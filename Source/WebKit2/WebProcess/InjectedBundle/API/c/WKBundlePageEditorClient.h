@@ -70,9 +70,15 @@ typedef void (*WKBundlePageWillWriteToPasteboard)(WKBundlePageRef page, WKBundle
 typedef void (*WKBundlePageGetPasteboardDataForRange)(WKBundlePageRef page, WKBundleRangeHandleRef range, WKArrayRef* pasteboardTypes, WKArrayRef* pasteboardData, const void* clientInfo);
 typedef void (*WKBundlePageDidWriteToPasteboard)(WKBundlePageRef page, const void* clientInfo);
 
-struct WKBundlePageEditorClient {
+typedef struct WKBundlePageEditorClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKBundlePageEditorClientBase;
+
+typedef struct WKBundlePageEditorClientV0 {
+    WKBundlePageEditorClientBase                                        base;
+
+    // Version 0.
     WKBundlePageShouldBeginEditingCallback                              shouldBeginEditing;
     WKBundlePageShouldEndEditingCallback                                shouldEndEditing;
     WKBundlePageShouldInsertNodeCallback                                shouldInsertNode;
@@ -84,13 +90,53 @@ struct WKBundlePageEditorClient {
     WKBundlePageEditingNotification                                     didEndEditing;
     WKBundlePageEditingNotification                                     didChange;
     WKBundlePageEditingNotification                                     didChangeSelection;
+} WKBundlePageEditorClientV0;
+
+typedef struct WKBundlePageEditorClientV1 {
+    WKBundlePageEditorClientBase                                        base;
+
+    // Version 0.
+    WKBundlePageShouldBeginEditingCallback                              shouldBeginEditing;
+    WKBundlePageShouldEndEditingCallback                                shouldEndEditing;
+    WKBundlePageShouldInsertNodeCallback                                shouldInsertNode;
+    WKBundlePageShouldInsertTextCallback                                shouldInsertText;
+    WKBundlePageShouldDeleteRangeCallback                               shouldDeleteRange;
+    WKBundlePageShouldChangeSelectedRange                               shouldChangeSelectedRange;
+    WKBundlePageShouldApplyStyle                                        shouldApplyStyle;
+    WKBundlePageEditingNotification                                     didBeginEditing;
+    WKBundlePageEditingNotification                                     didEndEditing;
+    WKBundlePageEditingNotification                                     didChange;
+    WKBundlePageEditingNotification                                     didChangeSelection;
+
     // Version 1.
     WKBundlePageWillWriteToPasteboard                                   willWriteToPasteboard;
     WKBundlePageGetPasteboardDataForRange                               getPasteboardDataForRange;
     WKBundlePageDidWriteToPasteboard                                    didWriteToPasteboard;
-};
-typedef struct WKBundlePageEditorClient WKBundlePageEditorClient;
+} WKBundlePageEditorClientV1;
 
+// FIXME: Deprecate.
 enum { kWKBundlePageEditorClientCurrentVersion = 1 };
+typedef struct WKBundlePageEditorClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKBundlePageShouldBeginEditingCallback                              shouldBeginEditing;
+    WKBundlePageShouldEndEditingCallback                                shouldEndEditing;
+    WKBundlePageShouldInsertNodeCallback                                shouldInsertNode;
+    WKBundlePageShouldInsertTextCallback                                shouldInsertText;
+    WKBundlePageShouldDeleteRangeCallback                               shouldDeleteRange;
+    WKBundlePageShouldChangeSelectedRange                               shouldChangeSelectedRange;
+    WKBundlePageShouldApplyStyle                                        shouldApplyStyle;
+    WKBundlePageEditingNotification                                     didBeginEditing;
+    WKBundlePageEditingNotification                                     didEndEditing;
+    WKBundlePageEditingNotification                                     didChange;
+    WKBundlePageEditingNotification                                     didChangeSelection;
+
+    // Version 1.
+    WKBundlePageWillWriteToPasteboard                                   willWriteToPasteboard;
+    WKBundlePageGetPasteboardDataForRange                               getPasteboardDataForRange;
+    WKBundlePageDidWriteToPasteboard                                    didWriteToPasteboard;
+} WKBundlePageEditorClient;
 
 #endif // WKBundlePageEditorClient_h

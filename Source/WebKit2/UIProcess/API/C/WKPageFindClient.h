@@ -32,21 +32,35 @@
 extern "C" {
 #endif
 
-// Find client.
 typedef void (*WKPageDidFindStringCallback)(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo);
 typedef void (*WKPageDidFailToFindStringCallback)(WKPageRef page, WKStringRef string, const void* clientInfo);
 typedef void (*WKPageDidCountStringMatchesCallback)(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo);
 
-struct WKPageFindClient {
+typedef struct WKPageFindClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKPageFindClientBase;
+
+typedef struct WKPageFindClientV0 {
+    WKPageFindClientBase                                                base;
+
+    // Version 0.
     WKPageDidFindStringCallback                                         didFindString;
     WKPageDidFailToFindStringCallback                                   didFailToFindString;
     WKPageDidCountStringMatchesCallback                                 didCountStringMatches;
-};
-typedef struct WKPageFindClient WKPageFindClient;
+} WKPageFindClientV0;
 
+// FIXME: Deprecate.
 enum { kWKPageFindClientCurrentVersion = 0 };
+typedef struct WKPageFindClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKPageDidFindStringCallback                                         didFindString;
+    WKPageDidFailToFindStringCallback                                   didFailToFindString;
+    WKPageDidCountStringMatchesCallback                                 didCountStringMatches;
+} WKPageFindClient;
 
 #ifdef __cplusplus
 }

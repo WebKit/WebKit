@@ -79,6 +79,8 @@ typedef struct WKPageLoaderClientBase {
 
 typedef struct WKPageLoaderClientV0 {
     WKPageLoaderClientBase                                              base;
+
+    // Version 0.
     WKPageDidStartProvisionalLoadForFrameCallback                       didStartProvisionalLoadForFrame;
     WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback    didReceiveServerRedirectForProvisionalLoadForFrame;
     WKPageDidFailProvisionalLoadWithErrorForFrameCallback               didFailProvisionalLoadWithErrorForFrame;
@@ -112,6 +114,8 @@ typedef struct WKPageLoaderClientV0 {
 
 typedef struct WKPageLoaderClientV1 {
     WKPageLoaderClientBase                                              base;
+
+    // Version -.
     WKPageDidStartProvisionalLoadForFrameCallback                       didStartProvisionalLoadForFrame;
     WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback    didReceiveServerRedirectForProvisionalLoadForFrame;
     WKPageDidFailProvisionalLoadWithErrorForFrameCallback               didFailProvisionalLoadWithErrorForFrame;
@@ -142,7 +146,7 @@ typedef struct WKPageLoaderClientV1 {
     WKPageShouldGoToBackForwardListItemCallback                         shouldGoToBackForwardListItem;
     WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0      didFailToInitializePlugin_deprecatedForUseWithV0;
 
-    // Version 1
+    // Version 1.
     WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
 
     void*                                                               didNewFirstVisuallyNonEmptyLayout_unavailable;
@@ -155,6 +159,8 @@ typedef struct WKPageLoaderClientV1 {
 
 typedef struct WKPageLoaderClientV2 {
     WKPageLoaderClientBase                                              base;
+
+    // Version 0.
     WKPageDidStartProvisionalLoadForFrameCallback                       didStartProvisionalLoadForFrame;
     WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback    didReceiveServerRedirectForProvisionalLoadForFrame;
     WKPageDidFailProvisionalLoadWithErrorForFrameCallback               didFailProvisionalLoadWithErrorForFrame;
@@ -185,7 +191,7 @@ typedef struct WKPageLoaderClientV2 {
     WKPageShouldGoToBackForwardListItemCallback                         shouldGoToBackForwardListItem;
     WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0      didFailToInitializePlugin_deprecatedForUseWithV0;
 
-    // Version 1
+    // Version 1.
     WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
 
     void*                                                               didNewFirstVisuallyNonEmptyLayout_unavailable;
@@ -195,7 +201,7 @@ typedef struct WKPageLoaderClientV2 {
     WKPageLoaderClientCallback                                          interactionOccurredWhileProcessUnresponsive;
     WKPagePluginDidFailCallback_deprecatedForUseWithV1                  pluginDidFail_deprecatedForUseWithV1;
 
-    // Version 2
+    // Version 2.
     void                                                                (*didReceiveIntentForFrame_unavailable)(void);
     void                                                                (*registerIntentServiceForFrame_unavailable)(void);
 
@@ -206,6 +212,8 @@ typedef struct WKPageLoaderClientV2 {
 
 typedef struct WKPageLoaderClientV3 {
     WKPageLoaderClientBase                                              base;
+
+    // Version 0.
     WKPageDidStartProvisionalLoadForFrameCallback                       didStartProvisionalLoadForFrame;
     WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback    didReceiveServerRedirectForProvisionalLoadForFrame;
     WKPageDidFailProvisionalLoadWithErrorForFrameCallback               didFailProvisionalLoadWithErrorForFrame;
@@ -236,7 +244,7 @@ typedef struct WKPageLoaderClientV3 {
     WKPageShouldGoToBackForwardListItemCallback                         shouldGoToBackForwardListItem;
     WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0      didFailToInitializePlugin_deprecatedForUseWithV0;
 
-    // Version 1
+    // Version 1.
     WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
 
     void*                                                               didNewFirstVisuallyNonEmptyLayout_unavailable;
@@ -246,7 +254,7 @@ typedef struct WKPageLoaderClientV3 {
     WKPageLoaderClientCallback                                          interactionOccurredWhileProcessUnresponsive;
     WKPagePluginDidFailCallback_deprecatedForUseWithV1                  pluginDidFail_deprecatedForUseWithV1;
 
-    // Version 2
+    // Version 2.
     void                                                                (*didReceiveIntentForFrame_unavailable)(void);
     void                                                                (*registerIntentServiceForFrame_unavailable)(void);
 
@@ -254,7 +262,7 @@ typedef struct WKPageLoaderClientV3 {
     WKPagePluginLoadPolicyCallback_deprecatedForUseWithV2               pluginLoadPolicy_deprecatedForUseWithV2;
     WKPagePluginDidFailCallback                                         pluginDidFail;
 
-    // Version 3
+    // Version 3.
     WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
 } WKPageLoaderClientV3;
 
@@ -263,6 +271,8 @@ enum { kWKPageLoaderClientCurrentVersion = 3 };
 typedef struct WKPageLoaderClient {
     int                                                                 version;
     const void *                                                        clientInfo;
+
+    // Version 0.
     WKPageDidStartProvisionalLoadForFrameCallback                       didStartProvisionalLoadForFrame;
     WKPageDidReceiveServerRedirectForProvisionalLoadForFrameCallback    didReceiveServerRedirectForProvisionalLoadForFrame;
     WKPageDidFailProvisionalLoadWithErrorForFrameCallback               didFailProvisionalLoadWithErrorForFrame;
@@ -293,7 +303,7 @@ typedef struct WKPageLoaderClient {
     WKPageShouldGoToBackForwardListItemCallback                         shouldGoToBackForwardListItem;
     WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0      didFailToInitializePlugin_deprecatedForUseWithV0;
 
-    // Version 1
+    // Version 1.
     WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
 
     void*                                                               didNewFirstVisuallyNonEmptyLayout_unavailable;
@@ -303,7 +313,7 @@ typedef struct WKPageLoaderClient {
     WKPageLoaderClientCallback                                          interactionOccurredWhileProcessUnresponsive;
     WKPagePluginDidFailCallback_deprecatedForUseWithV1                  pluginDidFail_deprecatedForUseWithV1;
 
-    // Version 2
+    // Version 2.
     void                                                                (*didReceiveIntentForFrame_unavailable)(void);
     void                                                                (*registerIntentServiceForFrame_unavailable)(void);
 
@@ -311,7 +321,7 @@ typedef struct WKPageLoaderClient {
     WKPagePluginLoadPolicyCallback_deprecatedForUseWithV2               pluginLoadPolicy_deprecatedForUseWithV2;
     WKPagePluginDidFailCallback                                         pluginDidFail;
 
-    // Version 3
+    // Version 3.
     WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
 } WKPageLoaderClient;
 

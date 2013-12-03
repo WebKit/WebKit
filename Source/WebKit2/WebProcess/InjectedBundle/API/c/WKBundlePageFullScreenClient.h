@@ -36,7 +36,37 @@ typedef void (*WKBundlePageBeganEnterFullScreen)(WKBundlePageRef page, WKRect in
 typedef void (*WKBundlePageBeganExitFullScreen)(WKBundlePageRef page, WKRect initialFrame, WKRect finalFrame);
 typedef void (*WKBundlePageCloseFullScreen)(WKBundlePageRef page);
 
-struct WKBundlePageFullScreenClient {
+typedef struct WKBundlePageFullScreenClientBase {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+} WKBundlePageFullScreenClientBase;
+
+typedef struct WKBundlePageFullScreenClientV0 {
+    WKBundlePageFullScreenClientBase                                    base;
+
+    // Version 0.
+    WKBundlePageSupportsFullScreen                                      supportsFullScreen;
+    WKBundlePageEnterFullScreenForElement                               enterFullScreenForElement;
+    WKBundlePageExitFullScreenForElement                                exitFullScreenForElement;
+} WKBundlePageFullScreenClientV0;
+
+typedef struct WKBundlePageFullScreenClientV1 {
+    WKBundlePageFullScreenClientBase                                    base;
+
+    // Version 0.
+    WKBundlePageSupportsFullScreen                                      supportsFullScreen;
+    WKBundlePageEnterFullScreenForElement                               enterFullScreenForElement;
+    WKBundlePageExitFullScreenForElement                                exitFullScreenForElement;
+
+    // Version 1.
+    WKBundlePageBeganEnterFullScreen                                    beganEnterFullScreen;
+    WKBundlePageBeganExitFullScreen                                     beganExitFullScreen;
+    WKBundlePageCloseFullScreen                                         closeFullScreen;
+} WKBundlePageFullScreenClientV1;
+
+// FIXME: Deprecate.
+enum { kWKBundlePageFullScreenClientCurrentVersion = 1 };
+typedef struct WKBundlePageFullScreenClient {
     int                                                                 version;
     const void *                                                        clientInfo;
 
@@ -49,9 +79,6 @@ struct WKBundlePageFullScreenClient {
     WKBundlePageBeganEnterFullScreen                                    beganEnterFullScreen;
     WKBundlePageBeganExitFullScreen                                     beganExitFullScreen;
     WKBundlePageCloseFullScreen                                         closeFullScreen;
-};
-typedef struct WKBundlePageFullScreenClient WKBundlePageFullScreenClient;
-
-enum { kWKBundlePageFullScreenClientCurrentVersion = 1 };
+} WKBundlePageFullScreenClient;
 
 #endif // WKBundlePageFullScreenClient_h

@@ -40,9 +40,15 @@ typedef void (*WKNotificationProviderRemoveNotificationManagerCallback)(WKNotifi
 typedef WKDictionaryRef (*WKNotificationProviderNotificationPermissionsCallback)(const void* clientInfo);
 typedef void (*WKNotificationProviderClearNotificationsCallback)(WKArrayRef notificationIDs, const void* clientInfo);
 
-struct WKNotificationProvider {
+typedef struct WKNotificationProviderBase {
     int                                                                   version;
     const void*                                                           clientInfo;
+} WKNotificationProviderBase;
+
+typedef struct WKNotificationProviderV0 {
+    WKNotificationProviderBase                                            base;
+
+    // Version 0.
     WKNotificationProviderShowCallback                                    show;
     WKNotificationProviderCancelCallback                                  cancel;
     WKNotificationProviderDidDestroyNotificationCallback                  didDestroyNotification;
@@ -50,10 +56,23 @@ struct WKNotificationProvider {
     WKNotificationProviderRemoveNotificationManagerCallback               removeNotificationManager;
     WKNotificationProviderNotificationPermissionsCallback                 notificationPermissions;
     WKNotificationProviderClearNotificationsCallback                      clearNotifications;
-};
-typedef struct WKNotificationProvider WKNotificationProvider;
+} WKNotificationProviderV0;
 
+// FIXME: Deprecate.
 enum { kWKNotificationProviderCurrentVersion = 0 };
+typedef struct WKNotificationProvider {
+    int                                                                   version;
+    const void*                                                           clientInfo;
+
+    // Version 0.
+    WKNotificationProviderShowCallback                                    show;
+    WKNotificationProviderCancelCallback                                  cancel;
+    WKNotificationProviderDidDestroyNotificationCallback                  didDestroyNotification;
+    WKNotificationProviderAddNotificationManagerCallback                  addNotificationManager;
+    WKNotificationProviderRemoveNotificationManagerCallback               removeNotificationManager;
+    WKNotificationProviderNotificationPermissionsCallback                 notificationPermissions;
+    WKNotificationProviderClearNotificationsCallback                      clearNotifications;
+} WKNotificationProvider;
 
 #ifdef __cplusplus
 }

@@ -42,14 +42,27 @@ typedef uint32_t WKHTTPCookieAcceptPolicy;
 // Cookie Manager Client
 typedef void (*WKCookieManagerCookiesDidChangeCallback)(WKCookieManagerRef cookieManager, const void *clientInfo);
 
-struct WKCookieManagerClient {
+typedef struct WKCookieManagerClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
-    WKCookieManagerCookiesDidChangeCallback                             cookiesDidChange;
-};
-typedef struct WKCookieManagerClient WKCookieManagerClient;
+} WKCookieManagerClientBase;
 
+typedef struct WKCookieManagerClientV0 {
+    WKCookieManagerClientBase                                           base;
+
+    // Version 0.
+    WKCookieManagerCookiesDidChangeCallback                             cookiesDidChange;
+} WKCookieManagerClientV0;
+
+// FIXME: Deprecate.
 enum { kWKCookieManagerClientCurrentVersion = 0 };
+typedef struct WKCookieManagerClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKCookieManagerCookiesDidChangeCallback                             cookiesDidChange;
+} WKCookieManagerClient;
 
 WK_EXPORT WKTypeID WKCookieManagerGetTypeID();
 

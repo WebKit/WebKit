@@ -37,7 +37,48 @@ typedef void (*WKBundlePageDidFailLoadForResourceCallback)(WKBundlePageRef, WKBu
 typedef bool (*WKBundlePageShouldCacheResponseCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, const void* clientInfo);
 typedef bool (*WKBundlePageShouldUseCredentialStorageCallback)(WKBundlePageRef, WKBundleFrameRef, uint64_t resourceIdentifier, const void* clientInfo);
 
-struct WKBundlePageResourceLoadClient {
+typedef struct WKBundlePageResourceLoadClientBase {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+} WKBundlePageResourceLoadClientBase;
+
+typedef struct WKBundlePageResourceLoadClientV0 {
+    WKBundlePageResourceLoadClientBase                                  base;
+
+    // Version 0.
+    WKBundlePageDidInitiateLoadForResourceCallback                      didInitiateLoadForResource;
+
+    // willSendRequestForFrame is supposed to return a retained reference to the URL request.
+    WKBundlePageWillSendRequestForFrameCallback                         willSendRequestForFrame;
+
+    WKBundlePageDidReceiveResponseForResourceCallback                   didReceiveResponseForResource;
+    WKBundlePageDidReceiveContentLengthForResourceCallback              didReceiveContentLengthForResource;
+    WKBundlePageDidFinishLoadForResourceCallback                        didFinishLoadForResource;
+    WKBundlePageDidFailLoadForResourceCallback                          didFailLoadForResource;
+} WKBundlePageResourceLoadClientV0;
+
+typedef struct WKBundlePageResourceLoadClientV1 {
+    WKBundlePageResourceLoadClientBase                                  base;
+
+    // Version 0.
+    WKBundlePageDidInitiateLoadForResourceCallback                      didInitiateLoadForResource;
+
+    // willSendRequestForFrame is supposed to return a retained reference to the URL request.
+    WKBundlePageWillSendRequestForFrameCallback                         willSendRequestForFrame;
+
+    WKBundlePageDidReceiveResponseForResourceCallback                   didReceiveResponseForResource;
+    WKBundlePageDidReceiveContentLengthForResourceCallback              didReceiveContentLengthForResource;
+    WKBundlePageDidFinishLoadForResourceCallback                        didFinishLoadForResource;
+    WKBundlePageDidFailLoadForResourceCallback                          didFailLoadForResource;
+
+    // Version 1.
+    WKBundlePageShouldCacheResponseCallback                             shouldCacheResponse;
+    WKBundlePageShouldUseCredentialStorageCallback                      shouldUseCredentialStorage;
+} WKBundlePageResourceLoadClientV1;
+
+// FIXME: Deprecate.
+enum { kWKBundlePageResourceLoadClientCurrentVersion = 1 };
+typedef struct WKBundlePageResourceLoadClient {
     int                                                                 version;
     const void *                                                        clientInfo;
 
@@ -55,9 +96,6 @@ struct WKBundlePageResourceLoadClient {
     // Version 1.
     WKBundlePageShouldCacheResponseCallback                             shouldCacheResponse;
     WKBundlePageShouldUseCredentialStorageCallback                      shouldUseCredentialStorage;
-};
-typedef struct WKBundlePageResourceLoadClient WKBundlePageResourceLoadClient;
-
-enum { kWKBundlePageResourceLoadClientCurrentVersion = 1 };
+} WKBundlePageResourceLoadClient;
 
 #endif // WKBundlePageResourceLoadClient_h

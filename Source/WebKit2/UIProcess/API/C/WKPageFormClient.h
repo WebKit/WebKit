@@ -35,14 +35,27 @@ extern "C" {
 // Form Client.
 typedef void (*WKPageWillSubmitFormCallback)(WKPageRef page, WKFrameRef frame, WKFrameRef sourceFrame, WKDictionaryRef values, WKTypeRef userData, WKFormSubmissionListenerRef listener, const void* clientInfo);
 
-struct WKPageFormClient {
+typedef struct WKPageFormClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
-    WKPageWillSubmitFormCallback                                        willSubmitForm;
-};
-typedef struct WKPageFormClient WKPageFormClient;
+} WKPageFormClientBase;
 
+typedef struct WKPageFormClientV0 {
+    WKPageFormClientBase                                                base;
+
+    // Version 0.
+    WKPageWillSubmitFormCallback                                        willSubmitForm;
+} WKPageFormClientV0;
+
+// FIXME: Deprecate.
 enum { kWKPageFormClientCurrentVersion = 0 };
+typedef struct WKPageFormClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKPageWillSubmitFormCallback                                        willSubmitForm;
+} WKPageFormClient;
 
 #ifdef __cplusplus
 }

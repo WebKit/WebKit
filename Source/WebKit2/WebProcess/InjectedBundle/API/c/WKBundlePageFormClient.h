@@ -39,7 +39,61 @@ typedef void (*WKBundlePageDidFocusTextFieldCallback)(WKBundlePageRef page, WKBu
 typedef bool (*WKBundlePageShouldNotifyOnFormChangesCallback)(WKBundlePageRef page, const void* clientInfo);
 typedef void (*WKBundlePageDidAssociateFormControlsCallback)(WKBundlePageRef page, WKArrayRef elementHandles, const void* clientInfo);
 
-struct WKBundlePageFormClient {
+typedef struct WKBundlePageFormClientBase {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+} WKBundlePageFormClientBase;
+
+typedef struct WKBundlePageFormClientV0 {
+    WKBundlePageFormClientBase                                          base;
+
+    // Version 0.
+    WKBundlePageTextFieldDidBeginEditingCallback                        textFieldDidBeginEditing;
+    WKBundlePageTextFieldDidEndEditingCallback                          textFieldDidEndEditing;
+    WKBundlePageTextDidChangeInTextFieldCallback                        textDidChangeInTextField;
+    WKBundlePageTextDidChangeInTextAreaCallback                         textDidChangeInTextArea;
+    WKBundlePageShouldPerformActionInTextFieldCallback                  shouldPerformActionInTextField;
+    WKBundlePageWillSubmitFormCallback                                  willSubmitForm;
+} WKBundlePageFormClientV0;
+
+typedef struct WKBundlePageFormClientV1 {
+    WKBundlePageFormClientBase                                          base;
+
+    // Version 0.
+    WKBundlePageTextFieldDidBeginEditingCallback                        textFieldDidBeginEditing;
+    WKBundlePageTextFieldDidEndEditingCallback                          textFieldDidEndEditing;
+    WKBundlePageTextDidChangeInTextFieldCallback                        textDidChangeInTextField;
+    WKBundlePageTextDidChangeInTextAreaCallback                         textDidChangeInTextArea;
+    WKBundlePageShouldPerformActionInTextFieldCallback                  shouldPerformActionInTextField;
+    WKBundlePageWillSubmitFormCallback                                  willSubmitForm;
+
+    // Version 1.
+    WKBundlePageWillSendSubmitEventCallback                             willSendSubmitEvent;
+} WKBundlePageFormClientV1;
+
+typedef struct WKBundlePageFormClientV2 {
+    WKBundlePageFormClientBase                                          base;
+
+    // Version 0.
+    WKBundlePageTextFieldDidBeginEditingCallback                        textFieldDidBeginEditing;
+    WKBundlePageTextFieldDidEndEditingCallback                          textFieldDidEndEditing;
+    WKBundlePageTextDidChangeInTextFieldCallback                        textDidChangeInTextField;
+    WKBundlePageTextDidChangeInTextAreaCallback                         textDidChangeInTextArea;
+    WKBundlePageShouldPerformActionInTextFieldCallback                  shouldPerformActionInTextField;
+    WKBundlePageWillSubmitFormCallback                                  willSubmitForm;
+
+    // Version 1.
+    WKBundlePageWillSendSubmitEventCallback                             willSendSubmitEvent;
+
+    // version 2.
+    WKBundlePageDidFocusTextFieldCallback                               didFocusTextField;
+    WKBundlePageShouldNotifyOnFormChangesCallback                       shouldNotifyOnFormChanges;
+    WKBundlePageDidAssociateFormControlsCallback                        didAssociateFormControls;
+} WKBundlePageFormClientV2;
+
+// FIXME: Deprecate.
+enum { kWKBundlePageFormClientCurrentVersion = 2 };
+typedef struct WKBundlePageFormClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     
@@ -58,9 +112,6 @@ struct WKBundlePageFormClient {
     WKBundlePageDidFocusTextFieldCallback                               didFocusTextField;
     WKBundlePageShouldNotifyOnFormChangesCallback                       shouldNotifyOnFormChanges;
     WKBundlePageDidAssociateFormControlsCallback                        didAssociateFormControls;
-};
-typedef struct WKBundlePageFormClient WKBundlePageFormClient;
-
-enum { kWKBundlePageFormClientCurrentVersion = 2 };
+} WKBundlePageFormClient;
 
 #endif // WKBundlePageFormClient_h

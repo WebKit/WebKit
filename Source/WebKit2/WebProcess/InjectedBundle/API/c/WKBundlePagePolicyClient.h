@@ -39,17 +39,32 @@ typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForNewWindowActionCal
 typedef WKBundlePagePolicyAction (*WKBundlePageDecidePolicyForResponseCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKTypeRef* userData, const void* clientInfo);
 typedef void (*WKBundlePageUnableToImplementPolicyCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKErrorRef error, WKTypeRef* userData, const void* clientInfo);
 
-struct WKBundlePagePolicyClient {
+typedef struct WKBundlePagePolicyClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKBundlePagePolicyClientBase;
+
+typedef struct WKBundlePagePolicyClientV0 {
+    WKBundlePagePolicyClientBase                                        base;
+
+    // Version 0.
     WKBundlePageDecidePolicyForNavigationActionCallback                 decidePolicyForNavigationAction;
     WKBundlePageDecidePolicyForNewWindowActionCallback                  decidePolicyForNewWindowAction;
     WKBundlePageDecidePolicyForResponseCallback                         decidePolicyForResponse;
     WKBundlePageUnableToImplementPolicyCallback                         unableToImplementPolicy;
-};
-typedef struct WKBundlePagePolicyClient WKBundlePagePolicyClient;
+} WKBundlePagePolicyClientV0;
 
+// FIXME: Deprecate.
 enum { kWKBundlePagePolicyClientCurrentVersion = 0 };
+typedef struct WKBundlePagePolicyClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
 
+    // Version 0.
+    WKBundlePageDecidePolicyForNavigationActionCallback                 decidePolicyForNavigationAction;
+    WKBundlePageDecidePolicyForNewWindowActionCallback                  decidePolicyForNewWindowAction;
+    WKBundlePageDecidePolicyForResponseCallback                         decidePolicyForResponse;
+    WKBundlePageUnableToImplementPolicyCallback                         unableToImplementPolicy;
+} WKBundlePagePolicyClient;
 
 #endif // WKBundlePagePolicyClient_h

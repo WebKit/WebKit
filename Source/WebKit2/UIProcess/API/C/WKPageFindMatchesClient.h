@@ -40,15 +40,27 @@ enum {
 typedef void (*WKPageDidFindStringMatchesCallback)(WKPageRef page, WKStringRef string, WKArrayRef matches, int firstIndex, const void* clientInfo);
 typedef void (*WKPageDidGetImageForMatchResultCallback)(WKPageRef page, WKImageRef image, uint32_t index, const void* clientInfo);
 
-struct WKPageFindMatchesClient {
+typedef struct WKPageFindMatchesClientBase {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+} WKPageFindMatchesClientBase;
+
+typedef struct WKPageFindMatchesClientV0 {
+    WKPageFindMatchesClientBase                                         base;
+
+    // Version 0.
+    WKPageDidFindStringMatchesCallback                                  didFindStringMatches;
+    WKPageDidGetImageForMatchResultCallback                             didGetImageForMatchResult;
+} WKPageFindMatchesClientV0;
+
+// FIXME: Deprecate.
+enum { kWKPageFindMatchesClientCurrentVersion = 0 };
+typedef struct WKPageFindMatchesClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKPageDidFindStringMatchesCallback                                  didFindStringMatches;
     WKPageDidGetImageForMatchResultCallback                             didGetImageForMatchResult;
-};
-typedef struct WKPageFindMatchesClient WKPageFindMatchesClient;
-
-enum { kWKPageFindMatchesClientCurrentVersion = 0 };
+} WKPageFindMatchesClient;
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,38 @@
 2013-12-02  Anders Carlsson  <andersca@apple.com>
 
+        Add versioned structs for all clients except the ones in WKContext.h
+        https://bugs.webkit.org/show_bug.cgi?id=125120
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/c/WKConnectionRef.h:
+        * UIProcess/API/C/WKCookieManager.h:
+        * UIProcess/API/C/WKDatabaseManager.h:
+        * UIProcess/API/C/WKGeolocationManager.h:
+        * UIProcess/API/C/WKIconDatabase.h:
+        * UIProcess/API/C/WKNotificationProvider.h:
+        * UIProcess/API/C/WKPageContextMenuClient.h:
+        * UIProcess/API/C/WKPageFindClient.h:
+        * UIProcess/API/C/WKPageFindMatchesClient.h:
+        * UIProcess/API/C/WKPageFormClient.h:
+        * UIProcess/API/C/WKPageLoaderClient.h:
+        * UIProcess/API/C/WKPagePolicyClient.h:
+        * UIProcess/API/C/WKPageUIClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageBanner.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageContextMenuClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageDiagnosticLoggingClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageEditorClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageFormClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageFullScreenClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePolicyClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageResourceLoadClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageUIClient.h:
+
+2013-12-02  Anders Carlsson  <andersca@apple.com>
+
         Split bundle page clients out into separate headers
         https://bugs.webkit.org/show_bug.cgi?id=125115
 

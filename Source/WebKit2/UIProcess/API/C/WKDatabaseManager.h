@@ -66,16 +66,29 @@ WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey();
 typedef void (*WKDatabaseManagerDidModifyOriginCallback)(WKDatabaseManagerRef databaseManager, WKSecurityOriginRef origin, const void *clientInfo);
 typedef void (*WKDatabaseManagerDidModifyDatabaseCallback)(WKDatabaseManagerRef databaseManager, WKSecurityOriginRef origin, WKStringRef databaseIdentifier, const void *clientInfo);
 
-struct WKDatabaseManagerClient {
+typedef struct WKDatabaseManagerClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKDatabaseManagerClientBase;
+
+typedef struct WKDatabaseManagerClientV0 {
+    WKDatabaseManagerClientBase                                         base;
+
+    // Version 0.
     WKDatabaseManagerDidModifyOriginCallback                            didModifyOrigin;
     WKDatabaseManagerDidModifyDatabaseCallback                          didModifyDatabase;
-};
-typedef struct WKDatabaseManagerClient WKDatabaseManagerClient;
+} WKDatabaseManagerClientV0;
 
+// FIXME: Deprecate.
 enum { kWKDatabaseManagerClientCurrentVersion = 0 };
+typedef struct WKDatabaseManagerClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
 
+    // Version 0.
+    WKDatabaseManagerDidModifyOriginCallback                            didModifyOrigin;
+    WKDatabaseManagerDidModifyDatabaseCallback                          didModifyDatabase;
+} WKDatabaseManagerClient;
 
 WK_EXPORT WKTypeID WKDatabaseManagerGetTypeID();
 

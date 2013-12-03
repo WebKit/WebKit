@@ -49,9 +49,15 @@ typedef bool (*WKBundlePageOverlayMouseUpCallback)(WKBundlePageOverlayRef pageOv
 typedef bool (*WKBundlePageOverlayMouseMovedCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, const void* clientInfo);
 typedef bool (*WKBundlePageOverlayMouseDraggedCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKEventMouseButton mouseButton, const void* clientInfo);
 
-struct WKBundlePageOverlayClient {
+typedef struct WKBundlePageOverlayClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKBundlePageOverlayClientBase;
+
+typedef struct WKBundlePageOverlayClientV0 {
+    WKBundlePageOverlayClientBase                                       base;
+
+    // Version 0.
     WKBundlePageOverlayWillMoveToPageCallback                           willMoveToPage;
     WKBundlePageOverlayDidMoveToPageCallback                            didMoveToPage;
     WKBundlePageOverlayDrawRectCallback                                 drawRect;
@@ -59,23 +65,50 @@ struct WKBundlePageOverlayClient {
     WKBundlePageOverlayMouseUpCallback                                  mouseUp;
     WKBundlePageOverlayMouseMovedCallback                               mouseMoved;
     WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
-};
-typedef struct WKBundlePageOverlayClient WKBundlePageOverlayClient;
+} WKBundlePageOverlayClientV0;
 
-enum { kWKBundlePageOverlayClientCurrentVersion = 0 };    
-    
-typedef WKTypeRef (*WKAccessibilityAttributeValueCallback)(WKBundlePageOverlayRef pageOverlay, WKStringRef attribute, WKTypeRef parameter, const void* clientInfo);
-typedef WKArrayRef (*WKAccessibilityAttributeNamesCallback)(WKBundlePageOverlayRef pageOverlay, bool parameterizedNames, const void* clientInfo);
-    
-struct WKBundlePageOverlayAccessibilityClient {
+// FIXME: Deprecate.
+enum { kWKBundlePageOverlayClientCurrentVersion = 0 };
+typedef struct WKBundlePageOverlayClient {
     int                                                                 version;
     const void *                                                        clientInfo;
+
+    // Version 0.
+    WKBundlePageOverlayWillMoveToPageCallback                           willMoveToPage;
+    WKBundlePageOverlayDidMoveToPageCallback                            didMoveToPage;
+    WKBundlePageOverlayDrawRectCallback                                 drawRect;
+    WKBundlePageOverlayMouseDownCallback                                mouseDown;
+    WKBundlePageOverlayMouseUpCallback                                  mouseUp;
+    WKBundlePageOverlayMouseMovedCallback                               mouseMoved;
+    WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
+} WKBundlePageOverlayClient;
+
+typedef WKTypeRef (*WKAccessibilityAttributeValueCallback)(WKBundlePageOverlayRef pageOverlay, WKStringRef attribute, WKTypeRef parameter, const void* clientInfo);
+typedef WKArrayRef (*WKAccessibilityAttributeNamesCallback)(WKBundlePageOverlayRef pageOverlay, bool parameterizedNames, const void* clientInfo);
+
+typedef struct WKBundlePageOverlayAccessibilityClientBase {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+} WKBundlePageOverlayAccessibilityClientBase;
+
+typedef struct WKBundlePageOverlayAccessibilityClientV0 {
+    WKBundlePageOverlayAccessibilityClientBase                          base;
+
+    // Version 0.
     WKAccessibilityAttributeValueCallback                               copyAccessibilityAttributeValue;
     WKAccessibilityAttributeNamesCallback                               copyAccessibilityAttributeNames;
-};
-typedef struct WKBundlePageOverlayAccessibilityClient WKBundlePageOverlayAccessibilityClient;
-    
+} WKBundlePageOverlayAccessibilityClientV0;
+
+// FIXME: Deprecate.
 enum { kWKBundlePageOverlayAccessibilityClientCurrentVersion = 0 };
+typedef struct WKBundlePageOverlayAccessibilityClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKAccessibilityAttributeValueCallback                               copyAccessibilityAttributeValue;
+    WKAccessibilityAttributeNamesCallback                               copyAccessibilityAttributeNames;
+} WKBundlePageOverlayAccessibilityClient;
     
 WK_EXPORT WKTypeID WKBundlePageOverlayGetTypeID();
 

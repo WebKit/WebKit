@@ -34,31 +34,59 @@
 extern "C" {
 #endif
 
-// Policy Client.
 typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageDecidePolicyForNewWindowActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageDecidePolicyForResponseCallback_deprecatedForUseWithV0)(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageUnableToImplementPolicyCallback)(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo);
 
-// Deprecated
 typedef void (*WKPageDecidePolicyForNavigationActionCallback_deprecatedForUseWithV0)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageDecidePolicyForResponseCallback)(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
 
-struct WKPagePolicyClient {
+typedef struct WKPagePolicyClientBase {
     int                                                                  version;
     const void *                                                         clientInfo;
+} WKPagePolicyClientBase;
+
+typedef struct WKPagePolicyClientV0 {
+    WKPagePolicyClientBase                                               base;
+
+    // Version 0.
+    WKPageDecidePolicyForNavigationActionCallback_deprecatedForUseWithV0 decidePolicyForNavigationAction_deprecatedForUseWithV0;
+    WKPageDecidePolicyForNewWindowActionCallback                         decidePolicyForNewWindowAction;
+    WKPageDecidePolicyForResponseCallback_deprecatedForUseWithV0         decidePolicyForResponse_deprecatedForUseWithV0;
+    WKPageUnableToImplementPolicyCallback                                unableToImplementPolicy;
+} WKPagePolicyClientV0;
+
+typedef struct WKPagePolicyClientV1 {
+    WKPagePolicyClientBase                                               base;
+
+    // Version 0.
     WKPageDecidePolicyForNavigationActionCallback_deprecatedForUseWithV0 decidePolicyForNavigationAction_deprecatedForUseWithV0;
     WKPageDecidePolicyForNewWindowActionCallback                         decidePolicyForNewWindowAction;
     WKPageDecidePolicyForResponseCallback_deprecatedForUseWithV0         decidePolicyForResponse_deprecatedForUseWithV0;
     WKPageUnableToImplementPolicyCallback                                unableToImplementPolicy;
 
-    // Version 1
+    // Version 1.
     WKPageDecidePolicyForNavigationActionCallback                        decidePolicyForNavigationAction;
     WKPageDecidePolicyForResponseCallback                                decidePolicyForResponse;
-};
-typedef struct WKPagePolicyClient WKPagePolicyClient;
+} WKPagePolicyClientV1;
 
+// FIXME: These should be deprecated.
 enum { kWKPagePolicyClientCurrentVersion = 1 };
+typedef struct WKPagePolicyClient {
+    int                                                                  version;
+    const void *                                                         clientInfo;
+
+    // Version 0.
+    WKPageDecidePolicyForNavigationActionCallback_deprecatedForUseWithV0 decidePolicyForNavigationAction_deprecatedForUseWithV0;
+    WKPageDecidePolicyForNewWindowActionCallback                         decidePolicyForNewWindowAction;
+    WKPageDecidePolicyForResponseCallback_deprecatedForUseWithV0         decidePolicyForResponse_deprecatedForUseWithV0;
+    WKPageUnableToImplementPolicyCallback                                unableToImplementPolicy;
+
+    // Version 1.
+    WKPageDecidePolicyForNavigationActionCallback                        decidePolicyForNavigationAction;
+    WKPageDecidePolicyForResponseCallback                                decidePolicyForResponse;
+} WKPagePolicyClient;
 
 #ifdef __cplusplus
 }

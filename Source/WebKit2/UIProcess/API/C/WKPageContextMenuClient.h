@@ -33,7 +33,6 @@
 extern "C" {
 #endif
 
-// ContextMenu client
 typedef void (*WKPageGetContextMenuFromProposedContextMenuCallback)(WKPageRef page, WKArrayRef proposedMenu, WKArrayRef* newMenu, WKHitTestResultRef hitTestResult, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageCustomContextMenuItemSelectedCallback)(WKPageRef page, WKContextMenuItemRef contextMenuItem, const void* clientInfo);
 typedef void (*WKPageContextMenuDismissedCallback)(WKPageRef page, const void* clientInfo);
@@ -42,27 +41,83 @@ typedef void (*WKPageHideContextMenuCallback)(WKPageRef page, const void* client
 
 // Deprecated
 typedef void (*WKPageGetContextMenuFromProposedContextMenuCallback_deprecatedForUseWithV0)(WKPageRef page, WKArrayRef proposedMenu, WKArrayRef* newMenu, WKTypeRef userData, const void* clientInfo);
-struct WKPageContextMenuClient {
+
+typedef struct WKPageContextMenuClientBase {
     int                                                                          version;
     const void *                                                                 clientInfo;
+} WKPageContextMenuClientBase;
 
-    // Version 0
+typedef struct WKPageContextMenuClientV0 {
+    WKPageContextMenuClientBase                                                  base;
+
+    // Version 0.
+    WKPageGetContextMenuFromProposedContextMenuCallback_deprecatedForUseWithV0   getContextMenuFromProposedMenu_deprecatedForUseWithV0;
+    WKPageCustomContextMenuItemSelectedCallback                                  customContextMenuItemSelected;
+} WKPageContextMenuClientV0;
+
+typedef struct WKPageContextMenuClientV1 {
+    WKPageContextMenuClientBase                                                  base;
+
+    // Version 0.
     WKPageGetContextMenuFromProposedContextMenuCallback_deprecatedForUseWithV0   getContextMenuFromProposedMenu_deprecatedForUseWithV0;
     WKPageCustomContextMenuItemSelectedCallback                                  customContextMenuItemSelected;
 
-    // Version 1
+    // Version 1.
+    WKPageContextMenuDismissedCallback                                           contextMenuDismissed;
+} WKPageContextMenuClientV1;
+
+typedef struct WKPageContextMenuClientV2 {
+    WKPageContextMenuClientBase                                                  base;
+
+    // Version 0.
+    WKPageGetContextMenuFromProposedContextMenuCallback_deprecatedForUseWithV0   getContextMenuFromProposedMenu_deprecatedForUseWithV0;
+    WKPageCustomContextMenuItemSelectedCallback                                  customContextMenuItemSelected;
+
+    // Version 1.
     WKPageContextMenuDismissedCallback                                           contextMenuDismissed;
 
-    // Version 2
+    // Version 2.
+    WKPageGetContextMenuFromProposedContextMenuCallback                          getContextMenuFromProposedMenu;
+} WKPageContextMenuClientV2;
+
+typedef struct WKPageContextMenuClientV3 {
+    WKPageContextMenuClientBase                                                  base;
+
+    // Version 0.
+    WKPageGetContextMenuFromProposedContextMenuCallback_deprecatedForUseWithV0   getContextMenuFromProposedMenu_deprecatedForUseWithV0;
+    WKPageCustomContextMenuItemSelectedCallback                                  customContextMenuItemSelected;
+
+    // Version 1.
+    WKPageContextMenuDismissedCallback                                           contextMenuDismissed;
+
+    // Version 2.
     WKPageGetContextMenuFromProposedContextMenuCallback                          getContextMenuFromProposedMenu;
 
-    // Version 3
+    // Version 3.
     WKPageShowContextMenuCallback                                                showContextMenu;
     WKPageHideContextMenuCallback                                                hideContextMenu;
-};
-typedef struct WKPageContextMenuClient WKPageContextMenuClient;
+} WKPageContextMenuClientV3;
 
+// FIXME: Deprecate.
 enum { kWKPageContextMenuClientCurrentVersion = 3 };
+typedef struct WKPageContextMenuClient {
+    int                                                                          version;
+    const void *                                                                 clientInfo;
+
+    // Version 0.
+    WKPageGetContextMenuFromProposedContextMenuCallback_deprecatedForUseWithV0   getContextMenuFromProposedMenu_deprecatedForUseWithV0;
+    WKPageCustomContextMenuItemSelectedCallback                                  customContextMenuItemSelected;
+
+    // Version 1.
+    WKPageContextMenuDismissedCallback                                           contextMenuDismissed;
+
+    // Version 2.
+    WKPageGetContextMenuFromProposedContextMenuCallback                          getContextMenuFromProposedMenu;
+
+    // Version 3.
+    WKPageShowContextMenuCallback                                                showContextMenu;
+    WKPageHideContextMenuCallback                                                hideContextMenu;
+} WKPageContextMenuClient;
 
 #ifdef __cplusplus
 }

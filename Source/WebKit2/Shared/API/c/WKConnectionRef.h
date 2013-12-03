@@ -35,15 +35,29 @@ extern "C" {
 typedef void (*WKConnectionDidReceiveMessageCallback)(WKConnectionRef connection, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
 typedef void (*WKConnectionDidCloseCallback)(WKConnectionRef connection, const void* clientInfo);
 
-struct WKConnectionClient {
+typedef struct WKConnectionClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKConnectionClientBase;
+
+typedef struct WKConnectionClientV0 {
+    WKConnectionClientBase                                              base;
+
+    // Version 0.
     WKConnectionDidReceiveMessageCallback                               didReceiveMessage;
     WKConnectionDidCloseCallback                                        didClose;
-};
-typedef struct WKConnectionClient WKConnectionClient;
+} WKConnectionClientV0;
 
+// FIXME: Deprecate.
 enum { WKConnectionClientCurrentVersion = 0 };
+typedef struct WKConnectionClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKConnectionDidReceiveMessageCallback                               didReceiveMessage;
+    WKConnectionDidCloseCallback                                        didClose;
+} WKConnectionClient;
 
 WK_EXPORT WKTypeID WKConnectionGetTypeID();
 

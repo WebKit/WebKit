@@ -55,9 +55,58 @@ typedef WKStringRef (*WKBundlePagePlugInCreateStartLabelSubtitleCallback)(WKStri
 typedef WKStringRef (*WKBundlePagePlugInCreateExtraStyleSheetCallback)(const void *clientInfo);
 typedef WKStringRef (*WKBundlePagePlugInCreateExtraScriptCallback)(const void *clientInfo);
 
-struct WKBundlePageUIClient {
+typedef struct WKBundlePageUIClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKBundlePageUIClientBase;
+
+typedef struct WKBundlePageUIClientV0 {
+    WKBundlePageUIClientBase                                            base;
+
+    // Version 0.
+    WKBundlePageWillAddMessageToConsoleCallback                         willAddMessageToConsole;
+    WKBundlePageWillSetStatusbarTextCallback                            willSetStatusbarText;
+    WKBundlePageWillRunJavaScriptAlertCallback                          willRunJavaScriptAlert;
+    WKBundlePageWillRunJavaScriptConfirmCallback                        willRunJavaScriptConfirm;
+    WKBundlePageWillRunJavaScriptPromptCallback                         willRunJavaScriptPrompt;
+    WKBundlePageMouseDidMoveOverElementCallback                         mouseDidMoveOverElement;
+    WKBundlePageDidScrollCallback                                       pageDidScroll;
+    void*                                                               unused1;
+    WKBundlePageGenerateFileForUploadCallback                           shouldGenerateFileForUpload;
+    WKBundlePageGenerateFileForUploadCallback                           generateFileForUpload;
+    void*                                                               unused2;
+    WKBundlePageStatusBarIsVisibleCallback                              statusBarIsVisible;
+    WKBundlePageMenuBarIsVisibleCallback                                menuBarIsVisible;
+    WKBundlePageToolbarsAreVisibleCallback                              toolbarsAreVisible;
+} WKBundlePageUIClientV0;
+
+typedef struct WKBundlePageUIClientV1 {
+    WKBundlePageUIClientBase                                            base;
+
+    // Version 0.
+    WKBundlePageWillAddMessageToConsoleCallback                         willAddMessageToConsole;
+    WKBundlePageWillSetStatusbarTextCallback                            willSetStatusbarText;
+    WKBundlePageWillRunJavaScriptAlertCallback                          willRunJavaScriptAlert;
+    WKBundlePageWillRunJavaScriptConfirmCallback                        willRunJavaScriptConfirm;
+    WKBundlePageWillRunJavaScriptPromptCallback                         willRunJavaScriptPrompt;
+    WKBundlePageMouseDidMoveOverElementCallback                         mouseDidMoveOverElement;
+    WKBundlePageDidScrollCallback                                       pageDidScroll;
+    void*                                                               unused1;
+    WKBundlePageGenerateFileForUploadCallback                           shouldGenerateFileForUpload;
+    WKBundlePageGenerateFileForUploadCallback                           generateFileForUpload;
+    void*                                                               unused2;
+    WKBundlePageStatusBarIsVisibleCallback                              statusBarIsVisible;
+    WKBundlePageMenuBarIsVisibleCallback                                menuBarIsVisible;
+    WKBundlePageToolbarsAreVisibleCallback                              toolbarsAreVisible;
+
+    // Version 1.
+    WKBundlePageReachedAppCacheOriginQuotaCallback                      didReachApplicationCacheOriginQuota;
+} WKBundlePageUIClientV1;
+
+typedef struct WKBundlePageUIClientV2 {
+    WKBundlePageUIClientBase                                            base;
+
+    // Version 0.
     WKBundlePageWillAddMessageToConsoleCallback                         willAddMessageToConsole;
     WKBundlePageWillSetStatusbarTextCallback                            willSetStatusbarText;
     WKBundlePageWillRunJavaScriptAlertCallback                          willRunJavaScriptAlert;
@@ -82,9 +131,39 @@ struct WKBundlePageUIClient {
     WKBundlePagePlugInCreateStartLabelSubtitleCallback                  createPlugInStartLabelSubtitle;
     WKBundlePagePlugInCreateExtraStyleSheetCallback                     createPlugInExtraStyleSheet;
     WKBundlePagePlugInCreateExtraScriptCallback                         createPlugInExtraScript;
-};
-typedef struct WKBundlePageUIClient WKBundlePageUIClient;
+} WKBundlePageUIClientV2;
 
+// FIXME: Deprecate.
 enum { kWKBundlePageUIClientCurrentVersion = 2 };
+typedef struct WKBundlePageUIClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKBundlePageWillAddMessageToConsoleCallback                         willAddMessageToConsole;
+    WKBundlePageWillSetStatusbarTextCallback                            willSetStatusbarText;
+    WKBundlePageWillRunJavaScriptAlertCallback                          willRunJavaScriptAlert;
+    WKBundlePageWillRunJavaScriptConfirmCallback                        willRunJavaScriptConfirm;
+    WKBundlePageWillRunJavaScriptPromptCallback                         willRunJavaScriptPrompt;
+    WKBundlePageMouseDidMoveOverElementCallback                         mouseDidMoveOverElement;
+    WKBundlePageDidScrollCallback                                       pageDidScroll;
+    void*                                                               unused1;
+    WKBundlePageGenerateFileForUploadCallback                           shouldGenerateFileForUpload;
+    WKBundlePageGenerateFileForUploadCallback                           generateFileForUpload;
+    void*                                                               unused2;
+    WKBundlePageStatusBarIsVisibleCallback                              statusBarIsVisible;
+    WKBundlePageMenuBarIsVisibleCallback                                menuBarIsVisible;
+    WKBundlePageToolbarsAreVisibleCallback                              toolbarsAreVisible;
+
+    // Version 1.
+    WKBundlePageReachedAppCacheOriginQuotaCallback                      didReachApplicationCacheOriginQuota;
+
+    // Version 2.
+    WKBundlePageExceededDatabaseQuotaCallback                           didExceedDatabaseQuota;
+    WKBundlePagePlugInCreateStartLabelTitleCallback                     createPlugInStartLabelTitle;
+    WKBundlePagePlugInCreateStartLabelSubtitleCallback                  createPlugInStartLabelSubtitle;
+    WKBundlePagePlugInCreateExtraStyleSheetCallback                     createPlugInExtraStyleSheet;
+    WKBundlePagePlugInCreateExtraScriptCallback                         createPlugInExtraScript;
+} WKBundlePageUIClient;
 
 #endif // WKBundlePageUIClient_h

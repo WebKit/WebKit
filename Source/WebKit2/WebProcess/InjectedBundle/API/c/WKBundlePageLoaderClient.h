@@ -63,7 +63,352 @@ typedef void (*WKBundlePageWillLoadURLRequestCallback)(WKBundlePageRef page, WKU
 typedef void (*WKBundlePageWillLoadDataRequestCallback)(WKBundlePageRef page, WKURLRequestRef request, WKDataRef data, WKStringRef MIMEType, WKStringRef encodingName, WKURLRef unreachableURL, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKBundlePageWillDestroyFrame)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
 
-struct WKBundlePageLoaderClient {
+typedef struct WKBundlePageLoaderClientBase {
+    int                                                                     version;
+    const void *                                                            clientInfo;
+} WKBundlePageLoaderClientBase;
+
+typedef struct WKBundlePageLoaderClientV0 {
+    WKBundlePageLoaderClientBase                                            base;
+
+    // Version 0.
+    WKBundlePageDidStartProvisionalLoadForFrameCallback                     didStartProvisionalLoadForFrame;
+    WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback  didReceiveServerRedirectForProvisionalLoadForFrame;
+    WKBundlePageDidFailProvisionalLoadWithErrorForFrameCallback             didFailProvisionalLoadWithErrorForFrame;
+    WKBundlePageDidCommitLoadForFrameCallback                               didCommitLoadForFrame;
+    WKBundlePageDidFinishDocumentLoadForFrameCallback                       didFinishDocumentLoadForFrame;
+    WKBundlePageDidFinishLoadForFrameCallback                               didFinishLoadForFrame;
+    WKBundlePageDidFailLoadWithErrorForFrameCallback                        didFailLoadWithErrorForFrame;
+    WKBundlePageDidSameDocumentNavigationForFrameCallback                   didSameDocumentNavigationForFrame;
+    WKBundlePageDidReceiveTitleForFrameCallback                             didReceiveTitleForFrame;
+    WKBundlePageDidFirstLayoutForFrameCallback                              didFirstLayoutForFrame;
+    WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrameCallback              didFirstVisuallyNonEmptyLayoutForFrame;
+    WKBundlePageDidRemoveFrameFromHierarchyCallback                         didRemoveFrameFromHierarchy;
+    WKBundlePageDidDisplayInsecureContentForFrameCallback                   didDisplayInsecureContentForFrame;
+    WKBundlePageDidRunInsecureContentForFrameCallback                       didRunInsecureContentForFrame;
+    WKBundlePageDidClearWindowObjectForFrameCallback                        didClearWindowObjectForFrame;
+    WKBundlePageDidCancelClientRedirectForFrameCallback                     didCancelClientRedirectForFrame;
+    WKBundlePageWillPerformClientRedirectForFrameCallback                   willPerformClientRedirectForFrame;
+    WKBundlePageDidHandleOnloadEventsForFrameCallback                       didHandleOnloadEventsForFrame;
+} WKBundlePageLoaderClientV0;
+
+typedef struct WKBundlePageLoaderClientV1 {
+    WKBundlePageLoaderClientBase                                            base;
+
+    // Version 0.
+    WKBundlePageDidStartProvisionalLoadForFrameCallback                     didStartProvisionalLoadForFrame;
+    WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback  didReceiveServerRedirectForProvisionalLoadForFrame;
+    WKBundlePageDidFailProvisionalLoadWithErrorForFrameCallback             didFailProvisionalLoadWithErrorForFrame;
+    WKBundlePageDidCommitLoadForFrameCallback                               didCommitLoadForFrame;
+    WKBundlePageDidFinishDocumentLoadForFrameCallback                       didFinishDocumentLoadForFrame;
+    WKBundlePageDidFinishLoadForFrameCallback                               didFinishLoadForFrame;
+    WKBundlePageDidFailLoadWithErrorForFrameCallback                        didFailLoadWithErrorForFrame;
+    WKBundlePageDidSameDocumentNavigationForFrameCallback                   didSameDocumentNavigationForFrame;
+    WKBundlePageDidReceiveTitleForFrameCallback                             didReceiveTitleForFrame;
+    WKBundlePageDidFirstLayoutForFrameCallback                              didFirstLayoutForFrame;
+    WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrameCallback              didFirstVisuallyNonEmptyLayoutForFrame;
+    WKBundlePageDidRemoveFrameFromHierarchyCallback                         didRemoveFrameFromHierarchy;
+    WKBundlePageDidDisplayInsecureContentForFrameCallback                   didDisplayInsecureContentForFrame;
+    WKBundlePageDidRunInsecureContentForFrameCallback                       didRunInsecureContentForFrame;
+    WKBundlePageDidClearWindowObjectForFrameCallback                        didClearWindowObjectForFrame;
+    WKBundlePageDidCancelClientRedirectForFrameCallback                     didCancelClientRedirectForFrame;
+    WKBundlePageWillPerformClientRedirectForFrameCallback                   willPerformClientRedirectForFrame;
+    WKBundlePageDidHandleOnloadEventsForFrameCallback                       didHandleOnloadEventsForFrame;
+
+    // Version 1.
+    WKBundlePageDidLayoutForFrameCallback                                   didLayoutForFrame;
+    void *                                                                  didNewFirstVisuallyNonEmptyLayout_unavailable;
+    WKBundlePageDidDetectXSSForFrameCallback                                didDetectXSSForFrame;
+    WKBundlePageShouldGoToBackForwardListItemCallback                       shouldGoToBackForwardListItem;
+    WKBundlePageGlobalObjectIsAvailableForFrameCallback                     globalObjectIsAvailableForFrame;
+    WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallback    willDisconnectDOMWindowExtensionFromGlobalObject;
+    WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback        didReconnectDOMWindowExtensionToGlobalObject;
+    WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback        willDestroyGlobalObjectForDOMWindowExtension;
+} WKBundlePageLoaderClientV1;
+
+typedef struct WKBundlePageLoaderClientV2 {
+    WKBundlePageLoaderClientBase                                            base;
+
+    // Version 0.
+    WKBundlePageDidStartProvisionalLoadForFrameCallback                     didStartProvisionalLoadForFrame;
+    WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback  didReceiveServerRedirectForProvisionalLoadForFrame;
+    WKBundlePageDidFailProvisionalLoadWithErrorForFrameCallback             didFailProvisionalLoadWithErrorForFrame;
+    WKBundlePageDidCommitLoadForFrameCallback                               didCommitLoadForFrame;
+    WKBundlePageDidFinishDocumentLoadForFrameCallback                       didFinishDocumentLoadForFrame;
+    WKBundlePageDidFinishLoadForFrameCallback                               didFinishLoadForFrame;
+    WKBundlePageDidFailLoadWithErrorForFrameCallback                        didFailLoadWithErrorForFrame;
+    WKBundlePageDidSameDocumentNavigationForFrameCallback                   didSameDocumentNavigationForFrame;
+    WKBundlePageDidReceiveTitleForFrameCallback                             didReceiveTitleForFrame;
+    WKBundlePageDidFirstLayoutForFrameCallback                              didFirstLayoutForFrame;
+    WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrameCallback              didFirstVisuallyNonEmptyLayoutForFrame;
+    WKBundlePageDidRemoveFrameFromHierarchyCallback                         didRemoveFrameFromHierarchy;
+    WKBundlePageDidDisplayInsecureContentForFrameCallback                   didDisplayInsecureContentForFrame;
+    WKBundlePageDidRunInsecureContentForFrameCallback                       didRunInsecureContentForFrame;
+    WKBundlePageDidClearWindowObjectForFrameCallback                        didClearWindowObjectForFrame;
+    WKBundlePageDidCancelClientRedirectForFrameCallback                     didCancelClientRedirectForFrame;
+    WKBundlePageWillPerformClientRedirectForFrameCallback                   willPerformClientRedirectForFrame;
+    WKBundlePageDidHandleOnloadEventsForFrameCallback                       didHandleOnloadEventsForFrame;
+
+    // Version 1.
+    WKBundlePageDidLayoutForFrameCallback                                   didLayoutForFrame;
+    void *                                                                  didNewFirstVisuallyNonEmptyLayout_unavailable;
+    WKBundlePageDidDetectXSSForFrameCallback                                didDetectXSSForFrame;
+    WKBundlePageShouldGoToBackForwardListItemCallback                       shouldGoToBackForwardListItem;
+    WKBundlePageGlobalObjectIsAvailableForFrameCallback                     globalObjectIsAvailableForFrame;
+    WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallback    willDisconnectDOMWindowExtensionFromGlobalObject;
+    WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback        didReconnectDOMWindowExtensionToGlobalObject;
+    WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback        willDestroyGlobalObjectForDOMWindowExtension;
+
+    // Version 2
+    WKBundlePageDidFinishProgressCallback                                   didFinishProgress;
+    WKBundlePageShouldForceUniversalAccessFromLocalURLCallback              shouldForceUniversalAccessFromLocalURL;
+} WKBundlePageLoaderClientV2;
+
+typedef struct WKBundlePageLoaderClientV3 {
+    WKBundlePageLoaderClientBase                                            base;
+
+    // Version 0.
+    WKBundlePageDidStartProvisionalLoadForFrameCallback                     didStartProvisionalLoadForFrame;
+    WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback  didReceiveServerRedirectForProvisionalLoadForFrame;
+    WKBundlePageDidFailProvisionalLoadWithErrorForFrameCallback             didFailProvisionalLoadWithErrorForFrame;
+    WKBundlePageDidCommitLoadForFrameCallback                               didCommitLoadForFrame;
+    WKBundlePageDidFinishDocumentLoadForFrameCallback                       didFinishDocumentLoadForFrame;
+    WKBundlePageDidFinishLoadForFrameCallback                               didFinishLoadForFrame;
+    WKBundlePageDidFailLoadWithErrorForFrameCallback                        didFailLoadWithErrorForFrame;
+    WKBundlePageDidSameDocumentNavigationForFrameCallback                   didSameDocumentNavigationForFrame;
+    WKBundlePageDidReceiveTitleForFrameCallback                             didReceiveTitleForFrame;
+    WKBundlePageDidFirstLayoutForFrameCallback                              didFirstLayoutForFrame;
+    WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrameCallback              didFirstVisuallyNonEmptyLayoutForFrame;
+    WKBundlePageDidRemoveFrameFromHierarchyCallback                         didRemoveFrameFromHierarchy;
+    WKBundlePageDidDisplayInsecureContentForFrameCallback                   didDisplayInsecureContentForFrame;
+    WKBundlePageDidRunInsecureContentForFrameCallback                       didRunInsecureContentForFrame;
+    WKBundlePageDidClearWindowObjectForFrameCallback                        didClearWindowObjectForFrame;
+    WKBundlePageDidCancelClientRedirectForFrameCallback                     didCancelClientRedirectForFrame;
+    WKBundlePageWillPerformClientRedirectForFrameCallback                   willPerformClientRedirectForFrame;
+    WKBundlePageDidHandleOnloadEventsForFrameCallback                       didHandleOnloadEventsForFrame;
+
+    // Version 1.
+    WKBundlePageDidLayoutForFrameCallback                                   didLayoutForFrame;
+    void *                                                                  didNewFirstVisuallyNonEmptyLayout_unavailable;
+    WKBundlePageDidDetectXSSForFrameCallback                                didDetectXSSForFrame;
+    WKBundlePageShouldGoToBackForwardListItemCallback                       shouldGoToBackForwardListItem;
+    WKBundlePageGlobalObjectIsAvailableForFrameCallback                     globalObjectIsAvailableForFrame;
+    WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallback    willDisconnectDOMWindowExtensionFromGlobalObject;
+    WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback        didReconnectDOMWindowExtensionToGlobalObject;
+    WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback        willDestroyGlobalObjectForDOMWindowExtension;
+
+    // Version 2
+    WKBundlePageDidFinishProgressCallback                                   didFinishProgress;
+    WKBundlePageShouldForceUniversalAccessFromLocalURLCallback              shouldForceUniversalAccessFromLocalURL;
+
+    // Version 3
+    void *                                                                  didReceiveIntentForFrame_unavailable;
+    void *                                                                  registerIntentServiceForFrame_unavailable;
+} WKBundlePageLoaderClientV3;
+
+typedef struct WKBundlePageLoaderClientV4 {
+    WKBundlePageLoaderClientBase                                            base;
+
+    // Version 0.
+    WKBundlePageDidStartProvisionalLoadForFrameCallback                     didStartProvisionalLoadForFrame;
+    WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback  didReceiveServerRedirectForProvisionalLoadForFrame;
+    WKBundlePageDidFailProvisionalLoadWithErrorForFrameCallback             didFailProvisionalLoadWithErrorForFrame;
+    WKBundlePageDidCommitLoadForFrameCallback                               didCommitLoadForFrame;
+    WKBundlePageDidFinishDocumentLoadForFrameCallback                       didFinishDocumentLoadForFrame;
+    WKBundlePageDidFinishLoadForFrameCallback                               didFinishLoadForFrame;
+    WKBundlePageDidFailLoadWithErrorForFrameCallback                        didFailLoadWithErrorForFrame;
+    WKBundlePageDidSameDocumentNavigationForFrameCallback                   didSameDocumentNavigationForFrame;
+    WKBundlePageDidReceiveTitleForFrameCallback                             didReceiveTitleForFrame;
+    WKBundlePageDidFirstLayoutForFrameCallback                              didFirstLayoutForFrame;
+    WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrameCallback              didFirstVisuallyNonEmptyLayoutForFrame;
+    WKBundlePageDidRemoveFrameFromHierarchyCallback                         didRemoveFrameFromHierarchy;
+    WKBundlePageDidDisplayInsecureContentForFrameCallback                   didDisplayInsecureContentForFrame;
+    WKBundlePageDidRunInsecureContentForFrameCallback                       didRunInsecureContentForFrame;
+    WKBundlePageDidClearWindowObjectForFrameCallback                        didClearWindowObjectForFrame;
+    WKBundlePageDidCancelClientRedirectForFrameCallback                     didCancelClientRedirectForFrame;
+    WKBundlePageWillPerformClientRedirectForFrameCallback                   willPerformClientRedirectForFrame;
+    WKBundlePageDidHandleOnloadEventsForFrameCallback                       didHandleOnloadEventsForFrame;
+
+    // Version 1.
+    WKBundlePageDidLayoutForFrameCallback                                   didLayoutForFrame;
+    void *                                                                  didNewFirstVisuallyNonEmptyLayout_unavailable;
+    WKBundlePageDidDetectXSSForFrameCallback                                didDetectXSSForFrame;
+    WKBundlePageShouldGoToBackForwardListItemCallback                       shouldGoToBackForwardListItem;
+    WKBundlePageGlobalObjectIsAvailableForFrameCallback                     globalObjectIsAvailableForFrame;
+    WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallback    willDisconnectDOMWindowExtensionFromGlobalObject;
+    WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback        didReconnectDOMWindowExtensionToGlobalObject;
+    WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback        willDestroyGlobalObjectForDOMWindowExtension;
+
+    // Version 2
+    WKBundlePageDidFinishProgressCallback                                   didFinishProgress;
+    WKBundlePageShouldForceUniversalAccessFromLocalURLCallback              shouldForceUniversalAccessFromLocalURL;
+
+    // Version 3
+    void *                                                                  didReceiveIntentForFrame_unavailable;
+    void *                                                                  registerIntentServiceForFrame_unavailable;
+
+    // Version 4
+    WKBundlePageDidLayoutCallback                                           didLayout;
+} WKBundlePageLoaderClientV4;
+
+typedef struct WKBundlePageLoaderClientV5 {
+    WKBundlePageLoaderClientBase                                            base;
+
+    // Version 0.
+    WKBundlePageDidStartProvisionalLoadForFrameCallback                     didStartProvisionalLoadForFrame;
+    WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback  didReceiveServerRedirectForProvisionalLoadForFrame;
+    WKBundlePageDidFailProvisionalLoadWithErrorForFrameCallback             didFailProvisionalLoadWithErrorForFrame;
+    WKBundlePageDidCommitLoadForFrameCallback                               didCommitLoadForFrame;
+    WKBundlePageDidFinishDocumentLoadForFrameCallback                       didFinishDocumentLoadForFrame;
+    WKBundlePageDidFinishLoadForFrameCallback                               didFinishLoadForFrame;
+    WKBundlePageDidFailLoadWithErrorForFrameCallback                        didFailLoadWithErrorForFrame;
+    WKBundlePageDidSameDocumentNavigationForFrameCallback                   didSameDocumentNavigationForFrame;
+    WKBundlePageDidReceiveTitleForFrameCallback                             didReceiveTitleForFrame;
+    WKBundlePageDidFirstLayoutForFrameCallback                              didFirstLayoutForFrame;
+    WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrameCallback              didFirstVisuallyNonEmptyLayoutForFrame;
+    WKBundlePageDidRemoveFrameFromHierarchyCallback                         didRemoveFrameFromHierarchy;
+    WKBundlePageDidDisplayInsecureContentForFrameCallback                   didDisplayInsecureContentForFrame;
+    WKBundlePageDidRunInsecureContentForFrameCallback                       didRunInsecureContentForFrame;
+    WKBundlePageDidClearWindowObjectForFrameCallback                        didClearWindowObjectForFrame;
+    WKBundlePageDidCancelClientRedirectForFrameCallback                     didCancelClientRedirectForFrame;
+    WKBundlePageWillPerformClientRedirectForFrameCallback                   willPerformClientRedirectForFrame;
+    WKBundlePageDidHandleOnloadEventsForFrameCallback                       didHandleOnloadEventsForFrame;
+
+    // Version 1.
+    WKBundlePageDidLayoutForFrameCallback                                   didLayoutForFrame;
+    void *                                                                  didNewFirstVisuallyNonEmptyLayout_unavailable;
+    WKBundlePageDidDetectXSSForFrameCallback                                didDetectXSSForFrame;
+    WKBundlePageShouldGoToBackForwardListItemCallback                       shouldGoToBackForwardListItem;
+    WKBundlePageGlobalObjectIsAvailableForFrameCallback                     globalObjectIsAvailableForFrame;
+    WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallback    willDisconnectDOMWindowExtensionFromGlobalObject;
+    WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback        didReconnectDOMWindowExtensionToGlobalObject;
+    WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback        willDestroyGlobalObjectForDOMWindowExtension;
+
+    // Version 2
+    WKBundlePageDidFinishProgressCallback                                   didFinishProgress;
+    WKBundlePageShouldForceUniversalAccessFromLocalURLCallback              shouldForceUniversalAccessFromLocalURL;
+
+    // Version 3
+    void *                                                                  didReceiveIntentForFrame_unavailable;
+    void *                                                                  registerIntentServiceForFrame_unavailable;
+
+    // Version 4
+    WKBundlePageDidLayoutCallback                                           didLayout;
+
+    // Version 5
+    WKBundlePageFeaturesUsedInPageCallback                                  featuresUsedInPage;
+} WKBundlePageLoaderClientV5;
+
+typedef struct WKBundlePageLoaderClientV6 {
+    WKBundlePageLoaderClientBase                                            base;
+
+    // Version 0.
+    WKBundlePageDidStartProvisionalLoadForFrameCallback                     didStartProvisionalLoadForFrame;
+    WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback  didReceiveServerRedirectForProvisionalLoadForFrame;
+    WKBundlePageDidFailProvisionalLoadWithErrorForFrameCallback             didFailProvisionalLoadWithErrorForFrame;
+    WKBundlePageDidCommitLoadForFrameCallback                               didCommitLoadForFrame;
+    WKBundlePageDidFinishDocumentLoadForFrameCallback                       didFinishDocumentLoadForFrame;
+    WKBundlePageDidFinishLoadForFrameCallback                               didFinishLoadForFrame;
+    WKBundlePageDidFailLoadWithErrorForFrameCallback                        didFailLoadWithErrorForFrame;
+    WKBundlePageDidSameDocumentNavigationForFrameCallback                   didSameDocumentNavigationForFrame;
+    WKBundlePageDidReceiveTitleForFrameCallback                             didReceiveTitleForFrame;
+    WKBundlePageDidFirstLayoutForFrameCallback                              didFirstLayoutForFrame;
+    WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrameCallback              didFirstVisuallyNonEmptyLayoutForFrame;
+    WKBundlePageDidRemoveFrameFromHierarchyCallback                         didRemoveFrameFromHierarchy;
+    WKBundlePageDidDisplayInsecureContentForFrameCallback                   didDisplayInsecureContentForFrame;
+    WKBundlePageDidRunInsecureContentForFrameCallback                       didRunInsecureContentForFrame;
+    WKBundlePageDidClearWindowObjectForFrameCallback                        didClearWindowObjectForFrame;
+    WKBundlePageDidCancelClientRedirectForFrameCallback                     didCancelClientRedirectForFrame;
+    WKBundlePageWillPerformClientRedirectForFrameCallback                   willPerformClientRedirectForFrame;
+    WKBundlePageDidHandleOnloadEventsForFrameCallback                       didHandleOnloadEventsForFrame;
+
+    // Version 1.
+    WKBundlePageDidLayoutForFrameCallback                                   didLayoutForFrame;
+    void *                                                                  didNewFirstVisuallyNonEmptyLayout_unavailable;
+    WKBundlePageDidDetectXSSForFrameCallback                                didDetectXSSForFrame;
+    WKBundlePageShouldGoToBackForwardListItemCallback                       shouldGoToBackForwardListItem;
+    WKBundlePageGlobalObjectIsAvailableForFrameCallback                     globalObjectIsAvailableForFrame;
+    WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallback    willDisconnectDOMWindowExtensionFromGlobalObject;
+    WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback        didReconnectDOMWindowExtensionToGlobalObject;
+    WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback        willDestroyGlobalObjectForDOMWindowExtension;
+
+    // Version 2
+    WKBundlePageDidFinishProgressCallback                                   didFinishProgress;
+    WKBundlePageShouldForceUniversalAccessFromLocalURLCallback              shouldForceUniversalAccessFromLocalURL;
+
+    // Version 3
+    void *                                                                  didReceiveIntentForFrame_unavailable;
+    void *                                                                  registerIntentServiceForFrame_unavailable;
+
+    // Version 4
+    WKBundlePageDidLayoutCallback                                           didLayout;
+
+    // Version 5
+    WKBundlePageFeaturesUsedInPageCallback                                  featuresUsedInPage;
+
+    // Version 6
+    WKBundlePageWillLoadURLRequestCallback                                  willLoadURLRequest;
+    WKBundlePageWillLoadDataRequestCallback                                 willLoadDataRequest;
+} WKBundlePageLoaderClientV6;
+
+typedef struct WKBundlePageLoaderClientV7 {
+    WKBundlePageLoaderClientBase                                            base;
+
+    // Version 0.
+    WKBundlePageDidStartProvisionalLoadForFrameCallback                     didStartProvisionalLoadForFrame;
+    WKBundlePageDidReceiveServerRedirectForProvisionalLoadForFrameCallback  didReceiveServerRedirectForProvisionalLoadForFrame;
+    WKBundlePageDidFailProvisionalLoadWithErrorForFrameCallback             didFailProvisionalLoadWithErrorForFrame;
+    WKBundlePageDidCommitLoadForFrameCallback                               didCommitLoadForFrame;
+    WKBundlePageDidFinishDocumentLoadForFrameCallback                       didFinishDocumentLoadForFrame;
+    WKBundlePageDidFinishLoadForFrameCallback                               didFinishLoadForFrame;
+    WKBundlePageDidFailLoadWithErrorForFrameCallback                        didFailLoadWithErrorForFrame;
+    WKBundlePageDidSameDocumentNavigationForFrameCallback                   didSameDocumentNavigationForFrame;
+    WKBundlePageDidReceiveTitleForFrameCallback                             didReceiveTitleForFrame;
+    WKBundlePageDidFirstLayoutForFrameCallback                              didFirstLayoutForFrame;
+    WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrameCallback              didFirstVisuallyNonEmptyLayoutForFrame;
+    WKBundlePageDidRemoveFrameFromHierarchyCallback                         didRemoveFrameFromHierarchy;
+    WKBundlePageDidDisplayInsecureContentForFrameCallback                   didDisplayInsecureContentForFrame;
+    WKBundlePageDidRunInsecureContentForFrameCallback                       didRunInsecureContentForFrame;
+    WKBundlePageDidClearWindowObjectForFrameCallback                        didClearWindowObjectForFrame;
+    WKBundlePageDidCancelClientRedirectForFrameCallback                     didCancelClientRedirectForFrame;
+    WKBundlePageWillPerformClientRedirectForFrameCallback                   willPerformClientRedirectForFrame;
+    WKBundlePageDidHandleOnloadEventsForFrameCallback                       didHandleOnloadEventsForFrame;
+
+    // Version 1.
+    WKBundlePageDidLayoutForFrameCallback                                   didLayoutForFrame;
+    void *                                                                  didNewFirstVisuallyNonEmptyLayout_unavailable;
+    WKBundlePageDidDetectXSSForFrameCallback                                didDetectXSSForFrame;
+    WKBundlePageShouldGoToBackForwardListItemCallback                       shouldGoToBackForwardListItem;
+    WKBundlePageGlobalObjectIsAvailableForFrameCallback                     globalObjectIsAvailableForFrame;
+    WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallback    willDisconnectDOMWindowExtensionFromGlobalObject;
+    WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback        didReconnectDOMWindowExtensionToGlobalObject;
+    WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback        willDestroyGlobalObjectForDOMWindowExtension;
+
+    // Version 2
+    WKBundlePageDidFinishProgressCallback                                   didFinishProgress;
+    WKBundlePageShouldForceUniversalAccessFromLocalURLCallback              shouldForceUniversalAccessFromLocalURL;
+
+    // Version 3
+    void *                                                                  didReceiveIntentForFrame_unavailable;
+    void *                                                                  registerIntentServiceForFrame_unavailable;
+
+    // Version 4
+    WKBundlePageDidLayoutCallback                                           didLayout;
+
+    // Version 5
+    WKBundlePageFeaturesUsedInPageCallback                                  featuresUsedInPage;
+
+    // Version 6
+    WKBundlePageWillLoadURLRequestCallback                                  willLoadURLRequest;
+    WKBundlePageWillLoadDataRequestCallback                                 willLoadDataRequest;
+
+    // Version 7
+    WKBundlePageWillDestroyFrame                                            willDestroyFrame;
+} WKBundlePageLoaderClientV7;
+
+// FIXME: Deprecate.
+enum { kWKBundlePageLoaderClientCurrentVersion = 7 };
+typedef struct WKBundlePageLoaderClient {
     int                                                                     version;
     const void *                                                            clientInfo;
 
@@ -117,9 +462,6 @@ struct WKBundlePageLoaderClient {
 
     // Version 7
     WKBundlePageWillDestroyFrame                                            willDestroyFrame;
-};
-typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
-
-enum { kWKBundlePageLoaderClientCurrentVersion = 7 };
+} WKBundlePageLoaderClient;
 
 #endif // WKBundlePageLoaderClient_h

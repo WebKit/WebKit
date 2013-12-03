@@ -30,13 +30,26 @@
 
 typedef void (*WKBundlePageDiagnosticLoggingCallback)(WKBundlePageRef page, WKStringRef message, WKStringRef description, WKStringRef success, const void* clientInfo);
 
-struct WKBundlePageDiagnosticLoggingClient {
+typedef struct WKBundlePageDiagnosticLoggingClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
-    WKBundlePageDiagnosticLoggingCallback                               logDiagnosticMessage;
-};
-typedef struct WKBundlePageDiagnosticLoggingClient WKBundlePageDiagnosticLoggingClient;
+} WKBundlePageDiagnosticLoggingClientBase;
 
+typedef struct WKBundlePageDiagnosticLoggingClientV0 {
+    WKBundlePageDiagnosticLoggingClientBase                             base;
+
+    // Version 0.
+    WKBundlePageDiagnosticLoggingCallback                               logDiagnosticMessage;
+} WKBundlePageDiagnosticLoggingClientV0;
+
+// FIXME: Deprecate.
 enum { kWKBundlePageDiagnosticLoggingClientCurrentVersion = 0 };
+typedef struct WKBundlePageDiagnosticLoggingClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKBundlePageDiagnosticLoggingCallback                               logDiagnosticMessage;
+} WKBundlePageDiagnosticLoggingClient;
 
 #endif // WKBundlePageDiagnosticLoggingClient_h

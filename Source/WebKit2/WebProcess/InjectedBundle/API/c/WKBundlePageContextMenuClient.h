@@ -30,13 +30,26 @@
 
 typedef void (*WKBundlePageGetContextMenuFromDefaultContextMenuCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKArrayRef defaultMenu, WKArrayRef* newMenu, WKTypeRef* userData, const void* clientInfo);
 
-struct WKBundlePageContextMenuClient {
+typedef struct WKBundlePageContextMenuClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
-    WKBundlePageGetContextMenuFromDefaultContextMenuCallback            getContextMenuFromDefaultMenu;
-};
-typedef struct WKBundlePageContextMenuClient WKBundlePageContextMenuClient;
+} WKBundlePageContextMenuClientBase;
 
+typedef struct WKBundlePageContextMenuClientV0 {
+    WKBundlePageContextMenuClientBase                                   base;
+
+    // Version 0.
+    WKBundlePageGetContextMenuFromDefaultContextMenuCallback            getContextMenuFromDefaultMenu;
+} WKBundlePageContextMenuClientV0;
+
+// FIXME: Deprecate.
 enum { kWKBundlePageContextMenuClientCurrentVersion = 0 };
+typedef struct WKBundlePageContextMenuClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKBundlePageGetContextMenuFromDefaultContextMenuCallback            getContextMenuFromDefaultMenu;
+} WKBundlePageContextMenuClient;
 
 #endif // WKBundlePageContextMenuClient_h

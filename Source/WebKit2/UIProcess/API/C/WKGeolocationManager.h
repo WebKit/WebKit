@@ -37,7 +37,33 @@ typedef void (*WKGeolocationProviderStartUpdatingCallback)(WKGeolocationManagerR
 typedef void (*WKGeolocationProviderStopUpdatingCallback)(WKGeolocationManagerRef geolocationManager, const void* clientInfo);
 typedef void (*WKGeolocationProviderSetEnableHighAccuracyCallback)(WKGeolocationManagerRef geolocationManager, bool enabled, const void* clientInfo);
 
-struct WKGeolocationProvider {
+typedef struct WKGeolocationProviderBase {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+} WKGeolocationProviderBase;
+
+typedef struct WKGeolocationProviderV0 {
+    WKGeolocationProviderBase                                           base;
+
+    // Version 0.
+    WKGeolocationProviderStartUpdatingCallback                          startUpdating;
+    WKGeolocationProviderStopUpdatingCallback                           stopUpdating;
+} WKGeolocationProviderV0;
+
+typedef struct WKGeolocationProviderV1 {
+    WKGeolocationProviderBase                                           base;
+
+    // Version 0.
+    WKGeolocationProviderStartUpdatingCallback                          startUpdating;
+    WKGeolocationProviderStopUpdatingCallback                           stopUpdating;
+
+    // Version 1.
+    WKGeolocationProviderSetEnableHighAccuracyCallback                  setEnableHighAccuracy;
+} WKGeolocationProviderV1;
+
+// FIXME: Deprecate.
+enum { kWKGeolocationProviderCurrentVersion = 1 };
+typedef struct WKGeolocationProvider {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKGeolocationProviderStartUpdatingCallback                          startUpdating;
@@ -45,11 +71,8 @@ struct WKGeolocationProvider {
 
     // Version 1.
     WKGeolocationProviderSetEnableHighAccuracyCallback                  setEnableHighAccuracy;
+} WKGeolocationProvider;
 
-};
-typedef struct WKGeolocationProvider WKGeolocationProvider;
-
-enum { kWKGeolocationProviderCurrentVersion = 1 };
 
 WK_EXPORT WKTypeID WKGeolocationManagerGetTypeID();
 
