@@ -27,9 +27,9 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(INPUT_TYPE_COLOR)
 using namespace WebCore;
 
-#if ENABLE(INPUT_TYPE_COLOR)
 EwkColorPicker::EwkColorPicker(WKColorPickerResultListenerRef colorPickerListener, const Color& initialColor)
     : m_colorPickerListener(colorPickerListener)
     , m_color(initialColor)

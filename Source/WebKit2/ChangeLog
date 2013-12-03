@@ -1,3 +1,12 @@
+2013-12-03  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Fix EFL build with INPUT_TYPE_COLOR disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=125065
+
+        Reviewed by Zoltan Herczeg.
+
+        * UIProcess/API/efl/ewk_color_picker.cpp:
+
 2013-12-03  Dariusz Frankiewicz  <d.frankiewic@samsung.com>
 
         Add spatial navigation API in EFL port
