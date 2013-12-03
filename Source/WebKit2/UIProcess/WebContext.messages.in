@@ -30,29 +30,29 @@ messages -> WebContext LegacyReceiver {
 #if PLATFORM(IOS)
     WriteWebContentToPasteboard(WebCore::PasteboardWebContent content)
     WriteImageToPasteboard(WebCore::PasteboardImage pasteboardImage)
-    WriteStringToPasteboard(WTF::String pasteboardType, WTF::String text) 
-    ReadStringFromPasteboard(uint64_t index, WTF::String pasteboardType) -> (WTF::String string)
-    ReadURLFromPasteboard(uint64_t index, WTF::String pasteboardType) -> (WTF::String string)
-    ReadBufferFromPasteboard(uint64_t index, WTF::String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
+    WriteStringToPasteboard(String pasteboardType, String text) 
+    ReadStringFromPasteboard(uint64_t index, String pasteboardType) -> (String string)
+    ReadURLFromPasteboard(uint64_t index, String pasteboardType) -> (String string)
+    ReadBufferFromPasteboard(uint64_t index, String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
     GetPasteboardItemsCount() -> (uint64_t itemsCount)
 #endif
 
 #if PLATFORM(MAC)
     # Pasteboard messages.
-    GetPasteboardTypes(WTF::String pasteboardName) -> (Vector<WTF::String> types)
-    GetPasteboardPathnamesForType(WTF::String pasteboardName, WTF::String pasteboardType) -> (Vector<WTF::String> pathnames)
-    GetPasteboardStringForType(WTF::String pasteboardName, WTF::String pasteboardType) -> (WTF::String string)
-    GetPasteboardBufferForType(WTF::String pasteboardName, WTF::String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
-    PasteboardCopy(WTF::String fromPasteboard, WTF::String toPasteboard) -> (uint64_t changeCount)
-    GetPasteboardChangeCount(WTF::String pasteboardName) -> (uint64_t changeCount)
-    GetPasteboardUniqueName() -> (WTF::String pasteboardName)
-    GetPasteboardColor(WTF::String pasteboardName) -> (WebCore::Color color)
-    GetPasteboardURL(WTF::String pasteboardName) -> (WTF::String urlString)
-    AddPasteboardTypes(WTF::String pasteboardName, Vector<WTF::String> pasteboardTypes) -> (uint64_t changeCount)
-    SetPasteboardTypes(WTF::String pasteboardName, Vector<WTF::String> pasteboardTypes) -> (uint64_t changeCount)
-    SetPasteboardPathnamesForType(WTF::String pasteboardName, WTF::String pasteboardType, Vector<WTF::String> pathnames) -> (uint64_t changeCount)
-    SetPasteboardStringForType(WTF::String pasteboardName, WTF::String pasteboardType, WTF::String string) -> (uint64_t changeCount)
-    SetPasteboardBufferForType(WTF::String pasteboardName, WTF::String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size) -> (uint64_t changeCount)
+    GetPasteboardTypes(String pasteboardName) -> (Vector<String> types)
+    GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType) -> (Vector<String> pathnames)
+    GetPasteboardStringForType(String pasteboardName, String pasteboardType) -> (String string)
+    GetPasteboardBufferForType(String pasteboardName, String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
+    PasteboardCopy(String fromPasteboard, String toPasteboard) -> (uint64_t changeCount)
+    GetPasteboardChangeCount(String pasteboardName) -> (uint64_t changeCount)
+    GetPasteboardUniqueName() -> (String pasteboardName)
+    GetPasteboardColor(String pasteboardName) -> (WebCore::Color color)
+    GetPasteboardURL(String pasteboardName) -> (String urlString)
+    AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (uint64_t changeCount)
+    SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (uint64_t changeCount)
+    SetPasteboardPathnamesForType(String pasteboardName, String pasteboardType, Vector<String> pathnames) -> (uint64_t changeCount)
+    SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string) -> (uint64_t changeCount)
+    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size) -> (uint64_t changeCount)
 #endif
 
 #if !PLATFORM(MAC)
@@ -62,6 +62,6 @@ messages -> WebContext LegacyReceiver {
 #endif
 
     # Plug-in messages.
-    void AddPlugInAutoStartOriginHash(WTF::String pageOrigin, uint32_t hash)
+    void AddPlugInAutoStartOriginHash(String pageOrigin, uint32_t hash)
     void PlugInDidReceiveUserInteraction(uint32_t hash)
 }

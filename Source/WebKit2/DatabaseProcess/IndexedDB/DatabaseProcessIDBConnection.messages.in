@@ -23,7 +23,7 @@
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 messages -> DatabaseProcessIDBConnection LegacyReceiver {
-    EstablishConnection(WTF::String databaseName, WebKit::SecurityOriginData openingOrigin, WebKit::SecurityOriginData mainFrameOrigin)
+    EstablishConnection(String databaseName, WebKit::SecurityOriginData openingOrigin, WebKit::SecurityOriginData mainFrameOrigin)
     GetOrEstablishIDBDatabaseMetadata(uint64_t requestID)
 }
 

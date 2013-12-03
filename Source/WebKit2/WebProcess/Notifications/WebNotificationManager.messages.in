@@ -24,6 +24,6 @@ messages -> WebNotificationManager {
     DidShowNotification(uint64_t notificationID);
     DidClickNotification(uint64_t notificationID);
     DidCloseNotifications(Vector<uint64_t> notificationIDs);
-    DidUpdateNotificationDecision(WTF::String originString, bool allowed);
-    DidRemoveNotificationDecisions(Vector<WTF::String> originStrings);
+    DidUpdateNotificationDecision(String originString, bool allowed);
+    DidRemoveNotificationDecisions(Vector<String> originStrings);
 }

@@ -22,7 +22,7 @@
 
 messages -> WebGeolocationManager {
     DidChangePosition(WebKit::WebGeolocationPosition::Data position);
-    DidFailToDeterminePosition(WTF::String errorMessage);
+    DidFailToDeterminePosition(String errorMessage);
 #if PLATFORM(IOS)
     ResetPermissions();
 #endif

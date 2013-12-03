@@ -1,3 +1,50 @@
+2013-12-03  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Remove WTF:: prefix from types in messages.in files.
+        https://bugs.webkit.org/show_bug.cgi?id=124578
+
+        Reviewed by Anders Carlsson.
+
+        The WTF:: prefixes are removed from the messages.in files, and the
+        messages.py now handles unprefixed non-template WTF classes (only
+        the WTF::String class is used currently). Tests are also updated.
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * PluginProcess/PluginControllerProxy.messages.in:
+        * PluginProcess/PluginProcess.messages.in:
+        * Scripts/webkit2/messages.py:
+        (forward_declarations_and_headers):
+        (class_template_headers):
+        (argument_coder_headers_for_type):
+        * Scripts/webkit2/messages_unittest.py:
+        (std):
+        * Shared/Network/CustomProtocols/CustomProtocolManager.messages.in:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        * UIProcess/Storage/StorageManager.messages.in:
+        * UIProcess/WebContext.messages.in:
+        * UIProcess/WebCookieManagerProxy.messages.in:
+        * UIProcess/WebDatabaseManagerProxy.messages.in:
+        * UIProcess/WebIconDatabase.messages.in:
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/WebMediaCacheManagerProxy.messages.in:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/Cookies/WebCookieManager.messages.in:
+        * WebProcess/Geolocation/WebGeolocationManager.messages.in:
+        * WebProcess/MediaCache/WebMediaCacheManager.messages.in:
+        * WebProcess/Notifications/WebNotificationManager.messages.in:
+        * WebProcess/Plugins/PluginProcessConnection.messages.in:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        * WebProcess/Storage/StorageAreaMap.messages.in:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.messages.in:
+        * WebProcess/WebPage/WebInspector.messages.in:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/soup/WebSoupRequestManager.messages.in:
+
 2013-12-03  Anders Carlsson  <andersca@apple.com>
 
         Tweak build fixes.

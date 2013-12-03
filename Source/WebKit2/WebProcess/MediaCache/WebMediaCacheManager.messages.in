@@ -22,6 +22,6 @@
 
 messages -> WebMediaCacheManager {
     void GetHostnamesWithMediaCache(uint64_t callbackID)
-    void ClearCacheForHostname(WTF::String hostname)
+    void ClearCacheForHostname(String hostname)
     void ClearCacheForAllHostnames()
 }

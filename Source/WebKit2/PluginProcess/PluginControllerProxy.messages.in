@@ -33,10 +33,10 @@ messages -> PluginControllerProxy LegacyReceiver {
     FrameDidFail(uint64_t requestID, bool wasCancelled)
 
     # Sent when JavaScript that the plug-in asked to be evaluated has been evaluated.
-    DidEvaluateJavaScript(uint64_t requestID, WTF::String result)
+    DidEvaluateJavaScript(uint64_t requestID, String result)
 
     # Sent when the plug-in receives a response for a stream.
-    StreamDidReceiveResponse(uint64_t streamID, WTF::String responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, WTF::String mimeType, WTF::String headers)
+    StreamDidReceiveResponse(uint64_t streamID, String responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, String mimeType, String headers)
 
     # Sent when the plug-in receives data for a stream.
     StreamDidReceiveData(uint64_t streamID, CoreIPC::DataReference data)
@@ -48,7 +48,7 @@ messages -> PluginControllerProxy LegacyReceiver {
     StreamDidFail(uint64_t streamID, bool wasCancelled)
 
     # Sent when the plug-in receives a response for the manual stream.
-    ManualStreamDidReceiveResponse(WTF::String responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, WTF::String mimeType, WTF::String headers)
+    ManualStreamDidReceiveResponse(String responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, String mimeType, String headers)
 
     # Sent when the plug-in receives data for the manual stream.
     ManualStreamDidReceiveData(CoreIPC::DataReference data)
@@ -75,10 +75,10 @@ messages -> PluginControllerProxy LegacyReceiver {
     HandleKeyboardEvent(WebKit::WebKeyboardEvent keyboardEvent) -> (bool handled)
     
     # Sent when an editing command should be processed.
-    HandleEditingCommand(WTF::String commandName, WTF::String argument) -> (bool handled);
+    HandleEditingCommand(String commandName, String argument) -> (bool handled);
     
     # Return whether or not a plugin wants to enable the given editing command.
-    IsEditingCommandEnabled(WTF::String commandName) -> (bool enabled);
+    IsEditingCommandEnabled(String commandName) -> (bool enabled);
     
     # Return whether or not a plugin wants to handle page scale factor itself.
     HandlesPageScaleFactor() -> (bool enabled);
@@ -97,7 +97,7 @@ messages -> PluginControllerProxy LegacyReceiver {
 
 #if PLATFORM(MAC)
     # Send the complex text input to the plug-in.
-    SendComplexTextInput(WTF::String textInput)
+    SendComplexTextInput(String textInput)
 
     # Sent when the containing NSWindow's focus changes
     WindowFocusChanged(bool hasFocus)
@@ -125,7 +125,7 @@ messages -> PluginControllerProxy LegacyReceiver {
     PrivateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 
     # Gets the string representating the form value of the plug-in
-    GetFormValue() -> (bool returnValue, WTF::String formValue)
+    GetFormValue() -> (bool returnValue, String formValue)
 }
 
 #endif

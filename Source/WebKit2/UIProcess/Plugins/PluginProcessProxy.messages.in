@@ -25,7 +25,7 @@
 messages -> PluginProcessProxy {
     DidCreateWebProcessConnection(CoreIPC::Attachment connectionIdentifier, bool supportsAsynchronousPluginInitialization)
 
-    DidGetSitesWithData(Vector<WTF::String> sites, uint64_t callbackID)
+    DidGetSitesWithData(Vector<String> sites, uint64_t callbackID)
     DidClearSiteData(uint64_t callbackID)
 
 #if PLATFORM(MAC)
@@ -36,16 +36,16 @@ messages -> PluginProcessProxy {
     OpenPluginPreferencePane()
 
     # Returns true if the UI process launched the process.
-    LaunchProcess(WTF::String launchPath, Vector<WTF::String> arguments) -> (bool result)
+    LaunchProcess(String launchPath, Vector<String> arguments) -> (bool result)
 
     # Returns true if the UI process launched the application.
-    LaunchApplicationAtURL(WTF::String url, Vector<WTF::String> arguments) -> (bool result)
+    LaunchApplicationAtURL(String url, Vector<String> arguments) -> (bool result)
 
     # Returns true if the UI process did open the URL.
-    OpenURL(WTF::String urlString) -> (bool result, int32_t status, WTF::String launchedURLString)
+    OpenURL(String urlString) -> (bool result, int32_t status, String launchedURLString)
     
     # Returns true if the UI process did open the file.
-    OpenFile(WTF::String fullPath) -> (bool result)
+    OpenFile(String fullPath) -> (bool result)
 #endif
 }
 

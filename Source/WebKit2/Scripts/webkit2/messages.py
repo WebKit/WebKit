@@ -244,6 +244,10 @@ def forward_declarations_and_headers(receiver):
         '"StringReference.h"',
     ])
 
+    non_template_wtf_types = frozenset([
+        'String',
+    ])
+
     for message in receiver.messages:
         if message.reply_parameters != None and message.has_attribute(DELAYED_ATTRIBUTE):
             headers.add('<wtf/ThreadSafeRefCounted.h>')
@@ -258,6 +262,10 @@ def forward_declarations_and_headers(receiver):
             continue
 
         split = type.split('::')
+
+        # Handle WTF types even if the WTF:: prefix is not given
+        if split[0] in non_template_wtf_types:
+            split.insert(0, 'WTF')
 
         if len(split) == 2:
             namespace = split[0]
@@ -389,7 +397,7 @@ def argument_coder_headers_for_type(type):
     header_infos_and_types = class_template_headers(type)
 
     special_cases = {
-        'WTF::String': '"ArgumentCoders.h"',
+        'String': '"ArgumentCoders.h"',
         'WebKit::InjectedBundleUserMessageEncoder': '"InjectedBundleUserMessageCoders.h"',
         'WebKit::WebContextUserMessageEncoder': '"WebContextUserMessageCoders.h"',
     }
@@ -415,7 +423,7 @@ def headers_for_type(type):
     header_infos_and_types = class_template_headers(type)
 
     special_cases = {
-        'WTF::String': ['<wtf/text/WTFString.h>'],
+        'String': ['<wtf/text/WTFString.h>'],
         'WebCore::CompositionUnderline': ['<WebCore/Editor.h>'],
         'WebCore::GrammarDetail': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::GraphicsLayerAnimations': ['<WebCore/GraphicsLayerAnimation.h>'],

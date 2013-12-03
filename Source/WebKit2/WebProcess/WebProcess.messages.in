@@ -35,17 +35,17 @@ messages -> WebProcess LegacyReceiver {
     # Global preferences.
     SetShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
     SetCacheModel(uint32_t cacheModel)
-    RegisterURLSchemeAsEmptyDocument(WTF::String scheme)
-    RegisterURLSchemeAsSecure(WTF::String scheme)
-    SetDomainRelaxationForbiddenForURLScheme(WTF::String scheme)
-    RegisterURLSchemeAsLocal(WTF::String scheme)
-    RegisterURLSchemeAsNoAccess(WTF::String scheme)
-    RegisterURLSchemeAsDisplayIsolated(WTF::String scheme)
-    RegisterURLSchemeAsCORSEnabled(WTF::String scheme)
+    RegisterURLSchemeAsEmptyDocument(String scheme)
+    RegisterURLSchemeAsSecure(String scheme)
+    SetDomainRelaxationForbiddenForURLScheme(String scheme)
+    RegisterURLSchemeAsLocal(String scheme)
+    RegisterURLSchemeAsNoAccess(String scheme)
+    RegisterURLSchemeAsDisplayIsolated(String scheme)
+    RegisterURLSchemeAsCORSEnabled(String scheme)
     SetDefaultRequestTimeoutInterval(double timeoutInterval)
     SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     SetShouldUseFontSmoothing(bool useFontSmoothing)
-    UserPreferredLanguagesChanged(Vector<WTF::String> languages)
+    UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 #if USE(SOUP)
     SetIgnoreTLSErrors(bool ignoreTLSErrors)
@@ -59,7 +59,7 @@ messages -> WebProcess LegacyReceiver {
     DidAddPlugInAutoStartOriginHash(uint32_t hash, double expirationTime)
     ResetPlugInAutoStartOriginHashes(HashMap<uint32_t,double> hashes)
 
-    void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, WTF::String sampleLogFilePath, double interval);
+    void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, String sampleLogFilePath, double interval);
     void StopMemorySampler();
 
     # Downloads. This should really be in a Download.messages.in, but it seemed unnecessary to create a new file just for
@@ -84,6 +84,6 @@ messages -> WebProcess LegacyReceiver {
 #endif
 
 #if !ENABLE(NETWORK_PROCESS) && USE(SOUP)
-    AllowSpecificHTTPSCertificateForHost(WebKit::CertificateInfo certificate, WTF::String host)
+    AllowSpecificHTTPSCertificateForHost(WebKit::CertificateInfo certificate, String host)
 #endif
 }

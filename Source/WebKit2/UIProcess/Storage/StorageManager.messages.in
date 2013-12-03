@@ -25,9 +25,9 @@ messages -> StorageManager {
     CreateSessionStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, WebKit::SecurityOriginData securityOriginData) WantsConnection
     DestroyStorageMap(uint64_t storageMapID) WantsConnection
 
-    GetValues(uint64_t storageMapID, uint64_t storageMapSeed) -> (HashMap<WTF::String, WTF::String> values) WantsConnection
+    GetValues(uint64_t storageMapID, uint64_t storageMapSeed) -> (HashMap<String, String> values) WantsConnection
 
-    SetItem(uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, WTF::String key, WTF::String value, WTF::String urlString) WantsConnection
-    RemoveItem(uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, WTF::String key, WTF::String urlString) WantsConnection
-    Clear(uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, WTF::String urlString) WantsConnection
+    SetItem(uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String key, String value, String urlString) WantsConnection
+    RemoveItem(uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String key, String urlString) WantsConnection
+    Clear(uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String urlString) WantsConnection
 }

@@ -24,7 +24,7 @@
 
 messages -> PluginProcessConnection LegacyReceiver {
     # Set a global JavaScript exception.
-    SetException(WTF::String exceptionString) -> ()
+    SetException(String exceptionString) -> ()
 }
 
 #endif

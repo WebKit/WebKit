@@ -22,10 +22,10 @@
 
 messages -> StorageAreaMap {
     DidGetValues(uint64_t storageMapSeed)
-    DidSetItem(uint64_t storageMapSeed, WTF::String key, bool quotaException)
-    DidRemoveItem(uint64_t storageMapSeed, WTF::String key)
+    DidSetItem(uint64_t storageMapSeed, String key, bool quotaException)
+    DidRemoveItem(uint64_t storageMapSeed, String key)
     DidClear(uint64_t storageMapSeed)
 
-    DispatchStorageEvent(uint64_t sourceStorageAreaID, WTF::String key, WTF::String oldValue, WTF::String newValue, WTF::String urlString)
+    DispatchStorageEvent(uint64_t sourceStorageAreaID, String key, String oldValue, String newValue, String urlString)
     ClearCache()
 }

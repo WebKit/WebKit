@@ -21,16 +21,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebIconDatabase {
-    RetainIconForPageURL(WTF::String pageURL)
-    ReleaseIconForPageURL(WTF::String pageURL)
-    SetIconURLForPageURL(WTF::String iconURL, WTF::String pageURL)
-    SetIconDataForIconURL(CoreIPC::DataReference iconData, WTF::String iconURL)
+    RetainIconForPageURL(String pageURL)
+    ReleaseIconForPageURL(String pageURL)
+    SetIconURLForPageURL(String iconURL, String pageURL)
+    SetIconDataForIconURL(CoreIPC::DataReference iconData, String iconURL)
     
-    SynchronousIconDataForPageURL(WTF::String pageURL) -> (CoreIPC::DataReference iconData)
-    SynchronousIconURLForPageURL(WTF::String pageURL) -> (WTF::String iconURL)
-    SynchronousIconDataKnownForIconURL(WTF::String iconURL) -> (bool dataKnown)
-    SynchronousLoadDecisionForIconURL(WTF::String iconURL) -> (int loadDecision)
+    SynchronousIconDataForPageURL(String pageURL) -> (CoreIPC::DataReference iconData)
+    SynchronousIconURLForPageURL(String pageURL) -> (String iconURL)
+    SynchronousIconDataKnownForIconURL(String iconURL) -> (bool dataKnown)
+    SynchronousLoadDecisionForIconURL(String iconURL) -> (int loadDecision)
     
-    GetLoadDecisionForIconURL(WTF::String iconURL, uint64_t callbackID)
-    DidReceiveIconForPageURL(WTF::String pageURL)
+    GetLoadDecisionForIconURL(String iconURL, uint64_t callbackID)
+    DidReceiveIconForPageURL(String pageURL)
 }

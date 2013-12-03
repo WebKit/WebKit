@@ -35,12 +35,12 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     StartDownload(bool privateBrowsingEnabled, uint64_t downloadID, WebCore::ResourceRequest request)
     ConvertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, uint64_t downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)
 
-    CookiesForDOM(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (WTF::String result)
-    SetCookiesFromDOM(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url, WTF::String cookieString)
+    CookiesForDOM(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (String result)
+    SetCookiesFromDOM(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url, String cookieString)
     CookiesEnabled(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (bool enabled)
-    CookieRequestHeaderFieldValue(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (WTF::String result)
+    CookieRequestHeaderFieldValue(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (String result)
     GetRawCookies(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (Vector<WebCore::Cookie> cookies)
-    DeleteCookie(bool privateBrowsingEnabled, WebCore::URL url, WTF::String cookieName)
+    DeleteCookie(bool privateBrowsingEnabled, WebCore::URL url, String cookieName)
 
     RegisterBlobURL(WebCore::URL url, WebKit::BlobRegistrationData data)
     RegisterBlobURLFromURL(WebCore::URL url, WebCore::URL srcURL)

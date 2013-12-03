@@ -24,28 +24,28 @@
 
 messages -> PluginProxy LegacyReceiver {
     # Asks the web process to load a URL.
-    LoadURL(uint64_t requestID, WTF::String method, WTF::String urlString, WTF::String target, WebCore::HTTPHeaderMap headerFields, Vector<uint8_t> httpBody, bool allowPopups);
+    LoadURL(uint64_t requestID, String method, String urlString, String target, WebCore::HTTPHeaderMap headerFields, Vector<uint8_t> httpBody, bool allowPopups);
 
     # Called when the plug-in has painted into its backing store. The painted rect is in plug-in coordinates.
     Update(WebCore::IntRect paintedRect)
 
     # Returns a PAC style string with proxies for the given URL.
-    ProxiesForURL(WTF::String urlString) -> (WTF::String proxiesString)
+    ProxiesForURL(String urlString) -> (String proxiesString)
 
     # Returns the cookies for the given URL.
-    CookiesForURL(WTF::String urlString) -> (WTF::String cookieString)
+    CookiesForURL(String urlString) -> (String cookieString)
 
     # Sets the cookies for the given URL.
-    SetCookiesForURL(WTF::String urlString, WTF::String cookieString)
+    SetCookiesForURL(String urlString, String cookieString)
 
     # Gets the authentication info for the given protection space.
-    GetAuthenticationInfo(WebCore::ProtectionSpace protectionSpace) -> (bool returnValue, WTF::String username, WTF::String password)
+    GetAuthenticationInfo(WebCore::ProtectionSpace protectionSpace) -> (bool returnValue, String username, String password)
 
     # Gets a reference to the plug-in element NPObject.
     GetPluginElementNPObject() -> (uint64_t pluginElementNPObjectID)
 
     # Evaluates the given JavaScript string.
-    Evaluate(WebKit::NPVariantData npObjectAsVariantData, WTF::String scriptString, bool allowPopups) -> (bool returnValue, WebKit::NPVariantData resultData)
+    Evaluate(WebKit::NPVariantData npObjectAsVariantData, String scriptString, bool allowPopups) -> (bool returnValue, WebKit::NPVariantData resultData)
 
     # Cancels the given stream load.
     CancelStreamLoad(uint64_t streamID)
@@ -54,7 +54,7 @@ messages -> PluginProxy LegacyReceiver {
     CancelManualStreamLoad()
 
     # Set the status bar text.
-    SetStatusbarText(WTF::String statusbarText)
+    SetStatusbarText(String statusbarText)
 
 #if PLATFORM(MAC)
     # Called when the plug-in's focus or its containing window focus changes.

@@ -52,16 +52,16 @@ _messages_file_contents = """# Copyright (C) 2010 Apple Inc. All rights reserved
 #if NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND
 
 messages -> WebPage LegacyReceiver {
-    LoadURL(WTF::String url)
+    LoadURL(String url)
 #if ENABLE(TOUCH_EVENTS)
-    LoadSomething(WTF::String url)
+    LoadSomething(String url)
 #if NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION
     TouchEvent(WebKit::WebTouchEvent event)
 #endif
 #if NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION
     AddEvent(WebKit::WebTouchEvent event)
 #endif
-    LoadSomethingElse(WTF::String url)
+    LoadSomethingElse(String url)
 #endif
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
     Close()
@@ -71,9 +71,9 @@ messages -> WebPage LegacyReceiver {
     SendInts(Vector<uint64_t> ints, Vector<Vector<uint64_t>> intVectors)
 
     CreatePlugin(uint64_t pluginInstanceID, WebKit::Plugin::Parameters parameters) -> (bool result)
-    RunJavaScriptAlert(uint64_t frameID, WTF::String message) -> ()
+    RunJavaScriptAlert(uint64_t frameID, String message) -> ()
     GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins)
-    GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) Delayed
+    GetPluginProcessConnection(String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) Delayed
 
     TestMultipleAttributes() -> () WantsConnection Delayed
 
@@ -110,14 +110,14 @@ _expected_results = {
         {
             'name': 'LoadURL',
             'parameters': (
-                ('WTF::String', 'url'),
+                ('String', 'url'),
             ),
             'conditions': (None),
         },
         {
             'name': 'LoadSomething',
             'parameters': (
-                ('WTF::String', 'url'),
+                ('String', 'url'),
             ),
             'conditions': ('ENABLE(TOUCH_EVENTS)'),
         },
@@ -138,7 +138,7 @@ _expected_results = {
         {
             'name': 'LoadSomethingElse',
             'parameters': (
-                ('WTF::String', 'url'),
+                ('String', 'url'),
             ),
             'conditions': ('ENABLE(TOUCH_EVENTS)'),
         },
@@ -194,7 +194,7 @@ _expected_results = {
             'name': 'RunJavaScriptAlert',
             'parameters': (
                 ('uint64_t', 'frameID'),
-                ('WTF::String', 'message')
+                ('String', 'message')
             ),
             'reply_parameters': (),
             'conditions': (None),
@@ -212,7 +212,7 @@ _expected_results = {
         {
             'name': 'GetPluginProcessConnection',
             'parameters': (
-                ('WTF::String', 'pluginPath'),
+                ('String', 'pluginPath'),
             ),
             'reply_parameters': (
                 ('CoreIPC::Connection::Handle', 'connectionHandle'),
@@ -353,6 +353,7 @@ _expected_header = """/*
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
     class Connection;
@@ -379,47 +380,47 @@ static inline CoreIPC::StringReference messageReceiverName()
 
 class LoadURL {
 public:
-    typedef std::tuple<WTF::String> DecodeType;
+    typedef std::tuple<String> DecodeType;
 
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("LoadURL"); }
     static const bool isSync = false;
 
-    explicit LoadURL(const WTF::String& url)
+    explicit LoadURL(const String& url)
         : m_arguments(url)
     {
     }
 
-    const std::tuple<const WTF::String&> arguments() const
+    const std::tuple<const String&> arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const WTF::String&> m_arguments;
+    std::tuple<const String&> m_arguments;
 };
 
 #if ENABLE(TOUCH_EVENTS)
 class LoadSomething {
 public:
-    typedef std::tuple<WTF::String> DecodeType;
+    typedef std::tuple<String> DecodeType;
 
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("LoadSomething"); }
     static const bool isSync = false;
 
-    explicit LoadSomething(const WTF::String& url)
+    explicit LoadSomething(const String& url)
         : m_arguments(url)
     {
     }
 
-    const std::tuple<const WTF::String&> arguments() const
+    const std::tuple<const String&> arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const WTF::String&> m_arguments;
+    std::tuple<const String&> m_arguments;
 };
 #endif
 
@@ -474,24 +475,24 @@ private:
 #if ENABLE(TOUCH_EVENTS)
 class LoadSomethingElse {
 public:
-    typedef std::tuple<WTF::String> DecodeType;
+    typedef std::tuple<String> DecodeType;
 
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("LoadSomethingElse"); }
     static const bool isSync = false;
 
-    explicit LoadSomethingElse(const WTF::String& url)
+    explicit LoadSomethingElse(const String& url)
         : m_arguments(url)
     {
     }
 
-    const std::tuple<const WTF::String&> arguments() const
+    const std::tuple<const String&> arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const WTF::String&> m_arguments;
+    std::tuple<const String&> m_arguments;
 };
 #endif
 
@@ -625,25 +626,25 @@ private:
 
 class RunJavaScriptAlert {
 public:
-    typedef std::tuple<uint64_t, WTF::String> DecodeType;
+    typedef std::tuple<uint64_t, String> DecodeType;
 
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("RunJavaScriptAlert"); }
     static const bool isSync = true;
 
     typedef CoreIPC::Arguments0 Reply;
-    RunJavaScriptAlert(uint64_t frameID, const WTF::String& message)
+    RunJavaScriptAlert(uint64_t frameID, const String& message)
         : m_arguments(frameID, message)
     {
     }
 
-    const std::tuple<uint64_t, const WTF::String&> arguments() const
+    const std::tuple<uint64_t, const String&> arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<uint64_t, const WTF::String&> m_arguments;
+    std::tuple<uint64_t, const String&> m_arguments;
 };
 
 class GetPlugins {
@@ -671,7 +672,7 @@ private:
 
 class GetPluginProcessConnection {
 public:
-    typedef std::tuple<WTF::String> DecodeType;
+    typedef std::tuple<String> DecodeType;
 
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("GetPluginProcessConnection"); }
@@ -689,18 +690,18 @@ public:
     };
 
     typedef CoreIPC::Arguments1<CoreIPC::Connection::Handle&> Reply;
-    explicit GetPluginProcessConnection(const WTF::String& pluginPath)
+    explicit GetPluginProcessConnection(const String& pluginPath)
         : m_arguments(pluginPath)
     {
     }
 
-    const std::tuple<const WTF::String&> arguments() const
+    const std::tuple<const String&> arguments() const
     {
         return m_arguments;
     }
 
 private:
-    std::tuple<const WTF::String&> m_arguments;
+    std::tuple<const String&> m_arguments;
 };
 
 class TestMultipleAttributes {

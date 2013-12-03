@@ -28,8 +28,8 @@ messages -> CustomProtocolManager {
     DidReceiveResponse(uint64_t customProtocolID, WebCore::ResourceResponse response, uint32_t cacheStoragePolicy)
     DidFinishLoading(uint64_t customProtocolID)
 
-    RegisterScheme(WTF::String name)
-    UnregisterScheme(WTF::String name)
+    RegisterScheme(String name)
+    UnregisterScheme(String name)
 }
 
 #endif // ENABLE(CUSTOM_PROTOCOLS)

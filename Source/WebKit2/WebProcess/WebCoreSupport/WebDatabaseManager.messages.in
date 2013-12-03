@@ -25,10 +25,10 @@
 messages -> WebDatabaseManager {
     void GetDatabasesByOrigin(uint64_t callbackID)
     void GetDatabaseOrigins(uint64_t callbackID)
-    void DeleteDatabaseWithNameForOrigin(WTF::String databaseIdentifier, WTF::String originIdentifier)
-    void DeleteDatabasesForOrigin(WTF::String originIdentifier)
+    void DeleteDatabaseWithNameForOrigin(String databaseIdentifier, String originIdentifier)
+    void DeleteDatabasesForOrigin(String originIdentifier)
     void DeleteAllDatabases()
-    void SetQuotaForOrigin(WTF::String originIdentifier, uint64_t quota)
+    void SetQuotaForOrigin(String originIdentifier, uint64_t quota)
 }
 
 #endif // ENABLE(SQL_DATABASE)

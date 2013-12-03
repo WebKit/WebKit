@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebCookieManagerProxy {
-    DidGetHostnamesWithCookies(Vector<WTF::String> hostnames, uint64_t callbackID);
+    DidGetHostnamesWithCookies(Vector<String> hostnames, uint64_t callbackID);
     DidGetHTTPCookieAcceptPolicy(uint32_t policy, uint64_t callbackID);
     
     CookiesDidChange()

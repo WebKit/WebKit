@@ -26,10 +26,10 @@ messages -> WebInspectorProxy {
     CreateInspectorPage() -> (uint64_t inspectorPageID, WebKit::WebPageCreationParameters inspectorPageParameters)
     DidClose()
     BringToFront()
-    InspectedURLChanged(WTF::String urlString)
+    InspectedURLChanged(String urlString)
 
-    Save(WTF::String filename, WTF::String content, bool base64Encoded, bool forceSaveAs)
-    Append(WTF::String filename, WTF::String content)
+    Save(String filename, String content, bool base64Encoded, bool forceSaveAs)
+    Append(String filename, String content)
 
     AttachBottom()
     AttachRight()
@@ -41,7 +41,7 @@ messages -> WebInspectorProxy {
     SetToolbarHeight(unsigned height)
 
 #if ENABLE(INSPECTOR_SERVER)
-    SendMessageToRemoteFrontend(WTF::String message)
+    SendMessageToRemoteFrontend(String message)
 #endif
 }
 
