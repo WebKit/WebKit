@@ -59,6 +59,42 @@ static CCCryptorStatus getPublicKeyComponents(CCRSACryptorRef rsaKey, Vector<uin
     return status;
 }
 
+static CCCryptorStatus getPrivateKeyComponents(CCRSACryptorRef rsaKey, Vector<uint8_t>& privateExponent, CryptoKeyDataRSAComponents::PrimeInfo& firstPrimeInfo, CryptoKeyDataRSAComponents::PrimeInfo& secondPrimeInfo)
+{
+    ASSERT(CCRSAGetKeyType(rsaKey) == ccRSAKeyPrivate);
+
+    Vector<uint8_t> unusedModulus(16384);
+    size_t modulusLength = unusedModulus.size();
+    privateExponent.resize(16384);
+    size_t exponentLength = privateExponent.size();
+    firstPrimeInfo.primeFactor.resize(16384);
+    size_t pLength = firstPrimeInfo.primeFactor.size();
+    secondPrimeInfo.primeFactor.resize(16384);
+    size_t qLength = secondPrimeInfo.primeFactor.size();
+
+    CCCryptorStatus status = CCRSAGetKeyComponents(rsaKey, unusedModulus.data(), &modulusLength, privateExponent.data(), &exponentLength, firstPrimeInfo.primeFactor.data(), &pLength, secondPrimeInfo.primeFactor.data(), &qLength);
+    if (status)
+        return status;
+
+    privateExponent.shrink(exponentLength);
+    firstPrimeInfo.primeFactor.shrink(pLength);
+    secondPrimeInfo.primeFactor.shrink(qLength);
+
+    CCBigNum d(privateExponent.data(), privateExponent.size());
+    CCBigNum p(firstPrimeInfo.primeFactor.data(), firstPrimeInfo.primeFactor.size());
+    CCBigNum q(secondPrimeInfo.primeFactor.data(), secondPrimeInfo.primeFactor.size());
+
+    CCBigNum dp = d % (p - 1);
+    CCBigNum dq = d % (q - 1);
+    CCBigNum qi = q.inverse(p);
+
+    firstPrimeInfo.factorCRTExponent = dp.data();
+    secondPrimeInfo.factorCRTExponent = dq.data();
+    secondPrimeInfo.factorCRTCoefficient = qi.data();
+
+    return status;
+}
+
 CryptoKeyRSA::CryptoKeyRSA(CryptoAlgorithmIdentifier identifier, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsage usage)
     : CryptoKey(identifier, type, extractable, usage)
     , m_platformKey(platformKey)
@@ -165,8 +201,25 @@ std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const
         }
         return CryptoKeyDataRSAComponents::createPublic(modulus, publicExponent);
     }
-    case ccRSAKeyPrivate:
-        // Not supported yet.
+    case ccRSAKeyPrivate: {
+        Vector<uint8_t> modulus;
+        Vector<uint8_t> publicExponent;
+        CCCryptorStatus status = getPublicKeyComponents(m_platformKey, modulus, publicExponent);
+        if (status) {
+            WTFLogAlways("Couldn't get RSA key components, status %d", status);
+            return nullptr;
+        }
+        Vector<uint8_t> privateExponent;
+        CryptoKeyDataRSAComponents::PrimeInfo firstPrimeInfo;
+        CryptoKeyDataRSAComponents::PrimeInfo secondPrimeInfo;
+        Vector<CryptoKeyDataRSAComponents::PrimeInfo> otherPrimeInfos; // Always empty, CommonCrypto only supports two primes (cf. <rdar://problem/15444074>).
+        status = getPrivateKeyComponents(m_platformKey, privateExponent, firstPrimeInfo, secondPrimeInfo);
+        if (status) {
+            WTFLogAlways("Couldn't get RSA key components, status %d", status);
+            return nullptr;
+        }
+        return CryptoKeyDataRSAComponents::createPrivateWithAdditionalData(modulus, publicExponent, privateExponent, firstPrimeInfo, secondPrimeInfo, otherPrimeInfos);
+    }
     default:
         return nullptr;
     }

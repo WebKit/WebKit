@@ -1,3 +1,30 @@
+2013-12-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Support exporting private WebCrypto RSA keys
+        https://bugs.webkit.org/show_bug.cgi?id=124483
+
+        Reviewed by Anders Carlsson.
+
+        Test: crypto/subtle/rsa-export-private-key.html
+
+        It might be better to have our own bignum implementation in WTF, but we currently
+        don't, and the need for this computation is Common Crypto specific anyway.
+
+        * crypto/CommonCryptoUtilities.h:
+        * crypto/CommonCryptoUtilities.cpp:
+        (WebCore::CCBigNum::CCBigNum):
+        (WebCore::CCBigNum::~CCBigNum):
+        (WebCore::CCBigNum::operator=):
+        (WebCore::CCBigNum::data):
+        (WebCore::CCBigNum::operator-):
+        (WebCore::CCBigNum::operator%):
+        (WebCore::CCBigNum::inverse):
+        Added a minimal wrapper around CommonCrypto BigNum.
+
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::getPrivateKeyComponents): Compute missing parts using CCBigNum.
+        (WebCore::CryptoKeyRSA::exportData): Implemented private key case.
+
 2013-12-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         XML fragment parsing algorithm doesn't use the context element's default namespace URI

@@ -29,8 +29,8 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmIdentifier.h"
-
 #include <CommonCrypto/CommonCryptor.h>
+#include <wtf/Vector.h>
 
 #if defined(__has_include)
 #if __has_include(<CommonCrypto/CommonRSACryptor.h>)
@@ -71,6 +71,8 @@ enum {
 };
 #endif
 
+typedef struct _CCBigNumRef *CCBigNumRef;
+
 typedef struct __CCRandom *CCRandomRef;
 extern const CCRandomRef kCCRandomDefault;
 extern "C" int CCRandomCopyBytes(CCRandomRef rnd, void *bytes, size_t count);
@@ -88,6 +90,28 @@ extern "C" CCCryptorStatus CCRSAGetKeyComponents(CCRSACryptorRef rsaKey, uint8_t
 extern "C" CCRSAKeyType CCRSAGetKeyType(CCRSACryptorRef key);
 
 namespace WebCore {
+
+class CCBigNum {
+public:
+    CCBigNum(const uint8_t*, size_t);
+    ~CCBigNum();
+
+    CCBigNum(const CCBigNum&);
+    CCBigNum(CCBigNum&&);
+    CCBigNum& operator=(const CCBigNum&);
+    CCBigNum& operator=(CCBigNum&&);
+
+    Vector<uint8_t> data() const;
+
+    CCBigNum operator-(uint32_t) const;
+    CCBigNum operator%(const CCBigNum&) const;
+    CCBigNum inverse(const CCBigNum& modulus) const;
+
+private:
+    CCBigNum(CCBigNumRef);
+
+    CCBigNumRef m_number;
+};
 
 bool getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier, CCDigestAlgorithm&);
 
