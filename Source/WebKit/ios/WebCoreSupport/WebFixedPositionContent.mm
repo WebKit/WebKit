@@ -110,7 +110,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
         const ViewportConstraints& constraints = *(constraintData->m_viewportConstraints.get());
 
         switch (constraints.constraintType()) {
-        case ViewportConstraints::FixedPositionConstaint: {
+        case ViewportConstraints::FixedPositionConstraint: {
                 const FixedPositionViewportConstraints& fixedConstraints = static_cast<const FixedPositionViewportConstraints&>(constraints);
 
                 FloatPoint layerPosition = fixedConstraints.layerPositionForViewportRect(positionedObjectsRect);

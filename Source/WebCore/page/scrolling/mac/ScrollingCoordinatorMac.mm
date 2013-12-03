@@ -396,7 +396,7 @@ void ScrollingCoordinatorMac::updateViewportConstrainedNode(ScrollingNodeID node
         return;
 
     switch (constraints.constraintType()) {
-    case ViewportConstraints::FixedPositionConstaint: {
+    case ViewportConstraints::FixedPositionConstraint: {
         ScrollingStateFixedNode* fixedNode = toScrollingStateFixedNode(node);
         setScrollLayerForNode(graphicsLayer, fixedNode);
         fixedNode->updateConstraints((const FixedPositionViewportConstraints&)constraints);

@@ -35,7 +35,7 @@ namespace WebCore {
 class ViewportConstraints {
 public:
     enum ConstraintType {
-        FixedPositionConstaint,
+        FixedPositionConstraint,
         StickyPositionConstraint
     };
 
@@ -104,7 +104,7 @@ public:
     bool operator!=(const FixedPositionViewportConstraints& other) const { return !(*this == other); }
 
 private:
-    virtual ConstraintType constraintType() const OVERRIDE { return FixedPositionConstaint; };
+    virtual ConstraintType constraintType() const OVERRIDE { return FixedPositionConstraint; };
 
     FloatRect m_viewportRectAtLastLayout;
     FloatPoint m_layerPositionAtLastLayout;

@@ -1,3 +1,18 @@
+2013-12-03  Ralph Thomas  <ralpht@gmail.com>
+
+        Typo: FixedPositionConstaint -> FixedPositionConstraint
+        https://bugs.webkit.org/show_bug.cgi?id=125171
+
+        Reviewed by Simon Fraser.
+
+        No new tests, no change in behavior.
+
+        * page/scrolling/ScrollingConstraints.h:
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp:
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::updateViewportConstrainedNode):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::updateViewportConstrainedNode):
+
 2013-12-03  Samuel White  <samuel_white@apple.com>
 
         AXPress event coordinates are always sent as (0, 0)

@@ -81,7 +81,7 @@ void ScrollingCoordinatorCoordinatedGraphics::updateViewportConstrainedNode(Scro
         return;
 
     switch (constraints.constraintType()) {
-    case ViewportConstraints::FixedPositionConstaint: {
+    case ViewportConstraints::FixedPositionConstraint: {
         toCoordinatedGraphicsLayer(graphicsLayer)->setFixedToViewport(true); // FIXME : Use constraints!
         ScrollingStateFixedNode* fixedNode = toScrollingStateFixedNode(node);
         fixedNode->setScrollLayer(graphicsLayer);
