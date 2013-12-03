@@ -65,11 +65,10 @@ bool BasicShape::canBlend(const BasicShape* other) const
 
     const BasicShapeEllipse* thisEllipse = static_cast<const BasicShapeEllipse*>(this);
     const BasicShapeEllipse* otherEllipse = static_cast<const BasicShapeEllipse*>(other);
-    if (!thisEllipse->radiusX().canBlend(otherEllipse->radiusX())
-        || !thisEllipse->radiusY().canBlend(otherEllipse->radiusY())
-        || !thisEllipse->centerX().canBlend(otherEllipse->centerX())
-        || !thisEllipse->centerY().canBlend(otherEllipse->centerY()))
-        return false;
+    return (thisEllipse->radiusX().canBlend(otherEllipse->radiusX())
+        && thisEllipse->radiusY().canBlend(otherEllipse->radiusY())
+        && thisEllipse->centerX().canBlend(otherEllipse->centerX())
+        && thisEllipse->centerY().canBlend(otherEllipse->centerY()));
 }
 
 void BasicShapeRectangle::path(Path& path, const FloatRect& boundingBox)
