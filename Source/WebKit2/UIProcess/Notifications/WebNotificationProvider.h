@@ -31,9 +31,11 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-template<> struct API::ClientTraits<WKNotificationProviderBase> {
+namespace API {
+template<> struct ClientTraits<WKNotificationProviderBase> {
     typedef std::tuple<WKNotificationProviderV0> Versions;
 };
+}
 
 namespace WebKit {
 

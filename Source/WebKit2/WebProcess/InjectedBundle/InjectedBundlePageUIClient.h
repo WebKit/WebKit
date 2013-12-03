@@ -32,12 +32,12 @@
 #include <WebCore/RenderSnapshottedPlugIn.h>
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKBundlePageUIClientBase> {
-    typedef std::tuple<WKBundlePageUIClientV0, WKBundlePageUIClientV1, WKBundlePageUIClientV2> Versions;
-};
-
 namespace API {
 class Object;
+
+template<> struct ClientTraits<WKBundlePageUIClientBase> {
+    typedef std::tuple<WKBundlePageUIClientV0, WKBundlePageUIClientV1, WKBundlePageUIClientV2> Versions;
+};
 }
 
 namespace WebCore {

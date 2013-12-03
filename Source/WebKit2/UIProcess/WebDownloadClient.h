@@ -30,9 +30,11 @@
 #include "WKContext.h"
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKContextDownloadClientBase> {
+namespace API {
+template<> struct ClientTraits<WKContextDownloadClientBase> {
     typedef std::tuple<WKContextDownloadClientV0> Versions;
 };
+}
 
 namespace WebCore {
     class ResourceError;

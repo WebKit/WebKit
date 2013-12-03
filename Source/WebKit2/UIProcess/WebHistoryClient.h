@@ -30,9 +30,11 @@
 #include "WKContext.h"
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKContextHistoryClientBase> {
+namespace API {
+template<> struct ClientTraits<WKContextHistoryClientBase> {
     typedef std::tuple<WKContextHistoryClientV0> Versions;
 };
+}
 
 namespace WebKit {
 

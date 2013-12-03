@@ -36,11 +36,11 @@
 
 namespace API {
 class Object;
-}
 
-template<> struct API::ClientTraits<WKBundlePageLoaderClientBase> {
+template<> struct ClientTraits<WKBundlePageLoaderClientBase> {
     typedef std::tuple<WKBundlePageLoaderClientV0, WKBundlePageLoaderClientV1, WKBundlePageLoaderClientV2, WKBundlePageLoaderClientV3, WKBundlePageLoaderClientV4, WKBundlePageLoaderClientV5, WKBundlePageLoaderClientV6, WKBundlePageLoaderClientV7> Versions;
 };
+}
 
 namespace WebCore {
 class DOMWindowExtension;

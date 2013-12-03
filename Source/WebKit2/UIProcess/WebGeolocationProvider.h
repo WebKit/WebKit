@@ -30,9 +30,11 @@
 #include "WKGeolocationManager.h"
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKGeolocationProviderBase> {
+namespace API {
+template<> struct ClientTraits<WKGeolocationProviderBase> {
     typedef std::tuple<WKGeolocationProviderV0, WKGeolocationProviderV1> Versions;
 };
+}
 
 namespace WebKit {
 

@@ -33,9 +33,11 @@
 #include "WebEvent.h"
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKBundlePageFullScreenClientBase> {
+namespace API {
+template<> struct ClientTraits<WKBundlePageFullScreenClientBase> {
     typedef std::tuple<WKBundlePageFullScreenClientV0, WKBundlePageFullScreenClientV1> Versions;
 };
+}
 
 namespace WebCore {
 class Element;

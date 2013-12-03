@@ -29,9 +29,11 @@
 #include "APIClient.h"
 #include "WKContext.h"
 
-template<> struct API::ClientTraits<WKContextConnectionClientBase> {
+namespace API {
+template<> struct ClientTraits<WKContextConnectionClientBase> {
     typedef std::tuple<WKContextConnectionClientV0> Versions;
 };
+}
 
 namespace WebKit {
 

@@ -30,12 +30,12 @@
 #include "WKContext.h"
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKContextInjectedBundleClientBase> {
-    typedef std::tuple<WKContextInjectedBundleClientV0, WKContextInjectedBundleClientV1> Versions;
-};
-
 namespace API {
 class Object;
+
+template<> struct ClientTraits<WKContextInjectedBundleClientBase> {
+    typedef std::tuple<WKContextInjectedBundleClientV0, WKContextInjectedBundleClientV1> Versions;
+};
 }
 
 namespace WebKit {

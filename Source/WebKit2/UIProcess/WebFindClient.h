@@ -30,16 +30,16 @@
 #include "WKPage.h"
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKPageFindClientBase> {
+namespace API {
+class Array;
+
+template<> struct ClientTraits<WKPageFindClientBase> {
     typedef std::tuple<WKPageFindClientV0> Versions;
 };
 
-template<> struct API::ClientTraits<WKPageFindMatchesClientBase> {
+template<> struct ClientTraits<WKPageFindMatchesClientBase> {
     typedef std::tuple<WKPageFindMatchesClientV0> Versions;
 };
-
-namespace API {
-class Array;
 }
 
 namespace WebKit {

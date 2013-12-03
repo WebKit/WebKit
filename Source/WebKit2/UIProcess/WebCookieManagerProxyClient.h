@@ -30,9 +30,11 @@
 #include "WKCookieManager.h"
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKCookieManagerClientBase> {
+namespace API {
+template<> struct ClientTraits<WKCookieManagerClientBase> {
     typedef std::tuple<WKCookieManagerClientV0> Versions;
 };
+}
 
 namespace WebKit {
 

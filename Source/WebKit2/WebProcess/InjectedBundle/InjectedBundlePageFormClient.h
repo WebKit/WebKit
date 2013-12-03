@@ -32,12 +32,12 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-template<> struct API::ClientTraits<WKBundlePageFormClientBase> {
-    typedef std::tuple<WKBundlePageFormClientV0, WKBundlePageFormClientV1, WKBundlePageFormClientV2> Versions;
-};
-
 namespace API {
 class Object;
+
+template<> struct ClientTraits<WKBundlePageFormClientBase> {
+    typedef std::tuple<WKBundlePageFormClientV0, WKBundlePageFormClientV1, WKBundlePageFormClientV2> Versions;
+};
 }
 
 namespace WebCore {

@@ -32,12 +32,12 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKPagePolicyClientBase> {
-    typedef std::tuple<WKPagePolicyClientV0, WKPagePolicyClientV1> Versions;
-};
-
 namespace API {
 class Object;
+
+template<> struct ClientTraits<WKPagePolicyClientBase> {
+    typedef std::tuple<WKPagePolicyClientV0, WKPagePolicyClientV1> Versions;
+};
 }
 
 namespace WebCore {

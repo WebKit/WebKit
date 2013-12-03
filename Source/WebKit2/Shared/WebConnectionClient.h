@@ -30,12 +30,12 @@
 #include "WKConnectionRef.h"
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKConnectionClientBase> {
-    typedef std::tuple<WKConnectionClientV0> Versions;
-};
-
 namespace API {
 class Object;
+
+template<> struct ClientTraits<WKConnectionClientBase> {
+    typedef std::tuple<WKConnectionClientV0> Versions;
+};
 }
 
 namespace WebKit {

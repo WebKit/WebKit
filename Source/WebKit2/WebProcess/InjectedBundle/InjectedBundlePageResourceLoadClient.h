@@ -32,9 +32,11 @@
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKBundlePageResourceLoadClientBase> {
+namespace API {
+template<> struct ClientTraits<WKBundlePageResourceLoadClientBase> {
     typedef std::tuple<WKBundlePageResourceLoadClientV0, WKBundlePageResourceLoadClientV1> Versions;
 };
+}
 
 namespace WebCore {
 class ResourceError;

@@ -32,12 +32,12 @@
 #include "WKBundlePage.h"
 #include <wtf/Vector.h>
 
-template<> struct API::ClientTraits<WKBundlePageContextMenuClientBase> {
-    typedef std::tuple<WKBundlePageContextMenuClientV0> Versions;
-};
-
 namespace API {
 class Object;
+
+template<> struct ClientTraits<WKBundlePageContextMenuClientBase> {
+    typedef std::tuple<WKBundlePageContextMenuClientV0> Versions;
+};
 }
 
 namespace WebCore {

@@ -1,3 +1,40 @@
+2013-12-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Build fixes for GCC-using ports after r159965 and later
+        https://bugs.webkit.org/show_bug.cgi?id=125136
+
+        GCC doesn't process API::ClientTraits template instantiations unless they're done
+        inside the API namespace.
+
+        * Shared/WebConnectionClient.h:
+        * UIProcess/Notifications/WebNotificationProvider.h:
+        * UIProcess/WebContextClient.h:
+        * UIProcess/WebContextConnectionClient.h:
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebCookieManagerProxyClient.h:
+        * UIProcess/WebDatabaseManagerProxyClient.h:
+        * UIProcess/WebDownloadClient.h:
+        * UIProcess/WebFindClient.h:
+        * UIProcess/WebFormClient.h:
+        * UIProcess/WebGeolocationProvider.h:
+        * UIProcess/WebHistoryClient.h:
+        * UIProcess/WebIconDatabaseClient.h:
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebOriginDataManagerProxyChangeClient.h:
+        * UIProcess/WebPageContextMenuClient.h:
+        * UIProcess/WebPolicyClient.h:
+        * UIProcess/WebUIClient.h:
+        * WebProcess/InjectedBundle/InjectedBundleClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+
 2013-12-02  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

@@ -30,9 +30,11 @@
 #include "WKDatabaseManager.h"
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKDatabaseManagerClientBase> {
+namespace API {
+template<> struct ClientTraits<WKDatabaseManagerClientBase> {
     typedef std::tuple<WKDatabaseManagerClientV0> Versions;
 };
+}
 
 namespace WebKit {
 

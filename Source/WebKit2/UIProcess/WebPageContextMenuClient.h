@@ -34,9 +34,11 @@
 #include <WebCore/IntPoint.h>
 #include <wtf/Vector.h>
 
-template<> struct API::ClientTraits<WKPageContextMenuClientBase> {
+namespace API {
+template<> struct ClientTraits<WKPageContextMenuClientBase> {
     typedef std::tuple<WKPageContextMenuClientV0, WKPageContextMenuClientV1, WKPageContextMenuClientV2, WKPageContextMenuClientV3> Versions;
 };
+}
 
 namespace WebKit {
 

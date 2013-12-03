@@ -34,9 +34,11 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
-template<> struct API::ClientTraits<WKPageUIClientBase> {
+namespace API {
+template<> struct ClientTraits<WKPageUIClientBase> {
     typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2> Versions;
 };
+}
 
 namespace WebCore {
     class FloatRect;

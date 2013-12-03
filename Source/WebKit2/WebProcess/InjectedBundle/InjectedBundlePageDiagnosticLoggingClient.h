@@ -31,9 +31,11 @@
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKBundlePageDiagnosticLoggingClientBase> {
+namespace API {
+template<> struct ClientTraits<WKBundlePageDiagnosticLoggingClientBase> {
     typedef std::tuple<WKBundlePageDiagnosticLoggingClientV0> Versions;
 };
+}
 
 namespace WebKit {
 

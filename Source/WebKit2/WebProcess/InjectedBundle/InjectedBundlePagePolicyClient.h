@@ -31,9 +31,11 @@
 #include "WKBundlePage.h"
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKBundlePagePolicyClientBase> {
+namespace API {
+template<> struct ClientTraits<WKBundlePagePolicyClientBase> {
     typedef std::tuple<WKBundlePagePolicyClientV0> Versions;
 };
+}
 
 namespace WebCore {
     class ResourceError;

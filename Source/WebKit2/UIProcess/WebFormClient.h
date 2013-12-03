@@ -32,12 +32,12 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-template<> struct API::ClientTraits<WKPageFormClientBase> {
-    typedef std::tuple<WKPageFormClientV0> Versions;
-};
-
 namespace API {
 class Object;
+
+template<> struct ClientTraits<WKPageFormClientBase> {
+    typedef std::tuple<WKPageFormClientV0> Versions;
+};
 }
 
 namespace WebKit {

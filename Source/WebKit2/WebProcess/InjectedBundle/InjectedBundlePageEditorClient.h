@@ -33,9 +33,11 @@
 #include <WebCore/TextAffinity.h>
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKBundlePageEditorClientBase> {
+namespace API {
+template<> struct ClientTraits<WKBundlePageEditorClientBase> {
     typedef std::tuple<WKBundlePageEditorClientV0, WKBundlePageEditorClientV1> Versions;
 };
+}
 
 namespace WebCore {
     class CSSStyleDeclaration;

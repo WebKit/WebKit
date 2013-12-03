@@ -30,9 +30,11 @@
 #include "WKOriginDataManager.h"
 #include <wtf/Forward.h>
 
-template<> struct API::ClientTraits<WKOriginDataManagerChangeClientBase> {
+namespace API {
+template<> struct ClientTraits<WKOriginDataManagerChangeClientBase> {
     typedef std::tuple<WKOriginDataManagerChangeClientV0> Versions;
 };
+}
 
 namespace WebKit {
 
