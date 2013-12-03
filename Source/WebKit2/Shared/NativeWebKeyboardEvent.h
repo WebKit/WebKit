@@ -42,6 +42,10 @@ typedef union _GdkEvent GdkEvent;
 #include <Evas.h>
 #endif
 
+#if PLATFORM(IOS)
+OBJC_CLASS WebIOSEvent;
+#endif
+
 namespace WebKit {
 
 class NativeWebKeyboardEvent : public WebKeyboardEvent {

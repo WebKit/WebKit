@@ -166,6 +166,7 @@ void WKBundlePageClickMenuItem(WKBundlePageRef pageRef, WKContextMenuItemRef ite
 #endif
 }
 
+#if ENABLE(CONTEXT_MENUS)
 static PassRefPtr<API::Array> contextMenuItems(const WebContextMenu& contextMenu)
 {
     auto items = contextMenu.items();
@@ -178,6 +179,7 @@ static PassRefPtr<API::Array> contextMenuItems(const WebContextMenu& contextMenu
 
     return API::Array::create(std::move(menuItems));
 }
+#endif
 
 WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef pageRef)
 {

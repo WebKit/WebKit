@@ -187,6 +187,18 @@ float RemoteLayerTreeDrawingArea::deviceScaleFactor() const
     return m_webPage->corePage()->deviceScaleFactor();
 }
 
+#if PLATFORM(IOS)
+void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
+{
+    m_webPage->setDeviceScaleFactor(deviceScaleFactor);
+}
+
+float RemoteLayerTreeDrawingArea::minimumDocumentScale() const
+{
+    return m_webPage->corePage()->mainFrame().minimumDocumentScale();
+}
+#endif
+
 void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 {
     m_remoteLayerTreeContext->setIsFlushingSuspended(isFrozen);

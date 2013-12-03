@@ -28,6 +28,11 @@
 
 #include "WebEvent.h"
 
+#if PLATFORM(IOS)
+#include <wtf/RetainPtr.h>
+OBJC_CLASS UIWebTouchEventsGestureRecognizer;
+#endif // PLATFORM(IOS)
+
 #if PLATFORM(EFL)
 #include "EwkTouchEvent.h"
 #include <WebCore/AffineTransform.h>

@@ -45,12 +45,12 @@ TiledCoreAnimationDrawingAreaProxyIOS::~TiledCoreAnimationDrawingAreaProxyIOS()
 
 void TiledCoreAnimationDrawingAreaProxyIOS::deviceScaleFactorDidChange()
 {
-    m_webPageProxy->process()->send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy->deviceScaleFactor()), m_webPageProxy->pageID());
+    m_webPageProxy->process().send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy->deviceScaleFactor()), m_webPageProxy->pageID());
 }
 
 void TiledCoreAnimationDrawingAreaProxyIOS::sizeDidChange()
 {
-    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateGeometry(m_size, IntSize()), m_webPageProxy->pageID());
+    m_webPageProxy->process().send(Messages::DrawingArea::UpdateGeometry(m_size, IntSize()), m_webPageProxy->pageID());
 }
 
 void TiledCoreAnimationDrawingAreaProxyIOS::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)

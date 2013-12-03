@@ -30,6 +30,10 @@
 #include <WebCore/IntRect.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(IOS)
+#include <WebCore/SelectionRect.h>
+#endif
+
 namespace WebKit {
 
 struct EditorState {

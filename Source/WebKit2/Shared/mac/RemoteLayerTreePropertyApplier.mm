@@ -27,6 +27,7 @@
 #import "RemoteLayerTreePropertyApplier.h"
 
 #import "PlatformCALayerRemote.h"
+#import <QuartzCore/CALayer.h>
 #import <WebCore/PlatformCAFilters.h>
 
 using namespace WebCore;

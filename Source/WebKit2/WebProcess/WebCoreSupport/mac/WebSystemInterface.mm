@@ -103,9 +103,9 @@ void InitWebCoreSystemInterface(void)
         INIT(QTGetSitesInMediaDownloadCache);
         INIT(QTClearMediaDownloadCacheForSite);
         INIT(QTClearMediaDownloadCache);
-        INIT(SetBaseCTM);
         INIT(SetCGFontRenderingMode);
 #endif
+        INIT(SetBaseCTM);
         INIT(SetCONNECTProxyAuthorizationForStream);
         INIT(SetCONNECTProxyForStream);
 #if !PLATFORM(IOS)
@@ -191,11 +191,11 @@ void InitWebCoreSystemInterface(void)
 
         INIT(DestroyRenderingResources);
 
-#if !PLATFORM(IOS)  && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         INIT(ExecutableWasLinkedOnOrBeforeLion);
 #endif
         
-#if !PLATFORM(IOS)  && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         INIT(CreateMemoryStatusPressureCriticalDispatchOnMainQueue);
 #endif
 

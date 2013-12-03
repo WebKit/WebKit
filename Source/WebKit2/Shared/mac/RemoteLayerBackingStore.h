@@ -32,6 +32,10 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/Region.h>
 
+#if USE(IOSURFACE)
+#include <IOSurface/IOSurface.h>
+#endif
+
 // FIXME: Make PlatformCALayerRemote.cpp Objective-C so we can include WebLayer.h here and share the typedef.
 namespace WebCore {
 typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
@@ -71,7 +75,8 @@ private:
     bool hasFrontBuffer()
     {
 #if USE(IOSURFACE)
-        return m_acceleratesDrawing ? !!m_frontSurface : !!m_frontBuffer;
+        if (m_acceleratesDrawing)
+            return !!m_frontSurface;
 #endif
         return !!m_frontBuffer;
     }

@@ -108,18 +108,18 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
     } else
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(NETWORK_PROCESS)
-    if (launchOptions.processType == ProcessLauncher::WebProcess) {
-        NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
-        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
-
-        processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
-    } else
-#endif // ENABLE(NETWORK_PROCESS)
     if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
         NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
         NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
 
         processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"SecItemShim.dylib"];
+    } else
+#endif // ENABLE(NETWORK_PROCESS)
+    if (launchOptions.processType == ProcessLauncher::WebProcess) {
+        NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
+        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
+
+        processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
     }
 
     // Make sure that the shim library file exists and insert it.

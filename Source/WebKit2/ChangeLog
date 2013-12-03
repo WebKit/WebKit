@@ -1,3 +1,27 @@
+2013-12-02  Enrica Casucci  <enrica@apple.com>
+
+        Merging some more iOS WebKit2 stuff.
+        https://bugs.webkit.org/show_bug.cgi?id=125119
+
+        Reviewed by Tim Horton.
+
+        * Shared/EditorState.h:
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/TiledCoreAnimationDrawingAreaProxyIOS.mm:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        * UIProcess/mac/SecItemShimProxy.messages.in:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+
 2013-12-02  Anders Carlsson  <andersca@apple.com>
 
         Add versioned structs for the remaining clients
