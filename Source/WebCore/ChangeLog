@@ -1,3 +1,22 @@
+2013-12-03  László Langó  <lango@inf.u-szeged.hu>
+
+        ASSERTION FAILED: !value || (value->isPrimitiveValue()) in WebCore::StyleProperties::getLayeredShorthandValue.
+        https://bugs.webkit.org/show_bug.cgi?id=125146
+
+        Reviewed by Darin Adler.
+
+        Do not presume that |yValue| is primitive if |value| is implicit in StylePropertySerializer.
+        An implicit y-value can become explicit if specified as a separate longhand.
+        At the same time, its new value can be non-primitive.
+
+        Backported from Blink:
+        http://src.chromium.org/viewvc/blink?view=rev&rev=153678
+
+        Test: fast/css/webkit-mask-crash-implicit.html
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getLayeredShorthandValue):
+
 2013-12-03  Rob Buis  <rob.buis@samsung.com>
 
         Fix build break after r160007.

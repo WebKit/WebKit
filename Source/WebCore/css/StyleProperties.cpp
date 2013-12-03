@@ -411,6 +411,9 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
                     else
                         yValue = nextValue;
 
+                    if (!value->isPrimitiveValue() || !yValue->isPrimitiveValue())
+                        continue;
+
                     CSSValueID xId = toCSSPrimitiveValue(value.get())->getValueID();
                     CSSValueID yId = toCSSPrimitiveValue(yValue.get())->getValueID();
                     if (xId != yId) {
