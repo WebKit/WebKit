@@ -1282,26 +1282,33 @@ LayoutRect RenderFlowThread::decorationsClipRectForBoxInRegion(const RenderBox& 
         else
             visualOverflowRect.moveBy(LayoutPoint(width(), 0));
     }
-    
-    const RenderBox* iterBox = &box;
-    while (iterBox && iterBox != this) {
-        RenderBlock* containerBlock = iterBox->containingBlock();
-        
-        LayoutRect currentBoxRect = iterBox->frameRect();
-        if (iterBox->style().isFlippedBlocksWritingMode()) {
-            if (iterBox->style().isHorizontalWritingMode())
-                currentBoxRect.setY(currentBoxRect.height() - currentBoxRect.maxY());
-            else
-                currentBoxRect.setX(currentBoxRect.width() - currentBoxRect.maxX());
+
+    // FIXME: This doesn't work properly with flipped writing modes.
+    // https://bugs.webkit.org/show_bug.cgi?id=125149
+    if (box.isRelPositioned()) {
+        // For relative-positioned elements, just use the layer's location.
+        visualOverflowRect.moveBy(box.layer()->absoluteBoundingBox().location());
+    } else {
+        const RenderBox* iterBox = &box;
+        while (iterBox && iterBox != this) {
+            RenderBlock* containerBlock = iterBox->containingBlock();
+
+            LayoutRect currentBoxRect = iterBox->frameRect();
+            if (iterBox->style().isFlippedBlocksWritingMode()) {
+                if (iterBox->style().isHorizontalWritingMode())
+                    currentBoxRect.setY(currentBoxRect.height() - currentBoxRect.maxY());
+                else
+                    currentBoxRect.setX(currentBoxRect.width() - currentBoxRect.maxX());
+            }
+
+            if (containerBlock->style().writingMode() != iterBox->style().writingMode())
+                iterBox->flipForWritingMode(currentBoxRect);
+
+            visualOverflowRect.moveBy(currentBoxRect.location());
+            iterBox = containerBlock;
         }
-        
-        if (containerBlock->style().writingMode() != iterBox->style().writingMode())
-            iterBox->flipForWritingMode(currentBoxRect);
-        
-        visualOverflowRect.moveBy(currentBoxRect.location());
-        iterBox = containerBlock;
     }
-    
+
     return visualOverflowRect;
 }
 
