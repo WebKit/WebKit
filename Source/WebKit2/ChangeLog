@@ -1,3 +1,12 @@
+2013-12-03  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        Fix EFL build error in WK2 (159965)
+        https://bugs.webkit.org/show_bug.cgi?id=125153
+
+        Reviewed by Darin Adler.
+
+        * Shared/APIClient.h:
+
 2013-12-03  Seokju Kwon  <seokju@webkit.org>
 
         Debug build fix : Add '<algorithm>' for 'std::is_sorted' after r159965.

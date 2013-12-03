@@ -53,7 +53,7 @@ template<typename ClientInterface> class Client {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-braces"
 #endif
-            return { sizeof(Interfaces)... };
+            return { { sizeof(Interfaces)... } };
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif
