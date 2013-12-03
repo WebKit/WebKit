@@ -81,6 +81,20 @@
 
         Reviewed by Darin Adler.
 
+        FrameLoader::loadProgressingStatusChanged() might be called while the Frame has a null FrameView.
+
+        It’s unclear how to reproduce, but there’s no harm in a null check.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadProgressingStatusChanged):
+
+2013-12-02  Brady Eidson  <beidson@apple.com>
+
+        Possible crash in ProgressTracker::progressHeartbeatTimerFired(Timer<ProgressTracker>*)
+        https://bugs.webkit.org/show_bug.cgi?id=125110
+
+        Reviewed by Darin Adler.
+
         It’s possible to have a null m_originatingProgressFrame when the heartbeat timer fires.
 
         On the surface this seems impossible because the only time m_originatingProgressFrame is cleared
