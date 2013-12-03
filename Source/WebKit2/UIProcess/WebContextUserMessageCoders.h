@@ -76,6 +76,8 @@ public:
         }
         case API::Object::Type::PageGroup: {
             WebPageGroup* pageGroup = static_cast<WebPageGroup*>(m_root);
+            if (pageGroup->addProcess(m_process))
+                m_process.addWebPageGroup(*pageGroup);
             encoder << pageGroup->data();
             break;
         }
@@ -145,7 +147,7 @@ public:
             uint64_t pageGroupID;
             if (!decoder.decode(pageGroupID))
                 return false;
-            coder.m_root = WebPageGroup::get(pageGroupID);
+            coder.m_root = coder.m_process.webPageGroup(pageGroupID);
             break;
         }
 #if PLATFORM(MAC)

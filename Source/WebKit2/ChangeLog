@@ -1,3 +1,28 @@
+2013-12-02  Sam Weinig  <sam@webkit.org>
+
+        WebPageGroups should keep track of what processes they are being used by
+        https://bugs.webkit.org/show_bug.cgi?id=124556
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebContextUserMessageCoders.h:
+        (WebKit::WebContextUserMessageEncoder::encode):
+        (WebKit::WebContextUserMessageDecoder::decode):
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::addProcess):
+        (WebKit::WebPageGroup::disconnectProcess):
+        * UIProcess/WebPageGroup.h:
+        (WebKit::WebPageGroup::sendToAllProcessesInGroup):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::disconnect):
+        (WebKit::WebProcessProxy::webPageGroup):
+        (WebKit::WebProcessProxy::addWebPageGroup):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::webPageGroup):
+
 2013-12-02  Anders Carlsson  <andersca@apple.com>
 
         Add versioned structs for all clients except the ones in WKContext.h

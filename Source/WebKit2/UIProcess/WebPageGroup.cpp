@@ -194,4 +194,14 @@ void WebPageGroup::removeAllUserContent()
     sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserContent(), m_data.pageGroupID);
 }
 
+bool WebPageGroup::addProcess(WebProcessProxy& process)
+{
+    return m_processes.add(&process).isNewEntry;
+}
+
+void WebPageGroup::disconnectProcess(WebProcessProxy& process)
+{
+    m_processes.remove(&process);
+}
+
 } // namespace WebKit
