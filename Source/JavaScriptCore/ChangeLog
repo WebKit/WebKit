@@ -1,3 +1,19 @@
+2013-12-03  peavo@outlook.com  <peavo@outlook.com>
+
+        testapi test crashes on Windows in WTF::Vector<wchar_t,64,WTF::UnsafeVectorOverflow>::size()
+        https://bugs.webkit.org/show_bug.cgi?id=121972
+
+        Reviewed by Michael Saboff.
+
+        The reason for the crash is that the wrong memory block is decommitted.
+        This can happen if no memory has been committed in the reserved block before the JSStack object is destroyed.
+        In the JSStack destructor, the pointer to decommit then points to the end of the block (or the start of the next), and the decommit size is zero.
+        If there is a block just after the block we are trying to decommit, this block will be decommitted, since Windows will decommit the whole block,
+        if the decommit size is zero (see VirtualFree). When somebody tries to read/write to this block later, we crash.
+
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::~JSStack): Don't decommit memory if nothing has been committed.
+
 2013-12-03  László Langó  <lango@inf.u-szeged.hu>
 
         Guard JIT include.
