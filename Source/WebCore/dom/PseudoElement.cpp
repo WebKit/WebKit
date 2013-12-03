@@ -114,7 +114,7 @@ void PseudoElement::didRecalcStyle(Style::Change)
         // We only manage the style for the generated content which must be images or text.
         if (!child->isImage())
             continue;
-        toRenderImage(child)->setPseudoStyle(&renderer->style());
+        toRenderImage(*child).setStyle(RenderImage::createStyleInheritingFromPseudoStyle(renderer->style()));
     }
 }
 

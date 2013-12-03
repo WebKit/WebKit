@@ -1,3 +1,17 @@
+2013-12-02  Andreas Kling  <akling@apple.com>
+
+        Avoid setting style twice for generated image content.
+        <https://webkit.org/b/125128>
+
+        Take care of a FIXME I added in r158097 and avoid redundant work in
+        ImageContentData::createRenderer().
+
+        I changed the inheritance helper RenderImage::setPseudoStyle() into
+        a new createStyleInheritingFromPseudoStyle() function instead so it
+        can be used from both PseudoElement and ImageContentData.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-02  Samuel White  <samuel_white@apple.com>
 
         AX: Add AXUIElementCountForSearchPredicate parameterized attribute.

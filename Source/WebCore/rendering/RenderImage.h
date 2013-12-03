@@ -39,8 +39,8 @@ public:
     explicit RenderImage(Document&, PassRef<RenderStyle>);
     virtual ~RenderImage();
 
-    // Set the style of the object if it's generated content.
-    void setPseudoStyle(PassRefPtr<RenderStyle>);
+    // Create a RenderStyle for generated content by inheriting from a pseudo style.
+    static PassRef<RenderStyle> createStyleInheritingFromPseudoStyle(const RenderStyle&);
 
     void setImageResource(PassOwnPtr<RenderImageResource>);
 
