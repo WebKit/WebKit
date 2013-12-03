@@ -60,7 +60,7 @@ public:
 
     void startObservingChanges(WKOriginDataTypes);
     void stopObservingChanges(WKOriginDataTypes);
-    void setChangeClient(const WKOriginDataManagerChangeClient*);
+    void setChangeClient(const WKOriginDataManagerChangeClientBase*);
 
     using API::Object::ref;
     using API::Object::deref;

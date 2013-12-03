@@ -82,27 +82,27 @@ WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
 
 void WKContextSetClient(WKContextRef contextRef, const WKContextClient* wkClient)
 {
-    toImpl(contextRef)->initializeClient(wkClient);
+    toImpl(contextRef)->initializeClient(reinterpret_cast<const WKContextClientBase*>(wkClient));
 }
 
 void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextInjectedBundleClient* wkClient)
 {
-    toImpl(contextRef)->initializeInjectedBundleClient(wkClient);
+    toImpl(contextRef)->initializeInjectedBundleClient(reinterpret_cast<const WKContextInjectedBundleClientBase*>(wkClient));
 }
 
 void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClient* wkClient)
 {
-    toImpl(contextRef)->initializeHistoryClient(wkClient);
+    toImpl(contextRef)->initializeHistoryClient(reinterpret_cast<const WKContextHistoryClientBase*>(wkClient));
 }
 
 void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownloadClient* wkClient)
 {
-    toImpl(contextRef)->initializeDownloadClient(wkClient);
+    toImpl(contextRef)->initializeDownloadClient(reinterpret_cast<const WKContextDownloadClientBase*>(wkClient));
 }
 
 void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnectionClient* wkClient)
 {
-    toImpl(contextRef)->initializeConnectionClient(wkClient);
+    toImpl(contextRef)->initializeConnectionClient(reinterpret_cast<const WKContextConnectionClientBase*>(wkClient));
 }
 
 WKDownloadRef WKContextDownloadURLRequest(WKContextRef contextRef, const WKURLRequestRef requestRef)

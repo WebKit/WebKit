@@ -30,11 +30,15 @@
 #include "WKGeolocationManager.h"
 #include <wtf/Forward.h>
 
+template<> struct API::ClientTraits<WKGeolocationProviderBase> {
+    typedef std::tuple<WKGeolocationProviderV0, WKGeolocationProviderV1> Versions;
+};
+
 namespace WebKit {
 
 class WebGeolocationManagerProxy;
 
-class WebGeolocationProvider : public APIClient<WKGeolocationProvider, kWKGeolocationProviderCurrentVersion> {
+class WebGeolocationProvider : public API::Client<WKGeolocationProviderBase> {
 public:
     void startUpdating(WebGeolocationManagerProxy*);
     void stopUpdating(WebGeolocationManagerProxy*);

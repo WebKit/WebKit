@@ -38,7 +38,7 @@ WKTypeID WKNotificationManagerGetTypeID()
 
 void WKNotificationManagerSetProvider(WKNotificationManagerRef managerRef, const WKNotificationProvider* wkProvider)
 {
-    toImpl(managerRef)->initializeProvider(wkProvider);
+    toImpl(managerRef)->initializeProvider(reinterpret_cast<const WKNotificationProviderBase*>(wkProvider));
 }
 
 void WKNotificationManagerProviderDidShowNotification(WKNotificationManagerRef managerRef, uint64_t notificationID)

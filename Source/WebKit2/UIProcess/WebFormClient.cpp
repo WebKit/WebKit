@@ -43,7 +43,7 @@ bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, Web
         map.set(textFieldValues[i].first, WebString::create(textFieldValues[i].second));
     RefPtr<ImmutableDictionary> textFieldsMap = ImmutableDictionary::adopt(map);
 
-    m_client.willSubmitForm(toAPI(page), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), toAPI(userData), toAPI(listener), m_client.clientInfo);
+    m_client.willSubmitForm(toAPI(page), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), toAPI(userData), toAPI(listener), m_client.base.clientInfo);
     return true;
 }
 

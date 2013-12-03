@@ -42,7 +42,7 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNavigati
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
 
     WKTypeRef userDataToPass = 0;
-    WKBundlePagePolicyAction policy = m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.get()), &userDataToPass, m_client.clientInfo);
+    WKBundlePagePolicyAction policy = m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.get()), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
     return policy;
 }
@@ -55,7 +55,7 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNewWindo
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
 
     WKTypeRef userDataToPass = 0;
-    WKBundlePagePolicyAction policy = m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.get()), toAPI(frameName.impl()), &userDataToPass, m_client.clientInfo);
+    WKBundlePagePolicyAction policy = m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.get()), toAPI(frameName.impl()), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
     return policy;
 }
@@ -69,7 +69,7 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForResponse
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
 
     WKTypeRef userDataToPass = 0;
-    WKBundlePagePolicyAction policy = m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), &userDataToPass, m_client.clientInfo);
+    WKBundlePagePolicyAction policy = m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
     return policy;
 }
@@ -80,7 +80,7 @@ void InjectedBundlePagePolicyClient::unableToImplementPolicy(WebPage* page, WebF
         return;
 
     WKTypeRef userDataToPass = 0;
-    m_client.unableToImplementPolicy(toAPI(page), toAPI(frame), toAPI(error), &userDataToPass, m_client.clientInfo);
+    m_client.unableToImplementPolicy(toAPI(page), toAPI(frame), toAPI(error), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
 }
 

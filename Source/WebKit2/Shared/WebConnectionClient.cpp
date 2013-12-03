@@ -37,7 +37,7 @@ void WebConnectionClient::didReceiveMessage(WebConnection* connection, const Str
     if (!m_client.didReceiveMessage)
         return;
     
-    m_client.didReceiveMessage(toAPI(connection), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
+    m_client.didReceiveMessage(toAPI(connection), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
 }
 
 void WebConnectionClient::didClose(WebConnection* connection)
@@ -45,7 +45,7 @@ void WebConnectionClient::didClose(WebConnection* connection)
     if (!m_client.didClose)
         return;
     
-    m_client.didClose(toAPI(connection), m_client.clientInfo);
+    m_client.didClose(toAPI(connection), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

@@ -33,6 +33,10 @@
 #include "WebEvent.h"
 #include <wtf/Forward.h>
 
+template<> struct API::ClientTraits<WKBundlePageFullScreenClientBase> {
+    typedef std::tuple<WKBundlePageFullScreenClientV0, WKBundlePageFullScreenClientV1> Versions;
+};
+
 namespace WebCore {
 class Element;
 class IntRect;
@@ -42,7 +46,7 @@ namespace WebKit {
 
 class WebPage;
 
-class InjectedBundlePageFullScreenClient : public APIClient<WKBundlePageFullScreenClient, kWKBundlePageFullScreenClientCurrentVersion> {
+class InjectedBundlePageFullScreenClient : public API::Client<WKBundlePageFullScreenClientBase> {
 public:
     bool supportsFullScreen(WebPage*, bool withKeyboard);
     void enterFullScreenForElement(WebPage*, WebCore::Element*);

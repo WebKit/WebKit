@@ -42,9 +42,9 @@ bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, WebFra
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
 
     if (m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0)
-        m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.clientInfo);
+        m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
     else
-        m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(originatingFrame), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.clientInfo);
+        m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(originatingFrame), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
 
     return true;
 }
@@ -56,7 +56,7 @@ bool WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, WebFram
 
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
 
-    m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(frameName.impl()), toAPI(listener), toAPI(userData), m_client.clientInfo);
+    m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(frameName.impl()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
     return true;
 }
 
@@ -69,9 +69,9 @@ bool WebPolicyClient::decidePolicyForResponse(WebPageProxy* page, WebFrameProxy*
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
 
     if (m_client.decidePolicyForResponse_deprecatedForUseWithV0)
-        m_client.decidePolicyForResponse_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.clientInfo);
+        m_client.decidePolicyForResponse_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
     else
-        m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), canShowMIMEType, toAPI(listener), toAPI(userData), m_client.clientInfo);
+        m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), canShowMIMEType, toAPI(listener), toAPI(userData), m_client.base.clientInfo);
 
     return true;
 }
@@ -81,7 +81,7 @@ void WebPolicyClient::unableToImplementPolicy(WebPageProxy* page, WebFrameProxy*
     if (!m_client.unableToImplementPolicy)
         return;
 
-    m_client.unableToImplementPolicy(toAPI(page), toAPI(frame), toAPI(error), toAPI(userData), m_client.clientInfo);
+    m_client.unableToImplementPolicy(toAPI(page), toAPI(frame), toAPI(error), toAPI(userData), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

@@ -34,12 +34,16 @@
 #include <WebCore/IntPoint.h>
 #include <wtf/Vector.h>
 
+template<> struct API::ClientTraits<WKPageContextMenuClientBase> {
+    typedef std::tuple<WKPageContextMenuClientV0, WKPageContextMenuClientV1, WKPageContextMenuClientV2, WKPageContextMenuClientV3> Versions;
+};
+
 namespace WebKit {
 
 class WebContextMenuItemData;
 class WebPageProxy;
 
-class WebPageContextMenuClient : public APIClient<WKPageContextMenuClient, kWKPageContextMenuClientCurrentVersion> {
+class WebPageContextMenuClient : public API::Client<WKPageContextMenuClientBase> {
 public:
     bool getContextMenuFromProposedMenu(WebPageProxy*, const Vector<WebContextMenuItemData>& proposedMenu, Vector<WebContextMenuItemData>& customMenu, const WebHitTestResult::Data&, API::Object* userData);
     void customContextMenuItemSelected(WebPageProxy*, const WebContextMenuItemData&);

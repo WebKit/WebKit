@@ -64,44 +64,44 @@ WKTypeID WKBundlePageGetTypeID()
 void WKBundlePageSetContextMenuClient(WKBundlePageRef pageRef, WKBundlePageContextMenuClient* wkClient)
 {
 #if ENABLE(CONTEXT_MENUS)
-    toImpl(pageRef)->initializeInjectedBundleContextMenuClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundleContextMenuClient(reinterpret_cast<WKBundlePageContextMenuClientBase*>(wkClient));
 #endif
 }
 
 void WKBundlePageSetEditorClient(WKBundlePageRef pageRef, WKBundlePageEditorClient* wkClient)
 {
-    toImpl(pageRef)->initializeInjectedBundleEditorClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundleEditorClient(reinterpret_cast<WKBundlePageEditorClientBase*>(wkClient));
 }
 
 void WKBundlePageSetFormClient(WKBundlePageRef pageRef, WKBundlePageFormClient* wkClient)
 {
-    toImpl(pageRef)->initializeInjectedBundleFormClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundleFormClient(reinterpret_cast<WKBundlePageFormClientBase*>(wkClient));
 }
 
 void WKBundlePageSetPageLoaderClient(WKBundlePageRef pageRef, WKBundlePageLoaderClient* wkClient)
 {
-    toImpl(pageRef)->initializeInjectedBundleLoaderClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundleLoaderClient(reinterpret_cast<WKBundlePageLoaderClientBase*>(wkClient));
 }
 
 void WKBundlePageSetResourceLoadClient(WKBundlePageRef pageRef, WKBundlePageResourceLoadClient* wkClient)
 {
-    toImpl(pageRef)->initializeInjectedBundleResourceLoadClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundleResourceLoadClient(reinterpret_cast<WKBundlePageResourceLoadClientBase*>(wkClient));
 }
 
 void WKBundlePageSetPolicyClient(WKBundlePageRef pageRef, WKBundlePagePolicyClient* wkClient)
 {
-    toImpl(pageRef)->initializeInjectedBundlePolicyClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundlePolicyClient(reinterpret_cast<WKBundlePagePolicyClientBase*>(wkClient));
 }
 
 void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClient* wkClient)
 {
-    toImpl(pageRef)->initializeInjectedBundleUIClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundleUIClient(reinterpret_cast<WKBundlePageUIClientBase*>(wkClient));
 }
 
 void WKBundlePageSetFullScreenClient(WKBundlePageRef pageRef, WKBundlePageFullScreenClient* wkClient)
 {
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
-    toImpl(pageRef)->initializeInjectedBundleFullScreenClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundleFullScreenClient(reinterpret_cast<WKBundlePageFullScreenClientBase*>(wkClient));
 #else
     UNUSED_PARAM(pageRef);
     UNUSED_PARAM(wkClient);
@@ -146,7 +146,7 @@ void WKBundlePageDidExitFullScreen(WKBundlePageRef pageRef)
 
 void WKBundlePageSetDiagnosticLoggingClient(WKBundlePageRef pageRef, WKBundlePageDiagnosticLoggingClient* client)
 {
-    toImpl(pageRef)->initializeInjectedBundleDiagnosticLoggingClient(client);
+    toImpl(pageRef)->initializeInjectedBundleDiagnosticLoggingClient(reinterpret_cast<WKBundlePageDiagnosticLoggingClientBase*>(client));
 }
 
 WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef pageRef)

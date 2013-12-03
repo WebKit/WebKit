@@ -107,7 +107,7 @@ WebDatabaseManagerProxy::~WebDatabaseManagerProxy()
 {
 }
 
-void WebDatabaseManagerProxy::initializeClient(const WKDatabaseManagerClient* client)
+void WebDatabaseManagerProxy::initializeClient(const WKDatabaseManagerClientBase* client)
 {
     m_client.initialize(client);
 }

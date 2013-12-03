@@ -53,7 +53,7 @@ public:
 
     static PassRefPtr<WebNotificationManagerProxy> create(WebContext*);
 
-    void initializeProvider(const WKNotificationProvider*);
+    void initializeProvider(const WKNotificationProviderBase*);
     void populateCopyOfNotificationPermissions(HashMap<String, bool>&);
 
     void show(WebPageProxy*, const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t pageNotificationID);

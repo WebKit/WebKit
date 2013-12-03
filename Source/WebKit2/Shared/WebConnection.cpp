@@ -41,7 +41,7 @@ WebConnection::~WebConnection()
 {
 }
 
-void WebConnection::initializeConnectionClient(const WKConnectionClient* client)
+void WebConnection::initializeConnectionClient(const WKConnectionClientBase* client)
 {
     m_client.initialize(client);
 }

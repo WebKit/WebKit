@@ -35,7 +35,7 @@ void WebContextConnectionClient::didCreateConnection(WebContext* context, WebCon
     if (!m_client.didCreateConnection)
         return;
 
-    m_client.didCreateConnection(toAPI(context), toAPI(connection), m_client.clientInfo);
+    m_client.didCreateConnection(toAPI(context), toAPI(connection), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

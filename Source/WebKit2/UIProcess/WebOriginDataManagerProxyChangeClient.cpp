@@ -35,7 +35,7 @@ void WebOriginDataManagerProxyChangeClient::didChange(WebOriginDataManagerProxy*
     if (!m_client.didChange)
         return;
 
-    m_client.didChange(toAPI(originDataManager), m_client.clientInfo);
+    m_client.didChange(toAPI(originDataManager), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

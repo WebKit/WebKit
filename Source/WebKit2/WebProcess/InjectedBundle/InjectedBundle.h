@@ -86,7 +86,7 @@ public:
     void setSandboxExtension(PassRefPtr<SandboxExtension> sandboxExtension) { m_sandboxExtension = sandboxExtension; }
 
     // API
-    void initializeClient(WKBundleClient*);
+    void initializeClient(const WKBundleClientBase*);
     void postMessage(const String&, API::Object*);
     void postSynchronousMessage(const String&, API::Object*, RefPtr<API::Object>& returnData);
 

@@ -35,7 +35,7 @@ void WebDatabaseManagerProxyClient::didModifyOrigin(WebDatabaseManagerProxy* dat
     if (!m_client.didModifyOrigin)
         return;
 
-    m_client.didModifyOrigin(toAPI(databaseManager), toAPI(origin), m_client.clientInfo);
+    m_client.didModifyOrigin(toAPI(databaseManager), toAPI(origin), m_client.base.clientInfo);
 }
 
 void WebDatabaseManagerProxyClient::didModifyDatabase(WebDatabaseManagerProxy* databaseManager, WebSecurityOrigin* origin, const String& databaseIdentifier)
@@ -43,7 +43,7 @@ void WebDatabaseManagerProxyClient::didModifyDatabase(WebDatabaseManagerProxy* d
     if (!m_client.didModifyDatabase)
         return;
 
-    m_client.didModifyDatabase(toAPI(databaseManager), toAPI(origin), toAPI(databaseIdentifier.impl()), m_client.clientInfo);
+    m_client.didModifyDatabase(toAPI(databaseManager), toAPI(origin), toAPI(databaseIdentifier.impl()), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

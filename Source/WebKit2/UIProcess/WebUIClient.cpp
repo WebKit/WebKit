@@ -48,10 +48,10 @@ namespace WebKit {
 
 PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, WebEvent::Modifiers modifiers, WebMouseEvent::Button button)
 {
-    if (!m_client.version && !m_client.createNewPage_deprecatedForUseWithV0)
+    if (!m_client.base.version && !m_client.createNewPage_deprecatedForUseWithV0)
         return 0;
     
-    if (m_client.version == kWKPageUIClientCurrentVersion && !m_client.createNewPage)
+    if (m_client.base.version == kWKPageUIClientCurrentVersion && !m_client.createNewPage)
         return 0;
 
     ImmutableDictionary::MapType map;
@@ -73,11 +73,11 @@ PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const Re
     map.set("dialog", WebBoolean::create(windowFeatures.dialog));
     RefPtr<ImmutableDictionary> featuresMap = ImmutableDictionary::adopt(map);
 
-    if (!m_client.version)
-        return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_client.clientInfo)));
+    if (!m_client.base.version)
+        return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_client.base.clientInfo)));
 
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);    
-    return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(request.get()), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_client.clientInfo)));
+    return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(request.get()), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_client.base.clientInfo)));
 } 
 
 void WebUIClient::showPage(WebPageProxy* page)
@@ -85,7 +85,7 @@ void WebUIClient::showPage(WebPageProxy* page)
     if (!m_client.showPage)
         return;
     
-    m_client.showPage(toAPI(page), m_client.clientInfo);
+    m_client.showPage(toAPI(page), m_client.base.clientInfo);
 }
 
 void WebUIClient::close(WebPageProxy* page)
@@ -93,7 +93,7 @@ void WebUIClient::close(WebPageProxy* page)
     if (!m_client.close)
         return;
     
-    m_client.close(toAPI(page), m_client.clientInfo);
+    m_client.close(toAPI(page), m_client.base.clientInfo);
 }
 
 void WebUIClient::takeFocus(WebPageProxy* page, WKFocusDirection direction)
@@ -101,7 +101,7 @@ void WebUIClient::takeFocus(WebPageProxy* page, WKFocusDirection direction)
     if (!m_client.takeFocus)
         return;
     
-    m_client.takeFocus(toAPI(page), direction, m_client.clientInfo);
+    m_client.takeFocus(toAPI(page), direction, m_client.base.clientInfo);
 }
 
 void WebUIClient::focus(WebPageProxy* page)
@@ -109,7 +109,7 @@ void WebUIClient::focus(WebPageProxy* page)
     if (!m_client.focus)
         return;
     
-    m_client.focus(toAPI(page), m_client.clientInfo);
+    m_client.focus(toAPI(page), m_client.base.clientInfo);
 }
 
 void WebUIClient::unfocus(WebPageProxy* page)
@@ -117,7 +117,7 @@ void WebUIClient::unfocus(WebPageProxy* page)
     if (!m_client.unfocus)
         return;
 
-    m_client.unfocus(toAPI(page), m_client.clientInfo);
+    m_client.unfocus(toAPI(page), m_client.base.clientInfo);
 }
 
 void WebUIClient::runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame)
@@ -125,7 +125,7 @@ void WebUIClient::runJavaScriptAlert(WebPageProxy* page, const String& message, 
     if (!m_client.runJavaScriptAlert)
         return;
     
-    m_client.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.clientInfo);
+    m_client.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
 }
 
 bool WebUIClient::runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame)
@@ -133,7 +133,7 @@ bool WebUIClient::runJavaScriptConfirm(WebPageProxy* page, const String& message
     if (!m_client.runJavaScriptConfirm)
         return false;
 
-    return m_client.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.clientInfo);
+    return m_client.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
 }
 
 String WebUIClient::runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame)
@@ -141,7 +141,7 @@ String WebUIClient::runJavaScriptPrompt(WebPageProxy* page, const String& messag
     if (!m_client.runJavaScriptPrompt)
         return String();
 
-    WebString* string = toImpl(m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.clientInfo));
+    WebString* string = toImpl(m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.base.clientInfo));
     if (!string)
         return String();
 
@@ -156,7 +156,7 @@ void WebUIClient::setStatusText(WebPageProxy* page, const String& text)
     if (!m_client.setStatusText)
         return;
 
-    m_client.setStatusText(toAPI(page), toAPI(text.impl()), m_client.clientInfo);
+    m_client.setStatusText(toAPI(page), toAPI(text.impl()), m_client.base.clientInfo);
 }
 
 void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, const WebHitTestResult::Data& data, WebEvent::Modifiers modifiers, API::Object* userData)
@@ -164,16 +164,16 @@ void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, const WebHitTestRe
     if (!m_client.mouseDidMoveOverElement && !m_client.mouseDidMoveOverElement_deprecatedForUseWithV0)
         return;
 
-    if (m_client.version == kWKPageUIClientCurrentVersion && !m_client.mouseDidMoveOverElement)
+    if (m_client.base.version == kWKPageUIClientCurrentVersion && !m_client.mouseDidMoveOverElement)
         return;
 
-    if (!m_client.version) {
-        m_client.mouseDidMoveOverElement_deprecatedForUseWithV0(toAPI(page), toAPI(modifiers), toAPI(userData), m_client.clientInfo);
+    if (!m_client.base.version) {
+        m_client.mouseDidMoveOverElement_deprecatedForUseWithV0(toAPI(page), toAPI(modifiers), toAPI(userData), m_client.base.clientInfo);
         return;
     }
 
     RefPtr<WebHitTestResult> webHitTestResult = WebHitTestResult::create(data);
-    m_client.mouseDidMoveOverElement(toAPI(page), toAPI(webHitTestResult.get()), toAPI(modifiers), toAPI(userData), m_client.clientInfo);
+    m_client.mouseDidMoveOverElement(toAPI(page), toAPI(webHitTestResult.get()), toAPI(modifiers), toAPI(userData), m_client.base.clientInfo);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -186,7 +186,7 @@ void WebUIClient::unavailablePluginButtonClicked(WebPageProxy* page, WKPluginUna
                 toAPI(pluginInformation->get<WebString>(pluginInformationMIMETypeKey())),
                 toAPI(pluginInformation->get<WebString>(pluginInformationPluginURLKey())),
                 toAPI(pluginInformation->get<WebString>(pluginInformationPluginspageAttributeURLKey())),
-                m_client.clientInfo);
+                m_client.base.clientInfo);
     }
 
     if (m_client.unavailablePluginButtonClicked_deprecatedForUseWithV1)
@@ -196,14 +196,14 @@ void WebUIClient::unavailablePluginButtonClicked(WebPageProxy* page, WKPluginUna
             toAPI(pluginInformation->get<WebString>(pluginInformationMIMETypeKey())),
             toAPI(pluginInformation->get<WebString>(pluginInformationPluginURLKey())),
             toAPI(pluginInformation->get<WebString>(pluginInformationPluginspageAttributeURLKey())),
-            m_client.clientInfo);
+            m_client.base.clientInfo);
 
     if (m_client.unavailablePluginButtonClicked)
         m_client.unavailablePluginButtonClicked(
             toAPI(page),
             pluginUnavailabilityReason,
             toAPI(pluginInformation),
-            m_client.clientInfo);
+            m_client.base.clientInfo);
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -216,7 +216,7 @@ void WebUIClient::didNotHandleKeyEvent(WebPageProxy* page, const NativeWebKeyboa
 {
     if (!m_client.didNotHandleKeyEvent)
         return;
-    m_client.didNotHandleKeyEvent(toAPI(page), event.nativeEvent(), m_client.clientInfo);
+    m_client.didNotHandleKeyEvent(toAPI(page), event.nativeEvent(), m_client.base.clientInfo);
 }
 
 bool WebUIClient::implementsDidNotHandleWheelEvent() const
@@ -228,63 +228,63 @@ void WebUIClient::didNotHandleWheelEvent(WebPageProxy* page, const NativeWebWhee
 {
     if (!m_client.didNotHandleWheelEvent)
         return;
-    m_client.didNotHandleWheelEvent(toAPI(page), event.nativeEvent(), m_client.clientInfo);
+    m_client.didNotHandleWheelEvent(toAPI(page), event.nativeEvent(), m_client.base.clientInfo);
 }
 
 bool WebUIClient::toolbarsAreVisible(WebPageProxy* page)
 {
     if (!m_client.toolbarsAreVisible)
         return true;
-    return m_client.toolbarsAreVisible(toAPI(page), m_client.clientInfo);
+    return m_client.toolbarsAreVisible(toAPI(page), m_client.base.clientInfo);
 
 }
 void WebUIClient::setToolbarsAreVisible(WebPageProxy* page, bool visible)
 {
     if (!m_client.setToolbarsAreVisible)
         return;
-    m_client.setToolbarsAreVisible(toAPI(page), visible, m_client.clientInfo);
+    m_client.setToolbarsAreVisible(toAPI(page), visible, m_client.base.clientInfo);
 }
 
 bool WebUIClient::menuBarIsVisible(WebPageProxy* page)
 {
     if (!m_client.menuBarIsVisible)
         return true;
-    return m_client.menuBarIsVisible(toAPI(page), m_client.clientInfo);
+    return m_client.menuBarIsVisible(toAPI(page), m_client.base.clientInfo);
 }
 
 void WebUIClient::setMenuBarIsVisible(WebPageProxy* page, bool visible)
 {
     if (!m_client.setMenuBarIsVisible)
         return;
-    m_client.setMenuBarIsVisible(toAPI(page), visible, m_client.clientInfo);
+    m_client.setMenuBarIsVisible(toAPI(page), visible, m_client.base.clientInfo);
 }
 
 bool WebUIClient::statusBarIsVisible(WebPageProxy* page)
 {
     if (!m_client.statusBarIsVisible)
         return true;
-    return m_client.statusBarIsVisible(toAPI(page), m_client.clientInfo);
+    return m_client.statusBarIsVisible(toAPI(page), m_client.base.clientInfo);
 }
 
 void WebUIClient::setStatusBarIsVisible(WebPageProxy* page, bool visible)
 {
     if (!m_client.setStatusBarIsVisible)
         return;
-    m_client.setStatusBarIsVisible(toAPI(page), visible, m_client.clientInfo);
+    m_client.setStatusBarIsVisible(toAPI(page), visible, m_client.base.clientInfo);
 }
 
 bool WebUIClient::isResizable(WebPageProxy* page)
 {
     if (!m_client.isResizable)
         return true;
-    return m_client.isResizable(toAPI(page), m_client.clientInfo);
+    return m_client.isResizable(toAPI(page), m_client.base.clientInfo);
 }
 
 void WebUIClient::setIsResizable(WebPageProxy* page, bool resizable)
 {
     if (!m_client.setIsResizable)
         return;
-    m_client.setIsResizable(toAPI(page), resizable, m_client.clientInfo);
+    m_client.setIsResizable(toAPI(page), resizable, m_client.base.clientInfo);
 }
 
 void WebUIClient::setWindowFrame(WebPageProxy* page, const FloatRect& frame)
@@ -292,7 +292,7 @@ void WebUIClient::setWindowFrame(WebPageProxy* page, const FloatRect& frame)
     if (!m_client.setWindowFrame)
         return;
 
-    m_client.setWindowFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
+    m_client.setWindowFrame(toAPI(page), toAPI(frame), m_client.base.clientInfo);
 }
 
 FloatRect WebUIClient::windowFrame(WebPageProxy* page)
@@ -300,7 +300,7 @@ FloatRect WebUIClient::windowFrame(WebPageProxy* page)
     if (!m_client.getWindowFrame)
         return FloatRect();
 
-    return toFloatRect(m_client.getWindowFrame(toAPI(page), m_client.clientInfo));
+    return toFloatRect(m_client.getWindowFrame(toAPI(page), m_client.base.clientInfo));
 }
 
 bool WebUIClient::canRunBeforeUnloadConfirmPanel() const
@@ -313,7 +313,7 @@ bool WebUIClient::runBeforeUnloadConfirmPanel(WebPageProxy* page, const String& 
     if (!m_client.runBeforeUnloadConfirmPanel)
         return true;
 
-    return m_client.runBeforeUnloadConfirmPanel(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.clientInfo);
+    return m_client.runBeforeUnloadConfirmPanel(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
 }
 
 void WebUIClient::didDraw(WebPageProxy* page)
@@ -321,7 +321,7 @@ void WebUIClient::didDraw(WebPageProxy* page)
     if (!m_client.didDraw)
         return;
 
-    m_client.didDraw(toAPI(page), m_client.clientInfo);
+    m_client.didDraw(toAPI(page), m_client.base.clientInfo);
 }
 
 void WebUIClient::pageDidScroll(WebPageProxy* page)
@@ -329,7 +329,7 @@ void WebUIClient::pageDidScroll(WebPageProxy* page)
     if (!m_client.pageDidScroll)
         return;
 
-    m_client.pageDidScroll(toAPI(page), m_client.clientInfo);
+    m_client.pageDidScroll(toAPI(page), m_client.base.clientInfo);
 }
 
 unsigned long long WebUIClient::exceededDatabaseQuota(WebPageProxy* page, WebFrameProxy* frame, WebSecurityOrigin* origin, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage)
@@ -337,7 +337,7 @@ unsigned long long WebUIClient::exceededDatabaseQuota(WebPageProxy* page, WebFra
     if (!m_client.exceededDatabaseQuota)
         return currentQuota;
 
-    return m_client.exceededDatabaseQuota(toAPI(page), toAPI(frame), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, m_client.clientInfo);
+    return m_client.exceededDatabaseQuota(toAPI(page), toAPI(frame), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, m_client.base.clientInfo);
 }
 
 bool WebUIClient::runOpenPanel(WebPageProxy* page, WebFrameProxy* frame, WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
@@ -345,7 +345,7 @@ bool WebUIClient::runOpenPanel(WebPageProxy* page, WebFrameProxy* frame, WebOpen
     if (!m_client.runOpenPanel)
         return false;
 
-    m_client.runOpenPanel(toAPI(page), toAPI(frame), toAPI(parameters), toAPI(listener), m_client.clientInfo);
+    m_client.runOpenPanel(toAPI(page), toAPI(frame), toAPI(parameters), toAPI(listener), m_client.base.clientInfo);
     return true;
 }
 
@@ -354,7 +354,7 @@ bool WebUIClient::decidePolicyForGeolocationPermissionRequest(WebPageProxy* page
     if (!m_client.decidePolicyForGeolocationPermissionRequest)
         return false;
 
-    m_client.decidePolicyForGeolocationPermissionRequest(toAPI(page), toAPI(frame), toAPI(origin), toAPI(permissionRequest), m_client.clientInfo);
+    m_client.decidePolicyForGeolocationPermissionRequest(toAPI(page), toAPI(frame), toAPI(origin), toAPI(permissionRequest), m_client.base.clientInfo);
     return true;
 }
 
@@ -363,7 +363,7 @@ bool WebUIClient::decidePolicyForNotificationPermissionRequest(WebPageProxy* pag
     if (!m_client.decidePolicyForNotificationPermissionRequest)
         return false;
     
-    m_client.decidePolicyForNotificationPermissionRequest(toAPI(page), toAPI(origin), toAPI(permissionRequest), m_client.clientInfo);
+    m_client.decidePolicyForNotificationPermissionRequest(toAPI(page), toAPI(origin), toAPI(permissionRequest), m_client.base.clientInfo);
     return true;
 }
 
@@ -372,7 +372,7 @@ float WebUIClient::headerHeight(WebPageProxy* page, WebFrameProxy* frame)
     if (!m_client.headerHeight)
         return 0;
 
-    return m_client.headerHeight(toAPI(page), toAPI(frame), m_client.clientInfo);
+    return m_client.headerHeight(toAPI(page), toAPI(frame), m_client.base.clientInfo);
 }
 
 float WebUIClient::footerHeight(WebPageProxy* page, WebFrameProxy* frame)
@@ -380,7 +380,7 @@ float WebUIClient::footerHeight(WebPageProxy* page, WebFrameProxy* frame)
     if (!m_client.footerHeight)
         return 0;
 
-    return m_client.footerHeight(toAPI(page), toAPI(frame), m_client.clientInfo);
+    return m_client.footerHeight(toAPI(page), toAPI(frame), m_client.base.clientInfo);
 }
 
 void WebUIClient::drawHeader(WebPageProxy* page, WebFrameProxy* frame, const WebCore::FloatRect& rect)
@@ -388,7 +388,7 @@ void WebUIClient::drawHeader(WebPageProxy* page, WebFrameProxy* frame, const Web
     if (!m_client.drawHeader)
         return;
 
-    m_client.drawHeader(toAPI(page), toAPI(frame), toAPI(rect), m_client.clientInfo);
+    m_client.drawHeader(toAPI(page), toAPI(frame), toAPI(rect), m_client.base.clientInfo);
 }
 
 void WebUIClient::drawFooter(WebPageProxy* page, WebFrameProxy* frame, const WebCore::FloatRect& rect)
@@ -396,7 +396,7 @@ void WebUIClient::drawFooter(WebPageProxy* page, WebFrameProxy* frame, const Web
     if (!m_client.drawFooter)
         return;
 
-    m_client.drawFooter(toAPI(page), toAPI(frame), toAPI(rect), m_client.clientInfo);
+    m_client.drawFooter(toAPI(page), toAPI(frame), toAPI(rect), m_client.base.clientInfo);
 }
 
 void WebUIClient::printFrame(WebPageProxy* page, WebFrameProxy* frame)
@@ -404,7 +404,7 @@ void WebUIClient::printFrame(WebPageProxy* page, WebFrameProxy* frame)
     if (!m_client.printFrame)
         return;
 
-    m_client.printFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
+    m_client.printFrame(toAPI(page), toAPI(frame), m_client.base.clientInfo);
 }
 
 bool WebUIClient::canRunModal() const
@@ -417,7 +417,7 @@ void WebUIClient::runModal(WebPageProxy* page)
     if (!m_client.runModal)
         return;
 
-    m_client.runModal(toAPI(page), m_client.clientInfo);
+    m_client.runModal(toAPI(page), m_client.base.clientInfo);
 }
 
 void WebUIClient::saveDataToFileInDownloadsFolder(WebPageProxy* page, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData* data)
@@ -425,7 +425,7 @@ void WebUIClient::saveDataToFileInDownloadsFolder(WebPageProxy* page, const Stri
     if (!m_client.saveDataToFileInDownloadsFolder)
         return;
 
-    m_client.saveDataToFileInDownloadsFolder(toAPI(page), toAPI(suggestedFilename.impl()), toAPI(mimeType.impl()), toURLRef(originatingURLString.impl()), toAPI(data), m_client.clientInfo);
+    m_client.saveDataToFileInDownloadsFolder(toAPI(page), toAPI(suggestedFilename.impl()), toAPI(mimeType.impl()), toURLRef(originatingURLString.impl()), toAPI(data), m_client.base.clientInfo);
 }
 
 bool WebUIClient::shouldInterruptJavaScript(WebPageProxy* page)
@@ -433,7 +433,7 @@ bool WebUIClient::shouldInterruptJavaScript(WebPageProxy* page)
     if (!m_client.shouldInterruptJavaScript)
         return false;
 
-    return m_client.shouldInterruptJavaScript(toAPI(page), m_client.clientInfo);
+    return m_client.shouldInterruptJavaScript(toAPI(page), m_client.base.clientInfo);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -442,7 +442,7 @@ bool WebUIClient::showColorPicker(WebPageProxy* page, const String& initialColor
     if (!m_client.showColorPicker)
         return false;
 
-    m_client.showColorPicker(toAPI(page), toAPI(initialColor.impl()), toAPI(listener), m_client.clientInfo);
+    m_client.showColorPicker(toAPI(page), toAPI(initialColor.impl()), toAPI(listener), m_client.base.clientInfo);
     return true;
 }
 
@@ -451,7 +451,7 @@ bool WebUIClient::hideColorPicker(WebPageProxy* page)
     if (!m_client.hideColorPicker)
         return false;
 
-    m_client.hideColorPicker(toAPI(page), m_client.clientInfo);
+    m_client.hideColorPicker(toAPI(page), m_client.base.clientInfo);
     return true;
 }
 #endif

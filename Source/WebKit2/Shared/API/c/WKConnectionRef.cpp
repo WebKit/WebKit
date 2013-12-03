@@ -38,7 +38,7 @@ WKTypeID WKConnectionGetTypeID()
 
 void WKConnectionSetConnectionClient(WKConnectionRef connectionRef, const WKConnectionClient* wkClient)
 {
-    toImpl(connectionRef)->initializeConnectionClient(wkClient);
+    toImpl(connectionRef)->initializeConnectionClient(reinterpret_cast<const WKConnectionClientBase*>(wkClient));
 }
 
 void WKConnectionPostMessage(WKConnectionRef connectionRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)

@@ -48,7 +48,7 @@ WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebContext* context)
     WebContextSupplement::context()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), this);
 }
 
-void WebGeolocationManagerProxy::initializeProvider(const WKGeolocationProvider* provider)
+void WebGeolocationManagerProxy::initializeProvider(const WKGeolocationProviderBase* provider)
 {
     m_provider.initialize(provider);
 }

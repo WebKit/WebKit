@@ -255,29 +255,29 @@ WebContext::~WebContext()
 #endif
 }
 
-void WebContext::initializeClient(const WKContextClient* client)
+void WebContext::initializeClient(const WKContextClientBase* client)
 {
     m_client.initialize(client);
 }
 
-void WebContext::initializeInjectedBundleClient(const WKContextInjectedBundleClient* client)
+void WebContext::initializeInjectedBundleClient(const WKContextInjectedBundleClientBase* client)
 {
     m_injectedBundleClient.initialize(client);
 }
 
-void WebContext::initializeConnectionClient(const WKContextConnectionClient* client)
+void WebContext::initializeConnectionClient(const WKContextConnectionClientBase* client)
 {
     m_connectionClient.initialize(client);
 }
 
-void WebContext::initializeHistoryClient(const WKContextHistoryClient* client)
+void WebContext::initializeHistoryClient(const WKContextHistoryClientBase* client)
 {
     m_historyClient.initialize(client);
 
     sendToAllProcesses(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient.shouldTrackVisitedLinks()));
 }
 
-void WebContext::initializeDownloadClient(const WKContextDownloadClient* client)
+void WebContext::initializeDownloadClient(const WKContextDownloadClientBase* client)
 {
     m_downloadClient.initialize(client);
 }

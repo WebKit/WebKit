@@ -39,7 +39,7 @@ void WebDownloadClient::didStart(WebContext* webContext, DownloadProxy* download
     if (!m_client.didStart)
         return;
 
-    m_client.didStart(toAPI(webContext), toAPI(downloadProxy), m_client.clientInfo);
+    m_client.didStart(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
 }
 
 void WebDownloadClient::didReceiveAuthenticationChallenge(WebContext* webContext, DownloadProxy* downloadProxy, AuthenticationChallengeProxy* authenticationChallengeProxy)
@@ -47,7 +47,7 @@ void WebDownloadClient::didReceiveAuthenticationChallenge(WebContext* webContext
     if (!m_client.didReceiveAuthenticationChallenge)
         return;
 
-    m_client.didReceiveAuthenticationChallenge(toAPI(webContext), toAPI(downloadProxy), toAPI(authenticationChallengeProxy), m_client.clientInfo);
+    m_client.didReceiveAuthenticationChallenge(toAPI(webContext), toAPI(downloadProxy), toAPI(authenticationChallengeProxy), m_client.base.clientInfo);
 }
 
 void WebDownloadClient::didReceiveResponse(WebContext* webContext, DownloadProxy* downloadProxy, const ResourceResponse& response)
@@ -55,7 +55,7 @@ void WebDownloadClient::didReceiveResponse(WebContext* webContext, DownloadProxy
     if (!m_client.didReceiveResponse)
         return;
 
-    m_client.didReceiveResponse(toAPI(webContext), toAPI(downloadProxy), toAPI(WebURLResponse::create(response).get()), m_client.clientInfo);
+    m_client.didReceiveResponse(toAPI(webContext), toAPI(downloadProxy), toAPI(WebURLResponse::create(response).get()), m_client.base.clientInfo);
 }
 
 void WebDownloadClient::didReceiveData(WebContext* webContext, DownloadProxy* downloadProxy, uint64_t length)
@@ -63,7 +63,7 @@ void WebDownloadClient::didReceiveData(WebContext* webContext, DownloadProxy* do
     if (!m_client.didReceiveData)
         return;
 
-    m_client.didReceiveData(toAPI(webContext), toAPI(downloadProxy), length, m_client.clientInfo);
+    m_client.didReceiveData(toAPI(webContext), toAPI(downloadProxy), length, m_client.base.clientInfo);
 }
 
 bool WebDownloadClient::shouldDecodeSourceDataOfMIMEType(WebContext* webContext, DownloadProxy* downloadProxy, const String& mimeType)
@@ -71,7 +71,7 @@ bool WebDownloadClient::shouldDecodeSourceDataOfMIMEType(WebContext* webContext,
     if (!m_client.shouldDecodeSourceDataOfMIMEType)
         return true;
 
-    return m_client.shouldDecodeSourceDataOfMIMEType(toAPI(webContext), toAPI(downloadProxy), toAPI(mimeType.impl()), m_client.clientInfo);
+    return m_client.shouldDecodeSourceDataOfMIMEType(toAPI(webContext), toAPI(downloadProxy), toAPI(mimeType.impl()), m_client.base.clientInfo);
 }
 
 String WebDownloadClient::decideDestinationWithSuggestedFilename(WebContext* webContext, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwrite)
@@ -79,7 +79,7 @@ String WebDownloadClient::decideDestinationWithSuggestedFilename(WebContext* web
     if (!m_client.decideDestinationWithSuggestedFilename)
         return String();
 
-    WKRetainPtr<WKStringRef> destination(AdoptWK, m_client.decideDestinationWithSuggestedFilename(toAPI(webContext), toAPI(downloadProxy), toAPI(filename.impl()), &allowOverwrite, m_client.clientInfo));
+    WKRetainPtr<WKStringRef> destination(AdoptWK, m_client.decideDestinationWithSuggestedFilename(toAPI(webContext), toAPI(downloadProxy), toAPI(filename.impl()), &allowOverwrite, m_client.base.clientInfo));
     return toWTFString(destination.get());
 }
 
@@ -88,7 +88,7 @@ void WebDownloadClient::didCreateDestination(WebContext* webContext, DownloadPro
     if (!m_client.didCreateDestination)
         return;
 
-    m_client.didCreateDestination(toAPI(webContext), toAPI(downloadProxy), toAPI(path.impl()), m_client.clientInfo);
+    m_client.didCreateDestination(toAPI(webContext), toAPI(downloadProxy), toAPI(path.impl()), m_client.base.clientInfo);
 }
 
 void WebDownloadClient::didFinish(WebContext* webContext, DownloadProxy* downloadProxy)
@@ -96,7 +96,7 @@ void WebDownloadClient::didFinish(WebContext* webContext, DownloadProxy* downloa
     if (!m_client.didFinish)
         return;
     
-    m_client.didFinish(toAPI(webContext), toAPI(downloadProxy), m_client.clientInfo);
+    m_client.didFinish(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
 }
 
 void WebDownloadClient::didFail(WebContext* webContext, DownloadProxy* downloadProxy, const ResourceError& error)
@@ -104,7 +104,7 @@ void WebDownloadClient::didFail(WebContext* webContext, DownloadProxy* downloadP
     if (!m_client.didFail)
         return;
 
-    m_client.didFail(toAPI(webContext), toAPI(downloadProxy), toAPI(error), m_client.clientInfo);
+    m_client.didFail(toAPI(webContext), toAPI(downloadProxy), toAPI(error), m_client.base.clientInfo);
 }
 
 void WebDownloadClient::didCancel(WebContext* webContext, DownloadProxy* downloadProxy)
@@ -112,7 +112,7 @@ void WebDownloadClient::didCancel(WebContext* webContext, DownloadProxy* downloa
     if (!m_client.didCancel)
         return;
 
-    m_client.didCancel(toAPI(webContext), toAPI(downloadProxy), m_client.clientInfo);
+    m_client.didCancel(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
 }
 
 void WebDownloadClient::processDidCrash(WebContext* webContext, DownloadProxy* downloadProxy)
@@ -120,7 +120,7 @@ void WebDownloadClient::processDidCrash(WebContext* webContext, DownloadProxy* d
     if (!m_client.processDidCrash)
         return;
 
-    m_client.processDidCrash(toAPI(webContext), toAPI(downloadProxy), m_client.clientInfo);
+    m_client.processDidCrash(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

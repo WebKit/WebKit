@@ -53,7 +53,7 @@ public:
     static PassRefPtr<WebDatabaseManagerProxy> create(WebContext*);
     virtual ~WebDatabaseManagerProxy();
 
-    void initializeClient(const WKDatabaseManagerClient*);
+    void initializeClient(const WKDatabaseManagerClientBase*);
 
     void getDatabasesByOrigin(PassRefPtr<ArrayCallback>);
     void getDatabaseOrigins(PassRefPtr<ArrayCallback>);

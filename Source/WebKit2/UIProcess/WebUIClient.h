@@ -34,6 +34,10 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
+template<> struct API::ClientTraits<WKPageUIClientBase> {
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2> Versions;
+};
+
 namespace WebCore {
     class FloatRect;
     class IntSize;
@@ -55,7 +59,7 @@ class WebPageProxy;
 class WebSecurityOrigin;
 class WebOpenPanelResultListenerProxy;
 
-class WebUIClient : public APIClient<WKPageUIClient, kWKPageUIClientCurrentVersion> {
+class WebUIClient : public API::Client<WKPageUIClientBase> {
 public:
     PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, WebEvent::Modifiers, WebMouseEvent::Button);
     void showPage(WebPageProxy*);

@@ -420,17 +420,17 @@ void WebPageProxy::initializeLoaderClient(const WKPageLoaderClientBase* loadClie
     m_process->send(Messages::WebPage::SetWillGoToBackForwardItemCallbackEnabled(loadClient->version > 0), m_pageID);
 }
 
-void WebPageProxy::initializePolicyClient(const WKPagePolicyClient* policyClient)
+void WebPageProxy::initializePolicyClient(const WKPagePolicyClientBase* policyClient)
 {
     m_policyClient.initialize(policyClient);
 }
 
-void WebPageProxy::initializeFormClient(const WKPageFormClient* formClient)
+void WebPageProxy::initializeFormClient(const WKPageFormClientBase* formClient)
 {
     m_formClient.initialize(formClient);
 }
 
-void WebPageProxy::initializeUIClient(const WKPageUIClient* client)
+void WebPageProxy::initializeUIClient(const WKPageUIClientBase* client)
 {
     if (!isValid())
         return;
@@ -441,18 +441,18 @@ void WebPageProxy::initializeUIClient(const WKPageUIClient* client)
     setCanRunModal(m_uiClient.canRunModal());
 }
 
-void WebPageProxy::initializeFindClient(const WKPageFindClient* client)
+void WebPageProxy::initializeFindClient(const WKPageFindClientBase* client)
 {
     m_findClient.initialize(client);
 }
 
-void WebPageProxy::initializeFindMatchesClient(const WKPageFindMatchesClient* client)
+void WebPageProxy::initializeFindMatchesClient(const WKPageFindMatchesClientBase* client)
 {
     m_findMatchesClient.initialize(client);
 }
 
 #if ENABLE(CONTEXT_MENUS)
-void WebPageProxy::initializeContextMenuClient(const WKPageContextMenuClient* client)
+void WebPageProxy::initializeContextMenuClient(const WKPageContextMenuClientBase* client)
 {
     m_contextMenuClient.initialize(client);
 }

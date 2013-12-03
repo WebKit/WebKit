@@ -62,7 +62,7 @@ WebNotificationManagerProxy::WebNotificationManagerProxy(WebContext* context)
 {
 }
 
-void WebNotificationManagerProxy::initializeProvider(const WKNotificationProvider *provider)
+void WebNotificationManagerProxy::initializeProvider(const WKNotificationProviderBase* provider)
 {
     m_provider.initialize(provider);
     m_provider.addNotificationManager(this);

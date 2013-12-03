@@ -30,11 +30,15 @@
 #include "WKOriginDataManager.h"
 #include <wtf/Forward.h>
 
+template<> struct API::ClientTraits<WKOriginDataManagerChangeClientBase> {
+    typedef std::tuple<WKOriginDataManagerChangeClientV0> Versions;
+};
+
 namespace WebKit {
 
 class WebOriginDataManagerProxy;
 
-class WebOriginDataManagerProxyChangeClient : public APIClient<WKOriginDataManagerChangeClient, kWKOriginDataManagerChangeClientVersion> {
+class WebOriginDataManagerProxyChangeClient : public API::Client<WKOriginDataManagerChangeClientBase> {
 public:
     void didChange(WebOriginDataManagerProxy*);
 };

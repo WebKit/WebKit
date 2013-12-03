@@ -449,7 +449,7 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
         0, /* decidePolicyForResponse */
     };
 
-    inspectorPage->initializePolicyClient(&policyClient);
+    inspectorPage->initializePolicyClient(reinterpret_cast<const WKPagePolicyClientBase*>(&policyClient));
 
     String url = inspectorPageURL();
 

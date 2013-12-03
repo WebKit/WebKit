@@ -35,7 +35,7 @@ void InjectedBundleClient::didCreatePage(InjectedBundle* bundle, WebPage* page)
     if (!m_client.didCreatePage)
         return;
 
-    m_client.didCreatePage(toAPI(bundle), toAPI(page), m_client.clientInfo);
+    m_client.didCreatePage(toAPI(bundle), toAPI(page), m_client.base.clientInfo);
 }
 
 void InjectedBundleClient::willDestroyPage(InjectedBundle* bundle, WebPage* page)
@@ -43,7 +43,7 @@ void InjectedBundleClient::willDestroyPage(InjectedBundle* bundle, WebPage* page
     if (!m_client.willDestroyPage)
         return;
 
-    m_client.willDestroyPage(toAPI(bundle), toAPI(page), m_client.clientInfo);
+    m_client.willDestroyPage(toAPI(bundle), toAPI(page), m_client.base.clientInfo);
 }
 
 void InjectedBundleClient::didInitializePageGroup(InjectedBundle* bundle, WebPageGroupProxy* pageGroup)
@@ -51,7 +51,7 @@ void InjectedBundleClient::didInitializePageGroup(InjectedBundle* bundle, WebPag
     if (!m_client.didInitializePageGroup)
         return;
 
-    m_client.didInitializePageGroup(toAPI(bundle), toAPI(pageGroup), m_client.clientInfo);
+    m_client.didInitializePageGroup(toAPI(bundle), toAPI(pageGroup), m_client.base.clientInfo);
 }
 
 void InjectedBundleClient::didReceiveMessage(InjectedBundle* bundle, const String& messageName, API::Object* messageBody)
@@ -59,7 +59,7 @@ void InjectedBundleClient::didReceiveMessage(InjectedBundle* bundle, const Strin
     if (!m_client.didReceiveMessage)
         return;
 
-    m_client.didReceiveMessage(toAPI(bundle), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
+    m_client.didReceiveMessage(toAPI(bundle), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
 }
 
 void InjectedBundleClient::didReceiveMessageToPage(InjectedBundle* bundle, WebPage* page, const String& messageName, API::Object* messageBody)
@@ -67,7 +67,7 @@ void InjectedBundleClient::didReceiveMessageToPage(InjectedBundle* bundle, WebPa
     if (!m_client.didReceiveMessageToPage)
         return;
 
-    m_client.didReceiveMessageToPage(toAPI(bundle), toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
+    m_client.didReceiveMessageToPage(toAPI(bundle), toAPI(page), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

@@ -1,3 +1,351 @@
+2013-12-02  Anders Carlsson  <andersca@apple.com>
+
+        Replace uses of WebKit::APIClient with API::Client
+        https://bugs.webkit.org/show_bug.cgi?id=125129
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/c/WKConnectionRef.cpp:
+        (WKConnectionSetConnectionClient):
+        * Shared/WebConnection.cpp:
+        (WebKit::WebConnection::initializeConnectionClient):
+        * Shared/WebConnection.h:
+        * Shared/WebConnectionClient.cpp:
+        (WebKit::WebConnectionClient::didReceiveMessage):
+        (WebKit::WebConnectionClient::didClose):
+        * Shared/WebConnectionClient.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetClient):
+        (WKContextSetInjectedBundleClient):
+        (WKContextSetHistoryClient):
+        (WKContextSetDownloadClient):
+        (WKContextSetConnectionClient):
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerSetClient):
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        (WKDatabaseManagerSetClient):
+        * UIProcess/API/C/WKGeolocationManager.cpp:
+        (WKGeolocationManagerSetProvider):
+        * UIProcess/API/C/WKIconDatabase.cpp:
+        (WKIconDatabaseSetIconDatabaseClient):
+        * UIProcess/API/C/WKNotificationManager.cpp:
+        (WKNotificationManagerSetProvider):
+        * UIProcess/API/C/WKOriginDataManager.cpp:
+        (WKOriginDataManagerSetChangeClient):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient):
+        (WKPageSetPageFindClient):
+        (WKPageSetPageFindMatchesClient):
+        (WKPageSetPageFormClient):
+        (WKPageSetPagePolicyClient):
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (setUpPagePolicyClient):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::initializeProvider):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        (WebKit::WebNotificationProvider::show):
+        (WebKit::WebNotificationProvider::cancel):
+        (WebKit::WebNotificationProvider::didDestroyNotification):
+        (WebKit::WebNotificationProvider::clearNotifications):
+        (WebKit::WebNotificationProvider::addNotificationManager):
+        (WebKit::WebNotificationProvider::removeNotificationManager):
+        (WebKit::WebNotificationProvider::notificationPermissions):
+        * UIProcess/Notifications/WebNotificationProvider.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::initializeClient):
+        (WebKit::WebContext::initializeInjectedBundleClient):
+        (WebKit::WebContext::initializeConnectionClient):
+        (WebKit::WebContext::initializeHistoryClient):
+        (WebKit::WebContext::initializeDownloadClient):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::plugInAutoStartOriginHashesChanged):
+        (WebKit::WebContextClient::networkProcessDidCrash):
+        (WebKit::WebContextClient::plugInInformationBecameAvailable):
+        * UIProcess/WebContextClient.h:
+        * UIProcess/WebContextConnectionClient.cpp:
+        (WebKit::WebContextConnectionClient::didCreateConnection):
+        * UIProcess/WebContextConnectionClient.h:
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        (WebKit::WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle):
+        (WebKit::WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle):
+        (WebKit::WebContextInjectedBundleClient::getInjectedBundleInitializationUserData):
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::initializeClient):
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebCookieManagerProxyClient.cpp:
+        (WebKit::WebCookieManagerProxyClient::cookiesDidChange):
+        * UIProcess/WebCookieManagerProxyClient.h:
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::initializeClient):
+        * UIProcess/WebDatabaseManagerProxy.h:
+        * UIProcess/WebDatabaseManagerProxyClient.cpp:
+        (WebKit::WebDatabaseManagerProxyClient::didModifyOrigin):
+        (WebKit::WebDatabaseManagerProxyClient::didModifyDatabase):
+        * UIProcess/WebDatabaseManagerProxyClient.h:
+        * UIProcess/WebDownloadClient.cpp:
+        (WebKit::WebDownloadClient::didStart):
+        (WebKit::WebDownloadClient::didReceiveAuthenticationChallenge):
+        (WebKit::WebDownloadClient::didReceiveResponse):
+        (WebKit::WebDownloadClient::didReceiveData):
+        (WebKit::WebDownloadClient::shouldDecodeSourceDataOfMIMEType):
+        (WebKit::WebDownloadClient::decideDestinationWithSuggestedFilename):
+        (WebKit::WebDownloadClient::didCreateDestination):
+        (WebKit::WebDownloadClient::didFinish):
+        (WebKit::WebDownloadClient::didFail):
+        (WebKit::WebDownloadClient::didCancel):
+        (WebKit::WebDownloadClient::processDidCrash):
+        * UIProcess/WebDownloadClient.h:
+        * UIProcess/WebFindClient.cpp:
+        (WebKit::WebFindClient::didFindString):
+        (WebKit::WebFindClient::didFailToFindString):
+        (WebKit::WebFindClient::didCountStringMatches):
+        (WebKit::WebFindMatchesClient::didFindStringMatches):
+        (WebKit::WebFindMatchesClient::didGetImageForMatchResult):
+        * UIProcess/WebFindClient.h:
+        * UIProcess/WebFormClient.cpp:
+        (WebKit::WebFormClient::willSubmitForm):
+        * UIProcess/WebFormClient.h:
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::initializeProvider):
+        * UIProcess/WebGeolocationManagerProxy.h:
+        * UIProcess/WebGeolocationProvider.cpp:
+        (WebKit::WebGeolocationProvider::startUpdating):
+        (WebKit::WebGeolocationProvider::stopUpdating):
+        (WebKit::WebGeolocationProvider::setEnableHighAccuracy):
+        * UIProcess/WebGeolocationProvider.h:
+        * UIProcess/WebHistoryClient.cpp:
+        (WebKit::WebHistoryClient::didNavigateWithNavigationData):
+        (WebKit::WebHistoryClient::didPerformClientRedirect):
+        (WebKit::WebHistoryClient::didPerformServerRedirect):
+        (WebKit::WebHistoryClient::didUpdateHistoryTitle):
+        (WebKit::WebHistoryClient::populateVisitedLinks):
+        * UIProcess/WebHistoryClient.h:
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::initializeIconDatabaseClient):
+        * UIProcess/WebIconDatabase.h:
+        * UIProcess/WebIconDatabaseClient.cpp:
+        (WebKit::WebIconDatabaseClient::didChangeIconForPageURL):
+        (WebKit::WebIconDatabaseClient::didRemoveAllIcons):
+        (WebKit::WebIconDatabaseClient::iconDataReadyForPageURL):
+        * UIProcess/WebIconDatabaseClient.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebOriginDataManagerProxy.cpp:
+        (WebKit::WebOriginDataManagerProxy::setChangeClient):
+        * UIProcess/WebOriginDataManagerProxy.h:
+        * UIProcess/WebOriginDataManagerProxyChangeClient.cpp:
+        (WebKit::WebOriginDataManagerProxyChangeClient::didChange):
+        * UIProcess/WebOriginDataManagerProxyChangeClient.h:
+        * UIProcess/WebPageContextMenuClient.cpp:
+        (WebKit::WebPageContextMenuClient::getContextMenuFromProposedMenu):
+        (WebKit::WebPageContextMenuClient::customContextMenuItemSelected):
+        (WebKit::WebPageContextMenuClient::contextMenuDismissed):
+        (WebKit::WebPageContextMenuClient::showContextMenu):
+        (WebKit::WebPageContextMenuClient::hideContextMenu):
+        * UIProcess/WebPageContextMenuClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializePolicyClient):
+        (WebKit::WebPageProxy::initializeFormClient):
+        (WebKit::WebPageProxy::initializeUIClient):
+        (WebKit::WebPageProxy::initializeFindClient):
+        (WebKit::WebPageProxy::initializeFindMatchesClient):
+        (WebKit::WebPageProxy::initializeContextMenuClient):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPolicyClient.cpp:
+        (WebKit::WebPolicyClient::decidePolicyForNavigationAction):
+        (WebKit::WebPolicyClient::decidePolicyForNewWindowAction):
+        (WebKit::WebPolicyClient::decidePolicyForResponse):
+        (WebKit::WebPolicyClient::unableToImplementPolicy):
+        * UIProcess/WebPolicyClient.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::createNewPage):
+        (WebKit::WebUIClient::showPage):
+        (WebKit::WebUIClient::close):
+        (WebKit::WebUIClient::takeFocus):
+        (WebKit::WebUIClient::focus):
+        (WebKit::WebUIClient::unfocus):
+        (WebKit::WebUIClient::runJavaScriptAlert):
+        (WebKit::WebUIClient::runJavaScriptConfirm):
+        (WebKit::WebUIClient::runJavaScriptPrompt):
+        (WebKit::WebUIClient::setStatusText):
+        (WebKit::WebUIClient::mouseDidMoveOverElement):
+        (WebKit::WebUIClient::unavailablePluginButtonClicked):
+        (WebKit::WebUIClient::didNotHandleKeyEvent):
+        (WebKit::WebUIClient::didNotHandleWheelEvent):
+        (WebKit::WebUIClient::toolbarsAreVisible):
+        (WebKit::WebUIClient::setToolbarsAreVisible):
+        (WebKit::WebUIClient::menuBarIsVisible):
+        (WebKit::WebUIClient::setMenuBarIsVisible):
+        (WebKit::WebUIClient::statusBarIsVisible):
+        (WebKit::WebUIClient::setStatusBarIsVisible):
+        (WebKit::WebUIClient::isResizable):
+        (WebKit::WebUIClient::setIsResizable):
+        (WebKit::WebUIClient::setWindowFrame):
+        (WebKit::WebUIClient::windowFrame):
+        (WebKit::WebUIClient::runBeforeUnloadConfirmPanel):
+        (WebKit::WebUIClient::didDraw):
+        (WebKit::WebUIClient::pageDidScroll):
+        (WebKit::WebUIClient::exceededDatabaseQuota):
+        (WebKit::WebUIClient::runOpenPanel):
+        (WebKit::WebUIClient::decidePolicyForGeolocationPermissionRequest):
+        (WebKit::WebUIClient::decidePolicyForNotificationPermissionRequest):
+        (WebKit::WebUIClient::headerHeight):
+        (WebKit::WebUIClient::footerHeight):
+        (WebKit::WebUIClient::drawHeader):
+        (WebKit::WebUIClient::drawFooter):
+        (WebKit::WebUIClient::printFrame):
+        (WebKit::WebUIClient::runModal):
+        (WebKit::WebUIClient::saveDataToFileInDownloadsFolder):
+        (WebKit::WebUIClient::shouldInterruptJavaScript):
+        (WebKit::WebUIClient::showColorPicker):
+        (WebKit::WebUIClient::hideColorPicker):
+        * UIProcess/WebUIClient.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetClient):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetContextMenuClient):
+        (WKBundlePageSetEditorClient):
+        (WKBundlePageSetFormClient):
+        (WKBundlePageSetPageLoaderClient):
+        (WKBundlePageSetResourceLoadClient):
+        (WKBundlePageSetPolicyClient):
+        (WKBundlePageSetUIClient):
+        (WKBundlePageSetFullScreenClient):
+        (WKBundlePageSetDiagnosticLoggingClient):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::initializeClient):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundleClient.cpp:
+        (WebKit::InjectedBundleClient::didCreatePage):
+        (WebKit::InjectedBundleClient::willDestroyPage):
+        (WebKit::InjectedBundleClient::didInitializePageGroup):
+        (WebKit::InjectedBundleClient::didReceiveMessage):
+        (WebKit::InjectedBundleClient::didReceiveMessageToPage):
+        * WebProcess/InjectedBundle/InjectedBundleClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+        (WebKit::InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems):
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp:
+        (WebKit::InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessage):
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::shouldBeginEditing):
+        (WebKit::InjectedBundlePageEditorClient::shouldEndEditing):
+        (WebKit::InjectedBundlePageEditorClient::shouldInsertNode):
+        (WebKit::InjectedBundlePageEditorClient::shouldInsertText):
+        (WebKit::InjectedBundlePageEditorClient::shouldDeleteRange):
+        (WebKit::InjectedBundlePageEditorClient::shouldChangeSelectedRange):
+        (WebKit::InjectedBundlePageEditorClient::shouldApplyStyle):
+        (WebKit::InjectedBundlePageEditorClient::didBeginEditing):
+        (WebKit::InjectedBundlePageEditorClient::didEndEditing):
+        (WebKit::InjectedBundlePageEditorClient::didChange):
+        (WebKit::InjectedBundlePageEditorClient::didChangeSelection):
+        (WebKit::InjectedBundlePageEditorClient::willWriteToPasteboard):
+        (WebKit::InjectedBundlePageEditorClient::getPasteboardDataForRange):
+        (WebKit::InjectedBundlePageEditorClient::didWriteToPasteboard):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::didFocusTextField):
+        (WebKit::InjectedBundlePageFormClient::textFieldDidBeginEditing):
+        (WebKit::InjectedBundlePageFormClient::textFieldDidEndEditing):
+        (WebKit::InjectedBundlePageFormClient::textDidChangeInTextField):
+        (WebKit::InjectedBundlePageFormClient::textDidChangeInTextArea):
+        (WebKit::InjectedBundlePageFormClient::shouldPerformActionInTextField):
+        (WebKit::InjectedBundlePageFormClient::willSendSubmitEvent):
+        (WebKit::InjectedBundlePageFormClient::willSubmitForm):
+        (WebKit::InjectedBundlePageFormClient::didAssociateFormControls):
+        (WebKit::InjectedBundlePageFormClient::shouldNotifyOnFormChanges):
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::willLoadURLRequest):
+        (WebKit::InjectedBundlePageLoaderClient::willLoadDataRequest):
+        (WebKit::InjectedBundlePageLoaderClient::shouldGoToBackForwardListItem):
+        (WebKit::InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didCommitLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFinishDocumentLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFinishLoadForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFinishProgress):
+        (WebKit::InjectedBundlePageLoaderClient::didFailLoadWithErrorForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didSameDocumentNavigationForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didReceiveTitleForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didRemoveFrameFromHierarchy):
+        (WebKit::InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didRunInsecureContentForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didDetectXSSForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFirstLayoutForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didLayoutForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didLayout):
+        (WebKit::InjectedBundlePageLoaderClient::didClearWindowObjectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didCancelClientRedirectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::willPerformClientRedirectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::globalObjectIsAvailableForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::willDisconnectDOMWindowExtensionFromGlobalObject):
+        (WebKit::InjectedBundlePageLoaderClient::didReconnectDOMWindowExtensionToGlobalObject):
+        (WebKit::InjectedBundlePageLoaderClient::willDestroyGlobalObjectForDOMWindowExtension):
+        (WebKit::InjectedBundlePageLoaderClient::shouldForceUniversalAccessFromLocalURL):
+        (WebKit::InjectedBundlePageLoaderClient::featuresUsedInPage):
+        (WebKit::InjectedBundlePageLoaderClient::willDestroyFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp:
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForNavigationAction):
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForNewWindowAction):
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForResponse):
+        (WebKit::InjectedBundlePagePolicyClient::unableToImplementPolicy):
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp:
+        (WebKit::InjectedBundlePageResourceLoadClient::didInitiateLoadForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::willSendRequestForFrame):
+        (WebKit::InjectedBundlePageResourceLoadClient::didReceiveResponseForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didReceiveContentLengthForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didFinishLoadForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didFailLoadForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::shouldCacheResponse):
+        (WebKit::InjectedBundlePageResourceLoadClient::shouldUseCredentialStorage):
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::willAddMessageToConsole):
+        (WebKit::InjectedBundlePageUIClient::willSetStatusbarText):
+        (WebKit::InjectedBundlePageUIClient::willRunJavaScriptAlert):
+        (WebKit::InjectedBundlePageUIClient::willRunJavaScriptConfirm):
+        (WebKit::InjectedBundlePageUIClient::willRunJavaScriptPrompt):
+        (WebKit::InjectedBundlePageUIClient::mouseDidMoveOverElement):
+        (WebKit::InjectedBundlePageUIClient::pageDidScroll):
+        (WebKit::InjectedBundlePageUIClient::shouldGenerateFileForUpload):
+        (WebKit::InjectedBundlePageUIClient::generateFileForUpload):
+        (WebKit::InjectedBundlePageUIClient::statusBarIsVisible):
+        (WebKit::InjectedBundlePageUIClient::menuBarIsVisible):
+        (WebKit::InjectedBundlePageUIClient::toolbarsAreVisible):
+        (WebKit::InjectedBundlePageUIClient::didReachApplicationCacheOriginQuota):
+        (WebKit::InjectedBundlePageUIClient::didExceedDatabaseQuota):
+        (WebKit::InjectedBundlePageUIClient::plugInStartLabelTitle):
+        (WebKit::InjectedBundlePageUIClient::plugInStartLabelSubtitle):
+        (WebKit::InjectedBundlePageUIClient::plugInExtraStyleSheet):
+        (WebKit::InjectedBundlePageUIClient::plugInExtraScript):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::initializeInjectedBundleContextMenuClient):
+        (WebKit::WebPage::initializeInjectedBundleEditorClient):
+        (WebKit::WebPage::initializeInjectedBundleFormClient):
+        (WebKit::WebPage::initializeInjectedBundleLoaderClient):
+        (WebKit::WebPage::initializeInjectedBundlePolicyClient):
+        (WebKit::WebPage::initializeInjectedBundleResourceLoadClient):
+        (WebKit::WebPage::initializeInjectedBundleUIClient):
+        (WebKit::WebPage::initializeInjectedBundleFullScreenClient):
+        (WebKit::WebPage::initializeInjectedBundleDiagnosticLoggingClient):
+        * WebProcess/WebPage/WebPage.h:
+
 2013-12-02  Enrica Casucci  <enrica@apple.com>
 
         Merging some more iOS WebKit2 stuff.

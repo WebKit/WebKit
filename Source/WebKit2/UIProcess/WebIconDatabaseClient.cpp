@@ -36,7 +36,7 @@ void WebIconDatabaseClient::didChangeIconForPageURL(WebIconDatabase* iconDatabas
     if (!m_client.didChangeIconForPageURL)
         return;
     
-    m_client.didChangeIconForPageURL(toAPI(iconDatabase), toAPI(url), m_client.clientInfo);
+    m_client.didChangeIconForPageURL(toAPI(iconDatabase), toAPI(url), m_client.base.clientInfo);
 }
 
 void WebIconDatabaseClient::didRemoveAllIcons(WebIconDatabase* iconDatabase)
@@ -44,7 +44,7 @@ void WebIconDatabaseClient::didRemoveAllIcons(WebIconDatabase* iconDatabase)
     if (!m_client.didRemoveAllIcons)
         return;
     
-    m_client.didRemoveAllIcons(toAPI(iconDatabase),  m_client.clientInfo);
+    m_client.didRemoveAllIcons(toAPI(iconDatabase),  m_client.base.clientInfo);
 }
 
 void WebIconDatabaseClient::iconDataReadyForPageURL(WebIconDatabase* iconDatabase, WebURL* url)
@@ -52,7 +52,7 @@ void WebIconDatabaseClient::iconDataReadyForPageURL(WebIconDatabase* iconDatabas
     if (!m_client.iconDataReadyForPageURL)
         return;
 
-    m_client.iconDataReadyForPageURL(toAPI(iconDatabase), toAPI(url), m_client.clientInfo);
+    m_client.iconDataReadyForPageURL(toAPI(iconDatabase), toAPI(url), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

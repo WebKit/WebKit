@@ -85,7 +85,7 @@ public:
     void checkIntegrityBeforeOpening();
     void close();
 
-    void initializeIconDatabaseClient(const WKIconDatabaseClient*);
+    void initializeIconDatabaseClient(const WKIconDatabaseClientBase*);
 
     void setPrivateBrowsingEnabled(bool);
     

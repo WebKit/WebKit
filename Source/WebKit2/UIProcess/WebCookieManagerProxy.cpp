@@ -58,7 +58,7 @@ WebCookieManagerProxy::~WebCookieManagerProxy()
 {
 }
 
-void WebCookieManagerProxy::initializeClient(const WKCookieManagerClient* client)
+void WebCookieManagerProxy::initializeClient(const WKCookieManagerClientBase* client)
 {
     m_client.initialize(client);
 }

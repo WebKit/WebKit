@@ -38,7 +38,7 @@ void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebCont
     if (!m_client.didReceiveMessageFromInjectedBundle)
         return;
 
-    m_client.didReceiveMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
+    m_client.didReceiveMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
 }
 
 void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebContext* context, const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
@@ -47,7 +47,7 @@ void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBun
         return;
 
     WKTypeRef returnDataRef = 0;
-    m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.clientInfo);
+    m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.base.clientInfo);
     returnData = adoptRef(toImpl(returnDataRef));
 }
 
@@ -56,7 +56,7 @@ PassRefPtr<API::Object> WebContextInjectedBundleClient::getInjectedBundleInitial
     if (!m_client.getInjectedBundleInitializationUserData)
         return 0;
 
-    return toImpl(m_client.getInjectedBundleInitializationUserData(toAPI(context), m_client.clientInfo));
+    return toImpl(m_client.getInjectedBundleInitializationUserData(toAPI(context), m_client.base.clientInfo));
 }
 
 } // namespace WebKit

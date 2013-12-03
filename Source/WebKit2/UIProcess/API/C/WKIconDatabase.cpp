@@ -38,7 +38,7 @@ WKTypeID WKIconDatabaseGetTypeID()
 
 void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabaseRef, const WKIconDatabaseClient* wkClient)
 {
-    toImpl(iconDatabaseRef)->initializeIconDatabaseClient(wkClient);
+    toImpl(iconDatabaseRef)->initializeIconDatabaseClient(reinterpret_cast<const WKIconDatabaseClientBase*>(wkClient));
 }
 
 void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURLRef)

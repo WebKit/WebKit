@@ -30,6 +30,10 @@
 #include "WKConnectionRef.h"
 #include <wtf/Forward.h>
 
+template<> struct API::ClientTraits<WKConnectionClientBase> {
+    typedef std::tuple<WKConnectionClientV0> Versions;
+};
+
 namespace API {
 class Object;
 }
@@ -38,7 +42,7 @@ namespace WebKit {
 
 class WebConnection;
 
-class WebConnectionClient : public APIClient<WKConnectionClient, WKConnectionClientCurrentVersion> {
+class WebConnectionClient : public API::Client<WKConnectionClientBase> {
 public:
     void didReceiveMessage(WebConnection*, const String&, API::Object*);
     void didClose(WebConnection*);

@@ -38,7 +38,7 @@ class WebConnection : public API::TypedObject<API::Object::Type::Connection>, pu
 public:
     virtual ~WebConnection();
 
-    void initializeConnectionClient(const WKConnectionClient*);
+    void initializeConnectionClient(const WKConnectionClientBase*);
     void postMessage(const String&, API::Object*);
     void didClose();
 

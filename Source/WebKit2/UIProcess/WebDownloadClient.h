@@ -30,6 +30,10 @@
 #include "WKContext.h"
 #include <wtf/Forward.h>
 
+template<> struct API::ClientTraits<WKContextDownloadClientBase> {
+    typedef std::tuple<WKContextDownloadClientV0> Versions;
+};
+
 namespace WebCore {
     class ResourceError;
     class ResourceResponse;
@@ -41,7 +45,7 @@ class AuthenticationChallengeProxy;
 class DownloadProxy;
 class WebContext;
 
-class WebDownloadClient : public APIClient<WKContextDownloadClient, kWKContextDownloadClientCurrentVersion> {
+class WebDownloadClient : public API::Client<WKContextDownloadClientBase> {
 public:
     void didStart(WebContext*, DownloadProxy*);
     void didReceiveAuthenticationChallenge(WebContext*, DownloadProxy*, AuthenticationChallengeProxy*);

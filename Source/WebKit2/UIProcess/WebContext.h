@@ -126,11 +126,11 @@ public:
     bool dispatchMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     bool dispatchSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
 
-    void initializeClient(const WKContextClient*);
-    void initializeInjectedBundleClient(const WKContextInjectedBundleClient*);
-    void initializeConnectionClient(const WKContextConnectionClient*);
-    void initializeHistoryClient(const WKContextHistoryClient*);
-    void initializeDownloadClient(const WKContextDownloadClient*);
+    void initializeClient(const WKContextClientBase*);
+    void initializeInjectedBundleClient(const WKContextInjectedBundleClientBase*);
+    void initializeConnectionClient(const WKContextConnectionClientBase*);
+    void initializeHistoryClient(const WKContextHistoryClientBase*);
+    void initializeDownloadClient(const WKContextDownloadClientBase*);
 
     void setProcessModel(ProcessModel); // Can only be called when there are no processes running.
     ProcessModel processModel() const { return m_processModel; }

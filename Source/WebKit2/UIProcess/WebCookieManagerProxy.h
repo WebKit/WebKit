@@ -58,7 +58,7 @@ public:
     static PassRefPtr<WebCookieManagerProxy> create(WebContext*);
     virtual ~WebCookieManagerProxy();
 
-    void initializeClient(const WKCookieManagerClient*);
+    void initializeClient(const WKCookieManagerClientBase*);
     
     void getHostnamesWithCookies(PassRefPtr<ArrayCallback>);
     void deleteCookiesForHostname(const String& hostname);

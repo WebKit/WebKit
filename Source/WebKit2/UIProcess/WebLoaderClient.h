@@ -35,13 +35,12 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-namespace API {
-class Object;
-
-template<> struct ClientTraits<WKPageLoaderClientBase> {
+template<> struct API::ClientTraits<WKPageLoaderClientBase> {
     typedef std::tuple<WKPageLoaderClientV0, WKPageLoaderClientV1, WKPageLoaderClientV2, WKPageLoaderClientV3> Versions;
 };
 
+namespace API {
+class Object;
 }
 
 namespace WebCore {

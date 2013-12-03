@@ -30,6 +30,14 @@
 #include "WKPage.h"
 #include <wtf/Forward.h>
 
+template<> struct API::ClientTraits<WKPageFindClientBase> {
+    typedef std::tuple<WKPageFindClientV0> Versions;
+};
+
+template<> struct API::ClientTraits<WKPageFindMatchesClientBase> {
+    typedef std::tuple<WKPageFindMatchesClientV0> Versions;
+};
+
 namespace API {
 class Array;
 }
@@ -39,14 +47,14 @@ namespace WebKit {
 class WebPageProxy;
 class WebImage;
 
-class WebFindClient : public APIClient<WKPageFindClient, kWKPageFindClientCurrentVersion> {
+class WebFindClient : public API::Client<WKPageFindClientBase> {
 public:
     void didFindString(WebPageProxy*, const String&, uint32_t matchCount);
     void didFailToFindString(WebPageProxy*, const String&);
     void didCountStringMatches(WebPageProxy*, const String&, uint32_t matchCount);
 };
 
-class WebFindMatchesClient : public APIClient<WKPageFindMatchesClient, kWKPageFindMatchesClientCurrentVersion> {
+class WebFindMatchesClient : public API::Client<WKPageFindMatchesClientBase> {
 public:
     void didFindStringMatches(WebPageProxy*, const String&, API::Array*, int);
     void didGetImageForMatchResult(WebPageProxy*, WebImage*, uint32_t);

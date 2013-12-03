@@ -30,12 +30,16 @@
 #include "WKDatabaseManager.h"
 #include <wtf/Forward.h>
 
+template<> struct API::ClientTraits<WKDatabaseManagerClientBase> {
+    typedef std::tuple<WKDatabaseManagerClientV0> Versions;
+};
+
 namespace WebKit {
 
 class WebDatabaseManagerProxy;
 class WebSecurityOrigin;
 
-class WebDatabaseManagerProxyClient : public APIClient<WKDatabaseManagerClient, kWKDatabaseManagerClientCurrentVersion> {
+class WebDatabaseManagerProxyClient : public API::Client<WKDatabaseManagerClientBase> {
 public:
     void didModifyOrigin(WebDatabaseManagerProxy*, WebSecurityOrigin*);
     void didModifyDatabase(WebDatabaseManagerProxy*, WebSecurityOrigin*, const String& databaseIdentifier);

@@ -31,6 +31,10 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
+template<> struct API::ClientTraits<WKNotificationProviderBase> {
+    typedef std::tuple<WKNotificationProviderV0> Versions;
+};
+
 namespace WebKit {
 
 class ImmutableDictionary;
@@ -39,7 +43,7 @@ class WebNotificationManagerProxy;
 class WebPageProxy;
 class WebSecurityOrigin;
     
-class WebNotificationProvider : public APIClient<WKNotificationProvider, kWKNotificationProviderCurrentVersion> {
+class WebNotificationProvider : public API::Client<WKNotificationProviderBase> {
 public:
     void show(WebPageProxy*, WebNotification*);
     void cancel(WebNotification*);

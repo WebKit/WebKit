@@ -31,6 +31,10 @@
 #include "WKBundlePage.h"
 #include <wtf/Forward.h>
 
+template<> struct API::ClientTraits<WKBundlePagePolicyClientBase> {
+    typedef std::tuple<WKBundlePagePolicyClientV0> Versions;
+};
+
 namespace WebCore {
     class ResourceError;
     class ResourceRequest;
@@ -43,7 +47,7 @@ class InjectedBundleNavigationAction;
 class WebFrame;
 class WebPage;
 
-class InjectedBundlePagePolicyClient : public APIClient<WKBundlePagePolicyClient, kWKBundlePagePolicyClientCurrentVersion> {
+class InjectedBundlePagePolicyClient : public API::Client<WKBundlePagePolicyClientBase> {
 public:
     WKBundlePagePolicyAction decidePolicyForNavigationAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, RefPtr<API::Object>& userData);
     WKBundlePagePolicyAction decidePolicyForNewWindowAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, const String& frameName, RefPtr<API::Object>& userData);

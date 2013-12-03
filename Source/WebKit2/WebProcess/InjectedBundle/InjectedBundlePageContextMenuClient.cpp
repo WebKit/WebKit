@@ -53,7 +53,7 @@ bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage*
 
     WKArrayRef newMenuWK = 0;
     WKTypeRef userDataToPass = 0;
-    m_client.getContextMenuFromDefaultMenu(toAPI(page), toAPI(hitTestResult), toAPI(API::Array::create(std::move(defaultMenuItems)).get()), &newMenuWK, &userDataToPass, m_client.clientInfo);
+    m_client.getContextMenuFromDefaultMenu(toAPI(page), toAPI(hitTestResult), toAPI(API::Array::create(std::move(defaultMenuItems)).get()), &newMenuWK, &userDataToPass, m_client.base.clientInfo);
     RefPtr<API::Array> array = adoptRef(toImpl(newMenuWK));
     userData = adoptRef(toImpl(userDataToPass));
     

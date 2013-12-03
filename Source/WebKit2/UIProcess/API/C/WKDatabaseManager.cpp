@@ -125,7 +125,7 @@ void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManagerRef, const W
 #if ENABLE(SQL_DATABASE)
     if (wkClient && wkClient->version)
         return;
-    toImpl(databaseManagerRef)->initializeClient(wkClient);
+    toImpl(databaseManagerRef)->initializeClient(reinterpret_cast<const WKDatabaseManagerClientBase*>(wkClient));
 #else
     UNUSED_PARAM(databaseManagerRef);
     UNUSED_PARAM(wkClient);

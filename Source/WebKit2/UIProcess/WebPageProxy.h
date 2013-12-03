@@ -348,14 +348,14 @@ public:
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
-    void initializeContextMenuClient(const WKPageContextMenuClient*);
+    void initializeContextMenuClient(const WKPageContextMenuClientBase*);
 #endif
-    void initializeFindClient(const WKPageFindClient*);
-    void initializeFindMatchesClient(const WKPageFindMatchesClient*);
-    void initializeFormClient(const WKPageFormClient*);
+    void initializeFindClient(const WKPageFindClientBase*);
+    void initializeFindMatchesClient(const WKPageFindMatchesClientBase*);
+    void initializeFormClient(const WKPageFormClientBase*);
     void initializeLoaderClient(const WKPageLoaderClientBase*);
-    void initializePolicyClient(const WKPagePolicyClient*);
-    void initializeUIClient(const WKPageUIClient*);
+    void initializePolicyClient(const WKPagePolicyClientBase*);
+    void initializeUIClient(const WKPageUIClientBase*);
 #if PLATFORM(EFL)
     void initializeUIPopupMenuClient(const WKPageUIPopupMenuClient*);
 #endif

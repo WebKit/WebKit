@@ -542,7 +542,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
             WKFramePolicyListenerUse(listener);
     };
 
-    page.initializePolicyClient(&policyClient);
+    page.initializePolicyClient(reinterpret_cast<const WKPagePolicyClientBase*>(&policyClient));
 }
 
 - (id <WKBrowsingContextLoadDelegate>)loadDelegate

@@ -38,7 +38,7 @@ WKTypeID WKCookieManagerGetTypeID()
 
 void WKCookieManagerSetClient(WKCookieManagerRef cookieManagerRef, const WKCookieManagerClient* wkClient)
 {
-    toImpl(cookieManagerRef)->initializeClient(wkClient);
+    toImpl(cookieManagerRef)->initializeClient(reinterpret_cast<const WKCookieManagerClientBase*>(wkClient));
 }
 
 void WKCookieManagerGetHostnamesWithCookies(WKCookieManagerRef cookieManagerRef, void* context, WKCookieManagerGetCookieHostnamesFunction callback)

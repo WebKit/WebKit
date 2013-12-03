@@ -139,7 +139,7 @@ void WebOriginDataManagerProxy::stopObservingChanges(WKOriginDataTypes types)
     context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebOriginDataManager::StartObservingChanges(types));
 }
 
-void WebOriginDataManagerProxy::setChangeClient(const WKOriginDataManagerChangeClient *client)
+void WebOriginDataManagerProxy::setChangeClient(const WKOriginDataManagerChangeClientBase *client)
 {
     m_client.initialize(client);
 }

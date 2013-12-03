@@ -35,7 +35,7 @@ void WebFindClient::didFindString(WebPageProxy* page, const String& string, uint
     if (!m_client.didFindString)
         return;
 
-    m_client.didFindString(toAPI(page), toAPI(string.impl()), matchCount, m_client.clientInfo);
+    m_client.didFindString(toAPI(page), toAPI(string.impl()), matchCount, m_client.base.clientInfo);
 
 }
 
@@ -44,7 +44,7 @@ void WebFindClient::didFailToFindString(WebPageProxy* page, const String& string
     if (!m_client.didFailToFindString)
         return;
     
-    m_client.didFailToFindString(toAPI(page), toAPI(string.impl()), m_client.clientInfo);
+    m_client.didFailToFindString(toAPI(page), toAPI(string.impl()), m_client.base.clientInfo);
 }
 
 void WebFindClient::didCountStringMatches(WebPageProxy* page, const String& string, uint32_t matchCount)
@@ -52,7 +52,7 @@ void WebFindClient::didCountStringMatches(WebPageProxy* page, const String& stri
     if (!m_client.didCountStringMatches)
         return;
 
-    m_client.didCountStringMatches(toAPI(page), toAPI(string.impl()), matchCount, m_client.clientInfo);
+    m_client.didCountStringMatches(toAPI(page), toAPI(string.impl()), matchCount, m_client.base.clientInfo);
 }
 
 void WebFindMatchesClient::didFindStringMatches(WebPageProxy* page, const String& string, API::Array* matches, int firstIndex)
@@ -60,14 +60,14 @@ void WebFindMatchesClient::didFindStringMatches(WebPageProxy* page, const String
     if (!m_client.didFindStringMatches)
         return;
 
-    m_client.didFindStringMatches(toAPI(page), toAPI(string.impl()), toAPI(matches), firstIndex, m_client.clientInfo);
+    m_client.didFindStringMatches(toAPI(page), toAPI(string.impl()), toAPI(matches), firstIndex, m_client.base.clientInfo);
 }
 
 void WebFindMatchesClient::didGetImageForMatchResult(WebPageProxy* page, WebImage* image, uint32_t index)
 {
     if (!m_client.didGetImageForMatchResult)
         return;
-    m_client.didGetImageForMatchResult(toAPI(page), toAPI(image), index, m_client.clientInfo);
+    m_client.didGetImageForMatchResult(toAPI(page), toAPI(image), index, m_client.base.clientInfo);
 }
 
 } // namespace WebKit

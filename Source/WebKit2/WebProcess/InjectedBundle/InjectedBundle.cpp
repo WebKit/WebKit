@@ -94,7 +94,7 @@ InjectedBundle::~InjectedBundle()
 {
 }
 
-void InjectedBundle::initializeClient(WKBundleClient* client)
+void InjectedBundle::initializeClient(const WKBundleClientBase* client)
 {
     m_client.initialize(client);
 }

@@ -36,7 +36,7 @@ void WebGeolocationProvider::startUpdating(WebGeolocationManagerProxy* geolocati
     if (!m_client.startUpdating)
         return;
 
-    m_client.startUpdating(toAPI(geolocationManager), m_client.clientInfo);
+    m_client.startUpdating(toAPI(geolocationManager), m_client.base.clientInfo);
 }
 
 void WebGeolocationProvider::stopUpdating(WebGeolocationManagerProxy* geolocationManager)
@@ -44,7 +44,7 @@ void WebGeolocationProvider::stopUpdating(WebGeolocationManagerProxy* geolocatio
     if (!m_client.stopUpdating)
         return;
 
-    m_client.stopUpdating(toAPI(geolocationManager), m_client.clientInfo);
+    m_client.stopUpdating(toAPI(geolocationManager), m_client.base.clientInfo);
 }
 
 void WebGeolocationProvider::setEnableHighAccuracy(WebGeolocationManagerProxy* geolocationManager, bool enabled)
@@ -52,7 +52,7 @@ void WebGeolocationProvider::setEnableHighAccuracy(WebGeolocationManagerProxy* g
     if (!m_client.setEnableHighAccuracy)
         return;
 
-    m_client.setEnableHighAccuracy(toAPI(geolocationManager), enabled, m_client.clientInfo);
+    m_client.setEnableHighAccuracy(toAPI(geolocationManager), enabled, m_client.base.clientInfo);
 }
 
 } // namespace WebKit

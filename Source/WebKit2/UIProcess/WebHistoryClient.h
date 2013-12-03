@@ -30,6 +30,10 @@
 #include "WKContext.h"
 #include <wtf/Forward.h>
 
+template<> struct API::ClientTraits<WKContextHistoryClientBase> {
+    typedef std::tuple<WKContextHistoryClientV0> Versions;
+};
+
 namespace WebKit {
 
 class WebContext;
@@ -37,7 +41,7 @@ class WebFrameProxy;
 class WebPageProxy;
 struct WebNavigationDataStore;
 
-class WebHistoryClient : public APIClient<WKContextHistoryClient, kWKContextHistoryClientCurrentVersion> {
+class WebHistoryClient : public API::Client<WKContextHistoryClientBase> {
 public:
     void didNavigateWithNavigationData(WebContext*, WebPageProxy*, const WebNavigationDataStore&, WebFrameProxy*);
     void didPerformClientRedirect(WebContext*, WebPageProxy*, const String& sourceURL, const String& destinationURL, WebFrameProxy*);

@@ -42,7 +42,7 @@ bool WebPageContextMenuClient::getContextMenuFromProposedMenu(WebPageProxy* page
     if (!m_client.getContextMenuFromProposedMenu && !m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0)
         return false;
 
-    if (m_client.version >= 2 && !m_client.getContextMenuFromProposedMenu)
+    if (m_client.base.version >= 2 && !m_client.getContextMenuFromProposedMenu)
         return false;
 
     Vector<RefPtr<API::Object>> proposedMenuItems;
@@ -52,11 +52,11 @@ bool WebPageContextMenuClient::getContextMenuFromProposedMenu(WebPageProxy* page
         proposedMenuItems.uncheckedAppend(WebContextMenuItem::create(menuItem));
 
     WKArrayRef newMenu = nullptr;
-    if (m_client.version >= 2) {
+    if (m_client.base.version >= 2) {
         RefPtr<WebHitTestResult> webHitTestResult = WebHitTestResult::create(hitTestResultData);
-        m_client.getContextMenuFromProposedMenu(toAPI(page), toAPI(API::Array::create(std::move(proposedMenuItems)).get()), &newMenu, toAPI(webHitTestResult.get()), toAPI(userData), m_client.clientInfo);
+        m_client.getContextMenuFromProposedMenu(toAPI(page), toAPI(API::Array::create(std::move(proposedMenuItems)).get()), &newMenu, toAPI(webHitTestResult.get()), toAPI(userData), m_client.base.clientInfo);
     } else
-        m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0(toAPI(page), toAPI(API::Array::create(std::move(proposedMenuItems)).get()), &newMenu, toAPI(userData), m_client.clientInfo);
+        m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0(toAPI(page), toAPI(API::Array::create(std::move(proposedMenuItems)).get()), &newMenu, toAPI(userData), m_client.base.clientInfo);
 
     RefPtr<API::Array> array = adoptRef(toImpl(newMenu));
     
@@ -82,7 +82,7 @@ void WebPageContextMenuClient::customContextMenuItemSelected(WebPageProxy* page,
         return;
 
     RefPtr<WebContextMenuItem> item = WebContextMenuItem::create(itemData);
-    m_client.customContextMenuItemSelected(toAPI(page), toAPI(item.get()), m_client.clientInfo);
+    m_client.customContextMenuItemSelected(toAPI(page), toAPI(item.get()), m_client.base.clientInfo);
 }
 
 void WebPageContextMenuClient::contextMenuDismissed(WebPageProxy* page)
@@ -90,7 +90,7 @@ void WebPageContextMenuClient::contextMenuDismissed(WebPageProxy* page)
     if (!m_client.contextMenuDismissed)
         return;
     
-    m_client.contextMenuDismissed(toAPI(page), m_client.clientInfo);
+    m_client.contextMenuDismissed(toAPI(page), m_client.base.clientInfo);
 }
 
 bool WebPageContextMenuClient::showContextMenu(WebPageProxy* page, const WebCore::IntPoint& menuLocation, const Vector<WebContextMenuItemData>& menuItemsVector)
@@ -104,7 +104,7 @@ bool WebPageContextMenuClient::showContextMenu(WebPageProxy* page, const WebCore
     for (const auto& menuItem : menuItemsVector)
         menuItems.uncheckedAppend(WebContextMenuItem::create(menuItem));
 
-    m_client.showContextMenu(toAPI(page), toAPI(menuLocation), toAPI(API::Array::create(std::move(menuItems)).get()), m_client.clientInfo);
+    m_client.showContextMenu(toAPI(page), toAPI(menuLocation), toAPI(API::Array::create(std::move(menuItems)).get()), m_client.base.clientInfo);
 
     return true;
 }
@@ -114,7 +114,7 @@ bool WebPageContextMenuClient::hideContextMenu(WebPageProxy* page)
     if (!m_client.hideContextMenu)
         return false;
 
-    m_client.hideContextMenu(toAPI(page), m_client.clientInfo);
+    m_client.hideContextMenu(toAPI(page), m_client.base.clientInfo);
 
     return true;
 }

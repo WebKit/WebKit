@@ -45,7 +45,7 @@ public:
 
     static PassRefPtr<WebGeolocationManagerProxy> create(WebContext*);
 
-    void initializeProvider(const WKGeolocationProvider*);
+    void initializeProvider(const WKGeolocationProviderBase*);
 
     void providerDidChangePosition(WebGeolocationPosition*);
     void providerDidFailToDeterminePosition(const String& errorMessage = String());

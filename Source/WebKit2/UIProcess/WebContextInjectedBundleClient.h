@@ -30,6 +30,10 @@
 #include "WKContext.h"
 #include <wtf/Forward.h>
 
+template<> struct API::ClientTraits<WKContextInjectedBundleClientBase> {
+    typedef std::tuple<WKContextInjectedBundleClientV0, WKContextInjectedBundleClientV1> Versions;
+};
+
 namespace API {
 class Object;
 }
@@ -38,7 +42,7 @@ namespace WebKit {
 
 class WebContext;
 
-class WebContextInjectedBundleClient : public APIClient<WKContextInjectedBundleClient, kWKContextInjectedBundleClientCurrentVersion> {
+class WebContextInjectedBundleClient : public API::Client<WKContextInjectedBundleClientBase> {
 public:
     void didReceiveMessageFromInjectedBundle(WebContext*, const String&, API::Object*);
     void didReceiveSynchronousMessageFromInjectedBundle(WebContext*, const String&, API::Object*, RefPtr<API::Object>& returnData);

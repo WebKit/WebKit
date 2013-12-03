@@ -632,23 +632,23 @@ void WKPageCountStringMatches(WKPageRef pageRef, WKStringRef string, WKFindOptio
 void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuClient* wkClient)
 {
 #if ENABLE(CONTEXT_MENUS)
-    toImpl(pageRef)->initializeContextMenuClient(wkClient);
+    toImpl(pageRef)->initializeContextMenuClient(reinterpret_cast<const WKPageContextMenuClientBase*>(wkClient));
 #endif
 }
 
 void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClient* wkClient)
 {
-    toImpl(pageRef)->initializeFindClient(wkClient);
+    toImpl(pageRef)->initializeFindClient(reinterpret_cast<const WKPageFindClientBase*>(wkClient));
 }
 
 void WKPageSetPageFindMatchesClient(WKPageRef pageRef, const WKPageFindMatchesClient* wkClient)
 {
-    toImpl(pageRef)->initializeFindMatchesClient(wkClient);
+    toImpl(pageRef)->initializeFindMatchesClient(reinterpret_cast<const WKPageFindMatchesClientBase*>(wkClient));
 }
 
 void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClient* wkClient)
 {
-    toImpl(pageRef)->initializeFormClient(wkClient);
+    toImpl(pageRef)->initializeFormClient(reinterpret_cast<const WKPageFormClientBase*>(wkClient));
 }
 
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClient* wkClient)
@@ -658,12 +658,12 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClient* wkCl
 
 void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClient* wkClient)
 {
-    toImpl(pageRef)->initializePolicyClient(wkClient);
+    toImpl(pageRef)->initializePolicyClient(reinterpret_cast<const WKPagePolicyClientBase*>(wkClient));
 }
 
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClient* wkClient)
 {
-    toImpl(pageRef)->initializeUIClient(wkClient);
+    toImpl(pageRef)->initializeUIClient(reinterpret_cast<const WKPageUIClientBase*>(wkClient));
 }
 
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)

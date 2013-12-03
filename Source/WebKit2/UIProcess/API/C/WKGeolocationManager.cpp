@@ -38,7 +38,7 @@ WKTypeID WKGeolocationManagerGetTypeID()
 
 void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocationManagerRef, const WKGeolocationProvider* wkProvider)
 {
-    toImpl(geolocationManagerRef)->initializeProvider(wkProvider);
+    toImpl(geolocationManagerRef)->initializeProvider(reinterpret_cast<const WKGeolocationProviderBase*>(wkProvider));
 }
 
 void WKGeolocationManagerProviderDidChangePosition(WKGeolocationManagerRef geolocationManagerRef, WKGeolocationPositionRef positionRef)
