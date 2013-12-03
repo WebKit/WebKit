@@ -30,9 +30,7 @@ namespace WebKit {
 
 enum DrawingAreaType {
 #if PLATFORM(MAC)
-#if PLATFORM(IOS)
-    DrawingAreaTypeTiledCoreAnimationIOS,
-#else
+#if !PLATFORM(IOS)
     DrawingAreaTypeTiledCoreAnimation,
 #endif
     DrawingAreaTypeRemoteLayerTree,

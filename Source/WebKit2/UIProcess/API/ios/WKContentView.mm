@@ -28,7 +28,6 @@
 
 #import "PageClientImplIOS.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
-#import "TiledCoreAnimationDrawingAreaProxyIOS.h"
 #import "UIWKRemoteView.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupPrivate.h"

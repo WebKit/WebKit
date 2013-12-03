@@ -1,3 +1,21 @@
+2013-12-03  Tim Horton  <timothy_horton@apple.com>
+
+        Remove TiledCoreAnimationDrawingArea(Proxy)IOS
+        https://bugs.webkit.org/show_bug.cgi?id=125176
+
+        Reviewed by Simon Fraser.
+
+        Remove unused code.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        * UIProcess/ios/TiledCoreAnimationDrawingAreaProxyIOS.h: Removed.
+        * UIProcess/ios/TiledCoreAnimationDrawingAreaProxyIOS.mm: Removed.
+        * Shared/DrawingAreaInfo.h:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/ios/TiledCoreAnimationDrawingAreaIOS.h: Removed.
+        * WebProcess/WebPage/ios/TiledCoreAnimationDrawingAreaIOS.mm: Removed.
+
 2013-12-03  Anders Carlsson  <andersca@apple.com>
 
         Remove old WebKit::APIClient cruft
