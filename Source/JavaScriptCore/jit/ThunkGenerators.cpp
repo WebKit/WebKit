@@ -343,7 +343,7 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
     jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT3);
 
-#elif CPU(ARM) || CPU(SH4)
+#elif CPU(ARM) || CPU(SH4) || CPU(MIPS)
     // Load caller frame's scope chain into this callframe so that whatever we call can get to its global data.
     jit.emitGetCallerFrameFromCallFrameHeaderPtr(JSInterfaceJIT::regT2);
     jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT1, JSInterfaceJIT::regT2);
@@ -351,6 +351,11 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
     jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT3); // Callee preserved
     jit.emitPutReturnPCToCallFrameHeader(JSInterfaceJIT::regT3);
+
+#if CPU(MIPS)
+    // Allocate stack space for (unused) 16 bytes (8-byte aligned) for 4 arguments.
+    jit.subPtr(JSInterfaceJIT::TrustedImm32(16), JSInterfaceJIT::stackPointerRegister);
+#endif
 
     // Calling convention is f(argumentGPR0, argumentGPR1, ...).
     // Host function signature is f(ExecState*).
@@ -361,35 +366,10 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::argumentGPR1, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT2);
     jit.call(JSInterfaceJIT::Address(JSInterfaceJIT::regT2, executableOffsetToFunction));
 
-    jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT3);
-#elif CPU(MIPS)
-    // Load caller frame's scope chain into this callframe so that whatever we call can
-    // get to its global data.
-    jit.emitGetCallerFrameFromCallFrameHeaderPtr(JSInterfaceJIT::regT0);
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT1, JSInterfaceJIT::regT0);
-    jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
-
-    jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT3); // Callee preserved
-    jit.emitPutReturnPCToCallFrameHeader(JSInterfaceJIT::regT3);
-
-    // Calling convention:      f(a0, a1, a2, a3);
-    // Host function signature: f(ExecState*);
-
-    // Allocate stack space for 16 bytes (8-byte aligned)
-    // 16 bytes (unused) for 4 arguments
-    jit.subPtr(JSInterfaceJIT::TrustedImm32(16), JSInterfaceJIT::stackPointerRegister);
-
-    // Setup arg0
-    jit.move(JSInterfaceJIT::callFrameRegister, MIPSRegisters::a0);
-
-    // Call
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::Callee, MIPSRegisters::a2);
-    jit.loadPtr(JSInterfaceJIT::Address(MIPSRegisters::a2, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT2);
-    jit.move(JSInterfaceJIT::regT0, JSInterfaceJIT::callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
-    jit.call(JSInterfaceJIT::Address(JSInterfaceJIT::regT2, executableOffsetToFunction));
-
+#if CPU(MIPS)
     // Restore stack space
     jit.addPtr(JSInterfaceJIT::TrustedImm32(16), JSInterfaceJIT::stackPointerRegister);
+#endif
 
     jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT3);
 #else

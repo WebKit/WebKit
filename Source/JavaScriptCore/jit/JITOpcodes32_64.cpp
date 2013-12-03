@@ -74,7 +74,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
 
     addPtr(TrustedImm32(16 - sizeof(void*)), stackPointerRegister);
 
-#elif CPU(ARM) || CPU(SH4)
+#elif CPU(ARM) || CPU(SH4) || CPU(MIPS)
     // Load caller frame's scope chain into this callframe so that whatever we call can get to its global data.
     emitGetCallerFrameFromCallFrameHeaderPtr(regT2);
     emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT2);
@@ -82,6 +82,11 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
     emitPutReturnPCToCallFrameHeader(regT3);
+
+#if CPU(MIPS)
+    // Allocate stack space for (unused) 16 bytes (8-byte aligned) for 4 arguments.
+    subPtr(TrustedImm32(16), stackPointerRegister);
+#endif
 
     // Calling convention is f(argumentGPR0, argumentGPR1, ...).
     // Host function signature is f(ExecState*).
@@ -94,37 +99,10 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     // call the function
     nativeCall = call();
 
-    restoreReturnAddressBeforeReturn(regT3);
-#elif CPU(MIPS)
-    // Load caller frame's scope chain into this callframe so that whatever we call can
-    // get to its global data.
-    emitGetCallerFrameFromCallFrameHeaderPtr(regT0);
-    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT0);
-    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
-
-    preserveReturnAddressAfterCall(regT3); // Callee preserved
-    emitPutReturnPCToCallFrameHeader(regT3);
-
-    // Calling convention:      f(a0, a1, a2, a3);
-    // Host function signature: f(ExecState*);
-
-    // Allocate stack space for 16 bytes (8-byte aligned)
-    // 16 bytes (unused) for 4 arguments
-    subPtr(TrustedImm32(16), stackPointerRegister);
-
-    // Setup arg0
-    move(callFrameRegister, MIPSRegisters::a0);
-
-    // Call
-    emitGetFromCallFrameHeaderPtr(JSStack::Callee, MIPSRegisters::a2);
-    loadPtr(Address(MIPSRegisters::a2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-    move(regT0, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
-    
-    // call the function
-    nativeCall = call();
-
+#if CPU(MIPS)
     // Restore stack space
     addPtr(TrustedImm32(16), stackPointerRegister);
+#endif
 
     restoreReturnAddressBeforeReturn(regT3);
 #else

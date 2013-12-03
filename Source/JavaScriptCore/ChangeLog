@@ -1,3 +1,15 @@
+2013-12-03  Julien Brianceau  <jbriance@cisco.com>
+
+        Merge mips and arm/sh4 paths in nativeForGenerator and privateCompileCTINativeCall functions.
+        https://bugs.webkit.org/show_bug.cgi?id=125067
+
+        Reviewed by Michael Saboff.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+
 2013-12-02  Mark Lam  <mark.lam@apple.com>
 
         Build failure when disabling JIT, YARR_JIT, and ASSEMBLER.
