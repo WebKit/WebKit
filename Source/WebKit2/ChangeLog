@@ -1,3 +1,9 @@
+2013-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Tweak build fixes.
+
+        * Shared/APIClient.h:
+
 2013-12-03  Laszlo Vidacs  <lac@inf.u-szeged.hu>
 
         Fix EFL build error in WK2 (159965)

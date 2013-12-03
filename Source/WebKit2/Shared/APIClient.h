@@ -27,11 +27,8 @@
 #define APIClient_h
 
 #include "APIClientTraits.h"
+#include <algorithm>
 #include <array>
-
-#if !ASSERT_DISABLED
-#include <algorithm> // std::is_sorted
-#endif
 
 // FIXME: Transition all clients from WebKit::APIClient to API::Client.
 namespace API {
@@ -48,15 +45,7 @@ template<typename ClientInterface> class Client {
     template<typename... Interfaces> struct InterfaceSizes<std::tuple<Interfaces...>> {
         static std::array<size_t, sizeof...(Interfaces)> sizes()
         {
-#if COMPILER(CLANG)
-// Workaround for http://llvm.org/bugs/show_bug.cgi?id=18117
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-braces"
-#endif
             return { { sizeof(Interfaces)... } };
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
         }
     };
 
