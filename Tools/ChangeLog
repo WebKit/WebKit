@@ -1,3 +1,18 @@
+2013-12-03  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION: repro scripts disappear when you rerun tests
+        https://bugs.webkit.org/show_bug.cgi?id=125184
+
+        Reviewed by Mark Hahnenberg.
+        
+        This bug made it difficult to quickly see if a test that recently failed is still
+        failing while also running a new batch of tests.
+
+        Repro scripts are supposed to stay around until you delete them explicitly. This
+        patch accomplishes that.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-12-03  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] run-jsc-stress-tests has a great number of failures (2026/7606) on Windows

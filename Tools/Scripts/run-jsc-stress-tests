@@ -907,7 +907,7 @@ end
 
 def eachResultFile(startingDir, &block)
     dirsToClean = [startingDir]
-    until dirsToClean.empty? do
+    until dirsToClean.empty?
         nextDir = dirsToClean.pop
         Dir.foreach(nextDir) {
             | entry |
@@ -1139,20 +1139,24 @@ def compressBundle
     raise unless system(cmd)
 end
 
-FileUtils.rm_rf $outputDir if $outputDir.directory? and not $bundle
-Dir.mkdir($outputDir) unless $outputDir.directory?
-
-begin
-    File.delete($outputDir + "failed")
-rescue
+def clean(file)
+    FileUtils.rm_rf file unless $bundle
 end
+
+clean($outputDir + "failed")
+clean($outputDir + ".vm")
+clean($outputDir + ".runner")
+clean($outputDir + ".tests")
+clean($outputDir + "_payload")
+
+Dir.mkdir($outputDir) unless $outputDir.directory?
 
 $outputDir = $outputDir.realpath
 $runnerDir = $outputDir + ".runner"
 
 prepareBundle unless $bundle
 
-puts " "
+puts
 
 prepareTestRunner unless $bundle
 cleanRunnerDirectory if $bundle
