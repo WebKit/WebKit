@@ -202,4 +202,9 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
     m_remoteLayerTreeContext->setIsFlushingSuspended(isFrozen);
 }
 
+void RemoteLayerTreeDrawingArea::forceRepaint()
+{
+    m_remoteLayerTreeContext->forceRepaint();
+}
+
 } // namespace WebKit

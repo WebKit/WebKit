@@ -66,6 +66,9 @@ private:
 
     virtual void setLayerTreeStateIsFrozen(bool) OVERRIDE;
 
+    virtual void forceRepaint() OVERRIDE;
+    virtual bool forceRepaintAsync(uint64_t) OVERRIDE { return false; }
+
     // WebCore::GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE { }
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) OVERRIDE { }

@@ -58,6 +58,8 @@ public:
 
     void setIsFlushingSuspended(bool);
 
+    void forceRepaint();
+
 private:
     // WebCore::GraphicsLayerFactory
     virtual std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;
