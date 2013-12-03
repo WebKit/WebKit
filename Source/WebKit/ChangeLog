@@ -1,3 +1,16 @@
+2013-12-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r160017.
+
+    2013-12-03  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] WebKit.make Makefile doesn't copy resource bundle to DSTROOT
+            https://bugs.webkit.org/show_bug.cgi?id=125160
+
+            Reviewed by Tim Horton.
+
+            * WebKit.vcxproj/WebKit.make: Add copy command for resource bundle.
+
 2013-12-02  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r159941.
