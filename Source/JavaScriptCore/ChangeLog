@@ -1,3 +1,12 @@
+2013-12-03  László Langó  <lango@inf.u-szeged.hu>
+
+        Guard JIT include.
+        https://bugs.webkit.org/show_bug.cgi?id=125063
+
+        Reviewed by Filip Pizlo.
+
+        * llint/LLIntThunks.cpp:
+
 2013-12-03  Julien Brianceau  <jbriance@cisco.com>
 
         Merge mips and arm/sh4 paths in nativeForGenerator and privateCompileCTINativeCall functions.

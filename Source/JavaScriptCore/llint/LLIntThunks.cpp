@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LLIntThunks.h"
 
-#if ENABLE(LLINT)
+#if ENABLE(LLINT) && ENABLE(JIT)
 
 #include "JSInterfaceJIT.h"
 #include "JSObject.h"
@@ -35,8 +35,6 @@
 
 
 namespace JSC { namespace LLInt {
-
-#if !ENABLE(LLINT_C_LOOP)
 
 static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, void (*target)(), const char *thunkKind)
 {
@@ -80,8 +78,6 @@ MacroAssemblerCodeRef programEntryThunkGenerator(VM* vm)
     return generateThunkWithJumpTo(vm, llint_program_prologue, "program");
 }
 
-#endif // !ENABLE(LLINT_C_LOOP)
-
 } } // namespace JSC::LLInt
 
-#endif // ENABLE(LLINT)
+#endif // ENABLE(LLINT) && ENABLE(JIT)
