@@ -1,3 +1,57 @@
+2013-12-03  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Implement OES texture float linear
+        https://bugs.webkit.org/show_bug.cgi?id=124871
+
+        Reviewed by Brent Fulgham.
+
+        Implement the OES_texture_float_linear extension. Generally
+        we'd also enable OES_texture_half_float_linear at the same
+        time, but that's blocked on webkit.org/b/110936.
+
+        Test: fast/canvas/webgl/oes-texture-float-linear.html
+
+        * CMakeLists.txt: Add new files.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Generate new file from IDL.
+        * GNUmakefile.list.am: Add new files.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: New files for OESTextureFloatLinear.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS): Map the new name into the appropriate type.
+
+        * html/canvas/OESTextureFloatLinear.cpp: Added. This is a very simple class
+        that's mostly empty.
+        (WebCore::OESTextureFloatLinear::OESTextureFloatLinear):
+        (WebCore::OESTextureFloatLinear::~OESTextureFloatLinear):
+        (WebCore::OESTextureFloatLinear::getName):
+        (WebCore::OESTextureFloatLinear::create):
+        * html/canvas/OESTextureFloatLinear.h: Added.
+        * html/canvas/OESTextureFloatLinear.idl: Added.
+
+        * html/canvas/WebGLExtension.h: Declare the new name in the enum of extensions.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::drawArrays): Call new name.
+        (WebCore::WebGLRenderingContext::drawElements): Call new name.
+        (WebCore::WebGLRenderingContext::getExtension): Create the new extension if asked.
+        (WebCore::WebGLRenderingContext::checkTextureCompleteness): Renamed from handleNPOTTextures. Now
+        checks for the type of the texture too.
+        * html/canvas/WebGLRenderingContext.h: Member variable for new extension.
+
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::WebGLTexture):
+        (WebCore::WebGLTexture::needToUseBlackTexture): Takes an extra parameter which indicates
+        if it has an extension enabled.
+        (WebCore::WebGLTexture::update): Note it is a float type when updating.
+        * html/canvas/WebGLTexture.h: New flag to indicate float type.
+
+        * platform/graphics/Extensions3D.h: New flag type.
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension): Add a comment about the extension.
+
 2013-12-03  Alexey Proskuryakov  <ap@apple.com>
 
         Support exporting private WebCrypto RSA keys

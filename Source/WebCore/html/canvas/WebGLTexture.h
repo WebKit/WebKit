@@ -35,6 +35,12 @@ namespace WebCore {
 
 class WebGLTexture : public WebGLSharedObject {
 public:
+
+    enum TextureExtensionFlag {
+        TextureExtensionsDisabled = 0,
+        TextureExtensionFloatLinearEnabled = 1 << 0
+    };
+
     virtual ~WebGLTexture();
 
     static PassRefPtr<WebGLTexture> create(WebGLRenderingContext*);
@@ -64,7 +70,7 @@ public:
 
     bool isNPOT() const;
     // Determine if texture sampling should always return [0, 0, 0, 1] (OpenGL ES 2.0 Sec 3.8.2).
-    bool needToUseBlackTexture() const;
+    bool needToUseBlackTexture(TextureExtensionFlag) const;
 
     bool isCompressed() const;
     void setCompressed();
@@ -127,6 +133,7 @@ private:
     bool m_isComplete;
     bool m_needToUseBlackTexture;
     bool m_isCompressed;
+    bool m_isFloatType;
 };
 
 } // namespace WebCore

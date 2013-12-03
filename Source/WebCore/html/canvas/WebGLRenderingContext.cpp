@@ -49,6 +49,7 @@
 #include "OESElementIndexUint.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
+#include "OESTextureFloatLinear.h"
 #include "OESTextureHalfFloat.h"
 #include "OESVertexArrayObject.h"
 #include "Page.h"
@@ -1986,12 +1987,12 @@ void WebGLRenderingContext::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei c
     if (!isGLES2Compliant())
         vertexAttrib0Simulated = simulateVertexAttrib0(first + count - 1);
     if (!isGLES2NPOTStrict())
-        handleNPOTTextures("drawArrays", true);
+        checkTextureCompleteness("drawArrays", true);
     m_context->drawArrays(mode, first, count);
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
     if (!isGLES2NPOTStrict())
-        handleNPOTTextures("drawArrays", false);
+        checkTextureCompleteness("drawArrays", false);
     cleanupAfterGraphicsCall(true);
 }
 
@@ -2070,12 +2071,12 @@ void WebGLRenderingContext::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denu
         vertexAttrib0Simulated = simulateVertexAttrib0(numElements);
     }
     if (!isGLES2NPOTStrict())
-        handleNPOTTextures("drawElements", true);
+        checkTextureCompleteness("drawElements", true);
     m_context->drawElements(mode, count, type, static_cast<GC3Dintptr>(offset));
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
     if (!isGLES2NPOTStrict())
-        handleNPOTTextures("drawElements", false);
+        checkTextureCompleteness("drawElements", false);
     cleanupAfterGraphicsCall(true);
 }
 
@@ -2390,6 +2391,14 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_oesTextureFloat = OESTextureFloat::create(this);
         }
         return m_oesTextureFloat.get();
+    }
+    if (equalIgnoringCase(name, "OES_texture_float_linear")
+        && m_context->getExtensions()->supports("GL_OES_texture_float_linear")) {
+        if (!m_oesTextureFloatLinear) {
+            m_context->getExtensions()->ensureEnabled("GL_OES_texture_float_linear");
+            m_oesTextureFloatLinear = OESTextureFloatLinear::create(this);
+        }
+        return m_oesTextureFloatLinear.get();
     }
     if (equalIgnoringCase(name, "OES_texture_half_float")
         && m_context->getExtensions()->supports("GL_OES_texture_half_float")) {
@@ -4844,12 +4853,14 @@ WebGLGetInfo WebGLRenderingContext::getWebGLIntArrayParameter(GC3Denum pname)
     return WebGLGetInfo(Int32Array::create(value, length));
 }
 
-void WebGLRenderingContext::handleNPOTTextures(const char* functionName, bool prepareToDraw)
+void WebGLRenderingContext::checkTextureCompleteness(const char* functionName, bool prepareToDraw)
 {
     bool resetActiveUnit = false;
+    WebGLTexture::TextureExtensionFlag extensions = static_cast<WebGLTexture::TextureExtensionFlag>(m_oesTextureFloatLinear ? WebGLTexture::TextureExtensionFloatLinearEnabled : 0);
+
     for (unsigned ii = 0; ii < m_textureUnits.size(); ++ii) {
-        if ((m_textureUnits[ii].texture2DBinding && m_textureUnits[ii].texture2DBinding->needToUseBlackTexture())
-            || (m_textureUnits[ii].textureCubeMapBinding && m_textureUnits[ii].textureCubeMapBinding->needToUseBlackTexture())) {
+        if ((m_textureUnits[ii].texture2DBinding && m_textureUnits[ii].texture2DBinding->needToUseBlackTexture(extensions))
+            || (m_textureUnits[ii].textureCubeMapBinding && m_textureUnits[ii].textureCubeMapBinding->needToUseBlackTexture(extensions))) {
             if (ii != m_activeTextureUnit) {
                 m_context->activeTexture(ii);
                 resetActiveUnit = true;
@@ -4861,7 +4872,8 @@ void WebGLRenderingContext::handleNPOTTextures(const char* functionName, bool pr
             WebGLTexture* texCubeMap;
             if (prepareToDraw) {
                 String msg(String("texture bound to texture unit ") + String::number(ii)
-                    + " is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete'");
+                    + " is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete',"
+                    + " or it is a Float type with linear filtering and without the relevant float linear extension enabled.");
                 printGLWarningToConsole(functionName, msg.utf8().data());
                 tex2D = m_blackTexture2D.get();
                 texCubeMap = m_blackTextureCubeMap.get();
@@ -4869,9 +4881,9 @@ void WebGLRenderingContext::handleNPOTTextures(const char* functionName, bool pr
                 tex2D = m_textureUnits[ii].texture2DBinding.get();
                 texCubeMap = m_textureUnits[ii].textureCubeMapBinding.get();
             }
-            if (m_textureUnits[ii].texture2DBinding && m_textureUnits[ii].texture2DBinding->needToUseBlackTexture())
+            if (m_textureUnits[ii].texture2DBinding && m_textureUnits[ii].texture2DBinding->needToUseBlackTexture(extensions))
                 m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, objectOrZero(tex2D));
-            if (m_textureUnits[ii].textureCubeMapBinding && m_textureUnits[ii].textureCubeMapBinding->needToUseBlackTexture())
+            if (m_textureUnits[ii].textureCubeMapBinding && m_textureUnits[ii].textureCubeMapBinding->needToUseBlackTexture(extensions))
                 m_context->bindTexture(GraphicsContext3D::TEXTURE_CUBE_MAP, objectOrZero(texCubeMap));
         }
     }

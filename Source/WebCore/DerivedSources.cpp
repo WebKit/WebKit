@@ -43,6 +43,7 @@
 #include "JSOESElementIndexUint.cpp"
 #include "JSOESStandardDerivatives.cpp"
 #include "JSOESTextureFloat.cpp"
+#include "JSOESTextureFloatLinear.cpp"
 #include "JSOESTextureHalfFloat.cpp"
 #include "JSOESVertexArrayObject.cpp"
 #include "JSWebGLActiveInfo.cpp"

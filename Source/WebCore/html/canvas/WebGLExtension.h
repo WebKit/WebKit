@@ -39,6 +39,7 @@ public:
         EXTDrawBuffersName,
         EXTTextureFilterAnisotropicName,
         OESTextureFloatName,
+        OESTextureFloatLinearName,
         OESTextureHalfFloatName,
         OESStandardDerivativesName,
         OESVertexArrayObjectName,

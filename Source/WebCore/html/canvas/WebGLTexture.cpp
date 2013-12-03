@@ -51,6 +51,7 @@ WebGLTexture::WebGLTexture(WebGLRenderingContext* ctx)
     , m_isComplete(false)
     , m_needToUseBlackTexture(false)
     , m_isCompressed(false)
+    , m_isFloatType(false)
 {
     setObject(ctx->graphicsContext3D()->createTexture());
 }
@@ -233,11 +234,17 @@ bool WebGLTexture::isNPOT() const
     return m_isNPOT;
 }
 
-bool WebGLTexture::needToUseBlackTexture() const
+bool WebGLTexture::needToUseBlackTexture(TextureExtensionFlag extensions) const
 {
     if (!object())
         return false;
-    return m_needToUseBlackTexture;
+    if (m_needToUseBlackTexture)
+        return true;
+    if (m_isFloatType && !(extensions & TextureExtensionFloatLinearEnabled)) {
+        if (m_magFilter != GraphicsContext3D::NEAREST || (m_minFilter != GraphicsContext3D::NEAREST && m_minFilter != GraphicsContext3D::NEAREST_MIPMAP_NEAREST))
+            return true;
+    }
+    return false;
 }
 
 bool WebGLTexture::isCompressed() const
@@ -353,6 +360,18 @@ void WebGLTexture::update()
                     break;
                 }
 
+            }
+        }
+    }
+
+    m_isFloatType = false;
+    if (m_isComplete)
+        m_isFloatType = m_info[0][0].type == GraphicsContext3D::FLOAT;
+    else {
+        for (size_t ii = 0; ii < m_info.size(); ++ii) {
+            if (m_info[ii][0].type == GraphicsContext3D::FLOAT) {
+                m_isFloatType = true;
+                break;
             }
         }
     }

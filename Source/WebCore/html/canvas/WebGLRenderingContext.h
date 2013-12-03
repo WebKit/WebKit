@@ -50,6 +50,7 @@ class ImageData;
 class IntSize;
 class OESStandardDerivatives;
 class OESTextureFloat;
+class OESTextureFloatLinear;
 class OESTextureHalfFloat;
 class OESVertexArrayObject;
 class OESElementIndexUint;
@@ -525,6 +526,7 @@ private:
     OwnPtr<EXTDrawBuffers> m_extDrawBuffers;
     OwnPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
     OwnPtr<OESTextureFloat> m_oesTextureFloat;
+    OwnPtr<OESTextureFloatLinear> m_oesTextureFloatLinear;
     OwnPtr<OESTextureHalfFloat> m_oesTextureHalfFloat;
     OwnPtr<OESStandardDerivatives> m_oesStandardDerivatives;
     OwnPtr<OESVertexArrayObject> m_oesVertexArrayObject;
@@ -559,7 +561,7 @@ private:
     void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&);
     void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&);
 
-    void handleNPOTTextures(const char*, bool);
+    void checkTextureCompleteness(const char*, bool);
 
     void createFallbackBlackTextures1x1();
 

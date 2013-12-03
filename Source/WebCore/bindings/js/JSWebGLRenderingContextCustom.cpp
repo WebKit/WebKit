@@ -42,6 +42,7 @@
 #include "JSOESElementIndexUint.h"
 #include "JSOESStandardDerivatives.h"
 #include "JSOESTextureFloat.h"
+#include "JSOESTextureFloatLinear.h"
 #include "JSOESTextureHalfFloat.h"
 #include "JSOESVertexArrayObject.h"
 #include "JSWebGLBuffer.h"
@@ -64,6 +65,7 @@
 #include "OESElementIndexUint.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
+#include "OESTextureFloatLinear.h"
 #include "OESTextureHalfFloat.h"
 #include "OESVertexArrayObject.h"
 #include "WebGLBuffer.h"
@@ -207,6 +209,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
         return toJS(exec, globalObject, static_cast<OESStandardDerivatives*>(extension));
     case WebGLExtension::OESTextureFloatName:
         return toJS(exec, globalObject, static_cast<OESTextureFloat*>(extension));
+    case WebGLExtension::OESTextureFloatLinearName:
+        return toJS(exec, globalObject, static_cast<OESTextureFloatLinear*>(extension));
     case WebGLExtension::OESTextureHalfFloatName:
         return toJS(exec, globalObject, static_cast<OESTextureHalfFloat*>(extension));
     case WebGLExtension::OESVertexArrayObjectName:
