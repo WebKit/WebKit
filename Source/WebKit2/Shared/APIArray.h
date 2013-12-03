@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,8 @@
 #define APIArray_h
 
 #include "APIObject.h"
+#include "FilterIterator.h"
+#include "IteratorPair.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -34,6 +36,13 @@
 namespace API {
 
 class Array FINAL : public TypedObject<Object::Type::Array> {
+private:
+    template<typename T>
+    static inline const T* getObject(const RefPtr<Object>& object) { return static_cast<const T*>(object.get()); }
+
+    template<typename T>
+    static inline bool isType(const RefPtr<Object>& object) { return object->type() == T::APIType; }
+
 public:
     static PassRefPtr<Array> create();
     static PassRefPtr<Array> create(Vector<RefPtr<Object>> elements);
@@ -45,7 +54,7 @@ public:
     template<typename T>
     T* at(size_t i) const
     {
-        if (m_elements[i]->type() != T::APIType)
+        if (!isType<T>(m_elements[i]))
             return nullptr;
 
         return static_cast<T*>(m_elements[i].get());
@@ -56,6 +65,12 @@ public:
 
     const Vector<RefPtr<Object>>& elements() const { return m_elements; }
     Vector<RefPtr<Object>>& elements() { return m_elements; }
+
+    template<typename T>
+    IteratorPair<FilterIterator<decltype(&isType<T>), decltype(&getObject<T>), Vector<RefPtr<Object>>::const_iterator>> elementsOfType()
+    {
+        return IteratorPair<FilterIterator<decltype(&isType<T>), decltype(&getObject<T>), Vector<RefPtr<Object>>::const_iterator>>(FilterIterator<decltype(&isType<T>), decltype(&getObject<T>), Vector<RefPtr<Object>>::const_iterator>(isType<T>, getObject<T>, m_elements.begin(), m_elements.end()), FilterIterator<decltype(&isType<T>), decltype(&getObject<T>), Vector<RefPtr<Object>>::const_iterator>(isType<T>, getObject<T>, m_elements.end(), m_elements.end()));
+    }
 
 private:
     explicit Array(Vector<RefPtr<Object>> elements);

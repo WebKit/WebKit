@@ -1,3 +1,20 @@
+2013-12-02  Martin Hock  <mhock@apple.com>
+
+        Add ability to iterate over API::Array
+        https://bugs.webkit.org/show_bug.cgi?id=124533
+
+        Reviewed by Sam Weinig.
+
+        * GNUmakefile.list.am:
+        * Shared/APIArray.h:
+        * Shared/FilterIterator.h:
+        * Shared/IteratorPair.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::toStringVector):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::getPasteboardDataForRange):
+
 2013-12-02  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] WebProtectionSpace has a generic wrapper

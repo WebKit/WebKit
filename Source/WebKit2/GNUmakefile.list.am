@@ -422,6 +422,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/Downloads/soup/DownloadSoupErrors.h \
 	Source/WebKit2/Shared/EditorState.cpp \
 	Source/WebKit2/Shared/EditorState.h \
+	Source/WebKit2/Shared/FilterIterator.h \
 	Source/WebKit2/Shared/FontSmoothingLevel.h \
 	Source/WebKit2/Shared/ProcessExecutablePath.h \
 	Source/WebKit2/Shared/cairo/ShareableBitmapCairo.cpp \
@@ -438,6 +439,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/ImageOptions.h \
 	Source/WebKit2/Shared/ImmutableDictionary.cpp \
 	Source/WebKit2/Shared/ImmutableDictionary.h \
+	Source/WebKit2/Shared/IteratorPair.h \
 	Source/WebKit2/Shared/LayerTreeContext.h \
 	Source/WebKit2/Shared/MutableDictionary.cpp \
 	Source/WebKit2/Shared/MutableDictionary.h \

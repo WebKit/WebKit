@@ -684,6 +684,7 @@
 		6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		728E86F11795188C0087879E /* WebColorPickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 728E86EF1795188C0087879E /* WebColorPickerMac.h */; };
 		728E86F21795188C0087879E /* WebColorPickerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 728E86F01795188C0087879E /* WebColorPickerMac.mm */; };
+		752A8077183D6DA7003D659E /* FilterIterator.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 752A8076183D6DA7003D659E /* FilterIterator.h */; };
 		755422BB18062B9C0046F6A8 /* WKOriginDataManager.cpp in Copy Files */ = {isa = PBXBuildFile; fileRef = 755422B918062B9C0046F6A8 /* WKOriginDataManager.cpp */; };
 		755422BC18062B9C0046F6A8 /* WKOriginDataManager.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 755422BA18062B9C0046F6A8 /* WKOriginDataManager.h */; };
 		755422BD18062BB20046F6A8 /* WKOriginDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422B918062B9C0046F6A8 /* WKOriginDataManager.cpp */; };
@@ -691,6 +692,7 @@
 		755422C418062BF90046F6A8 /* WebOriginDataManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422BE18062BE40046F6A8 /* WebOriginDataManagerProxy.cpp */; };
 		755422CB180650020046F6A8 /* WebOriginDataManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 755422C618064FFC0046F6A8 /* WebOriginDataManager.cpp */; };
 		755422CC180773CE0046F6A8 /* WebOriginDataManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 755422C718064FFC0046F6A8 /* WebOriginDataManager.h */; };
+		757AF978184D131400E6316E /* IteratorPair.h in Headers */ = {isa = PBXBuildFile; fileRef = 757AF976184D130500E6316E /* IteratorPair.h */; };
 		759CCD581808F1640078E8A8 /* WebOriginDataManagerProxyChangeClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 759CCD541808F1600078E8A8 /* WebOriginDataManagerProxyChangeClient.cpp */; };
 		759CCD591808F1690078E8A8 /* WebOriginDataManagerProxyChangeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 759CCD551808F1600078E8A8 /* WebOriginDataManagerProxyChangeClient.h */; };
 		759CCD5A1808F6160078E8A8 /* WebOriginDataManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 755422BF18062BE40046F6A8 /* WebOriginDataManagerProxy.h */; };
@@ -1467,6 +1469,7 @@
 				51A60B2A180CCEB500F3BF50 /* DatabaseProcess.app in Copy Files */,
 				755422C318062BE40046F6A8 /* WebOriginDataManagerProxy.messages.in in Copy Files */,
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in Copy Files */,
+				752A8077183D6DA7003D659E /* FilterIterator.h in Copy Files */,
 				755422BB18062B9C0046F6A8 /* WKOriginDataManager.cpp in Copy Files */,
 			);
 			name = "Copy Files";
@@ -2252,6 +2255,7 @@
 		6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKInspectorPrivateMac.h; path = mac/WKInspectorPrivateMac.h; sourceTree = "<group>"; };
 		728E86EF1795188C0087879E /* WebColorPickerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPickerMac.h; sourceTree = "<group>"; };
 		728E86F01795188C0087879E /* WebColorPickerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebColorPickerMac.mm; sourceTree = "<group>"; };
+		752A8076183D6DA7003D659E /* FilterIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterIterator.h; sourceTree = "<group>"; };
 		755422B918062B9C0046F6A8 /* WKOriginDataManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKOriginDataManager.cpp; sourceTree = "<group>"; };
 		755422BA18062B9C0046F6A8 /* WKOriginDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOriginDataManager.h; sourceTree = "<group>"; };
 		755422BE18062BE40046F6A8 /* WebOriginDataManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebOriginDataManagerProxy.cpp; sourceTree = "<group>"; };
@@ -2260,6 +2264,7 @@
 		755422C618064FFC0046F6A8 /* WebOriginDataManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebOriginDataManager.cpp; path = OriginData/WebOriginDataManager.cpp; sourceTree = "<group>"; };
 		755422C718064FFC0046F6A8 /* WebOriginDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebOriginDataManager.h; path = OriginData/WebOriginDataManager.h; sourceTree = "<group>"; };
 		755422C818064FFC0046F6A8 /* WebOriginDataManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebOriginDataManager.messages.in; path = OriginData/WebOriginDataManager.messages.in; sourceTree = "<group>"; };
+		757AF976184D130500E6316E /* IteratorPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorPair.h; sourceTree = "<group>"; };
 		759CCD541808F1600078E8A8 /* WebOriginDataManagerProxyChangeClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebOriginDataManagerProxyChangeClient.cpp; sourceTree = "<group>"; };
 		759CCD551808F1600078E8A8 /* WebOriginDataManagerProxyChangeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebOriginDataManagerProxyChangeClient.h; sourceTree = "<group>"; };
 		75E749E5180DBB9800088BA6 /* WebOriginDataManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebOriginDataManagerMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -3425,6 +3430,7 @@
 				0FB659221208B4DB0044816C /* DrawingAreaInfo.h */,
 				8CFECE931490F140002AAA32 /* EditorState.cpp */,
 				1AA41AB412C02EC4002BE67B /* EditorState.h */,
+				752A8076183D6DA7003D659E /* FilterIterator.h */,
 				BCE81D8A1319F7EF00241910 /* FontInfo.cpp */,
 				BCE81D8B1319F7EF00241910 /* FontInfo.h */,
 				762B7481120BBA0100819339 /* FontSmoothingLevel.h */,
@@ -3432,6 +3438,7 @@
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
 				BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */,
 				BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */,
+				757AF976184D130500E6316E /* IteratorPair.h */,
 				1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */,
 				BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */,
 				BCB0AEE7122F53E300B1341E /* MutableDictionary.h */,
@@ -5796,6 +5803,7 @@
 				51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */,
 				E179088F169BAA6A006904C7 /* SecItemShim.h in Headers */,
 				511F8A7B138B460900A95F44 /* SecItemShimLibrary.h in Headers */,
+				757AF978184D131400E6316E /* IteratorPair.h in Headers */,
 				E1790891169BAA82006904C7 /* SecItemShimMessages.h in Headers */,
 				E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */,
 				E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */,

@@ -154,20 +154,12 @@ void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage* page, Ra
 
         ASSERT(typesArray->size() == dataArray->size());
 
-        size_t size = typesArray->size();
-        for (size_t i = 0; i < size; ++i) {
-            WebString* type = typesArray->at<WebString>(i);
-            if (type)
-                pasteboardTypes.append(type->string());
-        }
+        for (const auto& type : typesArray->elementsOfType<WebString>())
+            pasteboardTypes.append(type->string());
 
-        size = dataArray->size();
-        for (size_t i = 0; i < size; ++i) {
-            WebData* item = dataArray->at<WebData>(i);
-            if (item) {
-                RefPtr<SharedBuffer> buffer = SharedBuffer::create(item->bytes(), item->size());
-                pasteboardData.append(buffer);
-            }
+        for (const auto& item : dataArray->elementsOfType<WebData>()) {
+            RefPtr<SharedBuffer> buffer = SharedBuffer::create(item->bytes(), item->size());
+            pasteboardData.append(buffer);
         }
     }
 }
