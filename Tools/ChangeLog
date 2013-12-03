@@ -1,3 +1,21 @@
+2013-12-03  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        run-jsc-stress-tests only supports host environments that have make installed
+        https://bugs.webkit.org/show_bug.cgi?id=124550
+
+        Reviewed by Darin Adler.
+
+        This might not be the case for all hosts, so this patch implements an alternate "backend" 
+        for run-jsc-stress-tests to use normal shell commands rather than Makefiles. To remain at 
+        least somewhat competitive with the make-based test runner, the shell backend uses subshells
+        run in the background to allow tests to run in parallel. Since the concurrency primitives 
+        in shell scripting are rather coarse, the overhead of this parallelism is higher than that 
+        of the make-based runner.
+
+        * Scripts/jsc-stress-test-helpers/shell-runner.sh: Added. This is the runner that is copied into
+        the bundle and controls all of the parallel aspects of the shell-based test runner.
+        * Scripts/run-jsc-stress-tests:
+
 2013-12-03  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Remove function from TextChecker
