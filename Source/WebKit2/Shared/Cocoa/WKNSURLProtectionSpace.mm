@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProtectionSpace_h
-#define WebProtectionSpace_h
+#import "config.h"
+#import "WKNSURLProtectionSpace.h"
 
-#include "APIObject.h"
-#include <WebCore/ProtectionSpace.h>
-#include <wtf/PassRefPtr.h>
+#if WK_API_ENABLED
 
-namespace WebKit {
+#import <WebCore/AuthenticationMac.h>
 
-class WebProtectionSpace : public API::TypedObject<API::Object::Type::ProtectionSpace> {
-public:
-    static PassRefPtr<WebProtectionSpace> create(const WebCore::ProtectionSpace& protectionSpace)
-    {
-        return adoptRef(new WebProtectionSpace(protectionSpace));
-    }
-    
-    const String& protocol() const;
-    const String& host() const;
-    int port() const;
-    const String& realm() const;
-    bool isProxy() const;
-    WebCore::ProtectionSpaceServerType serverType() const;
-    bool receivesCredentialSecurely() const;
-    WebCore::ProtectionSpaceAuthenticationScheme authenticationScheme() const;
+using namespace WebCore;
+using namespace WebKit;
 
-    const WebCore::ProtectionSpace& protectionSpace() const { return m_coreProtectionSpace; }
+@implementation WKNSURLProtectionSpace
 
-private:
-    explicit WebProtectionSpace(const WebCore::ProtectionSpace&);
+- (NSObject *)_web_createTarget
+{
+    return [mac(reinterpret_cast<WebProtectionSpace*>(&self._apiObject)->protectionSpace()) copy];
+}
 
-    WebCore::ProtectionSpace m_coreProtectionSpace;
-};
+#pragma mark NSCopying protocol implementation
 
-} // namespace WebKit
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
 
-#endif // WebProtectionSpace_h
+@end
+
+#endif // WK_API_ENABLED

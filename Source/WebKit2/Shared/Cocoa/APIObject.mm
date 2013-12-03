@@ -37,6 +37,7 @@
 #import "WKNSError.h"
 #import "WKNSString.h"
 #import "WKNSURL.h"
+#import "WKNSURLProtectionSpace.h"
 #import "WKNavigationDataInternal.h"
 #import "WKProcessGroupInternal.h"
 
@@ -95,6 +96,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::PageGroup:
         wrapper = [WKBrowsingContextGroup alloc];
+        break;
+
+    case Type::ProtectionSpace:
+        wrapper = NSAllocateObject([WKNSURLProtectionSpace class], size, nullptr);
         break;
 
     case Type::String:
