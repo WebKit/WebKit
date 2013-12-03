@@ -125,7 +125,7 @@ class ChangeLogCheckerTest(unittest.TestCase):
                           '        ExampleBug\n'
                           '        http://bugs.webkit.org/show_bug.cgi?id=12345\n'
                           '\n'
-                          '        No new tests. (OOPS!)\n'
+                          '        No new tests (OOPS!).\n'
                           '        *  Source/Tools/random-script.py: Fixed')
 
     def test_no_error(self):

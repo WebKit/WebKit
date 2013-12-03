@@ -1,3 +1,16 @@
+2013-12-03  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
+
+        Style Checker false pass.
+        https://bugs.webkit.org/show_bug.cgi?id=112456
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/style/checkers/changelog.py:
+        (ChangeLogChecker.check_entry):
+        simple regex fix to check "No new tests (...)."
+        * Scripts/webkitpy/style/checkers/changelog_unittest.py:
+        (ChangeLogCheckerTest.test_no_new_tests):
+
 2013-12-02  Filip Pizlo  <fpizlo@apple.com>
 
         run-jsc-stress-tests should allow for tests that have a directory containing .js files nested within a directory containing the data
