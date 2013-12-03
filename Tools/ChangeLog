@@ -1,3 +1,20 @@
+2013-12-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Support 64-bit Application Support Libraries Location 
+        https://bugs.webkit.org/show_bug.cgi?id=125179
+
+        Reviewed by Tim Horton.
+
+        Enable the user to specify a location for 64-bit support libraries (such as libxml2, ICU, etc.)
+        on Windows until an official distribution is available that properly creates registry settings
+        to specify these locations.
+
+        * Scripts/webkitdirs.pm:
+        (setupAppleWinEnv): Notify user to set WEBKIT_64_SUPPORT environment variable if needed.
+        (setupCygwinEnv): Report WEWBKIT_64_SUPPORT path when running 64-bit builds.
+        (appleApplicationSupportPath): Add WEBKIT_64_SUPPORT location to runtime environment when
+        running 64-bit builds.
+
 2013-12-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         run-jsc-stress-tests only supports host environments that have make installed

@@ -1574,6 +1574,11 @@ sub setupAppleWinEnv()
             print "         to be able build WebKit from within Visual Studio 2010 and newer.\n\n";
         }
     }
+    # FIXME (125180): Remove the following temporary 64-bit support once official support is available.
+    if (isWin64() and !$ENV{'WEBKIT_64_SUPPORT'}) {
+        print "Warning: You must set the 'WEBKIT_64_SUPPORT' environment variable\n";
+        print "         to be able run WebKit or JavaScriptCore tests.\n\n";
+    }
 }
 
 sub setupCygwinEnv()
@@ -1606,6 +1611,8 @@ sub setupCygwinEnv()
     print "Building results into: ", baseProductDir(), "\n";
     print "WEBKIT_OUTPUTDIR is set to: ", $ENV{"WEBKIT_OUTPUTDIR"}, "\n";
     print "WEBKIT_LIBRARIES is set to: ", $ENV{"WEBKIT_LIBRARIES"}, "\n";
+    # FIXME (125180): Remove the following temporary 64-bit support once official support is available.
+    print "WEBKIT_64_SUPPORT is set to: ", $ENV{"WEBKIT_64_SUPPORT"}, "\n" if isWin64();
 }
 
 sub dieIfWindowsPlatformSDKNotInstalled
@@ -2118,6 +2125,11 @@ sub buildGtkProject
 
 sub appleApplicationSupportPath
 {
+    if (isWin64()) {
+        # FIXME (125180): Remove the following once official 64-bit Windows support is available.
+        return $ENV{"WEBKIT_64_SUPPORT"}, "\n" if isWin64();
+    }
+
     open INSTALL_DIR, "</proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Apple\ Inc./Apple\ Application\ Support/InstallDir";
     my $path = <INSTALL_DIR>;
     $path =~ s/[\r\n\x00].*//;
