@@ -4212,7 +4212,11 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
     closeMediaSource();
 #endif
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    if (!shouldUseVideoPluginProxy())
+#endif
     m_player.clear();
+
     stopPeriodicTimers();
     m_loadTimer.stop();
 
