@@ -161,11 +161,6 @@ public:
     virtual String cssText() const OVERRIDE;
     virtual bool equals(const CSSBasicShape&) const OVERRIDE;
 
-#if ENABLE(CSS_VARIABLES)
-    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-    virtual bool hasVariableReference() const;
-#endif
-
 private:
     CSSBasicShapeInset() { }
 
