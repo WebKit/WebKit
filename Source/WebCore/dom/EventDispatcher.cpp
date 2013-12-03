@@ -218,17 +218,17 @@ void EventDispatcher::dispatchSimulatedClick(Element* element, Event* underlying
         return;
 
     if (mouseEventOptions == SendMouseOverUpDownEvents)
-        dispatchEvent(element, SimulatedMouseEvent::create(eventNames().mouseoverEvent, element->document().defaultView(), underlyingEvent));
+        dispatchEvent(element, SimulatedMouseEvent::create(eventNames().mouseoverEvent, element->document().defaultView(), underlyingEvent, element));
 
     if (mouseEventOptions != SendNoEvents)
-        dispatchEvent(element, SimulatedMouseEvent::create(eventNames().mousedownEvent, element->document().defaultView(), underlyingEvent));
+        dispatchEvent(element, SimulatedMouseEvent::create(eventNames().mousedownEvent, element->document().defaultView(), underlyingEvent, element));
     element->setActive(true, visualOptions == ShowPressedLook);
     if (mouseEventOptions != SendNoEvents)
-        dispatchEvent(element, SimulatedMouseEvent::create(eventNames().mouseupEvent, element->document().defaultView(), underlyingEvent));
+        dispatchEvent(element, SimulatedMouseEvent::create(eventNames().mouseupEvent, element->document().defaultView(), underlyingEvent, element));
     element->setActive(false);
 
     // always send click
-    dispatchEvent(element, SimulatedMouseEvent::create(eventNames().clickEvent, element->document().defaultView(), underlyingEvent));
+    dispatchEvent(element, SimulatedMouseEvent::create(eventNames().clickEvent, element->document().defaultView(), underlyingEvent, element));
 
     elementsDispatchingSimulatedClicks.remove(element);
 }

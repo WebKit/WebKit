@@ -252,16 +252,16 @@ PassRefPtr<Event> MouseEvent::cloneFor(HTMLIFrameElement* iframe) const
     return clonedMouseEvent.release();
 }
 
-PassRefPtr<SimulatedMouseEvent> SimulatedMouseEvent::create(const AtomicString& eventType, PassRefPtr<AbstractView> view, PassRefPtr<Event> underlyingEvent)
+PassRefPtr<SimulatedMouseEvent> SimulatedMouseEvent::create(const AtomicString& eventType, PassRefPtr<AbstractView> view, PassRefPtr<Event> underlyingEvent, Element* target)
 {
-    return adoptRef(new SimulatedMouseEvent(eventType, view, underlyingEvent));
+    return adoptRef(new SimulatedMouseEvent(eventType, view, underlyingEvent, target));
 }
 
 SimulatedMouseEvent::~SimulatedMouseEvent()
 {
 }
 
-SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<AbstractView> view, PassRefPtr<Event> underlyingEvent)
+SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<AbstractView> view, PassRefPtr<Event> underlyingEvent, Element* target)
     : MouseEvent(eventType, true, true, underlyingEvent ? underlyingEvent->timeStamp() : currentTime(), view, 0, 0, 0, 0, 0,
 #if ENABLE(POINTER_LOCK)
                  0, 0,
@@ -280,6 +280,9 @@ SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefP
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(this->underlyingEvent());
         m_screenLocation = mouseEvent->screenLocation();
         initCoordinates(mouseEvent->clientLocation());
+    } else if (target) {
+        m_screenLocation = target->screenRect().center();
+        initCoordinates(LayoutPoint(target->clientRect().center()));
     }
 }
 

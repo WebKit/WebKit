@@ -219,7 +219,9 @@ public:
     PassRefPtr<ClientRectList> getClientRects();
     PassRefPtr<ClientRect> getBoundingClientRect();
     
-    // Returns the absolute bounding box translated into screen coordinates:
+    // Returns the absolute bounding box translated into client coordinates.
+    IntRect clientRect() const;
+    // Returns the absolute bounding box translated into screen coordinates.
     IntRect screenRect() const;
 
     void removeAttribute(const AtomicString& name);

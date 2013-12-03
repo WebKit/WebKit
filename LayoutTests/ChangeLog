@@ -1,3 +1,15 @@
+2013-12-03  Samuel White  <samuel_white@apple.com>
+
+        AXPress event coordinates are always sent as (0, 0)
+        https://bugs.webkit.org/show_bug.cgi?id=76677
+
+        Reviewed by Simon Fraser.
+
+        Make sure a press targets an element's center point.
+
+        * accessibility/press-targets-center-point-expected.txt: Added.
+        * accessibility/press-targets-center-point.html: Added.
+
 2013-12-03  Dean Jackson  <dino@apple.com>
 
         [WebGL] Implement OES texture float linear
