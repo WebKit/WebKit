@@ -33,7 +33,31 @@ typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRe
 typedef void (*WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void *clientInfo);
 typedef WKTypeRef (*WKContextGetInjectedBundleInitializationUserDataCallback)(WKContextRef context, const void *clientInfo);
 
-struct WKContextInjectedBundleClient {
+typedef struct WKContextInjectedBundleClientBase {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+} WKContextInjectedBundleClientBase;
+
+typedef struct WKContextInjectedBundleClientV0 {
+    WKContextInjectedBundleClientBase                                   base;
+
+    // Version 0.
+    WKContextDidReceiveMessageFromInjectedBundleCallback                didReceiveMessageFromInjectedBundle;
+    WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback     didReceiveSynchronousMessageFromInjectedBundle;
+} WKContextInjectedBundleClientV0;
+
+typedef struct WKContextInjectedBundleClientV1 {
+    WKContextInjectedBundleClientBase                                   base;
+
+    // Version 0.
+    WKContextDidReceiveMessageFromInjectedBundleCallback                didReceiveMessageFromInjectedBundle;
+    WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback     didReceiveSynchronousMessageFromInjectedBundle;
+
+    // Version 1.
+    WKContextGetInjectedBundleInitializationUserDataCallback            getInjectedBundleInitializationUserData;
+} WKContextInjectedBundleClientV1;
+
+typedef struct WKContextInjectedBundleClient {
     int                                                                 version;
     const void *                                                        clientInfo;
 
@@ -43,8 +67,7 @@ struct WKContextInjectedBundleClient {
 
     // Version 1.
     WKContextGetInjectedBundleInitializationUserDataCallback            getInjectedBundleInitializationUserData;
-};
-typedef struct WKContextInjectedBundleClient WKContextInjectedBundleClient;
+} WKContextInjectedBundleClient;
 
 enum { kWKContextInjectedBundleClientCurrentVersion = 1 };
 

@@ -40,9 +40,15 @@ typedef void (*WKContextDownloadDidFailCallback)(WKContextRef context, WKDownloa
 typedef void (*WKContextDownloadDidCancel)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
 typedef void (*WKContextDownloadProcessDidCrashCallback)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
 
-struct WKContextDownloadClient {
+typedef struct WKContextDownloadClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKContextDownloadClientBase;
+
+typedef struct WKContextDownloadClientV0 {
+    WKContextDownloadClientBase                                         base;
+
+    // Version 0.
     WKContextDownloadDidStartCallback                                   didStart;
     WKContextDownloadDidReceiveAuthenticationChallengeCallback          didReceiveAuthenticationChallenge;
     WKContextDownloadDidReceiveResponseCallback                         didReceiveResponse;
@@ -54,9 +60,26 @@ struct WKContextDownloadClient {
     WKContextDownloadDidFailCallback                                    didFail;
     WKContextDownloadDidCancel                                          didCancel;
     WKContextDownloadProcessDidCrashCallback                            processDidCrash;
-};
-typedef struct WKContextDownloadClient WKContextDownloadClient;
+} WKContextDownloadClientV0;
 
+// FIXME: Deprecate.
 enum { kWKContextDownloadClientCurrentVersion = 0 };
+typedef struct WKContextDownloadClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKContextDownloadDidStartCallback                                   didStart;
+    WKContextDownloadDidReceiveAuthenticationChallengeCallback          didReceiveAuthenticationChallenge;
+    WKContextDownloadDidReceiveResponseCallback                         didReceiveResponse;
+    WKContextDownloadDidReceiveDataCallback                             didReceiveData;
+    WKContextDownloadShouldDecodeSourceDataOfMIMETypeCallback           shouldDecodeSourceDataOfMIMEType;
+    WKContextDownloadDecideDestinationWithSuggestedFilenameCallback     decideDestinationWithSuggestedFilename;
+    WKContextDownloadDidCreateDestinationCallback                       didCreateDestination;
+    WKContextDownloadDidFinishCallback                                  didFinish;
+    WKContextDownloadDidFailCallback                                    didFail;
+    WKContextDownloadDidCancel                                          didCancel;
+    WKContextDownloadProcessDidCrashCallback                            processDidCrash;
+} WKContextDownloadClient;
 
 #endif // WKContextDownloadClient_h

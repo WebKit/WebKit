@@ -48,7 +48,23 @@ typedef void (*WKContextPlugInAutoStartOriginHashesChangedCallback)(WKContextRef
 typedef void (*WKContextNetworkProcessDidCrashCallback)(WKContextRef context, const void *clientInfo);
 typedef void (*WKContextPlugInInformationBecameAvailableCallback)(WKContextRef context, WKArrayRef plugIn, const void *clientInfo);
 
-struct WKContextClient {
+typedef struct WKContextClientBase {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+} WKContextClientBase;
+
+typedef struct WKContextClientV0 {
+    WKContextClientBase                                                 base;
+
+    // Version 0.
+    WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
+    WKContextNetworkProcessDidCrashCallback                             networkProcessDidCrash;
+    WKContextPlugInInformationBecameAvailableCallback                   plugInInformationBecameAvailable;
+} WKContextClientV0;
+
+// FIXME: Deprecate.
+enum { kWKContextClientCurrentVersion = 0 };
+typedef struct WKContextClient {
     int                                                                 version;
     const void *                                                        clientInfo;
 
@@ -56,10 +72,7 @@ struct WKContextClient {
     WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
     WKContextNetworkProcessDidCrashCallback                             networkProcessDidCrash;
     WKContextPlugInInformationBecameAvailableCallback                   plugInInformationBecameAvailable;
-};
-typedef struct WKContextClient WKContextClient;
-
-enum { kWKContextClientCurrentVersion = 0 };
+} WKContextClient;
 
 enum {
     kWKProcessModelSharedSecondaryProcess = 0,

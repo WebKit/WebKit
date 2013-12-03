@@ -34,17 +34,34 @@ typedef void (*WKContextDidPerformServerRedirectCallback)(WKContextRef context, 
 typedef void (*WKContextDidUpdateHistoryTitleCallback)(WKContextRef context, WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKContextPopulateVisitedLinksCallback)(WKContextRef context, const void *clientInfo);
 
-struct WKContextHistoryClient {
+typedef struct WKContextHistoryClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKContextHistoryClientBase;
+
+typedef struct WKContextHistoryClientV0 {
+    WKContextHistoryClientBase                                          base;
+
+    // Version 0.
     WKContextDidNavigateWithNavigationDataCallback                      didNavigateWithNavigationData;
     WKContextDidPerformClientRedirectCallback                           didPerformClientRedirect;
     WKContextDidPerformServerRedirectCallback                           didPerformServerRedirect;
     WKContextDidUpdateHistoryTitleCallback                              didUpdateHistoryTitle;
     WKContextPopulateVisitedLinksCallback                               populateVisitedLinks;
-};
-typedef struct WKContextHistoryClient WKContextHistoryClient;
+} WKContextHistoryClientV0;
 
+// FIXME: Deprecate.
 enum { kWKContextHistoryClientCurrentVersion = 0 };
+typedef struct WKContextHistoryClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKContextDidNavigateWithNavigationDataCallback                      didNavigateWithNavigationData;
+    WKContextDidPerformClientRedirectCallback                           didPerformClientRedirect;
+    WKContextDidPerformServerRedirectCallback                           didPerformServerRedirect;
+    WKContextDidUpdateHistoryTitleCallback                              didUpdateHistoryTitle;
+    WKContextPopulateVisitedLinksCallback                               populateVisitedLinks;
+} WKContextHistoryClient;
 
 #endif // WKContextHistoryClient_h

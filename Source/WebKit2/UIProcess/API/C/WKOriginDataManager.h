@@ -55,14 +55,28 @@ WK_EXPORT void WKOriginDataManagerDeleteAllEntries(WKOriginDataManagerRef origin
 
 // OriginDataManager Client
 typedef void (*WKOriginDataManagerChangeCallback)(WKOriginDataManagerRef originDataManager, const void *clientInfo);
-struct WKOriginDataManagerChangeClient {
-    int                                 version;
-    const void *                        clientInfo;
-    WKOriginDataManagerChangeCallback   didChange;
-};
-typedef struct WKOriginDataManagerChangeClient WKOriginDataManagerChangeClient;
 
+typedef struct WKOriginDataManagerChangeClientBase {
+    const void *                                                        clientInfo;
+    int                                                                 version;
+} WKOriginDataManagerChangeClientBase;
+
+typedef struct WKOriginDataManagerChangeClientV0 {
+    WKOriginDataManagerChangeClientBase                                 base;
+
+    // Version 0.
+    WKOriginDataManagerChangeCallback                                   didChange;
+} WKOriginDataManagerChangeClientV0;
+
+// FIXME: Deprecate.
 enum { kWKOriginDataManagerChangeClientVersion = 0 };
+typedef struct WKOriginDataManagerChangeClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKOriginDataManagerChangeCallback                                   didChange;
+} WKOriginDataManagerChangeClient;
 
 WK_EXPORT void WKOriginDataManagerStartObservingChanges(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types);
 WK_EXPORT void WKOriginDataManagerStopObservingChanges(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types);

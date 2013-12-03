@@ -30,14 +30,26 @@
 
 typedef void (*WKContextDidCreateConnection)(WKContextRef context, WKConnectionRef connection, const void* clientInfo);
 
-struct WKContextConnectionClient {
+typedef struct WKContextConnectionClientBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKContextConnectionClientBase;
+
+typedef struct WKContextConnectionClientV0 {
+    WKContextConnectionClientBase                                       base;
+
+    // Version 0.
     WKContextDidCreateConnection                                        didCreateConnection;
-};
-typedef struct WKContextConnectionClient WKContextConnectionClient;
+} WKContextConnectionClientV0;
 
+// FIXME: Deprecate.
 enum { kWKContextConnectionClientCurrentVersion = 0 };
+typedef struct WKContextConnectionClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
 
+    // Version 0.
+    WKContextDidCreateConnection                                        didCreateConnection;
+} WKContextConnectionClient;
 
 #endif // WKContextConnectionClient_h

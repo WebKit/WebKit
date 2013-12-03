@@ -1,5 +1,19 @@
 2013-12-02  Anders Carlsson  <andersca@apple.com>
 
+        Add versioned structs for the remaining clients
+        https://bugs.webkit.org/show_bug.cgi?id=125123
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKContextConnectionClient.h:
+        * UIProcess/API/C/WKContextDownloadClient.h:
+        * UIProcess/API/C/WKContextHistoryClient.h:
+        * UIProcess/API/C/WKContextInjectedBundleClient.h:
+        * UIProcess/API/C/WKOriginDataManager.h:
+
+2013-12-02  Anders Carlsson  <andersca@apple.com>
+
         Move WKContext clients to separate files
         https://bugs.webkit.org/show_bug.cgi?id=125121
 
