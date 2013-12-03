@@ -1,5 +1,27 @@
 2013-12-03  Michael Saboff  <msaboff@apple.com>
 
+        ARM64: Crash in JIT code due to improper reuse of cached memory temp register
+        https://bugs.webkit.org/show_bug.cgi?id=125181
+
+        Reviewed by Geoffrey Garen.
+
+        Changed load8() and load() to invalidate the memory temp CachedTempRegister when the
+        destination of an absolute load is the memory temp register since the source address
+        is also the memory temp register.  Change branch{8,32,64} of an AbsoluteAddress with
+        a register to use the dataTempRegister as the destinate of the absolute load to
+        reduce the chance that we need to invalidate the memory temp register cache.
+        In the process, found and fixed an outright bug in branch8() where we'd load into
+        the data temp register and then compare and branch on the memory temp register.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load8):
+        (JSC::MacroAssemblerARM64::branch32):
+        (JSC::MacroAssemblerARM64::branch64):
+        (JSC::MacroAssemblerARM64::branch8):
+        (JSC::MacroAssemblerARM64::load):
+
+2013-12-03  Michael Saboff  <msaboff@apple.com>
+
         jit/JITArithmetic.cpp doesn't build for non-X86 ports
         https://bugs.webkit.org/show_bug.cgi?id=125185
 
