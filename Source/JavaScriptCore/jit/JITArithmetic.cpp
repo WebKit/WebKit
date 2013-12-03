@@ -667,13 +667,6 @@ void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
 void JIT::emit_op_mod(Instruction* currentInstruction)
 {
-    int result = currentInstruction[1].u.operand;
-    int op1 = currentInstruction[2].u.operand;
-    int op2 = currentInstruction[3].u.operand;
-
-    UNUSED_PARAM(op1);
-    UNUSED_PARAM(op2);
-
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
     slowPathCall.call();
 }
