@@ -1,3 +1,25 @@
+2013-12-02  Samuel White  <samuel_white@apple.com>
+
+        AX: Add AXUIElementCountForSearchPredicate parameterized attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=124561
+
+        Reviewed by Chris Fleizach.
+
+        Added ability to fetch the number of elements that match a specific criteria. This will enable VoiceOver
+        to interface with WebKit much more dynamically. We can now get an idea of how many interesting elements
+        exist on a page, and then fetch them in chunks as needed.
+
+        Test: platform/mac/accessibility/search-predicate-element-count.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityTextSearchMatch):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilitySearchCriteria::AccessibilitySearchCriteria):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute):
+        (-[WebAccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2013-12-02  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [css shapes] Layout support for new circle shape syntax

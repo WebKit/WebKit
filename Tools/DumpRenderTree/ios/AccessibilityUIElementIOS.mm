@@ -797,6 +797,12 @@ void AccessibilityUIElement::removeSelection()
     // FIXME: implement
 }
 
+unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly)
+{
+    // FIXME: implement
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly)
 {
     // FIXME: implement

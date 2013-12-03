@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+    .offscreen {
+        position:relative;
+        top:9999px;
+    }
+</style>
+<title>Search Predicate Element Count</title>
+</head>
+<body>
+
+<div id="container">
+<p id="start">Start</p>
+<!-- Tables. -->
+<table border="1">
+<tr><th>A</th><th>B</th></tr>
+<tr><td>C</td><td>D</td></tr>
+</table>
+<table border="1">
+<tr><th>W</th><th>X</th></tr>
+<tr><td>Y</td><td>Z</td></tr>
+</table>
+<br>
+<!-- Links. -->
+<a href="#">Link 1</a>
+<a href="#">Link 2</a>
+<a href="#">Link 3</a>
+<br>
+<!-- Images. -->
+<img alt="Cake" src="resources/cake.png">
+<img alt="Cake" src="resources/cake.png">
+<img alt="Cake" src="resources/cake.png">
+<img alt="Cake" src="resources/cake.png">
+<br>
+<!-- Inputs. -->
+<input type="submit" value="Submit">
+<input type="submit" value="Submit">
+<input type="submit" value="Submit">
+<input type="submit" value="Submit">
+<input type="submit" value="Submit">
+<br>
+<!-- Headings. -->
+<h1>Heading 1</h1>
+<h2>Heading 2</h2>
+<h3>Heading 3</h3>
+<h4>Heading 4</h4>
+<h5 class="offscreen">Heading 5</h5>
+<h6 class="offscreen">Heading 6</h6>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that search predicate based element count results are accurate.");
+    
+    if (window.accessibilityController) {
+        document.getElementById("container").focus();
+        var containerElement = accessibilityController.focusedElement;
+        var elementCount = 0;
+        var startElement = accessibilityController.accessibleElementById("start");
+        
+        // Tables.
+        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXTableSearchKey", "", false);
+        shouldBe("elementCount", "2");
+        
+        // Links.
+        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXLinkSearchKey", "", false);
+        shouldBe("elementCount", "3");
+        
+        // Images.
+        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXGraphicSearchKey", "", false);
+        shouldBe("elementCount", "4");
+        
+        // Inputs.
+        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXButtonSearchKey", "", false);
+        shouldBe("elementCount", "5");
+        
+        // Headings.
+        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);
+        shouldBe("elementCount", "6");
+        
+        // Onscreen
+        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);
+        shouldBe("elementCount", "6");
+        
+        // Offscreen
+        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", true);
+        shouldBe("elementCount", "4");
+        
+        // Hide superfluous text.
+        document.getElementById("container").style.display = "none";
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -202,32 +202,52 @@ static JSValueRef attributedStringRangeIsMisspelledCallback(JSContextRef context
     return JSValueMakeBoolean(context, toAXElement(thisObject)->attributedStringRangeIsMisspelled(location, length));
 }
 
-static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef uiElementCountForSearchPredicateCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    AccessibilityUIElement* startElement = 0;
+    AccessibilityUIElement* startElement = nullptr;
     bool isDirectionNext = true;
+    JSValueRef searchKey = nullptr;
+    JSRetainPtr<JSStringRef> searchText = nullptr;
     bool visibleOnly = false;
-    JSValueRef searchKey = 0;
-    JSStringRef searchText = 0;
     if (argumentCount == 5) {
-        JSObjectRef startElementObject = JSValueToObject(context, arguments[0], exception);
-        if (startElementObject)
-            startElement = toAXElement(startElementObject);
-        isDirectionNext = JSValueToBoolean(context, arguments[1]);      
+        if (JSValueIsObject(context, arguments[0]))
+            startElement = toAXElement(JSValueToObject(context, arguments[0], exception));
+        
+        isDirectionNext = JSValueToBoolean(context, arguments[1]);
         
         searchKey = arguments[2];
         
         if (JSValueIsString(context, arguments[3]))
-            searchText = JSValueToStringCopy(context, arguments[3], exception);
+            searchText.adopt(JSValueToStringCopy(context, arguments[3], exception));
         
         visibleOnly = JSValueToBoolean(context, arguments[4]);
     }
-    JSObjectRef resultObject = AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementForSearchPredicate(context, startElement, isDirectionNext, searchKey, searchText, visibleOnly));
-
-    if (searchText)
-        JSStringRelease(searchText);
     
-    return resultObject;
+    return JSValueMakeNumber(context, toAXElement(thisObject)->uiElementCountForSearchPredicate(context, startElement, isDirectionNext, searchKey, searchText.get(), visibleOnly));
+}
+
+static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityUIElement* startElement = nullptr;
+    bool isDirectionNext = true;
+    JSValueRef searchKey = nullptr;
+    JSRetainPtr<JSStringRef> searchText = nullptr;
+    bool visibleOnly = false;
+    if (argumentCount == 5) {
+        if (JSValueIsObject(context, arguments[0]))
+            startElement = toAXElement(JSValueToObject(context, arguments[0], exception));
+        
+        isDirectionNext = JSValueToBoolean(context, arguments[1]);
+        
+        searchKey = arguments[2];
+        
+        if (JSValueIsString(context, arguments[3]))
+            searchText.adopt(JSValueToStringCopy(context, arguments[3], exception));
+        
+        visibleOnly = JSValueToBoolean(context, arguments[4]);
+    }
+    
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementForSearchPredicate(context, startElement, isDirectionNext, searchKey, searchText.get(), visibleOnly));
 }
 
 static JSValueRef indexOfChildCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1390,6 +1410,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "stringForRange", stringForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributedStringForRange", attributedStringForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributedStringRangeIsMisspelled", attributedStringRangeIsMisspelledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "uiElementCountForSearchPredicate", uiElementCountForSearchPredicateCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeReadOnly },
         { "uiElementForSearchPredicate", uiElementForSearchPredicateCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "childAtIndex", childAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "linkedUIElementAtIndex", linkedUIElementAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

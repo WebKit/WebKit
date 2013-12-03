@@ -190,6 +190,10 @@ using namespace HTMLNames;
 #endif
 
 // Search
+#ifndef NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute
+#define NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute @"AXUIElementCountForSearchPredicate"
+#endif
+
 #ifndef NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute
 #define NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute @"AXUIElementsForSearchPredicate"
 #endif
@@ -534,6 +538,52 @@ static AccessibilitySearchKey accessibilitySearchKeyForString(const String& valu
     AccessibilitySearchKey searchKey = searchKeyMap->get(value);
     
     return searchKey ? searchKey : AnyTypeSearchKey;
+}
+
+static AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(const NSDictionary *parameterizedAttribute)
+{
+    NSString *directionParameter = [parameterizedAttribute objectForKey:@"AXDirection"];
+    NSNumber *resultsLimitParameter = [parameterizedAttribute objectForKey:@"AXResultsLimit"];
+    NSString *searchTextParameter = [parameterizedAttribute objectForKey:@"AXSearchText"];
+    WebAccessibilityObjectWrapper *startElementParameter = [parameterizedAttribute objectForKey:@"AXStartElement"];
+    NSNumber *visibleOnlyParameter = [parameterizedAttribute objectForKey:@"AXVisibleOnly"];
+    id searchKeyParameter = [parameterizedAttribute objectForKey:@"AXSearchKey"];
+    
+    AccessibilitySearchDirection direction = SearchDirectionNext;
+    if ([directionParameter isKindOfClass:[NSString class]])
+        direction = [directionParameter isEqualToString:@"AXDirectionNext"] ? SearchDirectionNext : SearchDirectionPrevious;
+    
+    unsigned resultsLimit = 0;
+    if ([resultsLimitParameter isKindOfClass:[NSNumber class]])
+        resultsLimit = [resultsLimitParameter unsignedIntValue];
+    
+    String searchText;
+    if ([searchTextParameter isKindOfClass:[NSString class]])
+        searchText = searchTextParameter;
+    
+    AccessibilityObject *startElement = nullptr;
+    if ([startElementParameter isKindOfClass:[WebAccessibilityObjectWrapper class]])
+        startElement = [startElementParameter accessibilityObject];
+    
+    BOOL visibleOnly = NO;
+    if ([visibleOnlyParameter isKindOfClass:[NSNumber class]])
+        visibleOnly = [visibleOnlyParameter boolValue];
+    
+    AccessibilitySearchCriteria criteria = AccessibilitySearchCriteria(startElement, direction, searchText, resultsLimit, visibleOnly);
+    
+    if ([searchKeyParameter isKindOfClass:[NSString class]])
+        criteria.searchKeys.append(accessibilitySearchKeyForString(searchKeyParameter));
+    else if ([searchKeyParameter isKindOfClass:[NSArray class]]) {
+        size_t searchKeyCount = static_cast<size_t>([searchKeyParameter count]);
+        criteria.searchKeys.reserveInitialCapacity(searchKeyCount);
+        for (size_t i = 0; i < searchKeyCount; ++i) {
+            NSString *searchKey = [searchKeyParameter objectAtIndex:i];
+            if ([searchKey isKindOfClass:[NSString class]])
+                criteria.searchKeys.uncheckedAppend(accessibilitySearchKeyForString(searchKey));
+        }
+    }
+    
+    return criteria;
 }
 
 #pragma mark Text Marker helpers
@@ -2865,6 +2915,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                       @"AXLengthForTextMarkerRange",
                       NSAccessibilityBoundsForRangeParameterizedAttribute,
                       NSAccessibilityStringForRangeParameterizedAttribute,
+                      NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute,
                       NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute,
                       NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute,
                       NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute,
@@ -3254,45 +3305,17 @@ static RenderObject* rendererForView(NSView* view)
     }
     
     // dispatch
-    if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {
-        AccessibilityObject* startObject = 0;
-        if ([[dictionary objectForKey:@"AXStartElement"] isKindOfClass:[WebAccessibilityObjectWrapper self]])
-            startObject = [(WebAccessibilityObjectWrapper*)[dictionary objectForKey:@"AXStartElement"] accessibilityObject];
-        
-        AccessibilitySearchDirection searchDirection = SearchDirectionNext;
-        if ([[dictionary objectForKey:@"AXDirection"] isKindOfClass:[NSString self]])
-            searchDirection = ([(NSString*)[dictionary objectForKey:@"AXDirection"] isEqualToString:@"AXDirectionNext"]) ? SearchDirectionNext : SearchDirectionPrevious;
-
-        String searchText;
-        if ([[dictionary objectForKey:@"AXSearchText"] isKindOfClass:[NSString self]])
-            searchText = (CFStringRef)[dictionary objectForKey:@"AXSearchText"];
-        
-        unsigned resultsLimit = 0;
-        if ([[dictionary objectForKey:@"AXResultsLimit"] isKindOfClass:[NSNumber self]])
-            resultsLimit = [(NSNumber*)[dictionary objectForKey:@"AXResultsLimit"] unsignedIntValue];
-        
-        BOOL visibleOnly = NO;
-        if ([[dictionary objectForKey:@"AXVisibleOnly"] isKindOfClass:[NSNumber self]])
-            visibleOnly = [(NSNumber*)[dictionary objectForKey:@"AXVisibleOnly"] boolValue];
-        
-        AccessibilitySearchCriteria criteria = AccessibilitySearchCriteria(startObject, searchDirection, &searchText, resultsLimit, visibleOnly);
-                
-        id searchKeyEntry = [dictionary objectForKey:@"AXSearchKey"];
-        if ([searchKeyEntry isKindOfClass:[NSString class]])
-            criteria.searchKeys.append(accessibilitySearchKeyForString((CFStringRef)searchKeyEntry));
-        else if ([searchKeyEntry isKindOfClass:[NSArray class]]) {
-            size_t length = static_cast<size_t>([(NSArray *)searchKeyEntry count]);
-            criteria.searchKeys.reserveInitialCapacity(length);
-            for (size_t i = 0; i < length; ++i) {
-                id searchKey = [(NSArray *)searchKeyEntry objectAtIndex:i];
-                if ([searchKey isKindOfClass:[NSString class]])
-                    criteria.searchKeys.append(accessibilitySearchKeyForString((CFStringRef)searchKey));
-            }
-        }
-        
+    if ([attribute isEqualToString:NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute]) {
+        AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
         AccessibilityObject::AccessibilityChildrenVector results;
         m_object->findMatchingObjects(&criteria, results);
-        
+        return @(results.size());
+    }
+    
+    if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {
+        AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
+        AccessibilityObject::AccessibilityChildrenVector results;
+        m_object->findMatchingObjects(&criteria, results);
         return convertToNSArray(results);
     }
     

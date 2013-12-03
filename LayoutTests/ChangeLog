@@ -1,3 +1,17 @@
+2013-12-02  Samuel White  <samuel_white@apple.com>
+
+        AX: Add AXUIElementCountForSearchPredicate parameterized attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=124561
+
+        Reviewed by Chris Fleizach.
+
+        Added test to verify that NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute
+        works as it should and updated existing test that has exposes this new attribute.
+
+        * platform/mac/accessibility/bounds-for-range-expected.txt:
+        * platform/mac/accessibility/search-predicate-element-count-expected.txt: Added.
+        * platform/mac/accessibility/search-predicate-element-count.html: Added.
+
 2013-12-02  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [css shapes] Layout support for new circle shape syntax

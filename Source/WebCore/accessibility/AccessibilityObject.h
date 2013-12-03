@@ -339,16 +339,16 @@ struct AccessibilitySearchCriteria {
     AccessibilityObject* startObject;
     AccessibilitySearchDirection searchDirection;
     Vector<AccessibilitySearchKey> searchKeys;
-    String* searchText;
+    String searchText;
     unsigned resultsLimit;
     bool visibleOnly;
     
-    AccessibilitySearchCriteria(AccessibilityObject* o, AccessibilitySearchDirection d, String* t, unsigned l, bool v)
-    : startObject(o)
-    , searchDirection(d)
-    , searchText(t)
-    , resultsLimit(l)
-    , visibleOnly(v)
+    AccessibilitySearchCriteria(AccessibilityObject* startObject, AccessibilitySearchDirection searchDirection, String searchText, unsigned resultsLimit, bool visibleOnly)
+    : startObject(startObject)
+    , searchDirection(searchDirection)
+    , searchText(searchText)
+    , resultsLimit(resultsLimit)
+    , visibleOnly(visibleOnly)
     { }
 };
 

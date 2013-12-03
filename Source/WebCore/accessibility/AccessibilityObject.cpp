@@ -263,7 +263,7 @@ bool AccessibilityObject::isAccessibilityTextSearchMatch(AccessibilityObject* ax
     if (!axObject || !criteria)
         return false;
     
-    return axObject->accessibilityObjectContainsText(criteria->searchText);
+    return axObject->accessibilityObjectContainsText(&criteria->searchText);
 }
 
 bool AccessibilityObject::accessibilityObjectContainsText(String* text) const

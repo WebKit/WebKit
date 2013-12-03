@@ -162,6 +162,7 @@ void AccessibilityUIElement::setSelectedTextRange(unsigned, unsigned) { }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForRange(unsigned, unsigned) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsigned, unsigned) { return 0; }
 bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned, unsigned) { return false; }
+unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef, AccessibilityUIElement*, bool, JSValueRef, JSStringRef, bool) { return 0; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement*, bool, JSValueRef, JSStringRef, bool) { return 0; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(unsigned, unsigned) { return 0; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::horizontalScrollbar() const { return 0; }
