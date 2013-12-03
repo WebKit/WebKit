@@ -444,6 +444,27 @@ EAPI Eina_Bool ewk_settings_text_autosizing_enabled_set(Ewk_Settings *settings, 
  */
 EAPI Eina_Bool ewk_settings_text_autosizing_enabled_get(const Ewk_Settings *settings);
 
+/**
+ * Changes spatial navigation state.
+ *
+ * @param settings settings object to enable/disable spatial navigation
+ * @param enabled @c EINA_TRUE to enable spatial navigation
+ *                @c EINA_FALSE to disable spatial navigation
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_settings_spatial_navigation_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Returns current state of spatial navigation.
+ *
+ * @param settings settings object to get whether spatial navigation is enabled
+ *
+ * @return @c EINA_TRUE if spatial navigation is enabled
+ *         @c EINA_FALSE if spatial navigation is disabled
+ */
+EAPI Eina_Bool ewk_settings_spatial_navigation_enabled_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif

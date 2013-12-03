@@ -287,3 +287,17 @@ TEST_F(EWK2UnitTestBase, ewk_settings_text_autosizing_enabled)
     ASSERT_FALSE(ewk_settings_text_autosizing_enabled_get(settings));
 #endif
 }
+
+TEST_F(EWK2UnitTestBase, ewk_settings_spatial_navigation_enabled)
+{
+    Ewk_Settings* settings = ewk_view_settings_get(webView());
+
+    // Spatial navigation is disabled by default.
+    ASSERT_FALSE(ewk_settings_spatial_navigation_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_spatial_navigation_enabled_set(settings, true));
+    ASSERT_TRUE(ewk_settings_spatial_navigation_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_spatial_navigation_enabled_set(settings, false));
+    ASSERT_FALSE(ewk_settings_spatial_navigation_enabled_get(settings));
+}
