@@ -1,3 +1,25 @@
+2013-12-03  Rob Buis  <rob.buis@samsung.com>
+
+        [css shapes] layout for new ellipse syntax
+        https://bugs.webkit.org/show_bug.cgi?id=124621
+
+        Reviewed by Dirk Schulze.
+
+        Implement support for doing layout with the new ellipse shape syntax,
+        including basic animation support.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-000.html
+
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape): Convert new ellipse to a layout shape.
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend): Ignore ellipses with values that
+            cannot be interpolated.
+        (WebCore::BasicShapeEllipse::floatValueForRadiusInBox): Helper function to calculate
+            either radiusX or radiusY, shared by clip-path and shape code paths.
+        (WebCore::BasicShapeEllipse::path):
+        * rendering/style/BasicShapes.h:
+
 2013-12-03  Frédéric Wang  <fred.wang@free.fr>
 
         Add an MathMLSelectElement class to implement <maction> and <semantics>.

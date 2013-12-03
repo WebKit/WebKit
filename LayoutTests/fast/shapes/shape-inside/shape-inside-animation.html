@@ -38,8 +38,8 @@
     }
 
     @-webkit-keyframes ellipse-anim {
-        from { -webkit-shape-inside: ellipse(50%, 50%, 50%, 40%); }
-        to   { -webkit-shape-inside: ellipse(20%, 20%, 20%, 20%); }
+        from { -webkit-shape-inside: ellipse(50% 40% at 50% 50%); }
+        to   { -webkit-shape-inside: ellipse(20% 20% at 20% 20%); }
     }
 
     @-webkit-keyframes polygon-anim {
@@ -54,7 +54,7 @@
       // [animation-name, time, element-id, property, expected-value, tolerance]
       ["rectangle-anim",  1, "rectangle-box", "webkitShapeInside", "rectangle(10%, 10%, 80%, 80%, 0px, 0px)", 0.05],
       ["circle-anim",  1, "circle-box", "webkitShapeInside", "circle(35% at 35% 35%)", 0.05],
-      ["ellipse-anim",  1, "ellipse-box", "webkitShapeInside", "ellipse(35%, 35%, 35%, 30%)", 0.05],
+      ["ellipse-anim",  1, "ellipse-box", "webkitShapeInside", "ellipse(35% 30% at 35% 35%)", 0.05],
       ["polygon-anim",  1, "polygon-box", "webkitShapeInside", "polygon(nonzero, 10% 10%, 90% 10%, 90% 90%, 10% 90%)", 0.05],
     ];
     

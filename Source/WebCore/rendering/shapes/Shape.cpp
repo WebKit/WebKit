@@ -175,8 +175,14 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
     }
 
     case BasicShape::BasicShapeEllipseType: {
-        // FIXME: Layout implementation needed. See bug https://bugs.webkit.org/show_bug.cgi?id=125079
-        shape = createRectangleShape(FloatRect(0, 0, boxWidth, boxHeight), FloatSize());
+        const BasicShapeEllipse* ellipse = static_cast<const BasicShapeEllipse*>(basicShape);
+        float centerX = floatValueForCenterCoordinate(ellipse->centerX(), boxWidth);
+        float centerY = floatValueForCenterCoordinate(ellipse->centerY(), boxHeight);
+        float radiusX = ellipse->floatValueForRadiusInBox(ellipse->radiusX(), centerX, boxWidth);
+        float radiusY = ellipse->floatValueForRadiusInBox(ellipse->radiusY(), centerY, boxHeight);
+        FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
+
+        shape = createShapeEllipse(logicalCenter, FloatSize(radiusX, radiusY));
         break;
     }
 

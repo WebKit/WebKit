@@ -1,3 +1,29 @@
+2013-12-03  Rob Buis  <rob.buis@samsung.com>
+
+        [css shapes] layout for new ellipse syntax
+        https://bugs.webkit.org/show_bug.cgi?id=124621
+
+        Add a new test for the new ellipse syntax. Also update existing shape-inside, animation, and clip-path tests to
+        test the new ellipse syntax for clipping and shape-inside.
+
+        Reviewed by Dirk Schulze.
+
+        * animations/resources/animation-test-helpers.js:
+        (parseBasicShape):
+        * css3/masking/clip-path-animation-expected.txt:
+        * css3/masking/clip-path-animation.html:
+        * css3/masking/clip-path-ellipse.html:
+        * fast/shapes/shape-inside/shape-inside-animation-expected.txt:
+        * fast/shapes/shape-inside/shape-inside-animation.html:
+        * fast/shapes/shape-inside/shape-inside-ellipse-padding.html:
+        * fast/shapes/shape-inside/shape-inside-ellipse.html:
+        * fast/shapes/shape-inside/shape-inside-empty-expected.html:
+        * fast/shapes/shape-inside/shape-inside-empty.html:
+        * fast/shapes/shape-outside-floats/shape-outside-animation-expected.txt:
+        * fast/shapes/shape-outside-floats/shape-outside-animation.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-000-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-000.html: Added.
+
 2013-12-03  Frédéric Wang  <fred.wang@free.fr>
 
         Add an MathMLSelectElement class to implement <maction> and <semantics>.

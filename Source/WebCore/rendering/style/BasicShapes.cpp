@@ -59,7 +59,17 @@ bool BasicShape::canBlend(const BasicShape* other) const
             return false;
     }
 
-    return true;
+    // Ellipses with keywords for radii or center coordinates cannot be animated.
+    if (type() != BasicShape::BasicShapeEllipseType)
+        return true;
+
+    const BasicShapeEllipse* thisEllipse = static_cast<const BasicShapeEllipse*>(this);
+    const BasicShapeEllipse* otherEllipse = static_cast<const BasicShapeEllipse*>(other);
+    if (!thisEllipse->radiusX().canBlend(otherEllipse->radiusX())
+        || !thisEllipse->radiusY().canBlend(otherEllipse->radiusY())
+        || !thisEllipse->centerX().canBlend(otherEllipse->centerX())
+        || !thisEllipse->centerY().canBlend(otherEllipse->centerY()))
+        return false;
 }
 
 void BasicShapeRectangle::path(Path& path, const FloatRect& boundingBox)
@@ -191,22 +201,26 @@ PassRefPtr<BasicShape> DeprecatedBasicShapeEllipse::blend(const BasicShape* othe
     return result.release();
 }
 
+float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius, float center, float boxWidthOrHeight) const
+{
+    if (radius.type() == BasicShapeRadius::Value)
+        return floatValueForLength(radius.value(), boxWidthOrHeight);
+
+    if (radius.type() == BasicShapeRadius::ClosestSide)
+        return std::min(center, boxWidthOrHeight - center);
+
+    ASSERT(radius.type() == BasicShapeRadius::FarthestSide);
+    return std::max(center, boxWidthOrHeight - center);
+}
+
 void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
-    // FIXME: The implementation of path is incomplete. See https://bugs.webkit.org/show_bug.cgi?id=125079 
-    // Compute closest-side and farthest-side from boundingBox.
-    // Compute top, left, bottom, right from boundingBox.
-    if (m_radiusX.type() != BasicShapeRadius::Value || m_radiusY.type() != BasicShapeRadius::Value)
-        return;
-    if (m_centerX.keyword() != BasicShapeCenterCoordinate::None || m_centerY.keyword() != BasicShapeCenterCoordinate::None)
-        return;
 
-    float diagonal = sqrtf((boundingBox.width() * boundingBox.width() + boundingBox.height() * boundingBox.height()) / 2);
-    float centerX = floatValueForLength(m_centerX.length(), boundingBox.width());
-    float centerY = floatValueForLength(m_centerY.length(), boundingBox.height());
-    float radiusX = floatValueForLength(m_radiusX.value(), diagonal);
-    float radiusY = floatValueForLength(m_radiusY.value(), diagonal);
+    float centerX = floatValueForCenterCoordinate(m_centerX, boundingBox.width());
+    float centerY = floatValueForCenterCoordinate(m_centerY, boundingBox.height());
+    float radiusX = floatValueForRadiusInBox(m_radiusX, centerX, boundingBox.width());
+    float radiusY = floatValueForRadiusInBox(m_radiusY, centerY, boundingBox.height());
     path.addEllipse(FloatRect(
         centerX - radiusX + boundingBox.x(),
         centerY - radiusY + boundingBox.y(),
