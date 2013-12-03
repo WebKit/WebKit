@@ -1209,10 +1209,14 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         AXObjectCache::setEnhancedUserInterfaceAccessibility([[NSApp accessibilityAttributeValue:NSAccessibilityEnhancedUserInterfaceAttribute] boolValue]);
     }
     
-    if (!_private->coreFrame || !_private->coreFrame->document())
+    if (!_private->coreFrame)
         return nil;
     
-    AccessibilityObject* rootObject = _private->coreFrame->document()->axObjectCache()->rootObjectForFrame(_private->coreFrame);
+    Document* document = _private->coreFrame->document();
+    if (!document || !document->axObjectCache())
+        return nil;
+    
+    AccessibilityObject* rootObject = document->axObjectCache()->rootObjectForFrame(_private->coreFrame);
     if (!rootObject)
         return nil;
     

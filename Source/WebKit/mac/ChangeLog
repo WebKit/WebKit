@@ -1,3 +1,15 @@
+2013-12-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash in accessibilityRoot when Document goes away
+        https://bugs.webkit.org/show_bug.cgi?id=125113
+
+        Reviewed by Tim Horton.
+
+        The AXObjectCache can sometimes be null if the render tree has been detached from the document.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame accessibilityRoot]):
+
 2013-11-28  Antti Koivisto  <antti@apple.com>
 
         Remove feature: CSS variables
