@@ -4050,6 +4050,8 @@ webcore_sources += \
 	Source/WebCore/mathml/MathMLInlineContainerElement.h  \
 	Source/WebCore/mathml/MathMLMathElement.cpp \
 	Source/WebCore/mathml/MathMLMathElement.h \
+	Source/WebCore/mathml/MathMLSelectElement.cpp \
+	Source/WebCore/mathml/MathMLSelectElement.h  \
 	Source/WebCore/mathml/MathMLTextElement.cpp \
 	Source/WebCore/mathml/MathMLTextElement.h \
 	Source/WebCore/page/animation/AnimationBase.cpp \

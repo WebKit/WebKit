@@ -1,3 +1,19 @@
+2013-12-03  Frédéric Wang  <fred.wang@free.fr>
+
+        Add an MathMLSelectElement class to implement <maction> and <semantics>.
+        <https://webkit.org/b/120058>
+
+        Reviewed by Chris Fleizach.
+
+        New tests for the selection of the visible child in the <maction> and <semantics> elements.
+
+        * mathml/presentation/maction-dynamic-expected.html: Added.
+        * mathml/presentation/maction-dynamic.html: Added.
+        * mathml/presentation/maction-expected.html: Added.
+        * mathml/presentation/maction.html: Added.
+        * mathml/presentation/semantics-expected.html: Added.
+        * mathml/presentation/semantics.html: Added.
+
 2013-12-02  Samuel White  <samuel_white@apple.com>
 
         AX: Add AXUIElementCountForSearchPredicate parameterized attribute.

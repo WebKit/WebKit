@@ -1704,6 +1704,7 @@ set(WebCore_SOURCES
     mathml/MathMLElement.cpp
     mathml/MathMLInlineContainerElement.cpp
     mathml/MathMLMathElement.cpp
+    mathml/MathMLSelectElement.cpp
     mathml/MathMLTextElement.cpp
 
     page/AutoscrollController.cpp

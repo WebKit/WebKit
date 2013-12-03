@@ -3,6 +3,9 @@ namespaceURI="http://www.w3.org/1998/Math/MathML"
 guardFactoryWith="ENABLE(MATHML)"
 fallbackInterfaceName="MathMLElement"
 
+annotation interfaceName=MathMLTextElement
+annotation-xml interfaceName=MathMLInlineContainerElement
+maction interfaceName=MathMLSelectElement
 math
 mfrac interfaceName=MathMLInlineContainerElement
 mfenced interfaceName=MathMLInlineContainerElement
@@ -27,10 +30,10 @@ mtd interfaceName=MathMLElement
 mmultiscripts interfaceName=MathMLInlineContainerElement
 mprescripts interfaceName=MathMLInlineContainerElement
 none interfaceName=MathMLInlineContainerElement
+semantics interfaceName=MathMLSelectElement
 
 #if 0 // Curently only for MathMLNames used by HTMLTreeBuilder.
 ms
 mglyph
 malignmark
-annotation-xml
 #endif

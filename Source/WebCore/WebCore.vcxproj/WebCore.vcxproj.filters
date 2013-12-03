@@ -4977,6 +4977,9 @@
     <ClCompile Include="..\mathml\MathMLMathElement.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
+    <ClCompile Include="..\mathml\MathMLSelectElement.cpp">
+      <Filter>rendering\mathml</Filter>
+    </ClCompile>
     <ClCompile Include="..\mathml\MathMLTextElement.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
@@ -12547,6 +12550,9 @@
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\mathml\MathMLMathElement.h">
+      <Filter>rendering\mathml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mathml\MathMLSelectElement.h">
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\mathml\MathMLTextElement.h">

@@ -56,6 +56,8 @@ PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(co
 
 RenderElement* MathMLInlineContainerElement::createRenderer(PassRef<RenderStyle> style)
 {
+    if (hasLocalName(annotation_xmlTag))
+        return new RenderMathMLRow(*this, std::move(style));
     if (hasLocalName(mrowTag))
         return new RenderMathMLRow(*this, std::move(style));
     if (hasLocalName(msubTag))

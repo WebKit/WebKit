@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2010 François Sausset (sausset@gmail.com). All rights reserved.
+ * Copyright (C) 2013 The MathJax Consortium. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,41 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MathMLElement_h
-#define MathMLElement_h
+#ifndef MathMLSelectElement_h
+#define MathMLSelectElement_h
 
 #if ENABLE(MATHML)
-
-#include "StyledElement.h"
+#include "MathMLInlineContainerElement.h"
 
 namespace WebCore {
 
-class MathMLElement : public StyledElement {
+class MathMLSelectElement FINAL : public MathMLInlineContainerElement {
 public:
-    static PassRefPtr<MathMLElement> create(const QualifiedName& tagName, Document&);
+    static PassRefPtr<MathMLSelectElement> create(const QualifiedName& tagName, Document&);
 
-    int colSpan() const;
-    int rowSpan() const;
+private:
+    MathMLSelectElement(const QualifiedName& tagName, Document&);
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
 
-protected:
-    MathMLElement(const QualifiedName& tagName, Document&);
-
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
 
-private:    
-    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
+    virtual void finishParsingChildren() OVERRIDE;
+    virtual void childrenChanged(const ChildChange&) OVERRIDE;
+    virtual void attributeChanged(const QualifiedName&, const AtomicString&, AttributeModificationReason = ModifiedDirectly) OVERRIDE;
 
-    inline bool isMathMLToken() const;
+    void updateSelectedChild();
+    Element* m_selectedChild;
 };
-
-void isMathMLElement(const MathMLElement&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isMathMLElement(const Node& node) { return node.isMathMLElement(); }
-NODE_TYPE_CASTS(MathMLElement)
 
 }
 
 #endif // ENABLE(MATHML)
-
-#endif // MathMLElement_h
+#endif // MathMLSelectElement_h

@@ -153,10 +153,6 @@ math[mathsize="big"], mstyle[mathsize="big"], mo[mathsize="big"], mn[mathsize="b
     font-size: 1.5em;
 }
  
-annotation, annotation-xml {
-    display: none;
-}
-
 mphantom {
     visibility: hidden;
 }
