@@ -1,4 +1,23 @@
 =================
+WebKitGTK+  2.2.3
+=================
+
+What's new in WebKitGTK+ 2.2.3?
+
+  - Render AC layers also when using GTK+ 2 in WebKit1.
+  - Avoid extra copy when drawing images in cairo backend.
+  - Fix return value of webkit_web_view_get_view_source_mode() in
+    WebKit1.
+  - Fix scrolling in combo boxes when the dropdown menu is larger than
+    the screen.
+  - Remove Chromium as user agent and claim to be Safari in OS X.
+  - Fix a crash in the WebProcess when visiting www.pressure.co.uk.
+  - Fix a crash JavaScriptcore with certain Google Drive documents.
+  - Fix a crash in JavaScriptcore when running peacekeeper benchmark
+    in 32 bit platforms.
+  - Fix the build with freetype >= 2.5.1.
+
+=================
 WebKitGTK+  2.2.2
 =================
 
