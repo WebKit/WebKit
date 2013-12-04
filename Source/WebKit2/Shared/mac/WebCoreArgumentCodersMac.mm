@@ -167,6 +167,14 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, 
     CoreIPC::encode(encoder, filteredUserInfo.get());
 
     id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
+    if (!peerCertificateChain) {
+        if (SecTrustRef peerTrust = (SecTrustRef)userInfo[NSURLErrorFailingURLPeerTrustErrorKey]) {
+            CFIndex count = SecTrustGetCertificateCount(peerTrust);
+            peerCertificateChain = [NSMutableArray arrayWithCapacity:count];
+            for (CFIndex i = 0; i < count; ++i)
+                [peerCertificateChain addObject:(id)SecTrustGetCertificateAtIndex(peerTrust, i)];
+        }
+    }
     ASSERT(!peerCertificateChain || [peerCertificateChain isKindOfClass:[NSArray class]]);
     encoder << CertificateInfo((CFArrayRef)peerCertificateChain);
 }

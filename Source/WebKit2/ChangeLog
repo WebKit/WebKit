@@ -1,5 +1,18 @@
 2013-12-04  Dan Bernstein  <mitz@apple.com>
 
+        [Mac] When NSError user info is missing NSErrorPeerCertificateChainKey, ArgumentCoder should extract it from NSURLErrorFailingURLPeerTrustErrorKey
+        https://bugs.webkit.org/show_bug.cgi?id=125251
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::::encodePlatformData): If the user info doesn’t include
+        NSURLErrorFailingURLPeerTrustErrorKey, copy the peer certificate chain from the peer trust
+        under NSURLErrorFailingURLPeerTrustErrorKey. On the decoding side, it will appear under the
+        NSURLErrorFailingURLPeerTrustErrorKey, because a trust object can’t be fully serialized.
+
+2013-12-04  Dan Bernstein  <mitz@apple.com>
+
         Replace USE(SECURITY_FRAMEWORK) with finer-grained defines
         https://bugs.webkit.org/show_bug.cgi?id=125242
 
