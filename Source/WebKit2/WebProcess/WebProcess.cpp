@@ -32,7 +32,6 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "Logging.h"
 #include "PluginProcessConnectionManager.h"
-#include "SecItemShim.h"
 #include "StatisticsData.h"
 #include "WebApplicationCacheManager.h"
 #include "WebConnectionToUIProcess.h"
@@ -98,6 +97,9 @@
 #include "NetworkProcessConnection.h"
 #endif
 
+#if ENABLE(SEC_ITEM_SHIM)
+#include "SecItemShim.h"
+#endif
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 #include "CustomProtocolManager.h"

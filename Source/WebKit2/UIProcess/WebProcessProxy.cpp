@@ -31,7 +31,6 @@
 #include "DownloadProxyMap.h"
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
-#include "SecItemShimProxy.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "WebBackForwardListItem.h"
@@ -52,6 +51,10 @@
 
 #if PLATFORM(MAC)
 #include "PDFPlugin.h"
+#endif
+
+#if ENABLE(SEC_ITEM_SHIM)
+#include "SecItemShimProxy.h"
 #endif
 
 using namespace WebCore;
