@@ -10338,6 +10338,10 @@
 		A556C287183206A8008CB720 /* InspectorAgentRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgentRegistry.h; sourceTree = "<group>"; };
 		A5732B08136A161D005C8D7C /* DateComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateComponents.cpp; sourceTree = "<group>"; };
 		A5732B09136A161D005C8D7C /* DateComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateComponents.h; sourceTree = "<group>"; };
+		A593CF7218402CE900BFCE27 /* protocol */ = {isa = PBXFileReference; lastKnownFileType = folder; path = protocol; sourceTree = "<group>"; };
+		A593CF7318402D4B00BFCE27 /* CodeGeneratorInspector.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = CodeGeneratorInspector.py; sourceTree = "<group>"; };
+		A593CF7418402D4B00BFCE27 /* CodeGeneratorInspectorStrings.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = CodeGeneratorInspectorStrings.py; sourceTree = "<group>"; };
+		A593CF7518402D4B00BFCE27 /* combine-javascript-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "combine-javascript-resources.pl"; sourceTree = "<group>"; };
 		A5ABB78613B904BC00F197E3 /* LineBreakIteratorPoolICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineBreakIteratorPoolICU.h; sourceTree = "<group>"; };
 		A5AC4AED18336975007114E0 /* InspectorBackendDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendDispatcher.cpp; sourceTree = "<group>"; };
 		A5AC4AEE18336975007114E0 /* InspectorBackendDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackendDispatcher.h; sourceTree = "<group>"; };
@@ -14436,7 +14440,11 @@
 		1C81B94D0E9732D900266E07 /* inspector */ = {
 			isa = PBXGroup;
 			children = (
+				A593CF7218402CE900BFCE27 /* protocol */,
 				A518225317E28CF100A9BA1D /* Scripts */,
+				A593CF7318402D4B00BFCE27 /* CodeGeneratorInspector.py */,
+				A593CF7418402D4B00BFCE27 /* CodeGeneratorInspectorStrings.py */,
+				A593CF7518402D4B00BFCE27 /* combine-javascript-resources.pl */,
 				F35AE5AB14925F5B004D5776 /* BindingVisitors.h */,
 				2DF2E9D4166E39740035BEF2 /* ConsoleAPITypes.h */,
 				41F0618D0F5F069800A07EAC /* ConsoleMessage.cpp */,

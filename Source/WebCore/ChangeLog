@@ -1,3 +1,12 @@
+2013-12-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add missing folders and files to Xcode project
+        https://bugs.webkit.org/show_bug.cgi?id=124802
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-12-04  José Dapena Paz  <jdapena@igalia.com>
 
         [texmap] Borders on rotating images are hidden/wrongly rendered with edge distance antialiasing
