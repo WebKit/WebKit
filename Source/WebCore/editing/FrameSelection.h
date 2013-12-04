@@ -288,8 +288,6 @@ private:
     void setCaretVisibility(CaretVisibility);
 
     bool dispatchSelectStart();
-  
-    bool visualWordMovementEnabled() const;
 
     Frame* m_frame;
 

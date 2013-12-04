@@ -136,7 +136,6 @@ passwordEchoEnabled initial=false
 suppressesIncrementalRendering initial=false
 incrementalRenderingSuppressionTimeoutInSeconds type=double, initial=defaultIncrementalRenderingSuppressionTimeoutInSeconds
 backspaceKeyNavigationEnabled initial=true
-visualWordMovementEnabled initial=false
 shouldDisplaySubtitles initial=false, conditional=VIDEO_TRACK
 shouldDisplayCaptions initial=false, conditional=VIDEO_TRACK
 shouldDisplayTextDescriptions initial=false, conditional=VIDEO_TRACK

@@ -434,17 +434,10 @@ static void updatePositionAfterAdoptingTextReplacement(Position& position, Chara
     ASSERT(static_cast<unsigned>(position.offsetInContainerNode()) <= node->length());
 }
 
-static inline bool nodeIsDetachedFromDocument(Node* node)
-{
-    ASSERT(node);
-    Node* highest = highestAncestor(node);
-    return highest->nodeType() == Node::DOCUMENT_FRAGMENT_NODE && !highest->isShadowRoot();
-}
-
 void FrameSelection::textWasReplaced(CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
 {
     // The fragment check is a performance optimization. See http://trac.webkit.org/changeset/30062.
-    if (isNone() || !node || nodeIsDetachedFromDocument(node))
+    if (isNone() || !node || !node->inDocument())
         return;
 
     Position base = m_selection.base();
@@ -2053,13 +2046,6 @@ bool FrameSelection::dispatchSelectStart()
         return true;
 
     return selectStartTarget->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
-}
-
-inline bool FrameSelection::visualWordMovementEnabled() const
-{
-    if (!m_frame)
-        return false;
-    return m_frame->settings().visualWordMovementEnabled();
 }
 
 void FrameSelection::setShouldShowBlockCursor(bool shouldShowBlockCursor)

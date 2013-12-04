@@ -46,7 +46,7 @@
     [RaisesException] Element insertAdjacentElement([Default=Undefined] optional DOMString where,
                                   [Default=Undefined] optional Element element);
     [RaisesException] void insertAdjacentHTML([Default=Undefined] optional DOMString where,
-                            [Default=Undefined] optional DOMString html);
+                  x          [Default=Undefined] optional DOMString html);
     [RaisesException] void insertAdjacentText([Default=Undefined] optional DOMString where,
                             [Default=Undefined] optional DOMString text);
 
