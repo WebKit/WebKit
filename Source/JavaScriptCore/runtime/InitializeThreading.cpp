@@ -41,15 +41,12 @@
 #include "WriteBarrier.h"
 #include <wtf/dtoa.h>
 #include <wtf/Threading.h>
+#include <wtf/ThreadingOnce.h>
 #include <wtf/dtoa/cached-powers.h>
 
 using namespace WTF;
 
 namespace JSC {
-
-#if OS(DARWIN)
-static pthread_once_t initializeThreadingKeyOnce = PTHREAD_ONCE_INIT;
-#endif
 
 static void initializeThreadingOnce()
 {
@@ -76,15 +73,8 @@ static void initializeThreadingOnce()
 
 void initializeThreading()
 {
-#if OS(DARWIN)
-    pthread_once(&initializeThreadingKeyOnce, initializeThreadingOnce);
-#else
-    static bool initializedThreading = false;
-    if (!initializedThreading) {
-        initializeThreadingOnce();
-        initializedThreading = true;
-    }
-#endif
+    static WTF::ThreadingOnce initializeThreadingKeyOnce;
+    initializeThreadingKeyOnce.callOnce(initializeThreadingOnce);
 }
 
 } // namespace JSC
