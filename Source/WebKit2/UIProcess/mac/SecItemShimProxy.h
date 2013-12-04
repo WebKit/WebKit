@@ -26,7 +26,7 @@
 #ifndef SecItemShimProxy_h
 #define SecItemShimProxy_h
 
-#if USE(SECURITY_FRAMEWORK)
+#if ENABLE(SEC_ITEM_SHIM)
 
 #include "Connection.h"
 
@@ -54,6 +54,6 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(SECURITY_FRAMEWORK)
+#endif // ENABLE(SEC_ITEM_SHIM)
 
 #endif // SecItemShimProxy_h

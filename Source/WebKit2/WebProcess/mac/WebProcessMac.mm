@@ -29,6 +29,7 @@
 #import "CustomProtocolManager.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
+#import "SecItemShim.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import "WebFrame.h"
 #import "WebInspector.h"
@@ -50,10 +51,6 @@
 #import <mach/mach_error.h>
 #import <objc/runtime.h>
 #import <stdio.h>
-
-#if USE(SECURITY_FRAMEWORK)
-#import "SecItemShim.h"
-#endif
 
 using namespace WebCore;
 
@@ -203,7 +200,7 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
 {
     WKAXRegisterRemoteApp();
 
-#if USE(SECURITY_FRAMEWORK)
+#if ENABLE(SEC_ITEM_SHIM)
     SecItemShim::shared().initialize(this);
 #endif
 }

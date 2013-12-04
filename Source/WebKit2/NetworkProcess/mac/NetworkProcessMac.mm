@@ -34,6 +34,7 @@
 #import "ResourceCachesToClear.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
+#import "SecItemShim.h"
 #import "StringUtilities.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
@@ -43,10 +44,6 @@
 #import <mach/mach_error.h>
 #import <sysexits.h>
 #import <wtf/text/WTFString.h>
-
-#if USE(SECURITY_FRAMEWORK)
-#import "SecItemShim.h"
-#endif
 
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 typedef struct _CFURLCache* CFURLCacheRef;
@@ -125,7 +122,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
             diskPath:parameters.diskCacheDirectory]).get()];
     }
 
-#if USE(SECURITY_FRAMEWORK)
+#if ENABLE(SEC_ITEM_SHIM)
     SecItemShim::shared().initialize(this);
 #endif
 

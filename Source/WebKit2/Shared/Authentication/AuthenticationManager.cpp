@@ -97,7 +97,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(Download* download
 }
 
 // Currently, only Mac knows how to respond to authentication challenges with certificate info.
-#if !USE(SECURITY_FRAMEWORK)
+#if !HAVE(SEC_IDENTITY)
 bool AuthenticationManager::tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const CertificateInfo&)
 {
     return false;

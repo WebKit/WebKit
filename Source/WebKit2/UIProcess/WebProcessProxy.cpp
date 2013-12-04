@@ -31,6 +31,7 @@
 #include "DownloadProxyMap.h"
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
+#include "SecItemShimProxy.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "WebBackForwardListItem.h"
@@ -51,10 +52,6 @@
 
 #if PLATFORM(MAC)
 #include "PDFPlugin.h"
-#endif
-
-#if USE(SECURITY_FRAMEWORK)
-#include "SecItemShimProxy.h"
 #endif
 
 using namespace WebCore;
@@ -112,7 +109,7 @@ void WebProcessProxy::connectionWillOpen(CoreIPC::Connection* connection)
 {
     ASSERT(this->connection() == connection);
 
-#if USE(SECURITY_FRAMEWORK)
+#if ENABLE(SEC_ITEM_SHIM)
     SecItemShimProxy::shared().initializeConnection(connection);
 #endif
 

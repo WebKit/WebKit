@@ -497,11 +497,12 @@
 #define WTF_USE_CF 1
 #define HAVE_READLINE 1
 #define HAVE_RUNLOOP_TIMER 1
+#define HAVE_SEC_IDENTITY 1
+#define HAVE_SEC_KEYCHAIN 1
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 #define HAVE_LAYER_HOSTING_IN_WINDOW_SERVER 1
 #endif
 #define WTF_USE_APPKIT 1
-#define WTF_USE_SECURITY_FRAMEWORK 1
 
 /* OS X defines a series of platform macros for debugging. */
 /* Some of them are really annoying because they use common names (e.g. check()). */
@@ -524,7 +525,6 @@
 #define WTF_USE_CF 1
 #define WTF_USE_CFNETWORK 1
 #define WTF_USE_NETWORK_CFDATA_ARRAY_CALLBACK 1
-#define WTF_USE_SECURITY_FRAMEWORK 0
 #define WTF_USE_WEB_THREAD 1
 
 #if CPU(ARM64)

@@ -56,8 +56,8 @@ enum CFType {
     CFNumber,
     CFString,
     CFURL,
-#if USE(SECURITY_FRAMEWORK)
     SecCertificate,
+#if HAVE(SEC_KEYCHAIN)
     SecKeychainItem,
 #endif
     Null,
@@ -90,9 +90,9 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
         return CFString;
     if (typeID == CFURLGetTypeID())
         return CFURL;
-#if USE(SECURITY_FRAMEWORK)
     if (typeID == SecCertificateGetTypeID())
         return SecCertificate;
+#if HAVE(SEC_KEYCHAIN)
     if (typeID == SecKeychainItemGetTypeID())
         return SecKeychainItem;
 #endif
@@ -133,10 +133,10 @@ void encode(ArgumentEncoder& encoder, CFTypeRef typeRef)
     case CFURL:
         encode(encoder, static_cast<CFURLRef>(typeRef));
         return;
-#if USE(SECURITY_FRAMEWORK)
     case SecCertificate:
         encode(encoder, (SecCertificateRef)typeRef);
         return;
+#if HAVE(SEC_KEYCHAIN)
     case SecKeychainItem:
         encode(encoder, (SecKeychainItemRef)typeRef);
         return;
@@ -216,7 +216,6 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
         result = adoptCF(url.leakRef());
         return true;
     }
-#if USE(SECURITY_FRAMEWORK)
     case SecCertificate: {
         RetainPtr<SecCertificateRef> certificate;
         if (!decode(decoder, certificate))
@@ -224,6 +223,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFTypeRef>& result)
         result = adoptCF(certificate.leakRef());
         return true;
     }
+#if HAVE(SEC_KEYCHAIN)
     case SecKeychainItem: {
         RetainPtr<SecKeychainItemRef> keychainItem;
         if (!decode(decoder, keychainItem))
@@ -539,7 +539,6 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFURLRef>& result)
     return result;
 }
 
-#if USE(SECURITY_FRAMEWORK)
 void encode(ArgumentEncoder& encoder, SecCertificateRef certificate)
 {
     RetainPtr<CFDataRef> data = adoptCF(SecCertificateCopyData(certificate));
@@ -556,6 +555,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecCertificateRef>& result)
     return true;
 }
 
+#if HAVE(SEC_KEYCHAIN)
 void encode(ArgumentEncoder& encoder, SecKeychainItemRef keychainItem)
 {
     CFDataRef data;

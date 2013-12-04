@@ -39,6 +39,7 @@
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoader.h"
 #include "RemoteNetworkingContext.h"
+#include "SecItemShim.h"
 #include "StatisticsData.h"
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
@@ -46,10 +47,6 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
-
-#if USE(SECURITY_FRAMEWORK)
-#include "SecItemShim.h"
-#endif
 
 using namespace WebCore;
 
@@ -176,7 +173,7 @@ void NetworkProcess::initializeConnection(CoreIPC::Connection* connection)
 {
     ChildProcess::initializeConnection(connection);
 
-#if USE(SECURITY_FRAMEWORK)
+#if ENABLE(SEC_ITEM_SHIM)
     SecItemShim::shared().initializeConnection(connection);
 #endif
 

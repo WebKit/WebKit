@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AuthenticationManager.h"
 
-#if USE(SECURITY_FRAMEWORK)
+#if HAVE(SEC_IDENTITY)
 
 #include "CertificateInfo.h"
 #include <Security/SecIdentity.h>
@@ -66,4 +66,4 @@ bool AuthenticationManager::tryUseCertificateInfoForChallenge(const Authenticati
 
 } // namespace WebKit
 
-#endif // USE(SECURITY_FRAMEWORK)
+#endif // HAVE(SEC_IDENTITY)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SecItemShim.h"
 
-#if USE(SECURITY_FRAMEWORK)
+#if ENABLE(SEC_ITEM_SHIM)
 
 #include "BlockingResponseMap.h"
 #include "ChildProcess.h"
@@ -145,4 +145,4 @@ void SecItemShim::initializeConnection(CoreIPC::Connection* connection)
 
 } // namespace WebKit
 
-#endif // USE(SECURITY_FRAMEWORK)
+#endif // ENABLE(SEC_ITEM_SHIM)

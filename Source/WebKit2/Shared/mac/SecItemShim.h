@@ -26,7 +26,7 @@
 #ifndef SecItemShim_h
 #define SecItemShim_h
 
-#if USE(SECURITY_FRAMEWORK)
+#if ENABLE(SEC_ITEM_SHIM)
 
 #include "Connection.h"
 
@@ -56,6 +56,6 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(SECURITY_FRAMEWORK)
+#endif // ENABLE(SEC_ITEM_SHIM)
 
 #endif // SecItemShim_h

@@ -1,3 +1,41 @@
+2013-12-04  Dan Bernstein  <mitz@apple.com>
+
+        Replace USE(SECURITY_FRAMEWORK) with finer-grained defines
+        https://bugs.webkit.org/show_bug.cgi?id=125242
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/WebKit2.xcconfig: Removed “-framework Security” from the linker flags, now
+        that it’s included in the target’s Link Binary with Libraries build phase.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeConnection): Changed to use ENABLE(SEC_ITEM_SHIM).
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess): Ditto.
+        * Shared/Authentication/AuthenticationManager.cpp: Changed to use HAVE(SEC_IDENTITY).
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm: Ditto.
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::typeFromCFTypeRef): Removed use of USE(SECURITY_FRAMEWORK) since all CF platforms
+        use it. Added HAVE(SEC_KEYCHAIN) where needed.
+        (CoreIPC::encode): Ditto.
+        (CoreIPC::decode): Ditto.
+        * Shared/cf/ArgumentCodersCF.h: Ditto.
+        * Shared/mac/SecItemShim.cpp: Chanegd to use ENABLE(SEC_ITEM_SHIM).
+        * Shared/mac/SecItemShim.h: Ditto.
+        * Shared/mac/SecItemShim.messages.in: Ditto.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::connectionWillOpen): Ditto.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connectionWillOpen): Ditto.
+        * UIProcess/mac/SecItemShimProxy.cpp: Ditto.
+        * UIProcess/mac/SecItemShimProxy.h: Ditto,
+        * UIProcess/mac/SecItemShimProxy.messages.in: Ditto.
+        * WebKit2.xcodeproj/project.pbxproj: Link Security.framework unconditionally.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection): Changed to use ENABLE(SEC_ITEM_SHIM).
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeProcess): Ditto.
+        * config.h: Defined ENABLE_SEC_ITEM_SHIM.
+
 2013-12-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL][WK2] Buildfix after r160104

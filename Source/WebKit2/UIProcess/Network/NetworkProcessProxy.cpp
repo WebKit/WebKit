@@ -33,13 +33,10 @@
 #include "DownloadProxyMessages.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
+#include "SecItemShimProxy.h"
 #include "WebContext.h"
 #include "WebProcessMessages.h"
 #include <wtf/RunLoop.h>
-
-#if USE(SECURITY_FRAMEWORK)
-#include "SecItemShimProxy.h"
-#endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 
@@ -74,7 +71,7 @@ void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launc
 
 void NetworkProcessProxy::connectionWillOpen(CoreIPC::Connection* connection)
 {
-#if USE(SECURITY_FRAMEWORK)
+#if ENABLE(SEC_ITEM_SHIM)
     SecItemShimProxy::shared().initializeConnection(connection);
 #endif
 }

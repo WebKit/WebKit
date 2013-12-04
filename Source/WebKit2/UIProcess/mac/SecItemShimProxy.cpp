@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SecItemShimProxy.h"
 
-#if USE(SECURITY_FRAMEWORK)
+#if ENABLE(SEC_ITEM_SHIM)
 
 #include "SecItemRequestData.h"
 #include "SecItemResponseData.h"
@@ -97,4 +97,4 @@ void SecItemShimProxy::secItemRequest(CoreIPC::Connection* connection, uint64_t 
 
 } // namespace WebKit
 
-#endif // USE(SECURITY_FRAMEWORK)
+#endif // ENABLE(SEC_ITEM_SHIM)
