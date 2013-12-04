@@ -57,6 +57,7 @@ typedef struct WKContextInjectedBundleClientV1 {
     WKContextGetInjectedBundleInitializationUserDataCallback            getInjectedBundleInitializationUserData;
 } WKContextInjectedBundleClientV1;
 
+enum { kWKContextInjectedBundleClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
 typedef struct WKContextInjectedBundleClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -67,8 +68,6 @@ typedef struct WKContextInjectedBundleClient {
 
     // Version 1.
     WKContextGetInjectedBundleInitializationUserDataCallback            getInjectedBundleInitializationUserData;
-} WKContextInjectedBundleClient;
-
-enum { kWKContextInjectedBundleClientCurrentVersion = 1 };
+} WKContextInjectedBundleClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKContextInjectedBundleClient_h

@@ -72,7 +72,7 @@ typedef struct WKPagePolicyClientV1 {
 } WKPagePolicyClientV1;
 
 // FIXME: These should be deprecated.
-enum { kWKPagePolicyClientCurrentVersion = 1 };
+enum { kWKPagePolicyClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
 typedef struct WKPagePolicyClient {
     int                                                                  version;
     const void *                                                         clientInfo;

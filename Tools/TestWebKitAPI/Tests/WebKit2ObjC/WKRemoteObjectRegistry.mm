@@ -59,13 +59,14 @@ static void didCreateConnection(WKContextRef context, WKConnectionRef connection
 
     // Setup a client on the connection so we can listen for messages and
     // tear down notifications.
-    WKConnectionClient connectionClient;
+    WKConnectionClientV0 connectionClient;
     memset(&connectionClient, 0, sizeof(connectionClient));
-    connectionClient.version = WKConnectionClientCurrentVersion;
-    connectionClient.clientInfo = 0;
+
+    connectionClient.base.version = 0;
     connectionClient.didReceiveMessage = connectionDidReceiveMessage;
     connectionClient.didClose = connectionDidClose;
-    WKConnectionSetConnectionClient(connection, &connectionClient);
+
+    WKConnectionSetConnectionClient(connection, &connectionClient.base);
 
     // Store off the conneciton to use.
     remoteObjectRegistry = [[WKRemoteObjectRegistry alloc] _initWithConnectionRef:connection];
@@ -77,12 +78,13 @@ TEST(WebKit2, WKRemoteObjectRegistryTest)
 
     // Set up the context's connection client so that we can access the connection when
     // it is created.
-    WKContextConnectionClient contextConnectionClient;
+    WKContextConnectionClientV0 contextConnectionClient;
     memset(&contextConnectionClient, 0, sizeof(contextConnectionClient));
-    contextConnectionClient.version = kWKContextConnectionClientCurrentVersion;
-    contextConnectionClient.clientInfo = 0;
+
+    contextConnectionClient.base.version = 0;
     contextConnectionClient.didCreateConnection = didCreateConnection;
-    WKContextSetConnectionClient(context.get(), &contextConnectionClient);
+
+    WKContextSetConnectionClient(context.get(), &contextConnectionClient.base);
 
     // Load a simple page to start the WebProcess and establish a connection.
     PlatformWebView webView(context.get());

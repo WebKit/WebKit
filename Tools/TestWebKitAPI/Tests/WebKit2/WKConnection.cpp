@@ -71,12 +71,13 @@ TEST(WebKit2, WKConnectionTest)
 
     // Set up the context's connection client so that we can access the connection when
     // it is created.
-    WKContextConnectionClient contextConnectionClient;
+    WKContextConnectionClientV0 contextConnectionClient;
     memset(&contextConnectionClient, 0, sizeof(contextConnectionClient));
-    contextConnectionClient.version = kWKContextConnectionClientCurrentVersion;
-    contextConnectionClient.clientInfo = 0;
+
+    contextConnectionClient.base.version = kWKContextConnectionClientCurrentVersion;
     contextConnectionClient.didCreateConnection = didCreateConnection;
-    WKContextSetConnectionClient(context.get(), &contextConnectionClient);
+
+    WKContextSetConnectionClient(context.get(), &contextConnectionClient.base);
  
     // Load a simple page to start the WebProcess and establish a connection.
     PlatformWebView webView(context.get());
@@ -89,13 +90,14 @@ TEST(WebKit2, WKConnectionTest)
 
     // Setup a client on the connection so we can listen for messages and
     // tear down notifications.
-    WKConnectionClient connectionClient;
+    WKConnectionClientV0 connectionClient;
     memset(&connectionClient, 0, sizeof(connectionClient));
-    connectionClient.version = WKConnectionClientCurrentVersion;
-    connectionClient.clientInfo = 0;
+
+    connectionClient.base.version = 0;
     connectionClient.didReceiveMessage = connectionDidReceiveMessage;
     connectionClient.didClose = connectionDidClose;
-    WKConnectionSetConnectionClient(connectionToBundle, &connectionClient);
+
+    WKConnectionSetConnectionClient(connectionToBundle, &connectionClient.base);
     
     // Post a simple message to the bundle via the connection.
     WKConnectionPostMessage(connectionToBundle, Util::toWK("PingMessageName").get(), Util::toWK("PingMessageBody").get());

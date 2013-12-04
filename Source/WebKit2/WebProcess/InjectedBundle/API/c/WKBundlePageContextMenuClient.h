@@ -42,14 +42,13 @@ typedef struct WKBundlePageContextMenuClientV0 {
     WKBundlePageGetContextMenuFromDefaultContextMenuCallback            getContextMenuFromDefaultMenu;
 } WKBundlePageContextMenuClientV0;
 
-// FIXME: Deprecate.
-enum { kWKBundlePageContextMenuClientCurrentVersion = 0 };
+enum { kWKBundlePageContextMenuClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKBundlePageContextMenuClient {
     int                                                                 version;
     const void *                                                        clientInfo;
 
     // Version 0.
     WKBundlePageGetContextMenuFromDefaultContextMenuCallback            getContextMenuFromDefaultMenu;
-} WKBundlePageContextMenuClient;
+} WKBundlePageContextMenuClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageContextMenuClient_h

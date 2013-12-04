@@ -61,7 +61,7 @@ void WKOriginDataManagerStopObservingChanges(WKOriginDataManagerRef originDataMa
     toImpl(originDataManagerRef)->stopObservingChanges(types);
 }
 
-void WKOriginDataManagerSetChangeClient(WKOriginDataManagerRef originDataManagerRef, const WKOriginDataManagerChangeClient *client)
+void WKOriginDataManagerSetChangeClient(WKOriginDataManagerRef originDataManagerRef, const WKOriginDataManagerChangeClientBase *client)
 {
-    toImpl(originDataManagerRef)->setChangeClient(reinterpret_cast<const WKOriginDataManagerChangeClientBase*>(client));
+    toImpl(originDataManagerRef)->setChangeClient(client);
 }

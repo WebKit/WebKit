@@ -615,9 +615,8 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [containerView addSubview:_webView];
     
-    WKPageLoaderClient loadClient = {
-        kWKPageLoaderClientCurrentVersion,
-        self,   /* clientInfo */
+    WKPageLoaderClientV3 loadClient = {
+        { 3, self },
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
         didFailProvisionalLoadWithErrorForFrame,
@@ -655,13 +654,12 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // pluginDidFail
         0, // pluginLoadPolicy
     };
-    WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
+    WKPageSetPageLoaderClient(_webView.pageRef, &loadClient.base);
 
     _webView.browsingContextController.policyDelegate = self;
 
-    WKPageUIClient uiClient = {
-        kWKPageUIClientCurrentVersion,
-        self,       /* clientInfo */
+    WKPageUIClientV2 uiClient = {
+        { 2, self },
         0,          /* createNewPage_deprecatedForUseWithV0 */
         showPage,
         closePage,
@@ -709,7 +707,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // hideColorPicker
         0, // unavailablePluginButtonClicked
     };
-    WKPageSetPageUIClient(_webView.pageRef, &uiClient);
+    WKPageSetPageUIClient(_webView.pageRef, &uiClient.base);
 }
 
 - (void)didStartProgress

@@ -94,9 +94,8 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 {
     self = [super init];
     if (self) {
-        WKContextHistoryClient historyClient = {
-            kWKContextHistoryClientCurrentVersion,
-            self,
+        WKContextHistoryClientV0 historyClient = {
+            { 0, self },
             didNavigateWithNavigationData,
             didPerformClientRedirect,
             didPerformServerRedirect,
@@ -106,7 +105,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 
         _processContext = WKContextCreate();
 
-        WKContextSetHistoryClient(_processContext, &historyClient);
+        WKContextSetHistoryClient(_processContext, &historyClient.base);
         WKContextSetCacheModel(_processContext, kWKCacheModelPrimaryWebBrowser);
 
         WKStringRef pageGroupIdentifier = WKStringCreateWithCFString(CFSTR("MiniBrowser"));

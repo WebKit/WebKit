@@ -112,21 +112,22 @@ TEST(WebKit2, FindMatches)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
     
-    WKPageLoaderClient loaderClient;
+    WKPageLoaderClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     
-    loaderClient.version = 0;
+    loaderClient.base.version = 0;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
 
-    WKPageFindMatchesClient findMatchesClient;
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+
+    WKPageFindMatchesClientV0 findMatchesClient;
     memset(&findMatchesClient, 0, sizeof(findMatchesClient));
 
-    findMatchesClient.version = 0;
+    findMatchesClient.base.version = 0;
     findMatchesClient.didFindStringMatches = didFindStringMatches;
     findMatchesClient.didGetImageForMatchResult = didGetImageForMatchResult;
 
-    WKPageSetPageFindMatchesClient(webView.page(), &findMatchesClient);
+    WKPageSetPageFindMatchesClient(webView.page(), &findMatchesClient.base);
 
     // This HTML file contains 3 occurrences of the word Hello and has the second occurence of the word 'world' selected.
     // It contains 1 occurrence of the word 'crazy' that is before the selected word.

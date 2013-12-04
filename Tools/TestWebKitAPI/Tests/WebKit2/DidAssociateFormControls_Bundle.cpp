@@ -64,15 +64,15 @@ DidAssociateFormControlsTest::DidAssociateFormControlsTest(const std::string& id
 
 void DidAssociateFormControlsTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
 {
-    WKBundlePageFormClient formClient;
+    WKBundlePageFormClientV2 formClient;
     memset(&formClient, 0, sizeof(formClient));
 
-    formClient.version = 2;
-    formClient.clientInfo = this;
+    formClient.base.version = 2;
+    formClient.base.clientInfo = this;
     formClient.shouldNotifyOnFormChanges = shouldNotifyOnFormChanges;
     formClient.didAssociateFormControls = didAssociateFormControls;
 
-    WKBundlePageSetFormClient(page, &formClient);
+    WKBundlePageSetFormClient(page, &formClient.base);
 }
 
 } // namespace TestWebKitAPI

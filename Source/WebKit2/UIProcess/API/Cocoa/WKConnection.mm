@@ -93,15 +93,15 @@ static void didClose(WKConnectionRef, const void* clientInfo)
 
 static void setUpClient(WKConnection *connection, WKConnectionRef connectionRef)
 {
-    WKConnectionClient client;
+    WKConnectionClientV0 client;
     memset(&client, 0, sizeof(client));
 
-    client.version = WKConnectionClientCurrentVersion;
-    client.clientInfo = connection;
+    client.base.version = 0;
+    client.base.clientInfo = connection;
     client.didReceiveMessage = didReceiveMessage;
     client.didClose = didClose;
 
-    WKConnectionSetConnectionClient(connectionRef, &client);
+    WKConnectionSetConnectionClient(connectionRef, &client.base);
 }
 
 - (id)_initWithConnectionRef:(WKConnectionRef)connectionRef

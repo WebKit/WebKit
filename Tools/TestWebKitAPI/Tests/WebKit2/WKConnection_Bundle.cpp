@@ -46,12 +46,13 @@ public:
 
     virtual void initialize(WKBundleRef bundle, WKTypeRef)
     {
-        WKConnectionClient connectionClient;
+        WKConnectionClientV0 connectionClient;
         memset(&connectionClient, 0, sizeof(connectionClient));
-        connectionClient.version = WKConnectionClientCurrentVersion;
-        connectionClient.clientInfo = 0;
+
+        connectionClient.base.version = WKConnectionClientCurrentVersion;
         connectionClient.didReceiveMessage = connectionDidReceiveMessage;
-        WKConnectionSetConnectionClient(WKBundleGetApplicationConnection(bundle), &connectionClient);
+
+        WKConnectionSetConnectionClient(WKBundleGetApplicationConnection(bundle), &connectionClient.base);
     }
 };
 

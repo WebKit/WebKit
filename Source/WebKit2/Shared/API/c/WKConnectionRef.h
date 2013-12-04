@@ -48,8 +48,7 @@ typedef struct WKConnectionClientV0 {
     WKConnectionDidCloseCallback                                        didClose;
 } WKConnectionClientV0;
 
-// FIXME: Deprecate.
-enum { WKConnectionClientCurrentVersion = 0 };
+enum { WKConnectionClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKConnectionClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -57,11 +56,11 @@ typedef struct WKConnectionClient {
     // Version 0.
     WKConnectionDidReceiveMessageCallback                               didReceiveMessage;
     WKConnectionDidCloseCallback                                        didClose;
-} WKConnectionClient;
+} WKConnectionClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT WKTypeID WKConnectionGetTypeID();
 
-WK_EXPORT void WKConnectionSetConnectionClient(WKConnectionRef connection, const WKConnectionClient* client);
+WK_EXPORT void WKConnectionSetConnectionClient(WKConnectionRef connection, const WKConnectionClientBase* client);
 WK_EXPORT void WKConnectionPostMessage(WKConnectionRef connection, WKStringRef messageName, WKTypeRef messageBody);
 
 #ifdef __cplusplus

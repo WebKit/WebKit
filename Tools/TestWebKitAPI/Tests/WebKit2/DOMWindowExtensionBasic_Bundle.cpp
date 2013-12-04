@@ -152,18 +152,18 @@ void DOMWindowExtensionBasic::didCreatePage(WKBundleRef bundle, WKBundlePageRef 
 {    
     m_bundle = bundle;
 
-    WKBundlePageLoaderClient pageLoaderClient;
+    WKBundlePageLoaderClientV1 pageLoaderClient;
     memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
     
-    pageLoaderClient.version = 1;
-    pageLoaderClient.clientInfo = this;
+    pageLoaderClient.base.version = 1;
+    pageLoaderClient.base.clientInfo = this;
     pageLoaderClient.didFinishLoadForFrame = didFinishLoadForFrameCallback;
     pageLoaderClient.globalObjectIsAvailableForFrame = globalObjectIsAvailableForFrameCallback;
     pageLoaderClient.willDisconnectDOMWindowExtensionFromGlobalObject = willDisconnectDOMWindowExtensionFromGlobalObjectCallback;
     pageLoaderClient.didReconnectDOMWindowExtensionToGlobalObject = didReconnectDOMWindowExtensionToGlobalObjectCallback;
     pageLoaderClient.willDestroyGlobalObjectForDOMWindowExtension = willDestroyGlobalObjectForDOMWindowExtensionCallback;
     
-    WKBundlePageSetPageLoaderClient(page, &pageLoaderClient);
+    WKBundlePageSetPageLoaderClient(page, &pageLoaderClient.base);
 }
 
 void DOMWindowExtensionBasic::willDestroyPage(WKBundleRef, WKBundlePageRef)

@@ -89,12 +89,13 @@ void PageVisibilityStateWithWindowChanges::teardownView(WebView *webView)
 
 void PageVisibilityStateWithWindowChanges::initializeView(WKView *wkView)
 {
-    WKPageUIClient uiClient;
+    WKPageUIClientV0 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
-    uiClient.version = 0;
-    uiClient.clientInfo = 0;
+
+    uiClient.base.version = 0;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
-    WKPageSetPageUIClient(wkView.pageRef, &uiClient);
+
+    WKPageSetPageUIClient(wkView.pageRef, &uiClient.base);
 }
 
 void PageVisibilityStateWithWindowChanges::teardownView(WKView *wkView)

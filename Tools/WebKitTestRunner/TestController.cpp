@@ -190,9 +190,8 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
 
     view->resizeTo(800, 600);
 
-    WKPageUIClient otherPageUIClient = {
-        kWKPageUIClientCurrentVersion,
-        view,
+    WKPageUIClientV2 otherPageUIClient = {
+        { 2, view },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         closeOtherPage,
@@ -240,7 +239,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // hideColorPicker
         0, // unavailablePluginButtonClicked
     };
-    WKPageSetPageUIClient(newPage, &otherPageUIClient);
+    WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
 
     view->didInitializeClients();
 
@@ -366,14 +365,13 @@ void TestController::initialize(int argc, const char* argv[])
 
     platformInitializeContext();
 
-    WKContextInjectedBundleClient injectedBundleClient = {
-        kWKContextInjectedBundleClientCurrentVersion,
-        this,
+    WKContextInjectedBundleClientV1 injectedBundleClient = {
+        { 1, this },
         didReceiveMessageFromInjectedBundle,
         didReceiveSynchronousMessageFromInjectedBundle,
         0 // getInjectedBundleInitializationUserData
     };
-    WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient);
+    WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient.base);
 
     WKNotificationManagerRef notificationManager = WKContextGetNotificationManager(m_context.get());
     WKNotificationProviderV0 notificationKit = m_webNotificationProvider.provider();
@@ -391,9 +389,8 @@ void TestController::initialize(int argc, const char* argv[])
 void TestController::createWebViewWithOptions(WKDictionaryRef options)
 {
     m_mainWebView = adoptPtr(new PlatformWebView(m_context.get(), m_pageGroup.get(), 0, options));
-    WKPageUIClient pageUIClient = {
-        kWKPageUIClientCurrentVersion,
-        m_mainWebView.get(),
+    WKPageUIClientV2 pageUIClient = {
+        { 2, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         0, // close
@@ -441,11 +438,10 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // hideColorPicker
         unavailablePluginButtonClicked,
     };
-    WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
+    WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 
-    WKPageLoaderClient pageLoaderClient = {
-        kWKPageLoaderClientCurrentVersion,
-        this,
+    WKPageLoaderClientV3 pageLoaderClient = {
+        { 3, this },
         0, // didStartProvisionalLoadForFrame
         0, // didReceiveServerRedirectForProvisionalLoadForFrame
         0, // didFailProvisionalLoadWithErrorForFrame
@@ -483,11 +479,10 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // pluginDidFail
         pluginLoadPolicy, // pluginLoadPolicy
     };
-    WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
+    WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient.base);
 
-    WKPagePolicyClient pagePolicyClient = {
-        kWKPagePolicyClientCurrentVersion,
-        this,
+    WKPagePolicyClientV1 pagePolicyClient = {
+        { 1, this },
         0, // decidePolicyForNavigationAction_deprecatedForUseWithV0
         0, // decidePolicyForNewWindowAction
         0, // decidePolicyForResponse_deprecatedForUseWithV0
@@ -495,7 +490,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         decidePolicyForNavigationAction,
         decidePolicyForResponse,
     };
-    WKPageSetPagePolicyClient(m_mainWebView->page(), &pagePolicyClient);
+    WKPageSetPagePolicyClient(m_mainWebView->page(), &pagePolicyClient.base);
 
     m_mainWebView->didInitializeClients();
 }

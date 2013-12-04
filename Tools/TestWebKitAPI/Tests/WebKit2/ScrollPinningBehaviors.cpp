@@ -79,13 +79,14 @@ TEST(WebKit2, ScrollPinningBehaviors)
 
     PlatformWebView webView(context.get(), pageGroup.get());
 
-    WKPageLoaderClient loaderClient;
+    WKPageLoaderClientV3 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
-    loaderClient.version = kWKPageLoaderClientCurrentVersion;
-    loaderClient.didFinishDocumentLoadForFrame = didFinishDocumentLoadForFrame;
-    loaderClient.clientInfo = &webView;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
+    loaderClient.base.version = 3;
+    loaderClient.base.clientInfo = &webView;
+    loaderClient.didFinishDocumentLoadForFrame = didFinishDocumentLoadForFrame;
+
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
 
     WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple-tall", "html")).get());
 

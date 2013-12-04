@@ -43,12 +43,13 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef context, WKStringRe
 
 static void setInjectedBundleClient(WKContextRef context)
 {
-    WKContextInjectedBundleClient injectedBundleClient;
+    WKContextInjectedBundleClientV0 injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
-    injectedBundleClient.version = 0;
-    injectedBundleClient.clientInfo = 0;
+
+    injectedBundleClient.base.version = 0;
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
-    WKContextSetInjectedBundleClient(context, &injectedBundleClient);
+
+    WKContextSetInjectedBundleClient(context, &injectedBundleClient.base);
 }
 
 TEST(WebKit2, InjectedBundleFrameHitTest)

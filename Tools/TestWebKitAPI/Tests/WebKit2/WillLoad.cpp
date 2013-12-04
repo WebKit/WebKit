@@ -56,13 +56,14 @@ public:
 
     static void setInjectedBundleClient(WKContextRef context, const void* clientInfo)
     {
-        WKContextInjectedBundleClient injectedBundleClient;
+        WKContextInjectedBundleClientV1 injectedBundleClient;
         memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
-        injectedBundleClient.version = kWKContextInjectedBundleClientCurrentVersion;
-        injectedBundleClient.clientInfo = clientInfo;
+
+        injectedBundleClient.base.version = 1;
+        injectedBundleClient.base.clientInfo = clientInfo;
         injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
 
-        WKContextSetInjectedBundleClient(context, &injectedBundleClient);
+        WKContextSetInjectedBundleClient(context, &injectedBundleClient.base);
     }
 
     virtual void SetUp()

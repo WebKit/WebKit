@@ -68,7 +68,6 @@ typedef struct WKOriginDataManagerChangeClientV0 {
     WKOriginDataManagerChangeCallback                                   didChange;
 } WKOriginDataManagerChangeClientV0;
 
-// FIXME: Deprecate.
 enum { kWKOriginDataManagerChangeClientVersion = 0 };
 typedef struct WKOriginDataManagerChangeClient {
     int                                                                 version;
@@ -76,11 +75,11 @@ typedef struct WKOriginDataManagerChangeClient {
 
     // Version 0.
     WKOriginDataManagerChangeCallback                                   didChange;
-} WKOriginDataManagerChangeClient;
+} WKOriginDataManagerChangeClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT void WKOriginDataManagerStartObservingChanges(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types);
 WK_EXPORT void WKOriginDataManagerStopObservingChanges(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types);
-WK_EXPORT void WKOriginDataManagerSetChangeClient(WKOriginDataManagerRef originDataManger, const WKOriginDataManagerChangeClient* client);
+WK_EXPORT void WKOriginDataManagerSetChangeClient(WKOriginDataManagerRef originDataManger, const WKOriginDataManagerChangeClientBase* client);
 #ifdef __cplusplus
 }
 #endif

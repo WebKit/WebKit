@@ -102,23 +102,27 @@ void decidePolicyForGeolocationPermissionRequestCallBack(WKPageRef page, WKFrame
 
 void setupGeolocationProvider(WKContextRef context, void *clientInfo)
 {
-    WKGeolocationProvider providerCallback;
+    WKGeolocationProviderV1 providerCallback;
     memset(&providerCallback, 0, sizeof(WKGeolocationProvider));
-    providerCallback.version = kWKGeolocationProviderCurrentVersion;
-    providerCallback.clientInfo = clientInfo;
+
+    providerCallback.base.version = 1;
+    providerCallback.base.clientInfo = clientInfo;
     providerCallback.startUpdating = GeolocationStateTracker::startUpdatingCallback;
     providerCallback.stopUpdating = GeolocationStateTracker::stopUpdatingCallback;
     providerCallback.setEnableHighAccuracy = GeolocationStateTracker::setEnableHighAccuracyCallback;
-    WKGeolocationManagerSetProvider(WKContextGetGeolocationManager(context), &providerCallback);
+
+    WKGeolocationManagerSetProvider(WKContextGetGeolocationManager(context), &providerCallback.base);
 }
 
 void setupView(PlatformWebView& webView)
 {
-    WKPageUIClient uiClient;
+    WKPageUIClientV2 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
-    uiClient.version = kWKPageUIClientCurrentVersion;
+
+    uiClient.base.version = 2;
     uiClient.decidePolicyForGeolocationPermissionRequest = decidePolicyForGeolocationPermissionRequestCallBack;
-    WKPageSetPageUIClient(webView.page(), &uiClient);
+
+    WKPageSetPageUIClient(webView.page(), &uiClient.base);
 }
 
 // GeolocationBasic.
@@ -311,11 +315,15 @@ TEST(WebKit2, GeolocationTransitionToLowAccuracy)
     setupView(lowAccuracyWebView);
 
     bool finishedSecondStep = false;
-    WKPageLoaderClient loaderClient;
+
+    WKPageLoaderClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
-    loaderClient.clientInfo = &finishedSecondStep;
+
+    loaderClient.base.version = 0;
+    loaderClient.base.clientInfo = &finishedSecondStep;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(lowAccuracyWebView.page(), &loaderClient);
+
+    WKPageSetPageLoaderClient(lowAccuracyWebView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> lowAccuracyURL(AdoptWK, Util::createURLForResource("geolocationWatchPosition", "html"));
     WKPageLoadURL(lowAccuracyWebView.page(), lowAccuracyURL.get());

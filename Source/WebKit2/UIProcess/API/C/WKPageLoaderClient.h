@@ -267,7 +267,7 @@ typedef struct WKPageLoaderClientV3 {
 } WKPageLoaderClientV3;
 
 // FIXME: These should be deprecated.
-enum { kWKPageLoaderClientCurrentVersion = 3 };
+enum { kWKPageLoaderClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 3 };
 typedef struct WKPageLoaderClient {
     int                                                                 version;
     const void *                                                        clientInfo;

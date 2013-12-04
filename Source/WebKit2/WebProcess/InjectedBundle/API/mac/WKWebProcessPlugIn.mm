@@ -84,15 +84,15 @@ static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void
 
 static void setUpBundleClient(WKWebProcessPlugInController *plugInController, WKBundleRef bundleRef)
 {
-    WKBundleClient bundleClient;
+    WKBundleClientV1 bundleClient;
     memset(&bundleClient, 0, sizeof(bundleClient));
 
-    bundleClient.version = kWKBundleClientCurrentVersion;
-    bundleClient.clientInfo = plugInController;
+    bundleClient.base.version = 1;
+    bundleClient.base.clientInfo = plugInController;
     bundleClient.didCreatePage = didCreatePage;
     bundleClient.willDestroyPage = willDestroyPage;
 
-    WKBundleSetClient(bundleRef, &bundleClient);
+    WKBundleSetClient(bundleRef, &bundleClient.base);
 }
 
 static WKWebProcessPlugInController *sharedInstance;

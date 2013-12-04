@@ -159,18 +159,18 @@ void DOMWindowExtensionNoCache::didCreatePage(WKBundleRef bundle, WKBundlePageRe
 {
     m_bundle = bundle;
 
-    WKBundlePageLoaderClient pageLoaderClient;
+    WKBundlePageLoaderClientV7 pageLoaderClient;
     memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
 
-    pageLoaderClient.version = kWKBundlePageLoaderClientCurrentVersion;
-    pageLoaderClient.clientInfo = this;
+    pageLoaderClient.base.version = 7;
+    pageLoaderClient.base.clientInfo = this;
     pageLoaderClient.didFinishLoadForFrame = didFinishLoadForFrameCallback;
     pageLoaderClient.globalObjectIsAvailableForFrame = globalObjectIsAvailableForFrameCallback;
     pageLoaderClient.willDisconnectDOMWindowExtensionFromGlobalObject = willDisconnectDOMWindowExtensionFromGlobalObjectCallback;
     pageLoaderClient.didReconnectDOMWindowExtensionToGlobalObject = didReconnectDOMWindowExtensionToGlobalObjectCallback;
     pageLoaderClient.willDestroyGlobalObjectForDOMWindowExtension = willDestroyGlobalObjectForDOMWindowExtensionCallback;
 
-    WKBundlePageSetPageLoaderClient(page, &pageLoaderClient);
+    WKBundlePageSetPageLoaderClient(page, &pageLoaderClient.base);
 }
 
 void DOMWindowExtensionNoCache::willDestroyPage(WKBundleRef, WKBundlePageRef)

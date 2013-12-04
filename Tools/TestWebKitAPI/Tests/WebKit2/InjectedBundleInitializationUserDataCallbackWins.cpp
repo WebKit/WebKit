@@ -49,13 +49,14 @@ TEST(WebKit2, InjectedBundleInitializationUserDataCallbackWins)
     WKRetainPtr<WKDictionaryRef> initializationDictionary(AdoptWK, Util::createInitializationDictionaryForInjectedBundleTest("InjectedBundleInitializationUserDataCallbackWinsTest",  Util::toWK("Set with WKContextSetInitializationUserDataForInjectedBundle").get()));
     WKContextSetInitializationUserDataForInjectedBundle(context.get(), initializationDictionary.get());
 
-    WKContextInjectedBundleClient injectedBundleClient;
+    WKContextInjectedBundleClientV1 injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
-    injectedBundleClient.version = 1;
-    injectedBundleClient.clientInfo = 0;
+
+    injectedBundleClient.base.version = 1;
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
     injectedBundleClient.getInjectedBundleInitializationUserData = getInjectedBundleInitializationUserData;
-    WKContextSetInjectedBundleClient(context.get(), &injectedBundleClient);
+
+    WKContextSetInjectedBundleClient(context.get(), &injectedBundleClient.base);
 
     PlatformWebView webView(context.get());
 

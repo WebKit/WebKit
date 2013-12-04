@@ -75,17 +75,18 @@ public:
         BundleObject *bundleObject = [[BundleObject alloc] init];
         [m_objectRegistry registerExportedObject:bundleObject interface:bundleInterface];
 
-        WKConnectionClient connectionClient;
+        WKConnectionClientV0 connectionClient;
         memset(&connectionClient, 0, sizeof(connectionClient));
-        connectionClient.version = WKConnectionClientCurrentVersion;
-        connectionClient.clientInfo = this;
+
+        connectionClient.base.version = WKConnectionClientCurrentVersion;
+        connectionClient.base.clientInfo = this;
         connectionClient.didReceiveMessage = [](WKConnectionRef connection, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo) {
             const WKRemoteObjectRegistryTest* test = static_cast<const WKRemoteObjectRegistryTest*>(clientInfo);
 
             [test->m_objectRegistry.get() _handleMessageWithName:messageName body:messageBody];
         };
 
-        WKConnectionSetConnectionClient(WKBundleGetApplicationConnection(bundle), &connectionClient);
+        WKConnectionSetConnectionClient(WKBundleGetApplicationConnection(bundle), &connectionClient.base);
     }
 
 private:

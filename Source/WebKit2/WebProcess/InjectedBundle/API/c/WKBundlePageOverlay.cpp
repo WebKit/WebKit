@@ -147,22 +147,22 @@ WKTypeID WKBundlePageOverlayGetTypeID()
     return toAPI(PageOverlay::APIType);
 }
 
-WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClient* wkClient)
+WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClientBase* wkClient)
 {
     if (wkClient && wkClient->version)
         return 0;
 
-    auto clientImpl = std::make_unique<PageOverlayClientImpl>(reinterpret_cast<WKBundlePageOverlayClientBase*>(wkClient));
+    auto clientImpl = std::make_unique<PageOverlayClientImpl>(wkClient);
 
     // FIXME: Looks like this leaks the clientImpl.
     return toAPI(PageOverlay::create(clientImpl.release()).leakRef());
 }
 
-void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlayRef, WKBundlePageOverlayAccessibilityClient* client)
+void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlayRef, WKBundlePageOverlayAccessibilityClientBase* client)
 {
     if (client && client->version)
         return;
-    static_cast<PageOverlayClientImpl*>(toImpl(bundlePageOverlayRef)->client())->setAccessibilityClient(reinterpret_cast<WKBundlePageOverlayAccessibilityClientBase*>(client));
+    static_cast<PageOverlayClientImpl*>(toImpl(bundlePageOverlayRef)->client())->setAccessibilityClient(client);
 }
 
 void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlayRef, WKRect rect)

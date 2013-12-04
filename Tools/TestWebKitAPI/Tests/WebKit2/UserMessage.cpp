@@ -65,24 +65,26 @@ public:
 
     static void setInjectedBundleClient(WKContextRef context, const void* clientInfo)
     {
-        WKContextInjectedBundleClient injectedBundleClient;
+        WKContextInjectedBundleClientV1 injectedBundleClient;
         memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
-        injectedBundleClient.version = kWKContextInjectedBundleClientCurrentVersion;
-        injectedBundleClient.clientInfo = clientInfo;
+
+        injectedBundleClient.base.version = 1;
+        injectedBundleClient.base.clientInfo = clientInfo;
         injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
 
-        WKContextSetInjectedBundleClient(context, &injectedBundleClient);
+        WKContextSetInjectedBundleClient(context, &injectedBundleClient.base);
     }
 
     static void setPageLoaderClient(WKPageRef page, const void* clientInfo)
     {
-        WKPageLoaderClient loaderClient;
+        WKPageLoaderClientV3 loaderClient;
         memset(&loaderClient, 0, sizeof(loaderClient));
-        loaderClient.version = kWKPageLoaderClientCurrentVersion;
-        loaderClient.clientInfo = clientInfo;
+
+        loaderClient.base.version = kWKPageLoaderClientCurrentVersion;
+        loaderClient.base.clientInfo = clientInfo;
         loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
 
-        WKPageSetPageLoaderClient(page, &loaderClient);
+        WKPageSetPageLoaderClient(page, &loaderClient.base);
     }
 
     virtual void SetUp()

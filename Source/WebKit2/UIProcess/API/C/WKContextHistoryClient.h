@@ -50,8 +50,7 @@ typedef struct WKContextHistoryClientV0 {
     WKContextPopulateVisitedLinksCallback                               populateVisitedLinks;
 } WKContextHistoryClientV0;
 
-// FIXME: Deprecate.
-enum { kWKContextHistoryClientCurrentVersion = 0 };
+enum { kWKContextHistoryClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKContextHistoryClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -62,6 +61,6 @@ typedef struct WKContextHistoryClient {
     WKContextDidPerformServerRedirectCallback                           didPerformServerRedirect;
     WKContextDidUpdateHistoryTitleCallback                              didUpdateHistoryTitle;
     WKContextPopulateVisitedLinksCallback                               populateVisitedLinks;
-} WKContextHistoryClient;
+} WKContextHistoryClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKContextHistoryClient_h

@@ -120,12 +120,12 @@ WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey()
 #endif
 }
 
-void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManagerRef, const WKDatabaseManagerClient* wkClient)
+void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManagerRef, const WKDatabaseManagerClientBase* wkClient)
 {
 #if ENABLE(SQL_DATABASE)
     if (wkClient && wkClient->version)
         return;
-    toImpl(databaseManagerRef)->initializeClient(reinterpret_cast<const WKDatabaseManagerClientBase*>(wkClient));
+    toImpl(databaseManagerRef)->initializeClient(wkClient);
 #else
     UNUSED_PARAM(databaseManagerRef);
     UNUSED_PARAM(wkClient);

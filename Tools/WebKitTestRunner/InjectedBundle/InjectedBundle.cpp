@@ -88,16 +88,15 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
 {
     m_bundle = bundle;
 
-    WKBundleClient client = {
-        kWKBundleClientCurrentVersion,
-        this,
+    WKBundleClientV1 client = {
+        { 1, this },
         didCreatePage,
         willDestroyPage,
         didInitializePageGroup,
         didReceiveMessage,
         didReceiveMessageToPage
     };
-    WKBundleSetClient(m_bundle, &client);
+    WKBundleSetClient(m_bundle, &client.base);
 
     platformInitialize(initializationUserData);
 

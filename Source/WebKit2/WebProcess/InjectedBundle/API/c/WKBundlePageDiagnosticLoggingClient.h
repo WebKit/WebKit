@@ -42,14 +42,13 @@ typedef struct WKBundlePageDiagnosticLoggingClientV0 {
     WKBundlePageDiagnosticLoggingCallback                               logDiagnosticMessage;
 } WKBundlePageDiagnosticLoggingClientV0;
 
-// FIXME: Deprecate.
-enum { kWKBundlePageDiagnosticLoggingClientCurrentVersion = 0 };
+enum { kWKBundlePageDiagnosticLoggingClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKBundlePageDiagnosticLoggingClient {
     int                                                                 version;
     const void *                                                        clientInfo;
 
     // Version 0.
     WKBundlePageDiagnosticLoggingCallback                               logDiagnosticMessage;
-} WKBundlePageDiagnosticLoggingClient;
+} WKBundlePageDiagnosticLoggingClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageDiagnosticLoggingClient_h

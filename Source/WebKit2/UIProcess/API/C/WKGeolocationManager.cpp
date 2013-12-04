@@ -36,9 +36,9 @@ WKTypeID WKGeolocationManagerGetTypeID()
     return toAPI(WebGeolocationManagerProxy::APIType);
 }
 
-void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocationManagerRef, const WKGeolocationProvider* wkProvider)
+void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocationManagerRef, const WKGeolocationProviderBase* wkProvider)
 {
-    toImpl(geolocationManagerRef)->initializeProvider(reinterpret_cast<const WKGeolocationProviderBase*>(wkProvider));
+    toImpl(geolocationManagerRef)->initializeProvider(wkProvider);
 }
 
 void WKGeolocationManagerProviderDidChangePosition(WKGeolocationManagerRef geolocationManagerRef, WKGeolocationPositionRef positionRef)

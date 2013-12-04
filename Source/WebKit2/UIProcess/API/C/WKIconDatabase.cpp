@@ -36,9 +36,9 @@ WKTypeID WKIconDatabaseGetTypeID()
     return toAPI(WebIconDatabase::APIType);
 }
 
-void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabaseRef, const WKIconDatabaseClient* wkClient)
+void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabaseRef, const WKIconDatabaseClientBase* wkClient)
 {
-    toImpl(iconDatabaseRef)->initializeIconDatabaseClient(reinterpret_cast<const WKIconDatabaseClientBase*>(wkClient));
+    toImpl(iconDatabaseRef)->initializeIconDatabaseClient(wkClient);
 }
 
 void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURLRef)

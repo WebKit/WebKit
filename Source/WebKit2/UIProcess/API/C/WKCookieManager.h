@@ -54,19 +54,18 @@ typedef struct WKCookieManagerClientV0 {
     WKCookieManagerCookiesDidChangeCallback                             cookiesDidChange;
 } WKCookieManagerClientV0;
 
-// FIXME: Deprecate.
-enum { kWKCookieManagerClientCurrentVersion = 0 };
+enum { kWKCookieManagerClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKCookieManagerClient {
     int                                                                 version;
     const void *                                                        clientInfo;
 
     // Version 0.
     WKCookieManagerCookiesDidChangeCallback                             cookiesDidChange;
-} WKCookieManagerClient;
+} WKCookieManagerClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT WKTypeID WKCookieManagerGetTypeID();
 
-WK_EXPORT void WKCookieManagerSetClient(WKCookieManagerRef cookieManager, const WKCookieManagerClient* client);
+WK_EXPORT void WKCookieManagerSetClient(WKCookieManagerRef cookieManager, const WKCookieManagerClientBase* client);
 
 typedef void (*WKCookieManagerGetCookieHostnamesFunction)(WKArrayRef, WKErrorRef, void*);
 WK_EXPORT void WKCookieManagerGetHostnamesWithCookies(WKCookieManagerRef cookieManager, void* context, WKCookieManagerGetCookieHostnamesFunction function);

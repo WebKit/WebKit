@@ -47,13 +47,15 @@ TEST(WebKit2, LayoutMilestonesWithAllContentInFrame)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClient loaderClient;
+    WKPageLoaderClientV3 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
-    loaderClient.version = kWKPageLoaderClientCurrentVersion;
-    loaderClient.didLayout = didLayout;
-    loaderClient.clientInfo = &webView;
 
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
+    loaderClient.base.version = 3;
+    loaderClient.base.clientInfo = &webView;
+    loaderClient.didLayout = didLayout;
+
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+
     WKPageListenForLayoutMilestones(webView.page(), kWKDidFirstVisuallyNonEmptyLayout);
     WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("all-content-in-one-iframe", "html")).get());
 

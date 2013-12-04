@@ -480,11 +480,11 @@ static WKPolicyDecisionHandler makePolicyDecisionBlock(WKFramePolicyListenerRef 
 
 static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, WebPageProxy& page)
 {
-    WKPagePolicyClient policyClient;
+    WKPagePolicyClientV1 policyClient;
     memset(&policyClient, 0, sizeof(policyClient));
 
-    policyClient.version = kWKPagePolicyClientCurrentVersion;
-    policyClient.clientInfo = browsingContext;
+    policyClient.base.version = 1;
+    policyClient.base.clientInfo = browsingContext;
 
     policyClient.decidePolicyForNavigationAction = [](WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
     {
@@ -542,7 +542,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
             WKFramePolicyListenerUse(listener);
     };
 
-    page.initializePolicyClient(reinterpret_cast<const WKPagePolicyClientBase*>(&policyClient));
+    page.initializePolicyClient(&policyClient.base);
 }
 
 - (id <WKBrowsingContextLoadDelegate>)loadDelegate

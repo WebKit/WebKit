@@ -50,18 +50,21 @@ TEST(WebKit2, DidNotHandleKeyDown)
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClient loaderClient;
+    WKPageLoaderClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     
-    loaderClient.version = 0;
+    loaderClient.base.version = 0;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
 
-    WKPageUIClient uiClient;
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+
+    WKPageUIClientV0 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
 
+    uiClient.base.version = 0;
     uiClient.didNotHandleKeyEvent = didNotHandleKeyEventCallback;
-    WKPageSetPageUIClient(webView.page(), &uiClient);
+
+    WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());

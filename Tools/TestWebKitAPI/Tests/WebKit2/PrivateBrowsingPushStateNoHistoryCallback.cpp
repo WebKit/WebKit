@@ -48,23 +48,23 @@ TEST(WebKit2, PrivateBrowsingPushStateNoHistoryCallback)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 
-    WKContextHistoryClient historyClient;
+    WKContextHistoryClientV0 historyClient;
     memset(&historyClient, 0, sizeof(historyClient));
 
-    historyClient.version = 0;
-    historyClient.clientInfo = 0;
+    historyClient.base.version = 0;
     historyClient.didNavigateWithNavigationData = didNavigateWithNavigationData;
-    WKContextSetHistoryClient(context.get(), &historyClient);
+
+    WKContextSetHistoryClient(context.get(), &historyClient.base);
 
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClient pageLoaderClient;
+    WKPageLoaderClientV0 pageLoaderClient;
     memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
 
-    pageLoaderClient.version = 0;
-    pageLoaderClient.clientInfo = 0;
+    pageLoaderClient.base.version = 0;
     pageLoaderClient.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &pageLoaderClient);
+
+    WKPageSetPageLoaderClient(webView.page(), &pageLoaderClient.base);
 
     WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
     WKPreferencesSetPrivateBrowsingEnabled(preferences.get(), true);

@@ -36,9 +36,9 @@ WKTypeID WKConnectionGetTypeID()
     return toAPI(WebConnection::APIType);
 }
 
-void WKConnectionSetConnectionClient(WKConnectionRef connectionRef, const WKConnectionClient* wkClient)
+void WKConnectionSetConnectionClient(WKConnectionRef connectionRef, const WKConnectionClientBase* wkClient)
 {
-    toImpl(connectionRef)->initializeConnectionClient(reinterpret_cast<const WKConnectionClientBase*>(wkClient));
+    toImpl(connectionRef)->initializeConnectionClient(wkClient);
 }
 
 void WKConnectionPostMessage(WKConnectionRef connectionRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)

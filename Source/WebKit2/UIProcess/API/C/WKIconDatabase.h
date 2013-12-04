@@ -61,8 +61,7 @@ typedef struct WKIconDatabaseClientV1 {
     WKIconDatabaseIconDataReadyForPageURLCallback                       iconDataReadyForPageURL;
 } WKIconDatabaseClientV1;
 
-// FIXME: Deprecate.
-enum { kWKIconDatabaseClientCurrentVersion = 1 };
+enum { kWKIconDatabaseClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
 typedef struct WKIconDatabaseClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -73,11 +72,11 @@ typedef struct WKIconDatabaseClient {
 
     // Version 1.
     WKIconDatabaseIconDataReadyForPageURLCallback                       iconDataReadyForPageURL;
-} WKIconDatabaseClient;
+} WKIconDatabaseClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT WKTypeID WKIconDatabaseGetTypeID();
 
-WK_EXPORT void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabase, const WKIconDatabaseClient* client);
+WK_EXPORT void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabase, const WKIconDatabaseClientBase* client);
 
 WK_EXPORT void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
 WK_EXPORT void WKIconDatabaseReleaseIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);

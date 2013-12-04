@@ -67,8 +67,7 @@ typedef struct WKBundlePageOverlayClientV0 {
     WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
 } WKBundlePageOverlayClientV0;
 
-// FIXME: Deprecate.
-enum { kWKBundlePageOverlayClientCurrentVersion = 0 };
+enum { kWKBundlePageOverlayClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKBundlePageOverlayClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -81,7 +80,7 @@ typedef struct WKBundlePageOverlayClient {
     WKBundlePageOverlayMouseUpCallback                                  mouseUp;
     WKBundlePageOverlayMouseMovedCallback                               mouseMoved;
     WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
-} WKBundlePageOverlayClient;
+} WKBundlePageOverlayClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 typedef WKTypeRef (*WKAccessibilityAttributeValueCallback)(WKBundlePageOverlayRef pageOverlay, WKStringRef attribute, WKTypeRef parameter, const void* clientInfo);
 typedef WKArrayRef (*WKAccessibilityAttributeNamesCallback)(WKBundlePageOverlayRef pageOverlay, bool parameterizedNames, const void* clientInfo);
@@ -99,8 +98,7 @@ typedef struct WKBundlePageOverlayAccessibilityClientV0 {
     WKAccessibilityAttributeNamesCallback                               copyAccessibilityAttributeNames;
 } WKBundlePageOverlayAccessibilityClientV0;
 
-// FIXME: Deprecate.
-enum { kWKBundlePageOverlayAccessibilityClientCurrentVersion = 0 };
+enum { kWKBundlePageOverlayAccessibilityClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKBundlePageOverlayAccessibilityClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -108,14 +106,14 @@ typedef struct WKBundlePageOverlayAccessibilityClient {
     // Version 0.
     WKAccessibilityAttributeValueCallback                               copyAccessibilityAttributeValue;
     WKAccessibilityAttributeNamesCallback                               copyAccessibilityAttributeNames;
-} WKBundlePageOverlayAccessibilityClient;
-    
+} WKBundlePageOverlayAccessibilityClient WK_DEPRECATED("Use an explicit versioned struct instead");
+
 WK_EXPORT WKTypeID WKBundlePageOverlayGetTypeID();
 
-WK_EXPORT WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClient* client);
+WK_EXPORT WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClientBase* client);
 WK_EXPORT void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlay, WKRect rect);
 WK_EXPORT float WKBundlePageOverlayFractionFadedIn(WKBundlePageOverlayRef bundlePageOverlay);
-WK_EXPORT void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlay, WKBundlePageOverlayAccessibilityClient* client);
+WK_EXPORT void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlay, WKBundlePageOverlayAccessibilityClientBase* client);
 
 #ifdef __cplusplus
 }

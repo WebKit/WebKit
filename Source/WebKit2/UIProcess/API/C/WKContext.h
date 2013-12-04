@@ -62,8 +62,7 @@ typedef struct WKContextClientV0 {
     WKContextPlugInInformationBecameAvailableCallback                   plugInInformationBecameAvailable;
 } WKContextClientV0;
 
-// FIXME: Deprecate.
-enum { kWKContextClientCurrentVersion = 0 };
+enum { kWKContextClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKContextClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -72,7 +71,7 @@ typedef struct WKContextClient {
     WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
     WKContextNetworkProcessDidCrashCallback                             networkProcessDidCrash;
     WKContextPlugInInformationBecameAvailableCallback                   plugInInformationBecameAvailable;
-} WKContextClient;
+} WKContextClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 enum {
     kWKProcessModelSharedSecondaryProcess = 0,
@@ -91,11 +90,11 @@ WK_EXPORT WKTypeID WKContextGetTypeID();
 WK_EXPORT WKContextRef WKContextCreate();
 WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef path);
 
-WK_EXPORT void WKContextSetClient(WKContextRef context, const WKContextClient* client);
-WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKContextInjectedBundleClient* client);
-WK_EXPORT void WKContextSetHistoryClient(WKContextRef context, const WKContextHistoryClient* client);
-WK_EXPORT void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClient* client);
-WK_EXPORT void WKContextSetConnectionClient(WKContextRef context, const WKContextConnectionClient* client);
+WK_EXPORT void WKContextSetClient(WKContextRef context, const WKContextClientBase* client);
+WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKContextInjectedBundleClientBase* client);
+WK_EXPORT void WKContextSetHistoryClient(WKContextRef context, const WKContextHistoryClientBase* client);
+WK_EXPORT void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClientBase* client);
+WK_EXPORT void WKContextSetConnectionClient(WKContextRef context, const WKContextConnectionClientBase* client);
 
 WK_EXPORT WKDownloadRef WKContextDownloadURLRequest(WKContextRef context, const WKURLRequestRef request);
 

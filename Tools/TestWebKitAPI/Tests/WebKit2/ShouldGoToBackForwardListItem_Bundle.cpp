@@ -57,14 +57,14 @@ ShouldGoToBackForwardListItemTest::ShouldGoToBackForwardListItemTest(const std::
 
 void ShouldGoToBackForwardListItemTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
 {    
-    WKBundlePageLoaderClient pageLoaderClient;
+    WKBundlePageLoaderClientV1 pageLoaderClient;
     memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
     
-    pageLoaderClient.version = 1;
-    pageLoaderClient.clientInfo = this;
+    pageLoaderClient.base.version = 1;
+    pageLoaderClient.base.clientInfo = this;
     pageLoaderClient.shouldGoToBackForwardListItem = shouldGoToBackForwardListItemCallback;
     
-    WKBundlePageSetPageLoaderClient(page, &pageLoaderClient);
+    WKBundlePageSetPageLoaderClient(page, &pageLoaderClient.base);
 }
 
 } // namespace TestWebKitAPI

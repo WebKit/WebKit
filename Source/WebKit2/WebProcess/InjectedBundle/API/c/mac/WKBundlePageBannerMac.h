@@ -35,7 +35,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKBundlePageBannerRef WKBundlePageBannerCreateBannerWithCALayer(CALayer *layer, int height, WKBundlePageBannerClient * client);
+WK_EXPORT WKBundlePageBannerRef WKBundlePageBannerCreateBannerWithCALayer(CALayer *layer, int height, WKBundlePageBannerClientBase* client);
 
 WK_EXPORT CALayer * WKBundlePageBannerGetLayer(WKBundlePageBannerRef pageBanner);
 

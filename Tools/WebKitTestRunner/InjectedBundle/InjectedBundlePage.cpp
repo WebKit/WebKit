@@ -268,9 +268,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     : m_page(page)
     , m_world(AdoptWK, WKBundleScriptWorldCreateWorld())
 {
-    WKBundlePageLoaderClient loaderClient = {
-        kWKBundlePageLoaderClientCurrentVersion,
-        this,
+    WKBundlePageLoaderClientV7 loaderClient = {
+        { 7, this },
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
         didFailProvisionalLoadWithErrorForFrame,
@@ -307,11 +306,10 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, // willLoadDataRequest
         0, // willDestroyFrame
     };
-    WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
+    WKBundlePageSetPageLoaderClient(m_page, &loaderClient.base);
 
-    WKBundlePageResourceLoadClient resourceLoadClient = {
-        kWKBundlePageResourceLoadClientCurrentVersion,
-        this,
+    WKBundlePageResourceLoadClientV1 resourceLoadClient = {
+        { 1, this },
         didInitiateLoadForResource,
         willSendRequestForFrame,
         didReceiveResponseForResource,
@@ -321,21 +319,19 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         shouldCacheResponse,
         0 // shouldUseCredentialStorage
     };
-    WKBundlePageSetResourceLoadClient(m_page, &resourceLoadClient);
+    WKBundlePageSetResourceLoadClient(m_page, &resourceLoadClient.base);
 
-    WKBundlePagePolicyClient policyClient = {
-        kWKBundlePagePolicyClientCurrentVersion,
-        this,
+    WKBundlePagePolicyClientV0 policyClient = {
+        { 0, this },
         decidePolicyForNavigationAction,
         decidePolicyForNewWindowAction,
         decidePolicyForResponse,
         unableToImplementPolicy
     };
-    WKBundlePageSetPolicyClient(m_page, &policyClient);
+    WKBundlePageSetPolicyClient(m_page, &policyClient.base);
 
-    WKBundlePageUIClient uiClient = {
-        kWKBundlePageUIClientCurrentVersion,
-        this,
+    WKBundlePageUIClientV2 uiClient = {
+        { 2, this },
         willAddMessageToConsole,
         willSetStatusbarText,
         willRunJavaScriptAlert,
@@ -357,11 +353,10 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, /*plugInExtraStyleSheet*/
         0, /*plugInExtraScript*/
     };
-    WKBundlePageSetUIClient(m_page, &uiClient);
+    WKBundlePageSetUIClient(m_page, &uiClient.base);
 
-    WKBundlePageEditorClient editorClient = {
-        kWKBundlePageEditorClientCurrentVersion,
-        this,
+    WKBundlePageEditorClientV1 editorClient = {
+        { 1, this },
         shouldBeginEditing,
         shouldEndEditing,
         shouldInsertNode,
@@ -377,12 +372,11 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, /* getPasteboardDataForRange */
         0  /* didWriteToPasteboard */
     };
-    WKBundlePageSetEditorClient(m_page, &editorClient);
+    WKBundlePageSetEditorClient(m_page, &editorClient.base);
 
 #if ENABLE(FULLSCREEN_API)
-    WKBundlePageFullScreenClient fullScreenClient = {
-        kWKBundlePageFullScreenClientCurrentVersion,
-        this,
+    WKBundlePageFullScreenClientV1 fullScreenClient = {
+        { 1, this },
         supportsFullScreen,
         enterFullScreenForElement,
         exitFullScreenForElement,
@@ -390,7 +384,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         beganExitFullScreen,
         closeFullScreen,
     };
-    WKBundlePageSetFullScreenClient(m_page, &fullScreenClient);
+    WKBundlePageSetFullScreenClient(m_page, &fullScreenClient.base);
 #endif
 }
 

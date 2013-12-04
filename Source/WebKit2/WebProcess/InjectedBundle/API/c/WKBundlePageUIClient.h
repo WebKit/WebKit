@@ -133,8 +133,7 @@ typedef struct WKBundlePageUIClientV2 {
     WKBundlePagePlugInCreateExtraScriptCallback                         createPlugInExtraScript;
 } WKBundlePageUIClientV2;
 
-// FIXME: Deprecate.
-enum { kWKBundlePageUIClientCurrentVersion = 2 };
+enum { kWKBundlePageUIClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 2 };
 typedef struct WKBundlePageUIClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -164,6 +163,6 @@ typedef struct WKBundlePageUIClient {
     WKBundlePagePlugInCreateStartLabelSubtitleCallback                  createPlugInStartLabelSubtitle;
     WKBundlePagePlugInCreateExtraStyleSheetCallback                     createPlugInExtraStyleSheet;
     WKBundlePagePlugInCreateExtraScriptCallback                         createPlugInExtraScript;
-} WKBundlePageUIClient;
+} WKBundlePageUIClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageUIClient_h

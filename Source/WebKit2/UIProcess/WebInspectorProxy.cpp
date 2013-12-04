@@ -438,9 +438,8 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     inspectorPageID = inspectorPage->pageID();
     inspectorPageParameters = inspectorPage->creationParameters();
 
-    WKPagePolicyClient policyClient = {
-        kWKPagePolicyClientCurrentVersion,
-        this, /* clientInfo */
+    WKPagePolicyClientV1 policyClient = {
+        { 1, this },
         0, /* decidePolicyForNavigationAction_deprecatedForUseWithV0 */
         0, /* decidePolicyForNewWindowAction */
         0, /* decidePolicyForResponse_deprecatedForUseWithV0 */

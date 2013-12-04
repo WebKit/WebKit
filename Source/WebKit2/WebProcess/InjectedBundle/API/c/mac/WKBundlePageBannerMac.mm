@@ -95,12 +95,12 @@ private:
     }
 };
 
-WKBundlePageBannerRef WKBundlePageBannerCreateBannerWithCALayer(CALayer *layer, int height, WKBundlePageBannerClient* wkClient)
+WKBundlePageBannerRef WKBundlePageBannerCreateBannerWithCALayer(CALayer *layer, int height, WKBundlePageBannerClientBase* wkClient)
 {
     if (wkClient && wkClient->version)
         return 0;
 
-    auto clientImpl = std::make_unique<PageBannerClientImpl>(reinterpret_cast<WKBundlePageBannerClientBase*>(wkClient));
+    auto clientImpl = std::make_unique<PageBannerClientImpl>(wkClient);
     return toAPI(PageBanner::create(layer, height, clientImpl.release()).leakRef());
 }
 

@@ -399,9 +399,8 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 
     WebPageProxy* inspectorPage = toImpl(m_inspectorView.get().pageRef);
 
-    WKPageUIClient uiClient = {
-        kWKPageUIClientCurrentVersion,
-        this,   /* clientInfo */
+    WKPageUIClientV2 uiClient = {
+        { 2, this },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         0, // closePage

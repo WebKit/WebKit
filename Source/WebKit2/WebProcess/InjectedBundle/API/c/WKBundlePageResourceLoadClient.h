@@ -76,8 +76,7 @@ typedef struct WKBundlePageResourceLoadClientV1 {
     WKBundlePageShouldUseCredentialStorageCallback                      shouldUseCredentialStorage;
 } WKBundlePageResourceLoadClientV1;
 
-// FIXME: Deprecate.
-enum { kWKBundlePageResourceLoadClientCurrentVersion = 1 };
+enum { kWKBundlePageResourceLoadClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
 typedef struct WKBundlePageResourceLoadClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -96,6 +95,6 @@ typedef struct WKBundlePageResourceLoadClient {
     // Version 1.
     WKBundlePageShouldCacheResponseCallback                             shouldCacheResponse;
     WKBundlePageShouldUseCredentialStorageCallback                      shouldUseCredentialStorage;
-} WKBundlePageResourceLoadClient;
+} WKBundlePageResourceLoadClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageResourceLoadClient_h

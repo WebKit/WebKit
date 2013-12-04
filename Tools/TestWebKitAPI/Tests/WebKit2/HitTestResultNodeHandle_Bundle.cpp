@@ -51,11 +51,13 @@ public:
 
     virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
     {
-        WKBundlePageContextMenuClient contextMenuClient;
+        WKBundlePageContextMenuClientV0 contextMenuClient;
         memset(&contextMenuClient, 0, sizeof(contextMenuClient));
+
+        contextMenuClient.base.version = 0;
         contextMenuClient.getContextMenuFromDefaultMenu = getContextMenuFromDefaultMenu;
     
-        WKBundlePageSetContextMenuClient(page, &contextMenuClient);
+        WKBundlePageSetContextMenuClient(page, &contextMenuClient.base);
     }
 };
 

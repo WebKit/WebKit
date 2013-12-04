@@ -65,11 +65,14 @@ TEST(WebKit2, ReloadPageAfterCrash)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClient loaderClient;
+    WKPageLoaderClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
+
+    loaderClient.base.version = 0;
     loaderClient.didFinishLoadForFrame = didFinishLoad;
     loaderClient.processDidCrash = didCrash;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
+
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
 
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
     // Load a blank page and next kills WebProcess.

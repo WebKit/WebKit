@@ -62,8 +62,7 @@ typedef struct WKContextDownloadClientV0 {
     WKContextDownloadProcessDidCrashCallback                            processDidCrash;
 } WKContextDownloadClientV0;
 
-// FIXME: Deprecate.
-enum { kWKContextDownloadClientCurrentVersion = 0 };
+enum { kWKContextDownloadClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKContextDownloadClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -80,6 +79,6 @@ typedef struct WKContextDownloadClient {
     WKContextDownloadDidFailCallback                                    didFail;
     WKContextDownloadDidCancel                                          didCancel;
     WKContextDownloadProcessDidCrashCallback                            processDidCrash;
-} WKContextDownloadClient;
+} WKContextDownloadClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKContextDownloadClient_h

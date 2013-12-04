@@ -56,13 +56,13 @@ public:
 
     virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
     {
-        WKBundlePageResourceLoadClient resourceLoadClient;
+        WKBundlePageResourceLoadClientV0 resourceLoadClient;
         memset(&resourceLoadClient, 0, sizeof(resourceLoadClient));
         
-        resourceLoadClient.version = 0;
+        resourceLoadClient.base.version = 0;
         resourceLoadClient.willSendRequestForFrame = willSendRequestForFrame;
 
-        WKBundlePageSetResourceLoadClient(page, &resourceLoadClient);
+        WKBundlePageSetResourceLoadClient(page, &resourceLoadClient.base);
 
     }
 };

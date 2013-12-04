@@ -88,11 +88,13 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
 
 static void setInjectedBundleClient(WKContextRef context)
 {
-    WKContextInjectedBundleClient injectedBundleClient;
+    WKContextInjectedBundleClientV0 injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
+
+    injectedBundleClient.base.version = 0;
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
 
-    WKContextSetInjectedBundleClient(context, &injectedBundleClient);
+    WKContextSetInjectedBundleClient(context, &injectedBundleClient.base);
 }
 
 static void didFinishLoadForFrame(WKPageRef page, WKFrameRef, WKTypeRef, const void*)
@@ -107,12 +109,13 @@ TEST(WebKit2, WebArchive)
 
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClient loaderClient;
+    WKPageLoaderClientV3 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
     
-    loaderClient.version = kWKPageLoaderClientCurrentVersion;
+    loaderClient.base.version = 3;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
+
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
 
     WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
 

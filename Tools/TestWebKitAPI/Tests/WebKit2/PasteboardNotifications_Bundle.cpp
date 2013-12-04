@@ -69,17 +69,16 @@ PasteboardNotificationsTest::PasteboardNotificationsTest(const std::string& iden
 
 void PasteboardNotificationsTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
 {    
-    WKBundlePageEditorClient pageEditorClient;
-
+    WKBundlePageEditorClientV1 pageEditorClient;
     memset(&pageEditorClient, 0, sizeof(pageEditorClient));
 
-    pageEditorClient.version = 1;
-    pageEditorClient.clientInfo = this;
+    pageEditorClient.base.version = 1;
+    pageEditorClient.base.clientInfo = this;
     pageEditorClient.willWriteToPasteboard = willWriteToPasteboard;
     pageEditorClient.getPasteboardDataForRange = getPasteboardDataForRange;
     pageEditorClient.didWriteToPasteboard = didWriteToPasteboard;
 
-    WKBundlePageSetEditorClient(page, &pageEditorClient);
+    WKBundlePageSetEditorClient(page, &pageEditorClient.base);
 }
 
 } // namespace TestWebKitAPI

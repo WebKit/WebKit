@@ -406,8 +406,7 @@ typedef struct WKBundlePageLoaderClientV7 {
     WKBundlePageWillDestroyFrame                                            willDestroyFrame;
 } WKBundlePageLoaderClientV7;
 
-// FIXME: Deprecate.
-enum { kWKBundlePageLoaderClientCurrentVersion = 7 };
+enum { kWKBundlePageLoaderClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 7 };
 typedef struct WKBundlePageLoaderClient {
     int                                                                     version;
     const void *                                                            clientInfo;
@@ -462,6 +461,6 @@ typedef struct WKBundlePageLoaderClient {
 
     // Version 7
     WKBundlePageWillDestroyFrame                                            willDestroyFrame;
-} WKBundlePageLoaderClient;
+} WKBundlePageLoaderClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageLoaderClient_h

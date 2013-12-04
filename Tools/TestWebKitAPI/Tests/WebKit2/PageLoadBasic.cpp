@@ -115,25 +115,27 @@ TEST(WebKit2, PageLoadBasic)
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
 
-    WKPageLoaderClient loaderClient;
+    WKPageLoaderClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
-    loaderClient.version = 0;
-    loaderClient.clientInfo = &state;
+    loaderClient.base.version = 0;
+    loaderClient.base.clientInfo = &state;
     loaderClient.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
     loaderClient.didCommitLoadForFrame = didCommitLoadForFrame;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
 
-    WKPagePolicyClient policyClient;
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+
+    WKPagePolicyClientV1 policyClient;
     memset(&policyClient, 0, sizeof(policyClient));
 
-    policyClient.version = 1;
-    policyClient.clientInfo = &state;
+    policyClient.base.version = 1;
+    policyClient.base.clientInfo = &state;
     policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
     policyClient.decidePolicyForNewWindowAction = decidePolicyForNewWindowAction;
     policyClient.decidePolicyForResponse = decidePolicyForResponse;
-    WKPageSetPagePolicyClient(webView.page(), &policyClient);
+
+    WKPageSetPagePolicyClient(webView.page(), &policyClient.base);
 
     // Before loading anything, the active url should be null
     EXPECT_NULL(WKPageCopyActiveURL(webView.page()));

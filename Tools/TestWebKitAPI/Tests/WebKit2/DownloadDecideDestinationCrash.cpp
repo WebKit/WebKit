@@ -46,21 +46,24 @@ static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownlo
 
 static void setContextDownloadClient(WKContextRef context)
 {
-    WKContextDownloadClient client;
+    WKContextDownloadClientV0 client;
     memset(&client, 0, sizeof(client));
+
+    client.base.version = 0;
     client.decideDestinationWithSuggestedFilename = decideDestinationWithSuggestedFilename;
 
-    WKContextSetDownloadClient(context, &client);
+    WKContextSetDownloadClient(context, &client.base);
 }
 
 static void setPagePolicyClient(WKPageRef page)
 {
-    WKPagePolicyClient policyClient;
+    WKPagePolicyClientV1 policyClient;
     memset(&policyClient, 0, sizeof(policyClient));
-    policyClient.version = 1;
+
+    policyClient.base.version = 1;
     policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
 
-    WKPageSetPagePolicyClient(page, &policyClient);
+    WKPageSetPagePolicyClient(page, &policyClient.base);
 }
 
 TEST(WebKit2, DownloadDecideDestinationCrash)

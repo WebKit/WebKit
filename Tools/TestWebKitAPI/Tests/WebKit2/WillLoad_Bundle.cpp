@@ -67,15 +67,15 @@ private:
 
     virtual void didCreatePage(WKBundleRef, WKBundlePageRef bundlePage) OVERRIDE
     {
-        WKBundlePageLoaderClient pageLoaderClient;
+        WKBundlePageLoaderClientV6 pageLoaderClient;
         memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
         
-        pageLoaderClient.version = 6;
-        pageLoaderClient.clientInfo = this;
+        pageLoaderClient.base.version = 6;
+        pageLoaderClient.base.clientInfo = this;
         pageLoaderClient.willLoadURLRequest = willLoadURLRequest;
         pageLoaderClient.willLoadDataRequest = willLoadDataRequest;
         
-        WKBundlePageSetPageLoaderClient(bundlePage, &pageLoaderClient);
+        WKBundlePageSetPageLoaderClient(bundlePage, &pageLoaderClient.base);
     }
 };
 

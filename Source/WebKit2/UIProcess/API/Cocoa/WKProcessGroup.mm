@@ -77,14 +77,14 @@ static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, con
 
 static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef contextRef)
 {
-    WKContextConnectionClient connectionClient;
+    WKContextConnectionClientV0 connectionClient;
     memset(&connectionClient, 0, sizeof(connectionClient));
 
-    connectionClient.version = kWKContextConnectionClientCurrentVersion;
-    connectionClient.clientInfo = processGroup;
+    connectionClient.base.version = 0;
+    connectionClient.base.clientInfo = processGroup;
     connectionClient.didCreateConnection = didCreateConnection;
 
-    WKContextSetConnectionClient(contextRef, &connectionClient);
+    WKContextSetConnectionClient(contextRef, &connectionClient.base);
 }
 
 static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const void* clientInfo)
@@ -101,14 +101,14 @@ static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const voi
 
 static void setUpInectedBundleClient(WKProcessGroup *processGroup, WKContextRef contextRef)
 {
-    WKContextInjectedBundleClient injectedBundleClient;
+    WKContextInjectedBundleClientV1 injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
 
-    injectedBundleClient.version = kWKContextInjectedBundleClientCurrentVersion;
-    injectedBundleClient.clientInfo = processGroup;
+    injectedBundleClient.base.version = 1;
+    injectedBundleClient.base.clientInfo = processGroup;
     injectedBundleClient.getInjectedBundleInitializationUserData = getInjectedBundleInitializationUserData;
 
-    WKContextSetInjectedBundleClient(contextRef, &injectedBundleClient);
+    WKContextSetInjectedBundleClient(contextRef, &injectedBundleClient.base);
 }
 
 static void didNavigateWithNavigationData(WKContextRef, WKPageRef pageRef, WKNavigationDataRef navigationDataRef, WKFrameRef frameRef, const void*)
@@ -153,17 +153,17 @@ static void didUpdateHistoryTitle(WKContextRef, WKPageRef pageRef, WKStringRef t
 
 static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contextRef)
 {
-    WKContextHistoryClient historyClient;
+    WKContextHistoryClientV0 historyClient;
     memset(&historyClient, 0, sizeof(historyClient));
 
-    historyClient.version = kWKContextHistoryClientCurrentVersion;
-    historyClient.clientInfo = processGroup;
+    historyClient.base.version = 0;
+    historyClient.base.clientInfo = processGroup;
     historyClient.didNavigateWithNavigationData = didNavigateWithNavigationData;
     historyClient.didPerformClientRedirect = didPerformClientRedirect;
     historyClient.didPerformServerRedirect = didPerformServerRedirect;
     historyClient.didUpdateHistoryTitle = didUpdateHistoryTitle;
 
-    WKContextSetHistoryClient(contextRef, &historyClient);
+    WKContextSetHistoryClient(contextRef, &historyClient.base);
 }
 
 - (id)init

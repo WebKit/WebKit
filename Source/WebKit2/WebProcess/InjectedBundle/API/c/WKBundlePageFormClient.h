@@ -91,8 +91,7 @@ typedef struct WKBundlePageFormClientV2 {
     WKBundlePageDidAssociateFormControlsCallback                        didAssociateFormControls;
 } WKBundlePageFormClientV2;
 
-// FIXME: Deprecate.
-enum { kWKBundlePageFormClientCurrentVersion = 2 };
+enum { kWKBundlePageFormClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 2 };
 typedef struct WKBundlePageFormClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -112,6 +111,6 @@ typedef struct WKBundlePageFormClient {
     WKBundlePageDidFocusTextFieldCallback                               didFocusTextField;
     WKBundlePageShouldNotifyOnFormChangesCallback                       shouldNotifyOnFormChanges;
     WKBundlePageDidAssociateFormControlsCallback                        didAssociateFormControls;
-} WKBundlePageFormClient;
+} WKBundlePageFormClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageFormClient_h

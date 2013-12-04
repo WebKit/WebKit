@@ -80,29 +80,29 @@ WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
     return toAPI(context.release().leakRef());
 }
 
-void WKContextSetClient(WKContextRef contextRef, const WKContextClient* wkClient)
+void WKContextSetClient(WKContextRef contextRef, const WKContextClientBase* wkClient)
 {
-    toImpl(contextRef)->initializeClient(reinterpret_cast<const WKContextClientBase*>(wkClient));
+    toImpl(contextRef)->initializeClient(wkClient);
 }
 
-void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextInjectedBundleClient* wkClient)
+void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextInjectedBundleClientBase* wkClient)
 {
-    toImpl(contextRef)->initializeInjectedBundleClient(reinterpret_cast<const WKContextInjectedBundleClientBase*>(wkClient));
+    toImpl(contextRef)->initializeInjectedBundleClient(wkClient);
 }
 
-void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClient* wkClient)
+void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClientBase* wkClient)
 {
-    toImpl(contextRef)->initializeHistoryClient(reinterpret_cast<const WKContextHistoryClientBase*>(wkClient));
+    toImpl(contextRef)->initializeHistoryClient(wkClient);
 }
 
-void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownloadClient* wkClient)
+void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownloadClientBase* wkClient)
 {
-    toImpl(contextRef)->initializeDownloadClient(reinterpret_cast<const WKContextDownloadClientBase*>(wkClient));
+    toImpl(contextRef)->initializeDownloadClient(wkClient);
 }
 
-void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnectionClient* wkClient)
+void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnectionClientBase* wkClient)
 {
-    toImpl(contextRef)->initializeConnectionClient(reinterpret_cast<const WKContextConnectionClientBase*>(wkClient));
+    toImpl(contextRef)->initializeConnectionClient(wkClient);
 }
 
 WKDownloadRef WKContextDownloadURLRequest(WKContextRef contextRef, const WKURLRequestRef requestRef)

@@ -43,9 +43,12 @@ public:
         , secondSuccessfulLoad(false)
     {
         memset(&loaderClient, 0, sizeof(loaderClient));
-        loaderClient.clientInfo = this;
+
+        loaderClient.base.version = 0;
+        loaderClient.base.clientInfo = this;
         loaderClient.didFinishLoadForFrame = didFinishLoad;
-        WKPageSetPageLoaderClient(webView.page(), &loaderClient);
+
+        WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
     }
 
     void loadUrl()
@@ -59,7 +62,7 @@ public:
     }
 
     WKRetainPtr<WKContextRef> context;
-    WKPageLoaderClient loaderClient;
+    WKPageLoaderClientV0 loaderClient;
     PlatformWebView webView;
     WKRetainPtr<WKURLRef> url;
 

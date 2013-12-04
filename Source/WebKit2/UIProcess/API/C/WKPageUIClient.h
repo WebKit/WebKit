@@ -249,8 +249,7 @@ typedef struct WKPageUIClientV2 {
     WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
 } WKPageUIClientV2;
 
-// FIXME: Deprecate.
-enum { kWKPageUIClientCurrentVersion = 2 };
+enum { kWKPageUIClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 2 };
 typedef struct WKPageUIClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -306,7 +305,7 @@ typedef struct WKPageUIClient {
     WKPageShowColorPickerCallback                                       showColorPicker;
     WKPageHideColorPickerCallback                                       hideColorPicker;
     WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
-} WKPageUIClient;
+} WKPageUIClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #ifdef __cplusplus
 }

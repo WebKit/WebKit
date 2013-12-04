@@ -42,14 +42,13 @@ typedef struct WKContextConnectionClientV0 {
     WKContextDidCreateConnection                                        didCreateConnection;
 } WKContextConnectionClientV0;
 
-// FIXME: Deprecate.
-enum { kWKContextConnectionClientCurrentVersion = 0 };
+enum { kWKContextConnectionClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKContextConnectionClient {
     int                                                                 version;
     const void *                                                        clientInfo;
 
     // Version 0.
     WKContextDidCreateConnection                                        didCreateConnection;
-} WKContextConnectionClient;
+} WKContextConnectionClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKContextConnectionClient_h

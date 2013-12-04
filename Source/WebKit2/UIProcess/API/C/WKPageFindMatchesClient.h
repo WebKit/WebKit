@@ -53,14 +53,13 @@ typedef struct WKPageFindMatchesClientV0 {
     WKPageDidGetImageForMatchResultCallback                             didGetImageForMatchResult;
 } WKPageFindMatchesClientV0;
 
-// FIXME: Deprecate.
-enum { kWKPageFindMatchesClientCurrentVersion = 0 };
+enum { kWKPageFindMatchesClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKPageFindMatchesClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKPageDidFindStringMatchesCallback                                  didFindStringMatches;
     WKPageDidGetImageForMatchResultCallback                             didGetImageForMatchResult;
-} WKPageFindMatchesClient;
+} WKPageFindMatchesClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 #ifdef __cplusplus
 }

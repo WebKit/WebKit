@@ -68,8 +68,7 @@ typedef struct WKBundleClientV1 {
     WKBundleDidReceiveMessageToPageCallback                             didReceiveMessageToPage;
 } WKBundleClientV1;
 
-// FIXME: Deprecate.
-enum { kWKBundleClientCurrentVersion = 1 };
+enum { kWKBundleClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 1 };
 typedef struct WKBundleClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -82,11 +81,11 @@ typedef struct WKBundleClient {
 
     // Version 1.
     WKBundleDidReceiveMessageToPageCallback                             didReceiveMessageToPage;
-} WKBundleClient;
+} WKBundleClient WK_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT WKTypeID WKBundleGetTypeID();
 
-WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClient* client);
+WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClientBase* client);
 
 WK_EXPORT void WKBundlePostMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody);
 WK_EXPORT void WKBundlePostSynchronousMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData);

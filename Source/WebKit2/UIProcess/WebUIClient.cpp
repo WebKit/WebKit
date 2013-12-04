@@ -51,7 +51,7 @@ PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const Re
     if (!m_client.base.version && !m_client.createNewPage_deprecatedForUseWithV0)
         return 0;
     
-    if (m_client.base.version == kWKPageUIClientCurrentVersion && !m_client.createNewPage)
+    if (m_client.base.version > 0 && !m_client.createNewPage)
         return 0;
 
     ImmutableDictionary::MapType map;
@@ -164,7 +164,7 @@ void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, const WebHitTestRe
     if (!m_client.mouseDidMoveOverElement && !m_client.mouseDidMoveOverElement_deprecatedForUseWithV0)
         return;
 
-    if (m_client.base.version == kWKPageUIClientCurrentVersion && !m_client.mouseDidMoveOverElement)
+    if (m_client.base.version > 0 && !m_client.mouseDidMoveOverElement)
         return;
 
     if (!m_client.base.version) {

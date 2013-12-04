@@ -54,16 +54,15 @@ void InjectedBundleController::initialize(WKBundleRef bundle, WKTypeRef initiali
     if (!initializationUserData)
         return;
 
-    WKBundleClient client = {
-        0,
-        this,
+    WKBundleClientV1 client = {
+        { 0, this },
         didCreatePage,
         willDestroyPage,
         didInitializePageGroup,
         didReceiveMessage,
         didReceiveMessageToPage
     };
-    WKBundleSetClient(m_bundle, &client);
+    WKBundleSetClient(m_bundle, &client.base);
 
     // Initialize the test from the "initializationUserData".
 

@@ -51,13 +51,13 @@ GeolocationProviderMock::GeolocationProviderMock(WKContextRef context)
 {
     m_geolocationManager = WKContextGetGeolocationManager(context);
 
-    WKGeolocationProvider providerCallback;
+    WKGeolocationProviderV1 providerCallback;
     memset(&providerCallback, 0, sizeof(WKGeolocationProvider));
-    providerCallback.version = 0;
-    providerCallback.clientInfo = this;
+    providerCallback.base.version = 1;
+    providerCallback.base.clientInfo = this;
     providerCallback.startUpdating = startUpdatingCallback;
     providerCallback.stopUpdating = stopUpdatingCallback;
-    WKGeolocationManagerSetProvider(m_geolocationManager, &providerCallback);
+    WKGeolocationManagerSetProvider(m_geolocationManager, &providerCallback.base);
 }
 
 GeolocationProviderMock::~GeolocationProviderMock()
