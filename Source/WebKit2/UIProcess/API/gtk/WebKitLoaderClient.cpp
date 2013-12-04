@@ -140,9 +140,11 @@ static void processDidCrash(WKPageRef page, const void* clientInfo)
 
 void attachLoaderClientToView(WebKitWebView* webView)
 {
-    WKPageLoaderClient wkLoaderClient = {
-        kWKPageLoaderClientCurrentVersion,
-        webView, // clientInfo
+    WKPageLoaderClientV3 wkLoaderClient = {
+        {
+            3, // version
+            webView, // clientInfo
+        },
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
         didFailProvisionalLoadWithErrorForFrame,
@@ -181,6 +183,6 @@ void attachLoaderClientToView(WebKitWebView* webView)
         0, // pluginLoadPolicy
     };
     WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
-    WKPageSetPageLoaderClient(wkPage, &wkLoaderClient);
+    WKPageSetPageLoaderClient(wkPage, &wkLoaderClient.base);
 }
 

@@ -95,9 +95,11 @@ static void didFinish(WKContextRef wkContext, WKDownloadRef wkDownload, const vo
 
 void attachDownloadClientToContext(WebKitWebContext* webContext)
 {
-    WKContextDownloadClient wkDownloadClient = {
-        kWKContextDownloadClientCurrentVersion,
-        webContext, // ClientInfo
+    WKContextDownloadClientV0 wkDownloadClient = {
+        {
+            0, // version
+            webContext, // ClientInfo
+        },
         didStart,
         0, // didReceiveAuthenticationChallenge
         didReceiveResponse,
@@ -110,6 +112,6 @@ void attachDownloadClientToContext(WebKitWebContext* webContext)
         didCancel,
         0, // processDidCrash
     };
-    WKContextSetDownloadClient(toAPI(webkitWebContextGetContext(webContext)), &wkDownloadClient);
+    WKContextSetDownloadClient(toAPI(webkitWebContextGetContext(webContext)), &wkDownloadClient.base);
 }
 

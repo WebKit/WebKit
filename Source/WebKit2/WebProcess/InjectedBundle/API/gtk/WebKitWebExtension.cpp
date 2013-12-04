@@ -116,16 +116,18 @@ WebKitWebExtension* webkitWebExtensionCreate(InjectedBundle* bundle)
 {
     WebKitWebExtension* extension = WEBKIT_WEB_EXTENSION(g_object_new(WEBKIT_TYPE_WEB_EXTENSION, NULL));
 
-    WKBundleClient wkBundleClient = {
-        kWKBundleClientCurrentVersion,
-        extension, // clientInfo
+    WKBundleClientV1 wkBundleClient = {
+        {
+            1, // version
+            extension, // clientInfo
+        },
         didCreatePage,
         willDestroyPage,
         0, // didInitializePageGroup
         didReceiveMessage,
         didReceiveMessageToPage
     };
-    WKBundleSetClient(toAPI(bundle), &wkBundleClient);
+    WKBundleSetClient(toAPI(bundle), &wkBundleClient.base);
 
     return extension;
 }

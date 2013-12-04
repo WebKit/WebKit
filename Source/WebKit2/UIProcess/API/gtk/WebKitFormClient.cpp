@@ -36,11 +36,13 @@ static void willSubmitForm(WKPageRef page, WKFrameRef frame, WKFrameRef sourceFr
 
 void attachFormClientToView(WebKitWebView* webView)
 {
-    WKPageFormClient wkFormClient = {
-        kWKPageFormClientCurrentVersion,
-        webView, // clientInfo
+    WKPageFormClientV0 wkFormClient = {
+        {
+            0, // version
+            webView, // clientInfo
+        },
         willSubmitForm
     };
     WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
-    WKPageSetPageFormClient(wkPage, &wkFormClient);
+    WKPageSetPageFormClient(wkPage, &wkFormClient.base);
 }

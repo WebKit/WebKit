@@ -100,12 +100,14 @@ WebKitCookieManager* webkitCookieManagerCreate(WebCookieManagerProxy* webCookieM
     WebKitCookieManager* manager = WEBKIT_COOKIE_MANAGER(g_object_new(WEBKIT_TYPE_COOKIE_MANAGER, NULL));
     manager->priv->webCookieManager = webCookieManager;
 
-    WKCookieManagerClient wkCookieManagerClient = {
-        kWKCookieManagerClientCurrentVersion,
-        manager, // clientInfo
+    WKCookieManagerClientV0 wkCookieManagerClient = {
+        {
+            0, // version
+            manager, // clientInfo
+        },
         cookiesDidChange
     };
-    WKCookieManagerSetClient(toAPI(webCookieManager), &wkCookieManagerClient);
+    WKCookieManagerSetClient(toAPI(webCookieManager), &wkCookieManagerClient.base);
     manager->priv->webCookieManager->startObservingCookieChanges();
 
     return manager;

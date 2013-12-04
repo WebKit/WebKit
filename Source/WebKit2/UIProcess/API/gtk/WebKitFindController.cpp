@@ -111,15 +111,17 @@ static inline WebPageProxy* getPage(WebKitFindController* findController)
 static void webkitFindControllerConstructed(GObject* object)
 {
     WebKitFindController* findController = WEBKIT_FIND_CONTROLLER(object);
-    WKPageFindClient wkFindClient = {
-        kWKPageFindClientCurrentVersion,
-        findController, // clientInfo
+    WKPageFindClientV0 wkFindClient = {
+        {
+            0, // version
+            findController, // clientInfo
+        },
         didFindString,
         didFailToFindString,
         didCountStringMatches
     };
 
-    WKPageSetPageFindClient(toAPI(getPage(findController)), &wkFindClient);
+    WKPageSetPageFindClient(toAPI(getPage(findController)), &wkFindClient.base);
 }
 
 static void webkitFindControllerGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)

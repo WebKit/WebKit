@@ -68,9 +68,11 @@ static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLRespo
 
 void attachPolicyClientToView(WebKitWebView* webView)
 {
-    WKPagePolicyClient policyClient = {
-        kWKPagePolicyClientCurrentVersion,
-        webView, // clientInfo
+    WKPagePolicyClientV1 policyClient = {
+        {
+            1, // version
+            webView, // clientInfo
+        },
         0, // decidePolicyForNavigationAction_deprecatedForUseWithV0
         decidePolicyForNewWindowAction,
         0, // decidePolicyForResponse_deprecatedForUseWithV0
@@ -78,5 +80,5 @@ void attachPolicyClientToView(WebKitWebView* webView)
         decidePolicyForNavigationAction,
         decidePolicyForResponse
     };
-    WKPageSetPagePolicyClient(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))), &policyClient);
+    WKPageSetPagePolicyClient(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))), &policyClient.base);
 }

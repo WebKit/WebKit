@@ -214,14 +214,16 @@ WebKitFaviconDatabase* webkitFaviconDatabaseCreate(WebIconDatabase* iconDatabase
     WebKitFaviconDatabase* faviconDatabase = WEBKIT_FAVICON_DATABASE(g_object_new(WEBKIT_TYPE_FAVICON_DATABASE, NULL));
     faviconDatabase->priv->iconDatabase = iconDatabase;
 
-    WKIconDatabaseClient wkIconDatabaseClient = {
-        kWKIconDatabaseClientCurrentVersion,
-        faviconDatabase, // clientInfo
+    WKIconDatabaseClientV1 wkIconDatabaseClient = {
+        {
+            1, // version
+            faviconDatabase, // clientInfo
+        },
         didChangeIconForPageURLCallback,
         0, // didRemoveAllIconsCallback
         iconDataReadyForPageURLCallback,
     };
-    WKIconDatabaseSetIconDatabaseClient(toAPI(iconDatabase), &wkIconDatabaseClient);
+    WKIconDatabaseSetIconDatabaseClient(toAPI(iconDatabase), &wkIconDatabaseClient.base);
     return faviconDatabase;
 }
 

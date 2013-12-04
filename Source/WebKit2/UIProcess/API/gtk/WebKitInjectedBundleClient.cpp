@@ -120,12 +120,14 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
 
 void attachInjectedBundleClientToContext(WebKitWebContext* webContext)
 {
-    WKContextInjectedBundleClient wkInjectedBundleClient = {
-        kWKContextInjectedBundleClientCurrentVersion,
-        webContext, // clientInfo
+    WKContextInjectedBundleClientV1 wkInjectedBundleClient = {
+        {
+            0, // version
+            webContext, // clientInfo
+        },
         didReceiveMessageFromInjectedBundle,
         0, // didReceiveSynchronousMessageFromInjectedBundle
         0 // getInjectedBundleInitializationUserData
     };
-    WKContextSetInjectedBundleClient(toAPI(webkitWebContextGetContext(webContext)), &wkInjectedBundleClient);
+    WKContextSetInjectedBundleClient(toAPI(webkitWebContextGetContext(webContext)), &wkInjectedBundleClient.base);
 }

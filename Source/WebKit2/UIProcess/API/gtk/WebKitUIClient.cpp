@@ -160,9 +160,11 @@ static void runModal(WKPageRef page, const void* clientInfo)
 
 void attachUIClientToView(WebKitWebView* webView)
 {
-    WKPageUIClient wkUIClient = {
-        kWKPageUIClientCurrentVersion,
-        webView, // clientInfo
+    WKPageUIClientV2 wkUIClient = {
+        {
+            2, // version
+            webView, // clientInfo
+        },
         0, // createNewPage_deprecatedForUseWithV0
         showPage,
         closePage,
@@ -211,6 +213,6 @@ void attachUIClientToView(WebKitWebView* webView)
         0, // pluginLoadPolicy
     };
     WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
-    WKPageSetPageUIClient(wkPage, &wkUIClient);
+    WKPageSetPageUIClient(wkPage, &wkUIClient.base);
 }
 

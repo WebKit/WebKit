@@ -309,9 +309,11 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     WebKitWebPage* page = WEBKIT_WEB_PAGE(g_object_new(WEBKIT_TYPE_WEB_PAGE, NULL));
     page->priv->webPage = webPage;
 
-    WKBundlePageLoaderClient loaderClient = {
-        kWKBundlePageLoaderClientCurrentVersion,
-        page,
+    WKBundlePageLoaderClientV7 loaderClient = {
+        {
+            7, // version
+            page, // clientInfo
+        },
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
         0, // didFailProvisionalLoadWithErrorForFrame
@@ -348,11 +350,13 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
         0, // willLoadDataRequest
         willDestroyFrame
     };
-    WKBundlePageSetPageLoaderClient(toAPI(webPage), &loaderClient);
+    WKBundlePageSetPageLoaderClient(toAPI(webPage), &loaderClient.base);
 
-    WKBundlePageResourceLoadClient resourceLoadClient = {
-        kWKBundlePageResourceLoadClientCurrentVersion,
-        page,
+    WKBundlePageResourceLoadClientV1 resourceLoadClient = {
+        {
+            1, // version
+            page, // clientInfo
+        },
         didInitiateLoadForResource,
         willSendRequestForFrame,
         didReceiveResponseForResource,
@@ -362,7 +366,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
         0, // shouldCacheResponse
         0 // shouldUseCredentialStorage
     };
-    WKBundlePageSetResourceLoadClient(toAPI(webPage), &resourceLoadClient);
+    WKBundlePageSetResourceLoadClient(toAPI(webPage), &resourceLoadClient.base);
 
     return page;
 }

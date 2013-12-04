@@ -1,3 +1,27 @@
+2013-12-04  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [GTK][WK2] Fix build after r160104
+        https://bugs.webkit.org/show_bug.cgi?id=125240
+
+        Reviewed by Anders Carlsson.
+
+        Using specific version of API client when instantiating them.
+        Applied that same change to the following files:
+
+        * UIProcess/API/gtk/WebKitContextMenuClient.cpp:
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp:
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        * UIProcess/API/gtk/WebKitFindController.cpp:
+        * UIProcess/API/gtk/WebKitFormClient.cpp:
+        * UIProcess/API/gtk/WebKitGeolocationProvider.cpp:
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        * UIProcess/API/gtk/WebKitPolicyClient.cpp:
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+
 2013-12-04  Dan Bernstein  <mitz@apple.com>
 
         Fixed the 32-bit Mac build.

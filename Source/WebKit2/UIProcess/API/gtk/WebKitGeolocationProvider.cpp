@@ -64,13 +64,16 @@ WebKitGeolocationProvider::WebKitGeolocationProvider(WebGeolocationManagerProxy*
 {
     ASSERT(geolocationManager);
 
-    WKGeolocationProvider wkGeolocationProvider = {
-        kWKGeolocationProviderCurrentVersion,
-        this, // clientInfo
+    WKGeolocationProviderV1 wkGeolocationProvider = {
+        {
+            1, // version
+            this, // clientInfo
+        },
         startUpdatingCallback,
-        stopUpdatingCallback
+        stopUpdatingCallback,
+        0 // setEnableHighAccuracy
     };
-    WKGeolocationManagerSetProvider(toAPI(geolocationManager), &wkGeolocationProvider);
+    WKGeolocationManagerSetProvider(toAPI(geolocationManager), &wkGeolocationProvider.base);
 }
 
 void WebKitGeolocationProvider::startUpdating()
