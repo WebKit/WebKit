@@ -82,7 +82,7 @@ NetworkInfoProvider::NetworkInfoProvider(WKContextRef context)
         isMeteredCallback
     };
 
-    WKNetworkInfoManagerSetProvider(wkNetworkInfoManager, reinterpret_cast<WKNetworkInfoProviderBase*>(&wkNetworkInfoProvider));
+    WKNetworkInfoManagerSetProvider(wkNetworkInfoManager, &wkNetworkInfoProvider.base);
 }
 
 NetworkInfoProvider::~NetworkInfoProvider()

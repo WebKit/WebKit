@@ -69,7 +69,7 @@ VibrationClientEfl::VibrationClientEfl(EwkView* view)
         vibrateCallback,
         cancelVibrationCallback
     };
-    WKVibrationSetProvider(wkVibration, reinterpret_cast<WKVibrationProviderBase*>(&wkVibrationProvider));
+    WKVibrationSetProvider(wkVibration, &wkVibrationProvider.base);
 }
 
 VibrationClientEfl::~VibrationClientEfl()

@@ -92,7 +92,7 @@ TEST(WebKit2, WKViewIsActive)
     viewClient.base.version = 0;
     viewClient.webProcessCrashed = webProcessCrashed;
     viewClient.webProcessDidRelaunch = webProcessRelaunched;
-    WKViewSetViewClient(view.get(), reinterpret_cast<WKViewClientBase*>(&viewClient));
+    WKViewSetViewClient(view.get(), &viewClient.base);
 
     WKViewInitialize(view.get());
 

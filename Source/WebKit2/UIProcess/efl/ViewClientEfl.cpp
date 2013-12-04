@@ -200,7 +200,7 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
     viewClient.doneWithTouchEvent = doneWithTouchEvent;
 #endif
 
-    WKViewSetViewClient(m_view->wkView(), reinterpret_cast<WKViewClientBase*>(&viewClient));
+    WKViewSetViewClient(m_view->wkView(), &viewClient.base);
 }
 
 ViewClientEfl::~ViewClientEfl()

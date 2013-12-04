@@ -97,7 +97,7 @@ static void setViewClient(WKViewRef view, const void* clientInfo)
     viewClient.webProcessCrashed = webProcessCrashed;
     viewClient.webProcessDidRelaunch = webProcessDidRelaunch;
 
-    WKViewSetViewClient(view, reinterpret_cast<WKViewClientBase*>(&viewClient));
+    WKViewSetViewClient(view, &viewClient.base);
 }
 
 TEST(WebKit2, WKViewClientWebProcessCallbacks)

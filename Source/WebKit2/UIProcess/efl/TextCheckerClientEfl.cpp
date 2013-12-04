@@ -77,7 +77,7 @@ TextCheckerClientEfl::TextCheckerClientEfl()
         learnWordCallback,
         ignoreWordCallback
     };
-    WKTextCheckerSetClient(reinterpret_cast<WKTextCheckerClientBase*>(&wkTextCheckerClient));
+    WKTextCheckerSetClient(&wkTextCheckerClient.base);
 }
 
 TextCheckerClientEfl& TextCheckerClientEfl::instance()

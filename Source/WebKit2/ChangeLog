@@ -1,5 +1,51 @@
 2013-12-04  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
+        [EFL][GTK][WK2] Remove unnecessary reinterpret_casts when setting API clients
+        https://bugs.webkit.org/show_bug.cgi?id=125231
+
+        Reviewed by Anders Carlsson.
+
+        After r159988, WKClients have to be instantiated with a specific
+        version of that client and its Base field has to used when setting it.
+        Eg:
+
+            WKFullScreenClientV0 wkClient = {
+                {
+                    0, // version
+                    this, // clientInfo
+                },
+                    willEnterFullScreen,
+                    willExitFullScreen
+            };
+            WKViewSetFullScreenClientGtk(this, &wkClient.base);
+
+        So we don't need the reinterpret_casts introduced in r160075.
+
+        * UIProcess/API/gtk/WebKitFullscreenClient.cpp:
+        (attachFullScreenClientToView): reinterpret_cast<WKFooClientBase*>(&client) -> &client.base
+        * UIProcess/API/gtk/WebKitRequestManagerClient.cpp:
+        (attachRequestManagerClientToContext): Ditto.
+        * UIProcess/API/gtk/WebKitTextChecker.cpp:
+        (WebKitTextChecker::WebKitTextChecker): Ditto.
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        (webkitWebInspectorCreate): Ditto.
+        * UIProcess/efl/BatteryProvider.cpp:
+        (BatteryProvider::BatteryProvider): Ditto.
+        * UIProcess/efl/NetworkInfoProvider.cpp:
+        (NetworkInfoProvider::NetworkInfoProvider): Ditto.
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::PageUIClientEfl): Ditto.
+        * UIProcess/efl/RequestManagerClientEfl.cpp:
+        (WebKit::RequestManagerClientEfl::RequestManagerClientEfl): Ditto.
+        * UIProcess/efl/TextCheckerClientEfl.cpp:
+        (TextCheckerClientEfl::TextCheckerClientEfl): Ditto.
+        * UIProcess/efl/VibrationClientEfl.cpp:
+        (VibrationClientEfl::VibrationClientEfl): Ditto.
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::ViewClientEfl): Ditto.
+
+2013-12-04  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
         [GTK][WK2] Fix build after r160104
         https://bugs.webkit.org/show_bug.cgi?id=125240
 

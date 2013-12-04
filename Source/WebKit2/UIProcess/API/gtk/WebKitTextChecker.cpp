@@ -107,7 +107,7 @@ WebKitTextChecker::WebKitTextChecker()
         learnWordCallback,
         ignoreWordCallback,
     };
-    WKTextCheckerSetClient(reinterpret_cast<WKTextCheckerClientBase*>(&wkTextCheckerClient));
+    WKTextCheckerSetClient(&wkTextCheckerClient.base);
 }
 
 void WebKitTextChecker::checkSpellingOfString(const String& string, int& misspellingLocation, int& misspellingLength)

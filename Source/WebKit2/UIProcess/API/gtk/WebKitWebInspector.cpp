@@ -329,7 +329,7 @@ WebKitWebInspector* webkitWebInspectorCreate(WebInspectorProxy* webInspector)
         detach,
         didChangeAttachedHeight
     };
-    WKInspectorSetInspectorClientGtk(toAPI(webInspector), reinterpret_cast<WKInspectorClientGtkBase*>(&wkInspectorClientGtk));
+    WKInspectorSetInspectorClientGtk(toAPI(webInspector), &wkInspectorClientGtk.base);
 
     return inspector;
 }

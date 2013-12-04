@@ -78,7 +78,7 @@ BatteryProvider::BatteryProvider(WKContextRef context)
         stopUpdatingCallback
     };
 
-    WKBatteryManagerSetProvider(m_batteryManager.get(), reinterpret_cast<WKBatteryProviderBase*>(&wkBatteryProvider));
+    WKBatteryManagerSetProvider(m_batteryManager.get(), &wkBatteryProvider.base);
 }
 
 void BatteryProvider::startUpdating()

@@ -45,6 +45,6 @@ void attachFullScreenClientToView(WebKitWebView* webView)
         willEnterFullScreen,
         willExitFullScreen
     };
-    WKViewSetFullScreenClientGtk(toAPI(WEBKIT_WEB_VIEW_BASE(webView)), reinterpret_cast<WKFullScreenClientGtkBase*>(&wkFullScreenClient));
+    WKViewSetFullScreenClientGtk(toAPI(WEBKIT_WEB_VIEW_BASE(webView)), &wkFullScreenClient.base);
 }
 

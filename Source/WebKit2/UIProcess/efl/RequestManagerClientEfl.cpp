@@ -77,7 +77,7 @@ RequestManagerClientEfl::RequestManagerClientEfl(WKContextRef context)
     wkRequestManagerClient.base.clientInfo = this;
     wkRequestManagerClient.didReceiveURIRequest = didReceiveURIRequest;
 
-    WKSoupRequestManagerSetClient(m_soupRequestManager.get(), reinterpret_cast<WKSoupRequestManagerClientBase*>(&wkRequestManagerClient));
+    WKSoupRequestManagerSetClient(m_soupRequestManager.get(), &wkRequestManagerClient.base);
 }
 
 RequestManagerClientEfl::~RequestManagerClientEfl()
