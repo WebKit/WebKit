@@ -44,6 +44,7 @@ from checkers.cmake import CMakeChecker
 from checkers.js import JSChecker
 from checkers.jsonchecker import JSONChecker
 from checkers.jsonchecker import JSONContributorsChecker
+from checkers.messagesin import MessagesInChecker
 from checkers.png import PNGChecker
 from checkers.python import PythonChecker
 from checkers.test_expectations import TestExpectationsChecker
@@ -634,6 +635,8 @@ class CheckerDispatcher(object):
             basename = os.path.basename(file_path)
             if basename == 'TestExpectations':
                 checker = TestExpectationsChecker(file_path, handle_style_error)
+            elif file_path.endswith('.messages.in'):
+                checker = MessagesInChecker(file_path, handle_style_error)
             else:
                 checker = TextChecker(file_path, handle_style_error)
         elif file_type == FileType.WATCHLIST:

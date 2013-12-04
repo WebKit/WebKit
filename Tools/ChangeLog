@@ -1,3 +1,32 @@
+2013-12-04  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Style checker for .messages.in files (WTF:: prefix)
+        https://bugs.webkit.org/show_bug.cgi?id=125142
+
+        Reviewed by Anders Carlsson.
+
+        A new style checker for .messages.in files, that checks for the use of WTF::
+        prefix in these files. (Also checks for tabs as these files were previously
+        handled as text files.)
+
+        * Scripts/webkitpy/style/checker.py:
+        (CheckerDispatcher._create_checker):
+          New checker is returned for .messages.in files.
+        * Scripts/webkitpy/style/checkers/messagesin.py: Added.
+          The new style checker class.
+        (MessagesInChecker):
+        (MessagesInChecker.__init__):
+        (MessagesInChecker.check):
+        (MessagesInChecker.check_WTF_prefix):
+        * Scripts/webkitpy/style/checkers/messagesin_unittest.py: Added.
+          Unit test for the new style  checker class.
+        (MessagesInCheckerStyleTestCase):
+        (test_checker):
+        (test_checker.error_handler_for_test):
+        (MessagesInCheckerTestCase):
+        (MessagesInCheckerTestCase.test_init):
+        (MessagesInCheckerTestCase.test_init.error_handler_for_test):
+
 2013-12-04  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
 
         Style checker requires alphabetical ordering in cmake lists even it contains variable.
