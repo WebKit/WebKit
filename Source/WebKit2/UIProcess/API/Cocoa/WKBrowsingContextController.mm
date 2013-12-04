@@ -81,6 +81,16 @@ private:
         [m_controller didChangeValueForKey:@"title"];
     }
 
+    virtual void willChangeEstimatedProgress() OVERRIDE
+    {
+        [m_controller willChangeValueForKey:@"estimatedProgress"];
+    }
+
+    virtual void didChangeEstimatedProgress() OVERRIDE
+    {
+        [m_controller didChangeValueForKey:@"estimatedProgress"];
+    }
+
     WKBrowsingContextController *m_controller;
 };
 

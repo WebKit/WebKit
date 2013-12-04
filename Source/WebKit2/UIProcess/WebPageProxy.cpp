@@ -235,7 +235,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_userAgent(standardUserAgent())
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
-    , m_estimatedProgress(0)
     , m_viewState(ViewState::NoFlags)
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_loadStateAtProcessExit(FrameLoadState::State::Finished)
@@ -2039,36 +2038,28 @@ void WebPageProxy::didCreateSubframe(uint64_t frameID)
     m_process->frameCreated(frameID, subFrame.get());
 }
 
-// Always start progress at initialProgressValue. This helps provide feedback as
-// soon as a load starts.
-
-static const double initialProgressValue = 0.1;
-
 double WebPageProxy::estimatedProgress() const
 {
-    if (!m_pageLoadState.pendingAPIRequestURL().isNull())
-        return initialProgressValue;
-
-    return m_estimatedProgress; 
+    return m_pageLoadState.estimatedProgress();
 }
 
 void WebPageProxy::didStartProgress()
 {
-    m_estimatedProgress = initialProgressValue;
+    m_pageLoadState.didStartProgress();
 
     m_loaderClient.didStartProgress(this);
 }
 
 void WebPageProxy::didChangeProgress(double value)
 {
-    m_estimatedProgress = value;
+    m_pageLoadState.didChangeProgress(value);
 
     m_loaderClient.didChangeProgress(this);
 }
 
 void WebPageProxy::didFinishProgress()
 {
-    m_estimatedProgress = 1.0;
+    m_pageLoadState.didFinishProgress();
 
     m_loaderClient.didFinishProgress(this);
 }
@@ -3757,8 +3748,6 @@ void WebPageProxy::resetState()
         editCommandVector[i]->invalidate();
 
     m_activePopupMenu = 0;
-
-    m_estimatedProgress = 0.0;
 }
 
 void WebPageProxy::resetStateAfterProcessExited()

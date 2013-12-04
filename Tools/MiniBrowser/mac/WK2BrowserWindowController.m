@@ -36,9 +36,6 @@
 #import <WebKit2/WKViewPrivate.h>
 
 @interface WK2BrowserWindowController () <WKBrowsingContextPolicyDelegate>
-- (void)didStartProgress;
-- (void)didChangeProgress:(double)value;
-- (void)didFinishProgress;
 - (void)didStartProvisionalLoadForFrame:(WKFrameRef)frame;
 - (void)didCommitLoadForFrame:(WKFrameRef)frame;
 - (void)didReceiveServerRedirectForProvisionalLoadForFrame:(WKFrameRef)frame;
@@ -68,6 +65,7 @@
 - (void)dealloc
 {
     [progressIndicator unbind:NSHiddenBinding];
+    [progressIndicator unbind:NSValueBinding];
 
     WKRelease(_context);
     WKRelease(_pageGroup);
@@ -388,21 +386,6 @@ static void didDetectXSSForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef use
     LOG(@"didDetectXSSForFrame"); 
 }
  
-static void didStartProgress(WKPageRef page, const void *clientInfo)
-{
-    [(WK2BrowserWindowController *)clientInfo didStartProgress];
-}
-
-static void didChangeProgress(WKPageRef page, const void *clientInfo)
-{
-    [(WK2BrowserWindowController *)clientInfo didChangeProgress:WKPageGetEstimatedProgress(page)];
-}
-
-static void didFinishProgress(WKPageRef page, const void *clientInfo)
-{
-    [(WK2BrowserWindowController *)clientInfo didFinishProgress];
-}
-
 static void didBecomeUnresponsive(WKPageRef page, const void *clientInfo)
 {
     LOG(@"didBecomeUnresponsive");
@@ -618,6 +601,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     [containerView addSubview:_webView];
 
     [progressIndicator bind:NSHiddenBinding toObject:_webView.browsingContextController withKeyPath:@"loading" options:@{ NSValueTransformerNameBindingOption : NSNegateBooleanTransformerName }];
+    [progressIndicator bind:NSValueBinding toObject:_webView.browsingContextController withKeyPath:@"estimatedProgress" options:nil];
 
     WKPageLoaderClientV3 loadClient = {
         { 3, self },
@@ -637,9 +621,9 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         didRunInsecureContentForFrame,
         0, // canAuthenticateAgainstProtectionSpaceInFrame
         0, // didReceiveAuthenticationChallengeInFrame
-        didStartProgress,
-        didChangeProgress,
-        didFinishProgress,
+        0, // didStartProgress,
+        0, // didChangeProgress,
+        0, // didFinishProgress,
         didBecomeUnresponsive,
         didBecomeResponsive,
         processDidExit,
@@ -712,21 +696,6 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // unavailablePluginButtonClicked
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient.base);
-}
-
-- (void)didStartProgress
-{
-    [progressIndicator setDoubleValue:0.0];
-}
-
-- (void)didChangeProgress:(double)value
-{
-    [progressIndicator setDoubleValue:value];
-}
-
-- (void)didFinishProgress
-{
-    [progressIndicator setDoubleValue:1.0];
 }
 
 - (void)updateTextFieldFromURL:(WKURLRef)URLRef

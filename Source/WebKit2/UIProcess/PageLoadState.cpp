@@ -30,6 +30,7 @@ namespace WebKit {
 
 PageLoadState::PageLoadState()
     : m_state(State::Finished)
+    , m_estimatedProgress(0)
 {
 }
 
@@ -67,6 +68,10 @@ void PageLoadState::reset()
     callObserverCallback(&Observer::willChangeTitle);
     m_title = String();
     callObserverCallback(&Observer::didChangeTitle);
+
+    callObserverCallback(&Observer::willChangeEstimatedProgress);
+    m_estimatedProgress = 0;
+    callObserverCallback(&Observer::didChangeEstimatedProgress);
 }
 
 bool PageLoadState::isLoading() const
@@ -95,7 +100,19 @@ String PageLoadState::activeURL() const
 
     ASSERT_NOT_REACHED();
     return String();
+}
 
+// Always start progress at initialProgressValue. This helps provide feedback as
+// soon as a load starts.
+
+static const double initialProgressValue = 0.1;
+
+double PageLoadState::estimatedProgress() const
+{
+    if (!m_pendingAPIRequestURL.isNull())
+        return initialProgressValue;
+
+    return m_estimatedProgress;
 }
 
 const String& PageLoadState::pendingAPIRequestURL() const
@@ -105,12 +122,16 @@ const String& PageLoadState::pendingAPIRequestURL() const
 
 void PageLoadState::setPendingAPIRequestURL(const String& pendingAPIRequestURL)
 {
+    callObserverCallback(&Observer::willChangeEstimatedProgress);
     m_pendingAPIRequestURL = pendingAPIRequestURL;
+    callObserverCallback(&Observer::didChangeEstimatedProgress);
 }
 
 void PageLoadState::clearPendingAPIRequestURL()
 {
+    callObserverCallback(&Observer::willChangeEstimatedProgress);
     m_pendingAPIRequestURL = String();
+    callObserverCallback(&Observer::didChangeEstimatedProgress);
 }
 
 void PageLoadState::didStartProvisionalLoad(const String& url, const String& unreachableURL)
@@ -191,6 +212,27 @@ void PageLoadState::setTitle(const String& title)
     callObserverCallback(&Observer::willChangeTitle);
     m_title = title;
     callObserverCallback(&Observer::didChangeTitle);
+}
+
+void PageLoadState::didStartProgress()
+{
+    callObserverCallback(&Observer::willChangeEstimatedProgress);
+    m_estimatedProgress = initialProgressValue;
+    callObserverCallback(&Observer::didChangeEstimatedProgress);
+}
+
+void PageLoadState::didChangeProgress(double value)
+{
+    callObserverCallback(&Observer::willChangeEstimatedProgress);
+    m_estimatedProgress = value;
+    callObserverCallback(&Observer::didChangeEstimatedProgress);
+}
+
+void PageLoadState::didFinishProgress()
+{
+    callObserverCallback(&Observer::willChangeEstimatedProgress);
+    m_estimatedProgress = 1;
+    callObserverCallback(&Observer::didChangeEstimatedProgress);
 }
 
 bool PageLoadState::isLoadingState(State state)

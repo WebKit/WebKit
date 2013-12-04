@@ -50,6 +50,9 @@ public:
 
         virtual void willChangeTitle() = 0;
         virtual void didChangeTitle() = 0;
+
+        virtual void willChangeEstimatedProgress() = 0;
+        virtual void didChangeEstimatedProgress() = 0;
     };
 
     void addObserver(Observer&);
@@ -64,6 +67,8 @@ public:
     const String& unreachableURL() const { return m_unreachableURL; }
 
     String activeURL() const;
+
+    double estimatedProgress() const;
 
     const String& pendingAPIRequestURL() const;
     void setPendingAPIRequestURL(const String&);
@@ -84,6 +89,10 @@ public:
     const String& title() const;
     void setTitle(const String&);
 
+    void didStartProgress();
+    void didChangeProgress(double);
+    void didFinishProgress();
+
 private:
     static bool isLoadingState(State);
     void setState(State);
@@ -103,6 +112,8 @@ private:
     String m_lastUnreachableURL;
 
     String m_title;
+
+    double m_estimatedProgress;
 };
 
 } // namespace WebKit
