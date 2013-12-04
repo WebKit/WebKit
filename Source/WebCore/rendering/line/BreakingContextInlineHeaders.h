@@ -106,37 +106,6 @@ inline void TrailingObjects::appendBoxIfNeeded(RenderBoxModelObject* box)
         m_boxes.append(box);
 }
 
-// Don't call this directly. Use one of the descriptive helper functions below.
-inline void deprecatedAddMidpoint(LineMidpointState& lineMidpointState, const InlineIterator& midpoint)
-{
-    if (lineMidpointState.midpoints.size() <= lineMidpointState.numMidpoints)
-        lineMidpointState.midpoints.grow(lineMidpointState.numMidpoints + 10);
-
-    InlineIterator* midpoints = lineMidpointState.midpoints.data();
-    midpoints[lineMidpointState.numMidpoints++] = midpoint;
-}
-
-inline void startIgnoringSpaces(LineMidpointState& lineMidpointState, const InlineIterator& midpoint)
-{
-    ASSERT(!(lineMidpointState.numMidpoints % 2));
-    deprecatedAddMidpoint(lineMidpointState, midpoint);
-}
-
-inline void stopIgnoringSpaces(LineMidpointState& lineMidpointState, const InlineIterator& midpoint)
-{
-    ASSERT(lineMidpointState.numMidpoints % 2);
-    deprecatedAddMidpoint(lineMidpointState, midpoint);
-}
-
-// When ignoring spaces, this needs to be called for objects that need line boxes such as RenderInlines or
-// hard line breaks to ensure that they're not ignored.
-inline void ensureLineBoxInsideIgnoredSpaces(LineMidpointState& lineMidpointState, RenderObject* renderer)
-{
-    InlineIterator midpoint(0, renderer, 0);
-    stopIgnoringSpaces(lineMidpointState, midpoint);
-    startIgnoringSpaces(lineMidpointState, midpoint);
-}
-
 void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMidpointState, const InlineIterator& lBreak, CollapseFirstSpaceOrNot collapseFirstSpace)
 {
     if (!m_whitespace)
@@ -158,7 +127,7 @@ void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMid
         for (size_t i = 0; i < m_boxes.size(); ++i) {
             if (currentMidpoint >= lineMidpointState.numMidpoints) {
                 // We don't have a midpoint for this box yet.
-                ensureLineBoxInsideIgnoredSpaces(lineMidpointState, m_boxes[i]);
+                lineMidpointState.ensureLineBoxInsideIgnoredSpaces(m_boxes[i]);
             } else {
                 ASSERT(lineMidpointState.midpoints[currentMidpoint].renderer() == m_boxes[i]);
                 ASSERT(lineMidpointState.midpoints[currentMidpoint + 1].renderer() == m_boxes[i]);
@@ -172,9 +141,9 @@ void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMid
         unsigned length = m_whitespace->textLength();
         unsigned pos = length >= 2 ? length - 2 : UINT_MAX;
         InlineIterator endMid(0, m_whitespace, pos);
-        startIgnoringSpaces(lineMidpointState, endMid);
+        lineMidpointState.startIgnoringSpaces(endMid);
         for (size_t i = 0; i < m_boxes.size(); ++i)
-            ensureLineBoxInsideIgnoredSpaces(lineMidpointState, m_boxes[i]);
+            lineMidpointState.ensureLineBoxInsideIgnoredSpaces(m_boxes[i]);
     }
 }
 
@@ -365,12 +334,12 @@ inline void BreakingContext::handleBR(EClear& clear)
         // need to check for floats to clear - so if we're ignoring spaces, stop ignoring them and add a
         // run for this object.
         if (m_ignoringSpaces && m_currentStyle->clear() != CNONE)
-            ensureLineBoxInsideIgnoredSpaces(m_lineMidpointState, br);
+            m_lineMidpointState.ensureLineBoxInsideIgnoredSpaces(br);
         // If we were preceded by collapsing space and are in a right-aligned container we need to ensure the space gets
         // collapsed away so that it doesn't push the text out from the container's right-hand edge.
         // FIXME: Do this regardless of the container's alignment - will require rebaselining a lot of test results.
         else if (m_ignoringSpaces && (m_blockStyle.textAlign() == RIGHT || m_blockStyle.textAlign() == WEBKIT_RIGHT))
-            stopIgnoringSpaces(m_lineMidpointState, InlineIterator(0, m_current.renderer(), m_current.m_pos));
+            m_lineMidpointState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), m_current.m_pos));
 
         if (!m_lineInfo.isEmpty())
             clear = m_currentStyle->clear();
@@ -443,7 +412,7 @@ inline void BreakingContext::handleOutOfFlowPositioned(Vector<RenderBox*>& posit
     // then start ignoring spaces again.
     if (isInlineType || box->container()->isRenderInline()) {
         if (m_ignoringSpaces)
-            ensureLineBoxInsideIgnoredSpaces(m_lineMidpointState, box);
+            m_lineMidpointState.ensureLineBoxInsideIgnoredSpaces(box);
         m_trailingObjects.appendBoxIfNeeded(box);
     } else
         positionedObjects.append(box);
@@ -485,7 +454,7 @@ inline bool shouldSkipWhitespaceAfterStartObject(RenderBlockFlow& block, RenderO
         RenderText* nextText = toRenderText(next);
         UChar nextChar = nextText->characterAt(0);
         if (nextText->style().isCollapsibleWhiteSpace(nextChar)) {
-            startIgnoringSpaces(lineMidpointState, InlineIterator(0, o, 0));
+            lineMidpointState.startIgnoringSpaces(InlineIterator(0, o, 0));
             return true;
         }
     }
@@ -512,7 +481,7 @@ inline void BreakingContext::handleEmptyInline()
             m_lineInfo.setEmpty(false, &m_block, &m_width);
         if (m_ignoringSpaces) {
             m_trailingObjects.clear();
-            ensureLineBoxInsideIgnoredSpaces(m_lineMidpointState, m_current.renderer());
+            m_lineMidpointState.ensureLineBoxInsideIgnoredSpaces(m_current.renderer());
         } else if (m_blockStyle.collapseWhiteSpace() && m_resolver.position().renderer() == m_current.renderer()
             && shouldSkipWhitespaceAfterStartObject(m_block, m_current.renderer(), m_lineMidpointState)) {
             // Like with list markers, we start ignoring spaces to make sure that any
@@ -541,7 +510,7 @@ inline void BreakingContext::handleReplaced()
     }
 
     if (m_ignoringSpaces)
-        stopIgnoringSpaces(m_lineMidpointState, InlineIterator(0, m_current.renderer(), 0));
+        m_lineMidpointState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), 0));
 
     m_lineInfo.setEmpty(false, &m_block, &m_width);
     m_ignoringSpaces = false;
@@ -673,8 +642,8 @@ ALWAYS_INLINE float textWidth(RenderText* text, unsigned from, unsigned len, con
 inline void ensureCharacterGetsLineBox(LineMidpointState& lineMidpointState, InlineIterator& textParagraphSeparator)
 {
     InlineIterator midpoint(0, textParagraphSeparator.renderer(), textParagraphSeparator.m_pos);
-    startIgnoringSpaces(lineMidpointState, InlineIterator(0, textParagraphSeparator.renderer(), textParagraphSeparator.m_pos - 1));
-    stopIgnoringSpaces(lineMidpointState, InlineIterator(0, textParagraphSeparator.renderer(), textParagraphSeparator.m_pos));
+    lineMidpointState.startIgnoringSpaces(InlineIterator(0, textParagraphSeparator.renderer(), textParagraphSeparator.m_pos - 1));
+    lineMidpointState.stopIgnoringSpaces(InlineIterator(0, textParagraphSeparator.renderer(), textParagraphSeparator.m_pos));
 }
 
 inline void tryHyphenating(RenderText* text, const Font& font, const AtomicString& localeIdentifier, unsigned consecutiveHyphenatedLines, int consecutiveHyphenatedLinesLimit, int minimumPrefixLimit, int minimumSuffixLimit, unsigned lastSpace, unsigned pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
@@ -856,7 +825,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     m_ignoringSpaces = false;
                     wordSpacingForWordMeasurement = 0;
                     lastSpace = m_current.m_pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
-                    stopIgnoringSpaces(m_lineMidpointState, InlineIterator(0, m_current.renderer(), m_current.m_pos));
+                    m_lineMidpointState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), m_current.m_pos));
                     stoppedIgnoringSpaces = true;
                 } else {
                     // Just keep ignoring these spaces.
@@ -1000,7 +969,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     // We just entered a mode where we are ignoring
                     // spaces. Create a midpoint to terminate the run
                     // before the second space.
-                    startIgnoringSpaces(m_lineMidpointState, m_startOfIgnoredSpaces);
+                    m_lineMidpointState.startIgnoringSpaces(m_startOfIgnoredSpaces);
                     m_trailingObjects.updateMidpointsForTrailingBoxes(m_lineMidpointState, InlineIterator(), TrailingObjects::DoNotCollapseFirstSpace);
                 }
             }
@@ -1011,7 +980,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             lastSpaceWordSpacing = applyWordSpacing ? wordSpacing : 0;
             wordSpacingForWordMeasurement = (applyWordSpacing && wordMeasurements.last().width) ? wordSpacing : 0;
             lastSpace = m_current.m_pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
-            stopIgnoringSpaces(m_lineMidpointState, InlineIterator(0, m_current.renderer(), m_current.m_pos));
+            m_lineMidpointState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), m_current.m_pos));
         }
 #if ENABLE(SVG)
         if (isSVGText && m_current.m_pos > 0) {
@@ -1031,7 +1000,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 m_startOfIgnoredSpaces.m_pos--;
                 // If there's just a single trailing space start ignoring it now so it collapses away.
                 if (m_current.m_pos == renderText->textLength() - 1)
-                    startIgnoringSpaces(m_lineMidpointState, m_startOfIgnoredSpaces);
+                    m_lineMidpointState.startIgnoringSpaces(m_startOfIgnoredSpaces);
             }
         }
 

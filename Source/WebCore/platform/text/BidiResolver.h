@@ -31,7 +31,10 @@
 
 namespace WebCore {
 
-template <class Iterator> struct MidpointState {
+class RenderObject;
+
+template <class Iterator> class MidpointState {
+public:
     MidpointState()
     {
         reset();
@@ -51,6 +54,36 @@ template <class Iterator> struct MidpointState {
     unsigned numMidpoints;
     unsigned currentMidpoint;
     bool betweenMidpoints;
+
+    void startIgnoringSpaces(const Iterator& midpoint)
+    {
+        ASSERT(!(numMidpoints % 2));
+        deprecatedAddMidpoint(midpoint);
+    }
+
+    void stopIgnoringSpaces(const Iterator& midpoint)
+    {
+        ASSERT(lineMidpointState.numMidpoints % 2);
+        deprecatedAddMidpoint(midpoint);
+    }
+
+    // When ignoring spaces, this needs to be called for objects that need line boxes such as RenderInlines or
+    // hard line breaks to ensure that they're not ignored.
+    void ensureLineBoxInsideIgnoredSpaces(RenderObject* renderer)
+    {
+        Iterator midpoint(0, renderer, 0);
+        stopIgnoringSpaces(midpoint);
+        startIgnoringSpaces(midpoint);
+    }
+private:
+    void deprecatedAddMidpoint(const Iterator& midpoint)
+    {
+        if (midpoints.size() <= numMidpoints)
+            midpoints.grow(numMidpoints + 10);
+
+        Iterator* midpointsIterator = midpoints.data();
+        midpointsIterator[numMidpoints++] = midpoint;
+    }
 };
 
 // The BidiStatus at a given position (typically the end of a line) can

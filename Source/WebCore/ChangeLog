@@ -1,3 +1,35 @@
+2013-12-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        Move space-ignoring inline functions into MidpointState
+        <https://webkit.org/b/124957>
+
+        Reviewed by David Hyatt.
+
+        Since:
+         - The following inline functions were used only with a mandatory LineMidpointState argument:
+           startIgnoringSpaces, stopIgnoringSpaces, ensureLineBoxInsideIgnoredSpaces, deprecatedAddMidpoint.
+         - TrailingObjects class uses these functions. Since they're inline in BreakingContextInlineHeaders.h,
+           it's hard to separate TrailingObjects into it's own file. (blocks bug #124956)
+         I made these functions as a member of LineMidpointState, and I also updated the call sites.
+
+        No new tests, no behavior change.
+
+        * platform/text/BidiResolver.h:
+        (WebCore::MidpointState::startIgnoringSpaces):
+        (WebCore::MidpointState::stopIgnoringSpaces):
+        (WebCore::MidpointState::ensureLineBoxInsideIgnoredSpaces):
+        (WebCore::MidpointState::deprecatedAddMidpoint):
+        * rendering/RenderBlock.h:
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::TrailingObjects::updateMidpointsForTrailingBoxes):
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::BreakingContext::handleOutOfFlowPositioned):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        (WebCore::BreakingContext::handleEmptyInline):
+        (WebCore::BreakingContext::handleReplaced):
+        (WebCore::ensureCharacterGetsLineBox):
+        (WebCore::BreakingContext::handleText):
+
 2013-12-03  Zoltan Horvath  <zoltan@webkit.org>
 
         Remove BreakingContext's friendship from RenderBlockFlow

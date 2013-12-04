@@ -61,7 +61,7 @@ class WordMeasurement;
 
 template <class Iterator, class Run> class BidiResolver;
 template <class Run> class BidiRunList;
-template <class Iterator> struct MidpointState;
+template <class Iterator> class MidpointState;
 typedef BidiResolver<InlineIterator, BidiRun> InlineBidiResolver;
 typedef MidpointState<InlineIterator> LineMidpointState;
 typedef WTF::ListHashSet<RenderBox*, 16> TrackedRendererListHashSet;
