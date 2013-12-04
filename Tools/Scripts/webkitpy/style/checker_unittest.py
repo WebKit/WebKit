@@ -309,7 +309,8 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
         # Check the file type before asserting the return value.
         checker = self._dispatcher.dispatch(file_path=path,
                                             handle_style_error=None,
-                                            min_confidence=3)
+                                            min_confidence=3,
+                                            commit_queue=False)
         message = 'while checking: %s' % path
         self.assertEqual(checker is None, is_checker_none, message)
         self.assertEqual(self._dispatcher.should_skip_without_warning(path),
@@ -367,7 +368,8 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         self.mock_handle_style_error = DefaultStyleErrorHandler('', None, None, [])
         checker = dispatcher.dispatch(file_path,
                                       self.mock_handle_style_error,
-                                      min_confidence=3)
+                                      min_confidence=3,
+                                      commit_queue=False)
         return checker
 
     def assert_checker_none(self, file_path):
@@ -609,7 +611,8 @@ class StyleProcessorConfigurationTest(LoggingTestCase):
                    filter_configuration=filter_configuration,
                    max_reports_per_category={"whitespace/newline": 1},
                    min_confidence=3,
-                   output_format=output_format)
+                   output_format=output_format,
+                   commit_queue=False)
 
     def test_init(self):
         """Test the __init__() method."""
@@ -661,7 +664,8 @@ class StyleProcessor_EndToEndTest(LoggingTestCase):
                             filter_configuration=FilterConfiguration(),
                             max_reports_per_category={},
                             min_confidence=3,
-                            output_format="vs7")
+                            output_format="vs7",
+                            commit_queue=False)
         processor = StyleProcessor(configuration)
 
         self.assertEqual(processor.error_count, 0)
@@ -671,7 +675,8 @@ class StyleProcessor_EndToEndTest(LoggingTestCase):
                             filter_configuration=FilterConfiguration(),
                             max_reports_per_category={},
                             min_confidence=3,
-                            output_format="vs7")
+                            output_format="vs7",
+                            commit_queue=False)
         processor = StyleProcessor(configuration)
 
         processor.process(lines=['line1', 'Line with tab:\t'],
@@ -719,7 +724,7 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
         def should_check_and_strip_carriage_returns(self, file_path):
             return not file_path.endswith('carriage_returns_allowed.txt')
 
-        def dispatch(self, file_path, style_error_handler, min_confidence):
+        def dispatch(self, file_path, style_error_handler, min_confidence, commit_queue):
             if file_path.endswith('do_not_process.txt'):
                 return None
 
@@ -742,7 +747,8 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
                             filter_configuration=FilterConfiguration(),
                             max_reports_per_category={"whitespace/newline": 1},
                             min_confidence=3,
-                            output_format="vs7")
+                            output_format="vs7",
+                            commit_queue=False)
 
         mock_carriage_checker_class = self._create_carriage_checker_class()
         mock_dispatcher = self.MockDispatcher()

@@ -47,3 +47,11 @@ class JSONChecker(object):
         if not match:
             return 0
         return int(match.group('line'))
+
+
+class JSONContributorsChecker(JSONChecker):
+    """Processes contributors.json lines"""
+
+    def check(self, lines):
+        super(JSONContributorsChecker, self).check(lines)
+        self._handle_style_error(0, 'json/syntax', 5, 'contributors.json should not be modified through the commit queue')

@@ -148,7 +148,8 @@ class CommandOptionValues(object):
                  diff_files=None,
                  is_verbose=False,
                  min_confidence=1,
-                 output_format="emacs"):
+                 output_format="emacs",
+                 commit_queue=False):
         if filter_rules is None:
             filter_rules = []
 
@@ -168,6 +169,7 @@ class CommandOptionValues(object):
         self.is_verbose = is_verbose
         self.min_confidence = min_confidence
         self.output_format = output_format
+        self.commit_queue = commit_queue
 
     # Useful for unit testing.
     def __eq__(self, other):
@@ -337,6 +339,9 @@ class ArgumentParser(object):
         parser.add_option("-v", "--verbose", dest="is_verbose", default=False,
                           action="store_true", help=verbose_help)
 
+        commit_queue_help = "force commit queue to check contributors.json change"
+        parser.add_option("--commit-queue", action="store_true", dest="commit_queue", default=False, help=commit_queue_help)
+
         # Override OptionParser's error() method so that option help will
         # also display when an error occurs.  Normally, just the usage
         # string displays and not option help.
@@ -422,6 +427,7 @@ class ArgumentParser(object):
         is_verbose = options.is_verbose
         min_confidence = options.min_confidence
         output_format = options.output_format
+        commit_queue = options.commit_queue
 
         if filter_value is not None and not filter_value:
             # Then the user explicitly passed no filter, for
@@ -451,7 +457,8 @@ class ArgumentParser(object):
                                       diff_files=diff_files,
                                       is_verbose=is_verbose,
                                       min_confidence=min_confidence,
-                                      output_format=output_format)
+                                      output_format=output_format,
+                                      commit_queue=commit_queue)
 
         return (paths, options)
 

@@ -57,7 +57,8 @@ class DefaultStyleErrorHandlerTest(LoggingTestCase):
                    filter_configuration=filter_configuration,
                    max_reports_per_category={"whitespace/tab": 2},
                    min_confidence=3,
-                   output_format="vs7")
+                   output_format="vs7",
+                   commit_queue=False)
 
     def _error_handler(self, configuration, line_numbers=None):
         return DefaultStyleErrorHandler(configuration=configuration,

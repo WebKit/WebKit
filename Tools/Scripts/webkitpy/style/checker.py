@@ -43,6 +43,7 @@ from checkers.cpp import CppChecker
 from checkers.cmake import CMakeChecker
 from checkers.js import JSChecker
 from checkers.jsonchecker import JSONChecker
+from checkers.jsonchecker import JSONContributorsChecker
 from checkers.png import PNGChecker
 from checkers.python import PythonChecker
 from checkers.test_expectations import TestExpectationsChecker
@@ -398,7 +399,8 @@ def check_webkit_style_configuration(options):
     return StyleProcessorConfiguration(filter_configuration=filter_configuration,
                max_reports_per_category=_MAX_REPORTS_PER_CATEGORY,
                min_confidence=options.min_confidence,
-               output_format=options.output_format)
+               output_format=options.output_format,
+               commit_queue=options.commit_queue)
 
 
 def _create_log_handlers(stream):
@@ -593,7 +595,7 @@ class CheckerDispatcher(object):
             return FileType.NONE
 
     def _create_checker(self, file_type, file_path, handle_style_error,
-                        min_confidence):
+                        min_confidence, commit_queue):
         """Instantiate and return a style checker based on file type."""
         if file_type == FileType.NONE:
             checker = None
@@ -613,7 +615,11 @@ class CheckerDispatcher(object):
             else:
                 checker = TextChecker(file_path, handle_style_error)
         elif file_type == FileType.JSON:
-            checker = JSONChecker(file_path, handle_style_error)
+            basename = os.path.basename(file_path)
+            if commit_queue and basename == 'contributors.json':
+                checker = JSONContributorsChecker(file_path, handle_style_error)
+            else:
+                checker = JSONChecker(file_path, handle_style_error)
         elif file_type == FileType.PYTHON:
             checker = PythonChecker(file_path, handle_style_error)
         elif file_type == FileType.XML:
@@ -642,14 +648,15 @@ class CheckerDispatcher(object):
 
         return checker
 
-    def dispatch(self, file_path, handle_style_error, min_confidence):
+    def dispatch(self, file_path, handle_style_error, min_confidence, commit_queue):
         """Instantiate and return a style checker based on file path."""
         file_type = self._file_type(file_path)
 
         checker = self._create_checker(file_type,
                                        file_path,
                                        handle_style_error,
-                                       min_confidence)
+                                       min_confidence,
+                                       commit_queue)
         return checker
 
 
@@ -670,7 +677,8 @@ class StyleProcessorConfiguration(object):
                  filter_configuration,
                  max_reports_per_category,
                  min_confidence,
-                 output_format):
+                 output_format,
+                 commit_queue):
         """Create a StyleProcessorConfiguration instance.
 
         Args:
@@ -689,12 +697,16 @@ class StyleProcessorConfiguration(object):
                          output formats are "emacs" which emacs can parse
                          and "vs7" which Microsoft Visual Studio 7 can parse.
 
+          commit_queue: A bool indicating whether the style check is performed
+                        by the commit queue or not.
+
         """
         self._filter_configuration = filter_configuration
         self._output_format = output_format
 
         self.max_reports_per_category = max_reports_per_category
         self.min_confidence = min_confidence
+        self.commit_queue = commit_queue
 
     def is_reportable(self, category, confidence_in_error, file_path):
         """Return whether an error is reportable.
@@ -864,7 +876,8 @@ class StyleProcessor(ProcessorBase):
         min_confidence = self._configuration.min_confidence
         checker = self._dispatcher.dispatch(file_path,
                                             style_error_handler,
-                                            min_confidence)
+                                            min_confidence,
+                                            self._configuration.commit_queue)
 
         if checker is None:
             raise AssertionError("File should not be checked: '%s'" % file_path)

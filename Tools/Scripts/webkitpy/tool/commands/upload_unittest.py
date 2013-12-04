@@ -63,6 +63,7 @@ Bug 50002 has no non-obsolete patches, ignoring.
         options.check_style_filter = None
         options.comment = None
         options.description = "MOCK description"
+        options.non_interactive = False
         options.request_commit = False
         options.review = True
         options.suggest_reviewers = False
@@ -114,6 +115,7 @@ MOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_rev
         options.check_style_filter = None
         options.comment = None
         options.description = "MOCK description"
+        options.non_interactive = False
         options.request_commit = False
         options.review = True
         options.suggest_reviewers = False

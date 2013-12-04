@@ -1,3 +1,46 @@
+2013-12-04  Tamas Gergely  <gertom@inf.u-szeged.hu>
+
+        style-bot should reject Committer additions to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=107574
+
+        Reviewed by Zoltan Herczeg.
+
+        The style check when executed in non-interactive mode (probably by a
+        bot) will raise an additional error if the contributors.json file is
+        modified. Non-interactive mode information is propagated to the
+        Dispatcher, which creates a special JSON checker for the
+        contributors.json file.
+
+        * Scripts/webkitpy/style/checker.py:
+        (check_webkit_style_configuration):
+        (CheckerDispatcher._create_checker):
+        (CheckerDispatcher.dispatch):
+        (StyleProcessorConfiguration.__init__):
+        (StyleProcessor.process):
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherSkipTest._assert_should_skip_without_warning):
+        (CheckerDispatcherDispatchTest.dispatch):
+        (StyleProcessorConfigurationTest._style_checker_configuration):
+        (StyleProcessor_EndToEndTest.test_init):
+        (StyleProcessor_EndToEndTest.test_process):
+        (StyleProcessor_CodeCoverageTest.MockDispatcher.dispatch):
+        (StyleProcessor_CodeCoverageTest.setUp):
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        (JSONChecker.line_number_from_json_exception):
+        (JSONContributorsChecker):
+        (JSONContributorsChecker.check):
+        * Scripts/webkitpy/style/error_handlers_unittest.py:
+        (DefaultStyleErrorHandlerTest._style_checker_configuration):
+        * Scripts/webkitpy/style/optparser.py:
+        (CommandOptionValues.__init__):
+        (ArgumentParser._create_option_parser):
+        (ArgumentParser.parse):
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        (test_post):
+        (test_upload):
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        (CheckStyle.run):
+
 2013-12-04  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [EFL][WK2] Fix build after API::Client changes
