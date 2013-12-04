@@ -1,3 +1,49 @@
+2013-12-04  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: edited color should serialize back to original format when possible
+        https://bugs.webkit.org/show_bug.cgi?id=125244
+
+        Reviewed by Joseph Pecoraro.
+
+        Profoundly reworked WebInspector.Color to be more efficient and more flexible when
+        serializing the color to the various supported formats.
+
+        * UserInterface/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches):
+        Use new WebInspector.Color.fromString() factory and check for a null return value
+        rather than an exception to identify invalid color tokens.
+
+        * UserInterface/Color.js:
+        (WebInspector.Color):
+        Rewrote WebInspector.Color such that it would have, at all times, a canonical
+        representation in terms of either RGBA or HSLA depending on the format used to
+        create the color. The new constructor parameters lets the user pass a format
+        and the RGBA or HSLA components, allowing to bypass the string-only creation
+        system which was sub-optimal for the new color picker. Additionally, the toString()
+        method now can provide the most accurate serialization of the color based on the
+        provided format with a fallback mechanism to RGB/RGBA in cases where the desired
+        format would incur a loss of fidelity. Finally, simplified the API to only feature
+        essential features.
+
+        (WebInspector.Color.fromString):
+        New factory method used to create a color from a string.
+
+        * UserInterface/ColorPicker.js:
+        (WebInspector.ColorPicker.prototype.set color):
+        Keep track of the original color format so that we can use it as the preferred format
+        when serializing the updated color in _updateColor().
+
+        (WebInspector.ColorPicker.prototype._updateColor):
+        Use the original color format as the prefered formation for color serialization. Also,
+        use the new WebInspector.Color constructor in lieu of the removed .fromRGBA factory.
+
+        (WebInspector.ColorPicker.prototype._updateSliders):
+        Use the new WebInspector.Color constructor in lieu of the removed .fromRGBA factory.
+
+        * UserInterface/ColorWheel.js:
+        (WebInspector.ColorWheel.prototype._colorAtPointWithBrightness):
+        Use the new WebInspector.Color constructor in lieu of the removed .fromRGB factory.
+
 2013-12-03  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove '_attachedWindowHeight' property in InspectorFrontendHostStub.js

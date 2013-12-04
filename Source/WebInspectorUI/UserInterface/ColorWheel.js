@@ -240,11 +240,12 @@ WebInspector.ColorWheel.prototype = {
         var s = Math.max(0, distance) / center;
 
         var rgb = WebInspector.Color.hsv2rgb(h, s, v);
-        return WebInspector.Color.fromRGB(
+        return new WebInspector.Color(WebInspector.Color.Format.RGBA, [
             Math.round(rgb[0] * 255),
             Math.round(rgb[1] * 255),
-            Math.round(rgb[2] * 255)
-        );
+            Math.round(rgb[2] * 255),
+            1
+        ]);
     },
     
     _drawTintedCanvas: function()

@@ -426,9 +426,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
                         continue;
                     }
 
-                    try {
-                        var color = new WebInspector.Color(match[0]);
-                    } catch (e) {
+
+                    var color = WebInspector.Color.fromString(match[0]);
+                    if (!color) {
                         match = colorRegex.exec(lineContent);
                         continue;
                     }

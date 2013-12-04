@@ -95,10 +95,12 @@ WebInspector.ColorPicker.prototype = {
     {
         this._dontUpdateColor = true;
 
+        this._colorFormat = color.format;
+
         this._colorWheel.tintedColor = color;
         this._brightnessSlider.value = this._colorWheel.brightness;
 
-        this._opacitySlider.value = isNaN(color.alpha) ? 1 : color.alpha;
+        this._opacitySlider.value = color.alpha;
         this._updateSliders(this._colorWheel.rawColor, color);
 
         delete this._dontUpdateColor;
@@ -125,15 +127,15 @@ WebInspector.ColorPicker.prototype = {
         if (this._dontUpdateColor)
             return;
 
-        var rgb = this._colorWheel.tintedColor.rgb;
-        this._color = WebInspector.Color.fromRGBA(rgb[0], rgb[1], rgb[2], this._opacity).toString();
+        var rgba = this._colorWheel.tintedColor.rgb.concat(this._opacity);
+        this._color = new WebInspector.Color(WebInspector.Color.Format.RGBA, rgba).toString(this._colorFormat);
         this.dispatchEventToListeners(WebInspector.ColorPicker.Event.ColorChanged, {color: this._color});
     },
 
     _updateSliders: function(rawColor, tintedColor)
     {
-        var rgb = this._colorWheel.tintedColor.rgb;
-        var transparent = WebInspector.Color.fromRGBA(rgb[0], rgb[1], rgb[2], 0).toString();
+        var rgba = this._colorWheel.tintedColor.rgb.concat(0);
+        var transparent = new WebInspector.Color(WebInspector.Color.Format.RGBA, rgba).toString();
 
         this._opacitySlider.element.style.backgroundImage = "linear-gradient(90deg, " + transparent + ", " + tintedColor + "), " + this._opacityPattern;
         this._brightnessSlider.element.style.backgroundImage = "linear-gradient(90deg, black, " + rawColor + ")";
