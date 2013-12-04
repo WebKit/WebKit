@@ -41,14 +41,14 @@ namespace WebCore {
 class CSSBasicShape : public RefCounted<CSSBasicShape> {
 public:
     enum Type {
-        CSSBasicShapeRectangleType = 1,
-        CSSDeprecatedBasicShapeCircleType = 2,
-        CSSDeprecatedBasicShapeEllipseType = 3,
-        CSSBasicShapePolygonType = 4,
-        CSSBasicShapeInsetRectangleType = 5,
-        CSSBasicShapeCircleType = 6,
-        CSSBasicShapeEllipseType = 7,
-        CSSBasicShapeInsetType = 8
+        CSSBasicShapeRectangleType,
+        CSSDeprecatedBasicShapeCircleType,
+        CSSDeprecatedBasicShapeEllipseType,
+        CSSBasicShapePolygonType,
+        CSSBasicShapeInsetRectangleType,
+        CSSBasicShapeCircleType,
+        CSSBasicShapeEllipseType,
+        CSSBasicShapeInsetType
     };
 
     virtual Type type() const = 0;

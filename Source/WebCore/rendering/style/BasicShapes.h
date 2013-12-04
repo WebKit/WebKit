@@ -47,14 +47,14 @@ public:
     virtual ~BasicShape() { }
 
     enum Type {
-        BasicShapeRectangleType = 1,
-        DeprecatedBasicShapeCircleType = 2,
-        DeprecatedBasicShapeEllipseType = 3,
-        BasicShapePolygonType = 4,
-        BasicShapeInsetRectangleType = 5,
-        BasicShapeCircleType = 6,
-        BasicShapeEllipseType = 7,
-        BasicShapeInsetType = 8
+        BasicShapeRectangleType,
+        DeprecatedBasicShapeCircleType,
+        DeprecatedBasicShapeEllipseType,
+        BasicShapePolygonType,
+        BasicShapeInsetRectangleType,
+        BasicShapeCircleType,
+        BasicShapeEllipseType,
+        BasicShapeInsetType
     };
 
     enum ReferenceBox {

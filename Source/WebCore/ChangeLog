@@ -1,3 +1,18 @@
+2013-12-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Remove explicit numbering from BasicShape::Type and CSSBasicShape::Type enums
+        https://bugs.webkit.org/show_bug.cgi?id=125163
+
+        Reviewed by Rob Buis.
+
+        I don't see any reason to have explicit numbering for the Type enum in our [CSS]BasicShape classes.
+        I removed numbering, which will decrease for instance the merge conflicts on Type changes.
+
+        No new tests, no behavior change.
+
+        * css/CSSBasicShapes.h:
+        * rendering/style/BasicShapes.h:
+
 2013-12-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow ImageBuffer to use an IOSurface that is larger than necessary
