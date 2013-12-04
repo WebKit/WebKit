@@ -1,3 +1,10 @@
+2013-12-04  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed GTK gardening. Updated expectations for GTK and share them with EFL.
+
+        * accessibility/multiselect-list-reports-active-option-expected.txt: Renamed from LayoutTests/platform/efl/multiselect-list-reports-active-option-expected.txt.
+        * platform/gtk/accessibility/multiselect-list-reports-active-option-expected.txt: Removed.
+
 2013-12-03  Alexey Proskuryakov  <ap@apple.com>
 
         Update WebCrypto JWK mapping to newer proposal
