@@ -222,6 +222,31 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
         break;
     }
 
+    case BasicShape::BasicShapeInsetType: {
+        const BasicShapeInset* rectangle = static_cast<const BasicShapeInset*>(basicShape);
+        float left = floatValueForLength(rectangle->left(), boxWidth);
+        float top = floatValueForLength(rectangle->top(), boxHeight);
+
+        FloatRect rect(left,
+            top,
+            boxWidth - left - floatValueForLength(rectangle->right(), boxWidth),
+            boxHeight - top - floatValueForLength(rectangle->bottom(), boxHeight));
+        FloatRect logicalRect = physicalRectToLogical(rect, logicalBoxSize.height(), writingMode);
+
+        // FloatRoundedRect constuctor has different order for the corners: topLeft, topRight, bottomLeft, bottomRight
+        FloatRoundedRect logicalBounds(logicalRect,
+            rectangle->topLeftRadius().floatSize(),
+            rectangle->topRightRadius().floatSize(),
+            rectangle->bottomLeftRadius().floatSize(),
+            rectangle->bottomRightRadius().floatSize());
+
+        float shapeMargin = floatValueForLength(margin, 0);
+        float shapePadding = floatValueForLength(padding, 0);
+
+        shape = createBoxShape(logicalBounds, shapeMargin, shapePadding);
+        break;
+    }
+
     default:
         ASSERT_NOT_REACHED();
     }

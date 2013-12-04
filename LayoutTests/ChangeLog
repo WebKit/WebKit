@@ -1,3 +1,25 @@
+2013-12-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Support inset for shape-outside
+        <https://webkit.org/b/125112>
+
+        Reviewed by David Hyatt.
+
+        * fast/shapes/resources/rounded-rectangle.js: Add support to generate partially rounded rectangles.
+        (scanConvertRoundedRectangleOutside):
+        (genLeftRoundedRectFloatShapeOutsideRefTest):
+        (genRightRoundedRectFloatShapeOutsideRefTest):
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-bottom-left-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-bottom-left.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-bottom-right-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-bottom-right.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-left-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-left.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-right-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-right.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-inset.html: Added.
+
 2013-12-04  Bear Travis  <betravis@adobe.com>
 
         Web Inspector: [CSS Shapes] Support raster shape visualizations

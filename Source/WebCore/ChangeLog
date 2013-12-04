@@ -1,3 +1,24 @@
+2013-12-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Support inset for shape-outside
+        <https://webkit.org/b/125112>
+
+        Reviewed by David Hyatt.
+
+        This patch adds inset support for shape-outside. Parsing has previously landed in r159968.
+        Specification: http://dev.w3.org/csswg/css-shapes/#supported-basic-shapes
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-bottom-left.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-bottom-right.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-left.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-right.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-inset.html
+
+        * platform/LengthSize.h:
+        (WebCore::LengthSize::floatSize): Add conversion to FloatSize.
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape): Handle inset case.
+
 2013-12-04  Bear Travis  <betravis@adobe.com>
 
         Web Inspector: [CSS Shapes] Support raster shape visualizations
