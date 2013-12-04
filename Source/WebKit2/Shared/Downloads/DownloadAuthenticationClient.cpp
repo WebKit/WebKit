@@ -38,17 +38,17 @@ DownloadAuthenticationClient::DownloadAuthenticationClient(Download* download)
     ASSERT_ARG(download, download);
 }
 
-void DownloadAuthenticationClient::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
+void DownloadAuthenticationClient::receivedCredential(const AuthenticationChallenge&, const Credential&)
 {
     // FIXME (119667): This can probably be just removed.
 }
 
-void DownloadAuthenticationClient::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& challenge)
+void DownloadAuthenticationClient::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&)
 {
     // FIXME (119667): This can probably be just removed.
 }
 
-void DownloadAuthenticationClient::receivedCancellation(const AuthenticationChallenge& challenge)
+void DownloadAuthenticationClient::receivedCancellation(const AuthenticationChallenge&)
 {
     // FIXME (119667): This can probably be just removed.
 }
