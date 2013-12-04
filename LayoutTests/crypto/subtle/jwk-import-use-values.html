@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing keys with various uses from JWK.");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+
+var aesKeyAsJSON = {
+    "alg": "A192CBC",
+    "ext": true,
+    "kty": "oct",
+    "k": "jnOw99oOZFLIEPMrgJB55WL46tJSLGt7"
+};
+
+var hmacKeyAsJSON = {
+    "alg": "HS256",
+    "ext": true,
+    "kty": "oct",
+    "k": "ahjkn-_387fgnsibf23qsvahjkn-_387fgnsibf23qs"
+};
+
+function testWithAESCBC(expectedUsages, use)
+{
+    aesKeyAsJSON.use = use;
+    return crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(aesKeyAsJSON)), "AES-CBC", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]).then(function(result) {
+        key = result;
+        debug(use + ":");
+        shouldBe("key.usages", JSON.stringify(expectedUsages));
+        debug("");
+    });
+}
+
+function testWithHMAC(expectedUsages, use)
+{
+    hmacKeyAsJSON.use = use;
+    return crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(hmacKeyAsJSON)), {name: 'hmac', hash: {name: 'sha-256'}}, extractable, ["sign", "verify"]).then(function(result) {
+        key = result;
+        debug(use + ":");
+        shouldBe("key.usages", JSON.stringify(expectedUsages));
+        debug("");
+    });
+}
+
+Promise.all([
+    testWithAESCBC(["encrypt"], "enconly"),
+    testWithAESCBC(["decrypt"], "deconly"),
+    testWithAESCBC(["encrypt", "decrypt"], "enconly,deconly"),
+    testWithAESCBC(["wrapKey"], "wrap"),
+    testWithAESCBC(["unwrapKey"], "unwrap"),
+    testWithAESCBC(["wrapKey", "unwrapKey"], "wrap,unwrap"),
+    testWithAESCBC(["encrypt", "decrypt", "wrapKey"], "enconly,deconly,wrap"),
+    testWithAESCBC(["encrypt", "decrypt", "wrapKey", "unwrapKey"], "enc"),
+    testWithHMAC(["sign"], "sigonly"),
+    testWithHMAC(["verify"], "vfyonly"),
+    testWithHMAC(["sign", "verify"], "sig"),
+
+// Incorrect use strings. There is currently no spec for what to do, but ignoring unknown uses seems right.
+    testWithAESCBC([], "'enconly'"),
+    testWithAESCBC([], "enconly "),
+    testWithAESCBC([], "EncOnly"),
+    testWithAESCBC(["encrypt"], "enconly, deconly"),
+    testWithAESCBC(["encrypt", "decrypt"], "enconly,,deconly"),
+
+]).then(function() { finishJSTest(); } );
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

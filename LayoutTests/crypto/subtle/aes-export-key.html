@@ -52,7 +52,7 @@ crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", extractable, ['en
     shouldBe("exportedJWK.kty", "'oct'");
     shouldBe("exportedJWK.k", "'jnOw99oOZFLIEPMrgJB55WL46tJSLGt7'");
     shouldBe("exportedJWK.alg", "'A192CBC'");
-    shouldBe("exportedJWK.extractable", "true");
+    shouldBe("exportedJWK.ext", "true");
     shouldBe("exportedJWK.use", "'enc'");
 
     debug("\nImporting a key that's not extractable...");
@@ -75,16 +75,6 @@ crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", extractable, ['en
     finishJSTest();
 }, function() {
     testPassed("Rejected, as expected");
-
-    // If this test starts to fail because a way to encode encrypt+decrypt is added to JWK, change to something that's not there.
-    // If all WebCrypto modes are added to JWK, then this test will be obsolete.
-    debug("\nImporting a key with only encrypt+decrypt usage (this doesn't map to anything in JWK, as 'enc' also allows wrap/unwrap)...");
-    return crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", extractable, ['encrypt', 'decrypt'])
-}).then(function(result) {
-    key = result;
-
-    // Maybe this should be a rejected promise, not an exception. We'll need to find a way to provide meaningful error messages with such failures.
-    shouldThrow('crypto.subtle.exportKey("jwk", key)');
 
     finishJSTest();
 });

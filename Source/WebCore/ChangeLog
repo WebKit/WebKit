@@ -1,3 +1,25 @@
+2013-12-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Update WebCrypto JWK mapping to newer proposal
+        https://bugs.webkit.org/show_bug.cgi?id=124218
+
+        Reviewed by Anders Carlsson.
+
+        Tests: crypto/subtle/jwk-export-use-values.html
+               crypto/subtle/jwk-import-use-values.html
+
+        1. "extractable" renamed to "ext" in JWK.
+        2. New values for "use" mapping, which can now be combined into comma separated lists,
+        and cover all possible WebCrypto usages.
+
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::JSCryptoKeySerializationJWK::reconcileUsages):
+        (WebCore::JSCryptoKeySerializationJWK::reconcileExtractable):
+        (WebCore::JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON):
+        (WebCore::processUseValue):
+        (WebCore::JSCryptoKeySerializationJWK::addJWKUseToJSON):
+        (WebCore::JSCryptoKeySerializationJWK::serialize):
+
 2013-12-03  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some iOS-related documentScale code

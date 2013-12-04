@@ -1,0 +1,57 @@
+Test importing keys with various uses from JWK.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+enconly:
+PASS key.usages is ["encrypt"]
+
+deconly:
+PASS key.usages is ["decrypt"]
+
+enconly,deconly:
+PASS key.usages is ["encrypt","decrypt"]
+
+wrap:
+PASS key.usages is ["wrapKey"]
+
+unwrap:
+PASS key.usages is ["unwrapKey"]
+
+wrap,unwrap:
+PASS key.usages is ["wrapKey","unwrapKey"]
+
+enconly,deconly,wrap:
+PASS key.usages is ["encrypt","decrypt","wrapKey"]
+
+enc:
+PASS key.usages is ["encrypt","decrypt","wrapKey","unwrapKey"]
+
+sigonly:
+PASS key.usages is ["sign"]
+
+vfyonly:
+PASS key.usages is ["verify"]
+
+sig:
+PASS key.usages is ["sign","verify"]
+
+'enconly':
+PASS key.usages is []
+
+enconly :
+PASS key.usages is []
+
+EncOnly:
+PASS key.usages is []
+
+enconly, deconly:
+PASS key.usages is ["encrypt"]
+
+enconly,,deconly:
+PASS key.usages is ["encrypt","decrypt"]
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

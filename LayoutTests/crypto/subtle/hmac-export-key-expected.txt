@@ -15,7 +15,7 @@ Exporting the key as JWK...
 PASS exportedJWK.kty is 'oct'
 PASS exportedJWK.k is 'ahjkn-_387fgnsibf23qsvahjkn-_387fgnsibf23qs'
 PASS exportedJWK.alg is 'HS256'
-PASS exportedJWK.extractable is true
+PASS exportedJWK.ext is true
 PASS exportedJWK.use is 'sig'
 
 Importing a key that's not extractable...
@@ -24,9 +24,6 @@ Trying to export as raw...
 PASS Rejected, as expected
 Trying to export as jwk...
 PASS Rejected, as expected
-
-Importing a key with only sign usage (this doesn't map to anything in JWK, as 'sig' allows both sign and verify)...
-PASS crypto.subtle.exportKey("jwk", key) threw exception TypeError: Key usages cannot be represented in JWK. Only two variants are supported: sign+verify and encrypt+decrypt+wrapKey+unwrapKey.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,0 +1,42 @@
+Test exporting keys with various usages to JWK.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+encrypt:
+PASS jwk.use is 'enconly'
+
+decrypt:
+PASS jwk.use is 'deconly'
+
+encrypt,decrypt:
+PASS jwk.use is 'enconly,deconly'
+
+wrapKey:
+PASS jwk.use is 'wrap'
+
+unwrapKey:
+PASS jwk.use is 'unwrap'
+
+wrapKey,unwrapKey:
+PASS jwk.use is 'wrap,unwrap'
+
+encrypt,decrypt,wrapKey:
+PASS jwk.use is 'enconly,deconly,wrap'
+
+encrypt,decrypt,wrapKey,unwrapKey:
+PASS jwk.use is 'enc'
+
+sign:
+PASS jwk.use is 'sigonly'
+
+verify:
+PASS jwk.use is 'vfyonly'
+
+sign,verify:
+PASS jwk.use is 'sig'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

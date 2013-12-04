@@ -22,7 +22,7 @@ Exporting the key as JWK...
 PASS exportedJWK.kty is 'oct'
 PASS exportedJWK.k is 'jnOw99oOZFLIEPMrgJB55WL46tJSLGt7'
 PASS exportedJWK.alg is 'A192CBC'
-PASS exportedJWK.extractable is true
+PASS exportedJWK.ext is true
 PASS exportedJWK.use is 'enc'
 
 Importing a key that's not extractable...
@@ -31,9 +31,6 @@ Trying to export as raw...
 PASS Rejected, as expected
 Trying to export as jwk...
 PASS Rejected, as expected
-
-Importing a key with only encrypt+decrypt usage (this doesn't map to anything in JWK, as 'enc' also allows wrap/unwrap)...
-PASS crypto.subtle.exportKey("jwk", key) threw exception TypeError: Key usages cannot be represented in JWK. Only two variants are supported: sign+verify and encrypt+decrypt+wrapKey+unwrapKey.
 PASS successfullyParsed is true
 
 TEST COMPLETE

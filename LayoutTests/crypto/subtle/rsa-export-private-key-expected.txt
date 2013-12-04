@@ -18,7 +18,7 @@ PASS exportedJWK.dq is privateKeyJSON.dq
 PASS exportedJWK.qi is privateKeyJSON.qi
 PASS exportedJWK.oth is privateKeyJSON.oth
 PASS exportedJWK.alg is privateKeyJSON.alg
-PASS exportedJWK.extractable is true
+PASS exportedJWK.ext is true
 PASS exportedJWK.use is 'sig'
 PASS successfullyParsed is true
 

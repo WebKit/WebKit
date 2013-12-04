@@ -16,7 +16,7 @@ PASS exportedJWK.kty is 'RSA'
 PASS exportedJWK.n is publicKeyJSON.n
 PASS exportedJWK.e is publicKeyJSON.e
 PASS exportedJWK.alg is 'RS256'
-PASS exportedJWK.extractable is true
+PASS exportedJWK.ext is true
 PASS exportedJWK.use is 'sig'
 PASS successfullyParsed is true
 

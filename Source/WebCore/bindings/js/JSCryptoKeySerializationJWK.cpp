@@ -245,7 +245,7 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
     return true;
 }
 
-void JSCryptoKeySerializationJWK::reconcileUsages(CryptoKeyUsage& suggestedUsage) const
+void JSCryptoKeySerializationJWK::reconcileUsages(CryptoKeyUsage& suggestedUsages) const
 {
     String jwkUseString;
     if (!getStringFromJSON(m_exec, m_json.get(), "use", jwkUseString)) {
@@ -253,23 +253,42 @@ void JSCryptoKeySerializationJWK::reconcileUsages(CryptoKeyUsage& suggestedUsage
         return;
     }
 
-    // FIXME: CryptoKeyUsageDeriveKey, CryptoKeyUsageDeriveBits - should these be implicitly allowed by any JWK use value?
-    // FIXME: "use" mapping is in flux, see <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23796>.
-    if (jwkUseString == "sig")
-        suggestedUsage = suggestedUsage & (CryptoKeyUsageSign | CryptoKeyUsageVerify);
-    else if (jwkUseString == "enc")
-        suggestedUsage = suggestedUsage & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey);
-    else if (jwkUseString == "wrap")
-        suggestedUsage = suggestedUsage & (CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey);
-    else
-        suggestedUsage = 0; // Unknown usage, better be safe.
+    // Implemented according to a proposal in <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23796>.
+    Vector<String> jwkUsageValues;
+    jwkUseString.split(',', jwkUsageValues);
+    CryptoKeyUsage jwkUsages = 0;
+    for (size_t i = 0, size = jwkUsageValues.size(); i < size; ++i) {
+        String jwkUse = jwkUsageValues[i];
+        if (jwkUse == "sig")
+            jwkUsages |= (CryptoKeyUsageSign | CryptoKeyUsageVerify);
+        else if (jwkUse == "enc")
+            jwkUsages |= (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey);
+        else if (jwkUse == "enconly")
+            jwkUsages |= CryptoKeyUsageEncrypt;
+        else if (jwkUse == "deconly")
+            jwkUsages |= CryptoKeyUsageDecrypt;
+        else if (jwkUse == "sigonly")
+            jwkUsages |= CryptoKeyUsageSign;
+        else if (jwkUse == "vfyonly")
+            jwkUsages |= CryptoKeyUsageVerify;
+        else if (jwkUse == "drvkey")
+            jwkUsages |= CryptoKeyUsageDeriveKey;
+        else if (jwkUse == "drvbits")
+            jwkUsages |= CryptoKeyUsageDeriveBits;
+        else if (jwkUse == "wrap")
+            jwkUsages |= CryptoKeyUsageWrapKey;
+        else if (jwkUse == "unwrap")
+            jwkUsages |= CryptoKeyUsageUnwrapKey;
+    }
+
+    suggestedUsages = suggestedUsages & jwkUsages;
 }
 
 void JSCryptoKeySerializationJWK::reconcileExtractable(bool& suggestedExtractable) const
 {
     bool jwkExtractable;
-    if (!getBooleanFromJSON(m_exec, m_json.get(), "extractable", jwkExtractable)) {
-        // "extractable" is a Netflix proposal that's not in any spec yet. It will certainly be optional once specified.
+    if (!getBooleanFromJSON(m_exec, m_json.get(), "ext", jwkExtractable)) {
+        // "ext" not in JWK or WebCrypto specs yet, implemented according to a proposal in <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23796>.
         return;
     }
 
@@ -589,7 +608,6 @@ void JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON(ExecState* exec, JSObjec
 
     if (jwkAlgorithm.isNull()) {
         // The spec doesn't currently tell whether export should fail, or just skip "alg" (which is an optional key in JWK).
-        // Perhaps this should depend on whether the key is extractable?
         throwTypeError(exec, "Key algorithm and size do not map to any JWK algorithm identifier");
         return;
     }
@@ -597,19 +615,51 @@ void JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON(ExecState* exec, JSObjec
     addToJSON(exec, json, "alg", jwkAlgorithm);
 }
 
+static bool processUseValue(StringBuilder& builder, CryptoKeyUsage& usages, const String& useString, CryptoKeyUsage usagesForUseString)
+{
+    if ((usages & usagesForUseString) != usagesForUseString)
+        return false;
+
+    if (!builder.isEmpty())
+        builder.append(',');
+    builder.append(useString);
+
+    usages &= ~usagesForUseString;
+
+    return true;
+}
+
 void JSCryptoKeySerializationJWK::addJWKUseToJSON(ExecState* exec, JSObject* json, CryptoKeyUsage usages)
 {
-    // FIXME: "use" mapping is in flux, see <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23796>.
-    switch (usages) {
-    case CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey:
-        addToJSON(exec, json, "use", "enc");
-        break;
-    case CryptoKeyUsageSign | CryptoKeyUsageVerify:
-        addToJSON(exec, json, "use", "sig");
-        break;
-    default:
-        throwTypeError(exec, "Key usages cannot be represented in JWK. Only two variants are supported: sign+verify and encrypt+decrypt+wrapKey+unwrapKey");
+    // Use mapping implemented according to a proposal in <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23796>.
+    StringBuilder useBuilder;
+    CryptoKeyUsage remainingUsages = usages;
+    while (remainingUsages) {
+        if (processUseValue(useBuilder, remainingUsages, "enc", CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey))
+            continue;
+        if (processUseValue(useBuilder, remainingUsages, "sig", CryptoKeyUsageSign | CryptoKeyUsageVerify))
+            continue;
+        if (processUseValue(useBuilder, remainingUsages, "enconly", CryptoKeyUsageEncrypt))
+            continue;
+        if (processUseValue(useBuilder, remainingUsages, "deconly", CryptoKeyUsageDecrypt))
+            continue;
+        if (processUseValue(useBuilder, remainingUsages, "sigonly", CryptoKeyUsageSign))
+            continue;
+        if (processUseValue(useBuilder, remainingUsages, "vfyonly", CryptoKeyUsageVerify))
+            continue;
+        if (processUseValue(useBuilder, remainingUsages, "drvkey", CryptoKeyUsageDeriveKey))
+            continue;
+        if (processUseValue(useBuilder, remainingUsages, "drvbits", CryptoKeyUsageDeriveBits))
+            continue;
+        if (processUseValue(useBuilder, remainingUsages, "wrap", CryptoKeyUsageWrapKey))
+            continue;
+        if (processUseValue(useBuilder, remainingUsages, "unwrap", CryptoKeyUsageUnwrapKey))
+            continue;
+        throwTypeError(exec, "Key usages cannot be represented in JWK.");
+        return;
     }
+
+    addToJSON(exec, json, "use", useBuilder.toString());
 }
 
 String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& key)
@@ -627,7 +677,7 @@ String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& 
     if (exec->hadException())
         return String();
 
-    addBoolToJSON(exec, result, "extractable", key.extractable());
+    addBoolToJSON(exec, result, "ext", key.extractable());
 
     addJWKUseToJSON(exec, result, key.usagesBitmap());
     if (exec->hadException())

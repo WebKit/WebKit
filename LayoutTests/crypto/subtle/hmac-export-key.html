@@ -46,7 +46,7 @@ crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, { name: "HMAC", hash: "SHA-2
     shouldBe("exportedJWK.kty", "'oct'");
     shouldBe("exportedJWK.k", "'ahjkn-_387fgnsibf23qsvahjkn-_387fgnsibf23qs'");
     shouldBe("exportedJWK.alg", "'HS256'");
-    shouldBe("exportedJWK.extractable", "true");
+    shouldBe("exportedJWK.ext", "true");
     shouldBe("exportedJWK.use", "'sig'");
 
     debug("\nImporting a key that's not extractable...");
@@ -69,16 +69,6 @@ crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, { name: "HMAC", hash: "SHA-2
     finishJSTest();
 }, function() {
     testPassed("Rejected, as expected");
-
-    // If this test starts to fail because a way to encode encrypt+decrypt is added to JWK, change to something that's not there.
-    // If all WebCrypto modes are added to JWK, then this test will be obsolete.
-    debug("\nImporting a key with only sign usage (this doesn't map to anything in JWK, as 'sig' allows both sign and verify)...");
-    return crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, { name: "HMAC", hash: "SHA-256" }, extractable, ['sign'])
-}).then(function(result) {
-    key = result;
-
-    // Maybe this should be a rejected promise, not an exception. We'll need to find a way to provide meaningful error messages with such failures.
-    shouldThrow('crypto.subtle.exportKey("jwk", key)');
 
     finishJSTest();
 });
