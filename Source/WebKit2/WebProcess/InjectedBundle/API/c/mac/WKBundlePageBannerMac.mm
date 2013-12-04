@@ -45,6 +45,7 @@ class PageBannerClientImpl : API::Client<WKBundlePageBannerClientBase>, public P
 public:
     explicit PageBannerClientImpl(WKBundlePageBannerClientBase* client)
     {
+        initialize(client);
     }
 
     virtual ~PageBannerClientImpl()
