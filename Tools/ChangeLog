@@ -1,3 +1,26 @@
+2013-12-04  László Langó  <lango@inf.u-szeged.hu>
+
+        check-webkit-style should check member initialization indentation.
+        https://bugs.webkit.org/show_bug.cgi?id=124820
+
+        Reviewed by Zoltan Herczeg.
+
+        check-webkit-style should check member initialization indentation
+        belongs to webkit coding style:
+        http://www.webkit.org/coding/coding-style.html#punctuation-member-init
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_member_initialization_list): Add new method to check member
+        initialization list.
+        (check_style): Add the call of the new method.
+        (check_language): Move self initialization checking into the new method.
+        (CppChecker): Add a new category for initialization list.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_runtime_selfinit):
+        (CppStyleTest.test_deprecated_cast):
+        (WebKitStyleTest.test_member_initialization_list): Add new testcases for
+        the new feature.
+
 2013-12-04  Tamas Gergely  <gertom@inf.u-szeged.hu>
 
         style-bot should reject Committer additions to committers.py
