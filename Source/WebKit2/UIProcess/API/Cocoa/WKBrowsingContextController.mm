@@ -61,6 +61,16 @@ public:
     }
 
 private:
+    virtual void willChangeIsLoading() OVERRIDE
+    {
+        [m_controller willChangeValueForKey:@"loading"];
+    }
+
+    virtual void didChangeIsLoading() OVERRIDE
+    {
+        [m_controller didChangeValueForKey:@"loading"];
+    }
+
     virtual void willChangeTitle() OVERRIDE
     {
         [m_controller willChangeValueForKey:@"title"];
@@ -268,6 +278,11 @@ static void releaseNSData(unsigned char*, const void* data)
 }
 
 #pragma mark Active Load Introspection
+
+- (BOOL)isLoading
+{
+    return _page->pageLoadState().isLoading();
+}
 
 - (NSURL *)activeURL
 {

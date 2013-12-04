@@ -106,6 +106,8 @@ WK_API_CLASS
 
 #pragma mark Active Load Introspection
 
+@property (readonly, getter=isLoading) BOOL loading;
+
 /* URL for the active load. This is the URL that should be shown in user interface. */
 @property(readonly) NSURL *activeURL;
 

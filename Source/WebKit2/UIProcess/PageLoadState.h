@@ -45,6 +45,9 @@ public:
     public:
         virtual ~Observer() { }
 
+        virtual void willChangeIsLoading() = 0;
+        virtual void didChangeIsLoading() = 0;
+
         virtual void willChangeTitle() = 0;
         virtual void didChangeTitle() = 0;
     };
@@ -53,6 +56,8 @@ public:
     void removeObserver(Observer&);
 
     void reset();
+
+    bool isLoading() const;
 
     const String& provisionalURL() const { return m_provisionalURL; }
     const String& url() const { return m_url; }
@@ -80,6 +85,9 @@ public:
     void setTitle(const String&);
 
 private:
+    static bool isLoadingState(State);
+    void setState(State);
+
     void callObserverCallback(void (Observer::*)());
 
     Vector<Observer*> m_observers;

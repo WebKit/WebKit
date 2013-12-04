@@ -67,6 +67,8 @@
 
 - (void)dealloc
 {
+    [progressIndicator unbind:NSHiddenBinding];
+
     WKRelease(_context);
     WKRelease(_pageGroup);
     _webView.browsingContextController.policyDelegate = nil;
@@ -614,7 +616,9 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [containerView addSubview:_webView];
-    
+
+    [progressIndicator bind:NSHiddenBinding toObject:_webView.browsingContextController withKeyPath:@"loading" options:@{ NSValueTransformerNameBindingOption : NSNegateBooleanTransformerName }];
+
     WKPageLoaderClientV3 loadClient = {
         { 3, self },
         didStartProvisionalLoadForFrame,
@@ -713,7 +717,6 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 - (void)didStartProgress
 {
     [progressIndicator setDoubleValue:0.0];
-    [progressIndicator setHidden:NO];
 }
 
 - (void)didChangeProgress:(double)value
@@ -723,7 +726,6 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 
 - (void)didFinishProgress
 {
-    [progressIndicator setHidden:YES];
     [progressIndicator setDoubleValue:1.0];
 }
 

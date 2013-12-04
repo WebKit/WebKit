@@ -1,3 +1,49 @@
+2013-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Add a loading property to WKBrowsingContextController
+        https://bugs.webkit.org/show_bug.cgi?id=125256
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h:
+        Add loading property.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextConteroller.mm:
+        Implement willChangeIsLoading and didChangeIsLoading and call the relevant KVO methods.
+
+        (-[WKBrowsingContextController isLoading]):
+        Call through to the PageLoadState.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::reset):
+        Use setState.
+
+        (WebKit::PageLoadState::isLoading):
+        Call isLoadingState.
+
+        (WebKit::PageLoadState::didStartProvisionalLoad):
+        Use setState.
+
+        (WebKit::PageLoadState::didFailProvisionalLoad):
+        Use setState.
+
+        (WebKit::PageLoadState::didCommitLoad):
+        Use setState.
+
+        (WebKit::PageLoadState::didFinishLoad):
+        Use setState.
+
+        (WebKit::PageLoadState::didFailLoad):
+        Use setState.
+
+        (WebKit::PageLoadState::isLoadingState):
+        Helper function for determining whether a state is a loading state or not.
+
+        (WebKit::PageLoadState::setState):
+        If setting the state will cause "isLoading" to change, call out to the observers.
+
+        * UIProcess/PageLoadState.h:
+
 2013-12-04  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [EFL][GTK][WK2] Remove unnecessary reinterpret_casts when setting API clients
