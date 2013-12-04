@@ -65,6 +65,14 @@ void OSAllocator::commit(void* address, size_t bytes, bool writable, bool execut
 
 void OSAllocator::decommit(void* address, size_t bytes)
 {
+    // According to http://msdn.microsoft.com/en-us/library/aa366892(VS.85).aspx,
+    // bytes (i.e. dwSize) being 0 when dwFreeType is MEM_DECOMMIT means that we'll
+    // decommit the entire region allocated by VirtualAlloc() instead of decommitting
+    // nothing as we would expect. Hence, we should check if bytes is 0 and handle it
+    // appropriately before calling VirtualFree().
+    // See: https://bugs.webkit.org/show_bug.cgi?id=121972.
+    if (!bytes)
+        return;
     bool result = VirtualFree(address, bytes, MEM_DECOMMIT);
     if (!result)
         CRASH();
@@ -72,6 +80,10 @@ void OSAllocator::decommit(void* address, size_t bytes)
 
 void OSAllocator::releaseDecommitted(void* address, size_t bytes)
 {
+    // See comment in OSAllocator::decommit(). Similarly, when bytes is 0, we
+    // don't want to release anything. So, don't call VirtualFree() below.
+    if (!bytes)
+        return;
     // According to http://msdn.microsoft.com/en-us/library/aa366892(VS.85).aspx,
     // dwSize must be 0 if dwFreeType is MEM_RELEASE.
     bool result = VirtualFree(address, 0, MEM_RELEASE);

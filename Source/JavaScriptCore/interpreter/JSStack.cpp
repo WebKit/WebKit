@@ -63,10 +63,8 @@ JSStack::JSStack(VM& vm, size_t capacity)
 JSStack::~JSStack()
 {
     void* highAddress = reinterpret_cast<void*>(static_cast<char*>(m_reservation.base()) + m_reservation.size());
-    if (highAddress > m_commitEnd) {
-        m_reservation.decommit(reinterpret_cast<void*>(m_commitEnd), reinterpret_cast<intptr_t>(highAddress) - reinterpret_cast<intptr_t>(m_commitEnd));
-        addToCommittedByteCount(-(reinterpret_cast<intptr_t>(highAddress) - reinterpret_cast<intptr_t>(m_commitEnd)));
-    }
+    m_reservation.decommit(reinterpret_cast<void*>(m_commitEnd), reinterpret_cast<intptr_t>(highAddress) - reinterpret_cast<intptr_t>(m_commitEnd));
+    addToCommittedByteCount(-(reinterpret_cast<intptr_t>(highAddress) - reinterpret_cast<intptr_t>(m_commitEnd)));
     m_reservation.deallocate();
 }
 

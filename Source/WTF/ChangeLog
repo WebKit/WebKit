@@ -1,3 +1,19 @@
+2013-12-03  Mark Lam  <mark.lam@apple.com>
+
+        testapi test crashes on Windows in WTF::Vector<wchar_t,64,WTF::UnsafeVectorOverflow>::size().
+        https://bugs.webkit.org/show_bug.cgi?id=121972.
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/OSAllocatorWin.cpp:
+        (WTF::OSAllocator::decommit):
+        (WTF::OSAllocator::releaseDecommitted):
+        - Added a check to ensure that the bytes to decommit / release is not 0.
+          On Windows, a 0 length passed to VirtualFree() has a special meaning,
+          and it's not "decommit / release nothing" as one would expect. Adding
+          this check makes OSAllocatorWin consistent with OSAllocatorPosix for
+          these 2 functions.
+
 2013-12-02  Mark Lam  <mark.lam@apple.com>
 
         Build failure when disabling JIT, YARR_JIT, and ASSEMBLER.
