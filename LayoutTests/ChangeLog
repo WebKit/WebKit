@@ -1,3 +1,23 @@
+2013-12-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow ImageBuffer to use an IOSurface that is larger than necessary
+        https://bugs.webkit.org/show_bug.cgi?id=124626
+
+        Reviewed by Simon Fraser.
+
+        Update tests to be more robust with respect to accelerated vs
+        non-accelerated ImageBuffers. 
+
+        * fast/canvas/script-tests/canvas-fillPath-shadow.js: Don't sample a canvas at exactly
+        the corner of a drawn shape (because the corner might be antialiased). Instead, sample
+        a single pixel inside the shape
+        * fast/canvas/script-tests/canvas-scale-shadowBlur.js: Don't sample a canvas at exactly
+        the edge of the blur radius. Instead, sample a single pixel past the blur radius.
+        * fast/canvas/script-tests/canvas-scale-strokePath-shadow.js:
+        (shouldBeAround): Allow this test to be less strict when sampling inside a blurred region
+        * platform/mac/fast/canvas/canvas-scale-shadowBlur-expected.txt: Matching update w/r/t
+        canvas-scale-shadowBlur.js
+
 2013-12-03  Dean Jackson  <dino@apple.com>
 
         [WebGL] Support for texImage2D/texSubImage2D of type HALF_FLOAT_OES

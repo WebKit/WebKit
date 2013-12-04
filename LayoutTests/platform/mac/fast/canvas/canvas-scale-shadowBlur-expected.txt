@@ -10,7 +10,7 @@ PASS d[3] is around 255
 FAIL d[0] should be 0. Was 255.
 PASS d[1] is 0
 PASS d[2] is 0
-FAIL d[3] should be 0. Was 6.
+FAIL d[3] should be 0. Was 5.
 FAIL d[0] should be 0. Was 255.
 PASS d[1] is 0
 PASS d[2] is 0
@@ -18,7 +18,7 @@ FAIL d[3] should be 0. Was 5.
 FAIL d[0] should be 0. Was 255.
 PASS d[1] is 0
 PASS d[2] is 0
-FAIL d[3] should be 0. Was 6.
+FAIL d[3] should be 0. Was 5.
 FAIL d[0] should be 0. Was 255.
 PASS d[1] is 0
 PASS d[2] is 0
@@ -54,7 +54,7 @@ PASS d[3] is around 255
 FAIL d[0] should be 0. Was 255.
 PASS d[1] is 0
 PASS d[2] is 0
-FAIL d[3] should be 0. Was 6.
+FAIL d[3] should be 0. Was 5.
 FAIL d[0] should be 0. Was 255.
 PASS d[1] is 0
 PASS d[2] is 0
@@ -62,7 +62,7 @@ FAIL d[3] should be 0. Was 5.
 FAIL d[0] should be 0. Was 255.
 PASS d[1] is 0
 PASS d[2] is 0
-FAIL d[3] should be 0. Was 6.
+FAIL d[3] should be 0. Was 5.
 FAIL d[0] should be 0. Was 255.
 PASS d[1] is 0
 PASS d[2] is 0

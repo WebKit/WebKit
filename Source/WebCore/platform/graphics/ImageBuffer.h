@@ -117,7 +117,7 @@ namespace WebCore {
         void transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace);
         void platformTransformColorSpace(const Vector<int>&);
 #else
-        AffineTransform baseTransform() const { return AffineTransform(1, 0, 0, -1, 0, internalSize().height()); }
+        AffineTransform baseTransform() const { return AffineTransform(1, 0, 0, -1, 0, m_data.m_backingStoreSize.height()); }
 #endif
 #if USE(ACCELERATED_COMPOSITING)
         PlatformLayer* platformLayer() const;
@@ -135,6 +135,8 @@ namespace WebCore {
 
     private:
 #if USE(CG)
+        // The returned image might be larger than the internalSize(). If you want the smaller
+        // image, crop the result.
         RetainPtr<CGImageRef> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
         void flushContext() const;
 #endif

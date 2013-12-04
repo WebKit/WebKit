@@ -67,7 +67,7 @@ shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBeAround('d[3]', '255');
 
-d = ctx.getImageData(250, 175, 1, 1).data;
+d = ctx.getImageData(250, 174, 1, 1).data;
 shouldBe('d[0]', '0');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
@@ -79,7 +79,7 @@ shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBe('d[3]', '0');
 
-d = ctx.getImageData(175, 250, 1, 1).data;
+d = ctx.getImageData(174, 250, 1, 1).data;
 shouldBe('d[0]', '0');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
@@ -135,7 +135,7 @@ shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBeAround('d[3]', '255');
 
-d = ctx.getImageData(450, 175, 1, 1).data;
+d = ctx.getImageData(450, 174, 1, 1).data;
 shouldBe('d[0]', '0');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
@@ -147,7 +147,7 @@ shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBe('d[3]', '0');
 
-d = ctx.getImageData(375, 250, 1, 1).data;
+d = ctx.getImageData(374, 250, 1, 1).data;
 shouldBe('d[0]', '0');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');

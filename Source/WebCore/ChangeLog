@@ -1,3 +1,42 @@
+2013-12-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow ImageBuffer to use an IOSurface that is larger than necessary
+        https://bugs.webkit.org/show_bug.cgi?id=124626
+
+        Reviewed by Simon Fraser.
+
+        Because creating ImageBuffer's backing store can be so expensive, it
+        would be beneficial to have a pool of pre-created backing stores
+        available. However, this means that ImageBuffer might have to use a
+        backing store that is larger than the exact dimensions that it needs.
+        This patch adds a field, m_backingStoreSize, to CG's ImageBufferData
+        class, and uses this new field when performing ImageBuffer operations
+        to allow for larger-than-necessary backing stores. Content is always
+        drawn in the top left corner of the backing store.
+
+        No new tests are necessary because there is no behavior change.
+
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::baseTransform): The base transform has to put
+        content at the top left corner instead of bottom left
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::createCroppedImageIfNecessary): Convenience function to figure out
+        the dimensions of the backing texture in user space
+        (WebCore::ImageBuffer::ImageBuffer): Set up new m_backingStoreSize member
+        (WebCore::maybeCropToBounds): Some ImageBuffer API functions require
+        outputting an image with logical size. This function performs the cropping
+        (WebCore::ImageBuffer::copyImage): Updated for larger-than-necessary
+        backing stores
+        (WebCore::ImageBuffer::copyNativeImage): Ditto
+        (WebCore::ImageBuffer::draw): Ditto
+        (WebCore::ImageBuffer::clip): Ditto
+        (WebCore::ImageBuffer::putByteArray): Ditto
+        (WebCore::ImageBuffer::toDataURL): Ditto
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::getData): Ditto
+        (WebCore::ImageBufferData::putData): Ditto
+        * platform/graphics/cg/ImageBufferDataCG.h: New m_backingStoreSize field
+
 2013-12-03  Dean Jackson  <dino@apple.com>
 
         [WebGL] Support for texImage2D of type HALF_FLOAT_OES

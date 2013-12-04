@@ -158,7 +158,7 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
     unsigned char* srcRows;
     
     if (!accelerateRendering) {
-        srcBytesPerRow = 4 * size.width();
+        srcBytesPerRow = m_bytesPerRow.unsafeGet();
         srcRows = reinterpret_cast<unsigned char*>(m_data) + originy * srcBytesPerRow + originx * 4;
         
 #if USE(ACCELERATE)
@@ -339,6 +339,10 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
 
 void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale)
 {
+#if ASSERT_DISABLED
+    UNUSED_PARAM(size);
+#endif
+
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
     
@@ -381,7 +385,7 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
     unsigned char* destRows;
     
     if (!accelerateRendering) {
-        destBytesPerRow = 4 * size.width();
+        destBytesPerRow = m_bytesPerRow.unsafeGet();
         destRows = reinterpret_cast<unsigned char*>(m_data) + (desty * destBytesPerRow + destx * 4).unsafeGet();
         
 #if  USE(ACCELERATE)

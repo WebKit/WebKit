@@ -10,7 +10,7 @@ function print(message, color)
     document.getElementById("console").appendChild(paragraph);
 }
 
-function shouldBeAround(a, b)
+function shouldBeAround(a, b, argdelta)
 {
     var evalA;
     try {
@@ -19,7 +19,11 @@ function shouldBeAround(a, b)
         evalA = e;
     }
 
-    if (Math.abs(evalA - b) < 20)
+    var delta = 20;
+    if (typeof argdelta != "undefined")
+        delta = argdelta;
+
+    if (Math.abs(evalA - b) < delta)
         print("PASS " + a + " is around " + b , "green")
     else
         print("FAIL " + a + " is not around " + b + " (actual: " + evalA + ")", "red");
@@ -119,7 +123,7 @@ d = ctx.getImageData(398, 210, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
-shouldBeAround('d[3]', '200');
+shouldBeAround('d[3]', '200', 25);
 
 d = ctx.getImageData(508, 250, 1, 1).data;
 shouldBe('d[0]', '255');
@@ -131,7 +135,7 @@ d = ctx.getImageData(450, 198, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
-shouldBeAround('d[3]', '199');
+shouldBeAround('d[3]', '199', 25);
 
 // Verify blurry alpha shadow.
 d = ctx.getImageData(505, 450, 1, 1).data;
