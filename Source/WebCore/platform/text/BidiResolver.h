@@ -63,7 +63,7 @@ public:
 
     void stopIgnoringSpaces(const Iterator& midpoint)
     {
-        ASSERT(lineMidpointState.numMidpoints % 2);
+        ASSERT(numMidpoints % 2);
         deprecatedAddMidpoint(midpoint);
     }
 

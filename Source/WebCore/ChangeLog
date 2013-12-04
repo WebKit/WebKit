@@ -1,3 +1,12 @@
+2013-12-04  László Langó  <lango@inf.u-szeged.hu>
+
+        Typo fix after r160074 to fix debug builds.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/text/BidiResolver.h:
+        (WebCore::MidpointState::stopIgnoringSpaces):
+
 2013-12-04  Zoltan Horvath  <zoltan@webkit.org>
 
         Move space-ignoring inline functions into MidpointState
