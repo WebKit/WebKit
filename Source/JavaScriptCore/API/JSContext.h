@@ -164,6 +164,12 @@ OBJC_VISIBLE
 */
 @property(readonly, retain) JSVirtualMachine *virtualMachine;
 
+/*!
+@property
+@discussion Name of the JSContext. Exposed when remote debugging the context.
+*/
+@property(copy) NSString *name;
+
 @end
 
 /*!

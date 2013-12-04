@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <wtf/HashMap.h>
+#ifndef InspectorFrontendChannel_h
+#define InspectorFrontendChannel_h
 
-class WebInspectorClient;
+#include <wtf/text/WTFString.h>
 
-@protocol WebInspectorClientRegistryDelegate
-- (void)didRegisterClient:(WebInspectorClient*)client;
-- (void)didUnregisterClient:(WebInspectorClient*)client;
-@end
+namespace Inspector {
 
-@interface WebInspectorClientRegistry : NSObject {
-@private
-    unsigned _nextAvailablePageId;
-    HashMap<unsigned, WebInspectorClient*> _pageClientMap;
-    id <WebInspectorClientRegistryDelegate> _delegate;
-}
+class InspectorFrontendChannel {
+public:
+    virtual ~InspectorFrontendChannel() { }
+    virtual bool sendMessageToFrontend(const String& message) = 0;
+};
 
-@property (nonatomic, assign) id <WebInspectorClientRegistryDelegate> delegate;
+} // namespace Inspector
 
-+ (WebInspectorClientRegistry *)sharedRegistry;
-
-- (void)registerClient:(WebInspectorClient*)client;
-- (void)unregisterClient:(WebInspectorClient*)client;
-- (WebInspectorClient*)clientForPageId:(unsigned)pageId;
-- (NSDictionary *)inspectableWebViews;
-
-@end
+#endif // !defined(InspectorFrontendChannel_h)

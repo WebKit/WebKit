@@ -3319,6 +3319,11 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
         m_client.setMainFrameDocumentReady(true); // update observers with new DOMDocument
         m_client.dispatchDidReceiveTitle(loader->title());
     }
+
+#if ENABLE(REMOTE_INSPECTOR)
+    if (m_frame.isMainFrame())
+        m_frame.page()->remoteInspectorInformationDidChange();
+#endif
 }
 
 void FrameLoader::didChangeIcons(IconType type)
@@ -3340,9 +3345,12 @@ void FrameLoader::dispatchDidCommitLoad()
 
     InspectorInstrumentation::didCommitLoad(&m_frame, m_documentLoader.get());
 
-    if (m_frame.isMainFrame())
+    if (m_frame.isMainFrame()) {
         m_frame.page()->featureObserver()->didCommitLoad();
-
+#if ENABLE(REMOTE_INSPECTOR)
+        m_frame.page()->remoteInspectorInformationDidChange();
+#endif
+    }
 }
 
 void FrameLoader::tellClientAboutPastMemoryCacheLoads()

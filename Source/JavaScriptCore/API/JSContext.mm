@@ -166,6 +166,22 @@
     return m_virtualMachine;
 }
 
+- (NSString *)name
+{
+    JSStringRef name = JSGlobalContextCopyName(m_context);
+    if (!name)
+        return nil;
+
+    return [(NSString *)JSStringCopyCFString(kCFAllocatorDefault, name) autorelease];
+}
+
+- (void)setName:(NSString *)name
+{
+    JSStringRef nameJS = JSStringCreateWithCFString((CFStringRef)[name copy]);
+    JSGlobalContextSetName(m_context, nameJS);
+    JSStringRelease(nameJS);
+}
+
 @end
 
 @implementation JSContext(SubscriptSupport)

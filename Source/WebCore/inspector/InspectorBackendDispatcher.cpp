@@ -29,7 +29,7 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorFrontendChannel.h"
+#include "InspectorForwarding.h"
 #include "InspectorValues.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

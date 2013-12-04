@@ -34,7 +34,7 @@
 #include "WebPageCreationParameters.h"
 #include "WebProcess.h"
 #include <WebCore/InspectorController.h>
-#include <WebCore/InspectorFrontendChannel.h>
+#include <WebCore/InspectorForwarding.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>

@@ -139,6 +139,10 @@
 
 #endif
 
+;; Remote Web Inspector
+(allow mach-lookup
+       (global-name "com.apple.webinspector"))
+
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
        (global-name "com.apple.DiskArbitration.diskarbitrationd")

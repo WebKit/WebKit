@@ -138,10 +138,6 @@
 #import "WebHostedNetscapePluginView.h"
 #endif
 
-#if ENABLE(REMOTE_INSPECTOR)
-#import "WebInspectorServer.h"
-#endif
-
 using namespace WebCore;
 using namespace HTMLNames;
 
@@ -621,12 +617,6 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
     if (implementations->didReceiveTitleForFrameFunc)
         // FIXME: use direction of title.
         CallFrameLoadDelegate(implementations->didReceiveTitleForFrameFunc, webView, @selector(webView:didReceiveTitle:forFrame:), (NSString *)title.string(), m_webFrame.get());
-
-#if ENABLE(REMOTE_INSPECTOR)
-    BOOL isMainFrame = [webView mainFrame] == m_webFrame.get();
-    if (isMainFrame)
-        [[WebView sharedWebInspectorServer] pushListing];
-#endif
 }
 
 void WebFrameLoaderClient::dispatchDidChangeIcons(WebCore::IconType)

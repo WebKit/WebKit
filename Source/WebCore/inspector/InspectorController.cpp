@@ -84,6 +84,9 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_page(page)
     , m_inspectorClient(inspectorClient)
     , m_isUnderTest(false)
+#if ENABLE(REMOTE_INSPECTOR)
+    , m_hasRemoteFrontend(false)
+#endif
 {
     OwnPtr<InspectorAgent> inspectorAgentPtr(InspectorAgent::create(page, m_injectedScriptManager.get(), m_instrumentingAgents.get()));
     m_inspectorAgent = inspectorAgentPtr.get();
@@ -148,7 +151,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_agents.append(profilerAgentPtr.release());
 
     m_agents.append(InspectorHeapProfilerAgent::create(m_instrumentingAgents.get(), m_injectedScriptManager.get()));
-
 #endif
 
     m_agents.append(InspectorWorkerAgent::create(m_instrumentingAgents.get()));
@@ -203,6 +205,24 @@ void InspectorController::setInspectorFrontendClient(PassOwnPtr<InspectorFronten
     m_inspectorFrontendClient = inspectorFrontendClient;
 }
 
+bool InspectorController::hasLocalFrontend() const
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    return hasFrontend() && !m_hasRemoteFrontend;
+#else
+    return hasFrontend();
+#endif
+}
+
+bool InspectorController::hasRemoteFrontend() const
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    return m_hasRemoteFrontend;
+#else
+    return false;
+#endif
+}
+
 bool InspectorController::hasInspectorFrontendClient() const
 {
     return m_inspectorFrontendClient;
@@ -233,6 +253,11 @@ void InspectorController::connectFrontend(InspectorFrontendChannel* frontendChan
 
     InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
     InspectorInstrumentation::frontendCreated();
+
+#if ENABLE(REMOTE_INSPECTOR)
+    if (!m_hasRemoteFrontend)
+        m_page->remoteInspectorInformationDidChange();
+#endif
 }
 
 void InspectorController::disconnectFrontend()
@@ -250,10 +275,17 @@ void InspectorController::disconnectFrontend()
     m_overlay->freePage();
     InspectorInstrumentation::frontendDeleted();
     InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
+
+#if ENABLE(REMOTE_INSPECTOR)
+    if (!m_hasRemoteFrontend)
+        m_page->remoteInspectorInformationDidChange();
+#endif
 }
 
 void InspectorController::show()
 {
+    ASSERT(!hasRemoteFrontend());
+
     if (!enabled())
         return;
 
@@ -310,7 +342,8 @@ void InspectorController::inspect(Node* node)
     if (!enabled())
         return;
 
-    show();
+    if (!hasRemoteFrontend())
+        show();
 
     m_domAgent->inspect(node);
 }
@@ -345,6 +378,15 @@ void InspectorController::hideHighlight()
 Node* InspectorController::highlightedNode() const
 {
     return m_overlay->highlightedNode();
+}
+
+void InspectorController::setIndicating(bool indicating)
+{
+    // FIXME: For non-iOS clients, we should have InspectorOverlay do something here.
+    if (indicating)
+        m_inspectorClient->indicate();
+    else
+        m_inspectorClient->hideIndication();
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

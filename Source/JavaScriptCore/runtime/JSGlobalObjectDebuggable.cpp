@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebInspectorClientRegistry.h"
+#include "config.h"
+#include "JSGlobalObjectDebuggable.h"
 
-@class WebInspectorServerWebViewConnectionController;
-@class WebInspectorXPCWrapper;
+#if ENABLE(REMOTE_INSPECTOR)
 
-@interface WebInspectorServer : NSObject <WebInspectorClientRegistryDelegate> {
-@private
-    BOOL _isEnabled;
-    BOOL _hasActiveDebugSession;
-    int _notifyToken;
-    WebInspectorXPCWrapper *_xpcConnection;
-    WebInspectorServerWebViewConnectionController *_connectionController;
+#include "InspectorFrontendChannel.h"
+#include "JSGlobalObject.h"
+#include "RemoteInspector.h"
+
+using namespace Inspector;
+
+namespace JSC {
+
+JSGlobalObjectDebuggable::JSGlobalObjectDebuggable(JSGlobalObject& globalObject)
+    : m_globalObject(globalObject)
+{
 }
 
-- (void)start;
-- (void)stop;
-- (BOOL)isEnabled;
-- (void)pushListing;
+String JSGlobalObjectDebuggable::name() const
+{
+    String name = m_globalObject.name();
+    return name.isEmpty() ? ASCIILiteral("JSContext") : name;
+}
 
-- (BOOL)hasActiveDebugSession;
-- (void)setHasActiveDebugSession:(BOOL)hasSession;
+void JSGlobalObjectDebuggable::connect(InspectorFrontendChannel*)
+{
+    // FIXME: Implement.
+    // Create an InspectorController, InspectorFrontend, InspectorBackend, and Agents.
+    // "InspectorController::connectFrontend".
+}
 
-- (WebInspectorXPCWrapper *)xpcConnection;
+void JSGlobalObjectDebuggable::disconnect()
+{
+    // FIXME: Implement.
+    // "InspectorController::disconnectFrontend".
+}
 
-@end
+void JSGlobalObjectDebuggable::dispatchMessageFromRemoteFrontend(const String&)
+{
+    // FIXME: Implement.
+    // "InspectorController::dispatchMessageFromFrontend"
+}
+
+} // namespace JSC
+
+#endif // ENABLE(REMOTE_INSPECTOR)

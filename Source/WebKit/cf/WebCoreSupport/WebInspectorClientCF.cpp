@@ -91,12 +91,10 @@ static void storeSetting(const String& key, const String& setting)
     CFPreferencesSetAppValue(createKeyForPreferences(key).get(), setting.createCFString().get(), kCFPreferencesCurrentApplication);
 }
 
-#if !ENABLE(REMOTE_INSPECTOR)
 bool WebInspectorClient::sendMessageToFrontend(const String& message)
 {
     return doDispatchMessageOnFrontendPage(m_frontendPage, message);
 }
-#endif
 
 bool WebInspectorClient::inspectorAttachDisabled()
 {

@@ -31,7 +31,7 @@
 
 #include <WebCore/COMPtr.h>
 #include <WebCore/InspectorClient.h>
-#include <WebCore/InspectorFrontendChannel.h>
+#include <WebCore/InspectorForwarding.h>
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/WindowMessageListener.h>
 #include <windows.h>

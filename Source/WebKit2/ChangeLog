@@ -1,3 +1,20 @@
+2013-12-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Push Remote Inspector debugging connection management into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=124613
+
+        Reviewed by Timothy Hatcher.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebPage/WebInspector.cpp:
+        Updated includes.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Allow the WebProcess to access the "com.apple.webinspector" named
+        XPC service to expose its WebCore::Page's to remote debuggers.
+
 2013-12-04  David Farler  <dfarler@apple.com>
 
         Use All-iOS target when building WK2 on iOS

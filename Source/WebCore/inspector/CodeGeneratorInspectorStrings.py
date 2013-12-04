@@ -179,7 +179,7 @@ backend_cpp = (
 
 #include "InspectorAgent.h"
 #include "InspectorValues.h"
-#include "InspectorFrontendChannel.h"
+#include "InspectorForwarding.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -200,7 +200,7 @@ frontend_cpp = (
 
 #include "InspectorFrontend.h"
 
-#include "InspectorFrontendChannel.h"
+#include "InspectorForwarding.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

@@ -1,3 +1,12 @@
+2013-12-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Push Remote Inspector debugging connection management into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=124613
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/InspectorClientGtk.h:
+
 2013-12-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] GTK2 paint code path does not render AC layers

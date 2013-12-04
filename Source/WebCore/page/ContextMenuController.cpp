@@ -892,7 +892,7 @@ void ContextMenuController::populate()
 #endif                
             } else {
 #if ENABLE(INSPECTOR)
-                if (!(frame->page() && frame->page()->inspectorController()->hasInspectorFrontendClient())) {
+                if (!(frame->page() && (frame->page()->inspectorController()->hasInspectorFrontendClient() || frame->page()->inspectorController()->hasRemoteFrontend()))) {
 #endif
 
                 // In GTK+ unavailable items are not hidden but insensitive.

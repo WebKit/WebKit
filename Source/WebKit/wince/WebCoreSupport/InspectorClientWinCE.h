@@ -26,7 +26,7 @@
 #define InspectorClientWinCE_h
 
 #include "InspectorClient.h"
-#include "InspectorFrontendChannel.h"
+#include "InspectorForwarding.h"
 
 class WebView;
 

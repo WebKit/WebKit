@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WebInspectorRemoteChannel;
-@class WebInspectorServerWebViewConnectionController;
+#ifndef JSGlobalObjectDebuggable_h
+#define JSGlobalObjectDebuggable_h
 
-@interface WebInspectorServerWebViewConnection : NSObject {
-@private
-    WebInspectorRemoteChannel *_channel;
+#if ENABLE(REMOTE_INSPECTOR)
 
-    WebInspectorServerWebViewConnectionController *_controller; // weak, the controller owns us.
-    NSString *_connectionIdentifier;
-    NSString *_destination;
-    NSNumber *_identifier;
-}
+#include "RemoteInspectorDebuggable.h"
+#include <wtf/Noncopyable.h>
 
-- (id)initWithController:(WebInspectorServerWebViewConnectionController *)controller connectionIdentifier:(NSString *)connectionIdentifier destination:(NSString *)destination identifier:(NSNumber *)identifier;
-- (BOOL)setupChannel;
-- (NSString *)connectionIdentifier;
-- (NSNumber *)identifier;
+namespace JSC {
 
-// Messages from the InspectorServer.
-- (void)receivedData:(NSDictionary *)dictionary;
-- (void)receivedDidClose:(NSDictionary *)dictionary;
+class JSGlobalObject;
 
-// Messages from the Channel.
-- (void)clearChannel;
-- (void)sendMessageToFrontend:(NSString *)message;
+class JSGlobalObjectDebuggable FINAL : public Inspector::RemoteInspectorDebuggable {
+    WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggable);
+public:
+    JSGlobalObjectDebuggable(JSGlobalObject&);
+    ~JSGlobalObjectDebuggable() { }
 
-// Messages to the Channel.
-- (void)sendMessageToBackend:(NSString *)message;
+    virtual Inspector::RemoteInspectorDebuggable::DebuggableType type() const OVERRIDE { return Inspector::RemoteInspectorDebuggable::JavaScript; }
 
-@end
+    virtual String name() const OVERRIDE;
+    virtual bool hasLocalDebugger() const OVERRIDE { return false; }
+
+    virtual void connect(Inspector::InspectorFrontendChannel*) OVERRIDE;
+    virtual void disconnect() OVERRIDE;
+    virtual void dispatchMessageFromRemoteFrontend(const String& message) OVERRIDE;
+
+private:
+    JSGlobalObject& m_globalObject;
+};
+
+} // namespace JSC
+
+#endif // ENABLE(REMOTE_INSPECTOR)
+
+#endif // !defined(JSGlobalObjectDebuggable_h)

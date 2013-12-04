@@ -11,6 +11,7 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/ftl"
     "${JAVASCRIPTCORE_DIR}/heap"
     "${JAVASCRIPTCORE_DIR}/debugger"
+    "${JAVASCRIPTCORE_DIR}/inspector"
     "${JAVASCRIPTCORE_DIR}/interpreter"
     "${JAVASCRIPTCORE_DIR}/jit"
     "${JAVASCRIPTCORE_DIR}/llint"
@@ -584,6 +585,7 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     collector/handles
     debugger
     heap
+    inspector
     interpreter
     jit
     llint

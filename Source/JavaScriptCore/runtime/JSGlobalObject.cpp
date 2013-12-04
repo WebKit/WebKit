@@ -125,6 +125,11 @@
 #include "JSPromiseResolverPrototype.h"
 #endif // ENABLE(PROMISES)
 
+#if ENABLE(REMOTE_INSPECTOR)
+#include "JSGlobalObjectDebuggable.h"
+#include "RemoteInspector.h"
+#endif
+
 #include "JSGlobalObject.lut.h"
 
 namespace JSC {
@@ -186,6 +191,12 @@ void JSGlobalObject::init(JSObject* thisValue)
     JSGlobalObject::globalExec()->init(0, 0, this, CallFrame::noCaller(), 0, 0);
 
     m_debugger = 0;
+
+#if ENABLE(REMOTE_INSPECTOR)
+    m_inspectorDebuggable = std::make_unique<JSGlobalObjectDebuggable>(*this);
+    m_inspectorDebuggable->init();
+    m_inspectorDebuggable->setRemoteDebuggingAllowed(true);
+#endif
 
     reset(prototype());
 }
@@ -758,6 +769,33 @@ UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame,
     }
 
     return unlinkedCodeBlock;
+}
+
+void JSGlobalObject::setRemoteDebuggingEnabled(bool enabled)
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    m_inspectorDebuggable->setRemoteDebuggingAllowed(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+bool JSGlobalObject::remoteDebuggingEnabled() const
+{
+#if ENABLE(REMOTE_INSPECTOR)
+    return m_inspectorDebuggable->remoteDebuggingAllowed();
+#else
+    return false;
+#endif
+}
+
+void JSGlobalObject::setName(const String& name)
+{
+    m_name = name;
+
+#if ENABLE(REMOTE_INSPECTOR)
+    m_inspectorDebuggable->update();
+#endif
 }
 
 } // namespace JSC

@@ -30,7 +30,7 @@
 #define InspectorClientGtk_h
 
 #include "InspectorClient.h"
-#include "InspectorFrontendChannel.h"
+#include "InspectorForwarding.h"
 #include "InspectorFrontendClientLocal.h"
 #include "webkitwebinspector.h"
 #include "webkitwebview.h"

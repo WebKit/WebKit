@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#if ENABLE(REMOTE_INSPECTOR)
+
+#ifndef RemoteInspectorXPCConnection_h
+#define RemoteInspectorXPCConnection_h
+
+#import <dispatch/dispatch.h>
+#import <wtf/Noncopyable.h>
 #import <xpc/xpc.h>
 
-@class WebInspectorXPCWrapper;
+OBJC_CLASS NSString;
+OBJC_CLASS NSDictionary;
 
-@protocol WebInspectorXPCWrapperDelegate <NSObject>
-- (void)xpcConnection:(WebInspectorXPCWrapper *)connection receivedMessage:(NSString *)messageName userInfo:(NSDictionary *)userInfo;
-- (void)xpcConnectionFailed:(WebInspectorXPCWrapper *)connection;
-@optional
-- (void)xpcConnection:(WebInspectorXPCWrapper *)connection unhandledMessage:(xpc_object_t)message;
-@end
+namespace Inspector {
 
-@interface WebInspectorXPCWrapper : NSObject
-{
-    id <WebInspectorXPCWrapperDelegate> _delegate;
-    xpc_connection_t _connection;
-    NSString *_tag;
-}
+class RemoteInspectorXPCConnection {
+    WTF_MAKE_NONCOPYABLE(RemoteInspectorXPCConnection);
 
-- (WebInspectorXPCWrapper *)initWithConnection:(xpc_connection_t)connection;
-- (void)close;
-- (void)sendMessage:(NSString *)messageName userInfo:(NSDictionary *)userInfo;
+public:
+    class Client {
+    public:
+        virtual ~Client() { }
+        virtual void xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*, NSString *messageName, NSDictionary *userInfo) = 0;
+        virtual void xpcConnectionFailed(RemoteInspectorXPCConnection*) = 0;
+        virtual void xpcConnectionUnhandledMessage(RemoteInspectorXPCConnection*, xpc_object_t) = 0;
+    };
 
-@property (nonatomic, assign) id <WebInspectorXPCWrapperDelegate> delegate;
-@property (nonatomic, readonly) xpc_connection_t connection;
-@property (nonatomic, readonly) BOOL available;
-@property (nonatomic, copy) NSString *tag;
+    RemoteInspectorXPCConnection(xpc_connection_t, Client*);
+    virtual ~RemoteInspectorXPCConnection();
 
-@end
+    void close();
+    void sendMessage(NSString *messageName, NSDictionary *userInfo);
+
+private:
+    NSDictionary *deserializeMessage(xpc_object_t);
+    void handleEvent(xpc_object_t);
+
+    xpc_connection_t m_connection;
+    dispatch_queue_t m_queue;
+    Client* m_client;
+};
+
+} // namespace Inspector
+
+#endif // RemoteInspectorXPCConnection_h
+
+#endif // ENABLE(REMOTE_INSPECTOR)

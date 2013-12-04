@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class WebInspectorClient;
-@class WebInspectorServerWebViewConnection;
+#ifndef PageDebuggable_h
+#define PageDebuggable_h
 
-@interface WebInspectorRemoteChannel : NSObject {
-@private
-    WebInspectorServerWebViewConnection *_remote;
-    WebInspectorClient* _local;
-}
+#if ENABLE(REMOTE_INSPECTOR)
 
-+ (WebInspectorRemoteChannel *)createChannelForPageId:(unsigned)pageId connection:(WebInspectorServerWebViewConnection *)connection;
+#include <JavaScriptCore/RemoteInspectorDebuggable.h>
+#include <wtf/Noncopyable.h>
 
-- (void)closeFromLocalSide;
-- (void)closeFromRemoteSide;
-- (void)sendMessageToFrontend:(NSString *)message;
-- (void)sendMessageToBackend:(NSString *)message;
+namespace WebCore {
 
-@end
+class Page;
+
+class PageDebuggable FINAL : public Inspector::RemoteInspectorDebuggable {
+    WTF_MAKE_NONCOPYABLE(PageDebuggable);
+public:
+    PageDebuggable(Page&);
+    ~PageDebuggable() { }
+
+    virtual Inspector::RemoteInspectorDebuggable::DebuggableType type() const OVERRIDE { return Inspector::RemoteInspectorDebuggable::Web; }
+
+    virtual String name() const OVERRIDE;
+    virtual String url() const OVERRIDE;
+    virtual bool hasLocalDebugger() const OVERRIDE;
+
+    virtual void connect(Inspector::InspectorFrontendChannel*) OVERRIDE;
+    virtual void disconnect() OVERRIDE;
+    virtual void dispatchMessageFromRemoteFrontend(const String& message) OVERRIDE;
+    virtual void setIndicating(bool) OVERRIDE;
+
+private:
+    Page& m_page;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(REMOTE_INSPECTOR)
+
+#endif // !defined(PageDebuggable_h)

@@ -35,7 +35,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorClient.h"
-#include "InspectorFrontendChannel.h"
+#include "InspectorForwarding.h"
 #include "InspectorFrontendClientLocal.h"
 #include <Evas.h>
 #include <wtf/Forward.h>

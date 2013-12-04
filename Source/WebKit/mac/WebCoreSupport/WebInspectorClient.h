@@ -27,7 +27,7 @@
  */
 
 #import <WebCore/InspectorClient.h>
-#import <WebCore/InspectorFrontendChannel.h>
+#import <WebCore/InspectorForwarding.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 
 #import <wtf/Forward.h>
@@ -73,6 +73,9 @@ public:
     virtual void highlight() OVERRIDE;
     virtual void hideHighlight() OVERRIDE;
 
+    virtual void indicate() OVERRIDE;
+    virtual void hideIndication() OVERRIDE;
+
     virtual void didSetSearchingForNode(bool) OVERRIDE;
 
     virtual bool sendMessageToFrontend(const String&) OVERRIDE;
@@ -85,22 +88,6 @@ public:
 
     void releaseFrontend();
 
-#if ENABLE(REMOTE_INSPECTOR)
-    void sendMessageToBackend(const String&);
-
-    bool setupRemoteConnection(WebInspectorRemoteChannel *remoteChannel);
-    void teardownRemoteConnection(bool fromLocalSide);
-
-    unsigned pageId() const { return m_pageId; }
-    void setPageId(unsigned pageId) { m_pageId = pageId; }
-
-    bool hasLocalSession() const;
-
-    bool canBeRemotelyInspected() const;
-
-    WebView *inspectedWebView();
-#endif
-
 private:
     PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> createFrontendSettings();
 
@@ -108,11 +95,6 @@ private:
     RetainPtr<WebNodeHighlighter> m_highlighter;
     WebCore::Page* m_frontendPage;
     WebInspectorFrontendClient* m_frontendClient;
-
-#if ENABLE(REMOTE_INSPECTOR)
-    WebInspectorRemoteChannel *m_remoteChannel;
-    unsigned m_pageId;
-#endif
 };
 
 

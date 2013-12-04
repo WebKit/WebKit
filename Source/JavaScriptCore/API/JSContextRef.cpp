@@ -213,6 +213,37 @@ JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx)
     return toGlobalRef(exec->lexicalGlobalObject()->globalExec());
 }
 
+JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    ExecState* exec = toJS(ctx);
+    APIEntryShim entryShim(exec);
+
+    String name = exec->vmEntryGlobalObject()->name();
+    if (name.isNull())
+        return 0;
+
+    return OpaqueJSString::create(name).leakRef();
+}
+
+void JSGlobalContextSetName(JSGlobalContextRef ctx, JSStringRef name)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    ExecState* exec = toJS(ctx);
+    APIEntryShim entryShim(exec);
+
+    exec->vmEntryGlobalObject()->setName(name ? name->string() : String());
+}
+
+
 class BacktraceFunctor {
 public:
     BacktraceFunctor(StringBuilder& builder, unsigned remainingCapacityForFrameCapture)

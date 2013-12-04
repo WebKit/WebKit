@@ -52,6 +52,9 @@ public:
     virtual void highlight() = 0;
     virtual void hideHighlight() = 0;
 
+    virtual void indicate() { }
+    virtual void hideIndication() { }
+
     virtual bool canClearBrowserCache() { return false; }
     virtual void clearBrowserCache() { }
     virtual bool canClearBrowserCookies() { return false; }

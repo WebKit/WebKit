@@ -99,10 +99,6 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     dashboardBehaviorAllowWheelScrolling = YES;
 #endif
 
-#if ENABLE(REMOTE_INSPECTOR)
-    allowsRemoteInspection = YES;
-#endif
-
     shouldCloseWithWindow = objc_collectingEnabled();
 
     pluginDatabaseClientCount++;
@@ -135,7 +131,6 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     [mediaStyle release];
 
 #if ENABLE(REMOTE_INSPECTOR)
-    [remoteInspectorUserInfo release];
 #if PLATFORM(IOS)
     [indicateLayer release];
     [hostApplicationBundleId release];

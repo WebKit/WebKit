@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class WebInspectorServer;
-@class WebInspectorServerWebViewConnection;
-@class WebInspectorXPCWrapper;
+#include "config.h"
+#include "RemoteInspectorDebuggable.h"
 
-@interface WebInspectorServerWebViewConnectionController : NSObject {
-@private
-    WebInspectorServer *_server; // weak, the server should never deallocate.
-    NSMutableDictionary *_openConnections;
-    BOOL _hasScheduledPush;
+#if ENABLE(REMOTE_INSPECTOR)
+
+#include "InspectorFrontendChannel.h"
+#include "RemoteInspector.h"
+
+namespace Inspector {
+
+RemoteInspectorDebuggable::RemoteInspectorDebuggable()
+    : m_identifier(0)
+    , m_allowed(false)
+{
 }
 
-- (id)initWithServer:(WebInspectorServer *)server;
+RemoteInspectorDebuggable::~RemoteInspectorDebuggable()
+{
+    RemoteInspector::shared().unregisterDebuggable(this);
+}
 
-- (void)closeAllConnections;
+void RemoteInspectorDebuggable::init()
+{
+    RemoteInspector::shared().registerDebuggable(this);
+}
 
-- (void)pushListing;
-- (void)receivedMessage:(NSString *)messageName userInfo:(NSDictionary *)userInfo;
+void RemoteInspectorDebuggable::update()
+{
+    RemoteInspector::shared().updateDebuggable(this);
+}
 
-- (void)connectionClosing:(WebInspectorServerWebViewConnection *)connection;
+void RemoteInspectorDebuggable::setRemoteDebuggingAllowed(bool allowed)
+{
+    if (m_allowed == allowed)
+        return;
 
-- (void)sendMessageToFrontend:(NSString *)messageName userInfo:(NSDictionary *)userInfo;
+    m_allowed = allowed;
 
-@end
+    update();
+}
+
+RemoteInspectorDebuggableInfo RemoteInspectorDebuggable::info() const
+{
+    RemoteInspectorDebuggableInfo info;
+    info.identifier = identifier();
+    info.type = type();
+    info.name = name();
+    info.url = url();
+    info.hasLocalDebugger = hasLocalDebugger();
+    info.remoteDebuggingAllowed = remoteDebuggingAllowed();
+    return info;
+}
+
+} // namespace Inspector
+
+#endif // ENABLE(REMOTE_INSPECTOR)

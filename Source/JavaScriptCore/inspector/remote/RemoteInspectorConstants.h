@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspectorRelayDefinitions_h
-#define WebInspectorRelayDefinitions_h
+#ifndef RemoteInspectorConstants_h
+#define RemoteInspectorConstants_h
 
 // WIRConstants are "Web Inspector Relay" constants shared between
-// the WebInspector framework on the debugger side, webinspectord,
-// and WebKit on the debuggable application side.
+// the WebInspector framework on the OS X side, webinspectord, and
+// iOS WebKit on the device side.
 
 #define WIRSimulatorTCPPortNumber               27753
 #define WIRXPCMachPortName                      "com.apple.webinspector"

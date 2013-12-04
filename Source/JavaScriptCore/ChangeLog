@@ -1,3 +1,169 @@
+2013-12-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Push Remote Inspector debugging connection management into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=124613
+
+        Reviewed by Timothy Hatcher.
+
+        Move the ENABLE(REMOTE_INSPECTOR) remote debugger connection management
+        into JavaScriptCore (originally from WebKit/mac). Include enhancements:
+
+          * allow for different types of remote debuggable targets,
+            eventually at least a JSContext, WebView, WKView.
+          * allow debuggables to be registered and debugged on any thread. Unlike
+            WebViews, JSContexts may be run entirely off of the main thread.
+          * move the remote connection (XPC connection) itself off of the main thread,
+            it doesn't need to be on the main thread.
+
+        Make JSContext @class and JavaScriptCore::JSContextRef
+        "JavaScript" Remote Debuggables.
+
+        * inspector/remote/RemoteInspectorDebuggable.h: Added.
+        * inspector/remote/RemoteInspectorDebuggable.cpp: Added.
+        (Inspector::RemoteInspectorDebuggable::RemoteInspectorDebuggable):
+        (Inspector::RemoteInspectorDebuggable::~RemoteInspectorDebuggable):
+        (Inspector::RemoteInspectorDebuggable::init):
+        (Inspector::RemoteInspectorDebuggable::update):
+        (Inspector::RemoteInspectorDebuggable::setRemoteDebuggingAllowed):
+        (Inspector::RemoteInspectorDebuggable::info):
+        RemoteInspectorDebuggable defines a debuggable target. As long as
+        something creates a debuggable and is set to allow remote inspection
+        it will be listed in remote debuggers. For the different types of
+        debuggables (JavaScript and Web) there is different basic information
+        that may be listed.
+
+        * inspector/InspectorFrontendChannel.h: Added.
+        (Inspector::InspectorFrontendChannel::~InspectorFrontendChannel):
+        The only thing a debuggable needs for remote debugging is an
+        InspectorFrontendChannel a way to send messages to a remote frontend.
+        This class provides that method, and is vended to the
+        RemoteInspectorDebuggable when a remote connection is setup.
+
+        * inspector/remote/RemoteInspector.h: Added.
+        * inspector/remote/RemoteInspector.mm: Added.
+        Singleton, created at least when the first Debuggable is created.
+        This class manages the list of debuggables, any connection to a
+        remote debugger proxy (XPC service "com.apple.webinspector").
+
+        (Inspector::dispatchAsyncOnQueueSafeForAnyDebuggable):
+        (Inspector::RemoteInspector::shared):
+        (Inspector::RemoteInspector::RemoteInspector):
+        (Inspector::RemoteInspector::nextAvailableIdentifier):
+        (Inspector::RemoteInspector::registerDebuggable):
+        (Inspector::RemoteInspector::unregisterDebuggable):
+        (Inspector::RemoteInspector::updateDebuggable):
+        Debuggable management. When debuggables are added, removed, or updated
+        we stash a copy of the debuggable information and push an update to
+        debuggers. Stashing a copy of the information in the RemoteInspector
+        is a thread safe way to avoid walking over all debuggables to gather
+        the information when it is needed.
+
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::stop):
+        Runtime API to enable / disable the feature.
+
+        (Inspector::RemoteInspector::listingForDebuggable):
+        (Inspector::RemoteInspector::pushListingNow):
+        (Inspector::RemoteInspector::pushListingSoon):
+        Pushing a listing to remote debuggers.
+
+        (Inspector::RemoteInspector::sendMessageToRemoteFrontend):
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        (Inspector::RemoteInspector::xpcConnectionReceivedMessage):
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        (Inspector::RemoteInspector::xpcConnectionUnhandledMessage):
+        XPC setup, send, and receive handling.
+
+        (Inspector::RemoteInspector::updateHasActiveDebugSession):
+        Applications being debugged may want to know when a debug
+        session is active. This provides that notification.
+
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        (Inspector::RemoteInspector::receivedDataMessage):
+        (Inspector::RemoteInspector::receivedDidCloseMessage):
+        (Inspector::RemoteInspector::receivedGetListingMessage):
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+        (Inspector::RemoteInspector::receivedConnectionDiedMessage):
+        Dispatching incoming remote debugging protocol messages.
+        These are wrapping above the inspector protocol messages.
+
+        * inspector/remote/RemoteInspectorConstants.h: Added.
+        Protocol messages and dictionary keys inside the messages.
+
+        (Inspector::RemoteInspectorDebuggableInfo::RemoteInspectorDebuggableInfo):
+        * inspector/remote/RemoteInspectorDebuggableConnection.h: Added.
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm: Added.
+        This is a connection between the RemoteInspector singleton and a RemoteInspectorDebuggable.
+
+        (Inspector::RemoteInspectorDebuggableConnection::RemoteInspectorDebuggableConnection):
+        (Inspector::RemoteInspectorDebuggableConnection::~RemoteInspectorDebuggableConnection):
+        Allow for dispatching messages on JavaScript debuggables on a dispatch_queue
+        instead of the main queue.
+
+        (Inspector::RemoteInspectorDebuggableConnection::destination):
+        (Inspector::RemoteInspectorDebuggableConnection::connectionIdentifier):
+        Needed in the remote debugging protocol to identify the remote debugger.
+
+        (Inspector::RemoteInspectorDebuggableConnection::dispatchSyncOnDebuggable):
+        (Inspector::RemoteInspectorDebuggableConnection::dispatchAsyncOnDebuggable):
+        (Inspector::RemoteInspectorDebuggableConnection::setup):
+        (Inspector::RemoteInspectorDebuggableConnection::closeFromDebuggable):
+        (Inspector::RemoteInspectorDebuggableConnection::close):
+        (Inspector::RemoteInspectorDebuggableConnection::sendMessageToBackend):
+        (Inspector::RemoteInspectorDebuggableConnection::sendMessageToFrontend):
+        The connection is a thin channel between the two sides that can be closed
+        from either side, so there is some logic around multi-threaded access.
+
+        * inspector/remote/RemoteInspectorXPCConnection.h: Added.
+        (Inspector::RemoteInspectorXPCConnection::Client::~Client):
+        * inspector/remote/RemoteInspectorXPCConnection.mm: Added.
+        (Inspector::RemoteInspectorXPCConnection::RemoteInspectorXPCConnection):
+        (Inspector::RemoteInspectorXPCConnection::~RemoteInspectorXPCConnection):
+        (Inspector::RemoteInspectorXPCConnection::close):
+        (Inspector::RemoteInspectorXPCConnection::deserializeMessage):
+        (Inspector::RemoteInspectorXPCConnection::handleEvent):
+        (Inspector::RemoteInspectorXPCConnection::sendMessage):
+        This is a connection between the RemoteInspector singleton and an XPC service
+        named "com.apple.webinspector". This handles serialization of the dictionary
+        messages to and from the service. The receiving is done on a non-main queue.
+
+        * API/JSContext.h:
+        * API/JSContext.mm:
+        (-[JSContext name]):
+        (-[JSContext setName:]):
+        ObjC API to enable/disable JSContext remote inspection and give a name.
+
+        * API/JSContextRef.h:
+        * API/JSContextRef.cpp:
+        (JSGlobalContextGetName):
+        (JSGlobalContextSetName):
+        C API to give a JSContext a name.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::setName):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::name):
+        Shared handling of the APIs above.
+
+        * runtime/JSGlobalObjectDebuggable.cpp: Added.
+        (JSC::JSGlobalObjectDebuggable::JSGlobalObjectDebuggable):
+        (JSC::JSGlobalObjectDebuggable::name):
+        (JSC::JSGlobalObjectDebuggable::connect):
+        (JSC::JSGlobalObjectDebuggable::disconnect):
+        (JSC::JSGlobalObjectDebuggable::dispatchMessageFromRemoteFrontend):
+        * runtime/JSGlobalObjectDebuggable.h: Added.
+        Stub for the actual remote debugging implementation. We will push
+        down the appropriate WebCore/inspector peices suitable for debugging
+        just a JavaScript context.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        Update build files.
+
 2013-12-04  Michael Saboff  <msaboff@apple.com>
 
         Move the setting up of callee's callFrame from pushFrame to callToJavaScript thunk

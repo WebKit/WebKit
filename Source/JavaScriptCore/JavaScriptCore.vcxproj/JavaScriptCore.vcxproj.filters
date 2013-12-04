@@ -25,6 +25,9 @@
     <Filter Include="heap">
       <UniqueIdentifier>{bd49e5cf-95d6-4151-b286-8837ccd347fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inspector">
+      <UniqueIdentifier>{09ae09da-1239-00ea-8dfe-9087ae123bbe}</UniqueIdentifier>
+    </Filter>
     <Filter Include="interpreter">
       <UniqueIdentifier>{10d97ea3-2af9-489c-a54e-d69ef2e4ca0a}</UniqueIdentifier>
     </Filter>
@@ -1705,6 +1708,9 @@
     </ClInclude>
     <ClInclude Include="..\heap\WriteBarrierSupport.h">
       <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InspectorFrontendChannel.h">
+      <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\interpreter\AbstractPC.h">
       <Filter>interpreter</Filter>

@@ -77,6 +77,7 @@ extern NSString *WebElementIsInScrollBarKey;
 extern NSString *_WebViewDidStartAcceleratedCompositingNotification;
 
 #if ENABLE_REMOTE_INSPECTOR
+// FIXME: Legacy, remove this, switch to something from JavaScriptCore Inspector::RemoteInspectorServer.
 // Notification when the number of inspector sessions becomes non-zero or returns to 0.
 // Check the current state via -[WebView _hasRemoteInspectorSession].
 extern NSString *_WebViewRemoteInspectorHasSessionChangedNotification;
@@ -263,15 +264,6 @@ typedef enum {
 + (BOOL)_hasRemoteInspectorSession;
 
 /*!
-    @method canBeRemotelyInspected
-    @result Looks at all the factors of this WebView and returns whether or not
-    this WebView should allow a Remote Web Inspector to attach to it. This takes
-    into account -allowsRemoteInspection, Private Browsing, and potentially other
-    factors.
-*/
-- (BOOL)canBeRemotelyInspected;
-
-/*!
     @method allowsRemoteInspection
     @result Returns whether or not this WebView will allow a Remote Web Inspector
     to attach to it.
@@ -292,21 +284,6 @@ typedef enum {
     @abstract indicate this WebView on screen for a remote inspector.
 */
 - (void)setIndicatingForRemoteInspector:(BOOL)enabled;
-
-/*
-    @method setRemoteInspectorUserInfo
-    @param tag The dictionary to be associated with the WebView.
-    @abstract Developer specified dictionary for the WebView that will be
-    sent to the Remote Debugger. The dictionary must contain property
-    list serializable values.
-*/
-- (void)setRemoteInspectorUserInfo:(NSDictionary *)userInfo;
-
-/*!
-    @method remoteInspectorUserInfo
-    @result Returns the dictionary associated with this WebView.
-*/
-- (NSDictionary *)remoteInspectorUserInfo;
 #endif
 
 

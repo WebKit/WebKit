@@ -31,7 +31,7 @@
 #include "PageOverlay.h"
 
 #include <WebCore/InspectorClient.h>
-#include <WebCore/InspectorFrontendChannel.h>
+#include <WebCore/InspectorForwarding.h>
 
 namespace WebCore {
 class GraphicsContext;

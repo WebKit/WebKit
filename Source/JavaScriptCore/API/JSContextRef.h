@@ -133,6 +133,24 @@ JS_EXPORT JSContextGroupRef JSContextGetGroup(JSContextRef ctx) AVAILABLE_IN_WEB
 */
 JS_EXPORT JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx) CF_AVAILABLE(10_7, 4_0);
 
+/*!
+@function
+@abstract Gets a copy of the name of a context.
+@param ctx The JSGlobalContext whose name you want to get.
+@result The name for ctx.
+@discussion A JSGlobalContext's name is exposed for remote debugging to make it
+easier to identify the context you would like to attach to.
+*/
+JS_EXPORT JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx);
+
+/*!
+@function
+@abstract Sets the remote debugging name for a context.
+@param ctx The JSGlobalContext that you want to name.
+@param name The remote debugging name to set on ctx.
+*/
+JS_EXPORT void JSGlobalContextSetName(JSGlobalContextRef ctx, JSStringRef name);
+
 #ifdef __cplusplus
 }
 #endif

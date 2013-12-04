@@ -2804,6 +2804,7 @@ __ZN7WebCore33QLPreviewGetSupportedMIMETypesSetEv
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
+__ZN7WebCore4Page26setRemoteInspectionAllowedEb
 __ZN7WebCore19InspectorController27dispatchMessageFromFrontendERKN3WTF6StringE
 #endif
 

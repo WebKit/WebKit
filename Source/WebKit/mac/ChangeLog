@@ -1,3 +1,58 @@
+2013-12-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Push Remote Inspector debugging connection management into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=124613
+
+        Reviewed by Timothy Hatcher.
+
+        Remove the old ENABLE(REMOTE_INSPECTOR) connection management implementation.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::indicate):
+        (WebInspectorClient::hideIndicate):
+        Hook up WebView indication through this new path.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveTitle):
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::inspectorDestroyed):
+        * WebInspector/remote/WebInspectorClientRegistry.h: Removed.
+        * WebInspector/remote/WebInspectorClientRegistry.mm: Removed.
+        * WebInspector/remote/WebInspectorRelayDefinitions.h: Removed.
+        * WebInspector/remote/WebInspectorRemoteChannel.h: Removed.
+        * WebInspector/remote/WebInspectorRemoteChannel.mm: Removed.
+        * WebInspector/remote/WebInspectorServer.h: Removed.
+        * WebInspector/remote/WebInspectorServer.mm: Removed.
+        * WebInspector/remote/WebInspectorServerWebViewConnection.h: Removed.
+        * WebInspector/remote/WebInspectorServerWebViewConnection.mm: Removed.
+        * WebInspector/remote/WebInspectorServerWebViewConnectionController.h: Removed.
+        * WebInspector/remote/WebInspectorServerWebViewConnectionController.mm: Removed.
+        * WebInspector/remote/WebInspectorXPCWrapper.h: Removed.
+        * WebInspector/remote/WebInspectorXPCWrapper.m: Removed.
+        * WebKit.exp:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (+[WebView _enableRemoteInspector]):
+        (+[WebView _disableRemoteInspector]):
+        (+[WebView _disableAutoStartRemoteInspector]):
+        (+[WebView _isRemoteInspectorEnabled]):
+        (+[WebView _hasRemoteInspectorSession]):
+        (-[WebView allowsRemoteInspection]):
+        (-[WebView setAllowsRemoteInspection:]):
+        (-[WebView setIndicatingForRemoteInspector:]):
+        (-[WebView setHostApplicationBundleId:name:]):
+        (-[WebView _didCommitLoadForFrame:]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]):
+        (-[WebViewPrivate dealloc]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+        Remove old REMOTE_INSPECTOR.
+
 2013-12-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash in accessibilityRoot when Document goes away

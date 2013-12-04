@@ -34,8 +34,8 @@
 
 #include "InspectorWorkerAgent.h"
 
+#include "InspectorForwarding.h"
 #include "InspectorFrontend.h"
-#include "InspectorFrontendChannel.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "URL.h"

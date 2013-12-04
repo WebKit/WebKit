@@ -1,5 +1,69 @@
 2013-12-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Push Remote Inspector debugging connection management into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=124613
+
+        Reviewed by Timothy Hatcher.
+
+        Make a WebCore::Page a "Web" Remote Debuggable.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        Disable JavaScript context inspection on JSGlobalObjects inside WebCore::Page's.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::remoteInspectionAllowed):
+        (WebCore::Page::setRemoteInspectionAllowed):
+        (WebCore::Page::remoteInspectorInformationDidChange):
+        * page/Page.h:
+        * page/PageDebuggable.h:
+        * page/PageDebuggable.cpp: Added.
+        (WebCore::PageDebuggable::PageDebuggable):
+        (WebCore::PageDebuggable::name):
+        (WebCore::PageDebuggable::url):
+        (WebCore::PageDebuggable::hasLocalDebugger):
+        (WebCore::PageDebuggable::connect):
+        (WebCore::PageDebuggable::disconnect):
+        (WebCore::PageDebuggable::dispatchMessageFromRemoteFrontend):
+        (WebCore::PageDebuggable::setIndicating):
+        Make a page a "Web" debuggable.
+
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Misc.
+
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::indicate):
+        (WebCore::InspectorClient::hideIndicate):
+        Forward indicate methods to WebKit clients.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didChangeTitle):
+        (WebCore::FrameLoader::dispatchDidCommitLoad):
+        Push updates when remote debuggable information like the Page's
+        URL or title change.
+
+        * ForwardingHeaders/inspector/InspectorFrontendChannel.h:
+        * inspector/InspectorForwarding.h:
+        Re-export Inspector::InspectorFrontendChannel as WebCore::InspectorFrontendChannel
+        to avoid needlessly updating code all over the place.
+
+        * inspector/CodeGeneratorInspectorStrings.py:
+        * inspector/InspectorWorkerAgent.cpp:
+        * inspector/WorkerInspectorController.cpp:
+        * testing/Internals.cpp:
+        Update include names.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+        Make the "Inspect Element" context menu work correctly when there is a
+        remote inspector instead of a local inspector.
+
+2013-12-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Add missing folders and files to Xcode project
         https://bugs.webkit.org/show_bug.cgi?id=124802
 
