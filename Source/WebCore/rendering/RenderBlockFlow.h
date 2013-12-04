@@ -531,7 +531,6 @@ protected:
     RenderLineBoxList m_lineBoxes;
     std::unique_ptr<SimpleLineLayout::Layout> m_simpleLineLayout;
 
-    friend class BreakingContext;
     friend class LineBreaker;
     friend class LineWidth; // Needs to know FloatingObject
 };

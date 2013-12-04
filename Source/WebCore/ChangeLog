@@ -1,3 +1,22 @@
+2013-12-03  Zoltan Horvath  <zoltan@webkit.org>
+
+        Remove BreakingContext's friendship from RenderBlockFlow
+        <https://webkit.org/b/124958>
+
+        Reviewed by David Hyatt.
+
+        BreakingContext uses only 2 functions from RenderBlockFlow: insertFloatingObject/positionNewFloatOnLine. I added helper
+        functions to LineBreaker, what is already a friend of RenderBlockFlow, so BreakingContext doesn't need to be anymore.
+ 
+        No new tests, no behavior change.
+
+        * rendering/RenderBlockFlow.h:
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleFloat):
+        * rendering/line/LineBreaker.h:
+        (WebCore::LineBreaker::insertFloatingObject):
+        (WebCore::LineBreaker::positionNewFloatOnLine):
+
 2013-12-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         bgColor, setBgColor, alinkColor, setAlinkColor, and etc... on HTMLBodyElement are useless

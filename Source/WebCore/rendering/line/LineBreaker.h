@@ -67,6 +67,12 @@ private:
     void skipTrailingWhitespace(InlineIterator&, const LineInfo&);
     void skipLeadingWhitespace(InlineBidiResolver&, LineInfo&, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
 
+    FloatingObject* insertFloatingObject(RenderBox& floatBox) { return m_block.insertFloatingObject(floatBox); }
+    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo& lineInfo, LineWidth& width)
+    {
+        return m_block.positionNewFloatOnLine(newFloat, lastFloatFromPreviousLine, lineInfo, width);
+    }
+
     RenderBlockFlow& m_block;
     bool m_hyphenated;
     EClear m_clear;
