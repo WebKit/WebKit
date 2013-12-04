@@ -1,3 +1,15 @@
+2013-12-04  Bear Travis  <betravis@adobe.com>
+
+        Web Inspector: [CSS Shapes] Support raster shape visualizations
+        https://bugs.webkit.org/show_bug.cgi?id=124080
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a test for data sent to the inspector for a raster shape.
+
+        * inspector-protocol/model/highlight-shape-outside-expected.txt:
+        * inspector-protocol/model/highlight-shape-outside.html:
+
 2013-12-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow ImageBuffer to use an IOSurface that is larger than necessary

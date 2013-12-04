@@ -55,6 +55,8 @@ public:
     bool firstIncludedIntervalY(int minY, const IntSize& minSize, LayoutUnit& result) const;
     PassOwnPtr<RasterShapeIntervals> computeShapeMarginIntervals(unsigned shapeMargin) const;
 
+    void buildBoundsPath(Path&) const;
+
 private:
     int size() const { return m_intervalLists.size(); }
 
@@ -101,8 +103,7 @@ public:
     virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
     virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit&) const OVERRIDE;
 
-    // FIXME: Bug 124080 - RasterShapes are not yet supported and only display their shape bounds
-    virtual void buildPath(Path& path) const OVERRIDE { UNUSED_PARAM(path); }
+    virtual void buildPath(Path& path) const OVERRIDE { m_intervals->buildBoundsPath(path); }
 
 private:
     const RasterShapeIntervals& marginIntervals() const;

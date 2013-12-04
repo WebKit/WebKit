@@ -252,6 +252,23 @@ PassOwnPtr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginInterva
     return result.release();
 }
 
+void RasterShapeIntervals::buildBoundsPath(Path& path) const
+{
+    for (int y = bounds().y(); y < bounds().maxY(); y++) {
+        if (intervalsAt(y).isEmpty())
+            continue;
+
+        IntShapeInterval extent = limitIntervalAt(y);
+        int endY = y + 1;
+        for (; endY < bounds().maxY(); endY++) {
+            if (intervalsAt(endY).isEmpty() || limitIntervalAt(endY) != extent)
+                break;
+        }
+        path.addRect(FloatRect(extent.x1(), y, extent.width(), endY - y));
+        y = endY - 1;
+    }
+}
+
 const RasterShapeIntervals& RasterShape::marginIntervals() const
 {
     ASSERT(shapeMargin() >= 0);
