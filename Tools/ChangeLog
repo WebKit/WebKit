@@ -1,3 +1,11 @@
+2013-12-03  Dan Bernstein  <mitz@apple.com>
+
+        Fixed a test timing out after r160040.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/WKBrowsingContextLoadDelegateTest.mm:
+        (-[SimpleLoadFailDelegate browsingContextController:didFailProvisionalLoadWithError:]):
+        Updated for the delegate method rename.
+
 2013-12-03  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION: repro scripts disappear when you rerun tests

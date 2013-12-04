@@ -200,7 +200,7 @@ TEST_F(WKBrowsingContextLoadDelegateTest, SimpleLoadOfHTMLString_NilHTMLStringAn
     return self;
 }
 
-- (void)browsingContextControllerDidFailProvisionalLoad:(WKBrowsingContextController *)sender withError:(NSError *)error
+- (void)browsingContextController:(WKBrowsingContextController *)sender didFailProvisionalLoadWithError:(NSError *)error
 {
     EXPECT_EQ(-1100, error.code);
     EXPECT_WK_STREQ(NSURLErrorDomain, error.domain);
