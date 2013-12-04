@@ -26,7 +26,6 @@
 #include "Identifier.h"
 #include "JSGlobalObject.h"
 #include "PropertySlot.h"
-#include <stdio.h>
 #include <wtf/Assertions.h>
 
 namespace JSC {

@@ -32,7 +32,6 @@
 #include "Operations.h"
 #include "Parser.h"
 #include <wtf/WTFThreadData.h>
-#include <stdio.h>
 
 namespace JSC {
 

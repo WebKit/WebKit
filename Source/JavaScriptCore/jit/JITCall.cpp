@@ -42,11 +42,6 @@
 #include "ThunkGenerators.h"
 #include <wtf/StringPrintStream.h>
 
-#ifndef NDEBUG
-#include <stdio.h>
-#endif
-
-using namespace std;
 
 namespace JSC {
 

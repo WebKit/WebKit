@@ -29,7 +29,6 @@
 #include "HeapStatistics.h"
 #include <algorithm>
 #include <limits>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/NumberOfCores.h>

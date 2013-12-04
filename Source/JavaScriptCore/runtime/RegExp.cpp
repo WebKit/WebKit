@@ -28,12 +28,15 @@
 #include "RegExpCache.h"
 #include "Yarr.h"
 #include "YarrJIT.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <wtf/Assertions.h>
 
 #define REGEXP_FUNC_TEST_DATA_GEN 0
+
+#if REGEXP_FUNC_TEST_DATA_GEN
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#endif
 
 namespace JSC {
 

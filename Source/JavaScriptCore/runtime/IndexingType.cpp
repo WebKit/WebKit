@@ -26,7 +26,6 @@
 #include "config.h"
 #include "IndexingType.h"
 
-#include <stdio.h>
 #include <wtf/StringExtras.h>
 
 namespace JSC {

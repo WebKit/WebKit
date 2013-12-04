@@ -28,7 +28,6 @@
 
 #if ENABLE(VMINSPECTOR)
 
-#include <stdio.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
 

@@ -40,11 +40,6 @@
 #include "SamplingTool.h"
 #include "SlowPathCall.h"
 
-#ifndef NDEBUG
-#include <stdio.h>
-#endif
-
-using namespace std;
 
 namespace JSC {
 
