@@ -225,7 +225,7 @@ static EncodedJSValue JSC_HOST_CALL callNPJSObject(ExecState* exec)
     JSObject* object = exec->callee();
     ASSERT(object->inherits(JSNPObject::info()));
 
-    return JSValue::encode(static_cast<JSNPObject*>(object)->callObject(exec));
+    return JSValue::encode(jsCast<JSNPObject*>(object)->callObject(exec));
 }
 
 JSC::CallType JSNPObject::getCallData(JSC::JSCell* cell, JSC::CallData& callData)
@@ -244,7 +244,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithConstructor(ExecState* exec)
     JSObject* constructor = exec->callee();
     ASSERT(constructor->inherits(JSNPObject::info()));
 
-    return JSValue::encode(static_cast<JSNPObject*>(constructor)->callConstructor(exec));
+    return JSValue::encode(jsCast<JSNPObject*>(constructor)->callConstructor(exec));
 }
 
 ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& constructData)
@@ -417,16 +417,16 @@ void JSNPObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
     npnMemFree(identifiers);
 }
 
-JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue JSNPObject::propertyGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSNPObject* thisObj = static_cast<JSNPObject*>(asObject(slotBase));
+    JSNPObject* thisObj = jsCast<JSNPObject*>(JSValue::decode(slotBase));
     ASSERT_GC_OBJECT_INHERITS(thisObj, info());
     
     if (!thisObj->m_npObject)
-        return throwInvalidAccessError(exec);
+        return JSValue::encode(throwInvalidAccessError(exec));
 
     if (!thisObj->m_npObject->_class->getProperty)
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
 
     NPVariant result;
     VOID_TO_NPVARIANT(result);
@@ -446,23 +446,23 @@ JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, PropertyNa
     }
 
     if (!returnValue)
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
 
     JSValue propertyValue = thisObj->m_objectMap->convertNPVariantToJSValue(exec, thisObj->globalObject(), result);
     releaseNPVariantValue(&result);
-    return propertyValue;
+    return JSValue::encode(propertyValue);
 }
 
-JSValue JSNPObject::methodGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue JSNPObject::methodGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSNPObject* thisObj = static_cast<JSNPObject*>(asObject(slotBase));
+    JSNPObject* thisObj = jsCast<JSNPObject*>(JSValue::decode(slotBase));
     ASSERT_GC_OBJECT_INHERITS(thisObj, info());
     
     if (!thisObj->m_npObject)
-        return throwInvalidAccessError(exec);
+        return JSValue::encode(throwInvalidAccessError(exec));
 
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
-    return JSNPMethod::create(exec, thisObj->globalObject(), propertyName.publicName(), npIdentifier);
+    return JSValue::encode(JSNPMethod::create(exec, thisObj->globalObject(), propertyName.publicName(), npIdentifier));
 }
 
 JSObject* JSNPObject::throwInvalidAccessError(ExecState* exec)

@@ -32,10 +32,10 @@ bool JSDOMPlugin::canGetItemsForName(ExecState*, DOMPlugin* plugin, PropertyName
     return plugin->canGetItemsForName(propertyNameToAtomicString(propertyName));
 }
 
-JSValue JSDOMPlugin::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue JSDOMPlugin::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSDOMPlugin* thisObj = jsCast<JSDOMPlugin*>(asObject(slotBase));
-    return toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName)));
+    JSDOMPlugin* thisObj = jsCast<JSDOMPlugin*>(JSValue::decode(slotBase));
+    return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName))));
 }
 
 } // namespace WebCore

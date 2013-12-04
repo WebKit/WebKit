@@ -45,11 +45,11 @@ bool JSHTMLCollection::canGetItemsForName(ExecState*, HTMLCollection* collection
     return collection->hasNamedItem(propertyNameToAtomicString(propertyName));
 }
 
-JSValue JSHTMLCollection::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue JSHTMLCollection::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSHTMLCollection* collection = jsCast<JSHTMLCollection*>(asObject(slotBase));
+    JSHTMLCollection* collection = jsCast<JSHTMLCollection*>(JSValue::decode(slotBase));
     const AtomicString& name = propertyNameToAtomicString(propertyName);
-    return toJS(exec, collection->globalObject(), collection->impl().namedItem(name));
+    return JSValue::encode(toJS(exec, collection->globalObject(), collection->impl().namedItem(name)));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, HTMLCollection* collection)

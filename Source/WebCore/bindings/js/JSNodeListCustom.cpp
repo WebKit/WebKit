@@ -56,10 +56,10 @@ bool JSNodeList::canGetItemsForName(ExecState*, NodeList* impl, PropertyName pro
     return impl->namedItem(propertyNameToAtomicString(propertyName));
 }
 
-JSValue JSNodeList::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue JSNodeList::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSNodeList* thisObj = jsCast<JSNodeList*>(asObject(slotBase));
-    return toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName)));
+    JSNodeList* thisObj = jsCast<JSNodeList*>(JSValue::decode(slotBase));
+    return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName))));
 }
 
 } // namespace WebCore

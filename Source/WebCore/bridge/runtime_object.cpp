@@ -62,13 +62,13 @@ void RuntimeObject::invalidate()
     m_instance = 0;
 }
 
-JSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    RuntimeObject* thisObj = static_cast<RuntimeObject*>(asObject(slotBase));
+    RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(slotBase));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)
-        return throwInvalidAccessError(exec);
+        return JSValue::encode(throwInvalidAccessError(exec));
     
     instance->begin();
 
@@ -77,16 +77,16 @@ JSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, JSValue slotBase, P
 
     instance->end();
             
-    return result;
+    return JSValue::encode(result);
 }
 
-JSValue RuntimeObject::fieldGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue RuntimeObject::fieldGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {    
-    RuntimeObject* thisObj = static_cast<RuntimeObject*>(asObject(slotBase));
+    RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(slotBase));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)
-        return throwInvalidAccessError(exec);
+        return JSValue::encode(throwInvalidAccessError(exec));
     
     instance->begin();
 
@@ -96,16 +96,16 @@ JSValue RuntimeObject::fieldGetter(ExecState* exec, JSValue slotBase, PropertyNa
     
     instance->end();
             
-    return result;
+    return JSValue::encode(result);
 }
 
-JSValue RuntimeObject::methodGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue RuntimeObject::methodGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    RuntimeObject* thisObj = static_cast<RuntimeObject*>(asObject(slotBase));
+    RuntimeObject* thisObj = jsCast<RuntimeObject*>(JSValue::decode(slotBase));
     RefPtr<Instance> instance = thisObj->m_instance;
 
     if (!instance)
-        return throwInvalidAccessError(exec);
+        return JSValue::encode(throwInvalidAccessError(exec));
     
     instance->begin();
 
@@ -113,7 +113,7 @@ JSValue RuntimeObject::methodGetter(ExecState* exec, JSValue slotBase, PropertyN
 
     instance->end();
             
-    return method;
+    return JSValue::encode(method);
 }
 
 bool RuntimeObject::getOwnPropertySlot(JSObject* object, ExecState *exec, PropertyName propertyName, PropertySlot& slot)

@@ -42,18 +42,18 @@ bool JSStorage::canGetItemsForName(ExecState* exec, Storage* impl, PropertyName 
     return result;
 }
 
-JSValue JSStorage::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue JSStorage::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSStorage* thisObj = jsCast<JSStorage*>(asObject(slotBase));
+    JSStorage* thisObj = jsCast<JSStorage*>(JSValue::decode(slotBase));
         
-    JSValue prototype = asObject(slotBase)->prototype();
+    JSValue prototype = asObject(JSValue::decode(slotBase))->prototype();
     if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
-        return asObject(prototype)->get(exec, propertyName);
+        return JSValue::encode(asObject(prototype)->get(exec, propertyName));
  
     ExceptionCode ec = 0;
     JSValue result = jsStringOrNull(exec, thisObj->impl().getItem(propertyNameToString(propertyName), ec));
     setDOMException(exec, ec);
-    return result;
+    return JSValue::encode(result);
 }
 
 bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)

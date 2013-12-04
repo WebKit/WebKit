@@ -95,8 +95,8 @@ private:
 
     static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode);
 
-    static JSC::JSValue propertyGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
-    static JSC::JSValue methodGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+    static JSC::EncodedJSValue propertyGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
+    static JSC::EncodedJSValue methodGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
     static JSC::JSObject* throwInvalidAccessError(JSC::ExecState*);
 
     NPRuntimeObjectMap* m_objectMap;

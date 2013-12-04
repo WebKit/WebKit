@@ -106,17 +106,17 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
             if (!foundLocalScope) {
                 // First activation object is local scope, each successive activation object is closure.
                 if (!index)
-                    return jsJavaScriptCallFrameLOCAL_SCOPE(exec, JSValue(), Identifier());
+                    return JSValue::decode(jsJavaScriptCallFrameLOCAL_SCOPE(exec, EncodedJSValue(), EncodedJSValue(), Identifier()));
                 foundLocalScope = true;
             } else if (!index)
-                return jsJavaScriptCallFrameCLOSURE_SCOPE(exec, JSValue(), Identifier());
+                return JSValue::decode(jsJavaScriptCallFrameCLOSURE_SCOPE(exec, EncodedJSValue(), EncodedJSValue(), Identifier()));
         }
 
         if (!index) {
             // Last in the chain is global scope.
             if (++iter == end)
-                return jsJavaScriptCallFrameGLOBAL_SCOPE(exec, JSValue(), Identifier());
-            return jsJavaScriptCallFrameWITH_SCOPE(exec, JSValue(), Identifier());
+                return JSValue::decode(jsJavaScriptCallFrameGLOBAL_SCOPE(exec, EncodedJSValue(), EncodedJSValue(), Identifier()));
+            return JSValue::decode(jsJavaScriptCallFrameWITH_SCOPE(exec, EncodedJSValue(), EncodedJSValue(), Identifier()));
         }
 
         --index;
