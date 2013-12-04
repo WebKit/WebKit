@@ -49,7 +49,7 @@ public:
     virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
     void calculateButtonSize(RenderStyle*) const;
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuListButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&);
     virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
     virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);

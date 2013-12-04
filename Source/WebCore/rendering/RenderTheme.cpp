@@ -442,15 +442,15 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const PaintInfo& paintInfo, c
     return false;
 }
 
-bool RenderTheme::paintDecorations(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderTheme::paintDecorations(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (paintInfo.context->paintingDisabled())
         return false;
 
     // Call the appropriate paint method based off the appearance value.
-    switch (o->style().appearance()) {
+    switch (renderer->style().appearance()) {
     case MenulistButtonPart:
-        return paintMenuListButton(o, paintInfo, r);
+        return paintMenuListButtonDecorations(renderer, paintInfo, rect);
     case TextFieldPart:
     case TextAreaPart:
     case ListboxPart:

@@ -88,7 +88,10 @@ protected:
 
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
-    virtual bool paintMenuListButton(RenderObject* o, const PaintInfo& i, const IntRect& r) OVERRIDE { return paintMenuList(o, i, r); }
+    virtual bool paintMenuListButtonDecorations(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect) OVERRIDE
+    {
+        return paintMenuList(renderer, paintInfo, rect);
+    }
 
     virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
     virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;

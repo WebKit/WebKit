@@ -137,7 +137,7 @@ protected:
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuListButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsDecoration(RenderObject*, const PaintInfo&, const IntRect&);

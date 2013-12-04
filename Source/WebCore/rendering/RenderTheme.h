@@ -281,7 +281,7 @@ protected:
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintMenuListButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 
 #if ENABLE(METER_ELEMENT)
     virtual void adjustMeterStyle(StyleResolver*, RenderStyle*, Element*) const;

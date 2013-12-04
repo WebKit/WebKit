@@ -242,18 +242,18 @@ void RenderThemeWinCE::adjustMenuListStyle(StyleResolver* styleResolver, RenderS
     adjustMenuListButtonStyle(styleResolver, style, e);
 }
 
-bool RenderThemeWinCE::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& r)
+bool RenderThemeWinCE::paintMenuList(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    paintTextField(o, i, r);
-    paintMenuListButton(o, i, r);
+    paintTextField(renderer, paintInfo, rect);
+    paintMenuListButtonDecorations(renderer, paintInfo, rect);
     return true;
 }
 
-bool RenderThemeWinCE::paintMenuListButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
+bool RenderThemeWinCE::paintMenuListButtonDecorations(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    IntRect buttonRect(r.maxX() - dropDownButtonWidth - 1, r.y(), dropDownButtonWidth, r.height());
+    IntRect buttonRect(rect.maxX() - dropDownButtonWidth - 1, rect.y(), dropDownButtonWidth, rect.height());
     buttonRect.inflateY(-1);
-    i.context->drawFrameControl(buttonRect, DFC_SCROLL, DFCS_SCROLLCOMBOBOX | determineClassicState(o));
+    paintInfo.context->drawFrameControl(buttonRect, DFC_SCROLL, DFCS_SCROLLCOMBOBOX | determineClassicState(renderer));
     return true;
 }
 

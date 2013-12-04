@@ -1191,29 +1191,29 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
     }
 }
 
-bool RenderThemeMac::paintMenuListButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMenuListButtonDecorations(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    IntRect bounds = IntRect(r.x() + o->style().borderLeftWidth(),
-                             r.y() + o->style().borderTopWidth(),
-                             r.width() - o->style().borderLeftWidth() - o->style().borderRightWidth(),
-                             r.height() - o->style().borderTopWidth() - o->style().borderBottomWidth());
+    IntRect bounds = IntRect(rect.x() + renderer->style().borderLeftWidth(),
+                             rect.y() + renderer->style().borderTopWidth(),
+                             rect.width() - renderer->style().borderLeftWidth() - renderer->style().borderRightWidth(),
+                             rect.height() - renderer->style().borderTopWidth() - renderer->style().borderBottomWidth());
     // Draw the gradients to give the styled popup menu a button appearance
-    paintMenuListButtonGradients(o, paintInfo, bounds);
+    paintMenuListButtonGradients(renderer, paintInfo, bounds);
 
     // Since we actually know the size of the control here, we restrict the font scale to make sure the arrows will fit vertically in the bounds
-    float fontScale = std::min(o->style().fontSize() / baseFontSize, bounds.height() / (baseArrowHeight * 2 + baseSpaceBetweenArrows));
+    float fontScale = std::min(renderer->style().fontSize() / baseFontSize, bounds.height() / (baseArrowHeight * 2 + baseSpaceBetweenArrows));
     float centerY = bounds.y() + bounds.height() / 2.0f;
     float arrowHeight = baseArrowHeight * fontScale;
     float arrowWidth = baseArrowWidth * fontScale;
-    float leftEdge = bounds.maxX() - arrowPaddingRight * o->style().effectiveZoom() - arrowWidth;
+    float leftEdge = bounds.maxX() - arrowPaddingRight * renderer->style().effectiveZoom() - arrowWidth;
     float spaceBetweenArrows = baseSpaceBetweenArrows * fontScale;
 
-    if (bounds.width() < arrowWidth + arrowPaddingLeft * o->style().effectiveZoom())
+    if (bounds.width() < arrowWidth + arrowPaddingLeft * renderer->style().effectiveZoom())
         return false;
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    paintInfo.context->setFillColor(o->style().visitedDependentColor(CSSPropertyColor), o->style().colorSpace());
+    paintInfo.context->setFillColor(renderer->style().visitedDependentColor(CSSPropertyColor), renderer->style().colorSpace());
     paintInfo.context->setStrokeStyle(NoStroke);
 
     FloatPoint arrow1[3];
@@ -1237,10 +1237,10 @@ bool RenderThemeMac::paintMenuListButton(RenderObject* o, const PaintInfo& paint
 
     // FIXME: Should the separator thickness and space be scaled up by fontScale?
     int separatorSpace = 2; // Deliberately ignores zoom since it looks nicer if it stays thin.
-    int leftEdgeOfSeparator = static_cast<int>(leftEdge - arrowPaddingLeft * o->style().effectiveZoom()); // FIXME: Round?
+    int leftEdgeOfSeparator = static_cast<int>(leftEdge - arrowPaddingLeft * renderer->style().effectiveZoom()); // FIXME: Round?
 
     // Draw the separator to the left of the arrows
-    paintInfo.context->setStrokeThickness(1.0f); // Deliberately ignores zoom since it looks nicer if it stays thin.
+    paintInfo.context->setStrokeThickness(1); // Deliberately ignores zoom since it looks nicer if it stays thin.
     paintInfo.context->setStrokeStyle(SolidStroke);
     paintInfo.context->setStrokeColor(leftSeparatorColor, ColorSpaceDeviceRGB);
     paintInfo.context->drawLine(IntPoint(leftEdgeOfSeparator, bounds.y()),

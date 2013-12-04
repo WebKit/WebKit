@@ -618,7 +618,7 @@ bool RenderThemeBlackBerry::paintMenuList(RenderObject* object, const PaintInfo&
     return false;
 }
 
-bool RenderThemeBlackBerry::paintMenuListButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeBlackBerry::paintMenuListButtonDecorations(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     return paintMenuList(object, info, rect);
 }

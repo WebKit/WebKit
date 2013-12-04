@@ -85,7 +85,7 @@ namespace WebCore {
         virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
         virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-        virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual bool paintMenuListButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&);
 
         virtual bool paintSliderTrack(RenderObject* o, const PaintInfo& i, const IntRect& r);
         virtual bool paintSliderThumb(RenderObject* o, const PaintInfo& i, const IntRect& r);

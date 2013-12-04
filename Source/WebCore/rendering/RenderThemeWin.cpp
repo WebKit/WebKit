@@ -777,13 +777,13 @@ bool RenderThemeWin::paintTextField(RenderObject* o, const PaintInfo& i, const I
     return false;
 }
 
-bool RenderThemeWin::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& r)
+bool RenderThemeWin::paintMenuList(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
     HANDLE theme;
     int part;
     if (haveTheme && (windowsVersion() >= WindowsVista)) {
         theme = menuListTheme();
-        if (o->frame().settings().applicationChromeMode())
+        if (renderer->frame().settings().applicationChromeMode())
             part = CP_READONLY;
         else
             part = CP_BORDER;
@@ -792,9 +792,9 @@ bool RenderThemeWin::paintMenuList(RenderObject* o, const PaintInfo& i, const In
         part = TFP_TEXTFIELD;
     }
 
-    drawControl(i.context,  o, theme, ThemeData(part, determineState(o)), r);
+    drawControl(i.context,  renderer, theme, ThemeData(part, determineState(renderer)), rect);
     
-    return paintMenuListButton(o, i, r);
+    return paintMenuListButtonDecorations(renderer, paintInfo, rect);
 }
 
 void RenderThemeWin::adjustMenuListStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
@@ -834,16 +834,16 @@ void RenderThemeWin::adjustMenuListButtonStyle(StyleResolver* styleResolver, Ren
     style->setWhiteSpace(PRE);
 }
 
-bool RenderThemeWin::paintMenuListButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
+bool RenderThemeWin::paintMenuListButtonDecorations(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
     // FIXME: Don't make hardcoded assumptions about the thickness of the textfield border.
     int borderThickness = haveTheme ? 1 : 2;
 
     // Paint the dropdown button on the inner edge of the text field,
     // leaving space for the text field's 1px border
-    IntRect buttonRect(r);
+    IntRect buttonRect(rect);
     buttonRect.inflate(-borderThickness);
-    if (o->style().direction() == LTR)
+    if (renderer->style().direction() == LTR)
         buttonRect.setX(buttonRect.maxX() - dropDownButtonWidth);
     buttonRect.setWidth(dropDownButtonWidth);
 
@@ -854,7 +854,7 @@ bool RenderThemeWin::paintMenuListButton(RenderObject* o, const PaintInfo& i, co
         buttonRect.setWidth(buttonRect.width() + vistaMenuListButtonOutset);
     }
 
-    drawControl(i.context, o, menuListTheme(), getThemeData(o), buttonRect);
+    drawControl(paintInfo.context, renderer, menuListTheme(), getThemeData(renderer), buttonRect);
 
     return false;
 }

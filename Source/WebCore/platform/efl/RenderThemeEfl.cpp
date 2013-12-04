@@ -892,7 +892,7 @@ void RenderThemeEfl::adjustMenuListButtonStyle(StyleResolver* styleResolver, Ren
     adjustMenuListStyle(styleResolver, style, element);
 }
 
-bool RenderThemeEfl::paintMenuListButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintMenuListButtonDecorations(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     return paintMenuList(object, info, rect);
 }
