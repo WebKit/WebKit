@@ -30,9 +30,7 @@
 
 """Supports reading and processing text files."""
 
-import codecs
 import logging
-import os
 import sys
 
 
@@ -76,17 +74,13 @@ class TextFileReader(object):
         """
         # Support the UNIX convention of using "-" for stdin.
         if file_path == '-':
-            file = codecs.StreamReaderWriter(sys.stdin,
-                                             codecs.getreader('utf8'),
-                                             codecs.getwriter('utf8'),
-                                             'replace')
+            file = self.filesystem.open_stdin()
         else:
             # We do not open the file with universal newline support
             # (codecs does not support it anyway), so the resulting
             # lines contain trailing "\r" characters if we are reading
             # a file with CRLF endings.
-            # FIXME: This should use self.filesystem
-            file = codecs.open(file_path, 'r', 'utf8', 'replace')
+            file = self.filesystem.open_text_file_for_reading(file_path)
 
         try:
             contents = file.read()
@@ -131,11 +125,8 @@ class TextFileReader(object):
 
     def _process_directory(self, directory):
         """Process all files in the given directory, recursively."""
-        # FIXME: We should consider moving to self.filesystem.files_under() (or adding walk() to FileSystem)
-        for dir_path, dir_names, file_names in os.walk(directory):
-            for file_name in file_names:
-                file_path = self.filesystem.join(dir_path, file_name)
-                self.process_file(file_path)
+        for file_path in self.filesystem.files_under(directory):
+            self.process_file(file_path)
 
     def process_paths(self, paths):
         for path in paths:

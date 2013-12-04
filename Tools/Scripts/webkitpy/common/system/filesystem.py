@@ -206,6 +206,12 @@ class FileSystem(object):
     def open_text_file_for_writing(self, path):
         return codecs.open(path, 'w', 'utf8')
 
+    def open_stdin(self):
+        return codecs.StreamReaderWriter(sys.stdin,
+                                             codecs.getreader('utf8'),
+                                             codecs.getwriter('utf8'),
+                                             'replace')
+
     def read_text_file(self, path):
         """Return the contents of the file at the given path as a Unicode string.
 

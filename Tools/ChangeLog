@@ -1,5 +1,21 @@
 2013-12-04  László Langó  <lango@inf.u-szeged.hu>
 
+        Remove codecs and os dependencies from filereader.py in webkitpy/style.
+        https://bugs.webkit.org/show_bug.cgi?id=124719
+
+        Although TextFileReader requires a FileSystem it circumvents it in two places!
+        We should use the FileSystem only and remove codecs and os imports.
+
+        Reviewed by Zoltan Herczeg.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.open_stdin): Moved from TextFileReader
+        * Scripts/webkitpy/style/filereader.py:
+        (TextFileReader._read_lines): use FileSystem instead of calling codecs.open directly
+        (TextFileReader._process_directory): use FileSystem instead of calling os.walk directly
+
+2013-12-04  László Langó  <lango@inf.u-szeged.hu>
+
         check-webkit-style should check member initialization indentation.
         https://bugs.webkit.org/show_bug.cgi?id=124820
 
