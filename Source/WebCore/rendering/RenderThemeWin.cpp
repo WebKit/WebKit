@@ -792,7 +792,7 @@ bool RenderThemeWin::paintMenuList(RenderObject* renderer, const PaintInfo& pain
         part = TFP_TEXTFIELD;
     }
 
-    drawControl(i.context,  renderer, theme, ThemeData(part, determineState(renderer)), rect);
+    drawControl(paintInfo.context,  renderer, theme, ThemeData(part, determineState(renderer)), rect);
     
     return paintMenuListButtonDecorations(renderer, paintInfo, rect);
 }
