@@ -11080,6 +11080,7 @@
     <ClCompile Include="..\rendering\line\LineBreaker.cpp" />
     <ClCompile Include="..\rendering\line\LineInfo.cpp" />
     <ClCompile Include="..\rendering\line\LineWidth.cpp" />
+    <ClCompile Include="..\rendering\line\TrailingObjects.cpp" />
     <ClCompile Include="..\rendering\shapes\BoxShape.cpp" />
     <ClCompile Include="..\rendering\shapes\PolygonShape.cpp" />
     <ClCompile Include="..\rendering\shapes\RasterShape.cpp" />
@@ -19930,6 +19931,7 @@
     <ClInclude Include="..\rendering\line\LineInlineHeaders.h" />
     <ClInclude Include="..\rendering\line\LineLayoutState.h" />
     <ClInclude Include="..\rendering\line\LineWidth.h" />
+    <ClInclude Include="..\rendering\line\TrailingObjects.h" />
     <ClInclude Include="..\rendering\shapes\BoxShape.h" />
     <ClInclude Include="..\rendering\shapes\PolygonShape.h" />
     <ClInclude Include="..\rendering\shapes\RasterShape.h" />

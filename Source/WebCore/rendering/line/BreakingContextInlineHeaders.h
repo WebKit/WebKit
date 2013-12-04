@@ -34,6 +34,7 @@
 #include "RenderInline.h"
 #include "RenderListMarker.h"
 #include "RenderRubyRun.h"
+#include "TrailingObjects.h"
 #include "break_lines.h"
 #include <wtf/unicode/CharacterNames.h>
 
@@ -66,86 +67,6 @@ public:
     int endOffset;
     HashSet<const SimpleFontData*> fallbackFonts;
 };
-
-class TrailingObjects {
-public:
-    TrailingObjects();
-    void setTrailingWhitespace(RenderText*);
-    void clear();
-    void appendBoxIfNeeded(RenderBoxModelObject*);
-
-    enum CollapseFirstSpaceOrNot { DoNotCollapseFirstSpace, CollapseFirstSpace };
-
-    void updateMidpointsForTrailingBoxes(LineMidpointState&, const InlineIterator& lBreak, CollapseFirstSpaceOrNot);
-
-private:
-    RenderText* m_whitespace;
-    Vector<RenderBoxModelObject*, 4> m_boxes;
-};
-
-TrailingObjects::TrailingObjects()
-    : m_whitespace(0)
-{
-}
-
-inline void TrailingObjects::setTrailingWhitespace(RenderText* whitespace)
-{
-    ASSERT(whitespace);
-    m_whitespace = whitespace;
-}
-
-inline void TrailingObjects::clear()
-{
-    m_whitespace = 0;
-    m_boxes.shrink(0); // Use shrink(0) instead of clear() to retain our capacity.
-}
-
-inline void TrailingObjects::appendBoxIfNeeded(RenderBoxModelObject* box)
-{
-    if (m_whitespace)
-        m_boxes.append(box);
-}
-
-void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMidpointState, const InlineIterator& lBreak, CollapseFirstSpaceOrNot collapseFirstSpace)
-{
-    if (!m_whitespace)
-        return;
-
-    // This object is either going to be part of the last midpoint, or it is going to be the actual endpoint.
-    // In both cases we just decrease our pos by 1 level to exclude the space, allowing it to - in effect - collapse into the newline.
-    if (lineMidpointState.numMidpoints % 2) {
-        // Find the trailing space object's midpoint.
-        int trailingSpaceMidpoint = lineMidpointState.numMidpoints - 1;
-        for ( ; trailingSpaceMidpoint > 0 && lineMidpointState.midpoints[trailingSpaceMidpoint].renderer() != m_whitespace; --trailingSpaceMidpoint) { }
-        ASSERT(trailingSpaceMidpoint >= 0);
-        if (collapseFirstSpace == CollapseFirstSpace)
-            lineMidpointState.midpoints[trailingSpaceMidpoint].m_pos--;
-
-        // Now make sure every single trailingPositionedBox following the trailingSpaceMidpoint properly stops and starts
-        // ignoring spaces.
-        size_t currentMidpoint = trailingSpaceMidpoint + 1;
-        for (size_t i = 0; i < m_boxes.size(); ++i) {
-            if (currentMidpoint >= lineMidpointState.numMidpoints) {
-                // We don't have a midpoint for this box yet.
-                lineMidpointState.ensureLineBoxInsideIgnoredSpaces(m_boxes[i]);
-            } else {
-                ASSERT(lineMidpointState.midpoints[currentMidpoint].renderer() == m_boxes[i]);
-                ASSERT(lineMidpointState.midpoints[currentMidpoint + 1].renderer() == m_boxes[i]);
-            }
-            currentMidpoint += 2;
-        }
-    } else if (!lBreak.renderer()) {
-        ASSERT(m_whitespace->isText());
-        ASSERT(collapseFirstSpace == CollapseFirstSpace);
-        // Add a new end midpoint that stops right at the very end.
-        unsigned length = m_whitespace->textLength();
-        unsigned pos = length >= 2 ? length - 2 : UINT_MAX;
-        InlineIterator endMid(0, m_whitespace, pos);
-        lineMidpointState.startIgnoringSpaces(endMid);
-        for (size_t i = 0; i < m_boxes.size(); ++i)
-            lineMidpointState.ensureLineBoxInsideIgnoredSpaces(m_boxes[i]);
-    }
-}
 
 class BreakingContext {
 public:

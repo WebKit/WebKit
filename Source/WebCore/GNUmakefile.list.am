@@ -4528,6 +4528,7 @@ webcore_sources += \
 	Source/WebCore/rendering/line/LineLayoutState.h \
 	Source/WebCore/rendering/line/LineWidth.h \
 	Source/WebCore/rendering/line/LineWidth.cpp \
+    Source/WebCore/rendering/line/TrailingObjects.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLBlock.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLBlock.h \
 	Source/WebCore/rendering/mathml/RenderMathMLFenced.cpp \

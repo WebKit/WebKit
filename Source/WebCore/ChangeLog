@@ -1,3 +1,32 @@
+2013-12-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        Move TrailingObjects class into its own h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=124956
+
+        Reviewed by David Hyatt.
+
+        Since I moved space-ignoring inline functions into MidpointState in r160074,
+        I can nicely separate TrailingObjects class from BreakingContextInlineHeader.h.
+        This change improves the readability, and it's part of the RenderBlockLineLayout
+        refactoring campaign, which is tracked under bug #121261.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.h:
+        * rendering/line/BreakingContextInlineHeaders.h:
+        * rendering/line/TrailingObjects.cpp: Added.
+        (WebCore::TrailingObjects::updateMidpointsForTrailingBoxes):
+        * rendering/line/TrailingObjects.h: Added.
+        (WebCore::TrailingObjects::TrailingObjects):
+        (WebCore::TrailingObjects::setTrailingWhitespace):
+        (WebCore::TrailingObjects::clear):
+        (WebCore::TrailingObjects::appendBoxIfNeeded):
+
 2013-12-04  Oliver Hunt  <oliver@apple.com>
 
         Refactor static getter function prototype to include thisValue in addition to the base object

@@ -27,6 +27,7 @@
 #include "RenderBlock.h"
 #include "RenderLineBoxList.h"
 #include "SimpleLineLayout.h"
+#include "TrailingObjects.h"
 
 namespace WebCore {
 

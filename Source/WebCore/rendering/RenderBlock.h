@@ -41,7 +41,6 @@
 namespace WebCore {
 
 class BidiContext;
-class InlineIterator;
 class LayoutStateMaintainer;
 class LineLayoutState;
 class LineWidth;
@@ -59,11 +58,7 @@ class BasicShape;
 class TextLayout;
 class WordMeasurement;
 
-template <class Iterator, class Run> class BidiResolver;
 template <class Run> class BidiRunList;
-template <class Iterator> class MidpointState;
-typedef BidiResolver<InlineIterator, BidiRun> InlineBidiResolver;
-typedef MidpointState<InlineIterator> LineMidpointState;
 typedef WTF::ListHashSet<RenderBox*, 16> TrackedRendererListHashSet;
 typedef WTF::HashMap<const RenderBlock*, OwnPtr<TrackedRendererListHashSet>> TrackedDescendantsMap;
 typedef WTF::HashMap<const RenderBox*, OwnPtr<HashSet<RenderBlock*>>> TrackedContainerMap;

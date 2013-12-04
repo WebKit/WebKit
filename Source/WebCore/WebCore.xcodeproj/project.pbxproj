@@ -6324,6 +6324,8 @@
 		FEE1811416C319E800084849 /* SQLTransactionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE1811216C319E800084849 /* SQLTransactionBackend.h */; };
 		FF945ECB161F7F3600971BC8 /* PseudoElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF945EC9161F7F3600971BC8 /* PseudoElement.cpp */; };
 		FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FF945ECA161F7F3600971BC8 /* PseudoElement.h */; };
+		FFAC30FE184FB145008C4F1E /* TrailingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = FFAC30FC184FB145008C4F1E /* TrailingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FFAC30FF184FB145008C4F1E /* TrailingObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFAC30FD184FB145008C4F1E /* TrailingObjects.cpp */; };
 		FFB698CC1833EE0D00158A31 /* LineBreaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFB698CA1833EC3800158A31 /* LineBreaker.cpp */; };
 		FFB698CF183402BB00158A31 /* LineInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFB698CD1833F17600158A31 /* LineInfo.cpp */; };
 		FFD5B97A135CC97800D5E92A /* PageVisibilityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */; };
@@ -13536,6 +13538,8 @@
 		FEE1811216C319E800084849 /* SQLTransactionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionBackend.h; sourceTree = "<group>"; };
 		FF945EC9161F7F3600971BC8 /* PseudoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PseudoElement.cpp; sourceTree = "<group>"; };
 		FF945ECA161F7F3600971BC8 /* PseudoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PseudoElement.h; sourceTree = "<group>"; };
+		FFAC30FC184FB145008C4F1E /* TrailingObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrailingObjects.h; sourceTree = "<group>"; };
+		FFAC30FD184FB145008C4F1E /* TrailingObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrailingObjects.cpp; sourceTree = "<group>"; };
 		FFB698C91832F10B00158A31 /* BreakingContextInlineHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BreakingContextInlineHeaders.h; sourceTree = "<group>"; };
 		FFB698CA1833EC3800158A31 /* LineBreaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineBreaker.cpp; sourceTree = "<group>"; };
 		FFB698CB1833EC3800158A31 /* LineBreaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineBreaker.h; sourceTree = "<group>"; };
@@ -22008,6 +22012,8 @@
 		FFB698C81832F10B00158A31 /* line */ = {
 			isa = PBXGroup;
 			children = (
+				FFAC30FC184FB145008C4F1E /* TrailingObjects.h */,
+				FFAC30FD184FB145008C4F1E /* TrailingObjects.cpp */,
 				FFDBC045183D27B700407109 /* LineWidth.h */,
 				FFDBC046183D27B700407109 /* LineWidth.cpp */,
 				FFEFAB2D183BCB6F00514534 /* LineInlineHeaders.h */,
@@ -24495,6 +24501,7 @@
 				49E911CB0EF86D47009D0CAF /* ScaleTransformOperation.h in Headers */,
 				5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */,
 				5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */,
+				FFAC30FE184FB145008C4F1E /* TrailingObjects.h in Headers */,
 				9BD0BF9312A42BF50072FD43 /* ScopedEventQueue.h in Headers */,
 				BCEC01BE0C274DAC009F4EC9 /* Screen.h in Headers */,
 				A84D82C111D3474800972990 /* ScriptableDocumentParser.h in Headers */,
@@ -26631,6 +26638,7 @@
 				7ACD88D314C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp in Sources */,
 				4D273CF91669420800259CA1 /* InspectorInputAgent.cpp in Sources */,
 				20D629261253690B00081543 /* InspectorInstrumentation.cpp in Sources */,
+				FFAC30FF184FB145008C4F1E /* TrailingObjects.cpp in Sources */,
 				71B1E1261640491A00B1880A /* InspectorLayerTreeAgent.cpp in Sources */,
 				7AA51DD5148506A900AD2752 /* InspectorMemoryAgent.cpp in Sources */,
 				7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */,
