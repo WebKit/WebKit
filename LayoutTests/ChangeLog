@@ -1,3 +1,23 @@
+2013-12-03  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Support for texImage2D/texSubImage2D of type HALF_FLOAT_OES
+        https://bugs.webkit.org/show_bug.cgi?id=110936
+
+        Reviewed by Brent Fulgham.
+
+        New tests for half-float textures.
+
+        * fast/canvas/webgl/oes-texture-half-float-expected.txt:
+        * fast/canvas/webgl/oes-texture-half-float-not-supported-expected.txt: Removed.
+        * fast/canvas/webgl/oes-texture-half-float-not-supported.html: Removed.
+        * fast/canvas/webgl/oes-texture-half-float-with-canvas-expected.txt: Added.
+        * fast/canvas/webgl/oes-texture-half-float-with-canvas.html: Added.
+        * fast/canvas/webgl/oes-texture-half-float-with-image-expected.txt: Added.
+        * fast/canvas/webgl/oes-texture-half-float-with-image.html: Added.
+        * fast/canvas/webgl/oes-texture-half-float-with-video-expected.txt: Added.
+        * fast/canvas/webgl/oes-texture-half-float-with-video.html: Added.
+        * fast/canvas/webgl/oes-texture-half-float.html:
+
 2013-12-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Test dynamic change of position for out-of-flow transformed element

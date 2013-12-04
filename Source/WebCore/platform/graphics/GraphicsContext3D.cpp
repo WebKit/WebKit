@@ -81,6 +81,27 @@ GraphicsContext3D::DataFormat getDataFormat(GC3Denum destinationFormat, GC3Denum
     case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
         dstFormat = GraphicsContext3D::DataFormatRGB565;
         break;
+    case GraphicsContext3D::HALF_FLOAT_OES: // OES_texture_half_float
+        switch (destinationFormat) {
+        case GraphicsContext3D::RGB:
+            dstFormat = GraphicsContext3D::DataFormatRGB16F;
+            break;
+        case GraphicsContext3D::RGBA:
+            dstFormat = GraphicsContext3D::DataFormatRGBA16F;
+            break;
+        case GraphicsContext3D::ALPHA:
+            dstFormat = GraphicsContext3D::DataFormatA16F;
+            break;
+        case GraphicsContext3D::LUMINANCE:
+            dstFormat = GraphicsContext3D::DataFormatR16F;
+            break;
+        case GraphicsContext3D::LUMINANCE_ALPHA:
+            dstFormat = GraphicsContext3D::DataFormatRA16F;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        break;
     case GraphicsContext3D::FLOAT: // OES_texture_float
         switch (destinationFormat) {
         case GraphicsContext3D::RGB:
@@ -309,6 +330,129 @@ bool GraphicsContext3D::extractTextureData(unsigned int width, unsigned int heig
 }
 
 namespace {
+
+// Following Float to Half-Float converion code is from the implementation of ftp://www.fox-toolkit.org/pub/fasthalffloatconversion.pdf,
+// "Fast Half Float Conversions" by Jeroen van der Zijp, November 2008 (Revised September 2010).
+// Specially, the basetable[512] and shifttable[512] are generated as follows:
+/*
+unsigned short basetable[512];
+unsigned char shifttable[512];
+
+void generatetables(){
+    unsigned int i;
+    int e;
+    for (i = 0; i < 256; ++i){
+        e = i - 127;
+        if (e < -24){ // Very small numbers map to zero
+            basetable[i | 0x000] = 0x0000;
+            basetable[i | 0x100] = 0x8000;
+            shifttable[i | 0x000] = 24;
+            shifttable[i | 0x100] = 24;
+        }
+        else if (e < -14) { // Small numbers map to denorms
+            basetable[i | 0x000] = (0x0400>>(-e-14));
+            basetable[i | 0x100] = (0x0400>>(-e-14)) | 0x8000;
+            shifttable[i | 0x000] = -e-1;
+            shifttable[i | 0x100] = -e-1;
+        }
+        else if (e <= 15){ // Normal numbers just lose precision
+            basetable[i | 0x000] = ((e+15)<<10);
+            basetable[i| 0x100] = ((e+15)<<10) | 0x8000;
+            shifttable[i|0x000] = 13;
+            shifttable[i|0x100] = 13;
+        }
+        else if (e<128){ // Large numbers map to Infinity
+            basetable[i|0x000] = 0x7C00;
+            basetable[i|0x100] = 0xFC00;
+            shifttable[i|0x000] = 24;
+            shifttable[i|0x100] = 24;
+        }
+        else { // Infinity and NaN's stay Infinity and NaN's
+            basetable[i|0x000] = 0x7C00;
+            basetable[i|0x100] = 0xFC00;
+            shifttable[i|0x000] = 13;
+            shifttable[i|0x100] = 13;
+       }
+    }
+}
+*/
+
+unsigned short baseTable[512] = {
+0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
+0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
+0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
+0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
+0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
+0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
+0,      0,      0,      0,      0,      0,      0,      1,      2,      4,      8,      16,     32,     64,     128,    256,
+512,    1024,   2048,   3072,   4096,   5120,   6144,   7168,   8192,   9216,   10240,  11264,  12288,  13312,  14336,  15360,
+16384,  17408,  18432,  19456,  20480,  21504,  22528,  23552,  24576,  25600,  26624,  27648,  28672,  29696,  30720,  31744,
+31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,
+31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,
+31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,
+31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,
+31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,
+31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,
+31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,  31744,
+32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,
+32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,
+32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,
+32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,
+32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,
+32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,  32768,
+32768,  32768,  32768,  32768,  32768,  32768,  32768,  32769,  32770,  32772,  32776,  32784,  32800,  32832,  32896,  33024,
+33280,  33792,  34816,  35840,  36864,  37888,  38912,  39936,  40960,  41984,  43008,  44032,  45056,  46080,  47104,  48128,
+49152,  50176,  51200,  52224,  53248,  54272,  55296,  56320,  57344,  58368,  59392,  60416,  61440,  62464,  63488,  64512,
+64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,
+64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,
+64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,
+64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,
+64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,
+64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,
+64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512
+};
+
+unsigned char shiftTable[512] = {
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     23,     22,     21,     20,     19,     18,     17,     16,     15,
+14,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,
+13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     13,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     23,     22,     21,     20,     19,     18,     17,     16,     15,
+14,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,
+13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     13,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
+24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     13
+};
+
+unsigned short convertFloatToHalfFloat(float f)
+{
+    unsigned temp = *(reinterpret_cast<unsigned *>(&f));
+    unsigned signexp = (temp >> 23) & 0x1ff;
+    return baseTable[signexp] + ((temp & 0x007fffff) >> shiftTable[signexp]);
+}
 
 /* BEGIN CODE SHARED WITH MOZILLA FIREFOX */
 
@@ -1067,17 +1211,163 @@ template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRA32F, GraphicsC
     }
 }
 
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGBA16F, GraphicsContext3D::AlphaDoNothing, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertFloatToHalfFloat(source[0]);
+        destination[1] = convertFloatToHalfFloat(source[1]);
+        destination[2] = convertFloatToHalfFloat(source[2]);
+        destination[3] = convertFloatToHalfFloat(source[3]);
+        source += 4;
+        destination += 4;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGBA16F, GraphicsContext3D::AlphaDoPremultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3];
+        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
+        destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
+        destination[2] = convertFloatToHalfFloat(source[2] * scaleFactor);
+        destination[3] = convertFloatToHalfFloat(source[3]);
+        source += 4;
+        destination += 4;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGBA16F, GraphicsContext3D::AlphaDoUnmultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
+        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
+        destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
+        destination[2] = convertFloatToHalfFloat(source[2] * scaleFactor);
+        destination[3] = convertFloatToHalfFloat(source[3]);
+        source += 4;
+        destination += 4;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGB16F, GraphicsContext3D::AlphaDoNothing, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertFloatToHalfFloat(source[0]);
+        destination[1] = convertFloatToHalfFloat(source[1]);
+        destination[2] = convertFloatToHalfFloat(source[2]);
+        source += 4;
+        destination += 3;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGB16F, GraphicsContext3D::AlphaDoPremultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3];
+        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
+        destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
+        destination[2] = convertFloatToHalfFloat(source[2] * scaleFactor);
+        source += 4;
+        destination += 3;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRGB16F, GraphicsContext3D::AlphaDoUnmultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
+        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
+        destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
+        destination[2] = convertFloatToHalfFloat(source[2] * scaleFactor);
+        source += 4;
+        destination += 3;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRA16F, GraphicsContext3D::AlphaDoNothing, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertFloatToHalfFloat(source[0]);
+        destination[1] = convertFloatToHalfFloat(source[3]);
+        source += 4;
+        destination += 2;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRA16F, GraphicsContext3D::AlphaDoPremultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3];
+        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
+        destination[1] = convertFloatToHalfFloat(source[3]);
+        source += 4;
+        destination += 2;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatRA16F, GraphicsContext3D::AlphaDoUnmultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
+        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
+        destination[1] = convertFloatToHalfFloat(source[3]);
+        source += 4;
+        destination += 2;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatR16F, GraphicsContext3D::AlphaDoNothing, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertFloatToHalfFloat(source[0]);
+        source += 4;
+        destination += 1;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatR16F, GraphicsContext3D::AlphaDoPremultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3];
+        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
+        source += 4;
+        destination += 1;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatR16F, GraphicsContext3D::AlphaDoUnmultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
+        destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
+        source += 4;
+        destination += 1;
+    }
+}
+
+template<> ALWAYS_INLINE void pack<GraphicsContext3D::DataFormatA16F, GraphicsContext3D::AlphaDoNothing, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+{
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
+        destination[0] = convertFloatToHalfFloat(source[3]);
+        source += 4;
+        destination += 1;
+    }
+}
+
 ALWAYS_INLINE bool HasAlpha(int format)
 {
     return format == GraphicsContext3D::DataFormatA8
+        || format == GraphicsContext3D::DataFormatA16F
         || format == GraphicsContext3D::DataFormatA32F
         || format == GraphicsContext3D::DataFormatRA8
         || format == GraphicsContext3D::DataFormatAR8
+        || format == GraphicsContext3D::DataFormatRA16F
         || format == GraphicsContext3D::DataFormatRA32F
         || format == GraphicsContext3D::DataFormatRGBA8
         || format == GraphicsContext3D::DataFormatBGRA8
         || format == GraphicsContext3D::DataFormatARGB8
         || format == GraphicsContext3D::DataFormatABGR8
+        || format == GraphicsContext3D::DataFormatRGBA16F
         || format == GraphicsContext3D::DataFormatRGBA32F
         || format == GraphicsContext3D::DataFormatRGBA4444
         || format == GraphicsContext3D::DataFormatRGBA5551;
@@ -1086,8 +1376,10 @@ ALWAYS_INLINE bool HasAlpha(int format)
 ALWAYS_INLINE bool HasColor(int format)
 {
     return format == GraphicsContext3D::DataFormatRGBA8
+        || format == GraphicsContext3D::DataFormatRGBA16F
         || format == GraphicsContext3D::DataFormatRGBA32F
         || format == GraphicsContext3D::DataFormatRGB8
+        || format == GraphicsContext3D::DataFormatRGB16F
         || format == GraphicsContext3D::DataFormatRGB32F
         || format == GraphicsContext3D::DataFormatBGR8
         || format == GraphicsContext3D::DataFormatBGRA8
@@ -1097,8 +1389,10 @@ ALWAYS_INLINE bool HasColor(int format)
         || format == GraphicsContext3D::DataFormatRGBA4444
         || format == GraphicsContext3D::DataFormatRGB565
         || format == GraphicsContext3D::DataFormatR8
+        || format == GraphicsContext3D::DataFormatR16F
         || format == GraphicsContext3D::DataFormatR32F
         || format == GraphicsContext3D::DataFormatRA8
+        || format == GraphicsContext3D::DataFormatRA16F
         || format == GraphicsContext3D::DataFormatRA32F
         || format == GraphicsContext3D::DataFormatAR8;
 }
@@ -1114,6 +1408,16 @@ struct IsFloatFormat {
 };
 
 template<int Format>
+struct IsHalfFloatFormat {
+    static const bool Value =
+        Format == GraphicsContext3D::DataFormatRGBA16F
+        || Format == GraphicsContext3D::DataFormatRGB16F
+        || Format == GraphicsContext3D::DataFormatRA16F
+        || Format == GraphicsContext3D::DataFormatR16F
+        || Format == GraphicsContext3D::DataFormatA16F;
+};
+
+template<int Format>
 struct Is16bppFormat {
     static const bool Value =
         Format == GraphicsContext3D::DataFormatRGBA5551
@@ -1121,24 +1425,29 @@ struct Is16bppFormat {
         || Format == GraphicsContext3D::DataFormatRGB565;
 };
 
-template<int Format, bool IsFloat = IsFloatFormat<Format>::Value, bool Is16bpp = Is16bppFormat<Format>::Value>
+template<int Format, bool IsFloat = IsFloatFormat<Format>::Value, bool IsHalfFloat = IsHalfFloatFormat<Format>::Value, bool Is16bpp = Is16bppFormat<Format>::Value>
 struct DataTypeForFormat {
     typedef uint8_t Type;
 };
 
 template<int Format>
-struct DataTypeForFormat<Format, true, false> {
+struct DataTypeForFormat<Format, true, false, false> {
     typedef float Type;
 };
 
 template<int Format>
-struct DataTypeForFormat<Format, false, true> {
+struct DataTypeForFormat<Format, false, true, false> {
+    typedef uint16_t Type;
+};
+
+template<int Format>
+struct DataTypeForFormat<Format, false, false, true> {
     typedef uint16_t Type;
 };
 
 template<int Format>
 struct IntermediateFormat {
-    static const int Value = IsFloatFormat<Format>::Value ? GraphicsContext3D::DataFormatRGBA32F : GraphicsContext3D::DataFormatRGBA8;
+    static const int Value = (IsFloatFormat<Format>::Value || IsHalfFloatFormat<Format>::Value) ? GraphicsContext3D::DataFormatRGBA32F : GraphicsContext3D::DataFormatRGBA8;
 };
 
 ALWAYS_INLINE unsigned TexelBytesForFormat(GraphicsContext3D::DataFormat format)
@@ -1152,6 +1461,8 @@ ALWAYS_INLINE unsigned TexelBytesForFormat(GraphicsContext3D::DataFormat format)
     case GraphicsContext3D::DataFormatRGBA5551:
     case GraphicsContext3D::DataFormatRGBA4444:
     case GraphicsContext3D::DataFormatRGB565:
+    case GraphicsContext3D::DataFormatA16F:
+    case GraphicsContext3D::DataFormatR16F:
         return 2;
     case GraphicsContext3D::DataFormatRGB8:
     case GraphicsContext3D::DataFormatBGR8:
@@ -1162,8 +1473,12 @@ ALWAYS_INLINE unsigned TexelBytesForFormat(GraphicsContext3D::DataFormat format)
     case GraphicsContext3D::DataFormatBGRA8:
     case GraphicsContext3D::DataFormatR32F:
     case GraphicsContext3D::DataFormatA32F:
+    case GraphicsContext3D::DataFormatRA16F:
         return 4;
+    case GraphicsContext3D::DataFormatRGB16F:
+        return 6;
     case GraphicsContext3D::DataFormatRA32F:
+    case GraphicsContext3D::DataFormatRGBA16F:
         return 8;
     case GraphicsContext3D::DataFormatRGB32F:
         return 12;
@@ -1250,17 +1565,22 @@ ALWAYS_INLINE void FormatConverter::convert(GraphicsContext3D::DataFormat dstFor
 
         switch (dstFormat) {
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatR8)
-            FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatA8)
+            FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatR16F)
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatR32F)
+            FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatA8)
+            FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatA16F)
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatA32F)
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRA8)
+            FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRA16F)
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRA32F)
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRGB8)
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRGB565)
+            FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRGB16F)
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRGB32F)
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRGBA8)
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRGBA5551)
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRGBA4444)
+            FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRGBA16F)
             FORMATCONVERTER_CASE_DSTFORMAT(GraphicsContext3D::DataFormatRGBA32F)
         default:
             ASSERT_NOT_REACHED();
@@ -1322,7 +1642,7 @@ ALWAYS_INLINE void FormatConverter::convert()
     typedef typename DataTypeForFormat<IntermediateSrcFormat>::Type IntermediateSrcType;
     const ptrdiff_t srcStrideInElements = m_srcStride / sizeof(SrcType);
     const ptrdiff_t dstStrideInElements = m_dstStride / sizeof(DstType);
-    const bool trivialUnpack = (SrcFormat == GraphicsContext3D::DataFormatRGBA8 && !IsFloatFormat<DstFormat>::Value) || SrcFormat == GraphicsContext3D::DataFormatRGBA32F;
+    const bool trivialUnpack = (SrcFormat == GraphicsContext3D::DataFormatRGBA8 && !IsFloatFormat<DstFormat>::Value && !IsHalfFloatFormat<DstFormat>::Value) || SrcFormat == GraphicsContext3D::DataFormatRGBA32F;
     const bool trivialPack = (DstFormat == GraphicsContext3D::DataFormatRGBA8 || DstFormat == GraphicsContext3D::DataFormatRGBA32F) && alphaOp == GraphicsContext3D::AlphaDoNothing && m_dstStride > 0;
     ASSERT(!trivialUnpack || !trivialPack);
 

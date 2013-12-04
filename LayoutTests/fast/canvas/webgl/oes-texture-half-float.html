@@ -1,3 +1,30 @@
+<!--
+
+/*
+** Copyright (c) 2013 The Khronos Group Inc.
+**
+** Permission is hereby granted, free of charge, to any person obtaining a
+** copy of this software and/or associated documentation files (the
+** "Materials"), to deal in the Materials without restriction, including
+** without limitation the rights to use, copy, modify, merge, publish,
+** distribute, sublicense, and/or sell copies of the Materials, and to
+** permit persons to whom the Materials are furnished to do so, subject to
+** the following conditions:
+**
+** The above copyright notice and this permission notice shall be included
+** in all copies or substantial portions of the Materials.
+**
+** THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+** IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+** MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+*/
+
+-->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -30,7 +57,7 @@ void main()
     }
 }
 </script>
-<!-- Shaders for testing half floating-point render targets -->
+<!-- Shaders for testing half-floating-point render targets -->
 <script id="positionVertexShader" type="x-shader/x-vertex">
 attribute vec4 vPosition;
 void main()
@@ -45,15 +72,16 @@ void main()
 }
 </script>
 <script>
+"use strict"
 description("This test verifies the functionality of OES_texture_half_float with null/non-null ArrayBufferView");
+
 debug("");
-
-if (window.internals)
-    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
-
 var wtu = WebGLTestUtils;
 var canvas = document.getElementById("canvas");
 var gl = wtu.create3DContext(canvas);
+// This constant must be defined in order to run the texture creation test without the extension enabled.
+var halfFloatOESEnum = 0x8D61;
+var ext = null;
 
 if (!gl) {
     testFailed("WebGL context does not exists");
@@ -63,7 +91,7 @@ if (!gl) {
     // Verify that allocation of texture fails if extension is not enabled
     runTextureCreationTest(false);
 
-    if(!gl.getExtension("OES_texture_half_float")) {
+    if (!(ext = gl.getExtension("OES_texture_half_float"))) {
         testPassed("No OES_texture_half_float support. This is legal");
     } else {
         testPassed("Successfully enabled OES_texture_half_float extension");
@@ -73,12 +101,12 @@ if (!gl) {
         for (var i = 0; i < formats.length; i++) {
             runTextureCreationTest(true, formats[i], null);
         }
-        
+
         // Texture creation should fail when passed with non-null ArrayBufferView
         for (var i = 0; i < formats.length; i++) {
             var width = 2;
             var height = 2;
-            
+
             // Float32Array
             var float32Data = new Float32Array(width * height * getNumberOfChannels(formats[i]));
             for (var ii = 0; ii < float32Data.length; ii++) {
@@ -98,7 +126,7 @@ if (!gl) {
             for (var ii = 0; ii <  uint16Data.length; ii++) {
                 uint16Data[ii] = 1000;
             }
-            runTextureCreationTest(true, formats[i], uint16Data);            
+            runTextureCreationTest(true, formats[i], uint16Data);
         }
 
         // Check if attaching texture as FBO target succeeds (Not mandatory)
@@ -151,22 +179,22 @@ function runTextureCreationTest(extensionEnabled, opt_format, opt_data)
     var format = opt_format || gl.RGBA;
     var data = opt_data || null;
     var expectSuccess = true;
-    
+
     if (!extensionEnabled || data)
         expectSuccess = false;
     debug("Testing texture creation with extension " + (extensionEnabled ? "enabled" : "disabled") +
           ", format " + getFormatName(format) + ", and data " + (data ? "non-null" : "null") +
-          ". Expect " + (expectSuccess ? "Success" : "Failure"));   
+          ". Expect " + (expectSuccess ? "Success" : "Failure"));
 
     var texture = allocateTexture();
     var width = 2;
     var height = 2;
-    gl.texImage2D(gl.TEXTURE_2D, 0, format, width, height, 0, format, gl.HALF_FLOAT_OES, data);
+    gl.texImage2D(gl.TEXTURE_2D, 0, format, width, height, 0, format, halfFloatOESEnum, data);
     if(!extensionEnabled) {
-        glErrorShouldBe(gl, gl.INVALID_ENUM, "Half floating point texture must be diallowed if OES_texture_half_float isn't enabled");
+        glErrorShouldBe(gl, gl.INVALID_ENUM, "Half floating point texture must be disallowed if OES_texture_half_float isn't enabled");
         return;
     } else if (data) {
-        glErrorShouldBe(gl, gl.INVALID_OPERATION, "Half floating point texture allocation must be diallowed when ArrayBufferView is not-null");
+        glErrorShouldBe(gl, gl.INVALID_OPERATION, "Half floating point texture allocation must be disallowed when ArrayBufferView is not-null");
         return;
     } else {
         glErrorShouldBe(gl, gl.NO_ERROR, "Half floating point texture allocation should succeed if OES_texture_half_float is enabled");
@@ -186,8 +214,8 @@ function runRenderTargetTest(testProgram)
     var texture = allocateTexture();
     var width = 2;
     var height = 2;
-    
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.HALF_FLOAT_OES, null);
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, ext.HALF_FLOAT_OES, null);
     glErrorShouldBe(gl, gl.NO_ERROR, "Half floating point texture allocation should succeed if OES_texture_half_float is enabled");
 
     // Try to use this texture as render target

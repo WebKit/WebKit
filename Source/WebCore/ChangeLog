@@ -1,3 +1,34 @@
+2013-12-03  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Support for texImage2D of type HALF_FLOAT_OES
+        https://bugs.webkit.org/show_bug.cgi?id=110936
+
+        Reviewed by Brent Fulgham.
+
+        Add support for the HALF_FLOAT_OES texture format from texImage2D
+        and texSubImage2D.
+
+        A lot of this patch comes from the original patch on the bug
+        by Nayan Kumar, and the Blink commit:
+        https://codereview.chromium.org/13842017
+
+        Tests: fast/canvas/webgl/oes-texture-half-float-with-canvas.html
+               fast/canvas/webgl/oes-texture-half-float-with-image.html
+               fast/canvas/webgl/oes-texture-half-float-with-video.html
+
+        * html/canvas/OESTextureHalfFloat.idl: New HALF_FLOAT_OES constant value.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateTexFunc): Remove the code that
+        would bail if half-float values were used.
+        * platform/graphics/GraphicsContext3D.cpp:
+        - Return appropriate DataFormats for half floating point types.
+        - Copy the float -> half-float code from Blink
+        - New pack functions for half floats
+        * platform/graphics/GraphicsContext3D.h: New format types.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::texSubImage2D): Use GL_HALF_FLOAT_ARB if we're passed
+        a HALF_FLOAT_OES.
+
 2013-12-04  Daniel Bates  <dabates@apple.com>
 
         Fix the Apple Windows build after <http://trac.webkit.org/changeset/160113>

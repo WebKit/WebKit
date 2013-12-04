@@ -1,0 +1,30 @@
+Verify texImage2D and texSubImage2D code paths taking canvas elements (RGBA/HALF_FLOAT_OES)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Successfully enabled OES_texture_half_float extension
+Testing texImage2D with flipY=true
+Checking lower left corner
+PASS shouldBe 0,255,0
+Checking upper left corner
+PASS shouldBe 255,0,0
+Testing texImage2D with flipY=false
+Checking lower left corner
+PASS shouldBe 255,0,0
+Checking upper left corner
+PASS shouldBe 0,255,0
+Testing texSubImage2D with flipY=true
+Checking lower left corner
+PASS shouldBe 0,255,0
+Checking upper left corner
+PASS shouldBe 255,0,0
+Testing texSubImage2D with flipY=false
+Checking lower left corner
+PASS shouldBe 255,0,0
+Checking upper left corner
+PASS shouldBe 0,255,0
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
