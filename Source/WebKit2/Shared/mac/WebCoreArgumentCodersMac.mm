@@ -168,7 +168,7 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, 
 
     id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
     if (!peerCertificateChain) {
-        if (SecTrustRef peerTrust = (SecTrustRef)userInfo[NSURLErrorFailingURLPeerTrustErrorKey]) {
+        if (SecTrustRef peerTrust = (SecTrustRef)[userInfo objectForKey:NSURLErrorFailingURLPeerTrustErrorKey]) {
             CFIndex count = SecTrustGetCertificateCount(peerTrust);
             peerCertificateChain = [NSMutableArray arrayWithCapacity:count];
             for (CFIndex i = 0; i < count; ++i)
