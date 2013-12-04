@@ -1,5 +1,30 @@
 2013-12-04  Antoine Quint  <graouts@apple.com>
 
+        Web Inspector: "data detectors" menu on hover for actionable tokens
+        https://bugs.webkit.org/show_bug.cgi?id=124363
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new WebInspector.HoverMenu class to display an overlay menu that is presented
+        with respect to a target frame that it draws itself around adding a customizable
+        action button to its right. The menu uses fade animations as it's presented and
+        dismissed and a single delegation method is fired when the button is pressed. Finally,
+        just like a popover, it automatically dismisses itself upon scrolling anywhere
+        outside of its bounds.
+
+        * UserInterface/HoverMenu.css: Added.
+        * UserInterface/HoverMenu.js: Added.
+        (WebInspector.HoverMenu):
+        (WebInspector.HoverMenu.prototype.get element):
+        (WebInspector.HoverMenu.prototype.dismiss):
+        (WebInspector.HoverMenu.prototype.handleEvent):
+        (WebInspector.HoverMenu.prototype._handleClickEvent):
+        * UserInterface/Images/HoverMenuButton.png: Added.
+        * UserInterface/Images/HoverMenuButton@2x.png: Added.
+        * UserInterface/Main.html:
+
+2013-12-04  Antoine Quint  <graouts@apple.com>
+
         Web Inspector: edited color should serialize back to original format when possible
         https://bugs.webkit.org/show_bug.cgi?id=125244
 
