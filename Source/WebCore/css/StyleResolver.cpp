@@ -2027,10 +2027,16 @@ static bool createGridPosition(CSSValue* value, GridPosition& position)
 
 void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 {
-    // CSS variables don't resolve shorthands at parsing time, so this should be *after* handling variables.
     ASSERT_WITH_MESSAGE(!isExpandedShorthand(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
 
     State& state = m_state;
+
+    if (CSSProperty::isDirectionAwareProperty(id)) {
+        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, state.style()->direction(), state.style()->writingMode());
+        ASSERT(newId != id);
+        return applyProperty(newId, value);
+    }
+
     bool isInherit = state.parentNode() && value->isInheritedValue();
     bool isInitial = value->isInitialValue() || (!state.parentNode() && value->isInheritedValue());
 
@@ -2557,38 +2563,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 #endif
     case CSSPropertyInvalid:
         return;
-    // Directional properties are resolved by resolveDirectionAwareProperty() before the switch.
-    case CSSPropertyWebkitBorderEndColor:
-    case CSSPropertyWebkitBorderEndStyle:
-    case CSSPropertyWebkitBorderEndWidth:
-    case CSSPropertyWebkitBorderStartColor:
-    case CSSPropertyWebkitBorderStartStyle:
-    case CSSPropertyWebkitBorderStartWidth:
-    case CSSPropertyWebkitBorderBeforeColor:
-    case CSSPropertyWebkitBorderBeforeStyle:
-    case CSSPropertyWebkitBorderBeforeWidth:
-    case CSSPropertyWebkitBorderAfterColor:
-    case CSSPropertyWebkitBorderAfterStyle:
-    case CSSPropertyWebkitBorderAfterWidth:
-    case CSSPropertyWebkitMarginEnd:
-    case CSSPropertyWebkitMarginStart:
-    case CSSPropertyWebkitMarginBefore:
-    case CSSPropertyWebkitMarginAfter:
-    case CSSPropertyWebkitPaddingEnd:
-    case CSSPropertyWebkitPaddingStart:
-    case CSSPropertyWebkitPaddingBefore:
-    case CSSPropertyWebkitPaddingAfter:
-    case CSSPropertyWebkitLogicalWidth:
-    case CSSPropertyWebkitLogicalHeight:
-    case CSSPropertyWebkitMinLogicalWidth:
-    case CSSPropertyWebkitMinLogicalHeight:
-    case CSSPropertyWebkitMaxLogicalWidth:
-    case CSSPropertyWebkitMaxLogicalHeight:
-    {
-        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, state.style()->direction(), state.style()->writingMode());
-        ASSERT(newId != id);
-        return applyProperty(newId, value);
-    }
     case CSSPropertyFontStretch:
     case CSSPropertyPage:
     case CSSPropertyTextLineThrough:

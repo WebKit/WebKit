@@ -1,3 +1,14 @@
+2013-12-03  Andreas Kling  <akling@apple.com>
+
+        Add a CSSProperty::isDirectionAwareProperty() helper.
+        <https://webkit.org/b/125202>
+
+        Move the block of case labels for checking whether a CSS property ID
+        is a directional property into a separate function. Also removed an
+        outdated comment about CSS variables.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert the inadvertently committed change.

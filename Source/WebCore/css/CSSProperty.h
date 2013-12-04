@@ -79,6 +79,7 @@ public:
 
     static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, TextDirection, WritingMode);
     static bool isInheritedProperty(CSSPropertyID);
+    static bool isDirectionAwareProperty(CSSPropertyID);
 
     const StylePropertyMetadata& metadata() const { return m_metadata; }
 
