@@ -1,5 +1,17 @@
 2013-12-04  László Langó  <lango@inf.u-szeged.hu>
 
+        check-webkit-style is wrong about expected format parameter pack rvalue reference arguments
+        https://bugs.webkit.org/show_bug.cgi?id=124731
+
+        Reviewed by Zoltan Herczeg.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (Cpp11StyleTest.test_rvaule_reference_in_parameter_pack):
+
+2013-12-04  László Langó  <lango@inf.u-szeged.hu>
+
         Remove codecs and os dependencies from filereader.py in webkitpy/style.
         https://bugs.webkit.org/show_bug.cgi?id=124719
 

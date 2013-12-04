@@ -628,6 +628,8 @@ class Cpp11StyleTest(CppStyleTestBase):
     def test_rvaule_reference_at_end_of_line(self):
         self.assert_lint('T&&', '')
 
+    def test_rvaule_reference_in_parameter_pack(self):
+        self.assert_lint('void requestCompleted(Arguments&&... arguments)', '')
 
 class CppStyleTest(CppStyleTestBase):
 

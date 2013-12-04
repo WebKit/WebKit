@@ -1842,7 +1842,9 @@ def check_spacing(file_extension, clean_lines, line_number, error):
         # regexp takes linear rather than quadratic time.
         if not search(r'<[^<]*,\s*$', line):  # template params spill
             matched = search(r'[^<>=!\s](<)[^<>=!\s]([^>]|->)*$', line)
-    if matched:
+    # It is necessary to check this, because rvaule references can be in
+    # parameter packs (c++11 feature)
+    if matched and not search(r'&&\.\.\.', line):
         error(line_number, 'whitespace/operators', 3,
               'Missing spaces around %s' % matched.group(1))
 
