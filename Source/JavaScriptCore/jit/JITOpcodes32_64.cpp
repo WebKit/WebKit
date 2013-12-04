@@ -152,13 +152,23 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
     int src = currentInstruction[2].u.operand;
-
+    
     if (m_codeBlock->isConstantRegisterIndex(src))
         emitStore(dst, getConstantOperand(src));
     else {
         emitLoad(src, regT1, regT0);
         emitStore(dst, regT1, regT0);
     }
+}
+
+void JIT::emit_op_captured_mov(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int src = currentInstruction[2].u.operand;
+
+    emitLoad(src, regT1, regT0);
+    emitNotifyWrite(regT1, regT0, regT2, currentInstruction[3].u.watchpointSet);
+    emitStore(dst, regT1, regT0);
 }
 
 void JIT::emit_op_end(Instruction* currentInstruction)

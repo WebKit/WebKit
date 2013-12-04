@@ -497,15 +497,16 @@ namespace JSC {
         RegisterID* newRegister();
 
         // Adds a var slot and maps it to the name ident in symbolTable().
-        RegisterID* addVar(const Identifier& ident, bool isConstant)
+        enum WatchMode { IsWatchable, NotWatchable };
+        RegisterID* addVar(const Identifier& ident, ConstantMode constantMode, WatchMode watchMode)
         {
             RegisterID* local;
-            addVar(ident, isConstant, local);
+            addVar(ident, constantMode, watchMode, local);
             return local;
         }
 
         // Ditto. Returns true if a new RegisterID was added, false if a pre-existing RegisterID was re-used.
-        bool addVar(const Identifier&, bool isConstant, RegisterID*&);
+        bool addVar(const Identifier&, ConstantMode, WatchMode, RegisterID*&);
         
         // Adds an anonymous var slot. To give this slot a name, add it to symbolTable().
         RegisterID* addVar()
@@ -590,6 +591,16 @@ namespace JSC {
         void createActivationIfNecessary();
         RegisterID* createLazyRegisterIfNecessary(RegisterID*);
         
+        StringImpl* watchableVariable(int operand)
+        {
+            VirtualRegister reg(operand);
+            if (!reg.isLocal())
+                return 0;
+            if (static_cast<size_t>(reg.toLocal()) >= m_watchableVariables.size())
+                return 0;
+            return m_watchableVariables[reg.toLocal()];
+        }
+        
         Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow> m_instructions;
 
         bool m_shouldEmitDebugHooks;
@@ -609,6 +620,7 @@ namespace JSC {
         RegisterID* m_activationRegister;
         RegisterID* m_emptyValueRegister;
         RegisterID* m_globalObjectRegister;
+        Vector<StringImpl*, 16> m_watchableVariables;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         SegmentedVector<RegisterID, 32> m_calleeRegisters;
         SegmentedVector<RegisterID, 32> m_parameters;

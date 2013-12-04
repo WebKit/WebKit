@@ -80,10 +80,8 @@ public:
     
     void invalidate()
     {
-        ASSERT(!!m_inferredValue);
-        ASSERT(state() == IsWatched);
         m_inferredValue = JSValue();
-        fireAll();
+        WatchpointSet::invalidate();
     }
     
     void finalizeUnconditionally()

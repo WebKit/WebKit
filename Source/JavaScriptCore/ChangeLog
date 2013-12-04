@@ -1,3 +1,77 @@
+2013-12-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Infer constant closure variables
+        https://bugs.webkit.org/show_bug.cgi?id=124630
+
+        Reviewed by Geoffrey Garen.
+        
+        Captured variables that are assigned once (not counting op_enter's Undefined
+        initialization) and that are contained within a function that has thus far only been
+        entered once are now constant folded. It's pretty awesome.
+        
+        This involves a watchpoint on the assignment to variables and a watchpoint on entry
+        into the function. The former is reused from global variable constant inference and the
+        latter is reused from one-time closure inference.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/Instruction.h:
+        (JSC::Instruction::Instruction):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedInstruction::UnlinkedInstruction):
+        * bytecode/VariableWatchpointSet.h:
+        (JSC::VariableWatchpointSet::invalidate):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::invalidate):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addVar):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitInitLazyRegister):
+        (JSC::BytecodeGenerator::emitMove):
+        (JSC::BytecodeGenerator::emitNewFunctionInternal):
+        (JSC::BytecodeGenerator::createArgumentsIfNecessary):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::addVar):
+        (JSC::BytecodeGenerator::watchableVariable):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::inferredConstant):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::tryGetActivation):
+        (JSC::DFG::Graph::tryGetRegisters):
+        * dfg/DFGGraph.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_mov):
+        (JSC::JIT::emit_op_captured_mov):
+        (JSC::JIT::emit_op_new_captured_func):
+        (JSC::JIT::emitSlow_op_captured_mov):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_mov):
+        (JSC::JIT::emit_op_captured_mov):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/ConstantMode.h: Added.
+        * runtime/JSGlobalObject.h:
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTableEntry::prepareToWatch):
+
 2013-12-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed project file gardening.

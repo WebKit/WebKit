@@ -115,19 +115,31 @@ ParserError BytecodeGenerator::generate()
     return ParserError(ParserError::ErrorNone);
 }
 
-bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, RegisterID*& r0)
+bool BytecodeGenerator::addVar(
+    const Identifier& ident, ConstantMode constantMode, WatchMode watchMode, RegisterID*& r0)
 {
+    ASSERT(static_cast<size_t>(m_codeBlock->m_numVars) == m_calleeRegisters.size());
+    
     ConcurrentJITLocker locker(symbolTable().m_lock);
     int index = virtualRegisterForLocal(m_calleeRegisters.size()).offset();
-    SymbolTableEntry newEntry(index, isConstant ? ReadOnly : 0);
+    SymbolTableEntry newEntry(index, constantMode == IsConstant ? ReadOnly : 0);
     SymbolTable::Map::AddResult result = symbolTable().add(locker, ident.impl(), newEntry);
 
     if (!result.isNewEntry) {
         r0 = &registerFor(result.iterator->value.getIndex());
         return false;
     }
-
+    
+    if (watchMode == IsWatchable) {
+        while (m_watchableVariables.size() < static_cast<size_t>(m_codeBlock->m_numVars))
+            m_watchableVariables.append(nullptr);
+        m_watchableVariables.append(ident.impl());
+    }
+    
     r0 = addVar();
+    
+    ASSERT(watchMode == NotWatchable || static_cast<size_t>(m_codeBlock->m_numVars) == m_watchableVariables.size());
+    
     return true;
 }
 
@@ -236,7 +248,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     if (functionBody->usesArguments() || codeBlock->usesEval()) { // May reify arguments object.
         RegisterID* unmodifiedArgumentsRegister = addVar(); // Anonymous, so it can't be modified by user code.
-        RegisterID* argumentsRegister = addVar(propertyNames().arguments, false); // Can be changed by assigning to 'arguments'.
+        RegisterID* argumentsRegister = addVar(propertyNames().arguments, IsVariable, NotWatchable); // Can be changed by assigning to 'arguments'.
 
         // We can save a little space by hard-coding the knowledge that the two
         // 'arguments' values are stored in consecutive registers, and storing
@@ -307,13 +319,13 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
                     instructions().append(m_activationRegister->index());
                 }
                 m_functions.add(ident.impl());
-                emitNewFunction(addVar(ident, false), IsCaptured, function);
+                emitNewFunction(addVar(ident, IsVariable, IsWatchable), IsCaptured, function);
             }
         }
         for (size_t i = 0; i < varStack.size(); ++i) {
             const Identifier& ident = varStack[i].first;
             if (functionBody->captures(ident))
-                addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
+                addVar(ident, (varStack[i].second & DeclarationStacks::IsConstant) ? IsConstant : IsVariable, IsWatchable);
         }
     }
     bool canLazilyCreateFunctions = !functionBody->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks;
@@ -331,7 +343,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         const Identifier& ident = function->ident();
         if (!functionBody->captures(ident)) {
             m_functions.add(ident.impl());
-            RefPtr<RegisterID> reg = addVar(ident, false);
+            RefPtr<RegisterID> reg = addVar(ident, IsVariable, NotWatchable);
             // Don't lazily create functions that override the name 'arguments'
             // as this would complicate lazy instantiation of actual arguments.
             if (!canLazilyCreateFunctions || ident == propertyNames().arguments)
@@ -346,7 +358,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     for (size_t i = 0; i < varStack.size(); ++i) {
         const Identifier& ident = varStack[i].first;
         if (!functionBody->captures(ident))
-            addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
+            addVar(ident, (varStack[i].second & DeclarationStacks::IsConstant) ? IsConstant : IsVariable, NotWatchable);
     }
 
     if (shouldCaptureAllTheThings)
@@ -457,6 +469,7 @@ RegisterID* BytecodeGenerator::emitInitLazyRegister(RegisterID* reg)
 {
     emitOpcode(op_init_lazy_reg);
     instructions().append(reg->index());
+    ASSERT(!watchableVariable(reg->index()));
     return reg;
 }
 
@@ -1007,6 +1020,8 @@ RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, CaptureMode captureMode
     emitOpcode(captureMode == IsCaptured ? op_captured_mov : op_mov);
     instructions().append(dst->index());
     instructions().append(src->index());
+    if (captureMode == IsCaptured)
+        instructions().append(watchableVariable(dst->index()));
     return dst;
 }
 
@@ -1579,7 +1594,11 @@ RegisterID* BytecodeGenerator::emitNewFunctionInternal(RegisterID* dst, CaptureM
     emitOpcode(captureMode == IsCaptured ? op_new_captured_func : op_new_func);
     instructions().append(dst->index());
     instructions().append(index);
-    instructions().append(doNullCheck);
+    if (captureMode == IsCaptured) {
+        ASSERT(!doNullCheck);
+        instructions().append(watchableVariable(dst->index()));
+    } else
+        instructions().append(doNullCheck);
     return dst;
 }
 
@@ -1621,6 +1640,7 @@ void BytecodeGenerator::createArgumentsIfNecessary()
 
     emitOpcode(op_create_arguments);
     instructions().append(m_codeBlock->argumentsRegister().offset());
+    ASSERT(!watchableVariable(m_codeBlock->argumentsRegister().offset()));
 }
 
 void BytecodeGenerator::createActivationIfNecessary()

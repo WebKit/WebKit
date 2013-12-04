@@ -55,9 +55,17 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int src = currentInstruction[2].u.operand;
 
-    // Use simpler approach, since the DFG thinks that the last result register
-    // is always set to the destination on every operation.
     emitGetVirtualRegister(src, regT0);
+    emitPutVirtualRegister(dst);
+}
+
+void JIT::emit_op_captured_mov(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int src = currentInstruction[2].u.operand;
+
+    emitGetVirtualRegister(src, regT0);
+    emitNotifyWrite(regT0, regT1, currentInstruction[3].u.watchpointSet);
     emitPutVirtualRegister(dst);
 }
 
@@ -1171,6 +1179,12 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
         lazyJump.link(this);
 }
 
+void JIT::emit_op_new_captured_func(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_new_captured_func);
+    slowPathCall.call();
+}
+
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
@@ -1210,6 +1224,16 @@ void JIT::emit_op_new_array_buffer(Instruction* currentInstruction)
     int size = currentInstruction[3].u.operand;
     const JSValue* values = codeBlock()->constantBuffer(valuesIndex);
     callOperation(operationNewArrayBufferWithProfile, dst, currentInstruction[4].u.arrayAllocationProfile, values, size);
+}
+
+void JIT::emitSlow_op_captured_mov(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    VariableWatchpointSet* set = currentInstruction[3].u.watchpointSet;
+    if (!set || set->state() == IsInvalidated)
+        return;
+    linkSlowCase(iter);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_captured_mov);
+    slowPathCall.call();
 }
 
 } // namespace JSC

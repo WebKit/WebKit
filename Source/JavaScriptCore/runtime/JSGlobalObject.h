@@ -23,6 +23,7 @@
 #define JSGlobalObject_h
 
 #include "ArrayAllocationProfile.h"
+#include "ConstantMode.h"
 #include "JSArray.h"
 #include "JSArrayBufferPrototype.h"
 #include "JSClassRef.h"
@@ -295,7 +296,6 @@ protected:
         init(thisValue);
     }
 
-    enum ConstantMode { IsConstant, IsVariable };
     struct NewGlobalVar {
         int registerNumber;
         VariableWatchpointSet* set;

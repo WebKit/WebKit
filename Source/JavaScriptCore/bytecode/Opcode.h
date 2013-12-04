@@ -55,7 +55,7 @@ namespace JSC {
     macro(op_new_array_buffer, 5) \
     macro(op_new_regexp, 3) \
     macro(op_mov, 3) \
-    macro(op_captured_mov, 3) \
+    macro(op_captured_mov, 4) \
     \
     macro(op_not, 3) \
     macro(op_eq, 4) \

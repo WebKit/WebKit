@@ -502,13 +502,38 @@ _llint_op_mov:
     dispatch(3)
 
 
+macro notifyWrite(set, value, scratch, slow)
+    loadb VariableWatchpointSet::m_state[set], scratch
+    bieq scratch, IsInvalidated, .done
+    bineq scratch, ClearWatchpoint, .overwrite
+    storeq value, VariableWatchpointSet::m_inferredValue[set]
+    storeb IsWatched, VariableWatchpointSet::m_state[set]
+    jmp .done
+
+.overwrite:
+    bqeq value, VariableWatchpointSet::m_inferredValue[set], .done
+    btbnz VariableWatchpointSet::m_setIsNotEmpty[set], slow
+    storeq 0, VariableWatchpointSet::m_inferredValue[set]
+    storeb IsInvalidated, VariableWatchpointSet::m_state[set]
+
+.done:    
+end
+
 _llint_op_captured_mov:
     traceExecution()
     loadisFromInstruction(2, t1)
-    loadisFromInstruction(1, t0)
     loadConstantOrVariable(t1, t2)
+    loadpFromInstruction(3, t0)
+    btpz t0, .opCapturedMovReady
+    notifyWrite(t0, t2, t1, .opCapturedMovSlow)
+.opCapturedMovReady:
+    loadisFromInstruction(1, t0)
     storeq t2, [cfr, t0, 8]
-    dispatch(3)
+    dispatch(4)
+
+.opCapturedMovSlow:
+    callSlowPath(_slow_path_captured_mov)
+    dispatch(4)
 
 
 _llint_op_not:
@@ -1609,13 +1634,7 @@ _llint_op_new_func:
 
 _llint_op_new_captured_func:
     traceExecution()
-    loadisFromInstruction(3, t2)
-    btiz t2, .opNewCapturedFuncUnchecked
-    loadisFromInstruction(1, t1)
-    btqnz [cfr, t1, 8], .opNewCapturedFuncDone
-.opNewCapturedFuncUnchecked:
-    callSlowPath(_llint_slow_path_new_func)
-.opNewCapturedFuncDone:
+    callSlowPath(_slow_path_new_captured_func)
     dispatch(4)
 
 
@@ -2055,23 +2074,6 @@ macro putProperty()
     loadConstantOrVariable(t1, t2)
     loadisFromInstruction(6, t1)
     storePropertyAtVariableOffset(t1, t0, t2)
-end
-
-macro notifyWrite(set, value, scratch, slow)
-    loadb VariableWatchpointSet::m_state[set], scratch
-    bieq scratch, IsInvalidated, .done
-    bineq scratch, ClearWatchpoint, .overwrite
-    storeq value, VariableWatchpointSet::m_inferredValue[set]
-    storeb IsWatched, VariableWatchpointSet::m_state[set]
-    jmp .done
-
-.overwrite:
-    bqeq value, VariableWatchpointSet::m_inferredValue[set], .done
-    btbnz VariableWatchpointSet::m_setIsNotEmpty[set], slow
-    storeq 0, VariableWatchpointSet::m_inferredValue[set]
-    storeb IsInvalidated, VariableWatchpointSet::m_state[set]
-
-.done:    
 end
 
 macro putGlobalVar()

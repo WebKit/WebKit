@@ -115,6 +115,13 @@ public:
         else
             fireAll();
     }
+    
+    void invalidate()
+    {
+        if (state() == IsWatched)
+            fireAll();
+        m_state = IsInvalidated;
+    }
 
     int8_t* addressOfState() { return &m_state; }
     int8_t* addressOfSetIsNotEmpty() { return &m_setIsNotEmpty; }

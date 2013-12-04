@@ -1,3 +1,40 @@
+2013-12-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Infer constant closure variables
+        https://bugs.webkit.org/show_bug.cgi?id=124630
+
+        Reviewed by Geoffrey Garen.
+        
+        This adds both correctness and performance tests for constant closure variable
+        inference.
+
+        * js/regress/infer-closure-const-then-mov-expected.txt: Added.
+        * js/regress/infer-closure-const-then-mov-no-inline-expected.txt: Added.
+        * js/regress/infer-closure-const-then-mov-no-inline.html: Added.
+        * js/regress/infer-closure-const-then-mov.html: Added.
+        * js/regress/infer-closure-const-then-put-to-scope-expected.txt: Added.
+        * js/regress/infer-closure-const-then-put-to-scope-no-inline-expected.txt: Added.
+        * js/regress/infer-closure-const-then-put-to-scope-no-inline.html: Added.
+        * js/regress/infer-closure-const-then-put-to-scope.html: Added.
+        * js/regress/infer-closure-const-then-reenter-expected.txt: Added.
+        * js/regress/infer-closure-const-then-reenter-no-inline-expected.txt: Added.
+        * js/regress/infer-closure-const-then-reenter-no-inline.html: Added.
+        * js/regress/infer-closure-const-then-reenter.html: Added.
+        * js/regress/script-tests/infer-closure-const-then-mov-no-inline.js: Added.
+        * js/regress/script-tests/infer-closure-const-then-mov.js: Added.
+        * js/regress/script-tests/infer-closure-const-then-put-to-scope-no-inline.js: Added.
+        (thingy.):
+        (thingy):
+        * js/regress/script-tests/infer-closure-const-then-put-to-scope.js: Added.
+        (thingy.):
+        (thingy):
+        * js/regress/script-tests/infer-closure-const-then-reenter-no-inline.js: Added.
+        (.return.foo):
+        (foo):
+        * js/regress/script-tests/infer-closure-const-then-reenter.js: Added.
+        (.return.foo):
+        (foo):
+
 2013-12-04  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed GTK gardening. Updated expectations for GTK and share them with EFL.

@@ -65,7 +65,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
         }
 
         if (!entry.isNull()) {
-            op = ResolveOp(makeType(ClosureVar, needsVarInjectionChecks), depth, 0, activation, 0, entry.getIndex());
+            op = ResolveOp(makeType(ClosureVar, needsVarInjectionChecks), depth, 0, activation, entry.watchpointSet(), entry.getIndex());
             return true;
         }
 

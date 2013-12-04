@@ -723,11 +723,16 @@ unsigned Graph::requiredRegisterCountForExecutionAndExit()
     return std::max(frameRegisterCount(), requiredRegisterCountForExit());
 }
 
-WriteBarrierBase<Unknown>* Graph::tryGetRegisters(Node* node)
+JSActivation* Graph::tryGetActivation(Node* node)
 {
     if (!node->hasConstant())
         return 0;
-    JSActivation* activation = jsDynamicCast<JSActivation*>(valueOfJSConstant(node));
+    return jsDynamicCast<JSActivation*>(valueOfJSConstant(node));
+}
+
+WriteBarrierBase<Unknown>* Graph::tryGetRegisters(Node* node)
+{
+    JSActivation* activation = tryGetActivation(node);
     if (!activation)
         return 0;
     if (!activation->isTornOff())

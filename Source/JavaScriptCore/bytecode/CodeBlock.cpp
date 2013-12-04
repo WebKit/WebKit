@@ -768,6 +768,7 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r1 = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "captured_mov");
             out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
+            ++it;
             break;
         }
         case op_not: {
@@ -1224,9 +1225,9 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         case op_new_captured_func: {
             int r0 = (++it)->u.operand;
             int f0 = (++it)->u.operand;
-            int shouldCheck = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "new_captured_func");
-            out.printf("%s, f%d, %s", registerName(r0).data(), f0, shouldCheck ? "<Checked>" : "<Unchecked>");
+            out.printf("%s, f%d", registerName(r0).data(), f0);
+            ++it;
             break;
         }
         case op_new_func_exp: {
@@ -1551,10 +1552,13 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 {
     ASSERT(m_heap->isDeferred());
 
+    bool didCloneSymbolTable = false;
+    
     if (SymbolTable* symbolTable = unlinkedCodeBlock->symbolTable()) {
-        if (codeType() == FunctionCode && symbolTable->captureCount())
+        if (codeType() == FunctionCode && symbolTable->captureCount()) {
             m_symbolTable.set(*m_vm, m_ownerExecutable.get(), symbolTable->clone(*m_vm));
-        else
+            didCloneSymbolTable = true;
+        } else
             m_symbolTable.set(*m_vm, m_ownerExecutable.get(), symbolTable);
     }
     
@@ -1820,9 +1824,26 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
             if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks)
                 instructions[i + 5].u.watchpointSet = op.watchpointSet;
-            else if (op.structure)
+            else if (op.type == ClosureVar || op.type == ClosureVarWithVarInjectionChecks) {
+                if (op.watchpointSet)
+                    op.watchpointSet->invalidate();
+            } else if (op.structure)
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
+            break;
+        }
+            
+        case op_captured_mov:
+        case op_new_captured_func: {
+            StringImpl* uid = pc[i + 3].u.uid;
+            if (!uid)
+                break;
+            RELEASE_ASSERT(didCloneSymbolTable);
+            ConcurrentJITLocker locker(m_symbolTable->m_lock);
+            SymbolTable::Map::iterator iter = m_symbolTable->find(locker, uid);
+            ASSERT(iter != m_symbolTable->end(locker));
+            iter->value.prepareToWatch();
+            instructions[i + 3].u.watchpointSet = iter->value.watchpointSet();
             break;
         }
 

@@ -670,14 +670,43 @@ _llint_op_mov:
     dispatch(3)
 
 
+macro notifyWrite(set, valueTag, valuePayload, scratch, slow)
+    loadb VariableWatchpointSet::m_state[set], scratch
+    bieq scratch, IsInvalidated, .done
+    bineq scratch, ClearWatchpoint, .overwrite
+    storei valueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set]
+    storei valuePayload, VariableWatchpointSet::m_inferredValue + PayloadOffset[set]
+    storeb IsWatched, VariableWatchpointSet::m_state[set]
+    jmp .done
+
+.overwrite:
+    bineq valuePayload, VariableWatchpointSet::m_inferredValue + PayloadOffset[set], .definitelyDifferent
+    bieq valueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set], .done
+.definitelyDifferent:
+    btbnz VariableWatchpointSet::m_setIsNotEmpty[set], slow
+    storei EmptyValueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set]
+    storei 0, VariableWatchpointSet::m_inferredValue + PayloadOffset[set]
+    storeb IsInvalidated, VariableWatchpointSet::m_state[set]
+
+.done:
+end
+
 _llint_op_captured_mov:
     traceExecution()
     loadi 8[PC], t1
-    loadi 4[PC], t0
     loadConstantOrVariable(t1, t2, t3)
+    loadpFromInstruction(3, t0)
+    btpz t0, .opCapturedMovReady
+    notifyWrite(t0, t2, t3, t1, .opCapturedMovSlow)
+.opCapturedMovReady:
+    loadi 4[PC], t0
     storei t2, TagOffset[cfr, t0, 8]
     storei t3, PayloadOffset[cfr, t0, 8]
-    dispatch(3)
+    dispatch(4)
+
+.opCapturedMovSlow:
+    callSlowPath(_slow_path_captured_mov)
+    dispatch(4)
 
 
 _llint_op_not:
@@ -1802,12 +1831,7 @@ _llint_op_new_func:
 
 _llint_op_new_captured_func:
     traceExecution()
-    btiz 12[PC], .opNewCapturedFuncUnchecked
-    loadi 4[PC], t1
-    bineq TagOffset[cfr, t1, 8], EmptyValueTag, .opNewCapturedFuncDone
-.opNewCapturedFuncUnchecked:
-    callSlowPath(_llint_slow_path_new_func)
-.opNewCapturedFuncDone:
+    callSlowPath(_slow_path_new_captured_func)
     dispatch(4)
 
 
@@ -2279,27 +2303,6 @@ macro putProperty()
     loadConstantOrVariable(t1, t2, t3)
     loadisFromInstruction(6, t1)
     storePropertyAtVariableOffset(t1, t0, t2, t3)
-end
-
-macro notifyWrite(set, valueTag, valuePayload, scratch, slow)
-    loadb VariableWatchpointSet::m_state[set], scratch
-    bieq scratch, IsInvalidated, .done
-    bineq scratch, ClearWatchpoint, .overwrite
-    storei valueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set]
-    storei valuePayload, VariableWatchpointSet::m_inferredValue + PayloadOffset[set]
-    storeb IsWatched, VariableWatchpointSet::m_state[set]
-    jmp .done
-
-.overwrite:
-    bineq valuePayload, VariableWatchpointSet::m_inferredValue + PayloadOffset[set], .definitelyDifferent
-    bieq valueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set], .done
-.definitelyDifferent:
-    btbnz VariableWatchpointSet::m_setIsNotEmpty[set], slow
-    storei EmptyValueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set]
-    storei 0, VariableWatchpointSet::m_inferredValue + PayloadOffset[set]
-    storeb IsInvalidated, VariableWatchpointSet::m_state[set]
-
-.done:
 end
 
 macro putGlobalVar()
