@@ -1,3 +1,14 @@
+2013-12-04  David Farler  <dfarler@apple.com>
+
+        Use All-iOS target when building WK2 on iOS
+        <rdar://problem/15574494>
+
+        Reviewed by David Kilzer.
+
+        * Makefile:
+        Add -target All-iOS to OTHER_OPTIONS if iphoneos or iphonesimulator
+        is in the SDKROOT make option.
+
 2013-12-04  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [EFL][WK2] Fix build after API::Client changes
