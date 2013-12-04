@@ -80,6 +80,7 @@ my $runJSCStress = !isAppleWinWebKit();
 my $enableFTL = 0;
 
 my $createTarball = 0;
+my $remoteHost = 0;
 
 my $programName = basename($0);
 my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
@@ -97,6 +98,7 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]testapi                Run (or don't run) testapi (default: $testapiDefault)
   --[no-]jsc-stress             Run (or don't run) the JSC stress tests (default: $jscStressDefault)
   --tarball                     Create a tarball of the bundle produced by running the JSC stress tests.
+  --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
 EOF
 
 GetOptions(
@@ -108,6 +110,7 @@ GetOptions(
     'testapi!' => \$runTestAPI,
     'jsc-stress!' => \$runJSCStress,
     'tarball!' => \$createTarball,
+    'remote=s' => \$remoteHost,
     'help' => \$showHelp
 );
 
@@ -245,6 +248,10 @@ if ($runJSCStress) {
     }
     if ($createTarball) {
         push(@jscStressDriverCmd, "--tarball");
+    }
+    if ($remoteHost) {
+        push(@jscStressDriverCmd, "--remote");
+        push(@jscStressDriverCmd, $remoteHost);
     }
     if (defined($extraTests)) {
         push(@jscStressDriverCmd, $extraTests);

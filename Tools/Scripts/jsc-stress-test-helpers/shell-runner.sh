@@ -36,7 +36,7 @@ testList=".all_tests.txt"
 tempFile=".temp.txt"
 lockDir=".lock_dir"
 
-trap "kill -9 0" SIGINT
+trap "kill -9 0" SIGINT SIGHUP SIGTERM
 
 echo 0 > ${indexFile}
 ls test_script_* > ${testList}
@@ -48,6 +48,11 @@ function lock_test_list() {
 function unlock_test_list() {
     rmdir ${lockDir}
 }
+
+if [ -d ${lockDir} ]
+then
+    rmdir ${lockDir}
+fi
 
 total=`wc -l < "${testList}" | sed 's/ //g'`
 for proc in `seq ${numProcs}`

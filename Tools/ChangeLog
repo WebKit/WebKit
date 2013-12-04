@@ -1,3 +1,19 @@
+2013-12-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        run-jsc-stress-tests can only run locally
+        https://bugs.webkit.org/show_bug.cgi?id=124551
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/jsc-stress-test-helpers/shell-runner.sh: Fixed a couple issues. One was if the script was
+        killed before the lock directory was removed, future executions wouldn't make any progress. Also 
+        added a couple more signals to handle gracefully at shutdown. 
+        * Scripts/run-javascriptcore-tests: Pass through the --remote argument to run-jsc-stress-tests.
+        * Scripts/run-jsc-stress-tests: Added support for the --remote flag. It accepts a hostname, user, and port.
+        The script then generates the test bundle, tars it up, and copies it to the remote host via ssh where
+        it then untars the bundle and executes the shell-based test runner. Also refactored some of the logic
+        toward the end of the script to make it easier to tell which of the various modes do what.
+
 2013-12-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL][WK2] Buildfix after r160104

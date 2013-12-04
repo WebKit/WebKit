@@ -26,6 +26,7 @@
 require 'fileutils'
 require 'getoptlong'
 require 'pathname'
+require 'uri'
 require 'yaml'
 
 THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
@@ -93,6 +94,10 @@ $bundle = nil
 $tarball = false
 $copyVM = false
 $testRunnerType = :make
+$remoteUser = nil
+$remoteHost = nil
+$remotePort = nil
+$remoteDirectory = nil
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -105,6 +110,7 @@ def usage
     puts "--tarball                   Creates a tarball of the final bundle."
     puts "--shell-runner              Uses the shell-based test runner instead of the default make-based runner."
     puts "                            In general the shell runner is slower than the make runner."
+    puts "--remote                    Specify a remote host on which to run tests."
     puts "--help               (-h)   Print this message."
     exit 1
 end
@@ -117,6 +123,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--tarball', GetoptLong::NO_ARGUMENT],
                ['--force-vm-copy', GetoptLong::NO_ARGUMENT],
                ['--shell-runner', GetoptLong::NO_ARGUMENT],
+               ['--remote', GetoptLong::REQUIRED_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -139,6 +146,13 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $copyVM = true
     when '--shell-runner'
         $testRunnerType = :shell
+    when '--remote'
+        $copyVM = true
+        $testRunnerType = :shell
+        $tarball = true
+        $remote = true
+        uri = URI("ftp://" + arg)
+        $remoteUser, $remoteHost, $remotePort = uri.user, uri.host, uri.port
     end
 }
 
@@ -161,15 +175,11 @@ EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", 
 $runlist = []
 
 def frameworkFromJSCPath(jscPath)
-    if jscPath.dirname.basename.to_s == "Resources" and jscPath.dirname.dirname.basename.to_s == "JavaScriptCore.framework"
-        jscPath.dirname.dirname
-    elsif jscPath.dirname.dirname.basename.to_s == "WebKitBuild"
-        parentDirName = jscPath.dirname.basename.to_s
-        if parentDirName == "Debug" or parentDirName == "Release" 
-            jscPath.dirname + "JavaScriptCore.framework"
-        else
-            raise "Unknown JSC path, cannot copy full framework: #{jscPath}"
-        end
+    parentDirectory = jscPath.dirname
+    if parentDirectory.basename.to_s == "Resources" and parentDirectory.dirname.basename.to_s == "JavaScriptCore.framework"
+        parentDirectory.dirname
+    elsif parentDirectory.basename.to_s =~ /^Debug/ or parentDirectory.basename.to_s =~ /^Release/
+        jscPath.dirname + "JavaScriptCore.framework"
     else
         $stderr.puts "Warning: cannot identify JSC framework, doing generic VM copy."
         nil
@@ -885,6 +895,8 @@ def prepareBundle
         | collection |
         handleCollection(collection)
     }
+
+    puts
 end
 
 def cleanOldResults
@@ -1050,13 +1062,41 @@ def runTestRunner
     end
 end
 
-def runShellTestRunner
-    Dir.chdir($runnerDir) {
-        mysys("sh", "runscript")
+def sshRead(cmd)
+    raise unless $remote
+
+    result = ""
+    IO.popen("ssh -p #{$remotePort} #{$remoteUser}@#{$remoteHost} '#{cmd}'", "r") {
+      | inp |
+      inp.each_line {
+        | line |
+        result += line
+      }
     }
+    raise "#{$?}" unless $?.success?
+    result
+end
+
+def runShellTestRunner
+    if $remote
+        $remoteDirectory = JSON::parse(sshRead("cat ~/.bencher"))["tempPath"]
+        mysys("scp", "-P", $remotePort.to_s, ($outputDir.dirname + "payload.tar.gz").to_s, "#{$remoteUser}@#{$remoteHost}:#{$remoteDirectory}")
+        remoteScript = ""
+        remoteScript += "cd #{$remoteDirectory} && "
+        remoteScript += "rm -rf #{$outputDir.basename} && "
+        remoteScript += "tar xzf payload.tar.gz && "
+        remoteScript += "cd #{$outputDir.basename}/.runner && "
+        remoteScript += "DYLD_FRAMEWORK_PATH=$(cd ../#{$frameworkPath.dirname}; pwd) sh runscript" 
+        system("ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", remoteScript)
+    else
+        Dir.chdir($runnerDir) {
+            mysys("sh", "runscript")
+        }
+    end
 end
 
 def runMakeTestRunner
+    raise if $remote
     Dir.chdir($runnerDir) {
         # -1 for the Makefile, and -2 for '..' and '.'
         numberOfTests = Dir.entries(".").count - 3
@@ -1126,11 +1166,20 @@ end
 def detectFailures
     raise if $bundle
 
-    Dir.foreach($runnerDir) {
-        | filename |
-        next unless filename =~ /test_fail_/
-        appendFailure($runlist[$~.post_match.to_i])
-    }
+    if $remote
+        output = sshRead("cd #{$remoteDirectory}/#{$outputDir.basename}/.runner && (ls test_fail_* 2> /dev/null || true)")
+        output.split(/\n/).each {
+            | line |
+            next unless line =~ /test_fail_/
+            appendFailure($runlist[$~.post_match.to_i])
+        }
+    else
+        Dir.foreach($runnerDir) {
+            | filename |
+            next unless filename =~ /test_fail_/
+            appendFailure($runlist[$~.post_match.to_i])
+        }
+    end
 end
 
 def compressBundle
@@ -1154,14 +1203,49 @@ Dir.mkdir($outputDir) unless $outputDir.directory?
 $outputDir = $outputDir.realpath
 $runnerDir = $outputDir + ".runner"
 
-prepareBundle unless $bundle
+def runBundle
+    raise unless $bundle
 
-puts
+    cleanRunnerDirectory
+    cleanOldResults
+    runTestRunner
+    cleanEmptyResultFiles
+end
 
-prepareTestRunner unless $bundle
-cleanRunnerDirectory if $bundle
-cleanOldResults if $bundle
-runTestRunner
-cleanEmptyResultFiles
-detectFailures unless $bundle
-compressBundle if $tarball
+def runNormal
+    raise if $bundle or $tarball
+
+    prepareBundle
+    prepareTestRunner
+    runTestRunner
+    cleanEmptyResultFiles
+    detectFailures
+end
+
+def runTarball
+    raise unless $tarball
+
+    prepareBundle 
+    prepareTestRunner
+    compressBundle
+end
+
+def runRemote
+    raise unless $remote
+
+    prepareBundle
+    prepareTestRunner
+    compressBundle
+    runTestRunner
+    detectFailures
+end
+
+if $bundle
+    runBundle
+elsif $remote
+    runRemote
+elsif $tarball
+    runTarball
+else
+    runNormal
+end
