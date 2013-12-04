@@ -261,7 +261,11 @@ class BaseIndex
         end
     end
     def pointerExpr
-        "#{base.clValue(:int8Ptr)} + (#{index.clValue} << #{scaleShift}) + #{offset.clValue}"
+        if offset.value == 0
+            "#{base.clValue(:int8Ptr)} + (#{index.clValue} << #{scaleShift})"
+        else
+            "#{base.clValue(:int8Ptr)} + (#{index.clValue} << #{scaleShift}) + #{offset.clValue}"
+        end
     end
     def int8MemRef
         "*CAST<int8_t*>(#{pointerExpr})"
