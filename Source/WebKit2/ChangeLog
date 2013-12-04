@@ -1,3 +1,18 @@
+2013-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        WKContentView should just use InitializeWebKit2()
+        https://bugs.webkit.org/show_bug.cgi?id=125209
+
+        Reviewed by Benjamin Poulain.
+        
+        Rather than calling an motley selection of init fuctions,
+        WKContentView should use the one true init function, InitializeWebKit2().
+
+        * Shared/WebKit2Initialize.cpp: On iOS, we need to call InitWebCoreThreadSystemInterface().
+        (WebKit::InitializeWebKit2):
+        * UIProcess/API/ios/WKContentView.mm: Remove various unused #imports.
+        (-[WKContentView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+
 2013-12-03  Anders Carlsson  <andersca@apple.com>
 
         PageOverlayClientImpl should be a proper API::Client

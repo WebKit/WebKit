@@ -28,7 +28,7 @@
 
 #import "PageClientImplIOS.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
-#import "UIWKRemoteView.h"
+#import "WebKit2Initialize.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKGeolocationProviderIOS.h"
@@ -38,10 +38,8 @@
 #import "WebFrameProxy.h"
 #import "WebPageGroup.h"
 #import "WebSystemInterface.h"
-#import <QuartzCore/CALayerHost.h>
 #import <UIKit/UIWindow_Private.h>
 #import <WebCore/ViewportArguments.h>
-#import <WebCore/WebCoreThreadSystemInterface.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;
@@ -141,8 +139,7 @@ using namespace WebKit;
     // <rdar://problem/12287363>
     self.backgroundColor = [UIColor blackColor];
 
-    InitWebCoreThreadSystemInterface();
-    InitWebCoreSystemInterface();
+    InitializeWebKit2();
     RunLoop::initializeMainRunLoop();
 
     _pageClient = std::make_unique<PageClientImpl>(self);

@@ -35,6 +35,9 @@
 #if PLATFORM(MAC)
 #include "WebSystemInterface.h"
 #endif
+#if PLATFORM(IOS)
+#import <WebCore/WebCoreThreadSystemInterface.h>
+#endif
 
 namespace WebKit {
 
@@ -42,6 +45,9 @@ void InitializeWebKit2()
 {
 #if PLATFORM(MAC)
     InitWebCoreSystemInterface();
+#endif
+#if PLATFORM(IOS)
+    InitWebCoreThreadSystemInterface();
 #endif
 
     JSC::initializeThreading();
