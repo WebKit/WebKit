@@ -1,3 +1,9 @@
+2013-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed Windows Build Fix attempt after r160099.
+
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+
 2013-12-04  Julien Brianceau  <jbriance@cisco.com>
 
         REGRESSION (r160094): Fix lots of crashes for sh4 architecture.

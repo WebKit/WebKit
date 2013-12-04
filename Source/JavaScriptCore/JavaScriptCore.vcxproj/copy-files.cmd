@@ -44,6 +44,7 @@ for %%d in (
     disassembler
     heap
     debugger
+    inspector
     interpreter
     jit
     llint
