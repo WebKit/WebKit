@@ -1,5 +1,24 @@
 2013-12-03  Anders Carlsson  <andersca@apple.com>
 
+        PageOverlayClientImpl should be a proper API::Client
+        https://bugs.webkit.org/show_bug.cgi?id=125199
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (PageOverlayClientImpl::PageOverlayClientImpl):
+        (PageOverlayClientImpl::setAccessibilityClient):
+        (PageOverlayClientImpl::willMoveToWebPage):
+        (PageOverlayClientImpl::didMoveToWebPage):
+        (PageOverlayClientImpl::drawRect):
+        (PageOverlayClientImpl::mouseEvent):
+        (PageOverlayClientImpl::copyAccessibilityAttributeValue):
+        (PageOverlayClientImpl::copyAccessibilityAttributeNames):
+        (WKBundlePageOverlayCreate):
+        (WKBundlePageOverlaySetAccessibilityClient):
+
+2013-12-03  Anders Carlsson  <andersca@apple.com>
+
         Initialize the PageBannerClientImpl API::Client
         https://bugs.webkit.org/show_bug.cgi?id=125198
 

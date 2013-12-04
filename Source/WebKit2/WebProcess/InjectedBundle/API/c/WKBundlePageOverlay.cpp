@@ -26,28 +26,37 @@
 #include "config.h"
 #include "WKBundlePageOverlay.h"
 
+#include "APIClient.h"
 #include "PageOverlay.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include <WebCore/GraphicsContext.h>
 
+namespace API {
+
+template<> struct ClientTraits<WKBundlePageOverlayClientBase> {
+    typedef std::tuple<WKBundlePageOverlayClientV0> Versions;
+};
+
+template<> struct ClientTraits<WKBundlePageOverlayAccessibilityClientBase> {
+    typedef std::tuple<WKBundlePageOverlayAccessibilityClientV0> Versions;
+};
+
+}
+
 using namespace WebCore;
 using namespace WebKit;
 
-class PageOverlayClientImpl : public PageOverlay::Client {
+class PageOverlayClientImpl : API::Client<WKBundlePageOverlayClientBase>, public PageOverlay::Client {
 public:
-    explicit PageOverlayClientImpl(WKBundlePageOverlayClient* client)
-        : m_client()
-        , m_accessibilityClient()
+    explicit PageOverlayClientImpl(WKBundlePageOverlayClientBase* client)
     {
-        if (client)
-            m_client = *client;
+        initialize(client);
     }
 
-    virtual void setAccessibilityClient(WKBundlePageOverlayAccessibilityClient* client)
+    virtual void setAccessibilityClient(WKBundlePageOverlayAccessibilityClientBase* client)
     {
-        if (client)
-            m_accessibilityClient = *client;
+        m_accessibilityClient.initialize(client);
     }
 
 private:
@@ -62,7 +71,7 @@ private:
         if (!m_client.willMoveToPage)
             return;
 
-        m_client.willMoveToPage(toAPI(pageOverlay), toAPI(page), m_client.clientInfo);
+        m_client.willMoveToPage(toAPI(pageOverlay), toAPI(page), m_client.base.clientInfo);
     }
     
     virtual void didMoveToWebPage(PageOverlay* pageOverlay, WebPage* page)
@@ -70,7 +79,7 @@ private:
         if (!m_client.didMoveToPage)
             return;
 
-        m_client.didMoveToPage(toAPI(pageOverlay), toAPI(page), m_client.clientInfo);
+        m_client.didMoveToPage(toAPI(pageOverlay), toAPI(page), m_client.base.clientInfo);
     }
 
     virtual void drawRect(PageOverlay* pageOverlay, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
@@ -78,7 +87,7 @@ private:
         if (!m_client.drawRect)
             return;
 
-        m_client.drawRect(toAPI(pageOverlay), graphicsContext.platformContext(), toAPI(dirtyRect), m_client.clientInfo);
+        m_client.drawRect(toAPI(pageOverlay), graphicsContext.platformContext(), toAPI(dirtyRect), m_client.base.clientInfo);
     }
     
     virtual bool mouseEvent(PageOverlay* pageOverlay, const WebMouseEvent& event)
@@ -88,27 +97,27 @@ private:
             if (!m_client.mouseDown)
                 return false;
 
-            return m_client.mouseDown(toAPI(pageOverlay), toAPI(event.position()), toAPI(event.button()), m_client.clientInfo);
+            return m_client.mouseDown(toAPI(pageOverlay), toAPI(event.position()), toAPI(event.button()), m_client.base.clientInfo);
         }
         case WebEvent::MouseUp: {
             if (!m_client.mouseUp)
                 return false;
 
-            return m_client.mouseUp(toAPI(pageOverlay), toAPI(event.position()), toAPI(event.button()), m_client.clientInfo);
+            return m_client.mouseUp(toAPI(pageOverlay), toAPI(event.position()), toAPI(event.button()), m_client.base.clientInfo);
         }
         case WebEvent::MouseMove: {
             if (event.button() == WebMouseEvent::NoButton) {
                 if (!m_client.mouseMoved)
                     return false;
 
-                return m_client.mouseMoved(toAPI(pageOverlay), toAPI(event.position()), m_client.clientInfo);
+                return m_client.mouseMoved(toAPI(pageOverlay), toAPI(event.position()), m_client.base.clientInfo);
             }
 
             // This is a MouseMove event with a mouse button pressed. Call mouseDragged.
             if (!m_client.mouseDragged)
                 return false;
 
-            return m_client.mouseDragged(toAPI(pageOverlay), toAPI(event.position()), toAPI(event.button()), m_client.clientInfo);
+            return m_client.mouseDragged(toAPI(pageOverlay), toAPI(event.position()), toAPI(event.button()), m_client.base.clientInfo);
         }
 
         default:
@@ -118,20 +127,19 @@ private:
     
     virtual WKTypeRef copyAccessibilityAttributeValue(PageOverlay* pageOverlay, WKStringRef attribute, WKTypeRef parameter)
     {
-        if (!m_accessibilityClient.copyAccessibilityAttributeValue)
+        if (!m_accessibilityClient.client().copyAccessibilityAttributeValue)
             return 0;
-        return m_accessibilityClient.copyAccessibilityAttributeValue(toAPI(pageOverlay), attribute, parameter, m_client.clientInfo);
+        return m_accessibilityClient.client().copyAccessibilityAttributeValue(toAPI(pageOverlay), attribute, parameter, m_accessibilityClient.client().base.clientInfo);
     }
 
     virtual WKArrayRef copyAccessibilityAttributeNames(PageOverlay* pageOverlay, bool paramerizedNames)
     {
-        if (!m_accessibilityClient.copyAccessibilityAttributeNames)
+        if (!m_accessibilityClient.client().copyAccessibilityAttributeNames)
             return 0;
-        return m_accessibilityClient.copyAccessibilityAttributeNames(toAPI(pageOverlay), paramerizedNames, m_client.clientInfo);
+        return m_accessibilityClient.client().copyAccessibilityAttributeNames(toAPI(pageOverlay), paramerizedNames, m_accessibilityClient.client().base.clientInfo);
     }
     
-    WKBundlePageOverlayClient m_client;
-    WKBundlePageOverlayAccessibilityClient m_accessibilityClient;
+    API::Client<WKBundlePageOverlayAccessibilityClientBase> m_accessibilityClient;
 };
 
 WKTypeID WKBundlePageOverlayGetTypeID()
@@ -144,7 +152,7 @@ WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClient* wkCl
     if (wkClient && wkClient->version)
         return 0;
 
-    auto clientImpl = std::make_unique<PageOverlayClientImpl>(wkClient);
+    auto clientImpl = std::make_unique<PageOverlayClientImpl>(reinterpret_cast<WKBundlePageOverlayClientBase*>(wkClient));
 
     // FIXME: Looks like this leaks the clientImpl.
     return toAPI(PageOverlay::create(clientImpl.release()).leakRef());
@@ -154,7 +162,7 @@ void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePage
 {
     if (client && client->version)
         return;
-    static_cast<PageOverlayClientImpl*>(toImpl(bundlePageOverlayRef)->client())->setAccessibilityClient(client);
+    static_cast<PageOverlayClientImpl*>(toImpl(bundlePageOverlayRef)->client())->setAccessibilityClient(reinterpret_cast<WKBundlePageOverlayAccessibilityClientBase*>(client));
 }
 
 void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlayRef, WKRect rect)
