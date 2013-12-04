@@ -42,11 +42,11 @@ JITCode::~JITCode()
 }
 
 #if ENABLE(JIT)
-JSValue JITCode::execute(JSStack* stack, CallFrame* callFrame, VM* vm)
+JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame, Register* topOfStack)
 {
-    UNUSED_PARAM(stack);
+    ASSERT(!vm->topCallFrame || ((Register*)(vm->topCallFrame) >= topOfStack));
 
-    JSValue result = JSValue::decode(callToJavaScript(executableAddress(), callFrame));
+    JSValue result = JSValue::decode(callToJavaScript(executableAddress(), &vm->topCallFrame, protoCallFrame, topOfStack));
     return vm->exception() ? jsNull() : result;
 }
 #endif

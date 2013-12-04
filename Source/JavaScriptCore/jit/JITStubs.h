@@ -38,10 +38,13 @@ namespace JSC {
 
 #if OS(WINDOWS)
 class ExecState;
+class Register;
+struct ProtoCallFrame;
 
 extern "C" {
-    EncodedJSValue callToJavaScript(void*, ExecState*);
+    EncodedJSValue callToJavaScript(void*, ExecState**, ProtoCallFrame*, Register*);
     void returnFromJavaScript();
+    EncodedJSValue callToNativeFunction(void*, ExecState**, ProtoCallFrame*, Register*);
 }
 #endif
 

@@ -459,6 +459,7 @@
     <ClCompile Include="..\interpreter\CallFrame.cpp" />
     <ClCompile Include="..\interpreter\Interpreter.cpp" />
     <ClCompile Include="..\interpreter\JSStack.cpp" />
+    <ClCompile Include="..\interpreter\ProtoCallFrame.cpp" />
     <ClCompile Include="..\interpreter\StackVisitor.cpp" />
     <ClCompile Include="..\interpreter\VMInspector.cpp" />
     <ClCompile Include="..\jit\AssemblyHelpers.cpp" />
@@ -1003,6 +1004,7 @@
     <ClInclude Include="..\interpreter\Interpreter.h" />
     <ClInclude Include="..\interpreter\JSStack.h" />
     <ClInclude Include="..\interpreter\JSStackInlines.h" />
+    <ClInclude Include="..\interpreter\ProtoCallFrame.h" />
     <ClInclude Include="..\interpreter\Register.h" />
     <ClInclude Include="..\interpreter\StackVisitor.h" />
     <ClInclude Include="..\interpreter\VMInspector.h" />

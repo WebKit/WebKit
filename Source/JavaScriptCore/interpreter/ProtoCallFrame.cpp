@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LLIntThunks_h
-#define LLIntThunks_h
+#include "config.h"
+#include "ProtoCallFrame.h"
 
-#include <wtf/Platform.h>
-
-#if ENABLE(LLINT)
-
-#include "MacroAssemblerCodeRef.h"
+#include "CodeBlock.h"
 
 namespace JSC {
 
-class ExecState;
-class Register;
-class VM;
-struct ProtoCallFrame;
-
-extern "C" {
-    EncodedJSValue callToJavaScript(void*, ExecState**, ProtoCallFrame*, Register*);
-    void returnFromJavaScript();
-    EncodedJSValue callToNativeFunction(void*, ExecState**, ProtoCallFrame*, Register*);
+void ProtoCallFrame::init(CodeBlock* codeBlock, JSScope* scope, JSObject* callee, JSValue thisValue, int argCountIncludingThis, JSValue* otherArgs)
+{
+    this->args = otherArgs;
+    this->setCodeBlock(codeBlock);
+    this->setScope(scope);
+    this->setCallee(callee);
+    this->setArgumentCountIncludingThis(argCountIncludingThis);
+    size_t paddedArgsCount = argCountIncludingThis;
+    if (codeBlock) {
+        size_t numParameters = codeBlock->numParameters();
+        if (paddedArgsCount < numParameters)
+            paddedArgsCount = numParameters;
+    }
+    this->setPaddedArgsCount(paddedArgsCount);
+    this->clearCurrentVPC();
+    this->setThisValue(thisValue);
 }
 
-namespace LLInt {
-
-MacroAssemblerCodeRef functionForCallEntryThunkGenerator(VM*);
-MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(VM*);
-MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(VM*);
-MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(VM*);
-MacroAssemblerCodeRef evalEntryThunkGenerator(VM*);
-MacroAssemblerCodeRef programEntryThunkGenerator(VM*);
-
-} } // namespace JSC::LLInt
-
-#endif // ENABLE(LLINT)
-
-#endif // LLIntThunks_h
+} // namespace JSC

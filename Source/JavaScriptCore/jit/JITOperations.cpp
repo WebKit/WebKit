@@ -76,6 +76,9 @@ void JIT_OPERATION operationStackCheck(ExecState* exec, CodeBlock* codeBlock)
     // We pass in our own code block, because the callframe hasn't been populated.
     VM* vm = codeBlock->vm();
     CallFrame* callerFrame = exec->callerFrameSkippingVMEntrySentinel();
+    if (!callerFrame)
+        callerFrame = exec;
+
     NativeCallFrameTracer tracer(vm, callerFrame);
 
     JSStack& stack = vm->interpreter->stack();

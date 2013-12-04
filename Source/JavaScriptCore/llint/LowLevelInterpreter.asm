@@ -423,12 +423,16 @@ end
 
 if C_LOOP
 else
-# stub to call into JavaScript
-# EncodedJSValue callToJavaScript(void* code, Register* topOfStack)
-# Note, if this stub or one of it's related macros is changed, make the
+# stub to call into JavaScript or Native functions
+# EncodedJSValue callToJavaScript(void* code, ExecState** vm, ProtoCallFrame* protoFrame, Register* topOfStack)
+# EncodedJSValue callToNativeFunction(void* code, ExecState** vm, ProtoCallFrame* protoFrame, Register* topOfStack)
+# Note, if these stubs or one of their related macros are changed, make the
 # equivalent changes in jit/JITStubsX86.h and/or jit/JITStubsMSVC64.asm
 _callToJavaScript:
-    doCallToJavaScript()
+    doCallToJavaScript(makeJavaScriptCall, doReturnFromJavaScript)
+
+_callToNativeFunction:
+    doCallToJavaScript(makeHostFunctionCall, doReturnFromHostFunction)
 end
 
 # Indicate the beginning of LLInt.

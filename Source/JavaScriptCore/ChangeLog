@@ -1,3 +1,82 @@
+2013-12-04  Michael Saboff  <msaboff@apple.com>
+
+        Move the setting up of callee's callFrame from pushFrame to callToJavaScript thunk
+        https://bugs.webkit.org/show_bug.cgi?id=123999
+
+        Reviewed by Filip Pizlo.
+
+        Changed LLInt and/or JIT enabled ports to allocate the stack frame in the
+        callToJavaScript stub.  Added an additional stub, callToNativeFunction that
+        allocates a stack frame in a similar way for calling native entry points
+        that take a single ExecState* argument.  These stubs are implemented
+        using common macros in LowLevelInterpreter{32_64,64}.asm.  There are also
+        Windows X86 and X86-64 versions in the corresponding JitStubsXX.h.
+        The stubs allocate and create a sentinel frame, then create the callee's
+        frame, populating  the header and arguments from the passed in ProtoCallFrame*.
+        It is assumed that the caller of either stub does a check for enough stack space
+        via JSStack::entryCheck().
+
+        For ports using the C-Loop interpreter, the prior method for allocating stack
+        frame and invoking functions is used, namely with JSStack::pushFrame() and
+        ::popFrame().
+
+        Made spelling changes "sentinal" -> "sentinel".
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        (JSC::CachedCall::setThis):
+        (JSC::CachedCall::setArgument):
+        * interpreter/CallFrameClosure.h:
+        (JSC::CallFrameClosure::resetCallFrame):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * interpreter/Interpreter.h:
+        * interpreter/JSStack.h:
+        * interpreter/JSStackInlines.h:
+        (JSC::JSStack::entryCheck):
+        (JSC::JSStack::pushFrame):
+        (JSC::JSStack::popFrame):
+        * interpreter/ProtoCallFrame.cpp: Added.
+        (JSC::ProtoCallFrame::init):
+        * interpreter/ProtoCallFrame.h: Added.
+        (JSC::ProtoCallFrame::codeBlock):
+        (JSC::ProtoCallFrame::setCodeBlock):
+        (JSC::ProtoCallFrame::setScope):
+        (JSC::ProtoCallFrame::setCallee):
+        (JSC::ProtoCallFrame::argumentCountIncludingThis):
+        (JSC::ProtoCallFrame::argumentCount):
+        (JSC::ProtoCallFrame::setArgumentCountIncludingThis):
+        (JSC::ProtoCallFrame::setPaddedArgsCount):
+        (JSC::ProtoCallFrame::clearCurrentVPC):
+        (JSC::ProtoCallFrame::setThisValue):
+        (JSC::ProtoCallFrame::setArgument):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::execute):
+        * jit/JITCode.h:
+        * jit/JITOperations.cpp:
+        * jit/JITStubs.h:
+        * jit/JITStubsMSVC64.asm:
+        * jit/JITStubsX86.h:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArgList.h:
+        (JSC::ArgList::data):
+        * runtime/JSArray.cpp:
+        (JSC::AVLTreeAbstractorForArrayCompare::compare_key_key):
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+
 2013-12-04  László Langó  <lango@inf.u-szeged.hu>
 
         Remove stdio.h from JSC files.

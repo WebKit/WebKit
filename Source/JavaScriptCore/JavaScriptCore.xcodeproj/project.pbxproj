@@ -735,6 +735,7 @@
 		65C02850171795E200351E35 /* ARMv7Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C0284F171795E200351E35 /* ARMv7Disassembler.cpp */; };
 		65C0285C1717966800351E35 /* ARMv7DOpcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C0285A1717966800351E35 /* ARMv7DOpcode.cpp */; };
 		65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C0285B1717966800351E35 /* ARMv7DOpcode.h */; };
+		65FB5117184EEE7000C12B70 /* ProtoCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */; };
 		7C15F65D17C199CE00794D40 /* JSPromiseCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C15F65B17C199CE00794D40 /* JSPromiseCallback.cpp */; };
 		7C15F65E17C199CE00794D40 /* JSPromiseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C15F65C17C199CE00794D40 /* JSPromiseCallback.h */; };
 		7C184E1A17BEDBD3007CB63A /* JSPromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C184E1817BEDBD3007CB63A /* JSPromise.cpp */; };
@@ -2015,6 +2016,8 @@
 		65EA4C9A092AF9E20093D800 /* JSLock.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSLock.h; sourceTree = "<group>"; tabWidth = 8; };
 		65EA73620BAE35D1001BB560 /* CommonIdentifiers.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CommonIdentifiers.cpp; sourceTree = "<group>"; };
 		65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CommonIdentifiers.h; sourceTree = "<group>"; };
+		65FB5115184EE8F800C12B70 /* ProtoCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtoCallFrame.h; sourceTree = "<group>"; };
+		65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProtoCallFrame.cpp; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		7C15F65B17C199CE00794D40 /* JSPromiseCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseCallback.cpp; sourceTree = "<group>"; };
 		7C15F65C17C199CE00794D40 /* JSPromiseCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseCallback.h; sourceTree = "<group>"; };
@@ -2918,6 +2921,8 @@
 		1429D77A0ED20D7300B89619 /* interpreter */ = {
 			isa = PBXGroup;
 			children = (
+				65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */,
+				65FB5115184EE8F800C12B70 /* ProtoCallFrame.h */,
 				0F55F0F114D1063600AC7649 /* AbstractPC.cpp */,
 				0F55F0F214D1063600AC7649 /* AbstractPC.h */,
 				A7F8690E0F9584A100558697 /* CachedCall.h */,
@@ -5277,6 +5282,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65FB5117184EEE7000C12B70 /* ProtoCallFrame.cpp in Sources */,
 				0FFA549716B8835000B3A982 /* A64DOpcode.cpp in Sources */,
 				0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */,
 				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,

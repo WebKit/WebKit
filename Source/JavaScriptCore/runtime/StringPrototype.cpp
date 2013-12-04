@@ -504,7 +504,11 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
 
                 cachedCall.setThis(jsUndefined());
                 JSValue jsResult = cachedCall.call();
+#if ENABLE(LLINT_C_LOOP)
                 replacements.append(jsResult.toString(cachedCall.newCallFrame(exec))->value(exec));
+#else
+                replacements.append(jsResult.toString(exec)->value(exec));
+#endif
                 if (exec->hadException())
                     break;
 
@@ -543,7 +547,11 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
 
                 cachedCall.setThis(jsUndefined());
                 JSValue jsResult = cachedCall.call();
+#if ENABLE(LLINT_C_LOOP)
                 replacements.append(jsResult.toString(cachedCall.newCallFrame(exec))->value(exec));
+#else
+                replacements.append(jsResult.toString(exec)->value(exec));
+#endif
                 if (exec->hadException())
                     break;
 

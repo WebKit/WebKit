@@ -288,6 +288,9 @@
     <ClCompile Include="..\interpreter\JSStack.cpp">
       <Filter>interpreter</Filter>
     </ClCompile>
+    <ClCompile Include="..\interpreter\ProtoCallFrame.cpp">
+      <Filter>interpreter</Filter>
+    </ClCompile>
     <ClCompile Include="..\interpreter\StackVisitor.cpp">
       <Filter>interpreter</Filter>
     </ClCompile>
@@ -1725,6 +1728,9 @@
       <Filter>interpreter</Filter>
     </ClInclude>
     <ClInclude Include="..\interpreter\JSStackInlines.h">
+      <Filter>interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\interpreter\ProtoCallFrame.h">
       <Filter>interpreter</Filter>
     </ClInclude>
     <ClInclude Include="..\interpreter\Register.h">

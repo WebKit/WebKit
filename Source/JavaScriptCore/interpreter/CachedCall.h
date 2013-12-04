@@ -31,6 +31,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Interpreter.h"
+#include "ProtoCallFrame.h"
 #include "VMEntryScope.h"
 
 namespace JSC {
@@ -43,9 +44,14 @@ namespace JSC {
             , m_entryScope(callFrame->vm(), function->scope()->globalObject())
         {
             ASSERT(!function->isHostFunction());
-            if (callFrame->vm().isSafeToRecurse())
+            if (callFrame->vm().isSafeToRecurse()) {
+#if !ENABLE(LLINT_C_LOOP)
+                m_arguments.resize(argumentCount);
+                m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments.data());
+#else
                 m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, function, argumentCount + 1, function->scope());
-            else
+#endif
+            } else
                 throwStackOverflowError(callFrame);
             m_valid = !callFrame->hadException();
         }
@@ -55,6 +61,10 @@ namespace JSC {
             ASSERT(m_valid);
             return m_interpreter->execute(m_closure);
         }
+#if !ENABLE(LLINT_C_LOOP)
+        void setThis(JSValue v) { m_protoCallFrame.setThisValue(v); }
+        void setArgument(int n, JSValue v) { m_protoCallFrame.setArgument(n, v); }
+#else
         void setThis(JSValue v) { m_closure.setThis(v); }
         void setArgument(int n, JSValue v) { m_closure.setArgument(n, v); }
 
@@ -70,11 +80,16 @@ namespace JSC {
             if (m_valid)
                 m_interpreter->endRepeatCall(m_closure);
         }
-        
+#endif
+
     private:
         bool m_valid;
         Interpreter* m_interpreter;
         VMEntryScope m_entryScope;
+#if !ENABLE(LLINT_C_LOOP)
+        ProtoCallFrame m_protoCallFrame;
+        Vector<JSValue> m_arguments;
+#endif
         CallFrameClosure m_closure;
     };
 }

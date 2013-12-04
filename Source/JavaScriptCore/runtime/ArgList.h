@@ -139,6 +139,7 @@ private:
 };
 
 class ArgList {
+    friend class Interpreter;
     friend class JIT;
 public:
     ArgList()
@@ -172,6 +173,8 @@ public:
     JS_EXPORT_PRIVATE void getSlice(int startIndex, ArgList& result) const;
 
 private:
+    JSValue* data() const { return m_args; }
+
     JSValue* m_args;
     int m_argCount;
 };

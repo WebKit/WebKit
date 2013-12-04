@@ -35,6 +35,7 @@
 #include <wtf/PageReservation.h>
 #include <wtf/VMTags.h>
 
+#define ENABLE_DEBUG_JSSTACK 0
 #if !defined(NDEBUG) && !defined(ENABLE_DEBUG_JSSTACK)
 #define ENABLE_DEBUG_JSSTACK 1
 #endif
@@ -98,6 +99,8 @@ namespace JSC {
         Register* getTopOfFrame(CallFrame*);
         Register* getStartOfFrame(CallFrame*);
         Register* getTopOfStack();
+
+        bool entryCheck(class CodeBlock*, int);
 
         CallFrame* pushFrame(CallFrame* callerFrame, class CodeBlock*,
             JSScope*, int argsCount, JSObject* callee);

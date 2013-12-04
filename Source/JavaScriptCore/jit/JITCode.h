@@ -49,6 +49,7 @@ class JITCode;
 #if ENABLE(JIT)
 class VM;
 class JSStack;
+struct ProtoCallFrame;
 #endif
 
 class JITCode : public ThreadSafeRefCounted<JITCode> {
@@ -177,7 +178,7 @@ public:
     virtual FTL::JITCode* ftl();
     virtual FTL::ForOSREntryJITCode* ftlForOSREntry();
     
-    JSValue execute(JSStack*, CallFrame*, VM*);
+    JSValue execute(VM*, ProtoCallFrame*, Register*);
     
     void* start() { return dataAddressAtOffset(0); }
     virtual size_t size() = 0;

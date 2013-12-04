@@ -1320,7 +1320,11 @@ struct AVLTreeAbstractorForArrayCompare {
             m_cachedCall->setThis(jsUndefined());
             m_cachedCall->setArgument(0, va);
             m_cachedCall->setArgument(1, vb);
+#if ENABLE(LLINT_C_LOOP)
             compareResult = m_cachedCall->call().toNumber(m_cachedCall->newCallFrame(m_exec));
+#else
+            compareResult = m_cachedCall->call().toNumber(m_exec);
+#endif
         } else {
             MarkedArgumentBuffer arguments;
             arguments.append(va);

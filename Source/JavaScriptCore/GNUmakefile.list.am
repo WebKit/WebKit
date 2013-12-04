@@ -622,6 +622,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/interpreter/JSStack.cpp \
 	Source/JavaScriptCore/interpreter/JSStack.h \
 	Source/JavaScriptCore/interpreter/JSStackInlines.h \
+	Source/JavaScriptCore/interpreter/ProtoCallFrame.cpp \
+	Source/JavaScriptCore/interpreter/ProtoCallFrame.h \
 	Source/JavaScriptCore/interpreter/Register.h \
 	Source/JavaScriptCore/interpreter/StackVisitor.cpp \
 	Source/JavaScriptCore/interpreter/StackVisitor.h \
