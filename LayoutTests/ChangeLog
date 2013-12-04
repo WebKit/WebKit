@@ -1,3 +1,16 @@
+2013-12-04  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Test dynamic change of position for out-of-flow transformed element
+        https://bugs.webkit.org/show_bug.cgi?id=124978
+
+        Reviewed by Alexandru Chiculita.
+
+        Test that a 3D transformed absolutely positioned element inside a named flow
+        whose position is dynamic changed is displayed in the right position in the associated region.
+
+        * compositing/regions/abs-transformed-dynamic-update-expected.html: Added.
+        * compositing/regions/abs-transformed-dynamic-update.html: Added.
+
 2013-12-03  Filip Pizlo  <fpizlo@apple.com>
 
         Infer constant closure variables

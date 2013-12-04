@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .transformed { -webkit-transform: scale3d(1, 1, 1); }
+            #absolute { -webkit-flow-into: flow; position: absolute; top: 50px; left: 50px; background-color: green; width: 50px; height: 50px; }
+            #red { position: absolute; top: 150px; left: 150px; width: 50px; height: 50px; background-color: red; }
+            #region { -webkit-flow-from: flow; width: 200px; height: 200px; position: absolute; top: 0px; left: 0px; }
+        </style>
+
+    </head>
+    <body>
+        <p>Test that an absolutely positioned transformed element inside a named flow is displayed in the right place when its coordinates are updated.</p>
+        <p>On success you should see a green rectangle and no red.</p>
+        <div id="red" class="transformed"></div>
+        <div id="absolute" class="transformed"></div>
+        <div id="region"></div>
+        <script>
+            document.body.offsetTop;
+            document.getElementById("absolute").style.top = "150px";
+            document.getElementById("absolute").style.left = "150px";
+        </script>
+    </body>
+</html>
