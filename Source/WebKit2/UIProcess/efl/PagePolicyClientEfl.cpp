@@ -105,15 +105,15 @@ PagePolicyClientEfl::PagePolicyClientEfl(EwkView* view)
     WKPageRef pageRef = m_view->wkPage();
     ASSERT(pageRef);
 
-    WKPagePolicyClient policyClient;
+    WKPagePolicyClientV1 policyClient;
     memset(&policyClient, 0, sizeof(WKPagePolicyClient));
-    policyClient.version = kWKPagePolicyClientCurrentVersion;
-    policyClient.clientInfo = this;
+    policyClient.base.version = 1;
+    policyClient.base.clientInfo = this;
     policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
     policyClient.decidePolicyForNewWindowAction = decidePolicyForNewWindowAction;
     policyClient.decidePolicyForResponse = decidePolicyForResponseCallback;
 
-    WKPageSetPagePolicyClient(pageRef, &policyClient);
+    WKPageSetPagePolicyClient(pageRef, &policyClient.base);
 }
 
 } // namespace WebKit

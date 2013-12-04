@@ -99,11 +99,11 @@ TEST(WebKit2, WKViewIsActive)
     // At this point we should have an active view.
     ASSERT_TRUE(WKViewIsActive(view.get()));
 
-    WKPageLoaderClient pageLoaderClient;
+    WKPageLoaderClientV3 pageLoaderClient;
     memset(&pageLoaderClient, 0, sizeof(WKPageLoaderClient));
-    pageLoaderClient.version = kWKPageLoaderClientCurrentVersion;
+    pageLoaderClient.base.version = 3;
     pageLoaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(WKViewGetPage(view.get()), &pageLoaderClient);
+    WKPageSetPageLoaderClient(WKViewGetPage(view.get()), &pageLoaderClient.base);
 
     const WKSize size = WKSizeMake(100, 100);
     WKViewSetSize(view.get(), size);

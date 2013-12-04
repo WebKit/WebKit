@@ -58,13 +58,14 @@ static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* 
 
 static void setPageLoaderClient(WKPageRef page, const void* clientInfo)
 {
-    WKPageLoaderClient loaderClient;
+    WKPageLoaderClientV3 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
+    loaderClient.base.version = 3;
+    loaderClient.base.clientInfo = clientInfo;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    loaderClient.clientInfo = clientInfo;
 
-    WKPageSetPageLoaderClient(page, &loaderClient);
+    WKPageSetPageLoaderClient(page, &loaderClient.base);
 }
 
 void webProcessCrashed(WKViewRef view, WKURLRef url, const void* clientInfo)

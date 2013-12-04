@@ -58,14 +58,14 @@ FindClientEfl::FindClientEfl(EwkView* viewImpl)
     WKPageRef pageRef = m_view->wkPage();
     ASSERT(pageRef);
 
-    WKPageFindClient findClient;
+    WKPageFindClientV0 findClient;
     memset(&findClient, 0, sizeof(WKPageFindClient));
-    findClient.version = kWKPageFindClientCurrentVersion;
-    findClient.clientInfo = this;
+    findClient.base.version = 0;
+    findClient.base.clientInfo = this;
     findClient.didFindString = didFindString;
     findClient.didFailToFindString = didFailToFindString;
     findClient.didCountStringMatches = didFindString;
-    WKPageSetPageFindClient(pageRef, &findClient);
+    WKPageSetPageFindClient(pageRef, &findClient.base);
 }
 
 } // namespace WebKit

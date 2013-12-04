@@ -116,11 +116,11 @@ ContextHistoryClientEfl::ContextHistoryClientEfl(WKContextRef context)
 {
     ASSERT(m_context);
 
-    WKContextHistoryClient wkHistoryClient;
+    WKContextHistoryClientV0 wkHistoryClient;
     memset(&wkHistoryClient, 0, sizeof(WKContextHistoryClient));
 
-    wkHistoryClient.version = kWKContextHistoryClientCurrentVersion;
-    wkHistoryClient.clientInfo = this;
+    wkHistoryClient.base.version = 0;
+    wkHistoryClient.base.clientInfo = this;
 
     wkHistoryClient.didNavigateWithNavigationData = didNavigateWithNavigationData;
     wkHistoryClient.didPerformClientRedirect = didPerformClientRedirect;
@@ -128,7 +128,7 @@ ContextHistoryClientEfl::ContextHistoryClientEfl(WKContextRef context)
     wkHistoryClient.didUpdateHistoryTitle = didUpdateHistoryTitle;
     wkHistoryClient.populateVisitedLinks = populateVisitedLinks;
 
-    WKContextSetHistoryClient(m_context.get(), &wkHistoryClient);
+    WKContextSetHistoryClient(m_context.get(), &wkHistoryClient.base);
 }
 
 ContextHistoryClientEfl::~ContextHistoryClientEfl()

@@ -120,11 +120,11 @@ void DownloadManagerEfl::didFinish(WKContextRef, WKDownloadRef wkDownload, const
 DownloadManagerEfl::DownloadManagerEfl(WKContextRef context)
     : m_context(context)
 {
-    WKContextDownloadClient wkDownloadClient;
+    WKContextDownloadClientV0 wkDownloadClient;
     memset(&wkDownloadClient, 0, sizeof(WKContextDownloadClient));
 
-    wkDownloadClient.version = kWKContextDownloadClientCurrentVersion;
-    wkDownloadClient.clientInfo = this;
+    wkDownloadClient.base.version = 0;
+    wkDownloadClient.base.clientInfo = this;
     wkDownloadClient.didCancel = didCancel;
     wkDownloadClient.decideDestinationWithSuggestedFilename = decideDestinationWithSuggestedFilename;
     wkDownloadClient.didCreateDestination = didCreateDestination;
@@ -133,7 +133,7 @@ DownloadManagerEfl::DownloadManagerEfl(WKContextRef context)
     wkDownloadClient.didFail = didFail;
     wkDownloadClient.didFinish = didFinish;
 
-    WKContextSetDownloadClient(m_context.get(), &wkDownloadClient);
+    WKContextSetDownloadClient(m_context.get(), &wkDownloadClient.base);
 }
 
 DownloadManagerEfl::~DownloadManagerEfl()

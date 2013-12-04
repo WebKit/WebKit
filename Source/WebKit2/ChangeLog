@@ -1,3 +1,31 @@
+2013-12-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][WK2] Buildfix after r160104
+        https://bugs.webkit.org/show_bug.cgi?id=125233
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (EwkCookieManager::EwkCookieManager):
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (EwkFaviconDatabase::EwkFaviconDatabase):
+        * UIProcess/efl/ContextHistoryClientEfl.cpp:
+        (WebKit::ContextHistoryClientEfl::ContextHistoryClientEfl):
+        * UIProcess/efl/ContextMenuClientEfl.cpp:
+        (ContextMenuClientEfl::ContextMenuClientEfl):
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::DownloadManagerEfl):
+        * UIProcess/efl/FindClientEfl.cpp:
+        (WebKit::FindClientEfl::FindClientEfl):
+        * UIProcess/efl/FormClientEfl.cpp:
+        (WebKit::FormClientEfl::FormClientEfl):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::PageLoadClientEfl):
+        * UIProcess/efl/PagePolicyClientEfl.cpp:
+        (WebKit::PagePolicyClientEfl::PagePolicyClientEfl):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+
 2013-12-03  Anders Carlsson  <andersca@apple.com>
 
         Deprecate all unversioned client structs in favor of having explicit versioned structs

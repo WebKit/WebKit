@@ -162,10 +162,10 @@ PageLoadClientEfl::PageLoadClientEfl(EwkView* view)
     WKPageRef pageRef = m_view->wkPage();
     ASSERT(pageRef);
 
-    WKPageLoaderClient loadClient;
+    WKPageLoaderClientV3 loadClient;
     memset(&loadClient, 0, sizeof(WKPageLoaderClient));
-    loadClient.version = kWKPageLoaderClientCurrentVersion;
-    loadClient.clientInfo = this;
+    loadClient.base.version = 3;
+    loadClient.base.clientInfo = this;
     loadClient.didReceiveTitleForFrame = didReceiveTitleForFrame;
     loadClient.didStartProgress = didChangeProgress;
     loadClient.didChangeProgress = didChangeProgress;
@@ -179,7 +179,7 @@ PageLoadClientEfl::PageLoadClientEfl(EwkView* view)
     loadClient.didChangeBackForwardList = didChangeBackForwardList;
     loadClient.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
     loadClient.didReceiveAuthenticationChallengeInFrame = didReceiveAuthenticationChallengeInFrame;
-    WKPageSetPageLoaderClient(pageRef, &loadClient);
+    WKPageSetPageLoaderClient(pageRef, &loadClient.base);
 }
 
 } // namespace WebKit

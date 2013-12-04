@@ -52,10 +52,10 @@ PageUIClientEfl::PageUIClientEfl(EwkView* view)
     WKPageRef pageRef = m_view->wkPage();
     ASSERT(pageRef);
 
-    WKPageUIClient uiClient;
+    WKPageUIClientV2 uiClient;
     memset(&uiClient, 0, sizeof(WKPageUIClient));
-    uiClient.version = kWKPageUIClientCurrentVersion;
-    uiClient.clientInfo = this;
+    uiClient.base.version = 2;
+    uiClient.base.clientInfo = this;
     uiClient.close = close;
     uiClient.takeFocus = takeFocus;
     uiClient.focus = focus;
@@ -84,7 +84,7 @@ PageUIClientEfl::PageUIClientEfl(EwkView* view)
     uiClient.hideColorPicker = hideColorPicker;
 #endif
 
-    WKPageSetPageUIClient(pageRef, &uiClient);
+    WKPageSetPageUIClient(pageRef, &uiClient.base);
 
     // Popup Menu UI client.
     WKPageUIPopupMenuClientV0 uiPopupMenuClient;
@@ -93,7 +93,7 @@ PageUIClientEfl::PageUIClientEfl(EwkView* view)
     uiPopupMenuClient.base.clientInfo = this;
     uiPopupMenuClient.showPopupMenu = showPopupMenu;
     uiPopupMenuClient.hidePopupMenu = hidePopupMenu;
-    WKPageSetUIPopupMenuClient(pageRef, reinterpret_cast<WKPageUIPopupMenuClientBase*>(&uiPopupMenuClient));
+    WKPageSetUIPopupMenuClient(pageRef, &uiPopupMenuClient.base);
 }
 
 

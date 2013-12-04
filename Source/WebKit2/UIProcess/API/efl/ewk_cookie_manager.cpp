@@ -42,12 +42,12 @@ EwkCookieManager::EwkCookieManager(WKCookieManagerRef cookieManager)
 {
     ASSERT(m_cookieManager);
 
-    WKCookieManagerClient wkCookieManagerClient = {
-        kWKCookieManagerClientCurrentVersion,
-        this, // clientInfo
-        cookiesDidChange
-    };
-    WKCookieManagerSetClient(m_cookieManager.get(), &wkCookieManagerClient);
+    WKCookieManagerClientV0 wkCookieManagerClient;
+    memset(&wkCookieManagerClient, 0, sizeof(wkCookieManagerClient));
+    wkCookieManagerClient.base.version = 0;
+    wkCookieManagerClient.base.clientInfo = this;
+    wkCookieManagerClient.cookiesDidChange = cookiesDidChange;
+    WKCookieManagerSetClient(m_cookieManager.get(), &wkCookieManagerClient.base);
 }
 
 EwkCookieManager::~EwkCookieManager()

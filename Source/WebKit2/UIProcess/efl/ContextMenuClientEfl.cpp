@@ -58,10 +58,10 @@ ContextMenuClientEfl::ContextMenuClientEfl(EwkView* view)
     WKPageRef pageRef = m_view->wkPage();
     ASSERT(pageRef);
 
-    WKPageContextMenuClient contextMenuClient;
+    WKPageContextMenuClientV3 contextMenuClient;
     memset(&contextMenuClient, 0, sizeof(WKPageContextMenuClient));
-    contextMenuClient.version = kWKPageContextMenuClientCurrentVersion;
-    contextMenuClient.clientInfo = this;
+    contextMenuClient.base.version = 3;
+    contextMenuClient.base.clientInfo = this;
     contextMenuClient.getContextMenuFromProposedMenu_deprecatedForUseWithV0 = 0;
     contextMenuClient.customContextMenuItemSelected = customContextMenuItemSelected;
     contextMenuClient.contextMenuDismissed = 0;
@@ -69,6 +69,6 @@ ContextMenuClientEfl::ContextMenuClientEfl(EwkView* view)
     contextMenuClient.showContextMenu = showContextMenu;
     contextMenuClient.hideContextMenu = hideContextMenu;
 
-    WKPageSetPageContextMenuClient(pageRef, &contextMenuClient);
+    WKPageSetPageContextMenuClient(pageRef, &contextMenuClient.base);
 }
 

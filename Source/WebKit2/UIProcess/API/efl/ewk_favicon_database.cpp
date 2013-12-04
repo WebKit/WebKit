@@ -42,12 +42,12 @@ using namespace WebKit;
 EwkFaviconDatabase::EwkFaviconDatabase(WKIconDatabaseRef iconDatabase)
     : m_iconDatabase(iconDatabase)
 {
-    WKIconDatabaseClient iconDatabaseClient;
+    WKIconDatabaseClientV1 iconDatabaseClient;
     memset(&iconDatabaseClient, 0, sizeof(WKIconDatabaseClient));
-    iconDatabaseClient.version = kWKIconDatabaseClientCurrentVersion;
-    iconDatabaseClient.clientInfo = this;
+    iconDatabaseClient.base.version = kWKIconDatabaseClientCurrentVersion;
+    iconDatabaseClient.base.clientInfo = this;
     iconDatabaseClient.iconDataReadyForPageURL = iconDataReadyForPageURL;
-    WKIconDatabaseSetIconDatabaseClient(m_iconDatabase.get(), &iconDatabaseClient);
+    WKIconDatabaseSetIconDatabaseClient(m_iconDatabase.get(), &iconDatabaseClient.base);
 }
 
 EwkFaviconDatabase::~EwkFaviconDatabase()

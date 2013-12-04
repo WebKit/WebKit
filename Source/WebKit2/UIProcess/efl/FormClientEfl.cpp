@@ -53,12 +53,12 @@ FormClientEfl::FormClientEfl(EwkView* viewImpl)
     WKPageRef pageRef = m_view->wkPage();
     ASSERT(pageRef);
 
-    WKPageFormClient formClient;
+    WKPageFormClientV0 formClient;
     memset(&formClient, 0, sizeof(WKPageFormClient));
-    formClient.version = kWKPageFormClientCurrentVersion;
-    formClient.clientInfo = this;
+    formClient.base.version = 0;
+    formClient.base.clientInfo = this;
     formClient.willSubmitForm = willSubmitForm;
-    WKPageSetPageFormClient(pageRef, &formClient);
+    WKPageSetPageFormClient(pageRef, &formClient.base);
 }
 
 } // namespace WebKit
