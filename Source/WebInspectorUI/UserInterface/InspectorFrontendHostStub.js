@@ -33,7 +33,6 @@
 if (!window.InspectorFrontendHost) {
     WebInspector.InspectorFrontendHostStub = function()
     {
-        this._attachedWindowHeight = 0;
     }
 
     WebInspector.InspectorFrontendHostStub.prototype = {
