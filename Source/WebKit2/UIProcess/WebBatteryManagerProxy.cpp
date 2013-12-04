@@ -55,7 +55,7 @@ WebBatteryManagerProxy::~WebBatteryManagerProxy()
 {
 }
 
-void WebBatteryManagerProxy::initializeProvider(const WKBatteryProvider* provider)
+void WebBatteryManagerProxy::initializeProvider(const WKBatteryProviderBase* provider)
 {
     m_provider.initialize(provider);
 }

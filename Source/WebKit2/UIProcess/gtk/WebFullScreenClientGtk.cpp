@@ -36,7 +36,7 @@ bool WebFullScreenClientGtk::willEnterFullScreen()
     if (!m_client.willEnterFullScreen)
         return true;
 
-    return m_client.willEnterFullScreen(m_client.clientInfo);
+    return m_client.willEnterFullScreen(m_client.base.clientInfo);
 }
 
 bool WebFullScreenClientGtk::willExitFullScreen()
@@ -44,7 +44,7 @@ bool WebFullScreenClientGtk::willExitFullScreen()
     if (!m_client.willExitFullScreen)
         return true;
 
-    return m_client.willExitFullScreen(m_client.clientInfo);
+    return m_client.willExitFullScreen(m_client.base.clientInfo);
 }
 
 } // namespace WebKit

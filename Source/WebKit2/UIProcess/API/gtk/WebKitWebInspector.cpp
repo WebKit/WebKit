@@ -316,9 +316,11 @@ WebKitWebInspector* webkitWebInspectorCreate(WebInspectorProxy* webInspector)
     WebKitWebInspector* inspector = WEBKIT_WEB_INSPECTOR(g_object_new(WEBKIT_TYPE_WEB_INSPECTOR, NULL));
     inspector->priv->webInspector = webInspector;
 
-    WKInspectorClientGtk wkInspectorClientGtk = {
-        kWKInspectorClientGtkCurrentVersion,
-        inspector, // clientInfo
+    WKInspectorClientGtkV0 wkInspectorClientGtk = {
+        {
+            0, // version
+            inspector, // clientInfo
+        },
         openWindow,
         didClose,
         bringToFront,
@@ -327,7 +329,7 @@ WebKitWebInspector* webkitWebInspectorCreate(WebInspectorProxy* webInspector)
         detach,
         didChangeAttachedHeight
     };
-    WKInspectorSetInspectorClientGtk(toAPI(webInspector), &wkInspectorClientGtk);
+    WKInspectorSetInspectorClientGtk(toAPI(webInspector), reinterpret_cast<WKInspectorClientGtkBase*>(&wkInspectorClientGtk));
 
     return inspector;
 }

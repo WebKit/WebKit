@@ -37,12 +37,14 @@ static bool willExitFullScreen(const void* clientInfo)
 
 void attachFullScreenClientToView(WebKitWebView* webView)
 {
-    WKFullScreenClientGtk wkFullScreenClient = {
-        kWKFullScreenClientGtkCurrentVersion,
-        webView, // clientInfo
+    WKFullScreenClientGtkV0 wkFullScreenClient = {
+        {
+            0, // version
+            webView, // clientInfo
+        },
         willEnterFullScreen,
         willExitFullScreen
     };
-    WKViewSetFullScreenClientGtk(toAPI(WEBKIT_WEB_VIEW_BASE(webView)), &wkFullScreenClient);
+    WKViewSetFullScreenClientGtk(toAPI(WEBKIT_WEB_VIEW_BASE(webView)), reinterpret_cast<WKFullScreenClientGtkBase*>(&wkFullScreenClient));
 }
 

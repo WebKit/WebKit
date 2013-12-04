@@ -42,9 +42,13 @@
 #elif defined(__GNUC__)
 #define WK_INLINE static __inline__
 #else
-#define WK_INLINE static    
+#define WK_INLINE static
 #endif
 #endif /* !defined(WK_INLINE) */
+
+#ifndef __has_extension
+#define __has_extension(x) 0
+#endif
 
 #if defined(__has_extension) && __has_extension(enumerator_attributes) && __has_extension(attribute_unavailable_with_message)
 #define WK_DEPRECATED(message) __attribute__((deprecated(message)))

@@ -44,7 +44,7 @@ public:
 
     void invalidate();
 
-    void initializeProvider(const WKVibrationProvider*);
+    void initializeProvider(const WKVibrationProviderBase*);
 
 private:
     explicit WebVibrationProxy(WebPageProxy*);

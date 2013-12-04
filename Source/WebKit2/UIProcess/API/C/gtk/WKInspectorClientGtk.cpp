@@ -31,7 +31,7 @@
 
 using namespace WebKit;
 
-void WKInspectorSetInspectorClientGtk(WKInspectorRef inspectorRef, const WKInspectorClientGtk* wkClient)
+void WKInspectorSetInspectorClientGtk(WKInspectorRef inspectorRef, const WKInspectorClientGtkBase* wkClient)
 {
     toImpl(inspectorRef)->initializeInspectorClientGtk(wkClient);
 }

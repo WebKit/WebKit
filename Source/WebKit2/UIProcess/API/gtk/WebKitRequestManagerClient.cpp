@@ -40,12 +40,14 @@ static void didFailToLoadURIRequest(WKSoupRequestManagerRef, uint64_t requestID,
 
 void attachRequestManagerClientToContext(WebKitWebContext* webContext)
 {
-    WKSoupRequestManagerClient wkRequestManagerClient = {
-        kWKSoupRequestManagerClientCurrentVersion,
-        webContext, // clientInfo
+    WKSoupRequestManagerClientV0 wkRequestManagerClient = {
+        {
+            0, // version
+            webContext // clientInfo
+        },
         didReceiveURIRequest,
         didFailToLoadURIRequest
     };
-    WKSoupRequestManagerSetClient(toAPI(webkitWebContextGetRequestManager(webContext)), &wkRequestManagerClient);
+    WKSoupRequestManagerSetClient(toAPI(webkitWebContextGetRequestManager(webContext)), reinterpret_cast<WKSoupRequestManagerClientBase*>(&wkRequestManagerClient));
 }
 

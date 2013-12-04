@@ -32,11 +32,17 @@
 #include "WKVibration.h"
 #include <wtf/Forward.h>
 
+namespace API {
+template<> struct ClientTraits<WKVibrationProviderBase> {
+    typedef std::tuple<WKVibrationProviderV0> Versions;
+};
+}
+
 namespace WebKit {
 
 class WebVibrationProxy;
 
-class WebVibrationProvider : public APIClient<WKVibrationProvider, kWKVibrationProviderCurrentVersion> {
+class WebVibrationProvider : public API::Client<WKVibrationProviderBase> {
 public:
     void vibrate(WebVibrationProxy*, uint32_t vibrationTime);
     void cancelVibration(WebVibrationProxy*);

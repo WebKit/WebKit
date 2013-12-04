@@ -99,7 +99,7 @@ public:
     void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize&);
 
     // View client.
-    void initializeClient(const WKViewClient*);
+    void initializeClient(const WKViewClientBase*);
 
     WebPageProxy* page() { return m_page.get(); }
 

@@ -44,7 +44,7 @@ void webkitWebViewBaseStartDrag(WebKitWebViewBase*, const WebCore::DragData&, Pa
 void webkitWebViewBaseChildMoveResize(WebKitWebViewBase*, GtkWidget*, const WebCore::IntRect&);
 void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
-void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase*, const WKFullScreenClientGtk*);
+void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase*, const WKFullScreenClientGtkBase*);
 void webkitWebViewBaseSetInspectorViewHeight(WebKitWebViewBase*, unsigned height);
 void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase*, WebKit::WebContextMenuProxyGtk*);
 WebKit::WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase*);

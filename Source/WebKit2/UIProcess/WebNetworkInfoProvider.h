@@ -32,11 +32,17 @@
 #include "WKNetworkInfoManager.h"
 #include <wtf/Forward.h>
 
+namespace API {
+template<> struct ClientTraits<WKNetworkInfoProviderBase> {
+    typedef std::tuple<WKNetworkInfoProviderV0> Versions;
+};
+}
+
 namespace WebKit {
 
 class WebNetworkInfoManagerProxy;
 
-class WebNetworkInfoProvider : public APIClient<WKNetworkInfoProvider, kWKNetworkInfoProviderCurrentVersion> {
+class WebNetworkInfoProvider : public API::Client<WKNetworkInfoProviderBase> {
 public:
     void startUpdating(WebNetworkInfoManagerProxy*);
     void stopUpdating(WebNetworkInfoManagerProxy*);

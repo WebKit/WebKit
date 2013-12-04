@@ -1,3 +1,156 @@
+2013-12-04  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [EFL][WK2] Fix build after API::Client changes
+        https://bugs.webkit.org/show_bug.cgi?id=125206
+
+        Reviewed by Csaba Osztrogonác.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Shared/API/c/WKDeclarationSpecifiers.h:
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewSetViewClient):
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h:
+        * UIProcess/API/C/WKBatteryManager.cpp:
+        (WKBatteryManagerSetProvider):
+        * UIProcess/API/C/WKBatteryManager.h:
+        * UIProcess/API/C/WKNetworkInfoManager.cpp:
+        (WKNetworkInfoManagerSetProvider):
+        * UIProcess/API/C/WKNetworkInfoManager.h:
+        * UIProcess/API/C/WKTextChecker.cpp:
+        (WKTextCheckerSetClient):
+        * UIProcess/API/C/WKTextChecker.h:
+        * UIProcess/API/C/WKVibration.cpp:
+        (WKVibrationSetProvider):
+        * UIProcess/API/C/WKVibration.h:
+        * UIProcess/API/C/efl/WKPageEfl.cpp:
+        (WKPageSetUIPopupMenuClient):
+        * UIProcess/API/C/efl/WKPageEfl.h:
+        * UIProcess/API/C/gtk/WKFullScreenClientGtk.cpp:
+        (WKViewSetFullScreenClientGtk):
+        * UIProcess/API/C/gtk/WKFullScreenClientGtk.h:
+        * UIProcess/API/C/gtk/WKInspectorClientGtk.cpp:
+        (WKInspectorSetInspectorClientGtk):
+        * UIProcess/API/C/gtk/WKInspectorClientGtk.h:
+        * UIProcess/API/C/soup/WKSoupRequestManager.cpp:
+        (WKSoupRequestManagerSetClient):
+        * UIProcess/API/C/soup/WKSoupRequestManager.h:
+        * UIProcess/API/gtk/WebKitFullscreenClient.cpp:
+        (attachFullScreenClientToView):
+        * UIProcess/API/gtk/WebKitRequestManagerClient.cpp:
+        (attachRequestManagerClientToContext):
+        * UIProcess/API/gtk/WebKitTextChecker.cpp:
+        (WebKitTextChecker::WebKitTextChecker):
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        (webkitWebInspectorCreate):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseInitializeFullScreenClient):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::initializeClient):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/CoordinatedGraphics/WebViewClient.cpp:
+        (WebKit::WebViewClient::viewNeedsDisplay):
+        (WebKit::WebViewClient::didChangeContentsSize):
+        (WebKit::WebViewClient::webProcessCrashed):
+        (WebKit::WebViewClient::webProcessDidRelaunch):
+        (WebKit::WebViewClient::didChangeContentsPosition):
+        (WebKit::WebViewClient::didRenderFrame):
+        (WebKit::WebViewClient::didCompletePageTransition):
+        (WebKit::WebViewClient::didChangeViewportAttributes):
+        (WebKit::WebViewClient::didChangeTooltip):
+        (WebKit::WebViewClient::didFindZoomableArea):
+        (WebKit::WebViewClient::doneWithTouchEvent):
+        * UIProcess/CoordinatedGraphics/WebViewClient.h:
+        * UIProcess/WebBatteryManagerProxy.cpp:
+        (WebKit::WebBatteryManagerProxy::initializeProvider):
+        * UIProcess/WebBatteryManagerProxy.h:
+        * UIProcess/WebBatteryProvider.cpp:
+        (WebKit::WebBatteryProvider::startUpdating):
+        (WebKit::WebBatteryProvider::stopUpdating):
+        * UIProcess/WebBatteryProvider.h:
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebNetworkInfoManagerProxy.cpp:
+        (WebKit::WebNetworkInfoManagerProxy::initializeProvider):
+        * UIProcess/WebNetworkInfoManagerProxy.h:
+        * UIProcess/WebNetworkInfoProvider.cpp:
+        (WebKit::WebNetworkInfoProvider::startUpdating):
+        (WebKit::WebNetworkInfoProvider::stopUpdating):
+        (WebKit::WebNetworkInfoProvider::bandwidth):
+        (WebKit::WebNetworkInfoProvider::isMetered):
+        * UIProcess/WebNetworkInfoProvider.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebTextChecker.cpp:
+        (WebKit::WebTextChecker::setClient):
+        * UIProcess/WebTextChecker.h:
+        * UIProcess/WebTextCheckerClient.cpp:
+        (WebKit::WebTextCheckerClient::continuousSpellCheckingAllowed):
+        (WebKit::WebTextCheckerClient::continuousSpellCheckingEnabled):
+        (WebKit::WebTextCheckerClient::setContinuousSpellCheckingEnabled):
+        (WebKit::WebTextCheckerClient::grammarCheckingEnabled):
+        (WebKit::WebTextCheckerClient::setGrammarCheckingEnabled):
+        (WebKit::WebTextCheckerClient::uniqueSpellDocumentTag):
+        (WebKit::WebTextCheckerClient::closeSpellDocumentWithTag):
+        (WebKit::WebTextCheckerClient::checkSpellingOfString):
+        (WebKit::WebTextCheckerClient::checkGrammarOfString):
+        (WebKit::WebTextCheckerClient::spellingUIIsShowing):
+        (WebKit::WebTextCheckerClient::toggleSpellingUIIsShowing):
+        (WebKit::WebTextCheckerClient::updateSpellingUIWithMisspelledWord):
+        (WebKit::WebTextCheckerClient::updateSpellingUIWithGrammarString):
+        (WebKit::WebTextCheckerClient::guessesForWord):
+        (WebKit::WebTextCheckerClient::learnWord):
+        (WebKit::WebTextCheckerClient::ignoreWord):
+        * UIProcess/WebTextCheckerClient.h:
+        * UIProcess/WebVibrationProvider.cpp:
+        (WebKit::WebVibrationProvider::vibrate):
+        (WebKit::WebVibrationProvider::cancelVibration):
+        * UIProcess/WebVibrationProvider.h:
+        * UIProcess/WebVibrationProxy.cpp:
+        (WebKit::WebVibrationProxy::initializeProvider):
+        * UIProcess/WebVibrationProxy.h:
+        * UIProcess/efl/BatteryProvider.cpp:
+        (BatteryProvider::BatteryProvider):
+        * UIProcess/efl/NetworkInfoProvider.cpp:
+        (NetworkInfoProvider::NetworkInfoProvider):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+        * UIProcess/efl/RequestManagerClientEfl.cpp:
+        (WebKit::RequestManagerClientEfl::RequestManagerClientEfl):
+        * UIProcess/efl/TextCheckerClientEfl.cpp:
+        (TextCheckerClientEfl::TextCheckerClientEfl):
+        * UIProcess/efl/VibrationClientEfl.cpp:
+        (VibrationClientEfl::VibrationClientEfl):
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::ViewClientEfl):
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::initializeUIPopupMenuClient):
+        * UIProcess/efl/WebUIPopupMenuClient.cpp:
+        (WebUIPopupMenuClient::showPopupMenu):
+        (WebUIPopupMenuClient::hidePopupMenu):
+        * UIProcess/efl/WebUIPopupMenuClient.h:
+        * UIProcess/gtk/WebFullScreenClientGtk.cpp:
+        (WebKit::WebFullScreenClientGtk::willEnterFullScreen):
+        (WebKit::WebFullScreenClientGtk::willExitFullScreen):
+        * UIProcess/gtk/WebFullScreenClientGtk.h:
+        * UIProcess/gtk/WebInspectorClientGtk.cpp:
+        (WebKit::WebInspectorClientGtk::openWindow):
+        (WebKit::WebInspectorClientGtk::didClose):
+        (WebKit::WebInspectorClientGtk::bringToFront):
+        (WebKit::WebInspectorClientGtk::inspectedURLChanged):
+        (WebKit::WebInspectorClientGtk::attach):
+        (WebKit::WebInspectorClientGtk::detach):
+        (WebKit::WebInspectorClientGtk::didChangeAttachedHeight):
+        * UIProcess/gtk/WebInspectorClientGtk.h:
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::initializeInspectorClientGtk):
+        * UIProcess/soup/WebSoupRequestManagerClient.cpp:
+        (WebKit::WebSoupRequestManagerClient::didReceiveURIRequest):
+        (WebKit::WebSoupRequestManagerClient::didFailToLoadURIRequest):
+        * UIProcess/soup/WebSoupRequestManagerClient.h:
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp:
+        (WebKit::WebSoupRequestManagerProxy::initializeClient):
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+
 2013-12-03  Simon Fraser  <simon.fraser@apple.com>
 
         WKContentView should just use InitializeWebKit2()

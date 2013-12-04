@@ -44,7 +44,7 @@ WKTypeID WKBatteryManagerGetTypeID()
 #endif
 }
 
-void WKBatteryManagerSetProvider(WKBatteryManagerRef batteryManager, const WKBatteryProvider* provider)
+void WKBatteryManagerSetProvider(WKBatteryManagerRef batteryManager, const WKBatteryProviderBase* provider)
 {
 #if ENABLE(BATTERY_STATUS)
     toImpl(batteryManager)->initializeProvider(provider);

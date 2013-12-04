@@ -325,8 +325,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/APIArray.cpp \
 	Source/WebKit2/Shared/APIArray.h \
 	Source/WebKit2/Shared/APIClient.h \
-	Source/WebKit2/Shared/APIClientTraits.cpp \
-	Source/WebKit2/Shared/APIClientTraits.h \
 	Source/WebKit2/Shared/API/c/cairo/WKImageCairo.cpp \
 	Source/WebKit2/Shared/API/c/cairo/WKImageCairo.h \
 	Source/WebKit2/Shared/API/c/gtk/WKBaseGtk.h \

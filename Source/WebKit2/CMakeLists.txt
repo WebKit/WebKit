@@ -180,7 +180,6 @@ set(WebKit2_SOURCES
     PluginProcess/WebProcessConnection.cpp
 
     Shared/APIArray.cpp
-    Shared/APIClientTraits.cpp
     Shared/APIObject.cpp
     Shared/ActivityAssertion.cpp
     Shared/CacheModel.cpp

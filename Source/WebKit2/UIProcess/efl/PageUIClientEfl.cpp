@@ -87,13 +87,13 @@ PageUIClientEfl::PageUIClientEfl(EwkView* view)
     WKPageSetPageUIClient(pageRef, &uiClient);
 
     // Popup Menu UI client.
-    WKPageUIPopupMenuClient uiPopupMenuClient;
-    memset(&uiPopupMenuClient, 0, sizeof(WKPageUIPopupMenuClient));
-    uiPopupMenuClient.version = kWKPageUIPopupMenuClientCurrentVersion;
-    uiPopupMenuClient.clientInfo = this;
+    WKPageUIPopupMenuClientV0 uiPopupMenuClient;
+    memset(&uiPopupMenuClient, 0, sizeof(WKPageUIPopupMenuClientV0));
+    uiPopupMenuClient.base.version = 0;
+    uiPopupMenuClient.base.clientInfo = this;
     uiPopupMenuClient.showPopupMenu = showPopupMenu;
     uiPopupMenuClient.hidePopupMenu = hidePopupMenu;
-    WKPageSetUIPopupMenuClient(pageRef, &uiPopupMenuClient);
+    WKPageSetUIPopupMenuClient(pageRef, reinterpret_cast<WKPageUIPopupMenuClientBase*>(&uiPopupMenuClient));
 }
 
 

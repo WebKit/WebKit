@@ -61,13 +61,15 @@ VibrationClientEfl::VibrationClientEfl(EwkView* view)
     WKVibrationRef wkVibration = WKPageGetVibration(pageRef);
     ASSERT(wkVibration);
 
-    WKVibrationProvider wkVibrationProvider = {
-        kWKVibrationProviderCurrentVersion,
-        this, // clientInfo
+    WKVibrationProviderV0 wkVibrationProvider = {
+        {
+            0, // version
+            this, // clientInfo
+        },
         vibrateCallback,
         cancelVibrationCallback
     };
-    WKVibrationSetProvider(wkVibration, &wkVibrationProvider);
+    WKVibrationSetProvider(wkVibration, reinterpret_cast<WKVibrationProviderBase*>(&wkVibrationProvider));
 }
 
 VibrationClientEfl::~VibrationClientEfl()

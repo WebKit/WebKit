@@ -106,7 +106,7 @@ public:
 
 #if PLATFORM(GTK)
     GtkWidget* inspectorView() const { return m_inspectorView; };
-    void initializeInspectorClientGtk(const WKInspectorClientGtk*);
+    void initializeInspectorClientGtk(const WKInspectorClientGtkBase*);
 #endif
 
     void showConsole();

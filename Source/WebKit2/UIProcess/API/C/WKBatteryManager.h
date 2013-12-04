@@ -36,19 +36,21 @@ extern "C" {
 typedef void (*WKBatteryProviderStartUpdatingCallback)(WKBatteryManagerRef batteryManager, const void* clientInfo);
 typedef void (*WKBatteryProviderStopUpdatingCallback)(WKBatteryManagerRef batteryManager, const void* clientInfo);
 
-struct WKBatteryProvider {
+typedef struct WKBatteryProviderBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKBatteryProviderBase;
+
+typedef struct WKBatteryProviderV0 {
+    WKBatteryProviderBase                                               base;
+
     WKBatteryProviderStartUpdatingCallback                              startUpdating;
     WKBatteryProviderStopUpdatingCallback                               stopUpdating;
-};
-typedef struct WKBatteryProvider WKBatteryProvider;
-
-enum { kWKBatteryProviderCurrentVersion = 0 };
+} WKBatteryProviderV0;
 
 WK_EXPORT WKTypeID WKBatteryManagerGetTypeID();
 
-WK_EXPORT void WKBatteryManagerSetProvider(WKBatteryManagerRef batteryManager, const WKBatteryProvider* provider);
+WK_EXPORT void WKBatteryManagerSetProvider(WKBatteryManagerRef batteryManager, const WKBatteryProviderBase* provider);
 
 WK_EXPORT void WKBatteryManagerProviderDidChangeBatteryStatus(WKBatteryManagerRef batteryManager, WKStringRef eventType, WKBatteryStatusRef status);
 WK_EXPORT void WKBatteryManagerProviderUpdateBatteryStatus(WKBatteryManagerRef batteryManager, WKBatteryStatusRef status);

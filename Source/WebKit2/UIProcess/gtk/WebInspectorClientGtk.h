@@ -33,13 +33,17 @@
 
 namespace API {
 class Object;
+
+template<> struct ClientTraits<WKInspectorClientGtkBase> {
+    typedef std::tuple<WKInspectorClientGtkV0> Versions;
+};
 }
 
 namespace WebKit {
 
 class WebInspectorProxy;
 
-class WebInspectorClientGtk : public APIClient<WKInspectorClientGtk, kWKInspectorClientGtkCurrentVersion> {
+class WebInspectorClientGtk : public API::Client<WKInspectorClientGtkBase> {
 public:
     bool openWindow(WebInspectorProxy*);
     void didClose(WebInspectorProxy*);

@@ -24,12 +24,18 @@
 #include "WKAPICast.h"
 #include "WKSoupRequestManager.h"
 
+namespace API {
+template<> struct ClientTraits<WKSoupRequestManagerClientBase> {
+    typedef std::tuple<WKSoupRequestManagerClientV0> Versions;
+};
+}
+
 namespace WebKit {
 
 class WebSoupRequestManagerProxy;
 class WebURL;
 
-class WebSoupRequestManagerClient : public APIClient<WKSoupRequestManagerClient, kWKSoupRequestManagerClientCurrentVersion> {
+class WebSoupRequestManagerClient : public API::Client<WKSoupRequestManagerClientBase> {
 public:
     bool didReceiveURIRequest(WebSoupRequestManagerProxy*, WebURL*, WebPageProxy*, uint64_t requestID);
     void didFailToLoadURIRequest(WebSoupRequestManagerProxy*, uint64_t requestID);

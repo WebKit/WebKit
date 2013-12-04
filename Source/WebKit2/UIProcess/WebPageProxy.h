@@ -357,7 +357,7 @@ public:
     void initializePolicyClient(const WKPagePolicyClientBase*);
     void initializeUIClient(const WKPageUIClientBase*);
 #if PLATFORM(EFL)
-    void initializeUIPopupMenuClient(const WKPageUIPopupMenuClient*);
+    void initializeUIPopupMenuClient(const WKPageUIPopupMenuClientBase*);
 #endif
 
     void initializeWebPage();

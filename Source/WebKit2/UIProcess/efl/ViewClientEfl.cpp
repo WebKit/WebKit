@@ -182,10 +182,10 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
 {
     ASSERT(m_view);
 
-    WKViewClient viewClient;
-    memset(&viewClient, 0, sizeof(WKViewClient));
-    viewClient.version = kWKViewClientCurrentVersion;
-    viewClient.clientInfo = this;
+    WKViewClientV0 viewClient;
+    memset(&viewClient, 0, sizeof(WKViewClientV0));
+    viewClient.base.version = 0;
+    viewClient.base.clientInfo = this;
     viewClient.didChangeContentsSize = didChangeContentsSize;
     viewClient.didFindZoomableArea = didFindZoomableArea;
     viewClient.viewNeedsDisplay = viewNeedsDisplay;
@@ -200,7 +200,7 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
     viewClient.doneWithTouchEvent = doneWithTouchEvent;
 #endif
 
-    WKViewSetViewClient(m_view->wkView(), &viewClient);
+    WKViewSetViewClient(m_view->wkView(), reinterpret_cast<WKViewClientBase*>(&viewClient));
 }
 
 ViewClientEfl::~ViewClientEfl()

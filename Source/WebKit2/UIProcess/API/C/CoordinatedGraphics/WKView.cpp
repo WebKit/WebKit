@@ -50,7 +50,7 @@ void WKViewSetSize(WKViewRef viewRef, WKSize size)
     toImpl(viewRef)->setSize(toIntSize(size));
 }
 
-void WKViewSetViewClient(WKViewRef viewRef, const WKViewClient* client)
+void WKViewSetViewClient(WKViewRef viewRef, const WKViewClientBase* client)
 {
     toImpl(viewRef)->initializeClient(client);
 }

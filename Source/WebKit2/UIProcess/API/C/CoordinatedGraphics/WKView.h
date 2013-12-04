@@ -43,10 +43,13 @@ typedef void (*WKViewPageDidChangeTooltipCallback)(WKViewRef view, WKStringRef n
 typedef void (*WKViewDidFindZoomableAreaCallback)(WKViewRef view, WKPoint point, WKRect area, const void* clientInfo);
 typedef void (*WKViewDoneWithTouchEventCallback)(WKViewRef view, WKTouchEventRef touchEvent, bool wasEventHandled, const void* clientInfo);
 
-struct WKViewClient {
+typedef struct WKViewClientBase {
     int                                              version;
     const void*                                      clientInfo;
+} WKViewClientBase;
 
+typedef struct WKViewClientV0 {
+    WKViewClientBase                                 base;
     // Version 0
     WKViewViewNeedsDisplayCallback                   viewNeedsDisplay;
     WKViewPageDidChangeContentsSizeCallback          didChangeContentsSize;
@@ -59,10 +62,7 @@ struct WKViewClient {
     WKViewPageDidChangeTooltipCallback               didChangeTooltip;
     WKViewDidFindZoomableAreaCallback                didFindZoomableArea;
     WKViewDoneWithTouchEventCallback                 doneWithTouchEvent;
-};
-typedef struct WKViewClient WKViewClient;
-
-enum { kWKViewClientCurrentVersion = 0 };
+} WKViewClientV0;
 
 WK_EXPORT WKViewRef WKViewCreate(WKContextRef context, WKPageGroupRef pageGroup);
 
@@ -71,7 +71,7 @@ WK_EXPORT void WKViewInitialize(WKViewRef);
 WK_EXPORT WKSize WKViewGetSize(WKViewRef);
 WK_EXPORT void WKViewSetSize(WKViewRef, WKSize size);
 
-WK_EXPORT void WKViewSetViewClient(WKViewRef, const WKViewClient*);
+WK_EXPORT void WKViewSetViewClient(WKViewRef, const WKViewClientBase*);
 
 WK_EXPORT bool WKViewIsActive(WKViewRef);
 WK_EXPORT void WKViewSetIsActive(WKViewRef, bool);

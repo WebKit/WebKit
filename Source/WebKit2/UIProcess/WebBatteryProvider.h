@@ -32,11 +32,17 @@
 #include "WKBatteryManager.h"
 #include <wtf/Forward.h>
 
+namespace API {
+template<> struct ClientTraits<WKBatteryProviderBase> {
+    typedef std::tuple<WKBatteryProviderV0> Versions;
+};
+}
+
 namespace WebKit {
 
 class WebBatteryManagerProxy;
 
-class WebBatteryProvider : public APIClient<WKBatteryProvider, kWKBatteryProviderCurrentVersion> {
+class WebBatteryProvider : public API::Client<WKBatteryProviderBase> {
 public:
     void startUpdating(WebBatteryManagerProxy*);
     void stopUpdating(WebBatteryManagerProxy*);

@@ -46,7 +46,7 @@ public:
     static PassRefPtr<WebBatteryManagerProxy> create(WebContext*);
     virtual ~WebBatteryManagerProxy();
 
-    void initializeProvider(const WKBatteryProvider*);
+    void initializeProvider(const WKBatteryProviderBase*);
 
     void providerDidChangeBatteryStatus(const WTF::AtomicString&, WebBatteryStatus*);
     void providerUpdateBatteryStatus(WebBatteryStatus*);

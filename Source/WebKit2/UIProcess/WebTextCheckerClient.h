@@ -32,11 +32,17 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
+namespace API {
+template<> struct ClientTraits<WKTextCheckerClientBase> {
+    typedef std::tuple<WKTextCheckerClientV0> Versions;
+};
+}
+
 namespace WebKit {
 
 class WebPageProxy;
 
-class WebTextCheckerClient : public APIClient<WKTextCheckerClient, kWKTextCheckerClientCurrentVersion> {
+class WebTextCheckerClient : public API::Client<WKTextCheckerClientBase> {
 public:
     bool continuousSpellCheckingAllowed();
     bool continuousSpellCheckingEnabled();

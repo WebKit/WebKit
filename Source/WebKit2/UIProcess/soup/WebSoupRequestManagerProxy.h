@@ -41,7 +41,7 @@ public:
     static PassRefPtr<WebSoupRequestManagerProxy> create(WebContext*);
     virtual ~WebSoupRequestManagerProxy();
 
-    void initializeClient(const WKSoupRequestManagerClient*);
+    void initializeClient(const WKSoupRequestManagerClientBase*);
 
     void registerURIScheme(const String& scheme);
     void didHandleURIRequest(const WebData*, uint64_t contentLength, const String& mimeType, uint64_t requestID);

@@ -36,49 +36,49 @@ bool WebInspectorClientGtk::openWindow(WebInspectorProxy* inspector)
 {
     if (!m_client.openWindow)
         return false;
-    return m_client.openWindow(toAPI(inspector), m_client.clientInfo);
+    return m_client.openWindow(toAPI(inspector), m_client.base.clientInfo);
 }
 
 void WebInspectorClientGtk::didClose(WebInspectorProxy* inspector)
 {
     if (!m_client.didClose)
         return;
-    m_client.didClose(toAPI(inspector), m_client.clientInfo);
+    m_client.didClose(toAPI(inspector), m_client.base.clientInfo);
 }
 
 bool WebInspectorClientGtk::bringToFront(WebInspectorProxy* inspector)
 {
     if (!m_client.bringToFront)
         return false;
-    return m_client.bringToFront(toAPI(inspector), m_client.clientInfo);
+    return m_client.bringToFront(toAPI(inspector), m_client.base.clientInfo);
 }
 
 void WebInspectorClientGtk::inspectedURLChanged(WebInspectorProxy* inspector, const String& url)
 {
     if (!m_client.inspectedURLChanged)
         return;
-    m_client.inspectedURLChanged(toAPI(inspector), toAPI(url.impl()), m_client.clientInfo);
+    m_client.inspectedURLChanged(toAPI(inspector), toAPI(url.impl()), m_client.base.clientInfo);
 }
 
 bool WebInspectorClientGtk::attach(WebInspectorProxy* inspector)
 {
     if (!m_client.attach)
         return false;
-    return m_client.attach(toAPI(inspector), m_client.clientInfo);
+    return m_client.attach(toAPI(inspector), m_client.base.clientInfo);
 }
 
 bool WebInspectorClientGtk::detach(WebInspectorProxy* inspector)
 {
     if (!m_client.detach)
         return false;
-    return m_client.detach(toAPI(inspector), m_client.clientInfo);
+    return m_client.detach(toAPI(inspector), m_client.base.clientInfo);
 }
 
 void WebInspectorClientGtk::didChangeAttachedHeight(WebInspectorProxy* inspector, unsigned height)
 {
     if (!m_client.didChangeAttachedHeight)
         return;
-    m_client.didChangeAttachedHeight(toAPI(inspector), height, m_client.clientInfo);
+    m_client.didChangeAttachedHeight(toAPI(inspector), height, m_client.base.clientInfo);
 }
 
 } // namespace WebKit

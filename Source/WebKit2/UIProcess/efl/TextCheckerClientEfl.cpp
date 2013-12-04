@@ -55,9 +55,11 @@ TextCheckerClientEfl::TextCheckerClientEfl()
 {
     memset(&m_clientCallbacks, 0, sizeof(ClientCallbacks));
 
-    WKTextCheckerClient wkTextCheckerClient = {
-        kWKTextCheckerClientCurrentVersion,
-        this,
+    WKTextCheckerClientV0 wkTextCheckerClient = {
+        {
+            0, // version
+            this, // clientInfo
+        },
         0, // continuousSpellCheckingAllowed
         isContinuousSpellCheckingEnabledCallback,
         setContinuousSpellCheckingEnabledCallback,
@@ -75,7 +77,7 @@ TextCheckerClientEfl::TextCheckerClientEfl()
         learnWordCallback,
         ignoreWordCallback
     };
-    WKTextCheckerSetClient(&wkTextCheckerClient);
+    WKTextCheckerSetClient(reinterpret_cast<WKTextCheckerClientBase*>(&wkTextCheckerClient));
 }
 
 TextCheckerClientEfl& TextCheckerClientEfl::instance()

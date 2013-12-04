@@ -31,7 +31,7 @@
 
 using namespace WebKit;
 
-void WKPageSetUIPopupMenuClient(WKPageRef pageRef, const WKPageUIPopupMenuClient* wkClient)
+void WKPageSetUIPopupMenuClient(WKPageRef pageRef, const WKPageUIPopupMenuClientBase* wkClient)
 {
     toImpl(pageRef)->initializeUIPopupMenuClient(wkClient);
 }

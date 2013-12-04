@@ -32,7 +32,7 @@
 
 using namespace WebKit;
 
-void WKTextCheckerSetClient(const WKTextCheckerClient* wkClient)
+void WKTextCheckerSetClient(const WKTextCheckerClientBase* wkClient)
 {
     if (wkClient && wkClient->version)
         return;

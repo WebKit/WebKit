@@ -36,19 +36,21 @@ extern "C" {
 typedef void (*WKVibrationProviderVibrateCallback)(WKVibrationRef vibrationRef, uint32_t vibrationTime, const void* clientInfo);
 typedef void (*WKVibrationProviderCancelVibrationCallback)(WKVibrationRef vibrationRef, const void* clientInfo);
 
-struct WKVibrationProvider {
+typedef struct WKVibrationProviderBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKVibrationProviderBase;
+
+typedef struct WKVibrationProviderV0 {
+    WKVibrationProviderBase                                             base;
+
     WKVibrationProviderVibrateCallback                                  vibrate;
     WKVibrationProviderCancelVibrationCallback                          cancelVibration;
-};
-typedef struct WKVibrationProvider WKVibrationProvider;
-
-enum { kWKVibrationProviderCurrentVersion = 0 };
+} WKVibrationProviderV0;
 
 WK_EXPORT WKTypeID WKVibrationGetTypeID();
 
-WK_EXPORT void WKVibrationSetProvider(WKVibrationRef vibrationRef, const WKVibrationProvider* provider);
+WK_EXPORT void WKVibrationSetProvider(WKVibrationRef vibrationRef, const WKVibrationProviderBase* provider);
 
 #ifdef __cplusplus
 }

@@ -85,9 +85,11 @@ WebKitTextChecker::WebKitTextChecker()
     : m_textChecker(WebCore::TextCheckerEnchant::create())
     , m_spellCheckingEnabled(false)
 {
-    WKTextCheckerClient wkTextCheckerClient = {
-        kWKTextCheckerClientCurrentVersion,
-        this, // clientInfo
+    WKTextCheckerClientV0 wkTextCheckerClient = {
+        {
+            0, // version
+            this, // clientInfo
+        },
         0, // continuousSpellCheckingAllowed
         continuousSpellCheckingEnabledCallback,
         setContinuousSpellCheckingEnabledCallback,
@@ -105,7 +107,7 @@ WebKitTextChecker::WebKitTextChecker()
         learnWordCallback,
         ignoreWordCallback,
     };
-    WKTextCheckerSetClient(&wkTextCheckerClient);
+    WKTextCheckerSetClient(reinterpret_cast<WKTextCheckerClientBase*>(&wkTextCheckerClient));
 }
 
 void WebKitTextChecker::checkSpellingOfString(const String& string, int& misspellingLocation, int& misspellingLength)

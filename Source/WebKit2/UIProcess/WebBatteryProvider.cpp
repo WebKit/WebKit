@@ -38,7 +38,7 @@ void WebBatteryProvider::startUpdating(WebBatteryManagerProxy* batteryManager)
     if (!m_client.startUpdating)
         return;
 
-    m_client.startUpdating(toAPI(batteryManager), m_client.clientInfo);
+    m_client.startUpdating(toAPI(batteryManager), m_client.base.clientInfo);
 }
 
 void WebBatteryProvider::stopUpdating(WebBatteryManagerProxy* batteryManager)
@@ -46,7 +46,7 @@ void WebBatteryProvider::stopUpdating(WebBatteryManagerProxy* batteryManager)
     if (!m_client.stopUpdating)
         return;
 
-    m_client.stopUpdating(toAPI(batteryManager), m_client.clientInfo);
+    m_client.stopUpdating(toAPI(batteryManager), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

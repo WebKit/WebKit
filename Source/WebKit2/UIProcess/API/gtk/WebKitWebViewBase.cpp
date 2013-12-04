@@ -1045,7 +1045,7 @@ void webkitWebViewBaseExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
 #endif
 }
 
-void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase* webkitWebViewBase, const WKFullScreenClientGtk* wkClient)
+void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase* webkitWebViewBase, const WKFullScreenClientGtkBase* wkClient)
 {
     webkitWebViewBase->priv->fullScreenClient.initialize(wkClient);
 }

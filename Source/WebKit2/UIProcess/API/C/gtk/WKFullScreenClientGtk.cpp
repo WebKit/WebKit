@@ -31,7 +31,7 @@
 
 using namespace WebKit;
 
-void WKViewSetFullScreenClientGtk(WKViewRef viewRef, const WKFullScreenClientGtk* wkClient)
+void WKViewSetFullScreenClientGtk(WKViewRef viewRef, const WKFullScreenClientGtkBase* wkClient)
 {
     webkitWebViewBaseInitializeFullScreenClient(toImpl(viewRef), wkClient);
 }

@@ -49,7 +49,7 @@ WebSoupRequestManagerProxy::~WebSoupRequestManagerProxy()
 {
 }
 
-void WebSoupRequestManagerProxy::initializeClient(const WKSoupRequestManagerClient* client)
+void WebSoupRequestManagerProxy::initializeClient(const WKSoupRequestManagerClientBase* client)
 {
     m_client.initialize(client);
 }

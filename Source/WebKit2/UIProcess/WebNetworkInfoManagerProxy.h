@@ -46,7 +46,7 @@ public:
     static PassRefPtr<WebNetworkInfoManagerProxy> create(WebContext*);
     virtual ~WebNetworkInfoManagerProxy();
 
-    void initializeProvider(const WKNetworkInfoProvider*);
+    void initializeProvider(const WKNetworkInfoProviderBase*);
 
     void providerDidChangeNetworkInformation(const WTF::AtomicString& eventType, WebNetworkInfo*);
 

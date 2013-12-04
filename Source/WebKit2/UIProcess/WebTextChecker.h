@@ -39,7 +39,7 @@ class WebTextChecker : public API::TypedObject<API::Object::Type::TextChecker> {
 public:
     static WebTextChecker* shared();
 
-    void setClient(const WKTextCheckerClient*);
+    void setClient(const WKTextCheckerClientBase*);
     WebTextCheckerClient& client() { return m_client; }
 
     void continuousSpellCheckingEnabledStateChanged(bool);

@@ -38,7 +38,7 @@ void WebVibrationProvider::vibrate(WebVibrationProxy* vibration, uint32_t vibrat
     if (!m_client.vibrate)
         return;
 
-    m_client.vibrate(toAPI(vibration), vibrationTime, m_client.clientInfo);
+    m_client.vibrate(toAPI(vibration), vibrationTime, m_client.base.clientInfo);
 }
 
 void WebVibrationProvider::cancelVibration(WebVibrationProxy* vibration)
@@ -46,7 +46,7 @@ void WebVibrationProvider::cancelVibration(WebVibrationProxy* vibration)
     if (!m_client.cancelVibration)
         return;
 
-    m_client.cancelVibration(toAPI(vibration), m_client.clientInfo);
+    m_client.cancelVibration(toAPI(vibration), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

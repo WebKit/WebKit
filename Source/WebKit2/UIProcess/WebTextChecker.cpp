@@ -43,7 +43,7 @@ WebTextChecker::WebTextChecker()
 {
 }
 
-void WebTextChecker::setClient(const WKTextCheckerClient* client)
+void WebTextChecker::setClient(const WKTextCheckerClientBase* client)
 {
     m_client.initialize(client);
 }

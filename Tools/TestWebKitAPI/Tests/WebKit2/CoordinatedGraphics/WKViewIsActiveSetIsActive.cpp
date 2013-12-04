@@ -87,12 +87,12 @@ TEST(WebKit2, WKViewIsActive)
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("WKViewIsActiveSetIsActiveTest"));
     WKRetainPtr<WKViewRef> view = adoptWK(WKViewCreate(context.get(), 0));
 
-    WKViewClient viewClient;
-    memset(&viewClient, 0, sizeof(WKViewClient));
-    viewClient.version = kWKViewClientCurrentVersion;
+    WKViewClientV0 viewClient;
+    memset(&viewClient, 0, sizeof(WKViewClientV0));
+    viewClient.base.version = 0;
     viewClient.webProcessCrashed = webProcessCrashed;
     viewClient.webProcessDidRelaunch = webProcessRelaunched;
-    WKViewSetViewClient(view.get(), &viewClient);
+    WKViewSetViewClient(view.get(), reinterpret_cast<WKViewClientBase*>(&viewClient));
 
     WKViewInitialize(view.get());
 

@@ -70,14 +70,14 @@ RequestManagerClientEfl::RequestManagerClientEfl(WKContextRef context)
 {
     ASSERT(m_soupRequestManager);
 
-    WKSoupRequestManagerClient wkRequestManagerClient;
-    memset(&wkRequestManagerClient, 0, sizeof(WKSoupRequestManagerClient));
+    WKSoupRequestManagerClientV0 wkRequestManagerClient;
+    memset(&wkRequestManagerClient, 0, sizeof(WKSoupRequestManagerClientV0));
 
-    wkRequestManagerClient.version = kWKSoupRequestManagerClientCurrentVersion;
-    wkRequestManagerClient.clientInfo = this;
+    wkRequestManagerClient.base.version = 0;
+    wkRequestManagerClient.base.clientInfo = this;
     wkRequestManagerClient.didReceiveURIRequest = didReceiveURIRequest;
 
-    WKSoupRequestManagerSetClient(m_soupRequestManager.get(), &wkRequestManagerClient);
+    WKSoupRequestManagerSetClient(m_soupRequestManager.get(), reinterpret_cast<WKSoupRequestManagerClientBase*>(&wkRequestManagerClient));
 }
 
 RequestManagerClientEfl::~RequestManagerClientEfl()

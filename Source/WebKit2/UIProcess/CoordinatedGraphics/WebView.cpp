@@ -206,7 +206,7 @@ bool WebView::exitFullScreen()
 }
 #endif
 
-void WebView::initializeClient(const WKViewClient* client)
+void WebView::initializeClient(const WKViewClientBase* client)
 {
     m_client.initialize(client);
 }

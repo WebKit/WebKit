@@ -71,16 +71,18 @@ NetworkInfoProvider::NetworkInfoProvider(WKContextRef context)
     WKNetworkInfoManagerRef wkNetworkInfoManager = WKContextGetNetworkInfoManager(m_context.get());
     ASSERT(wkNetworkInfoManager);
 
-    WKNetworkInfoProvider wkNetworkInfoProvider = {
-        kWKNetworkInfoProviderCurrentVersion,
-        this, // clientInfo
+    WKNetworkInfoProviderV0 wkNetworkInfoProvider = {
+        {
+            0, // version
+            this, // clientInfo
+        },
         startUpdatingCallback,
         stopUpdatingCallback,
         getBandwidthCallback,
         isMeteredCallback
     };
 
-    WKNetworkInfoManagerSetProvider(wkNetworkInfoManager, &wkNetworkInfoProvider);
+    WKNetworkInfoManagerSetProvider(wkNetworkInfoManager, reinterpret_cast<WKNetworkInfoProviderBase*>(&wkNetworkInfoProvider));
 }
 
 NetworkInfoProvider::~NetworkInfoProvider()

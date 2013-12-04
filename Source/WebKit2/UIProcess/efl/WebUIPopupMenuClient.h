@@ -33,12 +33,18 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/TextDirection.h>
 
+namespace API {
+template<> struct ClientTraits<WKPageUIPopupMenuClientBase> {
+    typedef std::tuple<WKPageUIPopupMenuClientV0> Versions;
+};
+}
+
 namespace WebKit {
 
 class WebPageProxy;
 class WebPopupMenuProxy;
 
-class WebUIPopupMenuClient : public APIClient<WKPageUIPopupMenuClient, kWKPageUIPopupMenuClientCurrentVersion> {
+class WebUIPopupMenuClient : public API::Client<WKPageUIPopupMenuClientBase> {
 public:
     void showPopupMenu(WebPageProxy*, WebPopupMenuProxy*, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, int32_t selectedIndex);
     void hidePopupMenu(WebPageProxy*);

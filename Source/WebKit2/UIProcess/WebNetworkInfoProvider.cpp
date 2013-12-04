@@ -39,7 +39,7 @@ void WebNetworkInfoProvider::startUpdating(WebNetworkInfoManagerProxy* networkIn
     if (!m_client.startUpdating)
         return;
 
-    m_client.startUpdating(toAPI(networkInfoManager), m_client.clientInfo);
+    m_client.startUpdating(toAPI(networkInfoManager), m_client.base.clientInfo);
 }
 
 void WebNetworkInfoProvider::stopUpdating(WebNetworkInfoManagerProxy* networkInfoManager)
@@ -47,7 +47,7 @@ void WebNetworkInfoProvider::stopUpdating(WebNetworkInfoManagerProxy* networkInf
     if (!m_client.stopUpdating)
         return;
 
-    m_client.stopUpdating(toAPI(networkInfoManager), m_client.clientInfo);
+    m_client.stopUpdating(toAPI(networkInfoManager), m_client.base.clientInfo);
 }
 
 double WebNetworkInfoProvider::bandwidth(WebNetworkInfoManagerProxy* networkInfoManager) const
@@ -56,7 +56,7 @@ double WebNetworkInfoProvider::bandwidth(WebNetworkInfoManagerProxy* networkInfo
     if (!m_client.bandwidth)
         return std::numeric_limits<double>::infinity();
 
-    return m_client.bandwidth(toAPI(networkInfoManager), m_client.clientInfo);
+    return m_client.bandwidth(toAPI(networkInfoManager), m_client.base.clientInfo);
 }
 
 bool WebNetworkInfoProvider::isMetered(WebNetworkInfoManagerProxy* networkInfoManager) const
@@ -64,7 +64,7 @@ bool WebNetworkInfoProvider::isMetered(WebNetworkInfoManagerProxy* networkInfoMa
     if (!m_client.isMetered)
         return false;
 
-    return m_client.isMetered(toAPI(networkInfoManager), m_client.clientInfo);
+    return m_client.isMetered(toAPI(networkInfoManager), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

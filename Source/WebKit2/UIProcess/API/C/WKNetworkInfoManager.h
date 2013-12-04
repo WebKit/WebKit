@@ -38,21 +38,23 @@ typedef void (*WKNetworkInfoProviderStopUpdatingCallback)(WKNetworkInfoManagerRe
 typedef double (*WKNetworkInfoProviderGetBandwidthCallback)(WKNetworkInfoManagerRef networkInfoManager, const void* clientInfo);
 typedef bool (*WKNetworkInfoProviderIsMeteredCallback)(WKNetworkInfoManagerRef networkInfoManager, const void* clientInfo);
 
-struct WKNetworkInfoProvider {
+typedef struct WKNetworkInfoProviderBase {
     int                                                                 version;
     const void *                                                        clientInfo;
+} WKNetworkInfoProviderBase;
+
+typedef struct WKNetworkInfoProvider {
+    WKNetworkInfoProviderBase                                           base;
+
     WKNetworkInfoProviderStartUpdatingCallback                          startUpdating;
     WKNetworkInfoProviderStopUpdatingCallback                           stopUpdating;
     WKNetworkInfoProviderGetBandwidthCallback                           bandwidth;
     WKNetworkInfoProviderIsMeteredCallback                              isMetered;
-};
-typedef struct WKNetworkInfoProvider WKNetworkInfoProvider;
-
-enum { kWKNetworkInfoProviderCurrentVersion = 0 };
+} WKNetworkInfoProviderV0;
 
 WK_EXPORT WKTypeID WKNetworkInfoManagerGetTypeID();
 
-WK_EXPORT void WKNetworkInfoManagerSetProvider(WKNetworkInfoManagerRef networkInfoManager, const WKNetworkInfoProvider* provider);
+WK_EXPORT void WKNetworkInfoManagerSetProvider(WKNetworkInfoManagerRef networkInfoManager, const WKNetworkInfoProviderBase* provider);
 
 WK_EXPORT void WKNetworkInfoManagerProviderDidChangeNetworkInformation(WKNetworkInfoManagerRef networkInfoManager, WKStringRef eventType, WKNetworkInfoRef networkInfo);
 

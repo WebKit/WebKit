@@ -40,7 +40,7 @@ WKTypeID WKNetworkInfoManagerGetTypeID()
 #endif
 }
 
-void WKNetworkInfoManagerSetProvider(WKNetworkInfoManagerRef networkInfoManager, const WKNetworkInfoProvider* provider)
+void WKNetworkInfoManagerSetProvider(WKNetworkInfoManagerRef networkInfoManager, const WKNetworkInfoProviderBase* provider)
 {
 #if ENABLE(NETWORK_INFO)
     toImpl(networkInfoManager)->initializeProvider(provider);

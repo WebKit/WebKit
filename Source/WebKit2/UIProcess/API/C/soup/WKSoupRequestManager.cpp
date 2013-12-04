@@ -36,7 +36,7 @@ WKTypeID WKSoupRequestManagerGetTypeID()
     return toAPI(WebSoupRequestManagerProxy::APIType);
 }
 
-void WKSoupRequestManagerSetClient(WKSoupRequestManagerRef soupRequestManagerRef, const WKSoupRequestManagerClient* wkClient)
+void WKSoupRequestManagerSetClient(WKSoupRequestManagerRef soupRequestManagerRef, const WKSoupRequestManagerClientBase* wkClient)
 {
     toImpl(soupRequestManagerRef)->initializeClient(wkClient);
 }

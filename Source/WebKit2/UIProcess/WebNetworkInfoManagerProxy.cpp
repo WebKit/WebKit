@@ -56,7 +56,7 @@ WebNetworkInfoManagerProxy::~WebNetworkInfoManagerProxy()
 {
 }
 
-void WebNetworkInfoManagerProxy::initializeProvider(const WKNetworkInfoProvider* provider)
+void WebNetworkInfoManagerProxy::initializeProvider(const WKNetworkInfoProviderBase* provider)
 {
     m_provider.initialize(provider);
 }

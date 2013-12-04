@@ -126,7 +126,7 @@ void WebPageProxy::cancelComposition()
     process().send(Messages::WebPage::CancelComposition(), m_pageID, 0);
 }
 
-void WebPageProxy::initializeUIPopupMenuClient(const WKPageUIPopupMenuClient* client)
+void WebPageProxy::initializeUIPopupMenuClient(const WKPageUIPopupMenuClientBase* client)
 {
     m_uiPopupMenuClient.initialize(client);
 }

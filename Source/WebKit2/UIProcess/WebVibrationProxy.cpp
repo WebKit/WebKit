@@ -57,7 +57,7 @@ void WebVibrationProxy::invalidate()
     m_provider.initialize(0);
 }
 
-void WebVibrationProxy::initializeProvider(const WKVibrationProvider* provider)
+void WebVibrationProxy::initializeProvider(const WKVibrationProviderBase* provider)
 {
     m_provider.initialize(provider);
 }

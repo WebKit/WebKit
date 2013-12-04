@@ -31,11 +31,15 @@
 
 namespace API {
 class Object;
+
+template<> struct ClientTraits<WKFullScreenClientGtkBase> {
+    typedef std::tuple<WKFullScreenClientGtkV0> Versions;
+};
 }
 
 namespace WebKit {
 
-class WebFullScreenClientGtk : public APIClient<WKFullScreenClientGtk, kWKFullScreenClientGtkCurrentVersion> {
+class WebFullScreenClientGtk : public API::Client<WKFullScreenClientGtkBase> {
 public:
     bool willEnterFullScreen();
     bool willExitFullScreen();

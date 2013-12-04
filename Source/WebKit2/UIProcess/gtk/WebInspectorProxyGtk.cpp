@@ -52,7 +52,7 @@ static void inspectorViewDestroyed(GtkWidget*, gpointer userData)
     inspectorProxy->close();
 }
 
-void WebInspectorProxy::initializeInspectorClientGtk(const WKInspectorClientGtk* inspectorClient)
+void WebInspectorProxy::initializeInspectorClientGtk(const WKInspectorClientGtkBase* inspectorClient)
 {
     m_client.initialize(inspectorClient);
 }
