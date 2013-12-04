@@ -12234,7 +12234,7 @@
     <ClInclude Include="..\ForwardingHeaders\heap\Strong.h">
       <Filter>ForwardingHeaders\heap</Filter>
     </ClInclude>
-    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorForwarding.h">
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorFrontendChannel.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\history\BackForwardClient.h">

@@ -9,6 +9,7 @@ mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\runtime"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\masm"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\profiler"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\heap"
+mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\inspector"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\yarr"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCoreTestSupport"
 
@@ -93,6 +94,7 @@ xcopy /y /d "%ProjectDir%..\ForwardingHeaders\runtime\*.h" "%CONFIGURATIONBUILDD
 xcopy /y /d "%ProjectDir%..\ForwardingHeaders\masm\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\masm"
 xcopy /y /d "%ProjectDir%..\ForwardingHeaders\profiler\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\profiler"
 xcopy /y /d "%ProjectDir%..\ForwardingHeaders\heap\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\heap"
+xcopy /y /d "%ProjectDir%..\ForwardingHeaders\inspector\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\inspector"
 xcopy /y /d "%ProjectDir%..\ForwardingHeaders\yarr\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\yarr"
 
 xcopy /y /d "%ProjectDir%..\testing\js\WebCoreTestSupport.h" "%CONFIGURATIONBUILDDIR%\include\WebCoreTestSupport"
