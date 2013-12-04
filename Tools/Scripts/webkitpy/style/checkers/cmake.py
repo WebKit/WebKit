@@ -153,6 +153,9 @@ class CMakeChecker(object):
 
         line_number = 0
         for line in lines:
+            matched = search('\$\{.*\}', line)
+            if matched:
+                continue
             line_number += 1
             line = line.strip()
 

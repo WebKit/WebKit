@@ -90,6 +90,7 @@ class CMakeCheckerTest(unittest.TestCase):
             'c/a.a\n',
             '\n',
             'c/b/a.a\n',
+            '${aVariable}\n',
             '\n',
             'c/c.c\n',
             '\n',

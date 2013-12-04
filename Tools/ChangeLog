@@ -1,3 +1,16 @@
+2013-12-04  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
+
+        Style checker requires alphabetical ordering in cmake lists even it contains variable.
+        https://bugs.webkit.org/show_bug.cgi?id=124918
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/style/checkers/cmake_unittest.py:
+        (CMakeCheckerTest.test_check):
+        * Scripts/webkitpy/style/checkers/cmake.py:
+        (CMakeChecker._check_list_order):
+        This will ignore lines with variable substitution.
+
 2013-12-04  László Langó  <lango@inf.u-szeged.hu>
 
         check-webkit-style is wrong about expected format parameter pack rvalue reference arguments
