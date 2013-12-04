@@ -233,8 +233,8 @@ macro doCallToJavaScript(makeCall, doReturn)
         const previousPC = lr
         const temp1 = t3 # Same as previousCFR
         const temp2 = a3 # Same as topOfStack
-        const temp3 = t4
-        const temp4 = t5
+        const temp3 = t8
+        const temp4 = t9
     end
 
     if X86

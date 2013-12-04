@@ -31,6 +31,10 @@ GPRS =
      "t3",
      "t4",
      "t5",
+     "t6",
+     "t7",
+     "t8",
+     "t9",
      "cfr",
      "a0",
      "a1",
@@ -42,7 +46,6 @@ GPRS =
      "lr",
      
      # 64-bit only registers:
-     "t6",
      "csr1",  # tag type number register
      "csr2"   # tag mask register
     ]
