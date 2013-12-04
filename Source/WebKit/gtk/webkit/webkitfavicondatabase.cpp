@@ -396,7 +396,7 @@ static GdkPixbuf* getIconPixbufSynchronously(WebKitFaviconDatabase* database, co
     if (!surface)
         return 0;
 
-    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(cairoImageSurfaceToGdkPixbuf(surface.get()));
+    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(cairoSurfaceToGdkPixbuf(surface.get()));
     if (!pixbuf)
         return 0;
 

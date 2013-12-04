@@ -1,3 +1,15 @@
+2013-08-29  Arnaud Renevier  <a.renevier@samsung.com>
+
+        [cairo] canvas drawing on itself doesn't work with accelerated canvas
+        https://bugs.webkit.org/show_bug.cgi?id=118808
+
+        Reviewed by Martin Robinson.
+
+        Change cairoImageSurfaceToGdkPixbuf to cairoSurfaceToGdkPixbuf.
+
+        * webkit/webkitfavicondatabase.cpp:
+        (getIconPixbufSynchronously):
+
 2013-12-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] GTK2 paint code path does not render AC layers

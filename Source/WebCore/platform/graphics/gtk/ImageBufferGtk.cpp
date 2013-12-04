@@ -19,6 +19,7 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
+#include "CairoUtilities.h"
 #include "GdkCairoUtilities.h"
 #include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGtk.h"
@@ -44,14 +45,23 @@ static bool encodeImage(cairo_surface_t* surface, const String& mimeType, const 
     if (type == "jpeg") {
         // JPEG doesn't support alpha channel. The <canvas> spec states that toDataURL() must encode a Porter-Duff
         // composite source-over black for image types that do not support alpha.
-        RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_image_surface_create_for_data(cairo_image_surface_get_data(surface),
-                                                                                          CAIRO_FORMAT_RGB24,
-                                                                                          cairo_image_surface_get_width(surface),
-                                                                                          cairo_image_surface_get_height(surface),
-                                                                                          cairo_image_surface_get_stride(surface)));
-        pixbuf = adoptGRef(cairoImageSurfaceToGdkPixbuf(newSurface.get()));
+        RefPtr<cairo_surface_t> newSurface;
+        if (cairo_surface_get_type(surface) == CAIRO_SURFACE_TYPE_IMAGE) {
+            newSurface = adoptRef(cairo_image_surface_create_for_data(cairo_image_surface_get_data(surface),
+                CAIRO_FORMAT_RGB24,
+                cairo_image_surface_get_width(surface),
+                cairo_image_surface_get_height(surface),
+                cairo_image_surface_get_stride(surface)));
+        } else {
+            IntSize size = cairoSurfaceSize(surface);
+            newSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_RGB24, size.width(), size.height()));
+            RefPtr<cairo_t> cr = adoptRef(cairo_create(newSurface.get()));
+            cairo_set_source_surface(cr.get(), surface, 0, 0);
+            cairo_paint(cr.get());
+        }
+        pixbuf = adoptGRef(cairoSurfaceToGdkPixbuf(newSurface.get()));
     } else
-        pixbuf = adoptGRef(cairoImageSurfaceToGdkPixbuf(surface));
+        pixbuf = adoptGRef(cairoSurfaceToGdkPixbuf(surface));
     if (!pixbuf)
         return false;
 
