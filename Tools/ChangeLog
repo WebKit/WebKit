@@ -1,3 +1,19 @@
+2013-12-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        check-webkit-style detected some ternary statements as initialization lists
+        https://bugs.webkit.org/show_bug.cgi?id=125246
+
+        Reviewed by Dean Jackson.
+
+        The regular expression that check-webkit-tests uses to detect initialization
+        lists was too broad, resulting in false positives. This patch makes the
+        regex more specific
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_member_initialization_list):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_member_initialization_list):
+
 2013-12-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         run-jsc-stress-tests can only run locally

@@ -4914,6 +4914,9 @@ class WebKitStyleTest(CppStyleTestBase):
                 webkit_export_error_rules))
 
     def test_member_initialization_list(self):
+        self.assert_lint('explicit MyClass(Document* doc) : MySuperClass() { }',
+        'Should be indented on a separate line, with the colon or comma first on that line.'
+        '  [whitespace/indent] [4]')
         self.assert_lint('MyClass::MyClass(Document* doc) : MySuperClass() { }',
         'Should be indented on a separate line, with the colon or comma first on that line.'
         '  [whitespace/indent] [4]')
@@ -4983,6 +4986,7 @@ class WebKitStyleTest(CppStyleTestBase):
         , public foo {
         };''',
         '')
+        self.assert_lint('o = foo(b ? bar() : baz());', '')
 
     def test_other(self):
         # FIXME: Implement this.
