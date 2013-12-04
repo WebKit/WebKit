@@ -156,37 +156,37 @@ static float drawAtPoint(const UChar* str, const int runLength, const FloatPoint
     return width;
 }
 
-static bool needsBidiLayout(const UChar *characters, unsigned length, WTF::Unicode::Direction& baseDirection, bool oneParagraph = false)
+static bool needsBidiLayout(const UChar *characters, unsigned length, UCharDirection& baseDirection, bool oneParagraph = false)
 {
     bool foundFirstStrong = false;
     bool result = false;
-    baseDirection = WTF::Unicode::LeftToRight;
+    baseDirection = U_LEFT_TO_RIGHT;
     for (unsigned i = 0; i < length;) {
         UChar32 c;
         U16_NEXT(characters, i, length, c);
-        switch (WTF::Unicode::direction(c)) {
-            case WTF::Unicode::RightToLeft:
-            case WTF::Unicode::RightToLeftArabic:
+        switch (UCharDirection(c)) {
+            case U_RIGHT_TO_LEFT:
+            case U_RIGHT_TO_LEFT_ARABIC:
                 if (!foundFirstStrong) {
                     foundFirstStrong = true;
-                    baseDirection = WTF::Unicode::RightToLeft;
+                    baseDirection = U_RIGHT_TO_LEFT;
                 }
                 // Fall through to rest of strongly directional cases
-            case WTF::Unicode::LeftToRightEmbedding:
-            case WTF::Unicode::LeftToRightOverride:
-            case WTF::Unicode::RightToLeftEmbedding:
-            case WTF::Unicode::RightToLeftOverride:
-            case WTF::Unicode::PopDirectionalFormat:
+            case U_LEFT_TO_RIGHT_EMBEDDING:
+            case U_LEFT_TO_RIGHT_OVERRIDE:
+            case U_RIGHT_TO_LEFT_EMBEDDING:
+            case U_RIGHT_TO_LEFT_OVERRIDE:
+            case U_POP_DIRECTIONAL_FORMAT:
                 result = true;
                 if (foundFirstStrong)
                     return result;
                 break;
-            case WTF::Unicode::LeftToRight:
+            case U_LEFT_TO_RIGHT:
                 foundFirstStrong = true;
                 if (result)
                     return result;
                 break;
-            case WTF::Unicode::BlockSeparator:
+            case U_BLOCK_SEPARATOR:
                 if (oneParagraph)
                     return result;
                 break;
@@ -269,7 +269,7 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, WTF::Unico
         renderer.setLetterSpacing(letterSpacing);
 
     String fullString(self);
-    WTF::Unicode::Direction base = WTF::Unicode::LeftToRight;
+    UCharDirection base = U_LEFT_TO_RIGHT;
     bool stringNeedsBidi = needsBidiLayout(fullString.characters(), fullString.length(), base);
     float stringWidth;
     String s = (width >= FLT_MAX && !measureOnly) ? fullString : applyEllipsisStyle(fullString, ellipsisStyle, width, renderer, shouldDisableWordRounding() ? StringTruncator::DisableRoundingHacks : StringTruncator::EnableRoundingHacks, &stringWidth);
@@ -280,7 +280,7 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, WTF::Unico
         context.setEmojiDrawingEnabled(includeEmoji);
 
         if (stringNeedsBidi) {
-            BidiStatus status(base, base, base, BidiContext::create((base == WTF::Unicode::LeftToRight) ? 0 : 1, base, false));
+            BidiStatus status(base, base, base, BidiContext::create((base == U_LEFT_TO_RIGHT) ? 0 : 1, base, false));
             // FIXME: For proper bidi rendering, we need to pass the whole string, rather than the truncated string.
             // Otherwise, weak/neutral characters on either side of the ellipsis may pick up the wrong direction
             // if there are strong characters ellided.
@@ -401,11 +401,11 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, WTF::Unico
 
     BOOL lastLine = NO;
     BOOL finishedLastLine = NO;
-    WTF::Unicode::Direction base;
+    UCharDirection base;
     BOOL paragraphNeedsBidi = needsBidiLayout(buffer, length, base, true);
     BidiStatus status;
     if (paragraphNeedsBidi)
-        status = BidiStatus(base, base, base, BidiContext::create((base == WTF::Unicode::LeftToRight) ? 0 : 1, base, false));
+        status = BidiStatus(base, base, base, BidiContext::create((base == U_LEFT_TO_RIGHT) ? 0 : 1, base, false));
 
     int lengthRemaining = length;
     
@@ -601,7 +601,7 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, WTF::Unico
                 } else {
                     ellipsisResult = applyEllipsisStyle(lastLine, ellipsisStyle, rect.size.width, renderer, shouldDisableWordRounding() ? StringTruncator::DisableRoundingHacks : StringTruncator::EnableRoundingHacks, &lastLineWidth, insertEllipsis, customTruncationElementWidth, forceTruncation);
                     if (truncationRect && (ellipsisResult != lastLine || droppingLines)
-                        && lastLineWidth && base == WTF::Unicode::RightToLeft)
+                        && lastLineWidth && base == U_RIGHT_TO_LEFT)
                         textPoint.x += truncationRect->size.width;
                 }
                 CGContextRef cgContext = WKGetCurrentGraphicsContext();
@@ -619,7 +619,7 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, WTF::Unico
                         *truncationRect = CGRectNull;
                     } else {
                         truncationRect->origin = textPoint;
-                        truncationRect->origin.x += (base == WTF::Unicode::RightToLeft) ? (-truncationRect->size.width) : lineWidth;
+                        truncationRect->origin.x += (base == U_RIGHT_TO_LEFT) ? (-truncationRect->size.width) : lineWidth;
                         truncationRect->origin.y -= ascent;
                         truncationRect->size.height = ascent - GSFontGetDescent(font);
                     }
@@ -656,7 +656,7 @@ static bool needsBidiLayout(const UChar *characters, unsigned length, WTF::Unico
             // Redetermine whether the succeeding paragraph needs bidi layout, and if so, determine the base direction
             paragraphNeedsBidi = needsBidiLayout(startOfLine, lengthRemaining, base, true);
             if (paragraphNeedsBidi)
-                status = BidiStatus(base, base, base, BidiContext::create((base == WTF::Unicode::LeftToRight) ? 0 : 1, base, false));
+                status = BidiStatus(base, base, base, BidiContext::create((base == U_LEFT_TO_RIGHT) ? 0 : 1, base, false));
         }
         maxLineWidth = max(maxLineWidth, lineWidth);
         cursor.y += lineSpacing;

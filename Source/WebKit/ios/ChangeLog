@@ -1,3 +1,63 @@
+2013-12-04  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream build fixes in Source/WebKit/ios/
+        https://bugs.webkit.org/show_bug.cgi?id=125230
+
+        Reviewed by Sam Weinig.
+
+        * DefaultDelegates/WebDefaultUIKitDelegate.m:
+        (-[WebDefaultUIKitDelegate webViewDidReceiveMobileDocType:]):
+        * Misc/WebNSStringDrawing.mm:
+        (needsBidiLayout):
+        (-[NSString __web_drawAtPoint:forWidth:withFont:ellipsis:letterSpacing:includeEmoji:measureOnly:renderedStringOut:drawUnderline:]):
+        (-[NSString __web_drawInRect:withFont:ellipsis:alignment:letterSpacing:lineSpacing:includeEmoji:truncationRect:measureOnly:renderedStringOut:drawUnderline:]):
+        * Misc/WebUIKitSupport.mm:
+        (WebKitInitialize):
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::didReceiveMobileDocType):
+        (WebChromeClientIOS::focusedElementChanged):
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame clearSelection]):
+        (-[WebFrame selectionState]):
+        (-[WebFrame collapseSelection]):
+        (-[WebFrame extendSelection:]):
+        (-[WebFrame selectionRects]):
+        (-[WebFrame setRangedSelectionWithExtentPoint:]):
+        (-[WebFrame setRangedSelectionExtentPoint:baseIsStart:allowFlipping:]):
+        (-[WebFrame setSelectionWithBasePoint:extentPoint:baseIsStart:allowFlipping:]):
+        (-[WebFrame setSelectionWithFirstPoint:secondPoint:]):
+        (-[WebFrame ensureRangedSelectionContainsInitialStartPoint:initialEndPoint:]):
+        (-[WebFrame aggressivelyExpandSelectionToWordContainingCaretSelection]):
+        (-[WebFrame expandSelectionToSentence]):
+        (-[WebFrame setBaseWritingDirection:]):
+        (-[WebFrame moveSelectionToStart]):
+        (-[WebFrame moveSelectionToEnd]):
+        (-[WebFrame moveSelectionToPoint:]):
+        (-[WebFrame setSelectionGranularity:]):
+        (-[WebFrame smartExtendRangedSelection:]):
+        (-[WebFrame previousUnperturbedDictationResultBoundaryFromPosition:]):
+        (-[WebFrame nextUnperturbedDictationResultBoundaryFromPosition:]):
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::didSetSearchingForNode):
+        (WebInspectorClient::setupRemoteConnection):
+        (WebInspectorClient::teardownRemoteConnection):
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition enclosingRangeWithDictationPhraseAlternatives:]):
+        (-[WebVisiblePosition enclosingRangeWithCorrectionIndicator]):
+        (-[DOMHTMLInputElement startPosition]):
+        (-[DOMHTMLInputElement endPosition]):
+        (-[DOMHTMLTextAreaElement startPosition]):
+        (-[DOMHTMLTextAreaElement endPosition]):
+        * WebView/WebPDFViewIOS.mm:
+        (+[WebPDFView shadowColor]):
+        (+[WebPDFView backgroundColor]):
+        (-[WebPDFView _checkPDFTitle]):
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder simulateClickOnLinkToURL:]):
+        * WebView/WebUIKitDelegate.h:
+
 2013-12-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Push Remote Inspector debugging connection management into JavaScriptCore

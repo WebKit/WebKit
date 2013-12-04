@@ -139,7 +139,7 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 {
 }
 
-- (void)webView:(WebView *)webView didReceiveDocTypeForFrame:(WebFrame *)frame
+- (void)webViewDidReceiveMobileDocType:(WebView *)webView
 {
     
 }

@@ -73,14 +73,14 @@ static const float PAGE_HEIGHT_INSET    = 4.0 * 2.0;
 
 + (CGColorRef)shadowColor
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<CGColorRef>, shadowColor, (AdoptCF, createCGColorWithDeviceWhite(0.0, 2.0 / 3.0)));
-    return shadowColor.get();
+    static CGColorRef shadowColor = createCGColorWithDeviceWhite(0, 2.0 / 3);
+    return shadowColor;
 }
 
 + (CGColorRef)backgroundColor
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<CGColorRef>, backgroundColor, (AdoptCF, createCGColorWithDeviceWhite(204.0 / 255.0, 1.0)));
-    return backgroundColor.get();
+    static CGColorRef backgroundColor = createCGColorWithDeviceWhite(204.0 / 255, 1);
+    return backgroundColor;
 }
 
 // This is a secret protocol for WebDataSource and WebFrameView to offer us the opportunity to do something different 
@@ -289,7 +289,7 @@ static const float PAGE_HEIGHT_INSET    = 4.0 * 2.0;
     if ([title length]) {
         [_title release];
         _title = [title copy];
-        core([self _frame])->loader()->client()->dispatchDidReceiveTitle(StringWithDirection(title, LTR));
+        core([self _frame])->loader().client().dispatchDidReceiveTitle(StringWithDirection(title, LTR));
     }
 }
 

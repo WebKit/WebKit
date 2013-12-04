@@ -418,19 +418,14 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     unsigned offset = o;
     
     Node* node = p.deepEquivalent().anchorNode();
-    Document* document = node->document();
-    if (!document)
-        return nil;
+    Document& document = node->document();
     
-    const Vector<DocumentMarker*>& markers = document->markers()->markersFor(node);
+    const Vector<DocumentMarker*>& markers = document.markers().markersFor(node, DocumentMarker::MarkerTypes(DocumentMarker::DictationPhraseWithAlternatives));
     if (markers.isEmpty())
         return nil;
         
     for (size_t i = 0; i < markers.size(); i++) {
         const DocumentMarker* marker = markers[i];
-        if (marker->type() != DocumentMarker::DictationPhraseWithAlternatives)
-            continue;
-            
         if (marker->startOffset() <= offset && marker->endOffset() >= offset) {
             const Vector<String>& markerAlternatives = marker->alternatives();
             *alternatives = [NSMutableArray arrayWithCapacity:markerAlternatives.size()];
@@ -457,21 +452,16 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     unsigned offset = o;
     
     Node* node = p.deepEquivalent().anchorNode();
-    Document* document = node->document();
-    if (!document)
-        return nil;
+    Document& document = node->document();
     
-    const Vector<DocumentMarker>& markers = document->markers()->markersForNode(node);
+    const Vector<DocumentMarker*>& markers = document.markers().markersFor(node, DocumentMarker::MarkerTypes(DocumentMarker::Spelling));
     if (markers.isEmpty())
         return nil;
     
     for (size_t i = 0; i < markers.size(); i++) {
-        const DocumentMarker& marker = markers[i];
-        if (marker.type() != DocumentMarker::Spelling)
-            continue;
-        
-        if (marker.startOffset() <= offset && marker.endOffset() >= offset) {
-            RefPtr<Range> range = Range::create(document, node, marker.startOffset(), node, marker.endOffset());
+        const DocumentMarker* marker = markers[i];
+        if (marker->startOffset() <= offset && marker->endOffset() >= offset) {
+            RefPtr<Range> range = Range::create(document, node, marker->startOffset(), node, marker->endOffset());
             return kit(range.get());
         }
     }
@@ -587,7 +577,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
         return [super startPosition];
     
     RenderTextControl *textControl = toRenderTextControl(object);
-    VisiblePosition visiblePosition = textControl->visiblePositionForIndex(0);
+    VisiblePosition visiblePosition = textControl->textFormControlElement().visiblePositionForIndex(0);
     return [WebVisiblePosition _wrapVisiblePosition:visiblePosition];
 }
 
@@ -599,7 +589,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
         return [super endPosition];
     
     RenderTextControl *textControl = toRenderTextControl(object);
-    VisiblePosition visiblePosition = textControl->visiblePositionForIndex(textControl->textFormControlElement()->value().length());
+    VisiblePosition visiblePosition = textControl->textFormControlElement().visiblePositionForIndex(textControl->textFormControlElement().value().length());
     return [WebVisiblePosition _wrapVisiblePosition:visiblePosition];
 }
 
@@ -615,7 +605,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
         return [super startPosition];
     
     RenderTextControl *textControl = toRenderTextControl(object);
-    VisiblePosition visiblePosition = textControl->visiblePositionForIndex(0);
+    VisiblePosition visiblePosition = textControl->textFormControlElement().visiblePositionForIndex(0);
     return [WebVisiblePosition _wrapVisiblePosition:visiblePosition];
 }
 
@@ -627,7 +617,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
         return [super endPosition];
     
     RenderTextControl *textControl = toRenderTextControl(object);
-    VisiblePosition visiblePosition = textControl->visiblePositionForIndex(textControl->textFormControlElement()->value().length());
+    VisiblePosition visiblePosition = textControl->textFormControlElement().visiblePositionForIndex(textControl->textFormControlElement().value().length());
     return [WebVisiblePosition _wrapVisiblePosition:visiblePosition];
 }
 

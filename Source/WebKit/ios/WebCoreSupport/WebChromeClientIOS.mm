@@ -131,9 +131,9 @@ void WebChromeClientIOS::didPreventDefaultForEvent()
 }
 #endif
 
-void WebChromeClientIOS::didReceiveDocType(WebCore::Frame* frame)
+void WebChromeClientIOS::didReceiveMobileDocType()
 {
-    [[webView() _UIKitDelegateForwarder] webView:webView() didReceiveDocTypeForFrame:kit(frame)];
+    [[webView() _UIKitDelegateForwarder] webViewDidReceiveMobileDocType:webView() ];
 }
 
 void WebChromeClientIOS::setNeedsScrollNotifications(WebCore::Frame* frame, bool flag)
@@ -290,18 +290,18 @@ void WebChromeClientIOS::webAppOrientationsUpdated()
     [[webView() _UIDelegateForwarder] webViewSupportedOrientationsUpdated:webView()];
 }
 
-void WebChromeClientIOS::focusedNodeChanged(Node* node)
+void WebChromeClientIOS::focusedElementChanged(Element* element)
 {
-    if (!node)
+    if (!element)
         return;
-    if (!node->hasTagName(HTMLNames::inputTag))
+    if (!isHTMLInputElement(element))
         return;
 
-    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node);
+    HTMLInputElement* inputElement = toHTMLInputElement(element);
     if (!inputElement->isText())
         return;
 
-    CallFormDelegate(webView(), @selector(didFocusTextField:inFrame:), kit(inputElement), kit(inputElement->document()->frame()));
+    CallFormDelegate(webView(), @selector(didFocusTextField:inFrame:), kit(inputElement), kit(inputElement->document().frame()));
 }
 
 #endif // PLATFORM(IOS)

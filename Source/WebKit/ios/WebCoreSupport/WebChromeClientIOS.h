@@ -48,7 +48,7 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     virtual void didPreventDefaultForEvent() OVERRIDE;
 #endif
-    virtual void didReceiveDocType(WebCore::Frame*) OVERRIDE;
+    virtual void didReceiveMobileDocType() OVERRIDE;
     virtual void setNeedsScrollNotifications(WebCore::Frame*, bool) OVERRIDE;
     virtual void observedContentChange(WebCore::Frame*) OVERRIDE;
     virtual void clearContentChangeObservers(WebCore::Frame*) OVERRIDE;
@@ -85,7 +85,7 @@ public:
     virtual PassRefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const OVERRIDE;
 
     virtual void webAppOrientationsUpdated() OVERRIDE;
-    virtual void focusedNodeChanged(WebCore::Node*) OVERRIDE;
+    virtual void focusedElementChanged(WebCore::Element*) OVERRIDE;
 
 private:
     int m_formNotificationSuppressions;

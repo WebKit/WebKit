@@ -48,6 +48,7 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPDFDocumentExtras.h>
 #import <WebKit/WebViewPrivate.h>
+#import <wtf/CurrentTime.h>
 #import <wtf/Vector.h>
 
 using namespace WebCore;
@@ -487,11 +488,11 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
         return;
 
     // Construct an event to simulate a click.
-    RefPtr<Event> event = MouseEvent::create(eventNames().clickEvent, true, true, 0, 1, 0, 0, 0, 0, false, false, false, false, 0, 0, 0, true);
+    RefPtr<Event> event = MouseEvent::create(eventNames().clickEvent, true, true, currentTime(), 0, 1, 0, 0, 0, 0, false, false, false, false, 0, 0, 0, true);
 
     // Call to the frame loader because this is where our security checks are made.
     Frame* frame = core([_dataSource webFrame]);
-    frame->loader()->loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(URL)), false, false, event.get(), 0, MaybeSendReferrer);
+    frame->loader().loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(URL)), false, false, event.get(), 0, MaybeSendReferrer);
 }
 
 @end

@@ -74,7 +74,7 @@ void WebKitInitialize(void)
     
     // This needs to be called before any requests are made in the process, <rdar://problem/9691871>
     WebCore::initializeHTTPConnectionSettingsOnStartup();
-    WebCore::enableKURLSchemeCanonicalization(linkedOnOrAfterIOS5());
+    WebCore::enableURLSchemeCanonicalization(linkedOnOrAfterIOS5());
 }
 
 void WebKitSetIsClassic(BOOL flag)

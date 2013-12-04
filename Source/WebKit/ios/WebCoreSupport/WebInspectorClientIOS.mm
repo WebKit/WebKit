@@ -32,7 +32,6 @@
 
 #import "WebFrameInternal.h"
 #import "WebInspector.h"
-#import "WebNSNotificationCenterExtras.h"
 #import "WebNodeHighlighter.h"
 #import "WebViewInternal.h"
 #import <WebCore/InspectorController.h>
@@ -46,7 +45,7 @@ using namespace WebCore;
 
 WebInspectorClient::WebInspectorClient(WebView *webView)
     : m_webView(webView)
-    , m_highlighter(AdoptNS, [[WebNodeHighlighter alloc] initWithInspectedWebView:webView])
+    , m_highlighter(adoptNS([[WebNodeHighlighter alloc] initWithInspectedWebView:webView]))
     , m_frontendPage(0)
     , m_frontendClient(0)
 {
@@ -92,13 +91,11 @@ void WebInspectorClient::hideHighlight()
 void WebInspectorClient::didSetSearchingForNode(bool enabled)
 {
     WebInspector *inspector = [m_webView inspector];
-
-    if (enabled)
-        [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadWithName:WebInspectorDidStartSearchingForNode object:inspector];
-    else
-        [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadWithName:WebInspectorDidStopSearchingForNode object:inspector];
+    NSString *notificationName = enabled ? WebInspectorDidStartSearchingForNode : WebInspectorDidStopSearchingForNode;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:inspector];
+    });
 }
-
 
 #pragma mark -
 #pragma mark WebInspectorFrontendClient Implementation
@@ -123,7 +120,6 @@ void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned) { }
 void WebInspectorFrontendClient::setToolbarHeight(unsigned) { }
 void WebInspectorFrontendClient::inspectedURLChanged(const String&) { }
 void WebInspectorFrontendClient::updateWindowTitle() const { }
-void WebInspectorFrontendClient::save(const String&, const String&, bool) { }
 void WebInspectorFrontendClient::append(const String&, const String&) { }
 
 #endif // PLATFORM(IOS)

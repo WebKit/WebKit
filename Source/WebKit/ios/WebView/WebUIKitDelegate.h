@@ -46,7 +46,7 @@
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame;
 - (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
 - (void)webView:(WebView *)sender didChangeLocationWithinPageForFrame:(WebFrame *)frame;
-- (void)webView:(WebView *)webView didReceiveDocTypeForFrame:(WebFrame *)frame;
+- (void)webViewDidReceiveMobileDocType:(WebView *)webView;
 - (void)webView:(WebView *)aWebView didReceiveViewportArguments:(NSDictionary *)arguments;
 - (void)webView:(WebView *)aWebView needsScrollNotifications:(NSNumber *)aNumber forFrame:(WebFrame *)aFrame;
 - (void)webView:(WebView *)webView saveStateToHistoryItem:(WebHistoryItem *)item forFrame:(WebFrame *)frame;
