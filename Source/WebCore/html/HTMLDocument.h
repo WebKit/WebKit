@@ -49,15 +49,15 @@ public:
     Element* activeElement();
     bool hasFocus();
 
-    String bgColor();
+    const AtomicString& bgColor() const;
     void setBgColor(const String&);
-    String fgColor();
+    const AtomicString& fgColor() const;
     void setFgColor(const String&);
-    String alinkColor();
+    const AtomicString& alinkColor() const;
     void setAlinkColor(const String&);
-    String linkColor();
+    const AtomicString& linkColor() const;
     void setLinkColor(const String&);
-    String vlinkColor();
+    const AtomicString& vlinkColor() const;
     void setVlinkColor(const String&);
 
     void clear();

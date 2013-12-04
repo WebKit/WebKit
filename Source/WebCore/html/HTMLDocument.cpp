@@ -158,114 +158,84 @@ bool HTMLDocument::hasFocus()
     return false;
 }
 
-String HTMLDocument::bgColor()
+const AtomicString& HTMLDocument::bgColor() const
 {
-    HTMLElement* b = body();
-    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? toHTMLBodyElement(b) : 0;
-
-    if (!bodyElement)
-        return String();
-    return bodyElement->bgColor();
+    HTMLElement* bodyElement = body();
+    if (!bodyElement || !isHTMLBodyElement(bodyElement))
+        return emptyAtom;
+    return bodyElement->getAttribute(bgcolorAttr);
 }
 
 void HTMLDocument::setBgColor(const String& value)
 {
-    HTMLElement* b = body();
-    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? toHTMLBodyElement(b) : 0;
-
-    if (bodyElement)
-        bodyElement->setBgColor(value);
+    HTMLElement* bodyElement = body();
+    if (!bodyElement || !isHTMLBodyElement(bodyElement))
+        return;
+    bodyElement->setAttribute(bgcolorAttr, value);
 }
 
-String HTMLDocument::fgColor()
+const AtomicString& HTMLDocument::fgColor() const
 {
-    HTMLElement* b = body();
-    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? toHTMLBodyElement(b) : 0;
-
-    if (!bodyElement)
-        return String();
-    return bodyElement->text();
+    HTMLElement* bodyElement = body();
+    if (!bodyElement || !isHTMLBodyElement(bodyElement))
+        return emptyAtom;
+    return bodyElement->getAttribute(textAttr);
 }
 
 void HTMLDocument::setFgColor(const String& value)
 {
-    HTMLElement* b = body();
-    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? toHTMLBodyElement(b) : 0;
-
-    if (bodyElement)
-        bodyElement->setText(value);
+    HTMLElement* bodyElement = body();
+    if (!bodyElement || !isHTMLBodyElement(bodyElement))
+        return;
+    bodyElement->setAttribute(textAttr, value);
 }
 
-String HTMLDocument::alinkColor()
+const AtomicString& HTMLDocument::alinkColor() const
 {
-    HTMLElement* b = body();
-    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? toHTMLBodyElement(b) : 0;
-
-    if (!bodyElement)
-        return String();
-    return bodyElement->aLink();
+    HTMLElement* bodyElement = body();
+    if (!bodyElement || !isHTMLBodyElement(bodyElement))
+        return emptyAtom;
+    return bodyElement->getAttribute(alinkAttr);
 }
 
 void HTMLDocument::setAlinkColor(const String& value)
 {
-    HTMLElement* b = body();
-    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? toHTMLBodyElement(b) : 0;
-
-    if (bodyElement) {
-        // This check is a bit silly, but some benchmarks like to set the
-        // document's link colors over and over to the same value and we
-        // don't want to incur a style update each time.
-        if (bodyElement->aLink() != value)
-            bodyElement->setALink(value);
-    }
+    HTMLElement* bodyElement = body();
+    if (!bodyElement || !isHTMLBodyElement(bodyElement))
+        return;
+    bodyElement->setAttribute(alinkAttr, value);
 }
 
-String HTMLDocument::linkColor()
+const AtomicString& HTMLDocument::linkColor() const
 {
-    HTMLElement* b = body();
-    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? toHTMLBodyElement(b) : 0;
-
-    if (!bodyElement)
-        return String();
-    return bodyElement->link();
+    HTMLElement* bodyElement = body();
+    if (!bodyElement || !isHTMLBodyElement(bodyElement))
+        return emptyAtom;
+    return bodyElement->getAttribute(linkAttr);
 }
 
 void HTMLDocument::setLinkColor(const String& value)
 {
-    HTMLElement* b = body();
-    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? toHTMLBodyElement(b) : 0;
-
-    if (bodyElement) {
-        // This check is a bit silly, but some benchmarks like to set the
-        // document's link colors over and over to the same value and we
-        // don't want to incur a style update each time.
-        if (bodyElement->link() != value)
-            bodyElement->setLink(value);
-    }
+    HTMLElement* bodyElement = body();
+    if (!bodyElement || !isHTMLBodyElement(bodyElement))
+        return;
+    return bodyElement->setAttribute(linkAttr, value);
 }
 
-String HTMLDocument::vlinkColor()
+const AtomicString& HTMLDocument::vlinkColor() const
 {
-    HTMLElement* b = body();
-    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? toHTMLBodyElement(b) : 0;
-
-    if (!bodyElement)
-        return String();
-    return bodyElement->vLink();
+    HTMLElement* bodyElement = body();
+    if (!bodyElement || !isHTMLBodyElement(bodyElement))
+        return emptyAtom;
+    return bodyElement->getAttribute(vlinkAttr);
 }
 
 void HTMLDocument::setVlinkColor(const String& value)
 {
-    HTMLElement* b = body();
-    HTMLBodyElement* bodyElement = (b && b->hasTagName(bodyTag)) ? toHTMLBodyElement(b) : 0;
-
-    if (bodyElement) {
-        // This check is a bit silly, but some benchmarks like to set the
-        // document's link colors over and over to the same value and we
-        // don't want to incur a style update each time.
-        if (bodyElement->vLink() != value)
-            bodyElement->setVLink(value);
-    }
+    HTMLElement* bodyElement = body();
+    if (!bodyElement || !isHTMLBodyElement(bodyElement))
+        return;
+    return bodyElement->setAttribute(vlinkAttr, value);
 }
 
 void HTMLDocument::captureEvents()

@@ -36,17 +36,6 @@ public:
     static PassRefPtr<HTMLBodyElement> create(const QualifiedName&, Document&);
     virtual ~HTMLBodyElement();
 
-    String aLink() const;
-    void setALink(const String&);
-    String bgColor() const;
-    void setBgColor(const String&);
-    String link() const;
-    void setLink(const String&);
-    String text() const;
-    void setText(const String&);
-    String vLink() const;
-    void setVLink(const String&);
-
     // Declared virtual in Element
     DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(blur);
     DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(error);

@@ -188,56 +188,6 @@ bool HTMLBodyElement::supportsFocus() const
     return rendererIsEditable() || HTMLElement::supportsFocus();
 }
 
-String HTMLBodyElement::aLink() const
-{
-    return getAttribute(alinkAttr);
-}
-
-void HTMLBodyElement::setALink(const String& value)
-{
-    setAttribute(alinkAttr, value);
-}
-
-String HTMLBodyElement::bgColor() const
-{
-    return getAttribute(bgcolorAttr);
-}
-
-void HTMLBodyElement::setBgColor(const String& value)
-{
-    setAttribute(bgcolorAttr, value);
-}
-
-String HTMLBodyElement::link() const
-{
-    return getAttribute(linkAttr);
-}
-
-void HTMLBodyElement::setLink(const String& value)
-{
-    setAttribute(linkAttr, value);
-}
-
-String HTMLBodyElement::text() const
-{
-    return getAttribute(textAttr);
-}
-
-void HTMLBodyElement::setText(const String& value)
-{
-    setAttribute(textAttr, value);
-}
-
-String HTMLBodyElement::vLink() const
-{
-    return getAttribute(vlinkAttr);
-}
-
-void HTMLBodyElement::setVLink(const String& value)
-{
-    setAttribute(vlinkAttr, value);
-}
-
 static int adjustForZoom(int value, Frame& frame)
 {
     float zoomFactor = frame.pageZoomFactor() * frame.frameScaleFactor();
