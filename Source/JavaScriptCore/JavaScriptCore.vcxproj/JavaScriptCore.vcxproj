@@ -752,7 +752,6 @@
     <ClInclude Include="..\bytecode\ByValInfo.h" />
     <ClInclude Include="..\bytecode\BytecodeBasicBlock.h" />
     <ClInclude Include="..\bytecode\BytecodeLivenessAnalysis.h" />
-    <ClInclude Include="..\bytecode\BytecodeLivenessAnalysisInline.h" />
     <ClInclude Include="..\bytecode\BytecodeUseDef.h" />
     <ClInclude Include="..\bytecode\CallLinkInfo.h" />
     <ClInclude Include="..\bytecode\CallLinkStatus.h" />
@@ -771,7 +770,6 @@
     <ClInclude Include="..\bytecode\ExecutionCounter.h" />
     <ClInclude Include="..\bytecode\ExitKind.h" />
     <ClInclude Include="..\bytecode\ExpressionRangeInfo.h" />
-    <ClInclude Include="..\bytecode\FullBytecodeLivenss.h" />
     <ClInclude Include="..\bytecode\GetByIdStatus.h" />
     <ClInclude Include="..\bytecode\HandlerInfo.h" />
     <ClInclude Include="..\bytecode\InlineCallFrameSet.h" />
@@ -1091,8 +1089,6 @@
     <ClInclude Include="..\profiler\ProfilerProfiledBytecodes.h" />
     <ClInclude Include="..\runtime\ArgList.h" />
     <ClInclude Include="..\runtime\Arguments.h" />
-    <ClInclude Include="..\runtime\ArgumentsConstructor.h" />
-    <ClInclude Include="..\runtime\ArgumentsPrototype.h" />
     <ClInclude Include="..\runtime\ArrayBuffer.h" />
     <ClInclude Include="..\runtime\ArrayBufferView.h" />
     <ClInclude Include="..\runtime\ArrayConstructor.h" />

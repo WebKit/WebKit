@@ -1,3 +1,11 @@
+2013-12-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed project file gardening.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Remove deleted files from project.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Put files in proper directory
+        folders to match the directory structure of the source code.
+
 2013-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed Windows Build Fix attempt after r160099.

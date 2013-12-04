@@ -357,9 +357,6 @@
     <ClCompile Include="..\jit\JITThunks.cpp">
       <Filter>jit</Filter>
     </ClCompile>
-    <ClCompile Include="..\jit\JumpReplacementWatchpoint.cpp">
-      <Filter>jit</Filter>
-    </ClCompile>
     <ClCompile Include="..\jit\ThunkGenerators.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -1257,6 +1254,18 @@
     <ClCompile Include="..\jit\JITInlineCacheGenerator.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\dfg\DFGAvailability.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGResurrectionForValidationPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\CodeBlockJettisoningWatchpoint.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -1577,9 +1586,6 @@
     <ClInclude Include="..\heap\DeferGC.h">
       <Filter>heap</Filter>
     </ClInclude>
-    <ClInclude Include="..\heap\DelayedReleaseScpe.h">
-      <Filter>heap</Filter>
-    </ClInclude>
     <ClInclude Include="..\heap\GCAssertions.h">
       <Filter>heap</Filter>
     </ClInclude>
@@ -1805,9 +1811,6 @@
     <ClInclude Include="..\jit\JSInterfaceJIT.h">
       <Filter>jit</Filter>
     </ClInclude>
-    <ClInclude Include="..\jit\JumpReplacementWatchpoint.h">
-      <Filter>jit</Filter>
-    </ClInclude>
     <ClInclude Include="..\jit\SpecializedThunkJIT.h">
       <Filter>jit</Filter>
     </ClInclude>
@@ -1983,9 +1986,6 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\ButterflyInlines.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\CachedTranscendentalFunction.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\CallData.h">
@@ -3069,12 +3069,6 @@
     <ClInclude Include="..\runtime\ArrayIteratorConstructor.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\ArgumentsIteratorPrototype.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\ArgumentsIteratorConstructor.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\MapIteratorPrototype.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -3140,6 +3134,30 @@
     </ClInclude>
     <ClInclude Include="..\jit\JITInlineCacheGenerator.h">
       <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGResurrectionForValidationPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGAvailability.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\BytecodeUseDef.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\CodeBlockJettisoningWatchpoint.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\StackAlignment.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\heap\DelayedReleaseScope.h">
+      <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\VariableWatchpointSet.h">
+      <Filter>bytecode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
