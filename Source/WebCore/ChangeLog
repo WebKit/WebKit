@@ -1,3 +1,26 @@
+2013-12-04  José Dapena Paz  <jdapena@igalia.com>
+
+        [texmap] Borders on rotating images are hidden/wrongly rendered with edge distance antialiasing
+        https://bugs.webkit.org/show_bug.cgi?id=124653
+
+        Reviewed by Noam Rosenthal.
+
+        Texture mapper edge distance antialiasing texture sampling was causing
+        borders to be shaded (and made them almost disappear in some cases).
+        This was because calculation of sampling happened on vertex shader, so
+        the border of the texture would go to the border of the inflation area.
+
+        What algorithm should do is sampling the border pixel for all the
+        inflation area (it is the closest pixel to all the samples in
+        inflation area), and then use the standard sampling for the other
+        parts of the texture.
+
+        No new test because this is already covered by test
+        transforms/3d/point-mapping/3d-point-mapping.html
+
+        * platform/graphics/texmap/TextureMapperShaderProgram.cpp: fix edge
+        distance antialiasing texture sampling.
+
 2013-12-04  László Langó  <lango@inf.u-szeged.hu>
 
         Typo fix after r160074 to fix debug builds.

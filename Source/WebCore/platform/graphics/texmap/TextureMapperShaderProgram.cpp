@@ -127,6 +127,7 @@ static const char* vertexTemplate =
         uniform mat4 u_textureSpaceMatrix;
 
         varying vec2 v_texCoord;
+        varying vec2 v_transformedTexCoord;
         varying float v_antialias;
 
         void noop(inout vec2 dummyParameter) { }
@@ -172,9 +173,9 @@ static const char* vertexTemplate =
             vec2 position = a_vertex.xy;
             applyAntialiasingIfNeeded(position);
 
-            // The texture position needs to be clamped to 0..1 before the texture matrix is applied.
+            v_texCoord = position;
             vec4 clampedPosition = clamp(vec4(position, 0., 1.), 0., 1.);
-            v_texCoord = (u_textureSpaceMatrix * clampedPosition).xy;
+            v_transformedTexCoord = (u_textureSpaceMatrix * clampedPosition).xy;
             gl_Position = u_projectionMatrix * u_modelViewMatrix * vec4(position, 0., 1.);
         }
     );
@@ -188,6 +189,13 @@ static const char* vertexTemplate =
         GLSL_DIRECTIVE(define SamplerFunction texture2D) \
     GLSL_DIRECTIVE(endif)
 
+#define ANTIALIASING_TEX_COORD_DIRECTIVE \
+    GLSL_DIRECTIVE(if defined(ENABLE_Antialiasing) && defined(ENABLE_Texture)) \
+        GLSL_DIRECTIVE(define transformTexCoord fragmentTransformTexCoord) \
+    GLSL_DIRECTIVE(else) \
+        GLSL_DIRECTIVE(define transformTexCoord vertexTransformTexCoord) \
+    GLSL_DIRECTIVE(endif)
+
 #define ENABLE_APPLIER(Name) "#define ENABLE_"#Name"\n#define apply"#Name"IfNeeded apply"#Name"\n"
 #define DISABLE_APPLIER(Name) "#define apply"#Name"IfNeeded noop\n"
 #define BLUR_CONSTANTS \
@@ -197,6 +205,7 @@ static const char* vertexTemplate =
 
 static const char* fragmentTemplate =
     RECT_TEXTURE_DIRECTIVE
+    ANTIALIASING_TEX_COORD_DIRECTIVE
     BLUR_CONSTANTS
     STRINGIFY(
         precision mediump float;
@@ -205,17 +214,28 @@ static const char* fragmentTemplate =
         uniform float u_opacity;
         varying float v_antialias;
         varying vec2 v_texCoord;
+        varying vec2 v_transformedTexCoord;
         uniform float u_filterAmount;
         uniform vec2 u_blurRadius;
         uniform vec2 u_shadowOffset;
         uniform vec4 u_color;
         uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
+        uniform mat4 u_textureSpaceMatrix;
 
         void noop(inout vec4 dummyParameter) { }
+        void noop(inout vec4 dummyParameter, vec2 texCoord) { }
 
-        float antialias() { return smoothstep(v_antialias, 0., 1.); }
+        float antialias() { return smoothstep(0., 1., v_antialias); }
 
-        void applyTexture(inout vec4 color) { color = SamplerFunction(s_sampler, v_texCoord); }
+        vec2 fragmentTransformTexCoord()
+        {
+            vec4 clampedPosition = clamp(vec4(v_texCoord, 0., 1.), 0., 1.);
+            return (u_textureSpaceMatrix * clampedPosition).xy;
+        }
+
+        vec2 vertexTransformTexCoord() { return v_transformedTexCoord; }
+
+        void applyTexture(inout vec4 color, vec2 texCoord) { color = SamplerFunction(s_sampler, texCoord); }
         void applyOpacity(inout vec4 color) { color *= u_opacity; }
         void applyAntialiasing(inout vec4 color) { color *= antialias(); }
 
@@ -278,35 +298,35 @@ static const char* fragmentTemplate =
             color = vec4(color.r, color.g, color.b, color.a * u_filterAmount);
         }
 
-        vec4 sampleColorAtRadius(float radius)
+        vec4 sampleColorAtRadius(float radius, vec2 texCoord)
         {
-            vec2 coord = v_texCoord + radius * u_blurRadius;
+            vec2 coord = texCoord + radius * u_blurRadius;
             return SamplerFunction(s_sampler, coord) * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
         }
 
-        float sampleAlphaAtRadius(float radius)
+        float sampleAlphaAtRadius(float radius, vec2 texCoord)
         {
-            vec2 coord = v_texCoord - u_shadowOffset + radius * u_blurRadius;
+            vec2 coord = texCoord - u_shadowOffset + radius * u_blurRadius;
             return SamplerFunction(s_sampler, coord).a * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
         }
 
-        void applyBlurFilter(inout vec4 color)
+        void applyBlurFilter(inout vec4 color, vec2 texCoord)
         {
-            vec4 total = sampleColorAtRadius(0.) * u_gaussianKernel[0];
+            vec4 total = sampleColorAtRadius(0., texCoord) * u_gaussianKernel[0];
             for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
-                total += sampleColorAtRadius(float(i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
-                total += sampleColorAtRadius(float(-1 * i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
+                total += sampleColorAtRadius(float(i) * GAUSSIAN_KERNEL_STEP, texCoord) * u_gaussianKernel[i];
+                total += sampleColorAtRadius(float(-1 * i) * GAUSSIAN_KERNEL_STEP, texCoord) * u_gaussianKernel[i];
             }
 
             color = total;
         }
 
-        void applyAlphaBlur(inout vec4 color)
+        void applyAlphaBlur(inout vec4 color, vec2 texCoord)
         {
-            float total = sampleAlphaAtRadius(0.) * u_gaussianKernel[0];
+            float total = sampleAlphaAtRadius(0., texCoord) * u_gaussianKernel[0];
             for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
-                total += sampleAlphaAtRadius(float(i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
-                total += sampleAlphaAtRadius(float(-1 * i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
+                total += sampleAlphaAtRadius(float(i) * GAUSSIAN_KERNEL_STEP, texCoord) * u_gaussianKernel[i];
+                total += sampleAlphaAtRadius(float(-1 * i) * GAUSSIAN_KERNEL_STEP, texCoord) * u_gaussianKernel[i];
             }
 
             color *= total;
@@ -314,9 +334,9 @@ static const char* fragmentTemplate =
 
         vec4 sourceOver(vec4 src, vec4 dst) { return src + dst * (1. - dst.a); }
 
-        void applyContentTexture(inout vec4 color)
+        void applyContentTexture(inout vec4 color, vec2 texCoord)
         {
-            vec4 contentColor = texture2D(s_contentTexture, v_texCoord);
+            vec4 contentColor = texture2D(s_contentTexture, texCoord);
             color = sourceOver(contentColor, color);
         }
 
@@ -325,7 +345,8 @@ static const char* fragmentTemplate =
         void main(void)
         {
             vec4 color = vec4(1., 1., 1., 1.);
-            applyTextureIfNeeded(color);
+            vec2 texCoord = transformTexCoord();
+            applyTextureIfNeeded(color, texCoord);
             applySolidColorIfNeeded(color);
             applyAntialiasingIfNeeded(color);
             applyOpacityIfNeeded(color);
@@ -337,9 +358,9 @@ static const char* fragmentTemplate =
             applyBrightnessFilterIfNeeded(color);
             applyContrastFilterIfNeeded(color);
             applyOpacityFilterIfNeeded(color);
-            applyBlurFilterIfNeeded(color);
-            applyAlphaBlurIfNeeded(color);
-            applyContentTextureIfNeeded(color);
+            applyBlurFilterIfNeeded(color, texCoord);
+            applyAlphaBlurIfNeeded(color, texCoord);
+            applyContentTextureIfNeeded(color, texCoord);
             gl_FragColor = color;
         }
     );
