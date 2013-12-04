@@ -1,3 +1,22 @@
+2013-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Potential crash in RenderView::selectionBounds and RenderView::repaintSelection
+        https://bugs.webkit.org/show_bug.cgi?id=125207
+
+        Reviewed by Simon Fraser.
+        
+        Merge https://chromium.googlesource.com/chromium/blink/+/f9e6e288a5aa959f05c374806121aaf0fc52d440
+
+        Update style in FrameSelection instead of RenderView's member functions. These are the last two
+        member functions of RenderView that updates the style.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        (WebCore::FrameSelection::bounds):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionBounds):
+        (WebCore::RenderView::repaintSelection):
+
 2013-12-03  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/125143> Improve the formatting in the generated Objective-C headers.
