@@ -1233,6 +1233,9 @@
     <ClCompile Include="..\jit\JITOperations.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\jit\JITOperationsMSVC64.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\TestRunnerUtils.cpp">
       <Filter>runtime</Filter>
     </ClCompile>

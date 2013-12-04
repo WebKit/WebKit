@@ -1,3 +1,30 @@
+2013-12-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix LLINT_C_LOOP build for Win64.
+        https://bugs.webkit.org/show_bug.cgi?id=125186.
+
+        Reviewed by Michael Saboff.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * jit/JITOperationsMSVC64.cpp: Added.
+        (JSC::getHostCallReturnValueWithExecState):
+        - Win64 will build JITStubMSVC64.asm even when !ENABLE(JIT). This results
+          in a linkage error due to a missing getHostCallReturnValueWithExecState().
+          So, we add a stub getHostCallReturnValueWithExecState() here to satisfy
+          that linkage. This function will never be called.
+          The alternative to providing such a stub is to make the MSVC project
+          recognize if the JIT is enabled or not, and exclude JITStubMSVC64.asm
+          if it's not enabled. We don't currently set ENABLE(JIT) via the MSVC
+          project and the work to do that is too much trouble for what we're trying
+          to achieve here. So, we're opting for this simpler workaround instead.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        - Don't build callToJavaScript if we're building the C loop. Otherwise,
+          the C loop won't build if !ENABLE(COMPUTE_GOTO_OPCODES). 
+
 2013-12-03  Michael Saboff  <msaboff@apple.com>
 
         ARM64: Crash in JIT code due to improper reuse of cached memory temp register
