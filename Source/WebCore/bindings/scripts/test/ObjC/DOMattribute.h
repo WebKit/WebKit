@@ -31,7 +31,7 @@
 @class NSString;
 
 @interface DOMattribute : DOMObject
-@property(readonly, copy) NSString *readonly;
+@property (readonly, copy) NSString *readonly;
 @end
 
 #endif

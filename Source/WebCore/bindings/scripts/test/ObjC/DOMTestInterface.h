@@ -49,14 +49,14 @@ enum {
 };
 
 @interface DOMTestInterface : DOMObject
-@property(readonly, copy) NSString *implementsStr1;
-@property(copy) NSString *implementsStr2;
-@property(copy) NSString *implementsStr3;
-@property(retain) DOMNode *implementsNode;
-@property(readonly, copy) NSString *supplementalStr1;
-@property(copy) NSString *supplementalStr2;
-@property(copy) NSString *supplementalStr3;
-@property(retain) DOMNode *supplementalNode;
+@property (readonly, copy) NSString *implementsStr1;
+@property (copy) NSString *implementsStr2;
+@property (copy) NSString *implementsStr3;
+@property (strong) DOMNode *implementsNode;
+@property (readonly, copy) NSString *supplementalStr1;
+@property (copy) NSString *supplementalStr2;
+@property (copy) NSString *supplementalStr3;
+@property (strong) DOMNode *supplementalNode;
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
 - (void)implementsMethod1;

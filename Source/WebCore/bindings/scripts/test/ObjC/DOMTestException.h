@@ -31,7 +31,7 @@
 @class NSString;
 
 @interface DOMTestException : DOMObject
-@property(readonly, copy) NSString *name;
+@property (readonly, copy) NSString *name;
 @end
 
 #endif

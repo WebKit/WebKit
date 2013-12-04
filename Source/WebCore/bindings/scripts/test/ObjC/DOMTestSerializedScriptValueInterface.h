@@ -31,10 +31,10 @@
 @class NSString;
 
 @interface DOMTestSerializedScriptValueInterface : DOMObject
-@property(retain) NSString *value;
-@property(readonly, retain) NSString *readonlyValue;
-@property(retain) NSString *cachedValue;
-@property(readonly, retain) NSString *cachedReadonlyValue;
+@property (strong) NSString *value;
+@property (readonly, strong) NSString *readonlyValue;
+@property (strong) NSString *cachedValue;
+@property (readonly, strong) NSString *cachedReadonlyValue;
 @end
 
 #endif

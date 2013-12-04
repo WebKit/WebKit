@@ -543,13 +543,13 @@ sub GetPropertyAttributes
     if ($codeGenerator->IsStringType($type) || IsNativeObjCType($type)) {
         push(@attributes, "copy");
     } elsif ($codeGenerator->IsSVGAnimatedType($type)) {
-        push(@attributes, "retain");
+        push(@attributes, "strong");
     } elsif (!$codeGenerator->IsStringType($type) && !$codeGenerator->IsPrimitiveType($type) && $type ne "DOMTimeStamp" && $type ne "CompareHow") {
-        push(@attributes, "retain");
+        push(@attributes, "strong");
     }
 
     return "" unless @attributes > 0;
-    return "(" . join(", ", @attributes) . ")";
+    return " (" . join(", ", @attributes) . ")";
 }
 
 sub ConversionNeeded

@@ -33,11 +33,11 @@
 
 @interface DOMTestTypedefs : DOMObject
 @property unsigned long long unsignedLongLongAttr;
-@property(retain) NSString *immutableSerializedScriptValue;
+@property (strong) NSString *immutableSerializedScriptValue;
 @property int attrWithGetterException;
 @property int attrWithSetterException;
-@property(copy) NSString *stringAttrWithGetterException;
-@property(copy) NSString *stringAttrWithSetterException;
+@property (copy) NSString *stringAttrWithGetterException;
+@property (copy) NSString *stringAttrWithSetterException;
 
 - (void)setShadow:(float)width height:(float)height blur:(float)blur color:(NSString *)color alpha:(float)alpha;
 - (DOMSVGPoint *)immutablePointFunction;

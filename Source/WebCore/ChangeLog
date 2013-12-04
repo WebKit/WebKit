@@ -1,3 +1,25 @@
+2013-12-03  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/125143> Improve the formatting in the generated Objective-C headers.
+
+        Add a space between @property and any parenthesized attributes.
+        Prefer strong over retain when specifying memory management semantics.
+
+        Reviewed by Darin Adler.
+
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GetPropertyAttributes): Generate strong instead of retain. Include a
+        space before the parenthesis.
+        * bindings/scripts/test/ObjC/DOMTestActiveDOMObject.h:
+        * bindings/scripts/test/ObjC/DOMTestEventConstructor.h:
+        * bindings/scripts/test/ObjC/DOMTestException.h:
+        * bindings/scripts/test/ObjC/DOMTestInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestTypedefs.h:
+        * bindings/scripts/test/ObjC/DOMattribute.h:
+
 2013-12-03  Alexey Proskuryakov  <ap@apple.com>
 
         Update WebCrypto JWK mapping to newer proposal
