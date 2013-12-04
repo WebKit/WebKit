@@ -41,6 +41,8 @@ class VM;
 
 typedef ExecState CallFrame;
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
 class JS_EXPORT_PRIVATE Debugger {
 public:
     Debugger(bool isInWorkerThread = false);
@@ -188,6 +190,26 @@ private:
     friend class TemporaryPausedState;
     friend class LLIntOffsetsExtractor;
 };
+
+#else // ENABLE(JAVASCRIPT_DEBUGGER)
+
+class Debugger {
+public:
+    Debugger(bool = false) { }
+    bool needsOpDebugCallbacks() const { return false; }
+    bool needsExceptionCallbacks() const { return false; }
+    void detach(JSGlobalObject*) { };
+    void sourceParsed(ExecState*, SourceProvider*, int, const WTF::String&) { };
+    void exception(CallFrame*, JSValue, bool) { };
+    void atStatement(CallFrame*) { };
+    void callEvent(CallFrame*) { };
+    void returnEvent(CallFrame*) { };
+    void willExecuteProgram(CallFrame*) { };
+    void didExecuteProgram(CallFrame*) { };
+    void didReachBreakpoint(CallFrame*) { };
+};
+
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 } // namespace JSC
 

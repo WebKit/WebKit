@@ -20,6 +20,8 @@
  */
 
 #include "config.h"
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+
 #include "Debugger.h"
 
 #include "DebuggerCallFrame.h"
@@ -587,3 +589,5 @@ DebuggerCallFrame* Debugger::currentDebuggerCallFrame() const
 }
 
 } // namespace JSC
+
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)

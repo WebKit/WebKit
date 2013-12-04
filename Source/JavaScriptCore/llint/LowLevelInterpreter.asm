@@ -820,6 +820,7 @@ _llint_op_profile_did_call:
 
 
 _llint_op_debug:
+if JAVASCRIPT_DEBUGGER
     traceExecution()
     loadp CodeBlock[cfr], t0
     loadp CodeBlock::m_globalObject[t0], t0
@@ -830,6 +831,7 @@ _llint_op_debug:
 
     callSlowPath(_llint_slow_path_debug)
 .opDebugDone:                    
+end
     dispatch(2)
 
 

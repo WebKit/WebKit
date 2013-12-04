@@ -986,7 +986,7 @@ void JIT::emit_op_debug(Instruction* currentInstruction)
 #if ENABLE(DEBUG_WITH_BREAKPOINT)
     UNUSED_PARAM(currentInstruction);
     breakpoint();
-#else
+#elif ENABLE(JAVASCRIPT_DEBUGGER)
     JSGlobalObject* globalObject = codeBlock()->globalObject();
     Debugger* debugger = globalObject->debugger();
     char* debuggerAddress = reinterpret_cast<char*>(globalObject) + JSGlobalObject::debuggerOffset();
@@ -997,6 +997,8 @@ void JIT::emit_op_debug(Instruction* currentInstruction)
     callOperation(operationDebug, currentInstruction[1].u.operand);
     skipDebugHook.link(this);
     noDebugger.link(this);
+#else
+    UNUSED_PARAM(currentInstruction);
 #endif
 }
 

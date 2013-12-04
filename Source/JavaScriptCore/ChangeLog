@@ -1,3 +1,32 @@
+2013-12-04  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Fix !ENABLE(JAVASCRIPT_DEBUGGER) build.
+        https://bugs.webkit.org/show_bug.cgi?id=125083
+
+        Reviewed by Mark Lam.
+
+        * debugger/Debugger.cpp:
+        * debugger/Debugger.h:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::needsOpDebugCallbacks):
+        (JSC::Debugger::needsExceptionCallbacks):
+        (JSC::Debugger::detach):
+        (JSC::Debugger::sourceParsed):
+        (JSC::Debugger::exception):
+        (JSC::Debugger::atStatement):
+        (JSC::Debugger::callEvent):
+        (JSC::Debugger::returnEvent):
+        (JSC::Debugger::willExecuteProgram):
+        (JSC::Debugger::didExecuteProgram):
+        (JSC::Debugger::didReachBreakpoint):
+        * debugger/DebuggerPrimitives.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_debug):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_debug):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+
 2013-12-03  Mark Lam  <mark.lam@apple.com>
 
         testapi test crashes on Windows in WTF::Vector<wchar_t,64,WTF::UnsafeVectorOverflow>::size().

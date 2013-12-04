@@ -26,8 +26,6 @@
 #ifndef DebuggerPrimitives_h
 #define DebuggerPrimitives_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-
 namespace JSC {
 
 typedef size_t SourceID;
@@ -37,7 +35,5 @@ typedef size_t BreakpointID;
 static const BreakpointID noBreakpointID = 0;
 
 } // namespace JSC
-
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 #endif // DebuggerPrimitives_h
