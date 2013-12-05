@@ -524,6 +524,7 @@
     <ClCompile Include="..\runtime\ArgumentsIteratorConstructor.cpp" />
     <ClCompile Include="..\runtime\ArgumentsIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\ArrayBuffer.cpp" />
+    <ClCompile Include="..\runtime\ArrayBufferNeuteringWatchpoint.cpp" />
     <ClCompile Include="..\runtime\ArrayBufferView.cpp" />
     <ClCompile Include="..\runtime\ArrayConstructor.cpp" />
     <ClCompile Include="..\runtime\ArrayIteratorConstructor.cpp" />
@@ -1090,6 +1091,7 @@
     <ClInclude Include="..\runtime\ArgList.h" />
     <ClInclude Include="..\runtime\Arguments.h" />
     <ClInclude Include="..\runtime\ArrayBuffer.h" />
+    <ClInclude Include="..\runtime\ArrayBufferNeuteringWatchpoint.h" />
     <ClInclude Include="..\runtime\ArrayBufferView.h" />
     <ClInclude Include="..\runtime\ArrayConstructor.h" />
     <ClInclude Include="..\runtime\ArrayConventions.h" />

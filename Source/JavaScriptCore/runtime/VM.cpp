@@ -30,6 +30,7 @@
 #include "VM.h"
 
 #include "ArgList.h"
+#include "ArrayBufferNeuteringWatchpoint.h"
 #include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
@@ -248,6 +249,7 @@ VM::VM(VMType vmType, HeapType heapType)
     symbolTableStructure.set(*this, SymbolTable::createStructure(*this, 0, jsNull()));
     structureChainStructure.set(*this, StructureChain::createStructure(*this, 0, jsNull()));
     sparseArrayValueMapStructure.set(*this, SparseArrayValueMap::createStructure(*this, 0, jsNull()));
+    arrayBufferNeuteringWatchpointStructure.set(*this, ArrayBufferNeuteringWatchpoint::createStructure(*this));
     withScopeStructure.set(*this, JSWithScope::createStructure(*this, 0, jsNull()));
     unlinkedFunctionExecutableStructure.set(*this, UnlinkedFunctionExecutable::createStructure(*this, 0, jsNull()));
     unlinkedProgramCodeBlockStructure.set(*this, UnlinkedProgramCodeBlock::createStructure(*this, 0, jsNull()));

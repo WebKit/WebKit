@@ -28,7 +28,21 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ArrayBufferNeuteringWatchpoint.h"
+#include "CodeBlock.h"
+#include "Operations.h"
+
 namespace JSC { namespace DFG {
+
+void ArrayBufferViewWatchpointAdaptor::add(
+    CodeBlock* codeBlock, JSArrayBufferView* view, Watchpoint* watchpoint)
+{
+    ArrayBufferNeuteringWatchpoint* neuteringWatchpoint =
+        ArrayBufferNeuteringWatchpoint::create(*codeBlock->vm());
+    neuteringWatchpoint->set()->add(watchpoint);
+    codeBlock->addConstant(neuteringWatchpoint);
+    codeBlock->vm()->heap.addReference(neuteringWatchpoint, view->buffer());
+}
 
 DesiredWatchpoints::DesiredWatchpoints() { }
 DesiredWatchpoints::~DesiredWatchpoints() { }
@@ -41,6 +55,11 @@ void DesiredWatchpoints::addLazily(WatchpointSet* set)
 void DesiredWatchpoints::addLazily(InlineWatchpointSet& set)
 {
     m_inlineSets.addLazily(&set);
+}
+
+void DesiredWatchpoints::addLazily(JSArrayBufferView* view)
+{
+    m_bufferViews.addLazily(view);
 }
 
 void DesiredWatchpoints::addLazily(CodeOrigin codeOrigin, ExitKind exitKind, WatchpointSet* set)
@@ -57,11 +76,14 @@ void DesiredWatchpoints::reallyAdd(CodeBlock* codeBlock, CommonData& commonData)
 {
     m_sets.reallyAdd(codeBlock, commonData);
     m_inlineSets.reallyAdd(codeBlock, commonData);
+    m_bufferViews.reallyAdd(codeBlock, commonData);
 }
 
 bool DesiredWatchpoints::areStillValid() const
 {
-    return m_sets.areStillValid() && m_inlineSets.areStillValid();
+    return m_sets.areStillValid()
+        && m_inlineSets.areStillValid()
+        && m_bufferViews.areStillValid();
 }
 
 } } // namespace JSC::DFG

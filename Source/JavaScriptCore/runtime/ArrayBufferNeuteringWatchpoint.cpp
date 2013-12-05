@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,42 +24,40 @@
  */
 
 #include "config.h"
-#include "ArrayBuffer.h"
-
 #include "ArrayBufferNeuteringWatchpoint.h"
-#include "JSArrayBufferView.h"
+
 #include "Operations.h"
-#include <wtf/RefPtr.h>
 
 namespace JSC {
 
-bool ArrayBuffer::transfer(ArrayBufferContents& result)
+const ClassInfo ArrayBufferNeuteringWatchpoint::s_info = {
+    "ArrayBufferNeuteringWatchpoint", 0, 0, 0,
+    CREATE_METHOD_TABLE(ArrayBufferNeuteringWatchpoint)
+};
+
+ArrayBufferNeuteringWatchpoint::ArrayBufferNeuteringWatchpoint(VM& vm)
+    : Base(vm, vm.arrayBufferNeuteringWatchpointStructure.get())
+    , m_set(adoptRef(new WatchpointSet(IsWatched)))
 {
-    Ref<ArrayBuffer> protect(*this);
+}
 
-    if (!m_contents.m_data) {
-        result.m_data = 0;
-        return false;
-    }
+void ArrayBufferNeuteringWatchpoint::destroy(JSCell* cell)
+{
+    static_cast<ArrayBufferNeuteringWatchpoint*>(cell)->ArrayBufferNeuteringWatchpoint::~ArrayBufferNeuteringWatchpoint();
+}
 
-    bool isNeuterable = !m_pinCount;
+ArrayBufferNeuteringWatchpoint* ArrayBufferNeuteringWatchpoint::create(VM& vm)
+{
+    ArrayBufferNeuteringWatchpoint* result = new
+        (NotNull, allocateCell<ArrayBufferNeuteringWatchpoint>(vm.heap))
+        ArrayBufferNeuteringWatchpoint(vm);
+    result->finishCreation(vm);
+    return result;
+}
 
-    if (isNeuterable)
-        m_contents.transfer(result);
-    else {
-        m_contents.copyTo(result);
-        if (!result.m_data)
-            return false;
-    }
-
-    for (size_t i = numberOfIncomingReferences(); i--;) {
-        JSCell* cell = incomingReferenceAt(i);
-        if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(cell))
-            view->neuter();
-        else if (ArrayBufferNeuteringWatchpoint* watchpoint = jsDynamicCast<ArrayBufferNeuteringWatchpoint*>(cell))
-            watchpoint->set()->fireAll();
-    }
-    return true;
+Structure* ArrayBufferNeuteringWatchpoint::createStructure(VM& vm)
+{
+    return Structure::create(vm, 0, jsNull(), TypeInfo(CompoundType, StructureFlags), info());
 }
 
 } // namespace JSC

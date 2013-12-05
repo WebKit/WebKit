@@ -2027,7 +2027,10 @@ public:
     void compileArithIMul(Node*);
     void compileArithDiv(Node*);
     void compileArithMod(Node*);
+    bool compileConstantIndexedPropertyStorage(Node*);
     void compileGetIndexedPropertyStorage(Node*);
+    JITCompiler::Jump jumpForTypedArrayOutOfBounds(Node*, GPRReg baseGPR, GPRReg indexGPR);
+    void emitTypedArrayBoundsCheck(Node*, GPRReg baseGPR, GPRReg indexGPR);
     void compileGetTypedArrayByteOffset(Node*);
     void compileGetByValOnIntTypedArray(Node*, TypedArrayType);
     void compilePutByValForIntTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);

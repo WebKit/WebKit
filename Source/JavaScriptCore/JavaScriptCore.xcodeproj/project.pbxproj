@@ -541,6 +541,8 @@
 		0FFB921E16D02F470055A5DB /* DFGVariadicFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F85A31E16AB76AE0077571E /* DFGVariadicFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FFB921F16D033050055A5DB /* (null) in Headers */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (Private, ); }; };
 		0FFB922016D033B70055A5DB /* NodeConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 930DAD030FB1EB1A0082D205 /* NodeConstructors.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FFC99D4184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFC99D2184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.cpp */; };
+		0FFC99D5184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFC99D3184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FFC99D1184EC8AD009C10AB /* ConstantMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFC99D0184EC8AD009C10AB /* ConstantMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */; };
 		0FFFC95814EF90A200C72532 /* DFGCFAPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1846,6 +1848,8 @@
 		0FF729A1166AD347000F5BA3 /* ProfilerOriginStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerOriginStack.cpp; path = profiler/ProfilerOriginStack.cpp; sourceTree = "<group>"; };
 		0FF729A2166AD347000F5BA3 /* ProfilerOriginStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerOriginStack.h; path = profiler/ProfilerOriginStack.h; sourceTree = "<group>"; };
 		0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JSCLLIntOffsetsExtractor; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FFC99D2184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBufferNeuteringWatchpoint.cpp; sourceTree = "<group>"; };
+		0FFC99D3184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBufferNeuteringWatchpoint.h; sourceTree = "<group>"; };
 		0FFC99D0184EC8AD009C10AB /* ConstantMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantMode.h; sourceTree = "<group>"; };
 		0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCFAPhase.cpp; path = dfg/DFGCFAPhase.cpp; sourceTree = "<group>"; };
 		0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCFAPhase.h; path = dfg/DFGCFAPhase.h; sourceTree = "<group>"; };
@@ -3366,6 +3370,8 @@
 				A76140CA182982CB00750624 /* ArgumentsIteratorPrototype.h */,
 				A7A8AF2517ADB5F2005AB174 /* ArrayBuffer.cpp */,
 				A7A8AF2617ADB5F3005AB174 /* ArrayBuffer.h */,
+				0FFC99D2184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.cpp */,
+				0FFC99D3184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h */,
 				A7A8AF2717ADB5F3005AB174 /* ArrayBufferView.cpp */,
 				A7A8AF2817ADB5F3005AB174 /* ArrayBufferView.h */,
 				BC7952060E15E8A800A898AB /* ArrayConstructor.cpp */,
@@ -4478,6 +4484,7 @@
 				A7A8AF3817ADB5F3005AB174 /* Float32Array.h in Headers */,
 				A7A8AF3917ADB5F3005AB174 /* Float64Array.h in Headers */,
 				0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */,
+				0FFC99D5184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h in Headers */,
 				0FDB2CC9173DA520007B3C1B /* FTLAbbreviatedTypes.h in Headers */,
 				0FEA0A08170513DB00BB722C /* FTLAbbreviations.h in Headers */,
 				0FEA0A1D1708B00700BB722C /* FTLAbstractHeap.h in Headers */,
@@ -5641,6 +5648,7 @@
 				1428083A107EC0750013E7B2 /* JSStack.cpp in Sources */,
 				147F39D5107EC37600427A48 /* JSString.cpp in Sources */,
 				2600B5A6152BAAA70091EE5F /* JSStringJoiner.cpp in Sources */,
+				0FFC99D4184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.cpp in Sources */,
 				1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */,
 				146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */,
 				0F919D0C157EE09F004A4E7D /* JSSymbolTableObject.cpp in Sources */,

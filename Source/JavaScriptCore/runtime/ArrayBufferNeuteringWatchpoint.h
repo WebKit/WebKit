@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ArrayBuffer.h"
+#ifndef ArrayBufferNeuteringWatchpoint_h
+#define ArrayBufferNeuteringWatchpoint_h
 
-#include "ArrayBufferNeuteringWatchpoint.h"
-#include "JSArrayBufferView.h"
-#include "Operations.h"
-#include <wtf/RefPtr.h>
+#include "JSCell.h"
+#include "Watchpoint.h"
 
 namespace JSC {
 
-bool ArrayBuffer::transfer(ArrayBufferContents& result)
-{
-    Ref<ArrayBuffer> protect(*this);
+class ArrayBufferNeuteringWatchpoint : public JSCell {
+public:
+    typedef JSCell Base;
+    
+private:
+    ArrayBufferNeuteringWatchpoint(VM&);
+    
+public:
+    DECLARE_INFO;
+    
+    static ArrayBufferNeuteringWatchpoint* create(VM&);
 
-    if (!m_contents.m_data) {
-        result.m_data = 0;
-        return false;
-    }
+    static const bool needsDestruction = true;
+    static const bool hasImmortalStructure = true;
+    static void destroy(JSCell*);
+    
+    static Structure* createStructure(VM&);
+    
+    WatchpointSet* set() { return m_set.get(); }
 
-    bool isNeuterable = !m_pinCount;
-
-    if (isNeuterable)
-        m_contents.transfer(result);
-    else {
-        m_contents.copyTo(result);
-        if (!result.m_data)
-            return false;
-    }
-
-    for (size_t i = numberOfIncomingReferences(); i--;) {
-        JSCell* cell = incomingReferenceAt(i);
-        if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(cell))
-            view->neuter();
-        else if (ArrayBufferNeuteringWatchpoint* watchpoint = jsDynamicCast<ArrayBufferNeuteringWatchpoint*>(cell))
-            watchpoint->set()->fireAll();
-    }
-    return true;
-}
+private:
+    RefPtr<WatchpointSet> m_set;
+};
 
 } // namespace JSC
 
+#endif // ArrayBufferNeuteringWatchpoint_h

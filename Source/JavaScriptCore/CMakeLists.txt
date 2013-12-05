@@ -281,6 +281,7 @@ set(JavaScriptCore_SOURCES
     runtime/ArgumentsIteratorConstructor.cpp
     runtime/ArgumentsIteratorPrototype.cpp
     runtime/ArrayBuffer.cpp
+    runtime/ArrayBufferNeuteringWatchpoint.cpp
     runtime/ArrayBufferView.cpp
     runtime/ArrayConstructor.cpp
     runtime/ArrayIteratorConstructor.cpp

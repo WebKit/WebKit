@@ -1335,6 +1335,13 @@ private:
             return;
         }
         
+        if (JSArrayBufferView* view = m_graph.tryGetFoldableView(m_node->child1().node(), m_node->arrayMode())) {
+            if (view->mode() != FastTypedArray) {
+                setStorage(m_out.constIntPtr(view->vector()));
+                return;
+            }
+        }
+        
         setStorage(m_out.loadPtr(cell, m_heaps.JSArrayBufferView_vector));
     }
     
@@ -1451,12 +1458,10 @@ private:
             TypedArrayType type = m_node->arrayMode().typedArrayType();
             
             if (isTypedView(type)) {
-                LValue array = lowCell(m_node->child1());
-                
                 speculate(
                     OutOfBounds, noValue(), 0,
                     m_out.aboveOrEqual(
-                        index, m_out.load32(array, m_heaps.JSArrayBufferView_length)));
+                        index, typedArrayLength(m_node->child1(), m_node->arrayMode())));
                 
                 TypedPointer pointer = TypedPointer(
                     m_heaps.typedArrayProperties,
@@ -1624,7 +1629,8 @@ private:
                     speculate(
                         OutOfBounds, noValue(), 0,
                         m_out.aboveOrEqual(
-                            index, m_out.load32(base, m_heaps.JSArrayBufferView_length)));
+                            index,
+                            typedArrayLength(child1.node(), m_node->arrayMode(), base)));
                 }
                 
                 TypedPointer pointer = TypedPointer(
@@ -2763,6 +2769,18 @@ private:
         return ArrayValues(
             m_out.phi(m_out.intPtr, fastArray, slowArray),
             m_out.phi(m_out.intPtr, fastButterfly, slowButterfly));
+    }
+    
+    LValue typedArrayLength(Node* baseNode, ArrayMode arrayMode, LValue base)
+    {
+        if (JSArrayBufferView* view = m_graph.tryGetFoldableView(baseNode, arrayMode))
+            return m_out.constInt32(view->length());
+        return m_out.load32(base, m_heaps.JSArrayBufferView_length);
+    }
+    
+    LValue typedArrayLength(Edge baseEdge, ArrayMode arrayMode)
+    {
+        return typedArrayLength(baseEdge.node(), arrayMode, lowCell(baseEdge));
     }
     
     LValue boolify(Edge edge)

@@ -794,6 +794,8 @@ public:
     JSActivation* tryGetActivation(Node*);
     WriteBarrierBase<Unknown>* tryGetRegisters(Node*);
     
+    JSArrayBufferView* tryGetFoldableView(Node*, ArrayMode);
+    
     VM& m_vm;
     Plan& m_plan;
     CodeBlock* m_codeBlock;

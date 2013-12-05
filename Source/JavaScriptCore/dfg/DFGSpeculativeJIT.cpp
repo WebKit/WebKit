@@ -2325,6 +2325,31 @@ static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg sou
 
 }
 
+JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRReg baseGPR, GPRReg indexGPR)
+{
+    if (node->op() == PutByValAlias)
+        return JITCompiler::Jump();
+    if (JSArrayBufferView* view = m_jit.graph().tryGetFoldableView(m_jit.graph().child(node, 0).node(), node->arrayMode())) {
+        uint32_t length = view->length();
+        Node* indexNode = m_jit.graph().child(node, 1).node();
+        if (m_jit.graph().isInt32Constant(indexNode) && static_cast<uint32_t>(m_jit.graph().valueOfInt32Constant(indexNode)) < length)
+            return JITCompiler::Jump();
+        return m_jit.branch32(
+            MacroAssembler::AboveOrEqual, indexGPR, MacroAssembler::Imm32(length));
+    }
+    return m_jit.branch32(
+        MacroAssembler::AboveOrEqual, indexGPR,
+        MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfLength()));
+}
+
+void SpeculativeJIT::emitTypedArrayBoundsCheck(Node* node, GPRReg baseGPR, GPRReg indexGPR)
+{
+    JITCompiler::Jump jump = jumpForTypedArrayOutOfBounds(node, baseGPR, indexGPR);
+    if (!jump.isSet())
+        return;
+    speculationCheck(OutOfBounds, JSValueRegs(), 0, jump);
+}
+
 void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType type)
 {
     ASSERT(isInt(type));
@@ -2342,11 +2367,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
 
     ASSERT(node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
 
-    speculationCheck(
-        Uncountable, JSValueRegs(), 0,
-        m_jit.branch32(
-            MacroAssembler::AboveOrEqual, propertyReg,
-            MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength())));
+    emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
     switch (elementSize(type)) {
     case 1:
         if (isSigned(type))
@@ -2509,9 +2530,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
     ASSERT_UNUSED(valueGPR, valueGPR != property);
     ASSERT(valueGPR != base);
     ASSERT(valueGPR != storageReg);
-    MacroAssembler::Jump outOfBounds;
-    if (node->op() == PutByVal)
-        outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, property, MacroAssembler::Address(base, JSArrayBufferView::offsetOfLength()));
+    MacroAssembler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property);
 
     switch (elementSize(type)) {
     case 1:
@@ -2526,7 +2545,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
     default:
         CRASH();
     }
-    if (node->op() == PutByVal)
+    if (outOfBounds.isSet())
         outOfBounds.link(&m_jit);
     noResult(node);
 }
@@ -2547,11 +2566,7 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
 
     FPRTemporary result(this);
     FPRReg resultReg = result.fpr();
-    speculationCheck(
-        Uncountable, JSValueRegs(), 0,
-        m_jit.branch32(
-            MacroAssembler::AboveOrEqual, propertyReg,
-            MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength())));
+    emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
     switch (elementSize(type)) {
     case 4:
         m_jit.loadFloat(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesFour), resultReg);
@@ -2590,12 +2605,7 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
 
     ASSERT_UNUSED(baseUse, node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(baseUse)));
     
-    MacroAssembler::Jump outOfBounds;
-    if (node->op() == PutByVal) {
-        outOfBounds = m_jit.branch32(
-            MacroAssembler::AboveOrEqual, property,
-            MacroAssembler::Address(base, JSArrayBufferView::offsetOfLength()));
-    }
+    MacroAssembler::Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base, property);
     
     switch (elementSize(type)) {
     case 4: {
@@ -2610,7 +2620,7 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
-    if (node->op() == PutByVal)
+    if (outOfBounds.isSet())
         outOfBounds.link(&m_jit);
     noResult(node);
 }
@@ -4035,8 +4045,27 @@ void SpeculativeJIT::compileStringZeroLength(Node* node)
 #endif
 }
 
+bool SpeculativeJIT::compileConstantIndexedPropertyStorage(Node* node)
+{
+    JSArrayBufferView* view = m_jit.graph().tryGetFoldableView(
+        node->child1().node(), node->arrayMode());
+    if (!view)
+        return false;
+    if (view->mode() == FastTypedArray)
+        return false;
+    
+    GPRTemporary storage(this);
+    GPRReg storageGPR = storage.gpr();
+    m_jit.move(TrustedImmPtr(view->vector()), storageGPR);
+    storageResult(storageGPR, node);
+    return true;
+}
+
 void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
 {
+    if (compileConstantIndexedPropertyStorage(node))
+        return;
+    
     SpeculateCellOperand base(this, node->child1());
     GPRReg baseReg = base.gpr();
     
