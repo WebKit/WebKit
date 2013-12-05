@@ -1,3 +1,15 @@
+2013-12-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Fix ANGLE build failures by re-comitting the changes in http://trac.webkit.org/changeset/154223
+        on top of the library updates introduced by http://trac.webkit.org/changeset/159533.
+
+        Rubber-stamped by Babak Shafiei.
+
+        * src/compiler/glslang.l:
+        * src/compiler/glslang_lex.cpp:
+        * src/compiler/preprocessor/Tokenizer.cpp:
+        * src/compiler/preprocessor/Tokenizer.l:
+
 2013-12-03  Daniel Bates  <dabates@apple.com>
 
         ANGLE fails to build with trunk clang: unused constant kTraceBufferLen
