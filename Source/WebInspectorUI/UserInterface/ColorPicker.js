@@ -127,7 +127,8 @@ WebInspector.ColorPicker.prototype = {
         if (this._dontUpdateColor)
             return;
 
-        var rgba = this._colorWheel.tintedColor.rgb.concat(this._opacity);
+        var opacity = Math.round(this._opacity * 100) / 100;
+        var rgba = this._colorWheel.tintedColor.rgb.concat(opacity);
         this._color = new WebInspector.Color(WebInspector.Color.Format.RGBA, rgba).toString(this._colorFormat);
         this.dispatchEventToListeners(WebInspector.ColorPicker.Event.ColorChanged, {color: this._color});
     },
