@@ -204,7 +204,7 @@ static RetainPtr<CGImageRef> createCroppedImageIfNecessary(CGImageRef image, con
 {
     if (image && (CGImageGetWidth(image) != static_cast<size_t>(bounds.width())
         || CGImageGetHeight(image) != static_cast<size_t>(bounds.height()))) {
-        return adoptCF(CGImageCreateWithImageInRect(image, CGRectMake(0, static_cast<int>(CGImageGetHeight(image)) - bounds.height(), bounds.width(), bounds.height())));
+        return adoptCF(CGImageCreateWithImageInRect(image, CGRectMake(0, 0, bounds.width(), bounds.height())));
     }
     return image;
 }
@@ -278,7 +278,7 @@ void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace,
 
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(m_resolutionScale, m_resolutionScale);
-    destContext->drawNativeImage(image.get(), internalSize(), colorSpace, destRect, adjustedSrcRect, op, blendMode);
+    destContext->drawNativeImage(image.get(), m_data.m_backingStoreSize, colorSpace, destRect, adjustedSrcRect, op, blendMode);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)

@@ -1,3 +1,24 @@
+2013-12-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Cropping and drawing ImageBuffers results in uninitialized data being shown
+        https://bugs.webkit.org/show_bug.cgi?id=125271
+
+        Reviewed by Simon Fraser.
+
+        createCroppedImageIfNecessary() crops to the bottom left of the ImageBuffer
+        backing store instead of the top left. In addition, ImageBuffer::draw()
+        draws the entire ImageBuffer's backing store instead of just the relevant
+        portion of it.
+
+        No new tests are necessary because the existing tests already test this
+        functionality
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::createCroppedImageIfNecessary): Crop to the top left of the
+        backing store 
+        (WebCore::ImageBuffer::draw): Draw only the logical portion of the
+        backing store 
+
 2013-12-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove stale ScriptGlobalObject methods
