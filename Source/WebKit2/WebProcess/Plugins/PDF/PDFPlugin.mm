@@ -335,7 +335,7 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 - (void)writeItemsToPasteboard:(NSArray *)items withTypes:(NSArray *)types
 {
-    _pdfPlugin->writeItemsToPasteboard(items, types);
+    _pdfPlugin->writeItemsToPasteboard(NSGeneralPboard, items, types);
 }
 
 - (void)showDefinitionForAttributedString:(NSAttributedString *)string atPoint:(CGPoint)point
@@ -1480,17 +1480,22 @@ bool PDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
 bool PDFPlugin::handleEditingCommand(const String& commandName, const String& argument)
 {
     if (commandName == "copy")
-        [m_pdfLayerController.get() copySelection];
+        [m_pdfLayerController copySelection];
     else if (commandName == "selectAll")
-        [m_pdfLayerController.get() selectAll];
-    
+        [m_pdfLayerController selectAll];
+    else if (commandName == "takeFindStringFromSelection") {
+        NSString *string = [m_pdfLayerController currentSelection].string;
+        if (string.length)
+            writeItemsToPasteboard(NSFindPboard, @[ [string dataUsingEncoding:NSUTF8StringEncoding] ], @[ NSPasteboardTypeString ]);
+    }
+
     return true;
 }
 
 bool PDFPlugin::isEditingCommandEnabled(const String& commandName)
 {
-    if (commandName == "copy")
-        return [m_pdfLayerController.get() currentSelection];
+    if (commandName == "copy" || commandName == "takeFindStringFromSelection")
+        return [m_pdfLayerController currentSelection];
         
     if (commandName == "selectAll")
         return true;
@@ -1630,7 +1635,7 @@ void PDFPlugin::openWithNativeApplication()
     webFrame()->page()->send(Messages::WebPageProxy::OpenPDFFromTemporaryFolderWithNativeApplication(m_temporaryPDFUUID));
 }
 
-void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
+void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types)
 {
     Vector<String> pasteboardTypes;
 
@@ -1638,7 +1643,7 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
         pasteboardTypes.append(type);
 
     uint64_t newChangeCount;
-    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardTypes(NSGeneralPboard, pasteboardTypes),
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardTypes(pasteboardName, pasteboardTypes),
         Messages::WebContext::SetPasteboardTypes::Reply(newChangeCount), 0);
 
     for (NSUInteger i = 0, count = items.count; i < count; ++i) {
@@ -1653,7 +1658,7 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
 
         if ([type isEqualToString:NSStringPboardType] || [type isEqualToString:NSPasteboardTypeString]) {
             RetainPtr<NSString> plainTextString = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-            WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardStringForType(NSGeneralPboard, type, plainTextString.get()),
+            WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardStringForType(pasteboardName, type, plainTextString.get()),
                 Messages::WebContext::SetPasteboardStringForType::Reply(newChangeCount), 0);
         } else {
             RefPtr<SharedBuffer> buffer = SharedBuffer::wrapNSData(data);
@@ -1665,7 +1670,7 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
             RefPtr<SharedMemory> sharedMemory = SharedMemory::create(buffer->size());
             memcpy(sharedMemory->data(), buffer->data(), buffer->size());
             sharedMemory->createHandle(handle, SharedMemory::ReadOnly);
-            WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardBufferForType(NSGeneralPboard, type, handle, buffer->size()),
+            WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardBufferForType(pasteboardName, type, handle, buffer->size()),
                 Messages::WebContext::SetPasteboardBufferForType::Reply(newChangeCount), 0);
         }
     }

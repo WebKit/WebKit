@@ -88,7 +88,7 @@ public:
     void clickedLink(NSURL *);
     void saveToPDF();
     void openWithNativeApplication();
-    void writeItemsToPasteboard(NSArray *items, NSArray *types);
+    void writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types);
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
     void performWebSearch(NSString *);
     void performSpotlightSearch(NSString *);
