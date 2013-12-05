@@ -188,6 +188,13 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
             sys.stdout.write('webkit_dom_%s_get_type\n' % self._dom_class_decamelize(class_name).lower())
             sys.stdout.write('</SECTION>\n\n')
 
+    def write_footer(self):
+        sys.stdout.write('<SECTION>\n')
+        sys.stdout.write('<FILE>webkitdomdefines</FILE>\n<TITLE>WebKitDOMDefines</TITLE>\n')
+        sys.stdout.write('<SUBSECTION Private>\n')
+        sys.stdout.write('WEBKIT_API\nWEBKIT_DEPRECATED\nWEBKIT_DEPRECATED_FOR\n')
+        sys.stdout.write('</SECTION>\n\n')
+
 
 symbol_files = sys.stdin.read().strip('\n').split(' ')
 if 'docs' in sys.argv[1:]:
