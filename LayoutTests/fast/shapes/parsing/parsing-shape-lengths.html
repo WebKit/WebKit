@@ -108,10 +108,10 @@ testInvalidValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, -1in, 1px, 1
 testInvalidValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)");
 
 // reject negative top, right, bottom, and left
-testInvalidValue("-webkit-shape-inside", "inset(-1cm, 1mm, 1in, 1px, 1pt, 1pc)");
-testInvalidValue("-webkit-shape-inside", "inset(1cm, -1mm, 1in, 1px, 1pt, 1pc)");
-testInvalidValue("-webkit-shape-inside", "inset(1cm, 1mm, -1in, 1px, 1pt, 1pc)");
-testInvalidValue("-webkit-shape-inside", "inset(1cm, 1mm, 1in, -1px, 1pt, 1pc)");
+testInvalidValue("-webkit-shape-inside", "inset(-1cm 1mm 1in 1px)");
+testInvalidValue("-webkit-shape-inside", "inset(1cm -1mm 1in 1px)");
+testInvalidValue("-webkit-shape-inside", "inset(1cm 1mm -1in 1px)");
+testInvalidValue("-webkit-shape-inside", "inset(1cm 1mm 1in -1px)");
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
