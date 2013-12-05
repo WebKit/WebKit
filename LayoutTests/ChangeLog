@@ -1,3 +1,19 @@
+2013-12-04  Samuel White  <samuel_white@apple.com>
+
+        Layout Test platform/mac/accessibility/search-predicate-element-count.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=125195
+
+        Reviewed by Chris Fleizach.
+
+        Our test checks for AccessibilityObject::isOnscreen which makes sure an element is currently scrolled to a visible
+        location onscreen. This test was flaky because sometimes elements we thought would be visible weren't. To resolve
+        this I've moved the elements that are tested for visibility to the very top of the document so they have a tiny
+        vertical offset and will ALWAYS be visible.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/accessibility/search-predicate-element-count-expected.txt:
+        * platform/mac/accessibility/search-predicate-element-count.html:
+
 2013-12-04  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         % unit heights don't work if parent block height is set in vh

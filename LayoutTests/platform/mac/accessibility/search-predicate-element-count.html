@@ -14,6 +14,14 @@
 
 <div id="container">
 <p id="start">Start</p>
+<!-- Headings. -->
+<h1>Heading 1</h1>
+<h2>Heading 2</h2>
+<h3>Heading 3</h3>
+<h4>Heading 4</h4>
+<h5 class="offscreen">Heading 5</h5>
+<h6 class="offscreen">Heading 6</h6>
+<br>
 <!-- Tables. -->
 <table border="1">
 <tr><th>A</th><th>B</th></tr>
@@ -41,14 +49,6 @@
 <input type="submit" value="Submit">
 <input type="submit" value="Submit">
 <input type="submit" value="Submit">
-<br>
-<!-- Headings. -->
-<h1>Heading 1</h1>
-<h2>Heading 2</h2>
-<h3>Heading 3</h3>
-<h4>Heading 4</h4>
-<h5 class="offscreen">Heading 5</h5>
-<h6 class="offscreen">Heading 6</h6>
 </div>
 
 <p id="description"></p>
@@ -60,36 +60,35 @@
     if (window.accessibilityController) {
         document.getElementById("container").focus();
         var containerElement = accessibilityController.focusedElement;
-        var elementCount = 0;
         var startElement = accessibilityController.accessibleElementById("start");
         
         // Tables.
-        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXTableSearchKey", "", false);
-        shouldBe("elementCount", "2");
+        var tableCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXTableSearchKey", "", false);
+        shouldBe("tableCount", "2");
         
         // Links.
-        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXLinkSearchKey", "", false);
-        shouldBe("elementCount", "3");
+        var linkCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXLinkSearchKey", "", false);
+        shouldBe("linkCount", "3");
         
         // Images.
-        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXGraphicSearchKey", "", false);
-        shouldBe("elementCount", "4");
+        var imageCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXGraphicSearchKey", "", false);
+        shouldBe("imageCount", "4");
         
         // Inputs.
-        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXButtonSearchKey", "", false);
-        shouldBe("elementCount", "5");
+        var inputCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXButtonSearchKey", "", false);
+        shouldBe("inputCount", "5");
         
         // Headings.
-        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);
-        shouldBe("elementCount", "6");
+        var headingCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);
+        shouldBe("headingCount", "6");
         
         // Onscreen
-        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);
-        shouldBe("elementCount", "6");
+        var onscreenCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);
+        shouldBe("onscreenCount", "6");
         
         // Offscreen
-        elementCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", true);
-        shouldBe("elementCount", "4");
+        var offscreenCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", true);
+        shouldBe("offscreenCount", "4");
         
         // Hide superfluous text.
         document.getElementById("container").style.display = "none";

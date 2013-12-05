@@ -1307,5 +1307,3 @@ webkit.org/b/124373 [ MountainLion Release ] http/tests/security/frameNavigation
 webkit.org/b/124424 webgl/1.0.2/conformance/ogles/GL/tan/tan_001_to_006.html [ Pass Failure ]
 
 webkit.org/b/124593 fast/forms/form-associated-element-crash.html [ Pass Timeout ]
-
-webkit.org/b/125195 platform/mac/accessibility/search-predicate-element-count.html [ Pass Failure ]
