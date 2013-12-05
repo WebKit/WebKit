@@ -1,3 +1,19 @@
+2013-12-05  Roger Fong  <roger_fong@apple.com>
+
+        [WebGL] Make sure we satisfy uniform and varying packing restrictions.
+        https://bugs.webkit.org/show_bug.cgi?id=125124.
+        <rdar://problem/15203291>
+
+        Reviewed by Brent Fulgham.
+
+        * src/compiler/Compiler.cpp: 
+        Add a check to enforcePackingRestrictions to ensure we make sure packing restrictions for varyings are satisfied as well.
+        (TCompiler::TCompiler):
+        (TCompiler::Init):
+        (TCompiler::compile):
+        (TCompiler::enforcePackingRestrictions):
+        * src/compiler/ShHandle.h: Keep track of maximum varying vectors.
+
 2013-12-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Fix ANGLE build failures by re-comitting the changes in http://trac.webkit.org/changeset/154223

@@ -1,3 +1,14 @@
+2013-12-05  Roger Fong  <roger_fong@apple.com>
+
+        [WebGL] Make sure we satisfy uniform and varying packing restrictions.
+        https://bugs.webkit.org/show_bug.cgi?id=125124.
+        <rdar://problem/15203291>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/mac/TestExpectations: Unskip some 1.0.2 WebGL conformance tests that should now be passing.
+        Skip conformance/ogles/GL/build/build_009_to_016.html which is a faulty test and has too many varyings in one shader.
+
 2013-12-05  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: [CSS Regions] Show a list of containing regions when clicking a node that is part of a flow
