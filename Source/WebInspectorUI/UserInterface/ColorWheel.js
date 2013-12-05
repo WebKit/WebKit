@@ -85,7 +85,7 @@ WebInspector.ColorWheel.prototype = {
         if (this._crosshairPosition)
             return this._colorAtPointWithBrightness(this._crosshairPosition.x, this._crosshairPosition.y, this._brightness);
 
-        return new WebInspector.Color("white");
+        return new WebInspector.Color(WebInspector.Color.Format.RGBA, [0, 0, 0, 0]);
     },
 
     set tintedColor(tintedColor)
@@ -100,7 +100,7 @@ WebInspector.ColorWheel.prototype = {
         if (this._crosshairPosition)
             return this._colorAtPointWithBrightness(this._crosshairPosition.x, this._crosshairPosition.y, 1);
 
-        return new WebInspector.Color("white");
+        return new WebInspector.Color(WebInspector.Color.Format.RGBA, [0, 0, 0, 0]);
     },
 
     // Protected

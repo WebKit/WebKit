@@ -1,5 +1,18 @@
 2013-12-04  Antoine Quint  <graouts@apple.com>
 
+        Web Inspector: ColorWheel uses old Color constructor
+        https://bugs.webkit.org/show_bug.cgi?id=125260
+
+        Reviewed by Joseph Pecoraro.
+
+        Update to new WebInspector.Color constructor signature and use a clear color.
+
+        * UserInterface/ColorWheel.js:
+        (WebInspector.ColorWheel.prototype.get tintedColor):
+        (WebInspector.ColorWheel.prototype.get rawColor):
+
+2013-12-04  Antoine Quint  <graouts@apple.com>
+
         Web Inspector: color picker doesn't work with "blue"
         https://bugs.webkit.org/show_bug.cgi?id=125262
 
