@@ -1,3 +1,38 @@
+2013-12-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Change how the form element pointer affects parsing template elements, to reduce weirdness in templates
+        https://bugs.webkit.org/show_bug.cgi?id=125279
+
+        Reviewed by Antti Koivisto.
+
+        Faithfully update the HTML5 parser after http://html5.org/tools/web-apps-tracker?from=8330&to=8331.
+
+        Test: fast/dom/HTMLTemplateElement/no-form-association-2.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLFormElement): Don't the form element pointer if the context
+        element or its ancestor is a template element.
+        (WebCore::HTMLConstructionSite::insideTemplateElement): Added.
+        (WebCore::HTMLConstructionSite::createHTMLElement): Renamed openElementsContainTemplateElement to
+        insideTemplateElement to reflect the true semantics of the boolean.
+
+        * html/parser/HTMLConstructionSite.h:
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processIsindexStartTagForInBody): Ignore the form element pointer if there
+        is a template element on the stack of open elements. This faithfully reflects what's being said in the
+        specification. We should probably make isParsingTemplateContents more efficient by storing a boolean
+        and then wrap from() in some helper function but that should probbaly happen in a separate patch.
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody): Don't unset or rely on the form element pointer
+        when there is a template element on the stack of open elements.
+
+        * html/parser/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::isParsingTemplateContents): Added a trivial implementation for when
+        TEMPLATE_ELEMENT is disabled.
+        (WebCore::HTMLTreeBuilder::isParsingFragmentOrTemplateContents): Merged two implementations.
+
 2013-12-05  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [MediaStream] Firing negotiationneeded event upon track add/remove on MediaStream

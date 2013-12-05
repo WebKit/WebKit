@@ -462,7 +462,7 @@ void HTMLTreeBuilder::processIsindexStartTagForInBody(AtomicHTMLToken* token)
     ASSERT(token->type() == HTMLToken::StartTag);
     ASSERT(token->name() == isindexTag);
     parseError(token);
-    if (m_tree.form())
+    if (m_tree.form() && !isParsingTemplateContents())
         return;
     notImplemented(); // Acknowledge self-closing flag
     processFakeStartTag(formTag);
@@ -700,7 +700,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
         return;
     }
     if (token->name() == formTag) {
-        if (m_tree.form()) {
+        if (m_tree.form() && !isParsingTemplateContents()) {
             parseError(token);
             return;
         }
@@ -1051,7 +1051,7 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomicHTMLToken* token)
     }
     if (token->name() == formTag) {
         parseError(token);
-        if (m_tree.form())
+        if (m_tree.form() && !isParsingTemplateContents())
             return;
         m_tree.insertHTMLFormElement(token, true);
         m_tree.openElements()->pop();
@@ -1864,15 +1864,26 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken* token)
         return;
     }
     if (token->name() == formTag) {
-        RefPtr<Element> node = m_tree.takeForm();
-        if (!node || !m_tree.openElements()->inScope(node.get())) {
-            parseError(token);
-            return;
+        if (!isParsingTemplateContents()) {
+            RefPtr<Element> node = m_tree.takeForm();
+            if (!node || !m_tree.openElements()->inScope(node.get())) {
+                parseError(token);
+                return;
+            }
+            m_tree.generateImpliedEndTags();
+            if (m_tree.currentNode() != node.get())
+                parseError(token);
+            m_tree.openElements()->remove(node.get());
+        } else {
+            if (!m_tree.openElements()->inScope(token->name())) {
+                parseError(token);
+                return;
+            }
+            m_tree.generateImpliedEndTags();
+            if (!m_tree.currentNode()->hasTagName(formTag))
+                parseError(token);
+            m_tree.openElements()->popUntilPopped(token->name());
         }
-        m_tree.generateImpliedEndTags();
-        if (m_tree.currentElement() != node.get())
-            parseError(token);
-        m_tree.openElements()->remove(node.get());
     }
     if (token->name() == pTag) {
         if (!m_tree.openElements()->inButtonScope(token->name())) {

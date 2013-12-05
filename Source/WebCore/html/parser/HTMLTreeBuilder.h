@@ -72,10 +72,10 @@ public:
     bool isParsingFragment() const { return !!m_fragmentContext.fragment(); }
 #if ENABLE(TEMPLATE_ELEMENT)
     bool isParsingTemplateContents() const { return m_tree.openElements()->hasTemplateInHTMLScope(); }
-    bool isParsingFragmentOrTemplateContents() const { return isParsingFragment() || isParsingTemplateContents(); }
 #else
-    bool isParsingFragmentOrTemplateContents() const { return isParsingFragment(); }
+    bool isParsingTemplateContents() const { return false; }
 #endif
+    bool isParsingFragmentOrTemplateContents() const { return isParsingFragment() || isParsingTemplateContents(); }
 
     void detach();
 
