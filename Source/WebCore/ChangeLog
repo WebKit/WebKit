@@ -1,3 +1,9 @@
+2013-12-04  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed build fix. Copy headers from rendering/line to build directory.
+
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+
 2013-12-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         bgColor, setBgColor, alinkColor, setAlinkColor, and etc... on HTMLBodyElement are useless
