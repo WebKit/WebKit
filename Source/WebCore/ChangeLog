@@ -1,3 +1,12 @@
+2013-12-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove spaces on a blank line to have ResourceHandleCFNet.cpp identical to iOS
+
+        Unreviewed.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+
 2013-12-04  Antti Koivisto  <antti@apple.com>
 
         Move pseudo element construction out from Element
