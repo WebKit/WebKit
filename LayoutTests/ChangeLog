@@ -1,3 +1,14 @@
+2013-12-05  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Enable CSS Shapes on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=89957
+
+        Reviewed by Brent Fulgham.
+
+        Turning shapes tests back on on Windows builds.
+
+        * platform/win/TestExpectations: Enable shapes tests.
+
 2013-12-05  Roger Fong  <roger_fong@apple.com>
 
         [WebGL] Make sure we satisfy uniform and varying packing restrictions.
