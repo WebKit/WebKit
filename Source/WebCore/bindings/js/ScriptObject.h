@@ -38,9 +38,8 @@
 #include <runtime/JSObject.h>
 
 namespace WebCore {
-    class InjectedScriptHost;
+
     class InspectorFrontendHost;
-    class MediaControlsHost;
 
     class ScriptObject : public ScriptValue {
     public:
@@ -59,12 +58,7 @@ namespace WebCore {
         static bool set(JSC::ExecState*, const char* name, const ScriptObject&);
 #if ENABLE(INSPECTOR)
         static bool set(JSC::ExecState*, const char* name, InspectorFrontendHost*);
-        static bool set(JSC::ExecState*, const char* name, InjectedScriptHost*);
 #endif
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-        static bool set(JSC::ExecState*, const char* name, MediaControlsHost*);
-#endif
-
         static bool get(JSC::ExecState*, const char* name, ScriptObject&);
         static bool remove(JSC::ExecState*, const char* name);
     private:
