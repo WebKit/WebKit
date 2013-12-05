@@ -940,7 +940,7 @@ void StreamingClient::handleDataReceived(const char* data, int length)
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
 
-    GST_LOG_OBJECT(src, "Have %ld bytes of data", priv->buffer ? gst_buffer_get_size(priv->buffer.get()) : length);
+    GST_LOG_OBJECT(src, "Have %lld bytes of data", priv->buffer ? static_cast<long long>(gst_buffer_get_size(priv->buffer.get())) : length);
 
     ASSERT(!priv->buffer || data == getGstBufferDataPointer(priv->buffer.get()));
 

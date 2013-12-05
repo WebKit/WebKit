@@ -1,3 +1,13 @@
+2013-12-05  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        32bit buildfix after r160151
+        https://bugs.webkit.org/show_bug.cgi?id=125298
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::handleDataReceived):
+
 2013-12-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Cropping and drawing ImageBuffers results in uninitialized data being shown
