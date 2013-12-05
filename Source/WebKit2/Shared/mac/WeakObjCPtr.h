@@ -27,6 +27,7 @@
 #define WeakObjCPtr_h
 
 #include <objc/runtime.h>
+#include <type_traits>
 #include <wtf/RetainPtr.h>
 
 #if __has_include(<objc/objc-internal.h>)
@@ -43,12 +44,14 @@ namespace WebKit {
 
 template<typename T> class WeakObjCPtr {
 public:
+    typedef typename std::remove_pointer<T>::type ValueType;
+
     WeakObjCPtr()
         : m_weakReference(nullptr)
     {
     }
 
-    WeakObjCPtr(T *ptr)
+    WeakObjCPtr(ValueType *ptr)
     {
         objc_initWeak(&m_weakReference, ptr);
     }
@@ -58,16 +61,21 @@ public:
         objc_destroyWeak(&m_weakReference);
     }
 
-    WeakObjCPtr& operator=(T *ptr)
+    WeakObjCPtr& operator=(ValueType *ptr)
     {
         objc_storeWeak(&m_weakReference, ptr);
 
         return *this;
     }
 
-    RetainPtr<T> get() const
+    RetainPtr<ValueType> get() const
     {
         return adoptNS(objc_loadWeakRetained(const_cast<id*>(&m_weakReference)));
+    }
+
+    ValueType *getAutoreleased() const
+    {
+        return static_cast<ValueType *>(objc_loadWeak(const_cast<id*>(&m_weakReference)));
     }
 
 private:

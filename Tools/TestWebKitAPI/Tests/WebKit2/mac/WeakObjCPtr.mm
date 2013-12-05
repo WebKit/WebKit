@@ -29,52 +29,80 @@
 
 using WebKit::WeakObjCPtr;
 
-TEST(WebKit2, WeakObjCPtr)
+TEST(WebKit2_WeakObjCPtr, Construction)
 {
-    // Test construction.
-    {
-        NSObject *object = [[NSObject alloc] init];
+    NSObject *object = [[NSObject alloc] init];
 
+    WeakObjCPtr<NSObject> weak(object);
+
+    EXPECT_EQ(weak.get(), object);
+
+    [object release];
+
+    EXPECT_EQ(weak.get(), (void*)nil);
+}
+
+TEST(WebKit2_WeakObjCPtr, Assignment)
+{
+    NSObject *object1 = [[NSObject alloc] init];
+
+    WeakObjCPtr<NSObject> weak(object1);
+
+    EXPECT_EQ(weak.get(), object1);
+
+    NSObject *object2 = [[NSObject alloc] init];
+
+    weak = object2;
+    EXPECT_EQ(weak.get(), object2);
+
+    [object1 release];
+    EXPECT_EQ(weak.get(), object2);
+
+    [object2 release];
+    EXPECT_EQ(weak.get(), (void*)nil);
+}
+
+TEST(WebKit2_WeakObjCPtr, ObjectOutlivesItsWeakPointer)
+{
+    NSObject *object = [[NSObject alloc] init];
+
+    {
         WeakObjCPtr<NSObject> weak(object);
 
         EXPECT_EQ(weak.get(), object);
-
-        [object release];
-
-        EXPECT_EQ(weak.get(), (void*)nil);
     }
 
-    // Test assignment.
-    {
-        NSObject *object1 = [[NSObject alloc] init];
+    [object release];
+}
 
-        WeakObjCPtr<NSObject> weak(object1);
+TEST(WebKit2_WeakObjCPtr, GetAutoreleased)
+{
+    WeakObjCPtr<NSObject> weak;
 
-        EXPECT_EQ(weak.get(), object1);
-
-        NSObject *object2 = [[NSObject alloc] init];
-
-        weak = object2;
-        EXPECT_EQ(weak.get(), object2);
-
-        [object1 release];
-        EXPECT_EQ(weak.get(), object2);
-
-        [object2 release];
-        EXPECT_EQ(weak.get(), (void*)nil);
-    }
-
-    // Test having an object that outlives its weak pointer.
-    {
+    @autoreleasepool {
         NSObject *object = [[NSObject alloc] init];
 
-        {
-            WeakObjCPtr<NSObject> weak(object);
+        weak = object;
 
-            EXPECT_EQ(weak.get(), object);
-        }
-
+        EXPECT_EQ(weak.getAutoreleased(), object);
+        
         [object release];
+
+        // The object is still in the autorelease pool.
+        EXPECT_EQ(weak.getAutoreleased(), object);
     }
 
+    EXPECT_EQ(weak.getAutoreleased(), (id)nil);
+}
+
+TEST(WebKit2_WeakObjCPtr, Id)
+{
+    id object = [[NSObject alloc] init];
+    WeakObjCPtr<id> weak(object);
+
+    EXPECT_EQ(weak.get(), object);
+
+    [object release];
+
+    EXPECT_EQ(weak.get(), (void*)nil);
 }
