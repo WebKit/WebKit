@@ -1,3 +1,19 @@
+2013-12-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        bgColor, setBgColor, alinkColor, setAlinkColor, and etc... on HTMLBodyElement are useless
+        https://bugs.webkit.org/show_bug.cgi?id=125208
+
+        Rubber-stamped by Anders Carlsson.
+
+        Address Darin's comment to use fastGetAttribute instead of getAttribute.
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::bgColor):
+        (WebCore::HTMLDocument::fgColor):
+        (WebCore::HTMLDocument::alinkColor):
+        (WebCore::HTMLDocument::linkColor):
+        (WebCore::HTMLDocument::vlinkColor):
+
 2013-12-04  Brian J. Burg  <burg@cs.washington.edu>
 
         Consolidate various frame snapshot capabilities.
