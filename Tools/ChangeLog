@@ -1,3 +1,16 @@
+2013-12-05  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        Fix cross compilation on x86
+        https://bugs.webkit.org/show_bug.cgi?id=125295
+
+        Reviewed by Zoltan Herczeg.
+
+        Certain compiler flags should not be added when cross compilation is enabled.
+
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary):
+        (generateBuildSystemFromCMakeProject):
+
 2013-12-05  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Remove duplicated/dead code from cpp style checker unit tests.
