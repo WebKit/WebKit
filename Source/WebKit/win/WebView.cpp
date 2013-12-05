@@ -6955,7 +6955,7 @@ void WebView::fullScreenClientDidEnterFullScreen()
 void WebView::fullScreenClientWillExitFullScreen()
 {
     ASSERT(m_fullScreenElement);
-    m_fullScreenElement->document().webkitWillExitFullScreenForElement(m_fullScreenElement.get());
+    m_fullScreenElement->document().webkitCancelFullScreen();
 }
 
 void WebView::fullScreenClientDidExitFullScreen()
