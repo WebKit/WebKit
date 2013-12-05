@@ -404,16 +404,26 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         const CSSBasicShapeInset* rectValue = static_cast<const CSSBasicShapeInset* >(basicShapeValue);
         RefPtr<BasicShapeInset> rect = BasicShapeInset::create();
 
-        if (rectValue->left())
+        if (rectValue->top())
             rect->setTop(convertToLength(style, rootStyle, rectValue->top()));
-        else
+        else {
+            rect->setTop(Length(0, Fixed));
             return rect;
+        }
         if (rectValue->right())
             rect->setRight(convertToLength(style, rootStyle, rectValue->right()));
+        else
+            rect->setRight(Length(0, Fixed));
+
         if (rectValue->bottom())
             rect->setBottom(convertToLength(style, rootStyle, rectValue->bottom()));
+        else
+            rect->setBottom(Length(0, Fixed));
+
         if (rectValue->left())
             rect->setLeft(convertToLength(style, rootStyle, rectValue->left()));
+        else
+            rect->setLeft(Length(0, Fixed));
 
         if (rectValue->topLeftRadius()) {
             Pair* topLeftRadius = rectValue->topLeftRadius()->getPairValue();
