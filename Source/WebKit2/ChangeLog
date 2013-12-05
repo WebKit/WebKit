@@ -1,3 +1,19 @@
+2013-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Add a WeakObjCPtr class
+        https://bugs.webkit.org/show_bug.cgi?id=125267
+
+        Reviewed by Geoffrey Garen.
+
+        WeakObjCPtr is a zeroing weak reference class template that will be used for delegates.
+
+        * Shared/mac/WeakObjCPtr.h: Added.
+        (WebKit::WeakObjCPtr::WeakObjCPtr):
+        (WebKit::WeakObjCPtr::~WeakObjCPtr):
+        (WebKit::WeakObjCPtr::operator=):
+        (WebKit::WeakObjCPtr::get):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-12-04  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL build fix after r160135

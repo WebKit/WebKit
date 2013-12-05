@@ -223,6 +223,7 @@
 		1AA576021496B97900A4EE06 /* EventDispatcherMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA575FF1496B7C000A4EE06 /* EventDispatcherMessageReceiver.cpp */; };
 		1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA5889011EE70400061B882 /* NetscapePluginStream.h */; };
 		1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */; };
+		1AA9BAE1184FFAC7003B6BC6 /* WeakObjCPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA9BAE0184FFAC7003B6BC6 /* WeakObjCPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAB4A8C1296F0A20023952F /* SandboxExtension.h */; };
 		1AAB4AAA1296F1540023952F /* SandboxExtensionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */; };
 		1AABFE3A1829C1ED005B070E /* WKRemoteObjectInterfaceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AABFE391829C1ED005B070E /* WKRemoteObjectInterfaceInternal.h */; };
@@ -1740,6 +1741,7 @@
 		1AA576001496B7C000A4EE06 /* EventDispatcherMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcherMessages.h; sourceTree = "<group>"; };
 		1AA5889011EE70400061B882 /* NetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginStream.h; sourceTree = "<group>"; };
 		1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePluginStream.cpp; sourceTree = "<group>"; };
+		1AA9BAE0184FFAC7003B6BC6 /* WeakObjCPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjCPtr.h; sourceTree = "<group>"; };
 		1AAB4A8C1296F0A20023952F /* SandboxExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxExtension.h; sourceTree = "<group>"; };
 		1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxExtensionMac.mm; sourceTree = "<group>"; };
 		1AABFE391829C1ED005B070E /* WKRemoteObjectInterfaceInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectInterfaceInternal.h; sourceTree = "<group>"; };
@@ -4757,6 +4759,7 @@
 				E18E690F169B5928009B6670 /* SecItemShim.messages.in */,
 				511F8A77138B460900A95F44 /* SecItemShimLibrary.h */,
 				511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */,
+				1AA9BAE0184FFAC7003B6BC6 /* WeakObjCPtr.h */,
 				BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */,
 				BC111B5B112F629800337BAB /* WebEventFactory.h */,
 				BC111B5C112F629800337BAB /* WebEventFactory.mm */,
@@ -5664,6 +5667,7 @@
 				BC498618124D10E200D834E1 /* InjectedBundleHitTestResult.h in Headers */,
 				84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */,
 				BC8147D512F66D31007B2C32 /* InjectedBundleNavigationAction.h in Headers */,
+				1AA9BAE1184FFAC7003B6BC6 /* WeakObjCPtr.h in Headers */,
 				BC4BEEAB120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.h in Headers */,
 				378E1A4E18208D700031007A /* WKNSURL.h in Headers */,
 				512935E41288D97800A4B695 /* InjectedBundlePageContextMenuClient.h in Headers */,
