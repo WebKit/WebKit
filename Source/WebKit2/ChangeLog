@@ -1,3 +1,35 @@
+2013-12-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WK2] Clean up WorkQueueGtk
+        https://bugs.webkit.org/show_bug.cgi?id=125177
+
+        Reviewed by Carlos Garcia Campos.
+
+        Clean up the GTK implementation of the WorkQueue class a bit.
+        - registerSocketEventHandler doesn't take a condition argument anymore -- G_IO_IN was the only condition ever passed into
+        that method so that is now the hard-coded default.
+        - Clean up the declarations of GTK-specific bits in the WorkQueue header file. SocketEventSourceIterator typedef is removed
+        and auto will be used instead.
+        - WorkQueue::dispatchOnTermination and WorkQueue::SocketEventSource::performWorkOnTermination methods were unused and now removed.
+        - WorkQueue::SocketEventSource doesn't expect a GIO condition anymore, and WorkQueue::SocketEventSource::checkCondition is removed.
+        G_IO_IN condition was the only one used is now hard-coded into the check in WorkQueue::SocketEventSource::eventCallback.
+        - Removed an unnecessary non-null assertion for the heap-allocated SocketEventSource.
+        - Removed a technically duplicated assertion that a file descriptor is already present in the event sources map. Moved the
+        assertion before the HashMap::find() call.
+        - Removed two unnecessary assertions that non-null values are being returned by g_idle_source_new() and g_timeout_source_new().
+        Both functions are guaranteed to return non-null values.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::open):
+        * Platform/WorkQueue.h:
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::SocketEventSource::SocketEventSource):
+        (WorkQueue::SocketEventSource::eventCallback):
+        (WorkQueue::registerSocketEventHandler):
+        (WorkQueue::unregisterSocketEventHandler):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfterDelay):
+
 2013-12-04  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
 
         Report error when #else is used in message receiver generator's input.

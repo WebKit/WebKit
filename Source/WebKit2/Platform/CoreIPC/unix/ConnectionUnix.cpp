@@ -378,7 +378,7 @@ bool Connection::open()
 
     m_isConnected = true;
 #if PLATFORM(GTK)
-    m_connectionQueue->registerSocketEventHandler(m_socketDescriptor, G_IO_IN, WTF::bind(&Connection::readyReadHandler, this), WTF::bind(&Connection::connectionDidClose, this));
+    m_connectionQueue->registerSocketEventHandler(m_socketDescriptor, WTF::bind(&Connection::readyReadHandler, this), WTF::bind(&Connection::connectionDidClose, this));
 #elif PLATFORM(EFL)
     m_connectionQueue->registerSocketEventHandler(m_socketDescriptor, WTF::bind(&Connection::readyReadHandler, this));
 #endif

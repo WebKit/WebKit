@@ -64,9 +64,8 @@ public:
 #if OS(DARWIN)
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
 #elif PLATFORM(GTK)
-    void registerSocketEventHandler(int, int, const Function<void()>& function, const Function<void()>& closeFunction);
+    void registerSocketEventHandler(int, const Function<void()>&, const Function<void()>&);
     void unregisterSocketEventHandler(int);
-    void dispatchOnTermination(WebKit::PlatformProcessIdentifier, const Function<void()>&);
 #elif PLATFORM(EFL)
     void registerSocketEventHandler(int, const Function<void()>&);
     void unregisterSocketEventHandler(int);
@@ -82,6 +81,9 @@ private:
     static void executeFunction(void*);
     dispatch_queue_t m_dispatchQueue;
 #elif PLATFORM(GTK)
+    class EventSource;
+    class SocketEventSource;
+
     static void startWorkQueueThread(WorkQueue*);
     void workQueueThreadBody();
     void dispatchOnSource(GSource*, const Function<void()>&, GSourceFunc);
@@ -91,10 +93,7 @@ private:
     Mutex m_eventLoopLock;
     GRefPtr<GMainLoop> m_eventLoop;
     Mutex m_eventSourcesLock;
-    class EventSource;
-    class SocketEventSource;
     HashMap<int, Vector<SocketEventSource*>> m_eventSources;
-    typedef HashMap<int, Vector<SocketEventSource*>>::iterator SocketEventSourceIterator;
 #elif PLATFORM(EFL)
     RefPtr<DispatchQueue> m_dispatchQueue;
 #endif
