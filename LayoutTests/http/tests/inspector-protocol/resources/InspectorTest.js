@@ -153,6 +153,21 @@ InspectorTest.importScript = function(scriptName)
 
 InspectorTest.importInspectorScripts = function()
 {
+    // Catch any errors and finish the test early.
+    console.error = window.onerror = function()
+    {
+        console.log(Array.prototype.join.call(arguments, ', '));
+        InspectorTest.completeTest();
+    };
+
+    console.assert = function(assertion, message)
+    {
+        if (assertion)
+            return;
+        console.log("ASSERT:" + message);
+        InspectorTest.completeTest();
+    };
+
     // Note: This function overwrites the InspectorFrontendAPI, so there's currently no
     // way to intercept the messages from the backend.
 
@@ -182,10 +197,13 @@ InspectorTest.importInspectorScripts = function()
         "DOMNode",
         "ContentFlow",
         "DOMTree",
+        "DOMUtilities",
         "ExecutionContext",
         "ExecutionContextList",
         "CSSStyleManager",
-        "Color"
+        "Color",
+        "RuntimeObserver",
+        "RuntimeManager"
     ];
     for (var i = 0; i < inspectorScripts.length; ++i)
         InspectorTest.importScript("../../../../../Source/WebInspectorUI/UserInterface/" + inspectorScripts[i] + ".js");
@@ -197,10 +215,13 @@ InspectorTest.importInspectorScripts = function()
     InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
+    if (InspectorBackend.registerRuntimeDispatcher)
+        InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
 
     WebInspector.frameResourceManager = new WebInspector.FrameResourceManager;
     WebInspector.domTreeManager = new WebInspector.DOMTreeManager;
     WebInspector.cssStyleManager = new WebInspector.CSSStyleManager;
+    WebInspector.runtimeManager = new WebInspector.RuntimeManager;
 
     InspectorFrontendHost.loaded();
 }

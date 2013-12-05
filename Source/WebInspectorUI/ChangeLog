@@ -1,3 +1,106 @@
+2013-12-05  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: [CSS Regions] Show a list of containing regions when clicking a node that is part of a flow
+        https://bugs.webkit.org/show_bug.cgi?id=124614
+
+        Reviewed by Timothy Hatcher.
+
+        Added a new function in DOMTreeManager called getNodeContentFlowInfo that can be used
+        to retrieve an object with the following structure:
+        {
+             "regionFlow": <Reference to the ContentFlow object referenced by the -webkit-flow-from property of the node>,
+             "contentFlow": <Reference to the ContentFlow object referenced by the -webkit-flow-into property of 
+                             the node or a parent of the node>,
+             "regions": [ list of DOMNodes representing the regions containers of the node. The node is split across all these regions. ]
+        }
+
+        Also, used this method to display a two new sections in the Computed Styles panel.
+        1. Section "Flows": can have up to two Simple Rows: "Region Flow" and "Content Flow".
+        2. Section "Container Regions" contains a DOMTreeDataGrid with the list of regions.
+
+        The sections are only visible when there's content to display.
+
+        Next to the "Region Flow" simple row I've added an arrow that will take the user to the "ContentFlowDOMTreeContentView" of the
+        ContentFlow. The same happens for the "Content Flow", but in this case the element will also be highlighted.
+
+        Part of the patch I've added the DOMTreeDataGridNode. LayerTreeDataGrid has a lot of CSS in common with it, so I
+        will make another patch to refactor LayerTreeDataGrid to use DOMTreeDataGridNode as a base class.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/ComputedStyleDetailsPanel.css: Added.
+        (.details-section > .content > .group > .row.simple.content-flow-link > .label):
+        (.details-section > .content > .group > .row.simple.content-flow-link > .value):
+        (.details-section > .content > .group > .row.simple.content-flow-link > .value > div):
+        (.details-section > .content > .group > .row.simple.content-flow-link > .value > div > .icon):
+        (.details-section > .content > .group > .row.simple.content-flow-link > .value > div > span):
+        (.details-section > .content > .group > .row.simple.content-flow-link > .value > div > .go-to-arrow):
+        (.details-section > .content > .group > .row.simple.content-flow-link:hover > .value > div > .go-to-arrow):
+        * UserInterface/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.get regionFlow):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.set regionFlow):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.get contentFlow):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.set contentFlow):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.get containerRegions):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.set containerRegions):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.refresh):
+        (WebInspector.ComputedStyleDetailsPanel.prototype._computedStyleShowAllCheckboxValueChanged):
+        (WebInspector.ComputedStyleDetailsPanel.prototype._resetFlowDetails):
+        (WebInspector.ComputedStyleDetailsPanel.prototype._refreshFlowDetails.contentFlowInfoReady):
+        (WebInspector.ComputedStyleDetailsPanel.prototype._refreshFlowDetails):
+        (WebInspector.ComputedStyleDetailsPanel.prototype._goToRegionFlowArrowWasClicked):
+        (WebInspector.ComputedStyleDetailsPanel.prototype._goToContentFlowArrowWasClicked):
+        * UserInterface/DOMTreeDataGrid.css: Added.
+        (.dom-tree-data-grid .data-grid):
+        (.dom-tree-data-grid .data-grid table.data):
+        (.dom-tree-data-grid .data-container):
+        (.dom-tree-data-grid .data-container tr):
+        (.dom-tree-data-grid .data-container td > div):
+        (.dom-tree-data-grid .data-container .name-column):
+        (.dom-tree-data-grid .data-container .name-column .icon):
+        (.dom-tree-data-grid .data-container .name-column .label):
+        (.dom-tree-data-grid .data-container tr:hover .name-column .label):
+        (.dom-tree-data-grid .data-container .go-to-arrow):
+        (.dom-tree-data-grid .data-container tr:hover .go-to-arrow):
+        (.dom-tree-data-grid .data-container tbody > tr:nth-child(2n)):
+        (.dom-tree-data-grid .data-container tbody > tr:nth-child(2n+1)):
+        * UserInterface/DOMTreeDataGrid.js: Added.
+        (WebInspector.DOMTreeDataGrid):
+        (WebInspector.DOMTreeDataGrid.prototype._onmousemove):
+        (WebInspector.DOMTreeDataGrid.prototype._onmouseout):
+        * UserInterface/DOMTreeDataGridNode.js: Added.
+        (WebInspector.DOMTreeDataGridNode):
+        (WebInspector.DOMTreeDataGridNode.prototype.get domNode):
+        (WebInspector.DOMTreeDataGridNode.prototype.createCellContent):
+        (WebInspector.DOMTreeDataGridNode.prototype._updateNodeName):
+        (WebInspector.DOMTreeDataGridNode.prototype._makeNameCell):
+        (WebInspector.DOMTreeDataGridNode.prototype._updateNameCellData):
+        (WebInspector.DOMTreeDataGridNode.prototype._goToArrowWasClicked):
+        * UserInterface/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype.unregisteredNamedFlowContentElement):
+        (WebInspector.DOMTreeManager.prototype.nodeRequested):
+        (WebInspector.DOMTreeManager.prototype._coerceRemoteArrayOfDOMNodes):
+        (WebInspector.DOMTreeManager.prototype.domNodeResolved):
+        (WebInspector.DOMTreeManager.prototype.regionNodesAvailable):
+        (WebInspector.DOMTreeManager.prototype.get if):
+        (WebInspector.DOMTreeManager.prototype.get var):
+        (WebInspector.DOMTreeManager.prototype.backendFunction.getComputedProperty):
+        (WebInspector.DOMTreeManager.prototype.backendFunction.getContentFlowName):
+        (WebInspector.DOMTreeManager.prototype.):
+        * UserInterface/DataGrid.css:
+        (.data-grid.no-header > table.header):
+        (.data-grid.no-header .data-container):
+        * UserInterface/DetailsSection.js:
+        (WebInspector.DetailsSection):
+        * UserInterface/InspectorBackend.js:
+        (InspectorBackendClass.prototype._wrap):
+        * UserInterface/Main.html:
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype.showContentFlowDOMTree):
+        * UserInterface/RuntimeManager.js:
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+        (WebInspector.RuntimeManager.prototype.getPropertiesForRemoteObject):
+
 2013-12-04  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: ColorWheel uses old Color constructor

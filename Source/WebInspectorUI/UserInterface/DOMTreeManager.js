@@ -661,6 +661,172 @@ WebInspector.DOMTreeManager.prototype = {
 
         this._contentNodesToFlowsMap.delete(contentNodeId);
         flow.removeContentNode(this.nodeForId(contentNodeId));
+    },
+
+    _coerceRemoteArrayOfDOMNodes: function(objectId, callback)
+    {
+        var length, nodes, received = 0, lastError = null, domTreeManager = this;
+
+        function nodeRequested(index, error, nodeId)
+        {
+            if (error)
+                lastError = error;
+            else
+                nodes[index] = domTreeManager._idToDOMNode[nodeId];
+            if (++received === length)
+                callback(lastError, nodes);
+        }
+
+        WebInspector.runtimeManager.getPropertiesForRemoteObject(objectId, function(error, properties) {
+            if (error) {
+                callback(error);
+                return;
+            }
+
+            var lengthProperty = properties.get("length");
+            if (!lengthProperty || lengthProperty.value.type !== "number") {
+                callback(null);
+                return;
+            }
+
+            length = lengthProperty.value.value;
+            if (!length) {
+                callback(null, []);
+                return;
+            }
+
+            nodes = new Array(length);
+            for (var i = 0; i < length; ++i) {
+                var nodeProperty = properties.get(String(i));
+                console.assert(nodeProperty.value.type === "object");
+                DOMAgent.requestNode(nodeProperty.value.objectId, nodeRequested.bind(null, i));
+            }
+        });
+    },
+
+    getNodeContentFlowInfo: function(domNode, resultReadyCallback)
+    {
+        DOMAgent.resolveNode(domNode.id, domNodeResolved.bind(this));
+
+        function domNodeResolved(error, remoteObject)
+        {
+            if (error) {
+                resultReadyCallback(error);
+                return;
+            }
+            // Serialize "backendFunction" and execute it in the context of the page
+            // passing the DOMNode as the "this" reference.
+            var evalParameters = {
+                objectId: remoteObject.objectId,
+                functionDeclaration: backendFunction.toString(),
+                doNotPauseOnExceptionsAndMuteConsole: true,
+                returnByValue: false,
+                generatePreview: false
+            };
+            RuntimeAgent.callFunctionOn.invoke(evalParameters, regionNodesAvailable.bind(this));
+        }
+
+        function regionNodesAvailable(error, remoteObject, wasThrown)
+        {
+            if (error) {
+                resultReadyCallback(error);
+                return;
+            }
+
+            if (wasThrown) {
+                // We should never get here, but having the error is useful for debugging.
+                console.error("Error while executing backend function:", JSON.stringify(remoteObject));
+                resultReadyCallback(null);
+                return;
+            }
+
+            // The backend function can never return null.
+            console.assert(remoteObject.type === "object");
+            console.assert(remoteObject.objectId);
+            WebInspector.runtimeManager.getPropertiesForRemoteObject(remoteObject.objectId, remoteObjectPropertiesAvailable.bind(this));
+        }
+
+        function remoteObjectPropertiesAvailable(error, properties) {
+            if (error) {
+                resultReadyCallback(error);
+                return;
+            }
+
+            var result = {
+                regionFlow: null,
+                contentFlow: null,
+                regions: null
+            };
+
+            var regionFlowNameProperty = properties.get("regionFlowName");
+            if (regionFlowNameProperty && regionFlowNameProperty.value && regionFlowNameProperty.value.value) {
+                console.assert(regionFlowNameProperty.value.type === "string");
+                var regionFlowKey = WebInspector.DOMTreeManager._flowPayloadHashKey({documentNodeId: domNode.ownerDocument.id, name: regionFlowNameProperty.value.value});
+                result.regionFlow = this._flows.get(regionFlowKey);
+            }
+
+            var contentFlowNameProperty = properties.get("contentFlowName");
+            if (contentFlowNameProperty && contentFlowNameProperty.value && contentFlowNameProperty.value.value) {
+                console.assert(contentFlowNameProperty.value.type === "string");
+                var contentFlowKey = WebInspector.DOMTreeManager._flowPayloadHashKey({documentNodeId: domNode.ownerDocument.id, name: contentFlowNameProperty.value.value});
+                result.contentFlow = this._flows.get(contentFlowKey);
+            }
+
+            var regionsProperty = properties.get("regions");
+            if (!regionsProperty || !regionsProperty.value.objectId) {
+                // The list of regions is null.
+                resultReadyCallback(null, result);
+                return;
+            }
+
+            console.assert(regionsProperty.value.type === "object");
+            console.assert(regionsProperty.value.subtype === "array");
+            this._coerceRemoteArrayOfDOMNodes(regionsProperty.value.objectId, function(error, nodes) {
+                result.regions = nodes;
+                resultReadyCallback(error, result);
+            });
+        }
+
+        // Note that "backendFunction" is serialized and executed in the context of the page.
+        function backendFunction()
+        {
+            function getComputedProperty(node, propertyName)
+            {
+                if (!node.ownerDocument || !node.ownerDocument.defaultView)
+                    return null;
+                var computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
+                return computedStyle ? computedStyle[propertyName] : null;
+            }
+
+            function getContentFlowName(node)
+            {
+                for (; node; node = node.parentNode) {
+                    var flowName = getComputedProperty(node, "webkitFlowInto");
+                    if (flowName && flowName !== "none")
+                        return flowName;
+                }
+                return null;
+            }
+
+            var node = this;
+
+            // Even detached nodes have an ownerDocument.
+            console.assert(node.ownerDocument);
+
+            var result = {
+                regionFlowName: getComputedProperty(node, "webkitFlowFrom"),
+                contentFlowName: getContentFlowName(node),
+                regions: null
+            };
+
+            if (result.contentFlowName) {
+                var flowThread = node.ownerDocument.webkitGetNamedFlows().namedItem(result.contentFlowName);
+                if (flowThread)
+                    result.regions = flowThread.getRegionsByContent(node);
+            }
+
+            return result;
+        }
     }
 }
 

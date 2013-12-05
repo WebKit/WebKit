@@ -67,6 +67,22 @@ WebInspector.RuntimeManager.prototype = {
         // in iOS 6. Fallback to including the frame identifier (frameId).
         var contextId = WebInspector.quickConsole.executionContextIdentifier;
         RuntimeAgent.evaluate.invoke({expression: expression, objectGroup: objectGroup, includeCommandLineAPI: includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole: doNotPauseOnExceptionsAndMuteConsole, contextId: contextId, frameId: contextId, returnByValue: returnByValue}, evalCallback);
+    },
+
+    getPropertiesForRemoteObject: function(objectId, callback)
+    {
+        RuntimeAgent.getProperties(objectId, function(error, result) {
+            if (error) {
+                callback(error);
+                return;
+            }
+
+            var properties = new Map;
+            for (var property of result)
+                properties.set(property.name, property);
+
+            callback(null, properties);
+        });
     }
 };
 

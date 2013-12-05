@@ -49,7 +49,43 @@ WebInspector.ComputedStyleDetailsPanel = function()
 
     propertiesRow.element.appendChild(this._propertiesTextEditor.element);
 
+    // Region flow name is used to display the "flow-from" property of the Region Containers.
+    this._regionFlowFragment = document.createElement("span");
+    this._regionFlowFragment.appendChild(document.createElement("img")).className = "icon";
+    this._regionFlowNameLabelValue = this._regionFlowFragment.appendChild(document.createElement("span"));
+
+    var goToRegionFlowButton = this._regionFlowFragment.appendChild(WebInspector.createGoToArrowButton());
+    goToRegionFlowButton.addEventListener("click", this._goToRegionFlowArrowWasClicked.bind(this));
+
+    this._regionFlowNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Region Flow"));
+    this._regionFlowNameRow.element.classList.add("content-flow-link");
+
+    // Content flow name is used to display the "flow-into" property of the Content nodes.
+    this._contentFlowFragment = document.createElement("span");
+    this._contentFlowFragment.appendChild(document.createElement("img")).className = "icon";
+    this._contentFlowNameLabelValue = this._contentFlowFragment.appendChild(document.createElement("span"));
+
+    var goToContentFlowButton = this._contentFlowFragment.appendChild(WebInspector.createGoToArrowButton());
+    goToContentFlowButton.addEventListener("click", this._goToContentFlowArrowWasClicked.bind(this));
+
+    this._contentFlowNameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Content Flow"));
+    this._contentFlowNameRow.element.classList.add("content-flow-link");
+
+    var flowNamesGroup = new WebInspector.DetailsSectionGroup([this._regionFlowNameRow, this._contentFlowNameRow]);
+    this._flowNamesSection = new WebInspector.DetailsSection("content-flow", WebInspector.UIString("Flows"), [flowNamesGroup]);
+
+    this._containerRegionsDataGrid = new WebInspector.DOMTreeDataGrid;
+    this._containerRegionsDataGrid.element.classList.add("no-header");
+
+    var containerRegionsRow = new WebInspector.DetailsSectionDataGridRow(this._containerRegionsDataGrid);
+    var containerRegionsGroup = new WebInspector.DetailsSectionGroup([containerRegionsRow]);
+    this._containerRegionsFlowSection = new WebInspector.DetailsSection("container-regions", WebInspector.UIString("Container Regions"), [containerRegionsGroup]);
+
     this.element.appendChild(propertiesSection.element);
+    this.element.appendChild(this._flowNamesSection.element);
+    this.element.appendChild(this._containerRegionsFlowSection.element);
+
+    this._resetFlowDetails();
 };
 
 WebInspector.ComputedStyleDetailsPanel.StyleClassName = "computed";
@@ -59,9 +95,57 @@ WebInspector.ComputedStyleDetailsPanel.prototype = {
 
     // Public
 
+    get regionFlow()
+    {
+        return this._regionFlow;
+    },
+
+    set regionFlow(regionFlow)
+    {
+        this._regionFlow = regionFlow;
+        this._regionFlowNameLabelValue.textContent = regionFlow ? regionFlow.name : "";
+        this._regionFlowNameRow.value = regionFlow ? this._regionFlowFragment : null;
+        this._updateFlowNamesSectionVisibility();
+    },
+
+    get contentFlow()
+    {
+        return this._contentFlow;
+    },
+
+    set contentFlow(contentFlow)
+    {
+        this._contentFlow = contentFlow;
+        this._contentFlowNameLabelValue.textContent = contentFlow ? contentFlow.name : "";
+        this._contentFlowNameRow.value = contentFlow ? this._contentFlowFragment : null;
+        this._updateFlowNamesSectionVisibility();
+    },
+
+    get containerRegions()
+    {
+        return this._containerRegions;
+    },
+
+    set containerRegions(regions)
+    {
+        this._containerRegions = regions;
+
+        if (!regions || !regions.length) {
+            this._containerRegionsFlowSection.element.classList.add("hidden");
+            return;
+        }
+
+        this._containerRegionsDataGrid.removeChildren();
+        for (var regionNode of regions)
+            this._containerRegionsDataGrid.appendChild(new WebInspector.DOMTreeDataGridNode(regionNode));
+
+        this._containerRegionsFlowSection.element.classList.remove("hidden");
+    },
+
     refresh: function()
     {
         this._propertiesTextEditor.style = this.nodeStyles.computedStyle;
+        this._refreshFlowDetails(this.nodeStyles.node);
     },
 
     // Protected
@@ -85,6 +169,50 @@ WebInspector.ComputedStyleDetailsPanel.prototype = {
         var checked = this._computedStyleShowAllCheckbox.checked;
         this._computedStyleShowAllSetting.value = checked;
         this._propertiesTextEditor.showsImplicitProperties = checked;
+    },
+
+    _updateFlowNamesSectionVisibility: function()
+    {
+        this._flowNamesSection.element.classList.toggle("hidden", !this._contentFlow && !this._regionFlow);
+    },
+
+    _resetFlowDetails : function()
+    {
+        this.regionFlow = null;
+        this.contentFlow = null;
+        this.containerRegions = null;
+    },
+
+    _refreshFlowDetails: function(domNode)
+    {
+        this._resetFlowDetails();
+        if (!domNode)
+            return;
+
+        function contentFlowInfoReady(error, flowData)
+        {
+            // Element is not part of any flow.
+            if (error || !flowData) {
+                this._resetFlowDetails();
+                return;
+            }
+
+            this.regionFlow = flowData.regionFlow;
+            this.contentFlow = flowData.contentFlow;
+            this.containerRegions = flowData.regions;
+        }
+
+        WebInspector.domTreeManager.getNodeContentFlowInfo(domNode, contentFlowInfoReady.bind(this));
+    },
+
+    _goToRegionFlowArrowWasClicked: function()
+    {
+        WebInspector.resourceSidebarPanel.showContentFlowDOMTree(this._regionFlow);
+    },
+
+    _goToContentFlowArrowWasClicked: function()
+    {
+        WebInspector.resourceSidebarPanel.showContentFlowDOMTree(this._contentFlow, this.nodeStyles.node, true);
     }
 };
 

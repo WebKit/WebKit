@@ -112,6 +112,14 @@ WebInspector.ResourceSidebarPanel.prototype = {
         WebInspector.contentBrowser.showContentView(contentView);
     },
 
+    showContentFlowDOMTree: function(contentFlow, nodeToSelect, preventFocusChange)
+    {
+        var contentView = WebInspector.contentBrowser.contentViewForRepresentedObject(contentFlow);
+        if (nodeToSelect)
+            contentView.selectAndRevealDOMNode(nodeToSelect, preventFocusChange);
+        WebInspector.contentBrowser.showContentView(contentView);
+    },
+
     showSourceCodeForFrame: function(frameIdentifier, revealAndSelectTreeElement)
     {
         delete this._frameIdentifierToShowSourceCodeWhenAvailable;

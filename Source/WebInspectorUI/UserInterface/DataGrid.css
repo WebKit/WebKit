@@ -64,6 +64,14 @@
     border: 1px solid rgb(181, 181, 181);
 }
 
+.data-grid.no-header > table.header {
+    display: none;
+}
+
+.data-grid.no-header .data-container {
+    top: 0;
+}
+
 .data-grid th {
     text-align: left;
     vertical-align: middle;

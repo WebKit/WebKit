@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<style>
+#flow
+{
+    -webkit-flow-into: flow;
+}
+.contentNode1
+{
+    width: 100%;
+    height: 50px;
+}
+.contentNode2
+{
+    width: 100%;
+    height: 150px;
+}
+.region
+{
+    -webkit-flow-from: flow;
+    width: 100px;
+    height: 100px;
+}
+</style>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    var queryList = ["#flow", ".contentNode1", ".contentNode2", "body", "#region1", "#region2"];
+    var documentNodeId;
+
+    InspectorTest.importInspectorScripts();
+    WebInspector.domTreeManager.requestDocument(function(documentNode) {
+        documentNodeId = documentNode.id;
+        WebInspector.domTreeManager.getNamedFlowCollection(documentNodeId);
+        next();
+    });
+
+    function query(selector, callback)
+    {
+        InspectorTest.log("\nSelector: " + selector);
+        WebInspector.domTreeManager.querySelector(documentNodeId, selector, function(contentNodeId) {
+            if (!contentNodeId) {
+                InspectorTest.log("DOM node not found.");
+                callback();
+            }
+            var domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
+            WebInspector.domTreeManager.getNodeContentFlowInfo(domNode, function(error, result) {
+                console.assert(!error);
+                if (result) {
+                    InspectorTest.log("Region flow name: " + (result.regionFlow ? result.regionFlow.name : "none"));
+                    InspectorTest.log("Content flow name: " + (result.contentFlow ? result.contentFlow.name : "none"));
+                    InspectorTest.log("Regions count: " + (result.regions ? result.regions.length : "N/A"));
+                    InspectorTest.log("Regions: " + (result.regions ? result.regions.map(WebInspector.displayNameForNode).join(", ") : "N/A"));
+                } else
+                    InspectorTest.log("No region flow information.");
+                callback();
+            });
+        });
+    }
+
+    function next()
+    {
+        if (!queryList.length)
+            return InspectorTest.completeTest();
+        query(queryList.shift(), next);
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that the DOMTreeManager.getNodeContentFlowInfo returns the containing regions.</p>
+
+    <div id="flow">
+        <div class="contentNode1"></div>
+        <div class="contentNode2"></div>
+    </div>
+
+    <div id="region1" class="region"></div>
+    <div id="region2" class="region"></div>
+</body>
+</html>

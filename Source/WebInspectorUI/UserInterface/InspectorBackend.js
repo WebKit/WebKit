@@ -57,7 +57,7 @@ InspectorBackendClass.prototype = {
         callback.methodName = method;
         if (this.dumpInspectorTimeStats)
             callback.sendRequestTime = Date.now();
-        
+
         return callbackId;
     },
 

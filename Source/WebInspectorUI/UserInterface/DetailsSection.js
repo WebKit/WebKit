@@ -30,6 +30,7 @@ WebInspector.DetailsSection = function(identifier, title, groups, optionsElement
 
     this._element = document.createElement("div");
     this._element.className = WebInspector.DetailsSection.StyleClassName;
+    this._element.classList.add(identifier);
 
     this._headerElement = document.createElement("div");
     this._headerElement.addEventListener("click", this._headerElementClicked.bind(this));
