@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +32,7 @@ namespace JSC {
 
 struct CallFrameClosure {
     CallFrame* oldCallFrame;
-#if ENABLE(LLINT_C_LOOP)
-    CallFrame* newCallFrame;
-#else
-    ProtoCallFrame* newCallFrame;
-#endif
+    ProtoCallFrame* protoCallFrame;
     JSFunction* function;
     FunctionExecutable* functionExecutable;
     VM* vm;
@@ -46,25 +42,17 @@ struct CallFrameClosure {
     
     void setThis(JSValue value)
     {
-        newCallFrame->setThisValue(value);
+        protoCallFrame->setThisValue(value);
     }
 
     void setArgument(int argument, JSValue value)
     {
-        newCallFrame->setArgument(argument, value);
+        protoCallFrame->setArgument(argument, value);
     }
 
     void resetCallFrame()
     {
-        newCallFrame->setScope(scope);
-#if ENABLE(LLINT_C_LOOP)
-        // setArgument() takes an arg index that starts from 0 for the first
-        // argument after the 'this' value. Since both argumentCountIncludingThis
-        // and parameterCountIncludingThis includes the 'this' value, we need to
-        // subtract 1 from them to make it a valid argument index for setArgument().
-        for (int i = argumentCountIncludingThis-1; i < parameterCountIncludingThis-1; ++i)
-            newCallFrame->setArgument(i, jsUndefined());
-#endif
+        protoCallFrame->setScope(scope);
     }
 };
 

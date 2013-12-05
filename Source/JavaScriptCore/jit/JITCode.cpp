@@ -41,7 +41,6 @@ JITCode::~JITCode()
 {
 }
 
-#if ENABLE(JIT)
 JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame, Register* topOfStack)
 {
     ASSERT(!vm->topCallFrame || ((Register*)(vm->topCallFrame) >= topOfStack));
@@ -49,7 +48,6 @@ JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame, Register* topOf
     JSValue result = JSValue::decode(callToJavaScript(executableAddress(), &vm->topCallFrame, protoCallFrame, topOfStack));
     return vm->exception() ? jsNull() : result;
 }
-#endif
 
 DFG::CommonData* JITCode::dfgCommon()
 {

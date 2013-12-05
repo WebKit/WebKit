@@ -1,3 +1,87 @@
+2013-12-05  Mark Lam  <mark.lam@apple.com>
+
+        Make the C Loop LLINT work with callToJavaScript.
+        https://bugs.webkit.org/show_bug.cgi?id=125294.
+
+        Reviewed by Michael Saboff.
+
+        1. Changed the C Loop LLINT to dispatch to an Executable via its JITCode
+           instance which is consistent with how the ASM LLINT works.
+        2. Changed CLoop::execute() to take an Opcode instead of an OpcodeID.
+           This makes it play nice with the use of JITCode for dispatching.
+        3. Introduce a callToJavaScript and callToNativeFunction for the C Loop
+           LLINT. These will call JSStack::pushFrame() and popFrame() to setup
+           and teardown the CallFrame.
+        4. Also introduced a C Loop returnFromJavaScript which is just a
+           replacement for ctiOpThrowNotCaught which had the same function.
+        5. Remove a lot of #if ENABLE(LLINT_C_LOOP) code now that the dispatch
+           mechanism is consistent.
+
+        This patch has been tested with both configurations of COMPUTED_GOTOs
+        on and off.
+
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        (JSC::CachedCall::call):
+        (JSC::CachedCall::setArgument):
+        * interpreter/CallFrameClosure.h:
+        (JSC::CallFrameClosure::setThis):
+        (JSC::CallFrameClosure::setArgument):
+        (JSC::CallFrameClosure::resetCallFrame):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * interpreter/Interpreter.h:
+        * interpreter/JSStack.h:
+        * interpreter/JSStackInlines.h:
+        (JSC::JSStack::pushFrame):
+        * interpreter/ProtoCallFrame.h:
+        (JSC::ProtoCallFrame::scope):
+        (JSC::ProtoCallFrame::callee):
+        (JSC::ProtoCallFrame::thisValue):
+        (JSC::ProtoCallFrame::argument):
+        (JSC::ProtoCallFrame::setArgument):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::execute):
+        * jit/JITCode.h:
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * llint/LLIntCLoop.cpp:
+        (JSC::LLInt::CLoop::initialize):
+        * llint/LLIntCLoop.h:
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        - Inverted the check for vm.canUseJIT(). This allows the JIT case to be
+          #if'd out nicely when building the C Loop LLINT.
+        * llint/LLIntOpcode.h:
+        * llint/LLIntThunks.cpp:
+        (JSC::doCallToJavaScript):
+        (JSC::executeJS):
+        (JSC::callToJavaScript):
+        (JSC::executeNative):
+        (JSC::callToNativeFunction):
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::offsetOfNumParametersFor):
+        (JSC::ExecutableBase::hostCodeEntryFor):
+        (JSC::ExecutableBase::jsCodeEntryFor):
+        (JSC::ExecutableBase::jsCodeWithArityCheckEntryFor):
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::finishCreation):
+        (JSC::ProgramExecutable::generatedJITCode):
+        * runtime/JSArray.cpp:
+        (JSC::AVLTreeAbstractorForArrayCompare::compare_key_key):
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        * runtime/VM.cpp:
+        (JSC::VM::getHostFunction):
+
 2013-12-05  Laszlo Vidacs  <lac@inf.u-szeged.hu>
 
         Fix JavaScriptCore build if cloop is enabled after r160094

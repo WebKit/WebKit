@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +28,11 @@
 
 #if ENABLE(LLINT_C_LOOP)
 
-#include "CodeSpecializationKind.h"
+#include "CallFrame.h"
 #include "JSCJSValue.h"
-#include "MacroAssemblerCodeRef.h"
 #include "Opcode.h"
-#include "Register.h"
 
 namespace JSC {
-
 namespace LLInt {
 
 const OpcodeID llint_unused = llint_end;
@@ -43,16 +40,12 @@ const OpcodeID llint_unused = llint_end;
 class CLoop {
 public:
     static void initialize();
-    static JSValue execute(CallFrame*, OpcodeID bootstrapOpcodeId, bool isInitializationPass = false);
-
-    static void* catchRoutineFor(Instruction* catchPCForInterpreter);
-
-    static MacroAssemblerCodePtr hostCodeEntryFor(CodeSpecializationKind);
-    static MacroAssemblerCodePtr jsCodeEntryWithArityCheckFor(CodeSpecializationKind);
-    static MacroAssemblerCodePtr jsCodeEntryFor(CodeSpecializationKind);
+    static JSValue execute(CallFrame*, Opcode entryOpcode, bool isInitializationPass = false);
 };
 
 } } // namespace JSC::LLInt
+
+using JSC::LLInt::CLoop;
 
 #endif // ENABLE(LLINT_C_LOOP)
 

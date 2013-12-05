@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,8 +39,6 @@
 #include "Operations.h"
 #include "VM.h"
 
-#if ENABLE(JIT) || ENABLE(LLINT)
-
 namespace JSC {
 
 void genericUnwind(VM* vm, ExecState* callFrame, JSValue exceptionValue)
@@ -52,14 +50,13 @@ void genericUnwind(VM* vm, ExecState* callFrame, JSValue exceptionValue)
     Instruction* catchPCForInterpreter = 0;
     if (handler) {
         catchPCForInterpreter = &callFrame->codeBlock()->instructions()[handler->target];
-        catchRoutine = ExecutableBase::catchRoutineFor(handler, catchPCForInterpreter);
-    } else {
-#if ENABLE(LLINT_C_LOOP)
-        catchRoutine = LLInt::getCodePtr(ctiOpThrowNotCaught);
+#if ENABLE(JIT)
+        catchRoutine = handler->nativeCode.executableAddress();
 #else
-        catchRoutine = FunctionPtr(LLInt::getCodePtr(returnFromJavaScript)).value();
+        catchRoutine = catchPCForInterpreter->u.pointer;
 #endif
-    }
+    } else
+        catchRoutine = LLInt::getCodePtr(returnFromJavaScript);
     
     vm->callFrameForThrow = callFrame;
     vm->targetMachinePCForThrow = catchRoutine;
@@ -68,6 +65,4 @@ void genericUnwind(VM* vm, ExecState* callFrame, JSValue exceptionValue)
     RELEASE_ASSERT(catchRoutine);
 }
 
-}
-
-#endif
+} // namespace JSC

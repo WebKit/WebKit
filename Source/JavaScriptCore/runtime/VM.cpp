@@ -456,10 +456,15 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrins
 }
 
 #else // !ENABLE(JIT)
+
 NativeExecutable* VM::getHostFunction(NativeFunction function, NativeFunction constructor)
 {
-    return NativeExecutable::create(*this, function, constructor);
+    return NativeExecutable::create(*this,
+        MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_call_trampoline), function,
+        MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_construct_trampoline), constructor,
+        NoIntrinsic);
 }
+
 #endif // !ENABLE(JIT)
 
 VM::ClientData::~ClientData()

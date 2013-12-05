@@ -102,8 +102,7 @@ namespace JSC {
 
         bool entryCheck(class CodeBlock*, int);
 
-        CallFrame* pushFrame(CallFrame* callerFrame, class CodeBlock*,
-            JSScope*, int argsCount, JSObject* callee);
+        CallFrame* pushFrame(class CodeBlock*, JSScope*, int argsCount, JSObject* callee);
 
         void popFrame(CallFrame*);
 

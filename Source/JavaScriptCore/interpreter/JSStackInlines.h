@@ -80,8 +80,7 @@ inline bool JSStack::entryCheck(class CodeBlock* codeBlock, int argsCount)
     return true;
 }
 
-inline CallFrame* JSStack::pushFrame(CallFrame* callerFrame,
-    class CodeBlock* codeBlock, JSScope* scope, int argsCount, JSObject* callee)
+inline CallFrame* JSStack::pushFrame(class CodeBlock* codeBlock, JSScope* scope, int argsCount, JSObject* callee)
 {
     ASSERT(!!scope);
     Register* oldEnd = getTopOfStack();
@@ -119,7 +118,7 @@ inline CallFrame* JSStack::pushFrame(CallFrame* callerFrame,
     // The caller frame should always be the real previous frame on the stack,
     // and not a potential GlobalExec that was passed in. Point callerFrame to
     // the top frame on the stack.
-    callerFrame = m_topCallFrame;
+    CallFrame* callerFrame = m_topCallFrame;
 
     // Initialize the VM sentinel frame header:
     newVMEntrySentinelFrame->initializeVMEntrySentinelFrame(callerFrame);

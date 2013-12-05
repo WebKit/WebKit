@@ -257,12 +257,8 @@ namespace JSC {
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
-#if !ENABLE(LLINT_C_LOOP)
         CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, ProtoCallFrame*, JSFunction*, int argumentCountIncludingThis, JSScope*, JSValue*);
-#else
-        CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, JSFunction*, int argumentCountIncludingThis, JSScope*);
-        void endRepeatCall(CallFrameClosure&);
-#endif
+
         JSValue execute(CallFrameClosure&);
 
         void getStackTrace(Vector<StackFrame>& results, size_t maxStackSize = std::numeric_limits<size_t>::max());

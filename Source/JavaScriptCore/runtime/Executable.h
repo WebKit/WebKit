@@ -36,7 +36,6 @@
 #include "Interpreter.h"
 #include "JITCode.h"
 #include "JSGlobalObject.h"
-#include "LLIntCLoop.h"
 #include "SamplingTool.h"
 #include "SourceCode.h"
 #include "UnlinkedCodeBlock.h"
@@ -126,7 +125,6 @@ protected:
 public:
     static void clearCodeVirtual(ExecutableBase*);
 
-#if ENABLE(JIT)
     PassRefPtr<JITCode> generatedJITCodeForCall()
     {
         ASSERT(m_jitCodeForCall);
@@ -184,7 +182,6 @@ public:
         ASSERT(kind == CodeForConstruct);
         return OBJECT_OFFSETOF(ExecutableBase, m_numParametersForConstruct);
     }
-#endif // ENABLE(JIT)
 
     bool hasJITCodeForCall() const
     {
@@ -214,46 +211,20 @@ public:
         return NoIntrinsic;
     }
         
-#if ENABLE(JIT) || ENABLE(LLINT_C_LOOP)
     MacroAssemblerCodePtr hostCodeEntryFor(CodeSpecializationKind kind)
     {
-#if ENABLE(JIT)
         return generatedJITCodeFor(kind)->addressForCall();
-#else
-        return LLInt::CLoop::hostCodeEntryFor(kind);
-#endif
     }
 
     MacroAssemblerCodePtr jsCodeEntryFor(CodeSpecializationKind kind)
     {
-#if ENABLE(JIT)
         return generatedJITCodeFor(kind)->addressForCall();
-#else
-        return LLInt::CLoop::jsCodeEntryFor(kind);
-#endif
     }
 
     MacroAssemblerCodePtr jsCodeWithArityCheckEntryFor(CodeSpecializationKind kind)
     {
-#if ENABLE(JIT)
         return generatedJITCodeWithArityCheckFor(kind);
-#else
-        return LLInt::CLoop::jsCodeEntryWithArityCheckFor(kind);
-#endif
     }
-
-    static void* catchRoutineFor(HandlerInfo* handler, Instruction* catchPCForInterpreter)
-    {
-#if ENABLE(JIT)
-        UNUSED_PARAM(catchPCForInterpreter);
-        return handler->nativeCode.executableAddress();
-#else
-        UNUSED_PARAM(handler);
-        return LLInt::CLoop::catchRoutineFor(catchPCForInterpreter);
-#endif
-    }
-    
-#endif // ENABLE(JIT || ENABLE(LLINT_C_LOOP)
 
 protected:
     ExecutableBase* m_prev;
@@ -271,30 +242,16 @@ class NativeExecutable : public ExecutableBase {
 public:
     typedef ExecutableBase Base;
 
-#if ENABLE(JIT)
     static NativeExecutable* create(VM& vm, MacroAssemblerCodeRef callThunk, NativeFunction function, MacroAssemblerCodeRef constructThunk, NativeFunction constructor, Intrinsic intrinsic)
     {
         NativeExecutable* executable;
-        if (!callThunk) {
-            executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
+        executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
+        if (!callThunk)
             executable->finishCreation(vm, 0, 0, intrinsic);
-        } else {
-            executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
+        else
             executable->finishCreation(vm, JITCode::hostFunction(callThunk), JITCode::hostFunction(constructThunk), intrinsic);
-        }
         return executable;
     }
-#endif
-
-#if ENABLE(LLINT_C_LOOP)
-    static NativeExecutable* create(VM& vm, NativeFunction function, NativeFunction constructor)
-    {
-        ASSERT(!vm.canUseJIT());
-        NativeExecutable* executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
-        executable->finishCreation(vm);
-        return executable;
-    }
-#endif
 
 #if ENABLE(JIT)
     static void destroy(JSCell*);
@@ -328,7 +285,6 @@ public:
     Intrinsic intrinsic() const;
 
 protected:
-#if ENABLE(JIT)
     void finishCreation(VM& vm, PassRefPtr<JITCode> callThunk, PassRefPtr<JITCode> constructThunk, Intrinsic intrinsic)
     {
         Base::finishCreation(vm);
@@ -338,7 +294,6 @@ protected:
         m_jitCodeForConstruct = constructThunk;
         m_intrinsic = intrinsic;
     }
-#endif
 
 private:
     NativeExecutable(VM& vm, NativeFunction function, NativeFunction constructor)
@@ -470,12 +425,11 @@ public:
 
     static EvalExecutable* create(ExecState*, const SourceCode&, bool isInStrictContext);
 
-#if ENABLE(JIT)
     PassRefPtr<JITCode> generatedJITCode()
     {
         return generatedJITCodeForCall();
     }
-#endif
+
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {
         return Structure::create(vm, globalObject, proto, TypeInfo(EvalExecutableType, StructureFlags), info());
@@ -527,12 +481,10 @@ public:
 
     JSObject* checkSyntax(ExecState*);
 
-#if ENABLE(JIT)
     PassRefPtr<JITCode> generatedJITCode()
     {
         return generatedJITCodeForCall();
     }
-#endif
         
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -1320,11 +1320,7 @@ struct AVLTreeAbstractorForArrayCompare {
             m_cachedCall->setThis(jsUndefined());
             m_cachedCall->setArgument(0, va);
             m_cachedCall->setArgument(1, vb);
-#if ENABLE(LLINT_C_LOOP)
-            compareResult = m_cachedCall->call().toNumber(m_cachedCall->newCallFrame(m_exec));
-#else
             compareResult = m_cachedCall->call().toNumber(m_exec);
-#endif
         } else {
             MarkedArgumentBuffer arguments;
             arguments.append(va);

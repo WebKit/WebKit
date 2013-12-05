@@ -40,21 +40,35 @@ struct ProtoCallFrame {
     JSValue *args;
 
     void init(CodeBlock*, JSScope*, JSObject*, JSValue, int, JSValue* otherArgs = 0);
+
     CodeBlock* codeBlock() const { return codeBlockValue.Register::codeBlock(); }
     void setCodeBlock(CodeBlock* codeBlock) { codeBlockValue = codeBlock; }
+
+    JSScope* scope() const { return scopeChainValue.Register::scope(); }
     void setScope(JSScope* scope) { scopeChainValue = scope; }
+
+    JSObject* callee() const { return calleeValue.Register::function(); }
     void setCallee(JSObject* callee) { calleeValue = Register::withCallee(callee); }
+
     int argumentCountIncludingThis() const { return argCountAndCodeOriginValue.payload(); }
     int argumentCount() const { return argumentCountIncludingThis() - 1; }
     void setArgumentCountIncludingThis(int count) { argCountAndCodeOriginValue.payload() = count; }
     void setPaddedArgsCount(size_t argCount) { paddedArgCount = argCount; }
 
     void clearCurrentVPC() { argCountAndCodeOriginValue.tag() = 0; }
+    
+    JSValue thisValue() const { return thisArg.Register::jsValue(); }
     void setThisValue(JSValue value) { thisArg = value; }
-    void setArgument(size_t argument, JSValue value)
+
+    JSValue argument(size_t argumentIndex)
     {
-        ASSERT(static_cast<int>(argument) < argumentCount());
-        args[argument] = value;
+        ASSERT(static_cast<int>(argumentIndex) < argumentCount());
+        return args[argumentIndex];
+    }
+    void setArgument(size_t argumentIndex, JSValue value)
+    {
+        ASSERT(static_cast<int>(argumentIndex) < argumentCount());
+        args[argumentIndex] = value;
     }
 };
 

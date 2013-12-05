@@ -47,11 +47,7 @@ class JITCode;
 }
 
 struct ProtoCallFrame;
-
-#if ENABLE(JIT)
 class VM;
-class JSStack;
-#endif
 
 class JITCode : public ThreadSafeRefCounted<JITCode> {
 public:

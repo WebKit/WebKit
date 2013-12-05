@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,24 @@
 #include "config.h"
 #include "LLIntThunks.h"
 
-#if ENABLE(LLINT) && ENABLE(JIT)
-
+#include "CallData.h"
+#include "ExceptionHelpers.h"
+#include "Interpreter.h"
 #include "JSInterfaceJIT.h"
 #include "JSObject.h"
+#include "JSStackInlines.h"
+#include "LLIntCLoop.h"
 #include "LinkBuffer.h"
 #include "LowLevelInterpreter.h"
+#include "ProtoCallFrame.h"
+#include "VM.h"
 
+namespace JSC {
 
-namespace JSC { namespace LLInt {
+#if ENABLE(JIT)
+#if ENABLE(LLINT)
+
+namespace LLInt {
 
 static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, void (*target)(), const char *thunkKind)
 {
@@ -78,6 +87,67 @@ MacroAssemblerCodeRef programEntryThunkGenerator(VM* vm)
     return generateThunkWithJumpTo(vm, llint_program_prologue, "program");
 }
 
-} } // namespace JSC::LLInt
+} // namespace LLInt
 
-#endif // ENABLE(LLINT) && ENABLE(JIT)
+#endif // ENABLE(LLINT)
+#else // ENABLE(JIT)
+
+// Non-JIT (i.e. C Loop LLINT) case:
+
+typedef JSValue (*ExecuteCode) (CallFrame*, void* executableAddress);
+
+template<ExecuteCode execute>
+EncodedJSValue doCallToJavaScript(void* executableAddress, ProtoCallFrame* protoCallFrame)
+{
+    CodeBlock* codeBlock = protoCallFrame->codeBlock();
+    JSScope* scope = protoCallFrame->scope();
+    JSObject* callee = protoCallFrame->callee();
+    int argCountIncludingThis = protoCallFrame->argumentCountIncludingThis();
+    int argCount = protoCallFrame->argumentCount();
+    JSValue thisValue = protoCallFrame->thisValue();
+    JSStack& stack = scope->vm()->interpreter->stack();
+
+    CallFrame* newCallFrame = stack.pushFrame(codeBlock, scope, argCountIncludingThis, callee);
+    if (UNLIKELY(!newCallFrame)) {
+        JSGlobalObject* globalObject = scope->globalObject();
+        ExecState* exec = globalObject->globalExec();
+        return JSValue::encode(throwStackOverflowError(exec));
+    }
+
+    // Set the arguments for the callee:
+    newCallFrame->setThisValue(thisValue);
+    for (int i = 0; i < argCount; ++i)
+        newCallFrame->setArgument(i, protoCallFrame->argument(i));
+
+    JSValue result = execute(newCallFrame, executableAddress);
+
+    stack.popFrame(newCallFrame);
+
+    return JSValue::encode(result);
+}
+
+static inline JSValue executeJS(CallFrame* newCallFrame, void* executableAddress)
+{
+    Opcode entryOpcode = *reinterpret_cast<Opcode*>(&executableAddress);
+    return CLoop::execute(newCallFrame, entryOpcode);
+}
+
+EncodedJSValue callToJavaScript(void* executableAddress, ExecState**, ProtoCallFrame* protoCallFrame, Register*)
+{
+    return doCallToJavaScript<executeJS>(executableAddress, protoCallFrame);
+}
+
+static inline JSValue executeNative(CallFrame* newCallFrame, void* executableAddress)
+{
+    NativeFunction function = reinterpret_cast<NativeFunction>(executableAddress);
+    return JSValue::decode(function(newCallFrame));
+}
+
+EncodedJSValue callToNativeFunction(void* executableAddress, ExecState**, ProtoCallFrame* protoCallFrame, Register*)
+{
+    return doCallToJavaScript<executeNative>(executableAddress, protoCallFrame);
+}
+
+#endif // ENABLE(JIT)
+
+} // namespace JSC

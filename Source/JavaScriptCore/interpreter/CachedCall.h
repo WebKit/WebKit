@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,12 +45,8 @@ namespace JSC {
         {
             ASSERT(!function->isHostFunction());
             if (callFrame->vm().isSafeToRecurse()) {
-#if !ENABLE(LLINT_C_LOOP)
                 m_arguments.resize(argumentCount);
                 m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments.data());
-#else
-                m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, function, argumentCount + 1, function->scope());
-#endif
             } else
                 throwStackOverflowError(callFrame);
             m_valid = !callFrame->hadException();
@@ -61,35 +57,15 @@ namespace JSC {
             ASSERT(m_valid);
             return m_interpreter->execute(m_closure);
         }
-#if !ENABLE(LLINT_C_LOOP)
         void setThis(JSValue v) { m_protoCallFrame.setThisValue(v); }
         void setArgument(int n, JSValue v) { m_protoCallFrame.setArgument(n, v); }
-#else
-        void setThis(JSValue v) { m_closure.setThis(v); }
-        void setArgument(int n, JSValue v) { m_closure.setArgument(n, v); }
-
-        CallFrame* newCallFrame(ExecState* exec)
-        {
-            CallFrame* callFrame = m_closure.newCallFrame;
-            callFrame->setScope(exec->scope());
-            return callFrame;
-        }
-
-        ~CachedCall()
-        {
-            if (m_valid)
-                m_interpreter->endRepeatCall(m_closure);
-        }
-#endif
 
     private:
         bool m_valid;
         Interpreter* m_interpreter;
         VMEntryScope m_entryScope;
-#if !ENABLE(LLINT_C_LOOP)
         ProtoCallFrame m_protoCallFrame;
         Vector<JSValue> m_arguments;
-#endif
         CallFrameClosure m_closure;
     };
 }
