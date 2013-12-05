@@ -1,3 +1,20 @@
+2013-12-05  Aloisio Almeida Jr  <aloisio.almeida@openbossa.org>
+
+        [Cairo] Avoid extra copy when drawing images
+        https://bugs.webkit.org/show_bug.cgi?id=124209
+
+        Reviewed by Carlos Garcia Campos.
+
+        This commit applies some changes proposed after the original patch has
+        been landed. It fixes the logic to create the subsurface (as it was
+        inverted). It also remove an unnecessary RefPtr variable to hold the
+        subsurface.
+
+        No new tests. It's an enhancement. Already covered by existing tests.
+
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::drawSurfaceToContext):
+
 2013-12-05  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Fix inset when only a subset of the arguments are defined
