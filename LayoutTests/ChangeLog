@@ -1,3 +1,19 @@
+2013-12-04  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        % unit heights don't work if parent block height is set in vh
+        https://bugs.webkit.org/show_bug.cgi?id=118516
+
+        Reviewed by Simon Fraser.
+
+        From Blink r156449 by <srinivasa.ragavan.venkateswaran@intel.com>
+
+        * fast/css/viewport-percentage-compute-box-height-expected.html: Added.
+        * fast/css/viewport-percentage-compute-box-height.html: Added.
+        * fast/css/viewport-percentage-compute-box-width-expected.html: Added.
+        * fast/css/viewport-percentage-compute-box-width.html: Added.
+        Added new tests for verifying that percentage unit height/width works
+        if parent block height/width is set in vh/vw units.
+
 2013-12-04  Filip Pizlo  <fpizlo@apple.com>
 
         Fold constant typed arrays

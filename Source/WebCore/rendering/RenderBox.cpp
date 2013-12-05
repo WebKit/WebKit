@@ -2729,6 +2729,17 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
             LayoutUnit contentBoxHeight = cb->constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
             availableHeight = std::max<LayoutUnit>(0, contentBoxHeight);
         }
+    } else if (cbstyle.logicalHeight().isViewportPercentage()) {
+        LayoutUnit heightWithScrollbar = valueForLength(cbstyle.logicalHeight(), 0, &view());
+        if (heightWithScrollbar != -1) {
+            LayoutUnit contentBoxHeightWithScrollbar = cb->adjustContentBoxLogicalHeightForBoxSizing(heightWithScrollbar);
+            // We need to adjust for min/max height because this method does 
+            // not handle the min/max of the current block, its caller does.
+            // So the return value from the recursive call will not have been
+            // adjusted yet.
+            LayoutUnit contentBoxHeight = cb->constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
+            availableHeight = std::max<LayoutUnit>(0, contentBoxHeight);
+        }
     } else if (isOutOfFlowPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
