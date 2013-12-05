@@ -1,5 +1,17 @@
 2013-12-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Do not use deprecated gtk-doc 'Rename to' tag
+        https://bugs.webkit.org/show_bug.cgi?id=125303
+
+        Reviewed by Philippe Normand.
+
+        GObject introspection rename-to annotation is available in
+        since version 0.6.3 so we should use that instead.
+
+        * bindings/gobject/WebKitDOMEventTarget.h:
+
+2013-12-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add missing symbols to WebKitDOMDeprecated.symbols
         https://bugs.webkit.org/show_bug.cgi?id=125300
 

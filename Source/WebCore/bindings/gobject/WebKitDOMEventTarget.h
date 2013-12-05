@@ -96,7 +96,7 @@ WEBKIT_API gboolean  webkit_dom_event_target_remove_event_listener(WebKitDOMEven
                                                                    gboolean              use_capture);
 
 /**
- * webkit_dom_event_target_add_event_listener_with_closure:
+ * webkit_dom_event_target_add_event_listener_with_closure: (rename-to webkit_dom_event_target_add_event_listener)
  * @target: A #WebKitDOMEventTarget
  * @event_name: A #gchar
  * @handler: A #GClosure
@@ -106,8 +106,6 @@ WEBKIT_API gboolean  webkit_dom_event_target_remove_event_listener(WebKitDOMEven
  * instead of a callbacks for easier binding in other languages.
  *
  * Returns: a #gboolean
- *
- * Rename to: webkit_dom_event_target_add_event_listener
  */
 WEBKIT_API gboolean webkit_dom_event_target_add_event_listener_with_closure(WebKitDOMEventTarget *target,
                                                                             const char           *event_name,
@@ -115,7 +113,7 @@ WEBKIT_API gboolean webkit_dom_event_target_add_event_listener_with_closure(WebK
                                                                             gboolean              use_capture);
 
 /**
- * webkit_dom_event_target_remove_event_listener_with_closure:
+ * webkit_dom_event_target_remove_event_listener_with_closure: (rename-to webkit_dom_event_target_remove_event_listener)
  * @target: A #WebKitDOMEventTarget
  * @event_name: A #gchar
  * @handler: A #GClosure
@@ -125,8 +123,6 @@ WEBKIT_API gboolean webkit_dom_event_target_add_event_listener_with_closure(WebK
  * instead of a callbacks for easier binding in other languages.
  *
  * Returns: a #gboolean
- *
- * Rename to: webkit_dom_event_target_remove_event_listener
  */
 WEBKIT_API gboolean webkit_dom_event_target_remove_event_listener_with_closure(WebKitDOMEventTarget *target,
                                                                                const char           *event_name,
