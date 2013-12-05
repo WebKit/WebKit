@@ -69,10 +69,8 @@ using namespace WebKit;
 static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, const void* clientInfo)
 {
     WKProcessGroup *processGroup = (WKProcessGroup *)clientInfo;
-    if ([processGroup.delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)]) {
-        RetainPtr<WKConnection> connection = adoptNS([[WKConnection alloc] _initWithConnectionRef:connectionRef]);
-        [processGroup.delegate processGroup:processGroup didCreateConnectionToWebProcessPlugIn:connection.get()];
-    }
+    if ([processGroup.delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)])
+        [processGroup.delegate processGroup:processGroup didCreateConnectionToWebProcessPlugIn:wrapper(*toImpl(connectionRef))];
 }
 
 static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef contextRef)

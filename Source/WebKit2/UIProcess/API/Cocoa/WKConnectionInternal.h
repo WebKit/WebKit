@@ -27,12 +27,20 @@
 
 #if WK_API_ENABLED
 
-#import <WebKit2/WKBase.h>
+#import "WKObject.h"
+#import "WebConnection.h"
 
-@interface WKConnection ()
+namespace WebKit {
 
-- (id)_initWithConnectionRef:(WKConnectionRef)connectionRef;
+inline WKConnection *wrapper(WebConnection& connection)
+{
+    ASSERT([connection.wrapper() isKindOfClass:[WKConnection class]]);
+    return (WKConnection *)connection.wrapper();
+}
 
+}
+
+@interface WKConnection () <WKObject>
 @end
 
 #endif // WK_API_ENABLED

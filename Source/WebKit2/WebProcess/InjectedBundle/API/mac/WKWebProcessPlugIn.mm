@@ -36,11 +36,13 @@
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import <wtf/RetainPtr.h>
 
+using namespace WebKit;
+
 typedef HashMap<WKBundlePageRef, RetainPtr<WKWebProcessPlugInBrowserContextController *>> BundlePageWrapperCache;
 
 @interface WKWebProcessPlugInController () {
-    RetainPtr<id <WKWebProcessPlugIn> > _principalClassInstance;
-    WKRetainPtr<WKBundleRef> _bundleRef;
+    RetainPtr<id <WKWebProcessPlugIn>> _principalClassInstance;
+    RefPtr<InjectedBundle> _bundle;
     BundlePageWrapperCache _bundlePageWrapperCache;
     RetainPtr<WKConnection *> _connectionWrapper;
 }
@@ -110,8 +112,7 @@ static WKWebProcessPlugInController *sharedInstance;
         return nil;
 
     _principalClassInstance = principalClassInstance;
-    _bundleRef = bundleRef;
-    _connectionWrapper = adoptNS([[WKConnection alloc] _initWithConnectionRef:WKBundleGetApplicationConnection(_bundleRef.get())]);
+    _bundle = toImpl(bundleRef);
 
     ASSERT_WITH_MESSAGE(!sharedInstance, "WKWebProcessPlugInController initialized multiple times.");
     sharedInstance = self;
@@ -129,7 +130,7 @@ static WKWebProcessPlugInController *sharedInstance;
 
 - (WKConnection *)connection
 {
-    return _connectionWrapper.get();
+    return wrapper(*_bundle->webConnectionToUIProcess());
 }
 
 @end
@@ -138,7 +139,7 @@ static WKWebProcessPlugInController *sharedInstance;
 
 - (WKBundleRef)_bundleRef
 {
-    return _bundleRef.get();
+    return toAPI(_bundle.get());
 }
 
 @end

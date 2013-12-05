@@ -1,3 +1,29 @@
+2013-12-04  Sam Weinig  <sam@webkit.org>
+
+        [Cocoa] Make WKConnection work with WKObject wrapping
+        https://bugs.webkit.org/show_bug.cgi?id=125266
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        (-[WKConnection dealloc]):
+        (didReceiveMessage):
+        (didClose):
+        (setUpClient):
+        (-[WKConnection delegate]):
+        (-[WKConnection setDelegate:]):
+        (-[WKConnection sendMessageWithName:body:]):
+        (-[WKConnection remoteObjectRegistry]):
+        (-[WKConnection API::]):
+        * UIProcess/API/Cocoa/WKConnectionInternal.h:
+        (WebKit::wrapper):
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (didCreateConnection):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        (-[WKWebProcessPlugInController _initWithPrincipalClassInstance:bundleRef:]):
+        (-[WKWebProcessPlugInController connection]):
+        (-[WKWebProcessPlugInController _bundleRef]):
+
 2013-12-04  Anders Carlsson  <andersca@apple.com>
 
         Add a WeakObjCPtr class
