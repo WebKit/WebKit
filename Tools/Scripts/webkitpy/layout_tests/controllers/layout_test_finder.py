@@ -96,10 +96,10 @@ class LayoutTestFinder(object):
     def skip_tests(self, paths, all_tests_list, expectations, http_tests):
         all_tests = set(all_tests_list)
 
-        tests_to_skip = expectations.get_tests_with_result_type(test_expectations.SKIP)
+        tests_to_skip = expectations.model().get_tests_with_result_type(test_expectations.SKIP)
         if self._options.skip_failing_tests:
-            tests_to_skip.update(expectations.get_tests_with_result_type(test_expectations.FAIL))
-            tests_to_skip.update(expectations.get_tests_with_result_type(test_expectations.FLAKY))
+            tests_to_skip.update(expectations.model().get_tests_with_result_type(test_expectations.FAIL))
+            tests_to_skip.update(expectations.model().get_tests_with_result_type(test_expectations.FLAKY))
 
         if self._options.skipped == 'only':
             tests_to_skip = all_tests - tests_to_skip

@@ -1,3 +1,37 @@
+2013-12-05  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
+
+        Remove certain methods from TestExpectations and use TestExpectationsModel instead of them
+        https://bugs.webkit.org/show_bug.cgi?id=125218
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder.skip_tests):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests):
+        (LayoutTestRunner._update_summary_with_result):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._test_is_slow):
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator._insert_failure_summaries):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.get_rebaselining_failures):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (assert_exp):
+        (MiscTests.test_multiple_results):
+        (MiscTests.test_category_expectations):
+        (MiscTests.test_get_modifiers):
+        (MiscTests.test_get_expectations_string):
+        (MiscTests.test_expectation_to_string):
+        (MiscTests.test_get_test_set):
+        (MiscTests.test_more_specific_override_resets_skip):
+        (SkippedTests.check):
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.__init__):
+        (summarize_results):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineExpectations._tests_to_rebaseline):
+
 2013-12-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable HTMLTemplateElement by default

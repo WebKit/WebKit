@@ -96,7 +96,7 @@ class LayoutTestRunner(object):
         self._printer.num_started = 0
 
         if not retrying:
-            self._printer.print_expected(run_results, self._expectations.get_tests_with_result_type)
+            self._printer.print_expected(run_results, self._expectations.model().get_tests_with_result_type)
 
         for test_name in set(tests_to_skip):
             result = test_results.TestResult(test_name)
@@ -188,8 +188,8 @@ class LayoutTestRunner(object):
             expected = True
         else:
             expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests or result.reftest_type)
-            exp_str = self._expectations.get_expectations_string(result.test_name)
-            got_str = self._expectations.expectation_to_string(result.type)
+            exp_str = self._expectations.model().get_expectations_string(result.test_name)
+            got_str = self._expectations.model().expectation_to_string(result.type)
 
         run_results.add(result, expected, self._test_is_slow(result.test_name))
 

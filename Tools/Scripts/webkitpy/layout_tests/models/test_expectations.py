@@ -884,36 +884,6 @@ class TestExpectations(object):
     def get_rebaselining_failures(self):
         return self._model.get_test_set(REBASELINE)
 
-    # FIXME: Change the callsites to use TestExpectationsModel and remove.
-    def get_expectations(self, test):
-        return self._model.get_expectations(test)
-
-    # FIXME: Change the callsites to use TestExpectationsModel and remove.
-    def has_modifier(self, test, modifier):
-        return self._model.has_modifier(test, modifier)
-
-    # FIXME: Change the callsites to use TestExpectationsModel and remove.
-    def get_tests_with_result_type(self, result_type):
-        return self._model.get_tests_with_result_type(result_type)
-
-    # FIXME: Change the callsites to use TestExpectationsModel and remove.
-    def get_test_set(self, modifier, expectation=None, include_skips=True):
-        return self._model.get_test_set(modifier, expectation, include_skips)
-
-    # FIXME: Change the callsites to use TestExpectationsModel and remove.
-    def get_modifiers(self, test):
-        return self._model.get_modifiers(test)
-
-    # FIXME: Change the callsites to use TestExpectationsModel and remove.
-    def get_tests_with_timeline(self, timeline):
-        return self._model.get_tests_with_timeline(timeline)
-
-    def get_expectations_string(self, test):
-        return self._model.get_expectations_string(test)
-
-    def expectation_to_string(self, expectation):
-        return self._model.expectation_to_string(expectation)
-
     def matches_an_expected_result(self, test, result, pixel_tests_are_enabled):
         expected_results = self._model.get_expectations(test)
         if not pixel_tests_are_enabled:

@@ -132,7 +132,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
             self._get_failure_summary_entry(test_expectations.NOW),
             self.FIXABLE)
         self._insert_item_into_raw_list(results_for_builder,
-            len(self._expectations.get_tests_with_timeline(
+            len(self._expectations.model().get_tests_with_timeline(
                 test_expectations.NOW)), self.ALL_FIXABLE_COUNT)
         self._insert_item_into_raw_list(results_for_builder,
             self._get_failure_summary_entry(test_expectations.WONTFIX),
