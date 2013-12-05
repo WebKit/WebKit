@@ -40,8 +40,8 @@ static void webkit_spell_checker_default_init(WebKitSpellCheckerInterface* inter
  * webkit_spell_checker_check_spelling_of_string:
  * @checker: a #WebKitSpellChecker
  * @string: the string to check for misspellings
- * @misspelling_location: (out) (allow-none) a pointer to an integer to store the location of the first misspelling
- * @misspelling_length: (out) (allow-none) a pointer to an integer to store the length of the first misspelling
+ * @misspelling_location: (out) (allow-none): a pointer to an integer to store the location of the first misspelling
+ * @misspelling_length: (out) (allow-none): a pointer to an integer to store the length of the first misspelling
  *
  * Checks @string for misspellings using @checker, storing the
  * location and length of the first misspelling in
@@ -63,7 +63,7 @@ void webkit_spell_checker_check_spelling_of_string(WebKitSpellChecker* checker, 
  * webkit_spell_checker_get_guesses_for_word:
  * @checker: a #WebKitSpellChecker
  * @word: the misspelled word
- * @context: (allow-none) the surrounding context of the misspelled word
+ * @context: (allow-none): the surrounding context of the misspelled word
  *
  * Returns a %NULL-terminated array of guesses for corrections of the
  * misspelled word @word.
@@ -89,7 +89,7 @@ char** webkit_spell_checker_get_guesses_for_word(WebKitSpellChecker* checker, co
 /**
  * webkit_spell_checker_update_spell_checking_languages:
  * @checker: a #WebKitSpellChecker
- * @languages: (allow-none) a string of languages to use for @checker
+ * @languages: (allow-none): a string of languages to use for @checker
  *
  * Sets @languages as the list of languages to use by @checker. The
  * accepted format is a list of comma (',') separated language codes
@@ -113,7 +113,7 @@ void webkit_spell_checker_update_spell_checking_languages(WebKitSpellChecker* ch
  *
  * Returns a suggestion for a word to use in an "autocorrect" feature.
  *
- * Returns: (transfer full) the suggestion for the autocorrection of
+ * Returns: (transfer full): the suggestion for the autocorrection of
  * @word
  *
  * Since: 1.5.1
