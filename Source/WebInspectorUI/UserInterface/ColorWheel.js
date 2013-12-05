@@ -231,8 +231,8 @@ WebInspector.ColorWheel.prototype = {
         var yDis = y - center;
         var distance = Math.sqrt(xDis * xDis + yDis * yDis);
 
-        if (distance > center)
-            return null;
+        if (distance - center > 0.001)
+            return new WebInspector.Color(WebInspector.Color.Format.RGBA, [0, 0, 0, 0]);
 
         var h = Math.atan2(y - center, center - x) * 180 / Math.PI;
         h = (h + 180) % 360;
