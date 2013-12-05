@@ -1,3 +1,13 @@
+2013-12-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable HTMLTemplateElement by default
+        https://bugs.webkit.org/show_bug.cgi?id=123851
+
+        Reviewed by Antti Koivisto.
+
+        * Source/autotools/SetupWebKitFeatures.m4:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2013-12-04  László Langó  <lango@inf.u-szeged.hu>
 
         Allow --cloop option to work correctly in case of EFL.
