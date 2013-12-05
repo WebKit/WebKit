@@ -1,5 +1,50 @@
 2013-12-05  Anders Carlsson  <andersca@apple.com>
 
+        WebKit2 API should use weak ownership for delegate properties rather than assign
+        https://bugs.webkit.org/show_bug.cgi?id=125316
+        <rdar://problem/15560614>
+
+        Reviewed by Dan Bernstein.
+
+        Use WeakObjCPtr for the delegates.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (didStartProvisionalLoadForFrame):
+        (didReceiveServerRedirectForProvisionalLoadForFrame):
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didCommitLoadForFrame):
+        (didFinishLoadForFrame):
+        (didFailLoadWithErrorForFrame):
+        (didStartProgress):
+        (didChangeProgress):
+        (didFinishProgress):
+        (didChangeBackForwardList):
+        (setUpPagePolicyClient):
+        (-[WKBrowsingContextController loadDelegate]):
+        (-[WKBrowsingContextController setLoadDelegate:]):
+        (-[WKBrowsingContextController policyDelegate]):
+        (-[WKBrowsingContextController setPolicyDelegate:]):
+        (-[WKBrowsingContextController historyDelegate]):
+        (-[WKBrowsingContextController setHistoryDelegate:]):
+        * UIProcess/API/Cocoa/WKBrowsingContextControllerInternal.h:
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        (didReceiveMessage):
+        (didClose):
+        (-[WKConnection delegate]):
+        (-[WKConnection setDelegate:]):
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (didCreateConnection):
+        (getInjectedBundleInitializationUserData):
+        (didNavigateWithNavigationData):
+        (didPerformClientRedirect):
+        (didPerformServerRedirect):
+        (didUpdateHistoryTitle):
+        (-[WKProcessGroup delegate]):
+        (-[WKProcessGroup setDelegate:]):
+
+2013-12-05  Anders Carlsson  <andersca@apple.com>
+
         Tweak WeakObjCPtr
         https://bugs.webkit.org/show_bug.cgi?id=125311
 

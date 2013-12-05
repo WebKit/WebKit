@@ -44,9 +44,9 @@ WK_API_CLASS
 
 #pragma mark Delegates
 
-@property (assign) id <WKBrowsingContextLoadDelegate> loadDelegate;
-@property (assign) id <WKBrowsingContextPolicyDelegate> policyDelegate;
-@property (assign) id <WKBrowsingContextHistoryDelegate> historyDelegate;
+@property (weak) id <WKBrowsingContextLoadDelegate> loadDelegate;
+@property (weak) id <WKBrowsingContextPolicyDelegate> policyDelegate;
+@property (weak) id <WKBrowsingContextHistoryDelegate> historyDelegate;
 
 #pragma mark Loading
 

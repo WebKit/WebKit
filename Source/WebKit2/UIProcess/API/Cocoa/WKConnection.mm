@@ -33,6 +33,7 @@
 #import "WKRetainPtr.h"
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
+#import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
@@ -41,9 +42,9 @@ using namespace WebKit;
 @implementation WKConnection {
     API::ObjectStorage<WebConnection> _connection;
     RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
-}
 
-@synthesize delegate = _delegate;
+    WeakObjCPtr<id <WKConnectionDelegate>> _delegate;
+}
 
 - (void)dealloc
 {
@@ -58,18 +59,21 @@ static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRe
     if ([connection->_remoteObjectRegistry _handleMessageWithName:messageName body:messageBody])
         return;
 
-    if ([connection.delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
+    auto delegate = connection->_delegate.get();
+    if ([delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
         RetainPtr<CFStringRef> nsMessageName = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, messageName));
         RetainPtr<id> nsMessageBody = ((ObjCObjectGraph*)messageBody)->rootObject();
-        [connection.delegate connection:connection didReceiveMessageWithName:(NSString *)nsMessageName.get() body:nsMessageBody.get()];
+        [delegate connection:connection didReceiveMessageWithName:(NSString *)nsMessageName.get() body:nsMessageBody.get()];
     }
 }
 
 static void didClose(WKConnectionRef, const void* clientInfo)
 {
     WKConnection *connection = (WKConnection *)clientInfo;
-    if ([connection.delegate respondsToSelector:@selector(connectionDidClose:)])
-        [connection.delegate connectionDidClose:connection];
+    auto delegate = connection->_delegate.get();
+
+    if ([delegate respondsToSelector:@selector(connectionDidClose:)])
+        [delegate connectionDidClose:connection];
 }
 
 static void setUpClient(WKConnection *wrapper, WebConnection& connection)
@@ -87,13 +91,13 @@ static void setUpClient(WKConnection *wrapper, WebConnection& connection)
 
 - (id <WKConnectionDelegate>)delegate
 {
-    return _delegate;
+    return _delegate.getAutoreleased();
 }
 
 - (void)setDelegate:(id <WKConnectionDelegate>)delegate
 {
     _delegate = delegate;
-    if (_delegate)
+    if (delegate)
         setUpClient(self, *_connection);
     else
         _connection->initializeConnectionClient(nullptr);

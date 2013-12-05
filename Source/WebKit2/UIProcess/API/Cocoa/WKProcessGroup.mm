@@ -40,6 +40,7 @@
 #import "WKNavigationDataInternal.h"
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
+#import "WeakObjCPtr.h"
 #import "WebFrameProxy.h"
 #import <wtf/RetainPtr.h>
 
@@ -53,6 +54,8 @@ using namespace WebKit;
 
 @implementation WKProcessGroup {
     API::ObjectStorage<WebContext> _context;
+
+    WeakObjCPtr<id <WKProcessGroupDelegate>> _delegate;
 
 #if PLATFORM(IOS)
     RetainPtr<WKGeolocationProviderIOS> _geolocationProvider;
@@ -69,8 +72,10 @@ using namespace WebKit;
 static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, const void* clientInfo)
 {
     WKProcessGroup *processGroup = (WKProcessGroup *)clientInfo;
-    if ([processGroup.delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)])
-        [processGroup.delegate processGroup:processGroup didCreateConnectionToWebProcessPlugIn:wrapper(*toImpl(connectionRef))];
+    auto delegate = processGroup->_delegate.get();
+
+    if ([delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)])
+        [delegate processGroup:processGroup didCreateConnectionToWebProcessPlugIn:wrapper(*toImpl(connectionRef))];
 }
 
 static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef contextRef)
@@ -88,8 +93,10 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
 static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const void* clientInfo)
 {
     WKProcessGroup *processGroup = (WKProcessGroup *)clientInfo;
-    if ([processGroup.delegate respondsToSelector:@selector(processGroupWillCreateConnectionToWebProcessPlugIn:)]) {
-        RetainPtr<id> initializationUserData = [processGroup.delegate processGroupWillCreateConnectionToWebProcessPlugIn:processGroup];
+    auto delegate = processGroup->_delegate.get();
+
+    if ([delegate respondsToSelector:@selector(processGroupWillCreateConnectionToWebProcessPlugIn:)]) {
+        RetainPtr<id> initializationUserData = [delegate processGroupWillCreateConnectionToWebProcessPlugIn:processGroup];
         RefPtr<WebKit::ObjCObjectGraph> wkMessageBody = WebKit::ObjCObjectGraph::create(initializationUserData.get());
         return (WKTypeRef)wkMessageBody.release().leakRef();
     }
@@ -115,8 +122,10 @@ static void didNavigateWithNavigationData(WKContextRef, WKPageRef pageRef, WKNav
         return;
 
     WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
-    if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didNavigateWithNavigationData:)])
-        [controller.historyDelegate browsingContextController:controller didNavigateWithNavigationData:wrapper(*toImpl(navigationDataRef))];
+    auto historyDelegate = controller->_historyDelegate.get();
+
+    if ([historyDelegate respondsToSelector:@selector(browsingContextController:didNavigateWithNavigationData:)])
+        [historyDelegate browsingContextController:controller didNavigateWithNavigationData:wrapper(*toImpl(navigationDataRef))];
 }
 
 static void didPerformClientRedirect(WKContextRef, WKPageRef pageRef, WKURLRef sourceURLRef, WKURLRef destinationURLRef, WKFrameRef frameRef, const void*)
@@ -125,8 +134,10 @@ static void didPerformClientRedirect(WKContextRef, WKPageRef pageRef, WKURLRef s
         return;
 
     WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
-    if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didPerformClientRedirectFromURL:toURL:)])
-        [controller.historyDelegate browsingContextController:controller didPerformClientRedirectFromURL:wrapper(*toImpl(sourceURLRef)) toURL:wrapper(*toImpl(destinationURLRef))];
+    auto historyDelegate = controller->_historyDelegate.get();
+
+    if ([historyDelegate respondsToSelector:@selector(browsingContextController:didPerformClientRedirectFromURL:toURL:)])
+        [historyDelegate browsingContextController:controller didPerformClientRedirectFromURL:wrapper(*toImpl(sourceURLRef)) toURL:wrapper(*toImpl(destinationURLRef))];
 }
 
 static void didPerformServerRedirect(WKContextRef, WKPageRef pageRef, WKURLRef sourceURLRef, WKURLRef destinationURLRef, WKFrameRef frameRef, const void*)
@@ -135,8 +146,10 @@ static void didPerformServerRedirect(WKContextRef, WKPageRef pageRef, WKURLRef s
         return;
 
     WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
-    if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didPerformServerRedirectFromURL:toURL:)])
-        [controller.historyDelegate browsingContextController:controller didPerformServerRedirectFromURL:wrapper(*toImpl(sourceURLRef)) toURL:wrapper(*toImpl(destinationURLRef))];
+    auto historyDelegate = controller->_historyDelegate.get();
+
+    if ([historyDelegate respondsToSelector:@selector(browsingContextController:didPerformServerRedirectFromURL:toURL:)])
+        [historyDelegate browsingContextController:controller didPerformServerRedirectFromURL:wrapper(*toImpl(sourceURLRef)) toURL:wrapper(*toImpl(destinationURLRef))];
 }
 
 static void didUpdateHistoryTitle(WKContextRef, WKPageRef pageRef, WKStringRef titleRef, WKURLRef urlRef, WKFrameRef frameRef, const void*)
@@ -145,8 +158,10 @@ static void didUpdateHistoryTitle(WKContextRef, WKPageRef pageRef, WKStringRef t
         return;
 
     WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
-    if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didUpdateHistoryTitle:forURL:)])
-        [controller.historyDelegate browsingContextController:controller didUpdateHistoryTitle:wrapper(*toImpl(titleRef)) forURL:wrapper(*toImpl(urlRef))];
+    auto historyDelegate = controller->_historyDelegate.get();
+
+    if ([historyDelegate respondsToSelector:@selector(browsingContextController:didUpdateHistoryTitle:forURL:)])
+        [historyDelegate browsingContextController:controller didUpdateHistoryTitle:wrapper(*toImpl(titleRef)) forURL:wrapper(*toImpl(urlRef))];
 }
 
 static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contextRef)
@@ -187,6 +202,16 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     setUpHistoryClient(self, toAPI(_context.get()));
 
     return self;
+}
+
+- (id <WKProcessGroupDelegate>)delegate
+{
+    return _delegate.getAutoreleased();
+}
+
+- (void)setDelegate:(id <WKProcessGroupDelegate>)delegate
+{
+    _delegate = delegate;
 }
 
 #pragma mark WKObject protocol implementation
