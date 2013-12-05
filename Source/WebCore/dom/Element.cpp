@@ -2334,57 +2334,6 @@ void Element::normalizeAttributes()
     }
 }
 
-bool Element::updateExistingPseudoElement(PseudoElement* existingPseudoElement, Style::Change change)
-{
-    // PseudoElement styles hang off their parent element's style so if we needed
-    // a style recalc we should Force one on the pseudo.
-    Style::resolveTree(*existingPseudoElement, needsStyleRecalc() ? Style::Force : change);
-
-    // FIXME: This is silly.
-    // Wait until our parent is not displayed or pseudoElementRendererIsNeeded
-    // is false, otherwise we could continously create and destroy PseudoElements
-    // when RenderElement::isChildAllowed on our parent returns false for the
-    // PseudoElement's renderer for each style recalc.
-    return renderer() && pseudoElementRendererIsNeeded(existingPseudoElement->renderStyle());
-}
-
-PassRefPtr<PseudoElement> Element::createPseudoElementIfNeeded(PseudoId pseudoId)
-{
-    if (!document().styleSheetCollection().usesBeforeAfterRules())
-        return 0;
-    if (!renderer() || !renderer()->canHaveGeneratedChildren())
-        return 0;
-    if (isPseudoElement())
-        return 0;
-    if (!pseudoElementRendererIsNeeded(renderer()->getCachedPseudoStyle(pseudoId)))
-        return 0;
-    RefPtr<PseudoElement> pseudoElement = PseudoElement::create(*this, pseudoId);
-    Style::attachRenderTree(*pseudoElement);
-    return pseudoElement.release();
-}
-
-void Element::updateBeforePseudoElement(Style::Change change)
-{
-    if (PseudoElement* existingPseudoElement = beforePseudoElement()) {
-        if (!updateExistingPseudoElement(existingPseudoElement, change))
-            clearBeforePseudoElement();
-        return;
-    }
-    if (RefPtr<PseudoElement> pseudo = createPseudoElementIfNeeded(BEFORE))
-        setBeforePseudoElement(pseudo.release());
-}
-
-void Element::updateAfterPseudoElement(Style::Change change)
-{
-    if (PseudoElement* existingPseudoElement = afterPseudoElement()) {
-        if (!updateExistingPseudoElement(existingPseudoElement, change))
-            clearAfterPseudoElement();
-        return;
-    }
-    if (RefPtr<PseudoElement> pseudo = createPseudoElementIfNeeded(AFTER))
-        setAfterPseudoElement(pseudo.release());
-}
-
 PseudoElement* Element::beforePseudoElement() const
 {
     return hasRareData() ? elementRareData()->beforePseudoElement() : 0;

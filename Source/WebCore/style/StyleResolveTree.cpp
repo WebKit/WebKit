@@ -467,6 +467,56 @@ static void attachShadowRoot(ShadowRoot& shadowRoot)
     shadowRoot.setAttached(true);
 }
 
+static PseudoElement* beforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
+{
+    ASSERT(pseudoId == BEFORE || pseudoId == AFTER);
+    if (pseudoId == BEFORE)
+        return current.beforePseudoElement();
+    return current.afterPseudoElement();
+}
+
+static void setBeforeOrAfterPseudoElement(Element& current, PassRefPtr<PseudoElement> pseudoElement, PseudoId pseudoId)
+{
+    ASSERT(pseudoId == BEFORE || pseudoId == AFTER);
+    if (pseudoId == BEFORE) {
+        current.setBeforePseudoElement(pseudoElement);
+        return;
+    }
+    current.setAfterPseudoElement(pseudoElement);
+}
+
+static void clearBeforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
+{
+    ASSERT(pseudoId == BEFORE || pseudoId == AFTER);
+    if (pseudoId == BEFORE) {
+        current.clearBeforePseudoElement();
+        return;
+    }
+    current.clearAfterPseudoElement();
+}
+
+static bool needsPseudeElement(Element& current, PseudoId pseudoId)
+{
+    if (!current.document().styleSheetCollection().usesBeforeAfterRules())
+        return false;
+    if (!current.renderer() || !current.renderer()->canHaveGeneratedChildren())
+        return false;
+    if (current.isPseudoElement())
+        return false;
+    if (!pseudoElementRendererIsNeeded(current.renderer()->getCachedPseudoStyle(pseudoId)))
+        return false;
+    return true;
+}
+
+static void attachBeforeOrAfterPseudoElementIfNeeded(Element& current, PseudoId pseudoId)
+{
+    if (!needsPseudeElement(current, pseudoId))
+        return;
+    RefPtr<PseudoElement> pseudoElement = PseudoElement::create(current, pseudoId);
+    setBeforeOrAfterPseudoElement(current, pseudoElement, pseudoId);
+    attachRenderTree(*pseudoElement, nullptr);
+}
+
 static void attachRenderTree(Element& current, PassRefPtr<RenderStyle> resolvedStyle)
 {
     PostAttachCallbackDisabler callbackDisabler(current);
@@ -480,7 +530,7 @@ static void attachRenderTree(Element& current, PassRefPtr<RenderStyle> resolvedS
     if (current.parentElement() && current.parentElement()->isInCanvasSubtree())
         current.setIsInCanvasSubtree(true);
 
-    current.updateBeforePseudoElement(NoChange);
+    attachBeforeOrAfterPseudoElementIfNeeded(current, BEFORE);
 
     StyleResolverParentPusher parentPusher(&current);
 
@@ -499,7 +549,7 @@ static void attachRenderTree(Element& current, PassRefPtr<RenderStyle> resolvedS
     if (AXObjectCache* cache = current.document().axObjectCache())
         cache->updateCacheAfterNodeIsAttached(&current);
 
-    current.updateAfterPseudoElement(NoChange);
+    attachBeforeOrAfterPseudoElementIfNeeded(current, AFTER);
 
     current.updateFocusAppearanceAfterAttachIfNeeded();
     
@@ -674,6 +724,18 @@ static void resolveShadowTree(ShadowRoot* shadowRoot, Style::Change change)
     shadowRoot->clearChildNeedsStyleRecalc();
 }
 
+static void updateBeforeOrAfterPseudoElement(Element& current, Change change, PseudoId pseudoId)
+{
+    if (PseudoElement* existingPseudoElement = beforeOrAfterPseudoElement(current, pseudoId)) {
+        if (needsPseudeElement(current, pseudoId))
+            resolveTree(*existingPseudoElement, current.needsStyleRecalc() ? Force : change);
+        else
+            clearBeforeOrAfterPseudoElement(current, pseudoId);
+        return;
+    }
+    attachBeforeOrAfterPseudoElementIfNeeded(current, pseudoId);
+}
+
 #if PLATFORM(IOS)
 static EVisibility elementImplicitVisibility(const Element* element)
 {
@@ -762,7 +824,7 @@ void resolveTree(Element& current, Change change)
             }
         }
 
-        current.updateBeforePseudoElement(change);
+        updateBeforeOrAfterPseudoElement(current, change, BEFORE);
 
         // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
         // For now we will just worry about the common case, since it's a lot trickier to get the second case right
@@ -788,7 +850,7 @@ void resolveTree(Element& current, Change change)
             forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
         }
 
-        current.updateAfterPseudoElement(change);
+        updateBeforeOrAfterPseudoElement(current, change, AFTER);
     }
 
     current.clearNeedsStyleRecalc();

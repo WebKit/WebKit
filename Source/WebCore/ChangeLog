@@ -1,3 +1,25 @@
+2013-12-04  Antti Koivisto  <antti@apple.com>
+
+        Move pseudo element construction out from Element
+        https://bugs.webkit.org/show_bug.cgi?id=125257
+
+        Reviewed by Anders Carlsson.
+
+        This is logically part of the style resolve/render tree construction. This will make future
+        refactoring easier.
+
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::beforeOrAfterPseudoElement):
+        (WebCore::Style::setBeforeOrAfterPseudoElement):
+        (WebCore::Style::clearBeforeOrAfterPseudoElement):
+        (WebCore::Style::needsPseudeElement):
+        (WebCore::Style::attachBeforeOrAfterPseudoElementIfNeeded):
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::updateBeforeOrAfterPseudoElement):
+        (WebCore::Style::resolveTree):
+
 2013-12-04  Zoltan Horvath  <zoltan@webkit.org>
 
         Move TrailingObjects class into its own h/cpp

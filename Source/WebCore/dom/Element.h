@@ -551,8 +551,10 @@ public:
     virtual void willDetachRenderers();
     virtual void didDetachRenderers();
 
-    void updateBeforePseudoElement(Style::Change);
-    void updateAfterPseudoElement(Style::Change);
+    void setBeforePseudoElement(PassRefPtr<PseudoElement>);
+    void setAfterPseudoElement(PassRefPtr<PseudoElement>);
+    void clearBeforePseudoElement();
+    void clearAfterPseudoElement();
     void resetComputedStyle();
     void clearStyleDerivedDataBeforeDetachingRenderer();
     void clearHoverAndActiveStatusBeforeDetachingRenderer();
@@ -590,13 +592,6 @@ private:
     bool isUserActionElementFocused() const;
     bool isUserActionElementHovered() const;
 
-    PassRefPtr<PseudoElement> createPseudoElementIfNeeded(PseudoId);
-    bool updateExistingPseudoElement(PseudoElement* existing, Style::Change);
-
-    void setBeforePseudoElement(PassRefPtr<PseudoElement>);
-    void setAfterPseudoElement(PassRefPtr<PseudoElement>);
-    void clearBeforePseudoElement();
-    void clearAfterPseudoElement();
     void resetNeedsNodeRenderingTraversalSlowPath();
 
     virtual bool areAuthorShadowsAllowed() const { return true; }
