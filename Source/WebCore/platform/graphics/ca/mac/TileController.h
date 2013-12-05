@@ -148,6 +148,8 @@ private:
     virtual float platformCALayerDeviceScaleFactor() const OVERRIDE;
 
     IntRect bounds() const;
+    IntRect boundsWithoutMargin() const;
+    IntRect boundsAtLastRevalidateWithoutMargin() const;
 
     IntRect rectForTileIndex(const TileIndex&) const;
     void adjustRectAtTileIndexForMargin(const TileIndex&, IntRect&) const;

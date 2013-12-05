@@ -403,6 +403,18 @@ IntRect TileController::bounds() const
     return IntRect(boundsOriginIncludingMargin, boundsSizeIncludingMargin);
 }
 
+IntRect TileController::boundsWithoutMargin() const
+{
+    return IntRect(IntPoint(), expandedIntSize(m_tileCacheLayer->bounds().size()));
+}
+
+IntRect TileController::boundsAtLastRevalidateWithoutMargin() const
+{
+    IntRect boundsWithoutMargin = IntRect(IntPoint(), m_boundsAtLastRevalidate.size());
+    boundsWithoutMargin.contract(IntSize(leftMarginWidth() + rightMarginWidth(), topMarginHeight() + bottomMarginHeight()));
+    return boundsWithoutMargin;
+}
+
 void TileController::adjustRectAtTileIndexForMargin(const TileIndex& tileIndex, IntRect& rect) const
 {
     if (!hasMargins())
@@ -420,10 +432,9 @@ void TileController::adjustRectAtTileIndexForMargin(const TileIndex& tileIndex, 
         rect.setWidth(leftMarginWidth());
     }
 
-    IntRect boundsWithoutMargin = IntRect(IntPoint(), expandedIntSize(m_tileCacheLayer->bounds().size()));
     TileIndex contentTopLeft;
     TileIndex contentBottomRight;
-    getTileIndexRangeForRect(boundsWithoutMargin, contentTopLeft, contentBottomRight);
+    getTileIndexRangeForRect(boundsWithoutMargin(), contentTopLeft, contentBottomRight);
 
     // This is a tile in the bottom margin.
     if (m_marginBottom && tileIndex.y() > contentBottomRight.y())
@@ -752,6 +763,27 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
     }
 
     if (m_boundsAtLastRevalidate != bounds) {
+        // If there are margin tiles and the bounds have grown taller or wider, then the tiles that used to
+        // be bottom or right margin tiles need to be invalidated.
+        if (hasMargins()) {
+            if (bounds.width() > m_boundsAtLastRevalidate.width() || bounds.height() > m_boundsAtLastRevalidate.height()) {
+                IntRect boundsWithoutMargin = this->boundsWithoutMargin();
+                IntRect oldBoundsWithoutMargin = boundsAtLastRevalidateWithoutMargin();
+
+                if (bounds.height() > m_boundsAtLastRevalidate.height()) {
+                    IntRect formerBottomMarginRect = IntRect(oldBoundsWithoutMargin.x(), oldBoundsWithoutMargin.height(),
+                        oldBoundsWithoutMargin.width(), boundsWithoutMargin.height() - oldBoundsWithoutMargin.height());
+                    setNeedsDisplayInRect(formerBottomMarginRect);
+                }
+
+                if (bounds.width() > m_boundsAtLastRevalidate.width()) {
+                    IntRect formerRightMarginRect = IntRect(oldBoundsWithoutMargin.width(), oldBoundsWithoutMargin.y(),
+                        boundsWithoutMargin.width() - oldBoundsWithoutMargin.width(), oldBoundsWithoutMargin.height());
+                    setNeedsDisplayInRect(formerRightMarginRect);
+                }
+            }
+        }
+
         FloatRect scaledBounds(bounds);
         scaledBounds.scale(m_scale);
         IntRect boundsInTileCoords(enclosingIntRect(scaledBounds));
