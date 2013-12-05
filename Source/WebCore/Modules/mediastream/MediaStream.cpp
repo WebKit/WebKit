@@ -153,7 +153,10 @@ void MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode&
         return;
     }
 
-    addTrack(prpTrack);
+    if (addTrack(prpTrack)) {
+        for (auto observer = m_observers.begin(), end = m_observers.end(); observer != end; ++observer)
+            (*observer)->didAddOrRemoveTrack();
+    }
 }
 
 bool MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack)
@@ -184,7 +187,10 @@ void MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCo
         return;
     }
 
-    removeTrack(prpTrack);
+    if (removeTrack(prpTrack)) {
+        for (auto observer = m_observers.begin(), end = m_observers.end(); observer != end; ++observer)
+            (*observer)->didAddOrRemoveTrack();
+    }
 }
 
 bool MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack)
@@ -374,6 +380,19 @@ Vector<RefPtr<MediaStreamTrack>>* MediaStream::trackVectorForType(MediaStreamSou
         ASSERT_NOT_REACHED();
     }
     return nullptr;
+}
+
+void MediaStream::addObserver(MediaStream::Observer* observer)
+{
+    if (m_observers.find(observer) == notFound)
+        m_observers.append(observer);
+}
+
+void MediaStream::removeObserver(MediaStream::Observer* observer)
+{
+    size_t pos = m_observers.find(observer);
+    if (pos != notFound)
+        m_observers.remove(pos);
 }
 
 } // namespace WebCore

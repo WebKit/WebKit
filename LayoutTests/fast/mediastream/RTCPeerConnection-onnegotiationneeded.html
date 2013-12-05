@@ -9,13 +9,16 @@
 
             var stream = null;
             var pc = null;
+            var track = null;
 
-            function error() {
+            function error()
+            {
                 testFailed('Stream generation failed.');
                 finishJSTest();
             }
 
-            function getUserMedia(dictionary, callback) {
+            function getUserMedia(dictionary, callback)
+            {
                 try {
                     navigator.webkitGetUserMedia(dictionary, callback, error);
                 } catch (e) {
@@ -24,13 +27,26 @@
                 }
             }
 
-            function onNegotiationNeeded(event) {
+            function onNegotiationNeeded(event)
+            {
                 testPassed('onNegotiationNeeded was called.');
+                removeTrack();
+            }
 
+            function onNegotiationNeeded2(event)
+            {
+                testPassed('onNegotiationNeeded was called when track was removed.');
+                addTrack();
+            }
+
+            function onNegotiationNeeded3(event)
+            {
+                testPassed('onNegotiationNeeded was called when track was added.');
                 finishJSTest();
             }
 
-            function gotStream(s) {
+            function gotStream(s)
+            {
                 testPassed('Got a stream.');
                 stream = s;
 
@@ -38,6 +54,23 @@
                 pc.onnegotiationneeded = onNegotiationNeeded;
 
                 pc.addStream(stream);
+            }
+
+            function removeTrack()
+            {
+                pc.onnegotiationneeded = onNegotiationNeeded2;
+                shouldBe('stream.getAudioTracks().length', '1');
+                track = stream.getAudioTracks()[0];
+                stream.removeTrack(track);
+                shouldBe('stream.getAudioTracks().length', '0');
+            }
+
+            function addTrack()
+            {
+                pc.onnegotiationneeded = onNegotiationNeeded3;
+                shouldBe('stream.getAudioTracks().length', '0');
+                stream.addTrack(track);
+                shouldBe('stream.getAudioTracks().length', '1');
             }
 
             getUserMedia({audio:true, video:true}, gotStream);

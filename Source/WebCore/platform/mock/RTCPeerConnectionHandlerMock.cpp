@@ -135,8 +135,12 @@ bool RTCPeerConnectionHandlerMock::addIceCandidate(PassRefPtr<RTCVoidRequest> re
     return true;
 }
 
-bool RTCPeerConnectionHandlerMock::addStream(PassRefPtr<MediaStreamPrivate>, PassRefPtr<MediaConstraints>)
+bool RTCPeerConnectionHandlerMock::addStream(PassRefPtr<MediaStreamPrivate>, PassRefPtr<MediaConstraints> constraints)
 {
+    String invalidQuery = MediaConstraintsMock::verifyConstraints(constraints);
+    if (!invalidQuery.isEmpty())
+        return false;
+
     // Spec states that every time a stream is added, a negotiationneeded event must be fired.
     m_client->negotiationNeeded();
     return true;

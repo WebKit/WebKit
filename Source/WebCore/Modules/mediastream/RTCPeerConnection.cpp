@@ -165,6 +165,9 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context, PassRefPtr
 RTCPeerConnection::~RTCPeerConnection()
 {
     stop();
+
+    for (auto stream = m_localStreams.begin(), end = m_localStreams.end(); stream != end; ++stream)
+        (*stream)->removeObserver(this);
 }
 
 void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, const Dictionary& mediaConstraints, ExceptionCode& ec)
@@ -383,11 +386,13 @@ void RTCPeerConnection::addStream(PassRefPtr<MediaStream> prpStream, const Dicti
     if (ec)
         return;
 
-    m_localStreams.append(stream);
-
     bool valid = m_peerHandler->addStream(stream->privateStream(), constraints);
     if (!valid)
         ec = SYNTAX_ERR;
+    else {
+        m_localStreams.append(stream);
+        stream->addObserver(this);
+    }
 }
 
 void RTCPeerConnection::removeStream(PassRefPtr<MediaStream> prpStream, ExceptionCode& ec)
@@ -409,7 +414,7 @@ void RTCPeerConnection::removeStream(PassRefPtr<MediaStream> prpStream, Exceptio
         return;
 
     m_localStreams.remove(pos);
-
+    stream->removeObserver(this);
     m_peerHandler->removeStream(stream->privateStream());
 }
 
@@ -599,6 +604,11 @@ void RTCPeerConnection::stop()
     Vector<RefPtr<RTCDataChannel>>::iterator i = m_dataChannels.begin();
     for (; i != m_dataChannels.end(); ++i)
         (*i)->stop();
+}
+
+void RTCPeerConnection::didAddOrRemoveTrack()
+{
+    negotiationNeeded();
 }
 
 void RTCPeerConnection::changeSignalingState(SignalingState signalingState)

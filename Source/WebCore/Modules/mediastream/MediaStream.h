@@ -47,6 +47,11 @@ class MediaStreamCenter;
 
 class MediaStream FINAL : public RefCounted<MediaStream>, public URLRegistrable, public ScriptWrappable, public MediaStreamPrivateClient, public EventTargetWithInlineData, public ContextDestructionObserver {
 public:
+    class Observer {
+    public:
+        virtual void didAddOrRemoveTrack() = 0;
+    };
+
     static PassRefPtr<MediaStream> create(ScriptExecutionContext&);
     static PassRefPtr<MediaStream> create(ScriptExecutionContext&, PassRefPtr<MediaStream>);
     static PassRefPtr<MediaStream> create(ScriptExecutionContext&, const Vector<RefPtr<MediaStreamTrack>>&);
@@ -81,6 +86,9 @@ public:
 
     // URLRegistrable
     virtual URLRegistry& registry() const OVERRIDE;
+
+    void addObserver(Observer*);
+    void removeObserver(Observer*);
 
 protected:
     MediaStream(ScriptExecutionContext&, PassRefPtr<MediaStreamPrivate>);
@@ -119,6 +127,8 @@ private:
 
     Timer<MediaStream> m_scheduledEventTimer;
     Vector<RefPtr<Event>> m_scheduledEvents;
+
+    Vector<Observer*> m_observers;
 };
 
 typedef Vector<RefPtr<MediaStream>> MediaStreamVector;

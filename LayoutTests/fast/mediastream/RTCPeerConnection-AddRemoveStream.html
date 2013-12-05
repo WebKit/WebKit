@@ -11,12 +11,14 @@
             var stream2 = null;
             var pc = null;
 
-            function error() {
+            function error()
+            {
                 testFailed('Stream generation failed.');
                 finishJSTest();
             }
 
-            function getUserMedia(dictionary, callback) {
+            function getUserMedia(dictionary, callback)
+            {
                 try {
                     navigator.webkitGetUserMedia(dictionary, callback, error);
                 } catch (e) {
@@ -25,12 +27,14 @@
                 }
             }
 
-            function onErroneousNegotiationNeeded() {
+            function onErroneousNegotiationNeeded()
+            {
                 testFailed('onErroneousNegotiationNeeded was called.');
                 finishJSTest();
             }
 
-            function onRemoveStream(event) {
+            function onRemoveStream(event)
+            {
                 testPassed('onRemoveStream was called.');
 
                 shouldBe('pc.getLocalStreams().length', '0');
@@ -38,7 +42,8 @@
                 finishJSTest();
             }
 
-            function onAddStream(event) {
+            function onAddStream(event)
+            {
                 testPassed('onAddStream was called.');
 
                 shouldBe('pc.getStreamById(stream.id)', 'stream');
@@ -54,20 +59,27 @@
                 pc.removeStream(stream);
             }
 
-            function gotStream2(s) {
+            function gotStream2(s)
+            {
                 testPassed('Got another stream.');
                 stream2 = s;
 
                 shouldBeFalse("stream.id === stream2.id");
 
-                pc = new webkitRTCPeerConnection({iceServers:[]});
                 pc.onnegotiationneeded = onAddStream;
                 pc.addStream(stream);
             }
 
-            function gotStream1(s) {
+            function gotStream1(s)
+            {
                 testPassed('Got a stream.');
                 stream = s;
+
+                pc = new webkitRTCPeerConnection({iceServers:[]});
+                pc.onnegotiationneeded = onErroneousNegotiationNeeded;
+                shouldThrow("pc.addStream(stream, {mandatory:{invalid:1}})");
+
+                shouldBe('pc.getLocalStreams().length', '0');
 
                 getUserMedia({audio:true, video:true}, gotStream2);
             }
