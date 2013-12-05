@@ -1,3 +1,15 @@
+2013-12-04  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Update jhbuild revision.
+        https://bugs.webkit.org/show_bug.cgi?id=124966
+        
+        Reviewed by Gyuyoung Kim.
+
+        Used version of Jhbuild failed to create directories and caused
+        update-webkitefl-libs to fail. Latest Jhbuild version has it fixed.
+
+        * jhbuild/jhbuild-wrapper:
+
 2013-12-04  Anders Carlsson  <andersca@apple.com>
 
         Add a WeakObjCPtr class
