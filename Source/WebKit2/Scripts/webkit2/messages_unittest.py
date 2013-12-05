@@ -1126,5 +1126,15 @@ class ReceiverImplementationTest(GeneratedFileContentsTest):
         self.assertGeneratedFileContentsEqual(file_contents, _expected_receiver_implementation)
 
 
+class UnsupportedPrecompilerDirectiveTest(unittest.TestCase):
+    def test_error_at_else(self):
+        with self.assertRaisesRegexp(Exception, r"ERROR: '#else.*' is not supported in the \*\.in files"):
+            messages.generate_message_handler(StringIO("asd\n#else bla\nfoo"))
+
+    def test_error_at_elif(self):
+        with self.assertRaisesRegexp(Exception, r"ERROR: '#elif.*' is not supported in the \*\.in files"):
+            messages.generate_message_handler(StringIO("asd\n#elif bla\nfoo"))
+
+
 if __name__ == '__main__':
     unittest.main()

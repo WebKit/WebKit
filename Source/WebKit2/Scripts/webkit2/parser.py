@@ -59,10 +59,13 @@ def parse(file):
             destination = match.group('destination')
             continue
         if line.startswith('#'):
+            trimmed = line.rstrip()
             if line.startswith('#if '):
-                conditions.append(line.rstrip()[4:])
+                conditions.append(trimmed[4:])
             elif line.startswith('#endif') and conditions:
                 conditions.pop()
+            elif line.startswith('#else') or line.startswith('#elif'):
+                raise Exception("ERROR: '%s' is not supported in the *.in files" % trimmed)
             continue
         match = re.search(r'([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\))?(?:\s+(.*))?', line)
         if match:
