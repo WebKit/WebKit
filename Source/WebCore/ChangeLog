@@ -1,3 +1,61 @@
+2013-12-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Consolidate various frame snapshot capabilities.
+        https://bugs.webkit.org/show_bug.cgi?id=124325
+
+        Reviewed by Darin Adler.
+
+        Various snapshot creation methods had duplicated code and were split
+        between Frame, DragImage, and platform-specific implementationss.
+        This patch puts WebCore snapshot methods into FrameSnapshotting
+        and removes platform implementations where possible.
+
+        DragImage methods reuse snapshot methods where possible. Inspector
+        will be able to take snapshots without using drag images.
+
+        No new tests, this is a refactoring.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (-[DOMNode renderedImage]):
+        (-[DOMRange renderedImageForcingBlackText:]):
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::createDragImage):
+        * dom/ClipboardMac.mm:
+        (WebCore::Clipboard::createDragImage):
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * page/FrameSnapshotting.cpp: Added.
+        (WebCore::ScopedFramePaintingState::ScopedFramePaintingState):
+        (WebCore::ScopedFramePaintingState::~ScopedFramePaintingState):
+        (WebCore::snapshotFrameRect): Move most buffer logic to here.
+        (WebCore::snapshotSelection): Moved from Frame.
+        (WebCore::snapshotNode): Moved from Frame.
+        * page/FrameSnapshotting.h: Added.
+        * page/mac/FrameMac.mm: Removed.
+        * page/mac/FrameSnapshottingMac.h: Removed.
+        * page/mac/FrameSnapshottingMac.mm: Removed.
+        * page/win/FrameWin.cpp: remove duplicate implementation.
+        * page/win/FrameWin.h: Fix an incorrect parameter name.
+        * platform/DragImage.cpp:
+        (WebCore::ScopedNodeDragState::ScopedNodeDragState):
+        (WebCore::ScopedNodeDragState::~ScopedNodeDragState):
+        (WebCore::createDragImageFromSnapshot): Boilerplate buffer conversion.
+        (WebCore::createDragImageForNode):
+        (WebCore::createDragImageForSelection):
+        (WebCore::ScopedFrameSelectionState::ScopedFrameSelectionState):
+        (WebCore::ScopedFrameSelectionState::~ScopedFrameSelectionState):
+        (WebCore::createDragImageForRange): Moved from Frame.
+        (WebCore::createDragImageForImage): Moved from FrameSnapshottingMac.
+        (WebCore::createDragImageForLink): use nullptr.
+
 2013-12-04  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove spaces on a blank line to have ResourceHandleCFNet.cpp identical to iOS

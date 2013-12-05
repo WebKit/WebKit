@@ -1,3 +1,12 @@
+2013-12-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Consolidate various frame snapshot capabilities.
+        https://bugs.webkit.org/show_bug.cgi?id=124325
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameIOS.mm: use new header file.
+
 2013-12-04  Andy Estes  <aestes@apple.com>
 
         [iOS] Upstream build fixes in Source/WebKit/ios/

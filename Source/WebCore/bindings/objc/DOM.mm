@@ -36,9 +36,9 @@
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
 #import "DOMRangeInternal.h"
+#import "DragImage.h"
 #import "Font.h"
 #import "Frame.h"
-#import "FrameSnapshottingMac.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
@@ -289,7 +289,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     WebCore::Frame* frame = node->document().frame();
     if (!frame)
         return nil;
-    return frame->nodeImage(node).get();
+    return [createDragImageForNode(*frame, *node).leakRef() autorelease];
 }
 
 - (NSArray *)textRects
@@ -335,7 +335,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     if (!frame)
         return nil;
 
-    return WebCore::rangeImage(frame, range, forceBlackText);
+    return [createDragImageForRange(*frame, *range, forceBlackText).leakRef() autorelease];
 }
 
 - (NSArray *)textRects

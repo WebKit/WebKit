@@ -57,30 +57,4 @@ GDIObject<HBITMAP> imageFromSelection(Frame* frame, bool forceBlackText)
     return image;
 }
 
-DragImageRef Frame::dragImageForSelection()
-{
-    if (selection().isRange())
-        return imageFromSelection(this, false).leak();
-
-    return 0;
-}
-
-DragImageRef Frame::nodeImage(Node* node)
-{
-    document()->updateLayout();
-
-    RenderObject* renderer = node->renderer();
-    if (!renderer)
-        return 0;
-
-    LayoutRect topLevelRect;
-    IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
-
-    m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
-    GDIObject<HBITMAP> result = imageFromRect(this, paintingRect);
-    m_view->setNodeToDraw(0);
-
-    return result.leak();
-}
-
 } // namespace WebCore

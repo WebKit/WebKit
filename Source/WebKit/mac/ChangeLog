@@ -1,3 +1,16 @@
+2013-12-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Consolidate various frame snapshot capabilities.
+        https://bugs.webkit.org/show_bug.cgi?id=124325
+
+        Reviewed by Darin Adler.
+
+        Use new platform-independent methods instead of Mac methods.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectionDraggingImage]):
+        (-[WebHTMLView selectionImageForcingBlackText:]):
+
 2013-12-04  Andy Estes  <aestes@apple.com>
 
         [iOS] Build projects with $(ARCHS_STANDARD_32_64_BIT)

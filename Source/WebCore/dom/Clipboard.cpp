@@ -277,10 +277,11 @@ DragImageRef Clipboard::createDragImage(IntPoint& location) const
 
     if (m_dragImageElement) {
         if (Frame* frame = m_dragImageElement->document().frame())
-            return frame->nodeImage(m_dragImageElement.get());
+            return createDragImageForNode(*frame, *m_dragImageElement);
     }
 
-    return 0; // We do not have enough information to create a drag image, use the default icon.
+    // We do not have enough information to create a drag image, use the default icon.
+    return nullptr;
 }
 
 #endif
