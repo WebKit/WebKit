@@ -40,7 +40,6 @@
 
 namespace WebCore {
 
-class BidiContext;
 class LayoutStateMaintainer;
 class LineLayoutState;
 class LineWidth;
