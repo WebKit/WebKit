@@ -291,7 +291,6 @@ webkit.org/b/110054 compositing/geometry/limit-layer-bounds-fixed.html [ Failure
 
 # Several new Khronos WebGL conformance tests are failing on WK2 EFL.
 webkit.org/b/109435 webgl/conformance/context/premultiplyalpha-test.html [ Failure Crash ]
-webkit.org/b/109435 webgl/conformance/extensions/oes-texture-float-with-video.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/extensions/oes-texture-float.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/textures/texture-size-cube-maps.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/context/context-creation-and-destruction.html [ Failure Crash ]
@@ -307,10 +306,6 @@ webkit.org/b/109435 webgl/conformance/renderbuffers/framebuffer-object-attachmen
 webkit.org/b/109435 webgl/conformance/rendering/multisample-corruption.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/rendering/point-size.html [ Failure Crash ]
 webkit.org/b/109435 webgl/conformance/textures/copy-tex-image-2d-formats.html [ Failure Crash ]
-webkit.org/b/109435 webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure Crash ]
-webkit.org/b/109435 webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure Crash ]
-webkit.org/b/109435 webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure Crash ]
-webkit.org/b/109435 webgl/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Failure Crash ]
 
 # Failing media query test.
 webkit.org/b/114916 fast/media/mq-resolution.html [ Failure ]
