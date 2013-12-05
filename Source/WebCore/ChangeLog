@@ -1,3 +1,13 @@
+2013-12-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Move platform sources free of layering violations under libPlatform
+        https://bugs.webkit.org/show_bug.cgi?id=117509
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.list.am: Move additional source files located in the platform layer under libPlatform.
+        All moved sources are free of layering violations and thus ready for the migration.
+
 2013-12-05  László Langó  <lango@inf.u-szeged.hu>
 
         Remove bridge/testqtbindings.cpp.

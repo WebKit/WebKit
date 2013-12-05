@@ -5342,50 +5342,12 @@ webcore_platform_sources += \
 	Source/WebCore/platform/DragImage.h \
 	Source/WebCore/platform/EventLoop.h \
 	Source/WebCore/platform/Gamepads.h \
-	Source/WebCore/platform/graphics/filters/DistantLightSource.cpp \
-	Source/WebCore/platform/graphics/filters/DistantLightSource.h \
-	Source/WebCore/platform/graphics/filters/FEBlend.cpp \
-	Source/WebCore/platform/graphics/filters/FEBlend.h \
-	Source/WebCore/platform/graphics/filters/FEColorMatrix.cpp \
-	Source/WebCore/platform/graphics/filters/FEColorMatrix.h \
-	Source/WebCore/platform/graphics/filters/FEComponentTransfer.cpp \
-	Source/WebCore/platform/graphics/filters/FEComponentTransfer.h \
-	Source/WebCore/platform/graphics/filters/FEComposite.cpp \
-	Source/WebCore/platform/graphics/filters/FEComposite.h \
-	Source/WebCore/platform/graphics/filters/FEConvolveMatrix.cpp \
-	Source/WebCore/platform/graphics/filters/FEConvolveMatrix.h \
-	Source/WebCore/platform/graphics/filters/FECustomFilter.cpp \
-	Source/WebCore/platform/graphics/filters/FECustomFilter.h \
-	Source/WebCore/platform/graphics/filters/FEDiffuseLighting.cpp \
-	Source/WebCore/platform/graphics/filters/FEDiffuseLighting.h \
-	Source/WebCore/platform/graphics/filters/FEDisplacementMap.cpp \
-	Source/WebCore/platform/graphics/filters/FEDisplacementMap.h \
-	Source/WebCore/platform/graphics/filters/FEDropShadow.cpp \
-	Source/WebCore/platform/graphics/filters/FEDropShadow.h \
-	Source/WebCore/platform/graphics/filters/FEFlood.cpp \
-	Source/WebCore/platform/graphics/filters/FEFlood.h \
-	Source/WebCore/platform/graphics/filters/FEGaussianBlur.cpp \
-	Source/WebCore/platform/graphics/filters/FEGaussianBlur.h \
-	Source/WebCore/platform/graphics/filters/FEMerge.cpp \
-	Source/WebCore/platform/graphics/filters/FEMerge.h \
-	Source/WebCore/platform/graphics/filters/FEMorphology.cpp \
-	Source/WebCore/platform/graphics/filters/FEMorphology.h \
-	Source/WebCore/platform/graphics/filters/FEOffset.cpp \
-	Source/WebCore/platform/graphics/filters/FEOffset.h \
-	Source/WebCore/platform/graphics/filters/FESpecularLighting.cpp \
-	Source/WebCore/platform/graphics/filters/FESpecularLighting.h \
 	Source/WebCore/platform/graphics/filters/FETile.cpp \
 	Source/WebCore/platform/graphics/filters/FETile.h \
-	Source/WebCore/platform/graphics/filters/FETurbulence.cpp \
-	Source/WebCore/platform/graphics/filters/FETurbulence.h \
 	Source/WebCore/platform/graphics/filters/FilterOperation.h \
 	Source/WebCore/platform/graphics/filters/FilterOperation.cpp \
 	Source/WebCore/platform/graphics/filters/FilterOperations.cpp \
 	Source/WebCore/platform/graphics/filters/FilterOperations.h \
-	Source/WebCore/platform/graphics/filters/SourceAlpha.cpp \
-	Source/WebCore/platform/graphics/filters/SourceAlpha.h \
-	Source/WebCore/platform/graphics/filters/SourceGraphic.cpp \
-	Source/WebCore/platform/graphics/filters/SourceGraphic.h \
 	Source/WebCore/platform/graphics/gpu/DrawingBuffer.cpp \
 	Source/WebCore/platform/graphics/gpu/DrawingBuffer.h \
 	Source/WebCore/platform/graphics/GraphicsContext3D.cpp \
@@ -5489,38 +5451,22 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/BlobResourceHandle.cpp \
 	Source/WebCore/platform/network/BlobResourceHandle.h \
 	Source/WebCore/platform/network/BlobStorageData.h \
-	Source/WebCore/platform/network/CookieStorage.h \
 	Source/WebCore/platform/network/FormDataBuilder.cpp \
 	Source/WebCore/platform/network/FormDataBuilder.h \
 	Source/WebCore/platform/network/FormData.cpp \
 	Source/WebCore/platform/network/FormData.h \
 	Source/WebCore/platform/network/HTTPParsers.cpp \
 	Source/WebCore/platform/network/HTTPParsers.h \
-	Source/WebCore/platform/network/NetworkingContext.h \
-	Source/WebCore/platform/network/NetworkStateNotifier.cpp \
-	Source/WebCore/platform/network/NetworkStateNotifier.h \
-	Source/WebCore/platform/network/NetworkStorageSession.h \
-	Source/WebCore/platform/network/PlatformCookieJar.h \
-	Source/WebCore/platform/network/ResourceErrorBase.cpp \
-	Source/WebCore/platform/network/ResourceErrorBase.h \
 	Source/WebCore/platform/network/ResourceHandleClient.cpp \
 	Source/WebCore/platform/network/ResourceHandleClient.h \
 	Source/WebCore/platform/network/ResourceHandle.cpp \
 	Source/WebCore/platform/network/ResourceHandle.h \
 	Source/WebCore/platform/network/ResourceHandleInternal.h \
 	Source/WebCore/platform/network/ResourceHandleTypes.h \
-	Source/WebCore/platform/network/ResourceLoadPriority.h \
-	Source/WebCore/platform/network/ResourceLoadTiming.cpp \
-	Source/WebCore/platform/network/ResourceLoadTiming.h \
 	Source/WebCore/platform/network/ResourceRequestBase.cpp \
 	Source/WebCore/platform/network/ResourceRequestBase.h \
 	Source/WebCore/platform/network/ResourceResponseBase.cpp \
 	Source/WebCore/platform/network/ResourceResponseBase.h \
-	Source/WebCore/platform/network/SocketStreamErrorBase.cpp \
-	Source/WebCore/platform/network/SocketStreamErrorBase.h \
-	Source/WebCore/platform/network/SocketStreamHandleBase.cpp \
-	Source/WebCore/platform/network/SocketStreamHandleBase.h \
-	Source/WebCore/platform/network/SocketStreamHandleClient.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallenge.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallengeSoup.cpp \
 	Source/WebCore/platform/network/soup/CookieJarSoup.cpp \
@@ -5529,17 +5475,11 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/soup/CredentialStorageSoup.cpp \
 	Source/WebCore/platform/network/soup/DNSSoup.cpp \
 	Source/WebCore/platform/network/soup/NetworkStorageSessionSoup.cpp \
-	Source/WebCore/platform/network/soup/ProxyServerSoup.cpp \
-	Source/WebCore/platform/network/soup/ResourceError.h \
-	Source/WebCore/platform/network/soup/ResourceErrorSoup.cpp \
 	Source/WebCore/platform/network/soup/ResourceHandleSoup.cpp \
 	Source/WebCore/platform/network/soup/ResourceRequest.h \
 	Source/WebCore/platform/network/soup/ResourceRequestSoup.cpp \
 	Source/WebCore/platform/network/soup/ResourceResponse.h \
 	Source/WebCore/platform/network/soup/ResourceResponseSoup.cpp \
-	Source/WebCore/platform/network/soup/SocketStreamError.h \
-	Source/WebCore/platform/network/soup/SocketStreamHandle.h \
-	Source/WebCore/platform/network/soup/SocketStreamHandleSoup.cpp \
 	Source/WebCore/platform/ScrollableArea.cpp \
 	Source/WebCore/platform/ScrollableArea.h \
 	Source/WebCore/platform/ScrollbarThemeClient.h \
@@ -5705,14 +5645,52 @@ platform_sources += \
 	Source/WebCore/platform/graphics/filters/CustomFilterTransformParameter.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterValidatedProgram.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterValidatedProgram.h \
+	Source/WebCore/platform/graphics/filters/DistantLightSource.cpp \
+	Source/WebCore/platform/graphics/filters/DistantLightSource.h \
+	Source/WebCore/platform/graphics/filters/FEBlend.cpp \
+	Source/WebCore/platform/graphics/filters/FEBlend.h \
+	Source/WebCore/platform/graphics/filters/FEColorMatrix.cpp \
+	Source/WebCore/platform/graphics/filters/FEColorMatrix.h \
+	Source/WebCore/platform/graphics/filters/FEComponentTransfer.cpp \
+	Source/WebCore/platform/graphics/filters/FEComponentTransfer.h \
+	Source/WebCore/platform/graphics/filters/FEComposite.cpp \
+	Source/WebCore/platform/graphics/filters/FEComposite.h \
+	Source/WebCore/platform/graphics/filters/FEConvolveMatrix.cpp \
+	Source/WebCore/platform/graphics/filters/FEConvolveMatrix.h \
+	Source/WebCore/platform/graphics/filters/FECustomFilter.cpp \
+	Source/WebCore/platform/graphics/filters/FECustomFilter.h \
+	Source/WebCore/platform/graphics/filters/FEDiffuseLighting.cpp \
+	Source/WebCore/platform/graphics/filters/FEDiffuseLighting.h \
+	Source/WebCore/platform/graphics/filters/FEDisplacementMap.cpp \
+	Source/WebCore/platform/graphics/filters/FEDisplacementMap.h \
+	Source/WebCore/platform/graphics/filters/FEDropShadow.cpp \
+	Source/WebCore/platform/graphics/filters/FEDropShadow.h \
+	Source/WebCore/platform/graphics/filters/FEFlood.cpp \
+	Source/WebCore/platform/graphics/filters/FEFlood.h \
+	Source/WebCore/platform/graphics/filters/FEGaussianBlur.cpp \
+	Source/WebCore/platform/graphics/filters/FEGaussianBlur.h \
 	Source/WebCore/platform/graphics/filters/FELighting.cpp \
 	Source/WebCore/platform/graphics/filters/FELighting.h \
+	Source/WebCore/platform/graphics/filters/FEMerge.cpp \
+	Source/WebCore/platform/graphics/filters/FEMerge.h \
+	Source/WebCore/platform/graphics/filters/FEMorphology.cpp \
+	Source/WebCore/platform/graphics/filters/FEMorphology.h \
+	Source/WebCore/platform/graphics/filters/FEOffset.cpp \
+	Source/WebCore/platform/graphics/filters/FEOffset.h \
+	Source/WebCore/platform/graphics/filters/FESpecularLighting.cpp \
+	Source/WebCore/platform/graphics/filters/FESpecularLighting.h \
+	Source/WebCore/platform/graphics/filters/FETurbulence.cpp \
+	Source/WebCore/platform/graphics/filters/FETurbulence.h \
 	Source/WebCore/platform/graphics/filters/Filter.h \
 	Source/WebCore/platform/graphics/filters/FilterEffect.cpp \
 	Source/WebCore/platform/graphics/filters/FilterEffect.h \
 	Source/WebCore/platform/graphics/filters/LightSource.h \
 	Source/WebCore/platform/graphics/filters/PointLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/PointLightSource.h \
+	Source/WebCore/platform/graphics/filters/SourceAlpha.cpp \
+	Source/WebCore/platform/graphics/filters/SourceAlpha.h \
+	Source/WebCore/platform/graphics/filters/SourceGraphic.cpp \
+	Source/WebCore/platform/graphics/filters/SourceGraphic.h \
 	Source/WebCore/platform/graphics/filters/SpotLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/SpotLightSource.h \
 	Source/WebCore/platform/graphics/freetype/FontCacheFreeType.cpp \
@@ -5917,11 +5895,18 @@ platform_sources += \
 	Source/WebCore/platform/leveldb/LevelDBWriteBatch.cpp \
 	Source/WebCore/platform/network/soup/GOwnPtrSoup.cpp \
 	Source/WebCore/platform/network/soup/GOwnPtrSoup.h \
+	Source/WebCore/platform/network/soup/ProxyServerSoup.cpp \
+	Source/WebCore/platform/network/soup/ResourceError.h \
+	Source/WebCore/platform/network/soup/ResourceErrorSoup.cpp \
+	Source/WebCore/platform/network/soup/SocketStreamError.h \
+	Source/WebCore/platform/network/soup/SocketStreamHandle.h \
+	Source/WebCore/platform/network/soup/SocketStreamHandleSoup.cpp \
 	Source/WebCore/platform/network/soup/SoupURIUtils.cpp \
 	Source/WebCore/platform/network/soup/SoupURIUtils.h \
 	Source/WebCore/platform/network/AuthenticationChallengeBase.cpp \
 	Source/WebCore/platform/network/AuthenticationChallengeBase.h \
 	Source/WebCore/platform/network/AuthenticationClient.h \
+	Source/WebCore/platform/network/CookieStorage.h \
 	Source/WebCore/platform/network/Credential.cpp \
 	Source/WebCore/platform/network/Credential.h \
 	Source/WebCore/platform/network/CredentialStorage.cpp \
@@ -5931,15 +5916,30 @@ platform_sources += \
 	Source/WebCore/platform/network/DNSResolveQueue.h \
 	Source/WebCore/platform/network/HTTPHeaderMap.cpp \
 	Source/WebCore/platform/network/HTTPHeaderMap.h \
+	Source/WebCore/platform/network/NetworkStateNotifier.cpp \
+	Source/WebCore/platform/network/NetworkStateNotifier.h \
 	Source/WebCore/platform/network/MIMEHeader.cpp \
 	Source/WebCore/platform/network/MIMEHeader.h \
+	Source/WebCore/platform/network/NetworkingContext.h \
+	Source/WebCore/platform/network/NetworkStorageSession.h \
 	Source/WebCore/platform/network/ParsedContentType.cpp \
 	Source/WebCore/platform/network/ParsedContentType.h \
+	Source/WebCore/platform/network/PlatformCookieJar.h \
 	Source/WebCore/platform/network/ProtectionSpaceHash.h \
 	Source/WebCore/platform/network/ProtectionSpace.cpp \
 	Source/WebCore/platform/network/ProtectionSpace.h \
 	Source/WebCore/platform/network/ProxyServer.cpp \
 	Source/WebCore/platform/network/ProxyServer.h \
+	Source/WebCore/platform/network/ResourceErrorBase.cpp \
+	Source/WebCore/platform/network/ResourceErrorBase.h \
+	Source/WebCore/platform/network/ResourceLoadPriority.h \
+	Source/WebCore/platform/network/ResourceLoadTiming.cpp \
+	Source/WebCore/platform/network/ResourceLoadTiming.h \
+	Source/WebCore/platform/network/SocketStreamErrorBase.cpp \
+	Source/WebCore/platform/network/SocketStreamErrorBase.h \
+	Source/WebCore/platform/network/SocketStreamHandleBase.cpp \
+	Source/WebCore/platform/network/SocketStreamHandleBase.h \
+	Source/WebCore/platform/network/SocketStreamHandleClient.h \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.h \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.cpp \
 	Source/WebCore/platform/text/BidiContext.cpp \
