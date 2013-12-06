@@ -156,7 +156,7 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
 
 }
 
-/* CurrentVersion tracks the serialization version so that persistant stores
+/* CurrentVersion tracks the serialization version so that persistent stores
  * are able to correctly bail out in the case of encountering newer formats.
  *
  * Initial version was 1.
@@ -644,13 +644,12 @@ private:
                 write(obj->internalValue().asNumber());
                 return true;
             }
-            if (obj->inherits(JSFile::info())) {
+            if (File* file = toFile(obj)) {
                 write(FileTag);
-                write(toFile(obj));
+                write(file);
                 return true;
             }
-            if (obj->inherits(JSFileList::info())) {
-                FileList* list = toFileList(obj);
+            if (FileList* list = toFileList(obj)) {
                 write(FileListTag);
                 unsigned length = list->length();
                 write(length);
@@ -658,17 +657,15 @@ private:
                     write(list->item(i));
                 return true;
             }
-            if (obj->inherits(JSBlob::info())) {
+            if (Blob* blob = toBlob(obj)) {
                 write(BlobTag);
-                Blob* blob = toBlob(obj);
                 m_blobURLs.append(blob->url());
                 write(blob->url());
                 write(blob->type());
                 write(blob->size());
                 return true;
             }
-            if (obj->inherits(JSImageData::info())) {
-                ImageData* data = toImageData(obj);
+            if (ImageData* data = toImageData(obj)) {
                 write(ImageDataTag);
                 write(data->width());
                 write(data->height());
@@ -702,8 +699,7 @@ private:
                 code = ValidationError;
                 return true;
             }
-            if (obj->inherits(JSArrayBuffer::info())) {
-                RefPtr<ArrayBuffer> arrayBuffer = toArrayBuffer(obj);
+            if (ArrayBuffer* arrayBuffer = toArrayBuffer(obj)) {
                 if (arrayBuffer->isNeutered()) {
                     code = ValidationError;
                     return true;
@@ -718,7 +714,7 @@ private:
                     return true;
                 write(ArrayBufferTag);
                 write(arrayBuffer->byteLength());
-                write(static_cast<const uint8_t *>(arrayBuffer->data()), arrayBuffer->byteLength());
+                write(static_cast<const uint8_t*>(arrayBuffer->data()), arrayBuffer->byteLength());
                 return true;
             }
             if (obj->inherits(JSArrayBufferView::info())) {
