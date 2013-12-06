@@ -1785,8 +1785,9 @@ _llint_op_catch:
     # the interpreter's throw trampoline (see _llint_throw_trampoline).
     # The throwing code must have known that we were throwing to the interpreter,
     # and have set VM::targetInterpreterPCForThrow.
-    loadp CodeBlock[cfr], t3
-    loadp CodeBlock::m_vm[t3], t3
+    loadp ScopeChain[cfr], t3
+    andp MarkedBlockMask, t3
+    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
     loadp CodeBlock[cfr], PB
     loadp CodeBlock::m_instructions[PB], PB
