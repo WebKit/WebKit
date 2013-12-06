@@ -2974,6 +2974,27 @@ private:
             LValue length = m_out.load32(stringValue, m_heaps.JSString_length);
             return m_out.notEqual(length, m_out.int32Zero);
         }
+        case UntypedUse: {
+            LValue value = lowJSValue(m_node->child1());
+            
+            LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped slow case"));
+            LBasicBlock fastCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped fast case"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Boolify untyped continuation"));
+            
+            m_out.branch(isNotBoolean(value), slowCase, fastCase);
+            
+            LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
+            ValueFromBlock fastResult = m_out.anchor(unboxBoolean(value));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(slowCase, continuation);
+            ValueFromBlock slowResult = m_out.anchor(m_out.notNull(vmCall(
+                m_out.operation(operationConvertJSValueToBoolean), m_callFrame, value)));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            return m_out.phi(m_out.boolean, fastResult, slowResult);
+        }
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return 0;

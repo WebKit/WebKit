@@ -1,5 +1,17 @@
 2013-12-06  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support all of Branch/LogicalNot
+        https://bugs.webkit.org/show_bug.cgi?id=125370
+
+        Reviewed by Mark Hahnenberg.
+
+        * js/regress/logical-not-expected.txt: Added.
+        * js/regress/logical-not.html: Added.
+        * js/regress/script-tests/logical-not.js: Added.
+        (foo):
+
+2013-12-06  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should support generic ByVal accesses
         https://bugs.webkit.org/show_bug.cgi?id=125368
 

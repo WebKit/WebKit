@@ -106,6 +106,8 @@ inline CapabilityLevel canCompile(Node* node)
     case VariableWatchpoint:
     case NotifyWrite:
     case ValueToInt32:
+    case Branch:
+    case LogicalNot:
         // These are OK.
         break;
     case GetById:
@@ -197,19 +199,6 @@ inline CapabilityLevel canCompile(Node* node)
         if (node->isBinaryUseKind(NumberUse))
             break;
         return CannotCompile;
-    case Branch:
-    case LogicalNot:
-        switch (node->child1().useKind()) {
-        case BooleanUse:
-        case Int32Use:
-        case NumberUse:
-        case StringUse:
-        case ObjectOrOtherUse:
-            break;
-        default:
-            return CannotCompile;
-        }
-        break;
     case Switch:
         switch (node->switchData()->kind) {
         case SwitchImm:
