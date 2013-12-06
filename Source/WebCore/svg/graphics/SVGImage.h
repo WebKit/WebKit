@@ -82,8 +82,7 @@ private:
 
     virtual bool dataChanged(bool allDataReceived) OVERRIDE;
 
-    // FIXME: SVGImages are underreporting decoded sizes and will be unable
-    // to prune because these functions are not implemented yet.
+    // FIXME: SVGImages will be unable to prune because this function is not implemented yet.
     virtual void destroyDecodedData(bool) OVERRIDE { }
 
     // FIXME: Implement this to be less conservative.
