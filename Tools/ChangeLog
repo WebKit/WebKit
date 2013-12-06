@@ -1,5 +1,12 @@
 2013-12-06  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Typo fix after r160218.
+
+        * Scripts/webkitpy/test/main.py:
+        (main):
+
+2013-12-06  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed fix after r160206.
 
         * Scripts/webkitpy/test/main.py:
