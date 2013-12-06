@@ -758,6 +758,7 @@ public:
 
     void useProgram(Platform3DObject);
     void validateProgram(Platform3DObject);
+    bool areProgramSymbolsValid(Platform3DObject vertexShader, Platform3DObject fragmentShader) const;
 
     void vertexAttrib1f(GC3Duint index, GC3Dfloat x);
     void vertexAttrib1fv(GC3Duint index, GC3Dfloat* values);
@@ -963,13 +964,17 @@ private:
         SymbolInfo()
             : type(0)
             , size(0)
+            , precision(SH_PRECISION_UNDEFINED)
+            , staticUse(0)
         {
         }
 
-        SymbolInfo(GC3Denum type, int size, const String& mappedName)
+        SymbolInfo(GC3Denum type, int size, const String& mappedName, ShPrecisionType precision, int staticUse)
             : type(type)
             , size(size)
             , mappedName(mappedName)
+            , precision(precision)
+            , staticUse(staticUse)
         {
         }
 
@@ -981,6 +986,8 @@ private:
         GC3Denum type;
         int size;
         String mappedName;
+        ShPrecisionType precision;
+        int staticUse;
     };
 
     typedef HashMap<String, SymbolInfo> ShaderSymbolMap;
@@ -993,6 +1000,7 @@ private:
         bool isValid;
         ShaderSymbolMap attributeMap;
         ShaderSymbolMap uniformMap;
+        ShaderSymbolMap varyingMap;
         ShaderSourceEntry()
             : type(VERTEX_SHADER)
             , isValid(false)
@@ -1001,9 +1009,11 @@ private:
         
         ShaderSymbolMap& symbolMap(enum ANGLEShaderSymbolType symbolType)
         {
-            ASSERT(symbolType == SHADER_SYMBOL_TYPE_ATTRIBUTE || symbolType == SHADER_SYMBOL_TYPE_UNIFORM);
+            ASSERT(symbolType == SHADER_SYMBOL_TYPE_ATTRIBUTE || symbolType == SHADER_SYMBOL_TYPE_UNIFORM || symbolType == SHADER_SYMBOL_TYPE_VARYING);
             if (symbolType == SHADER_SYMBOL_TYPE_ATTRIBUTE)
                 return attributeMap;
+            if (symbolType == SHADER_SYMBOL_TYPE_VARYING)
+                return varyingMap;
             return uniformMap;
         }
     };

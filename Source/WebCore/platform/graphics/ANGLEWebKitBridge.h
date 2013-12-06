@@ -46,7 +46,8 @@ enum ANGLEShaderType {
 
 enum ANGLEShaderSymbolType {
     SHADER_SYMBOL_TYPE_ATTRIBUTE,
-    SHADER_SYMBOL_TYPE_UNIFORM
+    SHADER_SYMBOL_TYPE_UNIFORM,
+    SHADER_SYMBOL_TYPE_VARYING
 };
 
 struct ANGLEShaderSymbol {
@@ -56,6 +57,8 @@ struct ANGLEShaderSymbol {
     ShDataType dataType;
     int size;
     bool isArray;
+    ShPrecisionType precision;
+    int staticUse;
 
     bool isSampler() const
     {

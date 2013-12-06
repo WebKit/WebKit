@@ -326,6 +326,14 @@ void GraphicsContext3D::reshape(int width, int height)
     ::glFlush();
 }
 
+bool GraphicsContext3D::areProgramSymbolsValid(Platform3DObject vertexShader, Platform3DObject fragmentShader) const
+{
+    UNUSED_PARAM(vertexShader);
+    UNUSED_PARAM(fragmentShader);
+    // TODO: Fill me in.
+    return true;
+}
+
 IntSize GraphicsContext3D::getInternalFramebufferSize() const
 {
     return IntSize(m_currentWidth, m_currentHeight);
