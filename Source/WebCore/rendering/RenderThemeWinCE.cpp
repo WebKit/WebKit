@@ -400,21 +400,21 @@ void RenderThemeWinCE::adjustSearchFieldCancelButtonStyle(StyleResolver*, Render
     style->setHeight(Length(cancelSize.height(), Fixed));
 }
 
-void RenderThemeWinCE::adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeWinCE::adjustSearchFieldDecorationPartStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize emptySize(1, 11);
     style->setWidth(Length(emptySize.width(), Fixed));
     style->setHeight(Length(emptySize.height(), Fixed));
 }
 
-void RenderThemeWinCE::adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeWinCE::adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize magnifierSize(15, 11);
     style->setWidth(Length(magnifierSize.width(), Fixed));
     style->setHeight(Length(magnifierSize.height(), Fixed));
 }
 
-bool RenderThemeWinCE::paintSearchFieldResultsDecoration(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeWinCE::paintSearchFieldResultsDecorationPart(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     notImplemented();
     return false;
@@ -429,7 +429,7 @@ void RenderThemeWinCE::adjustSearchFieldResultsButtonStyle(StyleResolver*, Rende
 
 bool RenderThemeWinCE::paintSearchFieldResultsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    paintSearchFieldResultsDecoration(o, paintInfo, r);
+    paintSearchFieldResultsDecorationPart(o, paintInfo, r);
     return false;
 }
 

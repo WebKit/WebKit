@@ -943,10 +943,10 @@ bool RenderThemeEfl::paintSearchFieldResultsButton(RenderObject* object, const P
     return paintThemePart(object, SearchFieldResultsButton, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldResultsDecorationStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustSearchFieldResultsDecorationPartStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document().page()) {
-        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustSearchFieldResultsDecorationStyle(styleResolver, style, element);
+        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustSearchFieldResultsDecorationPartStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchFieldResultsDecoration);
@@ -960,7 +960,7 @@ void RenderThemeEfl::adjustSearchFieldResultsDecorationStyle(StyleResolver* styl
     style->setHeight(Length(decorationSize, Fixed));
 }
 
-bool RenderThemeEfl::paintSearchFieldResultsDecoration(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeEfl::paintSearchFieldResultsDecorationPart(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     return paintThemePart(object, SearchFieldResultsDecoration, info, rect);
 }

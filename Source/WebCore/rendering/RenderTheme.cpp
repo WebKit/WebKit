@@ -231,9 +231,9 @@ void RenderTheme::adjustStyle(StyleResolver* styleResolver, RenderStyle* style, 
     case SearchFieldCancelButtonPart:
         return adjustSearchFieldCancelButtonStyle(styleResolver, style, e);
     case SearchFieldDecorationPart:
-        return adjustSearchFieldDecorationStyle(styleResolver, style, e);
+        return adjustSearchFieldDecorationPartStyle(styleResolver, style, e);
     case SearchFieldResultsDecorationPart:
-        return adjustSearchFieldResultsDecorationStyle(styleResolver, style, e);
+        return adjustSearchFieldResultsDecorationPartStyle(styleResolver, style, e);
     case SearchFieldResultsButtonPart:
         return adjustSearchFieldResultsButtonStyle(styleResolver, style, e);
 #if ENABLE(PROGRESS_ELEMENT)
@@ -374,9 +374,9 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
     case SearchFieldCancelButtonPart:
         return paintSearchFieldCancelButton(o, paintInfo, r);
     case SearchFieldDecorationPart:
-        return paintSearchFieldDecoration(o, paintInfo, r);
+        return paintSearchFieldDecorationPart(o, paintInfo, r);
     case SearchFieldResultsDecorationPart:
-        return paintSearchFieldResultsDecoration(o, paintInfo, r);
+        return paintSearchFieldResultsDecorationPart(o, paintInfo, r);
     case SearchFieldResultsButtonPart:
         return paintSearchFieldResultsButton(o, paintInfo, r);
     case SnapshottedPluginOverlayPart:
@@ -1099,11 +1099,11 @@ void RenderTheme::adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle
 {
 }
 
-void RenderTheme::adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle*, Element*) const
+void RenderTheme::adjustSearchFieldDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const
 {
 }
 
-void RenderTheme::adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle*, Element*) const
+void RenderTheme::adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle*, Element*) const
 {
 }
 

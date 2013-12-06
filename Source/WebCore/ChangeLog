@@ -1,3 +1,29 @@
+2013-12-06  Daniel Bates  <dabates@apple.com>
+
+        Rename {adjust, paint}SearchFieldDecoration, {adjust, paint}SearchFieldResultsDecoration
+        https://bugs.webkit.org/show_bug.cgi?id=125191
+
+        Reviewed by Joseph Pecoraro.
+
+        Towards upstreaming the iOS concept of render theme decorations, we should rename
+        RenderTheme::{adjust, paint}SearchFieldDecorationStyle and RenderTheme::{adjust, paint}SearchFieldResultsDecoration
+        to avoid ambiguity with the iOS concept.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        * platform/efl/RenderThemeEfl.h:
+        * platform/gtk/RenderThemeGtk.cpp:
+        * platform/gtk/RenderThemeGtk.h:
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        * rendering/RenderThemeSafari.cpp:
+        * rendering/RenderThemeSafari.h:
+        * rendering/RenderThemeWin.cpp:
+        * rendering/RenderThemeWin.h:
+        * rendering/RenderThemeWinCE.cpp:
+        * rendering/RenderThemeWinCE.h:
+
 2013-12-06  Andreas Kling  <akling@apple.com>
 
         Make remaining CSSValue constructors return PassRef.

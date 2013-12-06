@@ -1642,7 +1642,7 @@ const IntSize* RenderThemeMac::resultsButtonSizes() const
 }
 
 const int emptyResultsOffset = 9;
-void RenderThemeMac::adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustSearchFieldDecorationPartStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style->setWidth(Length(size.width() - emptyResultsOffset, Fixed));
@@ -1650,12 +1650,12 @@ void RenderThemeMac::adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyl
     style->setBoxShadow(nullptr);
 }
 
-bool RenderThemeMac::paintSearchFieldDecoration(RenderObject*, const PaintInfo&, const IntRect&)
+bool RenderThemeMac::paintSearchFieldDecorationPart(RenderObject*, const PaintInfo&, const IntRect&)
 {
     return false;
 }
 
-void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style->setWidth(Length(size.width(), Fixed));
@@ -1663,7 +1663,7 @@ void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(StyleResolver*, Ren
     style->setBoxShadow(nullptr);
 }
 
-bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintSearchFieldResultsDecorationPart(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* input = o->node()->shadowHost();
     if (!input)
