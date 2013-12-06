@@ -484,8 +484,96 @@ private:
 
     void compileValueToInt32()
     {
-        ASSERT(m_node->child1().useKind() == BooleanUse);
-        setInt32(m_out.zeroExt(lowBoolean(m_node->child1()), m_out.int32));
+        switch (m_node->child1().useKind()) {
+        case Int32Use:
+            setInt32(lowInt32(m_node->child1()));
+            break;
+            
+        case MachineIntUse:
+            setInt32(m_out.castToInt32(lowStrictInt52(m_node->child1())));
+            break;
+            
+        case NumberUse:
+        case NotCellUse: {
+            LoweredNodeValue value = m_int32Values.get(m_node->child1().node());
+            if (isValid(value)) {
+                setInt32(value.value());
+                break;
+            }
+            
+            value = m_jsValueValues.get(m_node->child1().node());
+            if (isValid(value)) {
+                LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 int case"));
+                LBasicBlock notIntCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 not int case"));
+                LBasicBlock doubleCase = 0;
+                LBasicBlock notNumberCase = 0;
+                if (m_node->child1().useKind() == NotCellUse) {
+                    doubleCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 double case"));
+                    notNumberCase = FTL_NEW_BLOCK(m_out, ("ValueToInt32 not number case"));
+                }
+                LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ValueToInt32 continuation"));
+                
+                Vector<ValueFromBlock> results;
+                
+                m_out.branch(isNotInt32(value.value()), notIntCase, intCase);
+                
+                LBasicBlock lastNext = m_out.appendTo(intCase, notIntCase);
+                results.append(m_out.anchor(unboxInt32(value.value())));
+                m_out.jump(continuation);
+                
+                if (m_node->child1().useKind() == NumberUse) {
+                    m_out.appendTo(notIntCase, continuation);
+                    FTL_TYPE_CHECK(
+                        jsValueValue(value.value()), m_node->child1(), SpecFullNumber,
+                        isCellOrMisc(value.value()));
+                    results.append(m_out.anchor(doubleToInt32(unboxDouble(value.value()))));
+                    m_out.jump(continuation);
+                } else {
+                    m_out.appendTo(notIntCase, doubleCase);
+                    m_out.branch(isCellOrMisc(value.value()), notNumberCase, doubleCase);
+                    
+                    m_out.appendTo(doubleCase, notNumberCase);
+                    results.append(m_out.anchor(doubleToInt32(unboxDouble(value.value()))));
+                    m_out.jump(continuation);
+                    
+                    m_out.appendTo(notNumberCase, continuation);
+                    
+                    FTL_TYPE_CHECK(
+                        jsValueValue(value.value()), m_node->child1(), ~SpecCell,
+                        isCell(value.value()));
+                    
+                    LValue specialResult = m_out.select(
+                        m_out.equal(
+                            value.value(),
+                            m_out.constInt64(JSValue::encode(jsBoolean(true)))),
+                        m_out.int32One, m_out.int32Zero);
+                    results.append(m_out.anchor(specialResult));
+                    m_out.jump(continuation);
+                }
+                
+                m_out.appendTo(continuation, lastNext);
+                setInt32(m_out.phi(m_out.int32, results));
+                break;
+            }
+            
+            value = m_doubleValues.get(m_node->child1().node());
+            if (isValid(value)) {
+                setInt32(doubleToInt32(value.value()));
+                break;
+            }
+            
+            terminate(Uncountable);
+            break;
+        }
+            
+        case BooleanUse:
+            setInt32(m_out.zeroExt(lowBoolean(m_node->child1()), m_out.int32));
+            break;
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
     }
 
     void compileInt52ToValue()
@@ -1649,7 +1737,7 @@ private:
                         if (child3.useKind() == Int32Use)
                             intValue = lowInt32(child3);
                         else
-                            intValue = m_out.castToInt32(lowInt52(child3));
+                            intValue = m_out.castToInt32(lowStrictInt52(child3));
 
                         if (isClamped(type)) {
                             ASSERT(elementSize(type) == 1);
@@ -3246,7 +3334,7 @@ private:
     
     LValue lowCell(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || isCell(edge.useKind()));
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || DFG::isCell(edge.useKind()));
         
         if (edge->op() == JSConstant) {
             JSValue value = m_graph.valueOfJSConstant(edge.node());
@@ -3553,6 +3641,11 @@ private:
     LValue isNotCell(LValue jsValue)
     {
         return m_out.testNonZero64(jsValue, m_tagMask);
+    }
+    
+    LValue isCell(LValue jsValue)
+    {
+        return m_out.testIsZero64(jsValue, m_tagMask);
     }
     
     LValue isNotBoolean(LValue jsValue)

@@ -105,6 +105,7 @@ inline CapabilityLevel canCompile(Node* node)
     case FunctionReentryWatchpoint:
     case VariableWatchpoint:
     case NotifyWrite:
+    case ValueToInt32:
         // These are OK.
         break;
     case GetById:
@@ -223,10 +224,6 @@ inline CapabilityLevel canCompile(Node* node)
         default:
             return CannotCompile;
         }
-        break;
-    case ValueToInt32:
-        if (node->child1().useKind() != BooleanUse)
-            return CannotCompile;
         break;
     default:
         // Don't know how to handle anything else.

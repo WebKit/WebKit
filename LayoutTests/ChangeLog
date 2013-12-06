@@ -1,3 +1,15 @@
+2013-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support all of ValueToInt32
+        https://bugs.webkit.org/show_bug.cgi?id=125283
+
+        Reviewed by Mark Hahnenberg.
+
+        * js/regress/put-by-val-machine-int-expected.txt: Added.
+        * js/regress/put-by-val-machine-int.html: Added.
+        * js/regress/script-tests/put-by-val-machine-int.js: Added.
+        (foo):
+
 2013-12-06  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed gardening, correct previous fix.
