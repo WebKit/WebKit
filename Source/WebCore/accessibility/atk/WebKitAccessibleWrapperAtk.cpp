@@ -534,6 +534,13 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
 static AtkRole atkRole(AccessibilityRole role)
 {
     switch (role) {
+    case ApplicationAlertRole:
+        return ATK_ROLE_ALERT;
+    case ApplicationDialogRole:
+    case ApplicationAlertDialogRole:
+        return ATK_ROLE_DIALOG;
+    case ApplicationStatusRole:
+        return ATK_ROLE_STATUSBAR;
     case UnknownRole:
         return ATK_ROLE_UNKNOWN;
     case AudioRole:
@@ -558,7 +565,10 @@ static AtkRole atkRole(AccessibilityRole role)
     case StaticTextRole:
         return ATK_ROLE_TEXT;
     case OutlineRole:
+    case TreeRole:
         return ATK_ROLE_TREE;
+    case TreeItemRole:
+        return ATK_ROLE_TREE_ITEM;
     case MenuBarRole:
         return ATK_ROLE_MENU_BAR;
     case MenuListPopupRole:
@@ -621,8 +631,8 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_IMAGE;
     case ListMarkerRole:
         return ATK_ROLE_TEXT;
-    case WebAreaRole:
-        // return ATK_ROLE_HTML_CONTAINER; // Is this right?
+    case DocumentRole:
+    case DocumentArticleRole:
         return ATK_ROLE_DOCUMENT_FRAME;
     case HeadingRole:
         return ATK_ROLE_HEADING;
@@ -648,6 +658,10 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_SPIN_BUTTON;
     case TabRole:
         return ATK_ROLE_PAGE_TAB;
+    case UserInterfaceTooltipRole:
+        return ATK_ROLE_TOOL_TIP;
+    case WebAreaRole:
+        return ATK_ROLE_DOCUMENT_WEB;
     default:
         return ATK_ROLE_UNKNOWN;
     }

@@ -1,3 +1,16 @@
+2013-12-06  Lukasz Gajowy  <l.gajowy@samsung.com>
+
+        [ATK] Missing aria roles mappings
+        https://bugs.webkit.org/show_bug.cgi?id=117729
+
+        Reviewed by Mario Sanchez Prada.
+
+        Added new test, checking whether ARIA roles to ATK roles mappings work properly.
+
+        * accessibility/aria-mappings-expected.txt: Added.
+        * accessibility/aria-mappings.html: Added.
+        * platform/mac/accessibility/aria-mappings-expected.txt: Added.
+
 2013-12-04  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should use cvttsd2si directly for double-to-int32 conversions

@@ -1,3 +1,17 @@
+2013-12-06  Lukasz Gajowy  <l.gajowy@samsung.com>
+
+        [ATK] Missing aria roles mappings
+        https://bugs.webkit.org/show_bug.cgi?id=117729
+
+        Reviewed by Mario Sanchez Prada.
+
+        Added a few mappings from ARIA roles to ATK roles.
+
+        Test: accessibility/aria-mappings.html
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
 2013-11-11  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] webkitwebaudiosrc element needs to emit stream-start, caps and segment events
