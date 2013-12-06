@@ -2452,14 +2452,3 @@ typebuilder_h_file.close()
 typebuilder_cpp_file.close()
 
 backend_js_file.close()
-
-# FIXME: This exists to remove some old generated files that can cause build issues if
-# a compiler includes the old files instead of the new files with the same name. This
-# can be removed after a week or so once bots and developers have built with this.
-# Otherwise, developers can always just do a clean build or remove their DerivedSources.
-old_backend_h_file = os.path.join(output_header_dirname, "InspectorBackendDispatcher.h")
-old_backend_cpp_file = os.path.join(output_header_dirname, "InspectorBackendDispatcher.cpp")
-if os.path.exists(old_backend_h_file):
-    os.remove(old_backend_h_file)
-if os.path.exists(old_backend_cpp_file):
-    os.remove(old_backend_cpp_file)

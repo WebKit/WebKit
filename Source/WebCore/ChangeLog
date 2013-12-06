@@ -1,5 +1,14 @@
 2013-12-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove Staging Workaround
+        https://bugs.webkit.org/show_bug.cgi?id=125354
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/CodeGeneratorInspector.py:
+
+2013-12-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Simplify ScriptFunctionCall by removing dead code.
         https://bugs.webkit.org/show_bug.cgi?id=125274
 
