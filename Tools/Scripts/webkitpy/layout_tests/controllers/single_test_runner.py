@@ -112,6 +112,10 @@ class SingleTestRunner(object):
             expected_driver_output.strip_metrics()
             driver_output.strip_metrics()
 
+        patterns = self._port.logging_patterns_to_strip()
+        expected_driver_output.strip_patterns(patterns)
+        driver_output.strip_patterns(patterns)
+
         test_result = self._compare_output(expected_driver_output, driver_output)
         if self._options.new_test_results:
             self._add_missing_baselines(test_result, driver_output)

@@ -1541,6 +1541,8 @@ class Port(object):
         # By current convention, the WebKit2 name is always mac-wk2, win-wk2, not mac-leopard-wk2, etc,
         return "%s-wk2" % self.port_name
 
+    def logging_patterns_to_strip(self):
+        return []
 
 class VirtualTestSuite(object):
     def __init__(self, name, base, args, tests=None):

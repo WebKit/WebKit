@@ -55,26 +55,26 @@ class DriverOutput(object):
     """Groups information about a output from driver for easy passing
     and post-processing of data."""
 
-    strip_patterns = []
-    strip_patterns.append((re.compile('at \(-?[0-9]+,-?[0-9]+\) *'), ''))
-    strip_patterns.append((re.compile('size -?[0-9]+x-?[0-9]+ *'), ''))
-    strip_patterns.append((re.compile('text run width -?[0-9]+: '), ''))
-    strip_patterns.append((re.compile('text run width -?[0-9]+ [a-zA-Z ]+: '), ''))
-    strip_patterns.append((re.compile('RenderButton {BUTTON} .*'), 'RenderButton {BUTTON}'))
-    strip_patterns.append((re.compile('RenderImage {INPUT} .*'), 'RenderImage {INPUT}'))
-    strip_patterns.append((re.compile('RenderBlock {INPUT} .*'), 'RenderBlock {INPUT}'))
-    strip_patterns.append((re.compile('RenderTextControl {INPUT} .*'), 'RenderTextControl {INPUT}'))
-    strip_patterns.append((re.compile('\([0-9]+px'), 'px'))
-    strip_patterns.append((re.compile(' *" *\n +" *'), ' '))
-    strip_patterns.append((re.compile('" +$'), '"'))
-    strip_patterns.append((re.compile('- '), '-'))
-    strip_patterns.append((re.compile('\n( *)"\s+'), '\n\g<1>"'))
-    strip_patterns.append((re.compile('\s+"\n'), '"\n'))
-    strip_patterns.append((re.compile('scrollWidth [0-9]+'), 'scrollWidth'))
-    strip_patterns.append((re.compile('scrollHeight [0-9]+'), 'scrollHeight'))
-    strip_patterns.append((re.compile('scrollX [0-9]+'), 'scrollX'))
-    strip_patterns.append((re.compile('scrollY [0-9]+'), 'scrollY'))
-    strip_patterns.append((re.compile('scrolled to [0-9]+,[0-9]+'), 'scrolled'))
+    metrics_patterns = []
+    metrics_patterns.append((re.compile('at \(-?[0-9]+,-?[0-9]+\) *'), ''))
+    metrics_patterns.append((re.compile('size -?[0-9]+x-?[0-9]+ *'), ''))
+    metrics_patterns.append((re.compile('text run width -?[0-9]+: '), ''))
+    metrics_patterns.append((re.compile('text run width -?[0-9]+ [a-zA-Z ]+: '), ''))
+    metrics_patterns.append((re.compile('RenderButton {BUTTON} .*'), 'RenderButton {BUTTON}'))
+    metrics_patterns.append((re.compile('RenderImage {INPUT} .*'), 'RenderImage {INPUT}'))
+    metrics_patterns.append((re.compile('RenderBlock {INPUT} .*'), 'RenderBlock {INPUT}'))
+    metrics_patterns.append((re.compile('RenderTextControl {INPUT} .*'), 'RenderTextControl {INPUT}'))
+    metrics_patterns.append((re.compile('\([0-9]+px'), 'px'))
+    metrics_patterns.append((re.compile(' *" *\n +" *'), ' '))
+    metrics_patterns.append((re.compile('" +$'), '"'))
+    metrics_patterns.append((re.compile('- '), '-'))
+    metrics_patterns.append((re.compile('\n( *)"\s+'), '\n\g<1>"'))
+    metrics_patterns.append((re.compile('\s+"\n'), '"\n'))
+    metrics_patterns.append((re.compile('scrollWidth [0-9]+'), 'scrollWidth'))
+    metrics_patterns.append((re.compile('scrollHeight [0-9]+'), 'scrollHeight'))
+    metrics_patterns.append((re.compile('scrollX [0-9]+'), 'scrollX'))
+    metrics_patterns.append((re.compile('scrollY [0-9]+'), 'scrollY'))
+    metrics_patterns.append((re.compile('scrolled to [0-9]+,[0-9]+'), 'scrolled'))
 
     def __init__(self, text, image, image_hash, audio, crash=False,
             test_time=0, measurements=None, timeout=False, error='', crashed_process_name='??',
@@ -99,11 +99,13 @@ class DriverOutput(object):
         return bool(self.error)
 
     def strip_metrics(self):
+        self.strip_patterns(self.metrics_patterns)
+
+    def strip_patterns(self, patterns):
         if not self.text:
             return
-        for pattern in self.strip_patterns:
+        for pattern in patterns:
             self.text = re.sub(pattern[0], pattern[1], self.text)
-
 
 class Driver(object):
     """object for running test(s) using DumpRenderTree/WebKitTestRunner."""

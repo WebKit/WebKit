@@ -30,6 +30,7 @@
 import logging
 import os
 import time
+import re
 
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
@@ -318,3 +319,7 @@ class MacPort(ApplePort):
         except ScriptError:
             _log.warn("xcrun failed; falling back to '%s'." % fallback)
             return fallback
+
+    def logging_patterns_to_strip(self):
+        # FIXME: Remove this after <rdar://problem/15605007> is fixed
+        return [(re.compile('(AVF|GVA) info:.*\n'), '')]
