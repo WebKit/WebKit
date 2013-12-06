@@ -1482,25 +1482,45 @@ private:
             LValue index = lowInt32(m_node->child2());
             LValue storage = lowStorage(m_node->child3());
             
+            IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
+                m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
+            
             if (m_node->arrayMode().isInBounds()) {
                 speculate(
                     OutOfBounds, noValue(), 0,
                     m_out.aboveOrEqual(
                         index, m_out.load32(storage, m_heaps.Butterfly_publicLength)));
                 
-                LValue result = m_out.load64(m_out.baseIndex(
-                    m_node->arrayMode().type() == Array::Int32 ?
-                        m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties,
-                    storage, m_out.zeroExt(index, m_out.intPtr),
-                    m_state.forNode(m_node->child2()).m_value));
+                LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
                 speculate(LoadFromHole, noValue(), 0, m_out.isZero64(result));
                 setJSValue(result);
                 return;
             }
             
-            // FIXME: Implement hole/OOB loads in the FTL.
-            // https://bugs.webkit.org/show_bug.cgi?id=118077
-            RELEASE_ASSERT_NOT_REACHED();
+            LValue base = lowCell(m_node->child1());
+            
+            LBasicBlock fastCase = FTL_NEW_BLOCK(m_out, ("GetByVal int/contiguous fast case"));
+            LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("GetByVal int/contiguous slow case"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("GetByVal int/contiguous continuation"));
+            
+            m_out.branch(
+                m_out.aboveOrEqual(
+                    index, m_out.load32(storage, m_heaps.Butterfly_publicLength)),
+                slowCase, fastCase);
+            
+            LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
+            
+            ValueFromBlock fastResult = m_out.anchor(
+                m_out.load64(baseIndex(heap, storage, index, m_node->child2())));
+            m_out.branch(m_out.isZero64(fastResult.value()), slowCase, continuation);
+            
+            m_out.appendTo(slowCase, continuation);
+            ValueFromBlock slowResult = m_out.anchor(
+                vmCall(m_out.operation(operationGetByValArrayInt), m_callFrame, base, index));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(m_out.int64, fastResult, slowResult));
             return;
         }
             
@@ -1508,16 +1528,16 @@ private:
             LValue index = lowInt32(m_node->child2());
             LValue storage = lowStorage(m_node->child3());
             
+            IndexedAbstractHeap& heap = m_heaps.indexedDoubleProperties;
+            
             if (m_node->arrayMode().isInBounds()) {
                 speculate(
                     OutOfBounds, noValue(), 0,
                     m_out.aboveOrEqual(
                         index, m_out.load32(storage, m_heaps.Butterfly_publicLength)));
                 
-                LValue result = m_out.loadDouble(m_out.baseIndex(
-                    m_heaps.indexedDoubleProperties,
-                    storage, m_out.zeroExt(index, m_out.intPtr),
-                    m_state.forNode(m_node->child2()).m_value));
+                LValue result = m_out.loadDouble(
+                    baseIndex(heap, storage, index, m_node->child2()));
                 
                 if (!m_node->arrayMode().isSaneChain()) {
                     speculate(
@@ -1528,9 +1548,35 @@ private:
                 break;
             }
             
-            // FIXME: Implement hole/OOB loads in the FTL.
-            // https://bugs.webkit.org/show_bug.cgi?id=118077
-            RELEASE_ASSERT_NOT_REACHED();
+            LValue base = lowCell(m_node->child1());
+            
+            LBasicBlock inBounds = FTL_NEW_BLOCK(m_out, ("GetByVal double in bounds"));
+            LBasicBlock boxPath = FTL_NEW_BLOCK(m_out, ("GetByVal double boxing"));
+            LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("GetByVal double slow case"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("GetByVal double continuation"));
+            
+            m_out.branch(
+                m_out.aboveOrEqual(
+                    index, m_out.load32(storage, m_heaps.Butterfly_publicLength)),
+                slowCase, inBounds);
+            
+            LBasicBlock lastNext = m_out.appendTo(inBounds, boxPath);
+            LValue doubleValue = m_out.loadDouble(
+                baseIndex(heap, storage, index, m_node->child2()));
+            m_out.branch(
+                m_out.doubleNotEqualOrUnordered(doubleValue, doubleValue), slowCase, boxPath);
+            
+            m_out.appendTo(boxPath, slowCase);
+            ValueFromBlock fastResult = m_out.anchor(boxDouble(doubleValue));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(slowCase, continuation);
+            ValueFromBlock slowResult = m_out.anchor(
+                vmCall(m_out.operation(operationGetByValArrayInt), m_callFrame, base, index));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(m_out.int64, fastResult, slowResult));
             return;
         }
             
@@ -2713,6 +2759,13 @@ private:
         callStackmap(exit, arguments);
         
         info.m_isInvalidationPoint = true;
+    }
+    
+    TypedPointer baseIndex(IndexedAbstractHeap& heap, LValue storage, LValue index, Edge edge)
+    {
+        return m_out.baseIndex(
+            heap, storage, m_out.zeroExt(index, m_out.intPtr),
+            m_state.forNode(edge).m_value);
     }
     
     LValue allocateCell(LValue allocator, LValue structure, LBasicBlock slowPath)

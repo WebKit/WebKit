@@ -1,3 +1,17 @@
+2013-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support hole/OOB array accesses
+        https://bugs.webkit.org/show_bug.cgi?id=118077
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::baseIndex):
+
 2013-12-06  Michael Saboff  <msaboff@apple.com>
 
         Split sizing of VarArgs frames from loading arguments for the frame

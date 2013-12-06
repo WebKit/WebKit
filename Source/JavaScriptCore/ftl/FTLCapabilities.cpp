@@ -158,13 +158,6 @@ inline CapabilityLevel canCompile(Node* node)
                 return CanCompileAndOSREnter;
             return CannotCompile;
         }
-        switch (node->arrayMode().speculation()) {
-        case Array::SaneChain:
-        case Array::InBounds:
-            break;
-        default:
-            return CannotCompile;
-        }
         break;
     case PutByVal:
     case PutByValAlias:
