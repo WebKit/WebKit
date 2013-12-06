@@ -1980,12 +1980,11 @@ _llint_op_catch:
     # This is where we end up from the JIT's throw trampoline (because the
     # machine code return address will be set to _llint_op_catch), and from
     # the interpreter's throw trampoline (see _llint_throw_trampoline).
-    # The JIT throwing protocol calls for the cfr to be in t0. The throwing
-    # code must have known that we were throwing to the interpreter, and have
-    # set VM::targetInterpreterPCForThrow.
-    move t0, cfr
+    # The throwing code must have known that we were throwing to the interpreter,
+    # and have set VM::targetInterpreterPCForThrow.
     loadp CodeBlock[cfr], t3
     loadp CodeBlock::m_vm[t3], t3
+    loadp VM::callFrameForThrow[t3], cfr
     loadi VM::targetInterpreterPCForThrow[t3], PC
     loadi VM::m_exception + PayloadOffset[t3], t0
     loadi VM::m_exception + TagOffset[t3], t1
@@ -2050,8 +2049,6 @@ _llint_throw_from_slow_path_trampoline:
     # This essentially emulates the JIT's throwing protocol.
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_vm[t1], t1
-    loadp VM::topCallFrame[t1], cfr
-    loadp VM::callFrameForThrow[t1], t0
     jmp VM::targetMachinePCForThrow[t1]
 
 

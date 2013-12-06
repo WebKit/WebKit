@@ -924,11 +924,10 @@ void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
-    // operationThrow returns the callFrame for the handler.
-    move(regT0, callFrameRegister);
-
-    // Now store the exception returned by operationThrow.
     move(TrustedImmPtr(m_vm), regT3);
+    // operationThrow returns the callFrame for the handler.
+    load32(Address(regT3, VM::callFrameForThrowOffset()), callFrameRegister);
+    // Now store the exception returned by operationThrow.
     load32(Address(regT3, VM::exceptionOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
     load32(Address(regT3, VM::exceptionOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
     store32(TrustedImm32(JSValue().payload()), Address(regT3, VM::exceptionOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
