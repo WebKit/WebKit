@@ -1,0 +1,41 @@
+# This file should contain entries for expectations that are specific
+# to the Apple Mac port running on OS X Mavericks
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+#
+
+###### This file has four sections. When adding new tests, make sure to
+###### add to the right section:
+
+### (1) Classified failures with bug reports
+### (2) Classified failures without bug reports
+### (3) Unclassified failures
+### (4) Features that are not supported in WebKit2 and likely never will be
+
+
+########################################
+### START OF (1) Classified failures with bug reports
+
+# Low level framework logs with printf on some configurations.
+webkit.org/b/125356 plugins/quicktime-plugin-replacement.html [ Pass Failure ]
+
+### END OF (1) Classified failures with bug reports
+########################################
+
+
+########################################
+### START OF (2) Classified failures without bug reports
+### END OF (2) Classified failures without bug reports
+########################################
+
+
+########################################
+### START OF (3) Unclassified failures
+### END OF (3) Unclassified failures
+########################################
+
+
+########################################
+### START OF (4) Features that are not supported on OS X Mavericks and likely never will be
+### END OF (4) Features that are not supported on OS X Mavericks and likely never will be
+########################################
