@@ -1705,10 +1705,8 @@ private:
                             
                             m_out.appendTo(continuation, lastNext);
                             intValue = m_out.phi(m_out.int32, intValues);
-                        } else if (isSigned(type))
+                        } else
                             intValue = doubleToInt32(doubleValue);
-                        else
-                            intValue = doubleToUInt32(doubleValue);
                         break;
                     }
                         
@@ -3016,14 +3014,6 @@ private:
         
         double limit = pow(2, 31) - 1;
         return doubleToInt32(doubleValue, -limit, limit);
-    }
-    
-    LValue doubleToUInt32(LValue doubleValue)
-    {
-        if (Output::hasSensibleDoubleToInt())
-            return sensibleDoubleToInt32(doubleValue);
-        
-        return doubleToInt32(doubleValue, 0, pow(2, 32) - 1, false);
     }
     
     LValue sensibleDoubleToInt32(LValue doubleValue)

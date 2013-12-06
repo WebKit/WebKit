@@ -1,3 +1,16 @@
+2013-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL shouldn't have a doubleToUInt32 path
+        https://bugs.webkit.org/show_bug.cgi?id=125360
+
+        Reviewed by Mark Hahnenberg.
+        
+        This code existed because I incorrectly thought it was necessary. It's now basically
+        dead.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+
 2013-12-06  Laszlo Vidacs  <lac@inf.u-szeged.hu>
 
         Define SHA1 hash size in SHA1.h and use it at various places.
