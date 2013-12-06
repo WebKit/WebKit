@@ -40,28 +40,17 @@
 
 namespace WebCore {
 
-class LayoutStateMaintainer;
 class LineLayoutState;
-class LineWidth;
 class LogicalSelectionOffsetCaches;
 class RenderInline;
 class RenderText;
 
 struct BidiRun;
 struct PaintInfo;
-class LineInfo;
-class RenderRubyRun;
-#if ENABLE(CSS_SHAPES)
-class BasicShape;
-#endif
-class TextLayout;
-class WordMeasurement;
 
-template <class Run> class BidiRunList;
 typedef WTF::ListHashSet<RenderBox*, 16> TrackedRendererListHashSet;
 typedef WTF::HashMap<const RenderBlock*, OwnPtr<TrackedRendererListHashSet>> TrackedDescendantsMap;
 typedef WTF::HashMap<const RenderBox*, OwnPtr<HashSet<RenderBlock*>>> TrackedContainerMap;
-typedef Vector<WordMeasurement, 64> WordMeasurements;
 
 enum CaretType { CursorCaret, DragCaret };
 enum ContainingBlockState { NewContainingBlock, SameContainingBlock };
