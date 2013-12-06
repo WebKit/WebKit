@@ -1,3 +1,13 @@
+2013-12-05  Iain Lane  <iain.lane@canonical.com>
+
+        Remove USE(LOCKFREE_THREADSAFEREFCOUNTED) from Atomics.cpp since it is
+        no longer defined.
+        https://bugs.webkit.org/show_bug.cgi?id=124502
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Atomics.cpp:
+
 2013-12-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable HTMLTemplateElement by default

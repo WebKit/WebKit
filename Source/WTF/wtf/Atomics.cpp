@@ -65,7 +65,7 @@
 // (http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56296). GCC >= 4.8 will support __atomic_* builtin
 // functions for this purpose for all the GCC targets, but for current compilers we have to include
 // our own implementation.
-#if COMPILER(GCC) && !defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_8) && USE(LOCKFREE_THREADSAFEREFCOUNTED) && USE(PTHREADS)
+#if COMPILER(GCC) && !defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_8) && USE(PTHREADS)
 
 #include "ThreadingPrimitives.h"
 
