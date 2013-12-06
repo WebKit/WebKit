@@ -367,7 +367,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
         return;
 
     Page* page = document().page();
-    if (page)
+    if (!page)
         return;
 
     // Reset any author styles that may apply as we only want explicit

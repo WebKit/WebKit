@@ -1,3 +1,16 @@
+2013-12-06  Eric Carlson  <eric.carlson@apple.com>
+
+        r159827 broke plug-in snapshotting
+        https://bugs.webkit.org/show_bug.cgi?id=125365
+
+        Reviewed by Dean Jackson.
+
+        No new tests, covered by existing tests.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot): Return early if there is NOT
+            a page, not if there IS a page.
+
 2013-12-06  Roger Fong <roger_fong@apple.com> and Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Support compiling with VS2013
