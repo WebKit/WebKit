@@ -4913,7 +4913,7 @@ class WebKitStyleTest(CppStyleTestBase):
         { }''',
         ['Should be indented on a separate line, with the colon or comma first on that line.'
          '  [whitespace/indent] [4]',
-         'Comma should be at the beggining of the line in a member initialization list.'
+         'Comma should be at the beginning of the line in a member initialization list.'
          '  [whitespace/init] [4]'])
         self.assert_multi_line_lint('''\
         MyClass::MyClass(Document* doc) :MySuperClass()
@@ -4949,7 +4949,7 @@ class WebKitStyleTest(CppStyleTestBase):
         MyClass::MyClass(Document* doc)
             : MySuperClass() , m_doc(0)
         { }''',
-        'Comma should be at the beggining of the line in a member initialization list.'
+        'Comma should be at the beginning of the line in a member initialization list.'
         '  [whitespace/init] [4]')
         self.assert_multi_line_lint('''\
         class MyClass : public Goo {
