@@ -288,6 +288,9 @@
         "cURLNetwork": {
             "filename": r"Source/WebCore/platform/network/curl/",
         },
+        "ANGLE": {
+            "filename": r"Source/ThirdParty/ANGLE",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -360,5 +363,7 @@
         "GtkWebKit2PublicAPI": [ "Thanks for the patch. If this patch contains new public API "
                                  "please make sure it follows the guidelines for new WebKit2 GTK+ API. "
                                  "See http://trac.webkit.org/wiki/WebKitGTK/AddingNewWebKit2API", ],
+        "ANGLE": [ "Note that there are important steps to take when updating ANGLE. "
+                   "See http://trac.webkit.org/wiki/UpdatingANGLE", ],
     },
 }
