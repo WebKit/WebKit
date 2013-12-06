@@ -1,5 +1,28 @@
 2013-12-06  Dan Bernstein  <mitz@apple.com>
 
+        <rdar://problem/15606872> REGRESSION (r160148): Mail throws an exception during launch
+        https://bugs.webkit.org/show_bug.cgi?id=125362
+
+        Reviewed by Sam Weinig.
+
+        There were two problems in how WKConnection was made to work with WKObject: first,
+        API::Object::newObject() was not updated to allocate the correct wrapper class, and second,
+        WebConnection has subclasses with additional data members, which don’t fit in the object
+        storage ivar.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Changed to allocate a WKConnection of the required size.
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        Removed _connection ivar.
+        (-[WKConnection dealloc]): Changed to use -_connection accessor instead of ivar.
+        (-[WKConnection setDelegate:]): Ditto.
+        (-[WKConnection sendMessageWithName:body:]): Ditto.
+        (-[WKConnection remoteObjectRegistry]): Ditto.
+        (-[WKConnection _connection]): Added.
+        (-[WKConnection _apiObject]): Changed to return the object in the instance extra storage.
+
+2013-12-06  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Add load delegate methods for responding to authentication challenges
         https://bugs.webkit.org/show_bug.cgi?id=125333
 

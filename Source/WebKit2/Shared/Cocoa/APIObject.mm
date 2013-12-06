@@ -33,6 +33,7 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupInternal.h"
 #import "WKNSArray.h"
+#import "WKConnectionInternal.h"
 #import "WKNSDictionary.h"
 #import "WKNSError.h"
 #import "WKNSString.h"
@@ -77,6 +78,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::BackForwardListItem:
         wrapper = [WKBackForwardListItem alloc];
+        break;
+
+    case Type::Connection:
+        wrapper = NSAllocateObject([WKConnection self], size, nullptr);
         break;
 
     case Type::Context:

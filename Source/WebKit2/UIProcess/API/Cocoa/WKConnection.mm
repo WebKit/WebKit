@@ -40,15 +40,13 @@
 using namespace WebKit;
 
 @implementation WKConnection {
-    API::ObjectStorage<WebConnection> _connection;
     RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
-
     WeakObjCPtr<id <WKConnectionDelegate>> _delegate;
 }
 
 - (void)dealloc
 {
-    _connection->~WebConnection();
+    self._connection.~WebConnection();
 
     [super dealloc];
 }
@@ -98,30 +96,35 @@ static void setUpClient(WKConnection *wrapper, WebConnection& connection)
 {
     _delegate = delegate;
     if (delegate)
-        setUpClient(self, *_connection);
+        setUpClient(self, self._connection);
     else
-        _connection->initializeConnectionClient(nullptr);
+        self._connection.initializeConnectionClient(nullptr);
 }
 
 - (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody
 {
     RefPtr<ObjCObjectGraph> wkMessageBody = ObjCObjectGraph::create(messageBody);
-    _connection->postMessage(messageName, wkMessageBody.get());
+    self._connection.postMessage(messageName, wkMessageBody.get());
 }
 
 - (WKRemoteObjectRegistry *)remoteObjectRegistry
 {
     if (!_remoteObjectRegistry)
-        _remoteObjectRegistry = adoptNS([[WKRemoteObjectRegistry alloc] _initWithConnectionRef:toAPI(_connection.get())]);
+        _remoteObjectRegistry = adoptNS([[WKRemoteObjectRegistry alloc] _initWithConnectionRef:toAPI(&self._connection)]);
 
     return _remoteObjectRegistry.get();
+}
+
+- (WebConnection&)_connection
+{
+    return *static_cast<WebConnection*>(object_getIndexedIvars(self));
 }
 
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
 {
-    return *_connection;
+    return *static_cast<API::Object*>(object_getIndexedIvars(self));
 }
 
 @end
