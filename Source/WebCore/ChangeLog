@@ -1,3 +1,22 @@
+2013-11-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] webkitwebaudiosrc element needs to emit stream-start, caps and segment events
+        https://bugs.webkit.org/show_bug.cgi?id=123015
+
+        Reviewed by Martin Robinson.
+
+        When the source element starts emitting buffers send along various
+        events to notify downstream elements.
+
+        No new tests, change covered by existing webaudio tests.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webkit_web_audio_src_init): Initialize segment.
+        (webKitWebAudioSrcConstructed): Give an explicit name to each
+        queue added in front of the interleave element.
+        (webKitWebAudioSrcLoop): Before sending the first buffers push
+        stream-start, caps and segment events on each queue's sinkpad.
+
 2013-12-05  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Audio/Video sink management is incoherent
