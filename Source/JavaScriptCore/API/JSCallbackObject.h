@@ -205,14 +205,13 @@ private:
     void init(ExecState*);
  
     static JSCallbackObject* asCallbackObject(JSValue);
-    static JSCallbackObject* asCallbackObject(EncodedJSValue);
  
     static EncodedJSValue JSC_HOST_CALL call(ExecState*);
     static EncodedJSValue JSC_HOST_CALL construct(ExecState*);
    
     JSValue getStaticValue(ExecState*, PropertyName);
-    static EncodedJSValue staticFunctionGetter(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-    static EncodedJSValue callbackGetter(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
+    static JSValue staticFunctionGetter(ExecState*, JSValue, PropertyName);
+    static JSValue callbackGetter(ExecState*, JSValue, PropertyName);
 
     OwnPtr<JSCallbackObjectData> m_callbackObjectData;
 };

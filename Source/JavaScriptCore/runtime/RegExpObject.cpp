@@ -39,10 +39,10 @@
 
 namespace JSC {
 
-static EncodedJSValue regExpObjectGlobal(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-static EncodedJSValue regExpObjectIgnoreCase(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-static EncodedJSValue regExpObjectMultiline(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-static EncodedJSValue regExpObjectSource(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
+static JSValue regExpObjectGlobal(ExecState*, JSValue, PropertyName);
+static JSValue regExpObjectIgnoreCase(ExecState*, JSValue, PropertyName);
+static JSValue regExpObjectMultiline(ExecState*, JSValue, PropertyName);
+static JSValue regExpObjectSource(ExecState*, JSValue, PropertyName);
 
 } // namespace JSC
 
@@ -155,24 +155,19 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
     return Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow);
 }
 
-static inline RegExpObject* asRegExpObject(EncodedJSValue value)
+JSValue regExpObjectGlobal(ExecState*, JSValue slotBase, PropertyName)
 {
-    return jsCast<RegExpObject*>(JSValue::decode(value));
+    return jsBoolean(asRegExpObject(slotBase)->regExp()->global());
 }
 
-EncodedJSValue regExpObjectGlobal(ExecState*, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+JSValue regExpObjectIgnoreCase(ExecState*, JSValue slotBase, PropertyName)
 {
-    return JSValue::encode(jsBoolean(asRegExpObject(slotBase)->regExp()->global()));
-}
-
-EncodedJSValue regExpObjectIgnoreCase(ExecState*, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
-{
-    return JSValue::encode(jsBoolean(asRegExpObject(slotBase)->regExp()->ignoreCase()));
+    return jsBoolean(asRegExpObject(slotBase)->regExp()->ignoreCase());
 }
  
-EncodedJSValue regExpObjectMultiline(ExecState*, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+JSValue regExpObjectMultiline(ExecState*, JSValue slotBase, PropertyName)
 {            
-    return JSValue::encode(jsBoolean(asRegExpObject(slotBase)->regExp()->multiline()));
+    return jsBoolean(asRegExpObject(slotBase)->regExp()->multiline());
 }
 
 template <typename CharacterType>
@@ -281,14 +276,12 @@ static inline JSValue regExpObjectSourceInternal(ExecState* exec, String pattern
     return jsString(exec, result.toString());
 }
 
-    
-    
-EncodedJSValue regExpObjectSource(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, PropertyName)
 {
     String pattern = asRegExpObject(slotBase)->regExp()->pattern();
     if (pattern.is8Bit())
-        return JSValue::encode(regExpObjectSourceInternal(exec, pattern, pattern.characters8(), pattern.length()));
-    return JSValue::encode(regExpObjectSourceInternal(exec, pattern, pattern.characters16(), pattern.length()));
+        return regExpObjectSourceInternal(exec, pattern, pattern.characters8(), pattern.length());
+    return regExpObjectSourceInternal(exec, pattern, pattern.characters16(), pattern.length());
 }
 
 void RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

@@ -171,10 +171,10 @@ namespace JSC {
         
         JS_EXPORT_PRIVATE bool isHostFunctionNonInline() const;
 
-        static EncodedJSValue argumentsGetter(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-        static EncodedJSValue callerGetter(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-        static EncodedJSValue lengthGetter(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-        static EncodedJSValue nameGetter(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
+        static JSValue argumentsGetter(ExecState*, JSValue, PropertyName);
+        static JSValue callerGetter(ExecState*, JSValue, PropertyName);
+        static JSValue lengthGetter(ExecState*, JSValue, PropertyName);
+        static JSValue nameGetter(ExecState*, JSValue, PropertyName);
 
         WriteBarrier<ExecutableBase> m_executable;
         WriteBarrier<JSScope> m_scope;

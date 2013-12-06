@@ -47,15 +47,15 @@ bool JSHTMLFrameSetElement::canGetItemsForName(ExecState*, HTMLFrameSetElement* 
     return frame && frame->hasTagName(frameTag);
 }
 
-EncodedJSValue JSHTMLFrameSetElement::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
+JSValue JSHTMLFrameSetElement::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
-    HTMLElement& element = jsCast<JSHTMLElement*>(JSValue::decode(slotBase))->impl();
+    HTMLElement& element = jsCast<JSHTMLElement*>(asObject(slotBase))->impl();
     Node* frameElement = element.children()->namedItem(propertyNameToAtomicString(propertyName));
     if (Document* document = toHTMLFrameElement(frameElement)->contentDocument()) {
         if (JSDOMWindowShell* window = toJSDOMWindowShell(document->frame(), currentWorld(exec)))
-            return JSValue::encode(window);
+            return window;
     }
-    return JSValue::encode(jsUndefined());
+    return jsUndefined();
 }
 
 } // namespace WebCore

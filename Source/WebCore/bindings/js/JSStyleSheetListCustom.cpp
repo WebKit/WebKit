@@ -40,12 +40,12 @@ bool JSStyleSheetList::canGetItemsForName(ExecState*, StyleSheetList* styleSheet
     return styleSheetList->getNamedItem(propertyNameToString(propertyName));
 }
 
-EncodedJSValue JSStyleSheetList::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
+JSValue JSStyleSheetList::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
-    JSStyleSheetList* thisObj = jsCast<JSStyleSheetList*>(JSValue::decode(slotBase));
+    JSStyleSheetList* thisObj = jsCast<JSStyleSheetList*>(asObject(slotBase));
     HTMLStyleElement* element = thisObj->impl().getNamedItem(propertyNameToString(propertyName));
     ASSERT(element);
-    return JSValue::encode(toJS(exec, thisObj->globalObject(), element->sheet()));
+    return toJS(exec, thisObj->globalObject(), element->sheet());
 }
 
 } // namespace WebCore

@@ -30,19 +30,19 @@ using namespace JSC;
 
 namespace WebCore {
 
-static EncodedJSValue nonCachingStaticReplaceFunctionGetter(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName propertyName)
+static JSValue nonCachingStaticReplaceFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsLocationPrototypeFunctionReplace));
+    return JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsLocationPrototypeFunctionReplace);
 }
 
-static EncodedJSValue nonCachingStaticReloadFunctionGetter(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName propertyName)
+static JSValue nonCachingStaticReloadFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsLocationPrototypeFunctionReload));
+    return JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsLocationPrototypeFunctionReload);
 }
 
-static EncodedJSValue nonCachingStaticAssignFunctionGetter(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName propertyName)
+static JSValue nonCachingStaticAssignFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsLocationPrototypeFunctionAssign));
+    return JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsLocationPrototypeFunctionAssign);
 }
 
 bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)

@@ -57,28 +57,28 @@ bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* document, Prop
     return atomicPropertyName && document->hasDocumentNamedItem(*atomicPropertyName);
 }
 
-EncodedJSValue JSHTMLDocument::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
+JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
-    JSHTMLDocument* thisObj = jsCast<JSHTMLDocument*>(JSValue::decode(slotBase));
+    JSHTMLDocument* thisObj = jsCast<JSHTMLDocument*>(asObject(slotBase));
     HTMLDocument& document = thisObj->impl();
 
     AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
     if (!atomicPropertyName || !document.hasDocumentNamedItem(*atomicPropertyName))
-        return JSValue::encode(jsUndefined());
+        return jsUndefined();
 
     if (UNLIKELY(document.documentNamedItemContainsMultipleElements(*atomicPropertyName))) {
         RefPtr<HTMLCollection> collection = document.documentNamedItems(atomicPropertyName);
         ASSERT(collection->length() > 1);
-        return JSValue::encode(toJS(exec, thisObj->globalObject(), WTF::getPtr(collection)));
+        return toJS(exec, thisObj->globalObject(), WTF::getPtr(collection));
     }
 
     Element* element = document.documentNamedItem(*atomicPropertyName);
     if (UNLIKELY(element->hasTagName(iframeTag))) {
         if (Frame* frame = toHTMLIFrameElement(element)->contentFrame())
-            return JSValue::encode(toJS(exec, frame));
+            return toJS(exec, frame);
     }
 
-    return JSValue::encode(toJS(exec, thisObj->globalObject(), element));
+    return toJS(exec, thisObj->globalObject(), element);
 }
 
 // Custom attributes

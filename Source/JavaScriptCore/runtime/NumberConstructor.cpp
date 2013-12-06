@@ -29,11 +29,11 @@
 
 namespace JSC {
 
-static EncodedJSValue numberConstructorNaNValue(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-static EncodedJSValue numberConstructorNegInfinity(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-static EncodedJSValue numberConstructorPosInfinity(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-static EncodedJSValue numberConstructorMaxValue(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
-static EncodedJSValue numberConstructorMinValue(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName);
+static JSValue numberConstructorNaNValue(ExecState*, JSValue, PropertyName);
+static JSValue numberConstructorNegInfinity(ExecState*, JSValue, PropertyName);
+static JSValue numberConstructorPosInfinity(ExecState*, JSValue, PropertyName);
+static JSValue numberConstructorMaxValue(ExecState*, JSValue, PropertyName);
+static JSValue numberConstructorMinValue(ExecState*, JSValue, PropertyName);
 
 } // namespace JSC
 
@@ -82,29 +82,29 @@ void NumberConstructor::put(JSCell* cell, ExecState* exec, PropertyName property
     lookupPut<NumberConstructor, InternalFunction>(exec, propertyName, value, ExecState::numberConstructorTable(exec), jsCast<NumberConstructor*>(cell), slot);
 }
 
-static EncodedJSValue numberConstructorNaNValue(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName)
+static JSValue numberConstructorNaNValue(ExecState*, JSValue, PropertyName)
 {
-    return JSValue::encode(jsNaN());
+    return jsNaN();
 }
 
-static EncodedJSValue numberConstructorNegInfinity(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName)
+static JSValue numberConstructorNegInfinity(ExecState*, JSValue, PropertyName)
 {
-    return JSValue::encode(jsNumber(-std::numeric_limits<double>::infinity()));
+    return jsNumber(-std::numeric_limits<double>::infinity());
 }
 
-static EncodedJSValue numberConstructorPosInfinity(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName)
+static JSValue numberConstructorPosInfinity(ExecState*, JSValue, PropertyName)
 {
-    return JSValue::encode(jsNumber(std::numeric_limits<double>::infinity()));
+    return jsNumber(std::numeric_limits<double>::infinity());
 }
 
-static EncodedJSValue numberConstructorMaxValue(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName)
+static JSValue numberConstructorMaxValue(ExecState*, JSValue, PropertyName)
 {
-    return JSValue::encode(jsNumber(1.7976931348623157E+308));
+    return jsNumber(1.7976931348623157E+308);
 }
 
-static EncodedJSValue numberConstructorMinValue(ExecState*, EncodedJSValue, EncodedJSValue, PropertyName)
+static JSValue numberConstructorMinValue(ExecState*, JSValue, PropertyName)
 {
-    return JSValue::encode(jsNumber(5E-324));
+    return jsNumber(5E-324);
 }
 
 // ECMA 15.7.1

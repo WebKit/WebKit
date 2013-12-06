@@ -54,11 +54,11 @@ void RuntimeMethod::finishCreation(VM& vm, const String& ident)
     ASSERT(inherits(info()));
 }
 
-EncodedJSValue RuntimeMethod::lengthGetter(ExecState*, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+JSValue RuntimeMethod::lengthGetter(ExecState*, JSValue slotBase, PropertyName)
 {
-    RuntimeMethod* thisObj = jsCast<RuntimeMethod*>(JSValue::decode(slotBase));
+    RuntimeMethod* thisObj = static_cast<RuntimeMethod*>(asObject(slotBase));
 
-    return JSValue::encode(jsNumber(thisObj->m_method->numParameters()));
+    return jsNumber(thisObj->m_method->numParameters());
 }
 
 bool RuntimeMethod::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
