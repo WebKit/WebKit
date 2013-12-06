@@ -1,3 +1,12 @@
+2013-12-06  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Add load delegate methods for responding to authentication challenges
+        https://bugs.webkit.org/show_bug.cgi?id=125333
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in: Exported core(NSURLCredential *).
+
 2013-12-06  Daniel Bates  <dabates@apple.com>
 
         Rename {adjust, paint}SearchFieldDecoration, {adjust, paint}SearchFieldResultsDecoration

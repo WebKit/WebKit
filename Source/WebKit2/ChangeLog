@@ -1,3 +1,41 @@
+2013-12-06  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Add load delegate methods for responding to authentication challenges
+        https://bugs.webkit.org/show_bug.cgi?id=125333
+
+        Reviewed by Darin Adler.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Allocate a WKNSURLAuthenticationChallenge if the object is an
+        AuthenticationChallengeProxy.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (canAuthenticateAgainstProtectionSpaceInFrame): Implemented this WKPageLoaderClient callback
+        by calling the load delegate.
+        (didReceiveAuthenticationChallengeInFrame): Ditto.
+        (setUpPageLoaderClient): Set the above callbacks in the client structure.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextLoadDelegatePrivate.h: Added. Declares two new
+        delegate methods.
+
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.h: Added.
+        (WebKit::wrapper): Added. Returns an AuthenticationChallengeProxy’s wrapper as an
+        NSURLAuthenticationChallenge.
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm: Added.
+        (-[WKNSURLAuthenticationChallenge _web_createTarget]): Override this WKObject method to
+        return a copy of the challenge with the sender set to a shared instance of
+        WKNSURLAuthenticationChallengeSender.
+        (-[WKNSURLAuthenticationChallenge _web_authenticationChallengeProxy]): Added. Returns the
+        wrapped object.
+        (-[WKNSURLAuthenticationChallengeSender cancelAuthenticationChallenge:]): Added. Calls
+        AuthenticationDecisionListener::cancel.
+        (-[WKNSURLAuthenticationChallengeSender continueWithoutCredentialForAuthenticationChallenge:]):
+        Added. Calls AuthenticationDecisionListener::useCredential, passing nullptr.
+        (-[WKNSURLAuthenticationChallengeSender useCredential:forAuthenticationChallenge:]): Added.
+        Calls AuthenticationDecisionListener::useCredential, passing the credential.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files.
+
 2013-12-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce IMAGE_TYPE_CASTS, and use it

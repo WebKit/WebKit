@@ -37,6 +37,7 @@
 #import "WKNSError.h"
 #import "WKNSString.h"
 #import "WKNSURL.h"
+#import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLProtectionSpace.h"
 #import "WKNavigationDataInternal.h"
 #import "WKProcessGroupInternal.h"
@@ -64,6 +65,10 @@ void* Object::newObject(size_t size, Type type)
     switch (type) {
     case Type::Array:
         wrapper = [WKNSArray alloc];
+        break;
+
+    case Type::AuthenticationChallenge:
+        wrapper = NSAllocateObject([WKNSURLAuthenticationChallenge self], size, nullptr);
         break;
 
     case Type::BackForwardList:
