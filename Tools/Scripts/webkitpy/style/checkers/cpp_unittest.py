@@ -247,9 +247,8 @@ class CppStyleTestBase(unittest.TestCase):
     # Helper function to avoid needing to explicitly pass confidence
     # in all the unit test calls to cpp_style.process_file_data().
     def process_file_data(self, filename, file_extension, lines, error, unit_test_config={}):
-        """Call cpp_style.process_file_data() with the min_confidence."""
-        return cpp_style.process_file_data(filename, file_extension, lines,
-                                           error, self.min_confidence, unit_test_config)
+        checker = CppChecker(filename, file_extension, error, self.min_confidence, unit_test_config)
+        checker.check(lines)
 
     def perform_lint(self, code, filename, basic_error_rules, unit_test_config={}, lines_to_check=None):
         error_collector = ErrorCollector(self.assertTrue, FilterConfiguration(basic_error_rules), lines_to_check)

@@ -3723,7 +3723,7 @@ class CppChecker(object):
         ])
 
     def __init__(self, file_path, file_extension, handle_style_error,
-                 min_confidence):
+                 min_confidence, unit_test_config={}):
         """Create a CppChecker instance.
 
         Args:
@@ -3731,10 +3731,12 @@ class CppChecker(object):
                           the leading dot.
 
         """
+        global _unit_test_config
         self.file_extension = file_extension
         self.file_path = file_path
         self.handle_style_error = handle_style_error
         self.min_confidence = min_confidence
+        _unit_test_config = unit_test_config
 
     # Useful for unit testing.
     def __eq__(self, other):
@@ -3758,12 +3760,3 @@ class CppChecker(object):
     def check(self, lines):
         _process_lines(self.file_path, self.file_extension, lines,
                        self.handle_style_error, self.min_confidence)
-
-
-# FIXME: Remove this function (requires refactoring unit tests).
-def process_file_data(filename, file_extension, lines, error, min_confidence, unit_test_config):
-    global _unit_test_config
-    _unit_test_config = unit_test_config
-    checker = CppChecker(filename, file_extension, error, min_confidence)
-    checker.check(lines)
-    _unit_test_config = {}
