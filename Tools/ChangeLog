@@ -1,3 +1,36 @@
+2013-12-06  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] Transition MiniBrowser to the Cocoa API: load delegate
+        https://bugs.webkit.org/show_bug.cgi?id=125334
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController dealloc]): Nil out the load delegate and stop observing the
+        title property.
+        (-[WK2BrowserWindowController isPaginated]): Changed to use Cocoa SPI.
+        (-[WK2BrowserWindowController togglePaginationMode:]): Ditto.
+        (-[WK2BrowserWindowController observeValueForKeyPath:ofObject:change:context:]): Update the
+        window title with the title property changes.
+        (-[WK2BrowserWindowController awakeFromNib]): Start observing the title property. Changed to
+        set the load delegate instead of the load client.
+        (-[WK2BrowserWindowController updateTextFieldFromURL:]): Changed to use Cocoa types.
+        (-[WK2BrowserWindowController updateProvisionalURL]): Removed frame parameter.
+        (-[WK2BrowserWindowController updateCommittedURL]): Ditto.
+        (-[WK2BrowserWindowController browsingContextControllerDidStartProvisionalLoad:]):
+        Implemented this load delegate method.
+        (-[WK2BrowserWindowController browsingContextControllerDidReceiveServerRedirectForProvisionalLoad:]):
+        Ditto.
+        (-[WK2BrowserWindowController browsingContextController:didFailProvisionalLoadWithError:]): Ditto.
+        (-[WK2BrowserWindowController browsingContextControllerDidCommitLoad:]): Ditto.
+        (-[WK2BrowserWindowController browsingContextControllerDidFinishLoad:]): Ditto.
+        (-[WK2BrowserWindowController browsingContextController:didFailLoadWithError:]): Ditto.
+        (-[WK2BrowserWindowController browsingContextControllerDidChangeBackForwardList:addedItem:removedItems:]):
+        Ditto.
+        (-[WK2BrowserWindowController browsingContextController:canAuthenticateAgainstProtectionSpace:]):
+        Ditto.
+        (-[WK2BrowserWindowController browsingContextController:didReceiveAuthenticationChallenge:]): Ditto.
+
 2013-12-06  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Remove function from style/checkers/cpp.py.

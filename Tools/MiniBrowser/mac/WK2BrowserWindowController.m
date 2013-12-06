@@ -28,21 +28,15 @@
 #if WK_API_ENABLED
 
 #import "AppDelegate.h"
-#import <WebKit2/WKBrowsingContextController.h>
+#import <WebKit2/WKBrowsingContextControllerPrivate.h>
+#import <WebKit2/WKBrowsingContextLoadDelegatePrivate.h>
 #import <WebKit2/WKBrowsingContextPolicyDelegate.h>
 #import <WebKit2/WKPagePrivate.h>
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKURLCF.h>
 #import <WebKit2/WKViewPrivate.h>
 
-@interface WK2BrowserWindowController () <WKBrowsingContextPolicyDelegate>
-- (void)didStartProvisionalLoadForFrame:(WKFrameRef)frame;
-- (void)didCommitLoadForFrame:(WKFrameRef)frame;
-- (void)didReceiveServerRedirectForProvisionalLoadForFrame:(WKFrameRef)frame;
-- (void)didFailProvisionalLoadWithErrorForFrame:(WKFrameRef)frame;
-- (void)didFailLoadWithErrorForFrame:(WKFrameRef)frame;
-- (void)didSameDocumentNavigationForFrame:(WKFrameRef)frame;
-- (BOOL)isPaginated;
+@interface WK2BrowserWindowController () <WKBrowsingContextLoadDelegatePrivate, WKBrowsingContextPolicyDelegate>
 @end
 
 @implementation WK2BrowserWindowController {
@@ -69,6 +63,8 @@
 
     WKRelease(_context);
     WKRelease(_pageGroup);
+    [_webView.browsingContextController removeObserver:self forKeyPath:@"title" context:[WK2BrowserWindowController self]];
+    _webView.browsingContextController.loadDelegate = nil;
     _webView.browsingContextController.policyDelegate = nil;
     [_webView release];
 
@@ -263,17 +259,17 @@
 
 - (BOOL)isPaginated
 {
-    return WKPageGetPaginationMode(_webView.pageRef) != kWKPaginationModeUnpaginated;
+    return _webView.browsingContextController.paginationMode != WKPaginationModeUnpaginated;
 }
 
 - (IBAction)togglePaginationMode:(id)sender
 {
     if ([self isPaginated])
-        WKPageSetPaginationMode(_webView.pageRef, kWKPaginationModeUnpaginated);
+        _webView.browsingContextController.paginationMode = WKPaginationModeUnpaginated;
     else {
-        WKPageSetPaginationMode(_webView.pageRef, kWKPaginationModeLeftToRight);
-        WKPageSetPageLength(_webView.pageRef, _webView.bounds.size.width / 2);
-        WKPageSetGapBetweenPages(_webView.pageRef, 10);
+        _webView.browsingContextController.paginationMode = WKPaginationModeLeftToRight;
+        _webView.browsingContextController.pageLength = _webView.bounds.size.width / 2;
+        _webView.browsingContextController.gapBetweenPages = 10;
     }
 }
 
@@ -303,107 +299,13 @@ static void dumpSource(WKStringRef source, WKErrorRef error, void* context)
     WKPageGetSourceForFrame(_webView.pageRef, WKPageGetMainFrame(_webView.pageRef), NULL, dumpSource);
 }
 
-// MARK: Loader Client Callbacks
-
-static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    [(WK2BrowserWindowController *)clientInfo didStartProvisionalLoadForFrame:frame];
-}
-
-static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    [(WK2BrowserWindowController *)clientInfo didReceiveServerRedirectForProvisionalLoadForFrame:frame];
-}
-
-static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void *clientInfo)
-{
-    [(WK2BrowserWindowController *)clientInfo didFailProvisionalLoadWithErrorForFrame:frame];
-}
-
-static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    [(WK2BrowserWindowController *)clientInfo didCommitLoadForFrame:frame];
-}
-
-static void didFinishDocumentLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    LOG(@"didFinishDocumentLoadForFrame");
-}
-
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    LOG(@"didFinishLoadForFrame");
-}
-
-static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void *clientInfo)
-{
-    [(WK2BrowserWindowController *)clientInfo didFailLoadWithErrorForFrame:frame];
-}
-
-static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void *clientInfo)
-{
-    [(WK2BrowserWindowController *)clientInfo didSameDocumentNavigationForFrame:frame];
-}
-
-static void didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    if (!WKFrameIsMainFrame(frame))
+    if (context != [WK2BrowserWindowController self] || object != _webView.browsingContextController)
         return;
 
-    WK2BrowserWindowController* controller = (WK2BrowserWindowController*)clientInfo;
-    CFStringRef cfTitle = WKStringCopyCFString(0, title);
-    [[controller window] setTitle:[(NSString *)cfTitle stringByAppendingString:@" [WK2]"]];
-    CFRelease(cfTitle);
-}
-
-static void didFirstLayoutForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    LOG(@"didFirstLayoutForFrame");
-}
-
-static void didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    LOG(@"didFirstVisuallyNonEmptyLayoutForFrame");
-}
-
-static void didRemoveFrameFromHierarchy(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    LOG(@"didRemoveFrameFromHierarchy");
-}
-
-static void didDisplayInsecureContentForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    LOG(@"didDisplayInsecureContentForFrame");
-}
-
-static void didRunInsecureContentForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    LOG(@"didRunInsecureContentForFrame");
-}
-
-static void didDetectXSSForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo) 
-{ 
-    LOG(@"didDetectXSSForFrame"); 
-}
- 
-static void didBecomeUnresponsive(WKPageRef page, const void *clientInfo)
-{
-    LOG(@"didBecomeUnresponsive");
-}
-
-static void didBecomeResponsive(WKPageRef page, const void *clientInfo)
-{
-    LOG(@"didBecomeResponsive");
-}
-
-static void processDidExit(WKPageRef page, const void *clientInfo)
-{
-    LOG(@"processDidExit");
-}
-
-static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void *clientInfo)
-{
-    [(WK2BrowserWindowController *)clientInfo validateToolbar];
+    if ([keyPath isEqualToString:@"title"])
+        self.window.title = [_webView.browsingContextController.title stringByAppendingString:@" [WK2]"];
 }
 
 // MARK: UI Client Callbacks
@@ -603,46 +505,9 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     [progressIndicator bind:NSHiddenBinding toObject:_webView.browsingContextController withKeyPath:@"loading" options:@{ NSValueTransformerNameBindingOption : NSNegateBooleanTransformerName }];
     [progressIndicator bind:NSValueBinding toObject:_webView.browsingContextController withKeyPath:@"estimatedProgress" options:nil];
 
-    WKPageLoaderClientV3 loadClient = {
-        { 3, self },
-        didStartProvisionalLoadForFrame,
-        didReceiveServerRedirectForProvisionalLoadForFrame,
-        didFailProvisionalLoadWithErrorForFrame,
-        didCommitLoadForFrame,
-        didFinishDocumentLoadForFrame,
-        didFinishLoadForFrame,
-        didFailLoadWithErrorForFrame,
-        didSameDocumentNavigationForFrame,
-        didReceiveTitleForFrame,
-        didFirstLayoutForFrame,
-        didFirstVisuallyNonEmptyLayoutForFrame,
-        didRemoveFrameFromHierarchy,
-        didDisplayInsecureContentForFrame,
-        didRunInsecureContentForFrame,
-        0, // canAuthenticateAgainstProtectionSpaceInFrame
-        0, // didReceiveAuthenticationChallengeInFrame
-        0, // didStartProgress,
-        0, // didChangeProgress,
-        0, // didFinishProgress,
-        didBecomeUnresponsive,
-        didBecomeResponsive,
-        processDidExit,
-        didChangeBackForwardList,
-        0, // shouldGoToBackForwardItem
-        0, // didFailToInitializePlugin
-        didDetectXSSForFrame,
-        0, // didNewFirstVisuallyNonEmptyLayout_unavailable
-        0, // willGoToBackForwardListItem
-        0, // interactionOccurredWhileProcessUnresponsive
-        0, // pluginDidFail_deprecatedForUseWithV1
-        0, // didReceiveIntentForFrame
-        0, // registerIntentServiceForFrame
-        0, // didLayout
-        0, // pluginLoadPolicy_deprecatedForUseWithV2
-        0, // pluginDidFail
-        0, // pluginLoadPolicy
-    };
-    WKPageSetPageLoaderClient(_webView.pageRef, &loadClient.base);
+    [_webView.browsingContextController addObserver:self forKeyPath:@"title" options:0 context:[WK2BrowserWindowController self]];
+
+    _webView.browsingContextController.loadDelegate = self;
 
     _webView.browsingContextController.policyDelegate = self;
 
@@ -698,83 +563,31 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     WKPageSetPageUIClient(_webView.pageRef, &uiClient.base);
 }
 
-- (void)updateTextFieldFromURL:(WKURLRef)URLRef
+- (void)updateTextFieldFromURL:(NSURL *)URL
 {
-    if (!URLRef)
+    if (!URL)
         return;
 
-    static WKURLRef emptyURL = 0;
-    if (!emptyURL)
-        emptyURL = WKURLCreateWithUTF8CString("");
-
-    if (WKURLIsEqual(URLRef, emptyURL))
+    if (!URL.absoluteString.length)
         return;
 
-    CFURLRef cfSourceURL = WKURLCopyCFURL(0, URLRef);
-    [urlText setStringValue:(NSString*)CFURLGetString(cfSourceURL)];
-    CFRelease(cfSourceURL);
+    urlText.stringValue = (NSString *)CFURLGetString((CFURLRef)URL);
 }
 
-- (void)updateProvisionalURLForFrame:(WKFrameRef)frame
+- (void)updateProvisionalURL
 {
-    WKURLRef url = WKFrameCopyProvisionalURL(frame);
+    NSURL *url = _webView.browsingContextController.provisionalURL;
     if (!url)
         return;
     [self updateTextFieldFromURL:url];
-    WKRelease(url);
 }
 
-- (void)updateCommittedURLForFrame:(WKFrameRef)frame
+- (void)updateCommittedURL
 {
-    WKURLRef url = WKFrameCopyURL(frame);
+    NSURL *url = _webView.browsingContextController.committedURL;
     if (!url)
         return;
     [self updateTextFieldFromURL:url];
-    WKRelease(url);
-}
-
-- (void)didStartProvisionalLoadForFrame:(WKFrameRef)frame
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    [self updateProvisionalURLForFrame:frame];
-}
-
-- (void)didReceiveServerRedirectForProvisionalLoadForFrame:(WKFrameRef)frame
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    [self updateProvisionalURLForFrame:frame];
-}
-
-- (void)didFailProvisionalLoadWithErrorForFrame:(WKFrameRef)frame
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    [self updateProvisionalURLForFrame:frame];
-}
-
-- (void)didFailLoadWithErrorForFrame:(WKFrameRef)frame
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    [self updateProvisionalURLForFrame:frame];
-}
-
-- (void)didSameDocumentNavigationForFrame:(WKFrameRef)frame
-{
-}
-
-- (void)didCommitLoadForFrame:(WKFrameRef)frame
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-
-    [self updateCommittedURLForFrame:frame];
 }
 
 - (void)loadURLString:(NSString *)urlString
@@ -794,6 +607,57 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     WKStringRef string = WKStringCreateWithCFString((CFStringRef)[sender stringValue]);
 
     WKPageFindString(_webView.pageRef, string, kWKFindOptionsCaseInsensitive | kWKFindOptionsWrapAround | kWKFindOptionsShowFindIndicator | kWKFindOptionsShowOverlay, 100);
+}
+
+#pragma mark WKBrowsingContextLoadDelegate
+
+- (void)browsingContextControllerDidStartProvisionalLoad:(WKBrowsingContextController *)sender
+{
+    [self updateProvisionalURL];
+}
+
+- (void)browsingContextControllerDidReceiveServerRedirectForProvisionalLoad:(WKBrowsingContextController *)sender
+{
+    [self updateProvisionalURL];
+}
+
+- (void)browsingContextController:(WKBrowsingContextController *)sender didFailProvisionalLoadWithError:(NSError *)error
+{
+    [self updateProvisionalURL];
+}
+
+- (void)browsingContextControllerDidCommitLoad:(WKBrowsingContextController *)sender
+{
+    [self updateCommittedURL];
+}
+
+- (void)browsingContextControllerDidFinishLoad:(WKBrowsingContextController *)sender
+{
+    LOG(@"didFinishLoad");
+}
+
+- (void)browsingContextController:(WKBrowsingContextController *)sender didFailLoadWithError:(NSError *)error
+{
+    [self updateProvisionalURL];
+}
+
+- (void)browsingContextControllerDidChangeBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems
+{
+    [self validateToolbar];
+}
+
+#pragma mark WKBrowsingContextLoadDelegatePrivate
+
+- (BOOL)browsingContextController:(WKBrowsingContextController *)sender canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
+{
+    LOG(@"canAuthenticateAgainstProtectionSpace: %@", protectionSpace);
+    return YES;
+}
+
+- (void)browsingContextController:(WKBrowsingContextController *)sender didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    LOG(@"didReceiveAuthenticationChallenge: %@", challenge);
+    [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
 }
 
 #pragma mark WKBrowsingContextPolicyDelegate
