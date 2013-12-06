@@ -209,14 +209,6 @@ void PDFDocumentImage::destroyDecodedData(bool)
     m_cachedBytes = 0;
 }
 
-unsigned PDFDocumentImage::decodedSize() const
-{
-    // FIXME: PDFDocumentImage is underreporting decoded sizes because this
-    // only includes the cached image and nothing else.
-
-    return m_cachedBytes;
-}
-
 #if !USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
 void PDFDocumentImage::createPDFDocument()
 {

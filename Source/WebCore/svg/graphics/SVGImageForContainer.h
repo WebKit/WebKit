@@ -73,7 +73,6 @@ private:
     }
 
     virtual void destroyDecodedData(bool /*destroyAll*/ = true) OVERRIDE { }
-    virtual unsigned decodedSize() const OVERRIDE { return 0; }
 
     SVGImage* m_image;
     const FloatSize m_containerSize;

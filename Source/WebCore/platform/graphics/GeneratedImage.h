@@ -47,7 +47,6 @@ public:
 
     // Assume that generated content has no decoded data we need to worry about
     virtual void destroyDecodedData(bool /*destroyAll*/ = true) OVERRIDE { }
-    virtual unsigned decodedSize() const OVERRIDE { return 0; }
 
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) OVERRIDE = 0;

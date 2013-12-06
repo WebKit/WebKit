@@ -65,7 +65,6 @@ private:
     virtual bool dataChanged(bool allDataReceived) OVERRIDE;
 
     virtual void destroyDecodedData(bool /*destroyAll*/ = true) OVERRIDE;
-    virtual unsigned decodedSize() const OVERRIDE;
 
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) OVERRIDE;
     virtual IntSize size() const OVERRIDE;
