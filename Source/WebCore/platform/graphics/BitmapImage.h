@@ -300,6 +300,8 @@ private:
     RefPtr<Image> m_cachedImage;
 };
 
+IMAGE_TYPE_CASTS(BitmapImage)
+
 }
 
 #endif

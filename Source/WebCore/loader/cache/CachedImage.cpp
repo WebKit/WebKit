@@ -263,11 +263,11 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
     if (renderer && m_image->isBitmapImage()) {
         ImageOrientationDescription orientationDescription(renderer->shouldRespectImageOrientation(), renderer->style().imageOrientation());
         if (orientationDescription.respectImageOrientation() == RespectImageOrientation)
-            imageSize = static_cast<BitmapImage*>(m_image.get())->sizeRespectingOrientation(orientationDescription);
+            imageSize = toBitmapImage(m_image.get())->sizeRespectingOrientation(orientationDescription);
     }
 #else
     if (m_image->isBitmapImage() && (renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation))
-        imageSize = static_cast<BitmapImage*>(m_image.get())->sizeRespectingOrientation();
+        imageSize = toBitmapImage(m_image.get())->sizeRespectingOrientation();
 #endif
 
 #if ENABLE(SVG)
@@ -529,7 +529,7 @@ void CachedImage::resumeAnimatingImagesForLoader(CachedResourceLoader* loader)
         Image* image = cachedImage->image();
         if (!image->isBitmapImage())
             continue;
-        BitmapImage* bitmapImage = static_cast<BitmapImage*>(image);
+        BitmapImage* bitmapImage = toBitmapImage(image);
         if (!bitmapImage->canAnimate())
             continue;
         cachedImage->animationAdvanced(bitmapImage);

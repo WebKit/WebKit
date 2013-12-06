@@ -1,3 +1,16 @@
+2013-12-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce IMAGE_TYPE_CASTS, and use it
+        https://bugs.webkit.org/show_bug.cgi?id=125330
+
+        Reviewed by Ryosuke Niwa.
+
+        As a step to use TYPE_CASTS_BASE, this cl introduce IMAGE_TYPE_CASTS.
+        BitmapImage, SVGImage can use it to generate toFoo() type case helper functions.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginSnapshotTimerFired):
+
 2013-12-05  Mark Lam  <mark.lam@apple.com>
 
         C Loop LLINT layout test regressions.

@@ -209,6 +209,9 @@ private:
     FloatSize m_space;
 };
 
+#define IMAGE_TYPE_CASTS(ToClassName) \
+    TYPE_CASTS_BASE(ToClassName, Image, image, image->is##ToClassName(), image.is##ToClassName())
+
 }
 
 #endif

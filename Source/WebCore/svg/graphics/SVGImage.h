@@ -102,7 +102,10 @@ private:
 
 bool isInSVGImage(const Element*);
 
+IMAGE_TYPE_CASTS(SVGImage)
+
 }
+
 
 #endif // ENABLE(SVG)
 #endif // SVGImage_h

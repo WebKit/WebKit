@@ -86,7 +86,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientationDescri
 
     if (image->isBitmapImage()) {
         ImageOrientation orientation;
-        BitmapImage* bitmapImage = static_cast<BitmapImage *>(image);
+        BitmapImage* bitmapImage = toBitmapImage(image);
         IntSize sizeRespectingOrientation = bitmapImage->sizeRespectingOrientation(description);
 
         if (description.respectImageOrientation() == RespectImageOrientation)

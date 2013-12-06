@@ -1683,7 +1683,7 @@ void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>*)
 
 #if PLATFORM(MAC)
         unsigned maximumSnapshotRetries = frame() ? frame()->settings().maximumPlugInSnapshotAttempts() : 0;
-        if (snapshotImage && isAlmostSolidColor(static_cast<BitmapImage*>(snapshotImage.get())) && m_countSnapshotRetries < maximumSnapshotRetries) {
+        if (snapshotImage && isAlmostSolidColor(toBitmapImage(snapshotImage.get())) && m_countSnapshotRetries < maximumSnapshotRetries) {
             ++m_countSnapshotRetries;
             m_pluginSnapshotTimer.restart();
             return;

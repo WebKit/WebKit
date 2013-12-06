@@ -1,3 +1,24 @@
+2013-12-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce IMAGE_TYPE_CASTS, and use it
+        https://bugs.webkit.org/show_bug.cgi?id=125330
+
+        Reviewed by Ryosuke Niwa.
+
+        As a step to use TYPE_CASTS_BASE, this cl introduce IMAGE_TYPE_CASTS.
+        BitmapImage and SVGImage can use it to generate toFoo() type case helper functions.
+
+        No new tests, no behavior changes.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer):
+        (WebCore::CachedImage::resumeAnimatingImagesForLoader):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageFromImage):
+        * svg/graphics/SVGImage.h:
+
 2013-12-05  Zoltan Horvath  <zoltan@webkit.org>
 
         Clean up the forwarding headers of RenderBlock.h
