@@ -2210,7 +2210,12 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         flipForWritingMode(overflowBox);
         overflowBox.inflate(maximalOutlineSize(paintInfo.phase));
         overflowBox.moveBy(adjustedPaintOffset);
-        if (!overflowBox.intersects(paintInfo.rect))
+        if (!overflowBox.intersects(paintInfo.rect)
+#if PLATFORM(IOS)
+            // FIXME: This may be applicable to non-iOS ports.
+            && (!hasLayer() || !layer()->isComposited())
+#endif
+        )
             return;
     }
 
@@ -3559,6 +3564,15 @@ VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock& parent,
     // If we can't find an ancestor to check editability on, or editability is unchanged, we recur like normal
     if (isEditingBoundary(ancestor, child))
         return child.positionForPoint(pointInChildCoordinates);
+    
+#if PLATFORM(IOS)
+    // On iOS we want to constrain VisiblePositions to the editable region closest to the input position, so
+    // we will allow descent from non-edtiable to editable content.
+    // FIXME: This constraining must be done at a higher level once we implement contentEditable. For now, if something
+    // is editable, the whole document will be.
+    if (childElement->isContentEditable() && !ancestor->element()->isContentEditable())
+        return child.positionForPoint(pointInChildCoordinates);
+#endif
 
     // Otherwise return before or after the child, depending on if the click was to the logical left or logical right of the child
     LayoutUnit childMiddle = parent.logicalWidthForChild(child) / 2;

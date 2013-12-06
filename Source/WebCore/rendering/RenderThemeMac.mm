@@ -16,6 +16,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+#if !PLATFORM(IOS)
 
 #import "config.h"
 #import "RenderThemeMac.h"
@@ -1933,3 +1934,5 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
 
 
 } // namespace WebCore
+
+#endif // !PLATFORM(IOS)

@@ -67,6 +67,10 @@
 #include "SVGRenderSupport.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "SelectionRect.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1127,6 +1131,57 @@ void RenderObject::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRec
         graphicsContext->endTransparencyLayer();
 }
 
+// FIXME: Make this return an unsigned integer?
+int RenderObject::columnNumberForOffset(int offset)
+{
+    int columnNumber = 0;
+    RenderBlock* containingBlock = this->containingBlock();
+    RenderView& view = containingBlock->view();
+    const Pagination& pagination = view.frameView().frame().page()->pagination();
+    if (pagination.mode == Pagination::Unpaginated)
+        return columnNumber;
+
+    ColumnInfo* columnInfo = view.columnInfo();
+    if (columnInfo && columnInfo->progressionAxis() == ColumnInfo::BlockAxis) {
+        if (!columnInfo->progressionIsReversed())
+            columnNumber = (pagination.pageLength + pagination.gap - offset) / (pagination.pageLength + pagination.gap);
+        else
+            columnNumber = offset / (pagination.pageLength + pagination.gap);
+    }
+    return columnNumber;
+}
+
+#if PLATFORM(IOS)
+// This function is similar in spirit to RenderText::absoluteRectsForRange, but returns rectangles
+// which are annotated with additional state which helps iOS draw selections in its unique way.
+// No annotations are added in this class.
+// FIXME: Move to RenderText with absoluteRectsForRange()?
+void RenderObject::collectSelectionRects(Vector<SelectionRect>& rects, unsigned start, unsigned end)
+{
+    Vector<FloatQuad> quads;
+
+    if (!firstChildSlow()) {
+        // FIXME: WebKit's position for an empty span after a BR is incorrect, so we can't trust 
+        // quads for them. We don't need selection rects for those anyway though, since they 
+        // are just empty containers. See <https://bugs.webkit.org/show_bug.cgi?id=49358>.
+        RenderObject* previous = previousSibling();
+        Node* node = this->node();
+        if (!previous || !previous->isBR() || !node || !node->isContainerNode() || !isInline()) {
+            // For inline elements we don't use absoluteQuads, since it takes into account continuations and leads to wrong results.
+            absoluteQuadsForSelection(quads);
+        }
+    } else {
+        unsigned offset = start;
+        for (RenderObject* child = childAt(start); child && offset < end; child = child->nextSibling(), ++offset)
+            child->absoluteQuads(quads);
+    }
+
+    unsigned numberOfQuads = quads.size();
+    for (unsigned i = 0; i < numberOfQuads; ++i)
+        rects.append(SelectionRect(quads[i].enclosingBoundingBox(), isHorizontalWritingMode(), columnNumberForOffset(quads[i].enclosingBoundingBox().x())));
+}
+#endif
+
 IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms) const
 {
     if (useTransforms) {
@@ -2093,6 +2148,11 @@ void RenderObject::destroyAndCleanupAnonymousWrappers()
 
 void RenderObject::destroy()
 {
+#if PLATFORM(IOS)
+    if (hasLayer())
+        toRenderBoxModelObject(this)->layer()->willBeDestroyed();
+#endif
+
     willBeDestroyed();
     delete this;
 }
@@ -2165,6 +2225,11 @@ void RenderObject::updateHitTestResult(HitTestResult& result, const LayoutPoint&
 bool RenderObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& /*locationInContainer*/, const LayoutPoint& /*accumulatedOffset*/, HitTestAction)
 {
     return false;
+}
+
+int RenderObject::innerLineHeight() const
+{
+    return style().computedLineHeight();
 }
 
 RenderStyle* RenderObject::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle) const
@@ -2343,9 +2408,14 @@ bool RenderObject::willRenderImage(CachedImage*)
     if (style().visibility() != VISIBLE)
         return false;
 
+#if PLATFORM(IOS)
+    if (document().frame()->timersPaused())
+        return false;
+#else
     // We will not render a new image when Active DOM is suspended
     if (document().activeDOMObjectsAreSuspended())
         return false;
+#endif
 
     // If we're not in a window (i.e., we're dormant from being put in the b/f cache or in a background tab)
     // then we don't want to render either.

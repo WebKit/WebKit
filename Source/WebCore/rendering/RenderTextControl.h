@@ -37,6 +37,13 @@ public:
     HTMLTextFormControlElement& textFormControlElement() const;
     virtual PassRef<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
+#if PLATFORM(IOS)
+    bool canScroll() const;
+
+    // Returns the line height of the inner renderer.
+    virtual int innerLineHeight() const OVERRIDE;
+#endif
+
 protected:
     RenderTextControl(HTMLTextFormControlElement&, PassRef<RenderStyle>);
 

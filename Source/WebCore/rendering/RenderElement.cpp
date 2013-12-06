@@ -846,6 +846,10 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         if (visibilityChanged)
             document().setAnnotatedRegionsDirty(true);
 #endif
+#if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
+        if (visibilityChanged)
+            document().dirtyTouchEventRects();
+#endif
         if (visibilityChanged) {
             if (AXObjectCache* cache = document().existingAXObjectCache())
                 cache->childrenChanged(parent());
@@ -923,6 +927,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
     }
 }
 
+#if !PLATFORM(IOS)
 static bool areNonIdenticalCursorListsEqual(const RenderStyle* a, const RenderStyle* b)
 {
     ASSERT(a->cursors() != b->cursors());
@@ -933,6 +938,7 @@ static inline bool areCursorsEqual(const RenderStyle* a, const RenderStyle* b)
 {
     return a->cursor() == b->cursor() && (a->cursors() == b->cursors() || areNonIdenticalCursorListsEqual(a, b));
 }
+#endif
 
 void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
@@ -972,8 +978,10 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     // Don't check for repaint here; we need to wait until the layer has been
     // updated by subclasses before we know if we have to repaint (in setStyle()).
 
+#if !PLATFORM(IOS)
     if (oldStyle && !areCursorsEqual(oldStyle, &style()))
         frame().eventHandler().scheduleCursorUpdate();
+#endif
 }
 
 void RenderElement::insertedIntoTree()

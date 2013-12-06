@@ -58,6 +58,8 @@ public:
 
     float opacity();
 
+    PassRefPtr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId);
+
 private:
     RenderScrollbar(ScrollableArea*, ScrollbarOrientation, Element*, Frame*);
 
@@ -75,7 +77,6 @@ private:
 
     void updateScrollbarParts(bool destroy = false);
 
-    PassRefPtr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId);
     void updateScrollbarPart(ScrollbarPart, bool destroy = false);
 
     // This Scrollbar(Widget) may outlive the DOM which created it (during tear down),

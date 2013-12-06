@@ -19,6 +19,7 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+#if !PLATFORM(IOS)
 
 #ifndef RenderThemeMac_h
 #define RenderThemeMac_h
@@ -235,3 +236,5 @@ private:
 } // namespace WebCore
 
 #endif // RenderThemeMac_h
+
+#endif // !PLATFORM(IOS)

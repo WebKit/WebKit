@@ -157,6 +157,8 @@ public:
     IntRect pixelSnappedBorderBoxRect() const { return IntRect(IntPoint(), m_frameRect.pixelSnappedSize()); }
     virtual IntRect borderBoundingBox() const OVERRIDE FINAL { return pixelSnappedBorderBoxRect(); }
 
+    RoundedRect::Radii borderRadii() const;
+
     // The content area of the box (excludes padding - and intrinsic padding for table cells, etc... - and border).
     LayoutRect contentBoxRect() const { return LayoutRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), contentWidth(), contentHeight()); }
     // The content box in absolute coords. Ignores transforms.

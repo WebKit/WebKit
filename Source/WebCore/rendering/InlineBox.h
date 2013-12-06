@@ -131,6 +131,7 @@ public:
         m_prev = prev;
     }
     bool nextOnLineExists() const;
+    bool previousOnLineExists() const;
 
     virtual bool isLeaf() const { return true; }
     

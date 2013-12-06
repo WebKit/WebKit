@@ -62,6 +62,10 @@
 #include "RenderLayerCompositor.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "Settings.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -594,6 +598,18 @@ LayoutUnit RenderBox::constrainContentBoxLogicalHeightByMinMax(LayoutUnit logica
             logicalHeight = std::min(logicalHeight, maxH);
     }
     return std::max(logicalHeight, computeContentLogicalHeight(styleToUse.logicalMinHeight()));
+}
+
+RoundedRect::Radii RenderBox::borderRadii() const
+{
+    RenderStyle& style = this->style();
+    LayoutRect bounds = frameRect();
+
+    unsigned borderLeft = style.borderLeftWidth();
+    unsigned borderTop = style.borderTopWidth();
+    bounds.moveBy(LayoutPoint(borderLeft, borderTop));
+    bounds.contract(borderLeft + style.borderRightWidth(), borderTop + style.borderBottomWidth());
+    return style.getRoundedBorderFor(bounds).radii();
 }
 
 IntRect RenderBox::absoluteContentBox() const
@@ -1159,6 +1175,14 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     LayoutRect paintRect = borderBoxRectInRegion(paintInfo.renderRegion);
     paintRect.moveBy(paintOffset);
 
+#if PLATFORM(IOS)
+    // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
+    if (style().appearance() == CheckboxPart || style().appearance() == RadioPart) {
+        int width = std::min(paintRect.width(), paintRect.height());
+        int height = width;
+        paintRect = IntRect(paintRect.x(), paintRect.y() + (this->height() - height) / 2, width, height); // Vertically center the checkbox, like on desktop
+    }
+#endif
     BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context);
 
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
@@ -2109,9 +2133,15 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     rect.setLocation(topLeft);
     if (o->hasOverflowClip()) {
         RenderBox* containerBox = toRenderBox(o);
+#if PLATFORM(IOS)
+        if (!containerBox->layer() || !containerBox->layer()->hasAcceleratedTouchScrolling()) {
+#endif
         containerBox->applyCachedClipAndScrollOffsetForRepaint(rect);
         if (rect.isEmpty())
             return;
+#if PLATFORM(IOS)
+        } 
+#endif
     }
 
     if (containerSkipped) {
@@ -2902,6 +2932,33 @@ LayoutUnit RenderBox::availableLogicalHeight(AvailableLogicalHeightType heightTy
     return constrainLogicalHeightByMinMax(availableLogicalHeightUsing(style().logicalHeight(), heightType));
 }
 
+#if PLATFORM(IOS)
+static inline int customContainingBlockWidth(const RenderView& view, const RenderBox& containingBlockBox)
+{
+    return view.frameView().customFixedPositionLayoutRect().width() - containingBlockBox.borderLeft() - containingBlockBox.borderRight() - containingBlockBox.verticalScrollbarWidth();
+}
+
+static inline int customContainingBlockHeight(const RenderView& view, const RenderBox& containingBlockBox)
+{
+    return view.frameView().customFixedPositionLayoutRect().height() - containingBlockBox.borderTop() - containingBlockBox.borderBottom() - containingBlockBox.horizontalScrollbarHeight();
+}
+
+static int customContainingBlockLogicalWidth(const RenderStyle& style, const RenderView& view, const RenderBox& containingBlockBox)
+{
+    return style.isHorizontalWritingMode() ? customContainingBlockWidth(view, containingBlockBox) : customContainingBlockHeight(view, containingBlockBox);
+}
+
+static int customContainingBlockLogicalHeight(const RenderStyle& style, const RenderView& view, const RenderBox& containingBlockBox)
+{
+    return style.isHorizontalWritingMode() ? customContainingBlockHeight(view, containingBlockBox) : customContainingBlockWidth(view, containingBlockBox);
+}
+
+static inline int customContainingBlockAvailableLogicalHeight(const RenderStyle& style, const RenderView& view)
+{
+    return style.isHorizontalWritingMode() ? view.frameView().customFixedPositionLayoutRect().height() : view.frameView().customFixedPositionLayoutRect().width();
+}
+#endif
+
 LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogicalHeightType heightType) const
 {
     // We need to stop here, since we don't want to increase the height of the table
@@ -2914,9 +2971,21 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
     }
 
     if (h.isPercent() && isOutOfFlowPositioned() && !isRenderFlowThread()) {
+#if PLATFORM(IOS)
+        RenderBlock* containingBlock = this->containingBlock();
+        // If we're fixed, and our container is the RenderView, use the custom fixed position rect for sizing.
+        if (containingBlock->isRenderView()) {
+            RenderView& view = toRenderView(*containingBlock);
+            if (view.hasCustomFixedPosition(*this))
+                return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(h, customContainingBlockAvailableLogicalHeight(containingBlock->style(), view)));
+        }
+
+        return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(h, containingBlock->availableLogicalHeight(heightType)));
+#else
         // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.
         LayoutUnit availableHeight = containingBlockLogicalHeightForPositioned(containingBlock());
         return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(h, availableHeight));
+#endif
     }
 
     LayoutUnit heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(h);
@@ -2981,8 +3050,15 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
 
     if (containingBlock->isBox()) {
         RenderFlowThread* flowThread = flowThreadContainingBlock();
-        if (!flowThread)
+        if (!flowThread) {
+#if PLATFORM(IOS)
+            if (view().hasCustomFixedPosition(*this)) {
+                const RenderBox& containingBlockBox = toRenderBox(*containingBlock);
+                return customContainingBlockLogicalWidth(containingBlockBox.style(), &view(), containingBlockBox);
+            }
+#endif
             return toRenderBox(containingBlock)->clientLogicalWidth();
+        }
 
         if (containingBlock->isRenderNamedFlowThread() && style().position() == FixedPosition)
             return containingBlock->view().clientLogicalWidth();
@@ -3038,6 +3114,10 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
         return containingBlockLogicalWidthForPositioned(containingBlock, 0, false);
 
     if (containingBlock->isBox()) {
+#if PLATFORM(IOS)
+        if (view().hasCustomFixedPosition(*this))
+            return customContainingBlockLogicalHeight(style(), view(), toRenderBox(*containingBlock));
+#endif
         const RenderBlock* cb = toRenderBlock(containingBlock);
         LayoutUnit result = cb->clientLogicalHeight();
         RenderFlowThread* flowThread = flowThreadContainingBlock();
@@ -4460,7 +4540,11 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle)
         rect.unite(layoutOverflowRect());
 
     bool hasTransform = hasLayer() && layer()->transform();
+#if PLATFORM(IOS)
+    if (isInFlowPositioned() || (hasTransform && document().settings()->shouldTransformsAffectOverflow())) {
+#else
     if (isInFlowPositioned() || hasTransform) {
+#endif
         // If we are relatively positioned or if we have a transform, then we have to convert
         // this rectangle into physical coordinates, apply relative positioning and transforms
         // to it, and then convert it back.

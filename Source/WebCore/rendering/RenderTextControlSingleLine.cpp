@@ -45,6 +45,10 @@
 #include "TextControlInnerElements.h"
 #include <wtf/StackStats.h>
 
+#if PLATFORM(IOS)
+#include "RenderThemeIOS.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -211,6 +215,12 @@ void RenderTextControlSingleLine::layout()
         if (neededLayout)
             computeOverflow(clientLogicalBottom());
     }
+
+#if PLATFORM(IOS)
+    // FIXME: We should not be adjusting styles during layout. <rdar://problem/7675493>
+    if (inputElement().isSearchField())
+        RenderThemeIOS::adjustRoundBorderRadius(style(), this);
+#endif
 }
 
 bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
@@ -298,12 +308,14 @@ LayoutRect RenderTextControlSingleLine::controlClipRect(const LayoutPoint& addit
 
 float RenderTextControlSingleLine::getAvgCharWidth(AtomicString family)
 {
+#if !PLATFORM(IOS)
     // Since Lucida Grande is the default font, we want this to match the width
     // of MS Shell Dlg, the default font for textareas in Firefox, Safari Win and
     // IE for some encodings (in IE, the default font is encoding specific).
     // 901 is the avgCharWidth value in the OS/2 table for MS Shell Dlg.
     if (family == "Lucida Grande")
         return scaleEmToUnits(901);
+#endif
 
     return RenderTextControl::getAvgCharWidth(family);
 }
@@ -318,6 +330,8 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
     LayoutUnit result = static_cast<LayoutUnit>(ceiledLayoutUnit(charWidth * factor));
 
     float maxCharWidth = 0.f;
+
+#if !PLATFORM(IOS)
     const AtomicString& family = style().font().firstFamily();
     // Since Lucida Grande is the default font, we want this to match the width
     // of MS Shell Dlg, the default font for textareas in Firefox, Safari Win and
@@ -327,6 +341,7 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
         maxCharWidth = scaleEmToUnits(4027);
     else if (hasValidAvgCharWidth(family))
         maxCharWidth = roundf(style().font().primaryFont()->maxCharWidth());
+#endif
 
     // For text inputs, IE adds some extra width.
     if (maxCharWidth > 0.f)

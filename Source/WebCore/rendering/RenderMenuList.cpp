@@ -48,9 +48,28 @@
 #include "TextRun.h"
 #include <math.h>
 
+#if PLATFORM(IOS)
+#include "LocalizedStrings.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
+
+#if PLATFORM(IOS)
+static size_t selectedOptionCount(const RenderMenuList& renderMenuList)
+{
+    const Vector<HTMLElement*>& listItems = renderMenuList.selectElement().listItems();
+    size_t numberOfItems = listItems.size();
+
+    size_t count = 0;
+    for (size_t i = 0; i < numberOfItems; ++i) {
+        if (listItems[i]->hasTagName(optionTag) && toHTMLOptionElement(listItems[i])->selected())
+            ++count;
+    }
+    return count;
+}
+#endif
 
 RenderMenuList::RenderMenuList(HTMLSelectElement& element, PassRef<RenderStyle> style)
     : RenderFlexibleBox(element, std::move(style))
@@ -59,15 +78,19 @@ RenderMenuList::RenderMenuList(HTMLSelectElement& element, PassRef<RenderStyle> 
     , m_needsOptionsWidthUpdate(true)
     , m_optionsWidth(0)
     , m_lastActiveIndex(-1)
+#if !PLATFORM(IOS)
     , m_popupIsVisible(false)
+#endif
 {
 }
 
 RenderMenuList::~RenderMenuList()
 {
+#if !PLATFORM(IOS)
     if (m_popup)
         m_popup->disconnectClient();
     m_popup = 0;
+#endif
 }
 
 bool RenderMenuList::canBeReplacedWithInlineRunIn() const
@@ -118,6 +141,26 @@ void RenderMenuList::adjustInnerStyle()
         innerStyle.setTextAlign(LEFT);
         TextDirection direction = (m_buttonText && m_buttonText->text()->defaultWritingDirection() == U_RIGHT_TO_LEFT) ? RTL : LTR;
         innerStyle.setDirection(direction);
+#if PLATFORM(IOS)
+    } else if (document().page()->chrome().selectItemAlignmentFollowsMenuWritingDirection()) {
+        innerStyle.setTextAlign(style().direction() == LTR ? LEFT : RIGHT);
+        TextDirection direction;
+        EUnicodeBidi unicodeBidi;
+        if (multiple() && selectedOptionCount(*this) != 1) {
+            direction = (m_buttonText && m_buttonText->text()->defaultWritingDirection() == U_RIGHT_TO_LEFT) ? RTL : LTR;
+            unicodeBidi = UBNormal;
+        } else if (m_optionStyle) {
+            direction = m_optionStyle->direction();
+            unicodeBidi = m_optionStyle->unicodeBidi();
+        } else {
+            direction = style().direction();
+            unicodeBidi = style().unicodeBidi();
+        }
+
+        innerStyle.setDirection(direction);
+        innerStyle.setUnicodeBidi(unicodeBidi);
+    }
+#else
     } else if (m_optionStyle && document().page()->chrome().selectItemAlignmentFollowsMenuWritingDirection()) {
         if ((m_optionStyle->direction() != innerStyle.direction() || m_optionStyle->unicodeBidi() != innerStyle.unicodeBidi()))
             m_innerBlock->setNeedsLayoutAndPrefWidthsRecalc();
@@ -125,6 +168,7 @@ void RenderMenuList::adjustInnerStyle()
         innerStyle.setDirection(m_optionStyle->direction());
         innerStyle.setUnicodeBidi(m_optionStyle->unicodeBidi());
     }
+#endif // !PLATFORM(IOS)
 }
 
 HTMLSelectElement& RenderMenuList::selectElement() const
@@ -207,9 +251,11 @@ void RenderMenuList::updateFromElement()
         m_needsOptionsWidthUpdate = false;
     }
 
+#if !PLATFORM(IOS)
     if (m_popupIsVisible)
         m_popup->updateFromElement();
     else
+#endif
         setTextFromOption(selectElement().selectedIndex());
 }
 
@@ -227,6 +273,14 @@ void RenderMenuList::setTextFromOption(int optionIndex)
             m_optionStyle = element->renderStyle();
         }
     }
+
+#if PLATFORM(IOS)
+    if (multiple()) {
+        size_t count = selectedOptionCount(*this);
+        if (count != 1)
+            text = htmlSelectMultipleItems(count);
+    }
+#endif
 
     setText(text.stripWhiteSpace());
     didUpdateActiveOption(optionIndex);
@@ -302,6 +356,13 @@ void RenderMenuList::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
+#if PLATFORM(IOS)
+NO_RETURN_DUE_TO_ASSERT
+void RenderMenuList::showPopup()
+{
+    ASSERT_NOT_REACHED();
+}
+#else
 void RenderMenuList::showPopup()
 {
     if (m_popupIsVisible)
@@ -325,11 +386,14 @@ void RenderMenuList::showPopup()
     absBounds.setLocation(roundedIntPoint(absTopLeft));
     m_popup->show(absBounds, &view().frameView(), selectElement().optionToListIndex(selectElement().selectedIndex()));
 }
+#endif
 
 void RenderMenuList::hidePopup()
 {
+#if !PLATFORM(IOS)
     if (m_popup)
         m_popup->hide();
+#endif
 }
 
 void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
@@ -564,7 +628,9 @@ int RenderMenuList::selectedIndex() const
 
 void RenderMenuList::popupDidHide()
 {
+#if !PLATFORM(IOS)
     m_popupIsVisible = false;
+#endif
 }
 
 bool RenderMenuList::itemIsSeparator(unsigned listIndex) const

@@ -397,6 +397,10 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const PaintInfo& paintInfo, c
     if (paintInfo.context->paintingDisabled())
         return false;
 
+#if PLATFORM(IOS)
+    UNUSED_PARAM(r);
+    return o->style().appearance() != NoControlPart;
+#else
     // Call the appropriate paint method based off the appearance value.
     switch (o->style().appearance()) {
     case TextFieldPart:
@@ -440,6 +444,7 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const PaintInfo& paintInfo, c
     }
 
     return false;
+#endif
 }
 
 bool RenderTheme::paintDecorations(RenderObject* renderer, const PaintInfo& paintInfo, const IntRect& rect)
@@ -452,15 +457,26 @@ bool RenderTheme::paintDecorations(RenderObject* renderer, const PaintInfo& pain
     case MenulistButtonPart:
         return paintMenuListButtonDecorations(renderer, paintInfo, rect);
     case TextFieldPart:
+        return paintTextFieldDecorations(renderer, paintInfo, rect);
     case TextAreaPart:
-    case ListboxPart:
+        return paintTextAreaDecorations(renderer, paintInfo, rect);
     case CheckboxPart:
+        return paintCheckboxDecorations(renderer, paintInfo, rect);
     case RadioPart:
+        return paintRadioDecorations(renderer, paintInfo, rect);
     case PushButtonPart:
+        return paintPushButtonDecorations(renderer, paintInfo, rect);
     case SquareButtonPart:
-    case DefaultButtonPart:
+        return paintSquareButtonDecorations(renderer, paintInfo, rect);
     case ButtonPart:
+        return paintButtonDecorations(renderer, paintInfo, rect);
     case MenulistPart:
+        return paintMenuListDecorations(renderer, paintInfo, rect);
+    case SliderThumbHorizontalPart:
+    case SliderThumbVerticalPart:
+        return paintSliderThumbDecorations(renderer, paintInfo, rect);
+    case SearchFieldPart:
+        return paintSearchFieldDecorations(renderer, paintInfo, rect);
 #if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:
@@ -473,9 +489,8 @@ bool RenderTheme::paintDecorations(RenderObject* renderer, const PaintInfo& pain
 #endif
     case SliderHorizontalPart:
     case SliderVerticalPart:
-    case SliderThumbHorizontalPart:
-    case SliderThumbVerticalPart:
-    case SearchFieldPart:
+    case ListboxPart:
+    case DefaultButtonPart:
     case SearchFieldCancelButtonPart:
     case SearchFieldDecorationPart:
     case SearchFieldResultsDecorationPart:

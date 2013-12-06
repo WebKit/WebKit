@@ -204,6 +204,11 @@ public:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
+#if PLATFORM(IOS)
+    enum ContainingBlockCheck { CheckContainingBlock, DontCheckContainingBlock };
+    bool hasCustomFixedPosition(const RenderObject&, ContainingBlockCheck = CheckContainingBlock) const;
+#endif
+
     IntervalArena* intervalArena();
 
     IntSize viewportSize() const;

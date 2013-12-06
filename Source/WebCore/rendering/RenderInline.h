@@ -68,6 +68,10 @@ public:
     InlineBox* firstLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? firstLineBox() : culledInlineFirstLineBox(); }
     InlineBox* lastLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? lastLineBox() : culledInlineLastLineBox(); }
 
+#if PLATFORM(IOS)
+    virtual void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const OVERRIDE;
+#endif
+
     virtual RenderBoxModelObject* virtualContinuation() const OVERRIDE FINAL { return continuation(); }
     RenderInline* inlineElementContinuation() const;
 

@@ -5439,6 +5439,8 @@
 		CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB61586ABAD0098B3FA /* TextAlternativeWithRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */; };
 		CE95208A1811B475007A5392 /* WebSafeIncrementalSweeperIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C4CB1D161A131200D214DA /* WebSafeIncrementalSweeperIOS.h */; };
+		FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = FED13D500CEA949700D89466 /* RenderThemeIOS.h */; };
+		C55C7BA11718AFBA001327E4 /* RenderThemeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = C55C7BA01718AFBA001327E4 /* RenderThemeIOS.mm */; };
 		CECADFC6153778FF00E37068 /* DictationAlternative.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFC2153778FF00E37068 /* DictationAlternative.cpp */; };
 		CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFC3153778FF00E37068 /* DictationAlternative.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CECADFC8153778FF00E37068 /* DictationCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFC4153778FF00E37068 /* DictationCommand.cpp */; };
@@ -12558,6 +12560,8 @@
 		CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AlternativeTextUIController.mm; path = mac/AlternativeTextUIController.mm; sourceTree = "<group>"; };
 		CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextAlternativeWithRange.h; path = mac/TextAlternativeWithRange.h; sourceTree = "<group>"; };
 		CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextAlternativeWithRange.mm; path = mac/TextAlternativeWithRange.mm; sourceTree = "<group>"; };
+		FED13D500CEA949700D89466 /* RenderThemeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderThemeIOS.h; sourceTree = "<group>"; };
+		C55C7BA01718AFBA001327E4 /* RenderThemeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderThemeIOS.mm; sourceTree = "<group>"; };
 		CECADFC2153778FF00E37068 /* DictationAlternative.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationAlternative.cpp; sourceTree = "<group>"; };
 		CECADFC3153778FF00E37068 /* DictationAlternative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictationAlternative.h; sourceTree = "<group>"; };
 		CECADFC4153778FF00E37068 /* DictationCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationCommand.cpp; sourceTree = "<group>"; };
@@ -21240,6 +21244,8 @@
 				86FF885F15DE3B8200BD6B28 /* RenderTextTrackCue.h */,
 				BCEA484A097D93020094C9E4 /* RenderTheme.cpp */,
 				BCEA484B097D93020094C9E4 /* RenderTheme.h */,
+				FED13D500CEA949700D89466 /* RenderThemeIOS.h */,
+				C55C7BA01718AFBA001327E4 /* RenderThemeIOS.mm */,
 				BCEA4848097D93020094C9E4 /* RenderThemeMac.h */,
 				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
@@ -24361,6 +24367,7 @@
 				439046DE12DA25E800AF80A2 /* RenderMathMLMath.h in Headers */,
 				439046E012DA25E800AF80A2 /* RenderMathMLOperator.h in Headers */,
 				439046E212DA25E800AF80A2 /* RenderMathMLRoot.h in Headers */,
+				FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */,
 				439046E412DA25E800AF80A2 /* RenderMathMLRow.h in Headers */,
 				439046E612DA25E800AF80A2 /* RenderMathMLSquareRoot.h in Headers */,
 				0783228518013ED800999E0C /* MediaStreamAudioSource.h in Headers */,
@@ -28303,6 +28310,7 @@
 				976D6C7B122B8A3D001FD1F7 /* WebKitBlobBuilder.cpp in Sources */,
 				150B923915F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp in Sources */,
 				A2E8AE3016A48E1C006BB3AA /* WebKitCSSFilterRule.cpp in Sources */,
+				C55C7BA11718AFBA001327E4 /* RenderThemeIOS.mm in Sources */,
 				3106036F14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp in Sources */,
 				31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */,
 				31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */,

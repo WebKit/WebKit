@@ -60,6 +60,10 @@ public:
     explicit RenderLayerBacking(RenderLayer&);
     ~RenderLayerBacking();
 
+#if PLATFORM(IOS)
+    void layerWillBeDestroyed();
+#endif
+
     RenderLayer& owningLayer() const { return m_owningLayer; }
 
     enum UpdateAfterLayoutFlag {

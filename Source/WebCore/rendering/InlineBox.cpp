@@ -193,6 +193,15 @@ bool InlineBox::nextOnLineExists() const
     return m_bitfields.nextOnLineExists();
 }
 
+bool InlineBox::previousOnLineExists() const
+{
+    if (!parent())
+        return false;
+    if (prevOnLine())
+        return true;
+    return parent()->previousOnLineExists();
+}
+
 InlineBox* InlineBox::nextLeafChild() const
 {
     InlineBox* leaf = 0;

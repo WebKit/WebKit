@@ -65,6 +65,9 @@ class VisiblePosition;
 #if ENABLE(SVG)
 class RenderSVGResourceContainer;
 #endif
+#if PLATFORM(IOS)
+class SelectionRect;
+#endif
 
 struct PaintInfo;
 
@@ -108,7 +111,11 @@ enum MapCoordinatesMode {
 };
 typedef unsigned MapCoordinatesFlags;
 
+#if PLATFORM(IOS)
+const int caretWidth = 2; // This value should be kept in sync with UIKit. See <rdar://problem/15580601>.
+#else
 const int caretWidth = 1;
+#endif
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
 struct AnnotatedRegionValue {
@@ -653,7 +660,11 @@ public:
     void setHasLayer(bool b = true) { m_bitfields.setHasLayer(b); }
     void setHasTransform(bool b = true) { m_bitfields.setHasTransform(b); }
     void setHasReflection(bool b = true) { m_bitfields.setHasReflection(b); }
-    
+
+    // Hook so that RenderTextControl can return the line height of its inner renderer.
+    // For other renderers, the value is the same as lineHeight(false).
+    virtual int innerLineHeight() const;
+
     // used for element state updates that cannot be fixed with a
     // repaint and do not need a relayout
     virtual void updateFromElement() { }
@@ -707,7 +718,12 @@ public:
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const;
     // Return the offset from an object up the container() chain. Asserts that none of the intermediate objects have transforms.
     LayoutSize offsetFromAncestorContainer(RenderObject*) const;
-    
+
+#if PLATFORM(IOS)
+    virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max());
+    virtual void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const { absoluteQuads(quads); }
+#endif
+
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint&) const { }
 
     // FIXME: useTransforms should go away eventually
@@ -905,9 +921,10 @@ public:
 
     RespectImageOrientationEnum shouldRespectImageOrientation() const;
 
-protected:
     void drawLineForBoxSide(GraphicsContext*, int x1, int y1, int x2, int y2, BoxSide,
                             Color, EBorderStyle, int adjbw1, int adjbw2, bool antialias = false);
+protected:
+    int columnNumberForOffset(int offset);
 
     void paintFocusRing(PaintInfo&, const LayoutPoint&, RenderStyle*);
     void paintOutline(PaintInfo&, const LayoutRect&);

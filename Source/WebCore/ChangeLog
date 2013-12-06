@@ -1,3 +1,246 @@
+2013-12-06  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream WebCore/rendering changes
+        https://bugs.webkit.org/show_bug.cgi?id=125239
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::previousOnLineExists): Added.
+        * rendering/InlineBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintCompositionBackground): Modified to query RenderStyle
+        on iOS for the composition fill color. Added FIXME to make this platform-independent.
+        (WebCore::InlineTextBox::paintDecoration): Added iOS-specific decoration code.
+        (WebCore::lineStyleForMarkerType):
+        (WebCore::InlineTextBox::paintDocumentMarkers): Added iOS-specific code. Also, added
+        FIXME to make this code platform-independent.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint): Ditto.
+        (WebCore::positionForPointRespectingEditingBoundaries): Added iOS-specific code.
+        * rendering/RenderBlock.h: Changed access control of logical{Left, Right}SelectionOffset()
+        from private to protected so that these methods can be used from RenderImage::collectSelectionRects().
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::borderRadii): Added.
+        (WebCore::RenderBox::paintBoxDecorations): Added iOS-specific workaround. See <rdar://problem/6209763>
+        for more details.
+        (WebCore::RenderBox::computeRectForRepaint): Added iOS-specific code. 
+        (WebCore::customContainingBlockWidth): Added; guarded by PLATFORM(IOS).
+        (WebCore::customContainingBlockHeight): Added; guarded by PLATFORM(IOS).
+        (WebCore::customContainingBlockLogicalWidth): Added; guarded by PLATFORM(IOS).
+        (WebCore::customContainingBlockLogicalHeight): Added; guarded by PLATFORM(IOS).
+        (WebCore::customContainingBlockAvailableLogicalHeight): Added; guarded by PLATFORM(IOS).
+        (WebCore::RenderBox::availableLogicalHeightUsing): Added iOS-specific code; calls customContainingBlockAvailableLogicalHeight().
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned): Added iOS-specific code; calls customContainingBlockLogicalWidth().
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned): Added iOS-specific code; calls customContainingBlockLogicalHeight().
+        (WebCore::RenderBox::layoutOverflowRectForPropagation): Added iOS-specific code.
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::stickyPositionOffset): Use FrameView::customFixedPositionLayoutRect()
+        instead of FrameView::viewportConstrainedVisibleContentRect().
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::layout): Added; iOS-specific. Includes FIXME comment.
+        See <rdar://problem/7675493> for more details.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange): Added iOS-specific code.
+        (WebCore::RenderElement::styleDidChange): Modified to only call areCursorsEqual() and
+        EventHandler::scheduleCursorUpdate() on a non-iOS port.
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::allowsAcceleratedCompositing): Added iOS-specific code.
+        (WebCore::RenderEmbeddedObject::setPluginUnavailabilityReason): This method has an empty implementation for iOS.
+        (WebCore::RenderEmbeddedObject::setPluginUnavailabilityReasonWithDescription): Ditto.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::nodeHeight):
+        (WebCore::RenderFileUploadControl::maxFilenameWidth): Added iOS-specific code.
+        (WebCore::RenderFileUploadControl::paintObject): Ditto.
+        (WebCore::RenderFileUploadControl::fileTextValue): Ditto.
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::positionFrames): Ditto; Also added FIXME comment as this code may not
+        be specific to iOS.
+        * rendering/RenderIFrame.h: Added iOS-specific workaround to RenderObject::renderName(). Added
+        FIXME comment to determine whether this workaround is still applicable.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::collectSelectionRects): Added; guarded by PLATFORM(IOS).
+        (WebCore::RenderImage::paintAreaElementFocusRing): This method has an empty implementation for iOS.
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteQuadsForSelection): Added; guarded by PLATFORM(IOS).
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer): Added iOS-specific member initialization.
+        (WebCore::RenderLayer::~RenderLayer): Added iOS-specific code.
+        (WebCore::RenderLayer::willBeDestroyed): Added; iOS-specific.
+        (WebCore::RenderLayer::hasAcceleratedTouchScrolling): Ditto.
+        (WebCore::RenderLayer::handleTouchEvent): Ditto.
+        (WebCore::RenderLayer::registerAsTouchEventListenerForScrolling): Ditto.
+        (WebCore::RenderLayer::unregisterAsTouchEventListenerForScrolling): Ditto.
+        (WebCore::RenderLayer::updateNeedsCompositedScrolling): Added iOS-specific code as we use UIKit
+        to composite our scroll bars.
+        (WebCore::RenderLayer::scrollTo): Added iOS-specific code.
+        (WebCore::RenderLayer::scrollRectToVisible): Ditto.
+        (WebCore::RenderLayer::styleChanged): Modified to make use of the passed StyleDifference on iOS.
+        (WebCore::RenderLayer::visibleContentRect): Added; iOS-specific.
+        (WebCore::RenderLayer::didStartScroll): Ditto.
+        (WebCore::RenderLayer::didEndScroll): Ditto.
+        (WebCore::RenderLayer::didUpdateScroll): Ditto.
+        (WebCore::RenderLayer::invalidateScrollbarRect): Added iOS-specific code.
+        (WebCore::RenderLayer::invalidateScrollCornerRect): Ditto.
+        (WebCore::RenderLayer::verticalScrollbarWidth): Ditto.
+        (WebCore::RenderLayer::horizontalScrollbarHeight): Ditto.
+        (WebCore::RenderLayer::updateScrollableAreaSet): Ditto.
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout): Add iOS-specific workaround with FIXME. See
+        <rdar://problem/15579797> for more details.
+        (WebCore::RenderLayer::paintOverflowControls): Added iOS-specific code.
+        (WebCore::RenderLayer::calculateClipRects): Ditto.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer): Modified to not apply page scale on iOS
+        as we apply a page scale at a different time in the code.
+        (WebCore::RenderLayerBacking::layerWillBeDestroyed): Added; guarded by PLATFORM(IOS).
+        (WebCore::layerOrAncestorIsTransformedOrScrolling): Added iOS-specific variant with FIXME comment.
+        (WebCore::RenderLayerBacking::shouldClipCompositedBounds): Added iOS-specific code.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration): Ditto.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Ditto.
+        (WebCore::RenderLayerBacking::registerScrollingLayers): Ditto.
+        (WebCore::RenderLayerBacking::updateScrollingLayers): Ditto.
+        (WebCore::RenderLayerBacking::containsPaintedContent): Call RenderLayer::hasBoxDecorationsOrBackground()
+        when building on iOS Simulator.
+        (WebCore::RenderLayerBacking::parentForSublayers): Added iOS-specific code and FIXME comment.
+        (WebCore::RenderLayerBacking::paintsIntoWindow): Opt-into coordinated graphics code path.
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect): Added iOS-specific code.
+        (WebCore::RenderLayerBacking::paintIntoLayer): Compile-out ASSERT_NOT_REACHED for iOS and added FIXME comment.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::scheduleLayerFlush): Added iOS-specific code.
+        (WebCore::RenderLayerCompositor::chromeClient): Added; guarded by PLATFORM(IOS).
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges): Added iOS-specific code.
+        (WebCore::scrollbarHasDisplayNone): Added; iOS-specific.
+        (WebCore::updateScrollingLayerWithClient): Ditto.
+        (WebCore::RenderLayerCompositor::updateCustomLayersAfterFlush): Ditto.
+        (WebCore::RenderLayerCompositor::didFlushChangesForLayer): Added iOS-specific code.
+        (WebCore::RenderLayerCompositor::didChangeVisibleRect): Ditto.
+        (WebCore::RenderLayerCompositor::addToOverlapMap): Don't apply page scale factor on iOS. We apply
+        the page scale factor at a different time in the code. Also, added FIXME comment.
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): Added iOS-specific workaround.
+        See <rdar://problem/8348337> for more details.
+        (WebCore::RenderLayerCompositor::setIsInWindow): Use non-Mac code path for iOS.
+        (WebCore::RenderLayerCompositor::allowsIndependentlyCompositedFrames): Added iOS-specific code.
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer): Ditto.
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore): Ditto.
+        (WebCore::RenderLayerCompositor::reasonsForCompositing): Ditto.
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation): Opt-into calling
+        AnimationController::isRunningAnimationOnRenderer() on iOS.
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrolling): Added; guarded by PLATFORM(IOS).
+        (WebCore::isStickyInAcceleratedScrollingLayerOrViewport): Added iOS-specific code.
+        (WebCore::isViewportConstrainedFixedOrStickyLayer): Ditto.
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition): Use FrameView::customFixedPositionLayoutRect()
+        instead of FrameView::viewportConstrainedVisibleContentRect().
+        (WebCore::RenderLayerCompositor::contentsScaleMultiplierForNewTiles): Ditto.
+        (WebCore::RenderLayerCompositor::ensureRootLayer): Ditto.
+        (WebCore::RenderLayerCompositor::computeFixedViewportConstraints): Use FrameView::customFixedPositionLayoutRect()
+        instead of FrameView::viewportConstrainedVisibleContentRect().
+        (WebCore::RenderLayerCompositor::computeStickyViewportConstraints): Ditto.
+        (WebCore::RenderLayerCompositor::registerOrUpdateViewportConstrainedLayer): This method has an empty implementation for iOS
+        as we batch update viewport-constrained layers in the iOS-specific method, RenderLayerCompositor::updateCustomLayersAfterFlush().
+        (WebCore::RenderLayerCompositor::unregisterViewportConstrainedLayer): Ditto.
+        (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers): Added; guarded by PLATFORM(IOS).
+        (WebCore::RenderLayerCompositor::unregisterAllViewportConstrainedLayers): Ditto.
+        (WebCore::RenderLayerCompositor::registerAllScrollingLayers): Ditto.
+        (WebCore::RenderLayerCompositor::unregisterAllScrollingLayers): Ditto.
+        (WebCore::RenderLayerCompositor::scrollingLayerAddedOrUpdated): Ditto.
+        (WebCore::RenderLayerCompositor::scrollingLayerRemoved): Ditto.
+        (WebCore::RenderLayerCompositor::startInitialLayerFlushTimerIfNeeded): Ditto.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerFilterInfo.h: Added iOS-specific Clang workaround to ignore
+        an unused private field.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::selectedOptionCount): Added; guarded by PLATFORM(IOS).
+        (WebCore::RenderMenuList::RenderMenuList): On iOS we don't make use of RenderMenuList::m_popupIsVisible.
+        (WebCore::RenderMenuList::~RenderMenuList): On iOS we don't make use of RenderMenuList::m_popup.
+        (WebCore::RenderMenuList::adjustInnerStyle): Add iOS-specific code.
+        (RenderMenuList::updateFromElement): On iOS we don't make use of RenderMenuList::m_popup.
+        (RenderMenuList::setTextFromOption): Add iOS-specific code.
+        (RenderMenuList::showPopup): Define RenderMenuList::showPopup() to ASSERT_NOT_REACHED() on iOS as
+        we don't make use of RenderMenuList::m_popup.
+        (RenderMenuList::hidePopup): This method has an empty implementation for iOS as we don't make use
+        of RenderMenuList::m_popup.
+        (RenderMenuList::popupDidHide): This method has an empty implementation for iOS as we don't make use
+        of RenderMenuList::m_popupIsVisible.
+        * rendering/RenderMenuList.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::columnNumberForOffset): Added; guarded by PLATFORM(IOS). Also, added a FIXME comment to
+        make this function return an unsigned integer instead of a signed integer.
+        (WebCore::RenderObject::collectSelectionRects): Added; guarded by PLATFORM(IOS).
+        (WebCore::RenderObject::destroy): Added iOS-specific code.
+        (WebCore::RenderObject::innerLineHeight): Added.
+        (WebCore::RenderObject::willRenderImage): Added iOS-specific code.
+        * rendering/RenderObject.h: Change the access control of RenderObject::drawLineForBoxSide() from protected to
+        public so that it can be used from RenderThemeIOS::adjustMenuListButtonStyle().
+        (WebCore::RenderObject::absoluteQuadsForSelection):
+        * rendering/RenderScrollbar.h: Change the access control of RenderScrollbar::getScrollbarPseudoStyle() from
+        private to public so that it can be used from the iOS-specific static function, scrollbarHasDisplayNone,
+        defined in RenderLayerCompositor.cpp.
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::itemText): Added iOS-specific code.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::collectSelectionRects): Added; guarded by PLATFORM(IOS).
+        (WebCore::RenderText::setTextInternal): Added iOS-specific code.
+        * rendering/RenderText.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::adjustInnerTextStyle): Ditto.
+        (WebCore::RenderTextControl::canScroll): Added; guarded by PLATFORM(IOS).
+        (WebCore::RenderTextControl::innerLineHeight): Ditto.
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::getAvgCharWidth): Compile-out code when building for iOS.
+        (WebCore::RenderTextControlMultiLine::createInnerTextStyle): Added iOS-specific code.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout): Ditto.
+        (WebCore::RenderTextControlSingleLine::getAvgCharWidth): Compile-out code when building for iOS.
+        (WebCore::RenderTextControlSingleLine::preferredContentLogicalWidth): Ditto.
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::lineDirectionPointFitsInBox): Ditto.
+        (WebCore::RenderTextLineBoxes::positionForPoint): Added iOS-specific code.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintBorderOnly): Ditto.
+        (WebCore::RenderTheme::paintDecorations): Modified to call the control-specific paint*Decorations().
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintCheckboxDecorations): Added.
+        (WebCore::RenderTheme::paintRadioDecorations): Added.
+        (WebCore::RenderTheme::paintButtonDecorations): Added.
+        (WebCore::RenderTheme::paintTextFieldDecorations): Added.
+        (WebCore::RenderTheme::paintTextAreaDecorations): Added.
+        (WebCore::RenderTheme::paintMenuListDecorations): Added.
+        (WebCore::RenderTheme::paintPushButtonDecorations): Added.
+        (WebCore::RenderTheme::paintSquareButtonDecorations): Added.
+        (WebCore::RenderTheme::paintFileUploadIconDecorations): Added.
+        (WebCore::RenderTheme::paintSliderThumbDecorations): Added.
+        (WebCore::RenderTheme::paintSearchFieldDecorations): Added.
+        * rendering/RenderThemeIOS.h: Added.
+        * rendering/RenderThemeIOS.mm: Added.
+        * rendering/RenderThemeMac.h: Don't compile the contents of this file when building for iOS.
+        * rendering/RenderThemeMac.mm: Ditto.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::calculateIntrinsicSize): Compile-out code when building for iOS.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::availableLogicalHeight): Add iOS-specific workaround. See <rdar://problem/7166808>.
+        (WebCore::fixedPositionOffset): Added; used in iOS-specific code (e.g. RenderView::mapLocalToContainer()).
+        (WebCore::RenderView::mapLocalToContainer): Use WebCore::fixedPositionOffset() instead of 
+        FrameView::scrollOffsetForFixedPosition().
+        (WebCore::RenderView::pushMappingToContainer): Ditto.
+        (WebCore::RenderView::mapAbsoluteToLocalPoint): Ditto.
+        (WebCore::RenderView::repaintViewRectangle): Ditto.
+        (WebCore::RenderView::computeRectForRepaint): Ditto.
+        (WebCore::isFixedPositionInViewport): Added; used in RenderView::hasCustomFixedPosition().
+        (WebCore::RenderView::hasCustomFixedPosition): Added; guarded by PLATFORM(IOS).
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::willBeDestroyed): Added iOS-specific code.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox): Ditto.
+        * rendering/break_lines.cpp: Only include header <CoreServices/CoreServices.h> when building for Mac.
+
 2013-12-06  Zoltan Horvath  <zoltan@webkit.org>
 
         Clean up the includes of RenderBlock.h 

@@ -32,7 +32,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 #include <CoreServices/CoreServices.h>
 #endif
 

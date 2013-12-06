@@ -47,7 +47,70 @@
 #include "SVGImage.h"
 #include <wtf/StackStats.h>
 
+#if PLATFORM(IOS)
+#include "LogicalSelectionOffsetCaches.h"
+#include "SelectionRect.h"
+#endif
+
 namespace WebCore {
+
+#if PLATFORM(IOS)
+// FIXME: This doesn't behave correctly for floating or positioned images, but WebCore doesn't handle those well
+// during selection creation yet anyway.
+// FIXME: We can't tell whether or not we contain the start or end of the selected Range using only the offsets
+// of the start and end, we need to know the whole Position.
+void RenderImage::collectSelectionRects(Vector<SelectionRect>& rects, unsigned, unsigned)
+{
+    RenderBlock* containingBlock = this->containingBlock();
+
+    IntRect imageRect;
+    // FIXME: It doesn't make sense to package line bounds into SelectionRects. We should find
+    // the right and left extent of the selection once for the entire selected Range, perhaps
+    // using the Range's common ancestor.
+    IntRect lineExtentRect;
+    bool isFirstOnLine = false;
+    bool isLastOnLine = false;
+
+    InlineBox* inlineBox = inlineBoxWrapper();
+    if (!inlineBox) {
+        // This is a block image.
+        imageRect = IntRect(0, 0, width(), height());
+        isFirstOnLine = true;
+        isLastOnLine = true;
+        lineExtentRect = imageRect;
+        if (containingBlock->isHorizontalWritingMode()) {
+            lineExtentRect.setX(containingBlock->x());
+            lineExtentRect.setWidth(containingBlock->width());
+        } else {
+            lineExtentRect.setY(containingBlock->y());
+            lineExtentRect.setHeight(containingBlock->height());
+        }
+    } else {
+        LayoutUnit selectionTop = !containingBlock->style().isFlippedBlocksWritingMode() ? inlineBox->root().selectionTop() - logicalTop() : logicalBottom() - inlineBox->root().selectionBottom();
+        imageRect = IntRect(0,  selectionTop, logicalWidth(), inlineBox->root().selectionHeight());
+        isFirstOnLine = !inlineBox->previousOnLineExists();
+        isLastOnLine = !inlineBox->nextOnLineExists();
+        LogicalSelectionOffsetCaches cache(*containingBlock);
+        LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, inlineBox->logicalTop(), cache);
+        LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, inlineBox->logicalTop(), cache);
+        lineExtentRect = IntRect(leftOffset - logicalLeft(), imageRect.y(), rightOffset - leftOffset, imageRect.height());
+        if (!inlineBox->isHorizontal()) {
+            imageRect = imageRect.transposedRect();
+            lineExtentRect = lineExtentRect.transposedRect();
+        }
+    }
+
+    bool isFixed = false;
+    IntRect absoluteBounds = localToAbsoluteQuad(FloatRect(imageRect), false, &isFixed).enclosingBoundingBox();
+    IntRect lineExtentBounds = localToAbsoluteQuad(FloatRect(lineExtentRect)).enclosingBoundingBox();
+    if (!containingBlock->isHorizontalWritingMode())
+        lineExtentBounds = lineExtentBounds.transposedRect();
+
+    // FIXME: We should consider either making SelectionRect a struct or better organize its optional fields into
+    // an auxiliary struct to simplify its initialization.
+    rects.append(SelectionRect(absoluteBounds, containingBlock->style().direction(), lineExtentBounds.x(), lineExtentBounds.maxX(), lineExtentBounds.maxY(), 0, false /* line break */, isFirstOnLine, isLastOnLine, false /* contains start */, false /* contains end */, containingBlock->style().isHorizontalWritingMode(), isFixed, false /* ruby text */, columnNumberForOffset(absoluteBounds.x())));
+}
+#endif
 
 using namespace HTMLNames;
 
@@ -462,6 +525,9 @@ void RenderImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     
 void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
 {
+#if PLATFORM(IOS)
+    UNUSED_PARAM(paintInfo);
+#else
     if (document().printing() || !frame().selection().isFocusedAndActive())
         return;
     
@@ -493,6 +559,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
     paintInfo.context->drawFocusRing(path, outlineWidth,
         areaElementStyle->outlineOffset(),
         areaElementStyle->visitedDependentColor(CSSPropertyOutlineColor));
+#endif
 }
 
 void RenderImage::areaElementFocusChanged(HTMLAreaElement* element)

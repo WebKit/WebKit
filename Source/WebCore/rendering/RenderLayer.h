@@ -320,6 +320,10 @@ public:
     explicit RenderLayer(RenderLayerModelObject&);
     virtual ~RenderLayer();
 
+#if PLATFORM(IOS)
+    // Called before the renderer's widget (if any) has been nulled out.
+    void willBeDestroyed();
+#endif
     String name() const;
 
     RenderLayerModelObject& renderer() const { return m_renderer; }
@@ -419,6 +423,27 @@ public:
     virtual Scrollbar* horizontalScrollbar() const OVERRIDE { return m_hBar.get(); }
     virtual Scrollbar* verticalScrollbar() const OVERRIDE { return m_vBar.get(); }
     virtual ScrollableArea* enclosingScrollableArea() const OVERRIDE;
+
+#if PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS)
+    virtual bool handleTouchEvent(const PlatformTouchEvent&) OVERRIDE;
+    virtual bool isTouchScrollable() const OVERRIDE { return true; }
+#endif
+    virtual bool isOverflowScroll() const OVERRIDE { return true; }
+    
+    virtual void didStartScroll() OVERRIDE;
+    virtual void didEndScroll() OVERRIDE;
+    virtual void didUpdateScroll() OVERRIDE;
+    virtual void setIsUserScroll(bool isUserScroll) OVERRIDE { m_inUserScroll = isUserScroll; }
+
+    bool isInUserScroll() const { return m_inUserScroll; }
+
+    bool requiresScrollBoundsOriginUpdate() const { return m_requiresScrollBoundsOriginUpdate; }
+    void setRequiresScrollBoundsOriginUpdate(bool requiresUpdate = true) { m_requiresScrollBoundsOriginUpdate = requiresUpdate; }
+
+    bool hasAcceleratedTouchScrolling() const;
+
+#endif
 
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
@@ -727,6 +752,11 @@ public:
    
     void setStaticInlinePosition(LayoutUnit position) { m_staticInlinePosition = position; }
     void setStaticBlockPosition(LayoutUnit position) { m_staticBlockPosition = position; }
+
+#if PLATFORM(IOS)
+    bool adjustForIOSCaretWhenScrolling() const { return m_adjustForIOSCaretWhenScrolling; }
+    void setAdjustForIOSCaretWhenScrolling(bool adjustForIOSCaretWhenScrolling) { m_adjustForIOSCaretWhenScrolling = adjustForIOSCaretWhenScrolling; }
+#endif
 
     bool hasTransform() const { return renderer().hasTransform(); }
     // Note that this transform has the transform-origin baked in.
@@ -1044,6 +1074,11 @@ private:
     virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
     virtual bool updatesScrollLayerPositionOnMainThread() const OVERRIDE { return true; }
 
+#if PLATFORM(IOS)
+    void registerAsTouchEventListenerForScrolling();
+    void unregisterAsTouchEventListenerForScrolling();
+#endif
+
     // Rectangle encompassing the scroll corner and resizer rect.
     IntRect scrollCornerAndResizerRect() const;
 
@@ -1202,6 +1237,13 @@ private:
     bool m_hasCompositingDescendant : 1; // In the z-order tree.
     unsigned m_indirectCompositingReason : 3;
     unsigned m_viewportConstrainedNotCompositedReason : 2;
+#endif
+
+#if PLATFORM(IOS)
+    bool m_adjustForIOSCaretWhenScrolling : 1;
+    bool m_registeredAsTouchEventListenerForScrolling : 1;
+    bool m_inUserScroll : 1;
+    bool m_requiresScrollBoundsOriginUpdate : 1;
 #endif
 
     bool m_containsDirtyOverlayScrollbars : 1;

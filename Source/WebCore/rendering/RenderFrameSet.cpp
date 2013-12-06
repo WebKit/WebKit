@@ -514,7 +514,12 @@ void RenderFrameSet::positionFrames()
             if (width != child->width() || height != child->height()) {
                 child->setWidth(width);
                 child->setHeight(height);
+#if PLATFORM(IOS)
+                // FIXME: Is this iOS-specific?
+                child->setNeedsLayout(MarkOnlyThis);
+#else
                 child->setNeedsLayout();
+#endif
                 child->layout();
             }
 

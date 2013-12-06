@@ -48,7 +48,9 @@ public:
 
     HTMLSelectElement& selectElement() const;
 
+#if !PLATFORM(IOS)
     bool popupIsVisible() const { return m_popupIsVisible; }
+#endif
     void showPopup();
     void hidePopup();
 
@@ -145,8 +147,10 @@ private:
 
     RefPtr<RenderStyle> m_optionStyle;
 
+#if !PLATFORM(IOS)
     RefPtr<PopupMenu> m_popup;
     bool m_popupIsVisible;
+#endif
 };
 
 template<> inline bool isRendererOfType<const RenderMenuList>(const RenderObject& renderer) { return renderer.isMenuList(); }

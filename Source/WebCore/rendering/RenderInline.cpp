@@ -697,6 +697,14 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
         continuation->absoluteQuads(quads, wasFixed);
 }
 
+#if PLATFORM(IOS)
+void RenderInline::absoluteQuadsForSelection(Vector<FloatQuad>& quads) const
+{
+    AbsoluteQuadsGeneratorContext context(this, quads);
+    generateLineBoxRects(context);
+}
+#endif
+
 LayoutUnit RenderInline::offsetLeft() const
 {
     LayoutPoint topLeft;

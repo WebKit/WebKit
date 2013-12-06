@@ -271,12 +271,14 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, const InlineText
         return true;
     }
 
+#if !PLATFORM(IOS)
     // and the x coordinate is to the left of the right edge of this box
     // check to see if position goes in this box
     if (pointLineDirection < box.logicalRight()) {
         shouldAffinityBeDownstream = UpstreamIfPositionIsNotAtStart;
         return true;
     }
+#endif
 
     // box is first on line
     // and the x coordinate is to the left of the first text box left edge
@@ -406,6 +408,13 @@ VisiblePosition RenderTextLineBoxes::positionForPoint(const RenderText& renderer
 
             if (pointBlockDirection < bottom || (blocksAreFlipped && pointBlockDirection == bottom)) {
                 ShouldAffinityBeDownstream shouldAffinityBeDownstream;
+#if PLATFORM(IOS)
+                if (pointLineDirection != box->logicalLeft() && point.x() < box->x() + box->logicalWidth()) {
+                    int half = box->x() + box->logicalWidth() / 2;
+                    EAffinity affinity = point.x() < half ? DOWNSTREAM : VP_UPSTREAM_IF_POSSIBLE;
+                    return renderer.createVisiblePosition(box->offsetForPosition(pointLineDirection) + box->start(), affinity);
+                }
+#endif
                 if (lineDirectionPointFitsInBox(pointLineDirection, *box, shouldAffinityBeDownstream))
                     return createVisiblePositionAfterAdjustingOffsetForBiDi(*box, box->offsetForPosition(pointLineDirection), shouldAffinityBeDownstream);
             }

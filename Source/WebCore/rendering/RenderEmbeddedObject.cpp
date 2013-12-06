@@ -134,10 +134,16 @@ bool RenderEmbeddedObject::requiresLayer() const
 
 bool RenderEmbeddedObject::allowsAcceleratedCompositing() const
 {
+#if PLATFORM(IOS)
+    // The timing of layer creation is different on the phone, since the plugin can only be manipulated from the main thread.
+    return widget() && widget()->isPluginViewBase() && toPluginViewBase(widget())->willProvidePluginLayer();
+#else
     return widget() && widget()->isPluginViewBase() && toPluginViewBase(widget())->platformLayer();
+#endif
 }
 #endif
 
+#if !PLATFORM(IOS)
 static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason)
 {
     switch (pluginUnavailabilityReason) {
@@ -154,6 +160,7 @@ static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnava
     ASSERT_NOT_REACHED();
     return String();
 }
+#endif
 
 static bool shouldUnavailablePluginMessageBeButton(Document& document, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason)
 {
@@ -163,11 +170,19 @@ static bool shouldUnavailablePluginMessageBeButton(Document& document, RenderEmb
 
 void RenderEmbeddedObject::setPluginUnavailabilityReason(PluginUnavailabilityReason pluginUnavailabilityReason)
 {
+#if PLATFORM(IOS)
+    UNUSED_PARAM(pluginUnavailabilityReason);
+#else
     setPluginUnavailabilityReasonWithDescription(pluginUnavailabilityReason, unavailablePluginReplacementText(pluginUnavailabilityReason));
+#endif
 }
 
 void RenderEmbeddedObject::setPluginUnavailabilityReasonWithDescription(PluginUnavailabilityReason pluginUnavailabilityReason, const String& description)
 {
+#if PLATFORM(IOS)
+    UNUSED_PARAM(pluginUnavailabilityReason);
+    UNUSED_PARAM(description);
+#else
     ASSERT(!m_isPluginUnavailable);
     m_isPluginUnavailable = true;
     m_pluginUnavailabilityReason = pluginUnavailabilityReason;
@@ -176,6 +191,7 @@ void RenderEmbeddedObject::setPluginUnavailabilityReasonWithDescription(PluginUn
         m_unavailablePluginReplacementText = unavailablePluginReplacementText(pluginUnavailabilityReason);
     else
         m_unavailablePluginReplacementText = description;
+#endif
 }
 
 void RenderEmbeddedObject::setUnavailablePluginIndicatorIsPressed(bool pressed)

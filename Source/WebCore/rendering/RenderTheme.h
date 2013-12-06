@@ -39,6 +39,7 @@ class CSSStyleSheet;
 class Element;
 class FileList;
 class HTMLInputElement;
+class Icon;
 class PopupMenu;
 class RenderMenuList;
 #if ENABLE(METER_ELEMENT)
@@ -271,18 +272,31 @@ protected:
     virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 #endif
 
+    virtual bool paintCheckboxDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintRadioDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+
     virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintTextFieldDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 
     virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintTextAreaDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 
     virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintMenuListDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuListButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 
+    virtual bool paintPushButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintSquareButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+
+    enum FileUploadDecorations { SingleFile, MultipleFiles };
+    virtual bool paintFileUploadIconDecorations(RenderObject* /*inputRenderer*/, RenderObject* /*buttonRenderer*/, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) { return true; }
+    
 #if ENABLE(METER_ELEMENT)
     virtual void adjustMeterStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&);
@@ -303,9 +317,11 @@ protected:
 
     virtual void adjustSliderThumbStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintSliderThumbDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 
     virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+    virtual bool paintSearchFieldDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 
     virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&) { return true; }

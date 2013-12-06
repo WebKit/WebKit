@@ -29,6 +29,10 @@
 #include "RenderTheme.h"
 #include "StyleInheritedData.h"
 
+#if PLATFORM(IOS)
+#include "RenderThemeIOS.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -191,5 +195,15 @@ void RenderButton::timerFired(Timer<RenderButton>*)
 
     repaint();
 }
+
+#if PLATFORM(IOS)
+void RenderButton::layout()
+{
+    RenderFlexibleBox::layout();
+
+    // FIXME: We should not be adjusting styles during layout. See <rdar://problem/7675493>.
+    RenderThemeIOS::adjustRoundBorderRadius(style(), this);
+}
+#endif
 
 } // namespace WebCore

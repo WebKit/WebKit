@@ -47,6 +47,14 @@
 #include <wtf/text/StringBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
+#if PLATFORM(IOS)
+#include "Document.h"
+#include "EditorClient.h"
+#include "LogicalSelectionOffsetCaches.h"
+#include "Page.h"
+#include "SelectionRect.h"
+#endif
+
 using namespace WTF;
 using namespace Unicode;
 
@@ -299,6 +307,83 @@ Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, 
     
     return m_lineBoxes.absoluteRectsForRange(*this, start, end, useSelectionHeight, wasFixed);
 }
+
+#if PLATFORM(IOS)
+// This function is similar in spirit to addLineBoxRects, but returns rectangles
+// which are annotated with additional state which helps the iPhone draw selections in its unique way.
+// Full annotations are added in this class.
+void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned start, unsigned end)
+{
+    // FIXME: Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
+    // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this 
+    // function to take ints causes various internal mismatches. But selectionRect takes ints, and 
+    // passing UINT_MAX to it causes trouble. Ideally we'd change selectionRect to take unsigneds, but 
+    // that would cause many ripple effects, so for now we'll just clamp our unsigned parameters to INT_MAX.
+    ASSERT(end == std::numeric_limits<unsigned>::max() || end <= std::numeric_limits<int>::max());
+    ASSERT(start <= std::numeric_limits<int>::max());
+    start = std::min(start, static_cast<unsigned>(std::numeric_limits<int>::max()));
+    end = std::min(end, static_cast<unsigned>(std::numeric_limits<int>::max()));
+
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+        LayoutRect rect;
+        // Note, box->end() returns the index of the last character, not the index past it.
+        if (start <= box->start() && box->end() < end)
+            rect = box->localSelectionRect(start, end);
+        else {
+            unsigned realEnd = std::min(box->end() + 1, end);
+            rect = box->localSelectionRect(start, realEnd);
+            if (rect.isEmpty())
+                continue;
+        }
+
+        if (box->root().isFirstAfterPageBreak()) {
+            if (box->isHorizontal())
+                rect.shiftYEdgeTo(box->root().lineTopWithLeading());
+            else
+                rect.shiftXEdgeTo(box->root().lineTopWithLeading());
+        }
+
+        RenderBlock* containingBlock = this->containingBlock();
+        // Map rect, extended left to leftOffset, and right to rightOffset, through transforms to get minX and maxX.
+        LogicalSelectionOffsetCaches cache(*containingBlock);
+        LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, box->logicalTop(), cache);
+        LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, box->logicalTop(), cache);
+        LayoutRect extentsRect = rect;
+        if (box->isHorizontal()) {
+            extentsRect.setX(leftOffset);
+            extentsRect.setWidth(rightOffset - leftOffset);
+        } else {
+            extentsRect.setY(leftOffset);
+            extentsRect.setHeight(rightOffset - leftOffset);
+        }
+        extentsRect = localToAbsoluteQuad(FloatRect(extentsRect)).enclosingBoundingBox();
+        if (!box->isHorizontal())
+            extentsRect = extentsRect.transposedRect();
+        bool isFirstOnLine = !box->previousOnLineExists();
+        bool isLastOnLine = !box->nextOnLineExists();
+        if (containingBlock->isRubyBase() || containingBlock->isRubyText())
+            isLastOnLine = !containingBlock->containingBlock()->inlineBoxWrapper()->nextOnLineExists();
+
+        bool containsStart = box->start() <= start && box->end() + 1 >= start;
+        bool containsEnd = box->start() <= end && box->end() + 1 >= end;
+
+        bool isFixed = false;
+        IntRect absRect = localToAbsoluteQuad(FloatRect(rect), false, &isFixed).enclosingBoundingBox();
+        bool boxIsHorizontal = !box->isSVGInlineTextBox() ? box->isHorizontal() : !style().svgStyle().isVerticalWritingMode();
+        // If the containing block is an inline element, we want to check the inlineBoxWrapper orientation
+        // to determine the orientation of the block. In this case we also use the inlineBoxWrapper to
+        // determine if the element is the last on the line.
+        if (containingBlock->inlineBoxWrapper()) {
+            if (containingBlock->inlineBoxWrapper()->isHorizontal() != boxIsHorizontal) {
+                boxIsHorizontal = containingBlock->inlineBoxWrapper()->isHorizontal();
+                isLastOnLine = !containingBlock->inlineBoxWrapper()->nextOnLineExists();
+            }
+        }
+
+        rects.append(SelectionRect(absRect, box->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, box->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, containingBlock->isRubyText(), columnNumberForOffset(absRect.x())));
+    }
+}
+#endif
 
 Vector<FloatQuad> RenderText::absoluteQuadsClippedToEllipsis() const
 {
@@ -953,13 +1038,25 @@ void RenderText::setTextInternal(const String& text)
     case TSNONE:
         break;
     case TSCIRCLE:
+#if PLATFORM(IOS)
+        secureText(blackCircle);
+#else
         secureText(whiteBullet);
+#endif
         break;
     case TSDISC:
+#if PLATFORM(IOS)
+        secureText(blackCircle);
+#else
         secureText(bullet);
+#endif
         break;
     case TSSQUARE:
+#if PLATFORM(IOS)
+        secureText(blackCircle);
+#else
         secureText(blackSquare);
+#endif
     }
 
     ASSERT(!m_text.isNull());

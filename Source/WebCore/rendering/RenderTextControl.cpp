@@ -92,6 +92,31 @@ void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, Rend
     bool disabled = updateUserModifyProperty(textFormControlElement(), textBlockStyle);
     if (disabled)
         textBlockStyle->setColor(theme()->disabledTextColor(textBlockStyle->visitedDependentColor(CSSPropertyColor), startStyle->visitedDependentColor(CSSPropertyBackgroundColor)));
+#if PLATFORM(IOS)
+    if (textBlockStyle->textSecurity() != TSNONE && !textBlockStyle->isLeftToRightDirection()) {
+        // Preserve the alignment but force the direction to LTR so that the last-typed, unmasked character
+        // (which cannot have RTL directionality) will appear to the right of the masked characters. See <rdar://problem/7024375>.
+        
+        switch (textBlockStyle->textAlign()) {
+        case TASTART:
+        case JUSTIFY:
+            textBlockStyle->setTextAlign(RIGHT);
+            break;
+        case TAEND:
+            textBlockStyle->setTextAlign(LEFT);
+            break;
+        case LEFT:
+        case RIGHT:
+        case CENTER:
+        case WEBKIT_LEFT:
+        case WEBKIT_RIGHT:
+        case WEBKIT_CENTER:
+            break;
+        }
+
+        textBlockStyle->setDirection(LTR);
+    }
+#endif
 }
 
 int RenderTextControl::textBlockLogicalHeight() const
@@ -302,6 +327,22 @@ RenderObject* RenderTextControl::layoutSpecialExcludedChild(bool relayoutChildre
     }
     return placeholderRenderer;
 }
+
+#if PLATFORM(IOS)
+bool RenderTextControl::canScroll() const
+{
+    Element* innerText = innerTextElement();
+    return innerText && innerText->renderer() && innerText->renderer()->hasOverflowClip();
+}
+
+int RenderTextControl::innerLineHeight() const
+{
+    Element* innerText = innerTextElement();
+    if (innerText && innerText->renderer())
+        return innerText->renderer()->style().computedLineHeight();
+    return style().computedLineHeight();
+}
+#endif
 
 bool RenderTextControl::canBeReplacedWithInlineRunIn() const
 {

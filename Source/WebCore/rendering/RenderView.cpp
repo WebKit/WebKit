@@ -137,6 +137,11 @@ LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
     // If we have columns, then the available logical height is reduced to the column height.
     if (hasColumns())
         return columnInfo()->columnHeight();
+#if PLATFORM(IOS)
+    // Workaround for <rdar://problem/7166808>.
+    if (document().isPluginDocument() && frameView().useFixedLayout())
+        return frameView().fixedLayoutSize().height();
+#endif
     return isHorizontalWritingMode() ? frameView().visibleHeight() : frameView().visibleWidth();
 }
 
@@ -363,6 +368,13 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
     return viewLogicalHeight();
 }
 
+#if PLATFORM(IOS)
+static inline LayoutSize fixedPositionOffset(const FrameView& frameView)
+{
+    return frameView.useCustomFixedPositionLayoutRect() ? (frameView.customFixedPositionLayoutRect().location() - LayoutPoint()) : frameView->scrollOffset();
+}
+#endif
+
 void RenderView::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
 {
     // If a container was specified, and was not 0 or the RenderView,
@@ -377,7 +389,11 @@ void RenderView::mapLocalToContainer(const RenderLayerModelObject* repaintContai
     }
     
     if (mode & IsFixed)
+#if PLATFORM(IOS)
+        transformState.move(fixedPositionOffset(m_frameView));
+#else
         transformState.move(frameView().scrollOffsetForFixedPosition());
+#endif
 }
 
 const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -386,7 +402,11 @@ const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObj
     // then we should have found it by now.
     ASSERT_ARG(ancestorToStopAt, !ancestorToStopAt || ancestorToStopAt == this);
 
+#if PLATFORM(IOS)
+    LayoutSize scrollOffset = fixedPositionOffset(frameView());
+#else
     LayoutSize scrollOffset = frameView().scrollOffsetForFixedPosition();
+#endif
 
     if (!ancestorToStopAt && shouldUseTransformFromContainer(0)) {
         TransformationMatrix t;
@@ -401,7 +421,11 @@ const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObj
 void RenderView::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
 {
     if (mode & IsFixed)
+#if PLATFORM(IOS)
+        transformState.move(fixedPositionOffset(frameView()));
+#else
         transformState.move(frameView().scrollOffsetForFixedPosition());
+#endif
 
     if (mode & UseTransforms && shouldUseTransformFromContainer(0)) {
         TransformationMatrix t;
@@ -572,7 +596,12 @@ void RenderView::repaintViewRectangle(const LayoutRect& ur, bool immediate) cons
         frameView().repaintContentRectangle(pixelSnappedIntRect(ur), immediate);
     else if (RenderBox* obj = elt->renderBox()) {
         LayoutRect vr = viewRect();
+#if PLATFORM(IOS)
+        // Don't clip using the visible rect since clipping is handled at a higher level on iPhone.
+        LayoutRect r = ur;
+#else
         LayoutRect r = intersection(ur, vr);
+#endif
         
         // Subtract out the contentsX and contentsY offsets to get our coords within the viewing
         // rectangle.
@@ -636,8 +665,13 @@ void RenderView::computeRectForRepaint(const RenderLayerModelObject* repaintCont
             rect.setX(viewWidth() - rect.maxX());
     }
 
-    if (fixed)
+    if (fixed) {
+#if PLATFORM(IOS)
+        rect.move(fixedPositionOffset(frameView()));
+#else
         rect.move(frameView().scrollOffsetForFixedPosition());
+#endif
+    }
         
     // Apply our transform if we have one (because of full page zooming).
     if (!repaintContainer && layer() && layer()->transform())
@@ -1155,6 +1189,24 @@ FlowThreadController& RenderView::flowThreadController()
 
     return *m_flowThreadController;
 }
+
+#if PLATFORM(IOS)
+static bool isFixedPositionInViewport(const RenderObject& renderer, const RenderObject* container)
+{
+    return (renderer.style().position() == FixedPosition) && renderer.container() == container;
+}
+
+bool RenderView::hasCustomFixedPosition(const RenderObject& renderer, ContainingBlockCheck checkContainer) const
+{
+    if (!frameView().useCustomFixedPositionLayoutRect())
+        return false;
+
+    if (checkContainer == CheckContainingBlock)
+        return isFixedPositionInViewport(renderer, this);
+
+    return renderer.style().position() == FixedPosition;
+}
+#endif
 
 void RenderView::pushLayoutStateForCurrentFlowThread(const RenderObject& object)
 {

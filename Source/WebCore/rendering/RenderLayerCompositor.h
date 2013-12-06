@@ -273,6 +273,16 @@ public:
     void updateViewportConstraintStatus(RenderLayer&);
     void removeViewportConstrainedLayer(RenderLayer&);
 
+#if PLATFORM(IOS)
+    void registerAllViewportConstrainedLayers();
+    void unregisterAllViewportConstrainedLayers();
+
+    void scrollingLayerAddedOrUpdated(RenderLayer*);
+    void scrollingLayerRemoved(RenderLayer*, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer);
+
+    void registerAllScrollingLayers();
+    void unregisterAllScrollingLayers();
+#endif
     void resetTrackedRepaintRects();
     void setTracksRepaints(bool);
 
@@ -383,6 +393,16 @@ private:
     bool requiresCompositingForOverflowScrolling(const RenderLayer&) const;
     bool requiresCompositingForIndirectReason(RenderLayerModelObject&, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason&) const;
 
+#if PLATFORM(IOS)
+    bool requiresCompositingForScrolling(RenderLayerModelObject&) const;
+
+    void updateCustomLayersAfterFlush();
+
+    ChromeClient* chromeClient() const;
+
+    void startInitialLayerFlushTimerIfNeeded();
+#endif
+
     void addViewportConstrainedLayer(RenderLayer&);
     void registerOrUpdateViewportConstrainedLayer(RenderLayer&);
     void unregisterViewportConstrainedLayer(RenderLayer&);
@@ -450,6 +470,10 @@ private:
     std::unique_ptr<GraphicsLayer> m_clipLayer;
     std::unique_ptr<GraphicsLayer> m_scrollLayer;
 
+#if PLATFORM(IOS)
+    HashSet<RenderLayer*> m_scrollingLayers;
+    HashSet<RenderLayer*> m_scrollingLayersNeedingUpdate;
+#endif
     HashSet<RenderLayer*> m_viewportConstrainedLayers;
     HashSet<RenderLayer*> m_viewportConstrainedLayersNeedingUpdate;
 

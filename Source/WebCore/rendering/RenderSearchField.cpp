@@ -218,6 +218,7 @@ void RenderSearchField::valueChanged(unsigned listIndex, bool fireEvents)
 
 String RenderSearchField::itemText(unsigned listIndex) const
 {
+#if !PLATFORM(IOS)
     int size = listSize();
     if (size == 1) {
         ASSERT(!listIndex);
@@ -225,10 +226,13 @@ String RenderSearchField::itemText(unsigned listIndex) const
     }
     if (!listIndex)
         return searchMenuRecentSearchesText();
+#endif
     if (itemIsSeparator(listIndex))
         return String();
+#if !PLATFORM(IOS)
     if (static_cast<int>(listIndex) == (size - 1))
         return searchMenuClearRecentSearchesText();
+#endif
     return m_recentSearches[listIndex - 1];
 }
 

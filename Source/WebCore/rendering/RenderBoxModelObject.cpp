@@ -432,7 +432,11 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
         FloatPoint scrollOffset = FloatPoint() + enclosingClippingLayer->scrollOffset();
         constrainingRect.setLocation(scrollOffset);
     } else {
+#if PLATFORM(IOS)
+        LayoutRect viewportRect = view().frameView().customFixedPositionLayoutRect();
+#else
         LayoutRect viewportRect = view().frameView().viewportConstrainedVisibleContentRect();
+#endif
         float scale = view().frameView().frame().frameScaleFactor();
         viewportRect.scale(1 / scale);
         constrainingRect = viewportRect;

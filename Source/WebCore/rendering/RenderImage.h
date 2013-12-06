@@ -56,6 +56,10 @@ public:
     void areaElementFocusChanged(HTMLAreaElement*);
 
     void highQualityRepaintTimerFired(Timer<RenderImage>*);
+    
+#if PLATFORM(IOS)
+    virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned, unsigned) OVERRIDE;
+#endif
 
     void setIsGeneratedContent(bool generated = true) { m_isGeneratedContent = generated; }
 

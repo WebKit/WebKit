@@ -89,7 +89,16 @@ private:
 
     static HashMap<const RenderLayer*, OwnPtr<FilterInfo>>& map();
 
+#if PLATFORM(IOS)
+#pragma clang diagnostic push
+#if defined(__has_warning) && __has_warning("-Wunused-private-field")
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#endif
+#endif
     RenderLayer& m_layer;
+#if PLATFORM(IOS)
+#pragma clang diagnostic pop
+#endif
 
     RefPtr<FilterEffectRenderer> m_renderer;
     LayoutRect m_dirtySourceRect;

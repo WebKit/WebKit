@@ -182,6 +182,12 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_indirectCompositingReason(NoIndirectCompositingReason)
     , m_viewportConstrainedNotCompositedReason(NoNotCompositedReason)
 #endif
+#if PLATFORM(IOS)
+    , m_adjustForIOSCaretWhenScrolling(false)
+    , m_registeredAsTouchEventListenerForScrolling(false)
+    , m_inUserScroll(false)
+    , m_requiresScrollBoundsOriginUpdate(false)
+#endif
     , m_containsDirtyOverlayScrollbars(false)
     , m_updatingMarqueePosition(false)
 #if !ASSERT_DISABLED
@@ -237,6 +243,9 @@ RenderLayer::~RenderLayer()
     renderer().view().frameView().removeScrollableArea(this);
 
     if (!renderer().documentBeingDestroyed()) {
+#if PLATFORM(IOS)
+        unregisterAsTouchEventListenerForScrolling();
+#endif
         if (Element* element = renderer().element())
             element->setSavedLayerScrollOffset(m_scrollOffset);
     }
@@ -1767,6 +1776,14 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext* context, const Render
     }
 }
 
+#if PLATFORM(IOS)
+void RenderLayer::willBeDestroyed()
+{
+    if (RenderLayerBacking* layerBacking = backing())
+        layerBacking->layerWillBeDestroyed();
+}
+#endif
+
 void RenderLayer::addChild(RenderLayer* child, RenderLayer* beforeChild)
 {
     RenderLayer* prevSibling = beforeChild ? beforeChild->previousSibling() : lastChild();
@@ -2084,6 +2101,55 @@ void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutR
     rect.move(-delta.x(), -delta.y());
 }
 
+#if PLATFORM(IOS)
+bool RenderLayer::hasAcceleratedTouchScrolling() const
+{
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+    if (!scrollsOverflow())
+        return false;
+    
+    Settings* settings = renderer().document().settings();
+
+    // FIXME: settings should not be null at this point. If you find a reliable way to hit this assertion, please file a bug.
+    // See <rdar://problem/10266101>.
+    ASSERT(settings);
+
+    return renderer().style().useTouchOverflowScrolling() || (settings && settings->alwaysUseAcceleratedOverflowScroll());
+#else
+    return false;
+#endif
+}
+
+#if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
+bool RenderLayer::handleTouchEvent(const PlatformTouchEvent& touchEvent)
+{
+    // If we have accelerated scrolling, let the scrolling be handled outside of WebKit.
+    if (hasAcceleratedTouchScrolling())
+        return false;
+
+    return ScrollableArea::handleTouchEvent(touchEvent);
+}
+#endif
+
+void RenderLayer::registerAsTouchEventListenerForScrolling()
+{
+    if (!renderer().element() || m_registeredAsTouchEventListenerForScrolling)
+        return;
+    
+    renderer().document().addTouchEventListener(renderer().element());
+    m_registeredAsTouchEventListenerForScrolling = true;
+}
+
+void RenderLayer::unregisterAsTouchEventListenerForScrolling()
+{
+    if (!renderer().element() || !m_registeredAsTouchEventListenerForScrolling)
+        return;
+
+    renderer().document().removeTouchEventListener(renderer().element());
+    m_registeredAsTouchEventListenerForScrolling = false;
+}
+#endif // PLATFORM(IOS)
+
 #if USE(ACCELERATED_COMPOSITING)
 
 bool RenderLayer::usesCompositedScrolling() const
@@ -2107,9 +2173,11 @@ void RenderLayer::updateNeedsCompositedScrolling()
             && canBeStackingContainer()
             && !hasOutOfFlowPositionedDescendant();
 
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if !PLATFORM(IOS) && ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
         m_needsCompositedScrolling = forceUseCompositedScrolling || renderer().style().useTouchOverflowScrolling();
 #else
+        // On iOS we don't want to opt into accelerated composited scrolling, which creates scroll bar
+        // layers in WebCore, because we use UIKit to composite our scroll bars.
         m_needsCompositedScrolling = forceUseCompositedScrolling;
 #endif
         // We gather a boolean value for use with Google UMA histograms to
@@ -2241,6 +2309,17 @@ void RenderLayer::scrollTo(int x, int y)
         // Ensure that the dimensions will be computed if they need to be (for overflow:hidden blocks).
         if (m_scrollDimensionsDirty)
             computeScrollDimensions();
+#if PLATFORM(IOS)
+        if (adjustForIOSCaretWhenScrolling()) {
+            int maxX = scrollWidth() - box->clientWidth();
+            if (x > maxX - caretWidth) {
+                x += caretWidth;
+                if (x <= caretWidth)
+                    x = 0;
+            } else if (x < m_scrollOffset.width() - caretWidth)
+                x -= caretWidth;
+        }
+#endif
     }
     
     // FIXME: Eventually, we will want to perform a blit.  For now never
@@ -2249,8 +2328,13 @@ void RenderLayer::scrollTo(int x, int y)
     // is either occluded by another layer or clipped by an enclosing
     // layer or contains fixed backgrounds, etc.).
     IntSize newScrollOffset = IntSize(x - scrollOrigin().x(), y - scrollOrigin().y());
-    if (m_scrollOffset == newScrollOffset)
+    if (m_scrollOffset == newScrollOffset) {
+#if PLATFORM(IOS)
+        if (m_requiresScrollBoundsOriginUpdate)
+            updateCompositingLayersAfterScroll();
+#endif
         return;
+}
     m_scrollOffset = newScrollOffset;
 
     InspectorInstrumentation::willScrollLayer(&renderer().frame());
@@ -2276,6 +2360,10 @@ void RenderLayer::scrollTo(int x, int y)
             // when that completes.
             updateCompositingLayersAfterScroll();
         }
+
+#if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
+        renderer().document().dirtyTouchEventRects();
+#endif
     }
 
     Frame& frame = renderer().frame();
@@ -2296,7 +2384,11 @@ void RenderLayer::scrollTo(int x, int y)
 #endif
 
     // Just schedule a full repaint of our object.
+#if PLATFORM(IOS)
+    if (!hasAcceleratedTouchScrolling())
+#else
     if (requiresRepaint)
+#endif
         renderer().repaintUsingContainer(repaintContainer, pixelSnappedIntRect(m_repaintRect));
 
     // Schedule the scroll DOM event.
@@ -2386,10 +2478,15 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                     parentLayer = 0;
             }
         } else {
+#if !PLATFORM(IOS)
             LayoutRect viewRect = frameView.visibleContentRect();
             LayoutRect visibleRectRelativeToDocument = viewRect;
             IntSize scrollOffsetRelativeToDocument = frameView.scrollOffsetRelativeToDocument();
             visibleRectRelativeToDocument.setLocation(IntPoint(scrollOffsetRelativeToDocument.width(), scrollOffsetRelativeToDocument.height()));
+#else
+            LayoutRect viewRect = frameView.actualVisibleContentRect();
+            LayoutRect visibleRectRelativeToDocument = viewRect;
+#endif
 
             LayoutRect r = getRectToExpose(viewRect, visibleRectRelativeToDocument, rect, alignX, alignY);
                 
@@ -2624,6 +2721,13 @@ IntRect RenderLayer::visibleContentRect(VisibleContentRectIncludesScrollbars scr
     if (scrollbarInclusion == IncludeScrollbars) {
         verticalScrollbarWidth = (verticalScrollbar() && !verticalScrollbar()->isOverlayScrollbar()) ? verticalScrollbar()->width() : 0;
         horizontalScrollbarHeight = (horizontalScrollbar() && !horizontalScrollbar()->isOverlayScrollbar()) ? horizontalScrollbar()->height() : 0;
+
+#if PLATFORM(IOS)
+        if (hasAcceleratedTouchScrolling()) {
+            verticalScrollbarWidth = 0;
+            horizontalScrollbarHeight = 0;
+        }
+#endif
     }
     
     return IntRect(IntPoint(scrollXOffset(), scrollYOffset()),
@@ -2761,6 +2865,27 @@ bool RenderLayer::shouldSuspendScrollAnimations() const
     return renderer().view().frameView().shouldSuspendScrollAnimations();
 }
 
+#if PLATFORM(IOS)
+void RenderLayer::didStartScroll()
+{
+    if (Page* page = renderer().frame().page())
+        page->chrome().client().didStartOverflowScroll();
+}
+
+void RenderLayer::didEndScroll()
+{
+    if (Page* page = renderer().frame().page())
+        page->chrome().client().didEndOverflowScroll();
+}
+    
+void RenderLayer::didUpdateScroll()
+{
+    // Send this notification when we scroll, since this is how we keep selection updated.
+    if (Page* page = renderer().frame().page())
+        page->chrome().client().didLayout(ChromeClient::Scroll);
+}
+#endif
+
 IntPoint RenderLayer::lastKnownMousePosition() const
 {
     return renderer().frame().eventHandler().lastKnownMousePosition();
@@ -2832,6 +2957,12 @@ IntSize RenderLayer::scrollbarOffset(const Scrollbar* scrollbar) const
 
 void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
 {
+#if PLATFORM(IOS)
+    // No need to invalidate scrollbars if we're using accelerated scrolling.
+    if (hasAcceleratedTouchScrolling())
+        return;
+#endif
+
 #if USE(ACCELERATED_COMPOSITING)
     if (scrollbar == m_vBar.get()) {
         if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
@@ -2863,6 +2994,12 @@ void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& r
 
 void RenderLayer::invalidateScrollCornerRect(const IntRect& rect)
 {
+#if PLATFORM(IOS)
+    // No need to invalidate the scroll corner if we're using accelerated scrolling.
+    if (hasAcceleratedTouchScrolling())
+        return;
+#endif
+
 #if USE(ACCELERATED_COMPOSITING)
     if (GraphicsLayer* layer = layerForScrollCorner()) {
         layer->setNeedsDisplayInRect(rect);
@@ -2984,6 +3121,12 @@ int RenderLayer::verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy)
 {
     if (!m_vBar || (m_vBar->isOverlayScrollbar() && (relevancy == IgnoreOverlayScrollbarSize || !m_vBar->shouldParticipateInHitTesting())))
         return 0;
+
+#if PLATFORM(IOS)
+    if (hasAcceleratedTouchScrolling()) 
+        return 0;
+#endif
+
     return m_vBar->width();
 }
 
@@ -2991,6 +3134,12 @@ int RenderLayer::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevan
 {
     if (!m_hBar || (m_hBar->isOverlayScrollbar() && (relevancy == IgnoreOverlayScrollbarSize || !m_hBar->shouldParticipateInHitTesting())))
         return 0;
+
+#if PLATFORM(IOS)
+    if (hasAcceleratedTouchScrolling()) 
+        return 0;
+#endif
+
     return m_hBar->height();
 }
 
@@ -3219,8 +3368,18 @@ void RenderLayer::updateScrollInfoAfterLayout()
         // Layout may cause us to be at an invalid scroll position. In this case we need
         // to pull our scroll offsets back to the max (or push them up to the min).
         IntSize clampedScrollOffset = clampScrollOffset(scrollOffset());
+#if PLATFORM(IOS)
+        // FIXME: This looks wrong. The caret adjust mode should only be enabled on editing related entry points.
+        // This code was added to fix an issue where the text insertion point would always be drawn on the right edge
+        // of a text field whose content overflowed its bounds. See <rdar://problem/15579797> for more details.
+        setAdjustForIOSCaretWhenScrolling(true);
+#endif
         if (clampedScrollOffset != scrollOffset())
             scrollToOffset(clampedScrollOffset);
+
+#if PLATFORM(IOS)
+        setAdjustForIOSCaretWhenScrolling(false);
+#endif
     }
 
     updateScrollbarsAfterLayout();
@@ -3259,6 +3418,12 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint
     // Don't do anything if we have no overflow.
     if (!renderer().hasOverflowClip())
         return;
+
+#if PLATFORM(IOS)
+    // Don't render (custom) scrollbars if we have accelerated scrolling.
+    if (hasAcceleratedTouchScrolling())
+        return;
+#endif
 
     // Overlay scrollbars paint in a second pass through the layer tree so that they will paint
     // on top of everything else. If this is the normal painting pass, paintingOverlayControls
@@ -5243,7 +5408,11 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
         clipRects.setOverflowClipRect(clipRects.posClipRect());
     
     // Update the clip rects that will be passed to child layers.
+#if PLATFORM(IOS)
+    if (renderer().hasClipOrOverflowClip() && (clipRectsContext.respectOverflowClip == RespectOverflowClip || this != clipRectsContext.rootLayer)) {
+#else
     if ((renderer().hasOverflowClip() && (clipRectsContext.respectOverflowClip == RespectOverflowClip || this != clipRectsContext.rootLayer)) || renderer().hasClip()) {
+#endif
         // This layer establishes a clip of some kind.
 
         // This offset cannot use convertToLayerCoords, because sometimes our rootLayer may be across
@@ -6183,6 +6352,9 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
 #if ENABLE(CSS_FILTERS)
         && !renderer().hasFilter()
 #endif
+#if PLATFORM(IOS)
+            && !hasAcceleratedTouchScrolling()
+#endif
 #if ENABLE(CSS_COMPOSITING)
         && !renderer().hasBlendMode()
 #endif
@@ -6397,7 +6569,7 @@ inline bool RenderLayer::needsCompositingLayersRebuiltForOverflow(const RenderSt
 
 #endif // USE(ACCELERATED_COMPOSITING)
 
-void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
+void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle)
 {
     bool isNormalFlowOnly = shouldBeNormalFlowOnly();
     if (isNormalFlowOnly != m_isNormalFlowOnly) {
@@ -6477,6 +6649,13 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
     }
 #endif
 
+#if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
+    if (diff == StyleDifferenceRecompositeLayer || diff >= StyleDifferenceLayoutPositionedMovementOnly)
+        renderer().document().dirtyTouchEventRects();
+#else
+    UNUSED_PARAM(diff);
+#endif
+
 #if ENABLE(CSS_FILTERS)
     updateOrRemoveFilterEffectRenderer();
 #if USE(ACCELERATED_COMPOSITING)
@@ -6510,6 +6689,18 @@ void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
         updateNeedsCompositedScrolling();
 #endif
     }
+
+#if PLATFORM(IOS)
+    if (addedOrRemoved) {
+        if (isScrollable && !hasAcceleratedTouchScrolling())
+            registerAsTouchEventListenerForScrolling();
+        else {
+            // We only need the touch listener for unaccelerated overflow scrolling, so if we became
+            // accelerated, remove ourselves as a touch event listener.
+            unregisterAsTouchEventListenerForScrolling();
+        }
+    }
+#endif
 }
 
 void RenderLayer::updateScrollCornerStyle()

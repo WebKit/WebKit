@@ -61,11 +61,13 @@ bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitT
 
 float RenderTextControlMultiLine::getAvgCharWidth(AtomicString family)
 {
+#if !PLATFORM(IOS)
     // Since Lucida Grande is the default font, we want this to match the width
     // of Courier New, the default font for textareas in IE, Firefox and Safari Win.
     // 1229 is the avgCharWidth value in the OS/2 table for Courier New.
     if (family == "Lucida Grande")
         return scaleEmToUnits(1229);
+#endif
 
     return RenderTextControl::getAvgCharWidth(family);
 }
@@ -91,6 +93,13 @@ PassRef<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const Rend
     textBlockStyle.get().inheritFrom(startStyle);
     adjustInnerTextStyle(startStyle, &textBlockStyle.get());
     textBlockStyle.get().setDisplay(BLOCK);
+
+#if PLATFORM(IOS)
+    // We're adding three extra pixels of padding to line textareas up with text fields.  
+    textBlockStyle.get().setPaddingLeft(Length(3, Fixed));
+    textBlockStyle.get().setPaddingRight(Length(3, Fixed));
+#endif
+
     return textBlockStyle;
 }
 

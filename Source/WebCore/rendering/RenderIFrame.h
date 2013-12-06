@@ -54,7 +54,12 @@ private:
 
     virtual bool isRenderIFrame() const OVERRIDE { return true; }
 
+#if PLATFORM(IOS)
+    // FIXME: Do we still need this workaround to avoid breaking layout tests?
+    virtual const char* renderName() const OVERRIDE { return "RenderPartObject"; }
+#else
     virtual const char* renderName() const OVERRIDE { return "RenderIFrame"; }
+#endif
 
     virtual bool requiresLayer() const OVERRIDE;
 
