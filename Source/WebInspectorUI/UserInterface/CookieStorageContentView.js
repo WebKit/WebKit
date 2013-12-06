@@ -41,7 +41,7 @@ WebInspector.CookieStorageContentView.prototype = {
 
     update: function()
     {
-        function callback(error, cookies, cookiesString)
+        function callback(error, cookies)
         {
             if (error)
                 return;

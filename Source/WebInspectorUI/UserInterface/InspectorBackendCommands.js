@@ -308,7 +308,7 @@ InspectorBackend.registerCommand("Page.addScriptToEvaluateOnLoad", [{"name": "sc
 InspectorBackend.registerCommand("Page.removeScriptToEvaluateOnLoad", [{"name": "identifier", "type": "string", "optional": false}], []);
 InspectorBackend.registerCommand("Page.reload", [{"name": "ignoreCache", "type": "boolean", "optional": true}, {"name": "scriptToEvaluateOnLoad", "type": "string", "optional": true}, {"name": "scriptPreprocessor", "type": "string", "optional": true}], []);
 InspectorBackend.registerCommand("Page.navigate", [{"name": "url", "type": "string", "optional": false}], []);
-InspectorBackend.registerCommand("Page.getCookies", [], ["cookies", "cookiesString"]);
+InspectorBackend.registerCommand("Page.getCookies", [], ["cookies"]);
 InspectorBackend.registerCommand("Page.deleteCookie", [{"name": "cookieName", "type": "string", "optional": false}, {"name": "url", "type": "string", "optional": false}], []);
 InspectorBackend.registerCommand("Page.getResourceTree", [], ["frameTree"]);
 InspectorBackend.registerCommand("Page.getResourceContent", [{"name": "frameId", "type": "string", "optional": false}, {"name": "url", "type": "string", "optional": false}], ["content", "base64Encoded"]);

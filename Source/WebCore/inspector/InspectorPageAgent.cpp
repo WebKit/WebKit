@@ -528,7 +528,7 @@ static Vector<URL> allResourcesURLsForFrame(Frame* frame)
     return result;
 }
 
-void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Page::Cookie>>& cookies, WTF::String* cookiesString)
+void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Page::Cookie>>& cookies)
 {
     // If we can get raw cookies.
     ListHashSet<Cookie> rawCookiesList;
@@ -564,13 +564,10 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<Type
     }
 
     // FIXME: Do not return empty string/empty array. Make returns optional instead. https://bugs.webkit.org/show_bug.cgi?id=80855
-    if (rawCookiesImplemented) {
+    if (rawCookiesImplemented)
         cookies = buildArrayForCookies(rawCookiesList);
-        *cookiesString = "";
-    } else {
+    else
         cookies = TypeBuilder::Array<TypeBuilder::Page::Cookie>::create();
-        *cookiesString = stringCookiesList.toString();
-    }
 }
 
 void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, const String& url)

@@ -135,10 +135,9 @@
         {
             "name": "getCookies",
             "returns": [
-                { "name": "cookies", "type": "array", "items": { "$ref": "Cookie"}, "description": "Array of cookie objects." },
-                { "name": "cookiesString", "type": "string", "description": "document.cookie string representation of the cookies." }
+                { "name": "cookies", "type": "array", "items": { "$ref": "Cookie"}, "description": "Array of cookie objects." }
             ],
-            "description": "Returns all browser cookies. Depending on the backend support, will either return detailed cookie information in the <code>cookie</code> field or string cookie representation using <code>cookieString</code>."
+            "description": "Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the <code>cookies</code> field."
         },
         {
             "name": "deleteCookie",
