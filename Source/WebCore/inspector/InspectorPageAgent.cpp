@@ -51,15 +51,18 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameSnapshotting.h"
 #include "FrameView.h"
 #include "GeolocationController.h"
 #include "GeolocationError.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "IdentifiersFactory.h"
+#include "ImageBuffer.h"
 #include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
 #include "InspectorClient.h"
+#include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorOverlay.h"
@@ -1251,10 +1254,44 @@ void InspectorPageAgent::setCompositingBordersVisible(ErrorString*, bool visible
     m_page->settings().setShowRepaintCounter(visible);
 }
 
-void InspectorPageAgent::captureScreenshot(ErrorString* errorString, String* data)
+void InspectorPageAgent::snapshotNode(ErrorString* errorString, int nodeId, String* outDataURL)
 {
-    if (!m_client->captureScreenshot(data))
-        *errorString = "Could not capture screenshot";
+    Frame* frame = mainFrame();
+    ASSERT(frame);
+
+    InspectorDOMAgent* domAgent = m_instrumentingAgents->inspectorDOMAgent();
+    ASSERT(domAgent);
+    Node* node = domAgent->assertNode(errorString, nodeId);
+    if (!node)
+        return;
+
+    std::unique_ptr<ImageBuffer> snapshot = WebCore::snapshotNode(*frame, *node);
+    if (!snapshot) {
+        *errorString = ASCIILiteral("Could not capture snapshot");
+        return;
+    }
+
+    *outDataURL = snapshot->toDataURL(ASCIILiteral("image/png"));
+}
+
+void InspectorPageAgent::snapshotRect(ErrorString* errorString, int x, int y, int width, int height, const String& coordinateSystem, String* outDataURL)
+{
+    Frame* frame = mainFrame();
+    ASSERT(frame);
+
+    SnapshotOptions options = SnapshotOptionsNone;
+    if (coordinateSystem == "Viewport")
+        options |= SnapshotOptionsInViewCoordinates;
+
+    IntRect rectangle(x, y, width, height);
+    std::unique_ptr<ImageBuffer> snapshot = snapshotFrameRect(*frame, rectangle, options);
+
+    if (!snapshot) {
+        *errorString = ASCIILiteral("Could not capture snapshot");
+        return;
+    }
+
+    *outDataURL = snapshot->toDataURL(ASCIILiteral("image/png"));
 }
 
 void InspectorPageAgent::handleJavaScriptDialog(ErrorString* errorString, bool accept, const String* promptText)

@@ -411,13 +411,6 @@
                 ]
             },
             {
-                "name": "captureScreenshot",
-                "description": "Capture page screenshot.",
-                "returns": [
-                    { "name": "data", "type": "string", "description": "Base64-encoded image data (PNG)." }
-                ]
-            },
-            {
                 "name": "handleJavaScriptDialog",
                 "description": "Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).",
                 "parameters": [
