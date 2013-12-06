@@ -74,23 +74,12 @@ namespace WebCore {
     class ScriptFunctionCall : public ScriptCallArgumentHandler {
     public:
         ScriptFunctionCall(const ScriptObject& thisObject, const String& name);
-        ScriptValue call(bool& hadException, bool reportExceptions = true);
+        ScriptValue call(bool& hadException);
         ScriptValue call();
-        ScriptObject construct(bool& hadException, bool reportExceptions = true);
 
     protected:
         ScriptObject m_thisObject;
         String m_name;
-    };
-
-    class ScriptCallback : public ScriptCallArgumentHandler {
-    public:
-        ScriptCallback(JSC::ExecState*, const ScriptValue&);
-
-        ScriptValue call();
-
-    private:
-        ScriptValue m_function;
     };
 
 } // namespace WebCore

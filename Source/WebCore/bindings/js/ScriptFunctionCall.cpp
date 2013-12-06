@@ -31,7 +31,6 @@
 #include "config.h"
 #include "ScriptFunctionCall.h"
 
-#include "JSDOMBinding.h"
 #include "JSMainThreadExecState.h"
 #include "ScriptValue.h"
 
@@ -115,7 +114,7 @@ ScriptFunctionCall::ScriptFunctionCall(const ScriptObject& thisObject, const Str
 {
 }
 
-ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
+ScriptValue ScriptFunctionCall::call(bool& hadException)
 {
     JSObject* thisObject = m_thisObject.jsObject();
 
@@ -123,9 +122,6 @@ ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
 
     JSValue function = thisObject->get(m_exec, Identifier(m_exec, m_name));
     if (m_exec->hadException()) {
-        if (reportExceptions)
-            reportException(m_exec, m_exec->exception());
-
         hadException = true;
         return ScriptValue();
     }
@@ -142,9 +138,6 @@ ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
         result = JSC::call(m_exec, function, callType, callData, thisObject, m_arguments);
 
     if (m_exec->hadException()) {
-        if (reportExceptions)
-            reportException(m_exec, m_exec->exception());
-
         hadException = true;
         return ScriptValue();
     }
@@ -156,64 +149,6 @@ ScriptValue ScriptFunctionCall::call()
 {
     bool hadException = false;
     return call(hadException);
-}
-
-ScriptObject ScriptFunctionCall::construct(bool& hadException, bool reportExceptions)
-{
-    JSObject* thisObject = m_thisObject.jsObject();
-
-    JSLockHolder lock(m_exec);
-
-    JSObject* constructor = asObject(thisObject->get(m_exec, Identifier(m_exec, m_name)));
-    if (m_exec->hadException()) {
-        if (reportExceptions)
-            reportException(m_exec, m_exec->exception());
-
-        hadException = true;
-        return ScriptObject();
-    }
-
-    ConstructData constructData;
-    ConstructType constructType = constructor->methodTable()->getConstructData(constructor, constructData);
-    if (constructType == ConstructTypeNone)
-        return ScriptObject();
-
-    JSValue result = JSC::construct(m_exec, constructor, constructType, constructData, m_arguments);
-    if (m_exec->hadException()) {
-        if (reportExceptions)
-            reportException(m_exec, m_exec->exception());
-
-        hadException = true;
-        return ScriptObject();
-    }
-
-    return ScriptObject(m_exec, asObject(result));
-}
-
-ScriptCallback::ScriptCallback(JSC::ExecState* state, const ScriptValue& function)
-    : ScriptCallArgumentHandler(state)
-    , m_function(function)
-{
-}
-
-ScriptValue ScriptCallback::call()
-{
-    JSLockHolder lock(m_exec);
-
-    CallData callData;
-    CallType callType = getCallData(m_function.jsValue(), callData);
-    if (callType == CallTypeNone)
-        return ScriptValue();
-
-    JSValue result = JSC::call(m_exec, m_function.jsValue(), callType, callData, m_function.jsValue(), m_arguments);
-    bool hadException = m_exec->hadException();
-
-    if (hadException) {
-        reportException(m_exec, m_exec->exception());
-        return ScriptValue();
-    }
-
-    return ScriptValue(m_exec->vm(), result);
 }
 
 } // namespace WebCore
