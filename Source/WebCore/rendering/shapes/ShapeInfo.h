@@ -165,6 +165,8 @@ protected:
     virtual ShapeValue* shapeValue() const = 0;
     virtual void getIntervals(LayoutUnit, LayoutUnit, SegmentList&) const = 0;
 
+    virtual WritingMode writingMode() const { return m_renderer.style().writingMode(); }
+
     LayoutUnit logicalTopOffset() const
     {
         BasicShape::ReferenceBox box = resolvedBox();

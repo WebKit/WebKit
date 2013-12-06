@@ -100,6 +100,12 @@ ShapeValue* ShapeOutsideInfo::shapeValue() const
     return m_renderer.style().shapeOutside();
 }
 
+WritingMode ShapeOutsideInfo::writingMode() const
+{
+    ASSERT(m_renderer.containingBlock());
+    return m_renderer.containingBlock()->style().writingMode();
+}
+
 }
 
 #endif

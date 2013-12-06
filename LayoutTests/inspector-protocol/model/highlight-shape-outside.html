@@ -72,19 +72,19 @@ function shapeTests() {
         'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
     },
     {
-        'selector' : '.rectangle.vertical-lr',
+        'selector' : '.vertical-lr > .rectangle',
         'path' : ['M', 50, 50, 'L', 50, 100, 'L', 150, 100, 'L', 150, 50, 'L', 50, 50, 'Z']
     },
     {
-        'selector' : '.rectangle.vertical-rl',
+        'selector' : '.vertical-rl > .rectangle',
         'path' : ['M', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'L', 150, 50, 'Z']
     },
     {
-        'selector' : '.rectangle.padded.vertical-rl',
+        'selector' : '.vertical-rl > .rectangle.padded',
         'path' : ['M', 175, 75, 'L', 175, 125, 'L', 75, 125, 'L', 75, 75, 'L', 175, 75, 'Z']
     },
     {
-        'selector' : '.rectangle.padded.vertical-rl.border-box',
+        'selector' : '.vertical-rl > .rectangle.padded.border-box',
         'path' : ['M', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'L', 150, 50, 'Z']
     },
     {
@@ -130,10 +130,14 @@ window.onload = function() { ShapeInfoHelper.runShapeTest(shapeTests); }
     <div class='shape polygon'></div>
     <div class='shape padded rectangle'></div>
     <div class='shape padded rectangle border-box'></div>
-    <div class='shape rectangle vertical-lr'></div>
-    <div class='shape rectangle vertical-rl'></div>
-    <div class='shape padded rectangle vertical-rl'></div>
-    <div class='shape padded rectangle vertical-rl border-box'></div>
+    <div class='vertical-lr'>
+        <div class='shape rectangle'></div>
+    </div>
+    <div class='vertical-rl'>
+        <div class='shape rectangle'></div>
+        <div class='shape padded rectangle'></div>
+        <div class='shape padded rectangle border-box'></div>
+    </div>
     <div class='shape padded content-box'></div>
     <div class='shape padded raster-svg'></div>
     <div class='shape padded raster-svg-complex'></div>

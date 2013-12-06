@@ -1,3 +1,25 @@
+2013-12-06  Rob Buis  <rob.buis@samsung.com>
+
+        [CSS Shapes] ShapeOutsideInfo needs to use the parent's writing mode when calculating offsets
+        https://bugs.webkit.org/show_bug.cgi?id=124680
+
+        Reviewed by Dirk Schulze.
+
+        Do not take the writing-mode property on the float into account for shape-outside.
+        Add a virtual method writingMode() in order to do this for shape-outside but
+        keep old behavior (element writingMode) for shape-inside.
+
+        Change existing test floats/shape-outside-floats-different-writing-modes.html to test the
+        new behavior.
+
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::::computedShape):
+        * rendering/shapes/ShapeInfo.h:
+        (WebCore::ShapeInfo::writingMode):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::writingMode):
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2013-12-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove Staging Workaround

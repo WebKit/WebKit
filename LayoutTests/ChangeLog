@@ -1,3 +1,19 @@
+2013-12-06  Rob Buis  <rob.buis@samsung.com>
+
+        [CSS Shapes] ShapeOutsideInfo needs to use the parent's writing mode when calculating offsets
+        https://bugs.webkit.org/show_bug.cgi?id=124680
+
+        Reviewed by Dirk Schulze.
+
+        Make sure the writing-mode property on the float is not taken into account for shape-outside.
+        Adapt highlight-shape-outside.html so it sets the writing-mode on the container div, not the float.
+        However because of earlier unreliability in EFL/GTK, skip the test for now.
+
+        * TestExpectations:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes.html:
+        * inspector-protocol/model/highlight-shape-outside-expected.txt:
+        * inspector-protocol/model/highlight-shape-outside.html:
+
 2013-12-06  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support all of ValueToInt32

@@ -79,6 +79,8 @@ private:
         return computedShape().getExcludedIntervals(lineTop, lineHeight, segments);
     }
 
+    virtual WritingMode writingMode() const;
+
     LayoutUnit m_leftMarginBoxDelta;
     LayoutUnit m_rightMarginBoxDelta;
     LayoutUnit m_lineTop;
