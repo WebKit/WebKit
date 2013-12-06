@@ -57,6 +57,9 @@
 #include "MediaPlayerPrivateQTKit.h"
 #if USE(AVFOUNDATION)
 #include "MediaPlayerPrivateAVFoundationObjC.h"
+#if ENABLE(MEDIA_SOURCE)
+#include "MediaPlayerPrivateMediaSourceAVFObjC.h"
+#endif
 #endif
 #elif OS(WINCE)
 #include "MediaPlayerPrivateWinCE.h"
@@ -213,6 +216,9 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions r
         if (Settings::isAVFoundationEnabled()) {
 #if PLATFORM(MAC) || PLATFORM(IOS)
             MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
+#if ENABLE(MEDIA_SOURCE)
+            MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(addMediaEngine);
+#endif
 #elif PLATFORM(WIN)
             MediaPlayerPrivateAVFoundationCF::registerMediaEngine(addMediaEngine);
 #endif

@@ -55,6 +55,8 @@ public:
     virtual void stop() OVERRIDE;
     virtual bool isRunning() const OVERRIDE { return m_running; }
 
+    CMTimebaseRef timebase() const { return m_timebase.get(); }
+
 private:
     void initializeWithTimingSource(CMClockRef);
 

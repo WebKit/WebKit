@@ -23,48 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaSample_h
-#define MediaSample_h
+#ifndef AudioTrackPrivateMediaSourceAVFObjC_h
+#define AudioTrackPrivateMediaSourceAVFObjC_h
 
-#include <wtf/MediaTime.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/AtomicString.h>
+#include "AudioTrackPrivateAVF.h"
+
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
+
+OBJC_CLASS AVAssetTrack;
+OBJC_CLASS AVPlayerItemTrack;
 
 namespace WebCore {
 
-class MockSampleBox;
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+class AVTrackPrivateAVFObjCImpl;
+class SourceBufferPrivateAVFObjC;
 
-struct PlatformSample {
-    enum {
-        None,
-        MockSampleBoxType,
-        CMSampleBufferType,
-    } type;
-    union {
-        MockSampleBox* mockSampleBox;
-        CMSampleBufferRef cmSampleBuffer;
-    } sample;
-};
-
-class MediaSample : public RefCounted<MediaSample> {
+class AudioTrackPrivateMediaSourceAVFObjC FINAL : public AudioTrackPrivateAVF {
+    WTF_MAKE_NONCOPYABLE(AudioTrackPrivateMediaSourceAVFObjC)
 public:
-    virtual ~MediaSample() { }
+    static RefPtr<AudioTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack* track, SourceBufferPrivateAVFObjC* parent)
+    {
+        return adoptRef(new AudioTrackPrivateMediaSourceAVFObjC(track, parent));
+    }
 
-    virtual MediaTime presentationTime() const = 0;
-    virtual MediaTime decodeTime() const = 0;
-    virtual MediaTime duration() const = 0;
-    virtual AtomicString trackID() const = 0;
+    virtual bool enabled() const OVERRIDE;
+    virtual void setEnabled(bool) OVERRIDE;
 
-    enum SampleFlags {
-        None = 0,
-        IsSync = 1 << 0,
-        NonDisplaying = 1 << 1,
-    };
-    virtual SampleFlags flags() const = 0;
-    virtual PlatformSample platformSample() = 0;
+    void setAssetTrack(AVAssetTrack*);
+    AVAssetTrack* assetTrack();
+
+    int trackID() { return m_trackID; }
+
+private:
+    explicit AudioTrackPrivateMediaSourceAVFObjC(AVAssetTrack*, SourceBufferPrivateAVFObjC* parent);
+    
+    void resetPropertiesFromTrack();
+
+    std::unique_ptr<AVTrackPrivateAVFObjCImpl> m_impl;
+    SourceBufferPrivateAVFObjC* m_parent;
+    int m_trackID;
+    bool m_enabled;
 };
 
 }
+
+#endif // ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
 
 #endif

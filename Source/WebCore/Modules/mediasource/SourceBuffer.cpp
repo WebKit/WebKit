@@ -993,12 +993,12 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
 
 bool SourceBuffer::sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const
 {
-    return m_audioTracks->length();
+    return m_audioTracks && m_audioTracks->length();
 }
 
 bool SourceBuffer::sourceBufferPrivateHasVideo(const SourceBufferPrivate*) const
 {
-    return m_videoTracks->length();
+    return m_videoTracks && m_videoTracks->length();
 }
 
 void SourceBuffer::videoTrackSelectedChanged(VideoTrack* track)

@@ -79,7 +79,7 @@ public:
 
     virtual void seek(float) { }
     virtual void seekDouble(double time) { seek(time); }
-    virtual void seekWithTolerance(double time, double, double) { seek(time); }
+    virtual void seekWithTolerance(double time, double, double) { seekDouble(time); }
 
     virtual bool seeking() const = 0;
 

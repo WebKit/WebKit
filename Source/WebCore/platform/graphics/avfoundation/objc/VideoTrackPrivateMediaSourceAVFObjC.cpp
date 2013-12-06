@@ -23,47 +23,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaSample_h
-#define MediaSample_h
+#include "config.h"
+#include "VideoTrackPrivateMediaSourceAVFObjC.h"
 
-#include <wtf/MediaTime.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/AtomicString.h>
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
+
+#include "AVTrackPrivateAVFObjCImpl.h"
+#include "SourceBufferPrivateAVFObjC.h"
 
 namespace WebCore {
 
-class MockSampleBox;
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+VideoTrackPrivateMediaSourceAVFObjC::VideoTrackPrivateMediaSourceAVFObjC(AVAssetTrack* track, SourceBufferPrivateAVFObjC* parent)
+    : m_impl(std::make_unique<AVTrackPrivateAVFObjCImpl>(track))
+    , m_parent(parent)
+    , m_trackID(-1)
+    , m_selected(false)
+{
+    resetPropertiesFromTrack();
+}
 
-struct PlatformSample {
-    enum {
-        None,
-        MockSampleBoxType,
-        CMSampleBufferType,
-    } type;
-    union {
-        MockSampleBox* mockSampleBox;
-        CMSampleBufferRef cmSampleBuffer;
-    } sample;
-};
+void VideoTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack()
+{
+    m_trackID = m_impl->trackID();
 
-class MediaSample : public RefCounted<MediaSample> {
-public:
-    virtual ~MediaSample() { }
+    setKind(m_impl->videoKind());
+    setId(m_impl->id());
+    setLabel(m_impl->label());
+    setLanguage(m_impl->language());
+}
 
-    virtual MediaTime presentationTime() const = 0;
-    virtual MediaTime decodeTime() const = 0;
-    virtual MediaTime duration() const = 0;
-    virtual AtomicString trackID() const = 0;
+void VideoTrackPrivateMediaSourceAVFObjC::setAssetTrack(AVAssetTrack *track)
+{
+    m_impl = std::make_unique<AVTrackPrivateAVFObjCImpl>(track);
+    resetPropertiesFromTrack();
+}
 
-    enum SampleFlags {
-        None = 0,
-        IsSync = 1 << 0,
-        NonDisplaying = 1 << 1,
-    };
-    virtual SampleFlags flags() const = 0;
-    virtual PlatformSample platformSample() = 0;
-};
+AVAssetTrack* VideoTrackPrivateMediaSourceAVFObjC::assetTrack()
+{
+    return m_impl->assetTrack();
+}
+
+
+bool VideoTrackPrivateMediaSourceAVFObjC::selected() const
+{
+    return m_selected;
+}
+
+void VideoTrackPrivateMediaSourceAVFObjC::setSelected(bool selected)
+{
+    if (m_selected == selected)
+        return;
+
+    m_selected = selected;
+    m_parent->trackDidChangeEnabled(this);
+}
 
 }
 

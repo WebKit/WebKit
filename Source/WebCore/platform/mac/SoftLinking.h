@@ -118,6 +118,24 @@
         return class##className; \
     }
 
+#define SOFT_LINK_CLASS_OPTIONAL(framework, className) \
+    static Class init##className(); \
+    static Class (*get##className##Class)() = init##className; \
+    static Class class##className; \
+    \
+    static Class className##Function() \
+    { \
+        return class##className; \
+    }\
+    \
+    static Class init##className() \
+    { \
+        framework##Library(); \
+        class##className = objc_getClass(#className); \
+        get##className##Class = className##Function; \
+        return class##className; \
+    }
+
 #define SOFT_LINK_POINTER(framework, name, type) \
     static type init##name(); \
     static type (*get##name)() = init##name; \

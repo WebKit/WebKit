@@ -1,3 +1,176 @@
+2013-11-15  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Add a new MSE-compatible MediaPlayerPrivate implementation, MediaPlayerPrivateMediaSourceAVFObjC
+        https://bugs.webkit.org/show_bug.cgi?id=123378
+
+        Reviewed by Eric Carlson.
+
+        Add an AVFoundation implementation of MediaPlayerPrivate which creates and uses
+        MediaSourcePrivate and SourceBufferPrivate subclasses.
+
+        Add the new media engine to the list of installed engines:
+        * platform/MediaSample.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines):
+        * platform/graphics/MediaPlayer.h:
+
+        Add the new files to the project:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Drive by fix for ports who implement seekDouble():
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::seekWithTolerance):
+
+        Add new Video and AudioTrackPrivate types which handle their own enable state:
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp: Added
+        (WebCore::AudioTrackPrivateMediaSourceAVFObjC::AudioTrackPrivateMediaSourceAVFObjC):
+        (WebCore::AudioTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack):
+        (WebCore::AudioTrackPrivateMediaSourceAVFObjC::setAssetTrack):
+        (WebCore::AudioTrackPrivateMediaSourceAVFObjC::assetTrack):
+        (WebCore::AudioTrackPrivateMediaSourceAVFObjC::setEnabled):
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.h: Added
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.cpp: Added.
+        (WebCore::VideoTrackPrivateMediaSourceAVFObjC::VideoTrackPrivateMediaSourceAVFObjC):
+        (WebCore::VideoTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack):
+        (WebCore::VideoTrackPrivateMediaSourceAVFObjC::setAssetTrack):
+        (WebCore::VideoTrackPrivateMediaSourceAVFObjC::assetTrack):
+        (WebCore::VideoTrackPrivateMediaSourceAVFObjC::setSelected):
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.h: Added.
+
+        Add a new MediaPlayerPrivate which can handle MediaSource objects:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h: Added.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm: Added.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::create):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isAvailable):
+        (WebCore::mimeTypeCache):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::load):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::cancelLoad):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::prepareToPlay):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::platformMedia):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::platformLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::play):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pause):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::paused):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsScanning):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::naturalSize):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::hasVideo):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::hasAudio):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVisible):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationDouble):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::currentTimeDouble):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::startTimeDouble):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::initialTime):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seeking):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::networkState):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::readyState):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekable):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::maxTimeSeekableDouble):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::minTimeSeekable):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::buffered):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setSize):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::paint):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::hasAvailableVideoFrame):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsAcceleratedRendering):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::movieLoadType):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::prepareForRendering):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::engineDescription):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::languageOfPrimaryAudioTrack):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::extraMemoryCost):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::updateDuration):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::updateStates):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setReadyState):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setNetworkState):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addDisplayLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::removeDisplayLayer):
+
+        Add a new MediaSourcePrivate implementation:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h: Added.
+        (WebCore::MediaSourcePrivateAVFObjC::player):
+        (WebCore::MediaSourcePrivateAVFObjC::activeSourceBuffers):
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm: Added.
+        (WebCore::MediaSourcePrivateAVFObjC::create):
+        (WebCore::MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC):
+        (WebCore::MediaSourcePrivateAVFObjC::~MediaSourcePrivateAVFObjC):
+        (WebCore::MediaSourcePrivateAVFObjC::addSourceBuffer):
+        (WebCore::MediaSourcePrivateAVFObjC::removeSourceBuffer):
+        (WebCore::MediaSourcePrivateAVFObjC::duration):
+        (WebCore::MediaSourcePrivateAVFObjC::setDuration):
+        (WebCore::MediaSourcePrivateAVFObjC::markEndOfStream):
+        (WebCore::MediaSourcePrivateAVFObjC::unmarkEndOfStream):
+        (WebCore::MediaSourcePrivateAVFObjC::readyState):
+        (WebCore::MediaSourcePrivateAVFObjC::setReadyState):
+        (WebCore::MediaSourcePrivateAVFObjC::sourceBufferPrivateDidChangeActiveState):
+        (WebCore::MediaSourcePrivateAVFObjCHasAudio):
+        (WebCore::MediaSourcePrivateAVFObjC::hasAudio):
+        (WebCore::MediaSourcePrivateAVFObjCHasVideo):
+        (WebCore::MediaSourcePrivateAVFObjC::hasVideo):
+        (WebCore::MediaSourcePrivateAVFObjC::seekToTime):
+
+        Add a new SourceBufferPrivate implementation:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h: Added.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm: Added.
+        (-[WebAVStreamDataParserListener initWithParser:parent:WebCore::]):
+        (-[WebAVStreamDataParserListener dealloc]):
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didFailToParseStreamDataWithError:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideMediaData:forTrackID:mediaType:flags:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didReachEndOfTrackWithTrackID:mediaType:]):
+        (WebCore::MediaSampleAVFObjC::create):
+        (WebCore::MediaSampleAVFObjC::~MediaSampleAVFObjC):
+        (WebCore::MediaSampleAVFObjC::MediaSampleAVFObjC):
+        (WebCore::MediaSampleAVFObjC::platformSample):
+        (WebCore::CMSampleBufferIsRandomAccess):
+        (WebCore::MediaSampleAVFObjC::flags):
+        (WebCore::MediaDescriptionAVFObjC::create):
+        (WebCore::MediaDescriptionAVFObjC::~MediaDescriptionAVFObjC):
+        (WebCore::MediaDescriptionAVFObjC::MediaDescriptionAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::create):
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset):
+        (WebCore::SourceBufferPrivateAVFObjC::didFailToParseStreamDataWithError):
+        (WebCore::callProcessCodedFrameForEachSample):
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::processCodedFrame):
+        (WebCore::SourceBufferPrivateAVFObjC::didReachEndOfTrackWithTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::setClient):
+        (WebCore::SourceBufferPrivateAVFObjC::append):
+        (WebCore::SourceBufferPrivateAVFObjC::abort):
+        (WebCore::SourceBufferPrivateAVFObjC::removedFromMediaSource):
+        (WebCore::SourceBufferPrivateAVFObjC::readyState):
+        (WebCore::SourceBufferPrivateAVFObjC::setReadyState):
+        (WebCore::SourceBufferPrivateAVFObjC::evictCodedFrames):
+        (WebCore::SourceBufferPrivateAVFObjC::isFull):
+        (WebCore::SourceBufferPrivateAVFObjC::hasVideo):
+        (WebCore::SourceBufferPrivateAVFObjC::hasAudio):
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+        (WebCore::createNonDisplayingCopy):
+        (WebCore::SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples):
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+        (WebCore::SourceBufferPrivateAVFObjC::isReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateAVFObjC::setActive):
+        (WebCore::SourceBufferPrivateAVFObjC::fastSeekTimeForMediaTime):
+        (WebCore::SourceBufferPrivateAVFObjC::seekToTime):
+        * platform/mac/PlatformClockCM.h:
+
+        Add a SOFT_LINK_CLASS_OPTIONAL macro:
+        * platform/mac/SoftLinking.h:
+
 2013-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         Remove some duplicate checks from SerializedScriptValue
