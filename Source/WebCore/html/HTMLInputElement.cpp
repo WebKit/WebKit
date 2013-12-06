@@ -61,6 +61,7 @@
 #include "ScopedEventQueue.h"
 #include "SearchInputType.h"
 #include "StyleResolver.h"
+#include "TextBreakIterator.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
 

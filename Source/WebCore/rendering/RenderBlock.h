@@ -25,18 +25,10 @@
 
 #include "ColumnInfo.h"
 #include "GapRects.h"
-#include "PODIntervalTree.h"
 #include "RenderBox.h"
-#include "RootInlineBox.h"
-#include "TextBreakIterator.h"
 #include "TextRun.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/ListHashSet.h>
-
-#if ENABLE(CSS_SHAPES)
-#include "ShapeInsideInfo.h"
-#include "ShapeValue.h"
-#endif
 
 namespace WebCore {
 
@@ -44,6 +36,10 @@ class LineLayoutState;
 class LogicalSelectionOffsetCaches;
 class RenderInline;
 class RenderText;
+#if ENABLE(CSS_SHAPES)
+class ShapeInsideInfo;
+class ShapeValue;
+#endif
 
 struct BidiRun;
 struct PaintInfo;

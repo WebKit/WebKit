@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InlineElementBox.h"
 
+#include "InlineFlowBox.h"
 #include "PaintInfo.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"

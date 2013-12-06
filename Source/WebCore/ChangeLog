@@ -1,3 +1,26 @@
+2013-12-06  Zoltan Horvath  <zoltan@webkit.org>
+
+        Clean up the includes of RenderBlock.h 
+        https://bugs.webkit.org/show_bug.cgi?id=125351
+
+        Reviewed by Darin Adler.
+
+        I turned some header includes into forward declarations. I also removed / 
+        moved out some includes, which don't belong to RenderBlock.h anymore.
+
+        No new tests, no behavior change.
+
+        * editing/VisibleUnits.cpp:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLTextAreaElement.cpp:
+        * html/TextFieldInputType.cpp:
+        * html/TextInputType.cpp:
+        * rendering/InlineElementBox.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        * rendering/line/LineBreaker.h:
+        * rendering/line/LineWidth.cpp:
+
 2013-12-06  Laszlo Vidacs  <lac@inf.u-szeged.hu>
 
         Define SHA1 hash size in SHA1.h and use it at various places.

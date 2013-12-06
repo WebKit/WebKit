@@ -40,6 +40,10 @@
 #include "VerticalPositionCache.h"
 #include "VisiblePosition.h"
 
+#if ENABLE(CSS_SHAPES)
+#include "ShapeInsideInfo.h"
+#endif
+
 namespace WebCore {
 
 bool RenderBlock::s_canPropagateFloatIntoSibling = false;

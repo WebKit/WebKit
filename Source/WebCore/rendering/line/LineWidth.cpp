@@ -33,6 +33,10 @@
 #include "RenderBlockFlow.h"
 #include "RenderRubyRun.h"
 
+#if ENABLE(CSS_SHAPES)
+#include "ShapeInsideInfo.h"
+#endif
+
 namespace WebCore {
 
 LineWidth::LineWidth(RenderBlockFlow& block, bool isFirstLine, IndentTextOrNot shouldIndentText)

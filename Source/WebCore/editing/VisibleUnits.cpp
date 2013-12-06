@@ -36,6 +36,7 @@
 #include "RenderedPosition.h"
 #include "Text.h"
 #include "TextBoundaries.h"
+#include "TextBreakIterator.h"
 #include "TextIterator.h"
 #include "VisibleSelection.h"
 #include "htmlediting.h"
