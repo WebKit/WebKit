@@ -723,6 +723,8 @@ _llint_op_construct:
 
 _llint_op_call_varargs:
     traceExecution()
+    callSlowPath(_llint_slow_path_size_and_alloc_frame_for_varargs)
+    branchIfException(_llint_throw_from_slow_path_trampoline)
     slowPathForCall(_llint_slow_path_call_varargs)
 
 

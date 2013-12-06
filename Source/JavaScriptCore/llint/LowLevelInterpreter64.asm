@@ -389,6 +389,14 @@ macro functionArityCheck(doneLabel, slow_path)
 end
 
 
+macro branchIfException(label)
+    loadp ScopeChain[cfr], t3
+    andp MarkedBlockMask, t3
+    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+    btqnz VM::m_exception[t3], label
+end
+
+
 # Instruction implementations
 
 _llint_op_enter:

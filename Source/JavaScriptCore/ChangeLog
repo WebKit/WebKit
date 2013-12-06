@@ -1,3 +1,41 @@
+2013-12-06  Michael Saboff  <msaboff@apple.com>
+
+        Split sizing of VarArgs frames from loading arguments for the frame
+        https://bugs.webkit.org/show_bug.cgi?id=125331
+
+        Reviewed by Filip Pizlo.
+
+        Split loadVarargs into sizeAndAllocFrameForVarargs() and loadVarargs() in
+        preparation for moving onto the C stack.  sizeAndAllocFrameForVarargs() will
+        compute the size of the callee frame and allocate it, while loadVarargs()
+        actually loads the argument values.
+
+        As part of moving onto the C stack, sizeAndAllocFrameForVarargs() will be
+        changed to a function that just computes the size.  The caller will use that
+        size to allocate the new frame on the stack before calling loadVargs() and
+        actually making the call.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeAndAllocFrameForVarargs):
+        (JSC::loadVarargs):
+        * interpreter/Interpreter.h:
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/VM.h:
+
 2013-12-06  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support all of ValueToInt32

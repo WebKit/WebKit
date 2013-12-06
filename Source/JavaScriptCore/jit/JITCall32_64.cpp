@@ -184,9 +184,12 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     if (canOptimize)
         slowCase.link(this);
 
+    emitLoad(arguments, regT1, regT0);
+    callOperation(operationSizeAndAllocFrameForVarargs, regT1, regT0, firstFreeRegister);
+    move(returnValueGPR, regT5);
     emitLoad(thisValue, regT1, regT0);
     emitLoad(arguments, regT3, regT2);
-    callOperation(operationLoadVarargs, regT1, regT0, regT3, regT2, firstFreeRegister);
+    callOperation(operationLoadVarargs, regT5, regT1, regT0, regT3, regT2);
     move(returnValueGPR, regT3);
 
     if (canOptimize)

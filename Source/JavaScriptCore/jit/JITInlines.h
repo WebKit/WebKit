@@ -285,9 +285,15 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnExce
 
 
 #if USE(JSVALUE64)
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(F_JITOperation_EJJZ operation, GPRReg arg1, GPRReg arg2, int32_t arg3)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(F_JITOperation_EJZ operation, GPRReg arg1, int32_t arg3)
 {
-    setupArgumentsWithExecState(arg1, arg2, TrustedImm32(arg3));
+    setupArgumentsWithExecState(arg1, TrustedImm32(arg3));
+    return appendCallWithExceptionCheck(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(F_JITOperation_EFJJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+{
+    setupArgumentsWithExecState(arg1, arg2, arg3);
     return appendCallWithExceptionCheck(operation);
 }
 
@@ -420,17 +426,23 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperationNoExceptionCheck(V_JITOpera
     return appendCall(operation);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(F_JITOperation_EJJZ operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload, int32_t arg3)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(F_JITOperation_EJZ operation, GPRReg arg1Tag, GPRReg arg1Payload, int32_t arg2)
 {
 #if CPU(SH4)
     // We have to put arg3 in the 4th argument register (r7) as 64-bit value arg2 will be put on stack for sh4 architecure.
-    setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImm32(arg3), arg2Payload, arg2Tag);
+    setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImm32(arg2));
 #else
-    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, arg2Payload, arg2Tag, TrustedImm32(arg3));
+    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, TrustedImm32(arg2));
 #endif
     return appendCallWithExceptionCheck(operation);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(F_JITOperation_EFJJ operation, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, GPRReg arg3Tag, GPRReg arg3Payload)
+{
+    setupArgumentsWithExecState(arg1, arg2Payload, arg2Tag, arg3Payload, arg3Tag);
+    return appendCallWithExceptionCheck(operation);
+}
+    
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EAapJ operation, int dst, ArrayAllocationProfile* arg1, GPRReg arg2Tag, GPRReg arg2Payload)
 {
     setupArgumentsWithExecState(TrustedImmPtr(arg1), arg2Payload, arg2Tag);

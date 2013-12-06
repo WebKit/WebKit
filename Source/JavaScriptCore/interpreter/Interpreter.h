@@ -286,8 +286,8 @@ namespace JSC {
     };
 
     JSValue eval(CallFrame*);
-    CallFrame* loadVarargs(CallFrame*, JSStack*, JSValue thisValue, JSValue arguments, int firstFreeRegister);
-
+    CallFrame* sizeAndAllocFrameForVarargs(CallFrame*, JSStack*, JSValue, int);
+    void loadVarargs(CallFrame*, CallFrame*, JSValue, JSValue);
 } // namespace JSC
 
 #endif // Interpreter_h

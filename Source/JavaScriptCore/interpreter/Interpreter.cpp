@@ -152,7 +152,7 @@ JSValue eval(CallFrame* callFrame)
     return interpreter->execute(eval, callFrame, thisValue, callerScopeChain);
 }
 
-CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, JSValue arguments, int firstFreeRegister)
+CallFrame* sizeAndAllocFrameForVarargs(CallFrame* callFrame, JSStack* stack, JSValue arguments, int firstFreeRegister)
 {
     if (!arguments) { // f.apply(x, arguments), with arguments unmodified.
         unsigned argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
@@ -161,11 +161,6 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
             callFrame->vm().throwException(callFrame, createStackOverflowError(callFrame));
             return 0;
         }
-
-        newCallFrame->setArgumentCountIncludingThis(argumentCountIncludingThis);
-        newCallFrame->setThisValue(thisValue);
-        for (size_t i = 0; i < callFrame->argumentCount(); ++i)
-            newCallFrame->setArgument(i, callFrame->argumentAfterCapture(i));
         return newCallFrame;
     }
 
@@ -175,8 +170,6 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
             callFrame->vm().throwException(callFrame, createStackOverflowError(callFrame));
             return 0;
         }
-        newCallFrame->setArgumentCountIncludingThis(1);
-        newCallFrame->setThisValue(thisValue);
         return newCallFrame;
     }
 
@@ -193,9 +186,6 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
             callFrame->vm().throwException(callFrame, createStackOverflowError(callFrame));
             return 0;
         }
-        newCallFrame->setArgumentCountIncludingThis(argCount + 1);
-        newCallFrame->setThisValue(thisValue);
-        argsObject->copyToArguments(callFrame, newCallFrame, argCount);
         return newCallFrame;
     }
 
@@ -207,9 +197,6 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
             callFrame->vm().throwException(callFrame, createStackOverflowError(callFrame));
             return 0;
         }
-        newCallFrame->setArgumentCountIncludingThis(argCount + 1);
-        newCallFrame->setThisValue(thisValue);
-        array->copyToArguments(callFrame, newCallFrame, argCount);
         return newCallFrame;
     }
 
@@ -220,14 +207,54 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
         callFrame->vm().throwException(callFrame,  createStackOverflowError(callFrame));
         return 0;
     }
+    return newCallFrame;
+}
+
+void loadVarargs(CallFrame* callFrame, CallFrame* newCallFrame, JSValue thisValue, JSValue arguments)
+{
+    if (!arguments) { // f.apply(x, arguments), with arguments unmodified.
+        unsigned argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
+
+        newCallFrame->setArgumentCountIncludingThis(argumentCountIncludingThis);
+        newCallFrame->setThisValue(thisValue);
+        for (size_t i = 0; i < callFrame->argumentCount(); ++i)
+            newCallFrame->setArgument(i, callFrame->argumentAfterCapture(i));
+        return;
+    }
+    
+    if (arguments.isUndefinedOrNull()) {
+        newCallFrame->setArgumentCountIncludingThis(1);
+        newCallFrame->setThisValue(thisValue);
+        return;
+    }
+    
+    if (asObject(arguments)->classInfo() == Arguments::info()) {
+        Arguments* argsObject = asArguments(arguments);
+        unsigned argCount = argsObject->length(callFrame);
+        newCallFrame->setArgumentCountIncludingThis(argCount + 1);
+        newCallFrame->setThisValue(thisValue);
+        argsObject->copyToArguments(callFrame, newCallFrame, argCount);
+        return;
+    }
+    
+    if (isJSArray(arguments)) {
+        JSArray* array = asArray(arguments);
+        unsigned argCount = array->length();
+        newCallFrame->setArgumentCountIncludingThis(argCount + 1);
+        newCallFrame->setThisValue(thisValue);
+        array->copyToArguments(callFrame, newCallFrame, argCount);
+        return;
+    }
+    
+    JSObject* argObject = asObject(arguments);
+    unsigned argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
     newCallFrame->setArgumentCountIncludingThis(argCount + 1);
     newCallFrame->setThisValue(thisValue);
     for (size_t i = 0; i < argCount; ++i) {
         newCallFrame->setArgument(i, asObject(arguments)->get(callFrame, i));
         if (UNLIKELY(callFrame->vm().exception()))
-            return 0;
+            return;
     }
-    return newCallFrame;
 }
 
 Interpreter::Interpreter(VM& vm)

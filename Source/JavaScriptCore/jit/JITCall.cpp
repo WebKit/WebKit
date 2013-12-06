@@ -104,9 +104,11 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     if (canOptimize)
         slowCase.link(this);
 
-    emitGetVirtualRegister(thisValue, regT0);
     emitGetVirtualRegister(arguments, regT1);
-    callOperation(operationLoadVarargs, regT0, regT1, firstFreeRegister);
+    callOperation(operationSizeAndAllocFrameForVarargs, regT1, firstFreeRegister);
+    emitGetVirtualRegister(thisValue, regT1);
+    emitGetVirtualRegister(arguments, regT2);
+    callOperation(operationLoadVarargs, returnValueGPR, regT1, regT2);
     move(returnValueGPR, regT1);
 
     if (canOptimize)

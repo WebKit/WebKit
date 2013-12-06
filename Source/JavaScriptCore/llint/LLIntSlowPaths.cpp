@@ -1105,19 +1105,33 @@ LLINT_SLOW_PATH_DECL(slow_path_construct)
     return genericCall(exec, pc, CodeForConstruct);
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
+LLINT_SLOW_PATH_DECL(slow_path_size_and_alloc_frame_for_varargs)
 {
     LLINT_BEGIN();
     // This needs to:
     // - Set up a call frame while respecting the variable arguments.
+    
+    ExecState* execCallee = sizeAndAllocFrameForVarargs(exec, &vm.interpreter->stack(),
+        LLINT_OP_C(4).jsValue(), pc[5].u.operand);
+    LLINT_CALL_CHECK_EXCEPTION(exec);
+    
+    vm.newCallFrameReturnValue = execCallee;
+
+    LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
+{
+    LLINT_BEGIN_NO_SET_PC();
+    // This needs to:
     // - Figure out what to call and compile it if necessary.
     // - Return a tuple of machine code address to call and the new call frame.
     
     JSValue calleeAsValue = LLINT_OP_C(2).jsValue();
     
-    ExecState* execCallee = loadVarargs(
-        exec, &vm.interpreter->stack(),
-        LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue(), pc[5].u.operand);
+    ExecState* execCallee = vm.newCallFrameReturnValue;
+
+    loadVarargs(exec, execCallee, LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue());
     LLINT_CALL_CHECK_EXCEPTION(exec);
     
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;

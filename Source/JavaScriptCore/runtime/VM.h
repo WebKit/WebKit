@@ -383,6 +383,7 @@ namespace JSC {
 
         ReturnAddressPtr exceptionLocation;
         JSValue hostCallReturnValue;
+        ExecState* newCallFrameReturnValue;
         ExecState* callFrameForThrow;
         void* targetMachinePCForThrow;
         Instruction* targetInterpreterPCForThrow;
