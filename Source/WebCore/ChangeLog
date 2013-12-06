@@ -1,3 +1,13 @@
+2013-12-06  Andreas Kling  <akling@apple.com>
+
+        Make remaining CSSValue constructors return PassRef.
+        <https://webkit.org/b/125337>
+
+        Tweak the remaining CSSValue create() helpers to return PassRef
+        instead of PassRefPtr in the cases where nullptr is never returned.
+
+        Reviewed by Anders Carlsson.
+
 2013-12-06  Roger Fong  <roger_fong@apple.com>
 
         Hook into some shader symbol logic following the ANGLE update in r159533.

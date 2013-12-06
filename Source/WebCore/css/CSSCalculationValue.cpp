@@ -750,9 +750,9 @@ PassRefPtr<CSSCalcValue> CSSCalcValue::create(CSSParserString name, CSSParserVal
     return expression ? adoptRef(new CSSCalcValue(expression, range)) : 0;
 }
 
-PassRefPtr<CSSCalcValue> CSSCalcValue::create(PassRefPtr<CSSCalcExpressionNode> expression, CalculationPermittedValueRange range)
+PassRef<CSSCalcValue> CSSCalcValue::create(PassRefPtr<CSSCalcExpressionNode> expression, CalculationPermittedValueRange range)
 {
-    return adoptRef(new CSSCalcValue(expression, range));
+    return adoptRef(*new CSSCalcValue(expression, range));
 }
 
 } // namespace WebCore

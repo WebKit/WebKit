@@ -303,9 +303,11 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle* st
         m_primitiveUnitType = CSS_PX;
         m_value.num = adjustFloatForAbsoluteZoom(length.value(), style);
         return;
-    case Calculated:
-        init(CSSCalcValue::create(length.calculationValue().get(), style));
+    case Calculated: {
+        RefPtr<CSSCalcValue> calcValue = CSSCalcValue::create(length.calculationValue().get(), style);
+        init(calcValue.release());
         return;
+    }
     case Relative:
     case Undefined:
         ASSERT_NOT_REACHED();

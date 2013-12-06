@@ -39,7 +39,11 @@ namespace WebCore {
 
 class CSSGridTemplateValue : public CSSValue {
 public:
-    static PassRefPtr<CSSGridTemplateValue> create(const NamedGridAreaMap& gridAreaMap, size_t rowCount, size_t columnCount) { return adoptRef(new CSSGridTemplateValue(gridAreaMap, rowCount, columnCount)); }
+    static PassRef<CSSGridTemplateValue> create(const NamedGridAreaMap& gridAreaMap, size_t rowCount, size_t columnCount)
+    {
+        return adoptRef(*new CSSGridTemplateValue(gridAreaMap, rowCount, columnCount));
+    }
+
     ~CSSGridTemplateValue() { }
 
     String customCSSText() const;

@@ -33,9 +33,9 @@ namespace WebCore {
 
 class CSSCubicBezierTimingFunctionValue : public CSSValue {
 public:
-    static PassRefPtr<CSSCubicBezierTimingFunctionValue> create(double x1, double y1, double x2, double y2)
+    static PassRef<CSSCubicBezierTimingFunctionValue> create(double x1, double y1, double x2, double y2)
     {
-        return adoptRef(new CSSCubicBezierTimingFunctionValue(x1, y1, x2, y2));
+        return adoptRef(*new CSSCubicBezierTimingFunctionValue(x1, y1, x2, y2));
     }
 
     String customCSSText() const;
@@ -67,9 +67,9 @@ CSS_VALUE_TYPE_CASTS(CSSCubicBezierTimingFunctionValue, isCubicBezierTimingFunct
 
 class CSSStepsTimingFunctionValue : public CSSValue {
 public:
-    static PassRefPtr<CSSStepsTimingFunctionValue> create(int steps, bool stepAtStart)
+    static PassRef<CSSStepsTimingFunctionValue> create(int steps, bool stepAtStart)
     {
-        return adoptRef(new CSSStepsTimingFunctionValue(steps, stepAtStart));
+        return adoptRef(*new CSSStepsTimingFunctionValue(steps, stepAtStart));
     }
 
     int numberOfSteps() const { return m_steps; }

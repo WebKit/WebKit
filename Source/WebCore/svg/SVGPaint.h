@@ -44,45 +44,43 @@ public:
         SVG_PAINTTYPE_URI = 107
     };
 
-    static PassRefPtr<SVGPaint> createUnknown()
+    static PassRef<SVGPaint> createUnknown()
     {
-        return adoptRef(new SVGPaint(SVG_PAINTTYPE_UNKNOWN));
+        return adoptRef(*new SVGPaint(SVG_PAINTTYPE_UNKNOWN));
     }
 
-    static PassRefPtr<SVGPaint> createNone()
+    static PassRef<SVGPaint> createNone()
     {
-        return adoptRef(new SVGPaint(SVG_PAINTTYPE_NONE));
+        return adoptRef(*new SVGPaint(SVG_PAINTTYPE_NONE));
     }
 
-    static PassRefPtr<SVGPaint> createCurrentColor()
+    static PassRef<SVGPaint> createCurrentColor()
     {
-        return adoptRef(new SVGPaint(SVG_PAINTTYPE_CURRENTCOLOR));
+        return adoptRef(*new SVGPaint(SVG_PAINTTYPE_CURRENTCOLOR));
     }
 
-    static PassRefPtr<SVGPaint> createColor(const Color& color)
+    static PassRef<SVGPaint> createColor(const Color& color)
     {
-        RefPtr<SVGPaint> paint = adoptRef(new SVGPaint(SVG_PAINTTYPE_RGBCOLOR));
-        paint->setColor(color);
-        return paint.release();
+        auto paint = adoptRef(*new SVGPaint(SVG_PAINTTYPE_RGBCOLOR));
+        paint.get().setColor(color);
+        return paint;
     }
 
-    static PassRefPtr<SVGPaint> createURI(const String& uri)
+    static PassRef<SVGPaint> createURI(const String& uri)
     {
-        RefPtr<SVGPaint> paint = adoptRef(new SVGPaint(SVG_PAINTTYPE_URI, uri));
-        return paint.release();
+        return adoptRef(*new SVGPaint(SVG_PAINTTYPE_URI, uri));
     }
 
-    static PassRefPtr<SVGPaint> createURIAndColor(const String& uri, const Color& color)
+    static PassRef<SVGPaint> createURIAndColor(const String& uri, const Color& color)
     {
-        RefPtr<SVGPaint> paint = adoptRef(new SVGPaint(SVG_PAINTTYPE_URI_RGBCOLOR, uri));
-        paint->setColor(color);
-        return paint.release();
+        auto paint = adoptRef(*new SVGPaint(SVG_PAINTTYPE_URI_RGBCOLOR, uri));
+        paint.get().setColor(color);
+        return paint;
     }
 
-    static PassRefPtr<SVGPaint> createURIAndNone(const String& uri)
+    static PassRef<SVGPaint> createURIAndNone(const String& uri)
     {
-        RefPtr<SVGPaint> paint = adoptRef(new SVGPaint(SVG_PAINTTYPE_URI_NONE, uri));
-        return paint.release();
+        return adoptRef(*new SVGPaint(SVG_PAINTTYPE_URI_NONE, uri));
     }
 
     const SVGPaintType& paintType() const { return m_paintType; }
@@ -100,11 +98,11 @@ public:
 private:
     friend class ComputedStyleExtractor;
 
-    static PassRefPtr<SVGPaint> create(const SVGPaintType& type, const String& uri, const Color& color)
+    static PassRef<SVGPaint> create(const SVGPaintType& type, const String& uri, const Color& color)
     {
-        RefPtr<SVGPaint> paint = adoptRef(new SVGPaint(type, uri));
-        paint->setColor(color);
-        return paint.release();
+        auto paint = adoptRef(*new SVGPaint(type, uri));
+        paint.get().setColor(color);
+        return paint;
     }
 
 private:

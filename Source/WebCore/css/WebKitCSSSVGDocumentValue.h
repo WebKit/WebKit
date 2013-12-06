@@ -35,7 +35,10 @@ class CachedSVGDocument;
 
 class WebKitCSSSVGDocumentValue : public CSSValue {
 public:
-    static PassRefPtr<WebKitCSSSVGDocumentValue> create(const String& url) { return adoptRef(new WebKitCSSSVGDocumentValue(url)); }
+    static PassRef<WebKitCSSSVGDocumentValue> create(const String& url)
+    {
+        return adoptRef(*new WebKitCSSSVGDocumentValue(url));
+    }
     ~WebKitCSSSVGDocumentValue();
 
     CachedSVGDocument* cachedSVGDocument() const { return m_document.get(); }

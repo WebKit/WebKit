@@ -76,7 +76,10 @@ COMPILE_ASSERT(sizeof(CSSValue) == sizeof(SameSizeAsCSSValue), CSS_value_should_
 
 class TextCloneCSSValue : public CSSValue {
 public:
-    static PassRefPtr<TextCloneCSSValue> create(ClassType classType, const String& text) { return adoptRef(new TextCloneCSSValue(classType, text)); }
+    static PassRef<TextCloneCSSValue> create(ClassType classType, const String& text)
+    {
+        return adoptRef(*new TextCloneCSSValue(classType, text));
+    }
 
     String cssText() const { return m_cssText; }
 

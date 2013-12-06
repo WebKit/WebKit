@@ -135,9 +135,9 @@ CSS_VALUE_TYPE_CASTS(CSSGradientValue, isGradientValue())
 class CSSLinearGradientValue : public CSSGradientValue {
 public:
 
-    static PassRefPtr<CSSLinearGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSLinearGradient)
+    static PassRef<CSSLinearGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSLinearGradient)
     {
-        return adoptRef(new CSSLinearGradientValue(repeat, gradientType));
+        return adoptRef(*new CSSLinearGradientValue(repeat, gradientType));
     }
 
     void setAngle(PassRefPtr<CSSPrimitiveValue> val) { m_angle = val; }
@@ -147,9 +147,9 @@ public:
     // Create the gradient for a given size.
     PassRefPtr<Gradient> createGradient(RenderElement*, const IntSize&);
 
-    PassRefPtr<CSSLinearGradientValue> clone() const
+    PassRef<CSSLinearGradientValue> clone() const
     {
-        return adoptRef(new CSSLinearGradientValue(*this));
+        return adoptRef(*new CSSLinearGradientValue(*this));
     }
 
     bool equals(const CSSLinearGradientValue&) const;
@@ -173,14 +173,14 @@ CSS_VALUE_TYPE_CASTS(CSSLinearGradientValue, isLinearGradientValue())
 
 class CSSRadialGradientValue : public CSSGradientValue {
 public:
-    static PassRefPtr<CSSRadialGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSRadialGradient)
+    static PassRef<CSSRadialGradientValue> create(CSSGradientRepeat repeat, CSSGradientType gradientType = CSSRadialGradient)
     {
-        return adoptRef(new CSSRadialGradientValue(repeat, gradientType));
+        return adoptRef(*new CSSRadialGradientValue(repeat, gradientType));
     }
 
-    PassRefPtr<CSSRadialGradientValue> clone() const
+    PassRef<CSSRadialGradientValue> clone() const
     {
-        return adoptRef(new CSSRadialGradientValue(*this));
+        return adoptRef(*new CSSRadialGradientValue(*this));
     }
 
     String customCSSText() const;
