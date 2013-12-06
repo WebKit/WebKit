@@ -361,6 +361,7 @@ webkit.org/b/86623 fast/events/bogus-dropEffect-effectAllowed.html
 webkit.org/b/86623 fast/events/click-count.html
 webkit.org/b/86623 fast/events/content-changed-during-drop.html
 webkit.org/b/86623 fast/events/crash-on-mutate-during-drop.html
+webkit.org/b/86623 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Skip ]
 webkit.org/b/86623 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 webkit.org/b/86623 fast/events/drag-and-drop-fire-drag-dragover.html
 webkit.org/b/86623 fast/events/drag-and-drop.html
@@ -665,7 +666,7 @@ webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass ]
 
 webkit.org/b/124655 css3/masking/clip-path-animation.html [ Failure Pass ]
 
-webkit.org/b/124664 media/video-seek-with-negative-playback.html [ Failure Crash ]
+webkit.org/b/124664 media/video-seek-with-negative-playback.html [ Failure Crash Pass ]
 
 webkit.org/b/124665 media/video-ended-event-negative-playback.html [ Failure Pass ]
 
@@ -1633,6 +1634,8 @@ webkit.org/b/123617 fast/css3-text/css3-text-decoration/getComputedStyle/getComp
 webkit.org/b/123617 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand.html [ Failure ]
 webkit.org/b/123617 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-style.html [ Failure ]
 webkit.org/b/123617 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-underline-position.html [ Failure ]
+webkit.org/b/123617 fast/css3-text/css3-text-decoration/text-decoration-color.html [ Failure ]
+webkit.org/b/123617 fast/css3-text/css3-text-decoration/text-decoration-line.html [ Failure ]
 webkit.org/b/123617 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip.html [ Failure ]
 
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
@@ -1650,7 +1653,6 @@ webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure 
 webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/1.0.2/conformance/extensions/oes-texture-float.html [ Failure ]
 webgl/1.0.2/conformance/glsl/literals/float_literal.vert.html [ Failure ]
-webgl/1.0.2/conformance/glsl/misc/shader-varying-packing-restrictions.html [ Failure ]
 webgl/1.0.2/conformance/glsl/misc/shader-with-global-variable-precision-mismatch.html [ Failure ]
 webgl/1.0.2/conformance/glsl/misc/shaders-with-varyings.html [ Failure ]
 webgl/1.0.2/conformance/ogles/GL/sin/sin_001_to_006.html [ Failure ]
@@ -1757,3 +1759,7 @@ webkit.org/b/124971 compositing/repaint/repaint-on-layer-grouping-change.html [ 
 webkit.org/b/124971 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ ImageOnlyFailure ]
 
 webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]
+
+webkit.org/b/125352 fast/css/text-input-with-webkit-border-radius.html [ Failure ]
+
+webkit.org/b/125355 fast/events/updateLayoutForHitTest.html [ Failure ]
