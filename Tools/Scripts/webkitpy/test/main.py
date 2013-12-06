@@ -47,7 +47,10 @@ def main():
 
     tester = Tester()
     tester.add_tree(os.path.join(webkit_root, 'Tools', 'Scripts'), 'webkitpy')
-    tester.add_tree(os.path.join(webkit_root, 'Source', 'WebKit2', 'Scripts'), 'webkit2')
+
+    # There is no WebKit2 on Windows, so we don't need to run WebKit2 unittests on it.
+    if sys.platform != 'win32':
+        tester.add_tree(os.path.join(webkit_root, 'Source', 'WebKit2', 'Scripts'), 'webkit2')
 
     tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)
     if sys.platform == 'win32':

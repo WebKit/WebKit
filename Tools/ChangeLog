@@ -1,3 +1,13 @@
+2013-12-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Disable WebKit2 webkitpy unittests on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=125318
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/test/main.py:
+        (main):
+
 2013-12-05  Anders Carlsson  <andersca@apple.com>
 
         Tweak WeakObjCPtr
