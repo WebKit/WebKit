@@ -147,9 +147,9 @@ AC_MSG_RESULT([$enable_svg_fonts])
 
 AC_MSG_CHECKING([whether to enable Web Audio support])
 AC_ARG_ENABLE(web_audio, 
-    AC_HELP_STRING([--enable-web-audio], [enable support for Web Audio [default=no]]),
+    AC_HELP_STRING([--enable-web-audio], [enable support for Web Audio [default=yes]]),
     [],
-    [enable_web_audio="no"])
+    [enable_web_audio="yes"])
 AC_MSG_RESULT([$enable_web_audio])
 
 AC_MSG_CHECKING([whether to enable Battery Status API support])
