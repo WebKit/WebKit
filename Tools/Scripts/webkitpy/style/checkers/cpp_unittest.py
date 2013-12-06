@@ -4940,6 +4940,18 @@ class WebKitStyleTest(CppStyleTestBase):
          'Wrong number of spaces before statement. (expected: 12)'
          '  [whitespace/indent] [4]',
          'Missing space after ,  [whitespace/comma] [3]'])
+
+        fine_example = (
+            'MyClass::MyClass(Document* doc)\n'
+            '    : MySuperClass()\n'
+            '#if !BLA(FOO)\n'
+            '    , MySuperClass()\n'
+            '    , m_doc(0)\n'
+            '#endif\n'
+            '    , m_myMember(0)\n'
+            '{ }')
+        self.assert_multi_line_lint(fine_example, '')
+
         self.assert_multi_line_lint('''\
         MyClass::MyClass(Document* doc)
             :MySuperClass()

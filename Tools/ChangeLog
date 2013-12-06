@@ -1,3 +1,15 @@
+2013-12-06  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
+
+        check-webkit-style: false positive warning for indentation of #ifdef code.
+        https://bugs.webkit.org/show_bug.cgi?id=125254
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_member_initialization_list):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_member_initialization_list):
+
 2013-12-06  Chris Fleizach  <cfleizach@apple.com>
 
         Fix spelling error in style checker: beggining

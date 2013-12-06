@@ -1986,6 +1986,7 @@ def check_member_initialization_list(clean_lines, line_number, error):
     # Each member (and superclass) should be indented on a separate line,
     # with the colon or comma preceding the member on that line.
     begin_line = line
+    # match the start of initialization list
     if search(r'^(?P<indentation>\s*)((explicit\s+)?[^\s]+\(.*\)\s?\:|^\s*\:).*[^;]*$', line):
         if search(r'[^:]\:[^\:\s]+', line):
             error(line_number, 'whitespace/init', 4,
@@ -2001,8 +2002,8 @@ def check_member_initialization_list(clean_lines, line_number, error):
         inner_indentation = indentation + ' ' * 4
 
         while(not search(r'{', line)):
-            # Don't check inheritance style
-            if search(r'\S\(.*\)', line):
+            # Don't check inheritance style and precompiler directives
+            if (not line.startswith('#')) and search(r'\S\(.*\)', line):
                 if not line.startswith(inner_indentation) and begin_line != line:
                     error(line_number, 'whitespace/indent', 4,
                         'Wrong number of spaces before statement. (expected: %d)' % len(inner_indentation))
