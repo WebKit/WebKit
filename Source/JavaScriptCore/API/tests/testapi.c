@@ -45,6 +45,7 @@
 
 #if COMPILER(MSVC)
 
+#if _MSC_VER < 1800
 #include <wtf/MathExtras.h>
 
 static double nan(const char*)
@@ -54,6 +55,7 @@ static double nan(const char*)
 
 using std::isinf;
 using std::isnan;
+#endif
 
 #endif
 

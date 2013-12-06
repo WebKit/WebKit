@@ -123,6 +123,7 @@ inline bool signbit(double x) { struct ieee_double *p = (struct ieee_double *)&x
 
 #if COMPILER(MSVC)
 
+#if _MSC_VER < 1800
 // We must not do 'num + 0.5' or 'num - 0.5' because they can cause precision loss.
 static double round(double num)
 {
@@ -138,13 +139,12 @@ static float roundf(float num)
         return integer - num > 0.5f ? integer - 1.0f : integer;
     return integer - num >= 0.5f ? integer - 1.0f : integer;
 }
+
 inline long long llround(double num) { return static_cast<long long>(round(num)); }
 inline long long llroundf(float num) { return static_cast<long long>(roundf(num)); }
 inline long lround(double num) { return static_cast<long>(round(num)); }
 inline long lroundf(float num) { return static_cast<long>(roundf(num)); }
 inline double trunc(double num) { return num > 0 ? floor(num) : ceil(num); }
-
-#if _MSC_VER < 1800
 
 inline double remainder(double numerator, double denominator)
 {
@@ -154,8 +154,6 @@ inline double remainder(double numerator, double denominator)
 
     return result;
 }
-
-#endif
 
 inline double asinh(double d)
 {
@@ -189,6 +187,8 @@ inline double cbrt(double d)
 
 #endif
 
+#endif
+
 #if COMPILER(GCC) && OS(QNX)
 // The stdlib on QNX doesn't contain long abs(long). See PR #104666.
 inline long long abs(long num) { return labs(num); }
@@ -215,6 +215,8 @@ inline float log2f(float num)
 inline long long abs(long long num) { return _abs64(num); }
 #endif
 
+#if _MSC_VER < 1800
+
 namespace std {
 
 inline bool isinf(double num) { return !_finite(num) && !_isnan(num); }
@@ -223,6 +225,8 @@ inline bool isfinite(double x) { return _finite(x); }
 inline bool signbit(double num) { return _copysign(1.0, num) < 0; }
 
 } // namespace std
+
+#endif
 
 inline double nextafter(double x, double y) { return _nextafter(x, y); }
 inline float nextafterf(float x, float y) { return x > y ? x - FLT_EPSILON : x + FLT_EPSILON; }

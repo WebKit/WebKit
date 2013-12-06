@@ -119,6 +119,7 @@ namespace WTF {
         PtrType operator->() const { return fromStorageType(m_ptr); }
 #if COMPILER_SUPPORTS(CXX_EXPLICIT_CONVERSIONS)
         explicit operator PtrType() const { return fromStorageType(m_ptr); }
+        explicit operator bool() const { return m_ptr; }
 #endif
 
         bool operator!() const { return !m_ptr; }

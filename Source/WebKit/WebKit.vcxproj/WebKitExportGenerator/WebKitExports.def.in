@@ -346,7 +346,12 @@ EXPORTS
         symbolWithPointer(?pageSizeAndMarginsInPixels@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@HHHHHHH@Z, ?pageSizeAndMarginsInPixels@PrintContext@WebCore@@SA?AVString@WTF@@PEAVFrame@2@HHHHHHH@Z)
         symbolWithPointer(?close@DOMWindow@WebCore@@QAEXPAVScriptExecutionContext@2@@Z, ?close@DOMWindow@WebCore@@QEAAXPEAVScriptExecutionContext@2@@Z)
         symbolWithPointer(?document@DOMWindow@WebCore@@QBEPAVDocument@2@XZ, ?document@DOMWindow@WebCore@@QEBAPEAVDocument@2@XZ)
+#if _MSC_VER < 1800
         symbolWithPointer(?open@DOMWindow@WebCore@@QAE?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@ABVString@4@ABVAtomicString@4@0PAV12@2@Z, ?open@DOMWindow@WebCore@@QEAA?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@AEBVString@4@AEBVAtomicString@4@0PEAV12@2@Z)
+#else
+        symbolWithPointer(?open@DOMWindow@WebCore@@QAE?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@ABVString@4@ABVAtomicString@4@0AAV12@2@Z, ?open@DOMWindow@WebCore@@QEAA?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@AEBVString@4@AEBVAtomicString@4@0AEAV12@2@Z)
+
+#endif
         symbolWithPointer(?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVDOMWindow@1@@Z, ?toJS@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@PEAVDOMWindow@1@@Z)
         symbolWithPointer(?layerTreeAsText@Frame@WebCore@@QBE?AVString@WTF@@I@Z, ?layerTreeAsText@Frame@WebCore@@QEBA?AVString@WTF@@I@Z)
         symbolWithPointer(?trackedRepaintRectsAsText@Frame@WebCore@@QBE?AVString@WTF@@XZ, ?trackedRepaintRectsAsText@Frame@WebCore@@QEBA?AVString@WTF@@XZ)
@@ -459,3 +464,8 @@ EXPORTS
         symbolWithPointer(?cacheStorage@WebCore@@YAAAVApplicationCacheStorage@1@XZ, ?cacheStorage@WebCore@@YAAEAVApplicationCacheStorage@1@XZ)
         symbolWithPointer(?setDefaultOriginQuota@ApplicationCacheStorage@WebCore@@QAEX_J@Z, ?setDefaultOriginQuota@ApplicationCacheStorage@WebCore@@QEAAX_J@Z)
         symbolWithPointer(?vm@ScriptExecutionContext@WebCore@@QAEPAVVM@JSC@@XZ, ?vm@ScriptExecutionContext@WebCore@@QEAAPEAVVM@JSC@@XZ)
+#if _MSC_VER >= 1800
+        symbolWithPointer(?completeURL@Document@WebCore@@UBE?AVURL@2@ABVString@WTF@@@Z, ?completeURL@Document@WebCore@@UBE?AVURL@2@ABVString@WTF@@@Z)
+        symbolWithPointer(??1DOMWindow@WebCore@@UAE@XZ, ??1DOMWindow@WebCore@@UAE@XZ)
+        symbolWithPointer(?visibleContentRect@ScrollView@WebCore@@UBE?AVIntRect@2@W4VisibleContentRectIncludesScrollbars@ScrollableArea@2@@Z, ?visibleContentRect@ScrollView@WebCore@@UBE?AVIntRect@2@W4VisibleContentRectIncludesScrollbars@ScrollableArea@2@@Z)
+#endif

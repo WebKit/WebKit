@@ -494,7 +494,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
     Vector<Node*> nodeList;
     String markupString = documentTypeString(document) + createMarkup(*range, &nodeList, AnnotateForInterchange);
 
-    return create(markupString, frame, nodeList, 0);
+    return create(markupString, frame, nodeList, nullptr);
 }
 
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame* frame, const Vector<Node*>& nodes, std::function<bool (Frame&)> frameFilter)
@@ -601,7 +601,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
         builder.append(createMarkup(*selectionRange, &nodeList, AnnotateForInterchange));
 
     String markupString = builder.toString();
-    RefPtr<LegacyWebArchive> archive = create(markupString, frame, nodeList, 0);
+    RefPtr<LegacyWebArchive> archive = create(markupString, frame, nodeList, nullptr);
     
     if (!document->isFrameSet())
         return archive.release();

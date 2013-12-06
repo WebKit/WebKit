@@ -335,11 +335,13 @@ namespace std {
     };
 
 #if COMPILER_SUPPORTS(CXX_VARIADIC_TEMPLATES)
+#if !defined(_MSC_VER) || _MSC_VER < 1800
     template<class T, class... Args> inline typename _Unique_if<T>::_Single_object
     make_unique(Args&&... args)
     {
         return unique_ptr<T>(new T(std::forward<Args>(args)...));
     }
+#endif
 #else
     template<class T> inline typename _Unique_if<T>::_Single_object
     make_unique()
@@ -408,12 +410,14 @@ namespace std {
     }
 #endif
 
+#if !defined(_MSC_VER) || _MSC_VER < 1800
     template<class T> inline typename _Unique_if<T>::_Unknown_bound
     make_unique(size_t n)
     {
         typedef typename remove_extent<T>::type U;
         return unique_ptr<T>(new U[n]());
     }
+#endif
     
 #if COMPILER_SUPPORTS(CXX_VARIADIC_TEMPLATES)
     template<class T, class... Args> typename _Unique_if<T>::_Known_bound

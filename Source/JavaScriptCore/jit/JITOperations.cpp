@@ -1363,6 +1363,8 @@ EncodedJSValue JIT_OPERATION operationGetArgumentsLength(ExecState* exec, int32_
     return JSValue::encode(baseValue.get(exec, ident, slot));
 }
 
+}
+
 static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, ReturnAddressPtr returnAddress)
 {
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
@@ -1386,6 +1388,8 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, R
     return baseValue.get(exec, property);
 }
 
+extern "C" {
+    
 EncodedJSValue JIT_OPERATION operationGetByValGeneric(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript)
 {
     VM& vm = exec->vm();
