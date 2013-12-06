@@ -1,3 +1,15 @@
+2013-12-06  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        Define SHA1 hash size in SHA1.h and use it at various places.
+        https://bugs.webkit.org/show_bug.cgi?id=125345
+
+        Reviewed by Darin Adler.
+
+        Use SHA1::hashSize instead of local variables.
+
+        * bytecode/CodeBlockHash.cpp:
+        (JSC::CodeBlockHash::CodeBlockHash): use SHA1::hashSize
+
 2013-12-05  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r160213): Crash in js/dom/JSON-parse.html

@@ -42,7 +42,7 @@ CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKin
 {
     SHA1 sha1;
     sha1.addBytes(sourceCode.toUTF8());
-    Vector<uint8_t, 20> digest;
+    Vector<uint8_t, SHA1::hashSize> digest;
     sha1.computeHash(digest);
     m_hash += digest[0] | (digest[1] << 8) | (digest[2] << 16) | (digest[3] << 24);
     m_hash ^= static_cast<unsigned>(kind);

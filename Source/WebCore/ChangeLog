@@ -1,3 +1,17 @@
+2013-12-06  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        Define SHA1 hash size in SHA1.h and use it at various places.
+        https://bugs.webkit.org/show_bug.cgi?id=125345
+
+        Reviewed by Darin Adler.
+
+        Use SHA1::hashSize instead of local variables.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::getExpectedWebSocketAccept):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::HostTLSCertificateSet::computeCertificateHash):
+
 2013-12-06  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Add load delegate methods for responding to authentication challenges

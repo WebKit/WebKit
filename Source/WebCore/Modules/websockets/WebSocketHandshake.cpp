@@ -109,14 +109,13 @@ static String generateSecWebSocketKey()
 String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocketKey)
 {
     static const char* const webSocketKeyGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-    static const size_t sha1HashSize = 20; // FIXME: This should be defined in SHA1.h.
     SHA1 sha1;
     CString keyData = secWebSocketKey.ascii();
     sha1.addBytes(reinterpret_cast<const uint8_t*>(keyData.data()), keyData.length());
     sha1.addBytes(reinterpret_cast<const uint8_t*>(webSocketKeyGUID), strlen(webSocketKeyGUID));
-    Vector<uint8_t, sha1HashSize> hash;
+    Vector<uint8_t, SHA1::hashSize> hash;
     sha1.computeHash(hash);
-    return base64Encode(hash.data(), sha1HashSize);
+    return base64Encode(hash.data(), SHA1::hashSize);
 }
 
 WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, ScriptExecutionContext* context)

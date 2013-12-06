@@ -205,14 +205,13 @@ private:
         if (!certificateData)
             return String();
 
-        static const size_t sha1HashSize = 20;
         SHA1 sha1;
         sha1.addBytes(certificateData->data, certificateData->len);
 
-        Vector<uint8_t, sha1HashSize> digest;
+        Vector<uint8_t, SHA1::hashSize> digest;
         sha1.computeHash(digest);
 
-        return base64Encode(reinterpret_cast<const char*>(digest.data()), sha1HashSize);
+        return base64Encode(reinterpret_cast<const char*>(digest.data()), SHA1::hashSize);
     }
 
     HashSet<String> m_certificates;

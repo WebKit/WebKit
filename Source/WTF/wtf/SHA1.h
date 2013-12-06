@@ -64,7 +64,10 @@ public:
     
     // Compute the hex digest directly. Pass a limit less than 40 if you want a shorter digest.
     WTF_EXPORT_PRIVATE CString computeHexDigest();
-    
+
+    // Size of the SHA1 hash
+    WTF_EXPORT_PRIVATE static const size_t hashSize = 20;
+
 private:
     void finalize();
     void processBlock();
