@@ -1,3 +1,66 @@
+2013-12-04  Oliver Hunt  <oliver@apple.com>
+
+        Refactor static getter function prototype to include thisValue in addition to the base object
+        https://bugs.webkit.org/show_bug.cgi?id=124461
+
+        Reviewed by Geoffrey Garen.
+
+        Add thisValue parameter to static getter prototype, and switch
+        from JSValue to EncodedJSValue for parameters and return value.
+
+        Currently none of the static getters use the thisValue, but
+        separating out the refactoring will prevent future changes
+        from getting lost in the noise of refactoring.  This means
+        that this patch does not result in any change in behaviour.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::asCallbackObject):
+        (JSC::::staticFunctionGetter):
+        (JSC::::callbackGetter):
+        * jit/JITOperations.cpp:
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSActivation.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::lengthGetter):
+        (JSC::JSFunction::nameGetter):
+        * runtime/JSFunction.h:
+        * runtime/JSObject.h:
+        (JSC::PropertySlot::getValue):
+        * runtime/NumberConstructor.cpp:
+        (JSC::numberConstructorNaNValue):
+        (JSC::numberConstructorNegInfinity):
+        (JSC::numberConstructorPosInfinity):
+        (JSC::numberConstructorMaxValue):
+        (JSC::numberConstructorMinValue):
+        * runtime/PropertySlot.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::asRegExpConstructor):
+        (JSC::regExpConstructorDollar1):
+        (JSC::regExpConstructorDollar2):
+        (JSC::regExpConstructorDollar3):
+        (JSC::regExpConstructorDollar4):
+        (JSC::regExpConstructorDollar5):
+        (JSC::regExpConstructorDollar6):
+        (JSC::regExpConstructorDollar7):
+        (JSC::regExpConstructorDollar8):
+        (JSC::regExpConstructorDollar9):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        * runtime/RegExpObject.cpp:
+        (JSC::asRegExpObject):
+        (JSC::regExpObjectGlobal):
+        (JSC::regExpObjectIgnoreCase):
+        (JSC::regExpObjectMultiline):
+        (JSC::regExpObjectSource):
+
 2013-12-04  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should use cvttsd2si directly for double-to-int32 conversions

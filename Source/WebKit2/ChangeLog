@@ -1,3 +1,27 @@
+2013-12-04  Oliver Hunt  <oliver@apple.com>
+
+        Refactor static getter function prototype to include thisValue in addition to the base object
+        https://bugs.webkit.org/show_bug.cgi?id=124461
+
+        Reviewed by Geoffrey Garen.
+
+        Update the WK2 JSC usage to the new static getter API
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::callMethod):
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::callNPJSObject):
+        (WebKit::constructWithConstructor):
+        (WebKit::JSNPObject::propertyGetter):
+        (WebKit::JSNPObject::methodGetter):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::getOrCreateNPObject):
+        (WebKit::NPRuntimeObjectMap::finalize):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::frameForContext):
+        (WebKit::WebFrame::counterValue):
+
 2013-12-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r160133.

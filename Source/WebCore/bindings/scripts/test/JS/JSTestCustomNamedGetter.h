@@ -71,7 +71,7 @@ protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::HasImpureGetOwnPropertySlot | Base::StructureFlags;
 private:
     static bool canGetItemsForName(JSC::ExecState*, TestCustomNamedGetter*, JSC::PropertyName);
-    static JSC::JSValue nameGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+    static JSC::EncodedJSValue nameGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
 };
 
 class JSTestCustomNamedGetterOwner : public JSC::WeakHandleOwner {
@@ -147,7 +147,7 @@ protected:
 JSC::EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunction(JSC::ExecState*);
 // Attributes
 
-JSC::JSValue jsTestCustomNamedGetterConstructor(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestCustomNamedGetterConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
 
 } // namespace WebCore
 

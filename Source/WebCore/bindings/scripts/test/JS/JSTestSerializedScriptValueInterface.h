@@ -146,14 +146,14 @@ protected:
 
 // Attributes
 
-JSC::JSValue jsTestSerializedScriptValueInterfaceValue(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestSerializedScriptValueInterfaceValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
 void setJSTestSerializedScriptValueInterfaceValue(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
-JSC::JSValue jsTestSerializedScriptValueInterfaceReadonlyValue(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
-JSC::JSValue jsTestSerializedScriptValueInterfaceCachedValue(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestSerializedScriptValueInterfaceReadonlyValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestSerializedScriptValueInterfaceCachedValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
 void setJSTestSerializedScriptValueInterfaceCachedValue(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
-JSC::JSValue jsTestSerializedScriptValueInterfacePorts(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
-JSC::JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
-JSC::JSValue jsTestSerializedScriptValueInterfaceConstructor(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestSerializedScriptValueInterfacePorts(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
 
 } // namespace WebCore
 

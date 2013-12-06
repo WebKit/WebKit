@@ -129,66 +129,66 @@ bool JSTestSerializedScriptValueInterface::getOwnPropertySlot(JSObject* object, 
     return getStaticValueSlot<JSTestSerializedScriptValueInterface, Base>(exec, JSTestSerializedScriptValueInterfaceTable, thisObject, propertyName, slot);
 }
 
-JSValue jsTestSerializedScriptValueInterfaceValue(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceValue(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestSerializedScriptValueInterface* castedThis = jsCast<JSTestSerializedScriptValueInterface*>(asObject(slotBase));
+    JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestSerializedScriptValueInterface& impl = castedThis->impl();
     JSValue result = impl.value() ? impl.value()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestSerializedScriptValueInterfaceReadonlyValue(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceReadonlyValue(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestSerializedScriptValueInterface* castedThis = jsCast<JSTestSerializedScriptValueInterface*>(asObject(slotBase));
+    JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestSerializedScriptValueInterface& impl = castedThis->impl();
     JSValue result = impl.readonlyValue() ? impl.readonlyValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestSerializedScriptValueInterface* castedThis = jsCast<JSTestSerializedScriptValueInterface*>(asObject(slotBase));
+    JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedValue.get())
-        return cachedValue;
+        return JSValue::encode(cachedValue);
     TestSerializedScriptValueInterface& impl = castedThis->impl();
     JSValue result = impl.cachedValue() ? impl.cachedValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
     castedThis->m_cachedValue.set(exec->vm(), castedThis, result);
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestSerializedScriptValueInterfacePorts(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfacePorts(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestSerializedScriptValueInterface* castedThis = jsCast<JSTestSerializedScriptValueInterface*>(asObject(slotBase));
+    JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestSerializedScriptValueInterface& impl = castedThis->impl();
     JSValue result = jsArray(exec, castedThis->globalObject(), impl.ports());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestSerializedScriptValueInterface* castedThis = jsCast<JSTestSerializedScriptValueInterface*>(asObject(slotBase));
+    JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedReadonlyValue.get())
-        return cachedValue;
+        return JSValue::encode(cachedValue);
     TestSerializedScriptValueInterface& impl = castedThis->impl();
     JSValue result = impl.cachedReadonlyValue() ? impl.cachedReadonlyValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
     castedThis->m_cachedReadonlyValue.set(exec->vm(), castedThis, result);
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestSerializedScriptValueInterfaceConstructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestSerializedScriptValueInterface* domObject = jsCast<JSTestSerializedScriptValueInterface*>(asObject(slotBase));
-    return JSTestSerializedScriptValueInterface::getConstructor(exec->vm(), domObject->globalObject());
+    JSTestSerializedScriptValueInterface* domObject = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestSerializedScriptValueInterface::getConstructor(exec->vm(), domObject->globalObject()));
 }
 
 void JSTestSerializedScriptValueInterface::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -292,7 +292,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestSer
 
 TestSerializedScriptValueInterface* toTestSerializedScriptValueInterface(JSC::JSValue value)
 {
-    return value.inherits(JSTestSerializedScriptValueInterface::info()) ? &jsCast<JSTestSerializedScriptValueInterface*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestSerializedScriptValueInterface::info()) ? &jsCast<JSTestSerializedScriptValueInterface*>(value)->impl() : 0;
 }
 
 }

@@ -128,10 +128,10 @@ bool JSTestMediaQueryListListener::getOwnPropertySlot(JSObject* object, ExecStat
     return getStaticValueSlot<JSTestMediaQueryListListener, Base>(exec, JSTestMediaQueryListListenerTable, thisObject, propertyName, slot);
 }
 
-JSValue jsTestMediaQueryListListenerConstructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestMediaQueryListListenerConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestMediaQueryListListener* domObject = jsCast<JSTestMediaQueryListListener*>(asObject(slotBase));
-    return JSTestMediaQueryListListener::getConstructor(exec->vm(), domObject->globalObject());
+    JSTestMediaQueryListListener* domObject = jsDynamicCast<JSTestMediaQueryListListener*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestMediaQueryListListener::getConstructor(exec->vm(), domObject->globalObject()));
 }
 
 JSValue JSTestMediaQueryListListener::getConstructor(VM& vm, JSGlobalObject* globalObject)
@@ -142,9 +142,9 @@ JSValue JSTestMediaQueryListListener::getConstructor(VM& vm, JSGlobalObject* glo
 EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestMediaQueryListListener::info()))
+    JSTestMediaQueryListListener* castedThis = jsDynamicCast<JSTestMediaQueryListListener*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestMediaQueryListListener* castedThis = jsCast<JSTestMediaQueryListListener*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestMediaQueryListListener::info());
     TestMediaQueryListListener& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -210,7 +210,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestMed
 
 TestMediaQueryListListener* toTestMediaQueryListListener(JSC::JSValue value)
 {
-    return value.inherits(JSTestMediaQueryListListener::info()) ? &jsCast<JSTestMediaQueryListListener*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestMediaQueryListListener::info()) ? &jsCast<JSTestMediaQueryListListener*>(value)->impl() : 0;
 }
 
 }

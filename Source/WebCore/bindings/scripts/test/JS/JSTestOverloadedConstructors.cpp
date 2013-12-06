@@ -192,10 +192,10 @@ bool JSTestOverloadedConstructors::getOwnPropertySlot(JSObject* object, ExecStat
     return getStaticValueSlot<JSTestOverloadedConstructors, Base>(exec, JSTestOverloadedConstructorsTable, thisObject, propertyName, slot);
 }
 
-JSValue jsTestOverloadedConstructorsConstructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestOverloadedConstructorsConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestOverloadedConstructors* domObject = jsCast<JSTestOverloadedConstructors*>(asObject(slotBase));
-    return JSTestOverloadedConstructors::getConstructor(exec->vm(), domObject->globalObject());
+    JSTestOverloadedConstructors* domObject = jsDynamicCast<JSTestOverloadedConstructors*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestOverloadedConstructors::getConstructor(exec->vm(), domObject->globalObject()));
 }
 
 JSValue JSTestOverloadedConstructors::getConstructor(VM& vm, JSGlobalObject* globalObject)
@@ -257,7 +257,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestOve
 
 TestOverloadedConstructors* toTestOverloadedConstructors(JSC::JSValue value)
 {
-    return value.inherits(JSTestOverloadedConstructors::info()) ? &jsCast<JSTestOverloadedConstructors*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestOverloadedConstructors::info()) ? &jsCast<JSTestOverloadedConstructors*>(value)->impl() : 0;
 }
 
 }

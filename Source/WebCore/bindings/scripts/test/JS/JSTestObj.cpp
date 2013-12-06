@@ -392,725 +392,725 @@ bool JSTestObj::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyNa
     return getStaticValueSlot<JSTestObj, Base>(exec, JSTestObjTable, thisObject, propertyName, slot);
 }
 
-JSValue jsTestObjReadOnlyLongAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReadOnlyLongAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.readOnlyLongAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReadOnlyStringAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReadOnlyStringAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.readOnlyStringAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReadOnlyTestObjAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReadOnlyTestObjAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.readOnlyTestObjAttr()));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjConstructorStaticReadOnlyLongAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjConstructorStaticReadOnlyLongAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(exec);
     JSValue result = jsNumber(TestObj::staticReadOnlyLongAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjConstructorStaticStringAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjConstructorStaticStringAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(exec);
     JSValue result = jsStringWithCache(exec, TestObj::staticStringAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjConstructorTestSubObj(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjConstructorTestSubObj(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestSubObj::getConstructor(exec->vm(), castedThis->globalObject());
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestSubObj::getConstructor(exec->vm(), castedThis->globalObject()));
 }
 
 
-JSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     if (!castedThis->impl().frame())
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
     Settings& settings = castedThis->impl().frame()->settings();
     if (!settings.testSettingEnabled())
-        return jsUndefined();
-    return JSTestSubObj::getConstructor(exec->vm(), castedThis->globalObject());
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(JSTestSubObj::getConstructor(exec->vm(), castedThis->globalObject()));
 }
 
 
-JSValue jsTestObjEnumAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjEnumAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.enumAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjByteAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjByteAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.byteAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjOctetAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjOctetAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.octetAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjShortAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjShortAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.shortAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjUnsignedShortAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjUnsignedShortAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.unsignedShortAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjLongAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjLongAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.longAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjLongLongAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjLongLongAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.longLongAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjUnsignedLongLongAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjUnsignedLongLongAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.unsignedLongLongAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjStringAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjStringAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.stringAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjTestObjAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjTestObjAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.testObjAttr()));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjXMLObjAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjXMLObjAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.xmlObjAttr()));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjCreate(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjCreate(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsBoolean(impl.isCreate());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReflectedStringAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.fastGetAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReflectedIntegralAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReflectedIntegralAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReflectedUnsignedIntegralAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReflectedUnsignedIntegralAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(std::max(0, impl.getIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr)));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReflectedBooleanAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReflectedBooleanAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsBoolean(impl.fastHasAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReflectedURLAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReflectedURLAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReflectedStringAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReflectedStringAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.fastGetAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReflectedCustomIntegralAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReflectedCustomIntegralAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReflectedCustomBooleanAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReflectedCustomBooleanAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsBoolean(impl.fastHasAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReflectedCustomURLAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReflectedCustomURLAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjTypedArrayAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjTypedArrayAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.typedArrayAttr()));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjAttrWithGetterException(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjAttrWithGetterException(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
     JSC::JSValue result = jsNumber(impl.attrWithGetterException(ec));
     setDOMException(exec, ec);
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjAttrWithSetterException(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjAttrWithSetterException(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.attrWithSetterException());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjStringAttrWithGetterException(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjStringAttrWithGetterException(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
     JSC::JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
     setDOMException(exec, ec);
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjStringAttrWithSetterException(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjStringAttrWithSetterException(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.stringAttrWithSetterException());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjCustomAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjCustomAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return castedThis->customAttr(exec);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
+    return JSValue::encode(castedThis->customAttr(exec));
 }
 
 
-JSValue jsTestObjWithScriptStateAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjWithScriptStateAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.withScriptStateAttribute(exec));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjWithScriptExecutionContextAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAttribute(scriptContext)));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjWithScriptStateAttributeRaises(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjWithScriptStateAttributeRaises(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     ExceptionCode ec = 0;
     TestObj& impl = castedThis->impl();
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptStateAttributeRaises(exec, ec)));
     setDOMException(exec, ec);
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     ExceptionCode ec = 0;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
     TestObj& impl = castedThis->impl();
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAttributeRaises(scriptContext, ec)));
     setDOMException(exec, ec);
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateAttribute(exec, scriptContext)));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     ExceptionCode ec = 0;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
     TestObj& impl = castedThis->impl();
     JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateAttributeRaises(exec, scriptContext, ec)));
     setDOMException(exec, ec);
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptExecutionContextAndScriptStateWithSpacesAttribute(exec, scriptContext)));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.withScriptArgumentsAndCallStackAttribute()));
-    return result;
+    return JSValue::encode(result);
 }
 
 
 #if ENABLE(Condition1)
-JSValue jsTestObjConditionalAttr1(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr1(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.conditionalAttr1());
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-JSValue jsTestObjConditionalAttr2(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr2(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.conditionalAttr2());
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-JSValue jsTestObjConditionalAttr3(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr3(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.conditionalAttr3());
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition1)
-JSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestObjectA::getConstructor(exec->vm(), castedThis->globalObject());
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestObjectA::getConstructor(exec->vm(), castedThis->globalObject()));
 }
 
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-JSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestObjectB::getConstructor(exec->vm(), castedThis->globalObject());
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestObjectB::getConstructor(exec->vm(), castedThis->globalObject()));
 }
 
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-JSValue jsTestObjConditionalAttr6Constructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjConditionalAttr6Constructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestObjectC::getConstructor(exec->vm(), castedThis->globalObject());
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestObjectC::getConstructor(exec->vm(), castedThis->globalObject()));
 }
 
 #endif
 
-JSValue jsTestObjCachedAttribute1(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjCachedAttribute1(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedAttribute1.get())
-        return cachedValue;
+        return JSValue::encode(cachedValue);
     TestObj& impl = castedThis->impl();
     JSValue result = (impl.cachedAttribute1().hasNoValue() ? jsNull() : impl.cachedAttribute1().jsValue());
     castedThis->m_cachedAttribute1.set(exec->vm(), castedThis, result);
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjCachedAttribute2(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjCachedAttribute2(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     if (JSValue cachedValue = castedThis->m_cachedAttribute2.get())
-        return cachedValue;
+        return JSValue::encode(cachedValue);
     TestObj& impl = castedThis->impl();
     JSValue result = (impl.cachedAttribute2().hasNoValue() ? jsNull() : impl.cachedAttribute2().jsValue());
     castedThis->m_cachedAttribute2.set(exec->vm(), castedThis, result);
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjAnyAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjAnyAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = (impl.anyAttribute().hasNoValue() ? jsNull() : impl.anyAttribute().jsValue());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjContentDocument(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjContentDocument(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     TestObj& impl = castedThis->impl();
-    return shouldAllowAccessToNode(exec, impl.contentDocument()) ? toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.contentDocument())) : jsNull();
+    return JSValue::encode(shouldAllowAccessToNode(exec, impl.contentDocument()) ? toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.contentDocument())) : jsNull());
 }
 
 
-JSValue jsTestObjMutablePoint(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjMutablePoint(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGStaticPropertyTearOff<TestObj, SVGPoint>::create(impl, impl.mutablePoint(), &TestObj::updateMutablePoint)));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjImmutablePoint(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjImmutablePoint(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePoint())));
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjStrawberry(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjStrawberry(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.blueberry());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjStrictFloat(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjStrictFloat(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.strictFloat());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjDescription(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjDescription(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.description());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjId(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjId(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.id());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjHash(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjHash(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.hash());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjReplaceableAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjReplaceableAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.replaceableAttribute());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjNullableDoubleAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjNullableDoubleAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.nullableDoubleAttribute(isNull));
     if (isNull)
-        return jsNull();
-    return result;
+        return JSValue::encode(jsNull());
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjNullableLongAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjNullableLongAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.nullableLongAttribute(isNull));
     if (isNull)
-        return jsNull();
-    return result;
+        return JSValue::encode(jsNull());
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjNullableBooleanAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjNullableBooleanAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj& impl = castedThis->impl();
     JSValue result = jsBoolean(impl.nullableBooleanAttribute(isNull));
     if (isNull)
-        return jsNull();
-    return result;
+        return JSValue::encode(jsNull());
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjNullableStringAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjNullableStringAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.nullableStringAttribute(isNull));
     if (isNull)
-        return jsNull();
-    return result;
+        return JSValue::encode(jsNull());
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjNullableLongSettableAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjNullableLongSettableAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj& impl = castedThis->impl();
     JSValue result = jsNumber(impl.nullableLongSettableAttribute(isNull));
     if (isNull)
-        return jsNull();
-    return result;
+        return JSValue::encode(jsNull());
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjNullableStringValue(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjNullableStringValue(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     ExceptionCode ec = 0;
     bool isNull = false;
     TestObj& impl = castedThis->impl();
     JSC::JSValue result = jsNumber(impl.nullableStringValue(isNull, ec));
     if (isNull)
-        return jsNull();
+        return JSValue::encode(jsNull());
     setDOMException(exec, ec);
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjAttribute(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attribute());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjAttributeWithReservedEnumType(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjAttributeWithReservedEnumType(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestObj& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attributeWithReservedEnumType());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestObjConstructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestObjConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestObj* domObject = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestObj::getConstructor(exec->vm(), domObject->globalObject());
+    JSTestObj* domObject = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestObj::getConstructor(exec->vm(), domObject->globalObject()));
 }
 
 void JSTestObj::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -1772,9 +1772,9 @@ JSValue JSTestObj::getConstructor(VM& vm, JSGlobalObject* globalObject)
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     impl.voidMethod();
@@ -1784,9 +1784,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* exe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -1807,9 +1807,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -1820,9 +1820,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(ExecState* exe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -1844,9 +1844,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -1857,9 +1857,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(ExecState* ex
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -1881,9 +1881,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethod(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -1894,9 +1894,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethod(ExecState* exe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -1918,9 +1918,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -1931,9 +1931,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(ExecState* exec
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -1955,9 +1955,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithSequenceArg(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -1972,9 +1972,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithSequenceArg(Exe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodReturningSequence(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -1990,9 +1990,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodReturningSequence(E
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2009,9 +2009,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecSta
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -2032,9 +2032,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2049,9 +2049,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2069,9 +2069,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
@@ -2083,9 +2083,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     return JSValue::encode(castedThis->customMethod(exec));
 }
@@ -2093,9 +2093,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(ExecState* e
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     return JSValue::encode(castedThis->customMethodWithArgs(exec));
 }
@@ -2103,9 +2103,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(Exec
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
@@ -2118,9 +2118,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecStat
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
@@ -2133,9 +2133,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoid(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     impl.withScriptStateVoid(exec);
@@ -2145,9 +2145,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoid(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObj(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -2160,9 +2160,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObj(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoidException(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
@@ -2174,9 +2174,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoidExcept
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjException(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
@@ -2191,9 +2191,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjExcepti
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContext(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
@@ -2206,9 +2206,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptState(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
@@ -2221,9 +2221,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjException(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
@@ -2241,9 +2241,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
@@ -2259,9 +2259,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, 0));
@@ -2272,9 +2272,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptArgumentsAndCal
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -2294,9 +2294,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(Exe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2321,9 +2321,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2356,9 +2356,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -2378,9 +2378,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalString(
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefined(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     const String& str(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
@@ -2393,9 +2393,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringI
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     const String& str(argumentOrNull(exec, 0).isEmpty() ? String() : argumentOrNull(exec, 0).toString(exec)->value(exec));
@@ -2408,9 +2408,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringI
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2425,9 +2425,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -2445,9 +2445,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     RefPtr<TestCallback> callback;
@@ -2466,7 +2466,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
     if (!exec->argument(0).isUndefinedOrNull()) {
         if (!exec->uncheckedArgument(0).isFunction())
             return throwVMTypeError(exec);
-        callback = createFunctionOnlyCallback<JSTestCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument(0));
+        callback = createFunctionOnlyCallback<JSTestCallback>(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument(0));
     }
     TestObj::staticMethodWithCallbackAndOptionalArg(callback);
     return JSValue::encode(jsUndefined());
@@ -2478,7 +2478,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     if (!exec->argument(0).isFunction())
         return throwVMTypeError(exec);
-    RefPtr<TestCallback> callback = createFunctionOnlyCallback<JSTestCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument(0));
+    RefPtr<TestCallback> callback = createFunctionOnlyCallback<JSTestCallback>(exec, jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument(0));
     TestObj::staticMethodWithCallbackArg(callback);
     return JSValue::encode(jsUndefined());
 }
@@ -2487,9 +2487,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -2503,9 +2503,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     impl.conditionalMethod2();
@@ -2518,9 +2518,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     impl.conditionalMethod3();
@@ -2532,9 +2532,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(ExecSt
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -2552,9 +2552,9 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod1(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2579,9 +2579,9 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod3(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2596,9 +2596,9 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod3(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod4(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2613,9 +2613,9 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod4(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2630,9 +2630,9 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod6(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2647,9 +2647,9 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod6(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod7(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2664,9 +2664,9 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod7(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod8(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2681,9 +2681,9 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod8(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod9(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2698,9 +2698,9 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod9(
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod10(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2715,9 +2715,9 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod10
 static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod11(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2842,9 +2842,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -2872,9 +2872,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(Exec
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2889,9 +2889,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSeq
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2909,9 +2909,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecS
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2929,9 +2929,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(Exe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
@@ -2946,9 +2946,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState*
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2963,9 +2963,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert2(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2980,9 +2980,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert2(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -2997,9 +2997,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert5(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -3014,9 +3014,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert5(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -3027,9 +3027,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(Exec
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionImmutablePointFunction(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
 
@@ -3040,9 +3040,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionImmutablePointFunction(Ex
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOrange(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     impl.banana();
@@ -3052,9 +3052,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOrange(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
@@ -3078,9 +3078,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState*
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequence(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -3103,9 +3103,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithSequenc
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -3128,9 +3128,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunctionWithArray(E
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -3148,9 +3148,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(Exec
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -3168,9 +3168,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(Exec
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -3191,9 +3191,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestObj::info()))
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -3222,88 +3222,88 @@ void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)
 // Constant getters
 
 #if ENABLE(Condition1)
-JSValue jsTestObjCONDITIONAL_CONST(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONDITIONAL_CONST(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(0));
+    return JSValue::encode(jsNumber(static_cast<int>(0)));
 }
 
 #endif
-JSValue jsTestObjCONST_VALUE_0(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_0(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(0));
+    return JSValue::encode(jsNumber(static_cast<int>(0)));
 }
 
-JSValue jsTestObjCONST_VALUE_1(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_1(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(1));
+    return JSValue::encode(jsNumber(static_cast<int>(1)));
 }
 
-JSValue jsTestObjCONST_VALUE_2(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_2(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(2));
+    return JSValue::encode(jsNumber(static_cast<int>(2)));
 }
 
-JSValue jsTestObjCONST_VALUE_4(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_4(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(4));
+    return JSValue::encode(jsNumber(static_cast<int>(4)));
 }
 
-JSValue jsTestObjCONST_VALUE_8(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_8(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(8));
+    return JSValue::encode(jsNumber(static_cast<int>(8)));
 }
 
-JSValue jsTestObjCONST_VALUE_9(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_9(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(-1));
+    return JSValue::encode(jsNumber(static_cast<int>(-1)));
 }
 
-JSValue jsTestObjCONST_VALUE_10(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_10(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
-    return jsStringOrNull(exec, String("my constant string"));
+    return JSValue::encode(jsStringOrNull(exec, String("my constant string")));
 }
 
-JSValue jsTestObjCONST_VALUE_11(ExecState* exec, JSValue, PropertyName)
-{
-    UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(0xffffffff));
-}
-
-JSValue jsTestObjCONST_VALUE_12(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_11(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(0x01));
+    return JSValue::encode(jsNumber(static_cast<int>(0xffffffff)));
 }
 
-JSValue jsTestObjCONST_VALUE_13(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_12(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(0X20));
+    return JSValue::encode(jsNumber(static_cast<int>(0x01)));
 }
 
-JSValue jsTestObjCONST_VALUE_14(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_13(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(0x1abc));
+    return JSValue::encode(jsNumber(static_cast<int>(0X20)));
 }
 
-JSValue jsTestObjCONST_JAVASCRIPT(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_VALUE_14(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(15));
+    return JSValue::encode(jsNumber(static_cast<int>(0x1abc)));
 }
 
-JSValue jsTestObjReadonly(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestObjCONST_JAVASCRIPT(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(0));
+    return JSValue::encode(jsNumber(static_cast<int>(15)));
+}
+
+EncodedJSValue jsTestObjReadonly(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
+{
+    UNUSED_PARAM(exec);
+    return JSValue::encode(jsNumber(static_cast<int>(0)));
 }
 
 bool JSTestObjOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
@@ -3360,7 +3360,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestObj
 
 TestObj* toTestObj(JSC::JSValue value)
 {
-    return value.inherits(JSTestObj::info()) ? &jsCast<JSTestObj*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestObj::info()) ? &jsCast<JSTestObj*>(value)->impl() : 0;
 }
 
 }

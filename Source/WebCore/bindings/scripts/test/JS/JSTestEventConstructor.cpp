@@ -167,30 +167,30 @@ bool JSTestEventConstructor::getOwnPropertySlot(JSObject* object, ExecState* exe
     return getStaticValueSlot<JSTestEventConstructor, Base>(exec, JSTestEventConstructorTable, thisObject, propertyName, slot);
 }
 
-JSValue jsTestEventConstructorAttr1(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestEventConstructorAttr1(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestEventConstructor* castedThis = jsCast<JSTestEventConstructor*>(asObject(slotBase));
+    JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestEventConstructor& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attr1());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestEventConstructorAttr2(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestEventConstructorAttr2(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestEventConstructor* castedThis = jsCast<JSTestEventConstructor*>(asObject(slotBase));
+    JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestEventConstructor& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attr2());
-    return result;
+    return JSValue::encode(result);
 }
 
 
-JSValue jsTestEventConstructorConstructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestEventConstructorConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestEventConstructor* domObject = jsCast<JSTestEventConstructor*>(asObject(slotBase));
-    return JSTestEventConstructor::getConstructor(exec->vm(), domObject->globalObject());
+    JSTestEventConstructor* domObject = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestEventConstructor::getConstructor(exec->vm(), domObject->globalObject()));
 }
 
 JSValue JSTestEventConstructor::getConstructor(VM& vm, JSGlobalObject* globalObject)
@@ -252,7 +252,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEve
 
 TestEventConstructor* toTestEventConstructor(JSC::JSValue value)
 {
-    return value.inherits(JSTestEventConstructor::info()) ? &jsCast<JSTestEventConstructor*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestEventConstructor::info()) ? &jsCast<JSTestEventConstructor*>(value)->impl() : 0;
 }
 
 }

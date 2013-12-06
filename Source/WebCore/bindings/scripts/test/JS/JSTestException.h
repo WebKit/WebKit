@@ -139,8 +139,8 @@ protected:
 
 // Attributes
 
-JSC::JSValue jsTestExceptionName(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
-JSC::JSValue jsTestExceptionConstructor(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestExceptionName(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestExceptionConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
 
 } // namespace WebCore
 

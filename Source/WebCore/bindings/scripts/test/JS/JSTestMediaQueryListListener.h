@@ -143,7 +143,7 @@ protected:
 JSC::EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(JSC::ExecState*);
 // Attributes
 
-JSC::JSValue jsTestMediaQueryListListenerConstructor(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestMediaQueryListListenerConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
 
 } // namespace WebCore
 

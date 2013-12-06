@@ -67,24 +67,24 @@ void JSDOMWindow::visitChildren(JSCell* cell, SlotVisitor& visitor)
 }
 
 template<NativeFunction nativeFunction, int length>
-JSValue nonCachingStaticFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
+EncodedJSValue nonCachingStaticFunctionGetter(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), length, propertyName.publicName(), nativeFunction);
+    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), length, propertyName.publicName(), nativeFunction));
 }
 
-static JSValue childFrameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+static EncodedJSValue childFrameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    return toJS(exec, jsCast<JSDOMWindow*>(asObject(slotBase))->impl().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))->document()->domWindow());
+    return JSValue::encode(toJS(exec, jsCast<JSDOMWindow*>(JSValue::decode(slotBase))->impl().frame()->tree().scopedChild(propertyNameToAtomicString(propertyName))->document()->domWindow()));
 }
 
-static JSValue indexGetter(ExecState* exec, JSValue slotBase, unsigned index)
+static EncodedJSValue indexGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, unsigned index)
 {
-    return toJS(exec, jsCast<JSDOMWindow*>(asObject(slotBase))->impl().frame()->tree().scopedChild(index)->document()->domWindow());
+    return JSValue::encode(toJS(exec, jsCast<JSDOMWindow*>(JSValue::decode(slotBase))->impl().frame()->tree().scopedChild(index)->document()->domWindow()));
 }
 
-static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+static EncodedJSValue namedItemGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSDOMWindowBase* thisObj = jsCast<JSDOMWindow*>(asObject(slotBase));
+    JSDOMWindowBase* thisObj = jsCast<JSDOMWindow*>(JSValue::decode(slotBase));
     Document* document = thisObj->impl().frame()->document();
 
     ASSERT(BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObj->impl()));
@@ -93,15 +93,15 @@ static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, PropertyName p
 
     AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
     if (!atomicPropertyName || !toHTMLDocument(document)->hasWindowNamedItem(*atomicPropertyName))
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
 
     if (UNLIKELY(toHTMLDocument(document)->windowNamedItemContainsMultipleElements(*atomicPropertyName))) {
         RefPtr<HTMLCollection> collection = document->windowNamedItems(atomicPropertyName);
         ASSERT(collection->length() > 1);
-        return toJS(exec, thisObj->globalObject(), WTF::getPtr(collection));
+        return JSValue::encode(toJS(exec, thisObj->globalObject(), WTF::getPtr(collection)));
     }
 
-    return toJS(exec, thisObj->globalObject(), toHTMLDocument(document)->windowNamedItem(*atomicPropertyName));
+    return JSValue::encode(toJS(exec, thisObj->globalObject(), toHTMLDocument(document)->windowNamedItem(*atomicPropertyName)));
 }
 
 bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

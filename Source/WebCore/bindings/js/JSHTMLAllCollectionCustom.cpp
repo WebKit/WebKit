@@ -100,10 +100,10 @@ bool JSHTMLAllCollection::canGetItemsForName(ExecState*, HTMLAllCollection* coll
     return collection->hasNamedItem(propertyNameToAtomicString(propertyName));
 }
 
-JSValue JSHTMLAllCollection::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue JSHTMLAllCollection::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSHTMLAllCollection* thisObj = jsCast<JSHTMLAllCollection*>(asObject(slotBase));
-    return getNamedItems(exec, thisObj, propertyName);
+    JSHTMLAllCollection* thisObj = jsCast<JSHTMLAllCollection*>(JSValue::decode(slotBase));
+    return JSValue::encode(getNamedItems(exec, thisObj, propertyName));
 }
 
 JSValue JSHTMLAllCollection::item(ExecState* exec)

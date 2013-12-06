@@ -272,143 +272,143 @@ bool JSTestInterface::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(exec);
     JSValue result = jsNumber(TestInterface::implementsStaticReadOnlyAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSValue jsTestInterfaceConstructorImplementsStaticAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(exec);
     JSValue result = jsStringWithCache(exec, TestInterface::implementsStaticAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSValue jsTestInterfaceImplementsStr1(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceImplementsStr1(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.implementsStr1());
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSValue jsTestInterfaceImplementsStr2(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.implementsStr2());
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSValue jsTestInterfaceImplementsStr3(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
-    return castedThis->implementsStr3(exec);
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(slotBase));
+    return JSValue::encode(castedThis->implementsStr3(exec));
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSValue jsTestInterfaceImplementsNode(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceImplementsNode(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.implementsNode()));
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(exec);
     JSValue result = jsNumber(TestSupplemental::supplementalStaticReadOnlyAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(exec);
     JSValue result = jsStringWithCache(exec, TestSupplemental::supplementalStaticAttr());
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, TestSupplemental::supplementalStr1(&impl));
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, TestSupplemental::supplementalStr2(&impl));
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
-    return castedThis->supplementalStr3(exec);
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(slotBase));
+    return JSValue::encode(castedThis->supplementalStr3(exec));
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(slotBase));
     UNUSED_PARAM(exec);
     TestInterface& impl = castedThis->impl();
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalNode(&impl)));
-    return result;
+    return JSValue::encode(result);
 }
 
 #endif
 
-JSValue jsTestInterfaceConstructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestInterfaceConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestInterface* domObject = jsCast<JSTestInterface*>(asObject(slotBase));
-    return JSTestInterface::getConstructor(exec->vm(), domObject->globalObject());
+    JSTestInterface* domObject = jsDynamicCast<JSTestInterface*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestInterface::getConstructor(exec->vm(), domObject->globalObject()));
 }
 
 void JSTestInterface::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -538,9 +538,9 @@ JSValue JSTestInterface::getConstructor(VM& vm, JSGlobalObject* globalObject)
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestInterface::info()))
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
     impl.implementsMethod1();
@@ -553,9 +553,9 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(E
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestInterface::info()))
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -582,9 +582,9 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestInterface::info()))
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     return JSValue::encode(castedThis->implementsMethod3(exec));
 }
@@ -604,9 +604,9 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestInterface::info()))
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
     TestSupplemental::supplementalMethod1(&impl);
@@ -619,9 +619,9 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestInterface::info()))
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     TestInterface& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
@@ -648,9 +648,9 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestInterface::info()))
+    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     return JSValue::encode(castedThis->supplementalMethod3(exec));
 }
@@ -669,34 +669,34 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMetho
 // Constant getters
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSValue jsTestInterfaceIMPLEMENTSCONSTANT1(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestInterfaceIMPLEMENTSCONSTANT1(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(1));
+    return JSValue::encode(jsNumber(static_cast<int>(1)));
 }
 
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-JSValue jsTestInterfaceIMPLEMENTSCONSTANT2(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestInterfaceIMPLEMENTSCONSTANT2(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(2));
+    return JSValue::encode(jsNumber(static_cast<int>(2)));
 }
 
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSUPPLEMENTALCONSTANT1(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestInterfaceSUPPLEMENTALCONSTANT1(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(1));
+    return JSValue::encode(jsNumber(static_cast<int>(1)));
 }
 
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSUPPLEMENTALCONSTANT2(ExecState* exec, JSValue, PropertyName)
+EncodedJSValue jsTestInterfaceSUPPLEMENTALCONSTANT2(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    return jsNumber(static_cast<int>(2));
+    return JSValue::encode(jsNumber(static_cast<int>(2)));
 }
 
 #endif
@@ -736,7 +736,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInt
 
 TestInterface* toTestInterface(JSC::JSValue value)
 {
-    return value.inherits(JSTestInterface::info()) ? &jsCast<JSTestInterface*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestInterface::info()) ? &jsCast<JSTestInterface*>(value)->impl() : 0;
 }
 
 }

@@ -210,17 +210,17 @@ JSValue JSActivation::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
     return exec->globalThisValue();
 }
 
-JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, PropertyName)
+EncodedJSValue JSActivation::argumentsGetter(ExecState*, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSActivation* activation = jsCast<JSActivation*>(slotBase);
+    JSActivation* activation = jsCast<JSActivation*>(JSValue::decode(slotBase));
     CallFrame* callFrame = CallFrame::create(reinterpret_cast<Register*>(activation->m_registers));
     ASSERT(!activation->isTornOff() && (callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()));
     if (activation->isTornOff() || !(callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()))
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
 
     VirtualRegister argumentsRegister = callFrame->codeBlock()->argumentsRegister();
     if (JSValue arguments = callFrame->uncheckedR(argumentsRegister.offset()).jsValue())
-        return arguments;
+        return JSValue::encode(arguments);
     int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister).offset();
 
     JSValue arguments = JSValue(Arguments::create(callFrame->vm(), callFrame));
@@ -228,7 +228,7 @@ JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, PropertyName
     callFrame->uncheckedR(realArgumentsRegister) = arguments;
     
     ASSERT(callFrame->uncheckedR(realArgumentsRegister).jsValue().inherits(Arguments::info()));
-    return callFrame->uncheckedR(realArgumentsRegister).jsValue();
+    return JSValue::encode(callFrame->uncheckedR(realArgumentsRegister).jsValue());
 }
 
 } // namespace JSC

@@ -664,7 +664,7 @@ String WebFrame::counterValue(JSObjectRef element)
     if (!toJS(element)->inherits(JSElement::info()))
         return String();
 
-    return counterValueForElement(&static_cast<JSElement*>(toJS(element))->impl());
+    return counterValueForElement(&jsCast<JSElement*>(toJS(element))->impl());
 }
 
 String WebFrame::provisionalURL() const

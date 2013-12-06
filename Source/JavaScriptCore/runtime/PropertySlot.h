@@ -60,8 +60,8 @@ public:
     {
     }
 
-    typedef JSValue (*GetValueFunc)(ExecState*, JSValue slotBase, PropertyName);
-    typedef JSValue (*GetIndexValueFunc)(ExecState*, JSValue slotBase, unsigned);
+    typedef EncodedJSValue (*GetValueFunc)(ExecState*, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName);
+    typedef EncodedJSValue (*GetIndexValueFunc)(ExecState*, EncodedJSValue slotBase, EncodedJSValue thisValue, unsigned);
 
     JSValue getValue(ExecState*, PropertyName) const;
     JSValue getValue(ExecState*, unsigned propertyName) const;
@@ -226,7 +226,7 @@ private:
 
     PropertyType m_propertyType;
     PropertyOffset m_offset;
-    JSValue m_thisValue;
+    const JSValue m_thisValue;
     JSObject* m_slotBase;
 };
 

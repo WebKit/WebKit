@@ -72,7 +72,7 @@ NPObject* NPRuntimeObjectMap::getOrCreateNPObject(VM& vm, JSObject* jsObject)
 {
     // If this is a JSNPObject, we can just get its underlying NPObject.
     if (jsObject->classInfo() == JSNPObject::info()) {
-        JSNPObject* jsNPObject = static_cast<JSNPObject*>(jsObject);
+        JSNPObject* jsNPObject = jsCast<JSNPObject*>(jsObject);
         NPObject* npObject = jsNPObject->npObject();
         
         retainNPObject(npObject);
@@ -302,7 +302,7 @@ void NPRuntimeObjectMap::addToInvalidationQueue(NPObject* npObject)
 
 void NPRuntimeObjectMap::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSNPObject* object = static_cast<JSNPObject*>(handle.get().asCell());
+    JSNPObject* object = jsCast<JSNPObject*>(handle.get().asCell());
     weakRemove(m_jsNPObjects, static_cast<NPObject*>(context), object);
     addToInvalidationQueue(object->leakNPObject());
 }

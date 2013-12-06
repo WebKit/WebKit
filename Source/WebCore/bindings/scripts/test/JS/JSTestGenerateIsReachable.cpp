@@ -117,10 +117,10 @@ bool JSTestGenerateIsReachable::getOwnPropertySlot(JSObject* object, ExecState* 
     return getStaticValueSlot<JSTestGenerateIsReachable, Base>(exec, JSTestGenerateIsReachableTable, thisObject, propertyName, slot);
 }
 
-JSValue jsTestGenerateIsReachableConstructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestGenerateIsReachableConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestGenerateIsReachable* domObject = jsCast<JSTestGenerateIsReachable*>(asObject(slotBase));
-    return JSTestGenerateIsReachable::getConstructor(exec->vm(), domObject->globalObject());
+    JSTestGenerateIsReachable* domObject = jsDynamicCast<JSTestGenerateIsReachable*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestGenerateIsReachable::getConstructor(exec->vm(), domObject->globalObject()));
 }
 
 JSValue JSTestGenerateIsReachable::getConstructor(VM& vm, JSGlobalObject* globalObject)
@@ -191,7 +191,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestGen
 
 TestGenerateIsReachable* toTestGenerateIsReachable(JSC::JSValue value)
 {
-    return value.inherits(JSTestGenerateIsReachable::info()) ? &jsCast<JSTestGenerateIsReachable*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestGenerateIsReachable::info()) ? &jsCast<JSTestGenerateIsReachable*>(value)->impl() : 0;
 }
 
 }

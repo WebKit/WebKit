@@ -117,10 +117,10 @@ bool JSreadonly::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     return getStaticValueSlot<JSreadonly, Base>(exec, JSreadonlyTable, thisObject, propertyName, slot);
 }
 
-JSValue jsreadonlyConstructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsreadonlyConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSreadonly* domObject = jsCast<JSreadonly*>(asObject(slotBase));
-    return JSreadonly::getConstructor(exec->vm(), domObject->globalObject());
+    JSreadonly* domObject = jsDynamicCast<JSreadonly*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSreadonly::getConstructor(exec->vm(), domObject->globalObject()));
 }
 
 JSValue JSreadonly::getConstructor(VM& vm, JSGlobalObject* globalObject)
@@ -162,7 +162,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, readonl
 
 readonly* toreadonly(JSC::JSValue value)
 {
-    return value.inherits(JSreadonly::info()) ? &jsCast<JSreadonly*>(asObject(value))->impl() : 0;
+    return value.inherits(JSreadonly::info()) ? &jsCast<JSreadonly*>(value)->impl() : 0;
 }
 
 }

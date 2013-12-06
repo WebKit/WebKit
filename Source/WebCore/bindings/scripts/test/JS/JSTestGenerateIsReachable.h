@@ -139,7 +139,7 @@ protected:
 
 // Attributes
 
-JSC::JSValue jsTestGenerateIsReachableConstructor(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestGenerateIsReachableConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
 
 } // namespace WebCore
 

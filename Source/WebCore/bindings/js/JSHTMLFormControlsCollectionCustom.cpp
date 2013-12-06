@@ -57,10 +57,10 @@ bool JSHTMLFormControlsCollection::canGetItemsForName(ExecState*, HTMLFormContro
     return collection->hasNamedItem(propertyNameToAtomicString(propertyName));
 }
 
-JSValue JSHTMLFormControlsCollection::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue JSHTMLFormControlsCollection::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSHTMLFormControlsCollection* thisObj = jsCast<JSHTMLFormControlsCollection*>(asObject(slotBase));
-    return getNamedItems(exec, thisObj, propertyName);
+    JSHTMLFormControlsCollection* thisObj = jsCast<JSHTMLFormControlsCollection*>(JSValue::decode(slotBase));
+    return JSValue::encode(getNamedItems(exec, thisObj, propertyName));
 }
 
 JSValue JSHTMLFormControlsCollection::namedItem(ExecState* exec)

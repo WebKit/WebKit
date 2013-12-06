@@ -144,10 +144,10 @@ bool JSTestCustomNamedGetter::getOwnPropertySlotByIndex(JSObject* object, ExecSt
     return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }
 
-JSValue jsTestCustomNamedGetterConstructor(ExecState* exec, JSValue slotBase, PropertyName)
+EncodedJSValue jsTestCustomNamedGetterConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
-    JSTestCustomNamedGetter* domObject = jsCast<JSTestCustomNamedGetter*>(asObject(slotBase));
-    return JSTestCustomNamedGetter::getConstructor(exec->vm(), domObject->globalObject());
+    JSTestCustomNamedGetter* domObject = jsDynamicCast<JSTestCustomNamedGetter*>(JSValue::decode(slotBase));
+    return JSValue::encode(JSTestCustomNamedGetter::getConstructor(exec->vm(), domObject->globalObject()));
 }
 
 JSValue JSTestCustomNamedGetter::getConstructor(VM& vm, JSGlobalObject* globalObject)
@@ -158,9 +158,9 @@ JSValue JSTestCustomNamedGetter::getConstructor(VM& vm, JSGlobalObject* globalOb
 EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunction(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(JSTestCustomNamedGetter::info()))
+    JSTestCustomNamedGetter* castedThis = jsDynamicCast<JSTestCustomNamedGetter*>(thisValue);
+    if (!castedThis)
         return throwVMTypeError(exec);
-    JSTestCustomNamedGetter* castedThis = jsCast<JSTestCustomNamedGetter*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestCustomNamedGetter::info());
     TestCustomNamedGetter& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
@@ -226,7 +226,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestCus
 
 TestCustomNamedGetter* toTestCustomNamedGetter(JSC::JSValue value)
 {
-    return value.inherits(JSTestCustomNamedGetter::info()) ? &jsCast<JSTestCustomNamedGetter*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestCustomNamedGetter::info()) ? &jsCast<JSTestCustomNamedGetter*>(value)->impl() : 0;
 }
 
 }

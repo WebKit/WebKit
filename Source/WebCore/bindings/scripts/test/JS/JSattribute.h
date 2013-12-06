@@ -139,8 +139,8 @@ protected:
 
 // Attributes
 
-JSC::JSValue jsattributeReadonly(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
-JSC::JSValue jsattributeConstructor(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsattributeReadonly(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsattributeConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
 
 } // namespace WebCore
 

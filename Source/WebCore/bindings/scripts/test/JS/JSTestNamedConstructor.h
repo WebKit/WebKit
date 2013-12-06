@@ -166,7 +166,7 @@ private:
 
 // Attributes
 
-JSC::JSValue jsTestNamedConstructorConstructor(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestNamedConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
 
 } // namespace WebCore
 

@@ -38,7 +38,7 @@ namespace WebCore {
     JSC::Bindings::Instance* pluginInstance(HTMLElement&);
     JSC::JSObject* pluginScriptObject(JSC::ExecState*, JSHTMLElement*);
 
-    JSC::JSValue pluginElementPropertyGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+    JSC::EncodedJSValue pluginElementPropertyGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);
     bool pluginElementCustomGetOwnPropertySlot(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&, JSHTMLElement*);
     bool pluginElementCustomPut(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSHTMLElement*, JSC::PutPropertySlot&);
     JSC::CallType pluginElementGetCallData(JSHTMLElement*, JSC::CallData&);

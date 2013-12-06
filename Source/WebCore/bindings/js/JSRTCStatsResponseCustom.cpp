@@ -40,10 +40,10 @@ bool JSRTCStatsResponse::canGetItemsForName(ExecState*, RTCStatsResponse* respon
     return response->canGetItemsForName(propertyNameToAtomicString(propertyName));
 }
 
-JSValue JSRTCStatsResponse::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+EncodedJSValue JSRTCStatsResponse::nameGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
 {
-    JSRTCStatsResponse* thisObj = jsCast<JSRTCStatsResponse*>(asObject(slotBase));
-    return toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName)));
+    JSRTCStatsResponse* thisObj = jsCast<JSRTCStatsResponse*>(JSValue::decode(slotBase));
+    return JSValue::encode(toJS(exec, thisObj->globalObject(), thisObj->impl().namedItem(propertyNameToAtomicString(propertyName))));
 }
 
 } // namespace WebCore

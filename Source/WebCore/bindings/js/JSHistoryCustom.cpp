@@ -38,19 +38,19 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValue nonCachingStaticBackFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
+static EncodedJSValue nonCachingStaticBackFunctionGetter(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsHistoryPrototypeFunctionBack);
+    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsHistoryPrototypeFunctionBack));
 }
 
-static JSValue nonCachingStaticForwardFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
+static EncodedJSValue nonCachingStaticForwardFunctionGetter(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsHistoryPrototypeFunctionForward);
+    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 0, propertyName.publicName(), jsHistoryPrototypeFunctionForward));
 }
 
-static JSValue nonCachingStaticGoFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
+static EncodedJSValue nonCachingStaticGoFunctionGetter(ExecState* exec, EncodedJSValue, EncodedJSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsHistoryPrototypeFunctionGo);
+    return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 1, propertyName.publicName(), jsHistoryPrototypeFunctionGo));
 }
 
 bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)

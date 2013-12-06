@@ -50,6 +50,13 @@ inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(JSVa
 }
 
 template <class Parent>
+inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(EncodedJSValue value)
+{
+    ASSERT(asObject(JSValue::decode(value))->inherits(info()));
+    return jsCast<JSCallbackObject*>(asObject(JSValue::decode(value)));
+}
+
+template <class Parent>
 JSCallbackObject<Parent>::JSCallbackObject(ExecState* exec, Structure* structure, JSClassRef jsClass, void* data)
     : Parent(exec->vm(), structure)
     , m_callbackObjectData(adoptPtr(new JSCallbackObjectData(data, jsClass)))
@@ -584,14 +591,14 @@ JSValue JSCallbackObject<Parent>::getStaticValue(ExecState* exec, PropertyName p
 }
 
 template <class Parent>
-JSValue JSCallbackObject<Parent>::staticFunctionGetter(ExecState* exec, JSValue slotParent, PropertyName propertyName)
+EncodedJSValue JSCallbackObject<Parent>::staticFunctionGetter(ExecState* exec, EncodedJSValue slotParent, EncodedJSValue, PropertyName propertyName)
 {
     JSCallbackObject* thisObj = asCallbackObject(slotParent);
     
     // Check for cached or override property.
     PropertySlot slot2(thisObj);
     if (Parent::getOwnPropertySlot(thisObj, exec, propertyName, slot2))
-        return slot2.getValue(exec, propertyName);
+        return JSValue::encode(slot2.getValue(exec, propertyName));
 
     if (StringImpl* name = propertyName.publicName()) {
         for (JSClassRef jsClass = thisObj->classRef(); jsClass; jsClass = jsClass->parentClass) {
@@ -601,18 +608,18 @@ JSValue JSCallbackObject<Parent>::staticFunctionGetter(ExecState* exec, JSValue 
                         VM& vm = exec->vm();
                         JSObject* o = JSCallbackFunction::create(vm, thisObj->globalObject(), callAsFunction, name);
                         thisObj->putDirect(vm, propertyName, o, entry->attributes);
-                        return o;
+                        return JSValue::encode(o);
                     }
                 }
             }
         }
     }
 
-    return exec->vm().throwException(exec, createReferenceError(exec, ASCIILiteral("Static function property defined with NULL callAsFunction callback.")));
+    return JSValue::encode(exec->vm().throwException(exec, createReferenceError(exec, ASCIILiteral("Static function property defined with NULL callAsFunction callback."))));
 }
 
 template <class Parent>
-JSValue JSCallbackObject<Parent>::callbackGetter(ExecState* exec, JSValue slotParent, PropertyName propertyName)
+EncodedJSValue JSCallbackObject<Parent>::callbackGetter(ExecState* exec, EncodedJSValue slotParent, EncodedJSValue, PropertyName propertyName)
 {
     JSCallbackObject* thisObj = asCallbackObject(slotParent);
     
@@ -632,15 +639,15 @@ JSValue JSCallbackObject<Parent>::callbackGetter(ExecState* exec, JSValue slotPa
                 }
                 if (exception) {
                     exec->vm().throwException(exec, toJS(exec, exception));
-                    return jsUndefined();
+                    return JSValue::encode(jsUndefined());
                 }
                 if (value)
-                    return toJS(exec, value);
+                    return JSValue::encode(toJS(exec, value));
             }
         }
     }
 
-    return exec->vm().throwException(exec, createReferenceError(exec, ASCIILiteral("hasProperty callback returned true for a property that doesn't exist.")));
+    return JSValue::encode(exec->vm().throwException(exec, createReferenceError(exec, ASCIILiteral("hasProperty callback returned true for a property that doesn't exist."))));
 }
 
 } // namespace JSC
