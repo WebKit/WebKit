@@ -1,5 +1,13 @@
 2013-12-06  Eric Carlson  <eric.carlson@apple.com>
 
+        Unreviewed gardening, correct previous fix.
+
+        * platform/mac-mountainlion/TestExpectations: Removed.
+        * platform/mac/TestExpectations: Mark plugins/quicktime-plugin-replacement.html as flakey
+            on Mavericks.
+
+2013-12-06  Eric Carlson  <eric.carlson@apple.com>
+
         plugins/quicktime-plugin-replacement.html is flakey on OS X Mavericks
         https://bugs.webkit.org/show_bug.cgi?id=125356
 
