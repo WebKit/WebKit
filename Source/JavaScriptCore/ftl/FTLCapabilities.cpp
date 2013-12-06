@@ -147,8 +147,8 @@ inline CapabilityLevel canCompile(Node* node)
     case GetByVal:
         switch (node->arrayMode().type()) {
         case Array::ForceExit:
+        case Array::Generic:
         case Array::String:
-            return CanCompileAndOSREnter;
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
@@ -161,9 +161,10 @@ inline CapabilityLevel canCompile(Node* node)
         break;
     case PutByVal:
     case PutByValAlias:
+    case PutByValDirect:
         switch (node->arrayMode().type()) {
         case Array::ForceExit:
-            return CanCompileAndOSREnter;
+        case Array::Generic:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:

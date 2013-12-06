@@ -362,6 +362,7 @@ private:
             break;
         case PutByVal:
         case PutByValAlias:
+        case PutByValDirect:
             compilePutByVal();
             break;
         case NewObject:
@@ -1580,6 +1581,13 @@ private:
             return;
         }
             
+        case Array::Generic: {
+            setJSValue(vmCall(
+                m_out.operation(operationGetByVal), m_callFrame,
+                lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
+            return;
+        }
+            
         case Array::String: {
             compileStringCharAt();
             return;
@@ -1678,6 +1686,31 @@ private:
         Edge child2 = m_graph.varArgChild(m_node, 1);
         Edge child3 = m_graph.varArgChild(m_node, 2);
         Edge child4 = m_graph.varArgChild(m_node, 3);
+        
+        switch (m_node->arrayMode().type()) {
+        case Array::Generic: {
+            V_JITOperation_EJJJ operation;
+            if (m_node->op() == PutByValDirect) {
+                if (m_graph.isStrictModeFor(m_node->codeOrigin))
+                    operation = operationPutByValDirectStrict;
+                else
+                    operation = operationPutByValDirectNonStrict;
+            } else {
+                if (m_graph.isStrictModeFor(m_node->codeOrigin))
+                    operation = operationPutByValStrict;
+                else
+                    operation = operationPutByValNonStrict;
+            }
+                
+            vmCall(
+                m_out.operation(operation), m_callFrame,
+                lowJSValue(child1), lowJSValue(child2), lowJSValue(child3));
+            return;
+        }
+            
+        default:
+            break;
+        }
 
         LValue base = lowCell(child1);
         LValue index = lowInt32(child2);
@@ -1759,7 +1792,7 @@ private:
             TypedArrayType type = m_node->arrayMode().typedArrayType();
             
             if (isTypedView(type)) {
-                if (m_node->op() == PutByVal) {
+                if (m_node->op() != PutByValAlias) {
                     speculate(
                         OutOfBounds, noValue(), 0,
                         m_out.aboveOrEqual(
