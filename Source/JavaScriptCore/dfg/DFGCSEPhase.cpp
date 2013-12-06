@@ -331,7 +331,7 @@ private:
         return 0;
     }
     
-    Node* getByValLoadElimination(Node* child1, Node* child2)
+    Node* getByValLoadElimination(Node* child1, Node* child2, ArrayMode arrayMode)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
@@ -342,7 +342,9 @@ private:
             case GetByVal:
                 if (!m_graph.byValIsPure(node))
                     return 0;
-                if (node->child1() == child1 && node->child2() == child2)
+                if (node->child1() == child1
+                    && node->child2() == child2
+                    && node->arrayMode().type() == arrayMode.type())
                     return node;
                 break;
                     
@@ -351,7 +353,12 @@ private:
             case PutByValAlias: {
                 if (!m_graph.byValIsPure(node))
                     return 0;
-                if (m_graph.varArgChild(node, 0) == child1 && m_graph.varArgChild(node, 1) == child2)
+                // Typed arrays 
+                if (arrayMode.typedArrayType() != NotTypedArray)
+                    return 0;
+                if (m_graph.varArgChild(node, 0) == child1
+                    && m_graph.varArgChild(node, 1) == child2
+                    && node->arrayMode().type() == arrayMode.type())
                     return m_graph.varArgChild(node, 2).node();
                 // We must assume that the PutByVal will clobber the location we're getting from.
                 // FIXME: We can do better; if we know that the PutByVal is accessing an array of a
@@ -1216,7 +1223,7 @@ private:
             if (cseMode == StoreElimination)
                 break;
             if (m_graph.byValIsPure(node))
-                setReplacement(getByValLoadElimination(node->child1().node(), node->child2().node()));
+                setReplacement(getByValLoadElimination(node->child1().node(), node->child2().node(), node->arrayMode()));
             break;
                 
         case PutByValDirect:
@@ -1226,7 +1233,7 @@ private:
             Edge child1 = m_graph.varArgChild(node, 0);
             Edge child2 = m_graph.varArgChild(node, 1);
             if (node->arrayMode().canCSEStorage()) {
-                Node* replacement = getByValLoadElimination(child1.node(), child2.node());
+                Node* replacement = getByValLoadElimination(child1.node(), child2.node(), node->arrayMode());
                 if (!replacement)
                     break;
                 node->setOp(PutByValAlias);

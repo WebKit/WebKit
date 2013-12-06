@@ -2506,11 +2506,8 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
                 MacroAssembler::Jump fixed = m_jit.jump();
                 notNaN.link(&m_jit);
                 
-                MacroAssembler::Jump failed;
-                if (isSigned(type))
-                    failed = m_jit.branchTruncateDoubleToInt32(fpr, gpr, MacroAssembler::BranchIfTruncateFailed);
-                else
-                    failed = m_jit.branchTruncateDoubleToUint32(fpr, gpr, MacroAssembler::BranchIfTruncateFailed);
+                MacroAssembler::Jump failed = m_jit.branchTruncateDoubleToInt32(
+                    fpr, gpr, MacroAssembler::BranchIfTruncateFailed);
                 
                 addSlowPathGenerator(slowPathCall(failed, this, toInt32, gpr, fpr));
                 

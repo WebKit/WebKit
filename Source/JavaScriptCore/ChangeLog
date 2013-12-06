@@ -1,3 +1,57 @@
+2013-12-04  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should use cvttsd2si directly for double-to-int32 conversions
+        https://bugs.webkit.org/show_bug.cgi?id=125275
+
+        Reviewed by Michael Saboff.
+        
+        Wow. This was an ordeal. Using cvttsd2si was actually easy, but I learned, and
+        sometimes even fixed, some interesting things:
+        
+        - The llvm.x86.sse2.cvttsd2si intrinsic can actually result in LLVM emitting a
+          vcvttsd2si. I guess the intrinsic doesn't actually imply the instruction.
+        
+        - That whole thing about branchTruncateDoubleToUint32? Yeah we don't need that. It's
+          better to use branchTruncateDoubleToInt32 instead. It has the right semantics for
+          all of its callers (err, its one-and-only caller), and it's more likely to take
+          fast path. This patch kills branchTruncateDoubleToUint32.
+        
+        - "a[i] = v; v = a[i]". Does this change v? OK, assume that 'a[i]' is a pure-ish
+          operation - like an array access with 'i' being an integer index and we're not
+          having a bad time. Now does this change v? CSE assumes that it doesn't. That's
+          wrong. If 'a' is a typed array - the most sensible and pure kind of array - then
+          this can be a truncating cast. For example 'v' could be a double and 'a' could be
+          an integer array.
+        
+        - "v1 = a[i]; v2 = a[i]". Is v1 === v2 assuming that 'a[i]' is pure-ish? The answer
+          is no. You could have a different arrayMode in each access. I know this sounds
+          weird, but with concurrent JIT that might happen.
+        
+        This patch adds tests for all of this stuff, except for the first issue (it's weird
+        but probably doesn't matter) and the last issue (it's too much of a freakshow).
+
+        * assembler/MacroAssemblerARM64.h:
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerX86Common.h:
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getByValLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::vectorType):
+        (JSC::FTL::getUndef):
+        (JSC::FTL::buildInsertElement):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::doubleToInt32):
+        (JSC::FTL::LowerDFGToLLVM::doubleToUInt32):
+        (JSC::FTL::LowerDFGToLLVM::sensibleDoubleToInt32):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::insertElement):
+        (JSC::FTL::Output::hasSensibleDoubleToInt):
+        (JSC::FTL::Output::sensibleDoubleToInt):
+
 2013-12-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r160133.

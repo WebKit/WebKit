@@ -154,6 +154,8 @@ public:
     LValue lShr(LValue left, LValue right) { return buildLShr(m_builder, left, right); }
     LValue bitNot(LValue value) { return buildNot(m_builder, value); }
     
+    LValue insertElement(LValue vector, LValue element, LValue index) { return buildInsertElement(m_builder, vector, element, index); }
+    
     LValue addWithOverflow32(LValue left, LValue right)
     {
         return call(addWithOverflow32Intrinsic(), left, right);
@@ -181,6 +183,17 @@ public:
     LValue doubleAbs(LValue value)
     {
         return call(doubleAbsIntrinsic(), value);
+    }
+    
+    static bool hasSensibleDoubleToInt() { return isX86(); }
+    LValue sensibleDoubleToInt(LValue value)
+    {
+        RELEASE_ASSERT(isX86());
+        return call(
+            x86SSE2CvtTSD2SIIntrinsic(),
+            insertElement(
+                insertElement(getUndef(vectorType(doubleType, 2)), value, int32Zero),
+                doubleZero, int32One));
     }
     
     LValue signExt(LValue value, LType type) { return buildSExt(m_builder, value, type); }

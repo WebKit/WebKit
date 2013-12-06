@@ -1196,15 +1196,6 @@ public:
         return Jump(makeBranch(branchType == BranchIfTruncateSuccessful ? Equal : NotEqual));
     }
 
-    Jump branchTruncateDoubleToUint32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
-    {
-        // Truncate to a 64-bit integer in dataTempRegister, copy the low 32-bit to dest.
-        m_assembler.fcvtzs<64, 64>(dest, src);
-        // Check thlow 32-bits zero extend to be equal to the full value.
-        m_assembler.cmp<64>(dest, dest, ARM64Assembler::UXTW, 0);
-        return Jump(makeBranch(branchType == BranchIfTruncateSuccessful ? Equal : NotEqual));
-    }
-
     void convertDoubleToFloat(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.fcvt<32, 64>(dest, src);

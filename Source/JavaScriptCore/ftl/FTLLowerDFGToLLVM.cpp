@@ -3011,13 +3011,39 @@ private:
     
     LValue doubleToInt32(LValue doubleValue)
     {
+        if (Output::hasSensibleDoubleToInt())
+            return sensibleDoubleToInt32(doubleValue);
+        
         double limit = pow(2, 31) - 1;
         return doubleToInt32(doubleValue, -limit, limit);
     }
     
     LValue doubleToUInt32(LValue doubleValue)
     {
+        if (Output::hasSensibleDoubleToInt())
+            return sensibleDoubleToInt32(doubleValue);
+        
         return doubleToInt32(doubleValue, 0, pow(2, 32) - 1, false);
+    }
+    
+    LValue sensibleDoubleToInt32(LValue doubleValue)
+    {
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("sensible doubleToInt32 slow path"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("sensible doubleToInt32 continuation"));
+        
+        ValueFromBlock fastResult = m_out.anchor(
+            m_out.sensibleDoubleToInt(doubleValue));
+        m_out.branch(
+            m_out.equal(fastResult.value(), m_out.constInt32(0x80000000)),
+            slowPath, continuation);
+        
+        LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
+        ValueFromBlock slowResult = m_out.anchor(
+            m_out.call(m_out.operation(toInt32), doubleValue));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        return m_out.phi(m_out.int32, fastResult, slowResult);
     }
     
     void speculateBackward(

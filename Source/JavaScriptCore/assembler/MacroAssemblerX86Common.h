@@ -885,13 +885,6 @@ public:
         return branch32(branchType ? NotEqual : Equal, dest, TrustedImm32(0x80000000));
     }
 
-    Jump branchTruncateDoubleToUint32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
-    {
-        ASSERT(isSSE2Present());
-        m_assembler.cvttsd2si_rr(src, dest);
-        return branch32(branchType ? GreaterThanOrEqual : LessThan, dest, TrustedImm32(0));
-    }
-
     void truncateDoubleToInt32(FPRegisterID src, RegisterID dest)
     {
         ASSERT(isSSE2Present());

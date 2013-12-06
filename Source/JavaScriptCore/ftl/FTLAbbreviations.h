@@ -58,6 +58,7 @@ static inline LType floatType(LContext context) { return llvm->FloatTypeInContex
 static inline LType doubleType(LContext context) { return llvm->DoubleTypeInContext(context); }
 
 static inline LType pointerType(LType type) { return llvm->PointerType(type, 0); }
+static inline LType vectorType(LType type, unsigned count) { return llvm->VectorType(type, count); }
 
 enum PackingMode { NotPacked, Packed };
 static inline LType structType(LContext context, LType* elementTypes, unsigned elementCount, PackingMode packing = NotPacked)
@@ -140,6 +141,7 @@ static inline LValue addExternFunction(LModule module, const char* name, LType t
 }
 
 static inline LValue getParam(LValue function, unsigned index) { return llvm->GetParam(function, index); }
+static inline LValue getUndef(LType type) { return llvm->GetUndef(type); }
 
 enum BitExtension { ZeroExtend, SignExtend };
 static inline LValue constInt(LType type, unsigned long long value, BitExtension extension = ZeroExtend) { return llvm->ConstInt(type, value, extension == SignExtend); }
@@ -217,6 +219,7 @@ static inline LValue buildPtrToInt(LBuilder builder, LValue value, LType type) {
 static inline LValue buildBitCast(LBuilder builder, LValue value, LType type) { return llvm->BuildBitCast(builder, value, type, ""); }
 static inline LValue buildICmp(LBuilder builder, LIntPredicate cond, LValue left, LValue right) { return llvm->BuildICmp(builder, cond, left, right, ""); }
 static inline LValue buildFCmp(LBuilder builder, LRealPredicate cond, LValue left, LValue right) { return llvm->BuildFCmp(builder, cond, left, right, ""); }
+static inline LValue buildInsertElement(LBuilder builder, LValue vector, LValue element, LValue index) { return llvm->BuildInsertElement(builder, vector, element, index, ""); }
 
 enum SynchronizationScope { SingleThread, CrossThread };
 static inline LValue buildFence(LBuilder builder, LAtomicOrdering ordering, SynchronizationScope scope = CrossThread)
