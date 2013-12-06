@@ -127,8 +127,7 @@ private:
 
     static bool isAvailable();
 
-    void updateAudioSink();
-    void createAudioSink();
+    GstElement* createAudioSink();
 
     float playbackPosition() const;
 
@@ -191,7 +190,6 @@ private:
     guint m_videoTimerHandler;
     guint m_videoCapsTimerHandler;
     guint m_readyTimerHandler;
-    GRefPtr<GstElement> m_webkitAudioSink;
     mutable long m_totalBytes;
     URL m_url;
     bool m_preservesPitch;

@@ -268,7 +268,6 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_videoTimerHandler(0)
     , m_videoCapsTimerHandler(0)
     , m_readyTimerHandler(0)
-    , m_webkitAudioSink(0)
     , m_totalBytes(-1)
     , m_preservesPitch(false)
     , m_requestedState(GST_STATE_VOID_PENDING)
@@ -1252,20 +1251,6 @@ unsigned MediaPlayerPrivateGStreamer::totalBytes() const
     return m_totalBytes;
 }
 
-void MediaPlayerPrivateGStreamer::updateAudioSink()
-{
-    if (!m_playBin)
-        return;
-
-    m_webkitAudioSink.clear();
-    g_object_get(m_playBin.get(), "audio-sink", &m_webkitAudioSink.outPtr(), NULL);
-}
-
-GstElement* MediaPlayerPrivateGStreamer::audioSink() const
-{
-    return m_webkitAudioSink.get();
-}
-
 void MediaPlayerPrivateGStreamer::sourceChanged()
 {
     m_source.clear();
@@ -1390,9 +1375,6 @@ void MediaPlayerPrivateGStreamer::updateStates()
 
         // Sync states where needed.
         if (state == GST_STATE_PAUSED) {
-            if (!m_webkitAudioSink)
-                updateAudioSink();
-
             if (!m_volumeAndMuteInitialized) {
                 notifyPlayerOfVolumeChange();
                 notifyPlayerOfMute();
@@ -1813,42 +1795,43 @@ void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
     }
 }
 
-void MediaPlayerPrivateGStreamer::createAudioSink()
+GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
 {
-    // Construct audio sink if pitch preserving is enabled.
-    if (!m_preservesPitch)
-        return;
+    m_autoAudioSink = gst_element_factory_make("autoaudiosink", 0);
+    g_signal_connect(m_autoAudioSink.get(), "child-added", G_CALLBACK(setAudioStreamPropertiesCallback), this);
 
-    if (!m_playBin)
-        return;
+    // Construct audio sink only if pitch preserving is enabled.
+    if (!m_preservesPitch)
+        return m_autoAudioSink.get();
 
     GstElement* scale = gst_element_factory_make("scaletempo", 0);
     if (!scale) {
         GST_WARNING("Failed to create scaletempo");
-        return;
+        return m_autoAudioSink.get();
     }
 
+    GstElement* audioSinkBin = gst_bin_new("audio-sink");
     GstElement* convert = gst_element_factory_make("audioconvert", 0);
     GstElement* resample = gst_element_factory_make("audioresample", 0);
-    GstElement* sink = gst_element_factory_make("autoaudiosink", 0);
 
-    m_autoAudioSink = sink;
+    gst_bin_add_many(GST_BIN(audioSinkBin), scale, convert, resample, m_autoAudioSink.get(), NULL);
 
-    g_signal_connect(sink, "child-added", G_CALLBACK(setAudioStreamPropertiesCallback), this);
-
-    GstElement* audioSink = gst_bin_new("audio-sink");
-    gst_bin_add_many(GST_BIN(audioSink), scale, convert, resample, sink, NULL);
-
-    if (!gst_element_link_many(scale, convert, resample, sink, NULL)) {
+    if (!gst_element_link_many(scale, convert, resample, m_autoAudioSink.get(), NULL)) {
         GST_WARNING("Failed to link audio sink elements");
-        gst_object_unref(audioSink);
-        return;
+        gst_object_unref(audioSinkBin);
+        return m_autoAudioSink.get();
     }
 
     GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(scale, "sink"));
-    gst_element_add_pad(audioSink, gst_ghost_pad_new("sink", pad.get()));
+    gst_element_add_pad(audioSinkBin, gst_ghost_pad_new("sink", pad.get()));
+    return audioSinkBin;
+}
 
-    g_object_set(m_playBin.get(), "audio-sink", audioSink, NULL);
+GstElement* MediaPlayerPrivateGStreamer::audioSink() const
+{
+    GstElement* sink;
+    g_object_get(m_playBin.get(), "audio-sink", &sink, nullptr);
+    return sink;
 }
 
 void MediaPlayerPrivateGStreamer::createGSTPlayBin()
@@ -1890,13 +1873,11 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     }
 #endif
 
-    g_object_set(m_playBin.get(), "video-sink", createVideoSink(), nullptr);
+    g_object_set(m_playBin.get(), "video-sink", createVideoSink(), "audio-sink", createAudioSink(), nullptr);
 
     GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_webkitVideoSink.get(), "sink"));
     if (videoSinkPad)
         g_signal_connect(videoSinkPad.get(), "notify::caps", G_CALLBACK(mediaPlayerPrivateVideoSinkCapsChangedCallback), this);
-
-    createAudioSink();
 }
 
 void MediaPlayerPrivateGStreamer::simulateAudioInterruption()

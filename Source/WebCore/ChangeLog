@@ -1,3 +1,29 @@
+2013-12-05  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Audio/Video sink management is incoherent
+        https://bugs.webkit.org/show_bug.cgi?id=125304
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Allow subclasses of MediaPlayerPrivateGStreamerBase to create
+        custom audio/video sinks in a coherent manner using
+        create{Audio,Video}Sink methods. Convenience getters are also
+        available. Also removed some un-needed member variables in the
+        playbin-based player.
+
+        No new tests, existing media tests cover this change.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamer::createAudioSink):
+        (WebCore::MediaPlayerPrivateGStreamer::audioSink):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        (WebCore::MediaPlayerPrivateGStreamerBase::createAudioSink):
+
 2013-12-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce IMAGE_TYPE_CASTS, and use it
