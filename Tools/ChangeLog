@@ -1,3 +1,10 @@
+2013-12-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r160206.
+
+        * Scripts/webkitpy/test/main.py:
+        (main): sys.platform can be win32 or cygwin too on Windows.
+
 2013-12-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Disable WebKit2 webkitpy unittests on Windows
