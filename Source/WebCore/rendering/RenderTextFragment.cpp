@@ -58,12 +58,6 @@ RenderTextFragment::~RenderTextFragment()
 {
 }
 
-String RenderTextFragment::originalText() const
-{
-    String result = textNode() ? textNode()->data() : contentString();
-    return result.substring(start(), end());
-}
-
 bool RenderTextFragment::canBeSelectionLeaf() const
 {
     return textNode() && textNode()->rendererIsEditable();
@@ -101,14 +95,6 @@ void RenderTextFragment::setText(const String& text, bool force)
         return;
     ASSERT(!textNode()->renderer());
     textNode()->setRenderer(this);
-}
-
-void RenderTextFragment::transformText()
-{
-    // Don't reset first-letter here because we are only transforming the truncated fragment.
-    String textToTransform = originalText();
-    if (!textToTransform.isNull())
-        RenderText::setText(textToTransform, true);
 }
 
 UChar RenderTextFragment::previousCharacter() const

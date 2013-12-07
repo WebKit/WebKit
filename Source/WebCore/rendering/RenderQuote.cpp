@@ -62,7 +62,7 @@ void RenderQuote::willBeRemovedFromTree()
 void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderText::styleDidChange(diff, oldStyle);
-    setText(originalText());
+    setText(originalText(), true);
 }
 
 const unsigned maxDistinctQuoteCharacters = 16;
@@ -452,7 +452,7 @@ void RenderQuote::updateDepth()
     if (m_depth == depth)
         return;
     m_depth = depth;
-    setText(originalText());
+    setText(originalText(), true);
 }
 
 } // namespace WebCore

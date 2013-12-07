@@ -52,6 +52,7 @@ public:
 private:
     virtual const char* renderName() const OVERRIDE { return "RenderSVGInlineText"; }
 
+    virtual String originalText() const OVERRIDE;
     virtual void setTextInternal(const String&) OVERRIDE;
     virtual void styleDidChange(StyleDifference, const RenderStyle*) OVERRIDE;
 

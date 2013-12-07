@@ -1,3 +1,31 @@
+2013-12-06  Antti Koivisto  <antti@apple.com>
+
+        Save original text for RenderText to a map
+        https://bugs.webkit.org/show_bug.cgi?id=125278
+
+        Reviewed by Darin Adler.
+        
+        Currently the original text is fetched from the Text node. This is one of the few things 
+        where we use the RenderText node pointer and is stopping Text nodes from being anonymous.
+        
+        It is very rare of original text to differ from the actual text so we can just squirrel the
+        original to a map when it differs. This is also simplifies the code.
+
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::styleDidChange):
+        (WebCore::RenderQuote::updateDepth):
+        * rendering/RenderText.cpp:
+        (WebCore::originalTextMap):
+        (WebCore::RenderText::RenderText):
+        (WebCore::RenderText::~RenderText):
+        (WebCore::RenderText::styleDidChange):
+        (WebCore::RenderText::originalText):
+        (WebCore::RenderText::setTextInternal):
+        (WebCore::RenderText::setText):
+        * rendering/RenderText.h:
+        * rendering/RenderTextFragment.cpp:
+        * rendering/RenderTextFragment.h:
+
 2013-12-04  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Refactor MediaSourceBase back into MediaSource

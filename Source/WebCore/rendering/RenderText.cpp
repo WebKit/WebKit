@@ -104,6 +104,15 @@ private:
     int m_lastTypedCharacterOffset;
 };
 
+
+typedef HashMap<const RenderText*, String> OriginalTextMap;
+
+static OriginalTextMap& originalTextMap()
+{
+    DEFINE_STATIC_LOCAL(OriginalTextMap, map, ());
+    return map;
+}
+
 static void makeCapitalized(String* string, UChar previous)
 {
     // FIXME: Need to change this to use u_strToTitle instead of u_totitle and to consider locale.
@@ -154,6 +163,7 @@ RenderText::RenderText(Text& textNode, const String& text)
     , m_isAllASCII(text.containsOnlyASCII())
     , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
     , m_useBackslashAsYenSymbol(false)
+    , m_originalTextDiffersFromRendered(false)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , m_candidateComputedTextSize(0)
 #endif
@@ -177,6 +187,7 @@ RenderText::RenderText(Document& document, const String& text)
     , m_isAllASCII(text.containsOnlyASCII())
     , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
     , m_useBackslashAsYenSymbol(false)
+    , m_originalTextDiffersFromRendered(false)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , m_candidateComputedTextSize(0)
 #endif
@@ -192,13 +203,11 @@ RenderText::RenderText(Document& document, const String& text)
     view().frameView().incrementVisuallyNonEmptyCharacterCount(textLength());
 }
 
-#ifndef NDEBUG
-
 RenderText::~RenderText()
 {
+    if (m_originalTextDiffersFromRendered)
+        originalTextMap().remove(this);
 }
-
-#endif
 
 const char* RenderText::renderName() const
 {
@@ -253,7 +262,7 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
     ETextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TSNONE;
     if (needsResetText || oldTransform != newStyle.textTransform() || oldSecurity != newStyle.textSecurity())
-        transformText();
+        RenderText::setText(originalText(), true);
 }
 
 void RenderText::removeAndDestroyTextBoxes()
@@ -279,7 +288,7 @@ void RenderText::deleteLineBoxesBeforeSimpleLineLayout()
 
 String RenderText::originalText() const
 {
-    return textNode() ? textNode()->data() : String();
+    return m_originalTextDiffersFromRendered ? originalTextMap().get(this) : m_text;
 }
 
 void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -970,13 +979,6 @@ void RenderText::setTextWithOffset(const String& text, unsigned offset, unsigned
     setText(text, force || m_linesDirty);
 }
 
-void RenderText::transformText()
-{
-    String textToTransform = originalText();
-    if (!textToTransform.isNull())
-        setText(textToTransform, true);
-}
-
 static inline bool isInlineFlowOrEmptyText(const RenderObject* o)
 {
     if (o->isRenderInline())
@@ -1023,6 +1025,13 @@ void applyTextTransform(const RenderStyle& style, String& text, UChar previousCh
 void RenderText::setTextInternal(const String& text)
 {
     ASSERT(!text.isNull());
+
+    if (m_originalTextDiffersFromRendered) {
+        originalTextMap().remove(this);
+        m_originalTextDiffersFromRendered = false;
+    }
+    String originalText = text;
+
     m_text = text;
 
     if (m_useBackslashAsYenSymbol)
@@ -1063,6 +1072,11 @@ void RenderText::setTextInternal(const String& text)
 
     m_isAllASCII = m_text.containsOnlyASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
+
+    if (m_text != originalText) {
+        originalTextMap().add(this, originalText);
+        m_originalTextDiffersFromRendered = true;
+    }
 }
 
 void RenderText::secureText(UChar mask)
@@ -1091,7 +1105,7 @@ void RenderText::setText(const String& text, bool force)
 {
     ASSERT(!text.isNull());
 
-    if (!force && m_text == text)
+    if (!force && text == originalText())
         return;
 
     setTextInternal(text);

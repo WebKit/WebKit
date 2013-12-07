@@ -38,6 +38,7 @@
 #include "SVGRootInlineBox.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
+#include "Text.h"
 #include "VisiblePosition.h"
 
 namespace WebCore {
@@ -72,6 +73,11 @@ RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
     , m_scalingFactor(1)
     , m_layoutAttributes(*this)
 {
+}
+
+String RenderSVGInlineText::originalText() const
+{
+    return textNode().data();
 }
 
 void RenderSVGInlineText::setTextInternal(const String& text)
