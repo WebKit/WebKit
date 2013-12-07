@@ -24,6 +24,7 @@
 #define CachedImage_h
 
 #include "CachedResource.h"
+#include "Image.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "IntSizeHash.h"
