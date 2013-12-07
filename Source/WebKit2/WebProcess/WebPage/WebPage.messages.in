@@ -47,6 +47,7 @@ messages -> WebPage LegacyReceiver {
     ExtendSelection(uint32_t granularity)
     RequestAutocorrectionData(String textForAutocorrection, uint64_t callbackID)
     ApplyAutocorrection(String correction, String originalText, uint64_t callbackID)
+    InsertText(String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -271,7 +272,6 @@ messages -> WebPage LegacyReceiver {
     SetComposition(String text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (WebKit::EditorState newState)
     ConfirmComposition() -> (WebKit::EditorState newState)
     CancelComposition() -> (WebKit::EditorState newState)
-    InsertText(String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (bool handled, WebKit::EditorState newState)
     GetMarkedRange() -> (uint64_t location, uint64_t length)
     GetSelectedRange() -> (uint64_t location, uint64_t length)
     GetAttributedSubstringFromRange(uint64_t location, uint64_t length) -> (WebKit::AttributedString result)
@@ -282,7 +282,9 @@ messages -> WebPage LegacyReceiver {
     AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result)
     InsertDictatedText(String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, Vector<WebCore::DictationAlternative> dictationAlternatives) -> (bool handled, WebKit::EditorState newState)
 #endif
-
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    InsertText(String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (bool handled, WebKit::EditorState newState)
+#endif
     SetMinimumLayoutSize(WebCore::IntSize minimumLayoutSize)
     SetAutoSizingShouldExpandToViewHeight(bool shouldExpand)
 

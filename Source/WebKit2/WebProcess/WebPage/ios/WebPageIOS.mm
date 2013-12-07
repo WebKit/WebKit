@@ -118,7 +118,7 @@ static PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
     return TextIterator::rangeFromLocationAndLength(frame->selection().rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
 }
 
-void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, EditorState& newState)
+void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     
@@ -131,13 +131,9 @@ void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uin
     if (!frame.editor().hasComposition()) {
         // An insertText: might be handled by other responders in the chain if we don't handle it.
         // One example is space bar that results in scrolling down the page.
-        handled = frame.editor().insertText(text, 0);
-    } else {
-        handled = true;
+        frame.editor().insertText(text, 0);
+    } else
         frame.editor().confirmComposition(text);
-    }
-    
-    newState = editorState();
 }
 
 void WebPage::insertDictatedText(const String&, uint64_t, uint64_t, const Vector<WebCore::DictationAlternative>&, bool&, EditorState&)

@@ -105,9 +105,8 @@ bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart
     if (!isValid())
         return true;
     
-    bool handled = true;
-    process().sendSync(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeEnd), Messages::WebPage::InsertText::Reply(handled, m_editorState), m_pageID);
-    return handled;
+    process().send(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeEnd), m_pageID);
+    return true;
 }
 
 bool WebPageProxy::insertDictatedText(const String&, uint64_t, uint64_t, const Vector<WebCore::TextAlternativeWithRange>&)
