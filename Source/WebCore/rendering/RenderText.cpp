@@ -44,6 +44,7 @@
 #include "TextResourceDecoder.h"
 #include "VisiblePosition.h"
 #include "break_lines.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -104,12 +105,9 @@ private:
     int m_lastTypedCharacterOffset;
 };
 
-
-typedef HashMap<const RenderText*, String> OriginalTextMap;
-
-static OriginalTextMap& originalTextMap()
+static HashMap<const RenderText*, String>& originalTextMap()
 {
-    DEFINE_STATIC_LOCAL(OriginalTextMap, map, ());
+    static NeverDestroyed<HashMap<const RenderText*, String>> map;
     return map;
 }
 

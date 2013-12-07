@@ -1,3 +1,12 @@
+2013-12-06  Antti Koivisto  <antti@apple.com>
+
+        Use NeverDestroyed instead of DEFINE_STATIC_LOCAL
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderText.cpp:
+        (WebCore::originalTextMap):
+
 2013-12-05  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Add a runtime-setting for the MediaSource constructor.
