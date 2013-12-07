@@ -324,20 +324,45 @@ class TestRunner:
 
         return self._run_test_command(tester_command, self._options.timeout)
 
-    def _run_test_google(self, test_program):
-        tester_command = [test_program]
-        skipped_tests_cases = self._test_cases_to_skip(test_program)
-        if skipped_tests_cases:
-            tester_command.append("--gtest_filter=-%s" % ":".join(skipped_tests_cases))
+    def _get_tests_from_google_test_suite(self, test_program):
+        try:
+            output = subprocess.check_output([test_program, '--gtest_list_tests'])
+        except subprocess.CalledProcessError:
+            sys.stderr.write("ERROR: could not list available tests for binary %s.\n" % (test_program))
+            sys.stderr.flush()
+            return 1
 
-        return self._run_test_command(tester_command, self._options.timeout)
+        skipped_test_cases = self._test_cases_to_skip(test_program)
+
+        tests = []
+        prefix = None
+        for line in output.split('\n'):
+            if not line.startswith('  '):
+                prefix = line
+                continue
+            else:
+                test_name = prefix + line.strip()
+                if not test_name in skipped_test_cases:
+                    tests.append(test_name)
+        return tests
+
+    def _run_google_test(self, test_program, subtest):
+        test_command = [test_program, '--gtest_filter=%s' % (subtest)]
+        return self._run_test_command(test_command, self._options.timeout)
+
+    def _run_google_test_suite(self, test_program):
+        for subtest in self._get_tests_from_google_test_suite(test_program):
+            retcode = self._run_google_test(test_program, subtest)
+            if retcode:
+                return retcode
+        return 0
 
     def _run_test(self, test_program):
         if "unittests" in test_program or "WebKit2APITests" in test_program:
             return self._run_test_glib(test_program)
 
         if "TestWebKitAPI" in test_program:
-            return self._run_test_google(test_program)
+            return self._run_google_test_suite(test_program)
 
         return 1
 

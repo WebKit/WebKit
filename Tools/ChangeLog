@@ -1,3 +1,19 @@
+2013-12-07  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Run each gtest subtest separately instead of in one go
+        https://bugs.webkit.org/show_bug.cgi?id=125386
+
+        Reviewed by Martin Robinson.
+
+        This is what other ports are doing (except they build each test as a separate binary)
+        and will help with the timeouts we sometimes hit because it applies to the full test
+        run.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._get_tests_from_google_test_suite): get a list of available sub-tests.
+        (TestRunner._run_google_test): run a single subtest from a gtest binary.
+        (TestRunner._run_google_test_suite): call the binary once per subtest.
+
 2013-12-07  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
 
         Move PrettyPatch related code to prettypatch.py
