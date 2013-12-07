@@ -1688,6 +1688,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setVideoPluginProxyEnabled([preferences isVideoPluginProxyEnabled]);
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+    settings.setMediaSourceEnabled([preferences mediaSourceEnabled]);
+#endif
+
     switch ([preferences storageBlockingPolicy]) {
     case WebAllowAllStorage:
         settings.setStorageBlockingPolicy(SecurityOrigin::AllowAllStorage);

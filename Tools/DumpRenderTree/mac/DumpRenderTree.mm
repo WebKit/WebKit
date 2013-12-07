@@ -670,6 +670,10 @@ static void resetWebPreferencesToConsistentValues()
 
     [preferences setScreenFontSubstitutionEnabled:YES];
 
+#if ENABLE(MEDIA_SOURCE)
+    [preferences setMediaSourceEnabled:YES];
+#endif
+
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }
 

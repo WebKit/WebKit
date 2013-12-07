@@ -1,3 +1,20 @@
+2013-12-05  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Add a runtime-setting for the MediaSource constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=125336
+
+        Reviewed by Eric Carlson.
+
+        Add a private WKPreferences API to control the WebCore mediaSourceEnabled setting.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMediaSourceEnabled):
+        (WKPreferencesGetMediaSourceEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2013-12-06  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/15606872> REGRESSION (r160148): Mail throws an exception during launch

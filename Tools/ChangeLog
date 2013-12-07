@@ -1,5 +1,19 @@
 2013-12-06  Jer Noble  <jer.noble@apple.com>
 
+        [MSE] Add a runtime-setting for the MediaSource constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=125336
+
+        Reviewed by Eric Carlson.
+
+        Enable MediaSource in DRT and WKTR.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
+2013-12-06  Jer Noble  <jer.noble@apple.com>
+
         Strip out extraneous logging from AppleGVA in media tests.
         https://bugs.webkit.org/show_bug.cgi?id=125357
 

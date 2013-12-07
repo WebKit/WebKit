@@ -213,3 +213,4 @@ simpleLineLayoutEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
 simpleLineLayoutDebugBordersEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 
 backgroundShouldExtendBeyondPage initial=false
+mediaSourceEnabled initial=false

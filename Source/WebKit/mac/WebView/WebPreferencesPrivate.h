@@ -352,4 +352,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setUseLegacyTextAlignPositionedElementBehavior:(BOOL)flag;
 - (BOOL)useLegacyTextAlignPositionedElementBehavior;
 
+- (void)setMediaSourceEnabled:(BOOL)flag;
+- (BOOL)mediaSourceEnabled;
+
 @end

@@ -431,6 +431,9 @@ public:
 #if !PLATFORM(IOS)
         [NSNumber numberWithBool:NO],   WebKitVideoPluginProxyEnabledKey,
 #endif
+#if ENABLE(MEDIA_SOURCE)
+        [NSNumber numberWithBool:NO], WebKitMediaSourceEnabledPreferenceKey,
+#endif
         nil];
 
 
@@ -1944,6 +1947,16 @@ static bool needsScreenFontsEnabledQuirk()
 - (void)setUseLegacyTextAlignPositionedElementBehavior:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey];
+}
+
+- (BOOL)mediaSourceEnabled
+{
+    return [self _boolValueForKey:WebKitMediaSourceEnabledPreferenceKey];
+}
+
+- (void)setMediaSourceEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitMediaSourceEnabledPreferenceKey];
 }
 
 @end

@@ -554,6 +554,9 @@ void TestController::resetPreferencesToConsistentValues()
     WKPreferencesSetSerifFontFamily(preferences, serifFontFamily);
     WKPreferencesSetScreenFontSubstitutionEnabled(preferences, true);
     WKPreferencesSetAsynchronousSpellCheckingEnabled(preferences, false);
+#if ENABLE(WEB_AUDIO)
+    WKPreferencesSetMediaSourceEnabled(preferences, true);
+#endif
 }
 
 bool TestController::resetStateToConsistentValues()

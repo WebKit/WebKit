@@ -1245,3 +1245,13 @@ bool WKPreferencesGetSpatialNavigationEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->spatialNavigationEnabled();
 }
+
+void WKPreferencesSetMediaSourceEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setMediaSourceEnabled(enabled);
+}
+
+bool WKPreferencesGetMediaSourceEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->mediaSourceEnabled();
+}
