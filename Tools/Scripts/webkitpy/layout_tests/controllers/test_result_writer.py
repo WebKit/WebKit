@@ -160,8 +160,8 @@ class TestResultWriter(object):
             self._write_binary_file(wdiff_filename, wdiff)
 
         # Use WebKit's PrettyPatch.rb to get an HTML diff.
-        if self._port.pretty_patch_available():
-            pretty_patch = self._port.pretty_patch_text(diff_filename)
+        if self._port.pretty_patch.pretty_patch_available():
+            pretty_patch = self._port.pretty_patch.pretty_patch_text(diff_filename)
             pretty_patch_filename = self.output_filename(self.FILENAME_SUFFIX_PRETTY_PATCH)
             self._write_binary_file(pretty_patch_filename, pretty_patch)
 
