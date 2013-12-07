@@ -182,7 +182,7 @@ static void testAtspiBasicHierarchy(WebViewTest* test, gconstpointer)
     currentParent = currentChild;
     currentChild = atspi_accessible_get_child_at_index(currentParent.get(), 0, 0);
     g_assert(ATSPI_IS_ACCESSIBLE(currentChild.get()));
-    checkAtspiAccessible(currentChild.get(), "", ATSPI_ROLE_DOCUMENT_FRAME);
+    checkAtspiAccessible(currentChild.get(), "", ATSPI_ROLE_DOCUMENT_WEB);
 
     // HTML H1's accessible element (Web Process).
     currentParent = currentChild;
