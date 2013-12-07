@@ -32,10 +32,8 @@ PUBLIC getHostCallReturnValue
 _TEXT   SEGMENT
 
 callToJavaScript PROC
-    ;; FIXME: This function has not been tested as the Win 64 port doesn't currently use the JIT.
-    ;; It is believed to be an accurate adaptation of the assembly created by the llint stub of the
-    ;; same name with changes for agrument register differences.
-    int 3
+    ;; This function is believed to be an accurate adaptation of the assembly created by the llint stub of the
+    ;; same name with changes for argument register differences.
     mov r10, qword ptr[rsp]
     push rbp
     mov rax, rbp ; Save previous frame pointer
@@ -132,10 +130,8 @@ calleeFramePopped:
 callToJavaScript ENDP
 
 callToNativeFunction PROC
-    ;; FIXME: This function has not been tested as the Win 64 port doesn't currently use the JIT.
-    ;; It is believed to be an accurate adaptation of the assembly created by the llint stub of the
-    ;; same name with changes for agrument register differences.
-    int 3
+    ;; This function is believed to be an accurate adaptation of the assembly created by the llint stub of the
+    ;; same name with changes for argument register differences.
     mov r10, qword ptr[rsp]
     push rbp
     mov rax, rbp ; Save previous frame pointer
