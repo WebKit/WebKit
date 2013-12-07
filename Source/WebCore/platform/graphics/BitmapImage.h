@@ -263,9 +263,9 @@ private:
     virtual bool decodedDataIsPurgeable() const OVERRIDE
     {
 #if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    return true;
+        return true;
 #else
-    return false;
+        return false;
 #endif
     }
 
