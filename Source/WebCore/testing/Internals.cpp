@@ -2260,6 +2260,9 @@ bool Internals::isPluginUnavailabilityIndicatorObscured(Element* element, Except
 #if ENABLE(MEDIA_SOURCE)
 void Internals::initializeMockMediaSource()
 {
+#if USE(AVFOUNDATION)
+    WebCore::Settings::setAVFoundationEnabled(false);
+#endif
     MediaPlayerFactorySupport::callRegisterMediaEngine(MockMediaPlayerMediaSource::registerMediaEngine);
 }
 #endif
