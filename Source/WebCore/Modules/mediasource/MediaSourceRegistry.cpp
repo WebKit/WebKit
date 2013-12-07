@@ -33,8 +33,8 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "MediaSource.h"
 #include "URL.h"
-#include "MediaSourceBase.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -51,7 +51,7 @@ void MediaSourceRegistry::registerURL(SecurityOrigin*, const URL& url, URLRegist
     ASSERT(&registrable->registry() == this);
     ASSERT(isMainThread());
 
-    MediaSourceBase* source = static_cast<MediaSourceBase*>(registrable);
+    MediaSource* source = static_cast<MediaSource*>(registrable);
     source->addedToRegistry();
     m_mediaSources.set(url.string(), source);
 }
@@ -59,11 +59,11 @@ void MediaSourceRegistry::registerURL(SecurityOrigin*, const URL& url, URLRegist
 void MediaSourceRegistry::unregisterURL(const URL& url)
 {
     ASSERT(isMainThread());
-    HashMap<String, RefPtr<MediaSourceBase>>::iterator iter = m_mediaSources.find(url.string());
+    HashMap<String, RefPtr<MediaSource>>::iterator iter = m_mediaSources.find(url.string());
     if (iter == m_mediaSources.end())
         return;
 
-    RefPtr<MediaSourceBase> source = iter->value;
+    RefPtr<MediaSource> source = iter->value;
     m_mediaSources.remove(iter);
     source->removedFromRegistry();
 }

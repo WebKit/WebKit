@@ -1874,8 +1874,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.h \
 	Source/WebCore/Modules/mediasource/MediaSource.cpp \
 	Source/WebCore/Modules/mediasource/MediaSource.h \
-	Source/WebCore/Modules/mediasource/MediaSourceBase.cpp \
-	Source/WebCore/Modules/mediasource/MediaSourceBase.h \
 	Source/WebCore/Modules/mediasource/MediaSourceRegistry.cpp \
 	Source/WebCore/Modules/mediasource/MediaSourceRegistry.h \
 	Source/WebCore/Modules/mediasource/SourceBuffer.cpp \

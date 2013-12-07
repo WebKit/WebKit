@@ -41,7 +41,7 @@
 namespace WebCore {
 
 class URL;
-class MediaSourceBase;
+class MediaSource;
 
 class MediaSourceRegistry FINAL : public URLRegistry {
 public:
@@ -55,7 +55,7 @@ public:
 
 private:
     MediaSourceRegistry();
-    HashMap<String, RefPtr<MediaSourceBase>> m_mediaSources;
+    HashMap<String, RefPtr<MediaSource>> m_mediaSources;
 };
 
 } // namespace WebCore

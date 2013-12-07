@@ -36,6 +36,8 @@
 #include "AudioTrack.h"
 #include "AudioTrackList.h"
 #include "ContentType.h"
+#include "Event.h"
+#include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
 #include "GenericEventQueue.h"
 #include "HTMLMediaElement.h"
@@ -51,6 +53,7 @@
 #include "VideoTrackList.h"
 #include <runtime/Uint8Array.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -62,7 +65,10 @@ PassRefPtr<MediaSource> MediaSource::create(ScriptExecutionContext& context)
 }
 
 MediaSource::MediaSource(ScriptExecutionContext& context)
-    : MediaSourceBase(context)
+    : ActiveDOMObject(&context)
+    , m_mediaElement(0)
+    , m_readyState(closedKeyword())
+    , m_asyncEventQueue(*this)
 {
     LOG(Media, "MediaSource::MediaSource %p", this);
     m_sourceBuffers = SourceBufferList::create(scriptExecutionContext());
@@ -73,6 +79,259 @@ MediaSource::~MediaSource()
 {
     LOG(Media, "MediaSource::~MediaSource %p", this);
     ASSERT(isClosed());
+}
+
+const AtomicString& MediaSource::openKeyword()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, open, ("open", AtomicString::ConstructFromLiteral));
+    return open;
+}
+
+const AtomicString& MediaSource::closedKeyword()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, closed, ("closed", AtomicString::ConstructFromLiteral));
+    return closed;
+}
+
+const AtomicString& MediaSource::endedKeyword()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, ended, ("ended", AtomicString::ConstructFromLiteral));
+    return ended;
+}
+
+void MediaSource::setPrivateAndOpen(PassRef<MediaSourcePrivate> mediaSourcePrivate)
+{
+    ASSERT(!m_private);
+    ASSERT(m_mediaElement);
+    m_private = std::move(mediaSourcePrivate);
+    setReadyState(openKeyword());
+}
+
+void MediaSource::addedToRegistry()
+{
+    setPendingActivity(this);
+}
+
+void MediaSource::removedFromRegistry()
+{
+    unsetPendingActivity(this);
+}
+
+double MediaSource::duration() const
+{
+    return isClosed() ? std::numeric_limits<float>::quiet_NaN() : m_private->duration();
+}
+
+PassRefPtr<TimeRanges> MediaSource::buffered() const
+{
+    // Implements MediaSource algorithm for HTMLMediaElement.buffered.
+    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#htmlmediaelement-extensions
+    Vector<RefPtr<TimeRanges>> ranges = activeRanges();
+
+    // 1. If activeSourceBuffers.length equals 0 then return an empty TimeRanges object and abort these steps.
+    if (ranges.isEmpty())
+        return TimeRanges::create();
+
+    // 2. Let active ranges be the ranges returned by buffered for each SourceBuffer object in activeSourceBuffers.
+    // 3. Let highest end time be the largest range end time in the active ranges.
+    double highestEndTime = -1;
+    for (size_t i = 0; i < ranges.size(); ++i) {
+        unsigned length = ranges[i]->length();
+        if (length)
+            highestEndTime = std::max(highestEndTime, ranges[i]->end(length - 1, ASSERT_NO_EXCEPTION));
+    }
+
+    // Return an empty range if all ranges are empty.
+    if (highestEndTime < 0)
+        return TimeRanges::create();
+
+    // 4. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
+    RefPtr<TimeRanges> intersectionRanges = TimeRanges::create(0, highestEndTime);
+
+    // 5. For each SourceBuffer object in activeSourceBuffers run the following steps:
+    bool ended = readyState() == endedKeyword();
+    for (size_t i = 0; i < ranges.size(); ++i) {
+        // 5.1 Let source ranges equal the ranges returned by the buffered attribute on the current SourceBuffer.
+        TimeRanges* sourceRanges = ranges[i].get();
+
+        // 5.2 If readyState is "ended", then set the end time on the last range in source ranges to highest end time.
+        if (ended && sourceRanges->length())
+            sourceRanges->add(sourceRanges->start(sourceRanges->length() - 1, ASSERT_NO_EXCEPTION), highestEndTime);
+
+        // 5.3 Let new intersection ranges equal the the intersection between the intersection ranges and the source ranges.
+        // 5.4 Replace the ranges in intersection ranges with the new intersection ranges.
+        intersectionRanges->intersectWith(sourceRanges);
+    }
+
+    return intersectionRanges.release();
+}
+
+class SourceBufferBufferedDoesNotContainTime {
+public:
+    SourceBufferBufferedDoesNotContainTime(double time) : m_time(time) { }
+    bool operator()(RefPtr<SourceBuffer> sourceBuffer)
+    {
+        return !sourceBuffer->buffered()->contain(m_time);
+    }
+
+    double m_time;
+};
+
+class SourceBufferBufferedHasEnough {
+public:
+    SourceBufferBufferedHasEnough(double time, double duration) : m_time(time), m_duration(duration) { }
+    bool operator()(RefPtr<SourceBuffer> sourceBuffer)
+    {
+        size_t rangePos = sourceBuffer->buffered()->find(m_time);
+        if (rangePos == notFound)
+            return false;
+
+        double endTime = sourceBuffer->buffered()->end(rangePos, IGNORE_EXCEPTION);
+        return m_duration - endTime < 1;
+    }
+
+    double m_time;
+    double m_duration;
+};
+
+class SourceBufferBufferedHasFuture {
+public:
+    SourceBufferBufferedHasFuture(double time) : m_time(time) { }
+    bool operator()(RefPtr<SourceBuffer> sourceBuffer)
+    {
+        size_t rangePos = sourceBuffer->buffered()->find(m_time);
+        if (rangePos == notFound)
+            return false;
+
+        double endTime = sourceBuffer->buffered()->end(rangePos, IGNORE_EXCEPTION);
+        return endTime - m_time > 1;
+    }
+
+    double m_time;
+};
+
+void MediaSource::monitorSourceBuffers()
+{
+    double currentTime = mediaElement()->currentTime();
+
+    // 2.4.4 SourceBuffer Monitoring
+    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#buffer-monitoring
+    // ↳ If buffered for all objects in activeSourceBuffers do not contain TimeRanges for the current
+    // playback position:
+    auto begin = m_activeSourceBuffers->begin();
+    auto end = m_activeSourceBuffers->end();
+    if (std::all_of(begin, end, SourceBufferBufferedDoesNotContainTime(currentTime))) {
+        // 1. Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
+        // 2. If this is the first transition to HAVE_METADATA, then queue a task to fire a simple event
+        // named loadedmetadata at the media element.
+        m_private->setReadyState(MediaPlayer::HaveMetadata);
+
+        // 3. Abort these steps.
+        return;
+    }
+
+    // ↳ If buffered for all objects in activeSourceBuffers contain TimeRanges that include the current
+    // playback position and enough data to ensure uninterrupted playback:
+    if (std::all_of(begin, end, SourceBufferBufferedHasEnough(currentTime, mediaElement()->duration()))) {
+        // 1. Set the HTMLMediaElement.readyState attribute to HAVE_ENOUGH_DATA.
+        // 2. Queue a task to fire a simple event named canplaythrough at the media element.
+        // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
+        m_private->setReadyState(MediaPlayer::HaveEnoughData);
+
+        // 4. Abort these steps.
+        return;
+    }
+
+    // ↳ If buffered for at least one object in activeSourceBuffers contains a TimeRange that includes
+    // the current playback position but not enough data to ensure uninterrupted playback:
+    if (std::any_of(begin, end, SourceBufferBufferedHasFuture(currentTime))) {
+        // 1. Set the HTMLMediaElement.readyState attribute to HAVE_FUTURE_DATA.
+        // 2. If the previous value of HTMLMediaElement.readyState was less than HAVE_FUTURE_DATA, then queue a task to fire a simple event named canplay at the media element.
+        // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
+        m_private->setReadyState(MediaPlayer::HaveFutureData);
+
+        // 4. Abort these steps.
+        return;
+    }
+
+    // ↳ If buffered for at least one object in activeSourceBuffers contains a TimeRange that ends
+    // at the current playback position and does not have a range covering the time immediately
+    // after the current position:
+    // NOTE: Logically, !(all objects do not contain currentTime) == (some objects contain current time)
+
+    // 1. Set the HTMLMediaElement.readyState attribute to HAVE_CURRENT_DATA.
+    // 2. If this is the first transition to HAVE_CURRENT_DATA, then queue a task to fire a simple
+    // event named loadeddata at the media element.
+    // 3. Playback is suspended at this point since the media element doesn't have enough data to
+    // advance the media timeline.
+    m_private->setReadyState(MediaPlayer::HaveCurrentData);
+    
+    // 4. Abort these steps.
+}
+
+void MediaSource::setDuration(double duration, ExceptionCode& ec)
+{
+    if (duration < 0.0 || std::isnan(duration)) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    if (!isOpen()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    m_private->setDuration(duration);
+}
+
+
+void MediaSource::setReadyState(const AtomicString& state)
+{
+    ASSERT(state == openKeyword() || state == closedKeyword() || state == endedKeyword());
+
+    AtomicString oldState = readyState();
+    LOG(Media, "MediaSource::setReadyState() %p : %s -> %s", this, oldState.string().ascii().data(), state.string().ascii().data());
+
+    if (state == closedKeyword()) {
+        m_private.clear();
+        m_mediaElement = 0;
+    }
+
+    if (oldState == state)
+        return;
+
+    m_readyState = state;
+
+    onReadyStateChange(oldState, state);
+}
+
+void MediaSource::endOfStream(const AtomicString& error, ExceptionCode& ec)
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, network, ("network", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, decode, ("decode", AtomicString::ConstructFromLiteral));
+
+    // 3.1 http://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#dom-endofstream
+    // 1. If the readyState attribute is not in the "open" state then throw an
+    // INVALID_STATE_ERR exception and abort these steps.
+    if (!isOpen()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    MediaSourcePrivate::EndOfStreamStatus eosStatus = MediaSourcePrivate::EosNoError;
+
+    if (error.isNull() || error.isEmpty())
+        eosStatus = MediaSourcePrivate::EosNoError;
+    else if (error == network)
+        eosStatus = MediaSourcePrivate::EosNetworkError;
+    else if (error == decode)
+        eosStatus = MediaSourcePrivate::EosDecodeError;
+    else {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    // 2. Change the readyState attribute value to "ended".
+    setReadyState(endedKeyword());
+    m_private->markEndOfStream(eosStatus);
 }
 
 SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec)
@@ -256,56 +515,23 @@ void MediaSource::removeSourceBuffer(SourceBuffer* buffer, ExceptionCode& ec)
             // cancelable, and that uses the TrackEvent interface, at the SourceBuffer textTracks list.
             textTracks->remove(track);
         }
-
+        
         // 9.4 If the removed enabled text track flag equals true, then queue a task to fire a simple event
         // named change at the HTMLMediaElement textTracks list.
         if (removedEnabledTextTrack)
             mediaElement()->textTracks()->scheduleChangeEvent();
     }
-
-
+    
+    
     // 10. If sourceBuffer is in activeSourceBuffers, then remove sourceBuffer from activeSourceBuffers ...
     m_activeSourceBuffers->remove(buffer);
-
+    
     // 11. Remove sourceBuffer from sourceBuffers and fire a removesourcebuffer event
     // on that object.
     m_sourceBuffers->remove(buffer);
-
+    
     // 12. Destroy all resources for sourceBuffer.
     buffer->removedFromMediaSource();
-}
-
-void MediaSource::onReadyStateChange(const AtomicString& oldState, const AtomicString& newState)
-{
-    if (isOpen()) {
-        scheduleEvent(eventNames().sourceopenEvent);
-        return;
-    }
-
-    if (oldState == openKeyword() && newState == endedKeyword()) {
-        scheduleEvent(eventNames().sourceendedEvent);
-        return;
-    }
-
-    ASSERT(isClosed());
-
-    m_activeSourceBuffers->clear();
-
-    // Clear SourceBuffer references to this object.
-    for (unsigned long i = 0; i < m_sourceBuffers->length(); ++i)
-        m_sourceBuffers->item(i)->removedFromMediaSource();
-    m_sourceBuffers->clear();
-
-    scheduleEvent(eventNames().sourcecloseEvent);
-}
-
-Vector<RefPtr<TimeRanges>> MediaSource::activeRanges() const
-{
-    Vector<RefPtr<TimeRanges>> activeRanges(m_activeSourceBuffers->length());
-    for (size_t i = 0; i < m_activeSourceBuffers->length(); ++i)
-        activeRanges[i] = m_activeSourceBuffers->item(i)->buffered(ASSERT_NO_EXCEPTION);
-
-    return activeRanges;
 }
 
 bool MediaSource::isTypeSupported(const String& type)
@@ -336,9 +562,19 @@ bool MediaSource::isTypeSupported(const String& type)
     return MediaPlayer::supportsType(parameters, 0) != MediaPlayer::IsNotSupported;
 }
 
-EventTargetInterface MediaSource::eventTargetInterface() const
+bool MediaSource::isOpen() const
 {
-    return MediaSourceEventTargetInterfaceType;
+    return readyState() == openKeyword();
+}
+
+bool MediaSource::isClosed() const
+{
+    return readyState() == closedKeyword();
+}
+
+void MediaSource::close()
+{
+    setReadyState(closedKeyword());
 }
 
 void MediaSource::sourceBufferDidChangeAcitveState(SourceBuffer* sourceBuffer, bool active)
@@ -349,109 +585,122 @@ void MediaSource::sourceBufferDidChangeAcitveState(SourceBuffer* sourceBuffer, b
         m_activeSourceBuffers->remove(sourceBuffer);
 }
 
-class SourceBufferBufferedDoesNotContainTime {
-public:
-    SourceBufferBufferedDoesNotContainTime(double time) : m_time(time) { }
-    bool operator()(RefPtr<SourceBuffer> sourceBuffer)
-    {
-        return !sourceBuffer->buffered()->contain(m_time);
-    }
-
-    double m_time;
-};
-
-class SourceBufferBufferedHasEnough {
-public:
-    SourceBufferBufferedHasEnough(double time, double duration) : m_time(time), m_duration(duration) { }
-    bool operator()(RefPtr<SourceBuffer> sourceBuffer)
-    {
-        size_t rangePos = sourceBuffer->buffered()->find(m_time);
-        if (rangePos == notFound)
-            return false;
-
-        double endTime = sourceBuffer->buffered()->end(rangePos, IGNORE_EXCEPTION);
-        return m_duration - endTime < 1;
-    }
-
-    double m_time;
-    double m_duration;
-};
-
-class SourceBufferBufferedHasFuture {
-public:
-    SourceBufferBufferedHasFuture(double time) : m_time(time) { }
-    bool operator()(RefPtr<SourceBuffer> sourceBuffer)
-    {
-        size_t rangePos = sourceBuffer->buffered()->find(m_time);
-        if (rangePos == notFound)
-            return false;
-
-        double endTime = sourceBuffer->buffered()->end(rangePos, IGNORE_EXCEPTION);
-        return endTime - m_time > 1;
-    }
-
-    double m_time;
-};
-
-void MediaSource::monitorSourceBuffers()
+bool MediaSource::attachToElement(HTMLMediaElement* element)
 {
-    double currentTime = mediaElement()->currentTime();
+    if (m_mediaElement)
+        return false;
 
-    // 2.4.4 SourceBuffer Monitoring
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#buffer-monitoring
-    // ↳ If buffered for all objects in activeSourceBuffers do not contain TimeRanges for the current
-    // playback position:
-    auto begin = m_activeSourceBuffers->begin();
-    auto end = m_activeSourceBuffers->end();
-    if (std::all_of(begin, end, SourceBufferBufferedDoesNotContainTime(currentTime))) {
-        // 1. Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
-        // 2. If this is the first transition to HAVE_METADATA, then queue a task to fire a simple event
-        // named loadedmetadata at the media element.
-        m_private->setReadyState(MediaPlayer::HaveMetadata);
+    ASSERT(isClosed());
 
-        // 3. Abort these steps.
-        return;
-    }
-
-    // ↳ If buffered for all objects in activeSourceBuffers contain TimeRanges that include the current
-    // playback position and enough data to ensure uninterrupted playback:
-    if (std::all_of(begin, end, SourceBufferBufferedHasEnough(currentTime, mediaElement()->duration()))) {
-        // 1. Set the HTMLMediaElement.readyState attribute to HAVE_ENOUGH_DATA.
-        // 2. Queue a task to fire a simple event named canplaythrough at the media element.
-        // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
-        m_private->setReadyState(MediaPlayer::HaveEnoughData);
-
-        // 4. Abort these steps.
-        return;
-    }
-
-    // ↳ If buffered for at least one object in activeSourceBuffers contains a TimeRange that includes
-    // the current playback position but not enough data to ensure uninterrupted playback:
-    if (std::any_of(begin, end, SourceBufferBufferedHasFuture(currentTime))) {
-        // 1. Set the HTMLMediaElement.readyState attribute to HAVE_FUTURE_DATA.
-        // 2. If the previous value of HTMLMediaElement.readyState was less than HAVE_FUTURE_DATA, then queue a task to fire a simple event named canplay at the media element.
-        // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
-        m_private->setReadyState(MediaPlayer::HaveFutureData);
-
-        // 4. Abort these steps.
-        return;
-    }
-
-    // ↳ If buffered for at least one object in activeSourceBuffers contains a TimeRange that ends
-    // at the current playback position and does not have a range covering the time immediately
-    // after the current position:
-    // NOTE: Logically, !(all objects do not contain currentTime) == (some objects contain current time)
-
-    // 1. Set the HTMLMediaElement.readyState attribute to HAVE_CURRENT_DATA.
-    // 2. If this is the first transition to HAVE_CURRENT_DATA, then queue a task to fire a simple
-    // event named loadeddata at the media element.
-    // 3. Playback is suspended at this point since the media element doesn't have enough data to
-    // advance the media timeline.
-    m_private->setReadyState(MediaPlayer::HaveCurrentData);
-
-    // 4. Abort these steps.
+    m_mediaElement = element;
+    return true;
 }
 
-} // namespace WebCore
+void MediaSource::openIfInEndedState()
+{
+    if (m_readyState != endedKeyword())
+        return;
+
+    setReadyState(openKeyword());
+    m_private->unmarkEndOfStream();
+}
+
+bool MediaSource::hasPendingActivity() const
+{
+    return m_private || m_asyncEventQueue.hasPendingEvents()
+        || ActiveDOMObject::hasPendingActivity();
+}
+
+void MediaSource::stop()
+{
+    m_asyncEventQueue.close();
+    if (!isClosed())
+        setReadyState(closedKeyword());
+    m_private.clear();
+}
+
+void MediaSource::onReadyStateChange(const AtomicString& oldState, const AtomicString& newState)
+{
+    if (isOpen()) {
+        scheduleEvent(eventNames().sourceopenEvent);
+        return;
+    }
+
+    if (oldState == openKeyword() && newState == endedKeyword()) {
+        scheduleEvent(eventNames().sourceendedEvent);
+        return;
+    }
+
+    ASSERT(isClosed());
+
+    m_activeSourceBuffers->clear();
+
+    // Clear SourceBuffer references to this object.
+    for (unsigned long i = 0, length =  m_sourceBuffers->length(); i < length; ++i)
+        m_sourceBuffers->item(i)->removedFromMediaSource();
+    m_sourceBuffers->clear();
+    
+    scheduleEvent(eventNames().sourcecloseEvent);
+}
+
+Vector<RefPtr<TimeRanges>> MediaSource::activeRanges() const
+{
+    Vector<RefPtr<TimeRanges>> activeRanges(m_activeSourceBuffers->length());
+    for (size_t i = 0, length = m_activeSourceBuffers->length(); i < length; ++i)
+        activeRanges[i] = m_activeSourceBuffers->item(i)->buffered(ASSERT_NO_EXCEPTION);
+
+    return activeRanges;
+}
+
+RefPtr<SourceBufferPrivate> MediaSource::createSourceBufferPrivate(const ContentType& type, ExceptionCode& ec)
+{
+    RefPtr<SourceBufferPrivate> sourceBufferPrivate;
+    switch (m_private->addSourceBuffer(type, sourceBufferPrivate)) {
+    case MediaSourcePrivate::Ok: {
+        return sourceBufferPrivate;
+    }
+    case MediaSourcePrivate::NotSupported:
+        // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-MediaSource-addSourceBuffer-SourceBuffer-DOMString-type
+        // Step 2: If type contains a MIME type ... that is not supported with the types
+        // specified for the other SourceBuffer objects in sourceBuffers, then throw
+        // a NOT_SUPPORTED_ERR exception and abort these steps.
+        ec = NOT_SUPPORTED_ERR;
+        return nullptr;
+    case MediaSourcePrivate::ReachedIdLimit:
+        // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-MediaSource-addSourceBuffer-SourceBuffer-DOMString-type
+        // Step 3: If the user agent can't handle any more SourceBuffer objects then throw
+        // a QUOTA_EXCEEDED_ERR exception and abort these steps.
+        ec = QUOTA_EXCEEDED_ERR;
+        return nullptr;
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+void MediaSource::scheduleEvent(const AtomicString& eventName)
+{
+    RefPtr<Event> event = Event::create(eventName, false, false);
+    event->setTarget(this);
+
+    m_asyncEventQueue.enqueueEvent(event.release());
+}
+
+ScriptExecutionContext* MediaSource::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+EventTargetInterface MediaSource::eventTargetInterface() const
+{
+    return MediaSourceEventTargetInterfaceType;
+}
+
+URLRegistry& MediaSource::registry() const
+{
+    return MediaSourceRegistry::registry();
+}
+
+}
 
 #endif

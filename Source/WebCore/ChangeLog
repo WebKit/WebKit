@@ -1,3 +1,40 @@
+2013-12-04  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Refactor MediaSourceBase back into MediaSource
+        https://bugs.webkit.org/show_bug.cgi?id=125245
+
+        Reviewed by Eric Carlson.
+
+        Now that the legacy WebKitMediaSource has been removed, there is no reason to have
+        a separate MediaSource and MediaSourceBase. Re-integrate the two.
+
+        Copy all the methods from MediaSource into MediaSourceBase, and rename the class MediaSource:
+        * Modules/mediasource/MediaSource.cpp: Copied from MediaSourceBase.cpp.
+        (WebCore::MediaSource::create): Copied from MediaSource.cpp.
+        (WebCore::MediaSource::addSourceBuffer): Ditto.
+        (WebCore::MediaSource::removeSourceBuffer): Ditto.
+        (WebCore::MediaSource::isTypeSupported): Ditto.
+        (WebCore::MediaSource::eventTargetInterface): Ditto.
+        (WebCore::MediaSource::sourceBufferDidChangeAcitveState): Ditto.
+        * Modules/mediasource/MediaSource.h: Copied from MediaSourceBase.h.
+        (WebCore::MediaSource::sourceBuffers): Copied from MediaSource.h.
+        (WebCore::MediaSource::activeSourceBuffers): Copied from MediaSource.h.
+        * Modules/mediasource/MediaSourceBase.cpp: Removed.
+        * Modules/mediasource/MediaSourceBase.h: Removed.
+
+        Change all references to MediaSourceBase into MediaSource:
+        * Modules/mediasource/DOMURLMediaSource.cpp:
+        (WebCore::DOMURLMediaSource::createObjectURL):
+        * Modules/mediasource/DOMURLMediaSource.h:
+        * Modules/mediasource/MediaSourceRegistry.cpp:
+        (WebCore::MediaSourceRegistry::registerURL):
+        (WebCore::MediaSourceRegistry::unregisterURL):
+        * Modules/mediasource/MediaSourceRegistry.h:
+
+        Remove MediaSourceBase.cpp/h from the project file:
+        * WebCore.xcodeproj/project.pbxproj:
+        * GNUmakefile.list.am:
+
 2013-12-06  Eric Carlson  <eric.carlson@apple.com>
 
         r159827 broke plug-in snapshotting

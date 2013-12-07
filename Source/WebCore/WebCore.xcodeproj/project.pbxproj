@@ -5329,8 +5329,6 @@
 		CD336F6717FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD336F6517FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp */; };
 		CD336F6817FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CD336F6617FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h */; };
 		CD37B39815C1B971006DC898 /* DiagnosticLoggingKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD37B37415C1A7E1006DC898 /* DiagnosticLoggingKeys.cpp */; };
-		CD3A495217A9C8C600274E42 /* MediaSourceBase.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3A495117A9C8B600274E42 /* MediaSourceBase.h */; };
-		CD3A495417A9CC9000274E42 /* MediaSourceBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3A495017A9C8B600274E42 /* MediaSourceBase.cpp */; };
 		CD3A495E17A9D01B00274E42 /* MediaSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3A495517A9D01B00274E42 /* MediaSource.cpp */; };
 		CD3A495F17A9D01B00274E42 /* MediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3A495617A9D01B00274E42 /* MediaSource.h */; };
 		CD3A496117A9D01B00274E42 /* SourceBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3A495817A9D01B00274E42 /* SourceBuffer.cpp */; };
@@ -7740,8 +7738,8 @@
 		3146FE6518442087001A937C /* OESTextureFloatLinear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OESTextureFloatLinear.cpp; path = canvas/OESTextureFloatLinear.cpp; sourceTree = "<group>"; };
 		3146FE6618442087001A937C /* OESTextureFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OESTextureFloatLinear.h; path = canvas/OESTextureFloatLinear.h; sourceTree = "<group>"; };
 		3146FE6718442087001A937C /* OESTextureFloatLinear.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OESTextureFloatLinear.idl; path = canvas/OESTextureFloatLinear.idl; sourceTree = "<group>"; };
-		3146FE7018442367001A937C /* JSOESTextureFloatLinear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSOESTextureFloatLinear.cpp; path = JSOESTextureFloatLinear.cpp; sourceTree = "<group>"; };
-		3146FE7118442367001A937C /* JSOESTextureFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSOESTextureFloatLinear.h; path = JSOESTextureFloatLinear.h; sourceTree = "<group>"; };
+		3146FE7018442367001A937C /* JSOESTextureFloatLinear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESTextureFloatLinear.cpp; sourceTree = "<group>"; };
+		3146FE7118442367001A937C /* JSOESTextureFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureFloatLinear.h; sourceTree = "<group>"; };
 		316023EF1532C40C00D50FF4 /* Dictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dictionary.h; sourceTree = "<group>"; };
 		31611E540E1C4D4A00F6A579 /* WebKitCSSTransformValue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSTransformValue.idl; sourceTree = "<group>"; };
 		31611E580E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSTransformValue.cpp; sourceTree = "<group>"; };
@@ -12416,8 +12414,6 @@
 		CD336F6617FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoTrackPrivateAVFObjC.h; path = objc/VideoTrackPrivateAVFObjC.h; sourceTree = "<group>"; };
 		CD37B37415C1A7E1006DC898 /* DiagnosticLoggingKeys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiagnosticLoggingKeys.cpp; sourceTree = "<group>"; };
 		CD37B37515C1A7E1006DC898 /* DiagnosticLoggingKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticLoggingKeys.h; sourceTree = "<group>"; };
-		CD3A495017A9C8B600274E42 /* MediaSourceBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSourceBase.cpp; sourceTree = "<group>"; };
-		CD3A495117A9C8B600274E42 /* MediaSourceBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSourceBase.h; sourceTree = "<group>"; };
 		CD3A495517A9D01B00274E42 /* MediaSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSource.cpp; sourceTree = "<group>"; };
 		CD3A495617A9D01B00274E42 /* MediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSource.h; sourceTree = "<group>"; };
 		CD3A495717A9D01B00274E42 /* MediaSource.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaSource.idl; sourceTree = "<group>"; };
@@ -18568,8 +18564,6 @@
 				CD3A495517A9D01B00274E42 /* MediaSource.cpp */,
 				CD3A495617A9D01B00274E42 /* MediaSource.h */,
 				CD3A495717A9D01B00274E42 /* MediaSource.idl */,
-				CD3A495017A9C8B600274E42 /* MediaSourceBase.cpp */,
-				CD3A495117A9C8B600274E42 /* MediaSourceBase.h */,
 				B1A942E115B5CE2200D525D1 /* MediaSourceRegistry.cpp */,
 				B1A942E215B5CE2200D525D1 /* MediaSourceRegistry.h */,
 				CD3A495817A9D01B00274E42 /* SourceBuffer.cpp */,
@@ -23962,7 +23956,6 @@
 				BC2CBF4E140F1ABD003879BE /* JSWebGLContextEvent.h in Headers */,
 				6E3FAD3914733F4011E42307 /* JSWebGLDebugRendererInfo.h in Headers */,
 				6E3FAD3914733F4022E42307 /* JSWebGLDebugShaders.h in Headers */,
-				CD3A495217A9C8C600274E42 /* MediaSourceBase.h in Headers */,
 				6E3FAD3914733F4000E42307 /* JSWebGLDepthTexture.h in Headers */,
 				49C7B9981042D2D30009D447 /* JSWebGLFramebuffer.h in Headers */,
 				93F1D5C112D5335600832BEC /* JSWebGLLoseContext.h in Headers */,
@@ -26367,7 +26360,6 @@
 				5160306C0CC4362300C8AC25 /* FileSystemCF.cpp in Sources */,
 				0779BF0D18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp in Sources */,
 				26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */,
-				CD3A495417A9CC9000274E42 /* MediaSourceBase.cpp in Sources */,
 				514B3F760C722055000530DF /* FileSystemMac.mm in Sources */,
 				6ED8C379183BFF8C009E53BD /* BoxShape.cpp in Sources */,
 				5160300B0CC4251200C8AC25 /* FileSystemPOSIX.cpp in Sources */,

@@ -37,12 +37,12 @@
 
 namespace WebCore {
 
-class MediaSourceBase;
+class MediaSource;
 class ScriptExecutionContext;
 
 class DOMURLMediaSource {
 public:
-    static String createObjectURL(ScriptExecutionContext*, MediaSourceBase*);
+    static String createObjectURL(ScriptExecutionContext*, MediaSource*);
 };
 
 } // namespace WebCore
