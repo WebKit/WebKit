@@ -64,6 +64,7 @@ public:
     void openIfInEndedState();
     bool isOpen() const;
     void sourceBufferDidChangeAcitveState(SourceBuffer*, bool);
+    void streamEndedWithError(const AtomicString& error, ExceptionCode&);
 
     // HTMLMediaSource
     virtual bool attachToElement(HTMLMediaElement*) OVERRIDE;

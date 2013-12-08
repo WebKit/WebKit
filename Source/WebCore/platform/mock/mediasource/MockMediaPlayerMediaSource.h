@@ -51,6 +51,7 @@ public:
 
     virtual MediaPlayer::ReadyState readyState() const OVERRIDE;
     void setReadyState(MediaPlayer::ReadyState);
+    void setNetworkState(MediaPlayer::NetworkState);
 
 private:
     MockMediaPlayerMediaSource(MediaPlayer*);

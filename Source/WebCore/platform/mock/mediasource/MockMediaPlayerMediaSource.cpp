@@ -236,6 +236,15 @@ void MockMediaPlayerMediaSource::setReadyState(MediaPlayer::ReadyState readyStat
     m_player->readyStateChanged();
 }
 
+void MockMediaPlayerMediaSource::setNetworkState(MediaPlayer::NetworkState networkState)
+{
+    if (networkState == m_networkState)
+        return;
+
+    m_networkState = networkState;
+    m_player->networkStateChanged();
+}
+
 }
 
 #endif

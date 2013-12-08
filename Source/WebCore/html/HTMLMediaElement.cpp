@@ -1669,9 +1669,9 @@ void HTMLMediaElement::noneSupported()
         renderer()->updateFromElement();
 }
 
-void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
+void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error)
 {
-    LOG(Media, "HTMLMediaElement::mediaEngineError(%d)", static_cast<int>(err->code()));
+    LOG(Media, "HTMLMediaElement::mediaLoadingFailedFatally(%d)", static_cast<int>(error));
 
     // 1 - The user agent should cancel the fetching process.
     stopPeriodicTimers();
@@ -1679,7 +1679,12 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
 
     // 2 - Set the error attribute to a new MediaError object whose code attribute is 
     // set to MEDIA_ERR_NETWORK/MEDIA_ERR_DECODE.
-    m_error = err;
+    if (error == MediaPlayer::NetworkError)
+        m_error = MediaError::create(MediaError::MEDIA_ERR_NETWORK);
+    else if (error == MediaPlayer::DecodeError)
+        m_error = MediaError::create(MediaError::MEDIA_ERR_DECODE);
+    else
+        ASSERT_NOT_REACHED();
 
     // 3 - Queue a task to fire a simple event named error at the media element.
     scheduleEvent(eventNames().errorEvent);
@@ -1783,10 +1788,8 @@ void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
         return;
     }
     
-    if (error == MediaPlayer::NetworkError && m_readyState >= HAVE_METADATA)
-        mediaEngineError(MediaError::create(MediaError::MEDIA_ERR_NETWORK));
-    else if (error == MediaPlayer::DecodeError)
-        mediaEngineError(MediaError::create(MediaError::MEDIA_ERR_DECODE));
+    if ((error == MediaPlayer::NetworkError && m_readyState >= HAVE_METADATA) || error == MediaPlayer::DecodeError)
+        mediaLoadingFailedFatally(error);
     else if ((error == MediaPlayer::FormatError || error == MediaPlayer::NetworkError) && m_loadState == LoadingFromSrcAttr)
         noneSupported();
     

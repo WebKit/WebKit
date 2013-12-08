@@ -42,7 +42,7 @@ RefPtr<MockMediaSourcePrivate> MockMediaSourcePrivate::create(MockMediaPlayerMed
 
 MockMediaSourcePrivate::MockMediaSourcePrivate(MockMediaPlayerMediaSource* parent)
     : m_player(parent)
-    , m_duration(0)
+    , m_duration(std::numeric_limits<float>::quiet_NaN())
     , m_isEnded(false)
 {
 }
@@ -96,7 +96,8 @@ void MockMediaSourcePrivate::setDuration(double duration)
 
 void MockMediaSourcePrivate::markEndOfStream(EndOfStreamStatus status)
 {
-    UNUSED_PARAM(status);
+    if (status == EosNoError)
+        m_player->setNetworkState(MediaPlayer::Loaded);
     m_isEnded = true;
 }
 

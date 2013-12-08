@@ -75,6 +75,7 @@ public:
 
     void abortIfUpdating();
     void removedFromMediaSource();
+    const MediaTime& highestPresentationEndTimestamp() const { return m_highestPresentationEndTimestamp; }
 
 #if ENABLE(VIDEO_TRACK)
     VideoTrackList* videoTracks();

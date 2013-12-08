@@ -43,6 +43,7 @@
 #include "HTMLMediaElement.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
+#include "MediaError.h"
 #include "MediaPlayer.h"
 #include "MediaSourceRegistry.h"
 #include "SourceBufferPrivate.h"
@@ -303,12 +304,14 @@ void MediaSource::setReadyState(const AtomicString& state)
     onReadyStateChange(oldState, state);
 }
 
+static bool SourceBufferIsUpdating(RefPtr<SourceBuffer>& sourceBuffer)
+{
+    return sourceBuffer->updating();
+}
+
 void MediaSource::endOfStream(const AtomicString& error, ExceptionCode& ec)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, network, ("network", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, decode, ("decode", AtomicString::ConstructFromLiteral));
-
-    // 3.1 http://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#dom-endofstream
+    // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#widl-MediaSource-endOfStream-void-EndOfStreamError-error
     // 1. If the readyState attribute is not in the "open" state then throw an
     // INVALID_STATE_ERR exception and abort these steps.
     if (!isOpen()) {
@@ -316,22 +319,75 @@ void MediaSource::endOfStream(const AtomicString& error, ExceptionCode& ec)
         return;
     }
 
-    MediaSourcePrivate::EndOfStreamStatus eosStatus = MediaSourcePrivate::EosNoError;
-
-    if (error.isNull() || error.isEmpty())
-        eosStatus = MediaSourcePrivate::EosNoError;
-    else if (error == network)
-        eosStatus = MediaSourcePrivate::EosNetworkError;
-    else if (error == decode)
-        eosStatus = MediaSourcePrivate::EosDecodeError;
-    else {
-        ec = INVALID_ACCESS_ERR;
+    // 2. If the updating attribute equals true on any SourceBuffer in sourceBuffers, then throw an
+    // INVALID_STATE_ERR exception and abort these steps.
+    if (std::any_of(m_sourceBuffers->begin(), m_sourceBuffers->end(), SourceBufferIsUpdating)) {
+        ec = INVALID_STATE_ERR;
         return;
     }
 
-    // 2. Change the readyState attribute value to "ended".
+    // 3. Run the end of stream algorithm with the error parameter set to error.
+    streamEndedWithError(error, ec);
+}
+
+void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode& ec)
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, network, ("network", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, decode, ("decode", AtomicString::ConstructFromLiteral));
+
+    // 2.4.7 https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#end-of-stream-algorithm
+    // 1. Change the readyState attribute value to "ended".
+    // 2. Queue a task to fire a simple event named sourceended at the MediaSource.
     setReadyState(endedKeyword());
-    m_private->markEndOfStream(eosStatus);
+
+    // 3.
+    if (error.isEmpty()) {
+        // ↳ If error is not set, is null, or is an empty string
+        // 1. Run the duration change algorithm with new duration set to the highest end timestamp
+        // across all SourceBuffer objects in sourceBuffers.
+        MediaTime maxEndTimestamp;
+        for (auto it = m_sourceBuffers->begin(), end = m_sourceBuffers->end(); it != end; ++it)
+            maxEndTimestamp = std::max((*it)->highestPresentationEndTimestamp(), maxEndTimestamp);
+        m_private->setDuration(maxEndTimestamp.toDouble());
+
+        // 2. Notify the media element that it now has all of the media data.
+        m_private->markEndOfStream(MediaSourcePrivate::EosNoError);
+    } else if (error == network) {
+        // ↳ If error is set to "network"
+        ASSERT(m_mediaElement);
+        if (m_mediaElement->readyState() == HTMLMediaElement::HAVE_NOTHING) {
+            //  ↳ If the HTMLMediaElement.readyState attribute equals HAVE_NOTHING
+            //    Run the "If the media data cannot be fetched at all, due to network errors, causing
+            //    the user agent to give up trying to fetch the resource" steps of the resource fetch algorithm.
+            //    NOTE: This step is handled by HTMLMediaElement::mediaLoadingFailed().
+            m_mediaElement->mediaLoadingFailed(MediaPlayer::NetworkError);
+        } else {
+            //  ↳ If the HTMLMediaElement.readyState attribute is greater than HAVE_NOTHING
+            //    Run the "If the connection is interrupted after some media data has been received, causing the
+            //    user agent to give up trying to fetch the resource" steps of the resource fetch algorithm.
+            //    NOTE: This step is handled by HTMLMediaElement::mediaLoadingFailedFatally().
+            m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::NetworkError);
+        }
+    } else if (error == decode) {
+        // ↳ If error is set to "decode"
+        ASSERT(m_mediaElement);
+        if (m_mediaElement->readyState() == HTMLMediaElement::HAVE_NOTHING) {
+            //  ↳ If the HTMLMediaElement.readyState attribute equals HAVE_NOTHING
+            //    Run the "If the media data can be fetched but is found by inspection to be in an unsupported
+            //    format, or can otherwise not be rendered at all" steps of the resource fetch algorithm.
+            //    NOTE: This step is handled by HTMLMediaElement::mediaLoadingFailed().
+            m_mediaElement->mediaLoadingFailed(MediaPlayer::FormatError);
+        } else {
+            //  ↳ If the HTMLMediaElement.readyState attribute is greater than HAVE_NOTHING
+            //    Run the media data is corrupted steps of the resource fetch algorithm.
+            //    NOTE: This step is handled by HTMLMediaElement::mediaLoadingFailedFatally().
+            m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::DecodeError);
+        }
+    } else {
+        // ↳ Otherwise
+        //   Throw an INVALID_ACCESS_ERR exception.
+        ec = INVALID_ACCESS_ERR;
+    }
 }
 
 SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec)
