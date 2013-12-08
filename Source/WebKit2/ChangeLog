@@ -1,3 +1,24 @@
+2013-12-07  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WebData has a generic wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=125402
+
+        Reviewed by Sam Weinig.
+
+        Added WKNSData, an NSData subclass that confroms to WKObject and wraps a WebData.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Allocate a WKNSData if the API::Object is data.
+        * Shared/Cocoa/WKNSData.h: Added.
+        (WebKit::wrapper): Added. Returns a WebData’s wrapper as an NSData.
+        * Shared/Cocoa/WKNSData.mm: Added.
+        (-[WKNSData dealloc]): Calls the WebData destructor.
+        (-[WKNSData length]): Added.
+        (-[WKNSData bytes]): Added.
+        (-[WKNSData copyWithZone:]): Retains self.
+        (-[WKNSData _apiObject]): Returns the wrapped WebData.
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files.
+
 2013-12-07  Sam Weinig  <sam@webkit.org>
 
         [Cocoa] Make WKWebProcessPlugInBrowserContextController work with WKObject wrapping

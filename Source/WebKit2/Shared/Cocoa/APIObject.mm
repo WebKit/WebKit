@@ -34,6 +34,7 @@
 #import "WKBrowsingContextGroupInternal.h"
 #import "WKConnectionInternal.h"
 #import "WKNSArray.h"
+#import "WKNSData.h"
 #import "WKNSDictionary.h"
 #import "WKNSError.h"
 #import "WKNSString.h"
@@ -91,6 +92,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::Context:
         wrapper = [WKProcessGroup alloc];
+        break;
+
+    case Type::Data:
+        wrapper = [WKNSData alloc];
         break;
 
     case Type::Dictionary:
