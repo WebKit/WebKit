@@ -207,6 +207,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMKeyboardEventPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMLocation.cpp \
 	DerivedSources/webkitdom/WebKitDOMLocationPrivate.h \
+	DerivedSources/webkitdom/WebKitDOMMediaController.cpp \
+	DerivedSources/webkitdom/WebKitDOMMediaControllerPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMMediaError.cpp \
 	DerivedSources/webkitdom/WebKitDOMMediaErrorPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMMediaList.cpp \
@@ -287,6 +289,7 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMCSSStyleDeclaration.h \
 	DerivedSources/webkitdom/WebKitDOMCSSStyleSheet.h \
 	DerivedSources/webkitdom/WebKitDOMCSSValue.h \
+	DerivedSources/webkitdom/WebKitDOMMediaController.h \
 	DerivedSources/webkitdom/WebKitDOMMediaList.h \
 	DerivedSources/webkitdom/WebKitDOMMediaQueryList.h \
 	DerivedSources/webkitdom/WebKitDOMStyleMedia.h \

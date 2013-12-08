@@ -188,8 +188,7 @@ sub SkipAttribute {
     my $attribute = shift;
 
     if ($attribute->signature->extendedAttributes->{"Custom"}
-        || $attribute->signature->extendedAttributes->{"CustomGetter"}
-        || $attribute->signature->extendedAttributes->{"CustomSetter"}) {
+        || $attribute->signature->extendedAttributes->{"CustomGetter"}) {
         return 1;
     }
 
@@ -430,7 +429,8 @@ sub GetWriteableProperties {
         # FIXME: We are not generating setters for 'Replaceable'
         # attributes now, but we should somehow.
         my $replaceable = $property->signature->extendedAttributes->{"Replaceable"};
-        if (!$property->isReadOnly && $hasGtypeSignature && !$replaceable) {
+        my $custom = $property->signature->extendedAttributes->{"CustomSetter"};
+        if (!$property->isReadOnly && $hasGtypeSignature && !$replaceable && !$custom) {
             push(@result, $property);
         }
     }
@@ -500,12 +500,10 @@ sub GenerateProperty {
     my $writeable = !$attribute->isReadOnly;
 
     my $mutableString = "read-only";
-    my $custom = $attribute->signature->extendedAttributes->{"Custom"};
-    if ($writeable && $custom) {
+    my $hasCustomSetter = $attribute->signature->extendedAttributes->{"CustomSetter"};
+    if ($writeable && $hasCustomSetter) {
         $mutableStringconst = "read-only (due to custom functions needed in webkitdom)";
-        return;
-    }
-    if ($writeable && !$custom) {
+    } elsif ($writeable) {
         $gparamflag = "WEBKIT_PARAM_READWRITE";
         $mutableStringconst = "read-write";
     }
@@ -1303,7 +1301,8 @@ sub GenerateFunctions {
 
         # FIXME: We are not generating setters for 'Replaceable'
         # attributes now, but we should somehow.
-        if ($attribute->isReadOnly || $attribute->signature->extendedAttributes->{"Replaceable"}) {
+        my $custom = $attribute->signature->extendedAttributes->{"CustomSetter"};
+        if ($attribute->isReadOnly || $attribute->signature->extendedAttributes->{"Replaceable"} || $custom) {
             next TOP;
         }
         

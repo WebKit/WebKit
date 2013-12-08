@@ -1,5 +1,31 @@
 2013-12-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Do not skip attributes with only custom setter
+        https://bugs.webkit.org/show_bug.cgi?id=125417
+
+        Reviewed by Gustavo Noronha Silva.
+
+        For attributes with a custom setter, we now generate the code as a
+        read-only attribute with a getter method, unless it also has a
+        custom getter in which case the attribute is skipped.
+
+        * bindings/gobject/GNUmakefile.am: Generate WebKitDOMMediaController
+        that is now required by an attribute having a custom setter.
+        * bindings/gobject/WebKitDOMCustom.cpp: Remove methods that are now generated.
+        * bindings/gobject/WebKitDOMCustom.h: Ditto.
+        * bindings/gobject/WebKitDOMCustom.symbols: Ditto.
+        * bindings/gobject/webkitdom.symbols: Add new symbols.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipAttribute): Do not skip attributes having a custom setter.
+        (GetWriteableProperties): Do not include attributes having a
+        custom setter.
+        (GenerateProperty): Do not return early for attributes having
+        custom setter.
+        (GenerateFunctions): Do not generate setter for attributes having
+        a custom setter.
+
+2013-12-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Do not generate new dispatch_event methods marked as deprecated
         https://bugs.webkit.org/show_bug.cgi?id=125416
 
