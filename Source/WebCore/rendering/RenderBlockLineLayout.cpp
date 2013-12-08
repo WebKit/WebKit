@@ -865,16 +865,6 @@ void RenderBlockFlow::appendFloatingObjectToLastLine(FloatingObject* floatingObj
     lastRootBox()->appendFloat(floatingObject->renderer());
 }
 
-// FIXME: This should be a BidiStatus constructor or create method.
-static inline BidiStatus statusWithDirection(TextDirection textDirection, bool isOverride)
-{
-    UCharDirection direction = textDirection == LTR ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
-    RefPtr<BidiContext> context = BidiContext::create(textDirection == LTR ? 0 : 1, direction, isOverride, FromStyleOrDOM);
-
-    // This copies BidiStatus and may churn the ref on BidiContext. I doubt it matters.
-    return BidiStatus(direction, direction, direction, context.release());
-}
-
 // FIXME: BidiResolver should have this logic.
 static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, BidiRunList<BidiRun>& bidiRuns, const InlineIterator& endOfRuns, VisualDirectionOverride override, bool previousLineBrokeCleanly)
 {
@@ -907,7 +897,7 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
             ASSERT(unicodeBidi == Isolate || unicodeBidi == IsolateOverride);
             direction = isolatedInline->style().direction();
         }
-        isolatedResolver.setStatus(statusWithDirection(direction, isOverride(unicodeBidi)));
+        isolatedResolver.setStatus(BidiStatus(direction, isOverride(unicodeBidi)));
 
         // FIXME: The fact that we have to construct an Iterator here
         // currently prevents this code from moving into BidiResolver.
