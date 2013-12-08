@@ -1,3 +1,22 @@
+2013-12-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [webkitpy] Add a WestonDriver unit test
+        https://bugs.webkit.org/show_bug.cgi?id=125408
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add a webkitpy unit test for the Weston driver.
+
+        * Scripts/webkitpy/port/westondriver_unittest.py: Added.
+        (WestonDriverTest):
+        (WestonDriverTest.make_driver): Sets up a new WestonDriver instance for testing purposes.
+        (WestonDriverTest.test_start): Check that the Weston compositor is launched properly and that
+        the server environment contains proper WAYLAND and GDK_BACKEND entries.
+        (WestonDriverTest.test_stop): Check that the Weston compositor is terminated properly and that
+        the driver cleans up the temporary directory.
+        (WestonDriverTest.test_stop.FakeWestonProcess): A helper class that logs the expected termination.
+        (WestonDriverTest.test_stop.FakeWestonProcess.terminate):
+
 2013-12-08  Brendan Long  <b.long@cablelabs.com>
 
         [Gtk] install-dependencies doesn't install libgtk-3-dev
