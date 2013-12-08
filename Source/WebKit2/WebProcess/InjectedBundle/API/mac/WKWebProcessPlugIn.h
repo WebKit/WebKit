@@ -39,9 +39,6 @@
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController initializeWithObject:(id)initializationObject;
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController willDestroyBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
-
-- (void)webProcessPlugInInitialize:(WKWebProcessPlugInController *)plugInController DEPRECATED_ATTRIBUTE;
-
 @end
 
 WK_API_CLASS

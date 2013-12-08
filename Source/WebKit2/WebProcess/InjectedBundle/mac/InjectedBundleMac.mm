@@ -112,11 +112,6 @@ bool InjectedBundle::load(API::Object* initializationUserData)
         if (initializationUserData && initializationUserData->type() == API::Object::Type::ObjCObjectGraph)
             objCInitializationUserData = static_cast<ObjCObjectGraph*>(initializationUserData)->rootObject();
         [instance webProcessPlugIn:plugInController initializeWithObject:objCInitializationUserData.get()];
-    } else if ([instance respondsToSelector:@selector(webProcessPlugInInitialize:)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [instance webProcessPlugInInitialize:plugInController];
-#pragma clang diagnostic pop
     }
 
     return true;
