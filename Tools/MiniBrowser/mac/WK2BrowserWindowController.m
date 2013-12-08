@@ -29,27 +29,30 @@
 
 #import "AppDelegate.h"
 #import <WebKit2/WKBrowsingContextControllerPrivate.h>
+#import <WebKit2/WKBrowsingContextHistoryDelegate.h>
 #import <WebKit2/WKBrowsingContextLoadDelegatePrivate.h>
 #import <WebKit2/WKBrowsingContextPolicyDelegate.h>
+#import <WebKit2/WKNavigationData.h>
 #import <WebKit2/WKPagePrivate.h>
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKURLCF.h>
 #import <WebKit2/WKViewPrivate.h>
 
-@interface WK2BrowserWindowController () <WKBrowsingContextLoadDelegatePrivate, WKBrowsingContextPolicyDelegate>
+@interface WK2BrowserWindowController () <WKBrowsingContextLoadDelegatePrivate, WKBrowsingContextPolicyDelegate, WKBrowsingContextHistoryDelegate>
 @end
 
 @implementation WK2BrowserWindowController {
-    WKContextRef _context;
-    WKPageGroupRef _pageGroup;
+    WKProcessGroup *_processGroup;
+    WKBrowsingContextGroup *_browsingContextGroup;
+
     WKView *_webView;
 }
 
-- (id)initWithContext:(WKContextRef)context pageGroup:(WKPageGroupRef)pageGroup
+- (id)initWithProcessGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
 {
     if ((self = [super initWithWindowNibName:@"BrowserWindow"])) {
-        _context = WKRetain(context);
-        _pageGroup = WKRetain(pageGroup);
+        _processGroup = [processGroup retain];
+        _browsingContextGroup = [browsingContextGroup retain];
         _zoomTextOnly = NO;
     }
     
@@ -61,12 +64,13 @@
     [progressIndicator unbind:NSHiddenBinding];
     [progressIndicator unbind:NSValueBinding];
 
-    WKRelease(_context);
-    WKRelease(_pageGroup);
     [_webView.browsingContextController removeObserver:self forKeyPath:@"title" context:[WK2BrowserWindowController self]];
     _webView.browsingContextController.loadDelegate = nil;
     _webView.browsingContextController.policyDelegate = nil;
     [_webView release];
+
+    [_browsingContextGroup release];
+    [_processGroup release];
 
     [super dealloc];
 }
@@ -313,7 +317,8 @@ static void dumpSource(WKStringRef source, WKErrorRef error, void* context)
 static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef request, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton button, const void* clientInfo)
 {
     LOG(@"createNewPage");
-    WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithContext:WKPageGetContext(page) pageGroup:WKPageGetPageGroup(page)];
+    WK2BrowserWindowController *originator = (WK2BrowserWindowController *)clientInfo;
+    WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithProcessGroup:originator->_processGroup browsingContextGroup:originator->_browsingContextGroup];
     [controller loadWindow];
 
     return WKRetain(controller->_webView.pageRef);
@@ -497,7 +502,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 
 - (void)awakeFromNib
 {
-    _webView = [[WKView alloc] initWithFrame:[containerView bounds] contextRef:_context pageGroupRef:_pageGroup];
+    _webView = [[WKView alloc] initWithFrame:[containerView bounds] processGroup:_processGroup browsingContextGroup:_browsingContextGroup];
 
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [containerView addSubview:_webView];
@@ -508,8 +513,8 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     [_webView.browsingContextController addObserver:self forKeyPath:@"title" options:0 context:[WK2BrowserWindowController self]];
 
     _webView.browsingContextController.loadDelegate = self;
-
     _webView.browsingContextController.policyDelegate = self;
+    _webView.browsingContextController.historyDelegate = self;
 
     WKPageUIClientV2 uiClient = {
         { 2, self },
@@ -677,6 +682,28 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 - (void)browsingContextController:(WKBrowsingContextController *)browsingContext decidePolicyForResponseAction:(NSDictionary *)actionInformation decisionHandler:(WKPolicyDecisionHandler)decisionHandler
 {
     decisionHandler(WKPolicyDecisionAllow);
+}
+
+#pragma mark WKBrowsingContextHistoryDelegate
+
+- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didNavigateWithNavigationData:(WKNavigationData *)navigationData
+{
+    LOG(@"WKBrowsingContextHistoryDelegate - didNavigateWithNavigationData - title: %@ - url: %@", navigationData.title, navigationData.originalRequest.URL);
+}
+
+- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didPerformClientRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL
+{
+    LOG(@"WKBrowsingContextHistoryDelegate - didPerformClientRedirect - fromURL: %@ - toURL: %@", sourceURL, destinationURL);
+}
+
+- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didPerformServerRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL
+{
+    LOG(@"WKBrowsingContextHistoryDelegate - didPerformServerRedirect - fromURL: %@ - toURL: %@", sourceURL, destinationURL);
+}
+
+- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didUpdateHistoryTitle:(NSString *)title forURL:(NSURL *)URL
+{
+    LOG(@"browsingContextController - didUpdateHistoryTitle - title: %@ - URL: %@", title, URL);
 }
 
 @end

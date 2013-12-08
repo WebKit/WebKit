@@ -29,7 +29,7 @@
 
 @interface WK2BrowserWindowController : BrowserWindowController <BrowserController>
 
-- (id)initWithContext:(WKContextRef)context pageGroup:(WKPageGroupRef)pageGroup;
+- (id)initWithProcessGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
 
 @end
 

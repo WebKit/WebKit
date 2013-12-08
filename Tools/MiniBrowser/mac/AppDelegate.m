@@ -28,7 +28,7 @@
 #import "WK1BrowserWindowController.h"
 #import "WK2BrowserWindowController.h"
 
-#import <WebKit2/WKContextPrivate.h>
+#import <WebKit2/WebKit2.h>
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKURLCF.h>
 
@@ -41,77 +41,12 @@ enum {
 
 @implementation BrowserAppDelegate
 
-// MARK: History Client Callbacks
-
-static void didNavigateWithNavigationData(WKContextRef context, WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo)
-{
-    WKStringRef wkTitle = WKNavigationDataCopyTitle(navigationData);
-    CFStringRef title = WKStringCopyCFString(0, wkTitle);
-    WKRelease(wkTitle);
-
-    WKURLRef wkURL = WKNavigationDataCopyURL(navigationData);
-    CFURLRef url = WKURLCopyCFURL(0, wkURL);
-    WKRelease(wkURL);
-
-    LOG(@"HistoryClient - didNavigateWithNavigationData - title: %@ - url: %@", title, url);
-    CFRelease(title);
-    CFRelease(url);
-}
-
-static void didPerformClientRedirect(WKContextRef context, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
-{
-    CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
-    CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
-    LOG(@"HistoryClient - didPerformClientRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
-    CFRelease(cfSourceURL);
-    CFRelease(cfDestinationURL);
-}
-
-static void didPerformServerRedirect(WKContextRef context, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
-{
-    CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
-    CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
-    LOG(@"HistoryClient - didPerformServerRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
-    CFRelease(cfSourceURL);
-    CFRelease(cfDestinationURL);
-}
-
-static void didUpdateHistoryTitle(WKContextRef context, WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void *clientInfo)
-{
-    CFStringRef cfTitle = WKStringCopyCFString(0, title);
-    CFURLRef cfURL = WKURLCopyCFURL(0, URL);
-    LOG(@"HistoryClient - didUpdateHistoryTitle - title: %@ - URL: %@", cfTitle, cfURL);
-    CFRelease(cfTitle);
-    CFRelease(cfURL);
-}
-
-static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
-{
-    LOG(@"HistoryClient - populateVisitedLinks");
-}
-
 - (id)init
 {
     self = [super init];
     if (self) {
-        WKContextHistoryClientV0 historyClient = {
-            { 0, self },
-            didNavigateWithNavigationData,
-            didPerformClientRedirect,
-            didPerformServerRedirect,
-            didUpdateHistoryTitle,
-            populateVisitedLinks
-        };
-
-        _processContext = WKContextCreate();
-
-        WKContextSetHistoryClient(_processContext, &historyClient.base);
-        WKContextSetCacheModel(_processContext, kWKCacheModelPrimaryWebBrowser);
-
-        WKStringRef pageGroupIdentifier = WKStringCreateWithCFString(CFSTR("MiniBrowser"));
-        _pageGroup = WKPageGroupCreateWithIdentifier(pageGroupIdentifier);
-        WKRelease(pageGroupIdentifier);
-
+        _processGroup = [[WKProcessGroup alloc] init];
+        _browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"MiniBrowser"];
         _browserWindows = [[NSMutableSet alloc] init];
     }
 
@@ -126,7 +61,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         controller = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
 #if WK_API_ENABLED
     else if ([sender tag] == WebKit2NewWindowTag)
-        controller = [[WK2BrowserWindowController alloc] initWithContext:_processContext pageGroup:_pageGroup];
+        controller = [[WK2BrowserWindowController alloc] initWithProcessGroup:_processGroup browsingContextGroup:_browsingContextGroup];
 #endif
 
     if (!controller)
@@ -157,8 +92,11 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         [controller applicationTerminating];
     }
 
-    WKRelease(_processContext);
-    _processContext = 0;
+    [_processGroup release];
+    _processGroup = nil;
+
+    [_browsingContextGroup release];
+    _browsingContextGroup = nil;
 }
 
 - (BrowserWindowController *)frontmostBrowserWindowController
@@ -200,7 +138,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
             return;
 
         // FIXME: add a way to open in WK1 also.
-        BrowserWindowController *newBrowserWindowController = [[WK2BrowserWindowController alloc] initWithContext:_processContext pageGroup:_pageGroup];
+        BrowserWindowController *newBrowserWindowController = [[WK2BrowserWindowController alloc] initWithProcessGroup:_processGroup browsingContextGroup:_browsingContextGroup];
         [newBrowserWindowController.window makeKeyAndOrderFront:self];
 
         NSURL *url = [openPanel.URLs objectAtIndex:0];

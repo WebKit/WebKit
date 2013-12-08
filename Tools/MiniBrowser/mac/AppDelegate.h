@@ -24,8 +24,9 @@
  */
 
 @interface BrowserAppDelegate : NSObject <NSApplicationDelegate> {
-    WKContextRef _processContext;
-    WKPageGroupRef _pageGroup;
+    WKProcessGroup *_processGroup;
+    WKBrowsingContextGroup *_browsingContextGroup;
+
     NSMutableSet *_browserWindows;
 }
 
