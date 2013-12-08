@@ -29,7 +29,7 @@
 
 @interface WKWebProcessPlugInController (Private)
 
-@property(readonly) WKBundleRef _bundleRef;
+@property (readonly) WKBundleRef _bundleRef;
 
 @end
 

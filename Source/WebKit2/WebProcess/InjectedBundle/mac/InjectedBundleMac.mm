@@ -98,24 +98,24 @@ bool InjectedBundle::load(API::Object* initializationUserData)
         return false;
     }
 
-    id<WKWebProcessPlugIn> instance = (id<WKWebProcessPlugIn>)[[principalClass alloc] init];
+    id <WKWebProcessPlugIn> instance = (id <WKWebProcessPlugIn>)[[principalClass alloc] init];
     if (!instance) {
         WTFLogAlways("InjectedBundle::load failed - Could not initialize an instance of the principal class.\n");
         return false;
     }
 
-    // Create the shared WKWebProcessPlugInController.
-    [[WKWebProcessPlugInController alloc] _initWithPrincipalClassInstance:instance bundle:*this];
+    WKWebProcessPlugInController* plugInController = WebKit::wrapper(*this);
+    [plugInController _setPrincipalClassInstance:instance];
 
     if ([instance respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)]) {
         RetainPtr<id> objCInitializationUserData;
         if (initializationUserData && initializationUserData->type() == API::Object::Type::ObjCObjectGraph)
             objCInitializationUserData = static_cast<ObjCObjectGraph*>(initializationUserData)->rootObject();
-        [instance webProcessPlugIn:[WKWebProcessPlugInController _shared] initializeWithObject:objCInitializationUserData.get()];
+        [instance webProcessPlugIn:plugInController initializeWithObject:objCInitializationUserData.get()];
     } else if ([instance respondsToSelector:@selector(webProcessPlugInInitialize:)]) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [instance webProcessPlugInInitialize:[WKWebProcessPlugInController _shared]];
+        [instance webProcessPlugInInitialize:plugInController];
 #pragma clang diagnostic pop
     }
 

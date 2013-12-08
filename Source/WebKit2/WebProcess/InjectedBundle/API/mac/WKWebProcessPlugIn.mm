@@ -28,7 +28,6 @@
 
 #if WK_API_ENABLED
 
-#import "InjectedBundle.h"
 #import "WKConnectionInternal.h"
 #import "WKBundle.h"
 #import "WKBundleAPICast.h"
@@ -39,18 +38,24 @@
 using namespace WebKit;
 
 @interface WKWebProcessPlugInController () {
+    API::ObjectStorage<InjectedBundle> _bundle;
     RetainPtr<id <WKWebProcessPlugIn>> _principalClassInstance;
-    RefPtr<InjectedBundle> _bundle;
-    RetainPtr<WKConnection *> _connectionWrapper;
 }
 @end
 
 @implementation WKWebProcessPlugInController
 
+- (void)dealloc
+{
+    _bundle->~InjectedBundle();
+
+    [super dealloc];
+}
+
 static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
     WKWebProcessPlugInController *plugInController = (WKWebProcessPlugInController *)clientInfo;
-    id<WKWebProcessPlugIn> principalClassInstance = plugInController->_principalClassInstance.get();
+    id <WKWebProcessPlugIn> principalClassInstance = plugInController->_principalClassInstance.get();
 
     if ([principalClassInstance respondsToSelector:@selector(webProcessPlugIn:didCreateBrowserContextController:)])
         [principalClassInstance webProcessPlugIn:plugInController didCreateBrowserContextController:wrapper(*toImpl(page))];
@@ -59,7 +64,7 @@ static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* 
 static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
     WKWebProcessPlugInController *plugInController = (WKWebProcessPlugInController *)clientInfo;
-    id<WKWebProcessPlugIn> principalClassInstance = plugInController->_principalClassInstance.get();
+    id <WKWebProcessPlugIn> principalClassInstance = plugInController->_principalClassInstance.get();
 
     if ([principalClassInstance respondsToSelector:@selector(webProcessPlugIn:willDestroyBrowserContextController:)])
         [principalClassInstance webProcessPlugIn:plugInController willDestroyBrowserContextController:wrapper(*toImpl(page))];
@@ -78,34 +83,24 @@ static void setUpBundleClient(WKWebProcessPlugInController *plugInController, In
     bundle.initializeClient(&bundleClient.base);
 }
 
-static WKWebProcessPlugInController *sharedInstance;
-
-+ (WKWebProcessPlugInController *)_shared
+- (void)_setPrincipalClassInstance:(id <WKWebProcessPlugIn>)principalClassInstance
 {
-    ASSERT_WITH_MESSAGE(sharedInstance, "+[WKWebProcessPlugIn _shared] called without first initializing it.");
-    return sharedInstance;
-}
-
-- (id)_initWithPrincipalClassInstance:(id<WKWebProcessPlugIn>)principalClassInstance bundle:(InjectedBundle&)bundle
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
+    ASSERT(!_principalClassInstance);
     _principalClassInstance = principalClassInstance;
-    _bundle = &bundle;
-
-    ASSERT_WITH_MESSAGE(!sharedInstance, "WKWebProcessPlugInController initialized multiple times.");
-    sharedInstance = self;
 
     setUpBundleClient(self, *_bundle);
-
-    return self;
 }
 
 - (WKConnection *)connection
 {
     return wrapper(*_bundle->webConnectionToUIProcess());
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_bundle;
 }
 
 @end

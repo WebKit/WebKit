@@ -40,7 +40,6 @@
 #import "InjectedBundleUserMessageCoders.h"
 #import "WKBundleAPICast.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
-#import "WKWebProcessPlugInBrowserContextControllerPrivate.h"
 #import "WKWebProcessPlugInInternal.h"
 #import "WebPage.h"
 #import "WebProcess.h"

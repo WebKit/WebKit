@@ -44,6 +44,7 @@
 #import "WKNavigationDataInternal.h"
 #import "WKProcessGroupInternal.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
+#import "WKWebProcessPlugInInternal.h"
 
 namespace API {
 
@@ -80,6 +81,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::BackForwardListItem:
         wrapper = [WKBackForwardListItem alloc];
+        break;
+
+    case Type::Bundle:
+        wrapper = [WKWebProcessPlugInController alloc];
         break;
 
     case Type::BundlePage:
