@@ -1,3 +1,12 @@
+2013-12-08  Brendan Long  <b.long@cablelabs.com>
+
+        [Gtk] install-dependencies doesn't install libgtk-3-dev
+        https://bugs.webkit.org/show_bug.cgi?id=125320
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/install-dependencies: Add libgtk-3-dev, libsoup2.4 and subversion
+
 2013-12-07  Sam Weinig  <sam@webkit.org>
 
         [Cocoa] Convert a few more parts of MiniBrowser over to the Objective-C API

@@ -55,6 +55,7 @@ function installDependenciesWithApt {
         libgl1-mesa-glx \
         libgnutls-dev \
         libgtk2.0-dev \
+        libgtk-3-dev \
         libgudev-1.0-dev \
         libicu-dev \
         libjpeg8-dev \
@@ -65,6 +66,7 @@ function installDependenciesWithApt {
         libpulse-dev \
         librsvg2-dev \
         libsecret-1-dev \
+        libsoup2.4-dev \
         libsqlite3-dev \
         libtheora-dev \
         libtool \
@@ -116,6 +118,10 @@ function installDependenciesWithApt {
         xfonts-utils \
         xtrans-dev \
         xutils-dev
+
+    # These are dependencies necessary for using webkit-patch
+    apt-get install \
+        subversion
 }
 
 function installDependenciesWithYum {
