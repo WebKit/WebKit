@@ -1,5 +1,17 @@
 2013-12-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK gardening.
+
+        Removing the baseline added in r160283. It's not really required, the failure is originating
+        in an unnecessary and wrong patch that's applied on the Freetype source tree that's used in the
+        GTK's Jhbuild setup. That patch will be removed in the near future, but until then the failure
+        of accessibility/press-targers-center-point.html should be handled through an expectation.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/press-targets-center-point-expected.txt: Removed.
+
+2013-12-08  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK gardening. Adding expectations for the current test failures.
         Adding a GTK-specific baseline for a recently introduced a11y test.
 
