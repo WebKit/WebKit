@@ -49,6 +49,8 @@ MockMediaSourcePrivate::MockMediaSourcePrivate(MockMediaPlayerMediaSource* paren
 
 MockMediaSourcePrivate::~MockMediaSourcePrivate()
 {
+    for (auto it = m_sourceBuffers.begin(), end = m_sourceBuffers.end(); it != end; ++it)
+        (*it)->clearMediaSource();
 }
 
 MediaSourcePrivate::AddStatus MockMediaSourcePrivate::addSourceBuffer(const ContentType& contentType, RefPtr<SourceBufferPrivate>& outPrivate)

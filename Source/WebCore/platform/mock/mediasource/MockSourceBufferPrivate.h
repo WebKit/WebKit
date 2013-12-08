@@ -50,6 +50,8 @@ public:
     static RefPtr<MockSourceBufferPrivate> create(MockMediaSourcePrivate*);
     virtual ~MockSourceBufferPrivate();
 
+    void clearMediaSource() { m_mediaSource = nullptr; }
+
     bool hasVideo() const;
     bool hasAudio() const;
 
@@ -77,7 +79,7 @@ private:
     void didReceiveInitializationSegment(const MockInitializationBox&);
     void didReceiveSample(const MockSampleBox&);
 
-    MockMediaSourcePrivate* m_parent;
+    MockMediaSourcePrivate* m_mediaSource;
     SourceBufferPrivateClient* m_client;
 
     Vector<char> m_inputBuffer;

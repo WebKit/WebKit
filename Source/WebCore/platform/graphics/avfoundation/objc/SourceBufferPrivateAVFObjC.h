@@ -59,6 +59,8 @@ public:
     static RefPtr<SourceBufferPrivateAVFObjC> create(MediaSourcePrivateAVFObjC*);
     virtual ~SourceBufferPrivateAVFObjC();
 
+    void clearMediaSource() { m_mediaSource = nullptr; }
+
     // AVStreamDataParser delegate methods
     void didParseStreamDataAsAsset(AVAsset*);
     void didFailToParseStreamDataWithError(NSError*);
@@ -101,7 +103,7 @@ private:
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
     RetainPtr<NSObject> m_delegate;
 
-    MediaSourcePrivateAVFObjC* m_parent;
+    MediaSourcePrivateAVFObjC* m_mediaSource;
     SourceBufferPrivateClient* m_client;
 
     bool m_parsingSucceeded;

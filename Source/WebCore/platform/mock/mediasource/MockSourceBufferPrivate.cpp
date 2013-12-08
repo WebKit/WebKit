@@ -100,7 +100,7 @@ RefPtr<MockSourceBufferPrivate> MockSourceBufferPrivate::create(MockMediaSourceP
 }
 
 MockSourceBufferPrivate::MockSourceBufferPrivate(MockMediaSourcePrivate* parent)
-    : m_parent(parent)
+    : m_mediaSource(parent)
     , m_client(0)
 {
 }
@@ -187,17 +187,19 @@ void MockSourceBufferPrivate::abort()
 
 void MockSourceBufferPrivate::removedFromMediaSource()
 {
-    m_parent->removeSourceBuffer(this);
+    if (m_mediaSource)
+        m_mediaSource->removeSourceBuffer(this);
 }
 
 MediaPlayer::ReadyState MockSourceBufferPrivate::readyState() const
 {
-    return m_parent->player()->readyState();
+    return m_mediaSource ? m_mediaSource->player()->readyState() : MediaPlayer::HaveNothing;
 }
 
 void MockSourceBufferPrivate::setReadyState(MediaPlayer::ReadyState readyState)
 {
-    m_parent->player()->setReadyState(readyState);
+    if (m_mediaSource)
+        m_mediaSource->player()->setReadyState(readyState);
 }
 
 void MockSourceBufferPrivate::evictCodedFrames()
@@ -212,7 +214,8 @@ bool MockSourceBufferPrivate::isFull()
 
 void MockSourceBufferPrivate::setActive(bool isActive)
 {
-    m_parent->sourceBufferPrivateDidChangeActiveState(this, isActive);
+    if (m_mediaSource)
+        m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
 }
 
 bool MockSourceBufferPrivate::hasVideo() const

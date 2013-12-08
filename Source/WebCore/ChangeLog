@@ -1,3 +1,45 @@
+2013-12-04  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Crash when removing MediaSource from HTMLMediaElement.
+        https://bugs.webkit.org/show_bug.cgi?id=125269
+
+        Reviewed by Sam Weinig.
+
+        Fixes the media/media-source/media-source-fastseek.html test when run with MallocScribble enabled.
+
+        It's possible for a SourceBufferPrivateAVFObjC to outlive its MediaSourcePrivateAVFObjC, so
+        make sure to clear the pointer from the former to the latter when the latter is destroyed.
+        That means we now have to check to see if the pointer to the latter is still valid at every
+        call site.
+
+        As a drive-by fix, rename m_parent to m_mediaSource to more accurately reflect what the pointer
+        points to.
+
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::~MediaSourcePrivateAVFObjC): Clear the SourceBuffer's backpointer.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        (WebCore::SourceBufferPrivateAVFObjC::clearMediaSource): 
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC): Rename m_parent -> m_mediaSource.
+        (WebCore::SourceBufferPrivateAVFObjC::append): Check m_mediaSource before calling.
+        (WebCore::SourceBufferPrivateAVFObjC::removedFromMediaSource): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::readyState): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::setReadyState): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::setActive): Ditto.
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::~MockMediaSourcePrivate): Clear the SourceBuffer's backpointer.
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockSourceBufferPrivate::MockSourceBufferPrivate): Rename m_parent -> m_mediaSource.
+        (WebCore::MockSourceBufferPrivate::removedFromMediaSource): Check m_mediaSource before calling.
+        (WebCore::MockSourceBufferPrivate::readyState): Ditto.
+        (WebCore::MockSourceBufferPrivate::setReadyState): Ditto.
+        (WebCore::MockSourceBufferPrivate::setActive): Ditto.
+        * platform/mock/mediasource/MockSourceBufferPrivate.h:
+        (WebCore::MockSourceBufferPrivate::clearMediaSource):
+
 2013-12-07  Zoltan Horvath  <zoltan@webkit.org>
 
         Remove statusWithDirection static function from RenderBlockLineLayout

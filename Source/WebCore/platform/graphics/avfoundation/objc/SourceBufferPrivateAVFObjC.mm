@@ -284,7 +284,7 @@ RefPtr<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourc
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent)
     : m_parser(adoptNS([[getAVStreamDataParserClass() alloc] init]))
     , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:this]))
-    , m_parent(parent)
+    , m_mediaSource(parent)
     , m_client(0)
     , m_parsingSucceeded(true)
 {
@@ -293,7 +293,8 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
 SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
 {
     if (m_displayLayer) {
-        m_parent->player()->removeDisplayLayer(m_displayLayer.get());
+        if (m_mediaSource)
+            m_mediaSource->player()->removeDisplayLayer(m_displayLayer.get());
         [m_displayLayer flushAndRemoveImage];
         [m_displayLayer stopRequestingMediaData];
         m_displayLayer = nullptr;
@@ -386,8 +387,8 @@ SourceBufferPrivate::AppendResult SourceBufferPrivateAVFObjC::append(const unsig
     LOG(Media, "SourceBufferPrivateAVFObjC::append(%p) - data:%p, length:%d", this, data, length);
     [m_parser appendStreamData:[NSData dataWithBytes:data length:length]];
 
-    if (m_parsingSucceeded)
-        m_parent->player()->setLoadingProgresssed(true);
+    if (m_parsingSucceeded && m_mediaSource)
+        m_mediaSource->player()->setLoadingProgresssed(true);
 
     return m_parsingSucceeded ? AppendSucceeded : ParsingFailed;
 }
@@ -400,23 +401,26 @@ void SourceBufferPrivateAVFObjC::abort()
 void SourceBufferPrivateAVFObjC::removedFromMediaSource()
 {
     if (m_displayLayer) {
-        m_parent->player()->removeDisplayLayer(m_displayLayer.get());
+        if (m_mediaSource)
+            m_mediaSource->player()->removeDisplayLayer(m_displayLayer.get());
         [m_displayLayer flush];
         [m_displayLayer stopRequestingMediaData];
         m_displayLayer = nullptr;
     }
 
-    m_parent->removeSourceBuffer(this);
+    if (m_mediaSource)
+        m_mediaSource->removeSourceBuffer(this);
 }
 
 MediaPlayer::ReadyState SourceBufferPrivateAVFObjC::readyState() const
 {
-    return m_parent->player()->readyState();
+    return m_mediaSource ? m_mediaSource->player()->readyState() : MediaPlayer::HaveNothing;
 }
 
 void SourceBufferPrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
 {
-    m_parent->player()->setReadyState(readyState);
+    if (m_mediaSource)
+        m_mediaSource->player()->setReadyState(readyState);
 }
 
 void SourceBufferPrivateAVFObjC::evictCodedFrames()
@@ -453,6 +457,8 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSou
     if (!track->selected() && m_enabledVideoTrackID == trackID) {
         m_enabledVideoTrackID = -1;
         [m_parser setShouldProvideMediaData:NO forTrackID:trackID];
+        if (m_mediaSource)
+            m_mediaSource->player()->removeDisplayLayer(m_displayLayer.get());
     } else if (track->selected()) {
         m_enabledVideoTrackID = trackID;
         [m_parser setShouldProvideMediaData:YES forTrackID:trackID];
@@ -462,7 +468,8 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSou
                 if (m_client)
                     m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(this);
             }];
-            m_parent->player()->addDisplayLayer(m_displayLayer.get());
+            if (m_mediaSource)
+                m_mediaSource->player()->addDisplayLayer(m_displayLayer.get());
         }
     }
 }
@@ -508,7 +515,8 @@ void SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(Vector<RefP
         [m_displayLayer enqueueSampleBuffer:sampleBuffer.get()];
     }
 
-    m_parent->player()->setHasAvailableVideoFrame(false);
+    if (m_mediaSource)
+        m_mediaSource->player()->setHasAvailableVideoFrame(false);
 }
 
 void SourceBufferPrivateAVFObjC::enqueueSample(PassRefPtr<MediaSample> prpMediaSample, AtomicString trackID)
@@ -523,7 +531,8 @@ void SourceBufferPrivateAVFObjC::enqueueSample(PassRefPtr<MediaSample> prpMediaS
         return;
 
     [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-    m_parent->player()->setHasAvailableVideoFrame(true);
+    if (m_mediaSource)
+        m_mediaSource->player()->setHasAvailableVideoFrame(true);
 }
 
 bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples()
@@ -533,7 +542,8 @@ bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples()
 
 void SourceBufferPrivateAVFObjC::setActive(bool isActive)
 {
-    m_parent->sourceBufferPrivateDidChangeActiveState(this, isActive);
+    if (m_mediaSource)
+        m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
 }
 
 MediaTime SourceBufferPrivateAVFObjC::fastSeekTimeForMediaTime(MediaTime time, MediaTime negativeThreshold, MediaTime positiveThreshold)
