@@ -1,3 +1,16 @@
+2013-12-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not generate new dispatch_event methods marked as deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=125416
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipFunction): Skip dispatch_event methods for objects
+        implementing EventTarget interface unless they are already
+        deprecated.
+        (GenerateFunction): Pass also the parentNode to SkipFunction().
+
 2013-12-05  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Bring end-of-stream algorithm section up to current spec.
