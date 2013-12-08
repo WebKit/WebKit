@@ -24,14 +24,23 @@
  */
 
 #import "WKWebProcessPlugInBrowserContextControllerPrivate.h"
-#import "WKBase.h"
 
 #if WK_API_ENABLED
 
-@interface WKWebProcessPlugInBrowserContextController ()
+#import "WKObject.h"
+#import "WebPage.h"
 
-- (id)_initWithBundlePageRef:(WKBundlePageRef)bundlePageRef;
+namespace WebKit {
 
+inline WKWebProcessPlugInBrowserContextController *wrapper(WebPage& page)
+{
+    ASSERT([page.wrapper() isKindOfClass:[WKWebProcessPlugInBrowserContextController class]]);
+    return (WKWebProcessPlugInBrowserContextController *)page.wrapper();
+}
+
+}
+
+@interface WKWebProcessPlugInBrowserContextController () <WKObject>
 @end
 
 #endif // WK_API_ENABLED

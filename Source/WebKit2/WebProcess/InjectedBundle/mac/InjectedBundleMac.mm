@@ -105,7 +105,7 @@ bool InjectedBundle::load(API::Object* initializationUserData)
     }
 
     // Create the shared WKWebProcessPlugInController.
-    [[WKWebProcessPlugInController alloc] _initWithPrincipalClassInstance:instance bundleRef:toAPI(this)];
+    [[WKWebProcessPlugInController alloc] _initWithPrincipalClassInstance:instance bundle:*this];
 
     if ([instance respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)]) {
         RetainPtr<id> objCInitializationUserData;

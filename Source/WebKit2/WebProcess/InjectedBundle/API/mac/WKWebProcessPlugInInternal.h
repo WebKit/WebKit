@@ -27,12 +27,12 @@
 
 #if WK_API_ENABLED
 
+#import "InjectedBundle.h"
+
 @interface WKWebProcessPlugInController ()
 
 + (WKWebProcessPlugInController *)_shared;
-- (id)_initWithPrincipalClassInstance:(id<WKWebProcessPlugIn>)principalClassInstance bundleRef:(WKBundleRef)bundleRef;
-
-- (WKWebProcessPlugInBrowserContextController *)_browserContextControllerForBundlePageRef:(WKBundlePageRef)pageRef;
+- (id)_initWithPrincipalClassInstance:(id<WKWebProcessPlugIn>)principalClassInstance bundle:(WebKit::InjectedBundle&)bundle;
 
 @end
 

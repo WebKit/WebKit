@@ -464,7 +464,7 @@ public:
             if (!webPage)
                 coder.m_root = [NSNull null];
             else 
-                coder.m_root = [[WKWebProcessPlugInController _shared] _browserContextControllerForBundlePageRef:toAPI(webPage)];
+                coder.m_root = wrapper(*webPage);
             break;
         }
         case WKTypeRefWrapperType: {

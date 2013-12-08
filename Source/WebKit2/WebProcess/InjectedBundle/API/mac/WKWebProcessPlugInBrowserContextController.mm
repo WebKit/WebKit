@@ -44,23 +44,19 @@ using namespace WebCore;
 using namespace WebKit;
 
 @implementation WKWebProcessPlugInBrowserContextController {
-    WKRetainPtr<WKBundlePageRef> _bundlePageRef;
+    API::ObjectStorage<WebPage> _page;
 }
 
-- (id)_initWithBundlePageRef:(WKBundlePageRef)bundlePageRef
+- (void)dealloc
 {
-    self = [super init];
-    if (!self)
-        return nil;
+    _page->~WebPage();
 
-    _bundlePageRef = bundlePageRef;
-
-    return self;
+    [super dealloc];
 }
 
 - (WKDOMDocument *)mainFrameDocument
 {
-    WebCore::Frame* webCoreMainFrame = toImpl(_bundlePageRef.get())->mainFrame();
+    Frame* webCoreMainFrame = _page->mainFrame();
     if (!webCoreMainFrame)
         return nil;
 
@@ -69,11 +65,18 @@ using namespace WebKit;
 
 - (WKDOMRange *)selectedRange
 {
-    RefPtr<WebCore::Range> range = toImpl(_bundlePageRef.get())->currentSelectionAsRange();
+    RefPtr<Range> range = _page->currentSelectionAsRange();
     if (!range)
         return nil;
 
     return toWKDOMRange(range.get());
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_page;
 }
 
 @end
@@ -82,12 +85,12 @@ using namespace WebKit;
 
 - (WKBundlePageRef)_bundlePageRef
 {
-    return _bundlePageRef.get();
+    return toAPI(_page.get());
 }
 
 - (WKBrowsingContextHandle *)handle
 {
-    return [[[WKBrowsingContextHandle alloc] _initWithPageID:toImpl(_bundlePageRef.get())->pageID()] autorelease];
+    return [[[WKBrowsingContextHandle alloc] _initWithPageID:_page->pageID()] autorelease];
 }
 
 + (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle
@@ -96,7 +99,7 @@ using namespace WebKit;
     if (!webPage)
         return nil;
 
-    return [[WKWebProcessPlugInController _shared] _browserContextControllerForBundlePageRef:toAPI(webPage)];
+    return wrapper(*webPage);
 }
 
 @end
