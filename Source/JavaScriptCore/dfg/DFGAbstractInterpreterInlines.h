@@ -1148,6 +1148,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
         
     case FunctionReentryWatchpoint:
+    case TypedArrayWatchpoint:
         break;
     
     case CreateArguments:

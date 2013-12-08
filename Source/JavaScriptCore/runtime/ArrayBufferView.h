@@ -79,6 +79,8 @@ public:
 
     // Helper to verify that a given sub-range of an ArrayBuffer is
     // within range.
+    // FIXME: This should distinguish between alignment errors and bounds errors.
+    // https://bugs.webkit.org/show_bug.cgi?id=125391
     template <typename T>
     static bool verifySubRange(
         PassRefPtr<ArrayBuffer> buffer,

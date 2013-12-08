@@ -1,0 +1,132 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "DFGStrengthReductionPhase.h"
+
+#if ENABLE(DFG_JIT)
+
+#include "DFGGraph.h"
+#include "DFGInsertionSet.h"
+#include "DFGPhase.h"
+#include "DFGPredictionPropagationPhase.h"
+#include "DFGVariableAccessDataDump.h"
+#include "Operations.h"
+
+namespace JSC { namespace DFG {
+
+class StrengthReductionPhase : public Phase {
+public:
+    StrengthReductionPhase(Graph& graph)
+        : Phase(graph, "strength reduction")
+        , m_insertionSet(graph)
+    {
+    }
+    
+    bool run()
+    {
+        ASSERT(m_graph.m_fixpointState == FixpointNotConverged);
+        
+        m_changed = false;
+        
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            m_block = m_graph.block(blockIndex);
+            if (!m_block)
+                continue;
+            for (m_nodeIndex = 0; m_nodeIndex < m_block->size(); ++m_nodeIndex) {
+                m_node = m_block->at(m_nodeIndex);
+                handleNode();
+            }
+            m_insertionSet.execute(m_block);
+        }
+        
+        return m_changed;
+    }
+
+private:
+    void handleNode()
+    {
+        switch (m_node->op()) {
+        case BitOr:
+            // Optimize X|0 -> X.
+            if (m_node->child2()->isConstant()) {
+                JSValue C2 = m_graph.valueOfJSConstant(m_node->child2().node());
+                if (C2.isInt32() && !C2.asInt32()) {
+                    m_insertionSet.insertNode(
+                        m_nodeIndex, SpecNone, Phantom, m_node->codeOrigin,
+                        m_node->child2());
+                    m_node->children.removeEdge(1);
+                    m_node->convertToIdentity();
+                    m_changed = true;
+                    break;
+                }
+            }
+            break;
+            
+        case GetArrayLength:
+            if (JSArrayBufferView* view = m_graph.tryGetFoldableViewForChild1(m_node))
+                foldTypedArrayPropertyToConstant(view, jsNumber(view->length()));
+            break;
+            
+        case GetTypedArrayByteOffset:
+            if (JSArrayBufferView* view = m_graph.tryGetFoldableView(m_node->child1().node()))
+                foldTypedArrayPropertyToConstant(view, jsNumber(view->byteOffset()));
+            break;
+            
+        // FIXME: The constant-folding of GetIndexedPropertyStorage should be expressed
+        // as an IR transformation in this phase.
+        // https://bugs.webkit.org/show_bug.cgi?id=125395
+            
+        default:
+            break;
+        }
+    }
+    
+    void foldTypedArrayPropertyToConstant(JSArrayBufferView* view, JSValue constant)
+    {
+        m_insertionSet.insertNode(
+            m_nodeIndex, SpecNone, TypedArrayWatchpoint, m_node->codeOrigin,
+            OpInfo(view));
+        m_graph.convertToConstant(m_node, constant);
+        m_changed = true;
+    }
+    
+    InsertionSet m_insertionSet;
+    BasicBlock* m_block;
+    unsigned m_nodeIndex;
+    Node* m_node;
+    bool m_changed;
+};
+    
+bool performStrengthReduction(Graph& graph)
+{
+    SamplingRegion samplingRegion("DFG Strength Reduction Phase");
+    return runPhase<StrengthReductionPhase>(graph);
+}
+
+} } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
+

@@ -740,10 +740,8 @@ WriteBarrierBase<Unknown>* Graph::tryGetRegisters(Node* node)
     return activation->registers();
 }
 
-JSArrayBufferView* Graph::tryGetFoldableView(Node* node, ArrayMode arrayMode)
+JSArrayBufferView* Graph::tryGetFoldableView(Node* node)
 {
-    if (arrayMode.typedArrayType() == NotTypedArray)
-        return 0;
     if (!node->hasConstant())
         return 0;
     JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(valueOfJSConstant(node));
@@ -752,6 +750,18 @@ JSArrayBufferView* Graph::tryGetFoldableView(Node* node, ArrayMode arrayMode)
     if (!watchpoints().isStillValid(view))
         return 0;
     return view;
+}
+
+JSArrayBufferView* Graph::tryGetFoldableView(Node* node, ArrayMode arrayMode)
+{
+    if (arrayMode.typedArrayType() == NotTypedArray)
+        return 0;
+    return tryGetFoldableView(node);
+}
+
+JSArrayBufferView* Graph::tryGetFoldableViewForChild1(Node* node)
+{
+    return tryGetFoldableView(child(node, 0).node(), node->arrayMode());
 }
 
 } } // namespace JSC::DFG

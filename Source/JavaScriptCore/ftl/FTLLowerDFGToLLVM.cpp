@@ -266,11 +266,6 @@ private:
         case Phantom:
             compilePhantom();
             break;
-        case Flush:
-        case PhantomLocal:
-        case SetArgument:
-        case LoopHint:
-            break;
         case ArithAdd:
         case ValueAdd:
             compileAddSub();
@@ -398,10 +393,6 @@ private:
         case NotifyWrite:
             compileNotifyWrite();
             break;
-        case VariableWatchpoint:
-            break;
-        case FunctionReentryWatchpoint:
-            break;
         case GetMyScope:
             compileGetMyScope();
             break;
@@ -471,6 +462,14 @@ private:
             break;
         case Int52ToValue:
             compileInt52ToValue();
+            break;
+        case Flush:
+        case PhantomLocal:
+        case SetArgument:
+        case LoopHint:
+        case VariableWatchpoint:
+        case FunctionReentryWatchpoint:
+        case TypedArrayWatchpoint:
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1424,7 +1423,7 @@ private:
             return;
         }
         
-        if (JSArrayBufferView* view = m_graph.tryGetFoldableView(m_node->child1().node(), m_node->arrayMode())) {
+        if (JSArrayBufferView* view = m_graph.tryGetFoldableView(m_node)) {
             if (view->mode() != FastTypedArray) {
                 setStorage(m_out.constIntPtr(view->vector()));
                 return;
@@ -1797,7 +1796,7 @@ private:
                         OutOfBounds, noValue(), 0,
                         m_out.aboveOrEqual(
                             index,
-                            typedArrayLength(child1.node(), m_node->arrayMode(), base)));
+                            typedArrayLength(child1, m_node->arrayMode(), base)));
                 }
                 
                 TypedPointer pointer = TypedPointer(
@@ -2943,16 +2942,16 @@ private:
             m_out.phi(m_out.intPtr, fastButterfly, slowButterfly));
     }
     
-    LValue typedArrayLength(Node* baseNode, ArrayMode arrayMode, LValue base)
+    LValue typedArrayLength(Edge baseEdge, ArrayMode arrayMode, LValue base)
     {
-        if (JSArrayBufferView* view = m_graph.tryGetFoldableView(baseNode, arrayMode))
+        if (JSArrayBufferView* view = m_graph.tryGetFoldableView(baseEdge.node(), arrayMode))
             return m_out.constInt32(view->length());
         return m_out.load32(base, m_heaps.JSArrayBufferView_length);
     }
     
     LValue typedArrayLength(Edge baseEdge, ArrayMode arrayMode)
     {
-        return typedArrayLength(baseEdge.node(), arrayMode, lowCell(baseEdge));
+        return typedArrayLength(baseEdge, arrayMode, lowCell(baseEdge));
     }
     
     LValue boolify(Edge edge)

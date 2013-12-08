@@ -244,6 +244,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case InvalidationPoint:
     case NotifyWrite:
     case FunctionReentryWatchpoint:
+    case TypedArrayWatchpoint:
         return true;
         
     case GetByVal:

@@ -144,7 +144,9 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         return;
         
     case VariableWatchpoint:
+    case TypedArrayWatchpoint:
         read(Watchpoint_fire);
+        write(SideState);
         return;
         
     case NotifyWrite:

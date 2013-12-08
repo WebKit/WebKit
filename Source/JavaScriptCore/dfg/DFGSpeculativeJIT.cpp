@@ -2329,7 +2329,7 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRRe
 {
     if (node->op() == PutByValAlias)
         return JITCompiler::Jump();
-    if (JSArrayBufferView* view = m_jit.graph().tryGetFoldableView(m_jit.graph().child(node, 0).node(), node->arrayMode())) {
+    if (JSArrayBufferView* view = m_jit.graph().tryGetFoldableViewForChild1(node)) {
         uint32_t length = view->length();
         Node* indexNode = m_jit.graph().child(node, 1).node();
         if (m_jit.graph().isInt32Constant(indexNode) && static_cast<uint32_t>(m_jit.graph().valueOfInt32Constant(indexNode)) < length)
@@ -4044,8 +4044,7 @@ void SpeculativeJIT::compileStringZeroLength(Node* node)
 
 bool SpeculativeJIT::compileConstantIndexedPropertyStorage(Node* node)
 {
-    JSArrayBufferView* view = m_jit.graph().tryGetFoldableView(
-        node->child1().node(), node->arrayMode());
+    JSArrayBufferView* view = m_jit.graph().tryGetFoldableViewForChild1(node);
     if (!view)
         return false;
     if (view->mode() == FastTypedArray)

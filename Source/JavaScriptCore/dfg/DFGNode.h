@@ -972,6 +972,16 @@ struct Node {
     {
         return reinterpret_cast<VariableWatchpointSet*>(m_opInfo);
     }
+    
+    bool hasTypedArray()
+    {
+        return op() == TypedArrayWatchpoint;
+    }
+    
+    JSArrayBufferView* typedArray()
+    {
+        return reinterpret_cast<JSArrayBufferView*>(m_opInfo);
+    }
 
     bool hasStructureTransitionData()
     {

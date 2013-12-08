@@ -33,6 +33,7 @@
 #include "InitializeThreading.h"
 #include "Interpreter.h"
 #include "JSArray.h"
+#include "JSArrayBuffer.h"
 #include "JSFunction.h"
 #include "JSLock.h"
 #include "JSProxy.h"
@@ -114,6 +115,7 @@ static EncodedJSValue JSC_HOST_CALL functionReadline(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPreciseTime(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionNeverInlineFunction(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState*);
 static NO_RETURN_WITH_VALUE EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
@@ -235,6 +237,7 @@ protected:
         addFunction(vm, "neverInlineFunction", functionNeverInlineFunction, 1);
         addFunction(vm, "noInline", functionNeverInlineFunction, 1);
         addFunction(vm, "numberOfDFGCompiles", functionNumberOfDFGCompiles, 1);
+        addFunction(vm, "transferArrayBuffer", functionTransferArrayBuffer, 1);
 #if ENABLE(SAMPLING_FLAGS)
         addFunction(vm, "setSamplingFlags", functionSetSamplingFlags, 1);
         addFunction(vm, "clearSamplingFlags", functionClearSamplingFlags, 1);
@@ -503,6 +506,21 @@ EncodedJSValue JSC_HOST_CALL functionNeverInlineFunction(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState* exec)
 {
     return JSValue::encode(numberOfDFGCompiles(exec));
+}
+
+EncodedJSValue JSC_HOST_CALL functionTransferArrayBuffer(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Not enough arguments")));
+    
+    JSArrayBuffer* buffer = jsDynamicCast<JSArrayBuffer*>(exec->argument(0));
+    if (!buffer)
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Expected an array buffer")));
+    
+    ArrayBufferContents dummyContents;
+    buffer->impl()->transfer(dummyContents);
+    
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)

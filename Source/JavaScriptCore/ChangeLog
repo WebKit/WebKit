@@ -1,3 +1,90 @@
+2013-12-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Fold typedArray.length if typedArray is constant
+        https://bugs.webkit.org/show_bug.cgi?id=125252
+
+        Reviewed by Sam Weinig.
+        
+        This was meant to be easy. The problem is that there was no good place for putting
+        the folding of typedArray.length to a constant. You can't quite do it in the
+        bytecode parser because at that point you don't yet know if typedArray is really
+        a typed array. You can't do it as part of constant folding because the folder
+        assumes that it can opportunistically forward-flow a constant value without changing
+        the IR; this doesn't work since we need to first change the IR to register a
+        desired watchpoint and only after that can we introduce that constant. We could have
+        done it in Fixup but that would have been awkward since Fixup's code for turning a
+        GetById of "length" into GetArrayLength is already somewhat complex. We could have
+        done it in CSE but CSE is already fairly gnarly and will probably get rewritten.
+        
+        So I introduced a new phase, called StrengthReduction. This phase should have any
+        transformations that don't requite CFA or CSE and that it would be weird to put into
+        those other phases.
+        
+        I also took the opportunity to refactor some of the other folding code.
+        
+        This also adds a test, but the test couldn't quite be a LayoutTests/js/regress so I
+        introduced the notion of JavaScriptCore/tests/stress.
+        
+        The goal of this patch isn't really to improve performance or anything like that.
+        It adds an optimization for completeness, and in doing so it unlocks a bunch of new
+        possibilities. The one that I'm most excited about is revealing array length checks
+        in DFG IR, which will allow for array bounds check hoisting and elimination.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::tryGetFoldableView):
+        (JSC::DFG::Graph::tryGetFoldableViewForChild1):
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasTypedArray):
+        (JSC::DFG::Node::typedArray):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpForTypedArrayOutOfBounds):
+        (JSC::DFG::SpeculativeJIT::compileConstantIndexedPropertyStorage):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp: Added.
+        (JSC::DFG::StrengthReductionPhase::StrengthReductionPhase):
+        (JSC::DFG::StrengthReductionPhase::run):
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        (JSC::DFG::StrengthReductionPhase::foldTypedArrayPropertyToConstant):
+        (JSC::DFG::performStrengthReduction):
+        * dfg/DFGStrengthReductionPhase.h: Added.
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetIndexedPropertyStorage):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::LowerDFGToLLVM::typedArrayLength):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionTransferArrayBuffer):
+        * runtime/ArrayBufferView.h:
+        * tests/stress: Added.
+        * tests/stress/fold-typed-array-properties.js: Added.
+        (foo):
+
 2013-12-07  peavo@outlook.com  <peavo@outlook.com>
 
         [Win][64-bit] Hitting breakpoint assembler instruction in callToJavaScript.

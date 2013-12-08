@@ -53,6 +53,7 @@
 #include "DFGResurrectionForValidationPhase.h"
 #include "DFGSSAConversionPhase.h"
 #include "DFGStackLayoutPhase.h"
+#include "DFGStrengthReductionPhase.h"
 #include "DFGTierUpCheckInjectionPhase.h"
 #include "DFGTypeCheckHoistingPhase.h"
 #include "DFGUnificationPhase.h"
@@ -203,6 +204,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         if (validationEnabled())
             validate(dfg);
         
+        changed |= performStrengthReduction(dfg);
         performCFA(dfg);
         changed |= performConstantFolding(dfg);
         changed |= performArgumentsSimplification(dfg);
