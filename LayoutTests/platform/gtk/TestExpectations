@@ -293,11 +293,12 @@ webkit.org/b/99065 http/tests/media/media-source/video-media-source-sourcebuffer
 webkit.org/b/99065 http/tests/media/media-source/video-media-source-state-changes.html [ Timeout ]
 webkit.org/b/99065 http/tests/media/media-source/video-media-source-zero-byte-append-in-ended-state.html [ Timeout ]
 
-webkit.org/b/99065  media/media-source/media-source-track-enabled.html [ Failure ]
-webkit.org/b/99065  media/media-source/media-source-tracks.html [ Failure ]
-webkit.org/b/99065  media/media-source/media-source-append-failed.html [ Timeout ]
-webkit.org/b/99065  media/media-source/media-source-canplaythrough.html [ Timeout ]
-webkit.org/b/99065  media/media-source/media-source-play.html [ Timeout ]
+webkit.org/b/99065 media/media-source/media-source-track-enabled.html [ Failure ]
+webkit.org/b/99065 media/media-source/media-source-tracks.html [ Failure ]
+webkit.org/b/99065 media/media-source/media-source-append-failed.html [ Timeout ]
+webkit.org/b/99065 media/media-source/media-source-canplaythrough.html [ Timeout ]
+webkit.org/b/99065 media/media-source/media-source-play.html [ Timeout ]
+webkit.org/b/99065 media/media-source/media-source-end-of-stream.html [ Timeout ]
 
 # Encrypted Media Extensions are not enabled.
 webkit.org/b/99024 media/encrypted-media [ Failure Timeout ]
@@ -754,6 +755,8 @@ webkit.org/b/124511 media/video-played-reset.html [ Failure Pass ]
 webkit.org/b/124512 media/video-seek-with-negative-playback.html [ Failure Pass ]
 
 webkit.org/b/124513 media/video-ended-event-negative-playback.html [ Failure Pass ]
+
+webkit.org/b/125407 plugins/plugin-clip-subframe.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1513,6 +1516,8 @@ webkit.org/b/124835 fast/repaint/repaint-regions-overflow.html [ Failure ]
 webkit.org/b/125071 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ ImageOnlyFailure ]
 
 webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]
+
+webkit.org/b/125406 fast/regions/relative-in-absolute-borders-overflow.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

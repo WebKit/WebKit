@@ -1,3 +1,11 @@
+2013-12-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Adding expectations for the current test failures.
+        Adding a GTK-specific baseline for a recently introduced a11y test.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/press-targets-center-point-expected.txt: Added.
+
 2013-12-05  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Bring end-of-stream algorithm section up to current spec.
