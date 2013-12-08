@@ -115,10 +115,9 @@ class WTFAtomicStringPrinter(StringPrinter):
 class WTFCStringPrinter(StringPrinter):
     "Print a WTF::CString"
     def to_string(self):
-        # The CString holds a buffer, which is a refptr to a WTF::CStringBuffer.
-        data = self.val['m_buffer']['m_ptr']['m_data'].cast(gdb.lookup_type('char').pointer())
+        string = (self.val['m_buffer']['m_ptr'] + 1).cast(gdb.lookup_type('char').pointer())
         length = self.val['m_buffer']['m_ptr']['m_length']
-        return ''.join([chr((data + i).dereference()) for i in range(length)])
+        return lstring_to_string(string, length)
 
 
 class WTFStringImplPrinter(StringPrinter):
@@ -164,7 +163,7 @@ class JSCJSStringPrinter(StringPrinter):
         if self.val['m_length'] == 0:
             return ''
 
-        return WTFStringImplPrinter(self.val['m_value']).to_string()
+        return WTFStringPrinter(self.val['m_value']).to_string()
 
 
 class WebCoreQualifiedNamePrinter(StringPrinter):
