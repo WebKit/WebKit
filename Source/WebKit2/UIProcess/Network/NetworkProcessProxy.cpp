@@ -33,10 +33,13 @@
 #include "DownloadProxyMessages.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
-#include "SecItemShimProxy.h"
 #include "WebContext.h"
 #include "WebProcessMessages.h"
 #include <wtf/RunLoop.h>
+
+#if ENABLE(SEC_ITEM_SHIM)
+#include "SecItemShimProxy.h"
+#endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
 

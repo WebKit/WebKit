@@ -39,7 +39,6 @@
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoader.h"
 #include "RemoteNetworkingContext.h"
-#include "SecItemShim.h"
 #include "StatisticsData.h"
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
@@ -47,6 +46,10 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
+
+#if ENABLE(SEC_ITEM_SHIM)
+#include "SecItemShim.h"
+#endif
 
 using namespace WebCore;
 
