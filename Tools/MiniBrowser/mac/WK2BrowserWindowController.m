@@ -33,7 +33,6 @@
 #import <WebKit2/WKBrowsingContextLoadDelegatePrivate.h>
 #import <WebKit2/WKBrowsingContextPolicyDelegate.h>
 #import <WebKit2/WKNavigationData.h>
-#import <WebKit2/WKPagePrivate.h>
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKURLCF.h>
 #import <WebKit2/WKViewPrivate.h>
@@ -79,15 +78,7 @@
 {
     [urlText setStringValue:[self addProtocolIfNecessary:[urlText stringValue]]];
 
-    CFURLRef cfURL = CFURLCreateWithString(0, (CFStringRef)[urlText stringValue], 0);
-    if (!cfURL)
-        return;
-
-    WKURLRef url = WKURLCreateWithCFURL(cfURL);
-    CFRelease(cfURL);
-
-    WKPageLoadURL(_webView.pageRef, url);
-    WKRelease(url);
+    [_webView.browsingContextController loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[urlText stringValue]]]];
 }
 
 - (IBAction)showHideWebView:(id)sender
@@ -135,7 +126,7 @@
 
 - (IBAction)reload:(id)sender
 {
-    WKPageReload(_webView.pageRef);
+    [_webView.browsingContextController reload];
 }
 
 - (IBAction)forceRepaint:(id)sender
@@ -145,12 +136,12 @@
 
 - (IBAction)goBack:(id)sender
 {
-    WKPageGoBack(_webView.pageRef);
+    [_webView.browsingContextController goBack];
 }
 
 - (IBAction)goForward:(id)sender
 {
-    WKPageGoForward(_webView.pageRef);
+    [_webView.browsingContextController goForward];
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -158,10 +149,10 @@
     SEL action = [item action];
 
     if (action == @selector(goBack:))
-        return _webView && WKPageCanGoBack(_webView.pageRef);
+        return _webView && [_webView.browsingContextController canGoBack];
     
     if (action == @selector(goForward:))
-        return _webView && WKPageCanGoForward(_webView.pageRef);
+        return _webView && [_webView.browsingContextController canGoForward];
     
     return YES;
 }
@@ -194,14 +185,17 @@
 #define DefaultMaximumZoomFactor (3.0)
 #define DefaultZoomFactorRatio (1.2)
 
-- (double)currentZoomFactor
+- (CGFloat)currentZoomFactor
 {
-    return _zoomTextOnly ? WKPageGetTextZoomFactor(_webView.pageRef) : WKPageGetPageZoomFactor(_webView.pageRef);
+    return _zoomTextOnly ? _webView.browsingContextController.textZoom : _webView.browsingContextController.pageZoom;
 }
 
-- (void)setCurrentZoomFactor:(double)factor
+- (void)setCurrentZoomFactor:(CGFloat)factor
 {
-    _zoomTextOnly ? WKPageSetTextZoomFactor(_webView.pageRef, factor) : WKPageSetPageZoomFactor(_webView.pageRef, factor);
+    if (_zoomTextOnly)
+        _webView.browsingContextController.textZoom = factor;
+    else
+        _webView.browsingContextController.pageZoom = factor;
 }
 
 - (BOOL)canZoomIn
@@ -214,7 +208,7 @@
     if (![self canZoomIn])
         return;
 
-    double factor = [self currentZoomFactor] * DefaultZoomFactorRatio;
+    CGFloat factor = [self currentZoomFactor] * DefaultZoomFactorRatio;
     [self setCurrentZoomFactor:factor];
 }
 
@@ -228,13 +222,13 @@
     if (![self canZoomIn])
         return;
 
-    double factor = [self currentZoomFactor] / DefaultZoomFactorRatio;
+    CGFloat factor = [self currentZoomFactor] / DefaultZoomFactorRatio;
     [self setCurrentZoomFactor:factor];
 }
 
 - (BOOL)canResetZoom
 {
-    return _zoomTextOnly ? (WKPageGetTextZoomFactor(_webView.pageRef) != 1) : (WKPageGetPageZoomFactor(_webView.pageRef) != 1);
+    return _zoomTextOnly ? (_webView.browsingContextController.textZoom != 1) : (_webView.browsingContextController.pageZoom != 1);
 }
 
 - (void)resetZoom:(id)sender
@@ -243,20 +237,20 @@
         return;
 
     if (_zoomTextOnly)
-        WKPageSetTextZoomFactor(_webView.pageRef, 1);
+        _webView.browsingContextController.textZoom = 1;
     else
-        WKPageSetPageZoomFactor(_webView.pageRef, 1);
+        _webView.browsingContextController.pageZoom = 1;
 }
 
 - (IBAction)toggleZoomMode:(id)sender
 {
     if (_zoomTextOnly) {
         _zoomTextOnly = NO;
-        double currentTextZoom = WKPageGetTextZoomFactor(_webView.pageRef);
+        double currentTextZoom = _webView.browsingContextController.textZoom;
         WKPageSetPageAndTextZoomFactors(_webView.pageRef, currentTextZoom, 1);
     } else {
         _zoomTextOnly = YES;
-        double currentPageZoom = WKPageGetPageZoomFactor(_webView.pageRef);
+        double currentPageZoom = _webView.browsingContextController.pageZoom;
         WKPageSetPageAndTextZoomFactors(_webView.pageRef, 1, currentPageZoom);
     }
 }
@@ -576,7 +570,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     if (!URL.absoluteString.length)
         return;
 
-    urlText.stringValue = (NSString *)CFURLGetString((CFURLRef)URL);
+    urlText.stringValue = [URL absoluteString];
 }
 
 - (void)updateProvisionalURL

@@ -1,5 +1,27 @@
 2013-12-07  Sam Weinig  <sam@webkit.org>
 
+        [Cocoa] Convert a few more parts of MiniBrowser over to the Objective-C API
+        https://bugs.webkit.org/show_bug.cgi?id=125401
+
+        Reviewed by Dan Bernstein.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController fetch:]):
+        (-[WK2BrowserWindowController reload:]):
+        (-[WK2BrowserWindowController goBack:]):
+        (-[WK2BrowserWindowController goForward:]):
+        (-[WK2BrowserWindowController validateUserInterfaceItem:]):
+        (-[WK2BrowserWindowController currentZoomFactor]):
+        (-[WK2BrowserWindowController setCurrentZoomFactor:]):
+        (-[WK2BrowserWindowController zoomIn:]):
+        (-[WK2BrowserWindowController zoomOut:]):
+        (-[WK2BrowserWindowController canResetZoom]):
+        (-[WK2BrowserWindowController resetZoom:]):
+        (-[WK2BrowserWindowController toggleZoomMode:]):
+        (-[WK2BrowserWindowController updateTextFieldFromURL:]):
+
+2013-12-07  Sam Weinig  <sam@webkit.org>
+
         Convert MiniBrowser to use WKProcessGroup and WKBrowsingContextGroup
         https://bugs.webkit.org/show_bug.cgi?id=125400
 
