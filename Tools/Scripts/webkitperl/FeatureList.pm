@@ -111,6 +111,7 @@ my (
     $mouseCursorScaleSupport,
     $netscapePluginAPISupport,
     $networkInfoSupport,
+    $networkProcessSupport,
     $nosniffSupport,
     $notificationsSupport,
     $orientationEventsSupport,
@@ -484,6 +485,9 @@ my @features = (
 
     { option => "cloop", desc => "Force use of the llint c loop",
       define => "ENABLE_LLINT_C_LOOP", default => 0, value => \$forceCLoop },
+
+    { option => "network-process", desc => "Toggle Network Process support",
+      define => "ENABLE_NETWORK_PROCESS", default => 0, value => \$networkProcessSupport },
 );
 
 sub getFeatureOptionList()
