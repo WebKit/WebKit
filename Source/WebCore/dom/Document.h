@@ -1188,6 +1188,8 @@ protected:
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 
+    virtual PassRefPtr<Document> cloneDocumentWithoutChildren() const;
+
 private:
     friend class Node;
     friend class IgnoreDestructiveWriteCountIncrementer;
@@ -1214,6 +1216,7 @@ private:
     virtual NodeType nodeType() const OVERRIDE;
     virtual bool childTypeAllowed(NodeType) const OVERRIDE;
     virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
+    void cloneDataFromDocument(const Document&);
 
     virtual void refScriptExecutionContext() OVERRIDE { ref(); }
     virtual void derefScriptExecutionContext() OVERRIDE { deref(); }

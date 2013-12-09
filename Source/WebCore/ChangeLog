@@ -1,3 +1,31 @@
+2013-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Implement Document.cloneNode()
+        https://bugs.webkit.org/show_bug.cgi?id=11646
+
+        Reviewed by Darin Adler.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/dc7879025e01d63be9fcf6a84ca6c9b8b5768a80
+
+        Implement the behavior specified in the current DOM4 working draft:
+        http://www.w3.org/TR/2013/WD-dom-20131107/#dom-node-clonenode
+
+        Tests: fast/dom/Document/clone-node.html
+               fast/dom/HTMLDocument/clone-node-quirks-mode.html
+               svg/custom/clone-node.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::cloneNode):
+        (WebCore::Document::cloneDocumentWithoutChildren):
+        (WebCore::Document::cloneDataFromDocument):
+        * dom/Document.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::cloneDocumentWithoutChildren):
+        * html/HTMLDocument.h:
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::cloneDocumentWithoutChildren):
+        * svg/SVGDocument.h:
+
 2013-12-09  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r160260): Memory pressure signal causes web process to hang.

@@ -1,3 +1,23 @@
+2013-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Implement Document.cloneNode()
+        https://bugs.webkit.org/show_bug.cgi?id=11646
+
+        Reviewed by Darin Adler.
+
+        * dom/xhtml/level3/core/documentgetinputencoding04-expected.txt:
+        * dom/xhtml/level3/core/documentgetxmlencoding05-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode01-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode21-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode25-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode26-expected.txt:
+        * fast/dom/Document/clone-node-expected.txt: Added.
+        * fast/dom/Document/clone-node.html: Added.
+        * fast/dom/HTMLDocument/clone-node-quirks-mode-expected.txt: Added.
+        * fast/dom/HTMLDocument/clone-node-quirks-mode.html: Added.
+        * svg/custom/clone-node-expected.txt: Added.
+        * svg/custom/clone-node.html: Added.
+
 2013-12-09  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Translate ATK_ROLE_SECTION into "AXSection" in DRT/WKTR

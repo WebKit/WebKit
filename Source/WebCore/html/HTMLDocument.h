@@ -88,6 +88,8 @@ private:
     virtual bool isFrameSet() const;
     virtual PassRefPtr<DocumentParser> createParser();
 
+    virtual PassRefPtr<Document> cloneDocumentWithoutChildren() const OVERRIDE FINAL;
+
     DocumentOrderedMap m_documentNamedItem;
     DocumentOrderedMap m_windowNamedItem;
 };

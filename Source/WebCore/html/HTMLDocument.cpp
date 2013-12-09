@@ -365,4 +365,9 @@ bool HTMLDocument::isFrameSet() const
     return bodyElement && isHTMLFrameSetElement(bodyElement);
 }
 
+PassRefPtr<Document> HTMLDocument::cloneDocumentWithoutChildren() const
+{
+    return create(nullptr, url());
+}
+
 }

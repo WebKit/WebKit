@@ -53,6 +53,8 @@ private:
 
     virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
 
+    virtual PassRefPtr<Document> cloneDocumentWithoutChildren() const OVERRIDE;
+
     FloatPoint m_translate;
 };
 
