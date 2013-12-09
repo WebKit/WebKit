@@ -85,11 +85,17 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
     if (element->isDisabledFormControl() || !element->form())
         return;
     element->setActivatedSubmit(true);
-    if (event->underlyingEvent() && event->underlyingEvent()->isMouseEvent()) {
-        MouseEvent* mouseEvent = static_cast<MouseEvent*>(event->underlyingEvent());
-        m_clickLocation = IntPoint(mouseEvent->offsetX(), mouseEvent->offsetY());
-    } else
-        m_clickLocation = IntPoint();
+
+    m_clickLocation = IntPoint();
+    if (event->underlyingEvent()) {
+        Event& underlyingEvent = *event->underlyingEvent();
+        if (underlyingEvent.isMouseEvent()) {
+            MouseEvent& mouseEvent = toMouseEvent(underlyingEvent);
+            if (!mouseEvent.isSimulated())
+                m_clickLocation = IntPoint(mouseEvent.offsetX(), mouseEvent.offsetY());
+        }
+    }
+
     element->form()->prepareForSubmission(event); // Event handlers can run.
     element->setActivatedSubmit(false);
     event->setDefaultHandled();

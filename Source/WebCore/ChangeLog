@@ -1,3 +1,23 @@
+2013-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r136280): input[type=image] should assume coords of 0,0 when activated without physically clicking
+        https://bugs.webkit.org/show_bug.cgi?id=125392
+
+        Reviewed by Darin Adler.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/3c33d42207cd209bb171083ba66c225f694f2101
+
+        Activating an image button with the keyboard or element.click() should result in selected coords of (0,0) per
+        http://www.w3.org/TR/2013/CR-html5-20130806/forms.html#image-button-state-(type=image)
+        "If the user activates the control without explicitly selecting a coordinate, then the coordinate (0,0) must be assumed."
+
+        New behavior also matches that of Internet Explorer and Firefox.
+
+        Tests: fast/forms/input-image-submit.html
+
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::handleDOMActivateEvent): Set m_clickLocation to (0, 0) for simulated events.
+
 2013-12-09  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Add support for VideoPlaybackMetrics.

@@ -1,3 +1,14 @@
+2013-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r136280): input[type=image] should assume coords of 0,0 when activated without physically clicking
+        https://bugs.webkit.org/show_bug.cgi?id=125392
+
+        Reviewed by Darin Adler.
+
+        * fast/events/stopPropagation-submit-expected.txt:
+        * fast/forms/input-image-submit.html:
+        * platform/gtk/fast/events/stopPropagation-submit-expected.txt: Removed.
+
 2013-12-09  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Add support for VideoPlaybackMetrics.

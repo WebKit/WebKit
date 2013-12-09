@@ -60,13 +60,37 @@ function startTests() {
     var query = window.location.search;
 
     if (query.indexOf('state=') == -1) {
-        // Step 1: Normal submission with type=image
+        // Step 1a: Normal submission by mouse click with type=image
         state.value = 'normal';
         image.dispatchEvent(clickEvent);
     } else if (query.indexOf('state=normal') != -1) {
         // Should have image.x=7&image.y=11&image=value.
         if (query.indexOf('image.x=7&image.y=11&image=value') == -1) {
             failAndDone('Normal submission failed: ' + query);
+            return;
+        }
+
+        // Step 1b: Submission by element.click() method with type=image
+        state.value = 'click-method';
+        image.click();
+    } else if (query.indexOf('state=click-method') != -1) {
+        if (query.indexOf('image.x=0&image.y=0&image=value') == -1) {
+            failAndDone('Click method failed: ' + query);
+            return;
+        }
+
+        // Step 1c: Submission by keyboard activation with type=image
+        state.value = 'keyboard';
+        if (window.eventSender) {
+            image.focus();
+            eventSender.keyDown(' ');
+        } else {
+            failAndDone('This test requires eventSender');
+            return;
+        }
+    } else if (query.indexOf('state=keyboard') != -1) {
+        if (query.indexOf('image.x=0&image.y=0&image=value') == -1) {
+            failAndDone('Activating with keyboard failed: ' + query);
             return;
         }
 
