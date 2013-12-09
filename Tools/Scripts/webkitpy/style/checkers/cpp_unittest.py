@@ -4973,6 +4973,7 @@ class WebKitStyleTest(CppStyleTestBase):
         };''',
         '')
         self.assert_lint('o = foo(b ? bar() : baz());', '')
+        self.assert_lint('MYMACRO(a ? b() : c);', '')
 
     def test_other(self):
         # FIXME: Implement this.
