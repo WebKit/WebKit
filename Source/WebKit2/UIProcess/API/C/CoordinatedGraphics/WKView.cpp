@@ -182,7 +182,7 @@ bool WKViewGetShowsAsSource(WKViewRef viewRef)
 bool WKViewExitFullScreen(WKViewRef viewRef)
 {
 #if ENABLE(FULLSCREEN_API)
-    return toImpl(viewRef)->exitFullScreen();
+    return toImpl(viewRef)->requestExitFullScreen();
 #else
     UNUSED_PARAM(viewRef);
     return false;

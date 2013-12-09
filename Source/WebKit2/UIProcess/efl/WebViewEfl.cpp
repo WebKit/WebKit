@@ -142,11 +142,6 @@ void WebViewEfl::sendMouseEvent(const Evas_Event_Mouse_Move* event)
 
 #if ENABLE(FULLSCREEN_API)
 
-WebFullScreenManagerProxyClient& WebViewEfl::fullScreenManagerProxyClient()
-{
-    return *this;
-}
-
 // WebFullScreenManagerProxyClient
 bool WebViewEfl::isFullScreen()
 {

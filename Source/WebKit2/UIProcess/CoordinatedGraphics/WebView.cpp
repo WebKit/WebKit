@@ -194,13 +194,16 @@ bool WebView::showsAsSource() const
 }
 
 #if ENABLE(FULLSCREEN_API)
-bool WebView::exitFullScreen()
+WebFullScreenManagerProxyClient& WebView::fullScreenManagerProxyClient()
 {
-#if PLATFORM(EFL)
-    // FIXME: Implement this for other platforms.
-    if (!m_page->fullScreenManager()->isFullScreen())
+    return *this;
+}
+
+bool WebView::requestExitFullScreen()
+{
+    if (!isFullScreen())
         return false;
-#endif
+
     m_page->fullScreenManager()->requestExitFullScreen();
     return true;
 }

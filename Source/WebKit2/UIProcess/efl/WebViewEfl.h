@@ -26,7 +26,6 @@
 #ifndef WebViewEfl_h
 #define WebViewEfl_h
 
-#include "WebFullScreenManagerProxy.h"
 #include "WebView.h"
 
 class EwkView;
@@ -38,9 +37,6 @@ class EwkTouchEvent;
 #endif
 
 class WebViewEfl : public WebView
-#if ENABLE(FULLSCREEN_API)
-    , public WebFullScreenManagerProxyClient
-#endif
     {
 public:
     void setEwkView(EwkView*);
@@ -64,10 +60,6 @@ private:
     PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) OVERRIDE;
     void updateTextInputState() OVERRIDE;
     void handleDownloadRequest(DownloadProxy*) OVERRIDE;
-
-#if ENABLE(FULLSCREEN_API)
-    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() OVERRIDE;
-#endif
 
 #if ENABLE(FULLSCREEN_API)
     // WebFullScreenManagerProxyClient

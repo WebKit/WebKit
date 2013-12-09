@@ -1,3 +1,30 @@
+2013-12-09  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] LayoutTests are broken after r160301
+        https://bugs.webkit.org/show_bug.cgi?id=125447
+
+        Reviewed by Darin Adler.
+
+        r160301 moved FullScreenManagerProxyClient logic to WebViewEfl, child class
+        of CoordinatedGraphics::WebView, because implementations are EFL specific.
+        However, CoordinatedGraphics::WebView creates WebPageProxy in constructor and
+        WebPageProxy requires FullScreenManagerProxyClient in constructor.
+        So, All WK2/Efl based applications got crashed
+
+        This patch adds virtual methods for FullScreenManagerProxyClient to CoordinatedGraphics::WebView
+        so that WebPageProxy can get FullScreenManagerProxyClient instance without
+        pure viertual methods.
+
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewExitFullScreen):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::fullScreenManagerProxyClient):
+        (WebKit::WebView::requestExitFullScreen):
+        renamed from exitFullScreen not to conflict with methods of FullScreenManagerProxyClient.
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/efl/WebViewEfl.cpp:
+        * UIProcess/efl/WebViewEfl.h:
+
 2013-12-09  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2] Add UNIX_DOMAIN_SOCKETS specific bits for supporting NetworkProcess

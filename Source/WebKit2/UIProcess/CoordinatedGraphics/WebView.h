@@ -33,6 +33,7 @@
 #include "DefaultUndoController.h"
 #include "PageClient.h"
 #include "WebContext.h"
+#include "WebFullScreenManagerProxy.h"
 #include "WebGeometry.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
@@ -46,7 +47,11 @@ class CoordinatedGraphicsScene;
 
 namespace WebKit {
 
-class WebView : public API::TypedObject<API::Object::Type::View>, public PageClient {
+class WebView : public API::TypedObject<API::Object::Type::View>, public PageClient
+#if ENABLE(FULLSCREEN_API)
+    , public WebFullScreenManagerProxyClient
+#endif
+    {
 public:
     virtual ~WebView();
 
@@ -93,7 +98,7 @@ public:
     bool showsAsSource() const;
 
 #if ENABLE(FULLSCREEN_API)
-    bool exitFullScreen();
+    bool requestExitFullScreen();
 #endif
 
     void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize&);
@@ -188,6 +193,18 @@ protected:
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) OVERRIDE;
     virtual void exitAcceleratedCompositingMode() OVERRIDE;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) OVERRIDE;
+
+#if ENABLE(FULLSCREEN_API)
+    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() OVERRIDE;
+
+    // WebFullScreenManagerProxyClient
+    virtual void closeFullScreenManager() OVERRIDE { }
+    virtual bool isFullScreen() OVERRIDE { return false; }
+    virtual void enterFullScreen() OVERRIDE { }
+    virtual void exitFullScreen() OVERRIDE { }
+    virtual void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE { }
+    virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE { }
+#endif
 
 protected:
     WebViewClient m_client;
