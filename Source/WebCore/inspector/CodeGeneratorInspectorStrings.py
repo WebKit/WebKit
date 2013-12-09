@@ -102,10 +102,10 @@ ${methodInParametersHandling}${methodDispatchHandling}${methodOutParametersHandl
 }
 """)
 
-frontend_method = ("""void Inspector${domainName}FrontendDispatcher::$eventName($parameters)
+frontend_method = ("""void Inspector${domainName}FrontendDispatcher::$eventName(${parameters})
 {
     RefPtr<InspectorObject> jsonMessage = InspectorObject::create();
-    jsonMessage->setString("method", "$domainName.$eventName");
+    jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("${domainName}.${eventName}"));
 $code
     m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }

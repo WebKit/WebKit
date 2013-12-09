@@ -1,3 +1,22 @@
+2013-12-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inspector.json and CodeGenerator tweaks
+        https://bugs.webkit.org/show_bug.cgi?id=125321
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Runtime.json:
+        Runtime.js was depending on Network.FrameId. This is a layering
+        violation, so ideally we can fix this later. For now, just copy
+        the FrameId type into Runtime. They are strings so all is good.
+
+        * inspector/CodeGeneratorInspector.py:
+        (Generator.EventMethodStructTemplate.append_epilog):
+        * inspector/CodeGeneratorInspectorStrings.py:
+        Improve --help usage information.
+        Make the script work with a single domain json file.
+        Add ASCIILiteral's where appropriate.
+
 2013-12-09  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [Nix] Fix file name typo in PlatformNix.cmake

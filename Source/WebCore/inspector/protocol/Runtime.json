@@ -82,6 +82,11 @@
             "description": "Id of an execution context."
         },
         {
+            "id": "RuntimeFrameId",
+            "type": "string",
+            "description": "Unique frame identifier. FIXME: This duplicates Network.FrameId."
+        },
+        {
             "id": "ExecutionContextDescription",
             "type": "object",
             "description": "Description of an isolated world.",
@@ -89,7 +94,7 @@
                 { "name": "id", "$ref": "ExecutionContextId", "description": "Unique id of the execution context. It can be used to specify in which execution context script evaluation should be performed." },
                 { "name": "isPageContext", "type": "boolean", "description": "True if this is a context where inpspected web page scripts run. False if it is a content script isolated context." },
                 { "name": "name", "type": "string", "description": "Human readable name describing given context."},
-                { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the owning frame." }
+                { "name": "frameId", "$ref": "RuntimeFrameId", "description": "Id of the owning frame." }
             ]
         },
         {

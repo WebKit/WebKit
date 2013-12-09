@@ -72,7 +72,7 @@ TYPES_WITH_OPEN_FIELD_LIST_SET = frozenset(["Timeline.TimelineEvent",
 
 EXACTLY_INT_SUPPORTED = False
 
-cmdline_parser = optparse.OptionParser()
+cmdline_parser = optparse.OptionParser(usage="usage: %prog [options] <Inspector.json>")
 cmdline_parser.add_option("--output_h_dir")
 cmdline_parser.add_option("--output_cpp_dir")
 cmdline_parser.add_option("--output_js_dir")
@@ -1703,6 +1703,10 @@ input_file = open(input_json_filename, "r")
 json_string = input_file.read()
 json_api = json.loads(json_string)
 
+# Allow this script to work when the input is a single domain.
+if not "domains" in json_api:
+    json_api = {"domains": [json_api]}
+
 
 class Templates:
     def get_this_script_path_(absolute_path):
@@ -1987,7 +1991,7 @@ class Generator:
 
         @staticmethod
         def append_epilog(line_list):
-            line_list.append("    jsonMessage->setObject(\"params\", paramsObject);\n")
+            line_list.append("    jsonMessage->setObject(ASCIILiteral(\"params\"), paramsObject);\n")
 
         container_name = "paramsObject"
 
