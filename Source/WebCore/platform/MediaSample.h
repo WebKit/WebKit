@@ -63,6 +63,9 @@ public:
     };
     virtual SampleFlags flags() const = 0;
     virtual PlatformSample platformSample() = 0;
+
+    bool isSync() const { return flags() & IsSync; }
+    bool isNonDisplaying() const { return flags() & NonDisplaying; }
 };
 
 }

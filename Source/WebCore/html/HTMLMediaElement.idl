@@ -117,4 +117,6 @@
 
     [Reflect, TreatNullAs=NullString] attribute DOMString mediaGroup;
     [CustomSetter] attribute MediaController controller;
+    
+    [Conditional=MEDIA_SOURCE] VideoPlaybackQuality getVideoPlaybackQuality();
 };

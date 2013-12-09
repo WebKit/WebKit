@@ -218,6 +218,28 @@ void MockSourceBufferPrivate::setActive(bool isActive)
         m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
 }
 
+void MockSourceBufferPrivate::enqueueSample(PassRefPtr<MediaSample> sample, AtomicString)
+{
+    if (!m_mediaSource || !sample)
+        return;
+
+    PlatformSample platformSample = sample->platformSample();
+    if (platformSample.type != PlatformSample::MockSampleBoxType)
+        return;
+
+    MockSampleBox* box = platformSample.sample.mockSampleBox;
+    if (!box)
+        return;
+
+    m_mediaSource->incrementTotalVideoFrames();
+    if (box->isCorrupted())
+        m_mediaSource->incrementCorruptedFrames();
+    if (box->isDropped())
+        m_mediaSource->incrementDroppedFrames();
+    if (box->isDelayed())
+        m_mediaSource->incrementTotalFrameDelayBy(1);
+}
+
 bool MockSourceBufferPrivate::hasVideo() const
 {
     if (!m_client)

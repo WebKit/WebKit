@@ -77,6 +77,10 @@ private:
     virtual double currentTimeDouble() const OVERRIDE;
     virtual double durationDouble() const OVERRIDE;
     virtual void seekWithTolerance(double time, double, double) OVERRIDE;
+    virtual unsigned long totalVideoFrames() OVERRIDE;
+    virtual unsigned long droppedVideoFrames() OVERRIDE;
+    virtual unsigned long corruptedVideoFrames() OVERRIDE;
+    virtual double totalFrameDelay() OVERRIDE;
 
     MediaPlayer* m_player;
     RefPtr<HTMLMediaSource> m_mediaSource;

@@ -141,6 +141,7 @@ private:
     bool validateInitializationSegment(const InitializationSegment&);
 
     void provideMediaData();
+    void didDropSample();
 
     RefPtr<SourceBufferPrivate> m_private;
     MediaSource* m_source;

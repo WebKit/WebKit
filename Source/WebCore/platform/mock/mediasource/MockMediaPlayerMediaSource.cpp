@@ -245,6 +245,26 @@ void MockMediaPlayerMediaSource::setNetworkState(MediaPlayer::NetworkState netwo
     m_player->networkStateChanged();
 }
 
+unsigned long MockMediaPlayerMediaSource::totalVideoFrames()
+{
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->totalVideoFrames() : 0;
+}
+
+unsigned long MockMediaPlayerMediaSource::droppedVideoFrames()
+{
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->droppedVideoFrames() : 0;
+}
+
+unsigned long MockMediaPlayerMediaSource::corruptedVideoFrames()
+{
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->corruptedVideoFrames() : 0;
+}
+
+double MockMediaPlayerMediaSource::totalFrameDelay()
+{
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->totalFrameDelay() : 0;
+}
+
 }
 
 #endif

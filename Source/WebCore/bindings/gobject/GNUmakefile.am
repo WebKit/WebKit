@@ -443,6 +443,7 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMTextTrackCue.h \
 	DerivedSources/webkitdom/WebKitDOMTextTrackCueList.h \
 	DerivedSources/webkitdom/WebKitDOMTrackEvent.h \
+	DerivedSources/webkitdom/WebKitDOMVideoPlaybackQuality.h \
 	DerivedSources/webkitdom/WebKitDOMVideoTrack.h \
 	DerivedSources/webkitdom/WebKitDOMVideoTrackList.h
 webkitgtk_gdom_built_sources += \
@@ -460,6 +461,7 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMTextTrackCuePrivate.h \
 	DerivedSources/webkitdom/WebKitDOMTextTrackCueList.cpp \
 	DerivedSources/webkitdom/WebKitDOMTextTrackCueListPrivate.h \
+	DerivedSources/webkitdom/WebKitDOMVideoPlaybackQuality.cpp \
 	DerivedSources/webkitdom/WebKitDOMVideoTrack.cpp \
 	DerivedSources/webkitdom/WebKitDOMVideoTrackList.cpp \
 	DerivedSources/webkitdom/WebKitDOMTrackEvent.cpp \

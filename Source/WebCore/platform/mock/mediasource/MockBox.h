@@ -129,8 +129,16 @@ public:
     int32_t trackID() const { return m_trackID; }
     uint8_t flags() const { return m_flags; }
 
-    enum { IsSync = 1 << 0 };
+    enum {
+        IsSync = 1 << 0,
+        IsCorrupted = 1 << 1,
+        IsDropped = 1 << 2,
+        IsDelayed = 1 << 3,
+    };
     bool isSync() const { return m_flags & IsSync; }
+    bool isCorrupted() const { return m_flags & IsCorrupted; }
+    bool isDropped() const { return m_flags & IsDropped; }
+    bool isDelayed() const { return m_flags & IsDelayed; }
 
 protected:
     MediaTime m_presentationTimestamp;

@@ -44,6 +44,10 @@ MockMediaSourcePrivate::MockMediaSourcePrivate(MockMediaPlayerMediaSource* paren
     : m_player(parent)
     , m_duration(std::numeric_limits<float>::quiet_NaN())
     , m_isEnded(false)
+    , m_totalVideoFrames(0)
+    , m_droppedVideoFrames(0)
+    , m_corruptedVideoFrames(0)
+    , m_totalFrameDelay(0)
 {
 }
 

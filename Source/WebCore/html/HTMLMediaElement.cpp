@@ -108,7 +108,10 @@
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
+#include "DOMWindow.h"
 #include "HTMLMediaSource.h"
+#include "Performance.h"
+#include "VideoPlaybackQuality.h"
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -271,6 +274,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_preload(MediaPlayer::Auto)
     , m_displayMode(Unknown)
     , m_processingMediaPlayerCallback(0)
+#if ENABLE(MEDIA_SOURCE)
+    , m_droppedVideoFrames(0)
+#endif
     , m_cachedTime(MediaPlayer::invalidTime())
     , m_clockTimeAtLastCachedTimeUpdate(0)
     , m_minimumClockTimeToUpdateCachedTime(0)
@@ -3908,6 +3914,10 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
     if (renderer())
         renderer()->updateFromElement();
     endProcessingMediaPlayerCallback();
+
+#if ENABLE(MEDIA_SOURCE)
+    m_droppedVideoFrames = 0;
+#endif
 }
 
 void HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable(MediaPlayer*)
@@ -5227,6 +5237,29 @@ void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 bool HTMLMediaElement::shouldUseVideoPluginProxy() const
 {
     return document()->settings() && document()->settings()->isVideoPluginProxyEnabled();
+}
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
+{
+#if ENABLE(WEB_TIMING)
+    DOMWindow* domWindow = document().domWindow();
+    Performance* performance = domWindow ? domWindow->performance() : nullptr;
+    double now = performance ? performance->now() : 0;
+#else
+    DocumentLoader* loader = document().loader();
+    double now = loader ? 1000.0 * loader->timing()->monotonicTimeToZeroBasedDocumentTime(monotonicallyIncreasingTime()) : 0;
+#endif
+
+    if (!m_player)
+        return VideoPlaybackQuality::create(now, 0, 0, 0, 0);
+
+    return VideoPlaybackQuality::create(now,
+        m_droppedVideoFrames + m_player->totalVideoFrames(),
+        m_droppedVideoFrames + m_player->droppedVideoFrames(),
+        m_player->corruptedVideoFrames(),
+        m_player->totalFrameDelay());
 }
 #endif
 

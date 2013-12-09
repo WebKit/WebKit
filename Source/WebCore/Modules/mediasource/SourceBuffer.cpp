@@ -69,7 +69,7 @@ struct SourceBuffer::TrackBuffer {
         , lastFrameDuration(MediaTime::invalidTime())
         , highestPresentationTimestamp(MediaTime::invalidTime())
         , lastEnqueuedPresentationTime(MediaTime::invalidTime())
-        , needRandomAccessFlag(false)
+        , needRandomAccessFlag(true)
         , enabled(false)
     {
     }
@@ -860,10 +860,17 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         // FIXME: implement append windows
 
         // 1.11 If the need random access point flag on track buffer equals true, then run the following steps:
-        // 1.11.1 If the coded frame is not a random access point, then drop the coded frame and jump
-        // to the top of the loop to start processing the next coded frame.
-        // 1.11.2 Set the need random access point flag on track buffer to false.
-        // NOTE: MockSampleBoxes are not decodable.
+        if (trackBuffer.needRandomAccessFlag) {
+            // 1.11.1 If the coded frame is not a random access point, then drop the coded frame and jump
+            // to the top of the loop to start processing the next coded frame.
+            if (!sample->isSync()) {
+                didDropSample();
+                return;
+            }
+
+            // 1.11.2 Set the need random access point flag on track buffer to false.
+            trackBuffer.needRandomAccessFlag = false;
+        }
 
         // 1.12 Let spliced audio frame be an unset variable for holding audio splice information
         // 1.13 Let spliced timed text frame be an unset variable for holding timed text splice information
@@ -1144,6 +1151,12 @@ void SourceBuffer::provideMediaData()
     }
 
     LOG(Media, "SourceBuffer::provideMediaData(%p) - Enqueued %u samples", this, enqueuedSamples);
+}
+
+void SourceBuffer::didDropSample()
+{
+    if (!isRemoved())
+        m_source->mediaElement()->incrementDroppedFrameCount();
 }
 
 } // namespace WebCore

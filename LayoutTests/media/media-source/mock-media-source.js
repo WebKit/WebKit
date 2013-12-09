@@ -11,6 +11,9 @@ function stringToArray(string) {
 var SAMPLE_FLAG = {
     NONE: 0,
     SYNC: 1 << 0,
+    CORRUPTED: 1 << 1,
+    DROPPED: 1 << 2,
+    DELAYED: 1 << 3,
 };
 
 function makeASample(presentationTime, decodeTime, duration, trackID, flags) {

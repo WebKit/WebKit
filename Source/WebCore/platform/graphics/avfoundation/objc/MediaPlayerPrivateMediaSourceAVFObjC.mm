@@ -50,6 +50,21 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAsset)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVURLAsset)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferDisplayLayer)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamDataParser)
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVVideoPerformanceMetrics)
+
+#pragma mark -
+#pragma mark AVVideoPerformanceMetrics
+
+@interface AVVideoPerformanceMetrics : NSObject
+- (unsigned long)totalNumberOfVideoFrames;
+- (unsigned long)numberOfDroppedVideoFrames;
+- (unsigned long)numberOfCorruptedVideoFrames;
+- (double)totalFrameDelay;
+@end
+
+@interface AVSampleBufferDisplayLayer (WebCoreAVSampleBufferDisplayLayerPrivate)
+- (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
+@end
 
 namespace WebCore {
 
@@ -364,6 +379,26 @@ String MediaPlayerPrivateMediaSourceAVFObjC::languageOfPrimaryAudioTrack() const
 size_t MediaPlayerPrivateMediaSourceAVFObjC::extraMemoryCost() const
 {
     return 0;
+}
+
+unsigned long MediaPlayerPrivateMediaSourceAVFObjC::totalVideoFrames()
+{
+    return [[m_sampleBufferDisplayLayer videoPerformanceMetrics] totalNumberOfVideoFrames];
+}
+
+unsigned long MediaPlayerPrivateMediaSourceAVFObjC::droppedVideoFrames()
+{
+    return [[m_sampleBufferDisplayLayer videoPerformanceMetrics] numberOfDroppedVideoFrames];
+}
+
+unsigned long MediaPlayerPrivateMediaSourceAVFObjC::corruptedVideoFrames()
+{
+    return [[m_sampleBufferDisplayLayer videoPerformanceMetrics] numberOfCorruptedVideoFrames];
+}
+
+double MediaPlayerPrivateMediaSourceAVFObjC::totalFrameDelay()
+{
+    return [[m_sampleBufferDisplayLayer videoPerformanceMetrics] totalFrameDelay];
 }
 
 #pragma mark -

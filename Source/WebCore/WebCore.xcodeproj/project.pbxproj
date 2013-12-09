@@ -5418,6 +5418,9 @@
 		CDE3A85817F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE3A85617F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h */; };
 		CDE7FC44181904B1002BBB77 /* OrderIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE7FC42181904B1002BBB77 /* OrderIterator.cpp */; };
 		CDE7FC45181904B1002BBB77 /* OrderIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE7FC43181904B1002BBB77 /* OrderIterator.h */; };
+		CDE83DB1183C44060031EAA3 /* VideoPlaybackQuality.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE83DAF183C44060031EAA3 /* VideoPlaybackQuality.cpp */; };
+		CDE83DB2183C44060031EAA3 /* VideoPlaybackQuality.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE83DB0183C44060031EAA3 /* VideoPlaybackQuality.h */; };
+		CDE83DB6183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE83DB4183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp */; };
 		CDEA763014608A53008B31F1 /* PlatformClockCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */; };
 		CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA76321460AE29008B31F1 /* ClockGeneric.cpp */; };
 		CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA76331460B462008B31F1 /* Clock.cpp */; };
@@ -12543,6 +12546,11 @@
 		CDE6560E17CA6E7600526BA7 /* mediaControlsApple.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = mediaControlsApple.js; sourceTree = "<group>"; };
 		CDE7FC42181904B1002BBB77 /* OrderIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OrderIterator.cpp; sourceTree = "<group>"; };
 		CDE7FC43181904B1002BBB77 /* OrderIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderIterator.h; sourceTree = "<group>"; };
+		CDE83DAF183C44060031EAA3 /* VideoPlaybackQuality.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoPlaybackQuality.cpp; sourceTree = "<group>"; };
+		CDE83DB0183C44060031EAA3 /* VideoPlaybackQuality.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPlaybackQuality.h; sourceTree = "<group>"; };
+		CDE83DB3183C441E0031EAA3 /* VideoPlaybackQuality.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoPlaybackQuality.idl; sourceTree = "<group>"; };
+		CDE83DB4183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVideoPlaybackQuality.cpp; sourceTree = "<group>"; };
+		CDE83DB5183D352A0031EAA3 /* JSVideoPlaybackQuality.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVideoPlaybackQuality.h; sourceTree = "<group>"; };
 		CDEA762C14608224008B31F1 /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
 		CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformClockCA.cpp; sourceTree = "<group>"; };
 		CDEA762F146084EE008B31F1 /* PlatformClockCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformClockCA.h; sourceTree = "<group>"; };
@@ -17769,6 +17777,8 @@
 				BE8EF048171C9014009B48C3 /* JSVideoTrackList.cpp */,
 				BE8EF049171C9014009B48C3 /* JSVideoTrackList.h */,
 				97E9EC8B15DC492F004F2E71 /* JSVoidCallback.cpp */,
+				CDE83DB4183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp */,
+				CDE83DB5183D352A0031EAA3 /* JSVideoPlaybackQuality.h */,
 				97E9EC8C15DC492F004F2E71 /* JSVoidCallback.h */,
 				A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */,
 				A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */,
@@ -18574,6 +18584,9 @@
 				CD3A495D17A9D01B00274E42 /* SourceBufferList.idl */,
 				CD8B5A48180E138B008B8E65 /* TextTrackMediaSource.h */,
 				CD8B5A47180E1361008B8E65 /* TextTrackMediaSource.idl */,
+				CDE83DAF183C44060031EAA3 /* VideoPlaybackQuality.cpp */,
+				CDE83DB0183C44060031EAA3 /* VideoPlaybackQuality.h */,
+				CDE83DB3183C441E0031EAA3 /* VideoPlaybackQuality.idl */,
 				CD8B5A45180DFF4E008B8E65 /* VideoTrackMediaSource.h */,
 				CD8B5A44180DD8D6008B8E65 /* VideoTrackMediaSource.idl */,
 				CDD7089418359F6E002B3DC6 /* SampleMap.cpp */,
@@ -23907,6 +23920,7 @@
 				B2FA3DFD0AB75A6F000E5AC4 /* JSSVGSVGElement.h in Headers */,
 				B2FA3DFF0AB75A6F000E5AC4 /* JSSVGSwitchElement.h in Headers */,
 				B2FA3E010AB75A6F000E5AC4 /* JSSVGSymbolElement.h in Headers */,
+				CDE83DB2183C44060031EAA3 /* VideoPlaybackQuality.h in Headers */,
 				B2FA3E030AB75A6F000E5AC4 /* JSSVGTextContentElement.h in Headers */,
 				B2FA3E050AB75A6F000E5AC4 /* JSSVGTextElement.h in Headers */,
 				B22362290C3AF04A0008CA9B /* JSSVGTextPathElement.h in Headers */,
@@ -26432,6 +26446,7 @@
 				4FB390AD15EF61F3007AD51F /* GeneratedImage.cpp in Sources */,
 				2D481F03146B5C6500AA7834 /* GradientImage.cpp in Sources */,
 				0720B0A014D3323500642955 /* GenericEventQueue.cpp in Sources */,
+				CDE83DB1183C44060031EAA3 /* VideoPlaybackQuality.cpp in Sources */,
 				9746AF2314F4DDE6003E7A70 /* Geolocation.cpp in Sources */,
 				9746AF2614F4DDE6003E7A70 /* GeolocationController.cpp in Sources */,
 				B2C3DA6D0D006CD600EF6F26 /* GlyphPageTreeNode.cpp in Sources */,
@@ -28025,6 +28040,7 @@
 				B22279A40D00BF220071B782 /* SVGComponentTransferFunctionElement.cpp in Sources */,
 				B2227B050D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp in Sources */,
 				078E090C17D14CEE00420AA1 /* RTCSessionDescription.cpp in Sources */,
+				CDE83DB6183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp in Sources */,
 				B2227B060D00BFF10071B782 /* SVGCSSParser.cpp in Sources */,
 				B2227B080D00BFF10071B782 /* SVGCSSStyleSelector.cpp in Sources */,
 				B22279A70D00BF220071B782 /* SVGCursorElement.cpp in Sources */,

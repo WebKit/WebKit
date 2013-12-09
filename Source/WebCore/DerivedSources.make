@@ -103,6 +103,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/mediasource/SourceBufferList.idl \
 	$(WebCore)/Modules/mediasource/TextTrackMediaSource.idl \
 	$(WebCore)/Modules/mediasource/VideoTrackMediaSource.idl \
+	$(WebCore)/Modules/mediasource/VideoPlaybackQuality.idl \
 	$(WebCore)/Modules/mediastream/AllVideoCapabilities.idl \
 	$(WebCore)/Modules/mediastream/AllAudioCapabilities.idl \
 	$(WebCore)/Modules/mediastream/AudioStreamTrack.idl \

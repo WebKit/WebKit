@@ -72,7 +72,7 @@ private:
     virtual bool isFull() OVERRIDE;
 
     virtual void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString) OVERRIDE { }
-    virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString) OVERRIDE { }
+    virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString) OVERRIDE;
     virtual bool isReadyForMoreSamples() OVERRIDE { return true; }
     virtual void setActive(bool) OVERRIDE;
 

@@ -735,6 +735,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSValidityState.h \
 	DerivedSources/WebCore/JSVoidCallback.cpp \
 	DerivedSources/WebCore/JSVoidCallback.h \
+	DerivedSources/WebCore/JSVideoPlaybackQuality.h \
+	DerivedSources/WebCore/JSVideoPlaybackQuality.cpp \
 	DerivedSources/WebCore/JSVideoStreamTrack.h \
 	DerivedSources/WebCore/JSVideoStreamTrack.cpp \
 	DerivedSources/WebCore/JSVideoTrack.cpp \
@@ -1202,6 +1204,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediasource/MediaSource.idl \
 	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
 	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
+	$(WebCore)/Modules/mediasource/VideoPlaybackQuality.idl \
 	$(WebCore)/Modules/mediastream/AllVideoCapabilities.idl \
 	$(WebCore)/Modules/mediastream/AllAudioCapabilities.idl \
 	$(WebCore)/Modules/mediastream/AudioStreamTrack.idl \
@@ -1884,6 +1887,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediasource/DOMURLMediaSource.h \
 	Source/WebCore/Modules/mediasource/SampleMap.cpp \
 	Source/WebCore/Modules/mediasource/SampleMap.h \
+	Source/WebCore/Modules/mediasource/VideoPlaybackQuality.cpp \
+	Source/WebCore/Modules/mediasource/VideoPlaybackQuality.h \
 	Source/WebCore/Modules/mediastream/AllAudioCapabilities.h \
 	Source/WebCore/Modules/mediastream/AllVideoCapabilities.h \
 	Source/WebCore/Modules/mediastream/AudioStreamTrack.cpp \

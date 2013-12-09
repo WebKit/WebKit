@@ -185,6 +185,7 @@ set(WebCore_IDL_FILES
     Modules/mediasource/MediaSource.idl
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl
+    Modules/mediasource/VideoPlaybackQuality.idl
 
     Modules/mediastream/AllAudioCapabilities.idl
     Modules/mediastream/AllVideoCapabilities.idl
@@ -829,6 +830,7 @@ set(WebCore_SOURCES
     Modules/mediasource/MediaSourceRegistry.cpp
     Modules/mediasource/SourceBuffer.cpp
     Modules/mediasource/SourceBufferList.cpp
+    Modules/mediasource/VideoPlaybackQuality.cpp
 
     Modules/mediastream/AudioStreamTrack.cpp
     Modules/mediastream/CapabilityRange.cpp

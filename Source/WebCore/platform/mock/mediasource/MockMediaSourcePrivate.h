@@ -52,6 +52,16 @@ public:
     void seekToTime(const MediaTime&);
     MediaTime seekToTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
 
+    unsigned long totalVideoFrames() const { return m_totalVideoFrames; }
+    unsigned long droppedVideoFrames() const  { return m_droppedVideoFrames; }
+    unsigned long corruptedVideoFrames() const { return m_corruptedVideoFrames; }
+    double totalFrameDelay() const { return m_totalFrameDelay; }
+
+    void incrementTotalVideoFrames() { ++m_totalVideoFrames; }
+    void incrementDroppedFrames() { ++m_droppedVideoFrames; }
+    void incrementCorruptedFrames() { ++m_corruptedVideoFrames; }
+    void incrementTotalFrameDelayBy(double delay) { m_totalFrameDelay += delay; }
+
 private:
     MockMediaSourcePrivate(MockMediaPlayerMediaSource*);
 
@@ -74,6 +84,11 @@ private:
     Vector<RefPtr<MockSourceBufferPrivate>> m_sourceBuffers;
     Vector<MockSourceBufferPrivate*> m_activeSourceBuffers;
     bool m_isEnded;
+
+    unsigned long m_totalVideoFrames;
+    unsigned long m_droppedVideoFrames;
+    unsigned long m_corruptedVideoFrames;
+    double m_totalFrameDelay;
 };
 
 }

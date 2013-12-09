@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var samples;
+    var quality;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest()
+    {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen()
+    {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', loadSample, false, true);
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadSample()
+    {
+        samples = concatenateSamples([makeASample(0, 0, 1, 1, SAMPLE_FLAG.NONE)]);
+        waitForEventOn(sourceBuffer, 'updateend', loadMoreSamples, false, true);
+        consoleWrite('Test that beginning a buffer with a non-sync sample results in that sample being dropped.')
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function loadMoreSamples()
+    {
+        run('quality = video.getVideoPlaybackQuality()');
+        testExpected('quality.totalVideoFrames', 1);
+        testExpected('quality.corruptedVideoFrames', 0);
+        testExpected('quality.droppedVideoFrames', 1);
+        testExpected('quality.totalFrameDelay', 0);
+
+        samples = concatenateSamples([
+            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(1, 1, 1, 1, SAMPLE_FLAG.CORRUPTED),
+            makeASample(2, 2, 1, 1, SAMPLE_FLAG.DROPPED),
+            makeASample(4, 4, 1, 1, SAMPLE_FLAG.DELAYED),
+            makeASample(5, 5, 1, 1, SAMPLE_FLAG.DELAYED),
+            makeASample(6, 6, 1, 1, SAMPLE_FLAG.DELAYED),
+            makeASample(7, 7, 1, 1, SAMPLE_FLAG.NONE),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', samplesAdded, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function samplesAdded()
+    {
+        run('quality = video.getVideoPlaybackQuality()');
+        testExpected('quality.totalVideoFrames', 8);
+        testExpected('quality.corruptedVideoFrames', 1);
+        testExpected('quality.droppedVideoFrames', 2);
+        testExpected('quality.totalFrameDelay', 3);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>

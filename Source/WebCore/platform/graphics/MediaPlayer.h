@@ -514,6 +514,13 @@ public:
 
     unsigned long long fileSize() const;
 
+#if ENABLE(MEDIA_SOURCE)
+    unsigned long totalVideoFrames();
+    unsigned long droppedVideoFrames();
+    unsigned long corruptedVideoFrames();
+    double totalFrameDelay();
+#endif
+
 private:
     MediaPlayer(MediaPlayerClient*);
     MediaPlayerFactory* nextBestMediaEngine(MediaPlayerFactory*) const;

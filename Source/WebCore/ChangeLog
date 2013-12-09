@@ -1,3 +1,99 @@
+2013-12-09  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Add support for VideoPlaybackMetrics.
+        https://bugs.webkit.org/show_bug.cgi?id=125380
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-video-playback-quality.html
+
+        Add a new object type VideoPlaybackQuality to be returned by
+        HTMLMediaElement.getVideoPlaybackQuality().
+
+        HTMLMediaElements must separately track a droppedVideoFrame count, as
+        certain operations on SourceBuffer will drop incoming frames, which must
+        be accounted for. Reset this count when the media engine changes, which is
+        indicitive of a new media load requset starting.
+
+        Add the new VideoPlaybackQuality class:
+        * Modules/mediasource/VideoPlaybackQuality.cpp: Added.
+        (WebCore::VideoPlaybackQuality::create):
+        (WebCore::VideoPlaybackQuality::VideoPlaybackQuality):
+        * Modules/mediasource/VideoPlaybackQuality.h: Added.
+        (WebCore::VideoPlaybackQuality::creationTime):
+        (WebCore::VideoPlaybackQuality::totalVideoFrames):
+        (WebCore::VideoPlaybackQuality::droppedVideoFrames):
+        (WebCore::VideoPlaybackQuality::corruptedVideoFrames):
+        (WebCore::VideoPlaybackQuality::totalFrameDelay):
+        * Modules/mediasource/VideoPlaybackQuality.idl: Added.
+
+        Add support for the new class to HTMLMediaElement:
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::shouldUseVideoPluginProxy):
+        (HTMLMediaElement::getVideoPlaybackQuality):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
+        Report the video quality metrics from the MediaPlayer:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::totalVideoFrames):
+        (WebCore::MediaPlayer::droppedVideoFrames):
+        (WebCore::MediaPlayer::corruptedVideoFrames):
+        (WebCore::MediaPlayer::totalFrameDelay):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::totalVideoFrames):
+        (WebCore::MediaPlayerPrivateInterface::droppedVideoFrames):
+        (WebCore::MediaPlayerPrivateInterface::corruptedVideoFrames):
+        (WebCore::MediaPlayerPrivateInterface::totalFrameDelay):
+
+        Correctly report the dropped frame count:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::TrackBuffer::TrackBuffer): needsRandomAccessFlag defaults to true.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): Check the sync status of the incoming sample.
+        (WebCore::SourceBuffer::didDropSample): Notify the media element of a dropped frame.
+        * Modules/mediasource/SourceBuffer.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (HTMLMediaElement::mediaPlayerEngineUpdated): Reset m_droppedFrameCount.
+        (HTMLMediaElement::getVideoPlaybackQuality): Return a new VideoPlaybackQuality object.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::incrementDroppedFrameCount): Simple incrementer.
+        * platform/MediaSample.h:
+        (WebCore::MediaSample::isSync): Convenience function.
+        (WebCore::MediaSample::isNonDisplaying): Ditto.
+
+        Add support in the AVFoundation MediaSource Engine:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::totalVideoFrames):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::droppedVideoFrames):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::corruptedVideoFrames):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::totalFrameDelay):
+
+        Add support in the Mock MediaSource Engine:
+        * platform/mock/mediasource/MockBox.h:
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::totalVideoFrames): Simple accessor.
+        (WebCore::MockMediaPlayerMediaSource::droppedVideoFrames): Ditto.
+        (WebCore::MockMediaPlayerMediaSource::corruptedVideoFrames): Ditto.
+        (WebCore::MockMediaPlayerMediaSource::totalFrameDelay): Ditto.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::MockMediaSourcePrivate):
+        * platform/mock/mediasource/MockMediaSourcePrivate.h:
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockSourceBufferPrivate::enqueueSample): Increment the frame counts based on
+            the incoming sample.
+        * platform/mock/mediasource/MockSourceBufferPrivate.h:
+
+        Add the new files to the project:
+        * bindings/gobject/GNUmakefile.am:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * GNUMakefile.list.am:
+        * CMakeLists.txt:
+
 2013-12-09  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid divide by zero in scrollbar code, and protect against Obj-C exceptions

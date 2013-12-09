@@ -129,6 +129,11 @@ private:
 
     virtual size_t extraMemoryCost() const OVERRIDE;
 
+    virtual unsigned long totalVideoFrames() OVERRIDE;
+    virtual unsigned long droppedVideoFrames() OVERRIDE;
+    virtual unsigned long corruptedVideoFrames() OVERRIDE;
+    virtual double totalFrameDelay() OVERRIDE;
+
     void ensureLayer();
     void destroyLayer();
     void durationChanged();
