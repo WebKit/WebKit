@@ -1,3 +1,25 @@
+2013-12-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid divide by zero in scrollbar code, and protect against Obj-C exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=125469
+        <rdar://problem/15535772>
+
+        Reviewed by Beth Dakin.
+        
+        In ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(), proportion could
+        end up as NaN if scrollbar->totalSize() were zero. Protect against that.
+        
+        Also wrap functions that call into Objective-C with BEGIN_BLOCK_OBJC_EXCEPTIONS/
+        END_BLOCK_OBJC_EXCEPTIONS.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+        (WebCore::ScrollbarThemeMac::updateScrollbarOverlayStyle):
+        (WebCore::ScrollbarThemeMac::minimumThumbLength):
+        (WebCore::ScrollbarThemeMac::updateEnabledState):
+        (WebCore::ScrollbarThemeMac::setPaintCharacteristicsForScrollbar):
+        (WebCore::scrollbarPainterPaint):
+
 2013-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Implement Document.cloneNode()
