@@ -1,3 +1,19 @@
+2013-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a test for style sharing if grandparents matches different rule chain and nth-last child
+        https://bugs.webkit.org/show_bug.cgi?id=125397
+
+        Reviewed by Darin Adler.
+        
+        Add the test from https://chromium.googlesource.com/chromium/blink/+/30ff49bf63cdec31070ab4eda8784564f56789d4
+        and https://chromium.googlesource.com/chromium/blink/+/3cb1724bb52f3607006ddd0a89d356da23766115
+        so that we may not introduce the same regressions in WebKit.
+
+        * fast/css/nth-last-child-recalc-expected.html: Added.
+        * fast/css/nth-last-child-recalc.html: Added.
+        * fast/css/style-sharing-grand-parent-invalidate-expected.txt: Added.
+        * fast/css/style-sharing-grand-parent-invalidate.html: Added.
+
 2013-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Convert the get_{string,text}_at_offset atktest.c unit tests to layout tests
