@@ -99,6 +99,9 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
     parameters.shouldTrackVisitedLinks = true;
+#if ENABLE(NETWORK_PROCESS)
+    parameters.usesNetworkProcess = true;
+#endif
 }
 
 void WebContext::platformInvalidateContext()

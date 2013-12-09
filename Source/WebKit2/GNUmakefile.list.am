@@ -159,6 +159,16 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/DrawingAreaProxyMessages.h \
 	DerivedSources/WebKit2/EventDispatcherMessageReceiver.cpp \
 	DerivedSources/WebKit2/EventDispatcherMessages.h \
+	DerivedSources/WebKit2/NetworkConnectionToWebProcessMessageReceiver.cpp \
+	DerivedSources/WebKit2/NetworkConnectionToWebProcessMessages.h \
+	DerivedSources/WebKit2/NetworkProcessConnectionMessageReceiver.cpp \
+	DerivedSources/WebKit2/NetworkProcessConnectionMessages.h \
+	DerivedSources/WebKit2/NetworkProcessMessageReceiver.cpp \
+	DerivedSources/WebKit2/NetworkProcessMessages.h \
+	DerivedSources/WebKit2/NetworkProcessProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/NetworkProcessProxyMessages.h \
+	DerivedSources/WebKit2/NetworkResourceLoaderMessageReceiver.cpp \
+	DerivedSources/WebKit2/NetworkResourceLoaderMessages.h \
 	DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp \
 	DerivedSources/WebKit2/NPObjectMessageReceiverMessages.h \
 	DerivedSources/WebKit2/PluginControllerProxyMessageReceiver.cpp \
@@ -233,16 +243,16 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebPageProxyMessages.h \
 	DerivedSources/WebKit2/WebPageMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebPageMessages.h \
-	DerivedSources/WebKit2/WebResourceCacheManagerMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebResourceCacheManagerMessages.h \
-	DerivedSources/WebKit2/WebResourceCacheManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebResourceCacheManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebProcessConnectionMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebProcessConnectionMessages.h \
 	DerivedSources/WebKit2/WebProcessMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebProcessMessages.h \
 	DerivedSources/WebKit2/WebProcessProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebProcessProxyMessages.h \
+	DerivedSources/WebKit2/WebResourceCacheManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebResourceCacheManagerMessages.h \
+	DerivedSources/WebKit2/WebResourceCacheManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebResourceCacheManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebResourceLoaderMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebResourceLoaderMessages.h \
 	DerivedSources/WebKit2/WebSoupRequestManagerMessageReceiver.cpp \
@@ -304,8 +314,31 @@ webkit2platform_sources += \
 
 webkit2_sources += \
 	Source/WebKit2/config.h \
+	Source/WebKit2/NetworkProcess/FileAPI/NetworkBlobRegistry.cpp \
+	Source/WebKit2/NetworkProcess/FileAPI/NetworkBlobRegistry.h \
 	Source/WebKit2/NetworkProcess/soup/NetworkProcessSoup.cpp \
+	Source/WebKit2/NetworkProcess/AsynchronousNetworkLoaderClient.cpp \
+	Source/WebKit2/NetworkProcess/AsynchronousNetworkLoaderClient.h \
+	Source/WebKit2/NetworkProcess/HostRecord.cpp \
+	Source/WebKit2/NetworkProcess/HostRecord.h \
+	Source/WebKit2/NetworkProcess/NetworkConnectionToWebProcess.cpp \
+	Source/WebKit2/NetworkProcess/NetworkConnectionToWebProcess.h \
+	Source/WebKit2/NetworkProcess/NetworkLoaderClient.h \
+	Source/WebKit2/NetworkProcess/NetworkProcess.cpp \
+	Source/WebKit2/NetworkProcess/NetworkProcess.h \
+	Source/WebKit2/NetworkProcess/NetworkProcessPlatformStrategies.cpp \
+	Source/WebKit2/NetworkProcess/NetworkProcessPlatformStrategies.h \
+	Source/WebKit2/NetworkProcess/NetworkResourceLoader.cpp \
+	Source/WebKit2/NetworkProcess/NetworkResourceLoader.h \
+	Source/WebKit2/NetworkProcess/NetworkResourceLoadScheduler.cpp \
+	Source/WebKit2/NetworkProcess/NetworkResourceLoadScheduler.h \
+	Source/WebKit2/NetworkProcess/RemoteNetworkingContext.h \
 	Source/WebKit2/NetworkProcess/soup/NetworkResourceLoadSchedulerSoup.cpp \
+	Source/WebKit2/NetworkProcess/soup/RemoteNetworkingContextSoup.cpp \
+	Source/WebKit2/NetworkProcess/SynchronousNetworkLoaderClient.cpp \
+	Source/WebKit2/NetworkProcess/SynchronousNetworkLoaderClient.h \
+	Source/WebKit2/NetworkProcess/unix/NetworkProcessMainUnix.cpp \
+	Source/WebKit2/NetworkProcess/unix/NetworkProcessMainUnix.h \
 	Source/WebKit2/PluginProcess/PluginControllerProxy.cpp \
 	Source/WebKit2/PluginProcess/PluginControllerProxy.h \
 	Source/WebKit2/PluginProcess/PluginCreationParameters.cpp \
@@ -398,6 +431,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/BlockingResponseMap.h \
 	Source/WebKit2/Shared/ShareableBitmap.cpp \
 	Source/WebKit2/Shared/ShareableBitmap.h \
+	Source/WebKit2/Shared/ShareableResource.cpp \
+	Source/WebKit2/Shared/ShareableResource.h \
 	Source/WebKit2/Shared/CacheModel.cpp \
 	Source/WebKit2/Shared/CacheModel.h \
 	Source/WebKit2/Shared/ChildProcess.cpp \
@@ -420,6 +455,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/Downloads/soup/DownloadSoupErrors.h \
 	Source/WebKit2/Shared/EditorState.cpp \
 	Source/WebKit2/Shared/EditorState.h \
+	Source/WebKit2/Shared/FileAPI/BlobRegistrationData.cpp \
+	Source/WebKit2/Shared/FileAPI/BlobRegistrationData.h \
 	Source/WebKit2/Shared/FilterIterator.h \
 	Source/WebKit2/Shared/FontSmoothingLevel.h \
 	Source/WebKit2/Shared/ProcessExecutablePath.h \
@@ -444,7 +481,11 @@ webkit2_sources += \
 	Source/WebKit2/Shared/NativeWebKeyboardEvent.h \
 	Source/WebKit2/Shared/NativeWebMouseEvent.h \
 	Source/WebKit2/Shared/NativeWebWheelEvent.h \
+	Source/WebKit2/Shared/Network/CustomProtocols/CustomProtocolManager.h \
+	Source/WebKit2/Shared/Network/NetworkProcessCreationParameters.cpp \
+	Source/WebKit2/Shared/Network/NetworkProcessCreationParameters.h \
 	Source/WebKit2/Shared/Network/NetworkProcessSupplement.h \
+	Source/WebKit2/Shared/Network/NetworkResourceLoadParameters.cpp \
 	Source/WebKit2/Shared/Network/NetworkResourceLoadParameters.h \
 	Source/WebKit2/Shared/OriginAndDatabases.cpp \
 	Source/WebKit2/Shared/OriginAndDatabases.h \
@@ -865,6 +906,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.cpp \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.h \
+	Source/WebKit2/UIProcess/Network/NetworkProcessProxy.cpp \
+	Source/WebKit2/UIProcess/Network/NetworkProcessProxy.h \
 	Source/WebKit2/UIProcess/Network/soup/NetworkProcessProxySoup.cpp \
 	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequest.cpp \
 	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequest.h \
@@ -1040,6 +1083,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp \
 	Source/WebKit2/WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.h \
 	Source/WebKit2/WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.h \
+	Source/WebKit2/WebProcess/FileAPI/BlobRegistryProxy.cpp \
+	Source/WebKit2/WebProcess/FileAPI/BlobRegistryProxy.h \
 	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.cpp \
 	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.h \
 	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
@@ -1143,6 +1188,12 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
 	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.cpp \
 	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.h \
+	Source/WebKit2/WebProcess/Network/NetworkProcessConnection.cpp \
+	Source/WebKit2/WebProcess/Network/NetworkProcessConnection.h \
+	Source/WebKit2/WebProcess/Network/WebResourceLoader.cpp \
+	Source/WebKit2/WebProcess/Network/WebResourceLoader.h \
+	Source/WebKit2/WebProcess/Network/WebResourceLoadScheduler.cpp \
+	Source/WebKit2/WebProcess/Network/WebResourceLoadScheduler.h \
 	Source/WebKit2/WebProcess/NetworkInfo/WebNetworkInfoManager.cpp \
 	Source/WebKit2/WebProcess/NetworkInfo/WebNetworkInfoManager.h \
 	Source/WebKit2/WebProcess/Notifications/NotificationPermissionRequestManager.cpp \
