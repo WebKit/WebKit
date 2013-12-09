@@ -179,6 +179,17 @@ inline CapabilityLevel canCompile(Node* node)
         }
         break;
     case CompareEq:
+        if (node->isBinaryUseKind(Int32Use))
+            break;
+        if (node->isBinaryUseKind(MachineIntUse))
+            break;
+        if (node->isBinaryUseKind(NumberUse))
+            break;
+        if (node->isBinaryUseKind(ObjectUse))
+            break;
+        if (node->isBinaryUseKind(UntypedUse))
+            break;
+        return CannotCompile;
     case CompareStrictEq:
         if (node->isBinaryUseKind(Int32Use))
             break;
@@ -198,6 +209,8 @@ inline CapabilityLevel canCompile(Node* node)
         if (node->isBinaryUseKind(MachineIntUse))
             break;
         if (node->isBinaryUseKind(NumberUse))
+            break;
+        if (node->isBinaryUseKind(UntypedUse))
             break;
         return CannotCompile;
     case Switch:

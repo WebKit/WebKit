@@ -1,3 +1,59 @@
+2013-12-08  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support UntypedUse versions of Compare nodes
+        https://bugs.webkit.org/show_bug.cgi?id=125426
+
+        Reviewed by Oliver Hunt.
+        
+        This adds UntypedUse versions of all comparisons except CompareStrictEq, which is
+        sufficiently different that I thought I'd do it in another patch.
+        
+        This also extends our ability to abstract over comparison kind and removes a bunch of
+        copy-paste code.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareLess):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareLessEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareGreater):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareGreaterEq):
+        (JSC::FTL::LowerDFGToLLVM::compare):
+        (JSC::FTL::LowerDFGToLLVM::nonSpeculativeCompare):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::icmp):
+        (JSC::FTL::Output::equal):
+        (JSC::FTL::Output::notEqual):
+        (JSC::FTL::Output::above):
+        (JSC::FTL::Output::aboveOrEqual):
+        (JSC::FTL::Output::below):
+        (JSC::FTL::Output::belowOrEqual):
+        (JSC::FTL::Output::greaterThan):
+        (JSC::FTL::Output::greaterThanOrEqual):
+        (JSC::FTL::Output::lessThan):
+        (JSC::FTL::Output::lessThanOrEqual):
+        (JSC::FTL::Output::fcmp):
+        (JSC::FTL::Output::doubleEqual):
+        (JSC::FTL::Output::doubleNotEqualOrUnordered):
+        (JSC::FTL::Output::doubleLessThan):
+        (JSC::FTL::Output::doubleLessThanOrEqual):
+        (JSC::FTL::Output::doubleGreaterThan):
+        (JSC::FTL::Output::doubleGreaterThanOrEqual):
+        (JSC::FTL::Output::doubleEqualOrUnordered):
+        (JSC::FTL::Output::doubleNotEqual):
+        (JSC::FTL::Output::doubleLessThanOrUnordered):
+        (JSC::FTL::Output::doubleLessThanOrEqualOrUnordered):
+        (JSC::FTL::Output::doubleGreaterThanOrUnordered):
+        (JSC::FTL::Output::doubleGreaterThanOrEqualOrUnordered):
+        * tests/stress/untyped-equality.js: Added.
+        (foo):
+        * tests/stress/untyped-less-than.js: Added.
+        (foo):
+
 2013-12-07  Filip Pizlo  <fpizlo@apple.com>
 
         Fold typedArray.length if typedArray is constant

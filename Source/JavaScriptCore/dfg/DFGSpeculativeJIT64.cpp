@@ -486,6 +486,7 @@ private:
 
 void SpeculativeJIT::nonSpeculativeNonPeepholeCompare(Node* node, MacroAssembler::RelationalCondition cond, S_JITOperation_EJJ helperFunction)
 {
+    ASSERT(node->isBinaryUseKind(UntypedUse));
     JSValueOperand arg1(this, node->child1());
     JSValueOperand arg2(this, node->child2());
     GPRReg arg1GPR = arg1.gpr();
