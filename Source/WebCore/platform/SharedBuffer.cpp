@@ -231,7 +231,7 @@ void SharedBuffer::createPurgeableBuffer() const
         return;
 #endif
 
-    char* destination;
+    char* destination = 0;
     m_purgeableBuffer = PurgeableBuffer::createUninitialized(m_size, destination);
     if (!m_purgeableBuffer)
         return;
@@ -454,7 +454,7 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
 #endif
 }
 
-#if !USE(CF)
+#if !USE(CF) && !USE(SOUP)
 
 inline void SharedBuffer::clearPlatformData()
 {

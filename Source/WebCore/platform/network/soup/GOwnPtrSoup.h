@@ -20,17 +20,17 @@
 #ifndef GOwnPtrSoup_h
 #define GOwnPtrSoup_h
 
+// We need to include libsoup headers here because the way that SoupBuffer
+// is defined is not compatible with forward declaration.
+#include <libsoup/soup.h>
 #include <wtf/gobject/GOwnPtr.h>
-
-typedef struct _SoupURI SoupURI;
-typedef struct _SoupCookie SoupCookie;
-typedef struct SoupMessageHeaders SoupMessageHeaders;
 
 namespace WTF {
 
 template<> void freeOwnedGPtr<SoupURI>(SoupURI* ptr);
 template<> void freeOwnedGPtr<SoupCookie>(SoupCookie* ptr);
 template<> void freeOwnedGPtr<SoupMessageHeaders>(SoupMessageHeaders*);
+template<> void freeOwnedGPtr<SoupBuffer>(SoupBuffer*);
 
 }
 

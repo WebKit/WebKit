@@ -106,8 +106,6 @@ namespace WebCore {
 #endif
 #if USE(SOUP)
             , m_cancelled(false)
-            , m_readBufferPtr(0)
-            , m_readBufferSize(0)
             , m_bodySize(0)
             , m_bodyDataSent(0)
             , m_redirectCount(0)
@@ -196,9 +194,7 @@ namespace WebCore {
         GRefPtr<GCancellable> m_cancellable;
         GRefPtr<GAsyncResult> m_deferredResult;
         GRefPtr<GSource> m_timeoutSource;
-        GOwnPtr<char> m_defaultReadBuffer;
-        char* m_readBufferPtr;
-        size_t m_readBufferSize;
+        GOwnPtr<SoupBuffer> m_soupBuffer;
         unsigned long m_bodySize;
         unsigned long m_bodyDataSent;
         SoupSession* soupSession();

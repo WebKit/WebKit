@@ -203,6 +203,8 @@ list(APPEND WebCore_SOURCES
     platform/network/soup/SoupURIUtils.cpp
     platform/network/soup/SynchronousLoaderClientSoup.cpp
 
+    platform/soup/SharedBufferSoup.cpp
+
     platform/text/LocaleICU.cpp
     platform/text/TextBreakIteratorICU.cpp
     platform/text/TextCodecICU.cpp

@@ -171,6 +171,8 @@ list(APPEND WebCore_SOURCES
     platform/posix/FileSystemPOSIX.cpp
     platform/posix/SharedBufferPOSIX.cpp
 
+    platform/soup/SharedBufferSoup.cpp
+
     platform/text/LocaleICU.cpp
 
     platform/text/efl/TextBreakIteratorInternalICUEfl.cpp

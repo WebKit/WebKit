@@ -37,6 +37,10 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+#if USE(SOUP)
+#include "GOwnPtrSoup.h"
+#endif
+
 #if PLATFORM(MAC)
 OBJC_CLASS NSData;
 #endif
@@ -85,6 +89,10 @@ public:
 #if USE(CF)
     RetainPtr<CFDataRef> createCFData();
     static PassRefPtr<SharedBuffer> wrapCFData(CFDataRef);
+#endif
+
+#if USE(SOUP)
+    static PassRefPtr<SharedBuffer> wrapSoupBuffer(SoupBuffer*);
 #endif
 
     // Calling this function will force internal segmented buffers
@@ -196,6 +204,11 @@ private:
 #if USE(CF)
     explicit SharedBuffer(CFDataRef);
     RetainPtr<CFDataRef> m_cfData;
+#endif
+
+#if USE(SOUP)
+    explicit SharedBuffer(SoupBuffer*);
+    GOwnPtr<SoupBuffer> m_soupBuffer;
 #endif
 };
 

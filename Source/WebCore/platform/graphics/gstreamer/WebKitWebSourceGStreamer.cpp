@@ -35,6 +35,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SharedBuffer.h"
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
@@ -99,6 +100,7 @@ class ResourceHandleStreamingClient : public ResourceHandleClient, public Stream
         virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&);
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
         virtual void didReceiveData(ResourceHandle*, const char*, int, int);
+        virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedLength);
         virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
         virtual void didFail(ResourceHandle*, const ResourceError&);
         virtual void wasBlocked(ResourceHandle*);
@@ -1117,7 +1119,18 @@ void ResourceHandleStreamingClient::didReceiveResponse(ResourceHandle*, const Re
 
 void ResourceHandleStreamingClient::didReceiveData(ResourceHandle*, const char* data, int length, int)
 {
-    handleDataReceived(data, length);
+    ASSERT_NOT_REACHED();
+}
+
+void ResourceHandleStreamingClient::didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int /* encodedLength */)
+{
+    // This pattern is suggested by SharedBuffer.h.
+    const char* segment;
+    unsigned position = 0;
+    while (unsigned length = buffer->getSomeData(segment, position)) {
+        handleDataReceived(segment, length);
+        position += length;
+    }
 }
 
 void ResourceHandleStreamingClient::didFinishLoading(ResourceHandle*, double)

@@ -42,4 +42,10 @@ template <> void freeOwnedGPtr<SoupMessageHeaders>(SoupMessageHeaders* ptr)
         soup_message_headers_free(ptr);
 }
 
+template <> void freeOwnedGPtr<SoupBuffer>(SoupBuffer* ptr)
+{
+    if (ptr)
+        soup_buffer_free(ptr);
 }
+
+} // namespace WTF

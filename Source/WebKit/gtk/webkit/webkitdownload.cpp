@@ -27,6 +27,7 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SharedBuffer.h"
 #include "webkitdownloadprivate.h"
 #include "webkitenumtypes.h"
 #include "webkitglobals.h"
@@ -61,18 +62,20 @@ using namespace WebCore;
 
 class DownloadClient : public ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(DownloadClient);
-    public:
-        DownloadClient(WebKitDownload*);
 
-        virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-        virtual void didReceiveData(ResourceHandle*, const char*, int, int);
-        virtual void didFinishLoading(ResourceHandle*, double);
-        virtual void didFail(ResourceHandle*, const ResourceError&);
-        virtual void wasBlocked(ResourceHandle*);
-        virtual void cannotShowURL(ResourceHandle*);
+public:
+    DownloadClient(WebKitDownload*);
 
-    private:
-        WebKitDownload* m_download;
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
+    virtual void didReceiveData(ResourceHandle*, const char*, int, int);
+    virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int encodedLength);
+    virtual void didFinishLoading(ResourceHandle*, double);
+    virtual void didFail(ResourceHandle*, const ResourceError&);
+    virtual void wasBlocked(ResourceHandle*);
+    virtual void cannotShowURL(ResourceHandle*);
+
+private:
+    WebKitDownload* m_download;
 };
 
 struct _WebKitDownloadPrivate {
@@ -940,7 +943,18 @@ void DownloadClient::didReceiveResponse(ResourceHandle*, const ResourceResponse&
 
 void DownloadClient::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
 {
-    webkit_download_received_data(m_download, data, length);
+    ASSERT_NOT_REACHED();
+}
+
+void DownloadClient::didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int encodedLength)
+{
+    // This pattern is suggested by SharedBuffer.h.
+    const char* segment;
+    unsigned position = 0;
+    while (unsigned length = buffer->getSomeData(segment, position)) {
+        webkit_download_received_data(m_download, segment, length);
+        position += length;
+    }
 }
 
 void DownloadClient::didFinishLoading(ResourceHandle*, double)
