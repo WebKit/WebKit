@@ -539,6 +539,9 @@ Programs_WebKitWebProcess_LDADD = \
 	$(GTK_UNIX_PRINTING_LIBS) \
 	$(LIBSOUP_LIBS)
 
+Programs_WebKitWebProcess_LDFLAGS = \
+	-no-fast-install
+
 libWebCoreGtk2_la_SOURCES = \
 	$(webcoregtk_sources)
 
@@ -755,6 +758,9 @@ Programs_WebKitPluginProcess_LDADD = \
 	$(XT_LIBS) \
 	$(WINMM_LIBS) \
 	$(ZLIB_LIBS)
+
+Programs_WebKitPluginProcess_LDFLAGS = \
+	-no-fast-install
 
 Programs_WebKitPluginProcess_CXXFLAGS = \
 	-fvisibility-inlines-hidden \
