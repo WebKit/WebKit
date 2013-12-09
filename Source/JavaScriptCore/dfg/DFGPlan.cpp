@@ -269,6 +269,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         performLICM(dfg);
+        performCSE(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         if (Options::validateFTLOSRExitLiveness())

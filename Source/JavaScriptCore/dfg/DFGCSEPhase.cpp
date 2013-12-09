@@ -48,15 +48,21 @@ public:
     
     bool run()
     {
-        ASSERT((cseMode == NormalCSE) == (m_graph.m_fixpointState == FixpointNotConverged));
         ASSERT(m_graph.m_fixpointState != BeforeFixpoint);
         
         m_changed = false;
         
         m_graph.clearReplacements();
         
-        for (unsigned blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
-            performBlockCSE(m_graph.block(blockIndex));
+        if (m_graph.m_form == SSA) {
+            Vector<BasicBlock*> depthFirst;
+            m_graph.getBlocksInDepthFirstOrder(depthFirst);
+            for (unsigned i = 0; i < depthFirst.size(); ++i)
+                performBlockCSE(depthFirst[i]);
+        } else {
+            for (unsigned blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
+                performBlockCSE(m_graph.block(blockIndex));
+        }
         
         return m_changed;
     }
@@ -1015,8 +1021,10 @@ private:
         if (cseMode == NormalCSE)
             m_graph.performSubstitution(node);
         
-        if (node->op() == SetLocal)
+        if (node->containsMovHint()) {
+            ASSERT(node->op() != ZombieHint);
             node->child1()->mergeFlags(NodeRelevantToOSR);
+        }
         
         switch (node->op()) {
         
@@ -1120,6 +1128,11 @@ private:
         }
             
         case Flush: {
+            if (m_graph.m_form == SSA) {
+                // FIXME: Enable Flush store elimination in SSA form.
+                // https://bugs.webkit.org/show_bug.cgi?id=125429
+                break;
+            }
             VariableAccessData* variableAccessData = node->variableAccessData();
             VirtualRegister local = variableAccessData->local();
             Node* replacement = node->child1().node();
