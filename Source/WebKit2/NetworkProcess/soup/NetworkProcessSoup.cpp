@@ -29,19 +29,79 @@
 #include "NetworkProcess.h"
 
 #include "NetworkProcessCreationParameters.h"
+#include "ResourceCachesToClear.h"
+#include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/ResourceHandle.h>
+#include <libsoup/soup.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters&)
+static uint64_t getCacheDiskFreeSize(SoupCache* cache)
 {
+    ASSERT(cache);
+
+    GOwnPtr<char> cacheDir;
+    g_object_get(G_OBJECT(cache), "cache-dir", &cacheDir.outPtr(), NULL);
+    if (!cacheDir)
+        return 0;
+
+    return WebCore::getVolumeFreeSizeForPath(cacheDir.get());
 }
 
-void NetworkProcess::platformSetCacheModel(CacheModel)
+static uint64_t getMemorySize()
 {
-    notImplemented();
+    static uint64_t kDefaultMemorySize = 512;
+#if !OS(WINDOWS)
+    long pageSize = sysconf(_SC_PAGESIZE);
+    if (pageSize == -1)
+        return kDefaultMemorySize;
+
+    long physPages = sysconf(_SC_PHYS_PAGES);
+    if (physPages == -1)
+        return kDefaultMemorySize;
+
+    return ((pageSize / 1024) * physPages) / 1024;
+#else
+    // Fallback to default for other platforms.
+    return kDefaultMemorySize;
+#endif
+}
+
+void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
+{
+    ASSERT(!parameters.diskCacheDirectory.isEmpty());
+    GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(parameters.diskCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER));
+    soup_session_add_feature(WebCore::ResourceHandle::defaultSession(), SOUP_SESSION_FEATURE(soupCache.get()));
+    soup_cache_load(soupCache.get());
+}
+
+void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
+{
+    unsigned cacheTotalCapacity = 0;
+    unsigned cacheMinDeadCapacity = 0;
+    unsigned cacheMaxDeadCapacity = 0;
+    double deadDecodedDataDeletionInterval = 0;
+    unsigned pageCacheCapacity = 0;
+
+    unsigned long urlCacheMemoryCapacity = 0;
+    unsigned long urlCacheDiskCapacity = 0;
+
+    SoupSession* session = ResourceHandle::defaultSession();
+    SoupCache* cache = SOUP_CACHE(soup_session_get_feature(session, SOUP_TYPE_CACHE));
+    uint64_t diskFreeSize = getCacheDiskFreeSize(cache) / 1024 / 1024;
+
+    uint64_t memSize = getMemorySize();
+    calculateCacheSizes(cacheModel, memSize, diskFreeSize,
+        cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
+        pageCacheCapacity, urlCacheMemoryCapacity, urlCacheDiskCapacity);
+
+    if (urlCacheDiskCapacity > soup_cache_get_max_size(cache))
+        soup_cache_set_max_size(cache, urlCacheDiskCapacity);
 }
 
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String&)
@@ -51,7 +111,11 @@ void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo&
 
 void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
 {
-    notImplemented();
+    if (cachesToClear == InMemoryResourceCachesOnly)
+        return;
+
+    SoupSession* session = ResourceHandle::defaultSession();
+    soup_cache_clear(SOUP_CACHE(soup_session_get_feature(session, SOUP_TYPE_CACHE)));
 }
 
 void NetworkProcess::platformTerminate()
