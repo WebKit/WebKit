@@ -1,3 +1,15 @@
+2013-12-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove miscellaneous unnecessary build statements
+        https://bugs.webkit.org/show_bug.cgi?id=125466
+
+        Reviewed by Darin Adler.
+
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/build-generated-files.sh:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * make-generated-sources.sh:
+
 2013-12-08  Filip Pizlo  <fpizlo@apple.com>
 
         CSE should work in SSA
