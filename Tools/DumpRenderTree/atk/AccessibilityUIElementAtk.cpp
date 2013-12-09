@@ -258,7 +258,7 @@ inline const char* roleToString(AtkRole role)
     case ATK_ROLE_SCROLL_PANE:
         return "AXScrollArea";
     case ATK_ROLE_SECTION:
-        return "AXDiv";
+        return "AXSection";
     case ATK_ROLE_SEPARATOR:
         return "AXHorizontalRule";
     case ATK_ROLE_SLIDER:

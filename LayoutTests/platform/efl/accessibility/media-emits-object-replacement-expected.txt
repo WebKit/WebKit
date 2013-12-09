@@ -3,20 +3,20 @@ a  b
 a  b
 End of test
 AXRole: AXWebArea 
-    AXRole: AXDiv AXValue: a <obj> b
+    AXRole: AXSection AXValue: a <obj> b
         AXRole: AXEmbedded 
             AXRole: AXToolbar 
                 AXRole: AXToolbar 
                     AXRole: AXButton 
                     AXRole: AXSlider 
     AXRole: AXGroup AXValue: <\n>
-    AXRole: AXDiv AXValue: a <obj> b
+    AXRole: AXSection AXValue: a <obj> b
         AXRole: AXEmbedded 
             AXRole: AXToolbar 
                 AXRole: AXToolbar 
                     AXRole: AXButton 
                     AXRole: AXSlider 
-    AXRole: AXDiv AXValue: End of test
+    AXRole: AXSection AXValue: End of test
 This tests ensures that if video or audio tags are used, they will emit an object replacement character in a range for string operation.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

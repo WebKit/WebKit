@@ -1,3 +1,32 @@
+2013-12-09  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Translate ATK_ROLE_SECTION into "AXSection" in DRT/WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=125456
+
+        Reviewed by Chris Fleizach.
+
+        Update expectations for GTK and EFL that were expecting AXDiv for
+        section roles, so they now expect AXSection.
+
+        * accessibility/adjacent-continuations-cause-assertion-failure-expected.txt:
+        * accessibility/div-within-anchors-causes-crash-expected.txt:
+        * platform/efl-wk1/accessibility/image-map2-expected.txt:
+        * platform/efl-wk1/accessibility/transformed-element-expected.txt:
+        * platform/efl-wk2/accessibility/image-map2-expected.txt:
+        * platform/efl-wk2/accessibility/transformed-element-expected.txt:
+        * platform/efl/accessibility/media-emits-object-replacement-expected.txt:
+        * platform/gtk/accessibility/aria-roles-unignored-expected.txt:
+        * platform/gtk/accessibility/aria-roles-unignored.html:
+        * platform/gtk/accessibility/entry-and-password-expected.txt:
+        * platform/gtk/accessibility/image-map2-expected.txt:
+        * platform/gtk/accessibility/media-emits-object-replacement-expected.txt:
+        * platform/gtk/accessibility/object-with-title-expected.txt:
+        * platform/gtk/accessibility/object-with-title.html:
+        * platform/gtk/accessibility/replaced-objects-in-anonymous-blocks-expected.txt:
+        * platform/gtk/accessibility/spans-paragraphs-and-divs-expected.txt:
+        * platform/gtk/accessibility/spans-paragraphs-and-divs.html:
+        * platform/gtk/accessibility/transformed-element-expected.txt:
+
 2013-12-09  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Fix handling of 'inherit' and 'initial' for grid lines.

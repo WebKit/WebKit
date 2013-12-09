@@ -1,5 +1,5 @@
 hello
-AXRole: AXDiv
+AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.000000, 9.000000 }

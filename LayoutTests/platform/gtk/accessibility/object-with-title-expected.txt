@@ -8,7 +8,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS child.role is 'AXRole: AXList'
-PASS child.role is 'AXRole: AXDiv'
+PASS child.role is 'AXRole: AXSection'
 PASS child.role is 'AXRole: AXList'
 PASS successfullyParsed is true
 

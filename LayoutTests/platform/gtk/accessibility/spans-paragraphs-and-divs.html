@@ -83,7 +83,7 @@ if (window.accessibilityController) {
     shouldBe("element.childrenCount", "0");
 
     element = webArea.childAtIndex(4);
-    shouldBe("element.role", "'AXRole: AXDiv'");
+    shouldBe("element.role", "'AXRole: AXSection'");
     shouldBe("element.childrenCount", "1");
 
     link = element.childAtIndex(0);
@@ -91,11 +91,11 @@ if (window.accessibilityController) {
     shouldBe("link.childrenCount", "0");
 
     element = webArea.childAtIndex(5);
-    shouldBe("element.role", "'AXRole: AXDiv'");
+    shouldBe("element.role", "'AXRole: AXSection'");
     shouldBe("element.childrenCount", "0");
 
     element = webArea.childAtIndex(6);
-    shouldBe("element.role", "'AXRole: AXDiv'");
+    shouldBe("element.role", "'AXRole: AXSection'");
     shouldBe("element.childrenCount", "1");
 
     link = element.childAtIndex(0);
@@ -103,7 +103,7 @@ if (window.accessibilityController) {
     shouldBe("link.childrenCount", "0");
 
     element = webArea.childAtIndex(7);
-    shouldBe("element.role", "'AXRole: AXDiv'");
+    shouldBe("element.role", "'AXRole: AXSection'");
     shouldBe("element.childrenCount", "0");
 }
 

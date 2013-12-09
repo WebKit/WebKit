@@ -1,6 +1,6 @@
 Image map - test 2 - 2 Links (alt tags)
 ----------------------
-AXRole: AXDiv
+AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
