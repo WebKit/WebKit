@@ -1,3 +1,9 @@
+2013-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the GTK+ build with NetworkProcess enabled.
+
+        * GNUmakefile.list.am: Add missing file to compilation.
+
 2013-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         getComputedStyle border-radius shorthand omits vertical radius information
