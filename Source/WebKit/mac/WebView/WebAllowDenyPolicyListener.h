@@ -28,7 +28,8 @@
 @protocol WebAllowDenyPolicyListener <NSObject>
 - (void)allow;
 - (void)deny;
-#if PLATFORM(IOS)
+
+#if TARGET_OS_IPHONE
 - (void)denyOnlyThisRequest;
 - (BOOL)shouldClearCache;
 #endif
