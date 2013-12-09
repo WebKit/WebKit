@@ -1,3 +1,17 @@
+2013-12-09  Michal Poteralski  <m.poteralski@samsung.com>
+
+        DataCloneError exception is not thrown when postMessage's second parameter
+        is the source port or the target port.
+
+        https://bugs.webkit.org/show_bug.cgi?id=124708
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added layout test to check correctness of value thrown by postMessage:
+
+        * fast/dom/Window/postMessage-clone-port-error-expected.txt: Added.
+        * fast/dom/Window/postMessage-clone-port-error.html: Added.
+
 2013-12-09  Gustavo Noronha Silva  <gns@gnome.org>
 
         accessibility/press-targets-center-point.html should not depend on font layout

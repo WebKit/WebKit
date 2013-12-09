@@ -1,3 +1,27 @@
+2013-12-09  Michal Poteralski  <m.poteralski@samsung.com>
+
+        DataCloneError exception is not thrown when postMessage's second parameter is the source
+        port or the target port.
+
+        https://bugs.webkit.org/show_bug.cgi?id=124708
+
+        Reviewed by Alexey Proskuryakov.
+
+        According to specification:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/web-messaging.html#dom-window-postmessage
+
+        If the method was invoked with a second argument transfer then if any of the objects in the
+        transfer are either the source port or the target port (if any), then a DataCloneError
+        exception should be thrown. Currently an InvalidStateError exception is thrown what is an
+        incorrect behaviour.
+
+        The proposed solution is change to the correct the exception value.
+
+        Tests: fast/dom/Window/postMessage-clone-port-error.html
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::postMessage): Improve exception value
+
 2013-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the GTK+ build with NetworkProcess enabled.

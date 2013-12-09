@@ -1,0 +1,21 @@
+<body onload="test();"></body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+var exName;
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var channel = new MessageChannel();
+    channel.port1.start();
+
+    try {
+        channel.port1.postMessage("ports", [channel.port1]);
+    } catch(ex) {
+        exName = ex.name
+        shouldBeEqualToString("exName", "DataCloneError");
+    }
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
