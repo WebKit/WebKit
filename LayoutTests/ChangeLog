@@ -1,3 +1,17 @@
+2013-12-09  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add failure test expectations and rebaselines for failing tests.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl-wk1/fast/forms/validation-message-appearance-expected.png: Rebaseline after r159915.
+        * platform/efl-wk2/fast/forms/validation-message-appearance-expected.png: Ditto.
+        * platform/efl/fast/forms/validation-message-appearance-expected.txt: Ditto.
+        * platform/efl/fast/parser/entity-comment-in-textarea-expected.png: Rebaseline after r159192.
+        * platform/efl/fast/parser/entity-comment-in-textarea-expected.txt: Ditto.
+
 2013-12-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit ignores @alt on IMG elements with role="text"

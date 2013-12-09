@@ -376,4 +376,6 @@ Bug(EFL) fast/media/media-query-list-04.html [ Failure ]
 Bug(EFL) fast/media/media-query-list-05.html [ Failure ]
 Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
 
+# Both tests started to fail after r150802
+webkit.org/b/125350 fast/backgrounds/gradient-background-leakage-hidpi.html [ Failure ]
 webkit.org/b/125350 fast/canvas/canvas-as-image-hidpi.html [ Failure ]
