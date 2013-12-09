@@ -39,6 +39,12 @@
 #define PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMG PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMGPROC
 #endif
 
+#if PLATFORM(WIN) && USE(OPENGL_ES_2)
+#ifndef GL_ARB_half_float_pixel
+#define GL_HALF_FLOAT_ARB                 0x140B
+#endif
+#endif
+
 #ifndef GL_EXT_robustness
 /* reuse GL_NO_ERROR */
 #define GL_GUILTY_CONTEXT_RESET_EXT 0x8253
