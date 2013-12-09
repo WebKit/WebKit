@@ -111,6 +111,8 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
 
 #if PLATFORM(MAC)
         reply->send(CoreIPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND));
+#elif USE(UNIX_DOMAIN_SOCKETS)
+        reply->send(CoreIPC::Attachment());
 #else
         notImplemented();
 #endif
@@ -161,6 +163,8 @@ void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const CoreIPC::
 
 #if PLATFORM(MAC)
     reply->send(CoreIPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
+#elif USE(UNIX_DOMAIN_SOCKETS)
+    reply->send(connectionIdentifier);
 #else
     notImplemented();
 #endif

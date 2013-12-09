@@ -116,6 +116,13 @@ public:
 #elif USE(UNIX_DOMAIN_SOCKETS)
     typedef int Identifier;
     static bool identifierIsNull(Identifier identifier) { return !identifier; }
+
+    struct SocketPair {
+        int client;
+        int server;
+    };
+
+    static Connection::SocketPair createPlatformConnection();
 #endif
 
     static PassRefPtr<Connection> createServerConnection(Identifier, Client*, WTF::RunLoop* clientRunLoop);

@@ -43,6 +43,16 @@
 #include <glib.h>
 #endif
 
+#ifdef SOCK_SEQPACKET
+#define SOCKET_TYPE SOCK_SEQPACKET
+#else
+#if PLATFORM(GTK)
+#define SOCKET_TYPE SOCK_STREAM
+#else
+#define SOCKET_TYPE SOCK_DGRAM
+#endif
+#endif // SOCK_SEQPACKET
+
 namespace CoreIPC {
 
 static const size_t messageMaxSize = 4096;
@@ -504,6 +514,23 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
             return false;
     }
     return true;
+}
+
+Connection::SocketPair Connection::createPlatformConnection()
+{
+    int sockets[2];
+    RELEASE_ASSERT(socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) != -1);
+
+    // Don't expose the child socket to the parent process.
+    while (fcntl(sockets[1], F_SETFD, FD_CLOEXEC)  == -1)
+        RELEASE_ASSERT(errno != EINTR);
+
+    // Don't expose the parent socket to potential future children.
+    while (fcntl(sockets[0], F_SETFD, FD_CLOEXEC) == -1)
+        RELEASE_ASSERT(errno != EINTR);
+
+    SocketPair socketPair = { sockets[0], sockets[1] };
+    return socketPair;
 }
 
 } // namespace CoreIPC

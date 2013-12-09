@@ -1,3 +1,32 @@
+2013-12-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2] Add UNIX_DOMAIN_SOCKETS specific bits for supporting NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=110093
+
+        Reviewed by Martin Robinson.
+
+        Original patch by Balazs Kelemen <kbalazs@webkit.org>.
+
+        Adds the UNIX specific bits to support connections to the
+        NetworkProcess. Since the process of creating the pair of sockets
+        is exactly the same as in the PluginProcess, I've decided to
+        refactor it in ConnectionUnix::createPlatformConnection(). This
+        can be reused later to create a cross-platform solution and remove
+        all the ifdefs (see bug 110978).
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::createPlatformConnection):
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::createWebProcessConnection):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch):
+        (WebKit::NetworkProcessProxy::didCreateNetworkConnectionToWebProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
 2013-12-09  Kwang Yul Seo  <skyul@company100.net>
 
         [WK2][Soup] Support cache model in NetworkProcess

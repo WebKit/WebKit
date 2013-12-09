@@ -199,6 +199,14 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
 
     CoreIPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientPort), 0);
+#elif USE(UNIX_DOMAIN_SOCKETS)
+    CoreIPC::Connection::SocketPair socketPair = CoreIPC::Connection::createPlatformConnection();
+
+    RefPtr<NetworkConnectionToWebProcess> connection = NetworkConnectionToWebProcess::create(socketPair.server);
+    m_webProcessConnections.append(connection.release());
+
+    CoreIPC::Attachment clientSocket(socketPair.client);
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientSocket), 0);
 #else
     notImplemented();
 #endif

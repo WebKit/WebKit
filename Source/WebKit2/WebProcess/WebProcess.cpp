@@ -372,11 +372,13 @@ void WebProcess::ensureNetworkProcessConnection()
 
 #if PLATFORM(MAC)
     CoreIPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
-    if (CoreIPC::Connection::identifierIsNull(connectionIdentifier))
-        return;
+#elif USE(UNIX_DOMAIN_SOCKETS)
+    CoreIPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
 #else
     ASSERT_NOT_REACHED();
 #endif
+    if (CoreIPC::Connection::identifierIsNull(connectionIdentifier))
+        return;
     m_networkProcessConnection = NetworkProcessConnection::create(connectionIdentifier);
 }
 #endif // ENABLE(NETWORK_PROCESS)
