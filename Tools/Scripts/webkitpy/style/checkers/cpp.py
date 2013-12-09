@@ -957,8 +957,8 @@ def check_for_unicode_replacement_characters(lines, error):
                   'Line contains invalid UTF-8 (or Unicode replacement character).')
 
 
-def check_for_new_line_at_eof(lines, error):
-    """Logs an error if there is no newline char at the end of the file.
+def check_for_missing_new_line_at_eof(lines, error):
+    """Logs an error if there is not a newline character at the end of the file.
 
     Args:
       lines: An array of strings, each representing a line of the file.
@@ -972,6 +972,20 @@ def check_for_new_line_at_eof(lines, error):
     if len(lines) < 3 or lines[-2]:
         error(len(lines) - 2, 'whitespace/ending_newline', 5,
               'Could not find a newline character at the end of the file.')
+
+
+def check_for_extra_new_line_at_eof(lines, error):
+    """Logs an error if there is not a single newline at the end of the file.
+
+    Args:
+      lines: An array of strings, each representing a line of the file.
+      error: The function to call with any errors found.
+    """
+    # The array lines() was created by adding two newlines to the
+    # original file (go figure), then splitting on \n.
+    if len(lines) > 3 and not lines[-3]:
+        error(len(lines) - 2, 'whitespace/ending_newline', 5,
+              'There was more than one newline at the end of the file.')
 
 
 def check_for_multiline_comments_and_strings(clean_lines, line_number, error):
@@ -3635,7 +3649,8 @@ def _process_lines(filename, file_extension, lines, error, min_confidence):
     # lines rather than "cleaned" lines.
     check_for_unicode_replacement_characters(lines, error)
 
-    check_for_new_line_at_eof(lines, error)
+    check_for_missing_new_line_at_eof(lines, error)
+    check_for_extra_new_line_at_eof(lines, error)
 
 
 class CppChecker(object):

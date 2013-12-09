@@ -1,3 +1,21 @@
+2013-12-09  Brian J. Burg  <burg@cs.washington.edu>
+
+        check-webkit-style should check for extra newlines at EOF
+        https://bugs.webkit.org/show_bug.cgi?id=125424
+
+        Reviewed by Darin Adler.
+
+        Report a style violation if extraneous newlines are added
+        to the end of a C++ file. There should only be one newline at EOF.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_for_missing_new_line_at_eof): Renamed from check_for_new_line_at_eof.
+        (check_for_extra_new_line_at_eof): Added.
+        (_process_lines): Added new check and renamed existing EOF check.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_extra_newlines_at_eof): Added.
+        (CppStyleTest.test_extra_newlines_at_eof.do_test): Added.
+
 2013-12-09  Laszlo Vidacs  <lac@inf.u-szeged.hu>
 
         check-webkit-style: ternary operator in macro call identified as initialization list

@@ -1937,6 +1937,23 @@ class CppStyleTest(CppStyleTestBase):
         do_test(self, '// Newline\n// at EOF\n', False)
         do_test(self, '// No newline\n// at EOF', True)
 
+    def test_extra_newlines_at_eof(self):
+        def do_test(self, data, too_many_newlines):
+            error_collector = ErrorCollector(self.assertTrue)
+            self.process_file_data('foo.cpp', 'cpp', data.split('\n'),
+                                   error_collector)
+            # The warning appears only once.
+            self.assertEqual(
+                int(too_many_newlines),
+                error_collector.results().count(
+                    'There was more than one newline at the end of the file.'
+                    '  [whitespace/ending_newline] [5]'))
+
+        do_test(self, '// No Newline\n// at EOF', False)
+        do_test(self, '// One Newline\n// at EOF\n', False)
+        do_test(self, '// Two Newlines\n// at EOF\n\n', True)
+        do_test(self, '// Three Newlines\n// at EOF\n\n\n', True)
+
     def test_invalid_utf8(self):
         def do_test(self, raw_bytes, has_invalid_utf8):
             error_collector = ErrorCollector(self.assertTrue)
