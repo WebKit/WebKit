@@ -83,6 +83,38 @@ PASS computedStyle.getPropertyCSSValue('border-top-right-radius').cssText is '2p
 PASS computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText is '4px 7px'
 PASS computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText is '6px 8px'
 PASS checkComputedStyleValue() is true
+PASS computedStyle.getPropertyValue('border-radius') is '10px 20px 30px 40px / 15px 25px 35px 45px'
+PASS computedStyle.getPropertyCSSValue('border-radius').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-radius').cssText is '10px 20px 30px 40px / 15px 25px 35px 45px'
+PASS computedStyle.getPropertyCSSValue('border-top-left-radius').cssText is '10px 15px'
+PASS computedStyle.getPropertyCSSValue('border-top-right-radius').cssText is '20px 25px'
+PASS computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText is '30px 35px'
+PASS computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText is '40px 45px'
+PASS checkComputedStyleValue() is true
+PASS computedStyle.getPropertyValue('border-radius') is '10px 20px 30px 40px / 10px 25px 35px 45px'
+PASS computedStyle.getPropertyCSSValue('border-radius').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-radius').cssText is '10px 20px 30px 40px / 10px 25px 35px 45px'
+PASS computedStyle.getPropertyCSSValue('border-top-left-radius').cssText is '10px'
+PASS computedStyle.getPropertyCSSValue('border-top-right-radius').cssText is '20px 25px'
+PASS computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText is '30px 35px'
+PASS computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText is '40px 45px'
+PASS checkComputedStyleValue() is true
+PASS computedStyle.getPropertyValue('border-radius') is '10px 20px 30px 40px / 10px 20px 35px 45px'
+PASS computedStyle.getPropertyCSSValue('border-radius').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-radius').cssText is '10px 20px 30px 40px / 10px 20px 35px 45px'
+PASS computedStyle.getPropertyCSSValue('border-top-left-radius').cssText is '10px'
+PASS computedStyle.getPropertyCSSValue('border-top-right-radius').cssText is '20px'
+PASS computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText is '30px 35px'
+PASS computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText is '40px 45px'
+PASS checkComputedStyleValue() is true
+PASS computedStyle.getPropertyValue('border-radius') is '10px 20px 30px 40px / 10px 20px 30px 45px'
+PASS computedStyle.getPropertyCSSValue('border-radius').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-radius').cssText is '10px 20px 30px 40px / 10px 20px 30px 45px'
+PASS computedStyle.getPropertyCSSValue('border-top-left-radius').cssText is '10px'
+PASS computedStyle.getPropertyCSSValue('border-top-right-radius').cssText is '20px'
+PASS computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText is '30px'
+PASS computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText is '40px 45px'
+PASS checkComputedStyleValue() is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
