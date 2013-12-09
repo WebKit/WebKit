@@ -123,14 +123,6 @@ const Vector<WebContext*>& WebContext::allContexts()
     return contexts();
 }
 
-#if PLATFORM(IOS)
-WebContext* WebContext::sharedProcessContext()
-{
-    static WKContextRef sharedContextRef = WKContextCreate();
-    return toImpl(sharedContextRef);
-}
-#endif
-
 WebContext::WebContext(const String& injectedBundlePath)
     : m_processModel(ProcessModelSharedSecondaryProcess)
     , m_webProcessCountLimit(UINT_MAX)

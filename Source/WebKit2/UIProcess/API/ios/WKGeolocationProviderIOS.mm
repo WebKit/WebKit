@@ -139,7 +139,8 @@ struct GeolocationRequestData {
 -(id)init
 {
     ASSERT_NOT_REACHED();
-    return [self initWithContext:(WebContext::sharedProcessContext())];
+    [self release];
+    return nil;
 }
 
 -(id)initWithContext:(WebContext*)context

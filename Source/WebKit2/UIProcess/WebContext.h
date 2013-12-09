@@ -101,10 +101,6 @@ public:
     static PassRefPtr<WebContext> create(const String& injectedBundlePath);
     virtual ~WebContext();
 
-#if PLATFORM(IOS)
-    static WebContext *sharedProcessContext();
-#endif
-
     static const Vector<WebContext*>& allContexts();
 
     template <typename T>
