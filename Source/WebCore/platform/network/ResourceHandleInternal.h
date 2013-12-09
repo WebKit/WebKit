@@ -33,6 +33,7 @@
 #include "Timer.h"
 
 #if USE(CFNETWORK)
+#include "ResourceHandleCFURLConnectionDelegate.h"
 #include <CFNetwork/CFURLConnectionPriv.h>
 #endif
 
@@ -146,6 +147,7 @@ namespace WebCore {
 #if USE(CFNETWORK)
         RetainPtr<CFURLConnectionRef> m_connection;
         ResourceRequest m_currentRequest;
+        RefPtr<ResourceHandleCFURLConnectionDelegate> m_connectionDelegate;
 #endif
 #if PLATFORM(MAC) && !USE(CFNETWORK)
         RetainPtr<NSURLConnection> m_connection;

@@ -1881,6 +1881,9 @@
     <ClCompile Include="..\platform\network\cf\ResourceHandleCFNet.cpp">
       <Filter>platform\network\cf</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\network\cf\ResourceHandleCFURLConnectionDelegate.cpp">
+      <Filter>platform\network\cf</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\network\cf\ResourceRequestCFNet.cpp">
       <Filter>platform\network\cf</Filter>
     </ClCompile>
@@ -1891,6 +1894,9 @@
       <Filter>platform\network\cf</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\network\cf\SynchronousLoaderClientCFNet.cpp">
+      <Filter>platform\network\cf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\network\cf\SynchronousResourceHandleCFURLConnectionDelegate.cpp">
       <Filter>platform\network\cf</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\network\win\DownloadBundleWin.cpp">
@@ -15092,6 +15098,9 @@
     <CustomBuildStep Include="..\platform\network\cf\ResourceError.h">
       <Filter>platform\network\cf</Filter>
     </CustomBuildStep>
+    <CustomBuildStep Include="..\platform\network\cf\ResourceHandleCFURLConnectionDelegate.h">
+      <Filter>platform\network\cf</Filter>
+    </CustomBuildStep>
     <CustomBuildStep Include="..\platform\network\cf\ResourceRequest.h">
       <Filter>platform\network\cf</Filter>
     </CustomBuildStep>
@@ -15099,6 +15108,9 @@
       <Filter>platform\network\cf</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\network\cf\ResourceResponse.h">
+      <Filter>platform\network\cf</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\platform\network\cf\SynchronousResourceHandleCFURLConnectionDelegate.h">
       <Filter>platform\network\cf</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\network\curl\AuthenticationChallenge.h">

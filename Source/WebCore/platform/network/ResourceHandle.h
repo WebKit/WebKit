@@ -72,7 +72,6 @@ typedef struct objc_object *id;
 typedef struct _CFURLConnection* CFURLConnectionRef;
 typedef int CFHTTPCookieStorageAcceptPolicy;
 typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
-typedef struct CFURLConnectionClient_V6 CFURLConnectionClient_V6;
 #endif
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
@@ -142,7 +141,6 @@ public:
     const ResourceRequest& currentRequest() const;
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, CFDataRef);
-    static CFURLConnectionClient_V6* connectionClientCallbacks();
 
 #if USE(QUICK_LOOK)
     QuickLookHandle* quickLookHandle() { return m_quickLook.get(); }
