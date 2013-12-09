@@ -452,18 +452,19 @@ def sh4LowerMisplacedLabels(list)
     list.each {
         | node |
         if node.is_a? Instruction
-            case node.opcode
-            when "jmp", "call"
-                if node.operands[0].is_a? LabelReference
-                    tmp = Tmp.new(codeOrigin, :gpr)
-                    newList << Instruction.new(codeOrigin, "move", [node.operands[0], tmp])
-                    newList << Instruction.new(codeOrigin, node.opcode, [tmp])
+            operands = node.operands
+            newOperands = []
+            operands.each {
+                | operand |
+                if operand.is_a? LabelReference
+                    tmp = Tmp.new(operand.codeOrigin, :gpr)
+                    newList << Instruction.new(operand.codeOrigin, "move", [operand, tmp])
+                    newOperands << tmp
                 else
-                    newList << node
+                    newOperands << operand
                 end
-            else
-                newList << node
-            end
+            }
+            newList << Instruction.new(node.codeOrigin, node.opcode, newOperands, node.annotation)
         else
             newList << node
         end
@@ -730,8 +731,8 @@ class Sequence
             "bbeq", "bbneq", "bbb", "bieq", "bpeq", "bineq", "bpneq", "bia", "bpa", "biaeq", "bpaeq", "bib", "bpb",
             "bigteq", "bpgteq", "bilt", "bplt", "bigt", "bpgt", "bilteq", "bplteq", "btiz", "btpz", "btinz", "btpnz", "btbz", "btbnz"])
         result = riscLowerMalformedImmediates(result, -128..127)
-        result = sh4LowerMisplacedLabels(result)
         result = riscLowerMisplacedAddresses(result)
+        result = sh4LowerMisplacedLabels(result)
         result = sh4LowerMisplacedSpecialRegisters(result)
 
         result = assignRegistersToTemporaries(result, :gpr, SH4_TMP_GPRS)
@@ -749,6 +750,7 @@ def sh4Operands(operands)
 end
 
 def emitSH4Branch(sh4opcode, operand)
+    raise "Invalid operand #{operand}" unless operand.is_a? RegisterID or operand.is_a? SpecialRegister
     $asm.puts "#{sh4opcode} @#{operand.sh4Operand}"
     $asm.puts "nop"
 end
@@ -772,12 +774,16 @@ def emitSH4ShiftImm(val, operand, direction)
     end
 end
 
-def emitSH4BranchIfT(label, neg)
+def emitSH4BranchIfT(dest, neg)
     outlabel = LocalLabel.unique("branchIfT")
     sh4opcode = neg ? "bt" : "bf"
     $asm.puts "#{sh4opcode} #{LocalLabelReference.new(codeOrigin, outlabel).asmLabel}"
-    $asm.puts "bra #{label.asmLabel}"
-    $asm.puts "nop"
+    if dest.is_a? LocalLabelReference
+        $asm.puts "bra #{dest.asmLabel}"
+        $asm.puts "nop"
+    else
+        emitSH4Branch("jmp", dest)
+    end
     outlabel.lower("SH4")
 end
 
