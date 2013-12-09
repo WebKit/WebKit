@@ -1,3 +1,52 @@
+2013-12-08  Sam Weinig  <sam@webkit.org>
+
+        [Cocoa] Remove knowledge of the WKView from the WebFullScreenManagerProxy by adding a proper client
+        https://bugs.webkit.org/show_bug.cgi?id=125427
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::fullScreenManagerProxyClient):
+        (WebKit::PageClientImpl::closeFullScreenManager):
+        (WebKit::PageClientImpl::isFullScreen):
+        (WebKit::PageClientImpl::enterFullScreen):
+        (WebKit::PageClientImpl::exitFullScreen):
+        (WebKit::PageClientImpl::beganEnterFullScreen):
+        (WebKit::PageClientImpl::beganExitFullScreen):
+        Implement the new client.
+
+        * UIProcess/API/mac/WKView.mm:
+        Remove call to setWebView() and do some cleanup.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        Convert to property syntax and re-arrange.
+
+        * UIProcess/PageClient.h:
+        Expose access to the new client.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::create):
+        (WebKit::WebFullScreenManagerProxy::WebFullScreenManagerProxy):
+        (WebKit::WebFullScreenManagerProxy::invalidate):
+        (WebKit::WebFullScreenManagerProxy::close):
+        (WebKit::WebFullScreenManagerProxy::isFullScreen):
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen):
+        (WebKit::WebFullScreenManagerProxy::beganEnterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::beganExitFullScreen):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        Use the new client.
+
+        * UIProcess/WebPageProxy.cpp:
+        Pass the new client.
+
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm:
+        Removed. Now goes through the client.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Remove WebFullScreenManagerProxyMac.mm.
+
 2013-12-07  Sam Weinig  <sam@webkit.org>
 
         [Cocoa] Remove webProcessPlugInInitialize: from the WKWebProcessPlugIn protocol

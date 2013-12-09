@@ -58,7 +58,6 @@
 #import "WKViewPrivate.h"
 #import "WebContext.h"
 #import "WebEventFactory.h"
-#import "WebFullScreenManagerProxy.h"
 #import "WebKit2Initialize.h"
 #import "WebPage.h"
 #import "WebPageGroup.h"
@@ -75,6 +74,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/Image.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/FileSystem.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PlatformEventFactoryMac.h>
@@ -82,10 +82,9 @@
 #import <WebCore/Region.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>
-#import <WebCore/WebCoreNSStringExtras.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
-#import <WebCore/FileSystem.h>
+#import <WebCore/WebCoreNSStringExtras.h>
 #import <WebKitSystemInterface.h>
 #import <sys/stat.h>
 #import <wtf/RefPtr.h>
@@ -2782,12 +2781,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 }
 
 #if ENABLE(FULLSCREEN_API)
-- (BOOL)hasFullScreenWindowController
+- (BOOL)_hasFullScreenWindowController
 {
     return (bool)_data->_fullScreenWindowController;
 }
 
-- (WKFullScreenWindowController*)fullScreenWindowController
+- (WKFullScreenWindowController *)_fullScreenWindowController
 {
     if (!_data->_fullScreenWindowController)
         _data->_fullScreenWindowController = adoptNS([[WKFullScreenWindowController alloc] initWithWindow:[self createFullScreenWindow] webView:self]);
@@ -2795,11 +2794,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_fullScreenWindowController.get();
 }
 
-- (void)closeFullScreenWindowController
+- (void)_closeFullScreenWindowController
 {
     if (!_data->_fullScreenWindowController)
         return;
-    [_data->_fullScreenWindowController.get() close];
+
+    [_data->_fullScreenWindowController close];
     _data->_fullScreenWindowController = nullptr;
 }
 #endif
@@ -2911,9 +2911,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page = toImpl(contextRef)->createWebPage(*_data->_pageClient, toImpl(pageGroupRef), toImpl(relatedPage));
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
     _data->_page->initializeWebPage();
-#if ENABLE(FULLSCREEN_API)
-    _data->_page->fullScreenManager()->setWebView(self);
-#endif
+
     _data->_mouseDownEvent = nil;
     _data->_ignoringMouseDraggedEvents = NO;
     _data->_clipsToVisibleRect = NO;
@@ -3122,13 +3120,27 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page->setUnderlayColor(colorFromNSColor(underlayColor));
 }
 
-- (NSView*)fullScreenPlaceholderView
+- (NSView *)fullScreenPlaceholderView
 {
 #if ENABLE(FULLSCREEN_API)
     if (_data->_fullScreenWindowController && [_data->_fullScreenWindowController isFullScreen])
         return [_data->_fullScreenWindowController webViewPlaceholder];
 #endif
     return nil;
+}
+
+- (NSWindow *)createFullScreenWindow
+{
+#if ENABLE(FULLSCREEN_API)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
+    NSRect contentRect = NSZeroRect;
+#else
+    NSRect contentRect = [[NSScreen mainScreen] frame];
+#endif
+    return [[[WebCoreFullScreenWindow alloc] initWithContentRect:contentRect styleMask:(NSBorderlessWindowMask | NSResizableWindowMask) backing:NSBackingStoreBuffered defer:NO] autorelease];
+#else
+    return nil;
+#endif
 }
 
 - (void)beginDeferringViewInWindowChanges
@@ -3228,20 +3240,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout * 0.5);
         drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout * 0.5);
     }
-}
-
-- (NSWindow*)createFullScreenWindow
-{
-#if ENABLE(FULLSCREEN_API)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
-    NSRect contentRect = NSZeroRect;
-#else
-    NSRect contentRect = [[NSScreen mainScreen] frame];
-#endif
-    return [[[WebCoreFullScreenWindow alloc] initWithContentRect:contentRect styleMask:(NSBorderlessWindowMask | NSResizableWindowMask) backing:NSBackingStoreBuffered defer:NO] autorelease];
-#else
-    return nil;
-#endif
 }
 
 - (BOOL)isUsingUISideCompositing

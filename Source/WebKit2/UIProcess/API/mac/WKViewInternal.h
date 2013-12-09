@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKView.h"
+#import "WKViewPrivate.h"
 
 #import "PluginComplexTextInputState.h"
 #import "WebFindOptions.h"
@@ -83,12 +83,6 @@ namespace WebKit {
 
 - (WebKit::ColorSpaceData)_colorSpace;
 
-#if ENABLE(FULLSCREEN_API)
-- (BOOL)hasFullScreenWindowController;
-- (WKFullScreenWindowController*)fullScreenWindowController;
-- (void)closeFullScreenWindowController;
-#endif
-
 - (void)_cacheWindowBottomCornerRect;
 
 - (NSInteger)spellCheckerDocumentTag;
@@ -96,5 +90,11 @@ namespace WebKit {
 
 - (void)_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates;
 - (BOOL)_suppressVisibilityUpdates;
+
+// FullScreen
+
+@property (readonly) BOOL _hasFullScreenWindowController;
+@property (readonly) WKFullScreenWindowController *_fullScreenWindowController;
+- (void)_closeFullScreenWindowController;
 
 @end

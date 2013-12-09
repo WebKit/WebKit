@@ -43,10 +43,6 @@ OBJC_CLASS CALayer;
 OBJC_CLASS WKView;
 OBJC_CLASS NSTextAlternatives;
 #endif
-
-#if PLATFORM(IOS)
-OBJC_CLASS UIWKView;
-#endif
 #endif
 
 namespace WebCore {
@@ -59,14 +55,20 @@ namespace WebKit {
 class DrawingAreaProxy;
 class FindIndicator;
 class NativeWebKeyboardEvent;
-#if ENABLE(TOUCH_EVENTS)
-class NativeWebTouchEvent;
-#endif
 class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebPopupMenuProxy;
+
+#if ENABLE(TOUCH_EVENTS)
+class NativeWebTouchEvent;
+#endif
+
 #if ENABLE(INPUT_TYPE_COLOR)
 class WebColorPicker;
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+class WebFullScreenManagerProxyClient;
 #endif
 
 #if PLATFORM(MAC)
@@ -241,6 +243,11 @@ public:
     virtual void stopAssistingNode() = 0;
     virtual void selectionDidChange() = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) = 0;
+#endif
+
+    // Auxiliary Client Creation
+#if ENABLE(FULLSCREEN_API)
+    virtual WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() = 0;
 #endif
 };
 

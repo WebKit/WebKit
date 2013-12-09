@@ -26,20 +26,17 @@
 #import "config.h"
 #import "PageClientImpl.h"
 
-#if USE(DICTATION_ALTERNATIVES)
-#import <AppKit/NSTextAlternatives.h>
-#endif
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DictionaryPopupInfo.h"
 #import "FindIndicator.h"
 #import "NativeWebKeyboardEvent.h"
+#import "StringUtilities.h"
 #import "WKAPICast.h"
+#import "WKFullScreenWindowController.h"
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
-#import "WKViewPrivate.h"
-#import "StringUtilities.h"
 #import "WebColorPickerMac.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebEditCommandProxy.h"
@@ -53,9 +50,13 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebKitSystemInterface.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
-#import <WebKitSystemInterface.h>
+
+#if USE(DICTATION_ALTERNATIVES)
+#import <AppKit/NSTextAlternatives.h>
+#endif
 
 @interface NSApplication (WebNSApplicationDetails)
 - (NSCursor *)_cursorRectCursor;
@@ -553,5 +554,49 @@ Vector<String> PageClientImpl::dictationAlternatives(uint64_t dictationContext)
     return m_alternativeTextUIController->alternativesForContext(dictationContext);
 }
 #endif
+
+#if ENABLE(FULLSCREEN_API)
+
+WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()
+{
+    return *this;
+}
+
+// WebFullScreenManagerProxyClient
+
+void PageClientImpl::closeFullScreenManager()
+{
+    [m_wkView _closeFullScreenWindowController];
+}
+
+bool PageClientImpl::isFullScreen()
+{
+    if (!m_wkView._hasFullScreenWindowController)
+        return false;
+
+    return m_wkView._fullScreenWindowController.isFullScreen;
+}
+
+void PageClientImpl::enterFullScreen()
+{
+    [m_wkView._fullScreenWindowController enterFullScreen:nil];
+}
+
+void PageClientImpl::exitFullScreen()
+{
+    [m_wkView._fullScreenWindowController exitFullScreen];
+}
+
+void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+{
+    [m_wkView._fullScreenWindowController beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+}
+
+void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+{
+    [m_wkView._fullScreenWindowController beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+}
+
+#endif // ENABLE(FULLSCREEN_API)
 
 } // namespace WebKit

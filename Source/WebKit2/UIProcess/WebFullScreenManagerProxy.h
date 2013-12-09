@@ -37,33 +37,29 @@ namespace WebCore {
 class IntRect;
 }
 
-#if PLATFORM(MAC)
-OBJC_CLASS WKView;
-#elif PLATFORM(GTK)
-typedef struct _WebKitWebViewBase WebKitWebViewBase;
-#endif
-
 namespace WebKit {
-    
-#if PLATFORM(MAC)
-typedef WKView PlatformWebView;
-#elif PLATFORM(GTK)
-typedef WebKitWebViewBase PlatformWebView;
-#elif PLATFORM(EFL)
-typedef Evas_Object PlatformWebView;
-#endif
 
 class WebPageProxy;
-class LayerTreeContext;
+
+class WebFullScreenManagerProxyClient {
+public:
+    virtual ~WebFullScreenManagerProxyClient() { }
+
+    virtual void closeFullScreenManager() = 0;
+    virtual bool isFullScreen() = 0;
+    virtual void enterFullScreen() = 0;
+    virtual void exitFullScreen() = 0;
+    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) = 0;
+    virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) = 0;
+};
 
 class WebFullScreenManagerProxy : public RefCounted<WebFullScreenManagerProxy>, public CoreIPC::MessageReceiver {
 public:
-    static PassRefPtr<WebFullScreenManagerProxy> create(WebPageProxy*);
+    static PassRefPtr<WebFullScreenManagerProxy> create(WebPageProxy&, WebFullScreenManagerProxyClient&);
     virtual ~WebFullScreenManagerProxy();
 
     void invalidate();
 
-    void setWebView(PlatformWebView*);
     bool isFullScreen();
     void close();
 
@@ -77,7 +73,7 @@ public:
     void restoreScrollPosition();
 
 private:
-    explicit WebFullScreenManagerProxy(WebPageProxy*);
+    explicit WebFullScreenManagerProxy(WebPageProxy&, WebFullScreenManagerProxyClient&);
 
     void supportsFullScreen(bool withKeyboard, bool&);
     void enterFullScreen();
@@ -89,7 +85,7 @@ private:
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&) OVERRIDE;
 
     WebPageProxy* m_page;
-    PlatformWebView* m_webView;
+    WebFullScreenManagerProxyClient* m_client;
 
 #if PLATFORM(EFL)
     bool m_hasRequestedFullScreen;

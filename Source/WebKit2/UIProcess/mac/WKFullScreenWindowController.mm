@@ -349,7 +349,6 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
 - (void)beganExitFullScreenWithInitialFrame:(const WebCore::IntRect&)initialFrame finalFrame:(const WebCore::IntRect&)finalFrame
 {
-
     if (_fullScreenState != WaitingToExitFullScreen)
         return;
     _fullScreenState = ExitingFullScreen;

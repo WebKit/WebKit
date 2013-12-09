@@ -28,6 +28,7 @@
 
 #include "CorrectionPanel.h"
 #include "PageClient.h"
+#include "WebFullScreenManagerProxy.h"
 #include <wtf/RetainPtr.h>
 
 @class WKEditorUndoTargetObjC;
@@ -40,14 +41,19 @@ class AlternativeTextUIController;
 namespace WebKit {
 class FindIndicatorWindow;
 
-class PageClientImpl FINAL : public PageClient {
+class PageClientImpl FINAL : public PageClient
+#if ENABLE(FULLSCREEN_API)
+    , public WebFullScreenManagerProxyClient
+#endif
+    {
 public:
-    explicit PageClientImpl(WKView*);
+    explicit PageClientImpl(WKView *);
     virtual ~PageClientImpl();
     
     void viewWillMoveToAnotherWindow();
 
 private:
+    // PageClient
     virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
     virtual void displayView();
@@ -132,6 +138,21 @@ private:
     virtual void removeDictationAlternatives(uint64_t dictationContext);
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext);
     virtual Vector<String> dictationAlternatives(uint64_t dictationContext);
+#endif
+
+    // Auxiliary Client Creation
+#if ENABLE(FULLSCREEN_API)
+    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() OVERRIDE;
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    // WebFullScreenManagerProxyClient
+    virtual void closeFullScreenManager() OVERRIDE;
+    virtual bool isFullScreen() OVERRIDE;
+    virtual void enterFullScreen() OVERRIDE;
+    virtual void exitFullScreen() OVERRIDE;
+    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) OVERRIDE;
+    virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) OVERRIDE;
 #endif
 
     WKView* m_wkView;
