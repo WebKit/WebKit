@@ -23,10 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit2/WebKit2.h>
+
 @interface BrowserAppDelegate : NSObject <NSApplicationDelegate> {
+#if WK_API_ENABLED
     WKProcessGroup *_processGroup;
     WKBrowsingContextGroup *_browsingContextGroup;
-
+#endif
     NSMutableSet *_browserWindows;
 }
 

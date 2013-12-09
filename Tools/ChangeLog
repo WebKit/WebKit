@@ -1,3 +1,15 @@
+2013-12-08  Sam Weinig  <sam@webkit.org>
+
+        32-bit MiniBrowser doesn't build
+        https://bugs.webkit.org/show_bug.cgi?id=125420
+
+        Reviewed by Dan Bernstein.
+
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        (-[BrowserAppDelegate applicationWillTerminate:]):
+
 2013-12-08  Brian Holt  <brian.holt@samsung.com>
 
         [WK2] Add ENABLE_NETWORK_PROCESS flag
