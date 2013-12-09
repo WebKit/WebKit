@@ -162,6 +162,21 @@ private:
         return 0;
     }
     
+    Node* constantStoragePointerCSE(Node* node)
+    {
+        for (unsigned i = endIndexForPureCSE(); i--;) {
+            Node* otherNode = m_currentBlock->at(i);
+            if (otherNode->op() != ConstantStoragePointer)
+                continue;
+            
+            if (otherNode->storagePointer() != node->storagePointer())
+                continue;
+            
+            return otherNode;
+        }
+        return 0;
+    }
+    
     Node* getCalleeLoadElimination()
     {
         for (unsigned i = m_indexInBlock; i--;) {
@@ -1152,6 +1167,12 @@ private:
                 break;
             // FIXME: have CSE for weak constants against strong constants and vice-versa.
             setReplacement(weakConstantCSE(node));
+            break;
+            
+        case ConstantStoragePointer:
+            if (cseMode == StoreElimination)
+                break;
+            setReplacement(constantStoragePointerCSE(node));
             break;
             
         case GetArrayLength:

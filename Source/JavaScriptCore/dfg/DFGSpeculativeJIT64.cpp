@@ -4243,6 +4243,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
+    case ConstantStoragePointer: {
+        compileConstantStoragePointer(node);
+        break;
+    }
+        
     case GetTypedArrayByteOffset: {
         compileGetTypedArrayByteOffset(node);
         break;

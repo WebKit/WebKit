@@ -116,6 +116,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case ExtractOSREntryLocal:
     case Int52ToDouble:
     case Int52ToValue:
+    case ConstantStoragePointer:
         return;
         
     case MovHintAndCheck:

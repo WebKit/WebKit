@@ -1,5 +1,57 @@
 2013-12-08  Filip Pizlo  <fpizlo@apple.com>
 
+        Add the notion of ConstantStoragePointer to DFG IR
+        https://bugs.webkit.org/show_bug.cgi?id=125395
+
+        Reviewed by Oliver Hunt.
+        
+        This pushes more typed array folding into StrengthReductionPhase, and enables CSE on
+        storage pointers. Previously, you might have separate nodes for the same storage
+        pointer and this would cause some bad register pressure in the DFG. Note that this
+        was really a theoretical problem and not, to my knowledge a practical one - so this
+        patch is basically just a clean-up.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::constantStoragePointerCSE):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToConstantStoragePointer):
+        (JSC::DFG::Node::hasStoragePointer):
+        (JSC::DFG::Node::storagePointer):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileConstantStoragePointer):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        (JSC::DFG::StrengthReductionPhase::foldTypedArrayPropertyToConstant):
+        (JSC::DFG::StrengthReductionPhase::prepareToFoldTypedArray):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileConstantStoragePointer):
+        (JSC::FTL::LowerDFGToLLVM::compileGetIndexedPropertyStorage):
+
+2013-12-08  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should support UntypedUse versions of Compare nodes
         https://bugs.webkit.org/show_bug.cgi?id=125426
 

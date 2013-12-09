@@ -290,6 +290,12 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, "^", node->phi()->index());
     if (node->hasExecutionCounter())
         out.print(comma, RawPointer(node->executionCounter()));
+    if (node->hasVariableWatchpointSet())
+        out.print(comma, RawPointer(node->variableWatchpointSet()));
+    if (node->hasTypedArray())
+        out.print(comma, inContext(JSValue(node->typedArray()), context));
+    if (node->hasStoragePointer())
+        out.print(comma, RawPointer(node->storagePointer()));
     if (op == JSConstant) {
         out.print(comma, "$", node->constantNumber());
         JSValue value = valueOfJSConstant(node);

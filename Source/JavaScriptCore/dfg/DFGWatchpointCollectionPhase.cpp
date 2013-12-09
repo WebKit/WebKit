@@ -138,18 +138,6 @@ private:
             addLazily(m_node->symbolTable()->m_functionEnteredOnce);
             break;
             
-        case GetIndexedPropertyStorage:
-            if (JSArrayBufferView* view = m_graph.tryGetFoldableViewForChild1(m_node)) {
-                // FIXME: It would be awesome to be able to fold the property storage for
-                // these GC-allocated typed arrays. For now it doesn't matter because the
-                // most common use-cases for constant typed arrays involve large arrays with
-                // aliased buffer views.
-                if (view->mode() == FastTypedArray)
-                    break;
-                addLazily(view);
-            }
-            break;
-            
         case TypedArrayWatchpoint:
             addLazily(m_node->typedArray());
             break;

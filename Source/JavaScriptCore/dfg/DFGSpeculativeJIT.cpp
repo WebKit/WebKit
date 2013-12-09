@@ -4042,26 +4042,16 @@ void SpeculativeJIT::compileStringZeroLength(Node* node)
 #endif
 }
 
-bool SpeculativeJIT::compileConstantIndexedPropertyStorage(Node* node)
+void SpeculativeJIT::compileConstantStoragePointer(Node* node)
 {
-    JSArrayBufferView* view = m_jit.graph().tryGetFoldableViewForChild1(node);
-    if (!view)
-        return false;
-    if (view->mode() == FastTypedArray)
-        return false;
-    
     GPRTemporary storage(this);
     GPRReg storageGPR = storage.gpr();
-    m_jit.move(TrustedImmPtr(view->vector()), storageGPR);
+    m_jit.move(TrustedImmPtr(node->storagePointer()), storageGPR);
     storageResult(storageGPR, node);
-    return true;
 }
 
 void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
 {
-    if (compileConstantIndexedPropertyStorage(node))
-        return;
-    
     SpeculateCellOperand base(this, node->child1());
     GPRReg baseReg = base.gpr();
     

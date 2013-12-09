@@ -343,6 +343,9 @@ private:
         case GetButterfly:
             compileGetButterfly();
             break;
+        case ConstantStoragePointer:
+            compileConstantStoragePointer();
+            break;
         case GetIndexedPropertyStorage:
             compileGetIndexedPropertyStorage();
             break;
@@ -1397,6 +1400,11 @@ private:
         setStorage(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSObject_butterfly));
     }
     
+    void compileConstantStoragePointer()
+    {
+        setStorage(m_out.constIntPtr(m_node->storagePointer()));
+    }
+    
     void compileGetIndexedPropertyStorage()
     {
         LValue cell = lowCell(m_node->child1());
@@ -1421,13 +1429,6 @@ private:
             
             setStorage(m_out.loadPtr(m_out.phi(m_out.intPtr, fastResult, slowResult), m_heaps.StringImpl_data));
             return;
-        }
-        
-        if (JSArrayBufferView* view = m_graph.tryGetFoldableView(m_node)) {
-            if (view->mode() != FastTypedArray) {
-                setStorage(m_out.constIntPtr(view->vector()));
-                return;
-            }
         }
         
         setStorage(m_out.loadPtr(cell, m_heaps.JSArrayBufferView_vector));

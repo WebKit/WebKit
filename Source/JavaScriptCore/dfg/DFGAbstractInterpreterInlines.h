@@ -1440,7 +1440,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         m_state.setHaveStructures(true);
         break;
     }
-    case GetIndexedPropertyStorage: {
+    case GetIndexedPropertyStorage:
+    case ConstantStoragePointer: {
         forNode(node).clear();
         break; 
     }

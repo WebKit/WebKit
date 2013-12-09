@@ -95,9 +95,22 @@ private:
                 foldTypedArrayPropertyToConstant(view, jsNumber(view->byteOffset()));
             break;
             
-        // FIXME: The constant-folding of GetIndexedPropertyStorage should be expressed
-        // as an IR transformation in this phase.
-        // https://bugs.webkit.org/show_bug.cgi?id=125395
+        case GetIndexedPropertyStorage:
+            if (JSArrayBufferView* view = m_graph.tryGetFoldableViewForChild1(m_node)) {
+                if (view->mode() != FastTypedArray) {
+                    prepareToFoldTypedArray(view);
+                    m_node->convertToConstantStoragePointer(view->vector());
+                    m_changed = true;
+                    break;
+                } else {
+                    // FIXME: It would be awesome to be able to fold the property storage for
+                    // these GC-allocated typed arrays. For now it doesn't matter because the
+                    // most common use-cases for constant typed arrays involve large arrays with
+                    // aliased buffer views.
+                    // https://bugs.webkit.org/show_bug.cgi?id=125425
+                }
+            }
+            break;
             
         default:
             break;
@@ -106,11 +119,18 @@ private:
     
     void foldTypedArrayPropertyToConstant(JSArrayBufferView* view, JSValue constant)
     {
+        prepareToFoldTypedArray(view);
+        m_graph.convertToConstant(m_node, constant);
+        m_changed = true;
+    }
+    
+    void prepareToFoldTypedArray(JSArrayBufferView* view)
+    {
         m_insertionSet.insertNode(
             m_nodeIndex, SpecNone, TypedArrayWatchpoint, m_node->codeOrigin,
             OpInfo(view));
-        m_graph.convertToConstant(m_node, constant);
-        m_changed = true;
+        m_insertionSet.insertNode(
+            m_nodeIndex, SpecNone, Phantom, m_node->codeOrigin, m_node->children);
     }
     
     InsertionSet m_insertionSet;
