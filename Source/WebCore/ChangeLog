@@ -1,3 +1,22 @@
+2013-12-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit ignores @alt on IMG elements with role="text"
+        https://bugs.webkit.org/show_bug.cgi?id=125363
+
+        Reviewed by Mario Sanchez Prada.
+
+        If an <img> element has a different role, the alt attribute should still be used in the 
+        name calculation if present.
+
+        Test: accessibility/alt-tag-on-image-with-nonimage-role.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::usesAltTagForTextComputation):
+        (WebCore::AccessibilityNodeObject::alternativeText):
+        (WebCore::AccessibilityNodeObject::accessibilityDescription):
+        (WebCore::AccessibilityNodeObject::text):
+        * accessibility/AccessibilityNodeObject.h:
+
 2013-12-08  Martin Robinson  <mrobinson@igalia.com>
 
         [WK2][Soup] Use didReceiveBuffer instead of didReceiveData

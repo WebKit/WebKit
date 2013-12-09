@@ -1211,6 +1211,11 @@ AccessibilityObject* AccessibilityNodeObject::menuButtonForMenu() const
     return 0;
 }
 
+bool AccessibilityNodeObject::usesAltTagForTextComputation() const
+{
+    return isImage() || isInputImage() || isNativeImage() || isCanvas() || (node() && node()->hasTagName(imgTag));
+}
+    
 void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOrder) const
 {
     Node* node = this->node();
@@ -1250,7 +1255,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
     if (!ariaLabel.isEmpty())
         textOrder.append(AccessibilityText(ariaLabel, AlternativeText));
     
-    if (isImage() || isInputImage() || isNativeImage() || isCanvas()) {
+    if (usesAltTagForTextComputation()) {
         if (renderer() && renderer()->isRenderImage()) {
             String renderAltText = toRenderImage(renderer())->altText();
 
@@ -1479,7 +1484,7 @@ String AccessibilityNodeObject::accessibilityDescription() const
     if (!ariaDescription.isEmpty())
         return ariaDescription;
 
-    if (isImage() || isInputImage() || isNativeImage() || isCanvas()) {
+    if (usesAltTagForTextComputation()) {
         // Images should use alt as long as the attribute is present, even if empty.                    
         // Otherwise, it should fallback to other methods, like the title attribute.                    
         const AtomicString& alt = getAttribute(altAttr);
@@ -1739,8 +1744,12 @@ String AccessibilityNodeObject::title() const
 String AccessibilityNodeObject::text() const
 {
     // If this is a user defined static text, use the accessible name computation.                                      
-    if (ariaRoleAttribute() == StaticTextRole)
-        return ariaAccessibilityDescription();
+    if (ariaRoleAttribute() == StaticTextRole) {
+        Vector<AccessibilityText> textOrder;
+        alternativeText(textOrder);
+        if (textOrder.size() > 0 && textOrder[0].text.length())
+            return textOrder[0].text;
+    }
 
     if (!isTextControl())
         return String();

@@ -201,6 +201,7 @@ private:
     String alternativeTextForWebArea() const;
     void ariaLabeledByText(Vector<AccessibilityText>&) const;
     virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    bool usesAltTagForTextComputation() const;
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityNodeObject, isAccessibilityNodeObject())

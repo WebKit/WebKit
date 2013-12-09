@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<img alt="TEST1" src="resources/cake.png" role="text" id="text">
+
+<img alt="TEST2" src="resources/cake.png" role="group" id="group">
+
+<img alt="TEST3" src="resources/cake.png" role="button" id="button">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that setting a role on an img still allows the alt attribute to be used for the description..");
+
+    if (window.accessibilityController) {
+
+        var text = accessibilityController.accessibleElementById("text");
+        shouldBe("text.stringValue", "'AXValue: TEST1'");
+
+        var group = accessibilityController.accessibleElementById("group");
+        shouldBe("group.description", "'AXDescription: TEST2'");
+
+        var button = accessibilityController.accessibleElementById("button");
+        shouldBe("button.description", "'AXDescription: TEST3'");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
