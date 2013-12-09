@@ -58,7 +58,6 @@ all : \
     RegExpJitTables.h \
     RegExpObject.lut.h \
     StringConstructor.lut.h \
-    docs/bytecode.html \
     udis86_itab.h \
 #
 
@@ -68,9 +67,6 @@ all : \
 	$^ -i > $@
 Lexer.lut.h: create_hash_table Keywords.table
 	$^ > $@
-
-docs/bytecode.html: make-bytecode-docs.pl Interpreter.cpp 
-	perl $^ $@
 
 # character tables for Yarr
 
