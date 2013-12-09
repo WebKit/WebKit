@@ -1,3 +1,15 @@
+2013-12-09  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] Memory leak due to incorrect use of gst_tag_list_merge in TextCombinerGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=125452
+
+        Reviewed by Philippe Normand.
+
+        No new tests because this fixes a memory leak.
+
+        * platform/graphics/gstreamer/TextCombinerGStreamer.cpp:
+        (webkitTextCombinerPadEvent): Use gst_tag_list_insert instead of gst_tag_list_merge, since we don't want to create a new list.
+
 2013-12-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit ignores @alt on IMG elements with role="text"

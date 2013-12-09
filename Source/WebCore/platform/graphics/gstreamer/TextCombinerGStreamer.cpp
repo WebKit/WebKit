@@ -202,7 +202,10 @@ static gboolean webkitTextCombinerPadEvent(GstPad* pad, GstObject* parent, GstEv
         gst_event_parse_tag(event, &tags);
         ASSERT(tags);
 
-        combinerPad->tags = gst_tag_list_merge(combinerPad->tags, tags, GST_TAG_MERGE_REPLACE);
+        if (!combinerPad->tags)
+            combinerPad->tags = gst_tag_list_copy(tags);
+        else
+            gst_tag_list_insert(combinerPad->tags, tags, GST_TAG_MERGE_REPLACE);
         g_object_notify(G_OBJECT(pad), "tags");
         break;
     }
