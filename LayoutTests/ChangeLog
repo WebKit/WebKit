@@ -1,3 +1,14 @@
+2013-12-09  Gustavo Noronha Silva  <gns@gnome.org>
+
+        accessibility/press-targets-center-point.html should not depend on font layout
+        https://bugs.webkit.org/show_bug.cgi?id=125387
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/press-targets-center-point.html: use explicit sizes for heights (and width
+        for vertical writing mode), so that font layout does not alter the results.
+        * platform/gtk/TestExpectations: remove failure expectation for accessibility/press-targets-center-point.html
+
 2013-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         getComputedStyle border-radius shorthand omits vertical radius information
