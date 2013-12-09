@@ -46,9 +46,6 @@ PassRefPtr<WebFullScreenManagerProxy> WebFullScreenManagerProxy::create(WebPageP
 WebFullScreenManagerProxy::WebFullScreenManagerProxy(WebPageProxy& page, WebFullScreenManagerProxyClient& client)
     : m_page(&page)
     , m_client(&client)
-#if PLATFORM(EFL)
-    , m_hasRequestedFullScreen(false)
-#endif
 {
     m_page->process().addMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page->pageID(), this);
 }

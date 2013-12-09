@@ -57,16 +57,13 @@ PassRefPtr<WebView> WebView::create(WebContext* context, WebPageGroup* pageGroup
 WebViewEfl::WebViewEfl(WebContext* context, WebPageGroup* pageGroup)
     : WebView(context, pageGroup)
     , m_ewkView(0)
+    , m_hasRequestedFullScreen(false)
 {
 }
 
 void WebViewEfl::setEwkView(EwkView* ewkView)
 {
     m_ewkView = ewkView;
-
-#if ENABLE(FULLSCREEN_API)
-    m_page->fullScreenManager()->setWebView(ewkView->evasObject());
-#endif
 }
 
 void WebViewEfl::paintToCairoSurface(cairo_surface_t* surface)
@@ -142,5 +139,46 @@ void WebViewEfl::sendMouseEvent(const Evas_Event_Mouse_Move* event)
     ASSERT(event);
     m_page->handleMouseEvent(NativeWebMouseEvent(event, transformFromScene(), m_userViewportTransform.toAffineTransform()));
 }
+
+#if ENABLE(FULLSCREEN_API)
+
+WebFullScreenManagerProxyClient& WebViewEfl::fullScreenManagerProxyClient()
+{
+    return *this;
+}
+
+// WebFullScreenManagerProxyClient
+bool WebViewEfl::isFullScreen()
+{
+    return m_hasRequestedFullScreen;
+}
+
+void WebViewEfl::enterFullScreen()
+{
+    if (!m_ewkView || m_hasRequestedFullScreen)
+        return;
+
+    m_hasRequestedFullScreen = true;
+
+    WebFullScreenManagerProxy* manager = m_page->fullScreenManager();
+    manager->willEnterFullScreen();
+    m_ewkView->enterFullScreen();
+    manager->didEnterFullScreen();
+}
+
+void WebViewEfl::exitFullScreen()
+{
+    if (!m_ewkView || !m_hasRequestedFullScreen)
+        return;
+
+    m_hasRequestedFullScreen = false;
+
+    WebFullScreenManagerProxy* manager = m_page->fullScreenManager();
+    manager->willExitFullScreen();
+    m_ewkView->exitFullScreen();
+    manager->didExitFullScreen();
+}
+
+#endif // ENABLE(FULLSCREEN_API)
 
 } // namespace WebKit

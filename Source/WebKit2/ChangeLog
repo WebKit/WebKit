@@ -1,3 +1,26 @@
+2013-12-08  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Move FullScreenManager logic to WebViewEfl
+        https://bugs.webkit.org/show_bug.cgi?id=125438
+
+        Reviewed by Gyuyoung Kim.
+
+        This patch fixed build break on EFL port Since r160296.
+
+        * PlatformEfl.cmake: Removed WebFullScreenManagerProxyEfl.cpp.
+        * UIProcess/WebFullScreenManagerProxy.cpp: Removed EFL specific code.
+        (WebKit::WebFullScreenManagerProxy::WebFullScreenManagerProxy):
+        * UIProcess/WebFullScreenManagerProxy.h: Ditto.
+        * UIProcess/efl/WebFullScreenManagerProxyEfl.cpp: Removed file and moved logic to WebViewEfl.
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebViewEfl::WebViewEfl):
+        (WebKit::WebViewEfl::setEwkView): Removed call to setWebView().
+        (WebKit::WebViewEfl::fullScreenManagerProxyClient):
+        (WebKit::WebViewEfl::isFullScreen):
+        (WebKit::WebViewEfl::enterFullScreen):
+        (WebKit::WebViewEfl::exitFullScreen):
+        * UIProcess/efl/WebViewEfl.h:
+
 2013-12-08  Sam Weinig  <sam@webkit.org>
 
         Remove WebContext::sharedProcessContext()

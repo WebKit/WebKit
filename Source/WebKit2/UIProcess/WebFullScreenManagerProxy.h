@@ -86,10 +86,6 @@ private:
 
     WebPageProxy* m_page;
     WebFullScreenManagerProxyClient* m_client;
-
-#if PLATFORM(EFL)
-    bool m_hasRequestedFullScreen;
-#endif
 };
 
 } // namespace WebKit

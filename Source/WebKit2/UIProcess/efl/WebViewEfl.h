@@ -26,6 +26,7 @@
 #ifndef WebViewEfl_h
 #define WebViewEfl_h
 
+#include "WebFullScreenManagerProxy.h"
 #include "WebView.h"
 
 class EwkView;
@@ -36,7 +37,11 @@ namespace WebKit {
 class EwkTouchEvent;
 #endif
 
-class WebViewEfl : public WebView {
+class WebViewEfl : public WebView
+#if ENABLE(FULLSCREEN_API)
+    , public WebFullScreenManagerProxyClient
+#endif
+    {
 public:
     void setEwkView(EwkView*);
     EwkView* ewkView() { return m_ewkView; }
@@ -60,8 +65,23 @@ private:
     void updateTextInputState() OVERRIDE;
     void handleDownloadRequest(DownloadProxy*) OVERRIDE;
 
+#if ENABLE(FULLSCREEN_API)
+    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() OVERRIDE;
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    // WebFullScreenManagerProxyClient
+    virtual void closeFullScreenManager() OVERRIDE FINAL { }
+    virtual bool isFullScreen() OVERRIDE FINAL;
+    virtual void enterFullScreen() OVERRIDE FINAL;
+    virtual void exitFullScreen() OVERRIDE FINAL;
+    virtual void beganEnterFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE FINAL { }
+    virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE FINAL { }
+#endif
+
 private:
     EwkView* m_ewkView;
+    bool m_hasRequestedFullScreen;
 
     friend class WebView;
 };
