@@ -934,10 +934,6 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebCon
     priv->pageProxy = context->createWebPage(*priv->pageClient, pageGroup);
     priv->pageProxy->initializeWebPage();
 
-#if ENABLE(FULLSCREEN_API)
-    priv->pageProxy->fullScreenManager()->setWebView(webkitWebViewBase);
-#endif
-
 #if USE(TEXTURE_MAPPER_GL)
     if (priv->redirectedWindow)
         priv->pageProxy->setAcceleratedCompositingWindowId(priv->redirectedWindow->windowId());

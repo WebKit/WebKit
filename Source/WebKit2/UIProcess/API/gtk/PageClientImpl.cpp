@@ -289,4 +289,49 @@ void PageClientImpl::didCommitLoadForMainFrame()
     notImplemented();
 }
 
+#if ENABLE(FULLSCREEN_API)
+WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()
+{
+    return *this;
+}
+
+void PageClientImpl::closeFullScreenManager()
+{
+    notImplemented();
+}
+
+bool PageClientImpl::isFullScreen()
+{
+    notImplemented();
+    return false;
+}
+
+void PageClientImpl::enterFullScreen()
+{
+    if (!m_viewWidget)
+        return;
+
+    webkitWebViewBaseEnterFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+}
+
+void PageClientImpl::exitFullScreen()
+{
+    if (!m_viewWidget)
+        return;
+
+    webkitWebViewBaseExitFullScreen(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+}
+
+void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+{
+    notImplemented();
+}
+
+void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+{
+    notImplemented();
+}
+
+#endif // ENABLE(FULLSCREEN_API)
+
 } // namespace WebKit

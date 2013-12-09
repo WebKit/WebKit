@@ -31,6 +31,7 @@
 #include "DefaultUndoController.h"
 #include "KeyBindingTranslator.h"
 #include "PageClient.h"
+#include "WebFullScreenManagerProxy.h"
 #include "WebPageProxy.h"
 #include "WindowsKeyboardCodes.h"
 #include <WebCore/IntSize.h>
@@ -41,7 +42,11 @@ namespace WebKit {
 class DrawingAreaProxy;
 class WebPageNamespace;
 
-class PageClientImpl : public PageClient {
+class PageClientImpl : public PageClient
+#if ENABLE(FULLSCREEN_API)
+    , public WebFullScreenManagerProxyClient
+#endif
+{
 public:
     ~PageClientImpl();
     static PassOwnPtr<PageClientImpl> create(GtkWidget* viewWidget)
@@ -54,6 +59,7 @@ public:
 private:
     explicit PageClientImpl(GtkWidget*);
 
+    // PageClient
     virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() OVERRIDE;
     virtual void setViewNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
     virtual void displayView() OVERRIDE;
@@ -100,6 +106,21 @@ private:
 
     virtual void handleDownloadRequest(DownloadProxy*) OVERRIDE;
     virtual void didCommitLoadForMainFrame() OVERRIDE;
+
+    // Auxiliary Client Creation
+#if ENABLE(FULLSCREEN_API)
+    virtual WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() FINAL;
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    // WebFullScreenManagerProxyClient
+    virtual void closeFullScreenManager() OVERRIDE;
+    virtual bool isFullScreen() OVERRIDE;
+    virtual void enterFullScreen() OVERRIDE;
+    virtual void exitFullScreen() OVERRIDE;
+    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) OVERRIDE;
+    virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) OVERRIDE;
+#endif
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
