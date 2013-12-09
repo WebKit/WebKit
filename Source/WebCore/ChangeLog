@@ -1,3 +1,22 @@
+2013-12-09  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r160260): Memory pressure signal causes web process to hang.
+        <https://webkit.org/b/125465>
+
+        Reviewed by Tim Horton.
+
+        This command caused all of my web processes to hang:
+
+            notifyutil -p org.WebKit.lowMemory
+
+        This only happens when the cache pruning code encounters a resource
+        using purgeable memory.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+
+            Grab the next CachedResource pointer before continuing the loop.
+
 2013-12-09  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] OpenGL compile error.
