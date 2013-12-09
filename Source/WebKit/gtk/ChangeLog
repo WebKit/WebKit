@@ -1,3 +1,17 @@
+2013-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Convert the get_{string,text}_at_offset atktest.c unit tests to layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=125451
+
+        Reviewed by Mario Sanchez Prada.
+
+        * tests/testatk.c: Remove the tests which now exist as layout tests. Note that the
+        tests for atk_text_get_text_{before,after}_offset were removed without equivalents
+        added to the layout tests. The same is true for the END AtkTextBoundary types. Both
+        have been deprecated in ATK and are not being used by AT-SPI2 assistive technologies.
+        (testGetTextFunction):
+        (main):
+
 2013-12-08  Martin Robinson  <mrobinson@igalia.com>
 
         [WK2][Soup] Use didReceiveBuffer instead of didReceiveData

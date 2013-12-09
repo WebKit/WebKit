@@ -54,6 +54,13 @@ bool AccessibilityUIElement::isValid() const
 }
 
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
+#if (!PLATFORM(GTK) && !PLATFORM(EFL)) || !HAVE(ACCESSIBILITY)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int) { return 0; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::wordAtOffset(int) { return 0; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int) { return 0; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int) { return 0; }
+#endif
+
 #if (!PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(EFL)) || !HAVE(ACCESSIBILITY)
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement) { }
 AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement&) { }

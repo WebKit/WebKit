@@ -1435,4 +1435,59 @@ JSStringRef AccessibilityUIElement::classList() const
     return nullptr;
 }
 
+JSStringRef stringAtOffset(PlatformUIElement element, AtkTextBoundary boundary, int offset)
+{
+    if (!ATK_IS_TEXT(element))
+        return JSStringCreateWithCharacters(0, 0);
+
+    gint startOffset, endOffset;
+    StringBuilder builder;
+
+#if ATK_CHECK_VERSION(2, 10, 0)
+    AtkTextGranularity granularity;
+    switch (boundary) {
+    case ATK_TEXT_BOUNDARY_CHAR:
+        granularity = ATK_TEXT_GRANULARITY_CHAR;
+        break;
+    case ATK_TEXT_BOUNDARY_WORD_START:
+        granularity = ATK_TEXT_GRANULARITY_WORD;
+        break;
+    case ATK_TEXT_BOUNDARY_LINE_START:
+        granularity = ATK_TEXT_GRANULARITY_LINE;
+        break;
+    case ATK_TEXT_BOUNDARY_SENTENCE_START:
+        granularity = ATK_TEXT_GRANULARITY_SENTENCE;
+        break;
+    default:
+        return JSStringCreateWithCharacters(0, 0);
+    }
+
+    builder.append(atk_text_get_string_at_offset(ATK_TEXT(element), offset, granularity, &startOffset, &endOffset));
+#else
+    builder.append(atk_text_get_text_at_offset(ATK_TEXT(element), offset, boundary, &startOffset, &endOffset));
+#endif
+    builder.append(String::format(", %i, %i", startOffset, endOffset));
+    return JSStringCreateWithUTF8CString(builder.toString().utf8().data());
+}
+
+JSStringRef AccessibilityUIElement::characterAtOffset(int offset)
+{
+    return stringAtOffset(m_element, ATK_TEXT_BOUNDARY_CHAR, offset);
+}
+
+JSStringRef AccessibilityUIElement::wordAtOffset(int offset)
+{
+    return stringAtOffset(m_element, ATK_TEXT_BOUNDARY_WORD_START, offset);
+}
+
+JSStringRef AccessibilityUIElement::lineAtOffset(int offset)
+{
+    return stringAtOffset(m_element, ATK_TEXT_BOUNDARY_LINE_START, offset);
+}
+
+JSStringRef AccessibilityUIElement::sentenceAtOffset(int offset)
+{
+    return stringAtOffset(m_element, ATK_TEXT_BOUNDARY_SENTENCE_START, offset);
+}
+
 #endif

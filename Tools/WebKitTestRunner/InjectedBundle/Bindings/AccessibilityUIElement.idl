@@ -114,6 +114,12 @@ interface AccessibilityUIElement {
     DOMString attributesOfChildren();
     DOMString attributesOfLinkedUIElements();
     DOMString attributesOfDocumentLinks();
+
+    // Text info.
+    DOMString characterAtOffset(int offset);
+    DOMString wordAtOffset(int offset);
+    DOMString lineAtOffset(int offset);
+    DOMString sentenceAtOffset(int offset);
     
     // Table info.
     DOMString attributesOfColumnHeaders();

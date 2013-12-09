@@ -1103,7 +1103,48 @@ static JSValueRef removeNotificationListenerCallback(JSContextRef context, JSObj
     return JSValueMakeUndefined(context);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(GTK) || PLATFORM(EFL)
+static JSValueRef characterAtOffsetCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    int offset = -1;
+    if (argumentCount == 1)
+        offset = JSValueToNumber(context, arguments[0], exception);
+
+    JSRetainPtr<JSStringRef> characterAtOffset(Adopt, toAXElement(thisObject)->characterAtOffset(offset));
+    return JSValueMakeString(context, characterAtOffset.get());
+}
+
+static JSValueRef wordAtOffsetCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    int offset = -1;
+    if (argumentCount == 1)
+        offset = JSValueToNumber(context, arguments[0], exception);
+
+    JSRetainPtr<JSStringRef> wordAtOffset(Adopt, toAXElement(thisObject)->wordAtOffset(offset));
+    return JSValueMakeString(context, wordAtOffset.get());
+}
+
+static JSValueRef lineAtOffsetCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    int offset = -1;
+    if (argumentCount == 1)
+        offset = JSValueToNumber(context, arguments[0], exception);
+
+    JSRetainPtr<JSStringRef> lineAtOffset(Adopt, toAXElement(thisObject)->lineAtOffset(offset));
+    return JSValueMakeString(context, lineAtOffset.get());
+}
+
+static JSValueRef sentenceAtOffsetCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    int offset = -1;
+    if (argumentCount == 1)
+        offset = JSValueToNumber(context, arguments[0], exception);
+
+    JSRetainPtr<JSStringRef> sentenceAtOffset(Adopt, toAXElement(thisObject)->sentenceAtOffset(offset));
+    return JSValueMakeString(context, sentenceAtOffset.get());
+}
+
+#elif PLATFORM(IOS)
 
 static JSValueRef stringForSelectionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
@@ -1475,7 +1516,12 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "setSelectedChild", setSelectedChildCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedChildAtIndex", selectedChildAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "scrollToMakeVisible", scrollToMakeVisibleCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-#if PLATFORM(IOS)
+#if PLATFORM(GTK) || PLATFORM(EFL)
+        { "characterAtOffset", characterAtOffsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "wordAtOffset", wordAtOffsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "lineAtOffset", lineAtOffsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "sentenceAtOffset", sentenceAtOffsetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#elif PLATFORM(IOS)
         { "linkedElement", linkedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "headerElementAtIndex", headerElementAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "elementsForRange", elementsForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

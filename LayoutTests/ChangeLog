@@ -1,3 +1,31 @@
+2013-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Convert the get_{string,text}_at_offset atktest.c unit tests to layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=125451
+
+        Reviewed by Mario Sanchez Prada.
+
+        New tests and expectations based on the tests and expectations found in atktest.c.
+        These were done as platform-specific tests because only ATK-based assistive technologies
+        seem to have any need for this support.
+
+        * platform/gtk/accessibility/text-at-offset-embedded-objects-expected.txt: Added.
+        * platform/gtk/accessibility/text-at-offset-embedded-objects.html: Added.
+        * platform/gtk/accessibility/text-at-offset-newlines-expected.txt: Added.
+        * platform/gtk/accessibility/text-at-offset-newlines.html: Added.
+        * platform/gtk/accessibility/text-at-offset-preformatted-expected.txt: Added.
+        * platform/gtk/accessibility/text-at-offset-preformatted.html: Added.
+        * platform/gtk/accessibility/text-at-offset-simple-expected.txt: Added.
+        * platform/gtk/accessibility/text-at-offset-simple.html: Added.
+        * platform/gtk/accessibility/text-at-offset-special-chars-expected.txt: Added.
+        * platform/gtk/accessibility/text-at-offset-special-chars.html: Added.
+        * platform/gtk/accessibility/text-at-offset-textarea-expected.txt: Added.
+        * platform/gtk/accessibility/text-at-offset-textarea.html: Added.
+        * platform/gtk/accessibility/text-at-offset-textinput-expected.txt: Added.
+        * platform/gtk/accessibility/text-at-offset-textinput.html: Added.
+        * platform/gtk/accessibility/text-at-offset-wrapped-lines-expected.txt: Added.
+        * platform/gtk/accessibility/text-at-offset-wrapped-lines.html: Added.
+
 2013-12-09  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
