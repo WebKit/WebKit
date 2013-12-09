@@ -27,18 +27,24 @@
 #define PageClientImplIOS_h
 
 #import "PageClient.h"
+#import "WebFullScreenManagerProxy.h"
 #import <wtf/RetainPtr.h>
 
 @class WKContentView;
 
 namespace WebKit {
     
-class PageClientImpl : public PageClient {
+class PageClientImpl : public PageClient
+#if ENABLE(FULLSCREEN_API)
+    , public WebFullScreenManagerProxyClient
+#endif
+    {
 public:
     explicit PageClientImpl(WKContentView *);
     virtual ~PageClientImpl();
     
 private:
+    // PageClient
     virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() OVERRIDE;
     virtual void setViewNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
     virtual void displayView() OVERRIDE;
@@ -101,6 +107,21 @@ private:
     virtual void stopAssistingNode() OVERRIDE;
     virtual void selectionDidChange() OVERRIDE;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) OVERRIDE;
+
+    // Auxiliary Client Creation
+#if ENABLE(FULLSCREEN_API)
+    virual WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() OVERRIDE;
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    // WebFullScreenManagerProxyClient
+    virtual void closeFullScreenManager() OVERRIDE;
+    virtual bool isFullScreen() OVERRIDE;
+    virtual void enterFullScreen() OVERRIDE;
+    virtual void exitFullScreen() OVERRIDE;
+    virtual void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) OVERRIDE;
+    virtual void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame) OVERRIDE;
+#endif
 
     WKContentView *m_view;
 };
