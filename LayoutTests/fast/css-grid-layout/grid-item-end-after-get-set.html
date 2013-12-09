@@ -89,6 +89,16 @@ if (window.testRunner)
     testColumnEndRowEndJSParsing("secondArea", "nonExistentArea", "secondArea", "auto");
 
     debug("");
+    debug("Test setting grid-start and grid-before to 'inherit' through JS");
+    testEndAfterInheritJSParsing("inherit", "18");
+    testEndAfterInheritJSParsing("2", "inherit");
+    testEndAfterInheritJSParsing("inherit", "inherit");
+
+    debug("");
+    debug("Test setting grid-start and grid-before to 'initial' through JS");
+    testEndAfterInitialJSParsing();
+
+    debug("");
     debug("Test setting grid-column-end and grid-row-end back to 'auto' through JS");
     element.style.webkitGridColumnEnd = "18";
     element.style.webkitGridRowEnd = "66";

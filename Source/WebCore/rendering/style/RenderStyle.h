@@ -1794,7 +1794,10 @@ public:
     static NamedGridLinesMap initialNamedGridRowLines() { return NamedGridLinesMap(); }
 
     // 'auto' is the default.
-    static GridPosition initialGridPosition() { return GridPosition(); }
+    static GridPosition initialGridItemColumnStart() { return GridPosition(); }
+    static GridPosition initialGridItemColumnEnd() { return GridPosition(); }
+    static GridPosition initialGridItemRowStart() { return GridPosition(); }
+    static GridPosition initialGridItemRowEnd() { return GridPosition(); }
 
     static unsigned initialTabSize() { return 8; }
 

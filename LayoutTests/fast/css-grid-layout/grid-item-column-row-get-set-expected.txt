@@ -227,6 +227,46 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row-start') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row-end') is 'auto'
 
+Test getting and setting 'initial' grid-column and grid-row through JS
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "1 / span 2"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "1"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "span 2"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "span 3 / 5"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "span 3"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "5"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "auto / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "span 3 / 5"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "span 3"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "5"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "auto / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "auto / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "auto"
+
+Test getting and setting 'inherit' grid-column and grid-row through JS
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "1 / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "1"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "span 1 / 7"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "span 1"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "7"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "6 / span 2"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "6"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "span 2"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "1 / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "1"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "6 / span 2"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "6"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "span 2"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "span 1 / 7"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "span 1"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "7"
+
 Test getting and setting invalid grid-column and grid-row through JS
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "auto / auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "auto"

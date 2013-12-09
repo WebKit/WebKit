@@ -2711,6 +2711,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
 
     case CSSPropertyWebkitGridColumnStart: {
+        HANDLE_INHERIT_AND_INITIAL(gridItemColumnStart, GridItemColumnStart);
         GridPosition columnStartPosition;
         if (!createGridPosition(value, columnStartPosition))
             return;
@@ -2718,6 +2719,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
     case CSSPropertyWebkitGridColumnEnd: {
+        HANDLE_INHERIT_AND_INITIAL(gridItemColumnEnd, GridItemColumnEnd);
         GridPosition columnEndPosition;
         if (!createGridPosition(value, columnEndPosition))
             return;
@@ -2726,6 +2728,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
 
     case CSSPropertyWebkitGridRowStart: {
+        HANDLE_INHERIT_AND_INITIAL(gridItemRowStart, GridItemRowStart);
         GridPosition rowStartPosition;
         if (!createGridPosition(value, rowStartPosition))
             return;
@@ -2733,6 +2736,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
     case CSSPropertyWebkitGridRowEnd: {
+        HANDLE_INHERIT_AND_INITIAL(gridItemRowEnd, GridItemRowEnd);
         GridPosition rowEndPosition;
         if (!createGridPosition(value, rowEndPosition))
             return;

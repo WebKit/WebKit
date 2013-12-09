@@ -173,6 +173,16 @@ if (window.testRunner)
     shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-row-end')", "'auto'");
 
     debug("");
+    debug("Test getting and setting 'initial' grid-column and grid-row through JS");
+    testColumnRowInitialJSParsing();
+
+    debug("");
+    debug("Test getting and setting 'inherit' grid-column and grid-row through JS");
+    testColumnRowInheritJSParsing("1 / auto", "inherit");
+    testColumnRowInheritJSParsing("inherit", "1 / auto");
+    testColumnRowInheritJSParsing("inherit", "inherit");
+
+    debug("");
     debug("Test getting and setting invalid grid-column and grid-row through JS");
     testColumnRowInvalidJSParsing("4 5", "5 8");
     testColumnRowInvalidJSParsing("4 /", "5 /");

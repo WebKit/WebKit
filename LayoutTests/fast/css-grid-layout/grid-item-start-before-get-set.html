@@ -94,6 +94,16 @@ if (window.testRunner)
     testColumnStartRowStartJSParsing("secondArea", "nonExistentArea", "secondArea", "auto");
 
     debug("");
+    debug("Test setting grid-start and grid-before to 'inherit' through JS");
+    testStartBeforeInheritJSParsing("inherit", "18");
+    testStartBeforeInheritJSParsing("2", "inherit");
+    testStartBeforeInheritJSParsing("inherit", "inherit");
+
+    debug("");
+    debug("Test setting grid-start and grid-before to 'initial' through JS");
+    testStartBeforeInitialJSParsing();
+
+    debug("");
     debug("Test setting grid-column-start and grid-row-start back to 'auto' through JS");
     element.style.webkitGridColumnStart = "18";
     element.style.webkitGridRowStart = "66";

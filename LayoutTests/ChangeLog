@@ -1,3 +1,24 @@
+2013-12-09  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Fix handling of 'inherit' and 'initial' for grid lines.
+        https://bugs.webkit.org/show_bug.cgi?id=125223
+
+        Reviewed by Darin Adler.
+
+        'initial' and 'inherit' are always allowed values for CSS properties.
+        As the CSSParser handles them automatically, those 2 values were never
+        taken care of in StyleResolver, leading to crashes.
+
+        Patch backported from Blink: https://src.chromium.org/viewvc/blink?revision=149257&view=revision
+
+        * fast/css-grid-layout/grid-item-column-row-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-column-row-get-set.html:
+        * fast/css-grid-layout/grid-item-end-after-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-end-after-get-set.html:
+        * fast/css-grid-layout/grid-item-start-before-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-start-before-get-set.html:
+        * fast/css-grid-layout/resources/grid-item-column-row-parsing-utils.js:
+
 2013-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a test for style sharing if grandparents matches different rule chain and nth-last child
