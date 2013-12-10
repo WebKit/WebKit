@@ -27,6 +27,8 @@
 #define APINumber_h
 
 #include "APIObject.h"
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
@@ -40,6 +42,21 @@ public:
     }
 
     NumberType value() const { return m_value; }
+
+    void encode(CoreIPC::ArgumentEncoder& encoder) const
+    {
+        encoder << m_value;
+    }
+
+    static bool decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
+    {
+        NumberType value;
+        if (!decoder.decode(value))
+            return false;
+
+        result = WebNumber::create(value);
+        return true;
+    }
 
 private:
     explicit WebNumber(NumberType value)

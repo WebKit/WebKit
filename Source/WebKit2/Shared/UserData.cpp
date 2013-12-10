@@ -114,11 +114,9 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
         break;
     }
 
-    case API::Object::Type::Boolean: {
-        auto& boolean = static_cast<const WebBoolean&>(object);
-        encoder << boolean.value();
+    case API::Object::Type::Boolean:
+        static_cast<const WebBoolean&>(object).encode(encoder);
         break;
-    }
 
     case API::Object::Type::Dictionary: {
         auto& dictionary = static_cast<const ImmutableDictionary&>(object);
@@ -138,17 +136,11 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
         break;
     }
 
-    case API::Object::Type::Point: {
-        auto& point = static_cast<const WebPoint&>(object);
-        point.encode(encoder);
-        break;
-    }
+    case API::Object::Type::Point:
+        static_cast<const WebPoint&>(object).encode(encoder);
 
-    case API::Object::Type::Rect: {
-        auto& rect = static_cast<const WebRect&>(object);
-        rect.encode(encoder);
-        break;
-    }
+    case API::Object::Type::Rect:
+        static_cast<const WebRect&>(object).encode(encoder);
 
     case API::Object::Type::SerializedScriptValue: {
         auto& serializedScriptValue = static_cast<const WebSerializedScriptValue&>(object);
@@ -156,11 +148,9 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
         break;
     }
 
-    case API::Object::Type::Size: {
-        auto& size = static_cast<const WebSize&>(object);
-        size.encode(encoder);
+    case API::Object::Type::Size:
+        static_cast<const WebSize&>(object).encode(encoder);
         break;
-    }
 
     case API::Object::Type::String: {
         auto& string = static_cast<const WebString&>(object);
@@ -174,11 +164,9 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
         break;
     }
 
-    case API::Object::Type::UInt64: {
-        auto& uint64 = static_cast<const WebUInt64&>(object);
-        encoder << uint64.value();
+    case API::Object::Type::UInt64:
+        static_cast<const WebUInt64&>(object).encode(encoder);
         break;
-    }
 
     default:
         ASSERT_NOT_REACHED();
@@ -210,14 +198,10 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
         break;
     }
 
-    case API::Object::Type::Boolean: {
-        bool value;
-        if (!decoder.decode(value))
+    case API::Object::Type::Boolean:
+        if (!WebBoolean::decode(decoder, result))
             return false;
-
-        result = WebBoolean::create(value);
         break;
-    }
 
     case API::Object::Type::Dictionary: {
         uint64_t size;
@@ -241,6 +225,11 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
         result = ImmutableDictionary::adopt(map);
         break;
     }
+
+    case API::Object::Type::Double:
+        if (!WebDouble::decode(decoder, result))
+            return false;
+        break;
 
     case API::Object::Type::FrameHandle: {
         uint64_t frameID;
@@ -297,13 +286,10 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
         break;
     }
 
-    case API::Object::Type::UInt64: {
-        uint64_t value;
-        if (!decoder.decode(value))
+    case API::Object::Type::UInt64:
+        if (!WebUInt64::decode(decoder, result))
             return false;
-        result = WebUInt64::create(value);
         break;
-    }
 
     default:
         ASSERT_NOT_REACHED();
