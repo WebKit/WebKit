@@ -27,11 +27,19 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #include "NetworkProcessProxy.h"
+#include <glib.h>
 
 namespace WebKit {
 
 void NetworkProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
+#ifndef NDEBUG
+    const char* networkProcessCmdPrefix = g_getenv("NETWORK_PROCESS_CMD_PREFIX");
+    if (networkProcessCmdPrefix && *networkProcessCmdPrefix)
+        launchOptions.processCmdPrefix = String::fromUTF8(networkProcessCmdPrefix);
+#else
+    UNUSED_PARAM(launchOptions);
+#endif
 }
 
 }
