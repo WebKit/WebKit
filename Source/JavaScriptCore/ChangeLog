@@ -1,3 +1,14 @@
+2013-12-10  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        [MIPS] Redundant instructions in code generated from offlineasm.
+        https://bugs.webkit.org/show_bug.cgi?id=125528
+
+        Reviewed by Michael Saboff.
+
+        Optimize lowering of offlineasm BaseIndex Addresses.
+
+        * offlineasm/mips.rb:
+
 2013-12-10  Oliver Hunt  <oliver@apple.com>
 
         Reduce the mass templatizing of the JS parser

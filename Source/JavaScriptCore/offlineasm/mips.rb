@@ -311,46 +311,93 @@ end
 #
 
 class Node
-    def mipsLowerMalformedAddressesRecurse(list, topLevelNode, &block)
+    def mipsLowerMalformedAddressesRecurse(list)
         mapChildren {
             | subNode |
-            subNode.mipsLowerMalformedAddressesRecurse(list, topLevelNode, &block)
+            subNode.mipsLowerMalformedAddressesRecurse(list)
+        }
+    end
+
+    def mipsLowerShiftedAddressesRecurse(list, isFirst, tmp)
+        mapChildren {
+            | subNode |
+            subNode.mipsLowerShiftedAddressesRecurse(list, isFirst, tmp)
         }
     end
 end
 
-class Address
-    def mipsLowerMalformedAddressesRecurse(list, node, &block)
-        riscLowerMalformedAddressesRecurse(list, node, &block)
-    end
-end
-
 class BaseIndex
-    def mipsLowerMalformedAddressesRecurse(list, node, &block)
+    def mipsLowerMalformedAddressesRecurse(list)
+        tmp = Tmp.new(codeOrigin, :gpr)
         if scaleShift == 0
-            tmp0 = Tmp.new(codeOrigin, :gpr)
-            list << Instruction.new(codeOrigin, "addp", [base, index, tmp0])
-            Address.new(codeOrigin, tmp0, Immediate.new(codeOrigin, offset.value));
-        else
-            tmp0 = Tmp.new(codeOrigin, :gpr)
-            list << Instruction.new(codeOrigin, "lshifti", [index, Immediate.new(codeOrigin, scaleShift), tmp0]);
-            list << Instruction.new(codeOrigin, "addp", [base, tmp0])
-            Address.new(codeOrigin, tmp0, Immediate.new(codeOrigin, offset.value));
+            list << Instruction.new(codeOrigin, "addp", [base, index, tmp])
+            Address.new(codeOrigin, tmp, Immediate.new(codeOrigin, offset.value));
         end
     end
-end
 
-class AbsoluteAddress
-    def mipsLowerMalformedAddressesRecurse(list, node, &block)
-        riscLowerMalformedAddressesRecurse(list, node, &block)
+    def mipsLowerShiftedAddressesRecurse(list, isFirst, tmp)
+        if isFirst
+            list << Instruction.new(codeOrigin, "lshifti", [index, Immediate.new(codeOrigin, scaleShift), tmp]);
+            list << Instruction.new(codeOrigin, "addp", [base, tmp])
+        end
+        Address.new(codeOrigin, tmp, Immediate.new(codeOrigin, offset.value));
     end
 end
 
-def mipsLowerMalformedAddresses(list, &block)
-    newList = []
-    list.each {
-        | node |
-        newList << node.mipsLowerMalformedAddressesRecurse(newList, node, &block)
+#
+# Lowering of BaseIndex addresses with optimization for MIPS.
+#
+# offline asm instruction pair:
+#   loadi 4[cfr, t0, 8], t2
+#   loadi 0[cfr, t0, 8], t0
+#
+# lowered instructions: 
+#   lshifti t0, 3, tmp
+#   addp    cfr, tmp
+#   loadi   4[tmp], t2
+#   loadi   0[tmp], t0
+#
+
+def mipsHasShiftedBaseIndexAddress(instruction)
+    instruction.operands.each_with_index {
+        | operand, index |
+        if operand.is_a? BaseIndex and operand.scaleShift != 0
+            return index
+        end
+    }
+    -1
+end
+
+def mipsScaleOfBaseIndexMatches(baseIndex0, baseIndex1)
+    baseIndex0.base == baseIndex1.base and
+    baseIndex0.index == baseIndex1.index and
+    baseIndex0.scale == baseIndex1.scale
+end
+
+def mipsLowerBaseIndexAddresses(list)
+    newList = [ list[0] ]
+    tmp = nil
+    list.each_cons(2) {
+        | nodes |
+        if nodes[1].is_a? Instruction
+            ind = mipsHasShiftedBaseIndexAddress(nodes[1])
+            if ind != -1
+                if nodes[0].is_a? Instruction and
+                    nodes[0].opcode == nodes[1].opcode and
+                    ind == mipsHasShiftedBaseIndexAddress(nodes[0]) and
+                    mipsScaleOfBaseIndexMatches(nodes[0].operands[ind], nodes[1].operands[ind])
+
+                    newList << nodes[1].mipsLowerShiftedAddressesRecurse(newList, false, tmp)
+                else
+                    tmp = Tmp.new(codeOrigin, :gpr)
+                    newList << nodes[1].mipsLowerShiftedAddressesRecurse(newList, true, tmp)
+                end
+            else
+                newList << nodes[1].mipsLowerMalformedAddressesRecurse(newList)
+            end
+        else
+            newList << nodes[1]
+        end
     }
     newList
 end
@@ -563,7 +610,8 @@ class Sequence
         result = riscLowerSimpleBranchOps(result)
         result = riscLowerHardBranchOps(result)
         result = riscLowerShiftOps(result)
-        result = mipsLowerMalformedAddresses(result) {
+        result = mipsLowerBaseIndexAddresses(result)
+        result = riscLowerMalformedAddresses(result) {
             | node, address |
             if address.is_a? Address
                 (-0xffff..0xffff).include? address.offset.value
