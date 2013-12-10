@@ -20,6 +20,7 @@
  */
 
 // http://dvcs.w3.org/hg/dap/raw-file/tip/network-api/index.html
+#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
 [
     NoInterfaceObject,
     Conditional=NETWORK_INFO,
@@ -40,3 +41,4 @@
                              optional boolean useCapture);
     [RaisesException] boolean dispatchEvent(Event evt);
 };
+#endif

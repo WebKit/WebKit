@@ -239,7 +239,7 @@
     [Conditional=FONT_LOAD_EVENTS] readonly attribute FontLoader fontloader;
 #endif
 
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
+#if (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C) && (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT)
     // Event handler DOM attributes
     [NotEnumerable] attribute EventListener onabort;
     [NotEnumerable] attribute EventListener onblur;

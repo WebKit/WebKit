@@ -1,5 +1,25 @@
 2013-12-10  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] [CMake] Add support for building the DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=116375
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The CMake build is more complete than the autotools counterpart, so autotools doesn't consider
+        some supplemental IDL attributes when building the DOM bindings. To prevent API breaks we should
+        protect these attributes from DOM binding generation.
+
+        * Modules/battery/BatteryManager.idl: Protect non-GObject DOM bound methods by C preprocessor checks.
+        * Modules/battery/NavigatorBattery.idl: Ditto.
+        * Modules/mediastream/HTMLMediaElementMediaStream.idl: Ditto.
+        * Modules/networkinfo/NavigatorNetworkInfoConnection.idl: Ditto.
+        * Modules/networkinfo/NetworkInfoConnection.idl: Ditto.
+        * PlatformGTK.cmake: Add build steps for building the bindings.
+        * dom/Document.idl: Protect non-GObject DOM bound methods by C preprocessor checks.
+        * html/HTMLMediaElement.idl: Ditto.
+
+2013-12-10  Martin Robinson  <mrobinson@igalia.com>
+
         Various fixes for the CMake GTK+ build
 
         Reviewed by Gustavo Noronha.

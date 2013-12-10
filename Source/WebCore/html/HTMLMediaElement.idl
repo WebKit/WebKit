@@ -108,7 +108,7 @@
     [ImplementedAs=setMediaKeys] void webkitSetMediaKeys(MediaKeys mediaKeys);
 #endif
 
-#if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
+#if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK && (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT)
     [RaisesException] TextTrack addTextTrack(DOMString kind, optional DOMString label, optional DOMString language);
     readonly attribute AudioTrackList audioTracks;
     readonly attribute TextTrackList textTracks;
@@ -116,7 +116,10 @@
 #endif
 
     [Reflect, TreatNullAs=NullString] attribute DOMString mediaGroup;
+
+#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
     [CustomSetter] attribute MediaController controller;
-    
+#endif
+
     [Conditional=MEDIA_SOURCE] VideoPlaybackQuality getVideoPlaybackQuality();
 };

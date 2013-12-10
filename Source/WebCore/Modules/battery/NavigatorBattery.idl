@@ -17,9 +17,10 @@
  *  Boston, MA 02110-1301, USA.
  */
 
+#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
 [
     Conditional=BATTERY_STATUS,
 ] partial interface Navigator {
     readonly attribute BatteryManager webkitBattery;
 };
-
+#endif
