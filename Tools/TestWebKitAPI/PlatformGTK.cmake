@@ -54,6 +54,11 @@ list(APPEND test_webcore_LIBRARIES
     ${GTK3_LIBRARIES}
 )
 
+list(APPEND TestWebKitAPI_LIBRARIES
+    ${GDK3_LIBRARIES}
+    ${GTK3_LIBRARIES}
+)
+
 # The list below works like a test expectation. Tests in the
 # test_{webkit2_api|webcore}_BINARIES list are added to the test runner and
 # tried on the bots on every build. Tests in test_{webkit2_api|webcore}_BINARIES

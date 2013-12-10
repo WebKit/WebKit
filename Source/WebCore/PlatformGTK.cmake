@@ -43,6 +43,8 @@ list(APPEND WebCore_SOURCES
 
     editing/atk/FrameSelectionAtk.cpp
 
+    html/shadow/MediaControlsGtk.cpp
+
     loader/soup/CachedRawResourceSoup.cpp
     loader/soup/SubresourceLoaderSoup.cpp
 

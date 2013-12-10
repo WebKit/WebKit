@@ -1,3 +1,11 @@
+2013-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Various fixes for the CMake GTK+ build
+
+        Reviewed by Gustavo Noronha.
+
+        * PlatformGTK.cmake: Update source list.
+
 2013-12-10  Robert Sipka  <sipka@inf.u-szeged.hu>
 
         [nix][curl] Buildfix after r160310

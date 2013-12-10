@@ -1,3 +1,12 @@
+2013-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Various fixes for the CMake GTK+ build
+
+        Reviewed by Gustavo Noronha.
+
+        * MiniBrowser/gtk/CMakeLists.txt: Update source list and correct the name of BrowserMarshal.h.
+        * TestWebKitAPI/PlatformGTK.cmake: Add GTK+ libraries to the test program. They're required.
+
 2013-12-10  László Langó  <lango@inf.u-szeged.hu>
 
         --cloop option does not work in Tools/Scripts/build-jsc.

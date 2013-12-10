@@ -1,3 +1,11 @@
+2013-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Various fixes for the CMake GTK+ build
+
+        Reviewed by Gustavo Noronha.
+
+        * wtf/PlatformGTK.cmake: Add Zlib library to the WTF build.
+
 2013-12-09  Sam Weinig  <sam@webkit.org>
 
         Remove FixedArray

@@ -32,8 +32,6 @@ list(APPEND WebKit2_SOURCES
 
     Shared/API/c/cairo/WKImageCairo.cpp
 
-    Shared/API/c/gtk/WKGraphicsContextGtk.cpp
-
     Shared/Downloads/gtk/DownloadSoupErrorsGtk.cpp
 
     Shared/Downloads/soup/DownloadSoup.cpp
@@ -82,6 +80,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/PageClientImpl.h
     UIProcess/API/gtk/WebKitAuthenticationDialog.cpp
     UIProcess/API/gtk/WebKitAuthenticationDialog.h
+    UIProcess/API/gtk/WebKitAuthenticationRequest.cpp
+    UIProcess/API/gtk/WebKitAuthenticationRequest.h
     UIProcess/API/gtk/WebKitBackForwardList.cpp
     UIProcess/API/gtk/WebKitBackForwardList.h
     UIProcess/API/gtk/WebKitBackForwardListItem.cpp
@@ -104,6 +104,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitCookieManager.cpp
     UIProcess/API/gtk/WebKitCookieManager.h
     UIProcess/API/gtk/WebKitCookieManagerPrivate.h
+    UIProcess/API/gtk/WebKitCredential.cpp
+    UIProcess/API/gtk/WebKitCredential.h
     UIProcess/API/gtk/WebKitDefines.h
     UIProcess/API/gtk/WebKitDownload.cpp
     UIProcess/API/gtk/WebKitDownload.h
@@ -242,7 +244,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/WebContextGtk.cpp
     UIProcess/gtk/WebContextMenuProxyGtk.cpp
     UIProcess/gtk/WebFullScreenClientGtk.cpp
-    UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp
     UIProcess/gtk/WebInspectorClientGtk.cpp
     UIProcess/gtk/WebInspectorProxyGtk.cpp
     UIProcess/gtk/WebPageProxyGtk.cpp
@@ -256,6 +257,11 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
     WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
+
+    WebProcess/InjectedBundle/API/gtk/WebKitFrame.cpp
+    WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.cpp
+    WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp
+    WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp
 
     WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp
 
@@ -278,6 +284,8 @@ list(APPEND WebKit2_SOURCES
     WebProcess/WebPage/gtk/WebPageGtk.cpp
     WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
 
+    WebProcess/gtk/WebGtkExtensionManager.cpp
+    WebProcess/gtk/WebGtkInjectedBundleMain.cpp
     WebProcess/gtk/WebProcessMainGtk.cpp
 
     WebProcess/soup/WebKitSoupRequestGeneric.cpp
@@ -328,9 +336,20 @@ set(WebKit2_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitWindowProperties.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/webkit2.h
 
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitFrame.cpp
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitFrame.h
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitFramePrivate.h
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.cpp
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.h
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitScriptWorldPrivate.h
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionPrivate.h
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebPagePrivate.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h
+
 )
 
 list(APPEND WebKit2_MESSAGES_IN_FILES
@@ -347,6 +366,7 @@ list(INSERT WebKit2_INCLUDE_DIRECTORIES 0
 )
 
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/platform/cairo"
     "${WEBCORE_DIR}/platform/gtk"
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/graphics/opentype"

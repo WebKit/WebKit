@@ -1,3 +1,12 @@
+2013-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Various fixes for the CMake GTK+ build
+
+        Reviewed by Gustavo Noronha.
+
+        * CMakeLists.txt: Update the source lists.
+        * PlatformGTK.cmake: Ditto.
+
 2013-12-10  Alberto Garcia  <berto@igalia.com>
 
         [WK2] [GTK] Enable the network process in the WebContext

@@ -5,14 +5,16 @@ file(MAKE_DIRECTORY ${DERIVED_SOURCES_MINIBROWSER_DIR})
 
 set(MiniBrowser_SOURCES
     ${DERIVED_SOURCES_MINIBROWSER_DIR}/BrowserMarshal.c
-    ${MINIBROWSER_DIR}/BrowserCellRendererVariant.h
     ${MINIBROWSER_DIR}/BrowserCellRendererVariant.c
-    ${MINIBROWSER_DIR}/BrowserDownloadsBar.h
+    ${MINIBROWSER_DIR}/BrowserCellRendererVariant.h
     ${MINIBROWSER_DIR}/BrowserDownloadsBar.c
-    ${MINIBROWSER_DIR}/BrowserSettingsDialog.h
+    ${MINIBROWSER_DIR}/BrowserDownloadsBar.h
+    ${MINIBROWSER_DIR}/BrowserSearchBar.c
+    ${MINIBROWSER_DIR}/BrowserSearchBar.h
     ${MINIBROWSER_DIR}/BrowserSettingsDialog.c
-    ${MINIBROWSER_DIR}/BrowserWindow.h
+    ${MINIBROWSER_DIR}/BrowserSettingsDialog.h
     ${MINIBROWSER_DIR}/BrowserWindow.c
+    ${MINIBROWSER_DIR}/BrowserWindow.h
     ${MINIBROWSER_DIR}/main.c
 )
 
@@ -36,7 +38,7 @@ set(MiniBrowser_LIBRARIES
 
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_MINIBROWSER_DIR}/BrowserMarshal.c
-           ${DERIVED_SOURCES_MINIBROWSER_DIR}/Browsermarshal.h
+           ${DERIVED_SOURCES_MINIBROWSER_DIR}/BrowserMarshal.h
     MAIN_DEPENDENCY ${MINIBROWSER_DIR}/browser-marshal.list
     COMMAND glib-genmarshal --prefix=browser_marshal ${MINIBROWSER_DIR}/browser-marshal.list --body > ${DERIVED_SOURCES_MINIBROWSER_DIR}/BrowserMarshal.c
     COMMAND glib-genmarshal --prefix=browser_marshal ${MINIBROWSER_DIR}/browser-marshal.list --header > ${DERIVED_SOURCES_MINIBROWSER_DIR}/BrowserMarshal.h
