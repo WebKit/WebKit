@@ -263,6 +263,12 @@
 		1AB8A1F418400B8F00E9AE69 /* WKPageFindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB8A1F318400B8F00E9AE69 /* WKPageFindClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB8A1F618400B9D00E9AE69 /* WKPageFindMatchesClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB8A1F518400B9D00E9AE69 /* WKPageFindMatchesClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB8A1F818400BB800E9AE69 /* WKPageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB8A1F718400BB800E9AE69 /* WKPageContextMenuClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AC1336718565B5700F3EC05 /* UserData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1336518565B5700F3EC05 /* UserData.cpp */; };
+		1AC1336818565B5700F3EC05 /* UserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1336618565B5700F3EC05 /* UserData.h */; };
+		1AC1336C18565C7A00F3EC05 /* APIPageHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */; };
+		1AC1336E18565D2B00F3EC05 /* APIPageHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1336D18565D2B00F3EC05 /* APIPageHandle.cpp */; };
+		1AC1337118566C7C00F3EC05 /* APIFrameHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1336F18566C7C00F3EC05 /* APIFrameHandle.cpp */; };
+		1AC1337218566C7C00F3EC05 /* APIFrameHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1337018566C7C00F3EC05 /* APIFrameHandle.h */; };
 		1AC25FC212A48F6000BD2671 /* PluginProcessShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AC25F8A12A48E0300BD2671 /* PluginProcessShim.mm */; };
 		1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC4C82816B876A90069DCCD /* MessageFlags.h */; };
 		1AC5FFC2174BFD1B0001483D /* PluginProcessAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC5FFC1174BFD1B0001483D /* PluginProcessAttributes.h */; };
@@ -1788,6 +1794,12 @@
 		1AB8A1F318400B8F00E9AE69 /* WKPageFindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageFindClient.h; sourceTree = "<group>"; };
 		1AB8A1F518400B9D00E9AE69 /* WKPageFindMatchesClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageFindMatchesClient.h; sourceTree = "<group>"; };
 		1AB8A1F718400BB800E9AE69 /* WKPageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageContextMenuClient.h; sourceTree = "<group>"; };
+		1AC1336518565B5700F3EC05 /* UserData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserData.cpp; sourceTree = "<group>"; };
+		1AC1336618565B5700F3EC05 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
+		1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIPageHandle.h; sourceTree = "<group>"; };
+		1AC1336D18565D2B00F3EC05 /* APIPageHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIPageHandle.cpp; sourceTree = "<group>"; };
+		1AC1336F18566C7C00F3EC05 /* APIFrameHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIFrameHandle.cpp; sourceTree = "<group>"; };
+		1AC1337018566C7C00F3EC05 /* APIFrameHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFrameHandle.h; sourceTree = "<group>"; };
 		1AC25F8912A48E0300BD2671 /* PluginProcessShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessShim.h; sourceTree = "<group>"; };
 		1AC25F8A12A48E0300BD2671 /* PluginProcessShim.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessShim.mm; sourceTree = "<group>"; };
 		1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = PluginProcessShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3413,8 +3425,12 @@
 				BC64696D11DBE603006455B0 /* APIArray.cpp */,
 				BC64696E11DBE603006455B0 /* APIArray.h */,
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
+				1AC1336F18566C7C00F3EC05 /* APIFrameHandle.cpp */,
+				1AC1337018566C7C00F3EC05 /* APIFrameHandle.h */,
 				B63403F814910D57001070B5 /* APIObject.cpp */,
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
+				1AC1336D18565D2B00F3EC05 /* APIPageHandle.cpp */,
+				1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */,
 				A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */,
 				A7D792D41767CB0900881CBE /* ActivityAssertion.h */,
 				515E7725183DD6F60007203F /* AsyncRequest.cpp */,
@@ -3474,6 +3490,8 @@
 				1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */,
 				1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */,
 				1A64245C12DE29A100CAAE2C /* UpdateInfo.h */,
+				1AC1336518565B5700F3EC05 /* UserData.cpp */,
+				1AC1336618565B5700F3EC05 /* UserData.h */,
 				BCB0B0DF12305AB100B1341E /* UserMessageCoders.h */,
 				865E0484181A090D001F72F2 /* ViewState.h */,
 				1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */,
@@ -5725,6 +5743,7 @@
 				517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */,
 				51795571162877D200FA43B6 /* NetworkProcessCreationParameters.h in Headers */,
 				1A9E329F1822FEDD00F5D04C /* WKRemoteObjectCoder.h in Headers */,
+				1AC1336818565B5700F3EC05 /* UserData.h in Headers */,
 				5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */,
 				E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */,
 				5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */,
@@ -5998,6 +6017,7 @@
 				BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */,
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
 				512F589D12A8838800629530 /* WebProtectionSpace.h in Headers */,
+				1AC1337218566C7C00F3EC05 /* APIFrameHandle.h in Headers */,
 				37948404150C350600E52CE9 /* WebRenderLayer.h in Headers */,
 				51E351F6180F5C7500E53BE9 /* WebIDBFactoryBackend.h in Headers */,
 				3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */,
@@ -6014,6 +6034,7 @@
 				BCC5715B115ADAEF001CCAF9 /* WebSystemInterface.h in Headers */,
 				1A594ABB112A1FB6009DE7C7 /* WebUIClient.h in Headers */,
 				BCA0EF7F12331E78007D3CFB /* WebUndoStep.h in Headers */,
+				1AC1336C18565C7A00F3EC05 /* APIPageHandle.h in Headers */,
 				1AB474E8184D44D00051B622 /* WKBundlePageDiagnosticLoggingClient.h in Headers */,
 				1AC7537C183A9FDB0072CB15 /* PageLoadState.h in Headers */,
 				BCDB86C11200FB97007254BE /* WebURL.h in Headers */,
@@ -7129,6 +7150,7 @@
 				1A2D90BB1281C931001EB962 /* PluginProcessProxyMac.mm in Sources */,
 				1A043B5D124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp in Sources */,
 				1A043DC2124FF87500FFBFB5 /* PluginProxy.cpp in Sources */,
+				1AC1336718565B5700F3EC05 /* UserData.cpp in Sources */,
 				1A2D92211281DC1B001EB962 /* PluginProxyMac.mm in Sources */,
 				755422C418062BF90046F6A8 /* WebOriginDataManagerProxy.cpp in Sources */,
 				1A8EFA701252B84100F7067F /* PluginProxyMessageReceiver.cpp in Sources */,
@@ -7138,6 +7160,7 @@
 				1A6FB7AE11E64B6800DB1371 /* PluginView.cpp in Sources */,
 				E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */,
 				E1CC1B9112D7EADF00625838 /* PrintInfoMac.mm in Sources */,
+				1AC1336E18565D2B00F3EC05 /* APIPageHandle.cpp in Sources */,
 				1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */,
 				BC111B1D112F5FE600337BAB /* ProcessLauncherMac.mm in Sources */,
 				1AB16AE9164B3A8800290D62 /* RemoteLayerTreeContext.mm in Sources */,
@@ -7475,6 +7498,7 @@
 				3336763A130C99DC006C9DE2 /* WKResourceCacheManager.cpp in Sources */,
 				F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */,
 				BC407603124FF0270068F20A /* WKSerializedScriptValue.cpp in Sources */,
+				1AC1337118566C7C00F3EC05 /* APIFrameHandle.cpp in Sources */,
 				BC407605124FF0270068F20A /* WKString.cpp in Sources */,
 				BC407619124FF0370068F20A /* WKStringCF.mm in Sources */,
 				1A4A9AA912B7E796008FE984 /* WKTextInputWindowController.mm in Sources */,

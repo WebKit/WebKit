@@ -1,3 +1,29 @@
+2013-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Begin working on a UserData class intended to replace UserMessageCoders
+        https://bugs.webkit.org/show_bug.cgi?id=125471
+
+        Reviewed by Sam Weinig.
+
+        * Shared/APIFrameHandle.cpp: Added.
+        * Shared/APIFrameHandle.h: Added.
+        Add a new API::FrameHandle class that represents a frame.
+
+        * Shared/APIObject.h:
+        * Shared/APIPageHandle.cpp: Added.
+        * Shared/APIPageHandle.h: Added.
+        Add a new API::PageHandle class that represents a page.
+
+        * Shared/UserData.cpp: Added.
+        (WebKit::UserData::UserData):
+        (WebKit::UserData::~UserData):
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/UserData.h: Added.
+        Add a UserData class that can be encoded and decoded. This will be used for sending data
+         between the web process and UI process without doing any of the Page -> BundlePage etc conversions.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-12-09  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] LayoutTests are broken after r160301

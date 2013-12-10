@@ -1,0 +1,180 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "UserData.h"
+
+#include "APIArray.h"
+#include "APIFrameHandle.h"
+#include "ArgumentCoders.h"
+#include "ArgumentEncoder.h"
+#include "WebNumber.h"
+#include "WebURL.h"
+
+namespace WebKit {
+
+UserData::UserData(API::Object* object)
+    : m_object(object)
+{
+}
+
+UserData::~UserData()
+{
+}
+
+void UserData::encode(CoreIPC::ArgumentEncoder& encoder) const
+{
+    encode(encoder, m_object.get());
+}
+
+bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, UserData& userData)
+{
+    return decode(decoder, userData.m_object);
+}
+
+void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object* object) const
+{
+    if (!object) {
+        encoder.encodeEnum(API::Object::Type::Null);
+        return;
+    }
+
+    encode(encoder, *object);
+}
+
+void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& object) const
+{
+    API::Object::Type type = object.type();
+    encoder.encodeEnum(type);
+
+    switch (object.type()) {
+    case API::Object::Type::Array: {
+        auto& array = static_cast<const API::Array&>(object);
+        encoder << static_cast<uint64_t>(array.size());
+        for (size_t i = 0; i < array.size(); ++i)
+            encode(encoder, array.at(i));
+        break;
+    }
+
+    case API::Object::Type::Boolean: {
+        auto& boolean = static_cast<const WebBoolean&>(object);
+        encoder << boolean.value();
+        break;
+    }
+
+    case API::Object::Type::FrameHandle: {
+        auto& frameHandle = static_cast<const API::FrameHandle&>(object);
+        encoder << frameHandle.frameID();
+        break;
+    }
+
+    case API::Object::Type::URL: {
+        auto& url = static_cast<const WebURL&>(object);
+        encoder << url.string();
+        break;
+    }
+
+    case API::Object::Type::UInt64: {
+        auto& uint64 = static_cast<const WebUInt64&>(object);
+        encoder << uint64.value();
+        break;
+    }
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
+{
+    API::Object::Type type;
+    if (!decoder.decodeEnum(type))
+        return false;
+
+    switch (type) {
+    case API::Object::Type::Array: {
+        uint64_t size;
+        if (!decoder.decode(size))
+            return false;
+
+        Vector<RefPtr<API::Object>> elements;
+        for (size_t i = 0; i < size; ++i) {
+            RefPtr<API::Object> element;
+            if (!decode(decoder, element))
+                return false;
+
+            elements.append(std::move(element));
+        }
+
+        result = API::Array::create(std::move(elements));
+        break;
+    }
+
+    case API::Object::Type::Boolean: {
+        bool value;
+        if (!decoder.decode(value))
+            return false;
+
+        result = WebBoolean::create(value);
+        break;
+    }
+
+    case API::Object::Type::FrameHandle: {
+        uint64_t frameID;
+        if (!decoder.decode(frameID))
+            return false;
+
+        result = API::FrameHandle::create(frameID);
+        break;
+    }
+
+    case API::Object::Type::Null:
+        result = nullptr;
+        break;
+
+    case API::Object::Type::URL: {
+        String string;
+        if (!decoder.decode(string))
+            return false;
+        result = WebURL::create(string);
+        break;
+    }
+
+    case API::Object::Type::UInt64: {
+        uint64_t value;
+        if (!decoder.decode(value))
+            return false;
+        result = WebUInt64::create(value);
+        break;
+    }
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return true;
+}
+
+} // namespace WebKit
