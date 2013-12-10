@@ -293,6 +293,12 @@ class BugzillaQueries(object):
         return map(lambda pair: pair[0], pairs)
 
 
+class CommitQueueFlag(object):
+    mark_for_nothing = 0
+    mark_for_commit_queue = 1
+    mark_for_landing = 2
+
+
 class Bugzilla(object):
     def __init__(self, committers=committers.CommitterList()):
         self.authenticated = False
@@ -550,31 +556,25 @@ class Bugzilla(object):
                 self.authenticated = True
                 self.username = username
 
-    # FIXME: Use enum instead of two booleans
-    def _commit_queue_flag(self, mark_for_landing, mark_for_commit_queue):
-        if mark_for_landing:
+    def _commit_queue_flag(self, commit_flag):
+        if commit_flag == CommitQueueFlag.mark_for_landing:
             user = self.committers.contributor_by_email(self.username)
-            mark_for_commit_queue = True
             if not user:
                 _log.warning("Your Bugzilla login is not listed in contributors.json. Uploading with cq? instead of cq+")
-                mark_for_landing = False
             elif not user.can_commit:
                 _log.warning("You're not a committer yet or haven't updated contributors.json yet. Uploading with cq? instead of cq+")
-                mark_for_landing = False
+            else:
+                return '+'
 
-        if mark_for_landing:
-            return '+'
-        if mark_for_commit_queue:
+        if commit_flag != CommitQueueFlag.mark_for_nothing:
             return '?'
         return 'X'
 
-    # FIXME: mark_for_commit_queue and mark_for_landing should be joined into a single commit_flag argument.
     def _fill_attachment_form(self,
                               description,
                               file_object,
                               mark_for_review=False,
-                              mark_for_commit_queue=False,
-                              mark_for_landing=False,
+                              commit_flag=CommitQueueFlag.mark_for_nothing,
                               is_patch=False,
                               filename=None,
                               mimetype=None):
@@ -583,7 +583,7 @@ class Bugzilla(object):
             self.browser['ispatch'] = ("1",)
         # FIXME: Should this use self._find_select_element_for_flag?
         self.browser['flag_type-1'] = ('?',) if mark_for_review else ('X',)
-        self.browser['flag_type-3'] = (self._commit_queue_flag(mark_for_landing, mark_for_commit_queue),)
+        self.browser['flag_type-3'] = (self._commit_queue_flag(commit_flag),)
 
         filename = filename or "%s.patch" % timestamp()
         if not mimetype:
@@ -637,11 +637,16 @@ class Bugzilla(object):
         self.browser.select_form(name="entryform")
         file_object = self._file_object_for_upload(file_or_string)
         filename = self._filename_for_upload(file_object, bug_id, extension="patch")
+        commit_flag = CommitQueueFlag.mark_for_nothing
+        if mark_for_landing:
+            commit_flag = CommitQueueFlag.mark_for_landing
+        elif mark_for_commit_queue:
+            commit_flag = CommitQueueFlag.mark_for_commit_queue
+
         self._fill_attachment_form(description,
                                    file_object,
                                    mark_for_review=mark_for_review,
-                                   mark_for_commit_queue=mark_for_commit_queue,
-                                   mark_for_landing=mark_for_landing,
+                                   commit_flag=commit_flag,
                                    is_patch=True,
                                    filename=filename)
         if comment_text:
@@ -708,11 +713,15 @@ class Bugzilla(object):
             # Patch files are already binary, so no encoding needed.
             assert(isinstance(diff, str))
             patch_file_object = StringIO.StringIO(diff)
+            commit_flag = CommitQueueFlag.mark_for_nothing
+            if mark_for_commit_queue:
+                commit_flag = CommitQueueFlag.mark_for_commit_queue
+
             self._fill_attachment_form(
                     patch_description,
                     patch_file_object,
                     mark_for_review=mark_for_review,
-                    mark_for_commit_queue=mark_for_commit_queue,
+                    commit_flag=commit_flag,
                     is_patch=True)
 
         response = self.browser.submit()
