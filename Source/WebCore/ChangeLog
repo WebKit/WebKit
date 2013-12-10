@@ -1,3 +1,16 @@
+2013-12-09  Seokju Kwon  <seokju@webkit.org>
+
+        Web Inspector: Remove enabled() in InspectorRuntimeAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=125476
+
+        Reviewed by Joseph Pecoraro.
+
+        Dead code. It's never called anywhere.
+
+        No new tests, no behavior change.
+
+        * inspector/InspectorRuntimeAgent.h:
+
 2013-12-09  Sam Weinig  <sam@webkit.org>
 
         Replace use of WTF::FixedArray with std::array

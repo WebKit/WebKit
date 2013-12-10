@@ -56,7 +56,6 @@ class InspectorRuntimeAgent : public InspectorBaseAgent, public InspectorRuntime
 public:
     virtual ~InspectorRuntimeAgent();
 
-    bool enabled() const { return m_enabled; }
     // Part of the protocol.
     virtual void enable(ErrorString*) { m_enabled = true; }
     virtual void disable(ErrorString*) { m_enabled = false; }
