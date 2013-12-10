@@ -126,6 +126,8 @@ public:
 
     void requestTermination();
 
+    RefPtr<API::Object> apiObjectByConvertingToHandles(API::Object*);
+
 private:
     explicit WebProcessProxy(WebContext&);
 

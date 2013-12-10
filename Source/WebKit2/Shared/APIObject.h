@@ -26,7 +26,9 @@
 #ifndef APIObject_h
 #define APIObject_h
 
+#include <functional>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC)
 #include "WKFoundation.h"

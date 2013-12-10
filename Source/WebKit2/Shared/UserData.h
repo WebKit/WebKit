@@ -45,6 +45,10 @@ public:
     explicit UserData(API::Object* = nullptr);
     ~UserData();
 
+    static RefPtr<API::Object> transform(API::Object*, const std::function<RefPtr<API::Object> (const API::Object&)> transformer);
+
+    API::Object* object() const { return m_object.get(); }
+
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, UserData&);
 

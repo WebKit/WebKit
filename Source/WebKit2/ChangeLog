@@ -1,3 +1,28 @@
+2013-12-10  Anders Carlsson  <andersca@apple.com>
+
+        More UserData work
+        https://bugs.webkit.org/show_bug.cgi?id=125524
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/APIObject.h:
+        * Shared/UserData.cpp:
+        (WebKit::UserData::transform):
+        New helper function that takes an API::Object and returns a new API::Object with all "sub-objects" (arrays etc)
+        transformed by calling the transformer.
+
+        * Shared/UserData.h:
+        (WebKit::UserData::object):
+        New getter.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::apiObjectByConvertingToHandles):
+        Helper function that creates a new API::Object graph by converting WebFrameProxy objects to FrameHandles.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::apiObjectByConvertingFromHandles):
+        Helper function that creates a new API::Object graph by converting FrameHandles to WebFrame objects.
+
 2013-12-10  Alberto Garcia  <berto@igalia.com>
 
         [WK2] [SOUP] Allow running the network process with an arbitrary prefix command

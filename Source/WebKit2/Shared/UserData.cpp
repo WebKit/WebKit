@@ -44,6 +44,28 @@ UserData::~UserData()
 {
 }
 
+RefPtr<API::Object> UserData::transform(API::Object* object, const std::function<RefPtr<API::Object> (const API::Object&)> transformer)
+{
+    if (!object)
+        return nullptr;
+
+    if (object->type() == API::Object::Type::Array) {
+        auto& array = static_cast<API::Array&>(*object);
+
+        Vector<RefPtr<API::Object>> elements;
+        elements.reserveInitialCapacity(array.elements().size());
+        for (const auto& element : array.elements())
+            elements.uncheckedAppend(transform(element.get(), transformer));
+
+        return API::Array::create(std::move(elements));
+    }
+
+    if (auto transformedObject = transformer(*object))
+        return transformedObject;
+
+    return object;
+}
+
 void UserData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encode(encoder, m_object.get());

@@ -47,6 +47,10 @@
 #include <dispatch/dispatch.h>
 #endif
 
+namespace API {
+class Object;
+}
+
 namespace WebCore {
 class PageGroup;
 class ResourceRequest;
@@ -180,6 +184,8 @@ public:
 #if PLATFORM(IOS)
     void resetAllGeolocationPermissions();
 #endif // PLATFORM(IOS)
+
+    RefPtr<API::Object> apiObjectByConvertingFromHandles(API::Object*);
 
 private:
     WebProcess();
