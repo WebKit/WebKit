@@ -296,6 +296,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_rubberBandsAtRight(true)
     , m_rubberBandsAtTop(true)
     , m_rubberBandsAtBottom(true)
+    , m_backgroundExtendsBeyondPage(false)
     , m_mainFrameInViewSourceMode(false)
     , m_pageCount(0)
     , m_renderTreeSize(0)
@@ -1736,6 +1737,23 @@ bool WebPageProxy::rubberBandsAtBottom() const
 void WebPageProxy::setRubberBandsAtBottom(bool rubberBandsAtBottom)
 {
     m_rubberBandsAtBottom = rubberBandsAtBottom;
+}
+
+void WebPageProxy::setBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
+{
+    if (backgroundExtendsBeyondPage == m_backgroundExtendsBeyondPage)
+        return;
+
+    m_backgroundExtendsBeyondPage = backgroundExtendsBeyondPage;
+
+    if (!isValid())
+        return;
+    m_process->send(Messages::WebPage::SetBackgroundExtendsBeyondPage(backgroundExtendsBeyondPage), m_pageID);
+}
+
+bool WebPageProxy::backgroundExtendsBeyondPage() const
+{
+    return m_backgroundExtendsBeyondPage;
 }
 
 void WebPageProxy::setPaginationMode(WebCore::Pagination::Mode mode)
@@ -3825,6 +3843,7 @@ void WebPageProxy::initializeCreationParameters()
     m_creationParameters.minimumLayoutSize = m_minimumLayoutSize;
     m_creationParameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;
     m_creationParameters.scrollPinningBehavior = m_scrollPinningBehavior;
+    m_creationParameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
 
 #if PLATFORM(MAC)
     m_creationParameters.layerHostingMode = m_layerHostingMode;

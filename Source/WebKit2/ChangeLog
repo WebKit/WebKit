@@ -1,3 +1,38 @@
+2013-12-10  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=125533
+        BackgroundExtendsBeyondPage setting should be switchable per WKView
+        -and corresponding-
+        <rdar://problem/15571310>
+
+        Reviewed by Anders Carlsson.
+
+        This patch removes the WKPreferences API and adds WKPage API in its place. To 
+        ensure that the setting sticks after a crash, it is also now a creation parameter.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetBackgroundExtendsBeyondPage):
+        (WKPageBackgroundExtendsBeyondPage):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setBackgroundExtendsBeyondPage):
+        (WebKit::WebPageProxy::backgroundExtendsBeyondPage):
+        (WebKit::WebPageProxy::initializeCreationParameters):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setBackgroundExtendsBeyondPage):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-12-10  Anders Carlsson  <andersca@apple.com>
 
         Rename API::TypedObject to API::ObjectImpl

@@ -584,6 +584,9 @@ public:
     bool rubberBandsAtBottom() const;
     void setRubberBandsAtBottom(bool);
 
+    void setBackgroundExtendsBeyondPage(bool);
+    bool backgroundExtendsBeyondPage() const;
+
     void setPaginationMode(WebCore::Pagination::Mode);
     WebCore::Pagination::Mode paginationMode() const { return m_paginationMode; }
     void setPaginationBehavesLikeColumns(bool);
@@ -1325,6 +1328,8 @@ private:
     bool m_rubberBandsAtRight;
     bool m_rubberBandsAtTop;
     bool m_rubberBandsAtBottom;
+
+    bool m_backgroundExtendsBeyondPage;
 
     bool m_mainFrameInViewSourceMode;
         

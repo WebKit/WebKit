@@ -318,6 +318,8 @@ public:
 
     void setSuppressScrollbarAnimations(bool);
 
+    void setBackgroundExtendsBeyondPage(bool);
+
     void setPaginationMode(uint32_t /* WebCore::Pagination::Mode */);
     void setPaginationBehavesLikeColumns(bool);
     void setPageLength(double);

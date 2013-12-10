@@ -495,6 +495,16 @@ void WKPageSetRubberBandsAtBottom(WKPageRef pageRef, bool rubberBandsAtBottom)
     toImpl(pageRef)->setRubberBandsAtBottom(rubberBandsAtBottom);
 }
 
+void WKPageSetBackgroundExtendsBeyondPage(WKPageRef pageRef, bool backgroundExtendsBeyondPage)
+{
+    toImpl(pageRef)->setBackgroundExtendsBeyondPage(backgroundExtendsBeyondPage);
+}
+
+bool WKPageBackgroundExtendsBeyondPage(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->backgroundExtendsBeyondPage();
+}
+
 void WKPageSetPaginationMode(WKPageRef pageRef, WKPaginationMode paginationMode)
 {
     Pagination::Mode mode;

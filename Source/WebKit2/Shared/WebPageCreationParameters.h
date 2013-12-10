@@ -97,6 +97,8 @@ struct WebPageCreationParameters {
     
     WebCore::ScrollPinningBehavior scrollPinningBehavior;
 
+    bool backgroundExtendsBeyondPage;
+
 #if PLATFORM(MAC)
     LayerHostingMode layerHostingMode;
     ColorSpaceData colorSpace;
