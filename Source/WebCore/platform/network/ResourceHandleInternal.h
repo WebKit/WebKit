@@ -110,6 +110,7 @@ namespace WebCore {
             , m_bodySize(0)
             , m_bodyDataSent(0)
             , m_redirectCount(0)
+            , m_previousPosition(0)
 #endif
 #if PLATFORM(MAC)
             , m_startWhenScheduled(false)
@@ -201,6 +202,7 @@ namespace WebCore {
         unsigned long m_bodyDataSent;
         SoupSession* soupSession();
         int m_redirectCount;
+        size_t m_previousPosition;
 #endif
 #if PLATFORM(GTK)
         struct {

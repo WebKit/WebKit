@@ -1,3 +1,23 @@
+2013-12-09  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [Soup] Send original encoded data size to didReceiveBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=125410
+
+        Reviewed by Martin Robinson.
+
+        No tests, the only way to test this seems to be through the inspector UI.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal): data member to track stream
+        position.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::currentStreamPosition): obtains the current stream position by querying
+        the first seekable input stream we find.
+        (WebCore::nextMultipartResponsePartCallback): store the position before we start reading a new part.
+        (WebCore::sendRequestCallback): store the position before we start reading the response body.
+        (WebCore::readCallback): pass the position delta to didReceiveData.
+
 2013-12-09  Andreas Kling  <akling@apple.com>
 
         Clear out font width measurement caches on memory pressure.

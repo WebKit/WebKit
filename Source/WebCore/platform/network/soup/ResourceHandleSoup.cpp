@@ -4,7 +4,7 @@
  * Copyright (C) 2008 Xan Lopez <xan@gnome.org>
  * Copyright (C) 2008, 2010 Collabora Ltd.
  * Copyright (C) 2009 Holger Hans Peter Freyther
- * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
+ * Copyright (C) 2009, 2013 Gustavo Noronha Silva <gns@gnome.org>
  * Copyright (C) 2009 Christian Dywan <christian@imendio.com>
  * Copyright (C) 2009, 2010, 2011, 2012 Igalia S.L.
  * Copyright (C) 2009 John Kjellberg <john.kjellberg@power.alstom.com>
@@ -606,6 +606,18 @@ static bool handleUnignoredTLSErrors(ResourceHandle* handle)
     return true;
 }
 
+size_t ResourceHandle::currentStreamPosition() const
+{
+    GInputStream* baseStream = d->m_inputStream.get();
+    while (!G_IS_SEEKABLE(baseStream) && G_IS_FILTER_INPUT_STREAM(baseStream))
+        baseStream = g_filter_input_stream_get_base_stream(G_FILTER_INPUT_STREAM(baseStream));
+
+    if (!G_IS_SEEKABLE(baseStream))
+        return 0;
+
+    return g_seekable_tell(G_SEEKABLE(baseStream));
+}
+
 static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult* result, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
@@ -643,6 +655,8 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
         cleanupSoupRequestOperation(handle.get());
         return;
     }
+
+    d->m_previousPosition = 0;
 
     handle->ensureReadBuffer();
     g_input_stream_read_async(d->m_inputStream.get(), const_cast<char*>(d->m_soupBuffer->data), d->m_soupBuffer->length,
@@ -1336,11 +1350,14 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
     // It's mandatory to have sent a response before sending data
     ASSERT(!d->m_response.isNull());
 
-    // FIXME: We should send the encoded data size here and not the decoded size
-    // See https://bugs.webkit.org/show_bug.cgi?id=125410
+    size_t currentPosition = handle->currentStreamPosition();
+    size_t encodedDataLength = currentPosition ? currentPosition - d->m_previousPosition : bytesRead;
+
     ASSERT(d->m_soupBuffer);
     d->m_soupBuffer->length = bytesRead; // The buffer might be larger than the number of bytes read. SharedBuffer looks at the length property.
-    handle->client()->didReceiveBuffer(handle.get(), SharedBuffer::wrapSoupBuffer(d->m_soupBuffer.release()), bytesRead);
+    handle->client()->didReceiveBuffer(handle.get(), SharedBuffer::wrapSoupBuffer(d->m_soupBuffer.release()), encodedDataLength);
+
+    d->m_previousPosition = currentPosition;
 
     // didReceiveBuffer may cancel the load, which may release the last reference.
     if (handle->cancelledOrClientless()) {

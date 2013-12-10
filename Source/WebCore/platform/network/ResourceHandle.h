@@ -178,6 +178,7 @@ public:
     void sendPendingRequest();
     bool cancelledOrClientless();
     void ensureReadBuffer();
+    size_t currentStreamPosition() const;
     static SoupSession* defaultSession();
     static SoupSession* createTestingSession();
     static SoupSession* createPrivateBrowsingSession();
