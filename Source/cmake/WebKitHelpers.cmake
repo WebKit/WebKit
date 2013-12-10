@@ -45,12 +45,6 @@ macro(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
             set(OLD_COMPILE_FLAGS "-Werror -Wno-error=unused-parameter ${OLD_COMPILE_FLAGS}")
         endif ()
 
-        # Disable C++0x compat warnings for GCC >= 4.6.0 until we build
-        # cleanly with that.
-        if (NOT ${OPTION_IGNORECXX_WARNINGS} AND NOT ${COMPILER_VERSION} VERSION_LESS "4.6.0")
-            set(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -Wno-c++0x-compat")
-        endif ()
-
         set_target_properties(${_target} PROPERTIES
             COMPILE_FLAGS "${OLD_COMPILE_FLAGS}")
 

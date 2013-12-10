@@ -1,3 +1,14 @@
+2013-12-10  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        [CMAKE] Remove code that disables C++0x compat warnings for gcc-4.6 and above.
+        https://bugs.webkit.org/show_bug.cgi?id=125492
+
+        Reviewed by Zoltan Herczeg.
+
+        Remove the code that disables these warnings for GCC >= 4.6.0
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2013-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         Various fixes for the CMake GTK+ build
