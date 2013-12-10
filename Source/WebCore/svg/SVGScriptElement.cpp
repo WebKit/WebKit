@@ -76,10 +76,8 @@ void SVGScriptElement::parseAttribute(const QualifiedName& name, const AtomicStr
         return;
     }
 
-    if (name == SVGNames::typeAttr) {
-        setType(value);
+    if (name == SVGNames::typeAttr)
         return;
-    }
 
     if (name == HTMLNames::onerrorAttr) {
         setAttributeEventListener(eventNames().errorEvent, name, value);
@@ -143,16 +141,6 @@ void SVGScriptElement::finishParsingChildren()
     SVGExternalResourcesRequired::finishParsingChildren();
 }
 
-String SVGScriptElement::type() const
-{
-    return m_type;
-}
-
-void SVGScriptElement::setType(const String& type)
-{
-    m_type = type;
-}
-
 void SVGScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     SVGElement::addSubresourceAttributeURLs(urls);
@@ -172,7 +160,7 @@ String SVGScriptElement::charsetAttributeValue() const
 
 String SVGScriptElement::typeAttributeValue() const
 {
-    return type();
+    return fastGetAttribute(SVGNames::typeAttr).string();
 }
 
 String SVGScriptElement::languageAttributeValue() const
