@@ -31,8 +31,8 @@
 #include "Opcode.h"
 
 #if ENABLE(OPCODE_STATS)
+#include <array>
 #include <wtf/DataLog.h>
-#include <wtf/FixedArray.h>
 #endif
 
 using namespace std;
@@ -102,7 +102,7 @@ OpcodeStats::~OpcodeStats()
         for (int j = 0; j < numOpcodeIDs; ++j)
             totalInstructionPairs += opcodePairCounts[i][j];
 
-    FixedArray<int, numOpcodeIDs> sortedIndices;
+    std::array<int, numOpcodeIDs> sortedIndices;
     for (int i = 0; i < numOpcodeIDs; ++i)
         sortedIndices[i] = i;
     qsort(sortedIndices.data(), numOpcodeIDs, sizeof(int), compareOpcodeIndices);

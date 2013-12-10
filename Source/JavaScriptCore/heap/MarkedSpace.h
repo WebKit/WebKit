@@ -26,10 +26,10 @@
 #include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
+#include <array>
 #include <wtf/PageAllocationAligned.h>
 #include <wtf/Bitmap.h>
 #include <wtf/DoublyLinkedList.h>
-#include <wtf/FixedArray.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -137,8 +137,8 @@ private:
     static const size_t impreciseCount = impreciseCutoff / impreciseStep;
 
     struct Subspace {
-        FixedArray<MarkedAllocator, preciseCount> preciseAllocators;
-        FixedArray<MarkedAllocator, impreciseCount> impreciseAllocators;
+        std::array<MarkedAllocator, preciseCount> preciseAllocators;
+        std::array<MarkedAllocator, impreciseCount> impreciseAllocators;
         MarkedAllocator largeAllocator;
     };
 

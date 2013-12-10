@@ -29,6 +29,7 @@
 #include "Identifier.h"
 #include "JSCJSValue.h"
 #include "JSGlobalObjectFunctions.h"
+#include <array>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -155,8 +156,8 @@ private:
     ParserMode m_mode;
     String m_parseErrorMessage;
     static unsigned const MaximumCachableCharacter = 128;
-    FixedArray<Identifier, MaximumCachableCharacter> m_shortIdentifiers;
-    FixedArray<Identifier, MaximumCachableCharacter> m_recentIdentifiers;
+    std::array<Identifier, MaximumCachableCharacter> m_shortIdentifiers;
+    std::array<Identifier, MaximumCachableCharacter> m_recentIdentifiers;
     ALWAYS_INLINE const Identifier makeIdentifier(const LChar* characters, size_t length);
     ALWAYS_INLINE const Identifier makeIdentifier(const UChar* characters, size_t length);
     };

@@ -27,6 +27,7 @@
 #define ParserArena_h
 
 #include "Identifier.h"
+#include <array>
 #include <wtf/SegmentedVector.h>
 
 namespace JSC {
@@ -64,8 +65,8 @@ namespace JSC {
 
     private:
         IdentifierVector m_identifiers;
-        FixedArray<Identifier*, MaximumCachableCharacter> m_shortIdentifiers;
-        FixedArray<Identifier*, MaximumCachableCharacter> m_recentIdentifiers;
+        std::array<Identifier*, MaximumCachableCharacter> m_shortIdentifiers;
+        std::array<Identifier*, MaximumCachableCharacter> m_recentIdentifiers;
     };
 
     template <typename T>

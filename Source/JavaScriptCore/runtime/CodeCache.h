@@ -32,7 +32,6 @@
 #include "Strong.h"
 #include "WeakRandom.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/FixedArray.h>
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RandomNumber.h>

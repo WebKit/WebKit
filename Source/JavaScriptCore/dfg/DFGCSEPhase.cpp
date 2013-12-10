@@ -32,6 +32,7 @@
 #include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "JSCellInlines.h"
+#include <array>
 #include <wtf/FastBitVector.h>
 
 namespace JSC { namespace DFG {
@@ -1410,7 +1411,7 @@ private:
     BasicBlock* m_currentBlock;
     Node* m_currentNode;
     unsigned m_indexInBlock;
-    FixedArray<unsigned, LastNodeType> m_lastSeen;
+    std::array<unsigned, LastNodeType> m_lastSeen;
     bool m_changed; // Only tracks changes that have a substantive effect on other optimizations.
 };
 

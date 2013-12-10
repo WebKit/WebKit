@@ -54,7 +54,7 @@ CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKin
 
 void CodeBlockHash::dump(PrintStream& out) const
 {
-    FixedArray<char, 7> buffer = integerToSixCharacterHashString(m_hash);
+    std::array<char, 7> buffer = integerToSixCharacterHashString(m_hash);
     
 #if !ASSERT_DISABLED
     CodeBlockHash recompute(buffer.data());

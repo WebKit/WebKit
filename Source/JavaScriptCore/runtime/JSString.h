@@ -22,12 +22,14 @@
 
 #ifndef JSString_h
 #define JSString_h
+
 #include "CallFrame.h"
 #include "CommonIdentifiers.h"
 #include "Identifier.h"
 #include "PropertyDescriptor.h"
 #include "PropertySlot.h"
 #include "Structure.h"
+#include <array>
 
 namespace JSC {
 
@@ -322,7 +324,7 @@ namespace JSC {
             
         JS_EXPORT_PRIVATE JSString* getIndexSlowCase(ExecState*, unsigned);
 
-        mutable FixedArray<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
+        mutable std::array<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
     };
 
 

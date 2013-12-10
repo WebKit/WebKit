@@ -26,7 +26,7 @@
 #ifndef SixCharacterHash_h
 #define SixCharacterHash_h
 
-#include <wtf/FixedArray.h>
+#include <array>
 
 namespace WTF {
 
@@ -37,7 +37,7 @@ WTF_EXPORT_PRIVATE unsigned sixCharacterHashStringToInteger(const char*);
 
 // Takes a 32-bit integer and constructs a six-character string that contains
 // the character hash.
-WTF_EXPORT_PRIVATE FixedArray<char, 7> integerToSixCharacterHashString(unsigned);
+WTF_EXPORT_PRIVATE std::array<char, 7> integerToSixCharacterHashString(unsigned);
 
 } // namespace WTF
 

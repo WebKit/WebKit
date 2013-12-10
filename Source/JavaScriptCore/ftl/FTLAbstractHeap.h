@@ -32,8 +32,8 @@
 
 #include "FTLAbbreviations.h"
 #include "JSCJSValue.h"
+#include <array>
 #include <wtf/FastMalloc.h>
-#include <wtf/FixedArray.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -171,7 +171,7 @@ private:
     size_t m_elementSize;
     LValue m_scaleTerm;
     bool m_canShift;
-    FixedArray<AbstractField, 16> m_smallIndices;
+    std::array<AbstractField, 16> m_smallIndices;
     
     struct WithoutZeroOrOneHashTraits : WTF::GenericHashTraits<ptrdiff_t> {
         static void constructDeletedValue(ptrdiff_t& slot) { slot = 1; }

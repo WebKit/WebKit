@@ -19,8 +19,8 @@
 #ifndef Bitmap_h
 #define Bitmap_h
 
+#include <array>
 #include <wtf/Atomics.h>
-#include <wtf/FixedArray.h>
 #include <wtf/StdLibExtras.h>
 #include <stdint.h>
 #include <string.h>
@@ -66,7 +66,7 @@ private:
     // a 64 bit unsigned int would give 0xffff8000
     static const WordType one = 1;
 
-    FixedArray<WordType, words> bits;
+    std::array<WordType, words> bits;
 };
 
 template<size_t size, BitmapAtomicMode atomicMode, typename WordType>

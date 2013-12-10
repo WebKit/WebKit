@@ -58,11 +58,11 @@ unsigned sixCharacterHashStringToInteger(const char* string)
     return hash;
 }
 
-FixedArray<char, 7> integerToSixCharacterHashString(unsigned hash)
+std::array<char, 7> integerToSixCharacterHashString(unsigned hash)
 {
-    ASSERT(strlen(TABLE) == 62);
-    
-    FixedArray<char, 7> buffer;
+    static_assert(WTF_ARRAY_LENGTH(TABLE) - 1 == 62, "Six character hash table is not 62 characters long.");
+
+    std::array<char, 7> buffer;
     unsigned accumulator = hash;
     for (unsigned i = 6; i--;) {
         buffer[i] = TABLE[accumulator % 62];

@@ -30,7 +30,7 @@
 #include "Strong.h"
 #include "Weak.h"
 #include "WeakInlines.h"
-#include <wtf/FixedArray.h>
+#include <array>
 #include <wtf/HashMap.h>
 
 #ifndef RegExpCache_h
@@ -58,7 +58,7 @@ private:
     void addToStrongCache(RegExp*);
     RegExpCacheMap m_weakCache; // Holds all regular expressions currently live.
     int m_nextEntryInStrongCache;
-    WTF::FixedArray<Strong<RegExp>, maxStrongCacheableEntries> m_strongCache; // Holds a select few regular expressions that have compiled and executed
+    std::array<Strong<RegExp>, maxStrongCacheableEntries> m_strongCache; // Holds a select few regular expressions that have compiled and executed
     VM* m_vm;
 };
 

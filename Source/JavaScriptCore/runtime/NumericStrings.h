@@ -26,7 +26,7 @@
 #ifndef NumericStrings_h
 #define NumericStrings_h
 
-#include <wtf/FixedArray.h>
+#include <array>
 #include <wtf/HashFunctions.h>
 #include <wtf/text/WTFString.h>
 
@@ -87,10 +87,10 @@ namespace JSC {
             return smallIntCache[i];
         }
 
-        FixedArray<CacheEntry<double>, cacheSize> doubleCache;
-        FixedArray<CacheEntry<int>, cacheSize> intCache;
-        FixedArray<CacheEntry<unsigned>, cacheSize> unsignedCache;
-        FixedArray<String, cacheSize> smallIntCache;
+        std::array<CacheEntry<double>, cacheSize> doubleCache;
+        std::array<CacheEntry<int>, cacheSize> intCache;
+        std::array<CacheEntry<unsigned>, cacheSize> unsignedCache;
+        std::array<String, cacheSize> smallIntCache;
     };
 
 } // namespace JSC

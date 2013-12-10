@@ -28,7 +28,7 @@
 
 #include "JSCJSValue.h"
 #include "JSDateMath.h"
-#include <wtf/FixedArray.h>
+#include <array>
 #include <wtf/HashFunctions.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -86,7 +86,7 @@ namespace JSC {
 
         CacheEntry& lookup(double d) { return m_cache[WTF::FloatHash<double>::hash(d) & (cacheSize - 1)]; }
 
-        FixedArray<CacheEntry, cacheSize> m_cache;
+        std::array<CacheEntry, cacheSize> m_cache;
     };
 
 } // namespace JSC

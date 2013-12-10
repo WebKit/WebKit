@@ -32,8 +32,8 @@
 #ifndef AVL_TREE_H_
 #define AVL_TREE_H_
 
+#include <array>
 #include <wtf/Assertions.h>
-#include <wtf/FixedArray.h>
 
 namespace WTF {
 
@@ -71,7 +71,7 @@ public:
     void reset() { for (unsigned i = 0; i < maxDepth; ++i) m_data[i] = false; }
 
 private:
-    FixedArray<bool, maxDepth> m_data;
+    std::array<bool, maxDepth> m_data;
 };
 
 // How to determine maxDepth:

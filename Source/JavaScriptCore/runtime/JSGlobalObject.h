@@ -37,6 +37,7 @@
 #include "VM.h"
 #include "Watchpoint.h"
 #include <JavaScriptCore/JSBase.h>
+#include <array>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -227,7 +228,7 @@ protected:
         WriteBarrier<Structure> structure;
     };
     
-    FixedArray<TypedArrayData, NUMBER_OF_TYPED_ARRAY_TYPES> m_typedArrays;
+    std::array<TypedArrayData, NUMBER_OF_TYPED_ARRAY_TYPES> m_typedArrays;
         
     void* m_specialPointers[Special::TableSize]; // Special pointers used by the LLInt and JIT.
 
