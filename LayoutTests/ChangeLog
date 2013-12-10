@@ -1,3 +1,11 @@
+2013-12-10  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add failure expectations for tests added in r157725.
+
+        * platform/efl/TestExpectations:
+
 2013-12-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Convert the get_text atktest.c unit tests to layout tests

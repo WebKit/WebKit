@@ -1776,3 +1776,17 @@ webkit.org/b/125496 animations/cross-fade-border-image-source.html [ Failure ]
 webkit.org/b/125496 animations/cross-fade-list-style-image.html [ Failure ]
 webkit.org/b/125496 animations/cross-fade-webkit-mask-box-image.html [ Failure ]
 webkit.org/b/125496 animations/cross-fade-webkit-mask-image.html [ Failure ]
+
+# Added in r157725, failing due differences in media player controls rendering
+webkit.org/b/125517 compositing/regions/floated-region-with-transformed-child.html [ ImageOnlyFailure ]
+webkit.org/b/125517 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ ImageOnlyFailure ]
+webkit.org/b/125517 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure ]
+
+# Added in r157725, failing due insigificant pixel differences on bot
+webkit.org/b/125517 compositing/regions/crash-transform-inside-region.html [ ImageOnlyFailure ]
+webkit.org/b/125517 compositing/regions/move-layer-from-one-region-to-another.html [ ImageOnlyFailure ]
+webkit.org/b/125517 compositing/regions/propagate-region-box-shadow-border-padding.html [ ImageOnlyFailure ]
+webkit.org/b/125517 compositing/regions/region-as-layer-in-another-flowthread.html [ ImageOnlyFailure ]
+webkit.org/b/125517 compositing/regions/transformed-layer-inside-transformed-layer.html [ ImageOnlyFailure ]
+webkit.org/b/125517 compositing/regions/z-index-update.html [ ImageOnlyFailure ]
+webkit.org/b/125517 compositing/regions/z-index.html [ ImageOnlyFailure ]
