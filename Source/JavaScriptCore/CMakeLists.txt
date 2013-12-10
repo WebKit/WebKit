@@ -162,6 +162,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGPredictionPropagationPhase.cpp
     dfg/DFGResurrectionForValidationPhase.cpp
     dfg/DFGSSAConversionPhase.cpp
+    dfg/DFGSSALoweringPhase.cpp
     dfg/DFGSpeculativeJIT.cpp
     dfg/DFGSpeculativeJIT32_64.cpp
     dfg/DFGSpeculativeJIT64.cpp

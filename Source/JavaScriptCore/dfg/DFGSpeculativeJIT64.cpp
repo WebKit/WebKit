@@ -2957,7 +2957,7 @@ void SpeculativeJIT::compile(Node* node)
             
             if (arrayMode.isInBounds()) {
                 speculationCheck(
-                    StoreToHoleOrOutOfBounds, JSValueRegs(), 0,
+                    OutOfBounds, JSValueRegs(), 0,
                     m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
             } else {
                 MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength()));
@@ -5065,6 +5065,7 @@ void SpeculativeJIT::compile(Node* node)
     case Upsilon:
     case GetArgument:
     case ExtractOSREntryLocal:
+    case CheckInBounds:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

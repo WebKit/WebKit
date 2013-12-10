@@ -52,6 +52,7 @@
 #include "DFGPredictionPropagationPhase.h"
 #include "DFGResurrectionForValidationPhase.h"
 #include "DFGSSAConversionPhase.h"
+#include "DFGSSALoweringPhase.h"
 #include "DFGStackLayoutPhase.h"
 #include "DFGStrengthReductionPhase.h"
 #include "DFGTierUpCheckInjectionPhase.h"
@@ -266,6 +267,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performLoopPreHeaderCreation(dfg);
         performCPSRethreading(dfg);
         performSSAConversion(dfg);
+        performSSALowering(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         performLICM(dfg);

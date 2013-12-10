@@ -906,12 +906,30 @@ void JSObject::convertUndecidedForValue(VM& vm, JSValue value)
         return;
     }
     
-    if (value.isDouble()) {
+    if (value.isDouble() && value.asNumber() == value.asNumber()) {
         convertUndecidedToDouble(vm);
         return;
     }
     
     convertUndecidedToContiguous(vm);
+}
+
+void JSObject::createInitialForValueAndSet(VM& vm, unsigned index, JSValue value)
+{
+    if (value.isInt32()) {
+        createInitialInt32(vm, index + 1)[index].set(vm, this, value);
+        return;
+    }
+    
+    if (value.isDouble()) {
+        double doubleValue = value.asNumber();
+        if (doubleValue == doubleValue) {
+            createInitialDouble(vm, index + 1)[index] = doubleValue;
+            return;
+        }
+    }
+    
+    createInitialContiguous(vm, index + 1)[index].set(vm, this, value);
 }
 
 void JSObject::convertInt32ForValue(VM& vm, JSValue value)
@@ -1993,8 +2011,8 @@ void JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
             storage->m_numValuesInVector++;
             break;
         }
-            
-        createInitialContiguous(vm, i + 1)[i].set(vm, this, value);
+        
+        createInitialForValueAndSet(vm, i, value);
         break;
     }
         
@@ -2142,7 +2160,7 @@ bool JSObject::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSV
             return true;
         }
         
-        createInitialContiguous(vm, i + 1)[i].set(vm, this, value);
+        createInitialForValueAndSet(vm, i, value);
         return true;
     }
         

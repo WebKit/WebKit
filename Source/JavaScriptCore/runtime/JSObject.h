@@ -757,6 +757,7 @@ protected:
     ContiguousJSValues createInitialContiguous(VM&, unsigned length);
         
     void convertUndecidedForValue(VM&, JSValue);
+    void createInitialForValueAndSet(VM&, unsigned index, JSValue);
     void convertInt32ForValue(VM&, JSValue);
         
     ArrayStorage* createArrayStorage(VM&, unsigned length, unsigned vectorLength);

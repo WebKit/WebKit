@@ -355,6 +355,9 @@ private:
         case GetArrayLength:
             compileGetArrayLength();
             break;
+        case CheckInBounds:
+            compileCheckInBounds();
+            break;
         case GetByVal:
             compileGetByVal();
             break;
@@ -1475,6 +1478,13 @@ private:
         }
     }
     
+    void compileCheckInBounds()
+    {
+        speculate(
+            OutOfBounds, noValue(), 0,
+            m_out.aboveOrEqual(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+    }
+    
     void compileGetByVal()
     {
         switch (m_node->arrayMode().type()) {
@@ -1487,11 +1497,6 @@ private:
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
             
             if (m_node->arrayMode().isInBounds()) {
-                speculate(
-                    OutOfBounds, noValue(), 0,
-                    m_out.aboveOrEqual(
-                        index, m_out.load32(storage, m_heaps.Butterfly_publicLength)));
-                
                 LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
                 speculate(LoadFromHole, noValue(), 0, m_out.isZero64(result));
                 setJSValue(result);
@@ -1532,11 +1537,6 @@ private:
             IndexedAbstractHeap& heap = m_heaps.indexedDoubleProperties;
             
             if (m_node->arrayMode().isInBounds()) {
-                speculate(
-                    OutOfBounds, noValue(), 0,
-                    m_out.aboveOrEqual(
-                        index, m_out.load32(storage, m_heaps.Butterfly_publicLength)));
-                
                 LValue result = m_out.loadDouble(
                     baseIndex(heap, storage, index, m_node->child2()));
                 
@@ -1600,11 +1600,6 @@ private:
             TypedArrayType type = m_node->arrayMode().typedArrayType();
             
             if (isTypedView(type)) {
-                speculate(
-                    OutOfBounds, noValue(), 0,
-                    m_out.aboveOrEqual(
-                        index, typedArrayLength(m_node->child1(), m_node->arrayMode())));
-                
                 TypedPointer pointer = TypedPointer(
                     m_heaps.typedArrayProperties,
                     m_out.add(
@@ -1792,14 +1787,6 @@ private:
             TypedArrayType type = m_node->arrayMode().typedArrayType();
             
             if (isTypedView(type)) {
-                if (m_node->op() != PutByValAlias) {
-                    speculate(
-                        OutOfBounds, noValue(), 0,
-                        m_out.aboveOrEqual(
-                            index,
-                            typedArrayLength(child1, m_node->arrayMode(), base)));
-                }
-                
                 TypedPointer pointer = TypedPointer(
                     m_heaps.typedArrayProperties,
                     m_out.add(
@@ -3085,15 +3072,12 @@ private:
     
     template<typename FunctionType>
     void contiguousPutByValOutOfBounds(
-        FunctionType slowPathFunction,
-        LValue base, LValue storage, LValue index, LValue value,
+        FunctionType slowPathFunction, LValue base, LValue storage, LValue index, LValue value,
         LBasicBlock continuation)
     {
         LValue isNotInBounds = m_out.aboveOrEqual(
             index, m_out.load32(storage, m_heaps.Butterfly_publicLength));
-        if (m_node->arrayMode().isInBounds())
-            speculate(StoreToHoleOrOutOfBounds, noValue(), 0, isNotInBounds);
-        else {
+        if (!m_node->arrayMode().isInBounds()) {
             LBasicBlock notInBoundsCase =
                 FTL_NEW_BLOCK(m_out, ("PutByVal not in bounds"));
             LBasicBlock performStore =

@@ -877,6 +877,7 @@ private:
         case Int52ToValue:
         case InvalidationPoint:
         case CheckArray:
+        case CheckInBounds:
         case ConstantStoragePointer:
             // These are just nodes that we don't currently expect to see during fixup.
             // If we ever wanted to insert them prior to fixup, then we just have to create

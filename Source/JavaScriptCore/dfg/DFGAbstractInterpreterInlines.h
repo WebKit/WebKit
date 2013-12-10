@@ -1473,6 +1473,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
+    case CheckInBounds: {
+        JSValue left = forNode(node->child1()).value();
+        JSValue right = forNode(node->child2()).value();
+        if (left && right && left.isInt32() && right.isInt32()
+            && static_cast<uint32_t>(left.asInt32()) < static_cast<uint32_t>(right.asInt32())) {
+            m_state.setFoundConstants(true);
+            break;
+        }
+        
+        node->setCanExit(true);
+        break;
+    }
+        
     case PutById:
     case PutByIdDirect:
         node->setCanExit(true);

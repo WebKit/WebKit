@@ -44,7 +44,6 @@ enum ExitKind {
     StoreToHole, // We had a store to a hole.
     LoadFromHole, // We had a load from a hole.
     OutOfBounds, // We had an out-of-bounds access to an array.
-    StoreToHoleOrOutOfBounds, // We're simultaneously speculating that we're in bounds and not accessing a hole, and one of those things didn't pan out.
     InadequateCoverage, // We exited because we ended up in code that didn't have profiling coverage.
     ArgumentsEscaped, // We exited because arguments escaped but we didn't expect them to.
     NotStringObject, // We exited because we shouldn't have attempted to optimize string object access.

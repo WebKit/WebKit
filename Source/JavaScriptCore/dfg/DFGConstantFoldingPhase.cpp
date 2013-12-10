@@ -142,6 +142,19 @@ private:
                 break;
             }
                 
+            case CheckInBounds: {
+                JSValue left = m_state.forNode(node->child1()).value();
+                JSValue right = m_state.forNode(node->child2()).value();
+                if (left && right && left.isInt32() && right.isInt32()
+                    && static_cast<uint32_t>(left.asInt32()) < static_cast<uint32_t>(right.asInt32())) {
+                    node->convertToPhantom();
+                    eliminated = true;
+                    break;
+                }
+                
+                break;
+            }
+        
             case GetById:
             case GetByIdFlush: {
                 CodeOrigin codeOrigin = node->codeOrigin;

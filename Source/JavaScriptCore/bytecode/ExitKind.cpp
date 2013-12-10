@@ -64,8 +64,6 @@ const char* exitKindToString(ExitKind kind)
         return "LoadFromHole";
     case OutOfBounds:
         return "OutOfBounds";
-    case StoreToHoleOrOutOfBounds:
-        return "StoreToHoleOrOutOfBounds";
     case InadequateCoverage:
         return "InadequateCoverage";
     case ArgumentsEscaped:
@@ -96,7 +94,6 @@ bool exitKindIsCountable(ExitKind kind)
     case LoadFromHole: // Already counted directly by the baseline JIT.
     case StoreToHole: // Already counted directly by the baseline JIT.
     case OutOfBounds: // Already counted directly by the baseline JIT.
-    case StoreToHoleOrOutOfBounds: // Already counted directly by the baseline JIT.
         return false;
     default:
         return true;

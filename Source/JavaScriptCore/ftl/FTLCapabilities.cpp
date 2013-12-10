@@ -109,6 +109,8 @@ inline CapabilityLevel canCompile(Node* node)
     case ValueToInt32:
     case Branch:
     case LogicalNot:
+    case CheckInBounds:
+    case ConstantStoragePointer:
         // These are OK.
         break;
     case GetById:

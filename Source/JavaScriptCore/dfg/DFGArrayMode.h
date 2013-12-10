@@ -110,6 +110,8 @@ IndexingType toIndexingShape(Array::Type);
 TypedArrayType toTypedArrayType(Array::Type);
 Array::Type toArrayType(TypedArrayType);
 
+bool permitsBoundsCheckLowering(Array::Type);
+
 class ArrayMode {
 public:
     ArrayMode()
@@ -292,7 +294,17 @@ public:
     
     bool lengthNeedsStorage() const
     {
-        return isJSArray();
+        switch (type()) {
+        case Array::Undecided:
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous:
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
+            return true;
+        default:
+            return false;
+        }
     }
     
     ArrayMode modeForPut() const
@@ -341,6 +353,8 @@ public:
             return true;
         }
     }
+    
+    bool permitsBoundsCheckLowering() const;
     
     bool benefitsFromOriginalArray() const
     {

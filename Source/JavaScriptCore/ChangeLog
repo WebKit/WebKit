@@ -1,3 +1,88 @@
+2013-12-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Reveal array bounds checks in DFG IR
+        https://bugs.webkit.org/show_bug.cgi?id=125253
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+        
+        In SSA mode, this reveals array bounds checks and the load of array length in DFG IR,
+        making this a candidate for LICM.
+
+        This also fixes a long-standing performance bug where the JSObject slow paths would
+        always create contiguous storage, rather than type-specialized storage, when doing a
+        "storage creating" storage, like:
+        
+            var o = {};
+            o[0] = 42;
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        (JSC::exitKindIsCountable):
+        * bytecode/ExitKind.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::permitsBoundsCheckLowering):
+        (JSC::DFG::ArrayMode::permitsBoundsCheckLowering):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::lengthNeedsStorage):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSSALoweringPhase.cpp: Added.
+        (JSC::DFG::SSALoweringPhase::SSALoweringPhase):
+        (JSC::DFG::SSALoweringPhase::run):
+        (JSC::DFG::SSALoweringPhase::handleNode):
+        (JSC::DFG::SSALoweringPhase::lowerBoundsCheck):
+        (JSC::DFG::performSSALowering):
+        * dfg/DFGSSALoweringPhase.h: Added.
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckInBounds):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::LowerDFGToLLVM::contiguousPutByValOutOfBounds):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::convertUndecidedForValue):
+        (JSC::JSObject::createInitialForValueAndSet):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        * runtime/JSObject.h:
+        * tests/stress/float32array-out-of-bounds.js: Added.
+        (make):
+        (foo):
+        (test):
+        * tests/stress/int32-object-out-of-bounds.js: Added.
+        (make):
+        (foo):
+        (test):
+        * tests/stress/int32-out-of-bounds.js: Added.
+        (foo):
+        (test):
+
 2013-12-09  Sam Weinig  <sam@webkit.org>
 
         Replace use of WTF::FixedArray with std::array
