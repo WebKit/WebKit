@@ -534,10 +534,10 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
 static AtkRole atkRole(AccessibilityRole role)
 {
     switch (role) {
+    case ApplicationAlertDialogRole:
     case ApplicationAlertRole:
         return ATK_ROLE_ALERT;
     case ApplicationDialogRole:
-    case ApplicationAlertDialogRole:
         return ATK_ROLE_DIALOG;
     case ApplicationStatusRole:
         return ATK_ROLE_STATUSBAR;
