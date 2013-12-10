@@ -1,3 +1,40 @@
+2013-12-10  Oliver Hunt  <oliver@apple.com>
+
+        Reduce the mass templatizing of the JS parser
+        https://bugs.webkit.org/show_bug.cgi?id=125535
+
+        Reviewed by Michael Saboff.
+
+        The various caches we have now have removed the need for many of
+        the template vs. regular parameters.  This patch converts those
+        template parameters to regular parameters and updates the call
+        sites.  This reduces the code size of the parser by around 15%.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createProperty):
+        * parser/Parser.cpp:
+        (JSC::::parseInner):
+        (JSC::::parseSourceElements):
+        (JSC::::parseVarDeclarationList):
+        (JSC::::createBindingPattern):
+        (JSC::::tryParseDeconstructionPatternExpression):
+        (JSC::::parseDeconstructionPattern):
+        (JSC::::parseSwitchClauses):
+        (JSC::::parseSwitchDefaultClause):
+        (JSC::::parseBlockStatement):
+        (JSC::::parseFormalParameters):
+        (JSC::::parseFunctionInfo):
+        (JSC::::parseFunctionDeclaration):
+        (JSC::::parseProperty):
+        (JSC::::parseObjectLiteral):
+        (JSC::::parseStrictObjectLiteral):
+        (JSC::::parseMemberExpression):
+        * parser/Parser.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createProperty):
+        (JSC::SyntaxChecker::createGetterOrSetterProperty):
+
 2013-12-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         ASSERT !heap.vm()->isInitializingObject() when finishing DFG compilation at beginning of GC

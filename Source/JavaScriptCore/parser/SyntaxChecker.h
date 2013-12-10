@@ -160,20 +160,20 @@ public:
     ExpressionType createSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return 1; }
     int createArgumentsList(const JSTokenLocation&, int) { return 1; }
     int createArgumentsList(const JSTokenLocation&, int, int) { return 1; }
-    template <bool complete> Property createProperty(const Identifier* name, int, PropertyNode::Type type)
+    Property createProperty(const Identifier* name, int, PropertyNode::Type type, bool complete)
     {
         if (!complete)
             return Property(type);
         ASSERT(name);
         return Property(name, type);
     }
-    template <bool complete> Property createProperty(VM* vm, double name, int, PropertyNode::Type type)
+    Property createProperty(VM* vm, double name, int, PropertyNode::Type type, bool complete)
     {
         if (!complete)
             return Property(type);
         return Property(&vm->parserArena->identifierArena().makeNumericIdentifier(vm, name), type);
     }
-    template <bool complete> Property createProperty(VM*, ExpressionNode*, int, PropertyNode::Type type)
+    Property createProperty(VM*, ExpressionNode*, int, PropertyNode::Type type, bool)
     {
         return Property(type);
     }
@@ -212,14 +212,14 @@ public:
     int createDebugger(const JSTokenLocation&, int, int) { return 1; }
     int createConstStatement(const JSTokenLocation&, int, int, int) { return 1; }
     int appendConstDecl(const JSTokenLocation&, int, const Identifier*, int) { return 1; }
-    template <bool strict> Property createGetterOrSetterProperty(const JSTokenLocation&, PropertyNode::Type type, const Identifier* name, int, int, int, int, int, int, int)
+    Property createGetterOrSetterProperty(const JSTokenLocation&, PropertyNode::Type type, bool strict, const Identifier* name, int, int, int, int, int, int, int)
     {
         ASSERT(name);
         if (!strict)
             return Property(type);
         return Property(name, type);
     }
-    template <bool strict> Property createGetterOrSetterProperty(VM* vm, const JSTokenLocation&, PropertyNode::Type type, double name, int, int, int, int, int, int, int)
+    Property createGetterOrSetterProperty(VM* vm, const JSTokenLocation&, PropertyNode::Type type, bool strict, double name, int, int, int, int, int, int, int)
     {
         if (!strict)
             return Property(type);
