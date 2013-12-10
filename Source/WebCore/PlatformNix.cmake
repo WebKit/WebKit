@@ -79,8 +79,6 @@ list(APPEND WebCore_SOURCES
     platform/gtk/LoggingGtk.cpp
     platform/gtk/SharedBufferGtk.cpp
 
-    platform/soup/SharedBufferSoup.cpp
-
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
 
     platform/linux/GamepadDeviceLinux.cpp
@@ -288,8 +286,7 @@ else ()
         platform/network/soup/SoupURIUtils.cpp
         platform/network/soup/SynchronousLoaderClientSoup.cpp
 
-        # Uncomment it after https://bugs.webkit.org/show_bug.cgi?id=118598 is fixed and merged to Nix.
-        # platform/soup/SharedBufferSoup.cpp
+        platform/soup/SharedBufferSoup.cpp
     )
 
     list(APPEND WebCore_INCLUDE_DIRECTORIES
