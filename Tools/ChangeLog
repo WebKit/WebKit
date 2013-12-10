@@ -1,3 +1,16 @@
+2013-12-09  Tim Horton  <timothy_horton@apple.com>
+
+        Remove dead extract_reference_link.py (and the reftests module)
+        https://bugs.webkit.org/show_bug.cgi?id=125116
+
+        Reviewed by Ryosuke Niwa.
+
+        This code doesn't seem to have ever been used.
+
+        * Scripts/webkitpy/layout_tests/reftests/__init__.py: Removed.
+        * Scripts/webkitpy/layout_tests/reftests/extract_reference_link.py: Removed.
+        * Scripts/webkitpy/layout_tests/reftests/extract_reference_link_unittest.py: Removed.
+
 2013-12-09  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Translate ATK_ROLE_SECTION into "AXSection" in DRT/WKTR
