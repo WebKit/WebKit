@@ -84,7 +84,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
-AXRole: AXHorizontalRule
+AXRole: AXSeparator
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }

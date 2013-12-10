@@ -349,7 +349,7 @@ const gchar* roleToString(AtkRole role)
     case ATK_ROLE_SECTION:
         return "AXSection";
     case ATK_ROLE_SEPARATOR:
-        return "AXHorizontalRule";
+        return "AXSeparator";
     case ATK_ROLE_SLIDER:
         return "AXSlider";
     case ATK_ROLE_SPIN_BUTTON:
