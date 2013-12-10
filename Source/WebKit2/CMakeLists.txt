@@ -181,6 +181,8 @@ set(WebKit2_SOURCES
     PluginProcess/WebProcessConnection.cpp
 
     Shared/APIArray.cpp
+    Shared/APIFrameHandle.cpp
+    Shared/APIPageHandle.cpp
     Shared/APIObject.cpp
     Shared/ActivityAssertion.cpp
     Shared/CacheModel.cpp
@@ -201,6 +203,7 @@ set(WebKit2_SOURCES
     Shared/ShareableResource.cpp
     Shared/StatisticsData.cpp
     Shared/UpdateInfo.cpp
+    Shared/UserData.cpp
     Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp
     Shared/WebBatteryStatus.cpp
