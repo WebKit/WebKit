@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "APIGeometry.h"
+#include "APINumber.h"
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
@@ -38,7 +39,6 @@
 #include "WebData.h"
 #include "WebError.h"
 #include "WebImage.h"
-#include "WebNumber.h"
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"
 #include "WebSerializedScriptValue.h"

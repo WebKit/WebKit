@@ -26,6 +26,7 @@
 #ifndef WKSharedAPICast_h
 #define WKSharedAPICast_h
 
+#include "APINumber.h"
 #include "ImageOptions.h"
 #include "SameDocumentNavigationType.h"
 #include "WKBase.h"
@@ -42,7 +43,6 @@
 #include "WebError.h"
 #include "WebEvent.h"
 #include "WebFindOptions.h"
-#include "WebNumber.h"
 #include "WebSecurityOrigin.h"
 #include "WebString.h"
 #include "WebURL.h"

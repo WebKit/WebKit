@@ -29,10 +29,10 @@
 #if WK_API_ENABLED
 
 #import "APIArray.h"
+#import "APINumber.h"
 #import "MutableDictionary.h"
 #import "WKRemoteObjectInterfaceInternal.h"
 #import "WebData.h"
-#import "WebNumber.h"
 #import "WebString.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>

@@ -28,10 +28,10 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
+#include "APINumber.h"
 #include "PluginInfoStore.h"
 #include "PluginModuleInfo.h"
 #include "WKAPICast.h"
-#include "WebNumber.h"
 #include "WebString.h"
 #include "WebURL.h"
 #include <wtf/text/WTFString.h>

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNumber_h
-#define WebNumber_h
+#ifndef APINumber_h
+#define APINumber_h
 
 #include "APIObject.h"
 #include <wtf/PassRefPtr.h>
@@ -56,4 +56,4 @@ typedef WebNumber<uint64_t, API::Object::Type::UInt64> WebUInt64;
 
 } // namespace WebKit
 
-#endif // WebNumber_h
+#endif // APINumber_h

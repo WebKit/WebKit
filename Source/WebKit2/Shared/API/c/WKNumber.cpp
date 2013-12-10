@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WKNumber.h"
 
+#include "APINumber.h"
 #include "WKAPICast.h"
-#include "WebNumber.h"
 
 using namespace WebKit;
 

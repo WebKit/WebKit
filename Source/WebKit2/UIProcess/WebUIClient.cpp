@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebUIClient.h"
 
+#include "APINumber.h"
 #include "ImmutableDictionary.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebWheelEvent.h"
@@ -33,7 +34,6 @@
 #include "PluginInformation.h"
 #include "WKAPICast.h"
 #include "WebColorPickerResultListenerProxy.h"
-#include "WebNumber.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageProxy.h"
 #include <WebCore/FloatRect.h>

@@ -27,6 +27,7 @@
 #import "WKContextPrivateMac.h"
 
 #import "APIArray.h"
+#import "APINumber.h"
 #import "ImmutableDictionary.h"
 #import "PluginInfoStore.h"
 #import "PluginInformation.h"
@@ -37,7 +38,6 @@
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
 #import "WebContext.h"
-#import "WebNumber.h"
 #import "WebString.h"
 #import <WebKitSystemInterface.h>
 #import <wtf/RetainPtr.h>

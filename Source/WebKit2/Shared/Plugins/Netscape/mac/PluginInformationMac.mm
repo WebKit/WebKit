@@ -28,10 +28,10 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
+#import "APINumber.h"
 #import "PluginModuleInfo.h"
 #import "PluginSandboxProfile.h"
 #import "StringUtilities.h"
-#import "WebNumber.h"
 #import "WebString.h"
 #import <WebKitSystemInterface.h>
 

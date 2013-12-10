@@ -888,7 +888,7 @@
 		BC3066BF125A442100E71278 /* WebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3066BD125A442100E71278 /* WebProcessMessages.h */; };
 		BC306824125A6B9400E71278 /* WebProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = BC306822125A6B9400E71278 /* WebProcessCreationParameters.h */; };
 		BC306825125A6B9400E71278 /* WebProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC306823125A6B9400E71278 /* WebProcessCreationParameters.cpp */; };
-		BC33DD681238464600360F3F /* WebNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = BC33DD671238464600360F3F /* WebNumber.h */; };
+		BC33DD681238464600360F3F /* APINumber.h in Headers */ = {isa = PBXBuildFile; fileRef = BC33DD671238464600360F3F /* APINumber.h */; };
 		BC33E0D112408E8600360F3F /* InjectedBundleRangeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC33E0CF12408E8600360F3F /* InjectedBundleRangeHandle.h */; };
 		BC33E0D212408E8600360F3F /* InjectedBundleRangeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */; };
 		BC39C4351626366F008BC689 /* WKDOMRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC39C4331626366F008BC689 /* WKDOMRange.mm */; };
@@ -2487,7 +2487,7 @@
 		BC329DA616ACE5A900316DE2 /* WKWebArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebArchive.h; sourceTree = "<group>"; };
 		BC329DA916ACE5BF00316DE2 /* WKWebArchiveResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebArchiveResource.cpp; sourceTree = "<group>"; };
 		BC329DAA16ACE5C000316DE2 /* WKWebArchiveResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebArchiveResource.h; sourceTree = "<group>"; };
-		BC33DD671238464600360F3F /* WebNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNumber.h; sourceTree = "<group>"; };
+		BC33DD671238464600360F3F /* APINumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APINumber.h; sourceTree = "<group>"; };
 		BC33E0CF12408E8600360F3F /* InjectedBundleRangeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleRangeHandle.h; sourceTree = "<group>"; };
 		BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleRangeHandle.cpp; sourceTree = "<group>"; };
 		BC39C4331626366F008BC689 /* WKDOMRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDOMRange.mm; sourceTree = "<group>"; };
@@ -3431,6 +3431,7 @@
 				1AC1337018566C7C00F3EC05 /* APIFrameHandle.h */,
 				1AC133731857C21E00F3EC05 /* APIGeometry.cpp */,
 				0F174AA2142A4CB60039250F /* APIGeometry.h */,
+				BC33DD671238464600360F3F /* APINumber.h */,
 				B63403F814910D57001070B5 /* APIObject.cpp */,
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
 				1AC1336D18565D2B00F3EC05 /* APIPageHandle.cpp */,
@@ -3539,7 +3540,6 @@
 				905620E912BC248B000799B6 /* WebMemorySampler.h */,
 				C0337DAF127A28D0008FF4F4 /* WebMouseEvent.cpp */,
 				BCF69F981176CED600471A52 /* WebNavigationDataStore.h */,
-				BC33DD671238464600360F3F /* WebNumber.h */,
 				BC857FB412B830E600EDEB2E /* WebOpenPanelParameters.cpp */,
 				BC857FB312B830E600EDEB2E /* WebOpenPanelParameters.h */,
 				C06C6093124C14430001682F /* WebPageCreationParameters.cpp */,
@@ -5986,7 +5986,7 @@
 				31BA924E148831260062EDB5 /* WebNotificationManagerMessages.h in Headers */,
 				31A2EC4B148997C200810D71 /* WebNotificationManagerProxy.h in Headers */,
 				31A2EC4E148997C200810D71 /* WebNotificationProvider.h in Headers */,
-				BC33DD681238464600360F3F /* WebNumber.h in Headers */,
+				BC33DD681238464600360F3F /* APINumber.h in Headers */,
 				BC857FB512B830E600EDEB2E /* WebOpenPanelParameters.h in Headers */,
 				BC857F8512B82D0B00EDEB2E /* WebOpenPanelResultListener.h in Headers */,
 				BC1DFEA412B31F87005DF730 /* WebOpenPanelResultListenerProxy.h in Headers */,

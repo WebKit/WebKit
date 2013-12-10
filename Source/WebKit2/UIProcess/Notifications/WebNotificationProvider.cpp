@@ -27,11 +27,11 @@
 #include "WebNotificationProvider.h"
 
 #include "APIArray.h"
+#include "APINumber.h"
 #include "ImmutableDictionary.h"
 #include "WKAPICast.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerProxy.h"
-#include "WebNumber.h"
 #include "WebSecurityOrigin.h"
 
 namespace WebKit {

@@ -1,5 +1,25 @@
 2013-12-10  Anders Carlsson  <andersca@apple.com>
 
+        Rename WebNumber.h to APINumber.h
+        https://bugs.webkit.org/show_bug.cgi?id=125545
+
+        Reviewed by Beth Dakin.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        * Shared/API/c/WKNumber.cpp:
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/APINumber.h: Renamed from Source/WebKit2/Shared/WebNumber.h.
+        * Shared/Plugins/Netscape/PluginInformation.cpp:
+        * Shared/Plugins/Netscape/mac/PluginInformationMac.mm:
+        * Shared/UserData.cpp:
+        * Shared/UserMessageCoders.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        * UIProcess/WebUIClient.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-12-10  Anders Carlsson  <andersca@apple.com>
+
         UserData should handle geometry types
         https://bugs.webkit.org/show_bug.cgi?id=125542
 
