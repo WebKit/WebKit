@@ -30,7 +30,10 @@
 #include "APIFrameHandle.h"
 #include "ArgumentCoders.h"
 #include "ArgumentEncoder.h"
+#include "MutableDictionary.h"
 #include "WebNumber.h"
+#include "WebSerializedScriptValue.h"
+#include "WebString.h"
 #include "WebURL.h"
 
 namespace WebKit {
@@ -58,6 +61,16 @@ RefPtr<API::Object> UserData::transform(API::Object* object, const std::function
             elements.uncheckedAppend(transform(element.get(), transformer));
 
         return API::Array::create(std::move(elements));
+    }
+
+    if (object->type() == API::Object::Type::Dictionary) {
+        auto& dictionary = static_cast<ImmutableDictionary&>(*object);
+
+        ImmutableDictionary::MapType map;
+        for (const auto& keyValuePair : dictionary.map())
+            map.add(keyValuePair.key, transform(keyValuePair.value.get(), transformer));
+
+        return ImmutableDictionary::adopt(map);
     }
 
     if (auto transformedObject = transformer(*object))
@@ -106,9 +119,33 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
         break;
     }
 
+    case API::Object::Type::Dictionary: {
+        auto& dictionary = static_cast<const ImmutableDictionary&>(object);
+        auto& map = dictionary.map();
+
+        encoder << map.size();
+        for (const auto& keyValuePair : map) {
+            encoder << keyValuePair.key;
+            encode(encoder, keyValuePair.value.get());
+        }
+        break;
+    }
+
     case API::Object::Type::FrameHandle: {
         auto& frameHandle = static_cast<const API::FrameHandle&>(object);
         encoder << frameHandle.frameID();
+        break;
+    }
+
+    case API::Object::Type::SerializedScriptValue: {
+        auto& serializedScriptValue = static_cast<const WebSerializedScriptValue&>(object);
+        encoder << serializedScriptValue.dataReference();
+        break;
+    }
+
+    case API::Object::Type::String: {
+        auto& string = static_cast<const WebString&>(object);
+        encoder << string.string();
         break;
     }
 
@@ -163,6 +200,29 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
         break;
     }
 
+    case API::Object::Type::Dictionary: {
+        uint64_t size;
+        if (!decoder.decode(size))
+            return false;
+
+        ImmutableDictionary::MapType map;
+        for (size_t i = 0; i < size; ++i) {
+            String key;
+            if (!decoder.decode(key))
+                return false;
+
+            RefPtr<API::Object> value;
+            if (!decode(decoder, value))
+                return false;
+
+            if (!map.add(std::move(key), std::move(value)).isNewEntry)
+                return false;
+        }
+
+        result = ImmutableDictionary::adopt(map);
+        break;
+    }
+
     case API::Object::Type::FrameHandle: {
         uint64_t frameID;
         if (!decoder.decode(frameID))
@@ -175,6 +235,25 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
     case API::Object::Type::Null:
         result = nullptr;
         break;
+
+    case API::Object::Type::SerializedScriptValue: {
+        CoreIPC::DataReference dataReference;
+        if (!decoder.decode(dataReference))
+            return false;
+
+        auto vector = dataReference.vector();
+        result = WebSerializedScriptValue::adopt(vector);
+        break;
+    }
+
+    case API::Object::Type::String: {
+        String string;
+        if (!decoder.decode(string))
+            return false;
+
+        result = WebString::create(string);
+        break;
+    }
 
     case API::Object::Type::URL: {
         String string;

@@ -1,5 +1,20 @@
 2013-12-10  Anders Carlsson  <andersca@apple.com>
 
+        Add more API object types to UserData
+        https://bugs.webkit.org/show_bug.cgi?id=125532
+
+        Reviewed by Beth Dakin.
+
+        * Shared/UserData.cpp:
+        (WebKit::UserData::transform):
+        Handle dictionaries.
+
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        Handle more API::Objects.
+
+2013-12-10  Anders Carlsson  <andersca@apple.com>
+
         More UserData work
         https://bugs.webkit.org/show_bug.cgi?id=125524
 
