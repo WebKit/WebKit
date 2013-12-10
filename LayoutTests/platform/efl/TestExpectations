@@ -1768,3 +1768,9 @@ webkit.org/b/125355 fast/events/updateLayoutForHitTest.html [ Failure ]
 webkit.org/b/125458 fast/repaint/line-flow-with-floats-9.html [ Failure ]
 
 webkit.org/b/125459 fast/text/partial-textruns.html [ ImageOnlyFailure ]
+
+# Started failing after r154906
+webkit.org/b/125496 animations/cross-fade-border-image-source.html [ Failure ]
+webkit.org/b/125496 animations/cross-fade-list-style-image.html [ Failure ]
+webkit.org/b/125496 animations/cross-fade-webkit-mask-box-image.html [ Failure ]
+webkit.org/b/125496 animations/cross-fade-webkit-mask-image.html [ Failure ]
