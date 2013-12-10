@@ -75,7 +75,9 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gi
     g_signal_connect(m_pad.get(), "notify::active", G_CALLBACK(trackPrivateActiveChangedCallback), this);
     g_signal_connect(m_pad.get(), "notify::tags", G_CALLBACK(trackPrivateTagsChangedCallback), this);
 
-    notifyTrackOfTagsChanged();
+    // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged()
+    // to setup m_tags.
+    tagsChanged();
 }
 
 TrackPrivateBaseGStreamer::~TrackPrivateBaseGStreamer()
@@ -100,6 +102,7 @@ void TrackPrivateBaseGStreamer::disconnect()
         g_source_remove(m_tagTimerHandler);
 
     m_pad.clear();
+    m_tags.clear();
 }
 
 void TrackPrivateBaseGStreamer::activeChanged()
@@ -114,6 +117,14 @@ void TrackPrivateBaseGStreamer::tagsChanged()
 {
     if (m_tagTimerHandler)
         g_source_remove(m_tagTimerHandler);
+
+    GRefPtr<GstTagList> tags;
+    g_object_get(m_pad.get(), "tags", &tags.outPtr(), NULL);
+    {
+        MutexLocker lock(m_tagMutex);
+        m_tags.swap(tags);
+    }
+
     m_tagTimerHandler = g_timeout_add(0,
         reinterpret_cast<GSourceFunc>(trackPrivateTagsChangeTimeoutCallback), this);
 }
@@ -149,7 +160,10 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 
     TrackPrivateBaseClient* client = m_owner->client();
     GRefPtr<GstTagList> tags;
-    g_object_get(m_pad.get(), "tags", &tags.outPtr(), NULL);
+    {
+        MutexLocker lock(m_tagMutex);
+        tags.swap(m_tags);
+    }
     if (!tags)
         return;
 

@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
 
 #include "GRefPtrGStreamer.h"
+#include <wtf/ThreadingPrimitives.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -67,6 +68,9 @@ private:
     TrackPrivateBase* m_owner;
     guint m_activeTimerHandler;
     guint m_tagTimerHandler;
+
+    Mutex m_tagMutex;
+    GRefPtr<GstTagList> m_tags;
 };
 
 } // namespace WebCore

@@ -1,3 +1,22 @@
+2013-12-10  Brendan Long  <b.long@cablelabs.com>
+
+        [GTK][GStreamer] media/video-preload.html is flakily crashing on WK2
+        https://bugs.webkit.org/show_bug.cgi?id=125411
+
+        Reviewed by Philippe Normand.
+
+        No new tests because this fixes flakeyness in existing tests (media/video-preload.html, and various tests in media/track/{audio,in-band,video}).
+
+        * platform/graphics/gstreamer/TextCombinerGStreamer.cpp:
+        (webkitTextCombinerPadGetProperty): Copy tag list to prevent concurrent modification problems.
+        (webkitTextCombinerPadEvent): Add locking.
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer): Call tagsChanged() because we need it to setup m_tags.
+        (WebCore::TrackPrivateBaseGStreamer::disconnect): Clear m_tags.
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged): Lookup the tags while we're in this callback, because it's the only time we can guarantee that the input-selector won't unref them.
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged): Use m_tags.
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h: Add m_tags and a mutex.
+
 2013-12-10  László Langó  <lango@inf.u-szeged.hu>
 
         PageConsole::addMessage should automatically determine column number alongside line number
