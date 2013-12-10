@@ -30,6 +30,7 @@
 #import <WebCore/GCController.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/MemoryCache.h>
+#import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/LayerPool.h>
 #import <WebCore/ScrollingThread.h>
@@ -162,6 +163,8 @@ void MemoryPressureHandler::releaseMemory(bool)
     cssValuePool().drain();
 
     clearWidthCaches();
+
+    Page::jettisonStyleResolversInAllDocuments();
 
     gcController().discardAllCompiledCode();
 

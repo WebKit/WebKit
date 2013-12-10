@@ -1,3 +1,18 @@
+2013-12-10  Andreas Kling  <akling@apple.com>
+
+        Jettison all StyleResolver data on memory pressure.
+        <https://webkit.org/b/125498>
+
+        The StyleResolver can be rebuilt relatively quickly; we already
+        have an optimization that discards it some time after last use.
+
+        If we find ourseles under serious memory pressure, don't wait for
+        the timer to kick in, throw everything overboard right away.
+
+        ~5MB progression post-pressure on Membuster3.
+
+        Reviewed by Anders Carlsson.
+
 2013-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building the DOM bindings
