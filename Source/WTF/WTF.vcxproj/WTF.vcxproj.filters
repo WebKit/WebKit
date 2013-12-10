@@ -437,9 +437,6 @@
     <ClInclude Include="..\wtf\FilePrintStream.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\FixedArray.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\Forward.h">
       <Filter>wtf</Filter>
     </ClInclude>

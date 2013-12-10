@@ -29,7 +29,6 @@ set(WTF_HEADERS
     FastMalloc.h
     FeatureDefines.h
     FilePrintStream.h
-    FixedArray.h
     FlipBytes.h
     Forward.h
     FunctionDispatcher.h

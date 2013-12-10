@@ -199,7 +199,6 @@
     <ClInclude Include="..\wtf\FastMalloc.h" />
     <ClInclude Include="..\wtf\FeatureDefines.h" />
     <ClInclude Include="..\wtf\FilePrintStream.h" />
-    <ClInclude Include="..\wtf\FixedArray.h" />
     <ClInclude Include="..\wtf\FlipBytes.h" />
     <ClInclude Include="..\wtf\Forward.h" />
     <ClInclude Include="..\wtf\FunctionDispatcher.h" />

@@ -55,7 +55,6 @@ wtf_sources += \
     Source/WTF/wtf/FeatureDefines.h \
     Source/WTF/wtf/FilePrintStream.cpp \
     Source/WTF/wtf/FilePrintStream.h \
-    Source/WTF/wtf/FixedArray.h \
     Source/WTF/wtf/FlipBytes.h \
     Source/WTF/wtf/Forward.h \
     Source/WTF/wtf/FunctionDispatcher.cpp \
