@@ -954,6 +954,8 @@ webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Fai
 webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
 
+webkit.org/b/125506 accessibility/alt-tag-on-image-with-nonimage-role.html [ Failure ]
+
 # Blur and focus events are not received for the following tests.
 Bug(GTK) fast/events/blur-focus-window-should-blur-focus-element.html [ Failure ]
 Bug(GTK) fast/dom/HTMLDocument/hasFocus.html [ Failure ]
