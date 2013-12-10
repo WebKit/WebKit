@@ -48,7 +48,7 @@ public:
     PageConsole(Page&);
     ~PageConsole();
 
-    static void printSourceURLAndLine(const String& sourceURL, unsigned lineNumber);
+    static void printSourceURLAndPosition(const String& sourceURL, unsigned lineNumber, unsigned columnNumber = 0);
     static void printMessageSourceAndLevelPrefix(MessageSource, MessageLevel);
 
     void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> = 0, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);

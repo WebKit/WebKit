@@ -64,11 +64,11 @@ PageConsole::~PageConsole()
 {
 }
 
-void PageConsole::printSourceURLAndLine(const String& sourceURL, unsigned lineNumber)
+void PageConsole::printSourceURLAndPosition(const String& sourceURL, unsigned lineNumber, unsigned columnNumber)
 {
     if (!sourceURL.isEmpty()) {
-        if (lineNumber > 0)
-            printf("%s:%d: ", sourceURL.utf8().data(), lineNumber);
+        if (lineNumber > 0 && columnNumber > 0)
+            printf("%s:%u:%u: ", sourceURL.utf8().data(), lineNumber, columnNumber);
         else
             printf("%s: ", sourceURL.utf8().data());
     }
@@ -142,18 +142,22 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     String url;
     if (document)
         url = document->url().string();
-    // FIXME: <http://webkit.org/b/114319> PageConsole::addMessage should automatically determine column number alongside line number.
     // FIXME: The below code attempts to determine line numbers for parser generated errors, but this is not the only reason why we can get here.
     // For example, if we are still parsing and get a WebSocket network error, it will be erroneously attributed to a line where parsing was paused.
     // Also, we should determine line numbers for script generated messages (e.g. calling getImageData on a canvas).
     // We probably need to split this function into multiple ones, as appropriate for different call sites. Or maybe decide based on MessageSource.
+    // https://bugs.webkit.org/show_bug.cgi?id=125340
     unsigned line = 0;
+    unsigned column = 0;
     if (document && document->parsing() && !document->isInDocumentWrite() && document->scriptableDocumentParser()) {
         ScriptableDocumentParser* parser = document->scriptableDocumentParser();
-        if (!parser->isWaitingForScripts() && !JSMainThreadExecState::currentState())
-            line = parser->lineNumber().oneBasedInt();
+        if (!parser->isWaitingForScripts() && !JSMainThreadExecState::currentState()) {
+            TextPosition position = parser->textPosition();
+            line = position.m_line.oneBasedInt();
+            column = position.m_column.oneBasedInt();
+        }
     }
-    addMessage(source, level, message, url, line, 0, 0, 0, requestIdentifier);
+    addMessage(source, level, message, url, line, column, 0, 0, requestIdentifier);
 }
 
 void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
@@ -182,7 +186,7 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     if (!m_page.settings().logsPageMessagesToSystemConsoleEnabled() && !shouldPrintExceptions())
         return;
 
-    printSourceURLAndLine(url, lineNumber);
+    printSourceURLAndPosition(url, lineNumber, columnNumber);
     printMessageSourceAndLevelPrefix(source, level);
 
     printf(" %s\n", message.utf8().data());

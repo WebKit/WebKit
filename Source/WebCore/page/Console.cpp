@@ -92,7 +92,7 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
     if (!page->settings().logsPageMessagesToSystemConsoleEnabled() && !PageConsole::shouldPrintExceptions())
         return;
 
-    PageConsole::printSourceURLAndLine(lastCaller.sourceURL(), lastCaller.lineNumber());
+    PageConsole::printSourceURLAndPosition(lastCaller.sourceURL(), lastCaller.lineNumber());
     PageConsole::printMessageSourceAndLevelPrefix(ConsoleAPIMessageSource, level);
 
     for (size_t i = 0; i < arguments->argumentCount(); ++i) {

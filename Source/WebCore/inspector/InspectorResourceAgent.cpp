@@ -454,7 +454,7 @@ PassRefPtr<TypeBuilder::Network::Initiator> InspectorResourceAgent::buildInitiat
         RefPtr<TypeBuilder::Network::Initiator> initiatorObject = TypeBuilder::Network::Initiator::create()
             .setType(TypeBuilder::Network::Initiator::Type::Parser);
         initiatorObject->setUrl(document->url().string());
-        initiatorObject->setLineNumber(document->scriptableDocumentParser()->lineNumber().oneBasedInt());
+        initiatorObject->setLineNumber(document->scriptableDocumentParser()->textPosition().m_line.oneBasedInt());
         return initiatorObject;
     }
 

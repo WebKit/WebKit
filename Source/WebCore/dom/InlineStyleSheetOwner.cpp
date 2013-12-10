@@ -38,7 +38,7 @@ InlineStyleSheetOwner::InlineStyleSheetOwner(Document& document, bool createdByP
     , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
 {
     if (createdByParser && document.scriptableDocumentParser() && !document.isInDocumentWrite())
-        m_startLineNumber = document.scriptableDocumentParser()->lineNumber();
+        m_startLineNumber = document.scriptableDocumentParser()->textPosition().m_line;
 }
 
 InlineStyleSheetOwner::~InlineStyleSheetOwner()

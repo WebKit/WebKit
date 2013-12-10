@@ -195,7 +195,7 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, At
 {
     WTF::OrdinalNumber startLineNumber = WTF::OrdinalNumber::beforeFirst();
     if (document().scriptableDocumentParser() && !document().isInDocumentWrite())
-        startLineNumber = document().scriptableDocumentParser()->lineNumber();
+        startLineNumber = document().scriptableDocumentParser()->textPosition().m_line;
 
     if (newStyleString.isNull()) {
         if (PropertySetCSSStyleDeclaration* cssomWrapper = inlineStyleCSSOMWrapper())

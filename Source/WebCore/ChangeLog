@@ -1,3 +1,33 @@
+2013-12-10  László Langó  <lango@inf.u-szeged.hu>
+
+        PageConsole::addMessage should automatically determine column number alongside line number
+        https://bugs.webkit.org/show_bug.cgi?id=114319
+
+        Reviewed by Joseph Pecoraro.
+
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::InlineStyleSheetOwner):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::ScriptElement):
+        * dom/ScriptableDocumentParser.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::styleAttributeChanged):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser):
+        (WebCore::HTMLDocumentParser::pumpPendingSpeculations):
+        * html/parser/HTMLDocumentParser.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::buildInitiatorObject):
+        * page/Console.cpp:
+        (WebCore::internalAddMessage):
+        * page/PageConsole.cpp:
+        (WebCore::PageConsole::printSourceURLAndPosition):
+        (WebCore::PageConsole::addMessage):
+        * page/PageConsole.h:
+        * xml/parser/XMLDocumentParser.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::error):
+
 2013-12-10  Andreas Kling  <akling@apple.com>
 
         Jettison all StyleResolver data on memory pressure.

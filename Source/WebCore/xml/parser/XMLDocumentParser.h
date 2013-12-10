@@ -105,8 +105,6 @@ class Text;
         virtual bool isWaitingForScripts() const;
         virtual void stopParsing();
         virtual void detach();
-        virtual OrdinalNumber lineNumber() const;
-        OrdinalNumber columnNumber() const;
 
         // from CachedResourceClient
         virtual void notifyFinished(CachedResource*);

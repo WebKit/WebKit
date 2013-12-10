@@ -80,7 +80,6 @@ public:
     HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
 
     virtual TextPosition textPosition() const;
-    virtual OrdinalNumber lineNumber() const;
 
     virtual void suspendScheduledTasks();
     virtual void resumeScheduledTasks();

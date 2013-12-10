@@ -75,7 +75,7 @@ ScriptElement::ScriptElement(Element* element, bool parserInserted, bool already
 {
     ASSERT(m_element);
     if (parserInserted && m_element->document().scriptableDocumentParser() && !m_element->document().isInDocumentWrite())
-        m_startLineNumber = m_element->document().scriptableDocumentParser()->lineNumber();
+        m_startLineNumber = m_element->document().scriptableDocumentParser()->textPosition().m_line;
 }
 
 ScriptElement::~ScriptElement()

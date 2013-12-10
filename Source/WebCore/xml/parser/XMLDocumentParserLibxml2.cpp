@@ -972,8 +972,9 @@ void XMLDocumentParser::error(XMLErrors::ErrorType type, const char* message, va
     vsnprintf(m, sizeof(m) - 1, message, args);
 #endif
 
+    TextPosition position = textPosition();
     if (m_parserPaused)
-        m_pendingCallbacks->appendErrorCallback(type, reinterpret_cast<const xmlChar*>(m), lineNumber(), columnNumber());
+        m_pendingCallbacks->appendErrorCallback(type, reinterpret_cast<const xmlChar*>(m), position.m_line, position.m_column);
     else
         handleError(type, m, textPosition());
 
@@ -1425,16 +1426,6 @@ void* xmlDocPtrForString(CachedResourceLoader* cachedResourceLoader, const Strin
     return xmlReadMemory(characters, sizeInBytes, url.latin1().data(), encoding, XSLT_PARSE_OPTIONS);
 }
 #endif
-
-OrdinalNumber XMLDocumentParser::lineNumber() const
-{
-    return OrdinalNumber::fromOneBasedInt(context() ? context()->input->line : 1);
-}
-
-OrdinalNumber XMLDocumentParser::columnNumber() const
-{
-    return OrdinalNumber::fromOneBasedInt(context() ? context()->input->col : 1);
-}
 
 TextPosition XMLDocumentParser::textPosition() const
 {
