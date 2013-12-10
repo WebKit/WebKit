@@ -1,3 +1,12 @@
+2013-12-10  László Langó  <lango@inf.u-szeged.hu>
+
+        --cloop option does not work in Tools/Scripts/build-jsc.
+        https://bugs.webkit.org/show_bug.cgi?id=125214
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/build-jsc:
+
 2013-12-10  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
 
         Merge mark_for_landing and mark_for_commit_queue into one argument

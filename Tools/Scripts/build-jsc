@@ -68,7 +68,11 @@ my @options = XcodeOptions();
 my @coverageSupportOptions = ($coverageSupport) ? XcodeCoverageSupportOptions() : ();
 
 if (cmakeBasedPortName()) {
-    buildCMakeProjectOrExit(0, cmakeBasedPortName(), undef, "jsc", cmakeBasedPortArguments()); # This call only returns if nothing wrong happened
+    my $cmakeArgs = "";
+    $cmakeArgs .= " -DENABLE_LLINT_C_LOOP=ON" if $forceCLoop;
+
+    # This call only returns if nothing wrong happened
+    buildCMakeProjectOrExit(0, cmakeBasedPortName(), undef, "jsc", (cmakeBasedPortArguments(), $cmakeArgs));
     exit exitStatus(0);
 }
 
