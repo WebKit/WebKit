@@ -1,3 +1,14 @@
+2013-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add support for building the WebKit injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=116373
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * PlatformGTK.cmake: Add support for building the InjectedBundle and link the WebKit2
+        shared library against the GObject DOM bindings.
+        * WebProcess/gtk/WebGtkExtensionManager.h: Properly export symbols used by the InjectedBundle.
+
 2013-12-10  Kwang Yul Seo  <skyul@company100.net>
 
         [WK2][SOUP] WebContext::setIgnoreTLSErrors should send SetIgnoreTLSErrors to the network process when network process is enabled
