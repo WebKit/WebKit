@@ -30,13 +30,10 @@
 
 #if OS(UNIX)
 #include <sys/utsname.h>
-#elif OS(WINDOWS)
-#include "SystemInfo.h"
 #endif
 
 namespace WebCore {
 
-#if OS(DARWIN) || OS(UNIX)
 static const char* cpuDescriptionForUAString()
 {
 #if CPU(PPC) || CPU(PPC64)
@@ -49,22 +46,6 @@ static const char* cpuDescriptionForUAString()
     return "Unknown";
 #endif
 }
-#endif
-
-static const char* platformForUAString()
-{
-#if PLATFORM(X11)
-    return "X11";
-#elif OS(WINDOWS)
-    return "";
-#elif PLATFORM(MAC)
-    return "Macintosh";
-#elif defined(GDK_WINDOWING_DIRECTFB)
-    return "DirectFB";
-#else
-    return "Unknown";
-#endif
-}
 
 static String platformVersionForUAString()
 {
@@ -72,15 +53,9 @@ static String platformVersionForUAString()
     if (!uaOSVersion.isEmpty())
         return uaOSVersion;
 
-#if OS(WINDOWS)
-    uaOSVersion = windowsVersionForUAString();
-#elif OS(DARWIN) || OS(UNIX)
     // We will always claim to be Safari in Mac OS X, since Safari in Linux triggers the iOS path on
     // some websites.
     uaOSVersion = String::format("%s Mac OS X", cpuDescriptionForUAString());
-#else
-    uaOSVersion = String("Unknown");
-#endif
     return uaOSVersion;
 }
 
@@ -95,9 +70,9 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     // wrong can cause sites to load the wrong JavaScript, CSS, or custom fonts. In some cases
     // sites won't load resources at all.
     DEFINE_STATIC_LOCAL(const CString, uaVersion, (String::format("%i.%i", USER_AGENT_GTK_MAJOR_VERSION, USER_AGENT_GTK_MINOR_VERSION).utf8()));
-    DEFINE_STATIC_LOCAL(const String, staticUA, (String::format("Mozilla/5.0 (%s; %s) AppleWebKit/%s (KHTML, like Gecko) Safari/%s",
-                                                                platformForUAString(), platformVersionForUAString().utf8().data(),
-                                                                uaVersion.data(), uaVersion.data())));
+    DEFINE_STATIC_LOCAL(const String, staticUA, (String::format("Mozilla/5.0 (Macintosh; %s) AppleWebKit/%s (KHTML, like Gecko) Safari/%s",
+        platformVersionForUAString().utf8().data(), uaVersion.data(), uaVersion.data())));
+
     if (applicationName.isEmpty())
         return staticUA;
 

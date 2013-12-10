@@ -1,3 +1,14 @@
+2013-12-10  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] REGRESSION: www.yahoo.com redirects to the mobile version after UA change
+        https://bugs.webkit.org/show_bug.cgi?id=125444
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::platformVersionForUAString): more correctly pretend we're Mac OS X.
+        (WebCore::standardUserAgent): ditto.
+
 2013-12-09  Gustavo Noronha Silva  <gns@gnome.org>
 
         [Soup] Send original encoded data size to didReceiveBuffer
