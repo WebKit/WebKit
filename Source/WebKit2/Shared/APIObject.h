@@ -202,18 +202,18 @@ private:
 };
 
 template <Object::Type ArgumentType>
-class TypedObject : public Object {
+class ObjectImpl : public Object {
 public:
     static const Type APIType = ArgumentType;
 
-    virtual ~TypedObject()
+    virtual ~ObjectImpl()
     {
     }
 
 protected:
     friend class Object;
 
-    TypedObject()
+    ObjectImpl()
     {
     }
 

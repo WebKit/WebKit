@@ -31,7 +31,7 @@
 
 namespace API {
 
-class PageHandle : public TypedObject<Object::Type::PageHandle> {
+class PageHandle : public ObjectImpl<Object::Type::PageHandle> {
 public:
     static RefPtr<PageHandle> create(uint64_t pageID);
     virtual ~PageHandle();
@@ -45,6 +45,5 @@ private:
 };
 
 } // namespace API
-
 
 #endif // APIPageHandle_h

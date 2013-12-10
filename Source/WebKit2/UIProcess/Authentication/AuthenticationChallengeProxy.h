@@ -41,7 +41,7 @@ class ChildProcessProxy;
 class WebCredential;
 class WebProtectionSpace;
 
-class AuthenticationChallengeProxy : public API::TypedObject<API::Object::Type::AuthenticationChallenge> {
+class AuthenticationChallengeProxy : public API::ObjectImpl<API::Object::Type::AuthenticationChallenge> {
 public:
     static PassRefPtr<AuthenticationChallengeProxy> create(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, CoreIPC::Connection* connection)
     {

@@ -38,7 +38,7 @@ namespace WebKit {
 
 // WebString - A string type suitable for vending to an API.
 
-class WebString : public API::TypedObject<API::Object::Type::String> {
+class WebString : public API::ObjectImpl<API::Object::Type::String> {
 public:
     static PassRefPtr<WebString> createNull()
     {

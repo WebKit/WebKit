@@ -74,7 +74,7 @@ class WebFrame;
 class WebPage;
 class WebPageGroupProxy;
 
-class InjectedBundle : public API::TypedObject<API::Object::Type::Bundle> {
+class InjectedBundle : public API::ObjectImpl<API::Object::Type::Bundle> {
 public:
     static PassRefPtr<InjectedBundle> create(const String& path)
     {

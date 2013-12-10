@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-class WebSerializedScriptValue : public API::TypedObject<API::Object::Type::SerializedScriptValue> {
+class WebSerializedScriptValue : public API::ObjectImpl<API::Object::Type::SerializedScriptValue> {
 public:
     static PassRefPtr<WebSerializedScriptValue> create(PassRefPtr<WebCore::SerializedScriptValue> serializedValue)
     {

@@ -35,7 +35,7 @@
 
 namespace API {
 
-class Array FINAL : public TypedObject<Object::Type::Array> {
+class Array FINAL : public ObjectImpl<Object::Type::Array> {
 private:
     template<typename T>
     static inline const T* getObject(const RefPtr<Object>& object) { return static_cast<const T*>(object.get()); }

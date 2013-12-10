@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-class WebConnection : public API::TypedObject<API::Object::Type::Connection>, public CoreIPC::MessageReceiver, public CoreIPC::MessageSender {
+class WebConnection : public API::ObjectImpl<API::Object::Type::Connection>, public CoreIPC::MessageReceiver, public CoreIPC::MessageSender {
 public:
     virtual ~WebConnection();
 

@@ -32,7 +32,7 @@
 
 namespace API {
 
-class NavigationData : public TypedObject<Object::Type::NavigationData> {
+class NavigationData : public ObjectImpl<Object::Type::NavigationData> {
 public:
     static PassRefPtr<NavigationData> create(const WebKit::WebNavigationDataStore& store)
     {

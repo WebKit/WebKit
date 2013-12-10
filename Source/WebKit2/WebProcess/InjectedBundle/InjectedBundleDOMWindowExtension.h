@@ -40,7 +40,7 @@ namespace WebKit {
 class InjectedBundleScriptWorld;
 class WebFrame;
 
-class InjectedBundleDOMWindowExtension : public API::TypedObject<API::Object::Type::BundleDOMWindowExtension> {
+class InjectedBundleDOMWindowExtension : public API::ObjectImpl<API::Object::Type::BundleDOMWindowExtension> {
 public:
     static PassRefPtr<InjectedBundleDOMWindowExtension> create(WebFrame*, InjectedBundleScriptWorld*);
     static InjectedBundleDOMWindowExtension* get(WebCore::DOMWindowExtension*);

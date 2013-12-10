@@ -90,7 +90,7 @@ extern NSString *SchemeForCustomProtocolRegisteredNotificationName;
 extern NSString *SchemeForCustomProtocolUnregisteredNotificationName;
 #endif
 
-class WebContext : public API::TypedObject<API::Object::Type::Context>, private CoreIPC::MessageReceiver
+class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private CoreIPC::MessageReceiver
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , private PluginInfoStoreClient
 #endif

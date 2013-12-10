@@ -58,7 +58,7 @@ class InjectedBundleRangeHandle;
 class InjectedBundleScriptWorld;
 class WebPage;
 
-class WebFrame : public API::TypedObject<API::Object::Type::BundleFrame> {
+class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame> {
 public:
     static PassRefPtr<WebFrame> createWithCoreMainFrame(WebPage*, WebCore::Frame*);
     static PassRefPtr<WebFrame> createSubframe(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);

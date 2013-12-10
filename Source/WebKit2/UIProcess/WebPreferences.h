@@ -41,7 +41,7 @@ namespace WebKit {
 
 class WebPageGroup;
 
-class WebPreferences : public API::TypedObject<API::Object::Type::Preferences> {
+class WebPreferences : public API::ObjectImpl<API::Object::Type::Preferences> {
 public:
     static PassRefPtr<WebPreferences> create()
     {

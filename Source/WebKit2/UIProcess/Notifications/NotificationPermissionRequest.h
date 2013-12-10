@@ -33,7 +33,7 @@ namespace WebKit {
 
 class NotificationPermissionRequestManagerProxy;
 
-class NotificationPermissionRequest : public API::TypedObject<API::Object::Type::NotificationPermissionRequest> {
+class NotificationPermissionRequest : public API::ObjectImpl<API::Object::Type::NotificationPermissionRequest> {
 public:
     static PassRefPtr<NotificationPermissionRequest> create(NotificationPermissionRequestManagerProxy*, uint64_t notificationID);
 

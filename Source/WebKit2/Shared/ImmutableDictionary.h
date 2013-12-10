@@ -40,7 +40,7 @@ namespace WebKit {
 
 // ImmutableDictionary - An immutable dictionary type suitable for vending to an API.
 
-class ImmutableDictionary : public API::TypedObject<API::Object::Type::Dictionary> {
+class ImmutableDictionary : public API::ObjectImpl<API::Object::Type::Dictionary> {
 public:
     typedef HashMap<String, RefPtr<API::Object>> MapType;
 

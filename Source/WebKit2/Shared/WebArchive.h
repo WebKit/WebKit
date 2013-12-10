@@ -46,7 +46,7 @@ namespace WebKit {
 class WebArchiveResource;
 class WebData;
 
-class WebArchive : public API::TypedObject<API::Object::Type::WebArchive> {
+class WebArchive : public API::ObjectImpl<API::Object::Type::WebArchive> {
 public:
     virtual ~WebArchive();
 

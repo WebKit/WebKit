@@ -38,7 +38,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebOpenPanelResultListenerProxy : public API::TypedObject<API::Object::Type::FramePolicyListener> {
+class WebOpenPanelResultListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
     static PassRefPtr<WebOpenPanelResultListenerProxy> create(WebPageProxy* page)
     {

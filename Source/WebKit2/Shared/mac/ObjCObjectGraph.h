@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-class ObjCObjectGraph : public API::TypedObject<API::Object::Type::ObjCObjectGraph> {
+class ObjCObjectGraph : public API::ObjectImpl<API::Object::Type::ObjCObjectGraph> {
 public:
     static PassRefPtr<ObjCObjectGraph> create(id rootObject)
     {

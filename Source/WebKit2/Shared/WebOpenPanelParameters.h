@@ -38,7 +38,7 @@ class Array;
 
 namespace WebKit {
 
-class WebOpenPanelParameters : public API::TypedObject<API::Object::Type::OpenPanelParameters> {
+class WebOpenPanelParameters : public API::ObjectImpl<API::Object::Type::OpenPanelParameters> {
 public:
     static PassRefPtr<WebOpenPanelParameters> create(const WebCore::FileChooserSettings&);
     ~WebOpenPanelParameters();

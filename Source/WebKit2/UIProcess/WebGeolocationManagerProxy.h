@@ -39,7 +39,7 @@ namespace WebKit {
 class WebContext;
 class WebGeolocationPosition;
 
-class WebGeolocationManagerProxy : public API::TypedObject<API::Object::Type::GeolocationManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebGeolocationManagerProxy : public API::ObjectImpl<API::Object::Type::GeolocationManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const char* supplementName();
 

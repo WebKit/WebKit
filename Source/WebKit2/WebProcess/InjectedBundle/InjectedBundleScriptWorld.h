@@ -36,7 +36,7 @@ namespace WebCore {
 
 namespace WebKit {
 
-class InjectedBundleScriptWorld : public API::TypedObject<API::Object::Type::BundleScriptWorld> {
+class InjectedBundleScriptWorld : public API::ObjectImpl<API::Object::Type::BundleScriptWorld> {
 public:
     static PassRefPtr<InjectedBundleScriptWorld> create();
     static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld&);

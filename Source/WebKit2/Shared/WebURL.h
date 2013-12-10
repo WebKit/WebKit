@@ -37,7 +37,7 @@ namespace WebKit {
 
 // WebURL - A URL type suitable for vending to an API.
 
-class WebURL : public API::TypedObject<API::Object::Type::URL> {
+class WebURL : public API::ObjectImpl<API::Object::Type::URL> {
 public:
     static PassRefPtr<WebURL> create(const String& string)
     {

@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-class WebGrammarDetail : public API::TypedObject<API::Object::Type::GrammarDetail> {
+class WebGrammarDetail : public API::ObjectImpl<API::Object::Type::GrammarDetail> {
 public:
     static PassRefPtr<WebGrammarDetail> create(int location, int length, API::Array* guesses, const String& userDescription);
     static PassRefPtr<WebGrammarDetail> create(const WebCore::GrammarDetail&);

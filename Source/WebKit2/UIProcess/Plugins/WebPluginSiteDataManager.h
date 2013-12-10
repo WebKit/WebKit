@@ -41,7 +41,7 @@ class WebProcessProxy;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebPluginSiteDataManager : public API::TypedObject<API::Object::Type::PluginSiteDataManager> {
+class WebPluginSiteDataManager : public API::ObjectImpl<API::Object::Type::PluginSiteDataManager> {
 public:
     static PassRefPtr<WebPluginSiteDataManager> create(WebContext*);
     virtual ~WebPluginSiteDataManager();

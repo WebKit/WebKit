@@ -32,7 +32,7 @@
 namespace WebKit {
 
 template<typename NumberType, API::Object::Type APIObjectType>
-class WebNumber : public API::TypedObject<APIObjectType> {
+class WebNumber : public API::ObjectImpl<APIObjectType> {
 public:
     static PassRefPtr<WebNumber> create(NumberType value)
     {

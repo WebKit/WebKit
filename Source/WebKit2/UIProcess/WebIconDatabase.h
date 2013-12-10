@@ -53,7 +53,7 @@ namespace WebKit {
 
 class WebContext;
 
-class WebIconDatabase : public API::TypedObject<API::Object::Type::IconDatabase>, public WebCore::IconDatabaseClient, private CoreIPC::MessageReceiver {
+class WebIconDatabase : public API::ObjectImpl<API::Object::Type::IconDatabase>, public WebCore::IconDatabaseClient, private CoreIPC::MessageReceiver {
 public:
     static PassRefPtr<WebIconDatabase> create(WebContext*);
     virtual ~WebIconDatabase();

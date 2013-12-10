@@ -38,7 +38,7 @@ typedef void* PlatformResponse;
 
 namespace WebKit {
 
-class WebURLResponse : public API::TypedObject<API::Object::Type::URLResponse> {
+class WebURLResponse : public API::ObjectImpl<API::Object::Type::URLResponse> {
 public:
     static PassRefPtr<WebURLResponse> create(const WebCore::ResourceResponse& response)
     {

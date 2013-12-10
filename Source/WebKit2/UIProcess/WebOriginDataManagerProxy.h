@@ -47,7 +47,7 @@ struct SecurityOriginData;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebOriginDataManagerProxy : public API::TypedObject<API::Object::Type::OriginDataManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebOriginDataManagerProxy : public API::ObjectImpl<API::Object::Type::OriginDataManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const char* supplementName();
 

@@ -33,7 +33,7 @@ namespace WebKit {
 
 class GeolocationPermissionRequestManagerProxy;
 
-class GeolocationPermissionRequestProxy : public API::TypedObject<API::Object::Type::GeolocationPermissionRequest> {
+class GeolocationPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::GeolocationPermissionRequest> {
 public:
     static PassRefPtr<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy* manager, uint64_t geolocationID)
     {

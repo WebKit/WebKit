@@ -45,7 +45,7 @@ struct SecurityOriginData;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebApplicationCacheManagerProxy : public API::TypedObject<API::Object::Type::ApplicationCacheManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebApplicationCacheManagerProxy : public API::ObjectImpl<API::Object::Type::ApplicationCacheManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const char* supplementName();
 

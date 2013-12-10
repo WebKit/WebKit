@@ -36,7 +36,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebRenderLayer : public API::TypedObject<API::Object::Type::RenderLayer> {
+class WebRenderLayer : public API::ObjectImpl<API::Object::Type::RenderLayer> {
 public:
     enum CompositingLayerType { None, Normal, Tiled, Media, Container };
 

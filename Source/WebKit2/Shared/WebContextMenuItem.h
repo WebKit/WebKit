@@ -37,7 +37,7 @@ class Array;
 
 namespace WebKit {
 
-class WebContextMenuItem : public API::TypedObject<API::Object::Type::ContextMenuItem> {
+class WebContextMenuItem : public API::ObjectImpl<API::Object::Type::ContextMenuItem> {
 public:
     static PassRefPtr<WebContextMenuItem> create(const WebContextMenuItemData& data)
     {

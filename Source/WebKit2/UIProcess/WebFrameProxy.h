@@ -50,7 +50,7 @@ class WebPageProxy;
 
 typedef GenericCallback<WKDataRef> DataCallback;
 
-class WebFrameProxy : public API::TypedObject<API::Object::Type::Frame> {
+class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame> {
 public:
     static PassRefPtr<WebFrameProxy> create(WebPageProxy* page, uint64_t frameID)
     {

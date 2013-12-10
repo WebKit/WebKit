@@ -31,7 +31,7 @@
 
 namespace API {
 
-class FrameHandle : public TypedObject<Object::Type::FrameHandle> {
+class FrameHandle : public ObjectImpl<Object::Type::FrameHandle> {
 public:
     static RefPtr<FrameHandle> create(uint64_t frameID);
     virtual ~FrameHandle();

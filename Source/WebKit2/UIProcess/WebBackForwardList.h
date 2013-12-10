@@ -44,7 +44,7 @@ namespace WebKit {
  *      Back        Forward
  */
 
-class WebBackForwardList : public API::TypedObject<API::Object::Type::BackForwardList> {
+class WebBackForwardList : public API::ObjectImpl<API::Object::Type::BackForwardList> {
 public:
     static PassRef<WebBackForwardList> create(WebPageProxy& page)
     {
