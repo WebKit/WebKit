@@ -549,7 +549,6 @@ set(WebKit2_SOURCES
 
     WebProcess/WebPage/DecoderAdapter.cpp
     WebProcess/WebPage/DrawingArea.cpp
-    WebProcess/WebPage/DrawingAreaImpl.cpp
     WebProcess/WebPage/EncoderAdapter.cpp
     WebProcess/WebPage/EventDispatcher.cpp
     WebProcess/WebPage/FindController.cpp

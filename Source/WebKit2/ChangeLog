@@ -1,5 +1,12 @@
 2013-12-10  Martin Robinson  <mrobinson@igalia.com>
 
+        Try to fix the EFL build
+
+        * CMakeLists.txt: Remove DrawingAreaImpl.cpp from the global list.
+        * PlatformGTK.cmake: Move it to the GTK+ specific list.
+
+2013-12-10  Martin Robinson  <mrobinson@igalia.com>
+
         Various fixes for the CMake GTK+ build
 
         Reviewed by Gustavo Noronha.
