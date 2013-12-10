@@ -983,6 +983,7 @@
     <ClInclude Include="..\heap\MarkedSpace.h" />
     <ClInclude Include="..\heap\MarkStack.h" />
     <ClInclude Include="..\heap\MarkStackInlines.h" />
+    <ClInclude Include="..\heap\RecursiveAllocationScope.h" />
     <ClInclude Include="..\heap\Region.h" />
     <ClInclude Include="..\heap\SlotVisitor.h" />
     <ClInclude Include="..\heap\SlotVisitorInlines.h" />

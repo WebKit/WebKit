@@ -35,13 +35,14 @@
 #include "HeapStatistics.h"
 #include "IncrementalSweeper.h"
 #include "Interpreter.h"
-#include "VM.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSONObject.h"
 #include "Operations.h"
+#include "RecursiveAllocationScope.h"
 #include "Tracing.h"
 #include "UnlinkedCodeBlock.h"
+#include "VM.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
 #include <wtf/RAMSize.h>
@@ -754,9 +755,10 @@ void Heap::collect(SweepToggle sweepToggle)
     JAVASCRIPTCORE_GC_BEGIN();
     RELEASE_ASSERT(m_operationInProgress == NoOperation);
     
-    m_deferralDepth++; // Make sure that we don't GC in this call.
-    m_vm->prepareToDiscardCode();
-    m_deferralDepth--; // Decrement deferal manually, so we don't GC when we do so, since we are already GCing!.
+    {
+        RecursiveAllocationScope scope(*this);
+        m_vm->prepareToDiscardCode();
+    }
     
     m_operationInProgress = Collection;
     m_extraMemoryUsage = 0;

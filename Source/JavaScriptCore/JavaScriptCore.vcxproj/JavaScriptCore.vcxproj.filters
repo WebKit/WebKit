@@ -1667,6 +1667,9 @@
     <ClInclude Include="..\heap\MarkStackInlines.h">
       <Filter>heap</Filter>
     </ClInclude>
+    <ClInclude Include="..\heap\RecursiveAllocationScope.h">
+      <Filter>heap</Filter>
+    </ClInclude>
     <ClInclude Include="..\heap\Region.h">
       <Filter>heap</Filter>
     </ClInclude>
