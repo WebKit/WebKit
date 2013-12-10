@@ -70,7 +70,6 @@
 #include "WebFullScreenManager.h"
 #include "WebFullScreenManagerMessages.h"
 #include "WebGeolocationClient.h"
-#include "WebGeometry.h"
 #include "WebImage.h"
 #include "WebInspector.h"
 #include "WebInspectorClient.h"

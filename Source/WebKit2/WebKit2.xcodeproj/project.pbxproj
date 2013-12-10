@@ -47,7 +47,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		0F174AA3142A4CB70039250F /* WebGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F174AA2142A4CB60039250F /* WebGeometry.h */; };
+		0F174AA3142A4CB70039250F /* APIGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F174AA2142A4CB60039250F /* APIGeometry.h */; };
 		0F174AA7142AAC610039250F /* WKGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F174AA6142AAC610039250F /* WKGeometry.cpp */; };
 		0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB659221208B4DB0044816C /* DrawingAreaInfo.h */; };
 		1A043976124D034800FFBFB5 /* PluginProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043974124D034800FFBFB5 /* PluginProcess.h */; };
@@ -269,6 +269,7 @@
 		1AC1336E18565D2B00F3EC05 /* APIPageHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1336D18565D2B00F3EC05 /* APIPageHandle.cpp */; };
 		1AC1337118566C7C00F3EC05 /* APIFrameHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1336F18566C7C00F3EC05 /* APIFrameHandle.cpp */; };
 		1AC1337218566C7C00F3EC05 /* APIFrameHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1337018566C7C00F3EC05 /* APIFrameHandle.h */; };
+		1AC133741857C21E00F3EC05 /* APIGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC133731857C21E00F3EC05 /* APIGeometry.cpp */; };
 		1AC25FC212A48F6000BD2671 /* PluginProcessShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AC25F8A12A48E0300BD2671 /* PluginProcessShim.mm */; };
 		1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC4C82816B876A90069DCCD /* MessageFlags.h */; };
 		1AC5FFC2174BFD1B0001483D /* PluginProcessAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC5FFC1174BFD1B0001483D /* PluginProcessAttributes.h */; };
@@ -1550,7 +1551,7 @@
 /* Begin PBXFileReference section */
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		0F174AA2142A4CB60039250F /* WebGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeometry.h; sourceTree = "<group>"; };
+		0F174AA2142A4CB60039250F /* APIGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIGeometry.h; sourceTree = "<group>"; };
 		0F174AA6142AAC610039250F /* WKGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGeometry.cpp; sourceTree = "<group>"; };
 		0FB659221208B4DB0044816C /* DrawingAreaInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaInfo.h; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -1800,6 +1801,7 @@
 		1AC1336D18565D2B00F3EC05 /* APIPageHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIPageHandle.cpp; sourceTree = "<group>"; };
 		1AC1336F18566C7C00F3EC05 /* APIFrameHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIFrameHandle.cpp; sourceTree = "<group>"; };
 		1AC1337018566C7C00F3EC05 /* APIFrameHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFrameHandle.h; sourceTree = "<group>"; };
+		1AC133731857C21E00F3EC05 /* APIGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIGeometry.cpp; sourceTree = "<group>"; };
 		1AC25F8912A48E0300BD2671 /* PluginProcessShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessShim.h; sourceTree = "<group>"; };
 		1AC25F8A12A48E0300BD2671 /* PluginProcessShim.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessShim.mm; sourceTree = "<group>"; };
 		1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = PluginProcessShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3427,6 +3429,8 @@
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
 				1AC1336F18566C7C00F3EC05 /* APIFrameHandle.cpp */,
 				1AC1337018566C7C00F3EC05 /* APIFrameHandle.h */,
+				1AC133731857C21E00F3EC05 /* APIGeometry.cpp */,
+				0F174AA2142A4CB60039250F /* APIGeometry.h */,
 				B63403F814910D57001070B5 /* APIObject.cpp */,
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
 				1AC1336D18565D2B00F3EC05 /* APIPageHandle.cpp */,
@@ -3524,7 +3528,6 @@
 				1A90C1ED1264FD50003E44D4 /* WebFindOptions.h */,
 				BC0E607212D6BC200012A72A /* WebGeolocationPosition.cpp */,
 				BC0E607112D6BC200012A72A /* WebGeolocationPosition.h */,
-				0F174AA2142A4CB60039250F /* WebGeometry.h */,
 				7801C095142290C400FAF9AF /* WebHitTestResult.cpp */,
 				7801C096142290C400FAF9AF /* WebHitTestResult.h */,
 				BCCF6ABA12C91EF9008F9C35 /* WebImage.cpp */,
@@ -5945,7 +5948,7 @@
 				BC0E618312D6CB1D0012A72A /* WebGeolocationManagerProxyMessages.h in Headers */,
 				BC0E607312D6BC200012A72A /* WebGeolocationPosition.h in Headers */,
 				BC1BE1F212D54DBD0004A228 /* WebGeolocationProvider.h in Headers */,
-				0F174AA3142A4CB70039250F /* WebGeometry.h in Headers */,
+				0F174AA3142A4CB70039250F /* APIGeometry.h in Headers */,
 				BCF69F871176CD6F00471A52 /* WebHistoryClient.h in Headers */,
 				7801C09A142290C400FAF9AF /* WebHitTestResult.h in Headers */,
 				511B24AB132E097200065A0C /* WebIconDatabase.h in Headers */,
@@ -7218,6 +7221,7 @@
 				C5E1AFEE16B21025006CC1F2 /* WebArchiveResource.cpp in Sources */,
 				BC72BA1D11E64907001EB4EA /* WebBackForwardList.cpp in Sources */,
 				51B3005012529D0E000B5CA0 /* WebBackForwardListCF.cpp in Sources */,
+				1AC133741857C21E00F3EC05 /* APIGeometry.cpp in Sources */,
 				518D2CAD12D5153B003BB93B /* WebBackForwardListItem.cpp in Sources */,
 				BC72B9FA11E6476B001EB4EA /* WebBackForwardListProxy.cpp in Sources */,
 				BC111A5A112F4FBB00337BAB /* WebChromeClient.cpp in Sources */,

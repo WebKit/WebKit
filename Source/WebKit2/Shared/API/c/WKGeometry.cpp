@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WKGeometry.h"
 
+#include "APIGeometry.h"
 #include "WKAPICast.h"
-#include "WebGeometry.h"
 
 using namespace WebKit;
 

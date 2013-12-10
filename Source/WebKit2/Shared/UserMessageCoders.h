@@ -27,6 +27,7 @@
 #define UserMessageCoders_h
 
 #include "APIArray.h"
+#include "APIGeometry.h"
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
@@ -36,7 +37,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebData.h"
 #include "WebError.h"
-#include "WebGeometry.h"
 #include "WebImage.h"
 #include "WebNumber.h"
 #include "WebRenderLayer.h"

@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "APIFrameHandle.h"
+#include "APIGeometry.h"
 #include "ArgumentCoders.h"
 #include "ArgumentEncoder.h"
 #include "MutableDictionary.h"
@@ -137,9 +138,27 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
         break;
     }
 
+    case API::Object::Type::Point: {
+        auto& point = static_cast<const WebPoint&>(object);
+        point.encode(encoder);
+        break;
+    }
+
+    case API::Object::Type::Rect: {
+        auto& rect = static_cast<const WebRect&>(object);
+        rect.encode(encoder);
+        break;
+    }
+
     case API::Object::Type::SerializedScriptValue: {
         auto& serializedScriptValue = static_cast<const WebSerializedScriptValue&>(object);
         encoder << serializedScriptValue.dataReference();
+        break;
+    }
+
+    case API::Object::Type::Size: {
+        auto& size = static_cast<const WebSize&>(object);
+        size.encode(encoder);
         break;
     }
 
@@ -235,6 +254,16 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
     case API::Object::Type::Null:
         result = nullptr;
         break;
+        
+    case API::Object::Type::Point:
+        if (!WebPoint::decode(decoder, result))
+            return false;
+        break;
+
+    case API::Object::Type::Rect:
+        if (!WebRect::decode(decoder, result))
+            return false;
+        break;
 
     case API::Object::Type::SerializedScriptValue: {
         CoreIPC::DataReference dataReference;
@@ -245,6 +274,11 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
         result = WebSerializedScriptValue::adopt(vector);
         break;
     }
+
+    case API::Object::Type::Size:
+        if (!WebSize::decode(decoder, result))
+            return false;
+        break;
 
     case API::Object::Type::String: {
         String string;
