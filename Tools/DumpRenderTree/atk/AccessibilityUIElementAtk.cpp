@@ -1080,10 +1080,13 @@ JSStringRef AccessibilityUIElement::boundsForRange(unsigned location, unsigned l
     return JSStringCreateWithCharacters(0, 0);
 }
 
-JSStringRef AccessibilityUIElement::stringForRange(unsigned, unsigned) 
+JSStringRef AccessibilityUIElement::stringForRange(unsigned location, unsigned length)
 {
-    // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    if (!ATK_IS_TEXT(m_element))
+        return JSStringCreateWithCharacters(0, 0);
+
+    String string = atk_text_get_text(ATK_TEXT(m_element), location, location + length);
+    return JSStringCreateWithUTF8CString(string.utf8().data());
 } 
 
 JSStringRef AccessibilityUIElement::attributedStringForRange(unsigned, unsigned)

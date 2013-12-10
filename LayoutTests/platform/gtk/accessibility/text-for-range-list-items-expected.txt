@@ -1,0 +1,29 @@
+A list item
+Block span in a list item
+Inline span in a list item
+Block span in a link in a list item
+Inline span in a link in a list item
+text only
+link only
+text and a link
+text only
+link only
+text and a link
+This tests the ability to get element text for a specified range.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS listitem1.stringForRange(0, -1) is '1. A list item'
+PASS listitem2.stringForRange(0, -1) is '2. Block span in a list item\nInline span in a list item'
+PASS listitem3.stringForRange(0, -1) is '3. Block span in a link in a list item\nInline span in a link in a list item'
+PASS listitem1.stringForRange(0, -1) is 'â¢ text only'
+PASS listitem2.stringForRange(0, -1) is 'â¢ link only'
+PASS listitem3.stringForRange(0, -1) is 'â¢ text and a link'
+PASS listitem1.stringForRange(0, -1) is '1. text only'
+PASS listitem2.stringForRange(0, -1) is '2. link only'
+PASS listitem3.stringForRange(0, -1) is '3. text and a link'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

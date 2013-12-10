@@ -1,3 +1,20 @@
+2013-12-10  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Convert the get_text atktest.c unit tests to layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=125497
+
+        Reviewed by Mario Sanchez Prada.
+
+        * tests/testatk.c: Remove the portions of the remaining tests which now exist as
+        layout tests.
+        (testWebkitAtkCaretOffsets):
+        (testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces):
+        (testWebkitAtkComboBox):
+        (testWebkitAtkEmbeddedObjects):
+        (testWebkitAtkTextSelections):
+        (testWebkitAtkListsOfItems):
+        (main):
+
 2013-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Convert the get_{string,text}_at_offset atktest.c unit tests to layout tests

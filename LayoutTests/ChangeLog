@@ -1,3 +1,33 @@
+2013-12-10  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Convert the get_text atktest.c unit tests to layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=125497
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/gtk/accessibility/text-for-range-combo-box-expected.txt: Added.
+        * platform/gtk/accessibility/text-for-range-combo-box.html: Added.
+        * platform/gtk/accessibility/text-for-range-embedded-objects-expected.txt: Added.
+        * platform/gtk/accessibility/text-for-range-embedded-objects.html: Added.
+        * platform/gtk/accessibility/text-for-range-entry-and-password-expected.txt: Added.
+        * platform/gtk/accessibility/text-for-range-entry-and-password.html: Added.
+        * platform/gtk/accessibility/text-for-range-extraneous-whitespace-expected.txt: Added.
+        * platform/gtk/accessibility/text-for-range-extraneous-whitespace.html: Added.
+        * platform/gtk/accessibility/text-for-range-formatted-expected.txt: Added.
+        * platform/gtk/accessibility/text-for-range-formatted.html: Added.
+        * platform/gtk/accessibility/text-for-range-heading-expected.txt: Added.
+        * platform/gtk/accessibility/text-for-range-heading.html: Added.
+        * platform/gtk/accessibility/text-for-range-list-items-expected.txt: Added.
+        * platform/gtk/accessibility/text-for-range-list-items.html: Added.
+        * platform/gtk/accessibility/text-for-range-simple-expected.txt: Added.
+        * platform/gtk/accessibility/text-for-range-simple.html: Added.
+        * platform/gtk/accessibility/text-for-range-table-cells-expected.txt: Added.
+        * platform/gtk/accessibility/text-for-range-table-cells.html: Added.
+        * platform/gtk/accessibility/text-for-range-with-link-expected.txt: Added.
+        * platform/gtk/accessibility/text-for-range-with-link.html: Added.
+        * platform/gtk/accessibility/text-for-table-expected.txt: Added.
+        * platform/gtk/accessibility/text-for-table.html: Added.
+
 2013-12-10  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] accessibility/alt-tag-on-image-with-nonimage-role.html is failing after r160311
