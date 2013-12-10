@@ -54,6 +54,9 @@ void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder)
     encoder << httpProxy;
     encoder << httpsProxy;
 #endif
+#if USE(SOUP)
+    encoder << ignoreTLSErrors;
+#endif
 }
 
 bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, NetworkProcessCreationParameters& result)
@@ -84,6 +87,11 @@ bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder,
     if (!decoder.decode(result.httpProxy))
         return false;
     if (!decoder.decode(result.httpsProxy))
+        return false;
+#endif
+
+#if USE(SOUP)
+    if (!decoder.decode(result.ignoreTLSErrors))
         return false;
 #endif
 

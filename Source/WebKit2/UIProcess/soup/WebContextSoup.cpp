@@ -31,8 +31,9 @@
 
 namespace WebKit {
 
-void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParameters&)
+void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
+    parameters.ignoreTLSErrors = m_ignoreTLSErrors;
 }
 
 }

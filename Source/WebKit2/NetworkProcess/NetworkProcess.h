@@ -108,6 +108,10 @@ private:
     void getNetworkProcessStatistics(uint64_t callbackID);
     void clearCacheForAllOrigins(uint32_t cachesToClear);
 
+#if USE(SOUP)
+    void setIgnoreTLSErrors(bool);
+#endif
+
     // Platform Helpers
     void platformSetCacheModel(CacheModel);
 

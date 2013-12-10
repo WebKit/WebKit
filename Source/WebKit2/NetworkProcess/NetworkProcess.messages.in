@@ -29,6 +29,10 @@ messages -> NetworkProcess LegacyReceiver {
     # Creates a connection for communication with a WebProcess
     CreateNetworkConnectionToWebProcess()
 
+#if USE(SOUP)
+    SetIgnoreTLSErrors(bool ignoreTLSErrors)
+#endif
+
     EnsurePrivateBrowsingSession()
     DestroyPrivateBrowsingSession()
 

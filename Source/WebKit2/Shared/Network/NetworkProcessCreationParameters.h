@@ -67,6 +67,10 @@ struct NetworkProcessCreationParameters {
     String httpProxy;
     String httpsProxy;
 #endif
+
+#if USE(SOUP)
+    bool ignoreTLSErrors;
+#endif
 };
 
 } // namespace WebKit

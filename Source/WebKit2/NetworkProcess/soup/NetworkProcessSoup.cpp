@@ -78,6 +78,8 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(parameters.diskCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER));
     soup_session_add_feature(WebCore::ResourceHandle::defaultSession(), SOUP_SESSION_FEATURE(soupCache.get()));
     soup_cache_load(soupCache.get());
+
+    setIgnoreTLSErrors(parameters.ignoreTLSErrors);
 }
 
 void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
@@ -102,6 +104,11 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
 
     if (urlCacheDiskCapacity > soup_cache_get_max_size(cache))
         soup_cache_set_max_size(cache, urlCacheDiskCapacity);
+}
+
+void NetworkProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
+{
+    ResourceHandle::setIgnoreSSLErrors(ignoreTLSErrors);
 }
 
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String&)

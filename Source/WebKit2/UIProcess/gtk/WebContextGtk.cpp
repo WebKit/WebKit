@@ -97,10 +97,11 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.urlSchemesRegistered = supplement<WebSoupRequestManagerProxy>()->registeredURISchemes();
     supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
-    parameters.ignoreTLSErrors = m_ignoreTLSErrors;
     parameters.shouldTrackVisitedLinks = true;
 #if ENABLE(NETWORK_PROCESS)
     parameters.usesNetworkProcess = true;
+#else
+    parameters.ignoreTLSErrors = m_ignoreTLSErrors;
 #endif
 }
 
