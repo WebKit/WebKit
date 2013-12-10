@@ -290,7 +290,6 @@ set(WebKit2_SOURCES
     UIProcess/APINavigationData.cpp
     UIProcess/BackingStore.cpp
     UIProcess/DrawingAreaProxy.cpp
-    UIProcess/DrawingAreaProxyImpl.cpp
     UIProcess/FindIndicator.cpp
     UIProcess/FrameLoadState.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp

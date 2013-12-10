@@ -64,6 +64,7 @@ list(APPEND WebKit2_SOURCES
     Shared/soup/WebCoreArgumentCodersSoup.cpp
 
     UIProcess/DefaultUndoController.cpp
+    UIProcess/DrawingAreaProxyImpl.cpp
 
     UIProcess/API/C/CoordinatedGraphics/WKView.cpp
 

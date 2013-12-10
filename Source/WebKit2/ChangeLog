@@ -1,3 +1,10 @@
+2013-12-10  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL build fix
+
+        * CMakeLists.txt: Remove UIProcess/DrawingAreaProxy.cpp.
+        * PlatformGTK.cmake: Add the file above.
+
 2013-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building the WebKit injected bundle
