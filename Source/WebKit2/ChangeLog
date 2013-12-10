@@ -1,3 +1,21 @@
+2013-12-10  Kwang Yul Seo  <skyul@company100.net>
+
+        Allow us to use network process with a single process model
+        https://bugs.webkit.org/show_bug.cgi?id=125507
+
+        Reviewed by Brady Eidson.
+
+        Currently, WebContext::sendToNetworkingProcess and
+        WebContext::sendToNetworkingProcessRelaunchingIfNecessary assume that
+        network process is not used when the given process model is
+        ProcessModelSharedSecondaryProcess. This is not consistent with
+        WebContext::networkingProcessConnection which returns the networking
+        process connection for ProcessModelSharedSecondaryProcess.
+
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::sendToNetworkingProcess):
+        (WebKit::WebContext::sendToNetworkingProcessRelaunchingIfNecessary):
+
 2013-12-10  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL build fix

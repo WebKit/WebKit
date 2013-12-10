@@ -516,6 +516,13 @@ void WebContext::sendToNetworkingProcess(T&& message)
 {
     switch (m_processModel) {
     case ProcessModelSharedSecondaryProcess:
+#if ENABLE(NETWORK_PROCESS)
+        if (m_usesNetworkProcess) {
+            if (m_networkProcess->canSendMessage())
+                m_networkProcess->send(std::forward<T>(message), 0);
+            return;
+        }
+#endif
         if (!m_processes.isEmpty() && m_processes[0]->canSendMessage())
             m_processes[0]->send(std::forward<T>(message), 0);
         return;
@@ -536,6 +543,13 @@ void WebContext::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 {
     switch (m_processModel) {
     case ProcessModelSharedSecondaryProcess:
+#if ENABLE(NETWORK_PROCESS)
+        if (m_usesNetworkProcess) {
+            ensureNetworkProcess();
+            m_networkProcess->send(std::forward<T>(message), 0);
+            return;
+        }
+#endif
         ensureSharedWebProcess();
         m_processes[0]->send(std::forward<T>(message), 0);
         return;
