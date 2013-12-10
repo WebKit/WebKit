@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-class WebNetworkInfo : public API::TypedObject<API::Object::Type::NetworkInfo> {
+class WebNetworkInfo : public API::ObjectImpl<API::Object::Type::NetworkInfo> {
 public:
     struct Data {
         void encode(CoreIPC::ArgumentEncoder&) const;

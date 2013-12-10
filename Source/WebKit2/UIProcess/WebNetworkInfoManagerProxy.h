@@ -39,7 +39,7 @@ namespace WebKit {
 class WebContext;
 class WebNetworkInfo;
 
-class WebNetworkInfoManagerProxy : public API::TypedObject<API::Object::Type::NetworkInfoManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebNetworkInfoManagerProxy : public API::ObjectImpl<API::Object::Type::NetworkInfoManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const char* supplementName();
 

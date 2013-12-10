@@ -34,7 +34,6 @@
 #include "PageClient.h"
 #include "WebContext.h"
 #include "WebFullScreenManagerProxy.h"
-#include "WebGeometry.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
@@ -47,7 +46,7 @@ class CoordinatedGraphicsScene;
 
 namespace WebKit {
 
-class WebView : public API::TypedObject<API::Object::Type::View>, public PageClient
+class WebView : public API::ObjectImpl<API::Object::Type::View>, public PageClient
 #if ENABLE(FULLSCREEN_API)
     , public WebFullScreenManagerProxyClient
 #endif

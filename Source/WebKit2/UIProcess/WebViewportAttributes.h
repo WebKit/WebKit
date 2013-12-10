@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-class WebViewportAttributes : public API::TypedObject<API::Object::Type::ViewportAttributes> {
+class WebViewportAttributes : public API::ObjectImpl<API::Object::Type::ViewportAttributes> {
 public:
     static PassRefPtr<WebViewportAttributes> create(const WebCore::ViewportAttributes& attributes)
     {
