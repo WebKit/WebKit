@@ -1639,9 +1639,8 @@ private:
                     }
                     
                     if (m_node->shouldSpeculateInt32()) {
-                        speculateForward(
-                            Overflow, noValue(), 0, m_out.lessThan(result, m_out.int32Zero),
-                            uInt32Value(result));
+                        speculate(
+                            Overflow, noValue(), 0, m_out.lessThan(result, m_out.int32Zero));
                         setInt32(result);
                         return;
                     }
