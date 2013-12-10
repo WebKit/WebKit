@@ -191,7 +191,7 @@ public:
             break;
             
         case SSA:
-            // FIXME: Implement SSA verification.
+            validateSSA();
             break;
         }
     }
@@ -394,6 +394,40 @@ private:
             for (size_t i = 0; i < block->variablesAtHead.numberOfLocals(); ++i) {
                 checkOperand(
                     block, getLocalPositions, setLocalPositions, virtualRegisterForLocal(i));
+            }
+        }
+    }
+    
+    void validateSSA()
+    {
+        // FIXME: Add more things here.
+        // https://bugs.webkit.org/show_bug.cgi?id=123471
+        
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            
+            unsigned nodeIndex = 0;
+            for (; nodeIndex < block->size() && !block->at(nodeIndex)->codeOrigin.isSet(); nodeIndex++) { }
+            
+            VALIDATE((block), nodeIndex < block->size());
+            
+            for (; nodeIndex < block->size(); nodeIndex++)
+                VALIDATE((block->at(nodeIndex)), block->at(nodeIndex)->codeOrigin.isSet());
+            
+            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                Node* node = block->at(nodeIndex);
+                switch (node->op()) {
+                case Phi:
+                    VALIDATE((node), !node->codeOrigin.isSet());
+                    break;
+                    
+                default:
+                    // FIXME: Add more things here.
+                    // https://bugs.webkit.org/show_bug.cgi?id=123471
+                    break;
+                }
             }
         }
     }

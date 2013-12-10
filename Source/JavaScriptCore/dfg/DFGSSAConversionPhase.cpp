@@ -151,7 +151,7 @@ public:
                         NodeFlags result = resultFor(format);
                         UseKind useKind = useKindFor(format);
                         
-                        node = m_insertionSet.insertNode(0, SpecNone, Phi, node->codeOrigin);
+                        node = m_insertionSet.insertNode(0, SpecNone, Phi, CodeOrigin());
                         node->mergeFlags(result);
                         RELEASE_ASSERT((node->flags() & NodeResultMask) == result);
                         
@@ -184,7 +184,7 @@ public:
                             // the value was already on the stack.
                         } else {
                             m_insertionSet.insertNode(
-                                0, SpecNone, MovHint, node->codeOrigin, OpInfo(variable),
+                                0, SpecNone, MovHint, CodeOrigin(), OpInfo(variable),
                                 Edge(node));
                         }
                     }

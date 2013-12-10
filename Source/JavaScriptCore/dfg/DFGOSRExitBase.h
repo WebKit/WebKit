@@ -48,6 +48,8 @@ struct OSRExitBase {
         , m_codeOrigin(origin)
         , m_codeOriginForExitProfile(originForProfile)
     {
+        ASSERT(m_codeOrigin.isSet());
+        ASSERT(m_codeOriginForExitProfile.isSet());
     }
     
     ExitKind m_kind;

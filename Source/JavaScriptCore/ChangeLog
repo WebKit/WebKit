@@ -1,3 +1,53 @@
+2013-12-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Impose and enforce some basic rules of sanity for where Phi functions are allowed to occur and where their (optional) corresponding MovHints can be
+        https://bugs.webkit.org/show_bug.cgi?id=125480
+
+        Reviewed by Geoffrey Garen.
+        
+        Previously, if you wanted to insert some speculation right after where a value was
+        produced, you'd get super confused if that value was produced by a Phi node.  You can't
+        necessarily insert speculations after a Phi node because Phi nodes appear in this
+        special sequence of Phis and MovHints that establish the OSR exit state for a block.
+        So, you'd probably want to search for the next place where it's safe to insert things.
+        We already do this "search for beginning of next bytecode instruction" search by
+        looking at the next node that has a different CodeOrigin.  But this would be hard for a
+        Phi because those Phis and MovHints have basically random CodeOrigins and they can all
+        have different CodeOrigins.
+
+        This change imposes some sanity for this situation:
+
+        - Phis must have unset CodeOrigins.
+
+        - In each basic block, all nodes that have unset CodeOrigins must come before all nodes
+          that have set CodeOrigins.
+
+        This all ends up working out just great because prior to this change we didn't have a 
+        use for unset CodeOrigins.  I think it's appropriate to make "unset CodeOrigin" mean
+        that we're in the prologue of a basic block.
+
+        It's interesting what this means for block merging, which we don't yet do in SSA.
+        Consider merging the edge A->B.  One possibility is that the block merger is now
+        required to clean up Phi/Upsilons, and reascribe the MovHints to have the CodeOrigin of
+        the A's block terminal.  But an answer that might be better is that the originless
+        nodes at the top of the B are just given the origin of the terminal and we keep the
+        Phis.  That would require changing the above rules.  We'll see how it goes, and what we
+        end up picking...
+
+        Overall, this special-things-at-the-top rule is analogous to what other SSA-based
+        compilers do.  For example, LLVM has rules mandating that Phis appear at the top of a
+        block.
+
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::dump):
+        * dfg/DFGOSRExitBase.h:
+        (JSC::DFG::OSRExitBase::OSRExitBase):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        (JSC::DFG::Validate::validateSSA):
+
 2013-12-08  Filip Pizlo  <fpizlo@apple.com>
 
         Reveal array bounds checks in DFG IR

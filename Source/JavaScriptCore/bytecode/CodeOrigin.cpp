@@ -59,6 +59,11 @@ Vector<CodeOrigin> CodeOrigin::inlineStack() const
 
 void CodeOrigin::dump(PrintStream& out) const
 {
+    if (!isSet()) {
+        out.print("<none>");
+        return;
+    }
+    
     Vector<CodeOrigin> stack = inlineStack();
     for (unsigned i = 0; i < stack.size(); ++i) {
         if (i)
