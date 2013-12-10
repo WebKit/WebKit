@@ -1,3 +1,17 @@
+2013-12-10  Alberto Garcia  <berto@igalia.com>
+
+        [WK2] [GTK] Enable the network process in the WebContext
+        https://bugs.webkit.org/show_bug.cgi?id=125494
+
+        Reviewed by Carlos Garcia Campos.
+
+        This should be initialized using the setUsesNetworkProcess() API.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (createDefaultWebContext):
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+
 2013-12-10  Brian Holt  <brian.holt@samsung.com>
 
         [WK2][SOUP] initialise the Network Process with ignoreTLSErrors

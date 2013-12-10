@@ -199,6 +199,9 @@ static gpointer createDefaultWebContext(gpointer)
     priv->context = WebContext::create(WebCore::filenameToString(injectedBundleFilename().data()));
     priv->requestManager = webContext->priv->context->supplement<WebSoupRequestManagerProxy>();
     priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
+#if ENABLE(NETWORK_PROCESS)
+    priv->context->setUsesNetworkProcess(true);
+#endif
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_IGNORE;
 
     attachInjectedBundleClientToContext(webContext.get());
