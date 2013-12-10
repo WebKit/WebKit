@@ -1,3 +1,16 @@
+2013-12-10  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        Use std::array when computing MD5 checksum
+        https://bugs.webkit.org/show_bug.cgi?id=125509
+
+        Reviewed by Anders Carlsson.
+
+        Added MD5::Digest type and MD5::hashSize for computing MD5 checksum.
+
+        * wtf/MD5.cpp:
+        (WTF::MD5::checksum):
+        * wtf/MD5.h:
+
 2013-12-10  Martin Robinson  <mrobinson@igalia.com>
 
         Various fixes for the CMake GTK+ build

@@ -21,12 +21,12 @@ static void expectMD5(CString input, CString expected)
 {
     MD5 md5;
     md5.addBytes(reinterpret_cast<const uint8_t*>(input.data()), input.length());
-    Vector<uint8_t, 16> digest;
+    MD5::Digest digest;
     md5.checksum(digest);
     char* buf = 0;
     CString actual = CString::newUninitialized(32, buf);
-    for (size_t i = 0; i < 16; i++, buf += 2)
-        snprintf(buf, 3, "%02x", digest.at(i));
+    for (size_t i = 0; i < MD5::hashSize; i++, buf += 2)
+        snprintf(buf, 3, "%02x", digest[i]);
 
     ASSERT_EQ(expected.length(), actual.length());
     ASSERT_STREQ(expected.data(), actual.data());

@@ -78,7 +78,7 @@ void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashStrin
         md5Context.addBytes(bitmapData, 4 * pixelsWide);
         bitmapData += bytesPerRow;
     }
-    Vector<uint8_t, 16> hash;
+    MD5::Digest hash;
     md5Context.checksum(hash);
 
     snprintf(hashString, 33, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",

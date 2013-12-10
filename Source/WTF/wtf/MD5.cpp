@@ -219,7 +219,7 @@ void MD5::addBytes(const uint8_t* input, size_t length)
     memcpy(m_in, buf, length);
 }
 
-void MD5::checksum(Vector<uint8_t, 16>& digest)
+void MD5::checksum(Digest& digest)
 {
     // Compute number of bytes mod 64
     unsigned count = (m_bits[0] >> 3) & 0x3F;
@@ -256,9 +256,9 @@ void MD5::checksum(Vector<uint8_t, 16>& digest)
     reverseBytes(reinterpret_cast<uint8_t*>(m_buf), 4);
 
     // Now, m_buf contains checksum result.
-    if (!digest.isEmpty())
-        digest.clear();
-    digest.append(reinterpret_cast<uint8_t*>(m_buf), 16);
+    uint8_t* mBufUInt8 = reinterpret_cast<uint8_t*>(m_buf);
+    for (size_t i = 0; i < hashSize; ++i)
+        digest[i] = mBufUInt8[i];
 
     // In case it's sensitive
     memset(m_buf, 0, sizeof(m_buf));

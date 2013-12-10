@@ -31,6 +31,7 @@
 #ifndef WTF_MD5_h
 #define WTF_MD5_h
 
+#include <array>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -45,8 +46,14 @@ public:
     }
     WTF_EXPORT_PRIVATE void addBytes(const uint8_t* input, size_t length);
 
+    // Size of the SHA1 hash
+    WTF_EXPORT_PRIVATE static const size_t hashSize = 16;
+
+    // type for computing MD5 hash
+    typedef std::array<uint8_t, hashSize> Digest;
+
     // checksum has a side effect of resetting the state of the object.
-    WTF_EXPORT_PRIVATE void checksum(Vector<uint8_t, 16>&);
+    WTF_EXPORT_PRIVATE void checksum(Digest&);
 
 private:
     uint32_t m_buf[4];

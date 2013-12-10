@@ -206,11 +206,11 @@ void CurlCacheEntry::generateBaseFilename(const CString& url)
     MD5 md5;
     md5.addBytes(reinterpret_cast<const uint8_t*>(url.data()), url.length());
 
-    Vector<uint8_t, 16> sum;
+    MD5::Digest sum;
     md5.checksum(sum);
     uint8_t* rawdata = sum.data();
 
-    for (unsigned i = 0; i < 16; i++)
+    for (size_t i = 0; i < MD5::hasSize; i++)
         appendByteAsHex(rawdata[i], m_basename, Lowercase);
 }
 
