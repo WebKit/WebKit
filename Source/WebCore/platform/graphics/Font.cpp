@@ -216,6 +216,12 @@ void invalidateFontGlyphsCache()
     fontGlyphsCache().clear();
 }
 
+void clearWidthCaches()
+{
+    for (auto it = fontGlyphsCache().begin(), end = fontGlyphsCache().end(); it != end; ++it)
+        it->value->glyphs.get().widthCache().clear();
+}
+
 static unsigned makeFontSelectorFlags(const FontDescription& description)
 {
     return static_cast<unsigned>(description.script()) << 1 | static_cast<unsigned>(description.smallCaps());

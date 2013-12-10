@@ -161,6 +161,8 @@ void MemoryPressureHandler::releaseMemory(bool)
 
     cssValuePool().drain();
 
+    clearWidthCaches();
+
     gcController().discardAllCompiledCode();
 
     // FastMalloc has lock-free thread specific caches that can only be cleared from the thread itself.

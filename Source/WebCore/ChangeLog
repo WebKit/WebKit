@@ -1,3 +1,13 @@
+2013-12-09  Andreas Kling  <akling@apple.com>
+
+        Clear out font width measurement caches on memory pressure.
+        <https://webkit.org/b/125481>
+
+        The data kept in WidthCaches can be regenerated on demand. Throwing
+        it away when we're under memory pressure buys us ~4MB on Membuster3.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-09  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove enabled() in InspectorRuntimeAgent.

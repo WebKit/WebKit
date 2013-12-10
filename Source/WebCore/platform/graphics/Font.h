@@ -309,6 +309,7 @@ private:
 
 void invalidateFontGlyphsCache();
 void pruneUnreferencedEntriesFromFontGlyphsCache();
+void clearWidthCaches();
 
 inline Font::~Font()
 {
