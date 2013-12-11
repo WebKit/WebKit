@@ -4,7 +4,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
   <PropertyGroup Label="Configuration">
-    <OutDir>$(ConfigurationBuildDir)\lib32\</OutDir>
+    <OutDir>$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup />

@@ -7,7 +7,7 @@
     <None Include="make-export-file-generator" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebKitExportGenerator\DerivedSources\WebKitExportGenerator.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKitExportGenerator\DerivedSources\WebKitExportGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="WebKitExports.def.in" />

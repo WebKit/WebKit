@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\..\win;$(ProjectDir)\..\..\win\WebCoreSupport;$(ConfigurationBuildDir)\include\WebKit;$(ConfigurationBuildDir)\Include;$(ConfigurationBuildDir)\Include\private;$(ConfigurationBuildDir)\Include\WebCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(ConfigurationBuildDir)\Include\JavaScriptCore;$(ConfigurationBuildDir)\Include\private\JavaScriptCore;$(ConfigurationBuildDir)\obj32\WebKit\DerivedSources;$(WebKit_Libraries)\Include;$(WebKit_Libraries)\Include\private;$(WebKit_Libraries)\Include\WebCore;$(WebKit_Libraries)\Include\WebCore\ForwardingHeaders;$(WebKit_Libraries)\Include\JavaScriptCore;$(WebKit_Libraries)\Include\private\JavaScriptCore;$(IntDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\..\..\win;$(ProjectDir)\..\..\win\WebCoreSupport;$(ConfigurationBuildDir)\include\WebKit;$(ConfigurationBuildDir)\Include;$(ConfigurationBuildDir)\Include\private;$(ConfigurationBuildDir)\Include\WebCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(ConfigurationBuildDir)\Include\JavaScriptCore;$(ConfigurationBuildDir)\Include\private\JavaScriptCore;$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKit\DerivedSources;$(WebKit_Libraries)\Include;$(WebKit_Libraries)\Include\private;$(WebKit_Libraries)\Include\WebCore;$(WebKit_Libraries)\Include\WebCore\ForwardingHeaders;$(WebKit_Libraries)\Include\JavaScriptCore;$(WebKit_Libraries)\Include\private\JavaScriptCore;$(IntDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WEBKIT_EXPORTS;FRAMEWORK_NAME=WebKit;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>WebKitPrefix.h</PrecompiledHeaderFile>
@@ -14,7 +14,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>delayimp.lib;kernel32.lib;user32.lib;gdi32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;usp10.lib;comctl32.lib;version.lib;shlwapi.lib;libxslt$(DebugSuffix).lib;libxml2$(DebugSuffix).lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;WTF$(DebugSuffix).lib;JavaScriptCore$(DebugSuffix).lib;WebCore$(DebugSuffix).lib;WebKitGUID$(DebugSuffix).lib;SQLite3$(DebugSuffix).lib;msimg32.lib;crypt32.lib;iphlpapi.lib;winmm.lib;comsuppw.lib;rpcrt4.lib;zdll$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>$(ConfigurationBuildDir)\obj32\WebKitExportGenerator\WebKitExports.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKitExportGenerator\WebKitExports.def</ModuleDefinitionFile>
       <DelayLoadDLLs>usp10.dll;comctl32.dll;version.dll;iphlpapi.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>

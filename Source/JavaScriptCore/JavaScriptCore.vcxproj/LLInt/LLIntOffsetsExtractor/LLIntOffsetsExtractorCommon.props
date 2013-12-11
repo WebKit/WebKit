@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\include;$(ConfigurationBuildDir)\include\private;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\obj32\JavaScriptCore\DerivedSources\;../../../;../../../os-win32/;../../../assembler/;../../../API/;../../../parser/;../../../heap/;../../../runtime/;../../../bytecode/;../../../interpreter/;../../../debugger/;../../../bytecompiler/;../../../profiler;../../../jit/;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\include;$(ConfigurationBuildDir)\include\private;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\JavaScriptCore\DerivedSources\;../../../;../../../os-win32/;../../../assembler/;../../../API/;../../../parser/;../../../heap/;../../../runtime/;../../../bytecode/;../../../interpreter/;../../../debugger/;../../../bytecompiler/;../../../profiler;../../../jit/;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__STD_C;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <ForcedUsingFiles>%(ForcedUsingFiles)</ForcedUsingFiles>

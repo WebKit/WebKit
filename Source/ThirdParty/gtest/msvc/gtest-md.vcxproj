@@ -160,18 +160,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ConfigurationBuildDir)\lib32\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">$(ConfigurationBuildDir)\lib32\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">$(ConfigurationBuildDir)\lib32\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationBuildDir)\lib32\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">$(ConfigurationBuildDir)\lib32\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\lib32\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|x64'">$(ConfigurationBuildDir)\lib32\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|x64'">$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\</OutDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">gtest$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">gtest$(DebugSuffix)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">gtest$(DebugSuffix)</TargetName>

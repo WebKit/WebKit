@@ -1,5 +1,25 @@
 2013-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge 154333
+
+    2013-08-20  Alex Christensen  <achristensen@apple.com>
+
+            Use PlatformArchitecture to distinguish between 32-bit and 64-bit builds on Windows.
+            https://bugs.webkit.org/show_bug.cgi?id=119512
+
+            Reviewed by Brent Fulgham.
+
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+            * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props:
+            * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.vcxproj:
+            * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj:
+            * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj:
+            * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorCommon.props:
+            Replaced obj32, bin32, and lib32 with macros for 64-bit build.
+
+2013-12-10  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge 152982
 
     2013-07-22  Alex Christensen  <achristensen@apple.com>

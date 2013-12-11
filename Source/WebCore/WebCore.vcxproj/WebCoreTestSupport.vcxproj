@@ -198,7 +198,7 @@
     <ClCompile />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\InternalSettingsGenerated.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\InternalSettingsGenerated.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -260,7 +260,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMallocStatistics.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSMallocStatistics.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -322,7 +322,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMemoryInfo.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSMemoryInfo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -384,7 +384,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSTypeConversions.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSTypeConversions.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -446,7 +446,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternals.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternals.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -508,7 +508,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternalSettings.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternalSettings.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -570,7 +570,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternalSettingsGenerated.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternalSettingsGenerated.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -820,13 +820,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\InternalSettingsGenerated.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMallocStatistics.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMemoryInfo.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSTypeConversions.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternals.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternalSettings.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternalSettingsGenerated.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\InternalSettingsGenerated.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSMallocStatistics.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSMemoryInfo.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSTypeConversions.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternals.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternalSettings.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternalSettingsGenerated.h" />
     <ClInclude Include="..\testing\MallocStatistics.h" />
     <ClInclude Include="..\testing\MemoryInfo.h" />
     <ClInclude Include="..\testing\TypeConversions.h" />
