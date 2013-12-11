@@ -1,0 +1,336 @@
+This tests that native elements and ARIA overrides result in the expected role and role description.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: a[href]
+      AXRole: AXLink
+      
+PASS: blockquote
+      AXRole: AXGroup
+      
+PASS: button
+      AXRole: AXButton
+      
+PASS: div
+      AXRole: AXSection
+      
+PASS: fieldset
+      AXRole: AXGroup
+      
+PASS: legend
+      AXRole: AXLabel
+      
+PASS: form
+      AXRole: AXForm
+      
+PASS: hgroup
+      AXRole: AXGroup
+      
+PASS: h1
+      AXRole: AXHeading
+      
+PASS: h2
+      AXRole: AXHeading
+      
+PASS: h3
+      AXRole: AXHeading
+      
+PASS: h4
+      AXRole: AXHeading
+      
+PASS: h5
+      AXRole: AXHeading
+      
+PASS: h6
+      AXRole: AXHeading
+      
+PASS: hr
+      AXRole: AXSeparator
+      
+PASS: img[alt='X']
+      AXRole: AXImage
+      
+PASS: input[type='button']
+      AXRole: AXButton
+      
+PASS: input[type='checkbox']
+      AXRole: AXCheckBox
+      
+PASS: input[type='date']
+      AXRole: AXTextField
+      
+PASS: input[type='datetime']
+      AXRole: AXTextField
+      
+PASS: input[type='datetime-local']
+      AXRole: AXTextField
+      
+PASS: input[type='email']
+      AXRole: AXTextField
+      
+PASS: input[type='file']
+      AXRole: AXButton
+      
+PASS: input[type='image']
+      AXRole: AXButton
+      
+PASS: input[type='month']
+      AXRole: AXTextField
+      
+PASS: input[type='number']
+      AXRole: AXTextField
+      
+PASS: input[type='password']
+      AXRole: AXPasswordField
+      
+PASS: input[type='radio']
+      AXRole: AXRadioButton
+      
+PASS: input[type='range']
+      AXRole: AXSlider
+      
+PASS: input[type='reset']
+      AXRole: AXButton
+      
+PASS: input[type='search']
+      AXRole: AXTextField
+      
+PASS: input[type='submit']
+      AXRole: AXButton
+      
+PASS: input[type='tel']
+      AXRole: AXTextField
+      
+PASS: input[type='text']
+      AXRole: AXTextField
+      
+PASS: input[type='time']
+      AXRole: AXTextField
+      
+PASS: input[type='url']
+      AXRole: AXTextField
+      
+PASS: input[type='week']
+      AXRole: AXTextField
+      
+PASS: ol
+      AXRole: AXList
+      
+PASS: li
+      AXRole: AXListItem
+      
+PASS: p
+      AXRole: AXParagraph
+      
+PASS: pre
+      AXRole: AXGroup
+      
+PASS: progress
+      AXRole: AXProgressIndicator
+      
+PASS: select:not([multiple])
+      AXRole: AXComboBox
+      
+PASS: select[multiple]
+      AXRole: AXList
+      
+PASS: option
+      AXRole: AXListItem
+      
+PASS: optgroup
+      AXRole: AXListItem
+      
+PASS: table
+      AXRole: AXTable
+      
+FAIL: tr
+      
+      Expected: AXRow
+
+PASS: th
+      AXRole: AXCell
+      
+FAIL: tr
+      
+      Expected: AXRow
+
+PASS: td
+      AXRole: AXCell
+      
+FAIL: tr
+      
+      Expected: AXRow
+
+PASS: th
+      AXRole: AXCell
+      
+PASS: textarea
+      AXRole: AXTextField
+      
+PASS: ul
+      AXRole: AXList
+      
+PASS: li
+      AXRole: AXListItem
+      
+PASS: div[role=command]
+      AXRole: AXSection
+      
+PASS: div[role=composite]
+      AXRole: AXSection
+      
+PASS: div[role=input]
+      AXRole: AXSection
+      
+PASS: div[role=landmark]
+      AXRole: AXSection
+      
+PASS: div[role=range]
+      AXRole: AXSection
+      
+PASS: div[role=roletype]
+      AXRole: AXSection
+      
+PASS: div[role=section]
+      AXRole: AXSection
+      
+PASS: div[role=sectionhead]
+      AXRole: AXSection
+      
+PASS: div[role=select]
+      AXRole: AXSection
+      
+PASS: div[role=structure]
+      AXRole: AXSection
+      
+PASS: div[role=widget]
+      AXRole: AXSection
+      
+PASS: div[role=window]
+      AXRole: AXSection
+      
+PASS: div[role=alert]
+      AXRole: AXAlert
+      
+PASS: div[role=alertdialog]
+      AXRole: AXAlert
+      
+PASS: div[role=button]
+      AXRole: AXButton
+      
+PASS: div[role=checkbox]
+      AXRole: AXCheckBox
+      
+PASS: div[role=combobox]
+      AXRole: AXComboBox
+      
+PASS: div[role=directory]
+      AXRole: AXList
+      
+PASS: div[role=grid]
+      AXRole: AXTable
+      
+PASS: div[role=rowgroup]
+      
+      
+FAIL: div[role=row]
+      
+      Expected: AXRow
+
+PASS: div[role=gridcell]
+      AXRole: AXCell
+      
+PASS: div[role=group]
+      AXRole: AXGroup
+      
+PASS: div[role=heading]
+      AXRole: AXHeading
+      
+PASS: div[role=img]
+      AXRole: AXImage
+      
+PASS: div[role=link]
+      AXRole: AXLink
+      
+PASS: div[role=list]
+      AXRole: AXList
+      
+PASS: div[role=listitem]
+      AXRole: AXListItem
+      
+FAIL: div[role=listbox]
+      AXRole: AXList
+      Expected: AXListBox
+
+PASS: div[role=option]
+      AXRole: AXListItem
+      
+PASS: div[role=menu]
+      AXRole: AXMenu
+      
+PASS: div[role=menuitem]
+      AXRole: AXMenuItem
+      
+PASS: div[role=menuitemradio]
+      AXRole: AXRadioMenuItem
+      
+PASS: div[role=menubar]
+      AXRole: AXMenuBar
+      
+PASS: div[role=menuitem]
+      AXRole: AXMenuItem
+      
+PASS: div[role=menuitemradio]
+      AXRole: AXRadioMenuItem
+      
+PASS: div[role=progressbar]
+      AXRole: AXProgressIndicator
+      
+PASS: div[role=radiogroup]
+      AXRole: AXGroup
+      
+PASS: div[role=radio]
+      AXRole: AXRadioButton
+      
+PASS: div[role=scrollbar]
+      AXRole: AXScrollBar
+      
+PASS: div[role=separator]
+      AXRole: AXSeparator
+      
+PASS: div[role=slider]
+      AXRole: AXSlider
+      
+PASS: div[role=spinbutton]
+      AXRole: AXSpinButton
+      
+PASS: div[role=tablist]
+      AXRole: AXTabGroup
+      
+PASS: div[role=tab]
+      AXRole: AXTab
+      
+PASS: div[role=textbox]
+      AXRole: AXTextField
+      
+PASS: div[role=toolbar]
+      AXRole: AXToolbar
+      
+PASS: div[role=treegrid]
+      AXRole: AXTable
+      
+PASS: div[role=rowgroup]
+      
+      
+FAIL: div[role=row]
+      
+      Expected: AXRow
+
+PASS: div[role=gridcell]
+      AXRole: AXCell
+      
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

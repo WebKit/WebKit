@@ -1,3 +1,18 @@
+2013-12-11  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Add new layout test to check ATK roles in a central place
+        https://bugs.webkit.org/show_bug.cgi?id=125525
+
+        Reviewed by Chris Fleizach.
+
+        New test added, with some skipped tests already present in
+        platform/mac/accessibility/role-subrole-roledescription.html (this
+        test is based in that one) as well as some issues specific to ATK
+        that have been reported in bugs, for traceability.
+
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Added.
+        * platform/gtk/accessibility/roles-exposed.html: Added.
+
 2013-12-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Enable Battery Status API
