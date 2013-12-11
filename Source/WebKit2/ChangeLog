@@ -1,5 +1,24 @@
 2013-12-11  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r160197
+
+    2013-12-05  Chris Fleizach  <cfleizach@apple.com> 
+
+            AX: Seed: safari extension installation crashes safari under voice over and freezes voice over
+            https://bugs.webkit.org/show_bug.cgi?id=125308
+
+            Reviewed by Anders Carlsson.
+
+            Much like Javascript alerts, we need to allow accessibility clients to continue to interact with the WebProcess thread
+            when using dispatchDecidePolicyResponses.
+
+            * Platform/CoreIPC/MessageSender.h:
+            (CoreIPC::MessageSender::sendSync):
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+
+2013-12-11  Lucas Forschler  <lforschler@apple.com>
+
         Merge r159460
 
     2013-11-18  David Hyatt  <hyatt@apple.com>

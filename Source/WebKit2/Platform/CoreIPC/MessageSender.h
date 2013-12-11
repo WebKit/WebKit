@@ -49,17 +49,17 @@ public:
         return sendMessage(encoder.release());
     }
 
-    template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, double timeout = Connection::NoTimeout)
+    template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, double timeout = Connection::NoTimeout, unsigned syncSendFlags = 0)
     {
         COMPILE_ASSERT(U::isSync, SyncMessageExpected);
-        return sendSync(message, reply, messageSenderDestinationID(), timeout);
+        return sendSync(message, reply, messageSenderDestinationID(), timeout, syncSendFlags);
     }
 
-    template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, uint64_t destinationID, double timeout = Connection::NoTimeout)
+    template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, uint64_t destinationID, double timeout = Connection::NoTimeout, unsigned syncSendFlags = 0)
     {
         ASSERT(messageSenderConnection());
 
-        return messageSenderConnection()->sendSync(message, reply, destinationID, timeout);
+        return messageSenderConnection()->sendSync(message, reply, destinationID, timeout, syncSendFlags);
     }
 
     bool sendMessage(PassOwnPtr<MessageEncoder>);
