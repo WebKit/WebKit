@@ -49,15 +49,14 @@ struct SameSizeAsInlineFlowBox : public InlineBox {
 
 COMPILE_ASSERT(sizeof(InlineFlowBox) == sizeof(SameSizeAsInlineFlowBox), InlineFlowBox_should_stay_small);
 
-#ifndef NDEBUG
-
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 InlineFlowBox::~InlineFlowBox()
 {
-    if (!m_hasBadChildList)
+    if (!m_hasBadChildList) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
             child->setHasBadParent();
+    }
 }
-
 #endif
 
 LayoutUnit InlineFlowBox::getFlowSpacingLogicalWidth()
@@ -1666,8 +1665,8 @@ void InlineFlowBox::showLineTreeAndMark(const InlineBox* markedBox1, const char*
 
 void InlineFlowBox::checkConsistency() const
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_hasBadChildList);
 #ifdef CHECK_CONSISTENCY
-    ASSERT(!m_hasBadChildList);
     const InlineBox* prev = 0;
     for (const InlineBox* child = m_firstChild; child; child = child->nextOnLine()) {
         ASSERT(child->parent() == this);

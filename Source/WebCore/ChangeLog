@@ -1,3 +1,35 @@
+2013-12-11  David Kilzer  <ddkilzer@apple.com>
+
+        Define m_hasBadParent in InlineBox if defined(ADDRESS_SANITIZER)
+        <http://webkit.org/b/125329>
+
+        Reviewed by Darin Adler.
+
+        No tests since this is a build fix for:
+
+            $ ./Tools/Scripts/build-webkit --release OTHER_CFLAGS="$inherited -DADDRESS_SANITIZER=1"
+
+        * rendering/InlineBox.cpp:
+        * rendering/InlineBox.h:
+        - Replace ASSERT_DISABLED use with
+          ASSERT_WITH_SECURITY_IMPLICATION_DISABLED for m_hasBadParent.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::~InlineFlowBox):
+        - Use !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED instead of
+          #ifndef NDEBUG since this calls setHasBadParent().
+        (WebCore::InlineFlowBox::checkConsistency):
+        - Move ASSERT(!m_hasBadChildList) outside of
+          #if CHECK_CONSISTENCY and change to
+          ASSERT_WITH_SECURITY_IMPLICATION(!m_hasBadChildList).
+
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (WebCore::InlineFlowBox::setHasBadChildList):
+        - Change #ifndef NDEBUG to
+          #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED for code using
+          m_hasBadChildList.
+
 2013-12-11  Ralph Thomas  <ralpht@gmail.com>
 
         [WebGL] Fix build on GL ES 2.0 targets after r160119

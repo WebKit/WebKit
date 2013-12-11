@@ -236,7 +236,7 @@ public:
     // visibleLeftEdge, visibleRightEdge are in the parent's coordinate system.
     virtual float placeEllipsisBox(bool ltr, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool&);
 
-#if !ASSERT_DISABLED
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     void setHasBadParent();
 #endif
 
@@ -368,7 +368,7 @@ protected:
         , m_parent(nullptr)
         , m_renderer(renderer)
         , m_logicalWidth(0)
-#if !ASSERT_DISABLED
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         , m_hasBadParent(false)
 #endif
     {
@@ -383,7 +383,7 @@ protected:
         , m_topLeft(topLeft)
         , m_logicalWidth(logicalWidth)
         , m_bitfields(firstLine, constructed, dirty, extracted, isHorizontal)
-#if !ASSERT_DISABLED
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         , m_hasBadParent(false)
 #endif
     {
@@ -408,7 +408,7 @@ protected:
     // For InlineFlowBox and InlineTextBox
     bool extracted() const { return m_bitfields.extracted(); }
 
-#if !ASSERT_DISABLED
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 private:
     bool m_hasBadParent;
 #endif
@@ -417,13 +417,13 @@ private:
 #define INLINE_BOX_OBJECT_TYPE_CASTS(ToValueTypeName, predicate) \
     TYPE_CASTS_BASE(ToValueTypeName, InlineBox, object, object->predicate, object.predicate)
 
-#if ASSERT_DISABLED
+#if ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 inline InlineBox::~InlineBox()
 {
 }
 #endif
 
-#if !ASSERT_DISABLED
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 inline void InlineBox::setHasBadParent()
 {
     m_hasBadParent = true;

@@ -238,8 +238,10 @@ inline void assertUnused(T& x) { (void)x; }
          CRASH_WITH_SECURITY_IMPLICATION()) : \
         (void)0)
 
+#define ASSERT_WITH_SECURITY_IMPLICATION_DISABLED 0
 #else
 #define ASSERT_WITH_SECURITY_IMPLICATION(assertion) ((void)0)
+#define ASSERT_WITH_SECURITY_IMPLICATION_DISABLED 1
 #endif
 
 #else
@@ -278,6 +280,7 @@ inline void assertUnused(T& x) { (void)x; }
         (WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion), \
          CRASH_WITH_SECURITY_IMPLICATION()) : \
         (void)0)
+#define ASSERT_WITH_SECURITY_IMPLICATION_DISABLED 0
 #endif
 
 /* ASSERT_WITH_MESSAGE */

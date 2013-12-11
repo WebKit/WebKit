@@ -53,7 +53,7 @@ public:
         , m_hasAnnotationsBefore(false)
         , m_hasAnnotationsAfter(false)
         , m_isFirstAfterPageBreak(false)
-#ifndef NDEBUG
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         , m_hasBadChildList(false)
 #endif
     {
@@ -66,9 +66,11 @@ public:
         m_hasTextDescendants = m_hasTextChildren;
     }
 
-#ifndef NDEBUG
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     virtual ~InlineFlowBox();
-    
+#endif
+
+#ifndef NDEBUG
     virtual void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0, int = 0) const OVERRIDE;
     virtual const char* boxName() const OVERRIDE;
 #endif
@@ -340,7 +342,7 @@ protected:
 
     // End of RootInlineBox-specific members.
 
-#ifndef NDEBUG
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 private:
     unsigned m_hasBadChildList : 1;
 #endif
@@ -356,7 +358,7 @@ inline void InlineFlowBox::checkConsistency() const
 
 inline void InlineFlowBox::setHasBadChildList()
 {
-#ifndef NDEBUG
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     m_hasBadChildList = true;
 #endif
 }
