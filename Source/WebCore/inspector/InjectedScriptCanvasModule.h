@@ -35,10 +35,13 @@
 #include "ScriptState.h"
 #include <wtf/text/WTFString.h>
 
+namespace Deprecated {
+class ScriptObject;
+}
+
 namespace WebCore {
 
 class InjectedScriptManager;
-class ScriptObject;
 
 #if ENABLE(INSPECTOR)
 
@@ -50,23 +53,23 @@ public:
 
     static InjectedScriptCanvasModule moduleForState(InjectedScriptManager*, JSC::ExecState*);
 
-    ScriptObject wrapCanvas2DContext(const ScriptObject&);
+    Deprecated::ScriptObject wrapCanvas2DContext(const Deprecated::ScriptObject&);
 #if ENABLE(WEBGL)
-    ScriptObject wrapWebGLContext(const ScriptObject&);
+    Deprecated::ScriptObject wrapWebGLContext(const Deprecated::ScriptObject&);
 #endif
     void markFrameEnd();
 
-    void captureFrame(ErrorString*, TypeBuilder::Canvas::TraceLogId*);
-    void startCapturing(ErrorString*, TypeBuilder::Canvas::TraceLogId*);
-    void stopCapturing(ErrorString*, const TypeBuilder::Canvas::TraceLogId&);
-    void dropTraceLog(ErrorString*, const TypeBuilder::Canvas::TraceLogId&);
-    void traceLog(ErrorString*, const String&, const int*, const int*, RefPtr<TypeBuilder::Canvas::TraceLog>*);
-    void replayTraceLog(ErrorString*, const TypeBuilder::Canvas::TraceLogId&, int, RefPtr<TypeBuilder::Canvas::ResourceState>*);
-    void resourceInfo(ErrorString*, const TypeBuilder::Canvas::ResourceId&, RefPtr<TypeBuilder::Canvas::ResourceInfo>*);
-    void resourceState(ErrorString*, const TypeBuilder::Canvas::TraceLogId&, const TypeBuilder::Canvas::ResourceId&, RefPtr<TypeBuilder::Canvas::ResourceState>*);
+    void captureFrame(ErrorString*, Inspector::TypeBuilder::Canvas::TraceLogId*);
+    void startCapturing(ErrorString*, Inspector::TypeBuilder::Canvas::TraceLogId*);
+    void stopCapturing(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&);
+    void dropTraceLog(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&);
+    void traceLog(ErrorString*, const String&, const int*, const int*, RefPtr<Inspector::TypeBuilder::Canvas::TraceLog>*);
+    void replayTraceLog(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&, int, RefPtr<Inspector::TypeBuilder::Canvas::ResourceState>*);
+    void resourceInfo(ErrorString*, const Inspector::TypeBuilder::Canvas::ResourceId&, RefPtr<Inspector::TypeBuilder::Canvas::ResourceInfo>*);
+    void resourceState(ErrorString*, const Inspector::TypeBuilder::Canvas::TraceLogId&, const Inspector::TypeBuilder::Canvas::ResourceId&, RefPtr<Inspector::TypeBuilder::Canvas::ResourceState>*);
 
 private:
-    ScriptObject callWrapContextFunction(const String&, const ScriptObject&);
+    Deprecated::ScriptObject callWrapContextFunction(const String&, const Deprecated::ScriptObject&);
     void callStartCapturingFunction(const String&, ErrorString*, String*);
     void callVoidFunctionWithTraceLogIdArgument(const String&, ErrorString*, const String&);
 };

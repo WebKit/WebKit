@@ -28,27 +28,30 @@
 #if ENABLE(INSPECTOR)
 
 #include "ApplicationCacheHost.h"
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
 #include "InspectorFrontend.h"
+#include "InspectorWebAgentBase.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
+
+namespace Inspector {
+class InspectorObject;
+class InspectorValue;
+}
 
 namespace WebCore {
 
 class Frame;
-class InspectorArray;
 class InspectorAgent;
 class InspectorApplicationCacheFrontendDispatcher;
-class InspectorObject;
 class InspectorPageAgent;
-class InspectorValue;
 class InstrumentingAgents;
 class Page;
 class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorApplicationCacheAgent : public InspectorBaseAgent, public InspectorApplicationCacheBackendDispatcherHandler {
+class InspectorApplicationCacheAgent : public InspectorAgentBase, public InspectorApplicationCacheBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorApplicationCacheAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
@@ -57,25 +60,22 @@ public:
     }
     ~InspectorApplicationCacheAgent() { }
 
-    // InspectorBaseAgent
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
-    // InspectorInstrumentation API
     void updateApplicationCacheStatus(Frame*);
     void networkStateChanged();
 
-    // ApplicationCache API for InspectorFrontend
     virtual void enable(ErrorString*);
-    virtual void getFramesWithManifests(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::ApplicationCache::FrameWithManifest>>& result);
+    virtual void getFramesWithManifests(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::ApplicationCache::FrameWithManifest>>& result);
     virtual void getManifestForFrame(ErrorString*, const String& frameId, String* manifestURL);
-    virtual void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<TypeBuilder::ApplicationCache::ApplicationCache>&);
+    virtual void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCache>&);
 
 private:
     InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorPageAgent*);
-    PassRefPtr<TypeBuilder::ApplicationCache::ApplicationCache> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);
-    PassRefPtr<TypeBuilder::Array<TypeBuilder::ApplicationCache::ApplicationCacheResource>> buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
-    PassRefPtr<TypeBuilder::ApplicationCache::ApplicationCacheResource> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
+    PassRefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCache> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);
+    PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource>> buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
+    PassRefPtr<Inspector::TypeBuilder::ApplicationCache::ApplicationCacheResource> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
 
     DocumentLoader* assertFrameWithDocumentLoader(ErrorString*, String frameId);
 

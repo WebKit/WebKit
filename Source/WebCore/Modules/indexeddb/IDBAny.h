@@ -29,8 +29,8 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKeyPath.h"
-#include "ScriptValue.h"
 #include "ScriptWrappable.h"
+#include <bindings/ScriptValue.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -101,7 +101,7 @@ public:
     PassRefPtr<IDBIndex> idbIndex();
     PassRefPtr<IDBObjectStore> idbObjectStore();
     PassRefPtr<IDBTransaction> idbTransaction();
-    const ScriptValue& scriptValue();
+    const Deprecated::ScriptValue& scriptValue();
     int64_t integer();
     const String& string();
     const IDBKeyPath& keyPath() { return m_idbKeyPath; };
@@ -118,7 +118,7 @@ private:
     explicit IDBAny(PassRefPtr<IDBTransaction>);
     explicit IDBAny(const IDBKeyPath&);
     explicit IDBAny(const String&);
-    explicit IDBAny(const ScriptValue&);
+    explicit IDBAny(const Deprecated::ScriptValue&);
     explicit IDBAny(int64_t);
 
     const Type m_type;
@@ -133,7 +133,7 @@ private:
     const RefPtr<IDBObjectStore> m_idbObjectStore;
     const RefPtr<IDBTransaction> m_idbTransaction;
     const IDBKeyPath m_idbKeyPath;
-    const ScriptValue m_scriptValue;
+    const Deprecated::ScriptValue m_scriptValue;
     const String m_string;
     const int64_t m_integer;
 };

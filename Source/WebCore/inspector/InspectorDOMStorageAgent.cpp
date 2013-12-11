@@ -41,7 +41,6 @@
 #include "Frame.h"
 #include "InspectorFrontend.h"
 #include "InspectorPageAgent.h"
-#include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -50,13 +49,15 @@
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "VoidCallback.h"
-
+#include <inspector/InspectorValues.h>
 #include <wtf/Vector.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
-    : InspectorBaseAgent(ASCIILiteral("DOMStorage"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("DOMStorage"), instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_enabled(false)
 {
@@ -69,7 +70,7 @@ InspectorDOMStorageAgent::~InspectorDOMStorageAgent()
     m_instrumentingAgents = 0;
 }
 
-void InspectorDOMStorageAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorDOMStorageAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorDOMStorageFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorDOMStorageBackendDispatcher::create(backendDispatcher, this);
@@ -93,7 +94,7 @@ void InspectorDOMStorageAgent::disable(ErrorString*)
     m_enabled = false;
 }
 
-void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, RefPtr<TypeBuilder::Array<TypeBuilder::Array<String>>>& items)
+void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Array<String>>>& items)
 {
     Frame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
@@ -103,13 +104,13 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, cons
         return;
     }
 
-    RefPtr<TypeBuilder::Array<TypeBuilder::Array<String>>> storageItems = TypeBuilder::Array<TypeBuilder::Array<String>>::create();
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Array<String>>> storageItems = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Array<String>>::create();
 
     for (unsigned i = 0; i < storageArea->length(); ++i) {
         String key = storageArea->key(i);
         String value = storageArea->item(key);
 
-        RefPtr<TypeBuilder::Array<String>> entry = TypeBuilder::Array<String>::create();
+        RefPtr<Inspector::TypeBuilder::Array<String>> entry = Inspector::TypeBuilder::Array<String>::create();
         entry->addItem(key);
         entry->addItem(value);
         storageItems->addItem(entry.release());
@@ -157,9 +158,9 @@ String InspectorDOMStorageAgent::storageId(Storage* storage)
     return storageId(securityOrigin.get(), isLocalStorage)->toJSONString();
 }
 
-PassRefPtr<TypeBuilder::DOMStorage::StorageId> InspectorDOMStorageAgent::storageId(SecurityOrigin* securityOrigin, bool isLocalStorage)
+PassRefPtr<Inspector::TypeBuilder::DOMStorage::StorageId> InspectorDOMStorageAgent::storageId(SecurityOrigin* securityOrigin, bool isLocalStorage)
 {
-    return TypeBuilder::DOMStorage::StorageId::create()
+    return Inspector::TypeBuilder::DOMStorage::StorageId::create()
         .setSecurityOrigin(securityOrigin->toRawString())
         .setIsLocalStorage(isLocalStorage).release();
 }
@@ -169,7 +170,7 @@ void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, con
     if (!m_frontendDispatcher || !m_enabled)
         return;
 
-    RefPtr<TypeBuilder::DOMStorage::StorageId> id = storageId(securityOrigin, storageType == LocalStorage);
+    RefPtr<Inspector::TypeBuilder::DOMStorage::StorageId> id = storageId(securityOrigin, storageType == LocalStorage);
 
     if (key.isNull())
         m_frontendDispatcher->domStorageItemsCleared(id);

@@ -30,7 +30,7 @@
 #include "JSDictionary.h"
 #include "JSEventListener.h"
 #include "NotImplemented.h"
-#include "ScriptValue.h"
+#include <bindings/ScriptValue.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -92,7 +92,7 @@ PassRefPtr<EventListener> Dictionary::getEventListener(const char* propertyName,
     if (!m_dictionary.isValid())
         return 0;
 
-    ScriptValue eventListener;
+    Deprecated::ScriptValue eventListener;
     if (!m_dictionary.tryGetProperty(propertyName, eventListener))
         return 0;
     if (eventListener.hasNoValue())

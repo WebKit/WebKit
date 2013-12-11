@@ -27,12 +27,12 @@
 #ifndef InspectorBackendDispatcher_h
 #define InspectorBackendDispatcher_h
 
-#include "InspectorTypeBuilder.h"
+#include "InspectorValues.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace Inspector {
 
 class InspectorBackendDispatcher;
 class InspectorFrontendChannel;
@@ -47,15 +47,13 @@ protected:
     RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
 };
 
-class InspectorBackendDispatcher : public RefCounted<InspectorBackendDispatcher> {
+class JS_EXPORT_PRIVATE InspectorBackendDispatcher : public RefCounted<InspectorBackendDispatcher> {
 public:
     static PassRefPtr<InspectorBackendDispatcher> create(InspectorFrontendChannel*);
-    virtual ~InspectorBackendDispatcher() { }
 
-    class CallbackBase: public RefCounted<CallbackBase> {
+    class JS_EXPORT_PRIVATE CallbackBase : public RefCounted<CallbackBase> {
     public:
         CallbackBase(PassRefPtr<InspectorBackendDispatcher>, int id);
-        virtual ~CallbackBase() { }
 
         bool isActive() const;
         void sendFailure(const ErrorString&);
@@ -98,13 +96,10 @@ public:
 private:
     InspectorBackendDispatcher(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
 
-    template<typename ReturnValueType, typename ValueType, typename DefaultValueType>
-    static ReturnValueType getPropertyValue(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors, DefaultValueType defaultValue, bool (*asMethod)(InspectorValue*, ValueType*), const char* typeName);
-
     InspectorFrontendChannel* m_inspectorFrontendChannel;
     HashMap<String, InspectorSupplementalBackendDispatcher*> m_dispatchers;
 };
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // !defined(InspectorBackendDispatcher_h)

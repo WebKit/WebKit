@@ -33,8 +33,8 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBaseAgent.h"
-
+#include "InspectorBackendDispatchers.h"
+#include "InspectorWebAgentBase.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -44,7 +44,7 @@ class Page;
 
 typedef String ErrorString;
 
-class InspectorInputAgent : public InspectorBaseAgent, public InspectorInputBackendDispatcherHandler {
+class InspectorInputAgent : public InspectorAgentBase, public InspectorInputBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorInputAgent);
 public:
     static PassOwnPtr<InspectorInputAgent> create(InstrumentingAgents* instrumentingAgents, Page* page)
@@ -54,7 +54,7 @@ public:
 
     ~InspectorInputAgent();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     // Methods called from the frontend for simulating input.

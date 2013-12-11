@@ -1,3 +1,593 @@
+2013-12-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Push More Inspector Required Classes Down into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=125324
+
+        Reviewed by Timothy Hatcher.
+
+        Part 1: Push down core inspector classes.
+
+          - Move InspectAgentBase, InspectorAgentRegistry, InspectorBackendDispatcher, InspectorValues
+            down to JavaScriptCore and into the Inspector namespace.
+          - Add forwarding headers for JavaScriptCore/inspector files.
+          - Use the Inspector namespace where appropriate.
+          - Rename InspectorBaseAgent to InspectorAgentBase for clarity.
+
+        Part 2: Push Script wrapper classes down into JavaScriptCore/bindings.
+
+          - Move ScriptObject and ScriptValue into JavaScriptCore but namespace Deprecated
+          - Add forwarding headers
+          - Use Deprecated::ScriptObject and Deprecated::ScriptValue everywhere.
+
+        Part 3: Push Down ScriptFunctionCall
+
+          - Move ScriptFunctionCall to JavaScriptCore/bindings into namespace Deprecated.
+          - Give constructor a function to all for a different JSC::call, because
+            WebCore ScriptFunctionCall's use JSMainThreadExecState when isMainThread.
+          - Prefer Deprecated::ScriptFunctionCall everywhere it is used in WebCore.
+
+        Part 4: Extract InspectorTypeBuilder helper functions
+
+          - There is a chunk of InspectorTypeBuilder that never changes. Extract it into
+            its own file, InspectorTypeBuilder.h in JSC/inspector, Inspector namespace.
+          - This moves TypeBuilder from namespace WebCore to namespace Inspector
+          - Rename the WebCore generated InspectorTypeBuilder to InspectorWebTypeBuilders,
+            eventually the CodeGenerator script will do this for more then TypeBuilders
+            and there will be "JS" TypeBuilders and "Web" TypeBuilders files.
+
+        No new tests. No change in functionality, just moving things around.
+
+        * CMakeLists.txt:
+        * ForwardingHeaders/bindings/ScriptFunctionCall.h: Added.
+        * ForwardingHeaders/bindings/ScriptObject.h: Added.
+        * ForwardingHeaders/bindings/ScriptValue.h: Added.
+        * ForwardingHeaders/inspector/InspectorAgentBase.h: Added.
+        * ForwardingHeaders/inspector/InspectorAgentRegistry.h: Added.
+        * ForwardingHeaders/inspector/InspectorBackendDispatcher.h: Added.
+        * ForwardingHeaders/inspector/InspectorTypeBuilder.h: Added.
+        * ForwardingHeaders/inspector/InspectorValues.h: Added.
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Modules/indexeddb/IDBAny.cpp:
+        (WebCore::IDBAny::scriptValue):
+        (WebCore::IDBAny::IDBAny):
+        * Modules/indexeddb/IDBAny.h:
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::key):
+        (WebCore::IDBCursor::primaryKey):
+        (WebCore::IDBCursor::value):
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::setValueReady):
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::cmp):
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::count):
+        (WebCore::IDBIndex::openKeyCursor):
+        (WebCore::IDBIndex::get):
+        (WebCore::IDBIndex::getKey):
+        * Modules/indexeddb/IDBIndex.h:
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::openKeyCursor):
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::lowerValue):
+        (WebCore::IDBKeyRange::upperValue):
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        * Modules/indexeddb/IDBKeyRange.h:
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::get):
+        (WebCore::generateIndexKeysForValue):
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        (WebCore::IDBObjectStore::deleteFunction):
+        (WebCore::IDBObjectStore::openCursor):
+        (WebCore::IDBObjectStore::count):
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::setResultCursor):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::onSuccessInternal):
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/mediastream/CapabilityRange.cpp:
+        (WebCore::scriptValue):
+        (WebCore::CapabilityRange::min):
+        (WebCore::CapabilityRange::max):
+        * Modules/mediastream/CapabilityRange.h:
+        * Modules/mediastream/MediaTrackConstraint.h:
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        * Modules/plugins/QuickTimePluginReplacement.cpp:
+        * Modules/plugins/QuickTimePluginReplacement.h:
+        * UseJSC.cmake:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/Dictionary.h:
+        (WebCore::Dictionary::getEventListener):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromScriptValueAndKeyPath):
+        (WebCore::injectIDBKeyIntoScriptValue):
+        (WebCore::canInjectIDBKeyIntoScriptValue):
+        (WebCore::deserializeIDBValue):
+        (WebCore::deserializeIDBValueBuffer):
+        (WebCore::idbKeyToScriptValue):
+        (WebCore::scriptValueToIDBKey):
+        * bindings/js/IDBBindingUtilities.h:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDictionary.h:
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::scriptValueAsNode):
+        (WebCore::InjectedScriptHost::nodeAsScriptValue):
+        (WebCore::JSInjectedScriptHost::inspectedObject):
+        (WebCore::JSInjectedScriptHost::inspect):
+        * bindings/js/JSInjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::createInjectedScript):
+        * bindings/js/JSMainThreadExecState.cpp:
+        (WebCore::functionCallHandlerFromAnyThread):
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::currentState):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::data):
+        (WebCore::handleInitMessageEvent):
+        * bindings/js/ScheduledAction.cpp:
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptArguments):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::evaluate):
+        (WebCore::ScriptController::executeScriptInWorld):
+        (WebCore::ScriptController::executeScript):
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setScriptSource):
+        (WebCore::ScriptDebugServer::updateCallStack):
+        (WebCore::ScriptDebugServer::dispatchDidPause):
+        (WebCore::ScriptDebugServer::runScript):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/ScriptGlobalObject.cpp: Renamed from Source/WebCore/bindings/js/ScriptObject.cpp.
+        (WebCore::handleException):
+        (WebCore::ScriptGlobalObject::set):
+        (WebCore::ScriptGlobalObject::get):
+        (WebCore::ScriptGlobalObject::remove):
+        * bindings/js/ScriptGlobalObject.h: Copied from Source/WebCore/inspector/ScriptCallStack.h.
+        (WebCore::ScriptGlobalObject::ScriptGlobalObject):
+        * bindings/js/ScriptObject.h: Removed.
+        * bindings/js/ScriptProfile.cpp:
+        (WebCore::buildInspectorObjectFor):
+        (WebCore::ScriptProfile::buildInspectorObjectForHead):
+        (WebCore::ScriptProfile::buildInspectorObjectForBottomUpHead):
+        * bindings/js/ScriptProfile.h:
+        * bindings/js/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::objectByHeapObjectId):
+        (WebCore::ScriptProfiler::getHeapObjectId):
+        * bindings/js/ScriptProfiler.h:
+        * bindings/js/ScriptState.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::deserializeForInspector):
+        (WebCore::SerializedScriptValue::serialize):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.h:
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        (WebCore::WorkerScriptController::setException):
+        * bindings/js/WorkerScriptController.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjAnyAttribute):
+        * dom/CustomEvent.cpp:
+        (WebCore::CustomEvent::initCustomEvent):
+        * dom/CustomEvent.h:
+        (WebCore::CustomEvent::detail):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEvent::initMessageEvent):
+        * dom/MessageEvent.h:
+        (WebCore::MessageEvent::create):
+        (WebCore::MessageEvent::dataAsScriptValue):
+        * dom/PopStateEvent.h:
+        (WebCore::PopStateEvent::state):
+        * dom/ScriptElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/parser/XSSAuditor.cpp:
+        * html/parser/XSSAuditorDelegate.cpp:
+        * inspector/CodeGeneratorInspector.py:
+        (RawTypes.BaseType.get_raw_validator_call_text):
+        (RawTypes.Object.get_array_item_raw_c_type_text):
+        (RawTypes.Any.get_array_item_raw_c_type_text):
+        (RawTypes.Array.get_array_item_raw_c_type_text):
+        (CommandReturnPassModel.OptOutput.get_return_var_type):
+        (CommandReturnPassModel.OptOutput.get_output_parameter_type):
+        (TypeModel.ExactlyInt.get_input_param_type_text):
+        (TypeModel.ExactlyInt.get_opt_output_type_):
+        (TypeModel.init_class):
+        (TypeBindings.create_named_type_declaration.Helper):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_code_generator.CodeGenerator.generate_type_builder):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_setter_value_expression_pattern):
+        (TypeBindings.create_type_declaration_.ClassBinding.get_code_generator.CodeGenerator.generate_type_builder):
+        (Inspector):
+        (ArrayBinding.get_array_item_c_type_text):
+        (Generator.go):
+        (Generator.process_command):
+        * inspector/CodeGeneratorInspectorStrings.py:
+        (void):
+        (InspectorFrontend_h):
+        (InspectorBackendDispatchers_h):
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::messageSourceValue):
+        (WebCore::messageTypeValue):
+        (WebCore::messageLevelValue):
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/ConsoleMessage.h:
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::buildObjectForSearchMatch):
+        (WebCore::ContentSearchUtils::searchInTextByLines):
+        * inspector/ContentSearchUtils.h:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::InjectedScript):
+        (WebCore::InjectedScript::evaluate):
+        (WebCore::InjectedScript::callFunctionOn):
+        (WebCore::InjectedScript::evaluateOnCallFrame):
+        (WebCore::InjectedScript::getFunctionDetails):
+        (WebCore::InjectedScript::getProperties):
+        (WebCore::InjectedScript::getInternalProperties):
+        (WebCore::InjectedScript::nodeForObjectId):
+        (WebCore::InjectedScript::releaseObject):
+        (WebCore::InjectedScript::wrapCallFrames):
+        (WebCore::InjectedScript::wrapObject):
+        (WebCore::InjectedScript::wrapTable):
+        (WebCore::InjectedScript::wrapNode):
+        (WebCore::InjectedScript::findObjectById):
+        (WebCore::InjectedScript::inspectNode):
+        (WebCore::InjectedScript::releaseObjectGroup):
+        (WebCore::InjectedScript::nodeAsScriptValue):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptBase.cpp:
+        (WebCore::InjectedScriptBase::InjectedScriptBase):
+        (WebCore::InjectedScriptBase::initialize):
+        (WebCore::InjectedScriptBase::injectedScriptObject):
+        (WebCore::InjectedScriptBase::callFunctionWithEvalEnabled):
+        (WebCore::InjectedScriptBase::makeCall):
+        (WebCore::InjectedScriptBase::makeEvalCall):
+        * inspector/InjectedScriptBase.h:
+        * inspector/InjectedScriptCanvasModule.cpp:
+        (WebCore::InjectedScriptCanvasModule::wrapCanvas2DContext):
+        (WebCore::InjectedScriptCanvasModule::wrapWebGLContext):
+        (WebCore::InjectedScriptCanvasModule::callWrapContextFunction):
+        (WebCore::InjectedScriptCanvasModule::markFrameEnd):
+        (WebCore::InjectedScriptCanvasModule::callStartCapturingFunction):
+        (WebCore::InjectedScriptCanvasModule::callVoidFunctionWithTraceLogIdArgument):
+        (WebCore::InjectedScriptCanvasModule::traceLog):
+        (WebCore::InjectedScriptCanvasModule::replayTraceLog):
+        (WebCore::InjectedScriptCanvasModule::resourceInfo):
+        (WebCore::InjectedScriptCanvasModule::resourceState):
+        * inspector/InjectedScriptCanvasModule.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::inspectImpl):
+        (WebCore::InjectedScriptHost::InspectableObject::get):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::injectedScriptFor):
+        * inspector/InjectedScriptManager.h:
+        * inspector/InjectedScriptModule.cpp:
+        (WebCore::InjectedScriptModule::ensureInjected):
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorAgent::inspect):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        (WebCore::InspectorApplicationCacheAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests):
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCacheForFrame):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCache):
+        (WebCore::InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::SelectorProfile::toInspectorObject):
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        (WebCore::InspectorCSSAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::getInlineStylesForNode):
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        (WebCore::InspectorCSSAgent::getAllStyleSheets):
+        (WebCore::InspectorCSSAgent::getStyleSheet):
+        (WebCore::InspectorCSSAgent::setStyleText):
+        (WebCore::InspectorCSSAgent::setPropertyText):
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::addRule):
+        (WebCore::InspectorCSSAgent::getSupportedCSSProperties):
+        (WebCore::InspectorCSSAgent::getNamedFlowCollection):
+        (WebCore::InspectorCSSAgent::stopSelectorProfiler):
+        (WebCore::InspectorCSSAgent::stopSelectorProfilerImpl):
+        (WebCore::InspectorCSSAgent::asInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::collectStyleSheets):
+        (WebCore::InspectorCSSAgent::viaInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::detectOrigin):
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+        (WebCore::InspectorCSSAgent::buildArrayForRuleList):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+        (WebCore::InspectorCSSAgent::buildArrayForRegions):
+        (WebCore::InspectorCSSAgent::buildObjectForNamedFlow):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::InspectorCanvasAgent):
+        (WebCore::InspectorCanvasAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorCanvasAgent::wrapCanvas2DRenderingContextForInstrumentation):
+        (WebCore::InspectorCanvasAgent::wrapWebGLRenderingContextForInstrumentation):
+        (WebCore::InspectorCanvasAgent::notifyRenderingContextWasWrapped):
+        (WebCore::InspectorCanvasAgent::injectedScriptCanvasModule):
+        * inspector/InspectorCanvasAgent.h:
+        * inspector/InspectorCanvasInstrumentation.h:
+        (WebCore::InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrumentation):
+        (WebCore::InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation):
+        * inspector/InspectorClient.cpp:
+        * inspector/InspectorClient.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectableHeapObject::get):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorDOMAgent::getDocument):
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::querySelectorAll):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::getSearchResults):
+        (WebCore::InspectorDOMAgent::resolveNode):
+        (WebCore::InspectorDOMAgent::getAttributes):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::buildArrayForElementAttributes):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        (WebCore::InspectorDOMAgent::didCommitLoad):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::styleAttributeInvalidated):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent):
+        (WebCore::InspectorDOMDebuggerAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorDOMDebuggerAgent::descriptionForDOMEvent):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageItems):
+        (WebCore::InspectorDOMStorageAgent::storageId):
+        (WebCore::InspectorDOMStorageAgent::didDispatchDOMStorageEvent):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::InspectorDatabaseAgent):
+        (WebCore::InspectorDatabaseAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorDatabaseAgent::getDatabaseTableNames):
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::didCreateFrontendAndBackend):
+        (WebCore::breakpointActionTypeForString):
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::resolveBreakpoint):
+        (WebCore::scriptToInspectorObject):
+        (WebCore::InspectorDebuggerAgent::searchInContent):
+        (WebCore::InspectorDebuggerAgent::setScriptSource):
+        (WebCore::InspectorDebuggerAgent::getFunctionDetails):
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        (WebCore::InspectorDebuggerAgent::compileScript):
+        (WebCore::InspectorDebuggerAgent::runScript):
+        (WebCore::InspectorDebuggerAgent::currentCallFrames):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        (WebCore::InspectorDebuggerAgent::didContinue):
+        (WebCore::InspectorDebuggerAgent::clear):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorForwarding.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::evaluateAsBoolean):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::FrontendMenuProvider::create):
+        (WebCore::FrontendMenuProvider::disconnect):
+        (WebCore::FrontendMenuProvider::FrontendMenuProvider):
+        (WebCore::FrontendMenuProvider::contextMenuItemSelected):
+        (WebCore::FrontendMenuProvider::contextMenuCleared):
+        (WebCore::InspectorFrontendHost::showContextMenu):
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        (WebCore::InspectorHeapProfilerAgent::InspectorHeapProfilerAgent):
+        (WebCore::InspectorHeapProfilerAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorHeapProfilerAgent::createSnapshotHeader):
+        (WebCore::InspectorHeapProfilerAgent::getProfileHeaders):
+        (WebCore::InspectorHeapProfilerAgent::getObjectByHeapObjectId):
+        (WebCore::InspectorHeapProfilerAgent::getHeapObjectId):
+        * inspector/InspectorHeapProfilerAgent.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::InspectorIndexedDBAgent::InspectorIndexedDBAgent):
+        (WebCore::InspectorIndexedDBAgent::didCreateFrontendAndBackend):
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorInputAgent.cpp:
+        (WebCore::InspectorInputAgent::InspectorInputAgent):
+        (WebCore::InspectorInputAgent::didCreateFrontendAndBackend):
+        * inspector/InspectorInputAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::InspectorLayerTreeAgent):
+        (WebCore::InspectorLayerTreeAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorLayerTreeAgent::layersForNode):
+        (WebCore::InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy):
+        (WebCore::InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy):
+        (WebCore::InspectorLayerTreeAgent::buildObjectForLayer):
+        (WebCore::InspectorLayerTreeAgent::buildObjectForIntRect):
+        (WebCore::InspectorLayerTreeAgent::reasonsForCompositingLayer):
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorMemoryAgent::InspectorMemoryAgent):
+        * inspector/InspectorMemoryAgent.h:
+        * inspector/InspectorOverlay.cpp:
+        * inspector/InspectorOverlay.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::resourceTypeJson):
+        (WebCore::InspectorPageAgent::cachedResourceTypeJson):
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        (WebCore::InspectorPageAgent::didCreateFrontendAndBackend):
+        (WebCore::buildObjectForCookie):
+        (WebCore::buildArrayForCookies):
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::getResourceTree):
+        (WebCore::InspectorPageAgent::searchInResource):
+        (WebCore::buildObjectForSearchResult):
+        (WebCore::InspectorPageAgent::searchInResources):
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::createProfileHeader):
+        (WebCore::InspectorProfilerAgent::createSnapshotHeader):
+        (WebCore::InspectorProfilerAgent::getProfileHeaders):
+        (WebCore::InspectorProfilerAgent::getCPUProfile):
+        (WebCore::InspectorProfilerAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorProfilerAgent::getObjectByHeapObjectId):
+        (WebCore::InspectorProfilerAgent::getHeapObjectId):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didCreateFrontendAndBackend):
+        (WebCore::buildObjectForTiming):
+        (WebCore::buildObjectForResourceRequest):
+        (WebCore::buildObjectForResourceResponse):
+        (WebCore::buildObjectForCachedResource):
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorResourceAgent::buildInitiatorObject):
+        (WebCore::InspectorResourceAgent::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketFrame):
+        (WebCore::InspectorResourceAgent::didSendWebSocketFrame):
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (WebCore::buildErrorRangeObject):
+        (WebCore::InspectorRuntimeAgent::parse):
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        (WebCore::InspectorRuntimeAgent::callFunctionOn):
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::buildSourceRangeObject):
+        (WebCore::buildMediaObject):
+        (WebCore::fillMediaListChain):
+        (WebCore::InspectorStyle::buildObjectForStyle):
+        (WebCore::InspectorStyle::buildArrayForComputedStyle):
+        (WebCore::InspectorStyle::styleWithProperties):
+        (WebCore::InspectorStyleSheet::create):
+        (WebCore::InspectorStyleSheet::InspectorStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheetInfo):
+        (WebCore::selectorsFromSource):
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::buildObjectForStyle):
+        (WebCore::InspectorStyleSheet::resourceStyleSheetText):
+        (WebCore::InspectorStyleSheet::buildArrayForRuleList):
+        (WebCore::InspectorStyleSheetForInlineStyle::create):
+        (WebCore::InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle):
+        * inspector/InspectorStyleSheet.h:
+        (WebCore::InspectorCSSId::InspectorCSSId):
+        (WebCore::InspectorStyleSheet::canBind):
+        * inspector/InspectorStyleTextEditor.cpp:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didCreateFrontendAndBackend):
+        (WebCore::toProtocol):
+        (WebCore::InspectorTimelineAgent::innerAddRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::setDOMCounters):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::sendEvent):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::TimelineRecordEntry::TimelineRecordEntry):
+        * inspector/InspectorWebAgentBase.h: Renamed from Source/WebCore/inspector/InspectorAgentRegistry.h.
+        (WebCore::InspectorAgentBase::InspectorAgentBase):
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::InspectorWorkerAgent):
+        (WebCore::InspectorWorkerAgent::didCreateFrontendAndBackend):
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/InstrumentingAgents.cpp:
+        * inspector/NetworkResourcesData.cpp:
+        * inspector/PageConsoleAgent.cpp:
+        (WebCore::InspectableNode::get):
+        * inspector/PageDebuggerAgent.cpp:
+        * inspector/PageDebuggerAgent.h:
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::didCreateFrontendAndBackend):
+        * inspector/PageRuntimeAgent.h:
+        * inspector/ScriptArguments.cpp:
+        (WebCore::ScriptArguments::create):
+        (WebCore::ScriptArguments::ScriptArguments):
+        (WebCore::ScriptArguments::argumentAt):
+        (WebCore::ScriptArguments::getFirstArgumentAsString):
+        * inspector/ScriptArguments.h:
+        * inspector/ScriptCallFrame.cpp:
+        (WebCore::ScriptCallFrame::buildInspectorObject):
+        * inspector/ScriptCallFrame.h:
+        * inspector/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::buildInspectorArray):
+        * inspector/ScriptCallStack.h:
+        * inspector/ScriptDebugListener.h:
+        * inspector/TimelineRecordFactory.cpp:
+        * inspector/TimelineRecordFactory.h:
+        (WebCore::TimelineRecordFactory::createWebSocketCreateData):
+        (WebCore::TimelineRecordFactory::createGenericWebSocketData):
+        * inspector/WorkerConsoleAgent.cpp:
+        * inspector/WorkerDebuggerAgent.cpp:
+        * inspector/WorkerInspectorController.cpp:
+        * inspector/WorkerInspectorController.h:
+        * inspector/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::didCreateFrontendAndBackend):
+        * inspector/WorkerRuntimeAgent.h:
+        * page/Console.cpp:
+        * page/ContentSecurityPolicy.cpp:
+        * page/Frame.cpp:
+        * page/PageConsole.cpp:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::performRequest):
+        * testing/Internals.cpp:
+        (WebCore::Internals::parserMetaData):
+        * testing/Internals.h:
+        * workers/SharedWorkerGlobalScope.cpp:
+        (WebCore::createConnectEvent):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::importScripts):
+        * workers/WorkerThread.cpp:
+        * xml/XMLTreeViewer.cpp:
+        * xml/parser/XMLDocumentParser.cpp:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+
 2013-12-11  Laszlo Vidacs  <lac@inf.u-szeged.hu>
 
         Store SHA1 hash in std::array

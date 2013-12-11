@@ -41,6 +41,8 @@
 #include "PageConsole.h"
 #include "PageScriptDebugServer.h"
 
+using namespace Inspector;
+
 namespace WebCore {
 
 PassOwnPtr<PageDebuggerAgent> PageDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay)

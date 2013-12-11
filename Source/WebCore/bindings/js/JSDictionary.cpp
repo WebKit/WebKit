@@ -37,7 +37,6 @@
 #include "JSStorage.h"
 #include "JSTrackCustom.h"
 #include "JSVoidCallback.h"
-#include "ScriptValue.h"
 #include "SerializedScriptValue.h"
 #include <runtime/JSTypedArrays.h>
 #include <wtf/HashMap.h>
@@ -144,9 +143,9 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<String>& 
     }
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, ScriptValue& result)
+void JSDictionary::convertValue(ExecState* exec, JSValue value, Deprecated::ScriptValue& result)
 {
-    result = ScriptValue(exec->vm(), value);
+    result = Deprecated::ScriptValue(exec->vm(), value);
 }
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, RefPtr<SerializedScriptValue>& result)

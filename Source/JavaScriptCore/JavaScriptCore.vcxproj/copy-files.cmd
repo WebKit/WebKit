@@ -39,6 +39,7 @@ echo Copying private headers...
 mkdir "%PrivateHeadersDirectory%" 2>NUL
 for %%d in (
     assembler
+    bindings
     bytecode
     dfg
     disassembler

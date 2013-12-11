@@ -35,8 +35,9 @@
 #include "JSDOMWindow.h"
 #include "MainFrame.h"
 #include "Page.h"
-#include "ScriptObject.h"
 #include "ScriptState.h"
+#include <bindings/ScriptObject.h>
+#include <bindings/ScriptValue.h>
 #include <profiler/LegacyProfiler.h>
 #include <wtf/Forward.h>
 
@@ -47,12 +48,12 @@ void ScriptProfiler::collectGarbage()
     gcController().garbageCollectSoon();
 }
 
-ScriptObject ScriptProfiler::objectByHeapObjectId(unsigned)
+Deprecated::ScriptObject ScriptProfiler::objectByHeapObjectId(unsigned)
 {
-    return ScriptObject();
+    return Deprecated::ScriptObject();
 }
 
-unsigned ScriptProfiler::getHeapObjectId(const ScriptValue&)
+unsigned ScriptProfiler::getHeapObjectId(const Deprecated::ScriptValue&)
 {
     return 0;
 }

@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,40 +32,24 @@
 #ifndef ScriptObject_h
 #define ScriptObject_h
 
-#include "ScriptState.h"
+#include "JSObject.h"
 #include "ScriptValue.h"
 
-#include <heap/Strong.h>
-#include <runtime/JSObject.h>
+namespace Deprecated {
 
-namespace WebCore {
+class ScriptObject : public ScriptValue {
+public:
+    JS_EXPORT_PRIVATE ScriptObject(JSC::ExecState*, JSC::JSObject*);
+    JS_EXPORT_PRIVATE ScriptObject(JSC::ExecState*, const ScriptValue&);
+    ScriptObject() : m_scriptState(nullptr) { }
 
-    class InspectorFrontendHost;
+    JSC::JSObject* jsObject() const { return asObject(jsValue()); }
+    JSC::ExecState* scriptState() const { return m_scriptState; }
 
-    class ScriptObject : public ScriptValue {
-    public:
-        ScriptObject(JSC::ExecState*, JSC::JSObject*);
-        ScriptObject(JSC::ExecState*, const ScriptValue&);
-        ScriptObject() : m_scriptState(0) { }
-        JSC::JSObject* jsObject() const { return asObject(jsValue()); }
-        JSC::ExecState* scriptState() const { return m_scriptState; }
+protected:
+    JSC::ExecState* m_scriptState;
+};
 
-    protected:
-        JSC::ExecState* m_scriptState;
-    };
-
-    class ScriptGlobalObject {
-    public:
-        static bool set(JSC::ExecState*, const char* name, const ScriptObject&);
-#if ENABLE(INSPECTOR)
-        static bool set(JSC::ExecState*, const char* name, InspectorFrontendHost*);
-#endif
-        static bool get(JSC::ExecState*, const char* name, ScriptObject&);
-        static bool remove(JSC::ExecState*, const char* name);
-    private:
-        ScriptGlobalObject() { }
-    };
-
-}
+} // namespace Deprecated
 
 #endif // ScriptObject_h

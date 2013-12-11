@@ -33,25 +33,29 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
+#include "InspectorWebAgentBase.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+
+namespace Inspector {
+class InspectorArray;
+class InspectorObject;
+class InspectorValue;
+}
 
 namespace WebCore {
 
 class InjectedScript;
 class InjectedScriptManager;
-class InspectorArray;
-class InspectorObject;
-class InspectorValue;
 class InstrumentingAgents;
 class ScriptDebugServer;
 class WorkerGlobalScope;
 
 typedef String ErrorString;
 
-class InspectorRuntimeAgent : public InspectorBaseAgent, public InspectorRuntimeBackendDispatcherHandler {
+class InspectorRuntimeAgent : public InspectorAgentBase, public InspectorRuntimeBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
 public:
     virtual ~InspectorRuntimeAgent();
@@ -59,7 +63,7 @@ public:
     // Part of the protocol.
     virtual void enable(ErrorString*) { m_enabled = true; }
     virtual void disable(ErrorString*) { m_enabled = false; }
-    virtual void parse(ErrorString*, const String& expression, TypeBuilder::Runtime::SyntaxErrorType::Enum* result, TypeBuilder::OptOutput<String>* message, RefPtr<TypeBuilder::Runtime::ErrorRange>&);
+    virtual void parse(ErrorString*, const String& expression, Inspector::TypeBuilder::Runtime::SyntaxErrorType::Enum* result, Inspector::TypeBuilder::OptOutput<String>* message, RefPtr<Inspector::TypeBuilder::Runtime::ErrorRange>&);
     virtual void evaluate(ErrorString*,
                   const String& expression,
                   const String* objectGroup,
@@ -68,19 +72,19 @@ public:
                   const int* executionContextId,
                   const bool* returnByValue,
                   const bool* generatePreview,
-                  RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
-                  TypeBuilder::OptOutput<bool>* wasThrown);
+                  RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result,
+                  Inspector::TypeBuilder::OptOutput<bool>* wasThrown);
     virtual void callFunctionOn(ErrorString*,
                         const String& objectId,
                         const String& expression,
-                        const RefPtr<InspectorArray>* optionalArguments,
+                        const RefPtr<Inspector::InspectorArray>* optionalArguments,
                         const bool* doNotPauseOnExceptionsAndMuteConsole,
                         const bool* returnByValue,
                         const bool* generatePreview,
-                        RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
-                        TypeBuilder::OptOutput<bool>* wasThrown);
+                        RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result,
+                        Inspector::TypeBuilder::OptOutput<bool>* wasThrown);
     virtual void releaseObject(ErrorString*, const String& objectId);
-    virtual void getProperties(ErrorString*, const String& objectId, const bool* ownProperties, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::PropertyDescriptor>>& result, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::InternalPropertyDescriptor>>& internalProperties);
+    virtual void getProperties(ErrorString*, const String& objectId, const bool* ownProperties, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor>>& internalProperties);
     virtual void releaseObjectGroup(ErrorString*, const String& objectGroup);
     virtual void run(ErrorString*);
 

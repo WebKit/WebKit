@@ -65,21 +65,21 @@ public:
     PassRefPtr<IDBTransaction> transaction() const { return m_transaction; }
     bool autoIncrement() const { return m_metadata.autoIncrement; }
 
-    PassRefPtr<IDBRequest> add(JSC::ExecState*, ScriptValue&, ExceptionCode&);
-    PassRefPtr<IDBRequest> put(JSC::ExecState*, ScriptValue&, ExceptionCode&);
+    PassRefPtr<IDBRequest> add(JSC::ExecState*, Deprecated::ScriptValue&, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(JSC::ExecState*, Deprecated::ScriptValue&, ExceptionCode&);
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&);
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, const String& direction, ExceptionCode&);
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, const String& direction, IDBDatabaseBackend::TaskType, ExceptionCode&);
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const ScriptValue& key, const String& direction, ExceptionCode&);
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&);
 
-    PassRefPtr<IDBRequest> get(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
     PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
-    PassRefPtr<IDBRequest> add(JSC::ExecState*, ScriptValue&, const ScriptValue& key, ExceptionCode&);
-    PassRefPtr<IDBRequest> put(JSC::ExecState*, ScriptValue&, const ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> add(JSC::ExecState*, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(JSC::ExecState*, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
-    PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
     PassRefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&);
 
     PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext* context, const String& name, const String& keyPath, const Dictionary& options, ExceptionCode& ec) { return createIndex(context, name, IDBKeyPath(keyPath), options, ec); }
@@ -92,10 +92,10 @@ public:
 
     PassRefPtr<IDBRequest> count(ScriptExecutionContext* context, ExceptionCode& ec) { return count(context, static_cast<IDBKeyRange*>(0), ec); }
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
-    PassRefPtr<IDBRequest> count(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
 
-    PassRefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, PassRefPtr<IDBAny> source, JSC::ExecState*, ScriptValue&, const ScriptValue& key, ExceptionCode&);
-    PassRefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, PassRefPtr<IDBAny> source, JSC::ExecState*, ScriptValue&, PassRefPtr<IDBKey>, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, PassRefPtr<IDBAny> source, JSC::ExecState*, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, PassRefPtr<IDBAny> source, JSC::ExecState*, Deprecated::ScriptValue&, PassRefPtr<IDBKey>, ExceptionCode&);
     void markDeleted() { m_deleted = true; }
     void transactionFinished();
 

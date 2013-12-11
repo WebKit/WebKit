@@ -61,7 +61,6 @@
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "ScriptController.h"
-#include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
@@ -69,6 +68,7 @@
 #include "c_instance.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
+#include <bindings/ScriptValue.h>
 #include <runtime/JSCJSValue.h>
 #include <runtime/JSLock.h>
 #include <wtf/ASCIICType.h>
@@ -467,7 +467,7 @@ void PluginView::performRequest(PluginRequest* request)
     
     // Executing a script can cause the plugin view to be destroyed, so we keep a reference to it.
     RefPtr<PluginView> protector(this);
-    ScriptValue result = m_parentFrame->script().executeScript(jsString, request->shouldAllowPopups());
+    Deprecated::ScriptValue result = m_parentFrame->script().executeScript(jsString, request->shouldAllowPopups());
 
     if (targetFrameName.isNull()) {
         String resultString;

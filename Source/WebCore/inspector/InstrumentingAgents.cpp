@@ -40,6 +40,8 @@
 #include "WorkerInspectorController.h"
 #include <wtf/MainThread.h>
 
+using namespace Inspector;
+
 namespace WebCore {
 
 InstrumentingAgents::InstrumentingAgents()

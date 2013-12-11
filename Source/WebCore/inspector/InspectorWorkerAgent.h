@@ -31,12 +31,16 @@
 #ifndef InspectorWorkerAgent_h
 #define InspectorWorkerAgent_h
 
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
+#include "InspectorWebAgentBase.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
-namespace WebCore {
+namespace Inspector {
 class InspectorObject;
+}
+
+namespace WebCore {
 class InspectorWorkerFrontendDispatcher;
 class InstrumentingAgents;
 class URL;
@@ -44,12 +48,12 @@ class WorkerGlobalScopeProxy;
 
 typedef String ErrorString;
 
-class InspectorWorkerAgent : public InspectorBaseAgent, public InspectorWorkerBackendDispatcherHandler {
+class InspectorWorkerAgent : public InspectorAgentBase, public InspectorWorkerBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*);
     ~InspectorWorkerAgent();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     // Called from InspectorInstrumentation
@@ -63,7 +67,7 @@ public:
     virtual void canInspectWorkers(ErrorString*, bool*);
     virtual void connectToWorker(ErrorString*, int workerId);
     virtual void disconnectFromWorker(ErrorString*, int workerId);
-    virtual void sendMessageToWorker(ErrorString*, int workerId, const RefPtr<InspectorObject>& message);
+    virtual void sendMessageToWorker(ErrorString*, int workerId, const RefPtr<Inspector::InspectorObject>& message);
     virtual void setAutoconnectToWorkers(ErrorString*, bool value);
 
 private:

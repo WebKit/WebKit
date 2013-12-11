@@ -294,6 +294,9 @@
     <ClCompile Include="..\assembler\MacroAssembler.cpp" />
     <ClInclude Include="..\API\JSCTestRunnerUtils.h" />
     <ClInclude Include="..\assembler\MacroAssemblerX86Common.cpp" />
+    <ClCompile Include="..\bindings\ScriptFunctionCall.cpp" />
+    <ClCompile Include="..\bindings\ScriptObject.cpp" />
+    <ClCompile Include="..\bindings\ScriptValue.cpp" />
     <ClCompile Include="..\bytecode\ArrayAllocationProfile.cpp" />
     <ClCompile Include="..\bytecode\ArrayProfile.cpp" />
     <ClCompile Include="..\bytecode\BytecodeBasicBlock.cpp" />
@@ -457,6 +460,9 @@
     <ClCompile Include="..\heap\WeakHandleOwner.cpp" />
     <ClCompile Include="..\heap\WeakSet.cpp" />
     <ClCompile Include="..\heap\WriteBarrierSupport.cpp" />
+    <ClCompile Include="..\inspector\InspectorAgentRegistry.cpp" />
+    <ClCompile Include="..\inspector\InspectorBackendDispatcher.cpp" />
+    <ClCompile Include="..\inspector\InspectorValues.cpp" />
     <ClCompile Include="..\interpreter\AbstractPC.cpp" />
     <ClCompile Include="..\interpreter\CallFrame.cpp" />
     <ClCompile Include="..\interpreter\Interpreter.cpp" />
@@ -750,6 +756,9 @@
     <ClInclude Include="..\assembler\MacroAssemblerX86_64.h" />
     <ClInclude Include="..\assembler\RepatchBuffer.h" />
     <ClInclude Include="..\assembler\X86Assembler.h" />
+    <ClInclude Include="..\bindings\ScriptFunctionCall.h" />
+    <ClInclude Include="..\bindings\ScriptObject.h" />
+    <ClInclude Include="..\bindings\ScriptValue.h" />
     <ClInclude Include="..\bytecode\ArrayAllocationProfile.h" />
     <ClInclude Include="..\bytecode\ArrayProfile.h" />
     <ClInclude Include="..\bytecode\ByValInfo.h" />
@@ -1000,7 +1009,12 @@
     <ClInclude Include="..\heap\WeakSet.h" />
     <ClInclude Include="..\heap\WeakSetInlines.h" />
     <ClInclude Include="..\heap\WriteBarrierSupport.h" />
+    <ClInclude Include="..\inspector\InspectorAgentBase.h" />
+    <ClInclude Include="..\inspector\InspectorAgentRegistry.h" />
+    <ClInclude Include="..\inspector\InspectorBackendDispatcher.h" />
     <ClInclude Include="..\inspector\InspectorFrontendChannel.h" />
+    <ClInclude Include="..\inspector\InspectorTypeBuilder.h" />
+    <ClInclude Include="..\inspector\InspectorValues.h" />
     <ClInclude Include="..\interpreter\AbstractPC.h" />
     <ClInclude Include="..\interpreter\CachedCall.h" />
     <ClInclude Include="..\interpreter\CallFrame.h" />

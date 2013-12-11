@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2010 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -37,6 +37,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+namespace Deprecated {
+class ScriptValue;
+}
+
 namespace JSC {
 class ExecState;
 class JSGlobalObject;
@@ -44,15 +48,13 @@ class JSGlobalObject;
 
 namespace WebCore {
 
-class ScriptValue;
-
 class ScriptArguments : public RefCounted<ScriptArguments> {
 public:
-    static PassRefPtr<ScriptArguments> create(JSC::ExecState*, Vector<ScriptValue>& arguments);
+    static PassRefPtr<ScriptArguments> create(JSC::ExecState*, Vector<Deprecated::ScriptValue>& arguments);
 
     ~ScriptArguments();
 
-    const ScriptValue& argumentAt(size_t) const;
+    const Deprecated::ScriptValue& argumentAt(size_t) const;
     size_t argumentCount() const { return m_arguments.size(); }
 
     JSC::ExecState* globalState() const;
@@ -61,10 +63,10 @@ public:
     bool isEqual(ScriptArguments*) const;
 
 private:
-    ScriptArguments(JSC::ExecState*, Vector<ScriptValue>& arguments);
+    ScriptArguments(JSC::ExecState*, Vector<Deprecated::ScriptValue>& arguments);
 
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
-    Vector<ScriptValue> m_arguments;
+    Vector<Deprecated::ScriptValue> m_arguments;
 };
 
 } // namespace WebCore

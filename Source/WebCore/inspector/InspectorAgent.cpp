@@ -42,23 +42,24 @@
 #include "InspectorController.h"
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
-#include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "ResourceRequest.h"
 #include "ScriptController.h"
-#include "ScriptFunctionCall.h"
-#include "ScriptObject.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include <bindings/ScriptValue.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
 InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents)
-    : InspectorBaseAgent(ASCIILiteral("Inspector"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("Inspector"), instrumentingAgents)
     , m_inspectedPage(page)
     , m_injectedScriptManager(injectedScriptManager)
     , m_enabled(false)
@@ -93,7 +94,7 @@ void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld& 
     frame->script().executeScript(scriptSource.toString());
 }
 
-void InspectorAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorInspectorFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorInspectorBackendDispatcher::create(backendDispatcher, this);
@@ -150,7 +151,7 @@ void InspectorAgent::setInjectedScriptForOrigin(const String& origin, const Stri
     m_injectedScriptForOrigin.set(origin, source);
 }
 
-void InspectorAgent::inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints)
+void InspectorAgent::inspect(PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints)
 {
     if (m_enabled && m_frontendDispatcher) {
         m_frontendDispatcher->inspect(objectToInspect, hints);

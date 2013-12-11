@@ -75,7 +75,7 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, const ScriptValue& key, const String& direction, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
 {
     LOG(StorageAPI, "IDBIndex::openCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
@@ -100,7 +100,7 @@ PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefP
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, const ScriptValue& key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "IDBIndex::count");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
@@ -130,7 +130,7 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, const ScriptValue& key, const String& direction, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
 {
     LOG(StorageAPI, "IDBIndex::openKeyCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
@@ -139,7 +139,7 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
     return openKeyCursor(context, keyRange.release(), direction, ec);
 }
 
-PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, const ScriptValue& key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "IDBIndex::get");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
@@ -169,7 +169,7 @@ PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, const ScriptValue& key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "IDBIndex::getKey");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);

@@ -32,20 +32,22 @@
 #include "Color.h"
 #include "FloatQuad.h"
 #include "LayoutRect.h"
-
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+namespace Inspector {
+class InspectorObject;
+class InspectorValue;
+}
+
 namespace WebCore {
 
 class Color;
 class GraphicsContext;
 class InspectorClient;
-class InspectorValue;
-class InspectorObject;
 class IntRect;
 class Node;
 class Page;
@@ -124,7 +126,7 @@ public:
 
     void didSetSearchingForNode(bool enabled);
 
-    PassRefPtr<InspectorObject> buildObjectForHighlightedNode() const;
+    PassRefPtr<Inspector::InspectorObject> buildObjectForHighlightedNode() const;
 
     void freePage();
 private:
@@ -137,7 +139,7 @@ private:
     Page* overlayPage();
     void reset(const IntSize& viewportSize, const IntSize& frameViewFullSize);
     void evaluateInOverlay(const String& method, const String& argument);
-    void evaluateInOverlay(const String& method, PassRefPtr<InspectorValue> argument);
+    void evaluateInOverlay(const String& method, PassRefPtr<Inspector::InspectorValue> argument);
 
     Page* m_page;
     InspectorClient* m_client;

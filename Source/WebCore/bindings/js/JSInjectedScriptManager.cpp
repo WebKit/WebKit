@@ -41,7 +41,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSInjectedScriptHost.h"
 #include "JSMainThreadExecState.h"
-#include "ScriptObject.h"
+#include <bindings/ScriptObject.h>
 #include <parser/SourceCode.h>
 #include <runtime/JSLock.h>
 
@@ -49,7 +49,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScriptObject InjectedScriptManager::createInjectedScript(const String& source, JSC::ExecState* scriptState, int id)
+Deprecated::ScriptObject InjectedScriptManager::createInjectedScript(const String& source, JSC::ExecState* scriptState, int id)
 {
     JSLockHolder lock(scriptState);
 
@@ -66,13 +66,13 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& source, J
         evaluationReturnValue = JSC::evaluate(scriptState, sourceCode, globalThisValue, &evaluationException);
     }
     if (evaluationException)
-        return ScriptObject();
+        return Deprecated::ScriptObject();
 
     JSValue functionValue = evaluationReturnValue;
     CallData callData;
     CallType callType = getCallData(functionValue, callData);
     if (callType == CallTypeNone)
-        return ScriptObject();
+        return Deprecated::ScriptObject();
 
     MarkedArgumentBuffer args;
     args.append(toJS(scriptState, globalObject, m_injectedScriptHost.get()));
@@ -81,8 +81,8 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& source, J
 
     JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
     if (result.isObject())
-        return ScriptObject(scriptState, result.getObject());
-    return ScriptObject();
+        return Deprecated::ScriptObject(scriptState, result.getObject());
+    return Deprecated::ScriptObject();
 }
 
 bool InjectedScriptManager::canAccessInspectedWindow(JSC::ExecState* scriptState)

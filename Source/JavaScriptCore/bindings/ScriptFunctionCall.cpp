@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,17 +32,15 @@
 #include "config.h"
 #include "ScriptFunctionCall.h"
 
-#include "JSMainThreadExecState.h"
+#include "JSLock.h"
 #include "ScriptValue.h"
-
-#include <runtime/JSLock.h>
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;
 
-namespace WebCore {
+namespace Deprecated {
 
-void ScriptCallArgumentHandler::appendArgument(const ScriptObject& argument)
+void ScriptCallArgumentHandler::appendArgument(const Deprecated::ScriptObject& argument)
 {
     if (argument.scriptState() != m_exec) {
         ASSERT_NOT_REACHED();
@@ -50,7 +49,7 @@ void ScriptCallArgumentHandler::appendArgument(const ScriptObject& argument)
     m_arguments.append(argument.jsObject());
 }
 
-void ScriptCallArgumentHandler::appendArgument(const ScriptValue& argument)
+void ScriptCallArgumentHandler::appendArgument(const Deprecated::ScriptValue& argument)
 {
     m_arguments.append(argument.jsValue());
 }
@@ -58,7 +57,7 @@ void ScriptCallArgumentHandler::appendArgument(const ScriptValue& argument)
 void ScriptCallArgumentHandler::appendArgument(const String& argument)
 {
     JSLockHolder lock(m_exec);
-    m_arguments.append(jsStringWithCache(m_exec, argument));
+    m_arguments.append(jsString(m_exec, argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(const char* argument)
@@ -67,7 +66,7 @@ void ScriptCallArgumentHandler::appendArgument(const char* argument)
     m_arguments.append(jsString(m_exec, String(argument)));
 }
 
-void ScriptCallArgumentHandler::appendArgument(JSC::JSValue argument)
+void ScriptCallArgumentHandler::appendArgument(JSValue argument)
 {
     m_arguments.append(argument);
 }
@@ -107,14 +106,15 @@ void ScriptCallArgumentHandler::appendArgument(bool argument)
     m_arguments.append(jsBoolean(argument));
 }
 
-ScriptFunctionCall::ScriptFunctionCall(const ScriptObject& thisObject, const String& name)
+ScriptFunctionCall::ScriptFunctionCall(const Deprecated::ScriptObject& thisObject, const String& name, ScriptFunctionCallHandler callHandler)
     : ScriptCallArgumentHandler(thisObject.scriptState())
+    , m_callHandler(callHandler)
     , m_thisObject(thisObject)
     , m_name(name)
 {
 }
 
-ScriptValue ScriptFunctionCall::call(bool& hadException)
+Deprecated::ScriptValue ScriptFunctionCall::call(bool& hadException)
 {
     JSObject* thisObject = m_thisObject.jsObject();
 
@@ -123,32 +123,32 @@ ScriptValue ScriptFunctionCall::call(bool& hadException)
     JSValue function = thisObject->get(m_exec, Identifier(m_exec, m_name));
     if (m_exec->hadException()) {
         hadException = true;
-        return ScriptValue();
+        return Deprecated::ScriptValue();
     }
 
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
-        return ScriptValue();
+        return Deprecated::ScriptValue();
 
     JSValue result;
-    if (isMainThread())
-        result = JSMainThreadExecState::call(m_exec, function, callType, callData, thisObject, m_arguments);
+    if (m_callHandler)
+        result = m_callHandler(m_exec, function, callType, callData, thisObject, m_arguments);
     else
         result = JSC::call(m_exec, function, callType, callData, thisObject, m_arguments);
 
     if (m_exec->hadException()) {
         hadException = true;
-        return ScriptValue();
+        return Deprecated::ScriptValue();
     }
 
-    return ScriptValue(m_exec->vm(), result);
+    return Deprecated::ScriptValue(m_exec->vm(), result);
 }
 
-ScriptValue ScriptFunctionCall::call()
+Deprecated::ScriptValue ScriptFunctionCall::call()
 {
     bool hadException = false;
     return call(hadException);
 }
 
-} // namespace WebCore
+} // namespace Deprecated

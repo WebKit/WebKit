@@ -42,9 +42,9 @@
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
-#include "ScriptValue.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
+#include <bindings/ScriptValue.h>
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

@@ -29,10 +29,10 @@
  */
 
 #include "config.h"
-#include "ScriptObject.h"
+#include "ScriptGlobalObject.h"
 
 #include "JSDOMBinding.h"
-
+#include <bindings/ScriptObject.h>
 #include <runtime/JSLock.h>
 
 #if ENABLE(INSPECTOR)
@@ -43,18 +43,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScriptObject::ScriptObject(JSC::ExecState* scriptState, JSObject* object)
-    : ScriptValue(scriptState->vm(), object)
-    , m_scriptState(scriptState)
-{
-}
-
-ScriptObject::ScriptObject(JSC::ExecState* scriptState, const ScriptValue& scriptValue)
-    : ScriptValue(scriptState->vm(), scriptValue.jsValue())
-    , m_scriptState(scriptState)
-{
-}
-
 static bool handleException(JSC::ExecState* scriptState)
 {
     if (!scriptState->hadException())
@@ -64,7 +52,7 @@ static bool handleException(JSC::ExecState* scriptState)
     return false;
 }
 
-bool ScriptGlobalObject::set(JSC::ExecState* scriptState, const char* name, const ScriptObject& value)
+bool ScriptGlobalObject::set(JSC::ExecState* scriptState, const char* name, const Deprecated::ScriptObject& value)
 {
     JSLockHolder lock(scriptState);
     scriptState->lexicalGlobalObject()->putDirect(scriptState->vm(), Identifier(scriptState, name), value.jsObject());
@@ -81,7 +69,7 @@ bool ScriptGlobalObject::set(JSC::ExecState* scriptState, const char* name, Insp
 }
 #endif // ENABLE(INSPECTOR)
 
-bool ScriptGlobalObject::get(JSC::ExecState* scriptState, const char* name, ScriptObject& value)
+bool ScriptGlobalObject::get(JSC::ExecState* scriptState, const char* name, Deprecated::ScriptObject& value)
 {
     JSLockHolder lock(scriptState);
     JSValue jsValue = scriptState->lexicalGlobalObject()->get(scriptState, Identifier(scriptState, name));
@@ -91,7 +79,7 @@ bool ScriptGlobalObject::get(JSC::ExecState* scriptState, const char* name, Scri
     if (!jsValue.isObject())
         return false;
 
-    value = ScriptObject(scriptState, asObject(jsValue));
+    value = Deprecated::ScriptObject(scriptState, asObject(jsValue));
     return true;
 }
 

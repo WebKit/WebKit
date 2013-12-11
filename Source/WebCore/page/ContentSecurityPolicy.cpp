@@ -35,7 +35,6 @@
 #include "FormDataList.h"
 #include "Frame.h"
 #include "InspectorInstrumentation.h"
-#include "InspectorValues.h"
 #include "URL.h"
 #include "PingLoader.h"
 #include "RuntimeEnabledFeatures.h"
@@ -46,9 +45,12 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicyViolationEvent.h"
 #include "TextEncoding.h"
+#include <inspector/InspectorValues.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 

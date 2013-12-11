@@ -4,6 +4,7 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/API"
     "${JAVASCRIPTCORE_DIR}/ForwardingHeaders"
     "${JAVASCRIPTCORE_DIR}/assembler"
+    "${JAVASCRIPTCORE_DIR}/bindings"
     "${JAVASCRIPTCORE_DIR}/bytecode"
     "${JAVASCRIPTCORE_DIR}/bytecompiler"
     "${JAVASCRIPTCORE_DIR}/dfg"
@@ -44,6 +45,10 @@ set(JavaScriptCore_SOURCES
     assembler/LinkBuffer.cpp
     assembler/MacroAssembler.cpp
     assembler/MacroAssemblerX86Common.cpp
+
+    bindings/ScriptFunctionCall.cpp
+    bindings/ScriptObject.cpp
+    bindings/ScriptValue.cpp
 
     bytecode/ArrayAllocationProfile.cpp
     bytecode/ArrayProfile.cpp
@@ -215,6 +220,10 @@ set(JavaScriptCore_SOURCES
     heap/WeakHandleOwner.cpp
     heap/WeakSet.cpp
     heap/WriteBarrierSupport.cpp
+
+    inspector/InspectorAgentRegistry.cpp
+    inspector/InspectorBackendDispatcher.cpp
+    inspector/InspectorValues.cpp
 
     interpreter/AbstractPC.cpp
     interpreter/CallFrame.cpp
@@ -584,6 +593,7 @@ endforeach ()
 
 set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     assembler
+    bindings
     bytecode
     collector/handles
     debugger

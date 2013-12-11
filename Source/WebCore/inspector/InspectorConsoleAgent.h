@@ -29,8 +29,9 @@
 
 #include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
 #include "InspectorFrontend.h"
+#include "InspectorWebAgentBase.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -52,7 +53,7 @@ class ScriptProfile;
 
 typedef String ErrorString;
 
-class InspectorConsoleAgent : public InspectorBaseAgent, public InspectorConsoleBackendDispatcherHandler {
+class InspectorConsoleAgent : public InspectorAgentBase, public InspectorConsoleBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
     InspectorConsoleAgent(InstrumentingAgents*, InjectedScriptManager*);
@@ -64,7 +65,7 @@ public:
     bool enabled() const { return m_enabled; }
     void reset();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, PassRefPtr<ScriptArguments>, unsigned long requestIdentifier = 0);

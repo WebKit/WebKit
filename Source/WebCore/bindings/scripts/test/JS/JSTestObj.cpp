@@ -1651,7 +1651,7 @@ void setJSTestObjAnyAttribute(ExecState* exec, JSObject* thisObject, JSValue val
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj& impl = castedThis->impl();
-    ScriptValue nativeValue(exec->vm(), value);
+    Deprecated::ScriptValue nativeValue(exec->vm(), value);
     if (exec->hadException())
         return;
     impl.setAnyAttribute(nativeValue);

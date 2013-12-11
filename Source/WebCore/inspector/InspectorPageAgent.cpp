@@ -66,7 +66,6 @@
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorOverlay.h"
-#include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
 #include "MemoryCache.h"
@@ -74,12 +73,13 @@
 #include "RegularExpression.h"
 #include "ResourceBuffer.h"
 #include "ScriptController.h"
-#include "ScriptObject.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
 #include "UserGestureIndicator.h"
+#include <bindings/ScriptValue.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
@@ -89,6 +89,8 @@
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
 #include "LegacyWebArchive.h"
 #endif
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -297,27 +299,27 @@ CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const URL& url)
     return cachedResource;
 }
 
-TypeBuilder::Page::ResourceType::Enum InspectorPageAgent::resourceTypeJson(InspectorPageAgent::ResourceType resourceType)
+Inspector::TypeBuilder::Page::ResourceType::Enum InspectorPageAgent::resourceTypeJson(InspectorPageAgent::ResourceType resourceType)
 {
     switch (resourceType) {
     case DocumentResource:
-        return TypeBuilder::Page::ResourceType::Document;
+        return Inspector::TypeBuilder::Page::ResourceType::Document;
     case ImageResource:
-        return TypeBuilder::Page::ResourceType::Image;
+        return Inspector::TypeBuilder::Page::ResourceType::Image;
     case FontResource:
-        return TypeBuilder::Page::ResourceType::Font;
+        return Inspector::TypeBuilder::Page::ResourceType::Font;
     case StylesheetResource:
-        return TypeBuilder::Page::ResourceType::Stylesheet;
+        return Inspector::TypeBuilder::Page::ResourceType::Stylesheet;
     case ScriptResource:
-        return TypeBuilder::Page::ResourceType::Script;
+        return Inspector::TypeBuilder::Page::ResourceType::Script;
     case XHRResource:
-        return TypeBuilder::Page::ResourceType::XHR;
+        return Inspector::TypeBuilder::Page::ResourceType::XHR;
     case WebSocketResource:
-        return TypeBuilder::Page::ResourceType::WebSocket;
+        return Inspector::TypeBuilder::Page::ResourceType::WebSocket;
     case OtherResource:
-        return TypeBuilder::Page::ResourceType::Other;
+        return Inspector::TypeBuilder::Page::ResourceType::Other;
     }
-    return TypeBuilder::Page::ResourceType::Other;
+    return Inspector::TypeBuilder::Page::ResourceType::Other;
 }
 
 InspectorPageAgent::ResourceType InspectorPageAgent::cachedResourceType(const CachedResource& cachedResource)
@@ -345,13 +347,13 @@ InspectorPageAgent::ResourceType InspectorPageAgent::cachedResourceType(const Ca
     return InspectorPageAgent::OtherResource;
 }
 
-TypeBuilder::Page::ResourceType::Enum InspectorPageAgent::cachedResourceTypeJson(const CachedResource& cachedResource)
+Inspector::TypeBuilder::Page::ResourceType::Enum InspectorPageAgent::cachedResourceTypeJson(const CachedResource& cachedResource)
 {
     return resourceTypeJson(cachedResourceType(cachedResource));
 }
 
 InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InjectedScriptManager* injectedScriptManager, InspectorClient* client, InspectorOverlay* overlay)
-    : InspectorBaseAgent(ASCIILiteral("Page"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("Page"), instrumentingAgents)
     , m_page(page)
     , m_inspectorAgent(inspectorAgent)
     , m_injectedScriptManager(injectedScriptManager)
@@ -371,7 +373,7 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
 {
 }
 
-void InspectorPageAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorPageAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorPageFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorPageBackendDispatcher::create(backendDispatcher, this);
@@ -460,9 +462,9 @@ void InspectorPageAgent::navigate(ErrorString*, const String& url)
     frame.loader().changeLocation(frame.document()->securityOrigin(), frame.document()->completeURL(url), "", false, false);
 }
 
-static PassRefPtr<TypeBuilder::Page::Cookie> buildObjectForCookie(const Cookie& cookie)
+static PassRefPtr<Inspector::TypeBuilder::Page::Cookie> buildObjectForCookie(const Cookie& cookie)
 {
-    return TypeBuilder::Page::Cookie::create()
+    return Inspector::TypeBuilder::Page::Cookie::create()
         .setName(cookie.name)
         .setValue(cookie.value)
         .setDomain(cookie.domain)
@@ -475,9 +477,9 @@ static PassRefPtr<TypeBuilder::Page::Cookie> buildObjectForCookie(const Cookie& 
         .release();
 }
 
-static PassRefPtr<TypeBuilder::Array<TypeBuilder::Page::Cookie>> buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
+static PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::Cookie>> buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
 {
-    RefPtr<TypeBuilder::Array<TypeBuilder::Page::Cookie>> cookies = TypeBuilder::Array<TypeBuilder::Page::Cookie>::create();
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::Cookie>> cookies = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::Cookie>::create();
 
     ListHashSet<Cookie>::iterator end = cookiesList.end();
     ListHashSet<Cookie>::iterator it = cookiesList.begin();
@@ -528,7 +530,7 @@ static Vector<URL> allResourcesURLsForFrame(Frame* frame)
     return result;
 }
 
-void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Page::Cookie>>& cookies)
+void InspectorPageAgent::getCookies(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::Cookie>>& cookies)
 {
     // If we can get raw cookies.
     ListHashSet<Cookie> rawCookiesList;
@@ -567,7 +569,7 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<Type
     if (rawCookiesImplemented)
         cookies = buildArrayForCookies(rawCookiesList);
     else
-        cookies = TypeBuilder::Array<TypeBuilder::Page::Cookie>::create();
+        cookies = Inspector::TypeBuilder::Array<TypeBuilder::Page::Cookie>::create();
 }
 
 void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, const String& url)
@@ -577,7 +579,7 @@ void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, co
         WebCore::deleteCookie(frame->document(), parsedURL, cookieName);
 }
 
-void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<TypeBuilder::Page::FrameResourceTree>& object)
+void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<Inspector::TypeBuilder::Page::FrameResourceTree>& object)
 {
     object = buildObjectForFrameTree(&m_page->mainFrame());
 }
@@ -604,9 +606,9 @@ static bool textContentForCachedResource(CachedResource* cachedResource, String*
     return false;
 }
 
-void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch>>& results)
+void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchMatch>>& results)
 {
-    results = TypeBuilder::Array<TypeBuilder::Page::SearchMatch>::create();
+    results = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchMatch>::create();
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
@@ -638,18 +640,18 @@ void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, c
     results = ContentSearchUtils::searchInTextByLines(content, query, caseSensitive, isRegex);
 }
 
-static PassRefPtr<TypeBuilder::Page::SearchResult> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)
+static PassRefPtr<Inspector::TypeBuilder::Page::SearchResult> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)
 {
-    return TypeBuilder::Page::SearchResult::create()
+    return Inspector::TypeBuilder::Page::SearchResult::create()
         .setUrl(url)
         .setFrameId(frameId)
         .setMatchesCount(matchesCount)
         .release();
 }
 
-void InspectorPageAgent::searchInResources(ErrorString*, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchResult>>& results)
+void InspectorPageAgent::searchInResources(ErrorString*, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchResult>>& results)
 {
-    RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchResult>> searchResults = TypeBuilder::Array<TypeBuilder::Page::SearchResult>::create();
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchResult>> searchResults = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchResult>::create();
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
@@ -1035,9 +1037,9 @@ void InspectorPageAgent::scriptsEnabled(bool isEnabled)
     m_frontendDispatcher->scriptsEnabled(isEnabled);
 }
 
-PassRefPtr<TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
+PassRefPtr<Inspector::TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
 {
-    RefPtr<TypeBuilder::Page::Frame> frameObject = TypeBuilder::Page::Frame::create()
+    RefPtr<Inspector::TypeBuilder::Page::Frame> frameObject = Inspector::TypeBuilder::Page::Frame::create()
         .setId(frameId(frame))
         .setLoaderId(loaderId(frame->loader().documentLoader()))
         .setUrl(frame->document()->url().string())
@@ -1055,11 +1057,11 @@ PassRefPtr<TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Fra
     return frameObject;
 }
 
-PassRefPtr<TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
+PassRefPtr<Inspector::TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
 {
-    RefPtr<TypeBuilder::Page::Frame> frameObject = buildObjectForFrame(frame);
-    RefPtr<TypeBuilder::Array<TypeBuilder::Page::FrameResourceTree::Resources>> subresources = TypeBuilder::Array<TypeBuilder::Page::FrameResourceTree::Resources>::create();
-    RefPtr<TypeBuilder::Page::FrameResourceTree> result = TypeBuilder::Page::FrameResourceTree::create()
+    RefPtr<Inspector::TypeBuilder::Page::Frame> frameObject = buildObjectForFrame(frame);
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::FrameResourceTree::Resources>> subresources = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::FrameResourceTree::Resources>::create();
+    RefPtr<Inspector::TypeBuilder::Page::FrameResourceTree> result = Inspector::TypeBuilder::Page::FrameResourceTree::create()
          .setFrame(frameObject)
          .setResources(subresources);
 
@@ -1067,7 +1069,7 @@ PassRefPtr<TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::buildObject
     for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
         CachedResource* cachedResource = *it;
 
-        RefPtr<TypeBuilder::Page::FrameResourceTree::Resources> resourceObject = TypeBuilder::Page::FrameResourceTree::Resources::create()
+        RefPtr<Inspector::TypeBuilder::Page::FrameResourceTree::Resources> resourceObject = Inspector::TypeBuilder::Page::FrameResourceTree::Resources::create()
             .setUrl(cachedResource->url())
             .setType(cachedResourceTypeJson(*cachedResource))
             .setMimeType(cachedResource->response().mimeType());
@@ -1081,10 +1083,10 @@ PassRefPtr<TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::buildObject
         subresources->addItem(resourceObject);
     }
 
-    RefPtr<TypeBuilder::Array<TypeBuilder::Page::FrameResourceTree>> childrenArray;
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::FrameResourceTree>> childrenArray;
     for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (!childrenArray) {
-            childrenArray = TypeBuilder::Array<TypeBuilder::Page::FrameResourceTree>::create();
+            childrenArray = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::FrameResourceTree>::create();
             result->setChildFrames(childrenArray);
         }
         childrenArray->addItem(buildObjectForFrameTree(child));

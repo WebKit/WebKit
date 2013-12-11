@@ -32,6 +32,7 @@
 #define PageDebuggerAgent_h
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+
 #include "InspectorDebuggerAgent.h"
 #include "PageScriptDebugServer.h"
 

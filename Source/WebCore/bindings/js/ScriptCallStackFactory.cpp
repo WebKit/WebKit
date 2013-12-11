@@ -38,7 +38,7 @@
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
-#include "ScriptValue.h"
+#include <bindings/ScriptValue.h>
 #include <interpreter/CallFrame.h>
 #include <interpreter/CallFrameInlines.h>
 #include <interpreter/StackVisitor.h>
@@ -199,10 +199,10 @@ PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec
 
 PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned skipArgumentCount)
 {
-    Vector<ScriptValue> arguments;
+    Vector<Deprecated::ScriptValue> arguments;
     size_t argumentCount = exec->argumentCount();
     for (size_t i = skipArgumentCount; i < argumentCount; ++i)
-        arguments.append(ScriptValue(exec->vm(), exec->uncheckedArgument(i)));
+        arguments.append(Deprecated::ScriptValue(exec->vm(), exec->uncheckedArgument(i)));
     return ScriptArguments::create(exec, arguments);
 }
 

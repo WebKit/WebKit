@@ -32,6 +32,8 @@
 #include "HTMLParserIdioms.h"
 #include "InspectorStyleSheet.h"
 
+using namespace Inspector;
+
 namespace WebCore {
 
 InspectorStyleTextEditor::InspectorStyleTextEditor(Vector<InspectorStyleProperty>* allProperties, Vector<InspectorStyleProperty>* disabledProperties, const String& styleText, const NewLineAndWhitespace& format)

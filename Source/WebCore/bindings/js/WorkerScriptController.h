@@ -33,15 +33,18 @@
 #include <wtf/Forward.h>
 #include <wtf/Threading.h>
 
+namespace Deprecated {
+class ScriptValue;
+}
+
 namespace JSC {
-    class VM;
+class VM;
 }
 
 namespace WebCore {
 
     class JSWorkerGlobalScope;
     class ScriptSourceCode;
-    class ScriptValue;
     class WorkerGlobalScope;
 
     class WorkerScriptController {
@@ -57,9 +60,9 @@ namespace WebCore {
         }
 
         void evaluate(const ScriptSourceCode&);
-        void evaluate(const ScriptSourceCode&, ScriptValue* exception);
+        void evaluate(const ScriptSourceCode&, Deprecated::ScriptValue* exception);
 
-        void setException(const ScriptValue&);
+        void setException(const Deprecated::ScriptValue&);
 
         // Async request to terminate a JS run execution. Eventually causes termination
         // exception raised during JS execution, if the worker thread happens to run JS.

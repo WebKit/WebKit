@@ -37,7 +37,6 @@
 
 #include "Dictionary.h"
 #include "ExceptionCode.h"
-#include "InspectorValues.h"
 #include "RTCIceCandidateDescriptor.h"
 
 namespace WebCore {

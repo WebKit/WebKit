@@ -31,13 +31,13 @@
 #if ENABLE(INSPECTOR)
 
 #include "ContentSearchUtils.h"
-
-#include "InspectorValues.h"
 #include "RegularExpression.h"
-
+#include <inspector/InspectorValues.h>
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/StdLibExtras.h>
 #include <yarr/Yarr.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 namespace ContentSearchUtils {
@@ -120,9 +120,9 @@ PassOwnPtr<Vector<size_t>> lineEndings(const String& text)
     return result.release();
 }
 
-static PassRefPtr<TypeBuilder::Page::SearchMatch> buildObjectForSearchMatch(int lineNumber, const String& lineContent)
+static PassRefPtr<Inspector::TypeBuilder::Page::SearchMatch> buildObjectForSearchMatch(int lineNumber, const String& lineContent)
 {
-    return TypeBuilder::Page::SearchMatch::create()
+    return Inspector::TypeBuilder::Page::SearchMatch::create()
         .setLineNumber(lineNumber)
         .setLineContent(lineContent)
         .release();
@@ -153,9 +153,9 @@ int countRegularExpressionMatches(const RegularExpression& regex, const String& 
     return result;
 }
 
-PassRefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
+PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
 {
-    RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch>> result = TypeBuilder::Array<TypeBuilder::Page::SearchMatch>::create();
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchMatch>> result = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchMatch>::create();
 
     RegularExpression regex = ContentSearchUtils::createSearchRegex(query, caseSensitive, isRegex);
     Vector<pair<int, String>> matches = getRegularExpressionMatchesByLines(regex, text);

@@ -42,7 +42,6 @@
 #include "InspectorAgent.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorBackendDispatchers.h"
-#include "InspectorBaseAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"
 #include "InspectorClient.h"
@@ -71,8 +70,10 @@
 #include "PageDebuggerAgent.h"
 #include "PageRuntimeAgent.h"
 #include "Page.h"
-#include "ScriptObject.h"
 #include "Settings.h"
+#include <inspector/InspectorBackendDispatcher.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 

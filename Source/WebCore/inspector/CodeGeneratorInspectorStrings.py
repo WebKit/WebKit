@@ -70,7 +70,7 @@ backend_dispatcher_dispatch_method = (
 {
     Ref<${dispatcherName}> protect(*this);
 
-    typedef void (${dispatcherName}::*CallHandler)(long callId, const InspectorObject& message);
+    typedef void (${dispatcherName}::*CallHandler)(long callId, const Inspector::InspectorObject& message);
     typedef HashMap<String, CallHandler> DispatchMap;
     DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, ());
     if (dispatchMap.isEmpty()) {
@@ -112,7 +112,7 @@ $code
 """)
 
 callback_method = (
-"""${handlerName}::${callbackName}::${callbackName}(PassRefPtr<InspectorBackendDispatcher> backendDispatcher, int id) : InspectorBackendDispatcher::CallbackBase(backendDispatcher, id) { }
+"""${handlerName}::${callbackName}::${callbackName}(PassRefPtr<InspectorBackendDispatcher> backendDispatcher, int id) : Inspector::InspectorBackendDispatcher::CallbackBase(backendDispatcher, id) { }
 
 void ${handlerName}::${callbackName}::sendSuccess(${parameters})
 {
@@ -125,14 +125,13 @@ frontend_h = (
 """#ifndef InspectorFrontend_h
 #define InspectorFrontend_h
 
-#include "InspectorTypeBuilder.h"
-#include "InspectorValues.h"
+#include "InspectorWebTypeBuilders.h"
+#include "InspectorForwarding.h"
+#include <inspector/InspectorValues.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class InspectorFrontendChannel;
 
 #if ENABLE(INSPECTOR)
 
@@ -149,15 +148,12 @@ backend_h = (
 """#ifndef InspectorBackendDispatchers_h
 #define InspectorBackendDispatchers_h
 
-#include "InspectorBackendDispatcher.h"
-#include "InspectorTypeBuilder.h"
+#include "InspectorWebTypeBuilders.h"
+#include <inspector/InspectorBackendDispatcher.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class InspectorObject;
-class InspectorArray;
 
 typedef String ErrorString;
 
@@ -178,10 +174,12 @@ backend_cpp = (
 #include "InspectorBackendDispatchers.h"
 
 #include "InspectorAgent.h"
-#include "InspectorValues.h"
 #include "InspectorForwarding.h"
+#include <inspector/InspectorValues.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -200,9 +198,10 @@ frontend_cpp = (
 
 #include "InspectorFrontend.h"
 
-#include "InspectorForwarding.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -215,290 +214,19 @@ $methods
 
 typebuilder_h = (
 """
-#ifndef InspectorTypeBuilder_h
-#define InspectorTypeBuilder_h
+// FIXME: TYPE.
+#ifndef InspectorWebTypeBuilders_h
+#define InspectorWebTypeBuilders_h
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorValues.h"
+#include <inspector/InspectorTypeBuilder.h>
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 
-namespace WebCore {
+namespace Inspector {
 
 namespace TypeBuilder {
-
-template<typename T>
-class OptOutput {
-public:
-    OptOutput() : m_assigned(false) { }
-
-    void operator=(T value)
-    {
-        m_value = value;
-        m_assigned = true;
-    }
-
-    bool isAssigned() { return m_assigned; }
-
-    T getValue()
-    {
-        ASSERT(isAssigned());
-        return m_value;
-    }
-
-private:
-    T m_value;
-    bool m_assigned;
-
-    WTF_MAKE_NONCOPYABLE(OptOutput);
-};
-
-
-// A small transient wrapper around int type, that can be used as a funciton parameter type
-// cleverly disallowing C++ implicit casts from float or double.
-class ExactlyInt {
-public:
-    template<typename T>
-    ExactlyInt(T t) : m_value(cast_to_int<T>(t)) {}
-
-    ExactlyInt() {}
-
-    operator int() { return m_value; }
-private:
-    int m_value;
-
-    template<typename T>
-    static int cast_to_int(T) { return T::default_case_cast_is_not_supported(); }
-};
-
-template<>
-inline int ExactlyInt::cast_to_int<int>(int i) { return i; }
-
-template<>
-inline int ExactlyInt::cast_to_int<unsigned int>(unsigned int i) { return i; }
-
-class RuntimeCastHelper {
-public:
-#if $validatorIfdefName
-    template<InspectorValue::Type TYPE>
-    static void assertType(InspectorValue* value)
-    {
-        ASSERT(value->type() == TYPE);
-    }
-    static void assertAny(InspectorValue*);
-    static void assertInt(InspectorValue* value);
-#endif
-};
-
-
-// This class provides "Traits" type for the input type T. It is programmed using C++ template specialization
-// technique. By default it simply takes "ItemTraits" type from T, but it doesn't work with the base types.
-template<typename T>
-struct ArrayItemHelper {
-    typedef typename T::ItemTraits Traits;
-};
-
-template<typename T>
-class Array : public InspectorArrayBase {
-private:
-    Array() { }
-
-    InspectorArray* openAccessors() {
-        COMPILE_ASSERT(sizeof(InspectorArray) == sizeof(Array<T>), cannot_cast);
-        return static_cast<InspectorArray*>(static_cast<InspectorArrayBase*>(this));
-    }
-
-public:
-    void addItem(PassRefPtr<T> value)
-    {
-        ArrayItemHelper<T>::Traits::pushRefPtr(this->openAccessors(), value);
-    }
-
-    void addItem(T value)
-    {
-        ArrayItemHelper<T>::Traits::pushRaw(this->openAccessors(), value);
-    }
-
-    static PassRefPtr<Array<T>> create()
-    {
-        return adoptRef(new Array<T>());
-    }
-
-    static PassRefPtr<Array<T>> runtimeCast(PassRefPtr<InspectorValue> value)
-    {
-        RefPtr<InspectorArray> array;
-        bool castRes = value->asArray(&array);
-        ASSERT_UNUSED(castRes, castRes);
-#if $validatorIfdefName
-        assertCorrectValue(array.get());
-#endif  // $validatorIfdefName
-        COMPILE_ASSERT(sizeof(Array<T>) == sizeof(InspectorArray), type_cast_problem);
-        return static_cast<Array<T>*>(static_cast<InspectorArrayBase*>(array.get()));
-    }
-
-#if $validatorIfdefName
-    static void assertCorrectValue(InspectorValue* value)
-    {
-        RefPtr<InspectorArray> array;
-        bool castRes = value->asArray(&array);
-        ASSERT_UNUSED(castRes, castRes);
-        for (unsigned i = 0; i < array->length(); i++)
-            ArrayItemHelper<T>::Traits::template assertCorrectValue<T>(array->get(i).get());
-    }
-
-#endif // $validatorIfdefName
-};
-
-struct StructItemTraits {
-    static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorValue> value)
-    {
-        array->pushValue(value);
-    }
-
-#if $validatorIfdefName
-    template<typename T>
-    static void assertCorrectValue(InspectorValue* value) {
-        T::assertCorrectValue(value);
-    }
-#endif  // $validatorIfdefName
-};
-
-template<>
-struct ArrayItemHelper<String> {
-    struct Traits {
-        static void pushRaw(InspectorArray* array, const String& value)
-        {
-            array->pushString(value);
-        }
-
-#if $validatorIfdefName
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value) {
-            RuntimeCastHelper::assertType<InspectorValue::TypeString>(value);
-        }
-#endif  // $validatorIfdefName
-    };
-};
-
-template<>
-struct ArrayItemHelper<int> {
-    struct Traits {
-        static void pushRaw(InspectorArray* array, int value)
-        {
-            array->pushInt(value);
-        }
-
-#if $validatorIfdefName
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value) {
-            RuntimeCastHelper::assertInt(value);
-        }
-#endif  // $validatorIfdefName
-    };
-};
-
-template<>
-struct ArrayItemHelper<double> {
-    struct Traits {
-        static void pushRaw(InspectorArray* array, double value)
-        {
-            array->pushNumber(value);
-        }
-
-#if $validatorIfdefName
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value) {
-            RuntimeCastHelper::assertType<InspectorValue::TypeNumber>(value);
-        }
-#endif  // $validatorIfdefName
-    };
-};
-
-template<>
-struct ArrayItemHelper<bool> {
-    struct Traits {
-        static void pushRaw(InspectorArray* array, bool value)
-        {
-            array->pushBoolean(value);
-        }
-
-#if $validatorIfdefName
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value) {
-            RuntimeCastHelper::assertType<InspectorValue::TypeBoolean>(value);
-        }
-#endif  // $validatorIfdefName
-    };
-};
-
-template<>
-struct ArrayItemHelper<InspectorValue> {
-    struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorValue> value)
-        {
-            array->pushValue(value);
-        }
-
-#if $validatorIfdefName
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value) {
-            RuntimeCastHelper::assertAny(value);
-        }
-#endif  // $validatorIfdefName
-    };
-};
-
-template<>
-struct ArrayItemHelper<InspectorObject> {
-    struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorValue> value)
-        {
-            array->pushValue(value);
-        }
-
-#if $validatorIfdefName
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value) {
-            RuntimeCastHelper::assertType<InspectorValue::TypeObject>(value);
-        }
-#endif  // $validatorIfdefName
-    };
-};
-
-template<>
-struct ArrayItemHelper<InspectorArray> {
-    struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorArray> value)
-        {
-            array->pushArray(value);
-        }
-
-#if $validatorIfdefName
-        template<typename T>
-        static void assertCorrectValue(InspectorValue* value) {
-            RuntimeCastHelper::assertType<InspectorValue::TypeArray>(value);
-        }
-#endif  // $validatorIfdefName
-    };
-};
-
-template<typename T>
-struct ArrayItemHelper<TypeBuilder::Array<T>> {
-    struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<TypeBuilder::Array<T>> value)
-        {
-            array->pushValue(value);
-        }
-
-#if $validatorIfdefName
-        template<typename S>
-        static void assertCorrectValue(InspectorValue* value) {
-            S::assertCorrectValue(value);
-        }
-#endif  // $validatorIfdefName
-    };
-};
 
 ${forwards}
 
@@ -507,12 +235,11 @@ String getEnumConstantValue(int code);
 ${typeBuilders}
 } // namespace TypeBuilder
 
-
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)
 
-#endif // !defined(InspectorTypeBuilder_h)
+#endif // !defined(InspectorWebTypeBuilders_h)
 
 """)
 
@@ -522,10 +249,12 @@ typebuilder_cpp = (
 #include "config.h"
 #if ENABLE(INSPECTOR)
 
-#include "InspectorTypeBuilder.h"
+#include "InspectorWebTypeBuilders.h"
 #include <wtf/text/CString.h>
 
-namespace WebCore {
+using namespace Inspector;
+
+namespace Inspector {
 
 namespace TypeBuilder {
 
@@ -542,25 +271,11 @@ $implCode
 
 #if $validatorIfdefName
 
-void TypeBuilder::RuntimeCastHelper::assertAny(InspectorValue*)
-{
-    // No-op.
-}
-
-
-void TypeBuilder::RuntimeCastHelper::assertInt(InspectorValue* value)
-{
-    double v;
-    bool castRes = value->asNumber(&v);
-    ASSERT_UNUSED(castRes, castRes);
-    ASSERT(static_cast<double>(static_cast<int>(v)) == v);
-}
-
 $validatorCode
 
 #endif // $validatorIfdefName
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)
 """)
@@ -584,14 +299,14 @@ class_binding_builder_part_1 = (
     template<int STATE>
     class Builder {
     private:
-        RefPtr<InspectorObject> m_result;
+        RefPtr<Inspector::InspectorObject> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr</*%s*/InspectorObject> ptr)
+        Builder(PassRefPtr</*%s*/Inspector::InspectorObject> ptr)
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
             m_result = ptr;
@@ -613,7 +328,7 @@ class_binding_builder_part_3 = ("""
         operator RefPtr<%s>& ()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(%s) == sizeof(InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(%s) == sizeof(Inspector::InspectorObject), cannot_cast);
             return *reinterpret_cast<RefPtr<%s>*>(&m_result);
         }
 
@@ -628,6 +343,6 @@ class_binding_builder_part_3 = ("""
 class_binding_builder_part_4 = (
 """    static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(InspectorObject::create());
+        return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
 """)

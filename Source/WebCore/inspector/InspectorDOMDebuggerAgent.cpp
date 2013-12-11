@@ -40,8 +40,8 @@
 #include "InspectorDebuggerAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
-#include "InspectorValues.h"
 #include "InstrumentingAgents.h"
+#include <inspector/InspectorValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace {
@@ -61,6 +61,8 @@ const int domBreakpointDerivedTypeShift = 16;
 
 }
 
+using namespace Inspector;
+
 namespace WebCore {
 
 PassOwnPtr<InspectorDOMDebuggerAgent> InspectorDOMDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent, InspectorAgent* inspectorAgent)
@@ -69,7 +71,7 @@ PassOwnPtr<InspectorDOMDebuggerAgent> InspectorDOMDebuggerAgent::create(Instrume
 }
 
 InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent, InspectorAgent*)
-    : InspectorBaseAgent(ASCIILiteral("DOMDebugger"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("DOMDebugger"), instrumentingAgents)
     , m_domAgent(domAgent)
     , m_debuggerAgent(debuggerAgent)
     , m_pauseInNextEventListener(false)
@@ -111,7 +113,7 @@ void InspectorDOMDebuggerAgent::disable()
     clear();
 }
 
-void InspectorDOMDebuggerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
+void InspectorDOMDebuggerAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
 {
     m_backendDispatcher = InspectorDOMDebuggerBackendDispatcher::create(backendDispatcher, this);
 }
@@ -314,7 +316,7 @@ void InspectorDOMDebuggerAgent::descriptionForDOMEvent(Node* target, int breakpo
     if ((1 << breakpointType) & inheritableDOMBreakpointTypesMask) {
         // For inheritable breakpoint types, target node isn't always the same as the node that owns a breakpoint.
         // Target node may be unknown to frontend, so we need to push it first.
-        RefPtr<TypeBuilder::Runtime::RemoteObject> targetNodeObject = m_domAgent->resolveNode(target, InspectorDebuggerAgent::backtraceObjectGroup);
+        RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> targetNodeObject = m_domAgent->resolveNode(target, InspectorDebuggerAgent::backtraceObjectGroup);
         description->setValue("targetNode", targetNodeObject);
 
         // Find breakpoint owner node.

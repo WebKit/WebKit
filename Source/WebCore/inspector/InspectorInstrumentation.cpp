@@ -83,6 +83,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
+using namespace Inspector;
+
 namespace WebCore {
 
 static const char* const requestAnimationFrameEventName = "requestAnimationFrame";

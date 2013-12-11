@@ -48,7 +48,7 @@ CustomEvent::~CustomEvent()
 {
 }
 
-void CustomEvent::initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue& detail)
+void CustomEvent::initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, const Deprecated::ScriptValue& detail)
 {
     ASSERT(!m_serializedScriptValue.get());
     if (dispatched())

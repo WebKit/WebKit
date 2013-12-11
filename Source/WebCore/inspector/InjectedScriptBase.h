@@ -31,15 +31,20 @@
 #ifndef InjectedScriptBase_h
 #define InjectedScriptBase_h
 
-#include "InspectorTypeBuilder.h"
-#include "ScriptObject.h"
+#include "InspectorWebTypeBuilders.h"
+#include <bindings/ScriptObject.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
-
-class InspectorValue;
+namespace Deprecated {
 class ScriptFunctionCall;
+}
+
+namespace Inspector {
+class InspectorValue;
+}
+
+namespace WebCore {
 
 typedef String ErrorString;
 
@@ -56,18 +61,18 @@ public:
 protected:
     typedef bool (*InspectedStateAccessCheck)(JSC::ExecState*);
     InjectedScriptBase(const String& name);
-    InjectedScriptBase(const String& name, ScriptObject, InspectedStateAccessCheck);
+    InjectedScriptBase(const String& name, Deprecated::ScriptObject, InspectedStateAccessCheck);
 
-    void initialize(ScriptObject, InspectedStateAccessCheck);
+    void initialize(Deprecated::ScriptObject, InspectedStateAccessCheck);
     bool canAccessInspectedWindow() const;
-    const ScriptObject& injectedScriptObject() const;
-    ScriptValue callFunctionWithEvalEnabled(ScriptFunctionCall&, bool& hadException) const;
-    void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
-    void makeEvalCall(ErrorString*, ScriptFunctionCall&, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown);
+    const Deprecated::ScriptObject& injectedScriptObject() const;
+    Deprecated::ScriptValue callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall&, bool& hadException) const;
+    void makeCall(Deprecated::ScriptFunctionCall&, RefPtr<Inspector::InspectorValue>* result);
+    void makeEvalCall(ErrorString*, Deprecated::ScriptFunctionCall&, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>* result, Inspector::TypeBuilder::OptOutput<bool>* wasThrown);
 
 private:
     String m_name;
-    ScriptObject m_injectedScriptObject;
+    Deprecated::ScriptObject m_injectedScriptObject;
     InspectedStateAccessCheck m_inspectedStateAccessCheck;
 };
 

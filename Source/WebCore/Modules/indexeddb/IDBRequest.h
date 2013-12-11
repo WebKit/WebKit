@@ -120,7 +120,7 @@ protected:
     void enqueueEvent(PassRefPtr<Event>);
     virtual bool shouldEnqueueEvent() const;
     void onSuccessInternal(PassRefPtr<SerializedScriptValue>);
-    void onSuccessInternal(const ScriptValue&);
+    void onSuccessInternal(const Deprecated::ScriptValue&);
 
     RefPtr<IDBAny> m_result;
     unsigned short m_errorCode;
@@ -140,7 +140,7 @@ private:
     virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
     PassRefPtr<IDBCursor> getResultCursor();
-    void setResultCursor(PassRefPtr<IDBCursor>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, const ScriptValue&);
+    void setResultCursor(PassRefPtr<IDBCursor>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, const Deprecated::ScriptValue&);
 
     RefPtr<IDBAny> m_source;
     const IDBDatabaseBackend::TaskType m_taskType;
@@ -155,7 +155,7 @@ private:
     RefPtr<IDBCursor> m_pendingCursor;
     RefPtr<IDBKey> m_cursorKey;
     RefPtr<IDBKey> m_cursorPrimaryKey;
-    ScriptValue m_cursorValue;
+    Deprecated::ScriptValue m_cursorValue;
     bool m_didFireUpgradeNeededEvent;
     bool m_preventPropagation;
 

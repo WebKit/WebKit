@@ -30,7 +30,7 @@
 #include <inspector/InspectorFrontendChannel.h>
 
 namespace WebCore {
-class InspectorFrontendChannel : public Inspector::InspectorFrontendChannel { };
+typedef Inspector::InspectorFrontendChannel InspectorFrontendChannel;
 }
 
 #endif // !defined(InspectorForwarding_h)

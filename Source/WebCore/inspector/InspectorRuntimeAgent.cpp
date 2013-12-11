@@ -36,8 +36,8 @@
 
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
-#include "InspectorValues.h"
 #include "JSDOMWindowBase.h"
+#include <inspector/InspectorValues.h>
 #include <parser/ParserError.h>
 #include <parser/SourceCode.h>
 #include <runtime/Completion.h>
@@ -50,6 +50,8 @@
 
 using namespace JSC;
 
+using namespace Inspector;
+
 namespace WebCore {
 
 static bool asBool(const bool* const b)
@@ -58,7 +60,7 @@ static bool asBool(const bool* const b)
 }
 
 InspectorRuntimeAgent::InspectorRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent(ASCIILiteral("Runtime"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("Runtime"), instrumentingAgents)
     , m_enabled(false)
     , m_injectedScriptManager(injectedScriptManager)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -82,15 +84,15 @@ static ScriptDebugServer::PauseOnExceptionsState setPauseOnExceptionsState(Scrip
 }
 #endif
 
-static PassRefPtr<TypeBuilder::Runtime::ErrorRange> buildErrorRangeObject(const JSTokenLocation& tokenLocation)
+static PassRefPtr<Inspector::TypeBuilder::Runtime::ErrorRange> buildErrorRangeObject(const JSTokenLocation& tokenLocation)
 {
-    RefPtr<TypeBuilder::Runtime::ErrorRange> result = TypeBuilder::Runtime::ErrorRange::create()
+    RefPtr<Inspector::TypeBuilder::Runtime::ErrorRange> result = Inspector::TypeBuilder::Runtime::ErrorRange::create()
         .setStartOffset(tokenLocation.startOffset)
         .setEndOffset(tokenLocation.endOffset);
     return result.release();
 }
 
-void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, TypeBuilder::Runtime::SyntaxErrorType::Enum* result, TypeBuilder::OptOutput<String>* message, RefPtr<TypeBuilder::Runtime::ErrorRange>& range)
+void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, Inspector::TypeBuilder::Runtime::SyntaxErrorType::Enum* result, Inspector::TypeBuilder::OptOutput<String>* message, RefPtr<Inspector::TypeBuilder::Runtime::ErrorRange>& range)
 {
     VM* vm = JSDOMWindowBase::commonVM();
     JSLockHolder lock(vm);
@@ -100,16 +102,16 @@ void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, TypeBu
 
     switch (error.m_syntaxErrorType) {
     case ParserError::SyntaxErrorNone:
-        *result = TypeBuilder::Runtime::SyntaxErrorType::None;
+        *result = Inspector::TypeBuilder::Runtime::SyntaxErrorType::None;
         break;
     case ParserError::SyntaxErrorIrrecoverable:
-        *result = TypeBuilder::Runtime::SyntaxErrorType::Irrecoverable;
+        *result = Inspector::TypeBuilder::Runtime::SyntaxErrorType::Irrecoverable;
         break;
     case ParserError::SyntaxErrorUnterminatedLiteral:
-        *result = TypeBuilder::Runtime::SyntaxErrorType::UnterminatedLiteral;
+        *result = Inspector::TypeBuilder::Runtime::SyntaxErrorType::UnterminatedLiteral;
         break;
     case ParserError::SyntaxErrorRecoverable:
-        *result = TypeBuilder::Runtime::SyntaxErrorType::Recoverable;
+        *result = Inspector::TypeBuilder::Runtime::SyntaxErrorType::Recoverable;
         break;
     }
 
@@ -119,7 +121,7 @@ void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, TypeBu
     }
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* const returnByValue, const bool* generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown)
+void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result, Inspector::TypeBuilder::OptOutput<bool>* wasThrown)
 {
     InjectedScript injectedScript = injectedScriptForEval(errorString, executionContextId);
     if (injectedScript.hasNoValue())
@@ -142,7 +144,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
     }
 }
 
-void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown)
+void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result, Inspector::TypeBuilder::OptOutput<bool>* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
@@ -171,7 +173,7 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
     }
 }
 
-void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, const bool* const ownProperties, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::PropertyDescriptor>>& result, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::InternalPropertyDescriptor>>& internalProperties)
+void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, const bool* const ownProperties, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor>>& internalProperties)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {

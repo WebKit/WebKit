@@ -48,16 +48,18 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "ScriptController.h"
-#include "ScriptFunctionCall.h"
-#include "ScriptObject.h"
+#include "ScriptGlobalObject.h"
 #include "ScriptState.h"
 #include "Settings.h"
 #include "Timer.h"
 #include "UserGestureIndicator.h"
 #include "WindowFeatures.h"
+#include <bindings/ScriptValue.h>
 #include <wtf/Deque.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -344,7 +346,7 @@ bool InspectorFrontendClientLocal::isUnderTest()
 
 bool InspectorFrontendClientLocal::evaluateAsBoolean(const String& expression)
 {
-    ScriptValue value = m_frontendPage->mainFrame().script().executeScript(expression);
+    Deprecated::ScriptValue value = m_frontendPage->mainFrame().script().executeScript(expression);
     return value.toString(mainWorldExecState(&m_frontendPage->mainFrame())) == "true";
 }
 

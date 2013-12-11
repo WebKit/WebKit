@@ -137,7 +137,6 @@
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/ScriptController.h>
-#include <WebCore/ScriptValue.h>
 #include <WebCore/Scrollbar.h>
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/SecurityOrigin.h>
@@ -147,6 +146,7 @@
 #include <WebCore/SystemInfo.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
+#include <bindings/ScriptValue.h>
 #include <wtf/MainThread.h>
 
 #if USE(CG)

@@ -29,12 +29,12 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorForwarding.h"
+#include "InspectorFrontendChannel.h"
 #include "InspectorValues.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace Inspector {
 
 InspectorBackendDispatcher::CallbackBase::CallbackBase(PassRefPtr<InspectorBackendDispatcher> backendDispatcher, int id)
     : m_backendDispatcher(backendDispatcher)
@@ -187,7 +187,7 @@ void InspectorBackendDispatcher::reportProtocolError(const long* const callId, C
 }
 
 template<typename ReturnValueType, typename ValueType, typename DefaultValueType>
-ReturnValueType InspectorBackendDispatcher::getPropertyValue(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors, DefaultValueType defaultValue, bool (*asMethod)(InspectorValue*, ValueType*), const char* typeName)
+static ReturnValueType getPropertyValue(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors, DefaultValueType defaultValue, bool (*asMethod)(InspectorValue*, ValueType*), const char* typeName)
 {
     ASSERT(protocolErrors);
 
@@ -259,6 +259,6 @@ PassRefPtr<InspectorArray> InspectorBackendDispatcher::getArray(InspectorObject*
     return getPropertyValue<PassRefPtr<InspectorArray>, RefPtr<InspectorArray>, InspectorArray*>(object, name, valueFound, protocolErrors, nullptr, AsMethodBridges::asArray, "Array");
 }
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)

@@ -59,9 +59,9 @@
 #include <RuntimeEnabledFeatures.h>
 #include <SchemeRegistry.h>
 #include <ScriptController.h>
-#include <ScriptValue.h>
 #include <Settings.h>
 #include <TextIterator.h>
+#include <bindings/ScriptValue.h>
 #include <bindings/js/GCController.h>
 #include <history/HistoryItem.h>
 #include <wtf/HashMap.h>

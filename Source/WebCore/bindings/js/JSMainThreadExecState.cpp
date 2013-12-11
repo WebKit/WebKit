@@ -46,4 +46,12 @@ void JSMainThreadExecState::didLeaveScriptContext()
     MutationObserver::deliverAllMutations();
 }
 
+JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args)
+{
+    if (isMainThread())
+        return JSMainThreadExecState::call(exec, functionObject, callType, callData, thisValue, args);
+    else
+        return JSC::call(exec, functionObject, callType, callData, thisValue, args);
+}
+
 } // namespace WebCore

@@ -4,6 +4,9 @@
     <Filter Include="assembler">
       <UniqueIdentifier>{429783a1-5d6a-4019-ad1a-ddb2c98f9b6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="bindings">
+      <UniqueIdentifier>{0bace123-4582-eebc-9314-7819b376c198}</UniqueIdentifier>
+    </Filter>
     <Filter Include="bytecode">
       <UniqueIdentifier>{766088a0-1216-4854-aa43-560c5e283668}</UniqueIdentifier>
     </Filter>
@@ -278,6 +281,15 @@
     </ClCompile>
     <ClCompile Include="..\heap\WriteBarrierSupport.cpp">
       <Filter>heap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\InspectorAgentRegistry.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\InspectorBackendDispatcher.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\InspectorValues.cpp">
+      <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\interpreter\AbstractPC.cpp">
       <Filter>interpreter</Filter>
@@ -1266,6 +1278,24 @@
     <ClCompile Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
+    <ClCompile Include="..\bindings\ScriptValue.cpp">
+      <Filter>bindings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bindings\ScriptFunctionCall.cpp">
+      <Filter>bindings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bindings\ScriptObject.cpp">
+      <Filter>bindings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGSSALoweringPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGStrengthReductionPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\ArrayBufferNeuteringWatchpoint.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -1718,7 +1748,22 @@
     <ClInclude Include="..\heap\WriteBarrierSupport.h">
       <Filter>heap</Filter>
     </ClInclude>
+    <ClInclude Include="..\inspector\InspectorAgentBase.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InspectorAgentRegistry.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InspectorBackendDispatcher.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
     <ClInclude Include="..\inspector\InspectorFrontendChannel.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InspectorTypeBuilder.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InspectorValues.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\interpreter\AbstractPC.h">
@@ -3161,6 +3206,27 @@
     </ClInclude>
     <ClInclude Include="..\bytecode\VariableWatchpointSet.h">
       <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bindings\ScriptFunctionCall.h">
+      <Filter>bindings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bindings\ScriptObject.h">
+      <Filter>bindings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bindings\ScriptValue.h">
+      <Filter>bindings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGStrengthReductionPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGSSALoweringPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\ArrayBufferNeuteringWatchpoint.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\ConstantMode.h">
+      <Filter>runtime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -41,7 +41,6 @@
 #include "Page.h"
 #include "RenderElement.h"
 #include "ScriptController.h"
-#include "ScriptObject.h"
 #include "ScriptSourceCode.h"
 #include "UserAgentScripts.h"
 #include <JavaScriptCore/APICast.h>

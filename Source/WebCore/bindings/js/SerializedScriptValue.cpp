@@ -46,7 +46,6 @@
 #include "JSMessagePort.h"
 #include "JSNavigator.h"
 #include "NotImplemented.h"
-#include "ScriptValue.h"
 #include "SharedBuffer.h"
 #include "WebCoreJSClientData.h"
 #include <limits>
@@ -2608,10 +2607,10 @@ JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* glob
 }
 
 #if ENABLE(INSPECTOR)
-ScriptValue SerializedScriptValue::deserializeForInspector(JSC::ExecState* scriptState)
+Deprecated::ScriptValue SerializedScriptValue::deserializeForInspector(JSC::ExecState* scriptState)
 {
     JSValue value = deserialize(scriptState, scriptState->lexicalGlobalObject(), 0);
-    return ScriptValue(scriptState->vm(), value);
+    return Deprecated::ScriptValue(scriptState->vm(), value);
 }
 #endif
 
@@ -2653,6 +2652,23 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value
     Vector<uint8_t> buffer;
     CloneSerializer::serializeBoolean(value, buffer);
     return adoptRef(new SerializedScriptValue(buffer));
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::serialize(const Deprecated::ScriptValue& value, JSC::ExecState* scriptState, SerializationErrorMode throwExceptions)
+{
+    return SerializedScriptValue::create(scriptState, value.jsValue(), nullptr, nullptr, throwExceptions);
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::serialize(const Deprecated::ScriptValue& value, JSC::ExecState* scriptState, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
+{
+    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(scriptState, value.jsValue(), messagePorts, arrayBuffers);
+    didThrow = scriptState->hadException();
+    return serializedValue.release();
+}
+
+Deprecated::ScriptValue SerializedScriptValue::deserialize(JSC::ExecState* scriptState, SerializedScriptValue* value, SerializationErrorMode throwExceptions)
+{
+    return Deprecated::ScriptValue(scriptState->vm(), value->deserialize(scriptState, scriptState->lexicalGlobalObject(), 0, throwExceptions));
 }
 
 void SerializedScriptValue::maybeThrowExceptionIfSerializationFailed(ExecState* exec, SerializationReturnCode code)

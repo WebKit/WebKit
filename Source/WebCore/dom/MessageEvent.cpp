@@ -21,13 +21,12 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
 #include "config.h"
 #include "MessageEvent.h"
-
 
 namespace WebCore {
 
@@ -56,7 +55,7 @@ MessageEvent::MessageEvent(const AtomicString& type, const MessageEventInit& ini
 {
 }
 
-MessageEvent::MessageEvent(const ScriptValue& data, const String& origin, const String& lastEventId, PassRefPtr<EventTarget> source, PassOwnPtr<MessagePortArray> ports)
+MessageEvent::MessageEvent(const Deprecated::ScriptValue& data, const String& origin, const String& lastEventId, PassRefPtr<EventTarget> source, PassOwnPtr<MessagePortArray> ports)
     : Event(eventNames().messageEvent, false, false)
     , m_dataType(DataTypeScriptValue)
     , m_dataAsScriptValue(data)
@@ -108,7 +107,7 @@ MessageEvent::~MessageEvent()
 {
 }
 
-void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue& data, const String& origin, const String& lastEventId, DOMWindow* source, PassOwnPtr<MessagePortArray> ports)
+void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const Deprecated::ScriptValue& data, const String& origin, const String& lastEventId, DOMWindow* source, PassOwnPtr<MessagePortArray> ports)
 {
     if (dispatched())
         return;

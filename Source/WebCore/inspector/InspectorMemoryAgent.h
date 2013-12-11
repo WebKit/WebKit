@@ -33,8 +33,8 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBaseAgent.h"
-#include "InspectorFrontend.h"
+#include "InspectorBackendDispatchers.h"
+#include "InspectorWebAgentBase.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -45,13 +45,13 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorMemoryAgent : public InspectorBaseAgent, public InspectorMemoryBackendDispatcherHandler {
+class InspectorMemoryAgent : public InspectorAgentBase, public InspectorMemoryBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorMemoryAgent);
 public:
     static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents);
     virtual ~InspectorMemoryAgent();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     virtual void getDOMCounters(ErrorString*, int* documents, int* nodes, int* jsEventListeners);

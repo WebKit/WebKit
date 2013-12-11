@@ -124,12 +124,10 @@ list(APPEND WebCore_SOURCES
     bindings/js/ScriptCallStackFactory.cpp
     bindings/js/ScriptController.cpp
     bindings/js/ScriptDebugServer.cpp
-    bindings/js/ScriptFunctionCall.cpp
-    bindings/js/ScriptObject.cpp
+    bindings/js/ScriptGlobalObject.cpp
     bindings/js/ScriptProfile.cpp
     bindings/js/ScriptProfiler.cpp
     bindings/js/ScriptState.cpp
-    bindings/js/ScriptValue.cpp
     bindings/js/SerializedScriptValue.cpp
     bindings/js/WebCoreTypedArrayController.cpp
 

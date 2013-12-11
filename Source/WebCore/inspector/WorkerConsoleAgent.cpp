@@ -34,6 +34,8 @@
 
 #include "WorkerConsoleAgent.h"
 
+using namespace Inspector;
+
 namespace WebCore {
 
 WorkerConsoleAgent::WorkerConsoleAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager)

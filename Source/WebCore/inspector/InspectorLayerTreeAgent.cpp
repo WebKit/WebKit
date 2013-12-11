@@ -46,10 +46,12 @@
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 
+using namespace Inspector;
+
 namespace WebCore {
 
 InspectorLayerTreeAgent::InspectorLayerTreeAgent(InstrumentingAgents* instrumentingAgents)
-    : InspectorBaseAgent(ASCIILiteral("LayerTree"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("LayerTree"), instrumentingAgents)
 {
 }
 
@@ -58,7 +60,7 @@ InspectorLayerTreeAgent::~InspectorLayerTreeAgent()
     reset();
 }
 
-void InspectorLayerTreeAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorLayerTreeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorLayerTreeFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorLayerTreeBackendDispatcher::create(backendDispatcher, this);
@@ -105,9 +107,9 @@ void InspectorLayerTreeAgent::pseudoElementDestroyed(PseudoElement* pseudoElemen
     unbindPseudoElement(pseudoElement);
 }
 
-void InspectorLayerTreeAgent::layersForNode(ErrorString* errorString, int nodeId, RefPtr<TypeBuilder::Array<TypeBuilder::LayerTree::Layer>>& layers)
+void InspectorLayerTreeAgent::layersForNode(ErrorString* errorString, int nodeId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::LayerTree::Layer>>& layers)
 {
-    layers = TypeBuilder::Array<TypeBuilder::LayerTree::Layer>::create();
+    layers = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::LayerTree::Layer>::create();
 
     Node* node = m_instrumentingAgents->inspectorDOMAgent()->nodeForId(nodeId);
     if (!node) {
@@ -124,7 +126,7 @@ void InspectorLayerTreeAgent::layersForNode(ErrorString* errorString, int nodeId
     gatherLayersUsingRenderObjectHierarchy(errorString, renderer, layers);
 }
 
-void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(ErrorString* errorString, RenderObject* renderer, RefPtr<TypeBuilder::Array<TypeBuilder::LayerTree::Layer>>& layers)
+void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(ErrorString* errorString, RenderObject* renderer, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::LayerTree::Layer>>& layers)
 {
     if (renderer->hasLayer()) {
         gatherLayersUsingRenderLayerHierarchy(errorString, toRenderLayerModelObject(renderer)->layer(), layers);
@@ -135,7 +137,7 @@ void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(ErrorString
         gatherLayersUsingRenderObjectHierarchy(errorString, renderer, layers);
 }
 
-void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(ErrorString* errorString, RenderLayer* renderLayer, RefPtr<TypeBuilder::Array<TypeBuilder::LayerTree::Layer>>& layers)
+void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(ErrorString* errorString, RenderLayer* renderLayer, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::LayerTree::Layer>>& layers)
 {
     if (renderLayer->isComposited())
         layers->addItem(buildObjectForLayer(errorString, renderLayer));
@@ -144,7 +146,7 @@ void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(ErrorString*
         gatherLayersUsingRenderLayerHierarchy(errorString, renderLayer, layers);
 }
 
-PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(ErrorString* errorString, RenderLayer* renderLayer)
+PassRefPtr<Inspector::TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(ErrorString* errorString, RenderLayer* renderLayer)
 {
     RenderObject* renderer = &renderLayer->renderer();
     RenderLayerBacking* backing = renderLayer->backing();
@@ -164,7 +166,7 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
         node = renderer->parent()->element();
 
     // Basic set of properties.
-    RefPtr<TypeBuilder::LayerTree::Layer> layerObject = TypeBuilder::LayerTree::Layer::create()
+    RefPtr<Inspector::TypeBuilder::LayerTree::Layer> layerObject = Inspector::TypeBuilder::LayerTree::Layer::create()
         .setLayerId(bind(renderLayer))
         .setNodeId(idForNode(errorString, node))
         .setBounds(buildObjectForIntRect(renderer->absoluteBoundingBoxRect()))
@@ -216,16 +218,16 @@ int InspectorLayerTreeAgent::idForNode(ErrorString* errorString, Node* node)
     return nodeId;
 }
 
-PassRefPtr<TypeBuilder::LayerTree::IntRect> InspectorLayerTreeAgent::buildObjectForIntRect(const IntRect& rect)
+PassRefPtr<Inspector::TypeBuilder::LayerTree::IntRect> InspectorLayerTreeAgent::buildObjectForIntRect(const IntRect& rect)
 {
-    return TypeBuilder::LayerTree::IntRect::create()
+    return Inspector::TypeBuilder::LayerTree::IntRect::create()
         .setX(rect.x())
         .setY(rect.y())
         .setWidth(rect.width())
         .setHeight(rect.height()).release();
 }
 
-void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString* errorString, const String& layerId, RefPtr<TypeBuilder::LayerTree::CompositingReasons>& compositingReasons)
+void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString* errorString, const String& layerId, RefPtr<Inspector::TypeBuilder::LayerTree::CompositingReasons>& compositingReasons)
 {
     const RenderLayer* renderLayer = m_idToLayer.get(layerId);
 
@@ -235,7 +237,7 @@ void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString* errorStrin
     }
 
     CompositingReasons reasonsBitmask = renderLayer->compositor().reasonsForCompositing(*renderLayer);
-    compositingReasons = TypeBuilder::LayerTree::CompositingReasons::create();
+    compositingReasons = Inspector::TypeBuilder::LayerTree::CompositingReasons::create();
 
     if (reasonsBitmask & CompositingReason3DTransform)
         compositingReasons->setTransform3D(true);

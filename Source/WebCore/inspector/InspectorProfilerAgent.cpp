@@ -40,19 +40,21 @@
 #include "InjectedScriptHost.h"
 #include "InspectorConsoleAgent.h"
 #include "InspectorFrontend.h"
-#include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "URL.h"
 #include "Page.h"
 #include "PageScriptDebugServer.h"
 #include "ScriptHeapSnapshot.h"
-#include "ScriptObject.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
 #include "WorkerScriptDebugServer.h"
+#include <bindings/ScriptObject.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringConcatenate.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -119,7 +121,7 @@ PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingA
 }
 
 InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent(ASCIILiteral("Profiler"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("Profiler"), instrumentingAgents)
     , m_consoleAgent(consoleAgent)
     , m_injectedScriptManager(injectedScriptManager)
     , m_enabled(false)
@@ -168,19 +170,19 @@ void InspectorProfilerAgent::collectGarbage(WebCore::ErrorString*)
     ScriptProfiler::collectGarbage();
 }
 
-PassRefPtr<TypeBuilder::Profiler::ProfileHeader> InspectorProfilerAgent::createProfileHeader(const ScriptProfile& profile)
+PassRefPtr<Inspector::TypeBuilder::Profiler::ProfileHeader> InspectorProfilerAgent::createProfileHeader(const ScriptProfile& profile)
 {
-    return TypeBuilder::Profiler::ProfileHeader::create()
-        .setTypeId(TypeBuilder::Profiler::ProfileHeader::TypeId::CPU)
+    return Inspector::TypeBuilder::Profiler::ProfileHeader::create()
+        .setTypeId(Inspector::TypeBuilder::Profiler::ProfileHeader::TypeId::CPU)
         .setUid(profile.uid())
         .setTitle(profile.title())
         .release();
 }
 
-PassRefPtr<TypeBuilder::Profiler::ProfileHeader> InspectorProfilerAgent::createSnapshotHeader(const ScriptHeapSnapshot& snapshot)
+PassRefPtr<Inspector::TypeBuilder::Profiler::ProfileHeader> InspectorProfilerAgent::createSnapshotHeader(const ScriptHeapSnapshot& snapshot)
 {
-    RefPtr<TypeBuilder::Profiler::ProfileHeader> header = TypeBuilder::Profiler::ProfileHeader::create()
-        .setTypeId(TypeBuilder::Profiler::ProfileHeader::TypeId::HEAP)
+    RefPtr<Inspector::TypeBuilder::Profiler::ProfileHeader> header = Inspector::TypeBuilder::Profiler::ProfileHeader::create()
+        .setTypeId(Inspector::TypeBuilder::Profiler::ProfileHeader::TypeId::HEAP)
         .setUid(snapshot.uid())
         .setTitle(snapshot.title());
     header->setMaxJSObjectId(snapshot.maxSnapshotJSObjectId());
@@ -240,10 +242,10 @@ String InspectorProfilerAgent::getCurrentUserInitiatedProfileName(bool increment
     return makeString(UserInitiatedProfileName, '.', String::number(m_currentUserInitiatedProfileNumber));
 }
 
-void InspectorProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::ProfileHeader>>& headers)
+void InspectorProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Profiler::ProfileHeader>>& headers)
 {
     m_profileHeadersRequested = true;
-    headers = TypeBuilder::Array<TypeBuilder::Profiler::ProfileHeader>::create();
+    headers = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Profiler::ProfileHeader>::create();
 
     ProfilesMap::iterator profilesEnd = m_profiles.end();
     for (ProfilesMap::iterator it = m_profiles.begin(); it != profilesEnd; ++it)
@@ -268,7 +270,7 @@ private:
 
 } // namespace
 
-void InspectorProfilerAgent::getCPUProfile(ErrorString* errorString, int rawUid, RefPtr<TypeBuilder::Profiler::CPUProfile>& profileObject)
+void InspectorProfilerAgent::getCPUProfile(ErrorString* errorString, int rawUid, RefPtr<Inspector::TypeBuilder::Profiler::CPUProfile>& profileObject)
 {
     unsigned uid = static_cast<unsigned>(rawUid);
     ProfilesMap::iterator it = m_profiles.find(uid);
@@ -276,7 +278,7 @@ void InspectorProfilerAgent::getCPUProfile(ErrorString* errorString, int rawUid,
         *errorString = "Profile wasn't found";
         return;
     }
-    profileObject = TypeBuilder::Profiler::CPUProfile::create();
+    profileObject = Inspector::TypeBuilder::Profiler::CPUProfile::create();
     profileObject->setHead(it->value->buildInspectorObjectForHead());
     profileObject->setIdleTime(it->value->idleTime());
 }
@@ -327,7 +329,7 @@ void InspectorProfilerAgent::resetFrontendProfiles()
         m_frontendDispatcher->resetProfiles();
 }
 
-void InspectorProfilerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorProfilerAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorProfilerFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorProfilerBackendDispatcher::create(backendDispatcher, this);
@@ -414,7 +416,7 @@ void InspectorProfilerAgent::toggleRecordButton(bool isProfiling)
         m_frontendDispatcher->setRecordingProfile(isProfiling);
 }
 
-void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result)
+void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result)
 {
     bool ok;
     unsigned id = heapSnapshotObjectId.toUInt(&ok);
@@ -422,7 +424,7 @@ void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, const S
         *error = "Invalid heap snapshot object id";
         return;
     }
-    ScriptObject heapObject = ScriptProfiler::objectByHeapObjectId(id);
+    Deprecated::ScriptObject heapObject = ScriptProfiler::objectByHeapObjectId(id);
     if (heapObject.hasNoValue()) {
         *error = "Object is not available";
         return;
@@ -444,7 +446,7 @@ void InspectorProfilerAgent::getHeapObjectId(ErrorString* errorString, const Str
         *errorString = "Inspected context has gone";
         return;
     }
-    ScriptValue value = injectedScript.findObjectById(objectId);
+    Deprecated::ScriptValue value = injectedScript.findObjectById(objectId);
     if (value.hasNoValue() || value.isUndefined()) {
         *errorString = "Object with given id not found";
         return;

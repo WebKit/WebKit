@@ -33,7 +33,8 @@
 
 #if ENABLE(INSPECTOR) && ENABLE(INDEXED_DATABASE)
 
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
+#include "InspectorWebAgentBase.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,7 +45,7 @@ class InspectorPageAgent;
 
 typedef String ErrorString;
 
-class InspectorIndexedDBAgent : public InspectorBaseAgent, public InspectorIndexedDBBackendDispatcherHandler {
+class InspectorIndexedDBAgent : public InspectorAgentBase, public InspectorIndexedDBBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorIndexedDBAgent> create(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, InspectorPageAgent* pageAgent)
     {
@@ -52,7 +53,7 @@ public:
     }
     ~InspectorIndexedDBAgent();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     // Called from the front-end.
@@ -60,7 +61,7 @@ public:
     virtual void disable(ErrorString*);
     virtual void requestDatabaseNames(ErrorString*, const String& securityOrigin, PassRefPtr<RequestDatabaseNamesCallback>);
     virtual void requestDatabase(ErrorString*, const String& securityOrigin, const String& databaseName, PassRefPtr<RequestDatabaseCallback>);
-    virtual void requestData(ErrorString*, const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const RefPtr<InspectorObject>* keyRange, PassRefPtr<RequestDataCallback>);
+    virtual void requestData(ErrorString*, const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const RefPtr<Inspector::InspectorObject>* keyRange, PassRefPtr<RequestDataCallback>);
     virtual void clearObjectStore(ErrorString*, const String& in_securityOrigin, const String& in_databaseName, const String& in_objectStoreName, PassRefPtr<ClearObjectStoreCallback>);
 
 private:

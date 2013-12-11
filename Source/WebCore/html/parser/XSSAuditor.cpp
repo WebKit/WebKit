@@ -37,16 +37,14 @@
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
 #include "HTMLParserIdioms.h"
-#include "InspectorValues.h"
 #include "Settings.h"
 #include "TextResourceDecoder.h"
 #include "XLinkNames.h"
+#include <wtf/MainThread.h>
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
 #endif
-
-#include <wtf/MainThread.h>
 
 namespace WebCore {
 

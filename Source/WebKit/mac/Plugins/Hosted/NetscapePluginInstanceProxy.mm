@@ -57,11 +57,11 @@
 #import <WebCore/ProxyServer.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/ScriptController.h>
-#import <WebCore/ScriptValue.h>
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/runtime_object.h>
 #import <WebKitSystemInterface.h>
+#import <bindings/ScriptValue.h>
 #import <mach/mach.h>
 #import <utility>
 #import <wtf/RefCountedLeakCounter.h>

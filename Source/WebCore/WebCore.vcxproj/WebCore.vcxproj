@@ -742,7 +742,7 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLNames.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorBackendDispatchers.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorFrontend.cpp" />
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorTypeBuilder.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebTypeBuilders.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSAbstractWorker.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -17288,21 +17288,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\ScriptFunctionCall.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\bindings\js\ScriptObject.cpp" />
+    <ClCompile Include="..\bindings\js\ScriptGlobalObject.cpp" />
     <ClCompile Include="..\bindings\js\ScriptProfile.cpp" />
     <ClCompile Include="..\bindings\js\ScriptProfiler.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -17332,7 +17318,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\ScriptValue.cpp" />
     <ClCompile Include="..\bindings\js\SerializedScriptValue.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -17645,14 +17630,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\inspector\InspectorAgentRegistry.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\inspector\InspectorAllInOne.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -17662,14 +17639,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\inspector\InspectorApplicationCacheAgent.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\inspector\InspectorBackendDispatcher.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -17917,14 +17886,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\inspector\InspectorValues.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\inspector\InspectorWorkerAgent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -18117,7 +18078,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorBackendDispatchers.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorFrontend.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorOverlayPage.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorTypeBuilder.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorWebTypeBuilders.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSAbstractWorker.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSAttr.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBarProp.h" />
@@ -18587,11 +18548,20 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLVertexArrayObjectOES.h" />
     <ClInclude Include="..\accessibility\AccessibilityNodeObject.h" />
     <ClInclude Include="..\css\CSSImageSetValue.h" />
+    <ClInclude Include="..\ForwardingHeaders\bindings\ScriptFunctionCall.h" />
+    <ClInclude Include="..\ForwardingHeaders\bindings\ScriptObject.h" />
+    <ClInclude Include="..\ForwardingHeaders\bindings\ScriptValue.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\AllocationSpace.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\Heap.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\SlotVisitor.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\StrongInlines.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\Weak.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorAgentBase.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorAgentRegistry.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorBackendDispatcher.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorFrontendChannel.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorTypeBuilder.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\InspectorValues.h" />
     <ClInclude Include="..\ForwardingHeaders\masm\X86Assembler.h" />
     <ClInclude Include="..\ForwardingHeaders\parser\SourceCode.h" />
     <ClInclude Include="..\ForwardingHeaders\parser\SourceProvider.h" />
@@ -20642,15 +20612,13 @@
     <ClInclude Include="..\bindings\js\ScriptCallStackFactory.h" />
     <ClInclude Include="..\bindings\js\ScriptController.h" />
     <ClInclude Include="..\bindings\js\ScriptDebugServer.h" />
-    <ClInclude Include="..\bindings\js\ScriptFunctionCall.h" />
     <ClInclude Include="..\bindings\js\ScriptHeapSnapshot.h" />
-    <ClInclude Include="..\bindings\js\ScriptObject.h" />
+    <ClInclude Include="..\bindings\js\ScriptGlobalObject.h" />
     <ClInclude Include="..\bindings\js\ScriptProfile.h" />
     <ClInclude Include="..\bindings\js\ScriptProfileNode.h" />
     <ClInclude Include="..\bindings\js\ScriptProfiler.h" />
     <ClInclude Include="..\bindings\js\ScriptSourceCode.h" />
     <ClInclude Include="..\bindings\js\ScriptState.h" />
-    <ClInclude Include="..\bindings\js\ScriptValue.h" />
     <ClInclude Include="..\bindings\js\ScriptWrappable.h" />
     <ClInclude Include="..\bindings\js\SerializedScriptValue.h" />
     <ClInclude Include="..\bindings\js\SourceID.h" />
@@ -20961,8 +20929,6 @@
     <ClInclude Include="..\inspector\InjectedScriptModule.h" />
     <ClInclude Include="..\inspector\InspectorAgent.h" />
     <ClInclude Include="..\inspector\InspectorApplicationCacheAgent.h" />
-    <ClInclude Include="..\inspector\InspectorBackendDispatcher.h" />
-    <ClInclude Include="..\inspector\InspectorBaseAgent.h" />
     <ClInclude Include="..\inspector\InspectorCanvasAgent.h" />
     <ClInclude Include="..\inspector\InspectorCanvasInstrumentation.h" />
     <ClInclude Include="..\inspector\InspectorClient.h" />
@@ -20998,7 +20964,7 @@
     <ClInclude Include="..\inspector\InspectorStyleSheet.h" />
     <ClInclude Include="..\inspector\InspectorStyleTextEditor.h" />
     <ClInclude Include="..\inspector\InspectorTimelineAgent.h" />
-    <ClInclude Include="..\inspector\InspectorValues.h" />
+    <ClInclude Include="..\inspector\InspectorWebAgentBase.h" />
     <ClInclude Include="..\inspector\InspectorWorkerAgent.h" />
     <ClInclude Include="..\inspector\InspectorWorkerResource.h" />
     <ClInclude Include="..\inspector\InstrumentingAgents.h" />

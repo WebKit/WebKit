@@ -28,6 +28,7 @@
 #define SerializedScriptValue_h
 
 #include "ScriptState.h"
+#include <bindings/ScriptValue.h>
 #include <heap/Strong.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/JSCJSValue.h>
@@ -57,7 +58,6 @@ enum SerializationReturnCode {
     
 enum SerializationErrorMode { NonThrowing, Throwing };
 
-class ScriptValue;
 class SharedBuffer;
 
 class SerializedScriptValue :
@@ -67,8 +67,7 @@ class SerializedScriptValue :
     public RefCounted<SerializedScriptValue> {
 #endif
 public:
-    static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, MessagePortArray*, ArrayBufferArray*,
-                                                    SerializationErrorMode = Throwing);
+    static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, MessagePortArray*, ArrayBufferArray*, SerializationErrorMode = Throwing);
     static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, MessagePortArray*, ArrayBufferArray*, JSValueRef* exception);
     static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, JSValueRef* exception);
 
@@ -83,6 +82,10 @@ public:
     static PassRefPtr<SerializedScriptValue> undefinedValue();
     static PassRefPtr<SerializedScriptValue> booleanValue(bool value);
 
+    static PassRefPtr<SerializedScriptValue> serialize(const Deprecated::ScriptValue&, JSC::ExecState*, SerializationErrorMode = Throwing);
+    static PassRefPtr<SerializedScriptValue> serialize(const Deprecated::ScriptValue&, JSC::ExecState*, MessagePortArray*, ArrayBufferArray*, bool&);
+    static Deprecated::ScriptValue deserialize(JSC::ExecState*, SerializedScriptValue*, SerializationErrorMode = Throwing);
+
     static uint32_t wireFormatVersion();
 
     String toString();
@@ -92,7 +95,7 @@ public:
     JSValueRef deserialize(JSContextRef, JSValueRef* exception);
 
 #if ENABLE(INSPECTOR)
-    ScriptValue deserializeForInspector(JSC::ExecState*);
+    Deprecated::ScriptValue deserializeForInspector(JSC::ExecState*);
 #endif
 
     const Vector<uint8_t>& data() const { return m_data; }

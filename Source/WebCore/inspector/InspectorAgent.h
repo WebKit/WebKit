@@ -30,10 +30,16 @@
 #ifndef InspectorAgent_h
 #define InspectorAgent_h
 
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
+#include "InspectorWebAgentBase.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+
+namespace Inspector {
+class InspectorObject;
+}
 
 namespace WebCore {
 
@@ -42,13 +48,12 @@ class DocumentLoader;
 class Frame;
 class InjectedScriptManager;
 class InspectorInspectorFrontendDispatcher;
-class InspectorObject;
 class InstrumentingAgents;
 class Page;
 
 typedef String ErrorString;
 
-class InspectorAgent : public InspectorBaseAgent, public InspectorInspectorBackendDispatcherHandler {
+class InspectorAgent : public InspectorAgentBase, public InspectorInspectorBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
 public:
     static PassOwnPtr<InspectorAgent> create(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents)
@@ -64,7 +69,7 @@ public:
     void enable(ErrorString*);
     void disable(ErrorString*);
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
@@ -79,7 +84,7 @@ public:
 
     void setInjectedScriptForOrigin(const String& origin, const String& source);
 
-    void inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints);
+    void inspect(PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<Inspector::InspectorObject> hints);
 
 private:
     InspectorAgent(Page*, InjectedScriptManager*, InstrumentingAgents*);
@@ -90,7 +95,7 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
 
     Vector<pair<long, String>> m_pendingEvaluateTestCommands;
-    pair<RefPtr<TypeBuilder::Runtime::RemoteObject>, RefPtr<InspectorObject>> m_pendingInspectData;
+    pair<RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>, RefPtr<Inspector::InspectorObject>> m_pendingInspectData;
     HashMap<String, String> m_injectedScriptForOrigin;
 
     bool m_enabled;

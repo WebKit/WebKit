@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,57 +32,56 @@
 #ifndef ScriptFunctionCall_h
 #define ScriptFunctionCall_h
 
+#include "ArgList.h"
 #include "ScriptObject.h"
-#include "ScriptState.h"
-
-#include <runtime/ArgList.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
-    class JSValue;
+class JSValue;
 }
 
-namespace WebCore {
-    class ScriptValue;
+namespace Deprecated {
 
-    class ScriptCallArgumentHandler {
-    public:
-        ScriptCallArgumentHandler(JSC::ExecState* state) : m_exec(state) { }
+class JS_EXPORT_PRIVATE ScriptCallArgumentHandler {
+public:
+    ScriptCallArgumentHandler(JSC::ExecState* state) : m_exec(state) { }
 
-        void appendArgument(const ScriptObject&);
-        void appendArgument(const ScriptValue&);
-        void appendArgument(const char*);
-        void appendArgument(const String&);
-        void appendArgument(JSC::JSValue);
-        void appendArgument(long);
-        void appendArgument(long long);
-        void appendArgument(unsigned int);
-        void appendArgument(unsigned long);
-        void appendArgument(int);
-        void appendArgument(bool);
+    void appendArgument(const ScriptObject&);
+    void appendArgument(const ScriptValue&);
+    void appendArgument(const char*);
+    void appendArgument(const String&);
+    void appendArgument(JSC::JSValue);
+    void appendArgument(long);
+    void appendArgument(long long);
+    void appendArgument(unsigned int);
+    void appendArgument(unsigned long);
+    void appendArgument(int);
+    void appendArgument(bool);
 
-    protected:
-        JSC::MarkedArgumentBuffer m_arguments;
-        JSC::ExecState* m_exec;
+protected:
+    JSC::MarkedArgumentBuffer m_arguments;
+    JSC::ExecState* m_exec;
 
-    private:
-        // MarkedArgumentBuffer must be stack allocated, so prevent heap
-        // alloc of ScriptFunctionCall as well.
-        void* operator new(size_t) { ASSERT_NOT_REACHED(); return reinterpret_cast<void*>(0xbadbeef); }
-        void* operator new[](size_t) { ASSERT_NOT_REACHED(); return reinterpret_cast<void*>(0xbadbeef); }
-    };
+private:
+    // MarkedArgumentBuffer must be stack allocated, so prevent heap
+    // alloc of ScriptFunctionCall as well.
+    void* operator new(size_t) { ASSERT_NOT_REACHED(); return reinterpret_cast<void*>(0xbadbeef); }
+    void* operator new[](size_t) { ASSERT_NOT_REACHED(); return reinterpret_cast<void*>(0xbadbeef); }
+};
 
-    class ScriptFunctionCall : public ScriptCallArgumentHandler {
-    public:
-        ScriptFunctionCall(const ScriptObject& thisObject, const String& name);
-        ScriptValue call(bool& hadException);
-        ScriptValue call();
+class JS_EXPORT_PRIVATE ScriptFunctionCall : public ScriptCallArgumentHandler {
+public:
+    typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args);
+    ScriptFunctionCall(const ScriptObject& thisObject, const String& name, ScriptFunctionCallHandler handler = nullptr);
+    ScriptValue call(bool& hadException);
+    ScriptValue call();
 
-    protected:
-        ScriptObject m_thisObject;
-        String m_name;
-    };
+protected:
+    ScriptFunctionCallHandler m_callHandler;
+    ScriptObject m_thisObject;
+    String m_name;
+};
 
-} // namespace WebCore
+} // namespace Deprecated
 
 #endif // ScriptFunctionCall

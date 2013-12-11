@@ -31,12 +31,14 @@
 #define InspectorDebuggerAgent_h
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+
 #include "BreakpointID.h"
 #include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
 #include "InjectedScript.h"
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
 #include "InspectorFrontend.h"
+#include "InspectorWebAgentBase.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
 #include "ScriptState.h"
@@ -48,19 +50,25 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
-namespace WebCore {
+namespace Deprecated {
+class ScriptValue;
+}
 
-class InjectedScriptManager;
+namespace Inspector {
 class InspectorArray;
 class InspectorObject;
 class InspectorValue;
+}
+
+namespace WebCore {
+
+class InjectedScriptManager;
 class InstrumentingAgents;
 class ScriptDebugServer;
-class ScriptValue;
 
 typedef String ErrorString;
 
-class InspectorDebuggerAgent : public InspectorBaseAgent, public ScriptDebugListener, public InspectorDebuggerBackendDispatcherHandler {
+class InspectorDebuggerAgent : public InspectorAgentBase, public ScriptDebugListener, public InspectorDebuggerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static const char* backtraceObjectGroup;
@@ -71,7 +79,7 @@ public:
     virtual void canSetScriptSource(ErrorString*, bool*);
     virtual void supportsSeparateScriptCompilationAndExecution(ErrorString*, bool*);
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     bool isPaused();
@@ -83,15 +91,15 @@ public:
     virtual void disable(ErrorString*);
     virtual void setBreakpointsActive(ErrorString*, bool active);
 
-    virtual void setBreakpointByUrl(ErrorString*, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<InspectorObject>* options, TypeBuilder::Debugger::BreakpointId*, RefPtr<TypeBuilder::Array<TypeBuilder::Debugger::Location>>& locations);
-    virtual void setBreakpoint(ErrorString*, const RefPtr<InspectorObject>& location, const RefPtr<InspectorObject>* options, TypeBuilder::Debugger::BreakpointId*, RefPtr<TypeBuilder::Debugger::Location>& actualLocation);
+    virtual void setBreakpointByUrl(ErrorString*, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::Location>>& locations);
+    virtual void setBreakpoint(ErrorString*, const RefPtr<Inspector::InspectorObject>& location, const RefPtr<Inspector::InspectorObject>* options, Inspector::TypeBuilder::Debugger::BreakpointId*, RefPtr<Inspector::TypeBuilder::Debugger::Location>& actualLocation);
     virtual void removeBreakpoint(ErrorString*, const String& breakpointIdentifier);
-    virtual void continueToLocation(ErrorString*, const RefPtr<InspectorObject>& location);
+    virtual void continueToLocation(ErrorString*, const RefPtr<Inspector::InspectorObject>& location);
 
-    virtual void searchInContent(ErrorString*, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch>>&);
-    virtual void setScriptSource(ErrorString*, const String& scriptID, const String& newContent, const bool* preview, RefPtr<TypeBuilder::Array<TypeBuilder::Debugger::CallFrame>>& newCallFrames, RefPtr<InspectorObject>& result);
+    virtual void searchInContent(ErrorString*, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchMatch>>&);
+    virtual void setScriptSource(ErrorString*, const String& scriptID, const String& newContent, const bool* preview, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>>& newCallFrames, RefPtr<Inspector::InspectorObject>& result);
     virtual void getScriptSource(ErrorString*, const String& scriptID, String* scriptSource);
-    virtual void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<TypeBuilder::Debugger::FunctionDetails>&);
+    virtual void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<Inspector::TypeBuilder::Debugger::FunctionDetails>&);
     virtual void pause(ErrorString*);
     virtual void resume(ErrorString*);
     virtual void stepOver(ErrorString*);
@@ -106,15 +114,15 @@ public:
                              const bool* doNotPauseOnExceptionsAndMuteConsole,
                              const bool* returnByValue,
                              const bool* generatePreview,
-                             RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
-                             TypeBuilder::OptOutput<bool>* wasThrown);
-    void compileScript(ErrorString*, const String& expression, const String& sourceURL, TypeBuilder::OptOutput<TypeBuilder::Debugger::ScriptId>*, TypeBuilder::OptOutput<String>* syntaxErrorMessage);
-    void runScript(ErrorString*, const TypeBuilder::Debugger::ScriptId&, const int* executionContextId, const String* objectGroup, const bool* doNotPauseOnExceptionsAndMuteConsole, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown);
+                             RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result,
+                             Inspector::TypeBuilder::OptOutput<bool>* wasThrown);
+    void compileScript(ErrorString*, const String& expression, const String& sourceURL, Inspector::TypeBuilder::OptOutput<Inspector::TypeBuilder::Debugger::ScriptId>*, Inspector::TypeBuilder::OptOutput<String>* syntaxErrorMessage);
+    void runScript(ErrorString*, const Inspector::TypeBuilder::Debugger::ScriptId&, const int* executionContextId, const String* objectGroup, const bool* doNotPauseOnExceptionsAndMuteConsole, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result, Inspector::TypeBuilder::OptOutput<bool>* wasThrown);
     virtual void setOverlayMessage(ErrorString*, const String*);
 
-    void schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<InspectorObject> data);
+    void schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<Inspector::InspectorObject> data);
     void cancelPauseOnNextStatement();
-    void breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<InspectorObject> data);
+    void breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<Inspector::InspectorObject> data);
     virtual void scriptExecutionBlockedByCSP(const String& directiveText);
 
     class Listener {
@@ -141,21 +149,21 @@ protected:
 
     virtual void enable();
     virtual void disable();
-    virtual void didPause(JSC::ExecState*, const ScriptValue& callFrames, const ScriptValue& exception);
+    virtual void didPause(JSC::ExecState*, const Deprecated::ScriptValue& callFrames, const Deprecated::ScriptValue& exception);
     virtual void didContinue();
     void reset();
 
 private:
     bool enabled() const { return m_enabled; };
 
-    PassRefPtr<TypeBuilder::Array<TypeBuilder::Debugger::CallFrame>> currentCallFrames();
+    PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>> currentCallFrames();
 
     virtual void didParseSource(SourceID, const Script&) OVERRIDE FINAL;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) OVERRIDE FINAL;
 
     void setPauseOnExceptionsImpl(ErrorString*, int);
 
-    PassRefPtr<TypeBuilder::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, SourceID, const ScriptBreakpoint&);
+    PassRefPtr<Inspector::TypeBuilder::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, SourceID, const ScriptBreakpoint&);
     void clear();
     bool assertPaused(ErrorString*);
     void clearBreakDetails();
@@ -164,19 +172,19 @@ private:
 
     typedef HashMap<SourceID, Script> ScriptsMap;
     typedef HashMap<String, Vector<BreakpointID>> BreakpointIdentifierToDebugServerBreakpointIDsMap;
-    typedef HashMap<String, RefPtr<InspectorObject>> BreakpointIdentifierToBreakpointMap;
+    typedef HashMap<String, RefPtr<Inspector::InspectorObject>> BreakpointIdentifierToBreakpointMap;
 
     InjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<InspectorDebuggerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<InspectorDebuggerBackendDispatcher> m_backendDispatcher;
     JSC::ExecState* m_pausedScriptState;
-    ScriptValue m_currentCallStack;
+    Deprecated::ScriptValue m_currentCallStack;
     ScriptsMap m_scripts;
     BreakpointIdentifierToDebugServerBreakpointIDsMap m_breakpointIdentifierToDebugServerBreakpointIDs;
     BreakpointIdentifierToBreakpointMap m_javaScriptBreakpoints;
     BreakpointID m_continueToLocationBreakpointID;
     InspectorDebuggerFrontendDispatcher::Reason::Enum m_breakReason;
-    RefPtr<InspectorObject> m_breakAuxData;
+    RefPtr<Inspector::InspectorObject> m_breakAuxData;
     bool m_enabled;
     bool m_javaScriptPauseScheduled;
     Listener* m_listener;

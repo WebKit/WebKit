@@ -41,8 +41,8 @@
 #include "PageConsole.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
-#include "ScriptValue.h"
 #include "Sound.h"
+#include <bindings/ScriptValue.h>
 #include <debugger/DebuggerCallFrame.h>
 #include <parser/SourceProvider.h>
 #include <runtime/JSLock.h>
@@ -130,14 +130,14 @@ bool ScriptDebugServer::canSetScriptSource()
     return false;
 }
 
-bool ScriptDebugServer::setScriptSource(const String&, const String&, bool, String*, ScriptValue*, ScriptObject*)
+bool ScriptDebugServer::setScriptSource(const String&, const String&, bool, String*, Deprecated::ScriptValue*, Deprecated::ScriptObject*)
 {
     // FIXME(40300): implement this.
     return false;
 }
 
 
-void ScriptDebugServer::updateCallStack(ScriptValue*)
+void ScriptDebugServer::updateCallStack(Deprecated::ScriptValue*)
 {
     // This method is used for restart frame feature that is not implemented yet.
     // FIXME(40300): implement this.
@@ -159,7 +159,7 @@ void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
         } else
             jsCallFrame = jsUndefined();
     }
-    listener->didPause(state, ScriptValue(state->vm(), jsCallFrame), ScriptValue());
+    listener->didPause(state, Deprecated::ScriptValue(state->vm(), jsCallFrame), Deprecated::ScriptValue());
 }
 
 void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
@@ -319,7 +319,7 @@ void ScriptDebugServer::clearCompiledScripts()
     // FIXME(89652): implement this.
 }
 
-void ScriptDebugServer::runScript(JSC::ExecState*, const String&, ScriptValue*, bool*, String*)
+void ScriptDebugServer::runScript(JSC::ExecState*, const String&, Deprecated::ScriptValue*, bool*, String*)
 {
     // FIXME(89652): implement this.
 }

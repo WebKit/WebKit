@@ -35,11 +35,13 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLParserIdioms.h"
-#include "InspectorValues.h"
 #include "PingLoader.h"
 #include "SecurityOrigin.h"
+#include <inspector/InspectorValues.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/CString.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 

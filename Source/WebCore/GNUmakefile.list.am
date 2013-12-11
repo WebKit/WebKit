@@ -26,8 +26,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/InspectorFrontend.cpp \
 	DerivedSources/WebCore/InspectorFrontend.h \
 	DerivedSources/WebCore/InspectorOverlayPage.h \
-	DerivedSources/WebCore/InspectorTypeBuilder.cpp \
-	DerivedSources/WebCore/InspectorTypeBuilder.h \
+	DerivedSources/WebCore/InspectorWebTypeBuilders.cpp \
+	DerivedSources/WebCore/InspectorWebTypeBuilders.h \
 	DerivedSources/WebCore/JSAbstractWorker.cpp \
 	DerivedSources/WebCore/JSAbstractWorker.h \
 	DerivedSources/WebCore/JSAllAudioCapabilities.cpp \
@@ -2449,11 +2449,9 @@ webcore_sources += \
 	Source/WebCore/bindings/js/ScriptController.h \
 	Source/WebCore/bindings/js/ScriptDebugServer.cpp \
 	Source/WebCore/bindings/js/ScriptDebugServer.h \
-	Source/WebCore/bindings/js/ScriptFunctionCall.cpp \
-	Source/WebCore/bindings/js/ScriptFunctionCall.h \
 	Source/WebCore/bindings/js/ScriptHeapSnapshot.h \
-	Source/WebCore/bindings/js/ScriptObject.cpp \
-	Source/WebCore/bindings/js/ScriptObject.h \
+	Source/WebCore/bindings/js/ScriptGlobalObject.cpp \
+	Source/WebCore/bindings/js/ScriptGlobalObject.h \
 	Source/WebCore/bindings/js/ScriptProfile.cpp \
 	Source/WebCore/bindings/js/ScriptProfile.h \
 	Source/WebCore/bindings/js/ScriptProfileNode.h \
@@ -2462,8 +2460,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/ScriptSourceCode.h \
 	Source/WebCore/bindings/js/ScriptState.cpp \
 	Source/WebCore/bindings/js/ScriptState.h \
-	Source/WebCore/bindings/js/ScriptValue.cpp \
-	Source/WebCore/bindings/js/ScriptValue.h \
 	Source/WebCore/bindings/js/ScriptWrappable.h \
 	Source/WebCore/bindings/js/ScriptWrappableInlines.h \
 	Source/WebCore/bindings/js/SerializedScriptValue.cpp \
@@ -3784,13 +3780,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InjectedScriptModule.h \
 	Source/WebCore/inspector/InspectorAgent.cpp \
 	Source/WebCore/inspector/InspectorAgent.h \
-	Source/WebCore/inspector/InspectorAgentRegistry.cpp \
-	Source/WebCore/inspector/InspectorAgentRegistry.h \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.cpp \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.h \
-	Source/WebCore/inspector/InspectorBackendDispatcher.cpp \
-	Source/WebCore/inspector/InspectorBackendDispatcher.h \
-	Source/WebCore/inspector/InspectorBaseAgent.h \
 	Source/WebCore/inspector/InspectorCanvasAgent.cpp \
 	Source/WebCore/inspector/InspectorCanvasAgent.h \
 	Source/WebCore/inspector/InspectorCanvasInstrumentation.h \
@@ -3856,8 +3847,7 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorStyleTextEditor.h \
 	Source/WebCore/inspector/InspectorTimelineAgent.cpp \
 	Source/WebCore/inspector/InspectorTimelineAgent.h \
-	Source/WebCore/inspector/InspectorValues.cpp \
-	Source/WebCore/inspector/InspectorValues.h \
+	Source/WebCore/inspector/InspectorWebAgentBase.h \
 	Source/WebCore/inspector/InspectorWorkerAgent.cpp \
 	Source/WebCore/inspector/InspectorWorkerAgent.h \
 	Source/WebCore/inspector/InspectorWorkerResource.h \

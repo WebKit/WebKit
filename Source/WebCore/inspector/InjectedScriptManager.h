@@ -35,13 +35,19 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
+namespace Deprecated {
+class ScriptObject;
+}
+
+namespace Inspector {
+class InspectorObject;
+}
+
 namespace WebCore {
 
 class DOMWindow;
 class InjectedScript;
 class InjectedScriptHost;
-class InspectorObject;
-class ScriptObject;
 
 class InjectedScriptManager {
     WTF_MAKE_NONCOPYABLE(InjectedScriptManager); WTF_MAKE_FAST_ALLOCATED;
@@ -69,7 +75,7 @@ private:
     explicit InjectedScriptManager(InspectedStateAccessCheck);
 
     String injectedScriptSource();
-    ScriptObject createInjectedScript(const String& source, JSC::ExecState*, int id);
+    Deprecated::ScriptObject createInjectedScript(const String& source, JSC::ExecState*, int id);
 
     static bool canAccessInspectedWindow(JSC::ExecState*);
     static bool canAccessInspectedWorkerGlobalScope(JSC::ExecState*);

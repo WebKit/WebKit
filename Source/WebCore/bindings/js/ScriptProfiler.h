@@ -28,11 +28,17 @@
 #define ScriptProfiler_h
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+
 #include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
+
+namespace Deprecated {
+class ScriptObject;
+class ScriptValue;
+}
 
 namespace WebCore {
 
@@ -40,8 +46,6 @@ class ExternalArrayVisitor;
 class ExternalStringVisitor;
 class WrappedNodeVisitor;
 class Page;
-class ScriptObject;
-class ScriptValue;
 class WorkerGlobalScope;
 
 class ScriptProfiler {
@@ -57,8 +61,8 @@ public:
     };
 
     static void collectGarbage();
-    static ScriptObject objectByHeapObjectId(unsigned id);
-    static unsigned getHeapObjectId(const ScriptValue&);
+    static Deprecated::ScriptObject objectByHeapObjectId(unsigned id);
+    static unsigned getHeapObjectId(const Deprecated::ScriptValue&);
     static void start(JSC::ExecState*, const String& title);
     static void startForPage(Page*, const String& title);
     static void startForWorkerGlobalScope(WorkerGlobalScope*, const String& title);

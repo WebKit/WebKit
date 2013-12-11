@@ -31,12 +31,12 @@
 #include "JSDOMBinding.h"
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "ScriptSourceCode.h"
-#include "ScriptValue.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerObjectProxy.h"
 #include "WorkerScriptDebugServer.h"
 #include "WorkerThread.h"
+#include <bindings/ScriptValue.h>
 #include <heap/StrongInlines.h>
 #include <interpreter/Interpreter.h>
 #include <runtime/Completion.h>
@@ -113,7 +113,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
     if (isExecutionForbidden())
         return;
 
-    ScriptValue exception;
+    Deprecated::ScriptValue exception;
     evaluate(sourceCode, &exception);
     if (exception.jsValue()) {
         JSLockHolder lock(vm());
@@ -121,7 +121,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
     }
 }
 
-void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* exception)
+void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Deprecated::ScriptValue* exception)
 {
     if (isExecutionForbidden())
         return;
@@ -145,13 +145,13 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Script
         int columnNumber = 0;
         String sourceURL = sourceCode.url().string();
         if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, sourceCode.cachedScript()))
-            *exception = ScriptValue(*m_vm, exec->vm().throwException(exec, createError(exec, errorMessage.impl())));
+            *exception = Deprecated::ScriptValue(*m_vm, exec->vm().throwException(exec, createError(exec, errorMessage.impl())));
         else
-            *exception = ScriptValue(*m_vm, evaluationException);
+            *exception = Deprecated::ScriptValue(*m_vm, evaluationException);
     }
 }
 
-void WorkerScriptController::setException(const ScriptValue& exception)
+void WorkerScriptController::setException(const Deprecated::ScriptValue& exception)
 {
     m_workerGlobalScopeWrapper->globalExec()->vm().throwException(m_workerGlobalScopeWrapper->globalExec(), exception.jsValue());
 }

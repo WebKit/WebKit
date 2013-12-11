@@ -43,13 +43,15 @@
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include "ScriptController.h"
-#include "ScriptObject.h"
 #include "ScriptProfiler.h"
+#include <bindings/ScriptObject.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -59,7 +61,7 @@ static const int expireConsoleMessagesStep = 100;
 int InspectorConsoleAgent::s_enabledAgentCount = 0;
 
 InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent(ASCIILiteral("Console"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("Console"), instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
     , m_previousMessage(0)
     , m_expiredConsoleMessageCount(0)
@@ -122,7 +124,7 @@ void InspectorConsoleAgent::reset()
     m_counts.clear();
 }
 
-void InspectorConsoleAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorConsoleAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorConsoleFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorConsoleBackendDispatcher::create(backendDispatcher, this);
@@ -320,7 +322,7 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
 class InspectableHeapObject : public InjectedScriptHost::InspectableObject {
 public:
     explicit InspectableHeapObject(int heapObjectId) : m_heapObjectId(heapObjectId) { }
-    virtual ScriptValue get(JSC::ExecState*)
+    virtual Deprecated::ScriptValue get(JSC::ExecState*)
     {
         return ScriptProfiler::objectByHeapObjectId(m_heapObjectId);
     }

@@ -39,7 +39,6 @@
 #include "GraphicsContext.h"
 #include "InspectorClient.h"
 #include "InspectorOverlayPage.h"
-#include "InspectorValues.h"
 #include "MainFrame.h"
 #include "Node.h"
 #include "Page.h"
@@ -55,10 +54,13 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
-#include "ScriptValue.h"
 #include "Settings.h"
 #include "StyledElement.h"
+#include <bindings/ScriptValue.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/text/StringBuilder.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 

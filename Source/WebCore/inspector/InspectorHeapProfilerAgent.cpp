@@ -39,6 +39,8 @@
 #include "InstrumentingAgents.h"
 #include "ScriptProfiler.h"
 
+using namespace Inspector;
+
 namespace WebCore {
 
 static const char* const UserInitiatedProfileNameHeap = "org.webkit.profiles.user-initiated";
@@ -49,7 +51,7 @@ PassOwnPtr<InspectorHeapProfilerAgent> InspectorHeapProfilerAgent::create(Instru
 }
 
 InspectorHeapProfilerAgent::InspectorHeapProfilerAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent(ASCIILiteral("HeapProfiler"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("HeapProfiler"), instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
     , m_nextUserInitiatedHeapSnapshotNumber(1)
     , m_profileHeadersRequested(false)
@@ -80,7 +82,7 @@ void InspectorHeapProfilerAgent::resetFrontendProfiles()
         m_frontendDispatcher->resetProfiles();
 }
 
-void InspectorHeapProfilerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorHeapProfilerAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorHeapProfilerFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorHeapProfilerBackendDispatcher::create(backendDispatcher, this);
@@ -99,9 +101,9 @@ void InspectorHeapProfilerAgent::collectGarbage(WebCore::ErrorString*)
     ScriptProfiler::collectGarbage();
 }
 
-PassRefPtr<TypeBuilder::HeapProfiler::ProfileHeader> InspectorHeapProfilerAgent::createSnapshotHeader(const ScriptHeapSnapshot& snapshot)
+PassRefPtr<Inspector::TypeBuilder::HeapProfiler::ProfileHeader> InspectorHeapProfilerAgent::createSnapshotHeader(const ScriptHeapSnapshot& snapshot)
 {
-    RefPtr<TypeBuilder::HeapProfiler::ProfileHeader> header = TypeBuilder::HeapProfiler::ProfileHeader::create()
+    RefPtr<Inspector::TypeBuilder::HeapProfiler::ProfileHeader> header = Inspector::TypeBuilder::HeapProfiler::ProfileHeader::create()
         .setUid(snapshot.uid())
         .setTitle(snapshot.title());
     header->setMaxJSObjectId(snapshot.maxSnapshotJSObjectId());
@@ -113,10 +115,10 @@ void InspectorHeapProfilerAgent::hasHeapProfiler(ErrorString*, bool* result)
     *result = ScriptProfiler::hasHeapProfiler();
 }
 
-void InspectorHeapProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::HeapProfiler::ProfileHeader>>& headers)
+void InspectorHeapProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::HeapProfiler::ProfileHeader>>& headers)
 {
     m_profileHeadersRequested = true;
-    headers = TypeBuilder::Array<TypeBuilder::HeapProfiler::ProfileHeader>::create();
+    headers = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::HeapProfiler::ProfileHeader>::create();
 
     IdToHeapSnapshotMap::iterator snapshotsEnd = m_snapshots.end();
     for (IdToHeapSnapshotMap::iterator it = m_snapshots.begin(); it != snapshotsEnd; ++it)
@@ -190,7 +192,7 @@ void InspectorHeapProfilerAgent::takeHeapSnapshot(ErrorString*, const bool* repo
     }
 }
 
-void InspectorHeapProfilerAgent::getObjectByHeapObjectId(ErrorString* error, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result)
+void InspectorHeapProfilerAgent::getObjectByHeapObjectId(ErrorString* error, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result)
 {
     bool ok;
     unsigned id = heapSnapshotObjectId.toUInt(&ok);
@@ -198,7 +200,7 @@ void InspectorHeapProfilerAgent::getObjectByHeapObjectId(ErrorString* error, con
         *error = "Invalid heap snapshot object id";
         return;
     }
-    ScriptObject heapObject = ScriptProfiler::objectByHeapObjectId(id);
+    Deprecated::ScriptObject heapObject = ScriptProfiler::objectByHeapObjectId(id);
     if (heapObject.hasNoValue()) {
         *error = "Object is not available";
         return;
@@ -220,7 +222,7 @@ void InspectorHeapProfilerAgent::getHeapObjectId(ErrorString* errorString, const
         *errorString = "Inspected context has gone";
         return;
     }
-    ScriptValue value = injectedScript.findObjectById(objectId);
+    Deprecated::ScriptValue value = injectedScript.findObjectById(objectId);
     if (value.hasNoValue() || value.isUndefined()) {
         *errorString = "Object with given id not found";
         return;

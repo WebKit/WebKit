@@ -36,12 +36,14 @@
 
 #include "InspectorForwarding.h"
 #include "InspectorFrontend.h"
-#include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "URL.h"
 #include "WorkerGlobalScopeProxy.h"
+#include <inspector/InspectorValues.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -107,7 +109,7 @@ PassOwnPtr<InspectorWorkerAgent> InspectorWorkerAgent::create(InstrumentingAgent
 }
 
 InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAgents)
-    : InspectorBaseAgent(ASCIILiteral("Worker"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("Worker"), instrumentingAgents)
     , m_enabled(false)
     , m_shouldPauseDedicatedWorkerOnStart(false)
 {
@@ -119,7 +121,7 @@ InspectorWorkerAgent::~InspectorWorkerAgent()
     m_instrumentingAgents->setInspectorWorkerAgent(0);
 }
 
-void InspectorWorkerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorWorkerAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorWorkerFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorWorkerBackendDispatcher::create(backendDispatcher, this);

@@ -32,7 +32,7 @@
 #define ScriptCallStack_h
 
 #if ENABLE(INSPECTOR)
-#include "InspectorTypeBuilder.h"
+#include "InspectorWebTypeBuilders.h"
 #endif
 
 #include "ScriptCallFrame.h"
@@ -41,8 +41,6 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-class InspectorArray;
 
 class ScriptCallStack : public RefCounted<ScriptCallStack> {
 public:
@@ -58,7 +56,7 @@ public:
     bool isEqual(ScriptCallStack*) const;
 
 #if ENABLE(INSPECTOR)
-    PassRefPtr<TypeBuilder::Array<TypeBuilder::Console::CallFrame>> buildInspectorArray() const;
+    PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Console::CallFrame>> buildInspectorArray() const;
 #endif
 
 private:

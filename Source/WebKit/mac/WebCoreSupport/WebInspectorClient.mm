@@ -43,12 +43,12 @@
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 #import <algorithm>
+#import <bindings/ScriptValue.h>
 #import <WebCore/InspectorController.h>
 #import <WebCore/InspectorFrontendClient.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/ScriptController.h>
-#import <WebCore/ScriptValue.h>
 #import <WebCore/SoftLinking.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKitSystemInterface.h>

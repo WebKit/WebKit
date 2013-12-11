@@ -101,6 +101,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+using namespace Inspector;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -210,7 +212,7 @@ String InspectorDOMAgent::toErrorString(const ExceptionCode& ec)
 }
 
 InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay, InspectorClient* client)
-    : InspectorBaseAgent(ASCIILiteral("DOM"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("DOM"), instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_injectedScriptManager(injectedScriptManager)
     , m_overlay(overlay)
@@ -230,7 +232,7 @@ InspectorDOMAgent::~InspectorDOMAgent()
     ASSERT(!m_searchingForNode);
 }
 
-void InspectorDOMAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorDOMFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorDOMBackendDispatcher::create(backendDispatcher, this);
@@ -420,7 +422,7 @@ Element* InspectorDOMAgent::assertEditableElement(ErrorString* errorString, int 
     return element;
 }
 
-void InspectorDOMAgent::getDocument(ErrorString* errorString, RefPtr<TypeBuilder::DOM::Node>& root)
+void InspectorDOMAgent::getDocument(ErrorString* errorString, RefPtr<Inspector::TypeBuilder::DOM::Node>& root)
 {
     m_documentRequested = true;
 
@@ -460,7 +462,7 @@ void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId, int depth)
         return;
     }
 
-    RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node>> children = buildArrayForContainerChildren(node, depth, nodeMap);
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>> children = buildArrayForContainerChildren(node, depth, nodeMap);
     m_frontendDispatcher->setChildNodes(nodeId, children.release());
 }
 
@@ -538,7 +540,7 @@ void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, cons
         *elementId = pushNodePathToFrontend(element.get());
 }
 
-void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, const String& selectors, RefPtr<TypeBuilder::Array<int>>& result)
+void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, const String& selectors, RefPtr<Inspector::TypeBuilder::Array<int>>& result)
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
@@ -555,7 +557,7 @@ void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, c
         return;
     }
 
-    result = TypeBuilder::Array<int>::create();
+    result = Inspector::TypeBuilder::Array<int>::create();
 
     for (unsigned i = 0; i < nodes->length(); ++i)
         result->addItem(pushNodePathToFrontend(nodes->item(i)));
@@ -586,7 +588,7 @@ int InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
             OwnPtr<NodeToIdMap> newMap = adoptPtr(new NodeToIdMap);
             danglingMap = newMap.get();
             m_danglingNodeToIdMaps.append(newMap.release());
-            RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node>> children = TypeBuilder::Array<TypeBuilder::DOM::Node>::create();
+            RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>> children = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>::create();
             children->addItem(buildObjectForNode(node, 0, danglingMap));
             m_frontendDispatcher->setChildNodes(0, children);
             break;
@@ -813,9 +815,9 @@ void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const
     m_domEditor->replaceWholeText(toText(node), value, errorString);
 }
 
-void InspectorDOMAgent::getEventListenersForNode(ErrorString* errorString, int nodeId, const String* objectGroup, RefPtr<TypeBuilder::Array<TypeBuilder::DOM::EventListener>>& listenersArray)
+void InspectorDOMAgent::getEventListenersForNode(ErrorString* errorString, int nodeId, const String* objectGroup, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::EventListener>>& listenersArray)
 {
-    listenersArray = TypeBuilder::Array<TypeBuilder::DOM::EventListener>::create();
+    listenersArray = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::EventListener>::create();
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return;
@@ -921,7 +923,7 @@ void InspectorDOMAgent::performSearch(ErrorString* errorString, const String& wh
     *resultCount = resultsVector.size();
 }
 
-void InspectorDOMAgent::getSearchResults(ErrorString* errorString, const String& searchId, int fromIndex, int toIndex, RefPtr<TypeBuilder::Array<int>>& nodeIds)
+void InspectorDOMAgent::getSearchResults(ErrorString* errorString, const String& searchId, int fromIndex, int toIndex, RefPtr<Inspector::TypeBuilder::Array<int>>& nodeIds)
 {
     SearchResults::iterator it = m_searchResults.find(searchId);
     if (it == m_searchResults.end()) {
@@ -935,7 +937,7 @@ void InspectorDOMAgent::getSearchResults(ErrorString* errorString, const String&
         return;
     }
 
-    nodeIds = TypeBuilder::Array<int>::create();
+    nodeIds = Inspector::TypeBuilder::Array<int>::create();
     for (int i = fromIndex; i < toIndex; ++i)
         nodeIds->addItem(pushNodePathToFrontend((it->value)[i].get()));
 }
@@ -1212,7 +1214,7 @@ void InspectorDOMAgent::setFileInputFiles(ErrorString* errorString, int nodeId, 
     element->setFiles(fileList);
 }
 
-void InspectorDOMAgent::resolveNode(ErrorString* errorString, int nodeId, const String* const objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result)
+void InspectorDOMAgent::resolveNode(ErrorString* errorString, int nodeId, const String* const objectGroup, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result)
 {
     String objectGroupName = objectGroup ? *objectGroup : "";
     Node* node = nodeForId(nodeId);
@@ -1220,7 +1222,7 @@ void InspectorDOMAgent::resolveNode(ErrorString* errorString, int nodeId, const 
         *errorString = "No node with given id found";
         return;
     }
-    RefPtr<TypeBuilder::Runtime::RemoteObject> object = resolveNode(node, objectGroupName);
+    RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> object = resolveNode(node, objectGroupName);
     if (!object) {
         *errorString = "Node with given id does not belong to the document";
         return;
@@ -1228,7 +1230,7 @@ void InspectorDOMAgent::resolveNode(ErrorString* errorString, int nodeId, const 
     result = object;
 }
 
-void InspectorDOMAgent::getAttributes(ErrorString* errorString, int nodeId, RefPtr<TypeBuilder::Array<String>>& result)
+void InspectorDOMAgent::getAttributes(ErrorString* errorString, int nodeId, RefPtr<Inspector::TypeBuilder::Array<String>>& result)
 {
     Element* element = assertElement(errorString, nodeId);
     if (!element)
@@ -1260,7 +1262,7 @@ static String documentBaseURLString(Document* document)
     return document->completeURL("").string();
 }
 
-PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int depth, NodeToIdMap* nodesMap)
+PassRefPtr<Inspector::TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int depth, NodeToIdMap* nodesMap)
 {
     int id = bind(node, nodesMap);
     String nodeName;
@@ -1289,7 +1291,7 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
         break;
     }
 
-    RefPtr<TypeBuilder::DOM::Node> value = TypeBuilder::DOM::Node::create()
+    RefPtr<Inspector::TypeBuilder::DOM::Node> value = Inspector::TypeBuilder::DOM::Node::create()
         .setNodeId(id)
         .setNodeType(static_cast<int>(node->nodeType()))
         .setNodeName(nodeName)
@@ -1299,7 +1301,7 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
     if (node->isContainerNode()) {
         int nodeCount = innerChildNodeCount(node);
         value->setChildNodeCount(nodeCount);
-        RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node>> children = buildArrayForContainerChildren(node, depth, nodesMap);
+        RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>> children = buildArrayForContainerChildren(node, depth, nodesMap);
         if (children->length() > 0)
             value->setChildren(children.release());
     }
@@ -1318,7 +1320,7 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
         }
 
         if (ShadowRoot* root = element->shadowRoot()) {
-            RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node>> shadowRoots = TypeBuilder::Array<TypeBuilder::DOM::Node>::create();
+            RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>> shadowRoots = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>::create();
             shadowRoots->addItem(buildObjectForNode(root, 0, nodesMap));
             value->setShadowRoots(shadowRoots);
         }
@@ -1346,9 +1348,9 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
     return value.release();
 }
 
-PassRefPtr<TypeBuilder::Array<String>> InspectorDOMAgent::buildArrayForElementAttributes(Element* element)
+PassRefPtr<Inspector::TypeBuilder::Array<String>> InspectorDOMAgent::buildArrayForElementAttributes(Element* element)
 {
-    RefPtr<TypeBuilder::Array<String>> attributesValue = TypeBuilder::Array<String>::create();
+    RefPtr<Inspector::TypeBuilder::Array<String>> attributesValue = Inspector::TypeBuilder::Array<String>::create();
     // Go through all attributes and serialize them.
     if (!element->hasAttributes())
         return attributesValue.release();
@@ -1362,9 +1364,9 @@ PassRefPtr<TypeBuilder::Array<String>> InspectorDOMAgent::buildArrayForElementAt
     return attributesValue.release();
 }
 
-PassRefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node>> InspectorDOMAgent::buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap)
+PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>> InspectorDOMAgent::buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap)
 {
-    RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node>> children = TypeBuilder::Array<TypeBuilder::DOM::Node>::create();
+    RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>> children = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::DOM::Node>::create();
     if (depth == 0) {
         // Special-case the only text child - pretend that container's children have been requested.
         Node* firstChild = container->firstChild();
@@ -1386,7 +1388,7 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node>> InspectorDOMAgent::buildA
     return children.release();
 }
 
-PassRefPtr<TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node, const String* objectGroupId)
+PassRefPtr<Inspector::TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node, const String* objectGroupId)
 {
     RefPtr<EventListener> eventListener = registeredEventListener.listener;
 
@@ -1414,7 +1416,7 @@ PassRefPtr<TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEve
         }
     }
 
-    RefPtr<TypeBuilder::DOM::EventListener> value = TypeBuilder::DOM::EventListener::create()
+    RefPtr<Inspector::TypeBuilder::DOM::EventListener> value = Inspector::TypeBuilder::DOM::EventListener::create()
         .setType(eventType)
         .setUseCapture(registeredEventListener.useCapture)
         .setIsAttribute(eventListener->isAttribute())
@@ -1423,10 +1425,10 @@ PassRefPtr<TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEve
     if (objectGroupId && handler && state) {
         InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(state);
         if (!injectedScript.hasNoValue())
-            value->setHandler(injectedScript.wrapObject(ScriptValue(state->vm(), handler), *objectGroupId));
+            value->setHandler(injectedScript.wrapObject(Deprecated::ScriptValue(state->vm(), handler), *objectGroupId));
     }
     if (!scriptID.isNull()) {
-        RefPtr<TypeBuilder::Debugger::Location> location = TypeBuilder::Debugger::Location::create()
+        RefPtr<Inspector::TypeBuilder::Debugger::Location> location = Inspector::TypeBuilder::Debugger::Location::create()
             .setScriptId(scriptID)
             .setLineNumber(lineNumber);
         value->setLocation(location.release());
@@ -1509,7 +1511,7 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
     m_frontendDispatcher->childNodeRemoved(parentId, frameOwnerId);
     unbind(frameOwner, &m_documentNodeToIdMap);
 
-    RefPtr<TypeBuilder::DOM::Node> value = buildObjectForNode(frameOwner, 0, &m_documentNodeToIdMap);
+    RefPtr<Inspector::TypeBuilder::DOM::Node> value = buildObjectForNode(frameOwner, 0, &m_documentNodeToIdMap);
     Node* previousSibling = innerPreviousSibling(frameOwner);
     int prevId = previousSibling ? m_documentNodeToIdMap.get(previousSibling) : 0;
     m_frontendDispatcher->childNodeInserted(parentId, prevId, value.release());
@@ -1539,7 +1541,7 @@ void InspectorDOMAgent::didInsertDOMNode(Node* node)
         // Children have been requested -> return value of a new child.
         Node* prevSibling = innerPreviousSibling(node);
         int prevId = prevSibling ? m_documentNodeToIdMap.get(prevSibling) : 0;
-        RefPtr<TypeBuilder::DOM::Node> value = buildObjectForNode(node, 0, &m_documentNodeToIdMap);
+        RefPtr<Inspector::TypeBuilder::DOM::Node> value = buildObjectForNode(node, 0, &m_documentNodeToIdMap);
         m_frontendDispatcher->childNodeInserted(parentId, prevId, value.release());
     }
 }
@@ -1604,7 +1606,7 @@ void InspectorDOMAgent::didRemoveDOMAttr(Element* element, const AtomicString& n
 
 void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elements)
 {
-    RefPtr<TypeBuilder::Array<int>> nodeIds = TypeBuilder::Array<int>::create();
+    RefPtr<Inspector::TypeBuilder::Array<int>> nodeIds = Inspector::TypeBuilder::Array<int>::create();
     for (unsigned i = 0, size = elements.size(); i < size; ++i) {
         Element* element = elements.at(i);
         int id = boundNodeId(element);
@@ -1729,7 +1731,7 @@ void InspectorDOMAgent::pushNodeByBackendIdToFrontend(ErrorString* errorString, 
     }
 }
 
-PassRefPtr<TypeBuilder::Runtime::RemoteObject> InspectorDOMAgent::resolveNode(Node* node, const String& objectGroup)
+PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> InspectorDOMAgent::resolveNode(Node* node, const String& objectGroup)
 {
     Frame* frame = node->document().frame();
     if (!frame)

@@ -40,7 +40,8 @@
 #include "InspectorAgent.h"
 #include "InspectorDOMAgent.h"
 #include "Node.h"
-#include "ScriptObject.h"
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -66,7 +67,7 @@ void PageConsoleAgent::clearMessages(ErrorString* errorString)
 class InspectableNode : public InjectedScriptHost::InspectableObject {
 public:
     explicit InspectableNode(Node* node) : m_node(node) { }
-    virtual ScriptValue get(JSC::ExecState* state)
+    virtual Deprecated::ScriptValue get(JSC::ExecState* state)
     {
         return InjectedScriptHost::nodeAsScriptValue(state, m_node);
     }

@@ -32,15 +32,17 @@
 #define ScriptCallFrame_h
 
 #if ENABLE(INSPECTOR)
-#include "InspectorTypeBuilder.h"
+#include "InspectorWebTypeBuilders.h"
 #endif
 
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-
+namespace Inspector {
 class InspectorObject;
+}
+
+namespace WebCore {
 
 class ScriptCallFrame  {
 public:
@@ -55,7 +57,7 @@ public:
     bool isEqual(const ScriptCallFrame&) const;
 
 #if ENABLE(INSPECTOR)
-    PassRefPtr<TypeBuilder::Console::CallFrame> buildInspectorObject() const;
+    PassRefPtr<Inspector::TypeBuilder::Console::CallFrame> buildInspectorObject() const;
 #endif
 
 private:

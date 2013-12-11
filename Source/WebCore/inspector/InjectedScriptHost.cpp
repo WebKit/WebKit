@@ -47,18 +47,19 @@
 #include "InspectorDatabaseAgent.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorFrontend.h"
-#include "InspectorValues.h"
 #include "Pasteboard.h"
 #include "Storage.h"
+#include "markup.h"
+#include <bindings/ScriptValue.h>
+#include <inspector/InspectorValues.h>
+#include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(SQL_DATABASE)
 #include "Database.h"
 #endif
 
-#include "markup.h"
-
-#include <wtf/RefPtr.h>
-#include <wtf/StdLibExtras.h>
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -97,7 +98,7 @@ void InjectedScriptHost::disconnect()
 void InjectedScriptHost::inspectImpl(PassRefPtr<InspectorValue> object, PassRefPtr<InspectorValue> hints)
 {
     if (m_inspectorAgent) {
-        RefPtr<TypeBuilder::Runtime::RemoteObject> remoteObject = TypeBuilder::Runtime::RemoteObject::runtimeCast(object);
+        RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> remoteObject = Inspector::TypeBuilder::Runtime::RemoteObject::runtimeCast(object);
         m_inspectorAgent->inspect(remoteObject, hints->asObject());
     }
 }
@@ -121,9 +122,9 @@ void InjectedScriptHost::copyText(const String& text)
     Pasteboard::createForCopyAndPaste()->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
-ScriptValue InjectedScriptHost::InspectableObject::get(JSC::ExecState*)
+Deprecated::ScriptValue InjectedScriptHost::InspectableObject::get(JSC::ExecState*)
 {
-    return ScriptValue();
+    return Deprecated::ScriptValue();
 };
 
 void InjectedScriptHost::addInspectedObject(PassOwnPtr<InjectedScriptHost::InspectableObject> object)

@@ -149,7 +149,6 @@
 #include "ScriptCallStackFactory.cpp"
 #include "ScriptController.cpp"
 #include "ScriptDebugServer.cpp"
-#include "ScriptFunctionCall.cpp"
 #include "ScriptProfiler.cpp"
 #include "ScriptState.cpp"
 #include "SerializedScriptValue.cpp"

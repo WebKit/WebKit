@@ -34,12 +34,11 @@
 #include "WebPageCreationParameters.h"
 #include "WebProcess.h"
 #include <WebCore/InspectorController.h>
-#include <WebCore/InspectorForwarding.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/ScriptController.h>
-#include <WebCore/ScriptValue.h>
+#include <bindings/ScriptValue.h>
 #include <wtf/text/StringConcatenate.h>
 
 using namespace WebCore;

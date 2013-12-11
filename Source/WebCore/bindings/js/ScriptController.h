@@ -38,6 +38,10 @@ OBJC_CLASS JSContext;
 
 struct NPObject;
 
+namespace Deprecated {
+class ScriptValue;
+}
+
 namespace JSC {
     class JSGlobalObject;
     class ExecState;
@@ -53,7 +57,6 @@ namespace WebCore {
 class HTMLPlugInElement;
 class Frame;
 class ScriptSourceCode;
-class ScriptValue;
 class SecurityOrigin;
 class Widget;
 
@@ -94,9 +97,9 @@ public:
 
     static void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
 
-    ScriptValue executeScript(const ScriptSourceCode&);
-    ScriptValue executeScript(const String& script, bool forceUserGesture = false);
-    ScriptValue executeScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture = false);
+    Deprecated::ScriptValue executeScript(const ScriptSourceCode&);
+    Deprecated::ScriptValue executeScript(const String& script, bool forceUserGesture = false);
+    Deprecated::ScriptValue executeScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture = false);
 
     // Returns true if argument is a JavaScript URL.
     bool executeIfJavaScriptURL(const URL&, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
@@ -105,8 +108,8 @@ public:
     // Darwin is an exception to this rule: it is OK to call this function from any thread, even reentrantly.
     static void initializeThreading();
 
-    ScriptValue evaluate(const ScriptSourceCode&);
-    ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&);
+    Deprecated::ScriptValue evaluate(const ScriptSourceCode&);
+    Deprecated::ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&);
 
     WTF::TextPosition eventHandlerPosition() const;
 

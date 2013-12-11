@@ -36,8 +36,11 @@
 
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
-#include "ScriptFunctionCall.h"
-#include "ScriptObject.h"
+#include "JSMainThreadExecState.h"
+#include <bindings/ScriptFunctionCall.h>
+#include <bindings/ScriptObject.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -54,13 +57,13 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         return;
 
     // FIXME: Make the InjectedScript a module itself.
-    ScriptFunctionCall function(injectedScript.injectedScriptObject(), "module");
+    Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), "module", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(name());
     bool hadException = false;
-    ScriptValue resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
+    Deprecated::ScriptValue resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
     ASSERT(!hadException);
     if (hadException || resultValue.hasNoValue() || !resultValue.isObject()) {
-        ScriptFunctionCall function(injectedScript.injectedScriptObject(), "injectModule");
+        Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), "injectModule", WebCore::functionCallHandlerFromAnyThread);
         function.appendArgument(name());
         function.appendArgument(source());
         resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
@@ -70,7 +73,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         }
     }
 
-    ScriptObject moduleObject(scriptState, resultValue);
+    Deprecated::ScriptObject moduleObject(scriptState, resultValue);
     initialize(moduleObject, injectedScriptManager->inspectedStateAccessCheck());
 }
 

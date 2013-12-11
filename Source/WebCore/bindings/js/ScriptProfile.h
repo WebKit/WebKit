@@ -35,7 +35,7 @@
 #include <wtf/RefPtr.h>
 
 #if ENABLE(INSPECTOR)
-#include "InspectorTypeBuilder.h"
+#include "InspectorWebTypeBuilders.h"
 #endif
 
 namespace JSC {
@@ -43,8 +43,6 @@ class Profile;
 }
 
 namespace WebCore {
-
-class InspectorObject;
 
 class ScriptProfile : public RefCounted<ScriptProfile> {
 public:
@@ -57,8 +55,8 @@ public:
     double idleTime() const;
 
 #if ENABLE(INSPECTOR)
-    PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectForHead() const;
-    PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectForBottomUpHead() const;
+    PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectForHead() const;
+    PassRefPtr<Inspector::TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectForBottomUpHead() const;
 #endif
 
 private:

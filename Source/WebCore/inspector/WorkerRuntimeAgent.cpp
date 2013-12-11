@@ -42,6 +42,8 @@
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
 
+using namespace Inspector;
+
 namespace WebCore {
 
 WorkerRuntimeAgent::WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, WorkerGlobalScope* workerGlobalScope)
@@ -57,7 +59,7 @@ WorkerRuntimeAgent::~WorkerRuntimeAgent()
     m_instrumentingAgents->setWorkerRuntimeAgent(0);
 }
 
-void WorkerRuntimeAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
+void WorkerRuntimeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
 {
     m_backendDispatcher = InspectorRuntimeBackendDispatcher::create(backendDispatcher, this);
 }

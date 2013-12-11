@@ -38,6 +38,8 @@
 #include "WorkerThread.h"
 #include <wtf/MessageQueue.h>
 
+using namespace Inspector;
+
 namespace WebCore {
 
 namespace {

@@ -49,10 +49,12 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/text/WTFString.h>
 
+using namespace Inspector;
+
 namespace WebCore {
 
 InspectorInputAgent::InspectorInputAgent(InstrumentingAgents* instrumentingAgents, Page* page)
-    : InspectorBaseAgent(ASCIILiteral("Input"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("Input"), instrumentingAgents)
     , m_page(page)
 {
 }
@@ -61,7 +63,7 @@ InspectorInputAgent::~InspectorInputAgent()
 {
 }
 
-void InspectorInputAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
+void InspectorInputAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
 {
     m_backendDispatcher = InspectorInputBackendDispatcher::create(backendDispatcher, this);
 }

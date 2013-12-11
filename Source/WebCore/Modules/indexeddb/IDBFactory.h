@@ -66,7 +66,7 @@ public:
     PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&);
     PassRefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&);
 
-    short cmp(ScriptExecutionContext*, const ScriptValue& first, const ScriptValue& second, ExceptionCode&);
+    short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCode&);
 
 private:
     IDBFactory(IDBFactoryBackendInterface*);

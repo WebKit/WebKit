@@ -32,8 +32,10 @@
 #include "ScriptCallFrame.h"
 
 #include "InspectorFrontend.h"
-#include "InspectorValues.h"
+#include <inspector/InspectorValues.h>
 #include <wtf/RefPtr.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -58,9 +60,9 @@ bool ScriptCallFrame::isEqual(const ScriptCallFrame& o) const
 }
 
 #if ENABLE(INSPECTOR)
-PassRefPtr<TypeBuilder::Console::CallFrame> ScriptCallFrame::buildInspectorObject() const
+PassRefPtr<Inspector::TypeBuilder::Console::CallFrame> ScriptCallFrame::buildInspectorObject() const
 {
-    return TypeBuilder::Console::CallFrame::create()
+    return Inspector::TypeBuilder::Console::CallFrame::create()
         .setFunctionName(m_functionName)
         .setUrl(m_scriptName)
         .setLineNumber(m_lineNumber)

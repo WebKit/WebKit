@@ -47,9 +47,9 @@
 #include "ScriptCallStackFactory.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
-#include "ScriptValue.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
+#include <bindings/ScriptValue.h>
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

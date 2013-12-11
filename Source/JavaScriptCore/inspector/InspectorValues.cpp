@@ -35,7 +35,7 @@
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
+namespace Inspector {
 
 namespace {
 
@@ -833,4 +833,4 @@ PassRefPtr<InspectorBasicValue> InspectorBasicValue::create(double value)
     return adoptRef(new InspectorBasicValue(value));
 }
 
-} // namespace WebCore
+} // namespace Inspector

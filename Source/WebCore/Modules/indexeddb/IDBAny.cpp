@@ -112,7 +112,7 @@ PassRefPtr<IDBTransaction> IDBAny::idbTransaction()
     return m_idbTransaction;
 }
 
-const ScriptValue& IDBAny::scriptValue()
+const Deprecated::ScriptValue& IDBAny::scriptValue()
 {
     ASSERT(m_type == ScriptValueType);
     return m_scriptValue;
@@ -186,7 +186,7 @@ IDBAny::IDBAny(PassRefPtr<IDBObjectStore> value)
 {
 }
 
-IDBAny::IDBAny(const ScriptValue& value)
+IDBAny::IDBAny(const Deprecated::ScriptValue& value)
     : m_type(ScriptValueType)
     , m_scriptValue(value)
     , m_integer(0)

@@ -53,7 +53,6 @@
 #include "ProgressTracker.h"
 #include "ResourceRequest.h"
 #include "ScriptController.h"
-#include "ScriptValue.h"
 #include "SharedBuffer.h"
 #include "SubstituteData.h"
 #include "WindowsKeyboardCodes.h"
@@ -65,6 +64,7 @@
 #include <Ecore_Input.h>
 #include <Eina.h>
 #include <Evas.h>
+#include <bindings/ScriptValue.h>
 #include <eina_safety_checks.h>
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>

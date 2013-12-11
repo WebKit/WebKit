@@ -51,7 +51,7 @@ public:
         return adoptPtr(new PageRuntimeAgent(instrumentingAgents, injectedScriptManager, page, pageAgent));
     }
     virtual ~PageRuntimeAgent();
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);

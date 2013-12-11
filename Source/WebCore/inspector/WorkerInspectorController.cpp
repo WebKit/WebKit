@@ -51,7 +51,10 @@
 #include "WorkerReportingProxy.h"
 #include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
+#include <inspector/InspectorBackendDispatcher.h>
 #include <wtf/PassOwnPtr.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 

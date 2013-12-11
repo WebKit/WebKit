@@ -28,9 +28,7 @@
 
 #include "JSDOMBinding.h"
 #include <runtime/Completion.h>
-#ifndef NDEBUG
 #include <wtf/MainThread.h>
-#endif
 
 namespace WebCore {
 
@@ -42,7 +40,7 @@ class JSMainThreadExecState {
     friend class JSMainThreadNullState;
 public:
     static JSC::ExecState* currentState()
-    { 
+    {
         ASSERT(isMainThread());
         return s_mainThreadState;
     };
@@ -53,14 +51,14 @@ public:
         return JSC::call(exec, functionObject, callType, callData, thisValue, args);
     };
 
-    static InspectorInstrumentationCookie instrumentFunctionCall(ScriptExecutionContext*, JSC::CallType, const JSC::CallData&);
-
     static JSC::JSValue evaluate(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::JSValue* exception)
     {
         JSMainThreadExecState currentState(exec);
         JSC::JSLockHolder lock(exec);
         return JSC::evaluate(exec, source, thisValue, exception);
     };
+
+    static InspectorInstrumentationCookie instrumentFunctionCall(ScriptExecutionContext*, JSC::CallType, const JSC::CallData&);
 
     explicit JSMainThreadExecState(JSC::ExecState* exec)
         : m_previousState(s_mainThreadState)
@@ -109,6 +107,8 @@ public:
 private:
     JSC::ExecState* m_previousState;
 };
+
+JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args);
 
 } // namespace WebCore
 

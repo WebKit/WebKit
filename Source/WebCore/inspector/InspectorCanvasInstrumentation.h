@@ -34,11 +34,11 @@
 #include "InspectorCanvasAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InstrumentingAgents.h"
-#include "ScriptObject.h"
+#include <bindings/ScriptObject.h>
 
 namespace WebCore {
 
-ScriptObject InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrumentation(Document* document, const ScriptObject& context)
+Deprecated::ScriptObject InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrumentation(Document* document, const Deprecated::ScriptObject& context)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document)) {
@@ -49,11 +49,11 @@ ScriptObject InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrument
     UNUSED_PARAM(document);
     UNUSED_PARAM(context);
 #endif
-    return ScriptObject();
+    return Deprecated::ScriptObject();
 }
 
 #if ENABLE(WEBGL)
-ScriptObject InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(Document* document, const ScriptObject& glContext)
+Deprecated::ScriptObject InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(Document* document, const Deprecated::ScriptObject& glContext)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document)) {
@@ -64,7 +64,7 @@ ScriptObject InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentati
     UNUSED_PARAM(document);
     UNUSED_PARAM(glContext);
 #endif
-    return ScriptObject();
+    return Deprecated::ScriptObject();
 }
 #endif // ENABLE(WEBGL)
 

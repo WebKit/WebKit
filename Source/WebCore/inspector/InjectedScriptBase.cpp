@@ -35,12 +35,14 @@
 #include "InjectedScriptBase.h"
 
 #include "InspectorInstrumentation.h"
-#include "InspectorValues.h"
-#include "ScriptFunctionCall.h"
+#include <bindings/ScriptFunctionCall.h>
+#include <inspector/InspectorValues.h>
 #include <runtime/JSGlobalObject.h>
 #include <wtf/text/WTFString.h>
 
-using WebCore::TypeBuilder::Runtime::RemoteObject;
+using Inspector::TypeBuilder::Runtime::RemoteObject;
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -50,14 +52,14 @@ InjectedScriptBase::InjectedScriptBase(const String& name)
 {
 }
 
-InjectedScriptBase::InjectedScriptBase(const String& name, ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
+InjectedScriptBase::InjectedScriptBase(const String& name, Deprecated::ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
     : m_name(name)
     , m_injectedScriptObject(injectedScriptObject)
     , m_inspectedStateAccessCheck(accessCheck)
 {
 }
 
-void InjectedScriptBase::initialize(ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
+void InjectedScriptBase::initialize(Deprecated::ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
 {
     m_injectedScriptObject = injectedScriptObject;
     m_inspectedStateAccessCheck = accessCheck;
@@ -68,12 +70,12 @@ bool InjectedScriptBase::canAccessInspectedWindow() const
     return m_inspectedStateAccessCheck(m_injectedScriptObject.scriptState());
 }
 
-const ScriptObject& InjectedScriptBase::injectedScriptObject() const
+const Deprecated::ScriptObject& InjectedScriptBase::injectedScriptObject() const
 {
     return m_injectedScriptObject;
 }
 
-ScriptValue InjectedScriptBase::callFunctionWithEvalEnabled(ScriptFunctionCall& function, bool& hadException) const
+Deprecated::ScriptValue InjectedScriptBase::callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall& function, bool& hadException) const
 {
     ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromExecState(m_injectedScriptObject.scriptState());
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willCallFunction(scriptExecutionContext, name(), 1);
@@ -87,7 +89,7 @@ ScriptValue InjectedScriptBase::callFunctionWithEvalEnabled(ScriptFunctionCall& 
             scriptState->lexicalGlobalObject()->setEvalEnabled(true);
     }
 
-    ScriptValue resultValue = function.call(hadException);
+    Deprecated::ScriptValue resultValue = function.call(hadException);
 
     if (evalIsDisabled)
         scriptState->lexicalGlobalObject()->setEvalEnabled(false);
@@ -96,7 +98,7 @@ ScriptValue InjectedScriptBase::callFunctionWithEvalEnabled(ScriptFunctionCall& 
     return resultValue;
 }
 
-void InjectedScriptBase::makeCall(ScriptFunctionCall& function, RefPtr<InspectorValue>* result)
+void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefPtr<InspectorValue>* result)
 {
     if (hasNoValue() || !canAccessInspectedWindow()) {
         *result = InspectorValue::null();
@@ -104,7 +106,7 @@ void InjectedScriptBase::makeCall(ScriptFunctionCall& function, RefPtr<Inspector
     }
 
     bool hadException = false;
-    ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
+    Deprecated::ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
 
     ASSERT(!hadException);
     if (!hadException) {
@@ -115,7 +117,7 @@ void InjectedScriptBase::makeCall(ScriptFunctionCall& function, RefPtr<Inspector
         *result = InspectorString::create("Exception while making a call.");
 }
 
-void InjectedScriptBase::makeEvalCall(ErrorString* errorString, ScriptFunctionCall& function, RefPtr<TypeBuilder::Runtime::RemoteObject>* objectResult, TypeBuilder::OptOutput<bool>* wasThrown)
+void InjectedScriptBase::makeEvalCall(ErrorString* errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>* objectResult, Inspector::TypeBuilder::OptOutput<bool>* wasThrown)
 {
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
@@ -139,7 +141,7 @@ void InjectedScriptBase::makeEvalCall(ErrorString* errorString, ScriptFunctionCa
         *errorString = "Internal error: result is not a pair of value and wasThrown flag";
         return;
     }
-    *objectResult = TypeBuilder::Runtime::RemoteObject::runtimeCast(resultObj);
+    *objectResult = Inspector::TypeBuilder::Runtime::RemoteObject::runtimeCast(resultObj);
     *wasThrown = wasThrownVal;
 }
 

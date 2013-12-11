@@ -31,16 +31,16 @@
 #include "config.h"
 #include "ScriptArguments.h"
 
-#include "ScriptValue.h"
+#include <bindings/ScriptValue.h>
 
 namespace WebCore {
 
-PassRefPtr<ScriptArguments> ScriptArguments::create(JSC::ExecState* scriptState, Vector<ScriptValue>& arguments)
+PassRefPtr<ScriptArguments> ScriptArguments::create(JSC::ExecState* scriptState, Vector<Deprecated::ScriptValue>& arguments)
 {
     return adoptRef(new ScriptArguments(scriptState, arguments));
 }
 
-ScriptArguments::ScriptArguments(JSC::ExecState* scriptState, Vector<ScriptValue>& arguments)
+ScriptArguments::ScriptArguments(JSC::ExecState* scriptState, Vector<Deprecated::ScriptValue>& arguments)
     : m_globalObject(scriptState->vm(), scriptState->lexicalGlobalObject())
 {
     m_arguments.swap(arguments);
@@ -50,7 +50,7 @@ ScriptArguments::~ScriptArguments()
 {
 }
 
-const ScriptValue &ScriptArguments::argumentAt(size_t index) const
+const Deprecated::ScriptValue &ScriptArguments::argumentAt(size_t index) const
 {
     ASSERT(m_arguments.size() > index);
     return m_arguments[index];
@@ -68,7 +68,7 @@ bool ScriptArguments::getFirstArgumentAsString(String& result, bool checkForNull
     if (!argumentCount())
         return false;
 
-    const ScriptValue& value = argumentAt(0);
+    const Deprecated::ScriptValue& value = argumentAt(0);
     if (checkForNullOrUndefined && (value.isNull() || value.isUndefined()))
         return false;
 

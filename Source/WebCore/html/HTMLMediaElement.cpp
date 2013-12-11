@@ -135,8 +135,9 @@
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
 #include "JSMediaControlsHost.h"
 #include "MediaControlsHost.h"
-#include "ScriptObject.h"
+#include "ScriptGlobalObject.h"
 #include "UserAgentScripts.h"
+#include <bindings/ScriptObject.h>
 #endif
 
 namespace WebCore {

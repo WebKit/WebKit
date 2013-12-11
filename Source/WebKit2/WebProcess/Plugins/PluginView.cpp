@@ -63,12 +63,12 @@
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/ResourceLoadScheduler.h>
 #include <WebCore/ScriptController.h>
-#include <WebCore/ScriptValue.h>
 #include <WebCore/ScrollView.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <bindings/ScriptValue.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace JSC;
@@ -1179,7 +1179,7 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     // Evaluate the JavaScript code. Note that running JavaScript here could cause the plug-in to be destroyed, so we
     // grab references to the plug-in here.
     RefPtr<Plugin> plugin = m_plugin;
-    ScriptValue result = frame->script().executeScript(jsString, request->allowPopups());
+    Deprecated::ScriptValue result = frame->script().executeScript(jsString, request->allowPopups());
 
     // Check if evaluating the JavaScript destroyed the plug-in.
     if (!plugin->controller())

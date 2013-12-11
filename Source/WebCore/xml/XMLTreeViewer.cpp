@@ -38,10 +38,10 @@
 #include "Frame.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
-#include "ScriptValue.h"
 #include "Text.h"
 #include "XMLViewerCSS.h"
 #include "XMLViewerJS.h"
+#include <bindings/ScriptValue.h>
 
 namespace WebCore {
 

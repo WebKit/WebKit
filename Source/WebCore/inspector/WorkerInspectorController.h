@@ -33,19 +33,21 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorAgentRegistry.h"
-#include "InspectorBaseAgent.h"
+#include "InspectorWebAgentBase.h"
+#include <inspector/InspectorAgentRegistry.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
+namespace Inspector {
+class InspectorBackendDispatcher;
+}
+
 namespace WebCore {
 
 class InjectedScriptManager;
-class InspectorBackendDispatcher;
-class InspectorFrontendChannel;
 class InspectorInstrumentation;
 class InspectorRuntimeAgent;
 class InstrumentingAgents;
@@ -72,9 +74,9 @@ private:
     RefPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;
     InspectorRuntimeAgent* m_runtimeAgent;
-    InspectorAgentRegistry m_agents;
+    Inspector::InspectorAgentRegistry m_agents;
     OwnPtr<InspectorFrontendChannel> m_frontendChannel;
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    RefPtr<Inspector::InspectorBackendDispatcher> m_backendDispatcher;
 };
 
 }

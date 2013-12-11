@@ -35,14 +35,20 @@
 
 #include "DeviceOrientationData.h"
 #include "GeolocationPosition.h"
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
 #include "InspectorFrontend.h"
+#include "InspectorWebAgentBase.h"
 #include "IntSize.h"
 #include "LayoutRect.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
+
+namespace Inspector {
+class InspectorArray;
+class InspectorObject;
+}
 
 namespace WebCore {
 
@@ -54,9 +60,7 @@ class Frontend;
 class GraphicsContext;
 class InjectedScriptManager;
 class InspectorAgent;
-class InspectorArray;
 class InspectorClient;
-class InspectorObject;
 class InspectorOverlay;
 class InstrumentingAgents;
 class URL;
@@ -67,7 +71,7 @@ class TextResourceDecoder;
 
 typedef String ErrorString;
 
-class InspectorPageAgent : public InspectorBaseAgent, public InspectorPageBackendDispatcherHandler {
+class InspectorPageAgent : public InspectorAgentBase, public InspectorPageBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
 public:
     enum ResourceType {
@@ -90,9 +94,9 @@ public:
 
     static PassRefPtr<SharedBuffer> resourceData(Frame*, const URL&, String* textEncodingName);
     static CachedResource* cachedResource(Frame*, const URL&);
-    static TypeBuilder::Page::ResourceType::Enum resourceTypeJson(ResourceType);
+    static Inspector::TypeBuilder::Page::ResourceType::Enum resourceTypeJson(ResourceType);
     static ResourceType cachedResourceType(const CachedResource&);
-    static TypeBuilder::Page::ResourceType::Enum cachedResourceTypeJson(const CachedResource&);
+    static Inspector::TypeBuilder::Page::ResourceType::Enum cachedResourceTypeJson(const CachedResource&);
 
     // Page API for InspectorFrontend
     virtual void enable(ErrorString*);
@@ -101,12 +105,12 @@ public:
     virtual void removeScriptToEvaluateOnLoad(ErrorString*, const String& identifier);
     virtual void reload(ErrorString*, const bool* optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad, const String* optionalScriptPreprocessor);
     virtual void navigate(ErrorString*, const String& url);
-    virtual void getCookies(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Page::Cookie>>& cookies);
+    virtual void getCookies(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::Cookie>>& cookies);
     virtual void deleteCookie(ErrorString*, const String& cookieName, const String& url);
-    virtual void getResourceTree(ErrorString*, RefPtr<TypeBuilder::Page::FrameResourceTree>&);
+    virtual void getResourceTree(ErrorString*, RefPtr<Inspector::TypeBuilder::Page::FrameResourceTree>&);
     virtual void getResourceContent(ErrorString*, const String& frameId, const String& url, String* content, bool* base64Encoded);
-    virtual void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch>>&);
-    virtual void searchInResources(ErrorString*, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchResult>>&);
+    virtual void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchMatch>>&);
+    virtual void searchInResources(ErrorString*, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchResult>>&);
     virtual void setDocumentContent(ErrorString*, const String& frameId, const String& html);
     virtual void canOverrideDeviceMetrics(ErrorString*, bool*);
     virtual void setDeviceMetricsOverride(ErrorString*, int width, int height, double fontScaleFactor, bool fitWindow);
@@ -163,7 +167,7 @@ public:
     void scriptsEnabled(bool isEnabled);
 
     // Inspector Controller API
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     // Cross-agents API
@@ -190,8 +194,8 @@ private:
     static bool mainResourceContent(Frame*, bool withBase64Encode, String* result);
     static bool dataContent(const char* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result);
 
-    PassRefPtr<TypeBuilder::Page::Frame> buildObjectForFrame(Frame*);
-    PassRefPtr<TypeBuilder::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
+    PassRefPtr<Inspector::TypeBuilder::Page::Frame> buildObjectForFrame(Frame*);
+    PassRefPtr<Inspector::TypeBuilder::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
     Page* m_page;
     InspectorAgent* m_inspectorAgent;
     InjectedScriptManager* m_injectedScriptManager;
@@ -218,7 +222,7 @@ private:
     bool m_ignoreScriptsEnabledNotification;
     bool m_showPaintRects;
     String m_emulatedMedia;
-    RefPtr<InspectorObject> m_scriptsToEvaluateOnLoad;
+    RefPtr<Inspector::InspectorObject> m_scriptsToEvaluateOnLoad;
     RefPtr<GeolocationPosition> m_geolocationPosition;
     RefPtr<GeolocationPosition> m_platformGeolocationPosition;
     RefPtr<DeviceOrientationData> m_deviceOrientation;

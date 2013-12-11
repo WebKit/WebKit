@@ -33,19 +33,21 @@
 
 #include "InjectedScriptBase.h"
 #include "InjectedScriptManager.h"
-#include "InspectorTypeBuilder.h"
+#include "InspectorWebTypeBuilders.h"
 #include "ScriptArguments.h"
-#include "ScriptObject.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
+namespace Deprecated {
+class ScriptObject;
+}
+
 namespace WebCore {
 
 class InjectedScriptModule;
 class Node;
-class SerializedScriptValue;
 
 #if ENABLE(INSPECTOR)
 
@@ -60,40 +62,40 @@ public:
                   bool includeCommandLineAPI,
                   bool returnByValue,
                   bool generatePreview,
-                  RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
-                  TypeBuilder::OptOutput<bool>* wasThrown);
+                  RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>* result,
+                  Inspector::TypeBuilder::OptOutput<bool>* wasThrown);
     void callFunctionOn(ErrorString*,
                         const String& objectId,
                         const String& expression,
                         const String& arguments,
                         bool returnByValue,
                         bool generatePreview,
-                        RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
-                        TypeBuilder::OptOutput<bool>* wasThrown);
+                        RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>* result,
+                        Inspector::TypeBuilder::OptOutput<bool>* wasThrown);
     void evaluateOnCallFrame(ErrorString*,
-                             const ScriptValue& callFrames,
+                             const Deprecated::ScriptValue& callFrames,
                              const String& callFrameId,
                              const String& expression,
                              const String& objectGroup,
                              bool includeCommandLineAPI,
                              bool returnByValue,
                              bool generatePreview,
-                             RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
-                             TypeBuilder::OptOutput<bool>* wasThrown);
-    void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<TypeBuilder::Debugger::FunctionDetails>* result);
-    void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::PropertyDescriptor>>* result);
-    void getInternalProperties(ErrorString*, const String& objectId, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::InternalPropertyDescriptor>>* result);
+                             RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>* result,
+                             Inspector::TypeBuilder::OptOutput<bool>* wasThrown);
+    void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<Inspector::TypeBuilder::Debugger::FunctionDetails>* result);
+    void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::PropertyDescriptor>>* result);
+    void getInternalProperties(ErrorString*, const String& objectId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor>>* result);
     Node* nodeForObjectId(const String& objectId);
     void releaseObject(const String& objectId);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    PassRefPtr<TypeBuilder::Array<TypeBuilder::Debugger::CallFrame>> wrapCallFrames(const ScriptValue&);
+    PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>> wrapCallFrames(const Deprecated::ScriptValue&);
 #endif
 
-    PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapObject(const ScriptValue&, const String& groupName, bool generatePreview = false) const;
-    PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapTable(const ScriptValue& table, const ScriptValue& columns) const;
-    PassRefPtr<TypeBuilder::Runtime::RemoteObject> wrapNode(Node*, const String& groupName);
-    ScriptValue findObjectById(const String& objectId) const;
+    PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> wrapObject(const Deprecated::ScriptValue&, const String& groupName, bool generatePreview = false) const;
+    PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const;
+    PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> wrapNode(Node*, const String& groupName);
+    Deprecated::ScriptValue findObjectById(const String& objectId) const;
 
     void inspectNode(Node*);
     void releaseObjectGroup(const String&);
@@ -101,9 +103,9 @@ public:
 private:
     friend class InjectedScriptModule;
     friend InjectedScript InjectedScriptManager::injectedScriptFor(JSC::ExecState*);
-    InjectedScript(ScriptObject, InspectedStateAccessCheck);
+    InjectedScript(Deprecated::ScriptObject, InspectedStateAccessCheck);
 
-    ScriptValue nodeAsScriptValue(Node*);
+    Deprecated::ScriptValue nodeAsScriptValue(Node*);
 };
 
 #endif

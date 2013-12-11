@@ -31,22 +31,26 @@
 
 #if ENABLE(INSPECTOR) && ENABLE(SQL_DATABASE)
 
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
 #include "InspectorFrontend.h"
+#include "InspectorWebAgentBase.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
+namespace Inspector {
+class InspectorArray;
+}
+
 namespace WebCore {
 
 class Database;
-class InspectorArray;
 class InspectorDatabaseResource;
 class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorDatabaseAgent : public InspectorBaseAgent, public InspectorDatabaseBackendDispatcherHandler {
+class InspectorDatabaseAgent : public InspectorAgentBase, public InspectorDatabaseBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorDatabaseAgent> create(InstrumentingAgents* instrumentingAgents)
     {
@@ -54,7 +58,7 @@ public:
     }
     ~InspectorDatabaseAgent();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     void clearResources();
@@ -62,7 +66,7 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
-    virtual void getDatabaseTableNames(ErrorString*, const String& databaseId, RefPtr<TypeBuilder::Array<String>>& names);
+    virtual void getDatabaseTableNames(ErrorString*, const String& databaseId, RefPtr<Inspector::TypeBuilder::Array<String>>& names);
     virtual void executeSQL(ErrorString*, const String& databaseId, const String& query, PassRefPtr<ExecuteSQLCallback>);
 
     // Called from the injected script.

@@ -31,9 +31,9 @@
 #ifndef InspectorResourceAgent_h
 #define InspectorResourceAgent_h
 
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
 #include "InspectorFrontend.h"
-
+#include "InspectorWebAgentBase.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -41,8 +41,9 @@
 
 #if ENABLE(INSPECTOR)
 
-namespace WTF {
-class String;
+namespace Inspector {
+class InspectorArray;
+class InspectorObject;
 }
 
 namespace WebCore {
@@ -53,9 +54,7 @@ class DocumentLoader;
 class FormData;
 class Frame;
 class HTTPHeaderMap;
-class InspectorArray;
 class InspectorClient;
-class InspectorObject;
 class InspectorPageAgent;
 class InstrumentingAgents;
 class URL;
@@ -76,7 +75,7 @@ struct WebSocketFrame;
 
 typedef String ErrorString;
 
-class InspectorResourceAgent : public InspectorBaseAgent, public InspectorNetworkBackendDispatcherHandler {
+class InspectorResourceAgent : public InspectorAgentBase, public InspectorNetworkBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client)
     {
@@ -85,7 +84,7 @@ public:
 
     ~InspectorResourceAgent();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     void willSendRequest(unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -116,7 +115,7 @@ public:
     void didRecalculateStyle();
     void didScheduleStyleRecalculation(Document*);
 
-    PassRefPtr<TypeBuilder::Network::Initiator> buildInitiatorObject(Document*);
+    PassRefPtr<Inspector::TypeBuilder::Network::Initiator> buildInitiatorObject(Document*);
 
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const URL& requestURL);
@@ -135,7 +134,7 @@ public:
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
     virtual void setUserAgentOverride(ErrorString*, const String& userAgent);
-    virtual void setExtraHTTPHeaders(ErrorString*, const RefPtr<InspectorObject>&);
+    virtual void setExtraHTTPHeaders(ErrorString*, const RefPtr<Inspector::InspectorObject>&);
     virtual void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded);
 
     virtual void replayXHR(ErrorString*, const String& requestId);
@@ -160,12 +159,12 @@ private:
     bool m_enabled;
     bool m_cacheDisabled;
     bool m_loadingXHRSynchronously;
-    RefPtr<InspectorObject> m_extraRequestHeaders;
+    RefPtr<Inspector::InspectorObject> m_extraRequestHeaders;
 
     typedef HashMap<ThreadableLoaderClient*, RefPtr<XHRReplayData>> PendingXHRReplayDataMap;
     PendingXHRReplayDataMap m_pendingXHRReplayData;
     // FIXME: InspectorResourceAgent should now be aware of style recalculation.
-    RefPtr<TypeBuilder::Network::Initiator> m_styleRecalculationInitiator;
+    RefPtr<Inspector::TypeBuilder::Network::Initiator> m_styleRecalculationInitiator;
     bool m_isRecalculatingStyle;
 };
 

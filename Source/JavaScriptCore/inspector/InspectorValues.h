@@ -38,12 +38,12 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace Inspector {
 
 class InspectorArray;
 class InspectorObject;
 
-class InspectorValue : public RefCounted<InspectorValue> {
+class JS_EXPORT_PRIVATE InspectorValue : public RefCounted<InspectorValue> {
 public:
     static const int maxDepth = 1000;
 
@@ -90,7 +90,7 @@ private:
     Type m_type;
 };
 
-class InspectorBasicValue : public InspectorValue {
+class JS_EXPORT_PRIVATE InspectorBasicValue : public InspectorValue {
 public:
 
     static PassRefPtr<InspectorBasicValue> create(bool);
@@ -117,7 +117,7 @@ private:
     };
 };
 
-class InspectorString : public InspectorValue {
+class JS_EXPORT_PRIVATE InspectorString : public InspectorValue {
 public:
     static PassRefPtr<InspectorString> create(const String&);
     static PassRefPtr<InspectorString> create(const char*);
@@ -133,7 +133,7 @@ private:
     String m_stringValue;
 };
 
-class InspectorObjectBase : public InspectorValue {
+class JS_EXPORT_PRIVATE InspectorObjectBase : public InspectorValue {
 private:
     typedef HashMap<String, RefPtr<InspectorValue>> Dictionary;
 
@@ -192,7 +192,7 @@ private:
 
 class InspectorObject : public InspectorObjectBase {
 public:
-    static PassRefPtr<InspectorObject> create();
+    static JS_EXPORT_PRIVATE PassRefPtr<InspectorObject> create();
 
     using InspectorObjectBase::asObject;
 
@@ -220,7 +220,7 @@ public:
 };
 
 
-class InspectorArrayBase : public InspectorValue {
+class JS_EXPORT_PRIVATE InspectorArrayBase : public InspectorValue {
 public:
     typedef Vector<RefPtr<InspectorValue>>::iterator iterator;
     typedef Vector<RefPtr<InspectorValue>>::const_iterator const_iterator;
@@ -260,7 +260,7 @@ private:
 
 class InspectorArray : public InspectorArrayBase {
 public:
-    static PassRefPtr<InspectorArray> create();
+    static JS_EXPORT_PRIVATE PassRefPtr<InspectorArray> create();
 
     using InspectorArrayBase::asArray;
 
@@ -363,6 +363,6 @@ inline void InspectorArrayBase::pushArray(PassRefPtr<InspectorArray> value)
     m_data.append(value);
 }
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // !defined(InspectorValues_h)

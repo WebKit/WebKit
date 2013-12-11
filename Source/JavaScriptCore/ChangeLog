@@ -1,3 +1,32 @@
+2013-12-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Push More Inspector Required Classes Down into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=125324
+
+        Reviewed by Timothy Hatcher.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/ScriptFunctionCall.cpp: Renamed from Source/WebCore/bindings/js/ScriptFunctionCall.cpp.
+        * bindings/ScriptFunctionCall.h: Renamed from Source/WebCore/bindings/js/ScriptFunctionCall.h.
+        * bindings/ScriptObject.cpp: Copied from Source/WebCore/inspector/WorkerConsoleAgent.cpp.
+        * bindings/ScriptObject.h: Renamed from Source/WebCore/inspector/InspectorBaseAgent.h.
+        * bindings/ScriptValue.cpp: Renamed from Source/WebCore/bindings/js/ScriptValue.cpp.
+        * bindings/ScriptValue.h: Renamed from Source/WebCore/bindings/js/ScriptValue.h.
+        * inspector/InspectorAgentBase.h: Copied from Source/WebCore/inspector/InspectorAgentRegistry.h.
+        * inspector/InspectorAgentRegistry.cpp: Renamed from Source/WebCore/inspector/InspectorAgentRegistry.cpp.
+        * inspector/InspectorBackendDispatcher.h: Renamed from Source/WebCore/inspector/InspectorBackendDispatcher.h.
+        (Inspector::InspectorSupplementalBackendDispatcher::InspectorSupplementalBackendDispatcher):
+        (Inspector::InspectorSupplementalBackendDispatcher::~InspectorSupplementalBackendDispatcher):
+        * inspector/InspectorValues.cpp: Renamed from Source/WebCore/inspector/InspectorValues.cpp.
+        * inspector/InspectorValues.h: Renamed from Source/WebCore/inspector/InspectorValues.h.
+
 2013-12-11  Laszlo Vidacs  <lac@inf.u-szeged.hu>
 
         Store SHA1 hash in std::array

@@ -262,7 +262,7 @@ class RawTypes(object):
 
         @classmethod
         def get_raw_validator_call_text(cls):
-            return "RuntimeCastHelper::assertType<InspectorValue::Type%s>" % cls.get_validate_method_params().template_type
+            return "RuntimeCastHelper::assertType<Inspector::InspectorValue::Type%s>" % cls.get_validate_method_params().template_type
 
     class String(BaseType):
         @staticmethod
@@ -451,7 +451,7 @@ class RawTypes(object):
 
         @staticmethod
         def get_array_item_raw_c_type_text():
-            return "InspectorObject"
+            return "Inspector::InspectorObject"
 
         @staticmethod
         def get_raw_type_model():
@@ -486,7 +486,7 @@ class RawTypes(object):
 
         @staticmethod
         def get_array_item_raw_c_type_text():
-            return "InspectorValue"
+            return "Inspector::InspectorValue"
 
         @staticmethod
         def get_raw_type_model():
@@ -529,7 +529,7 @@ class RawTypes(object):
 
         @staticmethod
         def get_array_item_raw_c_type_text():
-            return "InspectorArray"
+            return "Inspector::InspectorArray"
 
         @staticmethod
         def get_raw_type_model():
@@ -590,7 +590,7 @@ class CommandReturnPassModel:
             self.var_type = var_type
 
         def get_return_var_type(self):
-            return "TypeBuilder::OptOutput<%s>" % self.var_type
+            return "Inspector::TypeBuilder::OptOutput<%s>" % self.var_type
 
         @staticmethod
         def get_output_argument_prefix():
@@ -601,7 +601,7 @@ class CommandReturnPassModel:
             return "%s.getValue()"
 
         def get_output_parameter_type(self):
-            return "TypeBuilder::OptOutput<%s>*" % self.var_type
+            return "Inspector::TypeBuilder::OptOutput<%s>*" % self.var_type
 
         @staticmethod
         def get_set_return_condition():
@@ -712,10 +712,10 @@ class TypeModel:
             TypeModel.ValueType.__init__(self, "int", False)
 
         def get_input_param_type_text(self):
-            return "TypeBuilder::ExactlyInt"
+            return "Inspector::TypeBuilder::ExactlyInt"
 
         def get_opt_output_type_(self):
-            return "TypeBuilder::ExactlyInt"
+            return "Inspector::TypeBuilder::ExactlyInt"
 
     @classmethod
     def init_class(cls):
@@ -726,9 +726,9 @@ class TypeModel:
             cls.Int = cls.ValueType("int", False)
         cls.Number = cls.ValueType("double", False)
         cls.String = cls.ValueType("String", True,)
-        cls.Object = cls.RefPtrBased("InspectorObject")
-        cls.Array = cls.RefPtrBased("InspectorArray")
-        cls.Any = cls.RefPtrBased("InspectorValue")
+        cls.Object = cls.RefPtrBased("Inspector::InspectorObject")
+        cls.Array = cls.RefPtrBased("Inspector::InspectorArray")
+        cls.Any = cls.RefPtrBased("Inspector::InspectorValue")
 
 TypeModel.init_class()
 
@@ -837,8 +837,8 @@ class TypeBindings:
 
         class Helper:
             is_ad_hoc = False
-            full_name_prefix_for_use = "TypeBuilder::" + context_domain_name + "::"
-            full_name_prefix_for_impl = "TypeBuilder::" + context_domain_name + "::"
+            full_name_prefix_for_use = "Inspector::TypeBuilder::" + context_domain_name + "::"
+            full_name_prefix_for_impl = "Inspector::TypeBuilder::" + context_domain_name + "::"
 
             @staticmethod
             def write_doc(writer):
@@ -928,7 +928,7 @@ class TypeBindings:
 
                                 if enum_binding_cls.need_internal_runtime_cast_:
                                     writer.append("#if %s\n" % VALIDATOR_IFDEF_NAME)
-                                    writer.newline("    static void assertCorrectValue(InspectorValue* value);\n")
+                                    writer.newline("    static void assertCorrectValue(Inspector::InspectorValue* value);\n")
                                     writer.append("#endif  // %s\n" % VALIDATOR_IFDEF_NAME)
 
                                     validator_writer = generate_context.validator_writer
@@ -938,7 +938,7 @@ class TypeBindings:
                                     if domain_guard:
                                         domain_guard.generate_open(validator_writer)
 
-                                    validator_writer.newline("void %s%s::assertCorrectValue(InspectorValue* value)\n" % (helper.full_name_prefix_for_impl, enum_name))
+                                    validator_writer.newline("void %s%s::assertCorrectValue(Inspector::InspectorValue* value)\n" % (helper.full_name_prefix_for_impl, enum_name))
                                     validator_writer.newline("{\n")
                                     validator_writer.newline("    WTF::String s;\n")
                                     validator_writer.newline("    bool cast_res = value->asString(&s);\n")
@@ -980,7 +980,7 @@ class TypeBindings:
 
                     @staticmethod
                     def get_setter_value_expression_pattern():
-                        return "TypeBuilder::getEnumConstantValue(%s)"
+                        return "Inspector::TypeBuilder::getEnumConstantValue(%s)"
 
                     @staticmethod
                     def reduce_to_raw_type():
@@ -1172,9 +1172,9 @@ class TypeBindings:
                                 writer.append(class_name)
                                 writer.append(" : public ")
                                 if is_open_type:
-                                    writer.append("InspectorObject")
+                                    writer.append("Inspector::InspectorObject")
                                 else:
-                                    writer.append("InspectorObjectBase")
+                                    writer.append("Inspector::InspectorObjectBase")
                                 writer.append(" {\n")
                                 writer.newline("public:\n")
                                 ad_hoc_type_writer = writer.insert_writer("    ")
@@ -1234,7 +1234,7 @@ class TypeBindings:
 
                                 writer.newline_multiline(CodeGeneratorInspectorStrings.class_binding_builder_part_4)
 
-                                writer.newline("    typedef TypeBuilder::StructItemTraits ItemTraits;\n")
+                                writer.newline("    typedef Inspector::TypeBuilder::StructItemTraits ItemTraits;\n")
 
                                 for prop_data in resolve_data.optional_properties:
                                     prop_name = prop_data.p["name"]
@@ -1251,25 +1251,25 @@ class TypeBindings:
 
 
                                     if setter_name in INSPECTOR_OBJECT_SETTER_NAMES:
-                                        writer.newline("    using InspectorObjectBase::%s;\n\n" % setter_name)
+                                        writer.newline("    using Inspector::InspectorObjectBase::%s;\n\n" % setter_name)
 
                                 if class_binding_cls.need_user_runtime_cast_:
-                                    writer.newline("    static PassRefPtr<%s> runtimeCast(PassRefPtr<InspectorValue> value)\n" % class_name)
+                                    writer.newline("    static PassRefPtr<%s> runtimeCast(PassRefPtr<Inspector::InspectorValue> value)\n" % class_name)
                                     writer.newline("    {\n")
-                                    writer.newline("        RefPtr<InspectorObject> object;\n")
+                                    writer.newline("        RefPtr<Inspector::InspectorObject> object;\n")
                                     writer.newline("        bool castRes = value->asObject(&object);\n")
                                     writer.newline("        ASSERT_UNUSED(castRes, castRes);\n")
                                     writer.append("#if %s\n" % VALIDATOR_IFDEF_NAME)
                                     writer.newline("        assertCorrectValue(object.get());\n")
                                     writer.append("#endif  // %s\n" % VALIDATOR_IFDEF_NAME)
-                                    writer.newline("        COMPILE_ASSERT(sizeof(%s) == sizeof(InspectorObjectBase), type_cast_problem);\n" % class_name)
-                                    writer.newline("        return static_cast<%s*>(static_cast<InspectorObjectBase*>(object.get()));\n" % class_name)
+                                    writer.newline("        COMPILE_ASSERT(sizeof(%s) == sizeof(Inspector::InspectorObjectBase), type_cast_problem);\n" % class_name)
+                                    writer.newline("        return static_cast<%s*>(static_cast<Inspector::InspectorObjectBase*>(object.get()));\n" % class_name)
                                     writer.newline("    }\n")
                                     writer.append("\n")
 
                                 if class_binding_cls.need_internal_runtime_cast_:
                                     writer.append("#if %s\n" % VALIDATOR_IFDEF_NAME)
-                                    writer.newline("    static void assertCorrectValue(InspectorValue* value);\n")
+                                    writer.newline("    static void assertCorrectValue(Inspector::InspectorValue* value);\n")
                                     writer.append("#endif  // %s\n" % VALIDATOR_IFDEF_NAME)
 
                                     closed_field_set = (context_domain_name + "." + class_name) not in TYPES_WITH_OPEN_FIELD_LIST_SET
@@ -1281,7 +1281,7 @@ class TypeBindings:
                                     if domain_guard:
                                         domain_guard.generate_open(validator_writer)
 
-                                    validator_writer.newline("void %s%s::assertCorrectValue(InspectorValue* value)\n" % (helper.full_name_prefix_for_impl, class_name))
+                                    validator_writer.newline("void %s%s::assertCorrectValue(Inspector::InspectorValue* value)\n" % (helper.full_name_prefix_for_impl, class_name))
                                     validator_writer.newline("{\n")
                                     validator_writer.newline("    RefPtr<InspectorObject> object;\n")
                                     validator_writer.newline("    bool castRes = value->asObject(&object);\n")
@@ -1519,7 +1519,7 @@ class TypeBindings:
 
                     @classmethod
                     def get_array_item_c_type_text(cls):
-                        return replace_right_shift("TypeBuilder::Array<%s>" % cls.resolve_data_.item_type_binding.get_array_item_c_type_text())
+                        return replace_right_shift("Inspector::TypeBuilder::Array<%s>" % cls.resolve_data_.item_type_binding.get_array_item_c_type_text())
 
                     @staticmethod
                     def get_setter_value_expression_pattern():
@@ -1900,10 +1900,10 @@ class Generator:
             dispatcher_name = "Inspector" + Capitalizer.lower_camel_case_to_upper(domain_name) + "BackendDispatcher"
             agent_interface_name = dispatcher_name + "Handler"
 
-            Generator.backend_dispatcher_interface_list.append("class %s FINAL : public InspectorSupplementalBackendDispatcher {\n" % dispatcher_name)
+            Generator.backend_dispatcher_interface_list.append("class %s FINAL : public Inspector::InspectorSupplementalBackendDispatcher {\n" % dispatcher_name)
             Generator.backend_dispatcher_interface_list.append("public:\n")
-            Generator.backend_dispatcher_interface_list.append("    static PassRefPtr<%s> create(InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
-            Generator.backend_dispatcher_interface_list.append("    virtual void dispatch(long callId, const String& method, PassRefPtr<InspectorObject> message) OVERRIDE;\n")
+            Generator.backend_dispatcher_interface_list.append("    static PassRefPtr<%s> create(Inspector::InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
+            Generator.backend_dispatcher_interface_list.append("    virtual void dispatch(long callId, const String& method, PassRefPtr<Inspector::InspectorObject> message) OVERRIDE;\n")
             Generator.backend_dispatcher_interface_list.append("private:\n")
 
             Generator.backend_handler_interface_list.append("class %s {\n" % agent_interface_name)
@@ -1922,7 +1922,7 @@ class Generator:
             Generator.backend_handler_interface_list.append("};\n\n")
 
             Generator.backend_dispatcher_interface_list.append("private:\n")
-            Generator.backend_dispatcher_interface_list.append("    %s(InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
+            Generator.backend_dispatcher_interface_list.append("    %s(Inspector::InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
             Generator.backend_dispatcher_interface_list.append("    %s* m_agent;\n" % agent_interface_name)
             Generator.backend_dispatcher_interface_list.append("};\n\n")
 
@@ -2003,7 +2003,7 @@ class Generator:
         Generator.backend_handler_interface_list.append(ad_hoc_type_output)
         ad_hoc_type_writer = Writer(ad_hoc_type_output, "    ")
 
-        Generator.backend_dispatcher_interface_list.append("    void %s(long callId, const InspectorObject& message);\n" % json_command_name)
+        Generator.backend_dispatcher_interface_list.append("    void %s(long callId, const Inspector::InspectorObject& message);\n" % json_command_name)
 
         Generator.backend_handler_interface_list.append("    virtual void %s(ErrorString*" % json_command_name)
 
@@ -2098,9 +2098,9 @@ class Generator:
                                            Generator.backend_method_implementation_list, Templates.callback_method,
                                            {"callbackName": callback_name, "handlerName": agent_interface_name})
 
-            callback_writer.newline("class " + callback_name + " : public InspectorBackendDispatcher::CallbackBase {\n")
+            callback_writer.newline("class " + callback_name + " : public Inspector::InspectorBackendDispatcher::CallbackBase {\n")
             callback_writer.newline("public:\n")
-            callback_writer.newline("    " + callback_name + "(PassRefPtr<InspectorBackendDispatcher>, int id);\n")
+            callback_writer.newline("    " + callback_name + "(PassRefPtr<Inspector::InspectorBackendDispatcher>, int id);\n")
             callback_writer.newline("    void sendSuccess(" + ", ".join(decl_parameter_list) + ");\n")
             callback_writer.newline("};\n")
 
@@ -2109,7 +2109,7 @@ class Generator:
             method_dispatch_handling.append("    RefPtr<%s::%s> callback = adoptRef(new %s::%s(m_backendDispatcher,callId));\n" % (agent_interface_name, callback_name, agent_interface_name, callback_name))
             method_ending_handling.append("    if (error.length()) {\n")
             method_ending_handling.append("        callback->disable();\n")
-            method_ending_handling.append("        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::ServerError, error);\n")
+            method_ending_handling.append("        m_backendDispatcher->reportProtocolError(&callId, Inspector::InspectorBackendDispatcher::ServerError, error);\n")
             method_ending_handling.append("        return;\n")
             method_ending_handling.append("    }")
 
@@ -2413,8 +2413,8 @@ backend_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorBackendDispatcher
 frontend_h_file = SmartOutput(output_header_dirname + "/InspectorFrontend.h")
 frontend_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorFrontend.cpp")
 
-typebuilder_h_file = SmartOutput(output_header_dirname + "/InspectorTypeBuilder.h")
-typebuilder_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorTypeBuilder.cpp")
+typebuilder_h_file = SmartOutput(output_header_dirname + "/InspectorWebTypeBuilders.h")
+typebuilder_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorWebTypeBuilders.cpp")
 
 backend_js_file = SmartOutput(output_js_dirname + "/InspectorBackendCommands.js")
 

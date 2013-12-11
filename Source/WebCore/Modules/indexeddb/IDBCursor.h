@@ -31,8 +31,8 @@
 #include "IDBKey.h"
 #include "IDBTransaction.h"
 #include "IndexedDB.h"
-#include "ScriptValue.h"
 #include "ScriptWrappable.h"
+#include <bindings/ScriptValue.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -63,22 +63,22 @@ public:
 
     // Implement the IDL
     const String& direction() const;
-    const ScriptValue& key() const;
-    const ScriptValue& primaryKey() const;
-    const ScriptValue& value() const;
+    const Deprecated::ScriptValue& key() const;
+    const Deprecated::ScriptValue& primaryKey() const;
+    const Deprecated::ScriptValue& value() const;
     IDBAny* source() const;
 
-    PassRefPtr<IDBRequest> update(JSC::ExecState*, ScriptValue&, ExceptionCode&);
+    PassRefPtr<IDBRequest> update(JSC::ExecState*, Deprecated::ScriptValue&, ExceptionCode&);
     void advance(unsigned long, ExceptionCode&);
     // FIXME: Try to modify the code generator so this overload is unneeded.
     void continueFunction(ScriptExecutionContext*, ExceptionCode& ec) { continueFunction(static_cast<IDBKey*>(0), ec); }
-    void continueFunction(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
+    void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&);
 
     void continueFunction(PassRefPtr<IDBKey>, ExceptionCode&);
     void postSuccessHandlerCallback();
     void close();
-    void setValueReady(DOMRequestState*, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, ScriptValue&);
+    void setValueReady(DOMRequestState*, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, Deprecated::ScriptValue&);
     PassRefPtr<IDBKey> idbPrimaryKey() { return m_currentPrimaryKey; }
 
 protected:
@@ -97,11 +97,11 @@ private:
     bool m_gotValue;
     // These values are held because m_backend may advance while they
     // are still valid for the current success handlers.
-    ScriptValue m_currentKeyValue;
-    ScriptValue m_currentPrimaryKeyValue;
+    Deprecated::ScriptValue m_currentKeyValue;
+    Deprecated::ScriptValue m_currentPrimaryKeyValue;
     RefPtr<IDBKey> m_currentKey;
     RefPtr<IDBKey> m_currentPrimaryKey;
-    ScriptValue m_currentValue;
+    Deprecated::ScriptValue m_currentValue;
 };
 
 } // namespace WebCore

@@ -213,7 +213,7 @@ PassRefPtr<IDBCursor> IDBRequest::getResultCursor()
     return 0;
 }
 
-void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, const ScriptValue& value)
+void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, const Deprecated::ScriptValue& value)
 {
     ASSERT(m_readyState == PENDING);
     m_cursorKey = key;
@@ -282,7 +282,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackend> backend, PassRefPtr<IDBK
         return;
 
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValueBuffer(requestState(), buffer);
+    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), buffer);
     ASSERT(!m_pendingCursor);
     RefPtr<IDBCursor> cursor;
     switch (m_cursorType) {
@@ -321,7 +321,7 @@ void IDBRequest::onSuccess(PassRefPtr<SharedBuffer> valueBuffer)
         return;
 
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValueBuffer(requestState(), valueBuffer);
+    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), valueBuffer);
     onSuccessInternal(value);
 }
 
@@ -348,7 +348,7 @@ void IDBRequest::onSuccess(PassRefPtr<SharedBuffer> valueBuffer, PassRefPtr<IDBK
     ASSERT(keyPath == effectiveObjectStore(m_source)->keyPath());
 #endif
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValueBuffer(requestState(), valueBuffer);
+    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), valueBuffer);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
 #ifndef NDEBUG
@@ -383,7 +383,7 @@ void IDBRequest::onSuccessInternal(PassRefPtr<SerializedScriptValue> value)
     return onSuccessInternal(deserializeIDBValue(requestState(), value));
 }
 
-void IDBRequest::onSuccessInternal(const ScriptValue& value)
+void IDBRequest::onSuccessInternal(const Deprecated::ScriptValue& value)
 {
     m_result = IDBAny::create(value);
     if (m_pendingCursor) {
@@ -400,7 +400,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey
         return;
 
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValueBuffer(requestState(), buffer);
+    Deprecated::ScriptValue value = deserializeIDBValueBuffer(requestState(), buffer);
     ASSERT(m_pendingCursor);
     setResultCursor(m_pendingCursor.release(), key, primaryKey, value);
     enqueueEvent(createSuccessEvent());

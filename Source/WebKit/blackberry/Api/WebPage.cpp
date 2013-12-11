@@ -118,7 +118,6 @@
 #include "RenderWidget.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
-#include "ScriptValue.h"
 #include "ScrollTypes.h"
 #include "SecurityPolicy.h"
 #include "SelectionHandler.h"
@@ -172,6 +171,7 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <SharedPointer.h>
+#include <bindings/ScriptValue.h>
 #include <cmath>
 #include <sys/keycodes.h>
 #include <unicode/ustring.h> // platform ICU

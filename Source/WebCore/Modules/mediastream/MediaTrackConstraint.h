@@ -33,9 +33,11 @@
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-
+namespace Deprecated {
 class ScriptValue;
+}
+
+namespace WebCore {
 
 class MediaTrackConstraint : public RefCounted<MediaTrackConstraint>, public ScriptWrappable {
 public:

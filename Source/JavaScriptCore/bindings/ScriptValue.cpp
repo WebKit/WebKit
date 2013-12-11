@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
  * Copyright (c) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -7,13 +7,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -30,21 +30,20 @@
 #include "config.h"
 #include "ScriptValue.h"
 
+#include "APICast.h"
 #include "InspectorValues.h"
-#include "JSDOMBinding.h"
-#include "SerializedScriptValue.h"
-
-#include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/JSValueRef.h>
-
-#include <heap/Strong.h>
-#include <runtime/JSLock.h>
+#include "JSLock.h"
 
 using namespace JSC;
+using namespace Inspector;
 
-namespace WebCore {
+namespace Deprecated {
 
-bool ScriptValue::getString(JSC::ExecState* scriptState, String& result) const
+ScriptValue::~ScriptValue()
+{
+}
+
+bool ScriptValue::getString(ExecState* scriptState, String& result) const
 {
     if (!m_value)
         return false;
@@ -54,7 +53,7 @@ bool ScriptValue::getString(JSC::ExecState* scriptState, String& result) const
     return true;
 }
 
-String ScriptValue::toString(JSC::ExecState* scriptState) const
+String ScriptValue::toString(ExecState* scriptState) const
 {
     String result = m_value.get().toString(scriptState)->value(scriptState);
     // Handle the case where an exception is thrown as part of invoking toString on the object.
@@ -63,12 +62,11 @@ String ScriptValue::toString(JSC::ExecState* scriptState) const
     return result;
 }
 
-bool ScriptValue::isEqual(JSC::ExecState* scriptState, const ScriptValue& anotherValue) const
+bool ScriptValue::isEqual(ExecState* scriptState, const ScriptValue& anotherValue) const
 {
     if (hasNoValue())
         return anotherValue.hasNoValue();
-
-    return JSValueIsEqual(toRef(scriptState), toRef(scriptState, jsValue()), toRef(scriptState, anotherValue.jsValue()), 0);
+    return JSValueIsEqual(toRef(scriptState), toRef(scriptState, jsValue()), toRef(scriptState, anotherValue.jsValue()), nullptr);
 }
 
 bool ScriptValue::isNull() const
@@ -98,33 +96,17 @@ bool ScriptValue::isFunction() const
     return getCallData(m_value.get(), callData) != CallTypeNone;
 }
 
-PassRefPtr<SerializedScriptValue> ScriptValue::serialize(JSC::ExecState* scriptState, SerializationErrorMode throwExceptions)
-{
-    return SerializedScriptValue::create(scriptState, jsValue(), 0, 0, throwExceptions);
-}
-
-PassRefPtr<SerializedScriptValue> ScriptValue::serialize(JSC::ExecState* scriptState, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
-{
-    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(scriptState, jsValue(), messagePorts, arrayBuffers);
-    didThrow = scriptState->hadException();
-    return serializedValue.release();
-}
-
-ScriptValue ScriptValue::deserialize(JSC::ExecState* scriptState, SerializedScriptValue* value, SerializationErrorMode throwExceptions)
-{
-    return ScriptValue(scriptState->vm(), value->deserialize(scriptState, scriptState->lexicalGlobalObject(), 0, throwExceptions));
-}
-
 #if ENABLE(INSPECTOR)
-static PassRefPtr<InspectorValue> jsToInspectorValue(JSC::ExecState* scriptState, JSValue value, int maxDepth)
+static PassRefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSValue value, int maxDepth)
 {
     if (!value) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return nullptr;
     }
 
     if (!maxDepth)
-        return 0;
+        return nullptr;
+
     maxDepth--;
 
     if (value.isNull() || value.isUndefined())
@@ -137,6 +119,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(JSC::ExecState* scriptState
         String s = value.getString(scriptState);
         return InspectorString::create(String(s.characters(), s.length()));
     }
+
     if (value.isObject()) {
         if (isJSArray(value)) {
             RefPtr<InspectorArray> inspectorArray = InspectorArray::create();
@@ -146,7 +129,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(JSC::ExecState* scriptState
                 JSValue element = array->getIndex(scriptState, i);
                 RefPtr<InspectorValue> elementValue = jsToInspectorValue(scriptState, element, maxDepth);
                 if (!elementValue)
-                    return 0;
+                    return nullptr;
                 inspectorArray->pushValue(elementValue);
             }
             return inspectorArray;
@@ -160,20 +143,21 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(JSC::ExecState* scriptState
             JSValue propertyValue = object->get(scriptState, name);
             RefPtr<InspectorValue> inspectorValue = jsToInspectorValue(scriptState, propertyValue, maxDepth);
             if (!inspectorValue)
-                return 0;
+                return nullptr;
             inspectorObject->setValue(String(name.characters(), name.length()), inspectorValue);
         }
         return inspectorObject;
     }
+
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
-PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(JSC::ExecState* scriptState) const
+PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ExecState* scriptState) const
 {
-    JSC::JSLockHolder holder(scriptState);
+    JSLockHolder holder(scriptState);
     return jsToInspectorValue(scriptState, m_value.get(), InspectorValue::maxDepth);
 }
 #endif // ENABLE(INSPECTOR)
 
-} // namespace WebCore
+} // namespace Deprecated

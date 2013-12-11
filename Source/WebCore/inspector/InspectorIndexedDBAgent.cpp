@@ -61,26 +61,27 @@
 #include "InjectedScript.h"
 #include "InspectorFrontend.h"
 #include "InspectorPageAgent.h"
-#include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "SecurityOrigin.h"
-
+#include <inspector/InspectorValues.h>
 #include <wtf/Vector.h>
 
-using WebCore::TypeBuilder::Array;
-using WebCore::TypeBuilder::IndexedDB::DatabaseWithObjectStores;
-using WebCore::TypeBuilder::IndexedDB::DataEntry;
-using WebCore::TypeBuilder::IndexedDB::Key;
-using WebCore::TypeBuilder::IndexedDB::KeyPath;
-using WebCore::TypeBuilder::IndexedDB::KeyRange;
-using WebCore::TypeBuilder::IndexedDB::ObjectStore;
-using WebCore::TypeBuilder::IndexedDB::ObjectStoreIndex;
+using Inspector::TypeBuilder::Array;
+using Inspector::TypeBuilder::IndexedDB::DatabaseWithObjectStores;
+using Inspector::TypeBuilder::IndexedDB::DataEntry;
+using Inspector::TypeBuilder::IndexedDB::Key;
+using Inspector::TypeBuilder::IndexedDB::KeyPath;
+using Inspector::TypeBuilder::IndexedDB::KeyRange;
+using Inspector::TypeBuilder::IndexedDB::ObjectStore;
+using Inspector::TypeBuilder::IndexedDB::ObjectStoreIndex;
 
+typedef Inspector::InspectorBackendDispatcher::CallbackBase RequestCallback;
 typedef WebCore::InspectorIndexedDBBackendDispatcherHandler::RequestDatabaseNamesCallback RequestDatabaseNamesCallback;
 typedef WebCore::InspectorIndexedDBBackendDispatcherHandler::RequestDatabaseCallback RequestDatabaseCallback;
 typedef WebCore::InspectorIndexedDBBackendDispatcherHandler::RequestDataCallback RequestDataCallback;
-typedef WebCore::InspectorBackendDispatcher::CallbackBase RequestCallback;
 typedef WebCore::InspectorIndexedDBBackendDispatcherHandler::ClearObjectStoreCallback ClearObjectStoreCallback;
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -123,7 +124,7 @@ public:
         }
 
         RefPtr<DOMStringList> databaseNamesList = requestResult->domStringList();
-        RefPtr<TypeBuilder::Array<String>> databaseNames = TypeBuilder::Array<String>::create();
+        RefPtr<Inspector::TypeBuilder::Array<String>> databaseNames = Inspector::TypeBuilder::Array<String>::create();
         for (size_t i = 0; i < databaseNamesList->length(); ++i)
             databaseNames->addItem(databaseNamesList->item(i));
         m_requestCallback->sendSuccess(databaseNames.release());
@@ -250,7 +251,7 @@ static PassRefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
         break;
     case IDBKeyPath::ArrayType: {
         keyPath = KeyPath::create().setType(KeyPath::Type::Array);
-        RefPtr<TypeBuilder::Array<String>> array = TypeBuilder::Array<String>::create();
+        RefPtr<Inspector::TypeBuilder::Array<String>> array = Inspector::TypeBuilder::Array<String>::create();
         const Vector<String>& stringArray = idbKeyPath.array();
         for (size_t i = 0; i < stringArray.size(); ++i)
             array->addItem(stringArray[i]);
@@ -285,12 +286,12 @@ public:
 
         const IDBDatabaseMetadata databaseMetadata = idbDatabase->metadata();
 
-        RefPtr<TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStore>> objectStores = TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStore>::create();
+        RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::IndexedDB::ObjectStore>> objectStores = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::IndexedDB::ObjectStore>::create();
 
         for (IDBDatabaseMetadata::ObjectStoreMap::const_iterator it = databaseMetadata.objectStores.begin(); it != databaseMetadata.objectStores.end(); ++it) {
             const IDBObjectStoreMetadata& objectStoreMetadata = it->value;
 
-            RefPtr<TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStoreIndex>> indexes = TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStoreIndex>::create();
+            RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::IndexedDB::ObjectStoreIndex>> indexes = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::IndexedDB::ObjectStoreIndex>::create();
 
             for (IDBObjectStoreMetadata::IndexMap::const_iterator it = objectStoreMetadata.indexes.begin(); it != objectStoreMetadata.indexes.end(); ++it) {
                 const IDBIndexMetadata& indexMetadata = it->value;
@@ -557,7 +558,7 @@ public:
 } // namespace
 
 InspectorIndexedDBAgent::InspectorIndexedDBAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, InspectorPageAgent* pageAgent)
-    : InspectorBaseAgent(ASCIILiteral("IndexedDB"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("IndexedDB"), instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
     , m_pageAgent(pageAgent)
 {
@@ -567,7 +568,7 @@ InspectorIndexedDBAgent::~InspectorIndexedDBAgent()
 {
 }
 
-void InspectorIndexedDBAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
+void InspectorIndexedDBAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
 {
     m_backendDispatcher = InspectorIndexedDBBackendDispatcher::create(backendDispatcher, this);
 }

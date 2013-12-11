@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2008, 2011 Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2009 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,55 +28,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptValue_h
-#define ScriptValue_h
+#ifndef ScriptGlobalObject_h
+#define ScriptGlobalObject_h
 
-#include "SerializedScriptValue.h"
-#include "ScriptState.h"
-#include <heap/Strong.h>
-#include <heap/StrongInlines.h>
-#include <runtime/JSCJSValue.h>
-#include <runtime/Operations.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/text/WTFString.h>
+namespace Deprecated {
+class ScriptObject;
+}
+
+namespace JSC {
+class ExecState;
+}
 
 namespace WebCore {
 
-class InspectorValue;
-class SerializedScriptValue;
+class InjectedScriptHost;
+class InspectorFrontendHost;
+class MediaControlsHost;
 
-class ScriptValue {
+class ScriptGlobalObject {
 public:
-    ScriptValue() { }
-    ScriptValue(JSC::VM& vm, JSC::JSValue value) : m_value(vm, value) {}
-    virtual ~ScriptValue() {}
-
-    JSC::JSValue jsValue() const { return m_value.get(); }
-    bool getString(JSC::ExecState*, String& result) const;
-    String toString(JSC::ExecState*) const;
-    bool isEqual(JSC::ExecState*, const ScriptValue&) const;
-    bool isNull() const;
-    bool isUndefined() const;
-    bool isObject() const;
-    bool isFunction() const;
-    bool hasNoValue() const { return !m_value; }
-
-    void clear() { m_value.clear(); }
-
-    bool operator==(const ScriptValue& other) const { return m_value == other.m_value; }
-
-    PassRefPtr<SerializedScriptValue> serialize(JSC::ExecState*, SerializationErrorMode = Throwing);
-    PassRefPtr<SerializedScriptValue> serialize(JSC::ExecState*, MessagePortArray*, ArrayBufferArray*, bool&);
-    static ScriptValue deserialize(JSC::ExecState*, SerializedScriptValue*, SerializationErrorMode = Throwing);
-
+    static bool set(JSC::ExecState*, const char* name, const Deprecated::ScriptObject&);
 #if ENABLE(INSPECTOR)
-    PassRefPtr<InspectorValue> toInspectorValue(JSC::ExecState*) const;
+    static bool set(JSC::ExecState*, const char* name, InspectorFrontendHost*);
+    static bool set(JSC::ExecState*, const char* name, InjectedScriptHost*);
+#endif
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    static bool set(JSC::ExecState*, const char* name, MediaControlsHost*);
 #endif
 
+    static bool get(JSC::ExecState*, const char* name, Deprecated::ScriptObject&);
+    static bool remove(JSC::ExecState*, const char* name);
 private:
-    JSC::Strong<JSC::Unknown> m_value;
+    ScriptGlobalObject() { }
 };
 
 } // namespace WebCore
 
-#endif // ScriptValue_h
+#endif // ScriptGlobalObject_h

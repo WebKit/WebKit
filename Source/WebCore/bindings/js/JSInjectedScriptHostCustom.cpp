@@ -44,15 +44,15 @@
 #include "InjectedScriptHost.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
-#include "InspectorValues.h"
 #include "JSEventListener.h"
 #include "JSHTMLAllCollection.h"
 #include "JSHTMLCollection.h"
 #include "JSNode.h"
 #include "JSNodeList.h"
 #include "JSStorage.h"
-#include "ScriptValue.h"
 #include "Storage.h"
+#include <bindings/ScriptValue.h>
+#include <inspector/InspectorValues.h>
 #include <parser/SourceCode.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
@@ -69,20 +69,20 @@ using namespace JSC;
 
 namespace WebCore {
 
-Node* InjectedScriptHost::scriptValueAsNode(ScriptValue value)
+Node* InjectedScriptHost::scriptValueAsNode(Deprecated::ScriptValue value)
 {
     if (!value.isObject() || value.isNull())
         return 0;
     return toNode(value.jsValue());
 }
 
-ScriptValue InjectedScriptHost::nodeAsScriptValue(JSC::ExecState* state, Node* node)
+Deprecated::ScriptValue InjectedScriptHost::nodeAsScriptValue(JSC::ExecState* state, Node* node)
 {
     if (!shouldAllowAccessToNode(state, node))
-        return ScriptValue(state->vm(), jsNull());
+        return Deprecated::ScriptValue(state->vm(), jsNull());
 
     JSLockHolder lock(state);
-    return ScriptValue(state->vm(), toJS(state, deprecatedGlobalObjectForPrototype(state), node));
+    return Deprecated::ScriptValue(state->vm(), toJS(state, deprecatedGlobalObjectForPrototype(state), node));
 }
 
 JSValue JSInjectedScriptHost::inspectedObject(ExecState* exec)
@@ -95,7 +95,7 @@ JSValue JSInjectedScriptHost::inspectedObject(ExecState* exec)
         return jsUndefined();
 
     JSLockHolder lock(exec);
-    ScriptValue scriptValue = object->get(exec);
+    Deprecated::ScriptValue scriptValue = object->get(exec);
     if (scriptValue.hasNoValue())
         return jsUndefined();
 
@@ -247,8 +247,8 @@ JSValue JSInjectedScriptHost::getEventListeners(ExecState* exec)
 JSValue JSInjectedScriptHost::inspect(ExecState* exec)
 {
     if (exec->argumentCount() >= 2) {
-        ScriptValue object(exec->vm(), exec->uncheckedArgument(0));
-        ScriptValue hints(exec->vm(), exec->uncheckedArgument(1));
+        Deprecated::ScriptValue object(exec->vm(), exec->uncheckedArgument(0));
+        Deprecated::ScriptValue hints(exec->vm(), exec->uncheckedArgument(1));
         impl().inspectImpl(object.toInspectorValue(exec), hints.toInspectorValue(exec));
     }
     return jsUndefined();

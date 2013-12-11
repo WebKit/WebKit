@@ -53,7 +53,7 @@ JSValue JSMessageEvent::data(ExecState* exec) const
     JSValue result;
     switch (event.dataType()) {
     case MessageEvent::DataTypeScriptValue: {
-        ScriptValue scriptValue = event.dataAsScriptValue();
+        Deprecated::ScriptValue scriptValue = event.dataAsScriptValue();
         if (scriptValue.hasNoValue())
             result = jsNull();
         else
@@ -105,7 +105,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
         if (exec->hadException())
             return jsUndefined();
     }
-    ScriptValue dataArg = ScriptValue(exec->vm(), exec->argument(3));
+    Deprecated::ScriptValue dataArg = Deprecated::ScriptValue(exec->vm(), exec->argument(3));
     if (exec->hadException())
         return jsUndefined();
 

@@ -47,22 +47,24 @@
 #include "MainFrame.h"
 #include "NodeList.h"
 #include "Page.h"
-#include "ScriptObject.h"
 #include "ScriptProfiler.h"
 #include "ScriptState.h"
+#include <bindings/ScriptObject.h>
 
-using WebCore::TypeBuilder::Array;
-using WebCore::TypeBuilder::Canvas::ResourceId;
-using WebCore::TypeBuilder::Canvas::ResourceInfo;
-using WebCore::TypeBuilder::Canvas::ResourceState;
-using WebCore::TypeBuilder::Canvas::TraceLog;
-using WebCore::TypeBuilder::Canvas::TraceLogId;
-using WebCore::TypeBuilder::Network::FrameId;
+using Inspector::TypeBuilder::Array;
+using Inspector::TypeBuilder::Canvas::ResourceId;
+using Inspector::TypeBuilder::Canvas::ResourceInfo;
+using Inspector::TypeBuilder::Canvas::ResourceState;
+using Inspector::TypeBuilder::Canvas::TraceLog;
+using Inspector::TypeBuilder::Canvas::TraceLogId;
+using Inspector::TypeBuilder::Network::FrameId;
+
+using namespace Inspector;
 
 namespace WebCore {
 
 InspectorCanvasAgent::InspectorCanvasAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent(ASCIILiteral("Canvas"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("Canvas"), instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_injectedScriptManager(injectedScriptManager)
     , m_enabled(false)
@@ -73,7 +75,7 @@ InspectorCanvasAgent::~InspectorCanvasAgent()
 {
 }
 
-void InspectorCanvasAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorCanvasAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorCanvasFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorCanvasBackendDispatcher::create(backendDispatcher, this);
@@ -178,27 +180,27 @@ void InspectorCanvasAgent::getResourceState(ErrorString* errorString, const Trac
         module.resourceState(errorString, traceLogId, resourceId, &result);
 }
 
-ScriptObject InspectorCanvasAgent::wrapCanvas2DRenderingContextForInstrumentation(const ScriptObject& context)
+Deprecated::ScriptObject InspectorCanvasAgent::wrapCanvas2DRenderingContextForInstrumentation(const Deprecated::ScriptObject& context)
 {
     ErrorString error;
     InjectedScriptCanvasModule module = injectedScriptCanvasModule(&error, context);
     if (module.hasNoValue())
-        return ScriptObject();
+        return Deprecated::ScriptObject();
     return notifyRenderingContextWasWrapped(module.wrapCanvas2DContext(context));
 }
 
 #if ENABLE(WEBGL)
-ScriptObject InspectorCanvasAgent::wrapWebGLRenderingContextForInstrumentation(const ScriptObject& glContext)
+Deprecated::ScriptObject InspectorCanvasAgent::wrapWebGLRenderingContextForInstrumentation(const Deprecated::ScriptObject& glContext)
 {
     ErrorString error;
     InjectedScriptCanvasModule module = injectedScriptCanvasModule(&error, glContext);
     if (module.hasNoValue())
-        return ScriptObject();
+        return Deprecated::ScriptObject();
     return notifyRenderingContextWasWrapped(module.wrapWebGLContext(glContext));
 }
 #endif
 
-ScriptObject InspectorCanvasAgent::notifyRenderingContextWasWrapped(const ScriptObject& wrappedContext)
+Deprecated::ScriptObject InspectorCanvasAgent::notifyRenderingContextWasWrapped(const Deprecated::ScriptObject& wrappedContext)
 {
     ASSERT(m_frontendDispatcher);
     JSC::ExecState* scriptState = wrappedContext.scriptState();
@@ -224,13 +226,13 @@ InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModule(Erro
     return module;
 }
 
-InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModule(ErrorString* errorString, const ScriptObject& scriptObject)
+InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModule(ErrorString* errorString, const Deprecated::ScriptObject& scriptObject)
 {
     if (!checkIsEnabled(errorString))
         return InjectedScriptCanvasModule();
     if (scriptObject.hasNoValue()) {
         ASSERT_NOT_REACHED();
-        *errorString = "Internal error: original ScriptObject has no value";
+        *errorString = "Internal error: original Deprecated::ScriptObject has no value";
         return InjectedScriptCanvasModule();
     }
     return injectedScriptCanvasModule(errorString, scriptObject.scriptState());

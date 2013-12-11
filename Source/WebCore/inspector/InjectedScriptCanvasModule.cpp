@@ -37,15 +37,19 @@
 #include "InjectedScript.h"
 #include "InjectedScriptCanvasModuleSource.h"
 #include "InjectedScriptManager.h"
-#include "ScriptFunctionCall.h"
-#include "ScriptObject.h"
+#include "JSMainThreadExecState.h"
+#include <bindings/ScriptFunctionCall.h>
+#include <bindings/ScriptObject.h>
+#include <inspector/InspectorValues.h>
 
-using WebCore::TypeBuilder::Array;
-using WebCore::TypeBuilder::Canvas::ResourceId;
-using WebCore::TypeBuilder::Canvas::ResourceInfo;
-using WebCore::TypeBuilder::Canvas::ResourceState;
-using WebCore::TypeBuilder::Canvas::TraceLog;
-using WebCore::TypeBuilder::Canvas::TraceLogId;
+using Inspector::TypeBuilder::Array;
+using Inspector::TypeBuilder::Canvas::ResourceId;
+using Inspector::TypeBuilder::Canvas::ResourceInfo;
+using Inspector::TypeBuilder::Canvas::ResourceState;
+using Inspector::TypeBuilder::Canvas::TraceLog;
+using Inspector::TypeBuilder::Canvas::TraceLogId;
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -66,34 +70,34 @@ String InjectedScriptCanvasModule::source() const
     return String(reinterpret_cast<const char*>(InjectedScriptCanvasModuleSource_js), sizeof(InjectedScriptCanvasModuleSource_js));
 }
 
-ScriptObject InjectedScriptCanvasModule::wrapCanvas2DContext(const ScriptObject& context)
+Deprecated::ScriptObject InjectedScriptCanvasModule::wrapCanvas2DContext(const Deprecated::ScriptObject& context)
 {
     return callWrapContextFunction("wrapCanvas2DContext", context);
 }
 
 #if ENABLE(WEBGL)
-ScriptObject InjectedScriptCanvasModule::wrapWebGLContext(const ScriptObject& glContext)
+Deprecated::ScriptObject InjectedScriptCanvasModule::wrapWebGLContext(const Deprecated::ScriptObject& glContext)
 {
     return callWrapContextFunction("wrapWebGLContext", glContext);
 }
 #endif // ENABLE(WEBGL)
 
-ScriptObject InjectedScriptCanvasModule::callWrapContextFunction(const String& functionName, const ScriptObject& context)
+Deprecated::ScriptObject InjectedScriptCanvasModule::callWrapContextFunction(const String& functionName, const Deprecated::ScriptObject& context)
 {
-    ScriptFunctionCall function(injectedScriptObject(), functionName);
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), functionName, WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(context);
     bool hadException = false;
-    ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
+    Deprecated::ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
     if (hadException || resultValue.hasNoValue() || !resultValue.isObject()) {
         ASSERT_NOT_REACHED();
-        return ScriptObject();
+        return Deprecated::ScriptObject();
     }
-    return ScriptObject(context.scriptState(), resultValue);
+    return Deprecated::ScriptObject(context.scriptState(), resultValue);
 }
 
 void InjectedScriptCanvasModule::markFrameEnd()
 {
-    ScriptFunctionCall function(injectedScriptObject(), "markFrameEnd");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "markFrameEnd", WebCore::functionCallHandlerFromAnyThread);
     RefPtr<InspectorValue> resultValue;
     makeCall(function, &resultValue);
     ASSERT(resultValue);
@@ -111,7 +115,7 @@ void InjectedScriptCanvasModule::startCapturing(ErrorString* errorString, TraceL
 
 void InjectedScriptCanvasModule::callStartCapturingFunction(const String& functionName, ErrorString* errorString, TraceLogId* traceLogId)
 {
-    ScriptFunctionCall function(injectedScriptObject(), functionName);
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), functionName, WebCore::functionCallHandlerFromAnyThread);
     RefPtr<InspectorValue> resultValue;
     makeCall(function, &resultValue);
     if (!resultValue || resultValue->type() != InspectorValue::TypeString || !resultValue->asString(traceLogId))
@@ -130,7 +134,7 @@ void InjectedScriptCanvasModule::dropTraceLog(ErrorString* errorString, const Tr
 
 void InjectedScriptCanvasModule::callVoidFunctionWithTraceLogIdArgument(const String& functionName, ErrorString* errorString, const TraceLogId& traceLogId)
 {
-    ScriptFunctionCall function(injectedScriptObject(), functionName);
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), functionName, WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(traceLogId);
     bool hadException = false;
     callFunctionWithEvalEnabled(function, hadException);
@@ -141,7 +145,7 @@ void InjectedScriptCanvasModule::callVoidFunctionWithTraceLogIdArgument(const St
 
 void InjectedScriptCanvasModule::traceLog(ErrorString* errorString, const TraceLogId& traceLogId, const int* startOffset, const int* maxLength, RefPtr<TraceLog>* traceLog)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "traceLog");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "traceLog", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(traceLogId);
     if (startOffset)
         function.appendArgument(*startOffset);
@@ -159,7 +163,7 @@ void InjectedScriptCanvasModule::traceLog(ErrorString* errorString, const TraceL
 
 void InjectedScriptCanvasModule::replayTraceLog(ErrorString* errorString, const TraceLogId& traceLogId, int stepNo, RefPtr<ResourceState>* result)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "replayTraceLog");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "replayTraceLog", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(traceLogId);
     function.appendArgument(stepNo);
     RefPtr<InspectorValue> resultValue;
@@ -174,7 +178,7 @@ void InjectedScriptCanvasModule::replayTraceLog(ErrorString* errorString, const 
 
 void InjectedScriptCanvasModule::resourceInfo(ErrorString* errorString, const ResourceId& resourceId, RefPtr<ResourceInfo>* result)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "resourceInfo");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "resourceInfo", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(resourceId);
     RefPtr<InspectorValue> resultValue;
     makeCall(function, &resultValue);
@@ -188,7 +192,7 @@ void InjectedScriptCanvasModule::resourceInfo(ErrorString* errorString, const Re
 
 void InjectedScriptCanvasModule::resourceState(ErrorString* errorString, const TraceLogId& traceLogId, const ResourceId& resourceId, RefPtr<ResourceState>* result)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "resourceState");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "resourceState", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(traceLogId);
     function.appendArgument(resourceId);
     RefPtr<InspectorValue> resultValue;

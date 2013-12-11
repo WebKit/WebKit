@@ -33,12 +33,17 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
 #include "InspectorDebuggerAgent.h"
+#include "InspectorWebAgentBase.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
+
+namespace Inspector {
+class InspectorObject;
+}
 
 namespace WebCore {
 
@@ -46,13 +51,12 @@ class Element;
 class InspectorAgent;
 class InspectorDOMAgent;
 class InspectorDebuggerAgent;
-class InspectorObject;
 class InstrumentingAgents;
 class Node;
 
 typedef String ErrorString;
 
-class InspectorDOMDebuggerAgent : public InspectorBaseAgent, public InspectorDebuggerAgent::Listener, public InspectorDOMDebuggerBackendDispatcherHandler {
+class InspectorDOMDebuggerAgent : public InspectorAgentBase, public InspectorDebuggerAgent::Listener, public InspectorDOMDebuggerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
 public:
     static PassOwnPtr<InspectorDOMDebuggerAgent> create(InstrumentingAgents*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
@@ -79,7 +83,7 @@ public:
     void willSendXMLHttpRequest(const String& url);
     void pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous);
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
     virtual void discardAgent();
 
@@ -93,7 +97,7 @@ private:
     virtual void didPause();
     void disable();
 
-    void descriptionForDOMEvent(Node* target, int breakpointType, bool insertion, InspectorObject* description);
+    void descriptionForDOMEvent(Node* target, int breakpointType, bool insertion, Inspector::InspectorObject* description);
     void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);
     bool hasBreakpoint(Node*, int type);
     void discardBindings();

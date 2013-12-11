@@ -32,7 +32,7 @@
 
 #include "JSDOMBinding.h"
 #include "MediaSourceStates.h"
-#include "ScriptValue.h"
+#include <bindings/ScriptValue.h>
 #include <interpreter/CallFrame.h>
 #include <runtime/JSCJSValue.h>
 
@@ -50,7 +50,7 @@ CapabilityRange::CapabilityRange(const MediaStreamSourceCapabilityRange& rangeIn
 {
 }
 
-static ScriptValue scriptValue(ExecState* exec, const MediaStreamSourceCapabilityRange::ValueUnion& value, MediaStreamSourceCapabilityRange::Type type)
+static Deprecated::ScriptValue scriptValue(ExecState* exec, const MediaStreamSourceCapabilityRange::ValueUnion& value, MediaStreamSourceCapabilityRange::Type type)
 {
     // NOTE: the spec says:
     //      ... an implementation should make a reasonable attempt to translate and scale the hardware's setting
@@ -63,26 +63,26 @@ static ScriptValue scriptValue(ExecState* exec, const MediaStreamSourceCapabilit
     
     switch (type) {
     case MediaStreamSourceCapabilityRange::Float:
-        return ScriptValue(exec->vm(), JSValue(value.asFloat));
+        return Deprecated::ScriptValue(exec->vm(), JSValue(value.asFloat));
         break;
     case MediaStreamSourceCapabilityRange::ULong:
-        return ScriptValue(exec->vm(), JSValue(value.asULong));
+        return Deprecated::ScriptValue(exec->vm(), JSValue(value.asULong));
         break;
     case MediaStreamSourceCapabilityRange::Undefined:
-        return ScriptValue(exec->vm(), jsUndefined());
+        return Deprecated::ScriptValue(exec->vm(), jsUndefined());
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return ScriptValue(exec->vm(), jsUndefined());
+    return Deprecated::ScriptValue(exec->vm(), jsUndefined());
 }
 
-ScriptValue CapabilityRange::min(ExecState* exec) const
+Deprecated::ScriptValue CapabilityRange::min(ExecState* exec) const
 {
     return scriptValue(exec, m_rangeInfo.min(), m_rangeInfo.type());
 }
 
-ScriptValue CapabilityRange::max(ExecState* exec) const
+Deprecated::ScriptValue CapabilityRange::max(ExecState* exec) const
 {
     return scriptValue(exec, m_rangeInfo.max(), m_rangeInfo.type());
 }

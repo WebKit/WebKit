@@ -36,14 +36,16 @@
 
 #include "Event.h"
 #include "FloatQuad.h"
-#include "InspectorValues.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include <inspector/InspectorValues.h>
 #include <wtf/CurrentTime.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 

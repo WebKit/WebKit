@@ -30,8 +30,8 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamSourceCapabilities.h"
-#include "ScriptValue.h"
 #include "ScriptWrappable.h"
+#include <bindings/ScriptValue.h>
 #include <interpreter/CallFrame.h>
 #include <wtf/RefCounted.h>
 
@@ -43,8 +43,8 @@ public:
 
     static RefPtr<CapabilityRange> create(const MediaStreamSourceCapabilityRange&);
 
-    ScriptValue min(JSC::ExecState*) const;
-    ScriptValue max(JSC::ExecState*) const;
+    Deprecated::ScriptValue min(JSC::ExecState*) const;
+    Deprecated::ScriptValue max(JSC::ExecState*) const;
     bool supported() const { return m_rangeInfo.supported(); }
 
 private:

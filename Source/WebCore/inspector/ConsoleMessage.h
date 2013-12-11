@@ -38,15 +38,17 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
+namespace Inspector {
+class InspectorObject;
+}
+
 namespace WebCore {
 
 class DOMWindow;
 class InjectedScriptManager;
-class InspectorObject;
 class ScriptArguments;
 class ScriptCallFrame;
 class ScriptCallStack;
-class ScriptValue;
 
 class ConsoleMessage {
     WTF_MAKE_NONCOPYABLE(ConsoleMessage); WTF_MAKE_FAST_ALLOCATED;

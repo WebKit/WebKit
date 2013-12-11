@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,36 +29,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorBaseAgent_h
-#define InspectorBaseAgent_h
+#include "config.h"
+#include "ScriptObject.h"
 
-#include "InspectorBackendDispatchers.h"
-#include <wtf/text/WTFString.h>
+using namespace JSC;
 
-namespace WebCore {
+namespace Deprecated {
 
-class InspectorFrontendChannel;
-class InstrumentingAgents;
+ScriptObject::ScriptObject(ExecState* scriptState, JSObject* object)
+    : ScriptValue(scriptState->vm(), object)
+    , m_scriptState(scriptState)
+{
+}
 
-class InspectorBaseAgent {
-public:
-    virtual ~InspectorBaseAgent() { }
+ScriptObject::ScriptObject(ExecState* scriptState, const ScriptValue& scriptValue)
+    : ScriptValue(scriptState->vm(), scriptValue.jsValue())
+    , m_scriptState(scriptState)
+{
+}
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) = 0;
-    virtual void willDestroyFrontendAndBackend() = 0;
-    virtual void discardAgent() { }
-
-protected:
-    InspectorBaseAgent(const String& name, InstrumentingAgents* instrumentingAgents)
-        : m_instrumentingAgents(instrumentingAgents)
-        , m_name(name)
-    {
-    }
-
-    InstrumentingAgents* m_instrumentingAgents;
-    String m_name;
-};
-
-} // namespace WebCore
-
-#endif // !defined(InspectorBaseAgent_h)
+} // namespace Deprecated

@@ -37,6 +37,7 @@
 #include "ErrorEvent.h"
 #include "Event.h"
 #include "EventException.h"
+#include "ExceptionCode.h"
 #include "InspectorConsoleInstrumentation.h"
 #include "URL.h"
 #include "MessagePort.h"
@@ -44,7 +45,6 @@
 #include "ScheduledAction.h"
 #include "ScriptCallStack.h"
 #include "ScriptSourceCode.h"
-#include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "WorkerInspectorController.h"
 #include "WorkerLocation.h"
@@ -54,13 +54,12 @@
 #include "WorkerThread.h"
 #include "WorkerThreadableLoader.h"
 #include "XMLHttpRequestException.h"
+#include <bindings/ScriptValue.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "NotificationCenter.h"
 #endif
-
-#include "ExceptionCode.h"
 
 namespace WebCore {
 
@@ -241,7 +240,7 @@ void WorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode&
 
         InspectorInstrumentation::scriptImported(scriptExecutionContext(), scriptLoader->identifier(), scriptLoader->script());
 
-        ScriptValue exception;
+        Deprecated::ScriptValue exception;
         m_script->evaluate(ScriptSourceCode(scriptLoader->script(), scriptLoader->responseURL()), &exception);
         if (!exception.hasNoValue()) {
             m_script->setException(exception);

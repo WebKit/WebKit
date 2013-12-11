@@ -45,7 +45,9 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 
-using WebCore::TypeBuilder::Runtime::ExecutionContextDescription;
+using Inspector::TypeBuilder::Runtime::ExecutionContextDescription;
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -63,7 +65,7 @@ PageRuntimeAgent::~PageRuntimeAgent()
     m_instrumentingAgents->setPageRuntimeAgent(0);
 }
 
-void PageRuntimeAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void PageRuntimeAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorRuntimeFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorRuntimeBackendDispatcher::create(backendDispatcher, this);

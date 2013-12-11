@@ -165,7 +165,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* 
     return request;
 }
 
-short IDBFactory::cmp(ScriptExecutionContext* context, const ScriptValue& firstValue, const ScriptValue& secondValue, ExceptionCode& ec)
+short IDBFactory::cmp(ScriptExecutionContext* context, const Deprecated::ScriptValue& firstValue, const Deprecated::ScriptValue& secondValue, ExceptionCode& ec)
 {
     DOMRequestState requestState(context);
     RefPtr<IDBKey> first = scriptValueToIDBKey(&requestState, firstValue);

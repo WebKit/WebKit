@@ -52,7 +52,6 @@
 #include "ResourceResponse.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
-#include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "TextResourceDecoder.h"

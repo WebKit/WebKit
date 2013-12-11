@@ -30,18 +30,14 @@
 
 #include "APIObject.h"
 #include "Connection.h"
+#include <WebCore/InspectorForwarding.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore {
-class InspectorFrontendChannel;
-}
 
 namespace WebKit {
 
 class WebInspectorFrontendClient;
 class WebPage;
-struct WebPageCreationParameters;
 
 class WebInspector : public API::ObjectImpl<API::Object::Type::BundleInspector> {
 public:

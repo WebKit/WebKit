@@ -45,6 +45,10 @@
 #include "WebSocketFrame.h"
 #include <wtf/RefPtr.h>
 
+namespace Deprecated {
+class ScriptObject;
+}
+
 namespace WebCore {
 
 class CSSRule;
@@ -77,7 +81,6 @@ class ResourceResponse;
 class ScriptArguments;
 class ScriptCallStack;
 class ScriptExecutionContext;
-class ScriptObject;
 class ScriptProfile;
 class SecurityOrigin;
 class ShadowRoot;
@@ -276,9 +279,9 @@ public:
     static void didReceiveWebSocketFrameError(Document*, unsigned long identifier, const String& errorMessage);
 #endif
 
-    static ScriptObject wrapCanvas2DRenderingContextForInstrumentation(Document*, const ScriptObject&);
+    static Deprecated::ScriptObject wrapCanvas2DRenderingContextForInstrumentation(Document*, const Deprecated::ScriptObject&);
 #if ENABLE(WEBGL)
-    static ScriptObject wrapWebGLRenderingContextForInstrumentation(Document*, const ScriptObject&);
+    static Deprecated::ScriptObject wrapWebGLRenderingContextForInstrumentation(Document*, const Deprecated::ScriptObject&);
 #endif
 
     static void networkStateChanged(Page*);

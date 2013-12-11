@@ -31,9 +31,10 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBaseAgent.h"
+#include "InspectorBackendDispatchers.h"
 #include "InspectorFrontend.h"
-#include "InspectorTypeBuilder.h"
+#include "InspectorWebAgentBase.h"
+#include "InspectorWebTypeBuilders.h"
 #include "RenderLayer.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -46,7 +47,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorLayerTreeAgent : public InspectorBaseAgent, public InspectorLayerTreeBackendDispatcherHandler {
+class InspectorLayerTreeAgent : public InspectorAgentBase, public InspectorLayerTreeBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorLayerTreeAgent> create(InstrumentingAgents* instrumentingAgents)
     {
@@ -54,7 +55,7 @@ public:
     }
     ~InspectorLayerTreeAgent();
 
-    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
     void reset();
 
@@ -65,8 +66,8 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
-    virtual void layersForNode(ErrorString*, int nodeId, RefPtr<TypeBuilder::Array<TypeBuilder::LayerTree::Layer>>&);
-    virtual void reasonsForCompositingLayer(ErrorString*, const String& layerId, RefPtr<TypeBuilder::LayerTree::CompositingReasons>&);
+    virtual void layersForNode(ErrorString*, int nodeId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::LayerTree::Layer>>&);
+    virtual void reasonsForCompositingLayer(ErrorString*, const String& layerId, RefPtr<Inspector::TypeBuilder::LayerTree::CompositingReasons>&);
 
 private:
     InspectorLayerTreeAgent(InstrumentingAgents*);
@@ -75,11 +76,11 @@ private:
     String bind(const RenderLayer*);
     void unbind(const RenderLayer*);
 
-    void gatherLayersUsingRenderObjectHierarchy(ErrorString*, RenderObject*, RefPtr<TypeBuilder::Array<TypeBuilder::LayerTree::Layer>>&);
-    void gatherLayersUsingRenderLayerHierarchy(ErrorString*, RenderLayer*, RefPtr<TypeBuilder::Array<TypeBuilder::LayerTree::Layer>>&);
+    void gatherLayersUsingRenderObjectHierarchy(ErrorString*, RenderObject*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::LayerTree::Layer>>&);
+    void gatherLayersUsingRenderLayerHierarchy(ErrorString*, RenderLayer*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::LayerTree::Layer>>&);
 
-    PassRefPtr<TypeBuilder::LayerTree::Layer> buildObjectForLayer(ErrorString*, RenderLayer*);
-    PassRefPtr<TypeBuilder::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);
+    PassRefPtr<Inspector::TypeBuilder::LayerTree::Layer> buildObjectForLayer(ErrorString*, RenderLayer*);
+    PassRefPtr<Inspector::TypeBuilder::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);
 
     int idForNode(ErrorString*, Node*);
 

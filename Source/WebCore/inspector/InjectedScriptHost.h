@@ -36,6 +36,15 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
+namespace Deprecated {
+class ScriptValue;
+}
+
+namespace Inspector {
+class InspectorObject;
+class InspectorValue;
+}
+
 namespace WebCore {
 
 class Database;
@@ -46,12 +55,8 @@ class InspectorDOMAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorDebuggerAgent;
-class InspectorObject;
-class InspectorValue;
 class Node;
 class ScriptDebugServer;
-class ScriptObject;
-class ScriptValue;
 class Storage;
 
 struct EventListenerInfo;
@@ -85,22 +90,22 @@ public:
 #endif
     }
 
-    static Node* scriptValueAsNode(ScriptValue);
-    static ScriptValue nodeAsScriptValue(JSC::ExecState*, Node*);
+    static Node* scriptValueAsNode(Deprecated::ScriptValue);
+    static Deprecated::ScriptValue nodeAsScriptValue(JSC::ExecState*, Node*);
 
     void disconnect();
 
     class InspectableObject {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        virtual ScriptValue get(JSC::ExecState*);
+        virtual Deprecated::ScriptValue get(JSC::ExecState*);
         virtual ~InspectableObject() { }
     };
     void addInspectedObject(PassOwnPtr<InspectableObject>);
     void clearInspectedObjects();
     InspectableObject* inspectedObject(unsigned int num);
 
-    void inspectImpl(PassRefPtr<InspectorValue> objectToInspect, PassRefPtr<InspectorValue> hints);
+    void inspectImpl(PassRefPtr<Inspector::InspectorValue> objectToInspect, PassRefPtr<Inspector::InspectorValue> hints);
     void getEventListenersImpl(Node*, Vector<EventListenerInfo>& listenersArray);
 
     void clearConsoleMessages();

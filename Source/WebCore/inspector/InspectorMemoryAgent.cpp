@@ -41,13 +41,13 @@
 #include "Frame.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorFrontend.h"
-#include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "MemoryCache.h"
 #include "Node.h"
 #include "NodeTraversal.h"
 #include "ScriptProfiler.h"
 #include "StyledElement.h"
+#include <inspector/InspectorValues.h>
 #include <runtime/ArrayBufferView.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -58,8 +58,10 @@
 #include <wtf/text/WTFString.h>
 
 // Use a type alias instead of 'using' here which would cause a conflict on Mac.
-typedef WebCore::TypeBuilder::Memory::MemoryBlock InspectorMemoryBlock;
-typedef WebCore::TypeBuilder::Array<InspectorMemoryBlock> InspectorMemoryBlocks;
+typedef Inspector::TypeBuilder::Memory::MemoryBlock InspectorMemoryBlock;
+typedef Inspector::TypeBuilder::Array<InspectorMemoryBlock> InspectorMemoryBlocks;
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -67,7 +69,7 @@ InspectorMemoryAgent::~InspectorMemoryAgent()
 {
 }
 
-void InspectorMemoryAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
+void InspectorMemoryAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
 {
     m_backendDispatcher = InspectorMemoryBackendDispatcher::create(backendDispatcher, this);
 }
@@ -85,7 +87,7 @@ void InspectorMemoryAgent::getDOMCounters(ErrorString*, int* documents, int* nod
 }
 
 InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents)
-    : InspectorBaseAgent(ASCIILiteral("Memory"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("Memory"), instrumentingAgents)
 {
 }
 

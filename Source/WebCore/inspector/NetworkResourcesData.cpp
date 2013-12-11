@@ -46,6 +46,8 @@ static size_t maximumResourcesContentSize = 100 * 1000 * 1000;
 static size_t maximumSingleResourceContentSize = 10 * 1000 * 1000;
 }
 
+using namespace Inspector;
+
 namespace WebCore {
 
 

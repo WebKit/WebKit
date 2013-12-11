@@ -37,8 +37,6 @@
 #include "ExceptionCodePlaceholder.h"
 #include "InspectorDatabaseResource.h"
 #include "InspectorFrontend.h"
-
-#include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "SQLError.h"
 #include "SQLResultSet.h"
@@ -50,10 +48,12 @@
 #include "SQLTransactionErrorCallback.h"
 #include "SQLValue.h"
 #include "VoidCallback.h"
-
+#include <inspector/InspectorValues.h>
 #include <wtf/Vector.h>
 
 typedef WebCore::InspectorDatabaseBackendDispatcherHandler::ExecuteSQLCallback ExecuteSQLCallback;
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -61,7 +61,7 @@ namespace {
 
 void reportTransactionFailed(ExecuteSQLCallback* requestCallback, SQLError* error)
 {
-    RefPtr<TypeBuilder::Database::Error> errorObject = TypeBuilder::Database::Error::create()
+    RefPtr<Inspector::TypeBuilder::Database::Error> errorObject = Inspector::TypeBuilder::Database::Error::create()
         .setMessage(error->message())
         .setCode(error->code());
     requestCallback->sendSuccess(0, 0, errorObject.release());
@@ -80,12 +80,12 @@ public:
     {
         SQLResultSetRowList* rowList = resultSet->rows();
 
-        RefPtr<TypeBuilder::Array<String>> columnNames = TypeBuilder::Array<String>::create();
+        RefPtr<Inspector::TypeBuilder::Array<String>> columnNames = Inspector::TypeBuilder::Array<String>::create();
         const Vector<String>& columns = rowList->columnNames();
         for (size_t i = 0; i < columns.size(); ++i)
             columnNames->addItem(columns[i]);
 
-        RefPtr<TypeBuilder::Array<InspectorValue>> values = TypeBuilder::Array<InspectorValue>::create();
+        RefPtr<Inspector::TypeBuilder::Array<InspectorValue>> values = Inspector::TypeBuilder::Array<InspectorValue>::create();
         const Vector<SQLValue>& data = rowList->values();
         for (size_t i = 0; i < data.size(); ++i) {
             const SQLValue& value = rowList->values()[i];
@@ -211,7 +211,7 @@ void InspectorDatabaseAgent::clearResources()
 }
 
 InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentingAgents)
-    : InspectorBaseAgent(ASCIILiteral("Database"), instrumentingAgents)
+    : InspectorAgentBase(ASCIILiteral("Database"), instrumentingAgents)
     , m_enabled(false)
 {
     m_instrumentingAgents->setInspectorDatabaseAgent(this);
@@ -222,7 +222,7 @@ InspectorDatabaseAgent::~InspectorDatabaseAgent()
     m_instrumentingAgents->setInspectorDatabaseAgent(0);
 }
 
-void InspectorDatabaseAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorDatabaseAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorDatabaseFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorDatabaseBackendDispatcher::create(backendDispatcher, this);
@@ -254,14 +254,14 @@ void InspectorDatabaseAgent::disable(ErrorString*)
     m_enabled = false;
 }
 
-void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, const String& databaseId, RefPtr<TypeBuilder::Array<String>>& names)
+void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, const String& databaseId, RefPtr<Inspector::TypeBuilder::Array<String>>& names)
 {
     if (!m_enabled) {
         *error = "Database agent is not enabled";
         return;
     }
 
-    names = TypeBuilder::Array<String>::create();
+    names = Inspector::TypeBuilder::Array<String>::create();
 
     Database* database = databaseForId(databaseId);
     if (database) {

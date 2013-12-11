@@ -98,19 +98,19 @@ const String& IDBCursor::direction() const
     return directionToString(m_direction);
 }
 
-const ScriptValue& IDBCursor::key() const
+const Deprecated::ScriptValue& IDBCursor::key() const
 {
     LOG(StorageAPI, "IDBCursor::key");
     return m_currentKeyValue;
 }
 
-const ScriptValue& IDBCursor::primaryKey() const
+const Deprecated::ScriptValue& IDBCursor::primaryKey() const
 {
     LOG(StorageAPI, "IDBCursor::primaryKey");
     return m_currentPrimaryKeyValue;
 }
 
-const ScriptValue& IDBCursor::value() const
+const Deprecated::ScriptValue& IDBCursor::value() const
 {
     LOG(StorageAPI, "IDBCursor::value");
     return m_currentValue;
@@ -121,7 +121,7 @@ IDBAny* IDBCursor::source() const
     return m_source.get();
 }
 
-PassRefPtr<IDBRequest> IDBCursor::update(JSC::ExecState* state, ScriptValue& value, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBCursor::update(JSC::ExecState* state, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
     LOG(StorageAPI, "IDBCursor::update");
 
@@ -177,7 +177,7 @@ void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
     ASSERT(!ec);
 }
 
-void IDBCursor::continueFunction(ScriptExecutionContext* context, const ScriptValue& keyValue, ExceptionCode& ec)
+void IDBCursor::continueFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
 {
     DOMRequestState requestState(context);
     RefPtr<IDBKey> key = scriptValueToIDBKey(&requestState, keyValue);
@@ -263,7 +263,7 @@ void IDBCursor::close()
     }
 }
 
-void IDBCursor::setValueReady(DOMRequestState* state, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, ScriptValue& value)
+void IDBCursor::setValueReady(DOMRequestState* state, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, Deprecated::ScriptValue& value)
 {
     m_currentKey = key;
     m_currentKeyValue = idbKeyToScriptValue(state, m_currentKey);

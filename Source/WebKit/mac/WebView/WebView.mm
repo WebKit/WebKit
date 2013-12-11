@@ -169,7 +169,6 @@
 #import <WebCore/RuntimeEnabledFeatures.h>
 #import <WebCore/SchemeRegistry.h>
 #import <WebCore/ScriptController.h>
-#import <WebCore/ScriptValue.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/Settings.h>
@@ -185,6 +184,7 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
+#import <bindings/ScriptValue.h>
 #import <mach-o/dyld.h>
 #import <objc/objc-auto.h>
 #import <objc/runtime.h>

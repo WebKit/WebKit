@@ -28,14 +28,14 @@
 #define PopStateEvent_h
 
 #include "Event.h"
-#include "ScriptValue.h"
+#include <bindings/ScriptValue.h>
 
 namespace WebCore {
 
 struct PopStateEventInit : public EventInit {
     PopStateEventInit();
 
-    ScriptValue state;
+    Deprecated::ScriptValue state;
 };
 
 class History;
@@ -49,7 +49,7 @@ public:
     static PassRefPtr<PopStateEvent> create(const AtomicString&, const PopStateEventInit&);
 
     PassRefPtr<SerializedScriptValue> serializedState() const { return m_serializedState; }
-    const ScriptValue& state() const { return m_state; }
+    const Deprecated::ScriptValue& state() const { return m_state; }
     History* history() const { return m_history.get(); }
 
     virtual EventInterface eventInterface() const;
@@ -59,7 +59,7 @@ private:
     PopStateEvent(const AtomicString&, const PopStateEventInit&);
     explicit PopStateEvent(PassRefPtr<SerializedScriptValue>, PassRefPtr<History>);
 
-    ScriptValue m_state;
+    Deprecated::ScriptValue m_state;
     RefPtr<SerializedScriptValue> m_serializedState;
     RefPtr<History> m_history;
 };

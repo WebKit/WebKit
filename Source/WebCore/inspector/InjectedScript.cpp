@@ -36,18 +36,21 @@
 
 #include "InjectedScriptHost.h"
 #include "InjectedScriptModule.h"
-#include "InspectorValues.h"
+#include "JSMainThreadExecState.h"
 #include "Node.h"
-#include "ScriptFunctionCall.h"
-#include "SerializedScriptValue.h"
+#include <bindings/ScriptFunctionCall.h>
+#include <bindings/ScriptObject.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/text/WTFString.h>
 
-using WebCore::TypeBuilder::Array;
-using WebCore::TypeBuilder::Debugger::CallFrame;
-using WebCore::TypeBuilder::Runtime::PropertyDescriptor;
-using WebCore::TypeBuilder::Runtime::InternalPropertyDescriptor;
-using WebCore::TypeBuilder::Debugger::FunctionDetails;
-using WebCore::TypeBuilder::Runtime::RemoteObject;
+using Inspector::TypeBuilder::Array;
+using Inspector::TypeBuilder::Debugger::CallFrame;
+using Inspector::TypeBuilder::Debugger::FunctionDetails;
+using Inspector::TypeBuilder::Runtime::PropertyDescriptor;
+using Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor;
+using Inspector::TypeBuilder::Runtime::RemoteObject;
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -56,14 +59,14 @@ InjectedScript::InjectedScript()
 {
 }
 
-InjectedScript::InjectedScript(ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
+InjectedScript::InjectedScript(Deprecated::ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
     : InjectedScriptBase("InjectedScript", injectedScriptObject, accessCheck)
 {
 }
 
-void InjectedScript::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown)
+void InjectedScript::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>* result, Inspector::TypeBuilder::OptOutput<bool>* wasThrown)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "evaluate");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "evaluate", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
     function.appendArgument(includeCommandLineAPI);
@@ -72,9 +75,9 @@ void InjectedScript::evaluate(ErrorString* errorString, const String& expression
     makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown)
+void InjectedScript::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>* result, Inspector::TypeBuilder::OptOutput<bool>* wasThrown)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "callFunctionOn");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "callFunctionOn", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(objectId);
     function.appendArgument(expression);
     function.appendArgument(arguments);
@@ -83,9 +86,9 @@ void InjectedScript::callFunctionOn(ErrorString* errorString, const String& obje
     makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown)
+void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const Deprecated::ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<RemoteObject>* result, Inspector::TypeBuilder::OptOutput<bool>* wasThrown)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "evaluateOnCallFrame");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "evaluateOnCallFrame", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(callFrames);
     function.appendArgument(callFrameId);
     function.appendArgument(expression);
@@ -98,7 +101,7 @@ void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptV
 
 void InjectedScript::getFunctionDetails(ErrorString* errorString, const String& functionId, RefPtr<FunctionDetails>* result)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "getFunctionDetails");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "getFunctionDetails", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(functionId);
     RefPtr<InspectorValue> resultValue;
     makeCall(function, &resultValue);
@@ -112,7 +115,7 @@ void InjectedScript::getFunctionDetails(ErrorString* errorString, const String& 
 
 void InjectedScript::getProperties(ErrorString* errorString, const String& objectId, bool ownProperties, RefPtr<Array<PropertyDescriptor>>* properties)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "getProperties");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "getProperties", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(objectId);
     function.appendArgument(ownProperties);
 
@@ -127,7 +130,7 @@ void InjectedScript::getProperties(ErrorString* errorString, const String& objec
 
 void InjectedScript::getInternalProperties(ErrorString* errorString, const String& objectId, RefPtr<Array<InternalPropertyDescriptor>>* properties)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "getInternalProperties");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "getInternalProperties", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(objectId);
 
     RefPtr<InspectorValue> result;
@@ -146,11 +149,11 @@ Node* InjectedScript::nodeForObjectId(const String& objectId)
     if (hasNoValue() || !canAccessInspectedWindow())
         return 0;
 
-    ScriptFunctionCall function(injectedScriptObject(), "nodeForObjectId");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "nodeForObjectId", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(objectId);
 
     bool hadException = false;
-    ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
+    Deprecated::ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
     ASSERT(!hadException);
 
     return InjectedScriptHost::scriptValueAsNode(resultValue);
@@ -158,20 +161,20 @@ Node* InjectedScript::nodeForObjectId(const String& objectId)
 
 void InjectedScript::releaseObject(const String& objectId)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "releaseObject");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "releaseObject", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(objectId);
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-PassRefPtr<Array<CallFrame>> InjectedScript::wrapCallFrames(const ScriptValue& callFrames)
+PassRefPtr<Array<CallFrame>> InjectedScript::wrapCallFrames(const Deprecated::ScriptValue& callFrames)
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(injectedScriptObject(), "wrapCallFrames");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "wrapCallFrames", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(callFrames);
     bool hadException = false;
-    ScriptValue callFramesValue = callFunctionWithEvalEnabled(function, hadException);
+    Deprecated::ScriptValue callFramesValue = callFunctionWithEvalEnabled(function, hadException);
     ASSERT(!hadException);
     RefPtr<InspectorValue> result = callFramesValue.toInspectorValue(scriptState());
     if (result->type() == InspectorValue::TypeArray)
@@ -180,26 +183,26 @@ PassRefPtr<Array<CallFrame>> InjectedScript::wrapCallFrames(const ScriptValue& c
 }
 #endif
 
-PassRefPtr<TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapObject(const ScriptValue& value, const String& groupName, bool generatePreview) const
+PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapObject(const Deprecated::ScriptValue& value, const String& groupName, bool generatePreview) const
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall wrapFunction(injectedScriptObject(), "wrapObject");
+    Deprecated::ScriptFunctionCall wrapFunction(injectedScriptObject(), "wrapObject");
     wrapFunction.appendArgument(value);
     wrapFunction.appendArgument(groupName);
     wrapFunction.appendArgument(canAccessInspectedWindow());
     wrapFunction.appendArgument(generatePreview);
     bool hadException = false;
-    ScriptValue r = callFunctionWithEvalEnabled(wrapFunction, hadException);
+    Deprecated::ScriptValue r = callFunctionWithEvalEnabled(wrapFunction, hadException);
     if (hadException)
         return 0;
     RefPtr<InspectorObject> rawResult = r.toInspectorValue(scriptState())->asObject();
-    return TypeBuilder::Runtime::RemoteObject::runtimeCast(rawResult);
+    return Inspector::TypeBuilder::Runtime::RemoteObject::runtimeCast(rawResult);
 }
 
-PassRefPtr<TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapTable(const ScriptValue& table, const ScriptValue& columns) const
+PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall wrapFunction(injectedScriptObject(), "wrapTable");
+    Deprecated::ScriptFunctionCall wrapFunction(injectedScriptObject(), "wrapTable");
     wrapFunction.appendArgument(canAccessInspectedWindow());
     wrapFunction.appendArgument(table);
     if (columns.hasNoValue())
@@ -207,26 +210,26 @@ PassRefPtr<TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapTable(const S
     else
         wrapFunction.appendArgument(columns);
     bool hadException = false;
-    ScriptValue r = callFunctionWithEvalEnabled(wrapFunction, hadException);
+    Deprecated::ScriptValue r = callFunctionWithEvalEnabled(wrapFunction, hadException);
     if (hadException)
         return 0;
     RefPtr<InspectorObject> rawResult = r.toInspectorValue(scriptState())->asObject();
-    return TypeBuilder::Runtime::RemoteObject::runtimeCast(rawResult);
+    return Inspector::TypeBuilder::Runtime::RemoteObject::runtimeCast(rawResult);
 }
 
-PassRefPtr<TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapNode(Node* node, const String& groupName)
+PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapNode(Node* node, const String& groupName)
 {
     return wrapObject(nodeAsScriptValue(node), groupName);
 }
 
-ScriptValue InjectedScript::findObjectById(const String& objectId) const
+Deprecated::ScriptValue InjectedScript::findObjectById(const String& objectId) const
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(injectedScriptObject(), "findObjectById");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "findObjectById", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(objectId);
 
     bool hadException = false;
-    ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
+    Deprecated::ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
     ASSERT(!hadException);
     return resultValue;
 }
@@ -234,7 +237,7 @@ ScriptValue InjectedScript::findObjectById(const String& objectId) const
 void InjectedScript::inspectNode(Node* node)
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall function(injectedScriptObject(), "inspectNode");
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "inspectNode", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(nodeAsScriptValue(node));
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
@@ -243,14 +246,14 @@ void InjectedScript::inspectNode(Node* node)
 void InjectedScript::releaseObjectGroup(const String& objectGroup)
 {
     ASSERT(!hasNoValue());
-    ScriptFunctionCall releaseFunction(injectedScriptObject(), "releaseObjectGroup");
+    Deprecated::ScriptFunctionCall releaseFunction(injectedScriptObject(), "releaseObjectGroup", WebCore::functionCallHandlerFromAnyThread);
     releaseFunction.appendArgument(objectGroup);
     bool hadException = false;
     callFunctionWithEvalEnabled(releaseFunction, hadException);
     ASSERT(!hadException);
 }
 
-ScriptValue InjectedScript::nodeAsScriptValue(Node* node)
+Deprecated::ScriptValue InjectedScript::nodeAsScriptValue(Node* node)
 {
     return InjectedScriptHost::nodeAsScriptValue(scriptState(), node);
 }

@@ -63,7 +63,6 @@
 #include "InspectorFrontendClientLocal.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorOverlay.h"
-#include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "InternalSettings.h"
 #include "IntRect.h"
@@ -96,6 +95,7 @@
 #include "ViewportArguments.h"
 #include "WorkerThread.h"
 #include <bytecode/CodeBlock.h>
+#include <inspector/InspectorValues.h>
 #include <runtime/JSCJSValue.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
@@ -166,6 +166,8 @@ using JSC::JSFunction;
 using JSC::JSValue;
 using JSC::ScriptExecutable;
 using JSC::StackVisitor;
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -1282,7 +1284,7 @@ private:
     CodeBlock* m_codeBlock;
 };
 
-String Internals::parserMetaData(ScriptValue value)
+String Internals::parserMetaData(Deprecated::ScriptValue value)
 {
     JSC::VM* vm = contextDocument()->vm();
     JSC::ExecState* exec = vm->topCallFrame;

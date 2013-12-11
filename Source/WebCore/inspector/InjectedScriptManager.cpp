@@ -37,9 +37,11 @@
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptSource.h"
-#include "InspectorValues.h"
-#include "ScriptObject.h"
+#include <bindings/ScriptObject.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/PassOwnPtr.h>
+
+using namespace Inspector;
 
 namespace WebCore {
 
@@ -173,7 +175,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSC::ExecState* inspecte
         return InjectedScript();
 
     int id = injectedScriptIdFor(inspectedExecState);
-    ScriptObject injectedScriptObject = createInjectedScript(injectedScriptSource(), inspectedExecState, id);
+    Deprecated::ScriptObject injectedScriptObject = createInjectedScript(injectedScriptSource(), inspectedExecState, id);
     InjectedScript result(injectedScriptObject, m_inspectedStateAccessCheck);
     m_idToInjectedScript.set(id, result);
     return result;

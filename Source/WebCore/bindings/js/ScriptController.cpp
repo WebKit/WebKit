@@ -40,7 +40,6 @@
 #include "PluginView.h"
 #include "ScriptCallStack.h"
 #include "ScriptSourceCode.h"
-#include "ScriptValue.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
@@ -48,6 +47,7 @@
 #include "WebCoreJSClientData.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
+#include <bindings/ScriptValue.h>
 #include <debugger/Debugger.h>
 #include <heap/StrongInlines.h>
 #include <runtime/InitializeThreading.h>
@@ -117,7 +117,7 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld& world)
     return windowShell.get();
 }
 
-ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)
+Deprecated::ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)
 {
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
     String sourceURL = jsSourceCode.provider()->url();
@@ -149,14 +149,14 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     if (evaluationException) {
         reportException(exec, evaluationException, sourceCode.cachedScript());
         m_sourceURL = savedSourceURL;
-        return ScriptValue();
+        return Deprecated::ScriptValue();
     }
 
     m_sourceURL = savedSourceURL;
-    return ScriptValue(exec->vm(), returnValue);
+    return Deprecated::ScriptValue(exec->vm(), returnValue);
 }
 
-ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode) 
+Deprecated::ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode) 
 {
     return evaluateInWorld(sourceCode, mainThreadNormalWorld());
 }
@@ -458,13 +458,13 @@ void ScriptController::clearScriptObjects()
 #endif
 }
 
-ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
+Deprecated::ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
     UserGestureIndicator gestureIndicator(forceUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     ScriptSourceCode sourceCode(script, m_frame.document()->url());
 
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
-        return ScriptValue();
+        return Deprecated::ScriptValue();
 
     return evaluateInWorld(sourceCode, world);
 }
@@ -500,16 +500,16 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     return m_frame.loader().client().allowScript(m_frame.settings().isScriptEnabled());
 }
 
-ScriptValue ScriptController::executeScript(const String& script, bool forceUserGesture)
+Deprecated::ScriptValue ScriptController::executeScript(const String& script, bool forceUserGesture)
 {
     UserGestureIndicator gestureIndicator(forceUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     return executeScript(ScriptSourceCode(script, m_frame.document()->url()));
 }
 
-ScriptValue ScriptController::executeScript(const ScriptSourceCode& sourceCode)
+Deprecated::ScriptValue ScriptController::executeScript(const ScriptSourceCode& sourceCode)
 {
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
-        return ScriptValue();
+        return Deprecated::ScriptValue();
 
     Ref<Frame> protect(m_frame); // Script execution can destroy the frame, and thus the ScriptController.
 
@@ -532,7 +532,7 @@ bool ScriptController::executeIfJavaScriptURL(const URL& url, ShouldReplaceDocum
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
 
     String decodedURL = decodeURLEscapeSequences(url.string());
-    ScriptValue result = executeScript(decodedURL.substring(javascriptSchemeLength));
+    Deprecated::ScriptValue result = executeScript(decodedURL.substring(javascriptSchemeLength));
 
     // If executing script caused this frame to be removed from the page, we
     // don't want to try to replace its document!

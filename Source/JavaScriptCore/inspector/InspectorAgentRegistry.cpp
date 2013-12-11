@@ -24,29 +24,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorAgentRegistry_h
-#define InspectorAgentRegistry_h
+#include "config.h"
+#include "InspectorAgentRegistry.h"
 
-#include "InspectorBaseAgent.h"
-#include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
+#if ENABLE(INSPECTOR)
 
-namespace WebCore {
+namespace Inspector {
 
-class InspectorBackendDispatcher;
+void InspectorAgentRegistry::append(PassOwnPtr<InspectorAgentBase> agent)
+{
+    m_agents.append(agent);
+}
 
-class InspectorAgentRegistry {
-public:
-    void append(PassOwnPtr<InspectorBaseAgent>);
+void InspectorAgentRegistry::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+{
+    for (size_t i = 0; i < m_agents.size(); i++)
+        m_agents[i]->didCreateFrontendAndBackend(frontendChannel, backendDispatcher);
+}
 
-    void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*);
-    void willDestroyFrontendAndBackend();
-    void discardAgents();
+void InspectorAgentRegistry::willDestroyFrontendAndBackend()
+{
+    for (size_t i = 0; i < m_agents.size(); i++)
+        m_agents[i]->willDestroyFrontendAndBackend();
+}
 
-private:
-    Vector<OwnPtr<InspectorBaseAgent>> m_agents;
-};
+void InspectorAgentRegistry::discardAgents()
+{
+    for (size_t i = 0; i < m_agents.size(); i++)
+        m_agents[i]->discardAgent();
+}
 
-} // namespace WebCore
+} // namespace Inspector
 
-#endif // !defined(InspectorAgentRegistry_h)
+#endif // ENABLE(INSPECTOR)

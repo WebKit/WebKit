@@ -86,7 +86,6 @@
 #include "ResourceHandle.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
-#include "ScriptValue.h"
 #include "Settings.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "webkitdownload.h"
@@ -115,6 +114,7 @@
 #include "webkitwebplugindatabaseprivate.h"
 #include "webkitwebwindowfeatures.h"
 #include "webkitwebviewprivate.h"
+#include <bindings/ScriptValue.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/gobject/GOwnPtr.h>

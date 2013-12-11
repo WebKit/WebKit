@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,37 +24,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef InspectorAgentBase_h
+#define InspectorAgentBase_h
 
-#if ENABLE(INSPECTOR)
+#include <wtf/text/WTFString.h>
 
-#include "InspectorAgentRegistry.h"
+namespace Inspector {
 
-namespace WebCore {
+class InspectorBackendDispatcher;
+class InspectorFrontendChannel;
 
-void InspectorAgentRegistry::append(PassOwnPtr<InspectorBaseAgent> agent)
-{
-    m_agents.append(agent);
-}
+class InspectorAgentBase {
+public:
+    virtual ~InspectorAgentBase() { }
 
-void InspectorAgentRegistry::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
-{
-    for (size_t i = 0; i < m_agents.size(); i++)
-        m_agents[i]->didCreateFrontendAndBackend(frontendChannel, backendDispatcher);
-}
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) = 0;
+    virtual void willDestroyFrontendAndBackend() = 0;
+    virtual void discardAgent() { }
 
-void InspectorAgentRegistry::willDestroyFrontendAndBackend()
-{
-    for (size_t i = 0; i < m_agents.size(); i++)
-        m_agents[i]->willDestroyFrontendAndBackend();
-}
+protected:
+    InspectorAgentBase(const String& name)
+        : m_name(name)
+    {
+    }
 
-void InspectorAgentRegistry::discardAgents()
-{
-    for (size_t i = 0; i < m_agents.size(); i++)
-        m_agents[i]->discardAgent();
-}
+    String m_name;
+};
+    
+} // namespace Inspector
 
-} // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
+#endif // !defined(InspectorAgentBase_h)
