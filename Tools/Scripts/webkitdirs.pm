@@ -384,8 +384,8 @@ sub argumentsForConfiguration()
     determineArchitecture();
 
     my @args = ();
-    push(@args, '--debug') if $configuration eq "Debug";
-    push(@args, '--release') if $configuration eq "Release";
+    push(@args, '--debug') if ($configuration =~ "^Debug");
+    push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !hasArgument('--64-bit', \@ARGV));
     push(@args, '--qt') if isQt();
     push(@args, '--gtk') if isGtk();
