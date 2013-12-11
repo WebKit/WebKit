@@ -35,6 +35,7 @@
 #include "AXObjectCache.h"
 #include "ArchiveResource.h"
 #include "BackForwardList.h"
+#include "BatteryClientGtk.h"
 #include "CairoUtilities.h"
 #include "Chrome.h"
 #include "ChromeClientGtk.h"
@@ -3835,6 +3836,10 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
     priv->navigatorContentUtilsClient = WebKit::NavigatorContentUtilsClient::create();
     WebCore::provideNavigatorContentUtilsTo(priv->corePage, priv->navigatorContentUtilsClient.get());
+#endif
+
+#if ENABLE(BATTERY_STATUS)
+    WebCore::provideBatteryTo(priv->corePage, new BatteryClientGtk);
 #endif
 
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {

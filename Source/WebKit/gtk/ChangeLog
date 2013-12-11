@@ -1,3 +1,30 @@
+2013-12-11  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WK1] Add an empty BatteryClientGtk
+        https://bugs.webkit.org/show_bug.cgi?id=115628
+
+        Reviewed by Martin Robinson.
+
+        Add an empty BatteryClientGtk, implementing the WebCore's BatteryClient interface.
+        The implementation is left empty intentionally as the WebKit1 port is now in maintenance
+        mode and there's no desire to support new features under it. It's still required as the
+        WebCore implementation of the Battery Status API expects an existing BatteryClient, even
+        if the latter does not set up a provider that would then serve information about the battery
+        state.
+
+        * GNUmakefile.am: Add the BatteryClientGtk source files to the build.
+        * WebCoreSupport/BatteryClientGtk.cpp: Added.
+        (WebKit):
+        (WebKit::BatteryClientGtk::BatteryClientGtk):
+        (WebKit::BatteryClientGtk::startUpdating):
+        (WebKit::BatteryClientGtk::stopUpdating):
+        (WebKit::BatteryClientGtk::batteryControllerDestroyed):
+        * WebCoreSupport/BatteryClientGtk.h: Added.
+        (WebKit):
+        (BatteryClientGtk):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init): Set up the BatteryClientGtk for the new WebCore::Page object.
+
 2013-12-11  Brendan Long  <b.long@cablelabs.com>
 
         [GTK] Add "enable-mediasource" property to WebKitWebSettings
