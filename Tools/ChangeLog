@@ -1,3 +1,16 @@
+2013-12-11  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Avoid double quotations when passing parameters to valgrind in gtk.py
+        https://bugs.webkit.org/show_bug.cgi?id=125441
+
+        Reviewed by Martin Robinson.
+
+        Just avoid the double quotations when building the parameter
+        because some versions of valgrind are not handling it correctly.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+
 2013-12-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Enable Battery Status API

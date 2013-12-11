@@ -114,7 +114,7 @@ class GtkPort(Port):
                 "--undef-value-errors=no " \
                 "--gen-suppressions=all " \
                 "--xml=yes " \
-                "--xml-file=\"%s\" " \
+                "--xml-file=%s " \
                 "--suppressions=%s" % (xmlfile, suppressionsfile)
         return environment
 
