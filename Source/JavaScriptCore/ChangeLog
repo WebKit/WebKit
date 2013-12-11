@@ -1,3 +1,15 @@
+2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge 156934.
+
+    2013-10-04  Brent Fulgham  <bfulgham@apple.com>
+
+            Silence compiler warning when building 64-bit (on Windows)
+
+            Reviewed by Geoffrey Garen.
+
+            * jit/JSInterfaceJIT.h: Add a static cast for assignment.
+
 2013-12-10  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge 154333

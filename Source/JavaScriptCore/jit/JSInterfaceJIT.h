@@ -180,7 +180,7 @@ namespace JSC {
         static const unsigned Int32Tag = 0xffffffff;
         COMPILE_ASSERT(Int32Tag == JSValue::Int32Tag, Int32Tag_out_of_sync);
 #else
-        static const unsigned Int32Tag = TagTypeNumber >> 32;
+        static const unsigned Int32Tag = static_cast<unsigned>(TagTypeNumber >> 32);
 #endif
         inline Jump emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID payload);
         inline Jump emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst);
