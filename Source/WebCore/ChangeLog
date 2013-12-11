@@ -1,3 +1,22 @@
+2013-12-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Set m_nextBreakablePosition as private in InlineIterator, and use it.
+        https://bugs.webkit.org/show_bug.cgi?id=125482
+
+        Reviewed by Andreas Kling.
+
+        InlineIterator has been exported m_nextBreakablePosition as public though it is member variable.
+        This patch set it as private, and add getter/setter functions for it.
+
+        No new tests, no behavior changes.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::InlineIterator):
+        (WebCore::InlineIterator::nextBreakablePosition):
+        (WebCore::InlineIterator::setNextBreakablePosition):
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleText):
+
 2013-12-10  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         top and bottom black background line not getting displayed

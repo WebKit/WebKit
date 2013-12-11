@@ -39,16 +39,16 @@ public:
     InlineIterator()
         : m_root(0)
         , m_renderer(0)
-        , m_pos(0)
         , m_nextBreakablePosition(-1)
+        , m_pos(0)
     {
     }
 
     InlineIterator(RenderElement* root, RenderObject* o, unsigned p)
         : m_root(root)
         , m_renderer(o)
-        , m_pos(p)
         , m_nextBreakablePosition(-1)
+        , m_pos(p)
     {
     }
 
@@ -70,6 +70,8 @@ public:
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     unsigned offset() const { return m_pos; }
     RenderElement* root() const { return m_root; }
+    int nextBreakablePosition() const { return m_nextBreakablePosition; }
+    void setNextBreakablePosition(int position) { m_nextBreakablePosition = position; }
 
     void fastIncrementInTextNode();
     void increment(InlineBidiResolver* = 0);
@@ -95,10 +97,11 @@ private:
     RenderElement* m_root;
     RenderObject* m_renderer;
 
+    int m_nextBreakablePosition;
+
 // FIXME: These should be private.
 public:
     unsigned m_pos;
-    int m_nextBreakablePosition;
 };
 
 inline bool operator==(const InlineIterator& it1, const InlineIterator& it2)
