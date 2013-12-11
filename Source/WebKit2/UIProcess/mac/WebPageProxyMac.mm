@@ -92,15 +92,14 @@ static NSString *systemMarketingVersionForUserAgentString()
 
 static String userVisibleWebKitVersionString()
 {
-    // If the version is 4 digits long or longer, then the first digit represents
-    // the version of the OS. Our user agent string should not include this first digit,
-    // so strip it off and report the rest as the version. <rdar://problem/4997547>
+    // If the version is longer than 3 digits then the leading digits represent the version of the OS. Our user agent
+    // string should not include the leading digits, so strip them off and report the rest as the version. <rdar://problem/4997547>
     NSString *fullVersion = [[NSBundle bundleForClass:NSClassFromString(@"WKView")] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
     NSRange nonDigitRange = [fullVersion rangeOfCharacterFromSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
-    if (nonDigitRange.location == NSNotFound && [fullVersion length] >= 4)
-        return [fullVersion substringFromIndex:1];
-    if (nonDigitRange.location != NSNotFound && nonDigitRange.location >= 4)
-        return [fullVersion substringFromIndex:1];
+    if (nonDigitRange.location == NSNotFound && fullVersion.length > 3)
+        return [fullVersion substringFromIndex:fullVersion.length - 3];
+    if (nonDigitRange.location != NSNotFound && nonDigitRange.location > 3)
+        return [fullVersion substringFromIndex:nonDigitRange.location - 3];
     return fullVersion;
 }
 

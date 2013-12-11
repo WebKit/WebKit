@@ -1,3 +1,14 @@
+2013-12-10  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/125556> WebKit doesn't deal with longer bundle versions correctly
+        <rdar://problem/15634192>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::userVisibleWebKitVersionString): Strip as many leading digits as is necessary to
+        bring the major component of the version down to 3 digits.
+
 2013-12-10  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed GTK build fix attempt after r160395 (second)
