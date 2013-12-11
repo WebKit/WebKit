@@ -365,7 +365,7 @@ static bool isMainInspectorPage(const WebInspectorProxy* webInspectorProxy, WKUR
 {
     // Use URL so we can compare just the paths.
     URL inspectorURL(URL(), webInspectorProxy->inspectorPageURL());
-    URL requestURL(URL(), toImpl(requestRef)->url());
+    URL requestURL(URL(), toImpl(requestRef)->resourceRequest().url());
 
     ASSERT(WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(inspectorURL.protocol()));
 

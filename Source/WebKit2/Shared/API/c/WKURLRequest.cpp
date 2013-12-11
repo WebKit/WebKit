@@ -45,7 +45,7 @@ WKURLRequestRef WKURLRequestCreateWithWKURL(WKURLRef url)
 
 WKURLRef WKURLRequestCopyURL(WKURLRequestRef requestRef)
 {
-    return toCopiedURLAPI(toImpl(requestRef)->url());
+    return toCopiedURLAPI(toImpl(requestRef)->resourceRequest().url());
 }
 
 WKURLRef WKURLRequestCopyFirstPartyForCookies(WKURLRequestRef requestRef)

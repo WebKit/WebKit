@@ -40,5 +40,5 @@ WKURLResponseRef WKURLResponseCreateWithNSURLResponse(NSURLResponse* urlResponse
 
 NSURLResponse* WKURLResponseCopyNSURLResponse(WKURLResponseRef urlResponse)
 {
-    return [toImpl(urlResponse)->platformResponse() copy];
+    return [toImpl(urlResponse)->resourceResponse().nsURLResponse() copy];
 }

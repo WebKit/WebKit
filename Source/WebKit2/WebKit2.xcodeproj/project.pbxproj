@@ -1045,7 +1045,6 @@
 		BC9099801256A98200083756 /* WKStringPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC90997F1256A98200083756 /* WKStringPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC90A1D2122DD55E00CC8C50 /* WebURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */; };
 		BC90A1D3122DD55E00CC8C50 /* WebURLResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90A1D1122DD55E00CC8C50 /* WebURLResponse.cpp */; };
-		BC90A1D7122DD66A00CC8C50 /* WebURLResponseMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC90A1D5122DD66A00CC8C50 /* WebURLResponseMac.mm */; };
 		BC963D6B113DD19200574BE2 /* WebPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC963D6A113DD19200574BE2 /* WebPage.cpp */; };
 		BC963D6E113DD1A500574BE2 /* WebPageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC963D6D113DD1A500574BE2 /* WebPageMac.mm */; };
 		BC989D81161A7E5D000D46D3 /* WKWebProcessPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC989D7F161A7E5B000D46D3 /* WKWebProcessPlugIn.mm */; };
@@ -1151,7 +1150,6 @@
 		BCE17B7E1381F1170012A641 /* WKPagePrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE2315D122C30CA00D5C35A /* WebURLRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE2315B122C30CA00D5C35A /* WebURLRequest.h */; };
 		BCE2315E122C30CA00D5C35A /* WebURLRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE2315C122C30CA00D5C35A /* WebURLRequest.cpp */; };
-		BCE231C2122C466E00D5C35A /* WebURLRequestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE231C0122C466E00D5C35A /* WebURLRequestMac.mm */; };
 		BCE23263122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */; };
 		BCE469531214E6CB000B98EB /* WebFormClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE4694F1214E6CB000B98EB /* WebFormClient.cpp */; };
 		BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE469501214E6CB000B98EB /* WebFormClient.h */; };
@@ -2648,7 +2646,6 @@
 		BC90997F1256A98200083756 /* WKStringPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKStringPrivate.h; sourceTree = "<group>"; };
 		BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURLResponse.h; sourceTree = "<group>"; };
 		BC90A1D1122DD55E00CC8C50 /* WebURLResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebURLResponse.cpp; sourceTree = "<group>"; };
-		BC90A1D5122DD66A00CC8C50 /* WebURLResponseMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebURLResponseMac.mm; sourceTree = "<group>"; };
 		BC963D6A113DD19200574BE2 /* WebPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPage.cpp; sourceTree = "<group>"; };
 		BC963D6D113DD1A500574BE2 /* WebPageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageMac.mm; sourceTree = "<group>"; };
 		BC989D7F161A7E5B000D46D3 /* WKWebProcessPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebProcessPlugIn.mm; sourceTree = "<group>"; };
@@ -2757,7 +2754,6 @@
 		BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPagePrivateMac.h; path = mac/WKPagePrivateMac.h; sourceTree = "<group>"; };
 		BCE2315B122C30CA00D5C35A /* WebURLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURLRequest.h; sourceTree = "<group>"; };
 		BCE2315C122C30CA00D5C35A /* WebURLRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebURLRequest.cpp; sourceTree = "<group>"; };
-		BCE231C0122C466E00D5C35A /* WebURLRequestMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebURLRequestMac.mm; sourceTree = "<group>"; };
 		BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreArgumentCodersMac.mm; sourceTree = "<group>"; };
 		BCE4694F1214E6CB000B98EB /* WebFormClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFormClient.cpp; sourceTree = "<group>"; };
 		BCE469501214E6CB000B98EB /* WebFormClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFormClient.h; sourceTree = "<group>"; };
@@ -4798,8 +4794,6 @@
 				BC111B5B112F629800337BAB /* WebEventFactory.h */,
 				BC111B5C112F629800337BAB /* WebEventFactory.mm */,
 				905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */,
-				BCE231C0122C466E00D5C35A /* WebURLRequestMac.mm */,
-				BC90A1D5122DD66A00CC8C50 /* WebURLResponseMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -7395,9 +7389,7 @@
 				1A594ABA112A1FB6009DE7C7 /* WebUIClient.cpp in Sources */,
 				BCA0EF8012331E78007D3CFB /* WebUndoStep.cpp in Sources */,
 				BCE2315E122C30CA00D5C35A /* WebURLRequest.cpp in Sources */,
-				BCE231C2122C466E00D5C35A /* WebURLRequestMac.mm in Sources */,
 				BC90A1D3122DD55E00CC8C50 /* WebURLResponse.cpp in Sources */,
-				BC90A1D7122DD66A00CC8C50 /* WebURLResponseMac.mm in Sources */,
 				C0337DD1127A2980008FF4F4 /* WebWheelEvent.cpp in Sources */,
 				51FCB18517BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.cpp in Sources */,
 				29CD55AB128E294F00133C85 /* WKAccessibilityWebPageObject.mm in Sources */,

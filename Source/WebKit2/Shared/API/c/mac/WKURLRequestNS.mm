@@ -29,6 +29,7 @@
 #import "WKAPICast.h"
 #import "WebURLRequest.h"
 
+using namespace WebCore;
 using namespace WebKit;
 
 WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest* urlRequest)
@@ -40,5 +41,5 @@ WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest* urlRequest)
 
 NSURLRequest* WKURLRequestCopyNSURLRequest(WKURLRequestRef urlRequest)
 {
-    return [toImpl(urlRequest)->platformRequest() copy];
+    return [toImpl(urlRequest)->resourceRequest().nsURLRequest(DoNotUpdateHTTPBody) copy];
 }

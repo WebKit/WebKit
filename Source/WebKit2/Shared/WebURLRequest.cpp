@@ -16,11 +16,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebURLRequest> WebURLRequest::create(const URL& url)
-{
-    return adoptRef(new WebURLRequest(ResourceRequest(url)));
-}
-
 WebURLRequest::WebURLRequest(const ResourceRequest& request)
     : m_request(request)
 {

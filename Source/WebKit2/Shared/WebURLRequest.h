@@ -30,39 +30,22 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>
 
-#if PLATFORM(MAC)
-typedef NSURLRequest* PlatformRequest;
-#else
-typedef void* PlatformRequest;
-#endif
-
 namespace WebKit {
 
 class WebURLRequest : public API::ObjectImpl<API::Object::Type::URLRequest> {
 public:
-    static PassRefPtr<WebURLRequest> create(const WebCore::URL&);
-
     static PassRefPtr<WebURLRequest> create(const WebCore::ResourceRequest& request)
     {
         return adoptRef(new WebURLRequest(request));
     }
 
-    static PassRefPtr<WebURLRequest> create(PlatformRequest platformRequest)
-    {
-        return adoptRef(new WebURLRequest(platformRequest));
-    }
-
-    PlatformRequest platformRequest() const;
     const WebCore::ResourceRequest& resourceRequest() const { return m_request; }
-
-    const String& url() const { return m_request.url(); }
 
     static double defaultTimeoutInterval(); // May return 0 when using platform default.
     static void setDefaultTimeoutInterval(double);
 
 private:
     explicit WebURLRequest(const WebCore::ResourceRequest&);
-    explicit WebURLRequest(PlatformRequest);
 
     WebCore::ResourceRequest m_request;
 };
