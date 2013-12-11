@@ -528,6 +528,32 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
         attributeSet = addToAtkAttributeSet(attributeSet, "sort", sortAttribute.string().utf8().data());
     }
 
+    // Landmarks will be exposed with xml-roles object attributes, with the exception
+    // of LandmarkApplicationRole, which will be exposed with ATK_ROLE_EMBEDDED.
+    AccessibilityRole role = coreObject->roleValue();
+    switch (role) {
+    case LandmarkBannerRole:
+        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "banner");
+        break;
+    case LandmarkComplementaryRole:
+        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "complementary");
+        break;
+    case LandmarkContentInfoRole:
+        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "contentinfo");
+        break;
+    case LandmarkMainRole:
+        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "main");
+        break;
+    case LandmarkNavigationRole:
+        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "navigation");
+        break;
+    case LandmarkSearchRole:
+        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "search");
+        break;
+    default:
+        break;
+    }
+
     return attributeSet;
 }
 
@@ -662,6 +688,17 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_TOOL_TIP;
     case WebAreaRole:
         return ATK_ROLE_DOCUMENT_WEB;
+    case LandmarkApplicationRole:
+        return ATK_ROLE_EMBEDDED;
+#if ATK_CHECK_VERSION(2, 11, 3)
+    case LandmarkBannerRole:
+    case LandmarkComplementaryRole:
+    case LandmarkContentInfoRole:
+    case LandmarkMainRole:
+    case LandmarkNavigationRole:
+    case LandmarkSearchRole:
+        return ATK_ROLE_LANDMARK;
+#endif
     default:
         return ATK_ROLE_UNKNOWN;
     }

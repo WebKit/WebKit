@@ -85,6 +85,15 @@ const String attributesMap[][2] = {
     { "AXUnknownSortDirection", "unknown" }
 };
 
+#if ATK_CHECK_VERSION(2, 11, 3)
+const char* landmarkStringBanner = "AXLandmarkBanner";
+const char* landmarkStringComplementary = "AXLandmarkComplementary";
+const char* landmarkStringContentinfo = "AXLandmarkContentInfo";
+const char* landmarkStringMain = "AXLandmarkMain";
+const char* landmarkStringNavigation = "AXLandmarkNavigation";
+const char* landmarkStringSearch = "AXLandmarkSearch";
+#endif
+
 String jsStringToWTFString(JSStringRef attribute)
 {
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(attribute);
@@ -267,8 +276,28 @@ gchar* replaceCharactersForResults(gchar* str)
     return g_strdup(uString.utf8().data());
 }
 
-const gchar* roleToString(AtkRole role)
+const gchar* roleToString(AtkObject* object)
 {
+    AtkRole role = atk_object_get_role(object);
+
+#if ATK_CHECK_VERSION(2, 11, 3)
+    if (role == ATK_ROLE_LANDMARK) {
+        String xmlRolesValue = getAttributeSetValueForId(object, ObjectAttributeType, "xml-roles");
+        if (equalIgnoringCase(xmlRolesValue, "banner"))
+            return landmarkStringBanner;
+        if (equalIgnoringCase(xmlRolesValue, "complementary"))
+            return landmarkStringComplementary;
+        if (equalIgnoringCase(xmlRolesValue, "contentinfo"))
+            return landmarkStringContentinfo;
+        if (equalIgnoringCase(xmlRolesValue, "main"))
+            return landmarkStringMain;
+        if (equalIgnoringCase(xmlRolesValue, "navigation"))
+            return landmarkStringNavigation;
+        if (equalIgnoringCase(xmlRolesValue, "search"))
+            return landmarkStringSearch;
+    }
+#endif
+
     switch (role) {
     case ATK_ROLE_ALERT:
         return "AXAlert";
@@ -400,7 +429,7 @@ String attributesOfElement(AccessibilityUIElement* element)
     RefPtr<AccessibilityUIElement> parent = element->parentElement();
     AtkObject* atkParent = parent ? parent->platformUIElement().get() : nullptr;
     if (atkParent) {
-        builder.append(roleToString(atk_object_get_role(atkParent)));
+        builder.append(roleToString(atkParent));
         const char* parentName = atk_object_get_name(atkParent);
         if (parentName && g_utf8_strlen(parentName, -1))
             builder.append(String::format(": %s", parentName));
@@ -800,11 +829,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
     if (!ATK_IS_OBJECT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
-    AtkRole role = atk_object_get_role(ATK_OBJECT(m_element.get()));
-    if (!role)
+    if (!atk_object_get_role(ATK_OBJECT(m_element.get())))
         return JSStringCreateWithCharacters(0, 0);
 
-    GOwnPtr<char> roleStringWithPrefix(g_strdup_printf("AXRole: %s", roleToString(role)));
+    GOwnPtr<char> roleStringWithPrefix(g_strdup_printf("AXRole: %s", roleToString(ATK_OBJECT(m_element.get()))));
     return JSStringCreateWithUTF8CString(roleStringWithPrefix.get());
 }
 

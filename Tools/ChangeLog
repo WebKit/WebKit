@@ -1,3 +1,18 @@
+2013-12-11  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Expose accessibility objects WAI-ARIA landmark roles
+        https://bugs.webkit.org/show_bug.cgi?id=125584
+
+        Reviewed by Chris Fleizach.
+
+        Add mappings to DRT & WKTR for landmark roles.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::role):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::role):
+        * gtk/jhbuild.modules:
+
 2013-12-11  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Avoid double quotations when passing parameters to valgrind in gtk.py

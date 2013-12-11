@@ -6,6 +6,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS: a[href]
       AXRole: AXLink
       
+PASS: address
+      AXRole: AXLandmarkContentInfo
+      
+PASS: aside
+      AXRole: AXLandmarkComplementary
+      
 PASS: blockquote
       AXRole: AXGroup
       
@@ -23,6 +29,9 @@ PASS: legend
       
 PASS: form
       AXRole: AXForm
+      
+PASS: header
+      AXRole: AXLandmarkBanner
       
 PASS: hgroup
       AXRole: AXGroup
@@ -113,6 +122,9 @@ PASS: input[type='url']
       
 PASS: input[type='week']
       AXRole: AXTextField
+      
+PASS: nav
+      AXRole: AXLandmarkNavigation
       
 PASS: ol
       AXRole: AXList
@@ -216,6 +228,12 @@ PASS: div[role=alert]
 PASS: div[role=alertdialog]
       AXRole: AXAlert
       
+PASS: div[role=application]
+      AXRole: AXEmbedded
+      
+PASS: div[role=banner]
+      AXRole: AXLandmarkBanner
+      
 PASS: div[role=button]
       AXRole: AXButton
       
@@ -224,6 +242,12 @@ PASS: div[role=checkbox]
       
 PASS: div[role=combobox]
       AXRole: AXComboBox
+      
+PASS: div[role=complementary]
+      AXRole: AXLandmarkComplementary
+      
+PASS: div[role=contentinfo]
+      AXRole: AXLandmarkContentInfo
       
 PASS: div[role=directory]
       AXRole: AXList
@@ -266,6 +290,9 @@ FAIL: div[role=listbox]
 PASS: div[role=option]
       AXRole: AXListItem
       
+PASS: div[role=main]
+      AXRole: AXLandmarkMain
+      
 PASS: div[role=menu]
       AXRole: AXMenu
       
@@ -284,6 +311,9 @@ PASS: div[role=menuitem]
 PASS: div[role=menuitemradio]
       AXRole: AXRadioMenuItem
       
+PASS: div[role=navigation]
+      AXRole: AXLandmarkNavigation
+      
 PASS: div[role=progressbar]
       AXRole: AXProgressIndicator
       
@@ -295,6 +325,9 @@ PASS: div[role=radio]
       
 PASS: div[role=scrollbar]
       AXRole: AXScrollBar
+      
+PASS: div[role=search]
+      AXRole: AXLandmarkSearch
       
 PASS: div[role=separator]
       AXRole: AXSeparator
