@@ -724,6 +724,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitBatteryProvider.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitBatteryProvider.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCertificateInfo.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCertificateInfo.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCertificateInfoPrivate.h \

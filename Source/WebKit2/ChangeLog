@@ -1,5 +1,37 @@
 2013-12-11  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK][WK2] Add the WebKitBatteryProvider class
+        https://bugs.webkit.org/show_bug.cgi?id=115720
+
+        Reviewed by Martin Robinson.
+
+        This patch adds the WebKitBatteryProvider class which sets up a BatteryProviderUPower instance,
+        controlling the provider's activity when instrumented to do so by the WebBatteryManagerProxy
+        and relaying the battery status updates from the battery provider to the battery manager.
+
+        * GNUmakefile.list.am: Add the build targets for the new source files.
+        * UIProcess/API/gtk/WebKitBatteryProvider.cpp: Added.
+        (toBatteryProvider): A helper inline method that casts the client info to the battery provider instance.
+        (startUpdatingCallback): Relays the instruction to the WebKitBattery instance.
+        (stopUpdatingCallback): Ditto.
+        (WebKitBatteryProvider::create):
+        (WebKitBatteryProvider::WebKitBatteryProvider): Set up a WKBatteryProvider and set it to the passed-in battery manager.
+        (WebKitBatteryProvider::~WebKitBatteryProvider): Force the BatteryProviderUPower to stop updating.
+        (WebKitBatteryProvider::startUpdating): Relays the instruction to the BatteryProviderUPower instance.
+        (WebKitBatteryProvider::stopUpdating): Ditto.
+        (WebKitBatteryProvider::notifyBatteryStatusUnavailable): Update the battery manager with the new status that
+        has the default values that are to be used when the implementation cannot determine the battery status (as per
+        the Battery Status API specification).
+        (WebKitBatteryProvider::notifyBatteryStatusUpdated): Update the battery status.
+        * UIProcess/API/gtk/WebKitBatteryProvider.h: Added.
+        (WebKitBatteryProvider): Define the WebKitBatteryProvider reference-counted interface that also inherits from the
+        BatteryProviderUPowerClient interface.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (_WebKitWebContextPrivate): Add a WebKitBatteryProvider member variable to the struct.
+        (createDefaultWebContext): Create a new battery provider when initializing the default web context.
+
+2013-12-11  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Add a UPower-based BatteryProvider
         https://bugs.webkit.org/show_bug.cgi?id=115719
 

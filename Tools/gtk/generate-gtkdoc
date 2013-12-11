@@ -104,9 +104,10 @@ def get_webkit2_options():
         'ignored_files': glob.glob(src_path('*Private.h')) + \
                          glob.glob(injected_bundle_src_path('*Private.h')) + \
                          glob.glob(src_path('*Client*')) + \
+                         glob.glob(src_path('WebKitAuthenticationDialog.*')) + \
+                         glob.glob(src_path('WebKitBatteryProvider.*')) + \
                          glob.glob(src_path('WebKitGeolocationProvider.*')) + \
                          glob.glob(src_path('WebKitTextChecker.*')) + \
-                         glob.glob(src_path('WebKitAuthenticationDialog.*')) + \
                          glob.glob(src_path('WebKitWebViewBaseAccessible.*')) + \
                          glob.glob(src_path('WebViewBaseInputMethodFilter.*')) + \
                          glob.glob(derived_sources_path('webkit2gtk', 'webkit2', 'WebKitMarshal.*')) + \

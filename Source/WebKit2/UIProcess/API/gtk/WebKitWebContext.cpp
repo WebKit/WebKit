@@ -20,9 +20,11 @@
 #include "config.h"
 #include "WebKitWebContext.h"
 
+#include "WebBatteryManagerProxy.h"
 #include "WebCertificateInfo.h"
 #include "WebCookieManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
+#include "WebKitBatteryProvider.h"
 #include "WebKitCertificateInfoPrivate.h"
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitDownloadClient.h"
@@ -139,6 +141,9 @@ struct _WebKitWebContextPrivate {
 #if ENABLE(GEOLOCATION)
     RefPtr<WebKitGeolocationProvider> geolocationProvider;
 #endif
+#if ENABLE(BATTERY_STATUS)
+    RefPtr<WebKitBatteryProvider> batteryProvider;
+#endif
 #if ENABLE(SPELLCHECK)
     OwnPtr<WebKitTextChecker> textChecker;
 #endif
@@ -210,6 +215,9 @@ static gpointer createDefaultWebContext(gpointer)
 
 #if ENABLE(GEOLOCATION)
     priv->geolocationProvider = WebKitGeolocationProvider::create(priv->context->supplement<WebGeolocationManagerProxy>());
+#endif
+#if ENABLE(BATTERY_STATUS)
+    priv->batteryProvider = WebKitBatteryProvider::create(priv->context->supplement<WebBatteryManagerProxy>());
 #endif
 #if ENABLE(SPELLCHECK)
     priv->textChecker = WebKitTextChecker::create();
