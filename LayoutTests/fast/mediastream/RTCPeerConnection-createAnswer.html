@@ -9,6 +9,16 @@
 
             var pc = null;
 
+            function requestSucceeded4(sd)
+            {
+                testPassed('createAnswer request succeeded.');
+
+                sessionDescription = sd;
+                shouldBe('sessionDescription.type', '"answer"');
+
+                finishJSTest();
+            }
+
             function requestFailed3(reason)
             {
                 testFailed('createAnswer request failed.');
@@ -16,43 +26,60 @@
                 finishJSTest();
             }
 
-            function requestSucceeded3()
+            function requestSucceeded3(sd)
             {
                 testPassed('createAnswer request succeeded.');
 
-                finishJSTest();
+                sessionDescription = sd;
+                shouldBe('sessionDescription.type', '"answer"');
+
+                shouldNotThrow('pc.createAnswer(requestSucceeded4, requestFailed3, {mandatory:{"succeed":true}});');
             }
 
             function requestFailed2(reason)
             {
-                testFailed('setRemoteDescription request failed.');
-
-                finishJSTest();
-            }
-
-            function requestSucceeded2()
-            {
-                testPassed('setRemoteDescription request succeeded.');
+                testPassed('createAnswer request failed.');
 
                 shouldNotThrow('pc.createAnswer(requestSucceeded3, requestFailed3);');
             }
 
-            function requestFailed1()
+            function requestSucceeded2()
             {
-                testPassed('createOffer request failed.');
+                testFailed('createAnswer request succeeded.');
 
-                sessionDescription = new RTCSessionDescription({type:"answer", sdp:"remote"});
-                shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded2, requestFailed2);');
-            }
-
-            function requestSucceeded1(sd)
-            {
-                testFailed('createOffer request succeeded.');
                 finishJSTest();
             }
 
+            function requestFailed1(reason)
+            {
+                testFailed('createAnswer request failed.');
+
+                finishJSTest();
+            }
+
+            function requestSucceeded1()
+            {
+                testPassed('createAnswer request succeeded.');
+
+                sessionDescription = new RTCSessionDescription({type:"offer", sdp:"remote"});
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription, setDescriptionSucceeded, setDescriptionFailed);');
+            }
+
+            function setDescriptionFailed()
+            {
+                testFailed('setRemoteDescription failed.');
+
+                finishJSTest();
+            }
+
+            function setDescriptionSucceeded()
+            {
+                testPassed('setRemoteDescription succeeded.');
+                shouldNotThrow('pc.createAnswer(requestSucceeded2, requestFailed2, {mandatory:{"succeed":false}});');
+            }
+
             pc = new webkitRTCPeerConnection({iceServers:[]});
-            pc.createOffer(requestSucceeded1, requestFailed1);
+            shouldNotThrow('pc.createAnswer(requestSucceeded1, requestFailed1);');
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;
