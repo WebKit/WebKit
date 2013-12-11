@@ -1,3 +1,21 @@
+2013-12-10  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        top and bottom black background line not getting displayed
+        https://bugs.webkit.org/show_bug.cgi?id=21664
+
+        Reviewed by Simon Fraser.
+
+        The table cell's background was not being displayed. Since the table
+        cell had no child correct offsetWidth was not being set even if table
+        width is being defined.
+
+        Test: fast/dom/HTMLTableElement/empy-table-cell-with-background-color.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        cellHasContent should also be set to true incase background color is
+        present.
+
 2013-12-10  Beth Dakin  <bdakin@apple.com>
 
         Horizontal rubber-banding without a horizontal scrollbar is distracting

@@ -1,3 +1,23 @@
+2013-12-10  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        top and bottom black background line not getting displayed
+        https://bugs.webkit.org/show_bug.cgi?id=21664
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/HTMLTableElement/empy-table-cell-with-background-color-expected.txt: Added.
+        * fast/dom/HTMLTableElement/empy-table-cell-with-background-color.html: Added.
+        Added new test case to verify that table cell offsetWidth is set even
+        when it has no contents but has background color.
+        * fast/table/auto-100-percent-width-expected.txt:
+        * platform/mac/fast/table/empty-cells-expected.txt:
+        * tables/mozilla/bugs/bug1818-6-expected.txt:
+        Rebaselining the existing test case as per the new changes. The new
+        dimension changes are as per mozilla behaviour. For
+        auto-100-percent-width-expected.txt we get 1 px red background because
+        if cellHasContent we set columnLayout's minLogicalWidth and 
+        columnLayout's maxLogicalWidth as 1 initially even if cell is empty.
+
 2013-12-10  Krzysztof Czech  <k.czech@samsung.com>
 
         AX: Share accessibility/aria-hidden-negates-no-visibility.html expectation with other ports

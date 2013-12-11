@@ -63,7 +63,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                 if (current.inColSpan || !cell)
                     continue;
 
-                bool cellHasContent = cell->firstChild() || cell->style().hasBorder() || cell->style().hasPadding();
+                bool cellHasContent = cell->firstChild() || cell->style().hasBorder() || cell->style().hasPadding() || cell->style().hasBackground();
                 if (cellHasContent)
                     columnLayout.emptyCellsOnly = false;
 
