@@ -1,5 +1,19 @@
 2013-12-10  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r156928
+
+    2013-10-04  Brent Fulgham  <bfulgham@apple.com>
+
+            [Windows] Correct run-path when using 64-bit binaries.
+
+            Reviewed by David Kilzer.
+
+            * Scripts/webkitdirs.pm:
+            (determineConfigurationProductDir): If running in 64-bit mode, use the 'bin64'
+            directory. Otherwise use the existing 'bin32' directory.
+
+2013-12-10  Lucas Forschler  <lforschler@apple.com>
+
         Merge r156926
 
     2013-10-04  Brent Fulgham  <bfulgham@apple.com>
