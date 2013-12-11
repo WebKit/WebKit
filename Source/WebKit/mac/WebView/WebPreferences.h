@@ -57,12 +57,11 @@ and/or on disk.
 
 Examples: Safari, OmniWeb, Shiira.
 */
-enum {
+typedef NS_ENUM(NSUInteger, WebCacheModel) {
     WebCacheModelDocumentViewer = 0,
     WebCacheModelDocumentBrowser = 1,
     WebCacheModelPrimaryWebBrowser = 2
 };
-typedef NSUInteger WebCacheModel;
 
 typedef struct WebPreferencesPrivate WebPreferencesPrivate;
 
@@ -91,357 +90,177 @@ extern NSString *WebPreferencesChangedNotification;
     for the WebPreferences.
     @result Returns a new instance of WebPreferences or a previously allocated instance with the same identifier.
 */
-- (id)initWithIdentifier:(NSString *)anIdentifier;
+- (instancetype)initWithIdentifier:(NSString *)anIdentifier;
 
 /*!
     @method identifier
     @result Returns the identifier for this WebPreferences.
 */
-- (NSString *)identifier;
+@property (nonatomic, readonly, copy) NSString *identifier;
 
 /*!
-    @method standardFontFamily
+    @property standardFontFamily
 */
-- (NSString *)standardFontFamily;
+@property (nonatomic, copy) NSString *standardFontFamily;
 
 /*!
-    @method setStandardFontFamily:
-    @param family
+    @property fixedFontFamily
 */
-- (void)setStandardFontFamily:(NSString *)family;
+@property (nonatomic, copy) NSString *fixedFontFamily;
 
 /*!
-    @method fixedFontFamily
+    @property serifFontFamily
 */
-- (NSString *)fixedFontFamily;
+@property (nonatomic, copy) NSString *serifFontFamily;
 
 /*!
-    @method setFixedFontFamily:
-    @param family
+    @property sansSerifFontFamily
 */
-- (void)setFixedFontFamily:(NSString *)family;
+@property (nonatomic, copy) NSString *sansSerifFontFamily;
 
 /*!
-    @method serifFontFamily
+    @property cursiveFontFamily
 */
-- (NSString *)serifFontFamily;
+@property (nonatomic, copy) NSString *cursiveFontFamily;
 
 /*!
-    @method setSerifFontFamily:
-    @param family
+    @property fantasyFontFamily
 */
-- (void)setSerifFontFamily:(NSString *)family;
+@property (nonatomic, copy) NSString *fantasyFontFamily;
 
 /*!
-    @method sansSerifFontFamily
+    @property defaultFontSize
 */
-- (NSString *)sansSerifFontFamily;
+@property (nonatomic) int defaultFontSize;
 
 /*!
-    @method setSansSerifFontFamily:
-    @param family
+    @property defaultFixedFontSize
 */
-- (void)setSansSerifFontFamily:(NSString *)family;
+@property (nonatomic) int defaultFixedFontSize;
 
 /*!
-    @method cursiveFontFamily
+    @property minimumFontSize
 */
-- (NSString *)cursiveFontFamily;
-
-/*!
-    @method setCursiveFontFamily:
-    @param family
-*/
-- (void)setCursiveFontFamily:(NSString *)family;
-
-/*!
-    @method fantasyFontFamily
-*/
-- (NSString *)fantasyFontFamily;
-
-/*!
-    @method setFantasyFontFamily:
-    @param family
-*/
-- (void)setFantasyFontFamily:(NSString *)family;
-
-/*!
-    @method defaultFontSize
-*/
-- (int)defaultFontSize;
-
-/*!
-    @method setDefaultFontSize:
-    @param size
-*/
-- (void)setDefaultFontSize:(int)size;
-
-/*!
-    @method defaultFixedFontSize
-*/
-- (int)defaultFixedFontSize;
-
-/*!
-    @method setDefaultFixedFontSize:
-    @param size
-*/
-- (void)setDefaultFixedFontSize:(int)size;
-
-/*!
-    @method minimumFontSize
-*/
-- (int)minimumFontSize;
-
-/*!
-    @method setMinimumFontSize:
-    @param size
-*/
-- (void)setMinimumFontSize:(int)size;
+@property (nonatomic) int minimumFontSize;
 
 /*!
     @method minimumLogicalFontSize
 */
-- (int)minimumLogicalFontSize;
+@property (nonatomic) int minimumLogicalFontSize;
 
 /*!
-    @method setMinimumLogicalFontSize:
-    @param size
+    @property defaultTextEncodingName
 */
-- (void)setMinimumLogicalFontSize:(int)size;
+@property (nonatomic, copy) NSString *defaultTextEncodingName;
 
 /*!
-    @method defaultTextEncodingName
+    @property userStyleSheetEnabled
 */
-- (NSString *)defaultTextEncodingName;
+@property (nonatomic) BOOL userStyleSheetEnabled;
 
 /*!
-    @method setDefaultTextEncodingName:
-    @param encoding
+    @property userStyleSheetLocation
+    @abstract The location of the user style sheet.
 */
-- (void)setDefaultTextEncodingName:(NSString *)encoding;
+@property (nonatomic, strong) NSURL *userStyleSheetLocation;
 
 /*!
-    @method userStyleSheetEnabled
+    @property javaEnabled
 */
-- (BOOL)userStyleSheetEnabled;
+@property (nonatomic, getter=isJavaEnabled) BOOL javaEnabled;
 
 /*!
-    @method setUserStyleSheetEnabled:
-    @param flag
+    @property javaScriptEnabled
 */
-- (void)setUserStyleSheetEnabled:(BOOL)flag;
+@property (nonatomic, getter=isJavaScriptEnabled) BOOL javaScriptEnabled;
 
 /*!
-    @method userStyleSheetLocation
-    @discussion The location of the user style sheet.
+    @property javaScriptCanOpenWindowsAutomatically
 */
-- (NSURL *)userStyleSheetLocation;
+@property (nonatomic) BOOL javaScriptCanOpenWindowsAutomatically;
 
 /*!
-    @method setUserStyleSheetLocation:
-    @param URL The location of the user style sheet.
+    @property plugInsEnabled
 */
-- (void)setUserStyleSheetLocation:(NSURL *)URL;
+@property (nonatomic, getter=arePlugInsEnabled) BOOL plugInsEnabled;
 
 /*!
-    @method isJavaEnabled
+    @property allowsAnimatedImages
 */
-- (BOOL)isJavaEnabled;
+@property (nonatomic) BOOL allowsAnimatedImages;
 
 /*!
-    @method setJavaEnabled:
-    @param flag
+    @property allowsAnimatedImageLooping
 */
-- (void)setJavaEnabled:(BOOL)flag;
+@property (nonatomic) BOOL allowsAnimatedImageLooping;
 
 /*!
-    @method isJavaScriptEnabled
+    @property willLoadImagesAutomatically
 */
-- (BOOL)isJavaScriptEnabled;
+@property (nonatomic) BOOL loadsImagesAutomatically;
 
 /*!
-    @method setJavaScriptEnabled:
-    @param flag
-*/
-- (void)setJavaScriptEnabled:(BOOL)flag;
-
-/*!
-    @method JavaScriptCanOpenWindowsAutomatically
-*/
-- (BOOL)javaScriptCanOpenWindowsAutomatically;
-
-/*!
-    @method setJavaScriptCanOpenWindowsAutomatically:
-    @param flag
-*/
-- (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)flag;
-
-/*!
-    @method arePlugInsEnabled
-*/
-- (BOOL)arePlugInsEnabled;
-
-/*!
-    @method setPlugInsEnabled:
-    @param flag
-*/
-- (void)setPlugInsEnabled:(BOOL)flag;
-
-/*!
-    @method allowAnimatedImages
-*/
-- (BOOL)allowsAnimatedImages;
-
-/*!
-    @method setAllowAnimatedImages:
-    @param flag
-*/
-- (void)setAllowsAnimatedImages:(BOOL)flag;
-
-/*!
-    @method allowAnimatedImageLooping
-*/
-- (BOOL)allowsAnimatedImageLooping;
-
-/*!
-    @method setAllowAnimatedImageLooping:
-    @param flag
-*/
-- (void)setAllowsAnimatedImageLooping: (BOOL)flag;
-
-/*!
-    @method setWillLoadImagesAutomatically:
-    @param flag
-*/
-- (void)setLoadsImagesAutomatically: (BOOL)flag;
-
-/*!
-    @method willLoadImagesAutomatically
-*/
-- (BOOL)loadsImagesAutomatically;
-
-/*!
-    @method setAutosaves:
-    @param flag 
-    @discussion If autosave preferences is YES the settings represented by
+    @property autosaves
+    @discussion If autosaves is YES the settings represented by
     WebPreferences will be stored in the user defaults database.
 */
-- (void)setAutosaves:(BOOL)flag;
+@property (nonatomic) BOOL autosaves;
 
 /*!
-    @method autosaves
-    @result The value of the autosave preferences flag.
+    @property shouldPrintBackgrounds
 */
-- (BOOL)autosaves;
+@property (nonatomic) BOOL shouldPrintBackgrounds;
 
 /*!
-    @method setShouldPrintBackgrounds:
-    @param flag
-*/
-- (void)setShouldPrintBackgrounds:(BOOL)flag;
-
-/*!
-    @method shouldPrintBackgrounds
-    @result The value of the shouldPrintBackgrounds preferences flag
-*/
-- (BOOL)shouldPrintBackgrounds;
-
-/*!
-    @method setPrivateBrowsingEnabled:
-    @param flag 
+    @property privateBrowsingEnabled:
     @abstract If private browsing is enabled, WebKit will not store information
     about sites the user visits.
  */
-- (void)setPrivateBrowsingEnabled:(BOOL)flag;
+@property (nonatomic) BOOL privateBrowsingEnabled;
 
 /*!
-    @method privateBrowsingEnabled
- */
-- (BOOL)privateBrowsingEnabled;
-
-/*!
-    @method setTabsToLinks:
-    @param flag 
-    @abstract If tabsToLinks is YES, the tab key will focus links and form controls. 
+    @property tabsToLinks
+    @abstract If tabsToLinks is YES, the tab key will focus links and form controls.
     The option key temporarily reverses this preference.
 */
-- (void)setTabsToLinks:(BOOL)flag;
+@property (nonatomic) BOOL tabsToLinks;
 
 /*!
-    @method tabsToLinks
-*/
-- (BOOL)tabsToLinks;
-
-/*!
-    @method setUsesPageCache:
-    @abstract Sets whether the receiver's associated WebViews use the shared 
+    @property usesPageCache
+    @abstract Whether the receiver's associated WebViews use the shared
     page cache.
-    @param UsesPageCache Whether the receiver's associated WebViews use the 
-    shared page cache.
     @discussion Pages are cached as they are added to a WebBackForwardList, and
     removed from the cache as they are removed from a WebBackForwardList. Because 
     the page cache is global, caching a page in one WebBackForwardList may cause
     a page in another WebBackForwardList to be evicted from the cache.
 */
-- (void)setUsesPageCache:(BOOL)usesPageCache;
+@property (nonatomic) BOOL usesPageCache;
 
 /*!
-    @method usesPageCache
-    @abstract Returns whether the receiver should use the shared page cache.
-    @result Whether the receiver should use the shared page cache.
-    @discussion Pages are cached as they are added to a WebBackForwardList, and
-    removed from the cache as they are removed from a WebBackForwardList. Because 
-    the page cache is global, caching a page in one WebBackForwardList may cause
-    a page in another WebBackForwardList to be evicted from the cache.
+    @property cacheModel
+    @abstract Specifies a usage model for a WebView, which WebKit will use to
+    determine its caching behavior. If necessary, WebKit
+    will prune its caches to match cacheModel when set.
+
+    @discussion Research indicates that users tend to browse within clusters of
+    documents that hold resources in common, and to revisit previously visited
+    documents. WebKit and the frameworks below it include built-in caches that take
+    advantage of these patterns, substantially improving document load speed in
+    browsing situations. The WebKit cache model controls the behaviors of all of
+    these caches, including NSURLCache and the various WebCore caches.
+
+    Applications with a browsing interface can improve document load speed
+    substantially by specifying WebCacheModelDocumentBrowser. Applications without
+    a browsing interface can reduce memory usage substantially by specifying
+    WebCacheModelDocumentViewer.
+
+    If cacheModel is not set, WebKit will select a cache model automatically.
 */
-- (BOOL)usesPageCache;
+@property (nonatomic) WebCacheModel cacheModel;
 
 /*!
-@method setCacheModel:
-
-@abstract Specifies a usage model for a WebView, which WebKit will use to 
-determine its caching behavior.
-
-@param cacheModel The WebView's usage model for WebKit. If necessary, WebKit 
-will prune its caches to match cacheModel.
-
-@discussion Research indicates that users tend to browse within clusters of 
-documents that hold resources in common, and to revisit previously visited 
-documents. WebKit and the frameworks below it include built-in caches that take 
-advantage of these patterns, substantially improving document load speed in 
-browsing situations. The WebKit cache model controls the behaviors of all of 
-these caches, including NSURLCache and the various WebCore caches.
-
-Applications with a browsing interface can improve document load speed 
-substantially by specifying WebCacheModelDocumentBrowser. Applications without 
-a browsing interface can reduce memory usage substantially by specifying 
-WebCacheModelDocumentViewer.
-
-If setCacheModel: is not called, WebKit will select a cache model automatically.
+    @property suppressesIncrementalRendering
 */
-- (void)setCacheModel:(WebCacheModel)cacheModel;
-
-/*!
-@method cacheModel:
-
-@abstract Returns the usage model according to which WebKit determines its 
-caching behavior.
-
-@result The usage model.
-*/
-- (WebCacheModel)cacheModel;
-
-/*!
-    @method setSuppressesIncrementalRendering:
-    @param suppressesIncrementalRendering YES to suppress incremental rendering;
-    NO otherwise.
-*/
-- (void)setSuppressesIncrementalRendering:(BOOL)suppressesIncrementalRendering;
-
-/*!
-    @method suppressesIncrementalRendering
-    @result YES if the WebView suppresses incremental rendering; NO otherwise.
-*/
-- (BOOL)suppressesIncrementalRendering;
+@property (nonatomic) BOOL suppressesIncrementalRendering;
 
 @end

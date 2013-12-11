@@ -1307,13 +1307,13 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 @implementation WebFrame
 
-- (id)init
+- (instancetype)init
 {
     return nil;
 }
 
 // Should be deprecated.
-- (id)initWithName:(NSString *)name webFrameView:(WebFrameView *)view webView:(WebView *)webView
+- (instancetype)initWithName:(NSString *)name webFrameView:(WebFrameView *)view webView:(WebView *)webView
 {
     return nil;
 }

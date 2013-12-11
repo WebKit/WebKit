@@ -63,64 +63,51 @@ extern NSString *WebHistoryItemChangedNotification;
     'artificial' items to add to a WebBackForwardList.  When first initialized
     the URLString and originalURLString will be the same.
 */
-- (id)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time;
+- (instancetype)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time;
 
 /*!
-    @method originalURLString
-    @abstract The string representation of the originial URL of this item.
+    @property originalURLString
+    @abstract The string representation of the initial URL of this item.
     This value is normally set by the WebKit.
-    @result The string corresponding to the initial URL of this item.
 */
-- (NSString *)originalURLString;
+@property (nonatomic, readonly, copy) NSString *originalURLString;
 
 /*!
-    @method URLString
+    @property URLString
     @abstract The string representation of the URL represented by this item.
     @discussion The URLString may be different than the originalURLString if the page
     redirected to a new location.  This value is normally set by the WebKit.
-    @result The string corresponding to the final URL of this item.
 */
-- (NSString *)URLString;
+@property (nonatomic, readonly, copy) NSString *URLString;
 
 
 /*!
-    @method title
+    @property title
     @abstract The title of the page represented by this item.
     @discussion This title cannot be changed by the client.  This value
     is normally set by the WebKit when a page title for the item is received.
-    @result The title of this item.
 */
-- (NSString *)title;
+@property (nonatomic, readonly, copy) NSString *title;
 
 /*!
-    @method lastVisitedTimeInterval
+    @property lastVisitedTimeInterval
     @abstract The last time the page represented by this item was visited. The interval
     is since the reference date as determined by NSDate.  This value is normally set by
     the WebKit.
-    @result The last time this item was visited.
 */
-- (NSTimeInterval)lastVisitedTimeInterval;
-
-/*!
-    @method setAlternateTitle:
-    @param alternateTitle The new display title for this item.
-    @abstract A title that may be used by the client to display this item.
-*/
-- (void)setAlternateTitle:(NSString *)alternateTitle;
+@property (nonatomic, readonly) NSTimeInterval lastVisitedTimeInterval;
 
 /*
-    @method title
+    @property alternateTitle
     @abstract A title that may be used by the client to display this item.
-    @result The alternate title for this item.
 */
-- (NSString *)alternateTitle;
+@property (nonatomic, copy) NSString *alternateTitle;
 
 /*!
-    @method icon
+    @property icon
     @abstract The favorite icon of the page represented by this item.
     @discussion This icon returned will be determined by the WebKit.
-    @result The icon associated with this item's URL.
 */
-- (NSImage *)icon;
+@property (nonatomic, readonly, strong) NSImage *icon;
 
 @end

@@ -32,11 +32,11 @@
 @class DOMRange;
 @class WebView;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, WebViewInsertAction) {
     WebViewInsertActionTyped,
     WebViewInsertActionPasted,
     WebViewInsertActionDropped,
-} WebViewInsertAction;
+};
 
 @interface NSObject (WebViewEditingDelegate)
 - (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range;

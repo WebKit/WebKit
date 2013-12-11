@@ -1,3 +1,13 @@
+2013-12-03  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/125139> Modernize the WebKit API headers
+        <rdar://problem/15540175>
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setCacheModel): Cast to the enum type.
+
 2013-12-10  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of forward exit on DoubleAsInt32

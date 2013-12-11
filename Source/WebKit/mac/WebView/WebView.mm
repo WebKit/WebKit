@@ -399,7 +399,7 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
     id target; // Non-retained. Don't retain delegates.
     id defaultTarget;
 }
-- (id)initWithTarget:(id)target defaultTarget:(id)defaultTarget;
+- (instancetype)initWithTarget:(id)target defaultTarget:(id)defaultTarget;
 @end
 
 FindOptions coreOptions(WebFindOptions options)
@@ -3280,7 +3280,7 @@ static Vector<String> toStringVector(NSArray* patterns)
 
 // Used to send messages to delegates that implement informal protocols.
 
-- (id)initWithTarget:(id)t defaultTarget:(id)dt
+- (instancetype)initWithTarget:(id)t defaultTarget:(id)dt
 {
     self = [super init];
     if (!self)
@@ -3632,12 +3632,12 @@ static bool needsWebViewInitThreadWorkaround()
     return isOldClient && !pthread_main_np();
 }
 
-- (id)initWithFrame:(NSRect)f
+- (instancetype)initWithFrame:(NSRect)f
 {
     return [self initWithFrame:f frameName:nil groupName:nil];
 }
 
-- (id)initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName
+- (instancetype)initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     if (needsWebViewInitThreadWorkaround())
         return [[self _webkit_invokeOnMainThread] initWithFrame:f frameName:frameName groupName:groupName];
@@ -3646,7 +3646,7 @@ static bool needsWebViewInitThreadWorkaround()
     return [self _initWithFrame:f frameName:frameName groupName:groupName usesDocumentViews:YES];
 }
 
-- (id)initWithCoder:(NSCoder *)decoder
+- (instancetype)initWithCoder:(NSCoder *)decoder
 {
     if (needsWebViewInitThreadWorkaround())
         return [[self _webkit_invokeOnMainThread] initWithCoder:decoder];
@@ -6225,7 +6225,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     return s_cacheModel;
 }
 
-+ (WebCacheModel)_didSetCacheModel
++ (BOOL)_didSetCacheModel
 {
     return s_didSetCacheModel;
 }

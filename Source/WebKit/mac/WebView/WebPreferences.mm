@@ -188,7 +188,7 @@ public:
 
 @implementation WebPreferences
 
-- (id)init
+- (instancetype)init
 {
     // Create fake identifier
     static int instanceCount = 1;
@@ -203,7 +203,7 @@ public:
     return [self initWithIdentifier:fakeIdentifier];
 }
 
-- (id)initWithIdentifier:(NSString *)anIdentifier
+- (instancetype)initWithIdentifier:(NSString *)anIdentifier
 {
     WebPreferences *instance = [[self class] _getInstanceForIdentifier:anIdentifier];
     if (instance) {
@@ -228,7 +228,7 @@ public:
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)decoder
+- (instancetype)initWithCoder:(NSCoder *)decoder
 {
     self = [super init];
     if (!self)
@@ -853,7 +853,7 @@ public:
 
 - (WebCacheModel)cacheModel
 {
-    return [self _integerValueForKey:WebKitCacheModelPreferenceKey];
+    return (WebCacheModel)[self _integerValueForKey:WebKitCacheModelPreferenceKey];
 }
 
 

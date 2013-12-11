@@ -183,7 +183,7 @@ extern NSString *WebViewProgressFinishedNotification;
     @param groupName The name of the webView set to which this webView will be added.  May be nil.
     @result Returns an initialized WebView.
 */
-- (id)initWithFrame:(NSRect)frame frameName:(NSString *)frameName groupName:(NSString *)groupName;
+- (instancetype)initWithFrame:(NSRect)frame frameName:(NSString *)frameName groupName:(NSString *)groupName;
 
 /*!
     @method close
@@ -198,113 +198,62 @@ extern NSString *WebViewProgressFinishedNotification;
 - (void)close;
 
 /*!
-    @method setShouldCloseWithWindow:
-    @abstract Set whether the receiver closes when either it's window or hostWindow closes.
-    @param close YES if the receiver should close when either it's window or hostWindow closes, otherwise NO.
-*/
-- (void)setShouldCloseWithWindow:(BOOL)close;
-
-/*!
-    @method shouldCloseWithWindow
-    @abstract Returns whether the receiver closes when either it's window or hostWindow closes.
+    @property shouldCloseWithWindow
+    @abstract Whether the receiver closes when either it's window or hostWindow closes.
     @discussion Defaults to YES in garbage collected applications, otherwise NO to maintain backwards compatibility.
-    @result YES if the receiver closes when either it's window or hostWindow closes, otherwise NO.
 */
-- (BOOL)shouldCloseWithWindow;
+@property (nonatomic) BOOL shouldCloseWithWindow;
 
 /*!
-    @method setUIDelegate:
-    @abstract Set the WebView's WebUIDelegate.
-    @param delegate The WebUIDelegate to set as the delegate.
-*/    
-- (void)setUIDelegate:(id)delegate;
-
-/*!
-    @method UIDelegate
-    @abstract Return the WebView's WebUIDelegate.
-    @result The WebView's WebUIDelegate.
+    @property UIDelegate
+    @abstract The WebView's WebUIDelegate.
 */
-- (id)UIDelegate;
+@property (nonatomic, assign) id UIDelegate;
 
 /*!
-    @method setResourceLoadDelegate:
-    @abstract Set the WebView's WebResourceLoadDelegate load delegate.
-    @param delegate The WebResourceLoadDelegate to set as the load delegate.
+    @property resourceLoadDelegate
+    @abstract The WebView's WebResourceLoadDelegate.
 */
-- (void)setResourceLoadDelegate:(id)delegate;
+@property (nonatomic, assign) id resourceLoadDelegate;
 
 /*!
-    @method resourceLoadDelegate
-    @result Return the WebView's WebResourceLoadDelegate.
-*/    
-- (id)resourceLoadDelegate;
+    @property downloadDelegate
+    @abstract The WebView's WebDownloadDelegate.
+*/
+@property (nonatomic, assign) id downloadDelegate;
 
 /*!
-    @method setDownloadDelegate:
-    @abstract Set the WebView's WebDownloadDelegate.
-    @discussion The download delegate is retained by WebDownload when any downloads are in progress.
-    @param delegate The WebDownloadDelegate to set as the download delegate.
-*/    
-- (void)setDownloadDelegate:(id)delegate;
+    @property frameLoadDelegate
+    @abstract The WebView's WebFrameLoadDelegate delegate.
+*/
+@property (nonatomic, assign) id frameLoadDelegate;
 
 /*!
-    @method downloadDelegate
-    @abstract Return the WebView's WebDownloadDelegate.
-    @result The WebView's WebDownloadDelegate.
-*/    
-- (id)downloadDelegate;
+    @property policyDelegate
+    @abstract The WebView's WebPolicyDelegate.
+*/
+@property (nonatomic, assign) id policyDelegate;
 
 /*!
-    @method setFrameLoadDelegate:
-    @abstract Set the WebView's WebFrameLoadDelegate delegate.
-    @param delegate The WebFrameLoadDelegate to set as the delegate.
-*/    
-- (void)setFrameLoadDelegate:(id)delegate;
+    @property mainFrame
+    @abstract The top level frame.
+    @discussion Note that even documents that are not framesets will have a mainFrame.
+*/
+@property (nonatomic, readonly, strong) WebFrame *mainFrame;
 
 /*!
-    @method frameLoadDelegate
-    @abstract Return the WebView's WebFrameLoadDelegate delegate.
-    @result The WebView's WebFrameLoadDelegate delegate.
-*/    
-- (id)frameLoadDelegate;
-
-/*!
-    @method setPolicyDelegate:
-    @abstract Set the WebView's WebPolicyDelegate delegate.
-    @param delegate The WebPolicyDelegate to set as the delegate.
-*/    
-- (void)setPolicyDelegate:(id)delegate;
-
-/*!
-    @method policyDelegate
-    @abstract Return the WebView's WebPolicyDelegate.
-    @result The WebView's WebPolicyDelegate.
-*/    
-- (id)policyDelegate;
-
-/*!
-    @method mainFrame
-    @abstract Return the top level frame.  
-    @discussion Note that even document that are not framesets will have a
-    mainFrame.
-    @result The main frame.
-*/    
-- (WebFrame *)mainFrame;
-
-/*!
-    @method selectedFrame
-    @abstract Return the frame that has the active selection.  
+    @property selectedFrame
+    @abstract The frame that has the active selection.
     @discussion Returns the frame that contains the first responder, if any. Otherwise returns the
     frame that contains a non-zero-length selection, if any. Returns nil if no frame meets these criteria.
-    @result The selected frame.
 */
-- (WebFrame *)selectedFrame;
+@property (nonatomic, readonly, strong) WebFrame *selectedFrame;
 
 /*!
-    @method backForwardList
-    @result The backforward list for this webView.
+    @property backForwardList
+    @abstract The backforward list for this WebView.
 */    
-- (WebBackForwardList *)backForwardList;
+@property (nonatomic, readonly, strong) WebBackForwardList *backForwardList;
 
 /*!
     @method setMaintainsBackForwardList:
@@ -335,49 +284,33 @@ extern NSString *WebViewProgressFinishedNotification;
 - (BOOL)goToBackForwardItem:(WebHistoryItem *)item;
 
 /*!
-    @method setTextSizeMultiplier:
-    @abstract Change the size of the text rendering in views managed by this webView.
-    @param multiplier A fractional percentage value, 1.0 is 100%.
+    @property textSizeMultiplier
+    @abstract The text size multipler.
 */    
-- (void)setTextSizeMultiplier:(float)multiplier;
+@property (nonatomic) float textSizeMultiplier;
 
 /*!
-    @method textSizeMultiplier
-    @result The text size multipler.
-*/    
-- (float)textSizeMultiplier;
-
-/*!
-    @method setApplicationNameForUserAgent:
-    @abstract Set the application name. 
-    @discussion This name will be used in user-agent strings
-    that are chosen for best results in rendering web pages.
-    @param applicationName The application name
+    @property applicationNameForUserAgent
+    @abstract The name of the application as used in the user-agent string.
 */
-- (void)setApplicationNameForUserAgent:(NSString *)applicationName;
-
-/*!
-    @method applicationNameForUserAgent
-    @result The name of the application as used in the user-agent string.
-*/
-- (NSString *)applicationNameForUserAgent;
+@property (nonatomic, copy) NSString *applicationNameForUserAgent;
 
 /*!
     @method setCustomUserAgent:
     @abstract Set the user agent. 
-    @discussion Setting this means that the webView should use this user-agent string
-    instead of constructing a user-agent string for each URL. Setting it to nil
-    causes the webView to construct the user-agent string for each URL
-    for best results rendering web pages.
+    @discussion .
     @param userAgentString The user agent description
 */
-- (void)setCustomUserAgent:(NSString *)userAgentString;
 
 /*!
-    @method customUserAgent
-    @result The custom user-agent string or nil if no custom user-agent string has been set.
+    @property customUserAgent
+    @abstract The custom user-agent string or nil if no custom user-agent string has been set.
+    @discussion Setting this means that the webView should use this user-agent string
+ instead of constructing a user-agent string for each URL. Setting it to nil
+ causes the webView to construct the user-agent string for each URL
+ for best results rendering web pages
 */
-- (NSString *)customUserAgent;
+@property (nonatomic, copy) NSString *customUserAgent;
 
 /*!
     @method userAgentForURL:
@@ -389,45 +322,31 @@ extern NSString *WebViewProgressFinishedNotification;
 
 
 /*!
-    @method supportsTextEncoding
-    @abstract Find out if the current web page supports text encodings.
-    @result YES if the document view of the current web page can
-    support different text encodings.
+    @property supportsTextEncoding
+    @abstract If the document view of the current web page can support different text encodings.
 */
-- (BOOL)supportsTextEncoding;
+@property (nonatomic, readonly) BOOL supportsTextEncoding;
 
 /*!
-    @method setCustomTextEncodingName:
+    @property customTextEncodingName
+    @abstract The custom text encoding name or nil if no custom text encoding name has been set.
     @discussion Make the page display with a different text encoding; stops any load in progress.
     The text encoding passed in overrides the normal text encoding smarts including
     what's specified in a web page's header or HTTP response.
     The text encoding automatically goes back to the default when the top level frame
     changes to a new location.
     Setting the text encoding name to nil makes the webView use default encoding rules.
-    @param encoding The text encoding name to use to display a page or nil.
-*/
-- (void)setCustomTextEncodingName:(NSString *)encodingName;
 
-/*!
-    @method customTextEncodingName
-    @result The custom text encoding name or nil if no custom text encoding name has been set.
 */
-- (NSString *)customTextEncodingName;
-
-/*!
-    @method setMediaStyle:
-    @discussion Set the media style for the WebView.  The mediaStyle will override the normal value
-    of the CSS media property.  Setting the value to nil will restore the normal value.
-    @param mediaStyle The value to use for the CSS media property.
-*/
-- (void)setMediaStyle:(NSString *)mediaStyle;
+@property (nonatomic, copy) NSString *customTextEncodingName;
 
 /*!
     @method mediaStyle
-    @result mediaStyle The value to use for the CSS media property, as set by setMediaStyle:.  It
-    will be nil unless set by that method.
+    @abstract The media style for the WebView.
+    @discussion The mediaStyle will override the normal value
+    of the CSS media property. Setting the value to nil will restore the normal value. The value will be nil unless explicitly set.
 */
-- (NSString *)mediaStyle;
+@property (nonatomic, copy) NSString *mediaStyle;
 
 /*!
     @method stringByEvaluatingJavaScriptFromString:
@@ -437,58 +356,35 @@ extern NSString *WebViewProgressFinishedNotification;
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script;
 
 /*!
-    @method windowScriptObject
-    @discussion windowScriptObject return a WebScriptObject that represents the
+    @property windowScriptObject
+    @abstract A WebScriptObject that represents the
     window object from the script environment.
-    @result Returns the window object from the script environment.
 */
-- (WebScriptObject *)windowScriptObject;
+@property (nonatomic, readonly, strong) WebScriptObject *windowScriptObject;
 
 /*!
-    @method setPreferences:
-    @param preferences The preferences to use for the webView.
-    @abstract Override the standard setting for the webView. 
-*/
-- (void)setPreferences: (WebPreferences *)prefs;
-
-/*!
-    @method preferences
-    @result Returns the preferences used by this webView.
+    @property preferences
+    @abstract The preferences used by this WebView.
     @discussion This method will return [WebPreferences standardPreferences] if no
     other instance of WebPreferences has been set.
 */
-- (WebPreferences *)preferences;
+@property (nonatomic, strong) WebPreferences *preferences;
 
 /*!
-    @method setPreferencesIdentifier:
-    @param anIdentifier The string to use a prefix for storing values for this WebView in the user
-    defaults database.
-    @discussion If the WebPreferences for this WebView are stored in the user defaults database, the
-    string set in this method will be used a key prefix.
+    @property preferencesIdentifier
+    @abstract The WebPreferences key prefix.
+    @discussion If the WebPreferences for this WebView are stored in the user defaults database, this string will be used as a key prefix.
 */
-- (void)setPreferencesIdentifier:(NSString *)anIdentifier;
+@property (nonatomic, copy) NSString *preferencesIdentifier;
 
 /*!
-    @method preferencesIdentifier
-    @result Returns the WebPreferences key prefix.
-*/
-- (NSString *)preferencesIdentifier;
-
-
-/*!
-    @method setHostWindow:
-    @param hostWindow The host window for the web view.
+    @property hostWindow
+    @abstract The host window for the web view.
     @discussion Parts of WebKit (such as plug-ins and JavaScript) depend on a window to function
     properly. Set a host window so these parts continue to function even when the web view is
     not in an actual window.
 */
-- (void)setHostWindow:(NSWindow *)hostWindow;
-
-/*!
-    @method hostWindow
-    @result The host window for the web view.
-*/
-- (NSWindow *)hostWindow;
+@property (nonatomic, strong) NSWindow *hostWindow;
 
 /*!
     @method searchFor:direction:caseSensitive:
@@ -514,22 +410,15 @@ extern NSString *WebViewProgressFinishedNotification;
 */
 + (void)registerViewClass:(Class)viewClass representationClass:(Class)representationClass forMIMEType:(NSString *)MIMEType;
 
-
 /*!
-    @method setGroupName:
-    @param groupName The name of the group for this WebView.
-    @discussion JavaScript may access named frames within the same group. 
+    @property groupName
+    @abstract The group name for this WebView.
+    @discussion JavaScript may access named frames within the same group.
 */
-- (void)setGroupName:(NSString *)groupName;
+@property (nonatomic, copy) NSString *groupName;
 
 /*!
-    @method groupName
-    @discussion The group name for this WebView.
-*/
-- (NSString *)groupName;
-
-/*!
-    @method estimatedProgress
+    @property estimatedProgress
     @discussion An estimate of the percent complete for a document load.  This
     value will range from 0 to 1.0 and, once a load completes, will remain at 1.0 
     until a new load starts, at which point it will be reset to 0.  The value is an
@@ -538,13 +427,13 @@ extern NSString *WebViewProgressFinishedNotification;
     indication it is recommended that you implement a WebFrameLoadDelegate and a
     WebResourceLoadDelegate.
 */
-- (double)estimatedProgress;
+@property (nonatomic, readonly) double estimatedProgress;
 
 /*!
-    @method isLoading
-    @discussion Returns YES if there are any pending loads.
+    @property loading
+    @abstract Whether there are any pending loads in this WebView.
 */
-- (BOOL)isLoading;
+@property (nonatomic, getter=isLoading, readonly) BOOL loading;
 
 /*!
     @method elementAtPoint:
@@ -554,10 +443,10 @@ extern NSString *WebViewProgressFinishedNotification;
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
 
 /*!
-    @method pasteboardTypesForSelection
-    @abstract Returns the pasteboard types that WebView can use for the current selection
+    @property pasteboardTypesForSelection
+    @abstract The pasteboard types that the WebView can use for the current selection
 */
-- (NSArray *)pasteboardTypesForSelection;
+@property (nonatomic, readonly, copy) NSArray *pasteboardTypesForSelection;
 
 /*!
     @method writeSelectionWithPasteboardTypes:toPasteboard:
@@ -598,64 +487,43 @@ extern NSString *WebViewProgressFinishedNotification;
 - (void)removeDragCaret;
 
 /*!
-    @method setDrawsBackground:
-    @param drawsBackround YES to cause the receiver to draw a default white background, NO otherwise.
-    @abstract Sets whether the receiver draws a default white background when the loaded page has no background specified.
+    @property drawsBackground
+    @abstract Whether the receiver draws a default white background when the loaded page has no background specified.
 */
-- (void)setDrawsBackground:(BOOL)drawsBackround;
-
-/*!
-    @method drawsBackground
-    @result Returns YES if the receiver draws a default white background, NO otherwise.
-*/
-- (BOOL)drawsBackground;
-
-/*!
-    @method setShouldUpdateWhileOffscreen:
-    @abstract Sets whether the receiver must update even when it is not in a window that is currently visible.
-    @param updateWhileOffscreen whether the receiver is required to render updates to the web page when it is not in a visible window.
-    @abstract If set to NO, then whenever the web view is not in a visible window, updates to the web page will not necessarily be rendered in the view.
-    However, when the window is made visible, the view will be updated automatically. Not updating while hidden can improve performance. If set to is YES,
-    hidden web views are always updated. This is the default.
-*/
-- (void)setShouldUpdateWhileOffscreen:(BOOL)updateWhileOffscreen;
+@property (nonatomic) BOOL drawsBackground;
 
 /*!
     @method shouldUpdateWhileOffscreen
-    @result Returns whether the web view is always updated even when it is not in a window that is currently visible.
+    @abstract Whether the WebView is always updated even when it is not in a window that is currently visible.
+    @discussion If set to NO, then whenever the web view is not in a visible window, updates to the web page will not necessarily be rendered in the view.
+    However, when the window is made visible, the view will be updated automatically. Not updating while hidden can improve performance. If set to is YES,
+    hidden web views are always updated. This is the default.
 */
-- (BOOL)shouldUpdateWhileOffscreen;
+@property (nonatomic) BOOL shouldUpdateWhileOffscreen;
 
 /*!
-    @method setMainFrameURL:
-    @param URLString The URL to load in the mainFrame.
+    @property mainFrameURL
+    @abstract The main frame's current URL.
 */
-- (void)setMainFrameURL:(NSString *)URLString;
+@property (nonatomic, copy) NSString *mainFrameURL;
 
 /*!
-    @method mainFrameURL
-    @result Returns the main frame's current URL.
+    @property mainFrameDocument
+    @abstract The main frame's DOMDocument.
 */
-- (NSString *)mainFrameURL;
+@property (nonatomic, readonly, strong) DOMDocument *mainFrameDocument;
 
 /*!
-    @method mainFrameDocument
-    @result Returns the main frame's DOMDocument.
+    @property mainFrameTitle
+    @abstract The main frame's title if any, otherwise an empty string.
 */
-- (DOMDocument *)mainFrameDocument;
+@property (nonatomic, readonly, copy) NSString *mainFrameTitle;
 
 /*!
-    @method mainFrameTitle
-    @result Returns the main frame's title if any, otherwise an empty string.
+    @property mainFrameIcon
+    @abstract The site icon for the current page loaded in the mainFrame, or nil.
 */
-- (NSString *)mainFrameTitle;
-
-/*!
-    @method mainFrameIcon
-    @discussion The methods returns the site icon for the current page loaded in the mainFrame.
-    @result Returns the main frame's icon if any, otherwise nil.
-*/
-- (NSImage *)mainFrameIcon;
+@property (nonatomic, readonly, strong) NSImage *mainFrameIcon;
 
 @end
 
@@ -665,15 +533,15 @@ extern NSString *WebViewProgressFinishedNotification;
 - (IBAction)stopLoading:(id)sender;
 - (IBAction)reload:(id)sender;
 - (IBAction)reloadFromOrigin:(id)sender;
-- (BOOL)canGoBack;
+@property (nonatomic, readonly) BOOL canGoBack;
 - (IBAction)goBack:(id)sender;
-- (BOOL)canGoForward;
+@property (nonatomic, readonly) BOOL canGoForward;
 - (IBAction)goForward:(id)sender;
-- (BOOL)canMakeTextLarger;
+@property (nonatomic, readonly) BOOL canMakeTextLarger;
 - (IBAction)makeTextLarger:(id)sender;
-- (BOOL)canMakeTextSmaller;
+@property (nonatomic, readonly) BOOL canMakeTextSmaller;
 - (IBAction)makeTextSmaller:(id)sender;
-- (BOOL)canMakeTextStandardSize;
+@property (nonatomic, readonly) BOOL canMakeTextStandardSize;
 - (IBAction)makeTextStandardSize:(id)sender;
 - (IBAction)toggleContinuousSpellChecking:(id)sender;
 - (IBAction)toggleSmartInsertDelete:(id)sender;
@@ -695,21 +563,16 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 @interface WebView (WebViewEditing)
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point;
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity;
-- (DOMRange *)selectedDOMRange;
-- (NSSelectionAffinity)selectionAffinity;
-- (BOOL)maintainsInactiveSelection;
-- (void)setEditable:(BOOL)flag;
-- (BOOL)isEditable;
-- (void)setTypingStyle:(DOMCSSStyleDeclaration *)style;
-- (DOMCSSStyleDeclaration *)typingStyle;
-- (void)setSmartInsertDeleteEnabled:(BOOL)flag;
-- (BOOL)smartInsertDeleteEnabled;
-- (void)setContinuousSpellCheckingEnabled:(BOOL)flag;
-- (BOOL)isContinuousSpellCheckingEnabled;
-- (NSInteger)spellCheckerDocumentTag;
-- (NSUndoManager *)undoManager;
-- (void)setEditingDelegate:(id)delegate;
-- (id)editingDelegate;
+@property (nonatomic, readonly, strong) DOMRange *selectedDOMRange;
+@property (nonatomic, readonly) NSSelectionAffinity selectionAffinity;
+@property (nonatomic, readonly) BOOL maintainsInactiveSelection;
+@property (nonatomic, getter=isEditable) BOOL editable;
+@property (nonatomic, strong) DOMCSSStyleDeclaration *typingStyle;
+@property (nonatomic) BOOL smartInsertDeleteEnabled;
+@property (nonatomic, getter=isContinuousSpellCheckingEnabled) BOOL continuousSpellCheckingEnabled;
+@property (nonatomic, readonly) NSInteger spellCheckerDocumentTag;
+@property (nonatomic, readonly, strong) NSUndoManager *undoManager;
+@property (nonatomic, strong) id editingDelegate;
 - (DOMCSSStyleDeclaration *)styleDeclarationWithText:(NSString *)text;
 @end
 

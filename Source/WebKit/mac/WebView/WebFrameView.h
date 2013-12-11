@@ -44,39 +44,29 @@
 }
 
 /*!
-    @method webFrame
-    @abstract Returns the WebFrame associated with this WebFrameView
-    @result The WebFrameView's frame.
+    @property webFrame
+    @abstract The WebFrame associated with this WebFrameView
 */
-- (WebFrame *)webFrame;
+@property (nonatomic, readonly, strong) WebFrame *webFrame;
 
 /*!
-    @method documentView
-    @abstract Returns the WebFrameView's document subview
-    @result The subview that renders the WebFrameView's contents
+    @property documentView
+    @abstract The WebFrameView's document subview
+    @discussion The subview that renders the WebFrameView's contents
 */
-- (NSView <WebDocumentView> *)documentView;
+@property (nonatomic, readonly, strong) NSView<WebDocumentView> *documentView;
 
 /*!
-    @method setAllowsScrolling:
-    @abstract Sets whether the WebFrameView allows its document to be scrolled
-    @param flag YES to allow the document to be scrolled, NO to disallow scrolling
+    @property allowsScrolling
+    @abstract Whether the WebFrameView allows its document to be scrolled
 */
-- (void)setAllowsScrolling:(BOOL)flag;
+@property (nonatomic) BOOL allowsScrolling;
 
 /*!
-    @method allowsScrolling
-    @abstract Returns whether the WebFrameView allows its document to be scrolled
-    @result YES if the document is allowed to scroll, otherwise NO
+    @property canPrintHeadersAndFooters
+    @abstract Whether this frame can print headers and footers
 */
-- (BOOL)allowsScrolling;
-
-/*!
-    @method canPrintHeadersAndFooters
-    @abstract Tells whether this frame can print headers and footers
-    @result YES if the frame can, no otherwise
-*/
-- (BOOL)canPrintHeadersAndFooters;
+@property (nonatomic, readonly) BOOL canPrintHeadersAndFooters;
 
 /*!
     @method printOperationWithPrintInfo
@@ -86,13 +76,13 @@
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo;
 
 /*!
-    @method documentViewShouldHandlePrint
+    @property documentViewShouldHandlePrint
     @abstract Called by the host application before it initializes and runs a print operation.
-    @result If NO is returned, the host application will abort its print operation and call -printDocumentView on the
+    @discussion If NO is returned, the host application will abort its print operation and call -printDocumentView on the
     WebFrameView.  The document view is then expected to run its own print operation.  If YES is returned, the host 
     application's print operation will continue as normal.
 */
-- (BOOL)documentViewShouldHandlePrint;
+@property (nonatomic, readonly) BOOL documentViewShouldHandlePrint;
 
 /*!
     @method printDocumentView

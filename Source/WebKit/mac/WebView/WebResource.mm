@@ -59,7 +59,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 @public
     ArchiveResource* coreResource;
 }
-- (id)initWithCoreResource:(PassRefPtr<ArchiveResource>)coreResource;
+- (instancetype)initWithCoreResource:(PassRefPtr<ArchiveResource>)coreResource;
 @end
 
 @implementation WebResourcePrivate
@@ -72,12 +72,12 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
-- (id)init
+- (instancetype)init
 {
     return [super init];
 }
 
-- (id)initWithCoreResource:(PassRefPtr<ArchiveResource>)passedResource
+- (instancetype)initWithCoreResource:(PassRefPtr<ArchiveResource>)passedResource
 {
     self = [super init];
     if (!self)
@@ -108,7 +108,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 @implementation WebResource
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (!self)
@@ -117,12 +117,12 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     return self;
 }
 
-- (id)initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName
+- (instancetype)initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName
 {
     return [self _initWithData:data URL:URL MIMEType:MIMEType textEncodingName:textEncodingName frameName:frameName response:nil copyData:YES];
 }
 
-- (id)initWithCoder:(NSCoder *)decoder
+- (instancetype)initWithCoder:(NSCoder *)decoder
 {
     WebCoreThreadViolationCheckRoundTwo();
 

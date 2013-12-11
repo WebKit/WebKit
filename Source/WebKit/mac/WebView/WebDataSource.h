@@ -57,103 +57,103 @@
     @param request The request to use in creating a datasource.
     @result Returns an initialized WebDataSource.
 */
-- (id)initWithRequest:(NSURLRequest *)request;
+- (instancetype)initWithRequest:(NSURLRequest *)request;
 
 /*!
-    @method data
-    @discussion The data will be incomplete until the datasource has completely loaded.  
-    @result Returns the raw data associated with the datasource.  Returns nil
+    @property data
+    @abstract Returns the raw data associated with the datasource.  Returns nil
     if the datasource hasn't loaded any data.
+   @discussion The data will be incomplete until the datasource has completely loaded.
 */
-- (NSData *)data;
+@property (nonatomic, readonly, copy) NSData *data;
 
 /*!
-    @method representation
+    @property representation
+    @abstract The representation associated with this datasource.
+    Returns nil if the datasource hasn't created its representation.
     @discussion A representation holds a type specific representation
     of the datasource's data.  The representation class is determined by mapping
     a MIME type to a class.  The representation is created once the MIME type
     of the datasource content has been determined.
-    @result Returns the representation associated with this datasource.
-    Returns nil if the datasource hasn't created it's representation.
 */
-- (id <WebDocumentRepresentation>)representation;
+@property (nonatomic, readonly, strong) id<WebDocumentRepresentation> representation;
 
 /*!
-    @method webFrame
-    @result Return the frame that represents this data source.
+    @property webFrame
+    @abstract The frame that represents this data source.
 */
-- (WebFrame *)webFrame;
+@property (nonatomic, readonly, strong) WebFrame *webFrame;
 
 /*!
-    @method initialRequest
-    @result Returns a reference to the original request that created the
+    @property initialRequest
+    @abstract A reference to the original request that created the
     datasource.  This request will be unmodified by WebKit. 
 */
-- (NSURLRequest *)initialRequest;
+@property (nonatomic, readonly, strong) NSURLRequest *initialRequest;
 
 /*!
-    @method request
-    @result Returns the request that was used to create this datasource.
+    @property request
+    @abstract The request that was used to create this datasource.
 */
-- (NSMutableURLRequest *)request;
+@property (nonatomic, readonly, strong) NSMutableURLRequest *request;
 
 /*!
-    @method response
-    @result returns the WebResourceResponse for the data source.
+    @property response
+    @abstract The NSURLResponse for the data source.
 */
-- (NSURLResponse *)response;
+@property (nonatomic, readonly, strong) NSURLResponse *response;
 
 /*!
-    @method textEncodingName
-    @result Returns either the override encoding, as set on the WebView for this 
+    @property textEncodingName
+    @abstract Returns either the override encoding, as set on the WebView for this
     dataSource or the encoding from the response.
 */
-- (NSString *)textEncodingName;
+@property (nonatomic, readonly, copy) NSString *textEncodingName;
 
 /*!
-    @method isLoading
-    @discussion Returns YES if there are any pending loads.
+    @property isLoading
+    @abstract Returns YES if there are any pending loads.
 */
-- (BOOL)isLoading;
+@property (nonatomic, getter=isLoading, readonly) BOOL loading;
 
 /*!
-    @method pageTitle
-    @result Returns nil or the page title.
+    @property pageTitle
+    @abstract The page title or nil.
 */
-- (NSString *)pageTitle;
+@property (nonatomic, readonly, copy) NSString *pageTitle;
 
 /*!
-    @method unreachableURL
+    @property unreachableURL
+    @abstract The unreachableURL for which this dataSource is showing alternate content, or nil.
     @discussion This will be non-nil only for dataSources created by calls to the 
     WebFrame method loadAlternateHTMLString:baseURL:forUnreachableURL:.
-    @result returns the unreachableURL for which this dataSource is showing alternate content, or nil
 */
-- (NSURL *)unreachableURL;
+@property (nonatomic, readonly, strong) NSURL *unreachableURL;
 
 /*!
-    @method webArchive
-    @result A WebArchive representing the data source, its subresources and child frames.
+    @property webArchive
+    @abstract A WebArchive representing the data source, its subresources and child frames.
     @description This method constructs a WebArchive using the original downloaded data.
     In the case of HTML, if the current state of the document is preferred, webArchive should be
     called on the DOM document instead.
 */
-- (WebArchive *)webArchive;
+@property (nonatomic, readonly, strong) WebArchive *webArchive;
 
 /*!
-    @method mainResource
-    @result A WebResource representing the data source.
+    @property mainResource
+    @abstract A WebResource representing the data source.
     @description This method constructs a WebResource using the original downloaded data.
     This method can be used to construct a WebArchive in case the archive returned by
     WebDataSource's webArchive isn't sufficient.
 */
-- (WebResource *)mainResource;
+@property (nonatomic, readonly, strong) WebResource *mainResource;
 
 /*!
-    @method subresources
-    @abstract Returns all the subresources associated with the data source.
+    @property subresources
+    @abstract All the subresources associated with the data source.
     @description The returned array only contains subresources that have fully downloaded.
 */
-- (NSArray *)subresources;
+@property (nonatomic, readonly, copy) NSArray *subresources;
 
 /*!
     method subresourceForURL:

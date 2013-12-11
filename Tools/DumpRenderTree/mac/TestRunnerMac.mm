@@ -706,7 +706,7 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
 
 void TestRunner::setCacheModel(int cacheModel)
 {
-    [[WebPreferences standardPreferences] setCacheModel:cacheModel];
+    [[WebPreferences standardPreferences] setCacheModel:(WebCacheModel)cacheModel];
 }
 
 bool TestRunner::isCommandEnabled(JSStringRef name)

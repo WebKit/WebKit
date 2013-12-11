@@ -427,7 +427,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 @implementation WebDataSource
 
-- (id)initWithRequest:(NSURLRequest *)request
+- (instancetype)initWithRequest:(NSURLRequest *)request
 {
     return [self _initWithDocumentLoader:WebDocumentLoaderMac::create(request, SubstituteData())];
 }

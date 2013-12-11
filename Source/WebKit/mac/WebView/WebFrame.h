@@ -61,40 +61,40 @@
     @param webView The WebView that manages the frame.
     @result Returns an initialized WebFrame.
 */
-- (id)initWithName:(NSString *)name webFrameView:(WebFrameView *)view webView:(WebView *)webView;
+- (instancetype)initWithName:(NSString *)name webFrameView:(WebFrameView *)view webView:(WebView *)webView;
 
 /*!
-    @method name
-    @result The frame name.
+    @property name
+    @abstract The frame name.
 */
-- (NSString *)name;
+@property (nonatomic, readonly, copy) NSString *name;
 
 /*!
-    @method webView
-    @result Returns the WebView for the document that includes this frame.
+    @property webView
+    @abstract The WebView for the document that includes this frame.
 */
-- (WebView *)webView;
+@property (nonatomic, readonly, strong) WebView *webView;
 
 /*!
-    @method frameView
-    @result The WebFrameView for this frame.
+    @property frameView
+    @abstract The WebFrameView for this frame.
 */
-- (WebFrameView *)frameView;
+@property (nonatomic, readonly, strong) WebFrameView *frameView;
 
 /*!
-    @method DOMDocument
-    @abstract Returns the DOM document of the frame.
+    @property DOMDocument
+    @abstract The DOM document of the frame.
     @description Returns nil if the frame does not contain a DOM document such as a standalone image.
 */
-- (DOMDocument *)DOMDocument;
+@property (nonatomic, readonly, strong) DOMDocument *DOMDocument;
 
 /*!
-    @method frameElement
-    @abstract Returns the frame element of the frame.
+    @property frameElement
+    @abstract The frame element of the frame.
     @description The class of the result is either DOMHTMLFrameElement, DOMHTMLIFrameElement or DOMHTMLObjectElement.
     Returns nil if the frame is the main frame since there is no frame element for the frame in this case.
 */
-- (DOMHTMLElement *)frameElement;
+@property (nonatomic, readonly, strong) DOMHTMLElement *frameElement;
 
 /*!
     @method loadRequest:
@@ -141,21 +141,21 @@
 - (void)loadArchive:(WebArchive *)archive;
 
 /*!
-    @method dataSource
+    @property dataSource
+    @abstract The datasource for this frame.
     @discussion Returns the committed data source.  Will return nil if the
     provisional data source hasn't yet been loaded.
-    @result The datasource for this frame.
 */
-- (WebDataSource *)dataSource;
+@property (nonatomic, readonly, strong) WebDataSource *dataSource;
 
 /*!
-    @method provisionalDataSource
+    @property provisionalDataSource
+    @abstract The provisional datasource of this frame.
     @discussion Will return the provisional data source.  The provisional data source will
     be nil if no data source has been set on the frame, or the data source
     has successfully transitioned to the committed data source.
-    @result The provisional datasource of this frame.
 */
-- (WebDataSource *)provisionalDataSource;
+@property (nonatomic, readonly, strong) WebDataSource *provisionalDataSource;
 
 /*!
     @method stopLoading
@@ -190,38 +190,38 @@
 - (WebFrame *)findFrameNamed:(NSString *)name;
 
 /*!
-    @method parentFrame
-    @result The frame containing this frame, or nil if this is a top level frame.
+    @property parentFrame
+    @abstract The frame containing this frame, or nil if this is a top level frame.
 */
-- (WebFrame *)parentFrame;
+@property (nonatomic, readonly, strong) WebFrame *parentFrame;
 
 /*!
-    @method childFrames
+    @property childFrames
+    @abstract An array of WebFrame.
     @discussion The frames in the array are associated with a frame set or iframe.
-    @result Returns an array of WebFrame.
 */
-- (NSArray *)childFrames;
+@property (nonatomic, readonly, copy) NSArray *childFrames;
 
 /*!
-    @method windowObject
-    @result The WebScriptObject representing the frame's JavaScript window object.
+    @property windowObject
+    @abstract The WebScriptObject representing the frame's JavaScript window object.
 */
-- (WebScriptObject *)windowObject;
+@property (nonatomic, readonly, strong) WebScriptObject *windowObject;
 
 /*!
-    @method globalContext
-    @result The frame's global JavaScript execution context. Use this method to
-    bridge between the WebKit and JavaScriptCore APIs.
+    @property globalContext
+    @abstract The frame's global JavaScript execution context.
+    @discussion Use this method to bridge between the WebKit and JavaScriptCore APIs.
 */
-- (JSGlobalContextRef)globalContext;
+@property (nonatomic, readonly) JSGlobalContextRef globalContext;
 
 #if JSC_OBJC_API_ENABLED
 /*!
-    @method javaScriptContext
-    @result The frame's global JavaScript execution context. Use this method to 
-    bridge between the WebKit and Objective-C JavaScriptCore API.
+    @property javaScriptContext
+    @abstract The frame's global JavaScript execution context.
+    @discussion Use this method to bridge between the WebKit and Objective-C JavaScriptCore API.
 */
-- (JSContext *)javaScriptContext;
+@property (nonatomic, readonly, strong) JSContext *javaScriptContext;
 #endif // JSC_OBJC_API_ENABLED
 
 @end

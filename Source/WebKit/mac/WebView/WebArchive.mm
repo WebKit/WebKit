@@ -58,7 +58,7 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
     RefPtr<LegacyWebArchive> coreArchive;
 }
 
-- (id)initWithCoreArchive:(PassRefPtr<LegacyWebArchive>)coreArchive;
+- (instancetype)initWithCoreArchive:(PassRefPtr<LegacyWebArchive>)coreArchive;
 - (LegacyWebArchive*)coreArchive;
 - (void)setCoreArchive:(PassRefPtr<LegacyWebArchive>)newCoreArchive;
 @end
@@ -73,7 +73,7 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (!self)
@@ -82,7 +82,7 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
     return self;
 }
 
-- (id)initWithCoreArchive:(PassRefPtr<LegacyWebArchive>)_coreArchive
+- (instancetype)initWithCoreArchive:(PassRefPtr<LegacyWebArchive>)_coreArchive
 {
     self = [super init];
     if (!self || !_coreArchive) {
@@ -121,7 +121,7 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 
 @implementation WebArchive
 
-- (id)init
+- (instancetype)init
 {
     WebCoreThreadViolationCheckRoundTwo();
 
@@ -144,7 +144,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     return YES;
 }
 
-- (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives
+- (instancetype)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives
 {
     WebCoreThreadViolationCheckRoundTwo();
 
@@ -197,7 +197,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     return self;
 }
 
-- (id)initWithData:(NSData *)data
+- (instancetype)initWithData:(NSData *)data
 {
     WebCoreThreadViolationCheckRoundTwo();
 
@@ -227,7 +227,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)decoder
+- (instancetype)initWithCoder:(NSCoder *)decoder
 {    
     WebResource *mainResource = nil;
     NSArray *subresources = nil;

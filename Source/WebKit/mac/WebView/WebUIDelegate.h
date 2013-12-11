@@ -81,13 +81,13 @@ enum {
     @constant WebDragDestinationActionLoad Allows a location change from the drag
     @constant WebDragDestinationActionAny Allows any of the above to occur
 */
-typedef enum {
+typedef NS_OPTIONS(NSUInteger, WebDragDestinationAction) {
     WebDragDestinationActionNone    = 0,
     WebDragDestinationActionDHTML   = 1,
     WebDragDestinationActionEdit    = 2,
     WebDragDestinationActionLoad    = 4,
     WebDragDestinationActionAny     = UINT_MAX
-} WebDragDestinationAction;
+};
 
 /*!
     @enum WebDragSourceAction
@@ -99,14 +99,14 @@ typedef enum {
     @constant WebDragSourceActionSelection Allows a selection drag to occur
     @constant WebDragSourceActionAny Allows any of the above to occur
 */
-typedef enum {
+typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
     WebDragSourceActionNone         = 0,
     WebDragSourceActionDHTML        = 1,
     WebDragSourceActionImage        = 2,
     WebDragSourceActionLink         = 4,
     WebDragSourceActionSelection    = 8,
     WebDragSourceActionAny          = UINT_MAX
-} WebDragSourceAction;
+};
 
 /*!
     @protocol WebOpenPanelResultListener

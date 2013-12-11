@@ -54,19 +54,18 @@
 - (void)webPlugInContainerShowStatus:(NSString *)message;
 
 /*!
-    @method webPlugInContainerSelectionColor
-    @result Returns the color that should be used for any special drawing when
+    @property webPlugInContainerSelectionColor
+    @abstract The color that should be used for any special drawing when
     plug-in is selected.
 */
-- (NSColor *)webPlugInContainerSelectionColor;
+@property (nonatomic, readonly, strong) NSColor *webPlugInContainerSelectionColor;
 
 /*!
-    @method webFrame
-    @discussion The webFrame method allows the plug-in to access the WebFrame that
+    @property webFrame
+    @abstract Allows the plug-in to access the WebFrame that
     contains the plug-in.  This method will not be implemented by containers that 
     are not WebKit based.
-    @result Return the WebFrame that contains the plug-in.
 */
-- (WebFrame *)webFrame;
+@property (nonatomic, readonly, strong) WebFrame *webFrame;
 
 @end

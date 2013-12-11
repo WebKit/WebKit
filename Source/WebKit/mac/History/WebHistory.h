@@ -113,12 +113,12 @@ extern NSString *WebHistoryItemsKey;
 - (void)removeAllItems;
 
 /*!
-    @method orderedLastVisitedDays
-    @discussion Get an array of NSCalendarDates, each one representing a unique day that contains one
+    @property orderedLastVisitedDays
+    @abstract An array of NSCalendarDates for which history items exist in the WebHistory.
+    @discussion An array of NSCalendarDates, each one representing a unique day that contains one
     or more history items, ordered from most recent to oldest.
-    @result Returns an array of NSCalendarDates for which history items exist in the WebHistory.
 */
-- (NSArray *)orderedLastVisitedDays;
+@property (nonatomic, readonly, copy) NSArray *orderedLastVisitedDays;
 
 /*!
     @method orderedItemsLastVisitedOnDay:
@@ -141,30 +141,15 @@ extern NSString *WebHistoryItemsKey;
 - (WebHistoryItem *)itemForURL:(NSURL *)URL;
 
 /*!
-    @method setHistoryItemLimit:
-    @discussion Limits the number of items that will be stored by the WebHistory.
-    @param limit The maximum number of items that will be stored by the WebHistory.
+    @property historyItemLimit
+    @abstract The maximum number of items that will be stored by the WebHistory.
 */
-- (void)setHistoryItemLimit:(int)limit;
+@property (nonatomic) int historyItemLimit;
 
 /*!
-    @method historyItemLimit
-    @result The maximum number of items that will be stored by the WebHistory.
+    @property historyAgeInDaysLimit
+    @abstract The maximum number of days to be read from stored history.
 */
-- (int)historyItemLimit;
-
-/*!
-    @method setHistoryAgeInDaysLimit:
-    @discussion setHistoryAgeInDaysLimit: sets the maximum number of days to be read from
-    stored history.
-    @param limit The maximum number of days to be read from stored history.
-*/
-- (void)setHistoryAgeInDaysLimit:(int)limit;
-
-/*!
-    @method historyAgeInDaysLimit
-    @return Returns the maximum number of days to be read from stored history.
-*/
-- (int)historyAgeInDaysLimit;
+@property (nonatomic) int historyAgeInDaysLimit;
 
 @end

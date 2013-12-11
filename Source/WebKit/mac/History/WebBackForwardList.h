@@ -76,25 +76,22 @@
 - (void)goToItem:(WebHistoryItem *)item;
 
 /*!
-    @method backItem
-    @abstract Returns the entry right before the current entry.
-    @result The entry right before the current entry, or nil if there isn't one.
+    @property backItem
+    @abstract The entry right before the current entry, or nil if there isn't one.
 */
-- (WebHistoryItem *)backItem;
+@property (nonatomic, readonly, strong) WebHistoryItem *backItem;
 
 /*!
-    @method currentItem
+    @property currentItem
     @abstract Returns the current entry.
-    @result The current entry.
 */
-- (WebHistoryItem *)currentItem;
+@property (nonatomic, readonly, strong) WebHistoryItem *currentItem;
 
 /*!
-    @method forwardItem
-    @abstract Returns the entry right after the current entry.
-    @result The entry right after the current entry, or nil if there isn't one.
+    @property forwardItem
+    @abstract The entry right after the current entry, or nil if there isn't one.
 */
-- (WebHistoryItem *)forwardItem;
+@property (nonatomic, readonly, strong) WebHistoryItem *forwardItem;
 
 /*!
     @method backListWithLimit:
@@ -113,32 +110,22 @@
 - (NSArray *)forwardListWithLimit:(int)limit;
 
 /*!
-    @method capacity
-    @abstract Returns the list's maximum size.
-    @result The list's maximum size.
+    @property capacity
+    @abstract The list's maximum size.
 */
-- (int)capacity;
+@property (nonatomic) int capacity;
 
 /*!
-    @method setCapacity
-    @abstract Sets the list's maximum size.
-    @param size The new maximum size for the list.
+    @property backListCount
+    @abstract The number of items in the list.
 */
-- (void)setCapacity:(int)size;
+@property (nonatomic, readonly) int backListCount;
 
 /*!
-    @method backListCount
-    @abstract Returns the back list's current count.
+    @property forwardListCount
     @result The number of items in the list.
 */
-- (int)backListCount;
-
-/*!
-    @method forwardListCount
-    @abstract Returns the forward list's current count.
-    @result The number of items in the list.
-*/
-- (int)forwardListCount;
+@property (nonatomic, readonly) int forwardListCount;
 
 /*!
     @method containsItem:

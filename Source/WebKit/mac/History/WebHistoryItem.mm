@@ -101,12 +101,12 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithWebCoreHistoryItem:HistoryItem::create()];
 }
 
-- (id)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
+- (instancetype)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
 {
     WebCoreThreadViolationCheckRoundOne();
     return [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title, time)];

@@ -1,3 +1,44 @@
+2013-12-03  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/125139> Modernize the WebKit API headers
+        <rdar://problem/15540175>
+
+        This consists of three main changes:
+        1) Converting the return type of initializer methods to instancetype.
+        2) Declaring properties rather than getters and setters.
+        3) Declaring explicitly sized enums.
+
+        Changing the declarations from getters and setters to properties also required
+        updating the headerdoc in a number of places.
+
+        Reviewed by Anders Carlsson.
+
+        * DOM/WebDOMOperations.h:
+        * History/WebBackForwardList.h:
+        * History/WebHistory.h:
+        * History/WebHistoryItem.h:
+        * History/WebHistoryItem.mm:
+        * Plugins/WebPlugin.h:
+        * Plugins/WebPluginContainer.h:
+        * WebView/WebArchive.h:
+        * WebView/WebArchive.mm:
+        * WebView/WebDataSource.h:
+        * WebView/WebDataSource.mm:
+        * WebView/WebEditingDelegate.h:
+        * WebView/WebFrame.h:
+        * WebView/WebFrame.mm:
+        * WebView/WebFrameView.h:
+        * WebView/WebPolicyDelegate.h:
+        * WebView/WebPreferences.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences cacheModel]): Cast to the enum.
+        * WebView/WebResource.h:
+        * WebView/WebResource.mm:
+        * WebView/WebUIDelegate.h:
+        * WebView/WebView.h:
+        * WebView/WebView.mm:
+        (+[WebView _didSetCacheModel]): Fix the return type.
+
 2013-12-10  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/125556> WebKit doesn't deal with longer bundle versions correctly

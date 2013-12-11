@@ -36,20 +36,20 @@
 @interface DOMNode (WebDOMNodeOperations)
 
 /*!
-    @method webArchive
-    @result A WebArchive representing the node and the children of the node.
+    @property webArchive
+    @abstract A WebArchive representing the node and the children of the node.
 */
-- (WebArchive *)webArchive;
+@property (nonatomic, readonly, strong) WebArchive *webArchive;
 
 @end
 
 @interface DOMDocument (WebDOMDocumentOperations)
 
 /*!
-    @method webFrame
-    @abstract Returns the frame of the DOM document.
+    @property webFrame
+    @abstract The frame of the DOM document.
 */
-- (WebFrame *)webFrame;
+@property (nonatomic, readonly, strong) WebFrame *webFrame;
 
 /*!
     @method URLWithAttributeString:
@@ -65,47 +65,47 @@
 @interface DOMRange (WebDOMRangeOperations)
 
 /*!
-    @method webArchive
-    @result A WebArchive representing the range.
+    @property webArchive
+    @abstract A WebArchive representing the range.
 */
-- (WebArchive *)webArchive;
+@property (nonatomic, readonly, strong) WebArchive *webArchive;
 
 /*!
-    @method markupString
-    @result A markup string representing the range.
+    @property markupString
+    @abstract A markup string representing the range.
 */
-- (NSString *)markupString;
+@property (nonatomic, readonly, copy) NSString *markupString;
 
 @end
 
 @interface DOMHTMLFrameElement (WebDOMHTMLFrameElementOperations)
 
 /*!
-    @method contentFrame
-    @abstract Returns the content frame of the element.
+    @property contentFrame
+    @abstract The content frame of the element.
 */
-- (WebFrame *)contentFrame;
+@property (nonatomic, readonly, strong) WebFrame *contentFrame;
 
 @end
 
 @interface DOMHTMLIFrameElement (WebDOMHTMLIFrameElementOperations)
 
 /*!
-    @method contentFrame
+    @property contentFrame
     @abstract Returns the content frame of the element.
 */
-- (WebFrame *)contentFrame;
+@property (nonatomic, readonly, strong) WebFrame *contentFrame;
 
 @end
 
 @interface DOMHTMLObjectElement (WebDOMHTMLObjectElementOperations)
 
 /*!
-    @method contentFrame
-    @abstract Returns the content frame of the element.
+    @property contentFrame
+    @abstract The content frame of the element.
     @discussion Returns non-nil only if the object represents a child frame
     such as if the data of the object is HTML content.
 */
-- (WebFrame *)contentFrame;
+@property (nonatomic, readonly, strong) WebFrame *contentFrame;
 
 @end

@@ -52,36 +52,36 @@
     @param frameName The frame name of the resource if the resource represents the contents of an entire HTML frame (can be nil).
     @result An initialized WebResource.
 */
-- (id)initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName;
+- (instancetype)initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName;
 
 /*!
-    @method data
-    @result The data of the resource.
+    @property data
+    @abstract The data of the resource.
 */
-- (NSData *)data;
+@property (nonatomic, readonly, copy) NSData *data;
 
 /*!
-    @method URL
-    @result The URL of the resource.
+    @property URL
+    @abstract The URL of the resource.
 */
-- (NSURL *)URL;
+@property (nonatomic, readonly, strong) NSURL *URL;
 
 /*!
-    @method MIMEType
-    @result The MIME type of the resource.
+    @property MIMEType
+    @abstract The MIME type of the resource.
 */
-- (NSString *)MIMEType;
+@property (nonatomic, readonly, copy) NSString *MIMEType;
 
 /*!
-    @method textEncodingName
-    @result The text encoding name of the resource (can be nil).
+    @property textEncodingName
+    @abstract The text encoding name of the resource (can be nil).
 */
-- (NSString *)textEncodingName;
+@property (nonatomic, readonly, copy) NSString *textEncodingName;
 
 /*!
-    @method frameName
-    @result The frame name of the resource if the resource represents the contents of an entire HTML frame (can be nil).
+    @property frameName
+    @abstract The frame name of the resource if the resource represents the contents of an entire HTML frame (can be nil).
 */
-- (NSString *)frameName;
+@property (nonatomic, readonly, copy) NSString *frameName;
 
 @end
