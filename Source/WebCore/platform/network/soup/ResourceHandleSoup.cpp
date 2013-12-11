@@ -219,7 +219,7 @@ private:
         SHA1 sha1;
         sha1.addBytes(certificateData->data, certificateData->len);
 
-        Vector<uint8_t, SHA1::hashSize> digest;
+        SHA1::Digest digest;
         sha1.computeHash(digest);
 
         return base64Encode(reinterpret_cast<const char*>(digest.data()), SHA1::hashSize);

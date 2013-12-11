@@ -440,14 +440,14 @@ PassOwnPtr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* node, Un
                 addStringToSHA1(attrsSHA1, attribute.name().toString());
                 addStringToSHA1(attrsSHA1, attribute.value());
             }
-            Vector<uint8_t, 20> attrsHash;
+            SHA1::Digest attrsHash;
             attrsSHA1.computeHash(attrsHash);
             digest->m_attrsSHA1 = base64Encode(attrsHash.data(), 10);
             addStringToSHA1(sha1, digest->m_attrsSHA1);
         }
     }
 
-    Vector<uint8_t, 20> hash;
+    SHA1::Digest hash;
     sha1.computeHash(hash);
     digest->m_sha1 = base64Encode(hash.data(), 10);
     if (unusedNodesMap)

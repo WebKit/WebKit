@@ -88,12 +88,10 @@ void SHA1::addBytes(const uint8_t* input, size_t length)
     }
 }
 
-void SHA1::computeHash(Vector<uint8_t, 20>& digest)
+void SHA1::computeHash(Digest& digest)
 {
     finalize();
 
-    digest.clear();
-    digest.resize(20);
     for (size_t i = 0; i < 5; ++i) {
         // Treat hashValue as a big-endian value.
         uint32_t hashValue = m_hash[i];
@@ -106,12 +104,12 @@ void SHA1::computeHash(Vector<uint8_t, 20>& digest)
     reset();
 }
 
-CString SHA1::hexDigest(const Vector<uint8_t, 20>& digest)
+CString SHA1::hexDigest(const Digest& digest)
 {
     char* start = 0;
     CString result = CString::newUninitialized(40, start);
     char* buffer = start;
-    for (size_t i = 0; i < 20; ++i) {
+    for (size_t i = 0; i < hashSize; ++i) {
         snprintf(buffer, 3, "%02X", digest.at(i));
         buffer += 2;
     }
@@ -120,7 +118,7 @@ CString SHA1::hexDigest(const Vector<uint8_t, 20>& digest)
 
 CString SHA1::computeHexDigest()
 {
-    Vector<uint8_t, 20> digest;
+    Digest digest;
     computeHash(digest);
     return hexDigest(digest);
 }

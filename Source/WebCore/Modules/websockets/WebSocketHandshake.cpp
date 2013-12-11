@@ -113,7 +113,7 @@ String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocket
     CString keyData = secWebSocketKey.ascii();
     sha1.addBytes(reinterpret_cast<const uint8_t*>(keyData.data()), keyData.length());
     sha1.addBytes(reinterpret_cast<const uint8_t*>(webSocketKeyGUID), strlen(webSocketKeyGUID));
-    Vector<uint8_t, SHA1::hashSize> hash;
+    SHA1::Digest hash;
     sha1.computeHash(hash);
     return base64Encode(hash.data(), SHA1::hashSize);
 }

@@ -1,3 +1,18 @@
+2013-12-11  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        Store SHA1 hash in std::array
+        https://bugs.webkit.org/show_bug.cgi?id=125446
+
+        Reviewed by Darin Adler.
+
+        Change Vector to std::array and use typedef.
+
+        * wtf/SHA1.cpp:
+        (WTF::SHA1::computeHash):
+        (WTF::SHA1::hexDigest):
+        (WTF::SHA1::computeHexDigest):
+        * wtf/SHA1.h:
+
 2013-12-11  Oliver Hunt  <oliver@apple.com>
 
         Give Unique StringImpls a meaningful data pointer
