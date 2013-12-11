@@ -15240,4 +15240,9 @@
       <Filter>platform\win</Filter>
     </MASM>
   </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\plugins\win\PaintHooks.asm">
+      <Filter>plugins\win</Filter>
+    </MASM>
+  </ItemGroup>
 </Project>
