@@ -176,12 +176,12 @@ private:
     return [[[self alloc] initWithValue:value] autorelease];
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithValue:nil];
 }
 
-- (id)initWithValue:(JSValue *)value
+- (instancetype)initWithValue:(JSValue *)value
 {
     self = [super init];
     if (!self)

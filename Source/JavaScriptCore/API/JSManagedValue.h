@@ -70,15 +70,15 @@ OBJC_VISIBLE
 @param value
 @result The new JSManagedValue.
 */
-- (id)initWithValue:(JSValue *)value;
+- (instancetype)initWithValue:(JSValue *)value;
 
 /*!
-@method
+@property
 @abstract Get the JSValue from the JSManagedValue.
 @result The corresponding JSValue for this JSManagedValue or 
  nil if the JSValue has been collected.
 */
-- (JSValue *)value;
+@property (readonly, strong) JSValue *value;
 
 @end
 

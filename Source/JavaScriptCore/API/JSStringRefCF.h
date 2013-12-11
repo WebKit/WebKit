@@ -51,7 +51,7 @@ JS_EXPORT JSStringRef JSStringCreateWithCFString(CFStringRef string);
 @param string     The JSString to copy into the new CFString.
 @result           A CFString containing string. Ownership follows the Create Rule.
 */
-JS_EXPORT CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef string);
+JS_EXPORT CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef string) CF_RETURNS_RETAINED;
 
 #ifdef __cplusplus
 }

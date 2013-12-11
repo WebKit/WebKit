@@ -86,7 +86,7 @@ static NSMapTable *wrapperCache()
     NSMapTable *m_externalObjectGraph;
 }
 
-- (id)init
+- (instancetype)init
 {
     JSContextGroupRef group = JSContextGroupCreate();
     self = [self initWithContextGroupRef:group];
@@ -95,7 +95,7 @@ static NSMapTable *wrapperCache()
     return self;
 }
 
-- (id)initWithContextGroupRef:(JSContextGroupRef)group
+- (instancetype)initWithContextGroupRef:(JSContextGroupRef)group
 {
     self = [super init];
     if (!self)

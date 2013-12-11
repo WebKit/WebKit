@@ -54,12 +54,12 @@
     return m_context;
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithVirtualMachine:[[[JSVirtualMachine alloc] init] autorelease]];
 }
 
-- (id)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
+- (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
 {
     self = [super init];
     if (!self)
@@ -198,9 +198,9 @@
 
 @end
 
-@implementation JSContext(Internal)
+@implementation JSContext (Internal)
 
-- (id)initWithGlobalContextRef:(JSGlobalContextRef)context
+- (instancetype)initWithGlobalContextRef:(JSGlobalContextRef)context
 {
     self = [super init];
     if (!self)

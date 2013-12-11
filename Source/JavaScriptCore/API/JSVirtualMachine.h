@@ -48,7 +48,7 @@ OBJC_VISIBLE
 @method
 @abstract Create a new JSVirtualMachine.
 */
-- (id)init;
+- (instancetype)init;
 
 /*!
 @methodgroup Memory Management

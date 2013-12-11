@@ -58,7 +58,7 @@ OBJC_VISIBLE
 @abstract Create a JSContext.
 @result The new context.
 */
-- (id)init;
+- (instancetype)init;
 
 /*!
 @method
@@ -66,7 +66,7 @@ OBJC_VISIBLE
 @param virtualMachine The JSVirtualMachine in which the context will be created.
 @result The new context.
 */
-- (id)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine;
+- (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine;
 
 /*!
 @methodgroup Evaluating Scripts
@@ -117,14 +117,14 @@ OBJC_VISIBLE
 @methodgroup Global Properties
 */
 /*!
-@method
+@property
 @abstract Get the global object of the context.
 @discussion This method retrieves the global object of the JavaScript execution context.
  Instances of JSContext originating from WebKit will return a reference to the
  WindowProxy object.
 @result The global object.
 */
-- (JSValue *)globalObject;
+@property (readonly, strong) JSValue *globalObject;
 
 /*!
 @property
@@ -143,7 +143,7 @@ OBJC_VISIBLE
  If a JSValue originating from a different JSVirtualMachine than this context
  is assigned to this property, an Objective-C exception will be raised.
 */
-@property(retain) JSValue *exception;
+@property (strong) JSValue *exception;
 
 /*!
 @property
@@ -155,14 +155,14 @@ OBJC_VISIBLE
  Setting this value to nil will result in all uncaught exceptions thrown from
  the API being silently consumed.
 */
-@property(copy) void(^exceptionHandler)(JSContext *context, JSValue *exception);
+@property (copy) void(^exceptionHandler)(JSContext *context, JSValue *exception);
 
 /*!
 @property
 @discussion All instances of JSContext are associated with a single JSVirtualMachine. The
  virtual machine provides an "object space" or set of execution resources.
 */
-@property(readonly, retain) JSVirtualMachine *virtualMachine;
+@property (readonly, strong) JSVirtualMachine *virtualMachine;
 
 /*!
 @property
@@ -187,7 +187,7 @@ OBJC_VISIBLE
  and then the value converted to a string used to resolve a property of the
  global object.
 */
-@interface JSContext(SubscriptSupport)
+@interface JSContext (SubscriptSupport)
 
 /*!
 method
@@ -211,7 +211,7 @@ method
 @category
 @discussion These functions are for bridging between the C API and the Objective-C API.
 */
-@interface JSContext(JSContextRefSupport)
+@interface JSContext (JSContextRefSupport)
 
 /*!
 @method
@@ -222,11 +222,11 @@ method
 + (JSContext *)contextWithJSGlobalContextRef:(JSGlobalContextRef)jsGlobalContextRef;
 
 /*!
-@method
+@property
 @abstract Get the C API counterpart wrapped by a JSContext.
 @result The C API equivalent of this JSContext.
 */
-- (JSGlobalContextRef)JSGlobalContextRef;
+@property (readonly) JSGlobalContextRef JSGlobalContextRef;
 @end
 
 #endif

@@ -61,7 +61,7 @@ OBJC_VISIBLE
 @property
 @abstract The JSContext that this value originates from.
 */
-@property(readonly, retain) JSContext *context;
+@property (readonly, strong) JSContext *context;
 
 /*!
 @methodgroup Creating JavaScript Values
@@ -483,7 +483,7 @@ OBJC_VISIBLE
  return type of the latter.
  Support is provided for structs of type CGPoint, NSRange, CGRect and CGSize.
 */
-@interface JSValue(StructSupport)
+@interface JSValue (StructSupport)
 
 /*!
 @method
@@ -572,7 +572,7 @@ Create a JSValue from a CGRect.
  An object key passed as a subscript will be converted to a JavaScript value,
  and then the value converted to a string used as a property name.
 */
-@interface JSValue(SubscriptSupport)
+@interface JSValue (SubscriptSupport)
 
 - (JSValue *)objectForKeyedSubscript:(id)key;
 - (JSValue *)objectAtIndexedSubscript:(NSUInteger)index;
@@ -585,7 +585,7 @@ Create a JSValue from a CGRect.
 @category
 @discussion  These functions are for bridging between the C API and the Objective-C API.
 */
-@interface JSValue(JSValueRefSupport)
+@interface JSValue (JSValueRefSupport)
 
 /*!
 @method
@@ -597,11 +597,11 @@ Create a JSValue from a CGRect.
 + (JSValue *)valueWithJSValueRef:(JSValueRef)value inContext:(JSContext *)context;
 
 /*!
-@method
+@property
 @abstract Returns the C API counterpart wrapped by a JSContext.
 @result The C API equivalent of this JSValue.
 */
-- (JSValueRef)JSValueRef;
+@property (readonly) JSValueRef JSValueRef;
 @end
 
 #ifdef __cplusplus

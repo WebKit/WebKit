@@ -1,5 +1,29 @@
 2013-12-11  Mark Rowe  <mrowe@apple.com>
 
+        <https://webkit.org/b/125141> Modernize the JavaScriptCore API headers
+        <rdar://problem/15540121>
+
+        This consists of three main changes:
+        1) Converting the return type of initializer methods to instancetype.
+        2) Declaring properties rather than getters and setters.
+        3) Tagging C API methods with information about their memory management semantics.
+
+        Changing the declarations from getters and setters to properties also required
+        updating the headerdoc in a number of places.
+
+        Reviewed by Anders Carlsson.
+
+        * API/JSContext.h:
+        * API/JSContext.mm:
+        * API/JSManagedValue.h:
+        * API/JSManagedValue.mm:
+        * API/JSStringRefCF.h:
+        * API/JSValue.h:
+        * API/JSVirtualMachine.h:
+        * API/JSVirtualMachine.mm:
+
+2013-12-11  Mark Rowe  <mrowe@apple.com>
+
         <https://webkit.org/b/125559> Move JavaScriptCore off the legacy WebKit availability macros
 
         The legacy WebKit availability macros are verbose, confusing, and provide no benefit over
