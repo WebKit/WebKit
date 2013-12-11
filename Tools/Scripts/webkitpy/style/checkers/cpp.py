@@ -2021,7 +2021,7 @@ def check_member_initialization_list(clean_lines, line_number, error):
                 if not line.startswith(inner_indentation) and begin_line != line:
                     error(line_number, 'whitespace/indent', 4,
                         'Wrong number of spaces before statement. (expected: %d)' % len(inner_indentation))
-                if search(r'\S\s*,', line):
+                if search(r'\S\s*,\s*$', line):
                     error(line_number, 'whitespace/init', 4,
                         'Comma should be at the beginning of the line in a member initialization list.')
 

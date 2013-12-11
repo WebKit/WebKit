@@ -4975,7 +4975,8 @@ class WebKitStyleTest(CppStyleTestBase):
         'Missing spaces around :  [whitespace/init] [4]')
         self.assert_multi_line_lint('''\
         MyClass::MyClass(Document* doc)
-            : MySuperClass() , m_doc(0)
+            : MySuperClass() ,
+            m_doc(0)
         { }''',
         'Comma should be at the beginning of the line in a member initialization list.'
         '  [whitespace/init] [4]')
@@ -4988,6 +4989,11 @@ class WebKitStyleTest(CppStyleTestBase):
         : public Goo
         , public foo {
         };''',
+        '')
+        self.assert_multi_line_lint('''\
+        MyClass::MyClass(Document* doc)
+            : MySuperClass(doc, doc)
+        { }''',
         '')
         self.assert_lint('o = foo(b ? bar() : baz());', '')
         self.assert_lint('MYMACRO(a ? b() : c);', '')
