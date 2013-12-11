@@ -1549,6 +1549,7 @@ webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-cover.html [
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure Crash ]
+webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain-no-repeat.html [ ImageOnlyFailure Crash ]
 
 # Newly added test in r148131 is failing.
 webkit.org/b/114876 media/click-volume-bar-not-pausing.html [ Failure ]
@@ -1790,3 +1791,8 @@ webkit.org/b/125517 compositing/regions/region-as-layer-in-another-flowthread.ht
 webkit.org/b/125517 compositing/regions/transformed-layer-inside-transformed-layer.html [ ImageOnlyFailure ]
 webkit.org/b/125517 compositing/regions/z-index-update.html [ ImageOnlyFailure ]
 webkit.org/b/125517 compositing/regions/z-index.html [ ImageOnlyFailure ]
+
+webkit.org/b/125573 compositing/backgrounds/fixed-background-on-descendant.html [ ImageOnlyFailure ]
+webkit.org/b/125573 compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
+
+webkit.org/b/125578 compositing/images/positioned-image-content-rect.html [ ImageOnlyFailure ]

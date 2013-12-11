@@ -1,3 +1,12 @@
+2013-12-11  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add test expectations for failing ref-tests.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2013-12-11  Rob Buis  <rob.buis@samsung.com>
 
         [CSS Shapes] Take into account fill-rule for polygon interpolation
