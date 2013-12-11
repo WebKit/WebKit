@@ -55,6 +55,47 @@ public:
         
         m_graph.clearReplacements();
         
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            
+            // All Phis need to already be marked as relevant to OSR.
+            if (!ASSERT_DISABLED) {
+                for (unsigned i = 0; i < block->phis.size(); ++i)
+                    ASSERT(block->phis[i]->flags() & NodeRelevantToOSR);
+            }
+            
+            for (unsigned i = block->size(); i--;) {
+                Node* node = block->at(i);
+                
+                switch (node->op()) {
+                case SetLocal:
+                case GetLocal: // FIXME: The GetLocal case is only necessary until we do https://bugs.webkit.org/show_bug.cgi?id=106707.
+                    node->mergeFlags(NodeRelevantToOSR);
+                    break;
+                default:
+                    node->clearFlags(NodeRelevantToOSR);
+                    break;
+                }
+            }
+        }
+        
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            
+            for (unsigned i = block->size(); i--;) {
+                Node* node = block->at(i);
+                if (!node->containsMovHint())
+                    continue;
+                
+                ASSERT(node->op() != ZombieHint);
+                node->child1()->mergeFlags(NodeRelevantToOSR);
+            }
+        }
+        
         if (m_graph.m_form == SSA) {
             Vector<BasicBlock*> depthFirst;
             m_graph.getBlocksInDepthFirstOrder(depthFirst);
@@ -1022,11 +1063,6 @@ private:
         if (cseMode == NormalCSE)
             m_graph.performSubstitution(node);
         
-        if (node->containsMovHint()) {
-            ASSERT(node->op() != ZombieHint);
-            node->child1()->mergeFlags(NodeRelevantToOSR);
-        }
-        
         switch (node->op()) {
         
         case Identity:
@@ -1374,28 +1410,6 @@ private:
         for (unsigned i = 0; i < LastNodeType; ++i)
             m_lastSeen[i] = UINT_MAX;
         
-        // All Phis need to already be marked as relevant to OSR.
-        if (!ASSERT_DISABLED) {
-            for (unsigned i = 0; i < block->phis.size(); ++i)
-                ASSERT(block->phis[i]->flags() & NodeRelevantToOSR);
-        }
-        
-        // Make all of my SetLocal and GetLocal nodes relevant to OSR, and do some other
-        // necessary bookkeeping.
-        for (unsigned i = 0; i < block->size(); ++i) {
-            Node* node = block->at(i);
-            
-            switch (node->op()) {
-            case SetLocal:
-            case GetLocal: // FIXME: The GetLocal case is only necessary until we do https://bugs.webkit.org/show_bug.cgi?id=106707.
-                node->mergeFlags(NodeRelevantToOSR);
-                break;
-            default:
-                node->clearFlags(NodeRelevantToOSR);
-                break;
-            }
-        }
-
         for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
             m_currentNode = block->at(m_indexInBlock);
             performNodeCSE(m_currentNode);

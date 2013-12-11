@@ -1,5 +1,20 @@
 2013-12-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Simplify CSE's treatment of NodeRelevantToOSR
+        https://bugs.webkit.org/show_bug.cgi?id=125538
+
+        Reviewed by Oliver Hunt.
+        
+        Make the NodeRelevantToOSR thing obvious: if there is any MovHint on a node then the
+        node is relevant to OSR.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::run):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        (JSC::DFG::CSEPhase::performBlockCSE):
+
+2013-12-10  Filip Pizlo  <fpizlo@apple.com>
+
         Get rid of forward exit in GetByVal on Uint32Array
         https://bugs.webkit.org/show_bug.cgi?id=125543
 
