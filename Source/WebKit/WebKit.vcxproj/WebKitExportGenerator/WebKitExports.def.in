@@ -464,7 +464,7 @@ EXPORTS
         symbolWithPointer(?setDefaultOriginQuota@ApplicationCacheStorage@WebCore@@QAEX_J@Z, ?setDefaultOriginQuota@ApplicationCacheStorage@WebCore@@QEAAX_J@Z)
         symbolWithPointer(?vm@ScriptExecutionContext@WebCore@@QAEPAVVM@JSC@@XZ, ?vm@ScriptExecutionContext@WebCore@@QEAAPEAVVM@JSC@@XZ)
 #if _MSC_VER >= 1800
-        symbolWithPointer(?completeURL@Document@WebCore@@UBE?AVURL@2@ABVString@WTF@@@Z, ?completeURL@Document@WebCore@@UBE?AVURL@2@ABVString@WTF@@@Z)
-        symbolWithPointer(??1DOMWindow@WebCore@@UAE@XZ, ??1DOMWindow@WebCore@@UAE@XZ)
-        symbolWithPointer(?visibleContentRect@ScrollView@WebCore@@UBE?AVIntRect@2@W4VisibleContentRectIncludesScrollbars@ScrollableArea@2@@Z, ?visibleContentRect@ScrollView@WebCore@@UBE?AVIntRect@2@W4VisibleContentRectIncludesScrollbars@ScrollableArea@2@@Z)
+        symbolWithPointer(?completeURL@Document@WebCore@@UBE?AVURL@2@ABVString@WTF@@@Z, ?completeURL@Document@WebCore@@UBEA?AVURL@2@AEBVString@WTF@@@Z)
+        symbolWithPointer(??1DOMWindow@WebCore@@UAE@XZ, ??1DOMWindow@WebCore@@UEAA@XZ)
+        symbolWithPointer(?visibleContentRect@ScrollView@WebCore@@UBE?AVIntRect@2@W4VisibleContentRectIncludesScrollbars@ScrollableArea@2@@Z, ?visibleContentRect@ScrollView@WebCore@@UEAA?AVIntRect@2@W4VisibleContentRectIncludesScrollbars@ScrollableArea@2@@Z)
 #endif
