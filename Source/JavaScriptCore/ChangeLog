@@ -1,5 +1,32 @@
 2013-12-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Get rid of forward exit on DoubleAsInt32
+        https://bugs.webkit.org/show_bug.cgi?id=125552
+
+        Reviewed by Oliver Hunt.
+        
+        The forward exit was just there so that we wouldn't have to keep the inputs alive up to
+        the DoubleAsInt32. That's dumb. Forward exits are a complicated piece of machinery and
+        we shouldn't have it just for a bit of liveness micro-optimization.
+        
+        Also add a bunch of machinery to test this case on X86.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::optimizeForARMv7s):
+        (JSC::optimizeForARM64):
+        (JSC::optimizeForX86):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoubleAsInt32):
+        * runtime/Options.h:
+        * tests/stress/double-as-int32.js: Added.
+        (foo):
+        (test):
+
+2013-12-10  Filip Pizlo  <fpizlo@apple.com>
+
         Simplify CSE's treatment of NodeRelevantToOSR
         https://bugs.webkit.org/show_bug.cgi?id=125538
 

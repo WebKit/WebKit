@@ -144,6 +144,8 @@ typedef OptionRange optionRange;
     v(bool, forceUDis86Disassembler, false) \
     v(bool, forceLLVMDisassembler, false) \
     \
+    v(bool, enableArchitectureSpecificOptimizations, true) \
+    \
     v(unsigned, maximumOptimizationCandidateInstructionCount, 10000) \
     \
     v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 180) \

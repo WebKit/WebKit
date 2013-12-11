@@ -2188,7 +2188,7 @@ void SpeculativeJIT::compileDoubleAsInt32(Node* node)
     JITCompiler::JumpList failureCases;
     bool negZeroCheck = !bytecodeCanIgnoreNegativeZero(node->arithNodeFlags());
     m_jit.branchConvertDoubleToInt32(valueFPR, resultGPR, failureCases, scratchFPR, negZeroCheck);
-    forwardSpeculationCheck(Overflow, JSValueRegs(), 0, failureCases, ValueRecovery::inFPR(valueFPR));
+    speculationCheck(Overflow, JSValueRegs(), 0, failureCases);
 
     int32Result(resultGPR, node);
 }

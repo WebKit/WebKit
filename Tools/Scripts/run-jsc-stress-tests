@@ -563,6 +563,10 @@ def runAlwaysTriggerCopyPhase
     run("always-trigger-copy-phase", "--minHeapUtilization=2.0", "--minCopiedBlockUtilization=2.0")
 end
 
+def runNoCJITNoASO
+    run("no-cjit-no-aso", "--enableConcurrentJIT=false", "--enableArchitectureSpecificOptimizations=false")
+end
+
 def defaultRun
     runDefault
     runNoLLInt

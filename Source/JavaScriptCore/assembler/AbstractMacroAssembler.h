@@ -29,6 +29,7 @@
 #include "AssemblerBuffer.h"
 #include "CodeLocation.h"
 #include "MacroAssemblerCodeRef.h"
+#include "Options.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Noncopyable.h>
 
@@ -61,6 +62,21 @@ inline bool isX86()
 #else
     return false;
 #endif
+}
+
+inline bool optimizeForARMv7s()
+{
+    return isARMv7s() && Options::enableArchitectureSpecificOptimizations();
+}
+
+inline bool optimizeForARM64()
+{
+    return isARM64() && Options::enableArchitectureSpecificOptimizations();
+}
+
+inline bool optimizeForX86()
+{
+    return isX86() && Options::enableArchitectureSpecificOptimizations();
 }
 
 class LinkBuffer;

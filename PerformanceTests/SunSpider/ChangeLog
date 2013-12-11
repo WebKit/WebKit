@@ -1,3 +1,15 @@
+2013-12-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of forward exit on DoubleAsInt32
+        https://bugs.webkit.org/show_bug.cgi?id=125552
+
+        Reviewed by Oliver Hunt.
+        
+        Use SunSpider as a kind of spot-check for the
+        no-architecture-specific-optimization paths in the compiler.
+
+        * no-architecture-specific-optimizations.yaml: Added.
+
 2013-10-08  Geoffrey Garen  <ggaren@apple.com>
 
         Refined power management in SunSpider 1.0.2

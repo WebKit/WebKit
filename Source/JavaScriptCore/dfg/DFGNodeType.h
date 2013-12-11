@@ -111,7 +111,7 @@ namespace JSC { namespace DFG {
     /* of the value from the integer form. */\
     macro(Int32ToDouble, NodeResultNumber) \
     /* Used to speculate that a double value is actually an integer. */\
-    macro(DoubleAsInt32, NodeResultInt32 | NodeExitsForward) \
+    macro(DoubleAsInt32, NodeResultInt32) \
     /* Used to separate representation and register allocation of Int52's represented */\
     /* as values. */\
     macro(Int52ToValue, NodeResultJS) \
