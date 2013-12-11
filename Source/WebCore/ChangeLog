@@ -1,3 +1,54 @@
+2013-12-11  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add a UPower-based BatteryProvider
+        https://bugs.webkit.org/show_bug.cgi?id=115719
+
+        Reviewed by Martin Robinson.
+
+        Introduce the BatteryProviderUPower, a provider of the system's battery status that produces the information
+        using the upower-glib library.
+
+        The BatteryProviderUPower creates a new UPower client when the provider should start emitting updates and hooks
+        up to device alteration signals. These only fire recalculation of the battery status when a battery device is altered.
+
+        When recalculating, every battery device is taken into account, accumulating the energy capacities when both empty
+        and full, the current rate of energy charging/discharging, and the battery status (whether the device is charging or
+        discharging). This gives a set of data that covers the overall battery status of the system.
+
+        This data is then used to calculate the battery status as perceived by the WebCore implementation. Charging is determined
+        by examining the integral sign of the current combined energy rate. Charging and discharging times are calculated, when
+        appropriate, by dividing the chargable/dischargable capacity with the current combined energy rate. The battery level is
+        calculated by dividing the current energy capacity with the full energy capacity (i.e. the combined capacity of all
+        the batteries that the system possesses). The status is (indirectly) passed onto BatteryManager by invoking the
+        updateBatteryStatus method on the client, with the first parameter representing the battery charging/discharging state,
+        the second parameter representing the time left until the battery is fully charged (when charging) or fully
+        depleted (when discharging), and the third parameter representing the current battery level.
+
+        Whenever the implementation cannot provide any information about the battery status of the system, the client's
+        updateBatteryStatus method is invoked with the first parameter reporting the unavailability of any information
+        about the battery status. The other two parameters can be omitted as they default to 0 when not given and are neither
+        available nor useful in such circumstances. The client should handle such an update by reporting the 'default' battery
+        status - charging, the battery level being at 1.0 and both the charging and discharging time having the value of
+        the positive infinity (as per the Battery Status API specification).
+
+        The implementation is heavily inspired by a similar approach to calculating battery status in GNOME Settings Daemon.
+
+        No new tests - no new functionality. The feature is not yet enabled. When enabled, the relevant tests pass.
+
+        * GNUmakefile.list.am: Add the BatteryProviderUPower(Client) build targets.
+        * platform/glib/BatteryProviderUPower.cpp: Added.
+        (powerDeviceAlterationCallback):
+        (BatteryProviderUPower::BatteryProviderUPower):
+        (BatteryProviderUPower::startUpdating):
+        (BatteryProviderUPower::stopUpdating):
+        (BatteryProviderUPower::updateBatteryStatus):
+        * platform/glib/BatteryProviderUPower.h: Added.
+        (WebCore):
+        (BatteryProviderUPower):
+        * platform/glib/BatteryProviderUPowerClient.h: Added.
+        (WebCore):
+        (BatteryProviderUPowerClient):
+
 2013-12-11  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Improving createOffer and createAnswer LayoutTests

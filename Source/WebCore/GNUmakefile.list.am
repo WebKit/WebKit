@@ -5585,6 +5585,9 @@ platform_sources += \
 	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.h \
 	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.cpp \
 	Source/WebCore/platform/geoclue/GeolocationProviderGeoclueClient.h \
+	Source/WebCore/platform/glib/BatteryProviderUPowerClient.h \
+	Source/WebCore/platform/glib/BatteryProviderUPower.cpp \
+	Source/WebCore/platform/glib/BatteryProviderUPower.h \
 	Source/WebCore/platform/graphics/cairo/BitmapImageCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/CairoUtilities.cpp \
 	Source/WebCore/platform/graphics/cairo/CairoUtilities.h \

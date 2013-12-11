@@ -28,6 +28,7 @@ platform_webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/audio \
 	-I$(srcdir)/Source/WebCore/platform/cairo \
 	-I$(srcdir)/Source/WebCore/platform/geoclue \
+	-I$(srcdir)/Source/WebCore/platform/glib \
 	-I$(srcdir)/Source/WebCore/platform/graphics \
 	-I$(srcdir)/Source/WebCore/platform/graphics/cairo \
 	-I$(srcdir)/Source/WebCore/platform/graphics/cpu/arm \
@@ -95,7 +96,8 @@ libPlatform_la_CPPFLAGS = \
 	$(FREETYPE_CFLAGS) \
 	$(GEOCLUE_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
-	$(LIBSOUP_CFLAGS)
+	$(LIBSOUP_CFLAGS) \
+	$(UPOWER_GLIB_CFLAGS)
 
 libPlatformGtk_la_SOURCES = \
 	$(platformgtk_sources)

@@ -1,3 +1,13 @@
+2013-12-11  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add a UPower-based BatteryProvider
+        https://bugs.webkit.org/show_bug.cgi?id=115719
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add the Source/WebCore/platform/glib directory to the list of directories searched
+        for header inclusion. Add the upower-glib dependency CFLAGS to the list of libPlatform's CPPFLAGS.
+
 2013-12-02  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Nix Upstream: Updating Platform files
