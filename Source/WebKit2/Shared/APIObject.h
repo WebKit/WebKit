@@ -66,6 +66,7 @@ public:
         Error,
         FrameHandle,
         Image,
+        PageGroupData,
         PageHandle,
         ProtectionSpace,
         RenderLayer,

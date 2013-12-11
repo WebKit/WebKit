@@ -113,7 +113,7 @@ void getPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDiction
 #if ENABLE(NETSCAPE_PLUGIN_API)
     map.set(pluginInformationPathKey(), WebString::create(plugin.path));
     map.set(pluginInformationDisplayNameKey(), WebString::create(plugin.info.name));
-    map.set(pluginInformationDefaultLoadPolicyKey(), WebUInt64::create(toWKPluginLoadPolicy(PluginInfoStore::defaultLoadPolicyForPlugin(plugin))));
+    map.set(pluginInformationDefaultLoadPolicyKey(), API::UInt64::create(toWKPluginLoadPolicy(PluginInfoStore::defaultLoadPolicyForPlugin(plugin))));
 
     getPlatformPluginModuleInformation(plugin, map);
 #else
@@ -145,7 +145,7 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginMo
         map.set(pluginInformationPluginspageAttributeURLKey(), WebURL::create(pluginspageAttributeURLString));
     if (!pluginURLString.isEmpty())
         map.set(pluginInformationPluginURLKey(), WebURL::create(pluginURLString));
-    map.set(plugInInformationReplacementObscuredKey(), WebBoolean::create(replacementObscured));
+    map.set(plugInInformationReplacementObscuredKey(), API::Boolean::create(replacementObscured));
 
     return ImmutableDictionary::adopt(map);
 }

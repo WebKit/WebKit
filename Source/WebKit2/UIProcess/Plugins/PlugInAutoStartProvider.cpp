@@ -89,7 +89,7 @@ PassRefPtr<ImmutableDictionary> PlugInAutoStartProvider::autoStartOriginsTableCo
         for (PlugInAutoStartOriginHash::const_iterator valueIt = it->value.begin(); valueIt != valueEnd; ++valueIt) {
             if (now > valueIt->value)
                 continue;
-            hashMap.set(String::number(valueIt->key), WebDouble::create(valueIt->value));
+            hashMap.set(String::number(valueIt->key), API::Double::create(valueIt->value));
         }
 
         if (hashMap.size())
@@ -116,10 +116,10 @@ void PlugInAutoStartProvider::setAutoStartOriginsTable(ImmutableDictionary& tabl
             if (!ok)
                 continue;
 
-            if (hashIt->value->type() != WebDouble::APIType)
+            if (hashIt->value->type() != API::Double::APIType)
                 continue;
 
-            double expirationTime = static_cast<WebDouble*>(hashIt->value.get())->value();
+            double expirationTime = static_cast<API::Double*>(hashIt->value.get())->value();
             hashes.set(hash, expirationTime);
             hashMap.set(hash, expirationTime);
             m_hashToOriginMap.set(hash, it->key);

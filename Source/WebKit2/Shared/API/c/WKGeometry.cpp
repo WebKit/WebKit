@@ -33,35 +33,32 @@ using namespace WebKit;
 
 WKTypeID WKSizeGetTypeID()
 {
-    return toAPI(WebSize::APIType);
+    return toAPI(API::Size::APIType);
 }
 
 WKTypeID WKPointGetTypeID()
 {
-    return toAPI(WebPoint::APIType);
+    return toAPI(API::Point::APIType);
 }
 
 WKTypeID WKRectGetTypeID()
 {
-    return toAPI(WebRect::APIType);
+    return toAPI(API::Rect::APIType);
 }
 
 WKPointRef WKPointCreate(WKPoint point)
 {
-    RefPtr<WebPoint> webPoint = WebPoint::create(point);
-    return toAPI(webPoint.release().leakRef());
+    return toAPI(API::Point::create(point).leakRef());
 }
 
 WKSizeRef WKSizeCreate(WKSize size)
 {
-    RefPtr<WebSize> webSize = WebSize::create(size);
-    return toAPI(webSize.release().leakRef());
+    return toAPI(API::Size::create(size).leakRef());
 }
 
 WKRectRef WKRectCreate(WKRect rect)
 {
-    RefPtr<WebRect> webRect = WebRect::create(rect);
-    return toAPI(webRect.release().leakRef());
+    return toAPI(API::Rect::create(rect).leakRef());
 }
 
 WKSize WKSizeGetValue(WKSizeRef size)

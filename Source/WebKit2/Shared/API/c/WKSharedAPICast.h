@@ -60,6 +60,9 @@
 
 namespace API {
 class Array;
+class Point;
+class Rect;
+class Size;
 }
 
 namespace WebKit {
@@ -75,11 +78,8 @@ class WebContextMenuItem;
 class WebData;
 class WebGraphicsContext;
 class WebImage;
-class WebPoint;
-class WebRect;
 class WebSecurityOrigin;
 class WebSerializedScriptValue;
-class WebSize;
 class WebURLRequest;
 class WebURLResponse;
 class WebUserContentURLPattern;
@@ -92,25 +92,25 @@ template<typename ImplType> struct ImplTypeInfo { };
     template<> struct ImplTypeInfo<TheImplType*> { typedef TheAPIType APIType; };
 
 WK_ADD_API_MAPPING(WKArrayRef, API::Array)
-WK_ADD_API_MAPPING(WKBooleanRef, WebBoolean)
+WK_ADD_API_MAPPING(WKBooleanRef, API::Boolean)
 WK_ADD_API_MAPPING(WKCertificateInfoRef, WebCertificateInfo)
 WK_ADD_API_MAPPING(WKConnectionRef, WebConnection)
 WK_ADD_API_MAPPING(WKContextMenuItemRef, WebContextMenuItem)
 WK_ADD_API_MAPPING(WKDataRef, WebData)
 WK_ADD_API_MAPPING(WKDictionaryRef, ImmutableDictionary)
-WK_ADD_API_MAPPING(WKDoubleRef, WebDouble)
+WK_ADD_API_MAPPING(WKDoubleRef, API::Double)
 WK_ADD_API_MAPPING(WKErrorRef, WebError)
 WK_ADD_API_MAPPING(WKGraphicsContextRef, WebGraphicsContext)
 WK_ADD_API_MAPPING(WKImageRef, WebImage)
 WK_ADD_API_MAPPING(WKMutableDictionaryRef, MutableDictionary)
-WK_ADD_API_MAPPING(WKPointRef, WebPoint)
-WK_ADD_API_MAPPING(WKRectRef, WebRect)
+WK_ADD_API_MAPPING(WKPointRef, API::Point)
+WK_ADD_API_MAPPING(WKRectRef, API::Rect)
 WK_ADD_API_MAPPING(WKSecurityOriginRef, WebSecurityOrigin)
 WK_ADD_API_MAPPING(WKSerializedScriptValueRef, WebSerializedScriptValue)
-WK_ADD_API_MAPPING(WKSizeRef, WebSize)
+WK_ADD_API_MAPPING(WKSizeRef, API::Size)
 WK_ADD_API_MAPPING(WKStringRef, WebString)
 WK_ADD_API_MAPPING(WKTypeRef, API::Object)
-WK_ADD_API_MAPPING(WKUInt64Ref, WebUInt64)
+WK_ADD_API_MAPPING(WKUInt64Ref, API::UInt64)
 WK_ADD_API_MAPPING(WKURLRef, WebURL)
 WK_ADD_API_MAPPING(WKURLRequestRef, WebURLRequest)
 WK_ADD_API_MAPPING(WKURLResponseRef, WebURLResponse)

@@ -69,7 +69,7 @@ void WebNotificationProvider::clearNotifications(const Vector<uint64_t>& notific
     arrayIDs.reserveInitialCapacity(notificationIDs.size());
 
     for (const auto& notificationID : notificationIDs)
-        arrayIDs.uncheckedAppend(WebUInt64::create(notificationID));
+        arrayIDs.uncheckedAppend(API::UInt64::create(notificationID));
 
     m_client.clearNotifications(toAPI(API::Array::create(std::move(arrayIDs)).get()), m_client.base.clientInfo);
 }

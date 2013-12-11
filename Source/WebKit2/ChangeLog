@@ -1,5 +1,85 @@
 2013-12-10  Anders Carlsson  <andersca@apple.com>
 
+        Move number and geometry classes into the API namespace
+        https://bugs.webkit.org/show_bug.cgi?id=125549
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectEncoder encodeBool:forKey:]):
+        (-[WKRemoteObjectEncoder encodeInt64:forKey:]):
+        (-[WKRemoteObjectEncoder encodeDouble:forKey:]):
+        (-[WKRemoteObjectDecoder decodeBoolForKey:]):
+        (-[WKRemoteObjectDecoder decodeInt64ForKey:]):
+        (-[WKRemoteObjectDecoder decodeDoubleForKey:]):
+        * Shared/API/c/WKGeometry.cpp:
+        (WKSizeGetTypeID):
+        (WKPointGetTypeID):
+        (WKRectGetTypeID):
+        (WKPointCreate):
+        (WKSizeCreate):
+        (WKRectCreate):
+        * Shared/API/c/WKNumber.cpp:
+        (WKBooleanGetTypeID):
+        (WKBooleanCreate):
+        (WKDoubleGetTypeID):
+        (WKDoubleCreate):
+        (WKUInt64GetTypeID):
+        (WKUInt64Create):
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/APIGeometry.cpp:
+        (API::Point::encode):
+        (API::Point::decode):
+        (API::Size::encode):
+        (API::Size::decode):
+        (API::Rect::encode):
+        (API::Rect::decode):
+        * Shared/APIGeometry.h:
+        (API::Size::create):
+        (API::Size::Size):
+        (API::Point::create):
+        (API::Point::Point):
+        (API::Rect::create):
+        (API::Rect::Rect):
+        * Shared/APINumber.h:
+        (API::Number::create):
+        (API::Number::decode):
+        (API::Number::Number):
+        * Shared/APIObject.h:
+        * Shared/Plugins/Netscape/PluginInformation.cpp:
+        (WebKit::getPluginModuleInformation):
+        (WebKit::createPluginInformationDictionary):
+        * Shared/Plugins/Netscape/mac/PluginInformationMac.mm:
+        (WebKit::getPlatformPluginModuleInformation):
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::populateCopyOfNotificationPermissions):
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications):
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        (WebKit::WebNotificationProvider::clearNotifications):
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::PlugInAutoStartProvider::autoStartOriginsTableCopy):
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsTable):
+        * UIProcess/StatisticsRequest.cpp:
+        (WebKit::addToDictionaryFromHashMap):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::didGetDatabasesByOrigin):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFindStringMatches):
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::createNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::trackedRepaintRects):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:forParameter:]):
+
+2013-12-10  Anders Carlsson  <andersca@apple.com>
+
         Add encode and decode functions to WebNumber
         https://bugs.webkit.org/show_bug.cgi?id=125547
 

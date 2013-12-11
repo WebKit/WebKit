@@ -96,7 +96,7 @@ void WebNotificationManagerProxy::populateCopyOfNotificationPermissions(HashMap<
     RefPtr<API::Array> knownOrigins = knownPermissions->keys();
     for (size_t i = 0; i < knownOrigins->size(); ++i) {
         WebString* origin = knownOrigins->at<WebString>(i);
-        permissions.set(origin->string(), knownPermissions->get<WebBoolean>(origin->string())->value());
+        permissions.set(origin->string(), knownPermissions->get<API::Boolean>(origin->string())->value());
     }
 }
 
@@ -208,7 +208,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
     
     size_t size = globalNotificationIDs->size();
     for (size_t i = 0; i < size; ++i) {
-        auto it = m_globalNotificationMap.find(globalNotificationIDs->at<WebUInt64>(i)->value());
+        auto it = m_globalNotificationMap.find(globalNotificationIDs->at<API::UInt64>(i)->value());
         if (it == m_globalNotificationMap.end())
             continue;
 

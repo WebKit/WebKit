@@ -209,7 +209,7 @@ using namespace WebKit;
     
     if (toImpl(result.get())->type() == WebString::APIType)
         return CFBridgingRelease(WKStringCopyCFString(kCFAllocatorDefault, (WKStringRef)result.get()));
-    else if (toImpl(result.get())->type() == WebBoolean::APIType)
+    else if (toImpl(result.get())->type() == API::Boolean::APIType)
         return [NSNumber numberWithBool:WKBooleanGetValue(static_cast<WKBooleanRef>(result.get()))];
 
     return nil;

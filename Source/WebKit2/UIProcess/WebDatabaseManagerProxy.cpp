@@ -170,16 +170,16 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
 
             detailsMap.set(databaseDetailsNameKey(), WebString::create(databaseDetails.name()));
             detailsMap.set(databaseDetailsDisplayNameKey(), WebString::create(databaseDetails.displayName()));
-            detailsMap.set(databaseDetailsExpectedUsageKey(), WebUInt64::create(databaseDetails.expectedUsage()));
-            detailsMap.set(databaseDetailsCurrentUsageKey(), WebUInt64::create(databaseDetails.currentUsage()));
+            detailsMap.set(databaseDetailsExpectedUsageKey(), API::UInt64::create(databaseDetails.expectedUsage()));
+            detailsMap.set(databaseDetailsCurrentUsageKey(), API::UInt64::create(databaseDetails.currentUsage()));
 
             databases.uncheckedAppend(ImmutableDictionary::adopt(detailsMap));
         }
 
         HashMap<String, RefPtr<API::Object>> originAndDatabasesMap;
         originAndDatabasesMap.set(originKey(), origin);
-        originAndDatabasesMap.set(originQuotaKey(), WebUInt64::create(originAndDatabases.originQuota));
-        originAndDatabasesMap.set(originUsageKey(), WebUInt64::create(originAndDatabases.originUsage));
+        originAndDatabasesMap.set(originQuotaKey(), API::UInt64::create(originAndDatabases.originQuota));
+        originAndDatabasesMap.set(originUsageKey(), API::UInt64::create(originAndDatabases.originUsage));
         originAndDatabasesMap.set(databaseDetailsKey(), API::Array::create(std::move(databases)));
 
         result.uncheckedAppend(ImmutableDictionary::adopt(originAndDatabasesMap));

@@ -36,13 +36,13 @@ class ArgumentDecoder;
 class ArgumentEncoder;
 }
 
-namespace WebKit {
+namespace API {
 
-class WebSize : public API::ObjectImpl<API::Object::Type::Size> {
+class Size : public API::ObjectImpl<API::Object::Type::Size> {
 public:
-    static PassRefPtr<WebSize> create(const WKSize& size)
+    static PassRefPtr<Size> create(const WKSize& size)
     {
-        return adoptRef(new WebSize(size));
+        return adoptRef(new Size(size));
     }
 
     const WKSize& size() const { return m_size; }
@@ -51,7 +51,7 @@ public:
     static bool decode(CoreIPC::ArgumentDecoder&, RefPtr<API::Object>&);
 
 private:
-    explicit WebSize(const WKSize& size)
+    explicit Size(const WKSize& size)
         : m_size(size)
     {
     }
@@ -59,11 +59,11 @@ private:
     WKSize m_size;
 };
 
-class WebPoint : public API::ObjectImpl<API::Object::Type::Point> {
+class Point : public API::ObjectImpl<API::Object::Type::Point> {
 public:
-    static PassRefPtr<WebPoint> create(const WKPoint& point)
+    static PassRefPtr<Point> create(const WKPoint& point)
     {
-        return adoptRef(new WebPoint(point));
+        return adoptRef(new Point(point));
     }
 
     const WKPoint& point() const { return m_point; }
@@ -72,18 +72,18 @@ public:
     static bool decode(CoreIPC::ArgumentDecoder&, RefPtr<API::Object>&);
 
 private:
-    explicit WebPoint(const WKPoint& point)
+    explicit Point(const WKPoint& point)
         : m_point(point)
     { }
 
     WKPoint m_point;
 };
 
-class WebRect : public API::ObjectImpl<API::Object::Type::Rect> {
+class Rect : public API::ObjectImpl<API::Object::Type::Rect> {
 public:
-    static PassRefPtr<WebRect> create(const WKRect& rect)
+    static PassRefPtr<Rect> create(const WKRect& rect)
     {
-        return adoptRef(new WebRect(rect));
+        return adoptRef(new Rect(rect));
     }
 
     const WKRect& rect() const { return m_rect; }
@@ -92,7 +92,7 @@ public:
     static bool decode(CoreIPC::ArgumentDecoder&, RefPtr<API::Object>&);
 
 private:
-    explicit WebRect(const WKRect& rect)
+    explicit Rect(const WKRect& rect)
         : m_rect(rect)
     {
     }
@@ -100,6 +100,6 @@ private:
     WKRect m_rect;
 };
 
-} // namespace WebKit
+} // namespace API
 
 #endif // APIGeometry_h

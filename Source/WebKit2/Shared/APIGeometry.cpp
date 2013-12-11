@@ -29,15 +29,15 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 
-namespace WebKit {
+namespace API {
 
-void WebPoint::encode(CoreIPC::ArgumentEncoder& encoder) const
+void Point::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder << m_point.x;
     encoder << m_point.y;
 }
 
-bool WebPoint::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
+bool Point::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
 {
     WKPoint point;
     if (!decoder.decode(point.x))
@@ -45,18 +45,18 @@ bool WebPoint::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
     if (!decoder.decode(point.y))
         return false;
 
-    result = WebPoint::create(point);
+    result = Point::create(point);
     return true;
 }
 
 
-void WebSize::encode(CoreIPC::ArgumentEncoder& encoder) const
+void Size::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder << m_size.width;
     encoder << m_size.height;
 }
 
-bool WebSize::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
+bool Size::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
 {
     WKSize size;
     if (!decoder.decode(size.width))
@@ -64,12 +64,12 @@ bool WebSize::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& res
     if (!decoder.decode(size.height))
         return false;
 
-    result = WebSize::create(size);
+    result = Size::create(size);
     return true;
 }
 
 
-void WebRect::encode(CoreIPC::ArgumentEncoder& encoder) const
+void Rect::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder << m_rect.origin.x;
     encoder << m_rect.origin.y;
@@ -77,7 +77,7 @@ void WebRect::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_rect.size.height;
 }
 
-bool WebRect::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
+bool Rect::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
 {
     WKRect rect;
     if (!decoder.decode(rect.origin.x))
@@ -89,9 +89,8 @@ bool WebRect::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& res
     if (!decoder.decode(rect.size.height))
         return false;
 
-    result = WebRect::create(rect);
+    result = Rect::create(rect);
     return true;
 }
 
-} // namespace WebKit
-
+} // namespace API

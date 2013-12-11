@@ -692,7 +692,7 @@ PassRefPtr<API::Array> WebPage::trackedRepaintRects()
     repaintRects.reserveInitialCapacity(view->trackedRepaintRects().size());
 
     for (const auto& repaintRect : view->trackedRepaintRects())
-        repaintRects.uncheckedAppend(WebRect::create(toAPI(repaintRect)));
+        repaintRects.uncheckedAppend(API::Rect::create(toAPI(repaintRect)));
 
     return API::Array::create(std::move(repaintRects));
 }

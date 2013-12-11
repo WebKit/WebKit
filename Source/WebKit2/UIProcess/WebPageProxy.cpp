@@ -3031,7 +3031,7 @@ void WebPageProxy::didFindStringMatches(const String& string, Vector<Vector<WebC
         apiRects.reserveInitialCapacity(rects.size());
 
         for (const auto& rect : rects)
-            apiRects.uncheckedAppend(WebRect::create(toAPI(rect)));
+            apiRects.uncheckedAppend(API::Rect::create(toAPI(rect)));
 
         matches.uncheckedAppend(API::Array::create(std::move(apiRects)));
     }

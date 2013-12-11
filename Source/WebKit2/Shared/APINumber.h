@@ -31,14 +31,14 @@
 #include "ArgumentEncoder.h"
 #include <wtf/PassRefPtr.h>
 
-namespace WebKit {
+namespace API {
 
 template<typename NumberType, API::Object::Type APIObjectType>
-class WebNumber : public API::ObjectImpl<APIObjectType> {
+class Number : public ObjectImpl<APIObjectType> {
 public:
-    static PassRefPtr<WebNumber> create(NumberType value)
+    static PassRefPtr<Number> create(NumberType value)
     {
-        return adoptRef(new WebNumber(value));
+        return adoptRef(new Number(value));
     }
 
     NumberType value() const { return m_value; }
@@ -48,18 +48,18 @@ public:
         encoder << m_value;
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
+    static bool decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
     {
         NumberType value;
         if (!decoder.decode(value))
             return false;
 
-        result = WebNumber::create(value);
+        result = Number::create(value);
         return true;
     }
 
 private:
-    explicit WebNumber(NumberType value)
+    explicit Number(NumberType value)
         : m_value(value)
     {
     }
@@ -67,10 +67,10 @@ private:
     const NumberType m_value;
 };
 
-typedef WebNumber<bool, API::Object::Type::Boolean> WebBoolean;
-typedef WebNumber<double, API::Object::Type::Double> WebDouble;
-typedef WebNumber<uint64_t, API::Object::Type::UInt64> WebUInt64;
+typedef Number<bool, API::Object::Type::Boolean> Boolean;
+typedef Number<double, API::Object::Type::Double> Double;
+typedef Number<uint64_t, API::Object::Type::UInt64> UInt64;
 
-} // namespace WebKit
+} // namespace API
 
 #endif // APINumber_h

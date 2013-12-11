@@ -242,17 +242,17 @@ static NSString *escapeKey(NSString *key)
 
 - (void)encodeBool:(BOOL)value forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), WebBoolean::create(value));
+    _currentDictionary->set(escapeKey(key), API::Boolean::create(value));
 }
 
 - (void)encodeInt64:(int64_t)value forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), WebUInt64::create(value));
+    _currentDictionary->set(escapeKey(key), API::UInt64::create(value));
 }
 
 - (void)encodeDouble:(double)value forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), WebDouble::create(value));
+    _currentDictionary->set(escapeKey(key), API::Double::create(value));
 }
 
 - (BOOL)requiresSecureCoding
@@ -481,7 +481,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary
 
 - (BOOL)decodeBoolForKey:(NSString *)key
 {
-    const WebBoolean* value = _currentDictionary->get<WebBoolean>(escapeKey(key));
+    const API::Boolean* value = _currentDictionary->get<API::Boolean>(escapeKey(key));
     if (!value)
         return false;
     return value->value();
@@ -489,7 +489,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary
 
 - (int64_t)decodeInt64ForKey:(NSString *)key
 {
-    const WebUInt64* value = _currentDictionary->get<WebUInt64>(escapeKey(key));
+    const API::UInt64* value = _currentDictionary->get<API::UInt64>(escapeKey(key));
     if (!value)
         return 0;
     return value->value();
@@ -497,7 +497,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary
 
 - (double)decodeDoubleForKey:(NSString *)key
 {
-    const WebDouble* value = _currentDictionary->get<WebDouble>(escapeKey(key));
+    const API::Double* value = _currentDictionary->get<API::Double>(escapeKey(key));
     if (!value)
         return 0;
     return value->value();

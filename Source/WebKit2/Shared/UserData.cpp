@@ -115,7 +115,7 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
     }
 
     case API::Object::Type::Boolean:
-        static_cast<const WebBoolean&>(object).encode(encoder);
+        static_cast<const API::Boolean&>(object).encode(encoder);
         break;
 
     case API::Object::Type::Dictionary: {
@@ -137,10 +137,10 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
     }
 
     case API::Object::Type::Point:
-        static_cast<const WebPoint&>(object).encode(encoder);
+        static_cast<const API::Point&>(object).encode(encoder);
 
     case API::Object::Type::Rect:
-        static_cast<const WebRect&>(object).encode(encoder);
+        static_cast<const API::Rect&>(object).encode(encoder);
 
     case API::Object::Type::SerializedScriptValue: {
         auto& serializedScriptValue = static_cast<const WebSerializedScriptValue&>(object);
@@ -149,7 +149,7 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
     }
 
     case API::Object::Type::Size:
-        static_cast<const WebSize&>(object).encode(encoder);
+        static_cast<const API::Size&>(object).encode(encoder);
         break;
 
     case API::Object::Type::String: {
@@ -165,7 +165,7 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
     }
 
     case API::Object::Type::UInt64:
-        static_cast<const WebUInt64&>(object).encode(encoder);
+        static_cast<const API::UInt64&>(object).encode(encoder);
         break;
 
     default:
@@ -199,7 +199,7 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
     }
 
     case API::Object::Type::Boolean:
-        if (!WebBoolean::decode(decoder, result))
+        if (!API::Boolean::decode(decoder, result))
             return false;
         break;
 
@@ -227,7 +227,7 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
     }
 
     case API::Object::Type::Double:
-        if (!WebDouble::decode(decoder, result))
+        if (!API::Double::decode(decoder, result))
             return false;
         break;
 
@@ -245,12 +245,12 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
         break;
         
     case API::Object::Type::Point:
-        if (!WebPoint::decode(decoder, result))
+        if (!API::Point::decode(decoder, result))
             return false;
         break;
 
     case API::Object::Type::Rect:
-        if (!WebRect::decode(decoder, result))
+        if (!API::Rect::decode(decoder, result))
             return false;
         break;
 
@@ -265,7 +265,7 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
     }
 
     case API::Object::Type::Size:
-        if (!WebSize::decode(decoder, result))
+        if (!API::Size::decode(decoder, result))
             return false;
         break;
 
@@ -287,7 +287,7 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
     }
 
     case API::Object::Type::UInt64:
-        if (!WebUInt64::decode(decoder, result))
+        if (!API::UInt64::decode(decoder, result))
             return false;
         break;
 

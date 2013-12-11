@@ -33,12 +33,12 @@ using namespace WebKit;
 
 WKTypeID WKBooleanGetTypeID()
 {
-    return toAPI(WebBoolean::APIType);
+    return toAPI(API::Boolean::APIType);
 }
 
 WKBooleanRef WKBooleanCreate(bool value)
 {
-    RefPtr<WebBoolean> booleanObject = WebBoolean::create(value);
+    RefPtr<API::Boolean> booleanObject = API::Boolean::create(value);
     return toAPI(booleanObject.release().leakRef());
 }
 
@@ -49,12 +49,12 @@ bool WKBooleanGetValue(WKBooleanRef booleanRef)
 
 WKTypeID WKDoubleGetTypeID()
 {
-    return toAPI(WebDouble::APIType);
+    return toAPI(API::Double::APIType);
 }
 
 WKDoubleRef WKDoubleCreate(double value)
 {
-    RefPtr<WebDouble> doubleObject = WebDouble::create(value);
+    RefPtr<API::Double> doubleObject = API::Double::create(value);
     return toAPI(doubleObject.release().leakRef());
 }
 
@@ -65,12 +65,12 @@ double WKDoubleGetValue(WKDoubleRef doubleRef)
 
 WKTypeID WKUInt64GetTypeID()
 {
-    return toAPI(WebUInt64::APIType);
+    return toAPI(API::UInt64::APIType);
 }
 
 WKUInt64Ref WKUInt64Create(uint64_t value)
 {
-    RefPtr<WebUInt64> uint64Object = WebUInt64::create(value);
+    RefPtr<API::UInt64> uint64Object = API::UInt64::create(value);
     return toAPI(uint64Object.release().leakRef());
 }
 

@@ -56,7 +56,7 @@ static void addToDictionaryFromHashMap(MutableDictionary* dictionary, const Hash
 {
     HashMap<String, uint64_t>::const_iterator end = map.end();
     for (HashMap<String, uint64_t>::const_iterator it = map.begin(); it != end; ++it)
-        dictionary->set(it->key, RefPtr<WebUInt64>(WebUInt64::create(it->value)).get());
+        dictionary->set(it->key, RefPtr<API::UInt64>(API::UInt64::create(it->value)).get());
 }
 
 static PassRefPtr<MutableDictionary> createDictionaryFromHashMap(const HashMap<String, uint64_t>& map)

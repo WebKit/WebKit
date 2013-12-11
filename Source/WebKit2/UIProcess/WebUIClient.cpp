@@ -56,21 +56,21 @@ PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const Re
 
     ImmutableDictionary::MapType map;
     if (windowFeatures.xSet)
-        map.set("x", WebDouble::create(windowFeatures.x));
+        map.set("x", API::Double::create(windowFeatures.x));
     if (windowFeatures.ySet)
-        map.set("y", WebDouble::create(windowFeatures.y));
+        map.set("y", API::Double::create(windowFeatures.y));
     if (windowFeatures.widthSet)
-        map.set("width", WebDouble::create(windowFeatures.width));
+        map.set("width", API::Double::create(windowFeatures.width));
     if (windowFeatures.heightSet)
-        map.set("height", WebDouble::create(windowFeatures.height));
-    map.set("menuBarVisible", WebBoolean::create(windowFeatures.menuBarVisible));
-    map.set("statusBarVisible", WebBoolean::create(windowFeatures.statusBarVisible));
-    map.set("toolBarVisible", WebBoolean::create(windowFeatures.toolBarVisible));
-    map.set("locationBarVisible", WebBoolean::create(windowFeatures.locationBarVisible));
-    map.set("scrollbarsVisible", WebBoolean::create(windowFeatures.scrollbarsVisible));
-    map.set("resizable", WebBoolean::create(windowFeatures.resizable));
-    map.set("fullscreen", WebBoolean::create(windowFeatures.fullscreen));
-    map.set("dialog", WebBoolean::create(windowFeatures.dialog));
+        map.set("height", API::Double::create(windowFeatures.height));
+    map.set("menuBarVisible", API::Boolean::create(windowFeatures.menuBarVisible));
+    map.set("statusBarVisible", API::Boolean::create(windowFeatures.statusBarVisible));
+    map.set("toolBarVisible", API::Boolean::create(windowFeatures.toolBarVisible));
+    map.set("locationBarVisible", API::Boolean::create(windowFeatures.locationBarVisible));
+    map.set("scrollbarsVisible", API::Boolean::create(windowFeatures.scrollbarsVisible));
+    map.set("resizable", API::Boolean::create(windowFeatures.resizable));
+    map.set("fullscreen", API::Boolean::create(windowFeatures.fullscreen));
+    map.set("dialog", API::Boolean::create(windowFeatures.dialog));
     RefPtr<ImmutableDictionary> featuresMap = ImmutableDictionary::adopt(map);
 
     if (!m_client.base.version)
