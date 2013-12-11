@@ -35,9 +35,14 @@ namespace WebCore {
 
 CryptoAlgorithmRegistry& CryptoAlgorithmRegistry::shared()
 {
-    ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(CryptoAlgorithmRegistry, registry, ());
     return registry;
+}
+
+static Mutex& registryMutex()
+{
+    AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
+    return mutex;
 }
 
 CryptoAlgorithmRegistry::CryptoAlgorithmRegistry()
@@ -50,7 +55,9 @@ bool CryptoAlgorithmRegistry::getIdentifierForName(const String& name, CryptoAlg
     if (name.isEmpty())
         return false;
 
-    auto iter = m_nameToIdentifierMap.find(name.lower());
+    MutexLocker lock(registryMutex());
+
+    auto iter = m_nameToIdentifierMap.find(name.isolatedCopy().lower());
     if (iter == m_nameToIdentifierMap.end())
         return false;
 
@@ -60,11 +67,15 @@ bool CryptoAlgorithmRegistry::getIdentifierForName(const String& name, CryptoAlg
 
 String CryptoAlgorithmRegistry::nameForIdentifier(CryptoAlgorithmIdentifier identifier)
 {
-    return m_identifierToNameMap.get(static_cast<unsigned>(identifier));
+    MutexLocker lock(registryMutex());
+
+    return m_identifierToNameMap.get(static_cast<unsigned>(identifier)).isolatedCopy();
 }
 
 std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithmIdentifier identifier)
 {
+    MutexLocker lock(registryMutex());
+
     auto iter = m_identifierToConstructorMap.find(static_cast<unsigned>(identifier));
     if (iter == m_identifierToConstructorMap.end())
         return nullptr;
@@ -75,6 +86,8 @@ std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithm
 void CryptoAlgorithmRegistry::registerAlgorithm(const String& name, CryptoAlgorithmIdentifier identifier, CryptoAlgorithmConstructor constructor)
 {
     ASSERT(name == name.lower());
+
+    MutexLocker lock(registryMutex());
 
     bool added = m_nameToIdentifierMap.add(name, identifier).isNewEntry;
     ASSERT_UNUSED(added, added);

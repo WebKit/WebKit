@@ -44,6 +44,7 @@ enum KeyUsage {
     Conditional=SUBTLE_CRYPTO,
     GenerateIsReachable=Impl,
     InterfaceName=Key,
+    JSNoStaticTables,
     NoInterfaceObject,
     SkipVTableValidation
 ] interface CryptoKey {

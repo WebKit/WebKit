@@ -24,6 +24,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bridge"
     "${WEBCORE_DIR}/bridge/c"
     "${WEBCORE_DIR}/crypto"
+    "${WEBCORE_DIR}/crypto/keys"
     "${WEBCORE_DIR}/css"
     "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/default"

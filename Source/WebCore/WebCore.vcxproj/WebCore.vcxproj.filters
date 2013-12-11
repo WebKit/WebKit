@@ -175,6 +175,9 @@
     <Filter Include="crypto">
       <UniqueIdentifier>{02334427-19d6-44c8-a5d1-e1a67a9c4997}</UniqueIdentifier>
     </Filter>
+    <Filter Include="crypto\keys">
+      <UniqueIdentifier>{edd0faa6-bb8c-4c0e-b28a-064bde7e1eba}</UniqueIdentifier>
+    </Filter>
     <Filter Include="css">
       <UniqueIdentifier>{353b76ca-c49a-41da-88da-33dc422325ef}</UniqueIdentifier>
     </Filter>

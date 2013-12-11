@@ -39,16 +39,21 @@ CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, const Vector<uin
     : CryptoKey(algorithm, CryptoKeyType::Secret, extractable, usage)
     , m_key(key)
 {
-    ASSERT(algorithm == CryptoAlgorithmIdentifier::AES_CTR
-        || algorithm == CryptoAlgorithmIdentifier::AES_CBC
-        || algorithm == CryptoAlgorithmIdentifier::AES_CMAC
-        || algorithm == CryptoAlgorithmIdentifier::AES_GCM
-        || algorithm == CryptoAlgorithmIdentifier::AES_CFB
-        || algorithm == CryptoAlgorithmIdentifier::AES_KW);
+    ASSERT(isValidAESAlgorithm(algorithm));
 }
 
 CryptoKeyAES::~CryptoKeyAES()
 {
+}
+
+bool CryptoKeyAES::isValidAESAlgorithm(CryptoAlgorithmIdentifier algorithm)
+{
+    return algorithm == CryptoAlgorithmIdentifier::AES_CTR
+        || algorithm == CryptoAlgorithmIdentifier::AES_CBC
+        || algorithm == CryptoAlgorithmIdentifier::AES_CMAC
+        || algorithm == CryptoAlgorithmIdentifier::AES_GCM
+        || algorithm == CryptoAlgorithmIdentifier::AES_CFB
+        || algorithm == CryptoAlgorithmIdentifier::AES_KW;
 }
 
 PassRefPtr<CryptoKeyAES> CryptoKeyAES::generate(CryptoAlgorithmIdentifier algorithm, size_t lengthBits, bool extractable, CryptoKeyUsage usages)

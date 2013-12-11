@@ -28,11 +28,17 @@
 #include "SerializedScriptValue.h"
 
 #include "Blob.h"
+#include "CryptoKeyAES.h"
+#include "CryptoKeyDataOctetSequence.h"
+#include "CryptoKeyDataRSAComponents.h"
+#include "CryptoKeyHMAC.h"
+#include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
 #include "File.h"
 #include "FileList.h"
 #include "ImageData.h"
 #include "JSBlob.h"
+#include "JSCryptoKey.h"
 #include "JSDOMGlobalObject.h"
 #include "JSFile.h"
 #include "JSFileList.h"
@@ -117,6 +123,9 @@ enum SerializationTag {
     SetObjectTag = 29,
     MapObjectTag = 30,
     NonMapPropertiesTag = 31,
+#if ENABLE(SUBTLE_CRYPTO)
+    CryptoKeyTag = 32,
+#endif
     ErrorTag = 255
 };
 
@@ -155,6 +164,72 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
     }
 
 }
+
+#if ENABLE(SUBTLE_CRYPTO)
+
+ENUM_CLASS(CryptoKeyClassSubtag) {
+    HMAC = 0,
+    AES = 1,
+    RSA = 2
+};
+const uint8_t cryptoKeyClassSubtagMaximumValue = 2;
+
+ENUM_CLASS(CryptoKeyAsymmetricTypeSubtag) {
+    Public = 0,
+    Private = 1
+};
+const uint8_t cryptoKeyAsymmetricTypeSubtagMaximumValue = 1;
+
+ENUM_CLASS(CryptoKeyUsageTag) {
+    Encrypt = 0,
+    Decrypt = 1,
+    Sign = 2,
+    Verify = 3,
+    DeriveKey = 4,
+    DeriveBits = 5,
+    WrapKey = 6,
+    UnwrapKey = 7
+};
+const uint8_t cryptoKeyUsageTagMaximumValue = 7;
+
+ENUM_CLASS(CryptoAlgorithmIdentifierTag) {
+    RSAES_PKCS1_v1_5 = 0,
+    RSASSA_PKCS1_v1_5 = 1,
+    RSA_PSS = 2,
+    RSA_OAEP = 3,
+    ECDSA = 4,
+    ECDH = 5,
+    AES_CTR = 6,
+    AES_CBC = 7,
+    AES_CMAC = 8,
+    AES_GCM = 9,
+    AES_CFB = 10,
+    AES_KW = 11,
+    HMAC = 12,
+    DH = 13,
+    SHA_1 = 14,
+    SHA_224 = 15,
+    SHA_256 = 16,
+    SHA_384 = 17,
+    SHA_512 = 18,
+    CONCAT = 19,
+    HKDF_CTR = 20,
+    PBKDF2 = 21,
+};
+const uint8_t cryptoAlgorithmIdentifierTagMaximumValue = 21;
+
+static unsigned countUsages(CryptoKeyUsage usages)
+{
+    // Fast bit count algorithm for sparse bit maps.
+    unsigned count = 0;
+    while (usages) {
+        usages = usages & (usages - 1);
+        ++count;
+    }
+    return count;
+}
+
+#endif
 
 /* CurrentVersion tracks the serialization version so that persistent stores
  * are able to correctly bail out in the case of encountering newer formats.
@@ -217,8 +292,9 @@ static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
  *    | ObjectReference
  *    | MessagePortReferenceTag <value:uint32_t>
  *    | ArrayBuffer
- *    | ArrayBufferViewTag ArrayBufferViewSubtag <byteOffset:uint32_t> <byteLenght:uint32_t> (ArrayBuffer | ObjectReference)
+ *    | ArrayBufferViewTag ArrayBufferViewSubtag <byteOffset:uint32_t> <byteLength:uint32_t> (ArrayBuffer | ObjectReference)
  *    | ArrayBufferTransferTag <value:uint32_t>
+ *    | CryptoKeyTag <extractable:int32_t> <usagesCount:uint32_t> <usages:byte{usagesCount}> CryptoKeyClassSubtag (CryptoKeyHMAC | CryptoKeyAES | CryptoKeyRSA)
  *
  * String :-
  *      EmptyStringTag
@@ -255,6 +331,28 @@ static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
  *
  * ArrayBuffer :-
  *    ArrayBufferTag <length:uint32_t> <contents:byte{length}>
+ *
+ * CryptoKeyHMAC :-
+ *    <keySize:uint32_t> <keyData:byte{keySize}> CryptoAlgorithmIdentifierTag // Algorithm tag inner hash function.
+ *
+ * CryptoKeyAES :-
+ *    CryptoAlgorithmIdentifierTag <keySize:uint32_t> <keyData:byte{keySize}>
+ *
+ * CryptoKeyRSA :-
+ *    CryptoAlgorithmIdentifierTag <isRestrictedToHash:int32_t> CryptoAlgorithmIdentifierTag? CryptoKeyAsymmetricTypeSubtag CryptoKeyRSAPublicComponents CryptoKeyRSAPrivateComponents?
+ *
+ * CryptoKeyRSAPublicComponents :-
+ *    <modulusSize:uint32_t> <modulus:byte{modulusSize}> <exponentSize:uint32_t> <exponent:byte{exponentSize}>
+ *
+ * CryptoKeyRSAPrivateComponents :-
+ *    <privateExponentSize:uint32_t> <privateExponent:byte{privateExponentSize}> <primeCount:uint32_t> FirstPrimeInfo? PrimeInfo{primeCount - 1}
+ *
+ * // CRT data could be computed from prime factors. It is only serialized to reuse a code path that's needed for JWK.
+ * FirstPrimeInfo :-
+ *    <factorSize:uint32_t> <factor:byte{factorSize}> <crtExponentSize:uint32_t> <crtExponent:byte{crtExponentSize}>
+ *
+ * PrimeInfo :-
+ *    <factorSize:uint32_t> <factor:byte{factorSize}> <crtExponentSize:uint32_t> <crtExponent:byte{crtExponentSize}> <crtCoefficientSize:uint32_t> <crtCoefficient:byte{crtCoefficientSize}>
  */
 
 typedef pair<JSC::JSValue, SerializationReturnCode> DeserializationResult;
@@ -724,6 +822,13 @@ private:
                 recordObject(obj);
                 return success;
             }
+#if ENABLE(SUBTLE_CRYPTO)
+            if (CryptoKey* key = toCryptoKey(obj)) {
+                write(CryptoKeyTag);
+                write(key);
+                return true;
+            }
+#endif
 
             return false;
         }
@@ -741,6 +846,28 @@ private:
     {
         writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
     }
+
+#if ENABLE(SUBTLE_CRYPTO)
+    void write(CryptoKeyClassSubtag tag)
+    {
+        writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
+    }
+
+    void write(CryptoKeyAsymmetricTypeSubtag tag)
+    {
+        writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
+    }
+
+    void write(CryptoKeyUsageTag tag)
+    {
+        writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
+    }
+
+    void write(CryptoAlgorithmIdentifierTag tag)
+    {
+        writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
+    }
+#endif
 
     void write(uint8_t c)
     {
@@ -834,6 +961,13 @@ private:
             write(Identifier(m_exec, str));
     }
 
+    void write(const Vector<uint8_t>& vector)
+    {
+        uint32_t size = vector.size();
+        write(size);
+        writeLittleEndian(m_buffer, vector.data(), size);
+    }
+
     void write(const File* file)
     {
         m_blobURLs.append(file->url());
@@ -841,6 +975,166 @@ private:
         write(file->url());
         write(file->type());
     }
+
+#if ENABLE(SUBTLE_CRYPTO)
+    void write(CryptoAlgorithmIdentifier algorithm)
+    {
+        switch (algorithm) {
+        case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
+            write(CryptoAlgorithmIdentifierTag::RSAES_PKCS1_v1_5);
+            break;
+        case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
+            write(CryptoAlgorithmIdentifierTag::RSASSA_PKCS1_v1_5);
+            break;
+        case CryptoAlgorithmIdentifier::RSA_PSS:
+            write(CryptoAlgorithmIdentifierTag::RSA_PSS);
+            break;
+        case CryptoAlgorithmIdentifier::RSA_OAEP:
+            write(CryptoAlgorithmIdentifierTag::RSA_OAEP);
+            break;
+        case CryptoAlgorithmIdentifier::ECDSA:
+            write(CryptoAlgorithmIdentifierTag::ECDSA);
+            break;
+        case CryptoAlgorithmIdentifier::ECDH:
+            write(CryptoAlgorithmIdentifierTag::ECDH);
+            break;
+        case CryptoAlgorithmIdentifier::AES_CTR:
+            write(CryptoAlgorithmIdentifierTag::AES_CTR);
+            break;
+        case CryptoAlgorithmIdentifier::AES_CBC:
+            write(CryptoAlgorithmIdentifierTag::AES_CBC);
+            break;
+        case CryptoAlgorithmIdentifier::AES_CMAC:
+            write(CryptoAlgorithmIdentifierTag::AES_CMAC);
+            break;
+        case CryptoAlgorithmIdentifier::AES_GCM:
+            write(CryptoAlgorithmIdentifierTag::AES_GCM);
+            break;
+        case CryptoAlgorithmIdentifier::AES_CFB:
+            write(CryptoAlgorithmIdentifierTag::AES_CFB);
+            break;
+        case CryptoAlgorithmIdentifier::AES_KW:
+            write(CryptoAlgorithmIdentifierTag::AES_KW);
+            break;
+        case CryptoAlgorithmIdentifier::HMAC:
+            write(CryptoAlgorithmIdentifierTag::HMAC);
+            break;
+        case CryptoAlgorithmIdentifier::DH:
+            write(CryptoAlgorithmIdentifierTag::DH);
+            break;
+        case CryptoAlgorithmIdentifier::SHA_1:
+            write(CryptoAlgorithmIdentifierTag::SHA_1);
+            break;
+        case CryptoAlgorithmIdentifier::SHA_224:
+            write(CryptoAlgorithmIdentifierTag::SHA_224);
+            break;
+        case CryptoAlgorithmIdentifier::SHA_256:
+            write(CryptoAlgorithmIdentifierTag::SHA_256);
+            break;
+        case CryptoAlgorithmIdentifier::SHA_384:
+            write(CryptoAlgorithmIdentifierTag::SHA_384);
+            break;
+        case CryptoAlgorithmIdentifier::SHA_512:
+            write(CryptoAlgorithmIdentifierTag::SHA_512);
+            break;
+        case CryptoAlgorithmIdentifier::CONCAT:
+            write(CryptoAlgorithmIdentifierTag::CONCAT);
+            break;
+        case CryptoAlgorithmIdentifier::HKDF_CTR:
+            write(CryptoAlgorithmIdentifierTag::HKDF_CTR);
+            break;
+        case CryptoAlgorithmIdentifier::PBKDF2:
+            write(CryptoAlgorithmIdentifierTag::PBKDF2);
+            break;
+        }
+    }
+
+    void write(CryptoKeyDataRSAComponents::Type type)
+    {
+        switch (type) {
+        case CryptoKeyDataRSAComponents::Type::Public:
+            write(CryptoKeyAsymmetricTypeSubtag::Public);
+            return;
+        case CryptoKeyDataRSAComponents::Type::Private:
+            write(CryptoKeyAsymmetricTypeSubtag::Private);
+            return;
+        }
+    }
+
+    void write(const CryptoKeyDataRSAComponents& key)
+    {
+        write(key.type());
+        write(key.modulus());
+        write(key.exponent());
+        if (key.type() == CryptoKeyDataRSAComponents::Type::Public)
+            return;
+
+        write(key.privateExponent());
+
+        unsigned primeCount = key.hasAdditionalPrivateKeyParameters() ? key.otherPrimeInfos().size() + 2 : 0;
+        write(primeCount);
+        if (!primeCount)
+            return;
+
+        write(key.firstPrimeInfo().primeFactor);
+        write(key.firstPrimeInfo().factorCRTExponent);
+        write(key.secondPrimeInfo().primeFactor);
+        write(key.secondPrimeInfo().factorCRTExponent);
+        write(key.secondPrimeInfo().factorCRTCoefficient);
+        for (unsigned i = 2; i < primeCount; ++i) {
+            write(key.otherPrimeInfos()[i].primeFactor);
+            write(key.otherPrimeInfos()[i].factorCRTExponent);
+            write(key.otherPrimeInfos()[i].factorCRTCoefficient);
+        }
+    }
+
+    void write(const CryptoKey* key)
+    {
+        write(key->extractable());
+
+        CryptoKeyUsage usages = key->usagesBitmap();
+        write(countUsages(usages));
+        if (usages & CryptoKeyUsageEncrypt)
+            write(CryptoKeyUsageTag::Encrypt);
+        if (usages & CryptoKeyUsageDecrypt)
+            write(CryptoKeyUsageTag::Decrypt);
+        if (usages & CryptoKeyUsageSign)
+            write(CryptoKeyUsageTag::Sign);
+        if (usages & CryptoKeyUsageVerify)
+            write(CryptoKeyUsageTag::Verify);
+        if (usages & CryptoKeyUsageDeriveKey)
+            write(CryptoKeyUsageTag::DeriveKey);
+        if (usages & CryptoKeyUsageDeriveBits)
+            write(CryptoKeyUsageTag::DeriveBits);
+        if (usages & CryptoKeyUsageWrapKey)
+            write(CryptoKeyUsageTag::WrapKey);
+        if (usages & CryptoKeyUsageUnwrapKey)
+            write(CryptoKeyUsageTag::UnwrapKey);
+
+        switch (key->keyClass()) {
+        case CryptoKeyClass::HMAC:
+            write(CryptoKeyClassSubtag::HMAC);
+            write(toCryptoKeyHMAC(key)->key());
+            write(toCryptoKeyHMAC(key)->hashAlgorithmIdentifier());
+            break;
+        case CryptoKeyClass::AES:
+            write(CryptoKeyClassSubtag::AES);
+            write(key->algorithmIdentifier());
+            write(toCryptoKeyAES(key)->key());
+            break;
+        case CryptoKeyClass::RSA:
+            write(CryptoKeyClassSubtag::RSA);
+            write(key->algorithmIdentifier());
+            CryptoAlgorithmIdentifier hash;
+            bool isRestrictedToHash = toCryptoKeyRSA(key)->isRestrictedToHash(hash);
+            write(isRestrictedToHash);
+            if (isRestrictedToHash)
+                write(hash);
+            write(toCryptoKeyDataRSAComponents(*key->exportData()));
+            break;
+        }
+    }
+#endif
 
     void write(const uint8_t* data, unsigned length)
     {
@@ -1453,6 +1747,307 @@ private:
         }
     }
 
+    bool read(Vector<uint8_t>& result)
+    {
+        ASSERT(result.isEmpty());
+        uint32_t size;
+        if (!read(size))
+            return false;
+        if (m_ptr + size > m_end)
+            return false;
+        result.append(m_ptr, size);
+        m_ptr += size;
+        return true;
+    }
+
+#if ENABLE(SUBTLE_CRYPTO)
+    bool read(CryptoAlgorithmIdentifier& result)
+    {
+        uint8_t algorithmTag;
+        if (!read(algorithmTag))
+            return false;
+        if (algorithmTag > cryptoAlgorithmIdentifierTagMaximumValue)
+            return false;
+        switch (static_cast<CryptoAlgorithmIdentifierTag>(algorithmTag)) {
+        case CryptoAlgorithmIdentifierTag::RSAES_PKCS1_v1_5:
+            result = CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5;
+            break;
+        case CryptoAlgorithmIdentifierTag::RSASSA_PKCS1_v1_5:
+            result = CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5;
+            break;
+        case CryptoAlgorithmIdentifierTag::RSA_PSS:
+            result = CryptoAlgorithmIdentifier::RSA_PSS;
+            break;
+        case CryptoAlgorithmIdentifierTag::RSA_OAEP:
+            result = CryptoAlgorithmIdentifier::RSA_OAEP;
+            break;
+        case CryptoAlgorithmIdentifierTag::ECDSA:
+            result = CryptoAlgorithmIdentifier::ECDSA;
+            break;
+        case CryptoAlgorithmIdentifierTag::ECDH:
+            result = CryptoAlgorithmIdentifier::ECDH;
+            break;
+        case CryptoAlgorithmIdentifierTag::AES_CTR:
+            result = CryptoAlgorithmIdentifier::AES_CTR;
+            break;
+        case CryptoAlgorithmIdentifierTag::AES_CBC:
+            result = CryptoAlgorithmIdentifier::AES_CBC;
+            break;
+        case CryptoAlgorithmIdentifierTag::AES_CMAC:
+            result = CryptoAlgorithmIdentifier::AES_CMAC;
+            break;
+        case CryptoAlgorithmIdentifierTag::AES_GCM:
+            result = CryptoAlgorithmIdentifier::AES_GCM;
+            break;
+        case CryptoAlgorithmIdentifierTag::AES_CFB:
+            result = CryptoAlgorithmIdentifier::AES_CFB;
+            break;
+        case CryptoAlgorithmIdentifierTag::AES_KW:
+            result = CryptoAlgorithmIdentifier::AES_KW;
+            break;
+        case CryptoAlgorithmIdentifierTag::HMAC:
+            result = CryptoAlgorithmIdentifier::HMAC;
+            break;
+        case CryptoAlgorithmIdentifierTag::DH:
+            result = CryptoAlgorithmIdentifier::DH;
+            break;
+        case CryptoAlgorithmIdentifierTag::SHA_1:
+            result = CryptoAlgorithmIdentifier::SHA_1;
+            break;
+        case CryptoAlgorithmIdentifierTag::SHA_224:
+            result = CryptoAlgorithmIdentifier::SHA_224;
+            break;
+        case CryptoAlgorithmIdentifierTag::SHA_256:
+            result = CryptoAlgorithmIdentifier::SHA_256;
+            break;
+        case CryptoAlgorithmIdentifierTag::SHA_384:
+            result = CryptoAlgorithmIdentifier::SHA_384;
+            break;
+        case CryptoAlgorithmIdentifierTag::SHA_512:
+            result = CryptoAlgorithmIdentifier::SHA_512;
+            break;
+        case CryptoAlgorithmIdentifierTag::CONCAT:
+            result = CryptoAlgorithmIdentifier::CONCAT;
+            break;
+        case CryptoAlgorithmIdentifierTag::HKDF_CTR:
+            result = CryptoAlgorithmIdentifier::HKDF_CTR;
+            break;
+        case CryptoAlgorithmIdentifierTag::PBKDF2:
+            result = CryptoAlgorithmIdentifier::PBKDF2;
+            break;
+        }
+        return true;
+    }
+
+    bool read(CryptoKeyClassSubtag& result)
+    {
+        uint8_t tag;
+        if (!read(tag))
+            return false;
+        if (tag > cryptoKeyClassSubtagMaximumValue)
+            return false;
+        result = static_cast<CryptoKeyClassSubtag>(tag);
+        return true;
+    }
+
+    bool read(CryptoKeyUsageTag& result)
+    {
+        uint8_t tag;
+        if (!read(tag))
+            return false;
+        if (tag > cryptoKeyUsageTagMaximumValue)
+            return false;
+        result = static_cast<CryptoKeyUsageTag>(tag);
+        return true;
+    }
+
+    bool read(CryptoKeyAsymmetricTypeSubtag& result)
+    {
+        uint8_t tag;
+        if (!read(tag))
+            return false;
+        if (tag > cryptoKeyAsymmetricTypeSubtagMaximumValue)
+            return false;
+        result = static_cast<CryptoKeyAsymmetricTypeSubtag>(tag);
+        return true;
+    }
+
+    bool readHMACKey(bool extractable, CryptoKeyUsage usages, RefPtr<CryptoKey>& result)
+    {
+        Vector<uint8_t> keyData;
+        if (!read(keyData))
+            return false;
+        CryptoAlgorithmIdentifier hash;
+        if (!read(hash))
+            return false;
+        result = CryptoKeyHMAC::create(keyData, hash, extractable, usages);
+        return true;
+    }
+
+    bool readAESKey(bool extractable, CryptoKeyUsage usages, RefPtr<CryptoKey>& result)
+    {
+        CryptoAlgorithmIdentifier algorithm;
+        if (!read(algorithm))
+            return false;
+        if (!CryptoKeyAES::isValidAESAlgorithm(algorithm))
+            return false;
+        Vector<uint8_t> keyData;
+        if (!read(keyData))
+            return false;
+        result = CryptoKeyAES::create(algorithm, keyData, extractable, usages);
+        return true;
+    }
+
+    bool readRSAKey(bool extractable, CryptoKeyUsage usages, RefPtr<CryptoKey>& result)
+    {
+        CryptoAlgorithmIdentifier algorithm;
+        if (!read(algorithm))
+            return false;
+
+        int32_t isRestrictedToHash;
+        CryptoAlgorithmIdentifier hash;
+        if (!read(isRestrictedToHash))
+            return false;
+        if (isRestrictedToHash && !read(hash))
+            return false;
+
+        CryptoKeyAsymmetricTypeSubtag type;
+        if (!read(type))
+            return false;
+
+        Vector<uint8_t> modulus;
+        if (!read(modulus))
+            return false;
+        Vector<uint8_t> exponent;
+        if (!read(exponent))
+            return false;
+
+        if (type == CryptoKeyAsymmetricTypeSubtag::Public) {
+            auto keyData = CryptoKeyDataRSAComponents::createPublic(modulus, exponent);
+            auto key = CryptoKeyRSA::create(algorithm, *keyData, extractable, usages);
+            if (isRestrictedToHash)
+                key->restrictToHash(hash);
+            result = std::move(key);
+            return true;
+        }
+
+        Vector<uint8_t> privateExponent;
+        if (!read(privateExponent))
+            return false;
+
+        uint32_t primeCount;
+        if (!read(primeCount))
+            return false;
+
+        if (!primeCount) {
+            auto keyData = CryptoKeyDataRSAComponents::createPrivate(modulus, exponent, privateExponent);
+            auto key = CryptoKeyRSA::create(algorithm, *keyData, extractable, usages);
+            if (isRestrictedToHash)
+                key->restrictToHash(hash);
+            result = std::move(key);
+            return true;
+        }
+
+        if (primeCount < 2)
+            return false;
+
+        CryptoKeyDataRSAComponents::PrimeInfo firstPrimeInfo;
+        CryptoKeyDataRSAComponents::PrimeInfo secondPrimeInfo;
+        Vector<CryptoKeyDataRSAComponents::PrimeInfo> otherPrimeInfos(primeCount - 2);
+
+        if (!read(firstPrimeInfo.primeFactor))
+            return false;
+        if (!read(firstPrimeInfo.factorCRTExponent))
+            return false;
+        if (!read(secondPrimeInfo.primeFactor))
+            return false;
+        if (!read(secondPrimeInfo.factorCRTExponent))
+            return false;
+        if (!read(secondPrimeInfo.factorCRTCoefficient))
+            return false;
+        for (unsigned i = 2; i < primeCount; ++i) {
+            if (!read(otherPrimeInfos[i].primeFactor))
+                return false;
+            if (!read(otherPrimeInfos[i].factorCRTExponent))
+                return false;
+            if (!read(otherPrimeInfos[i].factorCRTCoefficient))
+                return false;
+        }
+
+        auto keyData = CryptoKeyDataRSAComponents::createPrivateWithAdditionalData(modulus, exponent, privateExponent, firstPrimeInfo, secondPrimeInfo, otherPrimeInfos);
+        auto key = CryptoKeyRSA::create(algorithm, *keyData, extractable, usages);
+        if (isRestrictedToHash)
+            key->restrictToHash(hash);
+        result = std::move(key);
+        return true;
+    }
+
+    bool readCryptoKey(JSValue& cryptoKey)
+    {
+        int32_t extractable;
+        if (!read(extractable))
+            return false;
+
+        uint32_t usagesCount;
+        if (!read(usagesCount))
+            return false;
+
+        CryptoKeyUsage usages = 0;
+        for (uint32_t i = 0; i < usagesCount; ++i) {
+            CryptoKeyUsageTag usage;
+            if (!read(usage))
+                return false;
+            switch (usage) {
+            case CryptoKeyUsageTag::Encrypt:
+                usages |= CryptoKeyUsageEncrypt;
+                break;
+            case CryptoKeyUsageTag::Decrypt:
+                usages |= CryptoKeyUsageDecrypt;
+                break;
+            case CryptoKeyUsageTag::Sign:
+                usages |= CryptoKeyUsageSign;
+                break;
+            case CryptoKeyUsageTag::Verify:
+                usages |= CryptoKeyUsageVerify;
+                break;
+            case CryptoKeyUsageTag::DeriveKey:
+                usages |= CryptoKeyUsageDeriveKey;
+                break;
+            case CryptoKeyUsageTag::DeriveBits:
+                usages |= CryptoKeyUsageDeriveBits;
+                break;
+            case CryptoKeyUsageTag::WrapKey:
+                usages |= CryptoKeyUsageWrapKey;
+                break;
+            case CryptoKeyUsageTag::UnwrapKey:
+                usages |= CryptoKeyUsageUnwrapKey;
+                break;
+            }
+        }
+
+        CryptoKeyClassSubtag cryptoKeyClass;
+        if (!read(cryptoKeyClass))
+            return false;
+        RefPtr<CryptoKey> result;
+        switch (cryptoKeyClass) {
+        case CryptoKeyClassSubtag::HMAC:
+            if (!readHMACKey(extractable, usages, result))
+                return false;
+            break;
+        case CryptoKeyClassSubtag::AES:
+            if (!readAESKey(extractable, usages, result))
+                return false;
+            break;
+        case CryptoKeyClassSubtag::RSA:
+            if (!readRSAKey(extractable, usages, result))
+                return false;
+            break;
+        }
+        cryptoKey = getJSValue(result.get());
+        return true;
+    }
+#endif
+
     template<class T>
     JSValue getJSValue(T* nativeObj)
     {
@@ -1658,6 +2253,17 @@ private:
             m_gcBuffer.append(arrayBufferView);
             return arrayBufferView;
         }
+#if ENABLE(SUBTLE_CRYPTO)
+        case CryptoKeyTag: {
+            JSValue cryptoKey;
+            if (!readCryptoKey(cryptoKey)) {
+                fail();
+                return JSValue();
+            }
+            m_gcBuffer.append(cryptoKey);
+            return cryptoKey;
+        }
+#endif
         default:
             m_ptr--; // Push the tag back
             return JSValue();

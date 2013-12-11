@@ -1,3 +1,71 @@
+2013-12-11  Alexey Proskuryakov  <ap@apple.com>
+
+        WebCrypto keys should support structured clone
+        https://bugs.webkit.org/show_bug.cgi?id=125590
+
+        Reviewed by Oliver Hunt.
+
+        Tests: crypto/subtle/aes-postMessage.html
+               crypto/subtle/hmac-postMessage.html
+               crypto/subtle/postMessage-worker.html
+               crypto/subtle/rsa-postMessage.html
+
+        * crypto/CryptoAlgorithmIdentifier.h:
+        (WebCore::CryptoAlgorithmIdentifier):
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForEncrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDecrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForSign):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForVerify):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDigest):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForGenerateKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveBits):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForImportKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForExportKey):
+        AES_KW was added to WebCrypto spec editor's draft yesterday night. Now that we're
+        adding a matching enum for structired clone serialization, it's as good a time as
+        any to update the order of values to match.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::countUsages):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneDeserializer::read):
+        (WebCore::CloneDeserializer::readHMACKey):
+        (WebCore::CloneDeserializer::readAESKey):
+        (WebCore::CloneDeserializer::readRSAKey):
+        (WebCore::CloneDeserializer::readCryptoKey):
+        (WebCore::CloneDeserializer::readTerminal):
+        Added serialization/deserialization for CryptoKey. This doesn't update version
+        number, because we don't currently store structured clones in persistent storage -
+        and even if we did, we wouldn't want to invalidate everything users already stored.
+
+        * crypto/CryptoAlgorithmRegistry.cpp:
+        (WebCore::CryptoAlgorithmRegistry::shared):
+        (WebCore::registryMutex):
+        (WebCore::CryptoAlgorithmRegistry::getIdentifierForName):
+        (WebCore::CryptoAlgorithmRegistry::nameForIdentifier):
+        (WebCore::CryptoAlgorithmRegistry::create):
+        (WebCore::CryptoAlgorithmRegistry::registerAlgorithm):
+        * crypto/CryptoKey.idl:
+        With structured clone, it is now possible to send a Key to a web worker. That's
+        of no practical use because the crypto API is not exposed in workers, but we
+        shouldn't crash anyway.
+
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::CryptoKeyAES):
+        (WebCore::CryptoKeyAES::isValidAESAlgorithm):
+        * crypto/keys/CryptoKeyAES.h:
+        Exposed isValidAESAlgorithm, so that a caller could know whether the constructor
+        will assert.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.vcxproj/WebCoreCommon.props:
+        Added crypto/keys to search paths to avoid build breakage.
+
 2013-12-11  Bear Travis  <betravis@adobe.com>
 
         Web Inspector: [CSS Shapes] Highlight margin-shape for shape-outside
