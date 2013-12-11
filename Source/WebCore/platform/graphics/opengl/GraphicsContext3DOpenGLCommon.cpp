@@ -1365,8 +1365,10 @@ void GraphicsContext3D::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xo
 {
     makeContextCurrent();
 
+#if !USE(OPENGL_ES_2)
     if (type == HALF_FLOAT_OES)
         type = GL_HALF_FLOAT_ARB;
+#endif
 
     // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size.
     ::glTexSubImage2D(target, level, xoff, yoff, width, height, format, type, pixels);
