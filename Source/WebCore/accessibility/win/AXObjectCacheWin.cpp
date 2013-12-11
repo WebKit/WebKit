@@ -42,7 +42,7 @@ using namespace std;
 
 namespace WebCore {
 
-void AXObjectCache::detachWrapper(AccessibilityObject* obj)
+void AXObjectCache::detachWrapper(AccessibilityObject* obj, DetachmentType)
 {
     // On Windows, AccessibilityObjects are created when get_accChildCount is
     // called, but they are not wrapped until get_accChild is called, so this
