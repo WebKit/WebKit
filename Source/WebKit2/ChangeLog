@@ -1,3 +1,9 @@
+2013-12-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL build fix attempt
+
+        * CMakeLists.txt: Added APIGeometry.cpp to source lists.
+
 2013-12-10  Anders Carlsson  <andersca@apple.com>
 
         Move number and geometry classes into the API namespace

@@ -15,6 +15,7 @@ include_directories(${CMAKE_BINARY_DIR}
     ${WEBCORE_DIR}/platform/graphics
     ${WEBCORE_DIR}/platform/text
     ${WEBCORE_DIR}/platform/network
+    ${WEBKIT2_DIR}/Platform/CoreIPC
     ${WEBKIT2_DIR}/Shared
     ${WEBKIT2_DIR}/Shared/API/c
     ${WEBKIT2_DIR}/Shared/Plugins

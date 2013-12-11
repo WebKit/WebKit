@@ -182,6 +182,7 @@ set(WebKit2_SOURCES
 
     Shared/APIArray.cpp
     Shared/APIFrameHandle.cpp
+    Shared/APIGeometry.cpp
     Shared/APIPageHandle.cpp
     Shared/APIObject.cpp
     Shared/ActivityAssertion.cpp

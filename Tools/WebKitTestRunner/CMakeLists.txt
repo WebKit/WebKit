@@ -35,6 +35,7 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/platform/network
     ${WEBCORE_DIR}/platform/text
     ${WEBCORE_DIR}/testing/js
+    ${WEBKIT2_DIR}/Platform/CoreIPC
     ${WEBKIT2_DIR}/Shared
     ${WEBKIT2_DIR}/Shared/API/c
     ${WEBKIT2_DIR}/Shared/Plugins

@@ -1,3 +1,10 @@
+2013-12-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL build fix attempt
+
+        * TestWebKitAPI/CMakeLists.txt: Added ${WEBKIT2_DIR}/Platform/CoreIPC to include lists.
+        * WebKitTestRunner/CMakeLists.txt: Ditto.
+
 2013-12-10  Anders Carlsson  <andersca@apple.com>
 
         Add a HashMap constructor that takes an initializer list
