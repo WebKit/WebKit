@@ -494,7 +494,6 @@ webkit.org/b/118665 fast/regions/overflow-region-transform.html [ ImageOnlyFailu
 webkit.org/b/118665 fast/regions/shape-inside/shape-inside-on-multiple-regions-with-negative-shape-top.html [ ImageOnlyFailure Pass ]
 webkit.org/b/118665 fast/regions/top-overflow-out-of-second-region.html [ ImageOnlyFailure Pass Missing ]
 webkit.org/b/118665 fast/regions/webkit-flow-float-unable-to-push.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/auto-size/autoheight-correct-region-for-lines-2.html [ ImageOnlyFailure Crash Pass ]
 
 # The feature is enabled at build-time, but the whole test set is failing.
 webkit.org/b/120665 media/track/in-band [ Skip ]
@@ -1439,8 +1438,6 @@ webkit.org/b/118418 accessibility/img-fallsback-to-title.html [ Failure ]
 webkit.org/b/118419 fast/css/style-scoped/registering.html [ Failure ]
 
 webkit.org/b/118420 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
-
-webkit.org/b/118595 fast/regions/auto-size/autoheight-correct-region-for-lines-2.html [ ImageOnlyFailure ]
 
 # May take too long on the bots.
 Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]

@@ -1,3 +1,14 @@
+2013-12-11  Javier Fernandez  <jfernandez@igalia.com>
+
+        Arithmetic overflow when computing max-height CSS property with subpixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=119273
+
+        Reviewed by Martin Robinson.
+
+        Enabled SATURATED_LAYOUT_ARITHMETIC for the gtk+ port.
+
+        * Source/autotools/SetupWebKitFeatures.m4:
+
 2013-12-10  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         [CMAKE] Remove code that disables C++0x compat warnings for gcc-4.6 and above.
