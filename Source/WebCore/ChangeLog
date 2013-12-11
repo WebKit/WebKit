@@ -1,3 +1,12 @@
+2013-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Correct a preprocessor guard from a mis-merged patch
+
+        In r160367, I mismerged a patch from Gustavo Noronha. This commit
+        fixes the merge and thus fixes the CMake build.
+
+        * html/HTMLMediaElement.idl: Move the preprocessor guard to the correct property.
+
 2013-12-10  Rob Buis  <rob.buis@samsung.com>
 
         Clean up SVGScriptElement
