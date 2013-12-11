@@ -28,6 +28,7 @@
 #if ENABLE(NETWORK_PROCESS)
 #include "NetworkProcess.h"
 
+#include "CertificateInfo.h"
 #include "NetworkProcessCreationParameters.h"
 #include "ResourceCachesToClear.h"
 #include <WebCore/FileSystem.h>
@@ -111,9 +112,9 @@ void NetworkProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
     ResourceHandle::setIgnoreSSLErrors(ignoreTLSErrors);
 }
 
-void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String&)
+void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
-    notImplemented();
+    WebCore::ResourceHandle::setClientCertificate(host, certificateInfo.certificate());
 }
 
 void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
