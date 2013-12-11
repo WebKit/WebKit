@@ -338,5 +338,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)lowPowerVideoAudioBufferSizeEnabled;
 - (void)setLowPowerVideoAudioBufferSizeEnabled:(BOOL)enabled;
 
+- (void)setUseLegacyTextAlignPositionedElementBehavior:(BOOL)flag;
+- (BOOL)useLegacyTextAlignPositionedElementBehavior;
 
 @end

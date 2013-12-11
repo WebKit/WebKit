@@ -524,6 +524,16 @@ void WKPreferencesSetNeedsSiteSpecificQuirks(WKPreferencesRef preferencesRef, bo
     toImpl(preferencesRef)->setNeedsSiteSpecificQuirks(flag);
 }
 
+bool WKPreferencesUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->useLegacyTextAlignPositionedElementBehavior();
+}
+
+void WKPreferencesSetUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setUseLegacyTextAlignPositionedElementBehavior(flag);
+}
+
 bool WKPreferencesGetNeedsSiteSpecificQuirks(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->needsSiteSpecificQuirks();

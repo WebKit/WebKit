@@ -87,6 +87,7 @@ acceleratedDrawingEnabled initial=false
 acceleratedFiltersEnabled initial=false
 regionBasedColumnsEnabled initial=false
 cssGridLayoutEnabled initial=false
+useLegacyTextAlignPositionedElementBehavior initial=false
 
 # FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
 # they can't use by. Leaving enabled for now to not change existing behavior.

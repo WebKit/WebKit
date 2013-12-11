@@ -2617,6 +2617,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings->setLowPowerVideoAudioBufferSizeEnabled(store.getBoolValueForKey(WebPreferencesKey::lowPowerVideoAudioBufferSizeEnabledKey()));
 
+    settings->setUseLegacyTextAlignPositionedElementBehavior(store.getBoolValueForKey(WebPreferencesKey::useLegacyTextAlignPositionedElementBehaviorKey()));
+
     platformPreferencesDidChange(store);
 
     if (m_drawingArea)

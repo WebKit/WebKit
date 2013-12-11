@@ -289,6 +289,10 @@ WK_EXPORT double WKPreferencesGetIncrementalRenderingSuppressionTimeout(WKPrefer
 
 WK_EXPORT void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

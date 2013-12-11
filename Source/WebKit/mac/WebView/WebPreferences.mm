@@ -419,6 +419,9 @@ public:
         [NSNumber numberWithBool:NO], WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey,
+        
+        [NSNumber numberWithBool:NO], WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey,
+        
         nil];
 
 
@@ -1838,6 +1841,16 @@ static bool needsScreenFontsEnabledQuirk()
 - (void)setLowPowerVideoAudioBufferSizeEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey];
+}
+
+- (BOOL)useLegacyTextAlignPositionedElementBehavior
+{
+    return [self _boolValueForKey:WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey];
+}
+
+- (void)setUseLegacyTextAlignPositionedElementBehavior:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitUseLegacyTextAlignPositionedElementBehaviorPreferenceKey];
 }
 
 @end
