@@ -1,5 +1,26 @@
 2013-12-11  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r159691
+
+    2013-11-22  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Avoid deadlock when interacting with some AVFoundationCF content
+            <rdar://problem/15482977> and https://bugs.webkit.org/show_bug.cgi?id=124752
+
+            Prevent deadlock caused by conflict over the "mapLock" mutex. Notification handling in the file,
+            which modify assets and make other changes, are required to happen on the main thread. This
+            patch enforces this requirement.
+
+            Reviewed by Eric Carlson.
+
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+            (WebCore::NotificationCallbackData::NotificationCallbackData): Added
+            (WebCore::AVFWrapper::processNotification): Moved logic from 'notificationCallback', which was
+            sometimes happening on a background thread.
+            (WebCore::AVFWrapper::notificationCallback): Dispatch calls to main thread.
+
+2013-12-11  Lucas Forschler  <lforschler@apple.com>
+
         Merge r159460
 
     2013-11-18  David Hyatt  <hyatt@apple.com>

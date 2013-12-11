@@ -115,6 +115,7 @@ public:
     static void periodicTimeObserverCallback(AVCFPlayerRef, CMTime, void*);
     static void seekCompletedCallback(AVCFPlayerItemRef, Boolean, void*);
     static void notificationCallback(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef);
+    static void processNotification(void* context);
 
     inline AVCFPlayerLayerRef videoLayer() const { return (AVCFPlayerLayerRef)m_avCFVideoLayer.get(); }
     inline AVCFPlayerRef avPlayer() const { return (AVCFPlayerRef)m_avPlayer.get(); }
@@ -1392,21 +1393,34 @@ void AVFWrapper::periodicTimeObserverCallback(AVCFPlayerRef, CMTime cmTime, void
     self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::PlayerTimeChanged, time);
 }
 
-void AVFWrapper::notificationCallback(CFNotificationCenterRef, void* observer, CFStringRef propertyName, const void* object, CFDictionaryRef)
+struct NotificationCallbackData {
+    RetainPtr<CFStringRef> m_propertyName;
+    void* m_context;
+
+    NotificationCallbackData(CFStringRef propertyName, void* context)
+        : m_propertyName(propertyName), m_context(context)
+    {
+    }
+};
+
+void AVFWrapper::processNotification(void* context)
 {
+    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
+    ASSERT(context);
+
+    if (!context)
+        return;
+
+    OwnPtr<NotificationCallbackData> notificationData = adoptPtr(reinterpret_cast<NotificationCallbackData*>(context));
+
     MutexLocker locker(mapLock());
-    AVFWrapper* self = avfWrapperForCallbackContext(observer);
-    
+    AVFWrapper* self = avfWrapperForCallbackContext(notificationData->m_context);
     if (!self) {
-        LOG(Media, "AVFWrapper::notificationCallback invoked for deleted AVFWrapper %d", reinterpret_cast<uintptr_t>(observer));
+        LOG(Media, "AVFWrapper::processNotification invoked for deleted AVFWrapper %d", reinterpret_cast<uintptr_t>(context));
         return;
     }
 
-#if !LOG_DISABLED
-    char notificationName[256];
-    CFStringGetCString(propertyName, notificationName, sizeof(notificationName), kCFStringEncodingASCII);
-    LOG(Media, "AVFWrapper::notificationCallback(%p) %s", self, notificationName);
-#endif
+    CFStringRef propertyName = notificationData->m_propertyName.get();
 
     if (CFEqual(propertyName, AVCFPlayerItemDidPlayToEndTimeNotification))
         self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemDidPlayToEndTime);
@@ -1435,6 +1449,19 @@ void AVFWrapper::notificationCallback(CFNotificationCenterRef, void* observer, C
         self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ContentsNeedsDisplay);
     else
         ASSERT_NOT_REACHED();
+}
+
+void AVFWrapper::notificationCallback(CFNotificationCenterRef, void* observer, CFStringRef propertyName, const void* object, CFDictionaryRef)
+{
+#if !LOG_DISABLED
+    char notificationName[256];
+    CFStringGetCString(propertyName, notificationName, sizeof(notificationName), kCFStringEncodingASCII);
+    LOG(Media, "AVFWrapper::notificationCallback(if=%d) %s", reinterpret_cast<uintptr_t>(observer), notificationName);
+#endif
+
+    OwnPtr<NotificationCallbackData> notificationData = adoptPtr(new NotificationCallbackData(propertyName, observer));
+
+    dispatch_async_f(dispatch_get_main_queue(), notificationData.leakPtr(), processNotification);
 }
 
 void AVFWrapper::loadPlayableCompletionCallback(AVCFAssetRef, void* context)
