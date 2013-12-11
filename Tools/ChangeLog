@@ -1,3 +1,23 @@
+2013-12-11  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/125563> Remove the DumpRenderTree Perl Support module
+
+        Now that old-run-webkit-tests is not used on OS X it's not worth the time and effort
+        to build and maintain this custom Perl module.
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Remove the target.
+        * DumpRenderTree/mac/PerlSupport/DumpRenderTreeSupport.c: Removed.
+        * DumpRenderTree/mac/PerlSupport/DumpRenderTreeSupportPregenerated.pm: Removed.
+        * DumpRenderTree/mac/PerlSupport/DumpRenderTreeSupport_wrapPregenerated.c: Removed.
+        * DumpRenderTree/mac/PerlSupport/Makefile: Removed.
+        * Scripts/old-run-webkit-tests: Update a comment that referred to DumpRenderTreeSupport as a reason to
+        build DumpRenderTree.
+        (dumpToolDidCrash): Stop importing and using the module.
+        * Scripts/webkitpy/port/base.py:
+        (Port._build_driver): Update a comment in the same manner as in old-run-webkit-tests.
+
 2013-12-11  Brendan Long  <b.long@cablelabs.com>
 
         [GTK] Add "enable-mediasource" property to WebKitWebSettings

@@ -421,11 +421,8 @@ my $currentDir = cwd();
 chdirWebKit();
 
 if (!defined($root) && !$noBuildDumpTool) {
-    # FIXME: We build both DumpRenderTree and WebKitTestRunner for
-    # WebKitTestRunner runs because DumpRenderTree still includes
-    # the DumpRenderTreeSupport module and the TestNetscapePlugin.
-    # These two projects should be factored out into their own
-    # projects.
+    # FIXME: We build both DumpRenderTree and WebKitTestRunner for WebKitTestRunner runs because
+    # DumpRenderTree includes TestNetscapePlugin. It should be factored out into its own project.
     buildDumpTool("DumpRenderTree");
     buildDumpTool("WebKitTestRunner") if $useWebKitTestRunner;
 }
@@ -446,11 +443,6 @@ $imageDiffTool .= "_debug" if isCygwin() && configuration() eq "Debug_Cairo";
 die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
 checkFrameworks() unless isCygwin();
-
-if (isAppleMacWebKit()) {
-    push @INC, $productDir;
-    require DumpRenderTreeSupport;
-}
 
 my $layoutTestsName = "LayoutTests";
 my $testDirectory = File::Spec->rel2abs($layoutTestsName);
@@ -1543,10 +1535,7 @@ sub dumpToolDidCrash()
     my $pid = waitpid(-1, WNOHANG);
     return 1 if ($pid == $dumpToolPID);
 
-    # On Mac OS X, crashing may be significantly delayed by crash reporter.
-    return 0 unless isAppleMacWebKit();
-
-    return DumpRenderTreeSupport::processIsCrashing($dumpToolPID);
+    return 0;
 }
 
 sub configureAndOpenHTTPDIfNeeded()

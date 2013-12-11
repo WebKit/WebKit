@@ -17,7 +17,6 @@
 				A84F609108B1370E00E9745F /* PBXTargetDependency */,
 				A84F608F08B1370E00E9745F /* PBXTargetDependency */,
 				141BF238096A451E00E0753C /* PBXTargetDependency */,
-				5DC82A701023C93D00FD1D3B /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -190,20 +189,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D403EB2150871F9005358D2;
 			remoteInfo = LayoutTestHelper;
-		};
-		378C802315AB589B00746821 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9340994A08540CAE007F3BC8;
-			remoteInfo = DumpRenderTree;
-		};
-		5DC82A6F1023C93D00FD1D3B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5DC82A661023C8DE00FD1D3B;
-			remoteInfo = "DumpRenderTree Perl Support";
 		};
 		A84F608E08B1370E00E9745F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -788,24 +773,6 @@
 		};
 /* End PBXHeadersBuildPhase section */
 
-/* Begin PBXLegacyTarget section */
-		5DC82A661023C8DE00FD1D3B /* DumpRenderTree Perl Support */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(ACTION)";
-			buildConfigurationList = 5DC82A6E1023C92A00FD1D3B /* Build configuration list for PBXLegacyTarget "DumpRenderTree Perl Support" */;
-			buildPhases = (
-			);
-			buildToolPath = make;
-			buildWorkingDirectory = "$(SRCROOT)/mac/PerlSupport";
-			dependencies = (
-				378C802415AB589B00746821 /* PBXTargetDependency */,
-			);
-			name = "DumpRenderTree Perl Support";
-			passBuildSettingsInEnvironment = 1;
-			productName = "DumpRenderTree Perl Support";
-		};
-/* End PBXLegacyTarget section */
-
 /* Begin PBXNativeTarget section */
 		141BF21E096A441D00E0753C /* TestNetscapePlugIn */ = {
 			isa = PBXNativeTarget;
@@ -905,7 +872,6 @@
 				9340994A08540CAE007F3BC8 /* DumpRenderTree */,
 				B5A7525A08AF4A4A00138E45 /* ImageDiff */,
 				141BF21E096A441D00E0753C /* TestNetscapePlugIn */,
-				5DC82A661023C8DE00FD1D3B /* DumpRenderTree Perl Support */,
 				2D403EB2150871F9005358D2 /* LayoutTestHelper */,
 			);
 		};
@@ -1043,16 +1009,6 @@
 			target = 2D403EB2150871F9005358D2 /* LayoutTestHelper */;
 			targetProxy = 2D403F201508736C005358D2 /* PBXContainerItemProxy */;
 		};
-		378C802415AB589B00746821 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9340994A08540CAE007F3BC8 /* DumpRenderTree */;
-			targetProxy = 378C802315AB589B00746821 /* PBXContainerItemProxy */;
-		};
-		5DC82A701023C93D00FD1D3B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5DC82A661023C8DE00FD1D3B /* DumpRenderTree Perl Support */;
-			targetProxy = 5DC82A6F1023C93D00FD1D3B /* PBXContainerItemProxy */;
-		};
 		A84F608F08B1370E00E9745F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B5A7525A08AF4A4A00138E45 /* ImageDiff */;
@@ -1135,27 +1091,6 @@
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
 				PRODUCT_NAME = LayoutTestHelper;
 				SKIP_INSTALL = NO;
-			};
-			name = Production;
-		};
-		5DC82A671023C8DE00FD1D3B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "DumpRenderTree Perl Support";
-			};
-			name = Debug;
-		};
-		5DC82A681023C8DE00FD1D3B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "DumpRenderTree Perl Support";
-			};
-			name = Release;
-		};
-		5DC82A691023C8DE00FD1D3B /* Production */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "DumpRenderTree Perl Support";
 			};
 			name = Production;
 		};
@@ -1292,16 +1227,6 @@
 				2D403F16150871F9005358D2 /* Debug */,
 				2D403F17150871F9005358D2 /* Release */,
 				2D403F18150871F9005358D2 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		5DC82A6E1023C92A00FD1D3B /* Build configuration list for PBXLegacyTarget "DumpRenderTree Perl Support" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5DC82A671023C8DE00FD1D3B /* Debug */,
-				5DC82A681023C8DE00FD1D3B /* Release */,
-				5DC82A691023C8DE00FD1D3B /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

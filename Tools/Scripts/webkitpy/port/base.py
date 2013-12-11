@@ -1392,11 +1392,8 @@ class Port(object):
         environment.disable_gcc_smartquotes()
         env = environment.to_dictionary()
 
-        # FIXME: We build both DumpRenderTree and WebKitTestRunner for
-        # WebKitTestRunner runs because DumpRenderTree still includes
-        # the DumpRenderTreeSupport module and the TestNetscapePlugin.
-        # These two projects should be factored out into their own
-        # projects.
+        # FIXME: We build both DumpRenderTree and WebKitTestRunner for WebKitTestRunner runs because
+        # DumpRenderTree includes TestNetscapePlugin. It should be factored out into its own project.
         try:
             self._run_script("build-dumprendertree", args=self._build_driver_flags(), env=env)
             if self.get_option('webkit_test_runner'):
