@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "MoveOnly.h"
+#include <string>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
@@ -128,5 +129,25 @@ TEST(WTF_HashMap, MoveOnlyKeys)
 
     ASSERT_TRUE(moveOnlyKeys.isEmpty());
 }
+
+#if COMPILER_SUPPORTS(CXX_GENERALIZED_INITIALIZERS)
+TEST(WTF_HashMap, InitializerList)
+{
+    HashMap<unsigned, std::string> map = {
+        { 1, "one" },
+        { 2, "two" },
+        { 3, "three" },
+        { 4, "four" },
+    };
+
+    EXPECT_EQ(4, map.size());
+
+    EXPECT_EQ("one", map.get(1));
+    EXPECT_EQ("two", map.get(2));
+    EXPECT_EQ("three", map.get(3));
+    EXPECT_EQ("four", map.get(4));
+    EXPECT_EQ(std::string(), map.get(5));
+}
+#endif
 
 } // namespace TestWebKitAPI

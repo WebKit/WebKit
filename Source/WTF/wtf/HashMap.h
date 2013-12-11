@@ -67,6 +67,18 @@ public:
     typedef typename HashTableType::AddResult AddResult;
 
 public:
+    HashMap()
+    {
+    }
+
+#if COMPILER_SUPPORTS(CXX_GENERALIZED_INITIALIZERS)
+    HashMap(std::initializer_list<KeyValuePairType> initializerList)
+    {
+        for (const auto& keyValuePair : initializerList)
+            add(keyValuePair.key, keyValuePair.value);
+    }
+#endif
+
     void swap(HashMap&);
 
     int size() const;
