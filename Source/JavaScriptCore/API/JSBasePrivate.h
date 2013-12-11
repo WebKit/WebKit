@@ -43,7 +43,7 @@ owns a large non-GC memory region. Calling this function will encourage the
 garbage collector to collect soon, hoping to reclaim that large non-GC memory
 region.
 */
-JS_EXPORT void JSReportExtraMemoryCost(JSContextRef ctx, size_t size) AVAILABLE_IN_WEBKIT_VERSION_4_0;
+JS_EXPORT void JSReportExtraMemoryCost(JSContextRef ctx, size_t size) CF_AVAILABLE(10_6, 7_0);
 
 JS_EXPORT void JSDisableGCTimer(void);
 

@@ -1,3 +1,25 @@
+2013-12-11  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/125559> Move JavaScriptCore off the legacy WebKit availability macros
+
+        The legacy WebKit availability macros are verbose, confusing, and provide no benefit over
+        using the system availability macros directly. The original vision was that they'd serve
+        a cross-platform purpose but that never came to be.
+
+        Map from WebKit version to OS X version based on the mapping in WebKitAvailability.h.
+        All iOS versions are specified as 7.0 as that is when the JavaScriptCore C API was made
+        public.
+
+        Part of <rdar://problem/15512304>.
+
+        Reviewed by Anders Carlsson.
+
+        * API/JSBasePrivate.h:
+        * API/JSContextRef.h:
+        * API/JSContextRefPrivate.h:
+        * API/JSObjectRef.h:
+        * API/JSValueRef.h:
+
 2013-12-10  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of forward exit on DoubleAsInt32
