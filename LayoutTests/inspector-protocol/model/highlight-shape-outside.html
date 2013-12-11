@@ -113,7 +113,7 @@ function shapeTests() {
         var test = tests[0];
         tests = tests.splice(1);
         InspectorTest.shapeOutsideInfo(test.selector, function(shapeOutside) {
-            var actual = shapeOutside.path.join(' ');
+            var actual = shapeOutside.shape.join(' ');
             var expected = test.path.join(' ');
             InspectorTest.assert(actual === expected, "Actual [" + actual + "] Expected [" + expected + "]");
             doTests(tests);

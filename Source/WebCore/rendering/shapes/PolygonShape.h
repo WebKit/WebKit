@@ -97,7 +97,7 @@ public:
     virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
     virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit&) const OVERRIDE;
 
-    virtual void buildPath(Path&) const OVERRIDE;
+    virtual void buildDisplayPaths(DisplayPaths&) const OVERRIDE;
 
 private:
     const FloatPolygon& shapeMarginBounds() const;

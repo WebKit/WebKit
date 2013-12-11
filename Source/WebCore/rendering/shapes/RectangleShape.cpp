@@ -228,9 +228,11 @@ bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalInterv
     return false;
 }
 
-void RectangleShape::buildPath(Path& path) const
+void RectangleShape::buildDisplayPaths(DisplayPaths& paths) const
 {
-    path.addRoundedRect(m_bounds, FloatSize(m_bounds.rx(), m_bounds.ry()), Path::PreferBezierRoundedRect);
+    paths.shape.addRoundedRect(m_bounds, FloatSize(m_bounds.rx(), m_bounds.ry()), Path::PreferBezierRoundedRect);
+    if (shapeMargin())
+        paths.marginShape.addRoundedRect(shapeMarginBounds(), FloatSize(shapeMarginBounds().rx(), shapeMarginBounds().ry()), Path::PreferBezierRoundedRect);
 }
 
 } // namespace WebCore

@@ -62,6 +62,11 @@ typedef Vector<LineSegment> SegmentList;
 
 class Shape {
 public:
+    struct DisplayPaths {
+        Path shape;
+        Path marginShape;
+    };
+
     static PassOwnPtr<Shape> createShape(const BasicShape*, const LayoutSize& logicalBoxSize, WritingMode, Length margin, Length padding);
     static PassOwnPtr<Shape> createShape(const StyleImage*, float threshold, const LayoutSize& logicalBoxSize, WritingMode, Length margin, Length padding);
     static PassOwnPtr<Shape> createShape(const RoundedRect&, WritingMode, Length margin, Length padding);
@@ -77,7 +82,7 @@ public:
     bool lineOverlapsShapeMarginBounds(LayoutUnit lineTop, LayoutUnit lineHeight) const { return lineOverlapsBoundingBox(lineTop, lineHeight, shapeMarginLogicalBoundingBox()); }
     bool lineOverlapsShapePaddingBounds(LayoutUnit lineTop, LayoutUnit lineHeight) const { return lineOverlapsBoundingBox(lineTop, lineHeight, shapePaddingLogicalBoundingBox()); }
 
-    virtual void buildPath(Path&) const = 0;
+    virtual void buildDisplayPaths(DisplayPaths&) const = 0;
 
 protected:
     float shapeMargin() const { return m_margin; }

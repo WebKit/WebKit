@@ -19,7 +19,8 @@ const regionNumberFillColor = "rgba(255, 255, 255, 0.9)";
 const regionNumberStrokeColor = "rgb(61, 127, 204)";
 
 // CSS Shapes highlight colors
-const shapeHighlightColor = "rgb(255, 105, 180)";
+const shapeHighlightColor = "rgba(96, 82, 127, 0.8)";
+const shapeMarginHighlightColor = "rgba(96, 82, 127, 0.6)";
 
 function drawPausedInDebuggerMessage(message)
 {
@@ -562,9 +563,13 @@ function _drawRegionsHighlight(regions)
 }
 
 function _drawShapeHighlight(shapeInfo) {
-    if (shapeInfo.path)
-        drawPath(context, shapeInfo.path, shapeHighlightColor);
-    else
+    if (shapeInfo.marginShape)
+        drawPath(context, shapeInfo.marginShape, shapeMarginHighlightColor);
+
+    if (shapeInfo.shape)
+        drawPath(context, shapeInfo.shape, shapeHighlightColor);
+
+    if (!(shapeInfo.shape || shapeInfo.marginShape))
         drawOutlinedQuad(shapeInfo.bounds, shapeHighlightColor, shapeHighlightColor);
 }
 

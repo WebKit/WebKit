@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+}
+.shape {
+    float: left;
+    width: 100px;
+    height: 100px;
+    padding: 25px 75px 75px 25px;
+    margin-right: -200px;
+    -webkit-shape-margin: 10px;
+}
+.inset {
+    -webkit-shape-outside: inset(25px 25px 25px 25px round 10px 10px) content-box;
+}
+.circle {
+    -webkit-shape-outside: circle(50px) content-box;
+}
+.svg {
+    -webkit-shape-outside: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none' width='100px' height='100px'><rect x='25' y='25' width='50' height='50' fill='blue' /></svg>");
+    -webkit-shape-margin: 1px;
+}
+</style>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript" src="../resources/shape-info-helper.js"></script>
+<script>
+function shapeTests() {
+    var tests = [
+    {
+        'selector' : '.inset',
+        'shape' : roundedRectCommands(50, 50, 50, 50, 10),
+        'marginShape' : roundedRectCommands(40, 40, 70, 70, 20)
+    },
+    {
+        'selector' : '.circle',
+        'shape' : roundedRectCommands(25, 25, 100, 100, 50),
+        'marginShape' : roundedRectCommands(15, 15, 120, 120, 60)
+    },
+    {
+        'selector' : '.svg',
+        'shape' : roundedRectCommands(50, 50, 50, 50, 0),
+        'marginShape' : [].concat(roundedRectCommands(50, 49, 50, 1, 0),
+            roundedRectCommands(49, 50, 52, 50, 0),
+            roundedRectCommands(50, 100, 50, 1, 0))
+    }
+    ];
+
+    function roundedRectCommands(x, y, w, h, r) {
+        if (!r)
+            return ['M', x, y, 'L', x + w, y, 'L', x + w, y + h, 'L', x, y + h, 'L', x, y, 'Z'];
+
+        // Approximate 1 - kappa, see Path.cpp
+        var control = .447715;
+
+        var commands = [];
+
+        commands.push('M', x + r, y);
+        commands.push('L', x + w - r, y);
+        commands.push('C', x + w - control * r, y, x + w, y + control * r, x + w, y + r);
+
+        commands.push('L', x + w, y + h - r);
+        commands.push('C', x + w, y + h - control * r, x + w - control * r, y + h, x + w - r, y + h);
+
+        commands.push('L', x + r, y + h);
+        commands.push('C', x + control * r, y + h, x, y + h - control * r, x, y + h - r);
+
+        commands.push('L', x, y + r);
+        commands.push('C', x, y + control * r, x + control * r, y, x + r, y);
+        commands.push('Z');
+
+        return commands;
+    }
+
+    function testPath(actual, expected, msg) {
+        var result = InspectorTest.pathsRoughlyEqual(actual, expected);
+        expectedString = expected.map(function(item) {
+            if (typeof item === 'number')
+                return +item.toFixed(2);
+            return item;
+        }).join(' ');
+        InspectorTest.assert(result, msg + " [" + expectedString + "]");
+        if (!result)
+            InspectorTest.log("Actual shape was [" + actual.join(" ") + "]");
+    }
+
+    function doTests(tests) {
+        if (!tests.length) {
+            InspectorTest.completeTest();
+            return;
+        }
+        var test = tests[0];
+        tests = tests.splice(1);
+        InspectorTest.shapeOutsideInfo(test.selector, function(shapeOutside) {
+            testPath(shapeOutside.shape, test.shape, "Shape roughly equals");
+            testPath(shapeOutside.marginShape, test.marginShape, "Margin shape roughly equals");
+
+            doTests(tests);
+        });
+    }
+
+    doTests(tests);
+}
+window.onload = function() { ShapeInfoHelper.runShapeTest(shapeTests); }
+</script>
+</head>
+<body>
+    <div class='shape inset'></div>
+    <div class='shape circle'></div>
+    <div class='shape svg'></div>
+</body>
+</html>

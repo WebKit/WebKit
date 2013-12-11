@@ -1,3 +1,37 @@
+2013-12-11  Bear Travis  <betravis@adobe.com>
+
+        Web Inspector: [CSS Shapes] Highlight margin-shape for shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=125175
+
+        Reviewed by Darin Adler.
+
+        In addition to highlighting the shape, also highlight the shape created
+        by shape-margin with a slightly more transparent color. This patch modifies
+        the shape info passed to the Inspector Overlay to include a path for both
+        the raw shape and the shape with margin.
+
+        Test: inspector-protocol/model/highlight-shape-outside-margin.html
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForShapeOutside): Call Shape::buildDisplayPaths rather than
+        Shape::buildPath, and pass along any relevant paths to the Inspector overlay.
+        * inspector/InspectorOverlayPage.js:
+        (_drawShapeHighlight): Draw the margin shape in addition to the raw shape.
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::addRoundedRect): Add a rounded rect to the path.
+        (WebCore::BoxShape::buildDisplayPaths): Create the applicable [margin/padding/raw] shapes.
+        * rendering/shapes/BoxShape.h:
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::addPolygon): Add a set of vertices as a polygon to the path.
+        (WebCore::PolygonShape::buildDisplayPaths): Create the applicable [margin/padding/raw] shapes.
+        * rendering/shapes/PolygonShape.h:
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShape::buildDisplayPaths): Ditto.
+        * rendering/shapes/RectangleShape.cpp:
+        (WebCore::RectangleShape::buildDisplayPaths): Ditto.
+        * rendering/shapes/RectangleShape.h:
+        * rendering/shapes/Shape.h:
+
 2013-12-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose accessibility objects WAI-ARIA landmark roles

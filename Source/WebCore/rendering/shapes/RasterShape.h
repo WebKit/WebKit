@@ -103,7 +103,12 @@ public:
     virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
     virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit&) const OVERRIDE;
 
-    virtual void buildPath(Path& path) const OVERRIDE { m_intervals->buildBoundsPath(path); }
+    virtual void buildDisplayPaths(DisplayPaths& paths) const OVERRIDE
+    {
+        m_intervals->buildBoundsPath(paths.shape);
+        if (shapeMargin())
+            marginIntervals().buildBoundsPath(paths.marginShape);
+    }
 
 private:
     const RasterShapeIntervals& marginIntervals() const;
