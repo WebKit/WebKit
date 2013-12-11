@@ -315,7 +315,9 @@ private:
     StringImpl(CreateEmptyUnique_T)
         : m_refCount(s_refCountIncrement)
         , m_length(0)
-        , m_data16(reinterpret_cast<const UChar*>(1))
+        // We expect m_buffer to be initialized to 0 as we use it
+        // to represent a null terminated buffer.
+        , m_data16(reinterpret_cast<const UChar*>(&m_buffer))
         , m_buffer(0)
     {
         ASSERT(m_data16);

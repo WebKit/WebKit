@@ -1,3 +1,23 @@
+2013-12-11  Oliver Hunt  <oliver@apple.com>
+
+        Give Unique StringImpls a meaningful data pointer
+        https://bugs.webkit.org/show_bug.cgi?id=125598
+
+        Reviewed by Michael Saboff.
+
+        Found by code inspection.  If there is a collision in an Identifier
+        table when comparing to a string literal we attempt to use the data
+        pointer (essentially this ends up being a null termination check).
+
+        Previously unique pointers just used the literal 1 as the data address
+        but this obviously fails when dereferenced.  Instead we now make the
+        data pointer point to the location of the buffer pointer itself.  As
+        the buffer pointer is initialised to 0, this satisfies the requirement
+        that the 0-length unique string is null terminated.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+
 2013-12-10  Anders Carlsson  <andersca@apple.com>
 
         Add a HashMap constructor that takes an initializer list
