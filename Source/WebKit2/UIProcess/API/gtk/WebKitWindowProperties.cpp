@@ -20,10 +20,10 @@
 #include "config.h"
 #include "WebKitWindowProperties.h"
 
+#include "APINumber.h"
 #include "ImmutableDictionary.h"
 #include "WebKitPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
-#include "WebNumber.h"
 #include "WebURLRequest.h"
 #include <WebCore/IntRect.h>
 #include <glib/gi18n-lib.h>
@@ -378,48 +378,48 @@ void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties* w
 {
     GdkRectangle geometry = windowProperties->priv->geometry;
 
-    WebDouble* doubleValue = static_cast<WebDouble*>(features->get("x"));
+    API::Double* doubleValue = static_cast<API::Double*>(features->get("x"));
     if (doubleValue)
         geometry.x = doubleValue->value();
 
-    doubleValue = static_cast<WebDouble*>(features->get("y"));
+    doubleValue = static_cast<API::Double*>(features->get("y"));
     if (doubleValue)
         geometry.y = doubleValue->value();
 
-    doubleValue = static_cast<WebDouble*>(features->get("width"));
+    doubleValue = static_cast<API::Double*>(features->get("width"));
     if (doubleValue)
         geometry.width = doubleValue->value();
 
-    doubleValue = static_cast<WebDouble*>(features->get("height"));
+    doubleValue = static_cast<API::Double*>(features->get("height"));
     if (doubleValue)
         geometry.height = doubleValue->value();
     webkitWindowPropertiesSetGeometry(windowProperties, &geometry);
 
-    WebBoolean* booleanValue = static_cast<WebBoolean*>(features->get("menuBarVisible"));
+    API::Boolean* booleanValue = static_cast<API::Boolean*>(features->get("menuBarVisible"));
     if (booleanValue)
         webkitWindowPropertiesSetMenubarVisible(windowProperties, booleanValue->value());
 
-    booleanValue = static_cast<WebBoolean*>(features->get("statusBarVisible"));
+    booleanValue = static_cast<API::Boolean*>(features->get("statusBarVisible"));
     if (booleanValue)
         webkitWindowPropertiesSetStatusbarVisible(windowProperties, booleanValue->value());
 
-    booleanValue = static_cast<WebBoolean*>(features->get("toolBarVisible"));
+    booleanValue = static_cast<API::Boolean*>(features->get("toolBarVisible"));
     if (booleanValue)
         webkitWindowPropertiesSetToolbarVisible(windowProperties, booleanValue->value());
 
-    booleanValue = static_cast<WebBoolean*>(features->get("locationBarVisible"));
+    booleanValue = static_cast<API::Boolean*>(features->get("locationBarVisible"));
     if (booleanValue)
         webkitWindowPropertiesSetLocationbarVisible(windowProperties, booleanValue->value());
 
-    booleanValue = static_cast<WebBoolean*>(features->get("scrollbarsVisible"));
+    booleanValue = static_cast<API::Boolean*>(features->get("scrollbarsVisible"));
     if (booleanValue)
         webkitWindowPropertiesSetScrollbarsVisible(windowProperties, booleanValue->value());
 
-    booleanValue = static_cast<WebBoolean*>(features->get("resizable"));
+    booleanValue = static_cast<API::Boolean*>(features->get("resizable"));
     if (booleanValue)
         webkitWindowPropertiesSetResizable(windowProperties, booleanValue->value());
 
-    booleanValue = static_cast<WebBoolean*>(features->get("fullscreen"));
+    booleanValue = static_cast<API::Boolean*>(features->get("fullscreen"));
     if (booleanValue)
         webkitWindowPropertiesSetFullscreen(windowProperties, booleanValue->value());
 }

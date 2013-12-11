@@ -35,13 +35,13 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
 {
     if (g_str_equal(messageName, "DidInitiateLoadForResource")) {
         WebFrameProxy* frame = static_cast<WebFrameProxy*>(message.get(String::fromUTF8("Frame")));
-        WebUInt64* resourceIdentifier = static_cast<WebUInt64*>(message.get(String::fromUTF8("Identifier")));
+        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
         WebURLRequest* webRequest = static_cast<WebURLRequest*>(message.get(String::fromUTF8("Request")));
         GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(webRequest->resourceRequest()));
 
         webkitWebViewResourceLoadStarted(webView, frame, resourceIdentifier->value(), request.get());
     } else if (g_str_equal(messageName, "DidSendRequestForResource")) {
-        WebUInt64* resourceIdentifier = static_cast<WebUInt64*>(message.get(String::fromUTF8("Identifier")));
+        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
         GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
         if (!resource)
             return;
@@ -53,7 +53,7 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
 
         webkitWebResourceSentRequest(resource.get(), request.get(), redirectResponse.get());
     } else if (g_str_equal(messageName, "DidReceiveResponseForResource")) {
-        WebUInt64* resourceIdentifier = static_cast<WebUInt64*>(message.get(String::fromUTF8("Identifier")));
+        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
         GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
         if (!resource)
             return;
@@ -63,15 +63,15 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
 
         webkitWebResourceSetResponse(resource.get(), response.get());
     } else if (g_str_equal(messageName, "DidReceiveContentLengthForResource")) {
-        WebUInt64* resourceIdentifier = static_cast<WebUInt64*>(message.get(String::fromUTF8("Identifier")));
+        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
         GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
         if (!resource)
             return;
 
-        WebUInt64* contentLength = static_cast<WebUInt64*>(message.get(String::fromUTF8("ContentLength")));
+        API::UInt64* contentLength = static_cast<API::UInt64*>(message.get(String::fromUTF8("ContentLength")));
         webkitWebResourceNotifyProgress(resource.get(), contentLength->value());
     } else if (g_str_equal(messageName, "DidFinishLoadForResource")) {
-        WebUInt64* resourceIdentifier = static_cast<WebUInt64*>(message.get(String::fromUTF8("Identifier")));
+        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
         GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
         if (!resource)
             return;
@@ -79,7 +79,7 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
         webkitWebResourceFinished(resource.get());
         webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());
     } else if (g_str_equal(messageName, "DidFailLoadForResource")) {
-        WebUInt64* resourceIdentifier = static_cast<WebUInt64*>(message.get(String::fromUTF8("Identifier")));
+        API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
         GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
         if (!resource)
             return;
@@ -92,7 +92,7 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
         webkitWebResourceFailed(resource.get(), resourceError.get());
         webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());
     } else if (g_str_equal(messageName, "DidGetSnapshot")) {
-        WebUInt64* callbackID = static_cast<WebUInt64*>(message.get("CallbackID"));
+        API::UInt64* callbackID = static_cast<API::UInt64*>(message.get("CallbackID"));
         WebImage* image = static_cast<WebImage*>(message.get("Snapshot"));
         webKitWebViewDidReceiveSnapshot(webView, callbackID->value(), image);
     } else

@@ -1,3 +1,25 @@
+2013-12-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed GTK build fix attempt after r160395
+
+        Renamed WebUInt64 to API::UInt64, WebDouble to API::Double, WebBoolean
+        to API::Boolean.
+
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (didReceiveWebViewMessageFromInjectedBundle):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_snapshot):
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp: Included APINumber.h instead of WebNumber.h
+        (webkitWindowPropertiesUpdateFromWebWindowFeatures):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (didInitiateLoadForResource):
+        (willSendRequestForFrame):
+        (didReceiveResponseForResource):
+        (didReceiveContentLengthForResource):
+        (didFinishLoadForResource):
+        (didFailLoadForResource):
+        (webkitWebPageDidReceiveMessage):
+
 2013-12-10  Dan Bernstein  <mitz@apple.com>
 
         All observable PageLoadState properties should change in an atomic fashion, with properly nested change notifications
