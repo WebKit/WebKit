@@ -66,6 +66,7 @@ public:
     EventSenderProxy* eventSenderProxy() { return m_eventSenderProxy.get(); }
 
     void ensureViewSupportsOptions(WKDictionaryRef options);
+    bool shouldUseRemoteLayerTree() const { return m_shouldUseRemoteLayerTree; }
     
     // Runs the run loop until `done` is true or the timeout elapses.
     enum TimeoutDuration { ShortTimeout, LongTimeout, NoTimeout, CustomTimeout };
@@ -217,6 +218,10 @@ private:
     String m_authenticationPassword;
 
     bool m_shouldBlockAllPlugins;
+
+    bool m_forceComplexText;
+    bool m_shouldUseAcceleratedDrawing;
+    bool m_shouldUseRemoteLayerTree;
 
     OwnPtr<EventSenderProxy> m_eventSenderProxy;
 

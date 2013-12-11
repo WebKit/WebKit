@@ -119,12 +119,18 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     , m_options(options)
 {
     WKRetainPtr<WKStringRef> useThreadedScrollingKey(AdoptWK, WKStringCreateWithUTF8CString("ThreadedScrolling"));
+    WKRetainPtr<WKStringRef> useRemoteLayerTreeKey(AdoptWK, WKStringCreateWithUTF8CString("RemoteLayerTree"));
     WKTypeRef useThreadedScrollingValue = options ? WKDictionaryGetItemForKey(options, useThreadedScrollingKey.get()) : NULL;
     bool useThreadedScrolling = useThreadedScrollingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useThreadedScrollingValue));
 
     // The tiled drawing specific tests also depend on threaded scrolling.
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroupRef);
     WKPreferencesSetThreadedScrollingEnabled(preferences, useThreadedScrolling);
+
+    // FIXME: Not sure this is the best place for this; maybe we should have API to set this so we can do it from TestController?
+    WKTypeRef useRemoteLayerTreeValue = options ? WKDictionaryGetItemForKey(options, useRemoteLayerTreeKey.get()) : NULL;
+    if (useRemoteLayerTreeValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useRemoteLayerTreeValue)))
+        [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
 
     NSRect rect = NSMakeRect(0, 0, TestController::viewWidth, TestController::viewHeight);
     m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage useThreadedScrolling:useThreadedScrolling];

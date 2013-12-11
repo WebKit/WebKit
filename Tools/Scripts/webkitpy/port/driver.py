@@ -336,6 +336,10 @@ class Driver(object):
             cmd.append('--gc-between-tests')
         if self._port.get_option('complex_text'):
             cmd.append('--complex-text')
+        if self._port.get_option('accelerated_drawing'):
+            cmd.append('--accelerated-drawing')
+        if self._port.get_option('remote_layer_tree'):
+            cmd.append('--remote-layer-tree')
         if self._port.get_option('threaded'):
             cmd.append('--threaded')
         if self._no_timeout:

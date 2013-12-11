@@ -151,6 +151,10 @@ static void updateThreadedScrollingForCurrentTest(const char* pathOrURL)
     WKRetainPtr<WKBooleanRef> useThreadedScrollingValue = adoptWK(WKBooleanCreate(shouldUseThreadedScrolling(pathOrURL)));
     WKDictionaryAddItem(viewOptions.get(), useThreadedScrollingKey.get(), useThreadedScrollingValue.get());
 
+    WKRetainPtr<WKStringRef> useRemoteLayerTreeKey = adoptWK(WKStringCreateWithUTF8CString("RemoteLayerTree"));
+    WKRetainPtr<WKBooleanRef> useRemoteLayerTreeValue = adoptWK(WKBooleanCreate(TestController::shared().shouldUseRemoteLayerTree()));
+    WKDictionaryAddItem(viewOptions.get(), useRemoteLayerTreeKey.get(), useRemoteLayerTreeValue.get());
+
     TestController::shared().ensureViewSupportsOptions(viewOptions.get());
 #else
     UNUSED_PARAM(pathOrURL);

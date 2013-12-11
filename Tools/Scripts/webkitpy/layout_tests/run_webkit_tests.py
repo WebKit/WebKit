@@ -104,15 +104,22 @@ def parse_args(args):
             default=False, help="Prefix used when spawning the Web process (Debug mode only)"),
     ]))
 
+    option_group_definitions.append(("Feature Switches", [
+        optparse.make_option("--complex-text", action="store_true", default=False,
+            help="Use the complex text code path for all text (OS X and Windows only)"),
+        optparse.make_option("--accelerated-drawing", action="store_true", default=False,
+            help="Use accelerated drawing (OS X only)"),
+        optparse.make_option("--remote-layer-tree", action="store_true", default=False,
+            help="Use the remote layer tree drawing model (OS X WebKit2 only)"),
+    ]))
+
     option_group_definitions.append(("WebKit Options", [
         optparse.make_option("--gc-between-tests", action="store_true", default=False,
             help="Force garbage collection between each test"),
-        optparse.make_option("--complex-text", action="store_true", default=False,
-            help="Use the complex text code path for all text (Mac OS X and Windows only)"),
         optparse.make_option("-l", "--leaks", action="store_true", default=False,
-            help="Enable leaks checking (Mac OS X and Gtk+ only)"),
+            help="Enable leaks checking (OS X and Gtk+ only)"),
         optparse.make_option("-g", "--guard-malloc", action="store_true", default=False,
-            help="Enable Guard Malloc (Mac OS X only)"),
+            help="Enable Guard Malloc (OS X only)"),
         optparse.make_option("--threaded", action="store_true", default=False,
             help="Run a concurrent JavaScript thread with each test"),
         optparse.make_option("--webkit-test-runner", "-2", action="store_true",
@@ -128,7 +135,7 @@ def parse_args(args):
         optparse.make_option("--no-pixel", "--no-pixel-tests", action="store_false",
             dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-sample-on-timeout", action="store_false",
-            dest="sample_on_timeout", help="Don't run sample on timeout (Mac OS X only)"),
+            dest="sample_on_timeout", help="Don't run sample on timeout (OS X only)"),
         optparse.make_option("--no-ref-tests", action="store_true",
             dest="no_ref_tests", help="Skip all ref tests"),
         optparse.make_option("--tolerance",
@@ -149,6 +156,8 @@ def parse_args(args):
         optparse.make_option("--no-new-test-results", action="store_false",
             dest="new_test_results", default=True,
             help="Don't create new baselines when no expected results exist"),
+        optparse.make_option("--treat-ref-tests-as-pixel-tests", action="store_true", default=False,
+            help="Run ref tests, but treat them as if they were traditional pixel tests"),
 
         #FIXME: we should support a comma separated list with --pixel-test-directory as well.
         optparse.make_option("--pixel-test-directory", action="append", default=[], dest="pixel_test_directories",

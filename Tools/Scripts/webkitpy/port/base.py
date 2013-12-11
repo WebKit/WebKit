@@ -542,6 +542,9 @@ class Port(object):
     def reference_files(self, test_name):
         """Return a list of expectation (== or !=) and filename pairs"""
 
+        if self.get_option('treat_ref_tests_as_pixel_tests'):
+            return []
+
         reftest_list = self._get_reftest_list(test_name)
         if not reftest_list:
             reftest_list = []

@@ -1,3 +1,63 @@
+2013-12-11  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to compare layout test results between various configurations of WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=125212
+        <rdar://problem/15199108>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/compare-webkit-configurations: Added.
+        Add a script that allows comparison between the "normal" WebKit configuration
+        used for testing and a different configuration (e.g. with accelerated drawing
+        turned on, with the remote layer tree enabled, or WebKit1 vs WebKit2), like so:
+
+        compare-webkit-configurations -2 --comparison=accelerated-drawing compositing/background-color
+
+        This script runs the tests once in the default configuration, ignoring
+        all test expectations, writing the results out to a temporary directory.
+
+        It then runs the tests again in the modified configuration, against the
+        just-written temporary results.
+
+        Ref tests are treated as pixel tests, with their pixel output dumped to disk.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        (initializeGlobalsFromCommandLineOptions):
+        Enable accelerated drawing if requested.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        Add --accelerated-drawing and --remote-layer-tree feature switches, which
+        are forwarded on to the test drivers.
+        Move those two and --complex-text into their own "feature switches" section.
+        Drive-by change "Mac OS X" to "OS X".
+        Add --treat-ref-tests-as-pixel-tests option, which treats ref tests
+        as traditional pixel tests (with PNGs dumped on disk), and
+        ignores e.g. -expected.html files.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.reference_files):
+        Pretend that there are no ref tests.
+        Since is_reference_html_file is intact, our mechanism to ignore
+        the expected files will continue working in this case.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.cmd_line):
+        Forward --accelerated-drawing and --remote-layer-tree to DRT/WKTR.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::shouldUseRemoteLayerTree):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::updateThreadedScrollingForCurrentTest):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        Parse and implement the three feature switches.
+
 2013-12-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose accessibility objects WAI-ARIA landmark roles

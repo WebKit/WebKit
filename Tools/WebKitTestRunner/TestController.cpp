@@ -111,6 +111,9 @@ TestController::TestController(int argc, const char* argv[])
     , m_policyDelegatePermissive(false)
     , m_handlesAuthenticationChallenges(false)
     , m_shouldBlockAllPlugins(false)
+    , m_forceComplexText(false)
+    , m_shouldUseAcceleratedDrawing(false)
+    , m_shouldUseRemoteLayerTree(false)
 {
     initialize(argc, argv);
     controller = this;
@@ -309,6 +312,18 @@ void TestController::initialize(int argc, const char* argv[])
             printSupportedFeatures = true;
             break;
         }
+        if (argument == "--complex-text") {
+            m_forceComplexText = true;
+            continue;
+        }
+        if (argument == "--accelerated-drawing") {
+            m_shouldUseAcceleratedDrawing = true;
+            continue;
+        }
+        if (argument == "--remote-layer-tree") {
+            m_shouldUseRemoteLayerTree = true;
+            continue;
+        }
 
 
         // Skip any other arguments that begin with '--'.
@@ -380,10 +395,21 @@ void TestController::initialize(int argc, const char* argv[])
     if (testPluginDirectory())
         WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
 
+    if (m_forceComplexText)
+        WKContextSetAlwaysUsesComplexTextCodePath(m_context.get(), true);
+
     // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
     resetPreferencesToConsistentValues();
 
-    createWebViewWithOptions(0);
+    WKRetainPtr<WKMutableDictionaryRef> viewOptions;
+    if (m_shouldUseRemoteLayerTree) {
+        viewOptions = adoptWK(WKMutableDictionaryCreate());
+        WKRetainPtr<WKStringRef> useRemoteLayerTreeKey = adoptWK(WKStringCreateWithUTF8CString("RemoteLayerTree"));
+        WKRetainPtr<WKBooleanRef> useRemoteLayerTreeValue = adoptWK(WKBooleanCreate(m_shouldUseRemoteLayerTree));
+        WKDictionaryAddItem(viewOptions.get(), useRemoteLayerTreeKey.get(), useRemoteLayerTreeValue.get());
+    }
+
+    createWebViewWithOptions(viewOptions.get());
 }
 
 void TestController::createWebViewWithOptions(WKDictionaryRef options)
@@ -557,6 +583,8 @@ void TestController::resetPreferencesToConsistentValues()
 #if ENABLE(WEB_AUDIO)
     WKPreferencesSetMediaSourceEnabled(preferences, true);
 #endif
+
+    WKPreferencesSetAcceleratedDrawingEnabled(preferences, m_shouldUseAcceleratedDrawing);
 }
 
 bool TestController::resetStateToConsistentValues()
