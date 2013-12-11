@@ -45,7 +45,7 @@ PassRefPtr<WebGeolocationManagerProxy> WebGeolocationManagerProxy::create(WebCon
 WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebContext* context)
     : WebContextSupplement(context)
 {
-    WebContextSupplement::context()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), this);
+    WebContextSupplement::context()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), *this);
 }
 
 void WebGeolocationManagerProxy::initializeProvider(const WKGeolocationProviderBase* provider)

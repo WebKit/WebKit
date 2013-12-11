@@ -64,7 +64,7 @@ WebNotificationManager::WebNotificationManager(WebProcess* process)
     : m_process(process)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    m_process->addMessageReceiver(Messages::WebNotificationManager::messageReceiverName(), this);
+    m_process->addMessageReceiver(Messages::WebNotificationManager::messageReceiverName(), *this);
 #endif
 }
 

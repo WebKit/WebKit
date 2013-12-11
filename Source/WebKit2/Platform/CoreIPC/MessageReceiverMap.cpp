@@ -39,18 +39,18 @@ MessageReceiverMap::~MessageReceiverMap()
 {
 }
 
-void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName, MessageReceiver* messageReceiver)
+void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName, MessageReceiver& messageReceiver)
 {
     ASSERT(!m_globalMessageReceivers.contains(messageReceiverName));
-    m_globalMessageReceivers.set(messageReceiverName, messageReceiver);
+    m_globalMessageReceivers.set(messageReceiverName, &messageReceiver);
 }
 
-void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName, uint64_t destinationID, MessageReceiver* messageReceiver)
+void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName, uint64_t destinationID, MessageReceiver& messageReceiver)
 {
     ASSERT(!m_messageReceivers.contains(std::make_pair(messageReceiverName, destinationID)));
     ASSERT(!m_globalMessageReceivers.contains(messageReceiverName));
 
-    m_messageReceivers.set(std::make_pair(messageReceiverName, destinationID), messageReceiver);
+    m_messageReceivers.set(std::make_pair(messageReceiverName, destinationID), &messageReceiver);
 }
 
 void MessageReceiverMap::removeMessageReceiver(StringReference messageReceiverName)

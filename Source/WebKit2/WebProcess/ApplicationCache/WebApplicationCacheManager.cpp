@@ -48,7 +48,7 @@ const char* WebApplicationCacheManager::supplementName()
 WebApplicationCacheManager::WebApplicationCacheManager(ChildProcess* childProcess)
     : m_childProcess(childProcess)
 {
-    m_childProcess->addMessageReceiver(Messages::WebApplicationCacheManager::messageReceiverName(), this);
+    m_childProcess->addMessageReceiver(Messages::WebApplicationCacheManager::messageReceiverName(), *this);
 }
 
 void WebApplicationCacheManager::getApplicationCacheOrigins(uint64_t callbackID)

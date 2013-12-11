@@ -48,7 +48,7 @@ const char* WebOriginDataManager::supplementName()
 WebOriginDataManager::WebOriginDataManager(ChildProcess* childProcess)
     : m_childProcess(childProcess)
 {
-    m_childProcess->addMessageReceiver(Messages::WebOriginDataManager::messageReceiverName(), this);
+    m_childProcess->addMessageReceiver(Messages::WebOriginDataManager::messageReceiverName(), *this);
 }
 
 void WebOriginDataManager::getOrigins(WKOriginDataTypes, uint64_t callbackID)

@@ -45,7 +45,7 @@ WebIconDatabaseProxy::WebIconDatabaseProxy(WebProcess* process)
     : m_isEnabled(false)
     , m_process(process)
 {
-    m_process->addMessageReceiver(Messages::WebIconDatabaseProxy::messageReceiverName(), this);
+    m_process->addMessageReceiver(Messages::WebIconDatabaseProxy::messageReceiverName(), *this);
 }
 
 bool WebIconDatabaseProxy::isEnabled() const

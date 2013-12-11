@@ -49,7 +49,7 @@ DownloadProxy* DownloadProxyMap::createDownloadProxy(WebContext& webContext)
     RefPtr<DownloadProxy> downloadProxy = DownloadProxy::create(*this, webContext);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy);
 
-    m_process->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), downloadProxy.get());
+    m_process->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadProxy->downloadID(), *downloadProxy);
 
     return downloadProxy.get();
 }

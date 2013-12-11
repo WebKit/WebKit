@@ -47,7 +47,7 @@ const char* WebResourceCacheManager::supplementName()
 WebResourceCacheManager::WebResourceCacheManager(WebProcess* process)
     : m_process(process)
 {
-    m_process->addMessageReceiver(Messages::WebResourceCacheManager::messageReceiverName(), this);
+    m_process->addMessageReceiver(Messages::WebResourceCacheManager::messageReceiverName(), *this);
 }
 
 void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const

@@ -40,7 +40,7 @@ PassRefPtr<WebConnectionToWebProcess> WebConnectionToWebProcess::create(WebProce
 WebConnectionToWebProcess::WebConnectionToWebProcess(WebProcessProxy* process)
     : m_process(process)
 {
-    m_process->addMessageReceiver(Messages::WebConnection::messageReceiverName(), this);
+    m_process->addMessageReceiver(Messages::WebConnection::messageReceiverName(), *this);
 }
 
 void WebConnectionToWebProcess::invalidate()

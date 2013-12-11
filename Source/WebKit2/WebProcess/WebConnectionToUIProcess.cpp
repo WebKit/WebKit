@@ -42,7 +42,7 @@ PassRefPtr<WebConnectionToUIProcess> WebConnectionToUIProcess::create(WebProcess
 WebConnectionToUIProcess::WebConnectionToUIProcess(WebProcess* process)
     : m_process(process)
 {
-    m_process->addMessageReceiver(Messages::WebConnection::messageReceiverName(), this);
+    m_process->addMessageReceiver(Messages::WebConnection::messageReceiverName(), *this);
 }
 
 void WebConnectionToUIProcess::invalidate()

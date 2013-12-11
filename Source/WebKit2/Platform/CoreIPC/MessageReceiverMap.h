@@ -42,8 +42,8 @@ public:
     MessageReceiverMap();
     ~MessageReceiverMap();
 
-    void addMessageReceiver(StringReference messageReceiverName, MessageReceiver*);
-    void addMessageReceiver(StringReference messageReceiverName, uint64_t destinationID, MessageReceiver*);
+    void addMessageReceiver(StringReference messageReceiverName, MessageReceiver&);
+    void addMessageReceiver(StringReference messageReceiverName, uint64_t destinationID, MessageReceiver&);
 
     void removeMessageReceiver(StringReference messageReceiverName);
     void removeMessageReceiver(StringReference messageReceiverName, uint64_t destinationID);

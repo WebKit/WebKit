@@ -45,9 +45,9 @@ PassRefPtr<WebOriginDataManagerProxy> WebOriginDataManagerProxy::create(WebConte
 }
 
 WebOriginDataManagerProxy::WebOriginDataManagerProxy(WebContext* context)
-: WebContextSupplement(context)
+    : WebContextSupplement(context)
 {
-    context->addMessageReceiver(Messages::WebOriginDataManagerProxy::messageReceiverName(), this);
+    context->addMessageReceiver(Messages::WebOriginDataManagerProxy::messageReceiverName(), *this);
 }
 
 WebOriginDataManagerProxy::~WebOriginDataManagerProxy()

@@ -47,7 +47,7 @@ WebFullScreenManagerProxy::WebFullScreenManagerProxy(WebPageProxy& page, WebFull
     : m_page(&page)
     , m_client(&client)
 {
-    m_page->process().addMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page->pageID(), this);
+    m_page->process().addMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page->pageID(), *this);
 }
 
 WebFullScreenManagerProxy::~WebFullScreenManagerProxy()

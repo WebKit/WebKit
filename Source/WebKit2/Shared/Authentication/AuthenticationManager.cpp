@@ -61,7 +61,7 @@ const char* AuthenticationManager::supplementName()
 AuthenticationManager::AuthenticationManager(ChildProcess* process)
     : m_process(process)
 {
-    m_process->addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), this);
+    m_process->addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), *this);
 }
 
 uint64_t AuthenticationManager::establishIdentifierForChallenge(const WebCore::AuthenticationChallenge& authenticationChallenge)

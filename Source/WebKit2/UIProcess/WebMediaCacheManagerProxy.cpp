@@ -47,7 +47,7 @@ PassRefPtr<WebMediaCacheManagerProxy> WebMediaCacheManagerProxy::create(WebConte
 WebMediaCacheManagerProxy::WebMediaCacheManagerProxy(WebContext* context)
     : WebContextSupplement(context)
 {
-    WebContextSupplement::context()->addMessageReceiver(Messages::WebMediaCacheManagerProxy::messageReceiverName(), this);
+    WebContextSupplement::context()->addMessageReceiver(Messages::WebMediaCacheManagerProxy::messageReceiverName(), *this);
 }
 
 WebMediaCacheManagerProxy::~WebMediaCacheManagerProxy()

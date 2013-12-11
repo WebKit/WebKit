@@ -46,7 +46,7 @@ RemoteLayerTreeHost::RemoteLayerTreeHost(WebPageProxy* webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_rootLayer(nullptr)
 {
-    m_webPageProxy->process().addMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID(), this);
+    m_webPageProxy->process().addMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID(), *this);
 }
 
 RemoteLayerTreeHost::~RemoteLayerTreeHost()

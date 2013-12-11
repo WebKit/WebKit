@@ -342,7 +342,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     m_vibration = WebVibrationProxy::create(this);
 #endif
 
-    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, this);
+    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
     // FIXME: If we ever expose the session storage size as a preference, we need to pass it here.
     m_process->context().storageManager().createSessionStorageNamespace(m_pageID, m_process->isValid() ? m_process->connection() : 0, std::numeric_limits<unsigned>::max());
@@ -473,7 +473,7 @@ void WebPageProxy::reattachToWebProcess()
     else
         m_process = m_process->context().createNewWebProcessRespectingProcessCountLimit();
     m_process->addExistingWebPage(this, m_pageID);
-    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, this);
+    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
 #if ENABLE(INSPECTOR)
     m_inspector = WebInspectorProxy::create(this);

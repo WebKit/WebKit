@@ -50,7 +50,7 @@ const char* WebDatabaseManager::supplementName()
 WebDatabaseManager::WebDatabaseManager(WebProcess* process)
     : m_process(process)
 {
-    m_process->addMessageReceiver(Messages::WebDatabaseManager::messageReceiverName(), this);
+    m_process->addMessageReceiver(Messages::WebDatabaseManager::messageReceiverName(), *this);
 }
 
 void WebDatabaseManager::initialize(const WebProcessCreationParameters& parameters)

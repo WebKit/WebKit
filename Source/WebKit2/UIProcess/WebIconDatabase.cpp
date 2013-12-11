@@ -56,7 +56,7 @@ WebIconDatabase::WebIconDatabase(WebContext* context)
     , m_urlImportCompleted(false)
     , m_databaseCleanupDisabled(false)
 {
-    m_webContext->addMessageReceiver(Messages::WebIconDatabase::messageReceiverName(), this);
+    m_webContext->addMessageReceiver(Messages::WebIconDatabase::messageReceiverName(), *this);
 }
 
 void WebIconDatabase::invalidate()

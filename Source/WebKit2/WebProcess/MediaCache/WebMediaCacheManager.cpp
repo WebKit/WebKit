@@ -43,7 +43,7 @@ const char* WebMediaCacheManager::supplementName()
 WebMediaCacheManager::WebMediaCacheManager(WebProcess* process)
     : m_process(process)
 {
-    m_process->addMessageReceiver(Messages::WebMediaCacheManager::messageReceiverName(), this);
+    m_process->addMessageReceiver(Messages::WebMediaCacheManager::messageReceiverName(), *this);
 }
 
 void WebMediaCacheManager::getHostnamesWithMediaCache(uint64_t callbackID)

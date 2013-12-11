@@ -41,7 +41,7 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy* webPagePr
     , m_webPageProxy(webPageProxy)
     , m_size(webPageProxy->viewSize())
 {
-    m_webPageProxy->process().addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), webPageProxy->pageID(), this);
+    m_webPageProxy->process().addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), webPageProxy->pageID(), *this);
 }
 
 DrawingAreaProxy::~DrawingAreaProxy()

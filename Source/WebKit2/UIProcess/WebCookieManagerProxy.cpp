@@ -51,7 +51,7 @@ WebCookieManagerProxy::WebCookieManagerProxy(WebContext* context)
     , m_cookiePersistentStorageType(SoupCookiePersistentStorageSQLite)
 #endif
 {
-    WebContextSupplement::context()->addMessageReceiver(Messages::WebCookieManagerProxy::messageReceiverName(), this);
+    WebContextSupplement::context()->addMessageReceiver(Messages::WebCookieManagerProxy::messageReceiverName(), *this);
 }
 
 WebCookieManagerProxy::~WebCookieManagerProxy()

@@ -140,7 +140,7 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
 #endif
 {
     m_level = WebInspectorPageGroups::shared().inspectorLevel(m_page->pageGroup());
-    m_page->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID(), this);
+    m_page->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID(), *this);
 }
 
 WebInspectorProxy::~WebInspectorProxy()

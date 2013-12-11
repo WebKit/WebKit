@@ -47,7 +47,7 @@ PassRefPtr<WebApplicationCacheManagerProxy> WebApplicationCacheManagerProxy::cre
 WebApplicationCacheManagerProxy::WebApplicationCacheManagerProxy(WebContext* context)
     : WebContextSupplement(context)
 {
-    context->addMessageReceiver(Messages::WebApplicationCacheManagerProxy::messageReceiverName(), this);
+    context->addMessageReceiver(Messages::WebApplicationCacheManagerProxy::messageReceiverName(), *this);
 }
 
 WebApplicationCacheManagerProxy::~WebApplicationCacheManagerProxy()

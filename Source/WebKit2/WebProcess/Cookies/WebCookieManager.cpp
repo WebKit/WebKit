@@ -51,7 +51,7 @@ const char* WebCookieManager::supplementName()
 WebCookieManager::WebCookieManager(ChildProcess* process)
     : m_process(process)
 {
-    m_process->addMessageReceiver(Messages::WebCookieManager::messageReceiverName(), this);
+    m_process->addMessageReceiver(Messages::WebCookieManager::messageReceiverName(), *this);
 
     ASSERT(!sharedCookieManager);
     sharedCookieManager = this;
