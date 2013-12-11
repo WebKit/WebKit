@@ -1,3 +1,11 @@
+2013-12-11  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/125562> Remove a Leopard-specific check from WebKit.xcodeproj
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2013-12-06  Roger Fong <roger_fong@apple.com> and Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Support compiling with VS2013.
