@@ -37,6 +37,8 @@
 #import <WebKit2/WKURLCF.h>
 #import <WebKit2/WKViewPrivate.h>
 
+static void* keyValueObservingContext = &keyValueObservingContext;
+
 @interface WK2BrowserWindowController () <WKBrowsingContextLoadDelegatePrivate, WKBrowsingContextPolicyDelegate, WKBrowsingContextHistoryDelegate>
 @end
 
@@ -63,7 +65,8 @@
     [progressIndicator unbind:NSHiddenBinding];
     [progressIndicator unbind:NSValueBinding];
 
-    [_webView.browsingContextController removeObserver:self forKeyPath:@"title" context:[WK2BrowserWindowController self]];
+    [_webView.browsingContextController removeObserver:self forKeyPath:@"title" context:keyValueObservingContext];
+    [_webView.browsingContextController removeObserver:self forKeyPath:@"activeURL" context:keyValueObservingContext];
     _webView.browsingContextController.loadDelegate = nil;
     _webView.browsingContextController.policyDelegate = nil;
     [_webView release];
@@ -299,11 +302,13 @@ static void dumpSource(WKStringRef source, WKErrorRef error, void* context)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (context != [WK2BrowserWindowController self] || object != _webView.browsingContextController)
+    if (context != keyValueObservingContext || object != _webView.browsingContextController)
         return;
 
     if ([keyPath isEqualToString:@"title"])
         self.window.title = [_webView.browsingContextController.title stringByAppendingString:@" [WK2]"];
+    else if ([keyPath isEqualToString:@"activeURL"])
+        [self updateTextFieldFromURL:_webView.browsingContextController.activeURL];
 }
 
 // MARK: UI Client Callbacks
@@ -504,7 +509,8 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     [progressIndicator bind:NSHiddenBinding toObject:_webView.browsingContextController withKeyPath:@"loading" options:@{ NSValueTransformerNameBindingOption : NSNegateBooleanTransformerName }];
     [progressIndicator bind:NSValueBinding toObject:_webView.browsingContextController withKeyPath:@"estimatedProgress" options:nil];
 
-    [_webView.browsingContextController addObserver:self forKeyPath:@"title" options:0 context:[WK2BrowserWindowController self]];
+    [_webView.browsingContextController addObserver:self forKeyPath:@"title" options:0 context:keyValueObservingContext];
+    [_webView.browsingContextController addObserver:self forKeyPath:@"activeURL" options:0 context:keyValueObservingContext];
 
     _webView.browsingContextController.loadDelegate = self;
     _webView.browsingContextController.policyDelegate = self;
@@ -573,22 +579,6 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     urlText.stringValue = [URL absoluteString];
 }
 
-- (void)updateProvisionalURL
-{
-    NSURL *url = _webView.browsingContextController.provisionalURL;
-    if (!url)
-        return;
-    [self updateTextFieldFromURL:url];
-}
-
-- (void)updateCommittedURL
-{
-    NSURL *url = _webView.browsingContextController.committedURL;
-    if (!url)
-        return;
-    [self updateTextFieldFromURL:url];
-}
-
 - (void)loadURLString:(NSString *)urlString
 {
     // FIXME: We shouldn't have to set the url text here.
@@ -612,22 +602,22 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 
 - (void)browsingContextControllerDidStartProvisionalLoad:(WKBrowsingContextController *)sender
 {
-    [self updateProvisionalURL];
+    LOG(@"didStartProvisionalLoad");
 }
 
 - (void)browsingContextControllerDidReceiveServerRedirectForProvisionalLoad:(WKBrowsingContextController *)sender
 {
-    [self updateProvisionalURL];
+    LOG(@"didReceiveServerRedirectForProvisionalLoad");
 }
 
 - (void)browsingContextController:(WKBrowsingContextController *)sender didFailProvisionalLoadWithError:(NSError *)error
 {
-    [self updateProvisionalURL];
+    LOG(@"didFailProvisionalLoadWithError: %@", error);
 }
 
 - (void)browsingContextControllerDidCommitLoad:(WKBrowsingContextController *)sender
 {
-    [self updateCommittedURL];
+    LOG(@"didCommitLoad");
 }
 
 - (void)browsingContextControllerDidFinishLoad:(WKBrowsingContextController *)sender
@@ -637,7 +627,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 
 - (void)browsingContextController:(WKBrowsingContextController *)sender didFailLoadWithError:(NSError *)error
 {
-    [self updateProvisionalURL];
+    LOG(@"didFailLoadWithError: %@", error);
 }
 
 - (void)browsingContextControllerDidChangeBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems
