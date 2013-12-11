@@ -51,69 +51,137 @@ public:
         virtual void willChangeTitle() = 0;
         virtual void didChangeTitle() = 0;
 
+        virtual void willChangeActiveURL() = 0;
+        virtual void didChangeActiveURL() = 0;
+
         virtual void willChangeEstimatedProgress() = 0;
         virtual void didChangeEstimatedProgress() = 0;
+    };
+
+    class Transaction {
+        WTF_MAKE_NONCOPYABLE(Transaction);
+    public:
+        Transaction(Transaction&& other)
+            : m_pageLoadState(other.m_pageLoadState)
+        {
+            other.m_pageLoadState = nullptr;
+        }
+
+        ~Transaction()
+        {
+            if (m_pageLoadState)
+                m_pageLoadState->endTransaction();
+        }
+
+    private:
+        friend class PageLoadState;
+
+        explicit Transaction(PageLoadState& pageLoadState)
+            : m_pageLoadState(&pageLoadState)
+        {
+            m_pageLoadState->beginTransaction();
+        }
+
+        class Token {
+        public:
+            Token(Transaction& transaction)
+#if !ASSERT_DISABLED
+                : m_pageLoadState(*transaction.m_pageLoadState)
+#endif
+            {
+                transaction.m_pageLoadState->m_mayHaveUncommittedChanges = true;
+            }
+
+#if !ASSERT_DISABLED
+            PageLoadState& m_pageLoadState;
+#endif
+        };
+
+        PageLoadState* m_pageLoadState;
     };
 
     void addObserver(Observer&);
     void removeObserver(Observer&);
 
-    void reset();
+    Transaction transaction() { return Transaction(*this); }
+    void commitChanges();
+
+    void reset(const Transaction::Token&);
 
     bool isLoading() const;
 
-    const String& provisionalURL() const { return m_provisionalURL; }
-    const String& url() const { return m_url; }
-    const String& unreachableURL() const { return m_unreachableURL; }
+    const String& provisionalURL() const { return m_committedState.provisionalURL; }
+    const String& url() const { return m_committedState.url; }
+    const String& unreachableURL() const { return m_committedState.unreachableURL; }
 
     String activeURL() const;
 
     double estimatedProgress() const;
 
     const String& pendingAPIRequestURL() const;
-    void setPendingAPIRequestURL(const String&);
-    void clearPendingAPIRequestURL();
+    void setPendingAPIRequestURL(const Transaction::Token&, const String&);
+    void clearPendingAPIRequestURL(const Transaction::Token&);
 
-    void didStartProvisionalLoad(const String& url, const String& unreachableURL);
-    void didReceiveServerRedirectForProvisionalLoad(const String& url);
-    void didFailProvisionalLoad();
+    void didStartProvisionalLoad(const Transaction::Token&, const String& url, const String& unreachableURL);
+    void didReceiveServerRedirectForProvisionalLoad(const Transaction::Token&, const String& url);
+    void didFailProvisionalLoad(const Transaction::Token&);
 
-    void didCommitLoad();
-    void didFinishLoad();
-    void didFailLoad();
+    void didCommitLoad(const Transaction::Token&);
+    void didFinishLoad(const Transaction::Token&);
+    void didFailLoad(const Transaction::Token&);
 
-    void didSameDocumentNavigation(const String& url);
+    void didSameDocumentNavigation(const Transaction::Token&, const String& url);
 
-    void setUnreachableURL(const String&);
+    void setUnreachableURL(const Transaction::Token&, const String&);
 
     const String& title() const;
-    void setTitle(const String&);
+    void setTitle(const Transaction::Token&, const String&);
 
-    void didStartProgress();
-    void didChangeProgress(double);
-    void didFinishProgress();
+    void didStartProgress(const Transaction::Token&);
+    void didChangeProgress(const Transaction::Token&, double);
+    void didFinishProgress(const Transaction::Token&);
 
 private:
     static bool isLoadingState(State);
-    void setState(State);
+
+    void beginTransaction() { ++m_outstandingTransactionCount; }
+    void endTransaction();
 
     void callObserverCallback(void (Observer::*)());
 
     Vector<Observer*> m_observers;
 
-    State m_state;
+    struct Data {
+        Data()
+            : state(State::Finished)
+            , estimatedProgress(0)
+        {
+        }
 
-    String m_pendingAPIRequestURL;
+        State state;
 
-    String m_provisionalURL;
-    String m_url;
+        String pendingAPIRequestURL;
 
-    String m_unreachableURL;
+        String provisionalURL;
+        String url;
+
+        String unreachableURL;
+
+        String title;
+
+        double estimatedProgress;
+    };
+
+    static String activeURL(const Data&);
+    static double estimatedProgress(const Data&);
+
+    Data m_committedState;
+    Data m_uncommittedState;
+
     String m_lastUnreachableURL;
 
-    String m_title;
-
-    double m_estimatedProgress;
+    bool m_mayHaveUncommittedChanges;
+    unsigned m_outstandingTransactionCount;
 };
 
 } // namespace WebKit

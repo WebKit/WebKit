@@ -151,6 +151,8 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
             provisionalURL = static_cast<CFStringRef>(value);
     }
 
+    auto transaction = m_pageLoadState.transaction();
+
     if (backForwardListDictionary) {
         if (!m_backForwardList->restoreFromCFDictionaryRepresentation(backForwardListDictionary))
             LOG(SessionState, "Failed to restore back/forward list from SessionHistory dictionary");
@@ -165,7 +167,7 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
                     process().send(Messages::WebPage::RestoreSession(state), m_pageID);
                 else {
                     if (WebBackForwardListItem* item = m_backForwardList->currentItem())
-                        m_pageLoadState.setPendingAPIRequestURL(item->url());
+                        m_pageLoadState.setPendingAPIRequestURL(transaction, item->url());
 
                     process().send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(state), m_pageID);
                 }

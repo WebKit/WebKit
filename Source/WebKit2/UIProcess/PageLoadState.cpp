@@ -28,9 +28,12 @@
 
 namespace WebKit {
 
+// Progress always starts at this value. This helps provide feedback as soon as a load starts.
+static const double initialProgressValue = 0.1;
+
 PageLoadState::PageLoadState()
-    : m_state(State::Finished)
-    , m_estimatedProgress(0)
+    : m_mayHaveUncommittedChanges(false)
+    , m_outstandingTransactionCount(0)
 {
 }
 
@@ -54,185 +57,233 @@ void PageLoadState::removeObserver(Observer& observer)
     m_observers.remove(index);
 }
 
-void PageLoadState::reset()
+void PageLoadState::endTransaction()
 {
-    setState(State::Finished);
+    ASSERT(m_outstandingTransactionCount > 0);
 
-    m_pendingAPIRequestURL = String();
-    m_provisionalURL = String();
-    m_url = String();
+    if (!--m_outstandingTransactionCount)
+        commitChanges();
+}
 
-    m_unreachableURL = String();
+void PageLoadState::commitChanges()
+{
+    if (!m_mayHaveUncommittedChanges)
+        return;
+
+    m_mayHaveUncommittedChanges = false;
+
+    bool titleChanged = m_committedState.title != m_uncommittedState.title;
+    bool isLoadingChanged = isLoadingState(m_committedState.state) != isLoadingState(m_uncommittedState.state);
+    bool activeURLChanged = activeURL(m_committedState) != activeURL(m_uncommittedState);
+    bool estimatedProgressChanged = estimatedProgress(m_committedState) != estimatedProgress(m_uncommittedState);
+
+    if (titleChanged)
+        callObserverCallback(&Observer::willChangeTitle);
+    if (isLoadingChanged)
+        callObserverCallback(&Observer::willChangeIsLoading);
+    if (activeURLChanged)
+        callObserverCallback(&Observer::willChangeActiveURL);
+    if (estimatedProgressChanged)
+        callObserverCallback(&Observer::willChangeEstimatedProgress);
+
+    m_committedState = m_uncommittedState;
+
+    // The "did" ordering is the reverse of the "will". This is a requirement of Cocoa Key-Value Observing.
+    if (estimatedProgressChanged)
+        callObserverCallback(&Observer::didChangeEstimatedProgress);
+    if (activeURLChanged)
+        callObserverCallback(&Observer::didChangeActiveURL);
+    if (isLoadingChanged)
+        callObserverCallback(&Observer::didChangeIsLoading);
+    if (titleChanged)
+        callObserverCallback(&Observer::didChangeTitle);
+}
+
+void PageLoadState::reset(const Transaction::Token& token)
+{
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+
+    m_uncommittedState.state = State::Finished;
+
+    m_uncommittedState.pendingAPIRequestURL = String();
+    m_uncommittedState.provisionalURL = String();
+    m_uncommittedState.url = String();
+
+    m_uncommittedState.unreachableURL = String();
     m_lastUnreachableURL = String();
 
-    callObserverCallback(&Observer::willChangeTitle);
-    m_title = String();
-    callObserverCallback(&Observer::didChangeTitle);
+    m_uncommittedState.title = String();
 
-    callObserverCallback(&Observer::willChangeEstimatedProgress);
-    m_estimatedProgress = 0;
-    callObserverCallback(&Observer::didChangeEstimatedProgress);
+    m_uncommittedState.estimatedProgress = 0;
 }
 
 bool PageLoadState::isLoading() const
 {
-    return isLoadingState(m_state);
+    return isLoadingState(m_committedState.state);
 }
 
-String PageLoadState::activeURL() const
+String PageLoadState::activeURL(const Data& data)
 {
     // If there is a currently pending URL, it is the active URL,
     // even when there's no main frame yet, as it might be the
     // first API request.
-    if (!m_pendingAPIRequestURL.isNull())
-        return m_pendingAPIRequestURL;
+    if (!data.pendingAPIRequestURL.isNull())
+        return data.pendingAPIRequestURL;
 
-    if (!m_unreachableURL.isEmpty())
-        return m_unreachableURL;
+    if (!data.unreachableURL.isEmpty())
+        return data.unreachableURL;
 
-    switch (m_state) {
+    switch (data.state) {
     case State::Provisional:
-        return m_provisionalURL;
+        return data.provisionalURL;
     case State::Committed:
     case State::Finished:
-        return m_url;
+        return data.url;
     }
 
     ASSERT_NOT_REACHED();
     return String();
 }
 
-// Always start progress at initialProgressValue. This helps provide feedback as
-// soon as a load starts.
+String PageLoadState::activeURL() const
+{
+    return activeURL(m_committedState);
+}
 
-static const double initialProgressValue = 0.1;
+double PageLoadState::estimatedProgress(const Data& data)
+{
+    if (!data.pendingAPIRequestURL.isNull())
+        return initialProgressValue;
+
+    return data.estimatedProgress;
+}
 
 double PageLoadState::estimatedProgress() const
 {
-    if (!m_pendingAPIRequestURL.isNull())
-        return initialProgressValue;
-
-    return m_estimatedProgress;
+    return estimatedProgress(m_committedState);
 }
 
 const String& PageLoadState::pendingAPIRequestURL() const
 {
-    return m_pendingAPIRequestURL;
+    return m_committedState.pendingAPIRequestURL;
 }
 
-void PageLoadState::setPendingAPIRequestURL(const String& pendingAPIRequestURL)
+void PageLoadState::setPendingAPIRequestURL(const Transaction::Token& token, const String& pendingAPIRequestURL)
 {
-    callObserverCallback(&Observer::willChangeEstimatedProgress);
-    m_pendingAPIRequestURL = pendingAPIRequestURL;
-    callObserverCallback(&Observer::didChangeEstimatedProgress);
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.pendingAPIRequestURL = pendingAPIRequestURL;
 }
 
-void PageLoadState::clearPendingAPIRequestURL()
+void PageLoadState::clearPendingAPIRequestURL(const Transaction::Token& token)
 {
-    callObserverCallback(&Observer::willChangeEstimatedProgress);
-    m_pendingAPIRequestURL = String();
-    callObserverCallback(&Observer::didChangeEstimatedProgress);
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.pendingAPIRequestURL = String();
 }
 
-void PageLoadState::didStartProvisionalLoad(const String& url, const String& unreachableURL)
+void PageLoadState::didStartProvisionalLoad(const Transaction::Token& token, const String& url, const String& unreachableURL)
 {
-    ASSERT(m_provisionalURL.isEmpty());
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    ASSERT(m_uncommittedState.provisionalURL.isEmpty());
 
-    setState(State::Provisional);
+    m_uncommittedState.state = State::Provisional;
 
-    m_provisionalURL = url;
+    m_uncommittedState.provisionalURL = url;
 
-    setUnreachableURL(unreachableURL);
+    setUnreachableURL(token, unreachableURL);
 }
 
-void PageLoadState::didReceiveServerRedirectForProvisionalLoad(const String& url)
+void PageLoadState::didReceiveServerRedirectForProvisionalLoad(const Transaction::Token& token, const String& url)
 {
-    ASSERT(m_state == State::Provisional);
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    ASSERT(m_uncommittedState.state == State::Provisional);
 
-    m_provisionalURL = url;
+    m_uncommittedState.provisionalURL = url;
 }
 
-void PageLoadState::didFailProvisionalLoad()
+void PageLoadState::didFailProvisionalLoad(const Transaction::Token& token)
 {
-    ASSERT(m_state == State::Provisional);
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    ASSERT(m_uncommittedState.state == State::Provisional);
 
-    setState(State::Finished);
+    m_uncommittedState.state = State::Finished;
 
-    m_provisionalURL = String();
-    m_unreachableURL = m_lastUnreachableURL;
+    m_uncommittedState.provisionalURL = String();
+    m_uncommittedState.unreachableURL = m_lastUnreachableURL;
 }
 
-void PageLoadState::didCommitLoad()
+void PageLoadState::didCommitLoad(const Transaction::Token& token)
 {
-    ASSERT(m_state == State::Provisional);
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    ASSERT(m_uncommittedState.state == State::Provisional);
 
-    setState(State::Committed);
+    m_uncommittedState.state = State::Committed;
 
-    m_url = m_provisionalURL;
-    m_provisionalURL = String();
+    m_uncommittedState.url = m_uncommittedState.provisionalURL;
+    m_uncommittedState.provisionalURL = String();
 
-    m_title = String();
+    m_uncommittedState.title = String();
 }
 
-void PageLoadState::didFinishLoad()
+void PageLoadState::didFinishLoad(const Transaction::Token& token)
 {
-    ASSERT(m_state == State::Committed);
-    ASSERT(m_provisionalURL.isEmpty());
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    ASSERT(m_uncommittedState.state == State::Committed);
+    ASSERT(m_uncommittedState.provisionalURL.isEmpty());
 
-    setState(State::Finished);
+    m_uncommittedState.state = State::Finished;
 }
 
-void PageLoadState::didFailLoad()
+void PageLoadState::didFailLoad(const Transaction::Token& token)
 {
-    ASSERT(m_provisionalURL.isEmpty());
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    ASSERT(m_uncommittedState.provisionalURL.isEmpty());
 
-    setState(State::Finished);
+    m_uncommittedState.state = State::Finished;
 }
 
-void PageLoadState::didSameDocumentNavigation(const String& url)
+void PageLoadState::didSameDocumentNavigation(const Transaction::Token& token, const String& url)
 {
-    ASSERT(!m_url.isEmpty());
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    ASSERT(!m_uncommittedState.url.isEmpty());
 
-    m_url = url;
+    m_uncommittedState.url = url;
 }
 
-void PageLoadState::setUnreachableURL(const String& unreachableURL)
+void PageLoadState::setUnreachableURL(const Transaction::Token& token, const String& unreachableURL)
 {
-    m_lastUnreachableURL = m_unreachableURL;
-    m_unreachableURL = unreachableURL;
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+
+    m_lastUnreachableURL = m_uncommittedState.unreachableURL;
+    m_uncommittedState.unreachableURL = unreachableURL;
 }
 
 const String& PageLoadState::title() const
 {
-    return m_title;
+    return m_committedState.title;
 }
 
-void PageLoadState::setTitle(const String& title)
+void PageLoadState::setTitle(const Transaction::Token& token, const String& title)
 {
-    callObserverCallback(&Observer::willChangeTitle);
-    m_title = title;
-    callObserverCallback(&Observer::didChangeTitle);
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.title = title;
 }
 
-void PageLoadState::didStartProgress()
+void PageLoadState::didStartProgress(const Transaction::Token& token)
 {
-    callObserverCallback(&Observer::willChangeEstimatedProgress);
-    m_estimatedProgress = initialProgressValue;
-    callObserverCallback(&Observer::didChangeEstimatedProgress);
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.estimatedProgress = initialProgressValue;
 }
 
-void PageLoadState::didChangeProgress(double value)
+void PageLoadState::didChangeProgress(const Transaction::Token& token, double value)
 {
-    callObserverCallback(&Observer::willChangeEstimatedProgress);
-    m_estimatedProgress = value;
-    callObserverCallback(&Observer::didChangeEstimatedProgress);
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.estimatedProgress = value;
 }
 
-void PageLoadState::didFinishProgress()
+void PageLoadState::didFinishProgress(const Transaction::Token& token)
 {
-    callObserverCallback(&Observer::willChangeEstimatedProgress);
-    m_estimatedProgress = 1;
-    callObserverCallback(&Observer::didChangeEstimatedProgress);
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.estimatedProgress = 1;
 }
 
 bool PageLoadState::isLoadingState(State state)
@@ -248,25 +299,6 @@ bool PageLoadState::isLoadingState(State state)
 
     ASSERT_NOT_REACHED();
     return false;
-}
-
-void PageLoadState::setState(State state)
-{
-    if (m_state == state)
-        return;
-
-    bool isLoadingIsChanging = false;
-
-    if (isLoadingState(m_state) != isLoadingState(state))
-        isLoadingIsChanging = true;
-
-    if (isLoadingIsChanging)
-        callObserverCallback(&Observer::willChangeIsLoading);
-
-    m_state = state;
-
-    if (isLoadingIsChanging)
-        callObserverCallback(&Observer::didChangeIsLoading);
 }
 
 void PageLoadState::callObserverCallback(void (Observer::*callback)())

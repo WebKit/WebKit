@@ -84,6 +84,16 @@ private:
         [m_controller didChangeValueForKey:@"title"];
     }
 
+    virtual void willChangeActiveURL() OVERRIDE
+    {
+        [m_controller willChangeValueForKey:@"activeURL"];
+    }
+
+    virtual void didChangeActiveURL() OVERRIDE
+    {
+        [m_controller didChangeValueForKey:@"activeURL"];
+    }
+
     virtual void willChangeEstimatedProgress() OVERRIDE
     {
         [m_controller willChangeValueForKey:@"estimatedProgress"];

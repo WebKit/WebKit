@@ -1,3 +1,106 @@
+2013-12-10  Dan Bernstein  <mitz@apple.com>
+
+        All observable PageLoadState properties should change in an atomic fashion, with properly nested change notifications
+        https://bugs.webkit.org/show_bug.cgi?id=125431
+
+        Reviewed by Anders Carlsson.
+
+        Made PageLoadState maintain two copies of its state data members, one representing the
+        committed state and one possibly containing uncommitted changes. When changes are committed,
+        change notifications are sent and the uncommitted state is copied into the committed state.
+        Changes can be committed explicitly at any time, but are also committed when the last
+        outstanding transaction ends. Transactions are RAII objects vended by the PageLoadState.
+        Mutating the PageLoadState requires holding a Transaction, which is enforced by making all
+        the mutating member functions take a Transaction::Token. Passing a Token also marks the
+        PageLoadState as possibly having uncommitted changes.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        Added PageLoadStateObserver::{will,did}ChangeActiveURL overrides that call
+        -{will,did}ChangeValueForKey:.
+
+        * UIProcess/PageLoadState.cpp:
+        Moved constant from the middle of the file to the beginning and reworded comment.
+        (WebKit::PageLoadState::PageLoadState): Added initializers for new member variables, removed
+        initialization of members that are not part of Data, which initializes them in its
+        constructor.
+        (WebKit::PageLoadState::endTransaction): Added. Calles when a Transaction is destructed.
+        Decrements the outstanding transaction count, and if it is zero, commits changes.
+        (WebKit::PageLoadState::commitChanges): Added. Checks for differences in observable
+        properties between the committed state and the uncommitted state, then makes appropriate
+        willChange Observer callbacks, then copies the uncommitted state into the committed state,
+        then makes appropriate didChange Observer callbacks in reverse order. Also added active URL
+        to the set of observable properties.
+        (WebKit::PageLoadState::reset): Changed to take a transaction token, act on
+        m_uncommittedState, and not make observer callbacks.
+        (WebKit::PageLoadState::isLoading): Changed to access m_committedState.
+        (WebKit::PageLoadState::activeURL): Changed to call a static function factored out of this.
+        (WebKit::PageLoadState::estimatedProgress): Ditto.
+        (WebKit::PageLoadState::pendingAPIRequestURL): Changed to access m_committedState.
+        (WebKit::PageLoadState::setPendingAPIRequestURL): Changed to take a transaction token, act
+        on m_uncommittedState, and not make observer callbacks.
+        (WebKit::PageLoadState::clearPendingAPIRequestURL): Ditto.
+        (WebKit::PageLoadState::didStartProvisionalLoad): Ditto.
+        (WebKit::PageLoadState::didReceiveServerRedirectForProvisionalLoad): Ditto.
+        (WebKit::PageLoadState::didFailProvisionalLoad): Ditto.
+        (WebKit::PageLoadState::didCommitLoad): Ditto.
+        (WebKit::PageLoadState::didFinishLoad): Ditto.
+        (WebKit::PageLoadState::didFailLoad): Ditto.
+        (WebKit::PageLoadState::didSameDocumentNavigation): Ditto.
+        (WebKit::PageLoadState::setUnreachableURL): Ditto.
+        (WebKit::PageLoadState::title): Changed to access m_committedState.
+        (WebKit::PageLoadState::setTitle): Changed to take a transaction token, act on
+        m_uncommittedState, and not make observer callbacks.
+        (WebKit::PageLoadState::didStartProgress): Ditto.
+        (WebKit::PageLoadState::didChangeProgress): Ditto.
+        (WebKit::PageLoadState::didFinishProgress): Ditto.
+        * UIProcess/PageLoadState.h:
+        (WebKit::PageLoadState::Transaction::Transaction): Added. Calls
+        PageLoadState::beginTransaction.
+        (WebKit::PageLoadState::Transaction::~Transaction): Added. Calls
+        PageLoadState::endTransaction.
+        (WebKit::PageLoadState::Transaction::Token::Token): Added. Sets m_mayHaveUncommittedChanges.
+        (WebKit::PageLoadState::transaction): Added. Returns a Transaction for this PageLoadState.
+        (WebKit::PageLoadState::provisionalURL): Changed to access m_committedState.
+        (WebKit::PageLoadState::url): Ditto.
+        (WebKit::PageLoadState::unreachableURL): Ditto.
+        (WebKit::PageLoadState::beginTransaction): Added. Increments the outstanding transaction
+        count.
+        (WebKit::PageLoadState::Data::Data): Added. Moved internal state members into this struct
+        and made its constructor initialize state and estimatedProgress.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadURL): Changed to create a PageLoadState::Transaction and pass it
+        along.
+        (WebKit::WebPageProxy::loadURLRequest): Ditto.
+        (WebKit::WebPageProxy::loadAlternateHTMLString): Ditto.
+        (WebKit::WebPageProxy::reload): Ditto.
+        (WebKit::WebPageProxy::goForward): Ditto.
+        (WebKit::WebPageProxy::goBack): Ditto.
+        (WebKit::WebPageProxy::goToBackForwardItem): Ditto.
+        (WebKit::WebPageProxy::receivedPolicyDecision): Ditto.
+        (WebKit::WebPageProxy::didStartProgress): Ditto. Also added a call to
+        PageLoadState::commitChanges before calling the client, so that the client sees the updated
+        state.
+        (WebKit::WebPageProxy::didChangeProgress): Ditto.
+        (WebKit::WebPageProxy::didFinishProgress): Ditto.
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame): Ditto.
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame): Ditto.
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame): Ditto.
+        (WebKit::WebPageProxy::didCommitLoadForFrame): Ditto.
+        (WebKit::WebPageProxy::didFinishLoadForFrame): Ditto.
+        (WebKit::WebPageProxy::didFailLoadForFrame): Ditto.
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame): Ditto.
+        (WebKit::WebPageProxy::didReceiveTitleForFrame): Ditto.
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Changed to create a
+        PageLoadState::Transaction and pass it along.
+        (WebKit::WebPageProxy::processDidCrash): Ditto. This addressed a FIXME about the client not
+        seeing the state prior to the crash, because now the changes cuased by reset() aren’t
+        committed until after the client callback.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionStateData): Changed to create a
+        PageLoadState::Transaction and pass it along.
+
 2013-12-10  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL build fix attempt
