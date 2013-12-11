@@ -1,3 +1,14 @@
+2013-12-10  Krzysztof Czech  <k.czech@samsung.com>
+
+        AX: Share accessibility/aria-hidden-negates-no-visibility.html expectation with other ports
+        https://bugs.webkit.org/show_bug.cgi?id=125495
+
+        Reviewed by Chris Fleizach.
+
+        Expectation of accessibility/aria-hidden-negates-no-visibility.html is the same for EFL and GTK.
+
+        * accessibility/aria-hidden-negates-no-visibility-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/aria-hidden-negates-no-visibility-expected.txt.
+
 2013-12-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose splitter elements with ATK_ROLE_SEPARATOR
