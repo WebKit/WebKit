@@ -268,6 +268,11 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_spatial_navigation(settings, TRUE);
     g_assert(webkit_settings_get_enable_spatial_navigation(settings));
 
+    // MediaSource is disabled by default
+    g_assert(!webkit_settings_get_enable_mediasource(settings));
+    webkit_settings_set_enable_mediasource(settings, TRUE);
+    g_assert(webkit_settings_get_enable_mediasource(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 

@@ -88,6 +88,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean mediaPlaybackAllowsInline;
     gboolean enableDisplayOfInsecureContent;
     gboolean enableRunningOfInsecureContent;
+    gboolean enableMediaSource;
 };
 
 WEBKIT_API void webkit_web_settings_add_extra_plugin_directory(WebKitWebView*, const gchar* directory);

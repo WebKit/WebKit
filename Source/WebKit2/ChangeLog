@@ -1,3 +1,21 @@
+2013-12-11  Brendan Long  <b.long@cablelabs.com>
+
+        [GTK] Add "enable-mediasource" property to WebKitWebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=125566
+
+        Reviewed by Philippe Normand.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_enable_mediasource):
+        (webkit_settings_set_enable_mediasource):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2013-12-11  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Fix build with CONTEXT_MENUS flag set OFF

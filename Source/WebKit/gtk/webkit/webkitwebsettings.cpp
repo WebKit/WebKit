@@ -123,7 +123,8 @@ enum {
     PROP_MEDIA_PLAYBACK_ALLOWS_INLINE,
     PROP_ENABLE_CSS_SHADERS,
     PROP_ENABLE_RUNNING_OF_INSECURE_CONTENT,
-    PROP_ENABLE_DISPLAY_OF_INSECURE_CONTENT
+    PROP_ENABLE_DISPLAY_OF_INSECURE_CONTENT,
+    PROP_ENABLE_MEDIA_SOURCE
 };
 
 static void webkit_web_settings_finalize(GObject* object);
@@ -1024,6 +1025,26 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
             _("Whether non-HTTPS resources can run on HTTPS pages."),
             TRUE,
             flags));
+
+    /**
+    * WebKitWebSettings:enable-mediasource:
+    *
+    * Enable or disable support for MediaSource on pages. MediaSource is an
+    * experimental proposal which extends HTMLMediaElement to allow
+    * JavaScript to generate media streams for playback.  The standard is
+    * currently a work-in-progress by the W3C HTML Media Task Force.
+    *
+    * See also http://www.w3.org/TR/media-source/
+    *
+    * Since: 2.4
+    */
+    g_object_class_install_property(gobject_class,
+        PROP_ENABLE_MEDIA_SOURCE,
+        g_param_spec_boolean("enable-mediasource",
+            _("Enable MediaSource"),
+            _("Whether MediaSource should be enabled."),
+            FALSE,
+            flags));
 }
 
 static void webkit_web_settings_init(WebKitWebSettings* web_settings)
@@ -1223,6 +1244,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_RUNNING_OF_INSECURE_CONTENT:
         priv->enableRunningOfInsecureContent = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_MEDIA_SOURCE:
+        priv->enableMediaSource = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1411,6 +1435,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_ENABLE_RUNNING_OF_INSECURE_CONTENT:
         g_value_set_boolean(value, priv->enableRunningOfInsecureContent);
+        break;
+    case PROP_ENABLE_MEDIA_SOURCE:
+        g_value_set_boolean(value, priv->enableMediaSource);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);

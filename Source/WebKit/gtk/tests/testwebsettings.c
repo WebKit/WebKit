@@ -34,24 +34,30 @@ static void test_webkit_web_settings_copy(void)
                  "enable-webgl", TRUE,
                  "enable-fullscreen", TRUE,
                  "auto-load-images", FALSE,
-                 "default-encoding", "utf-8", NULL);
+                 "default-encoding", "utf-8",
+                 "enable-mediasource", TRUE,
+                 NULL);
 
     WebKitWebSettings *copy = webkit_web_settings_copy(settings);
 
     gboolean enableWebGL = FALSE;
     gboolean enableFullscreen = FALSE;
     gboolean autoLoadImages = FALSE;
+    gboolean enableMediaSource = FALSE;
     char *defaultEncoding = 0;
     g_object_get(copy,
                  "enable-fullscreen", &enableFullscreen,
                  "enable-webgl", &enableWebGL,
                  "auto-load-images", &autoLoadImages,
-                 "default-encoding", &defaultEncoding, NULL);
+                 "default-encoding", &defaultEncoding,
+                 "enable-mediasource", &enableMediaSource,
+                 NULL);
 
     g_assert(enableWebGL);
     g_assert(enableFullscreen);
     g_assert(!autoLoadImages);
     g_assert_cmpstr(defaultEncoding, ==, "utf-8");
+    g_assert(enableMediaSource);
     g_free(defaultEncoding);
 }
 
