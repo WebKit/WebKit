@@ -46,7 +46,8 @@ bool BasicShape::canBlend(const BasicShape* other) const
 
     // Just polygons with same number of vertices can be animated.
     if (type() == BasicShape::BasicShapePolygonType
-        && static_cast<const BasicShapePolygon*>(this)->values().size() != static_cast<const BasicShapePolygon*>(other)->values().size())
+        && (static_cast<const BasicShapePolygon*>(this)->values().size() != static_cast<const BasicShapePolygon*>(other)->values().size()
+        || static_cast<const BasicShapePolygon*>(this)->windRule() != static_cast<const BasicShapePolygon*>(other)->windRule()))
         return false;
 
     // Circles with keywords for radii or center coordinates cannot be animated.

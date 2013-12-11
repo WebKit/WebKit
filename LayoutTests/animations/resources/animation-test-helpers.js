@@ -222,7 +222,7 @@ function parseBasicShape(s)
         matches = s.match("ellipse\\((.*)\\s+(.*)\\s+at\\s+(.*)\\s+(.*)\\)");
         break;
     case "polygon":
-        matches = s.match("polygon\\(nonzero, (.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\)");
+        matches = s.match("polygon\\((evenodd|nonzero), (.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\)");
         break;
     default:
         return null;
@@ -232,9 +232,12 @@ function parseBasicShape(s)
         return null;
 
     matches.shift();
+    var i = 0;
+    if (shapeFunction[1] == "polygon")
+        i++; // skip nonzero|evenodd below
 
     // Normalize percentage values.
-    for (var i = 0; i < matches.length; ++i) {
+    for (; i < matches.length; ++i) {
         var param = matches[i];
         matches[i] = parseFloat(matches[i]);
         if (param.indexOf('%') != -1)
@@ -309,7 +312,13 @@ function basicShapeParametersMatch(paramList1, paramList2, tolerance)
     if (paramList1.shape != paramList2.shape
         || paramList1.params.length != paramList2.params.length)
         return false;
-    for (var i = 0; i < paramList1.params.length; ++i) {
+    var i = 0;
+    if (paramList1.shape == "polygon") {
+        if (paramList1.params[0] != paramList2.params[0])
+            return false; // fill-rule's don't match
+        i++;
+    }
+    for (; i < paramList1.params.length; ++i) {
         var param1 = paramList1.params[i], 
             param2 = paramList2.params[i];
         var match = isCloseEnough(param1, param2, tolerance);

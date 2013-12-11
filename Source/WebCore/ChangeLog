@@ -1,3 +1,17 @@
+2013-12-11  Rob Buis  <rob.buis@samsung.com>
+
+        [CSS Shapes] Take into account fill-rule for polygon interpolation
+        https://bugs.webkit.org/show_bug.cgi?id=125508
+
+        Reviewed by Dirk Schulze.
+
+        Implement the polygon fill-rule part of http://dev.w3.org/csswg/css-shapes/#basic-shape-interpolation.
+
+        Adapt fast/shapes/shape-outside-floats/shape-outside-animation.html.
+
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend):
+
 2013-12-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Programmatically-inserted children lack accessibility events
