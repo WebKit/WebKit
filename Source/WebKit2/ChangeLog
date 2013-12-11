@@ -1,5 +1,12 @@
 2013-12-10  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        Unreviewed GTK build fix attempt after r160395 (second)
+
+        * GNUmakefile.list.am:
+        Added new files for UserData, APIFrameHandle, APIGeometry and APIPageHandle.
+
+2013-12-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
         Unreviewed GTK build fix attempt after r160395
 
         Renamed WebUInt64 to API::UInt64, WebDouble to API::Double, WebBoolean
