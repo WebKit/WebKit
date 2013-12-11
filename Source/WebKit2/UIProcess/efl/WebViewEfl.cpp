@@ -87,10 +87,12 @@ PassRefPtr<WebPopupMenuProxy> WebViewEfl::createPopupMenuProxy(WebPageProxy* pag
     return WebPopupMenuListenerEfl::create(page);
 }
 
+#if ENABLE(CONTEXT_MENUS)
 PassRefPtr<WebContextMenuProxy> WebViewEfl::createContextMenuProxy(WebPageProxy* page)
 {
     return WebContextMenuProxyEfl::create(m_ewkView, page);
 }
+#endif
 
 void WebViewEfl::setCursor(const Cursor& cursor)
 {

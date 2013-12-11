@@ -281,10 +281,11 @@ void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMe
     m_frontendPage->contextMenuController().showContextMenu(event, menuProvider);
     m_menuProvider = menuProvider.get();
 }
+#endif
 
 void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event* event)
 {
-#if USE(ACCESSIBILITY_CONTEXT_MENUS)
+#if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
     if (!event || !event->isMouseEvent())
         return;
 
@@ -297,7 +298,6 @@ void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event* event)
     UNUSED_PARAM(event);
 #endif
 }
-#endif
 
 String InspectorFrontendHost::loadResourceSynchronously(const String& url)
 {

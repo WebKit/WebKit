@@ -643,6 +643,9 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
 {
 #if ENABLE(CONTEXT_MENUS)
     toImpl(pageRef)->initializeContextMenuClient(wkClient);
+#else
+    UNUSED_PARAM(pageRef);
+    UNUSED_PARAM(wkClient);
 #endif
 }
 
@@ -857,6 +860,9 @@ void WKPageSelectContextMenuItem(WKPageRef page, WKContextMenuItemRef item)
 {
 #if ENABLE(CONTEXT_MENUS)
     toImpl(page)->contextMenuItemSelected(*(toImpl(item)->data()));
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(item);
 #endif
 }
 
