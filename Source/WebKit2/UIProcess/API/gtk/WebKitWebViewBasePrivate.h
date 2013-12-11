@@ -29,6 +29,7 @@
 #define WebKitWebViewBasePrivate_h
 
 #include "WebContextMenuProxyGtk.h"
+#include "WebInspectorProxy.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebViewBase.h"
 #include "WebPageProxy.h"
@@ -45,7 +46,7 @@ void webkitWebViewBaseChildMoveResize(WebKitWebViewBase*, GtkWidget*, const WebC
 void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase*, const WKFullScreenClientGtkBase*);
-void webkitWebViewBaseSetInspectorViewHeight(WebKitWebViewBase*, unsigned height);
+void webkitWebViewBaseSetInspectorViewSize(WebKitWebViewBase*, unsigned size);
 void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase*, WebKit::WebContextMenuProxyGtk*);
 WebKit::WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase*);
 GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
@@ -70,6 +71,6 @@ void webkitWebViewBaseHandleDownloadRequest(WebKitWebViewBase*, WebKit::Download
 
 void webkitWebViewBaseAddAuthenticationDialog(WebKitWebViewBase*, GtkWidget* authDialog);
 void webkitWebViewBaseCancelAuthenticationDialog(WebKitWebViewBase*);
-void webkitWebViewBaseAddWebInspector(WebKitWebViewBase*, GtkWidget* inspector);
+void webkitWebViewBaseAddWebInspector(WebKitWebViewBase*, GtkWidget* inspector, WebKit::AttachmentSide);
 
 #endif // WebKitWebViewBasePrivate_h

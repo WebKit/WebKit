@@ -36,6 +36,7 @@ typedef bool (*WKInspectorClientGtkInspectorCallback)(WKInspectorRef inspector, 
 typedef void (*WKInspectorClientGtkInspectorDidCloseCallback)(WKInspectorRef inspector, const void* clientInfo);
 typedef void (*WKInspectorClientGtkInspectedURLChangedCallback)(WKInspectorRef inspector, WKStringRef url, const void* clientInfo);
 typedef void (*WKInspectorClientGtkDidChangeAttachedHeightCallback)(WKInspectorRef inspector, unsigned height, const void* clientInfo);
+typedef void (*WKInspectorClientGtkDidChangeAttachedWidthCallback)(WKInspectorRef inspector, unsigned width, const void* clientInfo);
 
 typedef struct WKInspectorClientGtkBase {
     int                                                 version;
@@ -52,6 +53,7 @@ typedef struct WKInspectorClientGtkV0 {
     WKInspectorClientGtkInspectorCallback               attach;
     WKInspectorClientGtkInspectorCallback               detach;
     WKInspectorClientGtkDidChangeAttachedHeightCallback didChangeAttachedHeight;
+    WKInspectorClientGtkDidChangeAttachedWidthCallback  didChangeAttachedWidth;
 } WKInspectorClientGtkV0;
 
 WK_EXPORT void WKInspectorSetInspectorClientGtk(WKInspectorRef inspectorRef, const WKInspectorClientGtkBase* client);

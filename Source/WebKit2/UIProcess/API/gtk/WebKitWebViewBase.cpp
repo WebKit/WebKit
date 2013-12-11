@@ -2,6 +2,7 @@
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2013 Gustavo Noronha Silva <gns@gnome.org>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,7 +106,8 @@ struct _WebKitWebViewBasePrivate {
     bool needsResizeOnMap;
     GtkWidget* authenticationDialog;
     GtkWidget* inspectorView;
-    unsigned inspectorViewHeight;
+    AttachmentSide inspectorAttachmentSide;
+    unsigned inspectorViewSize;
     GOwnPtr<GdkEvent> contextMenuEvent;
     WebContextMenuProxyGtk* activeContextMenuProxy;
     WebViewBaseInputMethodFilter inputMethodFilter;
@@ -320,8 +322,18 @@ void webkitWebViewBaseAddAuthenticationDialog(WebKitWebViewBase* webViewBase, Gt
     gtk_widget_queue_draw(GTK_WIDGET(webViewBase));
 }
 
-void webkitWebViewBaseAddWebInspector(WebKitWebViewBase* webViewBase, GtkWidget* inspector)
+void webkitWebViewBaseAddWebInspector(WebKitWebViewBase* webViewBase, GtkWidget* inspector, AttachmentSide attachmentSide)
 {
+    if (webViewBase->priv->inspectorView == inspector && webViewBase->priv->inspectorAttachmentSide == attachmentSide)
+        return;
+
+    webViewBase->priv->inspectorAttachmentSide = attachmentSide;
+
+    if (webViewBase->priv->inspectorView == inspector) {
+        gtk_widget_queue_resize(GTK_WIDGET(webViewBase));
+        return;
+    }
+
     webViewBase->priv->inspectorView = inspector;
     gtk_container_add(GTK_CONTAINER(webViewBase), inspector);
 }
@@ -337,7 +349,7 @@ static void webkitWebViewBaseContainerRemove(GtkContainer* container, GtkWidget*
 
     if (priv->inspectorView == widget) {
         priv->inspectorView = 0;
-        priv->inspectorViewHeight = 0;
+        priv->inspectorViewSize = 0;
     } else if (priv->authenticationDialog == widget) {
         priv->authenticationDialog = 0;
     } else {
@@ -480,13 +492,23 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
     IntRect viewRect(allocation->x, allocation->y, allocation->width, allocation->height);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->inspectorView) {
-        int inspectorViewHeight = std::min(static_cast<int>(priv->inspectorViewHeight), allocation->height);
         GtkAllocation childAllocation = viewRect;
-        childAllocation.y = allocation->height - inspectorViewHeight;
-        childAllocation.height = inspectorViewHeight;
-        gtk_widget_size_allocate(priv->inspectorView, &childAllocation);
 
-        viewRect.setHeight(std::max(allocation->height - inspectorViewHeight, 1));
+        if (priv->inspectorAttachmentSide == AttachmentSideBottom) {
+            int inspectorViewHeight = std::min(static_cast<int>(priv->inspectorViewSize), allocation->height);
+            childAllocation.x = 0;
+            childAllocation.y = allocation->height - inspectorViewHeight;
+            childAllocation.height = inspectorViewHeight;
+            viewRect.setHeight(std::max(allocation->height - inspectorViewHeight, 1));
+        } else {
+            int inspectorViewWidth = std::min(static_cast<int>(priv->inspectorViewSize), allocation->width);
+            childAllocation.y = 0;
+            childAllocation.x = allocation->width - inspectorViewWidth;
+            childAllocation.width = inspectorViewWidth;
+            viewRect.setWidth(std::max(allocation->width - inspectorViewWidth, 1));
+        }
+
+        gtk_widget_size_allocate(priv->inspectorView, &childAllocation);
     }
 
     // The authentication dialog is centered in the view rect, which means that it
@@ -1046,11 +1068,11 @@ void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase* webkitWebVie
     webkitWebViewBase->priv->fullScreenClient.initialize(wkClient);
 }
 
-void webkitWebViewBaseSetInspectorViewHeight(WebKitWebViewBase* webkitWebViewBase, unsigned height)
+void webkitWebViewBaseSetInspectorViewSize(WebKitWebViewBase* webkitWebViewBase, unsigned size)
 {
-    if (webkitWebViewBase->priv->inspectorViewHeight == height)
+    if (webkitWebViewBase->priv->inspectorViewSize == size)
         return;
-    webkitWebViewBase->priv->inspectorViewHeight = height;
+    webkitWebViewBase->priv->inspectorViewSize = size;
     if (webkitWebViewBase->priv->inspectorView)
         gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webkitWebViewBase));
 }

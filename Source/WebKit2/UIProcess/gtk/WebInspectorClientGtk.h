@@ -52,6 +52,7 @@ public:
     bool attach(WebInspectorProxy*);
     bool detach(WebInspectorProxy*);
     void didChangeAttachedHeight(WebInspectorProxy*, unsigned height);
+    void didChangeAttachedWidth(WebInspectorProxy*, unsigned width);
 };
 
 } // namespace WebKit

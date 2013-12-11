@@ -81,4 +81,11 @@ void WebInspectorClientGtk::didChangeAttachedHeight(WebInspectorProxy* inspector
     m_client.didChangeAttachedHeight(toAPI(inspector), height, m_client.base.clientInfo);
 }
 
+void WebInspectorClientGtk::didChangeAttachedWidth(WebInspectorProxy* inspector, unsigned width)
+{
+    if (!m_client.didChangeAttachedWidth)
+        return;
+    m_client.didChangeAttachedWidth(toAPI(inspector), width, m_client.base.clientInfo);
+}
+
 } // namespace WebKit

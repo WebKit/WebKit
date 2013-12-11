@@ -2,6 +2,7 @@
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2013 Gustavo Noronha Silva <gns@gnome.org>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,15 +177,20 @@ void WebInspectorProxy::platformAttach()
         m_inspectorWindow = 0;
     }
 
-    // Set a default attached height based on InspectorFrontendClientLocal.
-    static const unsigned defaultAttachedHeight = 300;
-    unsigned maximumAttachedHeight = platformInspectedWindowHeight() * 3 / 4;
-    platformSetAttachedWindowHeight(std::max(minimumAttachedHeight, std::min(defaultAttachedHeight, maximumAttachedHeight)));
+    // Set a default attached size based on InspectorFrontendClientLocal.
+    static const unsigned defaultAttachedSize = 300;
+    if (m_attachmentSide == AttachmentSideBottom) {
+        unsigned maximumAttachedHeight = platformInspectedWindowHeight() * 3 / 4;
+        platformSetAttachedWindowHeight(std::max(minimumAttachedHeight, std::min(defaultAttachedSize, maximumAttachedHeight)));
+    } else {
+        unsigned maximumAttachedWidth = platformInspectedWindowWidth() * 3 / 4;
+        platformSetAttachedWindowWidth(std::max(minimumAttachedWidth, std::min(defaultAttachedSize, maximumAttachedWidth)));
+    }
 
     if (m_client.attach(this))
         return;
 
-    webkitWebViewBaseAddWebInspector(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), m_inspectorView);
+    webkitWebViewBaseAddWebInspector(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), m_inspectorView, m_attachmentSide);
     gtk_widget_show(m_inspectorView);
 }
 
@@ -212,12 +218,16 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
         return;
 
     m_client.didChangeAttachedHeight(this, height);
-    webkitWebViewBaseSetInspectorViewHeight(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), height);
+    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), height);
 }
 
-void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned)
+void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
 {
-    notImplemented();
+    if (!m_isAttached)
+        return;
+
+    m_client.didChangeAttachedWidth(this, width);
+    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), width);
 }
 
 void WebInspectorProxy::platformSetToolbarHeight(unsigned)
