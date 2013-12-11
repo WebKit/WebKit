@@ -1,3 +1,12 @@
+2013-12-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Enable Battery Status API
+        https://bugs.webkit.org/show_bug.cgi?id=125453
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitperl/FeatureList.pm: Enable the Battery Status API feature for the GTK port.
+
 2013-12-11  José Dapena Paz  <jdapena@igalia.com> and Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WK2] Add the WebKitBatteryProvider class
