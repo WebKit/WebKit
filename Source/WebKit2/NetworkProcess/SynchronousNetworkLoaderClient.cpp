@@ -86,7 +86,7 @@ void SynchronousNetworkLoaderClient::didReceiveBuffer(NetworkResourceLoader*, Sh
     // It's unclear if the potential complexities of that approach are worth it.
     
     if (!m_responseData)
-        m_responseData = adoptPtr(new Vector<uint8_t>);
+        m_responseData = adoptPtr(new Vector<char>);
 
     m_responseData->append(buffer->data(), buffer->size());
 }
@@ -106,15 +106,12 @@ void SynchronousNetworkLoaderClient::sendDelayedReply()
 {
     ASSERT(m_delayedReply);
 
-    uint8_t* bytes = m_responseData ? m_responseData->data() : 0;
-    size_t size = m_responseData ? m_responseData->size() : 0;
-
     if (m_response.isNull()) {
         ASSERT(!m_error.isNull());
         //platformSynthesizeErrorResponse();
     }
 
-    m_delayedReply->send(m_error, m_response, CoreIPC::DataReference(bytes, size));
+    m_delayedReply->send(m_error, m_response, m_responseData ? *m_responseData : Vector<char>());
     m_delayedReply = nullptr;
 }
 

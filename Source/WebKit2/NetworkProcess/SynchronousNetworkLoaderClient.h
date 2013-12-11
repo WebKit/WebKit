@@ -70,8 +70,7 @@ private:
     RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> m_delayedReply;
     WebCore::ResourceResponse m_response;
     WebCore::ResourceError m_error;
-    OwnPtr<Vector<uint8_t>> m_responseData;
-
+    OwnPtr<Vector<char>> m_responseData;
 };
 
 } // namespace WebKit
