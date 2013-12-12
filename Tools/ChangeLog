@@ -1,5 +1,13 @@
 2013-12-12  Lucas Forschler  <lforschler@apple.com>
 
+        Update hardware for Apple bots.
+        
+        Unreviewed.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2013-12-12  Lucas Forschler  <lforschler@apple.com>
+
         Remove unused Apple Bots.
         
         Unreviewed.
