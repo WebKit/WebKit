@@ -66,6 +66,8 @@ public:
 
     PlatformProcessIdentifier processIdentifier() const { return m_processLauncher->processIdentifier(); }
 
+    bool sendMessage(std::unique_ptr<CoreIPC::MessageEncoder>, unsigned messageSendFlags);
+
 protected:
     void clearConnection();
     void abortProcessLaunchIfNeeded();
@@ -80,8 +82,6 @@ private:
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) = 0;
     virtual void connectionWillOpen(CoreIPC::Connection*);
     virtual void connectionWillClose(CoreIPC::Connection*);
-
-    bool sendMessage(std::unique_ptr<CoreIPC::MessageEncoder>, unsigned messageSendFlags);
 
     Vector<std::pair<std::unique_ptr<CoreIPC::MessageEncoder>, unsigned>> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;

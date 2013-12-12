@@ -525,13 +525,13 @@ void WebPageProxy::initializeWebPage()
     process().send(Messages::WebProcess::CreateWebPage(m_pageID, m_creationParameters), 0);
 
 #if ENABLE(PAGE_VISIBILITY_API)
-    process().send(Messages::WebPage::SetVisibilityState(m_visibilityState, /* isInitialState */ true), m_pageID);
+    send(Messages::WebPage::SetVisibilityState(m_visibilityState, /* isInitialState */ true));
 #elif ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    process().send(Messages::WebPage::SetVisibilityState(isViewVisible() ? PageVisibilityStateVisible : PageVisibilityStateHidden, /* isInitialState */ true), m_pageID);
+    send(Messages::WebPage::SetVisibilityState(isViewVisible() ? PageVisibilityStateVisible : PageVisibilityStateHidden, /* isInitialState */ true));
 #endif
 
 #if PLATFORM(MAC)
-    process().send(Messages::WebPage::SetSmartInsertDeleteEnabled(m_isSmartInsertDeleteEnabled), m_pageID);
+    send(Messages::WebPage::SetSmartInsertDeleteEnabled(m_isSmartInsertDeleteEnabled));
 #endif
 }
 
@@ -3090,6 +3090,21 @@ void WebPageProxy::didFindStringMatches(const String& string, Vector<Vector<WebC
 void WebPageProxy::didFailToFindString(const String& string)
 {
     m_findClient.didFailToFindString(this, string);
+}
+
+bool WebPageProxy::sendMessage(std::unique_ptr<CoreIPC::MessageEncoder> encoder, unsigned messageSendFlags)
+{
+    return m_process->sendMessage(std::move(encoder), messageSendFlags);
+}
+
+CoreIPC::Connection* WebPageProxy::messageSenderConnection()
+{
+    return m_process->connection();
+}
+
+uint64_t WebPageProxy::messageSenderDestinationID()
+{
+    return m_pageID;
 }
 
 void WebPageProxy::valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex)

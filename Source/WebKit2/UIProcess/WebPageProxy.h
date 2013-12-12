@@ -34,6 +34,7 @@
 #include "EditorState.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "LayerTreeContext.h"
+#include "MessageSender.h"
 #include "NotificationPermissionRequestManagerProxy.h"
 #include "PageLoadState.h"
 #include "PlatformProcessIdentifier.h"
@@ -313,13 +314,13 @@ private:
 };
 #endif
 
-class WebPageProxy
-    : public API::ObjectImpl<API::Object::Type::Page>
+class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #if ENABLE(INPUT_TYPE_COLOR)
     , public WebColorPicker::Client
 #endif
     , public WebPopupMenuProxy::Client
-    , public CoreIPC::MessageReceiver {
+    , public CoreIPC::MessageReceiver
+    , public CoreIPC::MessageSender {
 public:
 
     static PassRefPtr<WebPageProxy> create(PageClient&, WebProcessProxy&, WebPageGroup&, uint64_t pageID);
@@ -862,6 +863,11 @@ private:
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&) OVERRIDE;
+
+    // CoreIPC::MessageSender
+    virtual bool sendMessage(std::unique_ptr<CoreIPC::MessageEncoder>, unsigned messageSendFlags) OVERRIDE;
+    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    virtual uint64_t messageSenderDestinationID() OVERRIDE;
 
     // WebPopupMenuProxy::Client
     virtual void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex);

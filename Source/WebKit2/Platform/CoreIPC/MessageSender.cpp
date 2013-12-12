@@ -32,11 +32,11 @@ MessageSender::~MessageSender()
 {
 }
 
-bool MessageSender::sendMessage(std::unique_ptr<MessageEncoder> encoder)
+bool MessageSender::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned messageSendFlags)
 {
     ASSERT(messageSenderConnection());
 
-    return messageSenderConnection()->sendMessage(std::move(encoder));
+    return messageSenderConnection()->sendMessage(std::move(encoder), messageSendFlags);
 }
 
 } // namespace CoreIPC

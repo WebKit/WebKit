@@ -37,17 +37,17 @@ public:
 
     template<typename U> bool send(const U& message)
     {
-        return send(message, messageSenderDestinationID());
+        return send(message, messageSenderDestinationID(), 0);
     }
 
-    template<typename U> bool send(const U& message, uint64_t destinationID)
+    template<typename U> bool send(const U& message, uint64_t destinationID, unsigned messageSendFlags = 0)
     {
         static_assert(!U::isSync, "Message is sync!");
 
         auto encoder = std::make_unique<MessageEncoder>(U::receiverName(), U::name(), destinationID);
         encoder->encode(message.arguments());
         
-        return sendMessage(std::move(encoder));
+        return sendMessage(std::move(encoder), messageSendFlags);
     }
 
     template<typename T>
@@ -66,7 +66,7 @@ public:
         return messageSenderConnection()->sendSync(std::move(message), std::move(reply), destinationID, timeout, syncSendFlags);
     }
 
-    bool sendMessage(std::unique_ptr<MessageEncoder>);
+    virtual bool sendMessage(std::unique_ptr<MessageEncoder>, unsigned messageSendFlags);
 
 private:
     virtual Connection* messageSenderConnection() = 0;
