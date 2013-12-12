@@ -1,3 +1,72 @@
+2013-12-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add the CFNetwork implementation of the asynchronous ResourceHandle
+        https://bugs.webkit.org/show_bug.cgi?id=124440
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a second subclass of ResourceHandleCFURLConnectionDelegate: ResourceHandleCFURLConnectionDelegateWithOperationQueue.
+        The difference is those objects handle the network callback on a different queue.
+
+        Some common code has been refactored in ResourceHandleCFURLConnectionDelegate to reduce duplicated code.
+
+        The initialization of the request and connection is moved to the subclass to clean up initialization.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.cpp:
+        (WebCore::ResourceHandleClient::willCacheResponseAsync):
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp: Added.
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::ResourceHandleCFURLConnectionDelegateWithOperationQueue):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::~ResourceHandleCFURLConnectionDelegateWithOperationQueue):
+        (WebCore::connectionWasCancelled):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupRequest):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupConnectionScheduling):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFail):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willCacheResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveChallenge):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::shouldUseCredentialStorage):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveDataArray):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueWillSendRequest):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueDidReceiveResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueShouldUseCredentialStorage):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueWillCacheResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueCanAuthenticateAgainstProtectionSpace):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.h: Copied from Source/WebCore/platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.h.
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::createCFURLConnection):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::shouldUseCredentialStorage):
+        (WebCore::ResourceHandle::canAuthenticateAgainstProtectionSpace):
+        (WebCore::ResourceHandle::continueWillSendRequest):
+        (WebCore::ResourceHandle::continueDidReceiveResponse):
+        (WebCore::ResourceHandle::continueShouldUseCredentialStorage):
+        (WebCore::ResourceHandle::continueCanAuthenticateAgainstProtectionSpace):
+        (WebCore::ResourceHandle::continueWillCacheResponse):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegate::releaseHandle):
+        (WebCore::ResourceHandleCFURLConnectionDelegate::synthesizeRedirectResponseIfNecessary):
+        (WebCore::ResourceHandleCFURLConnectionDelegate::createResourceRequest):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::setupRequest):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::setupConnectionScheduling):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::willSendRequest):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::continueWillSendRequest):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::continueDidReceiveResponse):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::continueShouldUseCredentialStorage):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::continueWillCacheResponse):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::continueCanAuthenticateAgainstProtectionSpace):
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.h:
+
 2013-12-11  David Kilzer  <ddkilzer@apple.com>
 
         Define m_hasBadParent in InlineBox if defined(ADDRESS_SANITIZER)

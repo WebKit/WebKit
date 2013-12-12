@@ -61,7 +61,12 @@ void ResourceHandleClient::canAuthenticateAgainstProtectionSpaceAsync(ResourceHa
 }
 #endif
 
-#if PLATFORM(MAC)
+#if USE(CFNETWORK)
+void ResourceHandleClient::willCacheResponseAsync(ResourceHandle* handle, CFCachedURLResponseRef response)
+{
+    handle->continueWillCacheResponse(response);
+}
+#elif PLATFORM(MAC)
 void ResourceHandleClient::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *response)
 {
     handle->continueWillCacheResponse(response);

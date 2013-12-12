@@ -30,12 +30,10 @@
 
 #include "AuthenticationCF.h"
 #include "AuthenticationChallenge.h"
-#include "FormDataStreamCFNet.h"
+#include "LoaderRunLoopCF.h"
 #include "Logging.h"
-#include "NetworkingContext.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
-#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include <wtf/RetainPtr.h>
@@ -47,9 +45,12 @@
 #include "WebCoreURLResponse.h"
 #endif // PLATFORM(MAC)
 
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#endif // PLATFORM(IOS)
+
 #if PLATFORM(WIN)
 #include "MIMETypeRegistry.h"
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif // PLATFORM(WIN)
 
 namespace WebCore {
@@ -59,31 +60,28 @@ SynchronousResourceHandleCFURLConnectionDelegate::SynchronousResourceHandleCFURL
 {
 }
 
-static RetainPtr<CFURLResponseRef> synthesizeRedirectResponseIfNecessary(const ResourceRequest& currentRequest, CFURLRequestRef newRequest, CFURLResponseRef cfRedirectResponse)
+void SynchronousResourceHandleCFURLConnectionDelegate::setupRequest(CFMutableURLRequestRef request)
 {
-    if (cfRedirectResponse)
-        return cfRedirectResponse;
+#if PLATFORM(IOS)
+    CFURLRequestSetShouldStartSynchronously(request, 1);
+#endif
+}
 
-    CFURLRef newURL = CFURLRequestGetURL(newRequest);
-    RetainPtr<CFStringRef> newScheme = adoptCF(CFURLCopyScheme(newURL));
-
-    // If the protocols of the new request and the current request match, this is not an HSTS redirect and we shouldn't synthesize a redirect response.
-    if (currentRequest.url().protocol() == String(newScheme.get()))
-        return 0;
-
-    RetainPtr<CFURLRef> currentURL = currentRequest.url().createCFURL();
-    RetainPtr<CFHTTPMessageRef> responseMessage = adoptCF(CFHTTPMessageCreateResponse(0, 302, 0, kCFHTTPVersion1_1));
-    RetainPtr<CFURLRef> newAbsoluteURL = adoptCF(CFURLCopyAbsoluteURL(newURL));
-    CFHTTPMessageSetHeaderFieldValue(responseMessage.get(), CFSTR("Location"), CFURLGetString(newAbsoluteURL.get()));
-    CFHTTPMessageSetHeaderFieldValue(responseMessage.get(), CFSTR("Cache-Control"), CFSTR("no-store"));
-
-    RetainPtr<CFURLResponseRef> newResponse = adoptCF(CFURLResponseCreateWithHTTPResponse(0, currentURL.get(), responseMessage.get(), kCFURLCacheStorageNotAllowed));
-    return newResponse;
+void SynchronousResourceHandleCFURLConnectionDelegate::setupConnectionScheduling(CFURLConnectionRef connection)
+{
+#if PLATFORM(WIN)
+    CFURLConnectionScheduleWithCurrentMessageQueue(connection);
+#elif PLATFORM(IOS)
+    CFURLConnectionScheduleWithRunLoop(connection, WebThreadRunLoop(), kCFRunLoopDefaultMode);
+#else
+    CFURLConnectionScheduleWithRunLoop(connection, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+#endif
+    CFURLConnectionScheduleDownloadWithRunLoop(connection, loaderRunLoop(), kCFRunLoopDefaultMode);
 }
 
 CFURLRequestRef SynchronousResourceHandleCFURLConnectionDelegate::willSendRequest(CFURLRequestRef cfRequest, CFURLResponseRef originalRedirectResponse)
 {
-    RetainPtr<CFURLResponseRef> redirectResponse = synthesizeRedirectResponseIfNecessary(m_handle->currentRequest(), cfRequest, originalRedirectResponse);
+    RetainPtr<CFURLResponseRef> redirectResponse = synthesizeRedirectResponseIfNecessary(cfRequest, originalRedirectResponse);
 
     if (!redirectResponse) {
         CFRetain(cfRequest);
@@ -92,34 +90,7 @@ CFURLRequestRef SynchronousResourceHandleCFURLConnectionDelegate::willSendReques
 
     LOG(Network, "CFNet - SynchronousResourceHandleCFURLConnectionDelegate::willSendRequest(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
-    ResourceRequest request;
-    CFHTTPMessageRef httpMessage = CFURLResponseGetHTTPResponse(redirectResponse.get());
-    if (httpMessage && CFHTTPMessageGetResponseStatusCode(httpMessage) == 307) {
-        RetainPtr<CFStringRef> lastHTTPMethod = m_handle->lastHTTPMethod().createCFString();
-        RetainPtr<CFStringRef> newMethod = adoptCF(CFURLRequestCopyHTTPRequestMethod(cfRequest));
-        if (CFStringCompareWithOptions(lastHTTPMethod.get(), newMethod.get(), CFRangeMake(0, CFStringGetLength(lastHTTPMethod.get())), kCFCompareCaseInsensitive)) {
-            RetainPtr<CFMutableURLRequestRef> mutableRequest = adoptCF(CFURLRequestCreateMutableCopy(0, cfRequest));
-            wkSetRequestStorageSession(m_handle->storageSession(), mutableRequest.get());
-            CFURLRequestSetHTTPRequestMethod(mutableRequest.get(), lastHTTPMethod.get());
-
-            FormData* body = m_handle->firstRequest().httpBody();
-            if (!equalIgnoringCase(m_handle->firstRequest().httpMethod(), "GET") && body && !body->isEmpty())
-                WebCore::setHTTPBody(mutableRequest.get(), body);
-
-            String originalContentType = m_handle->firstRequest().httpContentType();
-            if (!originalContentType.isEmpty())
-                CFURLRequestSetHTTPHeaderFieldValue(mutableRequest.get(), CFSTR("Content-Type"), originalContentType.createCFString().get());
-
-            request = mutableRequest.get();
-        }
-    }
-    if (request.isNull())
-        request = cfRequest;
-
-    // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https") && m_handle->context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
-        request.clearHTTPReferrer();
-
+    ResourceRequest request = createResourceRequest(cfRequest, redirectResponse.get());
     m_handle->willSendRequest(request, redirectResponse.get());
 
     if (request.isNull())
@@ -300,6 +271,33 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveDataArray(CFArr
     m_handle->handleDataArray(dataArray);
 }
 #endif // USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+
+void SynchronousResourceHandleCFURLConnectionDelegate::continueWillSendRequest(CFURLRequestRef)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void SynchronousResourceHandleCFURLConnectionDelegate::continueDidReceiveResponse()
+{
+    ASSERT_NOT_REACHED();
+}
+
+void SynchronousResourceHandleCFURLConnectionDelegate::continueShouldUseCredentialStorage(bool)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void SynchronousResourceHandleCFURLConnectionDelegate::continueWillCacheResponse(CFCachedURLResponseRef)
+{
+    ASSERT_NOT_REACHED();
+}
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+void SynchronousResourceHandleCFURLConnectionDelegate::continueCanAuthenticateAgainstProtectionSpace(bool)
+{
+    ASSERT_NOT_REACHED();
+}
+#endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
 
 } // namespace WebCore.
 

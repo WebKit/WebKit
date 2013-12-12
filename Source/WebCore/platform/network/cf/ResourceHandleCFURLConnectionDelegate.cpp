@@ -28,6 +28,18 @@
 
 #if USE(CFNETWORK)
 
+#include "FormDataStreamCFNet.h"
+#include "NetworkingContext.h"
+#include "ResourceHandle.h"
+
+#if PLATFORM(MAC)
+#include "WebCoreSystemInterface.h"
+#endif
+
+#if PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
+
 namespace WebCore {
 
 ResourceHandleCFURLConnectionDelegate::ResourceHandleCFURLConnectionDelegate(ResourceHandle* handle)
@@ -37,6 +49,11 @@ ResourceHandleCFURLConnectionDelegate::ResourceHandleCFURLConnectionDelegate(Res
 
 ResourceHandleCFURLConnectionDelegate::~ResourceHandleCFURLConnectionDelegate()
 {
+}
+
+void ResourceHandleCFURLConnectionDelegate::releaseHandle()
+{
+    m_handle = nullptr;
 }
 
 CFURLRequestRef ResourceHandleCFURLConnectionDelegate::willSendRequestCallback(CFURLConnectionRef, CFURLRequestRef cfRequest, CFURLResponseRef originalRedirectResponse, const void* clientInfo)
@@ -98,6 +115,61 @@ void ResourceHandleCFURLConnectionDelegate::didReceiveDataArrayCallback(CFURLCon
     static_cast<ResourceHandleCFURLConnectionDelegate*>(const_cast<void*>(clientInfo))->didReceiveDataArray(dataArray);
 }
 #endif // USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+
+RetainPtr<CFURLResponseRef> ResourceHandleCFURLConnectionDelegate::synthesizeRedirectResponseIfNecessary(CFURLRequestRef newRequest, CFURLResponseRef cfRedirectResponse)
+{
+    if (cfRedirectResponse)
+        return cfRedirectResponse;
+
+    CFURLRef newURL = CFURLRequestGetURL(newRequest);
+    RetainPtr<CFStringRef> newScheme = adoptCF(CFURLCopyScheme(newURL));
+
+    // If the protocols of the new request and the current request match, this is not an HSTS redirect and we shouldn't synthesize a redirect response.
+    const ResourceRequest& currentRequest = m_handle->currentRequest();
+    if (currentRequest.url().protocol() == String(newScheme.get()))
+        return nullptr;
+
+    RetainPtr<CFURLRef> currentURL = currentRequest.url().createCFURL();
+    RetainPtr<CFHTTPMessageRef> responseMessage = adoptCF(CFHTTPMessageCreateResponse(0, 302, 0, kCFHTTPVersion1_1));
+    RetainPtr<CFURLRef> newAbsoluteURL = adoptCF(CFURLCopyAbsoluteURL(newURL));
+    CFHTTPMessageSetHeaderFieldValue(responseMessage.get(), CFSTR("Location"), CFURLGetString(newAbsoluteURL.get()));
+    CFHTTPMessageSetHeaderFieldValue(responseMessage.get(), CFSTR("Cache-Control"), CFSTR("no-store"));
+
+    RetainPtr<CFURLResponseRef> newResponse = adoptCF(CFURLResponseCreateWithHTTPResponse(0, currentURL.get(), responseMessage.get(), kCFURLCacheStorageNotAllowed));
+    return newResponse;
+}
+
+ResourceRequest ResourceHandleCFURLConnectionDelegate::createResourceRequest(CFURLRequestRef cfRequest, CFURLResponseRef redirectResponse)
+{
+    ResourceRequest request;
+    CFHTTPMessageRef httpMessage = CFURLResponseGetHTTPResponse(redirectResponse);
+    if (httpMessage && CFHTTPMessageGetResponseStatusCode(httpMessage) == 307) {
+        RetainPtr<CFStringRef> lastHTTPMethod = m_handle->lastHTTPMethod().createCFString();
+        RetainPtr<CFStringRef> newMethod = adoptCF(CFURLRequestCopyHTTPRequestMethod(cfRequest));
+        if (CFStringCompareWithOptions(lastHTTPMethod.get(), newMethod.get(), CFRangeMake(0, CFStringGetLength(lastHTTPMethod.get())), kCFCompareCaseInsensitive)) {
+            RetainPtr<CFMutableURLRequestRef> mutableRequest = adoptCF(CFURLRequestCreateMutableCopy(0, cfRequest));
+            wkSetRequestStorageSession(m_handle->storageSession(), mutableRequest.get());
+            CFURLRequestSetHTTPRequestMethod(mutableRequest.get(), lastHTTPMethod.get());
+
+            FormData* body = m_handle->firstRequest().httpBody();
+            if (!equalIgnoringCase(m_handle->firstRequest().httpMethod(), "GET") && body && !body->isEmpty())
+                WebCore::setHTTPBody(mutableRequest.get(), body);
+
+            String originalContentType = m_handle->firstRequest().httpContentType();
+            if (!originalContentType.isEmpty())
+                CFURLRequestSetHTTPHeaderFieldValue(mutableRequest.get(), CFSTR("Content-Type"), originalContentType.createCFString().get());
+
+            request = mutableRequest.get();
+        }
+    }
+
+    if (request.isNull())
+        request = cfRequest;
+
+    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https") && m_handle->context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
+        request.clearHTTPReferrer();
+    return request;
+}
 
 CFURLConnectionClient_V6 ResourceHandleCFURLConnectionDelegate::makeConnectionClient() const
 {

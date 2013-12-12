@@ -89,8 +89,10 @@ namespace WebCore {
         // Client will pass an updated request using ResourceHandle::continueCanAuthenticateAgainstProtectionSpace() when ready.
         virtual void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&);
 #endif
-#if PLATFORM(MAC) && !USE(CFNETWORK)
         // Client will pass an updated request using ResourceHandle::continueWillCacheResponse() when ready.
+#if USE(CFNETWORK)
+        virtual void willCacheResponseAsync(ResourceHandle*, CFCachedURLResponseRef);
+#elif PLATFORM(MAC)
         virtual void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse *);
 #endif
 

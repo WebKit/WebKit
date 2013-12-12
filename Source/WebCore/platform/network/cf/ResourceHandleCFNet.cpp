@@ -34,7 +34,6 @@
 #include "FormDataStreamCFNet.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "LoaderRunLoopCF.h"
 #include "Logging.h"
 #include "NetworkingContext.h"
 #include "ResourceError.h"
@@ -52,11 +51,8 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(IOS)
-#include "WebCoreThread.h"
-#endif // PLATFORM(IOS)
-
 #if PLATFORM(MAC)
+#include "ResourceHandleCFURLConnectionDelegateWithOperationQueue.h"
 #include "WebCoreSystemInterface.h"
 #if USE(CFNETWORK)
 #include "WebCoreURLResponse.h"
@@ -105,6 +101,9 @@ static void applyBasicAuthorizationHeader(ResourceRequest& request, const Creden
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
+    if (m_connectionDelegate)
+        m_connectionDelegate->releaseHandle();
+
     if (m_connection) {
         LOG(Network, "CFNet - Cancelling connection %p (%s)", m_connection.get(), m_firstRequest.url().string().utf8().data());
         CFURLConnectionCancel(m_connection.get());
@@ -204,11 +203,18 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     CFDictionaryAddValue(propertiesDictionary.get(), kCFURLConnectionSocketStreamProperties, streamProperties);
     CFRelease(streamProperties);
 
-#if PLATFORM(IOS)
-    CFURLRequestSetShouldStartSynchronously(request.get(), 1);
-#endif
 
+
+#if PLATFORM(MAC)
+    if (client() && client()->usesAsyncCallbacks())
+        d->m_connectionDelegate = adoptRef(new ResourceHandleCFURLConnectionDelegateWithOperationQueue(this));
+    else
+        d->m_connectionDelegate = adoptRef(new SynchronousResourceHandleCFURLConnectionDelegate(this));
+#else
     d->m_connectionDelegate = adoptRef(new SynchronousResourceHandleCFURLConnectionDelegate(this));
+#endif
+    d->m_connectionDelegate->setupRequest(request.get());
+
     CFURLConnectionClient_V6 client = d->m_connectionDelegate->makeConnectionClient();
 
     d->m_connection = adoptCF(CFURLConnectionCreateWithProperties(0, request.get(), reinterpret_cast<CFURLConnectionClient*>(&client), propertiesDictionary.get()));
@@ -230,14 +236,7 @@ bool ResourceHandle::start()
 
     createCFURLConnection(shouldUseCredentialStorage, d->m_shouldContentSniff, client()->connectionProperties(this).get());
 
-#if PLATFORM(WIN)
-    CFURLConnectionScheduleWithCurrentMessageQueue(d->m_connection.get());
-#elif PLATFORM(IOS)
-    CFURLConnectionScheduleWithRunLoop(d->m_connection.get(), WebThreadRunLoop(), kCFRunLoopDefaultMode);
-#else
-    CFURLConnectionScheduleWithRunLoop(d->m_connection.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-#endif
-    CFURLConnectionScheduleDownloadWithRunLoop(d->m_connection.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
+    d->m_connectionDelegate->setupConnectionScheduling(d->m_connection.get());
     CFURLConnectionStart(d->m_connection.get());
 
     LOG(Network, "CFNet - Starting URL %s (handle=%p, conn=%p)", firstRequest().url().string().utf8().data(), this, d->m_connection.get());
@@ -293,9 +292,12 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
 bool ResourceHandle::shouldUseCredentialStorage()
 {
     LOG(Network, "CFNet - shouldUseCredentialStorage()");
-    if (client())
-        return client()->shouldUseCredentialStorage(this);
-
+    if (ResourceHandleClient* client = this->client()) {
+        if (client->usesAsyncCallbacks())
+            client->shouldUseCredentialStorageAsync(this);
+        else
+            return client->shouldUseCredentialStorage(this);
+    }
     return false;
 }
 
@@ -365,9 +367,12 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
-    if (client())
-        return client()->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
-
+    if (ResourceHandleClient* client = this->client()) {
+        if (client->usesAsyncCallbacks())
+            client->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace);
+        else
+            return client->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
+    }
     return false;
 }
 #endif
@@ -551,6 +556,36 @@ void ResourceHandle::unschedule(SchedulePair* pair)
 const ResourceRequest& ResourceHandle::currentRequest() const
 {
     return d->m_currentRequest;
+}
+
+void ResourceHandle::continueWillSendRequest(const ResourceRequest& request)
+{
+    ResourceRequest requestResult = request;
+    if (!requestResult.isNull())
+        requestResult.setStorageSession(d->m_storageSession.get());
+    d->m_connectionDelegate->continueWillSendRequest(requestResult.cfURLRequest(UpdateHTTPBody));
+}
+
+void ResourceHandle::continueDidReceiveResponse()
+{
+    d->m_connectionDelegate->continueDidReceiveResponse();
+}
+
+void ResourceHandle::continueShouldUseCredentialStorage(bool useCredentialStorage)
+{
+    d->m_connectionDelegate->continueShouldUseCredentialStorage(useCredentialStorage);
+}
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate)
+{
+    d->m_connectionDelegate->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
+}
+#endif
+
+void ResourceHandle::continueWillCacheResponse(CFCachedURLResponseRef response)
+{
+    d->m_connectionDelegate->continueWillCacheResponse(response);
 }
 #endif // USE(CFNETWORK)
 

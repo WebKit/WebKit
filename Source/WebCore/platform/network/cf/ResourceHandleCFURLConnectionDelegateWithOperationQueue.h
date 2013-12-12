@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SynchronousResourceHandleCFURLConnectionDelegate_h
-#define SynchronousResourceHandleCFURLConnectionDelegate_h
+#ifndef ResourceHandleCFURLConnectionDelegateWithOperationQueue_h
+#define ResourceHandleCFURLConnectionDelegateWithOperationQueue_h
 
 #if USE(CFNETWORK)
 
 #include "ResourceHandleCFURLConnectionDelegate.h"
+#include <CFNetwork/CFNetwork.h>
+#include <dispatch/queue.h>
+#include <dispatch/semaphore.h>
 
 namespace WebCore {
 
-class SynchronousResourceHandleCFURLConnectionDelegate FINAL : public ResourceHandleCFURLConnectionDelegate {
+class ResourceHandleCFURLConnectionDelegateWithOperationQueue FINAL : public ResourceHandleCFURLConnectionDelegate {
 public:
-    SynchronousResourceHandleCFURLConnectionDelegate(ResourceHandle*);
-
-    virtual void didReceiveData(CFDataRef, CFIndex originalLength) OVERRIDE;
-    virtual void didFinishLoading() OVERRIDE;
-    virtual void didFail(CFErrorRef) OVERRIDE;
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    virtual void didReceiveDataArray(CFArrayRef dataArray) OVERRIDE;
-#endif // USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+    ResourceHandleCFURLConnectionDelegateWithOperationQueue(ResourceHandle*);
+    virtual ~ResourceHandleCFURLConnectionDelegateWithOperationQueue();
 
 private:
+    bool hasHandle() const;
+
     virtual void setupRequest(CFMutableURLRequestRef) OVERRIDE;
     virtual void setupConnectionScheduling(CFURLConnectionRef) OVERRIDE;
 
     virtual CFURLRequestRef willSendRequest(CFURLRequestRef, CFURLResponseRef) OVERRIDE;
     virtual void didReceiveResponse(CFURLResponseRef) OVERRIDE;
+    virtual void didReceiveData(CFDataRef, CFIndex originalLength) OVERRIDE;
+    virtual void didFinishLoading() OVERRIDE;
+    virtual void didFail(CFErrorRef) OVERRIDE;
     virtual CFCachedURLResponseRef willCacheResponse(CFCachedURLResponseRef) OVERRIDE;
     virtual void didReceiveChallenge(CFURLAuthChallengeRef) OVERRIDE;
     virtual void didSendBodyData(CFIndex totalBytesWritten, CFIndex totalBytesExpectedToWrite) OVERRIDE;
@@ -56,6 +58,9 @@ private:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual Boolean canRespondToProtectionSpace(CFURLProtectionSpaceRef) OVERRIDE;
 #endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+    virtual void didReceiveDataArray(CFArrayRef dataArray) OVERRIDE;
+#endif // USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 
     virtual void continueWillSendRequest(CFURLRequestRef) OVERRIDE;
     virtual void continueDidReceiveResponse() OVERRIDE;
@@ -64,10 +69,17 @@ private:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual void continueCanAuthenticateAgainstProtectionSpace(bool) OVERRIDE;
 #endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
+
+    dispatch_queue_t m_queue;
+    dispatch_semaphore_t m_semaphore;
+
+    RetainPtr<CFURLRequestRef> m_requestResult;
+    RetainPtr<CFCachedURLResponseRef> m_cachedResponseResult;
+    bool m_boolResult;
 };
 
 } // namespace WebCore.
 
 #endif // USE(CFNETWORK)
 
-#endif // ResourceHandleCFURLConnectionDelegate_h
+#endif // ResourceHandleCFURLConnectionDelegateWithOperationQueue_h

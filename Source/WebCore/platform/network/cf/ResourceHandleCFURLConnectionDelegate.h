@@ -28,7 +28,9 @@
 
 #if USE(CFNETWORK)
 
+#include "ResourceRequest.h"
 #include <CFNetwork/CFURLConnectionPriv.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -41,6 +43,21 @@ public:
     virtual ~ResourceHandleCFURLConnectionDelegate();
 
     CFURLConnectionClient_V6 makeConnectionClient() const;
+    virtual void setupRequest(CFMutableURLRequestRef) = 0;
+    virtual void setupConnectionScheduling(CFURLConnectionRef) = 0;
+    void releaseHandle();
+
+    virtual void continueWillSendRequest(CFURLRequestRef) = 0;
+    virtual void continueDidReceiveResponse() = 0;
+    virtual void continueShouldUseCredentialStorage(bool) = 0;
+    virtual void continueWillCacheResponse(CFCachedURLResponseRef) = 0;
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    virtual void continueCanAuthenticateAgainstProtectionSpace(bool) = 0;
+#endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
+
+protected:
+    RetainPtr<CFURLResponseRef> synthesizeRedirectResponseIfNecessary(CFURLRequestRef, CFURLResponseRef);
+    ResourceRequest createResourceRequest(CFURLRequestRef, CFURLResponseRef);
 
 private:
     static CFURLRequestRef willSendRequestCallback(CFURLConnectionRef, CFURLRequestRef, CFURLResponseRef, const void* clientInfo);

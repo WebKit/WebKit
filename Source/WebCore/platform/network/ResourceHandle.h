@@ -69,6 +69,7 @@ typedef struct objc_object *id;
 #endif
 
 #if USE(CFNETWORK)
+typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 typedef struct _CFURLConnection* CFURLConnectionRef;
 typedef int CFHTTPCookieStorageAcceptPolicy;
 typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
@@ -213,8 +214,10 @@ public:
     void continueCanAuthenticateAgainstProtectionSpace(bool);
 #endif
 
-#if PLATFORM(MAC)
     // Called in response to ResourceHandleClient::willCacheResponseAsync().
+#if USE(CFNETWORK)
+    void continueWillCacheResponse(CFCachedURLResponseRef);
+#elif PLATFORM(MAC)
     void continueWillCacheResponse(NSCachedURLResponse *);
 #endif
 
