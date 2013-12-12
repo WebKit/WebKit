@@ -7,7 +7,7 @@ Importing a key...
 
 PASS key.type is 'secret'
 PASS key.extractable is false
-PASS key.algorithm.name is 'aes-cbc'
+PASS key.algorithm.name is 'AES-CBC'
 PASS key.algorithm.length is 192
 PASS key.usages is ["encrypt"]
 

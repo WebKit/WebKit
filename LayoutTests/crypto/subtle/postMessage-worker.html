@@ -22,7 +22,7 @@ importTestKeys().then(function(keys) {
             key = evt.data.key;
             shouldBe("key.type", "'secret'");
             shouldBe("key.extractable", "true");
-            shouldBe("key.algorithm.name", "'hmac'");
+            shouldBe("key.algorithm.name", "'HMAC'");
             shouldBe("key.algorithm.length", "16");
             shouldBe("key.usages", '["encrypt", "decrypt", "sign", "verify"]');
         }

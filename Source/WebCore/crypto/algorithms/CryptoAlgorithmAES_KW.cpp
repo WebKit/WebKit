@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-const char* const CryptoAlgorithmAES_KW::s_name = "aes-kw";
+const char* const CryptoAlgorithmAES_KW::s_name = "AES-KW";
 
 CryptoAlgorithmAES_KW::CryptoAlgorithmAES_KW()
 {

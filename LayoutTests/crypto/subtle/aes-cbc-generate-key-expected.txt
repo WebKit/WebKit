@@ -10,7 +10,7 @@ PASS crypto.subtle.generateKey({name: "aes-cbc", length: {}}, extractable, ["enc
 Generating a key...
 PASS key.type is 'secret'
 PASS key.extractable is true
-PASS key.algorithm.name is 'aes-cbc'
+PASS key.algorithm.name is 'AES-CBC'
 PASS key.algorithm.length is 128
 PASS key.usages is ['encrypt', 'decrypt']
 PASS successfullyParsed is true

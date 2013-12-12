@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-const char* const CryptoAlgorithmAES_CBC::s_name = "aes-cbc";
+const char* const CryptoAlgorithmAES_CBC::s_name = "AES-CBC";
 
 CryptoAlgorithmAES_CBC::CryptoAlgorithmAES_CBC()
 {

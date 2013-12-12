@@ -11,7 +11,7 @@ Unwrapping it...
 PASS unwrappedKey.toString() is '[object Key]'
 PASS unwrappedKey.type is 'secret'
 PASS unwrappedKey.extractable is true
-PASS unwrappedKey.algorithm.name is 'aes-cbc'
+PASS unwrappedKey.algorithm.name is 'AES-CBC'
 PASS unwrappedKey.algorithm.length is 256
 PASS unwrappedKey.usages is ['encrypt', 'decrypt']
 Exporting it...
@@ -23,7 +23,7 @@ Unwrapping it...
 PASS unwrappedKey.toString() is '[object Key]'
 PASS unwrappedKey.type is 'secret'
 PASS unwrappedKey.extractable is true
-PASS unwrappedKey.algorithm.name is 'aes-cbc'
+PASS unwrappedKey.algorithm.name is 'AES-CBC'
 PASS unwrappedKey.algorithm.length is 256
 PASS unwrappedKey.usages is ['encrypt', 'decrypt']
 Exporting it...

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-const char* const CryptoAlgorithmRSA_OAEP::s_name = "rsa-oaep";
+const char* const CryptoAlgorithmRSA_OAEP::s_name = "RSA-OAEP";
 
 CryptoAlgorithmRSA_OAEP::CryptoAlgorithmRSA_OAEP()
 {

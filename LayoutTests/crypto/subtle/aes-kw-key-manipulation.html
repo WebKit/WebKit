@@ -20,7 +20,7 @@ crypto.subtle.generateKey({name: "aes-kw", length: 256}, extractable, ["encrypt"
     key = result;
     shouldBe("key.toString()", "'[object Key]'");
     shouldBe("key.type", "'secret'");
-    shouldBe("key.algorithm.name", "'aes-kw'");
+    shouldBe("key.algorithm.name", "'AES-KW'");
     shouldBe("key.algorithm.length", "256");
 
     debug("\nTesting that the key can't be used with AES-CBC...");
@@ -39,7 +39,7 @@ crypto.subtle.generateKey({name: "aes-kw", length: 256}, extractable, ["encrypt"
 
     shouldBe("importedKey.toString()", "'[object Key]'");
     shouldBe("importedKey.type", "'secret'");
-    shouldBe("importedKey.algorithm.name", "'aes-kw'");
+    shouldBe("importedKey.algorithm.name", "'AES-KW'");
     shouldBe("importedKey.algorithm.length", "256");
 
     finishJSTest();

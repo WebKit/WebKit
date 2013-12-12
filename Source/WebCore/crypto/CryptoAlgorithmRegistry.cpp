@@ -57,7 +57,7 @@ bool CryptoAlgorithmRegistry::getIdentifierForName(const String& name, CryptoAlg
 
     MutexLocker lock(registryMutex());
 
-    auto iter = m_nameToIdentifierMap.find(name.isolatedCopy().lower());
+    auto iter = m_nameToIdentifierMap.find(name.isolatedCopy());
     if (iter == m_nameToIdentifierMap.end())
         return false;
 
@@ -85,8 +85,6 @@ std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmRegistry::create(CryptoAlgorithm
 
 void CryptoAlgorithmRegistry::registerAlgorithm(const String& name, CryptoAlgorithmIdentifier identifier, CryptoAlgorithmConstructor constructor)
 {
-    ASSERT(name == name.lower());
-
     MutexLocker lock(registryMutex());
 
     bool added = m_nameToIdentifierMap.add(name, identifier).isNewEntry;

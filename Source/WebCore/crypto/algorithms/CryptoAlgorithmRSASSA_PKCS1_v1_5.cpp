@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-const char* const CryptoAlgorithmRSASSA_PKCS1_v1_5::s_name = "rsassa-pkcs1-v1_5";
+const char* const CryptoAlgorithmRSASSA_PKCS1_v1_5::s_name = "RSASSA-PKCS1-v1_5";
 
 CryptoAlgorithmRSASSA_PKCS1_v1_5::CryptoAlgorithmRSASSA_PKCS1_v1_5()
 {

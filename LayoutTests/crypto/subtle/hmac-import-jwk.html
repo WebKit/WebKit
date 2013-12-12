@@ -31,7 +31,7 @@ crypto.subtle.importKey("jwk", hmacKeyAsArrayBuffer, null, extractable, ["sign",
 
     shouldBe("key.type", "'secret'");
     shouldBe("key.extractable", "false");
-    shouldBe("key.algorithm.name", "'hmac'");
+    shouldBe("key.algorithm.name", "'HMAC'");
     shouldBe("key.algorithm.length", "32");
     shouldBe("key.usages", '["sign", "verify"]');
 

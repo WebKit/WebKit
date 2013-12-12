@@ -30,7 +30,7 @@ window.addEventListener("message", function(evt) {
     key = evt.data;
     shouldBe("key.type", "'private'");
     shouldBe("key.extractable", "true");
-    shouldBe("key.algorithm.name", "'rsassa-pkcs1-v1_5'");
+    shouldBe("key.algorithm.name", "'RSASSA-PKCS1-v1_5'");
     shouldBe("key.algorithm.modulusLength", "2048");
     shouldBe("bytesToHexString(key.algorithm.publicExponent)", "'010001'");
     shouldBe("key.usages", '["sign", "verify"]');

@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Key received in a message:
 PASS key.type is 'private'
 PASS key.extractable is true
-PASS key.algorithm.name is 'rsassa-pkcs1-v1_5'
+PASS key.algorithm.name is 'RSASSA-PKCS1-v1_5'
 PASS key.algorithm.modulusLength is 2048
 PASS bytesToHexString(key.algorithm.publicExponent) is '010001'
 PASS key.usages is ["sign", "verify"]

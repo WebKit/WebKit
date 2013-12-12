@@ -39,7 +39,7 @@ crypto.subtle.importKey("raw", kekData, "aes-kw", extractable, ["wrapKey", "unwr
     shouldBe("unwrappedKey.toString()", "'[object Key]'");
     shouldBe("unwrappedKey.type", "'secret'");
     shouldBe("unwrappedKey.extractable", "true");
-    shouldBe("unwrappedKey.algorithm.name", "'aes-cbc'");
+    shouldBe("unwrappedKey.algorithm.name", "'AES-CBC'");
     shouldBe("unwrappedKey.algorithm.length", "128");
     shouldBe("unwrappedKey.usages", "['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']");
 
@@ -61,7 +61,7 @@ crypto.subtle.importKey("raw", kekData, "aes-kw", extractable, ["wrapKey", "unwr
     shouldBe("unwrappedKey.toString()", "'[object Key]'");
     shouldBe("unwrappedKey.type", "'secret'");
     shouldBe("unwrappedKey.extractable", "true");
-    shouldBe("unwrappedKey.algorithm.name", "'aes-cbc'");
+    shouldBe("unwrappedKey.algorithm.name", "'AES-CBC'");
     shouldBe("unwrappedKey.algorithm.length", "128");
     shouldBe("unwrappedKey.usages", "['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']");
 

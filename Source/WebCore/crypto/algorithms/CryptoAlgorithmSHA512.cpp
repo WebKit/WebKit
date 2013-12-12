@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-const char* const CryptoAlgorithmSHA512::s_name = "sha-512";
+const char* const CryptoAlgorithmSHA512::s_name = "SHA-512";
 
 CryptoAlgorithmSHA512::CryptoAlgorithmSHA512()
 {

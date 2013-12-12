@@ -34,7 +34,7 @@ crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, null, false, ["encrypt"]).th
 
     shouldBe("key.type", "'secret'");
     shouldBe("key.extractable", "false");
-    shouldBe("key.algorithm.name", "'aes-cbc'");
+    shouldBe("key.algorithm.name", "'AES-CBC'");
     shouldBe("key.algorithm.length", "192");
     shouldBe("key.usages", '["encrypt"]');
 

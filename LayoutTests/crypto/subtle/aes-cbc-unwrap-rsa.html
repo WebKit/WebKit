@@ -31,7 +31,7 @@ var wrappedKey = hexStringToUint8Array("3511f6028db04ea97e7cfad3c4cc60837bceff25
 debug("Importing an unwrapping key...");
 crypto.subtle.importKey("raw", unwrappingKeyOctets, "AES-CBC", nonExtractable, ["unwrapKey"]).then(function(result) {
     unwrappingKey = result;
-    shouldBe("unwrappingKey.algorithm.name", "'aes-cbc'");
+    shouldBe("unwrappingKey.algorithm.name", "'AES-CBC'");
     var unwrapAlgorithm = {name: "AES-CBC", iv: hexStringToUint8Array("000102030405060708090a0b0c0d0e0f")};
     debug("Unwrapping a key...");
     return crypto.subtle.unwrapKey("jwk", wrappedKey, unwrappingKey, unwrapAlgorithm, null, extractable, ["sign", "verify", "encrypt", "decrypt", "wrap", "unwrap"]);
@@ -41,10 +41,10 @@ crypto.subtle.importKey("raw", unwrappingKeyOctets, "AES-CBC", nonExtractable, [
     shouldBe("unwrappedKey.toString()", "'[object Key]'");
     shouldBe("unwrappedKey.type", "'public'");
     shouldBe("unwrappedKey.usages", "['sign','verify']");
-    shouldBe("unwrappedKey.algorithm.name", "'rsassa-pkcs1-v1_5'");
+    shouldBe("unwrappedKey.algorithm.name", "'RSASSA-PKCS1-v1_5'");
     shouldBe("unwrappedKey.algorithm.modulusLength", "2048");
     shouldBe("Base64URL.stringify(unwrappedKey.algorithm.publicExponent)", "publicKeyJSON.e");
-    shouldBe("unwrappedKey.algorithm.hash.name", "'sha-256'");
+    shouldBe("unwrappedKey.algorithm.hash.name", "'SHA-256'");
     shouldBe("unwrappedKey.extractable", "false");
     finishJSTest();
 });

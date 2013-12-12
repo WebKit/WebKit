@@ -41,10 +41,10 @@ crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(publicKeyJSON)),
     shouldBe("publicKey.toString()", "'[object Key]'");
     shouldBe("publicKey.type", "'public'");
     shouldBe("publicKey.usages", "['sign','verify']");
-    shouldBe("publicKey.algorithm.name", "'rsassa-pkcs1-v1_5'");
+    shouldBe("publicKey.algorithm.name", "'RSASSA-PKCS1-v1_5'");
     shouldBe("publicKey.algorithm.modulusLength", "2048");
     shouldBe("bytesToHexString(publicKey.algorithm.publicExponent)", "'010001'");
-    shouldBe("publicKey.algorithm.hash.name", "'sha-256'");
+    shouldBe("publicKey.algorithm.hash.name", "'SHA-256'");
     debug("\nImporting a private key...");
     return crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(privateKeyJSON)), null, extractable, ["sign", "verify"]);
 }).then(function(result) {
@@ -52,10 +52,10 @@ crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(publicKeyJSON)),
     shouldBe("privateKey.toString()", "'[object Key]'");
     shouldBe("privateKey.type", "'private'");
     shouldBe("privateKey.usages", "['sign','verify']");
-    shouldBe("privateKey.algorithm.name", "'rsassa-pkcs1-v1_5'");
+    shouldBe("privateKey.algorithm.name", "'RSASSA-PKCS1-v1_5'");
     shouldBe("privateKey.algorithm.modulusLength", "2048");
     shouldBe("bytesToHexString(privateKey.algorithm.publicExponent)", "'010001'");
-    shouldBe("privateKey.algorithm.hash.name", "'sha-256'");
+    shouldBe("privateKey.algorithm.hash.name", "'SHA-256'");
     finishJSTest();
 });
 </script>

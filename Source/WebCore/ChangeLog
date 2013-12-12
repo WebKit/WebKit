@@ -1,3 +1,37 @@
+2013-12-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Make algorithm.name return registered name, not normalized one
+        https://bugs.webkit.org/show_bug.cgi?id=125641
+
+        Reviewed by Anders Carlsson.
+
+        Currently, WebCrypto editor's draft stipulates that algorithm name is lowercased
+        as part of normalization.
+
+        But it makes little sense to register algorithms as mixed (mostly upper) case, yet
+        return the name lowercased. Other implementations don't bother respecting this,
+        and signs are that the spec will change.
+
+        I'd like to match other implementations here, because sticking to the spec only
+        makes us fail 3rd party test suites for no good reason.
+
+        Updated many existing tests.
+
+        * crypto/CryptoAlgorithmRegistry.cpp:
+        (WebCore::CryptoAlgorithmRegistry::getIdentifierForName):
+        (WebCore::CryptoAlgorithmRegistry::registerAlgorithm):
+        * crypto/CryptoAlgorithmRegistry.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA1.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA224.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA256.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA384.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA512.cpp:
+
 2013-12-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Move CertificateInfo to WebCore

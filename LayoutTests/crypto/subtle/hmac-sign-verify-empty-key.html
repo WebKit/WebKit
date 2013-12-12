@@ -21,9 +21,9 @@ crypto.subtle.importKey("raw", hmacKey, {name: 'hmac', hash: {name: 'sha-1'}}, e
     key = result;
     shouldBe("key.type", "'secret'");
     shouldBe("key.extractable", "true");
-    shouldBe("key.algorithm.name", "'hmac'");
+    shouldBe("key.algorithm.name", "'HMAC'");
     shouldBe("key.algorithm.length", "0"); // See <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23098>.
-    shouldBe("key.algorithm.hash.name", "'sha-1'");
+    shouldBe("key.algorithm.hash.name", "'SHA-1'");
     shouldBe("key.usages", "['sign', 'verify']");
 
     debug("Using the key to sign 'foo'...");

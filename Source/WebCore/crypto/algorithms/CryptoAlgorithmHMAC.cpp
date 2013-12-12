@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-const char* const CryptoAlgorithmHMAC::s_name = "hmac";
+const char* const CryptoAlgorithmHMAC::s_name = "HMAC";
 
 CryptoAlgorithmHMAC::CryptoAlgorithmHMAC()
 {

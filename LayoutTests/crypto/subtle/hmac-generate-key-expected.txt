@@ -11,14 +11,14 @@ PASS crypto.subtle.generateKey({name: "hmac", length: {}}, extractable, ["sign",
 Generating a key with default length...
 PASS key.type is 'secret'
 PASS key.extractable is true
-PASS key.algorithm.name is 'hmac'
+PASS key.algorithm.name is 'HMAC'
 PASS key.algorithm.length is 64
 PASS key.usages is ["sign", "verify"]
 
 Generating a key with custom length...
 PASS key.type is 'secret'
 PASS key.extractable is true
-PASS key.algorithm.name is 'hmac'
+PASS key.algorithm.name is 'HMAC'
 PASS key.algorithm.length is 5
 PASS key.usages is ["sign"]
 PASS successfullyParsed is true
