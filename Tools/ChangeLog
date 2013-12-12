@@ -1,5 +1,21 @@
 2013-12-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        check-webkit-style shouldn't check spacing in #if preprocessor lines
+        https://bugs.webkit.org/show_bug.cgi?id=125534
+
+        Reviewed by Ryosuke Niwa.
+
+        Preprocessor lines that start with #if shouldn't have to adhere to
+        the same spacing requirements that regular code does
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_spacing_for_binary_ops):
+        (WebKitStyleTest.test_line_breaking):
+
+2013-12-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         check-webkit-style can't determine if a comma is part of an initialization list
         https://bugs.webkit.org/show_bug.cgi?id=125537
 
