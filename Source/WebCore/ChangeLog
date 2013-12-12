@@ -1,3 +1,15 @@
+2013-12-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Remove a few more guards mistakenly added in r160367
+
+        Reviewed by Carlos Garcia Campos
+
+        r160367 was too liberal in hiding APIs from the GObject DOM bindings.
+        We should expose the BatteryManager and the text and audio tracks.
+
+        * Modules/battery/BatteryManager.idl:
+        * html/HTMLMediaElement.idl:
+
 2013-12-11  Darin Adler  <darin@apple.com>
 
         StylePendingImage needs to correctly manage the CSSValue pointer lifetime

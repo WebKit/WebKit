@@ -18,7 +18,6 @@
  */
 
 // http://dev.w3.org/2009/dap/system-info/battery-status.html
-#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_OBJECT
 [
     NoInterfaceObject,
     Conditional=BATTERY_STATUS,
@@ -44,4 +43,3 @@
                              optional boolean useCapture);
     [RaisesException] boolean dispatchEvent(Event event);
 };
-#endif

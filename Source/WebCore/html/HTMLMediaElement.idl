@@ -108,7 +108,7 @@
     [ImplementedAs=setMediaKeys] void webkitSetMediaKeys(MediaKeys mediaKeys);
 #endif
 
-#if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK && (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT)
+#if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
     [RaisesException] TextTrack addTextTrack(DOMString kind, optional DOMString label, optional DOMString language);
     readonly attribute AudioTrackList audioTracks;
     readonly attribute TextTrackList textTracks;
