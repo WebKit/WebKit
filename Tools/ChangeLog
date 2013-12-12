@@ -1,5 +1,10 @@
 2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Rollout r160469.  Not rolling out from trunk because r160469 was
+        applied on the branch from a patch file.
+
+2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r157821
 
     2013-10-22  Samuel White  <samuel_white@apple.com> 
