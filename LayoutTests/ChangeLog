@@ -1,5 +1,15 @@
 2013-12-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Public key in a generated KeyPair should always be extractable
+        https://bugs.webkit.org/show_bug.cgi?id=125643
+
+        Reviewed by Sam Weinig.
+
+        * crypto/subtle/rsa-oaep-generate-non-extractable-key-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-generate-non-extractable-key.html: Added.
+
+2013-12-12  Alexey Proskuryakov  <ap@apple.com>
+
         Make algorithm.name return registered name, not normalized one
         https://bugs.webkit.org/show_bug.cgi?id=125641
 
