@@ -91,7 +91,7 @@ void RenderImageResource::resetAnimation()
 
 PassRefPtr<Image> RenderImageResource::image(int, int) const
 {
-    return m_cachedImage ? m_cachedImage->imageForRenderer(m_renderer) : nullImage();
+    return m_cachedImage ? m_cachedImage->imageForRenderer(m_renderer) : Image::nullImage();
 }
 
 bool RenderImageResource::errorOccurred() const
@@ -104,16 +104,6 @@ void RenderImageResource::setContainerSizeForRenderer(const IntSize& imageContai
     ASSERT(m_renderer);
     if (m_cachedImage)
         m_cachedImage->setContainerSizeForRenderer(m_renderer, imageContainerSize, m_renderer->style().effectiveZoom());
-}
-
-Image* RenderImageResource::nullImage()
-{
-    return Image::nullImage();
-}
-
-bool RenderImageResource::usesImageContainerSize() const
-{
-    return m_cachedImage ? m_cachedImage->usesImageContainerSize() : false;
 }
 
 bool RenderImageResource::imageHasRelativeWidth() const

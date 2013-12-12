@@ -27,12 +27,12 @@
 #define RenderImageResource_h
 
 #include "CachedResourceHandle.h"
-#include "Image.h"
-#include "LayoutSize.h"
 #include "StyleImage.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
+class CachedImage;
 class RenderElement;
 
 class RenderImageResource {
@@ -58,7 +58,6 @@ public:
     virtual bool errorOccurred() const;
 
     virtual void setContainerSizeForRenderer(const IntSize&);
-    virtual bool usesImageContainerSize() const;
     virtual bool imageHasRelativeWidth() const;
     virtual bool imageHasRelativeHeight() const;
 
@@ -69,11 +68,9 @@ public:
 
 protected:
     RenderImageResource();
+
     RenderElement* m_renderer;
     CachedResourceHandle<CachedImage> m_cachedImage;
-
-private:
-    static Image* nullImage();
 };
 
 } // namespace WebCore

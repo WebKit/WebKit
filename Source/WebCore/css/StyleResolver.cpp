@@ -3876,32 +3876,23 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
 
 PassRefPtr<StyleImage> StyleResolver::loadPendingImage(StylePendingImage* pendingImage)
 {
-    CachedResourceLoader* cachedResourceLoader = m_state.document().cachedResourceLoader();
+    if (auto imageValue = pendingImage->cssImageValue())
+        return imageValue->cachedImage(m_state.document().cachedResourceLoader());
 
-    if (pendingImage->cssImageValue()) {
-        CSSImageValue* imageValue = pendingImage->cssImageValue();
-        return imageValue->cachedImage(cachedResourceLoader);
-    }
-
-    if (pendingImage->cssImageGeneratorValue()) {
-        CSSImageGeneratorValue* imageGeneratorValue = pendingImage->cssImageGeneratorValue();
-        imageGeneratorValue->loadSubimages(cachedResourceLoader);
+    if (auto imageGeneratorValue = pendingImage->cssImageGeneratorValue()) {
+        imageGeneratorValue->loadSubimages(m_state.document().cachedResourceLoader());
         return StyleGeneratedImage::create(imageGeneratorValue);
     }
 
-    if (pendingImage->cssCursorImageValue()) {
-        CSSCursorImageValue* cursorImageValue = pendingImage->cssCursorImageValue();
-        return cursorImageValue->cachedImage(cachedResourceLoader);
-    }
+    if (auto cursorImageValue = pendingImage->cssCursorImageValue())
+        return cursorImageValue->cachedImage(m_state.document().cachedResourceLoader());
 
 #if ENABLE(CSS_IMAGE_SET)
-    if (pendingImage->cssImageSetValue()) {
-        CSSImageSetValue* imageSetValue = pendingImage->cssImageSetValue();
-        return imageSetValue->cachedImageSet(cachedResourceLoader);
-    }
+    if (CSSImageSetValue* imageSetValue = pendingImage->cssImageSetValue())
+        return imageSetValue->cachedImageSet(m_state.document().cachedResourceLoader());
 #endif
 
-    return 0;
+    return nullptr;
 }
 
 
