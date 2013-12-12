@@ -24,39 +24,43 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#include "CryptoAlgorithmRSAES_PKCS1_v1_5.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmAES_KW.h"
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmRSAES_PKCS1_v1_5.h"
-#include "CryptoAlgorithmRSASSA_PKCS1_v1_5.h"
-#include "CryptoAlgorithmRSA_OAEP.h"
-#include "CryptoAlgorithmSHA1.h"
-#include "CryptoAlgorithmSHA224.h"
-#include "CryptoAlgorithmSHA256.h"
-#include "CryptoAlgorithmSHA384.h"
-#include "CryptoAlgorithmSHA512.h"
+#include "CommonCryptoUtilities.h"
+#include "CryptoKeyRSA.h"
 
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
+void CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    registerAlgorithm<CryptoAlgorithmAES_CBC>();
-    registerAlgorithm<CryptoAlgorithmAES_KW>();
-    registerAlgorithm<CryptoAlgorithmHMAC>();
-    registerAlgorithm<CryptoAlgorithmRSAES_PKCS1_v1_5>();
-    registerAlgorithm<CryptoAlgorithmRSASSA_PKCS1_v1_5>();
-    registerAlgorithm<CryptoAlgorithmRSA_OAEP>();
-    registerAlgorithm<CryptoAlgorithmSHA1>();
-    registerAlgorithm<CryptoAlgorithmSHA224>();
-    registerAlgorithm<CryptoAlgorithmSHA256>();
-    registerAlgorithm<CryptoAlgorithmSHA384>();
-    registerAlgorithm<CryptoAlgorithmSHA512>();
+    Vector<uint8_t> cipherText(1024);
+    size_t cipherTextLength = cipherText.size();
+    CCCryptorStatus status = CCRSACryptorEncrypt(key.platformKey(), ccPKCS1Padding, data.first, data.second, cipherText.data(), &cipherTextLength, 0, 0, kCCDigestNone);
+    if (status) {
+        failureCallback();
+        return;
+    }
+
+    cipherText.resize(cipherTextLength);
+    callback(cipherText);
 }
 
+void CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode&)
+{
+    Vector<uint8_t> plainText(1024);
+    size_t plainTextLength = plainText.size();
+    CCCryptorStatus status = CCRSACryptorDecrypt(key.platformKey(), ccPKCS1Padding, data.first, data.second, plainText.data(), &plainTextLength, 0, 0, kCCDigestNone);
+    if (status) {
+        failureCallback();
+        return;
+    }
+
+    plainText.resize(plainTextLength);
+    callback(plainText);
 }
+
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)

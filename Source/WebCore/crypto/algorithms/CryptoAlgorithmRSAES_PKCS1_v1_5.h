@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmAES_KW_h
-#define CryptoAlgorithmAES_KW_h
+#ifndef CryptoAlgorithmRSAES_PKCS1_v1_5_h
+#define CryptoAlgorithmRSAES_PKCS1_v1_5_h
 
 #include "CryptoAlgorithm.h"
 
@@ -32,32 +32,33 @@
 
 namespace WebCore {
 
-class CryptoKeyAES;
+class CryptoAlgorithmRSAESParams;
+class CryptoKeyRSA;
 
-class CryptoAlgorithmAES_KW FINAL : public CryptoAlgorithm {
+class CryptoAlgorithmRSAES_PKCS1_v1_5 FINAL : public CryptoAlgorithm {
 public:
     static const char* const s_name;
-    static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_KW;
+    static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5;
 
     static std::unique_ptr<CryptoAlgorithm> create();
 
     virtual CryptoAlgorithmIdentifier identifier() const OVERRIDE;
 
-    virtual void encryptForWrapKey(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&) OVERRIDE;
-    virtual void decryptForUnwrapKey(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&) OVERRIDE;
+    virtual void encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&) OVERRIDE;
+    virtual void decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&) OVERRIDE;
     virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, KeyOrKeyPairCallback, VoidCallback failureCallback, ExceptionCode&) OVERRIDE;
     virtual void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, KeyCallback, VoidCallback failureCallback, ExceptionCode&) OVERRIDE;
 
 private:
-    CryptoAlgorithmAES_KW();
-    virtual ~CryptoAlgorithmAES_KW();
+    CryptoAlgorithmRSAES_PKCS1_v1_5();
+    virtual ~CryptoAlgorithmRSAES_PKCS1_v1_5();
 
     bool keyAlgorithmMatches(const CryptoKey&) const;
-    void platformEncrypt(const CryptoKeyAES&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
-    void platformDecrypt(const CryptoKeyAES&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
+    void platformEncrypt(const CryptoKeyRSA&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
+    void platformDecrypt(const CryptoKeyRSA&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
 };
 
 }
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmAES_KW_h
+#endif // CryptoAlgorithmRSAES_PKCS1_v1_5_h

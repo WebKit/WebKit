@@ -190,6 +190,9 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
     } else if (m_jwkAlgorithmName == "RS512") {
         algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5);
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_512);
+    } else if (m_jwkAlgorithmName == "RSA1_5") {
+        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5);
+        parameters = std::make_unique<CryptoAlgorithmParameters>();
     } else if (m_jwkAlgorithmName == "RSA-OAEP") {
         algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSA_OAEP);
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_1);
@@ -320,6 +323,8 @@ bool JSCryptoKeySerializationJWK::keySizeIsValid(size_t sizeInBits) const
     if (m_jwkAlgorithmName == "RS384")
         return sizeInBits >= 2048;
     if (m_jwkAlgorithmName == "RS512")
+        return sizeInBits >= 2048;
+    if (m_jwkAlgorithmName == "RSA1_5")
         return sizeInBits >= 2048;
     if (m_jwkAlgorithmName == "RSA_OAEP")
         return sizeInBits >= 2048;
@@ -589,6 +594,13 @@ void JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON(ExecState* exec, JSObjec
         default:
             break;
         }
+        break;
+    }
+    case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5: {
+        const CryptoKeyRSA& rsaKey = toCryptoKeyRSA(key);
+        if (rsaKey.keySizeInBits() < 2048)
+            break;
+        jwkAlgorithm = "RSA1_5";
         break;
     }
     case CryptoAlgorithmIdentifier::RSA_OAEP: {

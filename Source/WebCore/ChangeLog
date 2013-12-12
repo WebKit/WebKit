@@ -1,3 +1,44 @@
+2013-12-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Add support for RSAES-PKCS1-v1_5
+        https://bugs.webkit.org/show_bug.cgi?id=125647
+
+        Reviewed by Anders Carlsson.
+
+        Tests: crypto/subtle/rsaes-pkcs1-v1_5-decrypt.html
+               crypto/subtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes.html
+
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        Removed meaningless parameters arguments from private functions. The base arguments
+        class is always empty.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForEncrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDecrypt):
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::JSCryptoKeySerializationJWK::reconcileAlgorithm):
+        (WebCore::JSCryptoKeySerializationJWK::keySizeIsValid):
+        (WebCore::JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON):
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp: Added.
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::CryptoAlgorithmRSAES_PKCS1_v1_5):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::~CryptoAlgorithmRSAES_PKCS1_v1_5):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::create):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::identifier):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::keyAlgorithmMatches):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h: Added.
+        * crypto/mac/CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp: Added.
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        Added support for this algorithm.
+
 2013-12-12  Andreas Kling  <akling@apple.com>
 
         [Mac] Stop not caching HTTP resources with "Vary" header in response.

@@ -55,7 +55,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmAES_KW::identifier() const
     return s_identifier;
 }
 
-bool CryptoAlgorithmAES_KW::keyAlgorithmMatches(const CryptoAlgorithmParameters&, const CryptoKey& key) const
+bool CryptoAlgorithmAES_KW::keyAlgorithmMatches(const CryptoKey& key) const
 {
     if (key.algorithmIdentifier() != s_identifier)
         return false;
@@ -64,9 +64,9 @@ bool CryptoAlgorithmAES_KW::keyAlgorithmMatches(const CryptoAlgorithmParameters&
     return true;
 }
 
-void CryptoAlgorithmAES_KW::encryptForWrapKey(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmAES_KW::encryptForWrapKey(const CryptoAlgorithmParameters&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    if (!keyAlgorithmMatches(parameters, key)) {
+    if (!keyAlgorithmMatches(key)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
@@ -74,9 +74,9 @@ void CryptoAlgorithmAES_KW::encryptForWrapKey(const CryptoAlgorithmParameters& p
     platformEncrypt(toCryptoKeyAES(key), data, std::move(callback), std::move(failureCallback), ec);
 }
 
-void CryptoAlgorithmAES_KW::decryptForUnwrapKey(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmAES_KW::decryptForUnwrapKey(const CryptoAlgorithmParameters&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    if (!keyAlgorithmMatches(parameters, key)) {
+    if (!keyAlgorithmMatches(key)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
