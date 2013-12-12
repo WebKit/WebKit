@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening
 
+        Rebaseline fast/table/empty-cells.html after r160410.
+
+        * platform/efl/fast/table/empty-cells-expected.png:
+        * platform/efl/fast/table/empty-cells-expected.txt:
+
+2013-12-12  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
         Add test expectations for failing compositing tests.
 
         * platform/efl-wk2/TestExpectations:
