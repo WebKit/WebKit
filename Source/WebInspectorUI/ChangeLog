@@ -1,3 +1,30 @@
+2013-12-12  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        Web Inspector: ES6: JavaScript syntax highlighting and recognition of for..of
+        https://bugs.webkit.org/show_bug.cgi?id=122868
+
+        Reviewed by Timothy Hatcher.
+
+        Update to CodeMirror 3.20 including javascript ES6 updates.
+
+        * Tools/PrettyPrinting/codemirror.css:
+        * Tools/PrettyPrinting/codemirror.js: Minor local change due to error from jsmin.py
+        * Tools/PrettyPrinting/css.js:
+        * Tools/PrettyPrinting/javascript.js:
+        * UserInterface/External/CodeMirror/codemirror.css:
+        * UserInterface/External/CodeMirror/codemirror.js: Minor local change due to error from jsmin.py
+        * UserInterface/External/CodeMirror/coffeescript.js:
+        * UserInterface/External/CodeMirror/css.js:
+        * UserInterface/External/CodeMirror/htmlmixed.js:
+        * UserInterface/External/CodeMirror/javascript.js:
+        * UserInterface/External/CodeMirror/less.js:
+        * UserInterface/External/CodeMirror/matchbrackets.js:
+        * UserInterface/External/CodeMirror/placeholder.js:
+        * UserInterface/External/CodeMirror/runmode.js:
+        * UserInterface/External/CodeMirror/searchcursor.js:
+        * UserInterface/External/CodeMirror/sql.js:
+        * UserInterface/External/CodeMirror/xml.js:
+
 2013-12-12  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: allow editing of colors in CSS resources
