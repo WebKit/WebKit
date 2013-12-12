@@ -1,5 +1,53 @@
 2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r157821
+
+    2013-10-22  Samuel White  <samuel_white@apple.com> 
+
+            AX: Add paramAttrs to fetch start and end text markers in a given rect. 
+            https://bugs.webkit.org/show_bug.cgi?id=122164 
+
+            Reviewed by Chris Fleizach. 
+
+            Added accessibility element hooks to test endTextMarkerForBounds and startTextMarkerForBounds. 
+
+            * DumpRenderTree/AccessibilityUIElement.cpp: 
+            (endTextMarkerForBoundsCallback): 
+            (startTextMarkerForBoundsCallback): 
+            (AccessibilityUIElement::endTextMarkerForBounds): 
+            (AccessibilityUIElement::startTextMarkerForBounds): 
+            (AccessibilityUIElement::getJSClass): 
+            * DumpRenderTree/AccessibilityUIElement.h: 
+            * DumpRenderTree/mac/AccessibilityUIElementMac.mm: 
+            (AccessibilityUIElement::endTextMarkerForBounds): 
+            (AccessibilityUIElement::startTextMarkerForBounds): 
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp: 
+            (WTR::AccessibilityUIElement::endTextMarkerForBounds): 
+            (WTR::AccessibilityUIElement::startTextMarkerForBounds): 
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h: 
+            * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl: 
+            * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp: 
+            (WTR::AccessibilityUIElement::endTextMarkerForBounds): 
+            (WTR::AccessibilityUIElement::startTextMarkerForBounds): 
+            * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm: 
+            (WTR::AccessibilityUIElement::endTextMarkerForBounds): 
+            (WTR::AccessibilityUIElement::startTextMarkerForBounds): 
+
+2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge 157303
+
+    2013-10-11  Brent Fulgham  <bfulgham@apple.com>
+
+            Unreviewed build fix for --64-bit target.
+
+            * Scripts/webkitdirs.pm:
+            (argumentsForConfiguration): Use 'isWin64' test, since @ARGV value may have
+            been removed by this point.
+            (hasArgument): Remove unused temporary.
+
+2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge 154368
         
     2013-08-20  Alex Christensen  <achristensen@apple.com>

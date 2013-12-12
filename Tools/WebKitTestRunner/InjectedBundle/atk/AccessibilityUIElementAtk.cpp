@@ -1155,6 +1155,18 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForText
     return 0;
 }
 
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForBounds(int x, int y, int width, int height)
+{
+    // FIXME: implement
+    return 0;
+}
+
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBounds(int x, int y, int width, int height)
+{
+    // FIXME: implement
+    return 0;
+}
+
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int x, int y)
 {
     // FIXME: implement
