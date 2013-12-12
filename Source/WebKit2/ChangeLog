@@ -1,3 +1,16 @@
+2013-12-12  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Let the load delegate know when the Web process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=125660
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (processDidCrash):  Implemented this WKPageLoaderClient callback by calling the load
+        delegate.
+        (setUpPageLoaderClient): Set the above callback in the client structure
+        * UIProcess/API/Cocoa/WKBrowsingContextLoadDelegatePrivate.h: Declare new delegate method.
+
 2013-12-12  Anders Carlsson  <andersca@apple.com>
 
         Move MessageSender to Platform/IPC.

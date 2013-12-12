@@ -512,6 +512,15 @@ static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef ad
     [loadDelegate browsingContextControllerDidChangeBackForwardList:browsingContext addedItem:added removedItems:removed];
 }
 
+static void processDidCrash(WKPageRef page, const void* clientInfo)
+{
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto loadDelegate = browsingContext->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(browsingContextControllerWebProcessDidCrash:)])
+        [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextControllerWebProcessDidCrash:browsingContext];
+}
+
 static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, WebPageProxy& page)
 {
     WKPageLoaderClientV3 loaderClient;
@@ -533,6 +542,8 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
     loaderClient.didChangeProgress = didChangeProgress;
     loaderClient.didFinishProgress = didFinishProgress;
     loaderClient.didChangeBackForwardList = didChangeBackForwardList;
+
+    loaderClient.processDidCrash = processDidCrash;
 
     page.initializeLoaderClient(&loaderClient.base);
 }

@@ -31,4 +31,6 @@
 - (BOOL)browsingContextController:(WKBrowsingContextController *)sender canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
 - (void)browsingContextController:(WKBrowsingContextController *)sender didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 
+- (void)browsingContextControllerWebProcessDidCrash:(WKBrowsingContextController *)sender;
+
 @end
