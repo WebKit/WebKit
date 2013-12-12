@@ -26,16 +26,11 @@
 #include "config.h"
 #include "CertificateInfo.h"
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
-#include "DataReference.h"
-#include <WebCore/ResourceError.h>
-#include <WebCore/ResourceResponse.h>
+#include <ResourceError.h>
+#include <ResourceResponse.h>
 #include <libsoup/soup.h>
 
-using namespace WebCore;
-
-namespace WebKit {
+namespace WebCore {
 
 CertificateInfo::CertificateInfo()
     : m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
@@ -64,53 +59,4 @@ CertificateInfo::~CertificateInfo()
 {
 }
 
-void CertificateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
-{
-    if (!m_certificate) {
-        encoder << false;
-        return;
-    }
-
-    GByteArray* certificateData = 0;
-    g_object_get(G_OBJECT(m_certificate.get()), "certificate", &certificateData, NULL);
-    if (!certificateData) {
-        encoder << false;
-        return;
-    }
-
-    encoder << true;
-    GRefPtr<GByteArray> certificate = adoptGRef(certificateData);
-    encoder.encodeVariableLengthByteArray(CoreIPC::DataReference(certificate->data, certificate->len));
-    encoder << static_cast<uint32_t>(m_tlsErrors);
-}
-
-bool CertificateInfo::decode(CoreIPC::ArgumentDecoder& decoder, CertificateInfo& certificateInfo)
-{
-    bool hasCertificate;
-    if (!decoder.decode(hasCertificate))
-        return false;
-
-    if (!hasCertificate)
-        return true;
-
-    CoreIPC::DataReference certificateDataReference;
-    if (!decoder.decodeVariableLengthByteArray(certificateDataReference))
-        return false;
-
-    GByteArray* certificateData = g_byte_array_sized_new(certificateDataReference.size());
-    certificateData = g_byte_array_append(certificateData, certificateDataReference.data(), certificateDataReference.size());
-    GRefPtr<GByteArray> certificate = adoptGRef(certificateData);
-
-    GTlsBackend* backend = g_tls_backend_get_default();
-    certificateInfo.m_certificate = adoptGRef(G_TLS_CERTIFICATE(g_initable_new(
-        g_tls_backend_get_certificate_type(backend), 0, 0, "certificate", certificate.get(), nullptr)));
-
-    uint32_t tlsErrors;
-    if (!decoder.decode(tlsErrors))
-        return false;
-    certificateInfo.m_tlsErrors = static_cast<GTlsCertificateFlags>(tlsErrors);
-
-    return true;
-}
-
-} // namespace WebKit
+} // namespace WebCore

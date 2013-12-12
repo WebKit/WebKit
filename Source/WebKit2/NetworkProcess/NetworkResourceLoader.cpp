@@ -30,7 +30,6 @@
 
 #include "AsynchronousNetworkLoaderClient.h"
 #include "AuthenticationManager.h"
-#include "CertificateInfo.h"
 #include "DataReference.h"
 #include "Logging.h"
 #include "NetworkBlobRegistry.h"

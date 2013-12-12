@@ -52,6 +52,7 @@ class Object;
 }
 
 namespace WebCore {
+class CertificateInfo;
 class PageGroup;
 class ResourceRequest;
 struct PluginInfo;
@@ -76,10 +77,6 @@ struct WebProcessCreationParameters;
 #if ENABLE(NETWORK_PROCESS)
 class NetworkProcessConnection;
 class WebResourceLoadScheduler;
-#else
-#if USE(SOUP)
-class CertificateInfo;
-#endif
 #endif
 
 #if ENABLE(DATABASE_PROCESS)
@@ -178,7 +175,7 @@ public:
     void updateActivePages();
 
 #if !ENABLE(NETWORK_PROCESS) && USE(SOUP)
-    void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
+    void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
 #endif
 
 #if PLATFORM(IOS)

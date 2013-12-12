@@ -26,13 +26,7 @@
 #import "config.h"
 #import "CertificateInfo.h"
 
-#import "ArgumentCodersCF.h"
-#import "ArgumentDecoder.h"
-#import "ArgumentEncoder.h"
-
-using namespace WebCore;
-
-namespace WebKit {
+namespace WebCore {
 
 CertificateInfo::CertificateInfo()
 {
@@ -46,32 +40,6 @@ CertificateInfo::CertificateInfo(const ResourceResponse& response)
 CertificateInfo::CertificateInfo(CFArrayRef certificateChain)
     : m_certificateChain(certificateChain)
 {
-}
-
-void CertificateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
-{
-    if (!m_certificateChain) {
-        encoder << false;
-        return;
-    }
-
-    encoder << true;
-    CoreIPC::encode(encoder, m_certificateChain.get());
-}
-
-bool CertificateInfo::decode(CoreIPC::ArgumentDecoder& decoder, CertificateInfo& c)
-{
-    bool hasCertificateChain;
-    if (!decoder.decode(hasCertificateChain))
-        return false;
-
-    if (!hasCertificateChain)
-        return true;
-
-    if (!CoreIPC::decode(decoder, c.m_certificateChain))
-        return false;
-
-    return true;
 }
 
 #ifndef NDEBUG
@@ -88,4 +56,4 @@ void CertificateInfo::dump() const
 }
 #endif
 
-} // namespace WebKit
+} // namespace WebCore

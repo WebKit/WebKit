@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,35 +27,32 @@
 #ifndef CertificateInfo_h
 #define CertificateInfo_h
 
-#include <WebCore/ResourceResponse.h>
-#include <wtf/RetainPtr.h>
+#include <libsoup/soup.h>
+#include <wtf/gobject/GRefPtr.h>
 
-namespace CoreIPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
-}
+namespace WebCore {
 
-namespace WebKit {
+class ResourceError;
+class ResourceResponse;
 
 class CertificateInfo {
 public:
     CertificateInfo();
     explicit CertificateInfo(const WebCore::ResourceResponse&);
-    explicit CertificateInfo(CFArrayRef certificateChain);
+    explicit CertificateInfo(const WebCore::ResourceError&);
+    explicit CertificateInfo(GTlsCertificate*, GTlsCertificateFlags);
+    ~CertificateInfo();
 
-    CFArrayRef certificateChain() const { return m_certificateChain.get(); }
-
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, CertificateInfo&);
-
-#ifndef NDEBUG
-    void dump() const;
-#endif
+    GTlsCertificate* certificate() const { return m_certificate.get(); }
+    void setCertificate(GTlsCertificate* certificate) { m_certificate = certificate; }
+    GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }
+    void setTLSErrors(GTlsCertificateFlags tlsErrors) { m_tlsErrors = tlsErrors; }
 
 private:
-    RetainPtr<CFArrayRef> m_certificateChain;
+    GRefPtr<GTlsCertificate> m_certificate;
+    GTlsCertificateFlags m_tlsErrors;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // CertificateInfo_h

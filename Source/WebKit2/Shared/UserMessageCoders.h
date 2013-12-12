@@ -504,7 +504,7 @@ public:
             break;
         }
         case API::Object::Type::CertificateInfo: {
-            CertificateInfo certificateInfo;
+            WebCore::CertificateInfo certificateInfo;
             if (!decoder.decode(certificateInfo))
                 return false;
             coder.m_root = WebCertificateInfo::create(certificateInfo);

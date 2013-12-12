@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Company 100 Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +29,13 @@
 
 #import "ArgumentCodersCF.h"
 #import "DataReference.h"
-#import "CertificateInfo.h"
 #import "WebKitSystemInterface.h"
+#import <WebCore/CertificateInfo.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 
 using namespace WebCore;
-using namespace WebKit;
 
 namespace CoreIPC {
 
@@ -131,6 +131,36 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decode
         return false;
 
     resourceResponse = ResourceResponse(nsURLResponse.get());
+    return true;
+}
+
+void ArgumentCoder<CertificateInfo>::encode(ArgumentEncoder& encoder, const CertificateInfo& certificateInfo)
+{
+    CFArrayRef certificateChain = certificateInfo.certificateChain();
+    if (!certificateChain) {
+        encoder << false;
+        return;
+    }
+
+    encoder << true;
+    CoreIPC::encode(encoder, certificateChain);
+}
+
+bool ArgumentCoder<CertificateInfo>::decode(ArgumentDecoder& decoder, CertificateInfo& certificateInfo)
+{
+    bool hasCertificateChain;
+    if (!decoder.decode(hasCertificateChain))
+        return false;
+
+    if (!hasCertificateChain)
+        return true;
+
+    RetainPtr<CFArrayRef> certificateChain;
+    if (!CoreIPC::decode(decoder, certificateChain))
+        return false;
+
+    certificateInfo.setCertificateChain(certificateChain.get());
+
     return true;
 }
 

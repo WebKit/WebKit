@@ -28,7 +28,6 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include "CertificateInfo.h"
 #include "DataReference.h"
 #include "Logging.h"
 #include "NetworkProcessConnection.h"
@@ -36,6 +35,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcess.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceError.h>

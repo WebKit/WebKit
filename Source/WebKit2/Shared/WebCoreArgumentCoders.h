@@ -31,6 +31,7 @@
 namespace WebCore {
 class AffineTransform;
 class AuthenticationChallenge;
+class CertificateInfo;
 class Color;
 class Credential;
 class Cursor;
@@ -101,6 +102,11 @@ template<> struct ArgumentCoder<WebCore::AffineTransform> {
 template<> struct ArgumentCoder<WebCore::TransformationMatrix> {
     static void encode(ArgumentEncoder&, const WebCore::TransformationMatrix&);
     static bool decode(ArgumentDecoder&, WebCore::TransformationMatrix&);
+};
+
+template<> struct ArgumentCoder<WebCore::CertificateInfo> {
+    static void encode(ArgumentEncoder&, const WebCore::CertificateInfo&);
+    static bool decode(ArgumentDecoder&, WebCore::CertificateInfo&);
 };
 
 template<> struct ArgumentCoder<WebCore::FloatPoint> {

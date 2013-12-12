@@ -29,6 +29,7 @@
 #import "WKAPICast.h"
 #import "WebCertificateInfo.h"
 
+using namespace WebCore;
 using namespace WebKit;
 
 WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain)

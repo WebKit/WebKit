@@ -35,10 +35,12 @@
 #include "NetworkResourceLoadScheduler.h"
 #include <wtf/Forward.h>
 
-namespace WebKit {
-
-class AuthenticationManager;
+namespace WebCore {
 class CertificateInfo;
+}
+
+namespace WebKit {
+class AuthenticationManager;
 class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
 struct NetworkProcessCreationParameters;
@@ -104,7 +106,7 @@ private:
     void downloadRequest(uint64_t downloadID, const WebCore::ResourceRequest&);
     void cancelDownload(uint64_t downloadID);
     void setCacheModel(uint32_t);
-    void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
+    void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
     void getNetworkProcessStatistics(uint64_t callbackID);
     void clearCacheForAllOrigins(uint32_t cachesToClear);
 

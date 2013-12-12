@@ -1,3 +1,60 @@
+2013-12-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Move CertificateInfo to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=124720
+
+        Reviewed by Darin Adler.
+
+        Based on the patch by Kwang Yul Seo <skyul@company100.net>
+
+        * GNUmakefile.list.am:
+        * NetworkProcess/AsynchronousNetworkLoaderClient.cpp:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/API/c/mac/WKCertificateInfoMac.mm:
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/AuthenticationManager.messages.in:
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebCertificateInfo.h:
+        (WebKit::WebCertificateInfo::create):
+        (WebKit::WebCertificateInfo::certificateInfo):
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::ArgumentCoder<CertificateInfo>::encode):
+        (CoreIPC::ArgumentCoder<CertificateInfo>::decode):
+        * Shared/soup/CertificateInfo.cpp: Removed.
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (CoreIPC::ArgumentCoder<CertificateInfo>::encode):
+        (CoreIPC::ArgumentCoder<CertificateInfo>::decode):
+        * UIProcess/API/gtk/WebKitCertificateInfoPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_tls_info):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::useCredential):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didCommitLoad):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::allowSpecificHTTPSCertificateForHost):
+
 2013-12-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Use of ar T option not supported by older binutils

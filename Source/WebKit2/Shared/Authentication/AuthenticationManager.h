@@ -34,13 +34,13 @@
 #include <wtf/HashMap.h>
 
 namespace WebCore {
-    class AuthenticationChallenge;
-    class Credential;
+class AuthenticationChallenge;
+class CertificateInfo;
+class Credential;
 }
 
 namespace WebKit {
 
-class CertificateInfo;
 class ChildProcess;
 class Download;
 class WebFrame;
@@ -59,7 +59,7 @@ public:
     // Called for downloads with or without the NetworkProcess
     void didReceiveAuthenticationChallenge(Download*, const WebCore::AuthenticationChallenge&);
 
-    void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&, const CertificateInfo&);
+    void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&, const WebCore::CertificateInfo&);
     void continueWithoutCredentialForChallenge(uint64_t challengeID);
     void cancelChallenge(uint64_t challengeID);
     
@@ -69,7 +69,7 @@ private:
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
-    bool tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const CertificateInfo&);
+    bool tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const WebCore::CertificateInfo&);
 
     uint64_t establishIdentifierForChallenge(const WebCore::AuthenticationChallenge&);
 

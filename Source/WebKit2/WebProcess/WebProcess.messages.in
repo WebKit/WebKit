@@ -84,6 +84,6 @@ messages -> WebProcess LegacyReceiver {
 #endif
 
 #if !ENABLE(NETWORK_PROCESS) && USE(SOUP)
-    AllowSpecificHTTPSCertificateForHost(WebKit::CertificateInfo certificate, String host)
+    AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)
 #endif
 }

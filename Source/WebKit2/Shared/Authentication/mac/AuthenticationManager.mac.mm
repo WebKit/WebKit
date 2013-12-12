@@ -28,9 +28,9 @@
 
 #if HAVE(SEC_IDENTITY)
 
-#include "CertificateInfo.h"
 #include <Security/SecIdentity.h>
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/CertificateInfo.h>
 
 using namespace WebCore;
 

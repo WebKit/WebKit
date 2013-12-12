@@ -26,11 +26,11 @@
 #include "config.h"
 #include "AsynchronousNetworkLoaderClient.h"
 
-#include "CertificateInfo.h"
 #include "DataReference.h"
 #include "NetworkResourceLoader.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebResourceLoaderMessages.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/CurrentTime.h>

@@ -28,7 +28,6 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-#import "CertificateInfo.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
 #import "ResourceCachesToClear.h"
@@ -36,6 +35,7 @@
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
 #import "StringUtilities.h"
+#import <WebCore/CertificateInfo.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>

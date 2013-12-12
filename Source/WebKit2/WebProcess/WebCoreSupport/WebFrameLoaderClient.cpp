@@ -27,7 +27,6 @@
 #include "WebFrameLoaderClient.h"
 
 #include "AuthenticationManager.h"
-#include "CertificateInfo.h"
 #include "DataReference.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardListItem.h"
@@ -52,6 +51,7 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObject.h>
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/DocumentLoader.h>

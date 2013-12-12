@@ -28,6 +28,7 @@
 
 #include "ShareableBitmap.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/Cookie.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
@@ -91,7 +92,6 @@ bool ArgumentCoder<TransformationMatrix>::decode(ArgumentDecoder& decoder, Trans
 {
     return SimpleArgumentCoder<TransformationMatrix>::decode(decoder, transformationMatrix);
 }
-
 
 void ArgumentCoder<FloatPoint>::encode(ArgumentEncoder& encoder, const FloatPoint& floatPoint)
 {

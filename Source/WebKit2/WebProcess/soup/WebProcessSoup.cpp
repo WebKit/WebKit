@@ -236,7 +236,7 @@ void WebProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
 }
 
 #if !ENABLE(NETWORK_PROCESS)
-void WebProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
+void WebProcess::allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo& certificateInfo, const String& host)
 {
     WebCore::ResourceHandle::setClientCertificate(host, certificateInfo.certificate());
 }
