@@ -166,7 +166,7 @@ my @features = (
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2DCanvasSupport },
 
     { option => "battery-status", desc => "Toggle Battery Status support",
-      define => "ENABLE_BATTERY_STATUS", default => (isEfl() || isBlackBerry() || isGtk()), value => \$batteryStatusSupport },
+      define => "ENABLE_BATTERY_STATUS", default => (isEfl() || isBlackBerry()), value => \$batteryStatusSupport },
 
     { option => "blob", desc => "Toggle Blob support",
       define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$blobSupport },

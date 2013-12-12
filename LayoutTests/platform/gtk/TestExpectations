@@ -356,6 +356,10 @@ webkit.org/b/99036 pointer-lock [ Skip ]
 webkit.org/b/99036 http/tests/fullscreen [ Skip ]
 webkit.org/b/99036 http/tests/pointer-lock [ Skip ]
 
+# Battery Status API support not yet.
+webkit.org/b/95582 batterystatus [ Failure ]
+webkit.org/b/95582 batterystatus/event-after-navigation.html [ Timeout ]
+
 # Network Information API support not yet.
 webkit.org/b/99052 networkinformation [ Failure ]
 webkit.org/b/99052 networkinformation/event-after-navigation.html [ Timeout ]
