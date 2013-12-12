@@ -5,7 +5,6 @@ set(WTF_HEADERS
     Atomics.h
     Bag.h
     BagToHashMap.h
-    BitArray.h
     BitVector.h
     Bitmap.h
     BoundsCheckedPointer.h

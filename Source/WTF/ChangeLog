@@ -1,3 +1,17 @@
+2013-12-12  Sam Weinig  <sam@webkit.org>
+
+        Replace uses of WTF::BitArray with std::bitset
+        https://bugs.webkit.org/show_bug.cgi?id=125642
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.list.am:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BitArray.h: Removed.
+        * wtf/CMakeLists.txt:
+
 2013-12-11  David Kilzer  <ddkilzer@apple.com>
 
         Define m_hasBadParent in InlineBox if defined(ADDRESS_SANITIZER)

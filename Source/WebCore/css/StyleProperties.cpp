@@ -32,7 +32,7 @@
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertyShorthand.h"
 #include "StyleSheetContents.h"
-#include <wtf/BitArray.h>
+#include <bitset>
 #include <wtf/text/StringBuilder.h>
 
 #ifndef NDEBUG
@@ -779,8 +779,8 @@ String StyleProperties::asText() const
     int repeatXPropertyIndex = -1;
     int repeatYPropertyIndex = -1;
 
-    BitArray<numCSSProperties> shorthandPropertyUsed;
-    BitArray<numCSSProperties> shorthandPropertyAppeared;
+    std::bitset<numCSSProperties> shorthandPropertyUsed;
+    std::bitset<numCSSProperties> shorthandPropertyAppeared;
 
     unsigned size = propertyCount();
     unsigned numDecls = 0;
@@ -824,13 +824,13 @@ String StyleProperties::asText() const
                 borderFallbackShorthandProperty = CSSPropertyBorderColor;
 
             // FIXME: Deal with cases where only some of border-(top|right|bottom|left) are specified.
-            if (!shorthandPropertyAppeared.get(CSSPropertyBorder - firstCSSProperty)) {
+            if (!shorthandPropertyAppeared.test(CSSPropertyBorder - firstCSSProperty)) {
                 value = borderPropertyValue(ReturnNullOnUncommonValues);
                 if (value.isNull())
                     shorthandPropertyAppeared.set(CSSPropertyBorder - firstCSSProperty);
                 else
                     shorthandPropertyID = CSSPropertyBorder;
-            } else if (shorthandPropertyUsed.get(CSSPropertyBorder - firstCSSProperty))
+            } else if (shorthandPropertyUsed.test(CSSPropertyBorder - firstCSSProperty))
                 shorthandPropertyID = CSSPropertyBorder;
             if (!shorthandPropertyID)
                 shorthandPropertyID = borderFallbackShorthandProperty;
@@ -925,9 +925,9 @@ String StyleProperties::asText() const
 
         unsigned shortPropertyIndex = shorthandPropertyID - firstCSSProperty;
         if (shorthandPropertyID) {
-            if (shorthandPropertyUsed.get(shortPropertyIndex))
+            if (shorthandPropertyUsed.test(shortPropertyIndex))
                 continue;
-            if (!shorthandPropertyAppeared.get(shortPropertyIndex) && value.isNull())
+            if (!shorthandPropertyAppeared.test(shortPropertyIndex) && value.isNull())
                 value = getPropertyValue(shorthandPropertyID);
             shorthandPropertyAppeared.set(shortPropertyIndex);
         }
