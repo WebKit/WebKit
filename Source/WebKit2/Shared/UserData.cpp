@@ -71,7 +71,7 @@ RefPtr<API::Object> UserData::transform(API::Object* object, const std::function
         for (const auto& keyValuePair : dictionary.map())
             map.add(keyValuePair.key, transform(keyValuePair.value.get(), transformer));
 
-        return ImmutableDictionary::adopt(map);
+        return ImmutableDictionary::create(std::move(map));
     }
 
     if (auto transformedObject = transformer(*object))
@@ -222,7 +222,7 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
                 return false;
         }
 
-        result = ImmutableDictionary::adopt(map);
+        result = ImmutableDictionary::create(std::move(map));
         break;
     }
 

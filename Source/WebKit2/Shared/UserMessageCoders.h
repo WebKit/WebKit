@@ -307,7 +307,7 @@ public:
                     return false;
             }
 
-            coder.m_root = ImmutableDictionary::adopt(map);
+            coder.m_root = ImmutableDictionary::create(std::move(map));
             break;
         }
         case API::Object::Type::String: {

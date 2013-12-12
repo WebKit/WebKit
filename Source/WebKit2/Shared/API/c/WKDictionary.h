@@ -36,6 +36,8 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKDictionaryGetTypeID();
 
+WK_EXPORT WKDictionaryRef WKDictionaryCreate(const WKStringRef* keys, const WKTypeRef* values, size_t numberOfValues);
+
 WK_EXPORT WKTypeRef WKDictionaryGetItemForKey(WKDictionaryRef dictionary, WKStringRef key);
 WK_EXPORT size_t WKDictionaryGetSize(WKDictionaryRef dictionary);
 

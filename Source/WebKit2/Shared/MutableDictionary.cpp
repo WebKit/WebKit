@@ -29,6 +29,7 @@
 namespace WebKit {
 
 MutableDictionary::MutableDictionary()
+    : ImmutableDictionary({ })
 {
 }
 

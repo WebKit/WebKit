@@ -93,10 +93,10 @@ PassRefPtr<ImmutableDictionary> PlugInAutoStartProvider::autoStartOriginsTableCo
         }
 
         if (hashMap.size())
-            map.set(it->key, ImmutableDictionary::adopt(hashMap));
+            map.set(it->key, ImmutableDictionary::create(std::move(hashMap)));
     }
 
-    return ImmutableDictionary::adopt(map);
+    return ImmutableDictionary::create(std::move(map));
 }
 
 void PlugInAutoStartProvider::setAutoStartOriginsTable(ImmutableDictionary& table)

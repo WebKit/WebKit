@@ -173,7 +173,7 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
             detailsMap.set(databaseDetailsExpectedUsageKey(), API::UInt64::create(databaseDetails.expectedUsage()));
             detailsMap.set(databaseDetailsCurrentUsageKey(), API::UInt64::create(databaseDetails.currentUsage()));
 
-            databases.uncheckedAppend(ImmutableDictionary::adopt(detailsMap));
+            databases.uncheckedAppend(ImmutableDictionary::create(std::move(detailsMap)));
         }
 
         HashMap<String, RefPtr<API::Object>> originAndDatabasesMap;
@@ -182,7 +182,7 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
         originAndDatabasesMap.set(originUsageKey(), API::UInt64::create(originAndDatabases.originUsage));
         originAndDatabasesMap.set(databaseDetailsKey(), API::Array::create(std::move(databases)));
 
-        result.uncheckedAppend(ImmutableDictionary::adopt(originAndDatabasesMap));
+        result.uncheckedAppend(ImmutableDictionary::create(std::move(originAndDatabasesMap)));
     }
 
     callback->performCallbackWithReturnValue(API::Array::create(std::move(result)).get());

@@ -1293,7 +1293,7 @@ void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
         map.set(ASCIILiteral("version"), WebString::create(pluginModule.versionString));
 #endif
 
-        plugins.uncheckedAppend(ImmutableDictionary::adopt(map));
+        plugins.uncheckedAppend(ImmutableDictionary::create(std::move(map)));
     }
 
     m_client.plugInInformationBecameAvailable(this, API::Array::create(std::move(plugins)).get());

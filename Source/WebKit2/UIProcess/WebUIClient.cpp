@@ -71,7 +71,7 @@ PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const Re
     map.set("resizable", API::Boolean::create(windowFeatures.resizable));
     map.set("fullscreen", API::Boolean::create(windowFeatures.fullscreen));
     map.set("dialog", API::Boolean::create(windowFeatures.dialog));
-    RefPtr<ImmutableDictionary> featuresMap = ImmutableDictionary::adopt(map);
+    RefPtr<ImmutableDictionary> featuresMap = ImmutableDictionary::create(std::move(map));
 
     if (!m_client.base.version)
         return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_client.base.clientInfo)));

@@ -31,13 +31,19 @@
 
 namespace WebKit {
 
-ImmutableDictionary::ImmutableDictionary()
+RefPtr<ImmutableDictionary> ImmutableDictionary::create()
 {
+    return create({ });
 }
 
-ImmutableDictionary::ImmutableDictionary(MapType& map)
+RefPtr<ImmutableDictionary> ImmutableDictionary::create(MapType map)
 {
-    m_map.swap(map);
+    return adoptRef(new ImmutableDictionary(std::move(map)));
+}
+
+ImmutableDictionary::ImmutableDictionary(MapType map)
+    : m_map(std::move(map))
+{
 }
 
 ImmutableDictionary::~ImmutableDictionary()

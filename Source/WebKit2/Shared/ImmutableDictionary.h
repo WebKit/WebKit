@@ -44,14 +44,8 @@ class ImmutableDictionary : public API::ObjectImpl<API::Object::Type::Dictionary
 public:
     typedef HashMap<String, RefPtr<API::Object>> MapType;
 
-    static PassRefPtr<ImmutableDictionary> create()
-    {
-        return adoptRef(new ImmutableDictionary);
-    }
-    static PassRefPtr<ImmutableDictionary> adopt(MapType& map)
-    {
-        return adoptRef(new ImmutableDictionary(map));
-    }
+    static RefPtr<ImmutableDictionary> create();
+    static RefPtr<ImmutableDictionary> create(MapType);
 
     virtual ~ImmutableDictionary();
 
@@ -89,8 +83,7 @@ public:
     const MapType& map() const { return m_map; }
 
 protected:
-    ImmutableDictionary();
-    explicit ImmutableDictionary(MapType&);
+    explicit ImmutableDictionary(MapType);
 
     MapType m_map;
 };

@@ -82,7 +82,7 @@ using namespace WebKit;
         return [self retain];
 
     auto map = _dictionary->map();
-    return ImmutableDictionary::adopt(map).leakRef()->wrapper();
+    return ImmutableDictionary::create(std::move(map)).release().leakRef()->wrapper();
 }
 
 #pragma mark WKObject protocol implementation

@@ -37,6 +37,15 @@ WKTypeID WKDictionaryGetTypeID()
     return toAPI(ImmutableDictionary::APIType);
 }
 
+WK_EXPORT WKDictionaryRef WKDictionaryCreate(const WKStringRef* keys, const WKTypeRef* values, size_t numberOfValues)
+{
+    ImmutableDictionary::MapType map;
+    for (size_t i = 0; i < numberOfValues; ++i)
+        map.add(toImpl(keys[i])->string(), toImpl(values[i]));
+
+    return toAPI(ImmutableDictionary::create(std::move(map)).release().leakRef());
+}
+
 WKTypeRef WKDictionaryGetItemForKey(WKDictionaryRef dictionaryRef, WKStringRef key)
 {
     return toImpl(dictionaryRef)->get(toImpl(key)->string());
