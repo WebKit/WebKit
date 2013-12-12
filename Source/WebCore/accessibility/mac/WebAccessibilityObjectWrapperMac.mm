@@ -195,6 +195,15 @@ using namespace std;
 #define NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute @"AXUIElementsForSearchPredicate"
 #endif
 
+// Text
+#ifndef NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute
+#define NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute @"AXEndTextMarkerForBounds"
+#endif
+
+#ifndef NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute
+#define NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute @"AXStartTextMarkerForBounds"
+#endif
+
 // Search Keys
 #ifndef NSAccessibilityAnyTypeSearchKey
 #define NSAccessibilityAnyTypeSearchKey @"AXAnyTypeSearchKey"
@@ -435,6 +444,23 @@ static id AXTextMarkerRangeEnd(id range)
     ASSERT(range != nil);
     ASSERT(CFGetTypeID(range) == wkGetAXTextMarkerRangeTypeID());
     return HardAutorelease(wkCopyAXTextMarkerRangeEnd(range));
+}
+
+#pragma mark Other helpers
+
+- (IntRect)screenToContents:(const IntRect&)rect
+{
+    Document* document = m_object->document();
+    if (!document)
+        return IntRect();
+    
+    FrameView* frameView = document->view();
+    if (!frameView)
+        return IntRect();
+    
+    IntPoint startPoint = frameView->screenToContents(rect.minXMaxYCorner());
+    IntPoint endPoint = frameView->screenToContents(rect.maxXMinYCorner());
+    return IntRect(startPoint.x(), startPoint.y(), endPoint.x() - startPoint.x(), endPoint.y() - startPoint.y());
 }
 
 #pragma mark Search helpers
@@ -2904,6 +2930,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                       NSAccessibilityBoundsForRangeParameterizedAttribute,
                       NSAccessibilityStringForRangeParameterizedAttribute,
                       NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute,
+                      NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute,
+                      NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute,
                       nil];
     }
     
@@ -3243,6 +3271,8 @@ static RenderObject* rendererForView(NSView* view)
     bool pointSet = false;
     NSRange range = {0, 0};
     bool rangeSet = false;
+    NSRect rect = NSZeroRect;
+    bool rectSet = false;
     
     // basic parameter validation
     if (!m_object || !attribute || !parameter)
@@ -3279,6 +3309,9 @@ static RenderObject* rendererForView(NSView* view)
     } else if ([parameter isKindOfClass:[NSValue self]] && strcmp([(NSValue*)parameter objCType], @encode(NSRange)) == 0) {
         rangeSet = true;
         range = [(NSValue*)parameter rangeValue];
+    } else if ([parameter isKindOfClass:[NSValue self]] && strcmp([(NSValue*)parameter objCType], @encode(NSRect)) == 0) {
+        rectSet = true;
+        rect = [(NSValue*)parameter rectValue];
     } else {
         // Attribute type is not supported. Allow super to handle.
         return [super accessibilityAttributeValue:attribute forParameter:parameter];
@@ -3325,6 +3358,15 @@ static RenderObject* rendererForView(NSView* view)
         m_object->findMatchingObjects(&criteria, results);
         
         return convertToNSArray(results);
+    }
+    
+    if ([attribute isEqualToString:NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute]) {
+        IntRect webCoreRect = [self screenToContents:enclosingIntRect(rect)];
+        return [self textMarkerForVisiblePosition:m_object->visiblePositionForBounds(webCoreRect, LastVisiblePositionForBounds)];
+    }
+    if ([attribute isEqualToString:NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute]) {
+        IntRect webCoreRect = [self screenToContents:enclosingIntRect(rect)];
+        return [self textMarkerForVisiblePosition:m_object->visiblePositionForBounds(webCoreRect, FirstVisiblePositionForBounds)];
     }
     
     if ([attribute isEqualToString:NSAccessibilityTextMarkerIsValidParameterizedAttribute]) {

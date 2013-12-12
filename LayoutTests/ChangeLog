@@ -1,5 +1,23 @@
 2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merged patch from <rdar://problems/15474133>.  This patch is a port of r157821.
+
+    2013-10-22  Samuel White  <samuel_white@apple.com>
+
+            AX: Add paramAttrs to fetch start and end text markers in a given rect.
+            https://bugs.webkit.org/show_bug.cgi?id=122164
+
+            Unreviewed change.
+
+            Added test to ensure end/start text marker for bounds works as
+            expected. Updated bounds for range test to include new API.
+
+            * platform/mac/accessibility/bounds-for-range-expected.txt:
+            * platform/mac/accessibility/text-marker-for-bounds-expected.txt: Added.
+            * platform/mac/accessibility/text-marker-for-bounds.html: Added.
+
+2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Rollout r160469.  Not rolling out from trunk because r160469 was
         applied on the branch from a patch file.
 

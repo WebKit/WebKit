@@ -584,7 +584,27 @@ bool AccessibilityObject::press() const
     actionElem->accessKeyAction(true);
     return true;
 }
+
+Frame* AccessibilityObject::mainFrame() const
+{
+    Document* document = topDocument();
+    if (!document)
+        return 0;
     
+    Page* page = document->page();
+    if (!page)
+        return 0;
+    
+    return page->mainFrame();
+}
+
+Document* AccessibilityObject::topDocument() const
+{
+    if (!document())
+        return 0;
+    return document()->topDocument();
+}
+
 String AccessibilityObject::language() const
 {
     const AtomicString& lang = getAttribute(langAttr);
@@ -912,6 +932,38 @@ int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRang
     }
     
     return length;
+}
+
+VisiblePosition AccessibilityObject::visiblePositionForBounds(const IntRect& rect, AccessibilityVisiblePositionForBounds visiblePositionForBounds) const
+{
+    if (rect.isEmpty())
+        return VisiblePosition();
+    
+    Frame* mainFrame = this->mainFrame();
+    if (!mainFrame)
+        return VisiblePosition();
+    
+    // FIXME: Add support for right-to-left languages.
+    IntPoint corner = (visiblePositionForBounds == FirstVisiblePositionForBounds) ? rect.minXMinYCorner() : rect.maxXMaxYCorner();
+    VisiblePosition position = mainFrame->visiblePositionForPoint(corner);
+    
+    if (rect.contains(position.absoluteCaretBounds().center()))
+        return position;
+    
+    // If the initial position is located outside the bounds adjust it incrementally as needed.
+    VisiblePosition nextPosition = position.next();
+    VisiblePosition previousPosition = position.previous();
+    while (nextPosition.isNotNull() || previousPosition.isNotNull()) {
+        if (rect.contains(nextPosition.absoluteCaretBounds().center()))
+            return nextPosition;
+        if (rect.contains(previousPosition.absoluteCaretBounds().center()))
+            return previousPosition;
+        
+        nextPosition = nextPosition.next();
+        previousPosition = previousPosition.previous();
+    }
+    
+    return VisiblePosition();
 }
 
 VisiblePosition AccessibilityObject::nextWordEnd(const VisiblePosition& visiblePos) const

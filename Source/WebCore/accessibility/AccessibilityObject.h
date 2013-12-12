@@ -311,6 +311,11 @@ enum AccessibilitySearchKey {
     VisitedLinkSearchKey
 };
 
+enum AccessibilityVisiblePositionForBounds {
+    FirstVisiblePositionForBounds,
+    LastVisiblePositionForBounds
+};
+
 struct AccessibilitySearchCriteria {
     AccessibilityObject* startObject;
     AccessibilitySearchDirection searchDirection;
@@ -633,6 +638,8 @@ public:
     virtual Document* document() const;
     virtual FrameView* topDocumentFrameView() const { return 0; }
     virtual FrameView* documentFrameView() const;
+    Frame* mainFrame() const;
+    Document* topDocument() const;
     String language() const;
     // 1-based, to match the aria-level spec.
     virtual unsigned hierarchicalLevel() const { return 0; }
@@ -705,6 +712,7 @@ public:
     int lengthForVisiblePositionRange(const VisiblePositionRange&) const;
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const { }
 
+    VisiblePosition visiblePositionForBounds(const IntRect&, AccessibilityVisiblePositionForBounds) const;
     virtual VisiblePosition visiblePositionForPoint(const IntPoint&) const { return VisiblePosition(); }
     VisiblePosition nextVisiblePosition(const VisiblePosition& visiblePos) const { return visiblePos.next(); }
     VisiblePosition previousVisiblePosition(const VisiblePosition& visiblePos) const { return visiblePos.previous(); }

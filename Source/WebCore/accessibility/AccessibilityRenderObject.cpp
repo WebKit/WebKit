@@ -1692,13 +1692,6 @@ Document* AccessibilityRenderObject::document() const
     return m_renderer->document();
 }
 
-Document* AccessibilityRenderObject::topDocument() const
-{
-    if (!document())
-        return 0;
-    return document()->topDocument();
-}
-    
 FrameView* AccessibilityRenderObject::topDocumentFrameView() const
 {
     RenderView* renderView = topRenderer();

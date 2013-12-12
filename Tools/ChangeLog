@@ -1,5 +1,40 @@
 2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merged patch from <rdar://problems/15474133>.  This patch is a port of r157821.
+
+    2013-10-22  Samuel White  <samuel_white@apple.com>
+
+            AX: Add paramAttrs to fetch start and end text markers in a given rect.
+            https://bugs.webkit.org/show_bug.cgi?id=122164
+
+            Unreviewed change.
+
+            Added accessibility element hooks to test endTextMarkerForBounds and startTextMarkerForBounds.
+
+            * DumpRenderTree/AccessibilityUIElement.cpp:
+            (endTextMarkerForBoundsCallback):
+            (startTextMarkerForBoundsCallback):
+            (AccessibilityUIElement::endTextMarkerForBounds):
+            (AccessibilityUIElement::startTextMarkerForBounds):
+            (AccessibilityUIElement::getJSClass):
+            * DumpRenderTree/AccessibilityUIElement.h:
+            * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+            (AccessibilityUIElement::endTextMarkerForBounds):
+            (AccessibilityUIElement::startTextMarkerForBounds):
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+            (WTR::AccessibilityUIElement::endTextMarkerForBounds):
+            (WTR::AccessibilityUIElement::startTextMarkerForBounds):
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+            * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+            * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+            (WTR::AccessibilityUIElement::endTextMarkerForBounds):
+            (WTR::AccessibilityUIElement::startTextMarkerForBounds):
+            * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+            (WTR::AccessibilityUIElement::endTextMarkerForBounds):
+            (WTR::AccessibilityUIElement::startTextMarkerForBounds):
+
+2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merged r156290.
 
     2013-09-23  Alex Christensen  <alex.christensen@flexsim.com>
