@@ -121,7 +121,7 @@ endif
 
 webcore_layer_archives = $(foreach lib, $(webcore_layer_deps), $(shell echo $(lib) | sed "s/\(.*\)\.la/.libs\/\1.a/"))
 
-WebCoreLayer.a: $(webcore_layer_deps)
+libWebCoreLayer.a: $(webcore_layer_deps)
 	$(AM_V_GEN)
 	$(AM_V_at)$(shell rm -f $@)
 	$(AM_V_at)$(shell find . -name "*.o" > objects_list)
@@ -129,7 +129,7 @@ WebCoreLayer.a: $(webcore_layer_deps)
 	$(AM_V_at)$(shell rm -f objects_list)
 
 DISTCLEANFILES += \
-	$(top_builddir)/WebCoreLayer.a
+	$(top_builddir)/libWebCoreLayer.a
 
 Programs_TestWebKitAPI_TestWebCore_CPPFLAGS = \
 	$(Libraries_libTestWebKitAPIMain_la_CPPFLAGS) \
@@ -144,7 +144,7 @@ Programs_TestWebKitAPI_TestWebCore_LDADD = \
 	Libraries/libgtest.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libWTF.la \
-	WebCoreLayer.a \
+	libWebCoreLayer.a \
 	$(CAIRO_LIBS) \
 	$(FREETYPE_LIBS) \
 	$(GAMEPAD_LIBS) \
