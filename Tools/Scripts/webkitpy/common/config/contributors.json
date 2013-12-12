@@ -2242,6 +2242,15 @@
             "tdanderson"
          ]
       },
+      "Thiago de Barros Lacerda" : {
+         "emails" : [
+            "thiago.lacerda@openbossa.org"
+         ],
+         "expertise" : "Nix port, WebRTC, MediaStream",
+         "nicks" : [
+            "lacerda"
+         ]
+      },
       "Thiago Marcos P. Santos" : {
          "emails" : [
             "tmpsantos@gmail.com",
