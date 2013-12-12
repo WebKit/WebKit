@@ -64,6 +64,8 @@ public:
 private:
     CSSCursorImageValue(PassRef<CSSValue> imageValue, bool hasHotSpot, const IntPoint& hotSpot);
 
+    void detachPendingImage();
+
 #if ENABLE(SVG)
     bool isSVGCursor() const;
     String cachedImageURL();

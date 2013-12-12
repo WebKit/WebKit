@@ -29,7 +29,6 @@
 #include "CSSCursorImageValue.h"
 #include "CSSImageGeneratorValue.h"
 #include "CSSImageValue.h"
-#include "Image.h"
 #include "StyleImage.h"
 
 #if ENABLE(CSS_IMAGE_SET)
@@ -46,15 +45,18 @@ class StylePendingImage : public StyleImage {
 public:
     static PassRefPtr<StylePendingImage> create(CSSValue* value) { return adoptRef(new StylePendingImage(value)); }
 
-    CSSImageValue* cssImageValue() const { return m_value->isImageValue() ? toCSSImageValue(m_value) : nullptr; }
-    CSSImageGeneratorValue* cssImageGeneratorValue() const { return m_value->isImageGeneratorValue() ? static_cast<CSSImageGeneratorValue*>(m_value) : nullptr; }
-    CSSCursorImageValue* cssCursorImageValue() const { return m_value->isCursorImageValue() ? toCSSCursorImageValue(m_value) : nullptr; }
+    CSSImageValue* cssImageValue() const { return m_value && m_value->isImageValue() ? toCSSImageValue(m_value) : nullptr; }
+    CSSImageGeneratorValue* cssImageGeneratorValue() const { return m_value && m_value->isImageGeneratorValue() ? static_cast<CSSImageGeneratorValue*>(m_value) : nullptr; }
+    CSSCursorImageValue* cssCursorImageValue() const { return m_value && m_value->isCursorImageValue() ? toCSSCursorImageValue(m_value) : nullptr; }
+
 #if ENABLE(CSS_IMAGE_SET)
-    CSSImageSetValue* cssImageSetValue() const { return m_value->isImageSetValue() ? toCSSImageSetValue(m_value) : nullptr; }
+    CSSImageSetValue* cssImageSetValue() const { return m_value && m_value->isImageSetValue() ? toCSSImageSetValue(m_value) : nullptr; }
 #endif
 
+    void detachFromCSSValue() { m_value = nullptr; }
+
 private:
-    virtual WrappedImagePtr data() const OVERRIDE { return toCSSImageValue(m_value); }
+    virtual WrappedImagePtr data() const OVERRIDE { return const_cast<StylePendingImage*>(this); }
 
     virtual PassRefPtr<CSSValue> cssValue() const OVERRIDE { return m_value; }
     
@@ -85,4 +87,5 @@ private:
 };
 
 }
+
 #endif

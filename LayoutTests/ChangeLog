@@ -1,3 +1,13 @@
+2013-12-11  Darin Adler  <darin@apple.com>
+
+        StylePendingImage needs to correctly manage the CSSValue pointer lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=125468
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/pending-image-crash-expected.txt: Added.
+        * fast/css/pending-image-crash.xhtml: Added.
+
 2013-12-11  Alexey Proskuryakov  <ap@apple.com>
 
         WebCrypto keys should support structured clone

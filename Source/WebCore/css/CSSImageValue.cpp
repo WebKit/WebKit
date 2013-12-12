@@ -52,8 +52,15 @@ CSSImageValue::CSSImageValue(const String& url, StyleImage* image)
 {
 }
 
+inline void CSSImageValue::detachPendingImage()
+{
+    if (m_image && m_image->isPendingImage())
+        static_cast<StylePendingImage&>(*m_image).detachFromCSSValue();
+}
+
 CSSImageValue::~CSSImageValue()
 {
+    detachPendingImage();
 }
 
 StyleImage* CSSImageValue::cachedOrPendingImage()
@@ -80,8 +87,10 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
         if (options.requestOriginPolicy == PotentiallyCrossOriginEnabled)
             updateRequestForAccessControl(request.mutableResourceRequest(), loader->document()->securityOrigin(), options.allowCredentials);
 
-        if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request))
+        if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request)) {
+            detachPendingImage();
             m_image = StyleCachedImage::create(cachedImage.get());
+        }
     }
 
     return (m_image && m_image->isCachedImage()) ? static_cast<StyleCachedImage*>(m_image.get()) : 0;
