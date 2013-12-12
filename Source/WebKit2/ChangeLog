@@ -1,3 +1,18 @@
+2013-12-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Use of ar T option not supported by older binutils
+        https://bugs.webkit.org/show_bug.cgi?id=118732
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: To support non-thin archives when generating the WebCoreLayerGtk2 archive,
+        switch to using the AR_FLAGS variable (which can be overridden) for providing the ar flags for the
+        new archive. Non-thin archives also pose the problem as their members are only noted by the basename
+        of the member's object file, and not the full path to it. To work around that, all the object files
+        under the build directory are listed by their relative paths. The members of various archives then have
+        the basenames of their paths grepped against that list, with the found path correlating to the member
+        finally added as the new member of the WebCoreLayerGtk2 archive.
+
 2013-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebProcess tests are failing with newer glib
