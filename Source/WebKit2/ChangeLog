@@ -1,5 +1,15 @@
 2013-12-12  Anders Carlsson  <andersca@apple.com>
 
+        Move MessageSender to Platform/IPC.
+
+        Rubber-stamped by Andreas Kling.
+
+        * Platform/IPC/MessageSender.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/MessageSender.cpp.
+        * Platform/IPC/MessageSender.h: Renamed from Source/WebKit2/Platform/CoreIPC/MessageSender.h.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-12-12  Anders Carlsson  <andersca@apple.com>
+
         WebPageProxy should be a MessageSender
         https://bugs.webkit.org/show_bug.cgi?id=125654
 
