@@ -234,7 +234,7 @@ struct StructureStubInfo {
         RegisterSet usedRegisters;
         int32_t deltaCallToDone;
         int32_t deltaCallToStorageLoad;
-        int32_t deltaCallToStructCheck;
+        int32_t deltaCallToJump;
         int32_t deltaCallToSlowCase;
         int32_t deltaCheckImmToCall;
 #if USE(JSVALUE64)
@@ -291,7 +291,6 @@ struct StructureStubInfo {
 
     RefPtr<JITStubRoutine> stubRoutine;
     CodeLocationCall callReturnLocation;
-    CodeLocationLabel hotPathBegin; // FIXME: This is only used by DFG In IC.
     RefPtr<WatchpointsOnStructureStubInfo> watchpoints;
 };
 

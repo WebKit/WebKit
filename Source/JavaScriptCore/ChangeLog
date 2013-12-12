@@ -1,3 +1,42 @@
+2013-12-11  Filip Pizlo  <fpizlo@apple.com>
+
+        ARM64: Hang running pdfjs test, suspect DFG generated code for "in"
+        https://bugs.webkit.org/show_bug.cgi?id=124727
+        <rdar://problem/15566923>
+
+        Reviewed by Michael Saboff.
+        
+        Get rid of In's hackish use of StructureStubInfo. Previously it was using hotPathBegin,
+        and it was the only IC that used that field, which was wasteful. Moreover, it used it
+        to store two separate locations: the label for patching the jump and the label right
+        after the jump. The code was relying on those two being the same label, which is true
+        on X86 and some other platforms, but it isn't true on ARM64.
+        
+        This gets rid of hotPathBegin and makes In express those two locations as offsets from
+        the callReturnLocation, which is analogous to what the other IC's do.
+        
+        This fixes a bug where any successful In patching would result in a trivially infinite
+        loop - and hence a hang - on ARM64.
+
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::InRecord::InRecord):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::finalize):
+        * jit/Repatch.cpp:
+        (JSC::replaceWithJump):
+        (JSC::patchJumpToGetByIdStub):
+        (JSC::tryCachePutByID):
+        (JSC::tryBuildPutByIdList):
+        (JSC::tryRepatchIn):
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        (JSC::resetIn):
+
 2013-12-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Push More Inspector Required Classes Down into JavaScriptCore

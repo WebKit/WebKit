@@ -76,7 +76,7 @@ void JITByIdGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
     m_stubInfo->callReturnLocation = callReturnLocation;
     m_stubInfo->patch.deltaCheckImmToCall = MacroAssembler::differenceBetweenCodePtr(
         fastPath.locationOf(m_structureImm), callReturnLocation);
-    m_stubInfo->patch.deltaCallToStructCheck = MacroAssembler::differenceBetweenCodePtr(
+    m_stubInfo->patch.deltaCallToJump = MacroAssembler::differenceBetweenCodePtr(
         callReturnLocation, fastPath.locationOf(m_structureCheck));
 #if USE(JSVALUE64)
     m_stubInfo->patch.deltaCallToLoadOrStore = MacroAssembler::differenceBetweenCodePtr(

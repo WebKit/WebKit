@@ -972,8 +972,9 @@ void SpeculativeJIT::compileIn(Node* node)
             GPRReg resultGPR = result.gpr();
 
             use(node->child1());
-                
+            
             MacroAssembler::PatchableJump jump = m_jit.patchableJump();
+            MacroAssembler::Label done = m_jit.label();
             
             OwnPtr<SlowPathGenerator> slowPath = slowPathCall(
                 jump.m_jump, this, operationInOptimize,
@@ -986,7 +987,7 @@ void SpeculativeJIT::compileIn(Node* node)
             stubInfo->patch.usedRegisters = usedRegisters();
             stubInfo->patch.registersFlushed = false;
             
-            m_jit.addIn(InRecord(jump, slowPath.get(), stubInfo));
+            m_jit.addIn(InRecord(jump, done, slowPath.get(), stubInfo));
             addSlowPathGenerator(slowPath.release());
                 
             base.use();
