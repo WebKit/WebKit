@@ -28,6 +28,7 @@
 
 #include "APIClient.h"
 #include "WKPage.h"
+#include "WKPagePolicyClientInternal.h"
 #include "WebEvent.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
@@ -36,7 +37,7 @@ namespace API {
 class Object;
 
 template<> struct ClientTraits<WKPagePolicyClientBase> {
-    typedef std::tuple<WKPagePolicyClientV0, WKPagePolicyClientV1> Versions;
+    typedef std::tuple<WKPagePolicyClientV0, WKPagePolicyClientV1, WKPagePolicyClientInternal> Versions;
 };
 }
 
@@ -54,7 +55,7 @@ class WebFramePolicyListenerProxy;
 
 class WebPolicyClient : public API::Client<WKPagePolicyClientBase> {
 public:
-    bool decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, API::Object* userData);
+    bool decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, API::Object* userData);
     bool decidePolicyForNewWindowAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, const String& frameName, WebFramePolicyListenerProxy*, API::Object* userData);
     bool decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, WebFramePolicyListenerProxy*, API::Object* userData);
     void unableToImplementPolicy(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, API::Object* userData);

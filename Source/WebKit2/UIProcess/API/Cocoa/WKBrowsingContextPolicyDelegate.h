@@ -33,6 +33,7 @@ WK_EXPORT extern NSString * const WKActionIsMainFrameKey;         // NSNumber (B
 WK_EXPORT extern NSString * const WKActionNavigationTypeKey;      // NSNumber (WKNavigationType)
 WK_EXPORT extern NSString * const WKActionMouseButtonKey;         // NSNumber (0 for left button, 1 for middle button, 2 for right button)
 WK_EXPORT extern NSString * const WKActionModifierFlagsKey;       // NSNumber (unsigned)
+WK_EXPORT extern NSString * const WKActionOriginalURLRequestKey;  // NSURLRequest
 WK_EXPORT extern NSString * const WKActionURLRequestKey;          // NSURLRequest
 WK_EXPORT extern NSString * const WKActionURLResponseKey;         // NSURLResponse
 WK_EXPORT extern NSString * const WKActionFrameNameKey;           // NSString
