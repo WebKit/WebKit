@@ -390,69 +390,22 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
     {
         function update()
         {
-            // Matches rgba(0, 0, 0, 0.5), rgb(0, 0, 0), hsl(), hsla(), #fff, #ffffff, white
-            const colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|\b\w+\b(?![-.]))/g;
-
-            var start = typeof lineNumber === "number" ? lineNumber : 0;
-            var end = typeof lineNumber === "number" ? lineNumber + 1 : this._codeMirror.lineCount();
-
             // Look for color strings and add swatches in front of them.
-            for (var i = start; i < end; ++i) {
-                var lineContent = this._codeMirror.getLine(i);
-
-                var match = colorRegex.exec(lineContent);
-                while (match) {
-
-                    // Act as a negative look-behind and disallow the color from being prefixing with certain characters.
-                    if (match.index > 0 && /[-.]/.test(lineContent[match.index - 1])) {
-                        match = colorRegex.exec(lineContent);
-                        continue;
-                    }
-
-                    var from = {line: i, ch: match.index};
-                    var to = {line: i, ch: match.index + match[0].length};
-
-                    var foundColorMarker = false;
-                    var marks = this._codeMirror.findMarksAt(to);
-                    for (var j = 0; j < marks.length; ++j) {
-                        if (!marks[j].__markedColor)
-                            continue;
-                        foundColorMarker = true;
-                        break;
-                    }
-
-                    if (foundColorMarker) {
-                        match = colorRegex.exec(lineContent);
-                        continue;
-                    }
-
-
-                    var color = WebInspector.Color.fromString(match[0]);
-                    if (!color) {
-                        match = colorRegex.exec(lineContent);
-                        continue;
-                    }
-
-                    var swatchElement = document.createElement("span");
-                    swatchElement.title = WebInspector.UIString("Click to open a colorpicker. Shift-click to change color format.");
-                    swatchElement.className = WebInspector.CSSStyleDeclarationTextEditor.ColorSwatchElementStyleClassName;
-                    swatchElement.addEventListener("click", this._colorSwatchClicked.bind(this));
-
-                    var swatchInnerElement = document.createElement("span");
-                    swatchInnerElement.style.backgroundColor = match[0];
-                    swatchElement.appendChild(swatchInnerElement);
-
-                    var swatchMarker = this._codeMirror.setUniqueBookmark(from, swatchElement);
-
-                    var colorTextMarker = this._codeMirror.markText(from, to);
-                    colorTextMarker.__markedColor = true;
-
-                    swatchInnerElement.__colorTextMarker = colorTextMarker;
-                    swatchInnerElement.__color = color;
-
-                    match = colorRegex.exec(lineContent);
-                }
-            }
+            this._codeMirror.createColorMarkers(lineNumber, function(marker, color, colorString) {
+                var swatchElement = document.createElement("span");
+                swatchElement.title = WebInspector.UIString("Click to open a colorpicker. Shift-click to change color format.");
+                swatchElement.className = WebInspector.CSSStyleDeclarationTextEditor.ColorSwatchElementStyleClassName;
+                swatchElement.addEventListener("click", this._colorSwatchClicked.bind(this));
+                            
+                var swatchInnerElement = document.createElement("span");
+                swatchInnerElement.style.backgroundColor = colorString;
+                swatchElement.appendChild(swatchInnerElement);
+                            
+                var swatchMarker = this._codeMirror.setUniqueBookmark(marker.find().from, swatchElement);
+                            
+                swatchInnerElement.__colorTextMarker = marker;
+                swatchInnerElement.__color = color;
+            }.bind(this));
         }
 
         if (nonatomic)

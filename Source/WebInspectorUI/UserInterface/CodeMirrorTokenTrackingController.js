@@ -31,7 +31,7 @@ WebInspector.CodeMirrorTokenTrackingController = function(codeMirror, delegate)
 
     this._codeMirror = codeMirror;
     this._delegate = delegate || null;
-    this._mode = WebInspector.CodeMirrorTokenTrackingController.Mode.NonSymbolTokens;
+    this._mode = WebInspector.CodeMirrorTokenTrackingController.Mode.None;
 
     this._mouseOverDelayDuration = 0;
     this._mouseOutReleaseDelayDuration = 0;
@@ -40,13 +40,16 @@ WebInspector.CodeMirrorTokenTrackingController = function(codeMirror, delegate)
     this._enabled = false;
     this._tracking = false;
     this._hoveredTokenInfo = null;
+    this._hoveredMarker = null;
 };
 
 WebInspector.CodeMirrorTokenTrackingController.JumpToSymbolHighlightStyleClassName = "jump-to-symbol-highlight";
 
 WebInspector.CodeMirrorTokenTrackingController.Mode = {
+    None: "none",
     NonSymbolTokens: "non-symbol-tokens",
     JavaScriptExpression: "javascript-expression",
+    MarkedTokens: "marked-tokens"
 }
 
 WebInspector.CodeMirrorTokenTrackingController.prototype = {
@@ -94,11 +97,11 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
         return this._mode;
     },
 
-    set mode(x)
+    set mode(mode)
     {
         var oldMode = this._mode;
 
-        this._mode = x || WebInspector.CodeMirrorTokenTrackingController.Mode.NonSymbolTokens;
+        this._mode = mode || WebInspector.CodeMirrorTokenTrackingController.Mode.None;
 
         if (oldMode !== this._mode && this._tracking && this._hoveredTokenInfo)
             this._processNewHoveredToken();
@@ -141,6 +144,16 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
         return this._candidate;
     },
 
+    get hoveredMarker()
+    {
+        return this._hoveredMarker;
+    },
+    
+    set hoveredMarker(hoveredMarker)
+    {
+        this._hoveredMarker = hoveredMarker;
+    },
+
     highlightLastHoveredRange: function()
     {
         if (this._candidate)
@@ -174,13 +187,6 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
         delete this._codeMirrorMarkedText;
 
         window.removeEventListener("mousemove", this, true);
-    },
-
-    boundsForRange: function(range)
-    {
-        var firstCharCoords = this._codeMirror.cursorCoords(range.start);
-        var lastCharCoords = this._codeMirror.cursorCoords(range.end);
-        return new WebInspector.Rect(firstCharCoords.left, firstCharCoords.top, lastCharCoords.right - firstCharCoords.left, firstCharCoords.bottom - firstCharCoords.top);
     },
 
     // Private
@@ -298,6 +304,12 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
         var token = this._codeMirror.getTokenAt(position);
 
         if (!token || !token.type || !token.string) {
+            if (this._hoveredMarker && this._delegate && typeof this._delegate.tokenTrackingControllerMouseOutOfHoveredMarker === "function") {
+                var markers = this._codeMirror.findMarksAt(position);
+                if (!markers.contains(this._hoveredMarker))
+                    this._delegate.tokenTrackingControllerMouseOutOfHoveredMarker(this, this._hoveredMarker);
+            }
+
             this._resetTrackingStates();
             return;
         }
@@ -379,6 +391,9 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
             break;
         case WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptExpression:
             this._candidate = this._processJavaScriptExpression();
+            break;
+        case WebInspector.CodeMirrorTokenTrackingController.Mode.MarkedTokens:
+            this._candidate = this._processMarkedToken();
             break;
         }
 
@@ -476,6 +491,11 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
             expression: expression,
             expressionRange: {start: expressionStartPosition, end: endPosition},
         };
+    },
+
+    _processMarkedToken: function()
+    {
+        return this._processNonSymbolToken();
     },
 
     _resetTrackingStates: function()

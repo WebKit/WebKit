@@ -34,6 +34,10 @@ WebInspector.Color = function(format, components)
         this._hsla = components;
     else
         this._rgba = components;
+
+    this.valid = !components.some(function(component) {
+        return isNaN(component);
+    });
 }
 
 WebInspector.Color.Format = {
@@ -209,6 +213,21 @@ WebInspector.Color.prototype = {
         if (!this._hsla)
             this._hsla = this._rgbaToHSLA(this.rgba);
         return this._hsla;
+    },
+
+    copy: function()
+    {
+        switch (this.format) {
+        case WebInspector.Color.Format.RGB:
+        case WebInspector.Color.Format.HEX:
+        case WebInspector.Color.Format.ShortHEX:
+        case WebInspector.Color.Format.Nickname:
+        case WebInspector.Color.Format.RGBA:
+            return new WebInspector.Color(this.format, this.rgba);
+        case WebInspector.Color.Format.HSL:
+        case WebInspector.Color.Format.HSLA:
+            return new WebInspector.Color(this.format, this.hsla);
+        }
     },
 
     toString: function(format)

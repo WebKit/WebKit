@@ -1,3 +1,218 @@
+2013-12-12  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: allow editing of colors in CSS resources
+        https://bugs.webkit.org/show_bug.cgi?id=124364
+
+        Reviewed by Timothy Hatcher.
+
+        Identify colors in CSS and HTML resources so that hovering these colors shows a HoverMenu
+        allowing a ColorPicker hosted in a Popover to be shown to edit the hovered color.
+
+        * UserInterface/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches):
+        Remove the code that goes through the lines of the CodeMirror editor to look for
+        color strings and replace it with a call to the .createColorMarkers() CodeMirror
+        extension in which the code was refactored. The callback passed to
+        .createColorMarkers() handles the CSSStyleDeclarationTextEditor-specific creation
+        of color swatches to show the popover, keeping the existing behavior of the Styles
+        sidebar panel.
+
+        * UserInterface/CodeMirrorAdditions.js:
+        Refactor existing code into two new CodeMirror extensions: .boundsForRange(), which
+        was previously defined on the CodeMirrorTokenTrackingController but was also needed
+        in the new CodeMirrorColorEditingController, and .createColorMarkers(), discussed above.
+
+        * UserInterface/CodeMirrorColorEditingController.js: Added.
+        (WebInspector.CodeMirrorColorEditingController):
+        New class used by SourceCodeTextEditor to coordinate the editing of a color in a CodeMirror
+        TextMarker by a ColorPicker hosted in a Popover shown by the activation of a HoverMenu. This
+        controller automatically gets the color set by the user using the ColorPicker and updates
+        the CodeMirror text editor with the new value. When the user presses the Esc. key while the
+        popover is shown, it's automatically dismissed and the original color is reset in the editor.
+
+        (WebInspector.CodeMirrorColorEditingController.prototype.get marker):
+        (WebInspector.CodeMirrorColorEditingController.prototype.get range):
+        (WebInspector.CodeMirrorColorEditingController.prototype.get delegate):
+        (WebInspector.CodeMirrorColorEditingController.prototype.set delegate):
+        Getters and setters for public properties.
+
+        (WebInspector.CodeMirrorColorEditingController.prototype.get color):
+        (WebInspector.CodeMirrorColorEditingController.prototype.set color):
+        Get and set the color for the edited color marker, replacing the text in the marker's range
+        upon setting.
+
+        (WebInspector.CodeMirrorColorEditingController.prototype.presentHoverMenu):
+        Public API allowing for a HoverMenu to be shown around the bounds of the TextMarker passed
+        in the constructor. This method is called from SourceCodeTextEditor when the
+        CodeMirrorTokenTrackingController identifies that a token that is part of a TextMarker is
+        hovered and that token is a color.
+
+        (WebInspector.CodeMirrorColorEditingController.prototype.dismissHoverMenu):
+        Public API allowing for the HoverMenu to be dismissed. This method is called when the
+        CodeMirrorTokenTrackingController identifies that its "hoveredMarker" is no longer being
+        hovered as well as when we identify that editing of the color has completed.
+
+        (WebInspector.CodeMirrorColorEditingController.prototype.handleEvent):
+        Event handler for the "keydown" event that are being listened to when the HoverMenu
+        is activated such that the Esc. key can be used to dimiss the popover and reset the
+        original color before any edits.
+
+        (WebInspector.CodeMirrorColorEditingController.prototype.hoverMenuButtonWasPressed):
+        Implementation of the HoverMenu delegation method used to show a Popover containing a
+        ColorPicker upon clicking on the color wheel attached to the HoverMenu. We also remember
+        the color set on the marker so that it may be restored when Esc. is pressed and used to
+        set the original state of the ColorPicker. The delegation method
+        colorEditingControllerDidStartEditing() is also called at this point, which the
+        SourceCodeTextEditor implements.
+
+        (WebInspector.CodeMirrorColorEditingController.prototype.didDismissPopover):
+        Implementation of the Popover delegation method used to identify that color editing has
+        completed. The delegation method colorEditingControllerDidFinishEditing() is called
+        at this point, which the SourceCodeTextEditor implements.
+
+        (WebInspector.CodeMirrorColorEditingController.prototype._colorPickerColorChanged):
+        Apply the color set in the color picker to the CodeMirror text editor.
+
+        * UserInterface/CodeMirrorTokenTrackingController.js:
+        Add two new modes to CodeMirrorTokenTrackingController. The first mode is "None" and is
+        the default, incurring no specific token handling behavior. The second mode is "MarkedTokens"
+        which identifies hover of a token contained in a CodeMirror TextMarker range. The new
+        "MarkedTokens" mode is used by SourceCodeTextEditor to identify when a marked color is being
+        hovered to display a HoverMenu.
+
+        (WebInspector.CodeMirrorTokenTrackingController):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype.set mode):
+        Make "None" the new default mode for CodeMirrorTokenTrackingController.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype.get hoveredMarker):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype.set hoveredMarker):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._updateHoveredTokenInfo):
+        Check, when we have a "hoveredMarker" set on the CodeMirrorTokenTrackingController,
+        whether the "hoveredMarker" is still being hovered when there is no token at the current
+        mouse position. We can then determine when we're mousing out of the "hoveredMarker" and
+        notify the delegate via the new tokenTrackingControllerMouseOutOfHoveredMarker delegate
+        method. The SourceCodeTextEditor uses this method to dismiss its CodeMirrorColorEditingController.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._processNewHoveredToken):
+        Add support for the new "MarkedTokens" mode.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._processMarkedToken):
+        For the moment, use the same behavior as the existing "MarkedTokens" mode.
+
+        * UserInterface/Color.js:
+        (WebInspector.Color):
+        Add a new "valid" property to identify whether a color has any invalid (NaN) component. This property
+        is used by SourceCodeTextEditor to establish whether a hovered color marker is indeed set to a
+        valid color still.
+
+        (WebInspector.Color.prototype.copy):
+        New method to create an exact copy of a Color instance, used by CodeMirrorColorEditingController
+        to duplicate the edited color in case we need to revert it.
+
+        * UserInterface/HoverMenu.js:
+        (WebInspector.HoverMenu.prototype._handleClickEvent):
+        Rename hoverMenuWasActivated to hoverMenuButtonWasPressed per review feedback.
+
+        * UserInterface/Images/ColorIcon.png: Added.
+        * UserInterface/Images/ColorIcon@2x.png: Added.
+        New color wheel icon used to customize the HoverMenu shown by a CodeMirrorColorEditingController.
+
+        * UserInterface/Main.html:
+        Link to the new CodeMirrorColorEditingController.js file.
+
+        * UserInterface/SourceCodeTextEditor.css:
+        (.hover-menu.color):
+        (.hover-menu.color > img):
+        Customize the HoverMenu shown by a CodeMirrorColorEditingController to use the new ColorIcon asset.
+
+        * UserInterface/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        Add a new "_ignoreContentDidChange" ivar that increments and decrements to track when handling
+        of CodeMirror content changes should be disabled.
+
+        (WebInspector.SourceCodeTextEditor.prototype.close):
+        Adopt the new ._updateTokenTrackingControllerState() method to update the state of the
+        CodeMirrorTokenTrackingController.
+
+        (WebInspector.SourceCodeTextEditor.prototype.contentDidChange):
+        Override the new TextEditor public API called when content in the CodeMirror text editor is changed.
+        We use this method to process any newly added line to create any newly added color marker.
+
+        (WebInspector.SourceCodeTextEditor.prototype._contentDidPopulate):
+        (WebInspector.SourceCodeTextEditor.prototype._debuggerDidPause):
+        (WebInspector.SourceCodeTextEditor.prototype._debuggerDidResume):
+        (WebInspector.SourceCodeTextEditor.prototype._sourceCodeSourceMapAdded):
+        Adopt the new ._updateTokenTrackingControllerState() method to update the state of the
+        CodeMirrorTokenTrackingController.
+
+        (WebInspector.SourceCodeTextEditor.prototype._updateTokenTrackingControllerState):
+        New method acting as the only point where we check the state of the text editor and set the right
+        mode and settings on the CodeMirrorTokenTrackingController, including setting the new "MarkedTokens"
+        mode when we have color markers, as determined by ._hasColorMarkers().
+
+        (WebInspector.SourceCodeTextEditor.prototype._hasColorMarkers):
+        Check whether any of the TextMarkers set on the CodeMirror text editor were created for a color.
+
+        (WebInspector.SourceCodeTextEditor.prototype.tokenTrackingControllerHighlightedRangeWasClicked):
+        Check the CodeMirrorTokenTrackingController mode rather than the removed "_jumpToSymbolTrackingModeEnabled"
+        ivar to identify we're in the "NonSymbolTokens" mode.
+
+        (WebInspector.SourceCodeTextEditor.prototype.tokenTrackingControllerNewHighlightCandidate):
+        Refactor method to use the CodeMirrorTokenTrackingController mode to branch into mode-specific code
+        and add a new branch for the new "MarkedTokens" mode where we check if the newly hovered token
+        is part of a color TextMarker range.
+
+        (WebInspector.SourceCodeTextEditor.prototype.tokenTrackingControllerMouseOutOfHoveredMarker):
+        Implement this new CodeMirrorTokenTrackingController delegation method to dismiss the
+        CodeMirrorColorEditingController as we identify we're no longer hovering over the TextMarker
+        for which the CodeMirrorColorEditingController was created.
+
+        (WebInspector.SourceCodeTextEditor.prototype._showPopover):
+        Adopt the new TextEditor boundsForRange() method.
+
+        (WebInspector.SourceCodeTextEditor.prototype._updateColorMarkers):
+        Harness the new TextEditor createColorMarkers() method to create new TextMarkers for the provided
+        line, or the entire text editor content if none provided. We then immediately call _updateTokenTrackingControllerState()
+        so that the new "MarkedTokens" mode is entered in case color TextMarkers were created for the first
+        time for this text editor.
+
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedMarkedExpression):
+        Called when we've identified the CodeMirrorTokenTrackingController highlighted a TextMarker. We check
+        if any of the hovered TextMarkers are for a color, and in this case create a CodeMirrorColorEditingController
+        to coordinate the display of a ColorPicker in a Popover to edit the hovered color token. We also check
+        whether the hovered marker still contains a valid color, clearing the marker in case it was edited to
+        no longer contain a color.
+
+        (WebInspector.SourceCodeTextEditor.prototype._dismissCodeMirrorColorEditingController):
+        Used to dismiss the CodeMirrorColorEditingController, if previously presented, and reset some internal state.
+
+        (WebInspector.SourceCodeTextEditor.prototype.colorEditingControllerDidStartEditing):
+        Implement this CodeMirrorColorEditingController delegation method to temporarily disable the
+        CodeMirrorTokenTrackingController while we edit the color with the ColorPicker, remove
+        the TextMarker for the edited color and instruct that content changes should be ignored
+        such that we act on the complete set of color edits upon completion.
+
+        (WebInspector.SourceCodeTextEditor.prototype.colorEditingControllerDidFinishEditing):
+        Update color markers for the edited line such that any color edits are correctly updated for
+        the future and so that, as a side-effect, the CodeMirrorColorEditingController is reset to the
+        appropriate mode depending on whether color TextMarkers are indeed available, resetting states
+        that may have been altered by colorEditingControllerDidStartEditing().
+
+        * UserInterface/TextEditor.js:
+        (WebInspector.TextEditor.prototype.contentDidChange):
+        New public method meant to be overriden by subclasses, added for the use of SourceCodeTextEditor, exposing
+        the list of TextRanges affected by the content change, both in the context of the old content and new content.
+
+        (WebInspector.TextEditor.prototype.boundsForRange):
+        (WebInspector.TextEditor.prototype.get markers):
+        (WebInspector.TextEditor.prototype.findMarkersAtPosition):
+        (WebInspector.TextEditor.prototype.createColorMarkers):
+        (WebInspector.TextEditor.prototype.colorEditingControllerForMarker):
+        New public methods calling into the CodeMirror private ivar for the benefit of SourceCodeTextEditor.
+
+        (WebInspector.TextEditor.prototype._contentChanged):
+        Call the new contentDidChange() method.
+
 2013-12-05  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove 'cookiesString' output from Page.getCookies

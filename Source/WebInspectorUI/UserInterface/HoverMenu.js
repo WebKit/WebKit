@@ -101,7 +101,7 @@ WebInspector.HoverMenu.prototype = {
 
     _handleClickEvent: function(event)
     {
-        if (this.delegate && typeof this.delegate.hoverMenuWasActivated === "function")
-            this.delegate.hoverMenuWasActivated(this);
+        if (this.delegate && typeof this.delegate.hoverMenuButtonWasPressed === "function")
+            this.delegate.hoverMenuButtonWasPressed(this);
     }
 }

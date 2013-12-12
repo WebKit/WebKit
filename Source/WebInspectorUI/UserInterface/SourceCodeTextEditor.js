@@ -32,12 +32,12 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
     this._issuesLineNumberMap = {};
     this._contentPopulated = false;
     this._invalidLineNumbers = {0: true};
+    this._ignoreContentDidChange = 0;
 
     WebInspector.TextEditor.call(this, null, null, this);
 
     // FIXME: Currently this just jumps between resources and related source map resources. It doesn't "jump to symbol" yet.
-    this._jumpToSymbolTrackingModeEnabled = false;
-    this._disableJumpToSymbolTrackingModeSettings();
+    this._updateTokenTrackingControllerState();
 
     this.element.classList.add(WebInspector.SourceCodeTextEditor.StyleClassName);
 
@@ -61,7 +61,7 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
     WebInspector.issueManager.addEventListener(WebInspector.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
 
     if (this._sourceCode instanceof WebInspector.SourceMapResource || this._sourceCode.sourceMaps.length > 0)
-        WebInspector.notifications.addEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._updateJumpToSymbolTrackingMode, this);
+        WebInspector.notifications.addEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._updateTokenTrackingControllerState, this);
     else
         this._sourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
 
@@ -127,7 +127,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
         WebInspector.issueManager.removeEventListener(WebInspector.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
 
-        WebInspector.notifications.removeEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._updateJumpToSymbolTrackingMode, this);
+        WebInspector.notifications.removeEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._updateTokenTrackingControllerState, this);
         this._sourceCode.removeEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
     },
 
@@ -215,6 +215,32 @@ WebInspector.SourceCodeTextEditor.prototype = {
     goToLineDialogWasDismissed: function()
     {
         this.focus();
+    },
+
+    contentDidChange: function(replacedRanges, newRanges)
+    {
+        WebInspector.TextEditor.prototype.contentDidChange.call(this, replacedRanges, newRanges);
+
+        if (this._ignoreContentDidChange > 0)
+            return;
+
+        // Gather all lines containing new text.
+        var lines = new Set;
+        for (var range of newRanges) {
+            // If the range is on a single line, only add the line if the range is not empty.
+            if (range.startLine === range.endLine) {
+                if (range.endColumn > range.startColumn)
+                    lines.add(range.startLine);
+            } else {
+                // Only add the last line if the range has characters on this line.
+                for (var line = range.startLine; line < range.endLine || range.endColumn > 0; ++line)
+                    lines.add(line);
+            }
+        }
+
+        // Consider all new lines for new color markers.
+        for (var line of lines)
+            this._updateColorMarkers(line);
     },
 
     // Private
@@ -332,7 +358,8 @@ WebInspector.SourceCodeTextEditor.prototype = {
             this._addIssue(issue);
         }
 
-        this._updateJumpToSymbolTrackingMode();
+        this._updateTokenTrackingControllerState();
+        this._updateColorMarkers();
     },
 
     _populateWithContent: function(content)
@@ -931,70 +958,68 @@ WebInspector.SourceCodeTextEditor.prototype = {
         }
     },
 
-    _updateTokenTrackingControllerEnabled: function()
-    {
-        this.tokenTrackingController.enabled = this._jumpToSymbolTrackingModeEnabled || WebInspector.debuggerManager.activeCallFrame;
-    },
-
     _debuggerDidPause: function(event)
     {
-        this._updateTokenTrackingControllerEnabled();
+        this._updateTokenTrackingControllerState();
     },
 
     _debuggerDidResume: function(event)
     {
-        this._updateTokenTrackingControllerEnabled();
+        this._updateTokenTrackingControllerState();
         this._dismissPopover();
     },
 
     _sourceCodeSourceMapAdded: function(event)
     {
-        WebInspector.notifications.addEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._updateJumpToSymbolTrackingMode, this);
+        WebInspector.notifications.addEventListener(WebInspector.Notification.GlobalModifierKeysDidChange, this._updateTokenTrackingControllerState, this);
         this._sourceCode.removeEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
 
-        this._updateJumpToSymbolTrackingMode();
+        this._updateTokenTrackingControllerState();
     },
 
-    _updateJumpToSymbolTrackingMode: function()
+    _updateTokenTrackingControllerState: function()
     {
-        var oldJumpToSymbolTrackingModeEnabled = this._jumpToSymbolTrackingModeEnabled;
+        var mode = WebInspector.CodeMirrorTokenTrackingController.Mode.None;
+        if (WebInspector.debuggerManager.paused)
+            mode = WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptExpression;
+        else if (this._hasColorMarkers())
+            mode = WebInspector.CodeMirrorTokenTrackingController.Mode.MarkedTokens;
+        else if ((this._sourceCode instanceof WebInspector.SourceMapResource || this._sourceCode.sourceMaps.length !== 0) && WebInspector.modifierKeys.metaKey && !WebInspector.modifierKeys.altKey && !WebInspector.modifierKeys.shiftKey)
+            mode = WebInspector.CodeMirrorTokenTrackingController.Mode.NonSymbolTokens;
 
-        if (!(this._sourceCode instanceof WebInspector.SourceMapResource) && this._sourceCode.sourceMaps.length === 0)
-            this._jumpToSymbolTrackingModeEnabled = false;
-        else
-            this._jumpToSymbolTrackingModeEnabled = WebInspector.modifierKeys.metaKey && !WebInspector.modifierKeys.altKey && !WebInspector.modifierKeys.shiftKey;
+        this.tokenTrackingController.enabled = mode !== WebInspector.CodeMirrorTokenTrackingController.Mode.None;
 
-        if (oldJumpToSymbolTrackingModeEnabled !== this._jumpToSymbolTrackingModeEnabled) {
-            if (this._jumpToSymbolTrackingModeEnabled) {
-                this._enableJumpToSymbolTrackingModeSettings();
-                this.tokenTrackingController.highlightLastHoveredRange();
-            } else {
-                this._disableJumpToSymbolTrackingModeSettings();
-                this.tokenTrackingController.removeHighlightedRange();
-            }
+        if (mode === this.tokenTrackingController.mode)
+            return;
+
+        switch (mode) {
+        case WebInspector.CodeMirrorTokenTrackingController.Mode.MarkedTokens:
+            this.tokenTrackingController.mouseOverDelayDuration = 0;
+            this.tokenTrackingController.mouseOutReleaseDelayDuration = 0;
+            break;
+        case WebInspector.CodeMirrorTokenTrackingController.Mode.NonSymbolTokens:
+            this.tokenTrackingController.mouseOverDelayDuration = 0;
+            this.tokenTrackingController.mouseOutReleaseDelayDuration = 0;
+            this.tokenTrackingController.classNameForHighlightedRange = WebInspector.CodeMirrorTokenTrackingController.JumpToSymbolHighlightStyleClassName;
+            this._dismissPopover();
+            break;
+        case WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptExpression:
+            this.tokenTrackingController.mouseOverDelayDuration = WebInspector.SourceCodeTextEditor.DurationToMouseOverTokenToMakeHoveredToken;
+            this.tokenTrackingController.mouseOutReleaseDelayDuration = WebInspector.SourceCodeTextEditor.DurationToMouseOutOfHoveredTokenToRelease;
+            this.tokenTrackingController.classNameForHighlightedRange = WebInspector.SourceCodeTextEditor.HoveredExpressionHighlightStyleClassName;
+            break;
         }
+
+        this.tokenTrackingController.mode = mode;
     },
 
-    _enableJumpToSymbolTrackingModeSettings: function()
+    _hasColorMarkers: function()
     {
-        this.tokenTrackingController.classNameForHighlightedRange = WebInspector.CodeMirrorTokenTrackingController.JumpToSymbolHighlightStyleClassName;
-        this.tokenTrackingController.mouseOverDelayDuration = 0;
-        this.tokenTrackingController.mouseOutReleaseDelayDuration = 0;
-
-        this.tokenTrackingController.mode = WebInspector.CodeMirrorTokenTrackingController.Mode.NonSymbolTokens;
-        this._updateTokenTrackingControllerEnabled();
-
-        this._dismissPopover();
-    },
-
-    _disableJumpToSymbolTrackingModeSettings: function()
-    {
-        this.tokenTrackingController.classNameForHighlightedRange = WebInspector.SourceCodeTextEditor.HoveredExpressionHighlightStyleClassName;
-        this.tokenTrackingController.mouseOverDelayDuration = WebInspector.SourceCodeTextEditor.DurationToMouseOverTokenToMakeHoveredToken;
-        this.tokenTrackingController.mouseOutReleaseDelayDuration = WebInspector.SourceCodeTextEditor.DurationToMouseOutOfHoveredTokenToRelease;
-
-        this.tokenTrackingController.mode = WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptExpression;
-        this._updateTokenTrackingControllerEnabled();
+        for (var marker of this.markers) {
+            if (marker.__markedColor)
+                return true;
+        }
+        return false;
     },
 
     // CodeMirrorTokenTrackingController Delegate
@@ -1018,29 +1043,48 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
     tokenTrackingControllerHighlightedRangeWasClicked: function(tokenTrackingController)
     {
-        if (this._jumpToSymbolTrackingModeEnabled) {
-            // Links are handled by TextEditor.
-            if (/\blink\b/.test(this.tokenTrackingController.candidate.hoveredToken.type))
-                return;
+        if (this.tokenTrackingController.mode !== WebInspector.CodeMirrorTokenTrackingController.Mode.NonSymbolTokens)
+            return;
 
-            var sourceCodeLocation = this._sourceCodeLocationForEditorPosition(this.tokenTrackingController.candidate.hoveredTokenRange.start);
-            if (this.sourceCode instanceof WebInspector.SourceMapResource)
-                WebInspector.resourceSidebarPanel.showOriginalOrFormattedSourceCodeLocation(sourceCodeLocation);
-            else
-                WebInspector.resourceSidebarPanel.showSourceCodeLocation(sourceCodeLocation);
-        }
+        // Links are handled by TextEditor.
+        if (/\blink\b/.test(this.tokenTrackingController.candidate.hoveredToken.type))
+            return;
+
+        var sourceCodeLocation = this._sourceCodeLocationForEditorPosition(this.tokenTrackingController.candidate.hoveredTokenRange.start);
+        if (this.sourceCode instanceof WebInspector.SourceMapResource)
+            WebInspector.resourceSidebarPanel.showOriginalOrFormattedSourceCodeLocation(sourceCodeLocation);
+        else
+            WebInspector.resourceSidebarPanel.showSourceCodeLocation(sourceCodeLocation);
     },
 
     tokenTrackingControllerNewHighlightCandidate: function(tokenTrackingController, candidate)
     {
-        if (this._jumpToSymbolTrackingModeEnabled) {
+        if (this.tokenTrackingController.mode === WebInspector.CodeMirrorTokenTrackingController.Mode.NonSymbolTokens) {
             this.tokenTrackingController.highlightRange(candidate.hoveredTokenRange);
             return;
         }
 
-        if (!WebInspector.debuggerManager.activeCallFrame)
+        if (this.tokenTrackingController.mode === WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptExpression) {
+            this._tokenTrackingControllerHighlightedJavaScriptExpression(candidate);
             return;
+        }
 
+        if (this.tokenTrackingController.mode === WebInspector.CodeMirrorTokenTrackingController.Mode.MarkedTokens) {
+            var markers = this.findMarkersAtPosition(candidate.hoveredTokenRange.start);
+            if (markers.length > 0)
+                this._tokenTrackingControllerHighlightedMarkedExpression(candidate, markers);
+            else
+                this._dismissCodeMirrorColorEditingController();
+        }
+    },
+
+    tokenTrackingControllerMouseOutOfHoveredMarker: function(tokenTrackingController, hoveredMarker)
+    {
+        this._dismissCodeMirrorColorEditingController();
+    },
+
+    _tokenTrackingControllerHighlightedJavaScriptExpression: function(candidate)
+    {
         console.assert(candidate.expression);
 
         function populate(error, result, wasThrown)
@@ -1085,7 +1129,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         if (!candidate)
             return;
 
-        var bounds = this.tokenTrackingController.boundsForRange(candidate.hoveredTokenRange);
+        var bounds = this.boundsForRange(candidate.hoveredTokenRange);
         if (!bounds)
             return;
 
@@ -1241,6 +1285,82 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _popoverMouseout: function(event)
     {
         this._mouseIsOverPopover = this._popover.element.contains(event.relatedTarget);
+    },
+
+    _updateColorMarkers: function(lineNumber)
+    {
+        this.createColorMarkers(lineNumber);
+
+        this._updateTokenTrackingControllerState();
+    },
+    
+    _tokenTrackingControllerHighlightedMarkedExpression: function(candidate, markers)
+    {
+        var colorMarker;
+        for (var marker of markers) {
+            if (marker.__markedColor) {
+                colorMarker = marker;
+                break;
+            }
+        }
+
+        if (!colorMarker) {
+            this.tokenTrackingController.hoveredMarker = null;
+            return;
+        }
+
+        if (this.tokenTrackingController.hoveredMarker === colorMarker)
+            return;
+
+        this._dismissCodeMirrorColorEditingController();
+
+        this.tokenTrackingController.hoveredMarker = colorMarker;
+
+        this._colorEditingController = this.colorEditingControllerForMarker(colorMarker);
+
+        var color = this._colorEditingController.color;
+        if (!color || !color.valid) {
+            colorMarker.clear();
+            delete this._colorEditingController;
+            return;
+        }
+
+        this._colorEditingController.delegate = this;
+        this._colorEditingController.presentHoverMenu();
+    },
+
+    _dismissCodeMirrorColorEditingController: function()
+    {
+        if (this._colorEditingController)
+            this._colorEditingController.dismissHoverMenu();
+        
+        this.tokenTrackingController.hoveredMarker = null;
+        delete this._colorEditingController;
+    },
+
+    // CodeMirrorColorEditingController Delegate
+    
+    colorEditingControllerDidStartEditing: function(colorEditingController)
+    {
+        // We can pause the token tracking controller during editing, it will be reset
+        // to the expected state by calling _updateColorMarkers() in the
+        // colorEditingControllerDidFinishEditing delegate.
+        this.tokenTrackingController.enabled = false;
+
+        // We clear the marker since we'll reset it after editing.
+        colorEditingController.marker.clear();
+        
+        // We ignore content changes made as a result of color editing.
+        this._ignoreContentDidChange++;
+    },
+    
+    colorEditingControllerDidFinishEditing: function(colorEditingController)
+    {
+        this._updateColorMarkers(colorEditingController.range.from.line);
+
+        this._ignoreContentDidChange--;
+
+        delete this._colorEditingController;
     }
 };
 

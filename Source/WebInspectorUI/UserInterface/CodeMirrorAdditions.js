@@ -418,6 +418,71 @@
             return CodeMirror.Pass;
     }
 
+    CodeMirror.defineExtension("boundsForRange", function(range) {
+        var firstCharCoords = this.cursorCoords(range.start);
+        var lastCharCoords = this.cursorCoords(range.end);
+        return new WebInspector.Rect(firstCharCoords.left, firstCharCoords.top, lastCharCoords.right - firstCharCoords.left, firstCharCoords.bottom - firstCharCoords.top);
+    });
+
+    CodeMirror.defineExtension("createColorMarkers", function(lineNumber, callback) {
+        var createdMarkers = [];
+
+        var start = typeof lineNumber === "number" ? lineNumber : 0;
+        var end = typeof lineNumber === "number" ? lineNumber + 1 : this.lineCount();
+
+        // Matches rgba(0, 0, 0, 0.5), rgb(0, 0, 0), hsl(), hsla(), #fff, #ffffff, white
+        const colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|\b\w+\b(?![-.]))/g;
+
+        for (var lineNumber = start; lineNumber < end; ++lineNumber) {
+            var lineContent = this.getLine(lineNumber);
+            var match = colorRegex.exec(lineContent);
+            while (match) {
+
+                // Act as a negative look-behind and disallow the color from being prefixing with certain characters.
+                if (match.index > 0 && /[-.]/.test(lineContent[match.index - 1])) {
+                    match = colorRegex.exec(lineContent);
+                    continue;
+                }
+
+                var from = {line: lineNumber, ch: match.index};
+                var to = {line: lineNumber, ch: match.index + match[0].length};
+
+                var foundColorMarker = false;
+                var markers = this.findMarksAt(to);
+                for (var j = 0; j < markers.length; ++j) {
+                    if (!markers[j].__markedColor)
+                        continue;
+                    foundColorMarker = true;
+                    break;
+                }
+
+                if (foundColorMarker) {
+                    match = colorRegex.exec(lineContent);
+                    continue;
+                }
+
+                var colorString = match[0];
+                var color = WebInspector.Color.fromString(colorString);
+                if (!color) {
+                    match = colorRegex.exec(lineContent);
+                    continue;
+                }
+
+                var marker = this.markText(from, to);
+                marker.__markedColor = true;
+
+                createdMarkers.push(marker);
+
+                if (callback)
+                    callback(marker, color, colorString);
+
+                match = colorRegex.exec(lineContent);
+            }
+        }
+
+        return createdMarkers;
+    });
+
     function ignoreKey(codeMirror)
     {
         // Do nothing to ignore the key.

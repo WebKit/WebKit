@@ -591,12 +591,62 @@ WebInspector.TextEditor.prototype = {
         this._codeMirror.focus();
     },
 
+    contentDidChange: function(replacedRanges, newRanges)
+    {
+        // Implemented by subclasses.
+    },
+
+    boundsForRange: function(range)
+    {
+        return this._codeMirror.boundsForRange(range);
+    },
+
+    get markers()
+    {
+        // FIXME: we should not return CodeMirror TextMarker objects but rather wrappers.
+        return this._codeMirror.getAllMarks();
+    },
+
+    findMarkersAtPosition: function(position)
+    {
+        return this._codeMirror.findMarksAt(position);
+    },
+
+    createColorMarkers: function(lineNumber)
+    {
+        return this._codeMirror.createColorMarkers(lineNumber);
+    },
+
+    colorEditingControllerForMarker: function(colorMarker)
+    {
+        return new WebInspector.CodeMirrorColorEditingController(this._codeMirror, colorMarker);
+    },
+
     // Private
 
     _contentChanged: function(codeMirror, change)
     {
         if (this._ignoreCodeMirrorContentDidChangeEvent > 0)
             return;
+
+        var replacedRanges = [];
+        var newRanges = [];
+        while (change) {
+            replacedRanges.push(new WebInspector.TextRange(
+                change.from.line,
+                change.from.ch,
+                change.to.line,
+                change.to.ch
+            ));
+            newRanges.push(new WebInspector.TextRange(
+                change.from.line,
+                change.from.ch,
+                change.from.line + change.text.length - 1,
+                change.text.length === 1 ? change.from.ch + change.text[0].length : change.text.lastValue.length
+            ));
+            change = change.next;
+        }
+        this.contentDidChange(replacedRanges, newRanges);
 
         if (this._formatted) {
             this._formatterSourceMap = null;
