@@ -1,3 +1,30 @@
+2013-12-11  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [WK2] Build fix after r160464
+        https://bugs.webkit.org/show_bug.cgi?id=125615
+
+        Reviewed by Gyuyoung Kim.
+
+        Modify the 2nd parameter for calling WebContext::addMessageReceiver from "this" to "*this"
+        because the parameter type is modified from CoreIPC::MessageReceiver* to CoreIPC::MessageReceiver&
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy):
+        * UIProcess/WebBatteryManagerProxy.cpp:
+        (WebKit::WebBatteryManagerProxy::WebBatteryManagerProxy):
+        * UIProcess/WebNetworkInfoManagerProxy.cpp:
+        (WebKit::WebNetworkInfoManagerProxy::WebNetworkInfoManagerProxy):
+        * UIProcess/WebVibrationProxy.cpp:
+        (WebKit::WebVibrationProxy::WebVibrationProxy):
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp:
+        (WebKit::WebSoupRequestManagerProxy::WebSoupRequestManagerProxy):
+        * WebProcess/Battery/WebBatteryManager.cpp:
+        (WebKit::WebBatteryManager::WebBatteryManager):
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.cpp:
+        (WebKit::WebNetworkInfoManager::WebNetworkInfoManager):
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestManager::WebSoupRequestManager):
+
 2013-12-11  Anders Carlsson  <andersca@apple.com>
 
         MessageReceiverMap should take MessageReceiver objects by reference

@@ -38,7 +38,7 @@ CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy(CoordinatedDrawingA
     : m_drawingAreaProxy(drawingAreaProxy)
     , m_scene(adoptRef(new CoordinatedGraphicsScene(this)))
 {
-    m_drawingAreaProxy->page()->process().addMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_drawingAreaProxy->page()->pageID(), this);
+    m_drawingAreaProxy->page()->process().addMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_drawingAreaProxy->page()->pageID(), *this);
 }
 
 CoordinatedLayerTreeHostProxy::~CoordinatedLayerTreeHostProxy()

@@ -48,7 +48,7 @@ const char* WebNetworkInfoManager::supplementName()
 WebNetworkInfoManager::WebNetworkInfoManager(WebProcess* process)
     : m_process(process)
 {
-    m_process->addMessageReceiver(Messages::WebNetworkInfoManager::messageReceiverName(), this);
+    m_process->addMessageReceiver(Messages::WebNetworkInfoManager::messageReceiverName(), *this);
 }
 
 WebNetworkInfoManager::~WebNetworkInfoManager()

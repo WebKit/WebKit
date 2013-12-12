@@ -48,7 +48,7 @@ const char* WebBatteryManager::supplementName()
 WebBatteryManager::WebBatteryManager(WebProcess* process)
     : m_process(process)
 {
-    m_process->addMessageReceiver(Messages::WebBatteryManager::messageReceiverName(), this);
+    m_process->addMessageReceiver(Messages::WebBatteryManager::messageReceiverName(), *this);
 }
 
 WebBatteryManager::~WebBatteryManager()

@@ -42,7 +42,7 @@ WebSoupRequestManagerProxy::WebSoupRequestManagerProxy(WebContext* context)
     : WebContextSupplement(context)
     , m_loadFailed(false)
 {
-    WebContextSupplement::context()->addMessageReceiver(Messages::WebSoupRequestManagerProxy::messageReceiverName(), this);
+    WebContextSupplement::context()->addMessageReceiver(Messages::WebSoupRequestManagerProxy::messageReceiverName(), *this);
 }
 
 WebSoupRequestManagerProxy::~WebSoupRequestManagerProxy()

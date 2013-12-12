@@ -49,7 +49,7 @@ WebNetworkInfoManagerProxy::WebNetworkInfoManagerProxy(WebContext* context)
     : WebContextSupplement(context)
     , m_isUpdating(false)
 {
-    WebContextSupplement::context()->addMessageReceiver(Messages::WebNetworkInfoManagerProxy::messageReceiverName(), this);
+    WebContextSupplement::context()->addMessageReceiver(Messages::WebNetworkInfoManagerProxy::messageReceiverName(), *this);
 }
 
 WebNetworkInfoManagerProxy::~WebNetworkInfoManagerProxy()

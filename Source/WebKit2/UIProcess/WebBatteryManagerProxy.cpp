@@ -48,7 +48,7 @@ WebBatteryManagerProxy::WebBatteryManagerProxy(WebContext* context)
     : WebContextSupplement(context)
     , m_isUpdating(false)
 {
-    WebContextSupplement::context()->addMessageReceiver(Messages::WebBatteryManagerProxy::messageReceiverName(), this);
+    WebContextSupplement::context()->addMessageReceiver(Messages::WebBatteryManagerProxy::messageReceiverName(), *this);
 }
 
 WebBatteryManagerProxy::~WebBatteryManagerProxy()
