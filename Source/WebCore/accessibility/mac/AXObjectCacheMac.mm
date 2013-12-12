@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-void AXObjectCache::detachWrapper(AccessibilityObject* obj, DetachmentType)
+void AXObjectCache::detachWrapper(AccessibilityObject* obj)
 {
     [obj->wrapper() detach];
     obj->setWrapper(0);
