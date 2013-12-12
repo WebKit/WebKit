@@ -58,6 +58,8 @@ int main(int argc, char** argv)
     g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
     g_setenv("LC_ALL", "C", TRUE);
+    g_setenv("GIO_USE_VFS", "local", TRUE);
+    g_setenv("GSETTINGS_BACKEND", "memory", TRUE);
     g_test_bug_base("https://bugs.webkit.org/");
 
     registerGResource();
