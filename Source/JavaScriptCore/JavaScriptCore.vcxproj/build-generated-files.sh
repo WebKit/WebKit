@@ -26,7 +26,7 @@ SDKROOT=`cygpath -m -s "$SDKROOT"`
 SDKROOT=`cygpath -u "$SDKROOT"`
 export SDKROOT
 
-export BUILT_PRODUCTS_DIR="$XDSTROOT/obj32/JavaScriptCore"
+export BUILT_PRODUCTS_DIR="$XDSTROOT/obj${3}/JavaScriptCore"
 
 mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/docs"
 cd "${BUILT_PRODUCTS_DIR}/DerivedSources"
