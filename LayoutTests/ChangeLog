@@ -1,3 +1,11 @@
+2013-12-12  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add test expectations for failing compositing tests.
+
+        * platform/efl-wk2/TestExpectations:
+
 2013-12-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r160446.
