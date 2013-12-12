@@ -255,12 +255,6 @@ using namespace WebCore;
     if (!m_handle || !m_handle->client())
         return nil;
 
-    // Workaround for <rdar://problem/6300990> Caching does not respect Vary HTTP header.
-    // FIXME: WebCore cache has issues with Vary, too (bug 58797, bug 71509).
-    if ([[cachedResponse response] isKindOfClass:[NSHTTPURLResponse class]]
-        && [[(NSHTTPURLResponse *)[cachedResponse response] allHeaderFields] objectForKey:@"Vary"])
-        return nil;
-
     return m_handle->client()->willCacheResponse(m_handle, cachedResponse);
 }
 

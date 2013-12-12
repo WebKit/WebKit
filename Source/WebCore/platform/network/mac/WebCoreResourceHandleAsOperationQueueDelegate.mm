@@ -369,15 +369,6 @@ using namespace WebCore;
             return;
         }
 
-        // Workaround for <rdar://problem/6300990> Caching does not respect Vary HTTP header.
-        // FIXME: WebCore cache has issues with Vary, too (bug 58797, bug 71509).
-        if ([[cachedResponse response] isKindOfClass:[NSHTTPURLResponse class]]
-            && [[(NSHTTPURLResponse *)[cachedResponse response] allHeaderFields] objectForKey:@"Vary"]) {
-            m_cachedResponseResult = nullptr;
-            dispatch_semaphore_signal(m_semaphore);
-            return;
-        }
-
         m_handle->client()->willCacheResponseAsync(m_handle, cachedResponse);
     });
 

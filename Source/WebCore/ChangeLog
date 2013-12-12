@@ -1,3 +1,20 @@
+2013-12-12  Andreas Kling  <akling@apple.com>
+
+        [Mac] Stop not caching HTTP resources with "Vary" header in response.
+        <https://webkit.org/b/125483>
+        <rdar://problem/11781097>
+
+        Remove the workaround preventing resources with the "Vary" header
+        from going into cache, as the CFNetwork cache has supported this
+        for quite a while now.
+
+        31.5 MB progression on Membuster3, because we can now mmap those
+        resources from disk once they are in the cache.
+
+        We keep the workaround on PLATFORM(WIN) for now.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-12  Sam Weinig  <sam@webkit.org>
 
         Replace uses of WTF::BitArray with std::bitset
