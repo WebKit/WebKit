@@ -1,3 +1,11 @@
+2013-12-12  Lucas Forschler  <lforschler@apple.com>
+
+        Remove unused Apple Bots.
+        
+        Unreviewed.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-12-12  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Unreviewed. Add myself as a committer.
