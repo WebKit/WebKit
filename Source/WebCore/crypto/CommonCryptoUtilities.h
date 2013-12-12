@@ -46,6 +46,7 @@
 
 #ifndef _CC_RSACRYPTOR_H_
 enum {
+    kCCDigestNone = 0,
     kCCDigestSHA1 = 8,
     kCCDigestSHA224 = 9,
     kCCDigestSHA256 = 10,
