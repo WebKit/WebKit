@@ -1,5 +1,21 @@
 2013-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WebProcess tests are failing with newer glib
+        https://bugs.webkit.org/show_bug.cgi?id=125621
+
+        Reviewed by Martin Robinson.
+
+        Newer versions of glib unset the DISPLAY env variable in
+        g_test_dbus_up(). The WebProcess needs the DISPLAY variable to
+        work, and it's important to keep its value when running the tests
+        under Xvfb.
+
+        * UIProcess/API/gtk/tests/WebProcessTestRunner.cpp:
+        (WebProcessTestRunner::WebProcessTestRunner): Restore the DISPLAY
+        env variable after calling g_test_dbus_up().
+
+2013-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Make sure unit tests don't use GVFS and dconf
         https://bugs.webkit.org/show_bug.cgi?id=125620
 

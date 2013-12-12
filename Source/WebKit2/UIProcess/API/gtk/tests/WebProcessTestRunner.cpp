@@ -26,7 +26,11 @@ WebProcessTestRunner::WebProcessTestRunner()
     : m_mainLoop(g_main_loop_new(0, TRUE))
     , m_bus(adoptGRef(g_test_dbus_new(G_TEST_DBUS_NONE)))
 {
+    // Save the DISPLAY env var to restore it after calling g_test_dbus_up() that unsets it.
+    // See https://bugs.webkit.org/show_bug.cgi?id=125621.
+    const char* display = g_getenv("DISPLAY");
     g_test_dbus_up(m_bus.get());
+    g_setenv("DISPLAY", display, FALSE);
     m_connection = adoptGRef(g_bus_get_sync(G_BUS_TYPE_SESSION, 0, 0));
 }
 
