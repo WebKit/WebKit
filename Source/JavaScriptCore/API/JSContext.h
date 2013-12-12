@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef JSContext_h
@@ -40,7 +40,7 @@
  JavaScript virtual machine. Every instance of JSValue is associated with a
  JSContext via a strong reference. The JSValue will keep the JSContext it
  references alive so long as the JSValue remains alive. When all of the JSValues
- that reference a particular JSContext have been deallocated the JSContext 
+ that reference a particular JSContext have been deallocated the JSContext
  will be deallocated unless it has been previously retained.
 */
 #ifndef JSC_OBJC_API_AVAILABLE_MAC_OS_X_1080
@@ -168,7 +168,7 @@ OBJC_VISIBLE
 @property
 @discussion Name of the JSContext. Exposed when remote debugging the context.
 */
-@property(copy) NSString *name;
+@property (copy) NSString *name;
 
 @end
 

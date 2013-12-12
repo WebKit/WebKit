@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import <JavaScriptCore/JavaScriptCore.h>
@@ -1194,6 +1194,20 @@ void testObjectiveCAPI()
         }
         JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
         checkResult(@"EvilAllocationObject was successfully dealloced without crashing", evilAllocationObjectWasDealloced);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        checkResult(@"default context.name is nil", context.name == nil);
+        NSString *name1 = @"Name1";
+        NSString *name2 = @"Name2";
+        context.name = name1;
+        NSString *fetchedName1 = context.name;
+        context.name = name2;
+        NSString *fetchedName2 = context.name;
+        checkResult(@"fetched context.name was expected", [fetchedName1 isEqualToString:name1]);
+        checkResult(@"fetched context.name was expected", [fetchedName2 isEqualToString:name2]);
+        checkResult(@"fetched context.name was expected", ![fetchedName1 isEqualToString:fetchedName2]);
     }
 
     currentThisInsideBlockGetterTest();
