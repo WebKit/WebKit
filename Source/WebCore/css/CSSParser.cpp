@@ -9762,8 +9762,8 @@ bool CSSParser::parseFilter(CSSParserValueList* valueList, RefPtr<CSSValue>& res
         if (value->unit == CSSPrimitiveValue::CSS_URI) {
 #if ENABLE(SVG)
             RefPtr<WebKitCSSFilterValue> referenceFilterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::ReferenceFilterOperation);
-            list->append(referenceFilterValue);
             referenceFilterValue->append(WebKitCSSSVGDocumentValue::create(value->string));
+            list->append(referenceFilterValue.release());
 #endif
         } else {
             const CSSParserString name = value->function->name;
@@ -9795,7 +9795,7 @@ bool CSSParser::parseFilter(CSSParserValueList* valueList, RefPtr<CSSValue>& res
             if (!filterValue)
                 return false;
             
-            list->append(filterValue);
+            list->append(filterValue.release());
         }
     }
 
