@@ -100,9 +100,6 @@ private:
     // Return whether this plug-in should be used (added to the list of plug-ins) or not.
     static bool shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo&);
 
-    // Get the MIME type for the given extension.
-    static String getMIMETypeForExtension(const String& extension);
-
     Vector<String> m_additionalPluginsDirectories;
     Vector<PluginModuleInfo> m_plugins;
     bool m_pluginListIsUpToDate;

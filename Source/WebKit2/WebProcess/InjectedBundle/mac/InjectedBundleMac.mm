@@ -55,7 +55,7 @@ bool InjectedBundle::load(API::Object* initializationUserData)
         m_sandboxExtension = 0;
     }
     
-    RetainPtr<CFStringRef> injectedBundlePathStr = adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(m_path.characters()), m_path.length()));
+    RetainPtr<CFStringRef> injectedBundlePathStr = m_path.createCFString();
     if (!injectedBundlePathStr) {
         WTFLogAlways("InjectedBundle::load failed - Could not create the path string.\n");
         return false;

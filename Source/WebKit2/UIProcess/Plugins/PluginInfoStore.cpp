@@ -176,11 +176,6 @@ PluginModuleLoadPolicy PluginInfoStore::defaultLoadPolicyForPlugin(const PluginM
 {
     return PluginModuleLoadNormally;
 }
-
-String PluginInfoStore::getMIMETypeForExtension(const String& extension)
-{
-    return MIMETypeRegistry::getMIMETypeForExtension(extension);
-}
     
 PluginModuleInfo PluginInfoStore::findPluginWithBundleIdentifier(const String&)
 {
@@ -209,7 +204,7 @@ PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const URL& url, P
             return plugin;
         
         // Finally, try to get the MIME type from the extension in a platform specific manner and use that.
-        String extensionMimeType = getMIMETypeForExtension(extension);
+        String extensionMimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
         if (!extensionMimeType.isNull()) {
             PluginModuleInfo plugin = findPluginForMIMEType(extensionMimeType, allowedPluginTypes);
             if (!plugin.path.isNull()) {

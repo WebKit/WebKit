@@ -33,14 +33,9 @@
 
 namespace WebKit {
 
-static RetainPtr<CFStringRef> cfStringFromWebCoreString(const String& string)
-{
-    return RetainPtr<CFStringRef> = adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(string.characters()), string.length()));
-}
-
 static inline RetainPtr<CFStringRef> makeKey(const String& identifier, const String& baseKey)
 {
-    return cfStringFromWebCoreString(makeString(identifier, ".WebKit2", baseKey));
+    return makeString(identifier, ".WebKit2", baseKey).createCFString();
 }
 
 static void setStringValueIfInUserDefaults(const String& identifier, const String& baseKey, WebPreferencesStore& store)
