@@ -2256,10 +2256,10 @@
 		A532438418568317002ED692 /* InspectorJSFrontendDispatchers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorJSFrontendDispatchers.h; sourceTree = "<group>"; };
 		A532438518568317002ED692 /* InspectorJSTypeBuilders.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorJSTypeBuilders.cpp; sourceTree = "<group>"; };
 		A532438618568317002ED692 /* InspectorJSTypeBuilders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorJSTypeBuilders.h; sourceTree = "<group>"; };
-		A532438D185696CA002ED692 /* protocol */ = {isa = PBXFileReference; lastKnownFileType = folder; name = protocol; path = inspector/protocol; sourceTree = "<group>"; };
-		A532438F185696E6002ED692 /* CodeGeneratorInspector.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CodeGeneratorInspector.py; path = inspector/scripts/CodeGeneratorInspector.py; sourceTree = "<group>"; };
-		A5324390185696E6002ED692 /* CodeGeneratorInspectorStrings.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = CodeGeneratorInspectorStrings.py; path = inspector/scripts/CodeGeneratorInspectorStrings.py; sourceTree = "<group>"; };
-		A5324391185696E6002ED692 /* generate-combined-inspector-json.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = "generate-combined-inspector-json.py"; path = "inspector/scripts/generate-combined-inspector-json.py"; sourceTree = "<group>"; };
+		A532438D185696CA002ED692 /* protocol */ = {isa = PBXFileReference; lastKnownFileType = folder; path = protocol; sourceTree = "<group>"; };
+		A532438F185696E6002ED692 /* CodeGeneratorInspector.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = CodeGeneratorInspector.py; sourceTree = "<group>"; };
+		A5324390185696E6002ED692 /* CodeGeneratorInspectorStrings.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = CodeGeneratorInspectorStrings.py; sourceTree = "<group>"; };
+		A5324391185696E6002ED692 /* generate-combined-inspector-json.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-combined-inspector-json.py"; sourceTree = "<group>"; };
 		A53243951856A475002ED692 /* InspectorJS.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = InspectorJS.json; sourceTree = "<group>"; };
 		A53243961856A475002ED692 /* InspectorJSBackendCommands.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InspectorJSBackendCommands.js; sourceTree = "<group>"; };
 		A54CF2F2184EAB2400237F19 /* ScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptValue.cpp; sourceTree = "<group>"; };
@@ -2268,26 +2268,26 @@
 		A54CF2F8184EAEDA00237F19 /* ScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptObject.h; sourceTree = "<group>"; };
 		A55D93A3185012A800400DED /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
 		A55D93A4185012A800400DED /* ScriptFunctionCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFunctionCall.h; sourceTree = "<group>"; };
-		A55D93AB18514F7900400DED /* InspectorTypeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InspectorTypeBuilder.h; path = inspector/InspectorTypeBuilder.h; sourceTree = "<group>"; };
-		A593CF7A1840360300BFCE27 /* InspectorBackendDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InspectorBackendDispatcher.cpp; path = inspector/InspectorBackendDispatcher.cpp; sourceTree = "<group>"; };
-		A593CF7B1840360300BFCE27 /* InspectorBackendDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InspectorBackendDispatcher.h; path = inspector/InspectorBackendDispatcher.h; sourceTree = "<group>"; };
-		A593CF7E1840362C00BFCE27 /* InspectorAgentBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InspectorAgentBase.h; path = inspector/InspectorAgentBase.h; sourceTree = "<group>"; };
-		A593CF801840377100BFCE27 /* InspectorValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InspectorValues.cpp; path = inspector/InspectorValues.cpp; sourceTree = "<group>"; };
-		A593CF811840377100BFCE27 /* InspectorValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InspectorValues.h; path = inspector/InspectorValues.h; sourceTree = "<group>"; };
-		A593CF84184038CA00BFCE27 /* InspectorAgentRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InspectorAgentRegistry.cpp; path = inspector/InspectorAgentRegistry.cpp; sourceTree = "<group>"; };
-		A593CF85184038CA00BFCE27 /* InspectorAgentRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InspectorAgentRegistry.h; path = inspector/InspectorAgentRegistry.h; sourceTree = "<group>"; };
-		A594558E18245EDE00CC3843 /* RemoteInspectorDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteInspectorDebuggable.cpp; path = inspector/remote/RemoteInspectorDebuggable.cpp; sourceTree = "<group>"; };
+		A55D93AB18514F7900400DED /* InspectorTypeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTypeBuilder.h; sourceTree = "<group>"; };
+		A593CF7A1840360300BFCE27 /* InspectorBackendDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendDispatcher.cpp; sourceTree = "<group>"; };
+		A593CF7B1840360300BFCE27 /* InspectorBackendDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackendDispatcher.h; sourceTree = "<group>"; };
+		A593CF7E1840362C00BFCE27 /* InspectorAgentBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgentBase.h; sourceTree = "<group>"; };
+		A593CF801840377100BFCE27 /* InspectorValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorValues.cpp; sourceTree = "<group>"; };
+		A593CF811840377100BFCE27 /* InspectorValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorValues.h; sourceTree = "<group>"; };
+		A593CF84184038CA00BFCE27 /* InspectorAgentRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAgentRegistry.cpp; sourceTree = "<group>"; };
+		A593CF85184038CA00BFCE27 /* InspectorAgentRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgentRegistry.h; sourceTree = "<group>"; };
+		A594558E18245EDE00CC3843 /* RemoteInspectorDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteInspectorDebuggable.cpp; sourceTree = "<group>"; };
 		A59455901824744700CC3843 /* JSGlobalObjectDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectDebuggable.cpp; sourceTree = "<group>"; };
 		A59455911824744700CC3843 /* JSGlobalObjectDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectDebuggable.h; sourceTree = "<group>"; };
-		A5945594182479EB00CC3843 /* InspectorFrontendChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InspectorFrontendChannel.h; path = inspector/InspectorFrontendChannel.h; sourceTree = "<group>"; };
-		A5BA15E1182340B300A82E69 /* RemoteInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteInspector.h; path = inspector/remote/RemoteInspector.h; sourceTree = "<group>"; };
-		A5BA15E2182340B300A82E69 /* RemoteInspector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RemoteInspector.mm; path = inspector/remote/RemoteInspector.mm; sourceTree = "<group>"; };
-		A5BA15E3182340B300A82E69 /* RemoteInspectorConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteInspectorConstants.h; path = inspector/remote/RemoteInspectorConstants.h; sourceTree = "<group>"; };
-		A5BA15E4182340B300A82E69 /* RemoteInspectorDebuggableConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteInspectorDebuggableConnection.h; path = inspector/remote/RemoteInspectorDebuggableConnection.h; sourceTree = "<group>"; };
-		A5BA15E5182340B300A82E69 /* RemoteInspectorDebuggableConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RemoteInspectorDebuggableConnection.mm; path = inspector/remote/RemoteInspectorDebuggableConnection.mm; sourceTree = "<group>"; };
-		A5BA15E6182340B300A82E69 /* RemoteInspectorXPCConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteInspectorXPCConnection.h; path = inspector/remote/RemoteInspectorXPCConnection.h; sourceTree = "<group>"; };
-		A5BA15E7182340B300A82E69 /* RemoteInspectorXPCConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RemoteInspectorXPCConnection.mm; path = inspector/remote/RemoteInspectorXPCConnection.mm; sourceTree = "<group>"; };
-		A5BA15EF182345AF00A82E69 /* RemoteInspectorDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteInspectorDebuggable.h; path = inspector/remote/RemoteInspectorDebuggable.h; sourceTree = "<group>"; };
+		A5945594182479EB00CC3843 /* InspectorFrontendChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontendChannel.h; sourceTree = "<group>"; };
+		A5BA15E1182340B300A82E69 /* RemoteInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspector.h; sourceTree = "<group>"; };
+		A5BA15E2182340B300A82E69 /* RemoteInspector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteInspector.mm; sourceTree = "<group>"; };
+		A5BA15E3182340B300A82E69 /* RemoteInspectorConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspectorConstants.h; sourceTree = "<group>"; };
+		A5BA15E4182340B300A82E69 /* RemoteInspectorDebuggableConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspectorDebuggableConnection.h; sourceTree = "<group>"; };
+		A5BA15E5182340B300A82E69 /* RemoteInspectorDebuggableConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteInspectorDebuggableConnection.mm; sourceTree = "<group>"; };
+		A5BA15E6182340B300A82E69 /* RemoteInspectorXPCConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspectorXPCConnection.h; sourceTree = "<group>"; };
+		A5BA15E7182340B300A82E69 /* RemoteInspectorXPCConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteInspectorXPCConnection.mm; sourceTree = "<group>"; };
+		A5BA15EF182345AF00A82E69 /* RemoteInspectorDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspectorDebuggable.h; sourceTree = "<group>"; };
 		A700873717CBE85300C3E643 /* MapConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapConstructor.cpp; sourceTree = "<group>"; };
 		A700873817CBE85300C3E643 /* MapConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapConstructor.h; sourceTree = "<group>"; };
 		A700873B17CBE8D300C3E643 /* MapPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapPrototype.cpp; sourceTree = "<group>"; };
@@ -4266,7 +4266,7 @@
 				A5324390185696E6002ED692 /* CodeGeneratorInspectorStrings.py */,
 				A5324391185696E6002ED692 /* generate-combined-inspector-json.py */,
 			);
-			name = scripts;
+			path = scripts;
 			sourceTree = "<group>";
 		};
 		A54CF2EA184EA73900237F19 /* bindings */ = {
@@ -4298,7 +4298,7 @@
 				A593CF801840377100BFCE27 /* InspectorValues.cpp */,
 				A593CF811840377100BFCE27 /* InspectorValues.h */,
 			);
-			name = inspector;
+			path = inspector;
 			sourceTree = "<group>";
 		};
 		A5BA15E01823409D00A82E69 /* remote */ = {
@@ -4307,14 +4307,14 @@
 				A5BA15E1182340B300A82E69 /* RemoteInspector.h */,
 				A5BA15E2182340B300A82E69 /* RemoteInspector.mm */,
 				A5BA15E3182340B300A82E69 /* RemoteInspectorConstants.h */,
-				A5BA15EF182345AF00A82E69 /* RemoteInspectorDebuggable.h */,
 				A594558E18245EDE00CC3843 /* RemoteInspectorDebuggable.cpp */,
+				A5BA15EF182345AF00A82E69 /* RemoteInspectorDebuggable.h */,
 				A5BA15E4182340B300A82E69 /* RemoteInspectorDebuggableConnection.h */,
 				A5BA15E5182340B300A82E69 /* RemoteInspectorDebuggableConnection.mm */,
 				A5BA15E6182340B300A82E69 /* RemoteInspectorXPCConnection.h */,
 				A5BA15E7182340B300A82E69 /* RemoteInspectorXPCConnection.mm */,
 			);
-			name = remote;
+			path = remote;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

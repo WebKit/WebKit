@@ -1,5 +1,14 @@
 2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Make inspector folder groups smarter in JavaScriptCore.xcodeproj
+        https://bugs.webkit.org/show_bug.cgi?id=125663
+
+        Reviewed by Darin Adler.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Add Inspector Code Generation to JavaScriptCore for Runtime Domain
         https://bugs.webkit.org/show_bug.cgi?id=125595
 
