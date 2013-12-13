@@ -201,6 +201,9 @@
 #if !COMPILER_SUPPORTS(CXX_AUTO_TYPE)
 #error "Please use a compiler that supports C++11 auto."
 #endif
+#if !COMPILER_SUPPORTS(CXX_VARIADIC_TEMPLATES)
+#error "Please use a compiler that supports C++11 variadic templates."
+#endif
 #endif
 
 /* PURE_FUNCTION */

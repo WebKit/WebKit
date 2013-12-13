@@ -46,24 +46,11 @@ template<typename T> class NeverDestroyed {
     WTF_MAKE_NONCOPYABLE(NeverDestroyed);
 
 public:
-#if COMPILER_SUPPORTS(CXX_VARIADIC_TEMPLATES)
     template<typename... Args>
     NeverDestroyed(Args&&... args)
     {
         new (asPtr()) T(std::forward<Args>(args)...);
     }
-#else
-    NeverDestroyed()
-    {
-        new (NotNull, asPtr()) T;
-    }
-
-    template<typename A1>
-    NeverDestroyed(A1&& a1)
-    {
-        new (NotNull, asPtr()) T(std::forward<A1>(a1));
-    }
-#endif
 
     operator T&() { return *asPtr(); }
     T& get() { return *asPtr(); }
