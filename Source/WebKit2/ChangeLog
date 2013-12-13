@@ -1,3 +1,9 @@
+2013-12-12  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed CMake build fix after r160509
+
+        * CMakeLists.txt: Apply MessageSender's changes
+
 2013-12-12  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Let the load delegate know when the Web process crashes
