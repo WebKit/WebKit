@@ -23,7 +23,7 @@
                 testPassed('createOffer request failed.');
 
                 errorReason = reason;
-                shouldBe('errorReason', '"TEST_ERROR"');
+                shouldBe('errorReason.name', '"IncompatibleConstraintsError"');
 
                 shouldNotThrow('pc.createOffer(requestSucceeded3, requestFailed1);');
             }

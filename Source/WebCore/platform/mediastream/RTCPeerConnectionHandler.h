@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,6 +74,11 @@ class RTCPeerConnectionHandler {
 public:
     static CreatePeerConnectionHandler create;
     virtual ~RTCPeerConnectionHandler() { }
+
+    static const AtomicString& incompatibleConstraintsErrorName();
+    static const AtomicString& invalidSessionDescriptionErrorName();
+    static const AtomicString& incompatibleSessionDescriptionErrorName();
+    static const AtomicString& internalErrorName();
 
     virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) = 0;
 

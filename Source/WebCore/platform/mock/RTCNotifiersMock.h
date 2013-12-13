@@ -33,6 +33,7 @@
 #include "TimerEventBasedMock.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -42,24 +43,26 @@ class RTCVoidRequest;
 
 class SessionRequestNotifier : public MockNotifier {
 public:
-    SessionRequestNotifier(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>);
+    SessionRequestNotifier(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<RTCSessionDescriptionDescriptor>, const String& = emptyString());
 
     void fire() OVERRIDE;
 
 private:
     RefPtr<RTCSessionDescriptionRequest> m_request;
     RefPtr<RTCSessionDescriptionDescriptor> m_descriptor;
+    String m_errorName;
 };
 
 class VoidRequestNotifier : public MockNotifier {
 public:
-    VoidRequestNotifier(PassRefPtr<RTCVoidRequest>, bool);
+    VoidRequestNotifier(PassRefPtr<RTCVoidRequest>, bool, const String& = emptyString());
 
     void fire() OVERRIDE;
 
 private:
     RefPtr<RTCVoidRequest> m_request;
     bool m_success;
+    String m_errorName;
 };
 
 class IceConnectionNotifier : public MockNotifier {

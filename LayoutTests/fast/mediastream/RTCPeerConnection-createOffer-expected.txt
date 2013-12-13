@@ -8,7 +8,7 @@ PASS createOffer request succeeded.
 PASS sessionDescription.type is "offer"
 PASS pc.createOffer(requestSucceeded2, requestFailed2, {mandatory:{"succeed":false}}); did not throw exception.
 PASS createOffer request failed.
-PASS errorReason is "TEST_ERROR"
+PASS errorReason.name is "IncompatibleConstraintsError"
 PASS pc.createOffer(requestSucceeded3, requestFailed1); did not throw exception.
 PASS createOffer request succeeded.
 PASS sessionDescription.type is "offer"

@@ -67,7 +67,7 @@ void RTCPeerConnectionHandlerMock::createOffer(PassRefPtr<RTCSessionDescriptionR
     String succeedValue;
     RefPtr<SessionRequestNotifier> notifier;
     if (constraints->getMandatoryConstraintValue("succeed", succeedValue) && succeedValue == "false")
-        notifier = adoptRef(new SessionRequestNotifier(request, 0));
+        notifier = adoptRef(new SessionRequestNotifier(request, 0, RTCPeerConnectionHandler::incompatibleConstraintsErrorName()));
     else
         notifier = adoptRef(new SessionRequestNotifier(request, RTCSessionDescriptionDescriptor::create("offer", "local")));
 
@@ -80,7 +80,7 @@ void RTCPeerConnectionHandlerMock::createAnswer(PassRefPtr<RTCSessionDescription
     // We can only create an answer if we have already had an offer and the remote session description is stored.
     String succeedValue;
     if (constraints->getMandatoryConstraintValue("succeed", succeedValue) && succeedValue == "false")
-        notifier = adoptRef(new SessionRequestNotifier(request, 0));
+        notifier = adoptRef(new SessionRequestNotifier(request, 0, RTCPeerConnectionHandler::incompatibleConstraintsErrorName()));
     else
         notifier = adoptRef(new SessionRequestNotifier(request, RTCSessionDescriptionDescriptor::create("answer", "local")));
 

@@ -1,19 +1,14 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer
- *    in the documentation and/or other materials provided with the
- *    distribution.
- * 3. Neither the name of Google Inc. nor the names of its contributors
- *    may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,9 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=MEDIA_STREAM,
-] callback interface RTCErrorCallback {
-    boolean handleEvent(DOMString errorInformation);
+#ifndef RTCPeerConnectionErrorCallback_h
+#define RTCPeerConnectionErrorCallback_h
+
+#if ENABLE(MEDIA_STREAM)
+
+#include "DOMError.h"
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+class RTCPeerConnectionErrorCallback : public RefCounted<RTCPeerConnectionErrorCallback> {
+public:
+    virtual ~RTCPeerConnectionErrorCallback() { }
+    virtual bool handleEvent(DOMError*) = 0;
 };
 
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)
+
+#endif // RTCPeerConnectionErrorCallback_h

@@ -39,21 +39,21 @@
     EventTarget,
     InterfaceName=webkitRTCPeerConnection,
 ] interface RTCPeerConnection {
-    [RaisesException] void createOffer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback, optional Dictionary mediaConstraints);
+    [RaisesException] void createOffer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback, optional Dictionary mediaConstraints);
 
-    [RaisesException] void createAnswer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback, optional Dictionary mediaConstraints);
+    [RaisesException] void createAnswer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback, optional Dictionary mediaConstraints);
 
-    [RaisesException] void setLocalDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback);
+    [RaisesException] void setLocalDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback);
     [GetterRaisesException] readonly attribute RTCSessionDescription localDescription;
 
-    [RaisesException] void setRemoteDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback);
+    [RaisesException] void setRemoteDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCPeerConnectionErrorCallback failureCallback);
     [GetterRaisesException] readonly attribute RTCSessionDescription remoteDescription;
 
     readonly attribute DOMString signalingState;
 
     [RaisesException] void updateIce(optional Dictionary configuration, optional Dictionary mediaConstraints);
 
-    [RaisesException] void addIceCandidate(RTCIceCandidate candidate, VoidCallback successCallback, RTCErrorCallback failureCallback);
+    [RaisesException] void addIceCandidate(RTCIceCandidate candidate, VoidCallback successCallback, RTCPeerConnectionErrorCallback failureCallback);
 
     readonly attribute DOMString iceGatheringState;
     readonly attribute DOMString iceConnectionState;

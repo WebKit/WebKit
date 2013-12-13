@@ -127,10 +127,10 @@ BINDING_IDLS = \
     $(WebCore)/Modules/mediastream/RTCDTMFToneChangeEvent.idl \
     $(WebCore)/Modules/mediastream/RTCDataChannel.idl \
     $(WebCore)/Modules/mediastream/RTCDataChannelEvent.idl \
-    $(WebCore)/Modules/mediastream/RTCErrorCallback.idl \
     $(WebCore)/Modules/mediastream/RTCIceCandidate.idl \
     $(WebCore)/Modules/mediastream/RTCIceCandidateEvent.idl \
     $(WebCore)/Modules/mediastream/RTCPeerConnection.idl \
+    $(WebCore)/Modules/mediastream/RTCPeerConnectionErrorCallback.idl \
     $(WebCore)/Modules/mediastream/RTCSessionDescription.idl \
     $(WebCore)/Modules/mediastream/RTCSessionDescriptionCallback.idl \
     $(WebCore)/Modules/mediastream/RTCStatsCallback.idl \

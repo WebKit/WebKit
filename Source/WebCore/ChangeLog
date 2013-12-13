@@ -1,3 +1,56 @@
+2013-12-13  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Adding RTCPeerConnectionErrorCallback
+        https://bugs.webkit.org/show_bug.cgi?id=125574
+
+        Reviewed by Eric Carlson.
+
+        According to the spec there should be a RTCPeerConnectionErrorCallback function type for createOffer/Answer,
+        setLocal/RemoteDescription and updateIce function calls. This callback must handle a DOMError object.
+
+        Existing tests were updated.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::createOffer):
+        (WebCore::RTCPeerConnection::createAnswer):
+        (WebCore::RTCPeerConnection::setLocalDescription):
+        (WebCore::RTCPeerConnection::setRemoteDescription):
+        (WebCore::RTCPeerConnection::addIceCandidate):
+        * Modules/mediastream/RTCErrorCallback.h: Removed.
+        * Modules/mediastream/RTCErrorCallback.idl: Removed.
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCPeerConnectionErrorCallback.h: Added.
+        * Modules/mediastream/RTCPeerConnectionErrorCallback.idl: Added.
+        * Modules/mediastream/RTCSessionDescriptionRequestImpl.cpp:
+        (WebCore::RTCSessionDescriptionRequestImpl::create):
+        (WebCore::RTCSessionDescriptionRequestImpl::RTCSessionDescriptionRequestImpl):
+        (WebCore::RTCSessionDescriptionRequestImpl::requestFailed):
+        * Modules/mediastream/RTCSessionDescriptionRequestImpl.h:
+        * Modules/mediastream/RTCVoidRequestImpl.cpp:
+        (WebCore::RTCVoidRequestImpl::create):
+        (WebCore::RTCVoidRequestImpl::RTCVoidRequestImpl):
+        (WebCore::RTCVoidRequestImpl::requestFailed):
+        * Modules/mediastream/RTCVoidRequestImpl.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/RTCPeerConnectionHandler.cpp:
+        (WebCore::RTCPeerConnectionHandler::incompatibleConstraintsErrorName):
+        (WebCore::RTCPeerConnectionHandler::invalidSessionDescriptionErrorName):
+        (WebCore::RTCPeerConnectionHandler::incompatibleSessionDescriptionErrorName):
+        (WebCore::RTCPeerConnectionHandler::internalErrorName):
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        * platform/mock/RTCNotifiersMock.cpp:
+        (WebCore::SessionRequestNotifier::SessionRequestNotifier):
+        (WebCore::SessionRequestNotifier::fire):
+        (WebCore::VoidRequestNotifier::VoidRequestNotifier):
+        (WebCore::VoidRequestNotifier::fire):
+        * platform/mock/RTCNotifiersMock.h:
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp:
+        (WebCore::RTCPeerConnectionHandlerMock::createOffer):
+        (WebCore::RTCPeerConnectionHandlerMock::createAnswer):
+
 2013-12-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Switch WebKit solution to Visual Studio 2013

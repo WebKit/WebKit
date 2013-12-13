@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,13 +39,13 @@
 
 namespace WebCore {
 
-class RTCErrorCallback;
+class RTCPeerConnectionErrorCallback;
 class RTCPeerConnection;
 class RTCSessionDescriptionCallback;
 
 class RTCSessionDescriptionRequestImpl : public RTCSessionDescriptionRequest, public ActiveDOMObject {
 public:
-    static PassRefPtr<RTCSessionDescriptionRequestImpl> create(ScriptExecutionContext*, PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCErrorCallback>);
+    static PassRefPtr<RTCSessionDescriptionRequestImpl> create(ScriptExecutionContext*, PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>);
     virtual ~RTCSessionDescriptionRequestImpl();
 
     virtual void requestSucceeded(PassRefPtr<RTCSessionDescriptionDescriptor>) OVERRIDE;
@@ -54,12 +55,12 @@ public:
     virtual void stop() OVERRIDE;
 
 private:
-    RTCSessionDescriptionRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCErrorCallback>);
+    RTCSessionDescriptionRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>);
 
     void clear();
 
     RefPtr<RTCSessionDescriptionCallback> m_successCallback;
-    RefPtr<RTCErrorCallback> m_errorCallback;
+    RefPtr<RTCPeerConnectionErrorCallback> m_errorCallback;
 };
 
 } // namespace WebCore

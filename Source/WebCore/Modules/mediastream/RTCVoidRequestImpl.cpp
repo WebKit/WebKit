@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,20 +35,21 @@
 
 #include "RTCVoidRequestImpl.h"
 
-#include "RTCErrorCallback.h"
+#include "DOMError.h"
 #include "RTCPeerConnection.h"
+#include "RTCPeerConnectionErrorCallback.h"
 #include "VoidCallback.h"
 
 namespace WebCore {
 
-PassRefPtr<RTCVoidRequestImpl> RTCVoidRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<VoidCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback)
+PassRefPtr<RTCVoidRequestImpl> RTCVoidRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<VoidCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback)
 {
     RefPtr<RTCVoidRequestImpl> request = adoptRef(new RTCVoidRequestImpl(context, successCallback, errorCallback));
     request->suspendIfNeeded();
     return request.release();
 }
 
-RTCVoidRequestImpl::RTCVoidRequestImpl(ScriptExecutionContext* context, PassRefPtr<VoidCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback)
+RTCVoidRequestImpl::RTCVoidRequestImpl(ScriptExecutionContext* context, PassRefPtr<VoidCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback)
     : ActiveDOMObject(context)
     , m_successCallback(successCallback)
     , m_errorCallback(errorCallback)
@@ -69,7 +71,7 @@ void RTCVoidRequestImpl::requestSucceeded()
 void RTCVoidRequestImpl::requestFailed(const String& error)
 {
     if (m_errorCallback.get())
-        m_errorCallback->handleEvent(error);
+        m_errorCallback->handleEvent(DOMError::create(error).get());
 
     clear();
 }

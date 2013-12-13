@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,6 +35,8 @@
 
 #include "RTCPeerConnectionHandler.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 class RTCPeerConnectionHandlerClient;
 
@@ -43,6 +46,30 @@ static std::unique_ptr<RTCPeerConnectionHandler> createHandler(RTCPeerConnection
 }
 
 CreatePeerConnectionHandler RTCPeerConnectionHandler::create = createHandler;
+
+const AtomicString& RTCPeerConnectionHandler::incompatibleConstraintsErrorName()
+{
+    static NeverDestroyed<AtomicString> incompatibleConstraints("IncompatibleConstraintsError", AtomicString::ConstructFromLiteral);
+    return incompatibleConstraints;
+}
+
+const AtomicString& RTCPeerConnectionHandler::invalidSessionDescriptionErrorName()
+{
+    static NeverDestroyed<AtomicString> invalidSessionDescription("InvalidSessionDescriptionError", AtomicString::ConstructFromLiteral);
+    return invalidSessionDescription;
+}
+
+const AtomicString& RTCPeerConnectionHandler::incompatibleSessionDescriptionErrorName()
+{
+    static NeverDestroyed<AtomicString> incompatibleSessionDescription("IncompatibleSessionDescriptionError", AtomicString::ConstructFromLiteral);
+    return incompatibleSessionDescription;
+}
+
+const AtomicString& RTCPeerConnectionHandler::internalErrorName()
+{
+    static NeverDestroyed<AtomicString> internal("InternalError", AtomicString::ConstructFromLiteral);
+    return internal;
+}
 
 } // namespace WebCore
 

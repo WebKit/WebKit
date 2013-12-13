@@ -40,6 +40,9 @@
             {
                 testPassed('createAnswer request failed.');
 
+                errorReason = reason;
+                shouldBe('errorReason.name', '"IncompatibleConstraintsError"');
+
                 shouldNotThrow('pc.createAnswer(requestSucceeded3, requestFailed3);');
             }
 

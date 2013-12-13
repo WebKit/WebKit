@@ -611,8 +611,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRTCDataChannel.h \
 	DerivedSources/WebCore/JSRTCDataChannelEvent.cpp \
 	DerivedSources/WebCore/JSRTCDataChannelEvent.h \
-	DerivedSources/WebCore/JSRTCErrorCallback.cpp \
-	DerivedSources/WebCore/JSRTCErrorCallback.h \
+	DerivedSources/WebCore/JSRTCPeerConnectionErrorCallback.cpp \
+	DerivedSources/WebCore/JSRTCPeerConnectionErrorCallback.h \
 	DerivedSources/WebCore/JSRTCIceCandidate.cpp \
 	DerivedSources/WebCore/JSRTCIceCandidate.h \
 	DerivedSources/WebCore/JSRTCIceCandidateEvent.cpp \
@@ -1227,7 +1227,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/RTCDTMFToneChangeEvent.idl \
 	$(WebCore)/Modules/mediastream/RTCDataChannel.idl \
 	$(WebCore)/Modules/mediastream/RTCDataChannelEvent.idl \
-	$(WebCore)/Modules/mediastream/RTCErrorCallback.idl \
+	$(WebCore)/Modules/mediastream/RTCPeerConnectionErrorCallback.idl \
 	$(WebCore)/Modules/mediastream/RTCIceCandidate.idl \
 	$(WebCore)/Modules/mediastream/RTCIceCandidateEvent.idl \
 	$(WebCore)/Modules/mediastream/RTCPeerConnection.idl \
@@ -1937,7 +1937,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/RTCDataChannel.h \
 	Source/WebCore/Modules/mediastream/RTCDataChannelEvent.cpp \
 	Source/WebCore/Modules/mediastream/RTCDataChannelEvent.h \
-	Source/WebCore/Modules/mediastream/RTCErrorCallback.h \
+	Source/WebCore/Modules/mediastream/RTCPeerConnectionErrorCallback.h \
 	Source/WebCore/Modules/mediastream/RTCIceCandidate.cpp \
 	Source/WebCore/Modules/mediastream/RTCIceCandidate.h \
 	Source/WebCore/Modules/mediastream/RTCIceCandidateEvent.cpp \

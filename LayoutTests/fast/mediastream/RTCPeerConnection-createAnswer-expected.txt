@@ -9,6 +9,7 @@ PASS pc.setRemoteDescription(sessionDescription, setDescriptionSucceeded, setDes
 PASS setRemoteDescription succeeded.
 PASS pc.createAnswer(requestSucceeded2, requestFailed2, {mandatory:{"succeed":false}}); did not throw exception.
 PASS createAnswer request failed.
+PASS errorReason.name is "IncompatibleConstraintsError"
 PASS pc.createAnswer(requestSucceeded3, requestFailed3); did not throw exception.
 PASS createAnswer request succeeded.
 PASS sessionDescription.type is "answer"
