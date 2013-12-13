@@ -1,3 +1,48 @@
+2013-12-12  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Need ObjC APIs for some InjectedBundle classes.
+        https://bugs.webkit.org/show_bug.cgi?id=125600
+
+        Add ObjC API classes for WebFrame, InjectedBundleScriptWorld, InjectedBundleHitTestResult and InjectedBundleNodeHandle.
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/Cocoa/APIObject.mm: creates API wrapper for WebFrame, InjectedBundleScriptWorld, InjectedBundleHitTestResult
+             and InjectedBundleNodeHandle.
+        (API::Object::newObject):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa: Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h: Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm: Added.
+        (-[WKWebProcessPlugInFrame dealloc]):
+        (-[WKWebProcessPlugInFrame jsContextForWorld:]): returns the JSContextRef for a ScriptWorld in frame.
+        (-[WKWebProcessPlugInFrame hitTest:]): returns hitTestResult (with API type) from a hitTest.
+        (-[WKWebProcessPlugInFrame jsWrapperForNodeHandle:inWorld:]):
+        (-[WKWebProcessPlugInFrame API::]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrameInternal.h: Added.
+        (WebKit::wrapper):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.h: Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.mm: Added.
+        (-[WKWebProcessPlugInHitTestResult dealloc]):
+        (-[WKWebProcessPlugInHitTestResult nodeHandle]):
+        (-[WKWebProcessPlugInHitTestResult API::]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResultInternal.h: Added.
+        (WebKit::wrapper):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h: Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm: Added.
+        (-[WKWebProcessPlugInNodeHandle dealloc]):
+        (-[WKWebProcessPlugInNodeHandle API::]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandleInternal.h: Added.
+        (WebKit::wrapper):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.h: Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm: Added.
+        (+[WKWebProcessPlugInScriptWorld world]): returns a new isolated world.
+        (+[WKWebProcessPlugInScriptWorld normalWorld]): returns the mainThread normal world. 
+        (-[WKWebProcessPlugInScriptWorld dealloc]):
+        (-[WKWebProcessPlugInScriptWorld API::]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorldInternal.h: Added.
+        (WebKit::wrapper):
+
 2013-12-12  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix unsafe memory load/store from the argument encoder/decoder affecting ARM
