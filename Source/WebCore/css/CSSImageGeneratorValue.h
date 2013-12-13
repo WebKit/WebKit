@@ -27,17 +27,16 @@
 #define CSSImageGeneratorValue_h
 
 #include "CSSValue.h"
-#include "CachedImage.h"
-#include "GeneratedImage.h"
 #include "IntSizeHash.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class CachedImage;
 class CachedResourceLoader;
 class GeneratedImage;
+class Image;
 class RenderElement;
 class StyleResolver;
 
@@ -89,8 +88,10 @@ private:
     void evictCachedGeneratedImage(IntSize);
 
     HashCountedSet<RenderElement*> m_clients;
-    HashMap<IntSize, OwnPtr<CachedGeneratedImage>> m_images;
+    HashMap<IntSize, std::unique_ptr<CachedGeneratedImage>> m_images;
 };
+
+CSS_VALUE_TYPE_CASTS(CSSImageGeneratorValue, isImageGeneratorValue())
 
 } // namespace WebCore
 

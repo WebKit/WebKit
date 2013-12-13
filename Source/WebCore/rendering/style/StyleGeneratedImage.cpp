@@ -30,8 +30,8 @@
 
 namespace WebCore {
     
-StyleGeneratedImage::StyleGeneratedImage(PassRefPtr<CSSImageGeneratorValue> value)
-    : m_imageGeneratorValue(value)  
+StyleGeneratedImage::StyleGeneratedImage(PassRef<CSSImageGeneratorValue> value)
+    : m_imageGeneratorValue(std::move(value))
     , m_fixedSize(m_imageGeneratorValue->isFixedSize())
 {
     m_isGeneratedImage = true;
@@ -39,13 +39,13 @@ StyleGeneratedImage::StyleGeneratedImage(PassRefPtr<CSSImageGeneratorValue> valu
 
 PassRefPtr<CSSValue> StyleGeneratedImage::cssValue() const
 {
-    return m_imageGeneratorValue;
+    return &const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get());
 }
 
 LayoutSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float multiplier) const
 {
     if (m_fixedSize) {
-        IntSize fixedSize = m_imageGeneratorValue->fixedSize(renderer);
+        IntSize fixedSize = const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get()).fixedSize(renderer);
         if (multiplier == 1.0f)
             return fixedSize;
 
@@ -86,7 +86,7 @@ void StyleGeneratedImage::removeClient(RenderElement* renderer)
 
 PassRefPtr<Image> StyleGeneratedImage::image(RenderElement* renderer, const IntSize& size) const
 {
-    return m_imageGeneratorValue->image(renderer, size);
+    return const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get()).image(renderer, size);
 }
 
 bool StyleGeneratedImage::knownToBeOpaque(const RenderElement* renderer) const

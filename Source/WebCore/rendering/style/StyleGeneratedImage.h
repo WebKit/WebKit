@@ -33,15 +33,15 @@ class CSSImageGeneratorValue;
 
 class StyleGeneratedImage FINAL : public StyleImage {
 public:
-    static PassRefPtr<StyleGeneratedImage> create(CSSImageGeneratorValue* value)
+    static PassRefPtr<StyleGeneratedImage> create(PassRef<CSSImageGeneratorValue> value)
     {
-        return adoptRef(new StyleGeneratedImage(value));
+        return adoptRef(new StyleGeneratedImage(std::move(value)));
     }
 
-    CSSImageGeneratorValue* imageValue() const { return m_imageGeneratorValue.get(); }
+    CSSImageGeneratorValue& imageValue() { return m_imageGeneratorValue.get(); }
 
 private:
-    virtual WrappedImagePtr data() const OVERRIDE { return m_imageGeneratorValue.get(); }
+    virtual WrappedImagePtr data() const OVERRIDE { return &m_imageGeneratorValue.get(); }
 
     virtual PassRefPtr<CSSValue> cssValue() const OVERRIDE;
 
@@ -56,9 +56,9 @@ private:
     virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const OVERRIDE;
     virtual bool knownToBeOpaque(const RenderElement*) const OVERRIDE;
 
-    StyleGeneratedImage(PassRefPtr<CSSImageGeneratorValue>);
+    StyleGeneratedImage(PassRef<CSSImageGeneratorValue>);
     
-    RefPtr<CSSImageGeneratorValue> m_imageGeneratorValue;
+    Ref<CSSImageGeneratorValue> m_imageGeneratorValue;
     IntSize m_containerSize;
     bool m_fixedSize;
 };

@@ -39,7 +39,7 @@ class CSSValue;
 class RenderElement;
 class RenderObject;
 
-typedef void* WrappedImagePtr;
+typedef const void* WrappedImagePtr;
 
 class StyleImage : public RefCounted<StyleImage> {
 public:

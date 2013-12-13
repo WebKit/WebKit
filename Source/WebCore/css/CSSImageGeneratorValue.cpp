@@ -32,6 +32,7 @@
 #include "CSSFilterImageValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageValue.h"
+#include "GeneratedImage.h"
 #include "Image.h"
 #include "RenderElement.h"
 #include "StyleCachedImage.h"
@@ -80,7 +81,7 @@ GeneratedImage* CSSImageGeneratorValue::cachedImageForSize(IntSize size)
 void CSSImageGeneratorValue::saveCachedImageForSize(IntSize size, PassRefPtr<GeneratedImage> image)
 {
     ASSERT(!m_images.contains(size));
-    m_images.add(size, adoptPtr(new CachedGeneratedImage(*this, size, image)));
+    m_images.add(size, std::make_unique<CachedGeneratedImage>(*this, size, image));
 }
 
 void CSSImageGeneratorValue::evictCachedGeneratedImage(IntSize size)
@@ -240,7 +241,7 @@ bool CSSImageGeneratorValue::subimageIsPending(CSSValue* value)
         return toCSSImageValue(value)->cachedOrPendingImage()->isPendingImage();
     
     if (value->isImageGeneratorValue())
-        return static_cast<CSSImageGeneratorValue*>(value)->isPending();
+        return toCSSImageGeneratorValue(value)->isPending();
 
     if (value->isPrimitiveValue() && toCSSPrimitiveValue(value)->getValueID() == CSSValueNone)
         return false;
@@ -253,27 +254,27 @@ bool CSSImageGeneratorValue::subimageIsPending(CSSValue* value)
 CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue* value, CachedResourceLoader* cachedResourceLoader)
 {
     if (!value)
-        return 0;
+        return nullptr;
 
     if (value->isImageValue()) {
         StyleCachedImage* styleCachedImage = toCSSImageValue(value)->cachedImage(cachedResourceLoader);
         if (!styleCachedImage)
-            return 0;
+            return nullptr;
 
         return styleCachedImage->cachedImage();
     }
     
     if (value->isImageGeneratorValue()) {
-        static_cast<CSSImageGeneratorValue*>(value)->loadSubimages(cachedResourceLoader);
+        toCSSImageGeneratorValue(value)->loadSubimages(cachedResourceLoader);
         // FIXME: Handle CSSImageGeneratorValue (and thus cross-fades with gradients and canvas).
-        return 0;
+        return nullptr;
     }
 
     if (value->isPrimitiveValue() && toCSSPrimitiveValue(value)->getValueID() == CSSValueNone)
-        return 0;
+        return nullptr;
 
     ASSERT_NOT_REACHED();
     
-    return 0;
+    return nullptr;
 }
 } // namespace WebCore

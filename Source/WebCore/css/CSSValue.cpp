@@ -41,7 +41,6 @@
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
 #include "CSSGridTemplateValue.h"
-#include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSInheritedValue.h"

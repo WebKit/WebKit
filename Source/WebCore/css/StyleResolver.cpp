@@ -218,11 +218,11 @@ inline void StyleResolver::State::cacheBorderAndBackground()
 
 inline void StyleResolver::State::clear()
 {
-    m_element = 0;
-    m_styledElement = 0;
-    m_parentStyle = 0;
-    m_parentNode = 0;
-    m_regionForStyling = 0;
+    m_element = nullptr;
+    m_styledElement = nullptr;
+    m_parentStyle = nullptr;
+    m_parentNode = nullptr;
+    m_regionForStyling = nullptr;
     m_pendingImageProperties.clear();
 #if ENABLE(CSS_SHADERS)
     m_hasPendingShaders = false;
@@ -2090,9 +2090,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 CSSValue* item = i.value();
                 if (item->isImageGeneratorValue()) {
                     if (item->isGradientValue())
-                        state.style()->setContent(StyleGeneratedImage::create(toCSSGradientValue(item)->gradientWithStylesResolved(this).get()), didSet);
+                        state.style()->setContent(StyleGeneratedImage::create(*toCSSGradientValue(item)->gradientWithStylesResolved(this)), didSet);
                     else
-                        state.style()->setContent(StyleGeneratedImage::create(static_cast<CSSImageGeneratorValue*>(item)), didSet);
+                        state.style()->setContent(StyleGeneratedImage::create(*toCSSImageGeneratorValue(item)), didSet);
                     didSet = true;
 #if ENABLE(CSS_IMAGE_SET)
                 } else if (item->isImageSetValue()) {
@@ -3067,8 +3067,8 @@ PassRefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValu
 
     if (value->isImageGeneratorValue()) {
         if (value->isGradientValue())
-            return generatedOrPendingFromValue(property, toCSSGradientValue(value)->gradientWithStylesResolved(this).get());
-        return generatedOrPendingFromValue(property, static_cast<CSSImageGeneratorValue*>(value));
+            return generatedOrPendingFromValue(property, *toCSSGradientValue(value)->gradientWithStylesResolved(this));
+        return generatedOrPendingFromValue(property, toCSSImageGeneratorValue(*value));
     }
 
 #if ENABLE(CSS_IMAGE_SET)
@@ -3090,17 +3090,17 @@ PassRefPtr<StyleImage> StyleResolver::cachedOrPendingFromValue(CSSPropertyID pro
     return image.release();
 }
 
-PassRefPtr<StyleImage> StyleResolver::generatedOrPendingFromValue(CSSPropertyID property, CSSImageGeneratorValue* value)
+PassRefPtr<StyleImage> StyleResolver::generatedOrPendingFromValue(CSSPropertyID property, CSSImageGeneratorValue& value)
 {
 #if ENABLE(CSS_FILTERS)
-    if (value->isFilterImageValue()) {
+    if (value.isFilterImageValue()) {
         // FilterImage needs to calculate FilterOperations.
-        toCSSFilterImageValue(value)->createFilterOperations(this);
+        toCSSFilterImageValue(value).createFilterOperations(this);
     }
 #endif
-    if (value->isPending()) {
-        m_state.pendingImageProperties().set(property, value);
-        return StylePendingImage::create(value);
+    if (value.isPending()) {
+        m_state.pendingImageProperties().set(property, &value);
+        return StylePendingImage::create(&value);
     }
     return StyleGeneratedImage::create(value);
 }
@@ -3881,7 +3881,7 @@ PassRefPtr<StyleImage> StyleResolver::loadPendingImage(StylePendingImage* pendin
 
     if (auto imageGeneratorValue = pendingImage->cssImageGeneratorValue()) {
         imageGeneratorValue->loadSubimages(m_state.document().cachedResourceLoader());
-        return StyleGeneratedImage::create(imageGeneratorValue);
+        return StyleGeneratedImage::create(*imageGeneratorValue);
     }
 
     if (auto cursorImageValue = pendingImage->cssCursorImageValue())
@@ -3923,8 +3923,8 @@ void StyleResolver::loadPendingImages()
     if (m_state.pendingImageProperties().isEmpty())
         return;
 
-    PendingImagePropertyMap::const_iterator::Keys end = m_state.pendingImageProperties().end().keys();
-    for (PendingImagePropertyMap::const_iterator::Keys it = m_state.pendingImageProperties().begin().keys(); it != end; ++it) {
+    auto end = m_state.pendingImageProperties().end().keys();
+    for (auto it = m_state.pendingImageProperties().begin().keys(); it != end; ++it) {
         CSSPropertyID currentProperty = *it;
 
         switch (currentProperty) {

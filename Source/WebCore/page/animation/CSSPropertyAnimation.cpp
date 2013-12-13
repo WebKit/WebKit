@@ -221,7 +221,7 @@ static inline PassRefPtr<StyleImage> blendFilter(const AnimationBase* anim, Cach
     RefPtr<CSSFilterImageValue> result = CSSFilterImageValue::create(std::move(imageValue), filterValue);
     result->setFilterOperations(filterResult);
 
-    return StyleGeneratedImage::create(result.get());
+    return StyleGeneratedImage::create(*result);
 }
 #endif // ENABLE(CSS_FILTERS)
 
@@ -288,7 +288,7 @@ static inline PassRefPtr<StyleImage> crossfadeBlend(const AnimationBase*, StyleC
 
     crossfadeValue->setPercentage(CSSPrimitiveValue::create(progress, CSSPrimitiveValue::CSS_NUMBER));
 
-    return StyleGeneratedImage::create(crossfadeValue.get());
+    return StyleGeneratedImage::create(*crossfadeValue);
 }
 
 static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleImage* from, StyleImage* to, double progress)
@@ -298,42 +298,42 @@ static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleI
 
     // Animation between two generated images. Cross fade for all other cases.
     if (from->isGeneratedImage() && to->isGeneratedImage()) {
-        CSSImageGeneratorValue* fromGenerated = toStyleGeneratedImage(from)->imageValue();
-        CSSImageGeneratorValue* toGenerated = toStyleGeneratedImage(to)->imageValue();
+        CSSImageGeneratorValue& fromGenerated = toStyleGeneratedImage(from)->imageValue();
+        CSSImageGeneratorValue& toGenerated = toStyleGeneratedImage(to)->imageValue();
 
 #if ENABLE(CSS_FILTERS)
-        if (fromGenerated->isFilterImageValue() && toGenerated->isFilterImageValue()) {
+        if (fromGenerated.isFilterImageValue() && toGenerated.isFilterImageValue()) {
             // Animation of generated images just possible if input images are equal.
             // Otherwise fall back to cross fade animation.
-            CSSFilterImageValue& fromFilter = *toCSSFilterImageValue(fromGenerated);
-            CSSFilterImageValue& toFilter = *toCSSFilterImageValue(toGenerated);
+            CSSFilterImageValue& fromFilter = toCSSFilterImageValue(fromGenerated);
+            CSSFilterImageValue& toFilter = toCSSFilterImageValue(toGenerated);
             if (fromFilter.equalInputImages(toFilter) && fromFilter.cachedImage())
                 return blendFilter(anim, fromFilter.cachedImage(), fromFilter.filterOperations(), toFilter.filterOperations(), progress);
         }
 #endif
 
-        if (fromGenerated->isCrossfadeValue() && toGenerated->isCrossfadeValue()) {
-            CSSCrossfadeValue& fromCrossfade = *toCSSCrossfadeValue(fromGenerated);
-            CSSCrossfadeValue& toCrossfade = *toCSSCrossfadeValue(toGenerated);
+        if (fromGenerated.isCrossfadeValue() && toGenerated.isCrossfadeValue()) {
+            CSSCrossfadeValue& fromCrossfade = toCSSCrossfadeValue(fromGenerated);
+            CSSCrossfadeValue& toCrossfade = toCSSCrossfadeValue(toGenerated);
             if (fromCrossfade.equalInputImages(toCrossfade))
-                return StyleGeneratedImage::create(toCrossfade.blend(fromCrossfade, progress).get());
+                return StyleGeneratedImage::create(*toCrossfade.blend(fromCrossfade, progress));
         }
 
         // FIXME: Add support for animation between two *gradient() functions.
         // https://bugs.webkit.org/show_bug.cgi?id=119956
 #if ENABLE(CSS_FILTERS)
     } else if (from->isGeneratedImage() && to->isCachedImage()) {
-        CSSImageGeneratorValue* fromGenerated = toStyleGeneratedImage(from)->imageValue();
-        if (fromGenerated->isFilterImageValue()) {
-            CSSFilterImageValue& fromFilter = *toCSSFilterImageValue(fromGenerated);
+        CSSImageGeneratorValue& fromGenerated = toStyleGeneratedImage(from)->imageValue();
+        if (fromGenerated.isFilterImageValue()) {
+            CSSFilterImageValue& fromFilter = toCSSFilterImageValue(fromGenerated);
             if (fromFilter.cachedImage() && static_cast<StyleCachedImage*>(to)->cachedImage() == fromFilter.cachedImage())
                 return blendFilter(anim, fromFilter.cachedImage(), fromFilter.filterOperations(), FilterOperations(), progress);
         }
         // FIXME: Add interpolation between cross-fade and image source.
     } else if (from->isCachedImage() && to->isGeneratedImage()) {
-        CSSImageGeneratorValue* toGenerated = toStyleGeneratedImage(to)->imageValue();
-        if (toGenerated->isFilterImageValue()) {
-            CSSFilterImageValue& toFilter = *toCSSFilterImageValue(toGenerated);
+        CSSImageGeneratorValue& toGenerated = toStyleGeneratedImage(to)->imageValue();
+        if (toGenerated.isFilterImageValue()) {
+            CSSFilterImageValue& toFilter = toCSSFilterImageValue(toGenerated);
             if (toFilter.cachedImage() && static_cast<StyleCachedImage*>(from)->cachedImage() == toFilter.cachedImage())     
                 return blendFilter(anim, toFilter.cachedImage(), FilterOperations(), toFilter.filterOperations(), progress);
         }

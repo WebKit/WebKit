@@ -44,13 +44,13 @@ static inline double blendFunc(double from, double to, double progress)
     return blend(from, to, progress);
 }
 
-static bool subimageKnownToBeOpaque(CSSValue* value, const RenderElement* renderer)
+static bool subimageKnownToBeOpaque(CSSValue& value, const RenderElement* renderer)
 {
-    if (value->isImageValue())
-        return toCSSImageValue(value)->knownToBeOpaque(renderer);
+    if (value.isImageValue())
+        return toCSSImageValue(value).knownToBeOpaque(renderer);
 
-    if (value->isImageGeneratorValue())
-        return static_cast<CSSImageGeneratorValue*>(value)->knownToBeOpaque(renderer);
+    if (value.isImageGeneratorValue())
+        return toCSSImageGeneratorValue(value).knownToBeOpaque(renderer);
 
     ASSERT_NOT_REACHED();
 
@@ -110,7 +110,7 @@ bool CSSCrossfadeValue::isPending() const
 
 bool CSSCrossfadeValue::knownToBeOpaque(const RenderElement* renderer) const
 {
-    return subimageKnownToBeOpaque(m_fromValue.get(), renderer) && subimageKnownToBeOpaque(m_toValue.get(), renderer);
+    return subimageKnownToBeOpaque(*m_fromValue, renderer) && subimageKnownToBeOpaque(*m_toValue, renderer);
 }
 
 void CSSCrossfadeValue::loadSubimages(CachedResourceLoader* cachedResourceLoader)

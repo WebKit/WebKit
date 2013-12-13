@@ -1,3 +1,69 @@
+2013-12-12  Darin Adler  <darin@apple.com>
+
+        Make some improvements in CSSImageGeneratorValue code
+        https://bugs.webkit.org/show_bug.cgi?id=125676
+
+        Reviewed by Simon Fraser.
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::subimageKnownToBeOpaque): Take a reference to the CSSValue, since
+        it's known not to be null. Used checked cast.
+        (WebCore::CSSCrossfadeValue::knownToBeOpaque): Updated to pass a reference.
+
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::saveCachedImageForSize): Use
+        make_unique instead of adoptPtr.
+        (WebCore::CSSImageGeneratorValue::subimageIsPending): Use checked cast.
+        (WebCore::CSSImageGeneratorValue::cachedImageForCSSValue): Ditto, also
+        use nullptr.
+
+        * css/CSSImageGeneratorValue.h: Removed unneeded includes, added some forward
+        declarations, used unique_ptr instead of OwnPtr, and used CSS_VALUE_TYPE_CASTS
+        macro to create cast functions.
+
+        * css/CSSValue.cpp: Removed unneeded include of CSSImageGeneratorValue.h.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear): Use nullptr instead of 0.
+        (WebCore::StyleResolver::applyProperty): Use checked cast and pass references
+        instead of pointers to StyleGeneratedImage::create.
+        (WebCore::StyleResolver::styleImage): Use checked cast and pass references
+        instead of pointers to generatedOrPendingFromValue.
+        (WebCore::StyleResolver::generatedOrPendingFromValue): Take the value as a
+        reference instead of a pointer.
+        (WebCore::StyleResolver::loadPendingImage): Pass a refernece instead of a
+        pointer to StyleGeneratedImage::create.
+        (WebCore::StyleResolver::loadPendingImages): Use auto for iteration instead of
+        a lot type name.
+
+        * css/StyleResolver.h: Changed generatedOrPendingFromValue to take the value
+        as a reference instead of a pointer.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFilter): Pass a reference insted of a pointer to
+        StyleGeneratedImage::create.
+        (WebCore::crossfadeBlend): Ditto.
+        (WebCore::blendFunc): Ditto. Also use references for local variables.
+
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::StyleGeneratedImage): Use PassRef instead of
+        PassRefPtr for the argument type.
+        (WebCore::StyleGeneratedImage::cssValue): Updated since m_imageGeneratorValue
+        is now a Ref instead of a RefPtr. Sadly this requires a const_cast that we can
+        come back and get rid of later.
+        (WebCore::StyleGeneratedImage::imageSize): Ditto.
+        (WebCore::StyleGeneratedImage::image): Ditto.
+
+        * rendering/style/StyleGeneratedImage.h: Changed create function and constructor
+        to take a PassRef. Made imageValue non-const since it returns a non-const value,
+        to be consistent with "conceptual const". Changed m_imageGeneratorValue to be a
+        Ref instead of a RefPtr.
+
+        * rendering/style/StyleImage.h: Made WrappedImagePtr be const void*, since it's
+        a pointer used only for equality checks. Not a great idiom, but fine to use a
+        const pointer instead of non-const, and avoids the const_cast we'd otherwise
+        need in StyleGeneratedImage::data.
+
 2013-12-12  KyungTae Kim  <ktf.kim@samsung.com>
 
         Improve the find word boundary performance
