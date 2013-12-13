@@ -1,3 +1,17 @@
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Switch WebKit solution to Visual Studio 2013
+        https://bugs.webkit.org/show_bug.cgi?id=125192
+
+        Reviewed by Anders Carlsson.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Update for VS2013
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj:
+        Ditto
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj: Ditto
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj: Ditto
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj: Ditto
+
 2013-12-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add a few more ASCIILiterals

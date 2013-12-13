@@ -1,3 +1,12 @@
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Switch WebKit solution to Visual Studio 2013
+        https://bugs.webkit.org/show_bug.cgi?id=125192
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/msvc/gtest-md.vcxproj: Update for VS2013
+
 2013-11-15  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed, gtest project file cleanup.

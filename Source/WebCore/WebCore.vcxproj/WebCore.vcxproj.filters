@@ -2301,9 +2301,6 @@
     <ClCompile Include="..\css\StyleMedia.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\StylePropertySet.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="..\css\StylePropertyShorthand.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -4869,9 +4866,6 @@
     <ClCompile Include="..\inspector\InspectorDOMDebuggerAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\InspectorDOMNodeAgent.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
     <ClCompile Include="..\inspector\InspectorDOMStorageAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -7114,6 +7108,11 @@
     <ClCompile Include="..\platform\graphics\gstreamer\WebKitWebSourceGStreamer.cpp">
       <Filter>platform\graphics\gstreamer</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\StyleProperties.cpp" />
+    <ClCompile Include="..\rendering\line\LineBreaker.cpp" />
+    <ClCompile Include="..\rendering\line\LineInfo.cpp" />
+    <ClCompile Include="..\rendering\line\TrailingObjects.cpp" />
+    <ClCompile Include="..\inspector\InspectorNodeFinder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -9226,9 +9225,6 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\StyleMedia.h">
-      <Filter>css</Filter>
-    </ClInclude>
-    <ClInclude Include="..\css\StylePropertySet.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\StylePropertyShorthand.h">
@@ -14714,9 +14710,6 @@
     <ClInclude Include="..\rendering\line\LineLayoutState.h">
       <Filter>rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\line\LineWidth.h">
-      <Filter>rendering\line</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\FloatPolygon.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
@@ -14975,6 +14968,13 @@
     <ClInclude Include="..\platform\graphics\gstreamer\WebKitWebSourceGStreamer.h">
       <Filter>platform\graphics\gstreamer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Modules\plugins\PluginReplacement.h" />
+    <ClInclude Include="..\css\StyleProperties.h" />
+    <ClInclude Include="..\rendering\line\BreakingContextInlineHeaders.h" />
+    <ClInclude Include="..\rendering\line\LineBreaker.h" />
+    <ClInclude Include="..\rendering\line\LineInlineHeaders.h" />
+    <ClInclude Include="..\rendering\line\LineWidth.h" />
+    <ClInclude Include="..\rendering\line\TrailingObjects.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">

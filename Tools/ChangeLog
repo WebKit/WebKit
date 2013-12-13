@@ -1,3 +1,36 @@
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Switch WebKit solution to Visual Studio 2013
+        https://bugs.webkit.org/show_bug.cgi?id=125192
+
+        Reviewed by Anders Carlsson.
+
+        Project files must reference vs12_xp for 32-bit builds. 
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTree.vcxproj:
+        Update for VS2013
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncher.vcxproj:
+        Ditto
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiff.vcxproj:
+        Ditto
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncher.vcxproj:
+        Ditto
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.vcxproj:
+        Ditto
+        * Scripts/webkitdirs.pm:
+        (visualStudioInstallDir): Specify VS2013
+        (visualStudioVersion): Ditto.
+        (setupAppleWinEnv): Use VS2013 in messages
+        (setupCygwinEnv): Ditto
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        Update for VS2013
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj:
+        Ditto
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj:
+        Ditto
+        * win/record-memory/record-memory.vcxproj:
+        Ditto
+
 2013-12-11  Martin Robinson  <mrobinson@igalia.com> and Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         Adding a .ycm_extra_conf file for webkitGtk

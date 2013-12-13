@@ -436,7 +436,7 @@ sub visualStudioInstallDir
         $vsInstallDir = $ENV{'VSINSTALLDIR'};
         $vsInstallDir =~ s|[\\/]$||;
     } else {
-        $vsInstallDir = File::Spec->catdir(programFilesPath(), "Microsoft Visual Studio 10.0");
+        $vsInstallDir = File::Spec->catdir(programFilesPath(), "Microsoft Visual Studio 12.0");
     }
     chomp($vsInstallDir = `cygpath "$vsInstallDir"`) if isCygwin();
 
@@ -449,7 +449,7 @@ sub visualStudioVersion
 
     my $installDir = visualStudioInstallDir();
 
-    $vsVersion = ($installDir =~ /Microsoft Visual Studio ([0-9]+\.[0-9]*)/) ? $1 : "8";
+    $vsVersion = ($installDir =~ /Microsoft Visual Studio ([0-9]+\.[0-9]*)/) ? $1 : "12";
 
     return $vsVersion;
 }
@@ -1560,18 +1560,14 @@ sub setupAppleWinEnv()
         }
     } else {
         if (!$ENV{'WEBKIT_LIBRARIES'}) {
-            # VS2010 (and newer) version. This will replace the VS2005 version as part of
-            # https://bugs.webkit.org/show_bug.cgi?id=109472. 
             print "Warning: You must set the 'WebKit_Libraries' environment variable\n";
-            print "         to be able build WebKit from within Visual Studio 2010 and newer.\n";
+            print "         to be able build WebKit from within Visual Studio 2013 and newer.\n";
             print "         Make sure that 'WebKit_Libraries' points to the\n";
             print "         'WebKitLibraries/win' directory, not the 'WebKitLibraries/' directory.\n\n";
         }
         if (!$ENV{'WEBKIT_OUTPUTDIR'}) {
-            # VS2010 (and newer) version. This will replace the VS2005 version as part of
-            # https://bugs.webkit.org/show_bug.cgi?id=109472. 
             print "Warning: You must set the 'WebKit_OutputDir' environment variable\n";
-            print "         to be able build WebKit from within Visual Studio 2010 and newer.\n\n";
+            print "         to be able build WebKit from within Visual Studio 2013 and newer.\n\n";
         }
     }
     # FIXME (125180): Remove the following temporary 64-bit support once official support is available.
@@ -1590,7 +1586,7 @@ sub setupCygwinEnv()
     $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE devenv.com));
     if (-e $vcBuildPath) {
         # Visual Studio is installed;
-        if (visualStudioVersion() eq "10") {
+        if (visualStudioVersion() eq "12") {
             $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE devenv.exe));
         }
     } else {
@@ -1600,7 +1596,7 @@ sub setupCygwinEnv()
             print "*************************************************************\n";
             print "Cannot find '$vcBuildPath'\n";
             print "Please execute the file 'vcvars32.bat' from\n";
-            print "'$programFilesPath\\Microsoft Visual Studio 8\\VC\\bin\\'\n";
+            print "'$programFilesPath\\Microsoft Visual Studio 12.0\\VC\\bin\\'\n";
             print "to setup the necessary environment variables.\n";
             print "*************************************************************\n";
             die;
