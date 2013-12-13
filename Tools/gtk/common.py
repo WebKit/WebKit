@@ -36,7 +36,7 @@ def top_level_path(*args):
     return os.path.join(*((os.path.join(os.path.dirname(__file__), '..', '..'),) + args))
 
 
-def get_build_path(build_types=('Release', 'Debug')):
+def get_build_path(build_types=('Release', 'Debug'), fatal=True):
     global build_dir
     if build_dir:
         return build_dir
@@ -76,7 +76,8 @@ def get_build_path(build_types=('Release', 'Debug')):
         return build_dir
 
     print('Could not determine build directory.')
-    sys.exit(1)
+    if fatal:
+        sys.exit(1)
 
 
 def build_path_for_build_types(build_types, *args):

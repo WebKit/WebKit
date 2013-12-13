@@ -117,3 +117,6 @@ tags
 .project
 .cproject
 .settings
+
+# Ignore YouCompleteMe symlinks
+.ycm_extra_conf.py

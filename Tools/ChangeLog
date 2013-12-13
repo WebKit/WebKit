@@ -1,3 +1,19 @@
+2013-12-11  Martin Robinson  <mrobinson@igalia.com> and Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        Adding a .ycm_extra_conf file for webkitGtk
+        https://bugs.webkit.org/show_bug.cgi?id=119618
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Added a YouCompleteMe flag discovery script for Vim and the GTK+ port. The script
+        read the GTK+ build files to determine dynamically what flags to compile a source
+        file with. This allows Vim to provide auto-complete for C++/C language. See
+        https://github.com/Valloric/YouCompleteMe for how to use this file.
+
+        * gtk/common.py:
+        (get_build_path): Added a fatal argument to build_path to avoid crashing YCM on failure.
+        * gtk/ycm_extra_conf.py: Added.
+
 2013-12-12  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Handle pinch-to-zoom gesture
