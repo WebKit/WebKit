@@ -48,6 +48,7 @@ WebKit := $(srcdir)/Source/WebKit/gtk
 WebKit2 := $(srcdir)/Source/WebKit2
 pkgconfigdir := $(libdir)/pkgconfig
 libwebkitgtkincludedir := $(prefix)/include/webkitgtk-@WEBKITGTK_API_VERSION@
+INSPECTOR_SCRIPTS_DIR := $(JavaScriptCore)/inspector/scripts
 
 # Libraries and support components
 bin_PROGRAMS :=

@@ -219,12 +219,10 @@ endif
 
 # Inspector Interfaces
 
-INSPECTOR_SCRIPTS_DIR := $(JavaScriptCore)/inspector/scripts
-
-INSPECTOR_DOMAINS := \
+JavaScriptCore_INSPECTOR_DOMAINS := \
     $(JavaScriptCore)/inspector/protocol/Runtime.json
 
-DerivedSources/JavaScriptCore/InspectorJS.json: $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS)
+DerivedSources/JavaScriptCore/InspectorJS.json: $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(JavaScriptCore_INSPECTOR_DOMAINS)
 	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(JavaScriptCore)/inspector/protocol > $(GENSOURCES_JAVASCRIPTCORE)/InspectorJS.json
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders

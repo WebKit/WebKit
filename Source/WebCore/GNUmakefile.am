@@ -333,9 +333,7 @@ dom_binding_idls += \
   DerivedSources/WebCore/InternalSettingsGenerated.idl
 
 
-INSPECTOR_SCRIPTS_DIR := $(JavaScriptCore)/inspector/scripts
-
-INSPECTOR_DOMAINS := \
+WebCore_INSPECTOR_DOMAINS := \
     $(WebCore)/inspector/protocol/ApplicationCache.json \
     $(WebCore)/inspector/protocol/CSS.json \
     $(WebCore)/inspector/protocol/Canvas.json \
@@ -358,7 +356,7 @@ INSPECTOR_DOMAINS := \
     $(WebCore)/inspector/protocol/Timeline.json \
     $(WebCore)/inspector/protocol/Worker.json
 
-DerivedSources/WebCore/InspectorWeb.json: $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS)
+DerivedSources/WebCore/InspectorWeb.json: $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(WebCore_INSPECTOR_DOMAINS)
 	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(WebCore)/inspector/protocol > $(GENSOURCES_WEBCORE)/InspectorWeb.json
 
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.py
