@@ -31,9 +31,9 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBackendDispatchers.h"
-#include "InspectorFrontend.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "InspectorWebTypeBuilders.h"
 #include "RenderLayer.h"
 #include <wtf/PassOwnPtr.h>
@@ -47,7 +47,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorLayerTreeAgent : public InspectorAgentBase, public InspectorLayerTreeBackendDispatcherHandler {
+class InspectorLayerTreeAgent : public InspectorAgentBase, public Inspector::InspectorLayerTreeBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorLayerTreeAgent> create(InstrumentingAgents* instrumentingAgents)
     {
@@ -87,8 +87,8 @@ private:
     String bindPseudoElement(PseudoElement*);
     void unbindPseudoElement(PseudoElement*);
 
-    std::unique_ptr<InspectorLayerTreeFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorLayerTreeBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorLayerTreeFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorLayerTreeBackendDispatcher> m_backendDispatcher;
 
     HashMap<const RenderLayer*, String> m_documentLayerToIdMap;
     HashMap<String, const RenderLayer*> m_idToLayer;

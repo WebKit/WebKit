@@ -30,8 +30,8 @@
 #ifndef InspectorAgent_h
 #define InspectorAgent_h
 
-#include "InspectorBackendDispatchers.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
@@ -39,6 +39,7 @@
 
 namespace Inspector {
 class InspectorObject;
+class InspectorInspectorFrontendDispatcher;
 }
 
 namespace WebCore {
@@ -47,13 +48,12 @@ class DOMWrapperWorld;
 class DocumentLoader;
 class Frame;
 class InjectedScriptManager;
-class InspectorInspectorFrontendDispatcher;
 class InstrumentingAgents;
 class Page;
 
 typedef String ErrorString;
 
-class InspectorAgent : public InspectorAgentBase, public InspectorInspectorBackendDispatcherHandler {
+class InspectorAgent : public InspectorAgentBase, public Inspector::InspectorInspectorBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
 public:
     static PassOwnPtr<InspectorAgent> create(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents)
@@ -90,8 +90,8 @@ private:
     InspectorAgent(Page*, InjectedScriptManager*, InstrumentingAgents*);
 
     Page* m_inspectedPage;
-    std::unique_ptr<InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorInspectorBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorInspectorBackendDispatcher> m_backendDispatcher;
     InjectedScriptManager* m_injectedScriptManager;
 
     Vector<pair<long, String>> m_pendingEvaluateTestCommands;

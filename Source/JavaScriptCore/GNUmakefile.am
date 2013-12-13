@@ -215,3 +215,27 @@ gir_DATA += JavaScriptCore-@WEBKITGTK_API_VERSION@.gir
 typelibs_DATA += JavaScriptCore-@WEBKITGTK_API_VERSION@.typelib
 CLEANFILES += JavaScriptCore-@WEBKITGTK_API_VERSION@.gir JavaScriptCore-@WEBKITGTK_API_VERSION@.typelib
 endif
+
+
+# Inspector Interfaces
+
+INSPECTOR_SCRIPTS_DIR := $(JavaScriptCore)/inspector/scripts
+
+INSPECTOR_DOMAINS := \
+    $(JavaScriptCore)/inspector/protocol/Runtime.json
+
+DerivedSources/JavaScriptCore/InspectorJS.json: $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS)
+	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(JavaScriptCore)/inspector/protocol > $(GENSOURCES_JAVASCRIPTCORE)/InspectorJS.json
+
+# Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
+# Copy generated header files to DerivedSources/JavaScriptCore/inspector so that WebCore's ForwardingHeader style of #include <inspector/Foo.h> will work.
+DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.cpp: DerivedSources/JavaScriptCore/InspectorJS.json $(INSPECTOR_SCRIPTS_DIR)/CodeGeneratorInspector.py $(INSPECTOR_SCRIPTS_DIR)/CodeGeneratorInspectorStrings.py
+	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/CodeGeneratorInspector.py $< --output_h_dir $(GENSOURCES_JAVASCRIPTCORE) --output_cpp_dir $(GENSOURCES_JAVASCRIPTCORE) --output_js_dir $(GENSOURCES_JAVASCRIPTCORE) --output_type JavaScript
+	mkdir -p DerivedSources/JavaScriptCore/inspector
+	cp DerivedSources/JavaScriptCore/InspectorJSTypeBuilders.h DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.h DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.h DerivedSources/JavaScriptCore/inspector
+DerivedSources/JavaScriptCore/InspectorJSTypeBuilders.h: DerivedSources/JavaScriptCore/InspectorJSTypeBuilders.cpp
+DerivedSources/JavaScriptCore/InspectorJSTypeBuilders.cpp: DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.h
+DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.h: DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.cpp
+DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.cpp: DerivedSources/JavaScriptCore/InspectorJSBackendCommands.js
+DerivedSources/JavaScriptCore/InspectorJSBackendCommands.js: DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.h
+DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.h: DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.cpp

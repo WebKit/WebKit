@@ -31,9 +31,9 @@
 #ifndef InspectorResourceAgent_h
 #define InspectorResourceAgent_h
 
-#include "InspectorBackendDispatchers.h"
-#include "InspectorFrontend.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -75,7 +75,7 @@ struct WebSocketFrame;
 
 typedef String ErrorString;
 
-class InspectorResourceAgent : public InspectorAgentBase, public InspectorNetworkBackendDispatcherHandler {
+class InspectorResourceAgent : public InspectorAgentBase, public Inspector::InspectorNetworkBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client)
     {
@@ -152,8 +152,8 @@ private:
 
     InspectorPageAgent* m_pageAgent;
     InspectorClient* m_client;
-    std::unique_ptr<InspectorNetworkFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorNetworkBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorNetworkFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorNetworkBackendDispatcher> m_backendDispatcher;
     String m_userAgentOverride;
     OwnPtr<NetworkResourcesData> m_resourcesData;
     bool m_enabled;

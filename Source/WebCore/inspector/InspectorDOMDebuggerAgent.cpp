@@ -38,8 +38,8 @@
 #include "InspectorAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
-#include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include <inspector/InspectorValues.h>
 #include <wtf/text/WTFString.h>

@@ -29,8 +29,8 @@
 #ifndef InspectorDOMStorageAgent_h
 #define InspectorDOMStorageAgent_h
 
-#include "InspectorBackendDispatchers.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
 #include "StorageArea.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
@@ -38,12 +38,12 @@
 
 namespace Inspector {
 class InspectorArray;
+class InspectorDOMStorageFrontendDispatcher;
 }
 
 namespace WebCore {
 
 class Frame;
-class InspectorDOMStorageFrontendDispatcher;
 class InspectorPageAgent;
 class InstrumentingAgents;
 class Page;
@@ -52,7 +52,7 @@ class Storage;
 
 typedef String ErrorString;
 
-class InspectorDOMStorageAgent : public InspectorAgentBase, public InspectorDOMStorageBackendDispatcherHandler {
+class InspectorDOMStorageAgent : public InspectorAgentBase, public Inspector::InspectorDOMStorageBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
     {
@@ -84,8 +84,8 @@ private:
     PassRefPtr<StorageArea> findStorageArea(ErrorString*, const RefPtr<Inspector::InspectorObject>&, Frame*&);
 
     InspectorPageAgent* m_pageAgent;
-    std::unique_ptr<InspectorDOMStorageFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorDOMStorageBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorDOMStorageFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorDOMStorageBackendDispatcher> m_backendDispatcher;
     bool m_enabled;
 };
 

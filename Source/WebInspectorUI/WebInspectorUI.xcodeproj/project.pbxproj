@@ -142,18 +142,7 @@
 		1C60FF1214E6D9AF006CD77D /* Copy User Interface Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/UserInterface",
-				"${SRCROOT}/Scripts/copy-user-interface-resources.sh",
-				"${DERIVED_SOURCES_DIR}/InspectorBackend.js",
-				"${DERIVED_SOURCES_DIR}/InspectorBackendCommands.js",
-			);
 			name = "Copy User Interface Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "sh \"${SRCROOT}/Scripts/copy-user-interface-resources.sh\"";

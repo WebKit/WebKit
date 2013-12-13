@@ -33,10 +33,10 @@
 #include "EventTarget.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
-#include "InspectorBackendDispatchers.h"
-#include "InspectorFrontend.h"
 #include "InspectorOverlay.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "RenderLayer.h"
 #include "Timer.h"
 #include <inspector/InspectorValues.h>
@@ -93,7 +93,7 @@ struct EventListenerInfo {
     const EventListenerVector eventListenerVector;
 };
 
-class InspectorDOMAgent : public InspectorAgentBase, public InspectorDOMBackendDispatcherHandler {
+class InspectorDOMAgent : public InspectorAgentBase, public Inspector::InspectorDOMBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
 public:
     struct DOMListener {
@@ -247,8 +247,8 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorOverlay* m_overlay;
     InspectorClient* m_client;
-    std::unique_ptr<InspectorDOMFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorDOMBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorDOMFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorDOMBackendDispatcher> m_backendDispatcher;
     DOMListener* m_domListener;
     NodeToIdMap m_documentNodeToIdMap;
     typedef HashMap<RefPtr<Node>, BackendNodeId> NodeToBackendIdMap;

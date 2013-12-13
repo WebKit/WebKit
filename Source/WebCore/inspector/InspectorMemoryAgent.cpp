@@ -40,7 +40,7 @@
 #include "EventListenerMap.h"
 #include "Frame.h"
 #include "InspectorDOMStorageAgent.h"
-#include "InspectorFrontend.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "MemoryCache.h"
 #include "Node.h"

@@ -21,11 +21,11 @@ webcore_built_sources += \
 	DerivedSources/WebCore/HTMLNames.h \
 	DerivedSources/WebCore/InjectedScriptCanvasModuleSource.h \
 	DerivedSources/WebCore/InjectedScriptSource.h \
-	DerivedSources/WebCore/InspectorBackendDispatchers.cpp \
-	DerivedSources/WebCore/InspectorBackendDispatchers.h \
-	DerivedSources/WebCore/InspectorFrontend.cpp \
-	DerivedSources/WebCore/InspectorFrontend.h \
 	DerivedSources/WebCore/InspectorOverlayPage.h \
+	DerivedSources/WebCore/InspectorWebBackendDispatchers.cpp \
+	DerivedSources/WebCore/InspectorWebBackendDispatchers.h \
+	DerivedSources/WebCore/InspectorWebFrontendDispatchers.cpp \
+	DerivedSources/WebCore/InspectorWebFrontendDispatchers.h \
 	DerivedSources/WebCore/InspectorWebTypeBuilders.cpp \
 	DerivedSources/WebCore/InspectorWebTypeBuilders.h \
 	DerivedSources/WebCore/JSAbstractWorker.cpp \

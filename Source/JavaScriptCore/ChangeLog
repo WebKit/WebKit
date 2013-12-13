@@ -1,3 +1,38 @@
+2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Inspector Code Generation to JavaScriptCore for Runtime Domain
+        https://bugs.webkit.org/show_bug.cgi?id=125595
+
+        Reviewed by Timothy Hatcher.
+
+          - Move CodeGeneration scripts from WebCore into JavaScriptCore/inspector/scripts
+          - For ports that build WebKit frameworks separately, export the scripts as PrivateHeaders
+          - Update CodeGeneratorInspector.py in a few ways:
+            - output dynamic filenames, so JavaScriptCore generates InspectorJSFoo.* and WebCore generates InspectorWebFoo.*
+            - take in more then one protocol JSON file. The first contains domains to generate, the others are dependencies
+              that are generated elsewhere that we can depend on for Types.
+          - Add DerivedSources build step to generate the Inspector Interfaces
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add scripts and code generation.
+
+        * inspector/protocol/Runtime.json: Renamed from Source/WebCore/inspector/protocol/Runtime.json.
+        Move protocol file into JavaScriptCore so its types will be generated in JavaScriptCore.
+
+        * inspector/scripts/CodeGeneratorInspector.py: Renamed from Source/WebCore/inspector/CodeGeneratorInspector.py.
+        Updates to the script as listed above.
+
+        * inspector/scripts/CodeGeneratorInspectorStrings.py: Renamed from Source/WebCore/inspector/CodeGeneratorInspectorStrings.py.
+        * inspector/scripts/generate-combined-inspector-json.py: Renamed from Source/WebCore/inspector/Scripts/generate-combined-inspector-json.py.
+        Moved from WebCore into JavaScriptCore for code generation.
+
 2013-12-13  Peter Szanka  <h868064@stud.u-szeged.hu>
 
         Delete INTEL C compiler related code parts.

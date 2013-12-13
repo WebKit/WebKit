@@ -548,7 +548,8 @@
     <None Include="..\UserInterface\IndeterminateProgressSpinner.css" />
     <None Include="..\UserInterface\IndeterminateProgressSpinner.js" />
     <None Include="..\UserInterface\InspectorBackend.js" />
-    <None Include="..\UserInterface\InspectorBackendCommands.js" />
+    <None Include="..\UserInterface\InspectorJSBackendCommands.js" />
+    <None Include="..\UserInterface\InspectorWebBackendCommands.js" />
     <None Include="..\UserInterface\InspectorFrontendAPI.js" />
     <None Include="..\UserInterface\InspectorFrontendHostStub.js" />
     <None Include="..\UserInterface\InspectorObserver.js" />
@@ -572,7 +573,8 @@
     <None Include="..\UserInterface\LayoutTimelineDataGrid.js" />
     <None Include="..\UserInterface\LayoutTimelineDataGridNode.js" />
     <None Include="..\UserInterface\LayoutTimelineRecord.js" />
-    <None Include="..\UserInterface\Legacy\6.0\InspectorBackendCommands.js" />
+    <None Include="..\UserInterface\Legacy\6.0\InspectorWebBackendCommands.js" />
+    <None Include="..\UserInterface\Legacy\7.0\InspectorWebBackendCommands.js" />
     <None Include="..\UserInterface\LoadInspectorBackendCommands.js" />
     <None Include="..\UserInterface\LoadLocalizedStrings.js" />
     <None Include="..\UserInterface\LogContentView.css" />

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "ScriptCallFrame.h"
 
-#include "InspectorFrontend.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include <inspector/InspectorValues.h>
 #include <wtf/RefPtr.h>
 

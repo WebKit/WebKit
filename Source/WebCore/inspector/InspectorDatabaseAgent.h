@@ -31,9 +31,9 @@
 
 #if ENABLE(INSPECTOR) && ENABLE(SQL_DATABASE)
 
-#include "InspectorBackendDispatchers.h"
-#include "InspectorFrontend.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -50,7 +50,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorDatabaseAgent : public InspectorAgentBase, public InspectorDatabaseBackendDispatcherHandler {
+class InspectorDatabaseAgent : public InspectorAgentBase, public Inspector::InspectorDatabaseBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorDatabaseAgent> create(InstrumentingAgents* instrumentingAgents)
     {
@@ -79,8 +79,8 @@ private:
     Database* databaseForId(const String& databaseId);
     InspectorDatabaseResource* findByFileName(const String& fileName);
 
-    std::unique_ptr<InspectorDatabaseFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorDatabaseBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorDatabaseFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorDatabaseBackendDispatcher> m_backendDispatcher;
     typedef HashMap<String, RefPtr<InspectorDatabaseResource>> DatabaseResourcesMap;
     DatabaseResourcesMap m_resources;
     bool m_enabled;

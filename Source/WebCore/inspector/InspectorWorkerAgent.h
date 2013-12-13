@@ -31,24 +31,24 @@
 #ifndef InspectorWorkerAgent_h
 #define InspectorWorkerAgent_h
 
-#include "InspectorBackendDispatchers.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
 namespace Inspector {
 class InspectorObject;
+class InspectorWorkerFrontendDispatcher;
 }
 
 namespace WebCore {
-class InspectorWorkerFrontendDispatcher;
 class InstrumentingAgents;
 class URL;
 class WorkerGlobalScopeProxy;
 
 typedef String ErrorString;
 
-class InspectorWorkerAgent : public InspectorAgentBase, public InspectorWorkerBackendDispatcherHandler {
+class InspectorWorkerAgent : public InspectorAgentBase, public Inspector::InspectorWorkerBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*);
     ~InspectorWorkerAgent();
@@ -76,8 +76,8 @@ private:
     void createWorkerFrontendChannel(WorkerGlobalScopeProxy*, const String& url);
     void destroyWorkerFrontendChannels();
 
-    std::unique_ptr<InspectorWorkerFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorWorkerBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorWorkerFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorWorkerBackendDispatcher> m_backendDispatcher;
     bool m_enabled;
     bool m_shouldPauseDedicatedWorkerOnStart;
 

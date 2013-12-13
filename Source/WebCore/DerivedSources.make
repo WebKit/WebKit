@@ -661,31 +661,6 @@ BINDING_IDLS = \
     InternalSettingsGenerated.idl
 #
 
-INSPECTOR_DOMAINS = \
-    $(WebCore)/inspector/protocol/ApplicationCache.json \
-    $(WebCore)/inspector/protocol/CSS.json \
-    $(WebCore)/inspector/protocol/Canvas.json \
-    $(WebCore)/inspector/protocol/Console.json \
-    $(WebCore)/inspector/protocol/DOM.json \
-    $(WebCore)/inspector/protocol/DOMDebugger.json \
-    $(WebCore)/inspector/protocol/DOMStorage.json \
-    $(WebCore)/inspector/protocol/Database.json \
-    $(WebCore)/inspector/protocol/Debugger.json \
-    $(WebCore)/inspector/protocol/FileSystem.json \
-    $(WebCore)/inspector/protocol/HeapProfiler.json \
-    $(WebCore)/inspector/protocol/IndexedDB.json \
-    $(WebCore)/inspector/protocol/Input.json \
-    $(WebCore)/inspector/protocol/InspectorDomain.json \
-    $(WebCore)/inspector/protocol/LayerTree.json \
-    $(WebCore)/inspector/protocol/Memory.json \
-    $(WebCore)/inspector/protocol/Network.json \
-    $(WebCore)/inspector/protocol/Page.json \
-    $(WebCore)/inspector/protocol/Profiler.json \
-    $(WebCore)/inspector/protocol/Runtime.json \
-    $(WebCore)/inspector/protocol/Timeline.json \
-    $(WebCore)/inspector/protocol/Worker.json
-#
-
 .PHONY : all
 
 DOM_CLASSES=$(basename $(notdir $(BINDING_IDLS)))
@@ -1093,17 +1068,44 @@ JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(WINDOW_CONSTRUCTOR
 
 # Inspector interfaces generator
 
-all : Inspector.json
+INSPECTOR_DOMAINS = \
+    $(WebCore)/inspector/protocol/ApplicationCache.json \
+    $(WebCore)/inspector/protocol/CSS.json \
+    $(WebCore)/inspector/protocol/Canvas.json \
+    $(WebCore)/inspector/protocol/Console.json \
+    $(WebCore)/inspector/protocol/DOM.json \
+    $(WebCore)/inspector/protocol/DOMDebugger.json \
+    $(WebCore)/inspector/protocol/DOMStorage.json \
+    $(WebCore)/inspector/protocol/Database.json \
+    $(WebCore)/inspector/protocol/Debugger.json \
+    $(WebCore)/inspector/protocol/FileSystem.json \
+    $(WebCore)/inspector/protocol/HeapProfiler.json \
+    $(WebCore)/inspector/protocol/IndexedDB.json \
+    $(WebCore)/inspector/protocol/Input.json \
+    $(WebCore)/inspector/protocol/InspectorDomain.json \
+    $(WebCore)/inspector/protocol/LayerTree.json \
+    $(WebCore)/inspector/protocol/Memory.json \
+    $(WebCore)/inspector/protocol/Network.json \
+    $(WebCore)/inspector/protocol/Page.json \
+    $(WebCore)/inspector/protocol/Profiler.json \
+    $(WebCore)/inspector/protocol/Timeline.json \
+    $(WebCore)/inspector/protocol/Worker.json \
+#
 
-Inspector.json : inspector/Scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS)
-	python $(WebCore)/inspector/Scripts/generate-combined-inspector-json.py "$(WebCore)/inspector/protocol" > ./Inspector.json
+INSPECTOR_GENERATOR_SCRIPTS = \
+	$(InspectorScripts)/CodeGeneratorInspector.py \
+	$(InspectorScripts)/CodeGeneratorInspectorStrings.py \
+#
 
-all : InspectorFrontend.h
+all : InspectorWeb.json
 
-INSPECTOR_GENERATOR_SCRIPTS = inspector/CodeGeneratorInspector.py inspector/CodeGeneratorInspectorStrings.py
+InspectorWeb.json : $(InspectorScripts)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS)
+	python $(InspectorScripts)/generate-combined-inspector-json.py $(WebCore)/inspector/protocol > ./InspectorWeb.json
 
-InspectorFrontend.h : Inspector.json $(INSPECTOR_GENERATOR_SCRIPTS)
-	python $(WebCore)/inspector/CodeGeneratorInspector.py ./Inspector.json --output_h_dir . --output_cpp_dir . --output_js_dir .
+all : InspectorWebFrontendDispatchers.h
+
+InspectorWebFrontendDispatchers.h : InspectorWeb.json $(InspectorScripts)/InspectorJS.json $(INSPECTOR_GENERATOR_SCRIPTS)
+	python $(InspectorScripts)/CodeGeneratorInspector.py ./InspectorWeb.json $(InspectorScripts)/InspectorJS.json --output_h_dir . --output_cpp_dir . --output_js_dir . --output_type Web
 
 all : InspectorOverlayPage.h
 

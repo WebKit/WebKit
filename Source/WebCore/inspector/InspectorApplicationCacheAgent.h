@@ -28,13 +28,14 @@
 #if ENABLE(INSPECTOR)
 
 #include "ApplicationCacheHost.h"
-#include "InspectorBackendDispatchers.h"
-#include "InspectorFrontend.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace Inspector {
+class InspectorApplicationCacheFrontendDispatcher;
 class InspectorObject;
 class InspectorValue;
 }
@@ -43,7 +44,6 @@ namespace WebCore {
 
 class Frame;
 class InspectorAgent;
-class InspectorApplicationCacheFrontendDispatcher;
 class InspectorPageAgent;
 class InstrumentingAgents;
 class Page;
@@ -51,7 +51,7 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorApplicationCacheAgent : public InspectorAgentBase, public InspectorApplicationCacheBackendDispatcherHandler {
+class InspectorApplicationCacheAgent : public InspectorAgentBase, public Inspector::InspectorApplicationCacheBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorApplicationCacheAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
@@ -80,8 +80,8 @@ private:
     DocumentLoader* assertFrameWithDocumentLoader(ErrorString*, String frameId);
 
     InspectorPageAgent* m_pageAgent;
-    std::unique_ptr<InspectorApplicationCacheFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorApplicationCacheBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorApplicationCacheFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorApplicationCacheBackendDispatcher> m_backendDispatcher;
 };
 
 } // namespace WebCore

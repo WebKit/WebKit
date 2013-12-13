@@ -33,8 +33,8 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorFrontend.h"
 #include "InspectorRuntimeAgent.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "ScriptState.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -70,8 +70,8 @@ private:
 
     Page* m_inspectedPage;
     InspectorPageAgent* m_pageAgent;
-    std::unique_ptr<InspectorRuntimeFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorRuntimeBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorRuntimeFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorRuntimeBackendDispatcher> m_backendDispatcher;
     bool m_mainWorldContextCreated;
 };
 

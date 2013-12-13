@@ -1186,7 +1186,13 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/yarr/YarrPattern.cpp \
 	Source/JavaScriptCore/yarr/YarrPattern.h \
 	Source/JavaScriptCore/yarr/YarrSyntaxChecker.cpp \
-	Source/JavaScriptCore/yarr/YarrSyntaxChecker.h
+	Source/JavaScriptCore/yarr/YarrSyntaxChecker.h \
+	DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.cpp \
+	DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.h \
+	DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.cpp \
+	DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.h \
+	DerivedSources/JavaScriptCore/InspectorJSTypeBuilders.cpp \
+	DerivedSources/JavaScriptCore/InspectorJSTypeBuilders.h
 
 llint_nosources += \
 	Source/JavaScriptCore/llint/LowLevelInterpreter32_64.asm \

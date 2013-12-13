@@ -33,9 +33,11 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBackendDispatchers.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
 #include "ScriptState.h"
+#include <inspector/InspectorJSBackendDispatchers.h>
+#include <inspector/InspectorJSFrontendDispatchers.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
@@ -55,7 +57,7 @@ class WorkerGlobalScope;
 
 typedef String ErrorString;
 
-class InspectorRuntimeAgent : public InspectorAgentBase, public InspectorRuntimeBackendDispatcherHandler {
+class InspectorRuntimeAgent : public InspectorAgentBase, public Inspector::InspectorRuntimeBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
 public:
     virtual ~InspectorRuntimeAgent();

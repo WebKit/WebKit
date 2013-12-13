@@ -29,15 +29,15 @@
 
 #include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
-#include "InspectorBackendDispatchers.h"
-#include "InspectorFrontend.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/text/StringHash.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -53,7 +53,7 @@ class ScriptProfile;
 
 typedef String ErrorString;
 
-class InspectorConsoleAgent : public InspectorAgentBase, public InspectorConsoleBackendDispatcherHandler {
+class InspectorConsoleAgent : public InspectorAgentBase, public Inspector::InspectorConsoleBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
     InspectorConsoleAgent(InstrumentingAgents*, InjectedScriptManager*);
@@ -101,8 +101,8 @@ protected:
     virtual bool developerExtrasEnabled() = 0;
 
     InjectedScriptManager* m_injectedScriptManager;
-    std::unique_ptr<InspectorConsoleFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorConsoleBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorConsoleFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorConsoleBackendDispatcher> m_backendDispatcher;
     ConsoleMessage* m_previousMessage;
     Vector<OwnPtr<ConsoleMessage>> m_consoleMessages;
     int m_expiredConsoleMessageCount;

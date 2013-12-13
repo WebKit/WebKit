@@ -35,7 +35,7 @@
 #include "InspectorWorkerAgent.h"
 
 #include "InspectorForwarding.h"
-#include "InspectorFrontend.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "URL.h"
 #include "WorkerGlobalScopeProxy.h"

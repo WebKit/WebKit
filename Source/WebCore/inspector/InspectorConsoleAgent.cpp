@@ -34,7 +34,7 @@
 #include "DOMWindow.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
-#include "InspectorFrontend.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"

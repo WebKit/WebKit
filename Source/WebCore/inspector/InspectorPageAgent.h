@@ -35,9 +35,9 @@
 
 #include "DeviceOrientationData.h"
 #include "GeolocationPosition.h"
-#include "InspectorBackendDispatchers.h"
-#include "InspectorFrontend.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "IntSize.h"
 #include "LayoutRect.h"
 #include <wtf/HashMap.h>
@@ -71,7 +71,7 @@ class TextResourceDecoder;
 
 typedef String ErrorString;
 
-class InspectorPageAgent : public InspectorAgentBase, public InspectorPageBackendDispatcherHandler {
+class InspectorPageAgent : public InspectorAgentBase, public Inspector::InspectorPageBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
 public:
     enum ResourceType {
@@ -121,7 +121,7 @@ public:
     virtual void setShowFPSCounter(ErrorString*, bool show);
     virtual void canContinuouslyPaint(ErrorString*, bool*);
     virtual void setContinuousPaintingEnabled(ErrorString*, bool enabled);
-    virtual void getScriptExecutionStatus(ErrorString*, InspectorPageBackendDispatcherHandler::Result::Enum*);
+    virtual void getScriptExecutionStatus(ErrorString*, Inspector::InspectorPageBackendDispatcherHandler::Result::Enum*);
     virtual void setScriptExecutionDisabled(ErrorString*, bool);
     virtual void setGeolocationOverride(ErrorString*, const double*, const double*, const double*);
     virtual void clearGeolocationOverride(ErrorString*);
@@ -200,8 +200,8 @@ private:
     InspectorAgent* m_inspectorAgent;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorClient* m_client;
-    std::unique_ptr<InspectorPageFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorPageBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorPageFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorPageBackendDispatcher> m_backendDispatcher;
     InspectorOverlay* m_overlay;
     long m_lastScriptIdentifier;
     String m_pendingScriptToEvaluateOnLoadOnce;

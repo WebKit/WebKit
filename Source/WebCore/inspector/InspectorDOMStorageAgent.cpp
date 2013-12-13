@@ -33,14 +33,14 @@
 
 #include "InspectorDOMStorageAgent.h"
 
-#include "Database.h"
 #include "DOMWindow.h"
+#include "Database.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodeDescription.h"
 #include "Frame.h"
-#include "InspectorFrontend.h"
 #include "InspectorPageAgent.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
 #include "PageGroup.h"

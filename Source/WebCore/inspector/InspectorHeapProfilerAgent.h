@@ -33,9 +33,9 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
-#include "InspectorBackendDispatchers.h"
-#include "InspectorFrontend.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -50,7 +50,7 @@ class ScriptProfile;
 
 typedef String ErrorString;
 
-class InspectorHeapProfilerAgent : public InspectorAgentBase, public InspectorHeapProfilerBackendDispatcherHandler {
+class InspectorHeapProfilerAgent : public InspectorAgentBase, public Inspector::InspectorHeapProfilerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorHeapProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorHeapProfilerAgent> create(InstrumentingAgents*, InjectedScriptManager*);
@@ -84,8 +84,8 @@ private:
     PassRefPtr<Inspector::TypeBuilder::HeapProfiler::ProfileHeader> createSnapshotHeader(const ScriptHeapSnapshot&);
 
     InjectedScriptManager* m_injectedScriptManager;
-    std::unique_ptr<InspectorHeapProfilerFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorHeapProfilerBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorHeapProfilerFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorHeapProfilerBackendDispatcher> m_backendDispatcher;
     unsigned m_nextUserInitiatedHeapSnapshotNumber;
     IdToHeapSnapshotMap m_snapshots;
     bool m_profileHeadersRequested;

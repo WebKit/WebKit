@@ -33,9 +33,9 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBackendDispatchers.h"
-#include "InspectorFrontend.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "LayoutRect.h"
 #include <inspector/InspectorValues.h>
 #include <wtf/PassOwnPtr.h>
@@ -123,7 +123,7 @@ private:
 
 class InspectorTimelineAgent
     : public InspectorAgentBase
-    , public InspectorTimelineBackendDispatcherHandler {
+    , public Inspector::InspectorTimelineBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
     enum InspectorType { PageInspector, WorkerInspector };
@@ -259,8 +259,8 @@ private:
     InspectorMemoryAgent* m_memoryAgent;
     TimelineTimeConverter m_timeConverter;
 
-    std::unique_ptr<InspectorTimelineFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorTimelineBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorTimelineFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorTimelineBackendDispatcher> m_backendDispatcher;
     double m_timestampOffset;
 
     Vector<TimelineRecordEntry> m_recordStack;

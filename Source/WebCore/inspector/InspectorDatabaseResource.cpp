@@ -35,7 +35,7 @@
 #include "InspectorDatabaseResource.h"
 
 #include "Database.h"
-#include "InspectorFrontend.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include <inspector/InspectorValues.h>
 
 using namespace Inspector;

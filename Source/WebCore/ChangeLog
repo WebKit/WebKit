@@ -1,3 +1,88 @@
+2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Inspector Code Generation to JavaScriptCore for Runtime Domain
+        https://bugs.webkit.org/show_bug.cgi?id=125595
+
+        Reviewed by Timothy Hatcher.
+
+          - CodeGeneration changed to output Frontend and Backend dispatchers
+            in namespace Inspector. So update all the agent's appropriately.
+          - Update Derived Sources code generation to use the Scripts that had
+            moved to JavaScriptCore. Some ports just use JSC/inspector/scripts
+            directly, but others have to use the Scripts exported by JSC
+            in JavaScriptCore's PrivateHeaders.
+          - Add ForwardingHeaders for the files generated in JavaScriptCore.
+          - Update the names of Inspector DerivedSources files, since they
+            were renamed to InspectorWeb*.
+
+        No new tests, this only moves code around. There are no functional changes.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * ForwardingHeaders/inspector/InspectorJSBackendDispatchers.h: Added.
+        * ForwardingHeaders/inspector/InspectorJSFrontendDispatchers.h: Added.
+        * ForwardingHeaders/inspector/InspectorJSTypeBuilders.h: Added.
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.vcxproj/build-generated-files.sh:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove files, rename files, update code generation.
+
+        * make-generated-sources.sh:
+        Update this standalone developer script to fill in the new InspectorScripts variable.
+
+        * inspector/ConsoleMessage.h:
+        * inspector/InjectedScriptHost.cpp:
+        * inspector/InspectorAgent.cpp:
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorCanvasAgent.cpp:
+        * inspector/InspectorCanvasAgent.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        * inspector/InspectorHeapProfilerAgent.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorInputAgent.h:
+        * inspector/InspectorLayerTreeAgent.cpp:
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorMemoryAgent.cpp:
+        * inspector/InspectorMemoryAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/PageRuntimeAgent.h:
+        * inspector/ScriptCallFrame.cpp:
+        * inspector/WorkerInspectorController.cpp:
+        * inspector/WorkerRuntimeAgent.h:
+        Updates header names and class namespace changes.
+
 2013-12-13  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Adding RTCPeerConnectionErrorCallback

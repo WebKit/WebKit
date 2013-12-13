@@ -3,6 +3,7 @@
 set PublicHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\JavaScriptCore
 set PrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private\JavaScriptCore
 set ResourcesDirectory=%CONFIGURATIONBUILDDIR%\bin%PlatformArchitecture%\JavaScriptCore.resources
+set DerivedSourcesDirectory=%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\JavaScriptCore\DerivedSources
 
 if "%1" EQU "clean" goto :clean
 if "%1" EQU "rebuild" call :clean
@@ -56,6 +57,19 @@ for %%d in (
 ) do (
     xcopy /y /d ..\%%d\*.h "%PrivateHeadersDirectory%" >NUL
 )
+
+echo Copying Inspector scripts as if they were private headers...
+for %%d in (
+    inspector\scripts
+) do (
+    xcopy /y /d ..\%%d\*.py "%PrivateHeadersDirectory%" >NUL
+)
+
+echo Copying Inspector generated files as if they were private headers...
+xcopy /y "%DerivedSourcesDirectory%\InspectorJS.json" "%PrivateHeadersDirectory%" >NUL
+xcopy /y "%DerivedSourcesDirectory%\InspectorJSTypeBuilders.h" "%PrivateHeadersDirectory%" >NUL
+xcopy /y "%DerivedSourcesDirectory%\InspectorJSBackendDispatchers.h" "%PrivateHeadersDirectory%" >NUL
+xcopy /y "%DerivedSourcesDirectory%\InspectorJSFrontendDispatchers.h" "%PrivateHeadersDirectory%" >NUL
 
 echo Copying resources...
 mkdir "%ResourcesDirectory%" 2>NUL

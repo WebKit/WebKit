@@ -37,7 +37,7 @@
 
 #include "IdentifiersFactory.h"
 #include "InspectorDOMAgent.h"
-#include "InspectorFrontend.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "PseudoElement.h"

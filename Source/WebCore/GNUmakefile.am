@@ -333,6 +333,8 @@ dom_binding_idls += \
   DerivedSources/WebCore/InternalSettingsGenerated.idl
 
 
+INSPECTOR_SCRIPTS_DIR := $(JavaScriptCore)/inspector/scripts
+
 INSPECTOR_DOMAINS := \
     $(WebCore)/inspector/protocol/ApplicationCache.json \
     $(WebCore)/inspector/protocol/CSS.json \
@@ -353,22 +355,21 @@ INSPECTOR_DOMAINS := \
     $(WebCore)/inspector/protocol/Network.json \
     $(WebCore)/inspector/protocol/Page.json \
     $(WebCore)/inspector/protocol/Profiler.json \
-    $(WebCore)/inspector/protocol/Runtime.json \
     $(WebCore)/inspector/protocol/Timeline.json \
     $(WebCore)/inspector/protocol/Worker.json
 
-DerivedSources/WebCore/Inspector.json: $(WebCore)/inspector/Scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS)
-	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/Scripts/generate-combined-inspector-json.py $(WebCore)/inspector/protocol > $(GENSOURCES_WEBCORE)/Inspector.json
+DerivedSources/WebCore/InspectorWeb.json: $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS)
+	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(WebCore)/inspector/protocol > $(GENSOURCES_WEBCORE)/InspectorWeb.json
 
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.py
-DerivedSources/WebCore/InspectorBackendDispatchers.cpp: DerivedSources/WebCore/Inspector.json $(WebCore)/inspector/CodeGeneratorInspector.py $(WebCore)/inspector/CodeGeneratorInspectorStrings.py
-	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/CodeGeneratorInspector.py $< --output_h_dir $(GENSOURCES_WEBCORE) --output_cpp_dir $(GENSOURCES_WEBCORE) --output_js_dir $(GENSOURCES_WEBCORE)
+DerivedSources/WebCore/InspectorWebBackendDispatchers.cpp: $(GENSOURCES_WEBCORE)/InspectorWeb.json $(GENSOURCES_JAVASCRIPTCORE)/InspectorJS.json $(INSPECTOR_SCRIPTS_DIR)/CodeGeneratorInspector.py $(INSPECTOR_SCRIPTS_DIR)/CodeGeneratorInspectorStrings.py $(GENSOURCES_JAVASCRIPTCORE)/InspectorJSTypeBuilders.h
+	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/CodeGeneratorInspector.py $(GENSOURCES_WEBCORE)/InspectorWeb.json $(GENSOURCES_JAVASCRIPTCORE)/InspectorJS.json --output_h_dir $(GENSOURCES_WEBCORE) --output_cpp_dir $(GENSOURCES_WEBCORE) --output_js_dir $(GENSOURCES_WEBCORE) --output_type Web
 DerivedSources/WebCore/InspectorWebTypeBuilders.h: DerivedSources/WebCore/InspectorWebTypeBuilders.cpp
-DerivedSources/WebCore/InspectorWebTypeBuilders.cpp: DerivedSources/WebCore/InspectorFrontend.h
-DerivedSources/WebCore/InspectorFrontend.h: DerivedSources/WebCore/InspectorFrontend.cpp
-DerivedSources/WebCore/InspectorFrontend.cpp: DerivedSources/WebCore/InspectorBackendCommands.js
-DerivedSources/WebCore/InspectorBackendCommands.js: DerivedSources/WebCore/InspectorBackendDispatchers.h
-DerivedSources/WebCore/InspectorBackendDispatchers.h: DerivedSources/WebCore/InspectorBackendDispatchers.cpp
+DerivedSources/WebCore/InspectorWebTypeBuilders.cpp: DerivedSources/WebCore/InspectorWebFrontendDispatchers.h
+DerivedSources/WebCore/InspectorWebFrontendDispatchers.h: DerivedSources/WebCore/InspectorWebFrontendDispatchers.cpp
+DerivedSources/WebCore/InspectorWebFrontendDispatchers.cpp: DerivedSources/WebCore/InspectorWebBackendCommands.js
+DerivedSources/WebCore/InspectorWebBackendCommands.js: DerivedSources/WebCore/InspectorWebBackendDispatchers.h
+DerivedSources/WebCore/InspectorWebBackendDispatchers.h: DerivedSources/WebCore/InspectorWebBackendDispatchers.cpp
 
 DerivedSources/WebCore/InspectorOverlayPage.h: $(WebCore)/inspector/InspectorOverlayPage.html $(WebCore)/inspector/InspectorOverlayPage.css $(WebCore)/inspector/InspectorOverlayPage.js
 	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/Scripts/inline-and-minify-stylesheets-and-scripts.py $(WebCore)/inspector/InspectorOverlayPage.html $(GENSOURCES_WEBCORE)/InspectorOverlayPage.combined.html

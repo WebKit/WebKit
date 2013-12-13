@@ -33,7 +33,7 @@
 
 #include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
-#include "InspectorFrontend.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
@@ -59,8 +59,8 @@ public:
     ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, JSC::ExecState*, unsigned long requestIdentifier = 0);
     ~ConsoleMessage();
 
-    void addToFrontend(InspectorConsoleFrontendDispatcher*, InjectedScriptManager*, bool generatePreview);
-    void updateRepeatCountInConsole(InspectorConsoleFrontendDispatcher*);
+    void addToFrontend(Inspector::InspectorConsoleFrontendDispatcher*, InjectedScriptManager*, bool generatePreview);
+    void updateRepeatCountInConsole(Inspector::InspectorConsoleFrontendDispatcher*);
     void incrementCount() { ++m_repeatCount; }
     bool isEqual(ConsoleMessage* msg) const;
 

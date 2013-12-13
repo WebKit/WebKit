@@ -31,9 +31,9 @@
 # Its syntax is a Python syntax subset, suitable for manual parsing.
 
 frontend_domain_class = (
-"""class $domainClassName {
+"""class ${exportMacro} ${domainClassName} {
 public:
-    $domainClassName(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
+    ${domainClassName}(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
 ${frontendDomainMethodDeclarations}private:
     InspectorFrontendChannel* m_inspectorFrontendChannel;
 };
@@ -122,16 +122,16 @@ ${code}    sendIfActive(jsonMessage, ErrorString());
 """)
 
 frontend_h = (
-"""#ifndef InspectorFrontend_h
-#define InspectorFrontend_h
+"""#ifndef Inspector${outputFileNamePrefix}FrontendDispatchers_h
+#define Inspector${outputFileNamePrefix}FrontendDispatchers_h
 
-#include "InspectorWebTypeBuilders.h"
-#include "InspectorForwarding.h"
+#include "Inspector${outputFileNamePrefix}TypeBuilders.h"
+#include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace Inspector {
 
 #if ENABLE(INSPECTOR)
 
@@ -139,52 +139,48 @@ $domainClassList
 
 #endif // ENABLE(INSPECTOR)
 
-} // namespace WebCore
+} // namespace Inspector
 
-#endif // !defined(InspectorFrontend_h)
+#endif // !defined(Inspector${outputFileNamePrefix}FrontendDispatchers_h)
 """)
 
 backend_h = (
-"""#ifndef InspectorBackendDispatchers_h
-#define InspectorBackendDispatchers_h
+"""#ifndef Inspector${outputFileNamePrefix}BackendDispatchers_h
+#define Inspector${outputFileNamePrefix}BackendDispatchers_h
 
-#include "InspectorWebTypeBuilders.h"
+#include "Inspector${outputFileNamePrefix}TypeBuilders.h"
 #include <inspector/InspectorBackendDispatcher.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace Inspector {
 
 typedef String ErrorString;
 
 $handlerInterfaces
 
 $dispatcherInterfaces
-} // namespace WebCore
+} // namespace Inspector
 
-#endif // !defined(InspectorBackendDispatchers_h)
+#endif // !defined(Inspector${outputFileNamePrefix}BackendDispatchers_h)
 """)
 
 backend_cpp = (
 """
 #include "config.h"
+#include "Inspector${outputFileNamePrefix}BackendDispatchers.h"
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBackendDispatchers.h"
-
-#include "InspectorAgent.h"
-#include "InspectorForwarding.h"
+#include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-using namespace Inspector;
-
-namespace WebCore {
+namespace Inspector {
 
 $methods
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)
 """)
@@ -193,34 +189,31 @@ frontend_cpp = (
 """
 
 #include "config.h"
+#include "Inspector${outputFileNamePrefix}FrontendDispatchers.h"
 
 #if ENABLE(INSPECTOR)
-
-#include "InspectorFrontend.h"
 
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-using namespace Inspector;
-
-namespace WebCore {
+namespace Inspector {
 
 $methods
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)
 """)
 
 typebuilder_h = (
 """
-// FIXME: TYPE.
-#ifndef InspectorWebTypeBuilders_h
-#define InspectorWebTypeBuilders_h
+#ifndef Inspector${outputFileNamePrefix}TypeBuilders_h
+#define Inspector${outputFileNamePrefix}TypeBuilders_h
 
 #if ENABLE(INSPECTOR)
 
 #include <inspector/InspectorTypeBuilder.h>
+${typeBuilderDependencies}
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 
@@ -239,7 +232,7 @@ ${typeBuilders}
 
 #endif // ENABLE(INSPECTOR)
 
-#endif // !defined(InspectorWebTypeBuilders_h)
+#endif // !defined(Inspector${outputFileNamePrefix}TypeBuilders_h)
 
 """)
 
@@ -247,12 +240,11 @@ typebuilder_cpp = (
 """
 
 #include "config.h"
+#include "Inspector${outputFileNamePrefix}TypeBuilders.h"
+
 #if ENABLE(INSPECTOR)
 
-#include "InspectorWebTypeBuilders.h"
 #include <wtf/text/CString.h>
-
-using namespace Inspector;
 
 namespace Inspector {
 

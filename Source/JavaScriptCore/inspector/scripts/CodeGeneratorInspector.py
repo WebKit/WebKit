@@ -72,21 +72,40 @@ TYPES_WITH_OPEN_FIELD_LIST_SET = frozenset(["Timeline.TimelineEvent",
 
 EXACTLY_INT_SUPPORTED = False
 
+INSPECTOR_TYPES_GENERATOR_CONFIG_MAP = {
+    "JavaScript": {
+        "prefix": "JS",
+        "typebuilder_dependency": "",
+        "export_macro": "JS_EXPORT_PRIVATE",
+    },
+    "Web": {
+        "prefix": "Web",
+        "typebuilder_dependency": "#include <inspector/InspectorJSTypeBuilders.h>",
+        "export_macro": "",
+    },
+}
+
 cmdline_parser = optparse.OptionParser(usage="usage: %prog [options] <Inspector.json>")
 cmdline_parser.add_option("--output_h_dir")
 cmdline_parser.add_option("--output_cpp_dir")
 cmdline_parser.add_option("--output_js_dir")
+cmdline_parser.add_option("--output_type")  # JavaScript, Web
 cmdline_parser.add_option("--write_always", action="store_true")
 cmdline_parser.add_option("--no_verification", action="store_true")
 
 try:
     arg_options, arg_values = cmdline_parser.parse_args()
-    if (len(arg_values) != 1):
-        raise Exception("Exactly one plain argument expected (found %s)" % len(arg_values))
+    if (len(arg_values) < 1):
+        raise Exception("At least one plain argument expected")
+
     input_json_filename = arg_values[0]
+    dependency_json_filenames = arg_values[1:]
+
     output_header_dirname = arg_options.output_h_dir
     output_cpp_dirname = arg_options.output_cpp_dir
     output_js_dirname = arg_options.output_js_dir
+    output_type = arg_options.output_type
+
     write_always = arg_options.write_always
     verification = not arg_options.no_verification
     if not output_header_dirname:
@@ -95,6 +114,8 @@ try:
         raise Exception("Output .cpp directory must be specified")
     if not output_js_dirname:
         raise Exception("Output .js directory must be specified")
+    if output_type not in INSPECTOR_TYPES_GENERATOR_CONFIG_MAP.keys():
+        raise Exception("Unknown output type. Allowed types are: %s" % INSPECTOR_TYPES_GENERATOR_CONFIG_MAP.keys())
 except Exception:
     # Work with python 2 and 3 http://docs.python.org/py3k/howto/pyporting.html
     exc = sys.exc_info()[1]
@@ -1269,7 +1290,7 @@ class TypeBindings:
 
                                 if class_binding_cls.need_internal_runtime_cast_:
                                     writer.append("#if %s\n" % VALIDATOR_IFDEF_NAME)
-                                    writer.newline("    static void assertCorrectValue(Inspector::InspectorValue* value);\n")
+                                    writer.newline("    static %s void assertCorrectValue(Inspector::InspectorValue* value);\n" % INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["export_macro"])
                                     writer.append("#endif  // %s\n" % VALIDATOR_IFDEF_NAME)
 
                                     closed_field_set = (context_domain_name + "." + class_name) not in TYPES_WITH_OPEN_FIELD_LIST_SET
@@ -1311,9 +1332,8 @@ class TypeBindings:
                                         validator_writer.newline("    }\n")
 
                                     if closed_field_set:
-                                        validator_writer.newline("    if (foundPropertiesCount != object->size()) {\n")
-                                        validator_writer.newline("      FATAL(\"Unexpected properties in object: %s\\n\", object->toJSONString().ascii().data());\n")
-                                        validator_writer.newline("    }\n")
+                                        validator_writer.newline("    if (foundPropertiesCount != object->size())\n")
+                                        validator_writer.newline("        FATAL(\"Unexpected properties in object: %s\\n\", object->toJSONString().ascii().data());\n")
                                     validator_writer.newline("}\n")
 
                                     if domain_guard:
@@ -1585,8 +1605,7 @@ class TypeData(object):
             raise Exception("Unknown type")
 
         json_type_name = json_type["type"]
-        raw_type = RawTypes.get(json_type_name)
-        self.raw_type_ = raw_type
+        self.raw_type_ = RawTypes.get(json_type_name)
         self.binding_being_resolved_ = False
         self.binding_ = None
 
@@ -1596,7 +1615,7 @@ class TypeData(object):
     def get_binding(self):
         if not self.binding_:
             if self.binding_being_resolved_:
-                raise Error("Type %s is already being resolved" % self.json_type_["type"])
+                raise Exception("Type %s is already being resolved" % self.json_type_["type"])
             # Resolve only lazily, because resolving one named type may require resolving some other named type.
             self.binding_being_resolved_ = True
             try:
@@ -1632,32 +1651,43 @@ class DomainData:
 
 
 class TypeMap:
-    def __init__(self, api):
+    def __init__(self, api, dependency_api):
         self.map_ = {}
         self.domains_ = []
+        self.domains_to_generate_ = []
         for json_domain in api["domains"]:
-            domain_name = json_domain["domain"]
+            self.add_domain(json_domain, True)
+        for json_domain in dependency_api["domains"]:
+            self.add_domain(json_domain, False)
 
-            domain_map = {}
-            self.map_[domain_name] = domain_map
+    def add_domain(self, json_domain, should_generate):
+        domain_name = json_domain["domain"]
 
-            domain_data = DomainData(json_domain)
+        domain_map = {}
+        self.map_[domain_name] = domain_map
 
+        domain_data = DomainData(json_domain)
+        self.domains_.append(domain_data)
+
+        if should_generate:
             # FIXME: The order of types should not matter. The generated code should work regardless of the order of types.
             if domain_name == "Page":
-                self.domains_.insert(0, domain_data)
+                self.domains_to_generate_.insert(0, domain_data)
             else:
-                self.domains_.append(domain_data)
+                self.domains_to_generate_.append(domain_data)
 
-            if "types" in json_domain:
-                for json_type in json_domain["types"]:
-                    type_name = json_type["id"]
-                    type_data = TypeData(json_type, json_domain, domain_data)
-                    domain_map[type_name] = type_data
-                    domain_data.add_type(type_data)
+        if "types" in json_domain:
+            for json_type in json_domain["types"]:
+                type_name = json_type["id"]
+                type_data = TypeData(json_type, json_domain, domain_data)
+                domain_map[type_name] = type_data
+                domain_data.add_type(type_data)
 
     def domains(self):
         return self.domains_
+
+    def domains_to_generate(self):
+        return self.domains_to_generate_
 
     def get(self, domain_name, type_name):
         return self.map_[domain_name][type_name]
@@ -1674,6 +1704,7 @@ def resolve_param_type(json_parameter, scope_domain_name, ad_hoc_type_context):
         return result
     else:
         raise Exception("Unknown type")
+
 
 def resolve_param_raw_type(json_parameter, scope_domain_name):
     if "$ref" in json_parameter:
@@ -1702,10 +1733,19 @@ def get_ref_data(json_ref, scope_domain_name):
 input_file = open(input_json_filename, "r")
 json_string = input_file.read()
 json_api = json.loads(json_string)
-
-# Allow this script to work when the input is a single domain.
+input_file.close()
 if not "domains" in json_api:
     json_api = {"domains": [json_api]}
+
+dependency_api = {"domains": []}
+for dependency_json_filename in dependency_json_filenames:
+    dependency_input_file = open(dependency_json_filename, "r")
+    dependency_json_string = dependency_input_file.read()
+    dependency_json_api = json.loads(dependency_json_string)
+    dependency_input_file.close()
+    if not "domains" in dependency_json_api:
+        dependency_json_api = {"domains": [dependency_json_api]}
+    dependency_api["domains"] += dependency_json_api["domains"]
 
 
 class Templates:
@@ -1752,7 +1792,7 @@ class Templates:
 
 
 
-type_map = TypeMap(json_api)
+type_map = TypeMap(json_api, dependency_api)
 
 
 class NeedRuntimeCastRequest:
@@ -1785,11 +1825,10 @@ def resolve_all_types():
 
     for domain_data in type_map.domains():
         for type_data in domain_data.types():
-            # Do not generate forwards for this type any longer.
-            ForwardListener.already_declared_set.add(type_data)
-
             binding = type_data.get_binding()
             binding.resolve_inner(ResolveContext)
+            # Do not generate forwards for this type any longer.
+            ForwardListener.already_declared_set.add(type_data)
 
     for domain_data in type_map.domains():
         for type_data in domain_data.types():
@@ -1802,9 +1841,11 @@ def resolve_all_types():
             if request and not request.is_acknowledged():
                 raise Exception("Failed to generate runtimeCast in " + full_type_name)
 
-    if verification:
-        for full_type_name in runtime_cast_generate_requests:
-            raise Exception("Failed to generate runtimeCast. Type " + full_type_name + " not found")
+    # FIXME: This assumes all the domains are processed at once. Change this verification
+    # to only verify runtime casts for the domains being generated.
+    # if verification:
+    #     for full_type_name in runtime_cast_generate_requests:
+    #         raise Exception("Failed to generate runtimeCast. Type " + full_type_name + " not found")
 
     return ForwardListener
 
@@ -1825,6 +1866,7 @@ def format_setter_value_expression(param_type_binding, value_ref):
         return pattern % value_ref
     else:
         return value_ref
+
 
 class Generator:
     frontend_domain_class_lines = []
@@ -1890,6 +1932,7 @@ class Generator:
                     Generator.process_event(json_event, domain_name, frontend_method_declaration_lines)
 
                 Generator.frontend_domain_class_lines.append(Templates.frontend_domain_class.substitute(None,
+                    exportMacro=INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["export_macro"],
                     domainClassName="Inspector%sFrontendDispatcher" % domain_name,
                     frontendDomainMethodDeclarations="".join(flatten_list(frontend_method_declaration_lines))))
 
@@ -1900,13 +1943,13 @@ class Generator:
             dispatcher_name = "Inspector" + Capitalizer.lower_camel_case_to_upper(domain_name) + "BackendDispatcher"
             agent_interface_name = dispatcher_name + "Handler"
 
-            Generator.backend_dispatcher_interface_list.append("class %s FINAL : public Inspector::InspectorSupplementalBackendDispatcher {\n" % dispatcher_name)
+            Generator.backend_dispatcher_interface_list.append("class %s %s FINAL : public Inspector::InspectorSupplementalBackendDispatcher {\n" % (INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["export_macro"], dispatcher_name))
             Generator.backend_dispatcher_interface_list.append("public:\n")
             Generator.backend_dispatcher_interface_list.append("    static PassRefPtr<%s> create(Inspector::InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
             Generator.backend_dispatcher_interface_list.append("    virtual void dispatch(long callId, const String& method, PassRefPtr<Inspector::InspectorObject> message) OVERRIDE;\n")
             Generator.backend_dispatcher_interface_list.append("private:\n")
 
-            Generator.backend_handler_interface_list.append("class %s {\n" % agent_interface_name)
+            Generator.backend_handler_interface_list.append("class %s %s {\n" % (INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["export_macro"], agent_interface_name))
             Generator.backend_handler_interface_list.append("public:\n")
 
             backend_method_count = len(Generator.backend_method_implementation_list)
@@ -2308,7 +2351,7 @@ class Generator:
 
         def generate_all_domains_code(out, type_data_callback):
             writer = Writer(out, "")
-            for domain_data in type_map.domains():
+            for domain_data in type_map.domains_to_generate():
                 domain_fixes = DomainNameFixes.get_fixed_data(domain_data.name())
                 domain_guard = domain_fixes.get_guard()
 
@@ -2407,37 +2450,46 @@ class SmartOutput:
 
 Generator.go()
 
-backend_h_file = SmartOutput(output_header_dirname + "/InspectorBackendDispatchers.h")
-backend_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorBackendDispatchers.cpp")
+output_file_name_prefix = INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["prefix"]
 
-frontend_h_file = SmartOutput(output_header_dirname + "/InspectorFrontend.h")
-frontend_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorFrontend.cpp")
+backend_h_file = SmartOutput(output_header_dirname + ("/Inspector%sBackendDispatchers.h" % output_file_name_prefix))
+backend_cpp_file = SmartOutput(output_cpp_dirname + ("/Inspector%sBackendDispatchers.cpp" % output_file_name_prefix))
 
-typebuilder_h_file = SmartOutput(output_header_dirname + "/InspectorWebTypeBuilders.h")
-typebuilder_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorWebTypeBuilders.cpp")
+frontend_h_file = SmartOutput(output_header_dirname + ("/Inspector%sFrontendDispatchers.h" % output_file_name_prefix))
+frontend_cpp_file = SmartOutput(output_cpp_dirname + ("/Inspector%sFrontendDispatchers.cpp" % output_file_name_prefix))
 
-backend_js_file = SmartOutput(output_js_dirname + "/InspectorBackendCommands.js")
+typebuilder_h_file = SmartOutput(output_header_dirname + ("/Inspector%sTypeBuilders.h" % output_file_name_prefix))
+typebuilder_cpp_file = SmartOutput(output_cpp_dirname + ("/Inspector%sTypeBuilders.cpp" % output_file_name_prefix))
+
+backend_js_file = SmartOutput(output_js_dirname + ("/Inspector%sBackendCommands.js" % output_file_name_prefix))
 
 
 backend_h_file.write(Templates.backend_h.substitute(None,
+    outputFileNamePrefix=output_file_name_prefix,
     handlerInterfaces="".join(flatten_list(Generator.backend_handler_interface_list)),
     dispatcherInterfaces="".join(flatten_list(Generator.backend_dispatcher_interface_list))))
 
 backend_cpp_file.write(Templates.backend_cpp.substitute(None,
+    outputFileNamePrefix=output_file_name_prefix,
     methods="\n".join(Generator.backend_method_implementation_list)))
 
 frontend_h_file.write(Templates.frontend_h.substitute(None,
+    outputFileNamePrefix=output_file_name_prefix,
     domainClassList="".join(Generator.frontend_domain_class_lines)))
 
 frontend_cpp_file.write(Templates.frontend_cpp.substitute(None,
+    outputFileNamePrefix=output_file_name_prefix,
     methods="\n".join(Generator.frontend_method_list)))
 
 typebuilder_h_file.write(Templates.typebuilder_h.substitute(None,
+    outputFileNamePrefix=output_file_name_prefix,
+    typeBuilderDependencies=INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["typebuilder_dependency"],
     typeBuilders="".join(flatten_list(Generator.type_builder_fragments)),
     forwards="".join(Generator.type_builder_forwards),
     validatorIfdefName=VALIDATOR_IFDEF_NAME))
 
 typebuilder_cpp_file.write(Templates.typebuilder_cpp.substitute(None,
+    outputFileNamePrefix=output_file_name_prefix,
     enumConstantValues=EnumConstants.get_enum_constant_code(),
     implCode="".join(flatten_list(Generator.type_builder_impl_list)),
     validatorCode="".join(flatten_list(Generator.validator_impl_list)),

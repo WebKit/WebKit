@@ -27,10 +27,10 @@
 
 #include "CSSSelector.h"
 #include "ContentSecurityPolicy.h"
-#include "InspectorBackendDispatchers.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorStyleSheet.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
 #include "SecurityContext.h"
 #include <inspector/InspectorValues.h>
 #include <wtf/HashMap.h>
@@ -38,6 +38,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
+
+namespace Inspector {
+class InspectorCSSFrontendDispatcher;
+}
 
 namespace WebCore {
 
@@ -50,7 +54,6 @@ class Document;
 class DocumentStyleSheetCollection;
 class Element;
 class InspectorCSSOMWrappers;
-class InspectorCSSFrontendDispatcher;
 class InstrumentingAgents;
 class NameNodeMap;
 class Node;
@@ -66,7 +69,7 @@ class ChangeRegionOversetTask;
 class InspectorCSSAgent
     : public InspectorAgentBase
     , public InspectorDOMAgent::DOMListener
-    , public InspectorCSSBackendDispatcherHandler
+    , public Inspector::InspectorCSSBackendDispatcherHandler
     , public InspectorStyleSheet::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
 public:
@@ -183,8 +186,8 @@ private:
 
     void resetPseudoStates();
 
-    std::unique_ptr<InspectorCSSFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorCSSBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorCSSFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorCSSBackendDispatcher> m_backendDispatcher;
     InspectorDOMAgent* m_domAgent;
 
     IdToInspectorStyleSheet m_idToInspectorStyleSheet;

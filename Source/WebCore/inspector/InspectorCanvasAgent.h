@@ -33,9 +33,9 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBackendDispatchers.h"
-#include "InspectorFrontend.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "InspectorWebTypeBuilders.h"
 #include "ScriptState.h"
 #include <wtf/HashMap.h>
@@ -57,7 +57,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorCanvasAgent : public InspectorAgentBase, public InspectorCanvasBackendDispatcherHandler {
+class InspectorCanvasAgent : public InspectorAgentBase, public Inspector::InspectorCanvasBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorCanvasAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager)
     {
@@ -104,8 +104,8 @@ private:
 
     InspectorPageAgent* m_pageAgent;
     InjectedScriptManager* m_injectedScriptManager;
-    std::unique_ptr<InspectorCanvasFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<InspectorCanvasBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<Inspector::InspectorCanvasFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<Inspector::InspectorCanvasBackendDispatcher> m_backendDispatcher;
     bool m_enabled;
     // Contains all frames with canvases, value is true only for frames that have an uninstrumented canvas.
     typedef HashMap<Frame*, bool> FramesWithUninstrumentedCanvases;

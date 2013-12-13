@@ -33,8 +33,8 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBackendDispatchers.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -45,7 +45,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorMemoryAgent : public InspectorAgentBase, public InspectorMemoryBackendDispatcherHandler {
+class InspectorMemoryAgent : public InspectorAgentBase, public Inspector::InspectorMemoryBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorMemoryAgent);
 public:
     static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents);
@@ -59,7 +59,7 @@ public:
 private:
     InspectorMemoryAgent(InstrumentingAgents*);
 
-    RefPtr<InspectorMemoryBackendDispatcher> m_backendDispatcher;
+    RefPtr<Inspector::InspectorMemoryBackendDispatcher> m_backendDispatcher;
 };
 
 } // namespace WebCore

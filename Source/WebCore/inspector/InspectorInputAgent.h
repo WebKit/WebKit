@@ -33,8 +33,8 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBackendDispatchers.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -44,7 +44,7 @@ class Page;
 
 typedef String ErrorString;
 
-class InspectorInputAgent : public InspectorAgentBase, public InspectorInputBackendDispatcherHandler {
+class InspectorInputAgent : public InspectorAgentBase, public Inspector::InspectorInputBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorInputAgent);
 public:
     static PassOwnPtr<InspectorInputAgent> create(InstrumentingAgents* instrumentingAgents, Page* page)
@@ -65,7 +65,7 @@ private:
     InspectorInputAgent(InstrumentingAgents*, Page*);
 
     Page* m_page;
-    RefPtr<InspectorInputBackendDispatcher> m_backendDispatcher;
+    RefPtr<Inspector::InspectorInputBackendDispatcher> m_backendDispatcher;
 };
 
 #endif // ENABLE(INSPECTOR)

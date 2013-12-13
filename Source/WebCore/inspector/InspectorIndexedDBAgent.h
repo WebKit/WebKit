@@ -33,8 +33,8 @@
 
 #if ENABLE(INSPECTOR) && ENABLE(INDEXED_DATABASE)
 
-#include "InspectorBackendDispatchers.h"
 #include "InspectorWebAgentBase.h"
+#include "InspectorWebBackendDispatchers.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,7 +45,7 @@ class InspectorPageAgent;
 
 typedef String ErrorString;
 
-class InspectorIndexedDBAgent : public InspectorAgentBase, public InspectorIndexedDBBackendDispatcherHandler {
+class InspectorIndexedDBAgent : public InspectorAgentBase, public Inspector::InspectorIndexedDBBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorIndexedDBAgent> create(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, InspectorPageAgent* pageAgent)
     {
@@ -69,7 +69,7 @@ private:
 
     InjectedScriptManager* m_injectedScriptManager;
     InspectorPageAgent* m_pageAgent;
-    RefPtr<InspectorIndexedDBBackendDispatcher> m_backendDispatcher;
+    RefPtr<Inspector::InspectorIndexedDBBackendDispatcher> m_backendDispatcher;
 };
 
 } // namespace WebCore

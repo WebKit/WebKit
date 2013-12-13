@@ -70,8 +70,9 @@ if [[ ${COMBINE_INSPECTOR_RESOURCES:=YES} == "YES" ]]; then
     ditto "${DERIVED_SOURCES_DIR}/Main.html" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Main.html"
     ditto "${SRCROOT}/UserInterface/Images" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Images"
 
-    # Copy over files that are dynamically loaded. The default InspectorBackendCommands.js and the Legacy directory.
-    ditto "${SRCROOT}/UserInterface/InspectorBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/InspectorBackendCommands.js"
+    # Copy over files that are dynamically loaded. The default Inspector*BackendCommands.js and the Legacy directory.
+    ditto "${SRCROOT}/UserInterface/InspectorJSBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/InspectorJSBackendCommands.js"
+    ditto "${SRCROOT}/UserInterface/InspectorWebBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/InspectorWebBackendCommands.js"
     ditto "${SRCROOT}/UserInterface/Legacy" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Legacy"
 else
     # Keep the files separate for engineering builds.

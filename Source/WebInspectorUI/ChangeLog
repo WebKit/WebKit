@@ -1,3 +1,28 @@
+2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Inspector Code Generation to JavaScriptCore for Runtime Domain
+        https://bugs.webkit.org/show_bug.cgi?id=125595
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/copy-user-interface-resources.sh:
+        Copy all the different backend commands files.
+
+        * Scripts/update-InspectorBackendCommands.rb:
+        Update with respect to new script location and new file names.
+
+        * WebInspectorUI.xcodeproj/project.pbxproj:
+        Remove Inputs and Outputs of build phase, which were wrong.
+        Now this build phase always runs, and not by accident.
+
+        * UserInterface/InspectorJSBackendCommands.js: Added.
+        * UserInterface/InspectorWebBackendCommands.js: Renamed from Source/WebInspectorUI/UserInterface/InspectorBackendCommands.js.
+        * UserInterface/Legacy/6.0/InspectorWebBackendCommands.js: Renamed from Source/WebInspectorUI/UserInterface/Legacy/6.0/InspectorBackendCommands.js.
+        * UserInterface/Legacy/7.0/InspectorWebBackendCommands.js: Renamed from Source/WebInspectorUI/UserInterface/Legacy/7.0/InspectorBackendCommands.js.
+        * UserInterface/LoadInspectorBackendCommands.js:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+
 2013-12-13  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: provide an abstraction for CodeMirror's TextMarker

@@ -59,8 +59,8 @@
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "InjectedScript.h"
-#include "InspectorFrontend.h"
 #include "InspectorPageAgent.h"
+#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "SecurityOrigin.h"
 #include <inspector/InspectorValues.h>
@@ -76,10 +76,10 @@ using Inspector::TypeBuilder::IndexedDB::ObjectStore;
 using Inspector::TypeBuilder::IndexedDB::ObjectStoreIndex;
 
 typedef Inspector::InspectorBackendDispatcher::CallbackBase RequestCallback;
-typedef WebCore::InspectorIndexedDBBackendDispatcherHandler::RequestDatabaseNamesCallback RequestDatabaseNamesCallback;
-typedef WebCore::InspectorIndexedDBBackendDispatcherHandler::RequestDatabaseCallback RequestDatabaseCallback;
-typedef WebCore::InspectorIndexedDBBackendDispatcherHandler::RequestDataCallback RequestDataCallback;
-typedef WebCore::InspectorIndexedDBBackendDispatcherHandler::ClearObjectStoreCallback ClearObjectStoreCallback;
+typedef Inspector::InspectorIndexedDBBackendDispatcherHandler::RequestDatabaseNamesCallback RequestDatabaseNamesCallback;
+typedef Inspector::InspectorIndexedDBBackendDispatcherHandler::RequestDatabaseCallback RequestDatabaseCallback;
+typedef Inspector::InspectorIndexedDBBackendDispatcherHandler::RequestDataCallback RequestDataCallback;
+typedef Inspector::InspectorIndexedDBBackendDispatcherHandler::ClearObjectStoreCallback ClearObjectStoreCallback;
 
 using namespace Inspector;
 
