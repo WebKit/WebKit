@@ -1,3 +1,23 @@
+2013-12-12  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Improve the find word boundary performance
+        https://bugs.webkit.org/show_bug.cgi?id=125619
+
+        In endWordBoundary case, the textBreakPrevious call in findWordBoundary is unnecessary.
+        So use separate function for endWordBoundary can improve the performance.
+
+        Reviewed by Darin Adler.
+
+        No tests because no operation changes.
+
+        * editing/VisibleUnits.cpp: Use findEndWordBoundary in endWordBoundary
+        (WebCore::endWordBoundary):
+        * platform/text/TextBoundaries.cpp: Add findEndWordBoundary function
+        (WebCore::findEndWordBoundary):
+        * platform/text/TextBoundaries.h:
+        * platform/text/mac/TextBoundaries.mm: Add findEndWordBoundary function
+        (WebCore::findEndWordBoundary):
+
 2013-12-12  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix a silly mistake of r160467

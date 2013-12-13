@@ -40,6 +40,17 @@ void findWordBoundary(const UChar* chars, int len, int position, int* start, int
     *end = range.location + range.length;
 }
 
+void findEndWordBoundary(const UChar* chars, int len, int position, int* end)
+{
+    NSString* string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(chars)
+        length:len freeWhenDone:NO];
+    NSAttributedString* attr = [[NSAttributedString alloc] initWithString:string];
+    NSRange range = [attr doubleClickAtIndex:(position >= len) ? len - 1 : position];
+    [attr release];
+    [string release];
+    *end = range.location + range.length;
+}
+
 int findNextWordFromIndex(const UChar* chars, int len, int position, bool forward)
 {   
     NSString* string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(chars)

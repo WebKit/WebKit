@@ -97,6 +97,14 @@ void findWordBoundary(const UChar* chars, int len, int position, int* start, int
     *start = textBreakPrevious(it);
 }
 
+void findEndWordBoundary(const UChar* chars, int len, int position, int* end)
+{
+    TextBreakIterator* it = wordBreakIterator(chars, len);
+    *end = textBreakFollowing(it, position);
+    if (*end < 0)
+        *end = textBreakLast(it);
+}
+
 #endif // !PLATFORM(MAC)
 
 } // namespace WebCore

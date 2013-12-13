@@ -45,6 +45,7 @@ namespace WebCore {
     int startOfLastWordBoundaryContext(const UChar* characters, int length);
 
     void findWordBoundary(const UChar*, int len, int position, int* start, int* end);
+    void findEndWordBoundary(const UChar*, int len, int position, int* end);
     int findNextWordFromIndex(const UChar*, int len, int position, bool forward);
 
 }

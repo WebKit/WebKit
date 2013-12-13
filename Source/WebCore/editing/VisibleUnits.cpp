@@ -650,8 +650,8 @@ static unsigned endWordBoundary(const UChar* characters, unsigned length, unsign
         return length;
     }
     needMoreContext = false;
-    int start, end;
-    findWordBoundary(characters, length, offset, &start, &end);
+    int end;
+    findEndWordBoundary(characters, length, offset, &end);
     return end;
 }
 
