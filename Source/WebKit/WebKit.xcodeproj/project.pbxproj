@@ -1927,6 +1927,7 @@
 				1C6CB0510AA63EB000D23BFD /* Migrate Headers */,
 				939811300824BF01008DF038 /* Make Frameworks Symbolic Link */,
 				9398100D0824BF01008DF038 /* Headers */,
+				A13EE61D185AE82700556064 /* Postprocess Headers */,
 				939810B20824BF01008DF038 /* Resources */,
 				939810BB0824BF01008DF038 /* Sources */,
 				1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */,
@@ -2117,6 +2118,20 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "ln -sf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
+		};
+		A13EE61D185AE82700556064 /* Postprocess Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Postprocess Headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "postProcessInDirectory() {\n    cd \"$1\"\n\n    if [[ ${PLATFORM_NAME} == iphoneos ]]; then\n        local unifdefOptions=\"-DTARGET_OS_EMBEDDED=1 -DTARGET_OS_IPHONE=1 -DTARGET_IPHONE_SIMULATOR=0\";\n    elif [[ ${PLATFORM_NAME} == iphonesimulator ]]; then\n        local unifdefOptions=\"-DTARGET_OS_EMBEDDED=0 -DTARGET_OS_IPHONE=1 -DTARGET_IPHONE_SIMULATOR=1\";\n    else\n        local unifdefOptions=\"-DTARGET_OS_EMBEDDED=0 -DTARGET_OS_IPHONE=0 -DTARGET_IPHONE_SIMULATOR=0\";\n    fi\n\n    for header in $(find . -name '*.h' -type f); do\n        unifdef -B ${unifdefOptions} -o ${header}.unifdef ${header}\n        case $? in\n        0)\n            rm ${header}.unifdef\n            ;;\n        1)\n            mv ${header}{.unifdef,}\n            ;;\n        *)\n            exit 1\n            ;;\n        esac\n    done\n}\n\npostProcessInDirectory \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\npostProcessInDirectory \"${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}\"";
 		};
 		A55DEAA516703F9F003DB841 /* Check For Inappropriate Macros in External Headers */ = {
 			isa = PBXShellScriptBuildPhase;
