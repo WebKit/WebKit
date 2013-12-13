@@ -1,3 +1,12 @@
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r160548
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj: Specify
+        that we are using the vs12_xp target for Makefile-based projects.
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.vcxproj: Ditto
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj: Ditto.
+
 2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Make inspector folder groups smarter in JavaScriptCore.xcodeproj

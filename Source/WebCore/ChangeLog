@@ -1,3 +1,10 @@
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r160548
+
+        * WebCore.vcxproj/WebCoreGenerated.vcxproj: Specify that we are
+        using the vs120_xp build target for Makefile-based projects.
+
 2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add Inspector Code Generation to JavaScriptCore for Runtime Domain

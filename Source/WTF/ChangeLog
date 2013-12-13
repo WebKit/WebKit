@@ -1,3 +1,10 @@
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r160548
+
+        * WTF.vcxproj/WTFGenerated.vcxproj: Specify that we are using
+        the vs12_xp target for Makefile-based projects.
+
 2013-12-13  Anders Carlsson  <andersca@apple.com>
 
         Require variadic templates to build WebKit
