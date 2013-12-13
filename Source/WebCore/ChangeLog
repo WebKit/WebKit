@@ -1,3 +1,20 @@
+2013-12-12  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Handle pinch-to-zoom gesture
+        https://bugs.webkit.org/show_bug.cgi?id=125604
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        Export some TransformationMatrix functions.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make some headers private so that RenderLayerCompositor/Backing can be used from WebKit2.
+
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::layerForContentShadow):
+        Add a getter for the content shadow layer.
+
 2013-12-12  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess IndexedDB: Establish a metadata backing store on disk

@@ -50,6 +50,10 @@ private:
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) OVERRIDE;
     virtual void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) OVERRIDE;
 
+    virtual void beginTransientZoom() OVERRIDE;
+    virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) OVERRIDE;
+    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) OVERRIDE;
+
     // Message handlers.
     virtual void didUpdateGeometry() OVERRIDE;
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& newIntrinsicContentSize) OVERRIDE;

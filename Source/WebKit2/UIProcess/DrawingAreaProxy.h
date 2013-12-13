@@ -70,6 +70,10 @@ public:
     virtual void colorSpaceDidChange() { }
     virtual void minimumLayoutSizeDidChange() { }
 
+    virtual void beginTransientZoom() { }
+    virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) { }
+    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }
+
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy*);
 

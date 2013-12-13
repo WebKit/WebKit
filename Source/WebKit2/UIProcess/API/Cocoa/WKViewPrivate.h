@@ -77,6 +77,8 @@ typedef enum {
 @property (readwrite) BOOL shouldClipToVisibleRect;
 @property (readwrite) BOOL shouldExpandToViewHeightForAutoLayout;
 @property (readonly, getter=isUsingUISideCompositing) BOOL usingUISideCompositing;
+@property (readwrite) BOOL allowsMagnification;
+@property (readwrite) double magnification;
 
 @property(copy, nonatomic) NSColor *underlayColor;
 
@@ -93,6 +95,8 @@ typedef enum {
 
 - (void)forceAsyncDrawingAreaSizeUpdate:(NSSize)size;
 - (void)waitForAsyncDrawingAreaSizeUpdate;
+
+- (void)setMagnification:(double)magnification centeredAtPoint:(NSPoint)point;
 
 #endif
 

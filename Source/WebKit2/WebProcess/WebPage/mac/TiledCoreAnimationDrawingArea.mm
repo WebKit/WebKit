@@ -32,6 +32,7 @@
 #import "DrawingAreaProxyMessages.h"
 #import "LayerHostingContext.h"
 #import "LayerTreeContext.h"
+#import "ViewGestureControllerMessages.h"
 #import "WebFrame.h"
 #import "WebPage.h"
 #import "WebPageCreationParameters.h"
@@ -43,6 +44,8 @@
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
+#import <WebCore/RenderLayerBacking.h>
+#import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
@@ -695,6 +698,54 @@ void TiledCoreAnimationDrawingArea::updateDebugInfoLayer(bool showLayer)
 bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const FrameView* frameView)
 {
     return frameView && frameView->frame().isMainFrame();
+}
+
+void TiledCoreAnimationDrawingArea::beginTransientZoom()
+{
+    FloatRect visibleContentRect = m_webPage->corePage()->mainFrame().view()->visibleContentRect(ScrollableArea::IncludeScrollbars);
+    m_webPage->send(Messages::ViewGestureController::DidBeginTransientZoom(visibleContentRect));
+}
+
+void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint origin)
+{
+    // FIXME: Scrollbars should stay in-place and change height while zooming.
+    // FIXME: Keep around pageScale=1 tiles so we can zoom out without gaps.
+    // FIXME: Bring in unparented-but-painted tiles when zooming out, to fill in any gaps.
+
+    if (!m_rootLayer)
+        return;
+
+    RenderView* renderView = m_webPage->corePage()->mainFrame().view()->renderView();
+
+    TransformationMatrix transform;
+    transform.translate(origin.x(), origin.y());
+    transform.scale(scale);
+
+    PlatformCALayer* renderViewLayer = static_cast<GraphicsLayerCA*>(renderView->layer()->backing()->graphicsLayer())->platformCALayer();
+    renderViewLayer->setTransform(transform);
+    renderViewLayer->setAnchorPoint(FloatPoint3D());
+    renderViewLayer->setPosition(FloatPoint3D());
+
+    // FIXME: We should transform the shadow layer as well, instead of hiding it.
+    PlatformCALayer* shadowLayer = static_cast<GraphicsLayerCA*>(renderView->compositor().layerForContentShadow())->platformCALayer();
+    shadowLayer->setHidden(true);
+
+    m_transientZoomScale = scale;
+}
+
+void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint origin)
+{
+    RenderView* renderView = m_webPage->corePage()->mainFrame().view()->renderView();
+
+    // If the page scale is already the target scale, scalePage() will short-circuit
+    // and not apply the transform, so we can't clear it.
+    if (m_transientZoomScale != m_webPage->pageScaleFactor())
+       static_cast<GraphicsLayerCA*>(renderView->layer()->backing()->graphicsLayer())->platformCALayer()->setTransform(TransformationMatrix());
+
+    PlatformCALayer* shadowLayer = static_cast<GraphicsLayerCA*>(renderView->compositor().layerForContentShadow())->platformCALayer();
+    shadowLayer->setHidden(false);
+
+    m_webPage->scalePage(scale, roundedIntPoint(origin));
 }
 
 } // namespace WebKit

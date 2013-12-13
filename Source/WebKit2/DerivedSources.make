@@ -89,6 +89,7 @@ MESSAGE_RECEIVERS = \
     SecItemShimProxy \
     StorageAreaMap \
     StorageManager \
+    ViewGestureController \
     WebApplicationCacheManager \
     WebApplicationCacheManagerProxy \
     WebConnection \

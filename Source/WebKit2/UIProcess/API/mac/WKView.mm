@@ -49,6 +49,7 @@
 #import "TextChecker.h"
 #import "TextCheckerState.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
+#import "ViewGestureController.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKPrintingView.h"
@@ -231,6 +232,9 @@ struct WKViewInterpretKeyEventsParameters {
     NSRect _contentPreparationRect;
     BOOL _useContentPreparationRectForVisibleRect;
     BOOL _windowOcclusionDetectionEnabled;
+
+    std::unique_ptr<ViewGestureController> _gestureController;
+    BOOL _allowsMagnification;
 }
 
 @end
@@ -3234,7 +3238,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)waitForAsyncDrawingAreaSizeUpdate
 {
     if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea()) {
-        // If a geometry update is still pending then the action of recieving the
+        // If a geometry update is still pending then the action of receiving the
         // first geometry update may result in another update being scheduled -
         // we should wait for this to complete too.
         drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout * 0.5);
@@ -3248,6 +3252,58 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         return drawingArea->type() == DrawingAreaTypeRemoteLayerTree;
 
     return NO;
+}
+
+- (void)_ensureGestureController
+{
+    if (_data->_gestureController)
+        return;
+
+    _data->_gestureController = std::make_unique<ViewGestureController>(*_data->_page);
+}
+
+- (void)setAllowsMagnification:(BOOL)allowsMagnification
+{
+    _data->_allowsMagnification = allowsMagnification;
+}
+
+- (BOOL)allowsMagnification
+{
+    return _data->_allowsMagnification;
+}
+
+- (void)magnifyWithEvent:(NSEvent *)event
+{
+    if (!_data->_allowsMagnification)
+        return;
+
+    [self _ensureGestureController];
+
+    _data->_gestureController->handleMagnificationGesture(event.magnification, [self convertPoint:event.locationInWindow fromView:nil]);
+}
+
+-(void)endGestureWithEvent:(NSEvent *)event
+{
+    if (!_data->_gestureController)
+        return;
+
+    _data->_gestureController->endActiveGesture();
+}
+
+- (void)setMagnification:(double)magnification centeredAtPoint:(NSPoint)point
+{
+    _data->_page->scalePage(magnification, roundedIntPoint(point));
+}
+
+- (void)setMagnification:(double)magnification
+{
+    FloatPoint viewCenter(NSMidX([self bounds]), NSMidY([self bounds]));
+    _data->_page->scalePage(magnification, roundedIntPoint(viewCenter));
+}
+
+- (double)magnification
+{
+    return _data->_page->pageScaleFactor();
 }
 
 @end

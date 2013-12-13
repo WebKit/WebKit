@@ -104,6 +104,10 @@ private:
     virtual void setLayerHostingMode(uint32_t) OVERRIDE;
     virtual void setColorSpace(const ColorSpaceData&) OVERRIDE;
 
+    virtual void beginTransientZoom() OVERRIDE;
+    virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) OVERRIDE;
+    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) OVERRIDE;
+
     void updateLayerHostingContext();
 
     void setRootCompositingLayer(CALayer *);
@@ -143,6 +147,8 @@ private:
     WebCore::IntSize m_lastSentIntrinsicContentSize;
     WebCore::Timer<TiledCoreAnimationDrawingArea> m_updateIntrinsicContentSizeTimer;
     bool m_inUpdateGeometry;
+
+    double m_transientZoomScale;
 };
 
 } // namespace WebKit

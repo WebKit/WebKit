@@ -263,6 +263,7 @@ public:
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
 #if ENABLE(RUBBER_BANDING)
     GraphicsLayer* layerForOverhangAreas() const { return m_layerForOverhangAreas.get(); }
+    GraphicsLayer* layerForContentShadow() const { return m_contentShadowLayer.get(); }
 
     GraphicsLayer* updateLayerForTopOverhangArea(bool wantsLayer);
     GraphicsLayer* updateLayerForBottomOverhangArea(bool wantsLayer);

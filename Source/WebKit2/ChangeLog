@@ -1,3 +1,111 @@
+2013-12-12  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Handle pinch-to-zoom gesture
+        https://bugs.webkit.org/show_bug.cgi?id=125604
+
+        Reviewed by Simon Fraser.
+
+        Add the concept of a "transient" zoom to DrawingArea, which is a zoom
+        that affects the content, but does not cause repaint, as would be used
+        for a live pinch-zoom gesture.
+
+        Add ViewGestureController, which currently only handles magnification 
+        gestures, and keeps track of the current gesture's scale and origin, and
+        forwards relevant events on to the DrawingArea via the transient zoom mechanism.
+
+        * DerivedSources.make:
+        Add ViewGestureController to the list of message receivers.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        Add shouldHandleMagnificationGesture property, which controls whether WKView will
+        attempt to handle magnifyWithEvent:.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView waitForAsyncDrawingAreaSizeUpdate]):
+        Fix a typo.
+
+        (-[WKView _ensureGestureController]):
+        Create our ViewGestureController if it doesn't already exist.
+
+        (-[WKView setAllowsMagnification:]):
+        (-[WKView allowsMagnification]):
+        SPI to enable/disable handling the magnification gesture.
+
+        (-[WKView setMagnification:centeredAtPoint:]):
+        (-[WKView setMagnification:]):
+        (-[WKView magnification]):
+        Adjust or retrieve the current page scale.
+        The variant of setMagnification that does not take an origin uses the view's center.
+
+        (-[WKView magnifyWithEvent:]):
+        (-[WKView endGestureWithEvent:]):
+        Forward gesture methods to ViewGestureController.
+
+        * UIProcess/mac/ViewGestureController.cpp: Added.
+        (WebKit::ViewGestureController::create):
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::~ViewGestureController):
+        (WebKit::resistanceForDelta):
+        Compute a resistance factor, which makes it feel "hard" to zoom out past
+        scale=1, and accelerates scaling out before you hit scale=1.
+
+        (WebKit::ViewGestureController::scaledMagnificationOrigin):
+        Compute the origin of the magnification gesture with the transient zoom unapplied.
+
+        (WebKit::ViewGestureController::handleMagnificationGesture):
+        The first magnification gesture will send a message to the WebProcess
+        to retrieve the visible content rect. Subsequent gestures will
+        hand the new magnification and origin to the DrawingArea to apply.
+
+        (WebKit::ViewGestureController::didBeginTransientZoom):
+        Callback from the WebProcess, with the current visible content rect.
+        Subsequent magnification gestures will forward the scale and origin to the DrawingArea.
+        
+        (WebKit::ViewGestureController::endMagnificationGesture):
+        Commit the current transient scale as the actual page scale, which will cause
+        a repaint and bring in all the tiles.
+
+        (WebKit::ViewGestureController::endActiveGesture):
+        If we have an active gesture, call its end function.
+
+        * UIProcess/mac/ViewGestureController.h: Added.
+        * UIProcess/mac/ViewGestureController.messages.in: Added.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::beginTransientZoom):
+        Call back to ViewGestureController with the visibleContentRect.
+
+        (WebKit::TiledCoreAnimationDrawingArea::adjustTransientZoom):
+        Scale and translate the RenderView's PlatformCALayer.
+        Reaching into the layer tree like this is scary, we should consider
+        teaching RenderLayerCompositor about transient zoom.
+        Hide the content shadow layer for now.
+
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+        Clear our custom transform on the RenderView's layer, and
+        change the actual page scale, causing a repaint.
+        Un-hide the shadow layer.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::beginTransientZoom):
+        (WebKit::DrawingAreaProxy::adjustTransientZoom):
+        (WebKit::DrawingAreaProxy::commitTransientZoom):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::beginTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::adjustTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::commitTransientZoom):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::beginTransientZoom):
+        (WebKit::DrawingArea::adjustTransientZoom):
+        (WebKit::DrawingArea::commitTransientZoom):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        Generic plumbing for {begin, adjust, end}TransientZoom.
+
 2013-12-12  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess IndexedDB: Establish a metadata backing store on disk

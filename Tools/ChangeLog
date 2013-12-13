@@ -1,3 +1,14 @@
+2013-12-12  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Handle pinch-to-zoom gesture
+        https://bugs.webkit.org/show_bug.cgi?id=125604
+
+        Reviewed by Simon Fraser.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        Enable handling of the magnification gesture in Minibrowser WebKit2 windows.
+
 2013-12-12  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         Unreviewed. Add myself as a committer.
