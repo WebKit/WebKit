@@ -3274,8 +3274,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)magnifyWithEvent:(NSEvent *)event
 {
-    if (!_data->_allowsMagnification)
+    if (!_data->_allowsMagnification) {
+        [super magnifyWithEvent:event];
         return;
+    }
 
     [self _ensureGestureController];
 
@@ -3284,8 +3286,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 -(void)endGestureWithEvent:(NSEvent *)event
 {
-    if (!_data->_gestureController)
+    if (!_data->_gestureController) {
+        [super endGestureWithEvent:event];
         return;
+    }
 
     _data->_gestureController->endActiveGesture();
 }

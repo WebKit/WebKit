@@ -1,3 +1,15 @@
+2013-12-13  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Handle pinch-to-zoom gesture
+        https://bugs.webkit.org/show_bug.cgi?id=125604
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView magnifyWithEvent:]):
+        (-[WKView endGestureWithEvent:]):
+        Forward the event up the chain if we're not going to handle it.
+
 2013-12-12  Anders Carlsson  <andersca@apple.com>
 
         Put classes in the IPC directory in the IPC namespace
