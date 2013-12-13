@@ -1,5 +1,20 @@
 2013-12-13  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed. Further GTK WK2 build fixes after r160504.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_snapshot):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (didInitiateLoadForResource):
+        (willSendRequestForFrame):
+        (didReceiveResponseForResource):
+        (didReceiveContentLengthForResource):
+        (didFinishLoadForResource):
+        (didFailLoadForResource):
+        (webkitWebPageDidReceiveMessage):
+
+2013-12-13  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK build fix after r160509.
 
         * GNUmakefile.list.am: MessageSender.(cpp|h) files were moved to Platform/IPC.
