@@ -80,43 +80,43 @@ void InspectorBackendDispatcher::dispatch(const String& message)
 
     RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);
     if (!parsedMessage) {
-        reportProtocolError(nullptr, ParseError, "Message must be in JSON format");
+        reportProtocolError(nullptr, ParseError, ASCIILiteral("Message must be in JSON format"));
         return;
     }
 
     RefPtr<InspectorObject> messageObject = parsedMessage->asObject();
     if (!messageObject) {
-        reportProtocolError(nullptr, InvalidRequest, "Message must be a JSONified object");
+        reportProtocolError(nullptr, InvalidRequest, ASCIILiteral("Message must be a JSONified object"));
         return;
     }
 
     RefPtr<InspectorValue> callIdValue = messageObject->get("id");
     if (!callIdValue) {
-        reportProtocolError(nullptr, InvalidRequest, "'id' property was not found");
+        reportProtocolError(nullptr, InvalidRequest, ASCIILiteral("'id' property was not found"));
         return;
     }
 
     long callId = 0;
     if (!callIdValue->asNumber(&callId)) {
-        reportProtocolError(nullptr, InvalidRequest, "The type of 'id' property must be number");
+        reportProtocolError(nullptr, InvalidRequest, ASCIILiteral("The type of 'id' property must be number"));
         return;
     }
 
     RefPtr<InspectorValue> methodValue = messageObject->get("method");
     if (!methodValue) {
-        reportProtocolError(&callId, InvalidRequest, "'method' property wasn't found");
+        reportProtocolError(&callId, InvalidRequest, ASCIILiteral("'method' property wasn't found"));
         return;
     }
 
     String method;
     if (!methodValue->asString(&method)) {
-        reportProtocolError(&callId, InvalidRequest, "The type of 'method' property must be string");
+        reportProtocolError(&callId, InvalidRequest, ASCIILiteral("The type of 'method' property must be string"));
         return;
     }
 
     size_t position = method.find('.');
     if (position == WTF::notFound) {
-        reportProtocolError(&callId, InvalidRequest, "The 'method' property was formatted incorrectly. It should be 'Domain.method'");
+        reportProtocolError(&callId, InvalidRequest, ASCIILiteral("The 'method' property was formatted incorrectly. It should be 'Domain.method'"));
         return;
     }
 
