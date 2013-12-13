@@ -50,6 +50,27 @@ static void testWebKitDOMNodeInsertion(WebViewTest* test, gconstpointer)
     g_assert(testRunner->runTest("WebKitDOMNode", "insertion", g_variant_builder_end(&builder)));
 }
 
+static void testWebKitDOMNodeTagNames(WebViewTest* test, gconstpointer)
+{
+    static const char* testHTML = "<html><head></head><body>"
+        "<video id='video' preload='none'>"
+        "    <source src='movie.ogg' type='video/ogg'>"
+        "        Your browser does not support the video tag."
+        "</video>"
+        "<video id='video2' preload='none'>"
+        "     <source src='movie.ogg' type='video/ogg'>"
+        "        Your browser does not support the video tag."
+        "</video>"
+        "<input type='hidden' id='test' name='finish' value='false'></body></html>";
+    test->loadHtml(testHTML, 0);
+    test->waitUntilLoadFinished();
+
+    GVariantBuilder builder;
+    g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
+    g_variant_builder_add(&builder, "{sv}", "pageID", g_variant_new_uint64(webkit_web_view_get_page_id(test->m_webView)));
+    g_assert(testRunner->runTest("WebKitDOMNode", "tag-names", g_variant_builder_end(&builder)));
+}
+
 void beforeAll()
 {
     testRunner = new WebProcessTestRunner();
@@ -57,6 +78,7 @@ void beforeAll()
 
     WebViewTest::add("WebKitDOMNode", "hierarchy-navigation", testWebKitDOMNodeHierarchyNavigation);
     WebViewTest::add("WebKitDOMNode", "insertion", testWebKitDOMNodeInsertion);
+    WebViewTest::add("WebKitDOMNode", "tag-names", testWebKitDOMNodeTagNames);
 }
 
 void afterAll()
