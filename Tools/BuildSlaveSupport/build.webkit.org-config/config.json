@@ -22,8 +22,6 @@
                     { "name": "apple-mini-211", "platform": "mac-mavericks" },
                     { "name": "apple-mini-212", "platform": "mac-mavericks" },
                     
-                    { "name": "apple-seo-01", "platform": "mac-mavericks"},
-
                     { "name": "apple-windows-1", "platform": "win"},
                     { "name": "apple-windows-2", "platform": "win"},
                     { "name": "apple-windows-3", "platform": "win"},
@@ -84,7 +82,7 @@
                     { "name": "Apple Mavericks Debug (Build)", "type": "Build", "builddir": "mavericks-debug",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["mavericks-debug-tests-wk1", "mavericks-debug-tests-wk2"],
-                      "slavenames": ["apple-mini-178", "apple-mini-179", "apple-seo-01"]
+                      "slavenames": ["apple-mini-178", "apple-mini-179"]
                     },
                     { "name": "Apple Mavericks Debug WK1 (Tests)", "type": "Test", "builddir": "mavericks-debug-tests-wk1",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],

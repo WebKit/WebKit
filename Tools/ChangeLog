@@ -1,3 +1,11 @@
+2013-12-13  Lucas Forschler  <lforschler@apple.com>
+
+        Update Apple bots.
+        
+        Unreviewed.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-12-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Switch WebKit solution to Visual Studio 2013
