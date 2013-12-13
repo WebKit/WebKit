@@ -1272,11 +1272,9 @@ sub GenerateFunctions {
             next TOP;
         }
 
-        if ($attribute->signature->name eq "type"
+        if ($attribute->signature->name eq "type") {
             # This will conflict with the get_type() function we define to return a GType
             # according to GObject conventions.  Skip this for now.
-            || $attribute->signature->name eq "URL"     # TODO: handle this
-            ) {
             next TOP;
         }
             
