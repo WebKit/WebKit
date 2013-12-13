@@ -393,7 +393,9 @@ macro branchIfException(label)
     loadp ScopeChain[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
-    btqnz VM::m_exception[t3], label
+    btqz VM::m_exception[t3], .noException
+    jmp label
+.noException:
 end
 
 
