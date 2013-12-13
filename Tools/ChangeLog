@@ -1,3 +1,9 @@
+2013-12-12  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-12-12  Lucas Forschler  <lforschler@apple.com>
 
         Update hardware for Apple bots.
