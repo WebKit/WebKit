@@ -326,11 +326,23 @@ void GraphicsContext3D::reshape(int width, int height)
     ::glFlush();
 }
 
-bool GraphicsContext3D::areProgramSymbolsValid(Platform3DObject vertexShader, Platform3DObject fragmentShader) const
+
+bool GraphicsContext3D::precisionsMatch(Platform3DObject vertexShader, Platform3DObject fragmentShader) const
 {
-    UNUSED_PARAM(vertexShader);
-    UNUSED_PARAM(fragmentShader);
-    // TODO: Fill me in.
+    ShaderSourceEntry vertexEntry = m_shaderSourceMap.find(vertexShader)->value;
+    ShaderSourceEntry fragmentEntry = m_shaderSourceMap.find(fragmentShader)->value;
+
+    HashMap<String, ShPrecisionType> vertexSymbolPrecisionMap;
+
+    for (auto it = vertexEntry.uniformMap.begin(); it != vertexEntry.uniformMap.end(); ++it)
+        vertexSymbolPrecisionMap.add(it->value.mappedName, it->value.precision);
+
+    for (auto it = fragmentEntry.uniformMap.begin(); it != fragmentEntry.uniformMap.end(); ++it) {
+        HashMap<String, ShPrecisionType>::iterator vertexSymbol = vertexSymbolPrecisionMap.find(it->value.mappedName);
+        if (vertexSymbol != vertexSymbolPrecisionMap.end() && vertexSymbol->value != it->value.precision)
+            return false;
+    }
+
     return true;
 }
 
