@@ -646,6 +646,11 @@ JSValue JSSubtleCrypto::wrapKey(ExecState* exec)
     if (!key)
         return throwTypeError(exec);
 
+    if (!wrappingKey->allows(CryptoKeyUsageWrapKey)) {
+        m_impl->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Key usages do not include 'wrapKey'");
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsUndefined();
+    }
 
     auto algorithm = createAlgorithmFromJSValue(exec, exec->uncheckedArgument(3));
     if (!algorithm) {
