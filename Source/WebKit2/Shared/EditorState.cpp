@@ -52,6 +52,9 @@ void EditorState::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << selectionRects;
     encoder << selectedTextLength;
     encoder << wordAtSelection;
+    encoder << firstMarkedRect;
+    encoder << lastMarkedRect;
+    encoder << markedText;
 #endif
 
 #if PLATFORM(GTK)
@@ -95,6 +98,12 @@ bool EditorState::decode(CoreIPC::ArgumentDecoder& decoder, EditorState& result)
     if (!decoder.decode(result.selectedTextLength))
         return false;
     if (!decoder.decode(result.wordAtSelection))
+        return false;
+    if (!decoder.decode(result.firstMarkedRect))
+        return false;
+    if (!decoder.decode(result.lastMarkedRect))
+        return false;
+    if (!decoder.decode(result.markedText))
         return false;
 #endif
 

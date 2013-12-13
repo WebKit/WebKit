@@ -3017,7 +3017,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 #if PLATFORM(IOS)
     else {
         // We need to notify the client on iOS to make sure the selection is redrawn.
-        m_pageClient.selectionDidChange();
+        notifyRevealedSelection();
     }
 #endif
 #elif PLATFORM(EFL) || PLATFORM(GTK)

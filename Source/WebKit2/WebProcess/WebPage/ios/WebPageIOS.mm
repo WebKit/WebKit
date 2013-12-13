@@ -87,14 +87,18 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t, const String&)
     notImplemented();
 }
 
-void WebPage::setComposition(const String&, Vector<CompositionUnderline>, uint64_t, uint64_t, uint64_t, uint64_t, EditorState&)
+void WebPage::setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd)
 {
-    notImplemented();
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+
+    if (frame.selection().isContentEditable())
+        frame.editor().setComposition(text, underlines, selectionStart, selectionEnd);
 }
 
-void WebPage::confirmComposition(EditorState&)
+void WebPage::confirmComposition()
 {
-    notImplemented();
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    frame.editor().confirmComposition();
 }
 
 void WebPage::cancelComposition(EditorState&)

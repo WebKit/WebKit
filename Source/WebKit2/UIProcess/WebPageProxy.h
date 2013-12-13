@@ -1121,6 +1121,7 @@ private:
 
     void startAssistingNode(const WebCore::IntRect&, bool hasNextFocusable, bool hasPreviousFocusable);
     void stopAssistingNode();
+    void notifyRevealedSelection();
 #endif // PLATFORM(IOS)
 
 #if USE(SOUP)

@@ -624,6 +624,18 @@ EditorState WebPage::editorState() const
 
 #if PLATFORM(IOS)
     FrameSelection& selection = frame.selection();
+    if (frame.editor().hasComposition()) {
+        RefPtr<Range> compositionRange = frame.editor().compositionRange();
+        Vector<WebCore::SelectionRect> compositionRects;
+        compositionRange->collectSelectionRects(compositionRects);
+        if (compositionRects.size())
+            result.firstMarkedRect = compositionRects[0].rect();
+        if (compositionRects.size() > 1)
+            result.lastMarkedRect = compositionRects.last().rect();
+        else
+            result.lastMarkedRect = result.firstMarkedRect;
+        result.markedText = plainText(compositionRange.get());
+    }
     if (selection.isCaret()) {
         result.caretRectAtStart = selection.absoluteCaretBounds();
         result.caretRectAtEnd = result.caretRectAtStart;

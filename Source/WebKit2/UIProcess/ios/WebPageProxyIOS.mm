@@ -83,15 +83,20 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect&, const FloatPoint
     notImplemented();
 }
 
-void WebPageProxy::setComposition(const String&, Vector<CompositionUnderline>, uint64_t, uint64_t, uint64_t, uint64_t)
+void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underline, uint64_t selectionStart, uint64_t selectionEnd, uint64_t, uint64_t)
 {
-    notImplemented();
+    if (!isValid())
+        return;
 
+    process().send(Messages::WebPage::SetComposition(text, underline, selectionStart, selectionEnd), m_pageID);
 }
 
 void WebPageProxy::confirmComposition()
 {
-    notImplemented();
+    if (!isValid())
+        return;
+
+    process().send(Messages::WebPage::ConfirmComposition(), m_pageID);
 }
 
 void WebPageProxy::cancelComposition()
@@ -262,6 +267,11 @@ void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebC
     uint64_t callbackID = callback->callbackID();
     m_gestureCallbacks.set(callbackID, callback);
     m_process->send(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState, callbackID), m_pageID);
+}
+
+void WebPageProxy::notifyRevealedSelection()
+{
+    m_pageClient.selectionDidChange();
 }
 
 void WebPageProxy::extendSelection(WebCore::TextGranularity granularity)

@@ -308,6 +308,7 @@ messages -> WebPageProxy {
 
     StartAssistingNode(WebCore::IntRect scrollRect, bool hasNextFocusable, bool hasPreviousFocusable)
     StopAssistingNode()
+    NotifyRevealedSelection()
 #endif
 
     # Search popup menus

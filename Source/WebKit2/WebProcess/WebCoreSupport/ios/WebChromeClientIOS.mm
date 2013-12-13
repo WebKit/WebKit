@@ -73,7 +73,7 @@ void WebChromeClient::clearContentChangeObservers(WebCore::Frame*)
 
 void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::Frame*)
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::NotifyRevealedSelection());
 }
 
 bool WebChromeClient::isStopping()

@@ -1,3 +1,43 @@
+2013-12-13  Enrica Casucci  <enrica@apple.com>
+
+        WK2: Add support for inline candidates on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=125667
+
+        Reviewed by Benjamin Poulain.
+
+        The state required to support inline candidates is cached in the UI process.
+        Asynchronous messages are used to set and confirm the composition.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView textFirstRect]):
+        (-[WKInteractionView textLastRect]):
+        (-[WKInteractionView hasMarkedText]):
+        (-[WKInteractionView markedText]):
+        (-[WKInteractionView setMarkedText:selectedRange:]):
+        (-[WKInteractionView unmarkText]):
+        (-[WKInteractionView _selectionChanged]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::confirmComposition):
+        (WebKit::WebPageProxy::notifyRevealedSelection):
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::notifyRevealedSelectionByScrollingFrame):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::confirmComposition):
+
 2013-12-13  Anders Carlsson  <andersca@apple.com>
 
         Fix the build.
