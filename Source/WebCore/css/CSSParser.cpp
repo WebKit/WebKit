@@ -8529,7 +8529,7 @@ bool CSSParser::parseFilterImage(CSSParserValueList* valueList, RefPtr<CSSValue>
         return false;
     value = args->next();
 
-    result = CSSFilterImageValue::create(imageValue, filterValue);
+    result = CSSFilterImageValue::create(imageValue.releaseNonNull(), filterValue.releaseNonNull());
 
     filter = result;
 

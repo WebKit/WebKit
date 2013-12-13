@@ -64,7 +64,7 @@ public:
     bool propertyMatches(CSSPropertyID, const CSSValue*) const;
 
 #if ENABLE(CSS_FILTERS)
-    static PassRefPtr<CSSValue> valueForFilter(const RenderObject*, const RenderStyle*, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
+    static PassRef<CSSValue> valueForFilter(const RenderObject*, const RenderStyle*, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
 #endif
 
 private:

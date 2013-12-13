@@ -1,3 +1,16 @@
+2013-12-13  Andreas Kling  <akling@apple.com>
+
+        CSSFilterImageValue constructor should require both image and filter.
+        <https://webkit.org/b/125056>
+
+        Make the CSSFilterImageValue::create() helper take both the image and
+        filter CSSValues by PassRef since they should never be null.
+
+        Tweaked ComputedStyleExtractor::valueForFilter() to return a PassRef
+        for this to work.
+
+        Reviewed by Anders Carlsson.
+
 2013-12-12  Andreas Kling  <akling@apple.com>
 
         StyleResolver::adjustRenderStyle() should take RenderStyle references.

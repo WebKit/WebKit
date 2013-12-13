@@ -940,7 +940,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::valueForShadow(const ShadowData* sh
 }
 
 #if ENABLE(CSS_FILTERS)
-PassRefPtr<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderObject* renderer, const RenderStyle* style, const FilterOperations& filterOperations, AdjustPixelValuesForComputedStyle adjust)
+PassRef<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderObject* renderer, const RenderStyle* style, const FilterOperations& filterOperations, AdjustPixelValuesForComputedStyle adjust)
 {
 #if !ENABLE(CSS_SHADERS)
     UNUSED_PARAM(renderer);
@@ -948,7 +948,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderObject* 
     if (filterOperations.operations().isEmpty())
         return cssValuePool().createIdentifierValue(CSSValueNone);
 
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    auto list = CSSValueList::createSpaceSeparated();
 
     RefPtr<WebKitCSSFilterValue> filterValue;
 
@@ -1092,10 +1092,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderObject* 
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::UnknownFilterOperation);
             break;
         }
-        list->append(filterValue.release());
+        list.get().append(filterValue.release());
     }
 
-    return list.release();
+    return std::move(list);
 }
 #endif
 

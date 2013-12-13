@@ -217,11 +217,11 @@ static inline PassRefPtr<StyleImage> blendFilter(const AnimationBase* anim, Cach
 
     RefPtr<StyleCachedImage> styledImage = StyleCachedImage::create(image);
     auto imageValue = CSSImageValue::create(image->url(), styledImage.get());
-    RefPtr<CSSValue> filterValue = ComputedStyleExtractor::valueForFilter(anim->renderer(), &anim->renderer()->style(), filterResult, DoNotAdjustPixelValues);
-    RefPtr<CSSFilterImageValue> result = CSSFilterImageValue::create(std::move(imageValue), filterValue);
-    result->setFilterOperations(filterResult);
+    auto filterValue = ComputedStyleExtractor::valueForFilter(anim->renderer(), &anim->renderer()->style(), filterResult, DoNotAdjustPixelValues);
 
-    return StyleGeneratedImage::create(*result);
+    auto result = CSSFilterImageValue::create(std::move(imageValue), std::move(filterValue));
+    result.get().setFilterOperations(filterResult);
+    return StyleGeneratedImage::create(std::move(result));
 }
 #endif // ENABLE(CSS_FILTERS)
 
@@ -284,11 +284,10 @@ static inline PassRefPtr<StyleImage> crossfadeBlend(const AnimationBase*, StyleC
 
     auto fromImageValue = CSSImageValue::create(fromStyleImage->cachedImage()->url(), fromStyleImage);
     auto toImageValue = CSSImageValue::create(toStyleImage->cachedImage()->url(), toStyleImage);
-    RefPtr<CSSCrossfadeValue> crossfadeValue = CSSCrossfadeValue::create(std::move(fromImageValue), std::move(toImageValue));
 
-    crossfadeValue->setPercentage(CSSPrimitiveValue::create(progress, CSSPrimitiveValue::CSS_NUMBER));
-
-    return StyleGeneratedImage::create(*crossfadeValue);
+    auto crossfadeValue = CSSCrossfadeValue::create(std::move(fromImageValue), std::move(toImageValue));
+    crossfadeValue.get().setPercentage(CSSPrimitiveValue::create(progress, CSSPrimitiveValue::CSS_NUMBER));
+    return StyleGeneratedImage::create(std::move(crossfadeValue));
 }
 
 static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleImage* from, StyleImage* to, double progress)

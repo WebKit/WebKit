@@ -48,9 +48,9 @@ class StyleResolver;
 class CSSFilterImageValue : public CSSImageGeneratorValue {
     friend class FilterSubimageObserverProxy;
 public:
-    static PassRef<CSSFilterImageValue> create(PassRefPtr<CSSValue> imageValue, PassRefPtr<CSSValue> filterValue)
+    static PassRef<CSSFilterImageValue> create(PassRef<CSSValue> imageValue, PassRef<CSSValue> filterValue)
     {
-        return adoptRef(*new CSSFilterImageValue(imageValue, filterValue));
+        return adoptRef(*new CSSFilterImageValue(std::move(imageValue), std::move(filterValue)));
     }
 
     ~CSSFilterImageValue();
