@@ -102,11 +102,11 @@ ${methodInParametersHandling}${methodDispatchHandling}${methodOutParametersHandl
 }
 """)
 
-frontend_method = ("""void Inspector${domainName}FrontendDispatcher::$eventName(${parameters})
+frontend_method = ("""void Inspector${domainName}FrontendDispatcher::${eventName}(${parameters})
 {
     RefPtr<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("${domainName}.${eventName}"));
-$code
+${code}
     m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
 """)
@@ -135,7 +135,7 @@ namespace Inspector {
 
 #if ENABLE(INSPECTOR)
 
-$domainClassList
+${domainClassList}
 
 #endif // ENABLE(INSPECTOR)
 
@@ -157,9 +157,9 @@ namespace Inspector {
 
 typedef String ErrorString;
 
-$handlerInterfaces
+${handlerInterfaces}
 
-$dispatcherInterfaces
+${dispatcherInterfaces}
 } // namespace Inspector
 
 #endif // !defined(Inspector${outputFileNamePrefix}BackendDispatchers_h)
@@ -179,7 +179,7 @@ backend_cpp = (
 
 namespace Inspector {
 
-$methods
+${methods}
 } // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)
@@ -198,7 +198,7 @@ frontend_cpp = (
 
 namespace Inspector {
 
-$methods
+${methods}
 
 } // namespace Inspector
 
@@ -251,7 +251,7 @@ namespace Inspector {
 namespace TypeBuilder {
 
 const char* const enum_constant_values[] = {
-$enumConstantValues};
+${enumConstantValues}};
 
 String getEnumConstantValue(int code) {
     return enum_constant_values[code];
@@ -259,13 +259,13 @@ String getEnumConstantValue(int code) {
 
 } // namespace TypeBuilder
 
-$implCode
+${implCode}
 
-#if $validatorIfdefName
+#if ${validatorIfdefName}
 
-$validatorCode
+${validatorCode}
 
-#endif // $validatorIfdefName
+#endif // ${validatorIfdefName}
 
 } // namespace Inspector
 
@@ -275,7 +275,7 @@ $validatorCode
 backend_js = (
 """
 
-$domainInitializers
+${domainInitializers}
 """)
 
 param_container_access_code = """
@@ -311,7 +311,7 @@ class_binding_builder_part_2 = ("""
         Builder<STATE | %s>& set%s(%s value)
         {
             COMPILE_ASSERT(!(STATE & %s), property_%s_already_set);
-            m_result->set%s("%s", %s);
+            m_result->set%s(ASCIILiteral("%s"), %s);
             return castState<%s>();
         }
 """)
