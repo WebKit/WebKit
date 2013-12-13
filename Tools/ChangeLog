@@ -1,3 +1,10 @@
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r160548.
+
+        * Scripts/webkitdirs.pm:
+        (setupCygwinEnv): VCExpress.exe is now called WDExpress.exe.
+
 2013-12-13  Lucas Forschler  <lforschler@apple.com>
 
         Update Apple bots.

@@ -1591,7 +1591,7 @@ sub setupCygwinEnv()
         }
     } else {
         # Visual Studio not found, try VC++ Express
-        $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE VCExpress.exe));
+        $vcBuildPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE WDExpress.exe));
         if (! -e $vcBuildPath) {
             print "*************************************************************\n";
             print "Cannot find '$vcBuildPath'\n";
