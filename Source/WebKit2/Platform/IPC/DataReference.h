@@ -28,7 +28,7 @@
 
 #include <wtf/Vector.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 class ArgumentDecoder;
 class ArgumentEncoder;
@@ -80,6 +80,6 @@ private:
     size_t m_size;
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // DataReference_h

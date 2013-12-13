@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MessageSender.h"
 
-namespace CoreIPC {
+namespace IPC {
 
 MessageSender::~MessageSender()
 {
@@ -39,4 +39,4 @@ bool MessageSender::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigne
     return messageSenderConnection()->sendMessage(std::move(encoder), messageSendFlags);
 }
 
-} // namespace CoreIPC
+} // namespace IPC

@@ -32,7 +32,7 @@
 #include <wtf/StringHasher.h>
 #include <wtf/text/CString.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 CString StringReference::toString() const
 {
@@ -61,4 +61,4 @@ unsigned StringReference::Hash::hash(const StringReference& a)
     return StringHasher::computeHash(reinterpret_cast<const unsigned char*>(a.data()), a.size());
 }
 
-} // namespace CoreIPC
+} // namespace IPC

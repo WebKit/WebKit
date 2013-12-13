@@ -30,7 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 class ArgumentEncoder;
 class ArgumentDecoder;
@@ -82,19 +82,19 @@ private:
     size_t m_size;
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 namespace WTF {
 template<typename T> struct DefaultHash;
 
-template<> struct DefaultHash<CoreIPC::StringReference> {
-    typedef CoreIPC::StringReference::Hash Hash;
+template<> struct DefaultHash<IPC::StringReference> {
+    typedef IPC::StringReference::Hash Hash;
 };
 
-template<> struct HashTraits<CoreIPC::StringReference> : GenericHashTraits<CoreIPC::StringReference> {
+template<> struct HashTraits<IPC::StringReference> : GenericHashTraits<IPC::StringReference> {
     static const bool emptyValueIsZero = 0;
-    static void constructDeletedValue(CoreIPC::StringReference& stringReference) { stringReference = CoreIPC::StringReference(0, std::numeric_limits<size_t>::max()); }
-    static bool isDeletedValue(const CoreIPC::StringReference& stringReference) { return stringReference.size() == std::numeric_limits<size_t>::max(); }
+    static void constructDeletedValue(IPC::StringReference& stringReference) { stringReference = IPC::StringReference(0, std::numeric_limits<size_t>::max()); }
+    static bool isDeletedValue(const IPC::StringReference& stringReference) { return stringReference.size() == std::numeric_limits<size_t>::max(); }
 };
 
 } // namespace WTF

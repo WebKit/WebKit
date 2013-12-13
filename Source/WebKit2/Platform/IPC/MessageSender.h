@@ -29,7 +29,7 @@
 #include <wtf/Assertions.h>
 #include "Connection.h"
 
-namespace CoreIPC {
+namespace IPC {
 
 class MessageSender {
 public:
@@ -73,6 +73,6 @@ private:
     virtual uint64_t messageSenderDestinationID() = 0;
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // MessageSender_h

@@ -1,3 +1,20 @@
+2013-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Put classes in the IPC directory in the IPC namespace
+        https://bugs.webkit.org/show_bug.cgi?id=125665
+
+        Reviewed by Sam Weinig.
+
+        Also add a hack to config.h that lets us use CoreIPC and IPC interchangeably.
+        
+        * Platform/IPC/DataReference.cpp:
+        * Platform/IPC/DataReference.h:
+        * Platform/IPC/MessageSender.cpp:
+        * Platform/IPC/MessageSender.h:
+        * Platform/IPC/StringReference.cpp:
+        * Platform/IPC/StringReference.h:
+        * config.h:
+
 2013-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add a unit tests to WebKit2 to test node names

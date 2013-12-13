@@ -29,7 +29,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 
-namespace CoreIPC {
+namespace IPC {
 
 void DataReference::encode(ArgumentEncoder& encoder) const
 {
@@ -41,6 +41,4 @@ bool DataReference::decode(ArgumentDecoder& decoder, DataReference& dataReferenc
     return decoder.decodeVariableLengthByteArray(dataReference);
 }
 
-} // namespace CoreIPC
-
-
+} // namespace IPC
