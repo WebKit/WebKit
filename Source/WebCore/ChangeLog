@@ -1,3 +1,17 @@
+2013-12-13  Darin Adler  <darin@apple.com>
+
+        Make some optimizations for DOM bindings involving vectors
+        https://bugs.webkit.org/show_bug.cgi?id=125680
+
+        Reviewed by Andreas Kling.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS): Removed unnecessary copying of vectors when converting them
+        to JavaScript values.
+        (WebCore::toRefPtrNativeArray): Use reserveInitialCapacity and uncheckedAppend.
+        (WebCore::toNativeArray): Ditto.
+        (WebCore::toNativeArguments): Ditto.
+
 2013-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r155784): [GTK] Some methods incorrectly removed in r155784 and deprecated in r158662

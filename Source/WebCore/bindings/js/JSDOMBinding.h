@@ -371,7 +371,7 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
 }
 
 template <typename T>
-inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Vector<T> vector)
+inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T>& vector)
 {
     JSC::JSArray* array = constructEmptyArray(exec, 0, vector.size());
 
@@ -382,7 +382,7 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
 }
 
 template <typename T>
-inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Vector<RefPtr<T>> vector)
+inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<RefPtr<T>>& vector)
 {
     JSC::JSArray* array = constructEmptyArray(exec, 0, vector.size());
 
@@ -513,10 +513,12 @@ Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState* exec, JSC::JSValue value, 
 
     Vector<RefPtr<T>> result;
     JSC::JSArray* array = asArray(value);
-    for (size_t i = 0; i < array->length(); ++i) {
+    size_t size = array->length();
+    result.reserveInitialCapacity(size);
+    for (size_t i = 0; i < size; ++i) {
         JSC::JSValue element = array->getIndex(exec, i);
         if (element.inherits(JST::info()))
-            result.append((*toT)(element));
+            result.uncheckedAppend((*toT)(element));
         else {
             throwVMError(exec, createTypeError(exec, "Invalid Array element type"));
             return Vector<RefPtr<T>>();
@@ -537,13 +539,14 @@ Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue value)
 
     JSC::JSObject* object = value.getObject();
     Vector<T> result;
+    result.reserveInitialCapacity(length);
     typedef NativeValueTraits<T> TraitsType;
 
     for (unsigned i = 0; i < length; ++i) {
         T indexValue;
         if (!TraitsType::nativeValue(exec, object->get(exec, i), indexValue))
             return Vector<T>();
-        result.append(indexValue);
+        result.uncheckedAppend(indexValue);
     }
     return result;
 }
@@ -555,13 +558,14 @@ Vector<T> toNativeArguments(JSC::ExecState* exec, size_t startIndex = 0)
     ASSERT(startIndex <= length);
 
     Vector<T> result;
+    result.reserveInitialCapacity(length);
     typedef NativeValueTraits<T> TraitsType;
 
     for (size_t i = startIndex; i < length; ++i) {
         T indexValue;
         if (!TraitsType::nativeValue(exec, exec->argument(i), indexValue))
             return Vector<T>();
-        result.append(indexValue);
+        result.uncheckedAppend(indexValue);
     }
     return result;
 }
