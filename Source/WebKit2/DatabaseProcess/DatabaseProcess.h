@@ -56,9 +56,10 @@ public:
 
     WorkQueue& queue() { return m_queue.get(); }
 
+    ~DatabaseProcess();
+
 private:
     DatabaseProcess();
-    ~DatabaseProcess();
 
     // ChildProcess
     virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;

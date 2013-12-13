@@ -1,3 +1,11 @@
+2013-12-13  Anders Carlsson  <andersca@apple.com>
+
+        Fix the build.
+
+        Work around a problem in Functional.h by making the DatabaseProcess destructor public.
+
+        * DatabaseProcess/DatabaseProcess.h:
+
 2013-12-13  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Handle pinch-to-zoom gesture
