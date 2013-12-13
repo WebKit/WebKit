@@ -50,6 +50,8 @@ public:
     bool isHashTableDeletedValue() const;
     unsigned hash() const;
 
+    UniqueIDBDatabaseIdentifier isolatedCopy() const;
+
 private:
     String m_databaseName;
     SecurityOriginData m_openingOrigin;

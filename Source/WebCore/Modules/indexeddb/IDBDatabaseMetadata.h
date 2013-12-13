@@ -53,6 +53,8 @@ struct IDBIndexMetadata {
     bool unique;
     bool multiEntry;
 
+    IDBIndexMetadata isolatedCopy() const;
+
     static const int64_t InvalidId = -1;
 };
 
@@ -77,6 +79,7 @@ struct IDBObjectStoreMetadata {
     typedef HashMap<int64_t, IDBIndexMetadata> IndexMap;
     IndexMap indexes;
 
+    IDBObjectStoreMetadata isolatedCopy() const;
 };
 
 struct IDBDatabaseMetadata {
@@ -120,6 +123,8 @@ struct IDBDatabaseMetadata {
     int64_t maxObjectStoreId;
 
     ObjectStoreMap objectStores;
+
+    IDBDatabaseMetadata isolatedCopy() const;
 };
 
 }

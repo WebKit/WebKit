@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,44 +22,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "config.h"
+#include "WebCrossThreadCopier.h"
 
-#ifndef SecurityOriginData_h
-#define SecurityOriginData_h
+#if ENABLE(INDEXED_DATABASE)
 
-#include "APIObject.h"
-#include "GenericCallback.h"
-#include <wtf/text/WTFString.h>
+#include "UniqueIDBDatabaseIdentifier.h"
 
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
+using namespace WebKit;
+
+namespace WebCore {
+
+UniqueIDBDatabaseIdentifier CrossThreadCopierBase<false, false, UniqueIDBDatabaseIdentifier>::copy(const UniqueIDBDatabaseIdentifier& identifier)
+{
+    return identifier.isolatedCopy();
 }
 
-namespace WebKit {
+} // namespace WebCore
 
-typedef GenericCallback<WKArrayRef> ArrayCallback;
-
-struct SecurityOriginData {
-    static SecurityOriginData fromSecurityOrigin(const WebCore::SecurityOrigin*);
-    PassRefPtr<WebCore::SecurityOrigin> securityOrigin() const;
-
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, SecurityOriginData&);
-
-    // FIXME <rdar://9018386>: We should be sending more state across the wire than just the protocol,
-    // host, and port.
-
-    String protocol;
-    String host;
-    int port;
-
-    SecurityOriginData isolatedCopy() const;
-};
-
-void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginData>&, ArrayCallback*);
-
-bool operator==(const SecurityOriginData&, const SecurityOriginData&);
-
-} // namespace WebKit
-
-#endif // SecurityOriginData_h
+#endif // ENABLE(INDEXED_DATABASE)

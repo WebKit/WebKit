@@ -72,6 +72,8 @@ public:
     bool isValid() const;
     bool operator==(const IDBKeyPath& other) const;
 
+    IDBKeyPath isolatedCopy() const;
+
 private:
     Type m_type;
     String m_string;

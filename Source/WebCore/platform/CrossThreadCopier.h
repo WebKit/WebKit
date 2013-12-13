@@ -145,6 +145,14 @@ namespace WebCore {
         static Type copy(const ResourceResponse&);
     };
 
+#if ENABLE(INDEXED_DATABASE)
+    struct IDBDatabaseMetadata;
+    template<> struct CrossThreadCopierBase<false, false, IDBDatabaseMetadata> {
+        typedef IDBDatabaseMetadata Type;
+        static Type copy(const IDBDatabaseMetadata&);
+    };
+#endif
+
     template<typename T>
     struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHelper::IsConvertibleToInteger<T>::value, CrossThreadCopierBaseHelper::IsThreadSafeRefCountedPointer<T>::value, T> {
     };

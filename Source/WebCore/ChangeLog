@@ -1,3 +1,31 @@
+2013-12-12  Brady Eidson  <beidson@apple.com>
+
+        DatabaseProcess IndexedDB: Establish a metadata backing store on disk
+        https://bugs.webkit.org/show_bug.cgi?id=125258
+
+        Reviewed by Alexey Proskuryakov, Anders Carlsson, and Tim Horton.
+
+        Teach CrossThreadCopier how to handle IDBDatabaseMetadata.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBDatabaseMetadata.cpp: Added.
+        (WebCore::IDBDatabaseMetadata::isolatedCopy):
+        (WebCore::IDBObjectStoreMetadata::isolatedCopy):
+        (WebCore::IDBIndexMetadata::isolatedCopy):
+        * Modules/indexeddb/IDBDatabaseMetadata.h:
+
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::IDBKeyPath::isolatedCopy):
+        * Modules/indexeddb/IDBKeyPath.h:
+
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::::copy): Add an IDBDatabaseMetadata specialization.
+        * platform/CrossThreadCopier.h:
+
 2013-12-12  Alexey Proskuryakov  <ap@apple.com>
 
         Add support for RSAES-PKCS1-v1_5

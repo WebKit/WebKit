@@ -75,6 +75,17 @@ bool UniqueIDBDatabaseIdentifier::isNull() const
     return m_databaseName.isNull();
 }
 
+UniqueIDBDatabaseIdentifier UniqueIDBDatabaseIdentifier::isolatedCopy() const
+{
+    UniqueIDBDatabaseIdentifier result;
+
+    result.m_databaseName = m_databaseName.isolatedCopy();
+    result.m_openingOrigin = m_openingOrigin.isolatedCopy();
+    result.m_mainFrameOrigin = m_mainFrameOrigin.isolatedCopy();
+
+    return result;
+}
+
 bool operator==(const UniqueIDBDatabaseIdentifier& a, const UniqueIDBDatabaseIdentifier& b)
 {
     if (&a == &b)

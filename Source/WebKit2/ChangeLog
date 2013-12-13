@@ -1,3 +1,83 @@
+2013-12-12  Brady Eidson  <beidson@apple.com>
+
+        DatabaseProcess IndexedDB: Establish a metadata backing store on disk
+        https://bugs.webkit.org/show_bug.cgi?id=125258
+
+        Reviewed by Alexey Proskuryakov, Anders Carlsson, and Tim Horton.
+
+        The DatabaseProcess already has an "Indexed Database path".
+        Each SecurityOrigin with indexed databases will have a subdirectory under the path.
+        Each indexed database will have a subdirectory under its SecurityOrigin's path.
+        Inside that directory will exist (1) metadata database, and 0-N ObjectStore databases.
+
+        This patch establishes the directory structure and the (1) metadata database.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::initializeDatabaseProcess): Asynchronously ensure the indexed database directory exists.
+        (WebKit::DatabaseProcess::ensureIndexedDatabaseRelativePathExists): Allow anyone to make necessary directories relative to
+          the indexed database directory.
+        (WebKit::DatabaseProcess::ensurePathExists):
+        (WebKit::DatabaseProcess::absoluteIndexedDatabasePathFromDatabaseRelativePath): Instead of exposing the indexed database directory, 
+          give DatabaseProcess a method to allow others to compute a path relative to the indexed database directory.
+        (WebKit::DatabaseProcess::postDatabaseTask):
+        (WebKit::DatabaseProcess::performNextDatabaseTask):
+        * DatabaseProcess/DatabaseProcess.h:
+        (WebKit::DatabaseProcess::queue):
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata):
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::UniqueIDBDatabase):
+        (WebKit::UniqueIDBDatabase::filenameForDatabaseName):
+        (WebKit::UniqueIDBDatabase::databaseFilenameIdentifier):
+        (WebKit::UniqueIDBDatabase::canShareDatabases):
+        (WebKit::UniqueIDBDatabase::shutdown): Method to cleanly shutdown a database, emptying its task and request queues.
+        (WebKit::UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata):
+        (WebKit::UniqueIDBDatabase::openBackingStoreAndReadMetadata): To be run on the database work queue, establishes a backing store
+          and extracts metadata from it.
+        (WebKit::UniqueIDBDatabase::didOpenBackingStoreAndReadMetadata): Callback once metadata from the backing store is ready for use.
+        (WebKit::UniqueIDBDatabase::absoluteDatabaseDirectory):
+        (WebKit::UniqueIDBDatabase::postMainThreadTask): Add a main thread task for this database.
+        (WebKit::UniqueIDBDatabase::performNextMainThreadTask):
+        (WebKit::UniqueIDBDatabase::postDatabaseTask): Add a database queue task for this database.
+        (WebKit::UniqueIDBDatabase::performNextDatabaseTask):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        Add a virtual backing store interface:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        (WebKit::UniqueIDBDatabaseBackingStore::~UniqueIDBDatabaseBackingStore):
+
+        Add a SQLite implementation of that interface:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp: Added.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::UniqueIDBDatabaseBackingStoreSQLite):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::extractExistingMetadata):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::openSQLiteDatabaseAtPath):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getOrEstablishMetadata):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        Add a general purpose asynchronous task that does cross thread copying:
+        * Shared/AsyncTask.h: Added.
+        (WebKit::AsyncTask::~AsyncTask):
+        (WebKit::AsyncTask::AsyncTask):
+        (WebKit::createAsyncTask):
+
+        Add more isolated copiers and introduce WebKit CrossThreadCopier specializations:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseIdentifier.cpp:
+        (WebKit::UniqueIDBDatabaseIdentifier::isolatedCopy):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseIdentifier.h:
+
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::SecurityOriginData::isolatedCopy):
+        * Shared/SecurityOriginData.h:
+
+        * Shared/WebCrossThreadCopier.cpp:
+        (WebCore::::copy):
+        * Shared/WebCrossThreadCopier.h:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-12-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: HANG: virginamerica.com: Pressing the print button on the boarding pass page locks up VoiceOver and Safari.

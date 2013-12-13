@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SecurityOriginData_h
-#define SecurityOriginData_h
+#ifndef UniqueIDBDatabaseBackingStore_h
+#define UniqueIDBDatabaseBackingStore_h
 
-#include "APIObject.h"
-#include "GenericCallback.h"
-#include <wtf/text/WTFString.h>
+#if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+struct IDBDatabaseMetadata;
 }
 
 namespace WebKit {
 
-typedef GenericCallback<WKArrayRef> ArrayCallback;
+class UniqueIDBDatabaseBackingStore : public RefCounted<UniqueIDBDatabaseBackingStore> {
+public:
+    virtual ~UniqueIDBDatabaseBackingStore() { }
 
-struct SecurityOriginData {
-    static SecurityOriginData fromSecurityOrigin(const WebCore::SecurityOrigin*);
-    PassRefPtr<WebCore::SecurityOrigin> securityOrigin() const;
-
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, SecurityOriginData&);
-
-    // FIXME <rdar://9018386>: We should be sending more state across the wire than just the protocol,
-    // host, and port.
-
-    String protocol;
-    String host;
-    int port;
-
-    SecurityOriginData isolatedCopy() const;
+    virtual std::unique_ptr<WebCore::IDBDatabaseMetadata> getOrEstablishMetadata() = 0;
 };
-
-void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginData>&, ArrayCallback*);
-
-bool operator==(const SecurityOriginData&, const SecurityOriginData&);
 
 } // namespace WebKit
 
-#endif // SecurityOriginData_h
+#endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
+#endif // UniqueIDBDatabaseBackingStore_h

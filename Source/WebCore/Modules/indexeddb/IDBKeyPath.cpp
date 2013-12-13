@@ -248,6 +248,18 @@ bool IDBKeyPath::operator==(const IDBKeyPath& other) const
     return false;
 }
 
+IDBKeyPath IDBKeyPath::isolatedCopy() const
+{
+    IDBKeyPath result;
+    result.m_type = m_type;
+    result.m_string = m_string.isolatedCopy();
+
+    result.m_array.reserveInitialCapacity(m_array.size());
+    for (size_t i = 0; i < m_array.size(); ++i)
+        result.m_array.uncheckedAppend(m_array[i].isolatedCopy());
+
+    return result;
+}
 
 } // namespace WebCore
 

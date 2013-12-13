@@ -43,11 +43,13 @@ struct IDBDatabaseMetadata;
 namespace WebKit {
 
 class AsyncRequest;
+class AsyncTask;
 class DatabaseProcessIDBConnection;
+class UniqueIDBDatabaseBackingStore;
 
 struct SecurityOriginData;
 
-class UniqueIDBDatabase : public RefCounted<UniqueIDBDatabase> {
+class UniqueIDBDatabase : public ThreadSafeRefCounted<UniqueIDBDatabase> {
 public:
     static PassRefPtr<UniqueIDBDatabase> create(const UniqueIDBDatabaseIdentifier& identifier)
     {
@@ -68,18 +70,48 @@ private:
 
     UniqueIDBDatabaseIdentifier m_identifier;
 
+    bool m_inMemory;
+    String m_databaseRelativeDirectory;
+
     HashSet<RefPtr<DatabaseProcessIDBConnection>> m_connections;
     HashMap<uint64_t, RefPtr<AsyncRequest>> m_databaseRequests;
 
-    void enqueueDatabaseQueueRequest(PassRefPtr<AsyncRequest>);
+    String absoluteDatabaseDirectory() const;
 
+    void postDatabaseTask(std::unique_ptr<AsyncTask>);
+    void shutdown();
+
+    // Method that attempts to make legal filenames from all legal database names
+    String filenameForDatabaseName() const;
+
+    // Returns a string that is appropriate for use as a unique filename
+    String databaseFilenameIdentifier(const SecurityOriginData&) const;
+
+    // Returns true if this origin can use the same databases as the given origin.
+    bool canShareDatabases(const SecurityOriginData&, const SecurityOriginData&) const;
+    
     // To be called from the database workqueue thread only
-    void processDatabaseRequestQueue();
-    bool getOrEstablishIDBDatabaseMetadataInternal(const WebCore::IDBDatabaseMetadata&);
+    void performNextDatabaseTask();
+    void postMainThreadTask(std::unique_ptr<AsyncTask>);
+    void openBackingStoreAndReadMetadata(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
 
-    Mutex m_databaseQueueRequestsMutex;
-    Deque<RefPtr<AsyncRequest>> m_databaseQueueRequests;
-    bool m_processingDatabaseQueueRequests;
+    // Callbacks from the database workqueue thread, to be performed on the main thread only
+    void performNextMainThreadTask();
+    void didOpenBackingStoreAndReadMetadata(const WebCore::IDBDatabaseMetadata&, bool success);
+
+    Deque<RefPtr<AsyncRequest>> m_pendingMetadataRequests;
+    bool m_acceptingNewRequests;
+
+    std::unique_ptr<WebCore::IDBDatabaseMetadata> m_metadata;
+    bool m_didGetMetadataFromBackingStore;
+
+    RefPtr<UniqueIDBDatabaseBackingStore> m_backingStore;
+
+    Deque<std::unique_ptr<AsyncTask>> m_databaseTasks;
+    Mutex m_databaseTaskMutex;
+
+    Deque<std::unique_ptr<AsyncTask>> m_mainThreadTasks;
+    Mutex m_mainThreadTaskMutex;
 };
 
 } // namespace WebKit

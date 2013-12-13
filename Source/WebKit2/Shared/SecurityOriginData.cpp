@@ -29,6 +29,7 @@
 #include "APIArray.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebSecurityOrigin.h"
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
@@ -67,6 +68,17 @@ bool SecurityOriginData::decode(CoreIPC::ArgumentDecoder& decoder, SecurityOrigi
         return false;
 
     return true;
+}
+
+SecurityOriginData SecurityOriginData::isolatedCopy() const
+{
+    SecurityOriginData result;
+
+    result.protocol = protocol.isolatedCopy();
+    result.host = host.isolatedCopy();
+    result.port = port;
+
+    return result;
 }
 
 void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginData>& originDatas, ArrayCallback* callback)
