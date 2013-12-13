@@ -1,3 +1,13 @@
+2013-12-13  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Remove wrong http baselines.
+
+        * platform/efl/http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt: Removed.
+        * platform/efl/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Removed.
+        * platform/efl/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Removed.
+
 2013-12-12  Alexey Proskuryakov  <ap@apple.com>
 
         WebCrypto wrapKey operation doesn't check key usage
