@@ -1,5 +1,30 @@
 2013-12-13  Darin Adler  <darin@apple.com>
 
+        Eliminate awkward virtualComputedStyle construction
+        https://bugs.webkit.org/show_bug.cgi?id=125681
+
+        Reviewed by Andreas Kling.
+
+        * dom/Element.cpp:
+        (WebCore::Element::computedStyle): Tweak coding style a bit.
+
+        * dom/Element.h: Marked computedStyle virtual and got rid of virtualComputedStyle.
+        This fixes a bug that we would not call SVGElement::computedStyle if we called
+        it through an Element pointer or reference. Not sure how to get test coverage for this.
+
+        * dom/Node.cpp:
+        (WebCore::Node::computedStyle): Use a loop instead of recursive virtual calls.
+
+        * dom/Node.h: Made computedStyle virtual and got rid of virtualComputedStyle.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::computedStyle): Tweak coding style a bit.
+
+        * svg/SVGElement.h: Made computedStyle virtual (and FINAL) and got rid fo
+        virtualComputedStyle.
+
+2013-12-13  Darin Adler  <darin@apple.com>
+
         Fix a couple stray uses of RefPtr that should release
         https://bugs.webkit.org/show_bug.cgi?id=125679
 

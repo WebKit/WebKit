@@ -2154,14 +2154,15 @@ RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
         if (pseudoElementSpecifier) {
             RenderStyle* cachedPseudoStyle = usedStyle->getCachedPseudoStyle(pseudoElementSpecifier);
             return cachedPseudoStyle ? cachedPseudoStyle : usedStyle;
-         } else
-            return usedStyle;
+        }
+        return usedStyle;
     }
 
-    if (!attached())
+    if (!attached()) {
         // FIXME: Try to do better than this. Ensure that styleForElement() works for elements that are not in the
         // document tree and figure out when to destroy the computed style for such elements.
-        return 0;
+        return nullptr;
+    }
 
     ElementRareData& data = ensureElementRareData();
     if (!data.computedStyle())

@@ -171,8 +171,7 @@ private:
     // https://bugs.webkit.org/show_bug.cgi?id=77938
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
-    RenderStyle* computedStyle(PseudoId = NOPSEUDO);
-    virtual RenderStyle* virtualComputedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO) OVERRIDE { return computedStyle(pseudoElementSpecifier); }
+    virtual RenderStyle* computedStyle(PseudoId = NOPSEUDO) OVERRIDE FINAL;
     virtual bool willRecalcStyle(Style::Change) OVERRIDE;
 
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;

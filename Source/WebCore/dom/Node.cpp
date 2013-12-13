@@ -884,9 +884,13 @@ Node* Node::pseudoAwareLastChild() const
     return lastChild();
 }
 
-RenderStyle* Node::virtualComputedStyle(PseudoId pseudoElementSpecifier)
+RenderStyle* Node::computedStyle(PseudoId pseudoElementSpecifier)
 {
-    return parentOrShadowHostNode() ? parentOrShadowHostNode()->computedStyle(pseudoElementSpecifier) : 0;
+    for (Node* node = this; node; node = node->parentOrShadowHostNode()) {
+        if (node->isElementNode())
+            return toElement(node)->computedStyle(pseudoElementSpecifier);
+    }
+    return nullptr;
 }
 
 int Node::maxCharacterOffset() const
