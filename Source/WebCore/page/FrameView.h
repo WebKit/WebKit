@@ -58,7 +58,7 @@ class RenderStyle;
 class RenderView;
 class RenderWidget;
 
-Pagination::Mode paginationModeForRenderStyle(RenderStyle*);
+Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 
 typedef unsigned long long DOMTimeStamp;
 

@@ -73,8 +73,7 @@ public:
     // metrics and defaults given the contents of the style.  This includes sophisticated operations like
     // selection of control size based off the font, the disabling of appearance when certain other properties like
     // "border" are set, or if the appearance is not supported by the theme.
-    void adjustStyle(StyleResolver*, RenderStyle*, Element*,  bool UAHasAppearance,
-                     const BorderData&, const FillLayer&, const Color& backgroundColor);
+    void adjustStyle(StyleResolver&, RenderStyle&, Element*,  bool UAHasAppearance, const BorderData&, const FillLayer&, const Color& backgroundColor);
 
     // This method is called to paint the widget as a background of the RenderObject.  A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself.  The boolean return value indicates

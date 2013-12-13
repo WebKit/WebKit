@@ -1,3 +1,13 @@
+2013-12-12  Andreas Kling  <akling@apple.com>
+
+        StyleResolver::adjustRenderStyle() should take RenderStyle references.
+        <https://webkit.org/b/125623>
+
+        This function doesn't handle null styles being passed, so prevent
+        it at compile time.
+
+        Reviewed by Anders Carlsson.
+
 2013-12-13  Darin Adler  <darin@apple.com>
 
         Eliminate awkward virtualComputedStyle construction

@@ -80,31 +80,31 @@ RenderTheme::RenderTheme()
 {
 }
 
-void RenderTheme::adjustStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e, bool UAHasAppearance, const BorderData& border, const FillLayer& background, const Color& backgroundColor)
+void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, Element* e, bool UAHasAppearance, const BorderData& border, const FillLayer& background, const Color& backgroundColor)
 {
     // Force inline and table display styles to be inline-block (except for table- which is block)
-    ControlPart part = style->appearance();
-    if (style->display() == INLINE || style->display() == INLINE_TABLE || style->display() == TABLE_ROW_GROUP
-        || style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_FOOTER_GROUP
-        || style->display() == TABLE_ROW || style->display() == TABLE_COLUMN_GROUP || style->display() == TABLE_COLUMN
-        || style->display() == TABLE_CELL || style->display() == TABLE_CAPTION)
-        style->setDisplay(INLINE_BLOCK);
-    else if (style->display() == COMPACT || style->display() == RUN_IN || style->display() == LIST_ITEM || style->display() == TABLE)
-        style->setDisplay(BLOCK);
+    ControlPart part = style.appearance();
+    if (style.display() == INLINE || style.display() == INLINE_TABLE || style.display() == TABLE_ROW_GROUP
+        || style.display() == TABLE_HEADER_GROUP || style.display() == TABLE_FOOTER_GROUP
+        || style.display() == TABLE_ROW || style.display() == TABLE_COLUMN_GROUP || style.display() == TABLE_COLUMN
+        || style.display() == TABLE_CELL || style.display() == TABLE_CAPTION)
+        style.setDisplay(INLINE_BLOCK);
+    else if (style.display() == COMPACT || style.display() == RUN_IN || style.display() == LIST_ITEM || style.display() == TABLE)
+        style.setDisplay(BLOCK);
 
-    if (UAHasAppearance && isControlStyled(style, border, background, backgroundColor)) {
+    if (UAHasAppearance && isControlStyled(&style, border, background, backgroundColor)) {
         if (part == MenulistPart) {
-            style->setAppearance(MenulistButtonPart);
+            style.setAppearance(MenulistButtonPart);
             part = MenulistButtonPart;
         } else
-            style->setAppearance(NoControlPart);
+            style.setAppearance(NoControlPart);
     }
 
-    if (!style->hasAppearance())
+    if (!style.hasAppearance())
         return;
 
     // Never support box-shadow on native controls.
-    style->setBoxShadow(nullptr);
+    style.setBoxShadow(nullptr);
     
 #if USE(NEW_THEME)
     switch (part) {
@@ -116,69 +116,69 @@ void RenderTheme::adjustStyle(StyleResolver* styleResolver, RenderStyle* style, 
     case DefaultButtonPart:
     case ButtonPart: {
         // Border
-        LengthBox borderBox(style->borderTopWidth(), style->borderRightWidth(), style->borderBottomWidth(), style->borderLeftWidth());
-        borderBox = m_theme->controlBorder(part, style->font(), borderBox, style->effectiveZoom());
-        if (borderBox.top().value() != static_cast<int>(style->borderTopWidth())) {
+        LengthBox borderBox(style.borderTopWidth(), style.borderRightWidth(), style.borderBottomWidth(), style.borderLeftWidth());
+        borderBox = m_theme->controlBorder(part, style.font(), borderBox, style.effectiveZoom());
+        if (borderBox.top().value() != static_cast<int>(style.borderTopWidth())) {
             if (borderBox.top().value())
-                style->setBorderTopWidth(borderBox.top().value());
+                style.setBorderTopWidth(borderBox.top().value());
             else
-                style->resetBorderTop();
+                style.resetBorderTop();
         }
-        if (borderBox.right().value() != static_cast<int>(style->borderRightWidth())) {
+        if (borderBox.right().value() != static_cast<int>(style.borderRightWidth())) {
             if (borderBox.right().value())
-                style->setBorderRightWidth(borderBox.right().value());
+                style.setBorderRightWidth(borderBox.right().value());
             else
-                style->resetBorderRight();
+                style.resetBorderRight();
         }
-        if (borderBox.bottom().value() != static_cast<int>(style->borderBottomWidth())) {
-            style->setBorderBottomWidth(borderBox.bottom().value());
+        if (borderBox.bottom().value() != static_cast<int>(style.borderBottomWidth())) {
+            style.setBorderBottomWidth(borderBox.bottom().value());
             if (borderBox.bottom().value())
-                style->setBorderBottomWidth(borderBox.bottom().value());
+                style.setBorderBottomWidth(borderBox.bottom().value());
             else
-                style->resetBorderBottom();
+                style.resetBorderBottom();
         }
-        if (borderBox.left().value() != static_cast<int>(style->borderLeftWidth())) {
-            style->setBorderLeftWidth(borderBox.left().value());
+        if (borderBox.left().value() != static_cast<int>(style.borderLeftWidth())) {
+            style.setBorderLeftWidth(borderBox.left().value());
             if (borderBox.left().value())
-                style->setBorderLeftWidth(borderBox.left().value());
+                style.setBorderLeftWidth(borderBox.left().value());
             else
-                style->resetBorderLeft();
+                style.resetBorderLeft();
         }
 
         // Padding
-        LengthBox paddingBox = m_theme->controlPadding(part, style->font(), style->paddingBox(), style->effectiveZoom());
-        if (paddingBox != style->paddingBox())
-            style->setPaddingBox(paddingBox);
+        LengthBox paddingBox = m_theme->controlPadding(part, style.font(), style.paddingBox(), style.effectiveZoom());
+        if (paddingBox != style.paddingBox())
+            style.setPaddingBox(paddingBox);
 
         // Whitespace
         if (m_theme->controlRequiresPreWhiteSpace(part))
-            style->setWhiteSpace(PRE);
+            style.setWhiteSpace(PRE);
             
         // Width / Height
         // The width and height here are affected by the zoom.
         // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
-        LengthSize controlSize = m_theme->controlSize(part, style->font(), LengthSize(style->width(), style->height()), style->effectiveZoom());
-        if (controlSize.width() != style->width())
-            style->setWidth(controlSize.width());
-        if (controlSize.height() != style->height())
-            style->setHeight(controlSize.height());
+        LengthSize controlSize = m_theme->controlSize(part, style.font(), LengthSize(style.width(), style.height()), style.effectiveZoom());
+        if (controlSize.width() != style.width())
+            style.setWidth(controlSize.width());
+        if (controlSize.height() != style.height())
+            style.setHeight(controlSize.height());
                 
         // Min-Width / Min-Height
-        LengthSize minControlSize = m_theme->minimumControlSize(part, style->font(), style->effectiveZoom());
-        if (minControlSize.width() != style->minWidth())
-            style->setMinWidth(minControlSize.width());
-        if (minControlSize.height() != style->minHeight())
-            style->setMinHeight(minControlSize.height());
+        LengthSize minControlSize = m_theme->minimumControlSize(part, style.font(), style.effectiveZoom());
+        if (minControlSize.width() != style.minWidth())
+            style.setMinWidth(minControlSize.width());
+        if (minControlSize.height() != style.minHeight())
+            style.setMinHeight(minControlSize.height());
                 
         // Font
-        FontDescription controlFont = m_theme->controlFont(part, style->font(), style->effectiveZoom());
-        if (controlFont != style->font().fontDescription()) {
+        FontDescription controlFont = m_theme->controlFont(part, style.font(), style.effectiveZoom());
+        if (controlFont != style.font().fontDescription()) {
             // Reset our line-height
-            style->setLineHeight(RenderStyle::initialLineHeight());
+            style.setLineHeight(RenderStyle::initialLineHeight());
 
             // Now update our font.
-            if (style->setFontDescription(controlFont))
-                style->font().update(0);
+            if (style.setFontDescription(controlFont))
+                style.font().update(0);
         }
     }
     default:
@@ -187,28 +187,28 @@ void RenderTheme::adjustStyle(StyleResolver* styleResolver, RenderStyle* style, 
 #endif
 
     // Call the appropriate style adjustment method based off the appearance value.
-    switch (style->appearance()) {
+    switch (style.appearance()) {
 #if !USE(NEW_THEME)
     case CheckboxPart:
-        return adjustCheckboxStyle(styleResolver, style, e);
+        return adjustCheckboxStyle(&styleResolver, &style, e);
     case RadioPart:
-        return adjustRadioStyle(styleResolver, style, e);
+        return adjustRadioStyle(&styleResolver, &style, e);
     case PushButtonPart:
     case SquareButtonPart:
     case DefaultButtonPart:
     case ButtonPart:
-        return adjustButtonStyle(styleResolver, style, e);
+        return adjustButtonStyle(&styleResolver, &style, e);
     case InnerSpinButtonPart:
-        return adjustInnerSpinButtonStyle(styleResolver, style, e);
+        return adjustInnerSpinButtonStyle(&styleResolver, &style, e);
 #endif
     case TextFieldPart:
-        return adjustTextFieldStyle(styleResolver, style, e);
+        return adjustTextFieldStyle(&styleResolver, &style, e);
     case TextAreaPart:
-        return adjustTextAreaStyle(styleResolver, style, e);
+        return adjustTextAreaStyle(&styleResolver, &style, e);
     case MenulistPart:
-        return adjustMenuListStyle(styleResolver, style, e);
+        return adjustMenuListStyle(&styleResolver, &style, e);
     case MenulistButtonPart:
-        return adjustMenuListButtonStyle(styleResolver, style, e);
+        return adjustMenuListButtonStyle(&styleResolver, &style, e);
     case MediaPlayButtonPart:
     case MediaCurrentTimePart:
     case MediaTimeRemainingPart:
@@ -216,29 +216,29 @@ void RenderTheme::adjustStyle(StyleResolver* styleResolver, RenderStyle* style, 
     case MediaExitFullscreenButtonPart:
     case MediaMuteButtonPart:
     case MediaVolumeSliderContainerPart:
-        return adjustMediaControlStyle(styleResolver, style, e);
+        return adjustMediaControlStyle(&styleResolver, &style, e);
     case MediaSliderPart:
     case MediaVolumeSliderPart:
     case MediaFullScreenVolumeSliderPart:
     case SliderHorizontalPart:
     case SliderVerticalPart:
-        return adjustSliderTrackStyle(styleResolver, style, e);
+        return adjustSliderTrackStyle(&styleResolver, &style, e);
     case SliderThumbHorizontalPart:
     case SliderThumbVerticalPart:
-        return adjustSliderThumbStyle(styleResolver, style, e);
+        return adjustSliderThumbStyle(&styleResolver, &style, e);
     case SearchFieldPart:
-        return adjustSearchFieldStyle(styleResolver, style, e);
+        return adjustSearchFieldStyle(&styleResolver, &style, e);
     case SearchFieldCancelButtonPart:
-        return adjustSearchFieldCancelButtonStyle(styleResolver, style, e);
+        return adjustSearchFieldCancelButtonStyle(&styleResolver, &style, e);
     case SearchFieldDecorationPart:
-        return adjustSearchFieldDecorationPartStyle(styleResolver, style, e);
+        return adjustSearchFieldDecorationPartStyle(&styleResolver, &style, e);
     case SearchFieldResultsDecorationPart:
-        return adjustSearchFieldResultsDecorationPartStyle(styleResolver, style, e);
+        return adjustSearchFieldResultsDecorationPartStyle(&styleResolver, &style, e);
     case SearchFieldResultsButtonPart:
-        return adjustSearchFieldResultsButtonStyle(styleResolver, style, e);
+        return adjustSearchFieldResultsButtonStyle(&styleResolver, &style, e);
 #if ENABLE(PROGRESS_ELEMENT)
     case ProgressBarPart:
-        return adjustProgressBarStyle(styleResolver, style, e);
+        return adjustProgressBarStyle(&styleResolver, &style, e);
 #endif
 #if ENABLE(METER_ELEMENT)
     case MeterPart:
@@ -246,11 +246,11 @@ void RenderTheme::adjustStyle(StyleResolver* styleResolver, RenderStyle* style, 
     case ContinuousCapacityLevelIndicatorPart:
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
-        return adjustMeterStyle(styleResolver, style, e);
+        return adjustMeterStyle(&styleResolver, &style, e);
 #endif
 #if ENABLE(INPUT_SPEECH)
     case InputSpeechButtonPart:
-        return adjustInputFieldSpeechButtonStyle(styleResolver, style, e);
+        return adjustInputFieldSpeechButtonStyle(&styleResolver, &style, e);
 #endif
     default:
         break;
