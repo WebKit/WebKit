@@ -1,3 +1,23 @@
+2013-12-13  Rob Buis  <rob.buis@samsung.com>
+
+        Clean up SVGScriptElement
+        https://bugs.webkit.org/show_bug.cgi?id=125527
+
+        Reviewed by Darin Adler.
+
+        From the Blink port of this bug it becomes clear that svg/dom/SVGScriptElement/script-set-href.svg and
+        svg/dom/svg-element-attribute-js-null.xhtml still hit an assert in Debug because SVGNames::typeAttr can't
+        be used with fastGetAttribute in all cases, because it can be animatable. However for SVGScriptElement
+        it is not animatable, so make isAnimatableAttribute virtual (note Debug only method) and allow typeAttr
+        in the SVGScriptElement case to be useable for fastGetAttribute.
+
+        Test: svg/dom/SVGScriptElement/script-type-attribute.svg
+
+        * svg/SVGElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::isAnimatableAttribute):
+        * svg/SVGScriptElement.h:
+
 2013-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Expose also webkit_dom_document_get_url

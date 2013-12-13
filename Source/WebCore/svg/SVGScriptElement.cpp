@@ -198,6 +198,16 @@ PassRefPtr<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren()
     return adoptRef(new SVGScriptElement(tagQName(), document(), false, alreadyStarted()));
 }
 
+#ifndef NDEBUG
+bool SVGScriptElement::isAnimatableAttribute(const QualifiedName& name) const
+{
+    if (name == SVGNames::typeAttr)
+        return false;
+
+    return SVGElement::isAnimatableAttribute(name);
+}
+#endif
+
 }
 
 #endif // ENABLE(SVG)

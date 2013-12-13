@@ -38,6 +38,9 @@ class SVGScriptElement FINAL : public SVGElement
 public:
     static PassRefPtr<SVGScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
 
+#ifndef NDEBUG
+    virtual bool isAnimatableAttribute(const QualifiedName&) const;
+#endif
 
 private:
     SVGScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
