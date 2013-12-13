@@ -304,6 +304,11 @@ sub SkipFunction {
         return 1;
     }
 
+    # Skip Console::profile() and Console::profileEnd() as they're not correctly generated for the moment.
+    if ($functionName eq "webkit_dom_console_profile" || $functionName eq "webkit_dom_console_profile_end") {
+        return 1;
+    }
+
     if ($function->signature->name eq "set" and $parentNode->extendedAttributes->{"TypedArray"}) {
         return 1;
     }
@@ -324,7 +329,7 @@ sub SkipFunction {
         return 1;
     }
 
-    if ($function->signature->name eq "timeEnd" || $function->signature->name eq "profile" || $function->signature->name eq "profileEnd") {
+    if ($function->signature->name eq "timeEnd") {
         return 1;
     }
 

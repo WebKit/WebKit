@@ -1,3 +1,25 @@
+2013-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r155784): [GTK] Some methods incorrectly removed in r155784 and deprecated in r158662
+        https://bugs.webkit.org/show_bug.cgi?id=125692
+
+        Reviewed by Martin Robinson.
+
+        In r155784 the build was fixed by skipping Console::profile() and
+        Console::profileEnd(), but the patch also skipped other methods
+        containing the profile method name. Those were incorrectly
+        deprecated in r158662 thinking that the property had been removed
+        in the idl.
+
+        * bindings/gobject/WebKitDOMDeprecated.cpp: Undeprecate
+        webkit_dom_html_head_element_get_profile and
+        webkit_dom_html_head_element_set_profile.
+        * bindings/gobject/WebKitDOMDeprecated.h: Ditto.
+        * bindings/gobject/WebKitDOMDeprecated.symbols: Ditto.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipFunction): Skip webkit_dom_console_profile and
+        webkit_dom_console_profile_end.
+
 2013-12-13  Rob Buis  <rob.buis@samsung.com>
 
         Clean up SVGScriptElement
