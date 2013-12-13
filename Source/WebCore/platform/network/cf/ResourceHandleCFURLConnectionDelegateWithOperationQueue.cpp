@@ -76,7 +76,7 @@ CFURLRequestRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSen
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (protector->hasHandle()) {
+        if (!protector->hasHandle()) {
             continueWillSendRequest(nullptr);
             return;
         }
@@ -103,7 +103,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (protector->hasHandle()) {
+        if (!protector->hasHandle()) {
             continueDidReceiveResponse();
             return;
         }
@@ -133,7 +133,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData(CFD
     CFRetain(data);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!protector->hasHandle()) {
+        if (protector->hasHandle()) {
             LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
             m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::wrapCFData(data), originalLength);
@@ -147,7 +147,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading()
 {
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (protector->hasHandle())
+        if (!protector->hasHandle())
             return;
 
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
@@ -161,7 +161,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFail(CFErrorRef
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
     CFRetain(error);
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!protector->hasHandle()) {
+        if (protector->hasHandle()) {
             LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFail(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
             m_handle->client()->didFail(m_handle, ResourceError(error));
@@ -176,7 +176,7 @@ CFCachedURLResponseRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (protector->hasHandle()) {
+        if (!protector->hasHandle()) {
             continueWillCacheResponse(nullptr);
             return;
         }
@@ -194,7 +194,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveChalleng
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
     CFRetain(challenge);
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!protector->hasHandle()) {
+        if (protector->hasHandle()) {
             LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveChallenge(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
             m_handle->didReceiveAuthenticationChallenge(AuthenticationChallenge(challenge, m_handle));
@@ -208,7 +208,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData(CF
 {
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (protector->hasHandle())
+        if (!protector->hasHandle())
             return;
 
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
@@ -222,7 +222,7 @@ Boolean ResourceHandleCFURLConnectionDelegateWithOperationQueue::shouldUseCreden
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (protector->hasHandle()) {
+        if (!protector->hasHandle()) {
             continueShouldUseCredentialStorage(false);
             return;
         }
@@ -241,7 +241,7 @@ Boolean ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToPro
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (protector->hasHandle()) {
+        if (!protector->hasHandle()) {
             continueCanAuthenticateAgainstProtectionSpace(false);
             return;
         }
@@ -269,7 +269,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveDataArra
     RefPtr<ResourceHandleCFURLConnectionDelegateWithOperationQueue> protector(this);
     CFRetain(dataArray);
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!protector->hasHandle()) {
+        if (protector->hasHandle()) {
             LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
             m_handle->handleDataArray(dataArray);
