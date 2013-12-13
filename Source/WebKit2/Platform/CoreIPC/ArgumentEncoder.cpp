@@ -123,67 +123,64 @@ void ArgumentEncoder::encodeVariableLengthByteArray(const DataReference& dataRef
     encodeFixedLengthData(dataReference.data(), dataReference.size(), 1);
 }
 
+template<typename Type>
+static void copyValueToBuffer(Type value, uint8_t* bufferPosition)
+{
+    memcpy(bufferPosition, &value, sizeof(Type));
+}
+
 void ArgumentEncoder::encode(bool n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    
-    *reinterpret_cast<bool*>(buffer) = n;
+    copyValueToBuffer(n, buffer);
 }
 
 void ArgumentEncoder::encode(uint8_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
-
-    *reinterpret_cast<uint8_t*>(buffer) = n;
+    copyValueToBuffer(n, buffer);
 }
 
 void ArgumentEncoder::encode(uint16_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
-
-    *reinterpret_cast_ptr<uint16_t*>(buffer) = n;
+    copyValueToBuffer(n, buffer);
 }
 
 void ArgumentEncoder::encode(uint32_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    
-    *reinterpret_cast_ptr<uint32_t*>(buffer) = n;
+    copyValueToBuffer(n, buffer);
 }
 
 void ArgumentEncoder::encode(uint64_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    
-    *reinterpret_cast_ptr<uint64_t*>(buffer) = n;
+    copyValueToBuffer(n, buffer);
 }
 
 void ArgumentEncoder::encode(int32_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    
-    *reinterpret_cast_ptr<int32_t*>(buffer) = n;
+    copyValueToBuffer(n, buffer);
 }
 
 void ArgumentEncoder::encode(int64_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
-    
-    *reinterpret_cast_ptr<int64_t*>(buffer) = n;
+    copyValueToBuffer(n, buffer);
 }
 
 void ArgumentEncoder::encode(float n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
-
-    *reinterpret_cast_ptr<float*>(buffer) = n;
+    copyValueToBuffer(n, buffer);
 }
 
 void ArgumentEncoder::encode(double n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
-
-    *reinterpret_cast_ptr<double*>(buffer) = n;
+    copyValueToBuffer(n, buffer);
 }
 
 void ArgumentEncoder::addAttachment(const Attachment& attachment)

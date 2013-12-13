@@ -1,3 +1,26 @@
+2013-12-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix unsafe memory load/store from the argument encoder/decoder affecting ARM
+        https://bugs.webkit.org/show_bug.cgi?id=125674
+
+        Reviewed by Darin Adler.
+
+        Depending on the CPU and CPU config, load and store may have to be aligned.
+        The argument buffer has no particular alignment which can cause problems.
+
+        In this case, on ARMv7, strd and ldrd can have alignment restriction on 16 bytes.
+        The code encoding double and 64 bits integers was causing bugs.
+
+        To avoid problems, the encoders/decoders are modified to just use memcpy. The compiler optimizes
+        it away for the right instructions (clang uses two ldr/str in the case of 64bits values on ARMv7).
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::decodeValueFromBuffer):
+        (CoreIPC::ArgumentDecoder::decode):
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::copyValueToBuffer):
+        (CoreIPC::ArgumentEncoder::encode):
+
 2013-12-12  Tim Horton  <timothy_horton@apple.com>
 
         Build fix for 32-bit.
