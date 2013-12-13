@@ -305,8 +305,7 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
 
         if (!token || !token.type || !token.string) {
             if (this._hoveredMarker && this._delegate && typeof this._delegate.tokenTrackingControllerMouseOutOfHoveredMarker === "function") {
-                var markers = this._codeMirror.findMarksAt(position);
-                if (!markers.contains(this._hoveredMarker))
+                if (!this._codeMirror.findMarksAt(position).contains(this._hoveredMarker.codeMirrorTextMarker))
                     this._delegate.tokenTrackingControllerMouseOutOfHoveredMarker(this, this._hoveredMarker);
             }
 

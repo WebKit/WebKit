@@ -31,9 +31,8 @@ WebInspector.CodeMirrorColorEditingController = function(codeMirror, marker)
     this._marker = marker;
     this._delegate = null;
 
-    this._range = marker.find();
-
-    this._color = WebInspector.Color.fromString(codeMirror.getRange(this._range.from, this._range.to));
+    this._range = marker.range;
+    this._color = WebInspector.Color.fromString(this.text);
 
     this._keyboardShortcutEsc = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape);
 }
@@ -61,10 +60,7 @@ WebInspector.CodeMirrorColorEditingController.prototype = {
     
     set color(color)
     {
-        var colorText = color.toString();
-        this._codeMirror.replaceRange(colorText, this._range.from, this._range.to);
-        this._range.to.ch = this._range.from.ch + colorText.length;
-
+        this.text = color.toString();
         this._color = color;
     },
 
@@ -77,15 +73,31 @@ WebInspector.CodeMirrorColorEditingController.prototype = {
     {
         this._delegate = delegate;
     },
+
+    get text()
+    {
+        var from = {line: this._range.startLine, ch: this._range.startColumn};
+        var to = {line: this._range.endLine, ch: this._range.endColumn};
+        return this._codeMirror.getRange(from, to);
+    },
+    
+    set text(text)
+    {
+        var from = {line: this._range.startLine, ch: this._range.startColumn};
+        var to = {line: this._range.endLine, ch: this._range.endColumn};
+        this._codeMirror.replaceRange(text, from, to);
+
+        var lines = text.split("\n");
+        var endLine = this._range.startLine + lines.length - 1;
+        var endColumn = lines.length > 1 ? lines.lastValue.length : this._range.startColumn + text.length;
+        this._range = new WebInspector.TextRange(this._range.startLine, this._range.startColumn, endLine, endColumn);
+    },
     
     presentHoverMenu: function()
     {
         this._hoverMenu = new WebInspector.HoverMenu(this);
         this._hoverMenu.element.classList.add("color");
-        this._bounds = this._codeMirror.boundsForRange({
-            start: this._range.from,
-            end: this._range.to
-        });
+        this._bounds = this._marker.bounds;
         this._hoverMenu.present(this._bounds);
     },
 

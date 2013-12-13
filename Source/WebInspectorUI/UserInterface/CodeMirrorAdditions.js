@@ -450,10 +450,10 @@
                 var foundColorMarker = false;
                 var markers = this.findMarksAt(to);
                 for (var j = 0; j < markers.length; ++j) {
-                    if (!markers[j].__markedColor)
-                        continue;
-                    foundColorMarker = true;
-                    break;
+                    if (WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(markers[j]).type === WebInspector.TextMarker.Type.Color) {
+                        foundColorMarker = true;
+                        break;
+                    }
                 }
 
                 if (foundColorMarker) {
@@ -469,7 +469,7 @@
                 }
 
                 var marker = this.markText(from, to);
-                marker.__markedColor = true;
+                marker = new WebInspector.TextMarker(marker, WebInspector.TextMarker.Type.Color);
 
                 createdMarkers.push(marker);
 

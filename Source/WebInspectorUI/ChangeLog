@@ -1,3 +1,91 @@
+2013-12-13  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: provide an abstraction for CodeMirror's TextMarker
+        https://bugs.webkit.org/show_bug.cgi?id=125695
+
+        Reviewed by Timothy Hatcher.
+
+        Introduce a new WebInspector.TextMarker class which is used by code with CodeMirror knowledge
+        to return information related to text markers to objects that should have no direct knowledge
+        of CodeMirror. Start using this class in TextEditor and SourceCodeTextEditor to remove the
+        last remaining pieces of CodeMirror knowledge added to SourceCodeTextEditor to fix
+        https://webkit.org/b/124364.
+
+        * UserInterface/CodeMirrorAdditions.js:
+        Stop using __markedColor to identify a color marker and instead use the type on the matching
+        WebInspector.TextMarker. Additionally, create a WebInspector.TextMarker with type
+        WebInspector.TextMarker.Type.Color in createColorMarkers().
+        
+        * UserInterface/CodeMirrorColorEditingController.js:
+        (WebInspector.CodeMirrorColorEditingController):
+        Use a WebInspector.TextRange to track the edited range and obtain it directly from the
+        WebInspector.TextMaker used to instantiate the object. We also use the new "text" public
+        property to create the color.
+
+        (WebInspector.CodeMirrorColorEditingController.prototype.set color):
+        Simply assing the serialized color to the new "text" public property.
+
+        (WebInspector.CodeMirrorColorEditingController.prototype.get text):
+        (WebInspector.CodeMirrorColorEditingController.prototype.set text):
+        New public property to set get and set the text for the edited range, automatically updating
+        the range upon setting to a new text.
+
+        (WebInspector.CodeMirrorColorEditingController.prototype.presentHoverMenu):
+        Obtain the bounds directly from the WebInspector.TextMarker object.
+
+        * UserInterface/CodeMirrorTokenTrackingController.js:
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._updateHoveredTokenInfo):
+        Since we're now tracking the hoveredMarker as a WebInspector.TextMarker, get the CodeMirror
+        TextMarker from that object to check if it's contained within the text markers at the
+        hovered position.
+
+        * UserInterface/Main.html:
+        Add the new TextMarker class source.
+
+        * UserInterface/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._hasColorMarkers):
+        Use the WebInspector.TextMarker type to identify a given text marker is marking a color.
+
+        (WebInspector.SourceCodeTextEditor.prototype.tokenTrackingControllerNewHighlightCandidate):
+        Use the renamed markersAtPosition() method from TextEditor.
+
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedMarkedExpression):
+        Use the WebInspector.TextMarker type to identify a given text marker is marking a color.
+
+        (WebInspector.SourceCodeTextEditor.prototype.colorEditingControllerDidFinishEditing):
+        Since the CodeMirrorColorEditingController is now using a WebInspector.TextRange for its range,
+        update to use a WebInspector.TextRange API to get the range's start line.
+
+        * UserInterface/TextEditor.js:
+        (WebInspector.TextEditor.prototype.get markers):
+        Return WebInspector.TextMarker objects instead of CodeMirror TextRange objects.
+
+        (WebInspector.TextEditor.prototype.markersAtPosition):
+        Rename method to a better name instead of using the CodeMirror-influenced name. Also, return
+        WebInspector.TextMarker objects instead of CodeMirror TextRange objects.
+
+        * UserInterface/TextMarker.js: Added.
+        (WebInspector.TextMarker):
+        Create a WebInspector.TextMarker with a CodeMirror TextMarker and an optional type.
+
+        (WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker):
+        Static method to either obtain the existing WebInspector.TextMarker for a given CodeMirror
+        TextMarker, or create a new WebInspector.TextMarker.
+
+        (WebInspector.TextMarker.prototype.get codeMirrorTextMarker):
+        Public property to access the CodeMirror TextMarker objects for classes that have direct
+        knowledge of CodeMirror.
+
+        (WebInspector.TextMarker.prototype.get type):
+        Public property to access the type used to create this text marker.
+
+        (WebInspector.TextMarker.prototype.get range):
+        (WebInspector.TextMarker.prototype.get bounds):
+        Public properties allowing easy access to generally useful information related to marked text.
+
+        (WebInspector.TextMarker.prototype.clear):
+        Wrapper for the CodeMirror TextMarker clear() method.
+
 2013-12-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Switch WebKit solution to Visual Studio 2013

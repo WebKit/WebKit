@@ -603,13 +603,16 @@ WebInspector.TextEditor.prototype = {
 
     get markers()
     {
-        // FIXME: we should not return CodeMirror TextMarker objects but rather wrappers.
-        return this._codeMirror.getAllMarks();
+        return this._codeMirror.getAllMarks().map(function(codeMirrorTextMarker) {
+            return WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(codeMirrorTextMarker);
+        });
     },
 
-    findMarkersAtPosition: function(position)
+    markersAtPosition: function(position)
     {
-        return this._codeMirror.findMarksAt(position);
+        return this._codeMirror.findMarksAt(position).map(function(codeMirrorTextMarker) {
+            return WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(codeMirrorTextMarker);
+        });
     },
 
     createColorMarkers: function(lineNumber)

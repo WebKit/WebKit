@@ -1016,7 +1016,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _hasColorMarkers: function()
     {
         for (var marker of this.markers) {
-            if (marker.__markedColor)
+            if (marker.type === WebInspector.TextMarker.Type.Color)
                 return true;
         }
         return false;
@@ -1070,7 +1070,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         }
 
         if (this.tokenTrackingController.mode === WebInspector.CodeMirrorTokenTrackingController.Mode.MarkedTokens) {
-            var markers = this.findMarkersAtPosition(candidate.hoveredTokenRange.start);
+            var markers = this.markersAtPosition(candidate.hoveredTokenRange.start);
             if (markers.length > 0)
                 this._tokenTrackingControllerHighlightedMarkedExpression(candidate, markers);
             else
@@ -1298,7 +1298,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     {
         var colorMarker;
         for (var marker of markers) {
-            if (marker.__markedColor) {
+            if (marker.type === WebInspector.TextMarker.Type.Color) {
                 colorMarker = marker;
                 break;
             }
@@ -1356,7 +1356,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     
     colorEditingControllerDidFinishEditing: function(colorEditingController)
     {
-        this._updateColorMarkers(colorEditingController.range.from.line);
+        this._updateColorMarkers(colorEditingController.range.startLine);
 
         this._ignoreContentDidChange--;
 
