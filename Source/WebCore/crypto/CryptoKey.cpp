@@ -67,23 +67,24 @@ void CryptoKey::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& bui
 
 Vector<String> CryptoKey::usages() const
 {
+    // The result is ordered alphabetically.
     Vector<String> result;
-    if (m_usages & CryptoKeyUsageEncrypt)
-        result.append(ASCIILiteral("encrypt"));
     if (m_usages & CryptoKeyUsageDecrypt)
         result.append(ASCIILiteral("decrypt"));
-    if (m_usages & CryptoKeyUsageSign)
-        result.append(ASCIILiteral("sign"));
-    if (m_usages & CryptoKeyUsageVerify)
-        result.append(ASCIILiteral("verify"));
-    if (m_usages & CryptoKeyUsageDeriveKey)
-        result.append(ASCIILiteral("deriveKey"));
     if (m_usages & CryptoKeyUsageDeriveBits)
         result.append(ASCIILiteral("deriveBits"));
-    if (m_usages & CryptoKeyUsageWrapKey)
-        result.append(ASCIILiteral("wrapKey"));
+    if (m_usages & CryptoKeyUsageDeriveKey)
+        result.append(ASCIILiteral("deriveKey"));
+    if (m_usages & CryptoKeyUsageEncrypt)
+        result.append(ASCIILiteral("encrypt"));
+    if (m_usages & CryptoKeyUsageSign)
+        result.append(ASCIILiteral("sign"));
     if (m_usages & CryptoKeyUsageUnwrapKey)
         result.append(ASCIILiteral("unwrapKey"));
+    if (m_usages & CryptoKeyUsageVerify)
+        result.append(ASCIILiteral("verify"));
+    if (m_usages & CryptoKeyUsageWrapKey)
+        result.append(ASCIILiteral("wrapKey"));
 
     return result;
 }

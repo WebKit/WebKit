@@ -70,7 +70,7 @@ crypto.subtle.generateKey(algorithmKeyGen, extractable, ["encrypt", "decrypt", "
     shouldBe("bytesToHexString(exportedPublicKey.algorithm.publicExponent)", "'010001'");
     shouldBe("exportedPublicKey.algorithm.hash.name", "'SHA-1'");
     shouldBe("exportedPublicKey.extractable", "true");
-    shouldBe("exportedPublicKey.usages", "['encrypt','decrypt','wrapKey','unwrapKey']");
+    shouldBe("exportedPublicKey.usages", "['decrypt','encrypt','unwrapKey','wrapKey']");
 
     finishJSTest();
 });

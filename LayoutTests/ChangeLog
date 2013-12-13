@@ -1,3 +1,41 @@
+2013-12-13  Alexey Proskuryakov  <ap@apple.com>
+
+        WebCrypto Key.usages should be ordered alphabetically
+        https://bugs.webkit.org/show_bug.cgi?id=125696
+
+        Reviewed by Darin Adler.
+
+        * crypto/subtle/aes-cbc-192-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-192-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-256-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-256-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-encrypt-decrypt-with-padding-expected.txt:
+        * crypto/subtle/aes-cbc-encrypt-decrypt-with-padding.html:
+        * crypto/subtle/aes-cbc-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-generate-key-expected.txt:
+        * crypto/subtle/aes-cbc-generate-key.html:
+        * crypto/subtle/aes-cbc-invalid-length-expected.txt:
+        * crypto/subtle/aes-cbc-invalid-length.html:
+        * crypto/subtle/aes-kw-wrap-unwrap-aes-expected.txt:
+        * crypto/subtle/aes-kw-wrap-unwrap-aes.html:
+        * crypto/subtle/aes-postMessage-expected.txt:
+        * crypto/subtle/aes-postMessage.html:
+        * crypto/subtle/hmac-postMessage-expected.txt:
+        * crypto/subtle/hmac-postMessage.html:
+        * crypto/subtle/jwk-import-use-values-expected.txt:
+        * crypto/subtle/jwk-import-use-values.html:
+        * crypto/subtle/postMessage-worker-expected.txt:
+        * crypto/subtle/postMessage-worker.html:
+        * crypto/subtle/resources/postMessage-worker.js:
+        (onmessage):
+        * crypto/subtle/rsa-oaep-key-manipulation-expected.txt:
+        * crypto/subtle/rsa-oaep-key-manipulation.html:
+        * crypto/subtle/rsa-oaep-wrap-unwrap-aes-expected.txt:
+        * crypto/subtle/rsa-oaep-wrap-unwrap-aes.html:
+        * crypto/subtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes-expected.txt:
+        * crypto/subtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes.html:
+
 2013-12-13  Rob Buis  <rob.buis@samsung.com>
 
         Clean up SVGScriptElement

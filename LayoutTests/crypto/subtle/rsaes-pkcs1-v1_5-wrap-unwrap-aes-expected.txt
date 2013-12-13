@@ -13,7 +13,7 @@ PASS unwrappedKey.type is 'secret'
 PASS unwrappedKey.extractable is true
 PASS unwrappedKey.algorithm.name is 'AES-CBC'
 PASS unwrappedKey.algorithm.length is 256
-PASS unwrappedKey.usages is ['encrypt', 'decrypt']
+PASS unwrappedKey.usages is ['decrypt', 'encrypt']
 Exporting it...
 PASS bytesToHexString(unwrappedKeyData) is bytesToHexString(aesKeyData)
 
@@ -25,7 +25,7 @@ PASS unwrappedKey.type is 'secret'
 PASS unwrappedKey.extractable is true
 PASS unwrappedKey.algorithm.name is 'AES-CBC'
 PASS unwrappedKey.algorithm.length is 256
-PASS unwrappedKey.usages is ['encrypt', 'decrypt']
+PASS unwrappedKey.usages is ['decrypt', 'encrypt']
 Exporting it...
 PASS bytesToHexString(unwrappedKeyData) is bytesToHexString(aesKeyData)
 PASS successfullyParsed is true

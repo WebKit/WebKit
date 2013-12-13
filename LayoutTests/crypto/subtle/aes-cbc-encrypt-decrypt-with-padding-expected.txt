@@ -8,7 +8,7 @@ PASS key.type is 'secret'
 PASS key.extractable is true
 PASS key.algorithm.name is 'AES-CBC'
 PASS key.algorithm.length is 128
-PASS key.usages is ['encrypt', 'decrypt']
+PASS key.usages is ['decrypt', 'encrypt']
 Using the key to encrypt plaintext...
 PASS bytesToHexString(new Uint8Array(cyphertext)) is '630199c5f202cc7167bb84c6c72b349d'
 Decrypting it back...

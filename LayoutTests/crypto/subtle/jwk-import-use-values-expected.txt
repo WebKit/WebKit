@@ -10,7 +10,7 @@ deconly:
 PASS key.usages is ["decrypt"]
 
 enconly,deconly:
-PASS key.usages is ["encrypt","decrypt"]
+PASS key.usages is ["decrypt","encrypt"]
 
 wrap:
 PASS key.usages is ["wrapKey"]
@@ -19,13 +19,13 @@ unwrap:
 PASS key.usages is ["unwrapKey"]
 
 wrap,unwrap:
-PASS key.usages is ["wrapKey","unwrapKey"]
+PASS key.usages is ["unwrapKey","wrapKey"]
 
 enconly,deconly,wrap:
-PASS key.usages is ["encrypt","decrypt","wrapKey"]
+PASS key.usages is ["decrypt","encrypt","wrapKey"]
 
 enc:
-PASS key.usages is ["encrypt","decrypt","wrapKey","unwrapKey"]
+PASS key.usages is ["decrypt","encrypt","unwrapKey","wrapKey"]
 
 sigonly:
 PASS key.usages is ["sign"]
@@ -49,7 +49,7 @@ enconly, deconly:
 PASS key.usages is ["encrypt"]
 
 enconly,,deconly:
-PASS key.usages is ["encrypt","decrypt"]
+PASS key.usages is ["decrypt","encrypt"]
 
 PASS successfullyParsed is true
 

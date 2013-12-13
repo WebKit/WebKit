@@ -64,7 +64,7 @@ crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(publicKeyJSON)),
     shouldBe("unwrappedKey.extractable", "true");
     shouldBe("unwrappedKey.algorithm.name", "'AES-CBC'");
     shouldBe("unwrappedKey.algorithm.length", "256");
-    shouldBe("unwrappedKey.usages", "['encrypt', 'decrypt']");
+    shouldBe("unwrappedKey.usages", "['decrypt', 'encrypt']");
 
     debug("Exporting it...");
     return crypto.subtle.exportKey("raw", unwrappedKey);
@@ -87,7 +87,7 @@ crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(publicKeyJSON)),
     shouldBe("unwrappedKey.extractable", "true");
     shouldBe("unwrappedKey.algorithm.name", "'AES-CBC'");
     shouldBe("unwrappedKey.algorithm.length", "256");
-    shouldBe("unwrappedKey.usages", "['encrypt', 'decrypt']");
+    shouldBe("unwrappedKey.usages", "['decrypt', 'encrypt']");
 
     debug("Exporting it...");
     return crypto.subtle.exportKey("raw", unwrappedKey);

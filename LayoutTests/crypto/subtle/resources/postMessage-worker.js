@@ -7,8 +7,8 @@ onmessage = function(evt)
         postMessage({ result:false, message:'key.extractable should be true' });
     else if (key.algorithm.name != "HMAC")
         postMessage({ result:false, message:'key.algorithm.name should be "HMAC"' });
-    else if (key.usages.toString() != "encrypt,decrypt,sign,verify")
-        postMessage({ result:false, message:'key.usages should be ["encrypt", "decrypt", "sign", "verify"]' });
+    else if (key.usages.toString() != "decrypt,encrypt,sign,verify")
+        postMessage({ result:false, message:'key.usages should be ["decrypt", "encrypt", "sign", "verify"]' });
     else
         postMessage({ result:true, key:key });
 }

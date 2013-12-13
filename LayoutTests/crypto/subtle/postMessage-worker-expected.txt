@@ -8,7 +8,7 @@ PASS key.type is 'secret'
 PASS key.extractable is true
 PASS key.algorithm.name is 'HMAC'
 PASS key.algorithm.length is 16
-PASS key.usages is ["encrypt", "decrypt", "sign", "verify"]
+PASS key.usages is ["decrypt", "encrypt", "sign", "verify"]
 PASS successfullyParsed is true
 
 TEST COMPLETE

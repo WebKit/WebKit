@@ -24,7 +24,7 @@ importTestKeys().then(function(keys) {
             shouldBe("key.extractable", "true");
             shouldBe("key.algorithm.name", "'HMAC'");
             shouldBe("key.algorithm.length", "16");
-            shouldBe("key.usages", '["encrypt", "decrypt", "sign", "verify"]');
+            shouldBe("key.usages", '["decrypt", "encrypt", "sign", "verify"]');
         }
         finishJSTest();
     }

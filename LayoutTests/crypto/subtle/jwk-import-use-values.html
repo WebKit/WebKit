@@ -54,12 +54,12 @@ function testWithHMAC(expectedUsages, use)
 Promise.all([
     testWithAESCBC(["encrypt"], "enconly"),
     testWithAESCBC(["decrypt"], "deconly"),
-    testWithAESCBC(["encrypt", "decrypt"], "enconly,deconly"),
+    testWithAESCBC(["decrypt", "encrypt"], "enconly,deconly"),
     testWithAESCBC(["wrapKey"], "wrap"),
     testWithAESCBC(["unwrapKey"], "unwrap"),
-    testWithAESCBC(["wrapKey", "unwrapKey"], "wrap,unwrap"),
-    testWithAESCBC(["encrypt", "decrypt", "wrapKey"], "enconly,deconly,wrap"),
-    testWithAESCBC(["encrypt", "decrypt", "wrapKey", "unwrapKey"], "enc"),
+    testWithAESCBC(["unwrapKey", "wrapKey"], "wrap,unwrap"),
+    testWithAESCBC(["decrypt", "encrypt", "wrapKey"], "enconly,deconly,wrap"),
+    testWithAESCBC(["decrypt", "encrypt", "unwrapKey", "wrapKey"], "enc"),
     testWithHMAC(["sign"], "sigonly"),
     testWithHMAC(["verify"], "vfyonly"),
     testWithHMAC(["sign", "verify"], "sig"),
@@ -69,7 +69,7 @@ Promise.all([
     testWithAESCBC([], "enconly "),
     testWithAESCBC([], "EncOnly"),
     testWithAESCBC(["encrypt"], "enconly, deconly"),
-    testWithAESCBC(["encrypt", "decrypt"], "enconly,,deconly"),
+    testWithAESCBC(["decrypt","encrypt"], "enconly,,deconly"),
 
 ]).then(function() { finishJSTest(); } );
 </script>

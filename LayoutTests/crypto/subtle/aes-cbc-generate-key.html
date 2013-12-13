@@ -28,7 +28,7 @@ crypto.subtle.generateKey({name: "aes-cbc", length: 128}, extractable, ["encrypt
     shouldBe("key.extractable", "true");
     shouldBe("key.algorithm.name", "'AES-CBC'");
     shouldBe("key.algorithm.length", "128");
-    shouldBe("key.usages", "['encrypt', 'decrypt']");
+    shouldBe("key.usages", "['decrypt', 'encrypt']");
 
     finishJSTest();
 });

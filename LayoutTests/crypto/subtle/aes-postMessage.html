@@ -18,7 +18,7 @@ window.addEventListener("message", function(evt) {
     shouldBe("key.extractable", "true");
     shouldBe("key.algorithm.name", "'AES-CBC'");
     shouldBe("key.algorithm.length", "128");
-    shouldBe("key.usages", '["encrypt", "decrypt", "sign", "verify"]');
+    shouldBe("key.usages", '["decrypt", "encrypt", "sign", "verify"]');
 
     finishJSTest();
 }, false);

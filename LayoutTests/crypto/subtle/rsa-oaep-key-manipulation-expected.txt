@@ -38,7 +38,7 @@ PASS exportedPublicKey.algorithm.modulusLength is 2048
 PASS bytesToHexString(exportedPublicKey.algorithm.publicExponent) is '010001'
 PASS exportedPublicKey.algorithm.hash.name is 'SHA-1'
 PASS exportedPublicKey.extractable is true
-PASS exportedPublicKey.usages is ['encrypt','decrypt','wrapKey','unwrapKey']
+PASS exportedPublicKey.usages is ['decrypt','encrypt','unwrapKey','wrapKey']
 PASS successfullyParsed is true
 
 TEST COMPLETE

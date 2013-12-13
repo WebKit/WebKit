@@ -25,7 +25,7 @@ crypto.subtle.importKey("raw", keyData, "aes-cbc", extractable, ["encrypt", "dec
     shouldBe("key.extractable", "true");
     shouldBe("key.algorithm.name", "'AES-CBC'");
     shouldBe("key.algorithm.length", "128");
-    shouldBe("key.usages", "['encrypt', 'decrypt']");
+    shouldBe("key.usages", "['decrypt', 'encrypt']");
 
     debug("Using the key to encrypt plaintext...");
     return crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, plaintext);
