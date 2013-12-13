@@ -32,11 +32,11 @@
 
 using namespace WebCore;
 
-static const CGFloat minMagnification = 0.75;
-static const CGFloat maxMagnification = 3;
+static const double minMagnification = 0.75;
+static const double maxMagnification = 3;
 
-static const CGFloat zoomOutBoost = 1.6;
-static const CGFloat zoomOutResistance = 0.10;
+static const double zoomOutBoost = 1.6;
+static const double zoomOutResistance = 0.10;
 
 namespace WebKit {
 
