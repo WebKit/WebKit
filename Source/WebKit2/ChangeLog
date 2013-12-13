@@ -1,3 +1,12 @@
+2013-12-13  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
+
+        GTK buildfix after r160504.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_prefetch_dns):
+
 2013-12-12  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Need ObjC APIs for some InjectedBundle classes.
