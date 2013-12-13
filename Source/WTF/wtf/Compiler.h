@@ -177,11 +177,6 @@
     #endif /* __MINGW64_VERSION_MAJOR */
 #endif /* __MINGW32__ */
 
-/* COMPILER(INTEL) - Intel C++ Compiler */
-#if defined(__INTEL_COMPILER)
-#define WTF_COMPILER_INTEL 1
-#endif
-
 /* COMPILER(SUNCC) */
 #if defined(__SUNPRO_CC) || defined(__SUNPRO_C)
 #define WTF_COMPILER_SUNCC 1
@@ -344,7 +339,7 @@
 
 /* UNUSED_PARAM */
 
-#if COMPILER(INTEL) && !(defined(WIN32) || defined(_WIN32)) || COMPILER(RVCT)
+#if COMPILER(RVCT)
 template<typename T>
 inline void unusedParam(T& x) { (void)x; }
 #define UNUSED_PARAM(variable) unusedParam(variable)

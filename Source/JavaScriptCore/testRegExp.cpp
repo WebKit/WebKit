@@ -147,7 +147,7 @@ GlobalObject::GlobalObject(VM& vm, Structure* structure, const Vector<String>& a
 // be in a separate main function because the realMain function requires object
 // unwinding.
 
-#if COMPILER(MSVC) && !COMPILER(INTEL) && !defined(_DEBUG) && !OS(WINCE)
+#if COMPILER(MSVC) && !defined(_DEBUG) && !OS(WINCE)
 #define TRY       __try {
 #define EXCEPT(x) } __except (EXCEPTION_EXECUTE_HANDLER) { x; }
 #else
