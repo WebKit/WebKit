@@ -47,7 +47,7 @@ static bool shouldUseXPC()
     if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
         return [value boolValue];
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if USE(XPC_SERVICES)
     return true;
 #else
     return false;

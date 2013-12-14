@@ -200,6 +200,9 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     setUpConnectionClient(self, toAPI(_context.get()));
     setUpInectedBundleClient(self, toAPI(_context.get()));
     setUpHistoryClient(self, toAPI(_context.get()));
+#if PLATFORM(IOS)
+    _context->setUsesNetworkProcess(true);
+#endif
 
     return self;
 }
