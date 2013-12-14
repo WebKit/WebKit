@@ -56,10 +56,10 @@ JSValue JSJavaScriptCallFrame::thisObject(ExecState*) const
 JSValue JSJavaScriptCallFrame::type(ExecState* exec) const
 {
     switch (impl().type()) {
-        case DebuggerCallFrame::FunctionType:
-            return jsString(exec, ASCIILiteral("function"));
-        case DebuggerCallFrame::ProgramType:
-            return jsString(exec, ASCIILiteral("program"));
+    case DebuggerCallFrame::FunctionType:
+        return jsNontrivialString(exec, ASCIILiteral("function"));
+    case DebuggerCallFrame::ProgramType:
+        return jsNontrivialString(exec, ASCIILiteral("program"));
     }
 
     ASSERT_NOT_REACHED();

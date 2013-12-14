@@ -283,7 +283,7 @@ JSValue CInstance::stringValue(ExecState* exec) const
         return value;
 
     // Fallback to default implementation.
-    return jsString(exec, "NPObject");
+    return jsNontrivialString(exec, ASCIILiteral("NPObject"));
 }
 
 JSValue CInstance::numberValue(ExecState*) const

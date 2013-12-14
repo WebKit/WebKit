@@ -128,29 +128,30 @@ JSValue JSInjectedScriptHost::type(ExecState* exec)
 
     JSValue value = exec->uncheckedArgument(0);
     if (value.isString())
-        return jsString(exec, String("string"));
+        return exec->vm().smallStrings.stringString();
     if (value.inherits(JSArray::info()))
-        return jsString(exec, String("array"));
+        return jsNontrivialString(exec, ASCIILiteral("array"));
     if (value.isBoolean())
-        return jsString(exec, String("boolean"));
+        return exec->vm().smallStrings.booleanString();
     if (value.isNumber())
-        return jsString(exec, String("number"));
+        return exec->vm().smallStrings.numberString();
     if (value.inherits(DateInstance::info()))
-        return jsString(exec, String("date"));
+        return jsNontrivialString(exec, ASCIILiteral("date"));
     if (value.inherits(RegExpObject::info()))
-        return jsString(exec, String("regexp"));
+        return jsNontrivialString(exec, ASCIILiteral("regexp"));
     if (value.inherits(JSNode::info()))
-        return jsString(exec, String("node"));
+        return jsNontrivialString(exec, ASCIILiteral("node"));
     if (value.inherits(JSNodeList::info()))
-        return jsString(exec, String("array"));
+        return jsNontrivialString(exec, ASCIILiteral("array"));
     if (value.inherits(JSHTMLCollection::info()))
-        return jsString(exec, String("array"));
+        return jsNontrivialString(exec, ASCIILiteral("array"));
     if (value.inherits(JSInt8Array::info()) || value.inherits(JSInt16Array::info()) || value.inherits(JSInt32Array::info()))
-        return jsString(exec, String("array"));
+        return jsNontrivialString(exec, ASCIILiteral("array"));
     if (value.inherits(JSUint8Array::info()) || value.inherits(JSUint16Array::info()) || value.inherits(JSUint32Array::info()))
-        return jsString(exec, String("array"));
+        return jsNontrivialString(exec, ASCIILiteral("array"));
     if (value.inherits(JSFloat32Array::info()) || value.inherits(JSFloat64Array::info()))
-        return jsString(exec, String("array"));
+        return jsNontrivialString(exec, ASCIILiteral("array"));
+
     return jsUndefined();
 }
 
