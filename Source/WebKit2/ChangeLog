@@ -1,3 +1,13 @@
+2013-12-14  Dan Bernstein  <mitz@apple.com>
+
+        Clarify Owners’ role
+        https://bugs.webkit.org/show_bug.cgi?id=125739
+
+        Reviewed by Anders Carlsson.
+
+        * Owners: Clarify that a patch authored by an Owner does not have to be reviewed by one, as
+        decided during the 2013 WebKit Contributors Meeting.
+
 2013-12-13  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Fix the build and enable the NetworkProcess by default on iOS
