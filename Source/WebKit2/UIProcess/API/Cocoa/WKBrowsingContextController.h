@@ -126,7 +126,7 @@ WK_API_CLASS
 
 @property(readonly) double estimatedProgress;
 
-@property WKRenderingProgressEvents observedRenderingProgressEvents;
+@property (nonatomic) WKRenderingProgressEvents observedRenderingProgressEvents;
 
 #pragma mark Active Document Introspection
 
