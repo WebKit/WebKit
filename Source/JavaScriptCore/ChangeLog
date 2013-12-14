@@ -1,3 +1,20 @@
+2013-12-14  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r160557.
+
+        r160557 added the first generated header to JavaScriptCore that needs to be installed in to
+        the framework wrapper. Sadly JavaScriptCore's Derived Sources target was not set to generate
+        headers when invoked as part of the installhdrs action. This resulted in the build failing
+        due to Xcode being unable to find the header file to install. The fix for this is to configure
+        the Derived Sources target to use JavaScriptCore.xcconfig, which sets INSTALLHDRS_SCRIPT_PHASE
+        to YES and allows Xcode to generate derived sources during the installhdrs action.
+
+        Enabling INSTALLHDRS_SCRIPT_PHASE required tweaking the Generate Derived Sources script build
+        phase to skip running code related to offlineasm that depends on JSCLLIntOffsetExtractor
+        having been compiled, which isn't the case at installhdrs time.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Some Set and Map prototype functions have incorrect function lengths

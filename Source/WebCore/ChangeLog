@@ -1,3 +1,10 @@
+2013-12-14  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r160557.
+
+        * Configurations/WebCore.xcconfig: Find JavaScriptCore.framework below SDKROOT so that we'll pick
+        up the built version in production builds rather than the system version.
+
 2013-12-14  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] Use GMutexLocker instead of g_mutex_lock
