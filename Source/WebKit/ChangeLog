@@ -1,5 +1,11 @@
 2013-12-13  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build correction after r160548
+
+        * WebKit.vcxproj/WebKit.sln: Revise build order to avoid errors with ANGLE included.
+
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed build fix after r160548
 
         * WebKit.vcxproj/WebKit.sln: Revised to build under VS2013.
