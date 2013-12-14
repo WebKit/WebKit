@@ -117,7 +117,7 @@ bool MediaControlsGtk::initializeControls(Document& document)
     if (exceptionCode)
         return false;
 
-    if (document.page()->theme()->supportsClosedCaptioning()) {
+    if (document.page()->theme().supportsClosedCaptioning()) {
         RefPtr<MediaControlClosedCaptionsContainerElement> closedCaptionsContainer = MediaControlClosedCaptionsContainerElement::create(document);
 
         RefPtr<MediaControlClosedCaptionsTrackListElement> closedCaptionsTrackList = MediaControlClosedCaptionsTrackListElement::create(document, this);
@@ -200,7 +200,7 @@ void MediaControlsGtk::reset()
         return;
 
     double duration = m_mediaController->duration();
-    m_durationDisplay->setInnerText(page->theme()->formatMediaControlsTime(duration), ASSERT_NO_EXCEPTION);
+    m_durationDisplay->setInnerText(page->theme().formatMediaControlsTime(duration), ASSERT_NO_EXCEPTION);
     m_durationDisplay->setCurrentValue(duration);
 
     if (m_toggleClosedCaptionsButton) {
@@ -238,7 +238,7 @@ void MediaControlsGtk::updateCurrentTimeDisplay()
 
     // Allow the theme to format the time.
     ExceptionCode exceptionCode;
-    m_currentTimeDisplay->setInnerText(page->theme()->formatMediaControlsCurrentTime(now, duration), exceptionCode);
+    m_currentTimeDisplay->setInnerText(page->theme().formatMediaControlsCurrentTime(now, duration), exceptionCode);
     m_currentTimeDisplay->setCurrentValue(now);
 }
 

@@ -1710,7 +1710,7 @@ void RenderBlock::addVisualOverflowFromTheme()
         return;
 
     IntRect inflatedRect = pixelSnappedBorderBoxRect();
-    theme()->adjustRepaintRect(this, inflatedRect);
+    theme().adjustRepaintRect(this, inflatedRect);
     addVisualOverflow(inflatedRect);
 
     if (RenderFlowThread* flowThread = flowThreadContainingBlock())
@@ -4711,8 +4711,8 @@ int RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, Lin
         // FIXME: Might be better to have a custom CSS property instead, so that if the theme
         // is turned off, checkboxes/radios will still have decent baselines.
         // FIXME: Need to patch form controls to deal with vertical lines.
-        if (style().hasAppearance() && !theme()->isControlContainer(style().appearance()))
-            return theme()->baselinePosition(this);
+        if (style().hasAppearance() && !theme().isControlContainer(style().appearance()))
+            return theme().baselinePosition(this);
             
         // CSS2.1 states that the baseline of an inline block is the baseline of the last line box in
         // the normal flow.  We make an exception for marquees, since their baselines are meaningless

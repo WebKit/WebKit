@@ -137,7 +137,7 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
             setNeedsWillValidateCheck();
             setNeedsStyleRecalc();
             if (renderer() && renderer()->style().hasAppearance())
-                renderer()->theme()->stateChanged(renderer(), ReadOnlyState);
+                renderer()->theme().stateChanged(renderer(), ReadOnlyState);
         }
     } else if (name == requiredAttr) {
         bool wasRequired = m_isRequired;
@@ -157,7 +157,7 @@ void HTMLFormControlElement::disabledAttributeChanged()
     setNeedsWillValidateCheck();
     didAffectSelector(AffectedSelectorDisabled | AffectedSelectorEnabled);
     if (renderer() && renderer()->style().hasAppearance())
-        renderer()->theme()->stateChanged(renderer(), EnabledState);
+        renderer()->theme().stateChanged(renderer(), EnabledState);
 }
 
 void HTMLFormControlElement::requiredAttributeChanged()

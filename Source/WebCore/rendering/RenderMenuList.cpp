@@ -130,10 +130,10 @@ void RenderMenuList::adjustInnerStyle()
         innerStyle.setAlignSelf(AlignFlexStart);
     }
 
-    innerStyle.setPaddingLeft(Length(theme()->popupInternalPaddingLeft(&style()), Fixed));
-    innerStyle.setPaddingRight(Length(theme()->popupInternalPaddingRight(&style()), Fixed));
-    innerStyle.setPaddingTop(Length(theme()->popupInternalPaddingTop(&style()), Fixed));
-    innerStyle.setPaddingBottom(Length(theme()->popupInternalPaddingBottom(&style()), Fixed));
+    innerStyle.setPaddingLeft(Length(theme().popupInternalPaddingLeft(&style()), Fixed));
+    innerStyle.setPaddingRight(Length(theme().popupInternalPaddingRight(&style()), Fixed));
+    innerStyle.setPaddingTop(Length(theme().popupInternalPaddingTop(&style()), Fixed));
+    innerStyle.setPaddingBottom(Length(theme().popupInternalPaddingBottom(&style()), Fixed));
 
     if (document().page()->chrome().selectItemWritingDirectionIsNatural()) {
         // Items in the popup will not respect the CSS text-align and direction properties,
@@ -223,7 +223,7 @@ void RenderMenuList::updateOptionsWidth()
 
         String text = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
         applyTextTransform(style(), text, ' ');
-        if (theme()->popupOptionSupportsTextIndent()) {
+        if (theme().popupOptionSupportsTextIndent()) {
             // Add in the option's text indent.  We can't calculate percentage values for now.
             float optionWidth = 0;
             if (RenderStyle* optionStyle = element->renderStyle())
@@ -324,7 +324,7 @@ LayoutRect RenderMenuList::controlClipRect(const LayoutPoint& additionalOffset) 
 
 void RenderMenuList::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    maxLogicalWidth = std::max(m_optionsWidth, theme()->minimumMenuListSize(&style())) + m_innerBlock->paddingLeft() + m_innerBlock->paddingRight();
+    maxLogicalWidth = std::max(m_optionsWidth, theme().minimumMenuListSize(&style())) + m_innerBlock->paddingLeft() + m_innerBlock->paddingRight();
     if (!style().width().isPercent())
         minLogicalWidth = maxLogicalWidth;
 }

@@ -1,3 +1,13 @@
+2013-12-14  Andreas Kling  <akling@apple.com>
+
+        Page::theme() should return a reference.
+        <https://webkit.org/b/125737>
+
+        There's always a RenderTheme, and not a single call site was checking
+        for null pointers anyway. Updated RenderObject::theme() as well.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-13  Sam Weinig  <sam@webkit.org>
 
         CTTE: Convert Element and RenderObject iterator usage to use range-based for loops

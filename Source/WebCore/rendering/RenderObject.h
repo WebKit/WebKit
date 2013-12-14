@@ -159,7 +159,7 @@ public:
     explicit RenderObject(Node&);
     virtual ~RenderObject();
 
-    RenderTheme* theme() const;
+    RenderTheme& theme() const;
 
     virtual const char* renderName() const = 0;
 

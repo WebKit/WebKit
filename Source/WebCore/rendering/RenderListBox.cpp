@@ -399,10 +399,10 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     Color textColor = listItemElement->renderStyle() ? listItemElement->renderStyle()->visitedDependentColor(CSSPropertyColor) : style().visitedDependentColor(CSSPropertyColor);
     if (isOptionElement && toHTMLOptionElement(listItemElement)->selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
-            textColor = theme()->activeListBoxSelectionForegroundColor();
+            textColor = theme().activeListBoxSelectionForegroundColor();
         // Honor the foreground color for disabled items
         else if (!listItemElement->isDisabledFormControl() && !selectElement().isDisabledFormControl())
-            textColor = theme()->inactiveListBoxSelectionForegroundColor();
+            textColor = theme().inactiveListBoxSelectionForegroundColor();
     }
 
     ColorSpace colorSpace = itemStyle->colorSpace();
@@ -432,9 +432,9 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
     Color backColor;
     if (isHTMLOptionElement(listItemElement) && toHTMLOptionElement(listItemElement)->selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
-            backColor = theme()->activeListBoxSelectionBackgroundColor();
+            backColor = theme().activeListBoxSelectionBackgroundColor();
         else
-            backColor = theme()->inactiveListBoxSelectionBackgroundColor();
+            backColor = theme().inactiveListBoxSelectionBackgroundColor();
     } else
         backColor = listItemElement->renderStyle() ? listItemElement->renderStyle()->visitedDependentColor(CSSPropertyBackgroundColor) : style().visitedDependentColor(CSSPropertyBackgroundColor);
 
@@ -807,7 +807,7 @@ PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
     if (hasCustomScrollbarStyle)
         widget = RenderScrollbar::createCustomScrollbar(this, VerticalScrollbar, &selectElement());
     else {
-        widget = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, theme()->scrollbarControlSizeForPart(ListboxPart));
+        widget = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, theme().scrollbarControlSizeForPart(ListboxPart));
         didAddScrollbar(widget.get(), VerticalScrollbar);
     }
     view().frameView().addChild(widget.get());

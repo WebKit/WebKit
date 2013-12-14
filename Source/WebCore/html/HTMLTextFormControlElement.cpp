@@ -152,7 +152,7 @@ bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
         && isEmptyValue()
         && isEmptySuggestedValue()
         && !isPlaceholderEmpty()
-        && (document().focusedElement() != this || (renderer() && renderer()->theme()->shouldShowPlaceholderWhenFocused()))
+        && (document().focusedElement() != this || (renderer() && renderer()->theme().shouldShowPlaceholderWhenFocused()))
         && (!renderer() || renderer()->style().visibility() == VISIBLE);
 }
 

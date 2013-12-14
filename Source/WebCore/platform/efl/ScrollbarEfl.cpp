@@ -113,7 +113,7 @@ void ScrollbarEfl::setParent(ScrollView* view)
     if (!frame.page())
         return;
 
-    String theme = static_cast<RenderThemeEfl*>(frame.page()->theme())->themePath();
+    String theme = static_cast<RenderThemeEfl&>(frame.page()->theme()).themePath();
 
     const char* group = (orientation() == HorizontalScrollbar) ? "scrollbar.horizontal" : "scrollbar.vertical";
     if (theme.isEmpty()) {

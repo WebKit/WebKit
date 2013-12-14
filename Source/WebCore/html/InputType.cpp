@@ -172,7 +172,7 @@ InputType::~InputType()
 bool InputType::themeSupportsDataListUI(InputType* type)
 {
     Document& document = type->element().document();
-    RefPtr<RenderTheme> theme = document.page() ? document.page()->theme() : RenderTheme::defaultTheme();
+    RefPtr<RenderTheme> theme = document.page() ? &document.page()->theme() : RenderTheme::defaultTheme();
     return theme->supportsDataListUI(type->formControlType());
 }
 

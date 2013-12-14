@@ -141,7 +141,7 @@ public:
 
     void setNeedsRecalcStyleInAllFrames();
 
-    RenderTheme* theme() const { return m_theme.get(); }
+    RenderTheme& theme() const { return *m_theme; }
 
     ViewportArguments viewportArguments() const;
 

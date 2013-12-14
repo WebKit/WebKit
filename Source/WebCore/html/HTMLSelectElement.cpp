@@ -192,7 +192,7 @@ void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelec
 bool HTMLSelectElement::usesMenuList() const
 {
     const Page* page = document().page();
-    RefPtr<RenderTheme> renderTheme = page ? page->theme() : RenderTheme::defaultTheme();
+    RefPtr<RenderTheme> renderTheme = page ? &page->theme() : RenderTheme::defaultTheme();
     if (renderTheme->delegatesMenuListRendering())
         return true;
 
@@ -1078,7 +1078,7 @@ void HTMLSelectElement::reset()
 bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 {
     const Page* page = document().page();
-    RefPtr<RenderTheme> renderTheme = page ? page->theme() : RenderTheme::defaultTheme();
+    RefPtr<RenderTheme> renderTheme = page ? &page->theme() : RenderTheme::defaultTheme();
 
     if (!renderTheme->popsMenuByArrowKeys())
         return false;
@@ -1111,7 +1111,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 {
     const Page* page = document().page();
-    RefPtr<RenderTheme> renderTheme = page ? page->theme() : RenderTheme::defaultTheme();
+    RefPtr<RenderTheme> renderTheme = page ? &page->theme() : RenderTheme::defaultTheme();
 
     if (event->type() == eventNames().keydownEvent) {
         if (!renderer() || !event->isKeyboardEvent())

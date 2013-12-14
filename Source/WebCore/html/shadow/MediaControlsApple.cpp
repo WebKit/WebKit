@@ -89,7 +89,7 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document& docu
     if (ec)
         return 0;
 
-    if (document.page()->theme()->usesMediaControlStatusDisplay()) {
+    if (document.page()->theme().usesMediaControlStatusDisplay()) {
         RefPtr<MediaControlStatusDisplayElement> statusDisplay = MediaControlStatusDisplayElement::create(document);
         controls->m_statusDisplay = statusDisplay.get();
         panel->appendChild(statusDisplay.release(), ec, AttachLazily);
@@ -136,7 +136,7 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document& docu
     if (ec)
         return 0;
 
-    if (document.page()->theme()->supportsClosedCaptioning()) {
+    if (document.page()->theme().supportsClosedCaptioning()) {
         RefPtr<MediaControlClosedCaptionsContainerElement> closedCaptionsContainer = MediaControlClosedCaptionsContainerElement::create(document);
 
         RefPtr<MediaControlClosedCaptionsTrackListElement> closedCaptionsTrackList = MediaControlClosedCaptionsTrackListElement::create(document, controls.get());
@@ -165,7 +165,7 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document& docu
     // The mute button and the slider element should be in the same div.
     RefPtr<HTMLDivElement> panelVolumeControlContainer = HTMLDivElement::create(document);
 
-    if (document.page()->theme()->usesMediaControlVolumeSlider()) {
+    if (document.page()->theme().usesMediaControlVolumeSlider()) {
         RefPtr<MediaControlVolumeSliderContainerElement> volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(document);
 
         RefPtr<MediaControlPanelVolumeSliderElement> slider = MediaControlPanelVolumeSliderElement::create(document);
@@ -313,7 +313,7 @@ void MediaControlsApple::reset()
         m_fullScreenButton->hide();
 
     double duration = m_mediaController->duration();
-    if (std::isfinite(duration) || page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart)) {
+    if (std::isfinite(duration) || page->theme().hasOwnDisabledStateHandlingFor(MediaSliderPart)) {
         m_timeline->setDuration(duration);
         m_timelineContainer->show();
         m_timeline->setPosition(m_mediaController->currentTime());
@@ -321,7 +321,7 @@ void MediaControlsApple::reset()
     } else
         m_timelineContainer->hide();
 
-    if (m_mediaController->hasAudio() || page->theme()->hasOwnDisabledStateHandlingFor(MediaMuteButtonPart))
+    if (m_mediaController->hasAudio() || page->theme().hasOwnDisabledStateHandlingFor(MediaMuteButtonPart))
         m_panelMuteButton->show();
     else
         m_panelMuteButton->hide();
@@ -378,9 +378,9 @@ void MediaControlsApple::updateCurrentTimeDisplay()
         return;
 
     // Allow the theme to format the time.
-    m_currentTimeDisplay->setInnerText(page->theme()->formatMediaControlsCurrentTime(now, duration), IGNORE_EXCEPTION);
+    m_currentTimeDisplay->setInnerText(page->theme().formatMediaControlsCurrentTime(now, duration), IGNORE_EXCEPTION);
     m_currentTimeDisplay->setCurrentValue(now);
-    m_timeRemainingDisplay->setInnerText(page->theme()->formatMediaControlsRemainingTime(now, duration), IGNORE_EXCEPTION);
+    m_timeRemainingDisplay->setInnerText(page->theme().formatMediaControlsRemainingTime(now, duration), IGNORE_EXCEPTION);
     m_timeRemainingDisplay->setCurrentValue(now - duration);
 }
 
@@ -390,17 +390,17 @@ void MediaControlsApple::reportedError()
     if (!page)
         return;
 
-    if (!page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart))
+    if (!page->theme().hasOwnDisabledStateHandlingFor(MediaSliderPart))
         m_timelineContainer->hide();
 
-    if (!page->theme()->hasOwnDisabledStateHandlingFor(MediaMuteButtonPart))
+    if (!page->theme().hasOwnDisabledStateHandlingFor(MediaMuteButtonPart))
         m_panelMuteButton->hide();
 
     m_fullScreenButton->hide();
 
     if (m_volumeSliderContainer)
         m_volumeSliderContainer->hide();
-    if (m_toggleClosedCaptionsButton && !page->theme()->hasOwnDisabledStateHandlingFor(MediaToggleClosedCaptionsButtonPart))
+    if (m_toggleClosedCaptionsButton && !page->theme().hasOwnDisabledStateHandlingFor(MediaToggleClosedCaptionsButtonPart))
         m_toggleClosedCaptionsButton->hide();
     if (m_closedCaptionsContainer)
         hideClosedCaptionTrackList();

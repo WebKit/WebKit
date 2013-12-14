@@ -91,7 +91,7 @@ void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, Rend
 
     bool disabled = updateUserModifyProperty(textFormControlElement(), textBlockStyle);
     if (disabled)
-        textBlockStyle->setColor(theme()->disabledTextColor(textBlockStyle->visitedDependentColor(CSSPropertyColor), startStyle->visitedDependentColor(CSSPropertyBackgroundColor)));
+        textBlockStyle->setColor(theme().disabledTextColor(textBlockStyle->visitedDependentColor(CSSPropertyColor), startStyle->visitedDependentColor(CSSPropertyBackgroundColor)));
 #if PLATFORM(IOS)
     if (textBlockStyle->textSecurity() != TSNONE && !textBlockStyle->isLeftToRightDirection()) {
         // Preserve the alignment but force the direction to LTR so that the last-typed, unmasked character

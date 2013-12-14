@@ -1458,7 +1458,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
     
     RenderStyle& styleToUse = style();
     if (styleToUse.outlineStyleIsAuto() || hasOutlineAnnotation()) {
-        if (!theme()->supportsFocusRing(&styleToUse)) {
+        if (!theme().supportsFocusRing(&styleToUse)) {
             // Only paint the focus ring by hand if the theme isn't able to draw the focus ring.
             paintFocusRing(paintInfo, paintOffset, &styleToUse);
         }

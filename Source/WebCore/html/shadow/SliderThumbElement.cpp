@@ -62,7 +62,7 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
     const RenderStyle& sliderStyle = input->renderer()->style();
 
 #if ENABLE(VIDEO)
-    if (sliderStyle.appearance() == MediaVolumeSliderPart && input->renderer()->theme()->usesVerticalVolumeSlider())
+    if (sliderStyle.appearance() == MediaVolumeSliderPart && input->renderer()->theme().usesVerticalVolumeSlider())
         return true;
 #endif
 
@@ -89,7 +89,7 @@ void RenderSliderThumb::updateAppearance(RenderStyle* parentStyle)
     else if (parentStyle->appearance() == MediaFullScreenVolumeSliderPart)
         style().setAppearance(MediaFullScreenVolumeSliderThumbPart);
     if (style().hasAppearance())
-        theme()->adjustSliderThumbSize(&style(), element());
+        theme().adjustSliderThumbSize(&style(), element());
 }
 
 bool RenderSliderThumb::isSliderThumb() const
@@ -122,12 +122,12 @@ void RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, Layou
 
 #if ENABLE(DATALIST_ELEMENT)
     if (input->renderer()->isSlider() && !isVertical && input->list()) {
-        int offsetFromCenter = theme()->sliderTickOffsetFromTrackCenter();
+        int offsetFromCenter = theme().sliderTickOffsetFromTrackCenter();
         LayoutUnit trackHeight = 0;
         if (offsetFromCenter < 0)
             trackHeight = -2 * offsetFromCenter;
         else {
-            int tickLength = theme()->sliderTickSize().height();
+            int tickLength = theme().sliderTickSize().height();
             trackHeight = 2 * (offsetFromCenter + tickLength);
         }
         float zoomFactor = style().effectiveZoom();
@@ -277,7 +277,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
     Decimal value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
 
 #if ENABLE(DATALIST_ELEMENT)
-    const LayoutUnit snappingThreshold = renderer()->theme()->sliderTickSnappingThreshold();
+    const LayoutUnit snappingThreshold = renderer()->theme().sliderTickSnappingThreshold();
     if (snappingThreshold > 0) {
         Decimal closest = input->findClosestTickMarkValue(value);
         if (closest.isFinite()) {

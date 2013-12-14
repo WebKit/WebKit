@@ -211,7 +211,7 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
     RenderFileUploadControl* renderer = const_cast<RenderFileUploadControl*>(this);
     float minDefaultLabelWidth = defaultWidthNumChars * font.width(constructTextRun(renderer, font, characterAsString, style(), TextRun::AllowTrailingExpansion));
 
-    const String label = theme()->fileListDefaultLabel(inputElement().multiple());
+    const String label = theme().fileListDefaultLabel(inputElement().multiple());
     float defaultLabelWidth = font.width(constructTextRun(renderer, font, label, style(), TextRun::AllowTrailingExpansion));
     if (HTMLInputElement* button = uploadButton())
         if (RenderObject* buttonRenderer = button->renderer())
@@ -278,7 +278,7 @@ String RenderFileUploadControl::fileTextValue() const
     if (inputElement().files()->length())
         return StringTruncator::rightTruncate(inputElement().displayString(), maxFilenameWidth(), style().font(), StringTruncator::EnableRoundingHacks);
 #endif
-    return theme()->fileListNameForWidth(inputElement().files(), style().font(), maxFilenameWidth(), inputElement().multiple());
+    return theme().fileListNameForWidth(inputElement().files(), style().font(), maxFilenameWidth(), inputElement().multiple());
 }
     
 } // namespace WebCore

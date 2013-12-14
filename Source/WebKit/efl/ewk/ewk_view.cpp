@@ -1366,8 +1366,8 @@ void ewk_view_theme_set(Evas_Object* ewkView, const char* path)
     if (!eina_stringshare_replace(&priv->settings.theme, path))
         return;
 
-    WebCore::RenderThemeEfl* theme = static_cast<WebCore::RenderThemeEfl*>(priv->page->theme());
-    theme->setThemePath(path);
+    WebCore::RenderThemeEfl& theme = static_cast<WebCore::RenderThemeEfl&>(priv->page->theme());
+    theme.setThemePath(path);
 }
 
 const char* ewk_view_theme_get(const Evas_Object* ewkView)

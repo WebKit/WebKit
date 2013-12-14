@@ -130,10 +130,9 @@ RenderObject::~RenderObject()
     view().didDestroyRenderer();
 }
 
-RenderTheme* RenderObject::theme() const
+RenderTheme& RenderObject::theme() const
 {
     ASSERT(document().page());
-
     return document().page()->theme();
 }
 
@@ -1016,7 +1015,7 @@ void RenderObject::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRec
     int outlineOffset = styleToUse.outlineOffset();
 
     if (styleToUse.outlineStyleIsAuto() || hasOutlineAnnotation()) {
-        if (!theme()->supportsFocusRing(&styleToUse)) {
+        if (!theme().supportsFocusRing(&styleToUse)) {
             // Only paint the focus ring by hand if the theme isn't able to draw the focus ring.
             paintFocusRing(paintInfo, paintRect.location(), &styleToUse);
         }
@@ -1456,7 +1455,7 @@ Color RenderObject::selectionBackgroundColor() const
             if (pseudoStyle && pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).isValid())
                 color = pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).blendWithWhite();
             else
-                color = frame().selection().isFocusedAndActive() ? theme()->activeSelectionBackgroundColor() : theme()->inactiveSelectionBackgroundColor();
+                color = frame().selection().isFocusedAndActive() ? theme().activeSelectionBackgroundColor() : theme().inactiveSelectionBackgroundColor();
         }
     }
 
@@ -1477,9 +1476,7 @@ Color RenderObject::selectionColor(int colorProperty) const
         if (!color.isValid())
             color = pseudoStyle->visitedDependentColor(CSSPropertyColor);
     } else
-        color = frame().selection().isFocusedAndActive() ?
-                theme()->activeSelectionForegroundColor() :
-                theme()->inactiveSelectionForegroundColor();
+        color = frame().selection().isFocusedAndActive() ? theme().activeSelectionForegroundColor() : theme().inactiveSelectionForegroundColor();
 
     return color;
 }

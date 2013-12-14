@@ -1705,7 +1705,7 @@ void FrameSelection::focusedOrActiveStateChanged()
         element->setNeedsStyleRecalc();
         if (RenderObject* renderer = element->renderer())
             if (renderer && renderer->style().hasAppearance())
-                renderer->theme()->stateChanged(renderer, FocusState);
+                renderer->theme().stateChanged(renderer, FocusState);
     }
 }
 
@@ -1759,7 +1759,7 @@ void FrameSelection::updateAppearance()
     // Start blinking with a black caret. Be sure not to restart if we're
     // already blinking in the right location.
     if (shouldBlink && !m_caretBlinkTimer.isActive()) {
-        if (double blinkInterval = m_frame->page()->theme()->caretBlinkInterval())
+        if (double blinkInterval = m_frame->page()->theme().caretBlinkInterval())
             m_caretBlinkTimer.startRepeating(blinkInterval);
 
         if (!m_caretPaint) {

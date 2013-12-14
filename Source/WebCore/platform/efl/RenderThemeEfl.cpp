@@ -798,7 +798,7 @@ bool RenderThemeEfl::paintSliderThumb(RenderObject* object, const PaintInfo& inf
 void RenderThemeEfl::adjustCheckboxStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document().page()) {
-        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustCheckboxStyle(styleResolver, style, element);
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustCheckboxStyle(styleResolver, style, element);
         return;
     }
 
@@ -821,7 +821,7 @@ bool RenderThemeEfl::paintCheckbox(RenderObject* object, const PaintInfo& info, 
 void RenderThemeEfl::adjustRadioStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document().page()) {
-        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustRadioStyle(styleResolver, style, element);
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustRadioStyle(styleResolver, style, element);
         return;
     }
 
@@ -844,7 +844,7 @@ bool RenderThemeEfl::paintRadio(RenderObject* object, const PaintInfo& info, con
 void RenderThemeEfl::adjustButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document().page()) {
-        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustButtonStyle(styleResolver, style, element);
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustButtonStyle(styleResolver, style, element);
         return;
     }
 
@@ -861,7 +861,7 @@ bool RenderThemeEfl::paintButton(RenderObject* object, const PaintInfo& info, co
 void RenderThemeEfl::adjustMenuListStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document().page()) {
-        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustMenuListStyle(styleResolver, style, element);
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustMenuListStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, ComboBox);
@@ -900,7 +900,7 @@ bool RenderThemeEfl::paintMenuListButtonDecorations(RenderObject* object, const 
 void RenderThemeEfl::adjustTextFieldStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document().page()) {
-        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustTextFieldStyle(styleResolver, style, element);
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustTextFieldStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, TextField);
@@ -924,7 +924,7 @@ bool RenderThemeEfl::paintTextArea(RenderObject* object, const PaintInfo& info, 
 void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document().page()) {
-        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustSearchFieldResultsButtonStyle(styleResolver, style, element);
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustSearchFieldResultsButtonStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchFieldResultsButton);
@@ -946,7 +946,7 @@ bool RenderThemeEfl::paintSearchFieldResultsButton(RenderObject* object, const P
 void RenderThemeEfl::adjustSearchFieldResultsDecorationPartStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document().page()) {
-        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustSearchFieldResultsDecorationPartStyle(styleResolver, style, element);
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustSearchFieldResultsDecorationPartStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchFieldResultsDecoration);
@@ -968,7 +968,7 @@ bool RenderThemeEfl::paintSearchFieldResultsDecorationPart(RenderObject* object,
 void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document().page()) {
-        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustSearchFieldCancelButtonStyle(styleResolver, style, element);
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustSearchFieldCancelButtonStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchFieldCancelButton);
@@ -992,7 +992,7 @@ bool RenderThemeEfl::paintSearchFieldCancelButton(RenderObject* object, const Pa
 void RenderThemeEfl::adjustSearchFieldStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document().page()) {
-        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustSearchFieldStyle(styleResolver, style, element);
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustSearchFieldStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, SearchField);
@@ -1008,7 +1008,7 @@ bool RenderThemeEfl::paintSearchField(RenderObject* object, const PaintInfo& inf
 void RenderThemeEfl::adjustInnerSpinButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document().page()) {
-        static_cast<RenderThemeEfl*>(element->document().page()->theme())->adjustInnerSpinButtonStyle(styleResolver, style, element);
+        static_cast<RenderThemeEfl&>(element->document().page()->theme()).adjustInnerSpinButtonStyle(styleResolver, style, element);
         return;
     }
     adjustSizeConstraints(style, Spinner);

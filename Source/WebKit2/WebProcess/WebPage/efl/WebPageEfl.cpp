@@ -168,8 +168,8 @@ const char* WebPage::interpretKeyEvent(const KeyboardEvent* event)
 
 void WebPage::setThemePath(const String& themePath)
 {
-    WebCore::RenderThemeEfl* theme = static_cast<WebCore::RenderThemeEfl*>(m_page->theme());
-    theme->setThemePath(themePath);
+    WebCore::RenderThemeEfl& theme = static_cast<WebCore::RenderThemeEfl&>(m_page->theme());
+    theme.setThemePath(themePath);
 }
 
 static Frame* targetFrameForEditing(WebPage* page)

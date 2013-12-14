@@ -1203,7 +1203,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     // If we have a native theme appearance, paint that before painting our background.
     // The theme will tell us whether or not we should also paint the CSS background.
     IntRect snappedPaintRect(pixelSnappedIntRect(paintRect));
-    bool themePainted = style().hasAppearance() && !theme()->paint(this, paintInfo, snappedPaintRect);
+    bool themePainted = style().hasAppearance() && !theme().paint(this, paintInfo, snappedPaintRect);
     if (!themePainted) {
         if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
             paintBorder(paintInfo, paintRect, &style(), bleedAvoidance);
@@ -1211,12 +1211,12 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         paintBackground(paintInfo, paintRect, bleedAvoidance);
 
         if (style().hasAppearance())
-            theme()->paintDecorations(this, paintInfo, snappedPaintRect);
+            theme().paintDecorations(this, paintInfo, snappedPaintRect);
     }
     paintBoxShadow(paintInfo, paintRect, &style(), Inset);
 
     // The theme will tell us whether or not we should also paint the CSS border.
-    if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasAppearance() || (!themePainted && theme()->paintBorderOnly(this, paintInfo, snappedPaintRect))) && style().hasBorder())
+    if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasAppearance() || (!themePainted && theme().paintBorderOnly(this, paintInfo, snappedPaintRect))) && style().hasBorder())
         paintBorder(paintInfo, paintRect, &style(), bleedAvoidance);
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
