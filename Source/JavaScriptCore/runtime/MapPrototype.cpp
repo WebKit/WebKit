@@ -64,10 +64,10 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION(vm.propertyNames->get, mapProtoFuncGet, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->has, mapProtoFuncHas, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->set, mapProtoFuncSet, DontEnum, 2);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->keys, mapProtoFuncKeys, DontEnum, 2);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->values, mapProtoFuncValues, DontEnum, 2);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->entries, mapProtoFuncEntries, DontEnum, 2);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, mapProtoFuncEntries, DontEnum, 2);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->keys, mapProtoFuncKeys, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->values, mapProtoFuncValues, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->entries, mapProtoFuncEntries, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, mapProtoFuncEntries, DontEnum, 0);
 
     GetterSetter* accessor = GetterSetter::create(vm);
     JSFunction* function = JSFunction::create(vm, globalObject, 0, vm.propertyNames->size.string(), mapProtoFuncSize);

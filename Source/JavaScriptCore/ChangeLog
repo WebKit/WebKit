@@ -1,5 +1,17 @@
 2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Some Set and Map prototype functions have incorrect function lengths
+        https://bugs.webkit.org/show_bug.cgi?id=125732
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+
+2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Move Inspector and Debugger protocol domains into JavaScriptCore
         https://bugs.webkit.org/show_bug.cgi?id=125707
 

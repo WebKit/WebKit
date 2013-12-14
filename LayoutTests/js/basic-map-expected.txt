@@ -19,6 +19,13 @@ PASS new Map(undefined, {}) threw exception RangeError: Invalid comparator funct
 PASS Object.hasOwnProperty(map, 'size') is false
 PASS Map.prototype.hasOwnProperty('size') is true
 PASS Map.prototype.size threw exception TypeError: Map operation called on non-Map object.
+PASS Map.prototype.set.length is 2
+PASS Map.prototype.has.length is 1
+PASS Map.prototype.get.length is 1
+PASS Map.prototype.clear.length is 0
+PASS Map.prototype.keys.length is 0
+PASS Map.prototype.values.length is 0
+PASS Map.prototype.entries.length is 0
 PASS map.size is 0
 PASS map.set(-0, 1) is map
 PASS map.set(0, 2) is map

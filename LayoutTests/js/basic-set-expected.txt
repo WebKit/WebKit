@@ -26,7 +26,13 @@ true
 [object Object]
 PASS Object.hasOwnProperty(set, 'size') is false
 PASS Set.prototype.hasOwnProperty('size') is true
-PASS Map.prototype.size threw exception TypeError: Map operation called on non-Map object.
+PASS Set.prototype.size threw exception TypeError: Set operation called on non-Set object.
+PASS Set.prototype.add.length is 1
+PASS Set.prototype.has.length is 1
+PASS Set.prototype.clear.length is 0
+PASS Set.prototype.keys.length is 0
+PASS Set.prototype.values.length is 0
+PASS Set.prototype.entries.length is 0
 PASS set.size is 0
 PASS set.add(-0) is set
 PASS set.add(0) is set

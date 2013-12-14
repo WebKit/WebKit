@@ -25,7 +25,15 @@ set.forEach(debug);
 var set = new Set;
 shouldBeFalse("Object.hasOwnProperty(set, 'size')")
 shouldBeTrue("Set.prototype.hasOwnProperty('size')")
-shouldThrow("Map.prototype.size")
+shouldThrow("Set.prototype.size")
+
+shouldBe("Set.prototype.add.length", "1")
+shouldBe("Set.prototype.has.length", "1")
+shouldBe("Set.prototype.clear.length", "0")
+shouldBe("Set.prototype.keys.length", "0")
+shouldBe("Set.prototype.values.length", "0")
+shouldBe("Set.prototype.entries.length", "0")
+
 shouldBe("set.size", "0")
 shouldBe("set.add(-0)", "set")
 shouldBe("set.add(0)", "set")

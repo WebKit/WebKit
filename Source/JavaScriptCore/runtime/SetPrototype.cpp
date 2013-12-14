@@ -58,8 +58,8 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION(vm.propertyNames->add, setProtoFuncAdd, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->clear, setProtoFuncClear, DontEnum, 1);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->add, setProtoFuncAdd, DontEnum, 1);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->clear, setProtoFuncClear, DontEnum, 0);
     JSC_NATIVE_FUNCTION(vm.propertyNames->deleteKeyword, setProtoFuncDelete, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->forEach, setProtoFuncForEach, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->has, setProtoFuncHas, DontEnum, 1);

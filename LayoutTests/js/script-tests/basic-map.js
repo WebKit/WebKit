@@ -21,6 +21,15 @@ var map = new Map;
 shouldBeFalse("Object.hasOwnProperty(map, 'size')")
 shouldBeTrue("Map.prototype.hasOwnProperty('size')")
 shouldThrow("Map.prototype.size")
+
+shouldBe("Map.prototype.set.length", "2")
+shouldBe("Map.prototype.has.length", "1")
+shouldBe("Map.prototype.get.length", "1")
+shouldBe("Map.prototype.clear.length", "0")
+shouldBe("Map.prototype.keys.length", "0")
+shouldBe("Map.prototype.values.length", "0")
+shouldBe("Map.prototype.entries.length", "0")
+
 shouldBe("map.size", "0")
 shouldBe("map.set(-0, 1)", "map")
 shouldBe("map.set(0, 2)", "map")
