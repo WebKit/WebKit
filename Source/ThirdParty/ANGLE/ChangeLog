@@ -1,3 +1,17 @@
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r160548
+
+        I missed the ANGLE files, since we aren't building these
+        on the Apple Windows port at the moment.
+
+        * ANGLE.vcxproj/libEGL.vcxproj: Update to VS2013
+        * ANGLE.vcxproj/libGLESv2.vcxproj: Ditto
+        * ANGLE.vcxproj/preprocessor.vcxproj: Ditto
+        * ANGLE.vcxproj/translator_common.vcxproj: Ditto
+        * ANGLE.vcxproj/translator_glsl.vcxproj: Ditto
+        * ANGLE.vcxproj/translator_hlsl.vcxproj: Ditto
+
 2013-12-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r159543.
