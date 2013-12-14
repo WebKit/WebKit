@@ -1,5 +1,12 @@
 2013-12-13  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build correction after r160548.
+
+        * WebKit.vcxproj/WebKit/WebKitApple.props: Exclude linking with QTMoveWin, which does
+        not build with VS2013.
+
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed build correction after r160548
 
         * WebKit.vcxproj/WebKit.sln: Revise build order to avoid errors with ANGLE included.
