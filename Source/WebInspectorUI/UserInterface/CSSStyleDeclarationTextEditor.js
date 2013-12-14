@@ -400,10 +400,11 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
                 var swatchInnerElement = document.createElement("span");
                 swatchInnerElement.style.backgroundColor = colorString;
                 swatchElement.appendChild(swatchInnerElement);
-                            
-                var swatchMarker = this._codeMirror.setUniqueBookmark(marker.find().from, swatchElement);
-                            
-                swatchInnerElement.__colorTextMarker = marker;
+
+                var codeMirrorTextMarker = marker.codeMirrorTextMarker;
+                var swatchMarker = this._codeMirror.setUniqueBookmark(codeMirrorTextMarker.find().from, swatchElement);
+
+                swatchInnerElement.__colorTextMarker = codeMirrorTextMarker;
                 swatchInnerElement.__color = color;
             }.bind(this));
         }
