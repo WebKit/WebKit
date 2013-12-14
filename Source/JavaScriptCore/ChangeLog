@@ -1,3 +1,96 @@
+2013-12-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of forward exit on UInt32ToNumber by adding an op_unsigned bytecode instruction
+        https://bugs.webkit.org/show_bug.cgi?id=125553
+
+        Reviewed by Oliver Hunt.
+        
+        UInt32ToNumber was a super complicated node because it had to do a speculation, but it
+        would do it after we already had computed the urshift. It couldn't just back to the
+        beginning of the urshift because the inputs to the urshift weren't necessarily live
+        anymore. We couldn't jump forward to the beginning of the next instruction because the
+        result of the urshift was not yet unsigned-converted.
+        
+        For a while we solved this by forward-exiting in UInt32ToNumber. But that's really
+        gross and I want to get rid of all forward exits. They cause a lot of bugs.
+        
+        We could also have turned UInt32ToNumber to a backwards exit by forcing the inputs to
+        the urshift to be live. I figure that this might be a bit too extreme.
+        
+        So, I just created a new place that we can exit to: I split op_urshift into op_urshift
+        followed by op_unsigned. op_unsigned is an "unsigned cast" along the lines of what
+        UInt32ToNumber does. This allows me to get rid of all of the nastyness in the DFG for
+        forward exiting in UInt32ToNumber.
+        
+        This patch enables massive code carnage in the DFG and FTL, and brings us closer to
+        eliminating one of the DFG's most confusing concepts. On the flipside, it does make the
+        bytecode slightly more complex (one new instruction). This is a profitable trade. We
+        want the DFG and FTL to trend towards simplicity, since they are both currently too
+        complicated.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecode/ValueRecovery.cpp:
+        (JSC::ValueRecovery::dumpInContext):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::gpr):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BinaryOpNode::emitBytecode):
+        (JSC::emitReadModifyAssignment):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::toInt32):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMovHint):
+        (JSC::DFG::SpeculativeJIT::compileUInt32ToNumber):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        (JSC::DFG::StrengthReductionPhase::convertToIdentityOverChild):
+        (JSC::DFG::StrengthReductionPhase::convertToIdentityOverChild1):
+        (JSC::DFG::StrengthReductionPhase::convertToIdentityOverChild2):
+        * ftl/FTLFormattedValue.h:
+        (JSC::FTL::int32Value):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileUInt32ToNumber):
+        * ftl/FTLValueFormat.cpp:
+        (JSC::FTL::reboxAccordingToFormat):
+        (WTF::printInternal):
+        * ftl/FTLValueFormat.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_urshift):
+        (JSC::JIT::emitSlow_op_urshift):
+        (JSC::JIT::emit_op_unsigned):
+        (JSC::JIT::emitSlow_op_unsigned):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitRightShift):
+        (JSC::JIT::emitRightShiftSlowCase):
+        (JSC::JIT::emit_op_unsigned):
+        (JSC::JIT::emitSlow_op_unsigned):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+
 2013-12-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         LLInt should not conditionally branch to to labels outside of its function

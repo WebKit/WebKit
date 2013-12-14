@@ -156,7 +156,8 @@ void computeUsesForBytecodeOffset(
     case op_new_array_with_size:
     case op_create_this:
     case op_get_pnames:
-    case op_del_by_id: {
+    case op_del_by_id:
+    case op_unsigned: {
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         return;
     }
@@ -390,7 +391,8 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_create_activation:
     case op_create_arguments:
     case op_del_by_id:
-    case op_del_by_val: {
+    case op_del_by_val:
+    case op_unsigned: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }

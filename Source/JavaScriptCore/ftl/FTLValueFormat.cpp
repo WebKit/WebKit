@@ -42,14 +42,6 @@ void reboxAccordingToFormat(
         break;
     }
     
-    case ValueFormatUInt32: {
-        jit.zeroExtend32ToPtr(value, value);
-        jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
-        jit.boxInt52(value, value, scratch1, FPRInfo::fpRegT0);
-        jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
-        break;
-    }
-    
     case ValueFormatInt52: {
         jit.rshift64(AssemblyHelpers::TrustedImm32(JSValue::int52ShiftAmount), value);
         jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
@@ -104,9 +96,6 @@ void printInternal(PrintStream& out, ValueFormat format)
         return;
     case ValueFormatInt32:
         out.print("Int32");
-        return;
-    case ValueFormatUInt32:
-        out.print("UInt32");
         return;
     case ValueFormatInt52:
         out.print("Int52");

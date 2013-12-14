@@ -91,6 +91,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_rshift:
     case op_lshift:
     case op_urshift:
+    case op_unsigned:
     case op_inc:
     case op_dec:
     case op_add:

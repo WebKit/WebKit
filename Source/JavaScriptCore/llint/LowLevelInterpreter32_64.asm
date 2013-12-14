@@ -1044,7 +1044,7 @@ macro bitOp(operation, slowPath, advance)
     bineq t3, Int32Tag, .slow
     bineq t2, Int32Tag, .slow
     loadi 4[PC], t2
-    operation(t1, t0, .slow)
+    operation(t1, t0)
     storei t3, TagOffset[cfr, t2, 8]
     storei t0, PayloadOffset[cfr, t2, 8]
     dispatch(advance)
@@ -1057,7 +1057,7 @@ end
 _llint_op_lshift:
     traceExecution()
     bitOp(
-        macro (left, right, slow) lshifti left, right end,
+        macro (left, right) lshifti left, right end,
         _slow_path_lshift,
         4)
 
@@ -1065,7 +1065,7 @@ _llint_op_lshift:
 _llint_op_rshift:
     traceExecution()
     bitOp(
-        macro (left, right, slow) rshifti left, right end,
+        macro (left, right) rshifti left, right end,
         _slow_path_rshift,
         4)
 
@@ -1073,18 +1073,29 @@ _llint_op_rshift:
 _llint_op_urshift:
     traceExecution()
     bitOp(
-        macro (left, right, slow)
-            urshifti left, right
-            bilt right, 0, slow
-        end,
+        macro (left, right) urshifti left, right end,
         _slow_path_urshift,
         4)
+
+
+_llint_op_unsigned:
+    traceExecution()
+    loadi 4[PC], t0
+    loadi 8[PC], t1
+    loadConstantOrVariablePayload(t1, Int32Tag, t2, .opUnsignedSlow)
+    bilt t2, 0, .opUnsignedSlow
+    storei t2, PayloadOffset[cfr, t0, 8]
+    storei Int32Tag, TagOffset[cfr, t0, 8]
+    dispatch(3)
+.opUnsignedSlow:
+    callSlowPath(_slow_path_unsigned)
+    dispatch(3)
 
 
 _llint_op_bitand:
     traceExecution()
     bitOp(
-        macro (left, right, slow) andi left, right end,
+        macro (left, right) andi left, right end,
         _slow_path_bitand,
         5)
 
@@ -1092,7 +1103,7 @@ _llint_op_bitand:
 _llint_op_bitxor:
     traceExecution()
     bitOp(
-        macro (left, right, slow) xori left, right end,
+        macro (left, right) xori left, right end,
         _slow_path_bitxor,
         5)
 
@@ -1100,7 +1111,7 @@ _llint_op_bitxor:
 _llint_op_bitor:
     traceExecution()
     bitOp(
-        macro (left, right, slow) ori left, right end,
+        macro (left, right) ori left, right end,
         _slow_path_bitor,
         5)
 

@@ -513,9 +513,6 @@ private:
         if (node->hasInt32Result())
             return node;
 
-        if (node->op() == UInt32ToNumber)
-            return node->child1().node();
-
         // Check for numeric constants boxed as JSValues.
         if (canFold(node)) {
             JSValue v = valueOfJSConstant(node);
@@ -2050,54 +2047,31 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_rshift: {
             Node* op1 = getToInt32(currentInstruction[2].u.operand);
             Node* op2 = getToInt32(currentInstruction[3].u.operand);
-            Node* result;
-            // Optimize out shifts by zero.
-            if (isInt32Constant(op2) && !(valueOfInt32Constant(op2) & 0x1f))
-                result = op1;
-            else
-                result = addToGraph(BitRShift, op1, op2);
-            set(VirtualRegister(currentInstruction[1].u.operand), result);
+            set(VirtualRegister(currentInstruction[1].u.operand),
+                addToGraph(BitRShift, op1, op2));
             NEXT_OPCODE(op_rshift);
         }
 
         case op_lshift: {
             Node* op1 = getToInt32(currentInstruction[2].u.operand);
             Node* op2 = getToInt32(currentInstruction[3].u.operand);
-            Node* result;
-            // Optimize out shifts by zero.
-            if (isInt32Constant(op2) && !(valueOfInt32Constant(op2) & 0x1f))
-                result = op1;
-            else
-                result = addToGraph(BitLShift, op1, op2);
-            set(VirtualRegister(currentInstruction[1].u.operand), result);
+            set(VirtualRegister(currentInstruction[1].u.operand),
+                addToGraph(BitLShift, op1, op2));
             NEXT_OPCODE(op_lshift);
         }
 
         case op_urshift: {
             Node* op1 = getToInt32(currentInstruction[2].u.operand);
             Node* op2 = getToInt32(currentInstruction[3].u.operand);
-            Node* result;
-            // The result of a zero-extending right shift is treated as an unsigned value.
-            // This means that if the top bit is set, the result is not in the int32 range,
-            // and as such must be stored as a double. If the shift amount is a constant,
-            // we may be able to optimize.
-            if (isInt32Constant(op2)) {
-                // If we know we are shifting by a non-zero amount, then since the operation
-                // zero fills we know the top bit of the result must be zero, and as such the
-                // result must be within the int32 range. Conversely, if this is a shift by
-                // zero, then the result may be changed by the conversion to unsigned, but it
-                // is not necessary to perform the shift!
-                if (valueOfInt32Constant(op2) & 0x1f)
-                    result = addToGraph(BitURShift, op1, op2);
-                else
-                    result = makeSafe(addToGraph(UInt32ToNumber, op1));
-            }  else {
-                // Cannot optimize at this stage; shift & potentially rebox as a double.
-                result = addToGraph(BitURShift, op1, op2);
-                result = makeSafe(addToGraph(UInt32ToNumber, result));
-            }
-            set(VirtualRegister(currentInstruction[1].u.operand), result);
+            set(VirtualRegister(currentInstruction[1].u.operand),
+                addToGraph(BitURShift, op1, op2));
             NEXT_OPCODE(op_urshift);
+        }
+            
+        case op_unsigned: {
+            set(VirtualRegister(currentInstruction[1].u.operand),
+                makeSafe(addToGraph(UInt32ToNumber, getToInt32(currentInstruction[2].u.operand))));
+            NEXT_OPCODE(op_unsigned);
         }
 
         // === Increment/Decrement opcodes ===

@@ -185,7 +185,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         switch (recovery.technique()) {
         case InGPR:
         case UnboxedInt32InGPR:
-        case UInt32InGPR:
         case UnboxedInt52InGPR:
         case UnboxedStrictInt52InGPR:
         case UnboxedCellInGPR:
@@ -279,13 +278,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         case UnboxedStrictInt52InGPR:
         case StrictInt52DisplacedInJSStack:
             m_jit.load64(scratch + index, GPRInfo::regT0);
-            m_jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
-            m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
-            break;
-            
-        case UInt32InGPR:
-            m_jit.load64(scratch + index, GPRInfo::regT0);
-            m_jit.zeroExtend32ToPtr(GPRInfo::regT0, GPRInfo::regT0);
             m_jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
             m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
             break;

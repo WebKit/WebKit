@@ -112,6 +112,8 @@ private:
             
         case UInt32ToNumber: {
             fixEdge<KnownInt32Use>(node->child1());
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                node->convertToIdentity();
             break;
         }
             

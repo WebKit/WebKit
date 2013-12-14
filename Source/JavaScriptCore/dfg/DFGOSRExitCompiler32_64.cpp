@@ -177,7 +177,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         
         switch (recovery.technique()) {
         case UnboxedInt32InGPR:
-        case UInt32InGPR:
         case UnboxedBooleanInGPR:
         case UnboxedCellInGPR:
             m_jit.store32(
@@ -316,28 +315,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 GPRInfo::regT0,
                 AssemblyHelpers::payloadFor(operand));
             break;
-            
-        case UInt32InGPR: {
-            m_jit.load32(
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload,
-                GPRInfo::regT0);
-            AssemblyHelpers::Jump positive = m_jit.branch32(
-                AssemblyHelpers::GreaterThanOrEqual,
-                GPRInfo::regT0, AssemblyHelpers::TrustedImm32(0));
-            m_jit.convertInt32ToDouble(GPRInfo::regT0, FPRInfo::fpRegT0);
-            m_jit.addDouble(
-                AssemblyHelpers::AbsoluteAddress(&AssemblyHelpers::twoToThe32),
-                FPRInfo::fpRegT0);
-            m_jit.storeDouble(FPRInfo::fpRegT0, AssemblyHelpers::addressFor(operand));
-            AssemblyHelpers::Jump done = m_jit.jump();
-            positive.link(&m_jit);
-            m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor(operand));
-            m_jit.store32(
-                AssemblyHelpers::TrustedImm32(JSValue::Int32Tag),
-                AssemblyHelpers::tagFor(operand));
-            done.link(&m_jit);
-            break;
-        }
             
         case Constant:
             m_jit.store32(

@@ -72,7 +72,6 @@ private:
 
 static inline FormattedValue noValue() { return FormattedValue(); }
 static inline FormattedValue int32Value(LValue value) { return FormattedValue(ValueFormatInt32, value); }
-static inline FormattedValue uInt32Value(LValue value) { return FormattedValue(ValueFormatUInt32, value); }
 static inline FormattedValue booleanValue(LValue value) { return FormattedValue(ValueFormatBoolean, value); }
 static inline FormattedValue jsValueValue(LValue value) { return FormattedValue(ValueFormatJSValue, value); }
 static inline FormattedValue doubleValue(LValue value) { return FormattedValue(ValueFormatDouble, value); }

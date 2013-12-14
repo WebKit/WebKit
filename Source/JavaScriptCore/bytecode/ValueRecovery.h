@@ -54,7 +54,6 @@ enum ValueRecoveryTechnique {
     InPair,
 #endif
     InFPR,
-    UInt32InGPR,
     // It's in the stack, but at a different location.
     DisplacedInJSStack,
     // It's in the stack, at a different location, and it's unboxed.
@@ -101,14 +100,6 @@ public:
             result.m_technique = UnboxedCellInGPR;
         else
             result.m_technique = InGPR;
-        result.m_source.gpr = gpr;
-        return result;
-    }
-    
-    static ValueRecovery uint32InGPR(MacroAssembler::RegisterID gpr)
-    {
-        ValueRecovery result;
-        result.m_technique = UInt32InGPR;
         result.m_source.gpr = gpr;
         return result;
     }
@@ -209,7 +200,7 @@ public:
     
     MacroAssembler::RegisterID gpr() const
     {
-        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR || m_technique == UnboxedBooleanInGPR || m_technique == UInt32InGPR || m_technique == UnboxedInt52InGPR || m_technique == UnboxedStrictInt52InGPR || m_technique == UnboxedCellInGPR);
+        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR || m_technique == UnboxedBooleanInGPR || m_technique == UnboxedInt52InGPR || m_technique == UnboxedStrictInt52InGPR || m_technique == UnboxedCellInGPR);
         return m_source.gpr;
     }
     

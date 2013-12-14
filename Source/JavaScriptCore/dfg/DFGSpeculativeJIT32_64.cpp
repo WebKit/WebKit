@@ -168,33 +168,6 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
     }
 }
 
-void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node* node)
-{
-    SpeculateInt32Operand op1(this, node->child1());
-    FPRTemporary boxer(this);
-    GPRTemporary resultTag(this, Reuse, op1);
-    GPRTemporary resultPayload(this);
-        
-    JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, op1.gpr(), TrustedImm32(0));
-        
-    m_jit.convertInt32ToDouble(op1.gpr(), boxer.fpr());
-    m_jit.move(JITCompiler::TrustedImmPtr(&AssemblyHelpers::twoToThe32), resultPayload.gpr()); // reuse resultPayload register here.
-    m_jit.addDouble(JITCompiler::Address(resultPayload.gpr(), 0), boxer.fpr());
-        
-    boxDouble(boxer.fpr(), resultTag.gpr(), resultPayload.gpr());
-        
-    JITCompiler::Jump done = m_jit.jump();
-        
-    positive.link(&m_jit);
-        
-    m_jit.move(TrustedImm32(JSValue::Int32Tag), resultTag.gpr());
-    m_jit.move(op1.gpr(), resultPayload.gpr());
-        
-    done.link(&m_jit);
-
-    jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
-}
-
 void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     JITGetByIdGenerator gen(

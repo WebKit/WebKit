@@ -118,6 +118,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case Int52ToValue:
     case CheckInBounds:
     case ConstantStoragePointer:
+    case UInt32ToNumber:
+    case DoubleAsInt32:
         return;
         
     case MovHintAndCheck:
@@ -168,15 +170,6 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         read(Watchpoint_fire);
         return;
 
-    // These are forward-exiting nodes that assume that the subsequent instruction
-    // is a MovHint, and they try to roll forward over this MovHint in their
-    // execution. This makes hoisting them impossible without additional magic. We
-    // may add such magic eventually, but just not yet.
-    case UInt32ToNumber:
-    case DoubleAsInt32:
-        write(SideState);
-        return;
-        
     case ToThis:
     case CreateThis:
         read(MiscFields);

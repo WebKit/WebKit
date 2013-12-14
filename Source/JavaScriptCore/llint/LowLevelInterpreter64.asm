@@ -861,7 +861,7 @@ macro bitOp(operation, slowPath, advance)
     loadConstantOrVariable(t2, t0)
     bqb t0, tagTypeNumber, .slow
     bqb t1, tagTypeNumber, .slow
-    operation(t1, t0, .slow)
+    operation(t1, t0)
     orq tagTypeNumber, t0
     storeq t0, [cfr, t3, 8]
     dispatch(advance)
@@ -874,7 +874,7 @@ end
 _llint_op_lshift:
     traceExecution()
     bitOp(
-        macro (left, right, slow) lshifti left, right end,
+        macro (left, right) lshifti left, right end,
         _slow_path_lshift,
         4)
 
@@ -882,7 +882,7 @@ _llint_op_lshift:
 _llint_op_rshift:
     traceExecution()
     bitOp(
-        macro (left, right, slow) rshifti left, right end,
+        macro (left, right) rshifti left, right end,
         _slow_path_rshift,
         4)
 
@@ -890,18 +890,28 @@ _llint_op_rshift:
 _llint_op_urshift:
     traceExecution()
     bitOp(
-        macro (left, right, slow)
-            urshifti left, right
-            bilt right, 0, slow
-        end,
+        macro (left, right) urshifti left, right end,
         _slow_path_urshift,
         4)
+
+
+_llint_op_unsigned:
+    traceExecution()
+    loadisFromInstruction(1, t0)
+    loadisFromInstruction(2, t1)
+    loadConstantOrVariable(t1, t2)
+    bilt t2, 0, .opUnsignedSlow
+    storeq t2, [cfr, t0, 8]
+    dispatch(3)
+.opUnsignedSlow:
+    callSlowPath(_slow_path_unsigned)
+    dispatch(3)
 
 
 _llint_op_bitand:
     traceExecution()
     bitOp(
-        macro (left, right, slow) andi left, right end,
+        macro (left, right) andi left, right end,
         _slow_path_bitand,
         5)
 
@@ -909,7 +919,7 @@ _llint_op_bitand:
 _llint_op_bitxor:
     traceExecution()
     bitOp(
-        macro (left, right, slow) xori left, right end,
+        macro (left, right) xori left, right end,
         _slow_path_bitxor,
         5)
 
@@ -917,7 +927,7 @@ _llint_op_bitxor:
 _llint_op_bitor:
     traceExecution()
     bitOp(
-        macro (left, right, slow) ori left, right end,
+        macro (left, right) ori left, right end,
         _slow_path_bitor,
         5)
 

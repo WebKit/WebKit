@@ -195,6 +195,8 @@ private:
         }
 
         case UInt32ToNumber: {
+            // FIXME: Support Int52.
+            // https://bugs.webkit.org/show_bug.cgi?id=125704
             if (nodeCanSpeculateInt32(node->arithNodeFlags()))
                 changed |= mergePrediction(SpecInt32);
             else

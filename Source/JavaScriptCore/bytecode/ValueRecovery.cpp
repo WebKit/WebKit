@@ -83,9 +83,6 @@ void ValueRecovery::dumpInContext(PrintStream& out, DumpContext* context) const
     case UnboxedCellInGPR:
         out.print("cell(", gpr(), ")");
         return;
-    case UInt32InGPR:
-        out.print("uint32(", gpr(), ")");
-        return;
     case InFPR:
         out.print(fpr());
         return;

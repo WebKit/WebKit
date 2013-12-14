@@ -105,7 +105,7 @@ namespace JSC { namespace DFG {
     /* Bitwise operators call ToInt32 on their operands. */\
     macro(ValueToInt32, NodeResultInt32) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
-    macro(UInt32ToNumber, NodeResultNumber | NodeExitsForward) \
+    macro(UInt32ToNumber, NodeResultNumber) \
     \
     /* Used to cast known integers to doubles, so as to separate the double form */\
     /* of the value from the integer form. */\

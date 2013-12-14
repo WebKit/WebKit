@@ -1171,9 +1171,7 @@ private:
             return;
         }
         
-        speculateForward(
-            Overflow, noValue(), 0, m_out.lessThan(value, m_out.int32Zero),
-            FormattedValue(ValueFormatUInt32, value));
+        speculate(Overflow, noValue(), 0, m_out.lessThan(value, m_out.int32Zero));
         setInt32(value);
     }
     

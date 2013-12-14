@@ -552,6 +552,7 @@ namespace JSC {
         void emit_op_to_number(Instruction*);
         void emit_op_to_primitive(Instruction*);
         void emit_op_unexpected_load(Instruction*);
+        void emit_op_unsigned(Instruction*);
         void emit_op_urshift(Instruction*);
 
         void emitSlow_op_add(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -603,6 +604,7 @@ namespace JSC {
         void emitSlow_op_sub(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_to_number(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_to_primitive(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_unsigned(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_urshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emit_op_resolve_scope(Instruction*);

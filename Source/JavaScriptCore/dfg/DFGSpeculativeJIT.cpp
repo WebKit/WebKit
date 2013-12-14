@@ -1425,9 +1425,6 @@ void SpeculativeJIT::compileMovHint(Node* node)
     Node* child = node->child1().node();
     noticeOSRBirth(child);
     
-    if (child->op() == UInt32ToNumber)
-        noticeOSRBirth(child->child1().node());
-    
     m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(child), node->local()));
 }
 
@@ -2160,18 +2157,15 @@ void SpeculativeJIT::compileUInt32ToNumber(Node* node)
         doubleResult(outputFPR, node);
         return;
     }
+    
+    RELEASE_ASSERT(!bytecodeCanTruncateInteger(node->arithNodeFlags()));
 
     SpeculateInt32Operand op1(this, node->child1());
-    GPRTemporary result(this); // For the benefit of OSR exit, force these to be in different registers. In reality the OSR exit compiler could find cases where you have uint32(%r1) followed by int32(%r1) and then use different registers, but that seems like too much effort.
+    GPRTemporary result(this);
 
     m_jit.move(op1.gpr(), result.gpr());
 
-    // Test the operand is positive. This is a very special speculation check - we actually
-    // use roll-forward speculation here, where if this fails, we jump to the baseline
-    // instruction that follows us, rather than the one we're executing right now. We have
-    // to do this because by this point, the original values necessary to compile whatever
-    // operation the UInt32ToNumber originated from might be dead.
-    forwardSpeculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, result.gpr(), TrustedImm32(0)), ValueRecovery::uint32InGPR(result.gpr()));
+    speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, result.gpr(), TrustedImm32(0)));
 
     int32Result(result.gpr(), node, op1.format());
 }

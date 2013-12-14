@@ -1168,7 +1168,10 @@ RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
             RELEASE_ASSERT_NOT_REACHED();
         return generator.emitUnaryOp(op_not, generator.finalDestination(dst, tmp.get()), tmp.get());
     }
-    return generator.emitBinaryOp(opcodeID, generator.finalDestination(dst, src1.get()), src1.get(), src2, OperandTypes(left->resultDescriptor(), right->resultDescriptor()));
+    RegisterID* result = generator.emitBinaryOp(opcodeID, generator.finalDestination(dst, src1.get()), src1.get(), src2, OperandTypes(left->resultDescriptor(), right->resultDescriptor()));
+    if (opcodeID == op_urshift && dst != generator.ignoredResult())
+        return generator.emitUnaryOp(op_unsigned, result, result);
+    return result;
 }
 
 RegisterID* EqualNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -1335,7 +1338,10 @@ static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(BytecodeGenerator& gen
     // If this is required the node is passed as 'emitExpressionInfoForMe'; do so now.
     if (emitExpressionInfoForMe)
         generator.emitExpressionInfo(emitExpressionInfoForMe->divot(), emitExpressionInfoForMe->divotStart(), emitExpressionInfoForMe->divotEnd());
-    return generator.emitBinaryOp(opcodeID, dst, src1, src2, types);
+    RegisterID* result = generator.emitBinaryOp(opcodeID, dst, src1, src2, types);
+    if (oper == OpURShift)
+        return generator.emitUnaryOp(op_unsigned, result, result);
+    return result;
 }
 
 RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

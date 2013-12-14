@@ -82,6 +82,7 @@ namespace JSC {
     macro(op_lshift, 4) \
     macro(op_rshift, 4) \
     macro(op_urshift, 4) \
+    macro(op_unsigned, 3) \
     macro(op_bitand, 5) \
     macro(op_bitxor, 5) \
     macro(op_bitor, 5) \

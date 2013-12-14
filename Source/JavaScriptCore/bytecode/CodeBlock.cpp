@@ -901,6 +901,10 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
             break;
         }
+        case op_unsigned: {
+            printUnaryOp(out, exec, location, it, "unsigned");
+            break;
+        }
         case op_typeof: {
             printUnaryOp(out, exec, location, it, "typeof");
             break;
