@@ -220,6 +220,9 @@ endif
 # Inspector Interfaces
 
 JavaScriptCore_INSPECTOR_DOMAINS := \
+    $(JavaScriptCore)/inspector/protocol/Debugger.json \
+    $(JavaScriptCore)/inspector/protocol/GenericTypes.json \
+    $(JavaScriptCore)/inspector/protocol/InspectorDomain.json \
     $(JavaScriptCore)/inspector/protocol/Runtime.json
 
 DerivedSources/JavaScriptCore/InspectorJS.json: $(INSPECTOR_SCRIPTS_DIR)/generate-combined-inspector-json.py $(JavaScriptCore_INSPECTOR_DOMAINS)

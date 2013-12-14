@@ -6,6 +6,50 @@
 // found in the LICENSE file.
 
 
+// Debugger.
+InspectorBackend.registerDebuggerDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Debugger");
+InspectorBackend.registerEnum("Debugger.BreakpointActionType", {Log: "log", Evaluate: "evaluate", Sound: "sound"});
+InspectorBackend.registerEnum("Debugger.ScopeType", {Global: "global", Local: "local", With: "with", Closure: "closure", Catch: "catch"});
+InspectorBackend.registerEvent("Debugger.globalObjectCleared", []);
+InspectorBackend.registerEvent("Debugger.scriptParsed", ["scriptId", "url", "startLine", "startColumn", "endLine", "endColumn", "isContentScript", "sourceMapURL", "hasSourceURL"]);
+InspectorBackend.registerEvent("Debugger.scriptFailedToParse", ["url", "scriptSource", "startLine", "errorLine", "errorMessage"]);
+InspectorBackend.registerEvent("Debugger.breakpointResolved", ["breakpointId", "location"]);
+InspectorBackend.registerEvent("Debugger.paused", ["callFrames", "reason", "data"]);
+InspectorBackend.registerEvent("Debugger.resumed", []);
+InspectorBackend.registerCommand("Debugger.causesRecompilation", [], ["result"]);
+InspectorBackend.registerCommand("Debugger.supportsSeparateScriptCompilationAndExecution", [], ["result"]);
+InspectorBackend.registerCommand("Debugger.enable", [], []);
+InspectorBackend.registerCommand("Debugger.disable", [], []);
+InspectorBackend.registerCommand("Debugger.setBreakpointsActive", [{"name": "active", "type": "boolean", "optional": false}], []);
+InspectorBackend.registerCommand("Debugger.setBreakpointByUrl", [{"name": "lineNumber", "type": "number", "optional": false}, {"name": "url", "type": "string", "optional": true}, {"name": "urlRegex", "type": "string", "optional": true}, {"name": "columnNumber", "type": "number", "optional": true}, {"name": "options", "type": "object", "optional": true}], ["breakpointId", "locations"]);
+InspectorBackend.registerCommand("Debugger.setBreakpoint", [{"name": "location", "type": "object", "optional": false}, {"name": "options", "type": "object", "optional": true}], ["breakpointId", "actualLocation"]);
+InspectorBackend.registerCommand("Debugger.removeBreakpoint", [{"name": "breakpointId", "type": "string", "optional": false}], []);
+InspectorBackend.registerCommand("Debugger.continueToLocation", [{"name": "location", "type": "object", "optional": false}], []);
+InspectorBackend.registerCommand("Debugger.stepOver", [], []);
+InspectorBackend.registerCommand("Debugger.stepInto", [], []);
+InspectorBackend.registerCommand("Debugger.stepOut", [], []);
+InspectorBackend.registerCommand("Debugger.pause", [], []);
+InspectorBackend.registerCommand("Debugger.resume", [], []);
+InspectorBackend.registerCommand("Debugger.searchInContent", [{"name": "scriptId", "type": "string", "optional": false}, {"name": "query", "type": "string", "optional": false}, {"name": "caseSensitive", "type": "boolean", "optional": true}, {"name": "isRegex", "type": "boolean", "optional": true}], ["result"]);
+InspectorBackend.registerCommand("Debugger.canSetScriptSource", [], ["result"]);
+InspectorBackend.registerCommand("Debugger.setScriptSource", [{"name": "scriptId", "type": "string", "optional": false}, {"name": "scriptSource", "type": "string", "optional": false}, {"name": "preview", "type": "boolean", "optional": true}], ["callFrames", "result"]);
+InspectorBackend.registerCommand("Debugger.getScriptSource", [{"name": "scriptId", "type": "string", "optional": false}], ["scriptSource"]);
+InspectorBackend.registerCommand("Debugger.getFunctionDetails", [{"name": "functionId", "type": "string", "optional": false}], ["details"]);
+InspectorBackend.registerCommand("Debugger.setPauseOnExceptions", [{"name": "state", "type": "string", "optional": false}], []);
+InspectorBackend.registerCommand("Debugger.evaluateOnCallFrame", [{"name": "callFrameId", "type": "string", "optional": false}, {"name": "expression", "type": "string", "optional": false}, {"name": "objectGroup", "type": "string", "optional": true}, {"name": "includeCommandLineAPI", "type": "boolean", "optional": true}, {"name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true}, {"name": "returnByValue", "type": "boolean", "optional": true}, {"name": "generatePreview", "type": "boolean", "optional": true}], ["result", "wasThrown"]);
+InspectorBackend.registerCommand("Debugger.compileScript", [{"name": "expression", "type": "string", "optional": false}, {"name": "sourceURL", "type": "string", "optional": false}], ["scriptId", "syntaxErrorMessage"]);
+InspectorBackend.registerCommand("Debugger.runScript", [{"name": "scriptId", "type": "string", "optional": false}, {"name": "contextId", "type": "number", "optional": true}, {"name": "objectGroup", "type": "string", "optional": true}, {"name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true}], ["result", "wasThrown"]);
+InspectorBackend.registerCommand("Debugger.setOverlayMessage", [{"name": "message", "type": "string", "optional": true}], []);
+
+// Inspector.
+InspectorBackend.registerInspectorDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Inspector");
+InspectorBackend.registerEvent("Inspector.evaluateForTestInFrontend", ["testCallId", "script"]);
+InspectorBackend.registerEvent("Inspector.inspect", ["object", "hints"]);
+InspectorBackend.registerEvent("Inspector.detached", ["reason"]);
+InspectorBackend.registerEvent("Inspector.targetCrashed", []);
+InspectorBackend.registerCommand("Inspector.enable", [], []);
+InspectorBackend.registerCommand("Inspector.disable", [], []);
+
 // Runtime.
 InspectorBackend.registerRuntimeDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Runtime");
 InspectorBackend.registerEnum("Runtime.RemoteObjectType", {Object: "object", Function: "function", Undefined: "undefined", String: "string", Number: "number", Boolean: "boolean"});

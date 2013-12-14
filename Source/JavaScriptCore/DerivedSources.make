@@ -84,6 +84,9 @@ udis86_itab.h: $(JavaScriptCore)/disassembler/udis86/itab.py $(JavaScriptCore)/d
 # Inspector interfaces
 
 INSPECTOR_DOMAINS = \
+    $(JavaScriptCore)/inspector/protocol/Debugger.json \
+    $(JavaScriptCore)/inspector/protocol/GenericTypes.json \
+    $(JavaScriptCore)/inspector/protocol/InspectorDomain.json \
     $(JavaScriptCore)/inspector/protocol/Runtime.json \
 #
 

@@ -44,7 +44,7 @@ namespace ContentSearchUtils {
 
 RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex);
 int countRegularExpressionMatches(const RegularExpression&, const String&);
-PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
+PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
 TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEndings);
 PassOwnPtr<Vector<size_t>> lineEndings(const String&);
 

@@ -1001,7 +1001,7 @@ class TypeBindings:
 
                     @staticmethod
                     def get_setter_value_expression_pattern():
-                        return "Inspector::TypeBuilder::getEnumConstantValue(%s)"
+                        return "Inspector::TypeBuilder::get%sEnumConstantValue(%s)"
 
                     @staticmethod
                     def reduce_to_raw_type():
@@ -1863,7 +1863,7 @@ def get_annotated_type_text(raw_type, annotated_type):
 def format_setter_value_expression(param_type_binding, value_ref):
     pattern = param_type_binding.get_setter_value_expression_pattern()
     if pattern:
-        return pattern % value_ref
+        return pattern % (INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["prefix"], value_ref)
     else:
         return value_ref
 
@@ -1906,10 +1906,10 @@ class Generator:
 
             frontend_method_declaration_lines = []
 
-            Generator.backend_js_domain_initializer_list.append("// %s.\n" % domain_name)
-
-            if not domain_fixes.skip_js_bind:
-                Generator.backend_js_domain_initializer_list.append("InspectorBackend.register%sDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, \"%s\");\n" % (domain_name, domain_name))
+            if ("commands" in json_domain or "events" in json_domain):
+                Generator.backend_js_domain_initializer_list.append("// %s.\n" % domain_name)
+                if not domain_fixes.skip_js_bind:
+                    Generator.backend_js_domain_initializer_list.append("InspectorBackend.register%sDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, \"%s\");\n" % (domain_name, domain_name))
 
             if "types" in json_domain:
                 for json_type in json_domain["types"]:
@@ -1943,52 +1943,52 @@ class Generator:
             dispatcher_name = "Inspector" + Capitalizer.lower_camel_case_to_upper(domain_name) + "BackendDispatcher"
             agent_interface_name = dispatcher_name + "Handler"
 
-            Generator.backend_dispatcher_interface_list.append("class %s %s FINAL : public Inspector::InspectorSupplementalBackendDispatcher {\n" % (INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["export_macro"], dispatcher_name))
-            Generator.backend_dispatcher_interface_list.append("public:\n")
-            Generator.backend_dispatcher_interface_list.append("    static PassRefPtr<%s> create(Inspector::InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
-            Generator.backend_dispatcher_interface_list.append("    virtual void dispatch(long callId, const String& method, PassRefPtr<Inspector::InspectorObject> message) OVERRIDE;\n")
-            Generator.backend_dispatcher_interface_list.append("private:\n")
-
-            Generator.backend_handler_interface_list.append("class %s %s {\n" % (INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["export_macro"], agent_interface_name))
-            Generator.backend_handler_interface_list.append("public:\n")
-
-            backend_method_count = len(Generator.backend_method_implementation_list)
-
-            dispatcher_if_chain = []
-            dispatcher_commands_list = []
             if "commands" in json_domain:
+                Generator.backend_dispatcher_interface_list.append("class %s %s FINAL : public Inspector::InspectorSupplementalBackendDispatcher {\n" % (INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["export_macro"], dispatcher_name))
+                Generator.backend_dispatcher_interface_list.append("public:\n")
+                Generator.backend_dispatcher_interface_list.append("    static PassRefPtr<%s> create(Inspector::InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
+                Generator.backend_dispatcher_interface_list.append("    virtual void dispatch(long callId, const String& method, PassRefPtr<Inspector::InspectorObject> message) OVERRIDE;\n")
+                Generator.backend_dispatcher_interface_list.append("private:\n")
+
+                Generator.backend_handler_interface_list.append("class %s %s {\n" % (INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["export_macro"], agent_interface_name))
+                Generator.backend_handler_interface_list.append("public:\n")
+
+                backend_method_count = len(Generator.backend_method_implementation_list)
+
+                dispatcher_if_chain = []
+                dispatcher_commands_list = []
                 for json_command in json_domain["commands"]:
                     Generator.process_command(json_command, domain_name, agent_interface_name, dispatcher_name, dispatcher_if_chain, dispatcher_commands_list)
 
-            Generator.backend_handler_interface_list.append("protected:\n")
-            Generator.backend_handler_interface_list.append("    virtual ~%s() { }\n" % agent_interface_name)
-            Generator.backend_handler_interface_list.append("};\n\n")
+                Generator.backend_handler_interface_list.append("protected:\n")
+                Generator.backend_handler_interface_list.append("    virtual ~%s() { }\n" % agent_interface_name)
+                Generator.backend_handler_interface_list.append("};\n\n")
 
-            Generator.backend_dispatcher_interface_list.append("private:\n")
-            Generator.backend_dispatcher_interface_list.append("    %s(Inspector::InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
-            Generator.backend_dispatcher_interface_list.append("    %s* m_agent;\n" % agent_interface_name)
-            Generator.backend_dispatcher_interface_list.append("};\n\n")
+                Generator.backend_dispatcher_interface_list.append("private:\n")
+                Generator.backend_dispatcher_interface_list.append("    %s(Inspector::InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
+                Generator.backend_dispatcher_interface_list.append("    %s* m_agent;\n" % agent_interface_name)
+                Generator.backend_dispatcher_interface_list.append("};\n\n")
 
-            Generator.backend_method_implementation_list.insert(backend_method_count, Templates.backend_dispatcher_constructor.substitute(None,
-                domainName=domain_name,
-                dispatcherName=dispatcher_name,
-                agentName=agent_interface_name))
-
-            if "commands" in json_domain and len(json_domain["commands"]) <= 5:
-                Generator.backend_method_implementation_list.insert(backend_method_count + 1, Templates.backend_dispatcher_dispatch_method_simple.substitute(None,
+                Generator.backend_method_implementation_list.insert(backend_method_count, Templates.backend_dispatcher_constructor.substitute(None,
                     domainName=domain_name,
                     dispatcherName=dispatcher_name,
-                    ifChain="\n".join(dispatcher_if_chain)))
-            else:
-                Generator.backend_method_implementation_list.insert(backend_method_count + 1, Templates.backend_dispatcher_dispatch_method.substitute(None,
-                    domainName=domain_name,
-                    dispatcherName=dispatcher_name,
-                    dispatcherCommands="\n".join(dispatcher_commands_list)))
+                    agentName=agent_interface_name))
 
-            if domain_guard:
-                for l in reversed(first_cycle_guardable_list_list):
-                    domain_guard.generate_close(l)
-            Generator.backend_js_domain_initializer_list.append("\n")
+                if len(json_domain["commands"]) <= 5:
+                    Generator.backend_method_implementation_list.insert(backend_method_count + 1, Templates.backend_dispatcher_dispatch_method_simple.substitute(None,
+                        domainName=domain_name,
+                        dispatcherName=dispatcher_name,
+                        ifChain="\n".join(dispatcher_if_chain)))
+                else:
+                    Generator.backend_method_implementation_list.insert(backend_method_count + 1, Templates.backend_dispatcher_dispatch_method.substitute(None,
+                        domainName=domain_name,
+                        dispatcherName=dispatcher_name,
+                        dispatcherCommands="\n".join(dispatcher_commands_list)))
+
+                if domain_guard:
+                    for l in reversed(first_cycle_guardable_list_list):
+                        domain_guard.generate_close(l)
+                Generator.backend_js_domain_initializer_list.append("\n")
 
     @staticmethod
     def process_enum(json_enum, enum_name):
@@ -2186,7 +2186,7 @@ class Generator:
                 var_name = "out_%s" % json_return_name
                 setter_argument = type_model.get_command_return_pass_model().get_output_to_raw_expression() % var_name
                 if return_type_binding.get_setter_value_expression_pattern():
-                    setter_argument = return_type_binding.get_setter_value_expression_pattern() % setter_argument
+                    setter_argument = return_type_binding.get_setter_value_expression_pattern() % (INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["prefix"], setter_argument)
 
                 cook = "        result->set%s(ASCIILiteral(\"%s\"), %s);\n" % (setter_type, json_return_name, setter_argument)
 
@@ -2279,7 +2279,7 @@ class Generator:
 
                 setter_argument = raw_type_model.get_event_setter_expression_pattern() % parameter_name
                 if mode_type_binding.get_setter_value_expression_pattern():
-                    setter_argument = mode_type_binding.get_setter_value_expression_pattern() % setter_argument
+                    setter_argument = mode_type_binding.get_setter_value_expression_pattern() % (INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["prefix"], setter_argument)
 
                 setter_code = "    %s->set%s(ASCIILiteral(\"%s\"), %s);\n" % (method_struct_template.container_name, setter_type, parameter_name, setter_argument)
                 if optional:
@@ -2484,6 +2484,7 @@ frontend_cpp_file.write(Templates.frontend_cpp.substitute(None,
 typebuilder_h_file.write(Templates.typebuilder_h.substitute(None,
     outputFileNamePrefix=output_file_name_prefix,
     typeBuilderDependencies=INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["typebuilder_dependency"],
+    exportMacro=INSPECTOR_TYPES_GENERATOR_CONFIG_MAP[output_type]["export_macro"],
     typeBuilders="".join(flatten_list(Generator.type_builder_fragments)),
     forwards="".join(Generator.type_builder_forwards),
     validatorIfdefName=VALIDATOR_IFDEF_NAME))

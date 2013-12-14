@@ -223,7 +223,7 @@ namespace TypeBuilder {
 
 ${forwards}
 
-String getEnumConstantValue(int code);
+${exportMacro} String get${outputFileNamePrefix}EnumConstantValue(int code);
 
 ${typeBuilders}
 } // namespace TypeBuilder
@@ -250,10 +250,10 @@ namespace Inspector {
 
 namespace TypeBuilder {
 
-const char* const enum_constant_values[] = {
+static const char* const enum_constant_values[] = {
 ${enumConstantValues}};
 
-String getEnumConstantValue(int code) {
+String get${outputFileNamePrefix}EnumConstantValue(int code) {
     return enum_constant_values[code];
 }
 

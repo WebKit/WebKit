@@ -180,7 +180,7 @@
                 { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats string parameter as regex." }
             ],
             "returns": [
-                { "name": "result", "type": "array", "items": { "$ref": "Page.SearchMatch" }, "description": "List of search matches." }
+                { "name": "result", "type": "array", "items": { "$ref": "GenericTypes.SearchMatch" }, "description": "List of search matches." }
             ],
             "description": "Searches for given string in script content."
         },

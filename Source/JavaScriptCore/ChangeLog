@@ -1,3 +1,30 @@
+2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move Inspector and Debugger protocol domains into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=125707
+
+        Reviewed by Timothy Hatcher.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * inspector/protocol/Debugger.json: Renamed from Source/WebCore/inspector/protocol/Debugger.json.
+        * inspector/protocol/GenericTypes.json: Added.
+        * inspector/protocol/InspectorDomain.json: Renamed from Source/WebCore/inspector/protocol/InspectorDomain.json.
+        Add new files to inspector generation.
+
+        * inspector/scripts/CodeGeneratorInspector.py:
+        (Generator.go):
+        Only build TypeBuilder output if the domain only has types. Avoid
+        backend/frontend dispatchers and backend commands.
+
+        (TypeBindings.create_type_declaration_.EnumBinding.get_setter_value_expression_pattern):
+        (format_setter_value_expression):
+        (Generator.process_command):
+        (Generator.generate_send_method):
+        * inspector/scripts/CodeGeneratorInspectorStrings.py:
+        Export and name the get{JS,Web}EnumConstant function.
+
 2013-12-11  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of forward exit on UInt32ToNumber by adding an op_unsigned bytecode instruction

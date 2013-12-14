@@ -514,7 +514,7 @@ static Inspector::TypeBuilder::Timeline::EventType::Enum toProtocol(TimelineReco
 
 void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, TimelineRecordType type)
 {
-    prpRecord->setString("type", Inspector::TypeBuilder::getEnumConstantValue(toProtocol(type)));
+    prpRecord->setString("type", Inspector::TypeBuilder::getWebEnumConstantValue(toProtocol(type)));
 
     RefPtr<Inspector::TypeBuilder::Timeline::TimelineEvent> record = Inspector::TypeBuilder::Timeline::TimelineEvent::runtimeCast(prpRecord);
 

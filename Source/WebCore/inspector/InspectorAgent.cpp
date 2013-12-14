@@ -41,7 +41,6 @@
 #include "InjectedScriptManager.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
 #include "Page.h"
@@ -50,6 +49,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <bindings/ScriptValue.h>
+#include <inspector/InspectorJSFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>

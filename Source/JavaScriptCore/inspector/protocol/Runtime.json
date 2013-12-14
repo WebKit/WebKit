@@ -84,7 +84,7 @@
         {
             "id": "RuntimeFrameId",
             "type": "string",
-            "description": "Unique frame identifier. FIXME: This duplicates Network.FrameId."
+            "description": "Unique frame identifier. FIXME: Duplicate of Network.FrameId <https://webkit.org/b/125664> Web Inspector: FIX Type Dependency Issues"
         },
         {
             "id": "ExecutionContextDescription",

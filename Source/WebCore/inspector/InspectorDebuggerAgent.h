@@ -37,12 +37,12 @@
 #include "ConsoleTypes.h"
 #include "InjectedScript.h"
 #include "InspectorWebAgentBase.h"
-#include "InspectorWebBackendDispatchers.h"
-#include "InspectorWebFrontendDispatchers.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
 #include "ScriptState.h"
 #include "SourceID.h"
+#include <inspector/InspectorJSBackendDispatchers.h>
+#include <inspector/InspectorJSFrontendDispatchers.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
@@ -96,7 +96,7 @@ public:
     virtual void removeBreakpoint(ErrorString*, const String& breakpointIdentifier);
     virtual void continueToLocation(ErrorString*, const RefPtr<Inspector::InspectorObject>& location);
 
-    virtual void searchInContent(ErrorString*, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchMatch>>&);
+    virtual void searchInContent(ErrorString*, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>>&);
     virtual void setScriptSource(ErrorString*, const String& scriptID, const String& newContent, const bool* preview, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>>& newCallFrames, RefPtr<Inspector::InspectorObject>& result);
     virtual void getScriptSource(ErrorString*, const String& scriptID, String* scriptSource);
     virtual void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<Inspector::TypeBuilder::Debugger::FunctionDetails>&);

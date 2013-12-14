@@ -131,7 +131,7 @@ InspectorTest.completeTest = function()
 InspectorTest.checkForError = function(responseObject)
 {
     if (responseObject.error) {
-        InspectorTest.log("PROTOCOL ERROR: " + responseObject.error.message);
+        InspectorTest.log("PROTOCOL ERROR: " + JSON.stringify(responseObject.error));
         InspectorTest.completeTest();
         throw "PROTOCOL ERROR";
     }

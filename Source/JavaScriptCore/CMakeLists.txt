@@ -658,6 +658,9 @@ ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/parser/Lexer.cpp ${DERIVED_S
 set(JavaScriptCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
 
 set(JavaScriptCore_INSPECTOR_DOMAINS
+    inspector/protocol/Debugger.json
+    inspector/protocol/GenericTypes.json
+    inspector/protocol/InspectorDomain.json
     inspector/protocol/Runtime.json
 )
 

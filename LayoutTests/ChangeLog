@@ -1,3 +1,15 @@
+2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move Inspector and Debugger protocol domains into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=125707
+
+        Reviewed by Timothy Hatcher.
+
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (InspectorTest.checkForError):
+        Since having a protocol error is likely wrong, make the output
+        for it as detailed as possible.
+
 2013-12-13  Roger Fong  <roger_fong@apple.com>
 
         [WebGL] Check for global variable precision mismatch between vertex and fragment shaders.

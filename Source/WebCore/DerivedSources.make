@@ -1077,12 +1077,10 @@ INSPECTOR_DOMAINS = \
     $(WebCore)/inspector/protocol/DOMDebugger.json \
     $(WebCore)/inspector/protocol/DOMStorage.json \
     $(WebCore)/inspector/protocol/Database.json \
-    $(WebCore)/inspector/protocol/Debugger.json \
     $(WebCore)/inspector/protocol/FileSystem.json \
     $(WebCore)/inspector/protocol/HeapProfiler.json \
     $(WebCore)/inspector/protocol/IndexedDB.json \
     $(WebCore)/inspector/protocol/Input.json \
-    $(WebCore)/inspector/protocol/InspectorDomain.json \
     $(WebCore)/inspector/protocol/LayerTree.json \
     $(WebCore)/inspector/protocol/Memory.json \
     $(WebCore)/inspector/protocol/Network.json \

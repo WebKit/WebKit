@@ -52,15 +52,6 @@
             ]
         },
         {
-            "id": "SearchMatch",
-            "type": "object",
-            "description": "Search match for resource.",
-            "properties": [
-                { "name": "lineNumber", "type": "number", "description": "Line number in resource content." },
-                { "name": "lineContent", "type": "string", "description": "Line with match content." }
-            ]
-        },
-        {
             "id": "SearchResult",
             "type": "object",
             "description": "Search result for resource.",
@@ -177,7 +168,7 @@
                 { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats string parameter as regex." }
             ],
             "returns": [
-                { "name": "result", "type": "array", "items": { "$ref": "SearchMatch" }, "description": "List of search matches." }
+                { "name": "result", "type": "array", "items": { "$ref": "GenericTypes.SearchMatch" }, "description": "List of search matches." }
             ]
         },
         {
