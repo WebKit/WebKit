@@ -36,6 +36,11 @@
 @protocol WKBrowsingContextLoadDelegate;
 @protocol WKBrowsingContextPolicyDelegate;
 
+typedef NS_OPTIONS(NSUInteger, WKRenderingProgressEvents) {
+    WKRenderingProgressEventFirstLayout = 1 << 0,
+    WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
+};
+
 WK_API_CLASS
 @interface WKBrowsingContextController : NSObject
 
@@ -120,6 +125,8 @@ WK_API_CLASS
 @property(readonly) NSURL *unreachableURL;
 
 @property(readonly) double estimatedProgress;
+
+@property WKRenderingProgressEvents observedRenderingProgressEvents;
 
 #pragma mark Active Document Introspection
 

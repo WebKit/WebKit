@@ -1,5 +1,27 @@
 2013-12-14  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Expose some layout milestones
+        https://bugs.webkit.org/show_bug.cgi?id=125721
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h:
+        (WKRenderingProgressEvents): Declared new enum.
+        (@interface WKBrowsingContextController): Declared new observedRenderingProgressEvents
+        property.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (layoutMilestones): Added helper to translate rendering progress events into layout
+        milestones.
+        (-[WKBrowsingContextController setObservedRenderingProgressEvents:]): Added this setter.
+        Sets the ivar and calls WebPageProxy::listenForLayoutMilestones.
+        (renderingProgressEvents): Added helper to translate layout milestones into rendering
+        progress events.
+        (didLayout): Implemented this WKPageLoaderClient callback by calling the load delegate.
+        (setUpPageLoaderClient): Set the above callback in the client structure.
+        * UIProcess/API/Cocoa/WKBrowsingContextLoadDelegate.h: Declared new delegate method.
+
+2013-12-14  Dan Bernstein  <mitz@apple.com>
+
         Clarify Owners’ role
         https://bugs.webkit.org/show_bug.cgi?id=125739
 

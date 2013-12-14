@@ -25,7 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
-@class WKBrowsingContextController;
+#import <WebKit2/WKBrowsingContextController.h>
+
 @class WKBackForwardListItem;
 
 @protocol WKBrowsingContextLoadDelegate <NSObject>
@@ -54,5 +55,7 @@
 - (void)browsingContextControllerDidFinishProgress:(WKBrowsingContextController *)sender;
 
 - (void)browsingContextControllerDidChangeBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems;
+
+- (void)browsingContextController:(WKBrowsingContextController *)sender renderingProgressDidChange:(WKRenderingProgressEvents)progressEvent;
 
 @end

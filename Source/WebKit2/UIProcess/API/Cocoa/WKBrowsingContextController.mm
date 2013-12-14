@@ -333,6 +333,25 @@ static void releaseNSData(unsigned char*, const void* data)
     return _page->estimatedProgress();
 }
 
+static inline LayoutMilestones layoutMilestones(WKRenderingProgressEvents events)
+{
+    LayoutMilestones milestones = 0;
+
+    if (events & WKRenderingProgressEventFirstLayout)
+        milestones |= DidFirstLayout;
+
+    if (events & WKRenderingProgressEventFirstPaintWithSignificantArea)
+        milestones |= DidHitRelevantRepaintedObjectsAreaThreshold;
+
+    return milestones;
+}
+
+- (void)setObservedRenderingProgressEvents:(WKRenderingProgressEvents)events
+{
+    _observedRenderingProgressEvents = events;
+    _page->listenForLayoutMilestones(layoutMilestones(events));
+}
+
 #pragma mark Active Document Introspection
 
 - (NSString *)title
@@ -521,6 +540,28 @@ static void processDidCrash(WKPageRef page, const void* clientInfo)
         [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextControllerWebProcessDidCrash:browsingContext];
 }
 
+static inline WKRenderingProgressEvents renderingProgressEvents(WKLayoutMilestones milestones)
+{
+    WKRenderingProgressEvents events = 0;
+
+    if (milestones & kWKDidFirstLayout)
+        events |= WKRenderingProgressEventFirstLayout;
+
+    if (milestones & kWKDidHitRelevantRepaintedObjectsAreaThreshold)
+        events |= WKRenderingProgressEventFirstPaintWithSignificantArea;
+
+    return events;
+}
+
+static void didLayout(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef userData, const void* clientInfo)
+{
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    auto loadDelegate = browsingContext->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(browsingContextController:renderingProgressDidChange:)])
+        [loadDelegate browsingContextController:browsingContext renderingProgressDidChange:renderingProgressEvents(milestones)];
+}
+
 static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, WebPageProxy& page)
 {
     WKPageLoaderClientV3 loaderClient;
@@ -544,6 +585,8 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
     loaderClient.didChangeBackForwardList = didChangeBackForwardList;
 
     loaderClient.processDidCrash = processDidCrash;
+
+    loaderClient.didLayout = didLayout;
 
     page.initializeLoaderClient(&loaderClient.base);
 }
