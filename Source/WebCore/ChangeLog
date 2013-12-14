@@ -1,3 +1,13 @@
+2013-12-13  Andreas Kling  <akling@apple.com>
+
+        Move RenderObject::repaintAfterLayoutIfNeeded() to RenderElement.
+        <https://webkit.org/b/125712>
+
+        This function is only ever called on RenderElements, so move it there.
+        Removes some RenderObject::style() branchiness.
+
+        Reviewed by Darin Adler.
+
 2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move Inspector and Debugger protocol domains into JavaScriptCore

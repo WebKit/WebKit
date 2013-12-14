@@ -109,6 +109,11 @@ public:
     // and so only should be called when the style is known not to have changed (or from setStyle).
     void setStyleInternal(PassRef<RenderStyle> style) { m_style = std::move(style); }
 
+    // Repaint only if our old bounds and new bounds are different. The caller may pass in newBounds and newOutlineBox if they are known.
+    bool repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = nullptr, const LayoutRect* newOutlineBoxPtr = nullptr);
+
+    bool borderImageIsLoadedAndCanBeRendered() const;
+
 protected:
     enum BaseTypeFlags {
         RenderLayerModelObjectFlag = 1 << 0,

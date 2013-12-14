@@ -541,8 +541,6 @@ public:
     };
     bool hasBoxDecorations() const { return m_bitfields.boxDecorationState() != NoBoxDecorations; }
     bool backgroundIsKnownToBeObscured();
-    bool borderImageIsLoadedAndCanBeRendered() const;
-    bool mustRepaintBackgroundOrBorder() const;
     bool hasBackground() const { return style().hasBackground(); }
     bool hasEntirelyFixedBackground() const;
 
@@ -768,9 +766,6 @@ public:
 
     // Repaint a specific subrectangle within a given object.  The rect |r| is in the object's coordinate space.
     void repaintRectangle(const LayoutRect&, bool immediate = false) const;
-
-    // Repaint only if our old bounds and new bounds are different. The caller may pass in newBounds and newOutlineBox if they are known.
-    bool repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = 0, const LayoutRect* newOutlineBoxPtr = 0);
 
     bool checkForRepaintDuringLayout() const;
 
