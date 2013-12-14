@@ -1,5 +1,19 @@
 2013-12-13  Brent Fulgham  <bfulgham@apple.com>
 
+        SVG bindings are improperly being generated with "fastGetAttribute"
+        https://bugs.webkit.org/show_bug.cgi?id=125670
+
+        Reviewed by Darin Adler.
+
+        A bug was introduced in r152845 that improperly called the
+        IsSVGAnimatedType using the $attribute hash, rather than the
+        expected $attribute->signature->type.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GetterExpression): Clean up attribute type confusion.
+
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed build fix after r160548
 
         * WebCore.vcxproj/WebCore.vcxproj: Exclude MediaPlayerPrivateQuickTimeVisualContext from
