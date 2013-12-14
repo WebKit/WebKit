@@ -1,5 +1,15 @@
 2013-12-14  Andreas Kling  <akling@apple.com>
 
+        Move a couple of inlines from RenderObject to RenderElement.
+        <https://webkit.org/b/125734>
+
+        Take most of the inline functions on RenderObject that call style()
+        and move them over to RenderElement where style() is branchless.
+
+        Reviewed by Antti Koivisto.
+
+2013-12-14  Andreas Kling  <akling@apple.com>
+
         RenderElement::rendererForRootBackground() should return a reference.
         <https://webkit.org/b/125735>
 

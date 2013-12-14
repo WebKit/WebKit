@@ -541,7 +541,6 @@ public:
     };
     bool hasBoxDecorations() const { return m_bitfields.boxDecorationState() != NoBoxDecorations; }
     bool backgroundIsKnownToBeObscured();
-    bool hasBackground() const { return style().hasBackground(); }
     bool hasEntirelyFixedBackground() const;
 
     bool needsLayout() const
@@ -571,21 +570,6 @@ public:
     bool hasClipOrOverflowClip() const { return hasClip() || hasOverflowClip(); }
 
     bool hasTransform() const { return m_bitfields.hasTransform(); }
-    bool hasMask() const { return style().hasMask(); }
-    bool hasClipPath() const { return style().clipPath(); }
-    bool hasHiddenBackface() const { return style().backfaceVisibility() == BackfaceVisibilityHidden; }
-
-#if ENABLE(CSS_FILTERS)
-    bool hasFilter() const { return style().hasFilter(); }
-#else
-    bool hasFilter() const { return false; }
-#endif
-
-#if ENABLE(CSS_COMPOSITING)
-    bool hasBlendMode() const { return style().hasBlendMode(); }
-#else
-    bool hasBlendMode() const { return false; }
-#endif
 
     inline bool preservesNewline() const;
 
@@ -805,9 +789,6 @@ public:
 
     bool isFloatingOrOutOfFlowPositioned() const { return (isFloating() || isOutOfFlowPositioned()); }
 
-    bool isTransparent() const { return style().opacity() < 1.0f; }
-    float opacity() const { return style().opacity(); }
-
     bool hasReflection() const { return m_bitfields.hasReflection(); }
 
     // Applied as a "slop" to dirty rect checks during the outline painting phase's dirty-rect checks.
@@ -903,9 +884,6 @@ public:
     
     bool shouldUseTransformFromContainer(const RenderObject* container) const;
     void getTransformFromContainer(const RenderObject* container, const LayoutSize& offsetInContainer, TransformationMatrix&) const;
-    
-    // return true if this object requires a new stacking context
-    bool createsGroup() const { return isTransparent() || hasMask() || hasFilter() || hasBlendMode(); } 
     
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& /* additionalOffset */, const RenderLayerModelObject* /* paintContainer */ = 0) { };
 

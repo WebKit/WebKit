@@ -125,7 +125,7 @@ static bool isDeletableElement(const Node* node)
         if (!parentNode)
             return false;
 
-        RenderObject* parentRenderer = parentNode->renderer();
+        auto parentRenderer = parentNode->renderer();
         if (!parentRenderer)
             return false;
 

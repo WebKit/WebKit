@@ -114,6 +114,29 @@ public:
 
     bool borderImageIsLoadedAndCanBeRendered() const;
 
+    // Returns true if this renderer requires a new stacking context.
+    bool createsGroup() const { return isTransparent() || hasMask() || hasFilter() || hasBlendMode(); }
+
+    bool isTransparent() const { return style().opacity() < 1.0f; }
+    float opacity() const { return style().opacity(); }
+
+    bool hasBackground() const { return style().hasBackground(); }
+    bool hasMask() const { return style().hasMask(); }
+    bool hasClipPath() const { return style().clipPath(); }
+    bool hasHiddenBackface() const { return style().backfaceVisibility() == BackfaceVisibilityHidden; }
+
+#if ENABLE(CSS_FILTERS)
+    bool hasFilter() const { return style().hasFilter(); }
+#else
+    bool hasFilter() const { return false; }
+#endif
+
+#if ENABLE(CSS_COMPOSITING)
+    bool hasBlendMode() const { return style().hasBlendMode(); }
+#else
+    bool hasBlendMode() const { return false; }
+#endif
+
 protected:
     enum BaseTypeFlags {
         RenderLayerModelObjectFlag = 1 << 0,
