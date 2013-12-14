@@ -92,7 +92,7 @@ static const char base64URLDecMap[128] = {
     0x31, 0x32, 0x33, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet
 };
 
-inline void base64EncodeInternal(const char* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy, const char* encodeMap)
+static inline void base64EncodeInternal(const char* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy, const char (&encodeMap)[64])
 {
     out.clear();
     if (!len)
@@ -182,7 +182,7 @@ void base64URLEncode(const void* data, unsigned len, Vector<char>& out)
 }
 
 template<typename T>
-static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<char>& out, Base64DecodePolicy policy, const char* decodeMap)
+static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<char>& out, Base64DecodePolicy policy, const char (&decodeMap)[128])
 {
     out.clear();
     if (!length)
@@ -201,8 +201,7 @@ static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<c
             if (policy == Base64FailOnInvalidCharacterOrExcessPadding && (length % 4 || equalsSignCount > 2))
                 return false;
         } else {
-            ASSERT(static_cast<size_t>(ch) < 128);
-            char decodedCharacter = decodeMap[ch];
+            char decodedCharacter = ch < WTF_ARRAY_LENGTH(decodeMap) ? decodeMap[ch] : nonAlphabet;
             if (decodedCharacter != nonAlphabet) {
                 if (equalsSignCount)
                     return false;

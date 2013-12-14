@@ -1,3 +1,16 @@
+2013-12-12  Darin Adler  <darin@apple.com>
+
+        Incorrect handling of non-ASCII characters in WTF::base64DecodeInternal
+        https://bugs.webkit.org/show_bug.cgi?id=125658
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/text/Base64.cpp:
+        (WTF::base64EncodeInternal): Use a reference to an array instead of a pointer
+        for the table argument type so we check the size of the array at the call site.
+        (WTF::base64DecodeInternal): Ditto. Also added an bounds check before using the
+        table so we don't load some random value for non-ASCII characters.
+
 2013-12-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix after r160548
