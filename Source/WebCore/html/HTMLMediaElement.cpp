@@ -1473,10 +1473,9 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
     bool trackIsLoaded = true;
     if (track->trackType() == TextTrack::TrackElement) {
         trackIsLoaded = false;
-        auto trackChildren = childrenOfType<HTMLTrackElement>(*this);
-        for (auto trackElement = trackChildren.begin(), end = trackChildren.end(); trackElement != end; ++trackElement) {
-            if (trackElement->track() == track) {
-                if (trackElement->readyState() == HTMLTrackElement::LOADING || trackElement->readyState() == HTMLTrackElement::LOADED)
+        for (auto& trackElement : childrenOfType<HTMLTrackElement>(*this)) {
+            if (trackElement.track() == track) {
+                if (trackElement.readyState() == HTMLTrackElement::LOADING || trackElement.readyState() == HTMLTrackElement::LOADED)
                     trackIsLoaded = true;
                 break;
             }
@@ -1717,9 +1716,8 @@ void HTMLMediaElement::cancelPendingEventsAndCallbacks()
     LOG(Media, "HTMLMediaElement::cancelPendingEventsAndCallbacks");
     m_asyncEventQueue.cancelAllEvents();
 
-    auto sourceChildren = childrenOfType<HTMLSourceElement>(*this);
-    for (auto source = sourceChildren.begin(), end = sourceChildren.end(); source != end; ++source)
-        source->cancelPendingErrorEvent();
+    for (auto& source : childrenOfType<HTMLSourceElement>(*this))
+        source.cancelPendingErrorEvent();
 }
 
 Document* HTMLMediaElement::mediaPlayerOwningDocument()

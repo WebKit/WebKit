@@ -184,9 +184,8 @@ RenderBox* RenderMathMLRoot::index() const
 
 void RenderMathMLRoot::layout()
 {
-    auto boxChildren = childrenOfType<RenderBox>(*this);
-    for (auto box = boxChildren.begin(), end = boxChildren.end(); box != end; ++box)
-        box->layoutIfNeeded();
+    for (auto& box : childrenOfType<RenderBox>(*this))
+        box.layoutIfNeeded();
 
     int baseHeight = firstChild() && firstChild()->isBox() ? roundToInt(toRenderBox(firstChild())->logicalHeight()) : style().fontSize();
     int frontWidth = lroundf(gFrontWidthEms * style().fontSize());

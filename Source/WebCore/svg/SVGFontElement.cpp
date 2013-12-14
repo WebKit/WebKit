@@ -118,29 +118,27 @@ void SVGFontElement::ensureGlyphCache()
 
     const SVGMissingGlyphElement* firstMissingGlyphElement = nullptr;
     Vector<String> ligatures;
-    auto children = childrenOfType<SVGElement>(*this);
-    for (auto child = children.begin(), end = children.end(); child != end; ++child) {
-        SVGElement* element = &*child;
-        if (isSVGGlyphElement(element)) {
-            SVGGlyphElement* glyph = toSVGGlyphElement(element);
-            AtomicString unicode = glyph->fastGetAttribute(SVGNames::unicodeAttr);
-            AtomicString glyphId = glyph->getIdAttribute();
+    for (auto& child : childrenOfType<SVGElement>(*this)) {
+        if (isSVGGlyphElement(child)) {
+            SVGGlyphElement& glyph = toSVGGlyphElement(child);
+            AtomicString unicode = glyph.fastGetAttribute(SVGNames::unicodeAttr);
+            AtomicString glyphId = glyph.getIdAttribute();
             if (glyphId.isEmpty() && unicode.isEmpty())
                 continue;
 
-            m_glyphMap.addGlyph(glyphId, unicode, glyph->buildGlyphIdentifier());
+            m_glyphMap.addGlyph(glyphId, unicode, glyph.buildGlyphIdentifier());
 
             // Register ligatures, if needed, don't mix up with surrogate pairs though!
             if (unicode.length() > 1 && !U16_IS_SURROGATE(unicode[0]))
                 ligatures.append(unicode.string());
-        } else if (isSVGHKernElement(element)) {
-            SVGHKernElement* hkern = toSVGHKernElement(element);
-            hkern->buildHorizontalKerningPair(m_horizontalKerningMap);
-        } else if (isSVGVKernElement(element)) {
-            SVGVKernElement* vkern = toSVGVKernElement(element);
-            vkern->buildVerticalKerningPair(m_verticalKerningMap);
-        } else if (isSVGMissingGlyphElement(element) && !firstMissingGlyphElement)
-            firstMissingGlyphElement = toSVGMissingGlyphElement(element);
+        } else if (isSVGHKernElement(child)) {
+            SVGHKernElement& hkern = toSVGHKernElement(child);
+            hkern.buildHorizontalKerningPair(m_horizontalKerningMap);
+        } else if (isSVGVKernElement(child)) {
+            SVGVKernElement& vkern = toSVGVKernElement(child);
+            vkern.buildVerticalKerningPair(m_verticalKerningMap);
+        } else if (isSVGMissingGlyphElement(child) && !firstMissingGlyphElement)
+            firstMissingGlyphElement = &toSVGMissingGlyphElement(child);
     }
 
     // Register each character of each ligature, if needed.

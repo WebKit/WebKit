@@ -2754,13 +2754,12 @@ void AccessibilityRenderObject::addImageMapChildren()
     if (!map)
         return;
 
-    auto areaDescendants = descendantsOfType<HTMLAreaElement>(*map);
-    for (auto area = areaDescendants.begin(), end = areaDescendants.end(); area != end; ++area) {
+    for (auto& area : descendantsOfType<HTMLAreaElement>(*map)) {
         // add an <area> element for this child if it has a link
-        if (!area->isLink())
+        if (!area.isLink())
             continue;
         AccessibilityImageMapLink* areaObject = toAccessibilityImageMapLink(axObjectCache()->getOrCreate(ImageMapLinkRole));
-        areaObject->setHTMLAreaElement(&*area);
+        areaObject->setHTMLAreaElement(&area);
         areaObject->setHTMLMapElement(map);
         areaObject->setParent(this);
         if (!areaObject->accessibilityIsIgnored())

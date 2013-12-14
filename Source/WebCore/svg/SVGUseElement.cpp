@@ -369,9 +369,8 @@ static bool isDisallowedElement(const Element& element)
 
 static bool subtreeContainsDisallowedElement(SVGElement& start)
 {
-    auto descendants = elementDescendants(start);
-    for (auto element = descendants.begin(), end = descendants.end(); element != end; ++element) {
-        if (isDisallowedElement(*element))
+    for (auto& element : elementDescendants(start)) {
+        if (isDisallowedElement(element))
             return true;
     }
 
@@ -606,19 +605,18 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
     // is the SVGGElement object for the 'g', and then two child SVGElementInstance objects, each of which has
     // its correspondingElement that is an SVGRectElement object.
 
-    auto svgChildren = childrenOfType<SVGElement>(*target);
-    for (auto element = svgChildren.begin(), end = svgChildren.end(); element != end; ++element) {
+    for (auto& element : childrenOfType<SVGElement>(*target)) {
         // Skip any non-svg nodes or any disallowed element.
-        if (isDisallowedElement(*element))
+        if (isDisallowedElement(element))
             continue;
 
         // Create SVGElementInstance object, for both container/non-container nodes.
-        RefPtr<SVGElementInstance> instance = SVGElementInstance::create(this, 0, &*element);
+        RefPtr<SVGElementInstance> instance = SVGElementInstance::create(this, 0, &element);
         SVGElementInstance* instancePtr = instance.get();
         targetInstance->appendChild(instance.release());
 
         // Enter recursion, appending new instance tree nodes to the "instance" object.
-        buildInstanceTree(&*element, instancePtr, foundProblem, foundUse);
+        buildInstanceTree(&element, instancePtr, foundProblem, foundUse);
         if (foundProblem)
             return;
     }

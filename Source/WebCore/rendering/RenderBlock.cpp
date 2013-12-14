@@ -1455,9 +1455,8 @@ void RenderBlock::markShapeInsideDescendantsForLayout()
         return;
     }
 
-    auto blockChildren = childrenOfType<RenderBlock>(*this);
-    for (auto childBlock = blockChildren.begin(), end = blockChildren.end(); childBlock != end; ++childBlock)
-        childBlock->markShapeInsideDescendantsForLayout();
+    for (auto& childBlock : childrenOfType<RenderBlock>(*this))
+        childBlock.markShapeInsideDescendantsForLayout();
 }
 
 ShapeInsideInfo* RenderBlock::layoutShapeInsideInfo() const

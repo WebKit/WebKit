@@ -99,15 +99,14 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
 
     URL parsedBaseURL(ParsedURLString, baseURL);
 
-    auto descendants = elementDescendants(*fragment);
-    for (auto element = descendants.begin(), end = descendants.end(); element != end; ++element) {
-        if (!element->hasAttributes())
+    for (auto& element : elementDescendants(*fragment)) {
+        if (!element.hasAttributes())
             continue;
-        unsigned length = element->attributeCount();
+        unsigned length = element.attributeCount();
         for (unsigned i = 0; i < length; i++) {
-            const Attribute& attribute = element->attributeAt(i);
-            if (element->isURLAttribute(attribute) && !attribute.value().isEmpty())
-                changes.append(AttributeChange(&*element, attribute.name(), URL(parsedBaseURL, attribute.value()).string()));
+            const Attribute& attribute = element.attributeAt(i);
+            if (element.isURLAttribute(attribute) && !attribute.value().isEmpty())
+                changes.append(AttributeChange(&element, attribute.name(), URL(parsedBaseURL, attribute.value()).string()));
         }
     }
 
@@ -892,9 +891,7 @@ PassRefPtr<DocumentFragment> createFragmentForTransformToFragment(const String& 
 static Vector<Ref<HTMLElement>> collectElementsToRemoveFromFragment(ContainerNode& container)
 {
     Vector<Ref<HTMLElement>> toRemove;
-    auto children = childrenOfType<HTMLElement>(container);
-    for (auto it = children.begin(), end = children.end(); it != end; ++it) {
-        HTMLElement& element = *it;
+    for (auto& element : childrenOfType<HTMLElement>(container)) {
         if (isHTMLHtmlElement(element)) {
             toRemove.append(element);
             collectElementsToRemoveFromFragment(element);

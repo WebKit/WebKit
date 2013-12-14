@@ -265,9 +265,7 @@ std::unique_ptr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const Pat
         contentTransformation = tileImageTransform;
 
     // Draw the content into the ImageBuffer.
-    auto children = childrenOfType<SVGElement>(*attributes.patternContentElement());
-    for (auto it = children.begin(), end = children.end(); it != end; ++it) {
-        const SVGElement& child = *it;
+    for (auto& child : childrenOfType<SVGElement>(*attributes.patternContentElement())) {
         if (!child.renderer())
             continue;
         if (child.renderer()->needsLayout())

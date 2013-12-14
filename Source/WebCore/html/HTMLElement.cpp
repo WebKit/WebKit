@@ -744,9 +744,8 @@ TranslateAttributeMode HTMLElement::translateAttributeMode() const
 
 bool HTMLElement::translate() const
 {
-    auto lineage = lineageOfType<HTMLElement>(*this);
-    for (auto element = lineage.begin(), end = lineage.end(); element != end; ++element) {
-        TranslateAttributeMode mode = element->translateAttributeMode();
+    for (auto& element : lineageOfType<HTMLElement>(*this)) {
+        TranslateAttributeMode mode = element.translateAttributeMode();
         if (mode == TranslateAttributeInherit)
             continue;
         ASSERT(mode == TranslateAttributeYes || mode == TranslateAttributeNo);
@@ -793,9 +792,9 @@ HTMLFormElement* HTMLElement::virtualForm() const
     return HTMLFormElement::findClosestFormAncestor(*this);
 }
 
-static inline bool elementAffectsDirectionality(const Node* node)
+static inline bool elementAffectsDirectionality(const Node& node)
 {
-    return node->isHTMLElement() && (node->hasTagName(bdiTag) || toHTMLElement(node)->hasAttribute(dirAttr));
+    return node.isHTMLElement() && (node.hasTagName(bdiTag) || toHTMLElement(node).hasAttribute(dirAttr));
 }
 
 static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastNode = nullptr)
@@ -808,7 +807,7 @@ static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastN
         if (node->selfOrAncestorHasDirAutoAttribute() == flag)
             return;
 
-        if (elementAffectsDirectionality(node)) {
+        if (elementAffectsDirectionality(*node)) {
             if (node == lastNode)
                 return;
             node = NodeTraversal::nextSkippingChildren(node, firstNode);
@@ -908,10 +907,9 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged(Element
     setHasDirAutoFlagRecursively(child, false);
     if (!renderer() || renderer()->style().direction() == textDirection)
         return;
-    auto lineage = elementLineage(this);
-    for (auto elementToAdjust = lineage.begin(), end = lineage.end(); elementToAdjust != end; ++elementToAdjust) {
-        if (elementAffectsDirectionality(&*elementToAdjust)) {
-            elementToAdjust->setNeedsStyleRecalc();
+    for (auto& elementToAdjust : elementLineage(this)) {
+        if (elementAffectsDirectionality(elementToAdjust)) {
+            elementToAdjust.setNeedsStyleRecalc();
             return;
         }
     }
@@ -932,7 +930,7 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
     if (document().renderView() && (changeType == ElementRemoved || changeType == TextRemoved)) {
         Node* node = beforeChange ? beforeChange->nextSibling() : nullptr;
         for (; node; node = node->nextSibling()) {
-            if (elementAffectsDirectionality(node))
+            if (elementAffectsDirectionality(*node))
                 continue;
 
             setHasDirAutoFlagRecursively(node, false);
@@ -946,15 +944,14 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
     if (beforeChange)
         oldMarkedNode = changeType == ElementInserted ? ElementTraversal::nextSibling(beforeChange) : beforeChange->nextSibling();
 
-    while (oldMarkedNode && elementAffectsDirectionality(oldMarkedNode))
+    while (oldMarkedNode && elementAffectsDirectionality(*oldMarkedNode))
         oldMarkedNode = oldMarkedNode->nextSibling();
     if (oldMarkedNode)
         setHasDirAutoFlagRecursively(oldMarkedNode, false);
 
-    auto lineage = lineageOfType<HTMLElement>(*this);
-    for (auto elementToAdjust = lineage.begin(), end = lineage.end(); elementToAdjust != end; ++elementToAdjust) {
-        if (elementAffectsDirectionality(&*elementToAdjust)) {
-            elementToAdjust->calculateAndAdjustDirectionality();
+    for (auto& elementToAdjust : lineageOfType<HTMLElement>(*this)) {
+        if (elementAffectsDirectionality(elementToAdjust)) {
+            elementToAdjust.calculateAndAdjustDirectionality();
             return;
         }
     }

@@ -475,8 +475,7 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
         return currentAssociatedElementsAfterIndex;
 
     unsigned i = m_associatedElementsBeforeIndex;
-    for (auto it = descendants.begin(); it != end; ++it) {
-        HTMLElement& element = *it;
+    for (auto& element : descendants) {
         if (&element == &associatedHTMLElement)
             return i;
         if (!isHTMLFormControlElement(element) && !isHTMLObjectElement(element))

@@ -112,10 +112,9 @@ RenderBlock* RenderTextFragment::blockForAccompanyingFirstLetter()
 {
     if (!m_firstLetter)
         return nullptr;
-    auto ancestorBlocks = ancestorsOfType<RenderBlock>(*m_firstLetter);
-    for (auto block = ancestorBlocks.begin(), end = ancestorBlocks.end(); block != end; ++block) {
-        if (block->style().hasPseudoStyle(FIRST_LETTER) && block->canHaveChildren())
-            return &*block;
+    for (auto& block : ancestorsOfType<RenderBlock>(*m_firstLetter)) {
+        if (block.style().hasPseudoStyle(FIRST_LETTER) && block.canHaveChildren())
+            return &block;
     }
     return nullptr;
 }

@@ -1774,15 +1774,14 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         RenderBlockFlow* parentBlock = this;
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
 
-        auto ancestors = ancestorsOfType<RenderBlockFlow>(*this);
-        for (auto ancestor = ancestors.begin(), end = ancestors.end(); ancestor != end; ++ancestor) {
-            if (ancestor->isRenderView())
+        for (auto& ancestor : ancestorsOfType<RenderBlockFlow>(*this)) {
+            if (ancestor.isRenderView())
                 break;
-            if (ancestor->hasOverhangingFloats()) {
+            if (ancestor.hasOverhangingFloats()) {
                 for (auto it = floatingObjectSet.begin(), end = floatingObjectSet.end(); it != end; ++it) {
                     RenderBox& renderer = (*it)->renderer();
-                    if (ancestor->hasOverhangingFloat(renderer)) {
-                        parentBlock = &*ancestor;
+                    if (ancestor.hasOverhangingFloat(renderer)) {
+                        parentBlock = &ancestor;
                         break;
                     }
                 }

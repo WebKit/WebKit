@@ -310,9 +310,7 @@ void RenderView::layout()
     if (relayoutChildren) {
         setChildNeedsLayout(MarkOnlyThis);
 
-        auto boxChildren = childrenOfType<RenderBox>(*this);
-        for (auto child = boxChildren.begin(), end = boxChildren.end(); child != end; ++child) {
-            RenderBox& box = *child;
+        for (auto& box : childrenOfType<RenderBox>(*this)) {
             if (box.hasRelativeLogicalHeight()
                 || box.hasViewportPercentageLogicalHeight()
                 || box.style().logicalHeight().isPercent()

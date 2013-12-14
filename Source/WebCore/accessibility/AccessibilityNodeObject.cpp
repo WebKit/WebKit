@@ -1026,15 +1026,14 @@ Element* AccessibilityNodeObject::mouseButtonListener() const
 
     // check if our parent is a mouse button listener
     // FIXME: Do the continuation search like anchorElement does
-    auto lineage = elementLineage(node->isElementNode() ? toElement(node) : node->parentElement());
-    for (auto element = lineage.begin(), end = lineage.end(); element != end; ++element) {
+    for (auto& element : elementLineage(node->isElementNode() ? toElement(node) : node->parentElement())) {
         // If we've reached the body and this is not a control element, do not expose press action for this element.
         // It can cause false positives, where every piece of text is labeled as accepting press actions. 
-        if (element->hasTagName(bodyTag) && isStaticText())
+        if (element.hasTagName(bodyTag) && isStaticText())
             break;
         
-        if (element->hasEventListeners(eventNames().clickEvent) || element->hasEventListeners(eventNames().mousedownEvent) || element->hasEventListeners(eventNames().mouseupEvent))
-            return &*element;
+        if (element.hasEventListeners(eventNames().clickEvent) || element.hasEventListeners(eventNames().mousedownEvent) || element.hasEventListeners(eventNames().mouseupEvent))
+            return &element;
     }
 
     return 0;
@@ -1166,21 +1165,21 @@ static Element* siblingWithAriaRole(String role, Node* node)
 {
     ContainerNode* parent = node->parentNode();
     if (!parent)
-        return 0;
-    auto children = elementChildren(*parent);
-    for (auto sibling = children.begin(), end = children.end(); sibling != end; ++sibling) {
-        const AtomicString& siblingAriaRole = sibling->fastGetAttribute(roleAttr);
+        return nullptr;
+
+    for (auto& sibling : elementChildren(*parent)) {
+        const AtomicString& siblingAriaRole = sibling.fastGetAttribute(roleAttr);
         if (equalIgnoringCase(siblingAriaRole, role))
-            return &*sibling;
+            return &sibling;
     }
 
-    return 0;
+    return nullptr;
 }
 
 Element* AccessibilityNodeObject::menuElementForMenuButton() const
 {
     if (ariaRoleAttribute() != MenuButtonRole)
-        return 0;
+        return nullptr;
 
     return siblingWithAriaRole("menu", node());
 }

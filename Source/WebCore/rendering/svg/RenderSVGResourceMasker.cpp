@@ -116,9 +116,7 @@ bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, C
     }
 
     // Draw the content into the ImageBuffer.
-    auto children = childrenOfType<SVGElement>(maskElement());
-    for (auto it = children.begin(), end = children.end(); it != end; ++it) {
-        SVGElement& child = *it;
+    for (auto& child : childrenOfType<SVGElement>(maskElement())) {
         auto renderer = child.renderer();
         if (!renderer)
             continue;

@@ -292,9 +292,8 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
 
         if (continueRendering) {
             childPaintInfo.updateSubtreePaintRootForChildren(this);
-            auto children = childrenOfType<RenderElement>(*this);
-            for (auto child = children.begin(), end = children.end(); child != end; ++child)
-                child->paint(childPaintInfo, location());
+            for (auto& child : childrenOfType<RenderElement>(*this))
+                child.paint(childPaintInfo, location());
         }
     }
 

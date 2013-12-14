@@ -656,13 +656,12 @@ void Document::buildAccessKeyMap(TreeScope* scope)
 {
     ASSERT(scope);
     ContainerNode* rootNode = scope->rootNode();
-    auto descendant = elementDescendants(*rootNode);
-    for (auto element = descendant.begin(), end = descendant.end(); element != end; ++element) {
-        const AtomicString& accessKey = element->fastGetAttribute(accesskeyAttr);
+    for (auto& element : elementDescendants(*rootNode)) {
+        const AtomicString& accessKey = element.fastGetAttribute(accesskeyAttr);
         if (!accessKey.isEmpty())
-            m_elementsByAccessKey.set(accessKey.impl(), &*element);
+            m_elementsByAccessKey.set(accessKey.impl(), &element);
 
-        if (ShadowRoot* root = element->shadowRoot())
+        if (ShadowRoot* root = element.shadowRoot())
             buildAccessKeyMap(root);
     }
 }
@@ -2579,9 +2578,8 @@ void Document::updateBaseURL()
     if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
         // Base URL change changes any relative visited links.
         // FIXME: There are other URLs in the tree that would need to be re-evaluated on dynamic base URL change. Style should be invalidated too.
-        auto anchorDescendants = descendantsOfType<HTMLAnchorElement>(*this);
-        for (auto anchor = anchorDescendants.begin(), end = anchorDescendants.end(); anchor != end; ++anchor)
-            anchor->invalidateCachedVisitedLinkHash();
+        for (auto& anchor : descendantsOfType<HTMLAnchorElement>(*this))
+            anchor.invalidateCachedVisitedLinkHash();
     }
 }
 

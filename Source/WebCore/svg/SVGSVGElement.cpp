@@ -337,15 +337,13 @@ PassRefPtr<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(const Flo
 {
     Vector<Ref<Element>> elements;
 
-    auto svgDescendants = descendantsOfType<SVGElement>(*(referenceElement ? referenceElement : this));
-    for (auto it = svgDescendants.begin(), end = svgDescendants.end(); it != end; ++it) {
-        const SVGElement* svgElement = &*it;
+    for (auto& svgElement : descendantsOfType<SVGElement>(*(referenceElement ? referenceElement : this))) {
         if (collect == CollectIntersectionList) {
-            if (RenderSVGModelObject::checkIntersection(svgElement->renderer(), rect))
-                elements.append(*const_cast<SVGElement*>(svgElement));
+            if (RenderSVGModelObject::checkIntersection(svgElement.renderer(), rect))
+                elements.append(const_cast<SVGElement&>(svgElement));
         } else {
-            if (RenderSVGModelObject::checkEnclosure(svgElement->renderer(), rect))
-                elements.append(*const_cast<SVGElement*>(svgElement));
+            if (RenderSVGModelObject::checkEnclosure(svgElement.renderer(), rect))
+                elements.append(const_cast<SVGElement&>(svgElement));
         }
     }
 
@@ -777,10 +775,9 @@ Element* SVGSVGElement::getElementById(const AtomicString& id)
 
     // Fall back to traversing our subtree. Duplicate ids are allowed, the first found will
     // be returned.
-    auto descendants = elementDescendants(*this);
-    for (auto element = descendants.begin(), end = descendants.end(); element != end; ++element) {
-        if (element->getIdAttribute() == id)
-            return &*element;
+    for (auto& element : elementDescendants(*this)) {
+        if (element.getIdAttribute() == id)
+            return &element;
     }
     return 0;
 }

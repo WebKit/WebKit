@@ -234,12 +234,11 @@ RenderBlockFlow* RenderBox::outermostBlockContainingFloatingObject()
 {
     ASSERT(isFloating());
     RenderBlockFlow* parentBlock = nullptr;
-    auto ancestors = ancestorsOfType<RenderBlockFlow>(*this);
-    for (auto ancestor = ancestors.begin(), end = ancestors.end(); ancestor != end; ++ancestor) {
-        if (ancestor->isRenderView())
+    for (auto& ancestor : ancestorsOfType<RenderBlockFlow>(*this)) {
+        if (ancestor.isRenderView())
             break;
-        if (!parentBlock || ancestor->containsFloat(*this))
-            parentBlock = &*ancestor;
+        if (!parentBlock || ancestor.containsFloat(*this))
+            parentBlock = &ancestor;
     }
     return parentBlock;
 }
@@ -1330,9 +1329,7 @@ bool RenderBox::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, u
 {
     if (!maxDepthToTest)
         return false;
-    auto boxChildren = childrenOfType<RenderBox>(*this);
-    for (auto child = boxChildren.begin(), end = boxChildren.end(); child != end; ++child) {
-        const RenderBox& childBox = *child;
+    for (auto& childBox : childrenOfType<RenderBox>(*this)) {
         if (!isCandidateForOpaquenessTest(childBox))
             continue;
         LayoutPoint childLocation = childBox.location();

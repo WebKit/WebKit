@@ -67,12 +67,11 @@ LabelableElement* HTMLLabelElement::control()
         // Search the children and descendants of the label element for a form element.
         // per http://dev.w3.org/html5/spec/Overview.html#the-label-element
         // the form element must be "labelable form-associated element".
-        auto labelableDescendants = descendantsOfType<LabelableElement>(*this);
-        for (auto labelableElement = labelableDescendants.begin(), end = labelableDescendants.end(); labelableElement != end; ++labelableElement) {
-            if (labelableElement->supportLabels())
-                return &*labelableElement;
+        for (auto& labelableElement : descendantsOfType<LabelableElement>(*this)) {
+            if (labelableElement.supportLabels())
+                return &labelableElement;
         }
-        return 0;
+        return nullptr;
     }
     
     // Find the first element whose id is controlId. If it is found and it is a labelable form control,

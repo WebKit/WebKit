@@ -83,24 +83,22 @@ PassRefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* 
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
     
     if (!input1)
-        return 0;
+        return nullptr;
 
     ComponentTransferFunction red;
     ComponentTransferFunction green;
     ComponentTransferFunction blue;
     ComponentTransferFunction alpha;
 
-    auto children = childrenOfType<SVGElement>(*this);
-    for (auto child = children.begin(), end = children.end(); child != end; ++child) {
-        SVGElement* element = &*child;
-        if (isSVGFEFuncRElement(element))
-            red = toSVGFEFuncRElement(element)->transferFunction();
-        else if (isSVGFEFuncGElement(element))
-            green = toSVGFEFuncGElement(element)->transferFunction();
-        else if (isSVGFEFuncBElement(element))
-            blue = toSVGFEFuncBElement(element)->transferFunction();
-        else if (isSVGFEFuncAElement(element))
-            alpha = toSVGFEFuncAElement(element)->transferFunction();
+    for (auto& child : childrenOfType<SVGElement>(*this)) {
+        if (isSVGFEFuncRElement(child))
+            red = toSVGFEFuncRElement(child).transferFunction();
+        else if (isSVGFEFuncGElement(child))
+            green = toSVGFEFuncGElement(child).transferFunction();
+        else if (isSVGFEFuncBElement(child))
+            blue = toSVGFEFuncBElement(child).transferFunction();
+        else if (isSVGFEFuncAElement(child))
+            alpha = toSVGFEFuncAElement(child).transferFunction();
     }
     
     RefPtr<FilterEffect> effect = FEComponentTransfer::create(filter, red, green, blue, alpha);

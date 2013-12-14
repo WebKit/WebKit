@@ -439,10 +439,9 @@ void ApplyStyleCommand::cleanupUnstyledAppleStyleSpans(ContainerNode* dummySpanA
     // all the children of the dummy's parent
 
     Vector<Element*> toRemove;
-    auto children = elementChildren(*dummySpanAncestor);
-    for (auto child = children.begin(), end = children.end(); child != end; ++child) {
-        if (isSpanWithoutAttributesOrUnstyledStyleSpan(&*child))
-            toRemove.append(&*child);
+    for (auto& child : elementChildren(*dummySpanAncestor)) {
+        if (isSpanWithoutAttributesOrUnstyledStyleSpan(&child))
+            toRemove.append(&child);
     }
     for (unsigned i = 0; i < toRemove.size(); ++i)
         removeNodePreservingChildren(toRemove[i]);

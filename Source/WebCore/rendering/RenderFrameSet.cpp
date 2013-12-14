@@ -714,10 +714,9 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
 void RenderFrameSet::setIsResizing(bool isResizing)
 {
     m_isResizing = isResizing;
-    auto ancestors = ancestorsOfType<RenderFrameSet>(*this);
-    for (auto ancestor = ancestors.begin(), end = ancestors.end(); ancestor != end; ++ancestor)
-        ancestor->m_isChildResizing = isResizing;
-    frame().eventHandler().setResizingFrameSet(isResizing ? &frameSetElement() : 0);
+    for (auto& ancestor : ancestorsOfType<RenderFrameSet>(*this))
+        ancestor.m_isChildResizing = isResizing;
+    frame().eventHandler().setResizingFrameSet(isResizing ? &frameSetElement() : nullptr);
 }
 
 bool RenderFrameSet::isResizingRow() const

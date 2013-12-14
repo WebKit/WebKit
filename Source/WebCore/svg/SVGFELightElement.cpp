@@ -71,12 +71,11 @@ SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document& doc
 
 SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElement)
 {
-    auto children = childrenOfType<SVGElement>(*svgElement);
-    for (auto child = children.begin(), end = children.end(); child != end; ++child) {
-        if (isSVGFEDistantLightElement(*child) || isSVGFEPointLightElement(*child) || isSVGFESpotLightElement(*child))
-            return static_cast<SVGFELightElement*>(const_cast<SVGElement*>(&*child));
+    for (auto& child : childrenOfType<SVGElement>(*svgElement)) {
+        if (isSVGFEDistantLightElement(child) || isSVGFEPointLightElement(child) || isSVGFESpotLightElement(child))
+            return static_cast<SVGFELightElement*>(const_cast<SVGElement*>(&child));
     }
-    return 0;
+    return nullptr;
 }
 
 PassRefPtr<LightSource> SVGFELightElement::findLightSource(const SVGElement* svgElement)

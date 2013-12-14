@@ -51,9 +51,8 @@ PassRefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName&
 
 void HTMLFieldSetElement::invalidateDisabledStateUnder(Element* base)
 {
-    auto formControlDescendants = descendantsOfType<HTMLFormControlElement>(*base);
-    for (auto control = formControlDescendants.begin(), end = formControlDescendants.end(); control != end; ++control)
-        control->ancestorDisabledStateWasChanged();
+    for (auto& control : descendantsOfType<HTMLFormControlElement>(*base))
+        control.ancestorDisabledStateWasChanged();
 }
 
 void HTMLFieldSetElement::disabledAttributeChanged()
@@ -67,9 +66,8 @@ void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
 {
     HTMLFormControlElement::childrenChanged(change);
 
-    auto legendChildren = childrenOfType<HTMLLegendElement>(*this);
-    for (auto legend = legendChildren.begin(), end = legendChildren.end(); legend != end; ++legend)
-        invalidateDisabledStateUnder(&*legend);
+    for (auto& legend : childrenOfType<HTMLLegendElement>(*this))
+        invalidateDisabledStateUnder(&legend);
 }
 
 bool HTMLFieldSetElement::supportsFocus() const
@@ -108,12 +106,11 @@ void HTMLFieldSetElement::refreshElementsIfNeeded() const
 
     m_associatedElements.clear();
 
-    auto descendants = elementDescendants(const_cast<HTMLFieldSetElement&>(*this));
-    for (auto element = descendants.begin(), end = descendants.end(); element != end; ++element) {
-        if (element->hasTagName(objectTag))
-            m_associatedElements.append(&toHTMLObjectElement(*element));
-        else if (element->isFormControlElement())
-            m_associatedElements.append(&toHTMLFormControlElement(*element));
+    for (auto& element : elementDescendants(const_cast<HTMLFieldSetElement&>(*this))) {
+        if (element.hasTagName(objectTag))
+            m_associatedElements.append(&toHTMLObjectElement(element));
+        else if (element.isFormControlElement())
+            m_associatedElements.append(&toHTMLFormControlElement(element));
     }
 }
 

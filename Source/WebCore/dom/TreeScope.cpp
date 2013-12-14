@@ -294,11 +294,10 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
         // Populate the map on first access.
         m_labelsByForAttribute = adoptPtr(new DocumentOrderedMap);
 
-        auto labelDescendants = descendantsOfType<HTMLLabelElement>(*rootNode());
-        for (auto label = labelDescendants.begin(), end = labelDescendants.end(); label != end; ++label) {
-            const AtomicString& forValue = label->fastGetAttribute(forAttr);
+        for (auto& label : descendantsOfType<HTMLLabelElement>(*rootNode())) {
+            const AtomicString& forValue = label.fastGetAttribute(forAttr);
             if (!forValue.isEmpty())
-                addLabel(*forValue.impl(), *label);
+                addLabel(*forValue.impl(), label);
         }
     }
 
@@ -336,16 +335,15 @@ Element* TreeScope::findAnchor(const String& name)
         return nullptr;
     if (Element* element = getElementById(name))
         return element;
-    auto anchorDescendants = descendantsOfType<HTMLAnchorElement>(*rootNode());
-    for (auto anchor = anchorDescendants.begin(), end = anchorDescendants.end(); anchor != end; ++anchor) {
+    for (auto& anchor : descendantsOfType<HTMLAnchorElement>(*rootNode())) {
         if (rootNode()->document().inQuirksMode()) {
             // Quirks mode, case insensitive comparison of names.
-            if (equalIgnoringCase(anchor->name(), name))
-                return &*anchor;
+            if (equalIgnoringCase(anchor.name(), name))
+                return &anchor;
         } else {
             // Strict mode, names need to match exactly.
-            if (anchor->name() == name)
-                return &*anchor;
+            if (anchor.name() == name)
+                return &anchor;
         }
     }
     return nullptr;

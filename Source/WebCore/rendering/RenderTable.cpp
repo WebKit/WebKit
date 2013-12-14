@@ -448,10 +448,9 @@ void RenderTable::layout()
 
     bool collapsing = collapseBorders();
 
-    auto children = childrenOfType<RenderElement>(*this);
-    for (auto child = children.begin(), end = children.end(); child != end; ++child) {
-        if (child->isTableSection()) {
-            RenderTableSection& section = toRenderTableSection(*child);
+    for (auto& child : childrenOfType<RenderElement>(*this)) {
+        if (child.isTableSection()) {
+            RenderTableSection& section = toRenderTableSection(child);
             if (m_columnLogicalWidthChanged)
                 section.setChildNeedsLayout(MarkOnlyThis);
             section.layoutIfNeeded();
@@ -459,9 +458,9 @@ void RenderTable::layout()
             if (collapsing)
                 section.recalcOuterBorder();
             ASSERT(!section.needsLayout());
-        } else if (child->isRenderTableCol()) {
-            toRenderTableCol(*child).layoutIfNeeded();
-            ASSERT(!child->needsLayout());
+        } else if (child.isRenderTableCol()) {
+            toRenderTableCol(child).layoutIfNeeded();
+            ASSERT(!child.needsLayout());
         }
     }
 
@@ -586,9 +585,8 @@ void RenderTable::recalcCollapsedBorders()
     m_collapsedBordersValid = true;
     m_collapsedBorders.clear();
 
-    auto sections = childrenOfType<RenderTableSection>(*this);
-    for (auto section = sections.begin(), end = sections.end(); section != end; ++section) {
-        for (RenderTableRow* row = section->firstRow(); row; row = row->nextRow()) {
+    for (auto& section : childrenOfType<RenderTableSection>(*this)) {
+        for (RenderTableRow* row = section.firstRow(); row; row = row->nextRow()) {
             for (RenderTableCell* cell = row->firstCell(); cell; cell = cell->nextCell()) {
                 ASSERT(cell->table() == this);
                 cell->collectBorderValues(m_collapsedBorders);
@@ -669,9 +667,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     info.phase = paintPhase;
     info.updateSubtreePaintRootForChildren(this);
 
-    auto boxChildren = childrenOfType<RenderBox>(*this);
-    for (auto child = boxChildren.begin(), end = boxChildren.end(); child != end; ++child) {
-        RenderBox& box = *child;
+    for (auto& box : childrenOfType<RenderBox>(*this)) {
         if (!box.hasSelfPaintingLayer() && (box.isTableSection() || box.isTableCaption())) {
             LayoutPoint childPoint = flipForWritingModeForChild(&box, paintOffset);
             box.paint(info, childPoint);
@@ -808,12 +804,11 @@ void RenderTable::splitColumn(unsigned position, unsigned firstSpan)
 
     // Propagate the change in our columns representation to the sections that don't need
     // cell recalc. If they do, they will be synced up directly with m_columns later.
-    auto sections = childrenOfType<RenderTableSection>(*this);
-    for (auto section = sections.begin(), end = sections.end(); section != end; ++section) {
-        if (section->needsCellRecalc())
+    for (auto& section : childrenOfType<RenderTableSection>(*this)) {
+        if (section.needsCellRecalc())
             continue;
 
-        section->splitColumn(position, firstSpan);
+        section.splitColumn(position, firstSpan);
     }
 
     m_columnPos.grow(numEffCols() + 1);
@@ -826,12 +821,11 @@ void RenderTable::appendColumn(unsigned span)
 
     // Propagate the change in our columns representation to the sections that don't need
     // cell recalc. If they do, they will be synced up directly with m_columns later.
-    auto sections = childrenOfType<RenderTableSection>(*this);
-    for (auto section = sections.begin(), end = sections.end(); section != end; ++section) {
-        if (section->needsCellRecalc())
+    for (auto& section : childrenOfType<RenderTableSection>(*this)) {
+        if (section.needsCellRecalc())
             continue;
 
-        section->appendColumn(newColumnIndex);
+        section.appendColumn(newColumnIndex);
     }
 
     m_columnPos.grow(numEffCols() + 1);
@@ -944,9 +938,8 @@ void RenderTable::recalcSections() const
 
     // repair column count (addChild can grow it too much, because it always adds elements to the last row of a section)
     unsigned maxCols = 0;
-    auto sections = childrenOfType<RenderTableSection>(*this);
-    for (auto section = sections.begin(), end = sections.end(); section != end; ++section) {
-        unsigned sectionCols = section->numColumns();
+    for (auto& section : childrenOfType<RenderTableSection>(*this)) {
+        unsigned sectionCols = section.numColumns();
         if (sectionCols > maxCols)
             maxCols = sectionCols;
     }

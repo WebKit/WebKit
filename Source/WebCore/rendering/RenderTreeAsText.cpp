@@ -917,12 +917,11 @@ static void writeCounterValuesFromChildren(TextStream& stream, const RenderEleme
 {
     if (!parent)
         return;
-    auto counters = childrenOfType<RenderCounter>(*parent);
-    for (auto counter = counters.begin(), end = counters.end(); counter != end; ++counter) {
+    for (auto& counter : childrenOfType<RenderCounter>(*parent)) {
         if (!isFirstCounter)
             stream << " ";
         isFirstCounter = false;
-        String str(counter->text());
+        String str(counter.text());
         stream << str;
     }
 }
