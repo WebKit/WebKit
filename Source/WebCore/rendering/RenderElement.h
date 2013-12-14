@@ -99,7 +99,7 @@ public:
     void layoutIfNeeded() { if (needsLayout()) layout(); }
 
     // Return the renderer whose background style is used to paint the root background. Should only be called on the renderer for which isRoot() is true.
-    RenderElement* rendererForRootBackground();
+    RenderElement& rendererForRootBackground();
 
     // Used only by Element::pseudoStyleCacheIsInvalid to get a first line style based off of a
     // given new style, without accessing the cache.

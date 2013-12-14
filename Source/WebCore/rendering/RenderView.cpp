@@ -487,8 +487,7 @@ static inline bool rendererObscuresBackground(RenderElement* rootObject)
     if (isComposited(rootObject))
         return false;
 
-    const RenderElement* rootRenderer = rootObject->rendererForRootBackground();
-    if (rootRenderer->style().backgroundClip() == TextFillBox)
+    if (rootObject->rendererForRootBackground().style().backgroundClip() == TextFillBox)
         return false;
 
     return true;
@@ -1006,8 +1005,7 @@ bool RenderView::rootBackgroundIsEntirelyFixed() const
     if (!rootObject)
         return false;
 
-    RenderElement* rootRenderer = rootObject->rendererForRootBackground();
-    return rootRenderer->hasEntirelyFixedBackground();
+    return rootObject->rendererForRootBackground().hasEntirelyFixedBackground();
 }
 
 LayoutRect RenderView::backgroundRect(RenderBox* backgroundRenderer) const

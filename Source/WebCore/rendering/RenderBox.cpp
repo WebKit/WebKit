@@ -1124,12 +1124,12 @@ void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
     if (paintInfo.skipRootBackground())
         return;
 
-    auto rootBackgroundRenderer = rendererForRootBackground();
+    auto& rootBackgroundRenderer = rendererForRootBackground();
     
-    const FillLayer* bgLayer = rootBackgroundRenderer->style().backgroundLayers();
-    Color bgColor = rootBackgroundRenderer->style().visitedDependentColor(CSSPropertyBackgroundColor);
+    const FillLayer* bgLayer = rootBackgroundRenderer.style().backgroundLayers();
+    Color bgColor = rootBackgroundRenderer.style().visitedDependentColor(CSSPropertyBackgroundColor);
 
-    paintFillLayers(paintInfo, bgColor, bgLayer, view().backgroundRect(this), BackgroundBleedNone, CompositeSourceOver, rootBackgroundRenderer);
+    paintFillLayers(paintInfo, bgColor, bgLayer, view().backgroundRect(this), BackgroundBleedNone, CompositeSourceOver, &rootBackgroundRenderer);
 }
 
 BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsContext* context) const

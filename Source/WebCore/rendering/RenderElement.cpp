@@ -1075,7 +1075,7 @@ void RenderElement::setNeedsSimplifiedNormalFlowLayout()
         setLayerNeedsFullRepaint();
 }
 
-RenderElement* RenderElement::rendererForRootBackground()
+RenderElement& RenderElement::rendererForRootBackground()
 {
     ASSERT(isRoot());
     if (!hasBackground() && element() && element()->hasTagName(HTMLNames::htmlTag)) {
@@ -1086,11 +1086,11 @@ RenderElement* RenderElement::rendererForRootBackground()
         if (auto body = document().body()) {
             if (body->hasLocalName(HTMLNames::bodyTag)) {
                 if (auto renderer = body->renderer())
-                    return renderer;
+                    return *renderer;
             }
         }
     }
-    return this;
+    return *this;
 }
 
 RenderElement* RenderElement::hoverAncestor() const

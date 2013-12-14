@@ -1,3 +1,12 @@
+2013-12-14  Andreas Kling  <akling@apple.com>
+
+        RenderElement::rendererForRootBackground() should return a reference.
+        <https://webkit.org/b/125735>
+
+        This function always finds a renderer to return.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-14  Mark Rowe  <mrowe@apple.com>
 
         Build fix after r160557.
