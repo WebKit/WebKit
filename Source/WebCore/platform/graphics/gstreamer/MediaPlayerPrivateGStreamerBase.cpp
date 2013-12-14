@@ -38,6 +38,7 @@
 #include "VideoSinkGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
 #include <gst/gst.h>
+#include <wtf/gobject/GMutexLocker.h>
 #include <wtf/text/CString.h>
 
 #include <gst/audio/streamvolume.h>
@@ -306,26 +307,20 @@ void MediaPlayerPrivateGStreamerBase::muteChanged()
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
 PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(TextureMapper* textureMapper)
 {
-    g_mutex_lock(m_bufferMutex);
-    if (!m_buffer) {
-        g_mutex_unlock(m_bufferMutex);
+    GMutexLocker lock(m_bufferMutex);
+    if (!m_buffer)
         return 0;
-    }
 
     const void* srcData = 0;
     GRefPtr<GstCaps> caps = currentVideoSinkCaps();
-    if (!caps) {
-        g_mutex_unlock(m_bufferMutex);
+    if (!caps)
         return 0;
-    }
 
     IntSize size;
     GstVideoFormat format;
     int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
-    if (!getVideoSizeAndFormatFromCaps(caps.get(), size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride)) {
-        g_mutex_unlock(m_bufferMutex);
+    if (!getVideoSizeAndFormatFromCaps(caps.get(), size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride))
         return 0;
-    }
 
     RefPtr<BitmapTexture> texture = textureMapper->acquireTextureFromPool(size);
 
@@ -336,10 +331,8 @@ PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(Texture
             const BitmapTextureGL* textureGL = static_cast<const BitmapTextureGL*>(texture.get());
             guint ids[4] = { textureGL->id(), 0, 0, 0 };
 
-            if (gst_video_gl_texture_upload_meta_upload(meta, ids)) {
-                g_mutex_unlock(m_bufferMutex);
+            if (gst_video_gl_texture_upload_meta_upload(meta, ids))
                 return texture;
-            }
         }
     }
 #endif
@@ -351,8 +344,6 @@ PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(Texture
     texture->updateContents(srcData, WebCore::IntRect(WebCore::IntPoint(0, 0), size), WebCore::IntPoint(0, 0), stride, BitmapTexture::UpdateCannotModifyOriginalImageData);
 
     gst_buffer_unmap(m_buffer, &srcInfo);
-
-    g_mutex_unlock(m_bufferMutex);
     return texture;
 }
 #endif
@@ -361,9 +352,10 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstBuffer* buffer)
 {
     g_return_if_fail(GST_IS_BUFFER(buffer));
 
-    g_mutex_lock(m_bufferMutex);
-    gst_buffer_replace(&m_buffer, buffer);
-    g_mutex_unlock(m_bufferMutex);
+    {
+        GMutexLocker lock(m_bufferMutex);
+        gst_buffer_replace(&m_buffer, buffer);
+    }
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
     if (supportsAcceleratedRendering() && m_player->mediaPlayerClient()->mediaPlayerRenderingCanBeAccelerated(m_player) && client()) {
@@ -393,27 +385,20 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntR
     if (!m_player->visible())
         return;
 
-    g_mutex_lock(m_bufferMutex);
-    if (!m_buffer) {
-        g_mutex_unlock(m_bufferMutex);
+    GMutexLocker lock(m_bufferMutex);
+    if (!m_buffer)
         return;
-    }
 
     GRefPtr<GstCaps> caps = currentVideoSinkCaps();
-    if (!caps) {
-        g_mutex_unlock(m_bufferMutex);
+    if (!caps)
         return;
-    }
 
     RefPtr<ImageGStreamer> gstImage = ImageGStreamer::createImage(m_buffer, caps.get());
-    if (!gstImage) {
-        g_mutex_unlock(m_bufferMutex);
+    if (!gstImage)
         return;
-    }
 
     context->drawImage(reinterpret_cast<Image*>(gstImage->image().get()), ColorSpaceSRGB,
         rect, gstImage->rect(), CompositeCopy, ImageOrientationDescription(), false);
-    g_mutex_unlock(m_bufferMutex);
 }
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
