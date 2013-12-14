@@ -155,11 +155,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
               if (pos < linelen && line[pos] == ',')
               {
                 unsigned long long seconds = 0;
-#if OS(WINDOWS)
-                sscanf(p + 1, "%I64u", &seconds);
-#else
                 sscanf(p + 1, "%llu", &seconds);
-#endif
                 time_t t = static_cast<time_t>(seconds);
 
                 // FIXME: This code has the year 2038 bug

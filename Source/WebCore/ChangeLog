@@ -1,5 +1,21 @@
 2013-12-13  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Remove pre-VS2013 support code.
+        https://bugs.webkit.org/show_bug.cgi?id=125693
+
+        Reviewed by Darin Adler.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::setQuota): Use C99 format arguments
+        * loader/FTPDirectoryParser.cpp:
+        (WebCore::parseOneFTPLine): Ditto
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::pruneUnretainedIcons): Ditto 
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::setMaximumSize): Ditto
+
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
         SVG bindings are improperly being generated with "fastGetAttribute"
         https://bugs.webkit.org/show_bug.cgi?id=125670
 

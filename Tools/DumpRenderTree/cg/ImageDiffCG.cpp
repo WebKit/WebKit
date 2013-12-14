@@ -60,10 +60,6 @@ typedef float CGFloat;
 using namespace std;
 
 #if PLATFORM(WIN)
-static inline float strtof(const char *nptr, char **endptr)
-{
-    return strtod(nptr, endptr);
-}
 static const CFStringRef kUTTypePNG = CFSTR("public.png");
 #endif
 

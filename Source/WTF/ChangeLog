@@ -1,3 +1,13 @@
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove Pre-VS2013 support code.
+        https://bugs.webkit.org/show_bug.cgi?id=125693
+
+        Reviewed by Darin Adler.
+
+        * wtf/StringPrintStream.cpp:
+        (WTF::StringPrintStream::vprintf): Use va_copy, like a civilized person.
+
 2013-12-12  Darin Adler  <darin@apple.com>
 
         Incorrect handling of non-ASCII characters in WTF::base64DecodeInternal

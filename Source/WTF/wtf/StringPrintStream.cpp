@@ -54,11 +54,7 @@ void StringPrintStream::vprintf(const char* format, va_list argList)
     ASSERT(!m_buffer[m_next]);
     
     va_list firstPassArgList;
-#if OS(WINDOWS)
-    firstPassArgList = argList;
-#else
     va_copy(firstPassArgList, argList);
-#endif
     
     int numberOfBytesNotIncludingTerminatorThatWouldHaveBeenWritten =
         vsnprintf(m_buffer + m_next, m_size - m_next, format, firstPassArgList);

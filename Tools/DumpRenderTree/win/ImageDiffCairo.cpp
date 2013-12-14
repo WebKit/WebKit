@@ -49,13 +49,6 @@ static const int s_bytesPerPixel = 4;
 static cairo_user_data_key_t s_imageDataKey;
 
 
-#if PLATFORM(WIN)
-static inline float strtof(const char* inputString, char** endptr)
-{
-    return strtod(inputString, endptr);
-}
-#endif
-
 static cairo_status_t readFromData(void* closure, unsigned char* data, unsigned int length)
 {
     CFMutableDataRef dataSource = reinterpret_cast<CFMutableDataRef>(closure);
