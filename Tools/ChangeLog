@@ -1,3 +1,10 @@
+2013-12-13  Sam Weinig  <sam@webkit.org>
+
+        Fix API tests.
+
+        * TestWebKitAPI/Tests/WebKit2/WillLoad.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2013-12-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove Pre-VS2013 support code.
