@@ -1,3 +1,11 @@
+2013-12-13  Dan Bernstein  <mitz@apple.com>
+
+        Demoted ActivityAssertion.h to a project header.
+
+        Rubber-stamped by Sam Weinig.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-12-13  Sam Weinig  <sam@webkit.org>
 
         [WK2] Start removing calls to String::characters()
