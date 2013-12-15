@@ -34,7 +34,11 @@
 #import "WKBundlePagePrivate.h"
 #import "WKDOMInternals.h"
 #import "WKRetainPtr.h"
+#import "WKWebProcessPluginFrameInternal.h"
 #import "WKWebProcessPlugInInternal.h"
+#import "WKWebProcessPlugInLoadDelegate.h"
+#import "WKWebProcessPlugInScriptWorldInternal.h"
+#import "WeakObjCPtr.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <WebCore/Document.h>
@@ -45,6 +49,63 @@ using namespace WebKit;
 
 @implementation WKWebProcessPlugInBrowserContextController {
     API::ObjectStorage<WebPage> _page;
+    WeakObjCPtr<id <WKWebProcessPlugInLoadDelegate>> _loadDelegate;
+}
+
+static void didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userDataRef, const void *clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:didStartProvisionalLoadForFrame:)])
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController didStartProvisionalLoadForFrame:wrapper(*toImpl(frame))];
+}
+
+static void didFinishLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:didFinishLoadForFrame:)])
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController didFinishLoadForFrame:wrapper(*toImpl(frame))];
+}
+
+static void globalObjectIsAvailableForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleScriptWorldRef scriptWorld, const void* clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:globalObjectIsAvailableForFrame:inScriptWorld:)])
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController globalObjectIsAvailableForFrame:wrapper(*toImpl(frame)) inScriptWorld:wrapper(*toImpl(scriptWorld))];
+}
+
+static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *contextController, WebPage& page)
+{
+    WKBundlePageLoaderClientV7 client;
+    memset(&client, 0, sizeof(client));
+
+    client.base.version = 7;
+    client.base.clientInfo = contextController;
+    client.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
+    client.didFinishLoadForFrame = didFinishLoadForFrame;
+    client.globalObjectIsAvailableForFrame = globalObjectIsAvailableForFrame;
+
+    page.initializeInjectedBundleLoaderClient(&client.base);
+}
+
+- (id <WKWebProcessPlugInLoadDelegate>)loadDelegate
+{
+    return _loadDelegate.getAutoreleased();
+}
+
+- (void)setLoadDelegate:(id <WKWebProcessPlugInLoadDelegate>)loadDelegate
+{
+    _loadDelegate = loadDelegate;
+
+    if (loadDelegate)
+        setUpPageLoaderClient(self, *_page);
+    else
+        _page->initializeInjectedBundleLoaderClient(nullptr);
 }
 
 - (void)dealloc

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,26 +22,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#import <WebKit2/WKFoundation.h>
-
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 
-@class WKDOMDocument;
-@class WKDOMRange;
-@protocol WKWebProcessPlugInLoadDelegate;
+@class WKWebProcessPlugInBrowsingContextController;
+@class WKWebProcessPlugInFrame;
+@class WKWebProcessPlugInScriptWorld;
 
-WK_API_CLASS
-@interface WKWebProcessPlugInBrowserContextController : NSObject
-
-@property(readonly) WKDOMDocument *mainFrameDocument;
-
-@property(readonly) WKDOMRange *selectedRange;
-
-@property (weak) id <WKWebProcessPlugInLoadDelegate> loadDelegate;
-
+@protocol WKWebProcessPlugInLoadDelegate <NSObject>
+@optional
+- (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller didStartProvisionalLoadForFrame:(WKWebProcessPlugInFrame *)frame;
+- (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller didFinishLoadForFrame:(WKWebProcessPlugInFrame *)frame;
+- (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller globalObjectIsAvailableForFrame:(WKWebProcessPlugInFrame *)frame inScriptWorld:(WKWebProcessPlugInScriptWorld *)scriptWorld;
 @end
-
-#endif // WK_API_ENABLED
