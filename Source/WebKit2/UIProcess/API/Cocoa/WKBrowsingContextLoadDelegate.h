@@ -23,8 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import <WebKit2/WKFoundation.h>
 
+#if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
 #import <WebKit2/WKBrowsingContextController.h>
 
 @class WKBackForwardListItem;
@@ -59,3 +62,5 @@
 - (void)browsingContextController:(WKBrowsingContextController *)sender renderingProgressDidChange:(WKRenderingProgressEvents)progressEvent;
 
 @end
+
+#endif // WK_API_ENABLED
