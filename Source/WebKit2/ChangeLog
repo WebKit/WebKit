@@ -1,3 +1,13 @@
+2013-12-14  Andy Estes  <aestes@apple.com>
+
+        Unify FeatureDefines.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=125741
+
+        Rubber-stamped by Dan Bernstein.
+
+        * Configurations/FeatureDefines.xcconfig: Remove a space in
+        FEATURE_DEFINES and fix a typo in ENABLE_CSS3_TEXT_DECORATION.
+
 2013-12-14  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix.
