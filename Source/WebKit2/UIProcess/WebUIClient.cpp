@@ -141,7 +141,7 @@ String WebUIClient::runJavaScriptPrompt(WebPageProxy* page, const String& messag
     if (!m_client.runJavaScriptPrompt)
         return String();
 
-    WebString* string = toImpl(m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.base.clientInfo));
+    API::String* string = toImpl(m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.base.clientInfo));
     if (!string)
         return String();
 
@@ -183,9 +183,9 @@ void WebUIClient::unavailablePluginButtonClicked(WebPageProxy* page, WKPluginUna
         if (m_client.missingPluginButtonClicked_deprecatedForUseWithV0)
             m_client.missingPluginButtonClicked_deprecatedForUseWithV0(
                 toAPI(page),
-                toAPI(pluginInformation->get<WebString>(pluginInformationMIMETypeKey())),
-                toAPI(pluginInformation->get<WebString>(pluginInformationPluginURLKey())),
-                toAPI(pluginInformation->get<WebString>(pluginInformationPluginspageAttributeURLKey())),
+                toAPI(pluginInformation->get<API::String>(pluginInformationMIMETypeKey())),
+                toAPI(pluginInformation->get<API::String>(pluginInformationPluginURLKey())),
+                toAPI(pluginInformation->get<API::String>(pluginInformationPluginspageAttributeURLKey())),
                 m_client.base.clientInfo);
     }
 
@@ -193,9 +193,9 @@ void WebUIClient::unavailablePluginButtonClicked(WebPageProxy* page, WKPluginUna
         m_client.unavailablePluginButtonClicked_deprecatedForUseWithV1(
             toAPI(page),
             pluginUnavailabilityReason,
-            toAPI(pluginInformation->get<WebString>(pluginInformationMIMETypeKey())),
-            toAPI(pluginInformation->get<WebString>(pluginInformationPluginURLKey())),
-            toAPI(pluginInformation->get<WebString>(pluginInformationPluginspageAttributeURLKey())),
+            toAPI(pluginInformation->get<API::String>(pluginInformationMIMETypeKey())),
+            toAPI(pluginInformation->get<API::String>(pluginInformationPluginURLKey())),
+            toAPI(pluginInformation->get<API::String>(pluginInformationPluginspageAttributeURLKey())),
             m_client.base.clientInfo);
 
     if (m_client.unavailablePluginButtonClicked)

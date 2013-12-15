@@ -145,9 +145,9 @@ static Vector<String> toStringVector(API::Array* array)
     
     patternVector.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i) {
-        WebString* webString = array->at<WebString>(i);
-        ASSERT(webString);
-        patternVector.uncheckedAppend(webString->string());
+        API::String* string = array->at<API::String>(i);
+        ASSERT(string);
+        patternVector.uncheckedAppend(string->string());
     }
     
     return patternVector;

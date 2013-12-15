@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WKCredential.h"
 
+#include "APIString.h"
 #include "WebCertificateInfo.h"
 #include "WebCredential.h"
-#include "WebString.h"
 #include "WKAPICast.h"
 
 using namespace WebKit;

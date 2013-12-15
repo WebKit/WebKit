@@ -27,11 +27,11 @@
 
 #if WK_API_ENABLED
 
+#import "APIString.h"
 #import "WKObject.h"
-#import "WebString.h"
 
 namespace WebKit {
-inline NSString *wrapper(WebString& string) { ASSERT([string.wrapper() isKindOfClass:[NSString class]]); return (NSString *)string.wrapper(); }
+inline NSString *wrapper(API::String& string) { ASSERT([string.wrapper() isKindOfClass:[NSString class]]); return (NSString *)string.wrapper(); }
 }
 
 @interface WKNSString : WKObject <NSCopying>

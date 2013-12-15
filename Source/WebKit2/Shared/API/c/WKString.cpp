@@ -33,13 +33,13 @@ using namespace WebKit;
 
 WKTypeID WKStringGetTypeID()
 {
-    return toAPI(WebString::APIType);
+    return toAPI(API::String::APIType);
 }
 
 WKStringRef WKStringCreateWithUTF8CString(const char* string)
 {
-    RefPtr<WebString> webString = WebString::createFromUTF8String(string);
-    return toAPI(webString.release().leakRef());
+    RefPtr<API::String> apiString = API::String::createFromUTF8String(string);
+    return toAPI(apiString.release().leakRef());
 }
 
 bool WKStringIsEmpty(WKStringRef stringRef)
@@ -85,8 +85,8 @@ bool WKStringIsEqualToUTF8CStringIgnoringCase(WKStringRef aRef, const char* b)
 
 WKStringRef WKStringCreateWithJSString(JSStringRef jsStringRef)
 {
-    RefPtr<WebString> webString = WebString::create(jsStringRef);
-    return toAPI(webString.release().leakRef());
+    RefPtr<API::String> apiString = API::String::create(jsStringRef);
+    return toAPI(apiString.release().leakRef());
 }
 
 JSStringRef WKStringCopyJSString(WKStringRef stringRef)

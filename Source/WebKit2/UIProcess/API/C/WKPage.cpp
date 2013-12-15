@@ -315,13 +315,13 @@ void WKPageTerminate(WKPageRef pageRef)
 
 WKStringRef WKPageGetSessionHistoryURLValueType()
 {
-    static WebString* sessionHistoryURLValueType = WebString::create("SessionHistoryURL").leakRef();
+    static API::String* sessionHistoryURLValueType = API::String::create("SessionHistoryURL").leakRef();
     return toAPI(sessionHistoryURLValueType);
 }
 
 WKStringRef WKPageGetSessionBackForwardListItemValueType()
 {
-    static WebString* sessionBackForwardListValueType = WebString::create("SessionBackForwardListItem").leakRef();
+    static API::String* sessionBackForwardListValueType = API::String::create("SessionBackForwardListItem").leakRef();
     return toAPI(sessionBackForwardListValueType);
 }
 

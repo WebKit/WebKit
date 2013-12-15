@@ -90,7 +90,7 @@ String InjectedBundlePageUIClient::shouldGenerateFileForUpload(WebPage* page, co
 {
     if (!m_client.shouldGenerateFileForUpload)
         return String();
-    RefPtr<WebString> generatedFilePath = adoptRef(toImpl(m_client.shouldGenerateFileForUpload(toAPI(page), toAPI(originalFilePath.impl()), m_client.base.clientInfo)));
+    RefPtr<API::String> generatedFilePath = adoptRef(toImpl(m_client.shouldGenerateFileForUpload(toAPI(page), toAPI(originalFilePath.impl()), m_client.base.clientInfo)));
     return generatedFilePath ? generatedFilePath->string() : String();
 }
 
@@ -98,7 +98,7 @@ String InjectedBundlePageUIClient::generateFileForUpload(WebPage* page, const St
 {
     if (!m_client.shouldGenerateFileForUpload)
         return String();
-    RefPtr<WebString> generatedFilePath = adoptRef(toImpl(m_client.generateFileForUpload(toAPI(page), toAPI(originalFilePath.impl()), m_client.base.clientInfo)));
+    RefPtr<API::String> generatedFilePath = adoptRef(toImpl(m_client.generateFileForUpload(toAPI(page), toAPI(originalFilePath.impl()), m_client.base.clientInfo)));
     return generatedFilePath ? generatedFilePath->string() : String();
 }
 
@@ -147,7 +147,7 @@ String InjectedBundlePageUIClient::plugInStartLabelTitle(const String& mimeType)
     if (!m_client.createPlugInStartLabelTitle)
         return String();
 
-    RefPtr<WebString> title = adoptRef(toImpl(m_client.createPlugInStartLabelTitle(toAPI(mimeType.impl()), m_client.base.clientInfo)));
+    RefPtr<API::String> title = adoptRef(toImpl(m_client.createPlugInStartLabelTitle(toAPI(mimeType.impl()), m_client.base.clientInfo)));
     return title ? title->string() : String();
 }
 
@@ -156,7 +156,7 @@ String InjectedBundlePageUIClient::plugInStartLabelSubtitle(const String& mimeTy
     if (!m_client.createPlugInStartLabelSubtitle)
         return String();
 
-    RefPtr<WebString> subtitle = adoptRef(toImpl(m_client.createPlugInStartLabelSubtitle(toAPI(mimeType.impl()), m_client.base.clientInfo)));
+    RefPtr<API::String> subtitle = adoptRef(toImpl(m_client.createPlugInStartLabelSubtitle(toAPI(mimeType.impl()), m_client.base.clientInfo)));
     return subtitle ? subtitle->string() : String();
 }
 
@@ -165,7 +165,7 @@ String InjectedBundlePageUIClient::plugInExtraStyleSheet() const
     if (!m_client.createPlugInExtraStyleSheet)
         return String();
 
-    RefPtr<WebString> styleSheet = adoptRef(toImpl(m_client.createPlugInExtraStyleSheet(m_client.base.clientInfo)));
+    RefPtr<API::String> styleSheet = adoptRef(toImpl(m_client.createPlugInExtraStyleSheet(m_client.base.clientInfo)));
     return styleSheet ? styleSheet->string() : String();
 }
 
@@ -174,7 +174,7 @@ String InjectedBundlePageUIClient::plugInExtraScript() const
     if (!m_client.createPlugInExtraScript)
         return String();
 
-    RefPtr<WebString> script = adoptRef(toImpl(m_client.createPlugInExtraScript(m_client.base.clientInfo)));
+    RefPtr<API::String> script = adoptRef(toImpl(m_client.createPlugInExtraScript(m_client.base.clientInfo)));
     return script ? script->string() : String();
 }
 

@@ -30,6 +30,7 @@
 #if WK_API_ENABLED
 
 #import "APIArray.h"
+#import "APIString.h"
 #import "WKArray.h"
 #import "WKPageGroup.h"
 #import "WKPreferences.h"
@@ -38,7 +39,6 @@
 #import "WKStringCF.h"
 #import "WKURL.h"
 #import "WKURLCF.h"
-#import "WebString.h"
 #import <wtf/Vector.h>
 
 using namespace WebKit;

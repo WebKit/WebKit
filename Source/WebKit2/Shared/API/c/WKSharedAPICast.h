@@ -27,6 +27,7 @@
 #define WKSharedAPICast_h
 
 #include "APINumber.h"
+#include "APIString.h"
 #include "ImageOptions.h"
 #include "SameDocumentNavigationType.h"
 #include "WKBase.h"
@@ -44,7 +45,6 @@
 #include "WebEvent.h"
 #include "WebFindOptions.h"
 #include "WebSecurityOrigin.h"
-#include "WebString.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"
 #include "WebURLResponse.h"
@@ -108,7 +108,7 @@ WK_ADD_API_MAPPING(WKRectRef, API::Rect)
 WK_ADD_API_MAPPING(WKSecurityOriginRef, WebSecurityOrigin)
 WK_ADD_API_MAPPING(WKSerializedScriptValueRef, WebSerializedScriptValue)
 WK_ADD_API_MAPPING(WKSizeRef, API::Size)
-WK_ADD_API_MAPPING(WKStringRef, WebString)
+WK_ADD_API_MAPPING(WKStringRef, API::String)
 WK_ADD_API_MAPPING(WKTypeRef, API::Object)
 WK_ADD_API_MAPPING(WKUInt64Ref, API::UInt64)
 WK_ADD_API_MAPPING(WKURLRef, WebURL)
@@ -123,6 +123,12 @@ WK_ADD_API_MAPPING(WKWebArchiveRef, WebArchive)
 WK_ADD_API_MAPPING(WKWebArchiveResourceRef, WebArchiveResource)
 WK_ADD_API_MAPPING(WKObjCTypeWrapperRef, ObjCObjectGraph)
 #endif
+
+template<typename T>
+inline typename ImplTypeInfo<T>::APIType toAPI(T t)
+{
+    return reinterpret_cast<typename ImplTypeInfo<T>::APIType>(t);
+}
 
 template<typename ImplType, typename APIType = typename ImplTypeInfo<ImplType*>::APIType>
 class ProxyingRefPtr {
@@ -152,23 +158,17 @@ inline typename APITypeInfo<T>::ImplType toImpl(T t)
     return reinterpret_cast<typename APITypeInfo<T>::ImplType>(const_cast<NonConstValueType*>(t));
 }
 
-template<typename T>
-inline typename ImplTypeInfo<T>::APIType toAPI(T t)
-{
-    return reinterpret_cast<typename ImplTypeInfo<T>::APIType>(t);
-}
-
 /* Special cases. */
 
-inline ProxyingRefPtr<WebString> toAPI(StringImpl* string)
+inline ProxyingRefPtr<API::String> toAPI(StringImpl* string)
 {
-    return ProxyingRefPtr<WebString>(WebString::create(string));
+    return ProxyingRefPtr<API::String>(API::String::create(string));
 }
 
 inline WKStringRef toCopiedAPI(const String& string)
 {
-    RefPtr<WebString> webString = WebString::create(string);
-    return toAPI(webString.release().leakRef());
+    RefPtr<API::String> apiString = API::String::create(string);
+    return toAPI(apiString.release().leakRef());
 }
 
 inline ProxyingRefPtr<WebURL> toURLRef(StringImpl* string)

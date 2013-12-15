@@ -29,19 +29,19 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "APINumber.h"
+#import "APIString.h"
 #import "PluginModuleInfo.h"
 #import "PluginSandboxProfile.h"
 #import "StringUtilities.h"
-#import "WebString.h"
 #import <WebKitSystemInterface.h>
 
 namespace WebKit {
 
 void getPlatformPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDictionary::MapType& map)
 {
-    map.set(pluginInformationBundleIdentifierKey(), WebString::create(plugin.bundleIdentifier));
-    map.set(pluginInformationBundleVersionKey(), WebString::create(plugin.versionString));
-    map.set(pluginInformationBundleShortVersionKey(), WebString::create(plugin.shortVersionString));
+    map.set(pluginInformationBundleIdentifierKey(), API::String::create(plugin.bundleIdentifier));
+    map.set(pluginInformationBundleVersionKey(), API::String::create(plugin.versionString));
+    map.set(pluginInformationBundleShortVersionKey(), API::String::create(plugin.shortVersionString));
     map.set(pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey(), API::Boolean::create(WKIsPluginUpdateAvailable(nsStringFromWebCoreString(plugin.bundleIdentifier))));
     map.set(pluginInformationHasSandboxProfileKey(), API::Boolean::create(pluginHasSandboxProfile(plugin.bundleIdentifier)));
 }

@@ -30,10 +30,10 @@
 
 #import "APIArray.h"
 #import "APINumber.h"
+#import "APIString.h"
 #import "MutableDictionary.h"
 #import "WKRemoteObjectInterfaceInternal.h"
 #import "WebData.h"
-#import "WebString.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TemporaryChange.h>
@@ -175,7 +175,7 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
     if (!objectClass)
         [NSException raise:NSInvalidArgumentException format:@"-classForCoder returned nil for %@", object];
 
-    encoder->_currentDictionary->set(classNameKey, WebString::create(class_getName(objectClass)));
+    encoder->_currentDictionary->set(classNameKey, API::String::create(class_getName(objectClass)));
 
     if ([object isKindOfClass:[NSInvocation class]]) {
         // We have to special case NSInvocation since we don't want to encode the target.
@@ -434,7 +434,7 @@ static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
 
 static id decodeObject(WKRemoteObjectDecoder *decoder)
 {
-    WebString* classNameString = decoder->_currentDictionary->get<WebString>(classNameKey);
+    API::String* classNameString = decoder->_currentDictionary->get<API::String>(classNameKey);
     if (!classNameString)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Class name missing"];
 

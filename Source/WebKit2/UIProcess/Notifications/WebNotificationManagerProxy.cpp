@@ -95,7 +95,7 @@ void WebNotificationManagerProxy::populateCopyOfNotificationPermissions(HashMap<
     permissions.clear();
     RefPtr<API::Array> knownOrigins = knownPermissions->keys();
     for (size_t i = 0; i < knownOrigins->size(); ++i) {
-        WebString* origin = knownOrigins->at<WebString>(i);
+        API::String* origin = knownOrigins->at<API::String>(i);
         permissions.set(origin->string(), knownPermissions->get<API::Boolean>(origin->string())->value());
     }
 }

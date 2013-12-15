@@ -26,10 +26,9 @@
 #include "config.h"
 #include "WebFormClient.h"
 
+#include "APIString.h"
 #include "ImmutableDictionary.h"
 #include "WKAPICast.h"
-#include "WebString.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -40,7 +39,7 @@ bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, Web
 
     ImmutableDictionary::MapType map;
     for (size_t i = 0; i < textFieldValues.size(); ++i)
-        map.set(textFieldValues[i].first, WebString::create(textFieldValues[i].second));
+        map.set(textFieldValues[i].first, API::String::create(textFieldValues[i].second));
     RefPtr<ImmutableDictionary> textFieldsMap = ImmutableDictionary::create(std::move(map));
 
     m_client.willSubmitForm(toAPI(page), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), toAPI(userData), toAPI(listener), m_client.base.clientInfo);

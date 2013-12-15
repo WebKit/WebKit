@@ -27,8 +27,8 @@
 #include "WebRenderLayer.h"
 
 #include "APIArray.h"
+#include "APIString.h"
 #include "WebPage.h"
-#include "WebString.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>

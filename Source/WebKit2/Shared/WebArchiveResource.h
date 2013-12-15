@@ -40,7 +40,6 @@ class ArchiveResource;
 namespace WebKit {
 
 class WebData;
-class WebString;
 class WebURL;
 
 class WebArchiveResource : public API::ObjectImpl<API::Object::Type::WebArchiveResource> {

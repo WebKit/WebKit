@@ -1,3 +1,55 @@
+2013-12-13  Sam Weinig  <sam@webkit.org>
+
+        [WK2] Rename WebString to API::String
+        https://bugs.webkit.org/show_bug.cgi?id=125726
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.mm:
+        * Shared/API/c/WKPluginInformation.cpp:
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/API/c/WKString.cpp:
+        * Shared/API/c/cf/WKStringCF.mm:
+        * Shared/APIArray.cpp:
+        * Shared/APIArray.h:
+        * Shared/APIString.h: Copied from Source/WebKit2/Shared/WebString.h.
+        * Shared/Cocoa/WKNSString.h:
+        * Shared/Cocoa/WKNSString.mm:
+        * Shared/ImmutableDictionary.cpp:
+        * Shared/Plugins/Netscape/PluginInformation.cpp:
+        * Shared/Plugins/Netscape/mac/PluginInformationMac.mm:
+        * Shared/UserData.cpp:
+        * Shared/UserMessageCoders.h:
+        * Shared/WebArchiveResource.h:
+        * Shared/WebOpenPanelParameters.cpp:
+        * Shared/WebRenderLayer.cpp:
+        * Shared/WebRenderObject.cpp:
+        * Shared/WebString.h: Removed.
+        * UIProcess/API/C/WKCredential.cpp:
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.mm:
+        * UIProcess/APINavigationData.h:
+        * UIProcess/Authentication/WebCredential.h:
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        * UIProcess/WebFormClient.cpp:
+        * UIProcess/WebLoaderClient.cpp:
+        * UIProcess/WebPageGroup.cpp:
+        * UIProcess/WebUIClient.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+
 2013-12-14  Andy Estes  <aestes@apple.com>
 
         Unify FeatureDefines.xcconfig

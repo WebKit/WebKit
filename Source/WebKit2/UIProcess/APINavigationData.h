@@ -41,8 +41,8 @@ public:
 
     virtual ~NavigationData();
 
-    String title() const { return m_store.title; }
-    String url() const { return m_store.url; }
+    WTF::String title() const { return m_store.title; }
+    WTF::String url() const { return m_store.url; }
     const WebCore::ResourceRequest& originalRequest() const { return m_store.originalRequest; }
     const WebCore::ResourceResponse& response() const { return m_store.response; }
 

@@ -88,7 +88,7 @@ using namespace WebKit;
     [encoder encodeObject:invocation forKey:invocationKey];
 
     RefPtr<MutableDictionary> body = MutableDictionary::create();
-    body->set(interfaceIdentifierKey, WebString::create(interface.identifier));
+    body->set(interfaceIdentifierKey, API::String::create(interface.identifier));
     body->set(encodedInvocationKey, [encoder rootObjectDictionary]);
 
     [self _sendMessageWithBody:body.release()];
@@ -123,7 +123,7 @@ using namespace WebKit;
 
     const ImmutableDictionary* dictionary = toImpl(static_cast<WKDictionaryRef>(body));
 
-    WebString* interfaceIdentifier = dictionary->get<WebString>(interfaceIdentifierKey);
+    API::String* interfaceIdentifier = dictionary->get<API::String>(interfaceIdentifierKey);
     if (!interfaceIdentifier)
         return NO;
 

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebString_h
-#define WebString_h
+#ifndef APIString_h
+#define APIString_h
 
 #include "APIObject.h"
 #include <JavaScriptCore/InitializeThreading.h>
@@ -34,30 +34,32 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/UTF8.h>
 
-namespace WebKit {
+namespace API {
 
-// WebString - A string type suitable for vending to an API.
-
-class WebString : public API::ObjectImpl<API::Object::Type::String> {
+class String FINAL : public API::ObjectImpl<API::Object::Type::String> {
 public:
-    static PassRefPtr<WebString> createNull()
+    static PassRefPtr<String> createNull()
     {
-        return adoptRef(new WebString());
+        return adoptRef(new String);
     }
 
-    static PassRefPtr<WebString> create(const String& string)
+    static PassRefPtr<String> create(const WTF::String& string)
     {
-        return adoptRef(new WebString(string));
+        return adoptRef(new String(string));
     }
 
-    static PassRefPtr<WebString> create(JSStringRef jsStringRef)
+    static PassRefPtr<String> create(JSStringRef jsStringRef)
     {
-        return adoptRef(new WebString(String(jsStringRef->string())));
+        return adoptRef(new String(jsStringRef->string()));
     }
 
-    static PassRefPtr<WebString> createFromUTF8String(const char* string)
+    static PassRefPtr<String> createFromUTF8String(const char* string)
     {
-        return adoptRef(new WebString(String::fromUTF8(string)));
+        return adoptRef(new String(WTF::String::fromUTF8(string)));
+    }
+
+    virtual ~String()
+    {
     }
 
     bool isNull() const { return m_string.isNull(); }
@@ -87,11 +89,11 @@ public:
         return p - buffer;
     }
 
-    bool equal(WebString* other) { return m_string == other->m_string; }
-    bool equalToUTF8String(const char* other) { return m_string == String::fromUTF8(other); }
+    bool equal(String* other) { return m_string == other->m_string; }
+    bool equalToUTF8String(const char* other) { return m_string == WTF::String::fromUTF8(other); }
     bool equalToUTF8StringIgnoringCase(const char* other) { return equalIgnoringCase(m_string, other); }
 
-    const String& string() const { return m_string; }
+    const WTF::String& string() const { return m_string; }
 
     JSStringRef createJSString() const
     {
@@ -100,19 +102,19 @@ public:
     }
 
 private:
-    WebString()
+    String()
         : m_string()
     {
     }
 
-    WebString(const String& string)
-        : m_string(!string.impl() ? String(StringImpl::empty()) : string)
+    String(const WTF::String& string)
+        : m_string(!string.impl() ? WTF::String(StringImpl::empty()) : string)
     {
     }
 
-    String m_string;
+    WTF::String m_string;
 };
 
 } // namespace WebKit
 
-#endif // WebString_h
+#endif // APIString_h

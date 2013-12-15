@@ -43,7 +43,7 @@ WKTypeID WKDatabaseManagerGetTypeID()
 WKStringRef WKDatabaseManagerGetOriginKey()
 {
 #if ENABLE(SQL_DATABASE)
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::originKey()).leakRef();
+    static API::String* key = API::String::create(WebDatabaseManagerProxy::originKey()).leakRef();
     return toAPI(key);
 #else
     return 0;
@@ -53,7 +53,7 @@ WKStringRef WKDatabaseManagerGetOriginKey()
 WKStringRef WKDatabaseManagerGetOriginQuotaKey()
 {
 #if ENABLE(SQL_DATABASE)
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::originQuotaKey()).leakRef();
+    static API::String* key = API::String::create(WebDatabaseManagerProxy::originQuotaKey()).leakRef();
     return toAPI(key);
 #else
     return 0;
@@ -63,7 +63,7 @@ WKStringRef WKDatabaseManagerGetOriginQuotaKey()
 WKStringRef WKDatabaseManagerGetOriginUsageKey()
 {
 #if ENABLE(SQL_DATABASE)
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::originUsageKey()).leakRef();
+    static API::String* key = API::String::create(WebDatabaseManagerProxy::originUsageKey()).leakRef();
     return toAPI(key);
 #else
     return 0;
@@ -73,7 +73,7 @@ WKStringRef WKDatabaseManagerGetOriginUsageKey()
 WKStringRef WKDatabaseManagerGetDatabaseDetailsKey()
 {
 #if ENABLE(SQL_DATABASE)
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsKey()).leakRef();
+    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsKey()).leakRef();
     return toAPI(key);
 #else
     return 0;
@@ -83,7 +83,7 @@ WKStringRef WKDatabaseManagerGetDatabaseDetailsKey()
 WKStringRef WKDatabaseManagerGetDatabaseDetailsNameKey()
 {
 #if ENABLE(SQL_DATABASE)
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsNameKey()).leakRef();
+    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsNameKey()).leakRef();
     return toAPI(key);
 #else
     return 0;
@@ -93,7 +93,7 @@ WKStringRef WKDatabaseManagerGetDatabaseDetailsNameKey()
 WKStringRef WKDatabaseManagerGetDatabaseDetailsDisplayNameKey()
 {
 #if ENABLE(SQL_DATABASE)
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsDisplayNameKey()).leakRef();
+    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsDisplayNameKey()).leakRef();
     return toAPI(key);
 #else
     return 0;
@@ -103,7 +103,7 @@ WKStringRef WKDatabaseManagerGetDatabaseDetailsDisplayNameKey()
 WKStringRef WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey()
 {
 #if ENABLE(SQL_DATABASE)
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey()).leakRef();
+    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey()).leakRef();
     return toAPI(key);
 #else
     return 0;
@@ -113,7 +113,7 @@ WKStringRef WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey()
 WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey()
 {
 #if ENABLE(SQL_DATABASE)
-    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()).leakRef();
+    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()).leakRef();
     return toAPI(key);
 #else
     return 0;

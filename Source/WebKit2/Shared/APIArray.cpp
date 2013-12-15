@@ -26,7 +26,7 @@
 #include "config.h"
 #include "APIArray.h"
 
-#include "WebString.h"
+#include "APIString.h"
 
 namespace API {
 
@@ -40,13 +40,13 @@ PassRefPtr<Array> Array::create(Vector<RefPtr<Object>> elements)
     return adoptRef(new Array(std::move(elements)));
 }
 
-PassRefPtr<Array> Array::createStringArray(const Vector<String>& strings)
+PassRefPtr<Array> Array::createStringArray(const Vector<WTF::String>& strings)
 {
     Vector<RefPtr<Object>> elements;
     elements.reserveInitialCapacity(strings.size());
 
     for (const auto& string : strings)
-        elements.uncheckedAppend(WebKit::WebString::create(string));
+        elements.uncheckedAppend(API::String::create(string));
 
     return create(std::move(elements));
 }

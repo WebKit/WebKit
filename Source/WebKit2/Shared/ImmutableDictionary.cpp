@@ -27,7 +27,7 @@
 #include "ImmutableDictionary.h"
 
 #include "APIArray.h"
-#include "WebString.h"
+#include "APIString.h"
 
 namespace WebKit {
 
@@ -59,7 +59,7 @@ PassRefPtr<API::Array> ImmutableDictionary::keys() const
     keys.reserveInitialCapacity(m_map.size());
 
     for (const auto& key : m_map.keys())
-        keys.uncheckedAppend(WebString::create(key));
+        keys.uncheckedAppend(API::String::create(key));
 
     return API::Array::create(std::move(keys));
 }

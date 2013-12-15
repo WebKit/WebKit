@@ -29,6 +29,7 @@
 #include "APIArray.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
+#include "APIString.h"
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
@@ -42,7 +43,6 @@
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"
 #include "WebSerializedScriptValue.h"
-#include "WebString.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"
 #include "WebURLResponse.h"
@@ -103,7 +103,7 @@ public:
             return true;
         }
         case API::Object::Type::String: {
-            WebString* string = static_cast<WebString*>(m_root);
+            API::String* string = static_cast<API::String*>(m_root);
             encoder << string->string();
             return true;
         }
@@ -314,7 +314,7 @@ public:
             String string;
             if (!decoder.decode(string))
                 return false;
-            coder.m_root = WebString::create(string);
+            coder.m_root = API::String::create(string);
             break;
         }
         case API::Object::Type::SerializedScriptValue: {

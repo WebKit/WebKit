@@ -168,8 +168,8 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
         for (const auto& databaseDetails : originAndDatabases.databases) {
             HashMap<String, RefPtr<API::Object>> detailsMap;
 
-            detailsMap.set(databaseDetailsNameKey(), WebString::create(databaseDetails.name()));
-            detailsMap.set(databaseDetailsDisplayNameKey(), WebString::create(databaseDetails.displayName()));
+            detailsMap.set(databaseDetailsNameKey(), API::String::create(databaseDetails.name()));
+            detailsMap.set(databaseDetailsDisplayNameKey(), API::String::create(databaseDetails.displayName()));
             detailsMap.set(databaseDetailsExpectedUsageKey(), API::UInt64::create(databaseDetails.expectedUsage()));
             detailsMap.set(databaseDetailsCurrentUsageKey(), API::UInt64::create(databaseDetails.currentUsage()));
 

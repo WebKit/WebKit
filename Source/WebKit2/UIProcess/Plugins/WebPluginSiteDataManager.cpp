@@ -186,7 +186,7 @@ void WebPluginSiteDataManager::clearSiteData(API::Array* sites, uint64_t flags, 
         }
 
         for (size_t i = 0; i < sites->size(); ++i) {
-            if (WebString* site = sites->at<WebString>(i))
+            if (API::String* site = sites->at<API::String>(i))
                 sitesVector.append(site->string());
         }
     }

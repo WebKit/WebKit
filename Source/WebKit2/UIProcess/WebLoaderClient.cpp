@@ -274,14 +274,14 @@ void WebLoaderClient::didFailToInitializePlugin(WebPageProxy* page, ImmutableDic
     if (m_client.didFailToInitializePlugin_deprecatedForUseWithV0)
         m_client.didFailToInitializePlugin_deprecatedForUseWithV0(
             toAPI(page),
-            toAPI(pluginInformation->get<WebString>(pluginInformationMIMETypeKey())),
+            toAPI(pluginInformation->get<API::String>(pluginInformationMIMETypeKey())),
             m_client.base.clientInfo);
 
     if (m_client.pluginDidFail_deprecatedForUseWithV1)
         m_client.pluginDidFail_deprecatedForUseWithV1(
             toAPI(page),
             kWKErrorCodeCannotLoadPlugIn,
-            toAPI(pluginInformation->get<WebString>(pluginInformationMIMETypeKey())),
+            toAPI(pluginInformation->get<API::String>(pluginInformationMIMETypeKey())),
             0,
             0,
             m_client.base.clientInfo);
@@ -300,9 +300,9 @@ void WebLoaderClient::didBlockInsecurePluginVersion(WebPageProxy* page, Immutabl
         m_client.pluginDidFail_deprecatedForUseWithV1(
             toAPI(page),
             kWKErrorCodeInsecurePlugInVersion,
-            toAPI(pluginInformation->get<WebString>(pluginInformationMIMETypeKey())),
-            toAPI(pluginInformation->get<WebString>(pluginInformationBundleIdentifierKey())),
-            toAPI(pluginInformation->get<WebString>(pluginInformationBundleVersionKey())),
+            toAPI(pluginInformation->get<API::String>(pluginInformationMIMETypeKey())),
+            toAPI(pluginInformation->get<API::String>(pluginInformationBundleIdentifierKey())),
+            toAPI(pluginInformation->get<API::String>(pluginInformationBundleVersionKey())),
             m_client.base.clientInfo);
 
     if (m_client.pluginDidFail)
@@ -324,7 +324,7 @@ PluginModuleLoadPolicy WebLoaderClient::pluginLoadPolicy(WebPageProxy* page, Plu
         loadPolicy = toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(pluginInformation), &unavailabilityDescriptionOut, m_client.base.clientInfo));
 
     if (unavailabilityDescriptionOut) {
-        RefPtr<WebString> webUnavailabilityDescription = adoptRef(toImpl(unavailabilityDescriptionOut));
+        RefPtr<API::String> webUnavailabilityDescription = adoptRef(toImpl(unavailabilityDescriptionOut));
         unavailabilityDescription = webUnavailabilityDescription->string();
     }
     

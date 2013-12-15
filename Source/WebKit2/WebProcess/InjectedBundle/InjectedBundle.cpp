@@ -414,7 +414,7 @@ PassRefPtr<API::Array> InjectedBundle::originsWithApplicationCache()
     originIdentifiers.reserveInitialCapacity(origins.size());
 
     for (const auto& origin : origins)
-        originIdentifiers.uncheckedAppend(WebString::create(origin->databaseIdentifier()));
+        originIdentifiers.uncheckedAppend(API::String::create(origin->databaseIdentifier()));
 
     return API::Array::create(std::move(originIdentifiers));
 }
@@ -485,7 +485,7 @@ static Vector<String> toStringVector(API::Array* patterns)
         return patternsVector;
 
     patternsVector.reserveInitialCapacity(size);
-    for (const auto& entry : patterns->elementsOfType<WebString>())
+    for (const auto& entry : patterns->elementsOfType<API::String>())
         patternsVector.uncheckedAppend(entry->string());
     return patternsVector;
 }

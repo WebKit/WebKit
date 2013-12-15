@@ -27,8 +27,8 @@
 #include "WebRenderObject.h"
 
 #include "APIArray.h"
+#include "APIString.h"
 #include "WebPage.h"
-#include "WebString.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
@@ -76,7 +76,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
                 classNames.reserveInitialCapacity(element->classNames().size());
 
                 for (size_t i = 0, size = element->classNames().size(); i < size; ++i)
-                    classNames.append(WebString::create(element->classNames()[i]));
+                    classNames.append(API::String::create(element->classNames()[i]));
 
                 m_elementClassNames = API::Array::create(std::move(classNames));
             }

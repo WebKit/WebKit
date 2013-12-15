@@ -28,7 +28,7 @@
 
 #if WK_API_ENABLED
 
-#import "WebString.h"
+#import "APIString.h"
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;
@@ -37,7 +37,7 @@ using namespace WebKit;
 
 - (NSObject *)_web_createTarget
 {
-    const String& string = static_cast<WebString*>(&self._apiObject)->string();
+    const String& string = static_cast<API::String*>(&self._apiObject)->string();
     return (NSString *)CFMakeCollectable(string.createCFString().leakRef());
 }
 

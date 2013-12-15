@@ -488,7 +488,7 @@ void WebContext::didReceiveInvalidMessage(const CoreIPC::StringReference& messag
     messageNameStringBuilder.append(".");
     messageNameStringBuilder.append(messageName.data(), messageName.size());
 
-    s_invalidMessageCallback(toAPI(WebString::create(messageNameStringBuilder.toString()).get()));
+    s_invalidMessageCallback(toAPI(API::String::create(messageNameStringBuilder.toString()).get()));
 }
 
 void WebContext::processDidCachePage(WebProcessProxy* process)
@@ -1277,20 +1277,20 @@ void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
 
     for (const auto& pluginModule : pluginModules) {
         ImmutableDictionary::MapType map;
-        map.set(ASCIILiteral("path"), WebString::create(pluginModule.path));
-        map.set(ASCIILiteral("name"), WebString::create(pluginModule.info.name));
-        map.set(ASCIILiteral("file"), WebString::create(pluginModule.info.file));
-        map.set(ASCIILiteral("desc"), WebString::create(pluginModule.info.desc));
+        map.set(ASCIILiteral("path"), API::String::create(pluginModule.path));
+        map.set(ASCIILiteral("name"), API::String::create(pluginModule.info.name));
+        map.set(ASCIILiteral("file"), API::String::create(pluginModule.info.file));
+        map.set(ASCIILiteral("desc"), API::String::create(pluginModule.info.desc));
 
         Vector<RefPtr<API::Object>> mimeTypes;
         mimeTypes.reserveInitialCapacity(pluginModule.info.mimes.size());
         for (const auto& mimeClassInfo : pluginModule.info.mimes)
-            mimeTypes.uncheckedAppend(WebString::create(mimeClassInfo.type));
+            mimeTypes.uncheckedAppend(API::String::create(mimeClassInfo.type));
         map.set(ASCIILiteral("mimes"), API::Array::create(std::move(mimeTypes)));
 
 #if PLATFORM(MAC)
-        map.set(ASCIILiteral("bundleId"), WebString::create(pluginModule.bundleIdentifier));
-        map.set(ASCIILiteral("version"), WebString::create(pluginModule.versionString));
+        map.set(ASCIILiteral("bundleId"), API::String::create(pluginModule.bundleIdentifier));
+        map.set(ASCIILiteral("version"), API::String::create(pluginModule.versionString));
 #endif
 
         plugins.uncheckedAppend(ImmutableDictionary::create(std::move(map)));

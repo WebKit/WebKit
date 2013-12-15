@@ -30,11 +30,11 @@
 #include "APIFrameHandle.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
+#include "APIString.h"
 #include "ArgumentCoders.h"
 #include "ArgumentEncoder.h"
 #include "MutableDictionary.h"
 #include "WebSerializedScriptValue.h"
-#include "WebString.h"
 #include "WebURL.h"
 
 namespace WebKit {
@@ -153,7 +153,7 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
         break;
 
     case API::Object::Type::String: {
-        auto& string = static_cast<const WebString&>(object);
+        auto& string = static_cast<const API::String&>(object);
         encoder << string.string();
         break;
     }
@@ -274,7 +274,7 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
         if (!decoder.decode(string))
             return false;
 
-        result = WebString::create(string);
+        result = API::String::create(string);
         break;
     }
 

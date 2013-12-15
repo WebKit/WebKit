@@ -154,7 +154,7 @@ void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage* page, Ra
 
         ASSERT(typesArray->size() == dataArray->size());
 
-        for (const auto& type : typesArray->elementsOfType<WebString>())
+        for (const auto& type : typesArray->elementsOfType<API::String>())
             pasteboardTypes.append(type->string());
 
         for (const auto& item : dataArray->elementsOfType<WebData>()) {
