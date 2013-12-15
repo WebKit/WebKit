@@ -39,7 +39,7 @@ public:
     SVGResourcesCache();
     ~SVGResourcesCache();
 
-    static SVGResources* cachedResourcesForRenderObject(const RenderObject*);
+    static SVGResources* cachedResourcesForRenderObject(const RenderObject&);
 
     // Called from all SVG renderers addChild() methods.
     static void clientWasAddedToTree(RenderObject&);

@@ -53,13 +53,13 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(RenderElement& renderer) co
     // First operate on the resources of the given renderer.
     // <marker id="a"> <path marker-start="url(#b)"/> ...
     // <marker id="b" marker-start="url(#a)"/>
-    if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(&renderer)) {
+    if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer)) {
         HashSet<RenderSVGResourceContainer*> resourceSet;
         resources->buildSetOfResources(resourceSet);
 
         // Walk all resources and check wheter they reference any resource contained in the resources set.
-        for (auto it = resourceSet.begin(), end = resourceSet.end(); it != end; ++it) {
-            if (m_allResources.contains(*it))
+        for (auto resource : resourceSet) {
+            if (m_allResources.contains(resource))
                 return true;
         }
     }
@@ -68,7 +68,7 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(RenderElement& renderer) co
     // <marker id="a"> <path marker-start="url(#b)"/> ...
     // <marker id="b"> <path marker-start="url(#a)"/> ...
     for (auto& child : childrenOfType<RenderElement>(renderer)) {
-        SVGResources* childResources = SVGResourcesCache::cachedResourcesForRenderObject(&child);
+        SVGResources* childResources = SVGResourcesCache::cachedResourcesForRenderObject(child);
         if (!childResources)
             continue;
         

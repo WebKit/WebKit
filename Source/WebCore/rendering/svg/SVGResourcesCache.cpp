@@ -89,15 +89,14 @@ static inline SVGResourcesCache* resourcesCacheFromRenderObject(const RenderObje
     return cache;
 }
 
-SVGResources* SVGResourcesCache::cachedResourcesForRenderObject(const RenderObject* renderer)
+SVGResources* SVGResourcesCache::cachedResourcesForRenderObject(const RenderObject& renderer)
 {
-    ASSERT(renderer);
-    return resourcesCacheFromRenderObject(*renderer)->m_cache.get(renderer);
+    return resourcesCacheFromRenderObject(renderer)->m_cache.get(&renderer);
 }
 
 void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)
 {
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(&renderer);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
     if (!resources)
         return;
 
@@ -166,7 +165,7 @@ void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
 
 void SVGResourcesCache::clientDestroyed(RenderElement& renderer)
 {
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(&renderer);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
     if (resources)
         resources->removeClientFromCache(&renderer);
 

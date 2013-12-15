@@ -128,7 +128,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
         m_paintInfo->context->clipPath(clipPath->path(renderer.objectBoundingBox()), clipPath->windRule());
     }
 
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(m_renderer);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(*m_renderer);
     if (!resources) {
 #if ENABLE(FILTERS)
         if (svgStyle.hasFilter())

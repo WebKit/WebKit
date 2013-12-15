@@ -190,14 +190,14 @@ const RenderSVGRoot& SVGRenderSupport::findTreeRootObject(const RenderElement& s
     return toRenderSVGRoot(*renderer);
 }
 
-static inline void invalidateResourcesOfChildren(RenderObject* start)
+static inline void invalidateResourcesOfChildren(RenderObject& start)
 {
-    ASSERT(!start->needsLayout());
+    ASSERT(!start.needsLayout());
     if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(start))
-        resources->removeClientFromCache(start, false);
+        resources->removeClientFromCache(&start, false);
 
-    for (RenderObject* child = start->firstChildSlow(); child; child = child->nextSibling())
-        invalidateResourcesOfChildren(child);
+    for (RenderObject* child = start.firstChildSlow(); child; child = child->nextSibling())
+        invalidateResourcesOfChildren(*child);
 }
 
 static inline bool layoutSizeOfNearestViewportChanged(const RenderElement& renderer)
@@ -293,9 +293,8 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
     }
 
     // If the layout size changed, invalidate all resources of all children that didn't go through the layout() code path.
-    HashSet<RenderObject*>::iterator end = notlayoutedObjects.end();
-    for (HashSet<RenderObject*>::iterator it = notlayoutedObjects.begin(); it != end; ++it)
-        invalidateResourcesOfChildren(*it);
+    for (auto child : notlayoutedObjects)
+        invalidateResourcesOfChildren(*child);
 }
 
 bool SVGRenderSupport::isOverflowHidden(const RenderElement& renderer)
@@ -369,7 +368,7 @@ void SVGRenderSupport::intersectRepaintRectWithShadows(const RenderElement& rend
 
 void SVGRenderSupport::intersectRepaintRectWithResources(const RenderElement& renderer, FloatRect& repaintRect)
 {
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(&renderer);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
     if (!resources)
         return;
 
@@ -392,7 +391,7 @@ bool SVGRenderSupport::filtersForceContainerLayout(const RenderElement& renderer
     if (!renderer.normalChildNeedsLayout())
         return false;
 
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(&renderer);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
     if (!resources || !resources->filter())
         return false;
 
@@ -403,7 +402,7 @@ bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const 
 {
     // We just take clippers into account to determine if a point is on the node. The Specification may
     // change later and we also need to check maskers.
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(&renderer);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
     if (!resources)
         return true;
 

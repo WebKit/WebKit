@@ -1,3 +1,42 @@
+2013-12-14  Sam Weinig  <sam@webkit.org>
+
+        CTTE: SVGResourcesCache::cachedResourcesForRenderObject() should take a reference
+        https://bugs.webkit.org/show_bug.cgi?id=125743
+
+        Reviewed by Dan Bernstein.
+
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::selfWillPaint):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::imageChanged):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::requestPaintingResource):
+        (WebCore::removeFromCacheAndInvalidateDependencies):
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::shouldGenerateMarkerPositions):
+        (WebCore::RenderSVGShape::markerRect):
+        (WebCore::RenderSVGShape::drawMarkers):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::invalidateResourcesOfChildren):
+        (WebCore::SVGRenderSupport::layoutChildren):
+        (WebCore::SVGRenderSupport::intersectRepaintRectWithResources):
+        (WebCore::SVGRenderSupport::filtersForceContainerLayout):
+        (WebCore::SVGRenderSupport::pointInClippingArea):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::cachedResourcesForRenderObject):
+        (WebCore::SVGResourcesCache::clientLayoutChanged):
+        (WebCore::SVGResourcesCache::clientDestroyed):
+        * rendering/svg/SVGResourcesCache.h:
+        * rendering/svg/SVGResourcesCycleSolver.cpp:
+        (WebCore::SVGResourcesCycleSolver::resourceContainsCycles):
+
 2013-12-14  Dan Bernstein  <mitz@apple.com>
 
         Clean up the project after r160487
