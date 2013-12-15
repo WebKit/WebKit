@@ -1,3 +1,13 @@
+2013-12-14  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Win] Unreviewed build fix
+
+        QTMovieWin should not be build at the moment, but some builders
+        are continuing to attempt it. This change marks the project
+        file as excluded from building.
+
+        * WebKit.vcxproj/WebKit.sln: Mark QTMovieWin as excluded from build.
+
 2013-12-13  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build correction after r160548.
