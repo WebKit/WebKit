@@ -159,7 +159,7 @@ void WebTextCheckerClient::guessesForWord(uint64_t tag, const String& word, Vect
     RefPtr<API::Array> wkGuesses = adoptRef(toImpl(m_client.guessesForWord(tag, toAPI(word.impl()), m_client.base.clientInfo)));
     size_t numGuesses = wkGuesses->size();
     for (size_t i = 0; i < numGuesses; ++i)
-        guesses.append(wkGuesses->at<WebString>(i)->string());
+        guesses.append(wkGuesses->at<API::String>(i)->string());
 }
 
 void WebTextCheckerClient::learnWord(uint64_t tag, const String& word)
