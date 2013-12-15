@@ -26,6 +26,8 @@
 #include "config.h"
 #include "TestBrowsingContextLoadDelegate.h"
 
+#if WK_API_ENABLED
+
 @implementation TestBrowsingContextLoadDelegate
 
 @synthesize onLoadBlock = _onLoadBlock;
@@ -46,3 +48,5 @@
 }
 
 @end
+
+#endif // WK_API_ENABLED

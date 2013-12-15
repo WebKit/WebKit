@@ -1,3 +1,10 @@
+2013-12-15  Dan Bernstein  <mitz@apple.com>
+
+        32-bit build fix.
+
+        * TestWebKitAPI/mac/TestBrowsingContextLoadDelegate.h:
+        * TestWebKitAPI/mac/TestBrowsingContextLoadDelegate.mm:
+
 2013-12-14  Tim Horton  <timothy_horton@apple.com>
 
         stylebot should warn when FeatureDefines differ
