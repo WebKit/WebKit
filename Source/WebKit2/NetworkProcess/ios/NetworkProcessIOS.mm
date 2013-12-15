@@ -28,8 +28,13 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#import <WebCore/CertificateInfo.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
+
+@interface NSURLRequest (WKDetails)
++ (void)setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
+@end
 
 using namespace WebCore;
 
@@ -57,9 +62,9 @@ void NetworkProcess::platformSetCacheModel(CacheModel)
     notImplemented();
 }
 
-void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String&)
+void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
-    notImplemented();
+    [NSURLRequest setAllowsSpecificHTTPSCertificate:(NSArray *)certificateInfo.certificateChain() forHost:host];
 }
 
 void NetworkProcess::clearCacheForAllOrigins(uint32_t)
