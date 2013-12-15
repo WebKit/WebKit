@@ -53,7 +53,9 @@
 + (NSArray *)supportedImageMIMETypes;
 + (NSArray *)unsupportedTextMIMETypes;
 
+#if !TARGET_OS_IPHONE
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
+#endif
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form;
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element;

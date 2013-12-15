@@ -26,7 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+
+#if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
+#else
+#import <WebKit/WAKAppKitStubs.h>
+#import <WebKit/WAKView.h>
+#endif
 
 #define WebDragImageAlpha 0.75f
 
@@ -39,8 +46,11 @@
 // Returns the nearest enclosing view of the given class, or nil if none.
 - (NSView *)_web_superviewOfClass:(Class)viewClass;
 - (WebFrameView *)_web_parentWebFrameView;
+#if !TARGET_OS_IPHONE
 - (WebView *)_webView;
+#endif
 
+#if !TARGET_OS_IPHONE
 // returns whether a drag should begin starting with mouseDownEvent; if the time
 // passes expiration or the mouse moves less than the hysteresis before the mouseUp event,
 // returns NO, else returns YES.
@@ -65,9 +75,20 @@
                    pasteboard:(NSPasteboard *)pasteboard 
                        source:(id)source
                        offset:(NSPoint *)dragImageOffset;
+#endif
 
 - (BOOL)_web_firstResponderIsSelfOrDescendantView;
 
 - (NSRect)_web_convertRect:(NSRect)aRect toView:(NSView *)aView;
 
 @end
+
+#if TARGET_OS_IPHONE
+@class WebFrame;
+@class WebView;
+
+@interface NSView (WebDocumentViewExtras)
+- (WebFrame *)_frame;
+- (WebView *)_webView;
+@end
+#endif

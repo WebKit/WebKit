@@ -29,6 +29,9 @@
 
 @interface WebApplicationCache: NSObject
 
+#if TARGET_OS_IPHONE
++ (void)initializeWithBundleIdentifier:(NSString *)bundleIdentifier;
+#endif
 + (long long)maximumSize;
 + (void)setMaximumSize:(long long)size;
 

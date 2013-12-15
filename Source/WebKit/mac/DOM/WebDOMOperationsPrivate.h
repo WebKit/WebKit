@@ -46,4 +46,9 @@ typedef BOOL (^WebArchiveSubframeFilter)(WebFrame* subframe);
 
 @interface DOMNode (WebDOMNodeOperationsPrivate)
 - (WebArchive *)webArchiveByFilteringSubframes:(WebArchiveSubframeFilter)webArchiveSubframeFilter;
+#if TARGET_OS_IPHONE
+- (BOOL)isHorizontalWritingMode;
+- (void)hidePlaceholder;
+- (void)showPlaceholderIfNecessary;
+#endif
 @end

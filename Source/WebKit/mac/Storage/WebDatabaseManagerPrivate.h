@@ -44,6 +44,13 @@ extern NSString *WebDatabaseDidModifyOriginNotification;
 extern NSString *WebDatabaseDidModifyDatabaseNotification;
 extern NSString *WebDatabaseIdentifierKey;
 
+#if TARGET_OS_IPHONE
+#import <WebKit/WebUIKitSupport.h>
+
+// Posted when origins have changed.
+extern CFStringRef WebDatabaseOriginsDidChangeNotification;
+#endif
+
 @class WebSecurityOrigin;
 
 @interface WebDatabaseManager : NSObject
@@ -63,6 +70,9 @@ extern NSString *WebDatabaseIdentifierKey;
 - (BOOL)deleteOrigin:(WebSecurityOrigin *)origin;
 - (BOOL)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin;
 
+#if TARGET_OS_IPHONE
++ (void)scheduleEmptyDatabaseRemoval;
+#endif
 @end
 
 #endif

@@ -28,8 +28,10 @@
 
 #import <WebKit/WebHTMLView.h>
 
+#if !TARGET_OS_IPHONE
 #if !defined(ENABLE_NETSCAPE_PLUGIN_API)
 #define ENABLE_NETSCAPE_PLUGIN_API 1
+#endif
 #endif
 
 @class DOMDocumentFragment;
@@ -54,31 +56,41 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 
 - (void)close;
 
+#if !TARGET_OS_IPHONE
 // Modifier (flagsChanged) tracking SPI
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (void)_updateMouseoverWithFakeEvent;
 
 - (void)_setAsideSubviews;
 - (void)_restoreSubviews;
+#endif
 
 - (BOOL)_insideAnotherHTMLView;
 - (void)_clearLastHitViewIfSelf;
+#if !TARGET_OS_IPHONE
 - (void)_updateMouseoverWithEvent:(NSEvent *)event;
 
 + (NSArray *)_insertablePasteboardTypes;
 + (NSArray *)_selectionPasteboardTypes;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
+#endif
 
 - (void)_frameOrBoundsChanged;
 
+#if !TARGET_OS_IPHONE
 - (void)_handleAutoscrollForMouseDragged:(NSEvent *)event;
+#endif
 - (WebPluginController *)_pluginController;
 
 // FIXME: _selectionRect is deprecated in favor of selectionRect, which is in protocol WebDocumentSelection.
 // We can't remove this yet because it's still in use by Mail.
 - (NSRect)_selectionRect;
 
+#if !TARGET_OS_IPHONE
 - (void)_startAutoscrollTimer:(NSEvent *)event;
+#else
+- (void)_startAutoscrollTimer:(WebEvent *)event;
+#endif
 - (void)_stopAutoscrollTimer;
 
 - (BOOL)_canEdit;
@@ -93,6 +105,7 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 
 - (void)_setToolTip:(NSString *)string;
 
+#if !TARGET_OS_IPHONE
 // SPI used by Mail.
 // FIXME: These should all be moved to WebView; we won't always have a WebHTMLView.
 - (NSImage *)_selectionDraggingImage;
@@ -108,6 +121,7 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (void)_setHighlighter:(id <WebHTMLHighlighter>)highlighter ofType:(NSString *)type;
 - (void)_removeHighlighterOfType:(NSString *)type;
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard forType:(NSString *)pboardType inContext:(DOMRange *)context subresources:(NSArray **)subresources;
+#endif
 
 #if ENABLE_NETSCAPE_PLUGIN_API
 - (void)_resumeNullEventsForAllNetscapePlugins;
@@ -117,10 +131,12 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (BOOL)_isUsingAcceleratedCompositing;
 - (NSView *)_compositingLayersHostingView;
 
+#if !TARGET_OS_IPHONE
 // SPI for printing (should be converted to API someday). When the WebHTMLView isn't being printed
 // directly, this method must be called before paginating, or the computed height might be incorrect.
 // Typically this would be called from inside an override of -[NSView knowsPageRange:].
 - (void)_layoutForPrinting;
+#endif
 - (CGFloat)_adjustedBottomOfPageWithTop:(CGFloat)top bottom:(CGFloat)bottom limit:(CGFloat)bottomLimit;
 - (BOOL)_isInPrintMode;
 - (BOOL)_beginPrintModeWithPageWidth:(float)pageWidth height:(float)pageHeight shrinkToFit:(BOOL)shrinkToFit;
@@ -133,6 +149,12 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (BOOL)_beginScreenPaginationModeWithPageSize:(CGSize)pageSize shrinkToFit:(BOOL)shrinkToFit;
 - (void)_endScreenPaginationMode;
 
+#if !TARGET_OS_IPHONE
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
+#endif
+
+#if TARGET_OS_IPHONE
+- (id)accessibilityRootElement;
+#endif
 
 @end

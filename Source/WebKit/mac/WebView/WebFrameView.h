@@ -26,7 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !TARGET_OS_IPHONE
 #import <Cocoa/Cocoa.h>
+#else
+#import <WebKit/WAKAppKitStubs.h>
+#endif
 
 @class WebDataSource;
 @class WebFrame;
@@ -62,6 +66,7 @@
 */
 @property (nonatomic) BOOL allowsScrolling;
 
+#if !TARGET_OS_IPHONE
 /*!
     @property canPrintHeadersAndFooters
     @abstract Whether this frame can print headers and footers
@@ -74,6 +79,7 @@
     @result A newly created print operation object
 */
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo;
+#endif
 
 /*!
     @property documentViewShouldHandlePrint

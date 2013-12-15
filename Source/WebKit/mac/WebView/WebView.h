@@ -26,7 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !TARGET_OS_IPHONE
 #import <Cocoa/Cocoa.h>
+#else
+#import <WebKit/WAKAppKitStubs.h>
+#if !defined(IBAction)
+#define IBAction void
+#endif
+#endif
 
 @class DOMCSSStyleDeclaration;
 @class DOMDocument;
@@ -69,7 +76,9 @@ extern NSString *WebElementLinkLabelKey;        // NSString of the text within t
 */
 extern NSString *WebViewProgressStartedNotification;
 extern NSString *WebViewProgressEstimateChangedNotification;
+#if !TARGET_OS_IPHONE
 extern NSString *WebViewProgressFinishedNotification;
+#endif
 
 /*!
     @class WebView
@@ -144,6 +153,7 @@ extern NSString *WebViewProgressFinishedNotification;
 */
 + (void)setMIMETypesShownAsHTML:(NSArray *)MIMETypes;
 
+#if !TARGET_OS_IPHONE
 /*!
     @method URLFromPasteboard:
     @abstract Returns a URL from a pasteboard
@@ -163,6 +173,7 @@ extern NSString *WebViewProgressFinishedNotification;
     which is the text inside the anchor tag.
 */
 + (NSString *)URLTitleFromPasteboard:(NSPasteboard *)pasteboard;
+#endif
 
 /*!
     @method registerURLSchemeAsLocal:
@@ -442,6 +453,7 @@ extern NSString *WebViewProgressFinishedNotification;
 */
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
 
+#if !TARGET_OS_IPHONE
 /*!
     @property pasteboardTypesForSelection
     @abstract The pasteboard types that the WebView can use for the current selection
@@ -485,6 +497,7 @@ extern NSString *WebViewProgressFinishedNotification;
     @abstract Removes the drag caret from the WebView
 */
 - (void)removeDragCaret;
+#endif /* !TARGET_OS_IPHONE */
 
 /*!
     @property drawsBackground
@@ -519,16 +532,21 @@ extern NSString *WebViewProgressFinishedNotification;
 */
 @property (nonatomic, readonly, copy) NSString *mainFrameTitle;
 
+#if !TARGET_OS_IPHONE
 /*!
     @property mainFrameIcon
     @abstract The site icon for the current page loaded in the mainFrame, or nil.
 */
 @property (nonatomic, readonly, strong) NSImage *mainFrameIcon;
+#endif
 
 @end
 
-
+#if TARGET_OS_IPHONE
+@interface WebView (WebIBActions)
+#else
 @interface WebView (WebIBActions) <NSUserInterfaceValidations>
+#endif
 - (IBAction)takeStringURLFrom:(id)sender;
 - (IBAction)stopLoading:(id)sender;
 - (IBAction)reload:(id)sender;
@@ -543,8 +561,13 @@ extern NSString *WebViewProgressFinishedNotification;
 - (IBAction)makeTextSmaller:(id)sender;
 @property (nonatomic, readonly) BOOL canMakeTextStandardSize;
 - (IBAction)makeTextStandardSize:(id)sender;
+#if !TARGET_OS_IPHONE
 - (IBAction)toggleContinuousSpellChecking:(id)sender;
 - (IBAction)toggleSmartInsertDelete:(id)sender;
+#endif
+#if TARGET_OS_IPHONE
+- (void)stopLoadingAndClear;
+#endif
 @end
 
 
@@ -570,7 +593,9 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 @property (nonatomic, strong) DOMCSSStyleDeclaration *typingStyle;
 @property (nonatomic) BOOL smartInsertDeleteEnabled;
 @property (nonatomic, getter=isContinuousSpellCheckingEnabled) BOOL continuousSpellCheckingEnabled;
+#if !TARGET_OS_IPHONE
 @property (nonatomic, readonly) NSInteger spellCheckerDocumentTag;
+#endif
 @property (nonatomic, readonly, strong) NSUndoManager *undoManager;
 @property (nonatomic, strong) id editingDelegate;
 - (DOMCSSStyleDeclaration *)styleDeclarationWithText:(NSString *)text;
@@ -620,6 +645,14 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 - (void)selectSentence:(id)sender;
 
 - (void)overWrite:(id)sender;
+
+#if TARGET_OS_IPHONE
+- (void)clearText:(id)sender;
+- (void)insertDictationPhrases:(NSArray *)dictationPhrases metadata:(id)metadata;
+- (void)toggleBold:(id)sender;
+- (void)toggleItalic:(id)sender;
+- (void)toggleUnderline:(id)sender;
+#endif
 
 /* 
 The following methods are declared in NSResponder.h.
@@ -691,3 +724,40 @@ a custom implementation for each.
 */
  
 @end
+
+#if TARGET_OS_IPHONE
+
+@interface WebView (WebViewIOS)
++ (void)enableWebThread;
++ (void)garbageCollectNow;
++ (void)purgeInactiveFontData;
++ (void)drainLayerPool;
++ (void)discardAllCompiledCode;
++ (void)registerForMemoryNotifications;
++ (void)releaseFastMallocMemoryOnCurrentThread;
++ (BOOL)isCharacterSmartReplaceExempt:(unichar)character isPreviousCharacter:(BOOL)b;
+
+/*!
+ * @method willEnterBackgroundWithCompletionHandler:
+ * @discussion This is invoked when the app gets a did enter background
+ * notification. It frees up caches on the web thread and invokes the handler
+ * block on the main thread when done.
+ *
+ * @param handler The block to invoke on the main thread once the cleanup is
+ * done.
+ */
++ (void)willEnterBackgroundWithCompletionHandler:(void(^)(void))handler;
+
+/*!
+ * @method updateLayoutIgnorePendingStyleSheets:
+ * @discussion This method forces the page to layout even if there are external
+ * pending style sheets.
+ */
+- (void)updateLayoutIgnorePendingStyleSheets;
+@end
+
+@interface NSObject (WebViewClassDelegate)
+- (BOOL)viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
+@end
+
+#endif /* TARGET_OS_IPHONE */

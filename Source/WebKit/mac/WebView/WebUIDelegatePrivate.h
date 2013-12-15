@@ -29,12 +29,18 @@
 #import <WebKit/WebAllowDenyPolicyListener.h>
 #import <WebKit/WebUIDelegate.h>
 
+#if !TARGET_OS_IPHONE
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
 #define ENABLE_DASHBOARD_SUPPORT 1
 #endif
+#endif
 
 #if !defined(ENABLE_FULLSCREEN_API)
+#if !TARGET_OS_IPHONE
 #define ENABLE_FULLSCREEN_API 1
+#else
+#define ENABLE_FULLSCREEN_API 0
+#endif
 #endif
 
 // Mail on Tiger expects the old value for WebMenuItemTagSearchInGoogle
@@ -174,14 +180,18 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (void)webView:(WebView *)webView dashboardRegionsChanged:(NSDictionary *)regions;
 #endif
 
+#if !TARGET_OS_IPHONE
 - (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view;
+#endif
 - (void)webView:(WebView *)sender didDrawRect:(NSRect)rect;
 - (void)webView:(WebView *)sender didScrollDocumentInFrameView:(WebFrameView *)frameView;
 // FIXME: If we ever make this method public, it should include a WebFrame parameter.
 - (BOOL)webViewShouldInterruptJavaScript:(WebView *)sender;
+#if !TARGET_OS_IPHONE
 - (void)webView:(WebView *)sender willPopupMenu:(NSMenu *)menu;
 - (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element;
 - (void)webView:(WebView *)sender saveFrameView:(WebFrameView *)frameView showingPanel:(BOOL)showingPanel;
+#endif
 - (BOOL)webView:(WebView *)sender didPressMissingPluginButton:(DOMElement *)element;
 /*!
     @method webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:
@@ -243,5 +253,16 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 #endif
 
 - (void)webView:(WebView *)sender didDrawFrame:(WebFrame *)frame;
+
+#if TARGET_OS_IPHONE
+/*!
+ @method webViewSupportedOrientationsUpdated:
+ @param sender The WebView sending the delegate method
+ @abstract Notify the client that the content has updated the orientations it claims to support.
+ */
+- (void)webViewSupportedOrientationsUpdated:(WebView *)sender;
+
+- (BOOL)webViewCanCheckGeolocationAuthorizationStatus:(WebView *)sender;
+#endif
 
 @end

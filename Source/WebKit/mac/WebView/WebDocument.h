@@ -26,7 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
+
+#if !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+#else
+#import <WebKit/WAKAppKitStubs.h>
+#endif
 
 @class NSError;
 @class WebDataSource;
@@ -118,11 +124,13 @@
 */
 - (NSString *)string;
 
+#if !TARGET_OS_IPHONE
 /*!
     @method attributedString
     @result Attributed string that represents the entire document.
 */
 - (NSAttributedString *)attributedString;
+#endif
 
 /*!
     @method selectedString
@@ -130,11 +138,13 @@
 */
 - (NSString *)selectedString;
 
+#if !TARGET_OS_IPHONE
 /*!
     @method selectedAttributedString
     @result Attributed string that represents the current selection.
 */
 - (NSAttributedString *)selectedAttributedString;
+#endif
 
 
 /*!

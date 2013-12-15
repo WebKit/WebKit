@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !TARGET_OS_IPHONE
+
 #import <Foundation/Foundation.h>
 #import <Foundation/NSURLCredentialStorage.h>
 
@@ -43,3 +45,5 @@
 - (void)cancelAuthentication:(NSURLAuthenticationChallenge *)challenge;
 
 @end
+
+#endif

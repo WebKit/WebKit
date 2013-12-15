@@ -32,6 +32,11 @@
 
 @interface NSObject (WebViewEditingDelegatePrivate)
 - (BOOL)webView:(WebView *)webView shouldShowDeleteInterfaceForElement:(DOMHTMLElement *)element;
+#if !TARGET_OS_IPHONE
 - (void)webView:(WebView *)webView didWriteSelectionToPasteboard:(NSPasteboard *)pasteboard;
+#else
+- (NSArray *)supportedPasteboardTypesForCurrentSelection;
+- (DOMDocumentFragment *)documentFragmentForPasteboardItemAtIndex:(NSInteger)index;
+#endif
 - (BOOL)webView:(WebView *)webView shouldMoveRangeAfterDelete:(DOMRange *)range replacingRange:(DOMRange *)rangeToBeReplaced;
 @end

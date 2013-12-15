@@ -42,7 +42,9 @@
 
 - (void)_ignoreWhenUnarchiving;
 
+#if !TARGET_OS_IPHONE
 - (NSFileWrapper *)_fileWrapperRepresentation;
+#endif
 - (NSURLResponse *)_response;
 - (NSString *)_stringValue;
 

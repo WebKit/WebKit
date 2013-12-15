@@ -54,4 +54,23 @@
  @result return YES if WebKit should paint the default broken image.
  */
 - (BOOL)webView:(WebView*)sender shouldPaintBrokenImageForURL:(NSURL*)imageURL;
+
+#if TARGET_OS_IPHONE
+- (id)webThreadWebView:(WebView *)sender identifierForInitialRequest:(NSURLRequest *)request fromDataSource:(WebDataSource *)dataSource;
+- (NSURLRequest *)webThreadWebView:(WebView *)sender resource:(id)identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource;
+- (void)webThreadWebView:(WebView *)sender resource:(id)identifier didReceiveContentLength:(WebNSInteger)length fromDataSource:(WebDataSource *)dataSource;
+- (void)webThreadWebView:(WebView *)sender resource:(id)identifier didReceiveResponse:(NSURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
+- (void)webThreadWebView:(WebView *)webView didLoadResourceFromMemoryCache:(NSURLRequest *)request response:(NSURLResponse *)response length:(WebNSInteger)length fromDataSource:(WebDataSource *)dataSource;
+- (void)webThreadWebView:(WebView *)sender resource:(id)identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource;
+- (void)webThreadWebView:(WebView *)sender resource:(id)identifier didFailLoadingWithError:(NSError *)error fromDataSource:(WebDataSource *)dataSource;
+- (NSCachedURLResponse *)webThreadWebView:(WebView *)sender resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
+
+/*!
+ @method webView:connectionPropertiesForResource:
+ @abstract Provide a CFStream level properties dictionary to be used by a connection
+ @result return an NSDictionary with the desired stream properties or nil
+ */
+- (NSDictionary *)webView:(WebView *)sender connectionPropertiesForResource:(id)identifier dataSource:(WebDataSource *)dataSource;
+#endif
+
 @end

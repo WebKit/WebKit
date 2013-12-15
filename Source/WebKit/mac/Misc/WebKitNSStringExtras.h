@@ -26,17 +26,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
+
+#if !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+#endif
 
 extern NSString *WebKitLocalCacheDefaultsKey;
 
 @interface NSString (WebKitExtras)
 
+#if !TARGET_OS_IPHONE
 - (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor allowingFontSmoothing:(BOOL)fontSmoothingIsAllowed;
 - (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor;
 - (void)_web_drawDoubledAtPoint:(NSPoint)textPoint withTopColor:(NSColor *)topColor bottomColor:(NSColor *)bottomColor font:(NSFont *)font;
 
 - (float)_web_widthWithFont:(NSFont *)font;
+#endif
 
 // Handles home directories that have symlinks in their paths.
 // This works around 2774250.
@@ -44,7 +50,9 @@ extern NSString *WebKitLocalCacheDefaultsKey;
 
 - (NSString *)_web_stringByStrippingReturnCharacters;
 
+#if !TARGET_OS_IPHONE
 + (NSStringEncoding)_web_encodingForResource:(Handle)resource;
+#endif
 
 - (BOOL)_webkit_isCaseInsensitiveEqualToString:(NSString *)string;
 - (BOOL)_webkit_hasCaseInsensitivePrefix:(NSString *)suffix;
@@ -55,7 +63,13 @@ extern NSString *WebKitLocalCacheDefaultsKey;
 - (NSString *)_webkit_stringByTrimmingWhitespace;
 - (NSString *)_webkit_stringByCollapsingNonPrintingCharacters;
 - (NSString *)_webkit_stringByCollapsingWhitespaceCharacters;
+#if !TARGET_OS_IPHONE
 - (NSString *)_webkit_fixedCarbonPOSIXPath;
+#endif
+
+#if TARGET_OS_IPHONE
++ (NSString *)_web_stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
+#endif
 
 + (NSString *)_webkit_localCacheDirectoryWithBundleIdentifier:(NSString*)bundleIdentifier;
 

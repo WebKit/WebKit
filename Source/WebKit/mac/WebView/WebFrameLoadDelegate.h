@@ -26,9 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <JavaScriptCore/JSBase.h>
 #import <JavaScriptCore/WebKitAvailability.h>
+
+#if !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+#endif
 
 @class NSError;
 @class WebFrame;
@@ -109,7 +113,9 @@
     @param image The icon image. Also known as a "favicon".
     @param frame The frame for which a page icon has been received
 */
+#if !TARGET_OS_IPHONE
 - (void)webView:(WebView *)sender didReceiveIcon:(NSImage *)image forFrame:(WebFrame *)frame;
+#endif
 
 /*!
     @method webView:didFinishLoadForFrame:

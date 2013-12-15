@@ -28,6 +28,10 @@
 
 #import <Foundation/Foundation.h>
 
+#if TARGET_OS_IPHONE
+#import <WebKit/WAKAppKitStubs.h>
+#endif
+
 @class WebBasePluginPackage;
 @class WebFrame;
 

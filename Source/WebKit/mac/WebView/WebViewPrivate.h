@@ -30,8 +30,14 @@
 #import <WebKit/WebFramePrivate.h>
 #import <JavaScriptCore/JSBase.h>
 
+#if TARGET_OS_IPHONE
+#import <CoreGraphics/CGColor.h>
+#endif
+
+#if !TARGET_OS_IPHONE
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
 #define ENABLE_DASHBOARD_SUPPORT 1
+#endif
 #endif
 
 #if !defined(ENABLE_REMOTE_INSPECTOR)
@@ -49,11 +55,17 @@
 @class WebScriptWorld;
 @class WebSecurityOrigin;
 @class WebTextIterator;
+#if TARGET_OS_IPHONE
+@class CALayer;
+@class WebFixedPositionContent;
 
+@protocol WebCaretChangeListener;
+#endif
 @protocol WebDeviceOrientationProvider;
 @protocol WebFormDelegate;
 @protocol WebUserMediaClient;
 
+#if !TARGET_OS_IPHONE
 extern NSString *_WebCanGoBackKey;
 extern NSString *_WebCanGoForwardKey;
 extern NSString *_WebEstimatedProgressKey;
@@ -62,6 +74,12 @@ extern NSString *_WebMainFrameIconKey;
 extern NSString *_WebMainFrameTitleKey;
 extern NSString *_WebMainFrameURLKey;
 extern NSString *_WebMainFrameDocumentKey;
+#endif
+
+#if TARGET_OS_IPHONE
+extern NSString * const WebViewProgressEstimatedProgressKey;
+extern NSString * const WebViewProgressBackgroundColorKey;
+#endif
 
 // pending public WebElementDictionary keys
 extern NSString *WebElementTitleKey;             // NSString of the title of the element (used by Safari)
@@ -121,6 +139,11 @@ typedef enum {
     WebPaginationModeRightToLeft,
     WebPaginationModeTopToBottom,
     WebPaginationModeBottomToTop,
+#if TARGET_OS_IPHONE
+    // FIXME: Remove these once UIKit has switched to the above.
+    WebPaginationModeHorizontal = WebPaginationModeLeftToRight,
+    WebPaginationModeVertical = WebPaginationModeTopToBottom,
+#endif
 } WebPaginationMode;
 
 enum {
@@ -143,12 +166,14 @@ typedef enum {
     WebNotificationPermissionDenied
 } WebNotificationPermission;
 
+#if !TARGET_OS_IPHONE
 @interface WebController : NSTreeController {
     IBOutlet WebView *webView;
 }
 - (WebView *)webView;
 - (void)setWebView:(WebView *)newWebView;
 @end
+#endif
 
 @interface WebView (WebViewEditingActionsPendingPublic)
 
@@ -158,8 +183,10 @@ typedef enum {
 
 @interface WebView (WebPendingPublic)
 
+#if !TARGET_OS_IPHONE
 - (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 - (void)unscheduleFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
+#endif
 
 - (BOOL)findString:(NSString *)string options:(WebFindOptions)options;
 - (DOMRange *)DOMRangeOfString:(NSString *)string relativeTo:(DOMRange *)previousRange options:(WebFindOptions)options;
@@ -170,6 +197,9 @@ typedef enum {
 - (BOOL)tabKeyCyclesThroughElements;
 
 - (void)scrollDOMRangeToVisible:(DOMRange *)range;
+#if TARGET_OS_IPHONE
+- (void)scrollDOMRangeToVisible:(DOMRange *)range withInset:(CGFloat)inset;
+#endif
 
 /*!
 @method setScriptDebugDelegate:
@@ -201,12 +231,14 @@ typedef enum {
 
 - (BOOL)shouldClose;
 
+#if !TARGET_OS_IPHONE
 /*!
     @method aeDescByEvaluatingJavaScriptFromString:
     @param script The text of the JavaScript.
     @result The result of the script, converted to an NSAppleEventDescriptor, or nil for failure.
 */
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)script;
+#endif
 
 // Support for displaying multiple text matches.
 // These methods might end up moving into a protocol, so different document types can specify
@@ -284,9 +316,33 @@ typedef enum {
     @abstract indicate this WebView on screen for a remote inspector.
 */
 - (void)setIndicatingForRemoteInspector:(BOOL)enabled;
+#if TARGET_OS_IPHONE
+/*!
+    @method setHostApplicationBundleId:name
+    @param bundleId The application that this WebView was created for.
+    @param name That application's localized display name.
+    @abstract When a WebView is created out of process for an application,
+    you can clarify to a Remote Debugger which application this WebView
+    is intended to belong to; the application which hosts the WebView.
+*/
+- (void)setHostApplicationBundleId:(NSString *)bundleId name:(NSString *)name;
+
+/*!
+    @method hostApplicationBundleId
+    @result Returns the host application bundle id.
+*/
+- (NSString *)hostApplicationBundleId;
+
+/*!
+    @method hostApplicationName
+    @result Returns the host application name.
+*/
+- (NSString *)hostApplicationName;
 #endif
 
+#endif // ENABLE_REMOTE_INSPECTOR
 
+#if !TARGET_OS_IPHONE
 /*!
     @method setBackgroundColor:
     @param backgroundColor Color to use as the default background.
@@ -303,6 +359,10 @@ typedef enum {
     in a non-opaque window, since the color is drawn using NSCompositeCopy.
 */
 - (NSColor *)backgroundColor;
+#else
+- (void)setBackgroundColor:(CGColorRef)backgroundColor;
+- (CGColorRef)backgroundColor;
+#endif
 
 /*!
 Could be worth adding to the API.
@@ -329,7 +389,9 @@ Could be worth adding to the API.
  */
 - (void)_dispatchPendingLoadRequests;
 
+#if !TARGET_OS_IPHONE
 + (NSArray *)_supportedFileExtensions;
+#endif
 
 /*!
     @method canShowFile:
@@ -339,14 +401,21 @@ Could be worth adding to the API.
 */
 + (BOOL)canShowFile:(NSString *)path;
 
+#if !TARGET_OS_IPHONE
 /*!
     @method suggestedFileExtensionForMIMEType:
     @param MIMEType The MIME type to check.
     @result The extension based on the MIME type
 */
 + (NSString *)suggestedFileExtensionForMIMEType: (NSString *)MIMEType;
+#endif
 
 + (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName;
+#if TARGET_OS_IPHONE
++ (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName osMarketingVersion:(NSString *)osMarketingVersion;
+- (void)_setBrowserUserAgentProductVersion:(NSString *)productVersion buildVersion:(NSString *)buildVersion bundleVersion:(NSString *)bundleVersion;
+- (void)_setUIWebViewUserAgentWithBuildVersion:(NSString *)buildVersion;
+#endif
 
 /*!
     @method canCloseAllWebViews
@@ -354,6 +423,51 @@ Could be worth adding to the API.
     @result YES if all the WebViews can be closed.
 */
 + (BOOL)canCloseAllWebViews;
+
+#if TARGET_OS_IPHONE
+- (id)initSimpleHTMLDocumentWithStyle:(NSString *)style frame:(CGRect)frame preferences:(WebPreferences *)preferences groupName:(NSString *)groupName;
+- (id)_formDelegateForwarder;
+- (id)_formDelegateForSelector:(SEL)selector;
+- (id)_webMailDelegate;
+- (void)setWebMailDelegate:(id)delegate;
+- (id <WebCaretChangeListener>)caretChangeListener;
+- (void)setCaretChangeListener:(id <WebCaretChangeListener>)listener;
+
+- (NSSet *)caretChangeListeners;
+- (void)addCaretChangeListener:(id <WebCaretChangeListener>)listener;
+- (void)removeCaretChangeListener:(id <WebCaretChangeListener>)listener;
+- (void)removeAllCaretChangeListeners;
+
+- (void)caretChanged;
+
+- (void)_dispatchUnloadEvent;
+
+- (DOMCSSStyleDeclaration *)styleAtSelectionStart;
+
+- (NSUInteger)_renderTreeSize;
+
+/*!
+ * @method _handleMemoryWarning
+ * @discussion Try to release memory since we got a memory warning from the system. This method is
+ * also used by other internal clients. See <rdar://9582500>.
+ */
++ (void)_handleMemoryWarning;
+
+- (void)_setResourceLoadSchedulerSuspended:(BOOL)suspend;
++ (void)_setTileCacheLayerPoolCapacity:(unsigned)capacity;
+
++ (void)_setAcceleratedImageDecoding:(BOOL)enabled;
++ (BOOL)_acceleratedImageDecoding;
++ (void)_setAllowCookies:(BOOL)allow;
++ (BOOL)_allowCookies;
++ (BOOL)_isUnderMemoryPressure;
++ (void)_clearMemoryPressure;
++ (BOOL)_shouldWaitForMemoryClearMessage;
++ (void)_releaseMemoryNow;
++ (void)_clearPrivateBrowsingSessionCookieStorage;
+
+- (void)_replaceCurrentHistoryItem:(WebHistoryItem *)item;
+#endif
 
 // May well become public
 - (void)_setFormDelegate:(id<WebFormDelegate>)delegate;
@@ -405,13 +519,17 @@ Could be worth adding to the API.
 + (NSString *)_decodeData:(NSData *)data;
 
 + (void)_setAlwaysUsesComplexTextCodePath:(BOOL)f;
+#if !TARGET_OS_IPHONE
 // This is the old name of the above method. Needed for Safari versions that call it.
 + (void)_setAlwaysUseATSU:(BOOL)f;
+#endif
 
 + (void)_setAllowsRoundingHacks:(BOOL)allowsRoundingHacks;
 + (BOOL)_allowsRoundingHacks;
 
+#if !TARGET_OS_IPHONE
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL;
+#endif
 
 #if ENABLE_DASHBOARD_SUPPORT
 - (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions;
@@ -424,11 +542,37 @@ Could be worth adding to the API.
 + (void)_setShouldUseFontSmoothing:(BOOL)f;
 + (BOOL)_shouldUseFontSmoothing;
 
+#if !TARGET_OS_IPHONE
 // These two methods are useful for a test harness that needs a consistent appearance for the focus rings
 // regardless of OS X version.
 + (void)_setUsesTestModeFocusRingColor:(BOOL)f;
 + (BOOL)_usesTestModeFocusRingColor;
+#endif
 
+#if TARGET_OS_IPHONE
+- (void)_setUIKitDelegate:(id)delegate;
+- (id)_UIKitDelegate;
+- (void)_clearDelegates;
+
+- (NSURL *)_displayURL;
+
++ (NSArray *)_productivityDocumentMIMETypes;
+
+- (void)_setAllowsMessaging:(BOOL)aFlag;
+- (BOOL)_allowsMessaging;
+
+- (void)_setNetworkStateIsOnline:(BOOL)isOnLine;
+
+- (void)_setCustomFixedPositionLayoutRectInWebThread:(CGRect)rect synchronize:(BOOL)synchronize;
+- (void)_setCustomFixedPositionLayoutRect:(CGRect)rect;
+
+- (WebFixedPositionContent*)_fixedPositionContent;
+
+- (void)_viewGeometryDidChange;
+- (void)_overflowScrollPositionChangedTo:(CGPoint)offset forNode:(DOMNode *)node isUserScroll:(BOOL)userScroll;
+#endif
+
+#if !TARGET_OS_IPHONE
 /*!
     @method setAlwaysShowVerticalScroller:
     @result Forces the vertical scroller to be visible if flag is YES, otherwise
@@ -467,6 +611,77 @@ Could be worth adding to the API.
     @abstract Sets additional plugin search paths for a specific WebView.
  */
 - (void)_setAdditionalWebPlugInPaths:(NSArray *)newPaths;
+#endif /* !TARGET_OS_IPHONE */
+
+#if TARGET_OS_IPHONE
+/*!
+    @method _pluginsAreRunning
+    @result Returns YES if any plug-ins in the WebView are running.
+ */
+- (BOOL)_pluginsAreRunning;
+/*!
+    @method _destroyAllPlugIns
+    @abstract Destroys all plug-ins in all of the WebView's frames.
+ */
+- (void)_destroyAllPlugIns;
+/*!
+    @method _startAllPlugIns
+    @abstract Starts all plug-ins in all of the WebView's frames.
+ */
+- (void)_startAllPlugIns;
+/*!
+    @method _stopAllPlugIns
+    @abstract Stops all plug-ins in all of the WebView's frames.
+ */
+- (void)_stopAllPlugIns;
+/*!
+    @method _stopAllPlugInsForPageCache
+    @abstract Stops all plug-ins in all of the WebView's frames.
+    Called when the page is entering the PageCache and lets the
+    plug-in know this by sending -webPlugInStopForPageCache.
+*/
+- (void)_stopAllPlugInsForPageCache;
+/*!
+    @method _restorePlugInsFromCache
+    @abstract Reconnects plug-ins from all of the WebView's frames to the
+    WebView and performs any other necessary reinitialization.
+ */
+- (void)_restorePlugInsFromCache;
+
+/*!
+    @method _setMediaLayer:forPluginView:
+    @abstract Set the layer that renders plug-in content for the given pluginView.
+    If layer is NULL, removes any existing layer. Returns YES if the set or
+    remove was successful.
+ */
+- (BOOL)_setMediaLayer:(CALayer*)layer forPluginView:(NSView*)pluginView;
+
+/*!
+    @method _clearBackForwardCache
+    @abstract Clear's this WebView's back/forward cache on the WebThread.
+ */
+- (void)_clearBackForwardCache;
+
+/*!
+ @method _wantsTelephoneNumberParsing
+ @abstract Does this WebView want phone number parsing? (This could ultimately be disallowed by the document itself).
+ */
+
+- (BOOL)_wantsTelephoneNumberParsing;
+
+/*!
+ @method _setWantsTelephoneNumberParsing
+ @abstract Explicitly disable WebKit phone number parsing on this WebView, or say that you want it enabled if possible.
+ */
+
+- (void)_setWantsTelephoneNumberParsing:(BOOL)flag;
+
+/*!
+    @method _setNeedsUnrestrictedGetMatchedCSSRules
+    @abstract Explicitly enables/disables cross origin CSS rules matching.
+ */
+- (void)_setNeedsUnrestrictedGetMatchedCSSRules:(BOOL)flag;
+#endif /* TARGET_OS_IPHONE */
 
 /*!
     @method _setInViewSourceMode:
@@ -520,7 +735,9 @@ Could be worth adding to the API.
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
 #endif
 
+#if !TARGET_OS_IPHONE
 - (void)_clearUndoRedoOperations;
+#endif
 
 /* Used to do fast (lower quality) scaling of images so that window resize can be quick. */
 - (BOOL)_inFastImageScalingMode;
@@ -542,7 +759,9 @@ Could be worth adding to the API.
 - (void)setMemoryCacheDelegateCallsEnabled:(BOOL)suspend;
 - (BOOL)areMemoryCacheDelegateCallsEnabled;
 
+#if !TARGET_OS_IPHONE
 + (NSCursor *)_pointingHandCursor;
+#endif
 
 // SPI for DumpRenderTree
 - (BOOL)_postsAcceleratedCompositingNotifications;
@@ -568,8 +787,10 @@ Could be worth adding to the API.
 - (void)resetTrackedRepaints;
 - (NSArray*)trackedRepaintRects; // Returned array contains rectValue NSValues.
 
+#if !TARGET_OS_IPHONE
 // Which pasteboard text is coming from in editing delegate methods such as shouldInsertNode.
 - (NSPasteboard *)_insertionPasteboard;
+#endif
 
 // Whitelists access from an origin (sourceOrigin) to a set of one or more origins described by the parameters:
 // - destinationProtocol: The protocol to grant access to.
@@ -653,8 +874,10 @@ Could be worth adding to the API.
 - (CGFloat)_gapBetweenPages;
 - (NSUInteger)_pageCount;
 
+#if !TARGET_OS_IPHONE
 - (void)_setCustomBackingScaleFactor:(CGFloat)overrideScaleFactor;
 - (CGFloat)_backingScaleFactor;
+#endif
 
 // Deprecated. Use the methods in pending public above instead.
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit;
@@ -696,6 +919,7 @@ Could be worth adding to the API.
 
 @end
 
+#if !TARGET_OS_IPHONE
 @interface WebView (WebViewPrintingPrivate)
 /*!
     @method _adjustPrintingMarginsForHeaderAndFooter:
@@ -747,6 +971,7 @@ Could be worth adding to the API.
 - (void)setAutomaticSpellingCorrectionEnabled:(BOOL)flag;
 - (void)toggleAutomaticSpellingCorrection:(id)sender;
 @end
+#endif /* !TARGET_OS_IPHONE */
 
 @interface WebView (WebViewEditingInMail)
 - (void)_insertNewlineInQuotedContent;
@@ -762,6 +987,15 @@ Could be worth adding to the API.
 - (id<WebDeviceOrientationProvider>)_deviceOrientationProvider;
 @end
 
+#if TARGET_OS_IPHONE
+@protocol WebGeolocationProvider;
+
+@protocol WebGeolocationProviderInitializationListener <NSObject>
+- (void)initializationAllowedWebView:(WebView *)webView provider:(id<WebGeolocationProvider>)provider;
+- (void)initializationDeniedWebView:(WebView *)webView provider:(id<WebGeolocationProvider>)provider;
+@end
+#endif
+
 @interface WebView (WebViewUserMedia)
 - (void)_setUserMediaClient:(id<WebUserMediaClient>)userMediaClient;
 - (id<WebUserMediaClient>)_userMediaClient;
@@ -771,6 +1005,12 @@ Could be worth adding to the API.
 - (void)registerWebView:(WebView *)webView;
 - (void)unregisterWebView:(WebView *)webView;
 - (WebGeolocationPosition *)lastPosition;
+#if TARGET_OS_IPHONE
+- (void)setEnableHighAccuracy:(BOOL)enableHighAccuracy;
+- (void)initializeGeolocationForWebView:(WebView *)webView listener:(id<WebGeolocationProviderInitializationListener>)listener;
+- (void)cancelWarmUpForWebView:(WebView *)webView;
+- (void)stopTrackingWebView:(WebView *)webView;
+#endif
 @end
 
 @protocol WebNotificationProvider
@@ -794,6 +1034,9 @@ Could be worth adding to the API.
 
 - (void)_geolocationDidChangePosition:(WebGeolocationPosition *)position;
 - (void)_geolocationDidFailWithMessage:(NSString *)errorMessage;
+#if TARGET_OS_IPHONE
+- (void)_resetAllGeolocationPermission;
+#endif
 @end
 
 @interface WebView (WebViewNotification)
@@ -806,6 +1049,16 @@ Could be worth adding to the API.
 
 - (uint64_t)_notificationIDForTesting:(JSValueRef)jsNotification;
 @end
+
+#if TARGET_OS_IPHONE
+@interface WebView (WebViewIOSPDF)
++ (Class)_getPDFRepresentationClass;
++ (void)_setPDFRepresentationClass:(Class)pdfRepresentationClass;
+
++ (Class)_getPDFViewClass;
++ (void)_setPDFViewClass:(Class)pdfViewClass;
+@end
+#endif
 
 @interface NSObject (WebViewFrameLoadDelegatePrivate)
 - (void)webView:(WebView *)sender didFirstLayoutInFrame:(WebFrame *)frame;

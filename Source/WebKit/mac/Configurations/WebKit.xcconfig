@@ -25,7 +25,7 @@
 #include "Version.xcconfig"
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
-EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.nib *.pdf *.tiff;
+EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.nib *.pdf *.tiff WebIconDatabase.h WebIconDatabasePrivate.h WebNSEventExtras.h WebNSPasteboardExtras.h WebNSWindowExtras.h WebPanelAuthenticationHandler.h WebPluginsPrivate.h WebJavaScriptTextInputPanel.h WebKeyGenerator.h WebDashboardRegion.h WebDynamicScrollBarsView.h;
 EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
 EXCLUDED_SOURCE_FILE_NAMES_macosx = *IOS.mm MemoryMeasure.h WebGeolocationCoreLocationProvider.h WebGeolocationProviderIOS.h WebNSStringDrawing.h WebNSStringExtrasIOS.h WebNSStringExtrasIPhone.h WebUIKitSupport.h WebCaretChangeListener.h WebFixedPositionContent.h WebFrameIOS.h WebFrameIPhone.h WebGeolocationPrivate.h WebMIMETypeRegistry.h WebSelectionRect.h WebVisiblePosition.h WebUIKitDelegate.h WebPDFViewIOS.h WebPDFViewIPhone.h WebPDFViewPlaceholder.h;
 

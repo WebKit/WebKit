@@ -142,5 +142,3 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 - (id)delegate;
 
 @end
-
-

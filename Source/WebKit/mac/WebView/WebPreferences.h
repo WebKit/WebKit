@@ -206,10 +206,12 @@ extern NSString *WebPreferencesChangedNotification;
 */
 @property (nonatomic) BOOL autosaves;
 
+#if !TARGET_OS_IPHONE
 /*!
     @property shouldPrintBackgrounds
 */
 @property (nonatomic) BOOL shouldPrintBackgrounds;
+#endif
 
 /*!
     @property privateBrowsingEnabled:
@@ -218,12 +220,14 @@ extern NSString *WebPreferencesChangedNotification;
  */
 @property (nonatomic) BOOL privateBrowsingEnabled;
 
+#if !TARGET_OS_IPHONE
 /*!
     @property tabsToLinks
     @abstract If tabsToLinks is YES, the tab key will focus links and form controls.
     The option key temporarily reverses this preference.
 */
 @property (nonatomic) BOOL tabsToLinks;
+#endif
 
 /*!
     @property usesPageCache

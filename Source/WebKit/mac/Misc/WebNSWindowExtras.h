@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !TARGET_OS_IPHONE
+
 #import <Cocoa/Cocoa.h>
 
 @interface NSWindow (WebExtras)
@@ -33,3 +35,5 @@
 - (void)centerOverMainWindow;
 - (void)makeResponder:(NSResponder *)responder firstResponderIfDescendantOfView:(NSView *)view;
 @end
+
+#endif

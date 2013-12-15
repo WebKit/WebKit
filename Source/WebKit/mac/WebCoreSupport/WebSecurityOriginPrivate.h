@@ -41,6 +41,9 @@
 - (NSString *)host;
 
 - (NSString *)databaseIdentifier;
+#if TARGET_OS_IPHONE
+- (NSString *)toString;
+#endif
 - (NSString *)stringValue;
 
 // Returns zero if the port is the default port for the protocol, non-zero otherwise.

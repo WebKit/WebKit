@@ -26,8 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <JavaScriptCore/WebKitAvailability.h>
+
+#if !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+#endif
 
 /*!
     @constant WebPlugInBaseURLKey REQUIRED. The base URL of the document containing
@@ -81,6 +85,11 @@ extern NSString *WebPlugInShouldLoadMainResourceKey AVAILABLE_IN_WEBKIT_VERSION_
     @param arguments The arguments dictionary with the mentioned keys and objects. This method is required to implement.
     @result Returns an NSView object that conforms to the WebPlugIn informal protocol.
 */
+#if !TARGET_OS_IPHONE
 + (NSView *)plugInViewWithArguments:(NSDictionary *)arguments;
+#else
+// +plugInViewWithArguments: returns a UIView subclass
++ (id)plugInViewWithArguments:(NSDictionary *)arguments;
+#endif
 
 @end

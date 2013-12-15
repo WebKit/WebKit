@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
+// In iOS WebKit, WebDynamicScrollBarsView is a WAKScrollView.
+// See WebCore/WAKAppKitStubs.h.
+#else
 // This is a Private header (containing SPI), despite the fact that its name
 // does not contain the word Private.
 
@@ -62,3 +66,5 @@ struct WebDynamicScrollBarsViewPrivate;
 - (BOOL)horizontalScrollingAllowed;
 - (BOOL)verticalScrollingAllowed;
 @end
+
+#endif // !TARGET_OS_IPHONE

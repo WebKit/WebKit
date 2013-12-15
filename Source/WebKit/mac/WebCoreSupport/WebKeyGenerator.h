@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !TARGET_OS_IPHONE
+
 typedef enum {
     WebCertificateParseResultSucceeded  = 0,
     WebCertificateParseResultFailed     = 1,
@@ -37,5 +39,7 @@ typedef enum {
 - (WebCertificateParseResult)addCertificatesToKeychainFromData:(NSData *)data;
 
 @end
+
+#endif
 
 #endif

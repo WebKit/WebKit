@@ -26,9 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/WebKitAvailability.h>
+
+#if !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+#else
+#import <WebKit/WAKAppKitStubs.h>
+#endif
 
 /*!
     @enum WebMenuItemTag
@@ -134,6 +140,11 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
     @abstract Call this method to indicate that the file open panel was cancelled.
 */
 - (void)cancel;
+
+#if TARGET_OS_IPHONE
+- (void)chooseFilename:(NSString *)filename displayString:(NSString *)displayString iconImage:(CGImageRef)imageRef;
+- (void)chooseFilenames:(NSArray *)filenames displayString:(NSString *)displayString iconImage:(CGImageRef)imageRef;
+#endif
 
 @end
 
@@ -437,6 +448,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 */
 - (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
 
+#if !TARGET_OS_IPHONE
 /*!
     @method webView:validateUserInterfaceItem:defaultValidation:
     @abstract Controls UI validation
@@ -448,6 +460,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
     NSValidatedUserInterfaceItem for information about UI validation.
 */
 - (BOOL)webView:(WebView *)webView validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item defaultValidation:(BOOL)defaultValidation;
+#endif
 
 /*!
     @method webView:shouldPerformAction:fromSender:
@@ -462,6 +475,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 */
 - (BOOL)webView:(WebView *)webView shouldPerformAction:(SEL)action fromSender:(id)sender;
 
+#if !TARGET_OS_IPHONE
 /*!
     @method webView:dragDestinationActionMaskForDraggingInfo:
     @abstract Controls behavior when dragging to a WebView
@@ -506,6 +520,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
     the contents of the dragging pasteboard.
 */
 - (void)webView:(WebView *)webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:(NSPoint)point withPasteboard:(NSPasteboard *)pasteboard;
+#endif /* !TARGET_OS_IPHONE */
 
 /*!
     @method webView:printFrameView:

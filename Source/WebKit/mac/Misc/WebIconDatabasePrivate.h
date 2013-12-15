@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !TARGET_OS_IPHONE
+
 #import <WebKit/WebIconDatabase.h>
 
 // FIXME: Some of the following is not API and should be moved
@@ -68,3 +70,4 @@ extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
 
 @end
 
+#endif // !TARGET_OS_IPHONE

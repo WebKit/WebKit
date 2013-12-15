@@ -29,9 +29,13 @@
 #import <Foundation/Foundation.h>
 
 @interface NSFileManager (WebNSFileManagerExtras)
+#if !TARGET_OS_IPHONE
 - (void)_webkit_setMetadataURL:(NSString *)URLString referrer:(NSString *)referrer atPath:(NSString *)path;
 - (NSString *)_webkit_startupVolumeName;
+#endif
 - (NSString *)_webkit_pathWithUniqueFilenameForPath:(NSString *)path;
+
+#if TARGET_OS_IPHONE
+- (NSString *)_webkit_createTemporaryDirectoryWithTemplatePrefix:(NSString *)prefix;
+#endif
 @end
-
-

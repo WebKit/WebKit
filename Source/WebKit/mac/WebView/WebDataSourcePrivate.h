@@ -36,7 +36,9 @@
 
 @interface WebDataSource (WebPrivate)
 
+#if !TARGET_OS_IPHONE
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
+#endif
 - (void)_addSubframeArchives:(NSArray *) archives;
 - (NSError *)_mainDocumentError;
 - (NSString *)_responseMIMEType;
@@ -45,6 +47,9 @@
 
 - (void)_setDeferMainResourceDataLoad:(BOOL)flag;
 
+#if TARGET_OS_IPHONE
+- (void)_setOverrideTextEncodingName:(NSString *)encoding;
+#endif
 - (void)_setAllowToBeMemoryMapped;
 - (void)setDataSourceDelegate:(NSObject<WebDataSourcePrivateDelegate> *)dataSourceDelegate;
 - (NSObject<WebDataSourcePrivateDelegate> *)dataSourceDelegate;

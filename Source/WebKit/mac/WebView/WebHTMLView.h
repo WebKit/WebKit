@@ -37,7 +37,11 @@
     WebHTMLView is a NSControl because it hosts NSCells that are painted by WebCore's Aqua theme
     renderer (and those cells must be hosted by an enclosing NSControl in order to paint properly).
 */
+#if !TARGET_OS_IPHONE
 @interface WebHTMLView : NSControl <WebDocumentView, WebDocumentSearching>
+#else
+@interface WebHTMLView : NSView <WebDocumentView, WebDocumentSearching>
+#endif
 {
 @private
     WebHTMLViewPrivate *_private;
@@ -57,7 +61,9 @@
 */
 - (void)reapplyStyles;
 
+#if !TARGET_OS_IPHONE
 - (void)outdent:(id)sender;
+#endif
 
 @end
 

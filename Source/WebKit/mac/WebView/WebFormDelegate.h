@@ -26,12 +26,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+
+#if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
+#endif
 
 @class DOMElement;
 @class DOMHTMLFormElement;
 @class DOMHTMLInputElement;
 @class DOMHTMLTextAreaElement;
+#if TARGET_OS_IPHONE
+@class DOMNode;
+#endif
 @class WebFrame;
 
 /*!
@@ -57,8 +64,9 @@
 - (void)didFocusTextField:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame;
 
 - (BOOL)textField:(DOMHTMLInputElement *)element doCommandBySelector:(SEL)commandSelector inFrame:(WebFrame *)frame;
+#if !TARGET_OS_IPHONE
 - (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event inFrame:(WebFrame *)frame;
-
+#endif
 // Sent when a form is just about to be submitted (before the load is started)
 // listener must be sent continue when the delegate is done.
 - (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form

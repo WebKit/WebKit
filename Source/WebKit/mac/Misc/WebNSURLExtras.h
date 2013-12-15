@@ -71,6 +71,11 @@
 
 - (NSURL *)_webkit_URLFromURLOrSchemelessFileURL;
 
+#if TARGET_OS_IPHONE
+- (NSURL *)_webkit_youTubeURL;
+
++ (NSURL *)uniqueURLWithRelativePart:(NSString *)relativePart;
+#endif
 @end
 
 @interface NSString (WebNSURLExtras)
@@ -93,5 +98,10 @@
 - (NSRange)_webkit_rangeOfURLScheme;
 - (NSString *)_webkit_URLFragment;
 - (NSString *)_webkit_scriptIfJavaScriptURL;
+
+#if TARGET_OS_IPHONE
+- (NSString *)_webkit_unescapedQueryValue;
+- (NSDictionary *)_webkit_queryKeysAndValues;
+#endif
 
 @end

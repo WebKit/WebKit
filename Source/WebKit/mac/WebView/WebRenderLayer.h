@@ -25,6 +25,10 @@
 
 #import <Foundation/Foundation.h>
 
+#if TARGET_OS_IPHONE
+#import <Foundation/NSGeometry.h>
+#endif
+
 @class WebFrame;
 
 @interface WebRenderLayer : NSObject

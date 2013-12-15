@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
-
+#import <Foundation/Foundation.h>
 #import <WebKit/WebBackForwardList.h>
 
 @interface WebBackForwardList (WebBackForwardListPrivate)
@@ -38,5 +37,12 @@
     @param entry The entry to remove.  Cannot be the current item.
 */    
 - (void)removeItem:(WebHistoryItem *)item;
+
+#if TARGET_OS_IPHONE
+// These methods are used by MobileSafari to save the back/forward state
+// to disk.
+- (NSDictionary *)dictionaryRepresentation;
+- (void)setToMatchDictionaryRepresentation:(NSDictionary *)dictionary;
+#endif
 
 @end

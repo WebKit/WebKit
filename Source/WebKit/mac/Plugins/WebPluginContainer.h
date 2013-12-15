@@ -26,7 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
+
+#if !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+#endif
 
 /*!
     This informal protocol enables a plug-in to request that its containing application
@@ -53,12 +57,14 @@
 */
 - (void)webPlugInContainerShowStatus:(NSString *)message;
 
+#if !TARGET_OS_IPHONE
 /*!
     @property webPlugInContainerSelectionColor
     @abstract The color that should be used for any special drawing when
     plug-in is selected.
 */
 @property (nonatomic, readonly, strong) NSColor *webPlugInContainerSelectionColor;
+#endif
 
 /*!
     @property webFrame

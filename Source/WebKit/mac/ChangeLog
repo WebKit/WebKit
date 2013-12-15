@@ -1,5 +1,71 @@
 2013-12-15  Andy Estes  <aestes@apple.com>
 
+        [iOS] Upstream changes to WebKit Public and Private headers
+        https://bugs.webkit.org/show_bug.cgi?id=125745
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebKit.xcconfig: Ignore headers that are completely
+        excluded on iOS. This prevents empty headers from being installed into
+        the iOS SDK.
+        * DOM/WebDOMOperationsPrivate.h: Upstream iOS changes.
+        * History/WebBackForwardListPrivate.h: Ditto.
+        * History/WebHistoryItem.h: Ditto.
+        * History/WebHistoryItemPrivate.h: Ditto.
+        * Misc/WebCache.h: Ditto.
+        * Misc/WebIconDatabase.h: Ditto.
+        * Misc/WebIconDatabasePrivate.h: Ditto.
+        * Misc/WebKitNSStringExtras.h: Ditto.
+        * Misc/WebLocalizableStrings.h: Ditto.
+        * Misc/WebNSEventExtras.h: Ditto.
+        * Misc/WebNSFileManagerExtras.h: Ditto.
+        * Misc/WebNSPasteboardExtras.h: Ditto.
+        * Misc/WebNSURLExtras.h: Ditto.
+        * Misc/WebNSViewExtras.h: Ditto.
+        * Misc/WebNSWindowExtras.h: Ditto.
+        * Panels/WebPanelAuthenticationHandler.h: Ditto.
+        * Plugins/WebPlugin.h: Ditto.
+        * Plugins/WebPluginContainer.h: Ditto.
+        * Plugins/WebPluginContainerPrivate.h: Ditto.
+        * Plugins/WebPluginDatabase.h: Ditto.
+        * Plugins/WebPluginPrivate.h: Ditto.
+        * Plugins/WebPluginViewFactory.h: Ditto.
+        * Plugins/WebPluginsPrivate.h: Ditto.
+        * Storage/WebDatabaseManagerPrivate.h: Ditto.
+        * WebCoreSupport/WebApplicationCache.h: Ditto.
+        * WebCoreSupport/WebJavaScriptTextInputPanel.h: Ditto.
+        * WebCoreSupport/WebKeyGenerator.h: Ditto.
+        * WebCoreSupport/WebSecurityOriginPrivate.h: Ditto.
+        * WebView/WebDashboardRegion.h: Ditto.
+        * WebView/WebDataSource.h: Ditto.
+        * WebView/WebDataSourcePrivate.h: Ditto.
+        * WebView/WebDocument.h: Ditto.
+        * WebView/WebDocumentPrivate.h: Ditto.
+        * WebView/WebDynamicScrollBarsView.h: Ditto.
+        * WebView/WebEditingDelegate.h: Ditto.
+        * WebView/WebEditingDelegatePrivate.h: Ditto.
+        * WebView/WebFormDelegate.h: Ditto.
+        * WebView/WebFrameLoadDelegate.h: Ditto.
+        * WebView/WebFramePrivate.h: Ditto.
+        * WebView/WebFrameView.h: Ditto.
+        * WebView/WebFrameViewPrivate.h: Ditto.
+        * WebView/WebHTMLRepresentation.h: Ditto.
+        * WebView/WebHTMLView.h: Ditto.
+        * WebView/WebHTMLViewPrivate.h: Ditto.
+        * WebView/WebPolicyDelegate.h: Ditto.
+        * WebView/WebPreferenceKeysPrivate.h: Ditto.
+        * WebView/WebPreferences.h: Ditto.
+        * WebView/WebPreferencesPrivate.h: Ditto.
+        * WebView/WebRenderLayer.h: Ditto.
+        * WebView/WebResourceLoadDelegatePrivate.h: Ditto.
+        * WebView/WebResourcePrivate.h: Ditto.
+        * WebView/WebUIDelegate.h: Ditto.
+        * WebView/WebUIDelegatePrivate.h: Ditto.
+        * WebView/WebView.h: Ditto.
+        * WebView/WebViewPrivate.h: Ditto.
+
+2013-12-15  Andy Estes  <aestes@apple.com>
+
         [iOS] Upstream changes to FeatureDefines.xcconfig
         https://bugs.webkit.org/show_bug.cgi?id=125742
 

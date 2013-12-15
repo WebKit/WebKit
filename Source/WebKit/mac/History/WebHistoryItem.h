@@ -26,7 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
+
+#if !TARGET_OS_IPHONE
+#import <AppKit/AppKit.h>
+#endif
 
 @class WebHistoryItemPrivate;
 @class NSURL;
@@ -103,11 +107,13 @@ extern NSString *WebHistoryItemChangedNotification;
 */
 @property (nonatomic, copy) NSString *alternateTitle;
 
+#if !TARGET_OS_IPHONE
 /*!
     @property icon
     @abstract The favorite icon of the page represented by this item.
     @discussion This icon returned will be determined by the WebKit.
 */
 @property (nonatomic, readonly, strong) NSImage *icon;
+#endif
 
 @end
