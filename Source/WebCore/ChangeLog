@@ -1,3 +1,10 @@
+2013-12-14  Dan Bernstein  <mitz@apple.com>
+
+        Clean up the project after r160487
+
+        * WebCore.xcodeproj/project.pbxproj: Moved reference to Security.framework from the top
+        level of the project to the Frameworks group, and made it SDK-relative.
+
 2013-12-14  Andreas Kling  <akling@apple.com>
 
         Page::theme() should return a reference.

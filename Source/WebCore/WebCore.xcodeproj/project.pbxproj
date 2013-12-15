@@ -8729,7 +8729,7 @@
 		5F2DBBE7178E332D00141486 /* CertificateInfoMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CertificateInfoMac.mm; sourceTree = "<group>"; };
 		5F2DBBE8178E336900141486 /* CertificateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CertificateInfo.h; sourceTree = "<group>"; };
 		5FC7DC26CFE2563200B85AE5 /* JSEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEventTarget.h; sourceTree = "<group>"; };
-		5FE1D291178FD1F3001AA3C3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = ../../../../../System/Library/Frameworks/Security.framework; sourceTree = "<group>"; };
+		5FE1D291178FD1F3001AA3C3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpatialNavigation.cpp; sourceTree = "<group>"; };
 		626CDE0D1140424C001E5A68 /* SpatialNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialNavigation.h; sourceTree = "<group>"; };
 		628D214B12131ED10055DCFC /* NetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkingContext.h; sourceTree = "<group>"; };
@@ -13967,7 +13967,6 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
-				5FE1D291178FD1F3001AA3C3 /* Security.framework */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
@@ -14026,6 +14025,7 @@
 				379919B11200DE5000EA041C /* libz.dylib */,
 				49C7BA781042EFAE0009D447 /* OpenGL.framework */,
 				A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */,
+				5FE1D291178FD1F3001AA3C3 /* Security.framework */,
 				1A7FA7CB0DDA4B770028F8A5 /* SystemConfiguration.framework */,
 			);
 			name = Frameworks;
