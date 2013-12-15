@@ -1,3 +1,17 @@
+2013-12-15  Rob Buis  <rob.buis@samsung.com>
+
+        [CSS Shapes] shape-outside animation does not handle 'auto' well
+        https://bugs.webkit.org/show_bug.cgi?id=125700
+
+        Reviewed by Dirk Schulze.
+
+        Handle the case where we are blending/animating with a null ShapeValue due to 'auto'.
+
+        Adapted LayoutTests/fast/shapes/shape-outside-floats/shape-outside-animation.html for testing this.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+
 2013-12-15  Andy Estes  <aestes@apple.com>
 
         [iOS] Upstream changes to FeatureDefines.xcconfig
