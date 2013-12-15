@@ -88,6 +88,9 @@ inspector [ Skip ]
 http/tests/inspector [ Skip ]
 http/tests/inspector-enabled [ Skip ]
 
+# Disable all media tests while QTSDK issues are worked out
+webkit.org/b/125754 media [ Skip ]
+
 # Fails <rdar://problem/5674289>
 media/video-seek-past-end-paused.html
 

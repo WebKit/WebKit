@@ -1,3 +1,11 @@
+2013-12-14  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Win] Disable media tests while we sort out QTSDK issues.
+        Unreviewed patch to get test bots green
+
+        * platform/win/TestExpectations
+
+
 2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Some Set and Map prototype functions have incorrect function lengths
