@@ -1,3 +1,20 @@
+2013-12-14  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should *really* know when things are flushed
+        https://bugs.webkit.org/show_bug.cgi?id=125747
+
+        Reviewed by Sam Weinig.
+        
+        Fix more codegen badness. This makes V8v7's crypto am3() function run faster in the FTL
+        than in DFG. This means that even if we just compile those functions in V8v7 that don't
+        make calls, the FTL gives us a 2% speed-up over the DFG. That's pretty good considering
+        that we have still more optimizations to fix and we can make calls work.
+
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+
 2013-12-14  Andy Estes  <aestes@apple.com>
 
         Unify FeatureDefines.xcconfig

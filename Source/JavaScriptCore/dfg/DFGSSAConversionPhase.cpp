@@ -141,6 +141,8 @@ public:
                 }
                 RELEASE_ASSERT(node->op() == Phi || node->op() == SetArgument);
                 
+                bool isFlushed = m_flushedLocalOps.contains(node);
+                
                 if (node->op() == Phi) {
                     Edge edge = node->children.justOneChild();
                     if (edge)
@@ -162,7 +164,7 @@ public:
                                 OpInfo(node), Edge(predecessor->variablesAtTail[i], useKind));
                         }
                         
-                        if (m_flushedLocalOps.contains(node)) {
+                        if (isFlushed) {
                             // Do nothing. For multiple reasons.
                             
                             // Reason #1: If the local is flushed then we don't need to bother

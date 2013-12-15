@@ -165,7 +165,7 @@ static void fixFunctionBasedOnStackMaps(
             OSRExit& exit = jitCode->osrExit[i];
             
             if (Options::verboseCompilation())
-                dataLog("Handling OSR stackmap #", exit.m_stackmapID, "\n");
+                dataLog("Handling OSR stackmap #", exit.m_stackmapID, " for ", exit.m_codeOrigin, "\n");
             
             StackMaps::RecordMap::iterator iter = recordMap.find(exit.m_stackmapID);
             if (iter == recordMap.end()) {
