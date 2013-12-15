@@ -41,6 +41,7 @@ from checkers.common import CarriageReturnChecker
 from checkers.changelog import ChangeLogChecker
 from checkers.cpp import CppChecker
 from checkers.cmake import CMakeChecker
+from checkers.featuredefines import FeatureDefinesChecker
 from checkers.js import JSChecker
 from checkers.jsonchecker import JSONChecker
 from checkers.jsonchecker import JSONContributorsChecker
@@ -359,6 +360,7 @@ def _all_categories():
     categories = categories.union(TestExpectationsChecker.categories)
     categories = categories.union(ChangeLogChecker.categories)
     categories = categories.union(PNGChecker.categories)
+    categories = categories.union(FeatureDefinesChecker.categories)
 
     # FIXME: Consider adding all of the pep8 categories.  Since they
     #        are not too meaningful for documentation purposes, for
@@ -508,6 +510,7 @@ class FileType:
     XML = 9
     XCODEPROJ = 10
     CMAKE = 11
+    FEATUREDEFINES = 12
 
 class CheckerDispatcher(object):
 
@@ -592,6 +595,8 @@ class CheckerDispatcher(object):
         elif ((not file_extension and os.path.join("Tools", "Scripts") in file_path) or
               file_extension in _TEXT_FILE_EXTENSIONS or os.path.basename(file_path) == 'TestExpectations'):
             return FileType.TEXT
+        elif os.path.basename(file_path) == "FeatureDefines.xcconfig":
+            return FileType.FEATUREDEFINES
         else:
             return FileType.NONE
 
@@ -641,6 +646,8 @@ class CheckerDispatcher(object):
                 checker = TextChecker(file_path, handle_style_error)
         elif file_type == FileType.WATCHLIST:
             checker = WatchListChecker(file_path, handle_style_error)
+        elif file_type == FileType.FEATUREDEFINES:
+            checker = FeatureDefinesChecker(file_path, handle_style_error)
         else:
             raise ValueError('Invalid file type "%(file_type)s": the only valid file types '
                              "are %(NONE)s, %(CPP)s, and %(TEXT)s."
