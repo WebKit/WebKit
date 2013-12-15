@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -225,10 +225,9 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, bool destroy)
     if (partType == NoPart)
         return;
 
-    RefPtr<RenderStyle> partStyle = !destroy ? getScrollbarPseudoStyle(partType,  pseudoForScrollbarPart(partType)) : PassRefPtr<RenderStyle>(0);
-    
-    bool needRenderer = !destroy && partStyle && partStyle->display() != NONE;
-    
+    RefPtr<RenderStyle> partStyle = destroy ? nullptr : getScrollbarPseudoStyle(partType, pseudoForScrollbarPart(partType));
+    bool needRenderer = partStyle && partStyle->display() != NONE;
+
     if (needRenderer && partStyle->display() != BLOCK) {
         // See if we are a button that should not be visible according to OS settings.
         ScrollbarButtonsPlacement buttonsPlacement = theme()->buttonsPlacement();
@@ -251,19 +250,19 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, bool destroy)
                 break;
         }
     }
-    
-    RenderScrollbarPart* partRenderer = m_parts.get(partType);
-    if (!partRenderer && needRenderer) {
-        partRenderer = new RenderScrollbarPart(owningRenderer()->document(), *partStyle, this, partType);
-        m_parts.set(partType, partRenderer);
-    } else if (partRenderer && !needRenderer) {
-        m_parts.remove(partType);
-        partRenderer->destroy();
-        partRenderer = 0;
+
+    if (needRenderer) {
+        RenderScrollbarPart*& partRendererSlot = m_parts.add(partType, nullptr).iterator->value;
+        if (partRendererSlot)
+            partRendererSlot->setStyle(partStyle.releaseNonNull());
+        else {
+            partRendererSlot = new RenderScrollbarPart(owningRenderer()->document(), partStyle.releaseNonNull(), this, partType);
+            partRendererSlot->initializeStyle();
+        }
+    } else {
+        if (RenderScrollbarPart* partRenderer = m_parts.take(partType))
+            partRenderer->destroy();
     }
-    
-    if (partRenderer)
-        partRenderer->setStyle(partStyle.releaseNonNull());
 }
 
 void RenderScrollbar::paintPart(GraphicsContext* graphicsContext, ScrollbarPart partType, const IntRect& rect)

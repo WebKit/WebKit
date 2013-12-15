@@ -1,3 +1,42 @@
+2013-12-14  Darin Adler  <darin@apple.com>
+
+        Crash in CSSImageGeneratorValue and RenderScrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=125702
+
+        Reviewed by Alexey Proskuryakov.
+
+        This crash had two causes at two different levels. The crash fixes both.
+
+        At the RenderScrollbar level, we were setting up a new renderer, a
+        RenderScrollbarPart, and never calling initializeStyle. This meant that
+        we did not do proper style setup, which meant we did not end up calling
+        CSSImageGeneratorValue::addClient and so had a removeClient that was not
+        properly balanced by an addClient. This is the primary bug.
+
+        At the CSSImageGeneratorValue level, the addClient and removeClient
+        functions were not properly handling possibly-mismatched calls. It was
+        easy to fix the functions to work even if the calls are not perfectly
+        matched up, which makes the consequences of a missed addClient call
+        much less dire, no longer messing up reference counting. Fixing this
+        mitigates the risk if we made this same mistake elsewhere, although I
+        could not find any other places with some quick searches.
+
+        Test: fast/css/scrollbar-image-crash.html
+
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::addClient): Only call ref if this will
+        add the first client.
+        (WebCore::CSSImageGeneratorValue::removeClient): Only call deref if this
+        removes the last client. Also added an assertion that can fire if we call
+        removeClient without first calling addClient, which is illegal. However,
+        the function handles that case without over-deref'ing itself.
+
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::updateScrollbarPart): Simplify the logic for
+        needRenderer a bit. Use initializeStyle rather than setStyle when first
+        creating the RenderScrollbarPart. Also use add and take properly so we
+        don't do extra hash lookups the old code did with get/set and get/remove.
+
 2013-12-14  Sam Weinig  <sam@webkit.org>
 
         CTTE: SVGResourcesCache::cachedResourcesForRenderObject() should take a reference
