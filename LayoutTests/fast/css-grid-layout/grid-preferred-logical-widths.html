@@ -37,6 +37,11 @@
     font: 10px/1 Ahem;
 }
 
+.gridFixedFraction {
+    -webkit-grid-definition-columns: minmax(10px, 1fr) minmax(2fr, 20px);
+    -webkit-grid-definition-rows: 10px;
+}
+
 .margins {
     margin: 10px 20px 30px 40px;
 }
@@ -81,6 +86,9 @@
     <div class="firstRowSecondColumn">XX XX XX</div>
 </div>
 
+<div class="grid gridFixedFraction min-content" data-expected-height="10" data-expected-width="10"></div>
+<div class="grid gridFixedFraction max-content" data-expected-height="10" data-expected-width="30"></div>
+
 <!-- Now with margin on one of the grid items. -->
 <div class="grid gridMinContentFixed min-content" data-expected-height="10" data-expected-width="100">
     <div class="firstRowFirstColumn">XX XX XX</div>
@@ -104,6 +112,27 @@
 </div>
 <div class="grid gridFixedMaxContent max-content" data-expected-height="10" data-expected-width="220">
     <div class="firstRowFirstColumn margins">XX XX XX</div>
+    <div class="firstRowSecondColumn">XX XX XX</div>
+</div>
+
+<!-- Spanning cells -->
+<div class="grid gridMinContentFixed min-content" data-expected-height="10" data-expected-width="20">
+    <div class="firstRowBothColumn">XX XX XX</div>
+</div>
+<div class="grid gridFixedMinContent max-content" data-expected-height="10" data-expected-width="80">
+    <div class="firstRowBothColumn">XXXXX XXXXX</div>
+    <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+</div>
+<div class="grid gridFixedMaxContent max-content" data-expected-height="10" data-expected-width="80">
+    <div class="firstRowBothColumn">XX XX XX</div>
+    <div class="firstRowBothColumn">XX XX XX</div>
+</div>
+<div class="grid gridAutoContent min-content" data-expected-height="10" data-expected-width="20">
+    <div class="firstRowFirstColumn">XX XX XX</div>
+    <div class="firstRowBothColumn">XX XX XX</div>
+</div>
+<div class="grid gridAutoContent max-content" data-expected-height="10" data-expected-width="120">
+    <div class="firstRowBothColumn">XX XX XX</div>
     <div class="firstRowSecondColumn">XX XX XX</div>
 </div>
 

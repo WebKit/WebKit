@@ -1,3 +1,28 @@
+2013-11-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Fix the preferred logical widths code to work with spanning grid items
+        https://bugs.webkit.org/show_bug.cgi?id=123994
+
+        Reviewed by Andreas Kling.
+
+        From Blink r159189 by <jchaffraix@chromium.org>
+
+        There was no definition in the specs for the intrinsic / preferred
+        logical widths on the grid element. The following was proposed to
+        the WG and later accepted:
+        - The sum of the grid tracks' UsedBreadth is the minimum logical width
+        - The sum of the grid tracks' MaxBreadth is the maximum logical width
+
+        http://lists.w3.org/Archives/Public/www-style/2013Oct/0054.html
+        for more information.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths):
+        (WebCore::RenderGrid::computedUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::minContentForChild):
+        (WebCore::RenderGrid::maxContentForChild):
+        * rendering/RenderGrid.h:
+
 2013-12-15  Frédéric Wang  <fred.wang@free.fr>
 
         Add support for maction@toggle

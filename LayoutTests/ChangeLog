@@ -1,3 +1,17 @@
+2013-11-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Fix the preferred logical widths code to work with spanning grid items
+        https://bugs.webkit.org/show_bug.cgi?id=123994
+
+        Reviewed by Andreas Kling.
+
+        From Blink r159189 by <jchaffraix@chromium.org>
+
+        Extended the test case to include spanning grid items.
+
+        * fast/css-grid-layout/grid-preferred-logical-widths-expected.txt:
+        * fast/css-grid-layout/grid-preferred-logical-widths.html:
+
 2013-12-15  Frédéric Wang  <fred.wang@free.fr>
 
         Add support for maction@toggle

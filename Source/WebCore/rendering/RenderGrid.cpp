@@ -220,13 +220,13 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
 {
     const_cast<RenderGrid*>(this)->placeItemsOnGrid();
 
-    // FIXME: This is an inefficient way to fill our sizes as it will try every grid areas, when we would
-    // only want to account for fixed grid tracks and grid items. Also this will be incorrect if we have spanning
-    // grid items.
-    for (size_t i = 0; i < gridColumnCount(); ++i) {
-        const GridTrackSize& trackSize = gridTrackSize(ForColumns, i);
-        LayoutUnit minTrackBreadth = computePreferredTrackWidth(trackSize.minTrackBreadth(), i);
-        LayoutUnit maxTrackBreadth = computePreferredTrackWidth(trackSize.maxTrackBreadth(), i);
+    GridSizingData sizingData(gridColumnCount(), gridRowCount());
+    LayoutUnit availableLogicalSpace = 0;
+    const_cast<RenderGrid*>(this)->computedUsedBreadthOfGridTracks(ForColumns, sizingData, availableLogicalSpace);
+
+    for (size_t i = 0; i < sizingData.columnTracks.size(); ++i) {
+        LayoutUnit minTrackBreadth = sizingData.columnTracks[i].m_usedBreadth;
+        LayoutUnit maxTrackBreadth = sizingData.columnTracks[i].m_maxBreadth;
         maxTrackBreadth = std::max(maxTrackBreadth, minTrackBreadth);
 
         minLogicalWidth += minTrackBreadth;
@@ -257,44 +257,14 @@ void RenderGrid::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-LayoutUnit RenderGrid::computePreferredTrackWidth(const GridLength& gridLength, size_t trackIndex) const
-{
-    if (gridLength.isFlex())
-        return 0;
-
-    const Length& length = gridLength.length();
-
-    if (length.isFixed()) {
-        // Grid areas don't have borders, margins or paddings so we don't need to account for them.
-        return length.intValue();
-    }
-
-    if (length.isMinContent()) {
-        LayoutUnit minContentSize = 0;
-        GridIterator iterator(m_grid, ForColumns, trackIndex);
-        while (RenderBox* gridItem = iterator.nextGridItem())
-            minContentSize = std::max(minContentSize, gridItem->minPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(*gridItem));
-
-        return minContentSize;
-    }
-
-    if (length.isMaxContent()) {
-        LayoutUnit maxContentSize = 0;
-        GridIterator iterator(m_grid, ForColumns, trackIndex);
-        while (RenderBox* gridItem = iterator.nextGridItem())
-            maxContentSize = std::max(maxContentSize, gridItem->maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(*gridItem));
-
-        return maxContentSize;
-    }
-
-    // FIXME: css3-sizing mentions that we should resolve "definite sizes"
-    // (including <percentage> and calc()) but we don't do it elsewhere.
-    return 0;
-}
-
 void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction, GridSizingData& sizingData)
 {
     LayoutUnit availableLogicalSpace = (direction == ForColumns) ? availableLogicalWidth() : availableLogicalHeight(IncludeMarginBorderPadding);
+    computedUsedBreadthOfGridTracks(direction, sizingData, availableLogicalSpace);
+}
+
+void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction, GridSizingData& sizingData, LayoutUnit& availableLogicalSpace)
+{
     Vector<GridTrack>& tracks = (direction == ForColumns) ? sizingData.columnTracks : sizingData.rowTracks;
     sizingData.contentSizedTracksIndex.shrink(0);
     for (size_t i = 0; i < tracks.size(); ++i) {
@@ -476,7 +446,7 @@ LayoutUnit RenderGrid::minContentForChild(RenderBox* child, TrackSizingDirection
     if (direction == ForColumns) {
         // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
         // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
-        return child->minPreferredLogicalWidth();
+        return child->minPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(*child);
     }
 
     return logicalContentHeightForChild(child, columnTracks);
@@ -492,7 +462,7 @@ LayoutUnit RenderGrid::maxContentForChild(RenderBox* child, TrackSizingDirection
     if (direction == ForColumns) {
         // FIXME: It's unclear if we should return the intrinsic width or the preferred width.
         // See http://lists.w3.org/Archives/Public/www-style/2013Jan/0245.html
-        return child->maxPreferredLogicalWidth();
+        return child->maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(*child);
     }
 
     return logicalContentHeightForChild(child, columnTracks);
