@@ -491,6 +491,24 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& v
         setAttributeEventListener(eventNames().DOMActivateEvent, name, value);
     else if (name == HTMLNames::classAttr)
         setClassNameBaseValue(value);
+#if ENABLE(TOUCH_EVENTS)
+    else if (name == ontouchstartAttr)
+        setAttributeEventListener(eventNames().touchstartEvent, name, value);
+    else if (name == ontouchmoveAttr)
+        setAttributeEventListener(eventNames().touchmoveEvent, name, value);
+    else if (name == ontouchendAttr)
+        setAttributeEventListener(eventNames().touchendEvent, name, value);
+    else if (name == ontouchcancelAttr)
+        setAttributeEventListener(eventNames().touchcancelEvent, name, value);
+#endif
+#if ENABLE(IOS_GESTURE_EVENTS)
+    else if (name == ongesturestartAttr)
+        setAttributeEventListener(eventNames().gesturestartEvent, name, value);
+    else if (name == ongesturechangeAttr)
+        setAttributeEventListener(eventNames().gesturechangeEvent, name, value);
+    else if (name == ongestureendAttr)
+        setAttributeEventListener(eventNames().gestureendEvent, name, value);
+#endif
     else if (SVGLangSpace::parseAttribute(name, value)) {
     } else
         StyledElement::parseAttribute(name, value);
