@@ -1,3 +1,15 @@
+2013-12-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r160645.
+        http://trac.webkit.org/changeset/160645
+        https://bugs.webkit.org/show_bug.cgi?id=125787
+
+        Change breaks test-webkitpy (Requested by bfulgham on
+        #webkit).
+
+        * Scripts/prepare-ChangeLog:
+        (get_selector_line_ranges_for_css):
+
 2013-12-16  David Farler  <dfarler@apple.com>
 
         [ASAN] WebKitLauncher: Include libasancrashreporter.dylib in DYLD_INSERT_LIBRARIES if it exists

@@ -1487,13 +1487,13 @@ sub get_selector_line_ranges_for_css($$)
         foreach my $token (split m-(\{|\}|/\*|\*/)-, $_) {
             if ($token eq "{") {
                 if (!$inComment) {
-                    warn "mismatched brace found in $fileName\n" if $inBrace > 2;
-                    $inBrace ++;
+                    warn "mismatched brace found in $fileName\n" if $inBrace;
+                    $inBrace = 1;
                 }
             } elsif ($token eq "}") {
                 if (!$inComment) {
                     warn "mismatched brace found in $fileName\n" if !$inBrace;
-                    $inBrace --;
+                    $inBrace = 0;
                     push(@ranges, [$start, $., $currentSelector]);
                     $currentSelector = "";
                     $start = 0;
