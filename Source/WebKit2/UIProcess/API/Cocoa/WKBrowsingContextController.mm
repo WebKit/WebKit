@@ -43,6 +43,7 @@
 #import "WKRetainPtr.h"
 #import "WKURLRequestNS.h"
 #import "WKURLResponseNS.h"
+#import "WebCertificateInfo.h"
 #import "WebContext.h"
 #import "WebData.h"
 #import "WebPageProxy.h"
@@ -357,6 +358,14 @@ static inline LayoutMilestones layoutMilestones(WKRenderingProgressEvents events
 - (NSString *)title
 {
     return _page->pageLoadState().title();
+}
+
+- (NSArray *)certificateChain
+{
+    if (WebFrameProxy* mainFrame = _page->mainFrame())
+        return mainFrame->certificateInfo() ? (NSArray *)mainFrame->certificateInfo()->certificateInfo().certificateChain() : nil;
+
+    return nil;
 }
 
 #pragma mark Zoom

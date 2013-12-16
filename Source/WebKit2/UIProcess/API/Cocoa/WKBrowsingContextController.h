@@ -133,6 +133,7 @@ WK_API_CLASS
 /* Title of the document associated with the active load. */
 @property(readonly) NSString *title;
 
+@property (readonly) NSArray *certificateChain;
 
 #pragma mark Zoom
 

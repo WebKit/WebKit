@@ -1,3 +1,15 @@
+2013-12-15  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose the certificate chain for the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=125760
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h: Declared certificateChain property.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController certificateChain]): Added this getter, which calls through
+        to WebFrameProxy::certificateInfo.
+
 2013-12-15  Andy Estes  <aestes@apple.com>
 
         [iOS] Upstream changes to FeatureDefines.xcconfig
