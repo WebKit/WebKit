@@ -60,6 +60,7 @@
 
 namespace API {
 class Array;
+class Data;
 class Point;
 class Rect;
 class Size;
@@ -75,7 +76,6 @@ class WebArchiveResource;
 class WebCertificateInfo;
 class WebConnection;
 class WebContextMenuItem;
-class WebData;
 class WebGraphicsContext;
 class WebImage;
 class WebSecurityOrigin;
@@ -96,7 +96,7 @@ WK_ADD_API_MAPPING(WKBooleanRef, API::Boolean)
 WK_ADD_API_MAPPING(WKCertificateInfoRef, WebCertificateInfo)
 WK_ADD_API_MAPPING(WKConnectionRef, WebConnection)
 WK_ADD_API_MAPPING(WKContextMenuItemRef, WebContextMenuItem)
-WK_ADD_API_MAPPING(WKDataRef, WebData)
+WK_ADD_API_MAPPING(WKDataRef, API::Data)
 WK_ADD_API_MAPPING(WKDictionaryRef, ImmutableDictionary)
 WK_ADD_API_MAPPING(WKDoubleRef, API::Double)
 WK_ADD_API_MAPPING(WKErrorRef, WebError)

@@ -58,7 +58,6 @@
 #include "WebContextMenuProxy.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebData.h"
 #include "WebEditCommandProxy.h"
 #include "WebEvent.h"
 #include "WebFormSubmissionListenerProxy.h"
@@ -659,7 +658,7 @@ void WebPageProxy::loadFile(const String& fileURLString, const String& resourceD
     m_process->responsivenessTimer()->start();
 }
 
-void WebPageProxy::loadData(WebData* data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData)
+void WebPageProxy::loadData(API::Data* data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData)
 {
     if (!isValid())
         reattachToWebProcess();
@@ -705,7 +704,7 @@ void WebPageProxy::loadPlainTextString(const String& string, API::Object* userDa
     m_process->responsivenessTimer()->start();
 }
 
-void WebPageProxy::loadWebArchiveData(const WebData* webArchiveData, API::Object* userData)
+void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* userData)
 {
     if (!isValid())
         reattachToWebProcess();
@@ -3605,7 +3604,7 @@ void WebPageProxy::dataCallback(const CoreIPC::DataReference& dataReference, uin
         return;
     }
 
-    callback->performCallbackWithReturnValue(WebData::create(dataReference.data(), dataReference.size()).get());
+    callback->performCallbackWithReturnValue(API::Data::create(dataReference.data(), dataReference.size()).get());
 }
 
 void WebPageProxy::imageCallback(const ShareableBitmap::Handle& bitmapHandle, uint64_t callbackID)
@@ -4258,19 +4257,19 @@ void WebPageProxy::updateBackingStoreDiscardableState()
     m_drawingArea->setBackingStoreIsDiscardable(isDiscardable);
 }
 
-void WebPageProxy::saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData* data)
+void WebPageProxy::saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, API::Data* data)
 {
     m_uiClient.saveDataToFileInDownloadsFolder(this, suggestedFilename, mimeType, originatingURLString, data);
 }
 
-void WebPageProxy::savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const CoreIPC::DataReference& data)
+void WebPageProxy::savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const CoreIPC::DataReference& dataReference)
 {
     if (!suggestedFilename.endsWith(".pdf", false))
         return;
 
-    RefPtr<WebData> webData = WebData::create(data.data(), data.size());
+    RefPtr<API::Data> data = API::Data::create(dataReference.data(), dataReference.size());
 
-    saveDataToFileInDownloadsFolder(suggestedFilename, "application/pdf", originatingURLString, webData.get());
+    saveDataToFileInDownloadsFolder(suggestedFilename, "application/pdf", originatingURLString, data.get());
 }
 
 void WebPageProxy::linkClicked(const String& url, const WebMouseEvent& event)

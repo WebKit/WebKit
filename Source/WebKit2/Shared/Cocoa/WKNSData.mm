@@ -28,15 +28,13 @@
 
 #if WK_API_ENABLED
 
-using namespace WebKit;
-
 @implementation WKNSData {
-    API::ObjectStorage<WebData> _data;
+    API::ObjectStorage<API::Data> _data;
 }
 
 - (void)dealloc
 {
-    _data->~WebData();
+    _data->~Data();
 
     [super dealloc];
 }

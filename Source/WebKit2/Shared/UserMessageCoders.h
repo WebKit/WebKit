@@ -27,6 +27,7 @@
 #define UserMessageCoders_h
 
 #include "APIArray.h"
+#include "APIData.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
 #include "APIString.h"
@@ -37,7 +38,6 @@
 #include "ShareableBitmap.h"
 #include "WebCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebData.h"
 #include "WebError.h"
 #include "WebImage.h"
 #include "WebRenderLayer.h"
@@ -57,7 +57,7 @@ namespace WebKit {
 //   - String -> String
 //   - UserContentURLPattern -> UserContentURLPattern
 //   - WebCertificateInfo -> WebCertificateInfo
-//   - WebData -> WebData
+//   - API::Data -> API::Data
 //   - API::Double -> API::Double
 //   - WebImage -> WebImage
 //   - WebRenderLayer -> WebRenderLayer
@@ -209,7 +209,7 @@ public:
             return true;
         }
         case API::Object::Type::Data: {
-            WebData* data = static_cast<WebData*>(m_root);
+            API::Data* data = static_cast<API::Data*>(m_root);
             encoder << data->dataReference();
             return true;
         }
@@ -500,7 +500,7 @@ public:
             CoreIPC::DataReference dataReference;
             if (!decoder.decode(dataReference))
                 return false;
-            coder.m_root = WebData::create(dataReference.data(), dataReference.size());
+            coder.m_root = API::Data::create(dataReference.data(), dataReference.size());
             break;
         }
         case API::Object::Type::CertificateInfo: {

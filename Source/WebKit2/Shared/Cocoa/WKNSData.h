@@ -27,17 +27,13 @@
 
 #if WK_API_ENABLED
 
+#import "APIData.h"
 #import "WKObject.h"
-#import "WebData.h"
 
-namespace WebKit {
-
-inline NSData *wrapper(WebData& data)
+inline NSData *wrapper(API::Data& data)
 {
     ASSERT([data.wrapper() isKindOfClass:[NSData self]]);
     return (NSData *)data.wrapper();
-}
-
 }
 
 @interface WKNSData : NSData <WKObject>

@@ -49,11 +49,12 @@ OBJC_CLASS NSBundle;
 
 namespace API {
 class Array;
+class Data;
 }
 
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
+namespace IPC {
+class ArgumentDecoder;
+class Connection;
 }
 
 namespace WebKit {
@@ -69,7 +70,6 @@ typedef Eina_Module* PlatformBundle;
 class InjectedBundleScriptWorld;
 class WebCertificateInfo;
 class WebConnection;
-class WebData;
 class WebFrame;
 class WebPage;
 class WebPageGroupProxy;
@@ -122,7 +122,7 @@ public:
     void setWebNotificationPermission(WebPage*, const String& originString, bool allowed);
     void removeAllWebNotificationPermissions(WebPage*);
     uint64_t webNotificationID(JSContextRef, JSValueRef);
-    PassRefPtr<WebData> createWebDataFromUint8Array(JSContextRef, JSValueRef);
+    PassRefPtr<API::Data> createWebDataFromUint8Array(JSContextRef, JSValueRef);
 
     // UserContent API
     void addUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, API::Array* whitelist, API::Array* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);

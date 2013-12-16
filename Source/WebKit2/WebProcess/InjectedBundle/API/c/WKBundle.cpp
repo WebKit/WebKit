@@ -27,11 +27,11 @@
 #include "WKBundle.h"
 
 #include "APIArray.h"
+#include "APIData.h"
 #include "InjectedBundle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WKBundlePrivate.h"
-#include "WebData.h"
 
 using namespace WebKit;
 
@@ -266,8 +266,7 @@ WKArrayRef WKBundleCopyOriginsWithApplicationCache(WKBundleRef bundleRef)
 
 WKDataRef WKBundleCreateWKDataFromUInt8Array(WKBundleRef bundle, JSContextRef context, JSValueRef data)
 {
-    RefPtr<WebData> webData = toImpl(bundle)->createWebDataFromUint8Array(context, data);
-    return toAPI(webData.release().leakRef());
+    return toAPI(toImpl(bundle)->createWebDataFromUint8Array(context, data).leakRef());
 }
 
 int WKBundleNumberOfPages(WKBundleRef bundleRef, WKBundleFrameRef frameRef, double pageWidthInPixels, double pageHeightInPixels)

@@ -137,7 +137,6 @@ class WebBackForwardList;
 class WebBackForwardListItem;
 class WebColorPickerResultListenerProxy;
 class WebContextMenuProxy;
-class WebData;
 class WebEditCommandProxy;
 class WebFullScreenManagerProxy;
 class WebKeyboardEvent;
@@ -370,11 +369,11 @@ public:
     void loadURL(const String&, API::Object* userData = nullptr);
     void loadURLRequest(WebURLRequest*, API::Object* userData = nullptr);
     void loadFile(const String& fileURL, const String& resourceDirectoryURL, API::Object* userData = nullptr);
-    void loadData(WebData*, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData = nullptr);
+    void loadData(API::Data*, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData = nullptr);
     void loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData = nullptr);
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, API::Object* userData = nullptr);
     void loadPlainTextString(const String&, API::Object* userData = nullptr);
-    void loadWebArchiveData(const WebData*, API::Object* userData = nullptr);
+    void loadWebArchiveData(API::Data*, API::Object* userData = nullptr);
 
     void stopLoading();
     void reload(bool reloadFromOrigin);
@@ -535,8 +534,8 @@ public:
     void terminateProcess();
 
     typedef bool (*WebPageProxySessionStateFilterCallback)(WKPageRef, WKStringRef type, WKTypeRef object, void* context);
-    PassRefPtr<WebData> sessionStateData(WebPageProxySessionStateFilterCallback, void* context) const;
-    void restoreFromSessionStateData(WebData*);
+    PassRefPtr<API::Data> sessionStateData(WebPageProxySessionStateFilterCallback, void* context) const;
+    void restoreFromSessionStateData(API::Data*);
 
     bool supportsTextZoom() const;
     double textZoomFactor() const { return m_textZoomFactor; }
@@ -778,7 +777,7 @@ public:
     void handleAlternativeTextUIResult(const String& result);
 #endif
 
-    void saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData*);
+    void saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, API::Data*);
     void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const CoreIPC::DataReference&);
 #if PLATFORM(MAC)
     void savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID);

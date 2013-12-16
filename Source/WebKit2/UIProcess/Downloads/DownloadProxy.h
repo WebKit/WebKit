@@ -33,6 +33,10 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 
+namespace API {
+class Data;
+}
+
 namespace WebCore {
     class AuthenticationChallenge;
     class ResourceError;
@@ -43,7 +47,6 @@ namespace WebKit {
 
 class DownloadProxyMap;
 class WebContext;
-class WebData;
 class WebPageProxy;
 
 class DownloadProxy : public API::ObjectImpl<API::Object::Type::Download>, public CoreIPC::MessageReceiver {
@@ -53,7 +56,7 @@ public:
 
     uint64_t downloadID() const { return m_downloadID; }
     const WebCore::ResourceRequest& request() const { return m_request; }
-    WebData* resumeData() const { return m_resumeData.get(); }
+    API::Data* resumeData() const { return m_resumeData.get(); }
 
     void cancel();
 
@@ -86,7 +89,7 @@ private:
     RefPtr<WebContext> m_webContext;
     uint64_t m_downloadID;
 
-    RefPtr<WebData> m_resumeData;
+    RefPtr<API::Data> m_resumeData;
     WebCore::ResourceRequest m_request;
 };
 

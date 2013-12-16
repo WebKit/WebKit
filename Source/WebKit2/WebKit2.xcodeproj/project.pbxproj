@@ -583,7 +583,7 @@
 		514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 514BDED216C98EDD00E4E25E /* StatisticsRequest.h */; };
 		5153569C1291B1D2000749DC /* WebPageContextMenuClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5153569A1291B1D2000749DC /* WebPageContextMenuClient.cpp */; };
 		5153569D1291B1D2000749DC /* WebPageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5153569B1291B1D2000749DC /* WebPageContextMenuClient.h */; };
-		51578B831209ECEF00A37C4A /* WebData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* WebData.h */; };
+		51578B831209ECEF00A37C4A /* APIData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* APIData.h */; };
 		515E7727183DD6F60007203F /* AsyncRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515E7725183DD6F60007203F /* AsyncRequest.cpp */; };
 		515E7728183DD6F60007203F /* AsyncRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E7726183DD6F60007203F /* AsyncRequest.h */; };
 		515E772B184008B90007203F /* DatabaseProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515E7729184008B90007203F /* DatabaseProcessCreationParameters.cpp */; };
@@ -2170,7 +2170,7 @@
 		514BDED216C98EDD00E4E25E /* StatisticsRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsRequest.h; sourceTree = "<group>"; };
 		5153569A1291B1D2000749DC /* WebPageContextMenuClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageContextMenuClient.cpp; sourceTree = "<group>"; };
 		5153569B1291B1D2000749DC /* WebPageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageContextMenuClient.h; sourceTree = "<group>"; };
-		51578B821209ECEF00A37C4A /* WebData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebData.h; sourceTree = "<group>"; };
+		51578B821209ECEF00A37C4A /* APIData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIData.h; sourceTree = "<group>"; };
 		515E7725183DD6F60007203F /* AsyncRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncRequest.cpp; sourceTree = "<group>"; };
 		515E7726183DD6F60007203F /* AsyncRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncRequest.h; sourceTree = "<group>"; };
 		515E7729184008B90007203F /* DatabaseProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcessCreationParameters.cpp; sourceTree = "<group>"; };
@@ -3468,6 +3468,7 @@
 				BC64696D11DBE603006455B0 /* APIArray.cpp */,
 				BC64696E11DBE603006455B0 /* APIArray.h */,
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
+				51578B821209ECEF00A37C4A /* APIData.h */,
 				1AC1336F18566C7C00F3EC05 /* APIFrameHandle.cpp */,
 				1AC1337018566C7C00F3EC05 /* APIFrameHandle.h */,
 				1AC133731857C21E00F3EC05 /* APIGeometry.cpp */,
@@ -3563,7 +3564,6 @@
 				BC1DD7B1114DC396005ADAF3 /* WebCoreArgumentCoders.h */,
 				51BA24451858F41500EA2811 /* WebCrossThreadCopier.cpp */,
 				516311861858446600534647 /* WebCrossThreadCopier.h */,
-				51578B821209ECEF00A37C4A /* WebData.h */,
 				BC575612126E0138006F0F12 /* WebError.cpp */,
 				516A4A5B120A2CCD00C05B7F /* WebError.h */,
 				C0337DAD127A24FE008FF4F4 /* WebEvent.cpp */,
@@ -5999,7 +5999,7 @@
 				BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */,
 				1A9E329718219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h in Headers */,
 				512F589B12A8838800629530 /* WebCredential.h in Headers */,
-				51578B831209ECEF00A37C4A /* WebData.h in Headers */,
+				51578B831209ECEF00A37C4A /* APIData.h in Headers */,
 				F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */,
 				F62A76B712B1B25F0005F1B6 /* WebDatabaseManagerMessages.h in Headers */,
 				F62A765D12B1ABC30005F1B6 /* WebDatabaseManagerProxy.h in Headers */,

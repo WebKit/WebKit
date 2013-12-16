@@ -26,20 +26,19 @@
 #include "config.h"
 #include "WKData.h"
 
-#include "WebData.h"
+#include "APIData.h"
 #include "WKAPICast.h"
 
 using namespace WebKit;
 
 WKTypeID WKDataGetTypeID()
 {
-    return toAPI(WebData::APIType);
+    return toAPI(API::Data::APIType);
 }
 
 WKDataRef WKDataCreate(const unsigned char* bytes, size_t size)
 {
-    RefPtr<WebData> data = WebData::create(bytes, size);
-    return toAPI(data.release().leakRef());
+    return toAPI(API::Data::create(bytes, size).leakRef());
 }
 
 const unsigned char* WKDataGetBytes(WKDataRef dataRef)

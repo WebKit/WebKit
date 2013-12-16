@@ -29,8 +29,8 @@
 #if PLATFORM(MAC)
 
 #include "APIArray.h"
+#include "APIData.h"
 #include "WebArchiveResource.h"
-#include "WebData.h"
 #include <WebCore/LegacyWebArchive.h>
 #include <wtf/RetainPtr.h>
 
@@ -43,7 +43,7 @@ PassRefPtr<WebArchive> WebArchive::create(WebArchiveResource* mainResource, Pass
     return adoptRef(new WebArchive(mainResource, subresources, subframeArchives));
 }
 
-PassRefPtr<WebArchive> WebArchive::create(WebData* data)
+PassRefPtr<WebArchive> WebArchive::create(API::Data* data)
 {
     return adoptRef(new WebArchive(data));
 }
@@ -82,7 +82,7 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> 
     m_legacyWebArchive = LegacyWebArchive::create(coreMainResource.release(), coreArchiveResources, coreSubframeLegacyWebArchives);
 }
 
-WebArchive::WebArchive(WebData* data)
+WebArchive::WebArchive(API::Data* data)
 {
     RefPtr<SharedBuffer> buffer = SharedBuffer::create(data->bytes(), data->size());
     m_legacyWebArchive = LegacyWebArchive::create(buffer.get());
@@ -140,14 +140,14 @@ static void releaseCFData(unsigned char*, const void* data)
     CFRelease(data);
 }
 
-PassRefPtr<WebData> WebArchive::data()
+PassRefPtr<API::Data> WebArchive::data()
 {
     RetainPtr<CFDataRef> rawDataRepresentation = m_legacyWebArchive->rawDataRepresentation();
 
     // Balanced by CFRelease in releaseCFData.
     CFRetain(rawDataRepresentation.get());
 
-    return WebData::createWithoutCopying(CFDataGetBytePtr(rawDataRepresentation.get()), CFDataGetLength(rawDataRepresentation.get()), releaseCFData, rawDataRepresentation.get());
+    return API::Data::createWithoutCopying(CFDataGetBytePtr(rawDataRepresentation.get()), CFDataGetLength(rawDataRepresentation.get()), releaseCFData, rawDataRepresentation.get());
 }
 
 LegacyWebArchive* WebArchive::coreLegacyWebArchive()

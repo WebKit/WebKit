@@ -420,7 +420,7 @@ void WebUIClient::runModal(WebPageProxy* page)
     m_client.runModal(toAPI(page), m_client.base.clientInfo);
 }
 
-void WebUIClient::saveDataToFileInDownloadsFolder(WebPageProxy* page, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData* data)
+void WebUIClient::saveDataToFileInDownloadsFolder(WebPageProxy* page, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, API::Data* data)
 {
     if (!m_client.saveDataToFileInDownloadsFolder)
         return;

@@ -28,7 +28,7 @@
 
 #if PLATFORM(MAC)
 
-#include "WebData.h"
+#include "APIData.h"
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/URL.h>
 #include <wtf/RetainPtr.h>
@@ -37,7 +37,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebArchiveResource> WebArchiveResource::create(WebData* data, const String& URL, const String& MIMEType, const String& textEncoding)
+PassRefPtr<WebArchiveResource> WebArchiveResource::create(API::Data* data, const String& URL, const String& MIMEType, const String& textEncoding)
 {
     return adoptRef(new WebArchiveResource(data, URL, MIMEType, textEncoding));
 }
@@ -47,7 +47,7 @@ PassRefPtr<WebArchiveResource> WebArchiveResource::create(PassRefPtr<ArchiveReso
     return adoptRef(new WebArchiveResource(archiveResource));
 }
 
-WebArchiveResource::WebArchiveResource(WebData* data, const String& URL, const String& MIMEType, const String& textEncoding)
+WebArchiveResource::WebArchiveResource(API::Data* data, const String& URL, const String& MIMEType, const String& textEncoding)
     : m_archiveResource(ArchiveResource::create(SharedBuffer::create(data->bytes(), data->size()), WebCore::URL(WebCore::URL(), URL), MIMEType, textEncoding, String()))
 {
 }
@@ -67,14 +67,14 @@ static void releaseCFData(unsigned char*, const void* data)
     CFRelease(data);
 }
 
-PassRefPtr<WebData> WebArchiveResource::data()
+PassRefPtr<API::Data> WebArchiveResource::data()
 {
     RetainPtr<CFDataRef> cfData = m_archiveResource->data()->createCFData();
 
     // Balanced by CFRelease in releaseCFData.
     CFRetain(cfData.get());
 
-    return WebData::createWithoutCopying(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()), releaseCFData, cfData.get());
+    return API::Data::createWithoutCopying(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()), releaseCFData, cfData.get());
 }
 
 String WebArchiveResource::URL()

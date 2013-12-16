@@ -23,28 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebData_h
-#define WebData_h
+#ifndef APIData_h
+#define APIData_h
 
 #include "APIObject.h"
 #include "DataReference.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-namespace WebKit {
+namespace API {
 
-// WebData - A data buffer type suitable for vending to an API.
-
-class WebData : public API::ObjectImpl<API::Object::Type::Data> {
+class Data : public ObjectImpl<API::Object::Type::Data> {
 public:
     typedef void (*FreeDataFunction)(unsigned char*, const void* context);
 
-    static PassRefPtr<WebData> createWithoutCopying(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
+    static PassRefPtr<Data> createWithoutCopying(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
     {
-        return adoptRef(new WebData(bytes, size, freeDataFunction, context));
+        return adoptRef(new Data(bytes, size, freeDataFunction, context));
     }
 
-    static PassRefPtr<WebData> create(const unsigned char* bytes, size_t size)
+    static PassRefPtr<Data> create(const unsigned char* bytes, size_t size)
     {
         unsigned char *copiedBytes = 0;
 
@@ -56,12 +54,12 @@ public:
         return createWithoutCopying(copiedBytes, size, fastFreeBytes, 0);
     }
     
-    static PassRefPtr<WebData> create(const Vector<unsigned char>& buffer)
+    static PassRefPtr<Data> create(const Vector<unsigned char>& buffer)
     {
         return create(buffer.data(), buffer.size());
     }
 
-    ~WebData()
+    ~Data()
     {
         m_freeDataFunction(const_cast<unsigned char*>(m_bytes), m_context);
     }
@@ -69,10 +67,10 @@ public:
     const unsigned char* bytes() const { return m_bytes; }
     size_t size() const { return m_size; }
 
-    CoreIPC::DataReference dataReference() const { return CoreIPC::DataReference(m_bytes, m_size); }
+    IPC::DataReference dataReference() const { return IPC::DataReference(m_bytes, m_size); }
 
 private:
-    WebData(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
+    Data(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
         : m_bytes(bytes)
         , m_size(size)
         , m_freeDataFunction(freeDataFunction)
@@ -93,6 +91,6 @@ private:
     const void* m_context;
 };
 
-} // namespace WebKit
+} // namespace API
 
-#endif // WebData_h
+#endif // APIData_h

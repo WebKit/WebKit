@@ -27,12 +27,12 @@
 #include "WKWebArchive.h"
 
 #include "APIArray.h"
+#include "APIData.h"
 #include "InjectedBundleRangeHandle.h"
 #include "WKBundleAPICast.h"
 #include "WKSharedAPICast.h"
 #include "WebArchive.h"
 #include "WebArchiveResource.h"
-#include "WebData.h"
 
 using namespace WebKit;
 
@@ -79,6 +79,5 @@ WKArrayRef WKWebArchiveCopySubframeArchives(WKWebArchiveRef webArchiveRef)
 
 WKDataRef WKWebArchiveCopyData(WKWebArchiveRef webArchiveRef)
 {
-    RefPtr<WebData> data = toImpl(webArchiveRef)->data();
-    return toAPI(data.release().leakRef());
+    return toAPI(toImpl(webArchiveRef)->data().leakRef());
 }

@@ -26,11 +26,11 @@
 #import "config.h"
 #import "WKPrintingView.h"
 
+#import "APIData.h"
 #import "Logging.h"
 #import "PDFKitImports.h"
 #import "PrintInfo.h"
 #import "ShareableBitmap.h"
-#import "WebData.h"
 #import "WebPageProxy.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/GraphicsContext.h>
@@ -242,7 +242,7 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
 
     OwnPtr<IPCCallbackContext> context = adoptPtr(static_cast<IPCCallbackContext*>(untypedContext));
     WKPrintingView *view = context->view.get();
-    WebData* data = toImpl(dataRef);
+    API::Data* data = toImpl(dataRef);
 
     if (context->callbackID == view->_expectedPrintCallback) {
         ASSERT(![view _isPrintingPreview]);

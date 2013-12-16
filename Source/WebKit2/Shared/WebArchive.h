@@ -34,6 +34,7 @@
 
 namespace API {
 class Array;
+class Data;
 }
 
 namespace WebCore {
@@ -44,14 +45,13 @@ class Range;
 namespace WebKit {
 
 class WebArchiveResource;
-class WebData;
 
 class WebArchive : public API::ObjectImpl<API::Object::Type::WebArchive> {
 public:
     virtual ~WebArchive();
 
     static PassRefPtr<WebArchive> create(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives);
-    static PassRefPtr<WebArchive> create(WebData*);
+    static PassRefPtr<WebArchive> create(API::Data*);
     static PassRefPtr<WebArchive> create(PassRefPtr<WebCore::LegacyWebArchive>);
     static PassRefPtr<WebArchive> create(WebCore::Range*);
 
@@ -59,13 +59,13 @@ public:
     API::Array* subresources();
     API::Array* subframeArchives();
 
-    PassRefPtr<WebData> data();
+    PassRefPtr<API::Data> data();
 
     WebCore::LegacyWebArchive* coreLegacyWebArchive();
 
 private:
     WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives);
-    WebArchive(WebData*);
+    WebArchive(API::Data*);
     WebArchive(PassRefPtr<WebCore::LegacyWebArchive>);
 
     RefPtr<WebCore::LegacyWebArchive> m_legacyWebArchive;

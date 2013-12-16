@@ -35,6 +35,8 @@
 #include <wtf/PassRefPtr.h>
 
 namespace API {
+class Data;
+
 template<> struct ClientTraits<WKPageUIClientBase> {
     typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2> Versions;
 };
@@ -55,7 +57,6 @@ class NativeWebKeyboardEvent;
 class NativeWebWheelEvent;
 class NotificationPermissionRequest;
 class WebColorPickerResultListenerProxy;
-class WebData;
 class WebFrameProxy;
 class WebPageProxy;
 class WebSecurityOrigin;
@@ -121,7 +122,7 @@ public:
     bool canRunModal() const;
     void runModal(WebPageProxy*);
 
-    void saveDataToFileInDownloadsFolder(WebPageProxy*, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData*);
+    void saveDataToFileInDownloadsFolder(WebPageProxy*, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, API::Data*);
 
     bool shouldInterruptJavaScript(WebPageProxy*);
 

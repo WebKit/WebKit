@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WKWebArchiveResource.h"
 
+#include "APIData.h"
 #include "WKSharedAPICast.h"
 #include "WebArchiveResource.h"
-#include "WebData.h"
 
 using namespace WebKit;
 
@@ -45,8 +45,7 @@ WKWebArchiveResourceRef WKWebArchiveResourceCreate(WKDataRef dataRef, WKURLRef U
 
 WKDataRef WKWebArchiveResourceCopyData(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    RefPtr<WebData> data = toImpl(webArchiveResourceRef)->data();
-    return toAPI(data.release().leakRef());
+    return toAPI(toImpl(webArchiveResourceRef)->data().leakRef());
 }
 
 WKURLRef WKWebArchiveResourceCopyURL(WKWebArchiveResourceRef webArchiveResourceRef)

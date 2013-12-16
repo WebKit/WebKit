@@ -29,11 +29,11 @@
 #if WK_API_ENABLED
 
 #import "APIArray.h"
+#import "APIData.h"
 #import "APINumber.h"
 #import "APIString.h"
 #import "MutableDictionary.h"
 #import "WKRemoteObjectInterfaceInternal.h"
-#import "WebData.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TemporaryChange.h>
@@ -237,7 +237,7 @@ static NSString *escapeKey(NSString *key)
 
 - (void)encodeBytes:(const uint8_t *)bytes length:(NSUInteger)length forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), WebData::create(bytes, length));
+    _currentDictionary->set(escapeKey(key), API::Data::create(bytes, length));
 }
 
 - (void)encodeBool:(BOOL)value forKey:(NSString *)key
@@ -505,7 +505,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary
 
 - (const uint8_t *)decodeBytesForKey:(NSString *)key returnedLength:(NSUInteger *)length
 {
-    WebData* data = _currentDictionary->get<WebData>(escapeKey(key));
+    auto* data = _currentDictionary->get<API::Data>(escapeKey(key));
     if (!data || !data->size())
         return nullptr;
 

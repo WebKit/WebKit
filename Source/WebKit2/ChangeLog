@@ -1,3 +1,85 @@
+2013-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Rename WebData to API::Data
+        https://bugs.webkit.org/show_bug.cgi?id=125797
+
+        Reviewed by Beth Dakin.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectEncoder encodeBytes:length:forKey:]):
+        (-[WKRemoteObjectDecoder decodeBytesForKey:returnedLength:]):
+        * Shared/API/c/WKData.cpp:
+        (WKDataGetTypeID):
+        (WKDataCreate):
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/API/c/mac/WKWebArchive.cpp:
+        (WKWebArchiveCopyData):
+        * Shared/API/c/mac/WKWebArchiveResource.cpp:
+        (WKWebArchiveResourceCopyData):
+        * Shared/APIData.h: Renamed from Source/WebKit2/Shared/WebData.h.
+        (API::Data::createWithoutCopying):
+        (API::Data::create):
+        (API::Data::~Data):
+        (API::Data::bytes):
+        (API::Data::size):
+        (API::Data::dataReference):
+        (API::Data::Data):
+        (API::Data::fastFreeBytes):
+        * Shared/Cocoa/WKNSData.h:
+        (WebKit::wrapper):
+        * Shared/Cocoa/WKNSData.mm:
+        (-[WKNSData dealloc]):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebArchive.cpp:
+        (WebKit::WebArchive::create):
+        (WebKit::WebArchive::WebArchive):
+        (WebKit::WebArchive::data):
+        * Shared/WebArchive.h:
+        * Shared/WebArchiveResource.cpp:
+        (WebKit::WebArchiveResource::create):
+        (WebKit::WebArchiveResource::WebArchiveResource):
+        (WebKit::WebArchiveResource::data):
+        * Shared/WebArchiveResource.h:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadData:MIMEType:textEncodingName:baseURL:userData:]):
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (pageDidDrawToPDF):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::createData):
+        (WebKit::DownloadProxy::didFail):
+        (WebKit::DownloadProxy::didCancel):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (WebKit::DownloadProxy::resumeData):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        (WebKit::WebPageProxy::dataCallback):
+        (WebKit::WebPageProxy::saveDataToFileInDownloadsFolder):
+        (WebKit::WebPageProxy::savePDFToFileInDownloadsFolder):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::saveDataToFileInDownloadsFolder):
+        * UIProcess/WebUIClient.h:
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::sessionStateData):
+        (WebKit::WebPageProxy::restoreFromSessionStateData):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleCreateWKDataFromUInt8Array):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::createWebDataFromUint8Array):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::getPasteboardDataForRange):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::willLoadDataRequest):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadDataImpl):
+
 2013-12-16  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Fix build warning in files including DrawingAreaProxy.h

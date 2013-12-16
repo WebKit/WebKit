@@ -61,7 +61,7 @@ class WebFrame;
 class InjectedBundlePageLoaderClient : public API::Client<WKBundlePageLoaderClientBase> {
 public:
     void willLoadURLRequest(WebPage*, const WebCore::ResourceRequest&, API::Object*);
-    void willLoadDataRequest(WebPage*, const WebCore::ResourceRequest&, const WebCore::SharedBuffer*, const String&, const String&, const WebCore::URL&, API::Object*);
+    void willLoadDataRequest(WebPage*, const WebCore::ResourceRequest&, WebCore::SharedBuffer*, const String&, const String&, const WebCore::URL&, API::Object*);
 
     bool shouldGoToBackForwardListItem(WebPage*, InjectedBundleBackForwardListItem*, RefPtr<API::Object>& userData);
     void didStartProvisionalLoadForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
