@@ -1,3 +1,22 @@
+2013-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a menu option to MiniBrowser to enable UI-side compositing
+        https://bugs.webkit.org/show_bug.cgi?id=125793
+
+        Reviewed by Anders Carlsson.
+        
+        Make it possible to test UI-side compositing in MiniBrowser WK2 windows.
+
+        * MiniBrowser/mac/BrowserWindowController.h: Add optional protocol method
+        to toggle UI-side compositing.
+        * MiniBrowser/mac/MainMenu.xib: Add menu item to Debug menu.
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController isUISideCompositingEnabled]):
+        (-[WK2BrowserWindowController toggleUISideCompositing:]):
+        (-[WK2BrowserWindowController observeValueForKeyPath:ofObject:change:context:]):
+        Adjust the window title to indicate whether the window is using UI-side compositing.
+
 2013-12-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r160645.

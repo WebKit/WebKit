@@ -38,6 +38,7 @@
 #import <WebKit2/WKViewPrivate.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
+static NSString * const WebKit2UseRemoteLayerTreeDrawingAreaKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
 
 @interface WK2BrowserWindowController () <WKBrowsingContextLoadDelegatePrivate, WKBrowsingContextPolicyDelegate, WKBrowsingContextHistoryDelegate>
 @end
@@ -123,6 +124,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
     else if ([menuItem action] == @selector(toggleTransparentWindow:))
         [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
+    else if ([menuItem action] == @selector(toggleUISideCompositing:))
+        [menuItem setState:[self isUISideCompositingEnabled] ? NSOnState : NSOffState];
 
     return YES;
 }
@@ -287,6 +290,18 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [[self window] display];    
 }
 
+- (BOOL)isUISideCompositingEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKit2UseRemoteLayerTreeDrawingAreaKey];
+}
+
+- (IBAction)toggleUISideCompositing:(id)sender
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    BOOL newValue = ![userDefaults boolForKey:WebKit2UseRemoteLayerTreeDrawingAreaKey];
+    [userDefaults setBool:newValue forKey:WebKit2UseRemoteLayerTreeDrawingAreaKey];
+}
+
 static void dumpSource(WKStringRef source, WKErrorRef error, void* context)
 {
     if (!source)
@@ -306,7 +321,7 @@ static void dumpSource(WKStringRef source, WKErrorRef error, void* context)
         return;
 
     if ([keyPath isEqualToString:@"title"])
-        self.window.title = [_webView.browsingContextController.title stringByAppendingString:@" [WK2]"];
+        self.window.title = [_webView.browsingContextController.title stringByAppendingString:_webView.isUsingUISideCompositing ? @" [WK2 UI]" : @" [WK2]"];
     else if ([keyPath isEqualToString:@"activeURL"])
         [self updateTextFieldFromURL:_webView.browsingContextController.activeURL];
 }
