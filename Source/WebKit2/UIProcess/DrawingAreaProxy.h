@@ -71,8 +71,8 @@ public:
     virtual void minimumLayoutSizeDidChange() { }
 
     virtual void beginTransientZoom() { }
-    virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) { }
-    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }
+    virtual void adjustTransientZoom(double, WebCore::FloatPoint) { }
+    virtual void commitTransientZoom(double, WebCore::FloatPoint) { }
 
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy*);

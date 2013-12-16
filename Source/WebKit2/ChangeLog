@@ -1,3 +1,16 @@
+2013-12-16  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Fix build warning in files including DrawingAreaProxy.h
+        https://bugs.webkit.org/show_bug.cgi?id=125778
+
+        Reviewed by Anders Carlsson.
+
+        Remove unused parameters from method declaration.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::adjustTransientZoom):
+        (WebKit::DrawingAreaProxy::commitTransientZoom):
+
 2013-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r160549.
