@@ -16,11 +16,12 @@ function Replacement(root, parent, host, attributeNames, attributeValues)
     this.postEvents = false;
     this.height = 0;
     this.width = 0;
-    this.src = '';
+    this.src = "";
     this.autohref = false;
-    this.href = '';
-    this.qtsrc = '';
-    this.target = '';
+    this.href = "";
+    this.qtsrc = "";
+    this.baseUrl = "";
+    this.target = "";
 
     this.createVideoElement(attributeNames, attributeValues);
     this.createScriptInterface();
@@ -45,6 +46,7 @@ Replacement.prototype = {
         postdomevents: 'postEvents',
         height: 'height',
         width: 'width',
+        qtsrc: 'qtsrc',
         src: 'src',
         airplay: 'x-webkit-airplay=',
         href: 'href',
@@ -94,15 +96,24 @@ Replacement.prototype = {
         video.setAttribute('controls', 'controls');
         this.setStatus('Waiting');
 
-        var src = this.src;
+        var src = this.resolveRelativeToUrl(this.src, "");
+        this.baseUrl = src;
+
+        // The 'qtsrc' attribute is used when a page author wanted to always use the QuickTime plug-in
+        // to load a media type even if another plug-in was registered for that type. It tells the
+        // plug-in to ignore the 'src' url, and to load the 'qtsrc' url instead.
+        if (this.qtsrc)
+            src = this.resolveRelativeToUrl(this.qtsrc, this.src);
         if (this.href && this.target) {
             src = this.resolveRelativeToUrl(this.href, this.src);
             video.poster = this.src;
             video.setAttribute('preload', 'none');
         }
         
-        if (src.length)
-            this.setURL(src);
+        if (src.length) {
+            this.setStatus('Validating');
+            this.video.src = src;
+        }
 
         this.root.appendChild(video);
     },
@@ -212,6 +223,8 @@ Replacement.prototype = {
     setURL: function(url)
     {
         this.setStatus('Validating');
+        if (url.length)
+            url = this.resolveRelativeToUrl(url, this.baseUrl);
         this.video.src = url;
     },
     

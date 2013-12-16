@@ -4,7 +4,8 @@
         <script src="../resources/js-test-pre.js"></script>
         <script>
             var embed;
-            var src = "resources/orange.mov";
+            var orangeURL = "orange.mov";
+            var yellowURL = "yellow.mov";
 
             function logEvent(event)
             {
@@ -20,22 +21,34 @@
 
             function playing(event)
             {
+                embed.removeEventListener("qt_play", playing, true);
                 debug("");
                 logEvent(event);
                 shouldEvaluateTo("embed.GetRate()", 1);
                 evalAndLog("embed.Stop()");
             }
             
+            function clearURL(event)
+            {
+                logEvent(event)
+
+                shouldBeTrue("embed.GetURL().indexOf('" + yellowURL + "') != -1");
+
+                debug("<br>** SetURL to an empty string should generate an error.");
+                evalAndLog("embed.SetURL('')");
+            }
+
             function paused(event)
             {
                 debug("");
                 logEvent(event)
                 shouldEvaluateTo("embed.GetRate()", 0);
 
-                debug("");
-                evalAndLog("embed.SetURL('')");
+                debug("<br>** SetURL expects a url relative to the original src, not to the document.");
+                embed.addEventListener("qt_canplaythrough", clearURL, true);
+                evalAndLog("embed.SetURL('" + yellowURL + "')");
             }
-            
+
             function error(event)
             {
                 logEvent(event)
@@ -45,9 +58,10 @@
                 if (window.testRunner)
                     testRunner.notifyDone();
             }
-            
-            function test(event)
+
+            function testElement(event)
             {
+                embed.removeEventListener("qt_canplaythrough", testElement, true);
                 logEvent(event)
 
                 if (window.internals) {
@@ -76,14 +90,14 @@
                 }
 
                 debug("<br>** Test overridden methods.");
-                shouldBeTrue("embed.GetURL().indexOf('" + src + "') != -1");
+                shouldBeTrue("embed.GetURL().indexOf('" + orangeURL + "') != -1");
                 shouldEvaluateTo("embed.GetDuration()", 300000);
                 shouldEvaluateTo("embed.GetMovieSize()", 24962);
                 shouldEvaluateTo("embed.GetMaxTimeLoaded()", 300000);
                 shouldEvaluateTo("embed.GetMaxBytesLoaded()", 24962);
                 shouldEvaluateTo("embed.GetMovieSize()", 24962);
                 shouldBeEqualToString("embed.GetPluginStatus()", "Playable");
-                
+
                 // "GetDate()" should return the current date, clear seconds and milliseconds 
                 var now = new Date();
                 shouldBeCloseTo("new Date(embed.GetDate()) - new Date()", 0, 100);
@@ -99,8 +113,11 @@
                     window.testRunner.dumpAsText()
                     window.internals.settings.setPluginReplacementEnabled(true);
                 }
+
                 div = document.getElementById("parent");
-                div.innerHTML = '<embed src="' + src + '" width="640" height="480" postdomevents=true>';
+
+                debug("<br>** Test 'qtsrc'. src = "  + yellowURL + " qtsrc = " + orangeURL + ", qtsrc should load.");
+                div.innerHTML = '<embed src="resources/' + yellowURL + '" qtsrc="' + orangeURL + '" width="640" height="480" postdomevents=true>';
                 
                 var events = [ "qt_begin", "qt_validated", "qt_enterfullscreen", "qt_exitfullscreen", 
                                 "qt_loadedmetada", "qt_canplay", "qt_ended", "qt_timedmetadataupdated" 
@@ -108,7 +125,7 @@
                 embed = div.firstChild;
                 for (i = 0; i < events.length; ++i)
                     embed.addEventListener(events[i], logEvent, true);
-                embed.addEventListener("qt_canplaythrough", test, true);
+                embed.addEventListener("qt_canplaythrough", testElement, true);
                 embed.addEventListener("qt_play", playing, true);
                 embed.addEventListener("qt_pause", paused, true);
                 embed.addEventListener("qt_error", error, true);

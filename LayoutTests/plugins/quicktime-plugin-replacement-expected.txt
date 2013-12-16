@@ -1,4 +1,6 @@
 
+
+** Test 'qtsrc'. src = yellow.mov qtsrc = orange.mov, qtsrc should load.
 EVENT(qt_begin)
 EVENT(qt_validated)
 EVENT(qt_canplay)
@@ -33,7 +35,7 @@ PASS embed.GetAccessLog is a function.
 PASS embed.GetErrorLog is a function.
 
 ** Test overridden methods.
-PASS embed.GetURL().indexOf('resources/orange.mov') != -1 is true
+PASS embed.GetURL().indexOf('orange.mov') != -1 is true
 PASS embed.GetDuration() is 300000
 PASS embed.GetMovieSize() is 24962
 PASS embed.GetMaxTimeLoaded() is 300000
@@ -53,6 +55,15 @@ embed.Stop()
 EVENT(qt_pause)
 PASS embed.GetRate() is 0
 
+** SetURL expects a url relative to the original src, not to the document.
+embed.SetURL('yellow.mov')
+EVENT(qt_begin)
+EVENT(qt_validated)
+EVENT(qt_canplay)
+EVENT(qt_canplaythrough)
+PASS embed.GetURL().indexOf('yellow.mov') != -1 is true
+
+** SetURL to an empty string should generate an error.
 embed.SetURL('')
 EVENT(qt_begin)
 EVENT(qt_error)
