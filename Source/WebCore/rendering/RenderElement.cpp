@@ -384,11 +384,8 @@ void RenderElement::initializeStyle()
 
     styleDidChange(StyleDifferenceEqual, nullptr);
 
-#if !ASSERT_DISABLED
     // We shouldn't have any text children that would need styleDidChange at this point.
-    auto textChildren = childrenOfType<RenderText>(*this);
-    ASSERT(textChildren.begin() == textChildren.end());
-#endif
+    ASSERT(!childrenOfType<RenderText>(*this).first());
 
     // It would be nice to assert that !parent() here, but some RenderLayer subrenderers
     // have their parent set before getting a call to initializeStyle() :|
@@ -396,11 +393,19 @@ void RenderElement::initializeStyle()
 
 void RenderElement::setStyle(PassRef<RenderStyle> style)
 {
+    // FIXME: Should change RenderView so it can use initializeStyle too.
+    // If we do that, we can assert m_hasInitializedStyle unconditionally,
+    // and remove the check of m_hasInitializedStyle below too.
+    ASSERT(m_hasInitializedStyle || isRenderView());
+
     if (&m_style.get() == &style.get()) {
+        // FIXME: Can we change things so we never hit this code path?
 #if USE(ACCELERATED_COMPOSITING)
         // We need to run through adjustStyleDifference() for iframes, plugins, and canvas so
         // style sharing is disabled for them. That should ensure that we never hit this code path.
-        ASSERT(!isRenderIFrame() && !isEmbeddedObject() && !isCanvas());
+        ASSERT(!isRenderIFrame());
+        ASSERT(!isEmbeddedObject());
+        ASSERT(!isCanvas());
 #endif
         style.dropRef();
         return;

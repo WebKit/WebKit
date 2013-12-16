@@ -1,3 +1,22 @@
+2013-12-15  Darin Adler  <darin@apple.com>
+
+        Catch callers who forget to use initializeStyle
+        https://bugs.webkit.org/show_bug.cgi?id=125763
+
+        Reviewed by Andreas Kling.
+
+        A recent fix was because a caller used setStyle first rather than using
+        initializeStyle. This patch adds an assertion to catch cases where we do
+        that so we see the mistake right away instead of indirectly later.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::initializeStyle): Simplified an assertion.
+        (WebCore::RenderElement::setStyle): Added an assertion that m_hasInitializedStyle
+        is true, with an exception for RenderView, which needs to be created before we
+        have the correct style computed for it (at least for now). Also broke out an
+        assertion that was using &&, since we would prefer to know which clause failed,
+        making separate assertions more useful than a combined assertion.
+
 2013-12-16  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose accessibility objects with ATK_ROLE_CHECK_MENU_ITEM
