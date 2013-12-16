@@ -1,3 +1,16 @@
+2013-12-16  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
+
+        Resolve inconsistant style warning caused by r160319.
+        https://bugs.webkit.org/show_bug.cgi?id=125772
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_for_extra_new_line_at_eof):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_newline_at_eof):
+        (CppStyleTest.test_extra_newlines_at_eof):
+
 2013-12-16  Eva Balazsfalvi  <balazsfalvi.eva@stud.u-szeged.hu>
 
         Remove mock_drt.py: parse_options() - --test-shell and --pixel-tests=<path>

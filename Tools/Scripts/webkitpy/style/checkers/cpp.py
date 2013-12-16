@@ -983,9 +983,14 @@ def check_for_extra_new_line_at_eof(lines, error):
     """
     # The array lines() was created by adding two newlines to the
     # original file (go figure), then splitting on \n.
-    if len(lines) > 3 and not lines[-3]:
-        error(len(lines) - 2, 'whitespace/ending_newline', 5,
-              'There was more than one newline at the end of the file.')
+    # len(lines) < 3 means that the original file contain one or less lines,
+    # so there is no way to be 'more then one newline at the end'.
+    # The case when the -2. line is non-empty should addressed in the
+    # check_for_missing_new_line_at_eof so it can be ignored here.
+    if len(lines) > 3:
+        if not lines[-2] and not lines[-3]:
+            error(len(lines) - 2, 'whitespace/ending_newline', 5,
+                  'There was more than one newline at the end of the file.')
 
 
 def check_for_multiline_comments_and_strings(clean_lines, line_number, error):
