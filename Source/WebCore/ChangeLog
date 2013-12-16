@@ -1,3 +1,15 @@
+2013-12-16  Brady Eidson  <beidson@apple.com>
+
+        DatabaseProcess: Fix a few bugs with opening an IDB connection
+        https://bugs.webkit.org/show_bug.cgi?id=125798
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::processPendingCalls): As the comment says, we should only
+          early return when there *are* pending delete calls. The logic here was backwards,
+          preventing the backend from ever getting to processPendingOpenCalls().
+
 2013-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Fixed Win64 build on VS2013.

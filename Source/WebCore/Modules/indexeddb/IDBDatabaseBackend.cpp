@@ -391,7 +391,7 @@ void IDBDatabaseBackend::processPendingCalls()
 
     // If there are any database deletions waiting for completion, we're done for now.
     // Further callbacks will be handled in a future call to processPendingCalls().
-    if (m_deleteCallbacksWaitingCompletion.isEmpty())
+    if (!m_deleteCallbacksWaitingCompletion.isEmpty())
         return;
 
     if (m_runningVersionChangeTransaction)

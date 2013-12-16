@@ -1,3 +1,16 @@
+2013-12-16  Brady Eidson  <beidson@apple.com>
+
+        DatabaseProcess: Fix a few bugs with opening an IDB connection
+        https://bugs.webkit.org/show_bug.cgi?id=125798
+
+        Reviewed by Alexey Proskuryakov.
+
+        Database metadata always needs a non-zero database identifier, unique at runtime.
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::generateDatabaseId):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getOrEstablishMetadata):
+
 2013-12-16  Anders Carlsson  <andersca@apple.com>
 
         UserData should encode and decode API::Data objects

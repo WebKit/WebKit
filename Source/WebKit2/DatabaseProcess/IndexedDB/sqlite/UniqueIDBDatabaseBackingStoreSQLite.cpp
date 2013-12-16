@@ -41,6 +41,14 @@ namespace WebKit {
 // Current version of the metadata schema being used in the metadata database.
 static const int currentMetadataVersion = 1;
 
+static int64_t generateDatabaseId()
+{
+    static int64_t databaseID = 0;
+
+    ASSERT(!isMainThread());
+    return ++databaseID;
+}
+
 UniqueIDBDatabaseBackingStoreSQLite::UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
     : m_identifier(identifier)
     , m_absoluteDatabaseDirectory(databaseDirectory)
@@ -172,6 +180,9 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
 
     if (!metadata)
         LOG_ERROR("Unable to establish IDB database at path '%s'", metadataDBFilename.utf8().data());
+
+    // The database id is a runtime concept and doesn't need to be stored in the metadata database.
+    metadata->id = generateDatabaseId();
 
     return metadata;
 }
