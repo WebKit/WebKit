@@ -27,6 +27,7 @@
 #include "UserData.h"
 
 #include "APIArray.h"
+#include "APIData.h"
 #include "APIFrameHandle.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
@@ -118,6 +119,10 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
         static_cast<const API::Boolean&>(object).encode(encoder);
         break;
 
+    case API::Object::Type::Data:
+        static_cast<const API::Data&>(object).encode(encoder);
+        break;
+    
     case API::Object::Type::Dictionary: {
         auto& dictionary = static_cast<const ImmutableDictionary&>(object);
         auto& map = dictionary.map();
@@ -200,6 +205,11 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
 
     case API::Object::Type::Boolean:
         if (!API::Boolean::decode(decoder, result))
+            return false;
+        break;
+
+    case API::Object::Type::Data:
+        if (!API::Data::decode(decoder, result))
             return false;
         break;
 

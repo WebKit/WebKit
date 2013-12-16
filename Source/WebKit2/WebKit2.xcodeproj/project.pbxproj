@@ -224,6 +224,7 @@
 		1AA9BAE1184FFAC7003B6BC6 /* WeakObjCPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA9BAE0184FFAC7003B6BC6 /* WeakObjCPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAB0379185A7C6A00EDF501 /* MessageSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB0377185A7C6A00EDF501 /* MessageSender.cpp */; };
 		1AAB037A185A7C6A00EDF501 /* MessageSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAB0378185A7C6A00EDF501 /* MessageSender.h */; };
+		1AAB037C185F99D800EDF501 /* APIData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB037B185F99D800EDF501 /* APIData.cpp */; };
 		1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAB4A8C1296F0A20023952F /* SandboxExtension.h */; };
 		1AAB4AAA1296F1540023952F /* SandboxExtensionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */; };
 		1AABFE3A1829C1ED005B070E /* WKRemoteObjectInterfaceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AABFE391829C1ED005B070E /* WKRemoteObjectInterfaceInternal.h */; };
@@ -1773,6 +1774,7 @@
 		1AA9BAE0184FFAC7003B6BC6 /* WeakObjCPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjCPtr.h; sourceTree = "<group>"; };
 		1AAB0377185A7C6A00EDF501 /* MessageSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageSender.cpp; sourceTree = "<group>"; };
 		1AAB0378185A7C6A00EDF501 /* MessageSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageSender.h; sourceTree = "<group>"; };
+		1AAB037B185F99D800EDF501 /* APIData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIData.cpp; sourceTree = "<group>"; };
 		1AAB4A8C1296F0A20023952F /* SandboxExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxExtension.h; sourceTree = "<group>"; };
 		1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxExtensionMac.mm; sourceTree = "<group>"; };
 		1AABFE391829C1ED005B070E /* WKRemoteObjectInterfaceInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectInterfaceInternal.h; sourceTree = "<group>"; };
@@ -3468,6 +3470,7 @@
 				BC64696D11DBE603006455B0 /* APIArray.cpp */,
 				BC64696E11DBE603006455B0 /* APIArray.h */,
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
+				1AAB037B185F99D800EDF501 /* APIData.cpp */,
 				51578B821209ECEF00A37C4A /* APIData.h */,
 				1AC1336F18566C7C00F3EC05 /* APIFrameHandle.cpp */,
 				1AC1337018566C7C00F3EC05 /* APIFrameHandle.h */,
@@ -3478,6 +3481,7 @@
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
 				1AC1336D18565D2B00F3EC05 /* APIPageHandle.cpp */,
 				1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */,
+				BCF04C8E11FF9F6E00F86A58 /* APIString.h */,
 				A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */,
 				A7D792D41767CB0900881CBE /* ActivityAssertion.h */,
 				515E7725183DD6F60007203F /* AsyncRequest.cpp */,
@@ -3605,7 +3609,6 @@
 				51217463164C21370037A5C1 /* WebResourceBuffer.h */,
 				F634445512A885C8000612D8 /* WebSecurityOrigin.h */,
 				A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */,
-				BCF04C8E11FF9F6E00F86A58 /* APIString.h */,
 				C0337DD7127A51B6008FF4F4 /* WebTouchEvent.cpp */,
 				BCDB86C01200FB97007254BE /* WebURL.h */,
 				BCE2315C122C30CA00D5C35A /* WebURLRequest.cpp */,
@@ -7134,6 +7137,7 @@
 				CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */,
 				755422CB180650020046F6A8 /* WebOriginDataManager.cpp in Sources */,
 				BCA8C6A811E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.cpp in Sources */,
+				1AAB037C185F99D800EDF501 /* APIData.cpp in Sources */,
 				BC8147AA12F64CDA007B2C32 /* InjectedBundlePagePolicyClient.cpp in Sources */,
 				659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */,
 				BCA8C6AF11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp in Sources */,

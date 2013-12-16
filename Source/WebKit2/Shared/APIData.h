@@ -31,6 +31,11 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
+
 namespace API {
 
 class Data : public ObjectImpl<API::Object::Type::Data> {
@@ -68,6 +73,9 @@ public:
     size_t size() const { return m_size; }
 
     IPC::DataReference dataReference() const { return IPC::DataReference(m_bytes, m_size); }
+
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, RefPtr<API::Object>&);
 
 private:
     Data(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
