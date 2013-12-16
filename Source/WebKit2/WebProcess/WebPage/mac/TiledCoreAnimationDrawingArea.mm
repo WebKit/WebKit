@@ -738,9 +738,10 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     RenderView* renderView = m_webPage->corePage()->mainFrame().view()->renderView();
 
     // If the page scale is already the target scale, scalePage() will short-circuit
-    // and not apply the transform, so we can't clear it.
-    if (m_transientZoomScale != m_webPage->pageScaleFactor())
-       static_cast<GraphicsLayerCA*>(renderView->layer()->backing()->graphicsLayer())->platformCALayer()->setTransform(TransformationMatrix());
+    // and not apply the transform, so we can't depend on it to do so.
+    TransformationMatrix transform;
+    transform.scale(scale);
+    static_cast<GraphicsLayerCA*>(renderView->layer()->backing()->graphicsLayer())->platformCALayer()->setTransform(transform);
 
     PlatformCALayer* shadowLayer = static_cast<GraphicsLayerCA*>(renderView->compositor().layerForContentShadow())->platformCALayer();
     shadowLayer->setHidden(false);

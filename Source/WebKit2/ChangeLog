@@ -1,3 +1,21 @@
+2013-12-15  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Can't pinch in past the maximum scale
+        https://bugs.webkit.org/show_bug.cgi?id=125749
+
+        Reviewed by Anders Carlsson.
+
+        Pinching in past the maximum scale should result in the zoom resisting, but continuing.
+
+        * UIProcess/mac/ViewGestureController.cpp:
+        (WebKit::resistanceForDelta):
+        Clean up the logic and apply resistance to pinching in past the maximum.
+
+        (WebKit::ViewGestureController::handleMagnificationGesture):
+        (WebKit::ViewGestureController::endMagnificationGesture):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+
 2013-12-15  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose the certificate chain for the main frame

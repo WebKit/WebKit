@@ -32,8 +32,11 @@
 
 using namespace WebCore;
 
-static const double minMagnification = 0.75;
+static const double minMagnification = 1;
 static const double maxMagnification = 3;
+
+static const double minElasticMagnification = 0.75;
+static const double maxElasticMagnification = 4;
 
 static const double zoomOutBoost = 1.6;
 static const double zoomOutResistance = 0.10;
@@ -55,18 +58,18 @@ ViewGestureController::~ViewGestureController()
 
 static double resistanceForDelta(double deltaScale, double currentScale)
 {
-    // Zoom in with no acceleration.
-    // FIXME: Should have resistance when zooming in past the limit.
-    if (deltaScale > 0)
-        return 1;
-
-    // Zoom out with slight acceleration, until we reach unit scale.
-    if (currentScale > 1)
+    // Zoom out with slight acceleration, until we reach minimum scale.
+    if (deltaScale < 0 && currentScale > minMagnification)
         return zoomOutBoost;
 
-    // Beyond scale=1, resist zooming out.
-    double scaleDistance = minMagnification - currentScale;
-    double scalePercent = std::min(std::max(scaleDistance / minMagnification, 0.), 1.);
+    // Zoom in with no acceleration, until we reach maximum scale.
+    if (deltaScale > 0 && currentScale < maxMagnification)
+        return 1;
+
+    // Outside of the extremes, resist further scaling.
+    double limit = currentScale < minMagnification ? minMagnification : maxMagnification;
+    double scaleDistance = abs(limit - currentScale);
+    double scalePercent = std::min(std::max(scaleDistance / limit, 0.), 1.);
     double resistance = zoomOutResistance + scalePercent * (0.01 - zoomOutResistance);
 
     return resistance;
@@ -106,7 +109,7 @@ void ViewGestureController::handleMagnificationGesture(double scale, FloatPoint 
     double scaleWithResistance = resistanceForDelta(scale, m_magnification) * scale;
 
     m_magnification += m_magnification * scaleWithResistance;
-    m_magnification = std::min(std::max(m_magnification, minMagnification), maxMagnification);
+    m_magnification = std::min(std::max(m_magnification, minElasticMagnification), maxElasticMagnification);
 
     m_magnificationOrigin = origin;
 
@@ -120,7 +123,7 @@ void ViewGestureController::endMagnificationGesture()
     ASSERT(m_activeGestureType == ViewGestureType::Magnification);
 
     // FIXME: Should rubber-band back when zoomed in or out past the limit.
-    double newMagnification = std::max(m_magnification, 1.);
+    double newMagnification = std::min(std::max(m_magnification, minMagnification), maxMagnification);
 
     FloatPoint scaledOrigin = scaledMagnificationOrigin(m_magnificationOrigin, newMagnification);
     scaledOrigin.moveBy(-m_visibleContentRect.location());
