@@ -226,7 +226,7 @@ static PassRefPtr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheSta
 PassRefPtr<RenderStyle> RenderElement::uncachedFirstLineStyle(RenderStyle* style) const
 {
     if (!document().styleSheetCollection().usesFirstLineRules())
-        return 0;
+        return nullptr;
 
     return firstLineStyleForCachedUncachedType(Uncached, *this, style);
 }
@@ -348,7 +348,7 @@ void RenderElement::updateImage(StyleImage* oldImage, StyleImage* newImage)
 void RenderElement::updateShapeImage(const ShapeValue* oldShapeValue, const ShapeValue* newShapeValue)
 {
     if (oldShapeValue || newShapeValue)
-        updateImage(oldShapeValue ? oldShapeValue->image() : 0, newShapeValue ? newShapeValue->image() : 0);
+        updateImage(oldShapeValue ? oldShapeValue->image() : nullptr, newShapeValue ? newShapeValue->image() : nullptr);
 }
 #endif
 
@@ -536,13 +536,13 @@ void RenderElement::destroyLeftoverChildren()
         if (m_firstChild->isListMarker() || (m_firstChild->style().styleType() == FIRST_LETTER && !m_firstChild->isText()))
             m_firstChild->removeFromParent(); // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
         else if (m_firstChild->isRunIn() && m_firstChild->node()) {
-            m_firstChild->node()->setRenderer(0);
+            m_firstChild->node()->setRenderer(nullptr);
             m_firstChild->node()->setNeedsStyleRecalc();
             m_firstChild->destroy();
         } else {
             // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
             if (m_firstChild->node())
-                m_firstChild->node()->setRenderer(0);
+                m_firstChild->node()->setRenderer(nullptr);
             m_firstChild->destroy();
         }
     }
@@ -726,7 +726,7 @@ RenderLayer* RenderElement::findNextLayer(RenderLayer* parentLayer, RenderObject
 {
     // Error check the parent layer passed in. If it's null, we can't find anything.
     if (!parentLayer)
-        return 0;
+        return nullptr;
 
     // Step 1: If our layer is a child of the desired parent, then return our layer.
     RenderLayer* ourLayer = hasLayer() ? toRenderLayerModelObject(this)->layer() : nullptr;

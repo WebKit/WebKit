@@ -1,3 +1,17 @@
+2013-12-15  Darin Adler  <darin@apple.com>
+
+        More nullptr in RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=125764
+
+        Reviewed by Andreas Kling.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::uncachedFirstLineStyle):
+        (WebCore::RenderElement::updateShapeImage):
+        (WebCore::RenderElement::destroyLeftoverChildren):
+        (WebCore::RenderElement::findNextLayer):
+        Use nullptr in a few more places.
+
 2013-12-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: 2x regression on Dromaeo DOM query tests
