@@ -105,15 +105,21 @@ static inline float cornerRectIntercept(float y, const FloatRect& cornerRect)
 
 bool FloatRoundedRect::xInterceptsAtY(float y, float& minXIntercept, float& maxXIntercept) const
 {
-    if (y < rect().y() || y >=  rect().maxY())
+    if (y < rect().y() || y >  rect().maxY())
         return false;
+
+    if (!isRounded()) {
+        minXIntercept = rect().x();
+        maxXIntercept = rect().maxX();
+        return true;
+    }
 
     const FloatRect& topLeftRect = topLeftCorner();
     const FloatRect& bottomLeftRect = bottomLeftCorner();
 
-    if (y >= topLeftRect.y() && y < topLeftRect.maxY())
+    if (!topLeftRect.isEmpty() && y >= topLeftRect.y() && y < topLeftRect.maxY())
         minXIntercept = topLeftRect.maxX() - cornerRectIntercept(topLeftRect.maxY() - y, topLeftRect);
-    else if (y >= bottomLeftRect.y() && y < bottomLeftRect.maxY())
+    else if (!bottomLeftRect.isEmpty() && y >= bottomLeftRect.y() && y <= bottomLeftRect.maxY())
         minXIntercept =  bottomLeftRect.maxX() - cornerRectIntercept(y - bottomLeftRect.y(), bottomLeftRect);
     else
         minXIntercept = m_rect.x();
@@ -121,9 +127,9 @@ bool FloatRoundedRect::xInterceptsAtY(float y, float& minXIntercept, float& maxX
     const FloatRect& topRightRect = topRightCorner();
     const FloatRect& bottomRightRect = bottomRightCorner();
 
-    if (y >= topRightRect.y() && y < topRightRect.maxY())
+    if (!topRightRect.isEmpty() && y >= topRightRect.y() && y <= topRightRect.maxY())
         maxXIntercept = topRightRect.x() + cornerRectIntercept(topRightRect.maxY() - y, topRightRect);
-    else if (y >= bottomRightRect.y() && y < bottomRightRect.maxY())
+    else if (!bottomRightRect.isEmpty() && y >= bottomRightRect.y() && y <= bottomRightRect.maxY())
         maxXIntercept = bottomRightRect.x() + cornerRectIntercept(y - bottomRightRect.y(), bottomRightRect);
     else
         maxXIntercept = m_rect.maxX();

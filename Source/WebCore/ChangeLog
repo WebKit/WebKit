@@ -1,3 +1,27 @@
+2013-12-16  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Add support for the computing the included intervals for a BoxShape
+        https://bugs.webkit.org/show_bug.cgi?id=124605
+
+        Reviewed by Andreas Kling.
+
+        Setting shape-inside to content-box now works.
+
+        Changed FloatRoundedRect::xInterceptsAtY() to include the bottom edge of
+        the rectangle and to check for the special cases where any or all of the
+        corner radii are empty.
+
+        Test: fast/shapes/shape-inside/shape-inside-content-box.html
+
+        * platform/graphics/FloatRoundedRect.cpp:
+        (WebCore::FloatRoundedRect::xInterceptsAtY):
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::BoxShape::getIncludedIntervals): Replaced the stub implementation with logic that's similar to getExcludedIntervals().
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::::computedShape): Removed a meaningless assert.
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::isEnabledFor):
+
 2013-12-16  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose accessibility objects for more WAI-ARIA roles

@@ -1,3 +1,15 @@
+2013-12-16  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Add support for the computing the included intervals for a BoxShape
+        https://bugs.webkit.org/show_bug.cgi?id=124605
+
+        Reviewed by Andreas Kling.
+
+        Check that shape-inside:content-box works with and without border radii.
+
+        * fast/shapes/shape-inside/shape-inside-content-box-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-content-box.html: Added.
+
 2013-12-16  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose accessibility objects for more WAI-ARIA roles
