@@ -1,3 +1,15 @@
+2013-12-16  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
+
+        PrettyPatch.rb doesn't handle diffs where lines matching /^--/ are missing properly
+        https://bugs.webkit.org/show_bug.cgi?id=54928
+
+        Reviewed by Adam Roben.
+
+        PrettyPatch will now check if the next line after /^--- / matches /^+++ /, and if not,
+        then it's just a normal line
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2013-08-16  David Farler  <dfarler@apple.com>
 
         PrettyPatch: Wrap pre blocks

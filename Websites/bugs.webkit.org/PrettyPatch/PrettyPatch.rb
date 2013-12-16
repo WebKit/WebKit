@@ -662,11 +662,12 @@ EOF
         def self.parse(string)
             haveSeenDiffHeader = false
             linesForDiffs = []
-            string.each_line do |line|
+            line_array = string.lines.to_a
+            line_array.each_with_index do |line, index|
                 if (PrettyPatch.diff_header?(line))
                     linesForDiffs << []
                     haveSeenDiffHeader = true
-                elsif (!haveSeenDiffHeader && line =~ /^--- /)
+                elsif (!haveSeenDiffHeader && line =~ /^--- / && line_array[index + 1] =~ /^\+\+\+ /)
                     linesForDiffs << []
                     haveSeenDiffHeader = false
                 end
