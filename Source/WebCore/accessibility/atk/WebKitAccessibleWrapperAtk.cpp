@@ -657,8 +657,11 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_IMAGE;
     case ListMarkerRole:
         return ATK_ROLE_TEXT;
-    case DocumentRole:
     case DocumentArticleRole:
+#if ATK_CHECK_VERSION(2, 11, 3)
+        return ATK_ROLE_ARTICLE;
+#endif
+    case DocumentRole:
         return ATK_ROLE_DOCUMENT_FRAME;
     case HeadingRole:
         return ATK_ROLE_HEADING;

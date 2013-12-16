@@ -322,6 +322,10 @@ const char* roleToString(AtkObject* object)
         return "AXWindow";
     case ATK_ROLE_UNKNOWN:
         return "AXUnknown";
+#if ATK_CHECK_VERSION(2, 11, 3)
+    case ATK_ROLE_ARTICLE:
+        return "AXArticle";
+#endif
     default:
         // We want to distinguish ATK_ROLE_UNKNOWN from a known AtkRole which
         // our DRT isn't properly handling.

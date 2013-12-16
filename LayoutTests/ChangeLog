@@ -1,3 +1,16 @@
+2013-12-16  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Expose accessibility objects with ATK_ROLE_ARTICLE
+        https://bugs.webkit.org/show_bug.cgi?id=125587
+
+        Reviewed by Chris Fleizach.
+
+        Update test to unskip article objects and update expectations.
+
+        * accessibility/aria-mappings-expected.txt:
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/gtk/accessibility/roles-exposed.html:
+
 2013-11-27  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Fix the preferred logical widths code to work with spanning grid items

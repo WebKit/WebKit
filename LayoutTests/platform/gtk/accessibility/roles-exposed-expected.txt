@@ -9,6 +9,9 @@ PASS: a[href]
 PASS: address
       AXRole: AXLandmarkContentInfo
       
+PASS: article
+      AXRole: AXArticle
+      
 PASS: aside
       AXRole: AXLandmarkComplementary
       
@@ -230,6 +233,9 @@ PASS: div[role=alertdialog]
       
 PASS: div[role=application]
       AXRole: AXEmbedded
+      
+PASS: div[role=article]
+      AXRole: AXArticle
       
 PASS: div[role=banner]
       AXRole: AXLandmarkBanner
