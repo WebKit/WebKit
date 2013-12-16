@@ -246,6 +246,10 @@ int main(int argc, char *argv[])
                             [NSString stringWithFormat:@"Nightly builds of WebKit are not supported on OS X %@ at this time.", systemVersion]);
 
     NSString *pathToEnablerLib = [[NSBundle mainBundle] pathForResource:@"WebKitNightlyEnabler" ofType:@"dylib"];
+    NSString *dyldInsertLibraries = pathToEnablerLib;
+    NSString *pathToASanCrashReporterLib = [[NSBundle mainBundle] pathForResource:@"libasancrashreporter" ofType:@"dylib"];
+    if (pathToASanCrashReporterLib)
+        dyldInsertLibraries = [@[ pathToASanCrashReporterLib, pathToEnablerLib ] componentsJoinedByString:@":"];
 
     NSBundle *safariBundle = locateSafariBundle();
     NSString *executablePath = determineExecutablePath(safariBundle);
@@ -263,7 +267,7 @@ int main(int argc, char *argv[])
 
     NSMutableArray *arguments = [NSMutableArray arrayWithObject:executablePath];
     NSMutableDictionary *environment = [[[NSDictionary dictionaryWithObjectsAndKeys:frameworkPath, @"DYLD_FRAMEWORK_PATH", @"YES", @"WEBKIT_UNSET_DYLD_FRAMEWORK_PATH",
-                                                                                    pathToEnablerLib, @"DYLD_INSERT_LIBRARIES", [[NSBundle mainBundle] executablePath], @"WebKitAppPath", nil] mutableCopy] autorelease];
+                                                                                    dyldInsertLibraries, @"DYLD_INSERT_LIBRARIES", [[NSBundle mainBundle] executablePath], @"WebKitAppPath", nil] mutableCopy] autorelease];
     [environment addEntriesFromDictionary:[[NSProcessInfo processInfo] environment]];
     addStartPageToArgumentsIfNeeded(arguments);
 

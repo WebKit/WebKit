@@ -139,6 +139,11 @@ static void enableWebKitNightlyBehaviour()
     unsetenv("DYLD_INSERT_LIBRARIES");
     poseAsWebKitApp();
 
+    NSString *pathToASanCrashReporterLib = [webKitLauncherBundle() pathForResource:@"libasancrashreporter" ofType:@"dylib"];
+
+    if (pathToASanCrashReporterLib)
+        setenv("DYLD_INSERT_LIBRARIES", [pathToASanCrashReporterLib UTF8String], 1);
+
     extensionPaths = [[NSSet alloc] initWithObjects:@"~/Library/InputManagers/", @"/Library/InputManagers/",
                                                     @"~/Library/Application Support/SIMBL/Plugins/", @"/Library/Application Support/SIMBL/Plugins/",
                                                     @"~/Library/Application Enhancers/", @"/Library/Application Enhancers/",
