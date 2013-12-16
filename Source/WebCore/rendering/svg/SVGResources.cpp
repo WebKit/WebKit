@@ -280,7 +280,7 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const SVG
     return foundResources;
 }
 
-void SVGResources::removeClientFromCache(RenderObject* object, bool markForInvalidation) const
+void SVGResources::removeClientFromCache(RenderObject& object, bool markForInvalidation) const
 {
     if (!m_clipperFilterMaskerData && !m_markerData && !m_fillStrokeData && !m_linkedResource)
         return;

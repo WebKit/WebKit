@@ -33,7 +33,7 @@ public:
     virtual ~RenderSVGResourceSolidColor();
 
     virtual void removeAllClientsFromCache(bool = true) { }
-    virtual void removeClientFromCache(RenderObject*, bool = true) { }
+    virtual void removeClientFromCache(RenderObject&, bool = true) { }
 
     virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) OVERRIDE;
     virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) OVERRIDE;

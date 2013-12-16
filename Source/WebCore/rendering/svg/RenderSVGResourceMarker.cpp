@@ -64,9 +64,8 @@ void RenderSVGResourceMarker::removeAllClientsFromCache(bool markForInvalidation
     markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourceMarker::removeClientFromCache(RenderObject* client, bool markForInvalidation)
+void RenderSVGResourceMarker::removeClientFromCache(RenderObject& client, bool markForInvalidation)
 {
-    ASSERT(client);
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 

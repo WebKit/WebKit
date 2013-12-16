@@ -304,8 +304,8 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName)
         || SVGZoomAndPan::isKnownAttribute(attrName)) {
-        if (renderer())
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
+        if (auto renderer = this->renderer())
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
 
@@ -683,7 +683,7 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
 
 void SVGSVGElement::setupInitialView(const String& fragmentIdentifier, Element* anchorNode)
 {
-    RenderObject* renderer = this->renderer();
+    auto renderer = this->renderer();
     SVGViewSpec* view = m_viewSpec.get();
     if (view)
         view->reset();
@@ -694,7 +694,7 @@ void SVGSVGElement::setupInitialView(const String& fragmentIdentifier, Element* 
     if (fragmentIdentifier.startsWith("xpointer(")) {
         // FIXME: XPointer references are ignored (https://bugs.webkit.org/show_bug.cgi?id=17491)
         if (renderer && hadUseCurrentView)
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
 
@@ -708,7 +708,7 @@ void SVGSVGElement::setupInitialView(const String& fragmentIdentifier, Element* 
             view->reset();
 
         if (renderer && (hadUseCurrentView || m_useCurrentView))
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
 
@@ -723,8 +723,8 @@ void SVGSVGElement::setupInitialView(const String& fragmentIdentifier, Element* 
                 SVGSVGElement* svg = static_cast<SVGSVGElement*>(element);
                 svg->inheritViewAttributes(viewElement);
 
-                if (RenderObject* renderer = svg->renderer())
-                    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+                if (RenderElement* renderer = svg->renderer())
+                    RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
             }
         }
         return;

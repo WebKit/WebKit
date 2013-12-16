@@ -103,7 +103,7 @@ void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)
     // Invalidate the resources if either the RenderElement itself changed,
     // or we have filter resources, which could depend on the layout of children.
     if (renderer.selfNeedsLayout())
-        resources->removeClientFromCache(&renderer);
+        resources->removeClientFromCache(renderer);
 }
 
 static inline bool rendererCanHaveResources(RenderObject& renderer)
@@ -129,7 +129,7 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
         cache->addResourcesFromRenderer(renderer, newStyle);
     }
 
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(&renderer, false);
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 
     if (renderer.element() && !renderer.element()->isSVGElement())
         renderer.element()->setNeedsStyleRecalc(SyntheticStyleChange);
@@ -140,7 +140,7 @@ void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)
     if (renderer.isAnonymous())
         return;
 
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(&renderer, false);
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 
     if (!rendererCanHaveResources(renderer))
         return;
@@ -154,7 +154,7 @@ void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
     if (renderer.isAnonymous())
         return;
 
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(&renderer, false);
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 
     if (!rendererCanHaveResources(renderer))
         return;
@@ -167,7 +167,7 @@ void SVGResourcesCache::clientDestroyed(RenderElement& renderer)
 {
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
     if (resources)
-        resources->removeClientFromCache(&renderer);
+        resources->removeClientFromCache(renderer);
 
     SVGResourcesCache* cache = resourcesCacheFromRenderObject(renderer);
     cache->removeResourcesFromRenderer(renderer);

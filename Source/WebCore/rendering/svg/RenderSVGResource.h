@@ -60,7 +60,7 @@ public:
     virtual ~RenderSVGResource() { }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true) = 0;
-    virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true) = 0;
+    virtual void removeClientFromCache(RenderObject&, bool markForInvalidation = true) = 0;
 
     virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short resourceMode) = 0;
     virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short, const Path*, const RenderSVGShape*) { }
@@ -82,7 +82,7 @@ public:
     static RenderSVGResource* strokePaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
     static RenderSVGResourceSolidColor* sharedSolidPaintingResource();
 
-    static void markForLayoutAndParentResourceInvalidation(RenderObject*, bool needsLayout = true);
+    static void markForLayoutAndParentResourceInvalidation(RenderObject&, bool needsLayout = true);
 };
 
 }

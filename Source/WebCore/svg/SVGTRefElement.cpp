@@ -212,8 +212,8 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
         buildPendingResource();
-        if (RenderObject* renderer = this->renderer())
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+        if (auto renderer = this->renderer())
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
 

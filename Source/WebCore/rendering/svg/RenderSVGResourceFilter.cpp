@@ -73,15 +73,13 @@ void RenderSVGResourceFilter::removeAllClientsFromCache(bool markForInvalidation
     markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourceFilter::removeClientFromCache(RenderObject* client, bool markForInvalidation)
+void RenderSVGResourceFilter::removeClientFromCache(RenderObject& client, bool markForInvalidation)
 {
-    ASSERT(client);
-
-    if (FilterData* filterData = m_filter.get(client)) {
+    if (FilterData* filterData = m_filter.get(&client)) {
         if (filterData->savedContext)
             filterData->state = FilterData::MarkedForRemoval;
         else
-            m_filter.remove(client);
+            m_filter.remove(&client);
     }
 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
@@ -263,7 +261,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
 
     case FilterData::PaintingSource:
         if (!filterData->savedContext) {
-            removeClientFromCache(&renderer);
+            removeClientFromCache(renderer);
             return;
         }
 
@@ -315,8 +313,8 @@ void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, co
 {
     SVGFilterPrimitiveStandardAttributes* primitve = static_cast<SVGFilterPrimitiveStandardAttributes*>(object->node());
 
-    for (auto it = m_filter.begin(), end = m_filter.end(); it != end; ++it) {
-        const auto &filterData = it->value;
+    for (const auto& objectFilterDataPair : m_filter) {
+        const auto& filterData = objectFilterDataPair.value;
         if (filterData->state != FilterData::Built)
             continue;
 
@@ -331,7 +329,7 @@ void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, co
         builder->clearResultsRecursive(effect);
 
         // Repaint the image on the screen.
-        markClientForInvalidation(it->key, RepaintInvalidation);
+        markClientForInvalidation(*objectFilterDataPair.key, RepaintInvalidation);
     }
     markAllClientLayersForInvalidation();
 }

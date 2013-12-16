@@ -289,26 +289,24 @@ void SVGAnimateMotionElement::applyResultsToTarget()
     if (!targetElement)
         return;
 
-    if (RenderObject* renderer = targetElement->renderer())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+    if (RenderElement* renderer = targetElement->renderer())
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 
     AffineTransform* t = targetElement->supplementalTransform();
     if (!t)
         return;
 
     // ...except in case where we have additional instances in <use> trees.
-    const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
-    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
-    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
-        SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
+    for (auto instance : targetElement->instancesForElement()) {
+        SVGElement* shadowTreeElement = instance->shadowTreeElement();
         ASSERT(shadowTreeElement);
         AffineTransform* transform = shadowTreeElement->supplementalTransform();
         if (!transform)
             continue;
         transform->setMatrix(t->a(), t->b(), t->c(), t->d(), t->e(), t->f());
-        if (RenderObject* renderer = shadowTreeElement->renderer()) {
+        if (RenderElement* renderer = shadowTreeElement->renderer()) {
             renderer->setNeedsTransformUpdate();
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         }
     }
 }

@@ -1,3 +1,104 @@
+2013-12-16  Sam Weinig  <sam@webkit.org>
+
+        CTTE: Convert more of SVG to use references
+        https://bugs.webkit.org/show_bug.cgi?id=125762
+
+        Reviewed by Darin Adler.
+
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::imageChanged):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::removeFromCacheAndInvalidateDependencies):
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation):
+        * rendering/svg/RenderSVGResource.h:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::removeClientFromCache):
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation):
+        (WebCore::RenderSVGResourceContainer::markAllClientLayersForInvalidation):
+        (WebCore::RenderSVGResourceContainer::markClientForInvalidation):
+        (WebCore::RenderSVGResourceContainer::removeClient):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::removeClientFromCache):
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        (WebCore::RenderSVGResourceFilter::primitiveAttributeChanged):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::removeClientFromCache):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::removeClientFromCache):
+        * rendering/svg/RenderSVGResourceMarker.h:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::removeClientFromCache):
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::removeClientFromCache):
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGResourceSolidColor.h:
+        (WebCore::RenderSVGResourceSolidColor::removeClientFromCache):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::invalidateResourcesOfChildren):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::SVGResources::removeClientFromCache):
+        * rendering/svg/SVGResources.h:
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientLayoutChanged):
+        (WebCore::SVGResourcesCache::clientStyleChanged):
+        (WebCore::SVGResourcesCache::clientWasAddedToTree):
+        (WebCore::SVGResourcesCache::clientWillBeRemovedFromTree):
+        (WebCore::SVGResourcesCache::clientDestroyed):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::notifyFinished):
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::childrenChanged):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::invalidateFilterPrimitiveParent):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::invalidate):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::primitiveAttributeChanged):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::svgAttributeChanged):
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::svgAttributeChanged):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::invalidateMPathDependencies):
+        (WebCore::SVGPathElement::pathSegListChanged):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+        (WebCore::SVGSVGElement::setupInitialView):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::svgAttributeChanged):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::svgAttributeChanged):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::svgAttributeChanged):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::svgAttributeChanged):
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+
 2013-12-16  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Add support for the computing the included intervals for a BoxShape

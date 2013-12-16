@@ -59,10 +59,9 @@ void RenderSVGResourceMasker::removeAllClientsFromCache(bool markForInvalidation
     markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourceMasker::removeClientFromCache(RenderObject* client, bool markForInvalidation)
+void RenderSVGResourceMasker::removeClientFromCache(RenderObject& client, bool markForInvalidation)
 {
-    ASSERT(client);
-    m_masker.remove(client);
+    m_masker.remove(&client);
 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }

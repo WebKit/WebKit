@@ -123,8 +123,8 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName == SVGNames::startOffsetAttr)
         updateRelativeLengthsInformation();
 
-    if (RenderObject* object = renderer())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
+    if (auto renderer = this->renderer())
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
 
 RenderElement* SVGTextPathElement::createRenderer(PassRef<RenderStyle> style)

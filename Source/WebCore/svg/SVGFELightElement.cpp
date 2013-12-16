@@ -214,9 +214,9 @@ void SVGFELightElement::childrenChanged(const ChildChange& change)
     ContainerNode* parent = parentNode();
     if (!parent)
         return;
-    RenderObject* renderer = parent->renderer();
+    RenderElement* renderer = parent->renderer();
     if (renderer && renderer->isSVGResourceFilterPrimitive())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
 
 }

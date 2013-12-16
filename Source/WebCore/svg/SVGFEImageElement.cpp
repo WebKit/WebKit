@@ -196,10 +196,14 @@ void SVGFEImageElement::notifyFinished(CachedResource*)
     Element* parent = parentElement();
     ASSERT(parent);
 
-    if (!parent->hasTagName(SVGNames::filterTag) || !parent->renderer())
+    if (!parent->hasTagName(SVGNames::filterTag))
         return;
 
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(parent->renderer());
+    RenderElement* parentRenderer = parent->renderer();
+    if (!parentRenderer)
+        return;
+
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
 }
 
 PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter* filter)

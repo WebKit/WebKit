@@ -99,18 +99,16 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
     bool needsLayout = mode == LayoutAndBoundariesInvalidation;
     bool markForInvalidation = mode != ParentOnlyInvalidation;
 
-    HashSet<RenderObject*>::iterator end = m_clients.end();
-    for (HashSet<RenderObject*>::iterator it = m_clients.begin(); it != end; ++it) {
-        RenderObject* client = *it;
+    for (auto client : m_clients) {
         if (client->isSVGResourceContainer()) {
             client->toRenderSVGResourceContainer()->removeAllClientsFromCache(markForInvalidation);
             continue;
         }
 
         if (markForInvalidation)
-            markClientForInvalidation(client, mode);
+            markClientForInvalidation(*client, mode);
 
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(client, needsLayout);
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*client, needsLayout);
     }
 
     markAllClientLayersForInvalidation();
@@ -121,25 +119,23 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
 void RenderSVGResourceContainer::markAllClientLayersForInvalidation()
 {
 #if ENABLE(CSS_FILTERS)
-    HashSet<RenderLayer*>::iterator layerEnd = m_clientLayers.end();
-    for (HashSet<RenderLayer*>::iterator it = m_clientLayers.begin(); it != layerEnd; ++it)
-        (*it)->filterNeedsRepaint();
+    for (auto clientLayer : m_clientLayers)
+        clientLayer->filterNeedsRepaint();
 #endif
 }
 
-void RenderSVGResourceContainer::markClientForInvalidation(RenderObject* client, InvalidationMode mode)
+void RenderSVGResourceContainer::markClientForInvalidation(RenderObject& client, InvalidationMode mode)
 {
-    ASSERT(client);
     ASSERT(!m_clients.isEmpty());
 
     switch (mode) {
     case LayoutAndBoundariesInvalidation:
     case BoundariesInvalidation:
-        client->setNeedsBoundariesUpdate();
+        client.setNeedsBoundariesUpdate();
         break;
     case RepaintInvalidation:
-        if (!client->documentBeingDestroyed())
-            client->repaint();
+        if (!client.documentBeingDestroyed())
+            client.repaint();
         break;
     case ParentOnlyInvalidation:
         break;
@@ -155,7 +151,7 @@ void RenderSVGResourceContainer::addClient(RenderObject* client)
 void RenderSVGResourceContainer::removeClient(RenderObject* client)
 {
     ASSERT(client);
-    removeClientFromCache(client, false);
+    removeClientFromCache(*client, false);
     m_clients.remove(client);
 }
 

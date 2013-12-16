@@ -134,13 +134,13 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
-    RenderObject* object = renderer();
-    if (!object)
+    auto renderer = this->renderer();
+    if (!renderer)
         return;
 
     if (attrName == SVGNames::transformAttr) {
-        object->setNeedsTransformUpdate();
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
+        renderer->setNeedsTransformUpdate();
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
 

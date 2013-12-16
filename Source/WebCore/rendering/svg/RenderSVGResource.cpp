@@ -161,13 +161,13 @@ static inline void removeFromCacheAndInvalidateDependencies(RenderObject& object
     if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object)) {
 #if ENABLE(FILTERS)
         if (RenderSVGResourceFilter* filter = resources->filter())
-            filter->removeClientFromCache(&object);
+            filter->removeClientFromCache(object);
 #endif
         if (RenderSVGResourceMasker* masker = resources->masker())
-            masker->removeClientFromCache(&object);
+            masker->removeClientFromCache(object);
 
         if (RenderSVGResourceClipper* clipper = resources->clipper())
-            clipper->removeClientFromCache(&object);
+            clipper->removeClientFromCache(object);
     }
 
     if (!object.node() || !object.node()->isSVGElement())
@@ -176,23 +176,22 @@ static inline void removeFromCacheAndInvalidateDependencies(RenderObject& object
     if (!dependencies)
         return;
     for (auto element : *dependencies) {
-        if (RenderObject* renderer = element->renderer())
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, needsLayout);
+        if (auto renderer = element->renderer())
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer, needsLayout);
     }
 }
 
-void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject* object, bool needsLayout)
+void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject& object, bool needsLayout)
 {
-    ASSERT(object);
-    ASSERT(object->node());
+    ASSERT(object.node());
 
-    if (needsLayout && !object->documentBeingDestroyed())
-        object->setNeedsLayout();
+    if (needsLayout && !object.documentBeingDestroyed())
+        object.setNeedsLayout();
 
-    removeFromCacheAndInvalidateDependencies(*object, needsLayout);
+    removeFromCacheAndInvalidateDependencies(object, needsLayout);
 
     // Invalidate resources in ancestor chain, if needed.
-    RenderObject* current = object->parent();
+    RenderObject* current = object.parent();
     while (current) {
         removeFromCacheAndInvalidateDependencies(*current, needsLayout);
 

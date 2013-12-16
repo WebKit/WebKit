@@ -194,7 +194,7 @@ static inline void invalidateResourcesOfChildren(RenderObject& start)
 {
     ASSERT(!start.needsLayout());
     if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(start))
-        resources->removeClientFromCache(&start, false);
+        resources->removeClientFromCache(start, false);
 
     for (RenderObject* child = start.firstChildSlow(); child; child = child->nextSibling())
         invalidateResourcesOfChildren(*child);
