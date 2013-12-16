@@ -57,6 +57,7 @@ libWebKit2Platform_la_CPPFLAGS = \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
 	-fno-strict-aliasing \
+	-I$(srcdir)/Source/WebKit2 \
 	-I$(srcdir)/Source \
 	-I$(srcdir)/Source/WTF \
 	-I$(srcdir)/Source/WebKit2/Platform \
@@ -65,6 +66,7 @@ libWebKit2Platform_la_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/Platform/IPC \
 	-I$(srcdir)/Source/WebKit2/Platform/gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	$(javascriptcore_cppflags) \
 	$(COVERAGE_CFLAGS) \
 	$(GLIB_CFLAGS)
 

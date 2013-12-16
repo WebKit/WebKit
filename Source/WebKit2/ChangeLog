@@ -1,3 +1,10 @@
+2013-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r160549.
+
+        * GNUmakefile.am: Fix the include paths to make sure we include
+        the WebKit2 config.h file when building libWebKit2Platform.
+
 2013-12-16  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] can't build from trunk: WebKitCookieManager: 'WebString' was not declared in this scope
