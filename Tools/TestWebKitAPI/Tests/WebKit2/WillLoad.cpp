@@ -179,7 +179,7 @@ TEST_F(WebKit2WillLoadTest, WKPageLoadHTMLStringWithUserData)
 
     WKPageLoadHTMLStringWithUserData(webView->page(), htmlString.get(), baseURL.get(), userData.get());
 
-    testWillLoadDataRequestReturnValues(baseURL.get(), Util::toWK("text/html").get(), Util::toWK("utf-8").get(), 0, userData.get());
+    testWillLoadDataRequestReturnValues(baseURL.get(), Util::toWK("text/html").get(), Util::toWK("latin1").get(), 0, userData.get());
 }
 
 TEST_F(WebKit2WillLoadTest, WKPageLoadHTMLString)
@@ -189,7 +189,7 @@ TEST_F(WebKit2WillLoadTest, WKPageLoadHTMLString)
 
     WKPageLoadHTMLString(webView->page(), htmlString.get(), baseURL.get());
 
-    testWillLoadDataRequestReturnValues(baseURL.get(), Util::toWK("text/html").get(), Util::toWK("utf-8").get(), 0, 0);
+    testWillLoadDataRequestReturnValues(baseURL.get(), Util::toWK("text/html").get(), Util::toWK("latin1").get(), 0, 0);
 }
 
 TEST_F(WebKit2WillLoadTest, WKPageLoadAlternateHTMLStringWithUserData)
@@ -202,7 +202,7 @@ TEST_F(WebKit2WillLoadTest, WKPageLoadAlternateHTMLStringWithUserData)
 
     WKPageLoadAlternateHTMLStringWithUserData(webView->page(), htmlString.get(), baseURL.get(), unreachableURL.get(), userData.get());
 
-    testWillLoadDataRequestReturnValues(baseURL.get(), Util::toWK("text/html").get(), Util::toWK("utf-8").get(), unreachableURL.get(), userData.get());
+    testWillLoadDataRequestReturnValues(baseURL.get(), Util::toWK("text/html").get(), Util::toWK("latin1").get(), unreachableURL.get(), userData.get());
 }
 
 TEST_F(WebKit2WillLoadTest, WKPageLoadAlternateHTMLString)
@@ -214,7 +214,7 @@ TEST_F(WebKit2WillLoadTest, WKPageLoadAlternateHTMLString)
 
     WKPageLoadAlternateHTMLString(webView->page(), htmlString.get(), baseURL.get(), unreachableURL.get());
 
-    testWillLoadDataRequestReturnValues(baseURL.get(), Util::toWK("text/html").get(), Util::toWK("utf-8").get(), unreachableURL.get(), 0);
+    testWillLoadDataRequestReturnValues(baseURL.get(), Util::toWK("text/html").get(), Util::toWK("latin1").get(), unreachableURL.get(), 0);
 }
 
 TEST_F(WebKit2WillLoadTest, WKPageLoadPlainTextStringWithUserData)
@@ -225,7 +225,7 @@ TEST_F(WebKit2WillLoadTest, WKPageLoadPlainTextStringWithUserData)
     WKPageLoadPlainTextStringWithUserData(webView->page(), plaintTextString.get(), userData.get());
 
     WKRetainPtr<WKURLRef> blankURL = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
-    testWillLoadDataRequestReturnValues(blankURL.get(), Util::toWK("text/plain").get(), Util::toWK("utf-8").get(), 0, userData.get());
+    testWillLoadDataRequestReturnValues(blankURL.get(), Util::toWK("text/plain").get(), Util::toWK("latin1").get(), 0, userData.get());
 }
 
 TEST_F(WebKit2WillLoadTest, WKPageLoadPlainTextString)
@@ -235,7 +235,7 @@ TEST_F(WebKit2WillLoadTest, WKPageLoadPlainTextString)
     WKPageLoadPlainTextString(webView->page(), plaintTextString.get());
 
     WKRetainPtr<WKURLRef> blankURL = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
-    testWillLoadDataRequestReturnValues(blankURL.get(), Util::toWK("text/plain").get(), Util::toWK("utf-8").get(), 0, 0);
+    testWillLoadDataRequestReturnValues(blankURL.get(), Util::toWK("text/plain").get(), Util::toWK("latin1").get(), 0, 0);
 }
 
 } // namespace TestWebKitAPI
