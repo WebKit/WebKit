@@ -97,28 +97,6 @@ private:
 
     void ensureRootStateNodeForFrameView(FrameView*);
 
-    struct ScrollParameters {
-        ScrollElasticity horizontalScrollElasticity;
-        ScrollElasticity verticalScrollElasticity;
-
-        bool hasEnabledHorizontalScrollbar;
-        bool hasEnabledVerticalScrollbar;
-
-        ScrollbarMode horizontalScrollbarMode;
-        ScrollbarMode verticalScrollbarMode;
-
-        IntPoint scrollOrigin;
-
-        IntRect viewportRect;
-        IntSize totalContentsSize;
-        
-        float frameScaleFactor;
-
-        int headerHeight;
-        int footerHeight;
-    };
-
-    void setScrollParametersForNode(const ScrollParameters&, ScrollingStateScrollingNode*);
     void setScrollLayerForNode(GraphicsLayer*, ScrollingStateNode*);
     void setCounterScrollingLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
     void setHeaderLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
@@ -127,7 +105,6 @@ private:
     void setNonFastScrollableRegionForNode(const Region&, ScrollingStateScrollingNode*);
     void setWheelEventHandlerCountForNode(unsigned, ScrollingStateScrollingNode*);
     void setScrollBehaviorForFixedElementsForNode(ScrollBehaviorForFixedElements, ScrollingStateScrollingNode*);
-
 
     void updateMainFrameScrollLayerPosition();
 

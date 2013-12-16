@@ -1,3 +1,38 @@
+2013-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Package up some data about scrollability into a struct for use in the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=125792
+
+        Reviewed by Beth Dakin.
+
+        Both scrolling state nodes and scrolling nodes share a set of parameters
+        relating to scrollability and rubberbanding, so package them into a struct
+        for re-use. Send the struct wholesale to the scrolling thread.
+
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollableAreaParameters::ScrollableAreaParameters): New struct.
+        (WebCore::ScrollableAreaParameters::operator==):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode): Reordering.
+        (WebCore::ScrollingStateScrollingNode::setScrollOrigin): Moved.
+        (WebCore::ScrollingStateScrollingNode::setScrollableAreaParameters): Set the parameters all at once.
+        (WebCore::ScrollingStateScrollingNode::setRequestedScrollPosition):
+        * page/scrolling/ScrollingStateScrollingNode.h: Getters access the struct. Reorder member variables.
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::ScrollingTreeScrollingNode):
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::scrollOrigin):
+        (WebCore::ScrollingTreeScrollingNode::horizontalScrollElasticity):
+        (WebCore::ScrollingTreeScrollingNode::verticalScrollElasticity):
+        (WebCore::ScrollingTreeScrollingNode::hasEnabledHorizontalScrollbar):
+        (WebCore::ScrollingTreeScrollingNode::hasEnabledVerticalScrollbar):
+        (WebCore::ScrollingTreeScrollingNode::canHaveScrollbars):
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm: Removed setScrollParametersForNode().
+        (WebCore::ScrollingCoordinatorMac::frameViewLayoutUpdated): Set the params in this
+        function. Reordering.
+
 2013-12-16  Sam Weinig  <sam@webkit.org>
 
         CTTE: Convert more of SVG to use references

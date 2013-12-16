@@ -51,17 +51,12 @@ public:
     enum ChangedProperty {
         ViewportRect = NumStateNodeBits,
         TotalContentsSize,
+        ScrollOrigin,
+        ScrollableAreaParams,
         FrameScaleFactor,
         NonFastScrollableRegion,
         WheelEventHandlerCount,
         ShouldUpdateScrollLayerPositionOnMainThread,
-        HorizontalScrollElasticity,
-        VerticalScrollElasticity,
-        HasEnabledHorizontalScrollbar,
-        HasEnabledVerticalScrollbar,
-        HorizontalScrollbarMode,
-        VerticalScrollbarMode,
-        ScrollOrigin,
         RequestedScrollPosition,
         CounterScrollingLayer,
         HeaderHeight,
@@ -78,6 +73,9 @@ public:
     const IntSize& totalContentsSize() const { return m_totalContentsSize; }
     void setTotalContentsSize(const IntSize&);
 
+    const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
+    void setScrollOrigin(const IntPoint&);
+
     float frameScaleFactor() const { return m_frameScaleFactor; }
     void setFrameScaleFactor(float);
 
@@ -90,32 +88,14 @@ public:
     MainThreadScrollingReasons shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
     void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);
 
-    ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
-    void setHorizontalScrollElasticity(ScrollElasticity);
-
-    ScrollElasticity verticalScrollElasticity() const { return m_verticalScrollElasticity; }
-    void setVerticalScrollElasticity(ScrollElasticity);
-
-    bool hasEnabledHorizontalScrollbar() const { return m_hasEnabledHorizontalScrollbar; }
-    void setHasEnabledHorizontalScrollbar(bool);
-
-    bool hasEnabledVerticalScrollbar() const { return m_hasEnabledVerticalScrollbar; }
-    void setHasEnabledVerticalScrollbar(bool);
-
-    ScrollbarMode horizontalScrollbarMode() const { return m_horizontalScrollbarMode; }
-    void setHorizontalScrollbarMode(ScrollbarMode);
-
-    ScrollbarMode verticalScrollbarMode() const { return m_verticalScrollbarMode; }
-    void setVerticalScrollbarMode(ScrollbarMode);
+    const ScrollableAreaParameters& scrollableAreaParameters() const { return m_scrollableAreaParameters; }
+    void setScrollableAreaParameters(const ScrollableAreaParameters& params);
 
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
     void setScrollBehaviorForFixedElements(ScrollBehaviorForFixedElements);
 
     const IntPoint& requestedScrollPosition() const { return m_requestedScrollPosition; }
     void setRequestedScrollPosition(const IntPoint&, bool representsProgrammaticScroll);
-
-    const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
-    void setScrollOrigin(const IntPoint&);
 
     int headerHeight() const { return m_headerHeight; }
     void setHeaderHeight(int);
@@ -164,35 +144,21 @@ private:
     ScrollbarPainter m_verticalScrollbarPainter;
     ScrollbarPainter m_horizontalScrollbarPainter;
 #endif
-    
+
     IntRect m_viewportRect;
     IntSize m_totalContentsSize;
-    
-    float m_frameScaleFactor;
-
-    Region m_nonFastScrollableRegion;
-
-    unsigned m_wheelEventHandlerCount;
-
-    MainThreadScrollingReasons m_shouldUpdateScrollLayerPositionOnMainThread;
-
-    ScrollElasticity m_horizontalScrollElasticity;
-    ScrollElasticity m_verticalScrollElasticity;
-
-    bool m_hasEnabledHorizontalScrollbar;
-    bool m_hasEnabledVerticalScrollbar;
-    bool m_requestedScrollPositionRepresentsProgrammaticScroll;
-
-    ScrollbarMode m_horizontalScrollbarMode;
-    ScrollbarMode m_verticalScrollbarMode;
-
-    ScrollBehaviorForFixedElements m_behaviorForFixed;
-
-    IntPoint m_requestedScrollPosition;
     IntPoint m_scrollOrigin;
-
+    
+    ScrollableAreaParameters m_scrollableAreaParameters;
+    Region m_nonFastScrollableRegion;
+    float m_frameScaleFactor;
+    unsigned m_wheelEventHandlerCount;
+    MainThreadScrollingReasons m_shouldUpdateScrollLayerPositionOnMainThread;
+    ScrollBehaviorForFixedElements m_behaviorForFixed;
     int m_headerHeight;
     int m_footerHeight;
+    IntPoint m_requestedScrollPosition;
+    bool m_requestedScrollPositionRepresentsProgrammaticScroll;
 };
 
 SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateScrollingNode, isScrollingNode());

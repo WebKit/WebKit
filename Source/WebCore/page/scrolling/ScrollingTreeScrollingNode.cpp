@@ -36,15 +36,9 @@ namespace WebCore {
 ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeNode(scrollingTree, nodeID)
     , m_frameScaleFactor(1)
-    , m_shouldUpdateScrollLayerPositionOnMainThread(0)
-    , m_horizontalScrollElasticity(ScrollElasticityNone)
-    , m_verticalScrollElasticity(ScrollElasticityNone)
-    , m_hasEnabledHorizontalScrollbar(false)
-    , m_hasEnabledVerticalScrollbar(false)
-    , m_horizontalScrollbarMode(ScrollbarAuto)
-    , m_verticalScrollbarMode(ScrollbarAuto)
     , m_headerHeight(0)
     , m_footerHeight(0)
+    , m_shouldUpdateScrollLayerPositionOnMainThread(0)
     , m_behaviorForFixed(StickToDocumentBounds)
 {
 }
@@ -68,32 +62,17 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(ScrollingStateNode* stateN
         m_totalContentsSize = state->totalContentsSize();
     }
 
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
+        m_scrollOrigin = state->scrollOrigin();
+
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaParams))
+        m_scrollableAreaParameters = state->scrollableAreaParameters();
+
     if (state->hasChangedProperty(ScrollingStateScrollingNode::FrameScaleFactor))
         m_frameScaleFactor = state->frameScaleFactor();
 
     if (state->hasChangedProperty(ScrollingStateScrollingNode::ShouldUpdateScrollLayerPositionOnMainThread))
         m_shouldUpdateScrollLayerPositionOnMainThread = state->shouldUpdateScrollLayerPositionOnMainThread();
-
-    if (state->hasChangedProperty(ScrollingStateScrollingNode::HorizontalScrollElasticity))
-        m_horizontalScrollElasticity = state->horizontalScrollElasticity();
-
-    if (state->hasChangedProperty(ScrollingStateScrollingNode::VerticalScrollElasticity))
-        m_verticalScrollElasticity = state->verticalScrollElasticity();
-
-    if (state->hasChangedProperty(ScrollingStateScrollingNode::HasEnabledHorizontalScrollbar))
-        m_hasEnabledHorizontalScrollbar = state->hasEnabledHorizontalScrollbar();
-
-    if (state->hasChangedProperty(ScrollingStateScrollingNode::HasEnabledVerticalScrollbar))
-        m_hasEnabledVerticalScrollbar = state->hasEnabledVerticalScrollbar();
-
-    if (state->hasChangedProperty(ScrollingStateScrollingNode::HorizontalScrollbarMode))
-        m_horizontalScrollbarMode = state->horizontalScrollbarMode();
-
-    if (state->hasChangedProperty(ScrollingStateScrollingNode::VerticalScrollbarMode))
-        m_verticalScrollbarMode = state->verticalScrollbarMode();
-
-    if (state->hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
-        m_scrollOrigin = state->scrollOrigin();
 
     if (state->hasChangedProperty(ScrollingStateScrollingNode::HeaderHeight))
         m_headerHeight = state->headerHeight();

@@ -135,7 +135,15 @@ void ScrollingCoordinatorMac::frameViewLayoutUpdated(FrameView* frameView)
     Scrollbar* horizontalScrollbar = frameView->horizontalScrollbar();
     setScrollbarPaintersFromScrollbarsForNode(verticalScrollbar, horizontalScrollbar, node);
 
-    ScrollParameters scrollParameters;
+    node->setFrameScaleFactor(frameView->frame().frameScaleFactor());
+    node->setHeaderHeight(frameView->headerHeight());
+    node->setFooterHeight(frameView->footerHeight());
+
+    node->setScrollOrigin(frameView->scrollOrigin());
+    node->setViewportRect(IntRect(IntPoint(), frameView->visibleContentRect().size()));
+    node->setTotalContentsSize(frameView->totalContentsSize());
+
+    ScrollableAreaParameters scrollParameters;
     scrollParameters.horizontalScrollElasticity = frameView->horizontalScrollElasticity();
     scrollParameters.verticalScrollElasticity = frameView->verticalScrollElasticity();
     scrollParameters.hasEnabledHorizontalScrollbar = horizontalScrollbar && horizontalScrollbar->enabled();
@@ -143,14 +151,8 @@ void ScrollingCoordinatorMac::frameViewLayoutUpdated(FrameView* frameView)
     scrollParameters.horizontalScrollbarMode = frameView->horizontalScrollbarMode();
     scrollParameters.verticalScrollbarMode = frameView->verticalScrollbarMode();
 
-    scrollParameters.scrollOrigin = frameView->scrollOrigin();
-    scrollParameters.viewportRect = IntRect(IntPoint(), frameView->visibleContentRect().size());
-    scrollParameters.totalContentsSize = frameView->totalContentsSize();
-    scrollParameters.frameScaleFactor = frameView->frame().frameScaleFactor();
-    scrollParameters.headerHeight = frameView->headerHeight();
-    scrollParameters.footerHeight = frameView->footerHeight();
-
-    setScrollParametersForNode(scrollParameters, node);
+    node->setScrollableAreaParameters(scrollParameters);
+    scheduleTreeStateCommit();
 }
 
 void ScrollingCoordinatorMac::recomputeWheelEventHandlerCountForFrameView(FrameView* frameView)
@@ -295,25 +297,6 @@ void ScrollingCoordinatorMac::setScrollbarPaintersFromScrollbarsForNode(Scrollba
 void ScrollingCoordinatorMac::setNonFastScrollableRegionForNode(const Region& region, ScrollingStateScrollingNode* node)
 {
     node->setNonFastScrollableRegion(region);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::setScrollParametersForNode(const ScrollParameters& scrollParameters, ScrollingStateScrollingNode* node)
-{
-    node->setHorizontalScrollElasticity(scrollParameters.horizontalScrollElasticity);
-    node->setVerticalScrollElasticity(scrollParameters.verticalScrollElasticity);
-    node->setHasEnabledHorizontalScrollbar(scrollParameters.hasEnabledHorizontalScrollbar);
-    node->setHasEnabledVerticalScrollbar(scrollParameters.hasEnabledVerticalScrollbar);
-    node->setHorizontalScrollbarMode(scrollParameters.horizontalScrollbarMode);
-    node->setVerticalScrollbarMode(scrollParameters.verticalScrollbarMode);
-
-    node->setScrollOrigin(scrollParameters.scrollOrigin);
-    node->setViewportRect(scrollParameters.viewportRect);
-    node->setTotalContentsSize(scrollParameters.totalContentsSize);
-    node->setFrameScaleFactor(scrollParameters.frameScaleFactor);
-    node->setHeaderHeight(scrollParameters.headerHeight);
-    node->setFooterHeight(scrollParameters.footerHeight);
-
     scheduleTreeStateCommit();
 }
 

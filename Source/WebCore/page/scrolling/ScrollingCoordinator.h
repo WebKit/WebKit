@@ -69,6 +69,37 @@ enum SetOrSyncScrollingLayerPosition {
     SyncScrollingLayerPosition
 };
 
+struct ScrollableAreaParameters {
+    ScrollElasticity horizontalScrollElasticity;
+    ScrollElasticity verticalScrollElasticity;
+
+    ScrollbarMode horizontalScrollbarMode;
+    ScrollbarMode verticalScrollbarMode;
+
+    bool hasEnabledHorizontalScrollbar;
+    bool hasEnabledVerticalScrollbar;
+    
+    ScrollableAreaParameters()
+        : horizontalScrollElasticity(ScrollElasticityNone)
+        , verticalScrollElasticity(ScrollElasticityNone)
+        , horizontalScrollbarMode(ScrollbarAuto)
+        , verticalScrollbarMode(ScrollbarAuto)
+        , hasEnabledHorizontalScrollbar(false)
+        , hasEnabledVerticalScrollbar(false)
+    {
+    }
+
+    bool operator==(const ScrollableAreaParameters& other) const
+    {
+        return horizontalScrollElasticity == other.horizontalScrollElasticity
+            && verticalScrollElasticity == other.verticalScrollElasticity
+            && horizontalScrollbarMode == other.horizontalScrollbarMode
+            && verticalScrollbarMode == other.verticalScrollbarMode
+            && hasEnabledHorizontalScrollbar == other.hasEnabledHorizontalScrollbar
+            && hasEnabledVerticalScrollbar == other.hasEnabledVerticalScrollbar;
+    }
+};
+
 class ScrollingCoordinator : public ThreadSafeRefCounted<ScrollingCoordinator> {
 public:
     static PassRefPtr<ScrollingCoordinator> create(Page*);

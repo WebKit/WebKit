@@ -60,6 +60,7 @@ protected:
 
     const IntRect& viewportRect() const { return m_viewportRect; }
     const IntSize& totalContentsSize() const { return m_totalContentsSize; }
+    const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
 
     // If the totalContentsSize changes in the middle of a rubber-band, we still want to use the old totalContentsSize for the sake of
     // computing the stretchAmount(). Using the old value will keep the animation smooth. When there is no rubber-band in progress at
@@ -69,15 +70,13 @@ protected:
 
     float frameScaleFactor() const { return m_frameScaleFactor; }
 
-    ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
-    ScrollElasticity verticalScrollElasticity() const { return m_verticalScrollElasticity; }
+    ScrollElasticity horizontalScrollElasticity() const { return m_scrollableAreaParameters.horizontalScrollElasticity; }
+    ScrollElasticity verticalScrollElasticity() const { return m_scrollableAreaParameters.verticalScrollElasticity; }
 
-    bool hasEnabledHorizontalScrollbar() const { return m_hasEnabledHorizontalScrollbar; }
-    bool hasEnabledVerticalScrollbar() const { return m_hasEnabledVerticalScrollbar; }
+    bool hasEnabledHorizontalScrollbar() const { return m_scrollableAreaParameters.hasEnabledHorizontalScrollbar; }
+    bool hasEnabledVerticalScrollbar() const { return m_scrollableAreaParameters.hasEnabledVerticalScrollbar; }
 
-    bool canHaveScrollbars() const { return m_horizontalScrollbarMode != ScrollbarAlwaysOff || m_verticalScrollbarMode != ScrollbarAlwaysOff; }
-
-    const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
+    bool canHaveScrollbars() const { return m_scrollableAreaParameters.horizontalScrollbarMode != ScrollbarAlwaysOff || m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarAlwaysOff; }
 
     int headerHeight() const { return m_headerHeight; }
     int footerHeight() const { return m_footerHeight; }
@@ -90,22 +89,14 @@ private:
     IntSize m_totalContentsSizeForRubberBand;
     IntPoint m_scrollOrigin;
     
-    float m_frameScaleFactor;
-
-    MainThreadScrollingReasons m_shouldUpdateScrollLayerPositionOnMainThread;
-
-    ScrollElasticity m_horizontalScrollElasticity;
-    ScrollElasticity m_verticalScrollElasticity;
+    ScrollableAreaParameters m_scrollableAreaParameters;
     
-    bool m_hasEnabledHorizontalScrollbar;
-    bool m_hasEnabledVerticalScrollbar;
-
-    ScrollbarMode m_horizontalScrollbarMode;
-    ScrollbarMode m_verticalScrollbarMode;
+    float m_frameScaleFactor;
 
     int m_headerHeight;
     int m_footerHeight;
 
+    MainThreadScrollingReasons m_shouldUpdateScrollLayerPositionOnMainThread;
     ScrollBehaviorForFixedElements m_behaviorForFixed;
 };
 
