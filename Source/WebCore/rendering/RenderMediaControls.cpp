@@ -73,12 +73,12 @@ namespace WebCore {
 static WKMediaControllerThemeState determineState(RenderObject* o)
 {
     int result = 0;
-    RenderTheme* theme = o->theme();
-    if (!theme->isEnabled(o) || theme->isReadOnlyControl(o))
+    const RenderTheme& theme = o->theme();
+    if (!theme.isEnabled(o) || theme.isReadOnlyControl(o))
         result |= WKMediaControllerFlagDisabled;
-    if (theme->isPressed(o))
+    if (theme.isPressed(o))
         result |= WKMediaControllerFlagPressed;
-    if (theme->isFocused(o))
+    if (theme.isFocused(o))
         result |= WKMediaControllerFlagFocused;
     return static_cast<WKMediaControllerThemeState>(result);
 }

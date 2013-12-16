@@ -1,5 +1,13 @@
 2013-12-15  Brent Fulgham  <bfulgham@webkit.org>
 
+        [WIn] Unreviewed build fix after r160599
+
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::determineState): RenderObject::theme now returns
+        a reference.
+
+2013-12-15  Brent Fulgham  <bfulgham@webkit.org>
+
         [Win] Unreviewed build fix
 
         The build system continues to attempt to build QTMovieWin, even
