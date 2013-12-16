@@ -305,6 +305,9 @@ PASS: div[role=menu]
 PASS: div[role=menuitem]
       AXRole: AXMenuItem
       
+PASS: div[role=menuitemcheckbox]
+      AXRole: AXCheckMenuItem
+      
 PASS: div[role=menuitemradio]
       AXRole: AXRadioMenuItem
       
@@ -313,6 +316,9 @@ PASS: div[role=menubar]
       
 PASS: div[role=menuitem]
       AXRole: AXMenuItem
+      
+PASS: div[role=menuitemcheckbox]
+      AXRole: AXCheckMenuItem
       
 PASS: div[role=menuitemradio]
       AXRole: AXRadioMenuItem

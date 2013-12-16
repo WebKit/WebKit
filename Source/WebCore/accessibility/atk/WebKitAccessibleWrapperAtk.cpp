@@ -603,6 +603,8 @@ static AtkRole atkRole(AccessibilityRole role)
     case MenuListOptionRole:
     case MenuItemRole:
         return ATK_ROLE_MENU_ITEM;
+    case MenuItemCheckboxRole:
+        return ATK_ROLE_CHECK_MENU_ITEM;
     case MenuItemRadioRole:
         return ATK_ROLE_RADIO_MENU_ITEM;
     case ColumnRole:

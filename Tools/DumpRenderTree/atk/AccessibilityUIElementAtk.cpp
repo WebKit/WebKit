@@ -280,6 +280,8 @@ const char* roleToString(AtkObject* object)
         return "AXRadioMenuItem";
     case ATK_ROLE_ROW_HEADER:
         return "AXRowHeader";
+    case ATK_ROLE_CHECK_MENU_ITEM:
+        return "AXCheckMenuItem";
     case ATK_ROLE_RULER:
         return "AXRuler";
     case ATK_ROLE_SCROLL_BAR:
