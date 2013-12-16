@@ -346,13 +346,6 @@ SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
 
 #endif // COMPILER(GCC)
 
-#if COMPILER(RVCT)
-
-/* Include the generated file */
-#include "GeneratedJITStubs_RVCT.h"
-
-#endif // COMPILER(RVCT)
-
 } // namespace JSC
 
 #endif // JITStubsARMv7_h

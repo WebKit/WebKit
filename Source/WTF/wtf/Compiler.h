@@ -105,15 +105,6 @@
 
 #endif /* defined(_MSC_VER) */
 
-/* COMPILER(RVCT) - ARM RealView Compilation Tools */
-#if defined(__CC_ARM) || defined(__ARMCC__)
-#define WTF_COMPILER_RVCT 1
-#define RVCT_VERSION_AT_LEAST(major, minor, patch, build) (__ARMCC_VERSION >= (major * 100000 + minor * 10000 + patch * 1000 + build))
-#else
-/* Define this for !RVCT compilers, just so we can write things like RVCT_VERSION_AT_LEAST(3, 0, 0, 0). */
-#define RVCT_VERSION_AT_LEAST(major, minor, patch, build) 0
-#endif
-
 /* COMPILER(GCCE) - GNU Compiler Collection for Embedded */
 #if defined(__GCCE__)
 #define WTF_COMPILER_GCCE 1
@@ -123,7 +114,7 @@
 
 /* COMPILER(GCC) - GNU Compiler Collection */
 /* --gnu option of the RVCT compiler also defines __GNUC__ */
-#if defined(__GNUC__) && !COMPILER(RVCT)
+#if defined(__GNUC__)
 #define WTF_COMPILER_GCC 1
 #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #define GCC_VERSION_AT_LEAST(major, minor, patch) (GCC_VERSION >= (major * 10000 + minor * 100 + patch))
@@ -219,7 +210,7 @@
 #ifndef ALWAYS_INLINE
 #if COMPILER(GCC) && defined(NDEBUG) && !COMPILER(MINGW)
 #define ALWAYS_INLINE inline __attribute__((__always_inline__))
-#elif (COMPILER(MSVC) || COMPILER(RVCT)) && defined(NDEBUG)
+#elif COMPILER(MSVC) && defined(NDEBUG)
 #define ALWAYS_INLINE __forceinline
 #else
 #define ALWAYS_INLINE inline
@@ -232,8 +223,6 @@
 #ifndef NEVER_INLINE
 #if COMPILER(GCC)
 #define NEVER_INLINE __attribute__((__noinline__))
-#elif COMPILER(RVCT)
-#define NEVER_INLINE __declspec(noinline)
 #else
 #define NEVER_INLINE
 #endif
@@ -243,7 +232,7 @@
 /* UNLIKELY */
 
 #ifndef UNLIKELY
-#if COMPILER(GCC) || (COMPILER(RVCT) && defined(__GNUC__))
+#if COMPILER(GCC)
 #define UNLIKELY(x) __builtin_expect(!!(x), 0)
 #else
 #define UNLIKELY(x) (x)
@@ -254,7 +243,7 @@
 /* LIKELY */
 
 #ifndef LIKELY
-#if COMPILER(GCC) || (COMPILER(RVCT) && defined(__GNUC__))
+#if COMPILER(GCC)
 #define LIKELY(x) __builtin_expect(!!(x), 1)
 #else
 #define LIKELY(x) (x)
@@ -268,7 +257,7 @@
 #ifndef NO_RETURN
 #if COMPILER(GCC)
 #define NO_RETURN __attribute((__noreturn__))
-#elif COMPILER(MSVC) || COMPILER(RVCT)
+#elif COMPILER(MSVC)
 #define NO_RETURN __declspec(noreturn)
 #else
 #define NO_RETURN
@@ -342,11 +331,7 @@
 
 /* UNUSED_PARAM */
 
-#if COMPILER(RVCT)
-template<typename T>
-inline void unusedParam(T& x) { (void)x; }
-#define UNUSED_PARAM(variable) unusedParam(variable)
-#elif COMPILER(MSVC)
+#if COMPILER(MSVC)
 #define UNUSED_PARAM(variable) (void)&variable
 #else
 #define UNUSED_PARAM(variable) (void)variable

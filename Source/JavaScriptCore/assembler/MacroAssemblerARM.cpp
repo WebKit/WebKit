@@ -62,7 +62,7 @@ static bool isVFPPresent()
     }
 #endif // OS(LINUX)
 
-#if (COMPILER(RVCT) && defined(__TARGET_FPU_VFP)) || (COMPILER(GCC) && defined(__VFP_FP__))
+#if (COMPILER(GCC) && defined(__VFP_FP__))
     return true;
 #else
     return false;

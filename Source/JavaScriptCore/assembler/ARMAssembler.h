@@ -1100,9 +1100,6 @@ namespace JSC {
         }
 #endif
 
-#if OS(LINUX) && COMPILER(RVCT)
-        static __asm void cacheFlush(void* code, size_t);
-#else
         static void cacheFlush(void* code, size_t size)
         {
 #if OS(LINUX) && COMPILER(GCC)
@@ -1133,7 +1130,6 @@ namespace JSC {
 #error "The cacheFlush support is missing on this platform."
 #endif
         }
-#endif
 
     private:
         static ARMWord RM(int reg)

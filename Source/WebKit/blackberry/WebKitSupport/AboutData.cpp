@@ -76,12 +76,6 @@ static String configPage()
     builder.append("<tr><td>_MSC_VER</td><td>" + String::number(_MSC_VER) + "</td></tr>");
     builder.append("<tr><td>_MSC_FULL_VER</td><td>" + String::number(_MSC_FULL_VER) + "</td></tr>");
     builder.append("<tr><td>_MSC_BUILD</td><td>" + String::number(_MSC_BUILD) + "</td></tr>");
-#elif COMPILER(RVCT)
-    builder.appendLiteral("<tr><td>ARM RealView Compiler Toolkit</td><td>RVCT</td></tr>");
-    builder.append("<tr><td>__ARMCC_VERSION</td><td>" + String::number(__ARMCC_VERSION) + "</td></tr>");
-#if COMPILER(RVCT4GNU)
-    builder.appendLiteral("<tr><td>RVCT 4+ in --gnu mode</td><td>1</td></tr>");
-#endif
 #elif COMPILER(GCC)
     builder.append("<tr><td>GCC</td><td>" + String::number(__GNUC__) + "." + String::number(__GNUC_MINOR__) + "." + String::number(__GNUC_PATCHLEVEL__) + "</td></tr>");
 #endif

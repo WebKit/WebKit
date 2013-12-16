@@ -169,7 +169,7 @@
 #define WTF_CPU_ARM_HARDFP 1
 #endif
 
-#if defined(__ARMEB__) || (COMPILER(RVCT) && defined(__BIG_ENDIAN))
+#if defined(__ARMEB__)
 #define WTF_CPU_BIG_ENDIAN 1
 
 #elif !defined(__ARM_EABI__) \
@@ -569,7 +569,7 @@
 #endif
 
 #if !defined(HAVE_VASPRINTF)
-#if !COMPILER(MSVC) && !COMPILER(RVCT) && !COMPILER(MINGW) && !(COMPILER(GCC) && OS(QNX))
+#if !COMPILER(MSVC) && !COMPILER(MINGW) && !(COMPILER(GCC) && OS(QNX))
 #define HAVE_VASPRINTF 1
 #endif
 #endif
@@ -820,7 +820,7 @@
 #endif
 
 /* Configure the interpreter */
-#if COMPILER(GCC) || (COMPILER(RVCT) && defined(__GNUC__))
+#if COMPILER(GCC)
 #define HAVE_COMPUTED_GOTO 1
 #endif
 
