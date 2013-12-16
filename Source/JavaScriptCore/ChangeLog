@@ -1,3 +1,48 @@
+2013-12-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: 2x regression on Dromaeo DOM query tests
+        https://bugs.webkit.org/show_bug.cgi?id=125377
+
+        Reviewed by Filip Pizlo.
+
+        The bug was caused by JSC not JIT'ing property access on "document" due to its type info having
+        HasImpureGetOwnPropertySlot flag.
+
+        Fixed the bug by new type info flag NewImpurePropertyFiresWatchpoints, which allows the baseline
+        JIT to generate byte code for access properties on an object with named properties (a.k.a.
+        custom name getter) in DOM. When a new named property appears on the object, VM is notified via
+        VM::addImpureProperty and fires StructureStubClearingWatchpoint added during the repatch.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt): Take the slow path if we have any object with impure
+        properties in the prototype chain.
+        (JSC::GetByIdStatus::computeForChain): Ditto.
+
+        * jit/Repatch.cpp:
+        (JSC::repatchByIdSelfAccess): Throw away the byte code when a new impure property is added on any
+        object in the prototype chain via StructureStubClearingWatchpoint.
+        (JSC::generateProtoChainAccessStub): Ditto.
+        (JSC::tryCacheGetByID):
+        (JSC::tryBuildGetByIDList):
+        (JSC::tryRepatchIn): Ditto.
+
+        * runtime/JSTypeInfo.h: Added NewImpurePropertyFiresWatchpoints.
+        (JSC::TypeInfo::newImpurePropertyFiresWatchpoints): Added.
+
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChainForChainAccess): Don't exit early if VM will be notified of new
+        impure property even if the object had impure properties.
+
+        * runtime/Structure.h:
+        (JSC::Structure::takesSlowPathInDFGForImpureProperty): Added. Wraps hasImpureGetOwnPropertySlot and
+        asserts that newImpurePropertyFiresWatchpoints is true whenever hasImpureGetOwnPropertySlot is true.
+
+        * runtime/VM.cpp:
+        (JSC::VM::registerWatchpointForImpureProperty): Added.
+        (JSC::VM::addImpureProperty): Added. HTMLDocument calls it to notify JSC of a new impure property.
+
+        * runtime/VM.h:
+
 2013-12-15  Andy Estes  <aestes@apple.com>
 
         [iOS] Upstream changes to FeatureDefines.xcconfig

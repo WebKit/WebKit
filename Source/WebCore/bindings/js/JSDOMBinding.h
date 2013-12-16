@@ -237,6 +237,8 @@ inline JSC::JSValue argumentOrNull(JSC::ExecState* exec, unsigned index)
     return index >= exec->argumentCount() ? JSC::JSValue() : exec->argument(index);
 }
 
+void addImpureProperty(const AtomicString&);
+
 const JSC::HashTable& getHashTableForGlobalData(JSC::VM&, const JSC::HashTable& staticTable);
 
 void reportException(JSC::ExecState*, JSC::JSValue exception, CachedScript* = 0);

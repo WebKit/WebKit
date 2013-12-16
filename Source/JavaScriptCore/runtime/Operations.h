@@ -217,8 +217,9 @@ inline size_t normalizePrototypeChainForChainAccess(CallFrame* callFrame, JSValu
     while (!slotBase || slotBase != cell) {
         if (cell->isProxy())
             return InvalidPrototypeChain;
-            
-        if (cell->structure()->typeInfo().hasImpureGetOwnPropertySlot())
+
+        const TypeInfo& typeInfo = cell->structure()->typeInfo();
+        if (typeInfo.hasImpureGetOwnPropertySlot() && !typeInfo.newImpurePropertyFiresWatchpoints())
             return InvalidPrototypeChain;
             
         JSValue v = cell->structure()->prototypeForLookup(callFrame);

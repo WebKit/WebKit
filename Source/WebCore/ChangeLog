@@ -1,3 +1,34 @@
+2013-12-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: 2x regression on Dromaeo DOM query tests
+        https://bugs.webkit.org/show_bug.cgi?id=125377
+
+        Reviewed by Filip Pizlo.
+
+        The bug was caused by JSC not JIT'ing property accesses on document because of its having
+        custom named getter (named properties).  This resulted in resolution of methods on document
+        such as getElementById to happen inside the interpreter.
+
+        Fixed the bug by using the new JSC type info flag which tells JSC to JIT property access on
+        document, and then notifying JSC whenever a new named property appeared on document.
+
+        Tests: js/dom/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps-2.html
+               js/dom/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps-3.html
+               js/dom/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps-4.html
+               js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-2.html
+               js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-3.html
+               js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-4.html
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::addImpureProperty): Wraps VM::addImpureProperty.
+        * bindings/js/JSDOMBinding.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Added the support for NewImpurePropertyFiresWatchpoints.
+        * bindings/scripts/IDLAttributes.txt: Ditto.
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::addDocumentNamedItem): Calls addImpureProperty.
+        * html/HTMLDocument.idl: Added NewImpurePropertyFiresWatchpoints.
+
 2013-12-15  Brent Fulgham  <bfulgham@webkit.org>
 
         [WIn] Unreviewed build fix after r160599

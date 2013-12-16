@@ -48,7 +48,10 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     Structure* structure = instruction[4].u.structure.get();
     if (!structure)
         return GetByIdStatus(NoInformation, false);
-    
+
+    if (structure->takesSlowPathInDFGForImpureProperty())
+        return GetByIdStatus(NoInformation, false);
+
     unsigned attributesIgnored;
     JSCell* specificValue;
     PropertyOffset offset = structure->getConcurrently(
@@ -79,7 +82,15 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
     // then we fall back on a polymorphic access.
     if (!result.m_chain->isStillValid())
         return;
-    
+
+    if (result.m_chain->head()->takesSlowPathInDFGForImpureProperty())
+        return;
+    size_t chainSize = result.m_chain->size();
+    for (size_t i = 0; i < chainSize; i++) {
+        if (result.m_chain->at(i)->takesSlowPathInDFGForImpureProperty())
+            return;
+    }
+
     JSObject* currentObject = result.m_chain->terminalPrototype();
     Structure* currentStructure = result.m_chain->last();
     
@@ -154,6 +165,8 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
         
     case access_get_by_id_self: {
         Structure* structure = stubInfo->u.getByIdSelf.baseObjectStructure.get();
+        if (structure->takesSlowPathInDFGForImpureProperty())
+            return GetByIdStatus(TakesSlowPath, true);
         unsigned attributesIgnored;
         JSCell* specificValue;
         result.m_offset = structure->getConcurrently(
@@ -176,6 +189,9 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
             ASSERT(list->list[i].isDirect);
             
             Structure* structure = list->list[i].base.get();
+            if (structure->takesSlowPathInDFGForImpureProperty())
+                return GetByIdStatus(TakesSlowPath, true);
+
             if (result.m_structureSet.contains(structure))
                 continue;
             
@@ -267,7 +283,7 @@ GetByIdStatus GetByIdStatus::computeFor(VM& vm, Structure* structure, StringImpl
     
     if (!structure->propertyAccessesAreCacheable())
         return GetByIdStatus(TakesSlowPath);
-    
+
     GetByIdStatus result;
     result.m_wasSeenInJIT = false; // To my knowledge nobody that uses computeFor(VM&, Structure*, StringImpl*) reads this field, but I might as well be honest: no, it wasn't seen in the JIT, since I computed it statically.
     unsigned attributes;

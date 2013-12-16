@@ -3,6 +3,7 @@ DOM/TraverseChildNodes.html
 Interactive/SelectAll.html
 Interactive/CopyAll.html
 Interactive/DeletingInPasswordField.html
+Bindings/update-name-getter.html
 
 # Not enabled by default on some ports
 Mutation

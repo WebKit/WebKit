@@ -3,18 +3,19 @@
 <body>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
+
 description("Tests what happens when you make prototype chain accesses with impure GetOwnPropertySlot traps in the way.");
 
-var doc = document;
+document.foo = function () {};
 
 function f() {
-    return doc.getElementsByTagName;
+    return document.foo;
 }
 
 dfgShouldBe(f, "typeof f()", "\"function\"");
 
 var img = new Image();
-img.name = "getElementsByTagName";
+img.name = "foo";
 document.body.appendChild(img);
 
 shouldBe("typeof f()", "\"object\"");

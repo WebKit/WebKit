@@ -84,6 +84,7 @@ JSNoStaticTables
 JSWindowEventListener
 MasqueradesAsUndefined
 NamedConstructor=*
+NewImpurePropertyFiresWatchpoints
 NoInterfaceObject
 NotEnumerable
 NotDeletable

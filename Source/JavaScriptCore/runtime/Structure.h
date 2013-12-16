@@ -134,6 +134,14 @@ public:
 
     bool propertyAccessesAreCacheable() { return m_dictionaryKind != UncachedDictionaryKind && !typeInfo().prohibitsPropertyCaching(); }
 
+    // We use SlowPath in GetByIdStatus for structures that may get new impure properties later to prevent
+    // DFG from inlining property accesses since structures don't transition when a new impure property appears.
+    bool takesSlowPathInDFGForImpureProperty()
+    {
+        ASSERT(!typeInfo().hasImpureGetOwnPropertySlot() || typeInfo().newImpurePropertyFiresWatchpoints());
+        return typeInfo().hasImpureGetOwnPropertySlot();
+    }
+
     // Type accessors.
     const TypeInfo& typeInfo() const { ASSERT(structure()->classInfo() == info()); return m_typeInfo; }
     bool isObject() const { return typeInfo().isObject(); }

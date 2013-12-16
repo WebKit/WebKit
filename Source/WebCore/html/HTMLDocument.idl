@@ -20,6 +20,7 @@
 
 [
     CustomNamedGetter,
+    NewImpurePropertyFiresWatchpoints,
 ] interface HTMLDocument : Document {
     [Custom] void open();
     void close();
