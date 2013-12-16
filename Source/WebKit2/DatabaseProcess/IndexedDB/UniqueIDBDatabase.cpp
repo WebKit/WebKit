@@ -196,6 +196,48 @@ void UniqueIDBDatabase::didOpenBackingStoreAndReadMetadata(const IDBDatabaseMeta
     }
 }
 
+void UniqueIDBDatabase::openTransaction(const IDBTransactionIdentifier& identifier, std::function<void(bool)> successCallback)
+{
+    ASSERT(isMainThread());
+
+    if (!m_acceptingNewRequests) {
+        successCallback(false);
+        return;
+    }
+
+    postDatabaseTask(createAsyncTask(*this, &UniqueIDBDatabase::openBackingStoreTransaction, identifier));
+
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<bool>::create([successCallback](bool success) {
+        successCallback(success);
+    }, [successCallback]() {
+        successCallback(false);
+    });
+
+    m_pendingOpenTransactionRequests.set(identifier, request.release());
+}
+
+void UniqueIDBDatabase::openBackingStoreTransaction(const IDBTransactionIdentifier& identifier)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_backingStore);
+
+    bool success = m_backingStore->establishTransaction(identifier);
+
+    postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didOpenBackingStoreTransaction, identifier, success));
+}
+
+void UniqueIDBDatabase::didOpenBackingStoreTransaction(const IDBTransactionIdentifier& identifier, bool success)
+{
+    ASSERT(isMainThread());
+
+    RefPtr<AsyncRequest> request = m_pendingOpenTransactionRequests.take(identifier);
+
+    if (!request)
+        return;
+
+    request->completeRequest(success);
+}
+
 String UniqueIDBDatabase::absoluteDatabaseDirectory() const
 {
     ASSERT(isMainThread());

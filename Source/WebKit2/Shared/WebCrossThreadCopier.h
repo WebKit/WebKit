@@ -31,6 +31,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebKit {
+class IDBTransactionIdentifier;
 class UniqueIDBDatabaseIdentifier;
 }
 
@@ -38,6 +39,10 @@ namespace WebCore {
 
 template<> struct CrossThreadCopierBase<false, false, WebKit::UniqueIDBDatabaseIdentifier> {
     static WebKit::UniqueIDBDatabaseIdentifier copy(const WebKit::UniqueIDBDatabaseIdentifier&);
+};
+
+template<> struct CrossThreadCopierBase<false, false, WebKit::IDBTransactionIdentifier> {
+    static WebKit::IDBTransactionIdentifier copy(const WebKit::IDBTransactionIdentifier&);
 };
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 
 #include "DatabaseProcess.h"
 #include "DatabaseToWebProcessConnection.h"
+#include "IDBTransactionIdentifier.h"
 #include "UniqueIDBDatabase.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBServerConnectionMessages.h"
@@ -69,6 +70,16 @@ void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata(uint64_t re
     RefPtr<DatabaseProcessIDBConnection> connection(this);
     m_uniqueIDBDatabase->getOrEstablishIDBDatabaseMetadata([connection, requestID](bool success, const IDBDatabaseMetadata& metadata) {
         connection->send(Messages::WebIDBServerConnection::DidGetOrEstablishIDBDatabaseMetadata(requestID, success, metadata));
+    });
+}
+
+void DatabaseProcessIDBConnection::openTransaction(uint64_t requestID, int64_t transactionID, int64_t)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->openTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
+        connection->send(Messages::WebIDBServerConnection::DidOpenTransaction(requestID, success));
     });
 }
 

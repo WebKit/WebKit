@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
+#include "SQLiteIDBTransaction.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBDatabaseMetadata.h>
 #include <WebCore/SQLiteDatabase.h>
@@ -54,6 +55,11 @@ UniqueIDBDatabaseBackingStoreSQLite::UniqueIDBDatabaseBackingStoreSQLite(const U
     , m_absoluteDatabaseDirectory(databaseDirectory)
 {
     // The backing store is meant to be created and used entirely on a background thread.
+    ASSERT(!isMainThread());
+}
+
+UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite()
+{
     ASSERT(!isMainThread());
 }
 
@@ -185,6 +191,16 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
     metadata->id = generateDatabaseId();
 
     return metadata;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBTransactionIdentifier& identifier)
+{
+    ASSERT(!isMainThread());
+    ASSERT(!m_transactions.contains(identifier));
+
+    m_transactions.add(identifier, SQLiteIDBTransaction::create(identifier));
+
+    return true;
 }
 
 } // namespace WebKit

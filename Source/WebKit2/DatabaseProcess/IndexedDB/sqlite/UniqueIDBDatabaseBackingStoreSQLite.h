@@ -40,6 +40,8 @@ struct IDBDatabaseMetadata;
 
 namespace WebKit {
 
+class SQLiteIDBTransaction;
+
 class UniqueIDBDatabaseBackingStoreSQLite FINAL : public UniqueIDBDatabaseBackingStore {
 public:
     static PassRefPtr<UniqueIDBDatabaseBackingStore> create(const UniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
@@ -47,7 +49,10 @@ public:
         return adoptRef(new UniqueIDBDatabaseBackingStoreSQLite(identifier, databaseDirectory));
     }
 
+    virtual ~UniqueIDBDatabaseBackingStoreSQLite();
+
     virtual std::unique_ptr<WebCore::IDBDatabaseMetadata> getOrEstablishMetadata() OVERRIDE;
+    virtual bool establishTransaction(const IDBTransactionIdentifier&) OVERRIDE;
 
 private:
     UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
@@ -60,6 +65,8 @@ private:
     String m_absoluteDatabaseDirectory;
 
     std::unique_ptr<WebCore::SQLiteDatabase> m_metadataDB;
+
+    HashMap<IDBTransactionIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
 };
 
 } // namespace WebKit

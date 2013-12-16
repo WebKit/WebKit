@@ -25,6 +25,7 @@
 messages -> DatabaseProcessIDBConnection LegacyReceiver {
     EstablishConnection(String databaseName, WebKit::SecurityOriginData openingOrigin, WebKit::SecurityOriginData mainFrameOrigin)
     GetOrEstablishIDBDatabaseMetadata(uint64_t requestID)
+    OpenTransaction(uint64_t requestID, int64_t transactionID, int64_t transactionMode)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

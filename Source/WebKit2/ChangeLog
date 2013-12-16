@@ -1,3 +1,72 @@
+2013-12-16  Brady Eidson  <beidson@apple.com>
+
+        DatabaseProcess: Implement openTransaction()
+        https://bugs.webkit.org/show_bug.cgi?id=125794
+
+        Reviewed by Darin Adler.
+
+        This patch hooks up all of the necessary infrastructure to open a uniquely
+        identified transaction in the DatabaseProcess backing store.
+
+        The transaction itself is not yet functional.
+
+        Add openTransaction messaging to the WebProcess side:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::isClosed):
+        (WebKit::WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata):
+        (WebKit::WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata):
+        (WebKit::WebIDBServerConnection::openTransaction):
+        (WebKit::WebIDBServerConnection::didOpenTransaction):
+        (WebKit::WebIDBServerConnection::deleteObjectStore):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
+        Add openTransaction messaging to the DatabaseProcess side:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::openTransaction):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        Add a hashable identifier that represents a connection/transactionID pair:
+        * DatabaseProcess/IndexedDB/IDBTransactionIdentifier.h: Added.
+        (WebKit::IDBTransactionIdentifier::IDBTransactionIdentifier):
+        (WebKit::IDBTransactionIdentifier::isolatedCopy):
+        (WebKit::IDBTransactionIdentifier::isEmpty):
+        (WebKit::IDBTransactionIdentifier::hash):
+        (WebKit::IDBTransactionIdentifier::operator==):
+        (WebKit::IDBTransactionIdentifier::isHashTableDeletedValue):
+        (WebKit::IDBTransactionIdentifierHash::hash):
+        (WebKit::IDBTransactionIdentifierHash::equal):
+        (WebKit::IDBTransactionIdentifierHashTraits::isEmptyValue):
+
+        Allow that identifier to be cross-thread copied:
+        * Shared/WebCrossThreadCopier.cpp:
+        (WebCore::::copy):
+        * Shared/WebCrossThreadCopier.h:
+
+        Ask the backing store to open this uniquely identified transaction:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::openTransaction):
+        (WebKit::UniqueIDBDatabase::openBackingStoreTransaction):
+        (WebKit::UniqueIDBDatabase::didOpenBackingStoreTransaction):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        Add the backing store implementation for opening a transaction:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::establishTransaction):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        Object to represent the backing store transaction itself, to be used in future patches:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp:
+        (WebKit::SQLiteIDBTransaction::SQLiteIDBTransaction):
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.h:
+        (WebKit::SQLiteIDBTransaction::create):
+        (WebKit::SQLiteIDBTransaction::identifier):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-12-16  Anders Carlsson  <andersca@apple.com>
 
         Fix crash when trying to load a null HTML string

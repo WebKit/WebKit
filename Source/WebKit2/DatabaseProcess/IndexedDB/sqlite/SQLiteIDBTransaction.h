@@ -23,30 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UniqueIDBDatabaseBackingStore_h
-#define UniqueIDBDatabaseBackingStore_h
+#ifndef SQLiteIDBTransaction_h
+#define SQLiteIDBTransaction_h
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-struct IDBDatabaseMetadata;
-}
+#include "IDBTransactionIdentifier.h"
+#include <wtf/Noncopyable.h>
 
 namespace WebKit {
 
-class IDBTransactionIdentifier;
-
-class UniqueIDBDatabaseBackingStore : public RefCounted<UniqueIDBDatabaseBackingStore> {
+class SQLiteIDBTransaction {
+    WTF_MAKE_NONCOPYABLE(SQLiteIDBTransaction);
 public:
-    virtual ~UniqueIDBDatabaseBackingStore() { }
+    static std::unique_ptr<SQLiteIDBTransaction> create(const IDBTransactionIdentifier& identifier)
+    {
+        return std::unique_ptr<SQLiteIDBTransaction>(new SQLiteIDBTransaction(identifier));
+    }
 
-    virtual std::unique_ptr<WebCore::IDBDatabaseMetadata> getOrEstablishMetadata() = 0;
-    virtual bool establishTransaction(const IDBTransactionIdentifier&) = 0;
+    const IDBTransactionIdentifier& identifier() const { return m_identifier; }
+
+private:
+    SQLiteIDBTransaction(const IDBTransactionIdentifier&);
+
+    IDBTransactionIdentifier m_identifier;
 };
 
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
-#endif // UniqueIDBDatabaseBackingStore_h
+#endif // SQLiteIDBTransaction_h

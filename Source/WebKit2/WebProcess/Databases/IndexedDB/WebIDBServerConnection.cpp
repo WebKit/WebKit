@@ -74,6 +74,7 @@ WebIDBServerConnection::~WebIDBServerConnection()
 
 bool WebIDBServerConnection::isClosed()
 {
+    // FIXME: Return real value here.
     return true;
 }
 
@@ -91,7 +92,8 @@ void WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMet
     });
 
     uint64_t requestID = serverRequest->requestID();
-    m_serverRequests.set(requestID, serverRequest.release());
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
 
     send(Messages::DatabaseProcessIDBConnection::GetOrEstablishIDBDatabaseMetadata(requestID));
 }
@@ -99,7 +101,9 @@ void WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMet
 void WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, const IDBDatabaseMetadata& metadata)
 {
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
-    ASSERT(serverRequest);
+
+    if (!serverRequest)
+        return;
 
     serverRequest->completeRequest(metadata, success);
 }
@@ -108,8 +112,29 @@ void WebIDBServerConnection::close()
 {
 }
 
-void WebIDBServerConnection::openTransaction(int64_t transactionID, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, BoolCallbackFunction successCallback)
+void WebIDBServerConnection::openTransaction(int64_t transactionID, const HashSet<int64_t>&, IndexedDB::TransactionMode mode, BoolCallbackFunction successCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<bool>::create(successCallback);
+
+    serverRequest->setAbortHandler([successCallback]() {
+        successCallback(false);
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    send(Messages::DatabaseProcessIDBConnection::OpenTransaction(requestID, transactionID, mode));
+}
+
+void WebIDBServerConnection::didOpenTransaction(uint64_t requestID, bool success)
+{
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest(success);
 }
 
 void WebIDBServerConnection::beginTransaction(int64_t transactionID, std::function<void()> completionCallback)
@@ -170,8 +195,8 @@ void WebIDBServerConnection::clearObjectStore(IDBTransactionBackend&, const Clea
 
 void WebIDBServerConnection::deleteObjectStore(IDBTransactionBackend&, const DeleteObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
-
 }
+
 void WebIDBServerConnection::changeDatabaseVersion(IDBTransactionBackend&, const IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
 }

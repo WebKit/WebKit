@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
+#include "IDBTransactionIdentifier.h"
 #include "UniqueIDBDatabaseIdentifier.h"
 #include <functional>
 #include <wtf/Deque.h>
@@ -64,6 +65,7 @@ public:
     void unregisterConnection(DatabaseProcessIDBConnection&);
 
     void getOrEstablishIDBDatabaseMetadata(std::function<void(bool, const WebCore::IDBDatabaseMetadata&)> completionCallback);
+    void openTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
 
 private:
     UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
@@ -94,13 +96,17 @@ private:
     void performNextDatabaseTask();
     void postMainThreadTask(std::unique_ptr<AsyncTask>);
     void openBackingStoreAndReadMetadata(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
+    void openBackingStoreTransaction(const IDBTransactionIdentifier&);
 
     // Callbacks from the database workqueue thread, to be performed on the main thread only
     void performNextMainThreadTask();
     void didOpenBackingStoreAndReadMetadata(const WebCore::IDBDatabaseMetadata&, bool success);
+    void didOpenBackingStoreTransaction(const IDBTransactionIdentifier&, bool success);
+
+    bool m_acceptingNewRequests;
 
     Deque<RefPtr<AsyncRequest>> m_pendingMetadataRequests;
-    bool m_acceptingNewRequests;
+    HashMap<IDBTransactionIdentifier, RefPtr<AsyncRequest>> m_pendingOpenTransactionRequests;
 
     std::unique_ptr<WebCore::IDBDatabaseMetadata> m_metadata;
     bool m_didGetMetadataFromBackingStore;

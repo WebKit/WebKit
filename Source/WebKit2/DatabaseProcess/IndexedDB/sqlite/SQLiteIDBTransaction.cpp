@@ -22,31 +22,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef UniqueIDBDatabaseBackingStore_h
-#define UniqueIDBDatabaseBackingStore_h
+#include "config.h"
+#include "SQLiteIDBTransaction.h"
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-struct IDBDatabaseMetadata;
-}
-
 namespace WebKit {
 
-class IDBTransactionIdentifier;
-
-class UniqueIDBDatabaseBackingStore : public RefCounted<UniqueIDBDatabaseBackingStore> {
-public:
-    virtual ~UniqueIDBDatabaseBackingStore() { }
-
-    virtual std::unique_ptr<WebCore::IDBDatabaseMetadata> getOrEstablishMetadata() = 0;
-    virtual bool establishTransaction(const IDBTransactionIdentifier&) = 0;
-};
+SQLiteIDBTransaction::SQLiteIDBTransaction(const IDBTransactionIdentifier& identifier)
+    : m_identifier(identifier)
+{
+}
 
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
-#endif // UniqueIDBDatabaseBackingStore_h
