@@ -21,6 +21,7 @@
 #include "WebKitFileChooserRequest.h"
 
 #include "APIArray.h"
+#include "APIString.h"
 #include "WebKitFileChooserRequestPrivate.h"
 #include "WebOpenPanelParameters.h"
 #include "WebOpenPanelResultListenerProxy.h"
@@ -212,7 +213,7 @@ const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooser
 
     request->priv->mimeTypes = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (size_t i = 0; i < numOfMimeTypes; ++i) {
-        WebString* webMimeType = static_cast<WebString*>(mimeTypes->at(i));
+        API::String* webMimeType = static_cast<API::String*>(mimeTypes->at(i));
         String mimeTypeString = webMimeType->string();
         if (mimeTypeString.isEmpty())
             continue;
@@ -256,7 +257,7 @@ GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChoos
     // sure we keep the ownership during the lifetime of the request.
     request->priv->filter = gtk_file_filter_new();
     for (size_t i = 0; i < numOfMimeTypes; ++i) {
-        WebString* webMimeType = static_cast<WebString*>(mimeTypes->at(i));
+        API::String* webMimeType = static_cast<API::String*>(mimeTypes->at(i));
         String mimeTypeString = webMimeType->string();
         if (mimeTypeString.isEmpty())
             continue;
@@ -352,7 +353,7 @@ const gchar* const* webkit_file_chooser_request_get_selected_files(WebKitFileCho
 
     request->priv->selectedFiles = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (size_t i = 0; i < numOfFiles; ++i) {
-        WebString* webFileName = static_cast<WebString*>(selectedFileNames->at(i));
+        API::String* webFileName = static_cast<API::String*>(selectedFileNames->at(i));
         if (webFileName->isEmpty())
             continue;
         CString filename = fileSystemRepresentation(webFileName->string());

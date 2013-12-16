@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitCookieManager.h"
 
+#include "APIString.h"
 #include "SoupCookiePersistentStorageType.h"
 #include "WebCookieManagerProxy.h"
 #include "WebKitCookieManagerPrivate.h"
@@ -205,7 +206,7 @@ static void webkitCookieManagerGetDomainsWithCookiesCallback(WKArrayRef wkDomain
     API::Array* domains = toImpl(wkDomains);
     GPtrArray* returnValue = g_ptr_array_sized_new(domains->size());
     for (size_t i = 0; i < domains->size(); ++i) {
-        WebString* domainString = static_cast<WebString*>(domains->at(i));
+        API::String* domainString = static_cast<API::String*>(domains->at(i));
         String domain = domainString->string();
         if (domain.isEmpty())
             continue;

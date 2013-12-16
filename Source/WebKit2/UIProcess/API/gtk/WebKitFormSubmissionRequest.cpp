@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitFormSubmissionRequest.h"
 
+#include "APIString.h"
 #include "ImmutableDictionary.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebKitFormSubmissionRequestPrivate.h"
@@ -102,7 +103,7 @@ GHashTable* webkit_form_submission_request_get_text_fields(WebKitFormSubmissionR
     const ImmutableDictionary::MapType& map = request->priv->webValues->map();
     ImmutableDictionary::MapType::const_iterator end = map.end();
     for (ImmutableDictionary::MapType::const_iterator it = map.begin(); it != end; ++it) {
-        WebString* value = static_cast<WebString*>(it->value.get());
+        API::String* value = static_cast<API::String*>(it->value.get());
         g_hash_table_insert(request->priv->values.get(), g_strdup(it->key.utf8().data()), g_strdup(value->string().utf8().data()));
     }
 

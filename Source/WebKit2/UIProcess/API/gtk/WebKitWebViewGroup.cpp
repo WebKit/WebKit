@@ -21,6 +21,7 @@
 #include "WebKitWebViewGroup.h"
 
 #include "APIArray.h"
+#include "APIString.h"
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitWebViewGroupPrivate.h"
@@ -233,7 +234,7 @@ static PassRefPtr<API::Array> toAPIArray(const char* const* list)
 
     Vector<RefPtr<API::Object> > entries;
     while (*list) {
-        entries.append(WebString::createFromUTF8String(*list));
+        entries.append(API::String::createFromUTF8String(*list));
         list++;
     }
     return API::Array::create(std::move(entries));
