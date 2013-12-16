@@ -27,6 +27,7 @@
 #include "TestController.h"
 
 #include "EventSenderProxy.h"
+#include "Options.h"
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestInvocation.h"
@@ -266,74 +267,29 @@ void TestController::initialize(int argc, const char* argv[])
 {
     platformInitialize();
 
+    Options options(defaultLongTimeout, defaultShortTimeout);
+    OptionsHandler optionsHandler(options);
+
     if (argc < 2) {
-        fputs("Usage: WebKitTestRunner [options] filename [filename2..n]\n", stderr);
-        // FIXME: Refactor option parsing to allow us to print
-        // an auto-generated list of options.
+        optionsHandler.printHelp();
         exit(1);
     }
+    if (!optionsHandler.parse(argc, argv))
+        exit(1);
 
-    bool printSupportedFeatures = false;
+    m_longTimeout = options.longTimeout;
+    m_shortTimeout = options.shortTimeout;
+    m_useWaitToDumpWatchdogTimer = options.useWaitToDumpWatchdogTimer;
+    m_forceNoTimeout = options.forceNoTimeout;
+    m_verbose = options.verbose;
+    m_gcBetweenTests = options.gcBetweenTests;
+    m_shouldDumpPixelsForAllTests = options.shouldDumpPixelsForAllTests;
+    m_forceComplexText = options.forceComplexText;
+    m_shouldUseAcceleratedDrawing = options.shouldUseAcceleratedDrawing;
+    m_shouldUseRemoteLayerTree = options.shouldUseRemoteLayerTree;
+    m_paths = options.paths;
 
-    for (int i = 1; i < argc; ++i) {
-        std::string argument(argv[i]);
-
-        if (argument == "--timeout" && i + 1 < argc) {
-            m_longTimeout = atoi(argv[++i]);
-            // Scale up the short timeout to match.
-            m_shortTimeout = defaultShortTimeout * m_longTimeout / defaultLongTimeout;
-            continue;
-        }
-
-        if (argument == "--no-timeout") {
-            m_useWaitToDumpWatchdogTimer = false;
-            continue;
-        }
-
-        if (argument == "--no-timeout-at-all") {
-            m_useWaitToDumpWatchdogTimer = false;
-            m_forceNoTimeout = true;
-            continue;
-        }
-
-        if (argument == "--verbose") {
-            m_verbose = true;
-            continue;
-        }
-        if (argument == "--gc-between-tests") {
-            m_gcBetweenTests = true;
-            continue;
-        }
-        if (argument == "--pixel-tests" || argument == "-p") {
-            m_shouldDumpPixelsForAllTests = true;
-            continue;
-        }
-        if (argument == "--print-supported-features") {
-            printSupportedFeatures = true;
-            break;
-        }
-        if (argument == "--complex-text") {
-            m_forceComplexText = true;
-            continue;
-        }
-        if (argument == "--accelerated-drawing") {
-            m_shouldUseAcceleratedDrawing = true;
-            continue;
-        }
-        if (argument == "--remote-layer-tree") {
-            m_shouldUseRemoteLayerTree = true;
-            continue;
-        }
-
-
-        // Skip any other arguments that begin with '--'.
-        if (argument.length() >= 2 && argument[0] == '-' && argument[1] == '-')
-            continue;
-
-        m_paths.push_back(argument);
-    }
-
-    if (printSupportedFeatures) {
+    if (options.printSupportedFeatures) {
         // FIXME: On Windows, DumpRenderTree uses this to expose whether it supports 3d
         // transforms and accelerated compositing. When we support those features, we
         // should match DRT's behavior.

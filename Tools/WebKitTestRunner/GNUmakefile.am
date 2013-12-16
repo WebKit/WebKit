@@ -21,6 +21,8 @@ Programs_WebKitTestRunner_SOURCES = \
 	Tools/WebKitTestRunner/CyclicRedundancyCheck.h \
 	Tools/WebKitTestRunner/GeolocationProviderMock.cpp \
 	Tools/WebKitTestRunner/GeolocationProviderMock.h \
+	Tools/WebKitTestRunner/Options.cpp \
+	Tools/WebKitTestRunner/Options.h \
 	Tools/WebKitTestRunner/PixelDumpSupport.cpp \
 	Tools/WebKitTestRunner/PixelDumpSupport.h \
 	Tools/WebKitTestRunner/PlatformWebView.h \
