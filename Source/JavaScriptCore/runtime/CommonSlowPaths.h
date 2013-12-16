@@ -105,10 +105,10 @@ struct Instruction;
 // warnings, or worse, a change in the ABI used to return these types.
 struct SlowPathReturnType {
     void* a;
-    ExecState* b;
+    void* b;
 };
 
-inline SlowPathReturnType encodeResult(void* a, ExecState* b)
+inline SlowPathReturnType encodeResult(void* a, void* b)
 {
     SlowPathReturnType result;
     result.a = a;
@@ -116,7 +116,7 @@ inline SlowPathReturnType encodeResult(void* a, ExecState* b)
     return result;
 }
 
-inline void decodeResult(SlowPathReturnType result, void*& a, ExecState*& b)
+inline void decodeResult(SlowPathReturnType result, void*& a, void*& b)
 {
     a = result.a;
     b = result.b;
@@ -128,12 +128,12 @@ typedef int64_t SlowPathReturnType;
 typedef union {
     struct {
         void* a;
-        ExecState* b;
+        void* b;
     } pair;
     int64_t i;
 } SlowPathReturnTypeEncoding;
 
-inline SlowPathReturnType encodeResult(void* a, ExecState* b)
+inline SlowPathReturnType encodeResult(void* a, void* b)
 {
     SlowPathReturnTypeEncoding u;
     u.pair.a = a;
@@ -141,7 +141,7 @@ inline SlowPathReturnType encodeResult(void* a, ExecState* b)
     return u.i;
 }
 
-inline void decodeResult(SlowPathReturnType result, void*& a, ExecState*& b)
+inline void decodeResult(SlowPathReturnType result, void*& a, void*& b)
 {
     SlowPathReturnTypeEncoding u;
     u.i = result;

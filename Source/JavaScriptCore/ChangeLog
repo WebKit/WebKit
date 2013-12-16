@@ -1,3 +1,19 @@
+2013-12-16  Mark Lam  <mark.lam@apple.com>
+
+        Change slow path result to take a void* instead of a ExecState*.
+        https://bugs.webkit.org/show_bug.cgi?id=125802.
+
+        Reviewed by Filip Pizlo.
+
+        This is in preparation for C Stack OSR entry work that is coming soon.
+        In the OSR entry case, we'll be returning a topOfFrame pointer value
+        instead of the ExecState*.
+
+        * offlineasm/cloop.rb:
+        * runtime/CommonSlowPaths.h:
+        (JSC::encodeResult):
+        (JSC::decodeResult):
+
 2013-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Fixed Win64 build on VS2013.
