@@ -1,3 +1,20 @@
+2013-12-15  Frédéric Wang  <fred.wang@free.fr>
+
+        Add support for maction@toggle
+        https://bugs.webkit.org/show_bug.cgi?id=120059
+
+        Reviewed by Chris Fleizach.
+
+        Test: mathml/presentation/maction-toggle.html
+
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::getSelectedChildAndIndex):
+        (WebCore::MathMLSelectElement::updateSelectedChild):
+        (WebCore::MathMLSelectElement::defaultEventHandler):
+        (WebCore::MathMLSelectElement::willRespondToMouseClickEvents):
+        (WebCore::MathMLSelectElement::toggle):
+        * mathml/MathMLSelectElement.h:
+
 2013-12-15  Darin Adler  <darin@apple.com>
 
         More nullptr in RenderElement

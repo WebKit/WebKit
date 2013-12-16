@@ -1,3 +1,13 @@
+2013-12-15  Frédéric Wang  <fred.wang@free.fr>
+
+        Add support for maction@toggle
+        https://bugs.webkit.org/show_bug.cgi?id=120059
+
+        Reviewed by Chris Fleizach.
+
+        * mathml/presentation/maction-toggle-expected.html: Added.
+        * mathml/presentation/maction-toggle.html: Added.
+
 2013-12-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: 2x regression on Dromaeo DOM query tests

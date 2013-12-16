@@ -28,6 +28,7 @@
 
 #if ENABLE(MATHML)
 
+#include "Event.h"
 #include "MathMLNames.h"
 #include "RenderMathMLRow.h"
 
@@ -76,6 +77,25 @@ void MathMLSelectElement::attributeChanged(const QualifiedName& name, const Atom
     MathMLInlineContainerElement::attributeChanged(name, newValue, reason);
 }
 
+int MathMLSelectElement::getSelectedChildAndIndex(Element*& selectedChild)
+{
+    // We "round up or down to the closest allowable value" of the selection attribute, as suggested by the MathML specification.
+    selectedChild = firstElementChild();
+    if (!selectedChild)
+        return 1;
+
+    int selection = fastGetAttribute(MathMLNames::selectionAttr).toInt();
+    int i;
+    for (i = 1; i < selection; i++) {
+        Element* nextChild = selectedChild->nextElementSibling();
+        if (!nextChild)
+            break;
+        selectedChild = nextChild;
+    }
+
+    return i;
+}
+
 void MathMLSelectElement::updateSelectedChild()
 {
     Element* newSelectedChild = firstElementChild();
@@ -91,15 +111,8 @@ void MathMLSelectElement::updateSelectedChild()
                 // FIXME: implement user interaction for the "tooltip" action type (http://wkbug/124921).
                 { }
             else {
-                // FIXME: implement user interaction for the "toggle" action type (http://wkbug/120059).
                 // For the "toggle" action type or any unknown action type, we rely on the value of the selection attribute to determine the visible child.
-                int selection = fastGetAttribute(MathMLNames::selectionAttr).toInt();
-                for (int i = 1; i < selection; i++) {
-                    Element* nextChild = newSelectedChild->nextElementSibling();
-                    if (!nextChild)
-                        break;
-                    newSelectedChild = nextChild;
-                }
+                getSelectedChildAndIndex(newSelectedChild);
             }
         } else {
             ASSERT(hasLocalName(semanticsTag));
@@ -115,6 +128,39 @@ void MathMLSelectElement::updateSelectedChild()
 
     m_selectedChild = newSelectedChild;
     setNeedsStyleRecalc();
+}
+
+void MathMLSelectElement::defaultEventHandler(Event* event)
+{
+    if (event->type() == eventNames().clickEvent) {
+        if (fastGetAttribute(MathMLNames::actiontypeAttr) == "toggle") {
+            toggle();
+            return;
+        }
+    }
+
+    MathMLInlineContainerElement::defaultEventHandler(event);
+}
+
+bool MathMLSelectElement::willRespondToMouseClickEvents()
+{
+    return true;
+}
+
+void MathMLSelectElement::toggle()
+{
+    // We determine the successor of the selected child.
+    // If we reach the end of the child list, we go back to the first child.
+    Element* child = nullptr;
+    int selection = getSelectedChildAndIndex(child);
+    if (!child || !child->nextElementSibling())
+        selection = 1;
+    else
+        selection++;
+
+    // We update the attribute value of the selection attribute.
+    // This will also call MathMLSelectElement::attributeChanged to update the selected child.
+    setAttribute(MathMLNames::selectionAttr, AtomicString::number(selection));
 }
 
 }

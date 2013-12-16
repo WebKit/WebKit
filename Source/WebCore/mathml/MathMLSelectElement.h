@@ -44,6 +44,11 @@ private:
     virtual void finishParsingChildren() OVERRIDE;
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
     virtual void attributeChanged(const QualifiedName&, const AtomicString&, AttributeModificationReason = ModifiedDirectly) OVERRIDE;
+    virtual void defaultEventHandler(Event*) OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+
+    void toggle();
+    int getSelectedChildAndIndex(Element*& selectedChild);
 
     void updateSelectedChild();
     Element* m_selectedChild;
