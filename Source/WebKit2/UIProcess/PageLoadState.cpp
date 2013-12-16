@@ -75,6 +75,7 @@ void PageLoadState::commitChanges()
     bool titleChanged = m_committedState.title != m_uncommittedState.title;
     bool isLoadingChanged = isLoadingState(m_committedState.state) != isLoadingState(m_uncommittedState.state);
     bool activeURLChanged = activeURL(m_committedState) != activeURL(m_uncommittedState);
+    bool hasOnlySecureContentChanged = hasOnlySecureContent(m_committedState) != hasOnlySecureContent(m_uncommittedState);
     bool estimatedProgressChanged = estimatedProgress(m_committedState) != estimatedProgress(m_uncommittedState);
 
     if (titleChanged)
@@ -83,6 +84,8 @@ void PageLoadState::commitChanges()
         callObserverCallback(&Observer::willChangeIsLoading);
     if (activeURLChanged)
         callObserverCallback(&Observer::willChangeActiveURL);
+    if (hasOnlySecureContentChanged)
+        callObserverCallback(&Observer::willChangeHasOnlySecureContent);
     if (estimatedProgressChanged)
         callObserverCallback(&Observer::willChangeEstimatedProgress);
 
@@ -91,6 +94,8 @@ void PageLoadState::commitChanges()
     // The "did" ordering is the reverse of the "will". This is a requirement of Cocoa Key-Value Observing.
     if (estimatedProgressChanged)
         callObserverCallback(&Observer::didChangeEstimatedProgress);
+    if (hasOnlySecureContentChanged)
+        callObserverCallback(&Observer::didChangeHasOnlySecureContent);
     if (activeURLChanged)
         callObserverCallback(&Observer::didChangeActiveURL);
     if (isLoadingChanged)
@@ -104,6 +109,7 @@ void PageLoadState::reset(const Transaction::Token& token)
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
 
     m_uncommittedState.state = State::Finished;
+    m_uncommittedState.hasInsecureContent = false;
 
     m_uncommittedState.pendingAPIRequestURL = String();
     m_uncommittedState.provisionalURL = String();
@@ -148,6 +154,19 @@ String PageLoadState::activeURL(const Data& data)
 String PageLoadState::activeURL() const
 {
     return activeURL(m_committedState);
+}
+
+bool PageLoadState::hasOnlySecureContent(const Data& data)
+{
+    if (data.hasInsecureContent)
+        return false;
+
+    return data.url.startsWith("https:", false);
+}
+
+bool PageLoadState::hasOnlySecureContent() const
+{
+    return hasOnlySecureContent(m_committedState);
 }
 
 double PageLoadState::estimatedProgress(const Data& data)
@@ -217,6 +236,7 @@ void PageLoadState::didCommitLoad(const Transaction::Token& token)
     ASSERT(m_uncommittedState.state == State::Provisional);
 
     m_uncommittedState.state = State::Committed;
+    m_uncommittedState.hasInsecureContent = false;
 
     m_uncommittedState.url = m_uncommittedState.provisionalURL;
     m_uncommittedState.provisionalURL = String();
@@ -247,6 +267,14 @@ void PageLoadState::didSameDocumentNavigation(const Transaction::Token& token, c
     ASSERT(!m_uncommittedState.url.isEmpty());
 
     m_uncommittedState.url = url;
+}
+
+void PageLoadState::didDisplayOrRunInsecureContent(const Transaction::Token& token)
+{
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    ASSERT(m_uncommittedState.url.startsWith("https:", false));
+
+    m_uncommittedState.hasInsecureContent = true;
 }
 
 void PageLoadState::setUnreachableURL(const Transaction::Token& token, const String& unreachableURL)

@@ -1,3 +1,33 @@
+2013-12-16  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose whether the page contains only secure content
+        https://bugs.webkit.org/show_bug.cgi?id=125758
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController hasOnlySecureContent]): Added a getter that calls
+        PageLoadState::hasOnlySecureContent.
+        * UIProcess/API/Cocoa/WKBrowsingContextControllerPrivate.h: Declared new property.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::commitChanges): Notify observers of hasOnlySecureContent() changes.
+        (WebKit::PageLoadState::reset): Reset hasInsecureContent in the uncommitted state.
+        (WebKit::PageLoadState::hasOnlySecureContent): Added. Returns true if there is no insecure
+        content and the URL is an HTTPS URL.
+        (WebKit::PageLoadState::didCommitLoad): Set hasInsecureContent to false in the uncommitted
+        state.
+        (WebKit::PageLoadState::didDisplayOrRunInsecureContent): Set hasInsecureContent to true in
+        the uncommitted state.
+        * UIProcess/PageLoadState.h:
+        (WebKit::PageLoadState::Data::Data): Added hasInsecureContent member.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame): Call
+        PageLoadState::didDisplayOrRunInsecureContent and commit the change before calling out to
+        the client.
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame): Ditto.
+
 2013-12-16  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] The NetworkProcess tries to load SecItemShim.dylib on iOS

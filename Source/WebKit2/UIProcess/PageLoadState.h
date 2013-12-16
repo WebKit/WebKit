@@ -54,6 +54,9 @@ public:
         virtual void willChangeActiveURL() = 0;
         virtual void didChangeActiveURL() = 0;
 
+        virtual void willChangeHasOnlySecureContent() = 0;
+        virtual void didChangeHasOnlySecureContent() = 0;
+
         virtual void willChangeEstimatedProgress() = 0;
         virtual void didChangeEstimatedProgress() = 0;
     };
@@ -116,6 +119,8 @@ public:
 
     String activeURL() const;
 
+    bool hasOnlySecureContent() const;
+
     double estimatedProgress() const;
 
     const String& pendingAPIRequestURL() const;
@@ -131,6 +136,8 @@ public:
     void didFailLoad(const Transaction::Token&);
 
     void didSameDocumentNavigation(const Transaction::Token&, const String& url);
+
+    void didDisplayOrRunInsecureContent(const Transaction::Token&);
 
     void setUnreachableURL(const Transaction::Token&, const String&);
 
@@ -154,11 +161,13 @@ private:
     struct Data {
         Data()
             : state(State::Finished)
+            , hasInsecureContent(false)
             , estimatedProgress(0)
         {
         }
 
         State state;
+        bool hasInsecureContent;
 
         String pendingAPIRequestURL;
 
@@ -173,6 +182,7 @@ private:
     };
 
     static String activeURL(const Data&);
+    static bool hasOnlySecureContent(const Data&);
     static double estimatedProgress(const Data&);
 
     Data m_committedState;

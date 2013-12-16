@@ -2383,6 +2383,10 @@ void WebPageProxy::didDisplayInsecureContentForFrame(uint64_t frameID, CoreIPC::
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
+    auto transaction = m_pageLoadState.transaction();
+    m_pageLoadState.didDisplayOrRunInsecureContent(transaction);
+
+    m_pageLoadState.commitChanges();
     m_loaderClient.didDisplayInsecureContentForFrame(this, frame, userData.get());
 }
 
@@ -2396,6 +2400,10 @@ void WebPageProxy::didRunInsecureContentForFrame(uint64_t frameID, CoreIPC::Mess
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
+    auto transaction = m_pageLoadState.transaction();
+    m_pageLoadState.didDisplayOrRunInsecureContent(transaction);
+
+    m_pageLoadState.commitChanges();
     m_loaderClient.didRunInsecureContentForFrame(this, frame, userData.get());
 }
 

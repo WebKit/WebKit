@@ -43,6 +43,8 @@ typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
 
 @property (readonly) WKPageRef _pageRef;
 
+@property (readonly) BOOL hasOnlySecureContent;
+
 @property WKBrowsingContextPaginationMode paginationMode;
 
 // Whether the column-break-{before,after} properties are respected instead of the

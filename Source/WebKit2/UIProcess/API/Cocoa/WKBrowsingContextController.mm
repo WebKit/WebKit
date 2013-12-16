@@ -94,6 +94,16 @@ private:
         [m_controller didChangeValueForKey:@"activeURL"];
     }
 
+    virtual void willChangeHasOnlySecureContent() OVERRIDE
+    {
+        [m_controller willChangeValueForKey:@"hasOnlySecureContent"];
+    }
+
+    virtual void didChangeHasOnlySecureContent() OVERRIDE
+    {
+        [m_controller didChangeValueForKey:@"hasOnlySecureContent"];
+    }
+
     virtual void willChangeEstimatedProgress() OVERRIDE
     {
         [m_controller willChangeValueForKey:@"estimatedProgress"];
@@ -327,6 +337,11 @@ static void releaseNSData(unsigned char*, const void* data)
 - (NSURL *)unreachableURL
 {
     return [NSURL _web_URLWithWTFString:_page->pageLoadState().unreachableURL()];
+}
+
+- (BOOL)hasOnlySecureContent
+{
+    return _page->pageLoadState().hasOnlySecureContent();
 }
 
 - (double)estimatedProgress
