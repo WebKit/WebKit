@@ -1,3 +1,13 @@
+2013-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fixed Win64 build on VS2013.
+        https://bugs.webkit.org/show_bug.cgi?id=125753
+
+        Reviewed by Brent Fulgham.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        Added 64-bit configuration.
+
 2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move Inspector and Debugger protocol domains into JavaScriptCore
