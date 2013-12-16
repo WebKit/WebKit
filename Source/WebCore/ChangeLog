@@ -1,3 +1,14 @@
+2013-12-15  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Win] Unreviewed build fix
+
+        The build system continues to attempt to build QTMovieWin, even
+        though it is excluded from the build solution. I'm actually
+        removing the project files to prevent this.
+
+        * WebCore.vcxproj/QTMovieWin/QTMovieWin.vcxproj: Removed.
+        * WebCore.vcxproj/QTMovieWin/QTMovieWin.vcxproj.filters: Removed.
+
 2013-12-15  Rob Buis  <rob.buis@samsung.com>
 
         [CSS Shapes] shape-outside animation does not handle 'auto' well

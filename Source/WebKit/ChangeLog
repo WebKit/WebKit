@@ -1,3 +1,10 @@
+2013-12-15  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Win] Unreviewed build fix.
+
+        * WebKit.vcxproj/WebKit.sln: Remove reference to QTMovieWin,
+        which we do not wish to build.
+
 2013-12-14  Brent Fulgham  <bfulgham@webkit.org>
 
         [Win] Unreviewed build fix
