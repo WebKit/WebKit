@@ -126,6 +126,9 @@ PASS: input[type='url']
 PASS: input[type='week']
       AXRole: AXTextField
       
+PASS: math
+      AXRole: AXMath
+      
 PASS: nav
       AXRole: AXLandmarkNavigation
       
@@ -255,6 +258,12 @@ PASS: div[role=complementary]
 PASS: div[role=contentinfo]
       AXRole: AXLandmarkContentInfo
       
+PASS: div[role=definition]
+      AXRole: AXDefinition
+      
+PASS: div[role=dialog]
+      AXRole: AXDialog
+      
 PASS: div[role=directory]
       AXRole: AXList
       
@@ -296,8 +305,17 @@ FAIL: div[role=listbox]
 PASS: div[role=option]
       AXRole: AXListItem
       
+PASS: div[role=log]
+      AXRole: AXLog
+      
 PASS: div[role=main]
       AXRole: AXLandmarkMain
+      
+PASS: div[role=marquee]
+      AXRole: AXMarquee
+      
+PASS: div[role=math]
+      AXRole: AXMath
       
 PASS: div[role=menu]
       AXRole: AXMenu
@@ -325,6 +343,9 @@ PASS: div[role=menuitemradio]
       
 PASS: div[role=navigation]
       AXRole: AXLandmarkNavigation
+      
+PASS: div[role=note]
+      AXRole: AXComment
       
 PASS: div[role=progressbar]
       AXRole: AXProgressIndicator
@@ -358,6 +379,9 @@ PASS: div[role=tab]
       
 PASS: div[role=textbox]
       AXRole: AXTextField
+      
+PASS: div[role=timer]
+      AXRole: AXTimer
       
 PASS: div[role=toolbar]
       AXRole: AXToolbar

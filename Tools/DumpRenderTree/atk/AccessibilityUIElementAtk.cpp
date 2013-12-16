@@ -224,6 +224,8 @@ const char* roleToString(AtkObject* object)
         return "AXColumnHeader";
     case ATK_ROLE_COMBO_BOX:
         return "AXComboBox";
+    case ATK_ROLE_COMMENT:
+        return "AXComment";
     case ATK_ROLE_DOCUMENT_FRAME:
         return "AXDocument";
     case ATK_ROLE_DOCUMENT_WEB:
@@ -327,6 +329,16 @@ const char* roleToString(AtkObject* object)
 #if ATK_CHECK_VERSION(2, 11, 3)
     case ATK_ROLE_ARTICLE:
         return "AXArticle";
+    case ATK_ROLE_DEFINITION:
+        return "AXDefinition";
+    case ATK_ROLE_LOG:
+        return "AXLog";
+    case ATK_ROLE_MARQUEE:
+        return "AXMarquee";
+    case ATK_ROLE_MATH:
+        return "AXMath";
+    case ATK_ROLE_TIMER:
+        return "AXTimer";
 #endif
     default:
         // We want to distinguish ATK_ROLE_UNKNOWN from a known AtkRole which

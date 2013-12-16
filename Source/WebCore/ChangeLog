@@ -1,3 +1,16 @@
+2013-12-16  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Expose accessibility objects for more WAI-ARIA roles
+        https://bugs.webkit.org/show_bug.cgi?id=125596
+
+        Reviewed by Chris Fleizach.
+
+        Exposed accessibility objects with the proper AtkRoles, some of
+        them to be provided by the next stable release of ATK.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
 2013-12-16  Eric Carlson  <eric.carlson@apple.com>
 
         Fix QuickTime plug-in replacement scripting bugs

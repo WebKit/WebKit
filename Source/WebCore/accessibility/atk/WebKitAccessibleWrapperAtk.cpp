@@ -665,6 +665,8 @@ static AtkRole atkRole(AccessibilityRole role)
 #endif
     case DocumentRole:
         return ATK_ROLE_DOCUMENT_FRAME;
+    case DocumentNoteRole:
+        return ATK_ROLE_COMMENT;
     case HeadingRole:
         return ATK_ROLE_HEADING;
     case ListBoxRole:
@@ -696,6 +698,16 @@ static AtkRole atkRole(AccessibilityRole role)
     case LandmarkApplicationRole:
         return ATK_ROLE_EMBEDDED;
 #if ATK_CHECK_VERSION(2, 11, 3)
+    case ApplicationLogRole:
+        return ATK_ROLE_LOG;
+    case ApplicationMarqueeRole:
+        return ATK_ROLE_MARQUEE;
+    case ApplicationTimerRole:
+        return ATK_ROLE_TIMER;
+    case DefinitionRole:
+        return ATK_ROLE_DEFINITION;
+    case DocumentMathRole:
+        return ATK_ROLE_MATH;
     case LandmarkBannerRole:
     case LandmarkComplementaryRole:
     case LandmarkContentInfoRole:
