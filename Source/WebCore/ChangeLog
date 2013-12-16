@@ -1,3 +1,13 @@
+2013-12-13  Jeffrey Pfau  <jpfau@apple.com>
+
+        [Mac] Cache partitioning asserts when associated NSURLRequest is nil
+        https://bugs.webkit.org/show_bug.cgi?id=125716
+
+        Reviewed by Darin Adler.
+
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+
 2013-12-16  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess: Fix a few bugs with opening an IDB connection

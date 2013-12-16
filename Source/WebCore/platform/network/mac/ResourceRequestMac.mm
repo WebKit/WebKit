@@ -108,9 +108,11 @@ void ResourceRequest::doUpdateResourceRequest()
     }
 
 #if ENABLE(CACHE_PARTITIONING)
-    NSString* cachePartition = [NSURLProtocol propertyForKey:(NSString *)wkCachePartitionKey() inRequest:m_nsRequest.get()];
-    if (cachePartition)
-        m_cachePartition = cachePartition;
+    if (m_nsRequest) {
+        NSString* cachePartition = [NSURLProtocol propertyForKey:(NSString *)wkCachePartitionKey() inRequest:m_nsRequest.get()];
+        if (cachePartition)
+            m_cachePartition = cachePartition;
+    }
 #endif
 }
 
