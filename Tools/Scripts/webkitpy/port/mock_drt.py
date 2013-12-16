@@ -132,10 +132,7 @@ def main(argv, host, stdin, stdout, stderr):
     """Run the tests."""
 
     options, args = parse_options(argv)
-    if options.test_shell:
-        drt = MockTestShell(options, args, host, stdin, stdout, stderr)
-    else:
-        drt = MockDRT(options, args, host, stdin, stdout, stderr)
+    drt = MockDRT(options, args, host, stdin, stdout, stderr)
     return drt.run()
 
 
@@ -151,18 +148,8 @@ def parse_options(argv):
     platform_index = argv.index('--platform')
     platform = argv[platform_index + 1]
 
-    pixel_tests = False
-    pixel_path = None
-    test_shell = '--test-shell' in argv
-    if test_shell:
-        for arg in argv:
-            if arg.startswith('--pixel-tests'):
-                pixel_tests = True
-                pixel_path = arg[len('--pixel-tests='):]
-    else:
-        pixel_tests = '--pixel-tests' in argv
-    options = optparse.Values({'test_shell': test_shell, 'platform': platform, 'pixel_tests': pixel_tests, 'pixel_path': pixel_path})
-    return (options, argv)
+    pixel_tests = '--pixel-tests' in argv
+    return (optparse.Values({'platform': platform, 'pixel_tests': pixel_tests}), argv)
 
 
 class MockDRT(object):
@@ -254,42 +241,6 @@ class MockDRT(object):
         self._stdout.flush()
         self._stderr.write('#EOF\n')
         self._stderr.flush()
-
-
-class MockTestShell(MockDRT):
-    def input_from_line(self, line):
-        vals = line.strip().split()
-        if len(vals) == 3:
-            uri, timeout, checksum = vals
-        else:
-            uri, timeout = vals
-            checksum = None
-
-        test_name = self._driver.uri_to_test(uri)
-        return DriverInput(test_name, timeout, checksum, self._options.pixel_tests)
-
-    def output_for_test(self, test_input, is_reftest):
-        # FIXME: This is a hack to make virtual tests work. Need something more general.
-        original_test_name = test_input.test_name
-        output = super(MockTestShell, self).output_for_test(test_input, is_reftest)
-        test_input.test_name = original_test_name
-        return output
-
-    def write_test_output(self, test_input, output, is_reftest):
-        self._stdout.write("#URL:%s\n" % self._driver.test_to_uri(test_input.test_name))
-        if self._options.pixel_tests and output.image_hash:
-            self._stdout.write("#MD5:%s\n" % output.image_hash)
-            if output.image:
-                self._host.filesystem.maybe_make_directory(self._host.filesystem.dirname(self._options.pixel_path))
-                self._host.filesystem.write_binary_file(self._options.pixel_path, output.image)
-        if output.text:
-            self._stdout.write(output.text)
-
-        if output.text and not output.text.endswith('\n'):
-            self._stdout.write('\n')
-        self._stdout.write('#EOF\n')
-        self._stdout.flush()
-
 
 if __name__ == '__main__':
     # Note that the Mock in MockDRT refers to the fact that it is emulating a
