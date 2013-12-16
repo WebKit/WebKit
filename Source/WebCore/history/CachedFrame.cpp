@@ -131,6 +131,18 @@ void CachedFrameBase::restore()
         m_childFrames[i]->open();
     }
 
+#if PLATFORM(IOS)
+    if (m_isMainFrame) {
+        frame.loader().client().didRestoreFrameHierarchyForCachedFrame();
+
+        if (DOMWindow* domWindow = m_document->domWindow()) {
+            // FIXME: Add SCROLL_LISTENER to the list of event types on Document, and use m_document->hasListenerType(). See <rdar://problem/9615482>.
+            if (domWindow->scrollEventListenerCount() && frame.page())
+                frame.page()->chrome().client().setNeedsScrollNotifications(&frame, true);
+        }
+    }
+#endif
+
     // FIXME: update Page Visibility state here.
     // https://bugs.webkit.org/show_bug.cgi?id=116770
     m_document->enqueuePageshowEvent(PageshowEventPersisted);
@@ -138,7 +150,7 @@ void CachedFrameBase::restore()
     HistoryItem* historyItem = frame.loader().history().currentItem();
     m_document->enqueuePopstateEvent(historyItem && historyItem->stateObject() ? historyItem->stateObject() : SerializedScriptValue::nullValue());
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     if (m_document->hasTouchEventHandlers())
         m_document->page()->chrome().client().needTouchEvents(true);
 #endif
@@ -209,6 +221,14 @@ CachedFrame::CachedFrame(Frame& frame)
         LOG(PageCache, "Finished creating CachedFrame for child frame with url '%s' and DocumentLoader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
 #endif
 
+#if PLATFORM(IOS)
+    if (m_isMainFrame) {
+        if (DOMWindow* domWindow = m_document->domWindow()) {
+            if (domWindow->scrollEventListenerCount() && frame.page())
+                frame.page()->chrome().client().setNeedsScrollNotifications(&frame, false);
+        }
+    }
+#endif
 }
 
 void CachedFrame::open()

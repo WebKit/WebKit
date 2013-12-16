@@ -70,6 +70,11 @@ HistoryItem::HistoryItem()
     , m_documentSequenceNumber(generateSequenceNumber())
     , m_next(0)
     , m_prev(0)
+#if PLATFORM(IOS)
+    , m_scale(0)
+    , m_scaleIsInitial(false)
+    , m_bookmarkID(0)
+#endif
 {
 }
 
@@ -87,6 +92,11 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
     , m_documentSequenceNumber(generateSequenceNumber())
     , m_next(0)
     , m_prev(0)
+#if PLATFORM(IOS)
+    , m_scale(0)
+    , m_scaleIsInitial(false)
+    , m_bookmarkID(0)
+#endif
 {    
     iconDatabase().retainIconForPageURL(m_urlString);
 }
@@ -106,6 +116,11 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     , m_documentSequenceNumber(generateSequenceNumber())
     , m_next(0)
     , m_prev(0)
+#if PLATFORM(IOS)
+    , m_scale(0)
+    , m_scaleIsInitial(false)
+    , m_bookmarkID(0)
+#endif
 {
     iconDatabase().retainIconForPageURL(m_urlString);
 }
@@ -126,6 +141,11 @@ HistoryItem::HistoryItem(const URL& url, const String& target, const String& par
     , m_documentSequenceNumber(generateSequenceNumber())
     , m_next(0)
     , m_prev(0)
+#if PLATFORM(IOS)
+    , m_scale(0)
+    , m_scaleIsInitial(false)
+    , m_bookmarkID(0)
+#endif
 {    
     iconDatabase().retainIconForPageURL(m_urlString);
 }
@@ -157,6 +177,12 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_itemSequenceNumber(item.m_itemSequenceNumber)
     , m_documentSequenceNumber(item.m_documentSequenceNumber)
     , m_formContentType(item.m_formContentType)
+#if PLATFORM(IOS)
+    , m_scale(item.m_scale)
+    , m_scaleIsInitial(item.m_scaleIsInitial)
+    , m_bookmarkID(item.m_bookmarkID)
+    , m_sharedLinkUniqueIdentifier(item.m_sharedLinkUniqueIdentifier)
+#endif
 {
     if (item.m_formData)
         m_formData = item.m_formData->copy();

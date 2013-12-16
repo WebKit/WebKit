@@ -57,6 +57,10 @@
 #include "DeviceProximityController.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "MemoryPressureHandler.h"
+#endif
+
 namespace WebCore {
 
 #if !defined(NDEBUG)
@@ -103,7 +107,14 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
     unsigned rejectReasons = 0;
     if (!frame->loader().documentLoader()->mainDocumentError().isNull()) {
         PCLOG("   -Main document has an error");
+#if !PLATFORM(IOS)
         rejectReasons |= 1 << MainDocumentError;
+#else
+        if (frame->loader().documentLoader()->mainDocumentError().isCancellation() && frame->loader().documentLoader()->subresourceLoadersArePageCacheAcceptable())
+            PCLOG("    -But, it was a cancellation and all loaders during the cancel were loading images.");
+        else
+            rejectReasons |= 1 << MainDocumentError;
+#endif
     }
     if (frame->loader().documentLoader()->substituteData().isValid() && frame->loader().documentLoader()->substituteData().failingURL().isEmpty()) {
         PCLOG("   -Frame is an error page");
@@ -121,7 +132,12 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
     }
     if (frame->document()->domWindow() && frame->document()->domWindow()->hasEventListeners(eventNames().unloadEvent)) {
         PCLOG("   -Frame has an unload event listener");
+#if !PLATFORM(IOS)
         rejectReasons |= 1 << HasUnloadListener;
+#else
+        // iOS allows pages with unload event listeners to enter the page cache.
+        PCLOG("    -BUT iOS allows these pages to be cached.");
+#endif
     }
 #if ENABLE(SQL_DATABASE)
     if (DatabaseManager::manager().hasOpenDatabases(frame->document())) {
@@ -223,7 +239,7 @@ static void logCanCachePageDecision(Page* page)
         PCLOG("   -Page settings says b/f cache disabled");
         rejectReasons |= 1 << DisabledPageCache;
     }
-#if ENABLE(DEVICE_ORIENTATION)
+#if ENABLE(DEVICE_ORIENTATION) && !PLATFORM(IOS)
     if (DeviceMotionController::isActiveAt(page)) {
         PCLOG("   -Page is using DeviceMotion");
         rejectReasons |= 1 << UsesDeviceMotion;
@@ -312,12 +328,18 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
     Document* document = frame->document();
     
     return documentLoader
+#if !PLATFORM(IOS)
         && documentLoader->mainDocumentError().isNull()
+#else
+        && (documentLoader->mainDocumentError().isNull() || (documentLoader->mainDocumentError().isCancellation() && documentLoader->subresourceLoadersArePageCacheAcceptable()))
+#endif
         // Do not cache error pages (these can be recognized as pages with substitute data or unreachable URLs).
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
         && (!frameLoader.subframeLoader().containsPlugins() || frame->page()->settings().pageCacheSupportsPlugins())
         && (!document->url().protocolIs("https") || (!documentLoader->response().cacheControlContainsNoCache() && !documentLoader->response().cacheControlContainsNoStore()))
+#if !PLATFORM(IOS)
         && (!document->domWindow() || !document->domWindow()->hasEventListeners(eventNames().unloadEvent))
+#endif
 #if ENABLE(SQL_DATABASE)
         && !DatabaseManager::manager().hasOpenDatabases(document)
 #endif
@@ -343,7 +365,12 @@ bool PageCache::canCache(Page* page) const
 #if !defined(NDEBUG)
     logCanCachePageDecision(page);
 #endif
-    
+
+#if PLATFORM(IOS)
+    if (memoryPressureHandler().hasReceivedMemoryPressure())
+        return false;
+#endif
+
     // Cache the page, if possible.
     // Don't write to the cache if in the middle of a redirect, since we will want to
     // store the final page we end up on.
@@ -355,7 +382,7 @@ bool PageCache::canCache(Page* page) const
         && canCachePageContainingThisFrame(&page->mainFrame())
         && page->backForward().isActive()
         && page->settings().usesPageCache()
-#if ENABLE(DEVICE_ORIENTATION)
+#if ENABLE(DEVICE_ORIENTATION) && !PLATFORM(IOS)
         && !DeviceMotionController::isActiveAt(page)
         && !DeviceOrientationController::isActiveAt(page)
 #endif
@@ -366,6 +393,13 @@ bool PageCache::canCache(Page* page) const
             || loadType == FrameLoadTypeBack
             || loadType == FrameLoadTypeForward
             || loadType == FrameLoadTypeIndexedBackForward);
+}
+
+void PageCache::pruneToCapacityNow(int capacity)
+{
+    int savedCapacity = m_capacity;
+    setCapacity(capacity);
+    setCapacity(savedCapacity);
 }
 
 void PageCache::setCapacity(int capacity)

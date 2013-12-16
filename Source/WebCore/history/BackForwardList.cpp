@@ -228,6 +228,32 @@ HistoryItemVector& BackForwardList::entries()
     return m_entries;
 }
 
+#if PLATFORM(IOS)
+unsigned BackForwardList::current()
+{
+    return m_current;
+}
+
+void BackForwardList::setCurrent(unsigned newCurrent)
+{
+    m_current = newCurrent;
+}
+
+bool BackForwardList::clearAllPageCaches()
+{
+    bool didRemoveAtLeastOneItem = false;
+    unsigned length = m_entries.size();
+    for (unsigned i = 0; i < length; ++i) {
+        HistoryItem* item = m_entries[i].get();
+        if (item->isInPageCache()) {
+            didRemoveAtLeastOneItem = true;
+            pageCache()->remove(item);
+        }
+    }
+    return didRemoveAtLeastOneItem;
+}
+#endif
+
 void BackForwardList::close()
 {
     int size = m_entries.size();

@@ -39,6 +39,10 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 
+#if PLATFORM(IOS)
+#include "FrameSelection.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -85,8 +89,17 @@ void CachedPage::restore(Page& page)
     // Restore the focus appearance for the focused element.
     // FIXME: Right now we don't support pages w/ frames in the b/f cache.  This may need to be tweaked when we add support for that.
     Document* focusedDocument = page.focusController().focusedOrMainFrame().document();
-    if (Element* element = focusedDocument->focusedElement())
+    if (Element* element = focusedDocument->focusedElement()) {
+#if PLATFORM(IOS)
+        // We don't want focused nodes changing scroll position when restoring from the cache
+        // as it can cause ugly jumps before we manage to restore the cached position.
+        page.mainFrame().selection().suppressScrolling();
+#endif
         element->updateFocusAppearance(true);
+#if PLATFORM(IOS)
+        page.mainFrame().selection().restoreScrolling();
+#endif
+    }
 
     if (m_needStyleRecalcForVisitedLinks) {
         for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext())

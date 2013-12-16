@@ -1,5 +1,43 @@
 2013-12-16  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Upstream WebCore/history changes
+        https://bugs.webkit.org/show_bug.cgi?id=125769
+
+        Reviewed by Darin Adler.
+
+        * history/BackForwardClient.h:
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::current): Added; guard by PLATFORM(IOS). Also added FIXME comment.
+        (WebCore::BackForwardList::setCurrent): Added; guard by PLATFORM(IOS). Also added FIXME comment.
+        (WebCore::BackForwardList::clearAllPageCaches): Added; guarded by PLATFORM(IOS).
+        * history/BackForwardList.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore): Added iOS-specific code.
+        (WebCore::CachedFrame::CachedFrame): Ditto.
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore): Ditto.
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem): Ditto.
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::scale): Added; guarded by PLATFORM(IOS).
+        (WebCore::HistoryItem::scaleIsInitial): Added; guarded by PLATFORM(IOS).
+        (WebCore::HistoryItem::setScale): Added; guarded by PLATFORM(IOS).
+        (WebCore::HistoryItem::viewportArguments): Added; guarded by PLATFORM(IOS).
+        (WebCore::HistoryItem::setViewportArguments): Added; guarded by PLATFORM(IOS).
+        (WebCore::HistoryItem::bookmarkID): Added; guarded by PLATFORM(IOS).
+        (WebCore::HistoryItem::setBookmarkID): Added; guarded by PLATFORM(IOS).
+        (WebCore::HistoryItem::sharedLinkUniqueIdentifier): Added; guarded by PLATFORM(IOS).
+        (WebCore::HistoryItem::setSharedLinkUniqueIdentifier): Added; guarded by PLATFORM(IOS).
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision): Added iOS-specific code.
+        (WebCore::logCanCachePageDecision): Ditto.
+        (WebCore::PageCache::canCachePageContainingThisFrame): Ditto.
+        (WebCore::PageCache::canCache): Ditto.
+        (WebCore::PageCache::pruneToCapacityNow): Added.
+        * history/PageCache.h:
+
+2013-12-16  Daniel Bates  <dabates@apple.com>
+
         [iOS] Upstream WebCore/svg changes
         https://bugs.webkit.org/show_bug.cgi?id=125784
 

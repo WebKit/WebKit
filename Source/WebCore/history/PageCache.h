@@ -61,6 +61,9 @@ namespace WebCore {
         // Will mark all cached pages associated with the given page as needing style recalc.
         void markPagesForFullStyleRecalc(Page*);
 
+        // Used when memory is low to prune some cached pages.
+        void pruneToCapacityNow(int capacity);
+
 #if ENABLE(VIDEO_TRACK)
         void markPagesForCaptionPreferencesChanged();
 #endif
