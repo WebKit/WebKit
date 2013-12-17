@@ -1,3 +1,13 @@
+2013-12-16  Tim Horton  <timothy_horton@apple.com>
+
+        Revert a mysterious and inexplicable part of http://trac.webkit.org/changeset/160685
+
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedEncoder::encodeEnum):
+        (WebCore::KeyedEncoder::encodeObject):
+        (WebCore::KeyedEncoder::encodeConditionalObject):
+        (WebCore::KeyedEncoder::encodeObjects):
+
 2013-12-16  Anders Carlsson  <andersca@apple.com>
 
         Remove EnumClass.h from WTF
