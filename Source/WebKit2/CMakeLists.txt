@@ -181,6 +181,7 @@ set(WebKit2_SOURCES
     PluginProcess/WebProcessConnection.cpp
 
     Shared/APIArray.cpp
+    Shared/APIData.cpp
     Shared/APIFrameHandle.cpp
     Shared/APIGeometry.cpp
     Shared/APIPageHandle.cpp

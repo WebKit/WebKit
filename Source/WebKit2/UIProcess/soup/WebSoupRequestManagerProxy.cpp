@@ -21,8 +21,8 @@
 #include "config.h"
 #include "WebSoupRequestManagerProxy.h"
 
+#include "APIData.h"
 #include "WebContext.h"
-#include "WebData.h"
 #include "WebSoupRequestManagerMessages.h"
 #include "WebSoupRequestManagerProxyMessages.h"
 
@@ -85,7 +85,7 @@ void WebSoupRequestManagerProxy::registerURIScheme(const String& scheme)
     m_registeredURISchemes.append(scheme);
 }
 
-void WebSoupRequestManagerProxy::didHandleURIRequest(const WebData* requestData, uint64_t contentLength, const String& mimeType, uint64_t requestID)
+void WebSoupRequestManagerProxy::didHandleURIRequest(const API::Data* requestData, uint64_t contentLength, const String& mimeType, uint64_t requestID)
 {
     if (!context())
         return;
@@ -93,7 +93,7 @@ void WebSoupRequestManagerProxy::didHandleURIRequest(const WebData* requestData,
     context()->sendToAllProcesses(Messages::WebSoupRequestManager::DidHandleURIRequest(requestData->dataReference(), contentLength, mimeType, requestID));
 }
 
-void WebSoupRequestManagerProxy::didReceiveURIRequestData(const WebData* requestData, uint64_t requestID)
+void WebSoupRequestManagerProxy::didReceiveURIRequestData(const API::Data* requestData, uint64_t requestID)
 {
     if (!context())
         return;
@@ -107,7 +107,7 @@ void WebSoupRequestManagerProxy::didReceiveURIRequestData(const WebData* request
 void WebSoupRequestManagerProxy::didReceiveURIRequest(const String& uriString, WebPageProxy* initiaingPage, uint64_t requestID)
 {
     if (!m_client.didReceiveURIRequest(this, WebURL::create(uriString).get(), initiaingPage, requestID))
-        didHandleURIRequest(WebData::create(0, 0).get(), 0, String(), requestID);
+        didHandleURIRequest(API::Data::create(0, 0).get(), 0, String(), requestID);
 }
 
 void WebSoupRequestManagerProxy::didFailToLoadURIRequest(uint64_t requestID)

@@ -1541,13 +1541,13 @@ void WebPageProxy::terminateProcess()
 }
 
 #if !USE(CF)
-PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilterCallback, void* /*context*/) const
+PassRefPtr<API::Data> WebPageProxy::sessionStateData(WebPageProxySessionStateFilterCallback, void* /*context*/) const
 {
     // FIXME: Return session state data for saving Page state.
     return 0;
 }
 
-void WebPageProxy::restoreFromSessionStateData(WebData*)
+void WebPageProxy::restoreFromSessionStateData(API::Data*)
 {
     // FIXME: Restore the Page from the passed in session state data.
 }
