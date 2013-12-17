@@ -196,11 +196,65 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
 bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBTransactionIdentifier& identifier)
 {
     ASSERT(!isMainThread());
-    ASSERT(!m_transactions.contains(identifier));
-
-    m_transactions.add(identifier, SQLiteIDBTransaction::create(identifier));
+    
+    if (!m_transactions.add(identifier, SQLiteIDBTransaction::create(identifier)).isNewEntry) {
+        LOG_ERROR("Attempt to establish transaction identifier that already exists");
+        return false;
+    }
 
     return true;
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::beginTransaction(const IDBTransactionIdentifier& identifier)
+{
+    ASSERT(!isMainThread());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction) {
+        LOG_ERROR("Attempt to begin a transaction that hasn't been established");
+        return false;
+    }
+
+    return transaction->begin();
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::commitTransaction(const IDBTransactionIdentifier& identifier)
+{
+    ASSERT(!isMainThread());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction) {
+        LOG_ERROR("Attempt to commit a transaction that hasn't been established");
+        return false;
+    }
+
+    return transaction->commit();
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::resetTransaction(const IDBTransactionIdentifier& identifier)
+{
+    ASSERT(!isMainThread());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction) {
+        LOG_ERROR("Attempt to reset a transaction that hasn't been established");
+        return false;
+    }
+
+    return transaction->reset();
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction(const IDBTransactionIdentifier& identifier)
+{
+    ASSERT(!isMainThread());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction) {
+        LOG_ERROR("Attempt to rollback a transaction that hasn't been established");
+        return false;
+    }
+
+    return transaction->rollback();
 }
 
 } // namespace WebKit

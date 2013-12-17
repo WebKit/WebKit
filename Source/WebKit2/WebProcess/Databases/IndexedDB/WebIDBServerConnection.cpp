@@ -139,18 +139,90 @@ void WebIDBServerConnection::didOpenTransaction(uint64_t requestID, bool success
 
 void WebIDBServerConnection::beginTransaction(int64_t transactionID, std::function<void()> completionCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<>::create(completionCallback, completionCallback);
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    send(Messages::DatabaseProcessIDBConnection::BeginTransaction(requestID, transactionID));
+}
+
+void WebIDBServerConnection::didBeginTransaction(uint64_t requestID, bool)
+{
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest();
 }
 
 void WebIDBServerConnection::commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<bool>::create(successCallback);
+
+    serverRequest->setAbortHandler([successCallback]() {
+        successCallback(false);
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    send(Messages::DatabaseProcessIDBConnection::CommitTransaction(requestID, transactionID));
+}
+
+void WebIDBServerConnection::didCommitTransaction(uint64_t requestID, bool success)
+{
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest(success);
 }
 
 void WebIDBServerConnection::resetTransaction(int64_t transactionID, std::function<void()> completionCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<>::create(completionCallback, completionCallback);
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    send(Messages::DatabaseProcessIDBConnection::ResetTransaction(requestID, transactionID));
+}
+
+void WebIDBServerConnection::didResetTransaction(uint64_t requestID, bool)
+{
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest();
 }
 
 void WebIDBServerConnection::rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<>::create(completionCallback, completionCallback);
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    send(Messages::DatabaseProcessIDBConnection::RollbackTransaction(requestID, transactionID));
+}
+
+void WebIDBServerConnection::didRollbackTransaction(uint64_t requestID, bool)
+{
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest();
 }
 
 void WebIDBServerConnection::setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const IDBObjectStoreMetadata&, IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<IDBKey>>>& indexKeys, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)

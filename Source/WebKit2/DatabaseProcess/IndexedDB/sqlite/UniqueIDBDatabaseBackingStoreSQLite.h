@@ -52,7 +52,12 @@ public:
     virtual ~UniqueIDBDatabaseBackingStoreSQLite();
 
     virtual std::unique_ptr<WebCore::IDBDatabaseMetadata> getOrEstablishMetadata() OVERRIDE;
+
     virtual bool establishTransaction(const IDBTransactionIdentifier&) OVERRIDE;
+    virtual bool beginTransaction(const IDBTransactionIdentifier&) OVERRIDE;
+    virtual bool commitTransaction(const IDBTransactionIdentifier&) OVERRIDE;
+    virtual bool resetTransaction(const IDBTransactionIdentifier&) OVERRIDE;
+    virtual bool rollbackTransaction(const IDBTransactionIdentifier&) OVERRIDE;
 
 private:
     UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);

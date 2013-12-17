@@ -65,7 +65,12 @@ public:
     void unregisterConnection(DatabaseProcessIDBConnection&);
 
     void getOrEstablishIDBDatabaseMetadata(std::function<void(bool, const WebCore::IDBDatabaseMetadata&)> completionCallback);
+
     void openTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
+    void beginTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
+    void commitTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
+    void resetTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
+    void rollbackTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
 
 private:
     UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
@@ -91,22 +96,29 @@ private:
 
     // Returns true if this origin can use the same databases as the given origin.
     bool canShareDatabases(const SecurityOriginData&, const SecurityOriginData&) const;
+
+    typedef void (UniqueIDBDatabase::*TransactionOperationFunction)(const IDBTransactionIdentifier&);
+    void postTransactionOperation(TransactionOperationFunction, const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
     
     // To be called from the database workqueue thread only
     void performNextDatabaseTask();
     void postMainThreadTask(std::unique_ptr<AsyncTask>);
     void openBackingStoreAndReadMetadata(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
     void openBackingStoreTransaction(const IDBTransactionIdentifier&);
+    void beginBackingStoreTransaction(const IDBTransactionIdentifier&);
+    void commitBackingStoreTransaction(const IDBTransactionIdentifier&);
+    void resetBackingStoreTransaction(const IDBTransactionIdentifier&);
+    void rollbackBackingStoreTransaction(const IDBTransactionIdentifier&);
 
     // Callbacks from the database workqueue thread, to be performed on the main thread only
     void performNextMainThreadTask();
     void didOpenBackingStoreAndReadMetadata(const WebCore::IDBDatabaseMetadata&, bool success);
-    void didOpenBackingStoreTransaction(const IDBTransactionIdentifier&, bool success);
+    void didCompleteTransactionOperation(const IDBTransactionIdentifier&, bool success);
 
     bool m_acceptingNewRequests;
 
     Deque<RefPtr<AsyncRequest>> m_pendingMetadataRequests;
-    HashMap<IDBTransactionIdentifier, RefPtr<AsyncRequest>> m_pendingOpenTransactionRequests;
+    HashMap<IDBTransactionIdentifier, RefPtr<AsyncRequest>> m_pendingTransactionRequests;
 
     std::unique_ptr<WebCore::IDBDatabaseMetadata> m_metadata;
     bool m_didGetMetadataFromBackingStore;

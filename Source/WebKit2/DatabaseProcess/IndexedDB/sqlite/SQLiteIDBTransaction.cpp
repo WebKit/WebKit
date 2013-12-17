@@ -34,6 +34,26 @@ SQLiteIDBTransaction::SQLiteIDBTransaction(const IDBTransactionIdentifier& ident
 {
 }
 
+bool SQLiteIDBTransaction::begin()
+{
+    return false;
+}
+
+bool SQLiteIDBTransaction::commit()
+{
+    return false;
+}
+
+bool SQLiteIDBTransaction::reset()
+{
+    return false;
+}
+
+bool SQLiteIDBTransaction::rollback()
+{
+    return false;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

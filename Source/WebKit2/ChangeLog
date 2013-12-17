@@ -1,3 +1,66 @@
+2013-12-16  Brady Eidson  <beidson@apple.com>
+
+        DatabaseProcess: Plumb through messaging for the 4 basic transaction operations
+        https://bugs.webkit.org/show_bug.cgi?id=125816
+
+        Reviewed by Alexey Proskuryakov.
+
+        The messaging begins and ends in the WebProcess:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::beginTransaction):
+        (WebKit::WebIDBServerConnection::didBeginTransaction):
+        (WebKit::WebIDBServerConnection::commitTransaction):
+        (WebKit::WebIDBServerConnection::didCommitTransaction):
+        (WebKit::WebIDBServerConnection::resetTransaction):
+        (WebKit::WebIDBServerConnection::didResetTransaction):
+        (WebKit::WebIDBServerConnection::rollbackTransaction):
+        (WebKit::WebIDBServerConnection::didRollbackTransaction):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
+        It travels from the WebProcess to the DatabaseProcess connection:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::beginTransaction):
+        (WebKit::DatabaseProcessIDBConnection::commitTransaction):
+        (WebKit::DatabaseProcessIDBConnection::resetTransaction):
+        (WebKit::DatabaseProcessIDBConnection::rollbackTransaction):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        It travels from the connection to the appropriate UniqueIDBDatabase:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::openTransaction):
+        (WebKit::UniqueIDBDatabase::beginTransaction):
+        (WebKit::UniqueIDBDatabase::commitTransaction):
+        (WebKit::UniqueIDBDatabase::resetTransaction):
+        (WebKit::UniqueIDBDatabase::rollbackTransaction):
+        (WebKit::UniqueIDBDatabase::postTransactionOperation):
+        (WebKit::UniqueIDBDatabase::didCompleteTransactionOperation):
+        (WebKit::UniqueIDBDatabase::openBackingStoreTransaction):
+        (WebKit::UniqueIDBDatabase::beginBackingStoreTransaction):
+        (WebKit::UniqueIDBDatabase::commitBackingStoreTransaction):
+        (WebKit::UniqueIDBDatabase::resetBackingStoreTransaction):
+        (WebKit::UniqueIDBDatabase::rollbackBackingStoreTransaction):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        The UniqueIDBDatabase object performs the operation with the backing store:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::establishTransaction):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::beginTransaction):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::commitTransaction):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::resetTransaction):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        And the SQLite backing store calls the appropriate method on the SQLite transaction:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp:
+        (WebKit::SQLiteIDBTransaction::begin): Stubbed for now.
+        (WebKit::SQLiteIDBTransaction::commit): Ditto.
+        (WebKit::SQLiteIDBTransaction::reset): Ditto.
+        (WebKit::SQLiteIDBTransaction::rollback): Ditto.
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.h:
+
 2013-12-16  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix on EFL port after r160653

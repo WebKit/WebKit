@@ -95,6 +95,10 @@ private:
 
     void didGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, const WebCore::IDBDatabaseMetadata&);
     void didOpenTransaction(uint64_t requestID, bool success);
+    void didBeginTransaction(uint64_t requestID, bool success);
+    void didCommitTransaction(uint64_t requestID, bool success);
+    void didResetTransaction(uint64_t requestID, bool success);
+    void didRollbackTransaction(uint64_t requestID, bool success);
 
     uint64_t m_serverConnectionIdentifier;
 

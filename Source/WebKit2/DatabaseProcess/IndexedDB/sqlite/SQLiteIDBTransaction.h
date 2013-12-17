@@ -43,6 +43,11 @@ public:
 
     const IDBTransactionIdentifier& identifier() const { return m_identifier; }
 
+    bool begin();
+    bool commit();
+    bool reset();
+    bool rollback();
+
 private:
     SQLiteIDBTransaction(const IDBTransactionIdentifier&);
 

@@ -83,6 +83,46 @@ void DatabaseProcessIDBConnection::openTransaction(uint64_t requestID, int64_t t
     });
 }
 
+void DatabaseProcessIDBConnection::beginTransaction(uint64_t requestID, int64_t transactionID)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->beginTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
+        connection->send(Messages::WebIDBServerConnection::DidBeginTransaction(requestID, success));
+    });
+}
+
+void DatabaseProcessIDBConnection::commitTransaction(uint64_t requestID, int64_t transactionID)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->commitTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
+        connection->send(Messages::WebIDBServerConnection::DidCommitTransaction(requestID, success));
+    });
+}
+
+void DatabaseProcessIDBConnection::resetTransaction(uint64_t requestID, int64_t transactionID)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->resetTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
+        connection->send(Messages::WebIDBServerConnection::DidResetTransaction(requestID, success));
+    });
+}
+
+void DatabaseProcessIDBConnection::rollbackTransaction(uint64_t requestID, int64_t transactionID)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->rollbackTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
+        connection->send(Messages::WebIDBServerConnection::DidRollbackTransaction(requestID, success));
+    });
+}
+
 CoreIPC::Connection* DatabaseProcessIDBConnection::messageSenderConnection()
 {
     return m_connection->connection();

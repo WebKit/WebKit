@@ -24,7 +24,12 @@
 
 messages -> WebIDBServerConnection LegacyReceiver {
     DidGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, WebCore::IDBDatabaseMetadata metadata)
+
     DidOpenTransaction(uint64_t requestID, bool success)
+    DidBeginTransaction(uint64_t requestID, bool success)
+    DidCommitTransaction(uint64_t requestID, bool success)
+    DidResetTransaction(uint64_t requestID, bool success)
+    DidRollbackTransaction(uint64_t requestID, bool success)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

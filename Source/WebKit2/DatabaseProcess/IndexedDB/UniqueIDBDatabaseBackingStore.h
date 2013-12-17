@@ -43,7 +43,12 @@ public:
     virtual ~UniqueIDBDatabaseBackingStore() { }
 
     virtual std::unique_ptr<WebCore::IDBDatabaseMetadata> getOrEstablishMetadata() = 0;
+
     virtual bool establishTransaction(const IDBTransactionIdentifier&) = 0;
+    virtual bool beginTransaction(const IDBTransactionIdentifier&) = 0;
+    virtual bool commitTransaction(const IDBTransactionIdentifier&) = 0;
+    virtual bool resetTransaction(const IDBTransactionIdentifier&) = 0;
+    virtual bool rollbackTransaction(const IDBTransactionIdentifier&) = 0;
 };
 
 } // namespace WebKit
