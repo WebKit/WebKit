@@ -272,7 +272,6 @@ void PageLoadState::didSameDocumentNavigation(const Transaction::Token& token, c
 void PageLoadState::didDisplayOrRunInsecureContent(const Transaction::Token& token)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    ASSERT(m_uncommittedState.url.startsWith("https:", false));
 
     m_uncommittedState.hasInsecureContent = true;
 }

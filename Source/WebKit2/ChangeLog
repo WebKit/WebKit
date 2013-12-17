@@ -1,5 +1,16 @@
 2013-12-17  Dan Bernstein  <mitz@apple.com>
 
+        Fixed an assertion failure seen running some mixed-content tests.
+        https://bugs.webkit.org/show_bug.cgi?id=125862
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::didDisplayOrRunInsecureContent): Removed an assertion about the URL
+        of the main frame when dealing with a notification that could have come from any frame.
+
+2013-12-17  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Add properties related to the user agent string
         https://bugs.webkit.org/show_bug.cgi?id=125856
 
