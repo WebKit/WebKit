@@ -1,3 +1,13 @@
+2013-12-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Invalid dir attributes should resolve to ltr
+        https://bugs.webkit.org/show_bug.cgi?id=125830
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLElement/set-and-clear-dir-attribute-expected.txt: Added.
+        * fast/dom/HTMLElement/set-and-clear-dir-attribute.html: Added.
+
 2013-12-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Incorrect repaint of fixed element with transformed parent
