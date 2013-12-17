@@ -1,3 +1,19 @@
+2013-12-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2][iOS] WKView sends unscaled scroll position to WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=125819
+
+        Reviewed by Anders Carlsson.
+
+        WKView was sending untransformed scroll coordinates to WKContentView. The scroll position
+        seen by WebKit was wrong when the content is scaled.
+
+        * UIProcess/API/ios/WKView.mm:
+        (-[WKView _didScroll]):
+        (-[WKView scrollViewDidEndDragging:willDecelerate:]):
+        (-[WKView scrollViewDidEndDecelerating:]):
+        (-[WKView scrollViewDidScrollToTop:]):
+
 2013-12-16  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess: Plumb through messaging for the 4 basic transaction operations
