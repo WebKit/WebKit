@@ -1,3 +1,10 @@
+2013-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update GObject DOM symbols file after r160336.
+
+        * bindings/gobject/webkitdom.symbols: Add new methods exposed for
+        VideoPlaybackQuality.
+
 2013-12-17  Mihai Maerean  <mmaerean@adobe.com>
 
         Fix hit testing for divs with a hierarchy of css transformed and non-transformed elements
