@@ -1,3 +1,44 @@
+2013-12-16  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Checking RTCPeerConnection signalingState before setting local/remoteDescription
+        https://bugs.webkit.org/show_bug.cgi?id=125655
+
+        Reviewed by Eric Carlson.
+
+        Before setting a session description RTCPeerConnection must check if it is in valid state for that SDP type.
+
+        New tests: fast/mediastream/RTCPeerConnection-have-local-answer.html
+               fast/mediastream/RTCPeerConnection-have-local-offer.html
+               fast/mediastream/RTCPeerConnection-have-local-pranswer.html
+               fast/mediastream/RTCPeerConnection-have-remote-offer.html
+               fast/mediastream/RTCPeerConnection-have-remote-pranswer.html
+               fast/mediastream/RTCPeerConnection-stable.html
+
+        Modified: fast/mediastream/RTCPeerConnection-remoteDescription.html
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::checkStateForLocalDescription): Checks if the current state of RTCPeerConnection is
+        valid for the local SDP that is being set.
+        (WebCore::RTCPeerConnection::checkStateForRemoteDescription): Checks if the current state of RTCPeerConnection
+        is valid for the remote SDP that is being set.
+        (WebCore::RTCPeerConnection::setLocalDescription): Now calls checkStateForLocalDescription prior to set the
+        local SDP.
+        (WebCore::RTCPeerConnection::setRemoteDescription): Now Calls checkStateForRemoteDescription prior to set the
+        remote SDP.
+        * Modules/mediastream/RTCPeerConnection.h:
+        * platform/mock/RTCNotifiersMock.cpp: Adding new class to notify RTCPeerConnection about a signaling state
+        change: SignalingStateNotifier.
+        (WebCore::SignalingStateNotifier::SignalingStateNotifier):
+        (WebCore::SignalingStateNotifier::fire):
+        * platform/mock/RTCNotifiersMock.h:
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp:
+        (WebCore::RTCPeerConnectionHandlerMock::signalingStateFromSDP): Defines the new state that RTCPeerConnection
+        should be, according the SDP that is being set.
+        (WebCore::RTCPeerConnectionHandlerMock::setLocalDescription): Calls signalingStateFromSDP, in order to get the
+        new signaling state and notify RTCPeerConnection object.
+        (WebCore::RTCPeerConnectionHandlerMock::setRemoteDescription): Ditto.
+        * platform/mock/RTCPeerConnectionHandlerMock.h:
+
 2013-12-16  Tim Horton  <timothy_horton@apple.com>
 
         Revert a mysterious and inexplicable part of http://trac.webkit.org/changeset/160685

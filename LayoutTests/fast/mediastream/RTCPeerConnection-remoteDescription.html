@@ -13,10 +13,10 @@
             {
                 testPassed('requestFailed was called.');
 
-                shouldBeEqualToString('pc.remoteDescription.type', "answer");
+                shouldBeEqualToString('pc.remoteDescription.type', "offer");
                 shouldBeEqualToString('pc.remoteDescription.sdp', "remote");
                 pc.close();
-                shouldBeEqualToString('pc.remoteDescription.type', "answer");
+                shouldBeEqualToString('pc.remoteDescription.type', "offer");
                 shouldBeEqualToString('pc.remoteDescription.sdp', "remote");
 
                 finishJSTest();
@@ -38,12 +38,12 @@
             {
                 testPassed('requestSucceeded was called.');
 
-                sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
+                sessionDescription = new RTCSessionDescription({type:"answer", sdp:"local"});
                 shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded2, requestFailed2);');
             }
 
             pc = new webkitRTCPeerConnection({iceServers:[]});
-            var sessionDescription = new RTCSessionDescription({type:"answer", sdp:"remote"});
+            var sessionDescription = new RTCSessionDescription({type:"offer", sdp:"remote"});
             shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded1, requestFailed1);');
 
 

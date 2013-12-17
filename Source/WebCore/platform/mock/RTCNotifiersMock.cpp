@@ -80,6 +80,17 @@ void IceConnectionNotifier::fire()
     m_client->didChangeIceConnectionState(m_connectionState);
 }
 
+SignalingStateNotifier::SignalingStateNotifier(RTCPeerConnectionHandlerClient* client, RTCPeerConnectionHandlerClient::SignalingState signalingState)
+    : m_client(client)
+    , m_signalingState(signalingState)
+{
+}
+
+void SignalingStateNotifier::fire()
+{
+    m_client->didChangeSignalingState(m_signalingState);
+}
+
 RemoteDataChannelNotifier::RemoteDataChannelNotifier(RTCPeerConnectionHandlerClient* client)
     : m_client(client)
 {

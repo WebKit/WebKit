@@ -149,6 +149,9 @@ private:
     void changeIceGatheringState(IceGatheringState);
     void changeIceConnectionState(IceConnectionState);
 
+    bool checkStateForLocalDescription(RTCSessionDescription*);
+    bool checkStateForRemoteDescription(RTCSessionDescription*);
+
     SignalingState m_signalingState;
     IceGatheringState m_iceGatheringState;
     IceConnectionState m_iceConnectionState;

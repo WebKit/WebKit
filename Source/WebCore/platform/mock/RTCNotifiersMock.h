@@ -77,6 +77,17 @@ private:
     RTCPeerConnectionHandlerClient::IceGatheringState m_gatheringState;
 };
 
+class SignalingStateNotifier : public MockNotifier {
+public:
+    SignalingStateNotifier(RTCPeerConnectionHandlerClient*, RTCPeerConnectionHandlerClient::SignalingState);
+
+    void fire() OVERRIDE;
+
+private:
+    RTCPeerConnectionHandlerClient* m_client;
+    RTCPeerConnectionHandlerClient::SignalingState m_signalingState;
+};
+
 class RemoteDataChannelNotifier : public MockNotifier {
 public:
     RemoteDataChannelNotifier(RTCPeerConnectionHandlerClient*);

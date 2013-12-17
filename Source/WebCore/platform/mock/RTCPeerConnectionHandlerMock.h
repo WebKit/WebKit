@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "RTCPeerConnectionHandler.h"
+#include "RTCPeerConnectionHandlerClient.h"
 #include "RTCSessionDescriptionDescriptor.h"
 #include "TimerEventBasedMock.h"
 
@@ -60,6 +61,7 @@ public:
     explicit RTCPeerConnectionHandlerMock(RTCPeerConnectionHandlerClient*);
 
 private:
+    RTCPeerConnectionHandlerClient::SignalingState signalingStateFromSDP(RTCSessionDescriptionDescriptor*);
     RTCPeerConnectionHandlerClient* m_client;
 
     RefPtr<RTCSessionDescriptionDescriptor> m_localSessionDescription;

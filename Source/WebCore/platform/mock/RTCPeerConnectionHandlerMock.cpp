@@ -87,30 +87,50 @@ void RTCPeerConnectionHandlerMock::createAnswer(PassRefPtr<RTCSessionDescription
     m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
 }
 
+RTCPeerConnectionHandlerClient::SignalingState RTCPeerConnectionHandlerMock::signalingStateFromSDP(RTCSessionDescriptionDescriptor* descriptor)
+{
+    if (descriptor->type() == "offer" && descriptor->sdp() == "local")
+        return RTCPeerConnectionHandlerClient::SignalingStateHaveLocalOffer;
+    if (descriptor->type() == "offer" && descriptor->sdp() == "remote")
+        return RTCPeerConnectionHandlerClient::SignalingStateHaveRemoteOffer;
+    if (descriptor->type() == "pranswer" && descriptor->sdp() == "local")
+        return RTCPeerConnectionHandlerClient::SignalingStateHaveLocalPrAnswer;
+    if (descriptor->type() == "pranswer" && descriptor->sdp() == "remote")
+        return RTCPeerConnectionHandlerClient::SignalingStateHaveRemotePrAnswer;
+
+    return RTCPeerConnectionHandlerClient::SignalingStateStable;
+}
+
 void RTCPeerConnectionHandlerMock::setLocalDescription(PassRefPtr<RTCVoidRequest> request, PassRefPtr<RTCSessionDescriptionDescriptor> descriptor)
 {
-    RefPtr<VoidRequestNotifier> notifier;
+    RefPtr<VoidRequestNotifier> voidNotifier;
+    RefPtr<SignalingStateNotifier> signalingNotifier;
     if (!descriptor.get() || descriptor->sdp() != "local")
-        notifier = adoptRef(new VoidRequestNotifier(request, false));
+        voidNotifier = adoptRef(new VoidRequestNotifier(request, false, RTCPeerConnectionHandler::internalErrorName()));
     else {
         m_localSessionDescription = descriptor;
-        notifier = adoptRef(new VoidRequestNotifier(request, true));
+        signalingNotifier = adoptRef(new SignalingStateNotifier(m_client, signalingStateFromSDP(m_localSessionDescription.get())));
+        voidNotifier = adoptRef(new VoidRequestNotifier(request, true));
+        m_timerEvents.append(adoptRef(new TimerEvent(this, signalingNotifier)));
     }
 
-    m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
+    m_timerEvents.append(adoptRef(new TimerEvent(this, voidNotifier)));
 }
 
 void RTCPeerConnectionHandlerMock::setRemoteDescription(PassRefPtr<RTCVoidRequest> request, PassRefPtr<RTCSessionDescriptionDescriptor> descriptor)
 {
-    RefPtr<VoidRequestNotifier> notifier;
+    RefPtr<VoidRequestNotifier> voidNotifier;
+    RefPtr<SignalingStateNotifier> signalingNotifier;
     if (!descriptor.get() || descriptor->sdp() != "remote")
-        notifier = adoptRef(new VoidRequestNotifier(request, false));
+        voidNotifier = adoptRef(new VoidRequestNotifier(request, false, RTCPeerConnectionHandler::internalErrorName()));
     else {
         m_remoteSessionDescription = descriptor;
-        notifier = adoptRef(new VoidRequestNotifier(request, true));
+        signalingNotifier = adoptRef(new SignalingStateNotifier(m_client, signalingStateFromSDP(m_remoteSessionDescription.get())));
+        voidNotifier = adoptRef(new VoidRequestNotifier(request, true));
+        m_timerEvents.append(adoptRef(new TimerEvent(this, signalingNotifier)));
     }
 
-    m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
+    m_timerEvents.append(adoptRef(new TimerEvent(this, voidNotifier)));
 }
 
 PassRefPtr<RTCSessionDescriptionDescriptor> RTCPeerConnectionHandlerMock::localDescription()
