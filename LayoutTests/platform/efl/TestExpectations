@@ -1730,9 +1730,6 @@ webkit.org/b/124589 http/tests/cache/partitioned-cache.html [ Failure ]
 webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 webkit.org/b/118126 fast/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
-webkit.org/b/124506 fast/block/float/float-with-fractional-height-vertical-lr.html [ ImageOnlyFailure ]
-webkit.org/b/124506 fast/block/float/float-with-fractional-height.html [ ImageOnlyFailure ]
-
 webkit.org/b/124656 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
 
 webkit.org/b/124657 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]

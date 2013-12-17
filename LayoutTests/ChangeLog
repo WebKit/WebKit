@@ -1,3 +1,15 @@
+2013-12-17  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        REGRESSION(r159166?): fast/block/float/float-with-fractional-height-vertical-lr.html, fast/block/float/float-with-fractional-height.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=124506
+
+        Reviewed by Dirk Schulze.
+
+        Remove lines for tests that have been fixed by this patch.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2013-12-17  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose accessibility objects for <dl>, <dt> and <dd>

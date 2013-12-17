@@ -1492,9 +1492,6 @@ webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/tex
 webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Failure ]
 webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
 
-webkit.org/b/124506 fast/block/float/float-with-fractional-height-vertical-lr.html [ ImageOnlyFailure ]
-webkit.org/b/124506 fast/block/float/float-with-fractional-height.html [ ImageOnlyFailure ]
-
 webkit.org/b/124565 fast/multicol/seamless-flowed-through-columns.html [ ImageOnlyFailure ]
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]

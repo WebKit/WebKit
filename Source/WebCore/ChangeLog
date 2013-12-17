@@ -1,3 +1,18 @@
+2013-12-17  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        REGRESSION(r159166?): fast/block/float/float-with-fractional-height-vertical-lr.html, fast/block/float/float-with-fractional-height.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=124506
+
+        Reviewed by Dirk Schulze.
+
+        Floor the endpoints of the floating object interval to keep the old
+        behavior until a better fix can be created.
+
+        No new tests, fixes regression in existing tests.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObjects::intervalForFloatingObject):
+
 2013-12-17  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Visual Studio workaround for compiling WebGL.

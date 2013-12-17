@@ -280,9 +280,11 @@ void FloatingObjects::decreaseObjectsCount(FloatingObject::Type type)
 
 FloatingObjectInterval FloatingObjects::intervalForFloatingObject(FloatingObject* floatingObject)
 {
+    // FIXME The endpoints of the floating object interval shouldn't need to be
+    // floored. See http://wkb.ug/125831 for more details.
     if (m_horizontalWritingMode)
-        return FloatingObjectInterval(floatingObject->frameRect().y(), floatingObject->frameRect().maxY(), floatingObject);
-    return FloatingObjectInterval(floatingObject->frameRect().x(), floatingObject->frameRect().maxX(), floatingObject);
+        return FloatingObjectInterval(floatingObject->frameRect().y().floor(), floatingObject->frameRect().maxY().floor(), floatingObject);
+    return FloatingObjectInterval(floatingObject->frameRect().x().floor(), floatingObject->frameRect().maxX().floor(), floatingObject);
 }
 
 void FloatingObjects::addPlacedObject(FloatingObject* floatingObject)
