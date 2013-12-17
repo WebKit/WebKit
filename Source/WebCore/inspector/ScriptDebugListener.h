@@ -32,8 +32,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "ScriptState.h"
-#include "SourceID.h"
+#include <debugger/Debugger.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
@@ -69,7 +68,7 @@ public:
 
     virtual ~ScriptDebugListener() { }
 
-    virtual void didParseSource(SourceID, const Script&) = 0;
+    virtual void didParseSource(JSC::SourceID, const Script&) = 0;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) = 0;
     virtual void didPause(JSC::ExecState*, const Deprecated::ScriptValue& callFrames, const Deprecated::ScriptValue& exception) = 0;
     virtual void didContinue() = 0;

@@ -20590,7 +20590,6 @@
     <ClInclude Include="..\bindings\generic\ActiveDOMCallback.h" />
     <ClInclude Include="..\bindings\generic\RuntimeEnabledFeatures.h" />
     <ClInclude Include="..\bindings\js\ArrayValue.h" />
-    <ClInclude Include="..\bindings\js\BreakpointID.h" />
     <ClInclude Include="..\bindings\js\CachedScriptSourceProvider.h" />
     <ClInclude Include="..\bindings\js\CallbackFunction.h" />
     <ClInclude Include="..\bindings\js\Dictionary.h" />
@@ -20640,7 +20639,6 @@
     <ClInclude Include="..\bindings\js\ScriptState.h" />
     <ClInclude Include="..\bindings\js\ScriptWrappable.h" />
     <ClInclude Include="..\bindings\js\SerializedScriptValue.h" />
-    <ClInclude Include="..\bindings\js\SourceID.h" />
     <ClInclude Include="..\bindings\js\WebCoreJSClientData.h" />
     <ClInclude Include="..\bindings\js\WorkerScriptController.h" />
     <ClInclude Include="..\plugins\DOMMimeType.h" />

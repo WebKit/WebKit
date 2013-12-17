@@ -6297,7 +6297,6 @@
 		FE16CFD4169D1DED00D3A0C7 /* DatabaseBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = FE16CFD0169D1DEC00D3A0C7 /* DatabaseBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE16CFD5169D1DED00D3A0C7 /* DatabaseBackendSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE16CFD1169D1DEC00D3A0C7 /* DatabaseBackendSync.cpp */; };
 		FE16CFD6169D1DED00D3A0C7 /* DatabaseBackendSync.h in Headers */ = {isa = PBXBuildFile; fileRef = FE16CFD2169D1DEC00D3A0C7 /* DatabaseBackendSync.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE213B29182BE9F800AD2D12 /* SourceID.h in Headers */ = {isa = PBXBuildFile; fileRef = FE213B28182BE9F800AD2D12 /* SourceID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3371A2167C11D400EDB752 /* DatabaseBasicTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3371A0167C11D400EDB752 /* DatabaseBasicTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE36FD1516C7826500F887C1 /* ChangeVersionData.h in Headers */ = {isa = PBXBuildFile; fileRef = FE36FD1116C7826400F887C1 /* ChangeVersionData.h */; };
 		FE36FD1616C7826500F887C1 /* SQLTransactionStateMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE36FD1216C7826400F887C1 /* SQLTransactionStateMachine.cpp */; };
@@ -6331,7 +6330,6 @@
 		FED13D3A0CEA934600D89466 /* EditorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = FED13D390CEA934600D89466 /* EditorIOS.mm */; };
 		FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = FED13D500CEA949700D89466 /* RenderThemeIOS.h */; };
 		FED48390CED66C3255F72C59 /* MathMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75A059AF170D8FAA5B8CABE /* MathMLSelectElement.cpp */; };
-		FEDBFF16182B7A8D0017FA64 /* BreakpointID.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDBFF14182B7A8D0017FA64 /* BreakpointID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEDEF84116797108000E444A /* DatabaseStrategy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDEF83F16797108000E444A /* DatabaseStrategy.cpp */; };
 		FEDEF84216797108000E444A /* DatabaseStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDEF84016797108000E444A /* DatabaseStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEE1811316C319E800084849 /* SQLTransactionBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEE1811116C319E800084849 /* SQLTransactionBackend.cpp */; };
@@ -13527,7 +13525,6 @@
 		FE16CFD0169D1DEC00D3A0C7 /* DatabaseBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseBackend.h; sourceTree = "<group>"; };
 		FE16CFD1169D1DEC00D3A0C7 /* DatabaseBackendSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseBackendSync.cpp; sourceTree = "<group>"; };
 		FE16CFD2169D1DEC00D3A0C7 /* DatabaseBackendSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseBackendSync.h; sourceTree = "<group>"; };
-		FE213B28182BE9F800AD2D12 /* SourceID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceID.h; sourceTree = "<group>"; };
 		FE3371A0167C11D400EDB752 /* DatabaseBasicTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseBasicTypes.h; sourceTree = "<group>"; };
 		FE36FD1116C7826400F887C1 /* ChangeVersionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeVersionData.h; sourceTree = "<group>"; };
 		FE36FD1216C7826400F887C1 /* SQLTransactionStateMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionStateMachine.cpp; sourceTree = "<group>"; };
@@ -13560,7 +13557,6 @@
 		FEBC5F3016BD0CC300659BD3 /* DatabaseBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseBase.h; sourceTree = "<group>"; };
 		FED13D390CEA934600D89466 /* EditorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorIOS.mm; sourceTree = "<group>"; };
 		FED13D500CEA949700D89466 /* RenderThemeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderThemeIOS.h; sourceTree = "<group>"; };
-		FEDBFF14182B7A8D0017FA64 /* BreakpointID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BreakpointID.h; sourceTree = "<group>"; };
 		FEDEF83F16797108000E444A /* DatabaseStrategy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseStrategy.cpp; sourceTree = "<group>"; };
 		FEDEF84016797108000E444A /* DatabaseStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseStrategy.h; sourceTree = "<group>"; };
 		FEE1811116C319E800084849 /* SQLTransactionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionBackend.cpp; sourceTree = "<group>"; };
@@ -19609,7 +19605,6 @@
 		BC1A3793097C6FB10019F3D8 /* js */ = {
 			isa = PBXGroup;
 			children = (
-				FE213B28182BE9F800AD2D12 /* SourceID.h */,
 				BCCE58A71061E82F008FB35A /* Callback Objects */,
 				BCCE58B41061E925008FB35A /* Constructors */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
@@ -19617,7 +19612,6 @@
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
 				49B3760A15C6C6840059131D /* ArrayValue.cpp */,
 				49B3760B15C6C6840059131D /* ArrayValue.h */,
-				FEDBFF14182B7A8D0017FA64 /* BreakpointID.h */,
 				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
 				312D67B01535691F00563D0D /* Dictionary.cpp */,
 				316023EF1532C40C00D50FF4 /* Dictionary.h */,
@@ -22102,7 +22096,6 @@
 				6E0E569C183BFFE600E0E8D5 /* FloatRoundedRect.h in Headers */,
 				9A1142041832D135000BB8AD /* ValueToString.h in Headers */,
 				932AD70617EFA2C40038F8FF /* MainFrame.h in Headers */,
-				FEDBFF16182B7A8D0017FA64 /* BreakpointID.h in Headers */,
 				FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */,
 				9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */,
 				FE4AADEE16D2C37400026FFC /* AbstractSQLStatement.h in Headers */,
@@ -22143,7 +22136,6 @@
 				BCF7E491137CD7C7001DDAE7 /* AdjustViewSizeOrNot.h in Headers */,
 				84D0C4061115F1EA0018AA34 /* AffineTransform.h in Headers */,
 				CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */,
-				FE213B29182BE9F800AD2D12 /* SourceID.h in Headers */,
 				CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */,
 				CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */,
 				FD31603E12B0267600C1A359 /* AnalyserNode.h in Headers */,

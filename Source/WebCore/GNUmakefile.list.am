@@ -2263,7 +2263,6 @@ webcore_sources += \
 	Source/WebCore/bindings/generic/RuntimeEnabledFeatures.h \
 	Source/WebCore/bindings/js/ArrayValue.cpp \
 	Source/WebCore/bindings/js/ArrayValue.h \
-	Source/WebCore/bindings/js/BreakpointID.h \
 	Source/WebCore/bindings/js/CachedScriptSourceProvider.h \
 	Source/WebCore/bindings/js/CallbackFunction.cpp \
 	Source/WebCore/bindings/js/CallbackFunction.h \
@@ -2465,7 +2464,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/ScriptWrappableInlines.h \
 	Source/WebCore/bindings/js/SerializedScriptValue.cpp \
 	Source/WebCore/bindings/js/SerializedScriptValue.h \
-	Source/WebCore/bindings/js/SourceID.h \
 	Source/WebCore/bindings/js/WebCoreJSClientData.h \
 	Source/WebCore/bindings/js/WebCoreTypedArrayController.cpp \
 	Source/WebCore/bindings/js/WebCoreTypedArrayController.h \

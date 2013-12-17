@@ -66,14 +66,14 @@ ScriptDebugServer::~ScriptDebugServer()
 {
 }
 
-BreakpointID ScriptDebugServer::setBreakpoint(SourceID sourceID, const ScriptBreakpoint& scriptBreakpoint, unsigned* actualLineNumber, unsigned* actualColumnNumber)
+JSC::BreakpointID ScriptDebugServer::setBreakpoint(JSC::SourceID sourceID, const ScriptBreakpoint& scriptBreakpoint, unsigned* actualLineNumber, unsigned* actualColumnNumber)
 {
     if (!sourceID)
-        return noBreakpointID;
+        return JSC::noBreakpointID;
 
     JSC::Breakpoint breakpoint(sourceID, scriptBreakpoint.lineNumber, scriptBreakpoint.columnNumber, scriptBreakpoint.condition, scriptBreakpoint.autoContinue);
-    BreakpointID id = Debugger::setBreakpoint(breakpoint, *actualLineNumber, *actualColumnNumber);
-    if (id != noBreakpointID && !scriptBreakpoint.actions.isEmpty()) {
+    JSC::BreakpointID id = Debugger::setBreakpoint(breakpoint, *actualLineNumber, *actualColumnNumber);
+    if (id != JSC::noBreakpointID && !scriptBreakpoint.actions.isEmpty()) {
 #ifndef NDEBUG
         BreakpointIDToActionsMap::iterator it = m_breakpointIDToActions.find(id);
         ASSERT(it == m_breakpointIDToActions.end());
@@ -84,9 +84,9 @@ BreakpointID ScriptDebugServer::setBreakpoint(SourceID sourceID, const ScriptBre
     return id;
 }
 
-void ScriptDebugServer::removeBreakpoint(BreakpointID id)
+void ScriptDebugServer::removeBreakpoint(JSC::BreakpointID id)
 {
-    ASSERT(id != noBreakpointID);
+    ASSERT(id != JSC::noBreakpointID);
     BreakpointIDToActionsMap::iterator it = m_breakpointIDToActions.find(id);
     if (it != m_breakpointIDToActions.end())
         m_breakpointIDToActions.remove(it);
@@ -169,7 +169,7 @@ void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
 
 void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, bool isContentScript)
 {
-    SourceID sourceID = sourceProvider->asID();
+    JSC::SourceID sourceID = sourceProvider->asID();
 
     ScriptDebugListener::Script script;
     script.url = sourceProvider->url();

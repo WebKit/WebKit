@@ -32,10 +32,8 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "BreakpointID.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
-#include "SourceID.h"
 #include "Timer.h"
 #include <bindings/ScriptObject.h>
 #include <debugger/Debugger.h>
@@ -57,8 +55,8 @@ namespace WebCore {
 class ScriptDebugServer : public JSC::Debugger {
     WTF_MAKE_NONCOPYABLE(ScriptDebugServer); WTF_MAKE_FAST_ALLOCATED;
 public:
-    BreakpointID setBreakpoint(SourceID, const ScriptBreakpoint&, unsigned* actualLineNumber, unsigned* actualColumnNumber);
-    void removeBreakpoint(BreakpointID);
+    JSC::BreakpointID setBreakpoint(JSC::SourceID, const ScriptBreakpoint&, unsigned* actualLineNumber, unsigned* actualColumnNumber);
+    void removeBreakpoint(JSC::BreakpointID);
     void clearBreakpoints();
 
     bool canSetScriptSource();
@@ -119,7 +117,7 @@ protected:
 
 private:
     typedef Vector<ScriptBreakpointAction> BreakpointActions;
-    typedef HashMap<BreakpointID, BreakpointActions> BreakpointIDToActionsMap;
+    typedef HashMap<JSC::BreakpointID, BreakpointActions> BreakpointIDToActionsMap;
 
     virtual bool needPauseHandling(JSC::JSGlobalObject*) OVERRIDE;
     virtual void handleBreakpointHit(const JSC::Breakpoint&) OVERRIDE;

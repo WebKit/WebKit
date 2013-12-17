@@ -11399,9 +11399,6 @@
     <ClInclude Include="..\bindings\js\ArrayValue.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
-    <ClInclude Include="..\bindings\js\BreakpointID.h">
-      <Filter>bindings\js</Filter>
-    </ClInclude>
     <ClInclude Include="..\bindings\js\CachedScriptSourceProvider.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
@@ -11529,9 +11526,6 @@
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\SerializedScriptValue.h">
-      <Filter>bindings\js</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bindings\js\SourceID.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\WebCoreJSClientData.h">

@@ -1,3 +1,38 @@
+2013-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Use JSC::SourceID and JSC::BreakpointID instead of WebCore dups
+        https://bugs.webkit.org/show_bug.cgi?id=125818
+
+        Reviewed by Mark Lam.
+
+        Remove the WebCore typedefs of JSC types. Prefer JSC namespace
+        prefixed types throughout WebCore's Inspector code.
+
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/BreakpointID.h: Removed.
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/SourceID.h: Removed.
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::parseLocation):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::continueToLocation):
+        (WebCore::InspectorDebuggerAgent::resolveBreakpoint):
+        (WebCore::InspectorDebuggerAgent::searchInContent):
+        (WebCore::InspectorDebuggerAgent::getScriptSource):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        (WebCore::InspectorDebuggerAgent::clear):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/ScriptDebugListener.h:
+
 2013-12-16  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream WebCore/dom changes
