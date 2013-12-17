@@ -1,3 +1,14 @@
+2013-12-17  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK][WK2] rowAtIndex is not implemented in DRT/WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=116971
+
+        Unreviewed. Moving test expectation to the right place, as this is
+        an issue that actually affects both to Webkit1 and Webkit2.
+
+        * platform/gtk-wk2/TestExpectations: Removed expectation.
+        * platform/gtk/TestExpectations: Added expectation.
+
 2013-12-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Remove left-over test expectations in fast/regions/layers
