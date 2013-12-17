@@ -1,3 +1,22 @@
+2013-12-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Remove left-over test expectations in fast/regions/layers
+        https://bugs.webkit.org/show_bug.cgi?id=125841
+
+        Reviewed by Dirk Schulze.
+
+        The original tests were removed part of https://bugs.webkit.org/show_bug.cgi?id=121828
+        and added back as expectations only when https://bugs.webkit.org/show_bug.cgi?id=118665
+        landed.
+        They should be removed.
+
+        * fast/regions/layers/dynamic-layer-added-with-no-layout-expected.txt: Removed.
+        * fast/regions/layers/dynamic-layer-removed-with-no-layout-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-horizontal-bt-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-lr-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-rl-expected.txt: Removed.
+
 2013-12-17  Mihai Maerean  <mmaerean@adobe.com>
 
         Fix hit testing for divs with a hierarchy of css transformed and non-transformed elements
