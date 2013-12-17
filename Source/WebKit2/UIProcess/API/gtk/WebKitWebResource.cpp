@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitWebResource.h"
 
-#include "WebData.h"
+#include "APIData.h"
 #include "WebFrameProxy.h"
 #include "WebKitMarshal.h"
 #include "WebKitURIRequest.h"
@@ -310,7 +310,7 @@ WebKitURIResponse* webkit_web_resource_get_response(WebKitWebResource* resource)
 }
 
 struct ResourceGetDataAsyncData {
-    RefPtr<WebData> webData;
+    RefPtr<API::Data> webData;
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ResourceGetDataAsyncData)
 

@@ -1,3 +1,15 @@
+2013-12-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed. Fix GTK+ build after r160653.
+
+        Renamed WebData to API::Data
+
+        * GNUmakefile.list.am: Added APIData.cpp and APIData.h
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestReadCallback):
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+
 2013-12-16  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2][iOS] WKView sends unscaled scroll position to WKContentView

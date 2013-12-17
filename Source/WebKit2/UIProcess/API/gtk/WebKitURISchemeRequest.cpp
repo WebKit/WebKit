@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitURISchemeRequest.h"
 
-#include "WebData.h"
+#include "APIData.h"
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebView.h"
@@ -171,12 +171,12 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
     }
 
     WebKitURISchemeRequestPrivate* priv = request->priv;
-    RefPtr<WebData> webData = WebData::create(reinterpret_cast<const unsigned char*>(priv->readBuffer), bytesRead);
+    RefPtr<API::Data> webData = API::Data::create(reinterpret_cast<const unsigned char*>(priv->readBuffer), bytesRead);
     if (!priv->bytesRead) {
-        // First chunk read. In case of empty reply an empty WebData is sent to the WebProcess.
+        // First chunk read. In case of empty reply an empty API::Data is sent to the WebProcess.
         priv->webRequestManager->didHandleURIRequest(webData.get(), priv->streamLength, String::fromUTF8(priv->mimeType.data()), priv->requestID);
     } else if (bytesRead || (!bytesRead && !priv->streamLength)) {
-        // Subsequent chunk read. We only send an empty WebData to the WebProcess when stream length is unknown.
+        // Subsequent chunk read. We only send an empty API::Data to the WebProcess when stream length is unknown.
         priv->webRequestManager->didReceiveURIRequestData(webData.get(), priv->requestID);
     }
 
