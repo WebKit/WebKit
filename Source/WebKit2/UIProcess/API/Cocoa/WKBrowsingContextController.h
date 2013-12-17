@@ -90,6 +90,8 @@ WK_API_CLASS
 /* Reload the currently active URL, bypassing caches. */
 - (void)reloadFromOrigin;
 
+@property (copy) NSString *applicationNameForUserAgent;
+@property (copy) NSString *customUserAgent;
 
 #pragma mark Back/Forward
 

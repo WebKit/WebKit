@@ -280,6 +280,28 @@ static void releaseNSData(unsigned char*, const void* data)
     _page->reload(true);
 }
 
+- (NSString *)applicationNameForUserAgent
+{
+    const String& applicationName = _page->applicationNameForUserAgent();
+    return !applicationName ? nil : (NSString *)applicationName;
+}
+
+- (void)setApplicationNameForUserAgent:(NSString *)applicationNameForUserAgent
+{
+    _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
+}
+
+- (NSString *)customUserAgent
+{
+    const String& customUserAgent = _page->customUserAgent();
+    return !customUserAgent ? nil : (NSString *)customUserAgent;
+}
+
+- (void)setCustomUserAgent:(NSString *)customUserAgent
+{
+    _page->setCustomUserAgent(customUserAgent);
+}
+
 #pragma mark Back/Forward
 
 - (void)goForward
