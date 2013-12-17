@@ -1,3 +1,13 @@
+2013-12-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Build the plugin process against GTK+ 2
+        https://bugs.webkit.org/show_bug.cgi?id=116374
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * TestWebKitAPI/PlatformGTK.cmake: Add WebCorePlatformGTK to the list of
+        libraries required for WebCore unit tests.
+
 2013-12-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Revise filter-build-webkit to deal with Windows build logs

@@ -1,3 +1,14 @@
+2013-12-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Build the plugin process against GTK+ 2
+        https://bugs.webkit.org/show_bug.cgi?id=116374
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * PlatformGTK.cmake: Split off the GTK+-dependent sources into
+        libWebCorePlatformGTK and compile libWebCorePlatformGTK2 when
+        WebKit2 is enabled.
+
 2013-12-17  Alex Christensen  <achristensen@webkit.org>
 
         Compile fix for WebGL on Windows without GRAPHICS_SURFACE.

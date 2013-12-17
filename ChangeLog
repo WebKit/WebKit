@@ -1,3 +1,16 @@
+2013-12-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Build the plugin process against GTK+ 2
+        https://bugs.webkit.org/show_bug.cgi?id=116374
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/cmake/FindGDK2.cmake: Added.
+        * Source/cmake/FindGTK2.cmake: Added.
+        * Source/cmake/OptionsGTK.cmake: Look for GTK2 and GDK2.
+        * Source/cmake/WebKitMacros.cmake: Abstract WebKit2 IPC generation here so it
+        can be shared between the WebKit2 library and the plugin process.
+
 2013-12-17  Simon Pena  <simon.pena@samsung.com>
 
         [NIX] Enable full debug builds by having ar creating thin archives

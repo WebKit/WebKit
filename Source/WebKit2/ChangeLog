@@ -1,3 +1,16 @@
+2013-12-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Build the plugin process against GTK+ 2
+        https://bugs.webkit.org/show_bug.cgi?id=116374
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Use the new GENERATE_WEBKIT2_MESSAGE_SOURCES macro so we
+        can share messaging file generation with the plugin process.
+        * PlatformGTK.cmake: Add more files to the plugin process source list. Properly
+        generate message sources, add the appropriate include paths, defines, and libraries
+        for the plugin process.
+
 2013-12-17  Anders Carlsson  <andersca@apple.com>
 
         Back out r159982

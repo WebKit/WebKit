@@ -22,6 +22,102 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
+    editing/SmartReplaceICU.cpp
+
+    html/shadow/MediaControlsGtk.cpp
+
+    loader/soup/CachedRawResourceSoup.cpp
+    loader/soup/SubresourceLoaderSoup.cpp
+
+    platform/Cursor.cpp
+    platform/PlatformStrategies.cpp
+
+    platform/audio/gstreamer/AudioDestinationGStreamer.cpp
+    platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
+    platform/audio/gstreamer/FFTFrameGStreamer.cpp
+    platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
+
+    platform/graphics/GraphicsContext3DPrivate.cpp
+    platform/graphics/OpenGLShims.cpp
+    platform/graphics/WOFFFileFormat.cpp
+
+    platform/graphics/cairo/BitmapImageCairo.cpp
+    platform/graphics/cairo/CairoUtilities.cpp
+    platform/graphics/cairo/DrawingBufferCairo.cpp
+    platform/graphics/cairo/FontCairo.cpp
+    platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
+    platform/graphics/cairo/GradientCairo.cpp
+    platform/graphics/cairo/GraphicsContext3DCairo.cpp
+    platform/graphics/cairo/ImageBufferCairo.cpp
+    platform/graphics/cairo/ImageCairo.cpp
+    platform/graphics/cairo/IntRectCairo.cpp
+    platform/graphics/cairo/OwnPtrCairo.cpp
+    platform/graphics/cairo/PathCairo.cpp
+    platform/graphics/cairo/PatternCairo.cpp
+    platform/graphics/cairo/PlatformContextCairo.cpp
+    platform/graphics/cairo/PlatformPathCairo.cpp
+    platform/graphics/cairo/RefPtrCairo.cpp
+    platform/graphics/cairo/TileCairo.cpp
+    platform/graphics/cairo/TiledBackingStoreBackendCairo.cpp
+    platform/graphics/cairo/TransformationMatrixCairo.cpp
+
+    platform/graphics/freetype/FontCacheFreeType.cpp
+    platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
+    platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
+    platform/graphics/freetype/SimpleFontDataFreeType.cpp
+
+    platform/graphics/gstreamer/GRefPtrGStreamer.cpp
+    platform/graphics/gstreamer/GStreamerUtilities.cpp
+    platform/graphics/gstreamer/ImageGStreamerCairo.cpp
+    platform/graphics/gstreamer/VideoSinkGStreamer.cpp
+    platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
+
+    platform/graphics/harfbuzz/HarfBuzzFace.cpp
+    platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
+    platform/graphics/harfbuzz/HarfBuzzShaper.cpp
+
+    platform/graphics/opengl/Extensions3DOpenGL.cpp
+    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
+    platform/graphics/opengl/Extensions3DOpenGLES.cpp
+    platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+
+    platform/graphics/opentype/OpenTypeVerticalData.cpp
+
+    platform/image-decoders/cairo/ImageDecoderCairo.cpp
+
+    platform/linux/GamepadDeviceLinux.cpp
+
+    platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp
+
+    platform/network/soup/AuthenticationChallengeSoup.cpp
+    platform/network/soup/CookieJarSoup.cpp
+    platform/network/soup/CookieStorageSoup.cpp
+    platform/network/soup/CredentialStorageSoup.cpp
+    platform/network/soup/DNSSoup.cpp
+    platform/network/soup/GOwnPtrSoup.cpp
+    platform/network/soup/NetworkStorageSessionSoup.cpp
+    platform/network/soup/ProxyResolverSoup.cpp
+    platform/network/soup/ProxyServerSoup.cpp
+    platform/network/soup/ResourceErrorSoup.cpp
+    platform/network/soup/ResourceHandleSoup.cpp
+    platform/network/soup/ResourceRequestSoup.cpp
+    platform/network/soup/ResourceResponseSoup.cpp
+    platform/network/soup/SocketStreamHandleSoup.cpp
+    platform/network/soup/SoupURIUtils.cpp
+    platform/network/soup/SynchronousLoaderClientSoup.cpp
+
+    platform/soup/SharedBufferSoup.cpp
+
+    platform/text/LocaleICU.cpp
+    platform/text/TextBreakIteratorICU.cpp
+    platform/text/TextCodecICU.cpp
+    platform/text/TextEncodingDetectorICU.cpp
+
+    platform/text/enchant/TextCheckerEnchant.cpp
+)
+
+list(APPEND WebCorePlatformGTK_SOURCES
     accessibility/atk/AXObjectCacheAtk.cpp
     accessibility/atk/AccessibilityObjectAtk.cpp
     accessibility/atk/WebKitAccessibleHyperlink.cpp
@@ -39,73 +135,27 @@ list(APPEND WebCore_SOURCES
     accessibility/atk/WebKitAccessibleUtil.cpp
     accessibility/atk/WebKitAccessibleWrapperAtk.cpp
 
-    editing/SmartReplaceICU.cpp
-
     editing/atk/FrameSelectionAtk.cpp
-
-    html/shadow/MediaControlsGtk.cpp
-
-    loader/soup/CachedRawResourceSoup.cpp
-    loader/soup/SubresourceLoaderSoup.cpp
 
     page/gtk/DragControllerGtk.cpp
     page/gtk/EventHandlerGtk.cpp
-
-    platform/Cursor.cpp
-    platform/PlatformStrategies.cpp
-
-    platform/audio/gstreamer/AudioDestinationGStreamer.cpp
-    platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
-    platform/audio/gstreamer/FFTFrameGStreamer.cpp
-    platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
 
     platform/audio/gtk/AudioBusGtk.cpp
 
     platform/cairo/WidgetBackingStoreCairo.cpp
 
     platform/graphics/GLContext.cpp
-    platform/graphics/GraphicsContext3DPrivate.cpp
-    platform/graphics/OpenGLShims.cpp
-    platform/graphics/WOFFFileFormat.cpp
 
-    platform/graphics/cairo/BitmapImageCairo.cpp
-    platform/graphics/cairo/CairoUtilities.cpp
-    platform/graphics/cairo/DrawingBufferCairo.cpp
-    platform/graphics/cairo/FontCairo.cpp
-    platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
-    platform/graphics/cairo/GradientCairo.cpp
-    platform/graphics/cairo/GraphicsContext3DCairo.cpp
     platform/graphics/cairo/GraphicsContextCairo.cpp
-    platform/graphics/cairo/ImageBufferCairo.cpp
-    platform/graphics/cairo/ImageCairo.cpp
-    platform/graphics/cairo/IntRectCairo.cpp
-    platform/graphics/cairo/OwnPtrCairo.cpp
-    platform/graphics/cairo/PathCairo.cpp
-    platform/graphics/cairo/PatternCairo.cpp
-    platform/graphics/cairo/PlatformContextCairo.cpp
-    platform/graphics/cairo/PlatformPathCairo.cpp
-    platform/graphics/cairo/RefPtrCairo.cpp
-    platform/graphics/cairo/TileCairo.cpp
-    platform/graphics/cairo/TiledBackingStoreBackendCairo.cpp
-    platform/graphics/cairo/TransformationMatrixCairo.cpp
 
     platform/graphics/egl/GLContextEGL.cpp
 
-    platform/graphics/freetype/FontCacheFreeType.cpp
-    platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
     platform/graphics/freetype/FontPlatformDataFreeType.cpp
-    platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
-    platform/graphics/freetype/SimpleFontDataFreeType.cpp
 
     platform/graphics/glx/GLContextGLX.cpp
 
-    platform/graphics/gstreamer/GRefPtrGStreamer.cpp
-    platform/graphics/gstreamer/GStreamerUtilities.cpp
-    platform/graphics/gstreamer/ImageGStreamerCairo.cpp
     platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
     platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
-    platform/graphics/gstreamer/VideoSinkGStreamer.cpp
-    platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
 
     platform/graphics/gtk/ColorGtk.cpp
     platform/graphics/gtk/GdkCairoUtilities.cpp
@@ -114,18 +164,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/gtk/ImageGtk.cpp
     platform/graphics/gtk/IntPointGtk.cpp
     platform/graphics/gtk/IntRectGtk.cpp
-
-    platform/graphics/harfbuzz/HarfBuzzFace.cpp
-    platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
-    platform/graphics/harfbuzz/HarfBuzzShaper.cpp
-
-    platform/graphics/opengl/Extensions3DOpenGL.cpp
-    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
-    platform/graphics/opengl/Extensions3DOpenGLES.cpp
-    platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
-    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
-
-    platform/graphics/opentype/OpenTypeVerticalData.cpp
 
     platform/gtk/ClipboardUtilitiesGtk.cpp
     platform/gtk/ContextMenuGtk.cpp
@@ -180,12 +218,6 @@ list(APPEND WebCore_SOURCES
     platform/gtk/WidgetGtk.cpp
     platform/gtk/WidgetRenderingContext.cpp
 
-    platform/image-decoders/cairo/ImageDecoderCairo.cpp
-
-    platform/linux/GamepadDeviceLinux.cpp
-
-    platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp
-
     platform/network/gtk/CredentialBackingStore.cpp
 
     platform/network/soup/AuthenticationChallengeSoup.cpp
@@ -225,7 +257,9 @@ if (ENABLE_NETSCAPE_PLUGIN_API)
         plugins/PluginPackage.cpp
         plugins/PluginStream.cpp
         plugins/PluginView.cpp
+    )
 
+    list(APPEND WebCorePlatformGTK_SOURCES
         plugins/gtk/PluginPackageGtk.cpp
         plugins/gtk/PluginViewGtk.cpp
         plugins/gtk/gtk2xtbin.c
@@ -251,7 +285,6 @@ list(APPEND WebCore_LIBRARIES
     ${GLIB_GMODULE_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
     ${GLIB_LIBRARIES}
-    ${GTK3_LIBRARIES}
     ${HARFBUZZ_LIBRARIES}
     ${ICU_LIBRARIES}
     ${JPEG_LIBRARIES}
@@ -279,7 +312,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${LIBXSLT_INCLUDE_DIR}
     ${SQLITE_INCLUDE_DIR}
     ${GLIB_INCLUDE_DIRS}
-    ${GTK3_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIRS}
     ${HARFBUZZ_INCLUDE_DIRS}
@@ -361,6 +393,47 @@ if (ENABLE_WEB_AUDIO)
             DESTINATION
                 "${DATA_INSTALL_DIR}/resources/audio")
 endif ()
+
+if (ENABLE_WEBKIT2)
+    # WebKit2 needs a version of WebCore compiled against GTK+2, so we've isolated all the GTK+
+    # dependent files into a separate library which can be used to construct a GTK+2 WebCore
+    # for the plugin process.
+    add_library(WebCorePlatformGTK2 ${WebCore_LIBRARY_TYPE} ${WebCorePlatformGTK_SOURCES})
+    WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebCorePlatformGTK2)
+    set_property(TARGET WebCorePlatformGTK2
+        APPEND
+        PROPERTY COMPILE_DEFINITIONS GTK_API_VERSION_2=1
+    )
+    set_property(
+        TARGET WebCorePlatformGTK2
+        APPEND
+        PROPERTY INCLUDE_DIRECTORIES
+            ${WebCore_INCLUDE_DIRECTORIES}
+            ${GTK2_INCLUDE_DIRS}
+            ${GDK2_INCLUDE_DIRS}
+    )
+    target_link_libraries(WebCorePlatformGTK2
+         ${WebCore_LIBRARIES}
+         ${GTK2_LIBRARIES}
+         ${GDK2_LIBRARIES}
+    )
+endif ()
+
+add_library(WebCorePlatformGTK ${WebCore_LIBRARY_TYPE} ${WebCorePlatformGTK_SOURCES})
+WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebCorePlatformGTK)
+set_property(
+    TARGET WebCorePlatformGTK
+    APPEND
+    PROPERTY INCLUDE_DIRECTORIES
+        ${WebCore_INCLUDE_DIRECTORIES}
+        ${GTK3_INCLUDE_DIRS}
+        ${GDK3_INCLUDE_DIRS}
+)
+target_link_libraries(WebCorePlatformGTK
+    ${WebCore_LIBRARIES}
+    ${GTK3_LIBRARIES}
+    ${GDK3_LIBRARIES}
+)
 
 if (ENABLE_WEBKIT2)
     set(DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR ${DERIVED_SOURCES_DIR}/webkitdom)

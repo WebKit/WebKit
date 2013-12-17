@@ -399,13 +399,27 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     ${WTF_DIR}
     ${CAIRO_INCLUDE_DIRS}
     ${ENCHANT_INCLUDE_DIRS}
+    ${LIBSOUP_INCLUDE_DIRS}
+)
+
+set(WebKit2CommonIncludeDirectories ${WebKit2_INCLUDE_DIRECTORIES})
+
+list(APPEND WebKit2_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}
-    ${LIBSOUP_INCLUDE_DIRS}
 )
 
 list(APPEND WebProcess_SOURCES
     gtk/MainGtk.cpp
+)
+
+set(SharedWebKit2Libraries
+    ${WebKit2_LIBRARIES}
+)
+
+list(APPEND WebKit2_LIBRARIES
+    GObjectDOMBindings
+    WebCorePlatformGTK
 )
 
 set(WebKit2_MARSHAL_LIST ${WEBKIT2_DIR}/UIProcess/API/gtk/webkit2marshal.list)
@@ -458,8 +472,6 @@ set(WEBKIT2_EXTRA_DEPENDENCIES
 )
 
 if (ENABLE_PLUGIN_PROCESS)
-    add_definitions(-DENABLE_PLUGIN_PROCESS=1)
-
     set(PluginProcess_EXECUTABLE_NAME WebKitPluginProcess)
     list(APPEND PluginProcess_INCLUDE_DIRECTORIES
         "${WEBKIT2_DIR}/PluginProcess/unix"
@@ -467,16 +479,134 @@ if (ENABLE_PLUGIN_PROCESS)
 
     include_directories(${PluginProcess_INCLUDE_DIRECTORIES})
 
+    # FIXME: We should figure out a way to avoid compiling files that are common between the plugin
+    # process and WebKit2 only once instead of recompiling them for the plugin process.
     list(APPEND PluginProcess_SOURCES
-        ${WEBKIT2_DIR}/unix/PluginMainUnix.cpp
+        Platform/CoreIPC/ArgumentCoders.cpp
+        Platform/CoreIPC/ArgumentDecoder.cpp
+        Platform/CoreIPC/ArgumentEncoder.cpp
+
+        Platform/CoreIPC/Attachment.cpp
+        Platform/CoreIPC/Connection.cpp
+        Platform/CoreIPC/MessageDecoder.cpp
+        Platform/CoreIPC/MessageEncoder.cpp
+        Platform/CoreIPC/MessageReceiverMap.cpp
+        Platform/CoreIPC/MessageSender.cpp
+
+        Platform/CoreIPC/unix/AttachmentUnix.cpp
+        Platform/CoreIPC/unix/ConnectionUnix.cpp
+
+        Platform/IPC/DataReference.cpp
+        Platform/IPC/StringReference.cpp
+
+        Platform/Logging.cpp
+        Platform/Module.cpp
+        Platform/WorkQueue.cpp
+
+        Platform/gtk/LoggingGtk.cpp
+        Platform/gtk/ModuleGtk.cpp
+        Platform/gtk/WorkQueueGtk.cpp
+        Platform/unix/SharedMemoryUnix.cpp
+
+        PluginProcess/PluginControllerProxy.cpp
+        PluginProcess/PluginCreationParameters.cpp
+        PluginProcess/PluginProcess.cpp
+        PluginProcess/WebProcessConnection.cpp
+
+        PluginProcess/unix/PluginControllerProxyUnix.cpp
+        PluginProcess/unix/PluginProcessMainUnix.cpp
+        PluginProcess/unix/PluginProcessUnix.cpp
+
+        Shared/ActivityAssertion.cpp
+        Shared/ChildProcess.cpp
+        Shared/ChildProcessProxy.cpp
+        Shared/ConnectionStack.cpp
+
+        Shared/Plugins/NPIdentifierData.cpp
+        Shared/Plugins/NPObjectMessageReceiver.cpp
+        Shared/Plugins/NPObjectProxy.cpp
+        Shared/Plugins/NPRemoteObjectMap.cpp
+        Shared/Plugins/NPVariantData.cpp
+
+        Shared/Plugins/Netscape/NetscapePluginModule.cpp
+        Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
+        Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
+
+        Shared/Plugins/PluginProcessCreationParameters.cpp
+
+        Shared/ShareableBitmap.cpp
+        Shared/WebCoreArgumentCoders.cpp
+        Shared/WebEvent.cpp
+        Shared/WebKeyboardEvent.cpp
+        Shared/WebKit2Initialize.cpp
+        Shared/WebMouseEvent.cpp
+        Shared/WebWheelEvent.cpp
+
+        Shared/cairo/ShareableBitmapCairo.cpp
+
+        Shared/gtk/NativeWebKeyboardEventGtk.cpp
+        Shared/gtk/NativeWebMouseEventGtk.cpp
+        Shared/gtk/NativeWebWheelEventGtk.cpp
+        Shared/gtk/ProcessExecutablePathGtk.cpp
+        Shared/gtk/WebEventFactory.cpp
+
+        Shared/soup/CertificateInfo.cpp
+        Shared/soup/WebCoreArgumentCodersSoup.cpp
+
+        UIProcess/Launcher/ProcessLauncher.cpp
+        UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp
+
+        UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
+
+        WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp
+        WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp
+        WebProcess/Plugins/Netscape/NetscapePlugin.cpp
+        WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
+        WebProcess/Plugins/Netscape/NetscapePluginStream.cpp
+        WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp
+
+        WebProcess/Plugins/Plugin.cpp
+
+        unix/PluginMainUnix.cpp
+        unix/PluginMainUnix.cpp
     )
 
-    set(PluginProcess_LIBRARIES
-        WebKit2
+    list(APPEND PluginProcess_MESSAGES_IN_FILES
+        Shared/Plugins/NPObjectMessageReceiver.messages.in
+
+        PluginProcess/PluginControllerProxy.messages.in
+        PluginProcess/PluginProcess.messages.in
+        PluginProcess/WebProcessConnection.messages.in
     )
+    GENERATE_WEBKIT2_MESSAGE_SOURCES(PluginProcess_SOURCES "${PluginProcess_MESSAGES_IN_FILES}")
 
     add_executable(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_SOURCES})
-    target_link_libraries(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_LIBRARIES})
+
+    # We need ENABLE_PLUGIN_PROCESS for all targets in this directory, but
+    # we only want GTK_API_VERSION_2 for the plugin process target.
+    add_definitions(-DENABLE_PLUGIN_PROCESS=1)
+    set_property(
+        TARGET ${PluginProcess_EXECUTABLE_NAME}
+        APPEND
+        PROPERTY COMPILE_DEFINITIONS GTK_API_VERSION_2=1
+    )
+    set_property(
+        TARGET ${PluginProcess_EXECUTABLE_NAME}
+        APPEND
+        PROPERTY INCLUDE_DIRECTORIES
+            ${WebKit2CommonIncludeDirectories}
+            ${GTK2_INCLUDE_DIRS}
+            ${GDK2_INCLUDE_DIRS}
+    )
+
+    target_link_libraries(${PluginProcess_EXECUTABLE_NAME}
+        ${SharedWebKit2Libraries}
+        WebCorePlatformGTK2
+        WebCore
+    )
+
+    add_dependencies(${PluginProcess_EXECUTABLE_NAME} WebKit2)
+
     install(TARGETS ${PluginProcess_EXECUTABLE_NAME} DESTINATION "${EXEC_INSTALL_DIR}")
 endif () # ENABLE_PLUGIN_PROCESS
 
@@ -498,4 +628,3 @@ add_library(webkit2gtkinjectedbundle MODULE
     "${WEBKIT2_DIR}/WebProcess/gtk/WebGtkInjectedBundleMain.cpp"
 )
 add_dependencies(webkit2gtkinjectedbundle GObjectDOMBindings)
-list(APPEND WebKit2_LIBRARIES GObjectDOMBindings)

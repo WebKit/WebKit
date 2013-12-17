@@ -248,3 +248,25 @@ macro(WEBKIT_CREATE_FORWARDING_HEADERS _framework)
         endif ()
     endforeach ()
 endmacro()
+
+# Helper macro which wraps generate-message-receiver.py and generate-message-header.py scripts
+#   _output_source is a list name which will contain generated sources.(eg. WebKit2_SOURCES)
+#   _input_files are messages.in files to generate.
+macro(GENERATE_WEBKIT2_MESSAGE_SOURCES _output_source _input_files)
+    foreach (_file ${_input_files})
+        get_filename_component(_name ${_file} NAME_WE)
+        add_custom_command(
+            OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}Messages.h
+            MAIN_DEPENDENCY ${_file}
+            DEPENDS ${WEBKIT2_DIR}/Scripts/webkit2/__init__.py
+                    ${WEBKIT2_DIR}/Scripts/webkit2/messages.py
+                    ${WEBKIT2_DIR}/Scripts/webkit2/model.py
+                    ${WEBKIT2_DIR}/Scripts/webkit2/parser.py
+            COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-message-receiver.py ${_file} > ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp
+            COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-messages-header.py ${_file} > ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}Messages.h
+            WORKING_DIRECTORY ${WEBKIT2_DIR}
+            VERBATIM)
+
+        list(APPEND ${_output_source} ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp)
+    endforeach ()
+endmacro()

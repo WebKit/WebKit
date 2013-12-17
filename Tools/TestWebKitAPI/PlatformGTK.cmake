@@ -50,6 +50,7 @@ list(APPEND test_webkit2_api_LIBRARIES
 )
 
 list(APPEND test_webcore_LIBRARIES
+    WebCorePlatformGTK
     ${GDK3_LIBRARIES}
     ${GTK3_LIBRARIES}
 )
