@@ -1,3 +1,28 @@
+2013-12-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Incorrect repaint of fixed element with transformed parent
+        https://bugs.webkit.org/show_bug.cgi?id=125756
+
+        Reviewed by Darin Adler.
+
+        When collecting the layers for fixed positioned elements with named flow
+        as a containing block, use layers collection at named flow layer level
+        instead of relying on the positioned elements collection.
+
+        Modified also FlowThreadController::collectFixedPositionedLayers function
+        to always return the layers sorted by z-index, as this operation was always
+        done at the call sites.
+
+        Tests: fast/regions/repaint/fixed-in-named-flow-cb-changed.html
+               fast/regions/repaint/fixed-in-named-flow-cb-changed2.html
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::compareZIndex):
+        (WebCore::FlowThreadController::collectFixedPositionedLayers):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintFixedLayersInNamedFlows):
+        (WebCore::RenderLayer::hitTestFixedLayersInNamedFlows):
+
 2013-12-17  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         REGRESSION(r159166?): fast/block/float/float-with-fractional-height-vertical-lr.html, fast/block/float/float-with-fractional-height.html are failing

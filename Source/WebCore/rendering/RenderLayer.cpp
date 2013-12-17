@@ -4044,9 +4044,6 @@ void RenderLayer::paintFixedLayersInNamedFlows(GraphicsContext* context, const L
     Vector<RenderLayer*> fixedLayers;
     renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
 
-    // Sort the fixed layers list
-    std::stable_sort(fixedLayers.begin(), fixedLayers.end(), compareZIndex);
-
     // Paint the layers
     for (size_t i = 0; i < fixedLayers.size(); ++i) {
         RenderLayer* fixedLayer = fixedLayers.at(i);
@@ -4793,9 +4790,6 @@ RenderLayer* RenderLayer::hitTestFixedLayersInNamedFlows(RenderLayer* /*rootLaye
 
     Vector<RenderLayer*> fixedLayers;
     renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
-
-    // Sort the fixed layers list
-    std::stable_sort(fixedLayers.begin(), fixedLayers.end(), compareZIndex);
 
     // Hit test the layers
     RenderLayer* resultLayer = 0;
