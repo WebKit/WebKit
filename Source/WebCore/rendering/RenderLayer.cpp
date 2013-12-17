@@ -4709,14 +4709,8 @@ bool RenderLayer::isFlowThreadCollectingGraphicsLayersUnderRegions() const
 static double computeZOffset(const HitTestingTransformState& transformState)
 {
     // We got an affine transform, so no z-offset
-    if (transformState.m_accumulatedTransform.isAffine()) {
-        // Non transformed layers are being hit last, not through or in-between transformed layers.
-        // The paint order says that the divs creating stacking contexts (including transforms) are painted after the
-        // other siblings so they should be hit tested in the reverse order. Also, a rotated div in a non-rotated parent
-        // should be hit in its entire area, not hit its parent's background, even if the z-coordinate is negative where
-        // the mouse is located.
-        return -std::numeric_limits<int>::max();
-    }
+    if (transformState.m_accumulatedTransform.isAffine())
+        return 0;
 
     // Flatten the point into the target plane
     FloatPoint targetPoint = transformState.mappedPoint();
@@ -4918,11 +4912,6 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     if (preserves3D()) {
         depthSortDescendants = true;
         // Our layers can depth-test with our container, so share the z depth pointer with the container, if it passed one down.
-        zOffsetForDescendantsPtr = zOffset ? zOffset : &localZOffset;
-        zOffsetForContentsPtr = zOffset ? zOffset : &localZOffset;
-    } else if (m_has3DTransformedDescendant) {
-        // Flattening layer with 3d children; use a local zOffset pointer to depth-test children and foreground.
-        depthSortDescendants = true;
         zOffsetForDescendantsPtr = zOffset ? zOffset : &localZOffset;
         zOffsetForContentsPtr = zOffset ? zOffset : &localZOffset;
     } else if (zOffset) {

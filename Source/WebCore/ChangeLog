@@ -1,3 +1,29 @@
+2013-12-17  Mihai Maerean  <mmaerean@adobe.com>
+
+        Fix hit testing for divs with a hierarchy of css transformed and non-transformed elements
+        https://bugs.webkit.org/show_bug.cgi?id=124777
+
+        Reviewed by Darin Adler.
+
+        After bug #124647, the hit test will still behave incorrectly for transformed divs with non
+        transformed siblings that are all inside a transformed element (tested by the
+        hover-rotated-with-children-negative-z.html layout test).
+
+        The fix is to not take zOffset into account during hit-testing when child layers are in the
+        same 3D rendering context. Only when preserve3d is true, should hit-testing compute the
+        zOffset of the layers with transformations and, when two layers overlap, to return the layer
+        with the highest zOffset.
+
+        The patch includes the work of a.renevier from https://codereview.chromium.org/79943002/
+
+        Tests: transforms/3d/hit-testing/hover-rotated-with-children-negative-z.html
+               transforms/3d/hit-testing/negative-zoffset-hit-test.html
+               transforms/3d/hit-testing/overlapping-layers-hit-test.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::computeZOffset):
+        (WebCore::RenderLayer::hitTestLayer):
+
 2013-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Remove a few more guards mistakenly added in r160367

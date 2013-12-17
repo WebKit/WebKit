@@ -1,3 +1,17 @@
+2013-12-17  Mihai Maerean  <mmaerean@adobe.com>
+
+        Fix hit testing for divs with a hierarchy of css transformed and non-transformed elements
+        https://bugs.webkit.org/show_bug.cgi?id=124777
+
+        Reviewed by Darin Adler.
+
+        * transforms/3d/hit-testing/hover-rotated-with-children-negative-z.html: Added.
+        * transforms/3d/hit-testing/hover-rotated-with-children-negative-z-expected.txt: Added.
+        * transforms/3d/hit-testing/negative-zoffset-hit-test.html: Added.
+        * transforms/3d/hit-testing/negative-zoffset-hit-test-expected.txt: Added.
+        * transforms/3d/hit-testing/overlapping-layers-hit-test.html: Added.
+        * transforms/3d/hit-testing/overlapping-layers-hit-test-expected.txt: Added.
+
 2013-12-16  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Checking RTCPeerConnection signalingState before setting local/remoteDescription
