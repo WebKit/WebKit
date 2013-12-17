@@ -38,7 +38,6 @@ static bool testDone;
 static void didRunStep1StateChangeVisibleToHidden(WKSerializedScriptValueRef, WKErrorRef, void*);
 static void didRunStep2StateChangeHiddenToPrerender(WKSerializedScriptValueRef, WKErrorRef, void*);
 static void didRunStep3StateChangePrerenderToUnloaded(WKSerializedScriptValueRef, WKErrorRef, void*);
-static void didRunStep4InStateUnloaded(WKSerializedScriptValueRef, WKErrorRef, void*);
 
 static void setPageVisibilityStateWithEvalContinuation(PlatformWebView* webView, WKPageVisibilityState visibilityState, WKPageRunJavaScriptFunction callback)
 {
@@ -86,12 +85,6 @@ static void didRunStep2StateChangeHiddenToPrerender(WKSerializedScriptValueRef r
 static void didRunStep3StateChangePrerenderToUnloaded(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
 {
     assertSerializedScriptValueIsStringValue(resultSerializedScriptValue, error, "prerender");
-    setPageVisibilityStateWithEvalContinuation(static_cast<PlatformWebView*>(context), kWKPageVisibilityStateUnloaded, didRunStep4InStateUnloaded);
-}
-
-static void didRunStep4InStateUnloaded(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
-{
-    assertSerializedScriptValueIsStringValue(resultSerializedScriptValue, error, "unloaded");
     testDone = true;
 }
 

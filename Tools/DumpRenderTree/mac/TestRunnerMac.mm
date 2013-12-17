@@ -1075,8 +1075,6 @@ void TestRunner::setPageVisibility(const char* newVisibility)
         [webView _setVisibilityState:WebPageVisibilityStateHidden isInitialState:NO];
     else if (!strcmp(newVisibility, "prerender"))
         [webView _setVisibilityState:WebPageVisibilityStatePrerender isInitialState:NO];
-    else if (!strcmp(newVisibility, "unloaded"))
-        [webView _setVisibilityState:WebPageVisibilityStateUnloaded isInitialState:NO];
 }
 
 void TestRunner::grantWebNotificationPermission(JSStringRef jsOrigin)

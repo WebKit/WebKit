@@ -435,8 +435,6 @@ static PageVisibilityState core(WebPageVisibilityState visibilityState)
         return PageVisibilityStateHidden;
     case WebPageVisibilityStatePrerender:
         return PageVisibilityStatePrerender;
-    case WebPageVisibilityStateUnloaded:
-        return PageVisibilityStateUnloaded;
     }
 
     ASSERT_NOT_REACHED();
@@ -452,8 +450,6 @@ static WebPageVisibilityState kit(PageVisibilityState visibilityState)
         return WebPageVisibilityStateHidden;
     case PageVisibilityStatePrerender:
         return WebPageVisibilityStatePrerender;
-    case PageVisibilityStateUnloaded:
-        return WebPageVisibilityStateUnloaded;
     }
 
     ASSERT_NOT_REACHED();

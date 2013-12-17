@@ -1,3 +1,18 @@
+2013-12-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove PageVisibilityStateUnloaded
+        https://bugs.webkit.org/show_bug.cgi?id=125869
+
+        Reviewed by Anders Carlsson.
+
+        This is not currently supported by WebKit, remove this enum value.
+        We can always add this back later if/when we add support for this state.
+
+        * page/PageVisibilityState.cpp:
+        (WebCore::pageVisibilityStateString):
+        * page/PageVisibilityState.h:
+            - removed PageVisibilityStateUnloaded
+
 2013-12-12  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Build the plugin process against GTK+ 2

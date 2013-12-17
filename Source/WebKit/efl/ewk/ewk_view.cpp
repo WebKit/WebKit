@@ -4250,6 +4250,10 @@ Eina_Bool ewk_view_visibility_state_set(Evas_Object* ewkView, Ewk_Page_Visibilit
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
+    // WebKit does not curently support the "unloaded" state.
+    if (pageVisibilityState == EWK_PAGE_VISIBILITY_STATE_UNLOADED)
+        return false;
+
     priv->page->setVisibilityState(static_cast<WebCore::PageVisibilityState>(pageVisibilityState), initialState);
 
     return true;

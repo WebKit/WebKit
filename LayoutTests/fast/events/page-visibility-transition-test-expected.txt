@@ -13,10 +13,6 @@ PASS document.visibilityState is "prerender"
 PASS document.hidden is true
 PASS document.visibilityState is "visible"
 PASS document.hidden is false
-PASS document.visibilityState is "unloaded"
-PASS document.hidden is true
-PASS document.visibilityState is "visible"
-PASS document.hidden is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

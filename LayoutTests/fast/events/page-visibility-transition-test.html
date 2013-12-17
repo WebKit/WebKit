@@ -95,16 +95,6 @@ function onVisibilityChange() {
     } else if (numVisibilityChanges == 4) {
         checkIsPageVisible();
         numVisibilityChanges++;
-        makePageUnloaded();
-        return;
-    } else if (numVisibilityChanges == 5) {
-        checkIsPageInUnloaded();
-        numVisibilityChanges++;
-        makePageVisible();
-        return;
-    } else if (numVisibilityChanges == 6) {
-        checkIsPageVisible();
-        numVisibilityChanges++;
         finishTest();
         return;
     } else {

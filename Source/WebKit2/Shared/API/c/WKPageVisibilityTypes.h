@@ -35,8 +35,7 @@ extern "C" {
 enum {
     kWKPageVisibilityStateVisible,
     kWKPageVisibilityStateHidden,
-    kWKPageVisibilityStatePrerender,
-    kWKPageVisibilityStateUnloaded
+    kWKPageVisibilityStatePrerender
 };
 typedef uint32_t WKPageVisibilityState;
 

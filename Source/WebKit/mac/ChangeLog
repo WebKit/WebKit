@@ -1,3 +1,19 @@
+2013-12-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove PageVisibilityStateUnloaded
+        https://bugs.webkit.org/show_bug.cgi?id=125869
+
+        Reviewed by Anders Carlsson.
+
+        This is not currently supported by WebKit, remove this enum value.
+        We can always add this back later if/when we add support for this state.
+
+        * WebView/WebView.mm:
+        (core):
+        (kit):
+        * WebView/WebViewPrivate.h:
+            - removed PageVisibilityStateUnloaded/WebPageVisibilityStateUnloaded
+
 2013-12-15  Andy Estes  <aestes@apple.com>
 
         [iOS] Upstream changes to WebKit Public and Private headers

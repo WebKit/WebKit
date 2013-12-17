@@ -156,8 +156,7 @@ typedef NSUInteger WebLayoutMilestones;
 typedef enum {
     WebPageVisibilityStateVisible,
     WebPageVisibilityStateHidden,
-    WebPageVisibilityStatePrerender,
-    WebPageVisibilityStateUnloaded
+    WebPageVisibilityStatePrerender
 } WebPageVisibilityState;
 
 typedef enum {

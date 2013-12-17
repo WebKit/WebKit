@@ -491,8 +491,6 @@ void TestRunner::setPageVisibility(JSStringRef state)
         visibilityState = kWKPageVisibilityStateHidden;
     else if (JSStringIsEqualToUTF8CString(state, "prerender"))
         visibilityState = kWKPageVisibilityStatePrerender;
-    else if (JSStringIsEqualToUTF8CString(state, "unloaded"))
-        visibilityState = kWKPageVisibilityStateUnloaded;
 
     InjectedBundle::shared().setVisibilityState(visibilityState, false);
 }

@@ -1,3 +1,17 @@
+2013-12-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove PageVisibilityStateUnloaded
+        https://bugs.webkit.org/show_bug.cgi?id=125869
+
+        Reviewed by Anders Carlsson.
+
+        This is not currently supported by WebKit, remove this enum value.
+        We can always add this back later if/when we add support for this state.
+
+        * fast/events/page-visibility-transition-test-expected.txt:
+        * fast/events/page-visibility-transition-test.html:
+            - remove test for visibility state "unloaded"; this is no longer supported (it never really was).
+
 2013-12-17  Alexey Proskuryakov  <ap@apple.com>
 
         Sanitize skip entries for pop-up menu tests.
