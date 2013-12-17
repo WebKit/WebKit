@@ -1,5 +1,16 @@
 2013-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix some whitespace issues in inspector code
+        https://bugs.webkit.org/show_bug.cgi?id=125814
+
+        Reviewed by Darin Adler.
+
+        * inspector/protocol/DOM.json:
+        * inspector/protocol/DOMStorage.json:
+        * inspector/protocol/Timeline.json:
+
+2013-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Use JSC::SourceID and JSC::BreakpointID instead of WebCore dups
         https://bugs.webkit.org/show_bug.cgi?id=125818
 

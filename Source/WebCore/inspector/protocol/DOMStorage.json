@@ -56,20 +56,20 @@
         {
             "name": "domStorageItemsCleared",
             "parameters": [
-                { "name": "storageId",  "$ref": "StorageId" }
+                { "name": "storageId", "$ref": "StorageId" }
             ]
         },
         {
             "name": "domStorageItemRemoved",
             "parameters": [
-                { "name": "storageId",  "$ref": "StorageId" },
+                { "name": "storageId", "$ref": "StorageId" },
                 { "name": "key", "type": "string" }
             ]
         },
         {
             "name": "domStorageItemAdded",
             "parameters": [
-                { "name": "storageId",  "$ref": "StorageId" },
+                { "name": "storageId", "$ref": "StorageId" },
                 { "name": "key", "type": "string" },
                 { "name": "newValue", "type": "string" }
             ]
@@ -77,7 +77,7 @@
         {
             "name": "domStorageItemUpdated",
             "parameters": [
-                { "name": "storageId",  "$ref": "StorageId" },
+                { "name": "storageId", "$ref": "StorageId" },
                 { "name": "key", "type": "string" },
                 { "name": "oldValue", "type": "string" },
                 { "name": "newValue", "type": "string" }

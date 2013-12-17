@@ -2055,7 +2055,7 @@ class Generator:
         else:
             dispatcher_if_chain.append("    else if (method == \"%s\")" % json_command_name)
         dispatcher_if_chain.append("        %s(callId, *message.get());" % json_command_name)
-        dispatcher_commands_list.append("            { \"%s\",  &%s::%s }," % (json_command_name, dispatcher_name, json_command_name))
+        dispatcher_commands_list.append("            { \"%s\", &%s::%s }," % (json_command_name, dispatcher_name, json_command_name))
 
         method_in_params_handling = []
         method_dispatch_handling = []

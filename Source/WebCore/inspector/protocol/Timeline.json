@@ -26,8 +26,8 @@
                 { "name": "thread", "type": "string", "optional": true, "description": "If present, identifies the thread that produced the event." },
                 { "name": "data", "type": "object", "description": "Event data." },
                 { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." },
-                { "name": "counters", "$ref": "DOMCounters", "optional": true,  "description": "Current values of DOM counters." },
-                { "name": "usedHeapSize", "type": "integer", "optional": true,  "description": "Current size of JS heap." }
+                { "name": "counters", "$ref": "DOMCounters", "optional": true, "description": "Current values of DOM counters." },
+                { "name": "usedHeapSize", "type": "integer", "optional": true, "description": "Current size of JS heap." }
             ],
             "description": "Timeline record contains information about the recorded activity."
         }
@@ -37,7 +37,7 @@
             "name": "start",
             "parameters": [
                 { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." },
-                { "name": "includeDomCounters", "optional": true, "type": "boolean",  "description": "Whether DOM counters data should be included into timeline events." }
+                { "name": "includeDomCounters", "optional": true, "type": "boolean", "description": "Whether DOM counters data should be included into timeline events." }
             ],
             "description": "Starts capturing instrumentation events."
         },

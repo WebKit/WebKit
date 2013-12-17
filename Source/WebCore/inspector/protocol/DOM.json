@@ -280,7 +280,7 @@
         {
             "name": "highlightNode",
             "parameters": [
-                { "name": "highlightConfig", "$ref": "HighlightConfig",  "description": "A descriptor for the highlight appearance." },
+                { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },
                 { "name": "nodeId", "$ref": "NodeId", "optional": true, "description": "Identifier of the node to highlight." },
                 { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "optional": true, "description": "JavaScript object id of the node to be highlighted." }
             ],
