@@ -517,9 +517,6 @@ void WebPageProxy::initializeWebPage()
         inspector()->enableRemoteInspection();
 #endif
 
-    if (pageGroup().addProcess(process()))
-        process().addWebPageGroup(pageGroup());
-
     initializeCreationParameters();
     process().send(Messages::WebProcess::CreateWebPage(m_pageID, m_creationParameters), 0);
 

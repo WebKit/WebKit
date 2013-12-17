@@ -39,7 +39,6 @@
 #include "WebContext.h"
 #include "WebNavigationDataStore.h"
 #include "WebNotificationManagerProxy.h"
-#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPluginSiteDataManager.h"
 #include "WebProcessMessages.h"
@@ -147,15 +146,10 @@ void WebProcessProxy::disconnect()
 
     Vector<RefPtr<WebFrameProxy>> frames;
     copyValuesToVector(m_frameMap, frames);
-    for (auto frame : frames)
-        frame->disconnect();
-    m_frameMap.clear();
 
-    Vector<WebPageGroup*> pageGroups;
-    copyValuesToVector(m_pageGroups, pageGroups);
-    for (auto pageGroup : pageGroups)
-        pageGroup->disconnectProcess(*this);
-    m_pageGroups.clear();
+    for (size_t i = 0, size = frames.size(); i < size; ++i)
+        frames[i]->disconnect();
+    m_frameMap.clear();
 
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
@@ -215,19 +209,6 @@ Vector<WebPageProxy*> WebProcessProxy::pages() const
     Vector<WebPageProxy*> result;
     copyValuesToVector(m_pageMap, result);
     return result;
-}
-
-WebPageGroup* WebProcessProxy::webPageGroup(uint64_t pageGroupID)
-{
-    if (!HashMap<uint64_t, WebPageGroup*>::isValidKey(pageGroupID))
-        return nullptr;
-
-    return m_pageGroups.get(pageGroupID);
-}
-
-void WebProcessProxy::addWebPageGroup(WebPageGroup& pageGroup)
-{
-    m_pageGroups.add(pageGroup.pageGroupID(), &pageGroup);
 }
 
 WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) const

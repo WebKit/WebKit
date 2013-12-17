@@ -1,3 +1,25 @@
+2013-12-17  Anders Carlsson  <andersca@apple.com>
+
+        Back out r159982
+        https://bugs.webkit.org/show_bug.cgi?id=125870
+        <rdar://problem/15598485>
+
+        Reviewed by Dan Bernstein.
+
+        Looks like r159982 caused intermittent crashes. Back it out for now.
+
+        * UIProcess/WebContextUserMessageCoders.h:
+        (WebKit::WebContextUserMessageEncoder::encode):
+        (WebKit::WebContextUserMessageDecoder::decode):
+        * UIProcess/WebPageGroup.cpp:
+        * UIProcess/WebPageGroup.h:
+        (WebKit::WebPageGroup::sendToAllProcessesInGroup):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::disconnect):
+        * UIProcess/WebProcessProxy.h:
+
 2013-12-17  Dan Bernstein  <mitz@apple.com>
 
         Fixed an assertion failure seen running some mixed-content tests.

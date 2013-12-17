@@ -82,9 +82,6 @@ public:
     void removeWebPage(uint64_t pageID);
     Vector<WebPageProxy*> pages() const;
 
-    WebPageGroup* webPageGroup(uint64_t pageGroupID);
-    void addWebPageGroup(WebPageGroup&);
-
     WebBackForwardListItem* webBackForwardItem(uint64_t itemID) const;
 
     ResponsivenessTimer* responsivenessTimer() { return &m_responsivenessTimer; }
@@ -199,7 +196,6 @@ private:
     WebPageProxyMap m_pageMap;
     WebFrameProxyMap m_frameMap;
     WebBackForwardListItemMap m_backForwardListItemMap;
-    HashMap<uint64_t, WebPageGroup*> m_pageGroups;
 
     OwnPtr<DownloadProxyMap> m_downloadProxyMap;
 
