@@ -26,17 +26,6 @@
 #import <WebKit2/WKBase.h>
 #import <WebKit2/WKView.h>
 
-#if !TARGET_OS_IPHONE
-
-typedef enum {
-    WKContentAnchorTopLeft,
-    WKContentAnchorTopRight,
-    WKContentAnchorBottomLeft,
-    WKContentAnchorBottomRight,
-} WKContentAnchor;
-
-#endif
-
 @interface WKView (Private)
 
 /* C SPI support. */
@@ -52,8 +41,6 @@ typedef enum {
 #endif
 
 #if !TARGET_OS_IPHONE
-
-@property WKContentAnchor contentAnchor;
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef;
 - (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef;
