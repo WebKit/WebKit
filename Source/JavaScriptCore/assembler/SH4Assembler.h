@@ -33,6 +33,7 @@
 #include "AssemblerBuffer.h"
 #include "AssemblerBufferWithConstantPool.h"
 #include "JITCompilationEffort.h"
+#include <limits.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
