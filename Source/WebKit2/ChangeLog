@@ -1,3 +1,48 @@
+2013-12-16  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Pinching beyond the extremes doesn't animate back to the min/max
+        https://bugs.webkit.org/show_bug.cgi?id=125750
+
+        Reviewed by Simon Fraser.
+
+        When you let go of a pinch where you exceeded the maximum or minimum scale,
+        the view should animate back to the limit instead of snapping back.
+
+        * UIProcess/mac/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::endMagnificationGesture):
+        Unscrolling the scaled origin here is wrong; we should send the same
+        value for 'origin' for commitTransientZoom that we do for adjustTransientZoom.
+        The drawing area can deal with transforming that however it needs to call scalePage().
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::beginTransientZoom):
+        Drive-by use WebPage::mainFrameView().
+
+        (WebKit::TiledCoreAnimationDrawingArea::adjustTransientZoom):
+        Update the shadow layer's bounds, position, and shadow path while zooming,
+        instead of hiding it.
+
+        (WebKit::transientZoomSnapAnimationForKeyPath):
+        Create a CABasicAnimation that stays applied to its target when it finishes,
+        lasts for a quarter second, and uses the ease-in-ease-out timing function.
+
+        (WebKit::constrainZoomOriginForFrameView):
+        When we land a transient zoom, there may be overhang areas (linen, in the case of Mac)
+        visible. During the commit animation, we should move the RenderView layer appropriately
+        so that the page covers the entire view and there are no overhang areas visible.
+        Adapt some code from ScrollableArea to constrain the zoom origin to do so.
+
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+        Animate the RenderView layer's transform, and the shadow layer's bounds, position, and path.
+        When they complete, apply the zoom via scalePage() and flush the layer tree (otherwise there
+        can be a flash between removing the animations and the next flush with the new scale).
+
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+        Move the code to land the transient zoom (via scalePage) and to put the shadow back
+        in the state WebCore left it out into its own function, so it can be called both from the
+        animation completion callback and from the short-circuit in the case where we don't need to animate.
+
 2013-12-16  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed. Fix GTK+ build after r160653.

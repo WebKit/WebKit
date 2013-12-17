@@ -47,6 +47,7 @@
 #import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/ScrollbarTheme.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
 #import <wtf/MainThread.h>
@@ -702,7 +703,7 @@ bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const Fram
 
 void TiledCoreAnimationDrawingArea::beginTransientZoom()
 {
-    FloatRect visibleContentRect = m_webPage->corePage()->mainFrame().view()->visibleContentRect(ScrollableArea::IncludeScrollbars);
+    FloatRect visibleContentRect = m_webPage->mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);
     m_webPage->send(Messages::ViewGestureController::DidBeginTransientZoom(visibleContentRect));
 }
 
@@ -715,38 +716,153 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
     if (!m_rootLayer)
         return;
 
-    RenderView* renderView = m_webPage->corePage()->mainFrame().view()->renderView();
-
     TransformationMatrix transform;
     transform.translate(origin.x(), origin.y());
     transform.scale(scale);
 
+    RenderView* renderView = m_webPage->mainFrameView()->renderView();
     PlatformCALayer* renderViewLayer = static_cast<GraphicsLayerCA*>(renderView->layer()->backing()->graphicsLayer())->platformCALayer();
     renderViewLayer->setTransform(transform);
     renderViewLayer->setAnchorPoint(FloatPoint3D());
     renderViewLayer->setPosition(FloatPoint3D());
 
-    // FIXME: We should transform the shadow layer as well, instead of hiding it.
     PlatformCALayer* shadowLayer = static_cast<GraphicsLayerCA*>(renderView->compositor().layerForContentShadow())->platformCALayer();
-    shadowLayer->setHidden(true);
+
+    FloatRect shadowBounds = FloatRect(FloatPoint(), toFloatSize(renderView->layoutOverflowRect().maxXMaxYCorner()));
+    shadowBounds.scale(scale);
+
+    shadowLayer->setBounds(shadowBounds);
+    shadowLayer->setPosition(origin + shadowBounds.center());
+    shadowLayer->platformLayer().shadowPath = adoptCF(CGPathCreateWithRect(shadowBounds, NULL)).get();
 
     m_transientZoomScale = scale;
 }
 
+static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(String keyPath)
+{
+    const float transientZoomSnapBackDuration = 0.25;
+
+    RetainPtr<CABasicAnimation> animation = [CABasicAnimation animationWithKeyPath:keyPath];
+    [animation setDuration:transientZoomSnapBackDuration];
+    [animation setFillMode:kCAFillModeForwards];
+    [animation setRemovedOnCompletion:false];
+    [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+
+    return animation;
+}
+
+/*static FloatPoint constrainZoomOriginForFrameView(double scale, FloatPoint origin, FrameView* frameView)
+{
+    // Scaling may have exposed the overhang area, so we need to constrain the final
+    // layer position exactly like scrolling will once it's committed, to ensure that
+    // scrolling doesn't make the view jump; this is borrowed from ScrollableArea.
+    FloatRect visibleContentRect = frameView->visibleContentRect(ScrollableArea::IncludeScrollbars);
+
+    FloatRect zoomContentRect = visibleContentRect;
+    zoomContentRect.moveBy(-origin);
+
+    FloatRect documentRect = frameView->renderView()->unscaledDocumentRect();
+    documentRect.scale(scale);
+    zoomContentRect.intersect(documentRect);
+
+    if (zoomContentRect.size() != visibleContentRect.size()) {
+        zoomContentRect.setSize(visibleContentRect.size());
+        zoomContentRect.intersect(documentRect);
+        if (zoomContentRect.width() < visibleContentRect.width())
+            zoomContentRect.move(-(visibleContentRect.width() - zoomContentRect.width()), 0);
+        if (zoomContentRect.height() < visibleContentRect.height())
+            zoomContentRect.move(0, -(visibleContentRect.height() - zoomContentRect.height()));
+    }
+
+    FloatPoint constrainedOrigin = zoomContentRect.location();
+    constrainedOrigin.moveBy(-visibleContentRect.location());
+
+    return -constrainedOrigin;
+}*/
+
 void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint origin)
 {
-    RenderView* renderView = m_webPage->corePage()->mainFrame().view()->renderView();
+    FrameView* frameView = m_webPage->mainFrameView();
+    RenderView* renderView = frameView->renderView();
+    PlatformCALayer* renderViewLayer = static_cast<GraphicsLayerCA*>(renderView->layer()->backing()->graphicsLayer())->platformCALayer();
 
-    // If the page scale is already the target scale, scalePage() will short-circuit
-    // and not apply the transform, so we can't depend on it to do so.
+    FloatRect visibleContentRect = frameView->visibleContentRect(ScrollableArea::IncludeScrollbars);
+
+    FloatPoint constrainedOrigin = visibleContentRect.location();
+    constrainedOrigin.moveBy(-origin);
+
+    IntRect documentRect = frameView->renderView()->unscaledDocumentRect();
+    documentRect.scale(scale);
+
+    constrainedOrigin = ScrollableArea::constrainScrollPositionForOverhang(roundedIntRect(visibleContentRect), documentRect.size(), roundedIntPoint(constrainedOrigin), IntPoint(), 0, 0);
+    constrainedOrigin.moveBy(-visibleContentRect.location());
+    constrainedOrigin = -constrainedOrigin;
+
+    if (m_transientZoomScale == scale && roundedIntPoint(origin) == roundedIntPoint(constrainedOrigin)) {
+        // We're already at the right scale and position, so we don't need to animate.
+        applyTransientZoomToPage(scale, origin);
+        return;
+    }
+
     TransformationMatrix transform;
+    transform.translate(constrainedOrigin.x(), constrainedOrigin.y());
     transform.scale(scale);
-    static_cast<GraphicsLayerCA*>(renderView->layer()->backing()->graphicsLayer())->platformCALayer()->setTransform(transform);
+
+    RetainPtr<CABasicAnimation> renderViewAnimationCA = transientZoomSnapAnimationForKeyPath("transform");
+    RefPtr<PlatformCAAnimation> renderViewAnimation = PlatformCAAnimation::create(renderViewAnimationCA.get());
+    renderViewAnimation->setToValue(transform);
+
+    RetainPtr<CALayer> shadowLayer = static_cast<GraphicsLayerCA*>(renderView->compositor().layerForContentShadow())->platformCALayer()->platformLayer();
+
+    FloatRect shadowBounds = FloatRect(FloatPoint(), toFloatSize(renderView->layoutOverflowRect().maxXMaxYCorner()));
+    shadowBounds.scale(scale);
+    RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect(shadowBounds, NULL)).get();
+
+    RetainPtr<CABasicAnimation> shadowBoundsAnimation = transientZoomSnapAnimationForKeyPath("bounds");
+    [shadowBoundsAnimation setToValue:[NSValue valueWithRect:shadowBounds]];
+    RetainPtr<CABasicAnimation> shadowPositionAnimation = transientZoomSnapAnimationForKeyPath("position");
+    [shadowBoundsAnimation setToValue:[NSValue valueWithPoint:constrainedOrigin + shadowBounds.center()]];
+    RetainPtr<CABasicAnimation> shadowPathAnimation = transientZoomSnapAnimationForKeyPath("shadowPath");
+    [shadowBoundsAnimation setToValue:(id)shadowPath.get()];
+
+    [CATransaction begin];
+    [CATransaction setCompletionBlock:^(void) {
+        renderViewLayer->removeAnimationForKey("transientZoomCommit");
+        [shadowLayer removeAllAnimations];
+        applyTransientZoomToPage(scale, origin);
+    }];
+
+    renderViewLayer->addAnimationForKey("transientZoomCommit", renderViewAnimation.get());
+    [shadowLayer addAnimation:shadowBoundsAnimation.get() forKey:@"transientZoomCommitShadowBounds"];
+    [shadowLayer addAnimation:shadowPositionAnimation.get() forKey:@"transientZoomCommitShadowPosition"];
+    [shadowLayer addAnimation:shadowPathAnimation.get() forKey:@"transientZoomCommitShadowPath"];
+
+    [CATransaction commit];
+}
+
+void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, FloatPoint origin)
+{
+    RenderView* renderView = m_webPage->mainFrameView()->renderView();
+    PlatformCALayer* renderViewLayer = static_cast<GraphicsLayerCA*>(renderView->layer()->backing()->graphicsLayer())->platformCALayer();
+
+    TransformationMatrix finalTransform;
+    finalTransform.scale(scale);
+
+    // If the page scale is already the target scale, setPageScaleFactor() will short-circuit
+    // and not apply the transform, so we can't depend on it to do so.
+    renderViewLayer->setTransform(finalTransform);
 
     PlatformCALayer* shadowLayer = static_cast<GraphicsLayerCA*>(renderView->compositor().layerForContentShadow())->platformCALayer();
-    shadowLayer->setHidden(false);
+    IntRect overflowRect = renderView->pixelSnappedLayoutOverflowRect();
+    shadowLayer->setBounds(IntRect(IntPoint(), toIntSize(overflowRect.maxXMaxYCorner())));
+    shadowLayer->setPosition(shadowLayer->bounds().center());
+    ScrollbarTheme::theme()->setUpContentShadowLayer(renderView->compositor().layerForContentShadow());
 
-    m_webPage->scalePage(scale, roundedIntPoint(origin));
+    FloatPoint unscrolledOrigin(origin);
+    FloatRect visibleContentRect = m_webPage->mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);
+    unscrolledOrigin.moveBy(-visibleContentRect.location());
+    m_webPage->scalePage(scale, roundedIntPoint(-unscrolledOrigin));
+    flushLayers();
 }
 
 } // namespace WebKit

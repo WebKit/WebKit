@@ -107,6 +107,7 @@ private:
     virtual void beginTransientZoom() OVERRIDE;
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) OVERRIDE;
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) OVERRIDE;
+    void applyTransientZoomToPage(double scale, WebCore::FloatPoint origin);
 
     void updateLayerHostingContext();
 

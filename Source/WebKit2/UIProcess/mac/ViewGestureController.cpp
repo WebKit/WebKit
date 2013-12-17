@@ -122,13 +122,8 @@ void ViewGestureController::endMagnificationGesture()
 {
     ASSERT(m_activeGestureType == ViewGestureType::Magnification);
 
-    // FIXME: Should rubber-band back when zoomed in or out past the limit.
     double newMagnification = std::min(std::max(m_magnification, minMagnification), maxMagnification);
-
-    FloatPoint scaledOrigin = scaledMagnificationOrigin(m_magnificationOrigin, newMagnification);
-    scaledOrigin.moveBy(-m_visibleContentRect.location());
-
-    m_webPageProxy.drawingArea()->commitTransientZoom(newMagnification, -scaledOrigin);
+    m_webPageProxy.drawingArea()->commitTransientZoom(newMagnification, scaledMagnificationOrigin(m_magnificationOrigin, newMagnification));
 }
 
 void ViewGestureController::endActiveGesture()
