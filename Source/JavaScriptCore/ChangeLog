@@ -1,3 +1,23 @@
+2013-12-16  Oliver Hunt  <oliver@apple.com>
+
+        Avoid indirect function calls for custom getters
+        https://bugs.webkit.org/show_bug.cgi?id=125821
+
+        Reviewed by Mark Hahnenberg.
+
+        Rather than invoking a helper function to perform an indirect call
+        through a function pointer, just have the JIT call the function directly.
+
+        Unfortunately this only works in JSVALUE64 at the moment as there
+        is not an obvious way to pass two EncodedJSValues uniformly over
+        the various effected JITs.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArguments):
+        * jit/Repatch.cpp:
+        (JSC::generateProtoChainAccessStub):
+        (JSC::tryBuildGetByIDList):
+
 2013-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix some whitespace issues in inspector code
