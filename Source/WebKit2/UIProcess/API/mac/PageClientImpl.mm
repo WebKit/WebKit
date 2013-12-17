@@ -127,6 +127,11 @@ PageClientImpl::PageClientImpl(WKView* wkView)
 #if USE(DICTATION_ALTERNATIVES)
     , m_alternativeTextUIController(adoptPtr(new AlternativeTextUIController))
 #endif
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    , m_layerHostingMode(LayerHostingModeInWindowServer)
+#else
+    , m_layerHostingMode(LayerHostingModeDefault)
+#endif
 {
 }
 
@@ -215,21 +220,20 @@ bool PageClientImpl::isViewInWindow()
     return [m_wkView window];
 }
 
+bool PageClientImpl::isLayerWindowServerHosted()
+{
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    // Only update m_layerHostingMode when the view is in a window - otherwise just report the last value.
+    if ([m_wkView window])
+        m_layerHostingMode = [[m_wkView window] _hostsLayersInWindowServer] ? LayerHostingModeInWindowServer : LayerHostingModeDefault;
+#endif
+
+    return m_layerHostingMode == LayerHostingModeInWindowServer;
+}
+
 void PageClientImpl::viewWillMoveToAnotherWindow()
 {
     clearAllEditCommands();
-}
-
-LayerHostingMode PageClientImpl::viewLayerHostingMode()
-{
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    if (![m_wkView window])
-        return LayerHostingModeDefault;
-
-    return [[m_wkView window] _hostsLayersInWindowServer] ? LayerHostingModeInWindowServer : LayerHostingModeDefault;
-#else
-    return LayerHostingModeDefault;
-#endif
 }
 
 ColorSpaceData PageClientImpl::colorSpace()

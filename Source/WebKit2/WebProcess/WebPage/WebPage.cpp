@@ -243,7 +243,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if PLATFORM(MAC)
     , m_pdfPluginEnabled(false)
     , m_hasCachedWindowFrame(false)
-    , m_layerHostingMode(parameters.layerHostingMode)
     , m_keyboardEventBeingInterpreted(0)
 #elif PLATFORM(GTK)
     , m_accessibilityObject(0)
@@ -442,8 +441,8 @@ WebPage::~WebPage()
 
     m_sandboxExtensionTracker.invalidate();
 
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->webPageDestroyed();
+    for (auto* pluginView : m_pluginViews)
+        pluginView->webPageDestroyed();
 
 #if !PLATFORM(IOS)
     if (m_headerBanner)
@@ -1233,8 +1232,8 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
 
     m_page->setPageScaleFactor(scale, origin);
 
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->pageScaleFactorDidChange();
+    for (auto* pluginView : m_pluginViews)
+        pluginView->pageScaleFactorDidChange();
 
     if (m_drawingArea->layerTreeHost())
         m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
@@ -1260,8 +1259,8 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
 
     // Tell all our plug-in views that the device scale factor changed.
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->setDeviceScaleFactor(scaleFactor);
+    for (auto* pluginView : m_pluginViews)
+        pluginView->setDeviceScaleFactor(scaleFactor);
 
     updateHeaderAndFooterLayersForDeviceScaleChange(scaleFactor);
 #endif
@@ -1912,8 +1911,8 @@ void WebPage::setActive(bool isActive)
 
 #if PLATFORM(MAC)    
     // Tell all our plug-in views that the window focus changed.
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->setWindowIsFocused(isActive);
+    for (auto* pluginView : m_pluginViews)
+        pluginView->setWindowIsFocused(isActive);
 #endif
 }
 
@@ -2095,6 +2094,8 @@ void WebPage::setViewState(ViewState::Flags viewState, bool wantsDidUpdateViewSt
         setActive(viewState & ViewState::WindowIsActive);
     if (changed & ViewState::IsInWindow)
         setIsInWindow(viewState & ViewState::IsInWindow);
+    if (changed & ViewState::IsLayerWindowServerHosted)
+        setLayerHostingMode(viewState & ViewState::IsLayerWindowServerHosted ? LayerHostingModeInWindowServer : LayerHostingModeDefault);
 
     m_viewState = viewState;
 
@@ -3058,9 +3059,20 @@ void WebPage::setWindowIsVisible(bool windowIsVisible)
 
 #if PLATFORM(MAC)
     // Tell all our plug-in views that the window visibility changed.
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->setWindowIsVisible(windowIsVisible);
+    for (auto* pluginView : m_pluginViews)
+        pluginView->setWindowIsVisible(windowIsVisible);
 #endif
+}
+
+void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
+{
+#if PLATFORM(MAC)
+    // Tell all our plug-in views that the layer hosting mode changed.
+    for (auto* pluginView : m_pluginViews)
+        pluginView->setLayerHostingMode(layerHostingMode);
+#endif
+
+    m_drawingArea->setLayerHostingMode(layerHostingMode);
 }
 
 #if PLATFORM(MAC)
@@ -3072,8 +3084,8 @@ void WebPage::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoo
     m_accessibilityPosition = accessibilityViewCoordinates;
     
     // Tell all our plug-in views that the window and view frames have changed.
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates));
+    for (auto* pluginView : m_pluginViews)
+        pluginView->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates));
 
     m_hasCachedWindowFrame = !m_windowFrameInUnflippedScreenCoordinates.isEmpty();
 }

@@ -101,7 +101,7 @@ private:
     // Message handlers.
     virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition) OVERRIDE;
     virtual void setDeviceScaleFactor(float) OVERRIDE;
-    virtual void setLayerHostingMode(uint32_t) OVERRIDE;
+    virtual void setLayerHostingMode(LayerHostingMode) OVERRIDE;
     virtual void setColorSpace(const ColorSpaceData&) OVERRIDE;
 
     virtual void beginTransientZoom() OVERRIDE;

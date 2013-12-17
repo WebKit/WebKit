@@ -27,7 +27,6 @@
 #define WebPageCreationParameters_h
 
 #include "DrawingAreaInfo.h"
-#include "LayerTreeContext.h"
 #include "SessionState.h"
 #include "ViewState.h"
 #include "WebCoreArgumentCoders.h"
@@ -100,7 +99,6 @@ struct WebPageCreationParameters {
     bool backgroundExtendsBeyondPage;
 
 #if PLATFORM(MAC)
-    LayerHostingMode layerHostingMode;
     ColorSpaceData colorSpace;
 #endif
 };

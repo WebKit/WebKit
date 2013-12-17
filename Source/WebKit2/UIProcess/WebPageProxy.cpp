@@ -92,6 +92,9 @@
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 
+#import "DrawingAreaMessages.h"
+#import "DrawingAreaProxyMessages.h"
+
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedLayerTreeHostProxyMessages.h"
 #endif
@@ -243,11 +246,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_pageScaleFactor(1)
     , m_intrinsicDeviceScaleFactor(1)
     , m_customDeviceScaleFactor(0)
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    , m_layerHostingMode(LayerHostingModeInWindowServer)
-#else
-    , m_layerHostingMode(LayerHostingModeDefault)
-#endif
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
     , m_areMemoryCacheClientCallsEnabled(true)
@@ -315,6 +313,10 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
 #endif
     , m_scrollPinningBehavior(DoNotPin)
 {
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    // By default assume we'll be window server hosted.
+    m_viewState |= ViewState::IsLayerWindowServerHosted;
+#endif
     updateViewState();
 
     platformInitialize();
@@ -950,12 +952,18 @@ void WebPageProxy::updateViewState(ViewState::Flags flagsToUpdate)
         m_viewState |= ViewState::IsVisible;
     if (flagsToUpdate & ViewState::IsInWindow && m_pageClient.isViewInWindow())
         m_viewState |= ViewState::IsInWindow;
+    if (flagsToUpdate & ViewState::IsLayerWindowServerHosted && m_pageClient.isLayerWindowServerHosted())
+        m_viewState |= ViewState::IsLayerWindowServerHosted;
 }
 
 void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsReplyOrNot wantsReply)
 {
     if (!isValid())
         return;
+
+    // If the in-window state may have changed, then so may the layer hosting.
+    if (mayHaveChanged & ViewState::IsInWindow)
+        mayHaveChanged |= ViewState::IsLayerWindowServerHosted;
 
     // Record the prior view state, update the flags that may have changed,
     // and check which flags have actually changed.
@@ -985,22 +993,15 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
 #endif
     }
 
-    if (mayHaveChanged & ViewState::IsInWindow) {
-        if (m_viewState & ViewState::IsInWindow) {
-            LayerHostingMode layerHostingMode = m_pageClient.viewLayerHostingMode();
-            if (m_layerHostingMode != layerHostingMode) {
-                m_layerHostingMode = layerHostingMode;
-                m_drawingArea->layerHostingModeDidChange();
-            }
-        }
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
-        else {
+    if (mayHaveChanged & ViewState::IsInWindow) {
+        if (!(m_viewState & ViewState::IsInWindow)) {
             // When leaving the current page, close the popover color well.
             if (m_colorPicker)
                 endColorPicker();
         }
-#endif
     }
+#endif
 
     updateBackingStoreDiscardableState();
 }
@@ -3916,11 +3917,8 @@ void WebPageProxy::initializeCreationParameters()
     m_creationParameters.scrollPinningBehavior = m_scrollPinningBehavior;
     m_creationParameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
 
-#if PLATFORM(MAC)
-    m_creationParameters.layerHostingMode = m_layerHostingMode;
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     m_creationParameters.colorSpace = m_pageClient.colorSpace();
-#endif // !PLATFORM(IOS)
 #endif
 }
 

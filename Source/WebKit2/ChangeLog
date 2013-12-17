@@ -1,3 +1,80 @@
+2013-12-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Add layer hosting mode to ViewState
+        https://bugs.webkit.org/show_bug.cgi?id=125803
+
+        Reviewed by Anders Carlsson.
+
+        When the view state of the page is updated the layer mode may also
+        change. Currently this is passed by a separate message, remove this
+        and fold it into ViewState.
+        
+        Previously the setLayerHostingMode message would be passed to the
+        DrawingArea, which would inform the WebPage. Since the WebPage is
+        passed the SetVisibilityState messgae reverse this.
+
+        WebPageProxy had a policy of only updating the hosting mode when
+        visible - the value is sticky whilst the view is not visible. Make
+        this policy explicit in the PageClientImpl, rather then implicit
+        from the flow control.
+
+        * Shared/ViewState.h:
+            - Added ViewState::IsLayerWindowServerHosted.
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+            - removed layerHostingMode.
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::isLayerWindowServerHosted):
+        (WebKit::PageClientImpl::viewWillMoveToAnotherWindow):
+            - viewLayerHostingMode -> isLayerWindowServerHosted, added m_layerHostingMode.
+        * UIProcess/DrawingAreaProxy.h:
+            - removed layerHostingModeDidChange.
+        * UIProcess/PageClient.h:
+            - viewLayerHostingMode -> isLayerWindowServerHosted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+            - removed m_layerHostingMode.
+        (WebKit::WebPageProxy::updateViewState):
+            - added IsLayerWindowServerHosted.
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - changes to ViewState::IsInWindow implies ViewState::IsLayerWindowServerHosted may change too.
+            - remove special handling (separate message) for LayerHostingMode.
+        (WebKit::WebPageProxy::initializeCreationParameters):
+            - removed m_layerHostingMode.
+        * UIProcess/WebPageProxy.h:
+            - removed m_layerHostingMode.
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+            - removed layerHostingModeDidChange.
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setLayerHostingMode):
+        (WebKit::DrawingArea::didUpdate):
+            - setLayerHostingMode takes a LayerHostingMode.
+        * WebProcess/WebPage/DrawingArea.messages.in:
+            - SetLayerHostingMode is no longer a message.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+            - removed m_layerHostingMode.
+        (WebKit::WebPage::setViewState):
+            - handle ViewState::IsLayerWindowServerHosted.
+        (WebKit::WebPage::setLayerHostingMode):
+            - moved from ~Mac.mm (matching other ViewState setters), calls to DrawingArea.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::layerHostingMode):
+            - layerHostingMode queries m_viewState, removed m_layerHostingMode.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+            - removed setLayerHostingMode.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerHostingMode):
+            - setLayerHostingMode takes a LayerHostingMode, WebPage now calls to DrawingArea.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+            - removed setLayerHostingMode.
+
 2013-12-16  Sam Weinig  <sam@webkit.org>
 
         [Cocoa] Remove unused contentAnchor SPI from WKView

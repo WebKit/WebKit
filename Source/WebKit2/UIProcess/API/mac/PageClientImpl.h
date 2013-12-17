@@ -27,6 +27,7 @@
 #define PageClientImpl_h
 
 #include "CorrectionPanel.h"
+#include "LayerTreeContext.h"
 #include "PageClient.h"
 #include "WebFullScreenManagerProxy.h"
 #include <wtf/RetainPtr.h>
@@ -66,7 +67,7 @@ private:
     virtual bool isViewVisible();
     virtual bool isWindowVisible();
     virtual bool isViewInWindow();
-    virtual LayerHostingMode viewLayerHostingMode() OVERRIDE;
+    virtual bool isLayerWindowServerHosted();
     virtual ColorSpaceData colorSpace() OVERRIDE;
     virtual void setAcceleratedCompositingRootLayer(CALayer *) OVERRIDE;
 
@@ -163,6 +164,8 @@ private:
 #if USE(DICTATION_ALTERNATIVES)
     OwnPtr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
 #endif
+
+    LayerHostingMode m_layerHostingMode;
 };
 
 } // namespace WebKit

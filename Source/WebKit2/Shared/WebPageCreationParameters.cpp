@@ -62,7 +62,6 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << backgroundExtendsBeyondPage;
 
 #if PLATFORM(MAC)
-    encoder.encodeEnum(layerHostingMode);
     encoder << colorSpace;
 #endif
 }
@@ -125,8 +124,6 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, WebPag
         return false;
     
 #if PLATFORM(MAC)
-    if (!decoder.decodeEnum(parameters.layerHostingMode))
-        return false;
     if (!decoder.decode(parameters.colorSpace))
         return false;
 #endif
