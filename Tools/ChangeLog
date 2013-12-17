@@ -1,3 +1,15 @@
+2013-12-17  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
+
+        Fix for C++ should have the & or * beside the type not the variable name check.
+        https://bugs.webkit.org/show_bug.cgi?id=125846
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_pointer_reference_marker_location):
+
 2013-12-16  Rob Buis  <rob.buis@samsung.com>
 
         Add my Samsung email address.
