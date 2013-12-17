@@ -1,3 +1,14 @@
+2013-12-17  Alex Christensen  <achristensen@webkit.org>
+
+        Compile fix for WebGL on Windows without GRAPHICS_SURFACE.
+        https://bugs.webkit.org/show_bug.cgi?id=125867
+
+        Reviewed by Martin Robinson.
+
+        * platform/graphics/opengl/GLPlatformSurface.cpp:
+        (WebCore::GLPlatformSurface::createOffScreenSurface):
+        Protect reference to EGLOffScreenSurface with USE(GRAPHICS_SURFACE).
+
 2013-12-17  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Positioned elements in regions get clipped if they fall outside the region

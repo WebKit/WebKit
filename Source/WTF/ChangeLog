@@ -1,5 +1,17 @@
 2013-12-17  Alex Christensen  <achristensen@webkit.org>
 
+        Compile fix for WebGL on Windows without GRAPHICS_SURFACE.
+        https://bugs.webkit.org/show_bug.cgi?id=125867
+
+        Reviewed by Martin Robinson.
+
+        * wtf/FeatureDefines.h:
+        Removed unused ENABLE_GLIB_SUPPORT macro.
+        * wtf/Platform.h:
+        Don't use GRAPHICS_SURFACE for WebGL on Windows.
+
+2013-12-17  Alex Christensen  <achristensen@webkit.org>
+
         [Win] Fixed linker error with GStreamer.
         https://bugs.webkit.org/show_bug.cgi?id=124861
 

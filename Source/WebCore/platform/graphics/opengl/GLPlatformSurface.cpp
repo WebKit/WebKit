@@ -47,7 +47,7 @@ PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createOffScreenSurface(SurfaceA
     OwnPtr<GLPlatformSurface> surface;
 #if USE(GLX)
     surface = adoptPtr(new GLXOffScreenSurface(attributes));
-#elif USE(EGL)
+#elif USE(EGL) && USE(GRAPHICS_SURFACE)
     surface = EGLOffScreenSurface::createOffScreenSurface(attributes);
 #else
     // FIXME: Need WGL implementation for Windows
