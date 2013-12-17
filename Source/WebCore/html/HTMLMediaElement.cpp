@@ -4287,8 +4287,9 @@ void HTMLMediaElement::suspend(ReasonForSuspension why)
             stop();
             addBehaviorRestriction(RequirePageConsentToResumeMediaRestriction);
             break;
-        case PageWillBeSuspended:
+        case DocumentWillBePaused:
         case JavaScriptDebuggerPaused:
+        case PageWillBeSuspended:
         case WillDeferLoading:
             // Do nothing, we don't pause media playback in these cases.
             break;

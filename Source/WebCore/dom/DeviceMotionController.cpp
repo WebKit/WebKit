@@ -46,6 +46,22 @@ PassOwnPtr<DeviceMotionController> DeviceMotionController::create(DeviceMotionCl
     return adoptPtr(new DeviceMotionController(client));
 }
 
+#if PLATFORM(IOS)
+// FIXME: We should look to reconcile the iOS and OpenSource differences with this class
+// so that we can either remove these methods or remove the PLATFORM(IOS)-guard.
+void DeviceMotionController::suspendUpdates()
+{
+    if (m_client)
+        m_client->stopUpdating();
+}
+
+void DeviceMotionController::resumeUpdates()
+{
+    if (m_client && !m_listeners.isEmpty())
+        m_client->startUpdating();
+}
+#endif
+    
 void DeviceMotionController::didChangeDeviceMotion(DeviceMotionData* deviceMotionData)
 {
     dispatchDeviceEvent(DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionData));

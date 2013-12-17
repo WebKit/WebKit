@@ -82,7 +82,7 @@ class TagNodeList;
 class UIRequestEvent;
 #endif
     
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 class TouchEvent;
 #endif
 
@@ -414,7 +414,9 @@ public:
     Node* childNode(unsigned index) const;
 
     void checkSetPrefix(const AtomicString& prefix, ExceptionCode&);
+
     bool isDescendantOf(const Node*) const;
+    bool isDescendantOrShadowDescendantOf(const Node*) const;
     bool contains(const Node*) const;
     bool containsIncludingShadowDOM(const Node*) const;
     bool containsIncludingHostElements(const Node*) const;
@@ -501,6 +503,7 @@ public:
 
     virtual bool willRespondToMouseMoveEvents();
     virtual bool willRespondToMouseClickEvents();
+    virtual bool willRespondToMouseWheelEvents();
     virtual bool willRespondToTouchEvents();
 
     unsigned short compareDocumentPosition(Node*);
@@ -524,7 +527,7 @@ public:
     void dispatchSubtreeModifiedEvent();
     bool dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent);
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     bool dispatchTouchEvent(PassRefPtr<TouchEvent>);
 #endif
 #if ENABLE(INDIE_UI)

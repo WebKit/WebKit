@@ -100,7 +100,7 @@ public:
     EventContext* lastContextIfExists() { return m_path.isEmpty() ? 0 : m_path.last().get(); }
 
 private:
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     void updateTouchListsInEventPath(const TouchList*, TouchEventContext::TouchListType);
 #endif
 
@@ -114,14 +114,14 @@ public:
         , m_relatedNodeTreeScope(relatedNode.treeScope())
         , m_relatedNodeInCurrentTreeScope(nullptr)
         , m_currentTreeScope(nullptr)
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
         , m_touch(0)
         , m_touchListType(TouchEventContext::NotTouchList)
 #endif
     {
     }
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     EventRelatedNodeResolver(Touch& touch, TouchEventContext::TouchListType touchListType)
         : m_relatedNode(*touch.target()->toNode())
         , m_relatedNodeTreeScope(m_relatedNode.treeScope())
@@ -134,7 +134,7 @@ public:
     }
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     Touch* touch() const { return m_touch; }
     TouchEventContext::TouchListType touchListType() const { return m_touchListType; }
 #endif
@@ -168,7 +168,7 @@ private:
     const TreeScope& m_relatedNodeTreeScope;
     Node* m_relatedNodeInCurrentTreeScope;
     TreeScope* m_currentTreeScope;
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     Touch* m_touch;
     TouchEventContext::TouchListType m_touchListType;
 #endif
@@ -311,7 +311,7 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
 
     if (EventTarget* relatedTarget = event->relatedTarget())
         eventPath.setRelatedTarget(*relatedTarget);
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     if (event->isTouchEvent())
         eventPath.updateTouchLists(*toTouchEvent(event.get()));
 #endif
@@ -394,7 +394,7 @@ EventPath::EventPath(Node& targetNode, Event& event)
     bool inDocument = targetNode.inDocument();
     bool isSVGElement = targetNode.isSVGElement();
     bool isMouseOrFocusEvent = event.isMouseEvent() || event.isFocusEvent();
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     bool isTouchEvent = event.isTouchEvent();
 #endif
     EventTarget* target = 0;
@@ -407,7 +407,7 @@ EventPath::EventPath(Node& targetNode, Event& event)
             EventTarget& currentTarget = eventTargetRespectingTargetRules(*node);
             if (isMouseOrFocusEvent)
                 m_path.append(std::make_unique<MouseOrFocusEventContext>(node, &currentTarget, target));
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
             else if (isTouchEvent)
                 m_path.append(std::make_unique<TouchEventContext>(node, &currentTarget, target));
 #endif
@@ -424,7 +424,7 @@ EventPath::EventPath(Node& targetNode, Event& event)
     }
 }
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 static void addRelatedNodeResolversForTouchList(Vector<EventRelatedNodeResolver, 16>& touchTargetResolvers, TouchList* touchList, TouchEventContext::TouchListType type)
 {
     const size_t touchListSize = touchList->length();

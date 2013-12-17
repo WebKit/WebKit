@@ -53,6 +53,11 @@ public:
     void addMarkerToNode(Node*, unsigned startOffset, unsigned length, DocumentMarker::MarkerType);
     void addMarkerToNode(Node*, unsigned startOffset, unsigned length, DocumentMarker::MarkerType, PassRefPtr<DocumentMarkerDetails>);
     void addTextMatchMarker(const Range*, bool activeMatch);
+#if PLATFORM(IOS)
+    void addMarker(Range*, DocumentMarker::MarkerType, String description, const Vector<String>& interpretations, const RetainPtr<id>& metadata);
+    void addDictationPhraseWithAlternativesMarker(Range*, const Vector<String>& interpretations);
+    void addDictationResultMarker(Range*, const RetainPtr<id>& metadata);
+#endif
 
     void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta);
     bool hasMarkers() const

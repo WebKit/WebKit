@@ -321,6 +321,11 @@
 #endif
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+    // FIXME: Consider defining an ENABLE macro for iOS touch event code, say IOS_TOUCH_EVENTS,
+    // and/or modifying the bindings scripts to support generating more complicated conditional code.
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+#include "DocumentIOS.idl"
+#else
     [ReturnNewObject, RaisesException] Touch createTouch([Default=Undefined] optional DOMWindow window,
                                                      [Default=Undefined] optional EventTarget target,
                                                      [Default=Undefined] optional long identifier,
@@ -333,6 +338,7 @@
                                                      [Default=Undefined] optional float webkitRotationAngle,
                                                      [Default=Undefined] optional float webkitForce);
     [ReturnNewObject, Custom, RaisesException] TouchList createTouchList();
+#endif // defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
 #endif
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP

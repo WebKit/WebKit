@@ -59,4 +59,6 @@ TrackEvent conditional=VIDEO_TRACK
 CSSFontFaceLoadEvent conditional=FONT_LOAD_EVENTS
 SecurityPolicyViolationEvent conditional=CSP_NEXT
 UIRequestEvent conditional=INDIE_UI
+GestureEvent conditional=IOS_GESTURE_EVENTS
+WebKitPlaybackTargetAvailabilityEvent conditional=IOS_AIRPLAY
 

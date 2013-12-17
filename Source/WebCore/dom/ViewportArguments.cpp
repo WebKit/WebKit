@@ -37,6 +37,10 @@
 #include "Page.h"
 #include "ScriptableDocumentParser.h"
 
+#if PLATFORM(IOS)
+#include "WebCoreSystemInterface.h"
+#endif
+
 namespace WebCore {
 
 #if PLATFORM(BLACKBERRY) || PLATFORM(GTK)
@@ -263,6 +267,13 @@ static FloatSize convertToUserSpace(const FloatSize& deviceSize, float devicePix
 
 ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport)
 {
+#if PLATFORM(IOS)
+    // FIXME: This should probably be fixed elsewhere on iOS. iOS may only use computeViewportAttributes for tests.
+    CGSize screenSize = wkGetViewportScreenSize();
+    visibleViewport.setWidth(screenSize.width);
+    visibleViewport.setHeight(screenSize.height);
+#endif
+
     FloatSize initialViewportSize = convertToUserSpace(visibleViewport, devicePixelRatio);
     FloatSize deviceSize = convertToUserSpace(FloatSize(deviceWidth, deviceHeight), devicePixelRatio);
 
@@ -396,9 +407,30 @@ void setViewportFeature(const String& keyString, const String& valueString, Docu
         arguments->maxZoom = findScaleValue(keyString, valueString, document);
     else if (keyString == "user-scalable")
         arguments->userZoom = findUserScalableValue(keyString, valueString, document);
+#if PLATFORM(IOS)
+    else if (keyString == "minimal-ui")
+        arguments->minimalUI = true;
+#endif
     else
         reportViewportWarning(document, UnrecognizedViewportArgumentKeyError, keyString, String());
 }
+
+#if PLATFORM(IOS)
+void finalizeViewportArguments(ViewportArguments& arguments)
+{
+    CGSize screenSize = wkGetViewportScreenSize();
+
+    if (arguments.width == ViewportArguments::ValueDeviceWidth)
+        arguments.width = screenSize.width;
+    else if (arguments.width == ViewportArguments::ValueDeviceHeight)
+        arguments.width = screenSize.height;
+
+    if (arguments.height == ViewportArguments::ValueDeviceWidth)
+        arguments.height = screenSize.width;
+    else if (arguments.height == ViewportArguments::ValueDeviceHeight)
+        arguments.height = screenSize.height;
+}
+#endif
 
 static const char* viewportErrorMessageTemplate(ViewportErrorCode errorCode)
 {

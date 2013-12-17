@@ -2001,7 +2001,20 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     }
         
     cancelFocusAppearanceUpdate();
+#if PLATFORM(IOS)
+    // Focusing a form element triggers animation in UIKit to scroll to the right position.
+    // Calling updateFocusAppearance() would generate an unnecessary call to ScrollView::setScrollPosition(),
+    // which would jump us around during this animation. See <rdar://problem/6699741>.
+    FrameView* view = document().view();
+    bool isFormControl = view && isFormControlElement();
+    if (isFormControl)
+        view->setProhibitsScrolling(true);
+#endif
     updateFocusAppearance(restorePreviousSelection);
+#if PLATFORM(IOS)
+    if (isFormControl)
+        view->setProhibitsScrolling(false);
+#endif
 }
 
 void Element::updateFocusAppearanceAfterAttachIfNeeded()

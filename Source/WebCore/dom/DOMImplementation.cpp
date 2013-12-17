@@ -349,7 +349,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
     if (Image::supportsType(type))
         return ImageDocument::create(frame, url);
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
      // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
     // Key system is not applicable here.
     DOMImplementationSupportsTypeClient client(frame && frame->settings().needsSiteSpecificQuirks(), url.host());

@@ -239,6 +239,30 @@ inline bool operator!=(const Position& a, const Position& b)
     return !(a == b);
 }
 
+inline bool operator<(const Position& a, const Position& b)
+{
+    if (a.isNull() || b.isNull())
+        return false;
+    if (a.anchorNode() == b.anchorNode())
+        return a.deprecatedEditingOffset() < b.deprecatedEditingOffset();
+    return b.anchorNode()->compareDocumentPosition(a.anchorNode()) == Node::DOCUMENT_POSITION_PRECEDING;
+}
+
+inline bool operator>(const Position& a, const Position& b) 
+{
+    return !a.isNull() && !b.isNull() && a != b && b < a;
+}
+
+inline bool operator>=(const Position& a, const Position& b) 
+{
+    return !a.isNull() && !b.isNull() && (a == b || a > b);
+}
+
+inline bool operator<=(const Position& a, const Position& b) 
+{
+    return !a.isNull() && !b.isNull() && (a == b || a < b);
+}
+
 // We define position creation functions to make callsites more readable.
 // These are inline to prevent ref-churn when returning a Position object.
 // If we ever add a PassPosition we can make these non-inline.

@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class Event;
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 class TouchList;
 #endif
 
@@ -82,7 +82,7 @@ inline MouseOrFocusEventContext& toMouseOrFocusEventContext(EventContext& eventC
 }
 
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 class TouchEventContext FINAL : public EventContext {
 public:
     TouchEventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
@@ -132,7 +132,7 @@ inline TouchEventContext* toTouchEventContext(EventContext* eventContext)
     ASSERT_WITH_SECURITY_IMPLICATION(!eventContext || eventContext->isTouchEventContext());
     return static_cast<TouchEventContext*>(eventContext);
 }
-#endif // ENABLE(TOUCH_EVENTS)
+#endif // ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 
 #ifndef NDEBUG
 inline bool EventContext::isUnreachableNode(EventTarget* target)

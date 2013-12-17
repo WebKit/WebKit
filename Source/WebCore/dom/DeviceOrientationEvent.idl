@@ -29,6 +29,21 @@
     [Custom] readonly attribute double alpha;
     [Custom] readonly attribute double beta;
     [Custom] readonly attribute double gamma;
+
+    // FIXME: Consider defining an ENABLE macro for iOS device orientation code and/or modifying
+    // the bindings scripts to support generating more complicated conditional code.
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+    [Custom] readonly attribute double webkitCompassHeading;
+    [Custom] readonly attribute double webkitCompassAccuracy;
+    [Custom] void initDeviceOrientationEvent([Default=Undefined] optional DOMString type,
+                                             [Default=Undefined] optional boolean bubbles,
+                                             [Default=Undefined] optional boolean cancelable,
+                                             [Default=Undefined] optional double alpha,
+                                             [Default=Undefined] optional double beta,
+                                             [Default=Undefined] optional double gamma,
+                                             [Default=Undefined] optional double compassHeading,
+                                             [Default=Undefined] optional double compassAccuracy);
+#else
     [Custom] readonly attribute boolean absolute;
     [Custom] void initDeviceOrientationEvent([Default=Undefined] optional DOMString type, 
                                              [Default=Undefined] optional boolean bubbles, 
@@ -37,5 +52,6 @@
                                              [Default=Undefined] optional double beta, 
                                              [Default=Undefined] optional double gamma,
                                              [Default=Undefined] optional boolean absolute);
+#endif
 };
 

@@ -171,6 +171,10 @@ public:
     void setDOMTimerAlignmentInterval(double);
     double domTimerAlignmentInterval() const;
 
+    // FIXME: Change these methods to take/return an unsigned integer after we upstream the iOS port.
+    void setLayoutInterval(int);
+    int layoutInterval() const { return m_layoutInterval; }
+
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     bool hiddenPageDOMTimerThrottlingEnabled() const { return m_hiddenPageDOMTimerThrottlingEnabled; }
     void setHiddenPageDOMTimerThrottlingEnabled(bool);
@@ -276,6 +280,7 @@ private:
     URL m_userStyleSheetLocation;
     const std::unique_ptr<FontGenericFamilies> m_fontGenericFamilies;
     SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
+    int m_layoutInterval;
 #if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingFontScaleFactor;
     IntSize m_textAutosizingWindowSizeOverride;

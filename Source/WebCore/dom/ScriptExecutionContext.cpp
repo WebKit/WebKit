@@ -43,6 +43,10 @@
 // FIXME: This is a layering violation.
 #include "JSDOMWindow.h"
 
+#if PLATFORM(IOS)
+#include "Document.h"
+#endif
+
 #if ENABLE(SQL_DATABASE)
 #include "DatabaseContext.h"
 #endif
@@ -177,6 +181,13 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjects()
 
 void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
 {
+#if PLATFORM(IOS)
+    if (m_activeDOMObjectsAreSuspended) {
+        ASSERT(m_reasonForSuspendingActiveDOMObjects == ActiveDOMObject::DocumentWillBePaused);
+        return;
+    }
+#endif
+
     // No protection against m_activeDOMObjects changing during iteration: suspend() shouldn't execute arbitrary JS.
     m_iteratingActiveDOMObjects = true;
     ActiveDOMObjectsSet::iterator activeObjectsEnd = m_activeDOMObjects.end();
@@ -319,6 +330,14 @@ bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int 
     EventTarget* target = errorEventTarget();
     if (!target)
         return false;
+
+#if PLATFORM(IOS)
+    if (target == target->toDOMWindow() && isDocument()) {
+        Settings* settings = static_cast<Document*>(this)->settings();
+        if (settings && !settings->shouldDispatchJavaScriptWindowOnErrorEvents())
+            return false;
+    }
+#endif
 
     String message = errorMessage;
     int line = lineNumber;

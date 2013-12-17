@@ -33,24 +33,52 @@ PassRefPtr<DeviceOrientationData> DeviceOrientationData::create()
     return adoptRef(new DeviceOrientationData);
 }
 
+#if PLATFORM(IOS)
+// FIXME: We should reconcile the iOS and OpenSource differences.
+PassRefPtr<DeviceOrientationData> DeviceOrientationData::create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideCompassHeading, double compassHeading, bool canProvideCompassAccuracy, double compassAccuracy)
+{
+    return adoptRef(new DeviceOrientationData(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma, canProvideCompassHeading, compassHeading, canProvideCompassAccuracy, compassAccuracy));
+}
+#else
 PassRefPtr<DeviceOrientationData> DeviceOrientationData::create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute)
 {
     return adoptRef(new DeviceOrientationData(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma, canProvideAbsolute, absolute));
 }
+#endif
 
 
 DeviceOrientationData::DeviceOrientationData()
     : m_canProvideAlpha(false)
     , m_canProvideBeta(false)
     , m_canProvideGamma(false)
+#if !PLATFORM(IOS)
     , m_canProvideAbsolute(false)
+#endif
     , m_alpha(0)
     , m_beta(0)
     , m_gamma(0)
+#if PLATFORM(IOS)
+    , m_canProvideCompassHeading(false)
+    , m_canProvideCompassAccuracy(false)
+#else
     , m_absolute(false)
+#endif
 {
 }
 
+#if PLATFORM(IOS)
+DeviceOrientationData::DeviceOrientationData(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideCompassHeading, double compassHeading, bool canProvideCompassAccuracy, double compassAccuracy)
+    : m_canProvideAlpha(canProvideAlpha)
+    , m_canProvideBeta(canProvideBeta)
+    , m_canProvideGamma(canProvideGamma)
+    , m_alpha(alpha)
+    , m_beta(beta)
+    , m_gamma(gamma)
+    , m_canProvideCompassHeading(canProvideCompassHeading)
+    , m_canProvideCompassAccuracy(canProvideCompassAccuracy)
+    , m_compassHeading(compassHeading)
+    , m_compassAccuracy(compassAccuracy)
+#else
 DeviceOrientationData::DeviceOrientationData(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute)
     : m_canProvideAlpha(canProvideAlpha)
     , m_canProvideBeta(canProvideBeta)
@@ -60,6 +88,7 @@ DeviceOrientationData::DeviceOrientationData(bool canProvideAlpha, double alpha,
     , m_beta(beta)
     , m_gamma(gamma)
     , m_absolute(absolute)
+#endif
 {
 }
 
@@ -78,10 +107,12 @@ double DeviceOrientationData::gamma() const
     return m_gamma;
 }
 
+#if !PLATFORM(IOS)
 bool DeviceOrientationData::absolute() const
 {
     return m_absolute;
 }
+#endif
 
 bool DeviceOrientationData::canProvideAlpha() const
 {
@@ -98,9 +129,33 @@ bool DeviceOrientationData::canProvideGamma() const
     return m_canProvideGamma;
 }
 
+#if PLATFORM(IOS)
+double DeviceOrientationData::compassHeading() const
+{
+    return m_compassHeading;
+}
+
+double DeviceOrientationData::compassAccuracy() const
+{
+    return m_compassAccuracy;
+}
+
+bool DeviceOrientationData::canProvideCompassHeading() const
+{
+    return m_canProvideCompassHeading;
+}
+
+bool DeviceOrientationData::canProvideCompassAccuracy() const
+{
+    return m_canProvideCompassAccuracy;
+}
+#endif
+
+#if !PLATFORM(IOS)
 bool DeviceOrientationData::canProvideAbsolute() const
 {
     return m_canProvideAbsolute;
 }
+#endif
 
 } // namespace WebCore

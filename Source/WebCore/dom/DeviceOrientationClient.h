@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, The Android Open Source Project
+ * Copyright (C) 2010, The Android Open Source Project
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@
 #define DeviceOrientationClient_h
 
 #include "DeviceClient.h"
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
@@ -36,8 +37,10 @@ class DeviceOrientationData;
 class Page;
 
 class DeviceOrientationClient : public DeviceClient {
+    WTF_MAKE_NONCOPYABLE(DeviceOrientationClient);
 public:
-    virtual ~DeviceOrientationClient() {}
+    DeviceOrientationClient() { }
+    virtual ~DeviceOrientationClient() { }
     virtual void setController(DeviceOrientationController*) = 0;
     virtual DeviceOrientationData* lastOrientation() const = 0;
     virtual void deviceOrientationControllerDestroyed() = 0;

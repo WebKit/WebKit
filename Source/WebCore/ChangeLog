@@ -1,3 +1,146 @@
+2013-12-16  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream WebCore/dom changes
+        https://bugs.webkit.org/show_bug.cgi?id=125646
+
+        Reviewed by David Kilzer.
+
+        * WebCore.exp.in: Added symbol __ZN7WebCore8Settings17setLayoutIntervalEi and removed symbol
+        __ZN7WebCore24cLayoutScheduleThresholdE.
+        * dom/ActiveDOMObject.h: Add suspension reason DocumentWillBePaused.
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument): Opt-out of ENABLE(VIDEO) logic when
+        building for iOS.
+        * dom/DeviceMotionClient.h: Made class non-copyable.
+        (WebCore::DeviceMotionClient::DeviceMotionClient): Added;
+        * dom/DeviceMotionController.cpp: Added FIXME comment to reconcile iOS and OpenSource differences.
+        (WebCore::DeviceMotionController::suspendUpdates): Added; guarded by PLATFORM(IOS).
+        (WebCore::DeviceMotionController::resumeUpdates): Added; guarded by PLATFORM(IOS).
+        * dom/DeviceMotionController.h: Added FIXME comment to reconcile iOS and OpenSource differences.
+        * dom/DeviceOrientationClient.h: Made class non-copyable.
+        (WebCore::DeviceOrientationClient::DeviceOrientationClient): Added.
+        * dom/DeviceOrientationController.cpp: Added FIXME comment to reconcile iOS and OpenSource differences.
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        (WebCore::DeviceOrientationController::suspendUpdates): Added; guarded by PLATFORM(IOS).
+        (WebCore::DeviceOrientationController::resumeUpdates): Added; guarded by PLATFORM(IOS).
+        * dom/DeviceOrientationController.h: Added FIXME comment to reconcile iOS and OpenSource differences.
+        * dom/DeviceOrientationData.cpp:
+        (WebCore::DeviceOrientationData::create): Added; iOS-specific. Added FIXME comment.
+        (WebCore::DeviceOrientationData::DeviceOrientationData): Added iOS-specific code.
+        (WebCore::DeviceOrientationData::compassHeading): Added; guarded by PLATFORM(IOS).
+        (WebCore::DeviceOrientationData::compassAccuracy): Added; guarded by PLATFORM(IOS).
+        (WebCore::DeviceOrientationData::canProvideCompassHeading): Added; guarded by PLATFORM(IOS).
+        (WebCore::DeviceOrientationData::canProvideCompassAccuracy): Added; guarded by PLATFORM(IOS).
+        * dom/DeviceOrientationData.h:
+        * dom/DeviceOrientationEvent.idl: Added iOS-specific code.
+        * dom/Document.cpp: Moved constant cLayoutScheduleThreshold to Settings.cpp and renamed it
+        layoutScheduleThreshold towards allowing a port to configure the layout interval.
+        (WebCore::Document::Document): Added optional argument isSynthesized, defaults false.
+        (WebCore::Document::~Document): Added iOS-specific code to destroy the device motion
+        and device orientation controllers.
+        (WebCore::Document::didBecomeCurrentDocumentInFrame): Added iOS-specific code with FIXME comment.
+        (WebCore::Document::prepareForDestruction): Added iOS-specific touch event code.
+        (WebCore::Document::removeAllEventListeners): Ditto.
+        (WebCore::Document::platformSuspendOrStopActiveDOMObjects): Added; compiles to an empty function on
+        non-iOS port.
+        (WebCore::Document::suspendActiveDOMObjects): Modified to call platformSuspendOrStopActiveDOMObjects().
+        (WebCore::Document::resumeActiveDOMObjects): Ditto.
+        (WebCore::Document::stopActiveDOMObjects): Added.
+        (WebCore::Document::implicitClose): Modified to query Settings::layoutInterval().
+        (WebCore::Document::minimumLayoutDelay): Ditto.
+        (WebCore::Document::processViewport): Added iOS-specific code.
+        (WebCore::Document::updateViewportArguments): Ditto.
+        (WebCore::setParserFeature): Added; guarded by PLATFORM(IOS).
+        (WebCore::Document::processFormatDetection): Added; guarded by PLATFORM(IOS).
+        (WebCore::Document::processWebAppOrientations): Added; guarded by PLATFORM(IOS).
+        (WebCore::Document::isTelephoneNumberParsingEnabled): Added; guarded by PLATFORM(IOS).
+        (WebCore::Document::setIsTelephoneNumberParsingAllowed): Added; guarded by PLATFORM(IOS).
+        (WebCore::Document::isTelephoneNumberParsingAllowed): Added; guarded by PLATFORM(IOS).
+        (WebCore::Document::initSecurityContext): Added iOS-specific code.
+        (WebCore::Document::suspendScheduledTasks): Added; guarded by PLATFORM(IOS).
+        (WebCore::Document::deviceMotionController): Added; iOS-specific.
+        (WebCore::Document::deviceOrientationController): Added; iOS-specific.
+        (WebCore::Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale): Added iOS-specific code.
+        (WebCore::Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale): Added iOS-specific code.
+        * dom/Document.h: Register gesture events gesture{change, end, start}; guarded by ENABLE(IOS_GESTURE_EVENTS).
+        (WebCore::Document::isSynthesized): Added.
+        (WebCore::Document::platformSuspendOrStopActiveDOMObjects): Added.
+        * dom/Document.idl:
+        * dom/DocumentMarker.h: Added iOS-specific changes. We should look to reconcile the differences between
+        iOS and OpenSource. See <rdar://problem/11306422>.
+        (WebCore::DocumentMarker::AllMarkers::AllMarkers):
+        (WebCore::DocumentMarker::DocumentMarker): Added; iOS-specific.
+        (WebCore::DocumentMarker::alternatives): Added; iOS-specific.
+        (WebCore::DocumentMarker::setAlternative): Added; iOS-specific.
+        (WebCore::DocumentMarker::metadata): Added; iOS-specific.
+        (WebCore::DocumentMarker::setMetadata): Added; iOS-specific.
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarker):
+        (WebCore::DocumentMarkerController::addDictationPhraseWithAlternativesMarker):
+        (WebCore::DocumentMarkerController::addDictationResultMarker):
+        (WebCore::DocumentMarkerController::shiftMarkers):
+        * dom/DocumentMarkerController.h:
+        * dom/Element.cpp:
+        (WebCore::Element::focus): Add iOS-specific workaround for <rdar://problem/6699741>.
+        * dom/Element.h: Register gesture events gesture{change, end, start}; guarded by ENABLE(IOS_GESTURE_EVENTS).
+        * dom/EventContext.cpp: Opt-out of ENABLE(TOUCH_EVENTS)-guarded code when building the iOS port.
+        * dom/EventContext.h: Ditto.
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedNodeResolver::EventRelatedNodeResolver): Ditto.
+        (WebCore::EventDispatcher::dispatchEvent): Ditto.
+        (WebCore::EventPath::EventPath): Ditto.
+        * dom/EventNames.h: Added events webkit{currentplaybacktargetiswirelesschanged, playbacktargetavailabilitychanged}
+        and gesture{change, end, start}.
+        * dom/EventNames.in: Added event names GestureEvent and WebKitPlaybackTargetAvailabilityEvent conditioned on
+        the macro defines ENABLE_IOS_GESTURE_EVENTS and ENABLE_IOS_AIRPLAY.
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::contentsScrollOffset): Added iOS-specific code.
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::willBeDeletedFrom): Ditto.
+        (WebCore::Node::isDescendantOf): Fixed style issue in function prototype; moved '*' to the left side.
+        (WebCore::Node::isDescendantOrShadowDescendantOf): Added.
+        (WebCore::tryAddEventListener): Added iOS-specific code; also added FIXME comment.
+        (WebCore::tryRemoveEventListener): Ditto.
+        (WebCore::Node::dispatchEvent): Opt-out of ENABLE(TOUCH_EVENTS)-guarded code when building the iOS port.
+        (WebCore::Node::defaultEventHandler): Added iOS-specific code.
+        (WebCore::Node::willRespondToMouseMoveEvents): Added iOS-specific code; also added FIXME comment.
+        (WebCore::Node::willRespondToMouseClickEvents): Added iOS-specific code; also added FIXME comment.
+        (WebCore::Node::willRespondToMouseWheelEvents): Added.
+        * dom/Node.h:
+        * dom/Position.h:
+        (WebCore::operator<): Added.
+        (WebCore::operator>): Added.
+        (WebCore::operator>=): Added.
+        (WebCore::operator<=): Added.
+        * dom/Range.cpp:
+        (WebCore::Range::create): Added iOS-specific code; also added FIXME comment.
+        (WebCore::intervalsSufficientlyOverlap): Added; guarded by PLATFORM(IOS).
+        (WebCore::printRects): Added; guarded by PLATFORM(IOS).
+        (WebCore::adjustLineHeightOfSelectionRects): Added; guarded by PLATFORM(IOS).
+        (WebCore::coalesceSelectionRects): Added; guarded by PLATFORM(IOS).
+        (WebCore::Range::collectSelectionRects): Added; guarded by PLATFORM(IOS).
+        * dom/Range.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects): Added iOS-specific code.
+        (WebCore::ScriptExecutionContext::dispatchErrorEvent): Ditto.
+        * dom/TreeScope.cpp:
+        (WebCore::nodeFromPoint): Ditto.
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes): Ditto.
+        (WebCore::setViewportFeature): Added iOS-specific code.
+        (WebCore::finalizeViewportArguments): Added; iOS-specific.
+        * dom/ViewportArguments.h:
+        * dom/make_names.pl: Added support to find the path to gcc with respect to the environment
+        variable SDKROOT.
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::suspend):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Initialize setting m_layoutInterval to layoutScheduleThreshold.
+        (WebCore::Settings::setLayoutInterval): Added.
+        * page/Settings.h:
+        (WebCore::Settings::layoutInterval): Added.
+
 2013-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         Attempt to fix the Windows build after r160672.

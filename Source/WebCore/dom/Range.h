@@ -45,12 +45,20 @@ class FloatQuad;
 class Node;
 class NodeWithIndex;
 class Text;
+#if PLATFORM(IOS)
+class SelectionRect;
+class VisiblePosition;
+#endif
 
 class Range : public RefCounted<Range> {
 public:
     static PassRefPtr<Range> create(Document&);
     static PassRefPtr<Range> create(Document&, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
     static PassRefPtr<Range> create(Document&, const Position&, const Position&);
+#if PLATFORM(IOS)
+    // FIXME: Consider making this a static non-member, non-friend function.
+    static PassRefPtr<Range> create(Document&, const VisiblePosition&, const VisiblePosition&);
+#endif
     ~Range();
 
     Document& ownerDocument() const { return const_cast<Document&>(m_ownerDocument.get()); }
@@ -127,6 +135,9 @@ public:
     void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false, RangeInFixedPosition* = 0) const;
     void getBorderAndTextQuads(Vector<FloatQuad>&) const;
     FloatRect boundingRect() const;
+#if PLATFORM(IOS)
+    void collectSelectionRects(Vector<SelectionRect>&);
+#endif
 
     void nodeChildrenChanged(ContainerNode&);
     void nodeChildrenWillBeRemoved(ContainerNode&);

@@ -51,6 +51,9 @@ struct ViewportAttributes {
 
     float userScalable;
     float orientation;
+#if PLATFORM(IOS)
+    bool minimalUI;
+#endif
 };
 
 struct ViewportArguments {
@@ -62,6 +65,10 @@ struct ViewportArguments {
         XHTMLMobileProfile,
         HandheldFriendlyMeta,
         MobileOptimizedMeta,
+#endif
+#if PLATFORM(IOS)
+        PluginDocument,
+        ImageDocument,
 #endif
         ViewportMeta,
         CSSDeviceAdaptation
@@ -88,6 +95,9 @@ struct ViewportArguments {
         , maxZoom(ValueAuto)
         , userZoom(ValueAuto)
         , orientation(ValueAuto)
+#if PLATFORM(IOS)
+        , minimalUI(false)
+#endif
     {
     }
 
@@ -110,6 +120,10 @@ struct ViewportArguments {
     {
         // Used for figuring out whether to reset the viewport or not,
         // thus we are not taking type into account.
+#if PLATFORM(IOS)
+        // We ignore minimalUI for the same reason -- it is a higher-level
+        // property that doesn't affect the actual viewport.
+#endif
         return width == other.width
             && minWidth == other.minWidth
             && maxWidth == other.maxWidth
@@ -143,6 +157,10 @@ float computeMinimumScaleFactorForContentContained(const ViewportAttributes& res
 
 void setViewportFeature(const String& keyString, const String& valueString, Document*, void* data);
 void reportViewportWarning(Document*, ViewportErrorCode, const String& replacement1, const String& replacement2);
+
+#if PLATFORM(IOS)
+void finalizeViewportArguments(ViewportArguments&);
+#endif
 
 } // namespace WebCore
 

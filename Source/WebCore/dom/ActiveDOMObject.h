@@ -56,7 +56,8 @@ public:
         JavaScriptDebuggerPaused,
         WillDeferLoading,
         DocumentWillBecomeInactive,
-        PageWillBeSuspended
+        PageWillBeSuspended,
+        DocumentWillBePaused
     };
     virtual bool canSuspend() const;
     virtual void suspend(ReasonForSuspension);

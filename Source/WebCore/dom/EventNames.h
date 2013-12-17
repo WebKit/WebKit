@@ -265,6 +265,16 @@ namespace WebCore {
     \
     macro(securitypolicyviolation) \
     \
+    /* ENABLE(IOS_AIRPLAY) */ \
+    macro(webkitcurrentplaybacktargetiswirelesschanged) \
+    macro(webkitplaybacktargetavailabilitychanged) \
+    /* End of ENABLE(IOS_AIRPLAY) */ \
+    \
+    /* ENABLE(IOS_GESTURE_EVENTS) */ \
+    macro(gesturestart) \
+    macro(gesturechange) \
+    macro(gestureend) \
+    /* End of ENABLE(IOS_GESTURE_EVENTS) */ \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 
