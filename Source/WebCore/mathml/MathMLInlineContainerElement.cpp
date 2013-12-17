@@ -58,7 +58,7 @@ RenderElement* MathMLInlineContainerElement::createRenderer(PassRef<RenderStyle>
 {
     if (hasLocalName(annotation_xmlTag))
         return new RenderMathMLRow(*this, std::move(style));
-    if (hasLocalName(mrowTag))
+    if (hasLocalName(merrorTag) || hasLocalName(mphantomTag) || hasLocalName(mrowTag) || hasLocalName(mstyleTag))
         return new RenderMathMLRow(*this, std::move(style));
     if (hasLocalName(msubTag))
         return new RenderMathMLScripts(*this, std::move(style));

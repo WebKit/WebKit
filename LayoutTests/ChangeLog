@@ -1,3 +1,15 @@
+2013-12-17  Frédéric Wang  <fred.wang@free.fr>
+
+        Ensure inferred mrows for msqrt, mstyle, merror, mphantom and math.
+        https://bugs.webkit.org/show_bug.cgi?id=124841
+
+        Reviewed by Darin Adler.
+
+        * mathml/presentation/inferred-mrow-baseline-expected.txt: Added.
+        * mathml/presentation/inferred-mrow-baseline.html: Added.
+        * mathml/presentation/inferred-mrow-stretchy-expected.txt: Added.
+        * mathml/presentation/inferred-mrow-stretchy.html: Added.
+
 2013-12-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Temporarily disable mediate tests to get bots green.

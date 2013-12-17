@@ -32,11 +32,11 @@ math[display="block"] {
     -webkit-margin-after: 1em;
 }
 
-mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot {
+mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle {
     display: -webkit-inline-flex !important;
 }
 
-math, mrow, mfenced, msqrt, mroot {
+math, mrow, mfenced, msqrt, mroot, merror, mphantom, mstyle {
     -webkit-align-items: baseline;
 }
 msqrt > * { /* This rule is needed because of <msqrt>'s anonymous <mrow>. */

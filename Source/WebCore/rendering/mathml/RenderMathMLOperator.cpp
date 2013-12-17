@@ -360,7 +360,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
 {
     RenderMathMLBlock::paint(info, paintOffset);
 
-    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground)
+    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE)
         return;
 
     if (!m_isStretched && !m_stretchyCharacter) {
