@@ -1,3 +1,11 @@
+2013-12-16  Rob Buis  <rob.buis@samsung.com>
+
+        Add my Samsung email address.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-12-16  Oliver Hunt  <oliver@apple.com>
 
         Cache getters and custom accessors on the prototype chain
