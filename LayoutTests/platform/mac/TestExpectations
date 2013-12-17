@@ -155,10 +155,6 @@ webkit.org/b/61827 fast/events/drag-image-filename.html
 # Datalist is not yet enabled.
 fast/forms/datalist
 
-# Times out only in non-wk2 Mac, possibly because of platform-specific behavior
-# interfering with how the test is executed.
-webkit.org/b/113220 fast/forms/select/popup-closes-on-blur.html [ Timeout Pass Failure ]
-
 # ENABLE_INPUT_TYPE_* are not enabled.
 # https://bugs.webkit.org/show_bug.cgi?id=29359
 fast/forms/date
@@ -424,12 +420,6 @@ webkit.org/b/82763 fast/forms/textarea-placeholder-set-attribute.html
 
 webkit.org/b/102257 fast/dom/Window/open-window-min-size.html
 
-# Skipped as this is not a expected behaviour on mac.
-webkit.org/b/74384 fast/forms/select/menulist-onchange-fired-with-key-up-down.html
-
-# Tiemout. Needs ChromeClient::hasOpenedPopup() impelementation?
-webkit.org/b/73304 fast/forms/select/menulist-popup-crash.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=75184
 media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html
 media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
@@ -547,9 +537,6 @@ webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-tru
 webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Failure ]
 
 webkit.org/b/87347 fast/frames/flattening/iframe-tiny.html [ Pass Failure ]
-
-# Times out without keyboard interaction
-webkit.org/b/87748 fast/forms/select/optgroup-clicking.html
 
 webkit.org/b/89680 fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Pass Failure ]
 
@@ -1308,3 +1295,9 @@ webkit.org/b/124424 webgl/1.0.2/conformance/ogles/GL/tan/tan_001_to_006.html [ P
 webkit.org/b/124593 fast/forms/form-associated-element-crash.html [ Pass Timeout ]
 
 webkit.org/b/121646 webaudio/delaynode-max-default-delay.html [ Pass Failure ]
+
+# These fast/forms/select tests open a pop-up menu (visible on screen even when using run-webkit-tests), and get stuck in its nested event loop.
+webkit.org/b/87748 fast/forms/select/optgroup-clicking.html [ Skip ]
+webkit.org/b/73304 fast/forms/select/menulist-popup-crash.html [ Skip ]
+webkit.org/b/113220 fast/forms/select/popup-closes-on-blur.html [ Skip ]
+webkit.org/b/74384 fast/forms/select/menulist-onchange-fired-with-key-up-down.html [ WontFix ] # Additionally, this is not an expected behavior on Mac.

@@ -1,3 +1,12 @@
+2013-12-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Sanitize skip entries for pop-up menu tests.
+
+        Pop-up menus are native controls on Mac, and block test progress when opened.
+
+        * platform/mac/TestExpectations: Combined entries for these tests together, and
+        updated comments.
+
 2013-12-17  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test update for Windows.
