@@ -74,6 +74,7 @@ sub possiblyColored($$);
 
 # Global variables used only in global scope.
 my $outputPath = "&STDOUT";
+my $platform = "mac";
 my $showHelp;
 
 # Global variables used in global and subroutine scope.
@@ -88,6 +89,7 @@ sub usageAndExit()
 Usage: @{[ basename($0) ]} [options] buildlog1 [buildlog2 ...]
        build-webkit | @{[ basename($0) ]} [options]
   -h|--help     Show this help message
+  -p|--platform Logfile type (default: $platform)
 Output Options:
   -o|--output   Path for output (default: STDOUT)
   -f|--format   Output format (default: $outputFormat)
@@ -104,6 +106,7 @@ __END__
 my $getOptionsResult = GetOptions(
     'h|help'                => \$showHelp,
     'o|output=s'            => \$outputPath,
+    'p|platform=s'          => \$platform,
     'f|format=s'            => \&setOutputFormatOption,
     'color!'                => \$useColor,
     'l|log'                 => \$logUnfilteredOutput,
@@ -139,7 +142,7 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
         printLine("Build Succeeded", STYLE_SUCCESS);
-    } elsif ($line =~ /^(PhaseScriptExecution|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|ProcessProductPackaging|CodeSign|SymLink|Updating|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile) ("[^"]+"|\S+)?/) {
+    } elsif ($line =~ /^(PhaseScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|ProcessProductPackaging|CodeSign|SymLink|Updating|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile) ("[^"]+"|\S+)?/) {
         my ($command, $path) = ($1, basename($2));
         $path =~ s/"//g;
         printLine("$command $path", STYLE_PLAIN);
@@ -156,7 +159,7 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
         printLine("$command $path", STYLE_PLAIN);
     } else {
         # This only gets hit if stderr is redirected to stdout.
-        if ($line =~ /\*\* BUILD FAILED \*\*/) {
+        if (($line =~ /\*\* BUILD FAILED \*\*/) || ($line =~ /^Build FAILED./)) {
             $buildFailed = 1;
         }
         printLine($line, $buildFinished ? STYLE_SUCCESS : STYLE_ALERT);
@@ -223,14 +226,34 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^JavaScriptCore\/pcre\/dftables/;
     return 1 if $line =~ /^Creating hashtable for /;
     return 1 if $line =~ /^Wrote output to /;
-    return 1 if $line =~ /^(touch|perl|cat|rm -f|bison|flex|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;
     return 1 if $line =~ /^UNDOCUMENTED: /;
     return 1 if $line =~ /libtool.*has no symbols/;
     return 1 if $line =~ /^# Lower case all the values, as CSS values are case-insensitive$/;
     return 1 if $line =~ /^if sort /;
-    return 1 if $line =~ /^    / && $previousLine !~ /referenced from:$/;
-    return 1 if $line =~ /^printf /;
-    return 1 if $line =~ /^offlineasm: Nothing changed/;
+    if ($platform eq "win") {
+        return 1 if $line =~ /^\s*(touch|perl|cat|rm -f|bison|del|flex|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;
+        return 1 if $line =~ /^\s*(if not exist \"|if errorlevel 1)/;
+        return 1 if $line =~ /(^\s*|MSB3073:\s+)(set |REM |cmd \/c)/;
+        return 1 if $line =~ /^\s*[cC]:\\[pP]rogram [fF]iles.*\\.*\\(CL|midl)\.exe /;
+        return 1 if $line =~ /^\s*Processing .*\.(acf|h|idl)\s*$/;
+        return 1 if $line =~ /^\s*printf /;
+        return 1 if $line =~ /^\s*\/usr\/bin\/bash\s*/;
+        return 1 if $line =~ /^\s*offlineasm: Nothing changed/;
+        return 1 if $line =~ / \d+ File\(s\) copied/;
+        return 1 if $line =~ /^\s*File not found - \*\.h/;
+        return 1 if $line =~ /mkdir\s+\"/;
+        return 1 if $line =~ /xcopy \/y \/d \"/;
+        return 1 if $line =~ /\.obj\"\s*$/;
+        return 1 if $line =~ /:\s+(cmd \/c|set)\s+/;
+        return 1 if $line =~ /MSB3073:\s+$/;
+        return 1 if $line =~ /MSB3073:\s+if not exist/;
+        return 1 if $line =~ /which.exe bash/;
+    } else {
+        return 1 if $line =~ /^(touch|perl|cat|rm -f|bison|flex|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;
+        return 1 if $line =~ /^    / && $previousLine !~ /referenced from:$/;
+        return 1 if $line =~ /^printf /;
+        return 1 if $line =~ /^offlineasm: Nothing changed/;
+    }
     return 1 if $line =~ /^Showing first/;
 
     return 0;
