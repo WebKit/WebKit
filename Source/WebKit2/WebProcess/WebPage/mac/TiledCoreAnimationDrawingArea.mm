@@ -751,35 +751,6 @@ static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(String k
     return animation;
 }
 
-/*static FloatPoint constrainZoomOriginForFrameView(double scale, FloatPoint origin, FrameView* frameView)
-{
-    // Scaling may have exposed the overhang area, so we need to constrain the final
-    // layer position exactly like scrolling will once it's committed, to ensure that
-    // scrolling doesn't make the view jump; this is borrowed from ScrollableArea.
-    FloatRect visibleContentRect = frameView->visibleContentRect(ScrollableArea::IncludeScrollbars);
-
-    FloatRect zoomContentRect = visibleContentRect;
-    zoomContentRect.moveBy(-origin);
-
-    FloatRect documentRect = frameView->renderView()->unscaledDocumentRect();
-    documentRect.scale(scale);
-    zoomContentRect.intersect(documentRect);
-
-    if (zoomContentRect.size() != visibleContentRect.size()) {
-        zoomContentRect.setSize(visibleContentRect.size());
-        zoomContentRect.intersect(documentRect);
-        if (zoomContentRect.width() < visibleContentRect.width())
-            zoomContentRect.move(-(visibleContentRect.width() - zoomContentRect.width()), 0);
-        if (zoomContentRect.height() < visibleContentRect.height())
-            zoomContentRect.move(0, -(visibleContentRect.height() - zoomContentRect.height()));
-    }
-
-    FloatPoint constrainedOrigin = zoomContentRect.location();
-    constrainedOrigin.moveBy(-visibleContentRect.location());
-
-    return -constrainedOrigin;
-}*/
-
 void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint origin)
 {
     FrameView* frameView = m_webPage->mainFrameView();
@@ -794,6 +765,9 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     IntRect documentRect = frameView->renderView()->unscaledDocumentRect();
     documentRect.scale(scale);
 
+    // Scaling may have exposed the overhang area, so we need to constrain the final
+    // layer position exactly like scrolling will once it's committed, to ensure that
+    // scrolling doesn't make the view jump.
     constrainedOrigin = ScrollableArea::constrainScrollPositionForOverhang(roundedIntRect(visibleContentRect), documentRect.size(), roundedIntPoint(constrainedOrigin), IntPoint(), 0, 0);
     constrainedOrigin.moveBy(-visibleContentRect.location());
     constrainedOrigin = -constrainedOrigin;
