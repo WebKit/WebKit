@@ -30,7 +30,6 @@
 
 #include "ExecutableAllocator.h"
 #include "JITCompilationEffort.h"
-#include "VM.h"
 #include "stdint.h"
 #include <string.h>
 #include <wtf/Assertions.h>

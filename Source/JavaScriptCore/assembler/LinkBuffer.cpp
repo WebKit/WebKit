@@ -29,6 +29,7 @@
 #if ENABLE(ASSEMBLER)
 
 #include "Options.h"
+#include "VM.h"
 #include <wtf/CompilationThread.h>
 
 namespace JSC {

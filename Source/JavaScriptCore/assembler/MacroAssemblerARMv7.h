@@ -1405,6 +1405,13 @@ public:
         return branchTest32(cond, addressTempRegister, mask);
     }
 
+    Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        // use addressTempRegister incase the branchTest8 we call uses dataTempRegister. :-/
+        load8(address, addressTempRegister);
+        return branchTest32(cond, addressTempRegister, mask);
+    }
+
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         // use addressTempRegister incase the branchTest8 we call uses dataTempRegister. :-/

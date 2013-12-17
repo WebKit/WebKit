@@ -351,6 +351,19 @@ public:
         signExtend32ToPtr(imm, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.and_<64>(dest, dest, dataTempRegister);
     }
+
+    void and64(TrustedImmPtr imm, RegisterID dest)
+    {
+        LogicalImmediate logicalImm = LogicalImmediate::create64(reinterpret_cast<uint64_t>(imm.m_value));
+
+        if (logicalImm.isValid()) {
+            m_assembler.and_<64>(dest, dest, logicalImm);
+            return;
+        }
+
+        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.and_<64>(dest, dest, dataTempRegister);
+    }
     
     void countLeadingZeros32(RegisterID src, RegisterID dest)
     {
@@ -1750,6 +1763,12 @@ public:
     {
         move(TrustedImmPtr(reinterpret_cast<void*>(address.offset)), getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.ldrb(dataTempRegister, address.base, dataTempRegister);
+        return branchTest32(cond, dataTempRegister, mask);
+    }
+
+    Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        load8(address, getCachedDataTempRegisterIDAndInvalidate());
         return branchTest32(cond, dataTempRegister, mask);
     }
 

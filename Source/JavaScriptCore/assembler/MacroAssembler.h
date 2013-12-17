@@ -592,6 +592,11 @@ public:
         store32(TrustedImm32(imm), address);
     }
 
+    void storePtr(TrustedImmPtr imm, BaseIndex address)
+    {
+        store32(TrustedImm32(imm), address);
+    }
+
     DataLabel32 storePtrWithAddressOffsetPatch(RegisterID src, Address address)
     {
         return store32WithAddressOffsetPatch(src, address);
@@ -725,6 +730,11 @@ public:
     }
 
     void andPtr(TrustedImm32 imm, RegisterID srcDest)
+    {
+        and64(imm, srcDest);
+    }
+    
+    void andPtr(TrustedImmPtr imm, RegisterID srcDest)
     {
         and64(imm, srcDest);
     }

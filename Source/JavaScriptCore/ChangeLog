@@ -1,3 +1,23 @@
+2013-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add some missing functions to MacroAssembler
+        https://bugs.webkit.org/show_bug.cgi?id=125809
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/AssemblerBuffer.h:
+        * assembler/LinkBuffer.cpp:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::andPtr):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::and64):
+        (JSC::MacroAssemblerARM64::branchTest8):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchTest8):
+        * assembler/X86Assembler.h:
+
 2013-12-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove dead code after conversion to VS2013

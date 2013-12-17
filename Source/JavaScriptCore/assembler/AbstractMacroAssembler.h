@@ -30,6 +30,7 @@
 #include "CodeLocation.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Options.h"
+#include "WeakRandom.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Noncopyable.h>
 
