@@ -28,6 +28,7 @@
  */
 
 #include "config.h"
+
 #include "FlowThreadController.h"
 
 #include "NamedFlowCollection.h"
@@ -279,15 +280,8 @@ bool FlowThreadController::isContentElementRegisteredWithAnyNamedFlow(const Elem
     return m_mapNamedFlowContentElement.contains(&contentElement);
 }
 
-// Helper for the sorting of layers by z-index.
-static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
-{
-    return first->zIndex() < second->zIndex();
-}
-
-// Collect the fixed positioned layers that have the named flows as containing block.
+// Collect the fixed positioned layers that have the named flows as containing block
 // These layers are painted and hit-tested starting from RenderView not from regions.
-// The list of layers is returned sorted by z-index.
 void FlowThreadController::collectFixedPositionedLayers(Vector<RenderLayer*>& fixedPosLayers) const
 {
     for (auto iter = m_renderNamedFlowThreadList->begin(), end = m_renderNamedFlowThreadList->end(); iter != end; ++iter) {
@@ -298,27 +292,17 @@ void FlowThreadController::collectFixedPositionedLayers(Vector<RenderLayer*>& fi
         if (!flowRenderer->hasRegions())
             continue;
 
-        RenderLayer* flowThreadLayer = flowRenderer->layer();
-        if (Vector<RenderLayer*>* negZOrderList = flowThreadLayer->negZOrderList()) {
-            for (size_t i = 0, size = negZOrderList->size(); i < size; ++i) {
-                RenderLayer* currLayer = negZOrderList->at(i);
-                if (currLayer->renderer().style().position() != FixedPosition)
+        // Iterate over the fixed positioned elements in the flow thread
+        TrackedRendererListHashSet* positionedDescendants = flowRenderer->positionedObjects();
+        if (positionedDescendants) {
+            for (auto it = positionedDescendants->begin(), end = positionedDescendants->end(); it != end; ++it) {
+                RenderBox* box = *it;
+                if (!box->fixedPositionedWithNamedFlowContainingBlock())
                     continue;
-                fixedPosLayers.append(currLayer);
-            }
-        }
-
-        if (Vector<RenderLayer*>* posZOrderList = flowThreadLayer->posZOrderList()) {
-            for (size_t i = 0, size = posZOrderList->size(); i < size; ++i) {
-                RenderLayer* currLayer = posZOrderList->at(i);
-                if (currLayer->renderer().style().position() != FixedPosition)
-                    continue;
-                fixedPosLayers.append(currLayer);
+                fixedPosLayers.append(box->layer());
             }
         }
     }
-
-    std::stable_sort(fixedPosLayers.begin(), fixedPosLayers.end(), compareZIndex);
 }
 
 #ifndef NDEBUG
