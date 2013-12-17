@@ -1,3 +1,43 @@
+2013-12-16  Oliver Hunt  <oliver@apple.com>
+
+        Cache getters and custom accessors on the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=125602
+
+        Reviewed by Michael Saboff.
+
+        Added a bunch of new tests
+
+        * js/regress/chain-custom-getter-expected.txt: Added.
+        * js/regress/chain-custom-getter.html: Added.
+        * js/regress/chain-getter-access-expected.txt: Added.
+        * js/regress/chain-getter-access.html: Added.
+        * js/regress/proto-custom-getter-expected.txt: Added.
+        * js/regress/proto-custom-getter.html: Added.
+        * js/regress/proto-getter-access-expected.txt: Added.
+        * js/regress/proto-getter-access.html: Added.
+        * js/regress/resources/regress-pre.js:
+          Made sure that noInline always exists (either using testRunner.neverInlineFunction
+          or a no-op function if nothing else is available)
+        * js/regress/script-tests/chain-custom-getter.js: Added.
+        (foo):
+        * js/regress/script-tests/chain-getter-access.js: Added.
+        (o.get value):
+        (foo):
+        * js/regress/script-tests/proto-custom-getter.js: Added.
+        (foo):
+        * js/regress/script-tests/proto-getter-access.js: Added.
+        (o.get value):
+        (foo):
+        * js/regress/script-tests/simple-custom-getter.js: Added.
+        (cycles.30000.numberObject.Number.foo):
+        * js/regress/script-tests/simple-getter-access.js: Added.
+        (o.get value):
+        (foo):
+        * js/regress/simple-custom-getter-expected.txt: Added.
+        * js/regress/simple-custom-getter.html: Added.
+        * js/regress/simple-getter-access-expected.txt: Added.
+        * js/regress/simple-getter-access.html: Added.
+
 2013-12-16  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Add support for the computing the included intervals for a BoxShape

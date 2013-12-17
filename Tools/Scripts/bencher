@@ -661,7 +661,9 @@ def emitBenchRunCodeFile(name, plan, benchDataPath, benchPath)
       else
         raise
       end
-      
+
+      doublePuts($stderr,file,"if (typeof noInline == 'undefined') noInline = function(){};")
+
       if benchDataPath
         doublePuts($stderr,file,"load(#{benchDataPath.inspect});")
         doublePuts($stderr,file,"gc();")
@@ -720,6 +722,7 @@ def emitBenchRunCodeFile(name, plan, benchDataPath, benchPath)
       doublePuts($stderr,file,"if (window.testRunner) {")
       doublePuts($stderr,file,"    testRunner.dumpAsText(window.enablePixelTesting);")
       doublePuts($stderr,file,"    testRunner.waitUntilDone();")
+      doublePuts($stderr,file,"    noInline = testRunner.neverInlineFunction || function(){};")
       doublePuts($stderr,file,"}")
       doublePuts($stderr,file,"")
       doublePuts($stderr,file,"function debug(msg)")
@@ -749,7 +752,7 @@ def emitBenchRunCodeFile(name, plan, benchDataPath, benchPath)
       if benchDataPath
         doublePuts($stderr,file,"        testFrame.contentDocument.write(\"<script src=\\\"#{benchDataPath}\\\"></script>\");")
       end
-      doublePuts($stderr,file,"        testFrame.contentDocument.write(\"<script type=\\\"text/javascript\\\">__bencher_before = Date.now();</script><script src=\\\"#{benchPath}\\\"></script><script type=\\\"text/javascript\\\">window.parent.reportResult(Date.now() - __bencher_before);</script></body></html>\");")
+      doublePuts($stderr,file,"        testFrame.contentDocument.write(\"<script type=\\\"text/javascript\\\">if (window.testRunner) noInline=window.testRunner.neverInlineFunction || function(){}; if (typeof noInline == 'undefined') noInline=function(){}; __bencher_before = Date.now();</script><script src=\\\"#{benchPath}\\\"></script><script type=\\\"text/javascript\\\">window.parent.reportResult(Date.now() - __bencher_before);</script></body></html>\");")
       doublePuts($stderr,file,"        testFrame.contentDocument.close();")
       doublePuts($stderr,file,"    }")
       doublePuts($stderr,file,"    __bencher_continuation = continuation;")

@@ -119,15 +119,6 @@ struct StructureStubInfo {
         u.getByIdSelf.baseObjectStructure.set(vm, owner, baseObjectStructure);
     }
 
-    void initGetByIdProto(VM& vm, JSCell* owner, Structure* baseObjectStructure, Structure* prototypeStructure, bool isDirect)
-    {
-        accessType = access_get_by_id_proto;
-
-        u.getByIdProto.baseObjectStructure.set(vm, owner, baseObjectStructure);
-        u.getByIdProto.prototypeStructure.set(vm, owner, prototypeStructure);
-        u.getByIdProto.isDirect = isDirect;
-    }
-
     void initGetByIdChain(VM& vm, JSCell* owner, Structure* baseObjectStructure, StructureChain* chain, unsigned count, bool isDirect)
     {
         accessType = access_get_by_id_chain;

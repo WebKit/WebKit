@@ -1,3 +1,21 @@
+2013-12-16  Oliver Hunt  <oliver@apple.com>
+
+        Cache getters and custom accessors on the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=125602
+
+        Reviewed by Michael Saboff.
+
+        Support caching of custom getters and accessors on the prototype chain.
+        This is relatively trivial and just requires a little work compared to
+        the direct access mode as we're under more register pressure.
+
+        * bytecode/StructureStubInfo.h:
+          Removed the unsued initGetByIdProto as it was confusing to still have it present.
+        * jit/Repatch.cpp:
+        (JSC::generateProtoChainAccessStub):
+        (JSC::tryCacheGetByID):
+        (JSC::tryBuildGetByIDList):
+
 2013-12-16  Mark Lam  <mark.lam@apple.com>
 
         Change slow path result to take a void* instead of a ExecState*.

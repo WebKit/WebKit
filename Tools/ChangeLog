@@ -1,3 +1,14 @@
+2013-12-16  Oliver Hunt  <oliver@apple.com>
+
+        Cache getters and custom accessors on the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=125602
+
+        Reviewed by Michael Saboff.
+
+        Make sure bencher scripts also make noInline exist
+
+        * Scripts/bencher:
+
 2013-12-16  Anders Carlsson  <andersca@apple.com>
 
         Fix crash when trying to load a null HTML string

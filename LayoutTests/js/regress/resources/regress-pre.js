@@ -6,3 +6,11 @@ window.onerror = function(message) {
     _JSRegress_didSucceed = false;
     _JSRegress_oldOnError.apply(this, arguments);
 }
+
+if (typeof noInline == "undefined") {
+    if (window.testRunner)
+        noInline =window.testRunner.neverInlineFunction || function(){};
+    else
+        noInline = function(){}
+}
+
