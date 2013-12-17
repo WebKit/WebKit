@@ -166,20 +166,20 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-ENUM_CLASS(CryptoKeyClassSubtag) {
+enum class CryptoKeyClassSubtag {
     HMAC = 0,
     AES = 1,
     RSA = 2
 };
 const uint8_t cryptoKeyClassSubtagMaximumValue = 2;
 
-ENUM_CLASS(CryptoKeyAsymmetricTypeSubtag) {
+enum class CryptoKeyAsymmetricTypeSubtag {
     Public = 0,
     Private = 1
 };
 const uint8_t cryptoKeyAsymmetricTypeSubtagMaximumValue = 1;
 
-ENUM_CLASS(CryptoKeyUsageTag) {
+enum class CryptoKeyUsageTag {
     Encrypt = 0,
     Decrypt = 1,
     Sign = 2,
@@ -191,7 +191,7 @@ ENUM_CLASS(CryptoKeyUsageTag) {
 };
 const uint8_t cryptoKeyUsageTagMaximumValue = 7;
 
-ENUM_CLASS(CryptoAlgorithmIdentifierTag) {
+enum class CryptoAlgorithmIdentifierTag {
     RSAES_PKCS1_v1_5 = 0,
     RSASSA_PKCS1_v1_5 = 1,
     RSA_PSS = 2,

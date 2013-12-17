@@ -64,7 +64,6 @@
 		2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */; };
 		2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0F118115C85004DBA70 /* RunLoop.cpp */; };
 		2CDED0F418115C85004DBA70 /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CDED0F218115C85004DBA70 /* RunLoop.h */; };
-		44F66008171AFAE600E4AD19 /* EnumClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 44F66007171AFAA900E4AD19 /* EnumClass.h */; };
 		7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
 		8134013915B092FD001FF0B8 /* Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8134013715B092FD001FF0B8 /* Base64.h */; };
@@ -331,7 +330,6 @@
 		2CDED0F118115C85004DBA70 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		2CDED0F218115C85004DBA70 /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		44DEE74A152274BB00C6EC37 /* iOS.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
-		44F66007171AFAA900E4AD19 /* EnumClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnumClass.h; sourceTree = "<group>"; };
 		5D247B6214689B8600E78B76 /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D247B6E14689C4700E78B76 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -690,7 +688,6 @@
 				A8A47299151A825A004123FF /* DynamicAnnotations.cpp */,
 				A8A4729A151A825A004123FF /* DynamicAnnotations.h */,
 				A8A4729E151A825A004123FF /* Encoder.h */,
-				44F66007171AFAA900E4AD19 /* EnumClass.h */,
 				A8A4729F151A825A004123FF /* ExportMacros.h */,
 				0F885E0E1845AE9F00F1E3FA /* FastBitVector.cpp */,
 				0FD81AC4154FB22E00983E72 /* FastBitVector.h */,
@@ -996,7 +993,6 @@
 				A8A473BB151A825B004123FF /* dtoa.h in Headers */,
 				A8A473BD151A825B004123FF /* DynamicAnnotations.h in Headers */,
 				A8A473C0151A825B004123FF /* Encoder.h in Headers */,
-				44F66008171AFAE600E4AD19 /* EnumClass.h in Headers */,
 				A8A473C1151A825B004123FF /* ExportMacros.h in Headers */,
 				A8A473B4151A825B004123FF /* fast-dtoa.h in Headers */,
 				0FD81AC5154FB22E00983E72 /* FastBitVector.h in Headers */,

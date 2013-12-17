@@ -40,7 +40,7 @@ namespace WebCore {
 class CryptoAlgorithmDescriptionBuilder;
 class CryptoKeyData;
 
-ENUM_CLASS(CryptoKeyClass) {
+enum class CryptoKeyClass {
     HMAC,
     AES,
     RSA

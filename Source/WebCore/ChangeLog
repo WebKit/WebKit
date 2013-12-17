@@ -1,3 +1,25 @@
+2013-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Remove EnumClass.h from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=125820
+
+        Reviewed by Darin Adler.
+
+        Replace uses of ENUM_CLASS with real enum class declarations.
+
+        * Modules/webdatabase/DatabaseBasicTypes.h:
+        * Modules/webdatabase/DatabaseError.h:
+        * Modules/webdatabase/SQLTransactionState.h:
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        * bindings/js/SerializedScriptValue.cpp:
+        * crypto/CryptoAlgorithmIdentifier.h:
+        * crypto/CryptoAlgorithmParameters.h:
+        * crypto/CryptoKey.h:
+        * crypto/CryptoKeyData.h:
+        * crypto/CryptoKeyType.h:
+        * crypto/keys/CryptoKeyDataRSAComponents.h:
+        * inspector/InspectorTimelineAgent.h:
+
 2013-12-16  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures: Pinching beyond the extremes doesn't animate back to the min/max

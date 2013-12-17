@@ -60,7 +60,7 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-ENUM_CLASS(TimelineRecordType) {
+enum class TimelineRecordType {
     EventDispatch,
     BeginFrame,
     ScheduleStyleRecalculation,
@@ -106,7 +106,7 @@ ENUM_CLASS(TimelineRecordType) {
     WebSocketSendHandshakeRequest,
     WebSocketReceiveHandshakeResponse,
     WebSocketDestroy
-} ENUM_CLASS_END(TimelineRecordType);
+};
 
 class TimelineTimeConverter {
 public:

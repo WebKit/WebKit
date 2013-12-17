@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-ENUM_CLASS(CryptoKeyType) {
+enum class CryptoKeyType {
     Secret,
     Public,
     Private

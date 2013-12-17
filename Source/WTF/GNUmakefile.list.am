@@ -45,7 +45,6 @@ wtf_sources += \
     Source/WTF/wtf/DynamicAnnotations.cpp \
     Source/WTF/wtf/DynamicAnnotations.h \
     Source/WTF/wtf/Encoder.h \
-    Source/WTF/wtf/EnumClass.h \
     Source/WTF/wtf/ExportMacros.h \
     Source/WTF/wtf/FastBitVector.cpp \
     Source/WTF/wtf/FastBitVector.h \

@@ -45,7 +45,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ENUM_CLASS(CryptoKeyFormat) {
+enum class CryptoKeyFormat {
     // An unformatted sequence of bytes. Intended for secret keys.
     Raw,
 

@@ -38,7 +38,7 @@ public:
     CryptoAlgorithmParameters() { }
     virtual ~CryptoAlgorithmParameters() { }
 
-    ENUM_CLASS(Class) {
+    enum class Class {
         None,
         AesCbcParams,
         AesKeyGenParams,

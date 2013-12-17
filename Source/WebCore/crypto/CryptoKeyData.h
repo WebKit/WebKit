@@ -35,7 +35,7 @@ namespace WebCore {
 class CryptoKeyData {
     WTF_MAKE_NONCOPYABLE(CryptoKeyData);
 public:
-    ENUM_CLASS(Format) {
+    enum class Format {
         OctetSequence,
         RSAComponents
     };
