@@ -47,7 +47,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXList
+AXRole: AXDescriptionList
 AXParent: AXWebArea
 AXChildren: 5
 AXPosition: { 8.000000, 116.000000 }
@@ -204,8 +204,8 @@ AXPlatformAttributes: toolkit:WebKitGtk
 ------------
 
 
-AXRole: AXUnknown
-AXParent: AXList
+AXRole: AXDescriptionTerm
+AXParent: AXDescriptionList
 AXChildren: 0
 AXPosition: { 8.000000, 116.000000 }
 AXSize: { 769.000000, 17.000000 }
@@ -223,8 +223,8 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXUnknown
-AXParent: AXList
+AXRole: AXDescriptionValue
+AXParent: AXDescriptionList
 AXChildren: 0
 AXPosition: { 48.000000, 133.000000 }
 AXSize: { 729.000000, 17.000000 }
@@ -242,8 +242,8 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXUnknown
-AXParent: AXList
+AXRole: AXDescriptionTerm
+AXParent: AXDescriptionList
 AXChildren: 0
 AXPosition: { 8.000000, 150.000000 }
 AXSize: { 769.000000, 17.000000 }
@@ -261,8 +261,8 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXUnknown
-AXParent: AXList
+AXRole: AXDescriptionValue
+AXParent: AXDescriptionList
 AXChildren: 0
 AXPosition: { 48.000000, 167.000000 }
 AXSize: { 729.000000, 17.000000 }
@@ -280,8 +280,8 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitGtk
 ------------
-AXRole: AXUnknown
-AXParent: AXList
+AXRole: AXDescriptionValue
+AXParent: AXDescriptionList
 AXChildren: 0
 AXPosition: { 48.000000, 184.000000 }
 AXSize: { 729.000000, 17.000000 }

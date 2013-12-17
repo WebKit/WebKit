@@ -35,6 +35,7 @@
 #if HAVE(ACCESSIBILITY)
 
 #include "AXObjectCache.h"
+#include "AccessibilityList.h"
 #include "AccessibilityListBoxOption.h"
 #include "Document.h"
 #include "Frame.h"
@@ -557,8 +558,9 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     return attributeSet;
 }
 
-static AtkRole atkRole(AccessibilityRole role)
+static AtkRole atkRole(AccessibilityObject* coreObject)
 {
+    AccessibilityRole role = coreObject->roleValue();
     switch (role) {
     case ApplicationAlertDialogRole:
     case ApplicationAlertRole:
@@ -632,6 +634,10 @@ static AtkRole atkRole(AccessibilityRole role)
     case ColorWellRole:
         return ATK_ROLE_COLOR_CHOOSER;
     case ListRole:
+#if ATK_CHECK_VERSION(2, 11, 4)
+        if (coreObject->isList() && toAccessibilityList(coreObject)->isDescriptionList())
+            return ATK_ROLE_DESCRIPTION_LIST;
+#endif
         return ATK_ROLE_LIST;
     case ScrollBarRole:
         return ATK_ROLE_SCROLL_BAR;
@@ -716,6 +722,14 @@ static AtkRole atkRole(AccessibilityRole role)
     case LandmarkSearchRole:
         return ATK_ROLE_LANDMARK;
 #endif
+#if ATK_CHECK_VERSION(2, 11, 4)
+    case DescriptionListRole:
+        return ATK_ROLE_DESCRIPTION_LIST;
+    case DescriptionListTermRole:
+        return ATK_ROLE_DESCRIPTION_TERM;
+    case DescriptionListDetailRole:
+        return ATK_ROLE_DESCRIPTION_VALUE;
+#endif
     default:
         return ATK_ROLE_UNKNOWN;
     }
@@ -735,7 +749,7 @@ static AtkRole webkitAccessibleGetRole(AtkObject* object)
     if (coreObject->isPasswordField())
         return ATK_ROLE_PASSWORD_TEXT;
 
-    return atkRole(coreObject->roleValue());
+    return atkRole(coreObject);
 }
 
 static bool isTextWithCaret(AccessibilityObject* coreObject)

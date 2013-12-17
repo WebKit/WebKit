@@ -429,6 +429,14 @@ const gchar* roleToString(AtkObject* object)
     case ATK_ROLE_TIMER:
         return "AXTimer";
 #endif
+#if ATK_CHECK_VERSION(2, 11, 4)
+    case ATK_ROLE_DESCRIPTION_LIST:
+        return "AXDescriptionList";
+    case ATK_ROLE_DESCRIPTION_TERM:
+        return "AXDescriptionTerm";
+    case ATK_ROLE_DESCRIPTION_VALUE:
+        return "AXDescriptionValue";
+#endif
     default:
         // We want to distinguish ATK_ROLE_UNKNOWN from a known AtkRole which
         // our DRT isn't properly handling.

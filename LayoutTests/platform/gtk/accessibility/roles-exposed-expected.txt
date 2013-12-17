@@ -21,6 +21,15 @@ PASS: blockquote
 PASS: button
       AXRole: AXButton
       
+PASS: dl
+      AXRole: AXDescriptionList
+      
+PASS: dt
+      AXRole: AXDescriptionTerm
+      
+PASS: dd
+      AXRole: AXDescriptionValue
+      
 PASS: div
       AXRole: AXSection
       

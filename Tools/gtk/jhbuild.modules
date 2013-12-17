@@ -232,9 +232,9 @@
   <autotools id="atk"
              autogen-sh="configure"
              autogenargs="--disable-introspection">
-    <branch module="pub/GNOME/sources/atk/2.11/atk-2.11.3.tar.xz" version="2.11.3"
+    <branch module="pub/GNOME/sources/atk/2.11/atk-2.11.4.tar.xz" version="2.11.4"
             repo="ftp.gnome.org"
-            hash="sha256:b3c63668638dbb627a81f4333a00b744c503531d07b168405ef5f27f382a0ae4"/>
+            hash="sha256:b609fa7a3f21147d40f0fe0f47278a62c263de0eadbbbe9839f2b63a0cb07d41"/>
   </autotools>
 
   <autotools id="at-spi2-core" 
