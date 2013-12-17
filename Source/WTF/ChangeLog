@@ -1,3 +1,15 @@
+2013-12-17  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Fixed linker error with GStreamer.
+        https://bugs.webkit.org/show_bug.cgi?id=124861
+
+        Reviewed by Martin Robinson.
+
+        * wtf/gobject/GOwnPtr.cpp:
+        (WTF::GError):
+        * wtf/gobject/GOwnPtr.h:
+        Added WTF_EXPORT_PRIVATE to freeOwnedGPtr<GError> declaration and definition.
+
 2013-12-17  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a simple register allocator to WebCore for x86_64

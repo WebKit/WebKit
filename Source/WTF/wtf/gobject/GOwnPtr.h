@@ -33,7 +33,7 @@ extern "C" void g_free(void*);
 namespace WTF {
 
 template <typename T> inline void freeOwnedGPtr(T* ptr);
-template<> void freeOwnedGPtr<GError>(GError*);
+template<> WTF_EXPORT_PRIVATE void freeOwnedGPtr<GError>(GError*);
 template<> void freeOwnedGPtr<GList>(GList*);
 template<> void freeOwnedGPtr<GSList>(GSList*);
 template<> void freeOwnedGPtr<GPatternSpec>(GPatternSpec*);

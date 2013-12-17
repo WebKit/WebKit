@@ -26,7 +26,7 @@
 
 namespace WTF {
 
-template <> void freeOwnedGPtr<GError>(GError* ptr)
+template <> WTF_EXPORT_PRIVATE void freeOwnedGPtr<GError>(GError* ptr)
 {
     if (ptr)
         g_error_free(ptr);
