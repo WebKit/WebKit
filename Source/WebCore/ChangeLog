@@ -1,3 +1,13 @@
+2013-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove a few more guards mistakenly added in r160367
+
+        Reviewed by Martin Robinson.
+
+        r160367 was too liberal in hiding APIs from the GObject DOM bindings.
+
+        * Modules/battery/NavigatorBattery.idl: Expose NavigatorBattery.
+
 2013-12-17  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a simple register allocator to WebCore for x86_64
