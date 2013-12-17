@@ -1,3 +1,43 @@
+2013-12-17  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a simple register allocator to WebCore for x86_64
+        https://bugs.webkit.org/show_bug.cgi?id=125771
+
+        Reviewed by Geoffrey Garen.
+
+        Add a brain dead register allocator to simplify the use of registers
+        when writting code generators.
+
+        RegisterAllocator has two purposes:
+        -make it easy to name registers properly.
+        -make it hard to reuse a register accidentally.
+
+        A helper class LocalRegister is also defined to provide an easy
+        way to work with registers within a C++ scope. For example:
+            LocalRegister elementPointer(allocator);
+            assembler.load(address, elementPointer);
+
+        RegisterAllocator makes no attempt at optimizing register allocations, but it reduces
+        implicit dependencies by returning used register at the end of the queue, making it less
+        likely they will be reused before their last instruction is executed.
+
+        The current implementation only support unix x86_64, it only uses caller saved registers.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * cssjit/RegisterAllocator.h: Added.
+        (WebCore::RegisterAllocator::allocateRegister): Provides any available register.
+        To restrict runtime exploitation of compiler bugs, the method crashes in release
+        if the register pool is empty.
+
+        (WebCore::RegisterAllocator::reserveRegister): Reserve a particular register.
+        (WebCore::RegisterAllocator::returnRegister): Return a previously allocated or reserved register.
+
+        (WebCore::RegisterAllocator::allocatedRegisters):
+        (WebCore::LocalRegister::LocalRegister):
+        (WebCore::LocalRegister::~LocalRegister):
+        (WebCore::LocalRegister::operator JSC::MacroAssembler::RegisterID):
+        (WebCore::RegisterAllocator::RegisterAllocator):
+
 2013-12-16  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Checking RTCPeerConnection signalingState before setting local/remoteDescription

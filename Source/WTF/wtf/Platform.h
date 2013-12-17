@@ -879,6 +879,11 @@
 #endif
 #endif
 
+/* CSS Selector JIT Compiler */
+#if !defined(ENABLE_CSS_SELECTOR_JIT)
+#define ENABLE_CSS_SELECTOR_JIT 0
+#endif
+
 /* Accelerated compositing */
 #if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && !USE(WINGDI) && !PLATFORM(WIN_CAIRO))
 #define WTF_USE_ACCELERATED_COMPOSITING 1
