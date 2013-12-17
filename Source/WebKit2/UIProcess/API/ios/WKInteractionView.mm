@@ -264,22 +264,14 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
     RetainPtr<UIColor> highlightUIKitColor = adoptNS([[UIColor alloc] initWithRed:(color.red() / 255.0) green:(color.green() / 255.0) blue:(color.blue() / 255.0) alpha:(color.alpha() / 255.0)]);
     [_highlightView.get() setColor:highlightUIKitColor.get()];
 
-    // Like WebKit1, we don't bother highlighting items that are bigger than the constraining rect.
-    // FIXME: this should not be done in mixed coordinate systems. It should be expressed in the ScrollView coordinates.
-    CGRect constrainRect = _scrollView.bounds;
-
     bool allHighlightRectsAreRectilinear = true;
     const size_t quadCount = highlightedQuads.size();
     RetainPtr<NSMutableArray> rects = adoptNS([[NSMutableArray alloc] initWithCapacity:static_cast<const NSUInteger>(quadCount)]);
     for (size_t i = 0; i < quadCount; ++i) {
         const FloatQuad& quad = highlightedQuads[i];
         if (quad.isRectilinear()) {
-            CGRect rect = quad.boundingBox();
-            if ((CGRectGetWidth(rect) > CGRectGetWidth(constrainRect)) || (CGRectGetHeight(rect) > CGRectGetHeight(constrainRect)))
-                continue;
-
-            rect = CGRectInset(rect, -UIWebViewMinimumHighlightRadius, -UIWebViewMinimumHighlightRadius);
-            [rects.get() addObject:[NSValue valueWithCGRect:rect]];
+            CGRect rect = CGRectInset(quad.boundingBox(), -UIWebViewMinimumHighlightRadius, -UIWebViewMinimumHighlightRadius);
+            [rects addObject:[NSValue valueWithCGRect:rect]];
         } else {
             allHighlightRectsAreRectilinear = false;
             rects.clear();

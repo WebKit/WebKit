@@ -1,3 +1,20 @@
+2013-12-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Remove the constraint that highlight rects must be smaller than the scrollview bounds
+        https://bugs.webkit.org/show_bug.cgi?id=125812
+
+        Reviewed by Dan Bernstein.
+
+        Currently, _scrollView is never set on WKInteractionView and all highlight rects are discarded.
+
+        Eventually, the constraint rect should be computed from the useful area of ScrollView and the scale
+        of the document. In the meantime, the constraint code is just causing troubles.
+
+        The issue is tracked by <rdar://problem/15673655>.
+
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (-[WKInteractionView _didGetTapHighlightForRequest:color:WebCore::quads:WebCore::topLeftRadius:WebCore::topRightRadius:WebCore::bottomLeftRadius:WebCore::bottomRightRadius:WebCore::]):
+
 2013-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         Apply overhang shadow and linen to UI-side layers
