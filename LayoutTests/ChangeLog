@@ -1,3 +1,10 @@
+2013-12-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Temporarily disable mediate tests to get bots green.
+
+        * platform/win/TestExpectations: Turn off additional media-related
+        tests. These will be reactivated soon.
+
 2013-12-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Move regions tests from fast/repaint into fast/regions

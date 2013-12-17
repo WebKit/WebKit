@@ -90,6 +90,26 @@ http/tests/inspector-enabled [ Skip ]
 
 # Disable all media tests while QTSDK issues are worked out
 webkit.org/b/125754 media [ Skip ]
+webkit.org/b/125754 fast/css/object-fit/object-fit-video-poster.html [ Failure ]
+webkit.org/b/125754 fast/dom/Window/custom-constructors.html [ Failure ]
+webkit.org/b/125754 fast/dom/beforeload/clear-video-poster-in-beforeload-listener.html [ Failure ]
+webkit.org/b/125754 fast/dom/beforeload/remove-video-in-beforeload-listener.html [ Failure ]
+webkit.org/b/125754 fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html [ Failure ]
+webkit.org/b/125754 fast/dom/beforeload/video-before-load.html [ Failure ]
+webkit.org/b/125754 fast/dom/boolean-attribute-reflection.html [ Failure ]
+webkit.org/b/125754 fast/dom/constructors-cached-navigate.html [ Failure ]
+webkit.org/b/125754 fast/dom/constructors-cached.html [ Failure ]
+webkit.org/b/125754 fast/dom/dom-constructors.html [ Failure ]
+webkit.org/b/125754 fast/events/constructors/track-event-constructor.html [ Failure ]
+webkit.org/b/125754 fast/events/media-element-focus-tab.html [ Failure ]
+webkit.org/b/125754 fast/events/media-focus-in-standalone-media-document.html [ Failure ]
+webkit.org/b/125754 fast/events/tabindex-focus-blur-all.html [ Failure ]
+webkit.org/b/125754 fast/replaced/outline-replaced-elements.html [ Failure ]
+webkit.org/b/125754 js/dom/custom-constructors.html [ Failure ]
+webkit.org/b/125754 js/dom/global-constructors-attributes.html [ Failure ]
+webkit.org/b/125754 js/dom/instanceof-XMLHttpRequest.html [ Failure ]
+webkit.org/b/125754 media/video-volume.html [ Failure ]
+#end temporarily excluded media tests [ Failure ]
 
 # Fails <rdar://problem/5674289>
 media/video-seek-past-end-paused.html
