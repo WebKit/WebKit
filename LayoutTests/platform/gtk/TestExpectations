@@ -50,11 +50,11 @@ webkit.org/b/122963 fast/regions/region-dynamic-after-before.html [ Missing ]
 webkit.org/b/122963 fast/regions/region-generated-content-before-after.html [ Missing ]
 webkit.org/b/122963 fast/regions/text-region-split-small-pagination.html [ Missing ]
 
-webkit.org/b/122963 fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Missing ]
-webkit.org/b/122963 fast/repaint/line-flow-with-floats-in-regions.html [ Missing ]
-webkit.org/b/122963 fast/repaint/overflow-flipped-writing-mode-block-in-regions.html [ Missing ]
-webkit.org/b/122963 fast/repaint/region-painting-invalidation.html [ Missing ]
-webkit.org/b/122963 fast/repaint/region-painting-via-layout.html [ Missing ]
+webkit.org/b/122963 fast/regions/repaint/japanese-rl-selection-repaint-in-regions.html [ Missing ]
+webkit.org/b/122963 fast/regions/repaint/line-flow-with-floats-in-regions.html [ Missing ]
+webkit.org/b/122963 fast/regions/repaint/overflow-flipped-writing-mode-block-in-regions.html [ Missing ]
+webkit.org/b/122963 fast/regions/repaint/region-painting-invalidation.html [ Missing ]
+webkit.org/b/122963 fast/regions/repaint/region-painting-via-layout.html [ Missing ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Expected failures
@@ -1512,7 +1512,7 @@ webkit.org/b/124770 fast/forms/select-accesskey.html [ Failure ]
 
 webkit.org/b/124834 fast/block/float/clear-negative-margin-top.html [ ImageOnlyFailure ]
 
-webkit.org/b/124835 fast/repaint/repaint-regions-overflow.html [ Failure ]
+webkit.org/b/124835 fast/regions/repaint/repaint-regions-overflow.html [ Failure ]
 
 webkit.org/b/125071 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ ImageOnlyFailure ]
 

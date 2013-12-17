@@ -1,3 +1,54 @@
+2013-12-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Move regions tests from fast/repaint into fast/regions
+        https://bugs.webkit.org/show_bug.cgi?id=78786
+
+        Reviewed by Dirk Schulze.
+
+        Moved regions repaint tests from fast/repaint into fast/regions/repaint.
+        Moved regions repaint tests from fast/regions into fast/regions/repaint.
+        Adjusted paths, TestExpectations.
+
+        * fast/regions/repaint/element-in-named-flow-absolute-from-fixed-expected.txt: Renamed from LayoutTests/fast/regions/element-in-named-flow-absolute-from-fixed-expected.txt.
+        * fast/regions/repaint/element-in-named-flow-absolute-from-fixed.html: Renamed from LayoutTests/fast/regions/element-in-named-flow-absolute-from-fixed.html.
+        * fast/regions/repaint/element-in-named-flow-fixed-from-absolute-expected.txt: Renamed from LayoutTests/fast/regions/element-in-named-flow-fixed-from-absolute-expected.txt.
+        * fast/regions/repaint/element-in-named-flow-fixed-from-absolute.html: Renamed from LayoutTests/fast/regions/element-in-named-flow-fixed-from-absolute.html.
+        * fast/regions/repaint/element-inflow-fixed-from-outflow-static-expected.txt: Renamed from LayoutTests/fast/regions/element-inflow-fixed-from-outflow-static-expected.txt.
+        * fast/regions/repaint/element-inflow-fixed-from-outflow-static.html: Renamed from LayoutTests/fast/regions/element-inflow-fixed-from-outflow-static.html.
+        * fast/regions/repaint/element-outflow-static-from-inflow-fixed-expected.txt: Renamed from LayoutTests/fast/regions/element-outflow-static-from-inflow-fixed-expected.txt.
+        * fast/regions/repaint/element-outflow-static-from-inflow-fixed.html: Renamed from LayoutTests/fast/regions/element-outflow-static-from-inflow-fixed.html.
+        * fast/regions/repaint/fixed-in-named-flow-scroll-expected.txt: Renamed from LayoutTests/fast/regions/fixed-in-named-flow-scroll-expected.txt.
+        * fast/regions/repaint/fixed-in-named-flow-scroll.html: Renamed from LayoutTests/fast/regions/fixed-in-named-flow-scroll.html.
+        * fast/regions/repaint/increasing-region-content-height-expected.txt: Renamed from LayoutTests/fast/repaint/increasing-region-content-height-expected.txt.
+        * fast/regions/repaint/increasing-region-content-height.html: Renamed from LayoutTests/fast/repaint/increasing-region-content-height.html.
+        * fast/regions/repaint/japanese-rl-selection-repaint-in-regions.html: Renamed from LayoutTests/fast/repaint/japanese-rl-selection-repaint-in-regions.html.
+        * fast/regions/repaint/line-flow-with-floats-in-regions.html: Added.
+        * fast/regions/repaint/overflow-flipped-writing-mode-block-in-regions.html: Renamed from LayoutTests/fast/repaint/overflow-flipped-writing-mode-block-in-regions.html.
+        * fast/regions/repaint/region-painting-composited-element-expected.html: Renamed from LayoutTests/fast/repaint/region-painting-composited-element-expected.html.
+        * fast/regions/repaint/region-painting-composited-element.html: Renamed from LayoutTests/fast/repaint/region-painting-composited-element.html.
+        * fast/regions/repaint/region-painting-in-composited-view-expected.html: Renamed from LayoutTests/fast/repaint/region-painting-in-composited-view-expected.html.
+        * fast/regions/repaint/region-painting-in-composited-view.html: Renamed from LayoutTests/fast/repaint/region-painting-in-composited-view.html.
+        * fast/regions/repaint/region-painting-invalidation.html: Renamed from LayoutTests/fast/repaint/region-painting-invalidation.html.
+        * fast/regions/repaint/region-painting-via-layout.html: Renamed from LayoutTests/fast/repaint/region-painting-via-layout.html.
+        * fast/regions/repaint/repaint-regions-overflow-expected.txt: Renamed from LayoutTests/fast/repaint/repaint-regions-overflow-expected.txt.
+        * fast/regions/repaint/repaint-regions-overflow.html: Renamed from LayoutTests/fast/repaint/repaint-regions-overflow.html.
+        * fast/repaint/line-flow-with-floats-in-regions.html: Removed.
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/regions/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/mac/fast/regions/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Renamed from LayoutTests/platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png.
+        * platform/mac/fast/regions/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Renamed from LayoutTests/platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt.
+        * platform/mac/fast/regions/repaint/line-flow-with-floats-in-regions-expected.png: Renamed from LayoutTests/platform/mac/fast/repaint/line-flow-with-floats-in-regions-expected.png.
+        * platform/mac/fast/regions/repaint/line-flow-with-floats-in-regions-expected.txt: Renamed from LayoutTests/platform/mac/fast/repaint/line-flow-with-floats-in-regions-expected.txt.
+        * platform/mac/fast/regions/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png: Renamed from LayoutTests/platform/mac/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png.
+        * platform/mac/fast/regions/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt: Renamed from LayoutTests/platform/mac/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt.
+        * platform/mac/fast/regions/repaint/region-painting-invalidation-expected.png: Renamed from LayoutTests/platform/mac/fast/repaint/region-painting-invalidation-expected.png.
+        * platform/mac/fast/regions/repaint/region-painting-invalidation-expected.txt: Renamed from LayoutTests/platform/mac/fast/repaint/region-painting-invalidation-expected.txt.
+        * platform/mac/fast/regions/repaint/region-painting-via-layout-expected.png: Renamed from LayoutTests/platform/mac/fast/repaint/region-painting-via-layout-expected.png.
+        * platform/mac/fast/regions/repaint/region-painting-via-layout-expected.txt: Renamed from LayoutTests/platform/mac/fast/repaint/region-painting-via-layout-expected.txt.
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2013-12-17  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK][WK2] rowAtIndex is not implemented in DRT/WKTR

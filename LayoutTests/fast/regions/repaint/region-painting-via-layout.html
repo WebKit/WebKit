@@ -1,10 +1,6 @@
 <html>
 <head>
 <title>Test for https://bugs.webkit.org/show_bug.cgi?id=69932</title>
-<script>
-    if (window.testRunner)
-        window.testRunner.overridePreference("WebKitCSSRegionsEnabled", "1");
-</script>
 <style type="text/css">
 #content {
     -webkit-flow-into: flow1;
@@ -32,7 +28,7 @@
 }
 
 </style>
-<script src="resources/repaint.js" type="text/javascript"></script>
+<script src="../../repaint/resources/repaint.js" type="text/javascript"></script>
 <script>
 function repaintTest()
 {
