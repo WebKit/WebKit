@@ -1,3 +1,13 @@
+2013-12-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Some ANGLE headers missing from dist
+        https://bugs.webkit.org/show_bug.cgi?id=125782
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: add a few headers that were missing from the build,
+        causing build failures when the system headers were incompatible.
+
 2013-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Fixed Win64 build on VS2013.
