@@ -1,5 +1,13 @@
 2013-12-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Attempt to fix the Windows build after r160672.
+        
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::PlatformCALayerWin):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+
+2013-12-16  Simon Fraser  <simon.fraser@apple.com>
+
         Apply overhang shadow and linen to UI-side layers
         https://bugs.webkit.org/show_bug.cgi?id=125807
 

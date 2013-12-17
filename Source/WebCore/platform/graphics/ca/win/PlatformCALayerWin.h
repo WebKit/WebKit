@@ -128,6 +128,9 @@ public:
 
     virtual void setEdgeAntialiasingMask(unsigned) OVERRIDE { ASSERT_NOT_REACHED(); }
 
+    virtual GraphicsLayer::CustomAppearance customAppearance() const OVERRIDE { return m_customAppearance; }
+    virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance customAppearance) OVERRIDE { m_customAppearance = customAppearance; }
+
     virtual TiledBacking* tiledBacking() OVERRIDE { return nullptr; }
     
     virtual PlatformCALayer* rootLayer() const OVERRIDE;
@@ -146,6 +149,7 @@ private:
     PlatformCALayerWin(LayerType, PlatformLayer*, PlatformCALayerClient* owner);
 
     HashMap<String, RefPtr<PlatformCAAnimation>> m_animations;
+    GraphicsLayer::CustomAppearance m_customAppearance;
 };
 
 }
