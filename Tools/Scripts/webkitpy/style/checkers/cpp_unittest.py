@@ -3313,20 +3313,20 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
 
         self.assert_multi_line_lint(
             '''\
-                ENUM_CLASS(Foo) {
+                enum class Foo {
                     FOO_ONE = 1,
                     FOO_TWO
                 };
-                ENUM_CLASS(Foo) { FOO_ONE };
-                ENUM_CLASS(Foo) {FooOne, fooTwo};
-                ENUM_CLASS(Foo) {
+                enum class Foo { FOO_ONE };
+                enum class Foo {FooOne, fooTwo};
+                enum class Foo {
                     FOO_ONE
                 };''',
             ['enum members should use InterCaps with an initial capital letter.  [readability/enum_casing] [4]'] * 5)
 
         self.assert_multi_line_lint(
             '''\
-                ENUM_CLASS(Foo) {
+                enum class Foo {
                     fooOne = 1,
                     FooTwo = 2
                 };''',
@@ -3334,11 +3334,11 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
 
         self.assert_multi_line_lint(
             '''\
-                ENUM_CLASS(Foo) {
+                enum class Foo {
                     FooOne = 1,
                     FooTwo
                 } fooVar = FooOne;
-                ENUM_CLASS(Enum123) {
+                enum class Enum123 {
                     FooOne,
                     FooTwo = FooOne,
                 };''',
@@ -3370,10 +3370,10 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
             '};',
             '')
         self.assert_lint(
-            'ENUM_CLASS(CPP11EnumClass) { Value1, Value2 };',
+            'enum class CPP11EnumClass { Value1, Value2 };',
             '')
         self.assert_lint(
-            'ENUM_CLASS(MyEnum) {\n'
+            'enum class MyEnum {\n'
             '    Value1,\n'
             '    Value2\n'
             '};',
@@ -4303,14 +4303,14 @@ class WebKitStyleTest(CppStyleTestBase):
             '    1\n'
             '};', '')
         self.assert_multi_line_lint(
-            'ENUM_CLASS(CPP11EnumClass)\n'
+            'enum class CPP11EnumClass\n'
             '{\n'
             '    Value1,\n'
             '    Value2\n'
             '};',
             'This { should be at the end of the previous line  [whitespace/braces] [4]')
         self.assert_multi_line_lint(
-            'ENUM_CLASS(CPP11EnumClass) {\n'
+            'enum class CPP11EnumClass {\n'
             '    Value1,\n'
             '    Value2\n'
             '};', '')
