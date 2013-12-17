@@ -1,3 +1,16 @@
+2013-12-17  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Compile fixes for GStreamer on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=124867
+
+        Reviewed by Philippe Normand.
+
+        * WebView.cpp:
+        (WebView::enterFullscreenForNode):
+        (WebView::exitFullscreen):
+        GStreamer in WebKit does not support fullscreen, so
+        I added #if !USE(GSTREAMER) to the fullscreen code to get it to compile.
+
 2013-12-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Push More Inspector Required Classes Down into JavaScriptCore

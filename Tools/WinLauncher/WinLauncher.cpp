@@ -42,6 +42,10 @@
 #include <CoreFoundation/CFRunLoop.h>
 #endif
 
+#if USE(GLIB)
+#include <glib.h>
+#endif
+
 #include <algorithm>
 #include <assert.h>
 #include <comip.h>
@@ -616,6 +620,9 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
             }
+#if USE(GLIB)
+            g_main_context_iteration(0, false);
+#endif
         }
     } __except(createCrashReport(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER) { }
 
