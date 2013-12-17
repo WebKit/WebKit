@@ -304,6 +304,9 @@ void PlatformCALayerRemote::setBounds(const FloatRect& value)
 {
     m_properties.size = value.size();
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::SizeChanged);
+    
+    if (requiresCustomAppearanceUpdateOnBoundsChange())
+        m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
 
     ensureBackingStore();
 }
@@ -511,6 +514,22 @@ void PlatformCALayerRemote::setEdgeAntialiasingMask(unsigned value)
 {
     m_properties.edgeAntialiasingMask = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged);
+}
+
+bool PlatformCALayerRemote::requiresCustomAppearanceUpdateOnBoundsChange() const
+{
+    return m_properties.customAppearance == GraphicsLayer::ScrollingShadow;
+}
+
+GraphicsLayer::CustomAppearance PlatformCALayerRemote::customAppearance() const
+{
+    return m_properties.customAppearance;
+}
+
+void PlatformCALayerRemote::updateCustomAppearance(GraphicsLayer::CustomAppearance customAppearance)
+{
+    m_properties.customAppearance = customAppearance;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
 }
 
 PassRefPtr<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const

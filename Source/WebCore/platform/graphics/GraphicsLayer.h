@@ -421,6 +421,10 @@ public:
     virtual void setDebugBackgroundColor(const Color&) { }
     virtual void setDebugBorder(const Color&, float /*borderWidth*/) { }
 
+    enum CustomAppearance { NoCustomAppearance, ScrollingOverhang, ScrollingShadow };
+    virtual void setCustomAppearance(CustomAppearance customAppearance) { m_customAppearance = customAppearance; }
+    CustomAppearance customAppearance() const { return m_customAppearance; }
+
     // z-position is the z-equivalent of position(). It's only used for debugging purposes.
     virtual float zPosition() const { return m_zPosition; }
     virtual void setZPosition(float);
@@ -577,6 +581,7 @@ protected:
     IntSize m_contentsTileSize;
 
     int m_repaintCount;
+    CustomAppearance m_customAppearance;
 };
 
 

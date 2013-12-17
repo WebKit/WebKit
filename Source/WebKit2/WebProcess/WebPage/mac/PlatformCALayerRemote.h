@@ -140,6 +140,9 @@ public:
 
     virtual void setEdgeAntialiasingMask(unsigned) OVERRIDE;
 
+    virtual WebCore::GraphicsLayer::CustomAppearance customAppearance() const OVERRIDE;
+    virtual void updateCustomAppearance(WebCore::GraphicsLayer::CustomAppearance) OVERRIDE;
+
     virtual WebCore::TiledBacking* tiledBacking() OVERRIDE { return nullptr; }
 
     virtual PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const OVERRIDE;
@@ -156,6 +159,8 @@ protected:
 private:
     void ensureBackingStore();
     void removeSublayer(PlatformCALayerRemote*);
+
+    bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
     RemoteLayerTreeTransaction::LayerID m_layerID;
     RemoteLayerTreeTransaction::LayerProperties m_properties;

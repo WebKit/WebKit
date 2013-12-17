@@ -35,6 +35,7 @@
 #import "GraphicsLayerCA.h"
 #import "LengthFunctions.h"
 #import "PlatformCAFilters.h"
+#import "ScrollbarThemeMac.h"
 #import "SoftLinking.h"
 #import "TiledBacking.h"
 #import "TileController.h"
@@ -178,6 +179,7 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 
 PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformLayer* layer, PlatformCALayerClient* owner)
     : PlatformCALayer(layer ? LayerTypeCustom : layerType, owner)
+    , m_customAppearance(GraphicsLayer::NoCustomAppearance)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (layer) {
@@ -272,6 +274,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerMac::clone(PlatformCALayerClient* own
 #if ENABLE(CSS_FILTERS)
     newLayer->copyFiltersFrom(this);
 #endif
+    newLayer->updateCustomAppearance(customAppearance());
 
     if (type == LayerTypeAVPlayerLayer) {
         ASSERT([newLayer->platformLayer() isKindOfClass:getAVPlayerLayerClass()]);
@@ -450,6 +453,10 @@ void PlatformCALayerMac::setBounds(const FloatRect& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setBounds:value];
+    
+    if (requiresCustomAppearanceUpdateOnBoundsChange())
+        updateCustomAppearance(m_customAppearance);
+
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -720,6 +727,29 @@ void PlatformCALayerMac::setEdgeAntialiasingMask(unsigned mask)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setEdgeAntialiasingMask:mask];
     END_BLOCK_OBJC_EXCEPTIONS
+}
+
+bool PlatformCALayerMac::requiresCustomAppearanceUpdateOnBoundsChange() const
+{
+    return m_customAppearance == GraphicsLayer::ScrollingShadow;
+}
+
+void PlatformCALayerMac::updateCustomAppearance(GraphicsLayer::CustomAppearance appearance)
+{
+    m_customAppearance = appearance;
+
+    switch (appearance) {
+    case GraphicsLayer::NoCustomAppearance:
+        ScrollbarThemeMac::removeOverhangAreaBackground(platformLayer());
+        ScrollbarThemeMac::removeOverhangAreaShadow(platformLayer());
+        break;
+    case GraphicsLayer::ScrollingOverhang:
+        ScrollbarThemeMac::setUpOverhangAreaBackground(platformLayer());
+        break;
+    case GraphicsLayer::ScrollingShadow:
+        ScrollbarThemeMac::setUpOverhangAreaShadow(platformLayer());
+        break;
+    }
 }
 
 TiledBacking* PlatformCALayerMac::tiledBacking()

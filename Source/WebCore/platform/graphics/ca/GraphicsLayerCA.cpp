@@ -1365,6 +1365,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & DebugIndicatorsChanged)
         updateDebugBorder();
 
+    if (m_uncommittedChanges & CustomAppearanceChanged)
+        updateCustomAppearance();
+
     if (m_uncommittedChanges & ChildrenChanged) {
         updateSublayerList();
         // Sublayers may set this flag again, so clear it to avoid always updating sublayers in commitLayerChangesAfterSublayers().
@@ -2843,6 +2846,11 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
         m_layer->setNeedsDisplay();
 }
 
+void GraphicsLayerCA::updateCustomAppearance()
+{
+    m_layer->updateCustomAppearance(m_customAppearance);
+}
+
 void GraphicsLayerCA::setShowDebugBorder(bool showBorder)
 {
     if (showBorder == m_showDebugBorder)
@@ -2933,6 +2941,15 @@ void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)
         m_layer->setBorderColor(Color::transparent);
         m_layer->setBorderWidth(0);
     }
+}
+
+void GraphicsLayerCA::setCustomAppearance(CustomAppearance customAppearance)
+{
+    if (customAppearance == m_customAppearance)
+        return;
+
+    GraphicsLayer::setCustomAppearance(customAppearance);
+    noteLayerPropertyChanged(CustomAppearanceChanged);
 }
 
 bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const

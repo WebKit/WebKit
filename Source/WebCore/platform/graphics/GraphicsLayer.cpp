@@ -97,6 +97,7 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     , m_replicaLayer(0)
     , m_replicatedLayer(0)
     , m_repaintCount(0)
+    , m_customAppearance(NoCustomAppearance)
 {
 #ifndef NDEBUG
     if (m_client)

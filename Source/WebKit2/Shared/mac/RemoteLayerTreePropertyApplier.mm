@@ -29,6 +29,7 @@
 #import "PlatformCALayerRemote.h"
 #import <QuartzCore/CALayer.h>
 #import <WebCore/PlatformCAFilters.h>
+#import <WebCore/ScrollbarThemeMac.h>
 
 using namespace WebCore;
 
@@ -56,6 +57,22 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
     
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearance customAppearance)
+{
+    switch (customAppearance) {
+    case GraphicsLayer::NoCustomAppearance:
+        ScrollbarThemeMac::removeOverhangAreaBackground(layer);
+        ScrollbarThemeMac::removeOverhangAreaShadow(layer);
+        break;
+    case GraphicsLayer::ScrollingOverhang:
+        ScrollbarThemeMac::setUpOverhangAreaBackground(layer);
+        break;
+    case GraphicsLayer::ScrollingShadow:
+        ScrollbarThemeMac::setUpOverhangAreaShadow(layer);
+        break;
+    }
 }
 
 void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeTransaction::LayerProperties properties, RelatedLayerMap relatedLayers)
@@ -161,6 +178,9 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged)
         layer.edgeAntialiasingMask = properties.edgeAntialiasingMask;
+
+    if (properties.changedProperties & RemoteLayerTreeTransaction::CustomAppearanceChanged)
+        updateCustomAppearance(layer, properties.customAppearance);
 }
 
 void RemoteLayerTreePropertyApplier::disableActionsForLayer(CALayer *layer)

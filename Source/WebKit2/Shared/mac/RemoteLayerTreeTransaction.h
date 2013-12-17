@@ -76,7 +76,8 @@ public:
         TimeOffsetChanged = 1 << 23,
         BackingStoreChanged = 1 << 24,
         FiltersChanged = 1 << 25,
-        EdgeAntialiasingMaskChanged = 1 << 26
+        EdgeAntialiasingMaskChanged = 1 << 26,
+        CustomAppearanceChanged = 1 << 27
     };
 
     struct LayerCreationProperties {
@@ -132,6 +133,7 @@ public:
         RemoteLayerBackingStore backingStore;
         WebCore::FilterOperations filters;
         unsigned edgeAntialiasingMask;
+        WebCore::GraphicsLayer::CustomAppearance customAppearance;
     };
 
     explicit RemoteLayerTreeTransaction();

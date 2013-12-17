@@ -155,6 +155,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncode
 
     if (changedProperties & EdgeAntialiasingMaskChanged)
         encoder << edgeAntialiasingMask;
+
+    if (changedProperties & CustomAppearanceChanged)
+        encoder.encodeEnum(customAppearance);
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder& decoder, LayerProperties& result)
@@ -294,6 +297,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecode
 
     if (result.changedProperties & EdgeAntialiasingMaskChanged) {
         if (!decoder.decode(result.edgeAntialiasingMask))
+            return false;
+    }
+
+    if (result.changedProperties & CustomAppearanceChanged) {
+        if (!decoder.decodeEnum(result.customAppearance))
             return false;
     }
 
@@ -638,6 +646,9 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const HashMap<Remot
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged)
             dumpProperty<unsigned>(ts, "edgeAntialiasingMask", layerProperties.edgeAntialiasingMask);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::CustomAppearanceChanged)
+            dumpProperty<GraphicsLayer::CustomAppearance>(ts, "customAppearance", layerProperties.customAppearance);
 
         ts << ")";
 

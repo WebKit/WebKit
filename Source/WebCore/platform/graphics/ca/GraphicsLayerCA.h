@@ -130,6 +130,8 @@ public:
     virtual void setDebugBackgroundColor(const Color&);
     virtual void setDebugBorder(const Color&, float borderWidth);
 
+    virtual void setCustomAppearance(CustomAppearance);
+
     virtual void layerDidDisplay(PlatformLayer*);
 
     virtual void setMaintainsPixelAlignment(bool);
@@ -366,6 +368,7 @@ private:
     void updateVisibleRect(const FloatRect& oldVisibleRect);
     void updateTiles();
     void updateContentsScale(float pageScaleFactor);
+    void updateCustomAppearance();
     
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
@@ -422,7 +425,8 @@ private:
         FiltersChanged = 1 << 27,
         TilingAreaChanged = 1 << 28,
         TilesAdded = 1 < 29,
-        DebugIndicatorsChanged = 1 << 30
+        DebugIndicatorsChanged = 1 << 30,
+        CustomAppearanceChanged = 1 << 31
     };
     typedef unsigned LayerChangeFlags;
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };

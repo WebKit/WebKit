@@ -1,3 +1,55 @@
+2013-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Apply overhang shadow and linen to UI-side layers
+        https://bugs.webkit.org/show_bug.cgi?id=125807
+
+        Reviewed by Tim Horton.
+        
+        With UI-side compositing, we need to apply the overhang shadow and linen
+        background to layers in the UI process. Achieve this by setting a "custom
+        appearance" flag on layers that need a shadow or linen background, and
+        migrating this flag to the UI process. Static functions on ScrollbarThemeMac
+        are exposed to do the actual setting.
+
+        * WebCore.exp.in: Export ScrollbarThemeMac and GraphicsLayerCA functions.
+        * WebCore.xcodeproj/project.pbxproj: ScrollbarThemeMac.h and ScrollbarThemeComposite.h
+        need to be Private.
+        * platform/graphics/GraphicsLayer.cpp: Initialize m_customAppearance.
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h: Getter/setter for CustomAppearance.
+        (WebCore::GraphicsLayer::setCustomAppearance):
+        (WebCore::GraphicsLayer::customAppearance):
+        * platform/graphics/ca/GraphicsLayerCA.cpp: Update CustomAppearanceChanged as
+        we do other properties.
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateCustomAppearance):
+        (WebCore::GraphicsLayerCA::setCustomAppearance):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm: When we have a custom
+        appearance, use ScrollbarThemeMac functions to update the layer. Ensure
+        that if the bounds change, we update the shadow (whose path depends on the bounds).
+        (PlatformCALayerMac::PlatformCALayerMac):
+        (PlatformCALayerMac::clone):
+        (PlatformCALayerMac::setBounds):
+        (PlatformCALayerMac::requiresCustomAppearanceUpdateOnBoundsChange):
+        (PlatformCALayerMac::updateCustomAppearance):
+        * platform/mac/ScrollbarThemeMac.h: Export some static functions.
+        * platform/mac/ScrollbarThemeMac.mm: Change code to use static functions.
+        (WebCore::ScrollbarThemeMac::setUpOverhangAreaBackground):
+        (WebCore::ScrollbarThemeMac::removeOverhangAreaBackground):
+        (WebCore::ScrollbarThemeMac::setUpOverhangAreaShadow):
+        (WebCore::ScrollbarThemeMac::removeOverhangAreaShadow):
+        (WebCore::ScrollbarThemeMac::setUpOverhangAreasLayerContents):
+        (WebCore::ScrollbarThemeMac::setUpContentShadowLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition): No need to call
+        setUpContentShadowLayer() now when size changes; PlatformCALayer takes
+        care of that.
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers): Now set
+        custom appearance via GraphicsLayer.
+
 2013-12-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Remove dead code after converstion to VS2013

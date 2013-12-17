@@ -135,6 +135,9 @@ public:
 
     virtual void setEdgeAntialiasingMask(unsigned) OVERRIDE;
 
+    virtual GraphicsLayer::CustomAppearance customAppearance() const OVERRIDE { return m_customAppearance; }
+    virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) OVERRIDE;
+
     virtual TiledBacking* tiledBacking() OVERRIDE;
 
     virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient* owner) const OVERRIDE;
@@ -146,8 +149,11 @@ public:
 private:
     PlatformCALayerMac(LayerType, PlatformLayer*, PlatformCALayerClient* owner);
 
+    bool requiresCustomAppearanceUpdateOnBoundsChange() const;
+
     RetainPtr<NSObject> m_delegate;
     OwnPtr<PlatformCALayerList> m_customSublayers;
+    GraphicsLayer::CustomAppearance m_customAppearance;
 };
 
 } // namespace WebCore

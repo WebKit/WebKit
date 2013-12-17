@@ -186,6 +186,9 @@ public:
     virtual void setContentsScale(float) = 0;
 
     virtual void setEdgeAntialiasingMask(unsigned) = 0;
+    
+    virtual GraphicsLayer::CustomAppearance customAppearance() const = 0;
+    virtual void updateCustomAppearance(GraphicsLayer::CustomAppearance) = 0;
 
     virtual TiledBacking* tiledBacking() = 0;
 

@@ -1,3 +1,34 @@
+2013-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Apply overhang shadow and linen to UI-side layers
+        https://bugs.webkit.org/show_bug.cgi?id=125807
+
+        Reviewed by Tim Horton.
+
+        With UI-side compositing, we need to apply the overhang shadow and linen
+        background to layers in the UI process. Achieve this by setting a "custom
+        appearance" flag on layers that need a shadow or linen background, and
+        migrating this flag to the UI process. Static functions on ScrollbarThemeMac
+        are exposed to do the actual setting.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::updateCustomAppearance): Use ScrollbarThemeMac to update the
+        appearance.
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::dumpChangedLayers):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::setBounds): If the bounds change, also set the
+        CustomAppearanceChanged bit so that the UI side updates the shadow bounds
+        (done here because the UI side is not stateful).
+        (PlatformCALayerRemote::requiresCustomAppearanceUpdateOnBoundsChange):
+        (PlatformCALayerRemote::customAppearance):
+        (PlatformCALayerRemote::updateCustomAppearance):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
 2013-12-16  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess: Implement openTransaction()

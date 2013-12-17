@@ -64,6 +64,14 @@ public:
     static bool isCurrentlyDrawingIntoLayer();
     static void setIsCurrentlyDrawingIntoLayer(bool);
 
+#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+    static void setUpOverhangAreaBackground(CALayer *, const Color& customBackgroundColor = Color());
+    static void removeOverhangAreaBackground(CALayer *);
+
+    static void setUpOverhangAreaShadow(CALayer *);
+    static void removeOverhangAreaShadow(CALayer *);
+#endif
+
 protected:
     virtual bool hasButtons(ScrollbarThemeClient*);
     virtual bool hasThumb(ScrollbarThemeClient*);

@@ -55,7 +55,6 @@
 #include "RenderReplica.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
-#include "ScrollbarTheme.h"
 #include "ScrollingConstraints.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
@@ -1842,12 +1841,7 @@ void RenderLayerCompositor::updateRootLayerPosition()
 #if ENABLE(RUBBER_BANDING)
     if (m_contentShadowLayer) {
         m_contentShadowLayer->setPosition(m_rootContentLayer->position());
-
-        FloatSize rootContentLayerSize = m_rootContentLayer->size();
-        if (m_contentShadowLayer->size() != rootContentLayerSize) {
-            m_contentShadowLayer->setSize(rootContentLayerSize);
-            ScrollbarTheme::theme()->setUpContentShadowLayer(m_contentShadowLayer.get());
-        }
+        m_contentShadowLayer->setSize(m_rootContentLayer->size());
     }
 
     updateLayerForTopOverhangArea(m_layerForTopOverhangArea != nullptr);
@@ -2933,8 +2927,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #endif
             m_layerForOverhangAreas->setDrawsContent(false);
             m_layerForOverhangAreas->setSize(m_renderView.frameView().frameRect().size());
-
-            ScrollbarTheme::theme()->setUpOverhangAreasLayerContents(m_layerForOverhangAreas.get(), this->page()->chrome().client().underlayColor());
+            m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::ScrollingOverhang);
 
             // We want the overhang areas layer to be positioned below the frame contents,
             // so insert it below the clip layer.
@@ -2953,7 +2946,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #endif
             m_contentShadowLayer->setSize(m_rootContentLayer->size());
             m_contentShadowLayer->setPosition(m_rootContentLayer->position());
-            ScrollbarTheme::theme()->setUpContentShadowLayer(m_contentShadowLayer.get());
+            m_contentShadowLayer->setCustomAppearance(GraphicsLayer::ScrollingShadow);
 
             m_scrollLayer->addChildBelow(m_contentShadowLayer.get(), m_rootContentLayer.get());
         }
