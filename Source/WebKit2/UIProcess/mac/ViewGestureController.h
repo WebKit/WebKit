@@ -40,6 +40,7 @@ public:
     ~ViewGestureController();
 
     void handleMagnificationGesture(double scale, WebCore::FloatPoint origin);
+    double magnification() const;
 
     void endActiveGesture();
 

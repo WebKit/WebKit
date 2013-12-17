@@ -1,3 +1,23 @@
+2013-12-16  Tim Horton  <timothy_horton@apple.com>
+
+        WKView.magnification should include magnification due to the active gesture
+        https://bugs.webkit.org/show_bug.cgi?id=125813
+
+        Reviewed by Simon Fraser.
+
+        Make WKView.magnification respect active pinch-zoom gestures.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView magnification]):
+        If we have a ViewGestureController, defer to it for the current magnification.
+
+        * UIProcess/mac/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::magnification):
+        Return either the current pinch-zoom magnification, if we're in the middle of a gesture,
+        or the pageScaleFactor, if we're not.
+
+        * UIProcess/mac/ViewGestureController.h:
+
 2013-12-16  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Remove the constraint that highlight rects must be smaller than the scrollview bounds

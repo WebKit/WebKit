@@ -144,4 +144,12 @@ void ViewGestureController::endActiveGesture()
     m_activeGestureType = ViewGestureType::None;
 }
 
+double ViewGestureController::magnification() const
+{
+    if (m_activeGestureType == ViewGestureType::Magnification)
+        return m_magnification;
+
+    return m_webPageProxy.pageScaleFactor();
+}
+
 } // namespace WebKit

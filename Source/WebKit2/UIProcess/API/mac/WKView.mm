@@ -3307,6 +3307,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (double)magnification
 {
+    if (_data->_gestureController)
+        return _data->_gestureController->magnification();
+
     return _data->_page->pageScaleFactor();
 }
 
