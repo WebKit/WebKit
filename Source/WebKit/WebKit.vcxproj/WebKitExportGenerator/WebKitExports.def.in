@@ -213,7 +213,7 @@ EXPORTS
         symbolWithPointer(?item@StaticNodeList@WebCore@@UBEPAVNode@2@I@Z, ?item@StaticNodeList@WebCore@@UEBAPEAVNode@2@I@Z)
         ?selectTag@HTMLNames@WebCore@@3VQualifiedName@2@B
 #if ENABLE(INSPECTOR)
-        symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ)
+        symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QEBA?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ)
         symbolWithPointer(?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z, ?getHighlight@InspectorController@WebCore@@QEBAXPEAUHighlight@2@@Z)
         symbolWithPointer(?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z, ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPEAVInstrumentingAgents@2@PEAVPage@2@@Z)
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
@@ -222,7 +222,7 @@ EXPORTS
         symbolWithPointer(??1InspectorFrontendClientLocal@WebCore@@UAE@XZ, ??1InspectorFrontendClientLocal@WebCore@@UEAA@XZ)
         symbolWithPointer(?changeAttachedWindowHeight@InspectorFrontendClientLocal@WebCore@@UAEXI@Z, ?changeAttachedWindowHeight@InspectorFrontendClientLocal@WebCore@@UEAAXI@Z)
         symbolWithPointer(?changeAttachedWindowWidth@InspectorFrontendClientLocal@WebCore@@UAEXI@Z, ?changeAttachedWindowWidth@InspectorFrontendClientLocal@WebCore@@UEAAXI@Z)
-        symbolWithPointer(?connectFrontend@InspectorController@WebCore@@QAEXPAVInspectorFrontendChannel@Inspector@@@Z, ?connectFrontend@InspectorController@WebCore@@QAEXPAVInspectorFrontendChannel@Inspector@@@Z)
+        symbolWithPointer(?connectFrontend@InspectorController@WebCore@@QAEXPAVInspectorFrontendChannel@Inspector@@@Z, connectFrontend@InspectorController@WebCore@@QEAAXPEAVInspectorFrontendChannel@Inspector@@@Z)
         symbolWithPointer(?doDispatchMessageOnFrontendPage@InspectorClient@WebCore@@SA_NPAVPage@2@ABVString@WTF@@@Z, ?doDispatchMessageOnFrontendPage@InspectorClient@WebCore@@SA_NPEAVPage@2@AEBVString@WTF@@@Z)
         symbolWithPointer(?frontendLoaded@InspectorFrontendClientLocal@WebCore@@UAEXXZ, ?frontendLoaded@InspectorFrontendClientLocal@WebCore@@UEAAXXZ)
         symbolWithPointer(?getProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAE?AVString@WTF@@ABV45@@Z, ?getProperty@Settings@InspectorFrontendClientLocal@WebCore@@UEAA?AVString@WTF@@AEBV45@@Z)
@@ -457,6 +457,6 @@ EXPORTS
         symbolWithPointer(?cacheStorage@WebCore@@YAAAVApplicationCacheStorage@1@XZ, ?cacheStorage@WebCore@@YAAEAVApplicationCacheStorage@1@XZ)
         symbolWithPointer(?setDefaultOriginQuota@ApplicationCacheStorage@WebCore@@QAEX_J@Z, ?setDefaultOriginQuota@ApplicationCacheStorage@WebCore@@QEAAX_J@Z)
         symbolWithPointer(?vm@ScriptExecutionContext@WebCore@@QAEPAVVM@JSC@@XZ, ?vm@ScriptExecutionContext@WebCore@@QEAAPEAVVM@JSC@@XZ)
-        symbolWithPointer(?completeURL@Document@WebCore@@UBE?AVURL@2@ABVString@WTF@@@Z, ?completeURL@Document@WebCore@@UBEA?AVURL@2@AEBVString@WTF@@@Z)
+        symbolWithPointer(?completeURL@Document@WebCore@@UBE?AVURL@2@ABVString@WTF@@@Z, ?completeURL@Document@WebCore@@UEBA?AVURL@2@AEBVString@WTF@@@Z)
         symbolWithPointer(??1DOMWindow@WebCore@@UAE@XZ, ??1DOMWindow@WebCore@@UEAA@XZ)
-        symbolWithPointer(?visibleContentRect@ScrollView@WebCore@@UBE?AVIntRect@2@W4VisibleContentRectIncludesScrollbars@ScrollableArea@2@@Z, ?visibleContentRect@ScrollView@WebCore@@UEAA?AVIntRect@2@W4VisibleContentRectIncludesScrollbars@ScrollableArea@2@@Z)
+        symbolWithPointer(?visibleContentRect@ScrollView@WebCore@@UBE?AVIntRect@2@W4VisibleContentRectIncludesScrollbars@ScrollableArea@2@@Z, ?visibleContentRect@ScrollView@WebCore@@UEBA?AVIntRect@2@W4VisibleContentRectIncludesScrollbars@ScrollableArea@2@@Z)

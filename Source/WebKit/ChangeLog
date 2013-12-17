@@ -1,3 +1,10 @@
+2013-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Unreviewed build fix for 64-bit.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Corrected 64-bit linker symbols.
+
 2013-12-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.
