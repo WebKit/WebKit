@@ -310,7 +310,7 @@ inline void* operator new(size_t, NotNullTag, void* location)
     return location;
 }
 
-#if (defined(_MSC_VER) && _MSC_VER < 1700) || (COMPILER(GCC) && !COMPILER(CLANG) && !GCC_VERSION_AT_LEAST(4, 8, 1))
+#if (COMPILER(GCC) && !COMPILER(CLANG) && !GCC_VERSION_AT_LEAST(4, 8, 1))
 
 // Work-around for Pre-C++11 syntax in MSVC 2010, and prior as well as GCC < 4.8.1.
 namespace std {

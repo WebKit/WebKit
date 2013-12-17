@@ -36,14 +36,10 @@
    Defining any of the symbols explicitly prevents this from having any effect.
 */
 
-#include <wtf/Platform.h>
-
+#include <inttypes.h>
 #include <stdarg.h>
 #include <stddef.h>
-
-#if !COMPILER(MSVC)
-#include <inttypes.h>
-#endif
+#include <wtf/Platform.h>
 
 #ifdef NDEBUG
 /* Disable ASSERT* macros in release mode. */

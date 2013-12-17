@@ -1,3 +1,12 @@
+2013-12-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove dead code after conversion to VS2013
+        https://bugs.webkit.org/show_bug.cgi?id=125795
+
+        Reviewed by Darin Adler.
+
+        * API/tests/testapi.c: Remove local nan implementation
+
 2013-12-16  Oliver Hunt  <oliver@apple.com>
 
         Cache getters and custom accessors on the prototype chain

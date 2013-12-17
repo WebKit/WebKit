@@ -160,10 +160,6 @@ namespace WebCore {
 
         PassRefPtr<DOMWindow> open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
             DOMWindow& activeWindow, DOMWindow& firstWindow);
-#if defined(_MSC_VER) && _MSC_VER <= 1700
-        PassRefPtr<DOMWindow> open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
-            DOMWindow* activeWindow, DOMWindow* firstWindow);
-#endif
 
         typedef void (*PrepareDialogFunction)(DOMWindow*, void* context);
         void showModalDialog(const String& urlString, const String& dialogFeaturesString,

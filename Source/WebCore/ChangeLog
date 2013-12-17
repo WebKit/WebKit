@@ -1,3 +1,19 @@
+2013-12-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove dead code after converstion to VS2013
+        https://bugs.webkit.org/show_bug.cgi?id=125795
+
+        Reviewed by Darin Adler.
+
+        * WebCorePrefix.h: Remove VS2012 include kludge.
+        * loader/FTPDirectoryParser.cpp: Remove gmtime workaround code.
+        * page/DOMWindow.cpp: Remove older pointer-based open implementation.
+        * page/DOMWindow.h: Ditto
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::TextEncodingNameHash::equal): Remove optimization bug workaround
+        * testing/Internals.cpp:
+        (WebCore::Internals::openDummyInspectorFrontend): Remove compiler workaround
+
 2013-12-16  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream WebCore/history changes

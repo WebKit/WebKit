@@ -43,22 +43,6 @@
 #include <windows.h>
 #endif
 
-#if COMPILER(MSVC)
-
-#if _MSC_VER < 1800
-#include <wtf/MathExtras.h>
-
-static double nan(const char*)
-{
-    return std::numeric_limits<double>::quiet_NaN();
-}
-
-using std::isinf;
-using std::isnan;
-#endif
-
-#endif
-
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(void);
 #endif

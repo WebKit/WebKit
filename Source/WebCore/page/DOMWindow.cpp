@@ -1900,15 +1900,6 @@ PassRefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicS
     return newFrame.release();
 }
 
-#if defined(_MSC_VER) && _MSC_VER <= 1700
-// Work around a compiler bug in Visual Studio:
-PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
-    DOMWindow* activeWindow, DOMWindow* firstWindow)
-{
-    return open(urlString, frameName, windowFeaturesString, *activeWindow, *firstWindow);
-}
-#endif
-
 PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
     DOMWindow& activeWindow, DOMWindow& firstWindow)
 {

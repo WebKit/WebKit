@@ -65,19 +65,10 @@ struct TextEncodingNameHash {
         char c1;
         char c2;
         do {
-#if defined(_MSC_VER) && _MSC_VER == 1700
-            // Workaround for a bug in the VS2012 Update1 and Update2 optimizer, remove once the fix is released.
-            // https://connect.microsoft.com/VisualStudio/feedback/details/781189/vs2012-update-ctp4-c-optimizing-bug
-            c1 = toASCIILower(*s1++);
-            c2 = toASCIILower(*s2++);
-            if (c1 != c2)
-                return false;
-#else
             c1 = *s1++;
             c2 = *s2++;
             if (toASCIILower(c1) != toASCIILower(c2))
                 return false;
-#endif
         } while (c1 && c2);
         return !c1 && !c2;
     }

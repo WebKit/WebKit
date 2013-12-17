@@ -1,3 +1,20 @@
+2013-12-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Remove dead code after conversion to VS2013
+        https://bugs.webkit.org/show_bug.cgi?id=125795
+
+        Reviewed by Darin Adler.
+
+        * wtf/Assertions.h: Include <inttypes.h> now that it exists.
+        * wtf/Compiler.h: Update compiler checks for VS2013, and
+        enable support for NEVER_INLINE
+        * wtf/HashFunctions.h:
+        (WTF::PtrHash::hash): Remove compiler workaround.
+        * wtf/MathExtras.h: Remove C99 functions that are now supplied
+        by the MS runtime library.
+        * wtf/Platform.h: Remove old MSVC support flags.
+        * wtf/StdLibExtras.h: Remove old MSVC workaround code.
+
 2013-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Fixed Win64 build on VS2013.
