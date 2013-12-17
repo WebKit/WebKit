@@ -1,3 +1,22 @@
+2013-12-17  Simon Pena  <simon.pena@samsung.com>
+
+        [NIX] Enable full debug builds by having ar creating thin archives
+        https://bugs.webkit.org/show_bug.cgi?id=125850
+
+        Reviewed by Csaba Osztrogonác.
+
+        By default, CMake uses ar to generate libWebCore.a with cr parameters
+        (do not warn if the library has to be created, and replace existing
+        files in the archive). That results in a very large file, and ar fails
+        with sizes over 4GB.
+
+        By using thin archives (the T option of ar), the generated
+        libWebCore.a is much smaller, and can be successfully archived. As a
+        result, we can generate a full debug build. This patch is based on Xan
+        López's webkit.org/b/110580.
+
+        * PlatformNix.cmake: Instruct cmake to invoke ar with T option.
+
 2013-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update GObject DOM symbols file after r160336.

@@ -1,3 +1,21 @@
+2013-12-17  Simon Pena  <simon.pena@samsung.com>
+
+        [NIX] Enable full debug builds by having ar creating thin archives
+        https://bugs.webkit.org/show_bug.cgi?id=125850
+
+        Reviewed by Csaba Osztrogonác.
+
+        By default, CMake uses ar to generate libWebCore.a with cr parameters
+        (do not warn if the library has to be created, and replace existing
+        files in the archive). That results in a very large file, and ar fails
+        with sizes over 4GB.
+
+        Previously, debug builds on NIX were overriding CFLAGS in order to reduce
+        the size of the WebCore library. Once that ar creates thin archives, overriding
+        CFLAGS is no longer needed.
+
+        * Source/cmake/OptionsNix.cmake: Remove CFLAGS override for debug builds.
+
 2013-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         [GTK] Remove Warnings in building about duplicate INSPECTOR variables

@@ -80,11 +80,6 @@ set(PROJECT_VERSION_MINOR 1)
 set(PROJECT_VERSION_PATCH 0)
 set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    # Use -femit-struct-debug-baseonly to reduce the size of WebCore static library
-    set(CMAKE_CXX_FLAGS_DEBUG "-g -femit-struct-debug-baseonly" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-endif ()
-
 set(SHARED_CORE 0)
 set(ENABLE_WEBKIT 0)
 set(ENABLE_WEBKIT2 1)
