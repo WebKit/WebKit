@@ -1266,7 +1266,8 @@ LayoutRect RenderFlowThread::mapFromFlowThreadToLocal(const RenderBox* box, cons
 LayoutRect RenderFlowThread::decorationsClipRectForBoxInRegion(const RenderBox& box, RenderRegion& region) const
 {
     LayoutRect visualOverflowRect = region.visualOverflowRectForBox(&box);
-    
+    LayoutUnit initialLogicalX = style().isHorizontalWritingMode() ? visualOverflowRect.x() : visualOverflowRect.y();
+
     // The visual overflow rect returned by visualOverflowRectForBox is already flipped but the
     // RenderRegion::rectFlowPortionForBox method expects it unflipped.
     flipForWritingModeLocalCoordinates(visualOverflowRect);
@@ -1283,30 +1284,50 @@ LayoutRect RenderFlowThread::decorationsClipRectForBoxInRegion(const RenderBox& 
             visualOverflowRect.moveBy(LayoutPoint(width(), 0));
     }
 
-    // FIXME: This doesn't work properly with flipped writing modes.
-    // https://bugs.webkit.org/show_bug.cgi?id=125149
-    if (box.isRelPositioned()) {
-        // For relative-positioned elements, just use the layer's location.
-        visualOverflowRect.moveBy(box.layer()->absoluteBoundingBox().location());
-    } else {
-        const RenderBox* iterBox = &box;
-        while (iterBox && iterBox != this) {
-            RenderBlock* containerBlock = iterBox->containingBlock();
+    const RenderBox* iterBox = &box;
+    while (iterBox && iterBox != this) {
+        RenderBlock* containerBlock = iterBox->containingBlock();
 
-            LayoutRect currentBoxRect = iterBox->frameRect();
-            if (iterBox->style().isFlippedBlocksWritingMode()) {
-                if (iterBox->style().isHorizontalWritingMode())
-                    currentBoxRect.setY(currentBoxRect.height() - currentBoxRect.maxY());
-                else
-                    currentBoxRect.setX(currentBoxRect.width() - currentBoxRect.maxX());
-            }
-
-            if (containerBlock->style().writingMode() != iterBox->style().writingMode())
-                iterBox->flipForWritingMode(currentBoxRect);
-
-            visualOverflowRect.moveBy(currentBoxRect.location());
-            iterBox = containerBlock;
+        // FIXME: This doesn't work properly with flipped writing modes.
+        // https://bugs.webkit.org/show_bug.cgi?id=125149
+        if (iterBox->isPositioned()) {
+            // For positioned elements, just use the layer's absolute bounding box.
+            visualOverflowRect.moveBy(iterBox->layer()->absoluteBoundingBox().location());
+            break;
         }
+
+        LayoutRect currentBoxRect = iterBox->frameRect();
+        if (iterBox->style().isFlippedBlocksWritingMode()) {
+            if (iterBox->style().isHorizontalWritingMode())
+                currentBoxRect.setY(currentBoxRect.height() - currentBoxRect.maxY());
+            else
+                currentBoxRect.setX(currentBoxRect.width() - currentBoxRect.maxX());
+        }
+
+        if (containerBlock->style().writingMode() != iterBox->style().writingMode())
+            iterBox->flipForWritingMode(currentBoxRect);
+
+        visualOverflowRect.moveBy(currentBoxRect.location());
+        iterBox = containerBlock;
+    }
+
+    // Since the purpose of this method is to make sure the borders of a fragmented
+    // element don't overflow the region in the fragmentation direction, there's no
+    // point in restricting the clipping rect on the logical X axis. 
+    // This also saves us the trouble of handling percent-based widths and margins
+    // since the absolute bounding box of a positioned element would not contain
+    // the correct coordinates relative to the region we're interested in, but rather
+    // relative to the actual flow thread.
+    if (style().isHorizontalWritingMode()) {
+        if (initialLogicalX < visualOverflowRect.x())
+            visualOverflowRect.shiftXEdgeTo(initialLogicalX);
+        if (visualOverflowRect.width() < frameRect().width())
+            visualOverflowRect.setWidth(frameRect().width());
+    } else {
+        if (initialLogicalX < visualOverflowRect.y())
+            visualOverflowRect.shiftYEdgeTo(initialLogicalX);
+        if (visualOverflowRect.height() < frameRect().height())
+            visualOverflowRect.setHeight(frameRect().height());
     }
 
     return visualOverflowRect;
