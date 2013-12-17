@@ -27,7 +27,6 @@
 #define DrawingArea_h
 
 #include "DrawingAreaInfo.h"
-#include "LayerTreeContext.h"
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
 #include <wtf/Forward.h>
@@ -107,7 +106,6 @@ public:
 
     virtual void suspendPainting() { }
     virtual void resumePainting() { }
-    virtual void setLayerHostingMode(LayerHostingMode) { }
 
 protected:
     DrawingArea(DrawingAreaType, WebPage*);
@@ -121,6 +119,7 @@ private:
     virtual void updateBackingStoreState(uint64_t /*backingStoreStateID*/, bool /*respondImmediately*/, float /*deviceScaleFactor*/, const WebCore::IntSize& /*size*/, 
                                          const WebCore::IntSize& /*scrollOffset*/) { }
     virtual void didUpdate() { }
+    virtual void setLayerHostingMode(uint32_t) { }
 
 #if PLATFORM(MAC)
     // Used by TiledCoreAnimationDrawingArea.

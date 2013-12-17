@@ -268,6 +268,11 @@ void WebPage::acceptsFirstMouse(int, const WebKit::WebMouseEvent&, bool&)
     notImplemented();
 }
 
+void WebPage::setLayerHostingMode(LayerHostingMode)
+{
+    notImplemented();
+}
+
 void WebPage::computePagesForPrintingPDFDocument(uint64_t, const PrintInfo&, Vector<IntRect>&)
 {
     notImplemented();

@@ -504,8 +504,14 @@ void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor
         it->value->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
-void TiledCoreAnimationDrawingArea::setLayerHostingMode(LayerHostingMode layerHostingMode)
+void TiledCoreAnimationDrawingArea::setLayerHostingMode(uint32_t opaqueLayerHostingMode)
 {
+    LayerHostingMode layerHostingMode = static_cast<LayerHostingMode>(opaqueLayerHostingMode);
+    if (layerHostingMode == m_webPage->layerHostingMode())
+        return;
+
+    m_webPage->setLayerHostingMode(layerHostingMode);
+
     updateLayerHostingContext();
 
     // Finally, inform the UIProcess that the context has changed.

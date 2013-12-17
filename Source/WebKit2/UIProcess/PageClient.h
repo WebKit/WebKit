@@ -111,8 +111,8 @@ public:
     // Return whether the view is in a window.
     virtual bool isViewInWindow() = 0;
 
-    // Return whether the layer is window server hosted.
-    virtual bool isLayerWindowServerHosted() = 0;
+    // Return the layer hosting mode for the view.
+    virtual LayerHostingMode viewLayerHostingMode() { return LayerHostingModeDefault; }
 
     virtual void processDidCrash() = 0;
     virtual void didRelaunchProcess() = 0;

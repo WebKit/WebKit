@@ -1,3 +1,58 @@
+2013-12-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Add layer hosting mode to ViewState
+        https://bugs.webkit.org/show_bug.cgi?id=125803
+
+        Unreviewed - reverting last commit - might have broken tests. :-(
+
+        * Shared/ViewState.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::viewWillMoveToAnotherWindow):
+        (WebKit::PageClientImpl::viewLayerHostingMode):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::layerHostingModeDidChange):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::viewLayerHostingMode):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::updateViewState):
+        (WebKit::WebPageProxy::viewStateDidChange):
+        (WebKit::WebPageProxy::initializeCreationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::layerHostingMode):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::layerHostingModeDidChange):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::resumePainting):
+        (WebKit::DrawingArea::setLayerHostingMode):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::scalePage):
+        (WebKit::WebPage::setDeviceScaleFactor):
+        (WebKit::WebPage::setActive):
+        (WebKit::WebPage::setViewState):
+        (WebKit::WebPage::setWindowIsVisible):
+        (WebKit::WebPage::windowAndViewFramesChanged):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::layerHostingMode):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setLayerHostingMode):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerHostingMode):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::sendComplexTextInputToPlugin):
+        (WebKit::WebPage::setLayerHostingMode):
+
 2013-12-13  Gavin Barraclough  <barraclough@apple.com>
 
         Add layer hosting mode to ViewState
