@@ -21,10 +21,10 @@
 #include "WebKitWindowProperties.h"
 
 #include "APINumber.h"
+#include "APIURLRequest.h"
 #include "ImmutableDictionary.h"
 #include "WebKitPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
-#include "WebURLRequest.h"
 #include <WebCore/IntRect.h>
 #include <glib/gi18n-lib.h>
 

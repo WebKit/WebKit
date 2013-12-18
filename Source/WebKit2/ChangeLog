@@ -1,3 +1,26 @@
+2013-12-17  Jae Hyun Park  <jae.park@company100.net>
+
+        [GTK] Build fix after r160737
+
+        Unreviewed.
+
+        Rename WebURLRequest to API::URLRequest
+
+        * GNUmakefile.list.am:
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (didReceiveWebViewMessageFromInjectedBundle):
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:
+        (webkitNavigationPolicyDecisionCreate):
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:
+        (webkitResponsePolicyDecisionCreate):
+        * UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_load_request):
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (willSendRequestForFrame):
+
 2013-12-17  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix on EFL port after r160737

@@ -20,11 +20,11 @@
 #include "config.h"
 #include "WebKitResponsePolicyDecision.h"
 
+#include "APIURLRequest.h"
 #include "WebKitPolicyDecisionPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
-#include "WebURLRequest.h"
 #include "WebURLResponse.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -137,7 +137,7 @@ WebKitURIResponse* webkit_response_policy_decision_get_response(WebKitResponsePo
     return decision->priv->response.get();
 }
 
-WebKitResponsePolicyDecision* webkitResponsePolicyDecisionCreate(WebURLRequest* request, WebURLResponse* response, WebFramePolicyListenerProxy* listener)
+WebKitResponsePolicyDecision* webkitResponsePolicyDecisionCreate(API::URLRequest* request, WebURLResponse* response, WebFramePolicyListenerProxy* listener)
 {
     WebKitResponsePolicyDecision* decision = WEBKIT_RESPONSE_POLICY_DECISION(g_object_new(WEBKIT_TYPE_RESPONSE_POLICY_DECISION, NULL));
     decision->priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(request->resourceRequest()));

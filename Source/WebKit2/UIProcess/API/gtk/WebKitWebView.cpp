@@ -2027,7 +2027,7 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
 
     ResourceRequest resourceRequest;
     webkitURIRequestGetResourceRequest(request, resourceRequest);
-    RefPtr<WebURLRequest> urlRequest = WebURLRequest::create(resourceRequest);
+    RefPtr<API::URLRequest> urlRequest = API::URLRequest::create(resourceRequest);
     getPage(webView)->loadURLRequest(urlRequest.get());
 }
 

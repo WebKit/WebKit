@@ -36,7 +36,7 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
     if (g_str_equal(messageName, "DidInitiateLoadForResource")) {
         WebFrameProxy* frame = static_cast<WebFrameProxy*>(message.get(String::fromUTF8("Frame")));
         API::UInt64* resourceIdentifier = static_cast<API::UInt64*>(message.get(String::fromUTF8("Identifier")));
-        WebURLRequest* webRequest = static_cast<WebURLRequest*>(message.get(String::fromUTF8("Request")));
+        API::URLRequest* webRequest = static_cast<API::URLRequest*>(message.get(String::fromUTF8("Request")));
         GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(webRequest->resourceRequest()));
 
         webkitWebViewResourceLoadStarted(webView, frame, resourceIdentifier->value(), request.get());
@@ -46,7 +46,7 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
         if (!resource)
             return;
 
-        WebURLRequest* webRequest = static_cast<WebURLRequest*>(message.get(String::fromUTF8("Request")));
+        API::URLRequest* webRequest = static_cast<API::URLRequest*>(message.get(String::fromUTF8("Request")));
         GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(webRequest->resourceRequest()));
         WebURLResponse* webRedirectResponse = static_cast<WebURLResponse*>(message.get(String::fromUTF8("RedirectResponse")));
         GRefPtr<WebKitURIResponse> redirectResponse = webRedirectResponse ? adoptGRef(webkitURIResponseCreateForResourceResponse(webRedirectResponse->resourceResponse())) : 0;

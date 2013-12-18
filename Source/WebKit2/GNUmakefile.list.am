@@ -432,6 +432,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/API/c/WKUserScriptInjectionTime.h \
 	Source/WebKit2/Shared/APIObject.cpp \
 	Source/WebKit2/Shared/APIObject.h \
+	Source/WebKit2/Shared/APIURLRequest.cpp \
+	Source/WebKit2/Shared/APIURLRequest.h \
 	Source/WebKit2/Shared/ActivityAssertion.cpp \
 	Source/WebKit2/Shared/ActivityAssertion.h \
 	Source/WebKit2/Shared/Authentication/AuthenticationManager.cpp \
@@ -599,8 +601,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebString.h \
 	Source/WebKit2/Shared/WebTouchEvent.cpp \
 	Source/WebKit2/Shared/WebURL.h \
-	Source/WebKit2/Shared/WebURLRequest.cpp \
-	Source/WebKit2/Shared/WebURLRequest.h \
 	Source/WebKit2/Shared/WebURLResponse.cpp \
 	Source/WebKit2/Shared/WebURLResponse.h \
 	Source/WebKit2/Shared/WebUserContentURLPattern.h \

@@ -23,6 +23,6 @@
 #include "WebKitNavigationPolicyDecision.h"
 #include "WebKitPrivate.h"
 
-WebKitNavigationPolicyDecision* webkitNavigationPolicyDecisionCreate(WebKitNavigationType, unsigned mouseButton, unsigned modifiers, WebKit::WebURLRequest*, const char* frameName, WebKit::WebFramePolicyListenerProxy*);
+WebKitNavigationPolicyDecision* webkitNavigationPolicyDecisionCreate(WebKitNavigationType, unsigned mouseButton, unsigned modifiers, API::URLRequest*, const char* frameName, WebKit::WebFramePolicyListenerProxy*);
 
 #endif // WebKitNavigationPolicyDecisionPrivate_h
