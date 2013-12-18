@@ -411,6 +411,18 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
     ASSERT(m_initialized);
 #endif
 
+    // Handle non-rendered text that is exposed through aria-hidden=false.
+    if (m_node && m_node->isTextNode() && !renderer()) {
+        // Fallback content in iframe nodes should be ignored.
+        if (m_node->parentNode() && m_node->parentNode()->hasTagName(iframeTag) && m_node->parentNode()->renderer())
+            return true;
+
+        // Whitespace only text elements should be ignored when they have no renderer.
+        String string = stringValue().stripWhiteSpace().simplifyWhiteSpace();
+        if (!string.length())
+            return true;
+    }
+    
     // If this element is within a parent that cannot have children, it should not be exposed.
     if (isDescendantOfBarrenParent())
         return true;
