@@ -1,3 +1,18 @@
+2013-12-18  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Rebaseline tests after r160715.
+
+        * platform/efl/css2.1/t0905-c414-flt-wrap-00-e-expected.png:
+        * platform/efl/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/efl/fast/backgrounds/background-position-parsing-expected.png:
+        * platform/efl/fast/backgrounds/background-position-parsing-expected.txt:
+        * platform/efl/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/efl/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt:
+        * platform/efl/fast/block/float/016-expected.png:
+        * platform/efl/fast/block/float/016-expected.txt:
+
 2013-12-17  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Periodically monitor source buffers.
