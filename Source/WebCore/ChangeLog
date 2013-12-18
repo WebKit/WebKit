@@ -1,3 +1,16 @@
+2013-12-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Do not create cue subtree just to delete it
+        https://bugs.webkit.org/show_bug.cgi?id=125904
+
+        Reviewed by Jer Noble.
+
+        No new tests, covered by existing tests.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::setIsActive): Return early if display tree is NULL.
+        (WebCore::TextTrackCue::removeDisplayTree): Ditto.
+
 2013-12-17  Oliver Hunt  <oliver@apple.com>
 
         Remove JSInlineGetOwnPropertySlot attribute as it is no longer necessary

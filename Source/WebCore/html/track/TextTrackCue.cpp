@@ -571,6 +571,9 @@ void TextTrackCue::setIsActive(bool active)
     m_isActive = active;
 
     if (!active) {
+        if (!hasDisplayTree())
+            return;
+
         // Remove the display tree as soon as the cue becomes inactive.
         displayTreeInternal()->remove(ASSERT_NO_EXCEPTION);
     }
@@ -846,6 +849,8 @@ TextTrackCueBox* TextTrackCue::getDisplayTree(const IntSize& videoSize)
 
 void TextTrackCue::removeDisplayTree()
 {
+    if (!hasDisplayTree())
+        return;
     displayTreeInternal()->remove(ASSERT_NO_EXCEPTION);
 }
 
