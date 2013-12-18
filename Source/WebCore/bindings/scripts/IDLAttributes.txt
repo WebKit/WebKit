@@ -78,7 +78,6 @@ JSCustomPushEventHandlerScope
 JSCustomToNativeObject
 JSGenerateToJSObject
 JSGenerateToNativeObject
-JSInlineGetOwnPropertySlot
 JSLegacyParent=*
 JSNoStaticTables
 JSWindowEventListener

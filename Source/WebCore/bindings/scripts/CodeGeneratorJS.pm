@@ -588,10 +588,6 @@ sub GenerateHeader
         $headerIncludes{"<runtime/CallData.h>"} = 1;
     }
 
-    if ($interface->extendedAttributes->{"JSInlineGetOwnPropertySlot"}) {
-        $headerIncludes{"<runtime/Lookup.h>"} = 1;
-    }
-
     if ($hasParent && $interface->extendedAttributes->{"JSGenerateToNativeObject"}) {
         $headerIncludes{"$interfaceName.h"} = 1;
     }
@@ -912,15 +908,6 @@ sub GenerateHeader
     }
 
     push(@headerContent, "};\n\n");
-
-    if ($interface->extendedAttributes->{"JSInlineGetOwnPropertySlot"} && !$interface->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
-        push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(JSC::JSObject* object, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertySlot& slot)\n");
-        push(@headerContent, "{\n");
-        push(@headerContent, "    ${className}* thisObject = JSC::jsCast<${className}*>(object);\n");
-        push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
-        push(@headerContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numAttributes > 0, 1));
-        push(@headerContent, "}\n\n");
-    }
 
     if (!$hasParent ||
         GetGenerateIsReachable($interface) ||
@@ -1797,14 +1784,12 @@ sub GenerateImplementation
     # Attributes
     if ($hasGetter) {
         if (!$interface->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
-            if (!$interface->extendedAttributes->{"JSInlineGetOwnPropertySlot"}) {
-                push(@implContent, "bool ${className}::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
-                push(@implContent, "{\n");
-                push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
-                push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
-                push(@implContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numAttributes > 0, 0));
-                push(@implContent, "}\n\n");
-            }
+            push(@implContent, "bool ${className}::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
+            push(@implContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numAttributes > 0, 0));
+            push(@implContent, "}\n\n");
         }
 
         if ($indexedGetterFunction || $namedGetterFunction

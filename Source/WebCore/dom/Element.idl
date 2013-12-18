@@ -20,7 +20,6 @@
 
 [
     JSGenerateToNativeObject,
-    JSInlineGetOwnPropertySlot,
 ] interface Element : Node {
 
     // DOM Level 1 Core
