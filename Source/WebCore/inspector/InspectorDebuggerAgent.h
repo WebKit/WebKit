@@ -121,7 +121,7 @@ public:
     void schedulePauseOnNextStatement(Inspector::InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<Inspector::InspectorObject> data);
     void cancelPauseOnNextStatement();
     void breakProgram(Inspector::InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<Inspector::InspectorObject> data);
-    virtual void scriptExecutionBlockedByCSP(const String& directiveText);
+    void scriptExecutionBlockedByCSP(const String& directiveText);
 
     class Listener {
     public:
@@ -152,14 +152,10 @@ protected:
     void reset();
 
 private:
-    bool enabled() const { return m_enabled; };
-
     PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>> currentCallFrames();
 
     virtual void didParseSource(JSC::SourceID, const Script&) OVERRIDE FINAL;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) OVERRIDE FINAL;
-
-    void setPauseOnExceptionsImpl(ErrorString*, int);
 
     PassRefPtr<Inspector::TypeBuilder::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const ScriptBreakpoint&);
     void clear();

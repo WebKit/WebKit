@@ -122,7 +122,7 @@ void InspectorDebuggerAgent::supportsSeparateScriptCompilationAndExecution(Error
 
 void InspectorDebuggerAgent::enable(ErrorString*)
 {
-    if (enabled())
+    if (m_enabled)
         return;
 
     enable();
@@ -132,7 +132,7 @@ void InspectorDebuggerAgent::enable(ErrorString*)
 
 void InspectorDebuggerAgent::disable(ErrorString*)
 {
-    if (!enabled())
+    if (!m_enabled)
         return;
 
     disable();
@@ -539,11 +539,7 @@ void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString* errorString, cons
         *errorString = "Unknown pause on exceptions mode: " + stringPauseState;
         return;
     }
-    setPauseOnExceptionsImpl(errorString, pauseState);
-}
 
-void InspectorDebuggerAgent::setPauseOnExceptionsImpl(ErrorString* errorString, int pauseState)
-{
     scriptDebugServer().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
     if (scriptDebugServer().pauseOnExceptionsState() != pauseState)
         *errorString = "Internal error. Could not change pause on exceptions state";

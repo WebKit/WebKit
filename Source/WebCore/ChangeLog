@@ -1,3 +1,21 @@
+2013-12-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Some basic DebuggerAgent cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=125901
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorDebuggerAgent.h:
+        Remove virtual from not really virtual method.
+
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::enable):
+        (WebCore::InspectorDebuggerAgent::disable):
+        Use member variable instead of private function.
+
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptions):
+        Inline the three lines from the private function.
+
 2013-12-18  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
 
         REGRESSION (r155536): Broken error recovery in @media at-rule
