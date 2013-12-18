@@ -223,9 +223,8 @@ Frame::~Frame()
 
     disconnectOwnerElement();
 
-    HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
-    for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)
-        (*it)->frameDestroyed();
+    for (auto& observer : m_destructionObservers)
+        observer->frameDestroyed();
 
     if (!isMainFrame())
         m_mainFrame.selfOnlyDeref();
@@ -614,9 +613,8 @@ void Frame::willDetachPage()
     if (Frame* parent = tree().parent())
         parent->loader().checkLoadComplete();
 
-    HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
-    for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)
-        (*it)->willDetachPage();
+    for (auto& observer : m_destructionObservers)
+        observer->willDetachPage();
 
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.

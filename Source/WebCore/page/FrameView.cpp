@@ -1645,8 +1645,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 
     // Get the rects of the fixed objects visible in the rectToScroll
     Region regionToUpdate;
-    for (auto it = m_viewportConstrainedObjects->begin(), end = m_viewportConstrainedObjects->end(); it != end; ++it) {
-        RenderElement* renderer = *it;
+    for (auto& renderer : *m_viewportConstrainedObjects) {
         if (!renderer->style().hasViewportConstrainedPosition())
             continue;
 #if USE(ACCELERATED_COMPOSITING)
@@ -1745,8 +1744,8 @@ void FrameView::repaintSlowRepaintObjects()
 
     // Renderers with fixed backgrounds may be in compositing layers, so we need to explicitly
     // repaint them after scrolling.
-    for (auto it = m_slowRepaintObjects->begin(), end = m_slowRepaintObjects->end(); it != end; ++it)
-        (*it)->repaint();
+    for (auto& renderer : *m_slowRepaintObjects)
+        renderer->repaint();
 }
 
 // Note that this gets called at painting time.
@@ -1945,8 +1944,8 @@ void FrameView::setViewportConstrainedObjectsNeedLayout()
     if (!hasViewportConstrainedObjects())
         return;
 
-    for (auto it = m_viewportConstrainedObjects->begin(), end = m_viewportConstrainedObjects->end(); it != end; ++it)
-        (*it)->setNeedsLayout();
+    for (auto& renderer : *m_viewportConstrainedObjects)
+        renderer->setNeedsLayout();
 }
 
 void FrameView::scrollPositionChangedViaPlatformWidget()
@@ -2591,8 +2590,7 @@ void FrameView::resumeScheduledEvents()
         return;
 
     Vector<ScheduledEvent> eventsToDispatch = std::move(m_scheduledEvents);
-    for (auto it = eventsToDispatch.begin(), end = eventsToDispatch.end(); it != end; ++it) {
-        ScheduledEvent& scheduledEvent = *it;
+    for (auto& scheduledEvent : eventsToDispatch) {
         if (!scheduledEvent.target->inDocument())
             continue;
         scheduledEvent.target->dispatchEvent(scheduledEvent.event.release(), IGNORE_EXCEPTION);
@@ -3168,10 +3166,8 @@ void FrameView::notifyPageThatContentAreaWillPaint() const
     if (!m_scrollableAreas)
         return;
 
-    for (HashSet<ScrollableArea*>::const_iterator it = m_scrollableAreas->begin(), end = m_scrollableAreas->end(); it != end; ++it) {
-        ScrollableArea* scrollableArea = *it;
+    for (auto& scrollableArea : *m_scrollableAreas)
         scrollableArea->contentAreaWillPaint();
-    }
 }
 
 bool FrameView::scrollAnimatorEnabled() const
@@ -3318,14 +3314,12 @@ Color FrameView::documentBackgroundColor() const
 
 bool FrameView::hasCustomScrollbars() const
 {
-    for (auto it = children().begin(), end = children().end(); it != end; ++it) {
-        Widget* widget = it->get();
+    for (auto& widget : children()) {
         if (widget->isFrameView()) {
-            if (toFrameView(widget)->hasCustomScrollbars())
+            if (toFrameView(*widget).hasCustomScrollbars())
                 return true;
         } else if (widget->isScrollbar()) {
-            Scrollbar* scrollbar = static_cast<Scrollbar*>(widget);
-            if (scrollbar->isCustomScrollbar())
+            if (toScrollbar(*widget).isCustomScrollbar())
                 return true;
         }
     }
@@ -3631,9 +3625,9 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
     // and thus mutates the children() set.
     Vector<Ref<FrameView>, 16> childViews;
     childViews.reserveInitialCapacity(children().size());
-    for (auto it = children().begin(), end = children().end(); it != end; ++it) {
-        if (it->get()->isFrameView())
-            childViews.uncheckedAppend(*toFrameView(it->get()));
+    for (auto& widget : children()) {
+        if (widget->isFrameView())
+            childViews.uncheckedAppend(toFrameView(*widget));
     }
 
     for (unsigned i = 0; i < childViews.size(); ++i)
