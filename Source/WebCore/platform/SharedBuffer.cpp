@@ -231,6 +231,9 @@ void SharedBuffer::createPurgeableBuffer() const
         return;
 #endif
 
+    if (!hasOneRef())
+        return;
+
     char* destination = 0;
     m_purgeableBuffer = PurgeableBuffer::createUninitialized(m_size, destination);
     if (!m_purgeableBuffer)
