@@ -99,6 +99,7 @@ void MediaSourcePrivateAVFObjC::setDuration(double duration)
         return;
 
     m_duration = duration;
+    m_player->durationChanged();
 }
 
 void MediaSourcePrivateAVFObjC::markEndOfStream(EndOfStreamStatus status)

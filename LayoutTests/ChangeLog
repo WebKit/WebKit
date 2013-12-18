@@ -1,3 +1,13 @@
+2013-12-17  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Update duration after appending samples, per spec.
+        https://bugs.webkit.org/show_bug.cgi?id=125703
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-duration-after-append-expected.txt: Added.
+        * media/media-source/media-source-duration-after-append.html: Added.
+
 2013-12-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Video element's width and height content attributes should not influence intrinsic width and height

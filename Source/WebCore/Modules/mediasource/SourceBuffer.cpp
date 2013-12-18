@@ -1001,6 +1001,13 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
 
         break;
     } while (1);
+
+    // Steps 2-4 will be handled by MediaSource::monitorSourceBuffers()
+
+    // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
+    // duration set to the maximum of the current duration and the highest end timestamp reported by HTMLMediaElement.buffered.
+    if (highestPresentationEndTimestamp().toDouble() > m_source->duration())
+        m_source->setDuration(highestPresentationEndTimestamp().toDouble(), IgnorableExceptionCode());
 }
 
 bool SourceBuffer::sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const

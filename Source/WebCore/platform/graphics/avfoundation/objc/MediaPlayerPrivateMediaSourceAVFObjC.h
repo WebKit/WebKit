@@ -60,6 +60,7 @@ public:
     void seekInternal(double, double, double);
     void setLoadingProgresssed(bool flag) { m_loadingProgressed = flag; }
     void setHasAvailableVideoFrame(bool flag) { m_hasAvailableVideoFrame = flag; }
+    void durationChanged();
 
 private:
     // MediaPlayerPrivateInterface
@@ -136,7 +137,6 @@ private:
 
     void ensureLayer();
     void destroyLayer();
-    void durationChanged();
 
     // MediaPlayer Factory Methods
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
