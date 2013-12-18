@@ -2070,6 +2070,7 @@ class CppStyleTest(CppStyleTestBase):
                          'Declaration has space between type name and * in int * b  [whitespace/declaration] [3]',
                          'foo.cpp')
         self.assert_lint('return *b;', '', 'foo.cpp')
+        self.assert_lint('return a * b;', '', 'foo.cpp')
         self.assert_lint('delete *b;', '', 'foo.cpp')
         self.assert_lint('int *b;', '', 'foo.c')
         self.assert_lint('int* b;',
