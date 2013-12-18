@@ -80,6 +80,7 @@ WK_EXPORT void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabas
 
 WK_EXPORT void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
 WK_EXPORT void WKIconDatabaseReleaseIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
+WK_EXPORT void WKIconDatabaseSetIconDataForIconURL(WKIconDatabaseRef iconDatabase, WKDataRef iconData, WKURLRef iconURL);
 WK_EXPORT void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef iconDatabase);
 
 WK_EXPORT void WKIconDatabaseRemoveAllIcons(WKIconDatabaseRef iconDatabase);

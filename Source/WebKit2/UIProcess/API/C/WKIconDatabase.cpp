@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKIconDatabase.h"
 
+#include "APIData.h"
 #include "WKAPICast.h"
 #include "WebIconDatabase.h"
 
@@ -49,6 +50,11 @@ void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef 
 void WKIconDatabaseReleaseIconForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURLRef)
 {
     toImpl(iconDatabaseRef)->releaseIconForPageURL(toWTFString(pageURLRef));
+}
+
+void WKIconDatabaseSetIconDataForIconURL(WKIconDatabaseRef iconDatabaseRef, WKDataRef iconDataRef, WKURLRef iconURLRef)
+{
+    toImpl(iconDatabaseRef)->setIconDataForIconURL(toImpl(iconDataRef)->dataReference(), toWTFString(iconURLRef));
 }
 
 void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef iconDatabaseRef)

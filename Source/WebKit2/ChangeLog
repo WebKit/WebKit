@@ -1,3 +1,17 @@
+2013-12-18  Conrad Shultz  <conrad_shultz@apple.com>
+
+        API to set a favicon
+        https://bugs.webkit.org/show_bug.cgi?id=125892
+
+        Reviewed by Brian Weinstein.
+
+        * UIProcess/API/C/WKIconDatabase.cpp:
+        (WKIconDatabaseSetIconDataForIconURL):
+        Call WebIconDatabase::setIconDataForIconURL().
+
+        * UIProcess/API/C/WKIconDatabase.h:
+        Declare WKIconDatabaseSetIconDataForIconURL().
+
 2013-12-18  Anders Carlsson  <andersca@apple.com>
 
         Fix Dictionary encoding
