@@ -1249,49 +1249,53 @@ static NSUInteger modifierFlagsFromWebEvent(const WebEvent& event)
         | (event.metaKey() ? NSCommandKeyMask : 0);
 }
     
-static NSEventType eventTypeFromWebEvent(const WebEvent& event)
+static bool getEventTypeFromWebEvent(const WebEvent& event, NSEventType& eventType)
 {
     switch (event.type()) {
     case WebEvent::KeyDown:
-        return NSKeyDown;
+        eventType = NSKeyDown;
+        return true;
     case WebEvent::KeyUp:
-        return NSKeyUp;
-
+        eventType = NSKeyUp;
+        return true;
     case WebEvent::MouseDown:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
         case WebMouseEvent::LeftButton:
-            return NSLeftMouseDown;
+            eventType = NSLeftMouseDown;
+            return true;
         case WebMouseEvent::RightButton:
-            return NSRightMouseDown;
+            eventType = NSRightMouseDown;
+            return true;
         default:
-            return 0;
+            return false;
         }
-        break;
     case WebEvent::MouseUp:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
         case WebMouseEvent::LeftButton:
-            return NSLeftMouseUp;
+            eventType = NSLeftMouseUp;
+            return true;
         case WebMouseEvent::RightButton:
-            return NSRightMouseUp;
+            eventType = NSRightMouseUp;
+            return true;
         default:
-            return 0;
+            return false;
         }
-        break;
     case WebEvent::MouseMove:
         switch (static_cast<const WebMouseEvent&>(event).button()) {
         case WebMouseEvent::LeftButton:
-            return NSLeftMouseDragged;
+            eventType = NSLeftMouseDragged;
+            return true;
         case WebMouseEvent::RightButton:
-            return NSRightMouseDragged;
+            eventType = NSRightMouseDragged;
+            return true;
         case WebMouseEvent::NoButton:
-            return NSMouseMoved;
+            eventType = NSMouseMoved;
+            return true;
         default:
-            return 0;
+            return false;
         }
-        break;
-
     default:
-        return 0;
+        return false;
     }
 }
     
@@ -1301,9 +1305,9 @@ NSEvent *PDFPlugin::nsEventForWebMouseEvent(const WebMouseEvent& event)
 
     IntPoint positionInPDFViewCoordinates(convertFromPluginToPDFView(m_lastMousePositionInPluginCoordinates));
 
-    NSEventType eventType = eventTypeFromWebEvent(event);
+    NSEventType eventType;
 
-    if (!eventType)
+    if (!getEventTypeFromWebEvent(event, eventType))
         return 0;
 
     NSUInteger modifierFlags = modifierFlagsFromWebEvent(event);
@@ -1462,7 +1466,11 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 
 bool PDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
 {
-    NSEventType eventType = eventTypeFromWebEvent(event);
+    NSEventType eventType;
+
+    if (!getEventTypeFromWebEvent(event, eventType))
+        return false;
+
     NSUInteger modifierFlags = modifierFlagsFromWebEvent(event);
     
     NSEvent *fakeEvent = [NSEvent keyEventWithType:eventType location:NSZeroPoint modifierFlags:modifierFlags timestamp:0 windowNumber:0 context:0 characters:event.text() charactersIgnoringModifiers:event.unmodifiedText() isARepeat:event.isAutoRepeat() keyCode:event.nativeVirtualKeyCode()];
