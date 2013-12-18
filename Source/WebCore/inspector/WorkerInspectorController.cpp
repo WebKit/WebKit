@@ -89,7 +89,6 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope* workerGl
     OwnPtr<InspectorConsoleAgent> consoleAgent = WorkerConsoleAgent::create(m_instrumentingAgents.get(), m_injectedScriptManager.get());
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     OwnPtr<InspectorDebuggerAgent> debuggerAgent = WorkerDebuggerAgent::create(m_instrumentingAgents.get(), workerGlobalScope, m_injectedScriptManager.get());
-    InspectorDebuggerAgent* debuggerAgentPtr = debuggerAgent.get();
     m_runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
     m_agents.append(debuggerAgent.release());
 
@@ -106,9 +105,6 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope* workerGl
 #endif
         , 0
         , 0
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-        , debuggerAgentPtr
-#endif
     );
 }
  

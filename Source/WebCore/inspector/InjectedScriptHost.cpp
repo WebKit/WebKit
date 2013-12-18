@@ -45,7 +45,6 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
-#include "InspectorDebuggerAgent.h"
 #include "InspectorWebFrontendDispatchers.h"
 #include "Pasteboard.h"
 #include "Storage.h"
@@ -161,13 +160,6 @@ String InjectedScriptHost::storageIdImpl(Storage* storage)
         return m_domStorageAgent->storageId(storage);
     return String();
 }
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-ScriptDebugServer& InjectedScriptHost::scriptDebugServer()
-{
-    return m_debuggerAgent->scriptDebugServer();
-}
-#endif
 
 } // namespace WebCore
 

@@ -1,5 +1,24 @@
 2013-12-17  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Some basic InjectedScriptHost cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=125902
+
+        Reviewed by Timothy Hatcher.
+
+        Remove InjectedScriptHost::scriptDebugServer. Nobody accesses
+        the ScriptDebugServer through the injected script host. This
+        also lets us remove the reference to the DebuggerAgent.
+
+        * inspector/InjectedScriptHost.cpp:
+        * inspector/InjectedScriptHost.h:
+        (WebCore::InjectedScriptHost::init):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+
+2013-12-17  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove InspectorFrontendHost.setInjectedScriptForOrigin
         https://bugs.webkit.org/show_bug.cgi?id=125906
 
