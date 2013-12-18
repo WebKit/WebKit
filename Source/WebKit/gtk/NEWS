@@ -1,4 +1,37 @@
 =================
+WebKitGTK+  2.3.3
+=================
+
+What's new in WebKitGTK+ 2.3.3?
+
+  - Initial Network Process support disabled by default.
+  - CSS regions are now enabled by default.
+  - Support right-side attachment of the inspector in WebKit2.
+  - Add spatial navigation setting to WebKit2 GTK+ API.
+  - Add media source setting to both WebKit1 and WebKit2.
+  - Support custom types for drag and drop data.
+  - Avoid extra copy when drawing images in cairo backend.
+  - Fix scrolling in combo boxes when the dropdown menu is larger than
+    the screen.
+  - Render AC layers also when using GTK+ 2 in WebKit1.
+  - Fix return value of webkit_web_view_get_view_source_mode() in
+    WebKit1.
+  - Emit stream-start, caps and segment events in webkitwebaudiosrc
+    element.
+  - Fix seeking on media content provided by servers not supporting
+    range requests.
+  - Fix a crash when using media source in GStreamer media backend.
+  - Fix an X11 error when the backing store surface is destroyed.
+  - Expose splitter elements with ATK_ROLE_SEPARATOR to accessibility.
+  - Expose accessibility objects WAI-ARIA landmark roles.
+  - Expose accessibility objects with ATK_ROLE_ARTICLE.
+  - Expose accessibility objects with ATK_ROLE_CHECK_MENU_ITEM.
+  - Remove support for GStreamer 0.10.
+  - Memory leak due to incorrect use of gst_tag_list_merge in
+    TextCombinerGStreamer.
+  - Translation updates: Brazilian Portuguese.
+
+=================
 WebKitGTK+  2.3.2
 =================
 

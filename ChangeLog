@@ -1,3 +1,9 @@
+2013-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.3.3 release.
+
+        * Source/autotools/Versions.m4: Bump version numbers.
+
 2013-12-12  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Build the plugin process against GTK+ 2
