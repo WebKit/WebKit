@@ -1,3 +1,17 @@
+2013-12-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Fix page visibility api test, initialization in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=125933
+
+        Reviewed by Anders Carlsson.
+
+        The API test for page visibility is broken, fix this. This revealed a recent regression in WebKit2
+        (introduced in https://bugs.webkit.org/show_bug.cgi?id=123379), caused by a typo removing a '!'.
+
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm:
+        (TestWebKitAPI::TEST_F):
+            - Running a test on WebKit1 twice is not the same as running it on WebKit2!
+
 2013-12-18  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
 
         Should not have identifiers with underscores in them, especially not leading underscores.

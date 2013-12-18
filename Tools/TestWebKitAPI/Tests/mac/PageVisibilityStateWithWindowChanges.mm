@@ -155,7 +155,7 @@ TEST_F(PageVisibilityStateWithWindowChanges, WebKit)
 
 TEST_F(PageVisibilityStateWithWindowChanges, WebKit2)
 {
-    runWebKit1Test();
+    runWebKit2Test();
 }
 
 } // namespace TestWebKitAPI
