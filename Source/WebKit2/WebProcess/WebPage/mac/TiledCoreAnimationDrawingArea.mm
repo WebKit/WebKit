@@ -733,7 +733,6 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
 
     shadowLayer->setBounds(shadowBounds);
     shadowLayer->setPosition(origin + shadowBounds.center());
-    shadowLayer->platformLayer().shadowPath = adoptCF(CGPathCreateWithRect(shadowBounds, NULL)).get();
 
     m_transientZoomScale = scale;
 }
@@ -795,9 +794,9 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     RetainPtr<CABasicAnimation> shadowBoundsAnimation = transientZoomSnapAnimationForKeyPath("bounds");
     [shadowBoundsAnimation setToValue:[NSValue valueWithRect:shadowBounds]];
     RetainPtr<CABasicAnimation> shadowPositionAnimation = transientZoomSnapAnimationForKeyPath("position");
-    [shadowBoundsAnimation setToValue:[NSValue valueWithPoint:constrainedOrigin + shadowBounds.center()]];
+    [shadowPositionAnimation setToValue:[NSValue valueWithPoint:constrainedOrigin + shadowBounds.center()]];
     RetainPtr<CABasicAnimation> shadowPathAnimation = transientZoomSnapAnimationForKeyPath("shadowPath");
-    [shadowBoundsAnimation setToValue:(id)shadowPath.get()];
+    [shadowPathAnimation setToValue:(id)shadowPath.get()];
 
     [CATransaction begin];
     [CATransaction setCompletionBlock:^(void) {
@@ -830,7 +829,6 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     IntRect overflowRect = renderView->pixelSnappedLayoutOverflowRect();
     shadowLayer->setBounds(IntRect(IntPoint(), toIntSize(overflowRect.maxXMaxYCorner())));
     shadowLayer->setPosition(shadowLayer->bounds().center());
-    ScrollbarTheme::theme()->setUpContentShadowLayer(renderView->compositor().layerForContentShadow());
 
     FloatPoint unscrolledOrigin(origin);
     FloatRect visibleContentRect = m_webPage->mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);

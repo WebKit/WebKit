@@ -1,3 +1,18 @@
+2013-12-17  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Fix the shadow layer restore-from-overpinched animation
+        https://bugs.webkit.org/show_bug.cgi?id=125884
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+        Set to-values on the right animations.
+
+        (WebKit::TiledCoreAnimationDrawingArea::adjustTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+        We don't need to explicitly set the shadow path, because PlatformCALayer::setBounds does it for us now.
+
 2013-12-17  Sam Weinig  <sam@webkit.org>
 
         [WK2] Rename WebURLRequest to API::URLRequest
