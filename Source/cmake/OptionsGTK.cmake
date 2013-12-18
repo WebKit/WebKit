@@ -139,13 +139,6 @@ if (NOT ENABLE_SVG)
     set(ENABLE_SVG_FONTS 0)
 endif ()
 
-# Optimize binary size for release builds by removing dead sections on unix/gcc
-if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS_RELEASE "-ffunction-sections -fdata-sections ${CMAKE_C_FLAGS_RELEASE}")
-    set(CMAKE_CXX_FLAGS_RELEASE "-ffunction-sections -fdata-sections ${CMAKE_CXX_FLAGS_RELEASE}")
-    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-Wl,--gc-sections ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
-endif ()
-
 if (${OPENGL_FOUND} AND (${GLX_FOUND} OR ${EGL_FOUND}))
     set(ENABLE_WEBGL 1)
     set(ENABLE_TEXTURE_MAPPER 1)
