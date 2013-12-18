@@ -135,6 +135,7 @@ void MathMLSelectElement::defaultEventHandler(Event* event)
     if (event->type() == eventNames().clickEvent) {
         if (fastGetAttribute(MathMLNames::actiontypeAttr) == "toggle") {
             toggle();
+            event->setDefaultHandled();
             return;
         }
     }
@@ -144,23 +145,21 @@ void MathMLSelectElement::defaultEventHandler(Event* event)
 
 bool MathMLSelectElement::willRespondToMouseClickEvents()
 {
-    return true;
+    return fastGetAttribute(MathMLNames::actiontypeAttr) == "toggle";
 }
 
 void MathMLSelectElement::toggle()
 {
-    // We determine the successor of the selected child.
-    // If we reach the end of the child list, we go back to the first child.
-    Element* child = nullptr;
-    int selection = getSelectedChildAndIndex(child);
-    if (!child || !child->nextElementSibling())
-        selection = 1;
-    else
-        selection++;
+    // Select the successor of the currently selected child
+    // or the first child if the currently selected child is the last.
+    Element* selectedChild;
+    int newSelectedChildIndex = getSelectedChildAndIndex(selectedChild) + 1;
+    if (!selectedChild || !selectedChild->nextElementSibling())
+        newSelectedChildIndex = 1;
 
     // We update the attribute value of the selection attribute.
     // This will also call MathMLSelectElement::attributeChanged to update the selected child.
-    setAttribute(MathMLNames::selectionAttr, AtomicString::number(selection));
+    setAttribute(MathMLNames::selectionAttr, AtomicString::number(newSelectedChildIndex));
 }
 
 }

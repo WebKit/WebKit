@@ -1,3 +1,15 @@
+2013-12-18  Darin Adler  <darin@apple.com>
+
+        Additional refinement in MathMLSelectElement toggle implementation
+        https://bugs.webkit.org/show_bug.cgi?id=125785
+
+        Reviewed by Andreas Kling.
+
+        * mathml/presentation/maction-toggle-expected.html: Updated incorrect expected
+        result, which expected an already-handled event to be re-handled by a parent
+        element during the bubbling process.
+        * mathml/presentation/maction-toggle.html: Ditto.
+
 2013-12-18  Rob Buis  <rob.buis@samsung.com>
 
         [CSS Shapes] Implement interpolation between keywords in basic shapes

@@ -1,3 +1,19 @@
+2013-12-18  Darin Adler  <darin@apple.com>
+
+        Additional refinement in MathMLSelectElement toggle implementation
+        https://bugs.webkit.org/show_bug.cgi?id=125785
+
+        Reviewed by Andreas Kling.
+
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::defaultEventHandler): Call setDefaultHandled
+        so this will be handled by only one element.
+        (WebCore::MathMLSelectElement::willRespondToMouseClickEvents): Return true
+        only when action is set to toggle, since other select elements will not
+        respond to mouse click events.
+        (WebCore::MathMLSelectElement::toggle): Simplified code a bit and gave
+        local a clearer variable name.
+
 2013-12-18  Rob Buis  <rob.buis@samsung.com>
 
         [CSS Shapes] Implement interpolation between keywords in basic shapes

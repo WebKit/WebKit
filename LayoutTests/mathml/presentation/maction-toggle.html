@@ -33,7 +33,8 @@
         click('m4', false);
 
         // Nested maction elements, bubble = true ; ([([1] 2 3)] 4 5)
-        // After one click on the inner maction: ((1 [2] 3) [4] 5)
+        // After one click on the inner maction: ([(1 [2] 3)] 4 5)
+        // Bubbling sends the event to outer maction handlers, but default handling is done only once.
         click('m5', true);
 
         // Prevent default ; ([1] 2 3)
