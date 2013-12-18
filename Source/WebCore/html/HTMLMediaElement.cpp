@@ -2623,12 +2623,6 @@ bool HTMLMediaElement::autoplay() const
     return fastHasAttribute(autoplayAttr);
 }
 
-void HTMLMediaElement::setAutoplay(bool b)
-{
-    LOG(Media, "HTMLMediaElement::setAutoplay(%s)", boolString(b));
-    setBooleanAttribute(autoplayAttr, b);
-}
-
 String HTMLMediaElement::preload() const
 {
     switch (m_preload) {

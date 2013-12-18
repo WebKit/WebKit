@@ -191,20 +191,6 @@ unsigned HTMLVideoElement::videoHeight() const
     return player()->naturalSize().height();
 }
 
-unsigned HTMLVideoElement::width() const
-{
-    bool ok;
-    unsigned w = getAttribute(widthAttr).string().toUInt(&ok);
-    return ok ? w : 0;
-}
-    
-unsigned HTMLVideoElement::height() const
-{
-    bool ok;
-    unsigned h = getAttribute(heightAttr).string().toUInt(&ok);
-    return ok ? h : 0;
-}
-    
 bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const
 {
     return attribute.name() == posterAttr || HTMLMediaElement::isURLAttribute(attribute);

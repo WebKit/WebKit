@@ -189,8 +189,7 @@ public:
     virtual PassRefPtr<TimeRanges> played() OVERRIDE;
     virtual PassRefPtr<TimeRanges> seekable() const OVERRIDE;
     bool ended() const;
-    bool autoplay() const;    
-    void setAutoplay(bool b);
+    bool autoplay() const;
     bool loop() const;    
     void setLoop(bool b);
     virtual void play() OVERRIDE;

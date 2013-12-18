@@ -37,9 +37,6 @@ class HTMLVideoElement FINAL : public HTMLMediaElement {
 public:
     static PassRefPtr<HTMLVideoElement> create(const QualifiedName&, Document&, bool);
 
-    unsigned width() const;
-    unsigned height() const;
-    
     unsigned videoWidth() const;
     unsigned videoHeight() const;
     

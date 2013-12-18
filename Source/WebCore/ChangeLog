@@ -1,3 +1,22 @@
+2013-12-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove dead code for reflected attributes from audio, video, and track elements
+        https://bugs.webkit.org/show_bug.cgi?id=125838
+
+        Reviewed by Eric Carlson.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/310514e2f0fd934975b841d463bad0cd62e6fd64
+
+        Where [Reflect] is used in the IDL, the getters and setters in C++ are
+        only for internal convenience, and these were unused.
+
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        * html/HTMLTrackElement.cpp:
+        * html/HTMLTrackElement.h:
+        * html/HTMLVideoElement.cpp:
+        * html/HTMLVideoElement.h:
+
 2013-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Rename "canRubberBands" to "canRubberBand"
