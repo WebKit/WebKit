@@ -133,11 +133,15 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="WinLauncherLibRelease.props" />
     <Import Project="WinLauncherCFLite.props" />
+    <Import Project="..\..\..\WebKitLibraries\win\tools\vsprops\GStreamer32.props" />
+    <Import Project="..\..\..\WebKitLibraries\win\tools\vsprops\GStreamerCommon.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="WinLauncherLibRelease.props" />
     <Import Project="WinLauncherCFLite.props" />
+    <Import Project="..\..\..\WebKitLibraries\win\tools\vsprops\GStreamer64.props" />
+    <Import Project="..\..\..\WebKitLibraries\win\tools\vsprops\GStreamerCommon.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -163,11 +167,15 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="WinLauncherLibDebug.props" />
     <Import Project="WinLauncherCFLite.props" />
+    <Import Project="..\..\..\WebKitLibraries\win\tools\vsprops\GStreamer32.props" />
+    <Import Project="..\..\..\WebKitLibraries\win\tools\vsprops\GStreamerCommon.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="WinLauncherLibDebug.props" />
     <Import Project="WinLauncherCFLite.props" />
+    <Import Project="..\..\..\WebKitLibraries\win\tools\vsprops\GStreamer64.props" />
+    <Import Project="..\..\..\WebKitLibraries\win\tools\vsprops\GStreamerCommon.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />

@@ -1,3 +1,15 @@
+2013-12-18  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Preparation for GStreamer on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=125946
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        Use new GStreamer property sheets for WinCairo.
+        * WebCore.vcxproj/WebCoreCairo.props:
+        Include GStreamer directory.
+
 2013-12-18  Oliver Hunt  <oliver@apple.com>
 
         Refactor CodeGeneratorJS - Move attribute function creation out of getOwnPropertyName guard
