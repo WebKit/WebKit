@@ -1,3 +1,64 @@
+2013-12-17  Sam Weinig  <sam@webkit.org>
+
+        [WK2] Rename WebURLRequest to API::URLRequest
+        https://bugs.webkit.org/show_bug.cgi?id=125886
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        * Shared/API/c/WKURLRequest.cpp:
+        (WKURLRequestGetTypeID):
+        (WKURLRequestCreateWithWKURL):
+        (WKURLRequestSetDefaultTimeoutInterval):
+        * Shared/API/c/mac/WKURLRequestNS.mm:
+        (WKURLRequestCreateWithNSURLRequest):
+        * Shared/APIString.h:
+        * Shared/APIURLRequest.cpp: Copied from Source/WebKit2/Shared/WebURLRequest.cpp.
+        (API::URLRequest::URLRequest):
+        (API::URLRequest::defaultTimeoutInterval):
+        (API::URLRequest::setDefaultTimeoutInterval):
+        (API::URLRequest::encode):
+        (API::URLRequest::decode):
+        * Shared/APIURLRequest.h: Copied from Source/WebKit2/Shared/WebURLRequest.h.
+        (API::URLRequest::create):
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebURLRequest.cpp: Removed.
+        * Shared/WebURLRequest.h: Removed.
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKDownload.cpp:
+        (WKDownloadCopyRequest):
+        * UIProcess/API/C/WKNavigationDataRef.cpp:
+        (WKNavigationDataCopyOriginalRequest):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadRequest:userData:]):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        * UIProcess/WebInspectorProxy.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadURLRequest):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPolicyClient.cpp:
+        (WebKit::WebPolicyClient::decidePolicyForNavigationAction):
+        (WebKit::WebPolicyClient::decidePolicyForNewWindowAction):
+        (WebKit::WebPolicyClient::decidePolicyForResponse):
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::createNewPage):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp:
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForNavigationAction):
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForNewWindowAction):
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForResponse):
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp:
+        (WebKit::InjectedBundlePageResourceLoadClient::willSendRequestForFrame):
+
 2013-12-17  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess: Pipe through object store IDs and transaction mode for "openTransaction"

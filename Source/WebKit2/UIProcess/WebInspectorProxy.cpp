@@ -29,6 +29,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "APIURLRequest.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
 #include "WebInspectorMessages.h"
@@ -38,7 +39,6 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
-#include "WebURLRequest.h"
 #include <WebCore/SchemeRegistry.h>
 
 #if ENABLE(INSPECTOR_SERVER)

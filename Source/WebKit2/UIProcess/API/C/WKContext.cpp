@@ -27,9 +27,9 @@
 #include "WKContext.h"
 #include "WKContextPrivate.h"
 
+#include "APIURLRequest.h"
 #include "WKAPICast.h"
 #include "WebContext.h"
-#include "WebURLRequest.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>

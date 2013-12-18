@@ -23,33 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebURLRequest_h
-#define WebURLRequest_h
+#include "config.h"
+#include "APIURLRequest.h"
 
-#include "APIObject.h"
-#include <WebCore/ResourceRequest.h>
-#include <wtf/Forward.h>
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+#include "WebContext.h"
 
-namespace WebKit {
+using namespace WebCore;
+using namespace WebKit;
 
-class WebURLRequest : public API::ObjectImpl<API::Object::Type::URLRequest> {
-public:
-    static PassRefPtr<WebURLRequest> create(const WebCore::ResourceRequest& request)
-    {
-        return adoptRef(new WebURLRequest(request));
-    }
+namespace API {
 
-    const WebCore::ResourceRequest& resourceRequest() const { return m_request; }
+URLRequest::URLRequest(const ResourceRequest& request)
+    : m_request(request)
+{
+}
 
-    static double defaultTimeoutInterval(); // May return 0 when using platform default.
-    static void setDefaultTimeoutInterval(double);
+double URLRequest::defaultTimeoutInterval()
+{
+    return ResourceRequest::defaultTimeoutInterval();
+}
 
-private:
-    explicit WebURLRequest(const WebCore::ResourceRequest&);
+// FIXME: This function should really be on WebContext.
+void URLRequest::setDefaultTimeoutInterval(double timeoutInterval)
+{
+    ResourceRequest::setDefaultTimeoutInterval(timeoutInterval);
 
-    WebCore::ResourceRequest m_request;
-};
+    const Vector<WebContext*>& contexts = WebContext::allContexts();
+    for (size_t i = 0; i < contexts.size(); ++i)
+        contexts[i]->setDefaultRequestTimeoutInterval(timeoutInterval);
+}
 
-} // namespace WebKit
+void URLRequest::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << resourceRequest();
+}
 
-#endif // WebURLRequest_h
+bool URLRequest::decode(IPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
+{
+    ResourceRequest request;
+    if (!decoder.decode(request))
+        return false;
+    
+    result = create(request);
+    return true;
+}
+
+} // namespace API

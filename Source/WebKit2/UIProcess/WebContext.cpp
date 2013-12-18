@@ -566,7 +566,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
 
     parameters.fullKeyboardAccessEnabled = WebProcessProxy::fullKeyboardAccessEnabled();
 
-    parameters.defaultRequestTimeoutInterval = WebURLRequest::defaultTimeoutInterval();
+    parameters.defaultRequestTimeoutInterval = API::URLRequest::defaultTimeoutInterval();
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     // FIXME: There should be a generic way for supplements to add to the intialization parameters.

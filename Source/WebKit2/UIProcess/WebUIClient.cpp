@@ -76,7 +76,7 @@ PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const Re
     if (!m_client.base.version)
         return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_client.base.clientInfo)));
 
-    RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);    
+    RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);    
     return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(request.get()), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_client.base.clientInfo)));
 } 
 

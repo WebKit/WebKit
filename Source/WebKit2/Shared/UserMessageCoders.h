@@ -31,6 +31,7 @@
 #include "APIGeometry.h"
 #include "APINumber.h"
 #include "APIString.h"
+#include "APIURLRequest.h"
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
@@ -44,17 +45,16 @@
 #include "WebRenderObject.h"
 #include "WebSerializedScriptValue.h"
 #include "WebURL.h"
-#include "WebURLRequest.h"
 #include "WebURLResponse.h"
 #include "WebUserContentURLPattern.h"
 
 namespace WebKit {
 
 //   - Null -> Null
-//   - Array -> Array
+//   - API::Array -> API::Array
 //   - Dictionary -> Dictionary
 //   - SerializedScriptValue -> SerializedScriptValue
-//   - String -> String
+//   - API::String -> API::String
 //   - UserContentURLPattern -> UserContentURLPattern
 //   - WebCertificateInfo -> WebCertificateInfo
 //   - API::Data -> API::Data
@@ -64,7 +64,7 @@ namespace WebKit {
 //   - WebRenderObject -> WebRenderObject
 //   - API::UInt64 -> API::UInt64
 //   - WebURL -> WebURL
-//   - WebURLRequest -> WebURLRequest
+//   - API::URLRequest -> API::URLRequest
 //   - WebURLResponse -> WebURLResponse
 //   - WebError -> WebError
 
@@ -177,7 +177,7 @@ public:
             return true;
         }
         case API::Object::Type::URLRequest: {
-            WebURLRequest* urlRequestObject = static_cast<WebURLRequest*>(m_root);
+            API::URLRequest* urlRequestObject = static_cast<API::URLRequest*>(m_root);
             encoder << urlRequestObject->resourceRequest();
             return true;
         }
@@ -242,18 +242,18 @@ protected:
 
 // Handles
 //   - Null -> Null
-//   - Array -> Array
+//   - API::Array -> API::Array
 //   - Dictionary -> Dictionary
 //   - SerializedScriptValue -> SerializedScriptValue
-//   - String -> String
+//   - API::String -> API::String
 //   - UserContentURLPattern -> UserContentURLPattern
 //   - WebCertificateInfo -> WebCertificateInfo
-//   - WebData -> WebData
+//   - API::Data -> API::Data
 //   - API::Double -> API::Double
 //   - WebImage -> WebImage
 //   - API::UInt64 -> API::UInt64
 //   - WebURL -> WebURL
-//   - WebURLRequest -> WebURLRequest
+//   - API::URLRequest -> API::URLRequest
 //   - WebURLResponse -> WebURLResponse
 //   - WebError -> WebError
 
@@ -464,7 +464,7 @@ public:
             WebCore::ResourceRequest request;
             if (!decoder.decode(request))
                 return false;
-            coder.m_root = WebURLRequest::create(request);
+            coder.m_root = API::URLRequest::create(request);
             break;
         }
         case API::Object::Type::URLResponse: {

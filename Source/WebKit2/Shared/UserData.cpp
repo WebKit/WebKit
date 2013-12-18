@@ -32,6 +32,7 @@
 #include "APIGeometry.h"
 #include "APINumber.h"
 #include "APIString.h"
+#include "APIURLRequest.h"
 #include "ArgumentCoders.h"
 #include "ArgumentEncoder.h"
 #include "MutableDictionary.h"
@@ -169,6 +170,10 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
         break;
     }
 
+    case API::Object::Type::URLRequest:
+        static_cast<const API::URLRequest&>(object).encode(encoder);
+        break;
+
     case API::Object::Type::UInt64:
         static_cast<const API::UInt64&>(object).encode(encoder);
         break;
@@ -295,6 +300,11 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
         result = WebURL::create(string);
         break;
     }
+
+    case API::Object::Type::URLRequest:
+        if (!API::URLRequest::decode(decoder, result))
+            return false;
+        break;
 
     case API::Object::Type::UInt64:
         if (!API::UInt64::decode(decoder, result))

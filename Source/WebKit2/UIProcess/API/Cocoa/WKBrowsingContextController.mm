@@ -194,7 +194,7 @@ static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
 
 - (void)loadRequest:(NSURLRequest *)request userData:(id)userData
 {
-    RefPtr<WebURLRequest> wkURLRequest = WebURLRequest::create(request);
+    RefPtr<API::URLRequest> wkURLRequest = API::URLRequest::create(request);
 
     RefPtr<ObjCObjectGraph> wkUserData;
     if (userData)

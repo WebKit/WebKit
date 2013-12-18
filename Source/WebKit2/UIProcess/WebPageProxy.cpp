@@ -28,6 +28,7 @@
 #include "WebPageProxy.h"
 
 #include "APIArray.h"
+#include "APIURLRequest.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "DataReference.h"
@@ -80,7 +81,6 @@
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
 #include "WebSecurityOrigin.h"
-#include "WebURLRequest.h"
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/DragSession.h>
@@ -611,7 +611,7 @@ void WebPageProxy::loadURL(const String& url, API::Object* userData)
     m_process->responsivenessTimer()->start();
 }
 
-void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest, API::Object* userData)
+void WebPageProxy::loadURLRequest(API::URLRequest* urlRequest, API::Object* userData)
 {
     auto transaction = m_pageLoadState.transaction();
 

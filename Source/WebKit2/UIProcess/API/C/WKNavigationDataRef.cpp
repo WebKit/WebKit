@@ -27,8 +27,8 @@
 #include "WKNavigationDataRef.h"
 
 #include "APINavigationData.h"
+#include "APIURLRequest.h"
 #include "WKAPICast.h"
-#include "WebURLRequest.h"
 
 using namespace WebKit;
 
@@ -55,5 +55,5 @@ WKURLRef WKNavigationDataCopyNavigationDestinationURL(WKNavigationDataRef naviga
 
 WKURLRequestRef WKNavigationDataCopyOriginalRequest(WKNavigationDataRef navigationData)
 {
-    return toAPI(WebURLRequest::create(toImpl(navigationData)->originalRequest()).leakRef());
+    return toAPI(API::URLRequest::create(toImpl(navigationData)->originalRequest()).leakRef());
 }

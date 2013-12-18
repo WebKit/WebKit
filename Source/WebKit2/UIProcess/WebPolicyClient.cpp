@@ -27,8 +27,8 @@
 #include "WebPolicyClient.h"
 
 #include "APIObject.h"
+#include "APIURLRequest.h"
 #include "WKAPICast.h"
-#include "WebURLRequest.h"
 
 using namespace WebCore;
 
@@ -39,8 +39,8 @@ bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, WebFra
     if (!m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0 && !m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1 && !m_client.decidePolicyForNavigationAction)
         return false;
 
-    RefPtr<WebURLRequest> originalRequest = WebURLRequest::create(originalResourceRequest);
-    RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
+    RefPtr<API::URLRequest> originalRequest = API::URLRequest::create(originalResourceRequest);
+    RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
     if (m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0)
         m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
@@ -57,7 +57,7 @@ bool WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, WebFram
     if (!m_client.decidePolicyForNewWindowAction)
         return false;
 
-    RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
+    RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
     m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(frameName.impl()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);
     return true;
@@ -69,7 +69,7 @@ bool WebPolicyClient::decidePolicyForResponse(WebPageProxy* page, WebFrameProxy*
         return false;
 
     RefPtr<WebURLResponse> response = WebURLResponse::create(resourceResponse);
-    RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
+    RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
     if (m_client.decidePolicyForResponse_deprecatedForUseWithV0)
         m_client.decidePolicyForResponse_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.base.clientInfo);

@@ -26,9 +26,9 @@
 #include "config.h"
 #include "InjectedBundlePagePolicyClient.h"
 
+#include "APIURLRequest.h"
 #include "WKBundleAPICast.h"
 #include "WebError.h"
-#include "WebURLRequest.h"
 
 using namespace WebCore;
 
@@ -39,7 +39,7 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNavigati
     if (!m_client.decidePolicyForNavigationAction)
         return WKBundlePagePolicyActionPassThrough;
 
-    RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
+    RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
     WKTypeRef userDataToPass = 0;
     WKBundlePagePolicyAction policy = m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.get()), &userDataToPass, m_client.base.clientInfo);
@@ -52,7 +52,7 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNewWindo
     if (!m_client.decidePolicyForNewWindowAction)
         return WKBundlePagePolicyActionPassThrough;
 
-    RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
+    RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
     WKTypeRef userDataToPass = 0;
     WKBundlePagePolicyAction policy = m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.get()), toAPI(frameName.impl()), &userDataToPass, m_client.base.clientInfo);
@@ -66,7 +66,7 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForResponse
         return WKBundlePagePolicyActionPassThrough;
 
     RefPtr<WebURLResponse> response = WebURLResponse::create(resourceResponse);
-    RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
+    RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
     WKTypeRef userDataToPass = 0;
     WKBundlePagePolicyAction policy = m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), &userDataToPass, m_client.base.clientInfo);

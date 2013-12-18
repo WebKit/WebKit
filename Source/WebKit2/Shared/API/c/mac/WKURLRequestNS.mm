@@ -26,8 +26,8 @@
 #import "config.h"
 #import "WKURLRequestNS.h"
 
+#import "APIURLRequest.h"
 #import "WKAPICast.h"
-#import "WebURLRequest.h"
 
 using namespace WebCore;
 using namespace WebKit;
@@ -35,7 +35,7 @@ using namespace WebKit;
 WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest* urlRequest)
 {
     RetainPtr<NSURLRequest> copiedURLRequest = adoptNS([urlRequest copy]);
-    RefPtr<WebURLRequest> request = WebURLRequest::create(copiedURLRequest.get());
+    RefPtr<API::URLRequest> request = API::URLRequest::create(copiedURLRequest.get());
     return toAPI(request.release().leakRef());
 }
 

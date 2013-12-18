@@ -23,36 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKDownload.h"
+#ifndef APIURLRequest_h
+#define APIURLRequest_h
 
-#include "APIURLRequest.h"
-#include "DownloadProxy.h"
-#include "WKAPICast.h"
+#include "APIObject.h"
+#include <WebCore/ResourceRequest.h>
+#include <wtf/Forward.h>
 
-using namespace WebKit;
-
-WKTypeID WKDownloadGetTypeID()
-{
-    return toAPI(DownloadProxy::APIType);
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
 }
 
-uint64_t WKDownloadGetID(WKDownloadRef download)
-{
-    return toImpl(download)->downloadID();
-}
+namespace API {
 
-WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download)
-{
-    return toAPI(API::URLRequest::create(toImpl(download)->request()).leakRef());
-}
+class URLRequest : public ObjectImpl<Object::Type::URLRequest> {
+public:
+    static PassRefPtr<URLRequest> create(const WebCore::ResourceRequest& request)
+    {
+        return adoptRef(new URLRequest(request));
+    }
 
-WKDataRef WKDownloadGetResumeData(WKDownloadRef download)
-{
-    return toAPI(toImpl(download)->resumeData());
-}
+    const WebCore::ResourceRequest& resourceRequest() const { return m_request; }
 
-void WKDownloadCancel(WKDownloadRef download)
-{
-    return toImpl(download)->cancel();
-}
+    static double defaultTimeoutInterval(); // May return 0 when using platform default.
+    static void setDefaultTimeoutInterval(double);
+
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
+
+private:
+    explicit URLRequest(const WebCore::ResourceRequest&);
+
+    WebCore::ResourceRequest m_request;
+};
+
+} // namespace API
+
+#endif // APIURLRequest_h

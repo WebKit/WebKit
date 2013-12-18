@@ -96,6 +96,10 @@
 #include <WebCore/PlatformLayer.h>
 #endif
 
+namespace API {
+class URLRequest;
+}
+
 namespace CoreIPC {
 class ArgumentDecoder;
 class Connection;
@@ -144,7 +148,6 @@ class WebMouseEvent;
 class WebOpenPanelResultListenerProxy;
 class WebPageGroup;
 class WebProcessProxy;
-class WebURLRequest;
 class WebWheelEvent;
 struct AttributedString;
 struct ColorSpaceData;
@@ -367,7 +370,7 @@ public:
     bool isClosed() const { return m_isClosed; }
 
     void loadURL(const String&, API::Object* userData = nullptr);
-    void loadURLRequest(WebURLRequest*, API::Object* userData = nullptr);
+    void loadURLRequest(API::URLRequest*, API::Object* userData = nullptr);
     void loadFile(const String& fileURL, const String& resourceDirectoryURL, API::Object* userData = nullptr);
     void loadData(API::Data*, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData = nullptr);
     void loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData = nullptr);
