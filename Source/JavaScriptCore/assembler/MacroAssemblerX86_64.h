@@ -228,6 +228,11 @@ public:
         add64(imm, Address(scratchRegister));
     }
 
+    void addPtrNoFlags(TrustedImm32 imm, RegisterID srcDest)
+    {
+        m_assembler.leaq_mr(imm.m_value, srcDest, srcDest);
+    }
+
     void and64(RegisterID src, RegisterID dest)
     {
         m_assembler.andq_rr(src, dest);

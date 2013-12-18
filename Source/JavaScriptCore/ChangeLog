@@ -1,3 +1,18 @@
+2013-12-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a simple stack abstraction for x86_64
+        https://bugs.webkit.org/show_bug.cgi?id=125908
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::addPtrNoFlags):
+        Add an explicit abstraction for the "lea" instruction. This is needed
+        by the experimental JIT to have add and substract without changing the flags.
+
+        This is useful for function calls to test the return value, restore the registers,
+        then branch on the flags from the return value.
+
 2013-12-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         DFG should have a separate StoreBarrier node

@@ -1,3 +1,53 @@
+2013-12-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a simple stack abstraction for x86_64
+        https://bugs.webkit.org/show_bug.cgi?id=125908
+
+        Reviewed by Geoffrey Garen.
+
+        StackAllocator provides an abstraction to make it hard to make mistakes and protects from obvious
+        issues at runtime.
+
+        The key roles of StackAllocators are:
+        -Provide the necessary stack alignment for function calls (only x86_64 stack for now).
+        -Provide ways to save registers on the stack, restore or discard them as needed.
+        -Crash at runtime if an operation would obviously cause a stack inconsistency.
+
+        The way simple inconsistencies are detected is through the StackReference object
+        returned whenever something is added on the stack.
+        The object keeps a reference to the offset of what has been pushed. When the StackReference
+        is used to recover the register, if the offset is different, there is a missmatch between
+        push() and pop() after the object was pushed.
+
+        * cssjit/StackAllocator.h: Added.
+        (WebCore::StackAllocator::StackReference::StackReference):
+        (WebCore::StackAllocator::StackReference::operator unsigned):
+        (WebCore::StackAllocator::StackAllocator):
+        (WebCore::StackAllocator::~StackAllocator):
+        (WebCore::StackAllocator::push):
+        (WebCore::StackAllocator::pop):
+
+        (WebCore::StackAllocator::alignStackPreFunctionCall):
+        (WebCore::StackAllocator::unalignStackPostFunctionCall):
+        Those helpers provide a simple way to have a valid stack prior to a function call.
+        Since StackAllocator knows the offset and the platform rules, it can adjust the stack
+        if needed for x86_64.
+
+        (WebCore::StackAllocator::discard): Discard a single register or the full stack.
+
+        (WebCore::StackAllocator::combine): combining stacks is the way to solve branches
+        where the stack is used differently in each case.
+        To do that, the stack is first copied to A and B. Each branch works on its own
+        StackAllocator copy, then the two copies are linked together to the original stack.
+
+        The copies ensure the local consistency in each branch, linking the copies ensure global
+        consistencies and that both branches end in the same stack state.
+
+        (WebCore::StackAllocator::offsetToStackReference): Helper function to access the stack by address
+        through its StackReference.
+
+        (WebCore::StackAllocator::reset):
+
 2013-12-18  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Preparation for GStreamer on Windows.
