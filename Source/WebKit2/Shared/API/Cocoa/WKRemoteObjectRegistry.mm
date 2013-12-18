@@ -156,7 +156,13 @@ using namespace WebKit;
         NSLog(@"Exception caught during decoding of message: %@", exception);
     }
 
-    // FIXME: Invoke the invocation.
+    invocation.target = interfaceAndObject.first.get();
+
+    @try {
+        [invocation invoke];
+    } @catch (NSException *exception) {
+        NSLog(@"%@: Warning: Exception caught during invocation of received message, dropping incoming message .\nException: %@", self, exception);
+    }
 }
 
 @end
