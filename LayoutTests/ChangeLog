@@ -1,3 +1,13 @@
+2013-12-17  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Periodically monitor source buffers.
+        https://bugs.webkit.org/show_bug.cgi?id=125898
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-monitor-source-buffers-expected.txt: Added.
+        * media/media-source/media-source-monitor-source-buffers.html: Added.
+
 2013-12-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove InspectorFrontendHost.setInjectedScriptForOrigin

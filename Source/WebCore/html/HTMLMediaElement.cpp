@@ -3008,6 +3008,11 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>*)
     if (RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
         updateActiveTextTrackCues(currentTime());
 #endif
+
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSource)
+        m_mediaSource->monitorSourceBuffers();
+#endif
 }
 
 void HTMLMediaElement::scheduleTimeupdateEvent(bool periodicEvent)
