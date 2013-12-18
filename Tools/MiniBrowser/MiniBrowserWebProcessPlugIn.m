@@ -25,6 +25,8 @@
 
 #import "MiniBrowserWebProcessPlugIn.h"
 
+#if WK_API_ENABLED
+
 @implementation MiniBrowserWebProcessPlugIn
 
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController initializeWithObject:(id)initializationObject
@@ -32,3 +34,5 @@
 }   
 
 @end
+
+#endif // WK_API_ENABLED

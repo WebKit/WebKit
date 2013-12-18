@@ -25,6 +25,10 @@
 
 #import <WebKit2/WKWebProcessPlugIn.h>
 
+#if WK_API_ENABLED
+
 @interface MiniBrowserWebProcessPlugIn : NSObject <WKWebProcessPlugIn>
 
 @end
+
+#endif // WK_API_ENABLED
