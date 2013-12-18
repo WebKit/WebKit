@@ -2045,8 +2045,11 @@ void Node::dispatchSubtreeModifiedEvent()
 
     if (!document().hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER))
         return;
+    const AtomicString& subtreeModifiedEventName = eventNames().DOMSubtreeModifiedEvent;
+    if (!parentNode() && !hasEventListeners(subtreeModifiedEventName))
+        return;
 
-    dispatchScopedEvent(MutationEvent::create(eventNames().DOMSubtreeModifiedEvent, true));
+    dispatchScopedEvent(MutationEvent::create(subtreeModifiedEventName, true));
 }
 
 bool Node::dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent)
