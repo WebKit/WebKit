@@ -84,7 +84,7 @@ void EventDispatcher::initializeConnection(CoreIPC::Connection* connection)
     connection->addWorkQueueMessageReceiver(Messages::EventDispatcher::messageReceiverName(), m_queue.get(), this);
 }
 
-void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent, bool canRubberBandsAtLeft, bool canRubberBandsAtRight, bool canRubberBandsAtTop, bool canRubberBandsAtBottom)
+void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
 {
 #if ENABLE(THREADED_SCROLLING)
     MutexLocker locker(m_scrollingTreesMutex);
@@ -96,7 +96,7 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
         // scrolling tree can be notified.
         // We only need to do this at the beginning of the gesture.
         if (platformWheelEvent.phase() == PlatformWheelEventPhaseBegan)
-            ScrollingThread::dispatch(bind(&ScrollingTree::setCanRubberBandState, scrollingTree, canRubberBandsAtLeft, canRubberBandsAtRight, canRubberBandsAtTop, canRubberBandsAtBottom));
+            ScrollingThread::dispatch(bind(&ScrollingTree::setCanRubberBandState, scrollingTree, canRubberBandAtLeft, canRubberBandAtRight, canRubberBandAtTop, canRubberBandAtBottom));
 
         ScrollingTree::EventResult result = scrollingTree->tryToHandleWheelEvent(platformWheelEvent);
         if (result == ScrollingTree::DidHandleEvent || result == ScrollingTree::DidNotHandleEvent) {
@@ -105,10 +105,10 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
         }
     }
 #else
-    UNUSED_PARAM(canRubberBandsAtLeft);
-    UNUSED_PARAM(canRubberBandsAtRight);
-    UNUSED_PARAM(canRubberBandsAtTop);
-    UNUSED_PARAM(canRubberBandsAtBottom);
+    UNUSED_PARAM(canRubberBandAtLeft);
+    UNUSED_PARAM(canRubberBandAtRight);
+    UNUSED_PARAM(canRubberBandAtTop);
+    UNUSED_PARAM(canRubberBandAtBottom);
 #endif
 
     RunLoop::main()->dispatch(bind(&EventDispatcher::dispatchWheelEvent, this, pageID, wheelEvent));

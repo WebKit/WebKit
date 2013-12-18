@@ -1,3 +1,17 @@
+2013-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename "canRubberBands" to "canRubberBand"
+        https://bugs.webkit.org/show_bug.cgi?id=125897
+
+        Reviewed by Anders Carlsson.
+
+        Rename "canRubberBands" to "canRubberBand" in various places.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+
 2013-12-17  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures: Fix the shadow layer restore-from-overpinched animation

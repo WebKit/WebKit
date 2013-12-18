@@ -92,7 +92,7 @@ public:
 #endif
 
     // Can be called from any thread. Will update what edges allow rubber-banding.
-    void setCanRubberBandState(bool canRubberBandsAtLeft, bool canRubberBandsAtRight, bool canRubberBandsAtTop, bool canRubberBandsAtBottom);
+    void setCanRubberBandState(bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom);
 
     bool rubberBandsAtLeft();
     bool rubberBandsAtRight();
