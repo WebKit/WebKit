@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import "WKWebProcessPlugInPageGroup.h"
 
 #if WK_API_ENABLED
 
-#import <Foundation/Foundation.h>
+#import "WKBase.h"
+#import "WebPageGroupProxy.h"
 
-@class WKDOMDocument;
-@class WKDOMRange;
-@class WKWebProcessPlugInFrame;
-@class WKWebProcessPlugInPageGroup;
-@protocol WKWebProcessPlugInLoadDelegate;
+namespace WebKit {
 
-WK_API_CLASS
-@interface WKWebProcessPlugInBrowserContextController : NSObject
+inline WKWebProcessPlugInPageGroup *wrapper(WebPageGroupProxy& pageGroup)
+{
+    ASSERT([pageGroup.wrapper() isKindOfClass:[WKWebProcessPlugInPageGroup class]]);
+    return (WKWebProcessPlugInPageGroup *)pageGroup.wrapper();
+}
+    
+}
 
-@property (readonly) WKDOMDocument *mainFrameDocument;
-
-@property (readonly) WKDOMRange *selectedRange;
-
-@property (readonly) WKWebProcessPlugInFrame *mainFrame;
-
-@property (readonly) WKWebProcessPlugInPageGroup *pageGroup;
-
-@property (weak) id <WKWebProcessPlugInLoadDelegate> loadDelegate;
-
+@interface WKWebProcessPlugInPageGroup () <WKObject>
 @end
 
 #endif // WK_API_ENABLED

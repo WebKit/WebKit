@@ -40,6 +40,7 @@
 #import "WKWebProcessPluginFrameInternal.h"
 #import "WKWebProcessPlugInInternal.h"
 #import "WKWebProcessPlugInLoadDelegate.h"
+#import "WKWebProcessPlugInPageGroupInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 #import "WeakObjCPtr.h"
 #import "WebPage.h"
@@ -136,6 +137,20 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
         return nil;
 
     return toWKDOMRange(range.get());
+}
+
+- (WKWebProcessPlugInFrame *)mainFrame
+{
+    WebFrame *webKitMainFrame = _page->mainWebFrame();
+    if (!webKitMainFrame)
+        return nil;
+
+    return wrapper(*webKitMainFrame);
+}
+
+- (WKWebProcessPlugInPageGroup *)pageGroup
+{
+    return wrapper(*_page->pageGroup());
 }
 
 #pragma mark WKObject protocol implementation

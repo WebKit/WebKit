@@ -1,3 +1,29 @@
+2013-12-18  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=125941
+        Add Obj C API for injected bundle PageGroup class.
+
+        Reviewed by Dan Bernstein.
+
+        Add Obj C API (WKWebProcessPlugInPageGroup) for injected bundle PageGroup class. And add APIs to
+        expose the main frame and page group from WKWebProcessPlugInBrowsingContextController.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Create wrapper object for InjectedPageGroup object.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.h: Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.mm: Added.
+        (-[WKWebProcessPlugInPageGroup identifier]):
+        (-[WKWebProcessPlugInPageGroup dealloc]):
+        (-[WKWebProcessPlugInPageGroup API::]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroupInternal.h: Added.
+        (WebKit::wrapper):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h: Add API to expose the main frame and page group
+            for WKWebPocessPlugInBrowserContextController.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController mainFrame]):
+        (-[WKWebProcessPlugInBrowserContextController pageGroup]):
+
 2013-12-18  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Never make a NSEventType = 0

@@ -48,6 +48,7 @@
 #import "WKWebProcessPlugInHitTestResultInternal.h"
 #import "WKWebProcessPlugInInternal.h"
 #import "WKWebProcessPlugInNodeHandleInternal.h"
+#import "WKWebProcessPlugInPageGroupInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 
 namespace API {
@@ -149,6 +150,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::BundleNodeHandle:
         wrapper = [WKWebProcessPlugInNodeHandle alloc];
+        break;
+
+    case Type::BundlePageGroup:
+        wrapper = [WKWebProcessPlugInPageGroup alloc];
         break;
 
     case Type::BundleScriptWorld:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#import "config.h"
+#import "WKWebProcessPlugInPageGroupInternal.h"
 
 #if WK_API_ENABLED
 
-#import <Foundation/Foundation.h>
+#import "WKBundlePageGroup.h"
+#import "WKAPICast.h"
+#import "WKNSString.h"
+#import "WKRetainPtr.h"
+#import "WebPageGroupProxy.h"
 
-@class WKDOMDocument;
-@class WKDOMRange;
-@class WKWebProcessPlugInFrame;
-@class WKWebProcessPlugInPageGroup;
-@protocol WKWebProcessPlugInLoadDelegate;
+using namespace WebKit;
 
-WK_API_CLASS
-@interface WKWebProcessPlugInBrowserContextController : NSObject
+@implementation WKWebProcessPlugInPageGroup {
+    API::ObjectStorage<WebPageGroupProxy> _bundlePageGroup;
+}
 
-@property (readonly) WKDOMDocument *mainFrameDocument;
+- (NSString *)identifier
+{
+    return _bundlePageGroup->identifier();
+}
 
-@property (readonly) WKDOMRange *selectedRange;
+- (void)dealloc
+{
+    _bundlePageGroup->~WebPageGroupProxy();
+    [super dealloc];
+}
 
-@property (readonly) WKWebProcessPlugInFrame *mainFrame;
+#pragma mark WKObject protocol implementation
 
-@property (readonly) WKWebProcessPlugInPageGroup *pageGroup;
-
-@property (weak) id <WKWebProcessPlugInLoadDelegate> loadDelegate;
+- (API::Object&)_apiObject
+{
+    return *_bundlePageGroup;
+}
 
 @end
 

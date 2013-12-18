@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,24 +29,10 @@
 
 #import <Foundation/Foundation.h>
 
-@class WKDOMDocument;
-@class WKDOMRange;
-@class WKWebProcessPlugInFrame;
-@class WKWebProcessPlugInPageGroup;
-@protocol WKWebProcessPlugInLoadDelegate;
-
 WK_API_CLASS
-@interface WKWebProcessPlugInBrowserContextController : NSObject
+@interface WKWebProcessPlugInPageGroup : NSObject
 
-@property (readonly) WKDOMDocument *mainFrameDocument;
-
-@property (readonly) WKDOMRange *selectedRange;
-
-@property (readonly) WKWebProcessPlugInFrame *mainFrame;
-
-@property (readonly) WKWebProcessPlugInPageGroup *pageGroup;
-
-@property (weak) id <WKWebProcessPlugInLoadDelegate> loadDelegate;
+@property (readonly) NSString *identifier;
 
 @end
 
