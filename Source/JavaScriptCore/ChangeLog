@@ -1,3 +1,19 @@
+2013-12-17  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge the patch attached to <rdar://problem/15684269>
+
+    2013-10-07  Oliver Hunt  <oliver@apple.com>
+
+            PutGlobalProperty doesn't kill specialised values
+
+            Reviewed by Geoff Garen.
+
+            When we're generating instructions to change a global property
+            we just pre-emptively despecialise it.
+
+            * runtime/JSScope.cpp:
+            (JSC::JSScope::resolveContainingScopeInternal):
+
 2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r154513

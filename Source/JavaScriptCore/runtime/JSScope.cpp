@@ -301,6 +301,14 @@ template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject
                             operations->append(ResolveOperation::checkForDynamicEntriesBeforeGlobalScope());
 
                         if (putToBaseOperation) {
+                            unsigned currentAttributes;
+                            JSCell* currentSpecificFunction;
+                            PropertyOffset offset = globalObject->structure()->get(callFrame->vm(), identifier, currentAttributes, currentSpecificFunction);
+                            ASSERT_UNUSED(offset, offset != invalidOffset);
+                            ASSERT_UNUSED(offset, offset == slot.cachedOffset());
+                            // We just assume that we are clobbering the global specialisation
+                            if (currentSpecificFunction)
+                                globalObject->setStructure(callFrame->vm(), Structure::despecifyFunctionTransition(callFrame->vm(), globalObject->structure(), identifier));
                             putToBaseOperation->m_isDynamic = requiresDynamicChecks;
                             putToBaseOperation->m_kind = PutToBaseOperation::GlobalPropertyPut;
                             putToBaseOperation->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), globalObject->structure());
