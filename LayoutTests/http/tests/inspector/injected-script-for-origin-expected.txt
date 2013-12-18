@@ -1,7 +1,0 @@
-Tests that different scripts are injected inso subframes of inspector window depending on the origin
-
-{
-    0 : "http://127.0.0.1:8000/inspector/resources/injected-script-for-origin-frame.html, data: 127.0.0.1"
-    1 : "http://localhost:8000/inspector/resources/injected-script-for-origin-frame.html, data: localhost"
-}
-

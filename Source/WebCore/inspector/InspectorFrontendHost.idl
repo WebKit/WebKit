@@ -48,7 +48,6 @@
     void setToolbarHeight(float height);
 
     void moveWindowBy(float x, float y);
-    void setInjectedScriptForOrigin(DOMString origin, DOMString script);
 
     DOMString localizedStringsURL();
 

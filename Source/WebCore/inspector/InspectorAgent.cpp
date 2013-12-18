@@ -34,19 +34,8 @@
 
 #include "InspectorAgent.h"
 
-#include "Document.h"
-#include "DocumentLoader.h"
-#include "GraphicsContext.h"
-#include "InjectedScriptHost.h"
-#include "InjectedScriptManager.h"
-#include "InspectorController.h"
-#include "InspectorInstrumentation.h"
 #include "InstrumentingAgents.h"
-#include "MainFrame.h"
 #include "Page.h"
-#include "ResourceRequest.h"
-#include "ScriptController.h"
-#include "SecurityOrigin.h"
 #include "Settings.h"
 #include <bindings/ScriptValue.h>
 #include <inspector/InspectorJSFrontendDispatchers.h>
@@ -58,10 +47,9 @@ using namespace Inspector;
 
 namespace WebCore {
 
-InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents)
+InspectorAgent::InspectorAgent(Page* page, InstrumentingAgents* instrumentingAgents)
     : InspectorAgentBase(ASCIILiteral("Inspector"), instrumentingAgents)
     , m_inspectedPage(page)
-    , m_injectedScriptManager(injectedScriptManager)
     , m_enabled(false)
 {
     ASSERT_ARG(page, page);
@@ -71,27 +59,6 @@ InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScript
 InspectorAgent::~InspectorAgent()
 {
     m_instrumentingAgents->setInspectorAgent(0);
-}
-
-void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld& world)
-{
-    if (&world != &mainThreadNormalWorld())
-        return;
-
-    if (m_injectedScriptForOrigin.isEmpty())
-        return;
-
-    String origin = frame->document()->securityOrigin()->toRawString();
-    String script = m_injectedScriptForOrigin.get(origin);
-    if (script.isEmpty())
-        return;
-    int injectedScriptId = m_injectedScriptManager->injectedScriptIdFor(mainWorldExecState(frame));
-    StringBuilder scriptSource;
-    scriptSource.append(script);
-    scriptSource.append("(");
-    scriptSource.appendNumber(injectedScriptId);
-    scriptSource.append(")");
-    frame->script().executeScript(scriptSource.toString());
 }
 
 void InspectorAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
@@ -106,14 +73,9 @@ void InspectorAgent::willDestroyFrontendAndBackend()
     m_backendDispatcher.clear();
 
     m_pendingEvaluateTestCommands.clear();
-    m_injectedScriptManager->discardInjectedScripts();
+
     ErrorString error;
     disable(&error);
-}
-
-void InspectorAgent::didCommitLoad()
-{
-    m_injectedScriptManager->discardInjectedScripts();
 }
 
 void InspectorAgent::enable(ErrorString*)
@@ -133,22 +95,12 @@ void InspectorAgent::disable(ErrorString*)
     m_enabled = false;
 }
 
-void InspectorAgent::domContentLoadedEventFired()
-{
-    m_injectedScriptManager->injectedScriptHost()->clearInspectedObjects();
-}
-
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
 {
     if (m_enabled && m_frontendDispatcher)
         m_frontendDispatcher->evaluateForTestInFrontend(static_cast<int>(callId), script);
     else
         m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
-}
-
-void InspectorAgent::setInjectedScriptForOrigin(const String& origin, const String& source)
-{
-    m_injectedScriptForOrigin.set(origin, source);
 }
 
 void InspectorAgent::inspect(PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints)

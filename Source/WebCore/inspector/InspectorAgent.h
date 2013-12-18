@@ -47,7 +47,6 @@ namespace WebCore {
 class DOMWrapperWorld;
 class DocumentLoader;
 class Frame;
-class InjectedScriptManager;
 class InstrumentingAgents;
 class Page;
 
@@ -56,9 +55,9 @@ typedef String ErrorString;
 class InspectorAgent : public InspectorAgentBase, public Inspector::InspectorInspectorBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
 public:
-    static PassOwnPtr<InspectorAgent> create(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents)
+    static PassOwnPtr<InspectorAgent> create(Page* page, InstrumentingAgents* instrumentingAgents)
     {
-        return adoptPtr(new InspectorAgent(page, injectedScriptManager, instrumentingAgents));
+        return adoptPtr(new InspectorAgent(page, instrumentingAgents));
     }
 
     virtual ~InspectorAgent();
@@ -72,31 +71,22 @@ public:
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
-    void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
-
-    void didCommitLoad();
-    void domContentLoadedEventFired();
-
     bool hasFrontend() const { return !!m_frontendDispatcher; }
 
     // Generic code called from custom implementations.
     void evaluateForTestInFrontend(long testCallId, const String& script);
 
-    void setInjectedScriptForOrigin(const String& origin, const String& source);
-
     void inspect(PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<Inspector::InspectorObject> hints);
 
 private:
-    InspectorAgent(Page*, InjectedScriptManager*, InstrumentingAgents*);
+    InspectorAgent(Page*, InstrumentingAgents*);
 
     Page* m_inspectedPage;
     std::unique_ptr<Inspector::InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorInspectorBackendDispatcher> m_backendDispatcher;
-    InjectedScriptManager* m_injectedScriptManager;
 
     Vector<pair<long, String>> m_pendingEvaluateTestCommands;
     pair<RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>, RefPtr<Inspector::InspectorObject>> m_pendingInspectData;
-    HashMap<String, String> m_injectedScriptForOrigin;
 
     bool m_enabled;
 };
