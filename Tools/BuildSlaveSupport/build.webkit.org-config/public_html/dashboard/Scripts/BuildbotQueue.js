@@ -131,10 +131,6 @@ BuildbotQueue.prototype = {
 
     update: function(iterationsToLoad)
     {
-        var hiddenPlatforms = settings.getObject("hiddenPlatforms");
-        if (hiddenPlatforms && hiddenPlatforms.contains(this.platform))
-            return;
-
         JSON.load(this.baseURL, function(data) {
             if (!(data.cachedBuilds instanceof Array))
                 return;

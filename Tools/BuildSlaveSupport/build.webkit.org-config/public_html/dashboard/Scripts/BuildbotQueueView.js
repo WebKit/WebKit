@@ -35,16 +35,24 @@ BuildbotQueueView = function(debugQueues, releaseQueues)
     this.element.__queueView = this;
 
     this.releaseQueues.forEach(function(queue) {
+        if (this.platform && this.platform != queue.platform)
+            throw "A buildbot view may not contain queues for multiple platforms."
+        else
+            this.platform = queue.platform;
         queue.addEventListener(BuildbotQueue.Event.IterationsAdded, this._queueIterationsAdded, this);
     }.bind(this));
 
     this.debugQueues.forEach(function(queue) {
+        if (this.platform && this.platform != queue.platform)
+            throw "A buildbot view may not contain queues for multiple platforms."
+        else
+            this.platform = queue.platform;
         queue.addEventListener(BuildbotQueue.Event.IterationsAdded, this._queueIterationsAdded, this);
     }.bind(this));
 
-    this.lastUpdate = 0;
-    setTimeout(this._updateQueues.bind(this), BuildbotQueueView.UpdateInterval);
-    settings.addSettingListener("hiddenPlatforms", this._updateQueues.bind(this));
+    this.updateTimer = null;
+    this._updateHiddenState();
+    settings.addSettingListener("hiddenPlatforms", this._updateHiddenState.bind(this));
 };
 
 BaseObject.addConstructorFunctions(BuildbotQueueView);
@@ -105,15 +113,24 @@ BuildbotQueueView.prototype = {
         return fragment;
     },
 
+    _updateHiddenState: function()
+    {
+        var hiddenPlatforms = settings.getObject("hiddenPlatforms");
+        var wasHidden = !this.updateTimer;
+        var isHidden = hiddenPlatforms && hiddenPlatforms.contains(this.platform);
+
+        if (wasHidden && !isHidden)
+            this.updateTimer = setInterval(this._updateQueues.bind(this), BuildbotQueueView.UpdateInterval);
+        else if (!wasHidden && isHidden) {
+            clearInterval(this.updateTimer);
+            this.updateTimer = null;
+        }
+    },
+
     _updateQueues: function()
     {
-        var now = Date.now();
-        if (now - this.lastUpdate < BuildbotQueueView.UpdateInterval)
-            return;
         this.releaseQueues.forEach(function(queue) { queue.update(); });
         this.debugQueues.forEach(function(queue) { queue.update(); });
-        this.lastUpdate = now;
-        setTimeout(this._updateQueues.bind(this), BuildbotQueueView.UpdateInterval);
     },
 
     _queueIterationsAdded: function(event)
