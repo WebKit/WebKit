@@ -1,3 +1,9 @@
+2013-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am:
+
 2013-12-17  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Some ANGLE headers missing from dist

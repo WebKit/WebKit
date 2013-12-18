@@ -1,3 +1,10 @@
+2013-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+
 2013-12-18  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         [soup] Fix unused parameter warnings in ResourceHandleSoup.

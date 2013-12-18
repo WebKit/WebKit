@@ -1,3 +1,9 @@
+2013-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am:
+
 2013-12-17  Jae Hyun Park  <jae.park@company100.net>
 
         [GTK] Build fix after r160737

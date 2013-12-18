@@ -1,3 +1,9 @@
+2013-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am:
+
 2013-12-17  Julien Brianceau  <jbriance@cisco.com>
 
         Fix armv7 and sh4 builds.

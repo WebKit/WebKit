@@ -1795,9 +1795,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/DOMWindowIndexedDatabase.h \
 	Source/WebCore/Modules/indexeddb/IDBAny.cpp \
 	Source/WebCore/Modules/indexeddb/IDBAny.h \
-	Source/WebCore/Modules/indexeddb/IDBBackingStoreCursorInterface.h \
-	Source/WebCore/Modules/indexeddb/IDBBackingStoreInterface.h \
-	Source/WebCore/Modules/indexeddb/IDBBackingStoreTransactionInterface.h \
 	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreCursorLevelDB.cpp \
 	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreCursorLevelDB.h \
 	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp \
@@ -2501,7 +2498,22 @@ webcore_sources += \
 	Source/WebCore/bridge/runtime_root.cpp \
 	Source/WebCore/bridge/runtime_root.h \
 	Source/WebCore/config.h \
+	Source/WebCore/crypto/CryptoAlgorithmIdentifier.h \
+	Source/WebCore/crypto/CryptoKey.h \
+	Source/WebCore/crypto/CryptoKey.cpp \
+	Source/WebCore/crypto/CryptoKeyData.h \
+	Source/WebCore/crypto/CryptoKeyType.h \
+	Source/WebCore/crypto/CryptoKeyUsage.h \
 	Source/WebCore/crypto/SubtleCrypto.h \
+	Source/WebCore/crypto/keys/CryptoKeyAES.h \
+	Source/WebCore/crypto/keys/CryptoKeyAES.cpp \
+	Source/WebCore/crypto/keys/CryptoKeyDataOctetSequence.h \
+	Source/WebCore/crypto/keys/CryptoKeyDataOctetSequence.cpp \
+	Source/WebCore/crypto/keys/CryptoKeyDataRSAComponents.h \
+	Source/WebCore/crypto/keys/CryptoKeyDataRSAComponents.cpp \
+	Source/WebCore/crypto/keys/CryptoKeyHMAC.h \
+	Source/WebCore/crypto/keys/CryptoKeyHMAC.cpp \
+	Source/WebCore/crypto/keys/CryptoKeyRSA.h \
 	Source/WebCore/css/BasicShapeFunctions.cpp \
 	Source/WebCore/css/BasicShapeFunctions.h \
 	Source/WebCore/css/Counter.h \
@@ -4155,6 +4167,8 @@ webcore_sources += \
 	Source/WebCore/page/PageActivityAssertionToken.cpp \
 	Source/WebCore/page/PageConsole.cpp \
 	Source/WebCore/page/PageConsole.h \
+	Source/WebCore/page/PageDebuggable.cpp \
+	Source/WebCore/page/PageDebuggable.h \
 	Source/WebCore/page/PageGroup.cpp \
 	Source/WebCore/page/PageGroup.h \
 	Source/WebCore/page/PageGroupLoadDeferrer.cpp \
@@ -4522,7 +4536,8 @@ webcore_sources += \
 	Source/WebCore/rendering/line/LineLayoutState.h \
 	Source/WebCore/rendering/line/LineWidth.h \
 	Source/WebCore/rendering/line/LineWidth.cpp \
-    Source/WebCore/rendering/line/TrailingObjects.cpp \
+	Source/WebCore/rendering/line/TrailingObjects.h \
+	Source/WebCore/rendering/line/TrailingObjects.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLBlock.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLBlock.h \
 	Source/WebCore/rendering/mathml/RenderMathMLFenced.cpp \
@@ -5460,6 +5475,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/ResourceRequestBase.h \
 	Source/WebCore/platform/network/ResourceResponseBase.cpp \
 	Source/WebCore/platform/network/ResourceResponseBase.h \
+	Source/WebCore/platform/network/SynchronousLoaderClient.cpp \
+	Source/WebCore/platform/network/SynchronousLoaderClient.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallenge.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallengeSoup.cpp \
 	Source/WebCore/platform/network/soup/CertificateInfo.cpp \

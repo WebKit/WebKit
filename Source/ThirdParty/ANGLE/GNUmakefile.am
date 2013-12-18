@@ -24,11 +24,9 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/include/EGL/egl.h \
 	Source/ThirdParty/ANGLE/include/EGL/eglext.h \
 	Source/ThirdParty/ANGLE/include/EGL/eglplatform.h \
-	Source/ThirdParty/ANGLE/include/EGL/eglsoftlinking.h \
 	Source/ThirdParty/ANGLE/include/GLES2/gl2.h \
 	Source/ThirdParty/ANGLE/include/GLES2/gl2ext.h \
 	Source/ThirdParty/ANGLE/include/GLES2/gl2platform.h \
-	Source/ThirdParty/ANGLE/include/GLES2/gl2softlinking.h \
 	Source/ThirdParty/ANGLE/include/GLSLANG/ShaderLang.h \
 	Source/ThirdParty/ANGLE/include/KHR/khrplatform.h \
 	Source/ThirdParty/ANGLE/src/common/angleutils.h \

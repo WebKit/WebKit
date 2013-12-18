@@ -54,6 +54,10 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/WKBatteryStatus.h \
 	$(WebKit2)/UIProcess/API/C/WKColorPickerResultListener.h \
 	$(WebKit2)/UIProcess/API/C/WKContext.h \
+	$(WebKit2)/UIProcess/API/C/WKContextConnectionClient.h \
+	$(WebKit2)/UIProcess/API/C/WKContextDownloadClient.h \
+	$(WebKit2)/UIProcess/API/C/WKContextHistoryClient.h \
+	$(WebKit2)/UIProcess/API/C/WKContextInjectedBundleClient.h \
 	$(WebKit2)/UIProcess/API/C/WKContextPrivate.h \
 	$(WebKit2)/UIProcess/API/C/WKCookieManager.h \
 	$(WebKit2)/UIProcess/API/C/WKCredential.h \
@@ -85,6 +89,13 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/WKPageGroup.h \
 	$(WebKit2)/UIProcess/API/C/WKPage.h \
 	$(WebKit2)/UIProcess/API/C/WKPagePrivate.h \
+	$(WebKit2)/UIProcess/API/C/WKPageContextMenuClient.h \
+	$(WebKit2)/UIProcess/API/C/WKPageFindClient.h \
+	$(WebKit2)/UIProcess/API/C/WKPageFindMatchesClient.h \
+	$(WebKit2)/UIProcess/API/C/WKPageFormClient.h \
+	$(WebKit2)/UIProcess/API/C/WKPageLoaderClient.h \
+	$(WebKit2)/UIProcess/API/C/WKPagePolicyClient.h \
+	$(WebKit2)/UIProcess/API/C/WKPageUIClient.h \
 	$(WebKit2)/UIProcess/API/C/WKPluginSiteDataManager.h \
 	$(WebKit2)/UIProcess/API/C/WKPreferences.h \
 	$(WebKit2)/UIProcess/API/C/WKPreferencesPrivate.h \
@@ -363,9 +374,11 @@ webkit2_sources += \
 	Source/WebKit2/Shared/APIFrameHandle.h \
 	Source/WebKit2/Shared/APIGeometry.cpp \
 	Source/WebKit2/Shared/APIGeometry.h \
+	Source/WebKit2/Shared/APINumber.h \
 	Source/WebKit2/Shared/APIPageHandle.cpp \
 	Source/WebKit2/Shared/APIPageHandle.h \
 	Source/WebKit2/Shared/APIClient.h \
+	Source/WebKit2/Shared/APIString.h \
 	Source/WebKit2/Shared/API/c/cairo/WKImageCairo.cpp \
 	Source/WebKit2/Shared/API/c/cairo/WKImageCairo.h \
 	Source/WebKit2/Shared/API/c/gtk/WKBaseGtk.h \
@@ -557,7 +570,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebContextMenuItem.h \
 	Source/WebKit2/Shared/WebCoreArgumentCoders.cpp \
 	Source/WebKit2/Shared/WebCoreArgumentCoders.h \
-	Source/WebKit2/Shared/WebData.h \
 	Source/WebKit2/Shared/WebError.cpp \
 	Source/WebKit2/Shared/WebError.h \
 	Source/WebKit2/Shared/WebEventConversion.cpp \
@@ -567,7 +579,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebFindOptions.h \
 	Source/WebKit2/Shared/WebGeolocationPosition.cpp \
 	Source/WebKit2/Shared/WebGeolocationPosition.h \
-	Source/WebKit2/Shared/WebGeometry.h \
 	Source/WebKit2/Shared/WebHitTestResult.cpp \
 	Source/WebKit2/Shared/WebHitTestResult.h \
 	Source/WebKit2/Shared/WebImage.cpp \
@@ -578,7 +589,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebMouseEvent.cpp \
 	Source/WebKit2/Shared/WebNavigationDataStore.h \
 	Source/WebKit2/Shared/WebNetworkInfo.h \
-	Source/WebKit2/Shared/WebNumber.h \
 	Source/WebKit2/Shared/WebOpenPanelParameters.cpp \
 	Source/WebKit2/Shared/WebOpenPanelParameters.h \
 	Source/WebKit2/Shared/WebPageCreationParameters.cpp \
@@ -596,9 +606,10 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebRenderLayer.h \
 	Source/WebKit2/Shared/WebRenderObject.cpp \
 	Source/WebKit2/Shared/WebRenderObject.h \
+	Source/WebKit2/Shared/WebResourceBuffer.cpp \
+	Source/WebKit2/Shared/WebResourceBuffer.h \
 	Source/WebKit2/Shared/WebSecurityOrigin.h \
 	Source/WebKit2/Shared/WebSerializedScriptValue.h \
-	Source/WebKit2/Shared/WebString.h \
 	Source/WebKit2/Shared/WebTouchEvent.cpp \
 	Source/WebKit2/Shared/WebURL.h \
 	Source/WebKit2/Shared/WebURLResponse.cpp \
@@ -639,6 +650,10 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKContext.cpp \
 	Source/WebKit2/UIProcess/API/C/WKContext.h \
 	Source/WebKit2/UIProcess/API/C/WKContextPrivate.h \
+	Source/WebKit2/UIProcess/API/C/WKContextConnectionClient.h \
+	Source/WebKit2/UIProcess/API/C/WKContextDownloadClient.h \
+	Source/WebKit2/UIProcess/API/C/WKContextHistoryClient.h \
+	Source/WebKit2/UIProcess/API/C/WKContextInjectedBundleClient.h \
 	Source/WebKit2/UIProcess/API/C/WKCookieManager.h \
 	Source/WebKit2/UIProcess/API/C/WKCookieManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKCredential.cpp \
@@ -697,6 +712,14 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKPageGroup.h \
 	Source/WebKit2/UIProcess/API/C/WKPage.h \
 	Source/WebKit2/UIProcess/API/C/WKPagePrivate.h \
+	Source/WebKit2/UIProcess/API/C/WKPageContextMenuClient.h \
+	Source/WebKit2/UIProcess/API/C/WKPageFindClient.h \
+	Source/WebKit2/UIProcess/API/C/WKPageFindMatchesClient.h \
+	Source/WebKit2/UIProcess/API/C/WKPageFormClient.h \
+	Source/WebKit2/UIProcess/API/C/WKPageLoaderClient.h \
+	Source/WebKit2/UIProcess/API/C/WKPagePolicyClient.h \
+	Source/WebKit2/UIProcess/API/C/WKPagePolicyClientInternal.h \
+	Source/WebKit2/UIProcess/API/C/WKPageUIClient.h \
 	Source/WebKit2/UIProcess/API/C/WKPluginSiteDataManager.h \
 	Source/WebKit2/UIProcess/API/C/WKPluginSiteDataManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKPreferences.cpp \
@@ -870,6 +893,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Authentication/WebCredential.h \
 	Source/WebKit2/UIProcess/Authentication/WebProtectionSpace.cpp \
 	Source/WebKit2/UIProcess/Authentication/WebProtectionSpace.h \
+	Source/WebKit2/UIProcess/AutoCorrectionCallback.h \
 	Source/WebKit2/UIProcess/APINavigationData.cpp \
 	Source/WebKit2/UIProcess/APINavigationData.h \
 	Source/WebKit2/UIProcess/BackingStore.cpp \
@@ -1132,6 +1156,15 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageGroup.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePage.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageContextMenuClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageDiagnosticLoggingClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageEditorClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageFormClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageFullScreenClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageLoaderClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePagePolicyClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageResourceLoadClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageUIClient.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h \
