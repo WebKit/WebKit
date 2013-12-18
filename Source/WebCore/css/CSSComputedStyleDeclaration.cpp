@@ -562,7 +562,7 @@ static PassRefPtr<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox&
     return cssValuePool().createValue(quad.release());
 }
 
-static PassRefPtr<CSSValue> valueForNinePieceImageRepeat(const NinePieceImage& image)
+static PassRef<CSSValue> valueForNinePieceImageRepeat(const NinePieceImage& image)
 {
     RefPtr<CSSPrimitiveValue> horizontalRepeat;
     RefPtr<CSSPrimitiveValue> verticalRepeat;
@@ -1280,7 +1280,7 @@ static PassRef<CSSValueList> getTimingFunctionValue(const AnimationList* animLis
     return list;
 }
 
-static PassRefPtr<CSSValue> createLineBoxContainValue(unsigned lineBoxContain)
+static PassRef<CSSValue> createLineBoxContainValue(unsigned lineBoxContain)
 {
     if (!lineBoxContain)
         return cssValuePool().createIdentifierValue(CSSValueNone);
@@ -1396,14 +1396,14 @@ static CSSValueID identifierForFamily(const AtomicString& family)
     return CSSValueInvalid;
 }
 
-static PassRefPtr<CSSPrimitiveValue> valueForFamily(const AtomicString& family)
+static PassRef<CSSPrimitiveValue> valueForFamily(const AtomicString& family)
 {
     if (CSSValueID familyIdentifier = identifierForFamily(family))
         return cssValuePool().createIdentifierValue(familyIdentifier);
     return cssValuePool().createValue(family.string(), CSSPrimitiveValue::CSS_STRING);
 }
 
-static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecoration)
+static PassRef<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecoration)
 {
     // Blink value is ignored.
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
@@ -1420,11 +1420,11 @@ static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecorati
 
     if (!list->length())
         return cssValuePool().createIdentifierValue(CSSValueNone);
-    return list.release();
+    return list.releaseNonNull();
 }
 
 #if ENABLE(CSS3_TEXT_DECORATION)
-static PassRefPtr<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorationStyle textDecorationStyle)
+static PassRef<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorationStyle textDecorationStyle)
 {
     switch (textDecorationStyle) {
     case TextDecorationStyleSolid:
@@ -1443,7 +1443,7 @@ static PassRefPtr<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorat
     return cssValuePool().createExplicitInitialValue();
 }
 
-static PassRefPtr<CSSValue> renderTextDecorationSkipFlagsToCSSValue(TextDecorationSkip textDecorationSkip)
+static PassRef<CSSValue> renderTextDecorationSkipFlagsToCSSValue(TextDecorationSkip textDecorationSkip)
 {
     switch (textDecorationSkip) {
     case TextDecorationSkipNone:
@@ -1457,7 +1457,7 @@ static PassRefPtr<CSSValue> renderTextDecorationSkipFlagsToCSSValue(TextDecorati
 }
 #endif // CSS3_TEXT_DECORATION
 
-static PassRefPtr<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat yRepeat)
+static PassRef<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat yRepeat)
 {
     // For backwards compatibility, if both values are equal, just return one of them. And
     // if the two values are equivalent to repeat-x or repeat-y, just return the shorthand.
@@ -1468,10 +1468,10 @@ static PassRefPtr<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepea
     if (xRepeat == NoRepeatFill && yRepeat == RepeatFill)
         return cssValuePool().createIdentifierValue(CSSValueRepeatY);
 
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    list->append(cssValuePool().createValue(xRepeat));
-    list->append(cssValuePool().createValue(yRepeat));
-    return list.release();
+    auto list = CSSValueList::createSpaceSeparated();
+    list.get().append(cssValuePool().createValue(xRepeat));
+    list.get().append(cssValuePool().createValue(yRepeat));
+    return std::move(list);
 }
 
 static PassRefPtr<CSSValue> fillSourceTypeToCSSValue(EMaskSourceType type)
@@ -1487,7 +1487,7 @@ static PassRefPtr<CSSValue> fillSourceTypeToCSSValue(EMaskSourceType type)
 
     return 0;
 }
-static PassRefPtr<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, const RenderStyle* style)
+static PassRef<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, const RenderStyle* style)
 {
     if (fillSize.type == Contain)
         return cssValuePool().createIdentifierValue(CSSValueContain);
@@ -1498,35 +1498,35 @@ static PassRefPtr<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, const R
     if (fillSize.size.height().isAuto())
         return zoomAdjustedPixelValueForLength(fillSize.size.width(), style);
 
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    list->append(zoomAdjustedPixelValueForLength(fillSize.size.width(), style));
-    list->append(zoomAdjustedPixelValueForLength(fillSize.size.height(), style));
-    return list.release();
+    auto list = CSSValueList::createSpaceSeparated();
+    list.get().append(zoomAdjustedPixelValueForLength(fillSize.size.width(), style));
+    list.get().append(zoomAdjustedPixelValueForLength(fillSize.size.height(), style));
+    return std::move(list);
 }
 
-static PassRefPtr<CSSValue> altTextToCSSValue(const RenderStyle* style)
+static PassRef<CSSValue> altTextToCSSValue(const RenderStyle* style)
 {
     return cssValuePool().createValue(style->contentAltText(), CSSPrimitiveValue::CSS_STRING);
 }
     
-static PassRefPtr<CSSValue> contentToCSSValue(const RenderStyle* style)
+static PassRef<CSSValueList> contentToCSSValue(const RenderStyle* style)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    auto list = CSSValueList::createSpaceSeparated();
     for (const ContentData* contentData = style->contentData(); contentData; contentData = contentData->next()) {
         if (contentData->isCounter()) {
             const CounterContent* counter = static_cast<const CounterContentData*>(contentData)->counter();
             ASSERT(counter);
-            list->append(cssValuePool().createValue(counter->identifier(), CSSPrimitiveValue::CSS_COUNTER_NAME));
+            list.get().append(cssValuePool().createValue(counter->identifier(), CSSPrimitiveValue::CSS_COUNTER_NAME));
         } else if (contentData->isImage()) {
             const StyleImage* image = static_cast<const ImageContentData*>(contentData)->image();
             ASSERT(image);
-            list->append(image->cssValue());
+            list.get().append(image->cssValue());
         } else if (contentData->isText())
-            list->append(cssValuePool().createValue(static_cast<const TextContentData*>(contentData)->text(), CSSPrimitiveValue::CSS_STRING));
+            list.get().append(cssValuePool().createValue(static_cast<const TextContentData*>(contentData)->text(), CSSPrimitiveValue::CSS_STRING));
     }
     if (style->hasFlowFrom())
-        list->append(cssValuePool().createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING));
-    return list.release();
+        list.get().append(cssValuePool().createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING));
+    return list;
 }
 
 static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, CSSPropertyID propertyID)
@@ -1553,15 +1553,15 @@ static void logUnimplementedPropertyID(CSSPropertyID propertyID)
     LOG_ERROR("WebKit does not yet implement getComputedStyle for '%s'.", getPropertyName(propertyID));
 }
 
-static PassRefPtr<CSSValueList> fontFamilyFromStyle(RenderStyle* style)
-    {
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+static PassRef<CSSValueList> fontFamilyFromStyle(RenderStyle* style)
+{
+    auto list = CSSValueList::createCommaSeparated();
     for (unsigned i = 0; i < style->font().familyCount(); ++i)
-        list->append(valueForFamily(style->font().familyAt(i)));
-    return list.release();
+        list.get().append(valueForFamily(style->font().familyAt(i)));
+    return list;
 }
 
-static PassRefPtr<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle* style, RenderView* renderView)
+static PassRef<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle* style, RenderView* renderView)
 {
     Length length = style->lineHeight();
     if (length.isNegative())
@@ -1575,26 +1575,26 @@ static PassRefPtr<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle* style, Ren
     return zoomAdjustedPixelValue(floatValueForLength(length, 0, renderView), style);
 }
 
-static PassRefPtr<CSSPrimitiveValue> fontSizeFromStyle(RenderStyle* style)
+static PassRef<CSSPrimitiveValue> fontSizeFromStyle(RenderStyle* style)
 {
     return zoomAdjustedPixelValue(style->fontDescription().computedPixelSize(), style);
 }
 
-static PassRefPtr<CSSPrimitiveValue> fontStyleFromStyle(RenderStyle* style)
+static PassRef<CSSPrimitiveValue> fontStyleFromStyle(RenderStyle* style)
 {
     if (style->fontDescription().italic())
         return cssValuePool().createIdentifierValue(CSSValueItalic);
     return cssValuePool().createIdentifierValue(CSSValueNormal);
 }
 
-static PassRefPtr<CSSPrimitiveValue> fontVariantFromStyle(RenderStyle* style)
+static PassRef<CSSPrimitiveValue> fontVariantFromStyle(RenderStyle* style)
 {
     if (style->fontDescription().smallCaps())
         return cssValuePool().createIdentifierValue(CSSValueSmallCaps);
     return cssValuePool().createIdentifierValue(CSSValueNormal);
 }
 
-static PassRefPtr<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style)
+static PassRef<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style)
 {
     switch (style->fontDescription().weight()) {
     case FontWeight100:

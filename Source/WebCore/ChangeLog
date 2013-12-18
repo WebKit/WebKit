@@ -1,5 +1,15 @@
 2013-12-18  Andreas Kling  <akling@apple.com>
 
+        Make more computed style helpers return values by PassRef.
+        <https://webkit.org/b/125923>
+
+        Tighten yet another handful of CSS computed style helper functions
+        to return their CSSValues by PassRef where we never return null.
+
+        Reviewed by Antti Koivisto.
+
+2013-12-18  Andreas Kling  <akling@apple.com>
+
         Use range for syntax in Frame and FrameView.
         <https://webkit.org/b/125922>
 
