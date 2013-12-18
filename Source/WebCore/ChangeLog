@@ -1,3 +1,22 @@
+2013-12-18  Martin Hodovan  <mhodovan@inf.u-szeged.hu>
+
+        REGRESSION (r155536): Broken error recovery in @media at-rule
+        https://bugs.webkit.org/show_bug.cgi?id=125637
+
+        Reviewed by Darin Adler.
+
+        Error recovery in @media is broken if any of its rules misses the opening '{'.
+        The problem is that when the parser recognises the mistake it removes only the last
+        WHITESPACE token instead of the whole selector and tries to recover the selector again.
+        it swallows everything until it finds the next opening bracket. thats why the '}' brackets
+        of both subrules and even the @media rule are ignored, and the whole @media will be
+        considered invalid. By joining the selector and its trailing whitespace the error recovery
+        ignores the bad selector only and keep the @media rule.
+
+        Test: fast/css/media-error-recovery.html
+
+        * css/CSSGrammar.y.in:
+
 2013-12-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit not sending AXMenuClosed notification

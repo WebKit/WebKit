@@ -239,8 +239,8 @@ static inline bool isCSSTokenAString(int yytype)
 %type <id> property
 
 %union { CSSParserSelector* selector; }
-%type <selector> attrib class page_selector pseudo pseudo_page selector simple_selector specifier specifier_list
-%destructor { delete $$; } attrib class page_selector pseudo pseudo_page selector simple_selector specifier specifier_list
+%type <selector> attrib class page_selector pseudo pseudo_page selector selector_with_trailing_whitespace simple_selector specifier specifier_list
+%destructor { delete $$; } attrib class page_selector pseudo pseudo_page selector selector_with_trailing_whitespace simple_selector specifier specifier_list
 
 %union { Vector<OwnPtr<CSSParserSelector>>* selectorList; }
 %type <selectorList> selector_list simple_selector_list
@@ -1040,12 +1040,15 @@ selector_list:
     }
    ;
 
+selector_with_trailing_whitespace:
+    selector WHITESPACE;
+
 selector:
     simple_selector
-    | selector WHITESPACE
-    | selector WHITESPACE simple_selector {
+    | selector_with_trailing_whitespace
+    | selector_with_trailing_whitespace simple_selector {
         OwnPtr<CSSParserSelector> left = adoptPtr($1);
-        OwnPtr<CSSParserSelector> right = adoptPtr($3);
+        OwnPtr<CSSParserSelector> right = adoptPtr($2);
         $$ = nullptr;
         if (left && right) {
             right->appendTagHistory(CSSSelector::Descendant, left.release());
