@@ -46,64 +46,36 @@ static inline float ellipseYIntercept(float x, float rx, float ry)
     return ry * sqrt(1 - (x * x) / (rx * rx));
 }
 
-RectangleShape::ShapeBounds RectangleShape::ShapeBounds::paddingBounds(float shapePadding) const
+FloatRect RectangleShape::shapePaddingBounds() const
 {
-    ASSERT(shapePadding >= 0);
-    if (!shapePadding || isEmpty())
-        return *this;
+    ASSERT(shapePadding() >= 0);
+    if (!shapePadding() || isEmpty())
+        return m_bounds;
 
-    float boundsX = x() + std::min(width() / 2, shapePadding);
-    float boundsY = y() + std::min(height() / 2, shapePadding);
-    float boundsWidth = std::max(0.0f, width() - shapePadding * 2);
-    float boundsHeight = std::max(0.0f, height() - shapePadding * 2);
-    float boundsRadiusX = std::max(0.0f, rx() - shapePadding);
-    float boundsRadiusY = std::max(0.0f, ry() - shapePadding);
-    return RectangleShape::ShapeBounds(FloatRect(boundsX, boundsY, boundsWidth, boundsHeight), FloatSize(boundsRadiusX, boundsRadiusY));
+    float boundsX = x() + std::min(width() / 2, shapePadding());
+    float boundsY = y() + std::min(height() / 2, shapePadding());
+    float boundsWidth = std::max(0.0f, width() - shapePadding() * 2);
+    float boundsHeight = std::max(0.0f, height() - shapePadding() * 2);
+
+    return FloatRect(boundsX, boundsY, boundsWidth, boundsHeight);
 }
 
-RectangleShape::ShapeBounds RectangleShape::ShapeBounds::marginBounds(float shapeMargin) const
+FloatRect RectangleShape::shapeMarginBounds() const
 {
-    ASSERT(shapeMargin >= 0);
-    if (!shapeMargin)
-        return *this;
+    ASSERT(shapeMargin() >= 0);
+    if (!shapeMargin())
+        return m_bounds;
 
-    float boundsX = x() - shapeMargin;
-    float boundsY = y() - shapeMargin;
-    float boundsWidth = width() + shapeMargin * 2;
-    float boundsHeight = height() + shapeMargin * 2;
-    float boundsRadiusX = rx() + shapeMargin;
-    float boundsRadiusY = ry() + shapeMargin;
-    return RectangleShape::ShapeBounds(FloatRect(boundsX, boundsY, boundsWidth, boundsHeight), FloatSize(boundsRadiusX, boundsRadiusY));
-}
-
-FloatPoint RectangleShape::ShapeBounds::cornerInterceptForWidth(float widthAtIntercept) const
-{
-    float xi = (width() - widthAtIntercept) / 2;
-    float yi = ry() - ellipseYIntercept(rx() - xi, rx(), ry());
-    return FloatPoint(xi, yi);
-}
-
-RectangleShape::ShapeBounds RectangleShape::shapePaddingBounds() const
-{
-    if (!m_haveInitializedPaddingBounds) {
-        m_haveInitializedPaddingBounds = true;
-        m_paddingBounds = m_bounds.paddingBounds(shapePadding());
-    }
-    return m_paddingBounds;
-}
-
-RectangleShape::ShapeBounds RectangleShape::shapeMarginBounds() const
-{
-    if (!m_haveInitializedMarginBounds) {
-        m_haveInitializedMarginBounds = true;
-        m_marginBounds = m_bounds.marginBounds(shapeMargin());
-    }
-    return m_marginBounds;
+    float boundsX = x() - shapeMargin();
+    float boundsY = y() - shapeMargin();
+    float boundsWidth = width() + shapeMargin() * 2;
+    float boundsHeight = height() + shapeMargin() * 2;
+    return FloatRect(boundsX, boundsY, boundsWidth, boundsHeight);
 }
 
 void RectangleShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
-    const RectangleShape::ShapeBounds& bounds = shapeMarginBounds();
+    const FloatRect& bounds = shapeMarginBounds();
     if (bounds.isEmpty())
         return;
 
@@ -116,17 +88,20 @@ void RectangleShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logi
     float x1 = bounds.x();
     float x2 = bounds.maxX();
 
-    if (bounds.ry() > 0) {
-        if (y2 < bounds.y() + bounds.ry()) {
-            float yi = y2 - bounds.y() - bounds.ry();
-            float xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
-            x1 = bounds.x() + bounds.rx() - xi;
-            x2 = bounds.maxX() - bounds.rx() + xi;
-        } else if (y1 > bounds.maxY() - bounds.ry()) {
-            float yi =  y1 - (bounds.maxY() - bounds.ry());
-            float xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
-            x1 = bounds.x() + bounds.rx() - xi;
-            x2 = bounds.maxX() - bounds.rx() + xi;
+    float marginRadiusX = rx() + shapeMargin();
+    float marginRadiusY = ry() + shapeMargin();
+
+    if (marginRadiusY > 0) {
+        if (y2 < bounds.y() + marginRadiusY) {
+            float yi = y2 - bounds.y() - marginRadiusY;
+            float xi = ellipseXIntercept(yi, marginRadiusX, marginRadiusY);
+            x1 = bounds.x() + marginRadiusX - xi;
+            x2 = bounds.maxX() - marginRadiusX + xi;
+        } else if (y1 > bounds.maxY() - marginRadiusY) {
+            float yi =  y1 - (bounds.maxY() - marginRadiusY);
+            float xi = ellipseXIntercept(yi, marginRadiusX, marginRadiusY);
+            x1 = bounds.x() + marginRadiusX - xi;
+            x2 = bounds.maxX() - marginRadiusX + xi;
         }
     }
 
@@ -135,7 +110,7 @@ void RectangleShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logi
 
 void RectangleShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
-    const RectangleShape::ShapeBounds& bounds = shapePaddingBounds();
+    const FloatRect& bounds = shapePaddingBounds();
     if (bounds.isEmpty())
         return;
 
@@ -148,34 +123,44 @@ void RectangleShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logi
     float x1 = bounds.x();
     float x2 = bounds.maxX();
 
-    if (bounds.ry() > 0) {
-        bool y1InterceptsCorner = y1 < bounds.y() + bounds.ry();
-        bool y2InterceptsCorner = y2 > bounds.maxY() - bounds.ry();
+    float paddingRadiusX = std::max(0.0f, rx() - shapePadding());
+    float paddingRadiusY = std::max(0.0f, ry() - shapePadding());
+
+    if (paddingRadiusX > 0) {
+        bool y1InterceptsCorner = y1 < bounds.y() + paddingRadiusY;
+        bool y2InterceptsCorner = y2 > bounds.maxY() - paddingRadiusY;
         float xi = 0;
 
         if (y1InterceptsCorner && y2InterceptsCorner) {
             if  (y1 < bounds.height() + 2 * bounds.y() - y2) {
-                float yi = y1 - bounds.y() - bounds.ry();
-                xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
+                float yi = y1 - bounds.y() - paddingRadiusY;
+                xi = ellipseXIntercept(yi, paddingRadiusX, paddingRadiusY);
             } else {
-                float yi =  y2 - (bounds.maxY() - bounds.ry());
-                xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
+                float yi =  y2 - (bounds.maxY() - paddingRadiusY);
+                xi = ellipseXIntercept(yi, paddingRadiusX, paddingRadiusY);
             }
         } else if (y1InterceptsCorner) {
-            float yi = y1 - bounds.y() - bounds.ry();
-            xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
+            float yi = y1 - bounds.y() - paddingRadiusY;
+            xi = ellipseXIntercept(yi, paddingRadiusX, paddingRadiusY);
         } else if (y2InterceptsCorner) {
-            float yi =  y2 - (bounds.maxY() - bounds.ry());
-            xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
+            float yi =  y2 - (bounds.maxY() - paddingRadiusY);
+            xi = ellipseXIntercept(yi, paddingRadiusX, paddingRadiusY);
         }
 
         if (y1InterceptsCorner || y2InterceptsCorner) {
-            x1 = bounds.x() + bounds.rx() - xi;
-            x2 = bounds.maxX() - bounds.rx() + xi;
+            x1 = bounds.x() + paddingRadiusX - xi;
+            x2 = bounds.maxX() - paddingRadiusX + xi;
         }
     }
 
     result.append(LineSegment(x1, x2));
+}
+
+static FloatPoint cornerInterceptForWidth(float width, float widthAtIntercept, float rx, float ry)
+{
+    float xi = (width - widthAtIntercept) / 2;
+    float yi = ry - ellipseYIntercept(rx - xi, rx, ry);
+    return FloatPoint(xi, yi);
 }
 
 bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const
@@ -184,7 +169,7 @@ bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalInterv
     float minIntervalHeight = minLogicalIntervalSize.height();
     float minIntervalWidth = minLogicalIntervalSize.width();
 
-    const RectangleShape::ShapeBounds& bounds = shapePaddingBounds();
+    const FloatRect& bounds = shapePaddingBounds();
     if (bounds.isEmpty() || minIntervalWidth > bounds.width())
         return false;
 
@@ -194,8 +179,11 @@ bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalInterv
     if (maxY > bounds.maxY())
         return false;
 
-    bool intervalOverlapsMinCorner = minY < bounds.y() + bounds.ry();
-    bool intervalOverlapsMaxCorner = maxY > bounds.maxY() - bounds.ry();
+    float paddingRadiusX = std::max(0.0f, rx() - shapePadding());
+    float paddingRadiusY = std::max(0.0f, ry() - shapePadding());
+
+    bool intervalOverlapsMinCorner = minY < bounds.y() + paddingRadiusY;
+    bool intervalOverlapsMaxCorner = maxY > bounds.maxY() - paddingRadiusY;
 
     if (!intervalOverlapsMinCorner && !intervalOverlapsMaxCorner) {
         result = minY;
@@ -204,8 +192,8 @@ bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalInterv
 
     float centerY = bounds.y() + bounds.height() / 2;
     bool minCornerDefinesX = fabs(centerY - minY) > fabs(centerY - maxY);
-    bool intervalFitsWithinCorners = minIntervalWidth + 2 * bounds.rx() <= bounds.width();
-    FloatPoint cornerIntercept = bounds.cornerInterceptForWidth(minIntervalWidth);
+    bool intervalFitsWithinCorners = minIntervalWidth + 2 * paddingRadiusX <= bounds.width();
+    FloatPoint cornerIntercept = cornerInterceptForWidth(bounds.width(), minIntervalWidth, paddingRadiusX, paddingRadiusY);
 
     if (intervalOverlapsMinCorner && (!intervalOverlapsMaxCorner || minCornerDefinesX)) {
         if (intervalFitsWithinCorners || bounds.y() + cornerIntercept.y() < minY) {
@@ -230,9 +218,9 @@ bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalInterv
 
 void RectangleShape::buildDisplayPaths(DisplayPaths& paths) const
 {
-    paths.shape.addRoundedRect(m_bounds, FloatSize(m_bounds.rx(), m_bounds.ry()), Path::PreferBezierRoundedRect);
+    paths.shape.addRoundedRect(m_bounds, FloatSize(m_radii.width(), m_radii.height()), Path::PreferBezierRoundedRect);
     if (shapeMargin())
-        paths.marginShape.addRoundedRect(shapeMarginBounds(), FloatSize(shapeMarginBounds().rx(), shapeMarginBounds().ry()), Path::PreferBezierRoundedRect);
+        paths.marginShape.addRoundedRect(shapeMarginBounds(), FloatSize(m_radii.width() + shapeMargin(), m_radii.height() + shapeMargin()), Path::PreferBezierRoundedRect);
 }
 
 } // namespace WebCore

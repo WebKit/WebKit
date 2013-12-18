@@ -58,13 +58,13 @@ static PassOwnPtr<Shape> createRectangleShape(const FloatRect& bounds, const Flo
     return adoptPtr(new RectangleShape(bounds, radii));
 }
 
-static PassOwnPtr<Shape> createShapeCircle(const FloatPoint& center, float radius)
+static PassOwnPtr<Shape> createCircleShape(const FloatPoint& center, float radius)
 {
     ASSERT(radius >= 0);
     return adoptPtr(new RectangleShape(FloatRect(center.x() - radius, center.y() - radius, radius*2, radius*2), FloatSize(radius, radius)));
 }
 
-static PassOwnPtr<Shape> createShapeEllipse(const FloatPoint& center, const FloatSize& radii)
+static PassOwnPtr<Shape> createEllipseShape(const FloatPoint& center, const FloatSize& radii)
 {
     ASSERT(radii.width() >= 0 && radii.height() >= 0);
     return adoptPtr(new RectangleShape(FloatRect(center.x() - radii.width(), center.y() - radii.height(), radii.width()*2, radii.height()*2), radii));
@@ -146,7 +146,7 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
         float radius = floatValueForLength(circle->radius(), sqrtf((boxWidth * boxWidth + boxHeight * boxHeight) / 2));
         FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
 
-        shape = createShapeCircle(logicalCenter, radius);
+        shape = createCircleShape(logicalCenter, radius);
         break;
     }
 
@@ -157,7 +157,7 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
         float radius = circle->floatValueForRadiusInBox(boxWidth, boxHeight);
         FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
 
-        shape = createShapeCircle(logicalCenter, radius);
+        shape = createCircleShape(logicalCenter, radius);
         break;
     }
 
@@ -170,7 +170,7 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
         FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
         FloatSize logicalRadii = physicalSizeToLogical(FloatSize(radiusX, radiusY), writingMode);
 
-        shape = createShapeEllipse(logicalCenter, logicalRadii);
+        shape = createEllipseShape(logicalCenter, logicalRadii);
         break;
     }
 
@@ -182,7 +182,7 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
         float radiusY = ellipse->floatValueForRadiusInBox(ellipse->radiusY(), centerY, boxHeight);
         FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
 
-        shape = createShapeEllipse(logicalCenter, FloatSize(radiusX, radiusY));
+        shape = createEllipseShape(logicalCenter, FloatSize(radiusX, radiusY));
         break;
     }
 

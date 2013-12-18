@@ -43,9 +43,8 @@ class RectangleShape : public Shape {
 public:
     RectangleShape(const FloatRect& bounds, const FloatSize& radii)
         : Shape()
-        , m_bounds(bounds, radii)
-        , m_haveInitializedMarginBounds(false)
-        , m_haveInitializedPaddingBounds(false)
+        , m_bounds(bounds)
+        , m_radii(radii)
     {
     }
 
@@ -59,33 +58,18 @@ public:
     virtual void buildDisplayPaths(DisplayPaths&) const OVERRIDE;
 
 private:
-    class ShapeBounds : public FloatRect {
-    public:
-        ShapeBounds() { }
-        ShapeBounds(const FloatRect& bounds, const FloatSize& radii)
-            : FloatRect(bounds)
-            , m_radii(radii)
-        {
-        }
+    FloatRect shapeMarginBounds() const;
+    FloatRect shapePaddingBounds() const;
 
-        float rx() const { return m_radii.width(); }
-        float ry() const { return m_radii.height(); }
-        ShapeBounds marginBounds(float shapeMargin) const;
-        ShapeBounds paddingBounds(float shapePadding) const;
-        FloatPoint cornerInterceptForWidth(float width) const;
+    float rx() const { return m_radii.width(); }
+    float ry() const { return m_radii.height(); }
+    float x() const { return m_bounds.x(); }
+    float y() const { return m_bounds.y(); }
+    float width() const { return m_bounds.width(); }
+    float height() const { return m_bounds.height(); }
 
-    private:
-        FloatSize m_radii;
-    };
-
-    ShapeBounds shapeMarginBounds() const;
-    ShapeBounds shapePaddingBounds() const;
-
-    ShapeBounds m_bounds;
-    mutable ShapeBounds m_marginBounds;
-    mutable ShapeBounds m_paddingBounds;
-    mutable bool m_haveInitializedMarginBounds : 1;
-    mutable bool m_haveInitializedPaddingBounds : 1;
+    FloatRect m_bounds;
+    FloatSize m_radii;
 };
 
 } // namespace WebCore

@@ -1,3 +1,44 @@
+2013-12-18  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Simplify RectangleShape implementation
+        https://bugs.webkit.org/show_bug.cgi?id=125536
+
+        Reviewed by Andreas Kling.
+
+        Instead of caching an instance of a private FloatRoundedRect (ish) class for
+        RectangleShape's shape-margin and shape-padding bounds, we just compute
+        the FloatRect and radii as needed. This reduces the classes footprint a little
+        and it simplifies the implementation.
+
+        Removed the private RectangleShape::ShapeBounds class and made its
+        cornerInterceptForWidth() method a static function. Added members for
+        the RectangleShape constructor args, and private getters for their properties.
+
+        There are no new tests because this is just an internal refactoring.
+
+        * rendering/shapes/RectangleShape.cpp:
+        (WebCore::RectangleShape::shapePaddingBounds):
+        (WebCore::RectangleShape::shapeMarginBounds):
+        (WebCore::ellipseXIntercept):
+        (WebCore::ellipseYIntercept):
+        (WebCore::RectangleShape::getExcludedIntervals):
+        (WebCore::RectangleShape::getIncludedIntervals):
+        (WebCore::cornerInterceptForWidth):
+        (WebCore::RectangleShape::firstIncludedIntervalLogicalTop):
+        (WebCore::RectangleShape::buildPath):
+        * rendering/shapes/RectangleShape.h:
+        (WebCore::RectangleShape::RectangleShape):
+        (WebCore::RectangleShape::rx):
+        (WebCore::RectangleShape::ry):
+        (WebCore::RectangleShape::x):
+        (WebCore::RectangleShape::y):
+        (WebCore::RectangleShape::width):
+        (WebCore::RectangleShape::height):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::createCircleShape): Renamed this internal function (it was createShapeCircle) because it was inconsistent.
+        (WebCore::createEllipseShape): Ditto.
+        (WebCore::Shape::createShape):
+
 2013-12-18  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a simple stack abstraction for x86_64
