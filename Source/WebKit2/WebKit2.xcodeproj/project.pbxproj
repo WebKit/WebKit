@@ -197,7 +197,6 @@
 		1A9E328A1821636900F5D04C /* WKRemoteObjectRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9E32881821636900F5D04C /* WKRemoteObjectRegistry.mm */; };
 		1A9E328D182165A900F5D04C /* WKRemoteObjectInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E328B182165A900F5D04C /* WKRemoteObjectInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A9E328E182165A900F5D04C /* WKRemoteObjectInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9E328C182165A900F5D04C /* WKRemoteObjectInterface.mm */; };
-		1A9E329718219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E329618219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A9E329A1822E1CC00F5D04C /* WKRemoteObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9E32981822E1CC00F5D04C /* WKRemoteObject.mm */; };
 		1A9E329B1822E1CC00F5D04C /* WKRemoteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E32991822E1CC00F5D04C /* WKRemoteObject.h */; };
 		1A9E329E1822FEDD00F5D04C /* WKRemoteObjectCoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9E329C1822FEDD00F5D04C /* WKRemoteObjectCoder.mm */; };
@@ -271,6 +270,10 @@
 		1AC1337118566C7C00F3EC05 /* APIFrameHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1336F18566C7C00F3EC05 /* APIFrameHandle.cpp */; };
 		1AC1337218566C7C00F3EC05 /* APIFrameHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1337018566C7C00F3EC05 /* APIFrameHandle.h */; };
 		1AC133741857C21E00F3EC05 /* APIGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC133731857C21E00F3EC05 /* APIGeometry.cpp */; };
+		1AC1337F18590AE400F3EC05 /* RemoteObjectRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1337D18590AE400F3EC05 /* RemoteObjectRegistry.mm */; };
+		1AC1338018590AE400F3EC05 /* RemoteObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1337E18590AE400F3EC05 /* RemoteObjectRegistry.h */; };
+		1AC1338518590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC1338318590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp */; };
+		1AC1338618590C4600F3EC05 /* RemoteObjectRegistryMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC1338418590C4600F3EC05 /* RemoteObjectRegistryMessages.h */; };
 		1AC25FC212A48F6000BD2671 /* PluginProcessShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AC25F8A12A48E0300BD2671 /* PluginProcessShim.mm */; };
 		1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC4C82816B876A90069DCCD /* MessageFlags.h */; };
 		1AC5FFC2174BFD1B0001483D /* PluginProcessAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC5FFC1174BFD1B0001483D /* PluginProcessAttributes.h */; };
@@ -1744,7 +1747,6 @@
 		1A9E32881821636900F5D04C /* WKRemoteObjectRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRemoteObjectRegistry.mm; sourceTree = "<group>"; };
 		1A9E328B182165A900F5D04C /* WKRemoteObjectInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectInterface.h; sourceTree = "<group>"; };
 		1A9E328C182165A900F5D04C /* WKRemoteObjectInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRemoteObjectInterface.mm; sourceTree = "<group>"; };
-		1A9E329618219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectRegistryPrivate.h; sourceTree = "<group>"; };
 		1A9E32981822E1CC00F5D04C /* WKRemoteObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRemoteObject.mm; sourceTree = "<group>"; };
 		1A9E32991822E1CC00F5D04C /* WKRemoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObject.h; sourceTree = "<group>"; };
 		1A9E329C1822FEDD00F5D04C /* WKRemoteObjectCoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRemoteObjectCoder.mm; sourceTree = "<group>"; };
@@ -1827,6 +1829,11 @@
 		1AC1336F18566C7C00F3EC05 /* APIFrameHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIFrameHandle.cpp; sourceTree = "<group>"; };
 		1AC1337018566C7C00F3EC05 /* APIFrameHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFrameHandle.h; sourceTree = "<group>"; };
 		1AC133731857C21E00F3EC05 /* APIGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIGeometry.cpp; sourceTree = "<group>"; };
+		1AC1337D18590AE400F3EC05 /* RemoteObjectRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteObjectRegistry.mm; sourceTree = "<group>"; };
+		1AC1337E18590AE400F3EC05 /* RemoteObjectRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteObjectRegistry.h; sourceTree = "<group>"; };
+		1AC1338118590B0500F3EC05 /* RemoteObjectRegistry.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteObjectRegistry.messages.in; sourceTree = "<group>"; };
+		1AC1338318590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteObjectRegistryMessageReceiver.cpp; sourceTree = "<group>"; };
+		1AC1338418590C4600F3EC05 /* RemoteObjectRegistryMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteObjectRegistryMessages.h; sourceTree = "<group>"; };
 		1AC25F8912A48E0300BD2671 /* PluginProcessShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessShim.h; sourceTree = "<group>"; };
 		1AC25F8A12A48E0300BD2671 /* PluginProcessShim.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessShim.mm; sourceTree = "<group>"; };
 		1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = PluginProcessShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3949,6 +3956,9 @@
 		37DFA6FE1810BB2D001F4A9F /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				1AC1337E18590AE400F3EC05 /* RemoteObjectRegistry.h */,
+				1AC1338118590B0500F3EC05 /* RemoteObjectRegistry.messages.in */,
+				1AC1337D18590AE400F3EC05 /* RemoteObjectRegistry.mm */,
 				1AE00D4B182D6EB000087DD7 /* WKBrowsingContextHandle.h */,
 				1AE00D4A182D6EB000087DD7 /* WKBrowsingContextHandle.mm */,
 				1AE00D4E182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h */,
@@ -3963,7 +3973,6 @@
 				1A9E32871821636900F5D04C /* WKRemoteObjectRegistry.h */,
 				1A9E32881821636900F5D04C /* WKRemoteObjectRegistry.mm */,
 				1A9E32A01823018900F5D04C /* WKRemoteObjectRegistryInternal.h */,
-				1A9E329618219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -5517,6 +5526,8 @@
 				1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */,
 				1AA3D75F1651B7D3008713D0 /* RemoteLayerTreeHostMessageReceiver.cpp */,
 				1AA3D7601651B7D3008713D0 /* RemoteLayerTreeHostMessages.h */,
+				1AC1338318590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp */,
+				1AC1338418590C4600F3EC05 /* RemoteObjectRegistryMessages.h */,
 				E18E6911169B667B009B6670 /* SecItemShimMessageReceiver.cpp */,
 				E18E6912169B667B009B6670 /* SecItemShimMessages.h */,
 				E18E6913169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp */,
@@ -6012,7 +6023,6 @@
 				33AA1067131F060000D4A575 /* WebCookieManagerProxyClient.h in Headers */,
 				3309344A1315B9220097A7BC /* WebCookieManagerProxyMessages.h in Headers */,
 				BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */,
-				1A9E329718219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h in Headers */,
 				512F589B12A8838800629530 /* WebCredential.h in Headers */,
 				51578B831209ECEF00A37C4A /* APIData.h in Headers */,
 				F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */,
@@ -6020,6 +6030,7 @@
 				F62A765D12B1ABC30005F1B6 /* WebDatabaseManagerProxy.h in Headers */,
 				1F7506B11859163700EC0FF7 /* WKWebProcessPlugInFrame.h in Headers */,
 				1A445BA3184D5FCF004B3414 /* WKContextDownloadClient.h in Headers */,
+				1AC1338618590C4600F3EC05 /* RemoteObjectRegistryMessages.h in Headers */,
 				BCAC111F12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h in Headers */,
 				F62A76B912B1B25F0005F1B6 /* WebDatabaseManagerProxyMessages.h in Headers */,
 				1AB7D72C1288CAAD00CFD08C /* WebDownloadClient.h in Headers */,
@@ -6119,6 +6130,7 @@
 				1A043A09124D11A900FFBFB5 /* WebProcessConnection.h in Headers */,
 				1A043F6A12514D8B00FFBFB5 /* WebProcessConnectionMessages.h in Headers */,
 				BC306824125A6B9400E71278 /* WebProcessCreationParameters.h in Headers */,
+				1AC1338018590AE400F3EC05 /* RemoteObjectRegistry.h in Headers */,
 				BC3066BF125A442100E71278 /* WebProcessMessages.h in Headers */,
 				BC032DD510F4389F0058C15A /* WebProcessProxy.h in Headers */,
 				51032F19180F73BB00961BB7 /* WebToDatabaseProcessConnection.h in Headers */,
@@ -7322,6 +7334,7 @@
 				374436881820E7240049579F /* WKObject.mm in Sources */,
 				1A0F29E3120B44420053D1B9 /* VisitedLinkProvider.cpp in Sources */,
 				1A0F29CB120B37160053D1B9 /* VisitedLinkTable.cpp in Sources */,
+				1AC1337F18590AE400F3EC05 /* RemoteObjectRegistry.mm in Sources */,
 				CEDA12E2152CD1AE00D9E08D /* WebAlternativeTextClient.cpp in Sources */,
 				512E352E130B55AF00ABD19A /* WebApplicationCacheManager.cpp in Sources */,
 				51E35205180F5D4F00E53BE9 /* DatabaseProcessMain.mm in Sources */,
@@ -7627,6 +7640,7 @@
 				51BA24461858F55D00EA2811 /* WebCrossThreadCopier.cpp in Sources */,
 				BC407609124FF0270068F20A /* WKURL.cpp in Sources */,
 				BC40761B124FF0370068F20A /* WKURLCF.mm in Sources */,
+				1AC1338518590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp in Sources */,
 				BC40760B124FF0270068F20A /* WKURLRequest.cpp in Sources */,
 				BC40762A124FF0400068F20A /* WKURLRequestNS.mm in Sources */,
 				512A9760180E031D0039A149 /* DatabaseProcessMessageReceiver.cpp in Sources */,

@@ -30,7 +30,6 @@
 #import <Foundation/Foundation.h>
 
 @class WKConnection;
-@class WKRemoteObjectRegistry;
 
 @protocol WKConnectionDelegate <NSObject>
 
@@ -45,8 +44,6 @@ WK_API_CLASS
 - (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody;
 
 @property (assign) id <WKConnectionDelegate> delegate;
-
-@property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
 
 @end
 

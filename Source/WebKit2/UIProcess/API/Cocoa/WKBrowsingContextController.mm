@@ -30,6 +30,8 @@
 
 #import "APIData.h"
 #import "ObjCObjectGraph.h"
+#import "RemoteObjectRegistry.h"
+#import "RemoteObjectRegistryMessages.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextGroupInternal.h"
@@ -45,6 +47,7 @@
 #import "WKNSURLExtras.h"
 #import "WKNSURLProtectionSpace.h"
 #import "WKProcessGroupInternal.h"
+#import "WKRemoteObjectRegistryInternal.h"
 #import "WKRetainPtr.h"
 #import "WKURLRequestNS.h"
 #import "WKURLResponseNS.h"
@@ -139,12 +142,16 @@ static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
 
     WeakObjCPtr<id <WKBrowsingContextLoadDelegate>> _loadDelegate;
     WeakObjCPtr<id <WKBrowsingContextPolicyDelegate>> _policyDelegate;
+    
+    RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
 }
 
 - (void)dealloc
 {
     _page->pageLoadState().removeObserver(*_pageLoadStateObserver);
     _page->~WebPageProxy();
+
+    [_remoteObjectRegistry _invalidate];
 
     [super dealloc];
 }
@@ -902,6 +909,16 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 - (WKBrowsingContextHandle *)handle
 {
     return [[[WKBrowsingContextHandle alloc] _initWithPageID:_page->pageID()] autorelease];
+}
+
+- (WKRemoteObjectRegistry *)remoteObjectRegistry
+{
+    if (!_remoteObjectRegistry) {
+        _remoteObjectRegistry = [[WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page];
+        _page->process().context().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
+    }
+
+    return _remoteObjectRegistry.get();
 }
 
 @end

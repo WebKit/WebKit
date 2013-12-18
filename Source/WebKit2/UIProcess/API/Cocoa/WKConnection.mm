@@ -29,7 +29,6 @@
 #if WK_API_ENABLED
 
 #import "ObjCObjectGraph.h"
-#import "WKRemoteObjectRegistryInternal.h"
 #import "WKRetainPtr.h"
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
@@ -40,7 +39,6 @@
 using namespace WebKit;
 
 @implementation WKConnection {
-    RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
     WeakObjCPtr<id <WKConnectionDelegate>> _delegate;
 }
 
@@ -54,10 +52,8 @@ using namespace WebKit;
 static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
     WKConnection *connection = (WKConnection *)clientInfo;
-    if ([connection->_remoteObjectRegistry _handleMessageWithName:messageName body:messageBody])
-        return;
-
     auto delegate = connection->_delegate.get();
+
     if ([delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
         RetainPtr<CFStringRef> nsMessageName = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, messageName));
         RetainPtr<id> nsMessageBody = ((ObjCObjectGraph*)messageBody)->rootObject();
@@ -105,14 +101,6 @@ static void setUpClient(WKConnection *wrapper, WebConnection& connection)
 {
     RefPtr<ObjCObjectGraph> wkMessageBody = ObjCObjectGraph::create(messageBody);
     self._connection.postMessage(messageName, wkMessageBody.get());
-}
-
-- (WKRemoteObjectRegistry *)remoteObjectRegistry
-{
-    if (!_remoteObjectRegistry)
-        _remoteObjectRegistry = adoptNS([[WKRemoteObjectRegistry alloc] _initWithConnectionRef:toAPI(&self._connection)]);
-
-    return _remoteObjectRegistry.get();
 }
 
 - (WebConnection&)_connection

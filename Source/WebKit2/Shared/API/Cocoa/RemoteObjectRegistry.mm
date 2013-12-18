@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKBrowsingContextController.h>
+#import "config.h"
+#import "RemoteObjectRegistry.h"
 
-#if WK_API_ENABLED
+#import "MessageSender.h"
+#import "RemoteObjectRegistryMessages.h"
+#import "UserData.h"
+#import "WKRemoteObjectRegistryInternal.h"
 
-#import <WebKit2/WKBase.h>
+namespace WebKit {
 
-typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
-    WKPaginationModeUnpaginated,
-    WKPaginationModeLeftToRight,
-    WKPaginationModeRightToLeft,
-    WKPaginationModeTopToBottom,
-    WKPaginationModeBottomToTop,
-};
+RemoteObjectRegistry::RemoteObjectRegistry(WKRemoteObjectRegistry *remoteObjectRegistry, IPC::MessageSender& messageSender)
+    : m_remoteObjectRegistry(remoteObjectRegistry)
+    , m_messageSender(messageSender)
+{
+}
 
-@class WKBrowsingContextHandle;
-@class WKRemoteObjectRegistry;
+RemoteObjectRegistry::~RemoteObjectRegistry()
+{
+}
 
-@interface WKBrowsingContextController (Private)
+void RemoteObjectRegistry::sendInvocation(const UserData& userData)
+{
+    m_messageSender.send(Messages::RemoteObjectRegistry::InvokeMethod(userData));
+}
 
-@property (readonly) WKPageRef _pageRef;
+void RemoteObjectRegistry::invokeMethod(const UserData& invocation)
+{
+    [m_remoteObjectRegistry _invokeMethod:invocation];
+}
 
-@property (readonly) BOOL hasOnlySecureContent;
-
-@property WKBrowsingContextPaginationMode paginationMode;
-
-// Whether the column-break-{before,after} properties are respected instead of the
-// page-break-{before,after} properties.
-@property BOOL paginationBehavesLikeColumns;
-
-// Set to 0 to have the page length equal the view length.
-@property CGFloat pageLength;
-@property CGFloat gapBetweenPages;
-
-@property (readonly) NSUInteger pageCount;
-
-@property (nonatomic, readonly) WKBrowsingContextHandle *handle;
-
-@property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
-@end
-
-#endif // WK_API_ENABLED
+} // namespace WebKit

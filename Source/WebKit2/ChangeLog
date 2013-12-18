@@ -1,3 +1,40 @@
+2013-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Make WKObjectRegistry objects be per page
+        https://bugs.webkit.org/show_bug.cgi?id=125937
+
+        Reviewed by Andreas Kling.
+
+        Remove WKObjectRegistry from WKConnection. Also, add a C++ object that is in charge 
+        of actually sending and receiving messages.
+
+        * DerivedSources.make:
+        * Shared/API/Cocoa/RemoteObjectRegistry.h: Added.
+        * Shared/API/Cocoa/RemoteObjectRegistry.messages.in: Added.
+        * Shared/API/Cocoa/RemoteObjectRegistry.mm: Added.
+        (WebKit::RemoteObjectRegistry::RemoteObjectRegistry):
+        (WebKit::RemoteObjectRegistry::~RemoteObjectRegistry):
+        (WebKit::RemoteObjectRegistry::sendInvocation):
+        (WebKit::RemoteObjectRegistry::invokeMethod):
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.mm:
+        (-[WKRemoteObjectRegistry _initWithMessageSender:IPC::]):
+        (-[WKRemoteObjectRegistry _invalidate]):
+        (-[WKRemoteObjectRegistry _sendInvocation:interface:]):
+        (-[WKRemoteObjectRegistry WebKit::]):
+        (-[WKRemoteObjectRegistry _invokeMethod:]):
+        * Shared/API/Cocoa/WKRemoteObjectRegistryInternal.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController dealloc]):
+        (-[WKBrowsingContextController remoteObjectRegistry]):
+        * UIProcess/API/Cocoa/WKBrowsingContextControllerPrivate.h:
+        * UIProcess/API/Cocoa/WKConnection.h:
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        (didReceiveMessage):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController remoteObjectRegistry]):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+
 2013-12-18  Conrad Shultz  <conrad_shultz@apple.com>
 
         API to set a favicon

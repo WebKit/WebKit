@@ -23,18 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKFoundation.h>
+#ifndef RemoteObjectRegistry_h
+#define RemoteObjectRegistry_h
 
-#if WK_API_ENABLED
+#include "MessageReceiver.h"
 
-#import <WebKit2/WKBase.h>
-#import <WebKit2/WKRemoteObjectRegistry.h>
+OBJC_CLASS WKRemoteObjectRegistry;
 
-@interface WKRemoteObjectRegistry (WKPrivate)
+namespace IPC {
+class MessageSender;
+}
 
-- (id)_initWithConnectionRef:(WKConnectionRef)connectionRef;
-- (BOOL)_handleMessageWithName:(WKStringRef)name body:(WKTypeRef)body;
+namespace WebKit {
 
-@end
+class UserData;
 
-#endif // WK_API_ENABLED
+class RemoteObjectRegistry FINAL : public CoreIPC::MessageReceiver {
+public:
+    RemoteObjectRegistry(WKRemoteObjectRegistry *, IPC::MessageSender&);
+    ~RemoteObjectRegistry();
+
+    void sendInvocation(const UserData&);
+
+private:
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+
+    // Message handlers
+    void invokeMethod(const UserData&);
+
+    WKRemoteObjectRegistry *m_remoteObjectRegistry;
+    IPC::MessageSender& m_messageSender;
+};
+
+} // namespace WebKit
+
+#endif // RemoteObjectRegistry_h

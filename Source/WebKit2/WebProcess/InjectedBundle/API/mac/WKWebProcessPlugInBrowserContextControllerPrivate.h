@@ -30,12 +30,15 @@
 #import <WebKit2/WKBase.h>
 
 @class WKBrowsingContextHandle;
+@class WKRemoteObjectRegistry;
 
 @interface WKWebProcessPlugInBrowserContextController (Private)
 
 @property (nonatomic, readonly) WKBundlePageRef _bundlePageRef;
 
 @property (nonatomic, readonly) WKBrowsingContextHandle *handle;
+
+@property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
 
 + (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle;
 

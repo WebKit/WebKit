@@ -28,11 +28,14 @@
 
 #if WK_API_ENABLED
 
+#import "RemoteObjectRegistry.h"
+#import "RemoteObjectRegistryMessages.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKBundleAPICast.h"
 #import "WKBundlePage.h"
 #import "WKBundlePagePrivate.h"
 #import "WKDOMInternals.h"
+#import "WKRemoteObjectRegistryInternal.h"
 #import "WKRetainPtr.h"
 #import "WKWebProcessPluginFrameInternal.h"
 #import "WKWebProcessPlugInInternal.h"
@@ -50,6 +53,8 @@ using namespace WebKit;
 @implementation WKWebProcessPlugInBrowserContextController {
     API::ObjectStorage<WebPage> _page;
     WeakObjCPtr<id <WKWebProcessPlugInLoadDelegate>> _loadDelegate;
+    
+    RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
 }
 
 static void didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userDataRef, const void *clientInfo)
@@ -161,6 +166,16 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
         return nil;
 
     return wrapper(*webPage);
+}
+
+- (WKRemoteObjectRegistry *)remoteObjectRegistry
+{
+    if (!_remoteObjectRegistry) {
+        _remoteObjectRegistry = [[WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page];
+        WebProcess::shared().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
+    }
+
+    return _remoteObjectRegistry.get();
 }
 
 @end
