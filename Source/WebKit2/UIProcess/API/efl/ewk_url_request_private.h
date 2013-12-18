@@ -29,7 +29,6 @@
 #include "WKEinaSharedString.h"
 #include "WKURL.h"
 #include "WKURLRequest.h"
-#include "WebURLRequest.h"
 #include "ewk_object_private.h"
 #include <wtf/PassRefPtr.h>
 

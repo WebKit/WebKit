@@ -186,6 +186,7 @@ set(WebKit2_SOURCES
     Shared/APIGeometry.cpp
     Shared/APIPageHandle.cpp
     Shared/APIObject.cpp
+    Shared/APIURLRequest.cpp
     Shared/ActivityAssertion.cpp
     Shared/CacheModel.cpp
     Shared/ChildProcess.cpp
@@ -236,7 +237,6 @@ set(WebKit2_SOURCES
     Shared/WebRenderObject.cpp
     Shared/WebResourceBuffer.cpp
     Shared/WebTouchEvent.cpp
-    Shared/WebURLRequest.cpp
     Shared/WebURLResponse.cpp
     Shared/WebWheelEvent.cpp
 

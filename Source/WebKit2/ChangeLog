@@ -1,3 +1,12 @@
+2013-12-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on EFL port after r160737
+
+        Rename WebURLRequest to API::URLRequest
+
+        * CMakeLists.txt:
+        * UIProcess/API/efl/ewk_url_request_private.h:
+
 2013-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Rename "canRubberBands" to "canRubberBand"
