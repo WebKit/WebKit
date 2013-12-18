@@ -227,6 +227,7 @@
 		CD5393C81757BA9700C07123 /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393C71757BA9700C07123 /* MD5.cpp */; };
 		CD5393CA1757BAC400C07123 /* SHA1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393C91757BAC400C07123 /* SHA1.cpp */; };
 		CD5497B415857F0C00B5BC30 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497B315857F0C00B5BC30 /* MediaTime.cpp */; };
+		CDC2C71517970DDB00E627FB /* TimeRanges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC2C7141797089D00E627FB /* TimeRanges.cpp */; };
 		CE14F1A4181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE14F1A2181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html */; };
 		CE32C7C818184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE32C7C718184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm */; };
 		E1220DA0155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1220D9F155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm */; };
@@ -575,6 +576,7 @@
 		CD5393C71757BA9700C07123 /* MD5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MD5.cpp; sourceTree = "<group>"; };
 		CD5393C91757BAC400C07123 /* SHA1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SHA1.cpp; sourceTree = "<group>"; };
 		CD5497B315857F0C00B5BC30 /* MediaTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTime.cpp; sourceTree = "<group>"; };
+		CDC2C7141797089D00E627FB /* TimeRanges.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimeRanges.cpp; sourceTree = "<group>"; };
 		CE14F1A2181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = WillPerformClientRedirectToURLCrash.html; sourceTree = "<group>"; };
 		CE32C7C718184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WillPerformClientRedirectToURLCrash.mm; sourceTree = "<group>"; };
 		E1220D9F155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCacheDisableWithinResourceLoadDelegate.mm; sourceTree = "<group>"; };
@@ -685,6 +687,7 @@
 		440A1D3614A01000008A66F2 /* WebCore */ = {
 			isa = PBXGroup;
 			children = (
+				CDC2C7141797089D00E627FB /* TimeRanges.cpp */,
 				440A1D3814A0103A008A66F2 /* URL.cpp */,
 				14464012167A8305000BD218 /* LayoutUnit.cpp */,
 			);
@@ -1251,6 +1254,7 @@
 				261516D615B0E60500A2C201 /* SetAndUpdateCacheModel.mm in Sources */,
 				52B8CF9615868CF000281053 /* SetDocumentURI.mm in Sources */,
 				7C8DDAAB1735DEEE00EA5AC0 /* CloseThenTerminate.cpp in Sources */,
+				CDC2C71517970DDB00E627FB /* TimeRanges.cpp in Sources */,
 				51FCF79A1534AC6D00104491 /* ShouldGoToBackForwardListItem.cpp in Sources */,
 				C540F776152E4DA000A40C8C /* SimplifyMarkup.mm in Sources */,
 				C02B77F2126612140026BF0F /* SpacebarScrolling.cpp in Sources */,

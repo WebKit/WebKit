@@ -58,13 +58,15 @@ void TimeRanges::invert()
     if (!m_ranges.size())
         inverted->add(negInf, posInf);
     else {
-        if (double start = m_ranges.first().m_start != negInf)
+        double start = m_ranges.first().m_start;
+        if (start != negInf)
             inverted->add(negInf, start);
 
         for (size_t index = 0; index + 1 < m_ranges.size(); ++index)
             inverted->add(m_ranges[index].m_end, m_ranges[index + 1].m_start);
 
-        if (double end = m_ranges.last().m_end != posInf)
+        double end = m_ranges.last().m_end;
+        if (end != posInf)
             inverted->add(end, posInf);
     }
 
@@ -74,12 +76,16 @@ void TimeRanges::invert()
 void TimeRanges::intersectWith(const TimeRanges* other)
 {
     ASSERT(other);
-    RefPtr<TimeRanges> inverted = copy();
-    RefPtr<TimeRanges> invertedOther = other->copy();
-    inverted->unionWith(invertedOther.get());
-    inverted->invert();
 
-    m_ranges.swap(inverted->m_ranges);
+    if (other == this)
+        return;
+
+    RefPtr<TimeRanges> invertedOther = other->copy();
+    invertedOther->invert();
+
+    invert();
+    unionWith(invertedOther.get());
+    invert();
 }
 
 void TimeRanges::unionWith(const TimeRanges* other)

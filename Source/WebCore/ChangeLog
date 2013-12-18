@@ -1,3 +1,21 @@
+2013-12-17  Jer Noble  <jer.noble@apple.com>
+
+        Fix TimeRanges::intersectWith
+        https://bugs.webkit.org/show_bug.cgi?id=118802
+
+        Test: TestWebKitAPI/Tests/WebCore/TimeRanges.cpp.
+
+        Reviewed by Eric Carlson.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/TimeRanges.cpp:
+        (TimeRanges::invert):
+        (TimeRanges::intersectWith):
+
+        Merge
+        https://chromium.googlesource.com/chromium/blink/+/f557582b6c6283a8b165514f52d01cfd98130e85        
+
 2013-12-17  Eric Carlson  <eric.carlson@apple.com>
 
         ASSERT setting pseudoID with registered DOMSubtreeModified listener
