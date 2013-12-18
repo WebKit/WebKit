@@ -1,3 +1,12 @@
+2013-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Remove now useless test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2ObjC/WKRemoteObjectRegistry.mm: Removed.
+        * TestWebKitAPI/Tests/mac/WKRemoteObjectRegistry_Bundle.mm: Removed.
+        * TestWebKitAPI/Tests/mac/WKRemoteObjectRegistry_Shared.h: Removed.
+
 2013-12-18  Gavin Barraclough  <barraclough@apple.com>
 
         Fix page visibility api test, initialization in WebKit2
