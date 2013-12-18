@@ -1,3 +1,14 @@
+2013-12-18  Andreas Kling  <akling@apple.com>
+
+        RenderElement-ize adjustForAbsoluteZoom() and friends.
+        <https://webkit.org/b/125921>
+
+        Make adjustForAbsoluteZoom() take a const RenderElement& instead
+        of a RenderObject* so we can avoid the extra branch in style().
+        All call sites already had RenderElements.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: HTML spec change indicates @aria-required should trump @required on any element

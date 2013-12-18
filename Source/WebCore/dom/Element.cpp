@@ -701,9 +701,9 @@ int Element::offsetWidth()
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedOffsetWidth(), renderer).round();
+        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedOffsetWidth(), *renderer).round();
 #else
-        return adjustForAbsoluteZoom(renderer->pixelSnappedOffsetWidth(), renderer);
+        return adjustForAbsoluteZoom(renderer->pixelSnappedOffsetWidth(), *renderer);
 #endif
     return 0;
 }
@@ -713,9 +713,9 @@ int Element::offsetHeight()
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBoxModelObject* renderer = renderBoxModelObject())
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedOffsetHeight(), renderer).round();
+        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedOffsetHeight(), *renderer).round();
 #else
-        return adjustForAbsoluteZoom(renderer->pixelSnappedOffsetHeight(), renderer);
+        return adjustForAbsoluteZoom(renderer->pixelSnappedOffsetHeight(), *renderer);
 #endif
     return 0;
 }
@@ -745,7 +745,7 @@ int Element::clientLeft()
     document().updateLayoutIgnorePendingStylesheets();
 
     if (RenderBox* renderer = renderBox())
-        return adjustForAbsoluteZoom(roundToInt(renderer->clientLeft()), renderer);
+        return adjustForAbsoluteZoom(roundToInt(renderer->clientLeft()), *renderer);
     return 0;
 }
 
@@ -754,7 +754,7 @@ int Element::clientTop()
     document().updateLayoutIgnorePendingStylesheets();
 
     if (RenderBox* renderer = renderBox())
-        return adjustForAbsoluteZoom(roundToInt(renderer->clientTop()), renderer);
+        return adjustForAbsoluteZoom(roundToInt(renderer->clientTop()), *renderer);
     return 0;
 }
 
@@ -770,13 +770,13 @@ int Element::clientWidth()
     // When in quirks mode, clientWidth for the body element should return the width of the containing frame.
     bool inQuirksMode = document().inQuirksMode();
     if ((!inQuirksMode && document().documentElement() == this) || (inQuirksMode && isHTMLElement() && document().body() == this))
-        return adjustForAbsoluteZoom(renderView.frameView().layoutWidth(), &renderView);
+        return adjustForAbsoluteZoom(renderView.frameView().layoutWidth(), renderView);
     
     if (RenderBox* renderer = renderBox())
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedClientWidth(), renderer).round();
+        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedClientWidth(), *renderer).round();
 #else
-        return adjustForAbsoluteZoom(renderer->pixelSnappedClientWidth(), renderer);
+        return adjustForAbsoluteZoom(renderer->pixelSnappedClientWidth(), *renderer);
 #endif
     return 0;
 }
@@ -793,13 +793,13 @@ int Element::clientHeight()
     // When in quirks mode, clientHeight for the body element should return the height of the containing frame.
     bool inQuirksMode = document().inQuirksMode();
     if ((!inQuirksMode && document().documentElement() == this) || (inQuirksMode && isHTMLElement() && document().body() == this))
-        return adjustForAbsoluteZoom(renderView.frameView().layoutHeight(), &renderView);
+        return adjustForAbsoluteZoom(renderView.frameView().layoutHeight(), renderView);
 
     if (RenderBox* renderer = renderBox())
 #if ENABLE(SUBPIXEL_LAYOUT)
-        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedClientHeight(), renderer).round();
+        return adjustLayoutUnitForAbsoluteZoom(renderer->pixelSnappedClientHeight(), *renderer).round();
 #else
-        return adjustForAbsoluteZoom(renderer->pixelSnappedClientHeight(), renderer);
+        return adjustForAbsoluteZoom(renderer->pixelSnappedClientHeight(), *renderer);
 #endif
     return 0;
 }
@@ -816,10 +816,10 @@ int Element::scrollLeft()
     RenderView& renderView = *document().renderView();
 
     if (document().documentElement() == this)
-        return adjustForAbsoluteZoom(renderView.frameView().scrollX(), &renderView);
+        return adjustForAbsoluteZoom(renderView.frameView().scrollX(), renderView);
 
     if (RenderBox* rend = renderBox())
-        return adjustForAbsoluteZoom(rend->scrollLeft(), rend);
+        return adjustForAbsoluteZoom(rend->scrollLeft(), *rend);
     return 0;
 }
 
@@ -835,10 +835,10 @@ int Element::scrollTop()
     RenderView& renderView = *document().renderView();
 
     if (document().documentElement() == this)
-        return adjustForAbsoluteZoom(renderView.frameView().scrollY(), &renderView);
+        return adjustForAbsoluteZoom(renderView.frameView().scrollY(), renderView);
 
     if (RenderBox* rend = renderBox())
-        return adjustForAbsoluteZoom(rend->scrollTop(), rend);
+        return adjustForAbsoluteZoom(rend->scrollTop(), *rend);
     return 0;
 }
 
@@ -888,7 +888,7 @@ int Element::scrollWidth()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
-        return adjustForAbsoluteZoom(rend->scrollWidth(), rend);
+        return adjustForAbsoluteZoom(rend->scrollWidth(), *rend);
     return 0;
 }
 
@@ -896,7 +896,7 @@ int Element::scrollHeight()
 {
     document().updateLayoutIgnorePendingStylesheets();
     if (RenderBox* rend = renderBox())
-        return adjustForAbsoluteZoom(rend->scrollHeight(), rend);
+        return adjustForAbsoluteZoom(rend->scrollHeight(), *rend);
     return 0;
 }
 

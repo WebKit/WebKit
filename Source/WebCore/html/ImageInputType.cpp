@@ -192,7 +192,7 @@ unsigned ImageInputType::height() const
     element->document().updateLayout();
 
     RenderBox* box = element->renderBox();
-    return box ? adjustForAbsoluteZoom(box->contentHeight(), box) : 0;
+    return box ? adjustForAbsoluteZoom(box->contentHeight(), *box) : 0;
 }
 
 unsigned ImageInputType::width() const
@@ -216,7 +216,7 @@ unsigned ImageInputType::width() const
     element->document().updateLayout();
 
     RenderBox* box = element->renderBox();
-    return box ? adjustForAbsoluteZoom(box->contentWidth(), box) : 0;
+    return box ? adjustForAbsoluteZoom(box->contentWidth(), *box) : 0;
 }
 
 } // namespace WebCore

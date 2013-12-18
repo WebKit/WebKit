@@ -1149,18 +1149,6 @@ inline bool RenderObject::backgroundIsKnownToBeObscured()
     return m_bitfields.boxDecorationState() == HasBoxDecorationsAndBackgroundIsKnownToBeObscured;
 }
 
-inline int adjustForAbsoluteZoom(int value, RenderObject* renderer)
-{
-    return adjustForAbsoluteZoom(value, &renderer->style());
-}
-
-#if ENABLE(SUBPIXEL_LAYOUT)
-inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, RenderObject* renderer)
-{
-    return adjustLayoutUnitForAbsoluteZoom(value, &renderer->style());
-}
-#endif
-
 #define RENDER_OBJECT_TYPE_CASTS(ToValueTypeName, predicate) \
     TYPE_CASTS_BASE(ToValueTypeName, RenderObject, object, object->predicate, object.predicate)
 

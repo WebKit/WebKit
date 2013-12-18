@@ -334,6 +334,18 @@ inline RenderElement* ContainerNode::renderer() const
     return toRenderElement(Node::renderer());
 }
 
+inline int adjustForAbsoluteZoom(int value, const RenderElement& renderer)
+{
+    return adjustForAbsoluteZoom(value, renderer.style());
+}
+
+#if ENABLE(SUBPIXEL_LAYOUT)
+inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const RenderElement& renderer)
+{
+    return adjustLayoutUnitForAbsoluteZoom(value, renderer.style());
+}
+#endif
+
 } // namespace WebCore
 
 #endif // RenderElement_h
