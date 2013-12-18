@@ -554,6 +554,35 @@ sub GetNamedGetterFunction
     return GetSpecialAccessorFunctionForType($interface, "getter", "DOMString", 1);
 }
 
+sub InstanceOverridesGetOwnPropertySlot
+{
+    my $interface = shift;
+    my $numAttributes = @{$interface->attributes};
+
+    my $namedGetterFunction = GetNamedGetterFunction($interface);
+    my $indexedGetterFunction = GetIndexedGetterFunction($interface);
+    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
+
+    my $hasImpureNamedGetter = $namedGetterFunction
+        || $interface->extendedAttributes->{"CustomNamedGetter"}
+        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"};
+
+    my $hasComplexGetter = $indexedGetterFunction
+        || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
+        || $hasImpureNamedGetter;
+
+    return $numAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"} || $hasComplexGetter;
+
+}
+
+sub PrototypeOverridesGetOwnPropertySlot
+{
+    my $interface = shift;
+    my $numConstants = @{$interface->constants};
+    my $numFunctions = @{$interface->functions};
+    return $numFunctions > 0 || $numConstants > 0;
+}
+
 sub GenerateHeader
 {
     my $object = shift;
@@ -685,7 +714,7 @@ sub GenerateHeader
         || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
         || $hasImpureNamedGetter;
     
-    my $hasGetter = $numAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"} || $hasComplexGetter;
+    my $hasGetter = InstanceOverridesGetOwnPropertySlot($interface);
 
     if ($hasImpureNamedGetter) {
         $structureFlags{"JSC::HasImpureGetOwnPropertySlot"} = 1;
@@ -972,7 +1001,7 @@ sub GenerateHeader
     push(@headerContent, "    }\n\n");
 
     push(@headerContent, "    DECLARE_INFO;\n");
-    if ($numFunctions > 0 || $numConstants > 0) {
+    if (PrototypeOverridesGetOwnPropertySlot($interface)) {
         push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
     }
@@ -1652,7 +1681,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if ($numConstants > 0 || $numFunctions > 0) {
+    if (PrototypeOverridesGetOwnPropertySlot($interface)) {
         push(@implContent, "bool ${className}Prototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}Prototype* thisObject = jsCast<${className}Prototype*>(object);\n");
@@ -1773,13 +1802,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    my $hasGetter = $numAttributes > 0
-                 || !$interface->extendedAttributes->{"NoInterfaceObject"}
-                 || $indexedGetterFunction
-                 || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
-                 || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
-                 || $namedGetterFunction
-                 || $interface->extendedAttributes->{"CustomNamedGetter"};
+    my $hasGetter = InstanceOverridesGetOwnPropertySlot($interface);
 
     # Attributes
     if ($hasGetter) {
