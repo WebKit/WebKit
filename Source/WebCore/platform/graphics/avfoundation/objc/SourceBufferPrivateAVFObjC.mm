@@ -222,12 +222,15 @@ PlatformSample MediaSampleAVFObjC::platformSample()
 static bool CMSampleBufferIsRandomAccess(CMSampleBufferRef sample)
 {
     CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sample, false);
+    if (!attachments)
+        return true;
+
     for (CFIndex i = 0, count = CFArrayGetCount(attachments); i < count; ++i) {
         CFDictionaryRef attachmentDict = (CFDictionaryRef)CFArrayGetValueAtIndex(attachments, i);
-        if (!CFDictionaryContainsKey(attachmentDict, kCMSampleAttachmentKey_NotSync))
-            return true;
+        if (CFDictionaryContainsKey(attachmentDict, kCMSampleAttachmentKey_NotSync))
+            return false;
     }
-    return false;
+    return true;
 }
 
 MediaSample::SampleFlags MediaSampleAVFObjC::flags() const
