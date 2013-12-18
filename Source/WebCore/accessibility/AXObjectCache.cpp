@@ -122,7 +122,7 @@ AXObjectCache::~AXObjectCache()
     for (HashMap<AXID, RefPtr<AccessibilityObject>>::iterator it = m_objects.begin(); it != end; ++it) {
         AccessibilityObject* obj = (*it).value.get();
         detachWrapper(obj);
-        obj->detach();
+        obj->detach(CacheDestroyed);
         removeAXID(obj);
     }
 }
@@ -494,7 +494,7 @@ void AXObjectCache::remove(AXID axID)
         return;
     
     detachWrapper(obj);
-    obj->detach();
+    obj->detach(ElementDestroyed, this);
     removeAXID(obj);
     
     // finally remove the object

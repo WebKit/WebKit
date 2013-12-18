@@ -41,7 +41,7 @@ public:
     ScrollView* scrollView() const { return m_scrollView; }
 
     virtual ~AccessibilityScrollView();
-    virtual void detach() OVERRIDE;
+    virtual void detach(AccessibilityDetachmentType, AXObjectCache*) OVERRIDE;
 
 protected:
     virtual ScrollableArea* getScrollableAreaIfScrollable() const OVERRIDE;

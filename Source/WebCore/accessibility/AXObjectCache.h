@@ -169,6 +169,7 @@ public:
         AXLiveRegionChanged,
         AXMenuListItemSelected,
         AXMenuListValueChanged,
+        AXMenuClosed,
         AXRowCountChanged,
         AXRowCollapsed,
         AXRowExpanded,
@@ -206,6 +207,8 @@ public:
 
     AXComputedObjectAttributeCache* computedObjectAttributeCache() { return m_computedObjectAttributeCache.get(); }
 
+    Document& document() const { return m_document; }
+    
 protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);
     void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned offset, const String&);

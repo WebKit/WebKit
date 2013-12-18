@@ -144,7 +144,7 @@ public:
     virtual AccessibilityObject* parentObject() const OVERRIDE;
     virtual AccessibilityObject* parentObjectIfExists() const OVERRIDE;
 
-    virtual void detach() OVERRIDE;
+    virtual void detach(AccessibilityDetachmentType, AXObjectCache*) OVERRIDE;
     virtual void childrenChanged() OVERRIDE;
     virtual void updateAccessibilityRole() OVERRIDE;
 

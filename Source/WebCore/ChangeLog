@@ -1,3 +1,36 @@
+2013-12-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit not sending AXMenuClosed notification
+        https://bugs.webkit.org/show_bug.cgi?id=125783
+
+        Reviewed by Mario Sanchez Prada.
+
+        When an object with a role=menu is removed, we need to send out a notification informing that the menu has closed.
+        This means detecting the right kind of destruction event for an element, because we do not want to 
+        send this notification when the entire cache is being torn down.
+
+        Test: platform/mac/accessibility/aria-menu-closed-notification.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::~AXObjectCache):
+        (WebCore::AXObjectCache::remove):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::document):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::detach):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::detach):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::detach):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::detach):
+        * accessibility/AccessibilityScrollView.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2013-12-18  Eric Carlson  <eric.carlson@apple.com>
 
         Do not create cue subtree just to delete it

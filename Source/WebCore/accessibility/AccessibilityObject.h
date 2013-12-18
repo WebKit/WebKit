@@ -351,6 +351,8 @@ struct AccessibilitySearchCriteria {
     , visibleOnly(visibleOnly)
     { }
 };
+    
+enum AccessibilityDetachmentType { CacheDestroyed, ElementDestroyed };
 
 struct VisiblePositionRange {
 
@@ -400,7 +402,7 @@ public:
 
     // When the corresponding WebCore object that this AccessibilityObject
     // wraps is deleted, it must be detached.
-    virtual void detach();
+    virtual void detach(AccessibilityDetachmentType, AXObjectCache* cache = nullptr);
     virtual bool isDetached() const;
 
     typedef Vector<RefPtr<AccessibilityObject>> AccessibilityChildrenVector;

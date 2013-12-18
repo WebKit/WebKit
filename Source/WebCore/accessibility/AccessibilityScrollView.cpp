@@ -48,9 +48,9 @@ AccessibilityScrollView::~AccessibilityScrollView()
     ASSERT(isDetached());
 }
 
-void AccessibilityScrollView::detach()
+void AccessibilityScrollView::detach(AccessibilityDetachmentType detachmentType, AXObjectCache* cache)
 {
-    AccessibilityObject::detach();
+    AccessibilityObject::detach(detachmentType, cache);
     m_scrollView = 0;
 }
 

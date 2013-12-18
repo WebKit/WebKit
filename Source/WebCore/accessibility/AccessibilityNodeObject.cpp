@@ -120,10 +120,10 @@ PassRefPtr<AccessibilityNodeObject> AccessibilityNodeObject::create(Node* node)
     return adoptRef(new AccessibilityNodeObject(node));
 }
 
-void AccessibilityNodeObject::detach()
+void AccessibilityNodeObject::detach(AccessibilityDetachmentType detachmentType, AXObjectCache* cache)
 {
-    clearChildren();
-    AccessibilityObject::detach();
+    // AccessibilityObject calls clearChildren.
+    AccessibilityObject::detach(detachmentType, cache);
     m_node = 0;
 }
 

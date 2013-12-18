@@ -161,7 +161,7 @@ public:
     virtual void setSelectedRows(AccessibilityChildrenVector&) OVERRIDE;
     virtual AccessibilityOrientation orientation() const OVERRIDE;
     
-    virtual void detach() OVERRIDE;
+    virtual void detach(AccessibilityDetachmentType, AXObjectCache*) OVERRIDE;
     virtual void textChanged() OVERRIDE;
     virtual void addChildren() OVERRIDE;
     virtual bool canHaveChildren() const OVERRIDE;
