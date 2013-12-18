@@ -1,3 +1,16 @@
+2013-12-18  Oliver Hunt  <oliver@apple.com>
+
+        Refactor CodeGeneratorJS - Move attribute function creation out of getOwnPropertyName guard
+        https://bugs.webkit.org/show_bug.cgi?id=125940
+
+        Reviewed by Simon Fraser.
+
+        This is just a huge block move of code out from behind the
+        ImplementationOverridesGetOwnProperty guard.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
 2013-12-18  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] Frequent ASSERT(hasOneRef()) in SharedBuffer::releasePurgeableBuffer
