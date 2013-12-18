@@ -1,5 +1,15 @@
 2013-12-18  Gustavo Noronha Silva  <gns@gnome.org>
 
+        [GTK][CMake] Use thin archives if building on Linux, only way to get non-shared-core debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=125951
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/OptionsGTK.cmake: append T for thin archives to the flags passed to ar,
+        also use u, which is used in the autotools build (it avoids adding a file twice).
+
+2013-12-18  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK][CMake] Remove binary size optimizations we do not use in the autotools build
         https://bugs.webkit.org/show_bug.cgi?id=125947
 

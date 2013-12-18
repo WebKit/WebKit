@@ -88,6 +88,13 @@ set(VERSION_SCRIPT "-Wl,--version-script,${CMAKE_MODULE_PATH}/gtksymbols.filter"
 set(DATA_BUILD_DIR "${CMAKE_BINARY_DIR}/share/${WebKit_OUTPUT_NAME}")
 set(DATA_INSTALL_DIR "${DATADIR}/webkitgtk-3.0")
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> cruT <TARGET> <LINK_FLAGS> <OBJECTS>")
+    set(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> cruT <TARGET> <LINK_FLAGS> <OBJECTS>")
+    set(CMAKE_CXX_ARCHIVE_APPEND "<CMAKE_AR> ruT <TARGET> <LINK_FLAGS> <OBJECTS>")
+    set(CMAKE_C_ARCHIVE_APPEND "<CMAKE_AR> ruT <TARGET> <LINK_FLAGS> <OBJECTS>")
+endif ()
+
 add_definitions(-DBUILDING_GTK__=1)
 add_definitions(-DGETTEXT_PACKAGE="WebKitGTK-3.0")
 add_definitions(-DDATA_DIR="${DATADIR}")
