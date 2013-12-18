@@ -1,3 +1,21 @@
+2013-12-18  Beth Dakin  <bdakin@apple.com>
+
+        Starting a momentum scroll while rubber banding can cause scrolling to jump back 
+        when the rubberband snaps
+        https://bugs.webkit.org/show_bug.cgi?id=119507
+        -and corresponding-
+        <rdar://problem/14655893>
+
+        Reviewed by Simon Fraser.
+
+        This line of code was added with the very first implementation of rubber-banding. 
+        As far as I can tell, it was always a belt-and-suspenders line of code that is a 
+        no-op in all normal rubber-banding. In this J-shaped scrolling case, this line of 
+        code is what causes the bug to occur because this line of code assumes that your 
+        rubber-band is always trying to take you back to the origin. 
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::ScrollElasticityController::snapRubberBandTimerFired):
+
 2013-12-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: make aria-hidden=false work with subtrees
