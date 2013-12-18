@@ -294,14 +294,12 @@ public:
     static bool canvasAgentEnabled(ScriptExecutionContext*);
     static bool consoleAgentEnabled(ScriptExecutionContext*);
     static bool timelineAgentEnabled(ScriptExecutionContext*);
-    static bool collectingHTMLParseErrors(Page*);
 #else
     static bool hasFrontends() { return false; }
     static bool canvasAgentEnabled(ScriptExecutionContext*) { return false; }
     static bool consoleAgentEnabled(ScriptExecutionContext*) { return false; }
     static bool runtimeAgentEnabled(Frame*) { return false; }
     static bool timelineAgentEnabled(ScriptExecutionContext*) { return false; }
-    static bool collectingHTMLParseErrors(Page*) { return false; }
 #endif
 
 #if ENABLE(GEOLOCATION)
@@ -491,7 +489,6 @@ private:
     static InstrumentingAgents* instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope*);
     static InstrumentingAgents* instrumentingAgentsForNonDocumentContext(ScriptExecutionContext*);
 
-    static bool collectingHTMLParseErrors(InstrumentingAgents*);
     static void pauseOnNativeEventIfNeeded(InstrumentingAgents*, bool isDOMEvent, const String& eventName, bool synchronous);
     static void cancelPauseOnNativeEvent(InstrumentingAgents*);
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
@@ -2075,14 +2072,6 @@ inline void InspectorInstrumentation::pseudoElementDestroyed(Page* page, PseudoE
 #endif
 
 #if ENABLE(INSPECTOR)
-inline bool InspectorInstrumentation::collectingHTMLParseErrors(Page* page)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(false);
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        return collectingHTMLParseErrors(instrumentingAgents);
-    return false;
-}
-
 inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForContext(ScriptExecutionContext* context)
 {
     if (!context)

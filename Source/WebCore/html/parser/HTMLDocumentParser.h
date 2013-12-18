@@ -66,9 +66,9 @@ class PumpSession;
 class HTMLDocumentParser :  public ScriptableDocumentParser, HTMLScriptRunnerHost, CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<HTMLDocumentParser> create(HTMLDocument& document, bool reportErrors)
+    static PassRefPtr<HTMLDocumentParser> create(HTMLDocument& document)
     {
-        return adoptRef(new HTMLDocumentParser(document, reportErrors));
+        return adoptRef(new HTMLDocumentParser(document));
     }
     virtual ~HTMLDocumentParser();
 
@@ -102,7 +102,7 @@ protected:
     virtual void append(PassRefPtr<StringImpl>) OVERRIDE;
     virtual void finish() OVERRIDE;
 
-    HTMLDocumentParser(HTMLDocument&, bool reportErrors);
+    explicit HTMLDocumentParser(HTMLDocument&);
     HTMLDocumentParser(DocumentFragment&, Element* contextElement, ParserContentPolicy);
 
     HTMLTreeBuilder* treeBuilder() const { return m_treeBuilder.get(); }

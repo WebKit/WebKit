@@ -33,7 +33,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 TextDocumentParser::TextDocumentParser(HTMLDocument& document)
-    : HTMLDocumentParser(document, false)
+    : HTMLDocumentParser(document)
     , m_haveInsertedFakePreElement(false)
 {
 }

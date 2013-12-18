@@ -70,7 +70,6 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
-#include "InspectorInstrumentation.h"
 #include "JSDOMBinding.h"
 #include "Page.h"
 #include "ScriptController.h"
@@ -249,8 +248,7 @@ void HTMLDocument::releaseEvents()
 
 PassRefPtr<DocumentParser> HTMLDocument::createParser()
 {
-    bool reportErrors = InspectorInstrumentation::collectingHTMLParseErrors(this->page());
-    return HTMLDocumentParser::create(*this, reportErrors);
+    return HTMLDocumentParser::create(*this);
 }
 
 // --------------------------------------------------------------------------

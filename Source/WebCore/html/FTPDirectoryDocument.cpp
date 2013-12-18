@@ -96,7 +96,7 @@ private:
 };
 
 FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument& document)
-    : HTMLDocumentParser(document, false)
+    : HTMLDocumentParser(document)
     , m_skipLF(false)
     , m_size(254)
     , m_buffer(static_cast<UChar*>(fastMalloc(sizeof(UChar) * m_size)))
