@@ -240,7 +240,9 @@ fast/viewport
 webkit.org/b/116651 media/context-menu-actions.html
 
 # requires video.buffered to be able to return multiple timeranges
-http/tests/media/video-buffered.html
+http/tests/media/video-buffered.html [ Skip ]
+
+webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
 
 # The WebKit plugin implementation does not support iframe shims.
 webkit.org/b/46223 plugins/iframe-shims.html
