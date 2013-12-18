@@ -86,6 +86,10 @@ public:
     String directionForFormData() const;
 
     void setTextAsOfLastFormControlChangeEvent(const String& text) { m_textAsOfLastFormControlChangeEvent = text; }
+#if PLATFORM(IOS)
+    void hidePlaceholder();
+    void showPlaceholderIfNecessary();
+#endif
 
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document&, HTMLFormElement*);

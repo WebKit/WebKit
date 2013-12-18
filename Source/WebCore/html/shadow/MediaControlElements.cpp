@@ -751,8 +751,13 @@ const AtomicString& MediaControlClosedCaptionsContainerElement::shadowPseudoId()
 
 MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement(Document& document, MediaControls* controls)
     : MediaControlDivElement(document, MediaClosedCaptionsTrackList)
+#if ENABLE(VIDEO_TRACK)
     , m_controls(controls)
+#endif
 {
+#if !ENABLE(VIDEO_TRACK)
+    UNUSED_PARAM(controls);
+#endif
 }
 
 PassRefPtr<MediaControlClosedCaptionsTrackListElement> MediaControlClosedCaptionsTrackListElement::create(Document& document, MediaControls* controls)
@@ -794,6 +799,8 @@ void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event* even
     }
 
     MediaControlDivElement::defaultEventHandler(event);
+#else
+    UNUSED_PARAM(event);
 #endif
 }
 
@@ -958,6 +965,7 @@ void MediaControlTimelineElement::defaultEventHandler(Event* event)
         m_controls->updateCurrentTimeDisplay();
 }
 
+#if !PLATFORM(IOS)
 bool MediaControlTimelineElement::willRespondToMouseClickEvents()
 {
     if (!attached())
@@ -965,6 +973,7 @@ bool MediaControlTimelineElement::willRespondToMouseClickEvents()
 
     return true;
 }
+#endif // !PLATFORM(IOS)
 
 void MediaControlTimelineElement::setPosition(double currentTime)
 {

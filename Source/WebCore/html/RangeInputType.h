@@ -51,7 +51,9 @@ private:
     virtual bool supportsRequired() const OVERRIDE;
     virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
     virtual bool isSteppable() const OVERRIDE;
+#if !PLATFORM(IOS)
     virtual void handleMouseDownEvent(MouseEvent*) OVERRIDE;
+#endif
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual RenderElement* createRenderer(PassRef<RenderStyle>) const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE;
@@ -77,10 +79,18 @@ private:
     Vector<Decimal> m_tickMarkValues;
 #endif
 
-#if ENABLE(TOUCH_EVENTS) && ENABLE(TOUCH_SLIDER)
+#if ENABLE(TOUCH_EVENTS)
     virtual void handleTouchEvent(TouchEvent*) OVERRIDE;
+
+#if PLATFORM(IOS)
+    virtual void disabledAttributeChanged() OVERRIDE;
+#else
+#if ENABLE(TOUCH_SLIDER)
     virtual bool hasTouchEventHandler() const OVERRIDE;
 #endif
+#endif // PLATFORM(IOS)
+#endif // ENABLE(TOUCH_EVENTS)
+
 };
 
 } // namespace WebCore

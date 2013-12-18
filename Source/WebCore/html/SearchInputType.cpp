@@ -59,8 +59,10 @@ void SearchInputType::attach()
 
 void SearchInputType::addSearchResult()
 {
+#if !PLATFORM(IOS)
     if (RenderObject* renderer = element().renderer())
         toRenderSearchField(renderer)->addSearchResult();
+#endif
 }
 
 RenderElement* SearchInputType::createRenderer(PassRef<RenderStyle> style) const

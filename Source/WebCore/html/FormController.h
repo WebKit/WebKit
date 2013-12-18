@@ -84,6 +84,9 @@ public:
 
     void registerFormElementWithState(HTMLFormControlElementWithState*);
     void unregisterFormElementWithState(HTMLFormControlElementWithState*);
+
+    unsigned formElementsCharacterCount() const;
+
     // This should be callled only by Document::formElementsState().
     Vector<String> formElementsState() const;
     // This should be callled only by Document::setStateForNewFormElements().

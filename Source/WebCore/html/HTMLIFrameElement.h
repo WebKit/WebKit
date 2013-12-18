@@ -37,6 +37,10 @@ public:
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);
 
+#if PLATFORM(IOS)
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE { return false; }
+#endif
+
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;

@@ -545,4 +545,9 @@ void HTMLTextAreaElement::updatePlaceholderText()
     m_placeholder->setInnerText(placeholderText, ASSERT_NO_EXCEPTION);
 }
 
+bool HTMLTextAreaElement::willRespondToMouseClickEvents()
+{
+    return !isDisabledFormControl();
 }
+
+} // namespace WebCore

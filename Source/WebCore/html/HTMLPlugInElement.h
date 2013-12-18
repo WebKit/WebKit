@@ -81,6 +81,9 @@ public:
 
     bool canProcessDrag() const;
 
+#if PLATFORM(IOS)
+    virtual bool willRespondToMouseMoveEvents() OVERRIDE { return false; }
+#endif
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
     virtual bool isPlugInImageElement() const { return false; }

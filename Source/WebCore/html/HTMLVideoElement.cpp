@@ -71,7 +71,7 @@ RenderElement* HTMLVideoElement::createRenderer(PassRef<RenderStyle> style)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (shouldUseVideoPluginProxy())
-        return HTMLMediaElement::createRenderer(arena, style);
+        return HTMLMediaElement::createRenderer(std::move(style));
 #endif
     return new RenderVideo(*this, std::move(style));
 }
@@ -131,8 +131,23 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
             if (renderer())
                 toRenderImage(renderer())->imageResource()->setCachedImage(0); 
         }
-    } else
+    }
+#if ENABLE(IOS_AIRPLAY)
+    else if (name == webkitwirelessvideoplaybackdisabledAttr) {
+        if (player())
+            player()->setWirelessVideoPlaybackDisabled(webkitWirelessVideoPlaybackDisabled());
+    } else {
         HTMLMediaElement::parseAttribute(name, value);
+
+        if (name == webkitairplayAttr) {
+            if (player())
+                player()->setWirelessVideoPlaybackDisabled(webkitWirelessVideoPlaybackDisabled());
+        }
+    }
+#else
+    else
+        HTMLMediaElement::parseAttribute(name, value);    
+#endif
 }
 
 bool HTMLVideoElement::supportsFullscreen() const
@@ -144,6 +159,10 @@ bool HTMLVideoElement::supportsFullscreen() const
     if (!player() || !player()->supportsFullscreen())
         return false;
 
+#if PLATFORM(IOS)
+    // Fullscreen implemented by player.
+    return true;
+#else
 #if ENABLE(FULLSCREEN_API)
     // If the full screen API is enabled and is supported for the current element
     // do not require that the player has a video track to enter full screen.
@@ -155,6 +174,7 @@ bool HTMLVideoElement::supportsFullscreen() const
         return false;
 
     return page->chrome().client().supportsFullscreenForNode(this);
+#endif // PLATFORM(IOS)
 }
 
 unsigned HTMLVideoElement::videoWidth() const
@@ -306,6 +326,25 @@ bool HTMLVideoElement::webkitDisplayingFullscreen()
 {
     return isFullscreen();
 }
+
+#if ENABLE(IOS_AIRPLAY)
+bool HTMLVideoElement::webkitWirelessVideoPlaybackDisabled() const
+{
+    Settings* settings = document().settings();
+    if (!settings || !settings->mediaPlaybackAllowsAirPlay())
+        return true;
+
+    String legacyAirplayAttributeValue = fastGetAttribute(webkitairplayAttr);
+    if (equalIgnoringCase(legacyAirplayAttributeValue, "deny"))
+        return true;
+    return fastHasAttribute(webkitwirelessvideoplaybackdisabledAttr);
+}
+
+void HTMLVideoElement::setWebkitWirelessVideoPlaybackDisabled(bool disabled)
+{
+    setBooleanAttribute(webkitwirelessvideoplaybackdisabledAttr, disabled);
+}
+#endif
 
 void HTMLVideoElement::didMoveToNewDocument(Document* oldDocument)
 {

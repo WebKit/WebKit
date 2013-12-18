@@ -92,6 +92,10 @@ public:
     virtual bool isHTMLUnknownElement() const { return false; }
     virtual bool isTextControlInnerTextElement() const { return false; }
 
+    virtual bool willRespondToMouseMoveEvents() OVERRIDE;
+    virtual bool willRespondToMouseWheelEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+
     virtual bool isLabelable() const { return false; }
     virtual FormNamedItem* asFormNamedItem() { return 0; }
 

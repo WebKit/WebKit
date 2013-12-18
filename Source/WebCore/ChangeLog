@@ -1,3 +1,235 @@
+2013-12-16  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream WebCore/html changes
+        https://bugs.webkit.org/show_bug.cgi?id=125765
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/Autocapitalize.cpp: Added.
+        * html/Autocapitalize.h: Added. Also, added FIXME comment to forward declare AtomicString once we upstream
+        more of the iOS port.
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent): Opt out of code when building for iOS.
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::isKeyboardFocusable): Added; iOS-specific.
+        * html/BaseDateAndTimeInputType.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::FileInputType): Added iOS-specific code.
+        (WebCore::FileInputType::~FileInputType): Opt out of code when building for iOS. Also, added FIXME comment.
+        (WebCore::FileInputType::requestIcon): Ditto.
+        (WebCore::FileInputType::filesChosen): Added; iOS-specific.
+        (WebCore::FileInputType::displayString): Added; iOS-specific.
+        (WebCore::FileInputType::receiveDroppedFiles): Guarded code with ENABLE(DRAG_SUPPORT).
+        * html/FileInputType.h:
+        * html/FormController.cpp:
+        (WebCore::FormController::formElementsCharacterCount): Added.
+        * html/FormController.h:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::updateWidget): Opt out of code when building for iOS.
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::computePath): Changed argument datatype from RenderElement* to RenderObject*.
+        Also, added FIXME comment to fix this up once we upstream iOS's DOMUIKitExtensions.{h, mm}.
+        (WebCore::HTMLAreaElement::computeRect): Ditto.
+        * html/HTMLAreaElement.h:
+        * html/HTMLAttributeNames.in: Added attributes ongesture{start, change, end}, autocorrect, autocapitalize,
+        data-youtube-id, onwebkit{currentplaybacktargetiswirelesschanged, playbacktargetavailabilitychanged}, webkit-playsinline,
+        x-webkit-airplay, and x-webkit-wirelessvideoplaybackdisabled.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::scrollLeft): Added iOS-specific code.
+        (WebCore::HTMLBodyElement::scrollTop): Ditto.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement): Added iOS-specific code and FIXME comment.
+        (WebCore::HTMLCanvasElement::createImageBuffer): Added iOS-specific code.
+        * html/HTMLCanvasElement.h: Added iOS-specific code and FIXME comment.
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument): Added argument isSynthesized (default to false), which is
+        passed through to Document::Document(), to create a synthesized document.
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::createSynthesizedDocument): Added.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::collectStyleForPresentationAttribute): Added iOS-specific code.
+        (WebCore::populateEventNameForAttributeLocalNameMap): Ditto.
+        (WebCore::HTMLElement::willRespondToMouseMoveEvents): Added; iOS-specific.
+        (WebCore::HTMLElement::willRespondToMouseWheelEvents): Added; iOS-specific.
+        (WebCore::HTMLElement::willRespondToMouseClickEvents): Added; iOS-specific.
+        * html/HTMLElement.h:
+        * html/HTMLFormControlElement.cpp: Added FIXME comment to share more code with class HTMLFormElement.
+        (WebCore::HTMLFormControlElement::autocorrect): Added; guarded by PLATFORM(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE).
+        (WebCore::HTMLFormControlElement::setAutocorrect): Added; guarded by PLATFORM(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE).
+        (WebCore::HTMLFormControlElement::autocapitalizeType): Added; guarded by PLATFORM(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE).
+        (WebCore::HTMLFormControlElement::autocapitalize): Added; guarded by PLATFORM(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE).
+        (WebCore::HTMLFormControlElement::setAutocapitalize): Added; guarded by PLATFORM(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE).
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp: Added FIXME comment to share more code with class HTMLFormControlElement.
+        (WebCore::HTMLFormElement::submitImplicitly): Modified to code to allow implicit submission of multi-input
+        forms only if Settings::allowMultiElementImplicitSubmission() returns true. Such behavior is expected by older
+        iOS apps. Also, changed datatype of variable submissionTriggerCount from int to unsigned because it represents
+        a non-negative value.
+        (WebCore::HTMLFormElement::autocorrect): Added; guarded by PLATFORM(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE).
+        (WebCore::HTMLFormElement::setAutocorrect): Added; guarded by PLATFORM(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE).
+        (WebCore::HTMLFormElement::autocapitalizeType): Added; guarded by PLATFORM(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE).
+        (WebCore::HTMLFormElement::autocapitalize): Added; guarded by PLATFORM(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE).
+        (WebCore::HTMLFormElement::setAutocapitalize): Added; guarded by PLATFORM(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE).
+        * html/HTMLFormElement.h:
+        * html/HTMLFormElement.idl: Added iOS-specific attributes: autocorrect and autocapitalize.
+        * html/HTMLIFrameElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::displayString): Added; guarded by PLATFORM(IOS).
+        (WebCore::HTMLInputElement::dateType): Added; guarded by PLATFORM(IOS).
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl: Added iOS-specific attributes: autocorrect and autocapitalize.
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::willRespondToMouseClickEvents): Added iOS-specific code.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Added iOS-specific code and FIXME comment.
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Added iOS-specific code.
+        (WebCore::HTMLMediaElement::parseMediaPlayerAttribute): Added; iOS-specific.
+        (WebCore::HTMLMediaElement::parseAttribute): Added iOS-specific code.
+        (WebCore::HTMLMediaElement::insertedInto): Ditto.
+        (WebCore::HTMLMediaElement::load): Ditto.
+        (WebCore::HTMLMediaElement::prepareForLoad): Ditto.
+        (WebCore::HTMLMediaElement::autoplay): Ditto.
+        (WebCore::HTMLMediaElement::play): Ditto.
+        (WebCore::HTMLMediaElement::playInternal): Ditto.
+        (WebCore::HTMLMediaElement::pauseInternal): Ditto.
+        (WebCore::HTMLMediaElement::setVolumne): Opt out of code when building for iOS.
+        (WebCore::HTMLMediaElement::setMuted): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): Added iOS-specific code.
+        (WebCore::HTMLMediaElement::updateVolume): Ditto.
+        (WebCore::HTMLMediaElement::updatePlayState): Ditto.
+        (WebCore::HTMLMediaElement::userCancelledLoad): Added iOS-specific code and FIXME comment.
+        (WebCore::HTMLMediaElement::resume): Added iOS-specific comment. See <rdar://problem/9751303>.
+        (WebCore::HTMLMediaElement::deliverNotification): Added iOS-specific code.
+        (WebCore::HTMLMediaElement::getPluginProxyParams): Added iOS-specific code. Also, changed src() to getNonEmptyURLAttribute()
+        in the non-iOS code as their doesn't exist a method called src in this class or its superclasses.
+        (WebCore::HTMLMediaElement::webkitShowPlaybackTargetPicker): Added; guarded by ENABLE(IOS_AIRPLAY).
+        (WebCore::HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless): Added; guarded by ENABLE(IOS_AIRPLAY).
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged): Added; guarded by ENABLE(IOS_AIRPLAY).
+        (WebCore::HTMLMediaElement::mediaPlayerPlaybackTargetAvailabilityChanged): Added; guarded by ENABLE(IOS_AIRPLAY).
+        (WebCore::HTMLMediaElement::addEventListener): Added; guarded by ENABLE(IOS_AIRPLAY).
+        (WebCore::HTMLMediaElement::removeEventListener): Added; guarded by ENABLE(IOS_AIRPLAY).
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent): Added; guarded by ENABLE(IOS_AIRPLAY).
+        (WebCore::HTMLMediaElement::enterFullscreen): Added iOS-specific code.
+        (WebCore::HTMLMediaElement::exitFullscreen): Ditto.
+        (WebCore::HTMLMediaElement::createMediaPlayer): Added ENABLE(IOS_AIRPLAY)-guarded code.
+        (WebCore::HTMLMediaElement::userRequestsMediaLoading): Added; guarded by PLATFORM(IOS).
+        (WebCore::HTMLMediaElement::shouldUseVideoPluginProxy): Use dot operator instead of dereference operator (->)
+        when accessing Document::settings().
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot): Added ENABLE(PLUGIN_PROXY_FOR_VIDEO)-guarded code.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::userGestureRequiredToShowPlaybackTargetPicker): Added; guarded by ENABLE(IOS_AIRPLAY).
+        * html/HTMLMediaElement.idl: Added ENABLE_IOS_AIRPLAY-guarded attributes and functions:webkitCurrentPlaybackTargetIsWireless,
+        onwebkit{currentplaybacktargetiswirelesschanged, playbacktargetavailabilitychanged}, and webkitShowPlaybackTargetPicker().
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::process): Added iOS-specific code.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::shouldNotPerformURLAdjustment): Added; iOS-specific.
+        (WebCore::HTMLObjectElement::parametersForPlugin): Modified to call shouldNotPerformURLAdjustment() when
+        building for iOS.
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::createRenderer): Added iOS-specific code.
+        (WebCore::HTMLPlugInImageElement::createShadowIFrameSubtree): Added; iOS-specific.
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::usesMenuList): Added iOS-specific code.
+        (WebCore::HTMLSelectElement::createRenderer): Ditto.
+        (WebCore::HTMLSelectElement::childShouldCreateRenderer): Ditto.
+        (WebCore::HTMLSelectElement::willRespondToMouseClickEvents): Added; iOS-specific.
+        (WebCore::HTMLSelectElement::updateListBoxSelection): Added iOS-specific code.
+        (WebCore::HTMLSelectElement::scrollToSelection): Ditto.
+        (WebCore::HTMLSelectElement::setOptionsChangedOnRenderer): Ditto.
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Opt out of code when building for iOS.
+        (WebCore::HTMLSelectElement::defaultEventHandler): Added iOS-specific code.
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::willRespondToMouseClickEvents): Added; iOS-specific.
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextAreaElement.idl: Added iOS-specific attributes: autocorrect and autocapitalize.
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::select): Added iOS-specific code and FIXME comment.
+        (WebCore::HTMLTextFormControlElement::setSelectionRange): Opt out of code when building for iOS.
+        (WebCore::HTMLTextFormControlElement::hidePlaceholder): Added; guarded by PLATFORM(IOS).
+        (WebCore::HTMLTextFormControlElement::showPlaceholderIfNecessary): Added; guarded by PLATFORM(IOS).
+        * html/HTMLTextFormControlElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::createRenderer): Fix up call to HTMLMediaElement::createRenderer().
+        (WebCore::HTMLVideoElement::parseAttribute): Added iOS-specific code.
+        (WebCore::HTMLVideoElement::supportsFullscreen): Ditto.
+        (WebCore::HTMLVideoElement::webkitWirelessVideoPlaybackDisabled): Added; guarded by ENABLE(IOS_AIRPLAY).
+        (WebCore::HTMLVideoElement::setWebkitWirelessVideoPlaybackDisabled): Added; guarded by ENABLE(IOS_AIRPLAY).
+        * html/HTMLVideoElement.h:
+        * html/HTMLVideoElement.idl: Added ENABLE_IOS_AIRPLAY-guarded attribute: webkitWirelessVideoPlaybackDisabled.
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure): Added iOS-specific code.
+        (WebCore::ImageDocument::scale): Ditto.
+        (WebCore::ImageDocument::resizeImageToFit): Ditto.
+        (WebCore::ImageDocument::imageClicked): Ditto.
+        (WebCore::ImageDocument::imageFitsInWindow): Ditto.
+        (WebCore::ImageDocument::windowSizeChanged): Ditto.
+        * html/InputType.cpp:
+        (WebCore::InputType::dateType): Added; guarded by PLATFORM(IOS).
+        (WebCore::InputType::isKeyboardFocusable): Added iOS-specific code.
+        (WebCore::InputType::displayString): Added; guarded by PLATFORM(IOS).
+        * html/InputType.h:
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure): Added iOS-specific code.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleTouchEvent): Ditto.
+        (WebCore::RangeInputType::disabledAttributeChanged): Added; iOS-specific.
+        * html/RangeInputType.h:
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::addSearchResult): Opt out of code when building for iOS.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::isKeyboardFocusable): Added iOS-specific code.
+        * html/TextFieldInputType.h:
+        * html/WebAutocapitalize.h: Added.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createImageData): Added iOS-specific code.
+        (WebCore::CanvasRenderingContext2D::getImageData): Ditto.
+        * html/parser/HTMLConstructionSite.h:
+        (WebCore::HTMLConstructionSite::isTelephoneNumberParsingEnabled): Added; guarded by PLATFORM(IOS).
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::HTMLParserScheduler::checkForYieldBeforeToken): Added iOS-specific code.
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::insertPhoneNumberLink): Added; guarded by PLATFORM(IOS).
+        (WebCore::HTMLTreeBuilder::linkifyPhoneNumbers): Added; guarded by PLATFORM(IOS).
+        (WebCore::disallowTelephoneNumberParsing): Added; guarded by PLATFORM(IOS).
+        (WebCore::shouldParseTelephoneNumbersInNode): Added; guarded by PLATFORM(IOS).
+        (WebCore::HTMLTreeBuilder::processCharacterBufferForInBody): Added iOS-specific code.
+        * html/parser/HTMLTreeBuilder.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement): Guarded member initialization of m_controls with ENABLE(VIDEO_TRACK). Also added UNUSED_PARAM(event) when building with
+        VIDEO_TRACK disabled.
+        (WebCore::MediaControlClosedCaptionsTrackListElement::defaultEventHandler): Added UNUSED_PARAM(event) when
+        building with VIDEO_TRACK disabled.
+        * html/shadow/MediaControls.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::SliderThumbElement): Added iOS-specific code.
+        (WebCore::SliderThumbElement::dragFrom): Opt out of code when building for iOS.
+        (WebCore::SliderThumbElement::willDetachRenderers):  Added iOS-specific code.
+        (WebCore::SliderThumbElement::exclusiveTouchIdentifier): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::SliderThumbElement::setExclusiveTouchIdentifier): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::SliderThumbElement::clearExclusiveTouchIdentifier): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::findTouchWithIdentifier): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::SliderThumbElement::handleTouchStart): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::SliderThumbElement::handleTouchMove): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::SliderThumbElement::handleTouchEndAndCancel): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::SliderThumbElement::didAttachRenderers): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::SliderThumbElement::handleTouchEvent): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::SliderThumbElement::shouldAcceptTouchEvents): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::SliderThumbElement::registerForTouchEvents): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::SliderThumbElement::unregisterForTouchEvents): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        (WebCore::SliderThumbElement::disabledAttributeChanged): Added; guarded by ENABLE(TOUCH_EVENTS) && PLATFORM(IOS).
+        * html/shadow/SliderThumbElement.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler): Opt out of code when building for iOS.
+        * html/shadow/TextControlInnerElements.h:
+        * page/Settings.in: Added setting allowMultiElementImplicitSubmission to enable/disable multi-input implicit form
+        submission (disabled by default). Also added FIXME comment to rename this setting to allowMultiElementImplicitFormSubmission
+        once we upstream the iOS changes to WebView.mm.
+
 2013-12-17  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess: Pipe through object store IDs and transaction mode for "openTransaction"

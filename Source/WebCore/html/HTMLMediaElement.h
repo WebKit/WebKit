@@ -35,6 +35,7 @@
 #include "MediaPlayer.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLPlugInImageElement.h"
 #include "MediaPlayerProxy.h"
 #endif
@@ -97,7 +98,13 @@ typedef CueIntervalTree::IntervalType CueInterval;
 typedef Vector<CueInterval> CueList;
 #endif
 
-class HTMLMediaElement : public HTMLElement, private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface
+class HTMLMediaElement
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    : public HTMLFrameOwnerElement
+#else
+    : public HTMLElement
+#endif
+    , private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface
 #if ENABLE(VIDEO_TRACK)
     , private AudioTrackClient
     , private TextTrackClient
@@ -329,13 +336,24 @@ public:
 #endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    void allocateMediaPlayerIfNecessary();
+    void ensureMediaPlayer();
     void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
     void deliverNotification(MediaPlayerProxyNotificationType notification);
     void setMediaPlayerProxy(WebMediaPlayerProxy* proxy);
     void getPluginProxyParams(URL& url, Vector<String>& names, Vector<String>& values);
     void createMediaPlayerProxy();
     void updateWidget(PluginCreationOption);
+#endif
+
+#if ENABLE(IOS_AIRPLAY)
+    void webkitShowPlaybackTargetPicker();
+    bool webkitCurrentPlaybackTargetIsWireless() const;
+
+    virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) OVERRIDE;
+    virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) OVERRIDE;
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitcurrentplaybacktargetiswirelesschanged);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitplaybacktargetavailabilitychanged);
 #endif
 
     // EventTarget function.
@@ -389,7 +407,9 @@ public:
     MediaController* controller() const;
     void setController(PassRefPtr<MediaController>);
 
+#if !PLATFORM(IOS)
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
+#endif
 
     void enteredOrExitedFullscreen() { configureMediaControls(); }
 
@@ -432,6 +452,9 @@ protected:
         RequireUserGestureForFullscreenRestriction = 1 << 2,
         RequirePageConsentToLoadMediaRestriction = 1 << 3,
         RequirePageConsentToResumeMediaRestriction = 1 << 4,
+#if ENABLE(IOS_AIRPLAY)
+        RequireUserGestureToShowPlaybackTargetPicker = 1 << 5,
+#endif
     };
     typedef unsigned BehaviorRestrictions;
     
@@ -440,6 +463,9 @@ protected:
     bool userGestureRequiredForFullscreen() const { return m_restrictions & RequireUserGestureForFullscreenRestriction; }
     bool pageConsentRequiredForLoad() const { return m_restrictions & RequirePageConsentToLoadMediaRestriction; }
     bool pageConsentRequiredForResume() const { return m_restrictions & RequirePageConsentToResumeMediaRestriction; }
+#if ENABLE(IOS_AIRPLAY)
+    bool userGestureRequiredToShowPlaybackTargetPicker() const { return m_restrictions & RequireUserGestureToShowPlaybackTargetPicker; }
+#endif
     
     void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
@@ -520,6 +546,12 @@ private:
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) OVERRIDE;
+#endif
+
+#if ENABLE(IOS_AIRPLAY)
+    virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerPlaybackTargetAvailabilityChanged(MediaPlayer*) OVERRIDE;
+    void enqueuePlaybackTargetAvailabilityChangedEvent();
 #endif
 
     virtual String mediaPlayerReferrer() const OVERRIDE;
@@ -614,6 +646,11 @@ private:
 
     double minTimeSeekable() const;
     double maxTimeSeekable() const;
+
+#if PLATFORM(IOS)
+    bool parseMediaPlayerAttribute(const QualifiedName&, const AtomicString&);
+    void userRequestsMediaLoading();
+#endif
 
     // Pauses playback without changing any states or generating events
     void setPausedInternal(bool);
@@ -756,6 +793,11 @@ private:
     bool m_parsingInProgress : 1;
 #if ENABLE(PAGE_VISIBILITY_API)
     bool m_isDisplaySleepDisablingSuspended : 1;
+#endif
+
+#if PLATFORM(IOS)
+    bool m_requestingPlay : 1;
+    bool m_userStartedPlayback : 1;
 #endif
 
 #if ENABLE(VIDEO_TRACK)

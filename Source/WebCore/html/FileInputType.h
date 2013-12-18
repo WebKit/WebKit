@@ -41,6 +41,7 @@ namespace WebCore {
 
 class DragData;
 class FileList;
+class Icon;
 
 class FileInputType : public BaseClickableWithKeyInputType, private FileChooserClient, private FileIconLoaderClient {
 public:
@@ -62,10 +63,17 @@ private:
     virtual bool canChangeFromAnotherType() const OVERRIDE;
     virtual FileList* files() OVERRIDE;
     virtual void setFiles(PassRefPtr<FileList>) OVERRIDE;
+#if PLATFORM(IOS)
+    virtual String displayString() const OVERRIDE;
+#endif
     virtual bool canSetValue(const String&) OVERRIDE;
     virtual bool getTypeSpecificValue(String&) OVERRIDE; // Checked first, before internal storage or the value attribute.
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
+
+#if ENABLE(DRAG_SUPPORT)
     virtual bool receiveDroppedFiles(const DragData&) OVERRIDE;
+#endif
+
     virtual Icon* icon() const OVERRIDE;
     virtual bool isFileUpload() const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE;
@@ -75,6 +83,9 @@ private:
 
     // FileChooserClient implementation.
     virtual void filesChosen(const Vector<FileChooserFileInfo>&) OVERRIDE;
+#if PLATFORM(IOS)
+    virtual void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString, Icon*) OVERRIDE;
+#endif
 
     // FileIconLoaderClient implementation.
     virtual void updateRendering(PassRefPtr<Icon>) OVERRIDE;
@@ -88,10 +99,15 @@ private:
     void applyFileChooserSettings(const FileChooserSettings&);
 
     RefPtr<FileChooser> m_fileChooser;
+#if !PLATFORM(IOS)
     std::unique_ptr<FileIconLoader> m_fileIconLoader;
+#endif
 
     RefPtr<FileList> m_fileList;
     RefPtr<Icon> m_icon;
+#if PLATFORM(IOS)
+    String m_displayString;
+#endif
 };
 
 } // namespace WebCore

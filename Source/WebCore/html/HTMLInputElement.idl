@@ -125,6 +125,9 @@ interface HTMLInputElement : HTMLElement {
     readonly attribute URL absoluteImageURL;
 #endif
 
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, TreatNullAs=NullString] attribute DOMString autocapitalize;
+
     // See http://www.w3.org/TR/html-media-capture/
     [Conditional=MEDIA_CAPTURE] attribute DOMString capture;
 };

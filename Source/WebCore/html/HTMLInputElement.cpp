@@ -1210,7 +1210,6 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 
 bool HTMLInputElement::willRespondToMouseClickEvents()
 {
-    // FIXME: Consider implementing willRespondToMouseClickEvents() in InputType if more accurate results are necessary.
     if (!isDisabledFormControl())
         return true;
 
@@ -1351,15 +1350,24 @@ void HTMLInputElement::setFiles(PassRefPtr<FileList> files)
     m_inputType->setFiles(files);
 }
 
+#if ENABLE(DRAG_SUPPORT)
 bool HTMLInputElement::receiveDroppedFiles(const DragData& dragData)
 {
     return m_inputType->receiveDroppedFiles(dragData);
 }
+#endif
 
 Icon* HTMLInputElement::icon() const
 {
     return m_inputType->icon();
 }
+
+#if PLATFORM(IOS)
+String HTMLInputElement::displayString() const
+{
+    return m_inputType->displayString();
+}
+#endif
 
 bool HTMLInputElement::canReceiveDroppedFiles() const
 {
@@ -1629,6 +1637,13 @@ bool HTMLInputElement::isSpeechEnabled() const
     return m_inputType->shouldRespectSpeechAttribute() && RuntimeEnabledFeatures::sharedFeatures().speechInputEnabled() && hasAttribute(webkitspeechAttr);
 }
 
+#endif
+
+#if PLATFORM(IOS)
+DateComponents::Type HTMLInputElement::dateType() const
+{
+    return m_inputType->dateType();
+}
 #endif
 
 bool HTMLInputElement::isTextButton() const

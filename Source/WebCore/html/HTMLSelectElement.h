@@ -94,6 +94,10 @@ public:
 
     void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);
 
+#if PLATFORM(IOS)
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+#endif
+
     bool canSelectAll() const;
     void selectAll();
     int listToOptionIndex(int listIndex) const;

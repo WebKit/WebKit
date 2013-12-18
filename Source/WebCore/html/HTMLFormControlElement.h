@@ -27,6 +27,10 @@
 #include "FormAssociatedElement.h"
 #include "LabelableElement.h"
 
+#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+#include "Autocapitalize.h"
+#endif
+
 namespace WebCore {
 
 class FormDataList;
@@ -84,6 +88,15 @@ public:
     virtual bool isSuccessfulSubmitButton() const { return false; }
     virtual bool isActivatedSubmit() const { return false; }
     virtual void setActivatedSubmit(bool) { }
+
+#if ENABLE(IOS_AUTOCORRECT_AND_AUTOCAPITALIZE)
+    bool autocorrect() const;
+    void setAutocorrect(bool);
+
+    WebAutocapitalizeType autocapitalizeType() const;
+    const AtomicString& autocapitalize() const;
+    void setAutocapitalize(const AtomicString&);
+#endif
 
     virtual bool willValidate() const OVERRIDE;
     void updateVisibleValidationMessage();

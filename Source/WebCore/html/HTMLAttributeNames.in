@@ -203,6 +203,9 @@ oninvalid
 onkeydown
 onkeypress
 onkeyup
+ongesturestart
+ongesturechange
+ongestureend
 onload
 onloadeddata
 onloadedmetadata
@@ -342,3 +345,12 @@ webkitallowfullscreen
 webkitdirectory
 width
 wrap
+
+autocorrect
+autocapitalize
+data-youtube-id
+onwebkitcurrentplaybacktargetiswirelesschanged
+onwebkitplaybacktargetavailabilitychanged
+webkit-playsinline
+x-webkit-airplay
+x-webkit-wirelessvideoplaybackdisabled

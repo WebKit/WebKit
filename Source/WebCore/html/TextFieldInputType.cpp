@@ -70,6 +70,10 @@ TextFieldInputType::~TextFieldInputType()
 
 bool TextFieldInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
+#if PLATFORM(IOS)
+    if (element().isReadOnly())
+        return false;
+#endif
     return element().isTextFormControlFocusable();
 }
 

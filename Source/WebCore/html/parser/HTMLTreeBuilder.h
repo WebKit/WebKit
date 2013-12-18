@@ -123,6 +123,11 @@ private:
     HTMLTreeBuilder(HTMLDocumentParser&, HTMLDocument&, ParserContentPolicy, bool reportErrors, const HTMLParserOptions&);
     HTMLTreeBuilder(HTMLDocumentParser&, DocumentFragment&, Element* contextElement, ParserContentPolicy, const HTMLParserOptions&);
 
+#if PLATFORM(IOS)
+    void insertPhoneNumberLink(const String&);
+    void linkifyPhoneNumbers(const String&);
+#endif
+
     void processToken(AtomicHTMLToken*);
 
     void processDoctypeToken(AtomicHTMLToken*);

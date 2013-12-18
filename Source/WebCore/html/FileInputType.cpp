@@ -94,8 +94,11 @@ FileInputType::~FileInputType()
     if (m_fileChooser)
         m_fileChooser->invalidate();
 
+#if !PLATFORM(IOS)
+    // FIXME: Is this correct? Why don't we do this on iOS?
     if (m_fileIconLoader)
         m_fileIconLoader->invalidate();
+#endif
 }
 
 Vector<FileChooserFileInfo> FileInputType::filesFromFormControlState(const FormControlState& state)
@@ -327,6 +330,9 @@ void FileInputType::multipleAttributeChanged()
 
 void FileInputType::requestIcon(const Vector<String>& paths)
 {
+#if PLATFORM(IOS)
+    UNUSED_PARAM(paths);
+#else
     if (!paths.size())
         return;
 
@@ -340,6 +346,7 @@ void FileInputType::requestIcon(const Vector<String>& paths)
     m_fileIconLoader = std::make_unique<FileIconLoader>(static_cast<FileIconLoaderClient&>(*this));
 
     chrome->loadIconForFiles(paths, m_fileIconLoader.get());
+#endif
 }
 
 void FileInputType::applyFileChooserSettings(const FileChooserSettings& settings)
@@ -391,6 +398,20 @@ void FileInputType::setFiles(PassRefPtr<FileList> files)
     input->setChangedSinceLastFormControlChangeEvent(false);
 }
 
+#if PLATFORM(IOS)
+void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const String& displayString, Icon* icon)
+{
+    m_displayString = displayString;
+    filesChosen(paths);
+    updateRendering(icon);
+}
+
+String FileInputType::displayString() const
+{
+    return m_displayString;
+}
+#endif
+
 void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& files)
 {
     setFiles(createFileList(files));
@@ -426,6 +447,7 @@ void FileInputType::updateRendering(PassRefPtr<Icon> icon)
         element().renderer()->repaint();
 }
 
+#if ENABLE(DRAG_SUPPORT)
 bool FileInputType::receiveDroppedFiles(const DragData& dragData)
 {
     Vector<String> paths;
@@ -454,6 +476,7 @@ bool FileInputType::receiveDroppedFiles(const DragData& dragData)
     }
     return true;
 }
+#endif // ENABLE(DRAG_SUPPORT)
 
 Icon* FileInputType::icon() const
 {

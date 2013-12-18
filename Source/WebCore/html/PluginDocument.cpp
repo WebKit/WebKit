@@ -74,10 +74,19 @@ void PluginDocumentParser::createDocumentStructure()
     if (document()->frame())
         document()->frame()->loader().dispatchDocumentElementAvailable();
 
+#if PLATFORM(IOS)
+    // Should not be able to zoom into standalone plug-in documents.
+    document()->processViewport(ASCIILiteral("user-scalable=no"), ViewportArguments::PluginDocument);
+#endif
+
     RefPtr<Element> body = document()->createElement(bodyTag, false);
-    body->setAttribute(marginwidthAttr, "0");
-    body->setAttribute(marginheightAttr, "0");
-    body->setAttribute(styleAttr, "background-color: rgb(38,38,38)");
+    body->setAttribute(marginwidthAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
+    body->setAttribute(marginheightAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
+#if PLATFORM(IOS)
+    body->setAttribute(styleAttr, AtomicString("background-color: rgb(217,224,233)", AtomicString::ConstructFromLiteral));
+#else
+    body->setAttribute(styleAttr, AtomicString("background-color: rgb(38,38,38)", AtomicString::ConstructFromLiteral));
+#endif
 
     rootElement->appendChild(body, IGNORE_EXCEPTION);
         

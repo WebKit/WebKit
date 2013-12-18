@@ -173,5 +173,12 @@ bool BaseDateAndTimeInputType::valueMissing(const String& value) const
     return element().isRequired() && value.isEmpty();
 }
 
+#if PLATFORM(IOS)
+bool BaseDateAndTimeInputType::isKeyboardFocusable(KeyboardEvent*) const
+{
+    return !element().isReadOnly() && element().isTextFormControlFocusable();
+}
+#endif
+
 } // namespace WebCore
 #endif

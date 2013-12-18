@@ -525,6 +525,13 @@ String InputType::serialize(const Decimal&) const
     return String();
 }
 
+#if PLATFORM(IOS)
+DateComponents::Type InputType::dateType() const
+{
+    return DateComponents::Invalid;
+}
+#endif
+
 void InputType::dispatchSimulatedClickIfActive(KeyboardEvent* event) const
 {
     if (element().active())
@@ -551,7 +558,7 @@ bool InputType::hasCustomFocusLogic() const
 
 bool InputType::isKeyboardFocusable(KeyboardEvent* event) const
 {
-    return element().isTextFormControlKeyboardFocusable(event);
+    return !element().isReadOnly() && element().isTextFormControlKeyboardFocusable(event);
 }
 
 bool InputType::isMouseFocusable() const
@@ -716,17 +723,27 @@ String InputType::sanitizeValue(const String& proposedValue) const
     return proposedValue;
 }
 
+#if ENABLE(DRAG_SUPPORT)
 bool InputType::receiveDroppedFiles(const DragData&)
 {
     ASSERT_NOT_REACHED();
     return false;
 }
+#endif
 
 Icon* InputType::icon() const
 {
     ASSERT_NOT_REACHED();
     return 0;
 }
+
+#if PLATFORM(IOS)
+String InputType::displayString() const
+{
+    ASSERT_NOT_REACHED();
+    return String();
+}
+#endif
 
 bool InputType::shouldResetOnDocumentActivation()
 {

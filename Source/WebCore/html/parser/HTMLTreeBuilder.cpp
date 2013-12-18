@@ -44,6 +44,30 @@
 #include <wtf/MainThread.h>
 #include <wtf/unicode/CharacterNames.h>
 
+// FIXME: Extract the following iOS-specific code into a separate file.
+#if PLATFORM(IOS)
+#include "SoftLinking.h"
+
+#ifdef __has_include
+#if __has_include(<DataDetectorsCore/DDDFACache.h>)
+#include <DataDetectorsCore/DDDFACache.h>
+#else
+typedef void* DDDFACacheRef;
+#endif
+
+#if __has_include(<DataDetectorsCore/DDDFAScanner.h>)
+#include <DataDetectorsCore/DDDFAScanner.h>
+#else
+typedef void* DDDFAScannerRef;
+#endif
+#endif
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectorsCore)
+SOFT_LINK(DataDetectorsCore, DDDFACacheCreateFromFramework, DDDFACacheRef, (), ())
+SOFT_LINK(DataDetectorsCore, DDDFAScannerCreateFromCache, DDDFAScannerRef, (DDDFACacheRef cache), (cache))
+SOFT_LINK(DataDetectorsCore, DDDFAScannerFirstResultInUnicharArray, Boolean, (DDDFAScannerRef scanner, const UniChar* str, unsigned length, int* startPos, int* endPos), (scanner, str, length, startPos, endPos))
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -2342,6 +2366,97 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken* token)
     processCharacterBuffer(buffer);
 }
 
+// FIXME: Extract the following iOS-specific code into a separate file.
+#if PLATFORM(IOS)
+// From the string 4089961010, creates a link of the form <a href="tel:4089961010">4089961010</a> and inserts it.
+void HTMLTreeBuilder::insertPhoneNumberLink(const String& string)
+{
+    Vector<Attribute> attributes;
+    attributes.append(Attribute(HTMLNames::hrefAttr, ASCIILiteral("tel:") + string));
+
+    const AtomicString& aTagLocalName = aTag.localName();
+    AtomicHTMLToken aStartToken(HTMLToken::StartTag, aTagLocalName, attributes);
+    AtomicHTMLToken aEndToken(HTMLToken::EndTag, aTagLocalName);
+
+    processStartTag(&aStartToken);
+    m_tree.executeQueuedTasks();
+    m_tree.insertTextNode(string);
+    processEndTag(&aEndToken);
+}
+
+// Locates the phone numbers in the string and deals with it
+// 1. Appends the text before the phone number as a text node.
+// 2. Wraps the phone number in a tel: link.
+// 3. Goes back to step 1 if a phone number is found in the rest of the string.
+// 4. Appends the rest of the string as a text node.
+void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
+{
+    static DDDFACacheRef phoneNumbersCache = DDDFACacheCreateFromFramework();
+    if (!phoneNumbersCache) {
+        m_tree.insertTextNode(string);
+        return;
+    }
+
+    static DDDFAScannerRef phoneNumbersScanner = DDDFAScannerCreateFromCache(phoneNumbersCache);
+
+    // relativeStartPosition and relativeEndPosition are the endpoints of the phone number range,
+    // relative to the scannerPosition
+    unsigned length = string.length();
+    unsigned scannerPosition = 0;
+    int relativeStartPosition = 0;
+    int relativeEndPosition = 0;
+
+    // While there's a phone number in the rest of the string...
+    while ((scannerPosition < length) && DDDFAScannerFirstResultInUnicharArray(phoneNumbersScanner, &string.characters()[scannerPosition], length - scannerPosition, &relativeStartPosition, &relativeEndPosition)) {
+        // The convention in the Data Detectors framework is that the end position is the first character NOT in the phone number
+        // (that is, the length of the range is relativeEndPosition - relativeStartPosition). So substract 1 to get the same
+        // convention as the old WebCore phone number parser (so that the rest of the code is still valid if we want to go back
+        // to the old parser).
+        --relativeEndPosition;
+
+        ASSERT(scannerPosition + relativeEndPosition < length);
+
+        m_tree.insertTextNode(string.substring(scannerPosition, relativeStartPosition));
+        insertPhoneNumberLink(string.substring(scannerPosition + relativeStartPosition, relativeEndPosition - relativeStartPosition + 1));
+
+        scannerPosition += relativeEndPosition + 1;
+    }
+
+    // Append the rest as a text node.
+    if (scannerPosition > 0) {
+        if (scannerPosition < length) {
+            String after = string.substring(scannerPosition, length - scannerPosition);
+            m_tree.insertTextNode(after);
+        }
+    } else
+        m_tree.insertTextNode(string);
+}
+
+// Looks at the ancestors of the element to determine whether we're inside an element which disallows parsing phone numbers.
+static inline bool disallowTelephoneNumberParsing(const Node& node)
+{
+    return node.isLink()
+        || node.nodeType() == Node::COMMENT_NODE
+        || node.hasTagName(scriptTag)
+        || (node.isHTMLElement() && toHTMLElement(node).isFormControlElement())
+        || node.hasTagName(styleTag)
+        || node.hasTagName(ttTag)
+        || node.hasTagName(preTag)
+        || node.hasTagName(codeTag);
+}
+
+static inline bool shouldParseTelephoneNumbersInNode(const ContainerNode& node)
+{
+    const ContainerNode* currentNode = &node;
+    do {
+        if (currentNode->isElementNode() && disallowTelephoneNumberParsing(*currentNode))
+            return false;
+        currentNode = currentNode->parentNode();
+    } while (currentNode);
+    return true;
+}
+#endif // PLATFORM(IOS)
+
 void HTMLTreeBuilder::processCharacterBuffer(ExternalCharacterTokenBuffer& buffer)
 {
 ReprocessBuffer:
@@ -2519,7 +2634,15 @@ void HTMLTreeBuilder::processCharacterBufferForInBody(ExternalCharacterTokenBuff
 {
     m_tree.reconstructTheActiveFormattingElements();
     String characters = buffer.takeRemaining();
+#if PLATFORM(IOS)
+    if (!isParsingFragment() && m_tree.isTelephoneNumberParsingEnabled() && shouldParseTelephoneNumbersInNode(*m_tree.currentNode()) && DataDetectorsCoreLibrary())
+        linkifyPhoneNumbers(characters);
+    else
+        m_tree.insertTextNode(characters);
+#else
     m_tree.insertTextNode(characters);
+#endif
+
     if (m_framesetOk && !isAllWhitespaceOrReplacementCharacters(characters))
         m_framesetOk = false;
 }

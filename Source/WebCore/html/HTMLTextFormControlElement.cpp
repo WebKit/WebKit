@@ -185,7 +185,14 @@ void HTMLTextFormControlElement::setSelectionDirection(const String& direction)
 
 void HTMLTextFormControlElement::select()
 {
+    // FIXME: We should abstract the selection behavior into an EditingBehavior function instead
+    // of hardcoding the behavior using a macro define.
+#if PLATFORM(IOS)
+    // We don't want to select all the text on iOS. Instead use the standard textfield behavior of going to the end of the line.
+    setSelectionRange(std::numeric_limits<int>::max(), std::numeric_limits<int>::max(), SelectionHasForwardDirection);
+#else
     setSelectionRange(0, std::numeric_limits<int>::max(), SelectionHasNoDirection);
+#endif
 }
 
 String HTMLTextFormControlElement::selectedText() const
@@ -300,12 +307,14 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
     else
         endPosition = visiblePositionForIndex(end);
 
+#if !PLATFORM(IOS)
     // startPosition and endPosition can be null position for example when
     // "-webkit-user-select: none" style attribute is specified.
     if (startPosition.isNotNull() && endPosition.isNotNull()) {
         ASSERT(startPosition.deepEquivalent().deprecatedNode()->shadowHost() == this
             && endPosition.deepEquivalent().deprecatedNode()->shadowHost() == this);
     }
+#endif
     VisibleSelection newSelection;
     if (direction == SelectionHasBackwardDirection)
         newSelection = VisibleSelection(endPosition, startPosition);
@@ -543,6 +552,25 @@ String HTMLTextFormControlElement::innerTextValue() const
     }
     return finishText(result);
 }
+
+#if PLATFORM(IOS)
+void HTMLTextFormControlElement::hidePlaceholder()
+{
+    if (!supportsPlaceholder())
+        return;
+    HTMLElement* placeholder = placeholderElement();
+    if (!placeholder) {
+        updatePlaceholderText();
+        return;
+    }
+    placeholder->setInlineStyleProperty(CSSPropertyVisibility, ASCIILiteral("hidden"));
+}
+
+void HTMLTextFormControlElement::showPlaceholderIfNecessary()
+{
+    updatePlaceholderVisibility(false);
+}
+#endif
 
 static void getNextSoftBreak(RootInlineBox*& line, Node*& breakNode, unsigned& breakOffset)
 {

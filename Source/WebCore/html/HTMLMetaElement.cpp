@@ -73,6 +73,12 @@ void HTMLMetaElement::process()
 
     if (equalIgnoringCase(name(), "viewport"))
         document().processViewport(contentValue, ViewportArguments::ViewportMeta);
+#if PLATFORM(IOS)
+    else if (equalIgnoringCase(name(), "format-detection"))
+        document().processFormatDetection(contentValue);
+    else if (equalIgnoringCase(name(), "apple-mobile-web-app-orientations"))
+        document().processWebAppOrientations();
+#endif
     else if (equalIgnoringCase(name(), "referrer"))
         document().processReferrerPolicy(contentValue);
 #if ENABLE(LEGACY_VIEWPORT_ADAPTION)

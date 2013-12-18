@@ -41,6 +41,7 @@ namespace WebCore {
 
 class HTMLInputElement;
 class FloatPoint;
+class TouchEvent;
 
 class SliderThumbElement FINAL : public HTMLDivElement {
 public:
@@ -51,6 +52,12 @@ public:
     HTMLInputElement* hostInput() const;
     void setPositionFromPoint(const LayoutPoint&);
 
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+    void handleTouchEvent(TouchEvent*);
+
+    void disabledAttributeChanged();
+#endif
+
 private:
     SliderThumbElement(Document&);
 
@@ -60,16 +67,45 @@ private:
     virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
     virtual bool matchesReadWritePseudoClass() const OVERRIDE;
     virtual Element* focusDelegate() OVERRIDE;
+#if !PLATFORM(IOS)
     virtual void defaultEventHandler(Event*) OVERRIDE;
     virtual bool willRespondToMouseMoveEvents() OVERRIDE;
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
+#endif
+
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+    virtual void didAttachRenderers() OVERRIDE;
+#endif
     virtual void willDetachRenderers() OVERRIDE;
+
     virtual const AtomicString& shadowPseudoId() const OVERRIDE;
 
     void startDragging();
     void stopDragging();
 
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+    unsigned exclusiveTouchIdentifier() const;
+    void setExclusiveTouchIdentifier(unsigned);
+    void clearExclusiveTouchIdentifier();
+
+    void handleTouchStart(TouchEvent*);
+    void handleTouchMove(TouchEvent*);
+    void handleTouchEndAndCancel(TouchEvent*);
+
+    bool shouldAcceptTouchEvents();
+    void registerForTouchEvents();
+    void unregisterForTouchEvents();
+#endif
+
     bool m_inDragMode;
+
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+    // FIXME: Currently it is safe to use 0, but this may need to change
+    // if touch identifers change in the future and can be 0.
+    static const unsigned NoIdentifier = 0;
+    unsigned m_exclusiveTouchIdentifier;
+    bool m_isRegisteredAsTouchEventListener;
+#endif
 };
 
 inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document& document)

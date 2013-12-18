@@ -65,7 +65,9 @@ static const int DefaultHeight = 150;
 // Firefox limits width/height to 32767 pixels, but slows down dramatically before it
 // reaches that limit. We limit by area instead, giving us larger maximum dimensions,
 // in exchange for a smaller maximum canvas size.
+#if !PLATFORM(IOS)
 static const float MaxCanvasArea = 32768 * 8192; // Maximum canvas area in CSS pixels
+#endif
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
@@ -74,6 +76,10 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& doc
     , m_ignoreReset(false)
     , m_deviceScaleFactor(targetDeviceScaleFactor())
     , m_originClean(true)
+#if PLATFORM(IOS)
+    // FIXME: We should look to reconcile usage of MaxCanvasArea and m_maximumDecodedImageSize.
+    , m_maximumDecodedImageSize(document.settings() ? document.settings()->maximumDecodedImageSize() : 0)
+#endif
     , m_hasCreatedImageBuffer(false)
     , m_didClearImageBuffer(false)
 {
@@ -573,8 +579,13 @@ void HTMLCanvasElement::createImageBuffer() const
     if (!deviceSize.isExpressibleAsIntSize())
         return;
 
+#if PLATFORM(IOS)
+    if (deviceSize.width() * deviceSize.height() * 4 > m_maximumDecodedImageSize)
+        return;
+#else
     if (deviceSize.width() * deviceSize.height() > MaxCanvasArea)
         return;
+#endif
 
     IntSize bufferSize(deviceSize.width(), deviceSize.height());
     if (!bufferSize.width() || !bufferSize.height())

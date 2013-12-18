@@ -49,10 +49,15 @@ protected:
     String serializeWithComponents(const DateComponents&) const;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const = 0;
     virtual String visibleValue() const OVERRIDE;
+#if PLATFORM(IOS)
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
+#endif
 
 private:
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const = 0;
+#if !PLATFORM(IOS)
     virtual DateComponents::Type dateType() const = 0;
+#endif
     virtual double valueAsDate() const OVERRIDE;
     virtual void setValueAsDate(double, ExceptionCode&) const OVERRIDE;
     virtual double valueAsDouble() const OVERRIDE;

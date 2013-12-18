@@ -60,6 +60,8 @@ public:
     void setCols(int);
     void setRows(int);
 
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+
 private:
     HTMLTextAreaElement(const QualifiedName&, Document&, HTMLFormElement*);
 

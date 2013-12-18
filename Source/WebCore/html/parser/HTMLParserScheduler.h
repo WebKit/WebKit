@@ -32,6 +32,10 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#endif
+
 namespace WebCore {
 
 class Document;
@@ -69,6 +73,10 @@ public:
     // Inline as this is called after every token in the parser.
     void checkForYieldBeforeToken(PumpSession& session)
     {
+#if PLATFORM(IOS)
+        if (WebThreadShouldYield())
+            session.needsYield = true;
+#endif
         if (session.processedTokens > m_parserChunkSize || session.didSeeScript) {
             // monotonicallyIncreasingTime() can be expensive. By delaying, we avoided calling
             // monotonicallyIncreasingTime() when constructing non-yielding PumpSessions.

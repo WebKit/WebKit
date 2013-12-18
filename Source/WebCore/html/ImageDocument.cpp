@@ -219,6 +219,10 @@ void ImageDocument::createDocumentStructure()
         if (DOMWindow* domWindow = this->domWindow())
             domWindow->addEventListener("resize", listener, false);
         imageElement->addEventListener("click", listener.release(), false);
+#if PLATFORM(IOS)
+        // Set the viewport to be in device pixels (rather than the default of 980).
+        processViewport(ASCIILiteral("width=device-width"), ViewportArguments::ImageDocument);
+#endif
     }
 
     m_imageElement = imageElement.get();
@@ -226,8 +230,12 @@ void ImageDocument::createDocumentStructure()
 
 float ImageDocument::scale() const
 {
+#if PLATFORM(IOS)
+    // On iOS big images are subsampled to make them smaller. So, don't resize them.
+    return 1;
+#else
     if (!m_imageElement)
-        return 1.0f;
+        return 1;
 
     FrameView* view = frame()->view();
     if (!view)
@@ -235,15 +243,19 @@ float ImageDocument::scale() const
 
     LayoutSize imageSize = m_imageElement->cachedImage()->imageSizeForRenderer(m_imageElement->renderer(), pageZoomFactor(this));
     LayoutSize windowSize = LayoutSize(view->width(), view->height());
-    
-    float widthScale = (float)windowSize.width() / imageSize.width();
-    float heightScale = (float)windowSize.height() / imageSize.height();
+
+    float widthScale = static_cast<float>(windowSize.width()) / imageSize.width();
+    float heightScale = static_cast<float>(windowSize.height()) / imageSize.height();
 
     return std::min(widthScale, heightScale);
+#endif
 }
 
 void ImageDocument::resizeImageToFit()
 {
+#if PLATFORM(IOS)
+    // On iOS big images are subsampled to make them smaller. So, don't resize them.
+#else
     if (!m_imageElement)
         return;
 
@@ -252,31 +264,38 @@ void ImageDocument::resizeImageToFit()
     float scale = this->scale();
     m_imageElement->setWidth(static_cast<int>(imageSize.width() * scale));
     m_imageElement->setHeight(static_cast<int>(imageSize.height() * scale));
-    
+
     m_imageElement->setInlineStyleProperty(CSSPropertyCursor, CSSValueWebkitZoomIn);
+#endif
 }
 
 void ImageDocument::imageClicked(int x, int y)
 {
+#if PLATFORM(IOS)
+    // On iOS big images are subsampled to make them smaller. So, don't resize them.
+    UNUSED_PARAM(x);
+    UNUSED_PARAM(y);
+#else
     if (!m_imageSizeIsKnown || imageFitsInWindow())
         return;
 
     m_shouldShrinkImage = !m_shouldShrinkImage;
-    
+
     if (m_shouldShrinkImage)
         windowSizeChanged();
     else {
         restoreImageSize();
-        
+
         updateLayout();
-        
+
         float scale = this->scale();
-        
+
         int scrollX = static_cast<int>(x / scale - (float)frame()->view()->width() / 2);
         int scrollY = static_cast<int>(y / scale - (float)frame()->view()->height() / 2);
-        
+
         frame()->view()->setScrollPosition(IntPoint(scrollX, scrollY));
     }
+#endif
 }
 
 void ImageDocument::imageUpdated()
@@ -324,9 +343,12 @@ bool ImageDocument::imageFitsInWindow() const
         return true;
 
     LayoutSize imageSize = m_imageElement->cachedImage()->imageSizeForRenderer(m_imageElement->renderer(), pageZoomFactor(this));
+#if PLATFORM(IOS)
+    LayoutSize windowSize = view->contentsToScreen(view->actualVisibleContentRect()).size();
+#else
     LayoutSize windowSize = LayoutSize(view->width(), view->height());
-    
-    return imageSize.width() <= windowSize.width() && imageSize.height() <= windowSize.height();    
+#endif
+    return imageSize.width() <= windowSize.width() && imageSize.height() <= windowSize.height();
 }
 
 void ImageDocument::windowSizeChanged()
@@ -335,7 +357,21 @@ void ImageDocument::windowSizeChanged()
         return;
 
     bool fitsInWindow = imageFitsInWindow();
-    
+
+#if PLATFORM(IOS)
+    if (fitsInWindow)
+        return;
+
+    LayoutSize imageSize = m_imageElement->cachedImage()->imageSizeForRenderer(m_imageElement->renderer(), pageZoomFactor(this));
+    LayoutRect visibleScreenSize = frame()->view()->contentsToScreen(frame()->view()->actualVisibleContentRect());
+
+    float widthScale = static_cast<float>(visibleScreenSize.width()) / imageSize.width();
+    float heightScale = static_cast<float>(visibleScreenSize.height()) / imageSize.height();
+    if (widthScale < heightScale)
+        processViewport(String::format("width=%d", imageSize.width().toInt()), ViewportArguments::ImageDocument);
+    else
+        processViewport(String::format("width=%d", static_cast<int>(1.0f + (1.0f - heightScale)) * imageSize.width().toInt()), ViewportArguments::ImageDocument);
+#else
     // If the image has been explicitly zoomed in, restore the cursor if the image fits
     // and set it to a zoom out cursor if the image doesn't fit
     if (!m_shouldShrinkImage) {
@@ -345,7 +381,7 @@ void ImageDocument::windowSizeChanged()
             m_imageElement->setInlineStyleProperty(CSSPropertyCursor, CSSValueWebkitZoomOut);
         return;
     }
-    
+
     if (m_didShrinkImage) {
         // If the window has been resized so that the image fits, restore the image size
         // otherwise update the restored image size.
@@ -360,6 +396,7 @@ void ImageDocument::windowSizeChanged()
             m_didShrinkImage = true;
         }
     }
+#endif
 }
 
 CachedImage* ImageDocument::cachedImage()

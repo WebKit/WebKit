@@ -55,6 +55,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
+#if PLATFORM(IOS)
+#include "HTMLIFrameElement.h"
+#include "RenderBlockFlow.h"
+#include "YouTubeEmbedShadowElement.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -220,6 +226,13 @@ RenderElement* HTMLPlugInImageElement::createRenderer(PassRef<RenderStyle> style
         return image;
     }
 
+#if PLATFORM(IOS)
+    if (ShadowRoot* shadowRoot = this->shadowRoot()) {
+        Element* shadowElement = toElement(shadowRoot->firstChild());
+        if (shadowElement && shadowElement->shadowPseudoId() == "-apple-youtube-shadow-iframe")
+            return new RenderBlockFlow(*this, std::move(style));
+    }
+#endif
     return HTMLPlugInElement::createRenderer(std::move(style));
 }
 
@@ -411,6 +424,38 @@ bool HTMLPlugInImageElement::partOfSnapshotOverlay(Node* node)
     RefPtr<Element> snapshotLabel = ensureUserAgentShadowRoot().querySelector(selector, ASSERT_NO_EXCEPTION);
     return node && snapshotLabel && (node == snapshotLabel.get() || node->isDescendantOf(snapshotLabel.get()));
 }
+
+#if PLATFORM(IOS)
+void HTMLPlugInImageElement::createShadowIFrameSubtree(const String& src)
+{
+    if (this->shadowRoot())
+        return;
+
+    if (src.isEmpty())
+        return;
+
+    RefPtr<YouTubeEmbedShadowElement> shadowElement = YouTubeEmbedShadowElement::create(document());
+    ShadowRoot& root = this->ensureUserAgentShadowRoot();
+    root.appendChild(shadowElement, ASSERT_NO_EXCEPTION);
+
+    RefPtr<HTMLIFrameElement> iframeElement = HTMLIFrameElement::create(HTMLNames::iframeTag, document());
+    if (hasAttribute(HTMLNames::widthAttr))
+        iframeElement->setAttribute(HTMLNames::widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
+    if (hasAttribute(HTMLNames::heightAttr)) {
+        iframeElement->setAttribute(HTMLNames::styleAttr, AtomicString("max-height: 100%", AtomicString::ConstructFromLiteral));
+        iframeElement->setAttribute(HTMLNames::heightAttr, getAttribute(HTMLNames::heightAttr));
+    }
+    iframeElement->setAttribute(HTMLNames::srcAttr, src);
+    iframeElement->setAttribute(HTMLNames::frameborderAttr, AtomicString("0", AtomicString::ConstructFromLiteral));
+
+    // Disable frame flattening for this iframe.
+    iframeElement->setAttribute(HTMLNames::scrollingAttr, AtomicString("no", AtomicString::ConstructFromLiteral));
+    shadowElement->appendChild(iframeElement, ASSERT_NO_EXCEPTION);
+
+    if (renderer())
+        Style::reattachRenderTree(*this);
+}
+#endif
 
 void HTMLPlugInImageElement::removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>*)
 {

@@ -54,6 +54,11 @@ public:
     void webkitEnterFullScreen(ExceptionCode& ec) { webkitEnterFullscreen(ec); }
     void webkitExitFullScreen() { webkitExitFullscreen(); }
 
+#if ENABLE(IOS_AIRPLAY)
+    bool webkitWirelessVideoPlaybackDisabled() const;
+    void setWebkitWirelessVideoPlaybackDisabled(bool);
+#endif
+
 #if ENABLE(MEDIA_STATISTICS)
     // Statistics
     unsigned webkitDecodedFrameCount() const;

@@ -191,12 +191,16 @@ void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelec
 
 bool HTMLSelectElement::usesMenuList() const
 {
+#if !PLATFORM(IOS)
     const Page* page = document().page();
     RefPtr<RenderTheme> renderTheme = page ? &page->theme() : RenderTheme::defaultTheme();
     if (renderTheme->delegatesMenuListRendering())
         return true;
 
     return !m_multiple && m_size <= 1;
+#else
+    return !m_multiple;
+#endif
 }
 
 int HTMLSelectElement::activeSelectionStartListIndex() const
@@ -345,17 +349,23 @@ bool HTMLSelectElement::canSelectAll() const
 
 RenderElement* HTMLSelectElement::createRenderer(PassRef<RenderStyle> style)
 {
+#if !PLATFORM(IOS)
     if (usesMenuList())
         return new RenderMenuList(*this, std::move(style));
     return new RenderListBox(*this, std::move(style));
+#else
+    return new RenderMenuList(*this, std::move(style));
+#endif
 }
 
 bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
 {
     if (!HTMLFormControlElementWithState::childShouldCreateRenderer(child))
         return false;
+#if !PLATFORM(IOS)
     if (!usesMenuList())
         return isHTMLOptionElement(child) || isHTMLOptGroupElement(child) || validationMessageShadowTreeContains(child);
+#endif
     return validationMessageShadowTreeContains(child);
 }
 
@@ -495,6 +505,13 @@ bool HTMLSelectElement::isRequiredFormControl() const
     return isRequired();
 }
 
+#if PLATFORM(IOS)
+bool HTMLSelectElement::willRespondToMouseClickEvents()
+{
+    return !isDisabledFormControl();
+}
+#endif
+
 // Returns the 1st valid item |skip| items from |listIndex| in direction |direction| if there is one.
 // Otherwise, it returns the valid item closest to that boundary which is past |listIndex| if there is one.
 // Otherwise, it returns |listIndex|.
@@ -617,7 +634,11 @@ void HTMLSelectElement::setActiveSelectionEndIndex(int index)
 
 void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
 {
+#if !PLATFORM(IOS)
     ASSERT(renderer() && (renderer()->isListBox() || m_multiple));
+#else
+    ASSERT(renderer() && (renderer()->isMenuList() || m_multiple));
+#endif
     ASSERT(!listItems().size() || m_activeSelectionAnchorIndex >= 0);
 
     unsigned start = std::min(m_activeSelectionAnchorIndex, m_activeSelectionEndIndex);
@@ -683,20 +704,29 @@ void HTMLSelectElement::dispatchChangeEventForMenuList()
 
 void HTMLSelectElement::scrollToSelection()
 {
+#if !PLATFORM(IOS)
     if (usesMenuList())
         return;
 
     if (auto renderer = this->renderer())
         toRenderListBox(renderer)->selectionChanged();
+#else
+    if (auto renderer = this->renderer())
+        renderer->repaint();
+#endif
 }
 
 void HTMLSelectElement::setOptionsChangedOnRenderer()
 {
     if (auto renderer = this->renderer()) {
+#if !PLATFORM(IOS)
         if (usesMenuList())
             toRenderMenuList(renderer)->setOptionsChanged(true);
         else
             toRenderListBox(renderer)->setOptionsChanged(true);
+#else
+        toRenderMenuList(renderer)->setOptionsChanged(true);
+#endif
     }
 }
 
@@ -1228,6 +1258,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         focus();
+#if !PLATFORM(IOS)
         if (renderer() && renderer()->isMenuList()) {
             if (RenderMenuList* menuList = toRenderMenuList(renderer())) {
                 if (menuList->popupIsVisible())
@@ -1243,15 +1274,18 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
                 }
             }
         }
+#endif
         event->setDefaultHandled();
     }
 
+#if !PLATFORM(IOS)
     if (event->type() == eventNames().blurEvent && !focused()) {
         if (RenderMenuList* menuList = toRenderMenuList(renderer())) {
             if (menuList->popupIsVisible())
                 menuList->hidePopup();
         }
     }
+#endif
 }
 
 void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shift)
@@ -1472,6 +1506,7 @@ void HTMLSelectElement::defaultEventHandler(Event* event)
     if (!renderer())
         return;
 
+#if !PLATFORM(IOS)
     if (isDisabledFormControl()) {
         HTMLFormControlElementWithState::defaultEventHandler(event);
         return;
@@ -1481,6 +1516,9 @@ void HTMLSelectElement::defaultEventHandler(Event* event)
         menuListDefaultEventHandler(event);
     else 
         listBoxDefaultEventHandler(event);
+#else
+    menuListDefaultEventHandler(event);
+#endif
     if (event->defaultHandled())
         return;
 

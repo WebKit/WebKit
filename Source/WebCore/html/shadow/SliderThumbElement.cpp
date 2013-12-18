@@ -45,6 +45,12 @@
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
 
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+#include "Document.h"
+#include "Page.h"
+#include "TouchEvent.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -189,6 +195,10 @@ void RenderSliderContainer::layout()
 SliderThumbElement::SliderThumbElement(Document& document)
     : HTMLDivElement(HTMLNames::divTag, document)
     , m_inDragMode(false)
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+    , m_exclusiveTouchIdentifier(NoIdentifier)
+    , m_isRegisteredAsTouchEventListener(false)
+#endif
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -234,7 +244,9 @@ void SliderThumbElement::dragFrom(const LayoutPoint& point)
 {
     Ref<SliderThumbElement> protect(*this);
     setPositionFromPoint(point);
+#if !PLATFORM(IOS)
     startDragging();
+#endif
 }
 
 void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
@@ -321,6 +333,7 @@ void SliderThumbElement::stopDragging()
         renderer()->setNeedsLayout();
 }
 
+#if !PLATFORM(IOS)
 void SliderThumbElement::defaultEventHandler(Event* event)
 {
     if (!event->isMouseEvent()) {
@@ -358,7 +371,9 @@ void SliderThumbElement::defaultEventHandler(Event* event)
 
     HTMLDivElement::defaultEventHandler(event);
 }
+#endif
 
+#if !PLATFORM(IOS)
 bool SliderThumbElement::willRespondToMouseMoveEvents()
 {
     const HTMLInputElement* input = hostInput();
@@ -376,6 +391,7 @@ bool SliderThumbElement::willRespondToMouseClickEvents()
 
     return HTMLDivElement::willRespondToMouseClickEvents();
 }
+#endif // !PLATFORM(IOS)
 
 void SliderThumbElement::willDetachRenderers()
 {
@@ -383,7 +399,160 @@ void SliderThumbElement::willDetachRenderers()
         if (Frame* frame = document().frame())
             frame->eventHandler().setCapturingMouseEventsElement(nullptr);
     }
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+    unregisterForTouchEvents();
+#endif
 }
+
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
+unsigned SliderThumbElement::exclusiveTouchIdentifier() const
+{
+    return m_exclusiveTouchIdentifier;
+}
+
+void SliderThumbElement::setExclusiveTouchIdentifier(unsigned identifier)
+{
+    ASSERT(m_exclusiveTouchIdentifier == NoIdentifier);
+    m_exclusiveTouchIdentifier = identifier;
+}
+
+void SliderThumbElement::clearExclusiveTouchIdentifier()
+{
+    m_exclusiveTouchIdentifier = NoIdentifier;
+}
+
+static Touch* findTouchWithIdentifier(TouchList* list, unsigned identifier)
+{
+    unsigned length = list->length();
+    for (unsigned i = 0; i < length; ++i) {
+        Touch* touch = list->item(i);
+        if (touch->identifier() == identifier)
+            return touch;
+    }
+    return nullptr;
+}
+
+void SliderThumbElement::handleTouchStart(TouchEvent* touchEvent)
+{
+    TouchList* targetTouches = touchEvent->targetTouches();
+    if (targetTouches->length() != 1)
+        return;
+
+    // Ignore the touch if it is not really inside the thumb.
+    Touch* touch = targetTouches->item(0);
+    IntRect boundingBox = renderer()->absoluteBoundingBoxRect();
+    if (!boundingBox.contains(touch->pageX(), touch->pageY()))
+        return;
+
+    setExclusiveTouchIdentifier(touch->identifier());
+
+    startDragging();
+    touchEvent->setDefaultHandled();
+}
+
+void SliderThumbElement::handleTouchMove(TouchEvent* touchEvent)
+{
+    unsigned identifier = exclusiveTouchIdentifier();
+    if (identifier == NoIdentifier)
+        return;
+
+    Touch* touch = findTouchWithIdentifier(touchEvent->targetTouches(), identifier);
+    if (!touch)
+        return;
+
+    if (m_inDragMode)
+        setPositionFromPoint(IntPoint(touch->pageX(), touch->pageY()));
+    touchEvent->setDefaultHandled();
+}
+
+void SliderThumbElement::handleTouchEndAndCancel(TouchEvent* touchEvent)
+{
+    unsigned identifier = exclusiveTouchIdentifier();
+    if (identifier == NoIdentifier)
+        return;
+
+    // If our exclusive touch still exists, it was not the touch
+    // that ended, so we should not stop dragging.
+    Touch* exclusiveTouch = findTouchWithIdentifier(touchEvent->targetTouches(), identifier);
+    if (exclusiveTouch)
+        return;
+
+    clearExclusiveTouchIdentifier();
+
+    stopDragging();
+}
+
+void SliderThumbElement::didAttachRenderers()
+{
+    if (shouldAcceptTouchEvents())
+        registerForTouchEvents();
+}
+
+void SliderThumbElement::handleTouchEvent(TouchEvent* touchEvent)
+{
+    HTMLInputElement* input = hostInput();
+    ASSERT(input);
+    if (input->isReadOnly() || input->isDisabledFormControl()) {
+        clearExclusiveTouchIdentifier();
+        stopDragging();
+        touchEvent->setDefaultHandled();
+        HTMLDivElement::defaultEventHandler(touchEvent);
+        return;
+    }
+
+    const AtomicString& eventType = touchEvent->type();
+    if (eventType == eventNames().touchstartEvent) {
+        handleTouchStart(touchEvent);
+        return;
+    }
+    if (eventType == eventNames().touchendEvent || eventType == eventNames().touchcancelEvent) {
+        handleTouchEndAndCancel(touchEvent);
+        return;
+    }
+    if (eventType == eventNames().touchmoveEvent) {
+        handleTouchMove(touchEvent);
+        return;
+    }
+
+    HTMLDivElement::defaultEventHandler(touchEvent);
+}
+
+bool SliderThumbElement::shouldAcceptTouchEvents()
+{
+    return attached() && !isDisabledFormControl();
+}
+
+void SliderThumbElement::registerForTouchEvents()
+{
+    if (m_isRegisteredAsTouchEventListener)
+        return;
+
+    ASSERT(shouldAcceptTouchEvents());
+
+    document().addTouchEventListener(this);
+    m_isRegisteredAsTouchEventListener = true;
+}
+
+void SliderThumbElement::unregisterForTouchEvents()
+{
+    if (!m_isRegisteredAsTouchEventListener)
+        return;
+
+    clearExclusiveTouchIdentifier();
+    stopDragging();
+
+    document().removeTouchEventListener(this);
+    m_isRegisteredAsTouchEventListener = false;
+}
+
+void SliderThumbElement::disabledAttributeChanged()
+{
+    if (shouldAcceptTouchEvents())
+        registerForTouchEvents();
+    else
+        unregisterForTouchEvents();
+}
+#endif // ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
 
 HTMLInputElement* SliderThumbElement::hostInput() const
 {

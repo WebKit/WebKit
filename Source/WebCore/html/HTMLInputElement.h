@@ -29,6 +29,10 @@
 #include "HTMLTextFormControlElement.h"
 #include "StepRange.h"
 
+#if PLATFORM(IOS)
+#include "DateComponents.h"
+#endif
+
 namespace WebCore {
 
 class CheckedRadioButtons;
@@ -138,6 +142,10 @@ public:
     bool isSpeechEnabled() const;
 #endif
 
+#if PLATFORM(IOS)
+    DateComponents::Type dateType() const;
+#endif
+
     HTMLElement* containerElement() const;
     virtual TextControlInnerTextElement* innerTextElement() const OVERRIDE;
     HTMLElement* innerBlockElement() const;
@@ -243,10 +251,15 @@ public:
     FileList* files();
     void setFiles(PassRefPtr<FileList>);
 
+#if ENABLE(DRAG_SUPPORT)
     // Returns true if the given DragData has more than one dropped files.
     bool receiveDroppedFiles(const DragData&);
+#endif
 
     Icon* icon() const;
+#if PLATFORM(IOS)
+    String displayString() const;
+#endif
     // These functions are used for rendering the input active during a
     // drag-and-drop operation.
     bool canReceiveDroppedFiles() const;

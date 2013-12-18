@@ -69,6 +69,9 @@ protected:
     virtual void handleBlurEvent() OVERRIDE;
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual void updateInnerTextValue() OVERRIDE;
+#if PLATFORM(IOS)
+    virtual String sanitizeValue(const String&) const OVERRIDE;
+#endif
 
     virtual String convertFromVisibleValue(const String&) const;
     enum ValueChangeState {
@@ -87,7 +90,9 @@ private:
     virtual bool shouldSubmitImplicitly(Event*) OVERRIDE;
     virtual RenderElement* createRenderer(PassRef<RenderStyle>) const OVERRIDE;
     virtual bool shouldUseInputMethod() const OVERRIDE;
+#if !PLATFORM(IOS)
     virtual String sanitizeValue(const String&) const OVERRIDE;
+#endif
     virtual bool shouldRespectListAttribute() OVERRIDE;
     virtual HTMLElement* placeholderElement() const OVERRIDE;
     virtual void updatePlaceholderText() OVERRIDE;

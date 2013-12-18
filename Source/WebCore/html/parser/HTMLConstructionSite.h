@@ -133,6 +133,10 @@ public:
 
     ParserContentPolicy parserContentPolicy() { return m_parserContentPolicy; }
 
+#if PLATFORM(IOS)
+    bool isTelephoneNumberParsingEnabled() { return m_document->isTelephoneNumberParsingEnabled(); }
+#endif
+
     class RedirectToFosterParentGuard {
         WTF_MAKE_NONCOPYABLE(RedirectToFosterParentGuard);
     public:

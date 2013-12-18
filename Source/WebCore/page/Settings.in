@@ -214,3 +214,6 @@ simpleLineLayoutDebugBordersEnabled initial=false, setNeedsStyleRecalcInAllFrame
 
 backgroundShouldExtendBeyondPage initial=false
 mediaSourceEnabled initial=false
+
+# FIXME: Rename to allowMultiElementImplicitFormSubmission once we upstream the iOS changes to WebView.mm.
+allowMultiElementImplicitSubmission initial=false

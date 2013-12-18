@@ -35,6 +35,12 @@ public:
     {
         return adoptRef(new HTMLDocument(frame, url));
     }
+
+    static PassRefPtr<HTMLDocument> createSynthesizedDocument(Frame* frame, const URL& url)
+    {
+        return adoptRef(new HTMLDocument(frame, url, true));
+    }
+
     virtual ~HTMLDocument();
 
     int width();
@@ -80,7 +86,7 @@ public:
     static bool isCaseSensitiveAttribute(const QualifiedName&);
 
 protected:
-    HTMLDocument(Frame*, const URL&, DocumentClassFlags = 0);
+    HTMLDocument(Frame*, const URL&, DocumentClassFlags = 0, bool isSynthesized = false);
 
 private:
     virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);

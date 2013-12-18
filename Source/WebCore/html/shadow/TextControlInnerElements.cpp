@@ -165,11 +165,13 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
     if (input && event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         input->focus();
         input->select();
+#if !PLATFORM(IOS)
         RenderSearchField* renderer = toRenderSearchField(input->renderer());
         if (renderer->popupIsVisible())
             renderer->hidePopup();
         else if (input->maxResults() > 0)
             renderer->showPopup();
+#endif
         event->setDefaultHandled();
     }
 
@@ -177,10 +179,12 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
+#if !PLATFORM(IOS)
 bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents()
 {
     return true;
 }
+#endif
 
 // ----------------------------
 
@@ -250,6 +254,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
+#if !PLATFORM(IOS)
 bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
 {
     const HTMLInputElement* input = toHTMLInputElement(shadowHost());
@@ -258,6 +263,7 @@ bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
 
     return HTMLDivElement::willRespondToMouseClickEvents();
 }
+#endif
 
 // ----------------------------
 
@@ -348,6 +354,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
+#if !PLATFORM(IOS)
 bool InputFieldSpeechButtonElement::willRespondToMouseClickEvents()
 {
     const HTMLInputElement* input = toHTMLInputElement(shadowHost());
@@ -356,6 +363,7 @@ bool InputFieldSpeechButtonElement::willRespondToMouseClickEvents()
 
     return HTMLDivElement::willRespondToMouseClickEvents();
 }
+#endif
 
 void InputFieldSpeechButtonElement::setState(SpeechInputState state)
 {

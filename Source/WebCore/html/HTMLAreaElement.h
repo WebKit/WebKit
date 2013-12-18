@@ -41,8 +41,9 @@ public:
 
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
 
-    LayoutRect computeRect(RenderElement*) const;
-    Path computePath(RenderElement*) const;
+    // FIXME: Use RenderElement* instead of RenderObject* once we upstream iOS's DOMUIKitExtensions.{h, mm}.
+    LayoutRect computeRect(RenderObject*) const;
+    Path computePath(RenderObject*) const;
 
     // The parent map's image.
     HTMLImageElement* imageElement() const;

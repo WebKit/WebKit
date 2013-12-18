@@ -379,6 +379,17 @@ FormController::~FormController()
 {
 }
 
+unsigned FormController::formElementsCharacterCount() const
+{
+    unsigned count = 0;
+    for (auto& element : m_formElementsWithState) {
+        FormControlState state = element->saveFormControlState();
+        if (state.valueSize() && element->isTextFormControl())
+            count += state[0].length();
+    }
+    return count;
+}
+
 static String formStateSignature()
 {
     // In the legacy version of serialized state, the first item was a name
