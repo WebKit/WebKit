@@ -128,7 +128,7 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
         auto& dictionary = static_cast<const ImmutableDictionary&>(object);
         auto& map = dictionary.map();
 
-        encoder << map.size();
+        encoder << static_cast<uint64_t>(map.size());
         for (const auto& keyValuePair : map) {
             encoder << keyValuePair.key;
             encode(encoder, keyValuePair.value.get());
