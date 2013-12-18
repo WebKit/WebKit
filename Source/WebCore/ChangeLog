@@ -1,3 +1,33 @@
+2013-12-18  Rob Buis  <rob.buis@samsung.com>
+
+        [CSS Shapes] Implement interpolation between keywords in basic shapes
+        https://bugs.webkit.org/show_bug.cgi?id=125108
+
+        Reviewed by Simon Fraser.
+
+        Allow blending for all center coordinates since top/left and bottom/right default to correct
+        Length values of 0% and 100%. For mixed keyword and value positions compute the length's used
+        for blending to percentages. This is possible since we compute the reference box bounds given the
+        renderer.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): Pass additional RenderBox parameter.
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend): Don't check circle/ellipse center anymore, but do check that both
+        shapes use the same reference box.
+        (WebCore::BasicShape::referenceBoxSize): Compute box dimension depending on reference box.
+        (WebCore::BasicShapeCenterCoordinate::lengthForBlending): Convert to percentage for Bottom/Right.
+        (WebCore::BasicShapeRectangle::blend):
+        (WebCore::DeprecatedBasicShapeCircle::blend):
+        (WebCore::BasicShapeCircle::blend):
+        (WebCore::DeprecatedBasicShapeEllipse::blend):
+        (WebCore::BasicShapeEllipse::blend):
+        (WebCore::BasicShapePolygon::blend):
+        (WebCore::BasicShapeInsetRectangle::blend):
+        (WebCore::BasicShapeInset::blend):
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShapeCenterCoordinate::blend): Use new lengthForBlending.
+
 2013-12-18  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         CSS: Null-pointer dereference with negative 'orphans' value.

@@ -41,6 +41,7 @@ namespace WebCore {
 
 class FloatRect;
 class Path;
+class RenderBox;
 
 class BasicShape : public RefCounted<BasicShape> {
 public:
@@ -69,7 +70,7 @@ public:
 
     virtual void path(Path&, const FloatRect&) = 0;
     virtual WindRule windRule() const { return RULE_NONZERO; }
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const = 0;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const = 0;
 
     virtual Type type() const = 0;
 
@@ -81,6 +82,8 @@ protected:
     : m_box(None)
     {
     }
+
+    FloatSize referenceBoxSize(const RenderBox&) const;
 
 private:
     ReferenceBox m_box;
@@ -113,7 +116,7 @@ public:
     }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const OVERRIDE;
 
     virtual Type type() const OVERRIDE { return BasicShapeRectangleType; }
 private:
@@ -143,19 +146,11 @@ public:
 
     Keyword keyword() const { return m_keyword; }
     const Length& length() const { return m_length; }
+    Length lengthForBlending(const FloatSize&) const;
 
-    bool canBlend(const BasicShapeCenterCoordinate& other) const
+    BasicShapeCenterCoordinate blend(const BasicShapeCenterCoordinate& other, double progress, const FloatSize& boxSize) const
     {
-        // FIXME determine how to interpolate between keywords. See bug 125108.
-        return m_keyword == None && other.keyword() == None;
-    }
-
-    BasicShapeCenterCoordinate blend(const BasicShapeCenterCoordinate& other, double progress) const
-    {
-        if (m_keyword != None || other.keyword() != None)
-            return BasicShapeCenterCoordinate(other);
-
-        return BasicShapeCenterCoordinate(m_length.blend(other.length(), progress));
+        return BasicShapeCenterCoordinate(lengthForBlending(boxSize).blend(other.lengthForBlending(boxSize), progress));
     }
 
 private:
@@ -212,7 +207,7 @@ public:
     void setRadius(BasicShapeRadius radius) { m_radius = std::move(radius); }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const OVERRIDE;
 
     virtual Type type() const OVERRIDE { return BasicShapeCircleType; }
 private:
@@ -236,7 +231,7 @@ public:
     void setRadius(Length radius) { m_radius = std::move(radius); }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const OVERRIDE;
 
     virtual Type type() const OVERRIDE { return DeprecatedBasicShapeCircleType; }
 private:
@@ -263,7 +258,7 @@ public:
     void setRadiusY(BasicShapeRadius radiusY) { m_radiusY = std::move(radiusY); }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const OVERRIDE;
 
     virtual Type type() const OVERRIDE { return BasicShapeEllipseType; }
 private:
@@ -290,7 +285,7 @@ public:
     void setRadiusY(Length radiusY) { m_radiusY = std::move(radiusY); }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const OVERRIDE;
 
     virtual Type type() const OVERRIDE { return DeprecatedBasicShapeEllipseType; }
 private:
@@ -314,7 +309,7 @@ public:
     void appendPoint(Length x, Length y) { m_values.append(std::move(x)); m_values.append(std::move(y)); }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const OVERRIDE;
 
     virtual WindRule windRule() const OVERRIDE { return m_windRule; }
 
@@ -355,7 +350,7 @@ public:
     }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const OVERRIDE;
 
     virtual Type type() const OVERRIDE { return BasicShapeInsetRectangleType; }
 private:
@@ -394,7 +389,7 @@ public:
     void setBottomLeftRadius(LengthSize radius) { m_bottomLeftRadius = std::move(radius); }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
-    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double, const RenderBox&) const OVERRIDE;
 
     virtual Type type() const OVERRIDE { return BasicShapeInsetType; }
 private:
