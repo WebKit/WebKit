@@ -46,7 +46,8 @@ enum {
     self = [super init];
     if (self) {
 #if WK_API_ENABLED
-        _processGroup = [[WKProcessGroup alloc] init];
+        NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"MiniBrowser.wkbundle"]];
+        _processGroup = [[WKProcessGroup alloc] initWithInjectedBundleURL:url];
         _browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"MiniBrowser"];
 #endif
         _browserWindows = [[NSMutableSet alloc] init];

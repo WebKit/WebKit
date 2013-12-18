@@ -1,3 +1,20 @@
+2013-12-17  Anders Carlsson  <andersca@apple.com>
+
+        Give the MiniBrowser a bundle
+        https://bugs.webkit.org/show_bug.cgi?id=125882
+
+        Reviewed by Sam Weinig.
+
+        * MiniBrowser/Configurations/MiniBrowserBundle.xcconfig: Added.
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/MiniBrowserWebProcessPlugIn.h: Added.
+        * MiniBrowser/MiniBrowserWebProcessPlugIn.m: Added.
+        (-[MiniBrowserWebProcessPlugIn webProcessPlugIn:initializeWithObject:]):
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        * MiniBrowser/mac/Bundle/Info.plist: Added.
+        * MiniBrowser/mac/Bundle/MiniBrowserBundle_Prefix.pch: Added.
+
 2013-12-17  Gavin Barraclough  <barraclough@apple.com>
 
         Remove PageVisibilityStateUnloaded
