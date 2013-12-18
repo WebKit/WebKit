@@ -1,3 +1,33 @@
+2013-12-18  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Fix ASSERTION FAILED in WebCore::SVGLengthContext::determineViewport
+        https://bugs.webkit.org/show_bug.cgi?id=120284
+
+        Reviewed by Philip Rogers.
+
+        Added handling of root <svg> elements.
+        Blink merge: https://chromium.googlesource.com/chromium/blink/+/a7dedf81eb7008276bb6854f0e46465e039788f8
+
+        SVGLengthContext::determineViewport() currently asserts that we're not
+        resolving lengths for the topmost element, but there's nothing to
+        prevent such calls.
+
+        The patch updates determineViewport() to handle root elements geracefully
+        (using their current viewport). It also changes the signature slightly
+        to operate directly on a FloatSize, reducing some of the boiler-plate
+        client code.
+
+        Tests: svg/custom/svg-length-value-handled.svg
+               svg/dom/svg-root-lengths.html
+
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::convertValueFromUserUnitsToPercentage):
+        (WebCore::SVGLengthContext::convertValueFromPercentageToUserUnits):
+        (WebCore::SVGLengthContext::determineViewport):
+        * svg/SVGLengthContext.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::platformApplySoftware):
+
 2013-12-18  Darin Adler  <darin@apple.com>
 
         Additional refinement in MathMLSelectElement toggle implementation

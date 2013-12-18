@@ -1,3 +1,20 @@
+2013-12-18  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Fix ASSERTION FAILED in WebCore::SVGLengthContext::determineViewport
+        https://bugs.webkit.org/show_bug.cgi?id=120284
+
+        Reviewed by Philip Rogers.
+
+        Added tests of handling root <svg> elements.
+        Blink merge: https://chromium.googlesource.com/chromium/blink/+/a7dedf81eb7008276bb6854f0e46465e039788f8
+
+        * svg/custom/svg-length-value-handled-expected.txt: Added.
+        * svg/custom/svg-length-value-handled.svg: Added.
+            Tests whether root svg elements sizes are handled.
+        * svg/dom/svg-root-lengths-expected.txt: Added.
+        * svg/dom/svg-root-lengths.html: Added.
+            Tests the correct handling of root svg elements sizes.
+
 2013-12-18  Darin Adler  <darin@apple.com>
 
         Additional refinement in MathMLSelectElement toggle implementation
