@@ -1,3 +1,16 @@
+2013-12-18  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
+
+        prepare-ChangeLog doesn't handle templates properly
+        https://bugs.webkit.org/show_bug.cgi?id=125853
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_cpp):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests-expected.txt:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests.cpp:
+        (Class110<TemplateClass>::func36):
+
 2013-12-18  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
 
         Move expectation parsing out of the constructor of TestExpectations

@@ -387,3 +387,7 @@ class Class109 {
 };
 
 };
+
+void Class110<TemplateClass>::func36()
+{
+}

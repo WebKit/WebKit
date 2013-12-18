@@ -217,5 +217,10 @@
       '320',
       'Class108::func35'
     ],
+    [
+      '391',
+      '393',
+      'Class110<TemplateClass>::func36'
+    ]
   ]
 }

@@ -762,7 +762,7 @@ sub get_function_line_ranges_for_cpp($$)
 
 
         # Find function, interface and method names.
-        while (m&((?:[[:word:]]+::)*operator(?:[ \t]*\(\)|[^()]*)|[[:word:]:~]+|[(){}:;=])|\@(?:implementation|interface|protocol)\s+(\w+)[^{]*&g) {
+        while (m&((?:[[:word:]]+::)*operator(?:[ \t]*\(\)|[^()]*)|[[:word:]<>:~]+|[(){}:;=])|\@(?:implementation|interface|protocol)\s+(\w+)[^{]*&g) {
             # Skip an array definition at the top level.
             # e.g. static int arr[] = { 1, 2, 3 };
             if ($1) {
