@@ -172,6 +172,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGSpeculativeJIT32_64.cpp
     dfg/DFGSpeculativeJIT64.cpp
     dfg/DFGStackLayoutPhase.cpp
+    dfg/DFGStoreBarrierElisionPhase.cpp
     dfg/DFGStrengthReductionPhase.cpp
     dfg/DFGThunks.cpp
     dfg/DFGTierUpCheckInjectionPhase.cpp
@@ -219,6 +220,7 @@ set(JavaScriptCore_SOURCES
     heap/WeakBlock.cpp
     heap/WeakHandleOwner.cpp
     heap/WeakSet.cpp
+    heap/WriteBarrierBuffer.cpp
     heap/WriteBarrierSupport.cpp
 
     inspector/InspectorAgentRegistry.cpp

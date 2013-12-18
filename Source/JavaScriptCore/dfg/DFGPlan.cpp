@@ -54,6 +54,7 @@
 #include "DFGSSAConversionPhase.h"
 #include "DFGSSALoweringPhase.h"
 #include "DFGStackLayoutPhase.h"
+#include "DFGStoreBarrierElisionPhase.h"
 #include "DFGStrengthReductionPhase.h"
 #include "DFGTierUpCheckInjectionPhase.h"
 #include "DFGTypeCheckHoistingPhase.h"
@@ -223,6 +224,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
 
     dfg.m_fixpointState = FixpointConverged;
 
+    performStoreBarrierElision(dfg);
     performStoreElimination(dfg);
     
     // If we're doing validation, then run some analyses, to give them an opportunity

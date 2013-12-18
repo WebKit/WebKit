@@ -1696,6 +1696,39 @@ void JIT_OPERATION operationThrow(ExecState* exec, EncodedJSValue encodedExcepti
     genericUnwind(vm, exec, exceptionValue);
 }
 
+void JIT_OPERATION operationFlushWriteBarrierBuffer(ExecState* exec, JSCell* cell)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    vm->heap.flushWriteBarrierBuffer(cell);
+}
+
+void JIT_OPERATION operationOSRWriteBarrier(ExecState* exec, JSCell* cell)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    exec->heap()->writeBarrier(cell);
+}
+
+// NB: We don't include the value as part of the barrier because the write barrier elision
+// phase in the DFG only tracks whether the object being stored to has been barriered. It 
+// would be much more complicated to try to model the value being stored as well.
+void JIT_OPERATION operationUnconditionalWriteBarrier(ExecState* exec, JSCell* cell)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    Heap::writeBarrier(cell);
+}
+
+void JIT_OPERATION operationInitGlobalConst(ExecState* exec, Instruction* pc)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue value = exec->r(pc[2].u.operand).jsValue();
+    pc[1].u.registerPointer->set(*vm, exec->codeBlock()->globalObject(), value);
+}
+
 void JIT_OPERATION lookupExceptionHandler(ExecState* exec)
 {
     VM* vm = &exec->vm();

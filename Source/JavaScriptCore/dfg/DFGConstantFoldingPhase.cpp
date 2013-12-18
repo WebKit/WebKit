@@ -300,28 +300,34 @@ private:
                 } else if (!structure->outOfLineCapacity()) {
                     ASSERT(status.newStructure()->outOfLineCapacity());
                     ASSERT(!isInlineOffset(status.offset()));
-                    propertyStorage = Edge(m_insertionSet.insertNode(
+                    Node* allocatePropertyStorage = m_insertionSet.insertNode(
                         indexInBlock, SpecNone, AllocatePropertyStorage,
-                        codeOrigin, OpInfo(transitionData), childEdge));
+                        codeOrigin, OpInfo(transitionData), childEdge);
+                    m_insertionSet.insertNode(indexInBlock, SpecNone, StoreBarrier, codeOrigin, Edge(node->child1().node(), KnownCellUse));
+                    propertyStorage = Edge(allocatePropertyStorage);
                 } else {
                     ASSERT(structure->outOfLineCapacity());
                     ASSERT(status.newStructure()->outOfLineCapacity() > structure->outOfLineCapacity());
                     ASSERT(!isInlineOffset(status.offset()));
                     
-                    propertyStorage = Edge(m_insertionSet.insertNode(
+                    Node* reallocatePropertyStorage = m_insertionSet.insertNode(
                         indexInBlock, SpecNone, ReallocatePropertyStorage, codeOrigin,
                         OpInfo(transitionData), childEdge,
                         Edge(m_insertionSet.insertNode(
-                            indexInBlock, SpecNone, GetButterfly, codeOrigin, childEdge))));
+                            indexInBlock, SpecNone, GetButterfly, codeOrigin, childEdge)));
+                    m_insertionSet.insertNode(indexInBlock, SpecNone, StoreBarrier, codeOrigin, Edge(node->child1().node(), KnownCellUse));
+                    propertyStorage = Edge(reallocatePropertyStorage);
                 }
                 
                 if (status.isSimpleTransition()) {
-                    m_insertionSet.insertNode(
-                        indexInBlock, SpecNone, PutStructure, codeOrigin, 
-                        OpInfo(transitionData), childEdge);
+                    Node* putStructure = m_graph.addNode(SpecNone, PutStructure, codeOrigin, OpInfo(transitionData), childEdge);
+                    m_insertionSet.insertNode(indexInBlock, SpecNone, StoreBarrier, codeOrigin, Edge(node->child1().node(), KnownCellUse));
+                    m_insertionSet.insert(indexInBlock, putStructure);
                 }
-                
+
                 node->convertToPutByOffset(m_graph.m_storageAccessData.size(), propertyStorage);
+                m_insertionSet.insertNode(indexInBlock, SpecNone, ConditionalStoreBarrier, codeOrigin, 
+                    Edge(node->child2().node(), KnownCellUse), Edge(node->child3().node(), UntypedUse));
                 
                 StorageAccessData storageAccessData;
                 storageAccessData.offset = status.offset();
@@ -329,7 +335,20 @@ private:
                 m_graph.m_storageAccessData.append(storageAccessData);
                 break;
             }
-                
+
+            case ConditionalStoreBarrier: {
+                if (!m_interpreter.needsTypeCheck(node->child2().node(), ~SpecCell)) {
+                    node->convertToPhantom();
+                    eliminated = true;
+                }
+                break;
+            }
+
+            case StoreBarrier:
+            case StoreBarrierWithNullCheck: {
+                break;
+            }
+
             default:
                 break;
             }

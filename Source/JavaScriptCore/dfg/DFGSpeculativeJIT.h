@@ -289,9 +289,22 @@ public:
         return masqueradesAsUndefinedWatchpointIsStillValid(m_currentNode->codeOrigin);
     }
 
-    void writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, Edge valueUse, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg, GPRReg scratchGPR2 = InvalidGPRReg);
-    void writeBarrier(GPRReg ownerGPR, JSCell* value, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg, GPRReg scratchGPR2 = InvalidGPRReg);
-    void writeBarrier(JSCell* owner, GPRReg valueGPR, Edge valueUse, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg);
+#if ENABLE(GGC)
+    static MacroAssembler::Call storeToWriteBarrierBuffer(CCallHelpers& jit, GPRReg cell, GPRReg scratch1, GPRReg scratch2);
+    void storeToWriteBarrierBuffer(GPRReg cell, GPRReg scratch1, GPRReg scratch2);
+    void storeToWriteBarrierBuffer(JSCell*, GPRReg scratch1, GPRReg scratch2);
+
+    static JITCompiler::Jump genericWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2);
+    static JITCompiler::Jump genericWriteBarrier(CCallHelpers& jit, JSCell* owner);
+    static void osrWriteBarrier(CCallHelpers&, GPRReg owner, GPRReg scratch1, GPRReg scratch2);
+    static MacroAssembler::Call writeBarrier(CCallHelpers&, GPRReg owner, GPRReg scratch1, GPRReg scratch2);
+    void writeBarrier(GPRReg owner, GPRReg scratch1, GPRReg scratch2);
+    void writeBarrier(GPRReg owner, JSCell* value, GPRReg scratch1, GPRReg scratch2);
+
+    void writeBarrier(GPRReg owner, GPRReg value, Edge valueUse, GPRReg scratch1, GPRReg scratch2);
+    void writeBarrier(JSCell* owner, GPRReg value, Edge valueUse, GPRReg scratch1, GPRReg scratch2);
+#endif
+    void compileStoreBarrier(Node*);
 
     static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg, GPRReg preserve4 = InvalidGPRReg)
     {
@@ -700,14 +713,16 @@ public:
 
 #if USE(JSVALUE64)
     void cachedGetById(CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
-    void cachedPutById(CodeOrigin, GPRReg base, GPRReg value, Edge valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    void cachedPutById(CodeOrigin, GPRReg base, GPRReg value, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
 #elif USE(JSVALUE32_64)
     void cachedGetById(CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
-    void cachedPutById(CodeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, Edge valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    void cachedPutById(CodeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
 #endif
     
     void compileIn(Node*);
     
+    void compileBaseValueStoreBarrier(Edge& baseEdge, Edge& valueEdge);
+
     void nonSpeculativeNonPeepholeCompareNull(Edge operand, bool invert = false);
     void nonSpeculativePeepholeBranchNull(Edge operand, Node* branchNode, bool invert = false);
     bool nonSpeculativeCompareNull(Node*, Edge operand, bool invert = false);
@@ -1059,6 +1074,12 @@ public:
         return appendCallWithExceptionCheck(operation);
     }
 
+    JITCompiler::Call callOperation(V_JITOperation_EC operation, JSCell* arg1)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(arg1));
+        return appendCallWithExceptionCheck(operation);
+    }
+
     JITCompiler::Call callOperation(V_JITOperation_ECIcf operation, GPRReg arg1, InlineCallFrame* inlineCallFrame)
     {
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(inlineCallFrame));
@@ -1075,10 +1096,19 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, TrustedImm32(arg2));
         return appendCallWithExceptionCheck(operation);
     }
-
     JITCompiler::Call callOperation(V_JITOperation_ECC operation, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallWithExceptionCheck(operation);
+    }
+    JITCompiler::Call callOperation(V_JITOperation_ECC operation, GPRReg arg1, JSCell* arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(arg2));
+        return appendCallWithExceptionCheck(operation);
+    }
+    JITCompiler::Call callOperation(V_JITOperation_ECC operation, JSCell* arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(arg1), arg2);
         return appendCallWithExceptionCheck(operation);
     }
 
@@ -1340,7 +1370,6 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallWithExceptionCheck(operation);
     }
-
     JITCompiler::Call callOperation(V_JITOperation_EJPP operation, GPRReg arg1, GPRReg arg2, void* pointer)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(pointer));

@@ -37,6 +37,15 @@
 namespace JSC { namespace DFG {
 
 template<typename ReadFunctor, typename WriteFunctor>
+void clobberizeForAllocation(ReadFunctor& read, WriteFunctor& write)
+{
+    read(GCState);
+    read(BarrierState);
+    write(GCState);
+    write(BarrierState);
+}
+
+template<typename ReadFunctor, typename WriteFunctor>
 void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write)
 {
     // Some notes:
@@ -160,10 +169,9 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
 
     case CreateActivation:
     case CreateArguments:
+        clobberizeForAllocation(read, write);
         write(SideState);
         write(Watchpoint_fire);
-        read(GCState);
-        write(GCState);
         return;
         
     case FunctionReentryWatchpoint:
@@ -173,8 +181,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case ToThis:
     case CreateThis:
         read(MiscFields);
-        read(GCState);
-        write(GCState);
+        clobberizeForAllocation(read, write);
         return;
 
     case VarInjectionWatchpoint:
@@ -435,15 +442,13 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         
     case AllocatePropertyStorage:
         write(JSObject_butterfly);
-        read(GCState);
-        write(GCState);
+        clobberizeForAllocation(read, write);
         return;
         
     case ReallocatePropertyStorage:
         read(JSObject_butterfly);
         write(JSObject_butterfly);
-        read(GCState);
-        write(GCState);
+        clobberizeForAllocation(read, write);
         return;
         
     case GetButterfly:
@@ -456,8 +461,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         read(JSObject_butterfly);
         write(JSCell_structure);
         write(JSObject_butterfly);
-        read(GCState);
-        write(GCState);
+        clobberizeForAllocation(read, write);
         return;
         
     case GetIndexedPropertyStorage:
@@ -544,15 +548,13 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case NewFunctionNoCheck:
     case NewFunction:
     case NewFunctionExpression:
-        read(GCState);
-        write(GCState);
+        clobberizeForAllocation(read, write);
         return;
         
     case NewTypedArray:
+        clobberizeForAllocation(read, write);
         switch (node->child1().useKind()) {
         case Int32Use:
-            read(GCState);
-            write(GCState);
             return;
         case UntypedUse:
             read(World);
@@ -641,14 +643,20 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
 
     case ThrowReferenceError:
         write(SideState);
-        read(GCState);
-        write(GCState);
+        clobberizeForAllocation(read, write);
         return;
         
     case CountExecution:
     case CheckWatchdogTimer:
         read(InternalState);
         write(InternalState);
+        return;
+
+    case StoreBarrier:
+    case ConditionalStoreBarrier:
+    case StoreBarrierWithNullCheck:
+        read(BarrierState);
+        write(BarrierState);
         return;
         
     case LastNodeType:

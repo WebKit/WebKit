@@ -141,6 +141,7 @@ typedef void JIT_OPERATION (*V_JITOperation_ECIcf)(ExecState*, JSCell*, InlineCa
 typedef void JIT_OPERATION (*V_JITOperation_ECICC)(ExecState*, JSCell*, Identifier*, JSCell*, JSCell*);
 typedef void JIT_OPERATION (*V_JITOperation_ECCIcf)(ExecState*, JSCell*, JSCell*, InlineCallFrame*);
 typedef void JIT_OPERATION (*V_JITOperation_ECJJ)(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue);
+typedef void JIT_OPERATION (*V_JITOperation_ECPSPS)(ExecState*, JSCell*, void*, size_t, void*, size_t);
 typedef void JIT_OPERATION (*V_JITOperation_ECZ)(ExecState*, JSCell*, int32_t);
 typedef void JIT_OPERATION (*V_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef void JIT_OPERATION (*V_JITOperation_EIdJZ)(ExecState*, Identifier*, EncodedJSValue, int32_t);
@@ -276,6 +277,13 @@ char* JIT_OPERATION operationSwitchStringWithUnknownKeyType(ExecState*, EncodedJ
 EncodedJSValue JIT_OPERATION operationResolveScope(ExecState*, int32_t identifierIndex) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState*, Instruction* bytecodePC) WTF_INTERNAL;
 void JIT_OPERATION operationPutToScope(ExecState*, Instruction* bytecodePC) WTF_INTERNAL;
+
+void JIT_OPERATION operationFlushWriteBarrierBuffer(ExecState*, JSCell*);
+void JIT_OPERATION operationWriteBarrier(ExecState*, JSCell*, JSCell*);
+void JIT_OPERATION operationUnconditionalWriteBarrier(ExecState*, JSCell*);
+void JIT_OPERATION operationOSRWriteBarrier(ExecState*, JSCell*);
+
+void JIT_OPERATION operationInitGlobalConst(ExecState*, Instruction*);
 
 } // extern "C"
 

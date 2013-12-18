@@ -428,6 +428,7 @@
     <ClCompile Include="..\dfg\DFGSSAConversionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGSSALoweringPhase.cpp" />
     <ClCompile Include="..\dfg\DFGStackLayoutPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGStoreBarrierElisionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGStrengthReductionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGThunks.cpp" />
     <ClCompile Include="..\dfg\DFGTierUpCheckInjectionPhase.cpp" />
@@ -471,6 +472,7 @@
     <ClCompile Include="..\heap\WeakBlock.cpp" />
     <ClCompile Include="..\heap\WeakHandleOwner.cpp" />
     <ClCompile Include="..\heap\WeakSet.cpp" />
+    <ClCompile Include="..\heap\WriteBarrierBuffer.cpp" />
     <ClCompile Include="..\heap\WriteBarrierSupport.cpp" />
     <ClCompile Include="..\inspector\InspectorAgentRegistry.cpp" />
     <ClCompile Include="..\inspector\InspectorBackendDispatcher.cpp" />
@@ -948,6 +950,7 @@
     <ClInclude Include="..\dfg\DFGSSAConversionPhase.h" />
     <ClInclude Include="..\dfg\DFGSSALoweringPhase.h" />
     <ClInclude Include="..\dfg\DFGStackLayoutPhase.h" />
+    <ClInclude Include="..\dfg\DFGStoreBarrierElisionPhase.h" />
     <ClInclude Include="..\dfg\DFGStrengthReductionPhase.h" />
     <ClInclude Include="..\dfg\DFGStructureAbstractValue.h" />
     <ClInclude Include="..\dfg\DFGThunks.h" />
@@ -1026,6 +1029,7 @@
     <ClInclude Include="..\heap\WeakReferenceHarvester.h" />
     <ClInclude Include="..\heap\WeakSet.h" />
     <ClInclude Include="..\heap\WeakSetInlines.h" />
+    <ClInclude Include="..\heap\WriteBarrierBuffer.h" />
     <ClInclude Include="..\heap\WriteBarrierSupport.h" />
     <ClInclude Include="..\inspector\InspectorAgentBase.h" />
     <ClInclude Include="..\inspector\InspectorAgentRegistry.h" />

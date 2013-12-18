@@ -31,6 +31,7 @@
 
 #include "DateInstanceCache.h"
 #include "ExecutableAllocator.h"
+#include "GPRInfo.h"
 #include "Heap.h"
 #include "Intrinsic.h"
 #include "JITThunks.h"
@@ -386,6 +387,8 @@ namespace JSC {
 
         const ClassInfo* const jsArrayClassInfo;
         const ClassInfo* const jsFinalObjectClassInfo;
+
+        void* writeBarrierRegisterBuffer[GPRInfo::numberOfRegisters];
 
         ReturnAddressPtr exceptionLocation;
         JSValue hostCallReturnValue;

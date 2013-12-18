@@ -68,6 +68,7 @@ namespace JSC { namespace DFG {
     macro(Variables) \
     macro(TypedArrayProperties) \
     macro(GCState) \
+    macro(BarrierState) \
     macro(RegExpState) \
     macro(InternalState) \
     macro(Absolute) \

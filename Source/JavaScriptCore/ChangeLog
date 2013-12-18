@@ -1,3 +1,118 @@
+2013-12-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        DFG should have a separate StoreBarrier node
+        https://bugs.webkit.org/show_bug.cgi?id=125530
+
+        Reviewed by Filip Pizlo.
+
+        This is in preparation for GenGC. We use a separate StoreBarrier node instead of making them implicitly 
+        part of other nodes so that it's easier to run analyses on them, e.g. for the StoreBarrierElisionPhase. 
+        They are inserted during the fixup phase. Initially they do not generate any code.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::isKnownNotCell):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberizeForAllocation):
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants): Whenever we insert new nodes that require StoreBarriers,
+        we have to add those new StoreBarriers too. It's important to note that AllocatePropertyStorage and 
+        ReallocatePropertyStorage nodes require their StoreBarriers to come after them since they allocate first,
+        which could cause a GC, and then store the resulting buffer into their JSCell, which requires the barrier.
+        If we ever require that write barriers occur before stores, we'll have to split these nodes into 
+        AllocatePropertyStorage + StoreBarrier + PutPropertyStorage.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::insertStoreBarrier):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isStoreBarrier):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileStoreBarrier):
+        (JSC::DFG::SpeculativeJIT::genericWriteBarrier): The fast path write barrier check. It loads the 
+        byte that contains the mark bit of the object. 
+        (JSC::DFG::SpeculativeJIT::storeToWriteBarrierBuffer): If the fast path check fails we try to store the 
+        cell in the WriteBarrierBuffer so as to avoid frequently flushing all registers in order to make a C call.
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        (JSC::DFG::SpeculativeJIT::osrWriteBarrier): More barebones version of the write barrier to be executed 
+        during an OSR exit into baseline code. We must do this so that the baseline JIT object and array profiles 
+        are properly cleared during GC.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compileBaseValueStoreBarrier):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compileBaseValueStoreBarrier):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGStoreBarrierElisionPhase.cpp: Added. New DFG phase that does block-local elision of redundant
+        StoreBarriers. Every time a StoreBarrier on a particular object is executed, a bit is set indicating that 
+        that object doesn't need any more StoreBarriers. 
+        (JSC::DFG::StoreBarrierElisionPhase::StoreBarrierElisionPhase):
+        (JSC::DFG::StoreBarrierElisionPhase::couldCauseGC): Nodes that could cause a GC reset the bits for all of the 
+        objects known in the current block. 
+        (JSC::DFG::StoreBarrierElisionPhase::allocatesFreshObject): A node that creates a new object automatically 
+        sets the bit for that object since if a GC occurred as the result of that object's allocation then that 
+        object would not need a barrier since it would be guaranteed to be a young generation object until the 
+        next GC point.
+        (JSC::DFG::StoreBarrierElisionPhase::noticeFreshObject):
+        (JSC::DFG::StoreBarrierElisionPhase::getBaseOfStore):
+        (JSC::DFG::StoreBarrierElisionPhase::shouldBeElided):
+        (JSC::DFG::StoreBarrierElisionPhase::elideBarrier):
+        (JSC::DFG::StoreBarrierElisionPhase::handleNode):
+        (JSC::DFG::StoreBarrierElisionPhase::handleBlock):
+        (JSC::DFG::StoreBarrierElisionPhase::run):
+        (JSC::DFG::performStoreBarrierElision):
+        * dfg/DFGStoreBarrierElisionPhase.h: Added.
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::flushWriteBarrierBuffer):
+        * heap/Heap.h:
+        (JSC::Heap::writeBarrier):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::offsetOfMarks):
+        * heap/WriteBarrierBuffer.cpp: Added. The WriteBarrierBuffer buffers a set of JSCells that are awaiting 
+        a pending WriteBarrier. This buffer is used by the DFG to avoid the overhead of calling out to C repeatedly
+        to invoke a write barrier on a single JSCell. Instead the DFG has inline code to fill the WriteBarrier buffer
+        until its full, and then to call out to C to flush it. The WriteBarrierBuffer will also be flushed prior to 
+        each EdenCollection.
+        (JSC::WriteBarrierBuffer::WriteBarrierBuffer):
+        (JSC::WriteBarrierBuffer::~WriteBarrierBuffer):
+        (JSC::WriteBarrierBuffer::flush):
+        (JSC::WriteBarrierBuffer::reset):
+        (JSC::WriteBarrierBuffer::add):
+        * heap/WriteBarrierBuffer.h: Added.
+        (JSC::WriteBarrierBuffer::currentIndexOffset):
+        (JSC::WriteBarrierBuffer::capacityOffset):
+        (JSC::WriteBarrierBuffer::bufferOffset):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * runtime/VM.h:
+
 2013-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

@@ -37,6 +37,7 @@
 #include "DFGSlowPathGenerator.h"
 #include "JSCJSValueInlines.h"
 #include "LinkBuffer.h"
+#include "WriteBarrierBuffer.h"
 #include <wtf/MathExtras.h>
 
 namespace JSC { namespace DFG {
@@ -907,53 +908,6 @@ void SpeculativeJIT::useChildren(Node* node)
             return;
         use(child3);
     }
-}
-
-void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, Edge valueUse, WriteBarrierUseKind useKind, GPRReg scratch1, GPRReg scratch2)
-{
-    UNUSED_PARAM(ownerGPR);
-    UNUSED_PARAM(valueGPR);
-    UNUSED_PARAM(scratch1);
-    UNUSED_PARAM(scratch2);
-    UNUSED_PARAM(useKind);
-
-    if (isKnownNotCell(valueUse.node()))
-        return;
-
-#if ENABLE(WRITE_BARRIER_PROFILING)
-    JITCompiler::emitCount(m_jit, WriteBarrierCounters::jitCounterFor(useKind));
-#endif
-}
-
-void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, JSCell* value, WriteBarrierUseKind useKind, GPRReg scratch1, GPRReg scratch2)
-{
-    UNUSED_PARAM(ownerGPR);
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(scratch1);
-    UNUSED_PARAM(scratch2);
-    UNUSED_PARAM(useKind);
-    
-    if (Heap::isMarked(value))
-        return;
-
-#if ENABLE(WRITE_BARRIER_PROFILING)
-    JITCompiler::emitCount(m_jit, WriteBarrierCounters::jitCounterFor(useKind));
-#endif
-}
-
-void SpeculativeJIT::writeBarrier(JSCell* owner, GPRReg valueGPR, Edge valueUse, WriteBarrierUseKind useKind, GPRReg scratch)
-{
-    UNUSED_PARAM(owner);
-    UNUSED_PARAM(valueGPR);
-    UNUSED_PARAM(scratch);
-    UNUSED_PARAM(useKind);
-
-    if (isKnownNotCell(valueUse.node()))
-        return;
-
-#if ENABLE(WRITE_BARRIER_PROFILING)
-    JITCompiler::emitCount(m_jit, WriteBarrierCounters::jitCounterFor(useKind));
-#endif
 }
 
 void SpeculativeJIT::compileIn(Node* node)
@@ -4329,26 +4283,26 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
     }
     
     SpeculateCellOperand base(this, node->child1());
-    GPRTemporary scratch(this);
+    GPRTemporary scratch1(this);
         
     GPRReg baseGPR = base.gpr();
-    GPRReg scratchGPR = scratch.gpr();
+    GPRReg scratchGPR1 = scratch1.gpr();
         
     ASSERT(!node->structureTransitionData().previousStructure->outOfLineCapacity());
     ASSERT(initialOutOfLineCapacity == node->structureTransitionData().newStructure->outOfLineCapacity());
     
     JITCompiler::Jump slowPath =
         emitAllocateBasicStorage(
-            TrustedImm32(initialOutOfLineCapacity * sizeof(JSValue)), scratchGPR);
+            TrustedImm32(initialOutOfLineCapacity * sizeof(JSValue)), scratchGPR1);
 
-    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(IndexingHeader)), scratchGPR);
+    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(IndexingHeader)), scratchGPR1);
         
     addSlowPathGenerator(
-        slowPathCall(slowPath, this, operationAllocatePropertyStorageWithInitialCapacity, scratchGPR));
-        
-    m_jit.storePtr(scratchGPR, JITCompiler::Address(baseGPR, JSObject::butterflyOffset()));
-        
-    storageResult(scratchGPR, node);
+        slowPathCall(slowPath, this, operationAllocatePropertyStorageWithInitialCapacity, scratchGPR1));
+
+    m_jit.storePtr(scratchGPR1, JITCompiler::Address(baseGPR, JSObject::butterflyOffset()));
+
+    storageResult(scratchGPR1, node);
 }
 
 void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
@@ -4367,6 +4321,10 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
         GPRResult result(this);
         callOperation(operationReallocateButterflyToGrowPropertyStorage, result.gpr(), baseGPR, newSize / sizeof(JSValue));
         
+        MacroAssembler::Jump notNull = m_jit.branchTestPtr(MacroAssembler::NonZero, result.gpr());
+        m_jit.breakpoint();
+        notNull.link(&m_jit);
+
         storageResult(result.gpr(), node);
         return;
     }
@@ -4382,20 +4340,21 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
     GPRReg scratchGPR2 = scratch2.gpr();
         
     JITCompiler::Jump slowPath =
-        emitAllocateBasicStorage(TrustedImm32(newSize), scratchGPR2);
+        emitAllocateBasicStorage(TrustedImm32(newSize), scratchGPR1);
 
-    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(IndexingHeader)), scratchGPR2);
+    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(IndexingHeader)), scratchGPR1);
         
     addSlowPathGenerator(
-        slowPathCall(slowPath, this, operationAllocatePropertyStorage, scratchGPR2, newSize / sizeof(JSValue)));
-    // We have scratchGPR2 = new storage, scratchGPR1 = scratch
+        slowPathCall(slowPath, this, operationAllocatePropertyStorage, scratchGPR1, newSize / sizeof(JSValue)));
+
+    // We have scratchGPR1 = new storage, scratchGPR2 = scratch
     for (ptrdiff_t offset = 0; offset < static_cast<ptrdiff_t>(oldSize); offset += sizeof(void*)) {
-        m_jit.loadPtr(JITCompiler::Address(oldStorageGPR, -(offset + sizeof(JSValue) + sizeof(void*))), scratchGPR1);
-        m_jit.storePtr(scratchGPR1, JITCompiler::Address(scratchGPR2, -(offset + sizeof(JSValue) + sizeof(void*))));
+        m_jit.loadPtr(JITCompiler::Address(oldStorageGPR, -(offset + sizeof(JSValue) + sizeof(void*))), scratchGPR2);
+        m_jit.storePtr(scratchGPR2, JITCompiler::Address(scratchGPR1, -(offset + sizeof(JSValue) + sizeof(void*))));
     }
-    m_jit.storePtr(scratchGPR2, JITCompiler::Address(baseGPR, JSObject::butterflyOffset()));
-    
-    storageResult(scratchGPR2, node);
+    m_jit.storePtr(scratchGPR1, JITCompiler::Address(baseGPR, JSObject::butterflyOffset()));
+
+    storageResult(scratchGPR1, node);
 }
 
 GPRReg SpeculativeJIT::temporaryRegisterForPutByVal(GPRTemporary& temporary, ArrayMode arrayMode)
@@ -5450,6 +5409,248 @@ void SpeculativeJIT::linkBranches()
         branch.jump.linkTo(m_jit.blockHeads()[branch.destination->index], &m_jit);
     }
 }
+
+#if ENABLE(GGC)
+void SpeculativeJIT::compileStoreBarrier(Node* node)
+{
+    switch (node->op()) {
+    case ConditionalStoreBarrier: {
+        compileBaseValueStoreBarrier(node->child1(), node->child2());
+        break;
+    }
+
+    case StoreBarrier: {
+        SpeculateCellOperand base(this, node->child1());
+        GPRTemporary scratch1(this);
+        GPRTemporary scratch2(this);
+    
+        writeBarrier(base.gpr(), scratch1.gpr(), scratch2.gpr());
+        break;
+    }
+
+    case StoreBarrierWithNullCheck: {
+        JSValueOperand base(this, node->child1());
+        GPRTemporary scratch1(this);
+        GPRTemporary scratch2(this);
+    
+#if USE(JSVALUE64)
+        JITCompiler::Jump isNull = m_jit.branchTest64(JITCompiler::Zero, base.gpr());
+        writeBarrier(base.gpr(), scratch1.gpr(), scratch2.gpr());
+#else
+        JITCompiler::Jump isNull = m_jit.branch32(JITCompiler::Equal, base.tagGPR(), TrustedImm32(JSValue::EmptyValueTag));
+        writeBarrier(base.payloadGPR(), scratch1.gpr(), scratch2.gpr());
+#endif
+        isNull.link(&m_jit);
+        break;
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    noResult(node);
+}
+
+JITCompiler::Jump SpeculativeJIT::genericWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2)
+{
+    jit.move(owner, scratch1);
+    jit.move(owner, scratch2);
+
+    jit.andPtr(MacroAssembler::TrustedImmPtr(MarkedBlock::blockMask), scratch1);
+    jit.andPtr(MacroAssembler::TrustedImmPtr(~MarkedBlock::blockMask), scratch2);
+
+    // Shift index
+#if USE(JSVALUE64)
+    jit.rshift64(MacroAssembler::TrustedImm32(MarkedBlock::atomShiftAmount + MarkedBlock::markByteShiftAmount), scratch2);
+#else
+    jit.rshift32(MacroAssembler::TrustedImm32(MarkedBlock::atomShiftAmount + MarkedBlock::markByteShiftAmount), scratch2);
+#endif
+
+    // Emit load and branch
+    return jit.branchTest8(MacroAssembler::Zero, MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::TimesOne, MarkedBlock::offsetOfMarks()));
+}
+
+JITCompiler::Jump SpeculativeJIT::genericWriteBarrier(CCallHelpers& jit, JSCell* owner)
+{
+    MarkedBlock* block = MarkedBlock::blockFor(owner);
+    size_t markIndex = (reinterpret_cast<size_t>(owner) & ~MarkedBlock::blockMask) >> (MarkedBlock::atomShiftAmount + MarkedBlock::markByteShiftAmount);
+    uint8_t* address = reinterpret_cast<uint8_t*>(reinterpret_cast<char*>(block) + MarkedBlock::offsetOfMarks()) + markIndex;
+    return jit.branchTest8(MacroAssembler::Zero, MacroAssembler::AbsoluteAddress(address));
+}
+
+MacroAssembler::Call SpeculativeJIT::storeToWriteBarrierBuffer(CCallHelpers& jit, GPRReg cell, GPRReg scratch1, GPRReg scratch2)
+{
+    ASSERT(scratch1 != scratch2);
+    // Load WriteBarrierBuffer from Heap
+    WriteBarrierBuffer* writeBarrierBuffer = &jit.vm()->heap.m_writeBarrierBuffer;
+    jit.move(TrustedImmPtr(writeBarrierBuffer), scratch1);
+    // Load currentIndex
+    jit.load32(MacroAssembler::Address(scratch1, WriteBarrierBuffer::currentIndexOffset()), scratch2);
+    // Branch if currentIndex >= capacity
+    JITCompiler::Jump needToFlush = jit.branch32(MacroAssembler::AboveOrEqual, scratch2, MacroAssembler::Address(scratch1, WriteBarrierBuffer::capacityOffset()));
+
+    // Store new currentIndex
+    jit.add32(TrustedImm32(1), scratch2);
+    jit.store32(scratch2, MacroAssembler::Address(scratch1, WriteBarrierBuffer::currentIndexOffset()));
+
+    // Load buffer
+    jit.loadPtr(MacroAssembler::Address(scratch1, WriteBarrierBuffer::bufferOffset()), scratch1);
+    // Store cell into buffer. We use an offset of -sizeof(void*) because we already added 1 to scratch2.
+    jit.storePtr(cell, MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::ScalePtr, static_cast<int32_t>(-sizeof(void*))));
+
+    // Jump to done
+    JITCompiler::Jump done = jit.jump();
+    // Link from branch
+    needToFlush.link(&jit);
+
+    // Call C slow path.
+    for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
+        jit.storePtr(GPRInfo::toRegister(i), &jit.vm()->writeBarrierRegisterBuffer[i]);
+
+#if CPU(X86)
+    jit.push(scratch1);
+    jit.push(scratch1);
+#endif
+
+    jit.setupArgumentsWithExecState(cell);
+    MacroAssembler::Call call = jit.call();
+
+#if CPU(X86)
+    jit.pop(scratch1);
+    jit.pop(scratch1);
+#endif
+
+    for (unsigned i = GPRInfo::numberOfRegisters; i--;)
+        jit.loadPtr(&jit.vm()->writeBarrierRegisterBuffer[i], GPRInfo::toRegister(i));
+
+    // Link Done
+    done.link(&jit);
+
+    return call;
+}
+
+void SpeculativeJIT::storeToWriteBarrierBuffer(GPRReg cell, GPRReg scratch1, GPRReg scratch2)
+{
+    ASSERT(scratch1 != scratch2);
+    WriteBarrierBuffer* writeBarrierBuffer = &m_jit.vm()->heap.m_writeBarrierBuffer;
+    m_jit.move(TrustedImmPtr(writeBarrierBuffer), scratch1);
+    m_jit.load32(MacroAssembler::Address(scratch1, WriteBarrierBuffer::currentIndexOffset()), scratch2);
+    JITCompiler::Jump needToFlush = m_jit.branch32(MacroAssembler::AboveOrEqual, scratch2, MacroAssembler::Address(scratch1, WriteBarrierBuffer::capacityOffset()));
+
+    m_jit.add32(TrustedImm32(1), scratch2);
+    m_jit.store32(scratch2, MacroAssembler::Address(scratch1, WriteBarrierBuffer::currentIndexOffset()));
+
+    m_jit.loadPtr(MacroAssembler::Address(scratch1, WriteBarrierBuffer::bufferOffset()), scratch1);
+    // We use an offset of -sizeof(void*) because we already added 1 to scratch2.
+    m_jit.storePtr(cell, MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::ScalePtr, static_cast<int32_t>(-sizeof(void*))));
+
+    JITCompiler::Jump done = m_jit.jump();
+    needToFlush.link(&m_jit);
+
+    silentSpillAllRegisters(InvalidGPRReg);
+    callOperation(operationFlushWriteBarrierBuffer, cell);
+    silentFillAllRegisters(InvalidGPRReg);
+
+    done.link(&m_jit);
+}
+
+void SpeculativeJIT::storeToWriteBarrierBuffer(JSCell* cell, GPRReg scratch1, GPRReg scratch2)
+{
+    ASSERT(scratch1 != scratch2);
+    WriteBarrierBuffer* writeBarrierBuffer = &m_jit.vm()->heap.m_writeBarrierBuffer;
+    m_jit.move(TrustedImmPtr(writeBarrierBuffer), scratch1);
+    m_jit.load32(MacroAssembler::Address(scratch1, WriteBarrierBuffer::currentIndexOffset()), scratch2);
+    JITCompiler::Jump needToFlush = m_jit.branch32(MacroAssembler::AboveOrEqual, scratch2, MacroAssembler::Address(scratch1, WriteBarrierBuffer::capacityOffset()));
+
+    m_jit.add32(TrustedImm32(1), scratch2);
+    m_jit.store32(scratch2, MacroAssembler::Address(scratch1, WriteBarrierBuffer::currentIndexOffset()));
+
+    m_jit.loadPtr(MacroAssembler::Address(scratch1, WriteBarrierBuffer::bufferOffset()), scratch1);
+    // We use an offset of -sizeof(void*) because we already added 1 to scratch2.
+    m_jit.storePtr(TrustedImmPtr(cell), MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::ScalePtr, static_cast<int32_t>(-sizeof(void*))));
+
+    JITCompiler::Jump done = m_jit.jump();
+    needToFlush.link(&m_jit);
+
+    // Call C slow path
+    silentSpillAllRegisters(InvalidGPRReg);
+    callOperation(operationFlushWriteBarrierBuffer, cell);
+    silentFillAllRegisters(InvalidGPRReg);
+
+    done.link(&m_jit);
+}
+
+void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, JSCell* value, GPRReg scratch1, GPRReg scratch2)
+{
+    if (Heap::isMarked(value))
+        return;
+
+    JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(m_jit, ownerGPR, scratch1, scratch2);
+    storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
+    definitelyNotMarked.link(&m_jit);
+}
+
+void SpeculativeJIT::osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2)
+{
+    UNUSED_PARAM(jit);
+    UNUSED_PARAM(owner);
+    UNUSED_PARAM(scratch1);
+    UNUSED_PARAM(scratch2);
+    ASSERT(owner != scratch1);
+    ASSERT(owner != scratch2);
+
+    JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(jit, owner, scratch1, scratch2);
+
+    for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i)
+        jit.storePtr(GPRInfo::toRegister(i), &jit.vm()->writeBarrierRegisterBuffer[i]);
+
+    // We need these extra slots because setupArgumentsWithExecState will use poke on x86.
+#if CPU(X86)
+    jit.push(scratch1);
+    jit.push(scratch1);
+    jit.push(scratch1);
+#endif
+
+    jit.setupArgumentsWithExecState(owner);
+    jit.move(TrustedImmPtr(reinterpret_cast<void*>(operationOSRWriteBarrier)), scratch1);
+    jit.call(scratch1);
+
+#if CPU(X86)
+    jit.pop(scratch1);
+    jit.pop(scratch1);
+    jit.pop(scratch1);
+#endif
+    for (unsigned i = GPRInfo::numberOfRegisters; i--;)
+        jit.loadPtr(&jit.vm()->writeBarrierRegisterBuffer[i], GPRInfo::toRegister(i)); 
+
+    definitelyNotMarked.link(&jit);
+}
+
+MacroAssembler::Call SpeculativeJIT::writeBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2)
+{
+    ASSERT(owner != scratch1);
+    ASSERT(owner != scratch2);
+
+    JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(jit, owner, scratch1, scratch2);
+    MacroAssembler::Call call = storeToWriteBarrierBuffer(jit, owner, scratch1, scratch2);
+    definitelyNotMarked.link(&jit);
+    return call;
+}
+
+void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg scratch1, GPRReg scratch2)
+{
+    JITCompiler::Jump definitelyNotMarked = genericWriteBarrier(m_jit, ownerGPR, scratch1, scratch2);
+    storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
+    definitelyNotMarked.link(&m_jit);
+}
+#else
+void SpeculativeJIT::compileStoreBarrier(Node* node)
+{
+    DFG_NODE_DO_TO_CHILDREN(m_jit.graph(), node, speculate);
+    noResult(node);
+}
+#endif // ENABLE(GGC)
 
 } } // namespace JSC::DFG
 

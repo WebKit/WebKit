@@ -291,6 +291,10 @@ namespace JSC { namespace DFG {
     /* Checks the watchdog timer. If the timer has fired, we OSR exit to the */ \
     /* baseline JIT to redo the watchdog timer check, and service the timer. */ \
     macro(CheckWatchdogTimer, NodeMustGenerate) \
+    /* Write barriers ! */\
+    macro(StoreBarrier, NodeMustGenerate) \
+    macro(ConditionalStoreBarrier, NodeMustGenerate) \
+    macro(StoreBarrierWithNullCheck, NodeMustGenerate) \
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).

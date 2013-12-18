@@ -73,11 +73,14 @@ namespace JSC {
 
     public:
         static const size_t atomSize = 8; // bytes
+        static const size_t atomShiftAmount = 4; // log_2(atomSize) FIXME: Change atomSize to 16.
         static const size_t blockSize = 64 * KB;
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
         static const size_t atomsPerBlock = blockSize / atomSize;
         static const size_t atomMask = atomsPerBlock - 1;
+
+        static const size_t markByteShiftAmount = 3; // log_2(word size for m_marks) FIXME: Change word size for m_marks to uint8_t.
 
         struct FreeCell {
             FreeCell* next;
@@ -167,6 +170,8 @@ namespace JSC {
         template <typename Functor> void forEachCell(Functor&);
         template <typename Functor> void forEachLiveCell(Functor&);
         template <typename Functor> void forEachDeadCell(Functor&);
+
+        static ptrdiff_t offsetOfMarks() { return OBJECT_OFFSETOF(MarkedBlock, m_marks); }
 
     private:
         static const size_t atomAlignmentMask = atomSize - 1; // atomSize must be a power of two.

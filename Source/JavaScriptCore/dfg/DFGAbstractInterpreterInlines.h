@@ -1588,6 +1588,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CheckTierUpAtReturn:
         break;
 
+    case ConditionalStoreBarrier: {
+        if (!needsTypeCheck(node->child2().node(), ~SpecCell))
+            m_state.setFoundConstants(true);
+        filter(node->child1(), SpecCell);
+        break;
+    }
+
+    case StoreBarrier: {
+        filter(node->child1(), SpecCell);
+        break;
+    }
+
+    case StoreBarrierWithNullCheck: {
+        break;
+    }
+
     case CheckTierUpAndOSREnter:
     case LoopHint:
         // We pretend that it can exit because it may want to get all state.

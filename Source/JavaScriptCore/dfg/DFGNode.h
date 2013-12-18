@@ -606,7 +606,19 @@ struct Node {
         ASSERT(hasPhi());
         return bitwise_cast<Node*>(m_opInfo);
     }
-    
+
+    bool isStoreBarrier()
+    {
+        switch (op()) {
+        case StoreBarrier:
+        case ConditionalStoreBarrier:
+        case StoreBarrierWithNullCheck:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     bool hasIdentifier()
     {
         switch (op()) {
@@ -1555,6 +1567,7 @@ public:
     union {
         Node* replacement;
         BasicBlock* owner;
+        bool needsBarrier;
     } misc;
 };
 

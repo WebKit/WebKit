@@ -30,6 +30,7 @@
 
 #include "DFGOperations.h"
 #include "DFGOSRExitCompilerCommon.h"
+#include "DFGSpeculativeJIT.h"
 #include "Operations.h"
 #include "VirtualRegister.h"
 
@@ -402,9 +403,19 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
         }
     }
-    
-    // 11) And finish.
-    
+
+#if ENABLE(GGC) 
+    // 11) Write barrier the owner executable because we're jumping into a different block.
+    for (CodeOrigin codeOrigin = exit.m_codeOrigin; ; codeOrigin = codeOrigin.inlineCallFrame->caller) {
+        CodeBlock* baselineCodeBlock = m_jit.baselineCodeBlockFor(codeOrigin);
+        m_jit.move(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock->ownerExecutable()), GPRInfo::nonArgGPR0); 
+        SpeculativeJIT::osrWriteBarrier(m_jit, GPRInfo::nonArgGPR0, GPRInfo::nonArgGPR1, GPRInfo::nonArgGPR2);
+        if (!codeOrigin.inlineCallFrame)
+            break;
+    }
+#endif
+
+    // 12) And finish.
     adjustAndJumpToTarget(m_jit, exit);
 }
 

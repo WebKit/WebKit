@@ -279,6 +279,9 @@
     <ClCompile Include="..\heap\WeakSet.cpp">
       <Filter>heap</Filter>
     </ClCompile>
+    <ClCompile Include="..\heap\WriteBarrierBuffer.cpp">
+      <Filter>heap</Filter>
+    </ClCompile>
     <ClCompile Include="..\heap\WriteBarrierSupport.cpp">
       <Filter>heap</Filter>
     </ClCompile>
@@ -1149,6 +1152,9 @@
     <ClCompile Include="..\dfg\DFGStackLayoutPhase.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
+    <ClCompile Include="..\dfg\DFGStoreBarrierElisionPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
     <ClCompile Include="..\dfg\DFGThunks.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -1752,6 +1758,9 @@
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\WeakSetInlines.h">
+      <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\heap\WriteBarrierBuffer.h">
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\WriteBarrierSupport.h">
@@ -3055,6 +3064,9 @@
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGStackLayoutPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGStoreBarrierElisionPhase.h">
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGStructureAbstractValue.h">

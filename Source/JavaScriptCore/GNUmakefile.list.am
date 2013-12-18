@@ -387,6 +387,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGSSALoweringPhase.h \
 	Source/JavaScriptCore/dfg/DFGStackLayoutPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGStackLayoutPhase.h \
+	Source/JavaScriptCore/dfg/DFGStoreBarrierElisionPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGStoreBarrierElisionPhase.h \
 	Source/JavaScriptCore/dfg/DFGStrengthReductionPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGStrengthReductionPhase.h \
 	Source/JavaScriptCore/dfg/DFGStructureAbstractValue.h \
@@ -576,6 +578,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/WeakSet.h \
 	Source/JavaScriptCore/heap/WeakSetInlines.h \
 	Source/JavaScriptCore/heap/WeakReferenceHarvester.h \
+	Source/JavaScriptCore/heap/WriteBarrierBuffer.cpp \
+	Source/JavaScriptCore/heap/WriteBarrierBuffer.h \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.cpp \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.h \
 	Source/JavaScriptCore/config.h \

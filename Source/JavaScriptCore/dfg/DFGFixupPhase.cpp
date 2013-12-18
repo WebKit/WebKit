@@ -549,6 +549,14 @@ private:
                 fixEdge<Int32Use>(child2);
                 fixEdge<NumberUse>(child3);
                 break;
+            case Array::Contiguous:
+            case Array::ArrayStorage:
+            case Array::SlowPutArrayStorage:
+            case Array::Arguments:
+                fixEdge<KnownCellUse>(child1);
+                fixEdge<Int32Use>(child2);
+                insertStoreBarrier(m_indexInBlock, child1, child3);
+                break;
             default:
                 fixEdge<KnownCellUse>(child1);
                 fixEdge<Int32Use>(child2);
@@ -581,6 +589,10 @@ private:
                 break;
             case Array::Double:
                 fixEdge<RealNumberUse>(node->child2());
+                break;
+            case Array::Contiguous:
+            case Array::ArrayStorage:
+                insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
                 break;
             default:
                 break;
@@ -767,18 +779,33 @@ private:
             break;
         }
             
+        case PutStructure: {
+            fixEdge<KnownCellUse>(node->child1());
+            insertStoreBarrier(m_indexInBlock, node->child1());
+            break;
+        }
+
+        case PutClosureVar: {
+            fixEdge<KnownCellUse>(node->child1());
+            insertStoreBarrier(m_indexInBlock, node->child1(), node->child3());
+            break;
+        }
+
         case GetClosureRegisters:
-        case PutClosureVar:
         case SkipTopScope:
         case SkipScope:
-        case PutStructure:
-        case AllocatePropertyStorage:
-        case ReallocatePropertyStorage:
         case GetScope: {
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
             
+        case AllocatePropertyStorage:
+        case ReallocatePropertyStorage: {
+            fixEdge<KnownCellUse>(node->child1());
+            insertStoreBarrier(m_indexInBlock + 1, node->child1());
+            break;
+        }
+
         case GetById:
         case GetByIdFlush: {
             if (!node->child1()->shouldSpeculateCell())
@@ -800,12 +827,17 @@ private:
             break;
         }
             
+        case PutById:
+        case PutByIdDirect: {
+            fixEdge<CellUse>(node->child1());
+            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
+            break;
+        }
+
         case CheckExecutable:
         case CheckStructure:
         case StructureTransitionWatchpoint:
         case CheckFunction:
-        case PutById:
-        case PutByIdDirect:
         case CheckHasInstance:
         case CreateThis:
         case GetButterfly: {
@@ -832,6 +864,7 @@ private:
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
+            insertStoreBarrier(m_indexInBlock, node->child2(), node->child3());
             break;
         }
             
@@ -891,6 +924,24 @@ private:
             // fixup rules for them.
             RELEASE_ASSERT_NOT_REACHED();
             break;
+        
+        case PutGlobalVar: {
+            Node* globalObjectNode = m_insertionSet.insertNode(m_indexInBlock, SpecNone, WeakJSConstant, node->codeOrigin, 
+                OpInfo(m_graph.globalObjectFor(node->codeOrigin)));
+            Node* barrierNode = m_graph.addNode(SpecNone, ConditionalStoreBarrier, m_currentNode->codeOrigin, 
+                Edge(globalObjectNode, KnownCellUse), Edge(node->child1().node(), UntypedUse));
+            fixupNode(barrierNode);
+            m_insertionSet.insert(m_indexInBlock, barrierNode);
+            break;
+        }
+
+        case TearOffActivation: {
+            Node* barrierNode = m_graph.addNode(SpecNone, StoreBarrierWithNullCheck, m_currentNode->codeOrigin, 
+                Edge(node->child1().node(), UntypedUse));
+            fixupNode(barrierNode);
+            m_insertionSet.insert(m_indexInBlock, barrierNode);
+            break;
+        }
 
         case IsString:
             if (node->child1()->shouldSpeculateString()) {
@@ -914,7 +965,6 @@ private:
         case GetMyScope:
         case GetClosureVar:
         case GetGlobalVar:
-        case PutGlobalVar:
         case NotifyWrite:
         case VariableWatchpoint:
         case VarInjectionWatchpoint:
@@ -931,7 +981,6 @@ private:
         case IsObject:
         case IsFunction:
         case CreateActivation:
-        case TearOffActivation:
         case CreateArguments:
         case PhantomArguments:
         case TearOffArguments:
@@ -951,6 +1000,9 @@ private:
         case Unreachable:
         case ExtractOSREntryLocal:
         case LoopHint:
+        case StoreBarrier:
+        case ConditionalStoreBarrier:
+        case StoreBarrierWithNullCheck:
         case FunctionReentryWatchpoint:
         case TypedArrayWatchpoint:
             break;
@@ -1503,6 +1555,19 @@ private:
         edge.setUseKind(useKind);
     }
     
+    void insertStoreBarrier(unsigned indexInBlock, Edge child1, Edge child2 = Edge())
+    {
+        Node* barrierNode;
+        if (!child2)
+            barrierNode = m_graph.addNode(SpecNone, StoreBarrier, m_currentNode->codeOrigin, Edge(child1.node(), child1.useKind()));
+        else {
+            barrierNode = m_graph.addNode(SpecNone, ConditionalStoreBarrier, m_currentNode->codeOrigin, 
+                Edge(child1.node(), child1.useKind()), Edge(child2.node(), child2.useKind()));
+        }
+        fixupNode(barrierNode);
+        m_insertionSet.insert(indexInBlock, barrierNode);
+    }
+
     void fixIntEdge(Edge& edge)
     {
         Node* node = edge.node();

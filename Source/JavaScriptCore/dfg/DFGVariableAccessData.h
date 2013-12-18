@@ -354,7 +354,7 @@ public:
     {
         return FlushedAt(flushFormat(), machineLocal());
     }
-    
+
 private:
     // This is slightly space-inefficient, since anything we're unified with
     // will have the same operand and should have the same prediction. But

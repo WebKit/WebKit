@@ -269,6 +269,9 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_copyVisitor(m_sharedData)
     , m_handleSet(vm)
     , m_isSafeToCollect(false)
+#if ENABLE(GGC)
+    , m_writeBarrierBuffer(128)
+#endif
     , m_vm(vm)
     , m_lastGCLength(0)
     , m_lastCodeDiscardTime(WTF::monotonicallyIncreasingTime())
@@ -994,6 +997,16 @@ void Heap::decrementDeferralDepthAndGCIfNeeded()
 {
     decrementDeferralDepth();
     collectIfNecessaryOrDefer();
+}
+
+void Heap::flushWriteBarrierBuffer(JSCell* cell)
+{
+#if ENABLE(GGC)
+    m_writeBarrierBuffer.flush(*this);
+    m_writeBarrierBuffer.add(cell);
+#else
+    UNUSED_PARAM(cell);
+#endif
 }
 
 } // namespace JSC
