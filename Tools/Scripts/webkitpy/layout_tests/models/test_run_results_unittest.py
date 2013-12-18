@@ -50,6 +50,7 @@ def run_results(port):
     tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html', 'failures/expected/hang.html',
              'failures/expected/audio.html']
     expectations = test_expectations.TestExpectations(port, tests)
+    expectations.parse_all_expectations()
     return test_run_results.TestRunResults(expectations, len(tests))
 
 

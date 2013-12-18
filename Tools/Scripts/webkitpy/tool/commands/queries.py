@@ -524,7 +524,9 @@ class PrintExpectations(Command):
 
     def _model(self, options, port_name, tests):
         port = self._tool.port_factory.get(port_name, options)
-        return TestExpectations(port, tests).model()
+        expectations = TestExpectations(port, tests)
+        expectations.parse_all_expectations()
+        return expectations.model()
 
 
 class PrintBaselines(Command):

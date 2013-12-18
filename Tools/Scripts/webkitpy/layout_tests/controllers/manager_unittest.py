@@ -85,6 +85,7 @@ class ManagerTest(unittest.TestCase):
         port = host.port_factory.get('test-mac-leopard')
         tests = ['failures/expected/crash.html']
         expectations = test_expectations.TestExpectations(port, tests)
+        expectations.parse_all_expectations()
         run_results = TestRunResults(expectations, len(tests))
         manager = get_manager()
         manager._look_for_new_crash_logs(run_results, time.time())

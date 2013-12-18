@@ -78,6 +78,7 @@ Bug(test) failures/expected/image.html [ WontFix Mac ]
         self._port.expectations_dict = lambda: expectations_dict
         expectations_to_lint = expectations_dict if is_lint_mode else None
         self._exp = TestExpectations(self._port, self.get_basic_tests(), expectations_to_lint=expectations_to_lint)
+        self._exp.parse_all_expectations()
 
     def assert_exp(self, test, result):
         self.assertEqual(self._exp.model().get_expectations(test),
@@ -251,6 +252,7 @@ class SkippedTests(Base):
         port.skipped_layout_tests = lambda tests: set(skips)
         expectations_to_lint = expectations_dict if lint else None
         exp = TestExpectations(port, ['failures/expected/text.html'], expectations_to_lint=expectations_to_lint)
+        exp.parse_all_expectations()
 
         # Check that the expectation is for BUG_DUMMY SKIP : ... [ Pass ]
         self.assertEqual(exp.model().get_modifiers('failures/expected/text.html'),
@@ -288,6 +290,7 @@ class SkippedTests(Base):
         capture = OutputCapture()
         capture.capture_output()
         exp = TestExpectations(port)
+        exp.parse_all_expectations()
         _, _, logs = capture.restore_output()
         self.assertEqual('The following test foo/bar/baz.html from the Skipped list doesn\'t exist\n', logs)
 
@@ -471,6 +474,7 @@ class RemoveConfigurationsTest(Base):
 Bug(y) [ Win Mac Debug ] failures/expected/foo.html [ Crash ]
 """}
         expectations = TestExpectations(test_port, self.get_basic_tests())
+        expectations.parse_all_expectations()
 
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', test_config)
 
@@ -489,6 +493,7 @@ Bug(y) [ Win Mac Debug ] failures/expected/foo.html [ Crash ]
 Bug(y) [ Win Debug ] failures/expected/foo.html [ Crash ]
 """}
         expectations = TestExpectations(test_port)
+        expectations.parse_all_expectations()
 
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', test_config)
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', host.port_factory.get('test-win-vista', None).test_configuration())

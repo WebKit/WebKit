@@ -152,6 +152,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
             lock = self._tool.make_file_lock(path + '.lock')
             lock.acquire_lock()
             expectations = TestExpectations(port, include_generic=False, include_overrides=False)
+            expectations.parse_all_expectations()
             for test_configuration in port.all_test_configurations():
                 if test_configuration.version == port.test_configuration().version:
                     expectationsString = expectations.remove_configuration_from_test(test_name, test_configuration)
@@ -316,6 +317,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
         port = self._tool.port_factory.get(port_name)
 
         expectations = TestExpectations(port)
+        expectations.parse_all_expectations()
         for path in port.expectations_dict():
             if self._tool.filesystem.exists(path):
                 self._tool.filesystem.write_text_file(path, expectations.remove_rebaselined_tests(expectations.get_rebaselining_failures(), path))
@@ -323,6 +325,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
     def _tests_to_rebaseline(self, port):
         tests_to_rebaseline = {}
         expectations = TestExpectations(port, include_overrides=True)
+        expectations.parse_all_expectations()
         for test in expectations.get_rebaselining_failures():
             tests_to_rebaseline[test] = TestExpectations.suffixes_for_expectations(expectations.model().get_expectations(test))
         return tests_to_rebaseline

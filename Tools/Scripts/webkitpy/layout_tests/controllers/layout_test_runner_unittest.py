@@ -104,6 +104,7 @@ class LayoutTestRunnerTests(unittest.TestCase):
     def _run_tests(self, runner, tests):
         test_inputs = [TestInput(test, 6000) for test in tests]
         expectations = TestExpectations(runner._port, tests)
+        expectations.parse_all_expectations()
         runner.run_tests(expectations, test_inputs, set(),
             num_workers=1, needs_http=any('http' in test for test in tests), needs_websockets=any(['websocket' in test for test in tests]), retrying=False)
 
@@ -122,7 +123,9 @@ class LayoutTestRunnerTests(unittest.TestCase):
         test_names = ['passes/text.html', 'passes/image.html']
         runner._test_inputs = [TestInput(test_name, 6000) for test_name in test_names]
 
-        run_results = TestRunResults(TestExpectations(runner._port, test_names), len(test_names))
+        expectations = TestExpectations(runner._port, test_names)
+        expectations.parse_all_expectations()
+        run_results = TestRunResults(expectations, len(test_names))
         run_results.unexpected_failures = 100
         run_results.unexpected_crashes = 50
         run_results.unexpected_timeouts = 50
@@ -150,6 +153,7 @@ class LayoutTestRunnerTests(unittest.TestCase):
         runner._options.pixel_tests = False
         test = 'failures/expected/reftest.html'
         expectations = TestExpectations(runner._port, tests=[test])
+        expectations.parse_all_expectations()
         runner._expectations = expectations
 
         run_results = TestRunResults(expectations, 1)

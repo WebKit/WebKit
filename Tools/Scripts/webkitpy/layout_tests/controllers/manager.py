@@ -182,6 +182,7 @@ class Manager(object):
 
         self._printer.write_update("Parsing expectations ...")
         self._expectations = test_expectations.TestExpectations(self._port, test_names, force_expectations_pass=self._options.force)
+        self._expectations.parse_all_expectations()
 
         tests_to_run, tests_to_skip = self._prepare_lists(paths, test_names)
         self._printer.print_found(len(test_names), len(tests_to_run), self._options.repeat_each, self._options.iterations)
