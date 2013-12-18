@@ -3219,12 +3219,15 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
     character_after_identifier_regexp = r'(?P<character_after_identifier>[[;()=,])(?!=)'
     declaration_without_type_regexp = r'\s*' + identifier_regexp + r'\s*' + maybe_bitfield_regexp + character_after_identifier_regexp
     declaration_with_type_regexp = r'\s*' + type_regexp + r'\s' + declaration_without_type_regexp
+    constructor_regexp = r'\s*([\w_]*::)*(?P<pre_part>[\w_]+)::(?P<post_part>[\w_]+)[(]'
     is_function_arguments = False
     number_of_identifiers = 0
     while True:
         # If we are seeing the first identifier or arguments of a
         # function, there should be a type name before an identifier.
-        if not number_of_identifiers or is_function_arguments:
+        constructor_check = match(constructor_regexp, line)
+        is_constructor = constructor_check and constructor_check.group('pre_part') == constructor_check.group('post_part')
+        if not is_constructor and (not number_of_identifiers or is_function_arguments):
             declaration_regexp = declaration_with_type_regexp
         else:
             declaration_regexp = declaration_without_type_regexp

@@ -1,5 +1,18 @@
 2013-12-18  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
 
+        Should not have identifiers with underscores in them, especially not leading underscores.
+        https://bugs.webkit.org/show_bug.cgi?id=125847
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_runtime_selfinit):
+        (WebKitStyleTest.test_names):
+
+2013-12-18  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
+
         False webkit-check-style warnings on *.
         https://bugs.webkit.org/show_bug.cgi?id=125915
 

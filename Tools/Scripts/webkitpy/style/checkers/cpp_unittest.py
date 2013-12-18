@@ -751,25 +751,25 @@ class CppStyleTest(CppStyleTestBase):
     def test_runtime_selfinit(self):
         self.assert_multi_line_lint(
             '''\
-            Foo::Foo(Bar r, Bel l)
-                : r_(r_)
-                , l_(l_) { }''',
+            Foo::Foo(Bar raa, Bel laa)
+                : raa_(raa_)
+                , laa_(laa_) { }''',
             ['You seem to be initializing a member variable with itself.'
             '  [runtime/init] [4]',
             'You seem to be initializing a member variable with itself.'
             '  [runtime/init] [4]'])
         self.assert_multi_line_lint(
             '''\
-            Foo::Foo(Bar r, Bel l)
-                : r_(r)
-                , l_(l) { }''',
+            Foo::Foo(Bar raa, Bel laa)
+                : raa_(raa)
+                , laa_(laa) { }''',
             '')
         self.assert_multi_line_lint(
             '''\
-            Foo::Foo(Bar r)
-                : r_(r)
-                , l_(r_)
-                , ll_(l_) { }''',
+            Foo::Foo(Bar raa)
+                : raa_(raa)
+                , laa_(raa_)
+                , llaa_(laa_) { }''',
             '')
 
     def test_runtime_rtti(self):
@@ -4677,6 +4677,14 @@ class WebKitStyleTest(CppStyleTestBase):
                          '_length' + name_underscore_error_message)
         self.assert_lint('unsigned long long _length;',
                          '_length' + name_underscore_error_message)
+        self.assert_lint('    ::blaspace::Options::Options(double defaultLongTimeout)',
+                         '')
+        self.assert_lint('    ::blaspace::Options::Options(double _default_long_timeout)',
+                         '_default_long_timeout' + name_underscore_error_message)
+        self.assert_lint('    blaspace::Options::Options(double _default_long_timeout)',
+                         '_default_long_timeout' + name_underscore_error_message)
+        self.assert_lint('    Options::Options(double _default_long_timeout)',
+                         '_default_long_timeout' + name_underscore_error_message)
 
         # Allow underscores in Objective C files.
         self.assert_lint('unsigned long long _length;',
