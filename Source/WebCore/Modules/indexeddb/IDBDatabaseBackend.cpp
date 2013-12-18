@@ -133,7 +133,7 @@ void IDBDatabaseBackend::createObjectStore(int64_t transactionId, int64_t object
     IDBTransactionBackend* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
-    ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
+    ASSERT(transaction->mode() == IndexedDB::TransactionMode::VersionChange);
 
     ASSERT(!m_metadata.objectStores.contains(objectStoreId));
     IDBObjectStoreMetadata objectStoreMetadata(name, objectStoreId, keyPath, autoIncrement, IDBDatabaseBackend::MinimumIndexId);
@@ -148,7 +148,7 @@ void IDBDatabaseBackend::deleteObjectStore(int64_t transactionId, int64_t object
     IDBTransactionBackend* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
-    ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
+    ASSERT(transaction->mode() == IndexedDB::TransactionMode::VersionChange);
 
     ASSERT(m_metadata.objectStores.contains(objectStoreId));
     const IDBObjectStoreMetadata& objectStoreMetadata = m_metadata.objectStores.get(objectStoreId);
@@ -163,7 +163,7 @@ void IDBDatabaseBackend::createIndex(int64_t transactionId, int64_t objectStoreI
     IDBTransactionBackend* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
-    ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
+    ASSERT(transaction->mode() == IndexedDB::TransactionMode::VersionChange);
 
     ASSERT(m_metadata.objectStores.contains(objectStoreId));
     const IDBObjectStoreMetadata objectStore = m_metadata.objectStores.get(objectStoreId);
@@ -182,7 +182,7 @@ void IDBDatabaseBackend::deleteIndex(int64_t transactionId, int64_t objectStoreI
     IDBTransactionBackend* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
-    ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
+    ASSERT(transaction->mode() == IndexedDB::TransactionMode::VersionChange);
 
     ASSERT(m_metadata.objectStores.contains(objectStoreId));
     const IDBObjectStoreMetadata objectStore = m_metadata.objectStores.get(objectStoreId);
@@ -223,7 +223,7 @@ void IDBDatabaseBackend::get(int64_t transactionId, int64_t objectStoreId, int64
     if (!transaction)
         return;
 
-    transaction->scheduleGetOperation(m_metadata, objectStoreId, indexId, keyRange, keyOnly ? IndexedDB::CursorKeyOnly : IndexedDB::CursorKeyAndValue, callbacks);
+    transaction->scheduleGetOperation(m_metadata, objectStoreId, indexId, keyRange, keyOnly ? IndexedDB::CursorType::KeyOnly : IndexedDB::CursorType::KeyAndValue, callbacks);
 }
 
 void IDBDatabaseBackend::put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
@@ -232,7 +232,7 @@ void IDBDatabaseBackend::put(int64_t transactionId, int64_t objectStoreId, PassR
     IDBTransactionBackend* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
-    ASSERT(transaction->mode() != IndexedDB::TransactionReadOnly);
+    ASSERT(transaction->mode() != IndexedDB::TransactionMode::ReadOnly);
 
     const IDBObjectStoreMetadata objectStoreMetadata = m_metadata.objectStores.get(objectStoreId);
 
@@ -250,7 +250,7 @@ void IDBDatabaseBackend::setIndexKeys(int64_t transactionID, int64_t objectStore
     RefPtr<IDBTransactionBackend> transaction = m_transactions.get(transactionID);
     if (!transaction)
         return;
-    ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
+    ASSERT(transaction->mode() == IndexedDB::TransactionMode::VersionChange);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
     m_serverConnection->setIndexKeys(transactionID, m_metadata.id, objectStoreID, m_metadata.objectStores.get(objectStoreID), *primaryKey, indexIDs, indexKeys, [transaction](PassRefPtr<IDBDatabaseError> error) {
@@ -277,7 +277,7 @@ void IDBDatabaseBackend::openCursor(int64_t transactionId, int64_t objectStoreId
     if (!transaction)
         return;
 
-    transaction->scheduleOpenCursorOperation(objectStoreId, indexId, keyRange, direction, keyOnly ? IndexedDB::CursorKeyOnly : IndexedDB::CursorKeyAndValue, taskType, callbacks);
+    transaction->scheduleOpenCursorOperation(objectStoreId, indexId, keyRange, direction, keyOnly ? IndexedDB::CursorType::KeyOnly : IndexedDB::CursorType::KeyAndValue, taskType, callbacks);
 }
 
 void IDBDatabaseBackend::count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
@@ -298,7 +298,7 @@ void IDBDatabaseBackend::deleteRange(int64_t transactionId, int64_t objectStoreI
     IDBTransactionBackend* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
-    ASSERT(transaction->mode() != IndexedDB::TransactionReadOnly);
+    ASSERT(transaction->mode() != IndexedDB::TransactionMode::ReadOnly);
 
     transaction->scheduleDeleteRangeOperation(objectStoreId, keyRange, callbacks);
 }
@@ -309,14 +309,14 @@ void IDBDatabaseBackend::clearObjectStore(int64_t transactionId, int64_t objectS
     IDBTransactionBackend* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
-    ASSERT(transaction->mode() != IndexedDB::TransactionReadOnly);
+    ASSERT(transaction->mode() != IndexedDB::TransactionMode::ReadOnly);
 
     transaction->scheduleClearObjectStoreOperation(objectStoreId, callbacks);
 }
 
 void IDBDatabaseBackend::transactionStarted(IDBTransactionBackend* transaction)
 {
-    if (transaction->mode() == IndexedDB::TransactionVersionChange) {
+    if (transaction->mode() == IndexedDB::TransactionMode::VersionChange) {
         ASSERT(!m_runningVersionChangeTransaction);
         m_runningVersionChangeTransaction = transaction;
     }
@@ -328,7 +328,7 @@ void IDBDatabaseBackend::transactionFinished(IDBTransactionBackend* rawTransacti
     ASSERT(m_transactions.contains(transaction->id()));
     ASSERT(m_transactions.get(transaction->id()) == transaction.get());
     m_transactions.remove(transaction->id());
-    if (transaction->mode() == IndexedDB::TransactionVersionChange) {
+    if (transaction->mode() == IndexedDB::TransactionMode::VersionChange) {
         ASSERT(transaction.get() == m_runningVersionChangeTransaction.get());
         m_runningVersionChangeTransaction.clear();
     }
@@ -337,7 +337,7 @@ void IDBDatabaseBackend::transactionFinished(IDBTransactionBackend* rawTransacti
 void IDBDatabaseBackend::transactionFinishedAndAbortFired(IDBTransactionBackend* rawTransaction)
 {
     RefPtr<IDBTransactionBackend> transaction = rawTransaction;
-    if (transaction->mode() == IndexedDB::TransactionVersionChange) {
+    if (transaction->mode() == IndexedDB::TransactionMode::VersionChange) {
         // If this was an open-with-version call, there will be a "second
         // half" open call waiting for us in processPendingCalls.
         // FIXME: When we no longer support setVersion, assert such a thing.
@@ -352,7 +352,7 @@ void IDBDatabaseBackend::transactionFinishedAndAbortFired(IDBTransactionBackend*
 void IDBDatabaseBackend::transactionFinishedAndCompleteFired(IDBTransactionBackend* rawTransaction)
 {
     RefPtr<IDBTransactionBackend> transaction = rawTransaction;
-    if (transaction->mode() == IndexedDB::TransactionVersionChange)
+    if (transaction->mode() == IndexedDB::TransactionMode::VersionChange)
         processPendingCalls();
 }
 
@@ -430,9 +430,9 @@ void IDBDatabaseBackend::processPendingOpenCalls(bool success)
     }
 }
 
-void IDBDatabaseBackend::createTransaction(int64_t transactionID, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIDs, unsigned short mode)
+void IDBDatabaseBackend::createTransaction(int64_t transactionID, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIDs, IndexedDB::TransactionMode mode)
 {
-    RefPtr<IDBTransactionBackend> transaction = IDBTransactionBackend::create(this, transactionID, callbacks, objectStoreIDs, static_cast<IndexedDB::TransactionMode>(mode));
+    RefPtr<IDBTransactionBackend> transaction = IDBTransactionBackend::create(this, transactionID, callbacks, objectStoreIDs, mode);
 
     ASSERT(!m_transactions.contains(transactionID));
     m_transactions.add(transactionID, transaction.get());
@@ -501,7 +501,7 @@ void IDBDatabaseBackend::runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks>
     for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
         // Front end ensures the event is not fired at connections that have closePending set.
         if (*it != databaseCallbacks)
-            (*it)->onVersionChange(m_metadata.version, requestedVersion, IndexedDB::NullVersion);
+            (*it)->onVersionChange(m_metadata.version, requestedVersion, IndexedDB::VersionNullness::Null);
     }
     // The spec dictates we wait until all the version change events are
     // delivered and then check m_databaseCallbacks.empty() before proceeding
@@ -519,7 +519,7 @@ void IDBDatabaseBackend::runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks>
     }
 
     Vector<int64_t> objectStoreIds;
-    createTransaction(transactionId, databaseCallbacks, objectStoreIds, IndexedDB::TransactionVersionChange);
+    createTransaction(transactionId, databaseCallbacks, objectStoreIds, IndexedDB::TransactionMode::VersionChange);
     RefPtr<IDBTransactionBackend> transaction = m_transactions.get(transactionId);
 
     transaction->scheduleVersionChangeOperation(requestedVersion, callbacks, databaseCallbacks, m_metadata);
@@ -534,7 +534,7 @@ void IDBDatabaseBackend::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallbacks)
     if (isDeleteDatabaseBlocked()) {
         for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
             // Front end ensures the event is not fired at connections that have closePending set.
-            (*it)->onVersionChange(m_metadata.version, 0, IndexedDB::NullVersion);
+            (*it)->onVersionChange(m_metadata.version, 0, IndexedDB::VersionNullness::Null);
         }
         // FIXME: Only fire onBlocked if there are open connections after the
         // VersionChangeEvents are received, not just set up to fire.

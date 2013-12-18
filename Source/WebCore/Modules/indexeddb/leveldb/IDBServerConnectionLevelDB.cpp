@@ -253,16 +253,16 @@ void IDBServerConnectionLevelDB::get(IDBTransactionBackend& transaction, const G
         int64_t cursorID = m_nextCursorID++;
 
         if (operation.indexID() == IDBIndexMetadata::InvalidId) {
-            ASSERT(operation.cursorType() != IndexedDB::CursorKeyOnly);
+            ASSERT(operation.cursorType() != IndexedDB::CursorType::KeyOnly);
             // ObjectStore Retrieval Operation
-            backingStoreCursor = m_backingStore->openObjectStoreCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.keyRange(), IndexedDB::CursorNext);
+            backingStoreCursor = m_backingStore->openObjectStoreCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.keyRange(), IndexedDB::CursorDirection::Next);
         } else {
-            if (operation.cursorType() == IndexedDB::CursorKeyOnly) {
+            if (operation.cursorType() == IndexedDB::CursorType::KeyOnly) {
                 // Index Value Retrieval Operation
-                backingStoreCursor = m_backingStore->openIndexKeyCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.indexID(), operation.keyRange(), IndexedDB::CursorNext);
+                backingStoreCursor = m_backingStore->openIndexKeyCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.indexID(), operation.keyRange(), IndexedDB::CursorDirection::Next);
             } else {
                 // Index Referenced Value Retrieval Operation
-                backingStoreCursor = m_backingStore->openIndexCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.indexID(), operation.keyRange(), IndexedDB::CursorNext);
+                backingStoreCursor = m_backingStore->openIndexCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.indexID(), operation.keyRange(), IndexedDB::CursorDirection::Next);
             }
         }
 
@@ -317,7 +317,7 @@ void IDBServerConnectionLevelDB::get(IDBTransactionBackend& transaction, const G
         ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
         return;
     }
-    if (operation.cursorType() == IndexedDB::CursorKeyOnly) {
+    if (operation.cursorType() == IndexedDB::CursorType::KeyOnly) {
         // Index Value Retrieval Operation
         operation.callbacks()->onSuccess(primaryKey.get());
         ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
@@ -442,11 +442,11 @@ void IDBServerConnectionLevelDB::openCursor(IDBTransactionBackend& transaction, 
 
     RefPtr<IDBBackingStoreCursorLevelDB> backingStoreCursor;
     if (operation.indexID() == IDBIndexMetadata::InvalidId) {
-        ASSERT(operation.cursorType() != IndexedDB::CursorKeyOnly);
+        ASSERT(operation.cursorType() != IndexedDB::CursorType::KeyOnly);
         backingStoreCursor = m_backingStore->openObjectStoreCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.keyRange(), operation.direction());
     } else {
         ASSERT(operation.taskType() == IDBDatabaseBackend::NormalTask);
-        if (operation.cursorType() == IndexedDB::CursorKeyOnly)
+        if (operation.cursorType() == IndexedDB::CursorType::KeyOnly)
             backingStoreCursor = m_backingStore->openIndexKeyCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.indexID(), operation.keyRange(), operation.direction());
         else
             backingStoreCursor = m_backingStore->openIndexCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.indexID(), operation.keyRange(), operation.direction());
@@ -480,9 +480,9 @@ void IDBServerConnectionLevelDB::count(IDBTransactionBackend& transaction, const
     int64_t cursorID = m_nextCursorID++;
 
     if (operation.indexID() == IDBIndexMetadata::InvalidId)
-        backingStoreCursor = m_backingStore->openObjectStoreKeyCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.keyRange(), IndexedDB::CursorNext);
+        backingStoreCursor = m_backingStore->openObjectStoreKeyCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.keyRange(), IndexedDB::CursorDirection::Next);
     else
-        backingStoreCursor = m_backingStore->openIndexKeyCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.indexID(), operation.keyRange(), IndexedDB::CursorNext);
+        backingStoreCursor = m_backingStore->openIndexKeyCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.indexID(), operation.keyRange(), IndexedDB::CursorDirection::Next);
     if (!backingStoreCursor) {
         operation.callbacks()->onSuccess(count);
         callOnMainThread([completionCallback]() {
@@ -506,7 +506,7 @@ void IDBServerConnectionLevelDB::deleteRange(IDBTransactionBackend& transaction,
 
     int64_t cursorID = m_nextCursorID++;
 
-    RefPtr<IDBBackingStoreCursorLevelDB> backingStoreCursor = m_backingStore->openObjectStoreCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.keyRange(), IndexedDB::CursorNext);
+    RefPtr<IDBBackingStoreCursorLevelDB> backingStoreCursor = m_backingStore->openObjectStoreCursor(cursorID, *backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), operation.keyRange(), IndexedDB::CursorDirection::Next);
     if (backingStoreCursor) {
         do {
             if (!m_backingStore->deleteRecord(*backingStoreTransaction, transaction.database().id(), operation.objectStoreID(), backingStoreCursor->recordIdentifier())) {
@@ -657,10 +657,10 @@ void IDBServerConnectionLevelDB::cursorPrefetchIteration(IDBCursorBackend& curso
         foundPrimaryKeys.append(backingStoreCursor->primaryKey());
 
         switch (cursor.cursorType()) {
-        case IndexedDB::CursorKeyOnly:
+        case IndexedDB::CursorType::KeyOnly:
             foundValues.append(SharedBuffer::create());
             break;
-        case IndexedDB::CursorKeyAndValue:
+        case IndexedDB::CursorType::KeyAndValue:
             sizeEstimate += backingStoreCursor->value()->size();
             foundValues.append(backingStoreCursor->value());
             break;

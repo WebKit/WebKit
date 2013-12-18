@@ -96,7 +96,7 @@ void IDBTransactionCoordinator::processStartedTransactions()
     if (m_queuedTransactions.isEmpty())
         return;
 
-    ASSERT(m_startedTransactions.isEmpty() || (*m_startedTransactions.begin())->mode() != IndexedDB::TransactionVersionChange);
+    ASSERT(m_startedTransactions.isEmpty() || (*m_startedTransactions.begin())->mode() != IndexedDB::TransactionMode::VersionChange);
 
     ListHashSet<IDBTransactionBackend*>::const_iterator it = m_queuedTransactions.begin();
     while (it != m_queuedTransactions.end()) {
@@ -123,22 +123,22 @@ bool IDBTransactionCoordinator::canRunTransaction(IDBTransactionBackend* transac
 {
     ASSERT(m_queuedTransactions.contains(transaction));
     switch (transaction->mode()) {
-    case IndexedDB::TransactionVersionChange:
+    case IndexedDB::TransactionMode::VersionChange:
         ASSERT(m_queuedTransactions.size() == 1);
         ASSERT(m_startedTransactions.isEmpty());
         return true;
 
-    case IndexedDB::TransactionReadOnly:
+    case IndexedDB::TransactionMode::ReadOnly:
         return true;
 
-    case IndexedDB::TransactionReadWrite:
+    case IndexedDB::TransactionMode::ReadWrite:
         for (HashSet<IDBTransactionBackend*>::const_iterator it = m_startedTransactions.begin(); it != m_startedTransactions.end(); ++it) {
-            if ((*it)->mode() == IndexedDB::TransactionReadWrite && doScopesOverlap(transaction->scope(), (*it)->scope()))
+            if ((*it)->mode() == IndexedDB::TransactionMode::ReadWrite && doScopesOverlap(transaction->scope(), (*it)->scope()))
                 return false;
         }
         for (ListHashSet<IDBTransactionBackend*>::const_iterator it = m_queuedTransactions.begin(); *it != transaction; ++it) {
             ASSERT(it != m_queuedTransactions.end());
-            if ((*it)->mode() == IndexedDB::TransactionReadWrite && doScopesOverlap(transaction->scope(), (*it)->scope()))
+            if ((*it)->mode() == IndexedDB::TransactionMode::ReadWrite && doScopesOverlap(transaction->scope(), (*it)->scope()))
                 return false;
         }
         return true;

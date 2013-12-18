@@ -205,7 +205,7 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 
     if (key) {
         ASSERT(m_currentKey);
-        if (m_direction == IndexedDB::CursorNext || m_direction == IndexedDB::CursorNextNoDuplicate) {
+        if (m_direction == IndexedDB::CursorDirection::Next || m_direction == IndexedDB::CursorDirection::NextNoDuplicate) {
             if (!m_currentKey->isLessThan(key.get())) {
                 ec = IDBDatabaseException::DataError;
                 return;
@@ -300,31 +300,31 @@ PassRefPtr<IDBObjectStore> IDBCursor::effectiveObjectStore()
 IndexedDB::CursorDirection IDBCursor::stringToDirection(const String& directionString, ExceptionCode& ec)
 {
     if (directionString == IDBCursor::directionNext())
-        return IndexedDB::CursorNext;
+        return IndexedDB::CursorDirection::Next;
     if (directionString == IDBCursor::directionNextUnique())
-        return IndexedDB::CursorNextNoDuplicate;
+        return IndexedDB::CursorDirection::NextNoDuplicate;
     if (directionString == IDBCursor::directionPrev())
-        return IndexedDB::CursorPrev;
+        return IndexedDB::CursorDirection::Prev;
     if (directionString == IDBCursor::directionPrevUnique())
-        return IndexedDB::CursorPrevNoDuplicate;
+        return IndexedDB::CursorDirection::PrevNoDuplicate;
 
     ec = TypeError;
-    return IndexedDB::CursorNext;
+    return IndexedDB::CursorDirection::Next;
 }
 
-const AtomicString& IDBCursor::directionToString(unsigned short direction)
+const AtomicString& IDBCursor::directionToString(IndexedDB::CursorDirection direction)
 {
     switch (direction) {
-    case IndexedDB::CursorNext:
+    case IndexedDB::CursorDirection::Next:
         return IDBCursor::directionNext();
 
-    case IndexedDB::CursorNextNoDuplicate:
+    case IndexedDB::CursorDirection::NextNoDuplicate:
         return IDBCursor::directionNextUnique();
 
-    case IndexedDB::CursorPrev:
+    case IndexedDB::CursorDirection::Prev:
         return IDBCursor::directionPrev();
 
-    case IndexedDB::CursorPrevNoDuplicate:
+    case IndexedDB::CursorDirection::PrevNoDuplicate:
         return IDBCursor::directionPrevUnique();
 
     default:

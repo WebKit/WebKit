@@ -54,7 +54,7 @@ PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* contex
 
 PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, IDBDatabase* db, IDBOpenDBRequest* openDBRequest, const IDBDatabaseMetadata& previousMetadata)
 {
-    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, id, Vector<String>(), IndexedDB::TransactionVersionChange, db, openDBRequest, previousMetadata)));
+    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, id, Vector<String>(), IndexedDB::TransactionMode::VersionChange, db, openDBRequest, previousMetadata)));
     transaction->suspendIfNeeded();
     return transaction.release();
 }
@@ -102,7 +102,7 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, int64_t id, cons
     , m_contextStopped(false)
     , m_previousMetadata(previousMetadata)
 {
-    if (mode == IndexedDB::TransactionVersionChange) {
+    if (mode == IndexedDB::TransactionMode::VersionChange) {
         // Not active until the callback.
         m_state = Inactive;
     }
@@ -335,26 +335,26 @@ IndexedDB::TransactionMode IDBTransaction::stringToMode(const String& modeString
 {
     if (modeString.isNull()
         || modeString == IDBTransaction::modeReadOnly())
-        return IndexedDB::TransactionReadOnly;
+        return IndexedDB::TransactionMode::ReadOnly;
     if (modeString == IDBTransaction::modeReadWrite())
-        return IndexedDB::TransactionReadWrite;
+        return IndexedDB::TransactionMode::ReadWrite;
 
     ec = TypeError;
-    return IndexedDB::TransactionReadOnly;
+    return IndexedDB::TransactionMode::ReadOnly;
 }
 
 const AtomicString& IDBTransaction::modeToString(IndexedDB::TransactionMode mode)
 {
     switch (mode) {
-    case IndexedDB::TransactionReadOnly:
+    case IndexedDB::TransactionMode::ReadOnly:
         return IDBTransaction::modeReadOnly();
         break;
 
-    case IndexedDB::TransactionReadWrite:
+    case IndexedDB::TransactionMode::ReadWrite:
         return IDBTransaction::modeReadWrite();
         break;
 
-    case IndexedDB::TransactionVersionChange:
+    case IndexedDB::TransactionMode::VersionChange:
         return IDBTransaction::modeVersionChange();
         break;
     }

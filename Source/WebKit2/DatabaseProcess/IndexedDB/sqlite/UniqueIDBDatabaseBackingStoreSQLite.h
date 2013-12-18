@@ -53,7 +53,7 @@ public:
 
     virtual std::unique_ptr<WebCore::IDBDatabaseMetadata> getOrEstablishMetadata() OVERRIDE;
 
-    virtual bool establishTransaction(const IDBTransactionIdentifier&) OVERRIDE;
+    virtual bool establishTransaction(const IDBTransactionIdentifier&, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode) OVERRIDE;
     virtual bool beginTransaction(const IDBTransactionIdentifier&) OVERRIDE;
     virtual bool commitTransaction(const IDBTransactionIdentifier&) OVERRIDE;
     virtual bool resetTransaction(const IDBTransactionIdentifier&) OVERRIDE;

@@ -61,7 +61,7 @@ public:
 
     IDBKey* key() const { return m_currentKey.get(); }
     IDBKey* primaryKey() const { return m_currentPrimaryKey.get(); }
-    SharedBuffer* value() const { return (m_cursorType == IndexedDB::CursorKeyOnly) ? 0 : m_currentValue.get(); }
+    SharedBuffer* value() const { return (m_cursorType == IndexedDB::CursorType::KeyOnly) ? 0 : m_currentValue.get(); }
     void updateCursorData(IDBKey*, IDBKey* primaryKey, SharedBuffer* value);
 
     void close();

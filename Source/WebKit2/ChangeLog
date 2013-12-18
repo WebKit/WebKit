@@ -1,3 +1,58 @@
+2013-12-17  Brady Eidson  <beidson@apple.com>
+
+        DatabaseProcess: Pipe through object store IDs and transaction mode for "openTransaction"
+        https://bugs.webkit.org/show_bug.cgi?id=125872
+
+        Reviewed by Alexey Proskuryakov.
+
+        Pipe through the objectStoreIDs and mode:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::openTransaction):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        Rework postTransactionOperation to take a pre-made AsyncTask to allow for different
+        transaction operation function signatures:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::openTransaction): Pipe through the objectStoreIDs and mode:
+        (WebKit::UniqueIDBDatabase::beginTransaction):
+        (WebKit::UniqueIDBDatabase::commitTransaction):
+        (WebKit::UniqueIDBDatabase::resetTransaction):
+        (WebKit::UniqueIDBDatabase::rollbackTransaction):
+        (WebKit::UniqueIDBDatabase::postTransactionOperation):
+        (WebKit::UniqueIDBDatabase::openBackingStoreTransaction):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        Pipe through the objectStoreIDs and mode:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::establishTransaction):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        * Platform/Logging.h: Add an IDB logging channel.
+
+        * Shared/AsyncTask.h:
+        (WebKit::createAsyncTask): Add a 3-argument variant.
+
+        * Shared/WebCrossThreadCopier.cpp:
+        (WebCore::::copy): Add a Vector<int64_t> copier.
+        * Shared/WebCrossThreadCopier.h:
+
+        Add logging throughout currently implemented methods:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata):
+        (WebKit::WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata):
+        (WebKit::WebIDBServerConnection::openTransaction): Pipe through the objectStoreIDs and mode.
+        (WebKit::WebIDBServerConnection::didOpenTransaction):
+        (WebKit::WebIDBServerConnection::beginTransaction):
+        (WebKit::WebIDBServerConnection::didBeginTransaction):
+        (WebKit::WebIDBServerConnection::commitTransaction):
+        (WebKit::WebIDBServerConnection::didCommitTransaction):
+        (WebKit::WebIDBServerConnection::resetTransaction):
+        (WebKit::WebIDBServerConnection::didResetTransaction):
+        (WebKit::WebIDBServerConnection::rollbackTransaction):
+        (WebKit::WebIDBServerConnection::didRollbackTransaction):
+
 2013-12-17  Gavin Barraclough  <barraclough@apple.com>
 
         Remove PageVisibilityStateUnloaded

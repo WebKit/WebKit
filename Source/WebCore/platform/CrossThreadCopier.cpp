@@ -73,6 +73,21 @@ CrossThreadCopierBase<false, false, ResourceResponse>::Type CrossThreadCopierBas
 
 #if ENABLE(INDEXED_DATABASE)
 
+IndexedDB::TransactionMode CrossThreadCopierBase<false, false, IndexedDB::TransactionMode>::copy(const IndexedDB::TransactionMode& mode)
+{
+    return mode;
+}
+
+IndexedDB::CursorDirection CrossThreadCopierBase<false, false, IndexedDB::CursorDirection>::copy(const IndexedDB::CursorDirection& direction)
+{
+    return direction;
+}
+
+IndexedDB::CursorType CrossThreadCopierBase<false, false, IndexedDB::CursorType>::copy(const IndexedDB::CursorType& type)
+{
+    return type;
+}
+
 CrossThreadCopierBase<false, false, IDBDatabaseMetadata>::Type CrossThreadCopierBase<false, false, IDBDatabaseMetadata>::copy(const IDBDatabaseMetadata& metadata)
 {
     return metadata.isolatedCopy();

@@ -35,6 +35,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBServerConnectionMessages.h"
 #include <WebCore/IDBDatabaseMetadata.h>
+#include <WebCore/IndexedDB.h>
 
 using namespace WebCore;
 
@@ -73,12 +74,18 @@ void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata(uint64_t re
     });
 }
 
-void DatabaseProcessIDBConnection::openTransaction(uint64_t requestID, int64_t transactionID, int64_t)
+void DatabaseProcessIDBConnection::openTransaction(uint64_t requestID, int64_t transactionID, const Vector<int64_t>& objectStoreIDs, uint64_t intMode)
 {
     ASSERT(m_uniqueIDBDatabase);
 
+    if (intMode > IndexedDB::TransactionModeMaximum) {
+        send(Messages::WebIDBServerConnection::DidOpenTransaction(requestID, false));
+        return;
+    }
+
+    IndexedDB::TransactionMode mode = static_cast<IndexedDB::TransactionMode>(intMode);
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->openTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
+    m_uniqueIDBDatabase->openTransaction(IDBTransactionIdentifier(*this, transactionID), objectStoreIDs, mode, [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidOpenTransaction(requestID, success));
     });
 }

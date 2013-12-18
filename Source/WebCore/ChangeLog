@@ -1,3 +1,89 @@
+2013-12-17  Brady Eidson  <beidson@apple.com>
+
+        DatabaseProcess: Pipe through object store IDs and transaction mode for "openTransaction"
+        https://bugs.webkit.org/show_bug.cgi?id=125872
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make these enums into enum classes.
+        Add const maximums for each enum class that might be serialized to allow for conversion later:
+        * Modules/indexeddb/IndexedDB.h:
+
+        Add cross-thread copying for these new enum classes.
+        * platform/CrossThreadCopier.cpp:
+        (WebCore::::copy):
+        * platform/CrossThreadCopier.h:
+
+        Adopt the new enum classes throughout the rest of WebCore:
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::stringToDirection):
+        (WebCore::IDBCursor::directionToString):
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBCursorBackend.cpp:
+        (WebCore::IDBCursorBackend::deleteFunction):
+        * Modules/indexeddb/IDBCursorBackend.h:
+        (WebCore::IDBCursorBackend::value):
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::createObjectStore):
+        (WebCore::IDBDatabaseBackend::deleteObjectStore):
+        (WebCore::IDBDatabaseBackend::createIndex):
+        (WebCore::IDBDatabaseBackend::deleteIndex):
+        (WebCore::IDBDatabaseBackend::get):
+        (WebCore::IDBDatabaseBackend::put):
+        (WebCore::IDBDatabaseBackend::setIndexKeys):
+        (WebCore::IDBDatabaseBackend::openCursor):
+        (WebCore::IDBDatabaseBackend::deleteRange):
+        (WebCore::IDBDatabaseBackend::clearObjectStore):
+        (WebCore::IDBDatabaseBackend::transactionStarted):
+        (WebCore::IDBDatabaseBackend::transactionFinished):
+        (WebCore::IDBDatabaseBackend::transactionFinishedAndAbortFired):
+        (WebCore::IDBDatabaseBackend::transactionFinishedAndCompleteFired):
+        (WebCore::IDBDatabaseBackend::createTransaction):
+        (WebCore::IDBDatabaseBackend::runIntVersionChangeTransaction):
+        (WebCore::IDBDatabaseBackend::deleteDatabase):
+        * Modules/indexeddb/IDBDatabaseBackend.h:
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::open):
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::openKeyCursor):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::openCursor):
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::setResultCursor):
+        (WebCore::IDBRequest::onSuccess):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::create):
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::stringToMode):
+        (WebCore::IDBTransaction::modeToString):
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::PutOperation::perform):
+        * Modules/indexeddb/IDBTransactionCoordinator.cpp:
+        (WebCore::IDBTransactionCoordinator::processStartedTransactions):
+        (WebCore::IDBTransactionCoordinator::canRunTransaction):
+        * Modules/indexeddb/IDBVersionChangeEvent.h:
+        (WebCore::IDBVersionChangeEvent::create):
+        (WebCore::IDBVersionChangeEvent::newVersion):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::objectStoreCursorOptions):
+        (WebCore::indexCursorOptions):
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::get):
+        (WebCore::IDBServerConnectionLevelDB::openCursor):
+        (WebCore::IDBServerConnectionLevelDB::count):
+        (WebCore::IDBServerConnectionLevelDB::deleteRange):
+        (WebCore::IDBServerConnectionLevelDB::cursorPrefetchIteration):
+
+        * WebCore.exp.in:
+
 2013-12-17  Gavin Barraclough  <barraclough@apple.com>
 
         Remove PageVisibilityStateUnloaded

@@ -100,7 +100,7 @@ void GetOperation::perform(std::function<void()> completionCallback)
 void PutOperation::perform(std::function<void()> completionCallback)
 {
     LOG(StorageAPI, "PutOperation");
-    ASSERT(m_transaction->mode() != IndexedDB::TransactionReadOnly);
+    ASSERT(m_transaction->mode() != IndexedDB::TransactionMode::ReadOnly);
     ASSERT(m_indexIDs.size() == m_indexKeys.size());
 
     RefPtr<PutOperation> operation(this);

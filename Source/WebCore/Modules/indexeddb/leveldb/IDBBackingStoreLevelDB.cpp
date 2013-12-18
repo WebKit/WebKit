@@ -1765,8 +1765,8 @@ static bool objectStoreCursorOptions(LevelDBTransaction* transaction, int64_t da
 
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
-    cursorOptions.forward = (direction == IndexedDB::CursorNextNoDuplicate || direction == IndexedDB::CursorNext);
-    cursorOptions.unique = (direction == IndexedDB::CursorNextNoDuplicate || direction == IndexedDB::CursorPrevNoDuplicate);
+    cursorOptions.forward = (direction == IndexedDB::CursorDirection::NextNoDuplicate || direction == IndexedDB::CursorDirection::Next);
+    cursorOptions.unique = (direction == IndexedDB::CursorDirection::NextNoDuplicate || direction == IndexedDB::CursorDirection::PrevNoDuplicate);
 
     if (!lowerBound) {
         cursorOptions.lowKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, minIDBKey());
@@ -1820,8 +1820,8 @@ static bool indexCursorOptions(LevelDBTransaction* transaction, int64_t database
 
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
-    cursorOptions.forward = (direction == IndexedDB::CursorNextNoDuplicate || direction == IndexedDB::CursorNext);
-    cursorOptions.unique = (direction == IndexedDB::CursorNextNoDuplicate || direction == IndexedDB::CursorPrevNoDuplicate);
+    cursorOptions.forward = (direction == IndexedDB::CursorDirection::NextNoDuplicate || direction == IndexedDB::CursorDirection::Next);
+    cursorOptions.unique = (direction == IndexedDB::CursorDirection::NextNoDuplicate || direction == IndexedDB::CursorDirection::PrevNoDuplicate);
 
     if (!lowerBound) {
         cursorOptions.lowKey = IndexDataKey::encodeMinKey(databaseId, objectStoreId, indexId);

@@ -30,6 +30,7 @@
 
 #include "IDBTransactionIdentifier.h"
 #include "UniqueIDBDatabaseIdentifier.h"
+#include <WebCore/IndexedDB.h>
 #include <functional>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
@@ -66,7 +67,7 @@ public:
 
     void getOrEstablishIDBDatabaseMetadata(std::function<void(bool, const WebCore::IDBDatabaseMetadata&)> completionCallback);
 
-    void openTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
+    void openTransaction(const IDBTransactionIdentifier&, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode, std::function<void(bool)> successCallback);
     void beginTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
     void commitTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
     void resetTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
@@ -97,14 +98,13 @@ private:
     // Returns true if this origin can use the same databases as the given origin.
     bool canShareDatabases(const SecurityOriginData&, const SecurityOriginData&) const;
 
-    typedef void (UniqueIDBDatabase::*TransactionOperationFunction)(const IDBTransactionIdentifier&);
-    void postTransactionOperation(TransactionOperationFunction, const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
+    void postTransactionOperation(const IDBTransactionIdentifier&, std::unique_ptr<AsyncTask>, std::function<void(bool)> successCallback);
     
     // To be called from the database workqueue thread only
     void performNextDatabaseTask();
     void postMainThreadTask(std::unique_ptr<AsyncTask>);
     void openBackingStoreAndReadMetadata(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
-    void openBackingStoreTransaction(const IDBTransactionIdentifier&);
+    void openBackingStoreTransaction(const IDBTransactionIdentifier&, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode);
     void beginBackingStoreTransaction(const IDBTransactionIdentifier&);
     void commitBackingStoreTransaction(const IDBTransactionIdentifier&);
     void resetBackingStoreTransaction(const IDBTransactionIdentifier&);

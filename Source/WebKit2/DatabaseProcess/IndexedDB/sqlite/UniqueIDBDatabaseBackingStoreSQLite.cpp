@@ -193,10 +193,10 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
     return metadata;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBTransactionIdentifier& identifier)
+bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBTransactionIdentifier& identifier, const Vector<int64_t>&, WebCore::IndexedDB::TransactionMode)
 {
     ASSERT(!isMainThread());
-    
+
     if (!m_transactions.add(identifier, SQLiteIDBTransaction::create(identifier)).isNewEntry) {
         LOG_ERROR("Attempt to establish transaction identifier that already exists");
         return false;

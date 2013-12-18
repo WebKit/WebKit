@@ -32,27 +32,30 @@ namespace WebCore {
 
 namespace IndexedDB {
 
-enum TransactionMode {
-    TransactionReadOnly = 0,
-    TransactionReadWrite = 1,
-    TransactionVersionChange = 2
+enum class TransactionMode {
+    ReadOnly = 0,
+    ReadWrite = 1,
+    VersionChange = 2,
 };
+const unsigned TransactionModeMaximum = 2;
 
-enum CursorDirection {
-    CursorNext = 0,
-    CursorNextNoDuplicate = 1,
-    CursorPrev = 2,
-    CursorPrevNoDuplicate = 3,
+enum class CursorDirection {
+    Next = 0,
+    NextNoDuplicate = 1,
+    Prev = 2,
+    PrevNoDuplicate = 3,
 };
+const unsigned CursorDirectionMaximum = 3;
 
-enum CursorType {
-    CursorKeyAndValue = 0,
-    CursorKeyOnly
+enum class CursorType {
+    KeyAndValue = 0,
+    KeyOnly = 1,
 };
+const unsigned CursorTypeMaximum = 1;
 
-enum VersionNullness {
-    NullVersion,
-    NonNullVersion
+enum class VersionNullness {
+    Null,
+    NonNull,
 };
 
 } // namespace IndexedDB

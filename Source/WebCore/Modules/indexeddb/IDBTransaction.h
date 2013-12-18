@@ -70,8 +70,8 @@ public:
     int64_t id() const { return m_id; }
     bool isActive() const { return m_state == Active; }
     bool isFinished() const { return m_state == Finished; }
-    bool isReadOnly() const { return m_mode == IndexedDB::TransactionReadOnly; }
-    bool isVersionChange() const { return m_mode == IndexedDB::TransactionVersionChange; }
+    bool isReadOnly() const { return m_mode == IndexedDB::TransactionMode::ReadOnly; }
+    bool isVersionChange() const { return m_mode == IndexedDB::TransactionMode::VersionChange; }
 
     // Implement the IDBTransaction IDL
     const String& mode() const;

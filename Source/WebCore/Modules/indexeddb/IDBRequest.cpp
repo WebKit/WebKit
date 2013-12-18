@@ -78,8 +78,8 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_source(source)
     , m_taskType(taskType)
     , m_hasPendingActivity(true)
-    , m_cursorType(IndexedDB::CursorKeyAndValue)
-    , m_cursorDirection(IndexedDB::CursorNext)
+    , m_cursorType(IndexedDB::CursorType::KeyAndValue)
+    , m_cursorDirection(IndexedDB::CursorDirection::Next)
     , m_cursorFinished(false)
     , m_pendingCursor(0)
     , m_didFireUpgradeNeededEvent(false)
@@ -220,7 +220,7 @@ void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> cursor, PassRefPtr<IDBKey
     m_cursorPrimaryKey = primaryKey;
     m_cursorValue = value;
 
-    if (m_cursorType == IndexedDB::CursorKeyOnly) {
+    if (m_cursorType == IndexedDB::CursorType::KeyOnly) {
         m_result = IDBAny::create(cursor);
         return;
     }
@@ -286,10 +286,10 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackend> backend, PassRefPtr<IDBK
     ASSERT(!m_pendingCursor);
     RefPtr<IDBCursor> cursor;
     switch (m_cursorType) {
-    case IndexedDB::CursorKeyOnly:
+    case IndexedDB::CursorType::KeyOnly:
         cursor = IDBCursor::create(backend, m_cursorDirection, this, m_source.get(), m_transaction.get());
         break;
-    case IndexedDB::CursorKeyAndValue:
+    case IndexedDB::CursorType::KeyAndValue:
         cursor = IDBCursorWithValue::create(backend, m_cursorDirection, this, m_source.get(), m_transaction.get());
         break;
     default:

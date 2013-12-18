@@ -110,7 +110,7 @@ PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* cont
 PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
     LOG(StorageAPI, "IDBFactory::open");
-    return openInternal(context, name, 0, IndexedDB::NullVersion, ec);
+    return openInternal(context, name, 0, IndexedDB::VersionNullness::Null, ec);
 }
 
 PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, unsigned long long version, ExceptionCode& ec)
@@ -120,13 +120,13 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, c
         ec = TypeError;
         return 0;
     }
-    return openInternal(context, name, version, IndexedDB::NonNullVersion, ec);
+    return openInternal(context, name, version, IndexedDB::VersionNullness::NonNull, ec);
 }
 
 PassRefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* context, const String& name, uint64_t version, IndexedDB::VersionNullness versionNullness, ExceptionCode& ec)
 {
     HistogramSupport::histogramEnumeration("WebCore.IndexedDB.FrontEndAPICalls", IDBOpenCall, IDBMethodsMax);
-    ASSERT(version >= 1 || versionNullness == IndexedDB::NullVersion);
+    ASSERT(version >= 1 || versionNullness == IndexedDB::VersionNullness::Null);
     if (name.isNull()) {
         ec = TypeError;
         return 0;
@@ -160,7 +160,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* 
         return 0;
     }
 
-    RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, 0, 0, 0, IndexedDB::NullVersion);
+    RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, 0, 0, 0, IndexedDB::VersionNullness::Null);
     m_backend->deleteDatabase(name, request, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
     return request;
 }

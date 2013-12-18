@@ -100,6 +100,22 @@ std::unique_ptr<AsyncTask> createAsyncTask(
 
 }
 
+template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
+std::unique_ptr<AsyncTask> createAsyncTask(
+    T& callee,
+    void (T::*method)(MP1, MP2, MP3),
+    const P1& parameter1,
+    const P2& parameter2,
+    const P3& parameter3)
+{
+    return std::make_unique<AsyncTaskImpl<T, MP1, MP2, MP3>>(
+        &callee,
+        method,
+        WebCore::CrossThreadCopier<P1>::copy(parameter1),
+        WebCore::CrossThreadCopier<P2>::copy(parameter2),
+        WebCore::CrossThreadCopier<P3>::copy(parameter3));
+}
+
 } // namespace WebKit
 
 #endif // AsyncTask_h

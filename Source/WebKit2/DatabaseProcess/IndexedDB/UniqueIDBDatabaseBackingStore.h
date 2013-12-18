@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
+#include <WebCore/IndexedDB.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -44,7 +45,7 @@ public:
 
     virtual std::unique_ptr<WebCore::IDBDatabaseMetadata> getOrEstablishMetadata() = 0;
 
-    virtual bool establishTransaction(const IDBTransactionIdentifier&) = 0;
+    virtual bool establishTransaction(const IDBTransactionIdentifier&, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode) = 0;
     virtual bool beginTransaction(const IDBTransactionIdentifier&) = 0;
     virtual bool commitTransaction(const IDBTransactionIdentifier&) = 0;
     virtual bool resetTransaction(const IDBTransactionIdentifier&) = 0;

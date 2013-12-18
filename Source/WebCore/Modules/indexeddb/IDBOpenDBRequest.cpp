@@ -99,7 +99,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDataba
     m_transaction = IDBTransaction::create(scriptExecutionContext(), m_transactionId, idbDatabase.get(), this, oldMetadata);
     m_result = IDBAny::create(idbDatabase.release());
 
-    if (m_versionNullness == IndexedDB::NullVersion)
+    if (m_versionNullness == IndexedDB::VersionNullness::Null)
         m_version = 1;
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, m_version, m_versionNullness, eventNames().upgradeneededEvent));
 }

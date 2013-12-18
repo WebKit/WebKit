@@ -44,6 +44,13 @@ IDBTransactionIdentifier CrossThreadCopierBase<false, false, IDBTransactionIdent
     return identifier.isolatedCopy();
 }
 
+Vector<int64_t> CrossThreadCopierBase<false, false, Vector<int64_t>>::copy(const Vector<int64_t>& vector)
+{
+    Vector<int64_t> result;
+    result.appendVector(vector);
+    return result;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

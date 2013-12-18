@@ -76,7 +76,7 @@ void IDBCursorBackend::advance(unsigned long count, PassRefPtr<IDBCallbacks> prp
 void IDBCursorBackend::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
     LOG(StorageAPI, "IDBCursorBackend::delete");
-    ASSERT(m_transaction->mode() != IndexedDB::TransactionReadOnly);
+    ASSERT(m_transaction->mode() != IndexedDB::TransactionMode::ReadOnly);
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::create(primaryKey());
     m_transaction->database().deleteRange(m_transaction->id(), m_objectStoreID, keyRange.release(), prpCallbacks);
 }

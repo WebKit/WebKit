@@ -77,7 +77,7 @@ public:
     // IDBDatabaseBackend
     void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement);
     void deleteObjectStore(int64_t transactionId, int64_t objectStoreId);
-    void createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, unsigned short mode);
+    void createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
     void close(PassRefPtr<IDBDatabaseCallbacks>);
 
     void commit(int64_t transactionId);
