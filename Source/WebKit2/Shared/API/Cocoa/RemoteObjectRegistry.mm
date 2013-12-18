@@ -50,7 +50,9 @@ void RemoteObjectRegistry::sendInvocation(const UserData& userData)
 
 void RemoteObjectRegistry::invokeMethod(const UserData& invocation)
 {
+#if WK_API_ENABLED
     [m_remoteObjectRegistry _invokeMethod:invocation];
+#endif
 }
 
 } // namespace WebKit
