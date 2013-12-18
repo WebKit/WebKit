@@ -1,3 +1,13 @@
+2013-12-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: HTML spec change indicates @aria-required should trump @required on any element
+        https://bugs.webkit.org/show_bug.cgi?id=122145
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/aria-required-expected.txt:
+        * accessibility/aria-required.html:
+
 2013-12-18  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening

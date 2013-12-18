@@ -3,7 +3,7 @@ This tests that aria-required is a usable attribute.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Elements to test: 32
+Elements to test: 35
 
 PASS textfield isRequired is false
 PASS textfield_required isRequired is true
@@ -14,17 +14,20 @@ PASS checkbox isRequired is false
 PASS checkbox_required isRequired is true
 PASS checkbox_required_ariarequired isRequired is true
 PASS checkbox_ariarequiredfalse isRequired is false
-PASS checkbox_required_ariarequiredfalse isRequired is true
+PASS checkbox_required_ariarequiredfalse isRequired is false
+PASS checkbox_requiredfalse_ariarequiredtrue isRequired is true
 PASS select isRequired is false
 PASS select_required isRequired is true
 PASS select_required_ariarequired isRequired is true
 PASS select_ariarequiredfalse isRequired is false
-PASS select_required_ariarequiredfalse isRequired is true
+PASS select_required_ariarequiredfalse isRequired is false
+PASS select_requiredfalse_ariarequiredtrue isRequired is true
 PASS textarea isRequired is false
 PASS textarea_required isRequired is true
 PASS textarea_required_ariarequired isRequired is true
 PASS textarea_ariarequiredfalse isRequired is false
-PASS textarea_required_ariarequiredfalse isRequired is true
+PASS textarea_required_ariarequiredfalse isRequired is false
+PASS textarea_requiredfalse_ariarequiredtrue isRequired is true
 PASS listbox_ariarequiredtrue isRequired is true
 PASS listbox_ariarequiredfalse isRequired is false
 PASS listbox isRequired is false
