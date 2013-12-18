@@ -73,7 +73,7 @@ private:
 
     virtual void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString) OVERRIDE { }
     virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString) OVERRIDE;
-    virtual bool isReadyForMoreSamples() OVERRIDE { return true; }
+    virtual bool isReadyForMoreSamples(AtomicString) OVERRIDE { return true; }
     virtual void setActive(bool) OVERRIDE;
 
     void didReceiveInitializationSegment(const MockInitializationBox&);

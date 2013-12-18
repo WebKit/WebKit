@@ -65,8 +65,10 @@ public:
 
     virtual void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString) { }
     virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString) { }
-    virtual bool isReadyForMoreSamples() { return false; }
+    virtual bool isReadyForMoreSamples(AtomicString) { return false; }
     virtual void setActive(bool) { }
+    virtual void stopAskingForMoreSamples(AtomicString) { }
+    virtual void notifyClientWhenReadyForMoreSamples(AtomicString) { }
 };
 
 }

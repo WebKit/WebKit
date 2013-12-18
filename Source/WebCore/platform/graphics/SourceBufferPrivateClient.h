@@ -73,11 +73,10 @@ public:
     virtual bool sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const = 0;
     virtual bool sourceBufferPrivateHasVideo(const SourceBufferPrivate*) const = 0;
 
-    virtual void sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*) = 0;
+    virtual void sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*, AtomicString trackID) = 0;
 
     virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime& time, const MediaTime&, const MediaTime&) { return time; }
     virtual void sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const MediaTime&) { };
-
 };
 
 }

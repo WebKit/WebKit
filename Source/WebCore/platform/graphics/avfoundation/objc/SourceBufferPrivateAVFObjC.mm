@@ -469,7 +469,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSou
             m_displayLayer = [[getAVSampleBufferDisplayLayerClass() alloc] init];
             [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 if (m_client)
-                    m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(this);
+                    m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(this, AtomicString::number(trackID));
             }];
             if (m_mediaSource)
                 m_mediaSource->player()->addDisplayLayer(m_displayLayer.get());
@@ -538,8 +538,9 @@ void SourceBufferPrivateAVFObjC::enqueueSample(PassRefPtr<MediaSample> prpMediaS
         m_mediaSource->player()->setHasAvailableVideoFrame(true);
 }
 
-bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples()
+bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(AtomicString trackID)
 {
+    UNUSED_PARAM(trackID);
     return [m_displayLayer isReadyForMoreMediaData];
 }
 

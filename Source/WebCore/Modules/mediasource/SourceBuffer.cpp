@@ -286,9 +286,9 @@ void SourceBuffer::sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const Med
         trackBuffer.decodeQueue.clear();
         for (auto iter = currentSampleDTSIterator; iter != trackBuffer.samples.decodeEnd(); ++iter)
             trackBuffer.decodeQueue.insert(*iter);
-    }
 
-    provideMediaData();   
+        provideMediaData(trackBuffer, trackID);
+    }
 }
 
 MediaTime SourceBuffer::sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
@@ -454,7 +454,8 @@ void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>*)
     scheduleEvent(eventNames().updateendEvent);
 
     m_source->monitorSourceBuffers();
-    provideMediaData();
+    for (auto iter = m_trackBufferMap.begin(), end = m_trackBufferMap.end(); iter != end; ++iter)
+        provideMediaData(iter->value, iter->key);
 }
 
 const AtomicString& SourceBuffer::decodeError()
@@ -1123,39 +1124,38 @@ void SourceBuffer::textTrackKindChanged(TextTrack* track)
         m_source->mediaElement()->textTrackKindChanged(track);
 }
 
-void SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*)
+void SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*, AtomicString trackID)
 {
     LOG(Media, "SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(%p)", this);
-    provideMediaData();
-}
-
-void SourceBuffer::provideMediaData()
-{
-    if (!m_private->isReadyForMoreSamples())
+    auto it = m_trackBufferMap.find(trackID);
+    if (it == m_trackBufferMap.end())
         return;
 
+    provideMediaData(it->value, trackID);
+}
+
+void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString trackID)
+{
 #if !LOG_DISABLED
     unsigned enqueuedSamples = 0;
 #endif
 
-    for (auto it = m_trackBufferMap.begin(), end = m_trackBufferMap.end(); it != end; ++it) {
-        TrackBuffer& trackBuffer = it->value;
-        AtomicString trackID = it->key;
-        auto sampleIt = trackBuffer.decodeQueue.begin();
-        for (auto sampleEnd = trackBuffer.decodeQueue.end(); sampleIt != sampleEnd; ++sampleIt) {
-            if (!m_private->isReadyForMoreSamples())
-                break;
+    auto sampleIt = trackBuffer.decodeQueue.begin();
+    for (auto sampleEnd = trackBuffer.decodeQueue.end(); sampleIt != sampleEnd; ++sampleIt) {
+        if (!m_private->isReadyForMoreSamples(trackID)) {
+            m_private->notifyClientWhenReadyForMoreSamples(trackID);
+            break;
+        }
 
-            RefPtr<MediaSample> sample = sampleIt->second;
-            trackBuffer.lastEnqueuedPresentationTime = sample->presentationTime();
-            m_private->enqueueSample(sample.release(), trackID);
+        RefPtr<MediaSample> sample = sampleIt->second;
+        trackBuffer.lastEnqueuedPresentationTime = sample->presentationTime();
+        m_private->enqueueSample(sample.release(), trackID);
 #if !LOG_DISABLED
-            ++enqueuedSamples;
+        ++enqueuedSamples;
 #endif
 
-        }
-        trackBuffer.decodeQueue.erase(trackBuffer.decodeQueue.begin(), sampleIt);
     }
+    trackBuffer.decodeQueue.erase(trackBuffer.decodeQueue.begin(), sampleIt);
 
     LOG(Media, "SourceBuffer::provideMediaData(%p) - Enqueued %u samples", this, enqueuedSamples);
 }
