@@ -116,14 +116,6 @@ LayoutSize RenderVideo::calculateIntrinsicSize()
     if (videoElement().shouldDisplayPosterImage() && !m_cachedImageSize.isEmpty() && !imageResource()->errorOccurred())
         return m_cachedImageSize;
 
-#if !PLATFORM(IOS)
-    // When the natural size of the video is unavailable, we use the provided
-    // width and height attributes of the video element as the intrinsic size until
-    // better values become available.
-    if (videoElement().hasAttribute(widthAttr) && videoElement().hasAttribute(heightAttr))
-        return LayoutSize(videoElement().width(), videoElement().height());
-#endif
-
     // <video> in standalone media documents should not use the default 300x150
     // size since they also have audio-only files. By setting the intrinsic
     // size to 300x1 the video will resize itself in these cases, and audio will
