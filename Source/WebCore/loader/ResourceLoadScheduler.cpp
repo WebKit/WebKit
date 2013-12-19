@@ -42,11 +42,20 @@
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
+#if PLATFORM(IOS)
+#include <RuntimeApplicationChecksIOS.h>
+#endif
+
 namespace WebCore {
 
-static const unsigned maxRequestsInFlightForNonHTTPProtocols = 20;
 // Match the parallel connection count used by the networking layer.
 static unsigned maxRequestsInFlightPerHost;
+#if !PLATFORM(IOS)
+static const unsigned maxRequestsInFlightForNonHTTPProtocols = 20;
+#else
+// Limiting this seems to regress performance in some local cases so let's just make it large.
+static const unsigned maxRequestsInFlightForNonHTTPProtocols = 10000;
+#endif
 
 ResourceLoadScheduler::HostInformation* ResourceLoadScheduler::hostForURL(const URL& url, CreateHostPolicy createHostPolicy)
 {
@@ -104,6 +113,15 @@ PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Fra
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
         scheduleLoad(loader.get(), priority);
+#if PLATFORM(IOS)
+    // Since we defer loader initialization until scheduling on iOS, the frame
+    // load delegate that would be called in SubresourceLoader::create() on
+    // other ports might be called in scheduleLoad() instead. Our contract to
+    // callers of this method is that a null loader is returned if the load was
+    // cancelled by a frame load delegate.
+    if (!loader || loader->reachedTerminalState())
+        return nullptr;
+#endif
     return loader.release();
 }
 
@@ -122,21 +140,49 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Resourc
 
     LOG(ResourceLoading, "ResourceLoadScheduler::load resource %p '%s'", resourceLoader, resourceLoader->url().string().latin1().data());
 
+#if PLATFORM(IOS)
     // If there's a web archive resource for this URL, we don't need to schedule the load since it will never touch the network.
+    if (!isSuspendingPendingRequests() && resourceLoader->documentLoader()->archiveResourceForURL(resourceLoader->iOSOriginalRequest().url())) {
+        resourceLoader->startLoading();
+        return;
+    }
+#else
     if (resourceLoader->documentLoader()->archiveResourceForURL(resourceLoader->request().url())) {
         resourceLoader->start();
         return;
     }
+#endif
 
-    HostInformation* host = hostForURL(resourceLoader->url(), CreateIfNotFound);    
+#if PLATFORM(IOS)
+    HostInformation* host = hostForURL(resourceLoader->iOSOriginalRequest().url(), CreateIfNotFound);
+#else
+    HostInformation* host = hostForURL(resourceLoader->url(), CreateIfNotFound);
+#endif
+
     bool hadRequests = host->hasRequests();
     host->schedule(resourceLoader, priority);
 
+#if PLATFORM(IOS)
+    if (ResourceRequest::httpPipeliningEnabled() && !isSuspendingPendingRequests()) {
+        // Serve all requests at once to keep the pipeline full at the network layer.
+        servePendingRequests(host, ResourceLoadPriorityVeryLow);
+        return;
+    }
+#endif
+
+#if PLATFORM(IOS)
+    if ((priority > ResourceLoadPriorityLow || !resourceLoader->iOSOriginalRequest().url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriorityLow && !hadRequests)) && !isSuspendingPendingRequests()) {
+        // Try to request important resources immediately.
+        servePendingRequests(host, priority);
+        return;
+    }
+#else
     if (priority > ResourceLoadPriorityLow || !resourceLoader->url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriorityLow && !hadRequests)) {
         // Try to request important resources immediately.
         servePendingRequests(host, priority);
         return;
     }
+#endif
 
     notifyDidScheduleResourceRequest(resourceLoader);
 
@@ -157,6 +203,15 @@ void ResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     HostInformation* host = hostForURL(resourceLoader->url());
     if (host)
         host->remove(resourceLoader);
+#if PLATFORM(IOS)
+    // ResourceLoader::url() doesn't start returning the correct value until the load starts. If we get canceled before that, we need to look for originalRequest url instead.
+    // FIXME: ResourceLoader::url() should be made to return a sensible value at all times.
+    if (!resourceLoader->iOSOriginalRequest().isNull()) {
+        HostInformation* originalHost = hostForURL(resourceLoader->iOSOriginalRequest().url());
+        if (originalHost && originalHost != host)
+            originalHost->remove(resourceLoader);
+    }
+#endif
     scheduleServePendingRequests();
 }
 
@@ -164,11 +219,14 @@ void ResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resource
 {
     HostInformation* oldHost = hostForURL(resourceLoader->url());
     ASSERT(oldHost);
+    if (!oldHost)
+        return;
+
     HostInformation* newHost = hostForURL(redirectURL, CreateIfNotFound);
 
     if (oldHost->name() == newHost->name())
         return;
-    
+
     newHost->addLoadInProgress(resourceLoader);
     oldHost->remove(resourceLoader);
 }
@@ -219,6 +277,12 @@ void ResourceLoadScheduler::servePendingRequests(HostInformation* host, Resource
 
             requestsPending.removeFirst();
             host->addLoadInProgress(resourceLoader.get());
+#if PLATFORM(IOS)
+            if (!applicationIsWebProcess()) {
+                resourceLoader->startLoading();
+                return;
+            }
+#endif
             resourceLoader->start();
         }
     }

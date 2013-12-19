@@ -42,6 +42,14 @@
 #include "HTMLFrameOwnerElement.h"
 #include "SecurityOrigin.h"
 
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
+#endif
+
+#if USE(CONTENT_FILTERING)
+#include "ContentFilter.h"
+#endif
+
 namespace WebCore {
 
 PolicyChecker::PolicyChecker(Frame& frame)
@@ -92,6 +100,23 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
     loader->setLastCheckedRequest(request);
 
     m_callback.set(request, formState.get(), std::move(function));
+
+#if USE(QUICK_LOOK)
+    // Always allow QuickLook-generated URLs based on the protocol scheme.
+    if (!request.isNull() && request.url().protocolIs(QLPreviewProtocol())) {
+        continueAfterNavigationPolicy(PolicyUse);
+        return;
+    }
+#endif
+
+#if USE(CONTENT_FILTERING)
+    if (DocumentLoader* documentLoader = m_frame.loader().documentLoader()) {
+        if (documentLoader->handleContentFilterRequest(request)) {
+            continueAfterNavigationPolicy(PolicyIgnore);
+            return;
+        }
+    }
+#endif
 
     m_delegateIsDecidingNavigationPolicy = true;
     m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, formState, [this](PolicyAction action) {

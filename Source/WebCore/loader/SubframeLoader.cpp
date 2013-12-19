@@ -432,6 +432,13 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginElement, const URL
 
     IntSize contentSize = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
     bool loadManually = document()->isPluginDocument() && !m_containsPlugins && toPluginDocument(document())->shouldLoadPluginManually();
+
+#if PLATFORM(IOS)
+    // On iOS, we only tell the plugin to be in full page mode if the containing plugin document is the top level document.
+    if (document()->ownerElement())
+        loadManually = false;
+#endif
+
     RefPtr<Widget> widget = m_frame.loader().client().createPlugin(contentSize, &pluginElement, url, paramNames, paramValues, mimeType, loadManually);
 
     if (!widget) {

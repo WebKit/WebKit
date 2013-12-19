@@ -30,9 +30,11 @@
 #include "DocumentLoader.h"
 #include "ResourceHandle.h"
 #include "ResourceLoader.h"
+#include <wtf/SchedulePair.h>
 
 namespace WebCore {
 
+#if !PLATFORM(IOS)
 static void scheduleAll(const ResourceLoaderSet& loaders, SchedulePair* pair)
 {
     const ResourceLoaderSet copy = loaders;
@@ -50,23 +52,32 @@ static void unscheduleAll(const ResourceLoaderSet& loaders, SchedulePair* pair)
         if (ResourceHandle* handle = (*it)->handle())
             handle->unschedule(pair);
 }
+#endif
 
 void DocumentLoader::schedule(SchedulePair* pair)
 {
+#if !PLATFORM(IOS)
     if (mainResourceLoader() && mainResourceLoader()->handle())
         mainResourceLoader()->handle()->schedule(pair);
     scheduleAll(m_subresourceLoaders, pair);
     scheduleAll(m_plugInStreamLoaders, pair);
     scheduleAll(m_multipartSubresourceLoaders, pair);
+#else
+    UNUSED_PARAM(pair);
+#endif
 }
 
 void DocumentLoader::unschedule(SchedulePair* pair)
 {
+#if !PLATFORM(IOS)
     if (mainResourceLoader() && mainResourceLoader()->handle())
         mainResourceLoader()->handle()->unschedule(pair);
     unscheduleAll(m_subresourceLoaders, pair);
     unscheduleAll(m_plugInStreamLoaders, pair);
     unscheduleAll(m_multipartSubresourceLoaders, pair);
+#else
+    UNUSED_PARAM(pair);
+#endif
 }
 
 } // namespace

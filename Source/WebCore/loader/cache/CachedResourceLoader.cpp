@@ -741,7 +741,7 @@ void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
     m_documentResources.remove(resource->url());
 }
 
-void CachedResourceLoader::loadDone(CachedResource* resource)
+void CachedResourceLoader::loadDone(CachedResource* resource, bool shouldPerformPostLoadActions)
 {
     RefPtr<DocumentLoader> protectDocumentLoader(m_documentLoader);
     RefPtr<Document> protectDocument(m_document);
@@ -766,7 +766,9 @@ void CachedResourceLoader::loadDone(CachedResource* resource)
 
     if (frame())
         frame()->loader().loadDone();
-    performPostLoadActions();
+
+    if (shouldPerformPostLoadActions)
+        performPostLoadActions();
 
     if (!m_garbageCollectDocumentResourcesTimer.isActive())
         m_garbageCollectDocumentResourcesTimer.startOneShot(0);
@@ -826,21 +828,20 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource* res)
 
 void CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest& request, const String& charset)
 {
-    bool delaySubresourceLoad = true;
-#if PLATFORM(IOS)
-    delaySubresourceLoad = false;
-#endif
-    if (delaySubresourceLoad) {
-        bool hasRendering = m_document->body() && m_document->body()->renderer();
-        bool canBlockParser = type == CachedResource::Script || type == CachedResource::CSSStyleSheet;
-        if (!hasRendering && !canBlockParser) {
-            // Don't preload subresources that can't block the parser before we have something to draw.
-            // This helps prevent preloads from delaying first display when bandwidth is limited.
-            PendingPreload pendingPreload = { type, request, charset };
-            m_pendingPreloads.append(pendingPreload);
-            return;
-        }
+    // We always preload resources on iOS. See <https://bugs.webkit.org/show_bug.cgi?id=91276>.
+    // FIXME: We should consider adding a setting to toggle aggressive preloading behavior as opposed
+    // to making this behavior specific to iOS.
+#if !PLATFORM(IOS)
+    bool hasRendering = m_document->body() && m_document->body()->renderer();
+    bool canBlockParser = type == CachedResource::Script || type == CachedResource::CSSStyleSheet;
+    if (!hasRendering && !canBlockParser) {
+        // Don't preload subresources that can't block the parser before we have something to draw.
+        // This helps prevent preloads from delaying first display when bandwidth is limited.
+        PendingPreload pendingPreload = { type, request, charset };
+        m_pendingPreloads.append(pendingPreload);
+        return;
     }
+#endif
     requestPreload(type, request, charset);
 }
 
@@ -848,6 +849,12 @@ void CachedResourceLoader::checkForPendingPreloads()
 {
     if (m_pendingPreloads.isEmpty() || !m_document->body() || !m_document->body()->renderer())
         return;
+#if PLATFORM(IOS)
+    // We always preload resources on iOS. See <https://bugs.webkit.org/show_bug.cgi?id=91276>.
+    // So, we should never have any pending preloads.
+    // FIXME: We should look to avoid compiling this code entirely when building for iOS.
+    ASSERT_NOT_REACHED();
+#endif
     while (!m_pendingPreloads.isEmpty()) {
         PendingPreload preload = m_pendingPreloads.takeFirst();
         // Don't request preload if the resource already loaded normally (this will result in double load if the page is being reloaded with cached results ignored).

@@ -23,6 +23,8 @@
 #include "config.h"
 #include "MemoryCache.h"
 
+#include "BitmapImage.h"
+#include "CachedImage.h"
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
 #include "CrossThreadTask.h"
@@ -210,18 +212,73 @@ unsigned MemoryCache::liveCapacity() const
     return m_capacity - deadCapacity();
 }
 
-void MemoryCache::pruneLiveResources()
+#if USE(CF)
+// FIXME: Remove the USE(CF) once we either make NativeImagePtr a smart pointer on all platforms or
+// remove the usage of CFRetain() in MemoryCache::addImageToCache() so as to make the code platform-independent.
+bool MemoryCache::addImageToCache(NativeImagePtr image, const URL& url, const String& cachePartition)
+{
+    ASSERT(image);
+    removeImageFromCache(url, cachePartition); // Remove cache entry if it already exists.
+
+    RefPtr<BitmapImage> bitmapImage = BitmapImage::create(image, nullptr);
+    if (!bitmapImage)
+        return false;
+
+    CachedImageManual* cachedImage = new CachedImageManual(url, bitmapImage.get());
+    if (!cachedImage)
+        return false;
+
+    // Actual release of the CGImageRef is done in BitmapImage.
+    CFRetain(image);
+    cachedImage->addFakeClient();
+    cachedImage->setDecodedSize(bitmapImage->decodedSize());
+    cachedImage->resourceRequest().setCachePartition(cachePartition);
+    add(cachedImage);
+    return true;
+}
+
+void MemoryCache::removeImageFromCache(const URL& url, const String& cachePartition)
+{
+#if ENABLE(CACHE_PARTITIONING)
+    CachedResource* resource;
+    if (CachedResourceItem* item = m_resources.get(url))
+        resource = item->get(ResourceRequest::partitionName(cachePartition));
+    else
+        resource = nullptr;
+#else
+    UNUSED_PARAM(cachePartition);
+    CachedResource* resource = m_resources.get(url);
+#endif
+    if (!resource)
+        return;
+
+    // A resource exists and is not a manually cached image, so just remove it.
+    if (!resource->isImage() || !static_cast<CachedImage*>(resource)->isManual()) {
+        evict(resource);
+        return;
+    }
+
+    // Removing the last client of a CachedImage turns the resource
+    // into a dead resource which will eventually be evicted when
+    // dead resources are pruned. That might be immediately since
+    // removing the last client triggers a MemoryCache::prune, so the
+    // resource may be deleted after this call.
+    static_cast<CachedImageManual*>(resource)->removeFakeClient();
+}
+#endif
+
+void MemoryCache::pruneLiveResources(bool shouldDestroyDecodedDataForAllLiveResources)
 {
     if (!m_pruneEnabled)
         return;
 
-    unsigned capacity = liveCapacity();
+    unsigned capacity = shouldDestroyDecodedDataForAllLiveResources ? 0 : liveCapacity();
     if (capacity && m_liveSize <= capacity)
         return;
 
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
 
-    pruneLiveResourcesToSize(targetSize);
+    pruneLiveResourcesToSize(targetSize, shouldDestroyDecodedDataForAllLiveResources);
 }
 
 void MemoryCache::pruneLiveResourcesToPercentage(float prunePercentage)
@@ -238,7 +295,7 @@ void MemoryCache::pruneLiveResourcesToPercentage(float prunePercentage)
     pruneLiveResourcesToSize(targetSize);
 }
 
-void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize)
+void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources)
 {
     if (m_inPruneResources)
         return;
@@ -263,7 +320,7 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize)
         if (current->isLoaded() && current->decodedSize()) {
             // Check to see if the remaining resources are too new to prune.
             double elapsedTime = currentTime - current->m_lastDecodedAccessTime;
-            if (elapsedTime < cMinDelayBeforeLiveDecodedPrune)
+            if (!shouldDestroyDecodedDataForAllLiveResources && elapsedTime < cMinDelayBeforeLiveDecodedPrune)
                 return;
 
             if (current->decodedDataIsPurgeable()) {

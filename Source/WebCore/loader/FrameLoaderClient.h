@@ -116,6 +116,9 @@ namespace WebCore {
 
         virtual void makeRepresentation(DocumentLoader*) = 0;
         virtual void forceLayout() = 0;
+#if PLATFORM(IOS)
+        virtual void forceLayoutWithoutRecalculatingStyles() = 0;
+#endif
         virtual void forceLayoutForNonHTML() = 0;
 
         virtual void setCopiesOnScroll() = 0;
@@ -132,6 +135,11 @@ namespace WebCore {
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
         virtual bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long identifier, const ProtectionSpace&) = 0;
 #endif
+
+#if PLATFORM(IOS)
+        virtual RetainPtr<CFDictionaryRef> connectionProperties(DocumentLoader*, unsigned long identifier) = 0;
+#endif
+
         virtual void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&) = 0;
         virtual void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int dataLength) = 0;
         virtual void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier) = 0;
@@ -249,6 +257,9 @@ namespace WebCore {
         
         virtual void savePlatformDataToCachedFrame(CachedFrame*) = 0;
         virtual void transitionToCommittedFromCachedFrame(CachedFrame*) = 0;
+#if PLATFORM(IOS)
+        virtual void didRestoreFrameHierarchyForCachedFrame() = 0;
+#endif
         virtual void transitionToCommittedForNewPage() = 0;
 
         virtual void didSaveToPageCache() = 0;
@@ -281,7 +292,7 @@ namespace WebCore {
         virtual void didPerformFirstNavigation() const = 0; // "Navigation" here means a transition from one page to another that ends up in the back/forward list.
 
         virtual void registerForIconNotification(bool listen = true) = 0;
-        
+
 #if PLATFORM(MAC)
         // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
         virtual RemoteAXObjectRef accessibilityRemoteObject() = 0;

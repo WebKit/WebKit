@@ -162,7 +162,7 @@ public:
     virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) OVERRIDE;
 #endif
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !PLATFORM(IOS)
     virtual PassRefPtr<DateTimeChooser> openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&) OVERRIDE;
 #endif
 
@@ -174,8 +174,10 @@ public:
     virtual void elementDidFocus(const Node*) OVERRIDE { }
     virtual void elementDidBlur(const Node*) OVERRIDE { }
 
+#if !PLATFORM(IOS)
     virtual void setCursor(const Cursor&) OVERRIDE { }
     virtual void setCursorHiddenUntilMouseMoves(bool) OVERRIDE { }
+#endif
 
     virtual void scrollRectIntoView(const IntRect&) const OVERRIDE { }
 
@@ -190,6 +192,28 @@ public:
     virtual void AXStartFrameLoad() OVERRIDE { }
     virtual void AXFinishFrameLoad() OVERRIDE { }
 #endif
+
+#if PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS)
+    virtual void didPreventDefaultForEvent() OVERRIDE { }
+#endif
+    virtual void didReceiveMobileDocType() OVERRIDE { }
+    virtual void setNeedsScrollNotifications(Frame*, bool) OVERRIDE { }
+    virtual void observedContentChange(Frame*) OVERRIDE { }
+    virtual void clearContentChangeObservers(Frame*) OVERRIDE { }
+    virtual void notifyRevealedSelectionByScrollingFrame(Frame*) OVERRIDE { }
+    virtual void didLayout(LayoutType) OVERRIDE { }
+    virtual void didStartOverflowScroll() OVERRIDE { }
+    virtual void didEndOverflowScroll() OVERRIDE { }
+
+    virtual void suppressFormNotifications() OVERRIDE { }
+    virtual void restoreFormNotifications() OVERRIDE { }
+
+    virtual void addOrUpdateScrollingLayer(Node*, PlatformLayer*, PlatformLayer*, const IntSize&, bool, bool) OVERRIDE { }
+    virtual void removeScrollingLayer(Node*, PlatformLayer*, PlatformLayer*) OVERRIDE { }
+
+    virtual void webAppOrientationsUpdated() OVERRIDE { };
+#endif // PLATFORM(IOS)
 
 #if PLATFORM(IOS)
     virtual bool isStopping() OVERRIDE { return false; }
@@ -220,6 +244,9 @@ public:
 
     virtual void makeRepresentation(DocumentLoader*) OVERRIDE { }
     virtual void forceLayout() OVERRIDE { }
+#if PLATFORM(IOS)
+    virtual void forceLayoutWithoutRecalculatingStyles() OVERRIDE { }
+#endif
     virtual void forceLayoutForNonHTML() OVERRIDE { }
 
     virtual void setCopiesOnScroll() OVERRIDE { }
@@ -237,6 +264,11 @@ public:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long, const ProtectionSpace&) OVERRIDE { return false; }
 #endif
+
+#if PLATFORM(IOS)
+    virtual RetainPtr<CFDictionaryRef> connectionProperties(DocumentLoader*, unsigned long) OVERRIDE { return nullptr; }
+#endif
+
     virtual void dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse&) OVERRIDE { }
     virtual void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long, int) OVERRIDE { }
     virtual void dispatchDidFinishLoading(DocumentLoader*, unsigned long) OVERRIDE { }
@@ -325,6 +357,9 @@ public:
 
     virtual void savePlatformDataToCachedFrame(CachedFrame*) OVERRIDE { }
     virtual void transitionToCommittedFromCachedFrame(CachedFrame*) OVERRIDE { }
+#if PLATFORM(IOS)
+    virtual void didRestoreFrameHierarchyForCachedFrame() OVERRIDE { }
+#endif
     virtual void transitionToCommittedForNewPage() OVERRIDE { }
 
     virtual void didSaveToPageCache() OVERRIDE { }
@@ -448,6 +483,21 @@ public:
     virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*) OVERRIDE { return false; }
     virtual void textWillBeDeletedInTextField(Element*) OVERRIDE { }
     virtual void textDidChangeInTextArea(Element*) OVERRIDE { }
+
+#if PLATFORM(IOS)
+    virtual void suppressSelectionNotifications() OVERRIDE { }
+    virtual void restoreSelectionNotifications() OVERRIDE { }
+    virtual void startDelayingAndCoalescingContentChangeNotifications() OVERRIDE { }
+    virtual void stopDelayingAndCoalescingContentChangeNotifications() OVERRIDE { }
+    virtual void writeDataToPasteboard(NSDictionary*) OVERRIDE { }
+    virtual NSArray* supportedPasteboardTypesForCurrentSelection() OVERRIDE { return nullptr; }
+    virtual NSArray* readDataFromPasteboard(NSString*, int) OVERRIDE { return nullptr; }
+    virtual bool hasRichlyEditableSelection() OVERRIDE { return false; }
+    virtual int getPasteboardItemsCount() OVERRIDE { return 0; }
+    virtual DocumentFragment* documentFragmentFromDelegate(int) OVERRIDE { return nullptr; }
+    virtual bool performsTwoStepPaste(DocumentFragment*) OVERRIDE { return false; }
+    virtual int pasteboardChangeCount() OVERRIDE { return 0; }
+#endif
 
 #if PLATFORM(MAC)
     virtual NSString* userVisibleString(NSURL*) OVERRIDE { return 0; }

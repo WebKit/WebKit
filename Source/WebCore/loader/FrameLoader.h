@@ -89,6 +89,9 @@ public:
     ~FrameLoader();
 
     void init();
+#if PLATFORM(IOS)
+    void initForSynthesizedDocument(const URL&);
+#endif
 
     Frame& frame() const { return m_frame; }
 
@@ -155,6 +158,9 @@ public:
     FrameState state() const { return m_state; }
     static double timeOfLastCompletedLoad();
 
+#if PLATFORM(IOS)
+    RetainPtr<CFDictionaryRef> connectionProperties(ResourceLoader*);
+#endif
     const ResourceRequest& originalRequest() const;
     const ResourceRequest& initialRequest() const;
     void receivedMainResourceError(const ResourceError&);
@@ -240,6 +246,9 @@ public:
     bool isComplete() const;
 
     void commitProvisionalLoad();
+
+    void setLoadsSynchronously(bool loadsSynchronously) { m_loadsSynchronously = loadsSynchronously; }
+    bool loadsSynchronously() const { return m_loadsSynchronously; }
 
     FrameLoaderStateMachine* stateMachine() const { return &m_stateMachine; }
 
@@ -435,8 +444,10 @@ private:
     bool m_didPerformFirstNavigation;
     bool m_loadingFromCachedPage;
     bool m_suppressOpenerInNewFrame;
-    
+
     bool m_currentNavigationHasShownBeforeUnloadConfirmPanel;
+
+    bool m_loadsSynchronously;
 
     SandboxFlags m_forcedSandboxFlags;
 

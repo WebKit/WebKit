@@ -30,20 +30,21 @@
 
 namespace WebCore {
 
-class PlaceholderDocument FINAL : public Document {
+class PlaceholderDocument : public Document {
 public:
     static PassRefPtr<PlaceholderDocument> create(Frame* frame, const URL& url)
     {
         return adoptRef(new PlaceholderDocument(frame, url));
     }
 
-private:
-    virtual void createRenderTree() OVERRIDE;
-
+protected:
     PlaceholderDocument(Frame* frame, const URL& url)
         : Document(frame, url)
     {
     }
+
+private:
+    virtual void createRenderTree() OVERRIDE;
 };
 
 } // namespace WebCore

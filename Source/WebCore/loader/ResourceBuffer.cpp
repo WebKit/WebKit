@@ -112,6 +112,14 @@ bool ResourceBuffer::hasPurgeableBuffer() const
     return m_sharedBuffer->hasPurgeableBuffer();
 }
 
+#if PLATFORM(IOS)
+void ResourceBuffer::setShouldUsePurgeableMemory(bool shouldUsePurgeableMemory)
+{
+    ASSERT(m_sharedBuffer);
+    sharedBuffer()->shouldUsePurgeableMemory(shouldUsePurgeableMemory);
+}
+#endif
+
 void ResourceBuffer::createPurgeableBuffer() const
 {
     ASSERT(m_sharedBuffer);

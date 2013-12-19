@@ -48,6 +48,10 @@
 #include "TextResourceDecoder.h"
 #include <wtf/Ref.h>
 
+#if PLATFORM(IOS)
+#include "PDFDocument.h"
+#endif
+
 namespace WebCore {
 
 static inline bool canReferToParentFrameEncoding(const Frame* frame, const Frame* parentFrame) 
@@ -107,6 +111,10 @@ PassRefPtr<Document> DocumentWriter::createDocument(const URL& url)
 {
     if (!m_frame->loader().stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->loader().client().shouldAlwaysUsePluginDocument(m_mimeType))
         return PluginDocument::create(m_frame, url);
+#if PLATFORM(IOS)
+    if (equalIgnoringCase(m_mimeType, "application/pdf"))
+        return PDFDocument::create(m_frame, url);
+#endif
     if (!m_frame->loader().client().hasHTMLView())
         return PlaceholderDocument::create(m_frame, url);
     return DOMImplementation::createDocument(m_mimeType, m_frame, url, m_frame->inViewSourceMode());

@@ -125,6 +125,8 @@ public:
     IntSize currentFrameSize() const;
     virtual bool getHotSpot(IntPoint&) const OVERRIDE;
 
+    unsigned decodedSize() const { return m_decodedSize; }
+
     virtual bool dataChanged(bool allDataReceived) OVERRIDE;
     virtual String filenameExtension() const OVERRIDE;
 

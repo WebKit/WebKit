@@ -116,6 +116,10 @@ namespace WebCore {
         const URL& requestURL() const;
         const URL& responseURL() const;
         const String& responseMIMEType() const;
+#if PLATFORM(IOS)
+        // FIXME: This method seems to violate the encapsulation of this class.
+        void setResponseMIMEType(const String&);
+#endif
 
         void replaceRequestURLForSameDocumentNavigation(const URL&);
         bool isStopping() const { return m_isStopping; }
@@ -123,8 +127,15 @@ namespace WebCore {
         void setCommitted(bool committed) { m_committed = committed; }
         bool isCommitted() const { return m_committed; }
         bool isLoading() const;
-        const ResourceResponse& response() const { return m_response; }
+
         const ResourceError& mainDocumentError() const { return m_mainDocumentError; }
+
+        const ResourceResponse& response() const { return m_response; }
+#if PLATFORM(IOS)
+        // FIXME: This method seems to violate the encapsulation of this class.
+        void setResponse(const ResourceResponse& response) { m_response = response; }
+#endif
+
         bool isClientRedirect() const { return m_isClientRedirect; }
         void setIsClientRedirect(bool isClientRedirect) { m_isClientRedirect = isClientRedirect; }
         void handledOnloadEvents();
@@ -193,7 +204,9 @@ namespace WebCore {
 
         bool didCreateGlobalHistoryEntry() const { return m_didCreateGlobalHistoryEntry; }
         void setDidCreateGlobalHistoryEntry(bool didCreateGlobalHistoryEntry) { m_didCreateGlobalHistoryEntry = didCreateGlobalHistoryEntry; }
-        
+
+        bool subresourceLoadersArePageCacheAcceptable() const { return m_subresourceLoadersArePageCacheAcceptable; }
+
         void setDefersLoading(bool);
         void setMainResourceDataBufferingPolicy(DataBufferingPolicy);
 
@@ -249,15 +262,20 @@ namespace WebCore {
 
         void checkLoadComplete();
 
+#if USE(CONTENT_FILTERING)
+        void setContentFilterForBlockedLoad(PassRefPtr<ContentFilter>);
+        bool handleContentFilterRequest(const ResourceRequest&);
+#endif
+
+        // The URL of the document resulting from this DocumentLoader.
+        URL documentURL() const;
+
     protected:
         DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
         bool m_deferMainResourceDataLoad;
 
     private:
-
-        // The URL of the document resulting from this DocumentLoader.
-        URL documentURL() const;
         Document* document() const;
 
         void setRequest(const ResourceRequest&);
@@ -397,11 +415,14 @@ namespace WebCore {
         RefPtr<IconLoadDecisionCallback> m_iconLoadDecisionCallback;
         RefPtr<IconDataCallback> m_iconDataCallback;
 
+        bool m_subresourceLoadersArePageCacheAcceptable;
+
         friend class ApplicationCacheHost;  // for substitute resource delivery
         OwnPtr<ApplicationCacheHost> m_applicationCacheHost;
 
 #if USE(CONTENT_FILTERING)
         RefPtr<ContentFilter> m_contentFilter;
+        RefPtr<ContentFilter> m_contentFilterForBlockedLoad;
 #endif
     };
 

@@ -1,3 +1,161 @@
+2013-12-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream WebCore/loader changes
+        https://bugs.webkit.org/show_bug.cgi?id=125879
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in: Added symbols for MemoryCache::{addImageToCache, removeImageFromCache}().
+        * loader/DocumentLoader.cpp:
+        (WebCore::areAllLoadersPageCacheAcceptable): Added.
+        (WebCore::DocumentLoader::DocumentLoader): Initialize m_subresourceLoadersArePageCacheAcceptable.
+        (WebCore::DocumentLoader::stopLoading): Modified to conditionally call areAllLoadersPageCacheAcceptable().
+        (WebCore::DocumentLoader::handleSubstituteDataLoadSoon): Modified to query FrameLoader::loadsSynchronously()
+        whether to load substitute data immediately or to schedule a load.
+        (WebCore::DocumentLoader::responseReceived): Modified to create a content filer when the response protocol
+        is either HTTP or HTTPS, assuming content filtering is enabled.
+        (WebCore::DocumentLoader::dataReceived): Modified to call DocumentLoader::setContentFilterForBlockedLoad()
+        as appropriate.
+        (WebCore::DocumentLoader::clearMainResourceLoader): Added PLATFORM(IOS)-guarded code. Also added a
+        FIXME comment to remove the PLATFORM(IOS)-guard once we upstream the iOS changes to ResourceRequest.h.
+        (WebCore::DocumentLoader::setResponseMIMEType): Added; guard by PLATFORM(IOS). Also added FIXME comment.
+        (WebCore::DocumentLoader::startLoadingMainResource): Added PLATFORM(IOS)-guarded code. Also added a
+        FIXME comment to remove the PLATFORM(IOS)-guard once we upstream the iOS changes to ResourceRequest.h.
+        I also substituted static NeverDestroyed<> for DEFINE_STATIC_LOCAL.
+        (WebCore::DocumentLoader::setContentFilterForBlockedLoad): Added; guarded by USE(CONTENT_FILTERING).
+        (WebCore::DocumentLoader::handleContentFilterRequest): Added; guarded by USE(CONTENT_FILTERING) and PLATFORM(IOS).
+        Also added a FIXME comment to remove the PLATFORM(IOS) guard inside its function body once we upstream
+        file ContentFilterIOS.mm and implement ContentFilter::requestUnblockAndDispatchIfSuccessful() for Mac.
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setResponse): Added; guard by PLATFORM(IOS). Also added a FIXME comment as
+        this method seems to violate the encapsulation of DocumentLoader.
+        (WebCore::DocumentLoader::subresourceLoadersArePageCacheAcceptable): Added.
+        (WebCore::DocumentLoader::documentURL): Added; returns the URL of the document resulting from the DocumentLoader.
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::createDocument): Added iOS-specific code to create a PDF document.
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyChromeClient::openDateTimeChooser): Opt out of compiling this code for iOS. Also substituted
+        nullptr for 0.
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameProgressTracker::~FrameProgressTracker):
+        (WebCore::FrameLoader::FrameLoader): Initialize m_loadsSynchronously.
+        (WebCore::FrameLoader::initForSynthesizedDocument): Added; guarded by PLATFORM(IOS). Also added FIXME comment.
+        (WebCore::FrameLoader::checkCompleted): Added iOS-specific code with FIXME comment.
+        (WebCore::FrameLoader::willLoadMediaElementURL): Added iOS-specific code.
+        (WebCore::FrameLoader::stopForUserCancel): Added iOS-specific code and FIXME comment.
+        (WebCore::FrameLoader::commitProvisionalLoad): Added iOS-specific code and FIXME comment.
+        (WebCore::FrameLoader::transitionToCommitted): Opt out of ENABLE(TOUCH_EVENTS) logic when building for iOS.
+        (WebCore::FrameLoader::didFirstLayout): Added iOS-specific code.
+        (WebCore::FrameLoader::connectionProperties): Added; guarded by PLATFORM(IOS).
+        (WebCore::createWindow): Added iOS-specific code and FIXME comment.
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::setLoadsSynchronously): Added.
+        (WebCore::FrameLoader::loadsSynchronously): Added.
+        * loader/FrameLoaderClient.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState): Opt out of scroll position logic when building for iOS.
+        (WebCore::HistoryController::replaceCurrentItem): Added.
+        * loader/HistoryController.h:
+        * loader/PlaceholderDocument.h: Changed access control of constructor from private to protected and removed the FINAL
+        keyword from the class so that we can subclass PlaceholderDocument on iOS.
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy): Added USE(QUICK_LOOK)- and USE(CONTENT_FILTERING)-guarded code.
+        * loader/ResourceBuffer.cpp:
+        (WebCore::ResourceBuffer::shouldUsePurgeableMemory): Added; guarded by PLATFORM(IOS).
+        * loader/ResourceBuffer.h:
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest): Added USE(QUICK_LOOK)-guarded code.
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::scheduleSubresourceLoad): Added iOS-specific code.
+        (WebCore::ResourceLoadScheduler::scheduleLoad): Ditto.
+        (WebCore::ResourceLoadScheduler::remove): Added iOS-specific code with FIXME comment.
+        (WebCore::ResourceLoadScheduler::crossOriginRedirectReceived): Added null-check for variable oldHost. Also added
+        iOS-specific code.
+        (WebCore::ResourceLoadScheduler::servePendingRequests): Added iOS-specific code.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init): Ditto.
+        (WebCore::ResourceLoader::willSendRequest): Ditto.
+        (WebCore::ResourceLoader::connectionProperties): Added; guarded by PLATFORM(IOS).
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::startLoading): Added; guarded by PLATFORM(IOS).
+        (WebCore::ResourceLoader::iOSOriginalRequest): Added; iOS-specific.
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadPlugin): Added iOS-specific code.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create): Ditto.
+        (WebCore::SubresourceLoader::startLoading): Added; guarded by PLATFORM(IOS).
+        (WebCore::SubresourceLoader::didFinishLoading): Added iOS-specific code.
+        (WebCore::SubresourceLoader::willCancel): Ditto.
+        (WebCore::SubresourceLoader::notifyDone): Ditto.
+        (WebCore::SubresourceLoader::releaseResources): Ditto.
+        * loader/SubresourceLoader.h:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCacheGroup): Added iOS-specific code.
+        (WebCore::ApplicationCacheStorage::loadManifestHostHashes): Ditto.
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL): Ditto.
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL): Ditto.
+        (WebCore::ApplicationCacheStorage::calculateQuotaForOrigin): Ditto.
+        (WebCore::ApplicationCacheStorage::calculateUsageForOrigin): Ditto.
+        (WebCore::ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache): Ditto.
+        (WebCore::ApplicationCacheStorage::storeUpdatedQuotaForOrigin): Ditto.
+        (WebCore::ApplicationCacheStorage::executeSQLCommand): Ditto.
+        (WebCore::ApplicationCacheStorage::verifySchemaVersion): Ditto.
+        (WebCore::ApplicationCacheStorage::openDatabase): Ditto.
+        (WebCore::ApplicationCacheStorage::executeStatement): Ditto.
+        (WebCore::ApplicationCacheStorage::store): Ditto.
+        (WebCore::ApplicationCacheStorage::storeUpdatedType): Ditto.
+        (WebCore::ApplicationCacheStorage::ensureOriginRecord): Ditto.
+        (WebCore::ApplicationCacheStorage::loadCache): Ditto.
+        (WebCore::ApplicationCacheStorage::remove): Ditto.
+        (WebCore::ApplicationCacheStorage::empty): Ditto.
+        (WebCore::ApplicationCacheStorage::storeCopyOfCache): Ditto.
+        (WebCore::ApplicationCacheStorage::manifestURLs): Ditto.
+        (WebCore::ApplicationCacheStorage::cacheGroupSize): Ditto.
+        (WebCore::ApplicationCacheStorage::deleteCacheGroup): Ditto.
+        (WebCore::ApplicationCacheStorage::vacuumDatabaseFile): Ditto.
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage): Added.
+        (WebCore::CachedImage::imageSizeForRenderer): Added iOS-specific code.
+        (WebCore::CachedImageManual::CachedImageManual): Added; guarded by USE(CF). Also added FIXME comment to incorporate
+        the functionality of this class into CachedImage and to remove the USE(CF)-guard once we make MemoryCache::addImageToCache()
+        platform-independent.
+        (WebCore::CachedImageManual::mustRevalidateDueToCacheHeaders): Added; guarded by USE(CF).
+        * loader/cache/CachedImage.h: Removed FINAL keyword from class so that we can define derived class CachedImageManual.
+        (WebCore::CachedImage::isManual): Added; guarded by USE(CF). Also added FIXME comment.
+        (WebCore::CachedImageManual::addFakeClient): Added; guarded by USE(CF).
+        (WebCore::CachedImageManual::removeFakeClient): Added; guarded by USE(CF).
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load): Added iOS-specific code.
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::loadDone): Added argument shouldPerformPostLoadActions, defaults to true. Modified
+        to conditionally call performPostLoadActions() with respect to the argument shouldPerformPostLoadActions.
+        (WebCore::CachedResourceLoader::preload): Added iOS-specific code.
+        (WebCore::CachedResourceLoader::checkForPendingPreloads): Ditto.
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::memoryCache):
+        (WebCore::MemoryCache::add): Added iOS-specific code.
+        (WebCore::MemoryCache::revalidationFailed): Ditto.
+        (WebCore::MemoryCache::resourceForRequest): Ditto.
+        (WebCore::MemoryCache::addImageToCache): Added; guarded by USE(CF). Also added FIXME comment.
+        (WebCore::MemoryCache::removeImageFromCache): Added; guarded by USE(CF). Also added FIXME comment.
+        (WebCore::MemoryCache::pruneLiveResources): Modified to take argument shouldDestroyDecodedDataForAllLiveResources.
+        (WebCore::MemoryCache::pruneLiveResourcesToSize): Modified to take argument shouldDestroyDecodedDataForAllLiveResources,
+        defaults to false. When this argument is true we destroy the decoded data for all live resources from the memory cache.
+        Such functionality is useful when the system is running low on memory.
+        (WebCore::MemoryCache::evict): Added iOS-specific code.
+        * loader/cache/MemoryCache.h:
+        * loader/cf/SubresourceLoaderCF.cpp:
+        (WebCore::SubresourceLoader::didReceiveDataArray): Actually make this code compile. In particular, there is no
+        method called sendDataToResource on SubresourceLoader or in its class hierarchy.
+        * loader/mac/DocumentLoaderMac.cpp:
+        (WebCore::DocumentLoader::schedule): This method has an empty implementation when building for iOS.
+        (WebCore::DocumentLoader::unschedule): Ditto.
+        * platform/graphics/BitmapImage.h: Exposed decodedSize() to access the decoded size of the bitmap image.
+        This functionality is used in MemoryCache::addImageToCache().
+
 2013-12-19  Jer Noble  <jer.noble@apple.com>
 
         Build fix for platforms which do not define -[AVSampleBufferAudioRenderer muted].

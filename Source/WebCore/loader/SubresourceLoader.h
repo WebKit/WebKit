@@ -52,6 +52,13 @@ public:
     virtual bool isSubresourceLoader() OVERRIDE;
     CachedResource* cachedResource();
 
+#if PLATFORM(IOS)
+    virtual bool startLoading() OVERRIDE;
+
+    // FIXME: What is an "iOS" original request? Why is it necessary?
+    virtual const ResourceRequest& iOSOriginalRequest() const OVERRIDE { return m_iOSOriginalRequest; }
+#endif
+
 private:
     SubresourceLoader(Frame*, CachedResource*, const ResourceLoaderOptions&);
 
@@ -86,7 +93,10 @@ private:
     enum SubresourceLoaderState {
         Uninitialized,
         Initialized,
-        Finishing
+        Finishing,
+#if PLATFORM(IOS)
+        CancelledWhileInitializing
+#endif
     };
 
     class RequestCountTracker {
@@ -98,6 +108,9 @@ private:
         CachedResource* m_resource;
     };
 
+#if PLATFORM(IOS)
+    ResourceRequest m_iOSOriginalRequest;
+#endif
     CachedResource* m_resource;
     bool m_loadingMultipartContent;
     SubresourceLoaderState m_state;

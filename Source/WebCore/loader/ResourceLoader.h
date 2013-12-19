@@ -56,6 +56,17 @@ public:
 
     virtual bool init(const ResourceRequest&);
 
+#if PLATFORM(IOS)
+    virtual bool startLoading()
+    {
+        start();
+        return true;
+    }
+
+    virtual const ResourceRequest& iOSOriginalRequest() const { return request(); }
+    virtual RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) OVERRIDE;
+#endif
+
     FrameLoader* frameLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
     const ResourceRequest& originalRequest() const { return m_originalRequest; }

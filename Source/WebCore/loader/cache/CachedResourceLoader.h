@@ -120,7 +120,9 @@ public:
     void clearDocumentLoader() { m_documentLoader = 0; }
 
     void removeCachedResource(CachedResource*) const;
-    void loadDone(CachedResource*);
+
+    void loadDone(CachedResource*, bool shouldPerformPostLoadActions = true);
+
     void garbageCollectDocumentResources();
     
     void incrementRequestCount(const CachedResource*);

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "SubresourceLoader.h"
 
+#include "CachedResource.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -32,8 +33,8 @@ namespace WebCore {
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 void SubresourceLoader::didReceiveDataArray(CFArrayRef dataArray)
 {
-    // Reference the object in this method since the additional processing can do
-    // anything including removing the last reference to this object; one example of this is 3266216.
+    // Reference the object in this method since the additional processing can do anything including
+    // removing the last reference to this object; one example of this is <rdar://problem/3266216>.
     Ref<SubresourceLoader> protect(*this);
 
     ResourceLoader::didReceiveDataArray(dataArray);
@@ -46,8 +47,19 @@ void SubresourceLoader::didReceiveDataArray(CFArrayRef dataArray)
     if (!m_loadingMultipartContent) {
         CFIndex arrayCount = CFArrayGetCount(dataArray);
         for (CFIndex i = 0; i < arrayCount; ++i)  {
-            CFDataRef data = reinterpret_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
-            sendDataToResource(reinterpret_cast<const char *>(CFDataGetBytePtr(data)), static_cast<int>(CFDataGetLength(data)));
+            // A previous iteration of this loop might have resulted in the load
+            // being cancelled. Bail out if we no longer have a cached resource.
+            if (!m_resource)
+                return;
+            if (ResourceBuffer* resourceData = this->resourceData())
+                m_resource->addDataBuffer(resourceData);
+            else {
+                CFDataRef cfData = reinterpret_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
+                const char* data = reinterpret_cast<const char *>(CFDataGetBytePtr(cfData));
+                CFIndex length = CFDataGetLength(cfData);
+                ASSERT(length <= std::numeric_limits<CFIndex>::max());
+                m_resource->addData(data, static_cast<unsigned>(length));
+            }
         }
     }
 }

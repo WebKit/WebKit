@@ -40,6 +40,10 @@
 #include "ProgressTracker.h"
 #include "ResourceLoader.h"
 
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
+#endif
+
 namespace WebCore {
 
 ResourceLoadNotifier::ResourceLoadNotifier(Frame& frame)
@@ -107,6 +111,12 @@ void ResourceLoadNotifier::assignIdentifierToInitialRequest(unsigned long identi
 
 void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
+#if USE(QUICK_LOOK)
+    // Always allow QuickLook-generated URLs based on the protocol scheme.
+    if (!request.isNull() && request.url().protocolIs(QLPreviewProtocol()))
+        return;
+#endif
+
     String oldRequestURL = request.url().string();
     m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url());
 

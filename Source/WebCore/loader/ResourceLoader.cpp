@@ -110,6 +110,15 @@ bool ResourceLoader::init(const ResourceRequest& r)
     ASSERT(!m_documentLoader->isSubstituteLoadPending(this));
     
     ResourceRequest clientRequest(r);
+
+#if PLATFORM(IOS)
+    // If the documentLoader was detached while this ResourceLoader was waiting its turn
+    // in ResourceLoadScheduler queue, don't continue.
+    if (!m_documentLoader->frame()) {
+        cancel();
+        return false;
+    }
+#endif
     
     m_defersLoading = m_frame->page()->defersLoading();
     if (m_options.securityCheck == DoSecurityCheck && !m_frame->document()->securityOrigin()->canDisplay(clientRequest.url())) {
@@ -129,6 +138,13 @@ bool ResourceLoader::init(const ResourceRequest& r)
     }
 
     willSendRequest(clientRequest, ResourceResponse());
+
+#if PLATFORM(IOS)
+    // If this ResourceLoader was stopped as a result of willSendRequest, bail out.
+    if (m_reachedTerminalState)
+        return false;
+#endif
+
     if (clientRequest.isNull()) {
         cancel();
         return false;
@@ -228,6 +244,20 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     Ref<ResourceLoader> protect(*this);
 
     ASSERT(!m_reachedTerminalState);
+    
+#if PLATFORM(IOS)
+    // Ensure an identifier is always set. This ensures that this assetion is not hit:
+    // <rdar://problem/11059794> ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key) in WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace loading the attached web archive
+    // This is not needed in WebKit2, as it doesn't use m_identifier in WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace
+    if (!m_identifier) {
+        m_identifier = m_frame->page()->progress().createUniqueIdentifier();
+        frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
+
+        // If this ResourceLoader was stopped as a result of assignIdentifierToInitialRequest, bail out
+        if (m_reachedTerminalState)
+            return;
+    }
+#endif
 
     // We need a resource identifier for all requests, even if FrameLoader is never going to see it (such as with CORS preflight requests).
     bool createdResourceIdentifier = false;
@@ -550,6 +580,13 @@ bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace
 {
     Ref<ResourceLoader> protect(*this);
     return frameLoader()->client().canAuthenticateAgainstProtectionSpace(documentLoader(), identifier(), protectionSpace);
+}
+#endif
+    
+#if PLATFORM(IOS)
+RetainPtr<CFDictionaryRef> ResourceLoader::connectionProperties(ResourceHandle*)
+{
+    return frameLoader()->connectionProperties(this);
 }
 #endif
 

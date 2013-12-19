@@ -45,6 +45,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(IOS)
+#include "SystemMemory.h"
+#endif
+
 #if USE(CG)
 #include "PDFDocumentImage.h"
 #endif
@@ -69,6 +73,15 @@ CachedImage::CachedImage(const ResourceRequest& resourceRequest)
 
 CachedImage::CachedImage(Image* image)
     : CachedResource(ResourceRequest(), ImageResource)
+    , m_image(image)
+    , m_shouldPaintBrokenImage(true)
+{
+    setStatus(Cached);
+    setLoading(false);
+}
+
+CachedImage::CachedImage(const URL& url, Image* image)
+    : CachedResource(ResourceRequest(url), ImageResource)
     , m_image(image)
     , m_shouldPaintBrokenImage(true)
 {
@@ -267,8 +280,17 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
     }
 #else
     if (m_image->isBitmapImage() && (renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation))
+#if !PLATFORM(IOS)
         imageSize = toBitmapImage(m_image.get())->sizeRespectingOrientation();
-#endif
+#else
+    {
+        // On iOS, the image may have been subsampled to accommodate our size restrictions. However
+        // we should tell the renderer what the original size was.
+        imageSize = toBitmapImage(m_image.get())->originalSizeRespectingOrientation();
+    } else if (m_image->isBitmapImage())
+        imageSize = toBitmapImage(m_image.get())->originalSize();
+#endif // !PLATFORM(IOS)
+#endif // ENABLE(CSS_IMAGE_ORIENTATION)
 
 #if ENABLE(SVG)
     else if (m_image->isSVGImage() && sizeType == UsedSize) {
@@ -589,5 +611,30 @@ bool CachedImage::isOriginClean(SecurityOrigin* securityOrigin)
         return true;
     return !securityOrigin->taintsCanvas(response().url());
 }
+
+#if USE(CF)
+// FIXME: We should look to incorporate the functionality of CachedImageManual
+// into CachedImage or find a better place for this class.
+// FIXME: Remove the USE(CF) once we make MemoryCache::addImageToCache() platform-independent.
+CachedImageManual::CachedImageManual(const URL& url, Image* image)
+    : CachedImage(url, image)
+    , m_fakeClient(std::make_unique<CachedImageClient>())
+{
+    // Use the incoming URL in the response field. This ensures that code
+    // using the response directly, such as origin checks for security,
+    // actually see something.
+    m_response.setURL(url);
+}
+
+bool CachedImageManual::mustRevalidateDueToCacheHeaders(CachePolicy) const
+{
+    // Do not revalidate manually cached images. This mechanism is used as a
+    // way to efficiently share an image from the client to content and
+    // the URL for that image may not represent a resource that can be
+    // retrieved by standard means. If the manual caching SPI is used, it is
+    // incumbent on the client to only use valid resources.
+    return false;
+}
+#endif
 
 } // namespace WebCore

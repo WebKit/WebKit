@@ -228,7 +228,9 @@ public:
     void unregisterHandle(CachedResourceHandleBase* h);
     
     bool canUseCacheValidator() const;
-    bool mustRevalidateDueToCacheHeaders(CachePolicy) const;
+
+    virtual bool mustRevalidateDueToCacheHeaders(CachePolicy) const;
+
     bool isCacheValidator() const { return m_resourceToRevalidate; }
     CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate; }
     

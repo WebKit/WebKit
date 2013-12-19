@@ -54,6 +54,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/Vector.h>
 
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
+#endif
+
 using namespace WTF;
 
 namespace WebCore {
@@ -305,6 +309,16 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
 
     m_options = options;
     m_loading = true;
+
+#if USE(QUICK_LOOK)
+    if (!m_resourceRequest.isNull() && m_resourceRequest.url().protocolIs(QLPreviewProtocol())) {
+        // When QuickLook is invoked to convert a document, it returns a unique URL in the
+        // NSURLReponse for the main document. To make safeQLURLForDocumentURLAndResourceURL()
+        // work, we need to use the QL URL not the original URL.
+        const URL& documentURL = cachedResourceLoader->frame() ? cachedResourceLoader->frame()->loader().documentLoader()->response().url() : cachedResourceLoader->document()->url();
+        m_resourceRequest.setURL(safeQLURLForDocumentURLAndResourceURL(documentURL, url()));
+    }
+#endif
 
 #if PLATFORM(BLACKBERRY)
     if (m_resourceRequest.targetType() == ResourceRequest::TargetIsUnspecified)

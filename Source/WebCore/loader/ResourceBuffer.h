@@ -71,7 +71,12 @@ public:
 
     bool hasPurgeableBuffer() const;
     void createPurgeableBuffer() const;
-    
+
+#if PLATFORM(IOS)
+    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to SharedBuffer.{cpp, h} and SharedBufferCF.cpp.
+    void setShouldUsePurgeableMemory(bool);
+#endif
+
     // Ensure this buffer has no other clients before calling this.
     PassOwnPtr<PurgeableBuffer> releasePurgeableBuffer();
 

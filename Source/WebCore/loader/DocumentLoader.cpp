@@ -56,12 +56,14 @@
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "ResourceBuffer.h"
+#include "ResourceHandle.h"
 #include "SchemeRegistry.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
 #include <wtf/Assertions.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -95,6 +97,26 @@ static void setAllDefersLoading(const ResourceLoaderSet& loaders, bool defers)
         loadersCopy[i]->setDefersLoading(defers);
 }
 
+static bool areAllLoadersPageCacheAcceptable(const ResourceLoaderSet& loaders)
+{
+    Vector<RefPtr<ResourceLoader>> loadersCopy;
+    copyToVector(loaders, loadersCopy);
+    for (auto& loader : loadersCopy) {
+        ResourceHandle* handle = loader->handle();
+        if (!handle)
+            return false;
+
+        CachedResource* cachedResource = memoryCache()->resourceForURL(handle->firstRequest().url());
+        if (!cachedResource)
+            return false;
+
+        // All non-image loads will prevent the page from entering the PageCache.
+        if (!cachedResource->isImage())
+            return false;
+    }
+    return true;
+}
+
 DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData& substituteData)
     : m_deferMainResourceDataLoad(true)
     , m_frame(0)
@@ -119,6 +141,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_identifierForLoadWithoutResourceLoader(0)
     , m_dataLoadTimer(this, &DocumentLoader::handleSubstituteDataLoadNow)
     , m_waitingForContentPolicy(false)
+    , m_subresourceLoadersArePageCacheAcceptable(false)
     , m_applicationCacheHost(adoptPtr(new ApplicationCacheHost(this)))
 {
 }
@@ -256,7 +279,14 @@ void DocumentLoader::stopLoading()
     // (This can happen when there's a single XMLHttpRequest currently loading and stopLoading causes it
     // to stop loading. Because of this, we need to save it so we don't return early.
     bool loading = isLoading();
-    
+
+    // We may want to audit the existing subresource loaders when we are on a page which has completed
+    // loading but there are subresource loads during cancellation. This must be done before the
+    // frame->stopLoading() call, which may evict the CachedResources, which we rely on to check
+    // the type of the resource loads.
+    if (loading && m_committed && !mainResourceLoader() && !m_subresourceLoaders.isEmpty())
+        m_subresourceLoadersArePageCacheAcceptable = areAllLoadersPageCacheAcceptable(m_subresourceLoaders);
+
     if (m_committed) {
         // Attempt to stop the frame if the document loader is loading, or if it is done loading but
         // still  parsing. Failure to do so can cause a world leak.
@@ -381,6 +411,9 @@ void DocumentLoader::finishedLoading(double finishTime)
         const char* data = m_contentFilter->getReplacementData(length);
         if (data)
             dataReceived(m_mainResource.get(), data, length);
+
+        if (m_contentFilter->didBlockData())
+            setContentFilterForBlockedLoad(m_contentFilter);
     }
 #endif
 
@@ -455,10 +488,10 @@ void DocumentLoader::startDataLoadTimer()
 
 void DocumentLoader::handleSubstituteDataLoadSoon()
 {
-    if (m_deferMainResourceDataLoad)
-        startDataLoadTimer();
-    else
+    if (!m_deferMainResourceDataLoad || frameLoader()->loadsSynchronously())
         handleSubstituteDataLoadNow(0);
+    else
+        startDataLoadTimer();
 }
 
 void DocumentLoader::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -633,7 +666,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
 #endif
 
 #if USE(CONTENT_FILTERING)
-    if (response.url().protocolIs("https") && ContentFilter::isEnabled())
+    if (response.url().protocolIsInHTTPFamily() && ContentFilter::isEnabled())
         m_contentFilter = ContentFilter::create(response);
 #endif
 
@@ -844,6 +877,9 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
 
         data = m_contentFilter->getReplacementData(length);
         loadWasBlockedBeforeFinishing = m_contentFilter->didBlockData();
+
+        if (loadWasBlockedBeforeFinishing)
+            setContentFilterForBlockedLoad(m_contentFilter);
     }
 #endif
 
@@ -927,6 +963,12 @@ void DocumentLoader::detachFromFrame()
 void DocumentLoader::clearMainResourceLoader()
 {
     m_loadingMainResource = false;
+
+#if PLATFORM(IOS)
+    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to ResourceRequest.h.
+    m_request.setMainResourceRequest(false);
+#endif
+
     if (this == frameLoader()->activeDocumentLoader())
         checkLoadComplete();
 }
@@ -1256,6 +1298,14 @@ const String& DocumentLoader::responseMIMEType() const
     return m_response.mimeType();
 }
 
+#if PLATFORM(IOS)
+// FIXME: This method seems to violate the encapsulation of this class.
+void DocumentLoader::setResponseMIMEType(const String& responseMimeType)
+{
+    m_response.setMimeType(responseMimeType);
+}
+#endif
+
 const URL& DocumentLoader::unreachableURL() const
 {
     return m_substituteData.failingURL();
@@ -1380,9 +1430,13 @@ void DocumentLoader::startLoadingMainResource()
         return;
     }
 
+#if PLATFORM(IOS)
+    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to ResourceRequest.h.
+    m_request.setMainResourceRequest(true);
+#endif
+
     ResourceRequest request(m_request);
-    DEFINE_STATIC_LOCAL(ResourceLoaderOptions, mainResourceLoadOptions,
-        (SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForAllCredentials, SkipSecurityCheck, UseDefaultOriginRestrictionsForType));
+    static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForAllCredentials, SkipSecurityCheck, UseDefaultOriginRestrictionsForType);
     CachedResourceRequest cachedResourceRequest(request, mainResourceLoadOptions);
     m_mainResource = m_cachedResourceLoader->requestMainResource(cachedResourceRequest);
     if (!m_mainResource) {
@@ -1505,5 +1559,39 @@ void DocumentLoader::handledOnloadEvents()
     m_wasOnloadHandled = true;
     applicationCacheHost()->stopDeferringEvents();
 }
+
+#if USE(CONTENT_FILTERING)
+void DocumentLoader::setContentFilterForBlockedLoad(PassRefPtr<ContentFilter> contentFilter)
+{
+    ASSERT(!m_contentFilterForBlockedLoad);
+    ASSERT(contentFilter);
+    ASSERT(contentFilter->didBlockData());
+    m_contentFilterForBlockedLoad = contentFilter;
+}
+
+bool DocumentLoader::handleContentFilterRequest(const ResourceRequest& request)
+{
+    // FIXME: Remove PLATFORM(IOS)-guard once we upstream ContentFilterIOS.mm and
+    // implement ContentFilter::requestUnblockAndDispatchIfSuccessful() for Mac.
+#if PLATFORM(IOS)
+    if (!m_contentFilterForBlockedLoad)
+        return false;
+
+    if (!request.url().protocolIs(ContentFilter::scheme()))
+        return false;
+
+    if (equalIgnoringCase(request.url().host(), "unblock")) {
+        // Tell the FrameLoader to reload if the unblock is successful.
+        m_contentFilterForBlockedLoad->requestUnblockAndDispatchIfSuccessful(bind(&FrameLoader::reload, &(m_frame->loader()), false));
+        return true;
+    }
+
+    return false;
+#else
+    UNUSED_PARAM(request);
+    return false;
+#endif
+}
+#endif
 
 } // namespace WebCore
