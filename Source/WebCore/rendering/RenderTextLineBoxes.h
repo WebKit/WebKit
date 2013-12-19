@@ -82,6 +82,10 @@ public:
     ~RenderTextLineBoxes();
 #endif
 
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    void invalidateParentChildLists();
+#endif
+
 private:
     void checkConsistency() const;
 

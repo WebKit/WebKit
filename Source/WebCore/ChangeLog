@@ -1,3 +1,21 @@
+2013-12-16  Darin Adler  <darin@apple.com>
+
+        Improve "bad parent" and "bad child list" assertions in line boxes
+        https://bugs.webkit.org/show_bug.cgi?id=125656
+
+        Reviewed by Sam Weinig.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::root): Use parent() function with assertions rather than
+        using m_parent function, which skips the assertions.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::removeAndDestroyTextBoxes): Call invalidateParentChildLists
+        if we are in the optimized document-destruction code path and destroying children
+        without removing them from their parents.
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::invalidateParentChildLists): Added.
+        * rendering/RenderTextLineBoxes.h: Added invalidateParentChildLists.
+
 2013-12-19  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/15696824> [CFNetwork] Loading stops at server redirects

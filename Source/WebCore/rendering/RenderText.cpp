@@ -267,6 +267,10 @@ void RenderText::removeAndDestroyTextBoxes()
 {
     if (!documentBeingDestroyed())
         m_lineBoxes.removeAllFromParent(*this);
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    else
+        m_lineBoxes.invalidateParentChildLists();
+#endif
     m_lineBoxes.deleteAll();
 }
 
