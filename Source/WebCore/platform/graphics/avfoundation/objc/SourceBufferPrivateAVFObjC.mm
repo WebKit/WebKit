@@ -59,6 +59,7 @@ SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 
 SOFT_LINK_CLASS(AVFoundation, AVAssetTrack)
 SOFT_LINK_CLASS(AVFoundation, AVStreamDataParser)
+SOFT_LINK_CLASS(AVFoundation, AVSampleBufferAudioRenderer)
 SOFT_LINK_CLASS(AVFoundation, AVSampleBufferDisplayLayer)
 
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaTypeVideo, NSString *)
@@ -107,15 +108,28 @@ SOFT_LINK(CoreMedia, CMSetAttachment, void, (CMAttachmentBearerRef target, CFStr
 
 #pragma mark -
 #pragma mark AVStreamDataParser
-@class AVStreamDataParserInternal;
 
-NS_CLASS_AVAILABLE(TBD, TBD)
 @interface AVStreamDataParser : NSObject
 - (void)setDelegate:(id)delegate;
 - (void)appendStreamData:(NSData *)data;
 - (void)setShouldProvideMediaData:(BOOL)shouldProvideMediaData forTrackID:(CMPersistentTrackID)trackID;
 - (BOOL)shouldProvideMediaDataForTrackID:(CMPersistentTrackID)trackID;
 @end
+
+#pragma mark -
+#pragma mark AVSampleBufferAudioRenderer
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
+@interface AVSampleBufferAudioRenderer : NSObject
+- (NSInteger)status;
+- (NSError*)error;
+- (void)enqueueSampleBuffer:(CMSampleBufferRef)sampleBuffer;
+- (void)flush;
+- (BOOL)isReadyForMoreMediaData;
+- (void)requestMediaDataWhenReadyOnQueue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
+- (void)stopRequestingMediaData;
+@end
+#endif
 
 #pragma mark -
 #pragma mark WebAVStreamDataParserListener
@@ -290,18 +304,13 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     , m_mediaSource(parent)
     , m_client(0)
     , m_parsingSucceeded(true)
+    , m_enabledVideoTrackID(-1)
 {
 }
 
 SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
 {
-    if (m_displayLayer) {
-        if (m_mediaSource)
-            m_mediaSource->player()->removeDisplayLayer(m_displayLayer.get());
-        [m_displayLayer flushAndRemoveImage];
-        [m_displayLayer stopRequestingMediaData];
-        m_displayLayer = nullptr;
-    }
+    destroyRenderers();
 }
 
 void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
@@ -352,7 +361,7 @@ struct ProcessCodedFrameInfo {
 static OSStatus callProcessCodedFrameForEachSample(CMSampleBufferRef sampleBuffer, CMItemCount, void *refcon)
 {
     ProcessCodedFrameInfo* info = static_cast<ProcessCodedFrameInfo*>(refcon);
-    return info->sourceBuffer->processCodedFrame(info->trackID, sampleBuffer, info->mediaType);
+    return info->sourceBuffer->processCodedFrame(info->trackID, sampleBuffer, info->mediaType) ? noErr : paramErr;
 }
 
 void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID(int trackID, CMSampleBufferRef sampleBuffer, const String& mediaType, unsigned flags)
@@ -401,7 +410,7 @@ void SourceBufferPrivateAVFObjC::abort()
     notImplemented();
 }
 
-void SourceBufferPrivateAVFObjC::removedFromMediaSource()
+void SourceBufferPrivateAVFObjC::destroyRenderers()
 {
     if (m_displayLayer) {
         if (m_mediaSource)
@@ -410,6 +419,21 @@ void SourceBufferPrivateAVFObjC::removedFromMediaSource()
         [m_displayLayer stopRequestingMediaData];
         m_displayLayer = nullptr;
     }
+
+    for (auto it = m_audioRenderers.begin(), end = m_audioRenderers.end(); it != end; ++it) {
+        AVSampleBufferAudioRenderer* renderer = it->second.get();
+        if (m_mediaSource)
+            m_mediaSource->player()->removeAudioRenderer(renderer);
+        [renderer flush];
+        [renderer stopRequestingMediaData];
+    }
+
+    m_audioRenderers.clear();
+}
+
+void SourceBufferPrivateAVFObjC::removedFromMediaSource()
+{
+    destroyRenderers();
 
     if (m_mediaSource)
         m_mediaSource->removeSourceBuffer(this);
@@ -468,18 +492,38 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSou
         if (!m_displayLayer) {
             m_displayLayer = [[getAVSampleBufferDisplayLayerClass() alloc] init];
             [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
-                if (m_client)
-                    m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(this, AtomicString::number(trackID));
+                didBecomeReadyForMoreSamples(trackID);
             }];
-            if (m_mediaSource)
-                m_mediaSource->player()->addDisplayLayer(m_displayLayer.get());
         }
+        if (m_mediaSource)
+            m_mediaSource->player()->addDisplayLayer(m_displayLayer.get());
     }
 }
 
-void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSourceAVFObjC*)
+void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSourceAVFObjC* track)
 {
-    // No-op.
+    int trackID = track->trackID();
+
+    if (!track->enabled()) {
+        AVSampleBufferAudioRenderer* renderer = m_audioRenderers[trackID].get();
+        [m_parser setShouldProvideMediaData:NO forTrackID:trackID];
+        if (m_mediaSource)
+            m_mediaSource->player()->removeAudioRenderer(renderer);
+    } else {
+        [m_parser setShouldProvideMediaData:YES forTrackID:trackID];
+        AVSampleBufferAudioRenderer* renderer;
+        if (!m_audioRenderers.count(trackID)) {
+            renderer = [[getAVSampleBufferAudioRendererClass() alloc] init];
+            [renderer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
+                didBecomeReadyForMoreSamples(trackID);
+            }];
+            m_audioRenderers[trackID] = renderer;
+        } else
+            renderer = m_audioRenderers[trackID].get();
+
+        if (m_mediaSource)
+            m_mediaSource->player()->addAudioRenderer(renderer);
+    }
 }
 
 static RetainPtr<CMSampleBufferRef> createNonDisplayingCopy(CMSampleBufferRef sampleBuffer)
@@ -498,14 +542,20 @@ static RetainPtr<CMSampleBufferRef> createNonDisplayingCopy(CMSampleBufferRef sa
     return adoptCF(newSampleBuffer);
 }
 
-void SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>> mediaSamples, AtomicString trackID)
+void SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>> mediaSamples, AtomicString trackIDString)
 {
-    if (trackID.toInt() != m_enabledVideoTrackID)
-        return;
+    int trackID = trackIDString.toInt();
+    LOG(Media, "SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(%p) samples: %d samples, trackId: %d", this, mediaSamples.size(), trackID);
 
-    LOG(Media, "SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(%p) samples: %d samples, trackId: %d", this, mediaSamples.size(), trackID.toInt());
+    if (trackID == m_enabledVideoTrackID)
+        flushAndEnqueueNonDisplayingSamples(mediaSamples, m_displayLayer.get());
+    else if (m_audioRenderers.count(trackID))
+        flushAndEnqueueNonDisplayingSamples(mediaSamples, m_audioRenderers[trackID].get());
+}
 
-    [m_displayLayer flush];
+void SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>> mediaSamples, AVSampleBufferAudioRenderer* renderer)
+{
+    [renderer flush];
 
     for (auto it = mediaSamples.begin(), end = mediaSamples.end(); it != end; ++it) {
         RefPtr<MediaSample>& mediaSample = *it;
@@ -515,16 +565,33 @@ void SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(Vector<RefP
 
         RetainPtr<CMSampleBufferRef> sampleBuffer = createNonDisplayingCopy(platformSample.sample.cmSampleBuffer);
 
-        [m_displayLayer enqueueSampleBuffer:sampleBuffer.get()];
+        [renderer enqueueSampleBuffer:sampleBuffer.get()];
+    }
+}
+
+void SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>> mediaSamples, AVSampleBufferDisplayLayer* layer)
+{
+    [layer flush];
+
+    for (auto it = mediaSamples.begin(), end = mediaSamples.end(); it != end; ++it) {
+        RefPtr<MediaSample>& mediaSample = *it;
+
+        PlatformSample platformSample = mediaSample->platformSample();
+        ASSERT(platformSample.type == PlatformSample::CMSampleBufferType);
+
+        RetainPtr<CMSampleBufferRef> sampleBuffer = createNonDisplayingCopy(platformSample.sample.cmSampleBuffer);
+
+        [layer enqueueSampleBuffer:sampleBuffer.get()];
     }
 
     if (m_mediaSource)
         m_mediaSource->player()->setHasAvailableVideoFrame(false);
 }
 
-void SourceBufferPrivateAVFObjC::enqueueSample(PassRefPtr<MediaSample> prpMediaSample, AtomicString trackID)
+void SourceBufferPrivateAVFObjC::enqueueSample(PassRefPtr<MediaSample> prpMediaSample, AtomicString trackIDString)
 {
-    if (trackID.toInt() != m_enabledVideoTrackID)
+    int trackID = trackIDString.toInt();
+    if (trackID != m_enabledVideoTrackID && !m_audioRenderers.count(trackID))
         return;
 
     RefPtr<MediaSample> mediaSample = prpMediaSample;
@@ -533,15 +600,25 @@ void SourceBufferPrivateAVFObjC::enqueueSample(PassRefPtr<MediaSample> prpMediaS
     if (platformSample.type != PlatformSample::CMSampleBufferType)
         return;
 
-    [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-    if (m_mediaSource)
-        m_mediaSource->player()->setHasAvailableVideoFrame(true);
+    if (trackID == m_enabledVideoTrackID) {
+        [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
+        if (m_mediaSource)
+            m_mediaSource->player()->setHasAvailableVideoFrame(true);
+    } else
+        [m_audioRenderers[trackID] enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
 }
 
-bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(AtomicString trackID)
+bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(AtomicString trackIDString)
 {
-    UNUSED_PARAM(trackID);
-    return [m_displayLayer isReadyForMoreMediaData];
+    int trackID = trackIDString.toInt();
+    if (trackID == m_enabledVideoTrackID)
+        return [m_displayLayer isReadyForMoreMediaData];
+    else if (m_audioRenderers.count(trackID))
+        return [m_audioRenderers[trackID] isReadyForMoreMediaData];
+    else
+        ASSERT_NOT_REACHED();
+
+    return false;
 }
 
 void SourceBufferPrivateAVFObjC::setActive(bool isActive)
@@ -561,6 +638,36 @@ void SourceBufferPrivateAVFObjC::seekToTime(MediaTime time)
 {
     if (m_client)
         m_client->sourceBufferPrivateSeekToTime(this, time);
+}
+
+void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(int trackID)
+{
+    if (trackID == m_enabledVideoTrackID)
+        [m_displayLayer stopRequestingMediaData];
+    else if (m_audioRenderers.count(trackID))
+        [m_audioRenderers[trackID] stopRequestingMediaData];
+    else {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (m_client)
+        m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(this, AtomicString::number(trackID));
+}
+
+void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(AtomicString trackIDString)
+{
+    int trackID = trackIDString.toInt();
+    if (trackID == m_enabledVideoTrackID) {
+        [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
+            didBecomeReadyForMoreSamples(trackID);
+        }];
+    } else if (m_audioRenderers.count(trackID)) {
+        [m_audioRenderers[trackID] requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
+            didBecomeReadyForMoreSamples(trackID);
+        }];
+    } else
+        ASSERT_NOT_REACHED();
 }
 
 }

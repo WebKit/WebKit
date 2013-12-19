@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #include "SourceBufferPrivate.h"
+#include <map>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/MediaTime.h>
@@ -39,6 +40,7 @@
 
 OBJC_CLASS AVAsset;
 OBJC_CLASS AVStreamDataParser;
+OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS NSError;
 OBJC_CLASS NSObject;
@@ -94,6 +96,13 @@ private:
     virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString trackID) OVERRIDE;
     virtual bool isReadyForMoreSamples(AtomicString trackID) OVERRIDE;
     virtual void setActive(bool) OVERRIDE;
+    virtual void notifyClientWhenReadyForMoreSamples(AtomicString trackID) OVERRIDE;
+
+    void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AVSampleBufferAudioRenderer*);
+    void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AVSampleBufferDisplayLayer*);
+
+    void didBecomeReadyForMoreSamples(int trackID);
+    void destroyRenderers();
 
     Vector<RefPtr<VideoTrackPrivate>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivate>> m_audioTracks;
@@ -101,6 +110,7 @@ private:
     RetainPtr<AVStreamDataParser> m_parser;
     RetainPtr<AVAsset> m_asset;
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
+    std::map<int, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
     RetainPtr<NSObject> m_delegate;
 
     MediaSourcePrivateAVFObjC* m_mediaSource;

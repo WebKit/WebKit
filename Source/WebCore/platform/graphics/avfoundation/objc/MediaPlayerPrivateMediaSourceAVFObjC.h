@@ -31,8 +31,10 @@
 #include "MediaPlayerPrivate.h"
 #include "SourceBufferPrivateClient.h"
 #include <wtf/MediaTime.h>
+#include <wtf/Vector.h>
 
 OBJC_CLASS AVAsset;
+OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
 
 typedef struct OpaqueCMTimebase* CMTimebaseRef;
@@ -51,6 +53,9 @@ public:
 
     void addDisplayLayer(AVSampleBufferDisplayLayer*);
     void removeDisplayLayer(AVSampleBufferDisplayLayer*);
+
+    void addAudioRenderer(AVSampleBufferAudioRenderer*);
+    void removeAudioRenderer(AVSampleBufferAudioRenderer*);
 
     virtual MediaPlayer::NetworkState networkState() const OVERRIDE;
     virtual MediaPlayer::ReadyState readyState() const OVERRIDE;
@@ -81,6 +86,10 @@ private:
     void pauseInternal();
 
     virtual bool paused() const OVERRIDE;
+
+    virtual void setVolume(float volume) OVERRIDE;
+    virtual bool supportsMuting() const OVERRIDE { return true; }
+    virtual void setMuted(bool) OVERRIDE;
 
     virtual bool supportsScanning() const OVERRIDE;
 
@@ -151,6 +160,7 @@ private:
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    Vector<RetainPtr<AVSampleBufferAudioRenderer>> m_sampleBufferAudioRenderers;
     std::unique_ptr<PlatformClockCM> m_clock;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;

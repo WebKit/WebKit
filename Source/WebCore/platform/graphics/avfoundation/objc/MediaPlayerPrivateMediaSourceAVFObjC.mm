@@ -48,9 +48,12 @@ SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAsset)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVURLAsset)
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferAudioRenderer)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferDisplayLayer)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamDataParser)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVVideoPerformanceMetrics)
+
+SOFT_LINK(CoreMedia, FigReadOnlyTimebaseSetTargetTimebase, OSStatus, (CMTimebaseRef timebase, CMTimebaseRef newTargetTimebase), (timebase, newTargetTimebase))
 
 #pragma mark -
 #pragma mark AVVideoPerformanceMetrics
@@ -65,6 +68,18 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVVideoPerformanceMetrics)
 @interface AVSampleBufferDisplayLayer (WebCoreAVSampleBufferDisplayLayerPrivate)
 - (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
 @end
+
+
+#pragma mark -
+#pragma mark AVSampleBufferAudioRenderer
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
+@interface AVSampleBufferAudioRenderer : NSObject
+- (CMTimebaseRef)timebase;
+- (void)setVolume:(float)volume;
+- (void)setMuted:(BOOL)muted;
+@end
+#endif
 
 namespace WebCore {
 
@@ -101,7 +116,7 @@ PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateMediaSourceAVFObjC::cr
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
 {
-    return AVFoundationLibrary() && CoreMediaLibrary() && getAVStreamDataParserClass();
+    return AVFoundationLibrary() && CoreMediaLibrary() && getAVStreamDataParserClass() && getAVSampleBufferAudioRendererClass();
 }
 
 static HashSet<String> mimeTypeCache()
@@ -211,9 +226,21 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::paused() const
     return !m_clock->isRunning();
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::setVolume(float volume)
+{
+    for (auto it = m_sampleBufferAudioRenderers.begin(), end = m_sampleBufferAudioRenderers.end(); it != end; ++it)
+        [*it setVolume:volume];
+}
+
 bool MediaPlayerPrivateMediaSourceAVFObjC::supportsScanning() const
 {
     return true;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setMuted(bool muted)
+{
+    for (auto it = m_sampleBufferAudioRenderers.begin(), end = m_sampleBufferAudioRenderers.end(); it != end; ++it)
+        [*it setMuted:muted];
 }
 
 IntSize MediaPlayerPrivateMediaSourceAVFObjC::naturalSize() const
@@ -465,6 +492,26 @@ void MediaPlayerPrivateMediaSourceAVFObjC::removeDisplayLayer(AVSampleBufferDisp
         return;
 
     m_sampleBufferDisplayLayer = nullptr;
+    m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer(AVSampleBufferAudioRenderer* audioRenderer)
+{
+    if (m_sampleBufferAudioRenderers.contains(audioRenderer))
+        return;
+
+    m_sampleBufferAudioRenderers.append(audioRenderer);
+    FigReadOnlyTimebaseSetTargetTimebase([audioRenderer timebase], m_clock->timebase());
+    m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioRenderer(AVSampleBufferAudioRenderer* audioRenderer)
+{
+    size_t pos = m_sampleBufferAudioRenderers.find(audioRenderer);
+    if (pos == notFound)
+        return;
+
+    m_sampleBufferAudioRenderers.remove(pos);
     m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 }
 
