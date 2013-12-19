@@ -1,3 +1,51 @@
+2013-12-18  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Move WebProcess-side geometry collection into its own class
+        https://bugs.webkit.org/show_bug.cgi?id=125967
+
+        Reviewed by Anders Carlsson.
+
+        Move the messages dispatched by ViewGestureController that grab geometry
+        from the WebProcess out of the DrawingArea and into ViewGestureGeometryCollector.
+        This class will grow when smart magnification is implemented.
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        Remove BeginTransientZoom() message.
+
+        * DerivedSources.make:
+        * UIProcess/DrawingAreaProxy.h:
+        
+        * UIProcess/mac/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didCollectGeometryForMagnificationGesture):
+        (WebKit::ViewGestureController::handleMagnificationGesture):
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureController.messages.in:
+        Make use of ViewGestureGeometryCollector and rename didBeginTransientZoom to didCollectGeometryForMagnificationGesture.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+        
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp: Added.
+        (WebKit::ViewGestureGeometryCollector::ViewGestureGeometryCollector):
+        (WebKit::ViewGestureGeometryCollector::~ViewGestureGeometryCollector):
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForMagnificationGesture):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h: Added.
+        * WebProcess/WebPage/ViewGestureGeometryCollector.messages.in: Added.
+        Move the code to collect the visible content rect and return it to the ViewGestureController into its own class.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        Move m_pageID to the top of WebPage's initialization list so that
+        it can be safely used from other members' constructors.
+
+        Add a ViewGestureGeometryCollector member and construct it.
+
 2013-12-18  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed cmake build fix for GTK+.

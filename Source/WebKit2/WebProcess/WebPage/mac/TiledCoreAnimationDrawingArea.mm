@@ -701,12 +701,6 @@ bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const Fram
     return frameView && frameView->frame().isMainFrame();
 }
 
-void TiledCoreAnimationDrawingArea::beginTransientZoom()
-{
-    FloatRect visibleContentRect = m_webPage->mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);
-    m_webPage->send(Messages::ViewGestureController::DidBeginTransientZoom(visibleContentRect));
-}
-
 void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint origin)
 {
     // FIXME: Scrollbars should stay in-place and change height while zooming.

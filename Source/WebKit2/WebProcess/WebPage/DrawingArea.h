@@ -127,7 +127,6 @@ private:
     virtual void setDeviceScaleFactor(float) { }
     virtual void setColorSpace(const ColorSpaceData&) { }
 
-    virtual void beginTransientZoom() { }
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) { }
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }
 #endif

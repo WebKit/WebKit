@@ -27,6 +27,7 @@
 #import "ViewGestureController.h"
 
 #import "ViewGestureControllerMessages.h"
+#import "ViewGestureGeometryCollectorMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 
@@ -84,7 +85,7 @@ FloatPoint ViewGestureController::scaledMagnificationOrigin(FloatPoint origin, d
     return scaledMagnificationOrigin;
 }
 
-void ViewGestureController::didBeginTransientZoom(FloatRect visibleContentRect)
+void ViewGestureController::didCollectGeometryForMagnificationGesture(FloatRect visibleContentRect)
 {
     m_activeGestureType = ViewGestureType::Magnification;
     m_visibleContentRect = visibleContentRect;
@@ -98,7 +99,8 @@ void ViewGestureController::handleMagnificationGesture(double scale, FloatPoint 
     if (m_activeGestureType == ViewGestureType::None) {
         // FIXME: We drop the first frame of the gesture on the floor, because we don't have the visible content bounds yet.
         m_magnification = m_webPageProxy.pageScaleFactor();
-        m_webPageProxy.drawingArea()->beginTransientZoom();
+        m_webPageProxy.process().send(Messages::ViewGestureGeometryCollector::CollectGeometryForMagnificationGesture(), m_webPageProxy.pageID());
+
         return;
     }
 

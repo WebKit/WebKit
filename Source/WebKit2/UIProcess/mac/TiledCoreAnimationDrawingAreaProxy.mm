@@ -148,11 +148,6 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
     m_isWaitingForDidUpdateGeometry = true;
 }
 
-void TiledCoreAnimationDrawingAreaProxy::beginTransientZoom()
-{
-    m_webPageProxy->process().send(Messages::DrawingArea::BeginTransientZoom(), m_webPageProxy->pageID());
-}
-
 void TiledCoreAnimationDrawingAreaProxy::adjustTransientZoom(double scale, FloatPoint origin)
 {
     m_webPageProxy->process().send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_webPageProxy->pageID());

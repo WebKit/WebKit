@@ -23,53 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewGestureController_h
-#define ViewGestureController_h
+#ifndef ViewGestureGeometryCollector_h
+#define ViewGestureGeometryCollector_h
 
 #include "MessageReceiver.h"
-#include <WebCore/FloatRect.h>
 
 namespace WebKit {
 
-class WebPageProxy;
+class WebPage;
 
-class ViewGestureController : private CoreIPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(ViewGestureController);
+class ViewGestureGeometryCollector : private CoreIPC::MessageReceiver {
 public:
-    ViewGestureController(WebPageProxy&);
-    ~ViewGestureController();
-
-    void handleMagnificationGesture(double scale, WebCore::FloatPoint origin);
-    double magnification() const;
-
-    void endActiveGesture();
-
-    enum class ViewGestureType {
-        None,
-        Magnification,
-    };
+    ViewGestureGeometryCollector(WebPage&);
+    ~ViewGestureGeometryCollector();
 
 private:
     // CoreIPC::MessageReceiver.
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     // Message handlers.
-    void didCollectGeometryForMagnificationGesture(WebCore::FloatRect visibleContentBounds);
+    void collectGeometryForMagnificationGesture();
 
-    void endMagnificationGesture();
-    WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
-
-    WebPageProxy& m_webPageProxy;
-
-    double m_magnification;
-    WebCore::FloatPoint m_magnificationOrigin;
-
-    ViewGestureType m_activeGestureType;
-
-    WebCore::FloatRect m_visibleContentRect;
-    bool m_visibleContentRectIsValid;
+    WebPage& m_webPage;
 };
 
 } // namespace WebKit
 
-#endif // ViewGestureController_h
+#endif // ViewGestureGeometryCollector

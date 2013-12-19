@@ -220,7 +220,8 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParame
 }
 
 WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
-    : m_viewSize(parameters.viewSize)
+    : m_pageID(pageID)
+    , m_viewSize(parameters.viewSize)
     , m_hasSeenPlugin(false)
     , m_useFixedLayout(false)
     , m_drawsBackground(true)
@@ -245,6 +246,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_hasCachedWindowFrame(false)
     , m_layerHostingMode(parameters.layerHostingMode)
     , m_keyboardEventBeingInterpreted(0)
+    , m_viewGestureGeometryCollector(*this)
 #elif PLATFORM(GTK)
     , m_accessibilityObject(0)
 #endif
@@ -257,7 +259,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(GEOLOCATION)
     , m_geolocationPermissionRequestManager(this)
 #endif
-    , m_pageID(pageID)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
     , m_canRunModal(parameters.canRunModal)
     , m_isRunningModal(false)

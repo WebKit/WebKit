@@ -382,6 +382,10 @@
 		2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */; };
 		2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */; };
 		2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */; };
+		2D819B9D186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */; };
+		2D819B9E18627EE9001F03D1 /* ViewGestureGeometryCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */; };
+		2D819BA11862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D819B9F1862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp */; };
+		2D819BA21862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D819BA01862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h */; };
 		2D870D1016234FFE000A3F20 /* PDFPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */; };
 		2D8710161828415D0018FA01 /* PlatformCALayerRemoteCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D8710141828415D0018FA01 /* PlatformCALayerRemoteCustom.cpp */; };
 		2D8710171828415D0018FA01 /* PlatformCALayerRemoteCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8710151828415D0018FA01 /* PlatformCALayerRemoteCustom.h */; };
@@ -1960,6 +1964,11 @@
 		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
 		2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStore.mm; sourceTree = "<group>"; };
 		2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStore.h; sourceTree = "<group>"; };
+		2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureGeometryCollector.cpp; sourceTree = "<group>"; };
+		2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureGeometryCollector.h; sourceTree = "<group>"; };
+		2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewGestureGeometryCollector.messages.in; sourceTree = "<group>"; };
+		2D819B9F1862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewGestureGeometryCollectorMessageReceiver.cpp; path = ViewGestureGeometryCollectorMessageReceiver.cpp; sourceTree = "<group>"; };
+		2D819BA01862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewGestureGeometryCollectorMessages.h; path = ViewGestureGeometryCollectorMessages.h; sourceTree = "<group>"; };
 		2D870D0D1622B7F9000A3F20 /* PDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPlugin.h; path = PDF/PDFPlugin.h; sourceTree = "<group>"; };
 		2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPlugin.mm; path = PDF/PDFPlugin.mm; sourceTree = "<group>"; };
 		2D8710141828415D0018FA01 /* PlatformCALayerRemoteCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayerRemoteCustom.cpp; sourceTree = "<group>"; };
@@ -4509,6 +4518,9 @@
 				7CF47FF917275C57008ACB91 /* PageBanner.h */,
 				1A90C23612650717003E44D4 /* PageOverlay.cpp */,
 				1A90C23512650717003E44D4 /* PageOverlay.h */,
+				2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */,
+				2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */,
+				2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */,
 				BC72B9F811E6476B001EB4EA /* WebBackForwardListProxy.cpp */,
 				BC72B9F911E6476B001EB4EA /* WebBackForwardListProxy.h */,
 				51871B59127CB89D00F76232 /* WebContextMenu.cpp */,
@@ -5485,6 +5497,8 @@
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				2D819B9F1862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp */,
+				2D819BA01862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h */,
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,
 				512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */,
 				E17AE2C216B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb */,
@@ -6026,6 +6040,7 @@
 				BCEE7D0E12846F69009827DA /* WebContextMessages.h in Headers */,
 				BCF4DE25168FA44800C94AFC /* WebContextSupplement.h in Headers */,
 				BCB0B0DC12305A2500B1341E /* WebContextUserMessageCoders.h in Headers */,
+				2D819BA21862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h in Headers */,
 				330934501315B94D0097A7BC /* WebCookieManager.h in Headers */,
 				330934481315B9220097A7BC /* WebCookieManagerMessages.h in Headers */,
 				330934561315B9750097A7BC /* WebCookieManagerProxy.h in Headers */,
@@ -6737,6 +6752,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D819B9D186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in in Resources */,
 				E1D26A51175964D70095BFD1 /* WebContentProcess.xib in Resources */,
 				E133FD8A1423DD7F00FC7BFB /* WebKit.icns in Resources */,
 			);
@@ -7382,6 +7398,7 @@
 				51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */,
 				512935D71288D19400A4B695 /* WebContextMenuItem.cpp in Sources */,
 				510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */,
+				2D819BA11862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp in Sources */,
 				51A84CE3127F386B00CA6EA4 /* WebContextMenuProxy.cpp in Sources */,
 				51ACBBA1127A8F2C00D203B9 /* WebContextMenuProxyMac.mm in Sources */,
 				BCEE7D0D12846F69009827DA /* WebContextMessageReceiver.cpp in Sources */,
@@ -7658,6 +7675,7 @@
 				512A9760180E031D0039A149 /* DatabaseProcessMessageReceiver.cpp in Sources */,
 				BC40760D124FF0270068F20A /* WKURLResponse.cpp in Sources */,
 				BC40762C124FF0400068F20A /* WKURLResponseNS.mm in Sources */,
+				2D819B9E18627EE9001F03D1 /* ViewGestureGeometryCollector.cpp in Sources */,
 				F6113E28126CE19B0057D0A7 /* WKUserContentURLPattern.cpp in Sources */,
 				BC8699B6116AADAA002A925B /* WKView.mm in Sources */,
 				C5E1AFE816B20B67006CC1F2 /* WKWebArchive.cpp in Sources */,

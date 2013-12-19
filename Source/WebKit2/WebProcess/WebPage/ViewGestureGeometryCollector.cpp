@@ -23,53 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewGestureController_h
-#define ViewGestureController_h
+#include "config.h"
+#include "ViewGestureGeometryCollector.h"
 
-#include "MessageReceiver.h"
-#include <WebCore/FloatRect.h>
+#include "ViewGestureControllerMessages.h"
+#include "ViewGestureGeometryCollectorMessages.h"
+#include "WebCoreArgumentCoders.h"
+#include "WebPage.h"
+#include "WebProcess.h"
+#include <WebCore/FrameView.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebPageProxy;
+ViewGestureGeometryCollector::ViewGestureGeometryCollector(WebPage& webPage)
+    : m_webPage(webPage)
+{
+    WebProcess::shared().addMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage.pageID(), *this);
+}
 
-class ViewGestureController : private CoreIPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(ViewGestureController);
-public:
-    ViewGestureController(WebPageProxy&);
-    ~ViewGestureController();
+ViewGestureGeometryCollector::~ViewGestureGeometryCollector()
+{
+    WebProcess::shared().removeMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage.pageID());
+}
 
-    void handleMagnificationGesture(double scale, WebCore::FloatPoint origin);
-    double magnification() const;
-
-    void endActiveGesture();
-
-    enum class ViewGestureType {
-        None,
-        Magnification,
-    };
-
-private:
-    // CoreIPC::MessageReceiver.
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-
-    // Message handlers.
-    void didCollectGeometryForMagnificationGesture(WebCore::FloatRect visibleContentBounds);
-
-    void endMagnificationGesture();
-    WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
-
-    WebPageProxy& m_webPageProxy;
-
-    double m_magnification;
-    WebCore::FloatPoint m_magnificationOrigin;
-
-    ViewGestureType m_activeGestureType;
-
-    WebCore::FloatRect m_visibleContentRect;
-    bool m_visibleContentRectIsValid;
-};
+void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
+{
+    FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);
+    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect));
+}
 
 } // namespace WebKit
-
-#endif // ViewGestureController_h
