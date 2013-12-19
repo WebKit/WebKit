@@ -48,7 +48,7 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
 
         API::URLRequest* webRequest = static_cast<API::URLRequest*>(message.get(String::fromUTF8("Request")));
         GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(webRequest->resourceRequest()));
-        WebURLResponse* webRedirectResponse = static_cast<WebURLResponse*>(message.get(String::fromUTF8("RedirectResponse")));
+        API::URLResponse* webRedirectResponse = static_cast<API::URLResponse*>(message.get(String::fromUTF8("RedirectResponse")));
         GRefPtr<WebKitURIResponse> redirectResponse = webRedirectResponse ? adoptGRef(webkitURIResponseCreateForResourceResponse(webRedirectResponse->resourceResponse())) : 0;
 
         webkitWebResourceSentRequest(resource.get(), request.get(), redirectResponse.get());
@@ -58,7 +58,7 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
         if (!resource)
             return;
 
-        WebURLResponse* webResponse = static_cast<WebURLResponse*>(message.get(String::fromUTF8("Response")));
+        API::URLResponse* webResponse = static_cast<API::URLResponse*>(message.get(String::fromUTF8("Response")));
         GRefPtr<WebKitURIResponse> response = adoptGRef(webkitURIResponseCreateForResourceResponse(webResponse->resourceResponse()));
 
         webkitWebResourceSetResponse(resource.get(), response.get());

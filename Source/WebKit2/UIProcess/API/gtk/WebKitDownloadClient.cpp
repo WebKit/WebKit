@@ -20,11 +20,11 @@
 #include "config.h"
 #include "WebKitDownloadClient.h"
 
+#include "APIURLResponse.h"
 #include "WebContext.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
-#include "WebURLResponse.h"
 #include <WebKit2/WKString.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>

@@ -1,5 +1,16 @@
 2013-12-19  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more URTBF to make GTK build happy after r160853.
+
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp:
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (didReceiveWebViewMessageFromInjectedBundle):
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:
+        (webkitResponsePolicyDecisionCreate):
+        * UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h:
+
+2013-12-19  Csaba Osztrogonác  <ossy@webkit.org>
+
         URTBF for GTK after r160853.
 
         * GNUmakefile.list.am:
