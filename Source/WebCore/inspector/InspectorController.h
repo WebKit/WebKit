@@ -66,7 +66,6 @@ class InspectorResourceAgent;
 class InstrumentingAgents;
 class IntSize;
 class Page;
-class PostWorkerNotificationToFrontendTask;
 class Node;
 
 struct Highlight;
@@ -137,7 +136,6 @@ public:
 private:
     InspectorController(Page*, InspectorClient*);
 
-    friend class PostWorkerNotificationToFrontendTask;
     friend InstrumentingAgents* instrumentationForPage(Page*);
 
     RefPtr<InstrumentingAgents> m_instrumentingAgents;

@@ -1,3 +1,14 @@
+2013-12-18  Seokju Kwon  <seokju@webkit.org>
+
+        Web Inspector: Remove leftover code from InspectorController after r108965
+        https://bugs.webkit.org/show_bug.cgi?id=125956
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests, no changes in behavior.
+
+        * inspector/InspectorController.h: PostWorkerNotificationToFrontendTask was removed in r108965.
+
 2013-12-18  Andreas Kling  <akling@apple.com>
 
         CSS: Add a property cascading pass to style application.
