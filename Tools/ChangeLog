@@ -1,3 +1,14 @@
+2013-12-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add support for building GtkLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=125766
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Add the GtkLauncher subdirectory for the GTK port.
+        * GtkLauncher/CMakeLists.txt: Added.
+        * GtkLauncher/main.c: Support including the CMake config file.
+
 2013-12-18  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Preparation for GStreamer on Windows.
