@@ -411,10 +411,6 @@
       <Value>$(ENABLE_VIEW_MODE_CSS_MEDIA)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>    
-    <BuildMacro Include="ENABLE_VIDEO_TRACK">
-      <Value>$(ENABLE_VIDEO_TRACK)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
     <BuildMacro Include="ENABLE_WEB_AUDIO">
       <Value>$(ENABLE_WEB_AUDIO)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>

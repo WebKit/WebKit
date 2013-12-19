@@ -1,3 +1,16 @@
+2013-12-19  Alex Christensen  <achristensen@webkit.org>
+
+        Final preparations for GStreamer on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=125958
+
+        Reviewed by Benjamin Poulain.
+
+        * WTF.vcxproj/WTFDebugWinCairo.props:
+        * WTF.vcxproj/WTFReleaseWinCairo.props:
+        Include WinCairo.props.
+        * wtf/Platform.h:
+        Use GLib and GStreamer on WinCairo with video.
+
 2013-12-18  Daniel Bates  <dabates@apple.com>
 
         WTF, JavaScriptCore fails to build with trunk clang: operators new, new[],

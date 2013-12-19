@@ -6,6 +6,7 @@
     <Import Project="$(WebKit_Libraries)\tools\vsprops\debug.props" />
     <Import Project="WTFCommon.props" />
     <Import Project="WTFCFLite.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\WinCairo.props" />
   </ImportGroup>
   <PropertyGroup />
   <PropertyGroup />
