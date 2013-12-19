@@ -31,7 +31,6 @@ import os
 import os.path
 import BaseHTTPServer
 
-from webkitpy.common.host import Host  # FIXME: This should not be needed!
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.port.base import Port
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
@@ -177,10 +176,8 @@ def get_test_baselines(test_file, test_config):
 
     test_path = test_config.filesystem.join(test_config.layout_tests_directory, test_file)
 
-    # FIXME: This should get the Host from the test_config to be mockable!
-    host = Host()
+    host = test_config.host
     host.initialize_scm()
-    host.filesystem = test_config.filesystem
     all_platforms_port = AllPlatformsPort(host)
 
     all_test_baselines = {}

@@ -307,5 +307,5 @@ def get_test_config(test_files=[], result_files=[]):
         layout_tests_directory,
         results_directory,
         ('mac', 'mac-leopard', 'win', 'linux'),
-        host.filesystem,
-        host.scm())
+        host.scm(),
+        host)

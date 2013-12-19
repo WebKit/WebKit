@@ -31,6 +31,7 @@ results directory), provides comparisons of expected and actual results (both
 images and text) and allows one-click rebaselining of tests."""
 
 from webkitpy.common import system
+from webkitpy.common.host import Host
 from webkitpy.common.net.resultsjsonparser import for_each_test, JSONTestResult
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.tool.commands.abstractlocalservercommand import AbstractLocalServerCommand
@@ -38,13 +39,14 @@ from webkitpy.tool.servers.rebaselineserver import get_test_baselines, Rebaselin
 
 
 class TestConfig(object):
-    def __init__(self, test_port, layout_tests_directory, results_directory, platforms, filesystem, scm):
+    def __init__(self, test_port, layout_tests_directory, results_directory, platforms, scm, host):
         self.test_port = test_port
         self.layout_tests_directory = layout_tests_directory
         self.results_directory = results_directory
         self.platforms = platforms
-        self.filesystem = filesystem
         self.scm = scm
+        self.host = host
+        self.filesystem = host.filesystem
 
 
 class RebaselineServer(AbstractLocalServerCommand):
@@ -73,8 +75,9 @@ class RebaselineServer(AbstractLocalServerCommand):
 
     def _prepare_config(self, options, args, tool):
         results_directory = args[0]
-        filesystem = system.filesystem.FileSystem()
         scm = self._tool.scm()
+        host = Host()
+        filesystem = host.filesystem
 
         print 'Parsing full_results.json...'
         results_json_path = filesystem.join(results_directory, 'full_results.json')
@@ -83,7 +86,7 @@ class RebaselineServer(AbstractLocalServerCommand):
         port = tool.port_factory.get()
         layout_tests_directory = port.layout_tests_dir()
         platforms = filesystem.listdir(filesystem.join(layout_tests_directory, 'platform'))
-        self._test_config = TestConfig(port, layout_tests_directory, results_directory, platforms, filesystem, scm)
+        self._test_config = TestConfig(port, layout_tests_directory, results_directory, platforms, scm, host)
 
         print 'Gathering current baselines...'
         self._gather_baselines(results_json)
