@@ -1396,16 +1396,16 @@ void EwkView::didFindZoomableArea(const WKPoint& point, const WKRect& area)
 bool EwkView::scrollBy(const IntSize& offset)
 {
     WKPoint oldPosition = WKViewGetContentPosition(wkView());
-    FloatPoint newPosition(oldPosition.x + offset.width(), oldPosition.y + offset.height());
+    float contentScale = WKViewGetContentScaleFactor(wkView());
+
+    FloatPoint newPosition(oldPosition.x + offset.width() / contentScale, oldPosition.y + offset.height() / contentScale);
 
     // Update new position to the PageViewportController.
-    float contentScale = WKViewGetContentScaleFactor(wkView());
-    newPosition.scale(1 / contentScale, 1 / contentScale);
     newPosition = m_pageViewportController.boundContentsPositionAtScale(newPosition, contentScale);
     m_pageViewportController.didChangeContentsVisibility(newPosition, contentScale);
 
     // Update new position to the WKView.
-    WKPoint position = WKPointMake(newPosition.x() * contentScale, newPosition.y() * contentScale);
+    WKPoint position = WKPointMake(newPosition.x(), newPosition.y());
     WKViewSetContentPosition(wkView(), position);
 
     // If the page position has not changed, notify the caller using the return value.

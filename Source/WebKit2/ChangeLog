@@ -1,3 +1,27 @@
+2013-12-19  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [CoordinatedGraphics] Regressions in WebView's contentScaleFactor/contentPosition
+        https://bugs.webkit.org/show_bug.cgi?id=125943
+
+        Reviewed by Noam Rosenthal.
+
+        When WebView::pageDidRequestScroll is called it is scaling position requested
+        to scroll before store it as contentPosition, that is not necessary since WebView
+        already stores the requested contentScaleFactor so it's able to do that internally
+        when needed, what simplifies the API and improves the readability of webview's code.
+        This patch reverts changes from https://bugs.webkit.org/show_bug.cgi?id=118548, which
+        was causing some regressions in contentScaleFactor/contentPosition related stuff.
+        Besides that WebView::pageDidRequestScroll calls viewClient callback with the wrong
+        position (different from the position stored in WebView).
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::scrollBy):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::transformToScene):
+        (WebKit::WebView::updateViewportSize):
+        (WebKit::WebView::pageDidRequestScroll):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::setViewportPosition):
 2013-12-18  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures: Move WebProcess-side geometry collection into its own class

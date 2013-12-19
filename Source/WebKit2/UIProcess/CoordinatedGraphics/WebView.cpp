@@ -239,7 +239,7 @@ AffineTransform WebView::transformToScene() const
 {
     FloatPoint position = -m_contentPosition;
     float effectiveScale = m_contentScaleFactor * m_page->deviceScaleFactor();
-    position.scale(m_page->deviceScaleFactor(), m_page->deviceScaleFactor());
+    position.scale(effectiveScale, effectiveScale);
 
     TransformationMatrix transform = m_userViewportTransform;
     transform.translate(position.x(), position.y());
@@ -261,9 +261,7 @@ void WebView::updateViewportSize()
     if (CoordinatedDrawingAreaProxy* drawingArea = static_cast<CoordinatedDrawingAreaProxy*>(page()->drawingArea())) {
         // Web Process expects sizes in UI units, and not raw device units.
         drawingArea->setSize(roundedIntSize(dipSize()), IntSize(), IntSize());
-        FloatPoint position = contentPosition();
-        position.scale(1 / m_contentScaleFactor, 1 / m_contentScaleFactor);
-        FloatRect visibleContentsRect(position, visibleContentsSize());
+        FloatRect visibleContentsRect(contentPosition(), visibleContentsSize());
         visibleContentsRect.intersect(FloatRect(FloatPoint(), contentsSize()));
         drawingArea->setVisibleContentsRect(visibleContentsRect, FloatPoint());
     }
@@ -515,7 +513,6 @@ void WebView::didChangeViewportProperties(const WebCore::ViewportAttributes& att
 void WebView::pageDidRequestScroll(const IntPoint& position)
 {
     FloatPoint uiPosition(position);
-    uiPosition.scale(contentScaleFactor(), contentScaleFactor());
     setContentPosition(uiPosition);
 
     m_client.didChangeContentsPosition(this, position);
