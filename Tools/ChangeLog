@@ -1,3 +1,18 @@
+2013-12-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        check-webkit-style marks auto return types for functions as violations
+        https://bugs.webkit.org/show_bug.cgi?id=125999
+
+        Reviewed by Ryosuke Niwa.
+
+        If a function declaration ends with a "->" followed by a non whitespace
+        string, don't mark as an invalid "{" on its own line
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_braces):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_brace_at_begin_of_line):
+
 2013-12-19  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] More GStreamer preparations.
