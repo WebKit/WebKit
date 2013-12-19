@@ -1,3 +1,93 @@
+2013-12-18  Andreas Kling  <akling@apple.com>
+
+        CSS: Add a property cascading pass to style application.
+        <https://webkit.org/b/125213>
+
+        Add an intermediate pass to style application where we cascade all
+        style properties to figure out their final values before starting
+        to build RenderStyles.
+
+        This opens up various opportunities for further optimization.
+
+        Reviewed by Antti Koivisto.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::CascadedProperties::Property::Property):
+        (WebCore::StyleResolver::CascadedProperties::CascadedProperties):
+        (WebCore::StyleResolver::CascadedProperties::property):
+        (WebCore::StyleResolver::CascadedProperties::set):
+        (WebCore::StyleResolver::CascadedProperties::addStyleProperties):
+        (WebCore::StyleResolver::CascadedProperties::addMatches):
+        (WebCore::StyleResolver::CascadedProperties::Property::apply):
+
+            Added. CascadedProperties is something of a container class
+            that takes CSS property/value/linkMatchType as input and boils
+            them down to the final values that will actually be used.
+
+            Most properties are poked into an unfancy array where latest
+            is greatest (unless !important, of course.) Some properties are
+            queued up to be applied in parse order, more on that below.
+
+        (WebCore::StyleResolver::applyCascadedProperties):
+        (WebCore::StyleResolver::applyMatchedProperties):
+
+            The brains of this patch. applyMatchedProperties() now creates
+            a CascadedProperties and uses it to figure out the final values
+            and uses applyCascadedProperties() to apply them. Deferred
+            properties (parse order) are applied last.
+
+            We may discover during property application that we won't be
+            able to use a matched properties cache item. This happens if
+            the effective zoom or font changes. If that happens, we start
+            the process over, now with the cache disabled. This may need
+            some optimization work.
+
+        (WebCore::extractDirectionAndWritingMode):
+
+            Directional properties ending in e.g -before or -after depend on
+            the direction and writing mode in effect, so we must begin with
+            resolving those properties before doing the full cascade.
+
+            This is done by simply walking the set of matched properties and
+            manually applying '-webkit-writing-mode' and 'direction'.
+
+            If this starts showing up in profiles, we can easily cache some
+            of the information in e.g RuleData to avoid the traversal here.
+
+        (WebCore::elementTypeHasAppearanceFromUAStyle):
+
+            To determine whether a form element is styled beyond the default
+            UA style sheet, StyleResolver caches the border and background
+            values from RenderStyle after applying the UA style sheet.
+
+            Those values are then compared against after all style is applied
+            and if some (platform-dependent) values differ, the element is
+            considered "styled."
+
+            This really only affects elements with -webkit-appearance values
+            in the default UA style sheet, so this function determines if an
+            element should take the goofy slow path for this.
+
+        (WebCore::shouldApplyPropertyInParseOrder):
+        (WebCore::StyleResolver::CascadedProperties::setDeferred):
+        (WebCore::StyleResolver::CascadedProperties::applyDeferredProperties):
+
+            Some CSS properties will write to the same RenderStyle fields when
+            applied, so in order to maintain previous behavior, we must apply
+            them in the order they were parsed.
+
+            We accomplish this by keeping an ordered queue of such properties
+            to apply separately after all the other properties.
+
+        (WebCore::StyleResolver::CascadedProperties::setPropertyInternal):
+
+            Helper for poking values into a CascadedProperties::Property.
+
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::state):
+
+            Expose the StyleResolver::State so CascadedProperties can access it.
+
 2013-12-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building WebKit1

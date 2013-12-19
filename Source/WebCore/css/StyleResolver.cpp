@@ -191,6 +191,38 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+class StyleResolver::CascadedProperties {
+public:
+    CascadedProperties(TextDirection, WritingMode);
+
+    struct Property {
+        Property();
+        void apply(StyleResolver&);
+
+        CSSPropertyID id;
+        bool isPresent;
+        CSSValue* cssValue[3];
+    };
+
+    Property& property(CSSPropertyID);
+    void addMatches(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
+
+    void set(CSSPropertyID, CSSValue&, unsigned linkMatchType);
+    void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType);
+
+    void applyDeferredProperties(StyleResolver&);
+
+private:
+    void addStyleProperties(const StyleProperties&, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType, unsigned linkMatchType);
+    static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType);
+
+    Property m_properties[numCSSProperties + 1];
+    Vector<Property> m_deferredProperties;
+
+    TextDirection m_direction;
+    WritingMode m_writingMode;
+};
+
 #define HANDLE_INHERIT(prop, Prop) \
 if (isInherit) { \
     m_state.style()->set##Prop(m_state.parentStyle()->prop()); \
@@ -1568,6 +1600,44 @@ void StyleResolver::applyProperties(const StyleProperties* properties, StyleRule
     InspectorInstrumentation::didProcessRule(cookie);
 }
 
+static bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyWebkitBorderImage:
+    case CSSPropertyBorderImage:
+    case CSSPropertyBorderImageSlice:
+    case CSSPropertyBorderImageSource:
+    case CSSPropertyBorderImageOutset:
+    case CSSPropertyBorderImageRepeat:
+    case CSSPropertyBorderImageWidth:
+#if ENABLE(CSS3_TEXT_DECORATION)
+    case CSSPropertyWebkitTextDecoration:
+    case CSSPropertyWebkitTextDecorationLine:
+    case CSSPropertyWebkitTextDecorationStyle:
+    case CSSPropertyWebkitTextDecorationColor:
+    case CSSPropertyWebkitTextDecorationSkip:
+    case CSSPropertyWebkitTextUnderlinePosition:
+#endif
+    case CSSPropertyTextDecoration:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool elementTypeHasAppearanceFromUAStyle(const Element& element)
+{
+    // NOTE: This is just a hard-coded list of elements that have some -webkit-appearance value in html.css
+    const auto& localName = element.localName();
+    return localName == HTMLNames::inputTag
+        || localName == HTMLNames::textareaTag
+        || localName == HTMLNames::buttonTag
+        || localName == HTMLNames::progressTag
+        || localName == HTMLNames::selectTag
+        || localName == HTMLNames::meterTag
+        || localName == HTMLNames::isindexTag;
+}
+
 template <StyleResolver::StyleApplicationPass pass>
 void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, bool isImportant, int startIndex, int endIndex, bool inheritedOnly)
 {
@@ -1691,14 +1761,47 @@ static bool isCacheableInMatchedPropertiesCache(const Element* element, const Re
     return true;
 }
 
-void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const Element* element)
+static void extractDirectionAndWritingMode(const RenderStyle& style, const StyleResolver::MatchResult& matchResult, TextDirection& direction, WritingMode& writingMode)
+{
+    direction = style.direction();
+    writingMode = style.writingMode();
+
+    bool hadImportantWebkitWritingMode = false;
+    bool hadImportantDirection = false;
+
+    for (auto& matchedProperties : matchResult.matchedProperties) {
+        for (unsigned i = 0, count = matchedProperties.properties->propertyCount(); i < count; ++i) {
+            auto property = matchedProperties.properties->propertyAt(i);
+            if (!property.value()->isPrimitiveValue())
+                continue;
+            switch (property.id()) {
+            case CSSPropertyWebkitWritingMode:
+                if (!hadImportantWebkitWritingMode || property.isImportant()) {
+                    writingMode = toCSSPrimitiveValue(*property.value());
+                    hadImportantWebkitWritingMode = property.isImportant();
+                }
+                break;
+            case CSSPropertyDirection:
+                if (!hadImportantDirection || property.isImportant()) {
+                    direction = toCSSPrimitiveValue(*property.value());
+                    hadImportantDirection = property.isImportant();
+                }
+                break;
+            default:
+                break;
+            }
+        }
+    }
+}
+
+void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const Element* element, ShouldUseMatchedPropertiesCache shouldUseMatchedPropertiesCache)
 {
     ASSERT(element);
     State& state = m_state;
     unsigned cacheHash = matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult.matchedProperties.data(), matchResult.matchedProperties.size()) : 0;
     bool applyInheritedOnly = false;
     const MatchedPropertiesCacheItem* cacheItem = 0;
-    if (cacheHash && (cacheItem = findFromMatchedPropertiesCache(cacheHash, matchResult))) {
+    if (shouldUseMatchedPropertiesCache && cacheHash && (cacheItem = findFromMatchedPropertiesCache(cacheHash, matchResult))) {
         // We can build up the style by copying non-inherited properties from an earlier style object built using the same exact
         // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the 
         // element context. This is fast and saves memory by reusing the style data structures.
@@ -1716,20 +1819,43 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         applyInheritedOnly = true; 
     }
 
-    // Now we have all of the matched rules in the appropriate order. Walk the rules and apply
-    // high-priority properties first, i.e., those properties that other properties depend on.
-    // The order is (1) high-priority not important, (2) high-priority important, (3) normal not important
-    // and (4) normal important.
-    state.setLineHeightValue(0);
-    applyMatchedProperties<HighPriorityProperties>(matchResult, false, 0, matchResult.matchedProperties.size() - 1, applyInheritedOnly);
-    applyMatchedProperties<HighPriorityProperties>(matchResult, true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
-    applyMatchedProperties<HighPriorityProperties>(matchResult, true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
-    applyMatchedProperties<HighPriorityProperties>(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
+    // Directional properties (*-before/after) are aliases that depend on the TextDirection and WritingMode.
+    // These must be resolved before we can begin the property cascade.
+    TextDirection direction;
+    WritingMode writingMode;
+    extractDirectionAndWritingMode(*state.style(), matchResult, direction, writingMode);
 
-    if (cacheItem && cacheItem->renderStyle->effectiveZoom() != state.style()->effectiveZoom()) {
-        state.setFontDirty(true);
-        applyInheritedOnly = false;
+    if (elementTypeHasAppearanceFromUAStyle(*state.element())) {
+        // FIXME: This is such a hack.
+        // Find out if there's a -webkit-appearance property in effect from the UA sheet.
+        // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
+        // can look at them later to figure out if this is a styled form control or not.
+        state.setLineHeightValue(nullptr);
+        CascadedProperties cascade(direction, writingMode);
+        cascade.addMatches(matchResult, false, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
+        cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
+
+        applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
+        updateFont();
+        applyCascadedProperties(cascade, CSSPropertyBackground, lastCSSProperty);
+
+        state.cacheBorderAndBackground();
     }
+
+    CascadedProperties cascade(direction, writingMode);
+    cascade.addMatches(matchResult, false, 0, matchResult.matchedProperties.size() - 1, applyInheritedOnly);
+    cascade.addMatches(matchResult, true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
+    cascade.addMatches(matchResult, true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
+    cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
+
+    state.setLineHeightValue(nullptr);
+
+    // Start by applying properties that other properties may depend on.
+    applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
+
+    // If the effective zoom value changes, we can't use the matched properties cache. Start over.
+    if (cacheItem && cacheItem->renderStyle->effectiveZoom() != state.style()->effectiveZoom())
+        return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
     // If our font got dirtied, go ahead and update it now.
     updateFont();
@@ -1738,22 +1864,18 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     if (state.lineHeightValue())
         applyProperty(CSSPropertyLineHeight, state.lineHeightValue());
 
-    // Many properties depend on the font. If it changes we just apply all properties.
+    // If the font changed, we can't use the matched properties cache. Start over.
     if (cacheItem && cacheItem->renderStyle->fontDescription() != state.style()->fontDescription())
-        applyInheritedOnly = false;
+        return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
-    // Now do the normal priority UA properties.
-    applyMatchedProperties<LowPriorityProperties>(matchResult, false, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
-    
-    // Cache our border and background so that we can examine them later.
-    state.cacheBorderAndBackground();
-    
-    // Now do the author and user normal priority properties and all the !important properties.
-    applyMatchedProperties<LowPriorityProperties>(matchResult, false, matchResult.ranges.lastUARule + 1, matchResult.matchedProperties.size() - 1, applyInheritedOnly);
-    applyMatchedProperties<LowPriorityProperties>(matchResult, true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
-    applyMatchedProperties<LowPriorityProperties>(matchResult, true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
-    applyMatchedProperties<LowPriorityProperties>(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
-   
+    // Apply properties that no other properties depend on.
+    applyCascadedProperties(cascade, CSSPropertyBackground, lastCSSProperty);
+
+    // Finally, some properties must be applied in the order they were parsed.
+    // There are some CSS properties that affect the same RenderStyle values,
+    // so to preserve behavior, we queue them up during cascade and flush here.
+    cascade.applyDeferredProperties(*this);
+
     // Start loading resources referenced by this style.
     loadPendingResources();
     
@@ -4068,6 +4190,152 @@ int StyleResolver::viewportPercentageValue(CSSPrimitiveValue& unit, int percenta
 
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+StyleResolver::CascadedProperties::Property::Property()
+    : id(CSSPropertyInvalid)
+    , isPresent(false)
+{
+    memset(cssValue, 0, sizeof(cssValue));
+}
+
+StyleResolver::CascadedProperties::CascadedProperties(TextDirection direction, WritingMode writingMode)
+    : m_direction(direction)
+    , m_writingMode(writingMode)
+{
+    memset(&m_properties, 0, sizeof(m_properties));
+}
+
+inline StyleResolver::CascadedProperties::Property& StyleResolver::CascadedProperties::property(CSSPropertyID id)
+{
+    return m_properties[id];
+}
+
+void StyleResolver::CascadedProperties::setPropertyInternal(Property& property, CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType)
+{
+    ASSERT(linkMatchType <= SelectorChecker::MatchAll);
+    property.id = id;
+    property.isPresent = true;
+    if (linkMatchType == SelectorChecker::MatchAll) {
+        property.cssValue[0] = &cssValue;
+        property.cssValue[SelectorChecker::MatchLink] = &cssValue;
+        property.cssValue[SelectorChecker::MatchVisited] = &cssValue;
+    } else
+        property.cssValue[linkMatchType] = &cssValue;
+}
+
+void StyleResolver::CascadedProperties::set(CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType)
+{
+    if (CSSProperty::isDirectionAwareProperty(id))
+        id = CSSProperty::resolveDirectionAwareProperty(id, m_direction, m_writingMode);
+
+    ASSERT(!shouldApplyPropertyInParseOrder(id));
+
+    auto& property = m_properties[id];
+    setPropertyInternal(property, id, cssValue, linkMatchType);
+}
+
+void StyleResolver::CascadedProperties::setDeferred(CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType)
+{
+    ASSERT(!CSSProperty::isDirectionAwareProperty(id));
+    ASSERT(shouldApplyPropertyInParseOrder(id));
+
+    Property property;
+    setPropertyInternal(property, id, cssValue, linkMatchType);
+    m_deferredProperties.append(property);
+}
+
+void StyleResolver::CascadedProperties::addStyleProperties(const StyleProperties& properties, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType propertyWhitelistType, unsigned linkMatchType)
+{
+    for (unsigned i = 0, count = properties.propertyCount(); i < count; ++i) {
+        auto current = properties.propertyAt(i);
+        if (isImportant != current.isImportant())
+            continue;
+        if (inheritedOnly && !current.isInherited()) {
+            // If the property value is explicitly inherited, we need to apply further non-inherited properties
+            // as they might override the value inherited here. For this reason we don't allow declarations with
+            // explicitly inherited properties to be cached.
+            ASSERT(!current.value()->isInheritedValue());
+            continue;
+        }
+        CSSPropertyID propertyID = current.id();
+
+        if (propertyWhitelistType == PropertyWhitelistRegion && !StyleResolver::isValidRegionStyleProperty(propertyID))
+            continue;
+#if ENABLE(VIDEO_TRACK)
+        if (propertyWhitelistType == PropertyWhitelistCue && !StyleResolver::isValidCueStyleProperty(propertyID))
+            continue;
+#endif
+
+        if (shouldApplyPropertyInParseOrder(propertyID))
+            setDeferred(propertyID, *current.value(), linkMatchType);
+        else
+            set(propertyID, *current.value(), linkMatchType);
+    }
+}
+
+void StyleResolver::CascadedProperties::addMatches(const MatchResult& matchResult, bool important, int startIndex, int endIndex, bool inheritedOnly)
+{
+    if (startIndex == -1)
+        return;
+
+    for (int i = startIndex; i <= endIndex; ++i) {
+        const MatchedProperties& matchedProperties = matchResult.matchedProperties[i];
+        addStyleProperties(*matchedProperties.properties, *matchResult.matchedRules[i], important, inheritedOnly, static_cast<PropertyWhitelistType>(matchedProperties.whitelistType), matchedProperties.linkMatchType);
+    }
+}
+
+void StyleResolver::CascadedProperties::applyDeferredProperties(StyleResolver& resolver)
+{
+    for (auto& property : m_deferredProperties)
+        property.apply(resolver);
+}
+
+void StyleResolver::CascadedProperties::Property::apply(StyleResolver& resolver)
+{
+    State& state = resolver.state();
+
+    // FIXME: It would be nice if line-height were less of a special snowflake.
+    if (id == CSSPropertyLineHeight) {
+        if (cssValue[0])
+            state.setLineHeightValue(cssValue[0]);
+        return;
+    }
+
+    if (cssValue[0]) {
+        state.setApplyPropertyToRegularStyle(true);
+        state.setApplyPropertyToVisitedLinkStyle(false);
+        resolver.applyProperty(id, cssValue[0]);
+    }
+
+    if (state.style()->insideLink() == NotInsideLink)
+        return;
+
+    if (cssValue[SelectorChecker::MatchLink]) {
+        state.setApplyPropertyToRegularStyle(true);
+        state.setApplyPropertyToVisitedLinkStyle(false);
+        resolver.applyProperty(id, cssValue[SelectorChecker::MatchLink]);
+    }
+
+    if (cssValue[SelectorChecker::MatchVisited]) {
+        state.setApplyPropertyToRegularStyle(false);
+        state.setApplyPropertyToVisitedLinkStyle(true);
+        resolver.applyProperty(id, cssValue[SelectorChecker::MatchVisited]);
+    }
+
+    state.setApplyPropertyToRegularStyle(true);
+    state.setApplyPropertyToVisitedLinkStyle(false);
+}
+
+void StyleResolver::applyCascadedProperties(CascadedProperties& cascade, int firstProperty, int lastProperty)
+{
+    for (int id = firstProperty; id <= lastProperty; ++id) {
+        auto& property = cascade.property(static_cast<CSSPropertyID>(id));
+        if (!property.isPresent)
+            continue;
+        ASSERT(!shouldApplyPropertyInParseOrder(property.id));
+        property.apply(*this);
+    }
 }
 
 } // namespace WebCore
