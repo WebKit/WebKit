@@ -199,7 +199,6 @@ FrameView::FrameView(Frame& frame)
     , m_milestonesPendingPaint(0)
     , m_visualUpdatesAllowedByClient(true)
     , m_scrollPinningBehavior(DoNotPin)
-    , m_scheduledEventSuppressionCount(0)
 {
     init();
 
@@ -226,11 +225,8 @@ PassRefPtr<FrameView> FrameView::create(Frame& frame, const IntSize& initialSize
 
 FrameView::~FrameView()
 {
-    if (m_postLayoutTasksTimer.isActive()) {
+    if (m_postLayoutTasksTimer.isActive())
         m_postLayoutTasksTimer.stop();
-        m_scheduledEventSuppressionCount = 0;
-        m_scheduledEvents.clear();
-    }
     
     removeFromAXObjectCache();
     resetScrollbars();
@@ -243,7 +239,6 @@ FrameView::~FrameView()
     setHasVerticalScrollbar(false);
     
     ASSERT(!m_scrollCorner);
-    ASSERT(m_scheduledEvents.isEmpty());
 
     ASSERT(frame().view() != this || !frame().contentRenderer());
 }
@@ -1241,8 +1236,6 @@ void FrameView::layout(bool allowSubtree)
 
         layer = root->enclosingLayer();
 
-        pauseScheduledEvents();
-
         bool disableLayoutState = false;
         if (subtree) {
             disableLayoutState = root->view().shouldDisableLayoutStateForSubtree(root);
@@ -1327,9 +1320,7 @@ void FrameView::layout(bool allowSubtree)
     if (document.hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(layoutWidth() < contentsWidth(), layoutHeight() < contentsHeight());
 
-    if (m_postLayoutTasksTimer.isActive())
-        resumeScheduledEvents();
-    else {
+    if (!m_postLayoutTasksTimer.isActive()) {
         if (!m_inSynchronousPostLayout) {
             if (inChildFrameLayoutWithFrameFlattening)
                 updateWidgetPositions();
@@ -1345,10 +1336,8 @@ void FrameView::layout(bool allowSubtree)
             // can make us need to update again, and we can get stuck in a nasty cycle unless
             // we call it through the timer here.
             m_postLayoutTasksTimer.startOneShot(0);
-            if (needsLayout()) {
-                pauseScheduledEvents();
+            if (needsLayout())
                 layout();
-            }
         }
     }
 
@@ -2562,41 +2551,6 @@ bool FrameView::shouldUpdate(bool immediateRequested) const
     return true;
 }
 
-struct FrameView::ScheduledEvent {
-    ScheduledEvent(PassRefPtr<Event> e, PassRefPtr<Node> t) : event(e), target(t) { }
-    RefPtr<Event> event;
-    RefPtr<Node> target;
-};
-
-void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<Node> eventTarget)
-{
-    if (!m_scheduledEventSuppressionCount) {
-        eventTarget->dispatchEvent(event, IGNORE_EXCEPTION);
-        return;
-    }
-    m_scheduledEvents.append(ScheduledEvent(event, eventTarget));
-}
-
-void FrameView::pauseScheduledEvents()
-{
-    ++m_scheduledEventSuppressionCount;
-}
-
-void FrameView::resumeScheduledEvents()
-{
-    ASSERT(m_scheduledEventSuppressionCount);
-    --m_scheduledEventSuppressionCount;
-    if (m_scheduledEventSuppressionCount)
-        return;
-
-    Vector<ScheduledEvent> eventsToDispatch = std::move(m_scheduledEvents);
-    for (auto& scheduledEvent : eventsToDispatch) {
-        if (!scheduledEvent.target->inDocument())
-            continue;
-        scheduledEvent.target->dispatchEvent(scheduledEvent.event.release(), IGNORE_EXCEPTION);
-    }
-}
-
 void FrameView::scrollToAnchor()
 {
     RefPtr<Node> anchorNode = m_maintainScrollPositionAnchor;
@@ -2763,8 +2717,6 @@ void FrameView::performPostLayoutTasks()
 #endif
 
     scrollToAnchor();
-
-    resumeScheduledEvents();
 
     sendResizeEventIfNeeded();
 }
@@ -2955,9 +2907,12 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
     if (horizontalOverflowChanged || verticalOverflowChanged) {
         m_horizontalOverflow = horizontalOverflow;
         m_verticalOverflow = verticalOverflow;
-        
-        scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
-            verticalOverflowChanged, verticalOverflow), m_viewportRenderer->element());
+
+        RefPtr<OverflowEvent> overflowEvent = OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
+            verticalOverflowChanged, verticalOverflow);
+        overflowEvent->setTarget(m_viewportRenderer->element());
+
+        frame().document()->enqueueOverflowEvent(overflowEvent.release());
     }
     
 }

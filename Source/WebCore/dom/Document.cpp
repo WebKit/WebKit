@@ -1745,7 +1745,6 @@ void Document::recalcStyle(Style::Change change)
         PostAttachCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
-        frameView.pauseScheduledEvents();
         frameView.beginDeferredRepaints();
 
         if (m_pendingStyleRecalcShouldForce)
@@ -1772,7 +1771,6 @@ void Document::recalcStyle(Style::Change change)
         if (m_styleResolver)
             m_styleSheetCollection.resetCSSFeatureFlags();
 
-        frameView.resumeScheduledEvents();
         frameView.endDeferredRepaints();
     }
 
@@ -3712,6 +3710,11 @@ void Document::enqueueWindowEvent(PassRefPtr<Event> event)
 void Document::enqueueDocumentEvent(PassRefPtr<Event> event)
 {
     event->setTarget(this);
+    m_eventQueue.enqueueEvent(event);
+}
+
+void Document::enqueueOverflowEvent(PassRefPtr<Event> event)
+{
     m_eventQueue.enqueueEvent(event);
 }
 
