@@ -1735,7 +1735,7 @@ void StyleResolver::addToMatchedPropertiesCache(const RenderStyle* style, const 
     // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.
     cacheItem.renderStyle = RenderStyle::clone(style);
     cacheItem.parentRenderStyle = RenderStyle::clone(parentStyle);
-    m_matchedPropertiesCache.add(hash, cacheItem);
+    m_matchedPropertiesCache.add(hash, std::move(cacheItem));
 }
 
 void StyleResolver::invalidateMatchedPropertiesCache()
@@ -1799,10 +1799,10 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 {
     ASSERT(element);
     State& state = m_state;
-    unsigned cacheHash = matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult.matchedProperties.data(), matchResult.matchedProperties.size()) : 0;
+    unsigned cacheHash = shouldUseMatchedPropertiesCache && matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult.matchedProperties.data(), matchResult.matchedProperties.size()) : 0;
     bool applyInheritedOnly = false;
     const MatchedPropertiesCacheItem* cacheItem = 0;
-    if (shouldUseMatchedPropertiesCache && cacheHash && (cacheItem = findFromMatchedPropertiesCache(cacheHash, matchResult))) {
+    if (cacheHash && (cacheItem = findFromMatchedPropertiesCache(cacheHash, matchResult))) {
         // We can build up the style by copying non-inherited properties from an earlier style object built using the same exact
         // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the 
         // element context. This is fast and saves memory by reusing the style data structures.

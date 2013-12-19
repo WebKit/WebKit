@@ -1,5 +1,18 @@
 2013-12-19  Andreas Kling  <akling@apple.com>
 
+        Two small refinements to matched properties cache.
+        <https://webkit.org/b/125992>
+
+        - Avoid computing the matched properties hash if we're banned from
+          using the cache anyway.
+
+        - When adding a new entry to the cache, use move semantics to avoid
+          creating a transient copy of all the data.
+
+        Reviewed by Antti Koivisto.
+
+2013-12-19  Andreas Kling  <akling@apple.com>
+
         CascadedProperties should use a bitset to track property presence.
         <https://webkit.org/b/125991>
 
