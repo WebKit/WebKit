@@ -70,3 +70,6 @@ fast/mediastream/MediaStream-construct-with-ended-tracks.html [ Skip ]
 fast/mediastream/MediaStream-clone.html [ Skip ]
 
 webkit.org/b/124660 inspector-protocol/model/highlight-shape-outside.html [ Failure ]
+
+# Temporarily skip this test while rniwa investigates this issue.
+fast/dynamic/paused-event-dispatch.html [ Failure ]
