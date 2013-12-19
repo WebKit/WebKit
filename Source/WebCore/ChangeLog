@@ -1,3 +1,41 @@
+2013-12-18  Jer Noble  <jer.noble@apple.com>
+
+        [MSE][Mac] Add AVSampleBufferRendererSynchronizer support.
+        https://bugs.webkit.org/show_bug.cgi?id=125954
+
+        Reviewed by Eric Carlson.
+
+        Instead of slaving all the various renderer's CMTimebases to one master timebase,
+        use AVSampleBufferRenderSynchronizer, which essentially does the same thing.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CMTimebaseEffectiveRateChangedCallback): Added; call effectiveRateChanged().
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC): Set up
+            the synchronizer and all the observers.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC): Tear down
+            the same.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isAvailable): Require the
+            AVSampleBufferRenderSynchronizer class.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playInternal): Convert Clock -> Synchronizer.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::paused): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::currentTimeDouble): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addDisplayLayer): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::removeDisplayLayer): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer): Ditto.
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::removeAudioRenderer): Ditto.
+
+        Drive-by fix; audio samples can't be subdivided, and video samples are
+        rarely combined, so remove the call to CMSampleBufferCallForEachSample:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID):
+
 2013-12-18  Andreas Kling  <akling@apple.com>
 
         CSS: Fall back to cache-less cascade when encountering explicitly inherited value.

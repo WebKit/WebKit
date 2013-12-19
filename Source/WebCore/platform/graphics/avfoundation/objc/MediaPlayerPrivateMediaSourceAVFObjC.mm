@@ -30,6 +30,7 @@
 
 #import "HTMLMediaSource.h"
 #import "MediaSourcePrivateAVFObjC.h"
+#import "MediaTimeMac.h"
 #import "PlatformClockCM.h"
 #import "SoftLinking.h"
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
@@ -50,10 +51,21 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAsset)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVURLAsset)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferAudioRenderer)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferDisplayLayer)
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferRenderSynchronizer)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamDataParser)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVVideoPerformanceMetrics)
 
-SOFT_LINK(CoreMedia, FigReadOnlyTimebaseSetTargetTimebase, OSStatus, (CMTimebaseRef timebase, CMTimebaseRef newTargetTimebase), (timebase, newTargetTimebase))
+typedef struct opaqueCMNotificationCenter *CMNotificationCenterRef;
+typedef void (*CMNotificationCallback)(CMNotificationCenterRef inCenter, const void *inListener, CFStringRef inNotificationName, const void *inNotifyingObject, CFTypeRef inNotificationPayload);
+
+SOFT_LINK(CoreMedia, CMNotificationCenterGetDefaultLocalCenter, CMNotificationCenterRef, (void), ());
+SOFT_LINK(CoreMedia, CMNotificationCenterAddListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object, UInt32 flags), (center, listener, callback, notification, object, flags))
+SOFT_LINK(CoreMedia, CMNotificationCenterRemoveListener, OSStatus, (CMNotificationCenterRef center, const void* listener, CMNotificationCallback callback, CFStringRef notification, const void* object), (center, listener, callback, notification, object))
+SOFT_LINK(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
+SOFT_LINK(CoreMedia, CMTimebaseGetTime, CMTime, (CMTimebaseRef timebase), (timebase))
+
+SOFT_LINK_CONSTANT(CoreMedia, kCMTimebaseNotification_EffectiveRateChanged, CFStringRef)
+#define kCMTimebaseNotification_EffectiveRateChanged getkCMTimebaseNotification_EffectiveRateChanged()
 
 #pragma mark -
 #pragma mark AVVideoPerformanceMetrics
@@ -81,23 +93,63 @@ SOFT_LINK(CoreMedia, FigReadOnlyTimebaseSetTargetTimebase, OSStatus, (CMTimebase
 @end
 #endif
 
+#pragma mark -
+#pragma mark AVSampleBufferRenderSynchronizer
+
+@interface AVSampleBufferRenderSynchronizer : NSObject
+- (CMTimebaseRef)timebase;
+- (float)rate;
+- (void)setRate:(float)rate;
+- (void)setRate:(float)rate time:(CMTime)time;
+- (NSArray *)renderers;
+- (void)addRenderer:(id)renderer;
+- (void)removeRenderer:(id)renderer atTime:(CMTime)time withCompletionHandler:(void (^)(BOOL didRemoveRenderer))completionHandler;
+- (id)addPeriodicTimeObserverForInterval:(CMTime)interval queue:(dispatch_queue_t)queue usingBlock:(void (^)(CMTime time))block;
+- (void)removeTimeObserver:(id)observer;
+@end
+
 namespace WebCore {
 
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaSourceAVFObjC
 
+static void CMTimebaseEffectiveRateChangedCallback(CMNotificationCenterRef, const void *listener, CFStringRef, const void *, CFTypeRef)
+{
+    MediaPlayerPrivateMediaSourceAVFObjC* player = (MediaPlayerPrivateMediaSourceAVFObjC*)listener;
+    callOnMainThread(bind(&MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged, player));
+}
+
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
     : m_player(player)
-    , m_clock(new PlatformClockCM())
+    , m_synchronizer(adoptNS([[getAVSampleBufferRenderSynchronizerClass() alloc] init]))
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
+    , m_rate(1)
+    , m_playing(0)
     , m_seeking(false)
     , m_loadingProgressed(false)
 {
+    CMTimebaseRef timebase = [m_synchronizer timebase];
+    CMNotificationCenterRef nc = CMNotificationCenterGetDefaultLocalCenter();
+    CMNotificationCenterAddListener(nc, this, CMTimebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, 0);
+
+    // addPeriodicTimeObserverForInterval: throws an exception if you pass a non-numeric CMTime, so just use
+    // an arbitrarily large time value of once an hour:
+    m_timeJumpedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:toCMTime(MediaTime::createWithDouble(3600)) queue:dispatch_get_main_queue() usingBlock:^(CMTime){
+        if (m_seeking) {
+            m_seeking = false;
+            m_player->timeChanged();
+        }
+    }];
 }
 
 MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 {
+    CMTimebaseRef timebase = [m_synchronizer timebase];
+    CMNotificationCenterRef nc = CMNotificationCenterGetDefaultLocalCenter();
+    CMNotificationCenterRemoveListener(nc, this, CMTimebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase);
+
+    [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
 }
 
 #pragma mark -
@@ -116,7 +168,7 @@ PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateMediaSourceAVFObjC::cr
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
 {
-    return AVFoundationLibrary() && CoreMediaLibrary() && getAVStreamDataParserClass() && getAVSampleBufferAudioRendererClass();
+    return AVFoundationLibrary() && CoreMediaLibrary() && getAVStreamDataParserClass() && getAVSampleBufferAudioRendererClass() && getAVSampleBufferRenderSynchronizerClass();
 }
 
 static HashSet<String> mimeTypeCache()
@@ -206,8 +258,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::play()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::playInternal()
 {
-    m_clock->start();
-    m_player->rateChanged();
+    m_playing = true;
+    [m_synchronizer setRate:m_rate];
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pause()
@@ -217,13 +269,13 @@ void MediaPlayerPrivateMediaSourceAVFObjC::pause()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal()
 {
-    m_clock->stop();
-    m_player->rateChanged();
+    m_playing = false;
+    [m_synchronizer setRate:0];
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::paused() const
 {
-    return !m_clock->isRunning();
+    return !m_playing;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVolume(float volume)
@@ -271,7 +323,7 @@ double MediaPlayerPrivateMediaSourceAVFObjC::durationDouble() const
 
 double MediaPlayerPrivateMediaSourceAVFObjC::currentTimeDouble() const
 {
-    return m_clock->currentTime();
+    return CMTimeGetSeconds(CMTimebaseGetTime([m_synchronizer timebase]));
 }
 
 double MediaPlayerPrivateMediaSourceAVFObjC::startTimeDouble() const
@@ -293,9 +345,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(double time, double
 void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal(double time, double negativeThreshold, double positiveThreshold)
 {
     MediaTime seekTime = m_mediaSourcePrivate->seekToTime(MediaTime::createWithDouble(time), MediaTime::createWithDouble(positiveThreshold), MediaTime::createWithDouble(negativeThreshold));
-    m_clock->setCurrentMediaTime(seekTime);
-    m_seeking = false;
-    m_player->timeChanged();
+
+    [m_synchronizer setRate:(m_playing ? m_rate : 0) time:toCMTime(seekTime)];
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const
@@ -305,8 +356,9 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
 {
-    m_clock->setPlayRate(rate);
-    m_player->rateChanged();
+    m_rate = rate;
+    if (m_playing)
+        [m_synchronizer setRate:m_rate];
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateMediaSourceAVFObjC::networkState() const
@@ -437,7 +489,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
         return;
 
     m_sampleBufferDisplayLayer = adoptNS([[getAVSampleBufferDisplayLayerClass() alloc] init]);
-    [m_sampleBufferDisplayLayer setControlTimebase:m_clock->timebase()];
+    [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
@@ -445,13 +497,21 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
     if (!m_sampleBufferDisplayLayer)
         return;
 
-    [m_sampleBufferDisplayLayer setControlTimebase:0];
+    CMTime currentTime = CMTimebaseGetTime([m_synchronizer timebase]);
+    [m_synchronizer removeRenderer:m_sampleBufferDisplayLayer.get() atTime:currentTime withCompletionHandler:^(BOOL){
+        // No-op.
+    }];
     m_sampleBufferDisplayLayer = nullptr;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 {
     m_player->durationChanged();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
+{
+    m_player->rateChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
@@ -479,7 +539,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::addDisplayLayer(AVSampleBufferDisplay
         return;
 
     m_sampleBufferDisplayLayer = displayLayer;
-    [m_sampleBufferDisplayLayer setControlTimebase:m_clock->timebase()];
+    [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
     m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 
     // FIXME: move this somewhere appropriate:
@@ -491,6 +551,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::removeDisplayLayer(AVSampleBufferDisp
     if (displayLayer != m_sampleBufferDisplayLayer)
         return;
 
+    CMTime currentTime = CMTimebaseGetTime([m_synchronizer timebase]);
+    [m_synchronizer removeRenderer:m_sampleBufferDisplayLayer.get() atTime:currentTime withCompletionHandler:^(BOOL){
+        // No-op.
+    }];
+
     m_sampleBufferDisplayLayer = nullptr;
     m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 }
@@ -501,7 +566,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer(AVSampleBufferAudioR
         return;
 
     m_sampleBufferAudioRenderers.append(audioRenderer);
-    FigReadOnlyTimebaseSetTargetTimebase([audioRenderer timebase], m_clock->timebase());
+    [m_synchronizer addRenderer:audioRenderer];
     m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 }
 
@@ -510,6 +575,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioRenderer(AVSampleBufferAud
     size_t pos = m_sampleBufferAudioRenderers.find(audioRenderer);
     if (pos == notFound)
         return;
+
+    CMTime currentTime = CMTimebaseGetTime([m_synchronizer timebase]);
+    [m_synchronizer removeRenderer:audioRenderer atTime:currentTime withCompletionHandler:^(BOOL){
+        // No-op.
+    }];
 
     m_sampleBufferAudioRenderers.remove(pos);
     m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);

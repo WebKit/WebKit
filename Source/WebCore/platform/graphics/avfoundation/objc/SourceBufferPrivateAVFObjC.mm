@@ -358,18 +358,11 @@ struct ProcessCodedFrameInfo {
     const String& mediaType;
 };
 
-static OSStatus callProcessCodedFrameForEachSample(CMSampleBufferRef sampleBuffer, CMItemCount, void *refcon)
-{
-    ProcessCodedFrameInfo* info = static_cast<ProcessCodedFrameInfo*>(refcon);
-    return info->sourceBuffer->processCodedFrame(info->trackID, sampleBuffer, info->mediaType) ? noErr : paramErr;
-}
-
 void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID(int trackID, CMSampleBufferRef sampleBuffer, const String& mediaType, unsigned flags)
 {
     UNUSED_PARAM(flags);
 
-    ProcessCodedFrameInfo info = {this, trackID, mediaType};
-    CMSampleBufferCallForEachSample(sampleBuffer, &callProcessCodedFrameForEachSample, &info);
+    processCodedFrame(trackID, sampleBuffer, mediaType);
 }
 
 bool SourceBufferPrivateAVFObjC::processCodedFrame(int trackID, CMSampleBufferRef sampleBuffer, const String&)

@@ -36,6 +36,7 @@
 OBJC_CLASS AVAsset;
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
+OBJC_CLASS AVSampleBufferRenderSynchronizer;
 
 typedef struct OpaqueCMTimebase* CMTimebaseRef;
 
@@ -66,6 +67,8 @@ public:
     void setLoadingProgresssed(bool flag) { m_loadingProgressed = flag; }
     void setHasAvailableVideoFrame(bool flag) { m_hasAvailableVideoFrame = flag; }
     void durationChanged();
+
+    void effectiveRateChanged();
 
 private:
     // MediaPlayerPrivateInterface
@@ -161,9 +164,12 @@ private:
     RetainPtr<AVAsset> m_asset;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     Vector<RetainPtr<AVSampleBufferAudioRenderer>> m_sampleBufferAudioRenderers;
-    std::unique_ptr<PlatformClockCM> m_clock;
+    RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
+    RetainPtr<id> m_timeJumpedObserver;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
+    double m_rate;
+    bool m_playing;
     bool m_seeking;
     mutable bool m_loadingProgressed;
     bool m_hasAvailableVideoFrame;
