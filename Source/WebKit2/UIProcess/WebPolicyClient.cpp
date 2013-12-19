@@ -68,7 +68,7 @@ bool WebPolicyClient::decidePolicyForResponse(WebPageProxy* page, WebFrameProxy*
     if (!m_client.decidePolicyForResponse_deprecatedForUseWithV0 && !m_client.decidePolicyForResponse)
         return false;
 
-    RefPtr<WebURLResponse> response = WebURLResponse::create(resourceResponse);
+    RefPtr<API::URLResponse> response = API::URLResponse::create(resourceResponse);
     RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
     if (m_client.decidePolicyForResponse_deprecatedForUseWithV0)

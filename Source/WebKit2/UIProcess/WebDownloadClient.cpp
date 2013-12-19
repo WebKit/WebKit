@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebDownloadClient.h"
 
+#include "APIURLResponse.h"
 #include "WKAPICast.h"
-#include "WebURLResponse.h"
 #include "WKRetainPtr.h"
 
 using namespace WebCore;
@@ -55,7 +55,7 @@ void WebDownloadClient::didReceiveResponse(WebContext* webContext, DownloadProxy
     if (!m_client.didReceiveResponse)
         return;
 
-    m_client.didReceiveResponse(toAPI(webContext), toAPI(downloadProxy), toAPI(WebURLResponse::create(response).get()), m_client.base.clientInfo);
+    m_client.didReceiveResponse(toAPI(webContext), toAPI(downloadProxy), toAPI(API::URLResponse::create(response).get()), m_client.base.clientInfo);
 }
 
 void WebDownloadClient::didReceiveData(WebContext* webContext, DownloadProxy* downloadProxy, uint64_t length)

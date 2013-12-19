@@ -29,6 +29,7 @@
 #include "APINumber.h"
 #include "APIString.h"
 #include "APIURLRequest.h"
+#include "APIURLResponse.h"
 #include "ImageOptions.h"
 #include "SameDocumentNavigationType.h"
 #include "WKBase.h"
@@ -47,7 +48,6 @@
 #include "WebFindOptions.h"
 #include "WebSecurityOrigin.h"
 #include "WebURL.h"
-#include "WebURLResponse.h"
 #include <WebCore/ContextMenuItem.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -80,7 +80,6 @@ class WebGraphicsContext;
 class WebImage;
 class WebSecurityOrigin;
 class WebSerializedScriptValue;
-class WebURLResponse;
 class WebUserContentURLPattern;
 
 template<typename APIType> struct APITypeInfo { };
@@ -112,7 +111,7 @@ WK_ADD_API_MAPPING(WKTypeRef, API::Object)
 WK_ADD_API_MAPPING(WKUInt64Ref, API::UInt64)
 WK_ADD_API_MAPPING(WKURLRef, WebURL)
 WK_ADD_API_MAPPING(WKURLRequestRef, API::URLRequest)
-WK_ADD_API_MAPPING(WKURLResponseRef, WebURLResponse)
+WK_ADD_API_MAPPING(WKURLResponseRef, API::URLResponse)
 WK_ADD_API_MAPPING(WKUserContentURLPatternRef, WebUserContentURLPattern)
 
 template<> struct APITypeInfo<WKMutableArrayRef> { typedef API::Array* ImplType; };
@@ -209,9 +208,9 @@ inline ProxyingRefPtr<API::URLRequest> toAPI(const WebCore::ResourceRequest& req
     return ProxyingRefPtr<API::URLRequest>(API::URLRequest::create(request));
 }
 
-inline ProxyingRefPtr<WebURLResponse> toAPI(const WebCore::ResourceResponse& response)
+inline ProxyingRefPtr<API::URLResponse> toAPI(const WebCore::ResourceResponse& response)
 {
-    return ProxyingRefPtr<WebURLResponse>(WebURLResponse::create(response));
+    return ProxyingRefPtr<API::URLResponse>(API::URLResponse::create(response));
 }
 
 inline WKSecurityOriginRef toCopiedAPI(WebCore::SecurityOrigin* origin)

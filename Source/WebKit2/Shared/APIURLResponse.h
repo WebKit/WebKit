@@ -23,14 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebURLResponse.h"
+#ifndef APIURLResponse_h
+#define APIURLResponse_h
 
-namespace WebKit {
+#include "APIObject.h"
+#include <WebCore/ResourceResponse.h>
+#include <wtf/Forward.h>
 
-WebURLResponse::WebURLResponse(const WebCore::ResourceResponse& response)
-    : m_response(response)
-{
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
 }
 
-} // namespace WebKit
+namespace API {
+
+class URLResponse : public ObjectImpl<Object::Type::URLResponse> {
+public:
+    static PassRefPtr<URLResponse> create(const WebCore::ResourceResponse& response)
+    {
+        return adoptRef(new URLResponse(response));
+    }
+
+    const WebCore::ResourceResponse& resourceResponse() const { return m_response; }
+
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
+
+private:
+    explicit URLResponse(const WebCore::ResourceResponse&);
+
+    WebCore::ResourceResponse m_response;
+};
+
+} // namespace API
+
+#endif // APIURLResponse_h

@@ -26,15 +26,15 @@
 #import "config.h"
 #import "WKURLResponseNS.h"
 
+#import "APIURLResponse.h"
 #import "WKAPICast.h"
-#import "WebURLResponse.h"
 
 using namespace WebKit;
 
 WKURLResponseRef WKURLResponseCreateWithNSURLResponse(NSURLResponse* urlResponse)
 {
     RetainPtr<NSURLResponse> copiedURLResponse = adoptNS([urlResponse copy]);
-    RefPtr<WebURLResponse> response = WebURLResponse::create(copiedURLResponse.get());
+    RefPtr<API::URLResponse> response = API::URLResponse::create(copiedURLResponse.get());
     return toAPI(response.release().leakRef());
 }
 

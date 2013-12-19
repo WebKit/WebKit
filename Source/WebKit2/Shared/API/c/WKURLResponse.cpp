@@ -26,15 +26,15 @@
 #include "config.h"
 #include "WKURLResponse.h"
 
+#include "APIURLResponse.h"
 #include "WKAPICast.h"
-#include "WebURLResponse.h"
 #include <WebCore/URL.h>
 
 using namespace WebKit;
 
 WKTypeID WKURLResponseGetTypeID()
 {
-    return toAPI(WebURLResponse::APIType);
+    return toAPI(API::URLResponse::APIType);
 }
 
 WKURLRef WKURLResponseCopyURL(WKURLResponseRef responseRef)

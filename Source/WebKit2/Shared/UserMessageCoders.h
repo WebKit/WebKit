@@ -32,6 +32,7 @@
 #include "APINumber.h"
 #include "APIString.h"
 #include "APIURLRequest.h"
+#include "APIURLResponse.h"
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
@@ -45,7 +46,6 @@
 #include "WebRenderObject.h"
 #include "WebSerializedScriptValue.h"
 #include "WebURL.h"
-#include "WebURLResponse.h"
 #include "WebUserContentURLPattern.h"
 
 namespace WebKit {
@@ -65,7 +65,7 @@ namespace WebKit {
 //   - API::UInt64 -> API::UInt64
 //   - WebURL -> WebURL
 //   - API::URLRequest -> API::URLRequest
-//   - WebURLResponse -> WebURLResponse
+//   - API::URLResponse -> API::URLResponse
 //   - WebError -> WebError
 
 template<typename Owner>
@@ -182,7 +182,7 @@ public:
             return true;
         }
         case API::Object::Type::URLResponse: {
-            WebURLResponse* urlResponseObject = static_cast<WebURLResponse*>(m_root);
+            API::URLResponse* urlResponseObject = static_cast<API::URLResponse*>(m_root);
             encoder << urlResponseObject->resourceResponse();
             return true;
         }
@@ -254,7 +254,7 @@ protected:
 //   - API::UInt64 -> API::UInt64
 //   - WebURL -> WebURL
 //   - API::URLRequest -> API::URLRequest
-//   - WebURLResponse -> WebURLResponse
+//   - API::URLResponse -> API::URLResponse
 //   - WebError -> WebError
 
 template<typename Owner>
@@ -471,7 +471,7 @@ public:
             WebCore::ResourceResponse response;
             if (!decoder.decode(response))
                 return false;
-            coder.m_root = WebURLResponse::create(response);
+            coder.m_root = API::URLResponse::create(response);
             break;
         }
         case API::Object::Type::UserContentURLPattern: {

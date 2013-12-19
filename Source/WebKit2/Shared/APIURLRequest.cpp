@@ -26,9 +26,8 @@
 #include "config.h"
 #include "APIURLRequest.h"
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
 #include "WebContext.h"
+#include "WebCoreArgumentCoders.h"
 
 using namespace WebCore;
 using namespace WebKit;
