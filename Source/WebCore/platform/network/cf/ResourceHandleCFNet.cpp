@@ -279,13 +279,17 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
     }
 
     Ref<ResourceHandle> protect(*this);
-    client()->willSendRequest(this, request, redirectResponse);
+    if (client()->usesAsyncCallbacks())
+        client()->willSendRequestAsync(this, request, redirectResponse);
+    else {
+        client()->willSendRequest(this, request, redirectResponse);
 
-    // Client call may not preserve the session, especially if the request is sent over IPC.
-    if (!request.isNull()) {
-        request.setStorageSession(d->m_storageSession.get());
+        // Client call may not preserve the session, especially if the request is sent over IPC.
+        if (!request.isNull()) {
+            request.setStorageSession(d->m_storageSession.get());
 
-        d->m_currentRequest = request;
+            d->m_currentRequest = request;
+        }
     }
 }
 
