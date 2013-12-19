@@ -1,3 +1,14 @@
+2013-12-19  Jer Noble  <jer.noble@apple.com>
+
+        Build fix for platforms which do not define -[AVSampleBufferAudioRenderer muted].
+        Rubber-stamped by Eric Carlson.
+
+        To work around platforms with broken AVSampleBufferAudioRenderer headers, just
+        declare only those functions we need, and update isAvalable to bail out early if
+        those methods are not present.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+
 2013-12-16  Darin Adler  <darin@apple.com>
 
         Improve "bad parent" and "bad child list" assertions in line boxes

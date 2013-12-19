@@ -33,7 +33,6 @@
 #import "MediaTimeMac.h"
 #import "PlatformClockCM.h"
 #import "SoftLinking.h"
-#import <AVFoundation/AVSampleBufferDisplayLayer.h>
 #import <AVFoundation/AVAsset.h>
 #import <CoreMedia/CMSync.h>
 #import <objc_runtime.h>
@@ -68,6 +67,12 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimebaseNotification_EffectiveRateChanged, CFSt
 #define kCMTimebaseNotification_EffectiveRateChanged getkCMTimebaseNotification_EffectiveRateChanged()
 
 #pragma mark -
+#pragma mark AVSampleBufferDisplayLayer
+
+@interface AVSampleBufferDisplayLayer : CALayer
+@end
+
+#pragma mark -
 #pragma mark AVVideoPerformanceMetrics
 
 @interface AVVideoPerformanceMetrics : NSObject
@@ -81,17 +86,13 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimebaseNotification_EffectiveRateChanged, CFSt
 - (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
 @end
 
-
 #pragma mark -
 #pragma mark AVSampleBufferAudioRenderer
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
 @interface AVSampleBufferAudioRenderer : NSObject
-- (CMTimebaseRef)timebase;
 - (void)setVolume:(float)volume;
 - (void)setMuted:(BOOL)muted;
 @end
-#endif
 
 #pragma mark -
 #pragma mark AVSampleBufferRenderSynchronizer
@@ -168,7 +169,12 @@ PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateMediaSourceAVFObjC::cr
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
 {
-    return AVFoundationLibrary() && CoreMediaLibrary() && getAVStreamDataParserClass() && getAVSampleBufferAudioRendererClass() && getAVSampleBufferRenderSynchronizerClass();
+    return AVFoundationLibrary()
+        && CoreMediaLibrary()
+        && getAVStreamDataParserClass()
+        && getAVSampleBufferAudioRendererClass()
+        && getAVSampleBufferRenderSynchronizerClass()
+        && class_getInstanceMethod(getAVSampleBufferAudioRendererClass(), @selector(setMuted:));
 }
 
 static HashSet<String> mimeTypeCache()
