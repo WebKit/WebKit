@@ -41,7 +41,8 @@ class TiledBackingStoreClient;
 class TiledBackingStore {
     WTF_MAKE_NONCOPYABLE(TiledBackingStore); WTF_MAKE_FAST_ALLOCATED;
 public:
-    TiledBackingStore(TiledBackingStoreClient*, std::unique_ptr<TiledBackingStoreBackend> = std::make_unique<TiledBackingStoreBackend>());
+    TiledBackingStore(TiledBackingStoreClient*);
+    TiledBackingStore(TiledBackingStoreClient*, std::unique_ptr<TiledBackingStoreBackend>);
     ~TiledBackingStore();
 
     TiledBackingStoreClient* client() { return m_client; }

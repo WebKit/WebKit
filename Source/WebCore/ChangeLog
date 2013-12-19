@@ -1,3 +1,16 @@
+2013-12-19  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Compile fix for VS2013 when using ACCELERATED_COMPOSITING.
+        https://bugs.webkit.org/show_bug.cgi?id=124866
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        * platform/graphics/TiledBackingStore.h:
+        Added constructor overload to avoid compile errors
+        from using MSVC's make_unique as a default parameter.
+
 2013-12-19  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream WebCore/loader changes
