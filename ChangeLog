@@ -1,3 +1,16 @@
+2013-12-18  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK][CMake] make libjavascriptcoregtk a public shared library again
+        https://bugs.webkit.org/show_bug.cgi?id=125512
+
+        Reviewed by Martin Robinson.
+
+        * CMakeLists.txt: make JavaScriptCore always be a shared library for the GTK+ port.
+        * Source/cmake/WebKitHelpers.cmake: make -fvisibility=hidden not be applied for GTK+,
+        visibility of some symbols is required for threading to be initialized properly by
+        WebKit2 processes, and we will rely on a linker script that will be added later on,
+        for production builds.
+
 2013-12-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building WebKit1

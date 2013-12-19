@@ -761,7 +761,7 @@ if (JavaScriptCore_OUTPUT_NAME)
     set_target_properties(JavaScriptCore PROPERTIES OUTPUT_NAME ${JavaScriptCore_OUTPUT_NAME})
 endif ()
 
-if (SHARED_CORE)
+if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "SHARED_LIBRARY")
     set_target_properties(JavaScriptCore PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
     install(TARGETS JavaScriptCore DESTINATION "${LIB_INSTALL_DIR}")
 endif ()
