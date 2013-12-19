@@ -491,13 +491,13 @@ if (ENABLE_PLUGIN_PROCESS)
         Platform/CoreIPC/MessageDecoder.cpp
         Platform/CoreIPC/MessageEncoder.cpp
         Platform/CoreIPC/MessageReceiverMap.cpp
-        Platform/CoreIPC/MessageSender.cpp
 
         Platform/CoreIPC/unix/AttachmentUnix.cpp
         Platform/CoreIPC/unix/ConnectionUnix.cpp
 
         Platform/IPC/DataReference.cpp
         Platform/IPC/StringReference.cpp
+        Platform/IPC/MessageSender.cpp
 
         Platform/Logging.cpp
         Platform/Module.cpp
@@ -550,7 +550,6 @@ if (ENABLE_PLUGIN_PROCESS)
         Shared/gtk/ProcessExecutablePathGtk.cpp
         Shared/gtk/WebEventFactory.cpp
 
-        Shared/soup/CertificateInfo.cpp
         Shared/soup/WebCoreArgumentCodersSoup.cpp
 
         UIProcess/Launcher/ProcessLauncher.cpp

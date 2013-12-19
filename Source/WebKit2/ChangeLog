@@ -1,3 +1,9 @@
+2013-12-18  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed cmake build fix for GTK+.
+
+        * PlatformGTK.cmake: fix paths for files that were moved.
+
 2013-12-18  Anders Carlsson  <andersca@apple.com>
 
         MessageReceiverMap::addMessageReceiver should assert that destinationID is not zero

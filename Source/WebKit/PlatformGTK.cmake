@@ -13,6 +13,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     ${THIRDPARTY_DIR}/ANGLE/include
     ${THIRDPARTY_DIR}/ANGLE/include/KHR
     ${THIRDPARTY_DIR}/ANGLE/include/GLSLANG
+    ${WEBCORE_DIR}/ForwardingHeaders
     ${WEBCORE_DIR}/accessibility/atk
     ${WEBCORE_DIR}/platform/cairo
     ${WEBCORE_DIR}/platform/graphics/cairo

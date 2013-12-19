@@ -1,3 +1,9 @@
+2013-12-18  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed cmake build fix for GTK+.
+
+        * PlatformGTK.cmake: add missing include directory.
+
 2013-12-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building WebKit1
