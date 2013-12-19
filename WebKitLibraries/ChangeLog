@@ -1,5 +1,12 @@
 2013-12-18  Alex Christensen  <achristensen@webkit.org>
 
+        [WinCairo] Unreviewed build fix after r160798.
+
+        * win/tools/vsprops/FeatureDefinesCairo.props:
+        Removed ENABLE_MEDIA_CONTROLS_SCRIPT definition for now.
+
+2013-12-18  Alex Christensen  <achristensen@webkit.org>
+
         [WinCairo] Preparation for GStreamer on Windows.
         https://bugs.webkit.org/show_bug.cgi?id=125946
 
