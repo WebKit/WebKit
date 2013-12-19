@@ -647,6 +647,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     uint64_t downloadID;
 
     // Notify the UIProcess.
+    // FIXME (126021): It is not good to change IPC behavior conditionally, and SpinRunLoopWhileWaitingForReply was known to cause trouble in other similar cases.
     unsigned syncSendFlags = (WebCore::AXObjectCache::accessibilityEnabled()) ? CoreIPC::SpinRunLoopWhileWaitingForReply : 0;
     if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForResponseSync(m_frame->frameID(), response, request, canShowMIMEType, listenerID, InjectedBundleUserMessageEncoder(userData.get())), Messages::WebPageProxy::DecidePolicyForResponseSync::Reply(receivedPolicyAction, policyAction, downloadID), CoreIPC::Connection::NoTimeout, syncSendFlags))
         return;

@@ -1,3 +1,19 @@
+2013-12-19  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r160515): Frequent assertion failures on printing/print-close-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=126014
+
+        Rolled out r160515 while Chris is investigating. Added FIXME comments in other
+        places where we use this pattern.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        (WebKit::WebChromeClient::print):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+
 2013-12-19  Ricky Mondello  <rmondello@apple.com>
 
         Add WebKit2 API for clearing the back-forward list

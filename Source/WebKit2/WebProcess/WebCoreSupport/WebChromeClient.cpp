@@ -348,6 +348,7 @@ void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptAlert(m_page, alertText, webFrame);
 
+    // FIXME (126021): It is not good to change IPC behavior conditionally, and SpinRunLoopWhileWaitingForReply was known to cause trouble in other similar cases.
     unsigned syncSendFlags = (WebCore::AXObjectCache::accessibilityEnabled()) ? CoreIPC::SpinRunLoopWhileWaitingForReply : 0;
     WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), alertText), Messages::WebPageProxy::RunJavaScriptAlert::Reply(), m_page->pageID(), CoreIPC::Connection::NoTimeout, syncSendFlags);
 }
@@ -361,6 +362,7 @@ bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptConfirm(m_page, message, webFrame);
 
+    // FIXME (126021): It is not good to change IPC behavior conditionally, and SpinRunLoopWhileWaitingForReply was known to cause trouble in other similar cases.
     unsigned syncSendFlags = (WebCore::AXObjectCache::accessibilityEnabled()) ? CoreIPC::SpinRunLoopWhileWaitingForReply : 0;
     bool result = false;
     if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptConfirm(webFrame->frameID(), message), Messages::WebPageProxy::RunJavaScriptConfirm::Reply(result), m_page->pageID(), CoreIPC::Connection::NoTimeout, syncSendFlags))
@@ -378,6 +380,7 @@ bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, c
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptPrompt(m_page, message, defaultValue, webFrame);
 
+    // FIXME (126021): It is not good to change IPC behavior conditionally, and SpinRunLoopWhileWaitingForReply was known to cause trouble in other similar cases.
     unsigned syncSendFlags = (WebCore::AXObjectCache::accessibilityEnabled()) ? CoreIPC::SpinRunLoopWhileWaitingForReply : 0;
     if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), message, defaultValue), Messages::WebPageProxy::RunJavaScriptPrompt::Reply(result), m_page->pageID(), CoreIPC::Connection::NoTimeout, syncSendFlags))
         return false;
@@ -589,8 +592,7 @@ void WebChromeClient::print(Frame* frame)
     WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
     ASSERT(webFrame);
 
-    unsigned syncSendFlags = (WebCore::AXObjectCache::accessibilityEnabled()) ? CoreIPC::SpinRunLoopWhileWaitingForReply : 0;
-    m_page->sendSync(Messages::WebPageProxy::PrintFrame(webFrame->frameID()), Messages::WebPageProxy::PrintFrame::Reply(), CoreIPC::Connection::NoTimeout, syncSendFlags);
+    m_page->sendSync(Messages::WebPageProxy::PrintFrame(webFrame->frameID()), Messages::WebPageProxy::PrintFrame::Reply());
 }
 
 #if ENABLE(SQL_DATABASE)
