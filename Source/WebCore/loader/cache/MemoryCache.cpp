@@ -232,7 +232,9 @@ bool MemoryCache::addImageToCache(NativeImagePtr image, const URL& url, const St
     CFRetain(image);
     cachedImage->addFakeClient();
     cachedImage->setDecodedSize(bitmapImage->decodedSize());
+#if ENABLE(CACHE_PARTITIONING)
     cachedImage->resourceRequest().setCachePartition(cachePartition);
+#endif
     add(cachedImage);
     return true;
 }

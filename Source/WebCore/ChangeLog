@@ -1,5 +1,16 @@
 2013-12-19  Daniel Bates  <dabates@apple.com>
 
+        Fix the Windows build after <http://trac.webkit.org/changeset/160841>
+        (https://bugs.webkit.org/show_bug.cgi?id=125879)
+
+        Add ENABLE(CACHE_PARTITIONING)-guard around call to ResourceRequest::setCachePartition()
+        as this function is only compiled when building with cache partitioning enabled.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::addImageToCache):
+
+2013-12-19  Daniel Bates  <dabates@apple.com>
+
         [iOS] Upstream WebCore/accessibility changes
         https://bugs.webkit.org/show_bug.cgi?id=125925
 
