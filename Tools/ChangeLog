@@ -1,3 +1,23 @@
+2013-12-19  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r160726
+
+    2013-12-17  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Revise filter-build-webkit to deal with Windows build logs
+            https://bugs.webkit.org/show_bug.cgi?id=125866
+
+            Reviewed by David Kilzer.
+
+            Enhance the script to accept a 'platform' argument. When platform
+            'win' is provided, use processing for the Windows build file format.
+            Otherwise, process the files as normal.
+
+            * Scripts/filter-build-webkit:
+            (usageAndExit): Add a 'platform' argument
+            (shouldIgnoreLine): When platform == 'win' use the new Windows
+            rules for processing the build file.
+
 2013-12-11  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merged patch from <rdar://problems/15474133>.  This patch is a port of r157821.
