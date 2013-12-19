@@ -1303,3 +1303,5 @@ webkit.org/b/87748 fast/forms/select/optgroup-clicking.html [ Skip ]
 webkit.org/b/73304 fast/forms/select/menulist-popup-crash.html [ Skip ]
 webkit.org/b/113220 fast/forms/select/popup-closes-on-blur.html [ Skip ]
 webkit.org/b/74384 fast/forms/select/menulist-onchange-fired-with-key-up-down.html [ WontFix ] # Additionally, this is not an expected behavior on Mac.
+
+webkit.org/b/123029 [ Debug ] platform/mac/editing/attributed-string [ Pass Crash ]
