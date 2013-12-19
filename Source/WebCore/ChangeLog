@@ -1,3 +1,14 @@
+2013-12-19  Andreas Kling  <akling@apple.com>
+
+        CascadedProperties should use a bitset to track property presence.
+        <https://webkit.org/b/125991>
+
+        Avoid zeroing out a bunch of memory in the CascadedProperties ctor
+        by using a bitset to track whether each property is present in the
+        cascaded set.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-19  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Fix description of parameters in Page.setGeolocationOverride

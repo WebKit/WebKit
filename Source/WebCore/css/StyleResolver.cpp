@@ -126,6 +126,7 @@
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include "XMLNames.h"
+#include <bitset>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -199,10 +200,10 @@ public:
         void apply(StyleResolver&);
 
         CSSPropertyID id;
-        bool isPresent;
         CSSValue* cssValue[3];
     };
 
+    bool hasProperty(CSSPropertyID id) const { return m_propertyIsPresent.test(id); }
     Property& property(CSSPropertyID);
     bool addMatches(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
 
@@ -216,6 +217,8 @@ private:
     static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType);
 
     Property m_properties[numCSSProperties + 1];
+    std::bitset<numCSSProperties + 1> m_propertyIsPresent;
+
     Vector<Property> m_deferredProperties;
 
     TextDirection m_direction;
@@ -4196,7 +4199,6 @@ StyleResolver::CascadedProperties::CascadedProperties(TextDirection direction, W
     : m_direction(direction)
     , m_writingMode(writingMode)
 {
-    memset(&m_properties, 0, sizeof(m_properties));
 }
 
 inline StyleResolver::CascadedProperties::Property& StyleResolver::CascadedProperties::property(CSSPropertyID id)
@@ -4208,7 +4210,6 @@ void StyleResolver::CascadedProperties::setPropertyInternal(Property& property, 
 {
     ASSERT(linkMatchType <= SelectorChecker::MatchAll);
     property.id = id;
-    property.isPresent = true;
     if (linkMatchType == SelectorChecker::MatchAll) {
         property.cssValue[0] = &cssValue;
         property.cssValue[SelectorChecker::MatchLink] = &cssValue;
@@ -4225,6 +4226,9 @@ void StyleResolver::CascadedProperties::set(CSSPropertyID id, CSSValue& cssValue
     ASSERT(!shouldApplyPropertyInParseOrder(id));
 
     auto& property = m_properties[id];
+    if (!m_propertyIsPresent.test(id))
+        memset(property.cssValue, 0, sizeof(property.cssValue));
+    m_propertyIsPresent.set(id);
     setPropertyInternal(property, id, cssValue, linkMatchType);
 }
 
@@ -4328,10 +4332,11 @@ void StyleResolver::CascadedProperties::Property::apply(StyleResolver& resolver)
 void StyleResolver::applyCascadedProperties(CascadedProperties& cascade, int firstProperty, int lastProperty)
 {
     for (int id = firstProperty; id <= lastProperty; ++id) {
-        auto& property = cascade.property(static_cast<CSSPropertyID>(id));
-        if (!property.isPresent)
+        CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
+        if (!cascade.hasProperty(propertyID))
             continue;
-        ASSERT(!shouldApplyPropertyInParseOrder(property.id));
+        auto& property = cascade.property(propertyID);
+        ASSERT(!shouldApplyPropertyInParseOrder(propertyID));
         property.apply(*this);
     }
 }
