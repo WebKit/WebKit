@@ -40,16 +40,16 @@ static inline bool isNonRenderBlockInline(RenderObject* object)
     return (object->isInline() && !object->isReplaced()) || !object->isRenderBlock();
 }
 
-static inline RenderObject* containingBlockForFixedPosition(RenderObject* parent)
+static inline RenderBlock* containingBlockForFixedPosition(RenderObject* parent)
 {
     RenderObject* object = parent;
     while (object && !object->canContainFixedPositionObjects())
         object = object->parent();
     ASSERT(!object || !object->isAnonymousBlock());
-    return object;
+    return toRenderBlock(object);
 }
 
-static inline RenderObject* containingBlockForAbsolutePosition(RenderObject* parent)
+static inline RenderBlock* containingBlockForAbsolutePosition(RenderObject* parent)
 {
     RenderObject* object = parent;
     while (object && !isContainingBlockCandidateForAbsolutelyPositionedObject(object))
@@ -59,21 +59,21 @@ static inline RenderObject* containingBlockForAbsolutePosition(RenderObject* par
     // not the inline itself, to avoid having a positioned objects list in all RenderInlines
     // and use RenderBlock* as RenderObject::containingBlock's return type.
     // Use RenderBlock::container() to obtain the inline.
-    if (object && object->isRenderInline())
+    if (object && !object->isRenderBlock())
         object = object->containingBlock();
 
     while (object && object->isAnonymousBlock())
         object = object->containingBlock();
 
-    return object;
+    return toRenderBlock(object);
 }
 
-static inline RenderObject* containingBlockForObjectInFlow(RenderObject* parent)
+static inline RenderBlock* containingBlockForObjectInFlow(RenderObject* parent)
 {
     RenderObject* object = parent;
     while (object && isNonRenderBlockInline(object))
         object = object->parent();
-    return object;
+    return toRenderBlock(object);
 }
 
 class LogicalSelectionOffsetCaches {
@@ -139,9 +139,9 @@ public:
         RenderObject* parent = rootBlock->parent();
 
         // LogicalSelectionOffsetCaches should not be used on an orphaned tree.
-        m_containingBlockForFixedPosition.setBlock(toRenderBlock(containingBlockForFixedPosition(parent)), 0);
-        m_containingBlockForAbsolutePosition.setBlock(toRenderBlock(containingBlockForAbsolutePosition(parent)), 0);
-        m_containingBlockForInflowPosition.setBlock(toRenderBlock(containingBlockForObjectInFlow(parent)), 0);
+        m_containingBlockForFixedPosition.setBlock(containingBlockForFixedPosition(parent), 0);
+        m_containingBlockForAbsolutePosition.setBlock(containingBlockForAbsolutePosition(parent), 0);
+        m_containingBlockForInflowPosition.setBlock(containingBlockForObjectInFlow(parent), 0);
     }
 
     LogicalSelectionOffsetCaches(RenderBlock* block, const LogicalSelectionOffsetCaches& cache)
