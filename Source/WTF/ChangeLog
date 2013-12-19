@@ -1,3 +1,20 @@
+2013-12-18  Daniel Bates  <dabates@apple.com>
+
+        WTF, JavaScriptCore fails to build with trunk clang: operators new, new[],
+        delete, delete[] cannot be declared inline
+        https://bugs.webkit.org/show_bug.cgi?id=124186
+        <rdar://problem/15644039>
+
+        Reviewed by Geoffrey Garen and Anders Carlsson.
+
+        Following <http://llvm.org/viewvc/llvm-project?view=revision&revision=193044>
+        (http://llvm.org/bugs/show_bug.cgi?id=17591>), Clang emits warnings when
+        operator new, delete are inlined. Such definitions cannot be inline per
+        replacement.functions (17.6.4.6/3) of the C++ standard. For now,
+        disable these warnings instead of exporting these functions.
+
+        * wtf/FastMalloc.h:
+
 2013-12-19  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         WTF fails to compile with gcc 4.8.2 and -Werror=array-bounds
