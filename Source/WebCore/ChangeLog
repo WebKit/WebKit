@@ -1,3 +1,16 @@
+2013-12-18  Andreas Kling  <akling@apple.com>
+
+        Don't waste cycles on zeroing every CascadedProperties::Property.
+        <https://webkit.org/b/125966>
+
+        The CascadedProperties constructor already zeroes out the whole
+        property array. Move the memset() to setDeferred() which is the only
+        other place we create a Property.
+
+        Brought to you by Instruments.app. Profile your code today!
+
+        Reviewed by Antti Koivisto.
+
 2013-12-18  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Simplify the BoxShape implementation

@@ -196,7 +196,6 @@ public:
     CascadedProperties(TextDirection, WritingMode);
 
     struct Property {
-        Property();
         void apply(StyleResolver&);
 
         CSSPropertyID id;
@@ -1667,7 +1666,6 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, bool 
 
 unsigned StyleResolver::computeMatchedPropertiesHash(const MatchedProperties* properties, unsigned size)
 {
-    
     return StringHasher::hashMemory(properties, sizeof(MatchedProperties) * size);
 }
 
@@ -4192,13 +4190,6 @@ int StyleResolver::viewportPercentageValue(CSSPrimitiveValue& unit, int percenta
     return 0;
 }
 
-StyleResolver::CascadedProperties::Property::Property()
-    : id(CSSPropertyInvalid)
-    , isPresent(false)
-{
-    memset(cssValue, 0, sizeof(cssValue));
-}
-
 StyleResolver::CascadedProperties::CascadedProperties(TextDirection direction, WritingMode writingMode)
     : m_direction(direction)
     , m_writingMode(writingMode)
@@ -4241,6 +4232,7 @@ void StyleResolver::CascadedProperties::setDeferred(CSSPropertyID id, CSSValue& 
     ASSERT(shouldApplyPropertyInParseOrder(id));
 
     Property property;
+    memset(property.cssValue, 0, sizeof(property.cssValue));
     setPropertyInternal(property, id, cssValue, linkMatchType);
     m_deferredProperties.append(property);
 }
