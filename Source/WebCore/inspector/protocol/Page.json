@@ -275,8 +275,8 @@
             "name": "setGeolocationOverride",
             "description": "Overrides the Geolocation Position or Error.",
             "parameters": [
-                { "name": "latitude", "type": "number", "optional": true, "description": "Mock longitude"},
-                { "name": "longitude", "type": "number", "optional": true, "description": "Mock latitude"},
+                { "name": "latitude", "type": "number", "optional": true, "description": "Mock latitude"},
+                { "name": "longitude", "type": "number", "optional": true, "description": "Mock longitude"},
                 { "name": "accuracy", "type": "number", "optional": true, "description": "Mock accuracy"}
             ]
         },
