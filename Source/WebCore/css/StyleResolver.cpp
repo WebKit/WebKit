@@ -204,7 +204,7 @@ public:
     };
 
     Property& property(CSSPropertyID);
-    void addMatches(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
+    bool addMatches(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
 
     void set(CSSPropertyID, CSSValue&, unsigned linkMatchType);
     void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType);
@@ -212,7 +212,7 @@ public:
     void applyDeferredProperties(StyleResolver&);
 
 private:
-    void addStyleProperties(const StyleProperties&, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType, unsigned linkMatchType);
+    bool addStyleProperties(const StyleProperties&, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType, unsigned linkMatchType);
     static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType);
 
     Property m_properties[numCSSProperties + 1];
@@ -1830,8 +1830,9 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // can look at them later to figure out if this is a styled form control or not.
         state.setLineHeightValue(nullptr);
         CascadedProperties cascade(direction, writingMode);
-        cascade.addMatches(matchResult, false, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
-        cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
+        if (!cascade.addMatches(matchResult, false, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly)
+            || !cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly))
+            return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
         applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
         updateFont();
@@ -1841,10 +1842,11 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     }
 
     CascadedProperties cascade(direction, writingMode);
-    cascade.addMatches(matchResult, false, 0, matchResult.matchedProperties.size() - 1, applyInheritedOnly);
-    cascade.addMatches(matchResult, true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
-    cascade.addMatches(matchResult, true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
-    cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
+    if (!cascade.addMatches(matchResult, false, 0, matchResult.matchedProperties.size() - 1, applyInheritedOnly)
+        || !cascade.addMatches(matchResult, true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly)
+        || !cascade.addMatches(matchResult, true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly)
+        || !cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly))
+        return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
     state.setLineHeightValue(nullptr);
 
@@ -4237,7 +4239,7 @@ void StyleResolver::CascadedProperties::setDeferred(CSSPropertyID id, CSSValue& 
     m_deferredProperties.append(property);
 }
 
-void StyleResolver::CascadedProperties::addStyleProperties(const StyleProperties& properties, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType propertyWhitelistType, unsigned linkMatchType)
+bool StyleResolver::CascadedProperties::addStyleProperties(const StyleProperties& properties, StyleRule&, bool isImportant, bool inheritedOnly, PropertyWhitelistType propertyWhitelistType, unsigned linkMatchType)
 {
     for (unsigned i = 0, count = properties.propertyCount(); i < count; ++i) {
         auto current = properties.propertyAt(i);
@@ -4247,7 +4249,8 @@ void StyleResolver::CascadedProperties::addStyleProperties(const StyleProperties
             // If the property value is explicitly inherited, we need to apply further non-inherited properties
             // as they might override the value inherited here. For this reason we don't allow declarations with
             // explicitly inherited properties to be cached.
-            ASSERT(!current.value()->isInheritedValue());
+            if (current.value()->isInheritedValue())
+                return false;
             continue;
         }
         CSSPropertyID propertyID = current.id();
@@ -4264,17 +4267,20 @@ void StyleResolver::CascadedProperties::addStyleProperties(const StyleProperties
         else
             set(propertyID, *current.value(), linkMatchType);
     }
+    return true;
 }
 
-void StyleResolver::CascadedProperties::addMatches(const MatchResult& matchResult, bool important, int startIndex, int endIndex, bool inheritedOnly)
+bool StyleResolver::CascadedProperties::addMatches(const MatchResult& matchResult, bool important, int startIndex, int endIndex, bool inheritedOnly)
 {
     if (startIndex == -1)
-        return;
+        return true;
 
     for (int i = startIndex; i <= endIndex; ++i) {
         const MatchedProperties& matchedProperties = matchResult.matchedProperties[i];
-        addStyleProperties(*matchedProperties.properties, *matchResult.matchedRules[i], important, inheritedOnly, static_cast<PropertyWhitelistType>(matchedProperties.whitelistType), matchedProperties.linkMatchType);
+        if (!addStyleProperties(*matchedProperties.properties, *matchResult.matchedRules[i], important, inheritedOnly, static_cast<PropertyWhitelistType>(matchedProperties.whitelistType), matchedProperties.linkMatchType))
+            return false;
     }
+    return true;
 }
 
 void StyleResolver::CascadedProperties::applyDeferredProperties(StyleResolver& resolver)

@@ -1,3 +1,20 @@
+2013-12-18  Andreas Kling  <akling@apple.com>
+
+        CSS: Fall back to cache-less cascade when encountering explicitly inherited value.
+        <https://webkit.org/b/125968>
+
+        When encountering an explicitly inherited value for a property that's not
+        "statically inherited", drop out of the matched properties cache path
+        immediately instead of waiting for some coincidence to trigger it later on.
+
+        Fixes 3 asserting table tests:
+
+        - fast/table/border-collapsing/cached-69296.html
+        - tables/mozilla/bugs/bug27038-3.html
+        - tables/mozilla_expected_failures/marvin/backgr_border-table-row-group.html
+
+        Reviewed by Antti Koivisto.
+
 2013-12-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in WebCore::LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches
