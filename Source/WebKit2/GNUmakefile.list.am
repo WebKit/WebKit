@@ -379,6 +379,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/APIPageHandle.h \
 	Source/WebKit2/Shared/APIClient.h \
 	Source/WebKit2/Shared/APIString.h \
+	Source/WebKit2/Shared/APIURLResponse.cpp \
+	Source/WebKit2/Shared/APIURLResponse.h \
 	Source/WebKit2/Shared/API/c/cairo/WKImageCairo.cpp \
 	Source/WebKit2/Shared/API/c/cairo/WKImageCairo.h \
 	Source/WebKit2/Shared/API/c/gtk/WKBaseGtk.h \
@@ -612,8 +614,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebSerializedScriptValue.h \
 	Source/WebKit2/Shared/WebTouchEvent.cpp \
 	Source/WebKit2/Shared/WebURL.h \
-	Source/WebKit2/Shared/WebURLResponse.cpp \
-	Source/WebKit2/Shared/WebURLResponse.h \
 	Source/WebKit2/Shared/WebUserContentURLPattern.h \
 	Source/WebKit2/Shared/WebWheelEvent.cpp \
 	Source/WebKit2/UIProcess/API/C/gtk/WKAPICastGtk.h \
