@@ -1,3 +1,17 @@
+2013-12-19  Andreas Kling  <akling@apple.com>
+
+        Use CascadedProperties for page and keyframe style resolution as well.
+        <https://webkit.org/b/125997>
+
+        Port StyleResolver's styleForKeyframe() and styleForPage() over to
+        the new property cascading code. Neither of them care about !important
+        or matched properties caches, so the code is very simple.
+
+        Removed the old applyMatchedProperties and applyProperties code with
+        low/high priority passes.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-19  Eric Carlson  <eric.carlson@apple.com>
 
         tryAddEventListener uses local PassRefPtr<>

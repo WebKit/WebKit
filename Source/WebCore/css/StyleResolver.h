@@ -353,20 +353,11 @@ private:
     enum ShouldUseMatchedPropertiesCache { DoNotUseMatchedPropertiesCache = 0, UseMatchedPropertiesCache };
     void applyMatchedProperties(const MatchResult&, const Element*, ShouldUseMatchedPropertiesCache = UseMatchedPropertiesCache);
 
-    enum StyleApplicationPass {
-        HighPriorityProperties,
-        LowPriorityProperties
-    };
-
     class CascadedProperties;
 
     void applyCascadedProperties(CascadedProperties&, int firstProperty, int lastProperty);
     void cascadeMatches(CascadedProperties&, const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
 
-    template <StyleApplicationPass pass>
-    void applyMatchedProperties(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
-    template <StyleApplicationPass pass>
-    void applyProperties(const StyleProperties*, StyleRule*, bool isImportant, bool inheritedOnly, PropertyWhitelistType = PropertyWhitelistNone);
     static bool isValidRegionStyleProperty(CSSPropertyID);
 #if ENABLE(VIDEO_TRACK)
     static bool isValidCueStyleProperty(CSSPropertyID);

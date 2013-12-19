@@ -205,7 +205,7 @@ public:
 
     bool hasProperty(CSSPropertyID id) const { return m_propertyIsPresent.test(id); }
     Property& property(CSSPropertyID);
-    bool addMatches(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
+    bool addMatches(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly = false);
 
     void set(CSSPropertyID, CSSValue&, unsigned linkMatchType);
     void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType);
@@ -224,6 +224,8 @@ private:
     TextDirection m_direction;
     WritingMode m_writingMode;
 };
+
+static void extractDirectionAndWritingMode(const RenderStyle&, const StyleResolver::MatchResult&, TextDirection&, WritingMode&);
 
 #define HANDLE_INHERIT(prop, Prop) \
 if (isInherit) { \
@@ -901,10 +903,16 @@ PassRef<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementS
     state.setStyle(RenderStyle::clone(elementStyle));
     state.setLineHeightValue(0);
 
+    TextDirection direction;
+    WritingMode writingMode;
+    extractDirectionAndWritingMode(*state.style(), result, direction, writingMode);
+
     // We don't need to bother with !important. Since there is only ever one
     // decl, there's nothing to override. So just add the first properties.
-    bool inheritedOnly = false;
-    applyMatchedProperties<HighPriorityProperties>(result, false, 0, result.matchedProperties.size() - 1, inheritedOnly);
+    CascadedProperties cascade(direction, writingMode);
+    cascade.addMatches(result, false, 0, result.matchedProperties.size() - 1);
+
+    applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
 
     // If our font got dirtied, go ahead and update it now.
     updateFont();
@@ -914,11 +922,13 @@ PassRef<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementS
         applyProperty(CSSPropertyLineHeight, state.lineHeightValue());
 
     // Now do rest of the properties.
-    applyMatchedProperties<LowPriorityProperties>(result, false, 0, result.matchedProperties.size() - 1, inheritedOnly);
+    applyCascadedProperties(cascade, CSSPropertyBackground, lastCSSProperty);
 
     // If our font got dirtied by one of the non-essential font props,
     // go ahead and update it a second time.
     updateFont();
+
+    cascade.applyDeferredProperties(*this);
 
     // Start loading resources referenced by this style.
     loadPendingResources();
@@ -1064,10 +1074,17 @@ PassRef<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     PageRuleCollector collector(m_state, m_ruleSets);
     collector.matchAllPageRules(pageIndex);
     m_state.setLineHeightValue(0);
-    bool inheritedOnly = false;
 
     MatchResult& result = collector.matchedResult();
-    applyMatchedProperties<HighPriorityProperties>(result, false, 0, result.matchedProperties.size() - 1, inheritedOnly);
+
+    TextDirection direction;
+    WritingMode writingMode;
+    extractDirectionAndWritingMode(*m_state.style(), result, direction, writingMode);
+
+    CascadedProperties cascade(direction, writingMode);
+    cascade.addMatches(result, false, 0, result.matchedProperties.size() - 1);
+
+    applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
 
     // If our font got dirtied, go ahead and update it now.
     updateFont();
@@ -1076,7 +1093,9 @@ PassRef<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     if (m_state.lineHeightValue())
         applyProperty(CSSPropertyLineHeight, m_state.lineHeightValue());
 
-    applyMatchedProperties<LowPriorityProperties>(result, false, 0, result.matchedProperties.size() - 1, inheritedOnly);
+    applyCascadedProperties(cascade, CSSPropertyBackground, lastCSSProperty);
+
+    cascade.applyDeferredProperties(*this);
 
     // Start loading resources referenced by this style.
     loadPendingResources();
@@ -1552,56 +1571,6 @@ Length StyleResolver::convertToFloatLength(const CSSPrimitiveValue* primitiveVal
     return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion | FractionConversion | ViewportPercentageConversion>(style, rootStyle, multiplier) : Length(Undefined);
 }
 
-template <StyleResolver::StyleApplicationPass pass>
-void StyleResolver::applyProperties(const StyleProperties* properties, StyleRule* rule, bool isImportant, bool inheritedOnly, PropertyWhitelistType propertyWhitelistType)
-{
-    ASSERT((propertyWhitelistType != PropertyWhitelistRegion) || m_state.regionForStyling());
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(&document(), rule, *this);
-
-    unsigned propertyCount = properties->propertyCount();
-    for (unsigned i = 0; i < propertyCount; ++i) {
-        StyleProperties::PropertyReference current = properties->propertyAt(i);
-        if (isImportant != current.isImportant())
-            continue;
-        if (inheritedOnly && !current.isInherited()) {
-            // If the property value is explicitly inherited, we need to apply further non-inherited properties
-            // as they might override the value inherited here. For this reason we don't allow declarations with
-            // explicitly inherited properties to be cached.
-            ASSERT(!current.value()->isInheritedValue());
-            continue;
-        }
-        CSSPropertyID property = current.id();
-
-        if (propertyWhitelistType == PropertyWhitelistRegion && !StyleResolver::isValidRegionStyleProperty(property))
-            continue;
-#if ENABLE(VIDEO_TRACK)
-        if (propertyWhitelistType == PropertyWhitelistCue && !StyleResolver::isValidCueStyleProperty(property))
-            continue;
-#endif
-        switch (pass) {
-        case HighPriorityProperties:
-            COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-            COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 18, CSS_zoom_is_end_of_first_prop_range);
-#else
-            COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 17, CSS_zoom_is_end_of_first_prop_range);
-#endif
-            COMPILE_ASSERT(CSSPropertyLineHeight == CSSPropertyZoom + 1, CSS_line_height_is_after_zoom);
-            // give special priority to font-xxx, color properties, etc
-            if (property < CSSPropertyLineHeight)
-                applyProperty(current.id(), current.value());
-            // we apply line-height later
-            else if (property == CSSPropertyLineHeight)
-                m_state.setLineHeightValue(current.value());
-            break;
-        case LowPriorityProperties:
-            if (property > CSSPropertyLineHeight)
-                applyProperty(current.id(), current.value());
-        }
-    }
-    InspectorInstrumentation::didProcessRule(cookie);
-}
-
 static bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
 {
     switch (propertyID) {
@@ -1638,33 +1607,6 @@ static bool elementTypeHasAppearanceFromUAStyle(const Element& element)
         || localName == HTMLNames::selectTag
         || localName == HTMLNames::meterTag
         || localName == HTMLNames::isindexTag;
-}
-
-template <StyleResolver::StyleApplicationPass pass>
-void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, bool isImportant, int startIndex, int endIndex, bool inheritedOnly)
-{
-    if (startIndex == -1)
-        return;
-
-    State& state = m_state;
-    if (state.style()->insideLink() != NotInsideLink) {
-        for (int i = startIndex; i <= endIndex; ++i) {
-            const MatchedProperties& matchedProperties = matchResult.matchedProperties[i];
-            unsigned linkMatchType = matchedProperties.linkMatchType;
-            // FIXME: It would be nicer to pass these as arguments but that requires changes in many places.
-            state.setApplyPropertyToRegularStyle(linkMatchType & SelectorChecker::MatchLink);
-            state.setApplyPropertyToVisitedLinkStyle(linkMatchType & SelectorChecker::MatchVisited);
-
-            applyProperties<pass>(matchedProperties.properties.get(), matchResult.matchedRules[i], isImportant, inheritedOnly, static_cast<PropertyWhitelistType>(matchedProperties.whitelistType));
-        }
-        state.setApplyPropertyToRegularStyle(true);
-        state.setApplyPropertyToVisitedLinkStyle(false);
-        return;
-    }
-    for (int i = startIndex; i <= endIndex; ++i) {
-        const MatchedProperties& matchedProperties = matchResult.matchedProperties[i];
-        applyProperties<pass>(matchedProperties.properties.get(), matchResult.matchedRules[i], isImportant, inheritedOnly, static_cast<PropertyWhitelistType>(matchedProperties.whitelistType));
-    }
 }
 
 unsigned StyleResolver::computeMatchedPropertiesHash(const MatchedProperties* properties, unsigned size)
@@ -1762,7 +1704,7 @@ static bool isCacheableInMatchedPropertiesCache(const Element* element, const Re
     return true;
 }
 
-static void extractDirectionAndWritingMode(const RenderStyle& style, const StyleResolver::MatchResult& matchResult, TextDirection& direction, WritingMode& writingMode)
+void extractDirectionAndWritingMode(const RenderStyle& style, const StyleResolver::MatchResult& matchResult, TextDirection& direction, WritingMode& writingMode)
 {
     direction = style.direction();
     writingMode = style.writingMode();
