@@ -1,3 +1,16 @@
+2013-12-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test that text-decoration-skip: ink is the same as regular underlines if no descenders
+        https://bugs.webkit.org/show_bug.cgi?id=125985
+
+        Reviewed by Simon Fraser.
+
+        If there are no descenders in the underlined text, using the text-decoration-skip: ink
+        CSS property should behave as if it wasn't specified (and the underline is a normal one)
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-no-descenders-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-no-descenders.html: Added.
+
 2013-12-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a failing test expectation to fast/dynamic/paused-event-dispatch.html
