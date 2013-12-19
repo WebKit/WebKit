@@ -30,7 +30,11 @@ bool MarkedAllocator::isPagedOut(double deadline)
 
 inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
 {
-    if (!m_freeList.head) {
+    // We need a while loop to check the free list because the DelayedReleaseScope 
+    // could cause arbitrary code to execute and exhaust the free list that we 
+    // thought had elements in it.
+    while (!m_freeList.head) {
+        DelayedReleaseScope delayedReleaseScope(*m_markedSpace);
         if (m_currentBlock) {
             ASSERT(m_currentBlock == m_blocksToSweep);
             m_currentBlock->didConsumeFreeList();
@@ -59,7 +63,8 @@ inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
             return 0;
         }
     }
-    
+
+    ASSERT(m_freeList.head);
     MarkedBlock::FreeCell* head = m_freeList.head;
     m_freeList.head = head->next;
     ASSERT(head);
@@ -78,7 +83,6 @@ inline void* MarkedAllocator::tryAllocate(size_t bytes)
 void* MarkedAllocator::allocateSlowCase(size_t bytes)
 {
     ASSERT(m_heap->vm()->currentThreadIsHoldingAPILock());
-    DelayedReleaseScope delayedReleaseScope(*m_markedSpace);
 #if COLLECT_ON_EVERY_ALLOCATION
     if (!m_heap->isDeferred())
         m_heap->collectAllGarbage();
@@ -126,6 +130,8 @@ MarkedBlock* MarkedAllocator::allocateBlock(size_t bytes)
 
 void MarkedAllocator::addBlock(MarkedBlock* block)
 {
+    // Satisfy the ASSERT in MarkedBlock::sweep.
+    DelayedReleaseScope delayedReleaseScope(*m_markedSpace);
     ASSERT(!m_currentBlock);
     ASSERT(!m_freeList.head);
     
