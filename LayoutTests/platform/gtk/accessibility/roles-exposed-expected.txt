@@ -172,21 +172,21 @@ PASS: table
       AXRole: AXTable
       
 FAIL: tr
-      AXRole: (no element)
+      
       Expected: AXRow
 
 PASS: th
       AXRole: AXCell
       
 FAIL: tr
-      AXRole: (no element)
+      
       Expected: AXRow
 
 PASS: td
       AXRole: AXCell
       
 FAIL: tr
-      AXRole: (no element)
+      
       Expected: AXRow
 
 PASS: th
@@ -279,12 +279,11 @@ PASS: div[role=directory]
 PASS: div[role=grid]
       AXRole: AXTable
       
-FAIL: div[role=rowgroup]
-      AXRole: (no element)
-      Expected: 
-
+PASS: div[role=rowgroup]
+      
+      
 FAIL: div[role=row]
-      AXRole: (no element)
+      
       Expected: AXRow
 
 PASS: div[role=gridcell]
@@ -399,12 +398,11 @@ PASS: div[role=toolbar]
 PASS: div[role=treegrid]
       AXRole: AXTable
       
-FAIL: div[role=rowgroup]
-      AXRole: (no element)
-      Expected: 
-
+PASS: div[role=rowgroup]
+      
+      
 FAIL: div[role=row]
-      AXRole: (no element)
+      
       Expected: AXRow
 
 PASS: div[role=gridcell]

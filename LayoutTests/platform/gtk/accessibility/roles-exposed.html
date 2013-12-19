@@ -291,7 +291,7 @@ if (window.testRunner && window.accessibilityController) {
         if (axElement)
             role = axElement.role;
         else
-            role = 'AXRole: (no element)';
+            role = 'AXRole: ';
 
         output = el.tagName.toLowerCase() + (ariaRole?("[role="+ariaRole+"]"):'');
         if (el.getAttribute('data-note')) {

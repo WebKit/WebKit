@@ -1,3 +1,24 @@
+2013-12-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r160842.
+        http://trac.webkit.org/changeset/160842
+        https://bugs.webkit.org/show_bug.cgi?id=126003
+
+        broke accessibility/loading-iframe-updates-axtree.html
+        (Requested by ap on #webkit).
+
+        * accessibility/deleting-iframe-destroys-axcache.html:
+        * accessibility/loading-iframe-updates-axtree-expected.txt:
+        * accessibility/loading-iframe-updates-axtree.html:
+        * accessibility/non-data-table-cell-title-ui-element.html:
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/gtk/accessibility/roles-exposed.html:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/accessibility/search-predicate-expected.txt:
+        * platform/mac/accessibility/search-predicate.html:
+        * platform/mac/accessibility/search-when-element-starts-in-table-expected.txt:
+        * platform/mac/accessibility/search-when-element-starts-in-table.html:
+
 2013-12-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         overflowchanged event could cause a crash

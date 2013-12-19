@@ -364,7 +364,7 @@
         
         // there should be no more visible buttons
         resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXButtonSearchKey", "", true);
-        shouldBeUndefined("resultElement");
+        shouldBe("resultElement.role", "'AXRole: '");
         
     }
     

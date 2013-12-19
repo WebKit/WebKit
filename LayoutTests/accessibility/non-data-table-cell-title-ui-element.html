@@ -14,7 +14,7 @@
 <th>issue</th>
 <th>fail</th>
 <th>blocked</th>
-<th id="skip">skip</th>
+<th>skip</th>
 <th>test</th>
 </tr>
 </tbody>
@@ -28,8 +28,9 @@
             var result = document.getElementById("result");
 
             var pass = document.getElementById("body");
+            body.focus();
             // get the <th>skip</th> element
-            var group = accessibilityController.accessibleElementById("skip");
+            var group = accessibilityController.focusedElement.childAtIndex(5);
             var titleUI = group.titleUIElement();
             var allAttributes = "";
             if (titleUI)

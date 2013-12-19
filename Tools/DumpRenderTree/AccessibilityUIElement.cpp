@@ -1358,9 +1358,6 @@ static void finalize(JSObjectRef thisObject)
 
 JSObjectRef AccessibilityUIElement::makeJSAccessibilityUIElement(JSContextRef context, const AccessibilityUIElement& element)
 {
-    if (!element.platformUIElement())
-        return nullptr;
-
     return JSObjectMake(context, AccessibilityUIElement::getJSClass(), new AccessibilityUIElement(element));
 }
 
