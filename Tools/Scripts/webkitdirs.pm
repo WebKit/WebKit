@@ -432,12 +432,8 @@ sub visualStudioInstallDir
 {
     return $vsInstallDir if defined $vsInstallDir;
 
-    if ($ENV{'VSINSTALLDIR'}) {
-        $vsInstallDir = $ENV{'VSINSTALLDIR'};
-        $vsInstallDir =~ s|[\\/]$||;
-    } else {
-        $vsInstallDir = File::Spec->catdir(programFilesPath(), "Microsoft Visual Studio 12.0");
-    }
+    $vsInstallDir = File::Spec->catdir(programFilesPath(), "Microsoft Visual Studio 12.0");
+
     chomp($vsInstallDir = `cygpath "$vsInstallDir"`) if isCygwin();
 
     return $vsInstallDir;
