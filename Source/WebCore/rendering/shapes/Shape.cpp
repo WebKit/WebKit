@@ -46,10 +46,10 @@
 
 namespace WebCore {
 
-static PassOwnPtr<Shape> createBoxShape(const FloatRoundedRect& bounds, float shapeMargin, float shapePadding)
+static PassOwnPtr<Shape> createBoxShape(const FloatRoundedRect& bounds)
 {
     ASSERT(bounds.rect().width() >= 0 && bounds.rect().height() >= 0);
-    return adoptPtr(new BoxShape(bounds, shapeMargin, shapePadding));
+    return adoptPtr(new BoxShape(bounds));
 }
 
 static PassOwnPtr<Shape> createRectangleShape(const FloatRect& bounds, const FloatSize& radii)
@@ -240,10 +240,7 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
             rectangle->bottomLeftRadius().floatSize(),
             rectangle->bottomRightRadius().floatSize());
 
-        float shapeMargin = floatValueForLength(margin, 0);
-        float shapePadding = floatValueForLength(padding, 0);
-
-        shape = createBoxShape(logicalBounds, shapeMargin, shapePadding);
+        shape = createBoxShape(logicalBounds);
         break;
     }
 
@@ -305,13 +302,11 @@ PassOwnPtr<Shape> Shape::createShape(const RoundedRect& roundedRect, WritingMode
 {
     FloatRect rect(0, 0, roundedRect.rect().width(), roundedRect.rect().height());
     FloatRoundedRect bounds(rect, roundedRect.radii().topLeft(), roundedRect.radii().topRight(), roundedRect.radii().bottomLeft(), roundedRect.radii().bottomRight());
-    float shapeMargin = floatValueForLength(margin, 0);
-    float shapePadding = floatValueForLength(padding, 0);
 
-    OwnPtr<Shape> shape = createBoxShape(bounds, shapeMargin, shapePadding);
+    OwnPtr<Shape> shape = createBoxShape(bounds);
     shape->m_writingMode = writingMode;
-    shape->m_margin = shapeMargin;
-    shape->m_padding = shapePadding;
+    shape->m_margin = floatValueForLength(margin, 0);
+    shape->m_padding = floatValueForLength(padding, 0);
 
     return shape.release();
 }
