@@ -1,5 +1,15 @@
 2013-12-19  Andreas Kling  <akling@apple.com>
 
+        CascadedProperties: Deferred properties should have inline capacity.
+        <https://webkit.org/b/125994>
+
+        Give CascadedProperties::m_deferredProperties an inline capacity
+        of 8 to sidestep malloc churn (0.2% of HTML5-8266 profile.)
+
+        Reviewed by Antti Koivisto.
+
+2013-12-19  Andreas Kling  <akling@apple.com>
+
         Two small refinements to matched properties cache.
         <https://webkit.org/b/125992>
 

@@ -219,7 +219,7 @@ private:
     Property m_properties[numCSSProperties + 1];
     std::bitset<numCSSProperties + 1> m_propertyIsPresent;
 
-    Vector<Property> m_deferredProperties;
+    Vector<Property, 8> m_deferredProperties;
 
     TextDirection m_direction;
     WritingMode m_writingMode;
