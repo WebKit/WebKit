@@ -1,3 +1,55 @@
+2013-12-19  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] [WK2] platform/gtk/accessibility/roles-exposed.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=125854
+
+        Reviewed by Chris Fleizach.
+
+        Updated tests and expectations to keep them passing after the
+        change done in DRT, without changing their actual purpose.
+
+        * platform/gtk/accessibility/roles-exposed.html: Make sure we
+        print "AXRole: (no element)" when accessibilityElementByID() does
+        not return a valid object, not to confuse it with cases where the
+        returned string for the role is an empty string.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Update
+        test expectations to reflect the "AXRole: (no element)" string
+        that is now being exposed. Also, replace the (wrongly added) PASS
+        expectations with FAIL for rowgroups, which are currently not
+        being exposed for ATK either.
+
+        * accessibility/deleting-iframe-destroys-axcache.html: Just
+        consider the first and third sons of the accessibility object for
+        the body (instead of the grandsons), so the test can run both in
+        Mac, where sons and grandsons are exposed, and ATK, where only
+        sons are exposed (no StaticText objects exposed there).
+
+        * accessibility/non-data-table-cell-title-ui-element.html: Use
+        accessibilityElementById() to get the accessibility object for the
+        "skip" table header instead of navigating with childAtIndex(),
+        since the hierarchy is not the same for Mac and ATK based ports.
+
+        * accessibility/loading-iframe-updates-axtree.html: Use the new
+        web area inside the iframe to compare against the old one, instead
+        of doing it the other way around, to avoid calling isEqual for an
+        undefined value (the old web area).
+        * accessibility/loading-iframe-updates-axtree-expected.txt:
+        Removed line comparing the old and new web areas inside the iframe.
+
+        * platform/mac/accessibility/search-predicate.html: Do not rely on
+        shouldBe() together with the string "AXRole: " when asking for the
+        role of objects that should no longer be in the accessibility
+        tree, and use shouldBeUndefined() instead.
+        * platform/mac/accessibility/search-when-element-starts-in-table.html: Ditto.
+
+        * platform/mac/accessibility/search-predicate-expected.txt: Update
+        expectations according to the usage of shouldBeUndefined().
+        * platform/mac/accessibility/search-when-element-starts-in-table-expected.txt: Ditto.
+
+        * platform/mac-wk2/TestExpectations: Add search-when-element-starts-in-table.html
+        here, since it does not return an undefined object in WebKit2 when
+        the search query should return no results (see bug 125996).
+
 2013-12-19  Alexey Proskuryakov  <ap@apple.com>
 
         platform/mac/editing/attributed-string tests all flakily assert

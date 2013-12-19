@@ -145,7 +145,7 @@ PASS resultElement.role is 'AXRole: AXButton'
 PASS resultElement.title is 'AXTitle: test button 2'
 PASS resultElement.role is 'AXRole: AXButton'
 PASS resultElement.title is 'AXTitle: Submit'
-PASS resultElement.role is 'AXRole: '
+PASS resultElement is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

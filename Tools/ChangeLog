@@ -1,3 +1,22 @@
+2013-12-19  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] [WK2] platform/gtk/accessibility/roles-exposed.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=125854
+
+        Reviewed by Chris Fleizach.
+
+        Ensure we don't ever create instances of AccessibilityUIElement
+        wrapping invalid platform-specific accessibility objects in DRT,
+        both for consistency with what WKTR does (so we avoid situations
+        where some tests fail in WK2 and not in WK1) and also to avoid
+        overlooking tests that might not be checking the right thing.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::makeJSAccessibilityUIElement): Return a
+        nullPtr if the platformUIElement() is not a valid one.
+        * DumpRenderTree/AccessibilityUIElement.h:
+        (AccessibilityUIElement::platformUIElement): Added const modifier.
+
 2013-12-18  Anders Carlsson  <andersca@apple.com>
 
         Deprecate some WKMutableDictionary functions
