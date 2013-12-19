@@ -1,3 +1,20 @@
+2013-12-18  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Allow the web process plug-in to intercept resource requests
+        https://bugs.webkit.org/show_bug.cgi?id=125959
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h: Declared new
+        delegate method.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (willSendRequestForFrame): Implemented this WKBundlePageResourceClient callback by calling
+        the load delegate.
+        (setUpResourceLoadClient): Added. Initializes the resource load client with the above
+        function.
+        (-[WKWebProcessPlugInBrowserContextController setLoadDelegate:]): Added calls to initialize
+        and clear the resource load client.
+
 2013-12-18  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=125941

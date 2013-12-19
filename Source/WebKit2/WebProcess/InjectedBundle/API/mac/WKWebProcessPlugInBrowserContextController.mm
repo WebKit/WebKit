@@ -37,6 +37,7 @@
 #import "WKDOMInternals.h"
 #import "WKRemoteObjectRegistryInternal.h"
 #import "WKRetainPtr.h"
+#import "WKURLRequestNS.h"
 #import "WKWebProcessPluginFrameInternal.h"
 #import "WKWebProcessPlugInInternal.h"
 #import "WKWebProcessPlugInLoadDelegate.h"
@@ -99,6 +100,36 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
     page.initializeInjectedBundleLoaderClient(&client.base);
 }
 
+static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t, WKURLRequestRef request, WKURLResponseRef redirectResponse, const void* clientInfo)
+{
+    WKWebProcessPlugInBrowserContextController *pluginContextController = (WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:frame:willSendRequest:redirectResponse:)]) {
+        NSURLRequest *originalRequest = toImpl(request)->resourceRequest().nsURLRequest(DoNotUpdateHTTPBody);
+        RetainPtr<NSURLRequest> substituteRequest = [loadDelegate webProcessPlugInBrowserContextController:pluginContextController frame:wrapper(*toImpl(frame)) willSendRequest:originalRequest
+            redirectResponse:toImpl(redirectResponse)->resourceResponse().nsURLResponse()];
+
+        if (substituteRequest != originalRequest)
+            return substituteRequest ? WKURLRequestCreateWithNSURLRequest(substituteRequest.get()) : nullptr;
+    }
+
+    WKRetain(request);
+    return request;
+}
+
+static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *contextController, WebPage& page)
+{
+    WKBundlePageResourceLoadClientV1 client;
+    memset(&client, 0, sizeof(client));
+
+    client.base.version = 1;
+    client.base.clientInfo = contextController;
+    client.willSendRequestForFrame = willSendRequestForFrame;
+
+    page.initializeInjectedBundleResourceLoadClient(&client.base);
+}
+
 - (id <WKWebProcessPlugInLoadDelegate>)loadDelegate
 {
     return _loadDelegate.getAutoreleased();
@@ -108,10 +139,13 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
 {
     _loadDelegate = loadDelegate;
 
-    if (loadDelegate)
+    if (loadDelegate) {
         setUpPageLoaderClient(self, *_page);
-    else
+        setUpResourceLoadClient(self, *_page);
+    } else {
         _page->initializeInjectedBundleLoaderClient(nullptr);
+        _page->initializeInjectedBundleResourceLoadClient(nullptr);
+    }
 }
 
 - (void)dealloc
