@@ -1,3 +1,14 @@
+2013-12-19  Ricky Mondello  <rmondello@apple.com>
+
+        Add WebKit2 API for clearing the back-forward list
+        https://bugs.webkit.org/show_bug.cgi?id=126005
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKBackForwardListRef.cpp:
+        (WKBackForwardListClear): Call through to the back-forward list's `clear()`.
+        * UIProcess/API/C/WKBackForwardListRef.h: Declare new API.
+
 2013-12-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more URTBF to make GTK build happy after r160853.

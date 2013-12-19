@@ -57,6 +57,11 @@ WKBackForwardListItemRef WKBackForwardListGetItemAtIndex(WKBackForwardListRef li
     return toAPI(toImpl(listRef)->itemAtIndex(index));
 }
 
+void WKBackForwardListClear(WKBackForwardListRef listRef)
+{
+    toImpl(listRef)->clear();
+}
+
 unsigned WKBackForwardListGetBackListCount(WKBackForwardListRef listRef)
 {
     return toImpl(listRef)->backListCount();
