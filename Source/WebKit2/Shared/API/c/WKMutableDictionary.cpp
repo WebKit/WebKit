@@ -37,22 +37,8 @@ WKMutableDictionaryRef WKMutableDictionaryCreate()
     return toAPI(dictionary.release().leakRef());
 }
 
-bool WKDictionaryIsMutable(WKDictionaryRef dictionaryRef)
-{
-    return toImpl(dictionaryRef)->isMutable();
-}
-
-bool WKDictionaryAddItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)
-{
-    return toImpl(dictionaryRef)->add(toImpl(keyRef)->string(), toImpl(itemRef));
-}
-
 bool WKDictionarySetItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)
 {
     return toImpl(dictionaryRef)->set(toImpl(keyRef)->string(), toImpl(itemRef));
 }
 
-void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef)
-{
-    toImpl(dictionaryRef)->remove(toImpl(keyRef)->string());
-}

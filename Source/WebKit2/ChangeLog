@@ -1,3 +1,17 @@
+2013-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Deprecate some WKMutableDictionary functions
+        https://bugs.webkit.org/show_bug.cgi?id=125962
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKDictionaryIsMutable):
+        (WKDictionaryAddItem):
+        (WKDictionaryRemoveItem):
+        * Shared/API/c/WKMutableDictionary.cpp:
+        * Shared/API/c/WKMutableDictionary.h:
+
 2013-12-18  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Allow the web process plug-in to intercept resource requests

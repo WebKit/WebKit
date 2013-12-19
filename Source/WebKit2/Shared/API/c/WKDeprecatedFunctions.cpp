@@ -25,12 +25,21 @@
 
 #include "config.h"
 
+#include "MutableDictionary.h"
 #include "WKArray.h"
+#include "WKMutableDictionary.h"
+#include "WKSharedAPICast.h"
 
 // Deprecated functions that should be removed from the framework once nobody uses them.
 
+using namespace WebKit;
+
 extern "C" {
 WK_EXPORT bool WKArrayIsMutable(WKArrayRef array);
+
+WK_EXPORT bool WKDictionaryAddItem(WKMutableDictionaryRef dictionary, WKStringRef key, WKTypeRef item);
+WK_EXPORT bool WKDictionaryIsMutable(WKDictionaryRef dictionary);
+WK_EXPORT void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionary, WKStringRef key);
 
 #if PLATFORM(MAC)
 WK_EXPORT CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphicsContext);
@@ -41,6 +50,22 @@ bool WKArrayIsMutable(WKArrayRef)
 {
     return false;
 }
+
+bool WKDictionaryIsMutable(WKDictionaryRef dictionaryRef)
+{
+    return toImpl(dictionaryRef)->isMutable();
+}
+
+bool WKDictionaryAddItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)
+{
+    return toImpl(dictionaryRef)->add(toImpl(keyRef)->string(), toImpl(itemRef));
+}
+
+void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef)
+{
+    toImpl(dictionaryRef)->remove(toImpl(keyRef)->string());
+}
+
 
 #if PLATFORM(MAC)
 CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphicsContext)

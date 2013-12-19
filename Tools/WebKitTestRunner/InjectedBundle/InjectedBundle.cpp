@@ -293,13 +293,13 @@ void InjectedBundle::done()
     WKRetainPtr<WKMutableDictionaryRef> doneMessageBody(AdoptWK, WKMutableDictionaryCreate());
 
     WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
-    WKDictionaryAddItem(doneMessageBody.get(), pixelResultKey.get(), m_pixelResult.get());
+    WKDictionarySetItem(doneMessageBody.get(), pixelResultKey.get(), m_pixelResult.get());
 
     WKRetainPtr<WKStringRef> repaintRectsKey = adoptWK(WKStringCreateWithUTF8CString("RepaintRects"));
-    WKDictionaryAddItem(doneMessageBody.get(), repaintRectsKey.get(), m_repaintRects.get());
+    WKDictionarySetItem(doneMessageBody.get(), repaintRectsKey.get(), m_repaintRects.get());
 
     WKRetainPtr<WKStringRef> audioResultKey = adoptWK(WKStringCreateWithUTF8CString("AudioResult"));
-    WKDictionaryAddItem(doneMessageBody.get(), audioResultKey.get(), m_audioResult.get());
+    WKDictionarySetItem(doneMessageBody.get(), audioResultKey.get(), m_audioResult.get());
 
     WKBundlePostMessage(m_bundle, doneMessageName.get(), doneMessageBody.get());
 
@@ -398,47 +398,47 @@ void InjectedBundle::setMockGeolocationPosition(double latitude, double longitud
 
     WKRetainPtr<WKStringRef> latitudeKeyWK(AdoptWK, WKStringCreateWithUTF8CString("latitude"));
     WKRetainPtr<WKDoubleRef> latitudeWK(AdoptWK, WKDoubleCreate(latitude));
-    WKDictionaryAddItem(messageBody.get(), latitudeKeyWK.get(), latitudeWK.get());
+    WKDictionarySetItem(messageBody.get(), latitudeKeyWK.get(), latitudeWK.get());
 
     WKRetainPtr<WKStringRef> longitudeKeyWK(AdoptWK, WKStringCreateWithUTF8CString("longitude"));
     WKRetainPtr<WKDoubleRef> longitudeWK(AdoptWK, WKDoubleCreate(longitude));
-    WKDictionaryAddItem(messageBody.get(), longitudeKeyWK.get(), longitudeWK.get());
+    WKDictionarySetItem(messageBody.get(), longitudeKeyWK.get(), longitudeWK.get());
 
     WKRetainPtr<WKStringRef> accuracyKeyWK(AdoptWK, WKStringCreateWithUTF8CString("accuracy"));
     WKRetainPtr<WKDoubleRef> accuracyWK(AdoptWK, WKDoubleCreate(accuracy));
-    WKDictionaryAddItem(messageBody.get(), accuracyKeyWK.get(), accuracyWK.get());
+    WKDictionarySetItem(messageBody.get(), accuracyKeyWK.get(), accuracyWK.get());
 
     WKRetainPtr<WKStringRef> providesAltitudeKeyWK(AdoptWK, WKStringCreateWithUTF8CString("providesAltitude"));
     WKRetainPtr<WKBooleanRef> providesAltitudeWK(AdoptWK, WKBooleanCreate(providesAltitude));
-    WKDictionaryAddItem(messageBody.get(), providesAltitudeKeyWK.get(), providesAltitudeWK.get());
+    WKDictionarySetItem(messageBody.get(), providesAltitudeKeyWK.get(), providesAltitudeWK.get());
 
     WKRetainPtr<WKStringRef> altitudeKeyWK(AdoptWK, WKStringCreateWithUTF8CString("altitude"));
     WKRetainPtr<WKDoubleRef> altitudeWK(AdoptWK, WKDoubleCreate(altitude));
-    WKDictionaryAddItem(messageBody.get(), altitudeKeyWK.get(), altitudeWK.get());
+    WKDictionarySetItem(messageBody.get(), altitudeKeyWK.get(), altitudeWK.get());
 
     WKRetainPtr<WKStringRef> providesAltitudeAccuracyKeyWK(AdoptWK, WKStringCreateWithUTF8CString("providesAltitudeAccuracy"));
     WKRetainPtr<WKBooleanRef> providesAltitudeAccuracyWK(AdoptWK, WKBooleanCreate(providesAltitudeAccuracy));
-    WKDictionaryAddItem(messageBody.get(), providesAltitudeAccuracyKeyWK.get(), providesAltitudeAccuracyWK.get());
+    WKDictionarySetItem(messageBody.get(), providesAltitudeAccuracyKeyWK.get(), providesAltitudeAccuracyWK.get());
 
     WKRetainPtr<WKStringRef> altitudeAccuracyKeyWK(AdoptWK, WKStringCreateWithUTF8CString("altitudeAccuracy"));
     WKRetainPtr<WKDoubleRef> altitudeAccuracyWK(AdoptWK, WKDoubleCreate(altitudeAccuracy));
-    WKDictionaryAddItem(messageBody.get(), altitudeAccuracyKeyWK.get(), altitudeAccuracyWK.get());
+    WKDictionarySetItem(messageBody.get(), altitudeAccuracyKeyWK.get(), altitudeAccuracyWK.get());
 
     WKRetainPtr<WKStringRef> providesHeadingKeyWK(AdoptWK, WKStringCreateWithUTF8CString("providesHeading"));
     WKRetainPtr<WKBooleanRef> providesHeadingWK(AdoptWK, WKBooleanCreate(providesHeading));
-    WKDictionaryAddItem(messageBody.get(), providesHeadingKeyWK.get(), providesHeadingWK.get());
+    WKDictionarySetItem(messageBody.get(), providesHeadingKeyWK.get(), providesHeadingWK.get());
 
     WKRetainPtr<WKStringRef> headingKeyWK(AdoptWK, WKStringCreateWithUTF8CString("heading"));
     WKRetainPtr<WKDoubleRef> headingWK(AdoptWK, WKDoubleCreate(heading));
-    WKDictionaryAddItem(messageBody.get(), headingKeyWK.get(), headingWK.get());
+    WKDictionarySetItem(messageBody.get(), headingKeyWK.get(), headingWK.get());
 
     WKRetainPtr<WKStringRef> providesSpeedKeyWK(AdoptWK, WKStringCreateWithUTF8CString("providesSpeed"));
     WKRetainPtr<WKBooleanRef> providesSpeedWK(AdoptWK, WKBooleanCreate(providesSpeed));
-    WKDictionaryAddItem(messageBody.get(), providesSpeedKeyWK.get(), providesSpeedWK.get());
+    WKDictionarySetItem(messageBody.get(), providesSpeedKeyWK.get(), providesSpeedWK.get());
 
     WKRetainPtr<WKStringRef> speedKeyWK(AdoptWK, WKStringCreateWithUTF8CString("speed"));
     WKRetainPtr<WKDoubleRef> speedWK(AdoptWK, WKDoubleCreate(speed));
-    WKDictionaryAddItem(messageBody.get(), speedKeyWK.get(), speedWK.get());
+    WKDictionarySetItem(messageBody.get(), speedKeyWK.get(), speedWK.get());
 
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
@@ -457,11 +457,11 @@ void InjectedBundle::setCustomPolicyDelegate(bool enabled, bool permissive)
 
     WKRetainPtr<WKStringRef> enabledKeyWK(AdoptWK, WKStringCreateWithUTF8CString("enabled"));
     WKRetainPtr<WKBooleanRef> enabledWK(AdoptWK, WKBooleanCreate(enabled));
-    WKDictionaryAddItem(messageBody.get(), enabledKeyWK.get(), enabledWK.get());
+    WKDictionarySetItem(messageBody.get(), enabledKeyWK.get(), enabledWK.get());
 
     WKRetainPtr<WKStringRef> permissiveKeyWK(AdoptWK, WKStringCreateWithUTF8CString("permissive"));
     WKRetainPtr<WKBooleanRef> permissiveWK(AdoptWK, WKBooleanCreate(permissive));
-    WKDictionaryAddItem(messageBody.get(), permissiveKeyWK.get(), permissiveWK.get());
+    WKDictionarySetItem(messageBody.get(), permissiveKeyWK.get(), permissiveWK.get());
 
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
@@ -473,11 +473,11 @@ void InjectedBundle::setVisibilityState(WKPageVisibilityState visibilityState, b
 
     WKRetainPtr<WKStringRef> visibilityStateKeyWK(AdoptWK, WKStringCreateWithUTF8CString("visibilityState"));
     WKRetainPtr<WKUInt64Ref> visibilityStateWK(AdoptWK, WKUInt64Create(visibilityState));
-    WKDictionaryAddItem(messageBody.get(), visibilityStateKeyWK.get(), visibilityStateWK.get());
+    WKDictionarySetItem(messageBody.get(), visibilityStateKeyWK.get(), visibilityStateWK.get());
 
     WKRetainPtr<WKStringRef> isInitialKeyWK(AdoptWK, WKStringCreateWithUTF8CString("isInitialState"));
     WKRetainPtr<WKBooleanRef> isInitialWK(AdoptWK, WKBooleanCreate(isInitialState));
-    WKDictionaryAddItem(messageBody.get(), isInitialKeyWK.get(), isInitialWK.get());
+    WKDictionarySetItem(messageBody.get(), isInitialKeyWK.get(), isInitialWK.get());
 
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
@@ -528,10 +528,10 @@ void InjectedBundle::queueLoad(WKStringRef url, WKStringRef target)
     WKRetainPtr<WKMutableDictionaryRef> loadData(AdoptWK, WKMutableDictionaryCreate());
 
     WKRetainPtr<WKStringRef> urlKey(AdoptWK, WKStringCreateWithUTF8CString("url"));
-    WKDictionaryAddItem(loadData.get(), urlKey.get(), url);
+    WKDictionarySetItem(loadData.get(), urlKey.get(), url);
 
     WKRetainPtr<WKStringRef> targetKey(AdoptWK, WKStringCreateWithUTF8CString("target"));
-    WKDictionaryAddItem(loadData.get(), targetKey.get(), target);
+    WKDictionarySetItem(loadData.get(), targetKey.get(), target);
 
     WKBundlePostMessage(m_bundle, messageName.get(), loadData.get());
 }
@@ -545,16 +545,16 @@ void InjectedBundle::queueLoadHTMLString(WKStringRef content, WKStringRef baseUR
     WKRetainPtr<WKMutableDictionaryRef> loadData(AdoptWK, WKMutableDictionaryCreate());
 
     WKRetainPtr<WKStringRef> contentKey(AdoptWK, WKStringCreateWithUTF8CString("content"));
-    WKDictionaryAddItem(loadData.get(), contentKey.get(), content);
+    WKDictionarySetItem(loadData.get(), contentKey.get(), content);
 
     if (baseURL) {
         WKRetainPtr<WKStringRef> baseURLKey(AdoptWK, WKStringCreateWithUTF8CString("baseURL"));
-        WKDictionaryAddItem(loadData.get(), baseURLKey.get(), baseURL);
+        WKDictionarySetItem(loadData.get(), baseURLKey.get(), baseURL);
     }
 
     if (unreachableURL) {
         WKRetainPtr<WKStringRef> unreachableURLKey(AdoptWK, WKStringCreateWithUTF8CString("unreachableURL"));
-        WKDictionaryAddItem(loadData.get(), unreachableURLKey.get(), unreachableURL);
+        WKDictionarySetItem(loadData.get(), unreachableURLKey.get(), unreachableURL);
     }
 
     WKBundlePostMessage(m_bundle, messageName.get(), loadData.get());

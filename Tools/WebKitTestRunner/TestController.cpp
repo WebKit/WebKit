@@ -362,7 +362,7 @@ void TestController::initialize(int argc, const char* argv[])
         viewOptions = adoptWK(WKMutableDictionaryCreate());
         WKRetainPtr<WKStringRef> useRemoteLayerTreeKey = adoptWK(WKStringCreateWithUTF8CString("RemoteLayerTree"));
         WKRetainPtr<WKBooleanRef> useRemoteLayerTreeValue = adoptWK(WKBooleanCreate(m_shouldUseRemoteLayerTree));
-        WKDictionaryAddItem(viewOptions.get(), useRemoteLayerTreeKey.get(), useRemoteLayerTreeValue.get());
+        WKDictionarySetItem(viewOptions.get(), useRemoteLayerTreeKey.get(), useRemoteLayerTreeValue.get());
     }
 
     createWebViewWithOptions(viewOptions.get());
@@ -554,7 +554,7 @@ bool TestController::resetStateToConsistentValues()
 
     WKRetainPtr<WKStringRef> shouldGCKey = adoptWK(WKStringCreateWithUTF8CString("ShouldGC"));
     WKRetainPtr<WKBooleanRef> shouldGCValue = adoptWK(WKBooleanCreate(m_gcBetweenTests));
-    WKDictionaryAddItem(resetMessageBody.get(), shouldGCKey.get(), shouldGCValue.get());
+    WKDictionarySetItem(resetMessageBody.get(), shouldGCKey.get(), shouldGCValue.get());
 
     WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), resetMessageBody.get());
 

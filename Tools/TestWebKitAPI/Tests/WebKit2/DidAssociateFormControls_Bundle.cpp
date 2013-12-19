@@ -50,9 +50,9 @@ static void didAssociateFormControls(WKBundlePageRef page, WKArrayRef elementHan
 {
     WKRetainPtr<WKMutableDictionaryRef> messageBody = adoptWK(WKMutableDictionaryCreate());
 
-    WKDictionaryAddItem(messageBody.get(), Util::toWK("Page").get(), page);
+    WKDictionarySetItem(messageBody.get(), Util::toWK("Page").get(), page);
     WKRetainPtr<WKUInt64Ref> numberOfElements = adoptWK(WKUInt64Create(WKArrayGetSize(elementHandles)));
-    WKDictionaryAddItem(messageBody.get(), Util::toWK("NumberOfControls").get(), numberOfElements.get());
+    WKDictionarySetItem(messageBody.get(), Util::toWK("NumberOfControls").get(), numberOfElements.get());
 
     WKBundlePostMessage(InjectedBundleController::shared().bundle(), Util::toWK("DidReceiveDidAssociateFormControls").get(), messageBody.get());
 }

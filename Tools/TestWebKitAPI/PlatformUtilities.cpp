@@ -45,10 +45,10 @@ WKDictionaryRef createInitializationDictionaryForInjectedBundleTest(const std::s
 
     WKRetainPtr<WKStringRef> testNameKey(AdoptWK, WKStringCreateWithUTF8CString("TestName"));
     WKRetainPtr<WKStringRef> testNameString(AdoptWK, WKStringCreateWithUTF8CString(testName.c_str()));
-    WKDictionaryAddItem(initializationDictionary, testNameKey.get(), testNameString.get());
+    WKDictionarySetItem(initializationDictionary, testNameKey.get(), testNameString.get());
 
     WKRetainPtr<WKStringRef> userDataKey(AdoptWK, WKStringCreateWithUTF8CString("UserData"));
-    WKDictionaryAddItem(initializationDictionary, userDataKey.get(), userData);
+    WKDictionarySetItem(initializationDictionary, userDataKey.get(), userData);
 
     return initializationDictionary;
 }
