@@ -1,3 +1,25 @@
+2013-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in WebCore::LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches
+        https://bugs.webkit.org/show_bug.cgi?id=125970
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by containingBlockForAbsolutePosition returning a non-RenderBlock render object.
+        Fixed the bug by obtaining its containg block.
+
+        Also changed the return type of containingBlockForFixedPosition, containingBlockForAbsolutePosition,
+        containingBlockForObjectInFlow from RenderElement to RenderBlock as all callers of these functions
+        had assumed the return value to be an instance of RenderBlock.
+
+        Test: svg/text/select-text-inside-non-static-position.html
+
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::containingBlockForFixedPosition):
+        (WebCore::containingBlockForAbsolutePosition):
+        (WebCore::containingBlockForObjectInFlow):
+        (WebCore::LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches):
+
 2013-12-18  Andreas Kling  <akling@apple.com>
 
         Don't waste cycles on zeroing every CascadedProperties::Property.
