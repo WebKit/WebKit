@@ -1,3 +1,14 @@
+2013-12-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add support for building WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=116377
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Switch to using the templates for building the GObject enums.
+        * webkit/webkitenumtypes.cpp.template: Added.
+        * webkit/webkitenumtypes.h.template: Added.
+
 2013-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.3.3 release.

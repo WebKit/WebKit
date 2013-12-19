@@ -1,3 +1,14 @@
+2013-12-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add support for building WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=116377
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/cmake/OptionsGTK.cmake: Turn off some features that do not build properly
+        for WebKit1 and stop using the version script which we haven't implemented yet. Turn
+        on WebKit1.
+
 2013-12-18  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK][CMake] Use thin archives if building on Linux, only way to get non-shared-core debug builds

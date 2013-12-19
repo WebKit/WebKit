@@ -1,3 +1,13 @@
+2013-12-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add support for building WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=116377
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * PlatformGTK.cmake: Add a missing source required by WebKit1 to
+        the WebCore build.
+
 2013-12-18  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Simplify RectangleShape implementation
