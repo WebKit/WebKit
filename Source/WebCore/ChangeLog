@@ -1,3 +1,13 @@
+2013-12-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream WebCore/accessibility changes
+        https://bugs.webkit.org/show_bug.cgi?id=125925
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint): Opt out of code when building for iOS.
+
 2013-12-19  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Compile fix for VS2013 when using ACCELERATED_COMPOSITING.

@@ -1987,7 +1987,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
     LayoutPoint pointResult;
     while (1) {
         LayoutPoint ourpoint;
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
         ourpoint = frameView->screenToContents(point);
 #else
         ourpoint = point;
