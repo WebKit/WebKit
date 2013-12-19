@@ -1,3 +1,9 @@
+2013-12-19  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL build fix attempt after r160853
+
+        * CMakeLists.txt: Change WebURLResponse.cpp to APIURLResponse.cpp.
+
 2013-12-17  Sam Weinig  <sam@webkit.org>
 
         [WK2] Rename WebURLResponse to API::URLResponse
