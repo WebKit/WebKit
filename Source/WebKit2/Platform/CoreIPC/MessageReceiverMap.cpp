@@ -47,6 +47,7 @@ void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName,
 
 void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName, uint64_t destinationID, MessageReceiver& messageReceiver)
 {
+    ASSERT(destinationID);
     ASSERT(!m_messageReceivers.contains(std::make_pair(messageReceiverName, destinationID)));
     ASSERT(!m_globalMessageReceivers.contains(messageReceiverName));
 
