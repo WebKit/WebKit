@@ -1,3 +1,21 @@
+2013-12-20  Anders Carlsson  <andersca@apple.com>
+
+        Move scheduleSetNeedsStyleRecalc to HTMLFrameOwnerElement
+        https://bugs.webkit.org/show_bug.cgi?id=126083
+
+        Reviewed by Antti Koivisto.
+
+        scheduleSetNeedsStyleRecalc is only ever called on HTMLFrameOwnerElement, so
+        move it there, remove the Node implementation and make it non-virtual.
+
+        * dom/ContainerNode.cpp:
+        * dom/ContainerNode.h:
+        * dom/Node.h:
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::needsStyleRecalcCallback):
+        (WebCore::HTMLFrameOwnerElement::scheduleSetNeedsStyleRecalc):
+        * html/HTMLFrameOwnerElement.h:
+
 2013-12-20  Andy Estes  <aestes@apple.com>
 
         Remove an unneeded include of WebCoreSystemInterface.h.

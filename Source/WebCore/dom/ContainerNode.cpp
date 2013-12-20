@@ -824,19 +824,6 @@ void ContainerNode::dispatchPostAttachCallbacks()
     s_postAttachCallbackQueue->clear();
 }
 
-static void needsStyleRecalcCallback(Node& node, unsigned data)
-{
-    node.setNeedsStyleRecalc(static_cast<StyleChangeType>(data));
-}
-
-void ContainerNode::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)
-{
-    if (postAttachCallbacksAreSuspended())
-        queuePostAttachCallback(needsStyleRecalcCallback, *this, static_cast<unsigned>(changeType));
-    else
-        setNeedsStyleRecalc(changeType);
-}
-
 void ContainerNode::childrenChanged(const ChildChange& change)
 {
     document().incDOMTreeVersion();

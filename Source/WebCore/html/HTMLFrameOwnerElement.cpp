@@ -126,6 +126,19 @@ SVGDocument* HTMLFrameOwnerElement::getSVGDocument(ExceptionCode& ec) const
 }
 #endif
 
+static void needsStyleRecalcCallback(Node& node, unsigned data)
+{
+    node.setNeedsStyleRecalc(static_cast<StyleChangeType>(data));
+}
+
+void HTMLFrameOwnerElement::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)
+{
+    if (postAttachCallbacksAreSuspended())
+        queuePostAttachCallback(needsStyleRecalcCallback, *this, static_cast<unsigned>(changeType));
+    else
+        setNeedsStyleRecalc(changeType);
+}
+
 bool SubframeLoadingDisabler::canLoadFrame(HTMLFrameOwnerElement& owner)
 {
     for (ContainerNode* node = &owner; node; node = node->parentOrShadowHostNode()) {

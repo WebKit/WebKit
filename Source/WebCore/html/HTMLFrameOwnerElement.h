@@ -56,6 +56,8 @@ public:
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
 
+    void scheduleSetNeedsStyleRecalc(StyleChangeType = FullStyleChange);
+
 protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document&);
     void setSandboxFlags(SandboxFlags);
