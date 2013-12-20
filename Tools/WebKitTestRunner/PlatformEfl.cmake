@@ -18,6 +18,8 @@ list(APPEND WebKitTestRunner_SOURCES
 )
 
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
+    ${WEBKIT2_DIR}/UIProcess/API/C/efl
+
     ${TOOLS_DIR}/DumpRenderTree/efl/
     ${WEBKIT2_DIR}/UIProcess/API/efl
     "${WTF_DIR}/wtf/gobject"
@@ -38,9 +40,16 @@ list(APPEND WebKitTestRunner_LIBRARIES
     ${EINA_LIBRARIES}
     ${EO_LIBRARIES}
     ${EVAS_LIBRARIES}
-    ${GLIB_LIBRARIES}
     ${OPENGL_LIBRARIES}
     WTF
+)
+
+list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
+    ${ATK_LIBRARIES}
+    ${ECORE_LIBRARIES}
+    ${ECORE_FILE_LIBRARIES}
+    ${FONTCONFIG_LIBRARIES}
+    ${GLIB_GOBJECT_LIBRARIES}
 )
 
 if (ENABLE_ECORE_X)

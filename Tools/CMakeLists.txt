@@ -1,4 +1,4 @@
-if (ENABLE_WEBKIT2 AND NOT("${PORT}" STREQUAL "GTK"))
+if (ENABLE_WEBKIT2)
     add_subdirectory(WebKitTestRunner)
 endif ()
 
@@ -22,6 +22,7 @@ elseif ("${PORT}" STREQUAL "GTK")
     if (ENABLE_WEBKIT)
         add_subdirectory(GtkLauncher)
     endif ()
+    add_subdirectory(DumpRenderTree/TestNetscapePlugIn)
 elseif ("${PORT}" STREQUAL "WinCE")
     add_subdirectory(WinCELauncher)
 endif ()
