@@ -312,6 +312,7 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
 
 JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction, PatchableJump& badType, IndexingType indexingShape)
 {
+    int base = currentInstruction[1].u.operand;
     int value = currentInstruction[3].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     
@@ -327,10 +328,14 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
     switch (indexingShape) {
     case Int32Shape:
         slowCases.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-        // Fall through.
+        store32(regT0, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
+        store32(regT1, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
+        break;
     case ContiguousShape:
         store32(regT0, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
         store32(regT1, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
+        emitLoad(base, regT2, regT3);
+        emitWriteBarrier(base, value, ShouldFilterValue);
         break;
     case DoubleShape: {
         Jump notInt = branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag));
@@ -361,13 +366,12 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
     
     done.link(this);
     
-    emitWriteBarrier(regT0, regT1, regT1, regT3, UnconditionalWriteBarrier, WriteBarrierForPropertyAccess);
-    
     return slowCases;
 }
 
 JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, PatchableJump& badType)
 {
+    int base = currentInstruction[1].u.operand;
     int value = currentInstruction[3].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     
@@ -397,7 +401,7 @@ JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, Pat
     
     end.link(this);
     
-    emitWriteBarrier(regT0, regT1, regT1, regT3, UnconditionalWriteBarrier, WriteBarrierForPropertyAccess);
+    emitWriteBarrier(base, value, ShouldFilterValue);
     
     return slowCases;
 }
@@ -515,12 +519,15 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     int value = currentInstruction[3].u.operand;
     int direct = currentInstruction[8].u.operand;
     
+    emitWriteBarrier(base, value, ShouldFilterBaseAndValue);
+
     emitLoad2(base, regT1, regT0, value, regT3, regT2);
     
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     
-    emitWriteBarrier(regT0, regT1, regT2, regT3, ShouldFilterImmediates, WriteBarrierForPropertyAccess);
-    
+    emitLoad(base, regT1, regT0);
+    emitLoad(value, regT3, regT2);
+
     JITPutByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), RegisterSet::specialRegisters(),
         callFrameRegister, JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2),
@@ -794,10 +801,11 @@ void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<Slo
 
 void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, int value)
 {
+    emitLoad(value, regT3, regT2);
+    
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
     loadPtr(operandSlot, regT1);
     negPtr(regT1);
-    emitLoad(value, regT3, regT2);
     store32(regT3, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     store32(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
 }
@@ -866,16 +874,19 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
     switch (resolveType) {
     case GlobalProperty:
     case GlobalPropertyWithVarInjectionChecks:
+        emitWriteBarrier(m_codeBlock->globalObject(), value, ShouldFilterValue);
         emitLoadWithStructureCheck(scope, structureSlot); // Structure check covers var injection.
         emitPutGlobalProperty(operandSlot, value);
         break;
     case GlobalVar:
     case GlobalVarWithVarInjectionChecks:
+        emitWriteBarrier(m_codeBlock->globalObject(), value, ShouldFilterValue);
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
         emitPutGlobalVar(*operandSlot, value, currentInstruction[5].u.watchpointSet);
         break;
     case ClosureVar:
     case ClosureVarWithVarInjectionChecks:
+        emitWriteBarrier(scope, value, ShouldFilterValue);
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
         emitPutClosureVar(scope, *operandSlot, value);
         break;
@@ -908,14 +919,10 @@ void JIT::emit_op_init_global_const(Instruction* currentInstruction)
 
     JSGlobalObject* globalObject = m_codeBlock->globalObject();
 
+    emitWriteBarrier(globalObject, value, ShouldFilterValue);
+
     emitLoad(value, regT1, regT0);
     
-    if (Heap::isWriteBarrierEnabled()) {
-        move(TrustedImmPtr(globalObject), regT2);
-        
-        emitWriteBarrier(globalObject, regT1, regT3, ShouldFilterImmediates, WriteBarrierForVariableAccess);
-    }
-
     store32(regT1, registerPointer->tagPointer());
     store32(regT0, registerPointer->payloadPointer());
 }

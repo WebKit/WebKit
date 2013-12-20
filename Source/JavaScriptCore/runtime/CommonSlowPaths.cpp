@@ -515,6 +515,14 @@ SLOW_PATH_DECL(slow_path_to_primitive)
     RETURN(OP_C(2).jsValue().toPrimitive(exec));
 }
 
+SLOW_PATH_DECL(slow_path_enter)
+{
+    BEGIN();
+    ScriptExecutable* ownerExecutable = exec->codeBlock()->ownerExecutable();
+    Heap::heap(ownerExecutable)->writeBarrier(ownerExecutable);
+    END();
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT) || ENABLE(LLINT)

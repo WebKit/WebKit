@@ -1,3 +1,51 @@
+2013-12-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Put write barriers in the right places in the baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=125975
+
+        Reviewed by Filip Pizlo.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        (JSC::JIT::emitArrayProfilingSite):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emitSlow_op_enter):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emitSlow_op_enter):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitPutGlobalProperty):
+        (JSC::JIT::emitPutGlobalVar):
+        (JSC::JIT::emitPutClosureVar):
+        (JSC::JIT::emit_op_init_global_const):
+        (JSC::JIT::checkMarkWord):
+        (JSC::JIT::emitWriteBarrier):
+        (JSC::JIT::privateCompilePutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::emitPutGlobalProperty):
+        (JSC::JIT::emitPutGlobalVar):
+        (JSC::JIT::emitPutClosureVar):
+        (JSC::JIT::emit_op_init_global_const):
+        * jit/Repatch.cpp:
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStub):
+        (JSC::repatchPutByID):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+
 2013-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         Implement ArrayBuffer.isView

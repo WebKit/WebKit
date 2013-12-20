@@ -349,7 +349,6 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     
     m_byValCompilationInfo.append(ByValCompilationInfo(m_bytecodeOffset, badType, mode, done));
 
-    emitWriteBarrier(regT0, regT3, regT1, regT3, ShouldFilterImmediates, WriteBarrierForPropertyAccess);
 }
 
 JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction, PatchableJump& badType, IndexingType indexingShape)
@@ -385,6 +384,7 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
     }
     case ContiguousShape:
         store64(regT3, BaseIndex(regT2, regT1, TimesEight));
+        emitWriteBarrier(currentInstruction[1].u.operand, value, ShouldFilterValue);
         break;
     default:
         CRASH();
@@ -423,6 +423,7 @@ JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, Pat
     Label storeResult(this);
     emitGetVirtualRegister(value, regT3);
     store64(regT3, BaseIndex(regT2, regT1, TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
+    emitWriteBarrier(currentInstruction[1].u.operand, value, ShouldFilterValue);
     Jump end = jump();
     
     empty.link(this);
@@ -552,6 +553,8 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     int valueVReg = currentInstruction[3].u.operand;
     unsigned direct = currentInstruction[8].u.operand;
 
+    emitWriteBarrier(baseVReg, valueVReg, ShouldFilterBaseAndValue);
+
     // In order to be able to patch both the Structure, and the object offset, we store one pointer,
     // to just after the arguments have been loaded into registers 'hotPathBegin', and we generate code
     // such that the Structure & offset are always at the same distance from this.
@@ -560,8 +563,6 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
 
     // Jump to a slow case if either the base object is an immediate, or if the Structure does not match.
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
-    
-    emitWriteBarrier(regT0, regT1, regT2, regT3, ShouldFilterImmediates, WriteBarrierForPropertyAccess);
 
     JITPutByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), RegisterSet::specialRegisters(),
@@ -759,10 +760,11 @@ void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<Slo
 
 void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, int value)
 {
+    emitGetVirtualRegister(value, regT2);
+
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
     loadPtr(operandSlot, regT1);
     negPtr(regT1);
-    emitGetVirtualRegister(value, regT2);
     storePtr(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
 }
 
@@ -822,16 +824,19 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
     switch (resolveType) {
     case GlobalProperty:
     case GlobalPropertyWithVarInjectionChecks:
+        emitWriteBarrier(m_codeBlock->globalObject(), value, ShouldFilterValue);
         emitLoadWithStructureCheck(scope, structureSlot); // Structure check covers var injection.
         emitPutGlobalProperty(operandSlot, value);
         break;
     case GlobalVar:
     case GlobalVarWithVarInjectionChecks:
+        emitWriteBarrier(m_codeBlock->globalObject(), value, ShouldFilterValue);
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
         emitPutGlobalVar(*operandSlot, value, currentInstruction[5].u.watchpointSet);
         break;
     case ClosureVar:
     case ClosureVarWithVarInjectionChecks:
+        emitWriteBarrier(scope, value, ShouldFilterValue);
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
         emitPutClosureVar(scope, *operandSlot, value);
         break;
@@ -860,44 +865,143 @@ void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowC
 void JIT::emit_op_init_global_const(Instruction* currentInstruction)
 {
     JSGlobalObject* globalObject = m_codeBlock->globalObject();
-
+    emitWriteBarrier(globalObject, currentInstruction[2].u.operand, ShouldFilterValue);
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-
     store64(regT0, currentInstruction[1].u.registerPointer);
-    if (Heap::isWriteBarrierEnabled())
-        emitWriteBarrier(globalObject, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
 }
 
 #endif // USE(JSVALUE64)
 
-void JIT::emitWriteBarrier(RegisterID owner, RegisterID value, RegisterID scratch, RegisterID scratch2, WriteBarrierMode mode, WriteBarrierUseKind useKind)
+JIT::Jump JIT::checkMarkWord(RegisterID owner, RegisterID scratch1, RegisterID scratch2)
 {
+    move(owner, scratch1);
+    move(owner, scratch2);
+
+    andPtr(TrustedImmPtr(MarkedBlock::blockMask), scratch1);
+    andPtr(TrustedImmPtr(~MarkedBlock::blockMask), scratch2);
+
+    rshift32(TrustedImm32(3 + 4), scratch2);
+
+    return branchTest8(Zero, BaseIndex(scratch1, scratch2, TimesOne, MarkedBlock::offsetOfMarks()));
+}
+
+JIT::Jump JIT::checkMarkWord(JSCell* owner)
+{
+    MarkedBlock* block = MarkedBlock::blockFor(owner);
+    size_t index = (reinterpret_cast<size_t>(owner) & ~MarkedBlock::blockMask) >> (3 + 4);
+    void* address = (reinterpret_cast<char*>(block) + MarkedBlock::offsetOfMarks()) + index;
+
+    return branchTest8(Zero, AbsoluteAddress(address));
+}
+
+#if USE(JSVALUE64)
+void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode)
+{
+#if ENABLE(GGC)
+    emitGetVirtualRegister(value, regT0);
+    Jump valueNotCell;
+    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue)
+        valueNotCell = branchTest64(NonZero, regT0, tagMaskRegister);
+    
+    emitGetVirtualRegister(owner, regT0);
+    Jump ownerNotCell;
+    if (mode == ShouldFilterBaseAndValue)
+        ownerNotCell = branchTest64(NonZero, regT0, tagMaskRegister);
+
+    Jump ownerNotMarked = checkMarkWord(regT0, regT1, regT2);
+    callOperation(operationUnconditionalWriteBarrier, regT0);
+    ownerNotMarked.link(this);
+
+    if (mode == ShouldFilterBaseAndValue)
+        ownerNotCell.link(this);
+    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) 
+        valueNotCell.link(this);
+#else
     UNUSED_PARAM(owner);
-    UNUSED_PARAM(scratch);
-    UNUSED_PARAM(scratch2);
-    UNUSED_PARAM(useKind);
     UNUSED_PARAM(value);
     UNUSED_PARAM(mode);
-    ASSERT(owner != scratch);
-    ASSERT(owner != scratch2);
-    
-#if ENABLE(WRITE_BARRIER_PROFILING)
-    emitCount(WriteBarrierCounters::jitCounterFor(useKind));
 #endif
 }
 
-void JIT::emitWriteBarrier(JSCell* owner, RegisterID value, RegisterID scratch, WriteBarrierMode mode, WriteBarrierUseKind useKind)
+void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 {
+#if ENABLE(GGC)
+    emitGetVirtualRegister(value, regT0);
+    Jump valueNotCell;
+    if (mode == ShouldFilterValue)
+        valueNotCell = branchTest64(NonZero, regT0, tagMaskRegister);
+
+    if (!MarkedBlock::blockFor(owner)->isMarked(owner)) {
+        Jump ownerNotMarked = checkMarkWord(regT0, regT1, regT2);
+        callOperation(operationUnconditionalWriteBarrier, owner);
+        ownerNotMarked.link(this);
+    } else
+        callOperation(operationUnconditionalWriteBarrier, owner);
+
+    if (mode == ShouldFilterValue) 
+        valueNotCell.link(this);
+#else
     UNUSED_PARAM(owner);
-    UNUSED_PARAM(scratch);
-    UNUSED_PARAM(useKind);
     UNUSED_PARAM(value);
     UNUSED_PARAM(mode);
-    
-#if ENABLE(WRITE_BARRIER_PROFILING)
-    emitCount(WriteBarrierCounters::jitCounterFor(useKind));
 #endif
 }
+
+#else // USE(JSVALUE64)
+
+void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode)
+{
+#if ENABLE(GGC)
+    emitLoadTag(value, regT0);
+    Jump valueNotCell;
+    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue)
+        valueNotCell = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
+    
+    emitLoad(owner, regT0, regT1);
+    Jump ownerNotCell;
+    if (mode == ShouldFilterBaseAndValue)
+        ownerNotCell = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
+
+    Jump ownerNotMarked = checkMarkWord(regT1, regT0, regT2);
+    callOperation(operationUnconditionalWriteBarrier, regT1);
+    ownerNotMarked.link(this);
+
+    if (mode == ShouldFilterBaseAndValue)
+        ownerNotCell.link(this);
+    if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) 
+        valueNotCell.link(this);
+#else
+    UNUSED_PARAM(owner);
+    UNUSED_PARAM(value);
+    UNUSED_PARAM(mode);
+#endif
+}
+
+void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
+{
+#if ENABLE(GGC)
+    emitLoadTag(value, regT0);
+    Jump valueNotCell;
+    if (mode == ShouldFilterValue)
+        valueNotCell = branch32(NotEqual, regT0, TrustedImm32(JSValue::CellTag));
+
+    if (!MarkedBlock::blockFor(owner)->isMarked(owner)) {
+        Jump ownerNotMarked = checkMarkWord(regT0, regT1, regT2);
+        callOperation(operationUnconditionalWriteBarrier, owner);
+        ownerNotMarked.link(this);
+    } else
+        callOperation(operationUnconditionalWriteBarrier, owner);
+
+    if (mode == ShouldFilterValue) 
+        valueNotCell.link(this);
+#else
+    UNUSED_PARAM(owner);
+    UNUSED_PARAM(value);
+    UNUSED_PARAM(mode);
+#endif
+}
+
+#endif // USE(JSVALUE64)
 
 JIT::Jump JIT::addStructureTransitionCheck(JSCell* object, Structure* structure, StructureStubInfo* stubInfo, RegisterID scratch)
 {
@@ -988,7 +1092,11 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     
     PatchableJump badType;
     JumpList slowCases;
-    
+
+#if ENABLE(GGC)
+    bool needsLinkForWriteBarrier = false;
+#endif
+
     switch (arrayMode) {
     case JITInt32:
         slowCases = emitInt32PutByVal(currentInstruction, badType);
@@ -998,9 +1106,15 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
         break;
     case JITContiguous:
         slowCases = emitContiguousPutByVal(currentInstruction, badType);
+#if ENABLE(GGC)
+        needsLinkForWriteBarrier = true;
+#endif
         break;
     case JITArrayStorage:
         slowCases = emitArrayStoragePutByVal(currentInstruction, badType);
+#if ENABLE(GGC)
+        needsLinkForWriteBarrier = true;
+#endif
         break;
     default:
         TypedArrayType type = typedArrayTypeForJITArrayMode(arrayMode);
@@ -1014,11 +1128,15 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     Jump done = jump();
 
     LinkBuffer patchBuffer(*m_vm, this, m_codeBlock);
-    
     patchBuffer.link(badType, CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
     patchBuffer.link(slowCases, CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
-    
     patchBuffer.link(done, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
+#if ENABLE(GGC)
+    if (needsLinkForWriteBarrier) {
+        ASSERT(m_calls.last().to == operationUnconditionalWriteBarrier);
+        patchBuffer.link(m_calls.last().from, operationUnconditionalWriteBarrier);
+    }
+#endif
     
     bool isDirect = m_interpreter->getOpcodeID(currentInstruction->u.opcode) == op_put_by_val_direct;
     if (!isDirect) {

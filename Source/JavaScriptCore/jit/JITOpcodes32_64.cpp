@@ -1012,7 +1012,7 @@ void JIT::emit_op_debug(Instruction* currentInstruction)
 }
 
 
-void JIT::emit_op_enter(Instruction*)
+void JIT::emit_op_enter(Instruction* currentInstruction)
 {
     emitEnterOptimizationCheck();
     
@@ -1021,6 +1021,9 @@ void JIT::emit_op_enter(Instruction*)
     // object lifetime and increasing GC pressure.
     for (int i = 0; i < m_codeBlock->m_numVars; ++i)
         emitStore(virtualRegisterForLocal(i).offset(), jsUndefined());
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_enter);
+    slowPathCall.call();
 }
 
 void JIT::emit_op_create_activation(Instruction* currentInstruction)
