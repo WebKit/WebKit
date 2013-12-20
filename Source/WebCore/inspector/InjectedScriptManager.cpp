@@ -29,14 +29,15 @@
  */
 
 #include "config.h"
+#include "InjectedScriptManager.h"
 
 #if ENABLE(INSPECTOR)
-
-#include "InjectedScriptManager.h"
 
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptSource.h"
+#include "PageInjectedScriptManager.h"
+#include "ScriptState.h"
 #include <bindings/ScriptObject.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/PassOwnPtr.h>
@@ -47,7 +48,7 @@ namespace WebCore {
 
 PassOwnPtr<InjectedScriptManager> InjectedScriptManager::createForPage()
 {
-    return adoptPtr(new InjectedScriptManager(&InjectedScriptManager::canAccessInspectedWindow));
+    return adoptPtr(new PageInjectedScriptManager(&InjectedScriptManager::canAccessInspectedWindow));
 }
 
 PassOwnPtr<InjectedScriptManager> InjectedScriptManager::createForWorker()
@@ -178,7 +179,13 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSC::ExecState* inspecte
     Deprecated::ScriptObject injectedScriptObject = createInjectedScript(injectedScriptSource(), inspectedExecState, id);
     InjectedScript result(injectedScriptObject, m_inspectedStateAccessCheck);
     m_idToInjectedScript.set(id, result);
+    didCreateInjectedScript(result);
     return result;
+}
+
+void InjectedScriptManager::didCreateInjectedScript(InjectedScript)
+{
+    // Intentionally empty. This allows for subclasses to inject additional scripts.
 }
 
 } // namespace WebCore

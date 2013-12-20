@@ -74,6 +74,7 @@
 #include "NetworkResourcesData.cpp"
 #include "PageConsoleAgent.cpp"
 #include "PageDebuggerAgent.cpp"
+#include "PageInjectedScriptManager.cpp"
 #include "PageRuntimeAgent.cpp"
 #include "ScriptArguments.cpp"
 #include "ScriptCallFrame.cpp"

@@ -34,7 +34,6 @@
 
 #include "PageRuntimeAgent.h"
 
-#include "CommandLineAPIModule.h"
 #include "Document.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
@@ -131,14 +130,12 @@ InjectedScript PageRuntimeAgent::injectedScriptForEval(ErrorString* errorString,
         InjectedScript result = injectedScriptManager()->injectedScriptFor(scriptState);
         if (result.hasNoValue())
             *errorString = ASCIILiteral("Internal error: main world execution context not found.");
-        CommandLineAPIModule::injectIfNeeded(injectedScriptManager(), result);
         return result;
     }
 
     InjectedScript injectedScript = injectedScriptManager()->injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
         *errorString = ASCIILiteral("Execution context with given id not found.");
-    CommandLineAPIModule::injectIfNeeded(injectedScriptManager(), injectedScript);
     return injectedScript;
 }
 

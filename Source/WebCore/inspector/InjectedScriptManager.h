@@ -30,13 +30,16 @@
 #ifndef InjectedScriptManager_h
 #define InjectedScriptManager_h
 
-#include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace Deprecated {
 class ScriptObject;
+}
+
+namespace JSC {
+class ExecState;
 }
 
 namespace Inspector {
@@ -54,7 +57,7 @@ class InjectedScriptManager {
 public:
     static PassOwnPtr<InjectedScriptManager> createForPage();
     static PassOwnPtr<InjectedScriptManager> createForWorker();
-    ~InjectedScriptManager();
+    virtual ~InjectedScriptManager();
 
     void disconnect();
 
@@ -71,9 +74,11 @@ public:
     typedef bool (*InspectedStateAccessCheck)(JSC::ExecState*);
     InspectedStateAccessCheck inspectedStateAccessCheck() const { return m_inspectedStateAccessCheck; }
 
-private:
+protected:
     explicit InjectedScriptManager(InspectedStateAccessCheck);
+    virtual void didCreateInjectedScript(InjectedScript);
 
+private:
     String injectedScriptSource();
     Deprecated::ScriptObject createInjectedScript(const String& source, JSC::ExecState*, int id);
 
