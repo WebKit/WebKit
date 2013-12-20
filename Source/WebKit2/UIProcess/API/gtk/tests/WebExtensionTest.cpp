@@ -25,8 +25,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <webkit2/webkit-web-extension.h>
+#include <wtf/Deque.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/text/CString.h>
 
 static const char introspectionXML[] =
     "<node>"
@@ -48,9 +52,33 @@ static const char introspectionXML[] =
     " </interface>"
     "</node>";
 
-static void documentLoadedCallback(WebKitWebPage*, gpointer userData)
+typedef enum {
+    DocumentLoadedSignal,
+    URIChangedSignal,
+} DelayedSignalType;
+
+struct DelayedSignal {
+    DelayedSignal(DelayedSignalType type)
+        : type(type)
+    {
+    }
+
+    DelayedSignal(DelayedSignalType type, const char* uri)
+        : type(type)
+        , uri(uri)
+    {
+    }
+
+    DelayedSignalType type;
+    CString uri;
+};
+
+Deque<OwnPtr<DelayedSignal>> delayedSignalsQueue;
+
+static void emitDocumentLoaded(GDBusConnection* connection)
 {
-    bool ok = g_dbus_connection_emit_signal(G_DBUS_CONNECTION(userData),
+    bool ok = g_dbus_connection_emit_signal(
+        connection,
         0,
         "/org/webkit/gtk/WebExtensionTest",
         "org.webkit.gtk.WebExtensionTest",
@@ -60,17 +88,35 @@ static void documentLoadedCallback(WebKitWebPage*, gpointer userData)
     g_assert(ok);
 }
 
-static void uriChangedCallback(WebKitWebPage* webPage, GParamSpec* pspec, gpointer userData)
+static void documentLoadedCallback(WebKitWebPage*, WebKitWebExtension* extension)
+{
+    gpointer data = g_object_get_data(G_OBJECT(extension), "dbus-connection");
+    if (data)
+        emitDocumentLoaded(G_DBUS_CONNECTION(data));
+    else
+        delayedSignalsQueue.append(adoptPtr(new DelayedSignal(DocumentLoadedSignal)));
+}
+
+static void emitURIChanged(GDBusConnection* connection, const char* uri)
 {
     bool ok = g_dbus_connection_emit_signal(
-        G_DBUS_CONNECTION(userData),
+        connection,
         0,
         "/org/webkit/gtk/WebExtensionTest",
         "org.webkit.gtk.WebExtensionTest",
         "URIChanged",
-        g_variant_new("(s)", webkit_web_page_get_uri(webPage)),
+        g_variant_new("(s)", uri),
         0);
     g_assert(ok);
+}
+
+static void uriChangedCallback(WebKitWebPage* webPage, GParamSpec* pspec, WebKitWebExtension* extension)
+{
+    gpointer data = g_object_get_data(G_OBJECT(extension), "dbus-connection");
+    if (data)
+        emitURIChanged(G_DBUS_CONNECTION(data), webkit_web_page_get_uri(webPage));
+    else
+        delayedSignalsQueue.append(adoptPtr(new DelayedSignal(URIChangedSignal, webkit_web_page_get_uri(webPage))));
 }
 
 static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, WebKitURIResponse*, gpointer)
@@ -92,10 +138,10 @@ static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, W
     return FALSE;
 }
 
-static void pageCreatedCallback(WebKitWebExtension*, WebKitWebPage* webPage, gpointer userData)
+static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* webPage, gpointer)
 {
-    g_signal_connect(webPage, "document-loaded", G_CALLBACK(documentLoadedCallback), userData);
-    g_signal_connect(webPage, "notify::uri", G_CALLBACK(uriChangedCallback), userData);
+    g_signal_connect(webPage, "document-loaded", G_CALLBACK(documentLoadedCallback), extension);
+    g_signal_connect(webPage, "notify::uri", G_CALLBACK(uriChangedCallback), extension);
     g_signal_connect(webPage, "send-request", G_CALLBACK(sendRequestCallback), 0);
 }
 
@@ -191,12 +237,25 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
     if (!registrationID)
         g_warning("Failed to register object: %s\n", error->message);
 
-    g_signal_connect(WEBKIT_WEB_EXTENSION(userData), "page-created", G_CALLBACK(pageCreatedCallback), connection);
-    g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectCleared), 0);
+    g_object_set_data(G_OBJECT(userData), "dbus-connection", connection);
+    while (delayedSignalsQueue.size()) {
+        OwnPtr<DelayedSignal> delayedSignal = delayedSignalsQueue.takeFirst();
+        switch (delayedSignal->type) {
+        case DocumentLoadedSignal:
+            emitDocumentLoaded(connection);
+            break;
+        case URIChangedSignal:
+            emitURIChanged(connection, delayedSignal->uri.data());
+            break;
+        }
+    }
 }
 
 extern "C" void webkit_web_extension_initialize(WebKitWebExtension* extension)
 {
+    g_signal_connect(extension, "page-created", G_CALLBACK(pageCreatedCallback), extension);
+    g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectCleared), 0);
+
     g_bus_own_name(
         G_BUS_TYPE_SESSION,
         "org.webkit.gtk.WebExtensionTest",

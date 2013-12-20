@@ -1,3 +1,35 @@
+2013-12-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Some unit tests using web extensions fail when run alone
+        https://bugs.webkit.org/show_bug.cgi?id=126002
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The problem is that the page is created before the dbus connection
+        has been established, and we are connecting to web-page-created
+        signal once we have a valid dbus connection. We should connect to
+        the signal before connecting to dbus and queue any request to emit
+        a dbus signal until the connection is set. This also fixes the
+        WebExtensions tests when using the network process because a new
+        web process is launched for every test case.
+
+        * UIProcess/API/gtk/tests/WebExtensionTest.cpp:
+        (DelayedSignal::DelayedSignal): Helper struct to queue signal
+        emissions requested before the dbus connection has been
+        established.
+        (emitDocumentLoaded): Emit the dbus DocumentLoaded signal.
+        (documentLoadedCallback): Queue the signal emission if we still
+        don't have a connection or call emitDocumentLoaded otherwise.
+        (emitURIChanged): Emit the dbus URIChanged signal.
+        (uriChangedCallback): Queue the signal emission if we still don't
+        have a connection or call emitURIChanged otherwise.
+        (pageCreatedCallback): Pass the web extension as user data to
+        document-loaded and uri-changed callbacks.
+        (busAcquiredCallback): Set the connection as user data of the web
+        extension and process any delayed signal emission pending.
+        (webkit_web_extension_initialize): Connect to web-page-create
+        signal before connecting to dbus.
+
 2013-12-19  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2][iOS] Enable multiprocess by default
