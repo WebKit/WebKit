@@ -444,7 +444,7 @@ namespace double_conversion {
         if (current == end) return 0.0;
         
         // The longest form of simplified number is: "-<significant digits>.1eXXX\0".
-        const int kBufferSize = kMaxSignificantDigits + 10;
+        const unsigned kBufferSize = kMaxSignificantDigits + 10;
         char buffer[kBufferSize];  // NOLINT: size is known at compile time.
         unsigned buffer_pos = 0;
         
