@@ -1,5 +1,15 @@
 2013-12-19  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r160826: <rdar://problems/15701133>
+
+2013-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rebaseline the test I added in r160819.
+
+        * svg/text/select-text-inside-non-static-position-expected.txt:
+
+2013-12-19  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r160819: <rdar://problems/15701133>
 
     2013-12-18  Ryosuke Niwa  <rniwa@webkit.org>
