@@ -100,6 +100,7 @@
 #include "VisibleUnits.h"
 #include "htmlediting.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -110,6 +111,9 @@ using namespace HTMLNames;
 AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
     : AccessibilityNodeObject(renderer->node())
     , m_renderer(renderer)
+#ifndef NDEBUG
+    , m_inComputeAccessibilityIsIgnored(false)
+#endif
 {
 #ifndef NDEBUG
     m_renderer->setHasAXObject(true);
@@ -119,6 +123,7 @@ AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
 AccessibilityRenderObject::~AccessibilityRenderObject()
 {
     ASSERT(isDetached());
+    ASSERT(!m_inComputeAccessibilityIsIgnored);
 }
 
 void AccessibilityRenderObject::init()
@@ -141,6 +146,7 @@ void AccessibilityRenderObject::detach(AccessibilityDetachmentType detachmentTyp
     if (m_renderer)
         m_renderer->setHasAXObject(false);
 #endif
+    ASSERT(!m_inComputeAccessibilityIsIgnored);
     m_renderer = 0;
 }
 
@@ -1155,6 +1161,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 {
 #ifndef NDEBUG
     ASSERT(m_initialized);
+    TemporaryChange<bool>(m_inComputeAccessibilityIsIgnored, true);
 #endif
 
     // Check first if any of the common reasons cause this element to be ignored.
@@ -1183,7 +1190,11 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     // Allow the platform to decide if the attachment is ignored or not.
     if (isAttachment())
         return accessibilityIgnoreAttachment();
-    
+
+    // FIXME: Somehow the renderer is becoming null.
+    if (!m_renderer)
+        return false;
+
     // ignore popup menu items because AppKit does
     if (ancestorsOfType<RenderMenuList>(*m_renderer).first())
         return true;

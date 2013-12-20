@@ -211,6 +211,10 @@ public:
 
 protected:
     RenderObject* m_renderer;
+
+#ifndef NDEBUG
+    mutable bool m_inComputeAccessibilityIsIgnored;
+#endif
     
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
     bool needsToUpdateChildren() const { return m_childrenDirty; }
