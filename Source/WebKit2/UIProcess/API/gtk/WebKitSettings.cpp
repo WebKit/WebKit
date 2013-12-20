@@ -898,15 +898,15 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * Whether to enable the Javascript Fullscreen API. The API
      * allows any HTML element to request fullscreen display. See also
      * the current draft of the spec:
-     * http://dvcs.w3.org/hg/fullscreen/raw-file/tip/Overview.html
+     * http://www.w3.org/TR/fullscreen/
      */
     g_object_class_install_property(gObjectClass,
-                                    PROP_ENABLE_FULLSCREEN,
-                                    g_param_spec_boolean("enable-fullscreen",
-                                                         _("Enable Fullscreen"),
-                                                         _("Whether to enable the Javascriipt Fullscreen API"),
-                                                         FALSE,
-                                                         readWriteConstructParamFlags));
+        PROP_ENABLE_FULLSCREEN,
+        g_param_spec_boolean("enable-fullscreen",
+            _("Enable Fullscreen"),
+            _("Whether to enable the Javascript Fullscreen API"),
+            TRUE,
+            readWriteConstructParamFlags));
 
     /**
      * WebKitSettings:print-backgrounds:
