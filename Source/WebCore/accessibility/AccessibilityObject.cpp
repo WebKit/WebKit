@@ -1263,9 +1263,10 @@ FrameView* AccessibilityObject::documentFrameView() const
 }
 
 #if HAVE(ACCESSIBILITY)
-const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children()
+const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool updateChildrenIfNeeded)
 {
-    updateChildrenIfNecessary();
+    if (updateChildrenIfNeeded)
+        updateChildrenIfNecessary();
 
     return m_children;
 }

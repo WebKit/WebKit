@@ -1,3 +1,55 @@
+2013-12-20  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Programmatically-inserted children lack accessibility events
+        https://bugs.webkit.org/show_bug.cgi?id=100275
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/children-changed-sends-notification.html
+
+        Emit children-changed::add and children-changed::remove whenever
+        an object has been added/removed to the accessibility hierarchy,
+        that is, when a new AtkObject is being attached/detached.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::detachWrapper): Added a new parameter and
+        updated all the prototypes in different ports.
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::~AXObjectCache): Call detachWrapper()
+        specifying that we do it because the cache is being destroyed.
+        (WebCore::AXObjectCache::remove): Call detachWrapper() specifying
+        that we do it because an accessible element is being destroyed.
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::detachWrapper): Emit the children-changed
+        signal when needed. We rely on the cached reference to the parent
+        AtkObject (using the implementation of atk_object_get_parent from
+        the AtkObject class) to find the right object to emit the signal
+        from here, since the accessibility hierarchy from WebCore will no
+        longer be accessible at this point.
+        (WebCore::AXObjectCache::attachWrapper): Emit the children-change
+        signal from here unless we are in the middle of a layout update,
+        trying to provide as much information (e.g. the offset) as possible.
+        (WebCore::AXObjectCache::postPlatformNotification): Make sure we
+        update (touch) the subtree under an accessibility object whenever
+        we receive AXChildrenChanded from WebCore, to ensure that those
+        objects will also be visible rightaway to ATs, and that those get
+        properly notified of the event at that very same moment.
+
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::detachWrapper): Updated function signature.
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::detachWrapper): Ditto.
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::detachWrapper): Ditto.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::children): Add the option ot
+        request the AccessibilityChildrenVector without updating it if
+        needed, to avoid maybe recreating the child subtree when trying to
+        get the offset of a newly attached element from attachWrapper.
+        * accessibility/AccessibilityObject.h:
+
 2013-12-20  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
 
         Move function calls outside loop in dom

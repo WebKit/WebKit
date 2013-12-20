@@ -691,7 +691,7 @@ public:
     virtual void childrenChanged() { }
     virtual void textChanged() { }
     virtual void updateAccessibilityRole() { }
-    const AccessibilityChildrenVector& children();
+    const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true);
     virtual void addChildren() { }
     virtual void addChild(AccessibilityObject*) { }
     virtual void insertChild(AccessibilityObject*, unsigned) { }

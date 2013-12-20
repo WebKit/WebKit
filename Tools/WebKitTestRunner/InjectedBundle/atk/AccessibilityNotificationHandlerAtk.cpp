@@ -102,8 +102,10 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
         if (g_value_get_boolean(&paramValues[1]))
             notificationName = "AXFocusedUIElementChanged";
     } else if (!g_strcmp0(signalQuery.signal_name, "children-changed")) {
-        signalName.set(g_strdup("children-changed"));
+        const gchar* childrenChangedDetail = g_quark_to_string(signalHint->detail);
+        signalName.set(g_strdup_printf("children-changed:%s", childrenChangedDetail));
         signalValue.set(g_strdup_printf("%d", g_value_get_uint(&paramValues[1])));
+        notificationName = !g_strcmp0(childrenChangedDetail, "add") ? "AXChildrenAdded" : "AXChildrenRemoved";
     } else if (!g_strcmp0(signalQuery.signal_name, "property-change")) {
         signalName.set(g_strdup_printf("property-change:%s", g_quark_to_string(signalHint->detail)));
         if (!g_strcmp0(g_quark_to_string(signalHint->detail), "accessible-value"))

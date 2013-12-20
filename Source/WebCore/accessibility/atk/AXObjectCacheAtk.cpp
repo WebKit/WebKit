@@ -31,13 +31,37 @@
 #include "TextIterator.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
-void AXObjectCache::detachWrapper(AccessibilityObject* obj)
+void AXObjectCache::detachWrapper(AccessibilityObject* obj, AccessibilityDetachmentType detachmentType)
 {
-    webkitAccessibleDetach(WEBKIT_ACCESSIBLE(obj->wrapper()));
+    AtkObject* wrapper = obj->wrapper();
+    ASSERT(wrapper);
+
+    // If an object is being detached NOT because of the AXObjectCache being destroyed,
+    // then it's being removed from the accessibility tree and we should emit a signal.
+    if (detachmentType != CacheDestroyed) {
+        if (obj->document()) {
+            // Look for the right object to emit the signal from, but using the implementation
+            // of atk_object_get_parent from AtkObject class (which uses a cached pointer if set)
+            // since the accessibility hierarchy in WebCore will no longer be navigable.
+            gpointer webkitAccessibleClass = g_type_class_peek_parent(WEBKIT_ACCESSIBLE_GET_CLASS(wrapper));
+            gpointer atkObjectClass = g_type_class_peek_parent(webkitAccessibleClass);
+            AtkObject* atkParent = ATK_OBJECT_CLASS(atkObjectClass)->get_parent(ATK_OBJECT(wrapper));
+
+            // We don't want to emit any signal from an object outside WebKit's world.
+            if (WEBKIT_IS_ACCESSIBLE(atkParent)) {
+                // The accessibility hierarchy is already invalid, so the parent-children relationships
+                // in the AccessibilityObject tree are not there anymore, so we can't know the offset.
+                g_signal_emit_by_name(atkParent, "children-changed::remove", -1, wrapper);
+            }
+        }
+    }
+
+    webkitAccessibleDetach(WEBKIT_ACCESSIBLE(wrapper));
 }
 
 void AXObjectCache::attachWrapper(AccessibilityObject* obj)
@@ -45,6 +69,25 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     AtkObject* atkObj = ATK_OBJECT(webkitAccessibleNew(obj));
     obj->setWrapper(atkObj);
     g_object_unref(atkObj);
+
+    // If an object is being attached and we are not in the middle of a layout update, then
+    // we should report ATs by emitting the children-changed::add signal from the parent.
+    Document* document = obj->document();
+    if (!document || document->childNeedsStyleRecalc())
+        return;
+
+    // Don't emit the signal for objects that we already know won't be exposed directly.
+    AccessibilityObject* coreParent = obj->parentObjectUnignored();
+    if (!coreParent || coreParent->accessibilityIsIgnoredByDefault())
+        return;
+
+    // Look for the right object to emit the signal from.
+    AtkObject* atkParent = coreParent->wrapper();
+    if (!atkParent)
+        return;
+
+    size_t index = coreParent->children(false).find(obj);
+    g_signal_emit_by_name(atkParent, "children-changed::add", index, atkObj);
 }
 
 static AccessibilityObject* getListObject(AccessibilityObject* object)
@@ -143,29 +186,51 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
     if (!axObject)
         return;
 
-    if (notification == AXCheckedStateChanged) {
+    switch (notification) {
+    case AXCheckedStateChanged:
         if (!coreObject->isCheckboxOrRadio())
             return;
         atk_object_notify_state_change(axObject, ATK_STATE_CHECKED, coreObject->isChecked());
-    } else if (notification == AXSelectedChildrenChanged || notification == AXMenuListValueChanged) {
+        break;
+
+    case AXChildrenChanged:
+        // We need to make sure that the children AtkObjects are created at this moment,
+        // so the children-changed::add signal gets properly emitted in attachWrapper().
+        {
+            int numOfChildren = atk_object_get_n_accessible_children(axObject);
+            for (int i = 0; i < numOfChildren; ++i)
+                GRefPtr<AtkObject> child(atk_object_ref_accessible_child(axObject, i));
+        }
+        break;
+
+    case AXSelectedChildrenChanged:
+    case AXMenuListValueChanged:
         if (notification == AXMenuListValueChanged && coreObject->isMenuList()) {
             g_signal_emit_by_name(axObject, "focus-event", true);
             atk_object_notify_state_change(axObject, ATK_STATE_FOCUSED, true);
         }
         notifyChildrenSelectionChange(coreObject);
-    } else if (notification == AXValueChanged) {
-        if (!ATK_IS_VALUE(axObject))
-            return;
+        break;
 
-        AtkPropertyValues propertyValues;
-        propertyValues.property_name = "accessible-value";
+    case AXValueChanged:
+        if (ATK_IS_VALUE(axObject)) {
+            AtkPropertyValues propertyValues;
+            propertyValues.property_name = "accessible-value";
 
-        memset(&propertyValues.new_value,  0, sizeof(GValue));
-        atk_value_get_current_value(ATK_VALUE(axObject), &propertyValues.new_value);
+            memset(&propertyValues.new_value,  0, sizeof(GValue));
+            atk_value_get_current_value(ATK_VALUE(axObject), &propertyValues.new_value);
 
-        g_signal_emit_by_name(ATK_OBJECT(axObject), "property-change::accessible-value", &propertyValues, NULL);
-    } else if (notification == AXInvalidStatusChanged)
+            g_signal_emit_by_name(ATK_OBJECT(axObject), "property-change::accessible-value", &propertyValues, NULL);
+        }
+        break;
+
+    case AXInvalidStatusChanged:
         atk_object_notify_state_change(axObject, ATK_STATE_INVALID_ENTRY, coreObject->invalidStatus() != "false");
+        break;
+
+    default:
+        break;
+    }
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
