@@ -662,7 +662,7 @@ bool HTMLElement::hasCustomFocusLogic() const
 
 bool HTMLElement::supportsFocus() const
 {
-    if (!document().view()->isInLayout())
+    if (!document().view()->isInLayout() && !document().view()->isPainting())
         document().updateStyleIfNeeded();
     return Element::supportsFocus() || (rendererIsEditable() && parentNode() && !parentNode()->rendererIsEditable());
 }

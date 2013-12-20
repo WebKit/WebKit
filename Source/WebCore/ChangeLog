@@ -1,3 +1,10 @@
+2013-12-20  Antti Koivisto  <antti@apple.com>
+
+        Fix asserting accesibility tests.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::supportsFocus): Accessibility code checks focus status during painting.
+
 2013-12-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r160909.
