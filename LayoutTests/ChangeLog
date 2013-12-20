@@ -1,3 +1,11 @@
+2013-12-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Layout Test plugins/destroy-during-npp-new.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=126027
+
+        * plugins/destroy-during-npp-new.html: Streamlined the test a little bit to see
+        what changes, if anything. There should be no effect on what is tested.
+
 2013-12-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test that text-decoration-skip: ink is the same as regular underlines if no descenders

@@ -8,30 +8,26 @@
     }
 
     var newWindow = window.open("data:text/html,Hello world!")
+    if (!newWindow)
+        alert("Please disable pop-up blocker");
 
-    function tryCloseWindow(w) {
-        if (!w)
+    function finishWhenClosed() {
+        if (newWindow.closed) {
+            if (window.testRunner)
+                testRunner.notifyDone();
             return;
-
-        w.close();
-
-        function doneIfClosed() {
-            if (w.closed) {
-                if (window.testRunner)
-                    testRunner.notifyDone();
-                return;
-            }
-            setTimeout(doneIfClosed, 1);
-        };
-        doneIfClosed();
-    }
+        }
+        setTimeout(finishWhenClosed, 1);
+    };
 
     window.onload = function() {
-        tryCloseWindow(newWindow);
+        newWindow.close();
 
         var testPlugin = document.getElementById('testPlugin');
         if (!testPlugin || !testPlugin.parentNode)
             document.documentElement.appendChild(document.createTextNode("SUCCESS"));
+
+        finishWhenClosed();
     }
     </script>
 </head>
