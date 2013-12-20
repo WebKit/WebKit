@@ -57,6 +57,10 @@ public:
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) = 0;
     virtual void startSnapRubberbandTimer() = 0;
     virtual void stopSnapRubberbandTimer() = 0;
+
+    // If the current scroll position is within the overhang area, this function will cause
+    // the page to scroll to the nearest boundary point.
+    virtual void adjustScrollPositionToBoundsIfNecessary() = 0;
 };
 
 class ScrollElasticityController {

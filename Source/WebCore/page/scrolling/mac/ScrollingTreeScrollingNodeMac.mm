@@ -271,6 +271,19 @@ void ScrollingTreeScrollingNodeMac::stopSnapRubberbandTimer()
     m_snapRubberbandTimer = nullptr;
 }
 
+void ScrollingTreeScrollingNodeMac::adjustScrollPositionToBoundsIfNecessary()
+{
+    IntPoint currentScrollPosition = absoluteScrollPosition();
+    IntPoint minPosition = minimumScrollPosition();
+    IntPoint maxPosition = maximumScrollPosition();
+
+    int nearestXWithinBounds = std::max<int>(std::min<int>(currentScrollPosition.x(), maxPosition.x()), minPosition.x());
+    int nearestYWithinBounds = std::max<int>(std::min<int>(currentScrollPosition.y(), maxPosition.y()), minPosition.y());
+
+    IntPoint nearestPointWithinBounds(nearestXWithinBounds, nearestYWithinBounds);
+    immediateScrollBy(nearestPointWithinBounds - currentScrollPosition);
+}
+
 IntPoint ScrollingTreeScrollingNodeMac::scrollPosition() const
 {
     if (shouldUpdateScrollLayerPositionOnMainThread())

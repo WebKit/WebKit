@@ -60,6 +60,7 @@ private:
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) OVERRIDE;
     virtual void startSnapRubberbandTimer() OVERRIDE;
     virtual void stopSnapRubberbandTimer() OVERRIDE;
+    virtual void adjustScrollPositionToBoundsIfNecessary() OVERRIDE;
 
     IntPoint scrollPosition() const;
     void setScrollPosition(const IntPoint&);

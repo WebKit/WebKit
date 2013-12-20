@@ -715,6 +715,18 @@ FloatPoint ScrollAnimatorMac::adjustScrollPositionIfNecessary(const FloatPoint& 
     return FloatPoint(newX, newY);
 }
 
+void ScrollAnimatorMac::adjustScrollPositionToBoundsIfNecessary()
+{
+    bool currentlyConstrainsToContentEdge = m_scrollableArea->constrainsScrollingToContentEdge();
+    m_scrollableArea->setConstrainsScrollingToContentEdge(true);
+
+    IntPoint currentScrollPosition = absoluteScrollPosition();
+    FloatPoint nearestPointWithinBounds = adjustScrollPositionIfNecessary(absoluteScrollPosition());
+    immediateScrollBy(nearestPointWithinBounds - currentScrollPosition);
+
+    m_scrollableArea->setConstrainsScrollingToContentEdge(currentlyConstrainsToContentEdge);
+}
+
 void ScrollAnimatorMac::immediateScrollTo(const FloatPoint& newPosition)
 {
     FloatPoint adjustedPosition = adjustScrollPositionIfNecessary(newPosition);
