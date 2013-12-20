@@ -153,9 +153,10 @@ void Node::dumpStatistics()
                     result.iterator->value++;
 
                 if (ElementData* elementData = element->elementData()) {
-                    attributes += elementData->length();
+                    unsigned length = elementData->length();
+                    attributes += length;
                     ++elementsWithAttributeStorage;
-                    for (unsigned i = 0; i < elementData->length(); ++i) {
+                    for (unsigned i = 0; i < length; ++i) {
                         Attribute& attr = elementData->attributeAt(i);
                         if (attr.attr())
                             ++attributesWithAttr;

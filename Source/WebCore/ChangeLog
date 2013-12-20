@@ -1,3 +1,17 @@
+2013-12-20  Laszlo Vidacs  <lvidacs.u-szeged@partner.samsung.com>
+
+        Move function calls outside loop in dom
+        https://bugs.webkit.org/show_bug.cgi?id=125916
+
+        Reviewed by Csaba Osztrogonác.
+
+        Do not call length() in each iteration.
+
+        * dom/Element.cpp:
+        (WebCore::Element::cloneAttributesFromElement):
+        * dom/Node.cpp:
+        (WebCore::Node::dumpStatistics):
+
 2013-12-19  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION: cnn.com will continue to reveal 1 px of overhang after rubber-banding 

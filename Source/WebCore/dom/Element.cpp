@@ -3059,7 +3059,8 @@ void Element::cloneAttributesFromElement(const Element& other)
     else
         m_elementData = other.m_elementData->makeUniqueCopy();
 
-    for (unsigned i = 0; i < m_elementData->length(); ++i) {
+    unsigned length = m_elementData->length();
+    for (unsigned i = 0; i < length; ++i) {
         const Attribute& attribute = const_cast<const ElementData*>(m_elementData.get())->attributeAt(i);
         attributeChanged(attribute.name(), attribute.value(), ModifiedByCloning);
     }
