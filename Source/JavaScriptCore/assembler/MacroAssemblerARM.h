@@ -637,6 +637,12 @@ public:
         return branchTest32(cond, ARMRegisters::S1, mask);
     }
 
+    Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        load8(address, ARMRegisters::S1);
+        return branchTest32(cond, ARMRegisters::S1, mask);
+    }
+
     Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
         move(TrustedImmPtr(address.m_ptr), ARMRegisters::S1);

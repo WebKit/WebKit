@@ -1,3 +1,13 @@
+2013-12-20  Julien Brianceau  <jbriance@cisco.com>
+
+        [arm] Add missing implementation in MacroAssembler to fix CPU(ARM_TRADITIONAL) build.
+        https://bugs.webkit.org/show_bug.cgi?id=126064
+
+        Reviewed by Mark Hahnenberg.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchTest8):
+
 2013-12-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add InspectorFrontendHost.debuggableType to let the frontend know it's backend is JavaScript or Web
