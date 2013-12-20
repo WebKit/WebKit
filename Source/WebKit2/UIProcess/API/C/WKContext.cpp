@@ -391,6 +391,13 @@ void WKContextSetPlugInAutoStartOriginHashes(WKContextRef contextRef, WKDictiona
     toImpl(contextRef)->setPlugInAutoStartOriginHashes(*toImpl(dictionaryRef));
 }
 
+void WKContextSetPlugInAutoStartOriginsFilteringOutEntriesAddedBeforeTime(WKContextRef contextRef, WKDictionaryRef dictionaryRef, double time)
+{
+    if (!dictionaryRef)
+        return;
+    toImpl(contextRef)->setPlugInAutoStartOriginsFilteringOutEntriesAddedBeforeTime(*toImpl(dictionaryRef), time);
+}
+
 void WKContextSetPlugInAutoStartOrigins(WKContextRef contextRef, WKArrayRef arrayRef)
 {
     if (!arrayRef)

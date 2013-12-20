@@ -101,6 +101,23 @@ PassRefPtr<ImmutableDictionary> PlugInAutoStartProvider::autoStartOriginsTableCo
 
 void PlugInAutoStartProvider::setAutoStartOriginsTable(ImmutableDictionary& table)
 {
+    setAutoStartOriginsTableWithItemsPassingTest(table, [](double) {
+        return true;
+    });
+}
+
+void PlugInAutoStartProvider::setAutoStartOriginsFilteringOutEntriesAddedBeforeTime(ImmutableDictionary& table, double time)
+{
+    double adjustedTimestamp = time + plugInAutoStartExpirationTimeThreshold;
+    setAutoStartOriginsTableWithItemsPassingTest(table, [adjustedTimestamp](double expirationTimestamp) {
+        return adjustedTimestamp > expirationTimestamp;
+    });
+}
+
+void PlugInAutoStartProvider::setAutoStartOriginsTableWithItemsPassingTest(ImmutableDictionary& table, std::function<bool(double expirationTimestamp)> isExpirationTimeAcceptable)
+{
+    ASSERT(isExpirationTimeAcceptable);
+
     m_hashToOriginMap.clear();
     m_autoStartTable.clear();
     HashMap<unsigned, double> hashMap;
@@ -120,12 +137,16 @@ void PlugInAutoStartProvider::setAutoStartOriginsTable(ImmutableDictionary& tabl
                 continue;
 
             double expirationTime = static_cast<API::Double*>(hashIt->value.get())->value();
+            if (!isExpirationTimeAcceptable(expirationTime))
+                continue;
+
             hashes.set(hash, expirationTime);
             hashMap.set(hash, expirationTime);
             m_hashToOriginMap.set(hash, it->key);
         }
 
-        m_autoStartTable.set(it->key, hashes);
+        if (!hashes.isEmpty())
+            m_autoStartTable.set(it->key, hashes);
     }
 
     m_context->sendToAllProcesses(Messages::WebProcess::ResetPlugInAutoStartOriginHashes(hashMap));

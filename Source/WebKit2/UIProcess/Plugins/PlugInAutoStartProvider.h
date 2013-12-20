@@ -26,6 +26,7 @@
 #ifndef PlugInAutoStartProvider_h
 #define PlugInAutoStartProvider_h
 
+#include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -55,6 +56,7 @@ public:
 
     PassRefPtr<ImmutableDictionary> autoStartOriginsTableCopy() const;
     void setAutoStartOriginsTable(ImmutableDictionary&);
+    void setAutoStartOriginsFilteringOutEntriesAddedBeforeTime(ImmutableDictionary&, double time);
     void setAutoStartOriginsArray(API::Array&);
 
     PlugInAutoStartOriginHash autoStartOriginHashesCopy() const;
@@ -62,6 +64,8 @@ public:
 
 private:
     WebContext* m_context;
+
+    void setAutoStartOriginsTableWithItemsPassingTest(ImmutableDictionary&, std::function<bool(double expirationTimestamp)>);
 
     typedef HashMap<String, PlugInAutoStartOriginHash, CaseFoldingHash> AutoStartTable;
     AutoStartTable m_autoStartTable;

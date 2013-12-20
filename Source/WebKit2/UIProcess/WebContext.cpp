@@ -1250,6 +1250,11 @@ void WebContext::setPlugInAutoStartOrigins(API::Array& array)
     m_plugInAutoStartProvider.setAutoStartOriginsArray(array);
 }
 
+void WebContext::setPlugInAutoStartOriginsFilteringOutEntriesAddedBeforeTime(ImmutableDictionary& dictionary, double time)
+{
+    m_plugInAutoStartProvider.setAutoStartOriginsFilteringOutEntriesAddedBeforeTime(dictionary, time);
+}
+
 #if ENABLE(CUSTOM_PROTOCOLS)
 void WebContext::registerSchemeForCustomProtocol(const String& scheme)
 {

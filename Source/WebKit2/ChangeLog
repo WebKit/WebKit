@@ -1,3 +1,31 @@
+2013-12-20  Ricky Mondello  <rmondello@apple.com>
+
+        Allow partial application of PlugInAutoStart tables based on timestamp
+        https://bugs.webkit.org/show_bug.cgi?id=125871
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetPlugInAutoStartOriginsFilteringOutEntriesAddedBeforeTime): New API.
+        * UIProcess/API/C/WKContext.h: New API.
+
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsTable): Call setAutoStartOriginsTableWithItemsPassingTest
+            with a predicate that lets all policies pass.
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsFilteringOutEntriesAddedBeforeTime): Call
+            setAutoStartOriginsTableWithItemsPassingTest with a predicate that lets policies created before a certain
+            time pass.
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsTableWithItemsPassingTest): Added. Contains most of the
+            contents of setAutoStartOriginsTable, with support for applying a predicate.
+        * UIProcess/Plugins/PlugInAutoStartProvider.h: Add public method,
+            `setAutoStartOriginsFilteringOutEntriesAddedBeforeTime`, and private method,
+            `setAutoStartOriginsTableWithItemsPassingTest`.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setPlugInAutoStartOriginsFilteringOutEntriesAddedBeforeTime): Pass through to the
+            PlugInAutoStartProvider.
+        * UIProcess/WebContext.h: Declare `setPlugInAutoStartOriginsFilteringOutEntriesAddedBeforeTime`.
+
 2013-12-20  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] WebKitWebViewBase's ClickCounter should be reset
