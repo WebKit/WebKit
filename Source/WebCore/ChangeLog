@@ -1,3 +1,167 @@
+2013-12-19  Oliver Hunt  <oliver@apple.com>
+
+        DOM bindings should use thisValue for attributes
+        https://bugs.webkit.org/show_bug.cgi?id=126011
+
+        Reviewed by Antti Koivisto.
+
+        Make all standard DOM attributes use the thisValue instead
+        of the slot object.  This requires using a dynamic cast in
+        the attribute getters. Happily for normal uses this a single
+        indirect load and pointer compare, and we were already doing
+        it for many attributes.
+
+        Alas it's too expensive to do this on the window object still
+        due to the proxy indirection that intercepts global variable
+        access.  I'll correct this in a follow on patch (bug 126013).
+
+        A number of custom getters have also been updated to use the
+        thisValue and full type checks.
+
+        This patch still leaves the index and generic named getters
+        on the slot based model as fixing these cases requires more
+        complicated changes.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::cssPropertyGetterPixelOrPosPrefixCallback):
+        (WebCore::cssPropertyGetterCallback):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginElementPropertyGetter):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::jsTestActiveDOMObjectExcitingAttr):
+        (WebCore::jsTestActiveDOMObjectConstructor):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::jsTestCustomNamedGetterConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::jsTestEventConstructorAttr1):
+        (WebCore::jsTestEventConstructorAttr2):
+        (WebCore::jsTestEventConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::jsTestEventTargetConstructor):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::jsTestExceptionName):
+        (WebCore::jsTestExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::jsTestGenerateIsReachableConstructor):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfaceConstructorImplementsStaticReadOnlyAttr):
+        (WebCore::jsTestInterfaceConstructorImplementsStaticAttr):
+        (WebCore::jsTestInterfaceImplementsStr1):
+        (WebCore::jsTestInterfaceImplementsStr2):
+        (WebCore::jsTestInterfaceImplementsStr3):
+        (WebCore::jsTestInterfaceImplementsNode):
+        (WebCore::jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr):
+        (WebCore::jsTestInterfaceConstructorSupplementalStaticAttr):
+        (WebCore::jsTestInterfaceSupplementalStr1):
+        (WebCore::jsTestInterfaceSupplementalStr2):
+        (WebCore::jsTestInterfaceSupplementalStr3):
+        (WebCore::jsTestInterfaceSupplementalNode):
+        (WebCore::jsTestInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::jsTestMediaQueryListListenerConstructor):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::jsTestNamedConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::jsTestNodeConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjReadOnlyLongAttr):
+        (WebCore::jsTestObjReadOnlyStringAttr):
+        (WebCore::jsTestObjReadOnlyTestObjAttr):
+        (WebCore::jsTestObjConstructorStaticReadOnlyLongAttr):
+        (WebCore::jsTestObjConstructorStaticStringAttr):
+        (WebCore::jsTestObjConstructorTestSubObj):
+        (WebCore::jsTestObjTestSubObjEnabledBySettingConstructor):
+        (WebCore::jsTestObjEnumAttr):
+        (WebCore::jsTestObjByteAttr):
+        (WebCore::jsTestObjOctetAttr):
+        (WebCore::jsTestObjShortAttr):
+        (WebCore::jsTestObjUnsignedShortAttr):
+        (WebCore::jsTestObjLongAttr):
+        (WebCore::jsTestObjLongLongAttr):
+        (WebCore::jsTestObjUnsignedLongLongAttr):
+        (WebCore::jsTestObjStringAttr):
+        (WebCore::jsTestObjTestObjAttr):
+        (WebCore::jsTestObjXMLObjAttr):
+        (WebCore::jsTestObjCreate):
+        (WebCore::jsTestObjReflectedStringAttr):
+        (WebCore::jsTestObjReflectedIntegralAttr):
+        (WebCore::jsTestObjReflectedUnsignedIntegralAttr):
+        (WebCore::jsTestObjReflectedBooleanAttr):
+        (WebCore::jsTestObjReflectedURLAttr):
+        (WebCore::jsTestObjReflectedCustomIntegralAttr):
+        (WebCore::jsTestObjReflectedCustomBooleanAttr):
+        (WebCore::jsTestObjReflectedCustomURLAttr):
+        (WebCore::jsTestObjTypedArrayAttr):
+        (WebCore::jsTestObjAttrWithGetterException):
+        (WebCore::jsTestObjAttrWithSetterException):
+        (WebCore::jsTestObjStringAttrWithGetterException):
+        (WebCore::jsTestObjStringAttrWithSetterException):
+        (WebCore::jsTestObjCustomAttr):
+        (WebCore::jsTestObjWithScriptStateAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAttribute):
+        (WebCore::jsTestObjWithScriptStateAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::jsTestObjWithScriptArgumentsAndCallStackAttribute):
+        (WebCore::jsTestObjConditionalAttr1):
+        (WebCore::jsTestObjConditionalAttr2):
+        (WebCore::jsTestObjConditionalAttr3):
+        (WebCore::jsTestObjConditionalAttr4Constructor):
+        (WebCore::jsTestObjConditionalAttr5Constructor):
+        (WebCore::jsTestObjConditionalAttr6Constructor):
+        (WebCore::jsTestObjCachedAttribute1):
+        (WebCore::jsTestObjCachedAttribute2):
+        (WebCore::jsTestObjAnyAttribute):
+        (WebCore::jsTestObjContentDocument):
+        (WebCore::jsTestObjMutablePoint):
+        (WebCore::jsTestObjImmutablePoint):
+        (WebCore::jsTestObjStrawberry):
+        (WebCore::jsTestObjStrictFloat):
+        (WebCore::jsTestObjDescription):
+        (WebCore::jsTestObjId):
+        (WebCore::jsTestObjHash):
+        (WebCore::jsTestObjReplaceableAttribute):
+        (WebCore::jsTestObjNullableDoubleAttribute):
+        (WebCore::jsTestObjNullableLongAttribute):
+        (WebCore::jsTestObjNullableBooleanAttribute):
+        (WebCore::jsTestObjNullableStringAttribute):
+        (WebCore::jsTestObjNullableLongSettableAttribute):
+        (WebCore::jsTestObjNullableStringValue):
+        (WebCore::jsTestObjAttribute):
+        (WebCore::jsTestObjAttributeWithReservedEnumType):
+        (WebCore::jsTestObjConstructor):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::jsTestOverloadedConstructorsConstructor):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::jsTestSerializedScriptValueInterfaceValue):
+        (WebCore::jsTestSerializedScriptValueInterfaceReadonlyValue):
+        (WebCore::jsTestSerializedScriptValueInterfaceCachedValue):
+        (WebCore::jsTestSerializedScriptValueInterfacePorts):
+        (WebCore::jsTestSerializedScriptValueInterfaceCachedReadonlyValue):
+        (WebCore::jsTestSerializedScriptValueInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsUnsignedLongLongAttr):
+        (WebCore::jsTestTypedefsImmutableSerializedScriptValue):
+        (WebCore::jsTestTypedefsConstructorTestSubObj):
+        (WebCore::jsTestTypedefsAttrWithGetterException):
+        (WebCore::jsTestTypedefsAttrWithSetterException):
+        (WebCore::jsTestTypedefsStringAttrWithGetterException):
+        (WebCore::jsTestTypedefsStringAttrWithSetterException):
+        (WebCore::jsTestTypedefsConstructor):
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::jsattributeReadonly):
+        (WebCore::jsattributeConstructor):
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        (WebCore::jsreadonlyConstructor):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::lengthGetter):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::lengthGetter):
+
 2013-12-19  Andy Estes  <aestes@apple.com>
 
         Remove WebFilterEvaluator wrappers from WebKitSystemInterface

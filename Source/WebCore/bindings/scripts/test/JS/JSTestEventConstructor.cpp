@@ -167,9 +167,12 @@ bool JSTestEventConstructor::getOwnPropertySlot(JSObject* object, ExecState* exe
     return getStaticValueSlot<JSTestEventConstructor, Base>(exec, JSTestEventConstructorTable, thisObject, propertyName, slot);
 }
 
-EncodedJSValue jsTestEventConstructorAttr1(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestEventConstructorAttr1(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(slotBase));
+    JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
+    UNUSED_PARAM(slotBase);
+    if (!castedThis)
+        return throwVMTypeError(exec);
     UNUSED_PARAM(exec);
     TestEventConstructor& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attr1());
@@ -177,9 +180,12 @@ EncodedJSValue jsTestEventConstructorAttr1(ExecState* exec, EncodedJSValue slotB
 }
 
 
-EncodedJSValue jsTestEventConstructorAttr2(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestEventConstructorAttr2(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(slotBase));
+    JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
+    UNUSED_PARAM(slotBase);
+    if (!castedThis)
+        return throwVMTypeError(exec);
     UNUSED_PARAM(exec);
     TestEventConstructor& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.attr2());
@@ -190,6 +196,8 @@ EncodedJSValue jsTestEventConstructorAttr2(ExecState* exec, EncodedJSValue slotB
 EncodedJSValue jsTestEventConstructorConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     JSTestEventConstructor* domObject = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(slotBase));
+    if (!domObject)
+        return throwVMTypeError(exec);
     return JSValue::encode(JSTestEventConstructor::getConstructor(exec->vm(), domObject->globalObject()));
 }
 

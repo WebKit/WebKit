@@ -54,11 +54,12 @@ void RuntimeMethod::finishCreation(VM& vm, const String& ident)
     ASSERT(inherits(info()));
 }
 
-EncodedJSValue RuntimeMethod::lengthGetter(ExecState*, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue RuntimeMethod::lengthGetter(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName)
 {
-    RuntimeMethod* thisObj = jsCast<RuntimeMethod*>(JSValue::decode(slotBase));
-
-    return JSValue::encode(jsNumber(thisObj->m_method->numParameters()));
+    RuntimeMethod* thisObject = jsDynamicCast<RuntimeMethod*>(JSValue::decode(thisValue));
+    if (!thisObject)
+        return throwVMTypeError(exec);
+    return JSValue::encode(jsNumber(thisObject->m_method->numParameters()));
 }
 
 bool RuntimeMethod::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)

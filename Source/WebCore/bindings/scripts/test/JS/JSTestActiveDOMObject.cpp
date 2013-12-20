@@ -130,9 +130,12 @@ bool JSTestActiveDOMObject::getOwnPropertySlot(JSObject* object, ExecState* exec
     return getStaticValueSlot<JSTestActiveDOMObject, Base>(exec, JSTestActiveDOMObjectTable, thisObject, propertyName, slot);
 }
 
-EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    JSTestActiveDOMObject* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(slotBase));
+    JSTestActiveDOMObject* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
+    UNUSED_PARAM(slotBase);
+    if (!castedThis)
+        return throwVMTypeError(exec);
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
         return JSValue::encode(jsUndefined());
     UNUSED_PARAM(exec);
@@ -145,6 +148,8 @@ EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, EncodedJSValue
 EncodedJSValue jsTestActiveDOMObjectConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     JSTestActiveDOMObject* domObject = jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(slotBase));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, domObject->impl()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(JSTestActiveDOMObject::getConstructor(exec->vm(), domObject->globalObject()));

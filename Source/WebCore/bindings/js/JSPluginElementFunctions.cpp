@@ -100,10 +100,13 @@ JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
     return instance->createRuntimeObject(exec);
 }
     
-EncodedJSValue pluginElementPropertyGetter(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName propertyName)
+EncodedJSValue pluginElementPropertyGetter(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, PropertyName propertyName)
 {
-    JSHTMLElement* element = jsCast<JSHTMLElement*>(JSValue::decode(slotBase));
-    JSObject* scriptObject = pluginScriptObject(exec, element);
+
+    JSHTMLElement* thisObject = jsDynamicCast<JSHTMLElement*>(JSValue::decode(thisValue));
+    if (!thisObject)
+        return throwVMTypeError(exec);
+    JSObject* scriptObject = pluginScriptObject(exec, thisObject);
     if (!scriptObject)
         return JSValue::encode(jsUndefined());
     

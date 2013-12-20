@@ -120,6 +120,8 @@ bool JSTestGenerateIsReachable::getOwnPropertySlot(JSObject* object, ExecState* 
 EncodedJSValue jsTestGenerateIsReachableConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     JSTestGenerateIsReachable* domObject = jsDynamicCast<JSTestGenerateIsReachable*>(JSValue::decode(slotBase));
+    if (!domObject)
+        return throwVMTypeError(exec);
     return JSValue::encode(JSTestGenerateIsReachable::getConstructor(exec->vm(), domObject->globalObject()));
 }
 

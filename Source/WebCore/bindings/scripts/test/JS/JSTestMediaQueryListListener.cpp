@@ -131,6 +131,8 @@ bool JSTestMediaQueryListListener::getOwnPropertySlot(JSObject* object, ExecStat
 EncodedJSValue jsTestMediaQueryListListenerConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     JSTestMediaQueryListListener* domObject = jsDynamicCast<JSTestMediaQueryListListener*>(JSValue::decode(slotBase));
+    if (!domObject)
+        return throwVMTypeError(exec);
     return JSValue::encode(JSTestMediaQueryListListener::getConstructor(exec->vm(), domObject->globalObject()));
 }
 

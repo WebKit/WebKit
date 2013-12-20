@@ -1887,12 +1887,21 @@ sub GenerateImplementation
             my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
 
-            push(@implContent, "EncodedJSValue ${getFunctionName}(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)\n");
+            push(@implContent, "EncodedJSValue ${getFunctionName}(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)\n");
             push(@implContent, "{\n");
 
             if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
-                push(@implContent, "    ${className}* castedThis = jsDynamicCast<$className*>(JSValue::decode(slotBase));\n");
+                if ($interfaceName eq "DOMWindow") {
+                    push(@implContent, "    ${className}* castedThis = jsCast<$className*>(JSValue::decode(slotBase));\n");
+                    push(@implContent, "    UNUSED_PARAM(thisValue);\n");
+                } else {
+                    push(@implContent, "    ${className}* castedThis = jsDynamicCast<$className*>(JSValue::decode(thisValue));\n");
+                    push(@implContent, "    UNUSED_PARAM(slotBase);\n");
+                    push(@implContent, "    if (!castedThis)\n");
+                    push(@implContent, "        return throwVMTypeError(exec);\n");
+                }
             } else {
+                push(@implContent, "    UNUSED_PARAM(thisValue);\n");
                 push(@implContent, "    UNUSED_PARAM(slotBase);\n");
             }
 
@@ -2058,6 +2067,8 @@ sub GenerateImplementation
             push(@implContent, "EncodedJSValue ${constructorFunctionName}(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)\n");
             push(@implContent, "{\n");
             push(@implContent, "    ${className}* domObject = jsDynamicCast<$className*>(JSValue::decode(slotBase));\n");
+            push(@implContent, "    if (!domObject)\n");
+            push(@implContent, "        return throwVMTypeError(exec);\n");
 
             if ($interface->extendedAttributes->{"CheckSecurity"}) {
                 push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, domObject->impl()))\n");

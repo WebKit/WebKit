@@ -120,6 +120,8 @@ bool JSreadonly::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
 EncodedJSValue jsreadonlyConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     JSreadonly* domObject = jsDynamicCast<JSreadonly*>(JSValue::decode(slotBase));
+    if (!domObject)
+        return throwVMTypeError(exec);
     return JSValue::encode(JSreadonly::getConstructor(exec->vm(), domObject->globalObject()));
 }
 

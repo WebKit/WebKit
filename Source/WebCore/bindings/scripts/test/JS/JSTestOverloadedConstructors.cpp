@@ -195,6 +195,8 @@ bool JSTestOverloadedConstructors::getOwnPropertySlot(JSObject* object, ExecStat
 EncodedJSValue jsTestOverloadedConstructorsConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     JSTestOverloadedConstructors* domObject = jsDynamicCast<JSTestOverloadedConstructors*>(JSValue::decode(slotBase));
+    if (!domObject)
+        return throwVMTypeError(exec);
     return JSValue::encode(JSTestOverloadedConstructors::getConstructor(exec->vm(), domObject->globalObject()));
 }
 

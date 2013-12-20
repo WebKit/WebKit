@@ -120,9 +120,12 @@ bool JSTestException::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
     return getStaticValueSlot<JSTestException, Base>(exec, JSTestExceptionTable, thisObject, propertyName, slot);
 }
 
-EncodedJSValue jsTestExceptionName(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestExceptionName(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    JSTestException* castedThis = jsDynamicCast<JSTestException*>(JSValue::decode(slotBase));
+    JSTestException* castedThis = jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
+    UNUSED_PARAM(slotBase);
+    if (!castedThis)
+        return throwVMTypeError(exec);
     UNUSED_PARAM(exec);
     TestException& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.name());
@@ -133,6 +136,8 @@ EncodedJSValue jsTestExceptionName(ExecState* exec, EncodedJSValue slotBase, Enc
 EncodedJSValue jsTestExceptionConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     JSTestException* domObject = jsDynamicCast<JSTestException*>(JSValue::decode(slotBase));
+    if (!domObject)
+        return throwVMTypeError(exec);
     return JSValue::encode(JSTestException::getConstructor(exec->vm(), domObject->globalObject()));
 }
 

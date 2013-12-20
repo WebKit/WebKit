@@ -120,9 +120,12 @@ bool JSattribute::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     return getStaticValueSlot<JSattribute, Base>(exec, JSattributeTable, thisObject, propertyName, slot);
 }
 
-EncodedJSValue jsattributeReadonly(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsattributeReadonly(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    JSattribute* castedThis = jsDynamicCast<JSattribute*>(JSValue::decode(slotBase));
+    JSattribute* castedThis = jsDynamicCast<JSattribute*>(JSValue::decode(thisValue));
+    UNUSED_PARAM(slotBase);
+    if (!castedThis)
+        return throwVMTypeError(exec);
     UNUSED_PARAM(exec);
     attribute& impl = castedThis->impl();
     JSValue result = jsStringWithCache(exec, impl.readonly());
@@ -133,6 +136,8 @@ EncodedJSValue jsattributeReadonly(ExecState* exec, EncodedJSValue slotBase, Enc
 EncodedJSValue jsattributeConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
 {
     JSattribute* domObject = jsDynamicCast<JSattribute*>(JSValue::decode(slotBase));
+    if (!domObject)
+        return throwVMTypeError(exec);
     return JSValue::encode(JSattribute::getConstructor(exec->vm(), domObject->globalObject()));
 }
 

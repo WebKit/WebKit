@@ -303,9 +303,12 @@ static inline JSValue cssPropertyGetterPixelOrPosPrefix(ExecState* exec, JSCSSSt
     return getPropertyValueFallback(exec, thisObj, propertyID);
 }
 
-static EncodedJSValue cssPropertyGetterPixelOrPosPrefixCallback(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, unsigned propertyID)
+static EncodedJSValue cssPropertyGetterPixelOrPosPrefixCallback(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, unsigned propertyID)
 {
-    return JSValue::encode(cssPropertyGetterPixelOrPosPrefix(exec, jsCast<JSCSSStyleDeclaration*>(JSValue::decode(slotBase)), propertyID));
+    JSCSSStyleDeclaration* thisObject = jsDynamicCast<JSCSSStyleDeclaration*>(JSValue::decode(thisValue));
+    if (!thisObject)
+        return throwVMTypeError(exec);
+    return JSValue::encode(cssPropertyGetterPixelOrPosPrefix(exec, thisObject, propertyID));
 }
 
 static inline JSValue cssPropertyGetter(ExecState* exec, JSCSSStyleDeclaration* thisObj, unsigned propertyID)
@@ -317,9 +320,12 @@ static inline JSValue cssPropertyGetter(ExecState* exec, JSCSSStyleDeclaration* 
     return getPropertyValueFallback(exec, thisObj, propertyID);
 }
 
-static EncodedJSValue cssPropertyGetterCallback(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, unsigned propertyID)
+static EncodedJSValue cssPropertyGetterCallback(ExecState* exec, EncodedJSValue, EncodedJSValue thisValue, unsigned propertyID)
 {
-    return JSValue::encode(cssPropertyGetter(exec, jsCast<JSCSSStyleDeclaration*>(JSValue::decode(slotBase)), propertyID));
+    JSCSSStyleDeclaration* thisObject = jsDynamicCast<JSCSSStyleDeclaration*>(JSValue::decode(thisValue));
+    if (!thisObject)
+        return throwVMTypeError(exec);
+    return JSValue::encode(cssPropertyGetter(exec, thisObject, propertyID));
 }
 
 bool JSCSSStyleDeclaration::getOwnPropertySlotDelegate(ExecState*, PropertyName propertyIdentifier, PropertySlot& slot)

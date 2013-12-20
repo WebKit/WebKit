@@ -1,3 +1,13 @@
+2013-12-19  Oliver Hunt  <oliver@apple.com>
+
+        DOM bindings should use thisValue for attributes
+        https://bugs.webkit.org/show_bug.cgi?id=126011
+
+        Reviewed by Antti Koivisto.
+
+        * js/dom/dom-attributes-on-mismatch-type.html: Added.
+        * js/dom/dom-attributes-on-mismatch-type-expected.txt: Added.
+
 2013-12-19  Brent Fulgham  <bfulgham@apple.com>
 
         Implement ArrayBuffer.isView
