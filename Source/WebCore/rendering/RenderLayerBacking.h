@@ -328,6 +328,13 @@ private:
     static bool m_creatingPrimaryGraphicsLayer;
 };
 
+enum CanvasCompositingStrategy {
+    UnacceleratedCanvas,
+    CanvasPaintedToLayer,
+    CanvasAsLayerContents
+};
+CanvasCompositingStrategy canvasCompositingStrategy(const RenderObject&);
+
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

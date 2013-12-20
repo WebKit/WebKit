@@ -81,18 +81,23 @@ using namespace HTMLNames;
 static bool hasBoxDecorationsOrBackgroundImage(const RenderStyle*);
 static IntRect clipBox(RenderBox& renderer);
 
-static inline bool isAcceleratedCanvas(RenderObject* renderer)
+CanvasCompositingStrategy canvasCompositingStrategy(const RenderObject& renderer)
 {
-#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
-    if (renderer->isCanvas()) {
-        const HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer->node());
-        if (CanvasRenderingContext* context = canvas->renderingContext())
-            return context->isAccelerated();
-    }
+    ASSERT(renderer.isCanvas());
+    
+    const HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer.node());
+    CanvasRenderingContext* context = canvas->renderingContext();
+    if (!context || !context->isAccelerated())
+        return UnacceleratedCanvas;
+    
+    if (context->is3d())
+        return CanvasAsLayerContents;
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    return CanvasAsLayerContents;
 #else
-    UNUSED_PARAM(renderer);
+    return CanvasPaintedToLayer; // On Mac and iOS we paint accelerated canvases into their layers.
 #endif
-    return false;
 }
 
 // Get the scrolling coordinator in a way that works inside RenderLayerBacking's destructor.
@@ -626,7 +631,7 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     }
 #endif
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
-    else if (isAcceleratedCanvas(&renderer())) {
+    else if (renderer().isCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
         const HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer().element());
         if (CanvasRenderingContext* context = canvas->renderingContext())
             m_graphicsLayer->setContentsToCanvas(context->platformLayer());
@@ -1832,9 +1837,9 @@ bool RenderLayerBacking::containsPaintedContent(bool isSimpleContainer) const
     if (renderer().isVideo() && toRenderVideo(renderer()).shouldDisplayVideo())
         return m_owningLayer.hasBoxDecorationsOrBackground();
 #endif
-#if PLATFORM(MAC) && !PLATFORM(IOS) && USE(CA)
-#elif ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS) || PLATFORM(IOS_SIMULATOR)
-    if (isAcceleratedCanvas(&renderer()))
+
+#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
+    if (renderer().isCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents)
         return m_owningLayer.hasBoxDecorationsOrBackground();
 #endif
 
@@ -1883,7 +1888,7 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
     }
 
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
-    if ((changeType == CanvasChanged || changeType == CanvasPixelsChanged) && isAcceleratedCanvas(&renderer())) {
+    if ((changeType == CanvasChanged || changeType == CanvasPixelsChanged) && renderer().isCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
         m_graphicsLayer->setContentsNeedsDisplay();
         return;
     }

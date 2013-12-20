@@ -1,3 +1,31 @@
+2013-12-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Clarify the behavior of composited canvases
+        https://bugs.webkit.org/show_bug.cgi?id=126042
+
+        Reviewed by Tim Horton.
+
+        Different platforms composite 2D and 3D canvases in different ways.
+        
+        "Accelerated 2D" canvases, and WebGL are always set as GraphicsLayer
+        contents.
+        
+        "IOSurface" canvases (Mac and iOS-only) get a compositing layer, but
+        paint into it (because this is fast, and a convenient way to get
+        synchronization).
+        
+        So make these behaviors explicit in RenderLayerBacking and RenderLayerCompositor.
+        No behavior changes on OS X, bug fix on iOS.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::canvasCompositingStrategy):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        (WebCore::RenderLayerBacking::containsPaintedContent):
+        (WebCore::RenderLayerBacking::contentChanged):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForCanvas):
+
 2013-12-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add InspectorFrontendHost.debuggableType to let the frontend know it's backend is JavaScript or Web

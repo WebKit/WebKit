@@ -2263,13 +2263,14 @@ bool RenderLayerCompositor::requiresCompositingForCanvas(RenderLayerModelObject&
         return false;
 
     if (renderer.isCanvas()) {
-        HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer.element());
 #if USE(COMPOSITING_FOR_SMALL_CANVASES)
         bool isCanvasLargeEnoughToForceCompositing = true;
 #else
+        HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer.element());
         bool isCanvasLargeEnoughToForceCompositing = canvas->size().area() >= canvasAreaThresholdRequiringCompositing;
 #endif
-        return canvas->renderingContext() && canvas->renderingContext()->isAccelerated() && (canvas->renderingContext()->is3d() || isCanvasLargeEnoughToForceCompositing);
+        CanvasCompositingStrategy compositingStrategy = canvasCompositingStrategy(renderer);
+        return compositingStrategy == CanvasAsLayerContents || (compositingStrategy == CanvasPaintedToLayer && isCanvasLargeEnoughToForceCompositing);
     }
 
     return false;
