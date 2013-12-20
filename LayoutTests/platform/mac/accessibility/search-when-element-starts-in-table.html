@@ -32,7 +32,7 @@
 
         // A search for the previous heading should return nothing.
         resultElement = containerElement.uiElementForSearchPredicate(heading, false, "AXHeadingSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: '");
+        shouldBeUndefined("resultElement");
 
         // When asking the child of the heading for the previous element, it should return the heading.
         resultElement = containerElement.uiElementForSearchPredicate(heading.childAtIndex(0), false, "AXAnyTypeSearchKey", "", false);

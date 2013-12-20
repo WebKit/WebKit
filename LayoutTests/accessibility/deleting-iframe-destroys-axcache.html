@@ -38,9 +38,9 @@
         if (window.accessibilityController) {
             window.root = accessibilityController.rootElement;
             window.body = root.childAtIndex(0);
-            window.before = body.childAtIndex(0).childAtIndex(0);
+            window.before = body.childAtIndex(0);
             window.iframe = body.childAtIndex(1).childAtIndex(0);
-            window.after = body.childAtIndex(2).childAtIndex(0);
+            window.after = body.childAtIndex(2);
 
             window.frameBody = window.iframe.childAtIndex(0);
             window.frameBodyRole = window.frameBody.role;
@@ -57,8 +57,8 @@
 
             window.newRoot = accessibilityController.rootElement;
             window.newBody = newRoot.childAtIndex(0);
-            window.newBefore = newBody.childAtIndex(0).childAtIndex(0);
-            window.newAfter = newBody.childAtIndex(1).childAtIndex(0);
+            window.newBefore = newBody.childAtIndex(0);
+            window.newAfter = newBody.childAtIndex(1);
 
             document.getElementById("console").innerText += "\nAfter:\n";
             buildAccessibilityTree(newRoot, 0);

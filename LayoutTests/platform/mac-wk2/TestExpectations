@@ -382,6 +382,9 @@ webkit.org/b/124437 editing/selection/5057506.html [ Pass Timeout ]
 
 webkit.org/b/124476 platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple.html [ Pass Failure ]
 
+# uiElementForSearchPredicate() is not returning an undefined object when the search returns no results
+webkit.org/b/125996 platform/mac/accessibility/search-when-element-starts-in-table.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
