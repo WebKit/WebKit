@@ -342,6 +342,8 @@ void ScrollElasticityController::snapRubberBandTimerFired()
             m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(newStretch.width()));
             m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(newStretch.height()));
         } else {
+            m_client->adjustScrollPositionToBoundsIfNecessary();
+
             stopSnapRubberbandTimer();
             m_stretchScrollForce = FloatSize();
             m_startTime = 0;

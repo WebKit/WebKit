@@ -1,3 +1,29 @@
+2013-12-19  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION: cnn.com will continue to reveal 1 px of overhang after rubber-banding 
+        at the top
+        https://bugs.webkit.org/show_bug.cgi?id=126054
+
+        Reviewed by Simon Fraser.
+
+        This regression was caused by http://trac.webkit.org/changeset/160791 It turns out 
+        that the line of code I removed was not always a no-op. In some instances, like on 
+        cnn.com, it would ensure that our final scroll position after a rubber-band was 
+        not something within the overhang area. It was still wrong in its assumption that 
+        rubber-band is always bouncing back the spot it originated from. So this patch 
+        continues to ignore the rubber-bands origin, and instead finds the nearest point 
+        that is not in the overhang area, and scrolls to that point instead of the origin.
+
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::adjustScrollPositionToBoundsIfNecessary):
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::adjustScrollPositionToBoundsIfNecessary):
+        * platform/mac/ScrollElasticityController.h:
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::ScrollElasticityController::snapRubberBandTimerFired):
+
 2013-12-19  Simon Fraser  <simon.fraser@apple.com>
 
         Clarify the behavior of composited canvases

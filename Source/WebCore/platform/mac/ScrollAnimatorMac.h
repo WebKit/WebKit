@@ -152,6 +152,7 @@ private:
     virtual void immediateScrollBy(const FloatSize&) OVERRIDE;
     virtual void startSnapRubberbandTimer() OVERRIDE;
     virtual void stopSnapRubberbandTimer() OVERRIDE;
+    virtual void adjustScrollPositionToBoundsIfNecessary() OVERRIDE;
 
     bool pinnedInDirection(float deltaX, float deltaY);
     void snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*);
