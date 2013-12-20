@@ -44,6 +44,9 @@ WK_EXPORT void WKContextGetInfoForInstalledPlugIns(WKContextRef context, WKConte
 
 WK_EXPORT void WKContextResetHSTSHosts(WKContextRef context);
 
+WK_EXPORT void WKContextRegisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme);
+WK_EXPORT void WKContextUnregisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme);
+
 /* DEPRECATED -  Please use constants from WKPluginInformation instead. */
 
 /* Value type: WKStringRef */

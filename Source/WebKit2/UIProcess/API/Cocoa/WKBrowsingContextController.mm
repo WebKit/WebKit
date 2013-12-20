@@ -176,22 +176,12 @@ static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
 
 + (void)registerSchemeForCustomProtocol:(NSString *)scheme
 {
-    if (!scheme)
-        return;
-
-    NSString *lowercaseScheme = [scheme lowercaseString];
-    [[WKBrowsingContextController customSchemes] addObject:lowercaseScheme];
-    [[NSNotificationCenter defaultCenter] postNotificationName:SchemeForCustomProtocolRegisteredNotificationName object:lowercaseScheme];
+    WebContext::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
 }
 
 + (void)unregisterSchemeForCustomProtocol:(NSString *)scheme
 {
-    if (!scheme)
-        return;
-
-    NSString *lowercaseScheme = [scheme lowercaseString];
-    [[WKBrowsingContextController customSchemes] removeObject:lowercaseScheme];
-    [[NSNotificationCenter defaultCenter] postNotificationName:SchemeForCustomProtocolUnregisteredNotificationName object:lowercaseScheme];
+    WebContext::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
 }
 
 - (void)loadRequest:(NSURLRequest *)request

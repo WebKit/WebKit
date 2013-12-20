@@ -64,6 +64,7 @@
 #include <runtime/Operations.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 
 #if ENABLE(BATTERY_STATUS)
@@ -872,6 +873,34 @@ void WebContext::registerURLSchemeAsCORSEnabled(const String& urlScheme)
 {
     m_schemesToRegisterAsCORSEnabled.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsCORSEnabled(urlScheme));
+}
+
+HashSet<String>& WebContext::globalURLSchemesWithCustomProtocolHandlers()
+{
+    static NeverDestroyed<HashSet<String>> set;
+    return set;
+}
+
+void WebContext::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String& urlScheme)
+{
+    if (!urlScheme)
+        return;
+
+    String schemeLower = urlScheme.lower();
+    globalURLSchemesWithCustomProtocolHandlers().add(schemeLower);
+    for (auto* context : allContexts())
+        context->registerSchemeForCustomProtocol(schemeLower);
+}
+
+void WebContext::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String& urlScheme)
+{
+    if (!urlScheme)
+        return;
+
+    String schemeLower = urlScheme.lower();
+    globalURLSchemesWithCustomProtocolHandlers().remove(schemeLower);
+    for (auto* context : allContexts())
+        context->unregisterSchemeForCustomProtocol(schemeLower);
 }
 
 void WebContext::setCacheModel(CacheModel cacheModel)

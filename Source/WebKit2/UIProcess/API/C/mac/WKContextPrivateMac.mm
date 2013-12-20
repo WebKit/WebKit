@@ -105,6 +105,17 @@ void WKContextResetHSTSHosts(WKContextRef context)
 }
 
 
+
+void WKContextRegisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme)
+{
+    WebContext::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(toWTFString(scheme));
+}
+
+void WKContextUnregisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme)
+{
+    WebContext::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(toWTFString(scheme));
+}
+
 /* DEPRECATED -  Please use constants from WKPluginInformation instead. */
 
 WKStringRef WKPlugInInfoPathKey()

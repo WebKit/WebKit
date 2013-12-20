@@ -85,11 +85,6 @@ class WebNetworkInfoManagerProxy;
 struct NetworkProcessCreationParameters;
 #endif
 
-#if PLATFORM(MAC)
-extern NSString *SchemeForCustomProtocolRegisteredNotificationName;
-extern NSString *SchemeForCustomProtocolUnregisteredNotificationName;
-#endif
-
 class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private CoreIPC::MessageReceiver
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , private PluginInfoStoreClient
@@ -312,6 +307,15 @@ public:
     bool isURLKnownHSTSHost(const String& urlString, bool privateBrowsingEnabled) const;
     void resetHSTSHosts();
 
+#if ENABLE(CUSTOM_PROTOCOLS)
+    void registerSchemeForCustomProtocol(const String&);
+    void unregisterSchemeForCustomProtocol(const String&);
+
+    static HashSet<String>& globalURLSchemesWithCustomProtocolHandlers();
+    static void registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
+    static void unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
+#endif
+
 private:
     void platformInitialize();
 
@@ -391,11 +395,6 @@ private:
     void unregisterNotificationObservers();
 #endif
 
-#if ENABLE(CUSTOM_PROTOCOLS)
-    void registerSchemeForCustomProtocol(const String&);
-    void unregisterSchemeForCustomProtocol(const String&);
-#endif
-
     void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash);
     void plugInDidReceiveUserInteraction(unsigned plugInOriginHash);
 
@@ -469,9 +468,6 @@ private:
 
 #if PLATFORM(MAC)
     RetainPtr<NSObject> m_enhancedAccessibilityObserver;
-    RetainPtr<NSObject> m_customSchemeRegisteredObserver;
-    RetainPtr<NSObject> m_customSchemeUnregisteredObserver;
-
     RetainPtr<NSObject> m_automaticTextReplacementNotificationObserver;
     RetainPtr<NSObject> m_automaticSpellingCorrectionNotificationObserver;
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090

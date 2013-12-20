@@ -1,3 +1,28 @@
+2013-12-20  Sam Weinig  <sam@webkit.org>
+
+        [WK2] Add SPI for using a custom protocol handler
+        https://bugs.webkit.org/show_bug.cgi?id=126089
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextRegisterSchemeForCustomProtocol):
+        (WKContextUnregisterSchemeForCustomProtocol):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (+[WKBrowsingContextController registerSchemeForCustomProtocol:]):
+        (+[WKBrowsingContextController unregisterSchemeForCustomProtocol:]):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::globalURLSchemesWithCustomProtocolHandlers):
+        (WebKit::WebContext::registerGlobalURLSchemeAsHavingCustomProtocolHandlers):
+        (WebKit::WebContext::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers):
+        * UIProcess/WebContext.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        (WebKit::WebContext::platformInitializeNetworkProcess):
+        (WebKit::WebContext::registerNotificationObservers):
+        (WebKit::WebContext::unregisterNotificationObservers):
+
 2013-12-20  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures: Implement smartMagnifyWithEvent: and make it work

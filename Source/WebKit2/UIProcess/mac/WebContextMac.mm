@@ -310,8 +310,8 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if ENABLE(NETWORK_PROCESS)
     if (!m_usesNetworkProcess) {
 #endif
-#if ENABLE(CUSTOM_PROTOCOLS) && WK_API_ENABLED
-        for (NSString *scheme in [WKBrowsingContextController customSchemes])
+#if ENABLE(CUSTOM_PROTOCOLS)
+        for (const auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
             parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 #endif
 #if ENABLE(NETWORK_PROCESS)
@@ -329,8 +329,8 @@ void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParamete
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
     parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 
-#if WK_API_ENABLED
-    for (NSString *scheme in [WKBrowsingContextController customSchemes])
+#if ENABLE(CUSTOM_PROTOCOLS)
+    for (const auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 #endif
 
@@ -573,18 +573,6 @@ void WebContext::processSuppressionEnabledChanged()
 void WebContext::registerNotificationObservers()
 {
 #if !PLATFORM(IOS)
-    m_customSchemeRegisteredObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKit::SchemeForCustomProtocolRegisteredNotificationName object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
-        NSString *scheme = [notification object];
-        ASSERT([scheme isKindOfClass:[NSString class]]);
-        registerSchemeForCustomProtocol(scheme);
-    }];
-
-    m_customSchemeUnregisteredObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKit::SchemeForCustomProtocolUnregisteredNotificationName object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
-        NSString *scheme = [notification object];
-        ASSERT([scheme isKindOfClass:[NSString class]]);
-        unregisterSchemeForCustomProtocol(scheme);
-    }];
-
     // Listen for enhanced accessibility changes and propagate them to the WebProcess.
     m_enhancedAccessibilityObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         setEnhancedAccessibility([[[note userInfo] objectForKey:@"AXEnhancedUserInterface"] boolValue]);
@@ -617,10 +605,7 @@ void WebContext::registerNotificationObservers()
 void WebContext::unregisterNotificationObservers()
 {
 #if !PLATFORM(IOS)
-    [[NSNotificationCenter defaultCenter] removeObserver:m_customSchemeRegisteredObserver.get()];
-    [[NSNotificationCenter defaultCenter] removeObserver:m_customSchemeUnregisteredObserver.get()];
-    [[NSNotificationCenter defaultCenter] removeObserver:m_enhancedAccessibilityObserver.get()];
-    
+    [[NSNotificationCenter defaultCenter] removeObserver:m_enhancedAccessibilityObserver.get()];    
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticTextReplacementNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticSpellingCorrectionNotificationObserver.get()];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
