@@ -92,10 +92,7 @@ class JSONGeneratorTest(unittest.TestCase):
         port = Mock()
         port._filesystem = host.filesystem
         generator = json_results_generator.JSONResultsGenerator(port,
-            self.builder_name, self.build_name, self.build_number,
-            '',
-            None,   # don't fetch past json results archive
-            test_results_map)
+            self.builder_name, self.build_name, self.build_number, '', test_results_map)
 
         failed_count_map = dict([(t, 1) for t in failed_tests])
 
