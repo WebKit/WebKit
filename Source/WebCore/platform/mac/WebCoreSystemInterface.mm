@@ -200,15 +200,6 @@ void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* m
 
 void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
 
-#if USE(CONTENT_FILTERING)
-BOOL (*wkFilterIsManagedSession)(void);
-WebFilterEvaluator *(*wkFilterCreateInstance)(NSURLResponse *);
-BOOL (*wkFilterWasBlocked)(WebFilterEvaluator *);
-BOOL (*wkFilterIsBuffering)(WebFilterEvaluator *);
-NSData *(*wkFilterAddData)(WebFilterEvaluator *, NSData *);
-NSData *(*wkFilterDataComplete)(WebFilterEvaluator *);
-#endif
-
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
 CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);

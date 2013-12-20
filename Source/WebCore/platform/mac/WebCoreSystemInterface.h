@@ -104,7 +104,6 @@ OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
 OBJC_CLASS QTMovie;
 OBJC_CLASS QTMovieView;
-OBJC_CLASS WebFilterEvaluator;
 
 extern "C" {
 
@@ -315,15 +314,6 @@ extern bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 extern void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 
 extern void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
-
-#if USE(CONTENT_FILTERING)
-extern BOOL (*wkFilterIsManagedSession)(void);
-extern WebFilterEvaluator *(*wkFilterCreateInstance)(NSURLResponse *);
-extern BOOL (*wkFilterWasBlocked)(WebFilterEvaluator *);
-extern BOOL (*wkFilterIsBuffering)(WebFilterEvaluator *);
-extern NSData *(*wkFilterAddData)(WebFilterEvaluator *, NSData *);
-extern NSData *(*wkFilterDataComplete)(WebFilterEvaluator *);
-#endif
 
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 extern CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);

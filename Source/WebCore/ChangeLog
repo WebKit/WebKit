@@ -1,3 +1,37 @@
+2013-12-19  Andy Estes  <aestes@apple.com>
+
+        Remove WebFilterEvaluator wrappers from WebKitSystemInterface
+        https://bugs.webkit.org/show_bug.cgi?id=126028
+
+        Reviewed by Anders Carlsson.
+
+        It's overkill to pipe access to WebFilterEvaluator through
+        WebKitSystemInterface. Instead, include WebFilterEvaluator.h when it
+        exists and re-declare WebFilterEvaluator when it doesn't.
+        
+        WebKitSystemInterface used to soft-link WebContentAnalysis.framework
+        since OS X 10.7 didn't contain this framework. Since we no longer
+        support 10.7, we can now directly link against the framework.
+
+        * Configurations/WebCore.xcconfig: Add /System/Library/PrivateHeaders
+        to the system framework search path at both compile and link time so
+        that we can find WebContentAnalysis.framework.
+        * WebCore.exp.in: Don't export removed symbols.
+        * WebCore.xcodeproj/project.pbxproj: Added WebContentAnalysis.framework
+        to the 'Link Binary With Libraries' build phase.
+        * platform/mac/ContentFilterMac.mm: Included WebFilterEvaluator.h when
+        it exists and re-declared WebFilterEvaluator when it doesn't.
+        (WebCore::ContentFilter::ContentFilter): Directly called a method on
+        m_platformContentFilter rather than going through WKSI.
+        (WebCore::ContentFilter::isEnabled): Ditto.
+        (WebCore::ContentFilter::addData): Ditto.
+        (WebCore::ContentFilter::finishedAddingData): Ditto.
+        (WebCore::ContentFilter::needsMoreData): Ditto.
+        (WebCore::ContentFilter::didBlockData): Ditto.
+        * platform/mac/WebCoreSystemInterface.h: Removed function pointers for
+        calling into WKSI.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
 2013-12-19  Andreas Kling  <akling@apple.com>
 
         Use CascadedProperties for page and keyframe style resolution as well.

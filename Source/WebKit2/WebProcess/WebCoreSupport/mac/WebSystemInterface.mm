@@ -202,18 +202,6 @@ void InitWebCoreSystemInterface(void)
         INIT(CGPathAddRoundedRect);
         INIT(CFURLRequestAllowAllPostCaching);
 
-#if USE(CONTENT_FILTERING)
-        INIT(FilterIsManagedSession);
-        INIT(FilterCreateInstance);
-        INIT(FilterWasBlocked);
-        INIT(FilterIsBuffering);
-        INIT(FilterAddData);
-        INIT(FilterDataComplete);
-#if PLATFORM(IOS)
-        INIT(FilterUnblockWithCompletion);
-#endif
-#endif
-
 #if !PLATFORM(IOS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         INIT(NSElasticDeltaForTimeDelta);
         INIT(NSElasticDeltaForReboundDelta);

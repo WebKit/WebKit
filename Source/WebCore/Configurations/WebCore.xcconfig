@@ -45,7 +45,7 @@ FRAMEWORK_SEARCH_PATHS_iphoneos_Production = $(PRODUCTION_FRAMEWORKS_DIR);
 FRAMEWORK_SEARCH_PATHS_iphonesimulator = $(FRAMEWORK_SEARCH_PATHS_iphoneos_$(CONFIGURATION));
 FRAMEWORK_SEARCH_PATHS_macosx = $(STAGED_FRAMEWORKS_SEARCH_PATH) $(FRAMEWORK_SEARCH_PATHS);
 
-OTHER_CFLAGS = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks;
+OTHER_CFLAGS = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS);
 
 STAGED_FRAMEWORKS_SEARCH_PATH = $(STAGED_FRAMEWORKS_SEARCH_PATH_$(USE_STAGING_INSTALL_PATH));
@@ -66,7 +66,7 @@ DYLIB_INSTALL_NAME_BASE_iphonesimulator =  $(SDKROOT)$(DYLIB_INSTALL_NAME_BASE_i
 INSTALLHDRS_COPY_PHASE = YES;
 INSTALLHDRS_SCRIPT_PHASE = YES;
 PRODUCT_NAME = WebCore;
-OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE -allowable_client WebCoreTestSupport;
+OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE -allowable_client WebCoreTestSupport -F$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework QuartzCore;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);

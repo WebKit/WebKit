@@ -2529,15 +2529,6 @@ _wkSetCFURLRequestShouldContentSniff
 _wkSetRequestStorageSession
 #endif
 
-#if USE(CONTENT_FILTERING)
-_wkFilterAddData
-_wkFilterCreateInstance
-_wkFilterDataComplete
-_wkFilterIsBuffering
-_wkFilterIsManagedSession
-_wkFilterWasBlocked
-#endif
-
 #if ENABLE(CONTEXT_MENUS)
 __ZN7WebCore11ContextMenu22setPlatformDescriptionEP14NSMutableArray
 __ZN7WebCore12EventHandler20sendContextMenuEventERKNS_18PlatformMouseEventE
