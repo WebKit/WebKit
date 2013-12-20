@@ -1775,6 +1775,9 @@ void WebPage::keyEventSyncForTesting(const WebKeyboardEvent& keyboardEvent, bool
 {
     CurrentEvent currentEvent(keyboardEvent);
 
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    frame.document()->updateStyleIfNeeded();
+
     handled = handleKeyEvent(keyboardEvent, m_page.get());
     if (!handled)
         handled = performDefaultBehaviorForKeyEvent(keyboardEvent);

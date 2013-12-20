@@ -162,14 +162,8 @@ void HTMLFrameElementBase::didNotifySubtreeInsertions(ContainerNode*)
     if (!SubframeLoadingDisabler::canLoadFrame(*this))
         return;
 
-    // JavaScript in src=javascript: and beforeonload can access the renderer
-    // during attribute parsing *before* the normal parser machinery would
-    // attach the element. To support this, we lazyAttach here, but only
-    // if we don't already have a renderer (if we're inserted
-    // as part of a DocumentFragment, insertedInto from an earlier element
-    // could have forced a style resolve and already attached us).
     if (!renderer())
-        lazyAttach(DoNotSetAttached);
+        setNeedsStyleRecalc(ReconstructRenderTree);
     setNameAndOpenURL();
 }
 

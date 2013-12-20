@@ -134,7 +134,7 @@ bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, v
 JSValue JSNode::insertBefore(ExecState* exec)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().insertBefore(toNode(exec->argument(0)), toNode(exec->argument(1)), ec, AttachLazily);
+    bool ok = impl().insertBefore(toNode(exec->argument(0)), toNode(exec->argument(1)), ec);
     setDOMException(exec, ec);
     if (ok)
         return exec->argument(0);
@@ -144,7 +144,7 @@ JSValue JSNode::insertBefore(ExecState* exec)
 JSValue JSNode::replaceChild(ExecState* exec)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().replaceChild(toNode(exec->argument(0)), toNode(exec->argument(1)), ec, AttachLazily);
+    bool ok = impl().replaceChild(toNode(exec->argument(0)), toNode(exec->argument(1)), ec);
     setDOMException(exec, ec);
     if (ok)
         return exec->argument(1);
@@ -164,7 +164,7 @@ JSValue JSNode::removeChild(ExecState* exec)
 JSValue JSNode::appendChild(ExecState* exec)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().appendChild(toNode(exec->argument(0)), ec, AttachLazily);
+    bool ok = impl().appendChild(toNode(exec->argument(0)), ec);
     setDOMException(exec, ec);
     if (ok)
         return exec->argument(0);

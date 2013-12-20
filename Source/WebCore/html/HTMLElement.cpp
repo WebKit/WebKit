@@ -39,6 +39,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameView.h"
 #include "HTMLBRElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
@@ -478,7 +479,7 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
     // FIXME: Can the renderer be out of date here? Do we need to call updateStyleIfNeeded?
     // For example, for the contents of textarea elements that are display:none?
     auto r = renderer();
-    if (r && r->style().preserveNewline()) {
+    if ((r && r->style().preserveNewline()) || (inDocument() && isTextControlInnerTextElement())) {
         if (!text.contains('\r')) {
             replaceChildrenWithText(*this, text, ec);
             return;
@@ -661,6 +662,8 @@ bool HTMLElement::hasCustomFocusLogic() const
 
 bool HTMLElement::supportsFocus() const
 {
+    if (!document().view()->isInLayout())
+        document().updateStyleIfNeeded();
     return Element::supportsFocus() || (rendererIsEditable() && parentNode() && !parentNode()->rendererIsEditable());
 }
 

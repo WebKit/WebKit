@@ -139,6 +139,7 @@ void HTMLDocument::setDesignMode(const String& value)
 
 Element* HTMLDocument::activeElement()
 {
+    document().updateStyleIfNeeded();
     if (Element* element = treeScope().focusedElement())
         return element;
     return body();

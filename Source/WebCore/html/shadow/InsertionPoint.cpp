@@ -55,22 +55,22 @@ void InsertionPoint::willAttachRenderers()
     if (ShadowRoot* shadowRoot = containingShadowRoot())
         ContentDistributor::ensureDistribution(shadowRoot);
     for (Node* current = firstDistributed(); current; current = nextDistributedTo(current)) {
-        if (current->attached())
-            continue;
         if (current->isTextNode()) {
+            if (current->renderer())
+                continue;
             Style::attachTextRenderer(*toText(current));
             continue;
         }
-        if (current->isElementNode())
+        if (current->isElementNode()) {
+            if (current->renderer())
+                Style::detachRenderTree(*toElement(current));
             Style::attachRenderTree(*toElement(current));
+        }
     }
 }
 
 void InsertionPoint::willDetachRenderers()
 {
-    if (ShadowRoot* shadowRoot = containingShadowRoot())
-        ContentDistributor::ensureDistribution(shadowRoot);
-
     for (Node* current = firstDistributed(); current; current = nextDistributedTo(current)) {
         if (current->isTextNode()) {
             Style::detachTextRenderer(*toText(current));

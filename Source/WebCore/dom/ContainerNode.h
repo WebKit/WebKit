@@ -90,10 +90,10 @@ public:
     unsigned childNodeCount() const;
     Node* childNode(unsigned index) const;
 
-    bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& = ASSERT_NO_EXCEPTION, AttachBehavior = AttachNow);
-    bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& = ASSERT_NO_EXCEPTION, AttachBehavior = AttachNow);
+    bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& = ASSERT_NO_EXCEPTION);
+    bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& = ASSERT_NO_EXCEPTION);
     bool removeChild(Node* child, ExceptionCode& = ASSERT_NO_EXCEPTION);
-    bool appendChild(PassRefPtr<Node> newChild, ExceptionCode& = ASSERT_NO_EXCEPTION, AttachBehavior = AttachNow);
+    bool appendChild(PassRefPtr<Node> newChild, ExceptionCode& = ASSERT_NO_EXCEPTION);
 
     // These methods are only used during parsing.
     // They don't send DOM mutation events or handle reparenting.
@@ -168,7 +168,7 @@ private:
     void notifyChildInserted(Node& child, ChildChangeSource);
     void notifyChildRemoved(Node& child, Node* previousSibling, Node* nextSibling, ChildChangeSource);
 
-    void updateTreeAfterInsertion(Node& child, AttachBehavior);
+    void updateTreeAfterInsertion(Node& child);
 
     bool isContainerNode() const WTF_DELETED_FUNCTION;
 

@@ -1,3 +1,176 @@
+2013-12-19  Antti Koivisto  <antti@apple.com>
+
+        Create render tree lazily
+        https://bugs.webkit.org/show_bug.cgi?id=120685
+
+        Reviewed by Andreas Kling.
+
+        We currently recompute style and construct renderer for each DOM node immediately after they are added to 
+        the tree. This is often inefficient as the style may change immediately afterwards and the work needs to be
+        redone. 
+        
+        With this patch we always compute style and construct render tree lazily, either on style recalc timer or
+        synchronously when they are needed. It also removes the 'attached' bit. If document has render tree then
+        all nodes are conceptually "attached" even if this happens lazily.
+        
+        The patch slightly changes behavior of implicit CSS transitions. A synchronous style change during parsing
+        may not trigger the animation anymore as laziness means we don't see anything changing. This matches Firefox
+        and Chrome in our test cases.
+        
+        * WebCore.exp.in:
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::insertBefore):
+        (WebCore::JSNode::replaceChild):
+        (WebCore::JSNode::appendChild):
+        
+            All attaching is now lazy, remove AttachLazily.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        
+            SVG renderers with !isValid() have empty display property value for some reason. Keep the behavior.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::parserInsertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::ContainerNode::parserAppendChild):
+        (WebCore::ContainerNode::updateTreeAfterInsertion):
+        * dom/ContainerNode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::createRenderTree):
+        (WebCore::Document::destroyRenderTree):
+        
+            Remove attach bit maintenance.
+
+        (WebCore::Document::webkitDidExitFullScreenForElement):
+        
+            Do lazy render tree reconstruction after returning from full screen. That is the only reliable way
+            to get the render tree back to decent shape.
+
+        * dom/Element.cpp:
+        (WebCore::Element::isFocusable):
+        
+            Remove pointless !renderer()->needsLayout() assert.
+
+        (WebCore::Element::addShadowRoot):
+        (WebCore::Element::childShouldCreateRenderer):
+        (WebCore::Element::resetComputedStyle):
+        
+            Take care to reset computed style in all descendants. attachRenderTree no longer does this.
+
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::insertBefore):
+        (WebCore::Node::replaceChild):
+        (WebCore::Node::appendChild):
+        (WebCore::Node::setNeedsStyleRecalc):
+        
+            Propagate ReconstructRenderTree.
+
+        (WebCore::Node::attached):
+        
+            Emulate the behavior of old attached bit for now so existing code calling this mostly stays working.
+
+        * dom/Node.h:
+        
+            Add new ReconstructRenderTree value for StyleChangeType.
+
+        * dom/Range.cpp:
+        (WebCore::Range::isPointInRange):
+        (WebCore::Range::comparePoint):
+        (WebCore::Range::compareNode):
+        (WebCore::Range::intersectsNode):
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::canRebalance):
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::didAddUserAgentShadowRoot):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::activeElement):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+        
+            TextControlInnerTextElement always preserves newline even if it doesn't have style yet.
+
+        (WebCore::HTMLElement::supportsFocus):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseAttribute):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus):
+        
+            Don't autofocus until we have renderer.
+
+        * html/HTMLFormControlElementWithState.cpp:
+        (WebCore::HTMLFormControlElementWithState::shouldSaveAndRestoreFormControlState):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::didNotifySubtreeInsertions):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        
+            Lazy render tree construction.
+
+        (WebCore::HTMLInputElement::parseAttribute):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::didAddUserAgentShadowRoot):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::executeTask):
+        
+            Don't attach renderer after construction.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::invalidateDistribution):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::willAttachRenderers):
+        (WebCore::InsertionPoint::willDetachRenderers):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::createTextTrackDisplay):
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::createControls):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::getDisplayTree):
+        * loader/PlaceholderDocument.cpp:
+        (WebCore::PlaceholderDocument::createRenderTree):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::preload):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::attachTextRenderer):
+        (WebCore::Style::detachTextRenderer):
+        
+            Remove attached bit maintenance.
+
+        (WebCore::Style::attachChildren):
+        (WebCore::Style::attachShadowRoot):
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::detachShadowRoot):
+        (WebCore::Style::detachRenderTree):
+        (WebCore::Style::resolveLocal):
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::handleAttributeChange):
+        
+            Make lazy.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::attached):
+        (WebCore::Internals::elementRenderTreeAsText):
+        (WebCore::Internals::markerAt):
+        (WebCore::Internals::nodesFromRect):
+
 2013-12-20  Andreas Kling  <akling@apple.com>
 
         Devirtualize RenderElement::setStyle().

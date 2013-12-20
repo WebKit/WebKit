@@ -405,7 +405,6 @@ void attachTextRenderer(Text& textNode)
 {
     createTextRendererIfNeeded(textNode);
 
-    textNode.setAttached(true);
     textNode.clearNeedsStyleRecalc();
 }
 
@@ -414,7 +413,6 @@ void detachTextRenderer(Text& textNode)
     if (textNode.renderer())
         textNode.renderer()->destroyAndCleanupAnonymousWrappers();
     textNode.setRenderer(0);
-    textNode.setAttached(false);
 }
 
 void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
@@ -440,8 +438,8 @@ void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfRepla
 static void attachChildren(ContainerNode& current)
 {
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
-        ASSERT(!child->attached() || current.shadowRoot());
-        if (child->attached())
+        ASSERT(!child->renderer() || current.shadowRoot() || current.isInsertionPoint());
+        if (child->renderer())
             continue;
         if (child->isTextNode()) {
             attachTextRenderer(*toText(child));
@@ -454,8 +452,6 @@ static void attachChildren(ContainerNode& current)
 
 static void attachShadowRoot(ShadowRoot& shadowRoot)
 {
-    if (shadowRoot.attached())
-        return;
     StyleResolver& styleResolver = shadowRoot.document().ensureStyleResolver();
     styleResolver.pushParentShadowRoot(&shadowRoot);
 
@@ -464,7 +460,7 @@ static void attachShadowRoot(ShadowRoot& shadowRoot)
     styleResolver.popParentShadowRoot(&shadowRoot);
 
     shadowRoot.clearNeedsStyleRecalc();
-    shadowRoot.setAttached(true);
+    shadowRoot.clearChildNeedsStyleRecalc();
 }
 
 static PseudoElement* beforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
@@ -543,8 +539,8 @@ static void attachRenderTree(Element& current, PassRefPtr<RenderStyle> resolvedS
 
     attachChildren(current);
 
-    current.setAttached(true);
     current.clearNeedsStyleRecalc();
+    current.clearChildNeedsStyleRecalc();
 
     if (AXObjectCache* cache = current.document().axObjectCache())
         cache->updateCacheAfterNodeIsAttached(&current);
@@ -572,11 +568,7 @@ static void detachChildren(ContainerNode& current, DetachType detachType)
 
 static void detachShadowRoot(ShadowRoot& shadowRoot, DetachType detachType)
 {
-    if (!shadowRoot.attached())
-        return;
     detachChildren(shadowRoot, detachType);
-
-    shadowRoot.setAttached(false);
 }
 
 static void detachRenderTree(Element& current, DetachType detachType)
@@ -601,8 +593,6 @@ static void detachRenderTree(Element& current, DetachType detachType)
     if (current.renderer())
         current.renderer()->destroyAndCleanupAnonymousWrappers();
     current.setRenderer(0);
-
-    current.setAttached(false);
 
     if (current.hasCustomStyleResolveCallbacks())
         current.didDetachRenderers();
@@ -649,12 +639,12 @@ static Change resolveLocal(Element& current, Change inheritedChange)
     RefPtr<RenderStyle> currentStyle = current.renderStyle();
 
     Document& document = current.document();
-    if (currentStyle) {
+    if (currentStyle && current.styleChangeType() != ReconstructRenderTree) {
         newStyle = current.styleForRenderer();
         localChange = determineChange(currentStyle.get(), newStyle.get(), document.settings());
     }
     if (localChange == Detach) {
-        if (current.attached())
+        if (current.renderer() || current.inNamedFlow())
             detachRenderTree(current, ReattachDetach);
         attachRenderTree(current, newStyle.release());
         reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded(current);

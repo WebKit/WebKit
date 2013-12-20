@@ -105,6 +105,7 @@ void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomicStr
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
     else if (name == srcAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
+        document().updateStyleIfNeeded();
         if (renderer() && isImageType()) {
             if (!m_imageLoader)
                 m_imageLoader = adoptPtr(new HTMLImageLoader(this));

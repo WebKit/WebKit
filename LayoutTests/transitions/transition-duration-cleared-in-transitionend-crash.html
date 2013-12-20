@@ -13,7 +13,7 @@
                 if (window.testRunner)
                     testRunner.notifyDone();
             });
-            el.style.cssText += ';-webkit-transition:background-color 0.2s;background-color:#fff'
+            setTimeout(function() { el.style.cssText += ';-webkit-transition:background-color 0.2s;background-color:#fff' }, 0);
         </script>
     </body>
 </html>

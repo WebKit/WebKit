@@ -626,6 +626,8 @@ bool CompositeEditCommand::canRebalance(const Position& position) const
     if (textNode->length() == 0)
         return false;
 
+    node->document().updateStyleIfNeeded();
+
     RenderObject* renderer = textNode->renderer();
     if (renderer && !renderer->style().collapseWhiteSpace())
         return false;

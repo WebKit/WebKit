@@ -58,6 +58,7 @@
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
+#include "SVGElement.h"
 #include "StyleInheritedData.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
@@ -1757,8 +1758,13 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             styledNode = this->styledNode();
         }
 
-        style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID);
         renderer = styledNode->renderer();
+
+#if ENABLE(SVG)
+        if (propertyID == CSSPropertyDisplay && !renderer && isSVGElement(*styledNode) && !toSVGElement(*styledNode).isValid())
+            return nullptr;
+#endif
+        style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID);
 
         // FIXME: Some of these cases could be narrowed down or optimized better.
         forceFullLayout = isLayoutDependent(propertyID, style.get(), renderer)

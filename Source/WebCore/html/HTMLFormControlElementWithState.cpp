@@ -77,7 +77,7 @@ void HTMLFormControlElementWithState::notifyFormStateChanged()
 bool HTMLFormControlElementWithState::shouldSaveAndRestoreFormControlState() const
 {
     // We don't save/restore control state in a form with autocomplete=off.
-    return attached() && shouldAutocomplete();
+    return inDocument() && shouldAutocomplete();
 }
 
 FormControlState HTMLFormControlElementWithState::saveFormControlState() const

@@ -832,7 +832,7 @@ void CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequ
     // FIXME: We should consider adding a setting to toggle aggressive preloading behavior as opposed
     // to making this behavior specific to iOS.
 #if !PLATFORM(IOS)
-    bool hasRendering = m_document->body() && m_document->body()->renderer();
+    bool hasRendering = m_document->body() && m_document->renderView();
     bool canBlockParser = type == CachedResource::Script || type == CachedResource::CSSStyleSheet;
     if (!hasRendering && !canBlockParser) {
         // Don't preload subresources that can't block the parser before we have something to draw.

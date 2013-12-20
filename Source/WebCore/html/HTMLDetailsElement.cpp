@@ -117,8 +117,8 @@ RenderElement* HTMLDetailsElement::createRenderer(PassRef<RenderStyle> style)
 
 void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
-    root->appendChild(DetailsSummaryElement::create(document()), ASSERT_NO_EXCEPTION, AttachLazily);
-    root->appendChild(DetailsContentElement::create(document()), ASSERT_NO_EXCEPTION, AttachLazily);
+    root->appendChild(DetailsSummaryElement::create(document()), ASSERT_NO_EXCEPTION);
+    root->appendChild(DetailsContentElement::create(document()), ASSERT_NO_EXCEPTION);
 }
 
 Element* HTMLDetailsElement::findMainSummary() const

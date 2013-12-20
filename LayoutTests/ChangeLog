@@ -1,3 +1,48 @@
+2013-12-19  Antti Koivisto  <antti@apple.com>
+
+        Create render tree lazily
+        https://bugs.webkit.org/show_bug.cgi?id=120685
+
+        Reviewed by Andreas Kling.
+        
+        Most of these are non-visible render tree dump changes (they become simpler).
+
+        * editing/selection/click-on-head-margin-expected.txt:
+        * fast/css-generated-content/before-content-continuation-chain-expected.txt:
+        * fast/css/transition-color-unspecified.html:
+        * fast/dom/adopt-node-crash-2-expected.txt:
+        * fast/dom/modify-node-and-while-in-the-callback-too-crash-expected.txt:
+        * fast/forms/radio/radio_checked_dynamic-expected.txt:
+        * fast/frames/lots-of-iframes-expected.txt:
+        * fast/frames/sandboxed-iframe-autofocus-denied-expected.txt:
+        * fast/table/table-row-style-not-updated-with-after-content-expected.txt:
+        * fullscreen/full-screen-render-inline-expected.txt:
+        * fullscreen/parent-flow-inline-with-block-child-expected.txt:
+        * platform/mac/editing/inserting/break-blockquote-after-delete-expected.txt:
+        * platform/mac/fast/css-generated-content/table-row-group-to-inline-expected.txt:
+        * platform/mac/fast/dynamic/011-expected.txt:
+        * platform/mac/fast/forms/formmove3-expected.txt:
+        * platform/mac/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/mac/fast/invalid/001-expected.txt:
+        * platform/mac/fast/invalid/003-expected.txt:
+        * platform/mac/fast/invalid/004-expected.txt:
+        * platform/mac/fast/invalid/007-expected.txt:
+        * platform/mac/fast/invalid/019-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/mac/fast/ruby/ruby-base-merge-block-children-crash-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113235-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug647-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * plugins/plugin-remove-readystatechange-expected.txt:
+        * svg/custom/system-language-crash-expected.txt:
+        * transitions/equivalent-background-image-no-transition.html:
+        * transitions/repeated-firing-background-color.html:
+        * transitions/transition-duration-cleared-in-transitionend-crash.html:
+
+            Adopt a few transition test cases to new behavior.
+
 2013-12-20  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] [WK2] platform/gtk/accessibility/roles-exposed.html is failing

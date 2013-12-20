@@ -144,11 +144,8 @@ void ContentDistributor::invalidateDistribution(Element* host)
     bool didNeedInvalidation = needsInvalidation();
     bool needsReattach = didNeedInvalidation ? invalidate(host) : false;
 
-    if (needsReattach && host->attached()) {
-        for (Element* element = ElementTraversal::firstWithin(host); element; element = ElementTraversal::nextSibling(element))
-            element->lazyReattach();
-        host->setNeedsStyleRecalc();
-    }
+    if (needsReattach)
+        host->setNeedsStyleRecalc(ReconstructRenderTree);
 
     if (didNeedInvalidation) {
         ASSERT(m_validity == Invalidating);

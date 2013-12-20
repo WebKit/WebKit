@@ -97,7 +97,8 @@ enum StyleChangeType {
     NoStyleChange = 0, 
     InlineStyleChange = 1 << nodeStyleChangeShift, 
     FullStyleChange = 2 << nodeStyleChangeShift, 
-    SyntheticStyleChange = 3 << nodeStyleChangeShift
+    SyntheticStyleChange = 3 << nodeStyleChangeShift,
+    ReconstructRenderTree = 4 << nodeStyleChangeShift,
 };
 
 class NodeRareDataBase {
@@ -112,11 +113,6 @@ protected:
 
 private:
     RenderObject* m_renderer;
-};
-
-enum AttachBehavior {
-    AttachNow,
-    AttachLazily,
 };
 
 class Node : public EventTarget, public ScriptWrappable, public TreeShared<Node> {
@@ -189,10 +185,10 @@ public:
     // These should all actually return a node, but this is only important for language bindings,
     // which will already know and hold a ref on the right node to return. Returning bool allows
     // these methods to be more efficient since they don't need to return a ref
-    bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&, AttachBehavior = AttachNow);
-    bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&, AttachBehavior = AttachNow);
+    bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&);
+    bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&);
     bool removeChild(Node* child, ExceptionCode&);
-    bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&, AttachBehavior = AttachNow);
+    bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&);
 
     void remove(ExceptionCode&);
     bool hasChildNodes() const { return firstChild(); }
@@ -313,8 +309,7 @@ public:
     bool isUserActionElement() const { return getFlag(IsUserActionElement); }
     void setUserActionElement(bool flag) { setFlag(flag, IsUserActionElement); }
 
-    bool attached() const { return getFlag(IsAttachedFlag); }
-    void setAttached(bool flag) { setFlag(flag, IsAttachedFlag); }
+    bool attached() const;
     bool needsStyleRecalc() const { return styleChangeType() != NoStyleChange; }
     StyleChangeType styleChangeType() const { return static_cast<StyleChangeType>(m_nodeFlags & StyleChangeMask); }
     bool childNeedsStyleRecalc() const { return getFlag(ChildNeedsStyleRecalcFlag); }
@@ -572,7 +567,6 @@ protected:
         IsStyledElementFlag = 1 << 3,
         IsHTMLFlag = 1 << 4,
         IsSVGFlag = 1 << 5,
-        IsAttachedFlag = 1 << 6,
         ChildNeedsStyleRecalcFlag = 1 << 7,
         InDocumentFlag = 1 << 8,
         IsLinkFlag = 1 << 9,
@@ -584,8 +578,7 @@ protected:
         // be stored in the same memory word as the Node bits above.
         IsParsingChildrenFinishedFlag = 1 << 13, // Element
 
-        StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
-        SelfOrAncestorHasDirAutoFlag = 1 << 16,
+        StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1) | 1 << (nodeStyleChangeShift + 2),
         IsEditingTextFlag = 1 << 17,
         InNamedFlowFlag = 1 << 18,
         HasSyntheticAttrChildNodesFlag = 1 << 19,
@@ -599,6 +592,8 @@ protected:
         ChildrenAffectedByLastChildRulesFlag = 1 << 26,
         ChildrenAffectedByDirectAdjacentRulesFlag = 1 << 27,
         ChildrenAffectedByHoverRulesFlag = 1 << 28,
+
+        SelfOrAncestorHasDirAutoFlag = 1 << 29,
 
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };

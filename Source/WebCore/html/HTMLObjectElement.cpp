@@ -115,6 +115,7 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
             setNeedsWidgetUpdate(true);
     } else if (name == dataAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
+        document().updateStyleIfNeeded();
         if (renderer()) {
             setNeedsWidgetUpdate(true);
             if (isImageType()) {

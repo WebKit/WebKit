@@ -156,12 +156,7 @@ bool SVGTests::handleAttributeChange(SVGElement* targetElement, const QualifiedN
     if (!targetElement->inDocument())
         return true;
 
-    bool valid = targetElement->isValid();
-    bool attached = targetElement->attached();
-    if (valid && !attached && targetElement->parentNode()->attached())
-        Style::attachRenderTree(*targetElement);
-    else if (!valid && attached)
-        Style::detachRenderTree(*targetElement);
+    targetElement->setNeedsStyleRecalc(ReconstructRenderTree);
 
     return true;
 }

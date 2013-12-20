@@ -1290,7 +1290,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         RefPtr<TextTrackCueBox> displayBox = cue->getDisplayTree(m_videoDisplaySize.size());
         if (displayBox->hasChildNodes() && !contains(displayBox.get())) {
             // Note: the display tree of a cue is removed when the active flag of the cue is unset.
-            appendChild(displayBox, ASSERT_NO_EXCEPTION, AttachNow);
+            appendChild(displayBox, ASSERT_NO_EXCEPTION);
             cue->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
         }
     }

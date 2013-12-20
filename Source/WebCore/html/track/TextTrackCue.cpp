@@ -825,7 +825,7 @@ TextTrackCueBox* TextTrackCue::getDisplayTree(const IntSize& videoSize)
 
     // Note: This is contained by default in m_cueBackgroundBox.
     m_cueBackgroundBox->setPseudo(cueShadowPseudoId());
-    displayTree->appendChild(m_cueBackgroundBox, ASSERT_NO_EXCEPTION, AttachLazily);
+    displayTree->appendChild(m_cueBackgroundBox, ASSERT_NO_EXCEPTION);
 
     // FIXME(BUG 79916): Runs of children of WebVTT Ruby Objects that are not
     // WebVTT Ruby Text Objects must be wrapped in anonymous boxes whose

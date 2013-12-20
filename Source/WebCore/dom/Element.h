@@ -304,12 +304,7 @@ public:
 
     virtual void copyNonAttributePropertiesFromElement(const Element&) { }
 
-    enum ShouldSetAttached {
-        SetAttached,
-        DoNotSetAttached
-    };
-    void lazyAttach(ShouldSetAttached = SetAttached);
-    void lazyReattach(ShouldSetAttached = SetAttached);
+    void lazyReattach();
 
     virtual RenderElement* createRenderer(PassRef<RenderStyle>);
     virtual bool rendererIsNeeded(const RenderStyle&);

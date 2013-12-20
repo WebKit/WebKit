@@ -734,7 +734,7 @@ void HTMLMediaElement::removedFrom(ContainerNode& insertionPoint)
 
 void HTMLMediaElement::willAttachRenderers()
 {
-    ASSERT(!attached());
+    ASSERT(!renderer());
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (shouldUseVideoPluginProxy())
@@ -5106,7 +5106,7 @@ bool HTMLMediaElement::createMediaControls()
     if (isFullscreen())
         mediaControls->enteredFullscreen();
 
-    ensureUserAgentShadowRoot().appendChild(mediaControls, ASSERT_NO_EXCEPTION, AttachLazily);
+    ensureUserAgentShadowRoot().appendChild(mediaControls, ASSERT_NO_EXCEPTION);
 
     if (!controls() || !inDocument())
         mediaControls->hide();

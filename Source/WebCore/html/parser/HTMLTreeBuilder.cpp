@@ -1603,8 +1603,6 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
             if (ContainerNode* parent = lastNode->element()->parentNode())
                 parent->parserRemoveChild(*lastNode->element());
             node->element()->parserAppendChild(lastNode->element());
-            if (lastNode->element()->parentElement()->attached() && !lastNode->element()->attached())
-                lastNode->element()->lazyAttach();
             // 9.10
             lastNode = node;
         }
@@ -1624,8 +1622,6 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
 #endif
             ASSERT(lastNode->stackItem()->isElementNode());
             ASSERT(lastNode->element()->parentNode());
-            if (lastNode->element()->parentNode()->attached() && !lastNode->element()->attached())
-                lastNode->element()->lazyAttach();
         }
         // 11.
         RefPtr<HTMLStackItem> newItem = m_tree.createElementFromSavedToken(formattingElementRecord->stackItem().get());

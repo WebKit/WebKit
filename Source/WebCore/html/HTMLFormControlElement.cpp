@@ -170,9 +170,11 @@ void HTMLFormControlElement::requiredAttributeChanged()
 
 static bool shouldAutofocus(HTMLFormControlElement* element)
 {
+    if (!element->renderer())
+        return false;
     if (!element->fastHasAttribute(autofocusAttr))
         return false;
-    if (!element->renderer())
+    if (!element->inDocument() || !element->document().renderView())
         return false;
     if (element->document().ignoreAutofocus())
         return false;

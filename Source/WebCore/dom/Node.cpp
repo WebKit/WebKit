@@ -420,22 +420,22 @@ Node* Node::firstDescendant() const
     return n;
 }
 
-bool Node::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec, AttachBehavior attachBehavior)
+bool Node::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec)
 {
     if (!isContainerNode()) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return toContainerNode(this)->insertBefore(newChild, refChild, ec, attachBehavior);
+    return toContainerNode(this)->insertBefore(newChild, refChild, ec);
 }
 
-bool Node::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, AttachBehavior attachBehavior)
+bool Node::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec)
 {
     if (!isContainerNode()) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return toContainerNode(this)->replaceChild(newChild, oldChild, ec, attachBehavior);
+    return toContainerNode(this)->replaceChild(newChild, oldChild, ec);
 }
 
 bool Node::removeChild(Node* oldChild, ExceptionCode& ec)
@@ -447,13 +447,13 @@ bool Node::removeChild(Node* oldChild, ExceptionCode& ec)
     return toContainerNode(this)->removeChild(oldChild, ec);
 }
 
-bool Node::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, AttachBehavior attachBehavior)
+bool Node::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec)
 {
     if (!isContainerNode()) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return toContainerNode(this)->appendChild(newChild, ec, attachBehavior);
+    return toContainerNode(this)->appendChild(newChild, ec);
 }
 
 void Node::remove(ExceptionCode& ec)
@@ -673,14 +673,14 @@ void Node::derefEventTarget()
 void Node::setNeedsStyleRecalc(StyleChangeType changeType)
 {
     ASSERT(changeType != NoStyleChange);
-    if (!attached()) // changed compared to what?
+    if (changeType != ReconstructRenderTree && !attached()) // changed compared to what?
         return;
 
     StyleChangeType existingChangeType = styleChangeType();
     if (changeType > existingChangeType)
         setStyleChange(changeType);
 
-    if (existingChangeType == NoStyleChange)
+    if (existingChangeType == NoStyleChange || changeType == ReconstructRenderTree)
         markAncestorsWithChildNeedsStyleRecalc();
 }
 
@@ -2295,6 +2295,13 @@ void Node::updateAncestorConnectedSubframeCountForInsertion() const
 
     for (Node* node = parentOrShadowHostNode(); node; node = node->parentOrShadowHostNode())
         node->incrementConnectedSubframeCount(count);
+}
+
+bool Node::attached() const
+{
+    // FIXME: This should go away along with the whole vague 'attached' concept. The conditions here produce
+    // roughly the old behavior based on an explicit attached bit.
+    return inDocument() && document().renderView() && (renderer() || styleChangeType() != ReconstructRenderTree);
 }
 
 } // namespace WebCore

@@ -559,7 +559,6 @@ Document::~Document()
     ASSERT(!renderView());
     ASSERT(!m_inPageCache);
     ASSERT(m_ranges.isEmpty());
-    ASSERT(!m_styleRecalcTimer.isActive());
     ASSERT(!m_parentTreeScope);
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
@@ -1795,7 +1794,10 @@ void Document::recalcStyle(Style::Change change)
 void Document::updateStyleIfNeeded()
 {
     ASSERT(isMainThread());
-    ASSERT(!view() || (!view()->isInLayout() && !view()->isPainting()));
+    ASSERT(!view() || !view()->isPainting());
+
+    if (!view() || view()->isInLayout())
+        return;
 
     if (m_optimizedStyleSheetUpdateTimer.isActive())
         styleResolverChanged(RecalcStyleIfNeeded);
@@ -1965,8 +1967,6 @@ void Document::createRenderTree()
 
     if (m_documentElement)
         Style::attachRenderTree(*m_documentElement);
-
-    setAttached(true);
 }
 
 static void pageWheelEventHandlerCountChanged(Page& page)
@@ -2059,7 +2059,6 @@ void Document::destroyRenderTree()
         Style::detachRenderTree(*m_documentElement);
 
     clearChildNeedsStyleRecalc();
-    setAttached(false);
 
     unscheduleStyleRecalc();
 
@@ -5439,6 +5438,9 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     
     if (m_fullScreenRenderer)
         m_fullScreenRenderer->unwrapRenderer();
+
+    if (m_fullScreenElement->parentNode())
+        m_fullScreenElement->parentNode()->setNeedsStyleRecalc(ReconstructRenderTree);
 
     m_fullScreenElement = nullptr;
     scheduleForcedStyleRecalc();

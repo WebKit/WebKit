@@ -61,7 +61,7 @@ void AppendNodeCommand::doApply()
     if (!m_parent->rendererIsEditable() && m_parent->attached())
         return;
 
-    m_parent->appendChild(m_node.get(), IGNORE_EXCEPTION, AttachLazily);
+    m_parent->appendChild(m_node.get(), IGNORE_EXCEPTION);
 
     if (AXObjectCache::accessibilityEnabled())
         sendAXTextChangedIgnoringLineBreaks(m_node.get(), AXObjectCache::AXTextInserted);

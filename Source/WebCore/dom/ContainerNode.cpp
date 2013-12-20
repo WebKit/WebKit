@@ -258,7 +258,7 @@ static inline bool checkReplaceChild(ContainerNode* newParent, Node* newChild, N
     return true;
 }
 
-bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec, AttachBehavior attachBehavior)
+bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec)
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
@@ -270,7 +270,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
     // insertBefore(node, 0) is equivalent to appendChild(node)
     if (!refChild)
-        return appendChild(newChild, ec, attachBehavior);
+        return appendChild(newChild, ec);
 
     // Make sure adding the new child is OK.
     if (!checkAddChild(this, newChild.get(), ec))
@@ -317,7 +317,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
         insertBeforeCommon(next.get(), child);
 
-        updateTreeAfterInsertion(child, attachBehavior);
+        updateTreeAfterInsertion(child);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -396,9 +396,11 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
     notifyChildInserted(*newChild, ChildChangeSourceParser);
 
     ChildNodeInsertionNotifier(*this).notify(*newChild);
+
+    newChild->setNeedsStyleRecalc(ReconstructRenderTree);
 }
 
-bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, AttachBehavior attachBehavior)
+bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec)
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
@@ -478,7 +480,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
                 appendChildToContainer(&child, *this);
         }
 
-        updateTreeAfterInsertion(child, attachBehavior);
+        updateTreeAfterInsertion(child);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -674,7 +676,7 @@ void ContainerNode::removeChildren()
     dispatchSubtreeModifiedEvent();
 }
 
-bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, AttachBehavior attachBehavior)
+bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec)
 {
     Ref<ContainerNode> protect(*this);
 
@@ -724,7 +726,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, At
             appendChildToContainer(&child, *this);
         }
 
-        updateTreeAfterInsertion(child, attachBehavior);
+        updateTreeAfterInsertion(child);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -757,6 +759,8 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
     notifyChildInserted(*newChild, ChildChangeSourceParser);
 
     ChildNodeInsertionNotifier(*this).notify(*newChild);
+
+    newChild->setNeedsStyleRecalc(ReconstructRenderTree);
 }
 
 void ContainerNode::suspendPostAttachCallbacks()
@@ -1065,7 +1069,7 @@ static void dispatchChildRemovalEvents(Node& child)
     }
 }
 
-void ContainerNode::updateTreeAfterInsertion(Node& child, AttachBehavior attachBehavior)
+void ContainerNode::updateTreeAfterInsertion(Node& child)
 {
     ASSERT(child.refCount());
 
@@ -1075,19 +1079,7 @@ void ContainerNode::updateTreeAfterInsertion(Node& child, AttachBehavior attachB
 
     ChildNodeInsertionNotifier(*this).notify(child);
 
-    // FIXME: Attachment should be the first operation in this function, but some code
-    // (for example, HTMLFormControlElement's autofocus support) requires this ordering.
-    if (attached() && !child.attached() && child.parentNode() == this) {
-        if (attachBehavior == AttachLazily) {
-            if (child.isElementNode())
-                toElement(child).lazyAttach();
-            else if (child.isTextNode()) {
-                child.setAttached(true);
-                child.setNeedsStyleRecalc();
-            }
-        } else
-            attachChild(child);
-    }
+    child.setNeedsStyleRecalc(ReconstructRenderTree);
 
     dispatchChildInsertionEvents(child);
 }

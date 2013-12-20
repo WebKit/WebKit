@@ -3016,7 +3016,16 @@ WEBCORE_COMMAND(yankAndSelect)
 // Do a layout, but set up a new fixed width for the purposes of doing printing layout.
 // minPageWidth==0 implies a non-printing layout
 - (void)layoutToMinimumPageWidth:(float)minPageLogicalWidth height:(float)minPageLogicalHeight originalPageWidth:(float)originalPageWidth originalPageHeight:(float)originalPageHeight maximumShrinkRatio:(float)maximumShrinkRatio adjustingViewSize:(BOOL)adjustViewSize
-{    
+{
+    Frame* coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+    if (coreFrame->document()) {
+        if (coreFrame->document()->inPageCache())
+            return;
+        coreFrame->document()->updateStyleIfNeeded();
+    }
+
     if (![self _needsLayout])
         return;
 
@@ -3025,10 +3034,6 @@ WEBCORE_COMMAND(yankAndSelect)
 #endif
 
     LOG(View, "%@ doing layout", self);
-
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return;
 
     if (FrameView* coreView = coreFrame->view()) {
         if (minPageLogicalWidth > 0.0) {

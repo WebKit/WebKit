@@ -36,8 +36,6 @@ void PlaceholderDocument::createRenderTree()
 
     for (auto& child : elementChildren(*this))
         Style::attachRenderTree(child);
-
-    setAttached(true);
 }
 
 } // namespace WebCore
