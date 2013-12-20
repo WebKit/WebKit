@@ -622,7 +622,7 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
     _treeElementSelected: function(treeElement, selectedByUser)
     {
-        if (treeElement instanceof WebInspector.FolderTreeElement)
+        if (treeElement instanceof WebInspector.FolderTreeElement || treeElement instanceof WebInspector.DatabaseHostTreeElement)
             return;
 
         if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement ||

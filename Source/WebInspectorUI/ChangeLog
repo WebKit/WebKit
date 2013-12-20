@@ -1,5 +1,18 @@
 2013-12-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Frontend Error when selecting Database folder in Resources Sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=126029
+
+        Reviewed by Timothy Hatcher.
+
+        Treat the DatabaseHostTreeElement tree element like a folder. It pretty much
+        is a folder, but inherits from StorageTreeElement to share some code there.
+
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._treeElementSelected):
+
+2013-12-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Uncaught Exception: NavigationSidebarPanel.js: TypeError: undefined is not a function
         https://bugs.webkit.org/show_bug.cgi?id=126018
 
