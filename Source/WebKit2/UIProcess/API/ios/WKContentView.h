@@ -24,6 +24,7 @@
  */
 
 #import <UIKit/UIKit.h>
+#import <WebKit2/WKBase.h>
 #import <WebKit2/WKBrowsingContextController.h>
 #import <WebKit2/WKBrowsingContextGroup.h>
 #import <WebKit2/WKProcessGroup.h>
@@ -54,6 +55,10 @@ WK_API_CLASS
 @property (nonatomic, assign) id <WKContentViewDelegate> delegate;
 @property (nonatomic, readonly) WKContentType contentType;
 
+@property (readonly) WKPageRef _pageRef;
+
+- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
+- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage;
 - (id)initWithFrame:(CGRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
 
 - (void)setMinimumSize:(CGSize)size;

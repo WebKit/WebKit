@@ -1,3 +1,18 @@
+2013-12-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove WKContentViewPrivate.h, WKContentView.h is private now
+        https://bugs.webkit.org/show_bug.cgi?id=125981
+
+        Reviewed by Dan Bernstein.
+
+        There is no need for a separate header, WKContentView has become an implementation
+        detail of WKView.
+
+        * UIProcess/API/ios/WKContentView.h:
+        * UIProcess/API/ios/WKContentViewInternal.h:
+        * UIProcess/API/ios/WKContentViewPrivate.h: Removed.
+        * UIProcess/API/ios/WKView.mm:
+
 2013-12-19  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r160515): Frequent assertion failures on printing/print-close-crash.html

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKContentViewPrivate.h"
+#import "WKContentView.h"
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>
 

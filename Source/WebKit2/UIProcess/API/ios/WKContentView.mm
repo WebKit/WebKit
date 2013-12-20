@@ -60,6 +60,20 @@ using namespace WebKit;
     return nil;
 }
 
+- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
+{
+    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:nullptr];
+}
+
+- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    [self _commonInitializationWithContextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage];
+    return self;
+}
+
 - (id)initWithFrame:(CGRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
 {
     if (!(self = [super initWithFrame:frame]))
@@ -109,6 +123,11 @@ using namespace WebKit;
     else if (_page->mainFrame()->isDisplayingStandaloneImageDocument())
         return WKContentType::Image;
     return WKContentType::Standard;
+}
+
+- (WKPageRef)_pageRef
+{
+    return toAPI(_page.get());
 }
 
 - (void)setMinimumSize:(CGSize)size
@@ -254,29 +273,6 @@ using namespace WebKit;
 - (void)_decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin&)origin frame:(WebFrameProxy&)frame request:(GeolocationPermissionRequestProxy&)permissionRequest
 {
     [[wrapper(_page->process().context()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:toAPI(&origin) frame:toAPI(&frame) request:toAPI(&permissionRequest) window:[self window]];
-}
-
-@end
-
-@implementation WKContentView (Private)
-
-- (WKPageRef)_pageRef
-{
-    return toAPI(_page.get());
-}
-
-- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
-{
-    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:nullptr];
-}
-
-- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
-{
-    if (!(self = [super initWithFrame:frame]))
-        return nil;
-
-    [self _commonInitializationWithContextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage];
-    return self;
 }
 
 @end
