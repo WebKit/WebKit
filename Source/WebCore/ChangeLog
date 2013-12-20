@@ -1,3 +1,12 @@
+2013-12-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r160909.
+        Remove remaining uses of AttachLazily in code specific to the GTK port.
+
+        * html/shadow/MediaControlsGtk.cpp:
+        (WebCore::MediaControlsGtk::initializeControls):
+        (WebCore::MediaControlsGtk::createTextTrackDisplay):
+
 2013-12-19  Antti Koivisto  <antti@apple.com>
 
         Create render tree lazily
