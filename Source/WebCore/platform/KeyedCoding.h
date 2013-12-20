@@ -30,6 +30,14 @@
 
 namespace WebCore {
 
+class KeyedDecoder {
+protected:
+    virtual ~KeyedDecoder() { }
+
+public:
+    virtual bool decodeUInt32(const String& key, uint32_t&) = 0;
+};
+
 class KeyedEncoder {
 protected:
     virtual ~KeyedEncoder() { }

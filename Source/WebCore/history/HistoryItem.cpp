@@ -924,6 +924,19 @@ resume:
     return node.release();
 }
 
+PassRefPtr<HistoryItem> HistoryItem::decodeBackForwardTree(const String&, const String&, const String&, KeyedDecoder& decoder)
+{
+    uint32_t version;
+    if (!decoder.decodeUInt32("version", version))
+        return nullptr;
+    
+    if (version != backForwardTreeEncodingVersion)
+        return nullptr;
+
+    // FIXME: Implement.
+    return nullptr;
+}
+
 #ifndef NDEBUG
 
 int HistoryItem::showTree() const

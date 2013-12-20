@@ -54,6 +54,7 @@ class Document;
 class FormData;
 class HistoryItem;
 class Image;
+class KeyedDecoder;
 class KeyedEncoder;
 class ResourceRequest;
 class URL;
@@ -95,6 +96,7 @@ public:
     void encodeBackForwardTree(Encoder&) const;
     void encodeBackForwardTree(KeyedEncoder&) const;
     static PassRefPtr<HistoryItem> decodeBackForwardTree(const String& urlString, const String& title, const String& originalURLString, Decoder&);
+    static PassRefPtr<HistoryItem> decodeBackForwardTree(const String& urlString, const String& title, const String& originalURLString, KeyedDecoder&);
 
     const String& originalURLString() const;
     const String& urlString() const;

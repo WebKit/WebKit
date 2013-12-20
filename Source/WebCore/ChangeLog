@@ -1,3 +1,18 @@
+2013-12-19  Anders Carlsson  <andersca@apple.com>
+
+        Begin stubbing out the KeyedDecoder class
+        https://bugs.webkit.org/show_bug.cgi?id=126031
+
+        Reviewed by Andreas Kling.
+
+        KeyedDecoder is going to be the new way to decode back forward trees.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::decodeBackForwardTree):
+        * history/HistoryItem.h:
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedDecoder::~KeyedDecoder):
+
 2013-12-19  Oliver Hunt  <oliver@apple.com>
 
         DOM bindings should use thisValue for attributes
