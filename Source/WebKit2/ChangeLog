@@ -1,3 +1,64 @@
+2013-12-20  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Implement smartMagnifyWithEvent: and make it work
+        https://bugs.webkit.org/show_bug.cgi?id=125752
+        <rdar://problem/15664245>
+
+        Reviewed by Anders Carlsson.
+
+        Implement "smart magnify", which is the double-tap-to-zoom gesture on OS X.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView smartMagnifyWithEvent:]):
+        Forward smartMagnifyWithEvent to ViewGestureController.
+
+        * UIProcess/mac/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::handleMagnificationGesture):
+        Drive-by repair a comment.
+
+        (WebKit::ViewGestureController::handleSmartMagnificationGesture):
+        Added. Immediately dispatch a message to the web process to retrieve
+        the rendered rect of the element under the gesture.
+
+        (WebKit::maximumRectangleComponentDelta):
+        Return the absolute maximum delta between corresponding components of two rects.
+
+        (WebKit::ViewGestureController::didCollectGeometryForSmartMagnificationGesture):
+        Once the WebProcess has replied with the relevant geometry, use it to
+        determine our target rectangle (the element's rect, with some padding)
+        and target magnification (attempting to keep replaced elements
+        fully in-view, and otherwise zooming in as far as possible to fit the
+        element's width).
+
+        If this gesture occurs after the page is already magnified, and targets
+        a similar region to the previous smart magnification gesture, zoom out
+        instead of panning across the page.
+
+        Begin a transient zoom with the current magnification, and immediately
+        commit it at our target magnification and offset, so that the drawing
+        area will animate to the new parameters.
+
+        (WebKit::ViewGestureController::endActiveGesture):
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureController.messages.in:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture):
+        Hit-test the document to determine the node under the smart magnification
+        gesture, and return it to the UI process along with various other bits of data.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.messages.in:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::adjustTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+        Instead of short-circuiting the animation if we didn't have to constrain
+        the origin, short-circuit if we're already *at* the right origin,
+        like the comment said. This prevents jarring jumps when double-tap-panning
+        between elements when zoomed all the way in.
+
 2013-12-20  Ricky Mondello  <rmondello@apple.com>
 
         Allow partial application of PlugInAutoStart tables based on timestamp

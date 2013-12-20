@@ -149,6 +149,7 @@ private:
     bool m_inUpdateGeometry;
 
     double m_transientZoomScale;
+    WebCore::FloatPoint m_transientZoomOrigin;
 };
 
 } // namespace WebKit

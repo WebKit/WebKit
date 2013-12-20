@@ -32,6 +32,8 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/FrameView.h>
+#include <WebCore/HitTestResult.h>
+#include <WebCore/RenderView.h>
 
 using namespace WebCore;
 
@@ -52,6 +54,24 @@ void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
 {
     FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);
     m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect));
+}
+
+void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(FloatPoint origin)
+{
+    FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);
+
+    FloatPoint scrolledOrigin = origin;
+    scrolledOrigin.moveBy(m_webPage.mainFrameView()->scrollPosition());
+
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
+    HitTestResult hitTestResult = HitTestResult(scrolledOrigin);
+    m_webPage.mainFrameView()->renderView()->hitTest(request, hitTestResult);
+
+    if (hitTestResult.innerNode()) {
+        bool isReplaced;
+        FloatRect renderRect = hitTestResult.innerNode()->renderRect(&isReplaced);
+        m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, renderRect, visibleContentRect, isReplaced));
+    }
 }
 
 } // namespace WebKit

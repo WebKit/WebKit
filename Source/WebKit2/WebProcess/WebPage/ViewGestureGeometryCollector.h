@@ -28,6 +28,10 @@
 
 #include "MessageReceiver.h"
 
+namespace WebCore {
+class FloatPoint;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -43,6 +47,7 @@ private:
 
     // Message handlers.
     void collectGeometryForMagnificationGesture();
+    void collectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin);
 
     WebPage& m_webPage;
 };

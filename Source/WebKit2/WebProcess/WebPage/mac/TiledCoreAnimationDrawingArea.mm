@@ -73,6 +73,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     , m_isPaintingSuspended(!(parameters.viewState & ViewState::IsVisible))
     , m_clipsToExposedRect(false)
     , m_updateIntrinsicContentSizeTimer(this, &TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired)
+    , m_transientZoomScale(1)
 {
     m_webPage->corePage()->settings().setForceCompositingMode(true);
 
@@ -729,6 +730,7 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
     shadowLayer->setPosition(origin + shadowBounds.center());
 
     m_transientZoomScale = scale;
+    m_transientZoomOrigin = origin;
 }
 
 static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(String keyPath)
@@ -765,7 +767,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     constrainedOrigin.moveBy(-visibleContentRect.location());
     constrainedOrigin = -constrainedOrigin;
 
-    if (m_transientZoomScale == scale && roundedIntPoint(origin) == roundedIntPoint(constrainedOrigin)) {
+    if (m_transientZoomScale == scale && roundedIntPoint(m_transientZoomOrigin) == roundedIntPoint(constrainedOrigin)) {
         // We're already at the right scale and position, so we don't need to animate.
         applyTransientZoomToPage(scale, origin);
         return;
@@ -829,6 +831,8 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     unscrolledOrigin.moveBy(-visibleContentRect.location());
     m_webPage->scalePage(scale, roundedIntPoint(-unscrolledOrigin));
     flushLayers();
+
+    m_transientZoomScale = 1;
 }
 
 } // namespace WebKit

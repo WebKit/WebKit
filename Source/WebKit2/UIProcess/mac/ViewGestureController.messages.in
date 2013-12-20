@@ -22,4 +22,5 @@
 
 messages -> ViewGestureController {
     DidCollectGeometryForMagnificationGesture(WebCore::FloatRect visibleContentBounds)
+    DidCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement)
 }

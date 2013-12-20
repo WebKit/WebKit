@@ -3221,6 +3221,18 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_gestureController->handleMagnificationGesture(event.magnification, [self convertPoint:event.locationInWindow fromView:nil]);
 }
 
+- (void)smartMagnifyWithEvent:(NSEvent *)event
+{
+    if (!_data->_allowsMagnification) {
+        [super smartMagnifyWithEvent:event];
+        return;
+    }
+
+    [self _ensureGestureController];
+
+    _data->_gestureController->handleSmartMagnificationGesture([self convertPoint:event.locationInWindow fromView:nil]);
+}
+
 -(void)endGestureWithEvent:(NSEvent *)event
 {
     if (!_data->_gestureController) {

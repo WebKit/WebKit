@@ -1,3 +1,14 @@
+2013-12-20  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Implement smartMagnifyWithEvent: and make it work
+        https://bugs.webkit.org/show_bug.cgi?id=125752
+        <rdar://problem/15664245>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        Add some exports.
+
 2013-12-20  Antti Koivisto  <antti@apple.com>
 
         http/tests/misc/object-image-error.html asserts

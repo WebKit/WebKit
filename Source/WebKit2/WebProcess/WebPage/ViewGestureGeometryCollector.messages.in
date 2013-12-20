@@ -23,5 +23,6 @@
 messages -> ViewGestureGeometryCollector {
 
 CollectGeometryForMagnificationGesture()
+CollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin)
 
 }

@@ -39,14 +39,17 @@ public:
     ViewGestureController(WebPageProxy&);
     ~ViewGestureController();
 
-    void handleMagnificationGesture(double scale, WebCore::FloatPoint origin);
     double magnification() const;
+
+    void handleMagnificationGesture(double scale, WebCore::FloatPoint origin);
+    void handleSmartMagnificationGesture(WebCore::FloatPoint origin);
 
     void endActiveGesture();
 
     enum class ViewGestureType {
         None,
         Magnification,
+        SmartMagnification,
     };
 
 private:
@@ -55,6 +58,7 @@ private:
 
     // Message handlers.
     void didCollectGeometryForMagnificationGesture(WebCore::FloatRect visibleContentBounds);
+    void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement);
 
     void endMagnificationGesture();
     WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
@@ -63,6 +67,8 @@ private:
 
     double m_magnification;
     WebCore::FloatPoint m_magnificationOrigin;
+
+    WebCore::FloatRect m_lastSmartMagnificationUnscaledTargetRect;
 
     ViewGestureType m_activeGestureType;
 
