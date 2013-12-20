@@ -1,3 +1,13 @@
+2013-12-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Implement ArrayBuffer.isView
+        https://bugs.webkit.org/show_bug.cgi?id=126004
+
+        Reviewed by Filip Pizlo.
+
+        * webgl/1.0.2/resources/webgl_test_files/conformance/typedarrays/array-unit-tests.html:
+        Correct test for 'isView' to actually check for 'isView' function.
+
 2013-12-19  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test plugins/destroy-during-npp-new.html is flaky

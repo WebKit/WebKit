@@ -148,7 +148,7 @@ function testArrayBufferIsViewMethod() {
   debug('test ArrayBuffer.isView() with various values');
 
   try {
-    if (!ArrayBuffer.create) {
+    if (!ArrayBuffer.isView) {
       testFailed('ArrayBuffer.isView() method does not exist');
     } else {
       testPassed('ArrayBuffer.isView() method exists');

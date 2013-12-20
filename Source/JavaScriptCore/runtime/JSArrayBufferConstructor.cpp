@@ -35,6 +35,8 @@
 
 namespace JSC {
 
+static EncodedJSValue JSC_HOST_CALL arrayBufferFuncIsView(ExecState*);
+
 const ClassInfo JSArrayBufferConstructor::s_info = {
     "Function", &Base::s_info, 0, 0,
     CREATE_METHOD_TABLE(JSArrayBufferConstructor)
@@ -50,6 +52,9 @@ void JSArrayBufferConstructor::finishCreation(VM& vm, JSArrayBufferPrototype* pr
     Base::finishCreation(vm, "ArrayBuffer");
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontEnum | DontDelete | ReadOnly);
+
+    JSGlobalObject* globalObject = this->globalObject();
+    JSC_NATIVE_FUNCTION(vm.propertyNames->isView, arrayBufferFuncIsView, DontEnum, 1);
 }
 
 JSArrayBufferConstructor* JSArrayBufferConstructor::create(VM& vm, Structure* structure, JSArrayBufferPrototype* prototype)
@@ -107,6 +112,15 @@ CallType JSArrayBufferConstructor::getCallData(JSCell*, CallData& callData)
     callData.native.function = constructArrayBuffer;
     return CallTypeHost;
 }
+
+// ------------------------------ Functions --------------------------------
+
+// ECMA 24.1.3.1
+EncodedJSValue JSC_HOST_CALL arrayBufferFuncIsView(ExecState* exec)
+{
+    return JSValue::encode(jsBoolean(jsDynamicCast<JSArrayBufferView*>(exec->argument(0))));
+}
+    
 
 } // namespace JSC
 

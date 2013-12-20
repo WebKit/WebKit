@@ -1,3 +1,16 @@
+2013-12-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Implement ArrayBuffer.isView
+        https://bugs.webkit.org/show_bug.cgi?id=126004
+
+        Reviewed by Filip Pizlo.
+
+        Test coverage in webgl/1.0.2/resources/webgl_test_files/conformance/typedarrays/array-unit-tests.html
+
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::finishCreation): Add 'isView' to object constructor.
+        (JSC::arrayBufferFuncIsView): New method.
+
 2013-12-19  Mark Lam  <mark.lam@apple.com>
 
         Fix broken C loop LLINT build.

@@ -112,6 +112,7 @@
     macro(instructionCount) \
     macro(isArray) \
     macro(isPrototypeOf) \
+    macro(isView) \
     macro(isWatchpoint) \
     macro(join) \
     macro(keys) \
