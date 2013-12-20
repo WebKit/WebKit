@@ -203,6 +203,7 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     setUpHistoryClient(self, toAPI(_context.get()));
 #if PLATFORM(IOS)
     _context->setUsesNetworkProcess(true);
+    _context->setProcessModel(ProcessModelMultipleSecondaryProcesses);
 #endif
 
     return self;

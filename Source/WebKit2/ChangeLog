@@ -1,3 +1,13 @@
+2013-12-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2][iOS] Enable multiprocess by default
+        https://bugs.webkit.org/show_bug.cgi?id=126030
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+
 2013-12-19  Andy Estes  <aestes@apple.com>
 
         Remove WebFilterEvaluator wrappers from WebKitSystemInterface
