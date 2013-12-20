@@ -1,3 +1,19 @@
+2013-12-20  Andreas Kling  <akling@apple.com>
+
+        Devirtualize RenderElement::setStyle().
+        <https://webkit.org/b/126065>
+
+        setStyle() was only virtual in order to let RenderSVGBlock override
+        the display type in some cases. Devirtualized it and moved the fixup
+        logic to StyleResolver::adjustRenderStyle().
+
+        This hack had an evil twin in RenderElement::initializeStyle() that
+        also goes away. FIXME--!
+
+        Based on a Blink change by Elliott Sprehn.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-20  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] When changing flow-from/flow-into on :hover, elements overflowing the region are not correctly repainted

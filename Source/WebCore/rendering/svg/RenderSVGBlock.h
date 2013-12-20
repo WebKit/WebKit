@@ -42,7 +42,6 @@ protected:
 private:
     void element() const WTF_DELETED_FUNCTION;
 
-    virtual void setStyle(PassRef<RenderStyle>) OVERRIDE FINAL;
     virtual void updateFromStyle() OVERRIDE FINAL;
 
     virtual bool isRenderSVGBlock() const OVERRIDE FINAL { return true; };

@@ -40,7 +40,7 @@ public:
 
     void initializeStyle();
 
-    virtual void setStyle(PassRef<RenderStyle>);
+    void setStyle(PassRef<RenderStyle>);
     // Called to update a style that is allowed to trigger animations.
     void setAnimatableStyle(PassRef<RenderStyle>);
 

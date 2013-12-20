@@ -1430,6 +1430,10 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         // not be scaled again.
         if (e->hasTagName(SVGNames::foreignObjectTag))
             style.setEffectiveZoom(RenderStyle::initialZoom());
+
+        // SVG text layout code expects us to be a block-level style element.
+        if ((e->hasTagName(SVGNames::foreignObjectTag) || e->hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
+            style.setDisplay(BLOCK);
     }
 #endif
 }
