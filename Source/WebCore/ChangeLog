@@ -1,5 +1,21 @@
 2013-12-20  Antti Koivisto  <antti@apple.com>
 
+        http/tests/misc/object-image-error.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=126074
+
+        Reviewed by Andreas Kling.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAttachRenderers):
+        (WebCore::HTMLPlugInImageElement::updateWidgetCallback):
+        (WebCore::HTMLPlugInImageElement::startLoadingImage):
+        (WebCore::HTMLPlugInImageElement::startLoadingImageCallback):
+        * html/HTMLPlugInImageElement.h:
+        
+            Start image load from post-attach so we don't re-enter attach when image load fails synchronously.
+
+2013-12-20  Antti Koivisto  <antti@apple.com>
+
         Crashes in AccessibilityRenderObject::computeAccessibilityIsIgnored()
         https://bugs.webkit.org/show_bug.cgi?id=126073
 

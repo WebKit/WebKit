@@ -252,9 +252,9 @@ void HTMLPlugInImageElement::didAttachRenderers()
     }
     if (!renderer() || useFallbackContent())
         return;
-    if (!m_imageLoader)
-        m_imageLoader = adoptPtr(new HTMLImageLoader(this));
-    m_imageLoader->updateFromElement();
+
+    // Image load might complete synchronously and cause us to re-enter attach.
+    queuePostAttachCallback(&HTMLPlugInImageElement::startLoadingImageCallback, this);
 }
 
 void HTMLPlugInImageElement::willDetachRenderers()
@@ -334,9 +334,21 @@ PassRefPtr<RenderStyle> HTMLPlugInImageElement::customStyleForRenderer()
     return m_customStyleForPageCache;
 }
 
-void HTMLPlugInImageElement::updateWidgetCallback(Node* n, unsigned)
+void HTMLPlugInImageElement::updateWidgetCallback(Node* node, unsigned)
 {
-    toHTMLPlugInImageElement(n)->updateWidgetIfNecessary();
+    toHTMLPlugInImageElement(node)->updateWidgetIfNecessary();
+}
+
+void HTMLPlugInImageElement::startLoadingImage()
+{
+    if (!m_imageLoader)
+        m_imageLoader = adoptPtr(new HTMLImageLoader(this));
+    m_imageLoader->updateFromElement();
+}
+
+void HTMLPlugInImageElement::startLoadingImageCallback(Node* node, unsigned)
+{
+    toHTMLPlugInImageElement(node)->startLoadingImage();
 }
 
 void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
