@@ -1,3 +1,13 @@
+2013-12-20  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        [MIPS] Missing MacroAssemblerMIPS::branchTest8(ResultCondition, BaseIndex, TrustedImm32)
+        https://bugs.webkit.org/show_bug.cgi?id=126062
+
+        Reviewed by Mark Hahnenberg.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchTest8):
+
 2013-12-20  Julien Brianceau  <jbriance@cisco.com>
 
         [sh4] Add missing implementation in MacroAssembler to fix build.
