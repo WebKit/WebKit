@@ -1,3 +1,46 @@
+2013-12-19  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add an utility class to simplify generating function calls
+        https://bugs.webkit.org/show_bug.cgi?id=125972
+
+        Reviewed by Geoffrey Garen.
+
+        FunctionCall is a little helper class to make function calls from the JIT
+        in 3 or 4 lines.
+
+        FunctionCall takes a StackAllocator, a RegisterAllocator and a function pointer.
+        When the call is generated, the helper saves the registers as necessary, aligns
+        the stack, does the call, restores the stack, and restore the registers.
+
+        * cssjit/FunctionCall.h: Added.
+        (WebCore::FunctionCall::FunctionCall):
+        (WebCore::FunctionCall::setFunctionAddress):
+        (WebCore::FunctionCall::setFirstArgument):
+        (WebCore::FunctionCall::call):
+
+        (WebCore::FunctionCall::callAndBranchOnCondition): Most test functions used
+        with FunctionCall return a boolean. When the boolean is the sole purpose of the function
+        call, this provides an easy way to branch on the boolean without worrying about registers.
+
+        The return register is tested first, then all the saved registers are restored from the stack
+        (which can include the return register), finally the flags are used for a jump.
+
+        (WebCore::FunctionCall::prepareAndCall):
+        (WebCore::FunctionCall::cleanupPostCall):
+        (WebCore::FunctionCall::saveAllocatedRegisters):
+        (WebCore::FunctionCall::restoreAllocatedRegisters):
+        * WebCore.xcodeproj/project.pbxproj:
+        * cssjit/FunctionCall.h: Added.
+        (WebCore::FunctionCall::FunctionCall):
+        (WebCore::FunctionCall::setFunctionAddress):
+        (WebCore::FunctionCall::setFirstArgument):
+        (WebCore::FunctionCall::call):
+        (WebCore::FunctionCall::callAndBranchOnCondition):
+        (WebCore::FunctionCall::prepareAndCall):
+        (WebCore::FunctionCall::cleanupPostCall):
+        (WebCore::FunctionCall::saveAllocatedRegisters):
+        (WebCore::FunctionCall::restoreAllocatedRegisters):
+
 2013-12-19  Anders Carlsson  <andersca@apple.com>
 
         Begin stubbing out the KeyedDecoder class
