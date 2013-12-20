@@ -74,6 +74,8 @@ public:
 
     void setRegionObjectsRegionStyle();
     void restoreRegionObjectsOriginalStyle();
+    
+    virtual LayoutRect visualOverflowRect() const OVERRIDE;
 
     RenderNamedFlowThread* namedFlowThread() const;
 

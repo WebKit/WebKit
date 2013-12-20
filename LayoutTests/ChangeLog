@@ -1,3 +1,18 @@
+2013-12-20  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] When changing flow-from/flow-into on :hover, elements overflowing the region are not correctly repainted
+        https://bugs.webkit.org/show_bug.cgi?id=117259
+
+        Reviewed by Antti Koivisto.
+
+        Added new tests and rebased existing test.
+
+        * fast/regions/hover-single-flow-from-none-overflow-expected.html: Added.
+        * fast/regions/hover-single-flow-from-none-overflow.html: Added.
+        * fast/regions/hover-single-flow-from-none-overflow-top-expected.html: Added.
+        * fast/regions/hover-single-flow-from-none-overflow-top.html: Added.
+        * fast/regions/repaint/repaint-regions-overflow-expected.txt: Rebased.
+
 2013-12-20  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Programmatically-inserted children lack accessibility events

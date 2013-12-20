@@ -266,4 +266,15 @@ RenderNamedFlowThread* RenderNamedFlowFragment::namedFlowThread() const
     return toRenderNamedFlowThread(flowThread());
 }
 
+LayoutRect RenderNamedFlowFragment::visualOverflowRect() const
+{
+    if (isValid()) {
+        RenderBoxRegionInfo* boxInfo = renderBoxRegionInfo(flowThread());
+        if (boxInfo && boxInfo->overflow())
+            return boxInfo->overflow()->visualOverflowRect();
+    }
+    
+    return RenderRegion::visualOverflowRect();
+}
+
 } // namespace WebCore

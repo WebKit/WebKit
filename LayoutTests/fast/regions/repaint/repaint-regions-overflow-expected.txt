@@ -5,15 +5,15 @@ Above all, avoid lies, all lies, especially the lie to yourself. Keep watch on y
 LAST LINE
 
 (repaint rects
-  (rect 106 206 300 100)
+  (rect 106 306 300 160)
   (rect 14 72 300 210)
   (rect 106 122 300 210)
   (rect 14 298 300 18)
   (rect 106 348 300 18)
   (rect 14 56 300 260)
   (rect 106 106 300 260)
-  (rect 60 150 312 112)
-  (rect 100 200 312 112)
+  (rect 60 150 312 266)
+  (rect 100 200 312 266)
   (rect 14 56 300 260)
   (rect 106 106 300 260)
   (rect 14 56 300 260)
