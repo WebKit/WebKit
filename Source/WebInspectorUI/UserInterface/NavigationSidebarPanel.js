@@ -201,9 +201,16 @@ WebInspector.NavigationSidebarPanel.prototype = {
         if (!selectedTreeElement)
             return;
 
+        if (this._isTreeElementWithoutRepresentedObject(selectedTreeElement))
+            return;
+
         var representedObject = selectedTreeElement.representedObject;
         cookie[WebInspector.TypeIdentifierCookieKey] = representedObject.constructor.TypeIdentifier;
-        representedObject.saveIdentityToCookie(cookie);
+
+        if (representedObject.saveIdentityToCookie)
+            representedObject.saveIdentityToCookie(cookie);
+        else
+            console.error("Error: TreeElement.representedObject is missing a saveIdentityToCookie implementation. TreeElement.constructor: %s", selectedTreeElement.constructor);
     },
 
     // This can be supplemented by subclasses that admit a simpler strategy for static tree elements.
@@ -541,6 +548,12 @@ WebInspector.NavigationSidebarPanel.prototype = {
         this._checkForOldResourcesTimeoutIdentifier = setTimeout(delayedWork.bind(this), 0);
     },
 
+    _isTreeElementWithoutRepresentedObject: function(treeElement)
+    {
+        return treeElement instanceof WebInspector.FolderTreeElement
+            || treeElement instanceof WebInspector.DatabaseHostTreeElement;
+    },
+
     _checkOutlinesForPendingViewStateCookie: function(matchTypeOnly)
     {
         if (!this._pendingViewStateCookie)
@@ -567,6 +580,9 @@ WebInspector.NavigationSidebarPanel.prototype = {
 
         function treeElementMatchesCookie(treeElement)
         {
+            if (this._isTreeElementWithoutRepresentedObject(treeElement))
+                return false;
+
             var representedObject = treeElement.representedObject;
             if (!representedObject)
                 return false;
@@ -579,7 +595,8 @@ WebInspector.NavigationSidebarPanel.prototype = {
                 return true;
 
             var candidateObjectCookie = {};
-            representedObject.saveIdentityToCookie(candidateObjectCookie);
+            if (representedObject.saveIdentityToCookie)
+                representedObject.saveIdentityToCookie(candidateObjectCookie);
 
             return Object.keys(candidateObjectCookie).every(function valuesMatchForKey(key) {
                 return candidateObjectCookie[key] === cookie[key];
@@ -591,11 +608,11 @@ WebInspector.NavigationSidebarPanel.prototype = {
 
         var matchedElement = null;
         treeElements.some(function(element) {
-            if (treeElementMatchesCookie(element)) {
+            if (treeElementMatchesCookie.call(this, element)) {
                 matchedElement = element;
                 return true;
             }
-        });
+        }, this);
 
         if (matchedElement) {
             matchedElement.revealAndSelect();

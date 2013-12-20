@@ -1,5 +1,33 @@
 2013-12-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Uncaught Exception: NavigationSidebarPanel.js: TypeError: undefined is not a function
+        https://bugs.webkit.org/show_bug.cgi?id=126018
+
+        Reviewed by Timothy Hatcher.
+
+        ERROR: TypeError: undefined is not a function (evaluating 'representedObject.saveIdentityToCookie(candidateObjectCookie)')
+
+        There are some TreeElements (Folders, and the special Databases Folder)
+        which do not have a represented object, and would throw an exception
+        when trying to use saveIdentityToCookie.
+
+        We should always provide a saveIdentityToCookie when possible. So just
+        blacklist the tree element types we know do not have representedObjects,
+        and where we don't want to save identity. This will continue to throw
+        exceptions in the future for tree elements that don't have the save
+        function implemented, but should.
+
+        Note that even if a TreeElement is constructed with a null represented
+        object, it becomes an empty object (representedObject || {}).
+
+        * UserInterface/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.saveStateToCookie):
+        (WebInspector.NavigationSidebarPanel.prototype._isTreeElementWithoutRepresentedObject):
+        (WebInspector.NavigationSidebarPanel.prototype.treeElementMatchesCookie):
+        (WebInspector.NavigationSidebarPanel.prototype._checkElementsForPendingViewStateCookie):
+
+2013-12-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Add InspectorFrontendHost.debuggableType to let the frontend know it's backend is JavaScript or Web
         https://bugs.webkit.org/show_bug.cgi?id=126016
 
