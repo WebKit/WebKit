@@ -1,3 +1,11 @@
+2013-12-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Myles C. Maxfield is a committer now
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-12-20  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] [WK2] platform/gtk/accessibility/roles-exposed.html is failing
