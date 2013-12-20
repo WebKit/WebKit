@@ -100,6 +100,9 @@ namespace JSC {
         static void writeBarrier(const JSCell*, JSCell*);
         static uint8_t* addressOfCardFor(JSCell*);
 
+#if ENABLE(GGC)
+        WriteBarrierBuffer& writeBarrierBuffer() { return m_writeBarrierBuffer; }
+#endif
         void flushWriteBarrierBuffer(JSCell*);
 
         Heap(VM*, HeapType);

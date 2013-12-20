@@ -1,3 +1,23 @@
+2013-12-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Clean up DFG write barriers
+        https://bugs.webkit.org/show_bug.cgi?id=126047
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::storeToWriteBarrierBuffer): Use the register allocator to 
+        determine which registers need saving instead of saving every single one of them.
+        (JSC::DFG::SpeculativeJIT::osrWriteBarrier): We don't need to save live register state 
+        because the write barriers during OSR execute when there are no live registers. Also we  
+        don't need to use pushes to pad the stack pointer for pokes on x86; we can just use an add.
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGSpeculativeJIT.h:
+        * jit/Repatch.cpp:
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStub):
+        * runtime/VM.h: Get rid of writeBarrierRegisterBuffer since it's no longer used.
+
 2013-12-20  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         [MIPS] Missing MacroAssemblerMIPS::branchTest8(ResultCondition, BaseIndex, TrustedImm32)
