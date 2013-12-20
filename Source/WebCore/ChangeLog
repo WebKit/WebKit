@@ -1,3 +1,11 @@
+2013-12-20  Andy Estes  <aestes@apple.com>
+
+        Remove an unneeded include of WebCoreSystemInterface.h.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * platform/mac/ContentFilterMac.mm:
+
 2013-12-20  Anders Carlsson  <andersca@apple.com>
 
         Node post attach callbacks should use references

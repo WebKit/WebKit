@@ -29,7 +29,6 @@
 #if USE(CONTENT_FILTERING)
 
 #import "ResourceResponse.h"
-#import "WebCoreSystemInterface.h"
 
 #if defined(__has_include) && __has_include(<WebContentAnalysis/WebFilterEvaluator.h>)
 #import <WebContentAnalysis/WebFilterEvaluator.h>
