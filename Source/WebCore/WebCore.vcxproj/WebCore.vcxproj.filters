@@ -4791,6 +4791,9 @@
     <ClCompile Include="..\bridge\runtime_root.cpp">
       <Filter>bridge</Filter>
     </ClCompile>
+    <ClCompile Include="..\inspector\CommandLineAPIModule.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
     <ClCompile Include="..\inspector\ConsoleMessage.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -12368,6 +12371,9 @@
     <ClInclude Include="..\inspector\BindingVisitors.h">
       <Filter>inspector</Filter>
     </ClInclude>
+    <ClInclude Include="..\inspector\CommandLineAPIModule.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
     <ClInclude Include="..\inspector\ConsoleAPITypes.h">
       <Filter>inspector</Filter>
     </ClInclude>
@@ -13037,6 +13043,9 @@
       <Filter>html\track</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\CSSGrammar.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\CommandLineAPIModuleSource.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\EventHeaders.h">

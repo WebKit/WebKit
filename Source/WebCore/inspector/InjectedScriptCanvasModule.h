@@ -50,6 +50,7 @@ public:
     InjectedScriptCanvasModule();
     
     virtual String source() const;
+    virtual bool returnsObject() const { return true; }
 
     static InjectedScriptCanvasModule moduleForState(InjectedScriptManager*, JSC::ExecState*);
 

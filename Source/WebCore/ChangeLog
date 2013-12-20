@@ -1,3 +1,73 @@
+2013-12-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Extract CommandLineAPI into its own InjectedScriptModule
+        https://bugs.webkit.org/show_bug.cgi?id=126038
+
+        Reviewed by Timothy Hatcher.
+
+        No tests, no observable change in behavior.
+
+        Move the CommandLineAPI source into its own module. Load the module
+        in InjectedScripts for WebCore::Pages. Not for workers.
+
+        Moving CommandLineAPI into it's own module moves it from being inside
+        the same anonymous function to being evaluated outside the anonymous
+        function. To connect the two InjectedScript passes itself to the
+        injected module, and the CommandLineAPI module places its class on the
+        injectedScript as injectedScript.CommandLineAPI.
+
+        This essentially makes the CommandLineAPI module an InjectedScript
+        extension. InjectedScriptSource checks for the existence of
+        this.CommandLineAPI to see if the fuller version is available. Otherwise
+        it falls back to a BasicCommandLineAPI which only exposes "$_",
+        which is the "last evaluated result". That will be useful for JS Contexts
+        and Workers.
+
+        At the same time, this patch makes InjectedScriptModule more generic,
+        to support being used in a pure JavaScript environment, meaning one
+        without "window" as the global object.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        Add files. Minify the CommandLineAPIModuleSource in generation.
+
+        * inspector/CommandLineAPIModule.h: Added.
+        * inspector/CommandLineAPIModule.cpp: Added.
+        (WebCore::CommandLineAPIModule::CommandLineAPIModule):
+        (WebCore::CommandLineAPIModule::injectIfNeeded):
+        (WebCore::CommandLineAPIModule::source):
+        Inject the module that doesn't return an object, its just evaluated code
+        extending the original InjectedScript.
+
+        * inspector/InjectedScriptModule.h:
+        * inspector/InjectedScriptModule.cpp:
+        (WebCore::InjectedScriptModule::ensureInjected):
+        Only ASSERT the result was an object if the Module claims it returns an object.
+
+        * inspector/InjectedScriptCanvasModule.h:
+        (WebCore::InjectedScriptCanvasModule::returnsObject):
+        Return an object used later to call into the CanvasModule.
+
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::injectedScriptForEval):
+        Ensure the CommandLineAPIModule is loaded in the Page's InjectedScript.
+
+        * inspector/CommandLineAPIModuleSource.js: Added.
+        Create the CommandLineAPI class and place it on injectedScript.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._evaluateOn):
+        Inject either the BasicCommandLineAPI or extended CommandLineAPI.
+        Derive the globalObject dynamically instead of assuming window.
+        Inject the commandLineAPI on window.console or the globalObject based on context.
+        Audit and rename uses of "window" to something like globalObject.
+
 2013-12-20  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2 View Gestures: Implement smartMagnifyWithEvent: and make it work

@@ -30,49 +30,13 @@
 
 /**
  * @param {InjectedScriptHost} InjectedScriptHost
- * @param {Window} inspectedWindow
+ * @param {GlobalObject} inspectedGlobalObject
  * @param {number} injectedScriptId
  */
-(function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
+(function (InjectedScriptHost, inspectedGlobalObject, injectedScriptId) {
 
 // Protect against Object overwritten by the user code.
 var Object = {}.constructor;
-
-/**
- * @param {Arguments} array
- * @param {number=} index
- * @return {Array.<*>}
- */
-function slice(array, index)
-{
-    var result = [];
-    for (var i = index || 0; i < array.length; ++i)
-        result.push(array[i]);
-    return result;
-}
-
-/**
- * Please use this bind, not the one from Function.prototype
- * @param {function(...)} func
- * @param {Object} thisObject
- * @param {...number} var_args
- */
-function bind(func, thisObject, var_args)
-{
-    var args = slice(arguments, 2);
-
-    /**
-     * @param {...number} var_args
-     */
-    function bound(var_args)
-    {
-        return func.apply(thisObject, args.concat(slice(arguments)));
-    }
-    bound.toString = function() {
-        return "bound: " + func;
-    };
-    return bound;
-}
 
 /**
  * @constructor
@@ -111,13 +75,13 @@ InjectedScript.prototype = {
     /**
      * @param {*} object
      * @param {string} groupName
-     * @param {boolean} canAccessInspectedWindow
+     * @param {boolean} canAccessInspectedGlobalObject
      * @param {boolean} generatePreview
      * @return {!RuntimeAgent.RemoteObject}
      */
-    wrapObject: function(object, groupName, canAccessInspectedWindow, generatePreview)
+    wrapObject: function(object, groupName, canAccessInspectedGlobalObject, generatePreview)
     {
-        if (canAccessInspectedWindow)
+        if (canAccessInspectedGlobalObject)
             return this._wrapObject(object, groupName, false, generatePreview);
         return this._fallbackWrapper(object);
     },
@@ -138,14 +102,14 @@ InjectedScript.prototype = {
     },
 
     /**
-     * @param {boolean} canAccessInspectedWindow
+     * @param {boolean} canAccessInspectedGlobalObject
      * @param {Object} table
      * @param {Array.<string>|string|boolean} columns
      * @return {!RuntimeAgent.RemoteObject}
      */
-    wrapTable: function(canAccessInspectedWindow, table, columns)
+    wrapTable: function(canAccessInspectedGlobalObject, table, columns)
     {
-        if (!canAccessInspectedWindow)
+        if (!canAccessInspectedGlobalObject)
             return this._fallbackWrapper(table);
         var columnNames = null;
         if (typeof columns === "string")
@@ -272,7 +236,9 @@ InjectedScript.prototype = {
         var argsArray = InjectedScriptHost.evaluate("(" + args + ")");
         var result = this[methodName].apply(this, argsArray);
         if (typeof result === "undefined") {
-            inspectedWindow.console.error("Web Inspector error: InjectedScript.%s returns undefined", methodName);
+            // FIXME: JS Context inspection currently does not have a global.console object.
+            if (inspectedGlobalObject.console)
+                inspectedGlobalObject.console.error("Web Inspector error: InjectedScript.%s returns undefined", methodName);
             result = null;
         }
         return result;
@@ -554,7 +520,13 @@ InjectedScript.prototype = {
      */
     _evaluateOn: function(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI)
     {
-        var commandLineAPI = injectCommandLineAPI ? new CommandLineAPI(this._commandLineAPIImpl, isEvalOnCallFrame ? object : null) : null;
+        var commandLineAPI = null;
+        if (injectCommandLineAPI) {
+            if (this.CommandLineAPI)
+                commandLineAPI = new this.CommandLineAPI(this._commandLineAPIImpl, isEvalOnCallFrame ? object : null);
+            else
+                commandLineAPI = new BasicCommandLineAPI;
+        }
 
         if (isEvalOnCallFrame) {
             // We can only use this approach if the evaluate function is the true 'eval'. That allows us to use it with
@@ -562,7 +534,11 @@ InjectedScript.prototype = {
             // create that provides the command line APIs.
 
             var parameters = [InjectedScriptHost.evaluate, expression];
-            var expressionFunctionBody = "var __originalEval = window.eval; window.eval = __eval; try { return eval(__currentExpression); } finally { window.eval = __originalEval; }";
+            var expressionFunctionBody = "" +
+                "var global = Function('return this')() || (1, eval)('this');" +
+                "var __originalEval = global.eval; global.eval = __eval;" +
+                "try { return eval(__currentExpression); }" +
+                "finally { global.eval = __originalEval; }";
 
             if (commandLineAPI) {
                 // To avoid using a 'with' statement (which fails in strict mode and requires injecting the API object)
@@ -596,21 +572,29 @@ InjectedScript.prototype = {
         // When not evaluating on a call frame we use a 'with' statement to allow var and function statements to leak
         // into the global scope. This allow them to stick around between evaluations.
 
+        // FIXME: JS Context inspection currently does not have a global.console object.
         try {
-            if (commandLineAPI && inspectedWindow.console) {
-                inspectedWindow.console.__commandLineAPI = commandLineAPI;
-                expression = "with ((window && window.console && window.console.__commandLineAPI) || {}) { " + expression + "\n}";
+            if (commandLineAPI) {
+                if (inspectedGlobalObject.console)
+                    inspectedGlobalObject.console.__commandLineAPI = commandLineAPI;
+                else
+                    inspectedGlobalObject.__commandLineAPI = commandLineAPI;
+                expression = "with ((this && (this.console ? this.console.__commandLineAPI : this.__commandLineAPI)) || {}) { " + expression + "\n}";
             }
 
-            var result = evalFunction.call(object, expression);
+            var result = evalFunction.call(inspectedGlobalObject, expression);
 
             if (objectGroup === "console")
                 this._lastResult = result;
 
             return result;
         } finally {
-            if (commandLineAPI && inspectedWindow.console)
-                delete inspectedWindow.console.__commandLineAPI;
+            if (commandLineAPI) {
+                if (inspectedGlobalObject.console)
+                    delete inspectedGlobalObject.console.__commandLineAPI;
+                else
+                    delete inspectedGlobalObject.__commandLineAPI;
+            }
         }
     },
 
@@ -715,10 +699,12 @@ InjectedScript.prototype = {
         delete this._modules[name];
         var moduleFunction = InjectedScriptHost.evaluate("(" + source + ")");
         if (typeof moduleFunction !== "function") {
-            inspectedWindow.console.error("Web Inspector error: A function was expected for module %s evaluation", name);
+            // FIXME: JS Context inspection currently does not have a global.console object.
+            if (inspectedGlobalObject.console)
+                inspectedGlobalObject.console.error("Web Inspector error: A function was expected for module %s evaluation", name);
             return null;
         }
-        var module = moduleFunction.call(inspectedWindow, InjectedScriptHost, inspectedWindow, injectedScriptId);
+        var module = moduleFunction.call(inspectedGlobalObject, InjectedScriptHost, inspectedGlobalObject, injectedScriptId, this);
         this._modules[name] = module;
         return module;
     },
@@ -836,7 +822,7 @@ InjectedScript.prototype = {
      */
     _toString: function(obj)
     {
-        // We don't use String(obj) because inspectedWindow.String is undefined if owning frame navigated to another page.
+        // We don't use String(obj) because inspectedGlobalObject.String is undefined if owning frame navigated to another page.
         return "" + obj;
     }
 }
@@ -1077,277 +1063,10 @@ InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeOb
     };
 }
 
-/**
- * @constructor
- * @param {CommandLineAPIImpl} commandLineAPIImpl
- * @param {Object} callFrame
- */
-function CommandLineAPI(commandLineAPIImpl, callFrame)
+function BasicCommandLineAPI()
 {
-    /**
-     * @param {string} member
-     * @return {boolean}
-     */
-    function inScopeVariables(member)
-    {
-        if (!callFrame)
-            return false;
-
-        var scopeChain = callFrame.scopeChain;
-        for (var i = 0; i < scopeChain.length; ++i) {
-            if (member in scopeChain[i])
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * @param {string} name The name of the method for which a toString method should be generated.
-     * @return {function():string}
-     */
-    function customToStringMethod(name)
-    {
-        return function () { return "function " + name + "() { [Command Line API] }"; };
-    }
-
-    for (var i = 0; i < CommandLineAPI.members_.length; ++i) {
-        var member = CommandLineAPI.members_[i];
-        if (member in inspectedWindow || inScopeVariables(member))
-            continue;
-
-        this[member] = bind(commandLineAPIImpl[member], commandLineAPIImpl);
-        this[member].toString = customToStringMethod(member);
-    }
-
-    for (var i = 0; i < 5; ++i) {
-        var member = "$" + i;
-        if (member in inspectedWindow || inScopeVariables(member))
-            continue;
-
-        this.__defineGetter__("$" + i, bind(commandLineAPIImpl._inspectedObject, commandLineAPIImpl, i));
-    }
-
     this.$_ = injectedScript._lastResult;
 }
 
-// NOTE: Please keep the list of API methods below snchronized to that in WebInspector.RuntimeModel!
-/**
- * @type {Array.<string>}
- * @const
- */
-CommandLineAPI.members_ = [
-    "$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd",
-    "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners"
-];
-
-/**
- * @constructor
- */
-function CommandLineAPIImpl()
-{
-}
-
-CommandLineAPIImpl.prototype = {
-    /**
-     * @param {string} selector
-     * @param {Node=} start
-     */
-    $: function (selector, start)
-    {
-        if (this._canQuerySelectorOnNode(start))
-            return start.querySelector(selector);
-
-        var result = inspectedWindow.document.querySelector(selector);
-        if (result)
-            return result;
-        if (selector && selector[0] !== "#") {
-            result = inspectedWindow.document.getElementById(selector);
-            if (result) {
-                inspectedWindow.console.warn("The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $(\"#%s\")", selector );
-                return null;
-            }
-        }
-        return result;
-    },
-
-    /**
-     * @param {string} selector
-     * @param {Node=} start
-     */
-    $$: function (selector, start)
-    {
-        if (this._canQuerySelectorOnNode(start))
-            return start.querySelectorAll(selector);
-        return inspectedWindow.document.querySelectorAll(selector);
-    },
-
-    /**
-     * @param {Node=} node
-     * @return {boolean}
-     */
-    _canQuerySelectorOnNode: function(node)
-    {
-        return !!node && InjectedScriptHost.type(node) === "node" && (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.DOCUMENT_NODE || node.nodeType === Node.DOCUMENT_FRAGMENT_NODE);
-    },
-
-    /**
-     * @param {string} xpath
-     * @param {Node=} context
-     */
-    $x: function(xpath, context)
-    {
-        var doc = (context && context.ownerDocument) || inspectedWindow.document;
-        var result = doc.evaluate(xpath, context || doc, null, XPathResult.ANY_TYPE, null);
-        switch (result.resultType) {
-        case XPathResult.NUMBER_TYPE:
-            return result.numberValue;
-        case XPathResult.STRING_TYPE:
-            return result.stringValue;
-        case XPathResult.BOOLEAN_TYPE:
-            return result.booleanValue;
-        default:
-            var nodes = [];
-            var node;
-            while (node = result.iterateNext())
-                nodes.push(node);
-            return nodes;
-        }
-    },
-
-    dir: function()
-    {
-        return inspectedWindow.console.dir.apply(inspectedWindow.console, arguments)
-    },
-
-    dirxml: function()
-    {
-        return inspectedWindow.console.dirxml.apply(inspectedWindow.console, arguments)
-    },
-
-    keys: function(object)
-    {
-        return Object.keys(object);
-    },
-
-    values: function(object)
-    {
-        var result = [];
-        for (var key in object)
-            result.push(object[key]);
-        return result;
-    },
-
-    profile: function()
-    {
-        return inspectedWindow.console.profile.apply(inspectedWindow.console, arguments)
-    },
-
-    profileEnd: function()
-    {
-        return inspectedWindow.console.profileEnd.apply(inspectedWindow.console, arguments)
-    },
-
-    /**
-     * @param {Object} object
-     * @param {Array.<string>|string=} types
-     */
-    monitorEvents: function(object, types)
-    {
-        if (!object || !object.addEventListener || !object.removeEventListener)
-            return;
-        types = this._normalizeEventTypes(types);
-        for (var i = 0; i < types.length; ++i) {
-            object.removeEventListener(types[i], this._logEvent, false);
-            object.addEventListener(types[i], this._logEvent, false);
-        }
-    },
-
-    /**
-     * @param {Object} object
-     * @param {Array.<string>|string=} types
-     */
-    unmonitorEvents: function(object, types)
-    {
-        if (!object || !object.addEventListener || !object.removeEventListener)
-            return;
-        types = this._normalizeEventTypes(types);
-        for (var i = 0; i < types.length; ++i)
-            object.removeEventListener(types[i], this._logEvent, false);
-    },
-
-    /**
-     * @param {*} object
-     * @return {*}
-     */
-    inspect: function(object)
-    {
-        return injectedScript._inspect(object);
-    },
-
-    copy: function(object)
-    {
-        if (injectedScript._subtype(object) === "node")
-            object = object.outerHTML;
-        InjectedScriptHost.copyText(object);
-    },
-
-    clear: function()
-    {
-        InjectedScriptHost.clearConsoleMessages();
-    },
-
-    /**
-     * @param {Node} node
-     */
-    getEventListeners: function(node)
-    {
-        return InjectedScriptHost.getEventListeners(node);
-    },
-
-    /**
-     * @param {number} num
-     */
-    _inspectedObject: function(num)
-    {
-        return InjectedScriptHost.inspectedObject(num);
-    },
-
-    /**
-     * @param {Array.<string>|string=} types
-     * @return {Array.<string>}
-     */
-    _normalizeEventTypes: function(types)
-    {
-        if (typeof types === "undefined")
-            types = [ "mouse", "key", "touch", "control", "load", "unload", "abort", "error", "select", "change", "submit", "reset", "focus", "blur", "resize", "scroll", "search", "devicemotion", "deviceorientation" ];
-        else if (typeof types === "string")
-            types = [ types ];
-
-        var result = [];
-        for (var i = 0; i < types.length; i++) {
-            if (types[i] === "mouse")
-                result.splice(0, 0, "mousedown", "mouseup", "click", "dblclick", "mousemove", "mouseover", "mouseout", "mousewheel");
-            else if (types[i] === "key")
-                result.splice(0, 0, "keydown", "keyup", "keypress", "textInput");
-            else if (types[i] === "touch")
-                result.splice(0, 0, "touchstart", "touchmove", "touchend", "touchcancel");
-            else if (types[i] === "control")
-                result.splice(0, 0, "resize", "scroll", "zoom", "focus", "blur", "select", "change", "submit", "reset");
-            else
-                result.push(types[i]);
-        }
-        return result;
-    },
-
-    /**
-     * @param {Event} event
-     */
-    _logEvent: function(event)
-    {
-        inspectedWindow.console.log(event.type, event);
-    }
-}
-
-injectedScript._commandLineAPIImpl = new CommandLineAPIImpl();
 return injectedScript;
 })

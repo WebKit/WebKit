@@ -52,6 +52,11 @@ InjectedScriptModule::InjectedScriptModule(const String& name)
 void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, JSC::ExecState* scriptState)
 {
     InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(scriptState);
+    ensureInjected(injectedScriptManager, injectedScript);
+}
+
+void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, InjectedScript injectedScript)
+{
     ASSERT(!injectedScript.hasNoValue());
     if (injectedScript.hasNoValue())
         return;
@@ -67,14 +72,16 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         function.appendArgument(name());
         function.appendArgument(source());
         resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
-        if (hadException || resultValue.hasNoValue() || !resultValue.isObject()) {
+        if (hadException || (returnsObject() && (resultValue.hasNoValue() || !resultValue.isObject()))) {
             ASSERT_NOT_REACHED();
             return;
         }
     }
 
-    Deprecated::ScriptObject moduleObject(scriptState, resultValue);
-    initialize(moduleObject, injectedScriptManager->inspectedStateAccessCheck());
+    if (returnsObject()) {
+        Deprecated::ScriptObject moduleObject(injectedScript.scriptState(), resultValue);
+        initialize(moduleObject, injectedScriptManager->inspectedStateAccessCheck());
+    }
 }
 
 } // namespace WebCore
