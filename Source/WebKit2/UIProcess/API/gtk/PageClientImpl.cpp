@@ -286,7 +286,7 @@ bool PageClientImpl::isWindowVisible()
 
 void PageClientImpl::didCommitLoadForMainFrame()
 {
-    notImplemented();
+    webkitWebViewBaseResetClickCounter(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
 #if ENABLE(FULLSCREEN_API)

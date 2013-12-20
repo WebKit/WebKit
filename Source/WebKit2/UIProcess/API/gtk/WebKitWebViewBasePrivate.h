@@ -72,5 +72,6 @@ void webkitWebViewBaseHandleDownloadRequest(WebKitWebViewBase*, WebKit::Download
 void webkitWebViewBaseAddAuthenticationDialog(WebKitWebViewBase*, GtkWidget* authDialog);
 void webkitWebViewBaseCancelAuthenticationDialog(WebKitWebViewBase*);
 void webkitWebViewBaseAddWebInspector(WebKitWebViewBase*, GtkWidget* inspector, WebKit::AttachmentSide);
+void webkitWebViewBaseResetClickCounter(WebKitWebViewBase*);
 
 #endif // WebKitWebViewBasePrivate_h

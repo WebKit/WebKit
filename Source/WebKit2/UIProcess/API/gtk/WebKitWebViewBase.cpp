@@ -1165,3 +1165,8 @@ void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase* webkitWebViewBase)
 {
     webkitWebViewBase->priv->inputMethodFilter.setCursorRect(webkitWebViewBase->priv->pageProxy->editorState().cursorRect);
 }
+
+void webkitWebViewBaseResetClickCounter(WebKitWebViewBase* webkitWebViewBase)
+{
+    webkitWebViewBase->priv->clickCounter.reset();
+}
