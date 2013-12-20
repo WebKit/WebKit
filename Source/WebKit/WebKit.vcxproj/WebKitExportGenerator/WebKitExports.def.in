@@ -317,6 +317,7 @@ EXPORTS
         symbolWithPointer(?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z, ?toRange@WebCore@@YAPEAVRange@1@VJSValue@JSC@@@Z)
         symbolWithPointer(?isTreeScope@Node@WebCore@@QBE_NXZ, ?isTreeScope@Node@WebCore@@QEBA_NXZ)
         symbolWithPointer(?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ, ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QEAAXXZ)
+        symbolWithPointer(?updateStyleIfNeeded@Document@WebCore@@QAEXXZ, ?updateStyleIfNeeded@Document@WebCore@@QEAAXXZ)
         symbolWithPointer(?view@Document@WebCore@@QBEPAVFrameView@2@XZ, ?view@Document@WebCore@@QEBAPEAVFrameView@2@XZ)
         symbolWithPointer(??1ContextDestructionObserver@WebCore@@MAE@XZ, ??1ContextDestructionObserver@WebCore@@MEAA@XZ)
         symbolWithPointer(?contextDestroyed@ContextDestructionObserver@WebCore@@UAEXXZ, ?contextDestroyed@ContextDestructionObserver@WebCore@@UEAAXXZ)
