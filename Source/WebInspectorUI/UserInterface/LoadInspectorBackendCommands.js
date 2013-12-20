@@ -32,10 +32,9 @@
     }
 
     if (!backendURLs) {
-        // FIXME: When we can inspect just a JSContext, we should not load InspectorWebBackendCommands.js.
-        backendURLs = [];
-        backendURLs.push("InspectorJSBackendCommands.js");
-        backendURLs.push("InspectorWebBackendCommands.js");
+        backendURLs = ["InspectorJSBackendCommands.js"];
+        if (InspectorFrontendHost.debuggableType() === "web")
+            backendURLs.push("InspectorWebBackendCommands.js");
     }
 
     console.assert(backendURLs.length);

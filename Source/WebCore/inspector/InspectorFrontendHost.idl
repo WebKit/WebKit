@@ -50,6 +50,7 @@
     void moveWindowBy(float x, float y);
 
     DOMString localizedStringsURL();
+    DOMString debuggableType();
 
     void copyText(DOMString text);
     void openInNewTab(DOMString url);

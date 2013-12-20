@@ -68,6 +68,7 @@ public:
     void moveWindowBy(float x, float y) const;
 
     String localizedStringsURL();
+    String debuggableType();
 
     void copyText(const String& text);
     void openInNewTab(const String& url);

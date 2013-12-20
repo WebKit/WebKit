@@ -221,6 +221,11 @@ String InspectorFrontendHost::localizedStringsURL()
     return m_client ? m_client->localizedStringsURL() : "";
 }
 
+String InspectorFrontendHost::debuggableType()
+{
+    return ASCIILiteral("web");
+}
+
 void InspectorFrontendHost::copyText(const String& text)
 {
     Pasteboard::createForCopyAndPaste()->writePlainText(text, Pasteboard::CannotSmartReplace);

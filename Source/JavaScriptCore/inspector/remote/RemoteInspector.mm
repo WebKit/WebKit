@@ -276,6 +276,7 @@ NSDictionary *RemoteInspector::listingForDebuggable(const RemoteInspectorDebugga
     case RemoteInspectorDebuggable::JavaScript: {
         NSString *name = debuggableInfo.name;
         [debuggableDetails setObject:name forKey:WIRTitleKey];
+        [debuggableDetails setObject:WIRTypeJavaScript forKey:WIRTypeKey];
         break;
     }
     case RemoteInspectorDebuggable::Web: {
@@ -283,6 +284,7 @@ NSDictionary *RemoteInspector::listingForDebuggable(const RemoteInspectorDebugga
         NSString *title = debuggableInfo.name;
         [debuggableDetails setObject:url forKey:WIRURLKey];
         [debuggableDetails setObject:title forKey:WIRTitleKey];
+        [debuggableDetails setObject:WIRTypeWeb forKey:WIRTypeKey];
         break;
     }
     default:

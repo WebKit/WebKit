@@ -1,3 +1,17 @@
+2013-12-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add InspectorFrontendHost.debuggableType to let the frontend know it's backend is JavaScript or Web
+        https://bugs.webkit.org/show_bug.cgi?id=126016
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::listingForDebuggable):
+        * inspector/remote/RemoteInspectorConstants.h:
+        Include a debuggable type identifier in the debuggable listing,
+        so the remote frontend can know if it is debugging a Web Page
+        or JS Context.
+
 2013-12-19  Benjamin Poulain  <benjamin@webkit.org>
 
         Add an utility class to simplify generating function calls
