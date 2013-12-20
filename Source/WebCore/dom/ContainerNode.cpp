@@ -797,12 +797,12 @@ void ContainerNode::resumePostAttachCallbacks()
     --s_attachDepth;
 }
 
-void ContainerNode::queuePostAttachCallback(NodeCallback callback, Node* node, unsigned callbackData)
+void ContainerNode::queuePostAttachCallback(NodeCallback callback, Node& node, unsigned callbackData)
 {
     if (!s_postAttachCallbackQueue)
         s_postAttachCallbackQueue = new NodeCallbackQueue;
     
-    s_postAttachCallbackQueue->append(CallbackInfo(callback, CallbackParameters(node, callbackData)));
+    s_postAttachCallbackQueue->append(CallbackInfo(callback, CallbackParameters(&node, callbackData)));
 }
 
 bool ContainerNode::postAttachCallbacksAreSuspended()
@@ -819,20 +819,20 @@ void ContainerNode::dispatchPostAttachCallbacks()
         NodeCallback callback = info.first;
         CallbackParameters params = info.second;
 
-        callback(params.first.get(), params.second);
+        callback(*params.first, params.second);
     }
     s_postAttachCallbackQueue->clear();
 }
 
-static void needsStyleRecalcCallback(Node* node, unsigned data)
+static void needsStyleRecalcCallback(Node& node, unsigned data)
 {
-    node->setNeedsStyleRecalc(static_cast<StyleChangeType>(data));
+    node.setNeedsStyleRecalc(static_cast<StyleChangeType>(data));
 }
 
 void ContainerNode::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)
 {
     if (postAttachCallbacksAreSuspended())
-        queuePostAttachCallback(needsStyleRecalcCallback, this, static_cast<unsigned>(changeType));
+        queuePostAttachCallback(needsStyleRecalcCallback, *this, static_cast<unsigned>(changeType));
     else
         setNeedsStyleRecalc(changeType);
 }

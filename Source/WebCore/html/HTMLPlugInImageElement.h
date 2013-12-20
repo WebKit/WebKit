@@ -113,8 +113,8 @@ protected:
     String m_url;
     URL m_loadedUrl;
 
-    static void updateWidgetCallback(Node*, unsigned);
-    static void startLoadingImageCallback(Node*, unsigned);
+    static void updateWidgetCallback(Node&, unsigned);
+    static void startLoadingImageCallback(Node&, unsigned);
 
     virtual void didAttachRenderers() OVERRIDE;
     virtual void willDetachRenderers() OVERRIDE;

@@ -1,3 +1,27 @@
+2013-12-20  Anders Carlsson  <andersca@apple.com>
+
+        Node post attach callbacks should use references
+        https://bugs.webkit.org/show_bug.cgi?id=126081
+
+        Reviewed by Antti Koivisto.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::queuePostAttachCallback):
+        (WebCore::ContainerNode::dispatchPostAttachCallbacks):
+        (WebCore::needsStyleRecalcCallback):
+        (WebCore::ContainerNode::scheduleSetNeedsStyleRecalc):
+        * dom/ContainerNode.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::focusPostAttach):
+        (WebCore::HTMLFormControlElement::didAttachRenderers):
+        (WebCore::updateFromElementCallback):
+        (WebCore::HTMLFormControlElement::didRecalcStyle):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAttachRenderers):
+        (WebCore::HTMLPlugInImageElement::updateWidgetCallback):
+        (WebCore::HTMLPlugInImageElement::startLoadingImageCallback):
+        * html/HTMLPlugInImageElement.h:
+
 2013-12-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Extract CommandLineAPI into its own InjectedScriptModule

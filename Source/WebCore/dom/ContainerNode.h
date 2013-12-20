@@ -35,7 +35,7 @@ namespace WebCore {
 class FloatPoint;
 class RenderElement;
 
-typedef void (*NodeCallback)(Node*, unsigned);
+typedef void (*NodeCallback)(Node&, unsigned);
 
 namespace Private { 
     template<class GenericNode, class GenericNodeContainer>
@@ -141,7 +141,7 @@ public:
 protected:
     explicit ContainerNode(Document*, ConstructionType = CreateContainer);
 
-    static void queuePostAttachCallback(NodeCallback, Node*, unsigned = 0);
+    static void queuePostAttachCallback(NodeCallback, Node&, unsigned = 0);
     static bool postAttachCallbacksAreSuspended();
 
     template<class GenericNode, class GenericNodeContainer>

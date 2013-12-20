@@ -247,14 +247,14 @@ bool HTMLPlugInImageElement::willRecalcStyle(Style::Change)
 void HTMLPlugInImageElement::didAttachRenderers()
 {
     if (!isImageType()) {
-        queuePostAttachCallback(&HTMLPlugInImageElement::updateWidgetCallback, this);
+        queuePostAttachCallback(&HTMLPlugInImageElement::updateWidgetCallback, *this);
         return;
     }
     if (!renderer() || useFallbackContent())
         return;
 
     // Image load might complete synchronously and cause us to re-enter attach.
-    queuePostAttachCallback(&HTMLPlugInImageElement::startLoadingImageCallback, this);
+    queuePostAttachCallback(&HTMLPlugInImageElement::startLoadingImageCallback, *this);
 }
 
 void HTMLPlugInImageElement::willDetachRenderers()
@@ -334,9 +334,9 @@ PassRefPtr<RenderStyle> HTMLPlugInImageElement::customStyleForRenderer()
     return m_customStyleForPageCache;
 }
 
-void HTMLPlugInImageElement::updateWidgetCallback(Node* node, unsigned)
+void HTMLPlugInImageElement::updateWidgetCallback(Node& node, unsigned)
 {
-    toHTMLPlugInImageElement(node)->updateWidgetIfNecessary();
+    toHTMLPlugInImageElement(node).updateWidgetIfNecessary();
 }
 
 void HTMLPlugInImageElement::startLoadingImage()
@@ -346,9 +346,9 @@ void HTMLPlugInImageElement::startLoadingImage()
     m_imageLoader->updateFromElement();
 }
 
-void HTMLPlugInImageElement::startLoadingImageCallback(Node* node, unsigned)
+void HTMLPlugInImageElement::startLoadingImageCallback(Node& node, unsigned)
 {
-    toHTMLPlugInImageElement(node)->startLoadingImage();
+    toHTMLPlugInImageElement(node).startLoadingImage();
 }
 
 void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
