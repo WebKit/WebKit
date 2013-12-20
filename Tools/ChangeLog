@@ -1,5 +1,21 @@
 2013-12-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        check-webkit-style mistakenly flags assigning to a dereferenced pointer
+        https://bugs.webkit.org/show_bug.cgi?id=126041
+
+        Reviewed by Ryosuke Niwa.
+
+        When checking for lines like "Foo *bar;", check-webkit-style doesn't make
+        sure that there is a declaration. This patch makes sure that there is a
+        declaration in order to flag spacing around asterisks.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_pointer_reference_marker_location):
+
+2013-12-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
         check-webkit-style marks rvalue references as violations
         https://bugs.webkit.org/show_bug.cgi?id=126000
 
