@@ -647,7 +647,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         ancestorCompositingBounds = pixelSnappedIntRect(compAncestor->backing()->compositedBounds());
     }
 
-    IntRect localCompositingBounds = pixelSnappedIntRect(compositedBounds());
+    LayoutRect localRawCompositingBounds = compositedBounds();
+    IntRect localCompositingBounds = pixelSnappedIntRect(localRawCompositingBounds);
 
     IntRect relativeCompositingBounds(localCompositingBounds);
     IntPoint delta;
@@ -714,7 +715,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     if (!m_isMainFrameRenderViewLayer) {
         // For non-root layers, background is always painted by the primary graphics layer.
         ASSERT(!m_backgroundLayer);
-        m_graphicsLayer->setContentsOpaque(m_owningLayer->backgroundIsKnownToBeOpaqueInRect(localCompositingBounds));
+        bool hadSubpixelRounding = LayoutSize(relativeCompositingBounds.size()) != localRawCompositingBounds.size();
+        m_graphicsLayer->setContentsOpaque(!hadSubpixelRounding && m_owningLayer->backgroundIsKnownToBeOpaqueInRect(localCompositingBounds));
     }
 
     // If we have a layer that clips children, position it.

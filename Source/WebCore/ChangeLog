@@ -1,3 +1,45 @@
+ 2013-12-19  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r159463: <rdar://problems/15701094>
+
+    2013-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+            At some scales, opaque compositing layers have garbage pixels around the edges
+            ​https://bugs.webkit.org/show_bug.cgi?id=124541
+
+            Reviewed by Dean Jackson.
+
+            Layers get marked as having opaque contents when their background is
+            known to paint the entire layer. However, this failed to take into
+            account two reasons why every pixel may not get painted.
+
+            First, subpixel layout can result in non-integral RenderLayer
+            bounds, which will get rounded up to an integral GraphicsLayer
+            size. When this happens we may not paint edge pixels.
+
+            Second, at non-integral scale factors, graphics context scaling
+            may cause us to not paint edge pixels.
+
+            Fix by only marking PlatformCALayers as having opaque contents
+            when the contentsScale of the layer is integral.
+
+            Not testable, because we can't guarantee to get garbage pixels
+            in a ref test, and layer dumps show GraphicsLayer's notion of
+            content opaqueness, not the one we set on the PlatformCALayer.
+
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::isIntegral):
+            (WebCore::clampedContentsScaleForScale):
+            (WebCore::GraphicsLayerCA::updateRootRelativeScale):
+            (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+            (WebCore::GraphicsLayerCA::updateContentsOpaque):
+            (WebCore::GraphicsLayerCA::getTransformFromAnimationsWithMaxScaleImpact):
+            Drive-by typo fix.
+            (WebCore::GraphicsLayerCA::noteChangesForScaleSensitiveProperties):
+            * platform/graphics/ca/GraphicsLayerCA.h:
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2013-12-19  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r160791: <rdar://problems/15694289>

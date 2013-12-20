@@ -66,6 +66,20 @@ static const int cMaxLayerTreeDepth = 250;
 // of 250ms. So send a very small value instead.
 static const float cAnimationAlmostZeroDuration = 1e-3f;
 
+static inline bool isIntegral(float value)
+{
+    return static_cast<int>(value) == value;
+}
+
+static float clampedContentsScaleForScale(float scale)
+{
+    // Define some limits as a sanity check for the incoming scale value
+    // those too small to see.
+    const float maxScale = 10.0f;
+    const float minScale = 0.01f;
+    return std::max(minScale, std::min(scale, maxScale));
+}
+
 static bool isTransformTypeTransformationMatrix(TransformOperation::OperationType transformType)
 {
     switch (transformType) {
@@ -1178,8 +1192,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ContentsVisibilityChanged)
         updateContentsVisibility();
 
+    // Note that contentsScale can affect whether the layer can be opaque.
     if (m_uncommittedChanges & ContentsOpaqueChanged)
-        updateContentsOpaque();
+        updateContentsOpaque(pageScaleFactor);
 
     if (m_uncommittedChanges & BackfaceVisibilityChanged)
         updateBackfaceVisibility();
@@ -1436,14 +1451,21 @@ void GraphicsLayerCA::updateContentsVisibility()
     }
 }
 
-void GraphicsLayerCA::updateContentsOpaque()
+void GraphicsLayerCA::updateContentsOpaque(float pageScaleFactor)
 {
-    m_layer->setOpaque(m_contentsOpaque);
+    bool contentsOpaque = m_contentsOpaque;
+    if (contentsOpaque) {
+        float contentsScale = clampedContentsScaleForScale(pageScaleFactor * deviceScaleFactor());
+        if (!isIntegral(contentsScale))
+            contentsOpaque = false;
+    }
+    
+    m_layer->setOpaque(contentsOpaque);
 
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-            it->value->setOpaque(m_contentsOpaque);
+            it->value->setOpaque(contentsOpaque);
     }
 }
 
@@ -2569,15 +2591,6 @@ GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedProperty
     return (property == AnimatedPropertyBackgroundColor) ? m_contentsLayerClones.get() : primaryLayerClones();
 }
 
-static float clampedContentsScaleForScale(float scale)
-{
-    // Define some limits as a sanity check for the incoming scale value
-    // those too small to see.
-    const float maxScale = 10.0f;
-    const float minScale = 0.01f;
-    return max(minScale, min(scale, maxScale));
-}
-
 void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 {
     float contentsScale = clampedContentsScaleForScale(pageScaleFactor * deviceScaleFactor());
@@ -2995,12 +3008,7 @@ void GraphicsLayerCA::deviceOrPageScaleFactorChanged()
 
 void GraphicsLayerCA::noteChangesForScaleSensitiveProperties()
 {
-    noteLayerPropertyChanged(GeometryChanged | ContentsScaleChanged);
-}
-
-static inline bool isIntegral(float value)
-{
-    return static_cast<int>(value) == value;
+    noteLayerPropertyChanged(GeometryChanged | ContentsScaleChanged | ContentsOpaqueChanged);
 }
 
 void GraphicsLayerCA::computePixelAlignment(float pageScaleFactor, const FloatPoint& positionRelativeToBase,

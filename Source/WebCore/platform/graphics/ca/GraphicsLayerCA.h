@@ -328,7 +328,7 @@ private:
     void updateChildrenTransform();
     void updateMasksToBounds();
     void updateContentsVisibility();
-    void updateContentsOpaque();
+    void updateContentsOpaque(float pageScaleFactor);
     void updateBackfaceVisibility();
     void updateStructuralLayer();
     void updateLayerDrawsContent();
