@@ -1,3 +1,24 @@
+2013-12-20  Ricky Mondello  <rmondello@apple.com>
+
+        Rename PlugInAutoStartProvider's ...EntriesAddedBeforeTime facility to ...EntriesAddedAfterTime
+        https://bugs.webkit.org/show_bug.cgi?id=126078
+
+        Reviewed by Anders Carlsson.
+
+        r160922 accidentally named a facility for filtering out data added after a certain time,
+        "...FilteringOutEntriesAddedBeforeTime", which was incorrect. This patch renames those instances
+        to "...FilteringOutEntriesAddedAfterTime".
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsFilteringOutEntriesAddedAfterTime):
+        * UIProcess/Plugins/PlugInAutoStartProvider.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime):
+        * UIProcess/WebContext.h:
+
 2013-12-20  Sam Weinig  <sam@webkit.org>
 
         [WK2] Add SPI for using a custom protocol handler

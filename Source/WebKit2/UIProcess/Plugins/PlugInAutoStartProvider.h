@@ -56,7 +56,7 @@ public:
 
     PassRefPtr<ImmutableDictionary> autoStartOriginsTableCopy() const;
     void setAutoStartOriginsTable(ImmutableDictionary&);
-    void setAutoStartOriginsFilteringOutEntriesAddedBeforeTime(ImmutableDictionary&, double time);
+    void setAutoStartOriginsFilteringOutEntriesAddedAfterTime(ImmutableDictionary&, double time);
     void setAutoStartOriginsArray(API::Array&);
 
     PlugInAutoStartOriginHash autoStartOriginHashesCopy() const;

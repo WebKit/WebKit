@@ -106,7 +106,7 @@ void PlugInAutoStartProvider::setAutoStartOriginsTable(ImmutableDictionary& tabl
     });
 }
 
-void PlugInAutoStartProvider::setAutoStartOriginsFilteringOutEntriesAddedBeforeTime(ImmutableDictionary& table, double time)
+void PlugInAutoStartProvider::setAutoStartOriginsFilteringOutEntriesAddedAfterTime(ImmutableDictionary& table, double time)
 {
     double adjustedTimestamp = time + plugInAutoStartExpirationTimeThreshold;
     setAutoStartOriginsTableWithItemsPassingTest(table, [adjustedTimestamp](double expirationTimestamp) {

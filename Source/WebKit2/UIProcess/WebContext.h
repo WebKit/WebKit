@@ -262,7 +262,7 @@ public:
     PassRefPtr<ImmutableDictionary> plugInAutoStartOriginHashes() const;
     void setPlugInAutoStartOriginHashes(ImmutableDictionary&);
     void setPlugInAutoStartOrigins(API::Array&);
-    void setPlugInAutoStartOriginsFilteringOutEntriesAddedBeforeTime(ImmutableDictionary&, double time);
+    void setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(ImmutableDictionary&, double time);
 
     // Network Process Management
 

@@ -1279,9 +1279,9 @@ void WebContext::setPlugInAutoStartOrigins(API::Array& array)
     m_plugInAutoStartProvider.setAutoStartOriginsArray(array);
 }
 
-void WebContext::setPlugInAutoStartOriginsFilteringOutEntriesAddedBeforeTime(ImmutableDictionary& dictionary, double time)
+void WebContext::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(ImmutableDictionary& dictionary, double time)
 {
-    m_plugInAutoStartProvider.setAutoStartOriginsFilteringOutEntriesAddedBeforeTime(dictionary, time);
+    m_plugInAutoStartProvider.setAutoStartOriginsFilteringOutEntriesAddedAfterTime(dictionary, time);
 }
 
 #if ENABLE(CUSTOM_PROTOCOLS)
