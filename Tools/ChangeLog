@@ -1,3 +1,19 @@
+2013-12-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r160941.
+        http://trac.webkit.org/changeset/160941
+        https://bugs.webkit.org/show_bug.cgi?id=126095
+
+        Doesn't handle subpixel layout being disabled (Requested by
+        smfr on #webkit).
+
+        * gdb/webkit.py:
+        (JSCJSStringPrinter.to_string):
+        (add_pretty_printers):
+        * lldb/lldb_webkit.py:
+        (WTFMediaTime_SummaryProvider):
+        (WTFStringProvider.to_string):
+
 2013-12-20  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Pretty print LayoutUnit, LayoutPoint, and LayoutSize in gdb and lldb
