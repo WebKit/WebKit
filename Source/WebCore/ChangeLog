@@ -1,5 +1,26 @@
 2013-12-20  Anders Carlsson  <andersca@apple.com>
 
+        PostAttachCallbackDisabler should take a Document
+        https://bugs.webkit.org/show_bug.cgi?id=126090
+
+        Reviewed by Andreas Kling.
+
+        suspendPostAttachCallbacks and resumePostAttachCallbacks always only get the document from the
+        container node, so make them static member functions that take a Document&. Also, move PostAttachCallbackDisabler
+        to Element.h in preparation for moving post attach callback handling to Element.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::suspendPostAttachCallbacks):
+        (WebCore::ContainerNode::resumePostAttachCallbacks):
+        * dom/ContainerNode.h:
+        * dom/Element.h:
+        (WebCore::PostAttachCallbackDisabler::PostAttachCallbackDisabler):
+        (WebCore::PostAttachCallbackDisabler::~PostAttachCallbackDisabler):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::attachRenderTree):
+
+2013-12-20  Anders Carlsson  <andersca@apple.com>
+
         Move scheduleSetNeedsStyleRecalc to HTMLFrameOwnerElement
         https://bugs.webkit.org/show_bug.cgi?id=126083
 

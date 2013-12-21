@@ -515,7 +515,7 @@ static void attachBeforeOrAfterPseudoElementIfNeeded(Element& current, PseudoId 
 
 static void attachRenderTree(Element& current, PassRefPtr<RenderStyle> resolvedStyle)
 {
-    PostAttachCallbackDisabler callbackDisabler(current);
+    PostAttachCallbackDisabler callbackDisabler(current.document());
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
     if (current.hasCustomStyleResolveCallbacks())

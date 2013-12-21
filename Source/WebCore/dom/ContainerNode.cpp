@@ -763,11 +763,11 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
     newChild->setNeedsStyleRecalc(ReconstructRenderTree);
 }
 
-void ContainerNode::suspendPostAttachCallbacks()
+void ContainerNode::suspendPostAttachCallbacks(Document& document)
 {
     if (!s_attachDepth) {
         ASSERT(!s_shouldReEnableMemoryCacheCallsAfterAttach);
-        if (Page* page = document().page()) {
+        if (Page* page = document.page()) {
             // FIXME: How can this call be specific to one Page, while the
             // s_attachDepth is a global? Doesn't make sense.
             if (page->areMemoryCacheClientCallsEnabled()) {
@@ -780,16 +780,16 @@ void ContainerNode::suspendPostAttachCallbacks()
     ++s_attachDepth;
 }
 
-void ContainerNode::resumePostAttachCallbacks()
+void ContainerNode::resumePostAttachCallbacks(Document& document)
 {
     if (s_attachDepth == 1) {
-        Ref<ContainerNode> protect(*this);
+        Ref<Document> protect(document);
 
         if (s_postAttachCallbackQueue)
             dispatchPostAttachCallbacks();
         if (s_shouldReEnableMemoryCacheCallsAfterAttach) {
             s_shouldReEnableMemoryCacheCallsAfterAttach = false;
-            if (Page* page = document().page())
+            if (Page* page = document.page())
                 page->setMemoryCacheClientCallsEnabled(true);
         }
         platformStrategies()->loaderStrategy()->resourceLoadScheduler()->resumePendingRequests();

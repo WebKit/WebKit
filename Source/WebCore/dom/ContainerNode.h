@@ -158,8 +158,8 @@ private:
     void insertBeforeCommon(Node& nextChild, Node& oldChild);
 
     static void dispatchPostAttachCallbacks();
-    void suspendPostAttachCallbacks();
-    void resumePostAttachCallbacks();
+    static void suspendPostAttachCallbacks(Document&);
+    static void resumePostAttachCallbacks(Document&);
 
     bool getUpperLeftCorner(FloatPoint&) const;
     bool getLowerRightCorner(FloatPoint&) const;
@@ -313,23 +313,6 @@ private:
     unsigned m_currentIndex;
     OwnPtr<Vector<RefPtr<Node>>> m_childNodes; // Lazily instantiated.
     ChildNodesLazySnapshot* m_nextSnapshot;
-};
-
-class PostAttachCallbackDisabler {
-public:
-    PostAttachCallbackDisabler(ContainerNode& node)
-        : m_node(node)
-    {
-        m_node.suspendPostAttachCallbacks();
-    }
-
-    ~PostAttachCallbackDisabler()
-    {
-        m_node.resumePostAttachCallbacks();
-    }
-
-private:
-    ContainerNode& m_node;
 };
 
 } // namespace WebCore

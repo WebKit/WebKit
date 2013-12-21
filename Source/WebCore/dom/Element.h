@@ -806,6 +806,23 @@ inline UniqueElementData& Element::ensureUniqueElementData()
     return static_cast<UniqueElementData&>(*m_elementData);
 }
 
-} // namespace
+class PostAttachCallbackDisabler {
+public:
+    explicit PostAttachCallbackDisabler(Document& document)
+        : m_document(document)
+    {
+        Element::suspendPostAttachCallbacks(m_document);
+    }
+
+    ~PostAttachCallbackDisabler()
+    {
+        Element::resumePostAttachCallbacks(m_document);
+    }
+
+private:
+    Document& m_document;
+};
+
+} // namespace WebCore
 
 #endif
