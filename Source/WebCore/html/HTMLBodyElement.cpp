@@ -185,7 +185,7 @@ bool HTMLBodyElement::isURLAttribute(const Attribute& attribute) const
 
 bool HTMLBodyElement::supportsFocus() const
 {
-    return rendererIsEditable() || HTMLElement::supportsFocus();
+    return hasEditableStyle() || HTMLElement::supportsFocus();
 }
 
 static int adjustForZoom(int value, Frame& frame)

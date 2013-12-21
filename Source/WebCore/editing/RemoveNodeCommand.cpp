@@ -59,7 +59,7 @@ void RemoveNodeCommand::doUnapply()
 {
     RefPtr<ContainerNode> parent = m_parent.release();
     RefPtr<Node> refChild = m_refChild.release();
-    if (!parent || !parent->rendererIsEditable())
+    if (!parent || !parent->hasEditableStyle())
         return;
 
     parent->insertBefore(m_node.get(), refChild.get(), IGNORE_EXCEPTION);

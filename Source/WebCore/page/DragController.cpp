@@ -405,7 +405,7 @@ DragOperation DragController::operationForLoad(DragData& dragData)
             pluginDocumentAcceptsDrags = pluginView->shouldAllowNavigationFromDrags();
     }
 
-    if (doc && (m_didInitiateDrag || (doc->isPluginDocument() && !pluginDocumentAcceptsDrags) || doc->rendererIsEditable()))
+    if (doc && (m_didInitiateDrag || (doc->isPluginDocument() && !pluginDocumentAcceptsDrags) || doc->hasEditableStyle()))
         return DragOperationNone;
     return dragOperation(dragData);
 }
@@ -553,9 +553,9 @@ bool DragController::canProcessDrag(DragData& dragData)
         return true;
 
     if (result.innerNonSharedNode()->isPluginElement()) {
-        if (!toHTMLPlugInElement(result.innerNonSharedNode())->canProcessDrag() && !result.innerNonSharedNode()->rendererIsEditable())
+        if (!toHTMLPlugInElement(result.innerNonSharedNode())->canProcessDrag() && !result.innerNonSharedNode()->hasEditableStyle())
             return false;
-    } else if (!result.innerNonSharedNode()->rendererIsEditable())
+    } else if (!result.innerNonSharedNode()->hasEditableStyle())
         return false;
 
     if (m_didInitiateDrag && m_documentUnderMouse == m_dragInitiator && result.isSelected())

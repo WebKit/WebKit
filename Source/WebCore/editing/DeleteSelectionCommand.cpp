@@ -340,7 +340,7 @@ static Position firstEditablePositionInNode(Node* node)
 {
     ASSERT(node);
     Node* next = node;
-    while (next && !next->rendererIsEditable())
+    while (next && !next->hasEditableStyle())
         next = NodeTraversal::next(next, node);
     return next ? firstPositionInOrBeforeNode(next) : Position();
 }
@@ -352,7 +352,7 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node, ShouldAssumeConte
         
     if (m_startRoot != m_endRoot && !(node->isDescendantOf(m_startRoot.get()) && node->isDescendantOf(m_endRoot.get()))) {
         // If a node is not in both the start and end editable roots, remove it only if its inside an editable region.
-        if (!node->parentNode()->rendererIsEditable()) {
+        if (!node->parentNode()->hasEditableStyle()) {
             // Don't remove non-editable atomic nodes.
             if (!node->firstChild())
                 return;

@@ -56,7 +56,7 @@ HTMLFormControlElement& RenderButton::formControlElement() const
 
 bool RenderButton::canBeSelectionLeaf() const
 {
-    return formControlElement().rendererIsEditable();
+    return formControlElement().hasEditableStyle();
 }
 
 bool RenderButton::hasLineIfEmpty() const

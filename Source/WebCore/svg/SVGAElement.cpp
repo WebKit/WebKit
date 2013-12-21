@@ -189,7 +189,7 @@ void SVGAElement::defaultEventHandler(Event* event)
 
 bool SVGAElement::supportsFocus() const
 {
-    if (rendererIsEditable())
+    if (hasEditableStyle())
         return SVGGraphicsElement::supportsFocus();
     return true;
 }

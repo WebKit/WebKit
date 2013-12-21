@@ -1,3 +1,38 @@
+2013-12-21  Antti Koivisto  <antti@apple.com>
+
+        Figure out if node is focusable without requiring renderer
+        https://bugs.webkit.org/show_bug.cgi?id=126118
+
+        Reviewed by Andreas Kling.
+
+        * dom/Element.cpp:
+        (WebCore::Element::computedStyle):
+        
+            Use inDocument() test instead of the attached() test. We can compute style for anything that
+            is in document.
+
+        * dom/Node.cpp:
+        (WebCore::Node::isContentEditable):
+        (WebCore::Node::isContentRichlyEditable):
+        (WebCore::Node::hasEditableStyle):
+        
+            Use computedStyle instead of getting the style from renderer. Computed style gets constructed
+            on demand if renderer does not exist. If it does then the existing style is used.
+
+        (WebCore::Node::isEditableToAccessibility):
+        (WebCore::Node::canStartSelection):
+        (WebCore::Node::isRootEditableElement):
+        (WebCore::Node::rootEditableElement):
+        * dom/Node.h:
+        (WebCore::Node::hasEditableStyle):
+        (WebCore::Node::hasRichlyEditableStyle):
+        
+            Renamed from rendererIsEditable since these no longer require renderer.
+
+        (WebCore::HTMLElement::supportsFocus):
+        
+            Stop calling updateStyleIfNeeded() and forcing render tree construction.
+
 2013-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] ResourceHandleSoup should use async client callbacks when client uses async callbacks

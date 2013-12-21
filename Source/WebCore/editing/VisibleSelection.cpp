@@ -626,7 +626,7 @@ bool VisibleSelection::isContentEditable() const
     return isEditablePosition(start());
 }
 
-bool VisibleSelection::rendererIsEditable() const
+bool VisibleSelection::hasEditableStyle() const
 {
     return isEditablePosition(start(), ContentIsEditable, DoNotUpdateStyle);
 }

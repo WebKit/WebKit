@@ -60,7 +60,7 @@ RenderTextFragment::~RenderTextFragment()
 
 bool RenderTextFragment::canBeSelectionLeaf() const
 {
-    return textNode() && textNode()->rendererIsEditable();
+    return textNode() && textNode()->hasEditableStyle();
 }
 
 void RenderTextFragment::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

@@ -53,7 +53,7 @@ void InsertIntoTextNodeCommand::doApply()
     if (passwordEchoEnabled)
         document().updateLayoutIgnorePendingStylesheets();
 
-    if (!m_node->rendererIsEditable())
+    if (!m_node->hasEditableStyle())
         return;
 
     if (passwordEchoEnabled) {
@@ -70,7 +70,7 @@ void InsertIntoTextNodeCommand::doApply()
 
 void InsertIntoTextNodeCommand::doUnapply()
 {
-    if (!m_node->rendererIsEditable())
+    if (!m_node->hasEditableStyle())
         return;
         
     // Need to notify this before actually deleting the text

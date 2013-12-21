@@ -328,7 +328,7 @@ static Widget* widgetForElement(Element* focusedElement)
 static bool acceptsEditingFocus(Node* node)
 {
     ASSERT(node);
-    ASSERT(node->rendererIsEditable());
+    ASSERT(node->hasEditableStyle());
 
     Node* root = node->rootEditableElement();
     Frame* frame = node->document().frame();

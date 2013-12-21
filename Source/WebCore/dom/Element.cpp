@@ -2148,7 +2148,7 @@ RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
         return usedStyle;
     }
 
-    if (!attached()) {
+    if (!inDocument()) {
         // FIXME: Try to do better than this. Ensure that styleForElement() works for elements that are not in the
         // document tree and figure out when to destroy the computed style for such elements.
         return nullptr;
