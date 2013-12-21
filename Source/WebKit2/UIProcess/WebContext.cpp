@@ -875,6 +875,7 @@ void WebContext::registerURLSchemeAsCORSEnabled(const String& urlScheme)
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsCORSEnabled(urlScheme));
 }
 
+#if ENABLE(CUSTOM_PROTOCOLS)
 HashSet<String>& WebContext::globalURLSchemesWithCustomProtocolHandlers()
 {
     static NeverDestroyed<HashSet<String>> set;
@@ -902,6 +903,7 @@ void WebContext::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const S
     for (auto* context : allContexts())
         context->unregisterSchemeForCustomProtocol(schemeLower);
 }
+#endif
 
 void WebContext::setCacheModel(CacheModel cacheModel)
 {
