@@ -1,3 +1,18 @@
+2013-12-20  Tim Horton  <timothy_horton@apple.com>
+
+        Revert r160327, r160273, and r160260.
+
+        We'll come up with something less aggressive, as this doesn't quite work.
+
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedDataIfNecessary):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+
 2013-12-20  Anders Carlsson  <andersca@apple.com>
 
         PostAttachCallbackDisabler should take a Document
