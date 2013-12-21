@@ -1,3 +1,17 @@
+2013-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Assert that RootInlineBox::setLineBreakInfo should is never called on a RenderInline without line boxes
+        https://bugs.webkit.org/show_bug.cgi?id=126101
+
+        Reviewed by Simon Fraser.
+
+        Merge assertions added in https://chromium.googlesource.com/chromium/blink/+/716ac74fd475b581d69c0aa8ec2d806201c3a420
+
+        The code change was not merged since we never hit the added assertion on the attached test case in WebKit.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::setLineBreakInfo):
+
 2013-12-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove the references to Node in InjectedScript
