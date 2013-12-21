@@ -760,6 +760,8 @@ public:
     ALWAYS_INLINE static StringStats& stringStats() { return m_stringStats; }
 #endif
 
+    WTF_EXPORT_STRING_API static const UChar latin1CaseFoldTable[256];
+
 private:
     bool requiresCopy() const
     {
