@@ -176,4 +176,11 @@ void TextPainter::paintTextInContext(GraphicsContext& context, float amountToInc
     m_savedDrawingStateForMask = savedDrawingStateForMask;
 }
 
+#if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
+DashArray TextPainter::dashesForIntersectionsWithRect(const FloatRect& lineExtents, int textRunStartIndex, int textRunEndIndex)
+{
+    return m_font.dashesForIntersectionsWithRect(m_textRun, m_textOrigin, textRunStartIndex, textRunEndIndex, lineExtents);
+}
+#endif
+
 } // namespace WebCore

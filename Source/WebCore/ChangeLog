@@ -1,3 +1,40 @@
+2013-12-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Faster implementation of text-decoration-skip: ink
+        https://bugs.webkit.org/show_bug.cgi?id=125718
+
+        Reviewed by Simon Fraser.
+
+        This new implementation of text-decoration-skip: ink extracts
+        each glyph into a path, then decomposes each path into a series
+        of contours. It then intersects each contour with the top and
+        bottom of the underline (by approximating the contour with a line).
+        It then draws underlines in between these intersection regions.
+
+        Tests for text-decoration-skip: ink already exist in
+        fast/css3-text/css3-text-decoration/text-decoration-skip
+
+        * platform/graphics/Font.h: Signature of new function
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::GlyphIterationState::GlyphIterationState): Persistent
+        between calls to findPathIntersections
+        (WebCore::findIntersectionPoint): Calculates an intersection point
+        between two lines
+        (WebCore::findPathIntersections): Called by CGPathApply to find
+        intersections of each contour
+        (WebCore::Font::intersectionPoints): Function to get the places
+        where an underline would intersect a TextRun.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::compareTuples): Used for sorting intersection ranges
+        (WebCore::translateIntersectionPointsToSkipInkBoundaries): Converts
+        a sequence of intersection points to the locations where
+        text-decoration-skip: ink should draw underlines
+        (WebCore::drawSkipInkUnderline): Draws a sequence of short underlines
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::intersectionPoints): Calls Font::intersectionPoints
+        * rendering/TextPainter.h:
+
 2013-12-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Give the CommandLineAPIModule its own Host object, making InjectedScriptHost viable for a JS Context

@@ -24,6 +24,7 @@
 #define TextPainter_h
 
 #include "AffineTransform.h"
+#include "DashArray.h"
 #include "RenderText.h"
 
 namespace WebCore {
@@ -66,6 +67,8 @@ public:
     
     void paintText();
     void paintTextInContext(GraphicsContext&, float amountToIncreaseStrokeWidthBy);
+
+    DashArray dashesForIntersectionsWithRect(const FloatRect& lineExtents, int textRunStartIndex, int textRunEndIndex);
 
 private:
     bool m_paintSelectedTextOnly;

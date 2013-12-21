@@ -1,3 +1,17 @@
+2013-12-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Faster implementation of text-decoration-skip: ink
+        https://bugs.webkit.org/show_bug.cgi?id=125718
+
+        Reviewed by Simon Fraser.
+
+        This creates a new preprocessor define, CSS3_TEXT_DECORATION_SKIP_INK,
+        which enables the use of the text-decoration-skip: ink CSS value.
+        Creating this new value simplifies the logic about when to enable the
+        codepath for this CSS value.
+
+        * wtf/Platform.h:
+
 2013-12-20  Simon Fraser  <simon.fraser@apple.com>
 
         Change "threaded scrolling" terminology to "asynchronous scrolling"

@@ -23,6 +23,7 @@
 #import "config.h"
 #import "Font.h"
 
+#import "DashArray.h"
 #import "GlyphBuffer.h"
 #import "GraphicsContext.h"
 #import "Logging.h"
@@ -322,5 +323,104 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
 #endif
 }
+
+#if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
+struct GlyphIterationState {
+    GlyphIterationState(CGPoint startingPoint, CGPoint currentPoint, CGFloat y1, CGFloat y2, CGFloat minX, CGFloat maxX)
+        : startingPoint(startingPoint)
+        , currentPoint(currentPoint)
+        , y1(y1)
+        , y2(y2)
+        , minX(minX)
+        , maxX(maxX)
+    {
+    }
+    CGPoint startingPoint;
+    CGPoint currentPoint;
+    CGFloat y1;
+    CGFloat y2;
+    CGFloat minX;
+    CGFloat maxX;
+};
+
+static bool findIntersectionPoint(float y, CGPoint p1, CGPoint p2, CGFloat& x)
+{
+    x = p1.x + (y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y);
+    return (p1.y < y && p2.y > y) || (p1.y > y && p2.y < y);
+}
+
+// This function is called by CGPathApply and is therefore invoked for each
+// contour in a glyph. This function models each contours as a straight line
+// and calculates the intersections between each pseudo-contour and
+// two horizontal lines (the upper and lower bounds of an underline) found in
+// GlyphIterationState::y1 and GlyphIterationState::y2. It keeps track of the
+// leftmost and rightmost intersection in GlyphIterationState::minX and
+// GlyphIterationState::maxX.
+static void findPathIntersections(void* stateAsVoidPointer, const CGPathElement* e)
+{
+    auto& state = *static_cast<GlyphIterationState*>(stateAsVoidPointer);
+    bool doIntersection = false;
+    CGPoint point = CGPointZero;
+    switch (e->type) {
+    case kCGPathElementMoveToPoint:
+        state.startingPoint = e->points[0];
+        state.currentPoint = e->points[0];
+        break;
+    case kCGPathElementAddLineToPoint:
+        doIntersection = true;
+        point = e->points[0];
+        break;
+    case kCGPathElementAddQuadCurveToPoint:
+        doIntersection = true;
+        point = e->points[1];
+        break;
+    case kCGPathElementAddCurveToPoint:
+        doIntersection = true;
+        point = e->points[2];
+        break;
+    case kCGPathElementCloseSubpath:
+        doIntersection = true;
+        point = state.startingPoint;
+        break;
+    }
+    if (!doIntersection)
+        return;
+    CGFloat x;
+    if (findIntersectionPoint(state.y1, state.currentPoint, point, x)) {
+        state.minX = std::min(state.minX, x);
+        state.maxX = std::max(state.maxX, x);
+    }
+    if (findIntersectionPoint(state.y2, state.currentPoint, point, x)) {
+        state.minX = std::min(state.minX, x);
+        state.maxX = std::max(state.maxX, x);
+    }
+    state.currentPoint = point;
+}
+
+DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, int textRunStartIndex, int textRunEndIndex, const FloatRect& lineExtents) const
+{
+    float deltaX;
+    GlyphBuffer glyphBuffer;
+    if (codePath(run) != Complex)
+        deltaX = getGlyphsAndAdvancesForSimpleText(run, textRunStartIndex, textRunEndIndex, glyphBuffer);
+    else
+        deltaX = getGlyphsAndAdvancesForComplexText(run, textRunStartIndex, textRunEndIndex, glyphBuffer);
+    CGAffineTransform translation = CGAffineTransformMakeTranslation(textOrigin.x() + deltaX, textOrigin.y());
+    translation = CGAffineTransformScale(translation, 1, -1);
+    DashArray result;
+    for (int i = 0; i < glyphBuffer.size(); ++i) {
+        GlyphIterationState info = GlyphIterationState(CGPointMake(0, 0), CGPointMake(0, 0), lineExtents.y(), lineExtents.y() + lineExtents.height(), lineExtents.x() + lineExtents.width(), lineExtents.x());
+        RetainPtr<CGPathRef> path = adoptCF(CTFontCreatePathForGlyph(glyphBuffer.fontDataAt(i)->platformData().ctFont(), glyphBuffer.glyphAt(i), &translation));
+        CGPathApply(path.get(), &info, &findPathIntersections);
+        if (info.minX < info.maxX) {
+            result.append(info.minX - lineExtents.x());
+            result.append(info.maxX - lineExtents.x());
+        }
+        GlyphBufferAdvance advance = glyphBuffer.advanceAt(i);
+        translation = CGAffineTransformTranslate(translation, advance.width(), advance.height());
+    }
+    return result;
+}
+#endif
 
 }
