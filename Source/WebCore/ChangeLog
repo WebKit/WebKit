@@ -1,3 +1,26 @@
+2013-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] ResourceHandleSoup should use async client callbacks when client uses async callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=126006
+
+        Reviewed by Martin Robinson.
+
+        This fixes WebKit2 loader client unit tests when using the network
+        process.
+
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::doRedirect): Call willSendRequestAsync on the client
+        when usesAsyncCallbacks returns true.
+        (WebCore::nextMultipartResponsePartCallback): Call
+        didReceiveResponseAsync on the client when usesAsyncCallbacks
+        returns true.
+        (WebCore::sendRequestCallback): Ditto.
+        (WebCore::ResourceHandle::continueWillSendRequest): Empty
+        implementation for now because the default one asserts.
+        (WebCore::ResourceHandle::continueDidReceiveResponse): Ditto.
+        (WebCore::ResourceHandle::continueShouldUseCredentialStorage): Ditto.
+
 2013-12-20  Anders Carlsson  <andersca@apple.com>
 
         Replace yield() and pauseBriefly() with std::this_thread::yield()

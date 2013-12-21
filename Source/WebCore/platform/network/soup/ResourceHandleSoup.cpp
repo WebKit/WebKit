@@ -511,7 +511,10 @@ static void doRedirect(ResourceHandle* handle)
     // the WebKit layer. They were only placed in the URL for the benefit of libsoup.
     newRequest.removeCredentials();
 
-    d->client()->willSendRequest(handle, newRequest, d->m_response);
+    if (d->client()->usesAsyncCallbacks())
+        d->client()->willSendRequestAsync(handle, newRequest, d->m_response);
+    else
+        d->client()->willSendRequest(handle, newRequest, d->m_response);
     handle->sendPendingRequest();
 }
 
@@ -649,7 +652,10 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
     d->m_response.setURL(handle->firstRequest().url());
     d->m_response.updateFromSoupMessageHeaders(soup_multipart_input_stream_get_headers(d->m_multipartInputStream.get()));
 
-    handle->client()->didReceiveResponse(handle.get(), d->m_response);
+    if (handle->client()->usesAsyncCallbacks())
+        handle->client()->didReceiveResponseAsync(handle.get(), d->m_response);
+    else
+        handle->client()->didReceiveResponse(handle.get(), d->m_response);
 
     if (handle->cancelledOrClientless()) {
         cleanupSoupRequestOperation(handle.get());
@@ -716,7 +722,10 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
         d->m_response.setExpectedContentLength(soup_request_get_content_length(d->m_soupRequest.get()));
     }
 
-    handle->client()->didReceiveResponse(handle.get(), d->m_response);
+    if (d->client()->usesAsyncCallbacks())
+        handle->client()->didReceiveResponseAsync(handle.get(), d->m_response);
+    else
+        handle->client()->didReceiveResponse(handle.get(), d->m_response);
 
     if (handle->cancelledOrClientless()) {
         cleanupSoupRequestOperation(handle.get());
@@ -1368,6 +1377,27 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
     handle->ensureReadBuffer();
     g_input_stream_read_async(d->m_inputStream.get(), const_cast<char*>(d->m_soupBuffer->data), d->m_soupBuffer->length, G_PRIORITY_DEFAULT,
         d->m_cancellable.get(), readCallback, handle.get());
+}
+
+void ResourceHandle::continueWillSendRequest(const ResourceRequest& request)
+{
+    ASSERT(client());
+    ASSERT(client()->usesAsyncCallbacks());
+    // FIXME: Implement this method if needed: https://bugs.webkit.org/show_bug.cgi?id=126114.
+}
+
+void ResourceHandle::continueDidReceiveResponse()
+{
+    ASSERT(client());
+    ASSERT(client()->usesAsyncCallbacks());
+    // FIXME: Implement this method if needed: https://bugs.webkit.org/show_bug.cgi?id=126114.
+}
+
+void ResourceHandle::continueShouldUseCredentialStorage(bool)
+{
+    ASSERT(client());
+    ASSERT(client()->usesAsyncCallbacks());
+    // FIXME: Implement this method if needed: https://bugs.webkit.org/show_bug.cgi?id=126114.
 }
 
 static gboolean requestTimeoutCallback(gpointer data)

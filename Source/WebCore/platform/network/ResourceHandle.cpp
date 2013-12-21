@@ -147,7 +147,7 @@ void ResourceHandle::setClient(ResourceHandleClient* client)
     d->m_client = client;
 }
 
-#if !PLATFORM(MAC) && !USE(CFNETWORK)
+#if !PLATFORM(MAC) && !USE(CFNETWORK) && !USE(SOUP)
 // ResourceHandle never uses async client calls on these platforms yet.
 void ResourceHandle::continueWillSendRequest(const ResourceRequest&)
 {
