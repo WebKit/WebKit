@@ -1,5 +1,19 @@
 2013-12-20  Anders Carlsson  <andersca@apple.com>
 
+        Replace yield() and pauseBriefly() with std::this_thread::yield()
+        https://bugs.webkit.org/show_bug.cgi?id=126105
+
+        Reviewed by Sam Weinig.
+
+        * wtf/ByteSpinLock.h:
+        (WTF::ByteSpinLock::lock):
+        * wtf/Threading.h:
+        * wtf/ThreadingPrimitives.h:
+        * wtf/ThreadingPthreads.cpp:
+        * wtf/ThreadingWin.cpp:
+
+2013-12-20  Anders Carlsson  <andersca@apple.com>
+
         Speed up case folding for 8-bit strings
         https://bugs.webkit.org/show_bug.cgi?id=126098
 
