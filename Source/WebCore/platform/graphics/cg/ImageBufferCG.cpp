@@ -47,6 +47,7 @@
 #endif
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
+#include "ImageBufferBackingStoreCache.h"
 #include <IOSurface/IOSurface.h>
 #endif
 
@@ -54,43 +55,6 @@ namespace WebCore {
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 static const int maxIOSurfaceDimension = 4096;
-
-static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
-{
-    unsigned pixelFormat = 'BGRA';
-    unsigned bytesPerElement = 4;
-    int width = size.width();
-    int height = size.height();
-
-    unsigned long bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, size.width() * bytesPerElement);
-    if (!bytesPerRow)
-        return 0;
-
-    unsigned long allocSize = IOSurfaceAlignProperty(kIOSurfaceAllocSize, size.height() * bytesPerRow);
-    if (!allocSize)
-        return 0;
-
-    const void *keys[6];
-    const void *values[6];
-    keys[0] = kIOSurfaceWidth;
-    values[0] = CFNumberCreate(0, kCFNumberIntType, &width);
-    keys[1] = kIOSurfaceHeight;
-    values[1] = CFNumberCreate(0, kCFNumberIntType, &height);
-    keys[2] = kIOSurfacePixelFormat;
-    values[2] = CFNumberCreate(0, kCFNumberIntType, &pixelFormat);
-    keys[3] = kIOSurfaceBytesPerElement;
-    values[3] = CFNumberCreate(0, kCFNumberIntType, &bytesPerElement);
-    keys[4] = kIOSurfaceBytesPerRow;
-    values[4] = CFNumberCreate(0, kCFNumberLongType, &bytesPerRow);
-    keys[5] = kIOSurfaceAllocSize;
-    values[5] = CFNumberCreate(0, kCFNumberLongType, &allocSize);
-
-    RetainPtr<CFDictionaryRef> dict = adoptCF(CFDictionaryCreate(0, keys, values, 6, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    for (unsigned i = 0; i < 6; i++)
-        CFRelease(values[i]);
-
-    return adoptCF(IOSurfaceCreate(dict.get()));
-}
 #endif
 
 static void releaseImageData(void*, const void* data, size_t)
@@ -156,9 +120,15 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace 
     RetainPtr<CGContextRef> cgContext;
     if (accelerateRendering) {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        m_data.m_surface = createIOSurface(m_data.m_backingStoreSize);
-        FloatSize userBounds = scaleSizeToUserSpace(FloatSize(width.unsafeGet(), height.unsafeGet()), m_data.m_backingStoreSize, m_size);
-        cgContext = adoptCF(wkIOSurfaceContextCreate(m_data.m_surface.get(), userBounds.width(), userBounds.height(), m_data.m_colorSpace));
+        ImageBufferBackingStoreCache::IOSurfaceAndContext infoFromPool = ImageBufferBackingStoreCache::get().getOrAllocate(
+            internalSize(), m_data.m_colorSpace, false);
+        cgContext = infoFromPool.context;
+        if (cgContext) {
+            m_data.m_surface = infoFromPool.surface;
+            m_data.m_backingStoreSize.setWidth(IOSurfaceGetWidth(m_data.m_surface.get()));
+            m_data.m_backingStoreSize.setHeight(IOSurfaceGetHeight(m_data.m_surface.get()));
+            m_data.m_bytesPerRow = IOSurfaceGetBytesPerRow(m_data.m_surface.get());
+        }
 #endif
         if (!cgContext)
             accelerateRendering = false; // If allocation fails, fall back to non-accelerated path.
@@ -188,6 +158,10 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace 
 
 ImageBuffer::~ImageBuffer()
 {
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    if (m_data.m_surface)
+        ImageBufferBackingStoreCache::get().deallocate(m_data.m_surface.get());
+#endif
 }
 
 GraphicsContext* ImageBuffer::context() const

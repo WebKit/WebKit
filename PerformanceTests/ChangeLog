@@ -1,3 +1,16 @@
+2013-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow ImageBuffer to re-use IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=125477
+
+        Reviewed by Geoff Garen.
+
+        This test times creating a variety of different sizes of canvases
+        once some have already been created. The second creation of the
+        canvases should re-use the existing IOSurfaces.
+
+        * Canvas/reuse.html: Added.
+
 2013-12-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: 2x regression on Dromaeo DOM query tests

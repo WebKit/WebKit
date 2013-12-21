@@ -1,3 +1,18 @@
+2013-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow ImageBuffer to re-use IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=125477
+
+        Reviewed by Geoff Garen.
+
+        Now that we're re-using the backing store of canvases, this
+        test makes sure that if we draw to a canvas, then destroy it,
+        then create a new canvas (which should share the same backing
+        store) that it doesn't have the stale data in it
+
+        * fast/canvas/canvas-backing-store-reuse-expected.txt: Added.
+        * fast/canvas/canvas-backing-store-reuse.html: Added.
+
 2013-12-19  Antti Koivisto  <antti@apple.com>
 
         Create render tree lazily
