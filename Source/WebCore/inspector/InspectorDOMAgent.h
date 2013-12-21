@@ -208,6 +208,9 @@ public:
     Element* assertElement(ErrorString*, int nodeId);
     Document* assertDocument(ErrorString*, int nodeId);
 
+    static Node* scriptValueAsNode(Deprecated::ScriptValue);
+    static Deprecated::ScriptValue nodeAsScriptValue(JSC::ExecState*, Node*);
+
     // Methods called from other agents.
     InspectorPageAgent* pageAgent() { return m_pageAgent; }
 
@@ -238,6 +241,7 @@ private:
     PassRefPtr<Inspector::TypeBuilder::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, const AtomicString& eventType, Node*, const String* objectGroupId);
 
     Node* nodeForPath(const String& path);
+    Node* nodeForObjectId(const String& objectId);
 
     void discardBindings();
 

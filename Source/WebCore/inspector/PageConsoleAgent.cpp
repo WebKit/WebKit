@@ -70,7 +70,7 @@ public:
     explicit InspectableNode(Node* node) : m_node(node) { }
     virtual Deprecated::ScriptValue get(JSC::ExecState* state) OVERRIDE
     {
-        return InjectedScriptHost::nodeAsScriptValue(state, m_node);
+        return InspectorDOMAgent::nodeAsScriptValue(state, m_node);
     }
 private:
     Node* m_node;

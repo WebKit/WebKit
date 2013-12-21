@@ -77,11 +77,13 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "JSEventListener.h"
+#include "JSNode.h"
 #include "MainFrame.h"
 #include "MutationEvent.h"
 #include "Node.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "PageInjectedScriptManager.h"
 #include "Pasteboard.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
@@ -998,11 +1000,12 @@ void InspectorDOMAgent::focusNode()
     if (!frame)
         return;
 
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldExecState(frame));
+    JSC::ExecState* scriptState = mainWorldExecState(frame);
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
     if (injectedScript.hasNoValue())
         return;
 
-    injectedScript.inspectNode(node.get());
+    injectedScript.inspectObject(InspectorDOMAgent::nodeAsScriptValue(scriptState, node.get()));
 }
 
 void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
@@ -1090,8 +1093,7 @@ void InspectorDOMAgent::highlightNode(ErrorString* errorString, const RefPtr<Ins
     if (nodeId) {
         node = assertNode(errorString, *nodeId);
     } else if (objectId) {
-        InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(*objectId);
-        node = injectedScript.nodeForObjectId(*objectId);
+        node = nodeForObjectId(*objectId);
         if (!node)
             *errorString = "Node for given objectId not found";
     } else
@@ -1241,8 +1243,7 @@ void InspectorDOMAgent::getAttributes(ErrorString* errorString, int nodeId, RefP
 
 void InspectorDOMAgent::requestNode(ErrorString*, const String& objectId, int* nodeId)
 {
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
-    Node* node = injectedScript.nodeForObjectId(objectId);
+    Node* node = nodeForObjectId(objectId);
     if (node)
         *nodeId = pushNodePathToFrontend(node);
     else
@@ -1706,6 +1707,13 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
     return node;
 }
 
+Node* InspectorDOMAgent::nodeForObjectId(const String& objectId)
+{
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    Deprecated::ScriptValue value = injectedScript.findObjectById(objectId);
+    return InspectorDOMAgent::scriptValueAsNode(value);
+}
+
 void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString* errorString, const String& path, int* nodeId)
 {
     if (Node* node = nodeForPath(path))
@@ -1737,11 +1745,29 @@ PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> InspectorDOMAgent::res
     if (!frame)
         return 0;
 
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldExecState(frame));
+    JSC::ExecState* scriptState = mainWorldExecState(frame);
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
     if (injectedScript.hasNoValue())
         return 0;
 
-    return injectedScript.wrapNode(node, objectGroup);
+    return injectedScript.wrapObject(InspectorDOMAgent::nodeAsScriptValue(scriptState, node), objectGroup);
+}
+
+Node* InspectorDOMAgent::scriptValueAsNode(Deprecated::ScriptValue value)
+{
+    if (!value.isObject() || value.isNull())
+        return nullptr;
+
+    return toNode(value.jsValue());
+}
+
+Deprecated::ScriptValue InspectorDOMAgent::nodeAsScriptValue(JSC::ExecState* state, Node* node)
+{
+    if (!shouldAllowAccessToNode(state, node))
+        return Deprecated::ScriptValue(state->vm(), JSC::jsNull());
+
+    JSC::JSLockHolder lock(state);
+    return Deprecated::ScriptValue(state->vm(), toJS(state, deprecatedGlobalObjectForPrototype(state), node));
 }
 
 } // namespace WebCore

@@ -59,22 +59,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-Node* InjectedScriptHost::scriptValueAsNode(Deprecated::ScriptValue value)
-{
-    if (!value.isObject() || value.isNull())
-        return 0;
-    return toNode(value.jsValue());
-}
-
-Deprecated::ScriptValue InjectedScriptHost::nodeAsScriptValue(JSC::ExecState* state, Node* node)
-{
-    if (!shouldAllowAccessToNode(state, node))
-        return Deprecated::ScriptValue(state->vm(), jsNull());
-
-    JSLockHolder lock(state);
-    return Deprecated::ScriptValue(state->vm(), toJS(state, deprecatedGlobalObjectForPrototype(state), node));
-}
-
 JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
 {
     if (exec->argumentCount() < 1)

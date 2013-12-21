@@ -1,3 +1,36 @@
+2013-12-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove the references to Node in InjectedScript
+        https://bugs.webkit.org/show_bug.cgi?id=126091
+
+        Reviewed by Timothy Hatcher.
+
+        Remove the last DOM references from InjectedScript so that
+        InjectedScript can move down into JavaScriptCore. The only
+        remaining references were to Nodes, which are all just thin
+        wrappers around existing functions. Move Node / JSNode (JSValue)
+        conversion into InspectorDOMAgent, where it was used.
+
+        No new tests, no observable change in functionality.
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::inspectObject):
+        (WebCore::InjectedScript::releaseObject):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptSource.js:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::focusNode):
+        (WebCore::InspectorDOMAgent::highlightNode):
+        (WebCore::InspectorDOMAgent::requestNode):
+        (WebCore::InspectorDOMAgent::nodeForObjectId):
+        (WebCore::InspectorDOMAgent::resolveNode):
+        (WebCore::InspectorDOMAgent::scriptValueAsNode):
+        (WebCore::InspectorDOMAgent::nodeAsScriptValue):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/PageConsoleAgent.cpp:
+
 2013-12-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Faster implementation of text-decoration-skip: ink

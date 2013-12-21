@@ -47,9 +47,6 @@ public:
     static PassRefPtr<InjectedScriptHost> create();
     ~InjectedScriptHost() { }
 
-    static Node* scriptValueAsNode(Deprecated::ScriptValue);
-    static Deprecated::ScriptValue nodeAsScriptValue(JSC::ExecState*, Node*);
-
 private:
     InjectedScriptHost() { }
 };

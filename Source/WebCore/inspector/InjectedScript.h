@@ -85,27 +85,23 @@ public:
     void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<Inspector::TypeBuilder::Debugger::FunctionDetails>* result);
     void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::PropertyDescriptor>>* result);
     void getInternalProperties(ErrorString*, const String& objectId, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor>>* result);
-    Node* nodeForObjectId(const String& objectId);
-    void releaseObject(const String& objectId);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>> wrapCallFrames(const Deprecated::ScriptValue&);
 #endif
-
     PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> wrapObject(const Deprecated::ScriptValue&, const String& groupName, bool generatePreview = false) const;
     PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const;
-    PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> wrapNode(Node*, const String& groupName);
-    Deprecated::ScriptValue findObjectById(const String& objectId) const;
 
-    void inspectNode(Node*);
-    void releaseObjectGroup(const String&);
+    Deprecated::ScriptValue findObjectById(const String& objectId) const;
+    void inspectObject(Deprecated::ScriptValue);
+
+    void releaseObject(const String& objectId);
+    void releaseObjectGroup(const String& objectGroup);
 
 private:
     friend class InjectedScriptModule;
     friend InjectedScript InjectedScriptManager::injectedScriptFor(JSC::ExecState*);
     InjectedScript(Deprecated::ScriptObject, InspectedStateAccessCheck);
-
-    Deprecated::ScriptValue nodeAsScriptValue(Node*);
 };
 
 #endif

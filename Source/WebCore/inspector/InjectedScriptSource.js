@@ -125,7 +125,7 @@ InjectedScript.prototype = {
     /**
      * @param {*} object
      */
-    inspectNode: function(object)
+    inspectObject: function(object)
     {
         if (this._commandLineAPIImpl)
             this._commandLineAPIImpl.inspect(object);
@@ -639,18 +639,6 @@ InjectedScript.prototype = {
     {
         var parsedObjectId = this._parseObjectId(objectId);
         return this._objectForId(parsedObjectId);
-    },
-
-    /**
-     * @param {string} objectId
-     * @return {Node}
-     */
-    nodeForObjectId: function(objectId)
-    {
-        var object = this.findObjectById(objectId);
-        if (!object || this._subtype(object) !== "node")
-            return null;
-        return /** @type {Node} */ (object);
     },
 
     /**
