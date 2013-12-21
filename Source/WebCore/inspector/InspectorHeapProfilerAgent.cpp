@@ -29,11 +29,11 @@
  */
 
 #include "config.h"
+#include "InspectorHeapProfilerAgent.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
-#include "InspectorHeapProfilerAgent.h"
-
+#include "CommandLineAPIHost.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InstrumentingAgents.h"
@@ -69,7 +69,9 @@ void InspectorHeapProfilerAgent::resetState()
     m_snapshots.clear();
     m_nextUserInitiatedHeapSnapshotNumber = 1;
     resetFrontendProfiles();
-    m_injectedScriptManager->injectedScriptHost()->clearInspectedObjects();
+
+    if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
+        commandLineAPIHost->clearInspectedObjects();
 }
 
 void InspectorHeapProfilerAgent::resetFrontendProfiles()

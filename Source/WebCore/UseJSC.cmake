@@ -39,6 +39,7 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSCanvasRenderingContext2DCustom.cpp
     bindings/js/JSCanvasRenderingContextCustom.cpp
     bindings/js/JSClipboardCustom.cpp
+    bindings/js/JSCommandLineAPIHostCustom.cpp
     bindings/js/JSCryptoCustom.cpp
     bindings/js/JSCustomXPathNSResolver.cpp
     bindings/js/JSDictionary.cpp

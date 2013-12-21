@@ -29,10 +29,10 @@
 
 #include "InspectorConsoleAgent.h"
 
+#include "CommandLineAPIHost.h"
 #include "Console.h"
 #include "ConsoleMessage.h"
 #include "DOMWindow.h"
-#include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
 #include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
@@ -319,10 +319,10 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
     }
 }
 
-class InspectableHeapObject : public InjectedScriptHost::InspectableObject {
+class InspectableHeapObject FINAL : public CommandLineAPIHost::InspectableObject {
 public:
     explicit InspectableHeapObject(int heapObjectId) : m_heapObjectId(heapObjectId) { }
-    virtual Deprecated::ScriptValue get(JSC::ExecState*)
+    virtual Deprecated::ScriptValue get(JSC::ExecState*) OVERRIDE
     {
         return ScriptProfiler::objectByHeapObjectId(m_heapObjectId);
     }
@@ -332,7 +332,8 @@ private:
 
 void InspectorConsoleAgent::addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId)
 {
-    m_injectedScriptManager->injectedScriptHost()->addInspectedObject(adoptPtr(new InspectableHeapObject(inspectedHeapObjectId)));
+    if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
+        commandLineAPIHost->addInspectedObject(adoptPtr(new InspectableHeapObject(inspectedHeapObjectId)));
 }
 
 } // namespace WebCore

@@ -1,3 +1,108 @@
+2013-12-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Give the CommandLineAPIModule its own Host object, making InjectedScriptHost viable for a JS Context
+        https://bugs.webkit.org/show_bug.cgi?id=126082
+
+        Reviewed by Timothy Hatcher.
+
+        Extract CommandLineAPIHost from InjectedScriptHost. The command line API contained
+        a bunch of DOM specific JavaScript that would not be suitable for a pure JavaScript
+        environment. Now that the DOM related code is in this WebCore only module, give this
+        module a host object that WebCore will provide.
+
+        No new tests, no observable change in functionality.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Add new files.
+
+        * bindings/js/JSCommandLineAPIHostCustom.cpp: Added.
+        (WebCore::JSCommandLineAPIHost::inspectedObject):
+        (WebCore::getJSListenerFunctions):
+        (WebCore::JSCommandLineAPIHost::getEventListeners):
+        (WebCore::JSCommandLineAPIHost::inspect):
+        (WebCore::JSCommandLineAPIHost::databaseId):
+        (WebCore::JSCommandLineAPIHost::storageId):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        * inspector/CommandLineAPIHost.cpp: Copied from Source/WebCore/inspector/InjectedScriptHost.cpp.
+        (WebCore::CommandLineAPIHost::create):
+        (WebCore::CommandLineAPIHost::CommandLineAPIHost):
+        (WebCore::CommandLineAPIHost::~CommandLineAPIHost):
+        (WebCore::CommandLineAPIHost::disconnect):
+        (WebCore::CommandLineAPIHost::inspectImpl):
+        (WebCore::CommandLineAPIHost::getEventListenersImpl):
+        (WebCore::CommandLineAPIHost::clearConsoleMessages):
+        (WebCore::CommandLineAPIHost::copyText):
+        (WebCore::CommandLineAPIHost::InspectableObject::get):
+        (WebCore::CommandLineAPIHost::addInspectedObject):
+        (WebCore::CommandLineAPIHost::clearInspectedObjects):
+        (WebCore::CommandLineAPIHost::inspectedObject):
+        (WebCore::CommandLineAPIHost::databaseIdImpl):
+        (WebCore::CommandLineAPIHost::storageIdImpl):
+        * inspector/CommandLineAPIHost.h: Copied from Source/WebCore/inspector/InjectedScriptHost.h.
+        (WebCore::CommandLineAPIHost::init):
+        * inspector/CommandLineAPIHost.idl: Copied from Source/WebCore/inspector/InjectedScriptHost.idl.
+        * inspector/CommandLineAPIModule.cpp:
+        These are almost all pure copies from InjectedScriptHost files. Cleaned up a bit.
+
+        * inspector/InjectedScriptModule.h:
+        * inspector/InjectedScriptModule.cpp:
+        (WebCore::InjectedScriptModule::ensureInjected):
+        Modules can now define a host object when they are getting injected.
+
+        (WebCore::CommandLineAPIModule::host):
+        * inspector/CommandLineAPIModule.h:
+        Provide a CommandLineAPIHost, host object.
+
+        * inspector/InjectedScriptCanvasModule.h:
+        * inspector/InjectedScriptCanvasModule.cpp:
+        (WebCore::InjectedScriptCanvasModule::host):
+        No host object is needed for the CanvasModule.
+
+        * inspector/InjectedScriptSource.js:
+        * inspector/CommandLineAPIModuleSource.js:
+        When injecting a module, pass on an optional host object to
+        the module's source. Move a little more code between the
+        two files. The two files are very tightly coupled right now.
+
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::create):
+        * inspector/InjectedScriptHost.h:
+        (WebCore::InjectedScriptHost::~InjectedScriptHost):
+        (WebCore::InjectedScriptHost::InjectedScriptHost):
+        * inspector/InjectedScriptHost.idl:
+        Move any command line specific logic to CommandLineAPIHost classes.
+
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::disconnect):
+        * inspector/InjectedScriptManager.h:
+        (WebCore::InjectedScriptManager::commandLineAPIHost):
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::addInspectedHeapObject):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        (WebCore::InspectorHeapProfilerAgent::resetState):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::resetState):
+        * inspector/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::addInspectedNode):
+        * inspector/PageInjectedScriptManager.cpp:
+        (WebCore::PageInjectedScriptManager::PageInjectedScriptManager):
+        (WebCore::PageInjectedScriptManager::disconnect):
+        * inspector/PageInjectedScriptManager.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        An InjectedScriptManager may optionally have a commandLineAPIHost object.
+        If it does, initialize it, and send it messages.
+
 2013-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow ImageBuffer to re-use IOSurfaces

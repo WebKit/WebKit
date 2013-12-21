@@ -34,6 +34,7 @@
 
 #include "WorkerInspectorController.h"
 
+#include "CommandLineAPIHost.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
 #include "InspectorClient.h"
@@ -98,14 +99,16 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope* workerGl
     m_agents.append(InspectorTimelineAgent::create(m_instrumentingAgents.get(), 0, 0, InspectorTimelineAgent::WorkerInspector, 0));
     m_agents.append(consoleAgent.release());
 
-    m_injectedScriptManager->injectedScriptHost()->init(0
-        , 0
+    if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost()) {
+        commandLineAPIHost->init(nullptr
+            , nullptr
+            , nullptr
+            , nullptr
 #if ENABLE(SQL_DATABASE)
-        , 0
+            , nullptr
 #endif
-        , 0
-        , 0
-    );
+        );
+    }
 }
  
 WorkerInspectorController::~WorkerInspectorController()

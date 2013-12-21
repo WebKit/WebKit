@@ -30,8 +30,10 @@
  * @param {InjectedScriptHost} InjectedScriptHost
  * @param {Window} inspectedWindow
  * @param {number} injectedScriptId
+ * @param {InjectedScript} injectedScript
+ * @param {CommandLineAPIHost} CommandLineAPIHost
  */
-(function (InjectedScriptHost, inspectedWindow, injectedScriptId, injectedScript) {
+(function (InjectedScriptHost, inspectedWindow, injectedScriptId, injectedScript, CommandLineAPIHost) {
 
 /**
  * @param {Arguments} array
@@ -272,19 +274,19 @@ CommandLineAPIImpl.prototype = {
      */
     inspect: function(object)
     {
-        return injectedScript._inspect(object);
+        return this._inspect(object);
     },
 
     copy: function(object)
     {
         if (injectedScript._subtype(object) === "node")
             object = object.outerHTML;
-        InjectedScriptHost.copyText(object);
+        CommandLineAPIHost.copyText(object);
     },
 
     clear: function()
     {
-        InjectedScriptHost.clearConsoleMessages();
+        CommandLineAPIHost.clearConsoleMessages();
     },
 
     /**
@@ -292,7 +294,7 @@ CommandLineAPIImpl.prototype = {
      */
     getEventListeners: function(node)
     {
-        return InjectedScriptHost.getEventListeners(node);
+        return CommandLineAPIHost.getEventListeners(node);
     },
 
     /**
@@ -300,7 +302,7 @@ CommandLineAPIImpl.prototype = {
      */
     _inspectedObject: function(num)
     {
-        return InjectedScriptHost.inspectedObject(num);
+        return CommandLineAPIHost.inspectedObject(num);
     },
 
     /**
@@ -336,6 +338,35 @@ CommandLineAPIImpl.prototype = {
     _logEvent: function(event)
     {
         inspectedWindow.console.log(event.type, event);
+    },
+
+    /**
+     * @param {*} object
+     * @return {*}
+     */
+    _inspect: function(object)
+    {
+        if (arguments.length === 0)
+            return;
+
+        var objectId = injectedScript._wrapObject(object, "");
+        var hints = {};
+
+        switch (injectedScript._describe(object)) {
+        case "Database":
+            var databaseId = CommandLineAPIHost.databaseId(object)
+            if (databaseId)
+                hints.databaseId = databaseId;
+            break;
+        case "Storage":
+            var storageId = CommandLineAPIHost.storageId(object)
+            if (storageId)
+                hints.domStorageId = InjectedScriptHost.evaluate("(" + storageId + ")");
+            break;
+        }
+
+        CommandLineAPIHost.inspect(objectId, hints);
+        return object;
     }
 }
 

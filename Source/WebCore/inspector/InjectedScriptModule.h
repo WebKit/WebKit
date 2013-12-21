@@ -38,6 +38,10 @@
 
 #if ENABLE(INSPECTOR)
 
+namespace JSC {
+class JSValue;
+}
+
 namespace WebCore {
 
 class InjectedScriptManager;
@@ -45,6 +49,7 @@ class InjectedScriptManager;
 class InjectedScriptModule : public InjectedScriptBase {
 public:
     virtual String source() const = 0;
+    virtual JSC::JSValue host(InjectedScriptManager*, JSC::ExecState*) const = 0;
     virtual bool returnsObject() const = 0;
 
 protected:

@@ -36,23 +36,13 @@
 
 #include "JSInjectedScriptHost.h"
 
-#if ENABLE(SQL_DATABASE)
-#include "Database.h"
-#include "JSDatabase.h"
-#endif
 #include "ExceptionCode.h"
 #include "InjectedScriptHost.h"
-#include "InspectorDOMAgent.h"
-#include "InspectorDebuggerAgent.h"
-#include "JSEventListener.h"
 #include "JSHTMLAllCollection.h"
 #include "JSHTMLCollection.h"
 #include "JSNode.h"
 #include "JSNodeList.h"
-#include "JSStorage.h"
-#include "Storage.h"
 #include <bindings/ScriptValue.h>
-#include <inspector/InspectorValues.h>
 #include <parser/SourceCode.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
@@ -83,23 +73,6 @@ Deprecated::ScriptValue InjectedScriptHost::nodeAsScriptValue(JSC::ExecState* st
 
     JSLockHolder lock(state);
     return Deprecated::ScriptValue(state->vm(), toJS(state, deprecatedGlobalObjectForPrototype(state), node));
-}
-
-JSValue JSInjectedScriptHost::inspectedObject(ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return jsUndefined();
-
-    InjectedScriptHost::InspectableObject* object = impl().inspectedObject(exec->uncheckedArgument(0).toInt32(exec));
-    if (!object)
-        return jsUndefined();
-
-    JSLockHolder lock(exec);
-    Deprecated::ScriptValue scriptValue = object->get(exec);
-    if (scriptValue.hasNoValue())
-        return jsUndefined();
-
-    return scriptValue.jsValue();
 }
 
 JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
@@ -192,88 +165,6 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
 JSValue JSInjectedScriptHost::getInternalProperties(ExecState*)
 {
     // FIXME: implement this. https://bugs.webkit.org/show_bug.cgi?id=94533
-    return jsUndefined();
-}
-
-static JSArray* getJSListenerFunctions(ExecState* exec, Document* document, const EventListenerInfo& listenerInfo)
-{
-    JSArray* result = constructEmptyArray(exec, 0);
-    size_t handlersCount = listenerInfo.eventListenerVector.size();
-    for (size_t i = 0, outputIndex = 0; i < handlersCount; ++i) {
-        const JSEventListener* jsListener = JSEventListener::cast(listenerInfo.eventListenerVector[i].listener.get());
-        if (!jsListener) {
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-        // Hide listeners from other contexts.
-        if (&jsListener->isolatedWorld() != &currentWorld(exec))
-            continue;
-        JSObject* function = jsListener->jsFunction(document);
-        if (!function)
-            continue;
-        JSObject* listenerEntry = constructEmptyObject(exec);
-        listenerEntry->putDirect(exec->vm(), Identifier(exec, "listener"), function);
-        listenerEntry->putDirect(exec->vm(), Identifier(exec, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i].useCapture));
-        result->putDirectIndex(exec, outputIndex++, JSValue(listenerEntry));
-    }
-    return result;
-}
-
-JSValue JSInjectedScriptHost::getEventListeners(ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return jsUndefined();
-    JSValue value = exec->uncheckedArgument(0);
-    if (!value.isObject() || value.isNull())
-        return jsUndefined();
-    Node* node = toNode(value);
-    if (!node)
-        return jsUndefined();
-
-    Vector<EventListenerInfo> listenersArray;
-    impl().getEventListenersImpl(node, listenersArray);
-
-    JSObject* result = constructEmptyObject(exec);
-    for (size_t i = 0; i < listenersArray.size(); ++i) {
-        JSArray* listeners = getJSListenerFunctions(exec, &node->document(), listenersArray[i]);
-        if (!listeners->length())
-            continue;
-        AtomicString eventType = listenersArray[i].eventType;
-        result->putDirect(exec->vm(), Identifier(exec, eventType.impl()), JSValue(listeners));
-    }
-
-    return result;
-}
-
-JSValue JSInjectedScriptHost::inspect(ExecState* exec)
-{
-    if (exec->argumentCount() >= 2) {
-        Deprecated::ScriptValue object(exec->vm(), exec->uncheckedArgument(0));
-        Deprecated::ScriptValue hints(exec->vm(), exec->uncheckedArgument(1));
-        impl().inspectImpl(object.toInspectorValue(exec), hints.toInspectorValue(exec));
-    }
-    return jsUndefined();
-}
-
-JSValue JSInjectedScriptHost::databaseId(ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return jsUndefined();
-#if ENABLE(SQL_DATABASE)
-    Database* database = toDatabase(exec->uncheckedArgument(0));
-    if (database)
-        return jsStringWithCache(exec, impl().databaseIdImpl(database));
-#endif
-    return jsUndefined();
-}
-
-JSValue JSInjectedScriptHost::storageId(ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return jsUndefined();
-    Storage* storage = toStorage(exec->uncheckedArgument(0));
-    if (storage)
-        return jsStringWithCache(exec, impl().storageIdImpl(storage));
     return jsUndefined();
 }
 

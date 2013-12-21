@@ -33,6 +33,7 @@
 
 #include "InspectorProfilerAgent.h"
 
+#include "CommandLineAPIHost.h"
 #include "Console.h"
 #include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
@@ -316,7 +317,9 @@ void InspectorProfilerAgent::resetState()
     m_nextUserInitiatedProfileNumber = 1;
     m_nextUserInitiatedHeapSnapshotNumber = 1;
     resetFrontendProfiles();
-    m_injectedScriptManager->injectedScriptHost()->clearInspectedObjects();
+
+    if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
+        commandLineAPIHost->clearInspectedObjects();
 }
 
 void InspectorProfilerAgent::resetFrontendProfiles()

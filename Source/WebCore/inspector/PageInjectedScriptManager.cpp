@@ -31,6 +31,20 @@
 #include "CommandLineAPIModule.h"
 
 namespace WebCore {
+    
+PageInjectedScriptManager::PageInjectedScriptManager(InspectedStateAccessCheck accessCheck)
+    : InjectedScriptManager(accessCheck)
+    , m_commandLineAPIHost(CommandLineAPIHost::create())
+{
+}
+
+void PageInjectedScriptManager::disconnect()
+{
+    InjectedScriptManager::disconnect();
+
+    m_commandLineAPIHost->disconnect();
+    m_commandLineAPIHost.clear();
+}
 
 void PageInjectedScriptManager::didCreateInjectedScript(InjectedScript injectedScript)
 {

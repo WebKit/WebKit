@@ -37,6 +37,7 @@ public:
     CommandLineAPIModule();
 
     virtual String source() const OVERRIDE;
+    virtual JSC::JSValue host(InjectedScriptManager*, JSC::ExecState*) const OVERRIDE;
     virtual bool returnsObject() const OVERRIDE { return false; }
 
     static void injectIfNeeded(InjectedScriptManager*, InjectedScript);

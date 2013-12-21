@@ -71,6 +71,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), "injectModule", WebCore::functionCallHandlerFromAnyThread);
         function.appendArgument(name());
         function.appendArgument(source());
+        function.appendArgument(host(injectedScriptManager, injectedScript.scriptState()));
         resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
         if (hadException || (returnsObject() && (resultValue.hasNoValue() || !resultValue.isObject()))) {
             ASSERT_NOT_REACHED();

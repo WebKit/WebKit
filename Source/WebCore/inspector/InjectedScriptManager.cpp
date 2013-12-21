@@ -69,7 +69,6 @@ InjectedScriptManager::~InjectedScriptManager()
 
 void InjectedScriptManager::disconnect()
 {
-    m_injectedScriptHost->disconnect();
     m_injectedScriptHost.clear();
 }
 

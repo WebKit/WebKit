@@ -49,6 +49,7 @@ using Inspector::TypeBuilder::Canvas::ResourceState;
 using Inspector::TypeBuilder::Canvas::TraceLog;
 using Inspector::TypeBuilder::Canvas::TraceLogId;
 
+using namespace JSC;
 using namespace Inspector;
 
 namespace WebCore {
@@ -68,6 +69,11 @@ InjectedScriptCanvasModule InjectedScriptCanvasModule::moduleForState(InjectedSc
 String InjectedScriptCanvasModule::source() const
 {
     return String(reinterpret_cast<const char*>(InjectedScriptCanvasModuleSource_js), sizeof(InjectedScriptCanvasModuleSource_js));
+}
+
+JSC::JSValue InjectedScriptCanvasModule::host(InjectedScriptManager*, JSC::ExecState*) const
+{
+    return jsUndefined();
 }
 
 Deprecated::ScriptObject InjectedScriptCanvasModule::wrapCanvas2DContext(const Deprecated::ScriptObject& context)

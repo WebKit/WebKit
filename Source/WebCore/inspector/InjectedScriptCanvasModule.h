@@ -45,12 +45,13 @@ class InjectedScriptManager;
 
 #if ENABLE(INSPECTOR)
 
-class InjectedScriptCanvasModule : public InjectedScriptModule {
+class InjectedScriptCanvasModule FINAL : public InjectedScriptModule {
 public:
     InjectedScriptCanvasModule();
     
-    virtual String source() const;
-    virtual bool returnsObject() const { return true; }
+    virtual String source() const OVERRIDE;
+    virtual JSC::JSValue host(InjectedScriptManager*, JSC::ExecState*) const OVERRIDE;
+    virtual bool returnsObject() const OVERRIDE { return true; }
 
     static InjectedScriptCanvasModule moduleForState(InjectedScriptManager*, JSC::ExecState*);
 

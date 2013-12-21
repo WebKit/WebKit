@@ -127,35 +127,8 @@ InjectedScript.prototype = {
      */
     inspectNode: function(object)
     {
-        this._inspect(object);
-    },
-
-    /**
-     * @param {*} object
-     * @return {*}
-     */
-    _inspect: function(object)
-    {
-        if (arguments.length === 0)
-            return;
-
-        var objectId = this._wrapObject(object, "");
-        var hints = {};
-
-        switch (injectedScript._describe(object)) {
-            case "Database":
-                var databaseId = InjectedScriptHost.databaseId(object)
-                if (databaseId)
-                    hints.databaseId = databaseId;
-                break;
-            case "Storage":
-                var storageId = InjectedScriptHost.storageId(object)
-                if (storageId)
-                    hints.domStorageId = InjectedScriptHost.evaluate("(" + storageId + ")");
-                break;
-        }
-        InjectedScriptHost.inspect(objectId, hints);
-        return object;
+        if (this._commandLineAPIImpl)
+            this._commandLineAPIImpl.inspect(object);
     },
 
     /**
@@ -694,7 +667,7 @@ InjectedScript.prototype = {
      * @param {string} source
      * @return {Object}
      */
-    injectModule: function(name, source)
+    injectModule: function(name, source, host)
     {
         delete this._modules[name];
         var moduleFunction = InjectedScriptHost.evaluate("(" + source + ")");
@@ -704,7 +677,7 @@ InjectedScript.prototype = {
                 inspectedGlobalObject.console.error("Web Inspector error: A function was expected for module %s evaluation", name);
             return null;
         }
-        var module = moduleFunction.call(inspectedGlobalObject, InjectedScriptHost, inspectedGlobalObject, injectedScriptId, this);
+        var module = moduleFunction.call(inspectedGlobalObject, InjectedScriptHost, inspectedGlobalObject, injectedScriptId, this, host);
         this._modules[name] = module;
         return module;
     },

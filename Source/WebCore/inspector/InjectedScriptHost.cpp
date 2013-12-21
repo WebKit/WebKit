@@ -29,136 +29,15 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InjectedScriptHost.h"
 
-#include "Element.h"
-#include "Frame.h"
-#include "FrameLoader.h"
-#include "HTMLFrameOwnerElement.h"
-#include "InjectedScript.h"
-#include "InspectorAgent.h"
-#include "InspectorClient.h"
-#include "InspectorConsoleAgent.h"
-#include "InspectorDOMAgent.h"
-#include "InspectorDOMStorageAgent.h"
-#include "InspectorDatabaseAgent.h"
-#include "InspectorWebFrontendDispatchers.h"
-#include "Pasteboard.h"
-#include "Storage.h"
-#include "markup.h"
-#include <bindings/ScriptValue.h>
-#include <inspector/InspectorValues.h>
-#include <wtf/RefPtr.h>
-#include <wtf/StdLibExtras.h>
-
-#if ENABLE(SQL_DATABASE)
-#include "Database.h"
-#endif
-
-using namespace Inspector;
+#if ENABLE(INSPECTOR)
 
 namespace WebCore {
 
 PassRefPtr<InjectedScriptHost> InjectedScriptHost::create()
 {
-    return adoptRef(new InjectedScriptHost());
-}
-
-InjectedScriptHost::InjectedScriptHost()
-    : m_inspectorAgent(0)
-    , m_consoleAgent(0)
-#if ENABLE(SQL_DATABASE)
-    , m_databaseAgent(0)
-#endif
-    , m_domStorageAgent(0)
-    , m_domAgent(0)
-{
-    m_defaultInspectableObject = adoptPtr(new InspectableObject());
-}
-
-InjectedScriptHost::~InjectedScriptHost()
-{
-}
-
-void InjectedScriptHost::disconnect()
-{
-    m_inspectorAgent = 0;
-    m_consoleAgent = 0;
-#if ENABLE(SQL_DATABASE)
-    m_databaseAgent = 0;
-#endif
-    m_domStorageAgent = 0;
-    m_domAgent = 0;
-}
-
-void InjectedScriptHost::inspectImpl(PassRefPtr<InspectorValue> object, PassRefPtr<InspectorValue> hints)
-{
-    if (m_inspectorAgent) {
-        RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> remoteObject = Inspector::TypeBuilder::Runtime::RemoteObject::runtimeCast(object);
-        m_inspectorAgent->inspect(remoteObject, hints->asObject());
-    }
-}
-
-void InjectedScriptHost::getEventListenersImpl(Node* node, Vector<EventListenerInfo>& listenersArray)
-{
-    if (m_domAgent)
-        m_domAgent->getEventListeners(node, listenersArray, false);
-}
-
-void InjectedScriptHost::clearConsoleMessages()
-{
-    if (m_consoleAgent) {
-        ErrorString error;
-        m_consoleAgent->clearMessages(&error);
-    }
-}
-
-void InjectedScriptHost::copyText(const String& text)
-{
-    Pasteboard::createForCopyAndPaste()->writePlainText(text, Pasteboard::CannotSmartReplace);
-}
-
-Deprecated::ScriptValue InjectedScriptHost::InspectableObject::get(JSC::ExecState*)
-{
-    return Deprecated::ScriptValue();
-};
-
-void InjectedScriptHost::addInspectedObject(PassOwnPtr<InjectedScriptHost::InspectableObject> object)
-{
-    m_inspectedObjects.insert(0, object);
-    while (m_inspectedObjects.size() > 5)
-        m_inspectedObjects.removeLast();
-}
-
-void InjectedScriptHost::clearInspectedObjects()
-{
-    m_inspectedObjects.clear();
-}
-
-InjectedScriptHost::InspectableObject* InjectedScriptHost::inspectedObject(unsigned int num)
-{
-    if (num >= m_inspectedObjects.size())
-        return m_defaultInspectableObject.get();
-    return m_inspectedObjects[num].get();
-}
-
-#if ENABLE(SQL_DATABASE)
-String InjectedScriptHost::databaseIdImpl(Database* database)
-{
-    if (m_databaseAgent)
-        return m_databaseAgent->databaseId(database);
-    return String();
-}
-#endif
-
-String InjectedScriptHost::storageIdImpl(Storage* storage)
-{
-    if (m_domStorageAgent)
-        return m_domStorageAgent->storageId(storage);
-    return String();
+    return adoptRef(new InjectedScriptHost);
 }
 
 } // namespace WebCore

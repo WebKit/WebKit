@@ -51,6 +51,7 @@ namespace WebCore {
 class DOMWindow;
 class InjectedScript;
 class InjectedScriptHost;
+class CommandLineAPIHost;
 
 class InjectedScriptManager {
     WTF_MAKE_NONCOPYABLE(InjectedScriptManager); WTF_MAKE_FAST_ALLOCATED;
@@ -59,9 +60,10 @@ public:
     static PassOwnPtr<InjectedScriptManager> createForWorker();
     virtual ~InjectedScriptManager();
 
-    void disconnect();
+    virtual void disconnect();
 
     InjectedScriptHost* injectedScriptHost();
+    virtual CommandLineAPIHost* commandLineAPIHost() const { return nullptr; }
 
     InjectedScript injectedScriptFor(JSC::ExecState*);
     InjectedScript injectedScriptForId(int);

@@ -3536,6 +3536,11 @@
 		A584FE2C1863870F00843B10 /* CommandLineAPIModule.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE2A1863870F00843B10 /* CommandLineAPIModule.h */; };
 		A584FE2F1864CB8400843B10 /* PageInjectedScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE2D1864CB8400843B10 /* PageInjectedScriptManager.cpp */; };
 		A584FE301864CB8400843B10 /* PageInjectedScriptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE2E1864CB8400843B10 /* PageInjectedScriptManager.h */; };
+		A584FE341864D5AF00843B10 /* CommandLineAPIHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE311864D5AF00843B10 /* CommandLineAPIHost.cpp */; };
+		A584FE351864D5AF00843B10 /* CommandLineAPIHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE321864D5AF00843B10 /* CommandLineAPIHost.h */; };
+		A584FE381864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */; };
+		A584FE3B1864E2D800843B10 /* JSCommandLineAPIHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE391864E2D800843B10 /* JSCommandLineAPIHost.cpp */; };
+		A584FE3C1864E2D800843B10 /* JSCommandLineAPIHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE3A1864E2D800843B10 /* JSCommandLineAPIHost.h */; };
 		A593CF8B1840535200BFCE27 /* InspectorWebAgentBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF8A1840535200BFCE27 /* InspectorWebAgentBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5A2AF0B1829734300DE1729 /* PageDebuggable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A2AF091829734300DE1729 /* PageDebuggable.cpp */; };
 		A5A2AF0C1829734300DE1729 /* PageDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A2AF0A1829734300DE1729 /* PageDebuggable.h */; };
@@ -10379,6 +10384,12 @@
 		A584FE2A1863870F00843B10 /* CommandLineAPIModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLineAPIModule.h; sourceTree = "<group>"; };
 		A584FE2D1864CB8400843B10 /* PageInjectedScriptManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageInjectedScriptManager.cpp; sourceTree = "<group>"; };
 		A584FE2E1864CB8400843B10 /* PageInjectedScriptManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageInjectedScriptManager.h; sourceTree = "<group>"; };
+		A584FE311864D5AF00843B10 /* CommandLineAPIHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineAPIHost.cpp; sourceTree = "<group>"; };
+		A584FE321864D5AF00843B10 /* CommandLineAPIHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLineAPIHost.h; sourceTree = "<group>"; };
+		A584FE331864D5AF00843B10 /* CommandLineAPIHost.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CommandLineAPIHost.idl; sourceTree = "<group>"; };
+		A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCommandLineAPIHostCustom.cpp; sourceTree = "<group>"; };
+		A584FE391864E2D800843B10 /* JSCommandLineAPIHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCommandLineAPIHost.cpp; sourceTree = "<group>"; };
+		A584FE3A1864E2D800843B10 /* JSCommandLineAPIHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCommandLineAPIHost.h; sourceTree = "<group>"; };
 		A593CF7218402CE900BFCE27 /* protocol */ = {isa = PBXFileReference; lastKnownFileType = folder; path = protocol; sourceTree = "<group>"; };
 		A593CF7518402D4B00BFCE27 /* combine-javascript-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "combine-javascript-resources.pl"; sourceTree = "<group>"; };
 		A593CF8A1840535200BFCE27 /* InspectorWebAgentBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWebAgentBase.h; sourceTree = "<group>"; };
@@ -14491,6 +14502,8 @@
 				4F4F5FFC11CBD30100A186BF /* InspectorWebFrontendDispatchers.h */,
 				573D134514CE39FF0057ABCA /* InspectorWebTypeBuilders.cpp */,
 				573D134614CE39FF0057ABCA /* InspectorWebTypeBuilders.h */,
+				A584FE391864E2D800843B10 /* JSCommandLineAPIHost.cpp */,
+				A584FE3A1864E2D800843B10 /* JSCommandLineAPIHost.h */,
 				7A0E76D810BF059800A0276E /* JSInjectedScriptHost.cpp */,
 				7A0E76D910BF059800A0276E /* JSInjectedScriptHost.h */,
 				7A0E771C10C00DB100A0276E /* JSInspectorFrontendHost.cpp */,
@@ -14512,6 +14525,9 @@
 				A518225317E28CF100A9BA1D /* Scripts */,
 				A593CF7518402D4B00BFCE27 /* combine-javascript-resources.pl */,
 				F35AE5AB14925F5B004D5776 /* BindingVisitors.h */,
+				A584FE311864D5AF00843B10 /* CommandLineAPIHost.cpp */,
+				A584FE321864D5AF00843B10 /* CommandLineAPIHost.h */,
+				A584FE331864D5AF00843B10 /* CommandLineAPIHost.idl */,
 				A584FE291863870F00843B10 /* CommandLineAPIModule.cpp */,
 				A584FE2A1863870F00843B10 /* CommandLineAPIModule.h */,
 				A584FE2718637DCA00843B10 /* CommandLineAPIModuleSource.js */,
@@ -19818,6 +19834,7 @@
 				49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */,
 				93BA59B10F2AA5FE008E8E99 /* JSCDATASectionCustom.cpp */,
 				BCA83E510D7CE205003421A8 /* JSClipboardCustom.cpp */,
+				A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */,
 				209B456A16796A7E00E54E4E /* JSCryptoCustom.cpp */,
 				E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */,
 				E1F80B89183172A2007885C3 /* JSCryptoKeyPairCustom.cpp */,
@@ -22698,6 +22715,7 @@
 				85032DE90AA8C9BE007D3B7D /* DOMCSSUnknownRule.h in Headers */,
 				85909CE40ACC7A7E00DF01F1 /* DOMCSSUnknownRuleInternal.h in Headers */,
 				858C381C0AA8E29600B187A4 /* DOMCSSValue.h in Headers */,
+				A584FE351864D5AF00843B10 /* CommandLineAPIHost.h in Headers */,
 				85B498F30ADB336A00925CBB /* DOMCSSValueInternal.h in Headers */,
 				858C383C0AA8ED8200B187A4 /* DOMCSSValueList.h in Headers */,
 				85909D2B0ACC7D5500DF01F1 /* DOMCSSValueListInternal.h in Headers */,
@@ -24058,6 +24076,7 @@
 				F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */,
 				BCDFD4960E30592F009D10AD /* JSXMLHttpRequestUpload.h in Headers */,
 				1ACE53F70A8D19470022947D /* JSXMLSerializer.h in Headers */,
+				A584FE3C1864E2D800843B10 /* JSCommandLineAPIHost.h in Headers */,
 				1A762C740A074F2600989F5B /* JSXPathEvaluator.h in Headers */,
 				E157A8ED181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.h in Headers */,
 				BC60DB4A0D2A3D1E00B9918F /* JSXPathException.h in Headers */,
@@ -25929,6 +25948,7 @@
 				4ACBC0BE12713CBD0094F9B2 /* ClassList.cpp in Sources */,
 				BC904B760D10998F00680D32 /* ClassNodeList.cpp in Sources */,
 				BCC0657D0F3CE1B700CD2D87 /* ClientRect.cpp in Sources */,
+				A584FE341864D5AF00843B10 /* CommandLineAPIHost.cpp in Sources */,
 				BCC065800F3CE1B700CD2D87 /* ClientRectList.cpp in Sources */,
 				A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */,
 				85031B3F0A44EFC700F992E0 /* ClipboardEvent.cpp in Sources */,
@@ -26054,6 +26074,7 @@
 				50D405F9147D31F300D30BB5 /* CustomFilterMesh.cpp in Sources */,
 				E1C266DE18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp in Sources */,
 				7E12E91015FA5D3A005E4126 /* CustomFilterMeshGenerator.cpp in Sources */,
+				A584FE3B1864E2D800843B10 /* JSCommandLineAPIHost.cpp in Sources */,
 				50CC0A3914C6F5B10017AB51 /* CustomFilterOperation.cpp in Sources */,
 				5093334F163B0E4300099A60 /* CustomFilterParameterList.cpp in Sources */,
 				503D0CAA14B5B08700F32F57 /* CustomFilterProgram.cpp in Sources */,
@@ -26757,6 +26778,7 @@
 				82889B4C13C62392009A6156 /* InspectorStyleTextEditor.cpp in Sources */,
 				07277E4E17D018CC0015534D /* JSMediaStreamAudioDestinationNode.cpp in Sources */,
 				754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */,
+				A584FE381864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp in Sources */,
 				573D134714CE39FF0057ABCA /* InspectorWebTypeBuilders.cpp in Sources */,
 				F3810C1B1365A49600ED6E33 /* InspectorWorkerAgent.cpp in Sources */,
 				F350B73513F1377D00880C43 /* InstrumentingAgents.cpp in Sources */,

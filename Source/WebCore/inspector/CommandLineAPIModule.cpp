@@ -29,6 +29,9 @@
 #if ENABLE(INSPECTOR)
 
 #include "CommandLineAPIModuleSource.h"
+#include "JSCommandLineAPIHost.h"
+
+using namespace JSC;
 
 namespace WebCore {
 
@@ -46,6 +49,13 @@ void CommandLineAPIModule::injectIfNeeded(InjectedScriptManager* injectedScriptM
 String CommandLineAPIModule::source() const
 {
     return String(reinterpret_cast<const char*>(CommandLineAPIModuleSource_js), sizeof(CommandLineAPIModuleSource_js));
+}
+
+JSC::JSValue CommandLineAPIModule::host(InjectedScriptManager* injectedScriptManager, JSC::ExecState* exec) const
+{
+    ASSERT(injectedScriptManager->commandLineAPIHost());
+    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
+    return toJS(exec, globalObject, injectedScriptManager->commandLineAPIHost());
 }
 
 } // namespace WebCore

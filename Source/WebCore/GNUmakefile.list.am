@@ -105,6 +105,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSClipboard.h \
 	DerivedSources/WebCore/JSCloseEvent.cpp \
 	DerivedSources/WebCore/JSCloseEvent.h \
+	DerivedSources/WebCore/JSCommandLineAPIHost.cpp \
+	DerivedSources/WebCore/JSCommandLineAPIHost.h \
 	DerivedSources/WebCore/JSComment.cpp \
 	DerivedSources/WebCore/JSComment.h \
 	DerivedSources/WebCore/JSCompositionEvent.cpp \
@@ -1548,6 +1550,7 @@ dom_binding_idls += \
 	$(WebCore)/html/track/TrackEvent.idl \
 	$(WebCore)/html/track/VideoTrack.idl \
 	$(WebCore)/html/track/VideoTrackList.idl \
+	$(WebCore)/inspector/CommandLineAPIHost.idl \
 	$(WebCore)/inspector/InjectedScriptHost.idl \
 	$(WebCore)/inspector/InspectorFrontendHost.idl \
 	$(WebCore)/inspector/JavaScriptCallFrame.idl \
@@ -2293,6 +2296,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSCanvasRenderingContext2DCustom.cpp \
 	Source/WebCore/bindings/js/JSCanvasRenderingContextCustom.cpp \
 	Source/WebCore/bindings/js/JSClipboardCustom.cpp \
+	Source/WebCore/bindings/js/JSCommandLineAPIHostCustom.cpp \
 	Source/WebCore/bindings/js/JSCryptoCustom.cpp \
 	Source/WebCore/bindings/js/JSCustomSQLStatementErrorCallback.cpp \
 	Source/WebCore/bindings/js/JSCustomXPathNSResolver.cpp \
@@ -3767,8 +3771,10 @@ webcore_sources += \
 	Source/WebCore/icu/unicode/utypes.h \
 	Source/WebCore/icu/unicode/uversion.h \
 	Source/WebCore/inspector/BindingVisitors.h \
-    Source/WebCore/inspector/CommandLineAPIModule.cpp \
-    Source/WebCore/inspector/CommandLineAPIModule.h \
+	Source/WebCore/inspector/CommandLineAPIHost.cpp \
+	Source/WebCore/inspector/CommandLineAPIHost.h \
+	Source/WebCore/inspector/CommandLineAPIModule.cpp \
+	Source/WebCore/inspector/CommandLineAPIModule.h \
 	Source/WebCore/inspector/ConsoleAPITypes.h \
 	Source/WebCore/inspector/ConsoleMessage.cpp \
 	Source/WebCore/inspector/ConsoleMessage.h \

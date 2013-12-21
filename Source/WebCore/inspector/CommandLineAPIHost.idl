@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
@@ -34,12 +34,12 @@
     NoInterfaceObject,
     Conditional=INSPECTOR,
     ImplementationLacksVTable
-] interface InjectedScriptHost {
-    [Custom] any internalConstructorName(any object);
-    [Custom] boolean isHTMLAllCollection(any object);
-    [Custom] DOMString type(any object);
-    [Custom] any functionDetails(any object);
-    [Custom] Array getInternalProperties(any object);
-
-    [Custom] readonly attribute any evaluate;
+] interface CommandLineAPIHost {
+    void clearConsoleMessages();
+    void copyText(DOMString text);
+    [Custom] void inspect(any objectId, any hints);
+    [Custom] any inspectedObject(int num);
+    [Custom] Array getEventListeners(Node node);
+    [Custom] DOMString databaseId(any database);
+    [Custom] DOMString storageId(any storage);
 };

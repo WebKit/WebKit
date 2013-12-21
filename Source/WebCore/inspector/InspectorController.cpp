@@ -34,6 +34,7 @@
 
 #include "InspectorController.h"
 
+#include "CommandLineAPIHost.h"
 #include "DOMWrapperWorld.h"
 #include "GraphicsContext.h"
 #include "IdentifiersFactory.h"
@@ -89,6 +90,8 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_hasRemoteFrontend(false)
 #endif
 {
+    ASSERT_ARG(inspectorClient, inspectorClient);
+
     OwnPtr<InspectorAgent> inspectorAgentPtr(InspectorAgent::create(page, m_instrumentingAgents.get()));
     m_inspectorAgent = inspectorAgentPtr.get();
     m_agents.append(inspectorAgentPtr.release());
@@ -164,15 +167,17 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_agents.append(InspectorLayerTreeAgent::create(m_instrumentingAgents.get()));
 #endif
 
-    ASSERT_ARG(inspectorClient, inspectorClient);
-    m_injectedScriptManager->injectedScriptHost()->init(m_inspectorAgent
-        , consoleAgent
+    ASSERT(m_injectedScriptManager->commandLineAPIHost());
+    if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost()) {
+        commandLineAPIHost->init(m_inspectorAgent
+            , consoleAgent
+            , m_domAgent
+            , domStorageAgent
 #if ENABLE(SQL_DATABASE)
-        , databaseAgent
+            , databaseAgent
 #endif
-        , domStorageAgent
-        , m_domAgent
-    );
+        );
+    }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     runtimeAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());

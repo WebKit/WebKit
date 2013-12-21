@@ -529,6 +529,7 @@ set(WebCore_IDL_FILES
     html/canvas/WebGLUniformLocation.idl
     html/canvas/WebGLVertexArrayObjectOES.idl
 
+    inspector/CommandLineAPIHost.idl
     inspector/InjectedScriptHost.idl
     inspector/InspectorFrontendHost.idl
     inspector/JavaScriptCallFrame.idl
@@ -1568,6 +1569,7 @@ set(WebCore_SOURCES
     html/shadow/SpinButtonElement.cpp
     html/shadow/TextControlInnerElements.cpp
 
+    inspector/CommandLineAPIHost.cpp
     inspector/CommandLineAPIModule.cpp
     inspector/ConsoleMessage.cpp
     inspector/ContentSearchUtils.cpp
