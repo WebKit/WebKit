@@ -279,13 +279,13 @@ String Page::scrollingStateTreeAsText()
     return String();
 }
 
-String Page::mainThreadScrollingReasonsAsText()
+String Page::synchronousScrollingReasonsAsText()
 {
     if (Document* document = m_mainFrame->document())
         document->updateLayout();
 
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-        return scrollingCoordinator->mainThreadScrollingReasonsAsText();
+        return scrollingCoordinator->synchronousScrollingReasonsAsText();
 
     return String();
 }

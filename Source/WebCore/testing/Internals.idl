@@ -170,7 +170,7 @@
     [RaisesException] DOMString layerTreeAsText(Document document, optional unsigned short flags);
 
     [RaisesException] DOMString scrollingStateTreeAsText();
-    [RaisesException] DOMString mainThreadScrollingReasons();
+    [RaisesException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
     [RaisesException] ClientRectList nonFastScrollableRects();
 
     [RaisesException] DOMString repaintRectsAsText();

@@ -29,7 +29,7 @@
 #include "GraphicsLayer.h"
 #include "ScrollingStateTree.h"
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 
 namespace WebCore {
 
@@ -59,4 +59,4 @@ void ScrollingStateNode::setScrollLayer(GraphicsLayer* graphicsLayer)
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(ASYNC_SCROLLING)

@@ -34,9 +34,9 @@ class PlatformCALayer;
 #endif
 
 enum ScrollingModeIndication {
-    MainThreadScrollingBecauseOfStyleIndication,
-    MainThreadScrollingBecauseOfEventHandlersIndication,
-    ThreadedScrollingIndication
+    SynchronousScrollingBecauseOfStyleIndication,
+    SynchronousScrollingBecauseOfEventHandlersIndication,
+    AsyncScrollingIndication
 };
 
 class TiledBacking {

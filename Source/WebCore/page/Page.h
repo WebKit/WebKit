@@ -206,7 +206,7 @@ public:
     ScrollingCoordinator* scrollingCoordinator();
 
     String scrollingStateTreeAsText();
-    String mainThreadScrollingReasonsAsText();
+    String synchronousScrollingReasonsAsText();
     PassRefPtr<ClientRectList> nonFastScrollableRects(const Frame*);
 
     Settings& settings() const { return *m_settings; }

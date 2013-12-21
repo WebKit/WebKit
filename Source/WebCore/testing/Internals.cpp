@@ -1704,7 +1704,7 @@ String Internals::mainThreadScrollingReasons(ExceptionCode& ec) const
     if (!page)
         return String();
 
-    return page->mainThreadScrollingReasonsAsText();
+    return page->synchronousScrollingReasonsAsText();
 }
 
 PassRefPtr<ClientRectList> Internals::nonFastScrollableRects(ExceptionCode& ec) const

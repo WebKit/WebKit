@@ -26,7 +26,7 @@
 #ifndef ScrollingCoordinatorMac_h
 #define ScrollingCoordinatorMac_h
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingCoordinator.h"
 
@@ -91,7 +91,7 @@ private:
     virtual void syncChildPositions(const LayoutRect& viewportRect) OVERRIDE;
 
     virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*);
-    virtual void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);
+    virtual void setSynchronousScrollingReasons(SynchronousScrollingReasons);
 
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(FrameView*) const { return false; }
 
@@ -120,6 +120,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(THREADED_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING)
 
 #endif // ScrollingCoordinatorMac_h

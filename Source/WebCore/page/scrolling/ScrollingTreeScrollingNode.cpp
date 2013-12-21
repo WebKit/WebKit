@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollingTreeScrollingNode.h"
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
@@ -38,7 +38,7 @@ ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree& scrollingT
     , m_frameScaleFactor(1)
     , m_headerHeight(0)
     , m_footerHeight(0)
-    , m_shouldUpdateScrollLayerPositionOnMainThread(0)
+    , m_synchronousScrollingReasons(0)
     , m_behaviorForFixed(StickToDocumentBounds)
 {
 }
@@ -71,8 +71,8 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(ScrollingStateNode* stateN
     if (state->hasChangedProperty(ScrollingStateScrollingNode::FrameScaleFactor))
         m_frameScaleFactor = state->frameScaleFactor();
 
-    if (state->hasChangedProperty(ScrollingStateScrollingNode::ShouldUpdateScrollLayerPositionOnMainThread))
-        m_shouldUpdateScrollLayerPositionOnMainThread = state->shouldUpdateScrollLayerPositionOnMainThread();
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::ReasonsForSynchronousScrolling))
+        m_synchronousScrollingReasons = state->synchronousScrollingReasons();
 
     if (state->hasChangedProperty(ScrollingStateScrollingNode::HeaderHeight))
         m_headerHeight = state->headerHeight();
@@ -86,4 +86,4 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(ScrollingStateNode* stateN
 
 } // namespace WebCore
 
-#endif // ENABLE(THREADED_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING)

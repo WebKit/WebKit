@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollingStateScrollingNode.h"
 
-#if ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
 #include "ScrollingStateTree.h"
 #include "TextStream.h"
@@ -50,7 +50,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* sta
 #endif
     , m_frameScaleFactor(1)
     , m_wheelEventHandlerCount(0)
-    , m_shouldUpdateScrollLayerPositionOnMainThread(0)
+    , m_synchronousScrollingReasons(0)
     , m_behaviorForFixed(StickToDocumentBounds)
     , m_headerHeight(0)
     , m_footerHeight(0)
@@ -71,7 +71,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_nonFastScrollableRegion(stateNode.nonFastScrollableRegion())
     , m_frameScaleFactor(stateNode.frameScaleFactor())
     , m_wheelEventHandlerCount(stateNode.wheelEventHandlerCount())
-    , m_shouldUpdateScrollLayerPositionOnMainThread(stateNode.shouldUpdateScrollLayerPositionOnMainThread())
+    , m_synchronousScrollingReasons(stateNode.synchronousScrollingReasons())
     , m_behaviorForFixed(stateNode.scrollBehaviorForFixedElements())
     , m_headerHeight(stateNode.headerHeight())
     , m_footerHeight(stateNode.footerHeight())
@@ -163,13 +163,13 @@ void ScrollingStateScrollingNode::setWheelEventHandlerCount(unsigned wheelEventH
     m_scrollingStateTree->setHasChangedProperties(true);
 }
 
-void ScrollingStateScrollingNode::setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons reasons)
+void ScrollingStateScrollingNode::setSynchronousScrollingReasons(SynchronousScrollingReasons reasons)
 {
-    if (m_shouldUpdateScrollLayerPositionOnMainThread == reasons)
+    if (m_synchronousScrollingReasons == reasons)
         return;
 
-    m_shouldUpdateScrollLayerPositionOnMainThread = reasons;
-    setPropertyChanged(ShouldUpdateScrollLayerPositionOnMainThread);
+    m_synchronousScrollingReasons = reasons;
+    setPropertyChanged(ReasonsForSynchronousScrolling);
     m_scrollingStateTree->setHasChangedProperties(true);
 }
 
@@ -230,9 +230,9 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent) con
         ts << "(frame scale factor " << m_frameScaleFactor << ")\n";
     }
 
-    if (m_shouldUpdateScrollLayerPositionOnMainThread) {
+    if (m_synchronousScrollingReasons) {
         writeIndent(ts, indent + 1);
-        ts << "(Scrolling on main thread because: " << ScrollingCoordinator::mainThreadScrollingReasonsAsText(m_shouldUpdateScrollLayerPositionOnMainThread) << ")\n";
+        ts << "(Scrolling on main thread because: " << ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons) << ")\n";
     }
 
     if (m_requestedScrollPosition != IntPoint()) {
@@ -248,4 +248,4 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent) con
 
 } // namespace WebCore
 
-#endif // ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)

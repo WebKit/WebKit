@@ -47,7 +47,7 @@ public:
     static PassRefPtr<EventDispatcher> create();
     ~EventDispatcher();
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     void addScrollingTreeForPage(WebPage*);
     void removeScrollingTreeForPage(WebPage*);
 #endif
@@ -66,13 +66,13 @@ private:
     // This is called on the main thread.
     void dispatchWheelEvent(uint64_t pageID, const WebWheelEvent&);
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     void sendDidReceiveEvent(uint64_t pageID, const WebEvent&, bool didHandleEvent);
 #endif
 
     RefPtr<WorkQueue> m_queue;
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     Mutex m_scrollingTreesMutex;
     HashMap<uint64_t, RefPtr<WebCore::ScrollingTree>> m_scrollingTrees;
 #endif

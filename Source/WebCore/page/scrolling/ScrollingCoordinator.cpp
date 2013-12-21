@@ -45,7 +45,7 @@
 #include "RenderLayerCompositor.h"
 #endif
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 #include "ScrollingCoordinatorMac.h"
 #endif
 
@@ -61,7 +61,7 @@ namespace WebCore {
 
 PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
-#if USE(ACCELERATED_COMPOSITING) && ENABLE(THREADED_SCROLLING)
+#if USE(ACCELERATED_COMPOSITING) && ENABLE(ASYNC_SCROLLING)
     return adoptRef(new ScrollingCoordinatorMac(page));
 #endif
 
@@ -81,7 +81,7 @@ ScrollingCoordinator::ScrollingCoordinator(Page* page)
     , m_updateMainFrameScrollPositionTimer(this, &ScrollingCoordinator::updateMainFrameScrollPositionTimerFired)
     , m_scheduledUpdateIsProgrammaticScroll(false)
     , m_scheduledScrollingLayerPositionAction(SyncScrollingLayerPosition)
-    , m_forceMainThreadScrollLayerPositionUpdates(false)
+    , m_forceSynchronousScrollLayerPositionUpdates(false)
 {
 }
 
@@ -182,7 +182,7 @@ void ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange(FrameView* fr
     if (!coordinatesScrollingForFrameView(frameView))
         return;
 
-    updateShouldUpdateScrollLayerPositionOnMainThread();
+    updateSynchronousScrollingReasons();
 }
 
 void ScrollingCoordinator::frameViewFixedObjectsDidChange(FrameView* frameView)
@@ -193,7 +193,7 @@ void ScrollingCoordinator::frameViewFixedObjectsDidChange(FrameView* frameView)
     if (!coordinatesScrollingForFrameView(frameView))
         return;
 
-    updateShouldUpdateScrollLayerPositionOnMainThread();
+    updateSynchronousScrollingReasons();
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -271,7 +271,7 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
 
     frameViewLayoutUpdated(frameView);
     recomputeWheelEventHandlerCountForFrameView(frameView);
-    updateShouldUpdateScrollLayerPositionOnMainThread();
+    updateSynchronousScrollingReasons();
 }
 
 void ScrollingCoordinator::scheduleUpdateMainFrameScrollPosition(const IntPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
@@ -392,40 +392,40 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(Frame
 #endif
 }
 
-MainThreadScrollingReasons ScrollingCoordinator::mainThreadScrollingReasons() const
+SynchronousScrollingReasons ScrollingCoordinator::synchronousScrollingReasons() const
 {
     FrameView* frameView = m_page->mainFrame().view();
     if (!frameView)
-        return static_cast<MainThreadScrollingReasons>(0);
+        return static_cast<SynchronousScrollingReasons>(0);
 
-    MainThreadScrollingReasons mainThreadScrollingReasons = (MainThreadScrollingReasons)0;
+    SynchronousScrollingReasons synchronousScrollingReasons = (SynchronousScrollingReasons)0;
 
-    if (m_forceMainThreadScrollLayerPositionUpdates)
-        mainThreadScrollingReasons |= ForcedOnMainThread;
+    if (m_forceSynchronousScrollLayerPositionUpdates)
+        synchronousScrollingReasons |= ForcedOnMainThread;
     if (frameView->hasSlowRepaintObjects())
-        mainThreadScrollingReasons |= HasSlowRepaintObjects;
+        synchronousScrollingReasons |= HasSlowRepaintObjects;
     if (!supportsFixedPositionLayers() && frameView->hasViewportConstrainedObjects())
-        mainThreadScrollingReasons |= HasViewportConstrainedObjectsWithoutSupportingFixedLayers;
+        synchronousScrollingReasons |= HasViewportConstrainedObjectsWithoutSupportingFixedLayers;
     if (supportsFixedPositionLayers() && hasVisibleSlowRepaintViewportConstrainedObjects(frameView))
-        mainThreadScrollingReasons |= HasNonLayerViewportConstrainedObjects;
+        synchronousScrollingReasons |= HasNonLayerViewportConstrainedObjects;
     if (m_page->mainFrame().document() && m_page->mainFrame().document()->isImageDocument())
-        mainThreadScrollingReasons |= IsImageDocument;
+        synchronousScrollingReasons |= IsImageDocument;
 
-    return mainThreadScrollingReasons;
+    return synchronousScrollingReasons;
 }
 
-void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
+void ScrollingCoordinator::updateSynchronousScrollingReasons()
 {
-    setShouldUpdateScrollLayerPositionOnMainThread(mainThreadScrollingReasons());
+    setSynchronousScrollingReasons(synchronousScrollingReasons());
 }
 
-void ScrollingCoordinator::setForceMainThreadScrollLayerPositionUpdates(bool forceMainThreadScrollLayerPositionUpdates)
+void ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates(bool forceSynchronousScrollLayerPositionUpdates)
 {
-    if (m_forceMainThreadScrollLayerPositionUpdates == forceMainThreadScrollLayerPositionUpdates)
+    if (m_forceSynchronousScrollLayerPositionUpdates == forceSynchronousScrollLayerPositionUpdates)
         return;
 
-    m_forceMainThreadScrollLayerPositionUpdates = forceMainThreadScrollLayerPositionUpdates;
-    updateShouldUpdateScrollLayerPositionOnMainThread();
+    m_forceSynchronousScrollLayerPositionUpdates = forceSynchronousScrollLayerPositionUpdates;
+    updateSynchronousScrollingReasons();
 }
 
 ScrollingNodeID ScrollingCoordinator::uniqueScrollLayerID()
@@ -439,7 +439,7 @@ String ScrollingCoordinator::scrollingStateTreeAsText() const
     return String();
 }
 
-String ScrollingCoordinator::mainThreadScrollingReasonsAsText(MainThreadScrollingReasons reasons)
+String ScrollingCoordinator::synchronousScrollingReasonsAsText(SynchronousScrollingReasons reasons)
 {
     StringBuilder stringBuilder;
 
@@ -459,9 +459,9 @@ String ScrollingCoordinator::mainThreadScrollingReasonsAsText(MainThreadScrollin
     return stringBuilder.toString();
 }
 
-String ScrollingCoordinator::mainThreadScrollingReasonsAsText() const
+String ScrollingCoordinator::synchronousScrollingReasonsAsText() const
 {
-    return mainThreadScrollingReasonsAsText(mainThreadScrollingReasons());
+    return synchronousScrollingReasonsAsText(synchronousScrollingReasons());
 }
 
 } // namespace WebCore

@@ -36,7 +36,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/ScrollingThread.h>
 #include <WebCore/ScrollingTree.h>
@@ -60,7 +60,7 @@ EventDispatcher::~EventDispatcher()
 {
 }
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 void EventDispatcher::addScrollingTreeForPage(WebPage* webPage)
 {
     MutexLocker locker(m_scrollingTreesMutex);
@@ -86,7 +86,7 @@ void EventDispatcher::initializeConnection(CoreIPC::Connection* connection)
 
 void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
 {
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     MutexLocker locker(m_scrollingTreesMutex);
     if (ScrollingTree* scrollingTree = m_scrollingTrees.get(pageID)) {
         PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
@@ -125,7 +125,7 @@ void EventDispatcher::dispatchWheelEvent(uint64_t pageID, const WebWheelEvent& w
     webPage->wheelEvent(wheelEvent);
 }
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 void EventDispatcher::sendDidReceiveEvent(uint64_t pageID, const WebEvent& event, bool didHandleEvent)
 {
     WebProcess::shared().parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(event.type()), didHandleEvent), pageID);

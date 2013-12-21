@@ -317,7 +317,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_drawingArea = DrawingArea::create(this, parameters);
     m_drawingArea->setPaintingEnabled(false);
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     m_useThreadedScrolling = parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey());
     if (!m_drawingArea->supportsThreadedScrolling())
         m_useThreadedScrolling = false;
@@ -423,7 +423,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     webPageCounter.increment();
 #endif
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     if (m_useThreadedScrolling)
         WebProcess::shared().eventDispatcher().addScrollingTreeForPage(this);
 #endif
@@ -436,7 +436,7 @@ WebPage::~WebPage()
 
     ASSERT(!m_page);
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     if (m_useThreadedScrolling)
         WebProcess::shared().eventDispatcher().removeScrollingTreeForPage(this);
 #endif

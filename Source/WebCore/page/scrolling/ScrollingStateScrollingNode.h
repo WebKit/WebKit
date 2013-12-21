@@ -26,7 +26,7 @@
 #ifndef ScrollingStateScrollingNode_h
 #define ScrollingStateScrollingNode_h
 
-#if ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
 #include "IntRect.h"
 #include "Region.h"
@@ -56,7 +56,7 @@ public:
         FrameScaleFactor,
         NonFastScrollableRegion,
         WheelEventHandlerCount,
-        ShouldUpdateScrollLayerPositionOnMainThread,
+        ReasonsForSynchronousScrolling,
         RequestedScrollPosition,
         CounterScrollingLayer,
         HeaderHeight,
@@ -85,8 +85,8 @@ public:
     unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
     void setWheelEventHandlerCount(unsigned);
 
-    MainThreadScrollingReasons shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
-    void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);
+    SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
+    void setSynchronousScrollingReasons(SynchronousScrollingReasons);
 
     const ScrollableAreaParameters& scrollableAreaParameters() const { return m_scrollableAreaParameters; }
     void setScrollableAreaParameters(const ScrollableAreaParameters& params);
@@ -153,7 +153,7 @@ private:
     Region m_nonFastScrollableRegion;
     float m_frameScaleFactor;
     unsigned m_wheelEventHandlerCount;
-    MainThreadScrollingReasons m_shouldUpdateScrollLayerPositionOnMainThread;
+    SynchronousScrollingReasons m_synchronousScrollingReasons;
     ScrollBehaviorForFixedElements m_behaviorForFixed;
     int m_headerHeight;
     int m_footerHeight;
@@ -165,6 +165,6 @@ SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateScrollingNode, isScrollingNode());
 
 } // namespace WebCore
 
-#endif // ENABLE(THREADED_SCROLLING) || USE(COORDINATED_GRAPHICS)
+#endif // ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
 #endif // ScrollingStateScrollingNode_h

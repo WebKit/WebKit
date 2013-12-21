@@ -26,7 +26,7 @@
 #ifndef ScrollingTree_h
 #define ScrollingTree_h
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include "PlatformWheelEvent.h"
 #include "Region.h"
@@ -145,6 +145,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(THREADED_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING)
 
 #endif // ScrollingTree_h

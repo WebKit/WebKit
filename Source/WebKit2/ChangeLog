@@ -1,3 +1,25 @@
+2013-12-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Change "threaded scrolling" terminology to "asynchronous scrolling"
+        https://bugs.webkit.org/show_bug.cgi?id=126094
+
+        Reviewed by Tim Horton.
+        
+        Rename ENABLE_THREADED_SCROLLING to ENABLE_ASYNC_SCROLLING, and change
+        references to "main thread scrolling" to "synchronous scrolling".
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::~WebPage):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::didInstallPageOverlay):
+        (WebKit::TiledCoreAnimationDrawingArea::didUninstallPageOverlay):
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+
 2013-12-20  Ricky Mondello  <rmondello@apple.com>
 
         Rename PlugInAutoStartProvider's ...EntriesAddedBeforeTime facility to ...EntriesAddedAfterTime

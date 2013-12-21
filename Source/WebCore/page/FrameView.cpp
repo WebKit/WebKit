@@ -1974,7 +1974,7 @@ void FrameView::updateLayerPositionsAfterScrolling()
 
 bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
 {
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     // If the scrolling thread is updating the fixed elements, then the FrameView should not update them as well.
 
     Page* page = frame().page();
@@ -1991,7 +1991,7 @@ bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
     if (!scrollingCoordinator->supportsFixedPositionLayers())
         return true;
 
-    if (scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread())
+    if (scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously())
         return true;
 
     if (inProgrammaticScroll())
@@ -2024,7 +2024,7 @@ bool FrameView::isRubberBandInProgress() const
     // ScrollingCoordinator::isRubberBandInProgress().
     if (Page* page = frame().page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
-            if (!scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread())
+            if (!scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously())
                 return scrollingCoordinator->isRubberBandInProgress();
         }
     }
@@ -2039,7 +2039,7 @@ bool FrameView::isRubberBandInProgress() const
 
 bool FrameView::requestScrollPositionUpdate(const IntPoint& position)
 {
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     if (TiledBacking* tiledBacking = this->tiledBacking()) {
         IntRect visibleRect = visibleContentRect();
         visibleRect.setLocation(position);
@@ -2989,7 +2989,7 @@ bool FrameView::updatesScrollLayerPositionOnMainThread() const
 {
     if (Page* page = frame().page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            return scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread();
+            return scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously();
     }
 
     return true;
@@ -4003,7 +4003,7 @@ bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
     if (platformWidget())
         return false;
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     if (Page* page = frame().page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
             if (scrollingCoordinator->coordinatesScrollingForFrameView(this))

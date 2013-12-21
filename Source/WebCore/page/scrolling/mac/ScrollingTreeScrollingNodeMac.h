@@ -26,7 +26,7 @@
 #ifndef ScrollingTreeScrollingNodeMac_h
 #define ScrollingTreeScrollingNodeMac_h
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollElasticityController.h"
 #include "ScrollbarThemeMac.h"
@@ -94,6 +94,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(THREADED_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING)
 
 #endif // ScrollingTreeScrollingNodeMac_h

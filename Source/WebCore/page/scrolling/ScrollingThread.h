@@ -26,7 +26,7 @@
 #ifndef ScrollingThread_h
 #define ScrollingThread_h
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include <wtf/Functional.h>
 #include <wtf/Noncopyable.h>
@@ -85,6 +85,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(THREADED_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING)
 
 #endif // ScrollingThread_h

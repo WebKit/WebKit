@@ -1,3 +1,99 @@
+2013-12-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Change "threaded scrolling" terminology to "asynchronous scrolling"
+        https://bugs.webkit.org/show_bug.cgi?id=126094
+
+        Reviewed by Tim Horton.
+
+        Rename ENABLE_THREADED_SCROLLING to ENABLE_ASYNC_SCROLLING, and change
+        references to "main thread scrolling" to "synchronous scrolling".
+        
+        In a few places, functions with names like shouldUpdateScrollLayerPositionOnMainThread()
+        were actually returning SynchronousScrollingReasons, so rename them appropriately.
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::shouldUpdateCompositingLayersAfterScrolling):
+        (WebCore::FrameView::isRubberBandInProgress):
+        (WebCore::FrameView::requestScrollPositionUpdate):
+        (WebCore::FrameView::updatesScrollLayerPositionOnMainThread):
+        (WebCore::FrameView::wheelEvent):
+        * page/Page.cpp:
+        (WebCore::Page::synchronousScrollingReasonsAsText):
+        * page/Page.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::create):
+        (WebCore::ScrollingCoordinator::ScrollingCoordinator):
+        (WebCore::ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange):
+        (WebCore::ScrollingCoordinator::frameViewFixedObjectsDidChange):
+        (WebCore::ScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasons):
+        (WebCore::ScrollingCoordinator::updateSynchronousScrollingReasons):
+        (WebCore::ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates):
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasonsAsText):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously):
+        (WebCore::ScrollingCoordinator::setSynchronousScrollingReasons):
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateNode.cpp:
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setSynchronousScrollingReasons):
+        (WebCore::ScrollingStateScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingStateScrollingNode.h: Awkward "ReasonsForSynchronousScrolling" to avoid
+        conflict with the enum called SynchronousScrollingReasons.
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        * page/scrolling/ScrollingStateStickyNode.h:
+        * page/scrolling/ScrollingStateTree.cpp:
+        * page/scrolling/ScrollingStateTree.h:
+        * page/scrolling/ScrollingThread.cpp:
+        * page/scrolling/ScrollingThread.h:
+        * page/scrolling/ScrollingTree.cpp:
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeNode.cpp:
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::ScrollingTreeScrollingNode):
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::synchronousScrollingReasons):
+        (WebCore::ScrollingTreeScrollingNode::shouldUpdateScrollLayerPositionSynchronously):
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::setSynchronousScrollingReasons):
+        (WebCore::ScrollingCoordinatorMac::commitTreeState):
+        * page/scrolling/mac/ScrollingStateNodeMac.mm:
+        * page/scrolling/mac/ScrollingStateScrollingNodeMac.mm:
+        * page/scrolling/mac/ScrollingThreadMac.mm:
+        * page/scrolling/mac/ScrollingTreeFixedNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::updateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNodeMac::scrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+        (WebCore::logThreadedScrollingMode):
+        * page/scrolling/mac/ScrollingTreeStickyNode.h:
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::supportsUpdateOnSecondaryThread):
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::updateTileCoverageMap):
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupFontSubpixelQuantization):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::computeTileCoverage):
+        * testing/Internals.cpp:
+        (WebCore::Internals::mainThreadScrollingReasons):
+        * testing/Internals.idl:
+
 2013-12-20  Tim Horton  <timothy_horton@apple.com>
 
         Revert r160327, r160273, and r160260.

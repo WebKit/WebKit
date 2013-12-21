@@ -52,7 +52,7 @@
 #import <WebCore/TiledBacking.h>
 #import <wtf/MainThread.h>
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 #import <WebCore/ScrollingCoordinator.h>
 #import <WebCore/ScrollingThread.h>
 #import <WebCore/ScrollingTree.h>
@@ -187,9 +187,9 @@ void TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush()
 
 void TiledCoreAnimationDrawingArea::didInstallPageOverlay(PageOverlay* pageOverlay)
 {
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     if (ScrollingCoordinator* scrollingCoordinator = m_webPage->corePage()->scrollingCoordinator())
-        scrollingCoordinator->setForceMainThreadScrollLayerPositionUpdates(true);
+        scrollingCoordinator->setForceSynchronousScrollLayerPositionUpdates(true);
 #endif
 
     createPageOverlayLayer(pageOverlay);
@@ -203,10 +203,10 @@ void TiledCoreAnimationDrawingArea::didUninstallPageOverlay(PageOverlay* pageOve
     if (m_pageOverlayLayers.size())
         return;
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     if (Page* page = m_webPage->corePage()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->setForceMainThreadScrollLayerPositionUpdates(false);
+            scrollingCoordinator->setForceSynchronousScrollLayerPositionUpdates(false);
     }
 #endif
 }
@@ -242,7 +242,7 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
 {
     Settings& settings = m_webPage->corePage()->settings();
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     if (ScrollingCoordinator* scrollingCoordinator = m_webPage->corePage()->scrollingCoordinator()) {
         bool scrollingPerformanceLoggingEnabled = m_webPage->scrollingPerformanceLoggingEnabled();
         ScrollingThread::dispatch(bind(&ScrollingTree::setScrollingPerformanceLoggingEnabled, scrollingCoordinator->scrollingTree(), scrollingPerformanceLoggingEnabled));
@@ -303,7 +303,7 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(c
 {
     Function<void ()> function = functionRef;
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     if (!m_webPage->corePage()->scrollingCoordinator()) {
         function();
         return;

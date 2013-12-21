@@ -3898,10 +3898,10 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext* context, bool& 
         return false;
 
     bool scrollingOnMainThread = true;
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
     if (Page* page = renderer().frame().page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingOnMainThread = scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread();
+            scrollingOnMainThread = scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously();
     }
 #endif
 

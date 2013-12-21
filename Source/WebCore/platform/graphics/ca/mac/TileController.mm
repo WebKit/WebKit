@@ -70,7 +70,7 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_clipsToExposedRect(false)
     , m_hasTilesWithTemporaryScaleFactor(false)
     , m_tileDebugBorderWidth(0)
-    , m_indicatorMode(ThreadedScrollingIndication)
+    , m_indicatorMode(AsyncScrollingIndication)
 {
     m_tileContainerLayer = m_tileCacheLayer->createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr);
 #ifndef NDEBUG
@@ -963,13 +963,13 @@ void TileController::updateTileCoverageMap()
 
     Color visibleRectIndicatorColor;
     switch (m_indicatorMode) {
-    case MainThreadScrollingBecauseOfStyleIndication:
+    case SynchronousScrollingBecauseOfStyleIndication:
         visibleRectIndicatorColor = Color(255, 0, 0);
         break;
-    case MainThreadScrollingBecauseOfEventHandlersIndication:
+    case SynchronousScrollingBecauseOfEventHandlersIndication:
         visibleRectIndicatorColor = Color(255, 255, 0);
         break;
-    case ThreadedScrollingIndication:
+    case AsyncScrollingIndication:
         visibleRectIndicatorColor = Color(0, 200, 0);
         break;
     }

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 
 #import "ScrollingCoordinatorMac.h"
 
@@ -312,7 +312,7 @@ void ScrollingCoordinatorMac::setScrollBehaviorForFixedElementsForNode(ScrollBeh
     scheduleTreeStateCommit();
 }
 
-void ScrollingCoordinatorMac::setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons reasons)
+void ScrollingCoordinatorMac::setSynchronousScrollingReasons(SynchronousScrollingReasons reasons)
 {
     if (!m_scrollingStateTree->rootStateNode())
         return;
@@ -322,7 +322,7 @@ void ScrollingCoordinatorMac::setShouldUpdateScrollLayerPositionOnMainThread(Mai
     // in order to avoid layer positioning bugs.
     if (reasons)
         updateMainFrameScrollLayerPosition();
-    m_scrollingStateTree->rootStateNode()->setShouldUpdateScrollLayerPositionOnMainThread(reasons);
+    m_scrollingStateTree->rootStateNode()->setSynchronousScrollingReasons(reasons);
     scheduleTreeStateCommit();
 }
 
@@ -427,12 +427,12 @@ void ScrollingCoordinatorMac::commitTreeState()
         return;
 
     ScrollingModeIndication indicatorMode;
-    if (shouldUpdateScrollLayerPositionOnMainThread())
-        indicatorMode = MainThreadScrollingBecauseOfStyleIndication;
+    if (shouldUpdateScrollLayerPositionSynchronously())
+        indicatorMode = SynchronousScrollingBecauseOfStyleIndication;
     else if (m_scrollingStateTree->rootStateNode() && m_scrollingStateTree->rootStateNode()->wheelEventHandlerCount())
-        indicatorMode =  MainThreadScrollingBecauseOfEventHandlersIndication;
+        indicatorMode =  SynchronousScrollingBecauseOfEventHandlersIndication;
     else
-        indicatorMode = ThreadedScrollingIndication;
+        indicatorMode = AsyncScrollingIndication;
     
     tiledBacking->setScrollingModeIndication(indicatorMode);
 }
@@ -447,4 +447,4 @@ String ScrollingCoordinatorMac::scrollingStateTreeAsText() const
 
 } // namespace WebCore
 
-#endif // ENABLE(THREADED_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING)

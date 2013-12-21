@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollingTreeFixedNode.h"
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingTree.h"
@@ -85,4 +85,4 @@ void ScrollingTreeFixedNode::parentScrollPositionDidChange(const IntRect& viewpo
 
 } // namespace WebCore
 
-#endif // ENABLE(THREADED_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING)

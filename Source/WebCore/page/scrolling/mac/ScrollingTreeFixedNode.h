@@ -26,7 +26,7 @@
 #ifndef ScrollingTreeFixedNode_h
 #define ScrollingTreeFixedNode_h
 
-#if ENABLE(THREADED_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingConstraints.h"
 #include "ScrollingTreeNode.h"
@@ -56,6 +56,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(THREADED_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING)
 
 #endif // ScrollingTreeFixedNode_h
