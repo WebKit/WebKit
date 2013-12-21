@@ -1,5 +1,20 @@
 2013-12-21  Antti Koivisto  <antti@apple.com>
 
+        Unreviewed, rolling out r160916.
+        http://trac.webkit.org/changeset/160916
+        https://bugs.webkit.org/show_bug.cgi?id=126073
+
+        Roll out a temporary fix. The underlying issue was fixed.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::AccessibilityRenderObject):
+        (WebCore::AccessibilityRenderObject::~AccessibilityRenderObject):
+        (WebCore::AccessibilityRenderObject::detach):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        * accessibility/AccessibilityRenderObject.h:
+
+2013-12-21  Antti Koivisto  <antti@apple.com>
+
         Figure out if node is focusable without requiring renderer
         https://bugs.webkit.org/show_bug.cgi?id=126118
 
