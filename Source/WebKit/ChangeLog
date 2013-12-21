@@ -1,3 +1,9 @@
+2013-12-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Try to fix the Windows build.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-12-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix after r160908.
