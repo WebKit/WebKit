@@ -32,12 +32,13 @@
 #include "APIGeometry.h"
 #include "APINumber.h"
 #include "APIString.h"
+#include "APIURL.h"
 #include "APIURLRequest.h"
+#include "APIURLResponse.h"
 #include "ArgumentCoders.h"
 #include "ArgumentEncoder.h"
 #include "MutableDictionary.h"
 #include "WebSerializedScriptValue.h"
-#include "WebURL.h"
 
 namespace WebKit {
 
@@ -165,13 +166,16 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
     }
 
     case API::Object::Type::URL: {
-        auto& url = static_cast<const WebURL&>(object);
-        encoder << url.string();
+        static_cast<const API::URL&>(object).encode(encoder);
         break;
     }
 
     case API::Object::Type::URLRequest:
         static_cast<const API::URLRequest&>(object).encode(encoder);
+        break;
+
+    case API::Object::Type::URLResponse:
+        static_cast<const API::URLResponse&>(object).encode(encoder);
         break;
 
     case API::Object::Type::UInt64:
@@ -293,16 +297,18 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
         break;
     }
 
-    case API::Object::Type::URL: {
-        String string;
-        if (!decoder.decode(string))
+    case API::Object::Type::URL:
+        if (!API::URL::decode(decoder, result))
             return false;
-        result = WebURL::create(string);
         break;
-    }
 
     case API::Object::Type::URLRequest:
         if (!API::URLRequest::decode(decoder, result))
+            return false;
+        break;
+
+    case API::Object::Type::URLResponse:
+        if (!API::URLResponse::decode(decoder, result))
             return false;
         break;
 

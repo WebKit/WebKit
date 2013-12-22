@@ -30,10 +30,10 @@
 
 #include "APINumber.h"
 #include "APIString.h"
+#include "APIURL.h"
 #include "PluginInfoStore.h"
 #include "PluginModuleInfo.h"
 #include "WKAPICast.h"
-#include "WebURL.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -136,15 +136,15 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginMo
     getPluginModuleInformation(plugin, map);
 
     if (!frameURLString.isEmpty())
-        map.set(pluginInformationFrameURLKey(), WebURL::create(frameURLString));
+        map.set(pluginInformationFrameURLKey(), API::URL::create(frameURLString));
     if (!mimeType.isEmpty())
         map.set(pluginInformationMIMETypeKey(), API::String::create(mimeType));
     if (!pageURLString.isEmpty())
-        map.set(pluginInformationPageURLKey(), WebURL::create(pageURLString));
+        map.set(pluginInformationPageURLKey(), API::URL::create(pageURLString));
     if (!pluginspageAttributeURLString.isEmpty())
-        map.set(pluginInformationPluginspageAttributeURLKey(), WebURL::create(pluginspageAttributeURLString));
+        map.set(pluginInformationPluginspageAttributeURLKey(), API::URL::create(pluginspageAttributeURLString));
     if (!pluginURLString.isEmpty())
-        map.set(pluginInformationPluginURLKey(), WebURL::create(pluginURLString));
+        map.set(pluginInformationPluginURLKey(), API::URL::create(pluginURLString));
     map.set(plugInInformationReplacementObscuredKey(), API::Boolean::create(replacementObscured));
 
     return ImmutableDictionary::create(std::move(map));
@@ -155,11 +155,11 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const String& 
     ImmutableDictionary::MapType map;
 
     if (!frameURLString.isEmpty())
-        map.set(pluginInformationFrameURLKey(), WebURL::create(frameURLString));
+        map.set(pluginInformationFrameURLKey(), API::URL::create(frameURLString));
     if (!mimeType.isEmpty())
         map.set(pluginInformationMIMETypeKey(), API::String::create(mimeType));
     if (!pageURLString.isEmpty())
-        map.set(pluginInformationPageURLKey(), WebURL::create(pageURLString));
+        map.set(pluginInformationPageURLKey(), API::URL::create(pageURLString));
 
     return ImmutableDictionary::create(std::move(map));
 }

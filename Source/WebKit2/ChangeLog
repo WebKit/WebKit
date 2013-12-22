@@ -1,3 +1,61 @@
+2013-12-20  Sam Weinig  <sam@webkit.org>
+
+        [WK2] Rename WebURL to API::URL
+        https://bugs.webkit.org/show_bug.cgi?id=126100
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toURLRef):
+        (WebKit::toCopiedURLAPI):
+        * Shared/API/c/WKURL.cpp:
+        (WKURLGetTypeID):
+        (WKURLCreateWithUTF8CString):
+        (WKURLCreateWithBaseURL):
+        * Shared/API/c/cf/WKURLCF.mm:
+        (WKURLCreateWithCFURL):
+        * Shared/APIURL.h: Copied from Source/WebKit2/Shared/WebURL.h.
+        (API::URL::create):
+        (API::URL::string):
+        (API::URL::host):
+        (API::URL::protocol):
+        (API::URL::path):
+        (API::URL::lastPathComponent):
+        (API::URL::encode):
+        (API::URL::decode):
+        (API::URL::URL):
+        * Shared/Cocoa/WKNSURL.h:
+        (WebKit::wrapper):
+        * Shared/Cocoa/WKNSURL.mm:
+        (-[WKNSURL _web_createTarget]):
+        * Shared/Plugins/Netscape/PluginInformation.cpp:
+        (WebKit::createPluginInformationDictionary):
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebArchiveResource.h:
+        * Shared/WebURL.h: Removed.
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::getResourceData):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::didChangeIconForPageURL):
+        (WebKit::WebIconDatabase::notifyIconDataReadyForPageURL):
+        * UIProcess/WebIconDatabaseClient.cpp:
+        (WebKit::WebIconDatabaseClient::didChangeIconForPageURL):
+        (WebKit::WebIconDatabaseClient::iconDataReadyForPageURL):
+        * UIProcess/WebIconDatabaseClient.h:
+        * UIProcess/WebOpenPanelResultListenerProxy.cpp:
+        (WebKit::WebOpenPanelResultListenerProxy::chooseFiles):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getResourceDataFromFrame):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+
 2013-12-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test /webkit2/WebKitWebResource/mime-type fails when run after /webkit2/WebKitWebView/resources

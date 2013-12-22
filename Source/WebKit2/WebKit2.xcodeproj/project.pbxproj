@@ -1173,7 +1173,7 @@
 		BCD59800112B57BE00EC8C23 /* WebPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD597FE112B57BE00EC8C23 /* WebPreferences.cpp */; };
 		BCD598AC112B7FDF00EC8C23 /* WebPreferencesStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */; };
 		BCD598AD112B7FDF00EC8C23 /* WebPreferencesStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */; };
-		BCDB86C11200FB97007254BE /* WebURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDB86C01200FB97007254BE /* WebURL.h */; };
+		BCDB86C11200FB97007254BE /* APIURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDB86C01200FB97007254BE /* APIURL.h */; };
 		BCDDB317124EBD130048D13C /* WKBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDDB316124EBD130048D13C /* WKBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCDDB32B124EC2AB0048D13C /* WKSharedAPICast.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDDB32A124EC2AB0048D13C /* WKSharedAPICast.h */; };
 		BCDDB32D124EC2E10048D13C /* WKAPICast.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDDB32C124EC2E10048D13C /* WKAPICast.h */; };
@@ -1967,8 +1967,8 @@
 		2D819B99186275B3001F03D1 /* ViewGestureGeometryCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureGeometryCollector.cpp; sourceTree = "<group>"; };
 		2D819B9A186275B3001F03D1 /* ViewGestureGeometryCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureGeometryCollector.h; sourceTree = "<group>"; };
 		2D819B9B186275B3001F03D1 /* ViewGestureGeometryCollector.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewGestureGeometryCollector.messages.in; sourceTree = "<group>"; };
-		2D819B9F1862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewGestureGeometryCollectorMessageReceiver.cpp; path = ViewGestureGeometryCollectorMessageReceiver.cpp; sourceTree = "<group>"; };
-		2D819BA01862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewGestureGeometryCollectorMessages.h; path = ViewGestureGeometryCollectorMessages.h; sourceTree = "<group>"; };
+		2D819B9F1862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureGeometryCollectorMessageReceiver.cpp; sourceTree = "<group>"; };
+		2D819BA01862800E001F03D1 /* ViewGestureGeometryCollectorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureGeometryCollectorMessages.h; sourceTree = "<group>"; };
 		2D870D0D1622B7F9000A3F20 /* PDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPlugin.h; path = PDF/PDFPlugin.h; sourceTree = "<group>"; };
 		2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPlugin.mm; path = PDF/PDFPlugin.mm; sourceTree = "<group>"; };
 		2D8710141828415D0018FA01 /* PlatformCALayerRemoteCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayerRemoteCustom.cpp; sourceTree = "<group>"; };
@@ -2818,7 +2818,7 @@
 		BCD597FE112B57BE00EC8C23 /* WebPreferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPreferences.cpp; sourceTree = "<group>"; };
 		BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesStore.h; sourceTree = "<group>"; };
 		BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPreferencesStore.cpp; sourceTree = "<group>"; };
-		BCDB86C01200FB97007254BE /* WebURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURL.h; sourceTree = "<group>"; };
+		BCDB86C01200FB97007254BE /* APIURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIURL.h; sourceTree = "<group>"; };
 		BCDDB316124EBD130048D13C /* WKBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBase.h; sourceTree = "<group>"; };
 		BCDDB32A124EC2AB0048D13C /* WKSharedAPICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSharedAPICast.h; sourceTree = "<group>"; };
 		BCDDB32C124EC2E10048D13C /* WKAPICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKAPICast.h; sourceTree = "<group>"; };
@@ -3511,6 +3511,7 @@
 				1AC1336D18565D2B00F3EC05 /* APIPageHandle.cpp */,
 				1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */,
 				BCF04C8E11FF9F6E00F86A58 /* APIString.h */,
+				BCDB86C01200FB97007254BE /* APIURL.h */,
 				BCE2315C122C30CA00D5C35A /* APIURLRequest.cpp */,
 				BCE2315B122C30CA00D5C35A /* APIURLRequest.h */,
 				BC90A1D1122DD55E00CC8C50 /* APIURLResponse.cpp */,
@@ -3643,7 +3644,6 @@
 				F634445512A885C8000612D8 /* WebSecurityOrigin.h */,
 				A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */,
 				C0337DD7127A51B6008FF4F4 /* WebTouchEvent.cpp */,
-				BCDB86C01200FB97007254BE /* WebURL.h */,
 				F6113E24126CE1820057D0A7 /* WebUserContentURLPattern.h */,
 				C0337DD0127A2980008FF4F4 /* WebWheelEvent.cpp */,
 			);
@@ -6183,7 +6183,7 @@
 				1AC1336C18565C7A00F3EC05 /* APIPageHandle.h in Headers */,
 				1AB474E8184D44D00051B622 /* WKBundlePageDiagnosticLoggingClient.h in Headers */,
 				1AC7537C183A9FDB0072CB15 /* PageLoadState.h in Headers */,
-				BCDB86C11200FB97007254BE /* WebURL.h in Headers */,
+				BCDB86C11200FB97007254BE /* APIURL.h in Headers */,
 				51C96119183D294700D2002E /* WebIDBServerConnectionMessages.h in Headers */,
 				BCE2315D122C30CA00D5C35A /* APIURLRequest.h in Headers */,
 				BC90A1D2122DD55E00CC8C50 /* APIURLResponse.h in Headers */,

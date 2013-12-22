@@ -27,71 +27,83 @@
 #define WebURL_h
 
 #include "APIObject.h"
+#include "WebCoreArgumentCoders.h"
 #include <WebCore/URL.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
+namespace API {
 
-// WebURL - A URL type suitable for vending to an API.
-
-class WebURL : public API::ObjectImpl<API::Object::Type::URL> {
+class URL : public ObjectImpl<Object::Type::URL> {
 public:
-    static PassRefPtr<WebURL> create(const String& string)
+    static PassRefPtr<URL> create(const WTF::String& string)
     {
-        return adoptRef(new WebURL(string));
+        return adoptRef(new URL(string));
     }
 
-    static PassRefPtr<WebURL> create(const WebURL* baseURL, const String& relativeURL)
+    static PassRefPtr<URL> create(const URL* baseURL, const WTF::String& relativeURL)
     {
-        using WebCore::URL;
-
         ASSERT(baseURL);
         baseURL->parseURLIfNecessary();
-        auto absoluteURL = std::make_unique<URL>(*baseURL->m_parsedURL.get(), relativeURL);
-        const String& absoluteURLString = absoluteURL->string();
+        auto absoluteURL = std::make_unique<WebCore::URL>(*baseURL->m_parsedURL.get(), relativeURL);
+        const WTF::String& absoluteURLString = absoluteURL->string();
 
-        return adoptRef(new WebURL(std::move(absoluteURL), absoluteURLString));
+        return adoptRef(new URL(std::move(absoluteURL), absoluteURLString));
     }
 
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
 
-    const String& string() const { return m_string; }
+    const WTF::String& string() const { return m_string; }
 
-    String host() const
+    WTF::String host() const
     {
         parseURLIfNecessary();
-        return m_parsedURL->isValid() ? m_parsedURL->host() : String();
+        return m_parsedURL->isValid() ? m_parsedURL->host() : WTF::String();
     }
 
-    String protocol() const
+    WTF::String protocol() const
     {
         parseURLIfNecessary();
-        return m_parsedURL->isValid() ? m_parsedURL->protocol() : String();
+        return m_parsedURL->isValid() ? m_parsedURL->protocol() : WTF::String();
     }
 
-    String path() const
+    WTF::String path() const
     {
         parseURLIfNecessary();
-        return m_parsedURL->isValid() ? m_parsedURL->path() : String();
+        return m_parsedURL->isValid() ? m_parsedURL->path() : WTF::String();
     }
 
-    String lastPathComponent() const
+    WTF::String lastPathComponent() const
     {
         parseURLIfNecessary();
-        return m_parsedURL->isValid() ? m_parsedURL->lastPathComponent() : String();
+        return m_parsedURL->isValid() ? m_parsedURL->lastPathComponent() : WTF::String();
+    }
+
+    void encode(IPC::ArgumentEncoder& encoder) const
+    {
+        encoder << m_string;
+    }
+
+    static bool decode(IPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
+    {
+        WTF::String string;
+        if (!decoder.decode(string))
+            return false;
+        
+        result = create(string);
+        return true;
     }
 
 private:
-    WebURL(const String& string)
+    URL(const WTF::String& string)
         : m_string(string)
     {
     }
 
-    WebURL(std::unique_ptr<WebCore::URL> parsedURL, const String& string)
+    URL(std::unique_ptr<WebCore::URL> parsedURL, const WTF::String& string)
         : m_string(string)
         , m_parsedURL(std::move(parsedURL))
     {
@@ -104,10 +116,10 @@ private:
         m_parsedURL = std::make_unique<WebCore::URL>(WebCore::URL(), m_string);
     }
 
-    String m_string;
+    WTF::String m_string;
     mutable std::unique_ptr<WebCore::URL> m_parsedURL;
 };
 
 } // namespace WebKit
 
-#endif // WebURL_h
+#endif // URL_h

@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-void WebIconDatabaseClient::didChangeIconForPageURL(WebIconDatabase* iconDatabase, WebURL* url)
+void WebIconDatabaseClient::didChangeIconForPageURL(WebIconDatabase* iconDatabase, API::URL* url)
 {
     if (!m_client.didChangeIconForPageURL)
         return;
@@ -47,7 +47,7 @@ void WebIconDatabaseClient::didRemoveAllIcons(WebIconDatabase* iconDatabase)
     m_client.didRemoveAllIcons(toAPI(iconDatabase),  m_client.base.clientInfo);
 }
 
-void WebIconDatabaseClient::iconDataReadyForPageURL(WebIconDatabase* iconDatabase, WebURL* url)
+void WebIconDatabaseClient::iconDataReadyForPageURL(WebIconDatabase* iconDatabase, API::URL* url)
 {
     if (!m_client.iconDataReadyForPageURL)
         return;

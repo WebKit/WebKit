@@ -55,9 +55,9 @@ void WebOpenPanelResultListenerProxy::chooseFiles(API::Array* fileURLsArray)
     filePaths.reserveInitialCapacity(size);
 
     for (size_t i = 0; i < size; ++i) {
-        WebURL* webURL = fileURLsArray->at<WebURL>(i);
-        if (webURL) {
-            URL url(URL(), webURL->string()); 
+        API::URL* apiURL = fileURLsArray->at<API::URL>(i);
+        if (apiURL) {
+            URL url(URL(), apiURL->string());
             filePaths.uncheckedAppend(url.fileSystemPath());
         }
     }

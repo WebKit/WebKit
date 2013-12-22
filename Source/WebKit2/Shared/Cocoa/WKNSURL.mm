@@ -28,17 +28,15 @@
 
 #if WK_API_ENABLED
 
+#import "APIURL.h"
 #import "WKAPICast.h"
 #import "WKURLCF.h"
-#import "WebURL.h"
-
-using namespace WebKit;
 
 @implementation WKNSURL
 
 - (NSObject *)_web_createTarget
 {
-    return (NSURL *)CFMakeCollectable(WKURLCopyCFURL(kCFAllocatorDefault, toAPI(reinterpret_cast<WebURL*>(&self._apiObject))));
+    return (NSURL *)CFMakeCollectable(WKURLCopyCFURL(kCFAllocatorDefault, WebKit::toAPI(reinterpret_cast<API::URL*>(&self._apiObject))));
 }
 
 #pragma mark NSCopying protocol implementation

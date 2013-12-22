@@ -31,6 +31,7 @@
 #include "APIGeometry.h"
 #include "APINumber.h"
 #include "APIString.h"
+#include "APIURL.h"
 #include "APIURLRequest.h"
 #include "APIURLResponse.h"
 #include "ArgumentDecoder.h"
@@ -45,7 +46,6 @@
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"
 #include "WebSerializedScriptValue.h"
-#include "WebURL.h"
 #include "WebUserContentURLPattern.h"
 
 namespace WebKit {
@@ -63,7 +63,7 @@ namespace WebKit {
 //   - WebRenderLayer -> WebRenderLayer
 //   - WebRenderObject -> WebRenderObject
 //   - API::UInt64 -> API::UInt64
-//   - WebURL -> WebURL
+//   - API::URL -> API::URL
 //   - API::URLRequest -> API::URLRequest
 //   - API::URLResponse -> API::URLResponse
 //   - WebError -> WebError
@@ -172,7 +172,7 @@ public:
             return true;
         }
         case API::Object::Type::URL: {
-            WebURL* urlObject = static_cast<WebURL*>(m_root);
+            API::URL* urlObject = static_cast<API::URL*>(m_root);
             encoder << urlObject->string();
             return true;
         }
@@ -252,7 +252,7 @@ protected:
 //   - API::Double -> API::Double
 //   - WebImage -> WebImage
 //   - API::UInt64 -> API::UInt64
-//   - WebURL -> WebURL
+//   - API::URL -> API::URL
 //   - API::URLRequest -> API::URLRequest
 //   - API::URLResponse -> API::URLResponse
 //   - WebError -> WebError
@@ -457,7 +457,7 @@ public:
             String string;
             if (!decoder.decode(string))
                 return false;
-            coder.m_root = WebURL::create(string);
+            coder.m_root = API::URL::create(string);
             break;
         }
         case API::Object::Type::URLRequest: {

@@ -215,7 +215,7 @@ void WebFrameProxy::getMainResourceData(PassRefPtr<DataCallback> callback)
     m_page->getMainResourceDataOfFrame(this, callback);
 }
 
-void WebFrameProxy::getResourceData(WebURL* resourceURL, PassRefPtr<DataCallback> callback)
+void WebFrameProxy::getResourceData(API::URL* resourceURL, PassRefPtr<DataCallback> callback)
 {
     if (!m_page) {
         callback->invalidate();

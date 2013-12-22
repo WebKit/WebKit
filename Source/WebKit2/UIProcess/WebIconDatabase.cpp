@@ -257,7 +257,7 @@ void WebIconDatabase::didImportIconDataForPageURL(const String& pageURL)
 
 void WebIconDatabase::didChangeIconForPageURL(const String& pageURL)
 {
-    m_iconDatabaseClient.didChangeIconForPageURL(this, WebURL::create(pageURL).get());
+    m_iconDatabaseClient.didChangeIconForPageURL(this, API::URL::create(pageURL).get());
 }
 
 void WebIconDatabase::didRemoveAllIcons()
@@ -295,7 +295,7 @@ void WebIconDatabase::didFinishURLImport()
 
 void WebIconDatabase::notifyIconDataReadyForPageURL(const String& pageURL)
 {
-    m_iconDatabaseClient.iconDataReadyForPageURL(this, WebURL::create(pageURL).get());
+    m_iconDatabaseClient.iconDataReadyForPageURL(this, API::URL::create(pageURL).get());
     didChangeIconForPageURL(pageURL);
 }
 

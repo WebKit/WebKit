@@ -32,17 +32,17 @@ using namespace WebKit;
 
 WKTypeID WKURLGetTypeID()
 {
-    return toAPI(WebURL::APIType);
+    return toAPI(API::URL::APIType);
 }
 
 WKURLRef WKURLCreateWithUTF8CString(const char* string)
 {
-    return toAPI(WebURL::create(String::fromUTF8(string)).leakRef());
+    return toAPI(API::URL::create(String::fromUTF8(string)).leakRef());
 }
 
 WKURLRef WKURLCreateWithBaseURL(WKURLRef baseURL, const char* relative)
 {
-    return toAPI(WebURL::create(toImpl(baseURL), String::fromUTF8(relative)).leakRef());
+    return toAPI(API::URL::create(toImpl(baseURL), String::fromUTF8(relative)).leakRef());
 }
 
 WKStringRef WKURLCopyString(WKURLRef url)

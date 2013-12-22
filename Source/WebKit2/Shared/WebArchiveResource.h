@@ -35,6 +35,7 @@
 
 namespace API {
 class Data;
+class URL;
 }
 
 namespace WebCore {
@@ -42,8 +43,6 @@ class ArchiveResource;
 }
 
 namespace WebKit {
-
-class WebURL;
 
 class WebArchiveResource : public API::ObjectImpl<API::Object::Type::WebArchiveResource> {
 public:

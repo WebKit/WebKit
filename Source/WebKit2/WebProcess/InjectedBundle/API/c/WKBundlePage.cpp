@@ -29,6 +29,7 @@
 
 #include "APIArray.h"
 #include "APIString.h"
+#include "APIURL.h"
 #include "APIURLRequest.h"
 #include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleNodeHandle.h"
@@ -46,7 +47,6 @@
 #include "WebPage.h"
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"
-#include "WebURL.h"
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObject.h>
 #include <WebCore/MainFrame.h>

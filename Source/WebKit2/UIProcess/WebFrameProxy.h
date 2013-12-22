@@ -97,7 +97,7 @@ public:
 
     void getWebArchive(PassRefPtr<DataCallback>);
     void getMainResourceData(PassRefPtr<DataCallback>);
-    void getResourceData(WebURL*, PassRefPtr<DataCallback>);
+    void getResourceData(API::URL*, PassRefPtr<DataCallback>);
 
     void didStartProvisionalLoad(const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);
