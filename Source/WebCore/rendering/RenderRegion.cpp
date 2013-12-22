@@ -112,7 +112,8 @@ LayoutPoint RenderRegion::mapRegionPointIntoFlowThreadCoordinates(const LayoutPo
 
 VisiblePosition RenderRegion::positionForPoint(const LayoutPoint& point)
 {
-    if (!m_flowThread->firstChild()) // checking for empty region blocks.
+    ASSERT(m_flowThread);
+    if (!isValid() || !m_flowThread->firstChild()) // checking for empty region blocks.
         return RenderBlock::positionForPoint(point);
 
     return toRenderBlock(m_flowThread->firstChild())->positionForPoint(mapRegionPointIntoFlowThreadCoordinates(point));

@@ -1,3 +1,21 @@
+2013-12-22  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Crash when trying to select content from invalid region
+        https://bugs.webkit.org/show_bug.cgi?id=126113
+
+        Reviewed by Antti Koivisto.
+
+        After fix for https://bugs.webkit.org/show_bug.cgi?id=120769, positionForPoint for a region attempts to use the associated named flow to perform its task.
+        However, this should happen only when the region is valid. If the region is invalid, part of a dependency cycle, positionForPoint should behave as usual
+        for a block instead of a region, otherwise it may run into an infinite loop due to cyclic dependencies and a crash will occur.
+
+        This patch ensures that positionForPoint region specifie behaviour is followed only if the region is valid - not part of a dependency cycle.
+
+        Test: fast/regions/selection/invalid-region-selection-crash.html
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::positionForPoint):
+
 2013-12-21  Dirk Schulze  <krit@webkit.org>
 
         Start refactoring Filter code to reuse CachedSVGDocument for clipPath

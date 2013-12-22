@@ -1,5 +1,15 @@
 2013-12-22  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        [CSSRegions] Crash when trying to select content from invalid region
+        https://bugs.webkit.org/show_bug.cgi?id=126113
+
+        Reviewed by Antti Koivisto.
+
+        * fast/regions/selection/invalid-region-selection-crash-expected.txt: Added.
+        * fast/regions/selection/invalid-region-selection-crash.html: Added.
+
+2013-12-22  Mihnea Ovidenie  <mihnea@adobe.com>
+
         [CSSRegions] Clean-up selection tests a bit
         https://bugs.webkit.org/show_bug.cgi?id=126135
 
