@@ -130,11 +130,6 @@ void CoordinatedDrawingAreaProxy::deviceScaleFactorDidChange()
     backingStoreStateDidChange(RespondImmediately);
 }
 
-void CoordinatedDrawingAreaProxy::layerHostingModeDidChange()
-{
-    m_webPageProxy->process().send(Messages::DrawingArea::SetLayerHostingMode(m_webPageProxy->layerHostingMode()), m_webPageProxy->pageID());
-}
-
 #if USE(ACCELERATED_COMPOSITING)
 void CoordinatedDrawingAreaProxy::visibilityDidChange()
 {

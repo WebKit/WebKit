@@ -244,7 +244,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if PLATFORM(MAC)
     , m_pdfPluginEnabled(false)
     , m_hasCachedWindowFrame(false)
-    , m_layerHostingMode(parameters.layerHostingMode)
     , m_keyboardEventBeingInterpreted(0)
     , m_viewGestureGeometryCollector(*this)
 #elif PLATFORM(GTK)
@@ -443,8 +442,8 @@ WebPage::~WebPage()
 
     m_sandboxExtensionTracker.invalidate();
 
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->webPageDestroyed();
+    for (auto* pluginView : m_pluginViews)
+        pluginView->webPageDestroyed();
 
 #if !PLATFORM(IOS)
     if (m_headerBanner)
@@ -1234,8 +1233,8 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
 
     m_page->setPageScaleFactor(scale, origin);
 
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->pageScaleFactorDidChange();
+    for (auto* pluginView : m_pluginViews)
+        pluginView->pageScaleFactorDidChange();
 
     if (m_drawingArea->layerTreeHost())
         m_drawingArea->layerTreeHost()->deviceOrPageScaleFactorChanged();
@@ -1261,8 +1260,8 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
 
     // Tell all our plug-in views that the device scale factor changed.
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->setDeviceScaleFactor(scaleFactor);
+    for (auto* pluginView : m_pluginViews)
+        pluginView->setDeviceScaleFactor(scaleFactor);
 
     updateHeaderAndFooterLayersForDeviceScaleChange(scaleFactor);
 #endif
@@ -1916,8 +1915,8 @@ void WebPage::setActive(bool isActive)
 
 #if PLATFORM(MAC)    
     // Tell all our plug-in views that the window focus changed.
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->setWindowIsFocused(isActive);
+    for (auto* pluginView : m_pluginViews)
+        pluginView->setWindowIsFocused(isActive);
 #endif
 }
 
@@ -2084,6 +2083,7 @@ void WebPage::setIsInWindow(bool isInWindow)
 void WebPage::setViewState(ViewState::Flags viewState, bool wantsDidUpdateViewState)
 {
     ViewState::Flags changed = m_viewState ^ viewState;
+    m_viewState = viewState;
 
     // We want to make sure to update the active state while hidden, so if the view is hidden then update the active state
     // early (in case it becomes visible), and if the view was visible then update active state later (in case it hides).
@@ -2099,8 +2099,10 @@ void WebPage::setViewState(ViewState::Flags viewState, bool wantsDidUpdateViewSt
         setActive(viewState & ViewState::WindowIsActive);
     if (changed & ViewState::IsInWindow)
         setIsInWindow(viewState & ViewState::IsInWindow);
-
-    m_viewState = viewState;
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    if (changed & ViewState::IsLayerWindowServerHosted)
+        setLayerHostingMode(layerHostingMode());
+#endif
 
     if (wantsDidUpdateViewState)
         m_sendDidUpdateViewStateTimer.startOneShot(0);
@@ -3062,12 +3064,20 @@ void WebPage::setWindowIsVisible(bool windowIsVisible)
 
 #if PLATFORM(MAC)
     // Tell all our plug-in views that the window visibility changed.
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->setWindowIsVisible(windowIsVisible);
+    for (auto* pluginView : m_pluginViews)
+        pluginView->setWindowIsVisible(windowIsVisible);
 #endif
 }
 
 #if PLATFORM(MAC)
+void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
+{
+    for (auto* pluginView : m_pluginViews)
+        pluginView->setLayerHostingMode(layerHostingMode);
+
+    m_drawingArea->setLayerHostingMode(layerHostingMode);
+}
+
 void WebPage::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoordinates, const FloatRect& windowFrameInUnflippedScreenCoordinates, const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
 {
     m_windowFrameInScreenCoordinates = windowFrameInScreenCoordinates;
@@ -3076,8 +3086,8 @@ void WebPage::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoo
     m_accessibilityPosition = accessibilityViewCoordinates;
     
     // Tell all our plug-in views that the window and view frames have changed.
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates));
+    for (auto* pluginView : m_pluginViews)
+        pluginView->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates));
 
     m_hasCachedWindowFrame = !m_windowFrameInUnflippedScreenCoordinates.isEmpty();
 }

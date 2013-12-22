@@ -249,8 +249,8 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event, bool saveCommands
 
 void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput)
 {
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it) {
-        if ((*it)->sendComplexTextInput(pluginComplexTextInputIdentifier, textInput))
+    for (auto* pluginView : m_pluginViews) {
+        if (pluginView->sendComplexTextInput(pluginComplexTextInputIdentifier, textInput))
             break;
     }
 }
@@ -790,14 +790,6 @@ void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& ev
     else
 #endif
         result = !!hitResult.scrollbar();
-}
-
-void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
-{
-    m_layerHostingMode = layerHostingMode;
-
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
-        (*it)->setLayerHostingMode(layerHostingMode);
 }
 
 void WebPage::setTopOverhangImage(PassRefPtr<WebImage> image)

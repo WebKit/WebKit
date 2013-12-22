@@ -113,11 +113,6 @@ void DrawingAreaProxyImpl::deviceScaleFactorDidChange()
     backingStoreStateDidChange(RespondImmediately);
 }
 
-void DrawingAreaProxyImpl::layerHostingModeDidChange()
-{
-    m_webPageProxy->process().send(Messages::DrawingArea::SetLayerHostingMode(m_webPageProxy->layerHostingMode()), m_webPageProxy->pageID());
-}
-
 void DrawingAreaProxyImpl::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
 {
     if (m_isBackingStoreDiscardable == isBackingStoreDiscardable)

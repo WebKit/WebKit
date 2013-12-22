@@ -349,7 +349,14 @@ public:
     bool windowIsVisible() const { return m_windowIsVisible; }
 
 #if PLATFORM(MAC)
-    LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
+    LayerHostingMode layerHostingMode() const
+    {
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+        return m_viewState & ViewState::IsLayerWindowServerHosted ? LayerHostingModeInWindowServer : LayerHostingModeDefault;
+#else
+        return LayerHostingModeDefault;
+#endif
+    }
     void setLayerHostingMode(LayerHostingMode);
 
     void updatePluginsActiveAndFocusedState();
@@ -928,9 +935,6 @@ private:
     // The accessibility position of the view.
     WebCore::FloatPoint m_accessibilityPosition;
     
-    // The layer hosting mode.
-    LayerHostingMode m_layerHostingMode;
-
     RetainPtr<WKAccessibilityWebPageObject> m_mockAccessibilityElement;
 
     WebCore::KeyboardEvent* m_keyboardEventBeingInterpreted;

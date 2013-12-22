@@ -33,7 +33,6 @@
 #include "DrawingAreaProxy.h"
 #include "EditorState.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
-#include "LayerTreeContext.h"
 #include "MessageSender.h"
 #include "NotificationPermissionRequestManagerProxy.h"
 #include "PageLoadState.h"
@@ -554,8 +553,6 @@ public:
     void setIntrinsicDeviceScaleFactor(float);
     void setCustomDeviceScaleFactor(float);
     void windowScreenDidChange(PlatformDisplayID);
-
-    LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
 
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
@@ -1239,8 +1236,6 @@ private:
     double m_pageScaleFactor;
     float m_intrinsicDeviceScaleFactor;
     float m_customDeviceScaleFactor;
-
-    LayerHostingMode m_layerHostingMode;
 
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;

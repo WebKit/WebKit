@@ -34,13 +34,14 @@ struct ViewState {
         IsFocused = 1 << 1,
         IsVisible = 1 << 2,
         IsInWindow = 1 << 3,
-        WindowIsVisible = 1 << 4
+        WindowIsVisible = 1 << 4,
+        IsLayerWindowServerHosted = 1 << 5
     };
 
     typedef unsigned Flags;
 
     static const Flags NoFlags = 0;
-    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsInWindow | WindowIsVisible;
+    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsInWindow | WindowIsVisible | IsLayerWindowServerHosted;
 };
 
 } // namespace WebKit
