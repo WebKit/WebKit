@@ -25,23 +25,6 @@
         onMouseUpLogSelectionAndFocus("selected-content", "focus-node", "focus-offset");
     </script>
     <script>
-        function clearSelection() {
-           mouseClick(0, 0);
-        }
-
-        function checkResult(id, nodeId, offset, content) {
-            var sel = window.getSelection();
-            var node = sel['focusNode'];
-            var focusId = node.id;
-            var selected = sel.getRangeAt(0).toString().replace(/(\r\n|\n|\r)/gm,"").replace(/\s+/gm, " ");;
-            if (node.nodeType == 3)
-              focusId =  node.parentNode.id;
-            var result = (focusId == nodeId) && (sel['focusOffset'] == offset) && (selected == content);
-            document.getElementById(id).innerHTML = result ? "PASS" : "FAIL";
-            if (!result)
-               console.log("Focus: " + focusId + " offset: " + sel['focusOffset'] + " selected: " + selected);
-        }
-
         function selectText() {
             if (window.testRunner) {
                 window.testRunner.dumpAsText();
@@ -60,27 +43,27 @@
                 clearSelection();
 
                 selectContentFromIdToPosVert("word1", region1Rect.right - 10 , region1Rect.bottom);
-                checkResult("result1", "word2", "5", "word1 inside region inside region inside region inside region word2");
+                checkSelectionResult("result1", "word1 inside region inside region inside region inside region word2", "word2", "5");
 
                 clearSelection();
 
                 selectContentFromIdToPosVert("word1", region1Rect.right - 2, region1Rect.bottom);
-                checkResult("result2", "word2", "5", "word1 inside region inside region inside region inside region word2");
+                checkSelectionResult("result2", "word1 inside region inside region inside region inside region word2", "word2", "5");
 
                 clearSelection();
 
                 selectContentFromIdToPosVert("word1", region1Rect.right, region1Rect.bottom);
-                checkResult("result3", "outside", "0", "word1 inside region inside region inside region inside region word2 word5 inside region inside region inside region inside region word6 ");
+                checkSelectionResult("result3", "word1 inside region inside region inside region inside region word2 word5 inside region inside region inside region inside region word6 ", "outside", "0");
 
                 clearSelection();
 
                 selectContentFromIdToPosVert("word3", outsideRect.right + 20 , outsideRect.bottom);
-                checkResult("result4", "word5", "0", "word5 inside region inside region inside region inside region word6 ");
+                checkSelectionResult("result4", "word5 inside region inside region inside region inside region word6 ", "word5", "0");
 
                 clearSelection();
 
                 selectContentFromIdToPosVert("word5", region2Rect.right - 10, region2Rect.bottom);
-                checkResult("result5", "word6", "5", "word5 inside region inside region inside region inside region word6");
+                checkSelectionResult("result5", "word5 inside region inside region inside region inside region word6", "word6", "5");
             }
         }
     </script>

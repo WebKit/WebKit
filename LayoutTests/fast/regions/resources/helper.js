@@ -267,17 +267,15 @@ function mouseClick(positionX, positionY) {
 
 function onMouseUpLogSelectionAndFocus(contentId, nodeId, offsetId) {
     document.onmouseup = function() {
-        var selectedContent = document.getElementById(contentId);
-        var focusNode = document.getElementById(nodeId);
-        var focusOffset = document.getElementById(offsetId);
         var sel = window.getSelection();
+
         var node = sel['focusNode'];
-        var id = " (id: " + node.id + ")";
-        if (node.nodeType == 3)
-            id = " (parent id: " + node.parentNode.id + ")";
-        focusNode.innerHTML = id + " " + sel['focusNode'] + " " + sel['focusNode'].nodeValue;
-        focusOffset.innerHTML = sel['focusOffset'];
-        selectedContent.innerHTML = sel.getRangeAt(0);
+        // nodeType == 3 for textNode
+        var id = (node.nodeType != 3) ? " (id: " + node.id + ")" : " (parent id: " + node.parentNode.id + ")";
+
+        document.getElementById(nodeId).innerHTML = id + " " + node + " " + node.nodeValue;
+        document.getElementById(offsetId).innerHTML = sel['focusOffset'];
+        document.getElementById(contentId).innerHTML = sel.getRangeAt(0);
     }
 }
 
@@ -285,5 +283,50 @@ function onMouseUpLogSelection(elementId) {
     document.onmouseup = function() {
         var selectedContent = document.getElementById(elementId);
         selectedContent.innerHTML = window.getSelection().getRangeAt(0);
+    }
+}
+
+function clearSelection() {
+    mouseClick(0, 0);
+}
+
+function checkSelectionResult(id, expectedSelection, expectedFocusNodeId, expectedFocusOffset) {
+    var sel = window.getSelection();
+
+    // Check actual and expected selection
+    var actualSelectedContent = sel.getRangeAt(0).toString().replace(/(\r\n|\n|\r)/gm,"").replace(/\s+/gm, "");
+    var expectedSelectedContent = expectedSelection.replace(/(\r\n|\n|\r)/gm,"").replace(/\s+/gm, "");
+    var selectionComparison = (actualSelectedContent == expectedSelectedContent);
+
+    // Check actual and expected focus node
+    var focusNodeComparison = true;
+    var actualFocusNodeId;
+    if (expectedFocusNodeId != undefined) {
+        var node = sel['focusNode'];
+        // nodeType == 3 for textNode
+        actualFocusNodeId = (node.nodeType != 3) ? node.id : node.parentNode.id;
+        focusNodeComparison = (actualFocusNodeId == expectedFocusNodeId);
+    }
+
+    // Check actual and expected focus offset
+    var focusOffsetComparison = true;
+    var actualFocusOffset;
+    if (expectedFocusOffset != undefined) {
+        actualFocusOffset =  sel['focusOffset'];
+        focusOffsetComparison = (actualFocusOffset == expectedFocusOffset);
+    }
+
+    var result = selectionComparison && focusNodeComparison && focusOffsetComparison;
+    document.getElementById(id).innerHTML = result ? "PASS" : "FAIL";
+
+    if (!result) {
+        var errorMessage = "";
+        if (!selectionComparison)
+            errorMessage += "\nExpected selection: " + expectedSelection + "\nActual selection: " + sel.getRangeAt(0).toString();
+        if (!focusNodeComparison)
+            errorMessage += "\nExpected focus node: " + expectedFocusNodeId + "\nActual focus node: " + actualFocusNodeId;
+        if (!focusOffsetComparison)
+            errorMessage += "\nExpected focus offset: " + expectedFocusOffset + "\nActual focus offset: " + actualFocusOffset;
+        console.log(errorMessage);
     }
 }

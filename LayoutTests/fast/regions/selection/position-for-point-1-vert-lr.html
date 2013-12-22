@@ -28,23 +28,6 @@
         onMouseUpLogSelectionAndFocus("selected-content", "focus-node", "focus-offset");
     </script>
     <script>
-        function clearSelection() {
-           mouseClick(0, 0);
-        }
-
-        function checkResult(id, content) {
-            var sel = window.getSelection();
-            var node = sel['focusNode'];
-            var focusId = node.id;
-            var selected = sel.getRangeAt(0).toString().replace(/(\r\n|\n|\r)/gm,"").replace(/\s+/gm, "");
-            var result = (selected == content);
-            document.getElementById(id).innerHTML = result ? "PASS" : "FAIL";
-            if (!result) {
-              console.log("Selection: " + selected + "\n");
-              console.log("Should be: " + content + "\n");
-            }
-        }
-
         function selectText() {
             if (window.testRunner) {
                 window.testRunner.dumpAsText();
@@ -60,33 +43,33 @@
                 var outsideRect = outside.getBoundingClientRect();
                 var region2Rect = region2.getBoundingClientRect();
 
-                var region1Data = region1.webkitGetRegionFlowRanges()[0].toString().replace(/(\r\n|\n|\r)/gm,"").replace(/\s+/gm, "");
-                var region2Data = region2.webkitGetRegionFlowRanges()[0].toString().replace(/(\r\n|\n|\r)/gm,"").replace(/\s+/gm, "");
+                var region1Data = region1.webkitGetRegionFlowRanges()[0].toString();
+                var region2Data = region2.webkitGetRegionFlowRanges()[0].toString();
 
                 clearSelection();
 
                 selectContentByRange(region1Rect.left, region1Rect.top, region1Rect.right - 10, region1Rect.bottom);
-                checkResult("result1", region1Data);
+                checkSelectionResult("result1", region1Data);
 
                 clearSelection();
 
                 selectContentByRange(region1Rect.left, region1Rect.top, region1Rect.right - 2 , region1Rect.bottom);
-                checkResult("result2", region1Data);
+                checkSelectionResult("result2", region1Data);
 
                 clearSelection();
 
                 selectContentByRange(region1Rect.left, region1Rect.top, region1Rect.right, region1Rect.bottom);
-                checkResult("result3", region1Data + region2Data);
+                checkSelectionResult("result3", region1Data + region2Data);
 
                 clearSelection();
 
                 selectContentByRange(outsideRect.left, outsideRect.top, outsideRect.right + 20 , outsideRect.bottom);
-                checkResult("result4", region2Data);
+                checkSelectionResult("result4", region2Data);
 
                 clearSelection();
 
                 selectContentByRange(region2Rect.left, region2Rect.top, region2Rect.right - 10, region2Rect.bottom);
-                checkResult("result5", region2Data);
+                checkSelectionResult("result5", region2Data);
             }
         }
     </script>

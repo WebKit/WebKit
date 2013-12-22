@@ -1,3 +1,22 @@
+2013-12-22  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Clean-up selection tests a bit
+        https://bugs.webkit.org/show_bug.cgi?id=126135
+
+        Reviewed by Dirk Schulze.
+
+        Move function clearSelection in helper.js. Combine checkResult() from position-for-point* and position-for-point-1*
+        into a single function, checkSelectionResult() and  move it into helper.js too. 
+
+        * fast/regions/resources/helper.js:
+        * fast/regions/selection/position-for-point-1-vert-lr.html:
+        * fast/regions/selection/position-for-point-1-vert-rl.html:
+        * fast/regions/selection/position-for-point-1.html:
+        * fast/regions/selection/position-for-point-vert-lr.html:
+        * fast/regions/selection/position-for-point-vert-rl.html:
+        * fast/regions/selection/position-for-point.html:
+        * fast/regions/selection/selecting-text-through-different-region-flows.html:
+
 2013-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow ImageBuffer to re-use IOSurfaces
