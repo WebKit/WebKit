@@ -1,3 +1,21 @@
+2013-12-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r160971 and r160969.
+
+        * GNUmakefile.list.am:
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        (webkit_file_chooser_request_select_files):
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (didReceiveWebViewMessageFromInjectedBundle):
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestCreate):
+        * UIProcess/API/gtk/WebKitURISchemeRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (webkit_web_resource_get_data):
+        * UIProcess/soup/WebSoupRequestManagerClient.h:
+        * WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp:
+        (WebKit::internalError):
+
 2013-12-21  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix attempt on EFL port after r160971 and r160969

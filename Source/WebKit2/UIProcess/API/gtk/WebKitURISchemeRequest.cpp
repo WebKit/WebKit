@@ -74,7 +74,7 @@ static void webkit_uri_scheme_request_class_init(WebKitURISchemeRequestClass* re
 {
 }
 
-WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext* webContext, WebSoupRequestManagerProxy* webRequestManager, WebURL* webURL, WebPageProxy* initiatingPage, uint64_t requestID)
+WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext* webContext, WebSoupRequestManagerProxy* webRequestManager, API::URL* webURL, WebPageProxy* initiatingPage, uint64_t requestID)
 {
     WebKitURISchemeRequest* request = WEBKIT_URI_SCHEME_REQUEST(g_object_new(WEBKIT_TYPE_URI_SCHEME_REQUEST, NULL));
     request->priv->webContext = webContext;

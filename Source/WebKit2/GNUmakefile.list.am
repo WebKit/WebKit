@@ -370,6 +370,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/APIArray.h \
 	Source/WebKit2/Shared/APIData.cpp \
 	Source/WebKit2/Shared/APIData.h \
+	Source/WebKit2/Shared/APIError.cpp \
+	Source/WebKit2/Shared/APIError.h \
 	Source/WebKit2/Shared/APIFrameHandle.cpp \
 	Source/WebKit2/Shared/APIFrameHandle.h \
 	Source/WebKit2/Shared/APIGeometry.cpp \
@@ -379,6 +381,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/APIPageHandle.h \
 	Source/WebKit2/Shared/APIClient.h \
 	Source/WebKit2/Shared/APIString.h \
+	Source/WebKit2/Shared/APIURL.h \
 	Source/WebKit2/Shared/APIURLResponse.cpp \
 	Source/WebKit2/Shared/APIURLResponse.h \
 	Source/WebKit2/Shared/API/c/cairo/WKImageCairo.cpp \
@@ -572,8 +575,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebContextMenuItem.h \
 	Source/WebKit2/Shared/WebCoreArgumentCoders.cpp \
 	Source/WebKit2/Shared/WebCoreArgumentCoders.h \
-	Source/WebKit2/Shared/WebError.cpp \
-	Source/WebKit2/Shared/WebError.h \
 	Source/WebKit2/Shared/WebEventConversion.cpp \
 	Source/WebKit2/Shared/WebEventConversion.h \
 	Source/WebKit2/Shared/WebEvent.cpp \
@@ -613,7 +614,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebSecurityOrigin.h \
 	Source/WebKit2/Shared/WebSerializedScriptValue.h \
 	Source/WebKit2/Shared/WebTouchEvent.cpp \
-	Source/WebKit2/Shared/WebURL.h \
 	Source/WebKit2/Shared/WebUserContentURLPattern.h \
 	Source/WebKit2/Shared/WebWheelEvent.cpp \
 	Source/WebKit2/UIProcess/API/C/gtk/WKAPICastGtk.h \

@@ -84,7 +84,7 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
         if (!resource)
             return;
 
-        WebError* webError = static_cast<WebError*>(message.get(String::fromUTF8("Error")));
+        API::Error* webError = static_cast<API::Error*>(message.get(String::fromUTF8("Error")));
         const ResourceError& platformError = webError->platformError();
         GOwnPtr<GError> resourceError(g_error_new_literal(g_quark_from_string(platformError.domain().utf8().data()),
             platformError.errorCode(), platformError.localizedDescription().utf8().data()));

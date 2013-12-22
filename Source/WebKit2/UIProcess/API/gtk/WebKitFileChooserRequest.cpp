@@ -307,7 +307,7 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
         // string, with the 'file://' prefix) to WebCore otherwise the
         // FileChooser won't actually choose it.
         GOwnPtr<char> uri(g_file_get_uri(filename.get()));
-        choosenFiles.append(WebURL::create(String::fromUTF8(uri.get())));
+        choosenFiles.append(API::URL::create(String::fromUTF8(uri.get())));
 
         // Do not use the URI here because this won't reach WebCore.
         g_ptr_array_add(selectedFiles.get(), g_strdup(files[i]));

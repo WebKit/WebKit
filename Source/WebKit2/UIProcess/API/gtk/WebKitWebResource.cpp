@@ -344,7 +344,7 @@ void webkit_web_resource_get_data(WebKitWebResource* resource, GCancellable* can
         resource->priv->frame->getMainResourceData(DataCallback::create(task, resourceDataCallback));
     else {
         String url = String::fromUTF8(resource->priv->uri.data());
-        resource->priv->frame->getResourceData(WebURL::create(url).get(), DataCallback::create(task, resourceDataCallback));
+        resource->priv->frame->getResourceData(API::URL::create(url).get(), DataCallback::create(task, resourceDataCallback));
     }
 }
 
