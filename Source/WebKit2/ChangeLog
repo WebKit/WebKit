@@ -1,3 +1,10 @@
+2013-12-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r160971 to try to make EFL build again.
+
+        * WebProcess/WebCoreSupport/efl/WebErrorsEfl.cpp:
+        (WebKit::internalError):
+
 2013-12-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r160971 and r160969.
