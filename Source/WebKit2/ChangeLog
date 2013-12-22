@@ -1,3 +1,13 @@
+2013-12-21  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attempt on EFL port after r160971 and r160969
+
+        * CMakeLists.txt:
+        * UIProcess/soup/WebSoupRequestManagerClient.cpp:
+        (WebKit::WebSoupRequestManagerClient::didReceiveURIRequest):
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp:
+        (WebKit::WebSoupRequestManagerProxy::didReceiveURIRequest):
+
 2013-12-21  Sam Weinig  <sam@webkit.org>
 
         [WK2] Rename WebError to API::Error

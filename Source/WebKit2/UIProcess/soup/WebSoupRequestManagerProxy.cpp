@@ -106,7 +106,7 @@ void WebSoupRequestManagerProxy::didReceiveURIRequestData(const API::Data* reque
 
 void WebSoupRequestManagerProxy::didReceiveURIRequest(const String& uriString, WebPageProxy* initiaingPage, uint64_t requestID)
 {
-    if (!m_client.didReceiveURIRequest(this, WebURL::create(uriString).get(), initiaingPage, requestID))
+    if (!m_client.didReceiveURIRequest(this, API::URL::create(uriString).get(), initiaingPage, requestID))
         didHandleURIRequest(API::Data::create(0, 0).get(), 0, String(), requestID);
 }
 

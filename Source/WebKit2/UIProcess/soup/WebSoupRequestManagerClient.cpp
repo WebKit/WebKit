@@ -24,7 +24,7 @@
 
 namespace WebKit {
 
-bool WebSoupRequestManagerClient::didReceiveURIRequest(WebSoupRequestManagerProxy* soupRequestManager, WebURL* url, WebPageProxy* initiaingPage, uint64_t requestID)
+bool WebSoupRequestManagerClient::didReceiveURIRequest(WebSoupRequestManagerProxy* soupRequestManager, API::URL* url, WebPageProxy* initiaingPage, uint64_t requestID)
 {
     if (!m_client.didReceiveURIRequest)
         return false;

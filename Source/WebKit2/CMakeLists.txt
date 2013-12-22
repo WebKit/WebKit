@@ -182,6 +182,7 @@ set(WebKit2_SOURCES
 
     Shared/APIArray.cpp
     Shared/APIData.cpp
+    Shared/APIError.cpp
     Shared/APIFrameHandle.cpp
     Shared/APIGeometry.cpp
     Shared/APIPageHandle.cpp
@@ -216,7 +217,6 @@ set(WebKit2_SOURCES
     Shared/WebContextMenuItem.cpp
     Shared/WebContextMenuItemData.cpp
     Shared/WebCoreArgumentCoders.cpp
-    Shared/WebError.cpp
     Shared/WebEvent.cpp
     Shared/WebEventConversion.cpp
     Shared/WebGeolocationPosition.cpp
