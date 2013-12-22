@@ -3418,22 +3418,18 @@ void StyleResolver::loadPendingSVGDocuments()
         return;
 
     CachedResourceLoader* cachedResourceLoader = state.document().cachedResourceLoader();
-    Vector<RefPtr<FilterOperation>>& filterOperations = state.style()->mutableFilter().operations();
-    for (unsigned i = 0; i < filterOperations.size(); ++i) {
-        RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
-        if (filterOperation->type() == FilterOperation::REFERENCE) {
-            ReferenceFilterOperation* referenceFilter = static_cast<ReferenceFilterOperation*>(filterOperation.get());
+    for (auto it = state.pendingSVGDocuments().begin(), end = state.pendingSVGDocuments().end(); it != end; ++it) {
+        WebKitCSSSVGDocumentValue* value = it->value.get();
+        // FIXME: It is unclear why it should be null. Maybe an ASSERT instead?
+        if (!value)
+            continue;
+        CachedSVGDocument* cachedDocument = value->load(cachedResourceLoader);
+        if (!cachedDocument)
+            continue;
 
-            WebKitCSSSVGDocumentValue* value = state.pendingSVGDocuments().get(referenceFilter);
-            if (!value)
-                continue;
-            CachedSVGDocument* cachedDocument = value->load(cachedResourceLoader);
-            if (!cachedDocument)
-                continue;
-
-            // Stash the CachedSVGDocument on the reference filter.
-            referenceFilter->setCachedSVGDocumentReference(adoptPtr(new CachedSVGDocumentReference(cachedDocument)));
-        }
+        // Stash the CachedSVGDocument on the reference filter.
+        ReferenceFilterOperation& referenceFilter = *toReferenceFilterOperation(it->key);
+        referenceFilter.setCachedSVGDocumentReference(adoptPtr(new CachedSVGDocumentReference(cachedDocument)));
     }
     state.pendingSVGDocuments().clear();
 }

@@ -338,6 +338,11 @@ private:
     Color m_color;
 };
 
+#define FILTER_OPERATION_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, FilterOperation, operation, operation->type() == FilterOperation::predicate, operation.type() == FilterOperation::predicate)
+
+FILTER_OPERATION_CASTS(ReferenceFilterOperation, REFERENCE)
+
 } // namespace WebCore
 
 #endif // ENABLE(CSS_FILTERS)

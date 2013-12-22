@@ -1,3 +1,20 @@
+2013-12-21  Dirk Schulze  <krit@webkit.org>
+
+        Start refactoring Filter code to reuse CachedSVGDocument for clipPath
+        https://bugs.webkit.org/show_bug.cgi?id=126069
+
+        Reviewed by Andreas Kling.
+
+        Smaller refactoring of the CSS filter style resolver code. Previously the code
+        requested the FilterOperations list from RenderStyle and compared the content
+        in this list with an internal map. Then the resource loading was triggered.
+        With the refactoring we do not request the list from RenderStyle anymore but
+        rely on the hash map data entirely.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingSVGDocuments):
+        * platform/graphics/filters/FilterOperation.h:
+
 2013-12-20  Andy Estes  <aestes@apple.com>
 
         [Mac] Soft-link WebContentAnalysis.framework
