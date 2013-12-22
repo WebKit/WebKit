@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebErrors.h"
 
-#import "WebError.h"
+#import "APIError.h"
 #import "WKError.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/ResourceRequest.h>
@@ -64,32 +64,32 @@ ResourceError fileDoesNotExistError(const ResourceResponse& response)
 
 ResourceError blockedError(const ResourceRequest& request)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeCannotUseRestrictedPort, request.url(), WEB_UI_STRING("Not allowed to use restricted network port", "WebKitErrorCannotUseRestrictedPort description"));
+    return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeCannotUseRestrictedPort, request.url(), WEB_UI_STRING("Not allowed to use restricted network port", "WebKitErrorCannotUseRestrictedPort description"));
 }
 
 ResourceError cannotShowURLError(const ResourceRequest& request)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeCannotShowURL, request.url(), WEB_UI_STRING("The URL can’t be shown", "WebKitErrorCannotShowURL description"));
+    return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeCannotShowURL, request.url(), WEB_UI_STRING("The URL can’t be shown", "WebKitErrorCannotShowURL description"));
 }
 
 ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeFrameLoadInterruptedByPolicyChange, request.url(), WEB_UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description"));
+    return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeFrameLoadInterruptedByPolicyChange, request.url(), WEB_UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description"));
 }
 
 ResourceError cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeCannotShowMIMEType, response.url(), WEB_UI_STRING("Content with specified MIME type can’t be shown", "WebKitErrorCannotShowMIMEType description"));
+    return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeCannotShowMIMEType, response.url(), WEB_UI_STRING("Content with specified MIME type can’t be shown", "WebKitErrorCannotShowMIMEType description"));
 }
 
 ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodePlugInWillHandleLoad, response.url(), WEB_UI_STRING("Plug-in handled load", "WebKitErrorPlugInWillHandleLoad description"));
+    return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodePlugInWillHandleLoad, response.url(), WEB_UI_STRING("Plug-in handled load", "WebKitErrorPlugInWillHandleLoad description"));
 }
 
 ResourceError internalError(const URL& url)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorInternal, url, WEB_UI_STRING("WebKit encountered an internal error", "WebKitErrorInternal description"));
+    return ResourceError(API::Error::webKitErrorDomain(), kWKErrorInternal, url, WEB_UI_STRING("WebKit encountered an internal error", "WebKitErrorInternal description"));
 }
 
 } // namespace WebKit

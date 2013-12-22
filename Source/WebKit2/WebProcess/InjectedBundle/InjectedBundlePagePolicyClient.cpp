@@ -26,9 +26,9 @@
 #include "config.h"
 #include "InjectedBundlePagePolicyClient.h"
 
+#include "APIError.h"
 #include "APIURLRequest.h"
 #include "WKBundleAPICast.h"
-#include "WebError.h"
 
 using namespace WebCore;
 

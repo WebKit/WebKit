@@ -28,12 +28,12 @@
 
 #include "APIArray.h"
 #include "APIData.h"
+#include "APIError.h"
 #include "APIURLRequest.h"
 #include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
-#include "WebError.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
 

@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "APIData.h"
+#include "APIError.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
 #include "APIString.h"
@@ -41,7 +42,6 @@
 #include "ShareableBitmap.h"
 #include "WebCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebError.h"
 #include "WebImage.h"
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"
@@ -66,7 +66,7 @@ namespace WebKit {
 //   - API::URL -> API::URL
 //   - API::URLRequest -> API::URLRequest
 //   - API::URLResponse -> API::URLResponse
-//   - WebError -> WebError
+//   - API::Error -> API::Error
 
 template<typename Owner>
 class UserMessageEncoder {
@@ -219,7 +219,7 @@ public:
             return true;
         }
         case API::Object::Type::Error: {
-            WebError* errorObject = static_cast<WebError*>(m_root);
+            API::Error* errorObject = static_cast<API::Error*>(m_root);
             encoder << errorObject->platformError();
             return true;
         }
@@ -255,7 +255,7 @@ protected:
 //   - API::URL -> API::URL
 //   - API::URLRequest -> API::URLRequest
 //   - API::URLResponse -> API::URLResponse
-//   - WebError -> WebError
+//   - API::Error -> API::Error
 
 template<typename Owner>
 class UserMessageDecoder {
@@ -514,7 +514,7 @@ public:
             WebCore::ResourceError resourceError;
             if (!decoder.decode(resourceError))
                 return false;
-            coder.m_root = WebError::create(resourceError);
+            coder.m_root = API::Error::create(resourceError);
             break;
         }
         default:

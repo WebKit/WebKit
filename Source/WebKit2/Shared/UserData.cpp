@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "APIData.h"
+#include "APIError.h"
 #include "APIFrameHandle.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
@@ -136,6 +137,10 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
         }
         break;
     }
+
+    case API::Object::Type::Error:
+        static_cast<const API::Error&>(object).encode(encoder);
+        break;
 
     case API::Object::Type::FrameHandle: {
         auto& frameHandle = static_cast<const API::FrameHandle&>(object);
@@ -247,6 +252,11 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
 
     case API::Object::Type::Double:
         if (!API::Double::decode(decoder, result))
+            return false;
+        break;
+
+    case API::Object::Type::Error:
+        if (!API::Error::decode(decoder, result))
             return false;
         break;
 

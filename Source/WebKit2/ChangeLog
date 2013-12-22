@@ -1,3 +1,63 @@
+2013-12-21  Sam Weinig  <sam@webkit.org>
+
+        [WK2] Rename WebError to API::Error
+        https://bugs.webkit.org/show_bug.cgi?id=126125
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/c/WKError.cpp:
+        (WKErrorGetTypeID):
+        (WKErrorCopyWKErrorDomain):
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        * Shared/API/c/cf/WKErrorCF.cpp:
+        (WKErrorCreateWithCFError):
+        * Shared/APIError.cpp: Copied from Source/WebKit2/Shared/WebError.cpp.
+        (API::Error::webKitErrorDomain):
+        (API::Error::encode):
+        (API::Error::decode):
+        * Shared/APIError.h: Copied from Source/WebKit2/Shared/WebError.h.
+        (API::Error::create):
+        (API::Error::domain):
+        (API::Error::failingURL):
+        (API::Error::localizedDescription):
+        (API::Error::Error):
+        * Shared/Cocoa/WKNSError.h:
+        (WebKit::wrapper):
+        * Shared/Cocoa/WKNSError.mm:
+        (-[WKNSError _web_createTarget]):
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebError.cpp: Removed.
+        * Shared/WebError.h: Removed.
+        * UIProcess/AutoCorrectionCallback.h:
+        (WebKit::AutocorrectionDataCallback::invalidate):
+        * UIProcess/GenericCallback.h:
+        (WebKit::VoidCallback::invalidate):
+        (WebKit::GenericCallback::invalidate):
+        (WebKit::ComputedPagesCallback::invalidate):
+        (WebKit::ImageCallback::invalidate):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::printFinishedCallback):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::ValidateCommandCallback::invalidate):
+        (WebKit::GestureCallback::invalidate):
+        (WebKit::TouchesCallback::invalidate):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp:
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm:
+        (WebKit::blockedError):
+        (WebKit::cannotShowURLError):
+        (WebKit::interruptedForPolicyChangeError):
+        (WebKit::cannotShowMIMETypeError):
+        (WebKit::pluginWillHandleLoadError):
+        (WebKit::internalError):
+
 2013-12-20  Sam Weinig  <sam@webkit.org>
 
         [WK2] Rename WebURL to API::URL

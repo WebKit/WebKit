@@ -27,11 +27,17 @@
 
 #if WK_API_ENABLED
 
+#import "APIError.h"
 #import "WKObject.h"
-#import "WebError.h"
 
 namespace WebKit {
-inline NSError *wrapper(WebError& error) { ASSERT([error.wrapper() isKindOfClass:[NSError self]]); return (NSError *)error.wrapper(); }
+
+inline NSError *wrapper(API::Error& error)
+{
+    ASSERT([error.wrapper() isKindOfClass:[NSError self]]);
+    return (NSError *)error.wrapper();
+}
+
 }
 
 @interface WKNSError : WKObject <NSCopying>

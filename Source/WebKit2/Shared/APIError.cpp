@@ -23,51 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebError_h
-#define WebError_h
+#include "config.h"
+#include "APIError.h"
 
-#include "APIObject.h"
-#include <WebCore/ResourceError.h>
-#include <wtf/PassRefPtr.h>
+#include "WebCoreArgumentCoders.h"
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/WTFString.h>
 
-namespace WebKit {
+namespace API {
 
-// WebError - An error type suitable for vending to an API.
+const WTF::String& Error::webKitErrorDomain()
+{
+    static NeverDestroyed<WTF::String> webKitErrorDomainString(ASCIILiteral("WebKitErrorDomain"));
+    return webKitErrorDomainString;
+}
 
-class WebError : public API::ObjectImpl<API::Object::Type::Error> {
-public:
-    static PassRefPtr<WebError> create()
-    {
-        return adoptRef(new WebError);
-    }
+void Error::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << platformError();
+}
 
-    static PassRefPtr<WebError> create(const WebCore::ResourceError& error)
-    {
-        return adoptRef(new WebError(error));
-    }
-
-    static const String& webKitErrorDomain();
-
-    const String& domain() const { return m_platformError.domain(); }
-    int errorCode() const { return m_platformError.errorCode(); }
-    const String& failingURL() const { return m_platformError.failingURL(); }
-    const String& localizedDescription() const { return m_platformError.localizedDescription(); }
-
-    const WebCore::ResourceError& platformError() const { return m_platformError; }
-
-private:
-    WebError()
-    {
-    }
-
-    WebError(const WebCore::ResourceError& error)
-        : m_platformError(error)
-    {
-    }
-
-    WebCore::ResourceError m_platformError;
-};
+bool Error::decode(IPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
+{
+    WebCore::ResourceError error;
+    if (!decoder.decode(error))
+        return false;
+    
+    result = create(error);
+    return true;
+}
 
 } // namespace WebKit
-
-#endif // WebError_h

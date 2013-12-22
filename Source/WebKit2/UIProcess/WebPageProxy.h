@@ -207,7 +207,7 @@ public:
     {
         ASSERT(m_callback);
 
-        RefPtr<WebError> error = WebError::create();
+        RefPtr<API::Error> error = API::Error::create();
         m_callback(0, 0, 0, toAPI(error.get()), context());
         
         m_callback = 0;
@@ -252,7 +252,7 @@ public:
     {
         ASSERT(m_callback);
 
-        RefPtr<WebError> error = WebError::create();
+        RefPtr<API::Error> error = API::Error::create();
         m_callback(WebCore::IntPoint(), 0, 0, 0, toAPI(error.get()), context());
 
         m_callback = 0;
@@ -297,7 +297,7 @@ public:
     {
         ASSERT(m_callback);
 
-        RefPtr<WebError> error = WebError::create();
+        RefPtr<API::Error> error = API::Error::create();
         m_callback(WebCore::IntPoint(), 0, toAPI(error.get()), context());
         
         m_callback = 0;

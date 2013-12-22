@@ -28,15 +28,13 @@
 
 #if WK_API_ENABLED
 
-#import "WebError.h"
-
-using namespace WebKit;
+#import "APIError.h"
 
 @implementation WKNSError
 
 - (NSObject *)_web_createTarget
 {
-    return [(NSError *)static_cast<WebError*>(&self._apiObject)->platformError().cfError() copy];
+    return [(NSError *)static_cast<API::Error*>(&self._apiObject)->platformError().cfError() copy];
 }
 
 #pragma mark NSCopying protocol implementation

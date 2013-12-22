@@ -26,6 +26,7 @@
 #ifndef WKSharedAPICast_h
 #define WKSharedAPICast_h
 
+#include "APIError.h"
 #include "APINumber.h"
 #include "APIString.h"
 #include "APIURL.h"
@@ -44,7 +45,6 @@
 #include "WKPageVisibilityTypes.h"
 #include "WKUserContentInjectedFrames.h"
 #include "WKUserScriptInjectionTime.h"
-#include "WebError.h"
 #include "WebEvent.h"
 #include "WebFindOptions.h"
 #include "WebSecurityOrigin.h"
@@ -97,7 +97,7 @@ WK_ADD_API_MAPPING(WKContextMenuItemRef, WebContextMenuItem)
 WK_ADD_API_MAPPING(WKDataRef, API::Data)
 WK_ADD_API_MAPPING(WKDictionaryRef, ImmutableDictionary)
 WK_ADD_API_MAPPING(WKDoubleRef, API::Double)
-WK_ADD_API_MAPPING(WKErrorRef, WebError)
+WK_ADD_API_MAPPING(WKErrorRef, API::Error)
 WK_ADD_API_MAPPING(WKGraphicsContextRef, WebGraphicsContext)
 WK_ADD_API_MAPPING(WKImageRef, WebImage)
 WK_ADD_API_MAPPING(WKMutableDictionaryRef, MutableDictionary)
@@ -198,9 +198,9 @@ inline String toWTFString(WKURLRef urlRef)
     return toImpl(urlRef)->string();
 }
 
-inline ProxyingRefPtr<WebError> toAPI(const WebCore::ResourceError& error)
+inline ProxyingRefPtr<API::Error> toAPI(const WebCore::ResourceError& error)
 {
-    return ProxyingRefPtr<WebError>(WebError::create(error));
+    return ProxyingRefPtr<API::Error>(API::Error::create(error));
 }
 
 inline ProxyingRefPtr<API::URLRequest> toAPI(const WebCore::ResourceRequest& request)

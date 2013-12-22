@@ -23,17 +23,57 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebError.h"
+#ifndef APIError_h
+#define APIError_h
 
-#include <wtf/text/WTFString.h>
+#include "APIObject.h"
+#include <WebCore/ResourceError.h>
+#include <wtf/PassRefPtr.h>
 
-namespace WebKit {
-
-const String& WebError::webKitErrorDomain()
-{
-    DEFINE_STATIC_LOCAL(String, webKitErrorDomainString, (ASCIILiteral("WebKitErrorDomain")));
-    return webKitErrorDomainString;
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
 }
 
-} // namespace WebKit
+namespace API {
+
+class Error : public ObjectImpl<Object::Type::Error> {
+public:
+    static PassRefPtr<Error> create()
+    {
+        return adoptRef(new Error);
+    }
+
+    static PassRefPtr<Error> create(const WebCore::ResourceError& error)
+    {
+        return adoptRef(new Error(error));
+    }
+
+    static const WTF::String& webKitErrorDomain();
+
+    const WTF::String& domain() const { return m_platformError.domain(); }
+    int errorCode() const { return m_platformError.errorCode(); }
+    const WTF::String& failingURL() const { return m_platformError.failingURL(); }
+    const WTF::String& localizedDescription() const { return m_platformError.localizedDescription(); }
+
+    const WebCore::ResourceError& platformError() const { return m_platformError; }
+
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
+
+private:
+    Error()
+    {
+    }
+
+    Error(const WebCore::ResourceError& error)
+        : m_platformError(error)
+    {
+    }
+
+    WebCore::ResourceError m_platformError;
+};
+
+} // namespace API
+
+#endif // APIError_h

@@ -26,19 +26,19 @@
 #include "config.h"
 #include "WKError.h"
 
-#include "WebError.h"
+#include "APIError.h"
 #include "WKAPICast.h"
 
 using namespace WebKit;
 
 WKTypeID WKErrorGetTypeID()
 {
-    return toAPI(WebError::APIType);
+    return toAPI(API::Error::APIType);
 }
 
 WKStringRef WKErrorCopyWKErrorDomain()
 {
-    return toCopiedAPI(WebError::webKitErrorDomain());
+    return toCopiedAPI(API::Error::webKitErrorDomain());
 }
 
 WKStringRef WKErrorCopyDomain(WKErrorRef errorRef)

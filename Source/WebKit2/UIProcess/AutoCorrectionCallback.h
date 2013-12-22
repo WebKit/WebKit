@@ -26,9 +26,9 @@
 #ifndef AutoCorrectionCallback_h
 #define AutoCorrectionCallback_h
 
+#include "APIError.h"
 #include "GenericCallback.h"
 #include "WKAPICast.h"
-#include "WebError.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -62,7 +62,7 @@ public:
     {
         ASSERT(m_callback);
 
-        RefPtr<WebError> error = WebError::create();
+        RefPtr<API::Error> error = API::Error::create();
         m_callback(Vector<WebCore::FloatRect>(), String(), 0, 0, toAPI(error.get()), context());
 
         m_callback = 0;

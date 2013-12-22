@@ -26,15 +26,15 @@
 #include "config.h"
 #include "WKErrorCF.h"
 
+#include "APIError.h"
 #include "WKAPICast.h"
-#include "WebError.h"
 
 using namespace WebCore;
 using namespace WebKit;
 
 WKErrorRef WKErrorCreateWithCFError(CFErrorRef cfError)
 {
-    RefPtr<WebError> error = WebError::create(ResourceError(cfError));
+    RefPtr<API::Error> error = API::Error::create(ResourceError(cfError));
     return toAPI(error.release().leakRef());
 }
 
