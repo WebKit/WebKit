@@ -45,6 +45,16 @@
         return frameworkLibrary; \
     }
 
+#define SOFT_LINK_PRIVATE_FRAMEWORK(framework) \
+    static void* framework##Library() \
+    { \
+        static void* frameworkLibrary = 0; \
+        if (!frameworkLibrary) \
+            frameworkLibrary = dlopen("/System/Library/PrivateFrameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+        ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
+        return frameworkLibrary; \
+    }
+
 #define SOFT_LINK_FRAMEWORK_OPTIONAL(framework) \
     static void* framework##Library() \
     { \

@@ -29,6 +29,8 @@
 #if USE(CONTENT_FILTERING)
 
 #import "ResourceResponse.h"
+#import "SoftLinking.h"
+#import <objc/runtime.h>
 
 #if defined(__has_include) && __has_include(<WebContentAnalysis/WebFilterEvaluator.h>)
 #import <WebContentAnalysis/WebFilterEvaluator.h>
@@ -44,6 +46,9 @@ static const OSStatus kWFEStateBuffering = 2;
 @end
 #endif
 
+SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
+SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
+
 namespace WebCore {
 
 PassRefPtr<ContentFilter> ContentFilter::create(const ResourceResponse& response)
@@ -52,14 +57,14 @@ PassRefPtr<ContentFilter> ContentFilter::create(const ResourceResponse& response
 }
 
 ContentFilter::ContentFilter(const ResourceResponse& response)
-    : m_platformContentFilter(adoptNS([[WebFilterEvaluator alloc] initWithResponse:response.nsURLResponse()]))
+    : m_platformContentFilter(adoptNS([[getWebFilterEvaluatorClass() alloc] initWithResponse:response.nsURLResponse()]))
 {
     ASSERT(m_platformContentFilter);
 }
 
 bool ContentFilter::isEnabled()
 {
-    return [WebFilterEvaluator isManagedSession];
+    return [getWebFilterEvaluatorClass() isManagedSession];
 }
 
 void ContentFilter::addData(const char* data, int length)

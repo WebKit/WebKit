@@ -1,3 +1,22 @@
+2013-12-20  Andy Estes  <aestes@apple.com>
+
+        [Mac] Soft-link WebContentAnalysis.framework
+        https://bugs.webkit.org/show_bug.cgi?id=126102
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebCore.xcconfig: There's no need to modify LDFLAGS
+        now that we don't hard link against WebContentAnalysis.framework.
+        * WebCore.xcodeproj/project.pbxproj: Removed
+        WebContentAnalysis.framework from the 'Link Binary with Libraries'
+        build phase.
+        * platform/mac/ContentFilterMac.mm: Soft-linked
+        WebContentAnalysis.framework and the WebFilterEvaluator @class.
+        (WebCore::ContentFilter::ContentFilter): Called getWebFilterEvaluatorClass().
+        (WebCore::ContentFilter::isEnabled): Ditto.
+        * platform/mac/SoftLinking.h: Added an implementation of
+        SOFT_LINK_PRIVATE_FRAMEWORK().
+
 2013-12-21  Antti Koivisto  <antti@apple.com>
 
         Unreviewed, rolling out r160916.
