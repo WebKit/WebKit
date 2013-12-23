@@ -18,7 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "autotoolsconfig.h"
+#include "config.h"
 #include <gtk/gtk.h>
 #include <libsoup/soup.h>
 #include <string.h>

@@ -1,3 +1,12 @@
+2013-12-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Build the WebKit1 GObject API tests
+        https://bugs.webkit.org/show_bug.cgi?id=125684
+
+        Reviewed by Daniel Bates.
+
+        * Source/PlatformGTK.cmake: Added.
+
 2013-12-22  Martin Robinson  <mrobinson@igalia.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=125511

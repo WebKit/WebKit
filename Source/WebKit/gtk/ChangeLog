@@ -1,3 +1,40 @@
+2013-12-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Build the WebKit1 GObject API tests
+        https://bugs.webkit.org/show_bug.cgi?id=125684
+
+        Reviewed by Daniel Bates.
+
+        * tests/CMakeLists.txt: Added.
+        * tests/testapplicationcache.c: Use the WTF config.h instead of including the autotools configuration directly.
+        * tests/testatk.c: Ditto.
+        * tests/testatkroles.c: Ditto.
+        * tests/testcontextmenu.c: Ditto.
+        * tests/testcopyandpaste.c: Ditto.
+        * tests/testdomdocument.c: Ditto.
+        * tests/testdomdomwindow.c: Ditto.
+        * tests/testdomnode.c: Ditto.
+        * tests/testdownload.c: Ditto.
+        * tests/testfavicondatabase.c: Ditto.
+        * tests/testglobals.c: Ditto.
+        * tests/testhittestresult.c: Ditto.
+        * tests/testhttpbackend.c: Ditto.
+        * tests/testkeyevents.c: Ditto.
+        * tests/testloading.c: Ditto.
+        * tests/testmimehandling.c: Ditto.
+        * tests/testnetworkrequest.c: Ditto.
+        * tests/testnetworkresponse.c: Ditto.
+        * tests/testwebbackforwardlist.c: Ditto.
+        * tests/testwebdatasource.c: Ditto.
+        * tests/testwebframe.c: Ditto.
+        * tests/testwebhistoryitem.c: Ditto.
+        * tests/testwebinspector.c: Ditto.
+        * tests/testwebplugindatabase.c: Ditto.
+        * tests/testwebresource.c: Ditto.
+        * tests/testwebsettings.c: Ditto.
+        * tests/testwebview.c: Ditto.
+        * tests/testwindow.c: Ditto.
+
 2013-12-20  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] The fullscreen API should be enabled by default

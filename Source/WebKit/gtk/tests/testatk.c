@@ -18,7 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "autotoolsconfig.h"
+#include "config.h"
 #include <errno.h>
 #include <glib.h>
 #include <glib/gstdio.h>
