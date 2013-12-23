@@ -87,7 +87,8 @@ struct SelectorFragment {
         : traversalBacktrackingAction(BacktrackingAction::NoBacktracking)
         , matchingBacktrackingAction(BacktrackingAction::NoBacktracking)
         , backtrackingFlags(0)
-        , tagName(0)
+        , tagName(nullptr)
+        , id(nullptr)
     {
     }
     FragmentRelation relationToLeftFragment;
@@ -98,6 +99,7 @@ struct SelectorFragment {
     unsigned char backtrackingFlags;
 
     const QualifiedName* tagName;
+    const AtomicString* id;
 };
 
 typedef JSC::MacroAssembler Assembler;
@@ -133,7 +135,9 @@ private:
 
     // Element properties matchers.
     void generateElementMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch);
+    void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch);
 
     Assembler m_assembler;
     RegisterAllocator m_registerAllocator;
@@ -142,6 +146,7 @@ private:
 
     FunctionType m_functionType;
     Vector<SelectorFragment, 8> m_selectorFragments;
+    bool m_selectorCannotMatchAnything;
 
     StackAllocator::StackReference m_checkingContextStackReference;
 
@@ -189,6 +194,7 @@ static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::
 inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelector)
     : m_stackAllocator(m_assembler)
     , m_functionType(FunctionType::SimpleSelectorChecker)
+    , m_selectorCannotMatchAnything(false)
 #if CSS_SELECTOR_JIT_DEBUGGING
     , m_originalSelector(rootSelector)
 #endif
@@ -205,8 +211,16 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
             ASSERT(!fragment.tagName);
             fragment.tagName = &(selector->tagQName());
             break;
+        case CSSSelector::Id: {
+            const AtomicString& id = selector->value();
+            if (fragment.id) {
+                if (id != *fragment.id)
+                    goto InconsistentSelector;
+            } else
+                fragment.id = &(selector->value());
+            break;
+        }
         case CSSSelector::Unknown:
-        case CSSSelector::Id:
         case CSSSelector::Class:
         case CSSSelector::Exact:
         case CSSSelector::Set:
@@ -242,14 +256,16 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
     computeBacktrackingInformation();
 
     return;
-
+InconsistentSelector:
+    m_functionType = FunctionType::SimpleSelectorChecker;
+    m_selectorCannotMatchAnything = true;
 CannotHandleSelector:
     m_selectorFragments.clear();
 }
 
 inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC::MacroAssemblerCodeRef& codeRef)
 {
-    if (m_selectorFragments.isEmpty())
+    if (m_selectorFragments.isEmpty() && !m_selectorCannotMatchAnything)
         return SelectorCompilationStatus::CannotCompile;
 
     m_registerAllocator.allocateRegister(elementAddressRegister);
@@ -284,12 +300,14 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC
     m_registerAllocator.deallocateRegister(elementAddressRegister);
 
     if (m_functionType == FunctionType::SimpleSelectorChecker) {
-        // Success.
-        m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
-        m_assembler.ret();
+        if (!m_selectorCannotMatchAnything) {
+            // Success.
+            m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
+            m_assembler.ret();
+        }
 
         // Failure.
-        if (!failureCases.empty()) {
+        if (m_selectorCannotMatchAnything || !failureCases.empty()) {
             failureCases.link(&m_assembler);
             m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
             m_assembler.ret();
@@ -724,6 +742,23 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
 {
     if (fragment.tagName)
         generateElementHasTagName(failureCases, *(fragment.tagName));
+    generateElementDataMatching(failureCases, fragment);
+}
+
+void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    if (!fragment.id)
+        return;
+
+    //  Generate:
+    //     elementDataAddress = element->elementData();
+    //     if (!elementDataAddress)
+    //         failure!
+    LocalRegister elementDataAddress(m_registerAllocator);
+    m_assembler.loadPtr(Assembler::Address(elementAddressRegister, Element::elementDataMemoryOffset()), elementDataAddress);
+    failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, elementDataAddress));
+
+    generateElementHasId(failureCases, elementDataAddress, *fragment.id);
 }
 
 inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch)
@@ -750,6 +785,14 @@ inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList
         m_assembler.move(Assembler::TrustedImmPtr(selectorLocalName.impl()), constantRegister);
         failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), constantRegister));
     }
+}
+
+void SelectorCodeGenerator::generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch)
+{
+    // Compare the pointers of the AtomicStringImpl from idForStyleResolution with the reference idToMatch.
+    LocalRegister idToMatchRegister(m_registerAllocator);
+    m_assembler.move(Assembler::TrustedImmPtr(idToMatch.impl()), idToMatchRegister);
+    failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(elementDataAddress, ElementData::idForStyleResolutionMemoryOffset()), idToMatchRegister));
 }
 
 }; // namespace SelectorCompiler.

@@ -293,6 +293,7 @@ public:
     void stripScriptingAttributes(Vector<Attribute>&) const;
 
     const ElementData* elementData() const { return m_elementData.get(); }
+    static ptrdiff_t elementDataMemoryOffset() { return OBJECT_OFFSETOF(Element, m_elementData); }
     UniqueElementData& ensureUniqueElementData();
 
     void synchronizeAllAttributes() const;

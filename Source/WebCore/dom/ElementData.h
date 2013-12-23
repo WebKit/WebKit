@@ -51,6 +51,7 @@ public:
     const SpaceSplitString& classNames() const { return m_classNames; }
 
     const AtomicString& idForStyleResolution() const { return m_idForStyleResolution; }
+    static ptrdiff_t idForStyleResolutionMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_idForStyleResolution); }
     void setIdForStyleResolution(const AtomicString& newId) const { m_idForStyleResolution = newId; }
 
     const StyleProperties* inlineStyle() const { return m_inlineStyle.get(); }

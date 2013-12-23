@@ -1,3 +1,28 @@
+2013-12-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add id matching to the Selector Code Generator
+        https://bugs.webkit.org/show_bug.cgi?id=126154
+
+        Reviewed by Antti Koivisto.
+
+        Compile matching for #id selectors. IDs are Atomic String so it is just a matter
+        of comparing the pointers.
+
+        No attempt is made at optimizing for the double #id case because such problem
+        do not really happen outside tests.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorFragment::SelectorFragment):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::compile):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementDataMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasId):
+        * dom/Element.h:
+        (WebCore::Element::elementDataMemoryOffset):
+        * dom/ElementData.h:
+        (WebCore::ElementData::idForStyleResolutionMemoryOffset):
+
 2013-12-23  Oliver Hunt  <oliver@apple.com>
 
         Update custom setter implementations to perform type checks
