@@ -111,7 +111,7 @@ sub GenerateAttributeEventListenerCall
     my $implSetterFunctionName = shift;
     my $windowEventListener = shift;
 
-    my $wrapperObject = $windowEventListener ? "globalObject" : "thisObject";
+    my $wrapperObject = $windowEventListener ? "globalObject" : "castedThis";
     my @GenerateEventListenerImpl = ();
 
     if ($className eq "JSSVGElementInstance") {
@@ -1063,7 +1063,7 @@ sub GenerateHeader
             push(@headerContent, "JSC::EncodedJSValue ${getter}(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue, JSC::PropertyName);\n");
             if (!IsReadonly($attribute)) {
                 my $setter = GetAttributeSetterName($interfaceName, $className, $attribute);
-                push(@headerContent, "void ${setter}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);\n");
+                push(@headerContent, "void ${setter}(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
             }
             push(@headerContent, "#endif\n") if $conditionalString;
         }
@@ -1075,7 +1075,7 @@ sub GenerateHeader
 
         if ($interface->extendedAttributes->{"ReplaceableConstructor"}) {
             my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
-            push(@headerContent, "void ${constructorFunctionName}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);\n");
+            push(@headerContent, "void ${constructorFunctionName}(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
         }
     }
 
@@ -2152,28 +2152,33 @@ sub GenerateImplementation
                         my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
                         push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
 
-                        push(@implContent, "void ${putFunctionName}(ExecState* exec, JSObject*");
-                        push(@implContent, " thisObject") if !$attribute->isStatic;
-                        push(@implContent, ", JSValue value)\n");
+                        push(@implContent, "void ${putFunctionName}(ExecState* exec, EncodedJSValue");
+                        push(@implContent, " thisValue") if !$attribute->isStatic;
+                        push(@implContent, ", EncodedJSValue encodedValue)\n");
                         push(@implContent, "{\n");
-
+                        push(@implContent, "    JSValue value = JSValue::decode(encodedValue);\n");
                         push(@implContent, "    UNUSED_PARAM(exec);\n");
-
+                        if (!$attribute->isStatic) {
+                            push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
+                            push(@implContent, "    if (!castedThis) {\n");
+                            push(@implContent, "        throwVMTypeError(exec);\n");
+                            push(@implContent, "        return;\n");
+                            push(@implContent, "    }\n");
+                        }
                         if ($interface->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                             if ($interfaceName eq "DOMWindow") {
-                                push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, jsCast<$className*>(thisObject)->impl()))\n");
+                                push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, jsCast<$className*>(castedThis)->impl()))\n");
                             } else {
-                                push(@implContent, "    if (!shouldAllowAccessToFrame(exec, jsCast<$className*>(thisObject)->impl().frame()))\n");
+                                push(@implContent, "    if (!shouldAllowAccessToFrame(exec, jsCast<$className*>(castedThis)->impl().frame()))\n");
                             }
                             push(@implContent, "        return;\n");
                         }
 
                         if (HasCustomSetter($attribute->signature->extendedAttributes)) {
-                            push(@implContent, "    jsCast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
+                            push(@implContent, "    castedThis->set$implSetterFunctionName(exec, value);\n");
                         } elsif ($type eq "EventListener") {
                             $implIncludes{"JSEventListener.h"} = 1;
                             push(@implContent, "    UNUSED_PARAM(exec);\n");
-                            push(@implContent, "    ${className}* castedThis = jsCast<${className}*>(thisObject);\n");
                             my $windowEventListener = $attribute->signature->extendedAttributes->{"JSWindowEventListener"};
                             if ($windowEventListener) {
                                 push(@implContent, "    JSDOMGlobalObject* globalObject = castedThis->globalObject();\n");
@@ -2181,7 +2186,7 @@ sub GenerateImplementation
                             push(@implContent, "    $interfaceName& impl = castedThis->impl();\n");
                             if ((($interfaceName eq "DOMWindow") or ($interfaceName eq "WorkerGlobalScope")) and $name eq "onerror") {
                                 $implIncludes{"JSErrorHandler.h"} = 1;
-                                push(@implContent, "    impl.set$implSetterFunctionName(createJSErrorHandler(exec, value, thisObject));\n");
+                                push(@implContent, "    impl.set$implSetterFunctionName(createJSErrorHandler(exec, value, castedThis));\n");
                             } else {
                                 push(@implContent, GenerateAttributeEventListenerCall($className, $implSetterFunctionName, $windowEventListener));
                             }
@@ -2197,16 +2202,15 @@ sub GenerateImplementation
                             push(@implContent, "    // Shadowing a built-in constructor\n");
                             if ($interfaceName eq "DOMWindow" && $className eq "JSblah") {
                                 # FIXME: This branch never executes and should be removed.
-                                push(@implContent, "    jsCast<$className*>(thisObject)->putDirect(exec->vm(), exec->propertyNames().constructor, value);\n");
+                                push(@implContent, "    castedThis->putDirect(exec->vm(), exec->propertyNames().constructor, value);\n");
                             } else {
-                                push(@implContent, "    jsCast<$className*>(thisObject)->putDirect(exec->vm(), Identifier(exec, \"$name\"), value);\n");
+                                push(@implContent, "    castedThis->putDirect(exec->vm(), Identifier(exec, \"$name\"), value);\n");
                             }
                         } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
                             push(@implContent, "    // Shadowing a built-in object\n");
-                            push(@implContent, "    jsCast<$className*>(thisObject)->putDirect(exec->vm(), Identifier(exec, \"$name\"), value);\n");
+                            push(@implContent, "    castedThis->putDirect(exec->vm(), Identifier(exec, \"$name\"), value);\n");
                         } else {
                             if (!$attribute->isStatic) {
-                                push(@implContent, "    $className* castedThis = jsCast<$className*>(thisObject);\n");
                                 push(@implContent, "    $implType& impl = castedThis->impl();\n");
                             }
                             push(@implContent, "    ExceptionCode ec = 0;\n") if $setterRaisesException;
@@ -2304,13 +2308,19 @@ sub GenerateImplementation
         if ($interface->extendedAttributes->{"ReplaceableConstructor"}) {
             my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
 
-            push(@implContent, "void ${constructorFunctionName}(ExecState* exec, JSObject* thisObject, JSValue value)\n");
+            push(@implContent, "void ${constructorFunctionName}(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
             push(@implContent, "{\n");
+            push(@implContent, "    JSValue value = JSValue::decode(encodedValue);");
+            push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
+            push(@implContent, "    if (!castedThis) {\n");
+            push(@implContent, "        throwVMTypeError(exec);\n");
+            push(@implContent, "        return;\n");
+            push(@implContent, "    }\n");
             if ($interface->extendedAttributes->{"CheckSecurity"}) {
                 if ($interfaceName eq "DOMWindow") {
-                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, jsCast<$className*>(thisObject)->impl()))\n");
+                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))\n");
                 } else {
-                    push(@implContent, "    if (!shouldAllowAccessToFrame(exec, jsCast<$className*>(thisObject)->impl().frame()))\n");
+                    push(@implContent, "    if (!shouldAllowAccessToFrame(exec, castedThis->impl().frame()))\n");
                 }
                 push(@implContent, "        return;\n");
             }
@@ -2318,7 +2328,7 @@ sub GenerateImplementation
             push(@implContent, "    // Shadowing a built-in constructor\n");
 
             if ($interfaceName eq "DOMWindow") {
-                push(@implContent, "    jsCast<$className*>(thisObject)->putDirect(exec->vm(), exec->propertyNames().constructor, value);\n");
+                push(@implContent, "    castedThis->putDirect(exec->vm(), exec->propertyNames().constructor, value);\n");
             } else {
                 die "No way to handle interface with ReplaceableConstructor extended attribute: $interfaceName";
             }

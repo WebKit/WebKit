@@ -1,3 +1,16 @@
+2013-12-23  Oliver Hunt  <oliver@apple.com>
+
+        Update custom setter implementations to perform type checks
+        https://bugs.webkit.org/show_bug.cgi?id=126171
+
+        Reviewed by Daniel Bates.
+
+        Modify the setter function signature to take encoded values
+        as we're changing the setter usage everywhere anyway.
+
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+
 2013-12-23  Lucas Forschler  <lforschler@apple.com>
 
         <rdar://problem/15682948> Update copyright strings

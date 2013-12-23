@@ -1322,8 +1322,9 @@ void JSTestObj::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JS
     lookupPut<JSTestObj, Base>(exec, propertyName, value, JSTestObjTable, thisObject, slot);
 }
 
-void setJSTestObjConstructorStaticStringAttr(ExecState* exec, JSObject*, JSValue value)
+void setJSTestObjConstructorStaticStringAttr(ExecState* exec, EncodedJSValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
@@ -1332,18 +1333,29 @@ void setJSTestObjConstructorStaticStringAttr(ExecState* exec, JSObject*, JSValue
 }
 
 
-void setJSTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     // Shadowing a built-in constructor
-    jsCast<JSTestObj*>(thisObject)->putDirect(exec->vm(), Identifier(exec, "TestSubObjEnabledBySetting"), value);
+    castedThis->putDirect(exec->vm(), Identifier(exec, "TestSubObjEnabledBySetting"), value);
 }
 
 
-void setJSTestObjEnumAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjEnumAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     const String nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
@@ -1354,10 +1366,15 @@ void setJSTestObjEnumAttr(ExecState* exec, JSObject* thisObject, JSValue value)
 }
 
 
-void setJSTestObjByteAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjByteAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int8_t nativeValue(toInt8(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1366,10 +1383,15 @@ void setJSTestObjByteAttr(ExecState* exec, JSObject* thisObject, JSValue value)
 }
 
 
-void setJSTestObjOctetAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjOctetAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     uint8_t nativeValue(toUInt8(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1378,10 +1400,15 @@ void setJSTestObjOctetAttr(ExecState* exec, JSObject* thisObject, JSValue value)
 }
 
 
-void setJSTestObjShortAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjShortAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int16_t nativeValue(toInt16(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1390,10 +1417,15 @@ void setJSTestObjShortAttr(ExecState* exec, JSObject* thisObject, JSValue value)
 }
 
 
-void setJSTestObjUnsignedShortAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjUnsignedShortAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     uint16_t nativeValue(toUInt16(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1402,10 +1434,15 @@ void setJSTestObjUnsignedShortAttr(ExecState* exec, JSObject* thisObject, JSValu
 }
 
 
-void setJSTestObjLongAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjLongAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1414,10 +1451,15 @@ void setJSTestObjLongAttr(ExecState* exec, JSObject* thisObject, JSValue value)
 }
 
 
-void setJSTestObjLongLongAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjLongLongAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     long long nativeValue(toInt64(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1426,10 +1468,15 @@ void setJSTestObjLongLongAttr(ExecState* exec, JSObject* thisObject, JSValue val
 }
 
 
-void setJSTestObjUnsignedLongLongAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjUnsignedLongLongAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     unsigned long long nativeValue(toUInt64(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1438,10 +1485,15 @@ void setJSTestObjUnsignedLongLongAttr(ExecState* exec, JSObject* thisObject, JSV
 }
 
 
-void setJSTestObjStringAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjStringAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
@@ -1450,10 +1502,15 @@ void setJSTestObjStringAttr(ExecState* exec, JSObject* thisObject, JSValue value
 }
 
 
-void setJSTestObjTestObjAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjTestObjAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     TestObj* nativeValue(toTestObj(value));
     if (exec->hadException())
@@ -1462,10 +1519,15 @@ void setJSTestObjTestObjAttr(ExecState* exec, JSObject* thisObject, JSValue valu
 }
 
 
-void setJSTestObjXMLObjAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjXMLObjAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     TestObj* nativeValue(toTestObj(value));
     if (exec->hadException())
@@ -1474,10 +1536,15 @@ void setJSTestObjXMLObjAttr(ExecState* exec, JSObject* thisObject, JSValue value
 }
 
 
-void setJSTestObjCreate(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjCreate(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     bool nativeValue(value.toBoolean(exec));
     if (exec->hadException())
@@ -1486,10 +1553,15 @@ void setJSTestObjCreate(ExecState* exec, JSObject* thisObject, JSValue value)
 }
 
 
-void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjReflectedStringAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
@@ -1498,10 +1570,15 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSVa
 }
 
 
-void setJSTestObjReflectedIntegralAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjReflectedIntegralAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1510,10 +1587,15 @@ void setJSTestObjReflectedIntegralAttr(ExecState* exec, JSObject* thisObject, JS
 }
 
 
-void setJSTestObjReflectedUnsignedIntegralAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjReflectedUnsignedIntegralAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     unsigned nativeValue(toUInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1522,10 +1604,15 @@ void setJSTestObjReflectedUnsignedIntegralAttr(ExecState* exec, JSObject* thisOb
 }
 
 
-void setJSTestObjReflectedBooleanAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjReflectedBooleanAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     bool nativeValue(value.toBoolean(exec));
     if (exec->hadException())
@@ -1534,10 +1621,15 @@ void setJSTestObjReflectedBooleanAttr(ExecState* exec, JSObject* thisObject, JSV
 }
 
 
-void setJSTestObjReflectedURLAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjReflectedURLAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
@@ -1546,10 +1638,15 @@ void setJSTestObjReflectedURLAttr(ExecState* exec, JSObject* thisObject, JSValue
 }
 
 
-void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjReflectedStringAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
@@ -1558,10 +1655,15 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSVa
 }
 
 
-void setJSTestObjReflectedCustomIntegralAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjReflectedCustomIntegralAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1570,10 +1672,15 @@ void setJSTestObjReflectedCustomIntegralAttr(ExecState* exec, JSObject* thisObje
 }
 
 
-void setJSTestObjReflectedCustomBooleanAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjReflectedCustomBooleanAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     bool nativeValue(value.toBoolean(exec));
     if (exec->hadException())
@@ -1582,10 +1689,15 @@ void setJSTestObjReflectedCustomBooleanAttr(ExecState* exec, JSObject* thisObjec
 }
 
 
-void setJSTestObjReflectedCustomURLAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjReflectedCustomURLAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
@@ -1594,10 +1706,15 @@ void setJSTestObjReflectedCustomURLAttr(ExecState* exec, JSObject* thisObject, J
 }
 
 
-void setJSTestObjTypedArrayAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjTypedArrayAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     RefPtr<Float32Array> nativeValue(toFloat32Array(value));
     if (exec->hadException())
@@ -1606,10 +1723,15 @@ void setJSTestObjTypedArrayAttr(ExecState* exec, JSObject* thisObject, JSValue v
 }
 
 
-void setJSTestObjAttrWithGetterException(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjAttrWithGetterException(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1618,10 +1740,15 @@ void setJSTestObjAttrWithGetterException(ExecState* exec, JSObject* thisObject, 
 }
 
 
-void setJSTestObjAttrWithSetterException(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjAttrWithSetterException(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
     int nativeValue(toInt32(exec, value, NormalConversion));
@@ -1632,10 +1759,15 @@ void setJSTestObjAttrWithSetterException(ExecState* exec, JSObject* thisObject, 
 }
 
 
-void setJSTestObjStringAttrWithGetterException(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjStringAttrWithGetterException(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
@@ -1644,10 +1776,15 @@ void setJSTestObjStringAttrWithGetterException(ExecState* exec, JSObject* thisOb
 }
 
 
-void setJSTestObjStringAttrWithSetterException(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjStringAttrWithSetterException(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     ExceptionCode ec = 0;
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
@@ -1658,17 +1795,28 @@ void setJSTestObjStringAttrWithSetterException(ExecState* exec, JSObject* thisOb
 }
 
 
-void setJSTestObjCustomAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjCustomAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    jsCast<JSTestObj*>(thisObject)->setCustomAttr(exec, value);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
+    castedThis->setCustomAttr(exec, value);
 }
 
 
-void setJSTestObjWithScriptStateAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjWithScriptStateAttribute(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1677,10 +1825,15 @@ void setJSTestObjWithScriptStateAttribute(ExecState* exec, JSObject* thisObject,
 }
 
 
-void setJSTestObjWithScriptExecutionContextAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjWithScriptExecutionContextAttribute(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     TestObj* nativeValue(toTestObj(value));
     if (exec->hadException())
@@ -1692,10 +1845,15 @@ void setJSTestObjWithScriptExecutionContextAttribute(ExecState* exec, JSObject* 
 }
 
 
-void setJSTestObjWithScriptStateAttributeRaises(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjWithScriptStateAttributeRaises(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     TestObj* nativeValue(toTestObj(value));
     if (exec->hadException())
@@ -1704,10 +1862,15 @@ void setJSTestObjWithScriptStateAttributeRaises(ExecState* exec, JSObject* thisO
 }
 
 
-void setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     TestObj* nativeValue(toTestObj(value));
     if (exec->hadException())
@@ -1719,10 +1882,15 @@ void setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, JSOb
 }
 
 
-void setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     TestObj* nativeValue(toTestObj(value));
     if (exec->hadException())
@@ -1734,10 +1902,15 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* ex
 }
 
 
-void setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     TestObj* nativeValue(toTestObj(value));
     if (exec->hadException())
@@ -1749,10 +1922,15 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecSta
 }
 
 
-void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     TestObj* nativeValue(toTestObj(value));
     if (exec->hadException())
@@ -1764,10 +1942,15 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(Exe
 }
 
 
-void setJSTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     TestObj* nativeValue(toTestObj(value));
     if (exec->hadException())
@@ -1777,10 +1960,15 @@ void setJSTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, JSObj
 
 
 #if ENABLE(Condition1)
-void setJSTestObjConditionalAttr1(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjConditionalAttr1(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1791,10 +1979,15 @@ void setJSTestObjConditionalAttr1(ExecState* exec, JSObject* thisObject, JSValue
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-void setJSTestObjConditionalAttr2(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjConditionalAttr2(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1805,10 +1998,15 @@ void setJSTestObjConditionalAttr2(ExecState* exec, JSObject* thisObject, JSValue
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-void setJSTestObjConditionalAttr3(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjConditionalAttr3(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1819,39 +2017,62 @@ void setJSTestObjConditionalAttr3(ExecState* exec, JSObject* thisObject, JSValue
 #endif
 
 #if ENABLE(Condition1)
-void setJSTestObjConditionalAttr4Constructor(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjConditionalAttr4Constructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     // Shadowing a built-in constructor
-    jsCast<JSTestObj*>(thisObject)->putDirect(exec->vm(), Identifier(exec, "conditionalAttr4"), value);
+    castedThis->putDirect(exec->vm(), Identifier(exec, "conditionalAttr4"), value);
 }
 
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-void setJSTestObjConditionalAttr5Constructor(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjConditionalAttr5Constructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     // Shadowing a built-in constructor
-    jsCast<JSTestObj*>(thisObject)->putDirect(exec->vm(), Identifier(exec, "conditionalAttr5"), value);
+    castedThis->putDirect(exec->vm(), Identifier(exec, "conditionalAttr5"), value);
 }
 
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-void setJSTestObjConditionalAttr6Constructor(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjConditionalAttr6Constructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     // Shadowing a built-in constructor
-    jsCast<JSTestObj*>(thisObject)->putDirect(exec->vm(), Identifier(exec, "conditionalAttr6"), value);
+    castedThis->putDirect(exec->vm(), Identifier(exec, "conditionalAttr6"), value);
 }
 
 #endif
 
-void setJSTestObjAnyAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjAnyAttribute(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     Deprecated::ScriptValue nativeValue(exec->vm(), value);
     if (exec->hadException())
@@ -1860,10 +2081,15 @@ void setJSTestObjAnyAttribute(ExecState* exec, JSObject* thisObject, JSValue val
 }
 
 
-void setJSTestObjMutablePoint(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjMutablePoint(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     SVGPropertyTearOff<SVGPoint>* nativeValue(toSVGPoint(value));
     if (exec->hadException())
@@ -1872,10 +2098,15 @@ void setJSTestObjMutablePoint(ExecState* exec, JSObject* thisObject, JSValue val
 }
 
 
-void setJSTestObjImmutablePoint(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjImmutablePoint(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     SVGPropertyTearOff<SVGPoint>* nativeValue(toSVGPoint(value));
     if (exec->hadException())
@@ -1884,10 +2115,15 @@ void setJSTestObjImmutablePoint(ExecState* exec, JSObject* thisObject, JSValue v
 }
 
 
-void setJSTestObjStrawberry(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjStrawberry(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1896,10 +2132,15 @@ void setJSTestObjStrawberry(ExecState* exec, JSObject* thisObject, JSValue value
 }
 
 
-void setJSTestObjStrictFloat(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjStrictFloat(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     float nativeValue(value.toFloat(exec));
     if (exec->hadException())
@@ -1908,10 +2149,15 @@ void setJSTestObjStrictFloat(ExecState* exec, JSObject* thisObject, JSValue valu
 }
 
 
-void setJSTestObjId(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjId(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1920,18 +2166,29 @@ void setJSTestObjId(ExecState* exec, JSObject* thisObject, JSValue value)
 }
 
 
-void setJSTestObjReplaceableAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjReplaceableAttribute(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     // Shadowing a built-in object
-    jsCast<JSTestObj*>(thisObject)->putDirect(exec->vm(), Identifier(exec, "replaceableAttribute"), value);
+    castedThis->putDirect(exec->vm(), Identifier(exec, "replaceableAttribute"), value);
 }
 
 
-void setJSTestObjNullableLongSettableAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjNullableLongSettableAttribute(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1940,10 +2197,15 @@ void setJSTestObjNullableLongSettableAttribute(ExecState* exec, JSObject* thisOb
 }
 
 
-void setJSTestObjNullableStringValue(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjNullableStringValue(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -1952,10 +2214,15 @@ void setJSTestObjNullableStringValue(ExecState* exec, JSObject* thisObject, JSVa
 }
 
 
-void setJSTestObjAttributeWithReservedEnumType(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestObjAttributeWithReservedEnumType(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestObj& impl = castedThis->impl();
     const String nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())

@@ -281,10 +281,15 @@ void JSTestTypedefs::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
     lookupPut<JSTestTypedefs, Base>(exec, propertyName, value, JSTestTypedefsTable, thisObject, slot);
 }
 
-void setJSTestTypedefsUnsignedLongLongAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestTypedefsUnsignedLongLongAttr(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
+    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestTypedefs& impl = castedThis->impl();
     unsigned long long nativeValue(toUInt64(exec, value, NormalConversion));
     if (exec->hadException())
@@ -293,10 +298,15 @@ void setJSTestTypedefsUnsignedLongLongAttr(ExecState* exec, JSObject* thisObject
 }
 
 
-void setJSTestTypedefsImmutableSerializedScriptValue(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestTypedefsImmutableSerializedScriptValue(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
+    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestTypedefs& impl = castedThis->impl();
     RefPtr<SerializedScriptValue> nativeValue(SerializedScriptValue::create(exec, value, 0, 0));
     if (exec->hadException())
@@ -305,10 +315,15 @@ void setJSTestTypedefsImmutableSerializedScriptValue(ExecState* exec, JSObject* 
 }
 
 
-void setJSTestTypedefsAttrWithGetterException(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestTypedefsAttrWithGetterException(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
+    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestTypedefs& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
@@ -317,10 +332,15 @@ void setJSTestTypedefsAttrWithGetterException(ExecState* exec, JSObject* thisObj
 }
 
 
-void setJSTestTypedefsAttrWithSetterException(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestTypedefsAttrWithSetterException(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
+    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestTypedefs& impl = castedThis->impl();
     ExceptionCode ec = 0;
     int nativeValue(toInt32(exec, value, NormalConversion));
@@ -331,10 +351,15 @@ void setJSTestTypedefsAttrWithSetterException(ExecState* exec, JSObject* thisObj
 }
 
 
-void setJSTestTypedefsStringAttrWithGetterException(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestTypedefsStringAttrWithGetterException(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
+    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestTypedefs& impl = castedThis->impl();
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
@@ -343,10 +368,15 @@ void setJSTestTypedefsStringAttrWithGetterException(ExecState* exec, JSObject* t
 }
 
 
-void setJSTestTypedefsStringAttrWithSetterException(ExecState* exec, JSObject* thisObject, JSValue value)
+void setJSTestTypedefsStringAttrWithSetterException(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
+    JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(exec);
-    JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
+    JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
+    if (!castedThis) {
+        throwVMTypeError(exec);
+        return;
+    }
     TestTypedefs& impl = castedThis->impl();
     ExceptionCode ec = 0;
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));

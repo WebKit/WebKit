@@ -41,7 +41,7 @@ namespace JSC {
     // FIXME: There is no reason this get function can't be simpler.
     // ie. typedef JSValue (*GetFunction)(ExecState*, JSObject* baseObject)
     typedef PropertySlot::GetValueFunc GetFunction;
-    typedef void (*PutFunction)(ExecState*, JSObject* baseObject, JSValue value);
+    typedef void (*PutFunction)(ExecState*, EncodedJSValue base, EncodedJSValue value);
 
     class HashEntry {
         WTF_MAKE_FAST_ALLOCATED;
@@ -297,7 +297,7 @@ namespace JSC {
         if (entry->attributes() & Function)
             thisObj->putDirect(exec->vm(), propertyName, value);
         else if (!(entry->attributes() & ReadOnly))
-            entry->propertyPutter()(exec, thisObj, value);
+            entry->propertyPutter()(exec, JSValue::encode(thisObj), JSValue::encode(value));
         else if (shouldThrow)
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     }
