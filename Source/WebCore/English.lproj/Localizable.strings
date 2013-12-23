@@ -157,8 +157,14 @@
 /* Default writing direction context menu item */
 "Default" = "Default";
 
+/* Undo action name */
+"Delete (Undo action name)" = "Delete";
+
 /* text to display in <details> tag when it has no <summary> child */
 "Details" = "Details";
+
+/* Undo action name */
+"Dictation (Undo action name)" = "Dictation";
 
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";
