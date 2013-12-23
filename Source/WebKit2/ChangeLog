@@ -1,3 +1,15 @@
+2013-12-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMake] Integrate GResource for inspector files (and others?)
+        https://bugs.webkit.org/show_bug.cgi?id=125569
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Use the newly added static WebKit2InspectorGResourceBundle.xml
+        instead of generating the same file each time.
+        * PlatformGTK.cmake: Add support for building the GResource bundles into WebKit2.
+        * UIProcess/API/gtk/WebKit2InspectorGResourceBundle.xml: Added.
+
 2013-12-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r160971 to try to make EFL build again.

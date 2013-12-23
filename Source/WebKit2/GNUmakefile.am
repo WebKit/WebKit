@@ -19,24 +19,12 @@ libexec_PROGRAMS += \
 	Programs/WebKitPluginProcess
 endif
 
-${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml: GNUmakefile \
-	$(WebKit2)/UIProcess/InspectorServer/front-end/inspectorPageIndex.html
-	$(AM_V_GEN)
-	$(AM_V_at)mkdir -p ${GENSOURCES_WEBINSPECTOR_UI}
-	$(AM_V_at)echo '<?xml version="1.0" encoding="UTF-8"?>' > ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
-	$(AM_V_at)echo '<gresources>' >> ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
-	$(AM_V_at)echo '  <gresource prefix="/org/webkitgtk/inspector/UserInterface">' >> ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
-	$(AM_V_at)echo "    <file>inspectorPageIndex.html</file>" >> ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
-	$(AM_V_at)echo '  </gresource>' >> ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
-	$(AM_V_at)echo '</gresources>' >> ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
-
-${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.c: DerivedSources/WebInspectorUI/WebKit2GResourceBundle.xml
+${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.c: \
+		$(WebKit2)/UIProcess/InspectorServer/front-end/inspectorPageIndex.html \
+		$(WebKit2)/UIProcess/API/gtk/WebKit2InspectorGResourceBundle.xml
 	$(AM_V_GEN)
 	$(AM_V_at)glib-compile-resources --generate --sourcedir=$(WebKit2)/UIProcess/InspectorServer/front-end \
-		--target=${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.c ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
-
-BUILT_SOURCES += \
-	DerivedSources/WebInspectorUI/WebKit2GResourceBundle.xml
+		--target=${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.c $(WebKit2)/UIProcess/API/gtk/WebKit2InspectorGResourceBundle.xml
 
 webkit2gtk_built_sources += \
 	DerivedSources/WebInspectorUI/WebKit2GResourceBundle.c

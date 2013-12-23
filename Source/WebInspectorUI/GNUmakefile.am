@@ -5,21 +5,11 @@ ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml: GNUmakefile \
 	$(WebInspectorUI)/UserInterface/Images/*.png \
 	$(WebInspectorUI)/UserInterface/Images/*.svg \
 	$(WebInspectorUI)/UserInterface/External/CodeMirror/* \
-	$(WebInspectorUI)/Localizations/en.lproj/localizedStrings.js
+	$(WebInspectorUI)/Localizations/en.lproj/localizedStrings.js \
+	$(srcdir)/Tools/gtk/generate-inspector-gresource-manifest.py
 	$(AM_V_GEN)
 	$(AM_V_at)mkdir -p ${GENSOURCES_WEBINSPECTOR_UI}
-	$(AM_V_at)echo '<?xml version="1.0" encoding="UTF-8"?>' > ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
-	$(AM_V_at)echo '<gresources>' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
-	$(AM_V_at)echo '  <gresource prefix="/org/webkitgtk/inspector">' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
-	$(AM_V_at)\
-		basepath=`echo $(WebInspectorUI)/ | sed 's,^./,,g'`; \
-		for file in $^; do \
-			if [ "$$file" = "GNUmakefile" ]; then continue; fi; \
-			file=`echo $$file | sed "s,$$basepath,,g"`; \
-			echo "    <file>$$file</file>" >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml; \
-		done
-	$(AM_V_at)echo '  </gresource>' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
-	$(AM_V_at)echo '</gresources>' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
+	$(AM_V_at)$(srcdir)/Tools/gtk/generate-inspector-gresource-manifest.py $@
 
 ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.c: DerivedSources/WebInspectorUI/GResourceBundle.xml
 	$(AM_V_GEN)

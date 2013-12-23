@@ -15,6 +15,9 @@ add_definitions(-DPACKAGE_LOCALE_DIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 add_definitions(-DLIBDIR="${CMAKE_INSTALL_FULL_LIBDIR}")
 
 list(APPEND WebKit2_SOURCES
+    ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2InspectorGResourceBundle.c
+    ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.c
+
     ${WEBKIT2_BUILT_API_DIR}/WebKitEnumTypes.cpp
     ${WEBKIT2_BUILT_API_DIR}/WebKitMarshal.cpp
 
@@ -352,7 +355,16 @@ set(WebKit2_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebPagePrivate.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h
+)
 
+file(GLOB InspectorFiles
+    ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js
+    ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/*.css
+    ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/External/CodeMirror/*
+    ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/*.html
+    ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/Images/*.png
+    ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/Images/*.svg
+    ${CMAKE_SOURCE_DIR}/Source/WebInspectorUI/UserInterface/*.js
 )
 
 list(APPEND WebKit2_MESSAGES_IN_FILES
@@ -444,6 +456,30 @@ add_custom_command(
 
     COMMAND glib-mkenums --template ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitEnumTypes.cpp.template ${WebKit2_INSTALLED_HEADERS} | sed s/web_kit/webkit/ > ${WEBKIT2_BUILT_API_DIR}/WebKitEnumTypes.cpp
     VERBATIM)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.xml
+    DEPENDS ${InspectorFiles}
+            ${TOOLS_DIR}/gtk/generate-inspector-gresource-manifest.py
+    COMMAND ${TOOLS_DIR}/gtk/generate-inspector-gresource-manifest.py ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.xml
+    VERBATIM
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.c
+    DEPENDS ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.xml
+            ${InspectorFiles}
+    COMMAND glib-compile-resources --generate --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebInspectorUI --target=${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.c ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/InspectorGResourceBundle.xml
+    VERBATIM
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2InspectorGResourceBundle.c
+    DEPENDS ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKit2InspectorGResourceBundle.xml
+            ${WEBKIT2_DIR}/UIProcess/InspectorServer/front-end/inspectorPageIndex.html
+    COMMAND glib-compile-resources --generate --sourcedir=${WEBKIT2_DIR}/UIProcess/InspectorServer/front-end --target=${DERIVED_SOURCES_WEBKIT2GTK_DIR}/WebKit2InspectorGResourceBundle.c ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKit2InspectorGResourceBundle.xml
+    VERBATIM
+)
 
 # This symbolic link allows includes like #include <webkit2/WebkitWebView.h> which simulates installed headers.
 add_custom_target(fake-installed-headers
