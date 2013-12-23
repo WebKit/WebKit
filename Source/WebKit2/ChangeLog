@@ -1,3 +1,11 @@
+2013-12-23  Anders Carlsson  <andersca@apple.com>
+
+        Include <condition_variable>, not <thread>.
+
+        * Platform/CoreIPC/Connection.h:
+        * Shared/BlockingResponseMap.h:
+        * UIProcess/API/mac/WKPrintingView.h:
+
 2013-12-23  Lucas Forschler  <lforschler@apple.com>
 
         <rdar://problem/15682948> Update copyright strings

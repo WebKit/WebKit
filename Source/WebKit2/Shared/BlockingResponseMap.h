@@ -26,7 +26,7 @@
 #ifndef BlockingResponseMap_h
 #define BlockingResponseMap_h
 
-#include <thread>
+#include <condition_variable>
 #include <wtf/HashMap.h>
 
 template<typename T>

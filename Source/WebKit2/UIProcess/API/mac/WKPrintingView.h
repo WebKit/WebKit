@@ -24,7 +24,7 @@
  */
 
 #import <WebCore/IntRectHash.h>
-#import <thread>
+#import <condition_variable>
 #import <wtf/RetainPtr.h>
 
 @class WKPrintingViewData;
