@@ -13,7 +13,6 @@ AM_CONDITIONAL([GTK_API_VERSION_2],[test "$GTK_API_VERSION" = "2.0"])
 # For the moment we need to check whether or not indexed database is
 # enabled because it determines if we build leveldb or not.
 AM_WEBKIT_FEATURE_CONDITIONAL([ENABLE_INDEXED_DATABASE])
-AM_WEBKIT_FEATURE_CONDITIONAL([ENABLE_NETWORK_PROCESS])
 
 # OS conditionals.
 AM_CONDITIONAL([OS_WIN32],[test "$os_win32" = "yes"])

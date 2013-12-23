@@ -1,3 +1,21 @@
+2013-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Build with network process unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=126128
+
+        Reviewed by Martin Robinson.
+
+        Build always with the network process enabled and decide whether
+        to use it or not using an environment variable. This makes a lot
+        easier to work on the network process and also to switch between
+        using it or not.
+
+        * GNUmakefile.am: Make sure we always include the WebKit2Prefix.h.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (createDefaultWebContext): Use the network process when
+        WEBKIT_USE_NETWORK_PROCESS environment variable is present.
+        * WebKit2Prefix.h: Always enable network process for GTK port.
+
 2013-12-23  Brian Holt  <brian.holt@samsung.com>
 
         [WK2] Implement platform specific Resource Response for SOUP

@@ -45,6 +45,7 @@ libWebKit2Platform_la_CPPFLAGS = \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
 	-fno-strict-aliasing \
+	-include $(srcdir)/Source/WebKit2/WebKit2Prefix.h \
 	-I$(srcdir)/Source/WebKit2 \
 	-I$(srcdir)/Source \
 	-I$(srcdir)/Source/WTF \
@@ -461,12 +462,13 @@ CLEANFILES += \
 DISTCLEANFILES += \
 	$(top_builddir)/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
 
-if ENABLE_NETWORK_PROCESS
+if ENABLE_WEBKIT2
 libexec_PROGRAMS += \
 	Programs/WebKitNetworkProcess
 endif
 
 Programs_WebKitNetworkProcess_CPPFLAGS = \
+	-include $(srcdir)/Source/WebKit2/WebKit2Prefix.h \
 	-I$(srcdir)/Source/WebKit2 \
 	-I$(srcdir)/Source/WebKit2/UIProcess/API/C \
 	-I$(srcdir)/Source/WebKit2/NetworkProcess/unix \
@@ -499,6 +501,7 @@ libexec_PROGRAMS += \
 endif
 
 Programs_WebKitWebProcess_CPPFLAGS = \
+	-include $(srcdir)/Source/WebKit2/WebKit2Prefix.h \
 	-I$(srcdir)/Source/WebKit2 \
 	-I$(srcdir)/Source/WebKit2/UIProcess/API/C \
 	-I$(srcdir)/Source/WebKit2/WebProcess/gtk \

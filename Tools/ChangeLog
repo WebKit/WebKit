@@ -1,5 +1,15 @@
 2013-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Build with network process unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=126128
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitperl/FeatureList.pm: Remove network-process
+        feature command line option.
+
+2013-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] run-gtk-tests should always run glib tests with -k option
         https://bugs.webkit.org/show_bug.cgi?id=126132
 

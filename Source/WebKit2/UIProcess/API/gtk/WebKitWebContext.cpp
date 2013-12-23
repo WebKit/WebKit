@@ -206,7 +206,8 @@ static gpointer createDefaultWebContext(gpointer)
     priv->requestManager = webContext->priv->context->supplement<WebSoupRequestManagerProxy>();
     priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
 #if ENABLE(NETWORK_PROCESS)
-    priv->context->setUsesNetworkProcess(true);
+    // FIXME: Temporary use an env var until we have API to set the process model. See https://bugs.webkit.org/show_bug.cgi?id=125463.
+    priv->context->setUsesNetworkProcess(g_getenv("WEBKIT_USE_NETWORK_PROCESS"));
 #endif
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_IGNORE;
 

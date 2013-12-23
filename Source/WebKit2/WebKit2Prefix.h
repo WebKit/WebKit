@@ -68,6 +68,10 @@
 #define WTF_USE_XPC_SERVICES 1
 #endif
 
+#if PLATFORM(GTK)
+#define ENABLE_NETWORK_PROCESS 1
+#endif
+
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
 * to allow C++ code that expects exceptions to build. These definitions
 * interfere with Objective-C++ uses of Objective-C exception handlers, which
