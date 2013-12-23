@@ -234,8 +234,6 @@ layer at (0,0) size 785x1309
                         text run at (240,0) width 48: " has no"
                         text run at (0,18) width 294: "special effect on the row data since it simply"
                         text run at (0,36) width 319: "reiterates the default horizontal row alignment!"
-                  RenderInline {B} at (0,0) size 0x0
-                    RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
                 RenderBlock {P} at (2,72) size 336x0
                   RenderInline {B} at (0,0) size 0x0
                     RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
@@ -280,8 +278,6 @@ layer at (0,0) size 785x1309
                         text run at (266,0) width 48: " has no"
                         text run at (0,18) width 297: "special effect on the row head since it simply"
                         text run at (0,36) width 319: "reiterates the default horizontal row alignment!"
-                  RenderInline {B} at (0,0) size 0x0
-                    RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
                 RenderBlock {P} at (2,72) size 336x0
                   RenderInline {B} at (0,0) size 0x0
                     RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]

@@ -418,7 +418,6 @@ webkit.org/b/102486 editing/pasteboard/paste-table-cells.html [ Failure ]
 
 # Needs baselines
 editing/inserting/before-after-input-element.html [ Missing ]
-editing/inserting/break-blockquote-after-delete.html [ Missing ]
 editing/selection/contains-boundaries.html [ Missing ]
 editing/selection/designmode-no-caret.html [ Missing ]
 editing/selection/replaced-boundaries-3.html [ Missing ]

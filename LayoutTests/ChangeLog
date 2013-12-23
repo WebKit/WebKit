@@ -1,3 +1,29 @@
+2013-12-23  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Rebaseline tests after 160908.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/inserting/break-blockquote-after-delete-expected.png: Added.
+        * platform/efl/editing/inserting/break-blockquote-after-delete-expected.txt: Added.
+        * platform/efl/fast/css-generated-content/table-row-group-to-inline-expected.txt:
+        * platform/efl/fast/dynamic/011-expected.txt:
+        * platform/efl/fast/forms/formmove3-expected.txt:
+        * platform/efl/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/efl/fast/invalid/001-expected.txt:
+        * platform/efl/fast/invalid/003-expected.txt:
+        * platform/efl/fast/invalid/004-expected.txt:
+        * platform/efl/fast/invalid/007-expected.txt:
+        * platform/efl/fast/invalid/019-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/efl/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/efl/fast/ruby/ruby-base-merge-block-children-crash-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug113235-1-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug647-expected.txt:
+        * platform/efl/tables/mozilla/other/wa_table_tr_align-expected.txt:
+
 2013-12-22  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Crash when trying to select content from invalid region
