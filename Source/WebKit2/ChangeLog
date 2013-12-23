@@ -1,3 +1,18 @@
+2013-12-23  Brian Holt  <brian.holt@samsung.com>
+
+        [WK2] Implement platform specific Resource Response for SOUP
+        https://bugs.webkit.org/show_bug.cgi?id=125422
+
+        Reviewed by Martin Robinson.
+
+        SOUP specific Resource Response implementation for the Network
+        Process.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo):
+
 2013-12-22  Kwang Yul Seo  <skyul@company100.net>
 
         [WK2][SOUP] WebContext::allowSpecificHTTPSCertificateForHost does not work correctly when m_usesNetworkProcess is false
