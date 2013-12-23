@@ -1,5 +1,26 @@
 include(GNUInstallDirs)
 
+set(PROJECT_VERSION_MAJOR 2)
+set(PROJECT_VERSION_MINOR 3)
+set(PROJECT_VERSION_PATCH 3)
+set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+
+# Libtool library version, not to be confused with API version.
+# See http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html
+CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 22 0 22)
+CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT2 32 0 7)
+CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 16 2 16)
+
+# This is a little confusing: WEBKIT_MICRO_VERSION and friends are used as
+# macros in files like WebKitVersion.h.in to expose the project version to
+# the API. Meanwhile WEBKIT_VERSION_MICRO (note the transposed words) is used
+# by the CMake files to hold the *library* version number, which we calculated
+# from the libtool triple above. We should consider ditching these below
+# and using PROJECT_VERSION_* directly.
+set(WEBKIT_MICRO_VERSION ${PROJECT_VERSION_PATCH})
+set(WEBKIT_MINOR_VERSION ${PROJECT_VERSION_MINOR})
+set(WEBKIT_MAJOR_VERSION ${PROJECT_VERSION_MAJOR})
+
 # FIXME: We want to expose fewer options to downstream, but for now everything is public.
 WEBKIT_OPTION_BEGIN()
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_3D_RENDERING ON)
@@ -58,15 +79,6 @@ if (NOT ENABLE_VIDEO AND ENABLE_VIDEO_TRACK)
     set(ENABLE_VIDEO_TRACK OFF)
 endif ()
 WEBKIT_OPTION_END()
-
-set(PROJECT_VERSION_MAJOR 2)
-set(PROJECT_VERSION_MINOR 3)
-set(PROJECT_VERSION_PATCH 3)
-set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
-
-set(WEBKIT_MICRO_VERSION ${PROJECT_VERSION_PATCH})
-set(WEBKIT_MINOR_VERSION ${PROJECT_VERSION_MINOR})
-set(WEBKIT_MAJOR_VERSION ${PROJECT_VERSION_MAJOR})
 
 # These are used to generate the pkg-config files, note we only support GTK 3.0
 # builds with cmake.
