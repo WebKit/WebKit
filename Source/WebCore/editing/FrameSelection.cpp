@@ -213,11 +213,12 @@ void FrameSelection::setNonDirectionalSelectionIfNeeded(const VisibleSelection& 
 
     VisiblePosition base = m_originalBase.isNotNull() ? m_originalBase : newSelection.visibleBase();
     VisiblePosition newBase = base;
-    VisiblePosition newExtent = newSelection.visibleExtent();
+    VisiblePosition extent = newSelection.visibleExtent();
+    VisiblePosition newExtent = extent;
     if (endpointsAdjustmentMode == AdjustEndpointsAtBidiBoundary)
         adjustEndpointsAtBidiBoundary(newBase, newExtent);
 
-    if (newBase != base || newExtent != newSelection.visibleExtent()) {
+    if (newBase != base || newExtent != extent) {
         m_originalBase = base;
         newSelection.setBase(newBase);
         newSelection.setExtent(newExtent);
