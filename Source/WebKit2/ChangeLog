@@ -1,3 +1,12 @@
+2013-12-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for GTK and EFL after r161007.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState):
+        Use std::chrono::milliseconds instead of double for the timeout parameter to
+        CoreIPC::Connection::waitForAndDispatchImmediately.
+
 2013-12-23  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] [CMake] Add support for generating gtkdoc
