@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>WebKit</string>
 	<key>CFBundleGetInfoString</key>
-	<string>522+, Copyright 2003-2009 Apple Inc.</string>
+	<string>522+, Copyright 2003-2014 Apple Inc.</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.WebKit</string>
 	<key>CFBundleInfoDictionaryVersion</key>

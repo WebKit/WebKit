@@ -1,3 +1,29 @@
+2013-12-23  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge 161003: <rdar://problem/15719584>
+
+    2013-12-23  Lucas Forschler  <lforschler@apple.com>
+
+            <rdar://problem/15682948> Update copyright strings
+
+            Reviewed by Dan Bernstein
+
+            * DatabaseProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+            * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService.Development/Info.plist:
+            * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService/Info.plist:
+            * Info.plist:
+            * NetworkProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+            * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info.plist:
+            * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist:
+            * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-iOS.plist:
+            * PluginProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+            * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist:
+            * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/Info.plist:
+            * WebProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+            * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info.plist:
+            * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist:
+            * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info.plist:
+
 2013-12-11  Lucas Forschler  <lforschler@apple.com>
 
         Merge r160197
