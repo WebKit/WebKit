@@ -1,3 +1,12 @@
+2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r160847): fast/dynamic/paused-event-dispatch.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=126163
+
+        Unreviewed. Try increasing the timeouts after r160896.
+
+        * fast/dynamic/paused-event-dispatch.html:
+
 2013-12-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r160945.
