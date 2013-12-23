@@ -53,11 +53,12 @@
 #include "MediaStream.h"
 #endif
 
+#if USE(AUDIO_SESSION)
+#include "MediaSessionManager.h"
+#endif
+
 namespace WebCore {
 
-#if USE(AUDIO_SESSION)
-class AudioSessionManagerToken;
-#endif
 #if ENABLE(WEB_AUDIO)
 class AudioSourceProvider;
 class MediaElementAudioSourceNode;
@@ -112,6 +113,9 @@ class HTMLMediaElement
 #endif
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     , public PlatformTextTrackMenuClient
+#endif
+#if USE(AUDIO_SESSION)
+    , public MediaSessionManagerClient
 #endif
 {
 public:
@@ -691,6 +695,10 @@ private:
     bool ensureMediaControlsInjectedScript();
 #endif
 
+#if USE(AUDIO_SESSION)
+    virtual MediaSessionManager::MediaType mediaType() const OVERRIDE;
+#endif
+
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
     Timer<HTMLMediaElement> m_playbackProgressTimer;
@@ -846,7 +854,7 @@ private:
 #endif
 
 #if USE(AUDIO_SESSION)
-    OwnPtr<AudioSessionManagerToken> m_audioSessionManagerToken;
+    std::unique_ptr<MediaSessionManagerToken> m_mediaSessionManagerToken;
 #endif
 
     std::unique_ptr<PageActivityAssertionToken> m_activityToken;

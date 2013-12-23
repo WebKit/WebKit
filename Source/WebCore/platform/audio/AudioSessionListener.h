@@ -28,6 +28,8 @@
 
 #if USE(AUDIO_SESSION)
 
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
 
 class AudioSessionListener {

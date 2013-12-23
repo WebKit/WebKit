@@ -33,9 +33,10 @@
 #include "AudioDestinationMac.h"
 
 #include "AudioIOCallback.h"
-#include "AudioSessionManager.h"
+#include "AudioSession.h"
 #include "FloatConversion.h"
 #include "Logging.h"
+#include "MediaSessionManager.h"
 #include "VectorMath.h"
 #include <CoreAudio/AudioHardware.h>
 
@@ -82,7 +83,7 @@ AudioDestinationMac::AudioDestinationMac(AudioIOCallback& callback, float sample
     , m_renderBus(AudioBus::create(2, kBufferSize, false))
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
-    , m_audioSessionManagerToken(AudioSessionManagerToken::create(AudioSessionManager::WebAudio))
+    , m_mediaSessionManagerToken(MediaSessionManagerToken::create(*this))
 {
     // Open and initialize DefaultOutputUnit
     AudioComponent comp;

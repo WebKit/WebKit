@@ -23,55 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioSessionManager_h
-#define AudioSessionManager_h
+#include "config.h"
+#include "MediaSessionManager.h"
 
-#if USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION) && PLATFORM(MAC)
 
 #include "AudioSession.h"
-#include <wtf/HashCountedSet.h>
-#include <wtf/PassOwnPtr.h>
+#include "Logging.h"
+#include "Settings.h"
 
-namespace WebCore {
+using namespace WebCore;
 
-class AudioSessionManager {
-public:
-    static AudioSessionManager& sharedManager();
+static const size_t kWebAudioBufferSize = 128;
 
-    enum AudioType {
-        None,
-        Video,
-        Audio,
-        WebAudio,
-    };
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+static const size_t kLowPowerVideoBufferSize = 4096;
+#endif
 
-    bool has(AudioType);
+void MediaSessionManager::updateSessionState()
+{
+    LOG(Media, "MediaSessionManager::updateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(Video), count(Audio), count(WebAudio));
 
-protected:
-    friend class AudioSessionManagerToken;
-    void incrementCount(AudioType);
-    void decrementCount(AudioType);
-    
-private:
-    AudioSessionManager();
-
-    void updateSessionState();
-
-    HashCountedSet<size_t> m_typeCount;
-};
-
-class AudioSessionManagerToken {
-public:
-    static PassOwnPtr<AudioSessionManagerToken> create(AudioSessionManager::AudioType);
-    ~AudioSessionManagerToken();
-
-private:
-    AudioSessionManagerToken(AudioSessionManager::AudioType);
-
-    AudioSessionManager::AudioType m_type;
-};
+    if (has(WebAudio))
+        AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);
+    // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
+    // causes media LayoutTests to fail on 10.8.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    else if ((has(Video) || has(Audio)) && Settings::lowPowerVideoAudioBufferSizeEnabled())
+        AudioSession::sharedSession().setPreferredBufferSize(kLowPowerVideoBufferSize);
+#endif
 }
 
-#endif // USE(AUDIO_SESSION)
-
-#endif // AudioSessionManager_h
+#endif // USE(AUDIO_SESSION) && PLATFORM(MAC)

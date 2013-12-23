@@ -23,63 +23,69 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AudioSessionManager.h"
+#ifndef MediaSessionManager_h
+#define MediaSessionManager_h
 
-#if USE(AUDIO_SESSION)
+#include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
-using namespace WebCore;
+namespace WebCore {
 
-PassOwnPtr<AudioSessionManagerToken> AudioSessionManagerToken::create(AudioSessionManager::AudioType type)
-{
-    return adoptPtr(new AudioSessionManagerToken(type));
+class MediaSessionManagerToken;
+
+class MediaSessionManager {
+public:
+    static MediaSessionManager& sharedManager();
+
+    enum MediaType {
+        None,
+        Video,
+        Audio,
+        WebAudio,
+    };
+
+    bool has(MediaType) const;
+    int count(MediaType) const;
+
+protected:
+    friend class MediaSessionManagerToken;
+    void addToken(MediaSessionManagerToken&);
+    void removeToken(MediaSessionManagerToken&);
+
+private:
+    MediaSessionManager();
+
+    void updateSessionState();
+
+    Vector<MediaSessionManagerToken*> m_tokens;
+};
+
+class MediaSessionManagerClient {
+    WTF_MAKE_NONCOPYABLE(MediaSessionManagerClient);
+public:
+    MediaSessionManagerClient() { }
+
+    virtual MediaSessionManager::MediaType mediaType() const = 0;
+
+protected:
+    virtual ~MediaSessionManagerClient() { }
+};
+
+class MediaSessionManagerToken {
+public:
+    static std::unique_ptr<MediaSessionManagerToken> create(MediaSessionManagerClient&);
+
+    MediaSessionManagerToken(MediaSessionManagerClient&);
+    ~MediaSessionManagerToken();
+
+    MediaSessionManager::MediaType mediaType() const { return m_type; }
+
+private:
+
+    MediaSessionManagerClient& m_client;
+    MediaSessionManager::MediaType m_type;
+};
+
 }
 
-AudioSessionManagerToken::AudioSessionManagerToken(AudioSessionManager::AudioType type)
-    : m_type(type)
-{
-    AudioSessionManager::sharedManager().incrementCount(type);
-}
-
-AudioSessionManagerToken::~AudioSessionManagerToken()
-{
-    AudioSessionManager::sharedManager().decrementCount(m_type);
-}
-
-AudioSessionManager& AudioSessionManager::sharedManager()
-{
-    DEFINE_STATIC_LOCAL(AudioSessionManager, manager, ());
-    return manager;
-}
-
-AudioSessionManager::AudioSessionManager()
-{
-}
-
-bool AudioSessionManager::has(AudioSessionManager::AudioType type)
-{
-    ASSERT(type >= 0);
-    return m_typeCount.contains(type);
-}
-
-void AudioSessionManager::incrementCount(AudioSessionManager::AudioType type)
-{
-    ASSERT(type >= 0);
-    m_typeCount.add(type);
-    updateSessionState();
-}
-
-void AudioSessionManager::decrementCount(AudioSessionManager::AudioType type)
-{
-    ASSERT(type >= 0);
-    m_typeCount.remove(type);
-    updateSessionState();
-}
-
-#if !PLATFORM(MAC)
-void AudioSessionManager::updateSessionState()
-{
-}
-#endif
-
-#endif // USE(AUDIO_SESSION)
+#endif // MediaSessionManager_h

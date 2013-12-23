@@ -1,3 +1,47 @@
+2013-12-23  Eric Carlson  <eric.carlson@apple.com>
+
+        AudioSessionManager should be MediaSessionManager
+        https://bugs.webkit.org/show_bug.cgi?id=126087
+
+        Reviewed by Jer Noble.
+
+        No new tests, no change in functionality.
+
+        * WebCore.xcodeproj/project.pbxproj: Change file names.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): MediaSessionManagerToken::create() takes a client
+            interface instead of the media type.
+        * html/HTMLMediaElement.h:
+
+        * platform/audio/AudioSessionListener.h: Include <wtf/Noncopyable.h>.
+        
+        AudioSessionManager.* -> MediaSessionManager.*
+        * platform/audio/AudioSessionManager.cpp: Removed.
+        * platform/audio/AudioSessionManager.h: Removed.
+        * platform/audio/MediaSessionManager.cpp: Copied from Source/WebCore/platform/audio/AudioSessionManager.cpp.
+        (MediaSessionManagerToken::create):
+        (MediaSessionManagerToken::MediaSessionManagerToken):
+        (MediaSessionManagerToken::~MediaSessionManagerToken):
+        (MediaSessionManager::sharedManager):
+        (MediaSessionManager::MediaSessionManager):
+        (MediaSessionManager::has):
+        (MediaSessionManager::count):
+        (MediaSessionManager::addToken):
+        (MediaSessionManager::removeToken):
+        (MediaSessionManager::updateSessionState):
+        * platform/audio/MediaSessionManager.h: Copied from Source/WebCore/platform/audio/AudioSessionManager.h.
+
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationMac::AudioDestinationMac): MediaSessionManagerToken::create() takes a
+            client interface instead of the media type.
+        * platform/audio/mac/AudioDestinationMac.h:
+
+        * platform/audio/mac/AudioSessionMac.cpp:
+        * platform/audio/mac/AudioSessionManagerMac.cpp: Removed.
+        * platform/audio/mac/MediaSessionManagerMac.cpp: Copied from Source/WebCore/platform/audio/mac/AudioSessionManagerMac.cpp.
+        (MediaSessionManager::updateSessionState):
+
 2013-12-23  Zan Dobersek  <zdobersek@igalia.com>
 
         webkit gtk 2.2.3 stable tarball compilation error

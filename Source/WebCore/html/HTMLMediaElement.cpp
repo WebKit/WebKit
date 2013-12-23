@@ -138,7 +138,7 @@
 #endif
 
 #if USE(AUDIO_SESSION)
-#include "AudioSessionManager.h"
+#include "MediaSessionManager.h"
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
@@ -342,7 +342,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_audioSourceNode(0)
 #endif
 #if USE(AUDIO_SESSION)
-    , m_audioSessionManagerToken(AudioSessionManagerToken::create(tagName == videoTag ? AudioSessionManager::Video : AudioSessionManager::Audio))
+    , m_mediaSessionManagerToken(MediaSessionManagerToken::create(*this))
 #endif
     , m_reportedExtraMemoryCost(0)
 #if ENABLE(MEDIA_STREAM)
@@ -5702,6 +5702,16 @@ unsigned long long HTMLMediaElement::fileSize() const
     
     return 0;
 }
+
+#if USE(AUDIO_SESSION)
+MediaSessionManager::MediaType HTMLMediaElement::mediaType() const
+{
+    if (hasTagName(HTMLNames::videoTag))
+        return MediaSessionManager::Video;
+
+    return MediaSessionManager::Audio;
+}
+#endif
 
 }
 
