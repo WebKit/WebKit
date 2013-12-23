@@ -83,7 +83,7 @@ messages -> WebProcess LegacyReceiver {
     SetProcessSuppressionEnabled(bool flag);
 #endif
 
-#if !ENABLE(NETWORK_PROCESS) && USE(SOUP)
+#if USE(SOUP)
     AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)
 #endif
 }

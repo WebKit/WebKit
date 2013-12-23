@@ -174,7 +174,7 @@ public:
 
     void updateActivePages();
 
-#if !ENABLE(NETWORK_PROCESS) && USE(SOUP)
+#if USE(SOUP)
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
 #endif
 

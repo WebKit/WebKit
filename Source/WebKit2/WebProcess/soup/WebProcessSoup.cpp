@@ -235,10 +235,9 @@ void WebProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
     WebCore::ResourceHandle::setIgnoreSSLErrors(ignoreTLSErrors);
 }
 
-#if !ENABLE(NETWORK_PROCESS)
 void WebProcess::allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo& certificateInfo, const String& host)
 {
     WebCore::ResourceHandle::setClientCertificate(host, certificateInfo.certificate());
 }
-#endif
+
 } // namespace WebKit
