@@ -80,7 +80,7 @@ unsigned NoEventDispatchAssertion::s_count = 0;
 
 static void collectChildrenAndRemoveFromOldParent(Node& node, NodeVector& nodes, ExceptionCode& ec)
 {
-    if (node.nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
+    if (!node.isDocumentFragment()) {
         nodes.append(node);
         if (ContainerNode* oldParent = node.parentNode())
             oldParent->removeChild(&node, ec);

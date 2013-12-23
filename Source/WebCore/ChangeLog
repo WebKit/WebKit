@@ -1,3 +1,19 @@
+2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use isDocumentFragment() instead of comparing nodeType() with Node::DOCUMENT_FRAGMENT_NODE
+        https://bugs.webkit.org/show_bug.cgi?id=126178
+
+        Reviewed by Antti Koivisto.
+
+        Inspired by https://chromium.googlesource.com/chromium/blink/+/a622cb80af2bfb0c5d91123cbcfa4fa72a06554c
+
+        Use inline Node::isDocumentFragment() instead of virtual nodeType().
+
+        * dom/ContainerNode.cpp:
+        (WebCore::collectChildrenAndRemoveFromOldParent):
+        * dom/Document.cpp:
+        (WebCore::Document::canReplaceChild):
+
 2013-12-23  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         Clear ScratchBuffer::m_lastLayerSize when clearing the scratch buffer.
