@@ -1,3 +1,10 @@
+2013-12-22  Martin Robinson  <mrobinson@igalia.com>
+
+        Small build fix for GTK+ with the CMake build
+
+        * CMakeLists.txt: Remove duplicate include directory and add missing directories
+        necessary for GTK+.
+
 2013-12-20  Simon Fraser  <simon.fraser@apple.com>
 
         Try to fix the Windows build.
