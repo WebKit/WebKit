@@ -41,6 +41,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
+#if PLATFORM(IOS)
+#include "SQLiteDatabaseTracker.h"
+#endif
+
 namespace WebCore {
 
 // If the StorageArea undergoes rapid changes, don't sync each change to disk.
@@ -232,6 +236,9 @@ void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
     ASSERT(!m_database.isOpen());
     ASSERT(!m_databaseOpenFailed);
 
+#if PLATFORM(IOS)
+    SQLiteTransactionInProgressAutoCounter transactionCounter;
+#endif
     String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
 
     if (!fileExists(databaseFilename) && openingStrategy == SkipIfNonExistent)
@@ -403,6 +410,9 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
         return;
     }
     
+#if PLATFORM(IOS)
+    SQLiteTransactionInProgressAutoCounter transactionCounter;
+#endif
     // If the clear flag is set, then we clear all items out before we write any new ones in.
     if (clearItems) {
         SQLiteStatement clear(m_database, "DELETE FROM ItemTable");

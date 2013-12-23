@@ -42,6 +42,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
+#if PLATFORM(IOS)
+#include "SQLiteDatabaseTracker.h"
+#endif
+
 namespace WebCore {
 
 static StorageTracker* storageTracker = 0;
@@ -132,6 +136,9 @@ void StorageTracker::openTrackerDatabase(bool createIfDoesNotExist)
 {
     ASSERT(m_isActive);
     ASSERT(!isMainThread());
+#if PLATFORM(IOS)
+    SQLiteTransactionInProgressAutoCounter transactionCounter;
+#endif
     ASSERT(!m_databaseMutex.tryLock());
 
     if (m_database.isOpen())
@@ -192,6 +199,9 @@ void StorageTracker::syncImportOriginIdentifiers()
         openTrackerDatabase(false);
 
         if (m_database.isOpen()) {
+#if PLATFORM(IOS)
+            SQLiteTransactionInProgressAutoCounter transactionCounter;
+#endif
             SQLiteStatement statement(m_database, "SELECT origin FROM Origins");
             if (statement.prepare() != SQLResultOk) {
                 LOG_ERROR("Failed to prepare statement.");
@@ -232,6 +242,9 @@ void StorageTracker::syncImportOriginIdentifiers()
 void StorageTracker::syncFileSystemAndTrackerDatabase()
 {
     ASSERT(!isMainThread());
+#if PLATFORM(IOS)
+    SQLiteTransactionInProgressAutoCounter transactionCounter;
+#endif
     ASSERT(m_isActive);
 
     Vector<String> paths;
@@ -304,6 +317,9 @@ void StorageTracker::setOriginDetails(const String& originIdentifier, const Stri
 void StorageTracker::syncSetOriginDetails(const String& originIdentifier, const String& databaseFile)
 {
     ASSERT(!isMainThread());
+#if PLATFORM(IOS)
+    SQLiteTransactionInProgressAutoCounter transactionCounter;
+#endif
 
     MutexLocker locker(m_databaseMutex);
 
@@ -373,6 +389,9 @@ void StorageTracker::deleteAllOrigins()
 void StorageTracker::syncDeleteAllOrigins()
 {
     ASSERT(!isMainThread());
+#if PLATFORM(IOS)
+    SQLiteTransactionInProgressAutoCounter transactionCounter;
+#endif
     
     MutexLocker locker(m_databaseMutex);
     
@@ -402,10 +421,15 @@ void StorageTracker::syncDeleteAllOrigins()
     
     if (result != SQLResultDone)
         LOG_ERROR("Failed to read in all origins from the database.");
-    
-    if (m_database.isOpen())
+
+    if (m_database.isOpen()) {
+#if PLATFORM(IOS)
+        SQLiteFileSystem::truncateDatabaseFile(m_database.sqlite3Handle());
+#endif
         m_database.close();
-    
+    }
+
+#if !PLATFORM(IOS)
     if (!SQLiteFileSystem::deleteDatabaseFile(trackerDatabasePath())) {
         // In the case where it is not possible to delete the database file (e.g some other program
         // like a virus scanner is accessing it), make sure to remove all entries.
@@ -423,6 +447,7 @@ void StorageTracker::syncDeleteAllOrigins()
         }
     }
     SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_storageDirectoryPath);
+#endif
 }
 
 void StorageTracker::deleteOriginWithIdentifier(const String& originIdentifier)
@@ -461,6 +486,9 @@ void StorageTracker::deleteOrigin(SecurityOrigin* origin)
 void StorageTracker::syncDeleteOrigin(const String& originIdentifier)
 {
     ASSERT(!isMainThread());
+#if PLATFORM(IOS)
+    SQLiteTransactionInProgressAutoCounter transactionCounter;
+#endif
 
     MutexLocker locker(m_databaseMutex);
     
@@ -501,9 +529,14 @@ void StorageTracker::syncDeleteOrigin(const String& originIdentifier)
     }
 
     if (shouldDeleteTrackerFiles) {
+#if PLATFORM(IOS)
+        SQLiteFileSystem::truncateDatabaseFile(m_database.sqlite3Handle());
+#endif
         m_database.close();
+#if !PLATFORM(IOS)
         SQLiteFileSystem::deleteDatabaseFile(trackerDatabasePath());
         SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_storageDirectoryPath);
+#endif
     }
 
     {
@@ -567,7 +600,11 @@ String StorageTracker::databasePathForOrigin(const String& originIdentifier)
     
     if (!m_database.isOpen())
         return String();
-    
+
+#if PLATFORM(IOS)
+    SQLiteTransactionInProgressAutoCounter transactionCounter;
+#endif
+
     SQLiteStatement pathStatement(m_database, "SELECT path FROM Origins WHERE origin=?");
     if (pathStatement.prepare() != SQLResultOk) {
         LOG_ERROR("Unable to prepare selection of path for origin '%s'", originIdentifier.ascii().data());
