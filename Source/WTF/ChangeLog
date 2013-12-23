@@ -1,3 +1,11 @@
+2013-12-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix the build after r161031
+
+        I enabled ENABLE_CSS_SELECTOR_JIT by accident.
+
+        * wtf/Platform.h:
+
 2013-12-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Clean up compiler optimizations flags for libWTF, libJSC
