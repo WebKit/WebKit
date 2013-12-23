@@ -35,29 +35,24 @@ using namespace WebCore;
 
 namespace WebKit {
 
-const char* gWebKitWebProcessName = "WebKitWebProcess";
-const char* gWebKitPluginProcessName = "WebKitPluginProcess";
-const char* gWebKitNetworkProcessName = "WebKitNetworkProcess";
+static String getExecutablePath()
+{
+    CString executablePath = getCurrentExecutablePath();
+    if (!executablePath.isNull())
+        return directoryName(filenameToString(executablePath.data()));
+    return String();
+}
 
 static String findWebKitProcess(const char* processName)
 {
-    const char* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
+    static const char* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
     if (execDirectory) {
         String processPath = pathByAppendingComponent(filenameToString(execDirectory), processName);
         if (fileExists(processPath))
             return processPath;
     }
 
-    static bool gotExecutablePath = false;
-    static String executablePath;
-    if (!gotExecutablePath) {
-        gotExecutablePath = true;
-
-        CString executableFile = getCurrentExecutablePath();
-        if (!executableFile.isNull())
-            executablePath = directoryName(filenameToString(executableFile.data()));
-    }
-
+    static String executablePath = getExecutablePath();
     if (!executablePath.isNull()) {
         String processPath = pathByAppendingComponent(executablePath, processName);
         if (fileExists(processPath))
@@ -69,18 +64,18 @@ static String findWebKitProcess(const char* processName)
 
 String executablePathOfWebProcess()
 {
-    return findWebKitProcess(gWebKitWebProcessName);
+    return findWebKitProcess("WebKitWebProcess");
 }
 
 String executablePathOfPluginProcess()
 {
-    return findWebKitProcess(gWebKitPluginProcessName);
+    return findWebKitProcess("WebKitPluginProcess");
 }
 
 #if ENABLE(NETWORK_PROCESS)
 String executablePathOfNetworkProcess()
 {
-    return findWebKitProcess(gWebKitNetworkProcessName);
+    return findWebKitProcess("WebKitNetworkProcess");
 }
 #endif
 

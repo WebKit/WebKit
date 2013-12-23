@@ -1,5 +1,31 @@
 2013-12-23  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK][WK2] Simplify ProcessExecutablePathGtk
+        https://bugs.webkit.org/show_bug.cgi?id=126173
+
+        Reviewed by Martin Robinson.
+
+        Don't store process name strings in global variables -- each of the names is only used in the relevant
+        function, so the string can be directly passed into the findWebKitProcess function call.
+
+        Simplify the findWebKitProcess function. Make the execDirectory variable static so that g_getenv is only
+        called once, as it's not expected for the WEBKIT_EXEC_PATH environment variable to change during the runtime.
+
+        Introduce the getExecutablePath helper function that gets the current executable path and, if non-null, returns
+        the directory path of that executable. The helper function preserves the small performance improvement of querying
+        and processing the executable path only once.
+        The return value of getExecutablePath is stored in a static variable and is used to construct the process path
+        if the executable path was successfully retrieved.
+
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        (WebKit::getExecutablePath):
+        (WebKit::findWebKitProcess):
+        (WebKit::executablePathOfWebProcess):
+        (WebKit::executablePathOfPluginProcess):
+        (WebKit::executablePathOfNetworkProcess):
+
+2013-12-23  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed build fix for GTK and EFL after r161007.
 
         * UIProcess/DrawingAreaProxyImpl.cpp:
