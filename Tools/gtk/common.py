@@ -29,13 +29,8 @@ is_cmake = None
 
 def is_cmake_build():
     global is_cmake
-
     if is_cmake is None:
-        if build_path('CMakeCache.txt'):
-            is_cmake = True
-        else:
-            is_cmake = False
-
+        is_cmake = os.path.exists(build_path('CMakeCache.txt'))
     return is_cmake
 
 

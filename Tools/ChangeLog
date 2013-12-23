@@ -1,3 +1,11 @@
+2013-12-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the build after r161017
+
+        * gtk/common.py:
+        (is_cmake_build): Instead of checking whether the return value of build_path
+        of the CMakeCache.txt file is None, check if a file actually exists at that path.
+
 2013-12-23  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] [CMake] Add support for generating gtkdoc
