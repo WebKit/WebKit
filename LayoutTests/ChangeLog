@@ -1,3 +1,15 @@
+2013-12-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r160945.
+        http://trac.webkit.org/changeset/160945
+        https://bugs.webkit.org/show_bug.cgi?id=126164
+
+        Seems to have broken multiple canvas tests (Requested by ap on
+        #webkit).
+
+        * fast/canvas/canvas-backing-store-reuse-expected.txt: Removed.
+        * fast/canvas/canvas-backing-store-reuse.html: Removed.
+
 2013-12-23  Alexey Proskuryakov  <ap@apple.com>
 
         Layout tests editing/selection/5057506.html and editing/selection/5057506-2.html
