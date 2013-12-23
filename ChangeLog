@@ -1,3 +1,14 @@
+2013-12-23  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] [CMake] Add support for generating gtkdoc
+        https://bugs.webkit.org/show_bug.cgi?id=116376
+
+        Reviewed by Martin Robinson.
+
+        * Source/PlatformGTK.cmake: Added. New custom target that depends on a custom command
+        which calls our generate-gtkdoc script. It uses a docs-build.stamp for simplicity,
+        like the autotools build.
+
 2013-12-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Build the WebKit2 GObject API tests

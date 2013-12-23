@@ -61,7 +61,7 @@ def get_common_options():
     return {
         'decorator': 'WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\(.+\)',
         'deprecation_guard': 'WEBKIT_DISABLE_DEPRECATED',
-        'library_path' : common.build_path('.libs'),
+        'library_path' : common.library_build_path(),
         'virtual_root' : virtual_root,
     }
 
@@ -120,6 +120,12 @@ def get_webkit1_options(gtk_version):
     def src_path(*args):
         return common.top_level_path(*(('Source', 'WebKit', 'gtk') + args))
 
+    def webkitversionh_path():
+        if common.is_cmake_build():
+            return common.build_path('DerivedSources', 'webkit')
+        else:
+            return common.build_path('Source', 'WebKit', 'gtk', 'webkit')
+
     xref_deps = get_common_xref_deps().copy()
     if gtk_version == 3:
         xref_deps.update({
@@ -136,7 +142,7 @@ def get_webkit1_options(gtk_version):
         'namespace' : 'webkit',
         'doc_dir' : src_path('docs'),
         'output_dir' : common.build_path('Documentation', 'webkitgtk'),
-        'source_dirs' : [src_path('webkit'), common.build_path('Source', 'WebKit', 'gtk', 'webkit')],
+        'source_dirs' : [src_path('webkit'), webkitversionh_path()],
         'cflags' : ' -I' + common.build_path('WebKit', 'gtk') + \
                    ' -I' + common.build_path('DerivedSources') + \
                    ' -I' + src_path() + \
@@ -216,16 +222,19 @@ if os.path.exists(wk2_pkg_config_path):
     pkg_config_path = wk2_pkg_config_path
 elif os.path.exists(wk1_pkg_config_path):
     pkg_config_path = wk1_pkg_config_path
-generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, get_webkitdom_options())
-if '--rebase' not in sys.argv:
-    print("\nGenerating WebKitDOM documentation...")
-    saw_webkitdom_warnings = generate_doc(generator)
-else:
-    print("\nRebasing WebKitDOM documentation...")
-    try:
-        generator.rebase_installed_docs()
-    except Exception:
-        print("Rebase did not happen, likely no documentation is present.")
+
+webkitdom_docs_path = common.build_path('DerivedSources', 'webkitdom', 'docs')
+if not common.is_cmake_build():
+    generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, get_webkitdom_options())
+    if '--rebase' not in sys.argv:
+        print("\nGenerating WebKitDOM documentation...")
+        saw_webkitdom_warnings = generate_doc(generator)
+    else:
+        print("\nRebasing WebKitDOM documentation...")
+        try:
+            generator.rebase_installed_docs()
+        except Exception:
+            print("Rebase did not happen, likely no documentation is present.")
 
 pkg_config_path = wk1_pkg_config_path
 if os.path.exists(pkg_config_path):
@@ -255,4 +264,7 @@ if os.path.exists(pkg_config_path):
         except Exception:
             print("Rebase did not happen, likely no documentation is present.")
 
-sys.exit(saw_webkit1_warnings or saw_webkit2_warnings)
+# For CMake we are still generating warnings because we lack DOM bindings docs,
+# so do not cause the build to fail for now.
+if not common.is_cmake_build():
+    sys.exit(saw_webkit1_warnings or saw_webkit2_warnings)
