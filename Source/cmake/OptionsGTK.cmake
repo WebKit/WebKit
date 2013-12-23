@@ -149,6 +149,7 @@ find_package(Xt REQUIRED)
 find_package(ATK REQUIRED)
 find_package(WebP REQUIRED)
 find_package(GStreamer 1.0.3 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
+find_package(ATSPI 2.5.3)
 
 # We don't use find_package for GLX because it is part of -lGL, unlike EGL.
 find_package(OpenGL)
