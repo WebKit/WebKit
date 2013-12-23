@@ -90,8 +90,6 @@ PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALaye
     , m_acceleratesDrawing(false)
     , m_context(context)
 {
-    // FIXME: match all default values from CA.
-    setContentsScale(1);
 }
 
 PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* client) const

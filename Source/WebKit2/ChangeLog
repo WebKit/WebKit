@@ -1,3 +1,25 @@
+2013-12-23  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r160672): Random remote layers are getting shadows
+        https://bugs.webkit.org/show_bug.cgi?id=126126
+
+        Reviewed by Anders Carlsson.
+
+        In http://trac.webkit.org/changeset/160672, we unconditionally
+        check m_properties.customAppearance without regard for whether it
+        has ever been initialized. This would result in sending an uninitialized
+        custom appearance to the UI process, which could end up requesting a shadow.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        Initialize LayerProperties to the CoreAnimation defaults.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::PlatformCALayerRemote):
+        Remove wrongly-placed default initialization of contentsScale;
+        there's no reason to send it across the wire for every new layer
+        if it's left at the default.
+
 2013-12-23  Anders Carlsson  <andersca@apple.com>
 
         Use std::chrono::milliseconds for message wait timeouts in WebKit2
