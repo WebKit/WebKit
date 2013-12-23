@@ -139,6 +139,7 @@ private:
     {
         m_imageBuffer = nullptr;
         m_lastRadius = FloatSize();
+        m_lastLayerSize = FloatSize();
     }
 
     std::unique_ptr<ImageBuffer> m_imageBuffer;

@@ -1,3 +1,22 @@
+2013-12-23  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        Clear ScratchBuffer::m_lastLayerSize when clearing the scratch buffer.
+        https://bugs.webkit.org/show_bug.cgi?id=126150
+
+        Reviewed by Simon Fraser.
+
+        Since ScratchBuffer::clearScratchBuffer only clears m_lastRadius,
+        ShadowBlur doesn't draw shadow into the re-created scratch buffer if it
+        tries to draw shadow without blurRadius.
+
+        Clear m_lastLayerSize to empty is enought to ensure that there is no
+        drawn contents in the scratch buffer.
+
+        No new tests due to the flaky nature of reproducing the issue.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::clearScratchBuffer):
+
 2013-12-23  Benjamin Poulain  <benjamin@webkit.org>
 
         Add id matching to the Selector Code Generator
