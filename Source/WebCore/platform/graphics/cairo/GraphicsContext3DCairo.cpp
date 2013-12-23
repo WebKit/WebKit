@@ -159,8 +159,11 @@ GraphicsContext3D::~GraphicsContext3D()
         return;
 
     makeContextCurrent();
-    ::glDeleteTextures(1, &m_texture);
-    ::glDeleteTextures(1, &m_compositorTexture);
+    if (m_texture)
+        ::glDeleteTextures(1, &m_texture);
+    if (m_compositorTexture)
+        ::glDeleteTextures(1, &m_compositorTexture);
+
     if (m_attrs.antialias) {
         ::glDeleteRenderbuffers(1, &m_multisampleColorBuffer);
         if (m_attrs.stencil || m_attrs.depth)

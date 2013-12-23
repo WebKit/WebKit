@@ -1,3 +1,24 @@
+2013-12-23  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK][WK2] WebGL is not working with GLES
+        https://bugs.webkit.org/show_bug.cgi?id=126138
+
+        Reviewed by Martin Robinson.
+
+        m_texture has been unnecessarily regenerated. It's generated in GraphicsContext3D
+        constructor for offscreen rendering. And m_compositorTexture is used by only Mac port.
+        They create it in their GraphicsContext3D constructor so that we don't need to recreate it
+        in GC3DOpenGLES::reshapeFBOs.
+
+        No new tests since no functionality changed.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+
 2013-12-22  Benjamin Poulain  <bpoulain@apple.com>
 
         Create a skeleton for CSS Selector code generation

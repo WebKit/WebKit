@@ -124,12 +124,18 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         mustRestoreFBO = true;
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
     }
+
+    ASSERT(m_texture);
     ::glBindTexture(GL_TEXTURE_2D, m_texture);
     ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_texture, 0);
-    ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
-    ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-    ::glBindTexture(GL_TEXTURE_2D, 0);
+
+    if (m_compositorTexture) {
+        ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
+        ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+        ::glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
     if (!m_attrs.antialias && (m_attrs.stencil || m_attrs.depth)) {
         ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
         ::glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, internalDepthStencilFormat, width, height);
