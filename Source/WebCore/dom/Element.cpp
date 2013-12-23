@@ -2177,9 +2177,14 @@ void Element::setChildrenAffectedByDrag(bool value)
         ensureElementRareData().setChildrenAffectedByDrag(value);
 }
 
-void Element::setChildrenAffectedByForwardPositionalRules()
+void Element::setChildrenAffectedByDirectAdjacentRules(Element* element)
 {
-    ensureElementRareData().setChildrenAffectedByForwardPositionalRules(true);
+    element->setChildrenAffectedByDirectAdjacentRules();
+}
+
+void Element::setChildrenAffectedByForwardPositionalRules(Element* element)
+{
+    element->ensureElementRareData().setChildrenAffectedByForwardPositionalRules(true);
 }
 
 void Element::setChildrenAffectedByBackwardPositionalRules()

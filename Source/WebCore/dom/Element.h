@@ -248,6 +248,9 @@ public:
     virtual CSSStyleDeclaration* style();
 
     const QualifiedName& tagQName() const { return m_tagName; }
+#if ENABLE(CSS_SELECTOR_JIT)
+    static ptrdiff_t tagQNameMemoryOffset() { return OBJECT_OFFSETOF(Element, m_tagName); }
+#endif // ENABLE(CSS_SELECTOR_JIT)
     String tagName() const { return nodeName(); }
     bool hasTagName(const QualifiedName& tagName) const { return m_tagName.matches(tagName); }
     
@@ -363,8 +366,10 @@ public:
     void setChildrenAffectedByDrag(bool);
     void setChildrenAffectedByFirstChildRules() { setFlag(ChildrenAffectedByFirstChildRulesFlag); }
     void setChildrenAffectedByLastChildRules() { setFlag(ChildrenAffectedByLastChildRulesFlag); }
+    static void setChildrenAffectedByDirectAdjacentRules(Element*);
     void setChildrenAffectedByDirectAdjacentRules() { setFlag(ChildrenAffectedByDirectAdjacentRulesFlag); }
-    void setChildrenAffectedByForwardPositionalRules();
+    static void setChildrenAffectedByForwardPositionalRules(Element*);
+    void setChildrenAffectedByForwardPositionalRules() { setChildrenAffectedByForwardPositionalRules(this); }
     void setChildrenAffectedByBackwardPositionalRules();
     void setChildIndex(unsigned);
 

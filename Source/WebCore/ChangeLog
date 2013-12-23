@@ -1,3 +1,88 @@
+2013-12-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        Create a skeleton for CSS Selector code generation
+        https://bugs.webkit.org/show_bug.cgi?id=126044
+
+        Reviewed by Antti Koivisto and Gavin Barraclough.
+
+        Add CSSCompiler, which provides the basic infrastructure to compile
+        CSS Selectors on x86_64.
+
+        Compilation happens in two phases.
+        1) The various matching and relation of each CSSSelector is aggregated into units
+           matching a single element: SelectorFragment.
+           SelectorFragment also knows about the relations between different fragments,
+           and contains all the information to generate the code for a particular element.
+        2) The compiler then goes over the fragments, and generate code based on the information
+           of each fragment.
+
+        It the current state, SelectorCompiler only compiles the tag matching selectors and
+        any of the relation between selectors.
+
+        Depending on the relation and position of a fragment, failure on traversal or matching
+        does not necessarily causes the complete selector. A failure can cause matching to
+        resume from the parent or the sibling of a previously visisted node.
+        The implementation of this is done through the BacktrackingAction. In case of failure,
+        the next starting state is setup and the program counter jumps back to the appropriate
+        starting point.
+
+        When backtracking, the method used to save the starting point depends on the type
+        of backtracking.
+        The child/parent relation (">") is very common so it uses an additional register to keep
+        the next starting point (m_descendantBacktrackingStart).
+        The indirect sibling relation ("~") is much less common and uses the stack to save
+        the next starting point.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * cssjit/SelectorCompiler.cpp: Added.
+        (WebCore::SelectorCompiler::SelectorFragment::SelectorFragment):
+        (WebCore::SelectorCompiler::compileSelector):
+        (WebCore::SelectorCompiler::fragmentRelationForSelectorRelation):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::compile):
+        (WebCore::SelectorCompiler::updateChainStates):
+        (WebCore::SelectorCompiler::isFirstAncestor):
+        (WebCore::SelectorCompiler::isFirstAdjacent):
+        (WebCore::SelectorCompiler::isAfterChildRelation):
+        (WebCore::SelectorCompiler::solveBacktrackingAction):
+        (WebCore::SelectorCompiler::requiresAdjacentTail):
+        (WebCore::SelectorCompiler::requiresDescendantTail):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::computeBacktrackingInformation):
+        (WebCore::SelectorCompiler::testIsElementFlagOnNode):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateWalkToParentElement):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateParentElementTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAncestorTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateWalkToPreviousAdjacent):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateDirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateIndirectAdjacentTreeWalker):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::markParentElementIfResolvingStyle):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::linkFailures):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAdjacentBacktrackingTail):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateDescendantBacktrackingTail):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateBacktrackingTailsIfNeeded):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasTagName):
+        * cssjit/SelectorCompiler.h: Added.
+        (WebCore::SelectorCompilationStatus::SelectorCompilationStatus):
+        (WebCore::SelectorCompilationStatus::operator Status):
+        (WebCore::SelectorCompiler::simpleSelectorCheckerFunction):
+        (WebCore::SelectorCompiler::selectorCheckerFunctionWithCheckingContext):
+        * dom/Element.cpp:
+        (WebCore::Element::setChildrenAffectedByDirectAdjacentRules):
+        (WebCore::Element::setChildrenAffectedByForwardPositionalRules):
+        * dom/Element.h:
+        (WebCore::Element::tagQNameMemoryOffset):
+        (WebCore::Element::setChildrenAffectedByForwardPositionalRules):
+        * dom/Node.h:
+        (WebCore::Node::parentNodeMemoryOffset):
+        (WebCore::Node::previousSiblingMemoryOffset):
+        (WebCore::Node::nodeFlagsMemoryOffset):
+        (WebCore::Node::flagIsElement):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::localNameMemoryOffset):
+        (WebCore::QualifiedName::QualifiedNameImpl::namespaceMemoryOffset):
+        (WebCore::QualifiedName::implMemoryOffset):
+
 2013-12-22  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Crash when trying to select content from invalid region

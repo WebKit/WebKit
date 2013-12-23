@@ -165,8 +165,10 @@ public:
     virtual void setNodeValue(const String&, ExceptionCode&);
     virtual NodeType nodeType() const = 0;
     ContainerNode* parentNode() const;
+    static ptrdiff_t parentNodeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_parentNode); }
     Element* parentElement() const;
     Node* previousSibling() const { return m_previous; }
+    static ptrdiff_t previousSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_previous); }
     Node* nextSibling() const { return m_next; }
     PassRefPtr<NodeList> childNodes();
     Node* firstChild() const;
@@ -557,6 +559,11 @@ public:
     void updateAncestorConnectedSubframeCountForInsertion() const;
 
     void markAncestorsWithChildNeedsStyleRecalc();
+
+#if ENABLE(CSS_SELECTOR_JIT)
+    static ptrdiff_t nodeFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_nodeFlags); }
+    static uint8_t flagIsElement() { return IsElementFlag; }
+#endif // ENABLE(CSS_SELECTOR_JIT)
 
 protected:
     enum NodeFlags {

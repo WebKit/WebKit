@@ -33,6 +33,7 @@
 
 #define GLOBAL_THUNK_ID reinterpret_cast<void*>(static_cast<intptr_t>(-1))
 #define REGEXP_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-2))
+#define CSS_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-3))
 
 #include "JITCompilationEffort.h"
 #include "MacroAssembler.h"
@@ -231,8 +232,8 @@ public:
     // finalizeCodeWithoutDisassembly() directly if you have your own way of
     // displaying disassembly.
     
-    CodeRef finalizeCodeWithoutDisassembly();
-    CodeRef finalizeCodeWithDisassembly(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
+    JS_EXPORT_PRIVATE CodeRef finalizeCodeWithoutDisassembly();
+    JS_EXPORT_PRIVATE CodeRef finalizeCodeWithDisassembly(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
 
     CodePtr trampolineAt(Label label)
     {
@@ -267,7 +268,7 @@ private:
     void allocate(size_t initialSize, void* ownerUID, JITCompilationEffort);
     void shrink(size_t newSize);
 
-    void linkCode(void* ownerUID, JITCompilationEffort);
+    JS_EXPORT_PRIVATE void linkCode(void* ownerUID, JITCompilationEffort);
 #if ENABLE(BRANCH_COMPACTION)
     template <typename InstructionType>
     void copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort);
@@ -319,10 +320,10 @@ private:
 // is true, so you can hide expensive disassembly-only computations inside there.
 
 #define FINALIZE_CODE(linkBufferReference, dataLogFArgumentsForHeading)  \
-    FINALIZE_CODE_IF(Options::showDisassembly(), linkBufferReference, dataLogFArgumentsForHeading)
+    FINALIZE_CODE_IF(JSC::Options::showDisassembly(), linkBufferReference, dataLogFArgumentsForHeading)
 
 #define FINALIZE_DFG_CODE(linkBufferReference, dataLogFArgumentsForHeading)  \
-    FINALIZE_CODE_IF((Options::showDisassembly() || Options::showDFGDisassembly()), linkBufferReference, dataLogFArgumentsForHeading)
+    FINALIZE_CODE_IF((JSC::Options::showDisassembly() || Options::showDFGDisassembly()), linkBufferReference, dataLogFArgumentsForHeading)
 
 } // namespace JSC
 

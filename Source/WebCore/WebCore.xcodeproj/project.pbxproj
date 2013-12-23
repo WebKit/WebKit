@@ -914,6 +914,8 @@
 		26B9998F1803AE7200D01121 /* RegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 26B9998E1803AE7200D01121 /* RegisterAllocator.h */; };
 		26B999911803B3C900D01121 /* StackAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 26B999901803B3C900D01121 /* StackAllocator.h */; };
 		26B999931803B9D900D01121 /* FunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 26B999921803B9D900D01121 /* FunctionCall.h */; };
+		26B999961804D54200D01121 /* SelectorCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B999941804D54200D01121 /* SelectorCompiler.cpp */; };
+		26B999971804D54200D01121 /* SelectorCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 26B999951804D54200D01121 /* SelectorCompiler.h */; };
 		26C15CF61857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26C15CF41857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp */; };
 		26C15CF71857E15E00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 26C15CF51857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.h */; };
 		26C17A3E1491D2D400D12BA2 /* FileSystemIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */; };
@@ -7581,6 +7583,8 @@
 		26B9998E1803AE7200D01121 /* RegisterAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegisterAllocator.h; path = cssjit/RegisterAllocator.h; sourceTree = "<group>"; };
 		26B999901803B3C900D01121 /* StackAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StackAllocator.h; path = cssjit/StackAllocator.h; sourceTree = "<group>"; };
 		26B999921803B9D900D01121 /* FunctionCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FunctionCall.h; path = cssjit/FunctionCall.h; sourceTree = "<group>"; };
+		26B999941804D54200D01121 /* SelectorCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectorCompiler.cpp; path = cssjit/SelectorCompiler.cpp; sourceTree = "<group>"; };
+		26B999951804D54200D01121 /* SelectorCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectorCompiler.h; path = cssjit/SelectorCompiler.h; sourceTree = "<group>"; };
 		26C15CF41857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp; sourceTree = "<group>"; };
 		26C15CF51857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandleCFURLConnectionDelegateWithOperationQueue.h; sourceTree = "<group>"; };
 		26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemIOS.h; path = ios/FileSystemIOS.h; sourceTree = "<group>"; };
@@ -14688,6 +14692,8 @@
 		26B9998D1803ADFA00D01121 /* cssjit */ = {
 			isa = PBXGroup;
 			children = (
+				26B999941804D54200D01121 /* SelectorCompiler.cpp */,
+				26B999951804D54200D01121 /* SelectorCompiler.h */,
 				26B999921803B9D900D01121 /* FunctionCall.h */,
 				26B9998E1803AE7200D01121 /* RegisterAllocator.h */,
 				26B999901803B3C900D01121 /* StackAllocator.h */,
@@ -22522,6 +22528,7 @@
 				070F549817F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h in Headers */,
 				371F51A10D262FA000ECE0D5 /* CSSSegmentedFontFace.h in Headers */,
 				A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */,
+				26B999971804D54200D01121 /* SelectorCompiler.h in Headers */,
 				E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */,
 				A80E6CE80A1989CA007FB8C5 /* CSSShadowValue.h in Headers */,
 				A80E6E0F0A19911C007FB8C5 /* CSSStyleDeclaration.h in Headers */,
@@ -26050,6 +26057,7 @@
 				A80E6D090A1989CA007FB8C5 /* CSSRuleList.cpp in Sources */,
 				371F51A20D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp in Sources */,
 				A80E734F0A199C77007FB8C5 /* CSSSelector.cpp in Sources */,
+				26B999961804D54200D01121 /* SelectorCompiler.cpp in Sources */,
 				E4C1789A0EE6903800824D69 /* CSSSelectorList.cpp in Sources */,
 				A80E6CF40A1989CA007FB8C5 /* CSSShadowValue.cpp in Sources */,
 				A80E6CEF0A1989CA007FB8C5 /* CSSStyleRule.cpp in Sources */,
