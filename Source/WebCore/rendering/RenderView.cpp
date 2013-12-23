@@ -369,7 +369,7 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
 #if PLATFORM(IOS)
 static inline LayoutSize fixedPositionOffset(const FrameView& frameView)
 {
-    return frameView.useCustomFixedPositionLayoutRect() ? (frameView.customFixedPositionLayoutRect().location() - LayoutPoint()) : frameView->scrollOffset();
+    return frameView.useCustomFixedPositionLayoutRect() ? (frameView.customFixedPositionLayoutRect().location() - LayoutPoint()) : frameView.scrollOffset();
 }
 #endif
 

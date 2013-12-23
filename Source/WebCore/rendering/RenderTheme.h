@@ -238,6 +238,9 @@ public:
     virtual String fileListDefaultLabel(bool multipleFilesAllowed) const;
     virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const;
 
+    enum FileUploadDecorations { SingleFile, MultipleFiles };
+    virtual bool paintFileUploadIconDecorations(RenderObject* /*inputRenderer*/, RenderObject* /*buttonRenderer*/, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) { return true; }
+
 protected:
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor() const;
@@ -293,9 +296,6 @@ protected:
     virtual bool paintPushButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintSquareButtonDecorations(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 
-    enum FileUploadDecorations { SingleFile, MultipleFiles };
-    virtual bool paintFileUploadIconDecorations(RenderObject* /*inputRenderer*/, RenderObject* /*buttonRenderer*/, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) { return true; }
-    
 #if ENABLE(METER_ELEMENT)
     virtual void adjustMeterStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&);

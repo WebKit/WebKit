@@ -465,7 +465,7 @@ bool RenderThemeIOS::paintTextFieldDecorations(RenderObject* box, const PaintInf
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    paintInfo.context->clipRoundedRect(style.getRoundedBorderFor(r));
+    paintInfo.context->clipRoundedRect(style.getRoundedBorderFor(rect));
 
     // This gradient gets drawn black when printing.
     // Do not draw the gradient if there is no visible top border.
@@ -1078,18 +1078,18 @@ void RenderThemeIOS::systemFont(CSSValueID valueID, FontDescription& fontDescrip
     if (userTextSize != contentSizeCategory()) {
         userTextSize = contentSizeCategory();
 
-        headlineFont.setIsAbsoluteSize(false);
-        bodyFont.setIsAbsoluteSize(false);
-        subheadlineFont.setIsAbsoluteSize(false);
-        footnoteFont.setIsAbsoluteSize(false);
-        caption1Font.setIsAbsoluteSize(false);
-        caption2Font.setIsAbsoluteSize(false);
-        shortHeadlineFont.setIsAbsoluteSize(false);
-        shortBodyFont.setIsAbsoluteSize(false);
-        shortSubheadlineFont.setIsAbsoluteSize(false);
-        shortFootnoteFont.setIsAbsoluteSize(false);
-        shortCaption1Font.setIsAbsoluteSize(false);
-        tallBodyFont.setIsAbsoluteSize(false);
+        headlineFont.get().setIsAbsoluteSize(false);
+        bodyFont.get().setIsAbsoluteSize(false);
+        subheadlineFont.get().setIsAbsoluteSize(false);
+        footnoteFont.get().setIsAbsoluteSize(false);
+        caption1Font.get().setIsAbsoluteSize(false);
+        caption2Font.get().setIsAbsoluteSize(false);
+        shortHeadlineFont.get().setIsAbsoluteSize(false);
+        shortBodyFont.get().setIsAbsoluteSize(false);
+        shortSubheadlineFont.get().setIsAbsoluteSize(false);
+        shortFootnoteFont.get().setIsAbsoluteSize(false);
+        shortCaption1Font.get().setIsAbsoluteSize(false);
+        tallBodyFont.get().setIsAbsoluteSize(false);
     }
 
     FontDescription* cachedDesc;
@@ -1097,86 +1097,86 @@ void RenderThemeIOS::systemFont(CSSValueID valueID, FontDescription& fontDescrip
     CFStringRef textStyle;
     switch (valueID) {
     case CSSValueAppleSystemHeadline:
-        cachedDesc = &headlineFont;
+        cachedDesc = &headlineFont.get();
         textStyle = kCTUIFontTextStyleHeadline;
-        if (!headlineFont.isAbsoluteSize())
+        if (!headlineFont.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
     case CSSValueAppleSystemBody:
-        cachedDesc = &bodyFont;
+        cachedDesc = &bodyFont.get();
         textStyle = kCTUIFontTextStyleBody;
-        if (!bodyFont.isAbsoluteSize())
+        if (!bodyFont.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
     case CSSValueAppleSystemSubheadline:
-        cachedDesc = &subheadlineFont;
+        cachedDesc = &subheadlineFont.get();
         textStyle = kCTUIFontTextStyleSubhead;
-        if (!subheadlineFont.isAbsoluteSize())
+        if (!subheadlineFont.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
     case CSSValueAppleSystemFootnote:
-        cachedDesc = &footnoteFont;
+        cachedDesc = &footnoteFont.get();
         textStyle = kCTUIFontTextStyleFootnote;
-        if (!footnoteFont.isAbsoluteSize())
+        if (!footnoteFont.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
     case CSSValueAppleSystemCaption1:
-        cachedDesc = &caption1Font;
+        cachedDesc = &caption1Font.get();
         textStyle = kCTUIFontTextStyleCaption1;
-        if (!caption1Font.isAbsoluteSize())
+        if (!caption1Font.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
     case CSSValueAppleSystemCaption2:
-        cachedDesc = &caption2Font;
+        cachedDesc = &caption2Font.get();
         textStyle = kCTUIFontTextStyleCaption2;
-        if (!caption2Font.isAbsoluteSize())
+        if (!caption2Font.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
 
     // Short version.
     case CSSValueAppleSystemShortHeadline:
-        cachedDesc = &shortHeadlineFont;
+        cachedDesc = &shortHeadlineFont.get();
         textStyle = kCTUIFontTextStyleShortHeadline;
-        if (!shortHeadlineFont.isAbsoluteSize())
+        if (!shortHeadlineFont.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
     case CSSValueAppleSystemShortBody:
-        cachedDesc = &shortBodyFont;
+        cachedDesc = &shortBodyFont.get();
         textStyle = kCTUIFontTextStyleShortBody;
-        if (!shortBodyFont.isAbsoluteSize())
+        if (!shortBodyFont.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
     case CSSValueAppleSystemShortSubheadline:
-        cachedDesc = &shortSubheadlineFont;
+        cachedDesc = &shortSubheadlineFont.get();
         textStyle = kCTUIFontTextStyleShortSubhead;
-        if (!shortSubheadlineFont.isAbsoluteSize())
+        if (!shortSubheadlineFont.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
     case CSSValueAppleSystemShortFootnote:
-        cachedDesc = &shortFootnoteFont;
+        cachedDesc = &shortFootnoteFont.get();
         textStyle = kCTUIFontTextStyleShortFootnote;
-        if (!shortFootnoteFont.isAbsoluteSize())
+        if (!shortFootnoteFont.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
     case CSSValueAppleSystemShortCaption1:
-        cachedDesc = &shortCaption1Font;
+        cachedDesc = &shortCaption1Font.get();
         textStyle = kCTUIFontTextStyleShortCaption1;
-        if (!shortCaption1Font.isAbsoluteSize())
+        if (!shortCaption1Font.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
 
     // Tall version.
     case CSSValueAppleSystemTallBody:
-        cachedDesc = &tallBodyFont;
+        cachedDesc = &tallBodyFont.get();
         textStyle = kCTUIFontTextStyleTallBody;
-        if (!tallBodyFont.isAbsoluteSize())
+        if (!tallBodyFont.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
 
     default:
         textStyle = kCTFontDescriptorTextStyleEmphasized;
-        cachedDesc = &systemFont;
-        if (!systemFont.isAbsoluteSize())
+        cachedDesc = &systemFont.get();
+        if (!systemFont.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(kCTFontSystemFontType, 0, nullptr));
     }
 

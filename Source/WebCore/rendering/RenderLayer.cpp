@@ -2334,7 +2334,7 @@ void RenderLayer::scrollTo(int x, int y)
             updateCompositingLayersAfterScroll();
 #endif
         return;
-}
+    }
     m_scrollOffset = newScrollOffset;
 
     InspectorInstrumentation::willScrollLayer(&renderer().frame());

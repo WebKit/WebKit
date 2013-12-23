@@ -1,3 +1,25 @@
+2013-12-23  Daniel Bates  <dabates@apple.com>
+
+        Fix the iOS build following <http://trac.webkit.org/changeset/160236>
+        (https://bugs.webkit.org/show_bug.cgi?id=125239)
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned): Substitute view() for &view().
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo): Fix indentation of closing brace.
+        * rendering/RenderLayerCompositor.cpp: Include MainFrame.h.
+        (WebCore::RenderLayerCompositor::contentsScaleMultiplierForNewTiles): Check that page->mainFrame().view()
+        is non-null; also add explicit #else clause.
+        (WebCore::RenderLayerCompositor::ensureRootLayer): Fix up main frame check.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintFileUploadIconDecorations): Substitute rect for r.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintTextFieldDecorations): Use .get() to access underlying NeverDestroyed item.
+        (WebCore::RenderThemeIOS::systemFont):
+        * rendering/RenderView.cpp:
+        (WebCore::fixedPositionOffset): Substitute frameView.scrollOffset() for frameView->scrollOffset().
+
 2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Minor optimization in FrameSelection::setNonDirectionalSelectionIfNeeded()
