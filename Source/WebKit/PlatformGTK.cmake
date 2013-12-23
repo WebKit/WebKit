@@ -1,6 +1,8 @@
 set(DERIVED_SOURCES_WEBKITGTK_DIR ${DERIVED_SOURCES_DIR}/webkit)
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKITGTK_DIR})
 configure_file(gtk/webkit/webkitversion.h.in ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitversion.h)
+configure_file(gtk/webkit.pc.in ${CMAKE_BINARY_DIR}/Source/WebKit/gtk/webkitgtk-3.0.pc @ONLY)
+
 add_definitions(-DPACKAGE_LOCALE_DIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES

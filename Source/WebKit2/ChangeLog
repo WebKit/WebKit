@@ -1,3 +1,12 @@
+2013-12-23  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] [CMake] Generate pkg-config files
+        https://bugs.webkit.org/show_bug.cgi?id=125685
+
+        Reviewed by Martin Robinson.
+
+        * PlatformGTK.cmake: generate webkit2gtk.pc.
+
 2013-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Build with network process unconditionally

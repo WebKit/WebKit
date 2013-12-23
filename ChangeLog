@@ -1,3 +1,13 @@
+2013-12-23  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] [CMake] Generate pkg-config files
+        https://bugs.webkit.org/show_bug.cgi?id=125685
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/OptionsGTK.cmake: set variables used for filling in the values in the
+        pkg-config files.
+
 2013-12-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Build with network process unconditionally

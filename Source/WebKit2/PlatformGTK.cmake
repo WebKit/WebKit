@@ -8,6 +8,7 @@ file(MAKE_DIRECTORY ${WEBKIT2_BUILT_API_DIR})
 file(MAKE_DIRECTORY ${WEBKIT2_FORWARDING_HEADERS_DIR})
 
 configure_file(UIProcess/API/gtk/WebKitVersion.h.in ${WEBKIT2_BUILT_API_DIR}/WebKitVersion.h)
+configure_file(webkit2gtk.pc.in ${CMAKE_BINARY_DIR}/Source/WebKit2/webkit2gtk-3.0.pc @ONLY)
 
 add_definitions(-DWEBKIT2_COMPILATION)
 add_definitions(-DLIBEXECDIR="${CMAKE_INSTALL_FULL_LIBEXECDIR}")
