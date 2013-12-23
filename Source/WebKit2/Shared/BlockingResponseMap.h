@@ -26,9 +26,8 @@
 #ifndef BlockingResponseMap_h
 #define BlockingResponseMap_h
 
+#include <thread>
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/ThreadingPrimitives.h>
 
 template<typename T>
 class BlockingResponseMap {
@@ -40,7 +39,7 @@ public:
     std::unique_ptr<T> waitForResponse(uint64_t requestID)
     {
         while (true) {
-            MutexLocker locker(m_mutex);
+            std::unique_lock<std::mutex> lock(m_mutex);
 
             if (m_canceled)
                 return nullptr;
@@ -48,7 +47,7 @@ public:
             if (std::unique_ptr<T> response = m_responses.take(requestID))
                 return response;
 
-            m_condition.wait(m_mutex);
+            m_condition.wait(lock);
         }
 
         return nullptr;
@@ -56,12 +55,13 @@ public:
 
     void didReceiveResponse(uint64_t requestID, std::unique_ptr<T> response)
     {
-        MutexLocker locker(m_mutex);
+        std::lock_guard<std::mutex> lock(m_mutex);
         ASSERT(!m_responses.contains(requestID));
 
         m_responses.set(requestID, std::move(response));
+
         // FIXME: Waking up all threads is quite inefficient.
-        m_condition.broadcast();
+        m_condition.notify_all();
     }
 
     void cancel()
@@ -69,12 +69,12 @@ public:
         m_canceled = true;
 
         // FIXME: Waking up all threads is quite inefficient.
-        m_condition.broadcast();
+        m_condition.notify_all();
     }
 
 private:
-    Mutex m_mutex;
-    ThreadCondition m_condition;
+    std::mutex m_mutex;
+    std::condition_variable m_condition;
 
     HashMap<uint64_t, std::unique_ptr<T>> m_responses;
     bool m_canceled;

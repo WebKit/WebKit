@@ -1,3 +1,25 @@
+2013-12-23  Anders Carlsson  <andersca@apple.com>
+
+        Convert ThreadCondition in WebKit2 over to std::condition_variable
+        https://bugs.webkit.org/show_bug.cgi?id=126161
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForMessage):
+        (CoreIPC::Connection::processIncomingMessage):
+        * Platform/CoreIPC/Connection.h:
+        * Shared/BlockingResponseMap.h:
+        (BlockingResponseMap::waitForResponse):
+        (BlockingResponseMap::didReceiveResponse):
+        (BlockingResponseMap::cancel):
+        * UIProcess/API/mac/WKPrintingView.h:
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (pageDidDrawToPDF):
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        (prepareDataForPrintingOnSecondaryThread):
+        (-[WKPrintingView knowsPageRange:]):
+
 2013-12-22  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] libtool-compatible soversion calculation

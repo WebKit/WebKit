@@ -34,11 +34,11 @@
 #include "MessageReceiver.h"
 #include "WorkQueue.h"
 #include <atomic>
+#include <thread>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 
 #if OS(DARWIN)
@@ -238,8 +238,8 @@ private:
     Mutex m_outgoingMessagesLock;
     Deque<std::unique_ptr<MessageEncoder>> m_outgoingMessages;
     
-    ThreadCondition m_waitForMessageCondition;
-    Mutex m_waitForMessageMutex;
+    std::condition_variable m_waitForMessageCondition;
+    std::mutex m_waitForMessageMutex;
     HashMap<std::pair<std::pair<StringReference, StringReference>, uint64_t>, std::unique_ptr<MessageDecoder>> m_waitForMessageMap;
 
     // Represents a sync request for which we're waiting on a reply.

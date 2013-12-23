@@ -24,6 +24,7 @@
  */
 
 #import <WebCore/IntRectHash.h>
+#import <thread>
 #import <wtf/RetainPtr.h>
 
 @class WKPrintingViewData;
@@ -53,8 +54,8 @@ namespace WebKit {
     uint64_t _expectedPrintCallback;
 
     BOOL _isPrintingFromSecondaryThread;
-    Mutex _printingCallbackMutex;
-    ThreadCondition _printingCallbackCondition;
+    std::mutex _printingCallbackMutex;
+    std::condition_variable _printingCallbackCondition;
 
     NSTimer *_autodisplayResumeTimer;
 }

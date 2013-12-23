@@ -251,7 +251,7 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
         if (data)
             view->_printedPagesData.append(data->bytes(), data->size());
         view->_expectedPrintCallback = 0;
-        view->_printingCallbackCondition.signal();
+        view->_printingCallbackCondition.notify_one();
     }
 }
 
@@ -260,11 +260,11 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
     ASSERT(RunLoop::isMain());
 
     if (!_webFrame->page()) {
-        _printingCallbackCondition.signal();
+        _printingCallbackCondition.notify_one();
         return;
     }
 
-    MutexLocker lock(_printingCallbackMutex);
+    std::lock_guard<std::mutex> lock(_printingCallbackMutex);
 
     ASSERT([self _hasPageRects]);
     ASSERT(_printedPagesData.isEmpty());
@@ -358,7 +358,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     ASSERT(RunLoop::isMain());
 
     WKPrintingView *view = static_cast<WKPrintingView *>(untypedContext);
-    MutexLocker lock(view->_printingCallbackMutex);
+    std::lock_guard<std::mutex> lock(view->_printingCallbackMutex);
 
     // We may have received page rects while a message to call this function traveled from secondary thread to main one.
     if ([view _hasPageRects]) {
@@ -396,9 +396,9 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
         *range = NSMakeRange(1, _printingPageRects.size());
     else if (!RunLoop::isMain()) {
         ASSERT(![self _isPrintingPreview]);
-        MutexLocker lock(_printingCallbackMutex);
+        std::unique_lock<std::mutex> lock(_printingCallbackMutex);
         callOnMainThread(prepareDataForPrintingOnSecondaryThread, self);
-        _printingCallbackCondition.wait(_printingCallbackMutex);
+        _printingCallbackCondition.wait(lock);
         *range = NSMakeRange(1, _printingPageRects.size());
     } else {
         ASSERT([self _isPrintingPreview]);
