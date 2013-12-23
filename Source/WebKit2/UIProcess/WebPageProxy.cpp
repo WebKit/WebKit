@@ -1008,7 +1008,7 @@ void WebPageProxy::waitForDidUpdateViewState()
     m_waitingForDidUpdateViewState = true;
 
     if (!m_process->isLaunching()) {
-        const double viewStateUpdateTimeout = 0.25;
+        auto viewStateUpdateTimeout = std::chrono::milliseconds(250);
         m_process->connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateViewState>(m_pageID, viewStateUpdateTimeout);
     }
 }

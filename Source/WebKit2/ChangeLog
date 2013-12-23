@@ -1,5 +1,29 @@
 2013-12-23  Anders Carlsson  <andersca@apple.com>
 
+        Use std::chrono::milliseconds for message wait timeouts in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=126168
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForMessage):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::waitForAndDispatchImmediately):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView forceAsyncDrawingAreaSizeUpdate:]):
+        (-[WKView waitForAsyncDrawingAreaSizeUpdate]):
+        * UIProcess/DrawingAreaProxy.cpp:
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::didUpdateBackingStoreStateTimeout):
+        (WebKit::DrawingAreaProxy::waitForPossibleGeometryUpdate):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::waitForDidUpdateViewState):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate):
+
+2013-12-23  Anders Carlsson  <andersca@apple.com>
+
         Include <condition_variable>, not <thread>.
 
         * Platform/CoreIPC/Connection.h:

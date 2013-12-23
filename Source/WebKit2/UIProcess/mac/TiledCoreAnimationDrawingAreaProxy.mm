@@ -67,7 +67,7 @@ void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
     sendUpdateGeometry();
 }
 
-void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate(double timeout)
+void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate(std::chrono::milliseconds timeout)
 {
     if (!m_isWaitingForDidUpdateGeometry)
         return;

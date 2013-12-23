@@ -3169,7 +3169,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     // pending did-update message now, such that the new update can be sent. We do so after setting
     // the drawing area size such that the latest update is sent.
     if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea())
-        drawingArea->waitForPossibleGeometryUpdate(0);
+        drawingArea->waitForPossibleGeometryUpdate(std::chrono::milliseconds::zero());
 }
 
 - (void)waitForAsyncDrawingAreaSizeUpdate
@@ -3178,8 +3178,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         // If a geometry update is still pending then the action of receiving the
         // first geometry update may result in another update being scheduled -
         // we should wait for this to complete too.
-        drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout * 0.5);
-        drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout * 0.5);
+        drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout() / 2);
+        drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout() / 2);
     }
 }
 

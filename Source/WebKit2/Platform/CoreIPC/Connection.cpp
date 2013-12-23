@@ -375,7 +375,7 @@ bool Connection::sendSyncReply(std::unique_ptr<MessageEncoder> encoder)
     return sendMessage(std::move(encoder));
 }
 
-std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, double timeout)
+std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout)
 {
     // First, check if this message is already in the incoming messages queue.
     {
@@ -418,9 +418,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
         }
 
         // Now we wait.
-        // FIXME: It would be better if Connection::waitForMessage took an std::chrono::milliseconds instead of a double.
-        std::chrono::milliseconds timeoutInMilliseconds(static_cast<std::chrono::milliseconds::rep>(timeout * 1000));
-        if (m_waitForMessageCondition.wait_for(lock, timeoutInMilliseconds) == std::cv_status::timeout) {
+        if (m_waitForMessageCondition.wait_for(lock, timeout) == std::cv_status::timeout) {
             // We timed out, now remove the pending wait.
             m_waitForMessageMap.remove(messageAndDestination);
 
