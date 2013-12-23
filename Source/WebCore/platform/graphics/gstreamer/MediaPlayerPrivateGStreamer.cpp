@@ -599,18 +599,8 @@ void MediaPlayerPrivateGStreamer::seek(float time)
                 loadingFailed(MediaPlayer::Empty);
         }
     } else {
-        gint64 startTime, endTime;
-        if (m_player->rate() > 0) {
-            startTime = clockTime;
-            endTime = GST_CLOCK_TIME_NONE;
-        } else {
-            startTime = 0;
-            endTime = clockTime;
-        }
-
         // We can seek now.
-        if (!gst_element_seek(m_playBin.get(), m_player->rate(), GST_FORMAT_TIME, static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE),
-            GST_SEEK_TYPE_SET, startTime, GST_SEEK_TYPE_SET, endTime)) {
+        if (!doSeek(clockTime, m_player->rate(), static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE))) {
             LOG_MEDIA_MESSAGE("[Seek] seeking to %f failed", time);
             return;
         }
@@ -619,6 +609,27 @@ void MediaPlayerPrivateGStreamer::seek(float time)
     m_seeking = true;
     m_seekTime = time;
     m_isEndReached = false;
+}
+
+bool MediaPlayerPrivateGStreamer::doSeek(gint64 position, float rate, GstSeekFlags seekType)
+{
+    gint64 startTime, endTime;
+
+    if (rate > 0) {
+        startTime = position;
+        endTime = GST_CLOCK_TIME_NONE;
+    } else {
+        startTime = 0;
+        // If we are at beginning of media, start from the end to
+        // avoid immediate EOS.
+        if (position < 0)
+            endTime = static_cast<gint64>(duration() * GST_SECOND);
+        else
+            endTime = position;
+    }
+
+    return gst_element_seek(m_playBin.get(), rate, GST_FORMAT_TIME, seekType,
+        GST_SEEK_TYPE_SET, startTime, GST_SEEK_TYPE_SET, endTime);
 }
 
 bool MediaPlayerPrivateGStreamer::paused() const
@@ -842,8 +853,6 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
     }
 
     float currentPosition = static_cast<float>(playbackPosition() * GST_SECOND);
-    GstSeekFlags flags = (GstSeekFlags)(GST_SEEK_FLAG_FLUSH);
-    gint64 start, end;
     bool mute = false;
 
     INFO_MEDIA_MESSAGE("Set Rate to %f", rate);
@@ -851,25 +860,15 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
         // Mute the sound if the playback rate is too extreme and
         // audio pitch is not adjusted.
         mute = (!m_preservesPitch && (rate < 0.8 || rate > 2));
-        start = currentPosition;
-        end = GST_CLOCK_TIME_NONE;
     } else {
-        start = 0;
+        if (currentPosition == 0.0f)
+            currentPosition = -1.0f;
         mute = true;
-
-        // If we are at beginning of media, start from the end to
-        // avoid immediate EOS.
-        if (currentPosition <= 0)
-            end = static_cast<gint64>(duration() * GST_SECOND);
-        else
-            end = currentPosition;
     }
 
     INFO_MEDIA_MESSAGE("Need to mute audio?: %d", (int) mute);
 
-    if (!gst_element_seek(m_playBin.get(), rate, GST_FORMAT_TIME, flags,
-                          GST_SEEK_TYPE_SET, start,
-                          GST_SEEK_TYPE_SET, end))
+    if (!doSeek(currentPosition, rate, static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH)))
         ERROR_MEDIA_MESSAGE("Set rate to %f failed", rate);
     else
         g_object_set(m_playBin.get(), "mute", mute, NULL);
@@ -1457,8 +1456,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
     if (m_seekIsPending && getStateResult == GST_STATE_CHANGE_SUCCESS && (state == GST_STATE_PAUSED || state == GST_STATE_PLAYING)) {
         LOG_MEDIA_MESSAGE("[Seek] committing pending seek to %f", m_seekTime);
         m_seekIsPending = false;
-        m_seeking = gst_element_seek(m_playBin.get(), m_player->rate(), GST_FORMAT_TIME, static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE),
-            GST_SEEK_TYPE_SET, toGstClockTime(m_seekTime), GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE);
+        m_seeking = doSeek(toGstClockTime(m_seekTime), m_player->rate(), static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE));
         if (!m_seeking)
             LOG_MEDIA_MESSAGE("[Seek] seeking to %f failed", m_seekTime);
     }

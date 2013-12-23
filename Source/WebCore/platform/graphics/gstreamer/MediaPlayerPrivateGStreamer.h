@@ -146,6 +146,8 @@ private:
     void processTableOfContents(GstMessage*);
     void processTableOfContentsEntry(GstTocEntry*, GstTocEntry* parent);
 #endif
+    bool doSeek(gint64 position, float rate, GstSeekFlags seekType);
+
 
     virtual String engineDescription() const { return "GStreamer"; }
     virtual bool isLiveStream() const { return m_isStreaming; }
