@@ -1,3 +1,14 @@
+2013-12-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Clean up compiler optimizations flags for libWTF, libJSC
+        https://bugs.webkit.org/show_bug.cgi?id=126157
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Remove the -fstrict-aliasing and -O3 compiler flags for libWTF.la. -O3 gets
+        overridden by -O2 that's listed in CXXFLAGS (or -O0 in case of debug builds) and -fstrict-aliasing
+        is enabled when -O2 is used (and shouldn't be enabled in debug builds anyway).
+
 2013-12-22  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Fix typo from r160812

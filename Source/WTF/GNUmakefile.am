@@ -29,8 +29,6 @@ libWTF_la_CXXFLAGS = \
 	$(libWTF_la_CFLAGS)
 
 libWTF_la_CFLAGS = \
-	-fstrict-aliasing \
-	-O3 \
 	$(global_cflags) \
 	$(GLIB_CFLAGS) \
 	$(UNICODE_CFLAGS)
