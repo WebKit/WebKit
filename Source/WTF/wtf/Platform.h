@@ -886,7 +886,7 @@
 
 /* CSS Selector JIT Compiler */
 #if !defined(ENABLE_CSS_SELECTOR_JIT)
-#define ENABLE_CSS_SELECTOR_JIT 0
+#define ENABLE_CSS_SELECTOR_JIT 1
 #endif
 
 /* Accelerated compositing */

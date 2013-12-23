@@ -992,6 +992,11 @@ public:
         m_formatter.oneByteOp64(OP_CMP_EvGv, src, base, offset);
     }
 
+    void cmpq_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        m_formatter.oneByteOp64(OP_CMP_EvGv, src, base, index, scale, offset);
+    }
+
     void cmpq_mr(int offset, RegisterID base, RegisterID src)
     {
         m_formatter.oneByteOp64(OP_CMP_GvEv, src, base, offset);

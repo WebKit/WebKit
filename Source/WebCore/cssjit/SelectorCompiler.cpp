@@ -100,6 +100,7 @@ struct SelectorFragment {
 
     const QualifiedName* tagName;
     const AtomicString* id;
+    Vector<const AtomicStringImpl*, 1> classNames;
 };
 
 typedef JSC::MacroAssembler Assembler;
@@ -138,6 +139,7 @@ private:
     void generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch);
     void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch);
+    void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
 
     Assembler m_assembler;
     RegisterAllocator m_registerAllocator;
@@ -220,8 +222,10 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
                 fragment.id = &(selector->value());
             break;
         }
-        case CSSSelector::Unknown:
         case CSSSelector::Class:
+            fragment.classNames.append(selector->value().impl());
+            break;
+        case CSSSelector::Unknown:
         case CSSSelector::Exact:
         case CSSSelector::Set:
         case CSSSelector::List:
@@ -747,7 +751,7 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
 
 void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    if (!fragment.id)
+    if (!fragment.id && fragment.classNames.isEmpty())
         return;
 
     //  Generate:
@@ -758,7 +762,10 @@ void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& fai
     m_assembler.loadPtr(Assembler::Address(elementAddressRegister, Element::elementDataMemoryOffset()), elementDataAddress);
     failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, elementDataAddress));
 
-    generateElementHasId(failureCases, elementDataAddress, *fragment.id);
+    if (fragment.id)
+        generateElementHasId(failureCases, elementDataAddress, *fragment.id);
+    if (!fragment.classNames.isEmpty())
+        generateElementHasClasses(failureCases, elementDataAddress, fragment.classNames);
 }
 
 inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch)
@@ -793,6 +800,41 @@ void SelectorCodeGenerator::generateElementHasId(Assembler::JumpList& failureCas
     LocalRegister idToMatchRegister(m_registerAllocator);
     m_assembler.move(Assembler::TrustedImmPtr(idToMatch.impl()), idToMatchRegister);
     failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(elementDataAddress, ElementData::idForStyleResolutionMemoryOffset()), idToMatchRegister));
+}
+
+void SelectorCodeGenerator::generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames)
+{
+    // Load m_classNames.
+    LocalRegister spaceSplitStringData(m_registerAllocator);
+    m_assembler.loadPtr(Assembler::Address(elementDataAddress, ElementData::classNamesMemoryOffset()), spaceSplitStringData);
+
+    // If SpaceSplitString does not have a SpaceSplitStringData pointer, it is empty -> failure case.
+    failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, spaceSplitStringData));
+
+    // We loop over the classes of SpaceSplitStringData for each class name we need to match.
+    LocalRegister indexRegister(m_registerAllocator);
+    for (unsigned i = 0; i < classNames.size(); ++i) {
+        LocalRegister classNameToMatch(m_registerAllocator);
+        m_assembler.move(Assembler::TrustedImmPtr(classNames[i]), classNameToMatch);
+        m_assembler.move(Assembler::TrustedImm32(0), indexRegister);
+
+        // Beginning of a loop over all the class name of element to find the one we are looking for.
+        Assembler::Label loopStart(m_assembler.label());
+
+        // If the pointers match, proceed to the next matcher.
+        Assembler::Jump classFound = m_assembler.branchPtr(Assembler::Equal, Assembler::BaseIndex(spaceSplitStringData, indexRegister, Assembler::timesPtr(), SpaceSplitStringData::tokensMemoryOffset()), classNameToMatch);
+
+        // Increment the index.
+        m_assembler.add32(Assembler::TrustedImm32(1), indexRegister);
+
+        // If we reached the last element -> failure.
+        failureCases.append(m_assembler.branch32(Assembler::Equal, Assembler::Address(spaceSplitStringData, SpaceSplitStringData::sizeMemoryOffset()), indexRegister));
+        // Otherwise just loop over.
+        m_assembler.jump().linkTo(loopStart, &m_assembler);
+
+        // Success case.
+        classFound.link(&m_assembler);
+    }
 }
 
 }; // namespace SelectorCompiler.

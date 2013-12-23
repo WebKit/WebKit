@@ -1,3 +1,20 @@
+2013-12-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add class matching to the Selector Code Generator
+        https://bugs.webkit.org/show_bug.cgi?id=126176
+
+        Reviewed by Antti Koivisto and Oliver Hunt.
+
+        Add test and branch based on BaseIndex addressing for x86_64.
+        Fast loops are needed to compete with clang on tight loops.
+
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branch64):
+        (JSC::MacroAssemblerX86_64::branchPtr):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cmpq_rm):
+
 2013-12-23  Oliver Hunt  <oliver@apple.com>
 
         Update custom setter implementations to perform type checks

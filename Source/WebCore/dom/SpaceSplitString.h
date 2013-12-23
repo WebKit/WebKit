@@ -49,6 +49,8 @@ public:
     bool containsAll(SpaceSplitStringData&);
 
     unsigned size() const { return m_size; }
+    static ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(SpaceSplitStringData, m_size); }
+
     const AtomicString& operator[](size_t i)
     {
         RELEASE_ASSERT(i < m_size);
@@ -73,6 +75,8 @@ public:
         }
         m_refCount = tempRefCount;
     }
+
+    static ptrdiff_t tokensMemoryOffset() { return sizeof(SpaceSplitStringData); }
 
 private:
     static PassRefPtr<SpaceSplitStringData> create(const AtomicString&, unsigned tokenCount);

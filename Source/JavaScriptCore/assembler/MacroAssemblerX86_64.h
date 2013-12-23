@@ -486,6 +486,23 @@ public:
         return branch64(cond, left, scratchRegister);
     }
 
+    Jump branch64(RelationalCondition cond, BaseIndex address, RegisterID right)
+    {
+        m_assembler.cmpq_rm(right, address.offset, address.base, address.index, address.scale);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
+    Jump branchPtr(RelationalCondition cond, BaseIndex left, RegisterID right)
+    {
+        return branch64(cond, left, right);
+    }
+
+    Jump branchPtr(RelationalCondition cond, BaseIndex left, TrustedImmPtr right)
+    {
+        move(right, scratchRegister);
+        return branchPtr(cond, left, scratchRegister);
+    }
+
     Jump branchTest64(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         m_assembler.testq_rr(reg, mask);
