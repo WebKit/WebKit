@@ -2165,16 +2165,14 @@ void Element::setStyleAffectedByEmpty()
     ensureElementRareData().setStyleAffectedByEmpty(true);
 }
 
-void Element::setChildrenAffectedByActive(bool value)
+void Element::setChildrenAffectedByActive()
 {
-    if (value || hasRareData())
-        ensureElementRareData().setChildrenAffectedByActive(value);
+    ensureElementRareData().setChildrenAffectedByActive(true);
 }
 
-void Element::setChildrenAffectedByDrag(bool value)
+void Element::setChildrenAffectedByDrag()
 {
-    if (value || hasRareData())
-        ensureElementRareData().setChildrenAffectedByDrag(value);
+    ensureElementRareData().setChildrenAffectedByDrag(true);
 }
 
 void Element::setChildrenAffectedByDirectAdjacentRules(Element* element)

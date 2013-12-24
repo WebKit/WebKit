@@ -1,3 +1,22 @@
+2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove boolean argument from Element::setChildrenAffectBy* methods
+        https://bugs.webkit.org/show_bug.cgi?id=126183
+
+        Reviewed by Daniel Bates.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/066ef2fa78336b2b65052cb17cb81b367fe7dbbf
+
+        These functions are never called with false.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * dom/Element.cpp:
+        (WebCore::Element::setChildrenAffectedByActive):
+        (WebCore::Element::setChildrenAffectedByDrag):
+        * dom/Element.h:
+        (WebCore::Element::setChildrenAffectedByHover):
+
 2013-12-23  Tim Horton  <timothy_horton@apple.com>
 
         Fix the iOS build after r161013 and r160672.
