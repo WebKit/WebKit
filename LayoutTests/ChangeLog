@@ -1,3 +1,16 @@
+2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a test for submitting a form targeted at an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=126175
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merge the test from https://chromium.googlesource.com/chromium/blink/+/9220cbdaae8413f3c8316c022f98579af120bf10
+        so that we may not introduce the same regression in WebKit.
+
+        * http/tests/misc/form-target-iframe-inline-expected.txt: Added.
+        * http/tests/misc/form-target-iframe-inline.html: Added.
+
 2013-12-23  Alexey Proskuryakov  <ap@apple.com>
 
         svg/animations/getCurrentTime-pause-unpause.html is flaky
