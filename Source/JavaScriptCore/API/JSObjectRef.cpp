@@ -331,7 +331,7 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
         PropertyDescriptor desc(jsValue, attributes);
         jsObject->methodTable()->defineOwnProperty(jsObject, exec, name, desc, false);
     } else {
-        PutPropertySlot slot;
+        PutPropertySlot slot(jsObject);
         jsObject->methodTable()->put(jsObject, exec, name, jsValue, slot);
     }
 

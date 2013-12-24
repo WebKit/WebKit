@@ -1,3 +1,15 @@
+2013-12-23  Oliver Hunt  <oliver@apple.com>
+
+        Refactor PutPropertySlot to be aware of custom properties
+        https://bugs.webkit.org/show_bug.cgi?id=126187
+
+        Reviewed by msaboff.
+
+        Update for new method signatures.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::setProperty):
+
 2013-12-23  Lucas Forschler  <lforschler@apple.com>
 
         <rdar://problem/15682948> Update copyright strings

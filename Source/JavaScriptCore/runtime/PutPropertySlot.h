@@ -27,6 +27,8 @@
 #ifndef PutPropertySlot_h
 #define PutPropertySlot_h
 
+#include "JSCJSValue.h"
+
 #include <wtf/Assertions.h>
 
 namespace JSC {
@@ -36,14 +38,17 @@ namespace JSC {
     
     class PutPropertySlot {
     public:
-        enum Type { Uncachable, ExistingProperty, NewProperty };
+        enum Type { Uncachable, ExistingProperty, NewProperty, CustomProperty };
         enum Context { UnknownContext, PutById, PutByIdEval };
+        typedef void (*PutValueFunc)(ExecState*, EncodedJSValue base, EncodedJSValue value);
 
-        PutPropertySlot(bool isStrictMode = false, Context context = UnknownContext)
+        PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext)
             : m_type(Uncachable)
             , m_base(0)
+            , m_thisValue(thisValue)
             , m_isStrictMode(isStrictMode)
             , m_context(context)
+            , m_putFunction(nullptr)
         {
         }
 
@@ -60,14 +65,22 @@ namespace JSC {
             m_base = base;
             m_offset = offset;
         }
+
+        void setCustomProperty(JSObject* base, PutValueFunc function)
+        {
+            m_type = CustomProperty;
+            m_base = base;
+            m_putFunction = function;
+        }
         
         Context context() const { return static_cast<Context>(m_context); }
 
         Type type() const { return m_type; }
         JSObject* base() const { return m_base; }
+        JSValue thisValue() const { return m_thisValue; }
 
         bool isStrictMode() const { return m_isStrictMode; }
-        bool isCacheable() const { return m_type != Uncachable; }
+        bool isCacheable() const { return m_type != Uncachable && m_type != CustomProperty; }
         PropertyOffset cachedOffset() const
         {
             ASSERT(isCacheable());
@@ -77,9 +90,12 @@ namespace JSC {
     private:
         Type m_type;
         JSObject* m_base;
+        JSValue m_thisValue;
         PropertyOffset m_offset;
         bool m_isStrictMode;
         uint8_t m_context;
+        PutValueFunc m_putFunction;
+
     };
 
 } // namespace JSC

@@ -172,7 +172,7 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
 void JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
 {
     if (propertyName > MAX_ARRAY_INDEX) {
-        PutPropertySlot slot(shouldThrow);
+        PutPropertySlot slot(*this, shouldThrow);
         putToPrimitive(exec, Identifier::from(exec, propertyName), value, slot);
         return;
     }

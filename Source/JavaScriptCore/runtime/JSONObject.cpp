@@ -746,7 +746,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             case ObjectEndVisitMember: {
                 JSObject* object = objectStack.peek();
                 Identifier prop = propertyStack.last()[indexStack.last()];
-                PutPropertySlot slot;
+                PutPropertySlot slot(object);
                 JSValue filteredValue = callReviver(object, jsString(m_exec, prop.string()), outValue);
                 if (filteredValue.isUndefined())
                     object->methodTable()->deleteProperty(object, m_exec, prop);
@@ -775,7 +775,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
         stateStack.removeLast();
     }
     JSObject* finalHolder = constructEmptyObject(m_exec);
-    PutPropertySlot slot;
+    PutPropertySlot slot(finalHolder);
     finalHolder->methodTable()->put(finalHolder, m_exec, m_exec->vm().propertyNames->emptyIdentifier, outValue, slot);
     return callReviver(finalHolder, jsEmptyString(m_exec), outValue);
 }

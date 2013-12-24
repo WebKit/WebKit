@@ -110,7 +110,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
     }
 
     if (isName(property)) {
-        PutPropertySlot slot(strict);
+        PutPropertySlot slot(baseValue, strict);
         if (direct) {
             RELEASE_ASSERT(baseValue.isObject());
             asObject(baseValue)->putDirect(*vm, jsCast<NameInstance*>(property.asCell())->privateName(), value, slot);
@@ -122,7 +122,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
     // Don't put to an object if toString throws an exception.
     Identifier ident(exec, property.toString(exec)->value(exec));
     if (!vm->exception()) {
-        PutPropertySlot slot(strict);
+        PutPropertySlot slot(baseValue, strict);
         if (direct) {
             RELEASE_ASSERT(baseValue.isObject());
             asObject(baseValue)->putDirect(*vm, jsCast<NameInstance*>(property.asCell())->privateName(), value, slot);
@@ -399,7 +399,7 @@ void JIT_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSO
         return;
     }
     
-    PutPropertySlot slot(true);
+    PutPropertySlot slot(array, true);
     array->methodTable()->put(
         array, exec, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
@@ -414,7 +414,7 @@ void JIT_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState* exec, 
         return;
     }
     
-    PutPropertySlot slot(false);
+    PutPropertySlot slot(array, false);
     array->methodTable()->put(
         array, exec, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
@@ -431,7 +431,7 @@ void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsStrict(ExecState* exe
         return;
     }
     
-    PutPropertySlot slot(true);
+    PutPropertySlot slot(array, true);
     array->methodTable()->put(
         array, exec, Identifier::from(exec, index), jsValue, slot);
 }
@@ -448,7 +448,7 @@ void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(ExecState* 
         return;
     }
     
-    PutPropertySlot slot(false);
+    PutPropertySlot slot(array, false);
     array->methodTable()->put(
         array, exec, Identifier::from(exec, index), jsValue, slot);
 }
@@ -494,7 +494,7 @@ void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsStrict(ExecState* exe
         return;
     }
     
-    PutPropertySlot slot(true);
+    PutPropertySlot slot(array, true);
     array->putDirect(exec->vm(), Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
@@ -508,7 +508,7 @@ void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(ExecState* 
         return;
     }
     
-    PutPropertySlot slot(false);
+    PutPropertySlot slot(array, false);
     array->putDirect(exec->vm(), Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 

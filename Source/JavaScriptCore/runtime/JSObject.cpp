@@ -411,7 +411,7 @@ void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
     JSObject* thisObject = jsCast<JSObject*>(cell);
     
     if (propertyName > MAX_ARRAY_INDEX) {
-        PutPropertySlot slot(shouldThrow);
+        PutPropertySlot slot(cell, shouldThrow);
         thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
         return;
     }
@@ -1215,7 +1215,7 @@ void JSObject::putDirectAccessor(ExecState* exec, PropertyName propertyName, JSV
 
 void JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
 {
-    PutPropertySlot slot;
+    PutPropertySlot slot(this);
     putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot, getCallableObject(value));
 
     // putDirect will change our Structure if we add a new property. For
@@ -1269,7 +1269,8 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
         if (entry->attributes() & DontDelete && !exec->vm().isInDefineOwnProperty())
             return false; // this builtin property can't be deleted
 
-        putEntry(exec, entry, propertyName, jsUndefined(), thisObject);
+        PutPropertySlot slot(thisObject);
+        putEntry(exec, entry, propertyName, jsUndefined(), slot);
     }
 
     return true;

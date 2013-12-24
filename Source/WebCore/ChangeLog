@@ -1,3 +1,24 @@
+2013-12-23  Oliver Hunt  <oliver@apple.com>
+
+        Refactor PutPropertySlot to be aware of custom properties
+        https://bugs.webkit.org/show_bug.cgi?id=126187
+
+        Reviewed by msaboff.
+
+        Update the bindings code generation and custom objects
+        to the new function signatures
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject setValue:forKey:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::putByIndex):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_SetProperty):
+
 2013-12-23  Benjamin Poulain  <benjamin@webkit.org>
 
         Add class matching to the Selector Code Generator
