@@ -79,7 +79,8 @@ enum class FragmentRelation {
 
 enum class FunctionType {
     SimpleSelectorChecker,
-    SelectorCheckerWithCheckingContext
+    SelectorCheckerWithCheckingContext,
+    CannotCompile
 };
 
 struct SelectorFragment {
@@ -101,6 +102,7 @@ struct SelectorFragment {
     const QualifiedName* tagName;
     const AtomicString* id;
     Vector<const AtomicStringImpl*, 1> classNames;
+    HashSet<unsigned> pseudoClasses;
 };
 
 typedef JSC::MacroAssembler Assembler;
@@ -140,6 +142,7 @@ private:
     void generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch);
     void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch);
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
+    void generateElementIsFocused(Assembler::JumpList& failureCases);
 
     Assembler m_assembler;
     RegisterAllocator m_registerAllocator;
@@ -193,6 +196,23 @@ static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::
     return FragmentRelation::Descendant;
 }
 
+static inline FunctionType mostRestrictiveFunctionType(FunctionType a, FunctionType b)
+{
+    return std::max(a, b);
+}
+
+static inline FunctionType addPseudoType(CSSSelector::PseudoType type, HashSet<unsigned>& pseudoClasses)
+{
+    switch (type) {
+    case CSSSelector::PseudoFocus:
+        pseudoClasses.add(CSSSelector::PseudoFocus);
+        return FunctionType::SimpleSelectorChecker;
+    default:
+        break;
+    }
+    return FunctionType::CannotCompile;
+}
+
 inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelector)
     : m_stackAllocator(m_assembler)
     , m_functionType(FunctionType::SimpleSelectorChecker)
@@ -225,12 +245,16 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector* rootSelec
         case CSSSelector::Class:
             fragment.classNames.append(selector->value().impl());
             break;
+        case CSSSelector::PseudoClass:
+            m_functionType = mostRestrictiveFunctionType(m_functionType, addPseudoType(selector->pseudoType(), fragment.pseudoClasses));
+            if (m_functionType == FunctionType::CannotCompile)
+                goto CannotHandleSelector;
+            break;
         case CSSSelector::Unknown:
         case CSSSelector::Exact:
         case CSSSelector::Set:
         case CSSSelector::List:
         case CSSSelector::Hyphen:
-        case CSSSelector::PseudoClass:
         case CSSSelector::PseudoElement:
         case CSSSelector::Contain:
         case CSSSelector::Begin:
@@ -746,6 +770,10 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failure
 {
     if (fragment.tagName)
         generateElementHasTagName(failureCases, *(fragment.tagName));
+
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoFocus))
+        generateElementIsFocused(failureCases);
+
     generateElementDataMatching(failureCases, fragment);
 }
 
@@ -835,6 +863,15 @@ void SelectorCodeGenerator::generateElementHasClasses(Assembler::JumpList& failu
         // Success case.
         classFound.link(&m_assembler);
     }
+}
+
+void SelectorCodeGenerator::generateElementIsFocused(Assembler::JumpList& failureCases)
+{
+    Assembler::RegisterID elementAddress = elementAddressRegister;
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    functionCall.setFunctionAddress(SelectorChecker::matchesFocusPseudoClass);
+    functionCall.setFirstArgument(elementAddress);
+    failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
 }
 
 }; // namespace SelectorCompiler.

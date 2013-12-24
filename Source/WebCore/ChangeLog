@@ -1,3 +1,16 @@
+2013-12-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add the pseudo class :focus to the Selector Code Generator
+        https://bugs.webkit.org/show_bug.cgi?id=126189
+
+        Reviewed by Ryosuke Niwa.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::addPseudoType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::SelectorCodeGenerator):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsFocused):
+
 2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove boolean argument from Element::setChildrenAffectBy* methods
