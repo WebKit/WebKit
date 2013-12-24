@@ -35,6 +35,7 @@
 #include <WebCore/PageGroup.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -44,7 +45,7 @@ typedef HashMap<uint64_t, StorageNamespaceImpl*> LocalStorageNamespaceMap;
 
 static LocalStorageNamespaceMap& localStorageNamespaceMap()
 {
-    DEFINE_STATIC_LOCAL(LocalStorageNamespaceMap, localStorageNamespaceMap, ());
+    static NeverDestroyed<LocalStorageNamespaceMap> localStorageNamespaceMap;
     return localStorageNamespaceMap;
 }
 

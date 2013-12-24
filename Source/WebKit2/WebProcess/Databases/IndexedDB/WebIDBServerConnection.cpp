@@ -36,7 +36,6 @@
 #include "SecurityOriginData.h"
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
-
 #include <WebCore/IDBDatabaseMetadata.h>
 #include <WebCore/SecurityOrigin.h>
 
@@ -47,7 +46,7 @@ namespace WebKit {
 static uint64_t generateServerConnectionIdentifier()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(uint64_t, identifier, (0));
+    static uint64_t identifier = 0;
     return ++identifier;
 }
 

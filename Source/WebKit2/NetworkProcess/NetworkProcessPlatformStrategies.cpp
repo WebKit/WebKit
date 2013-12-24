@@ -27,6 +27,7 @@
 #include "NetworkProcessPlatformStrategies.h"
 
 #include <WebCore/BlobRegistryImpl.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -34,8 +35,8 @@ namespace WebKit {
 
 void NetworkProcessPlatformStrategies::initialize()
 {
-    DEFINE_STATIC_LOCAL(NetworkProcessPlatformStrategies, platformStrategies, ());
-    setPlatformStrategies(&platformStrategies);
+    static NeverDestroyed<NetworkProcessPlatformStrategies> platformStrategies;
+    setPlatformStrategies(&platformStrategies.get());
 }
 
 CookiesStrategy* NetworkProcessPlatformStrategies::createCookiesStrategy()

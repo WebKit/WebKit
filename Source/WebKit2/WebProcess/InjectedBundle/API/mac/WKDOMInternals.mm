@@ -33,6 +33,7 @@
 #import <WebCore/Node.h>
 #import <WebCore/Range.h>
 #import <WebCore/Text.h>
+#import <wtf/NeverDestroyed.h>
 
 // Classes to instantiate.
 #import "WKDOMElement.h"
@@ -48,15 +49,13 @@ static WKDOMType toWKDOMType(WebCoreType impl, DOMCache<WebCoreType, WKDOMType>&
 
 DOMCache<WebCore::Node*, WKDOMNode *>& WKDOMNodeCache()
 {
-    typedef DOMCache<WebCore::Node*, WKDOMNode *> Cache;
-    DEFINE_STATIC_LOCAL(Cache, cache, ());
+    static NeverDestroyed<DOMCache<WebCore::Node*, WKDOMNode *>> cache;
     return cache;
 }
 
 DOMCache<WebCore::Range*, WKDOMRange *>& WKDOMRangeCache()
 {
-    typedef DOMCache<WebCore::Range*, WKDOMRange *> Cache;
-    DEFINE_STATIC_LOCAL(Cache, cache, ());
+    static NeverDestroyed<DOMCache<WebCore::Range*, WKDOMRange *>> cache;
     return cache;
 }
 

@@ -57,7 +57,7 @@ namespace WebKit {
 
 NetworkProcess& NetworkProcess::shared()
 {
-    DEFINE_STATIC_LOCAL(NetworkProcess, networkProcess, ());
+    static NeverDestroyed<NetworkProcess> networkProcess;
     return networkProcess;
 }
 
@@ -88,7 +88,7 @@ AuthenticationManager& NetworkProcess::authenticationManager()
 
 DownloadManager& NetworkProcess::downloadManager()
 {
-    DEFINE_STATIC_LOCAL(DownloadManager, downloadManager, (this));
+    static NeverDestroyed<DownloadManager> downloadManager(this);
     return downloadManager;
 }
 

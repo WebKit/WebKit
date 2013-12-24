@@ -29,18 +29,22 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #include <wtf/Noncopyable.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
 class CookieStorageShim {
     WTF_MAKE_NONCOPYABLE(CookieStorageShim);
+    friend NeverDestroyed<CookieStorageShim>;
 public:
     static CookieStorageShim& shared();
 
     void initialize();
 
 private:
-    CookieStorageShim() { };
+    CookieStorageShim()
+    {
+    }
 };
 
 }

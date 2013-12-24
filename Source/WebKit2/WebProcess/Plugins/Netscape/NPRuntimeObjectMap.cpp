@@ -44,6 +44,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageThrottler.h>
 #include <WebCore/ScriptController.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
 using namespace WebCore;
@@ -258,7 +259,7 @@ ExecState* NPRuntimeObjectMap::globalExec() const
 
 static String& globalExceptionString()
 {
-    DEFINE_STATIC_LOCAL(String, exceptionString, ());
+    static NeverDestroyed<String> exceptionString;
     return exceptionString;
 }
 

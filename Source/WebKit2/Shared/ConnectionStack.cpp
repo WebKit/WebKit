@@ -26,12 +26,13 @@
 #include "config.h"
 #include "ConnectionStack.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebKit {
 
 ConnectionStack& ConnectionStack::shared()
 {
-    DEFINE_STATIC_LOCAL(ConnectionStack, connectionStack, ());
-
+    static NeverDestroyed<ConnectionStack> connectionStack;
     return connectionStack;
 }
 

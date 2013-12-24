@@ -46,6 +46,7 @@
 #include <WebCore/SuddenTermination.h>
 #include <WebCore/URL.h>
 #include <stdio.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -74,7 +75,7 @@ static uint64_t generatePageID()
 static WebProcessProxy::WebPageProxyMap& globalPageMap()
 {
     ASSERT(RunLoop::isMain());
-    DEFINE_STATIC_LOCAL(WebProcessProxy::WebPageProxyMap, pageMap, ());
+    static NeverDestroyed<WebProcessProxy::WebPageProxyMap> pageMap;
     return pageMap;
 }
 

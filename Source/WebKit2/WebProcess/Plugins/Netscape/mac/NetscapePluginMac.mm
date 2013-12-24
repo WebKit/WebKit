@@ -36,6 +36,7 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/NotImplemented.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -196,8 +197,7 @@ typedef HashMap<WindowRef, NetscapePlugin*> WindowMap;
 
 static WindowMap& windowMap()
 {
-    DEFINE_STATIC_LOCAL(WindowMap, windowMap, ());
-
+    static NeverDestroyed<WindowMap windowMap;
     return windowMap;
 }
 #endif

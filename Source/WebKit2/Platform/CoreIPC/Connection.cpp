@@ -28,6 +28,7 @@
 
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/threads/BinarySemaphore.h>
@@ -63,13 +64,13 @@ private:
     typedef HashMap<RunLoop*, SyncMessageState*> SyncMessageStateMap;
     static SyncMessageStateMap& syncMessageStateMap()
     {
-        DEFINE_STATIC_LOCAL(SyncMessageStateMap, syncMessageStateMap, ());
+        static NeverDestroyed<SyncMessageStateMap> syncMessageStateMap;
         return syncMessageStateMap;
     }
 
     static Mutex& syncMessageStateMapMutex()
     {
-        DEFINE_STATIC_LOCAL(Mutex, syncMessageStateMapMutex, ());
+        static NeverDestroyed<Mutex> syncMessageStateMapMutex;
         return syncMessageStateMapMutex;
     }
 

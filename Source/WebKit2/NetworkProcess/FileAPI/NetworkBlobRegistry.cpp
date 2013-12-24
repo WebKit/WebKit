@@ -31,6 +31,7 @@
 #include "SandboxExtension.h"
 #include <WebCore/BlobRegistryImpl.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -39,7 +40,7 @@ namespace WebKit {
 NetworkBlobRegistry& NetworkBlobRegistry::shared()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(NetworkBlobRegistry, registry, ());
+    static NeverDestroyed<NetworkBlobRegistry> registry;
     return registry;
 }
 

@@ -90,6 +90,7 @@
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/WindowFeatures.h>
+#include <wtf/NeverDestroyed.h>
 #include <stdio.h>
 
 #if USE(COORDINATED_GRAPHICS)
@@ -129,6 +130,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebP
 
 class ExceededDatabaseQuotaRecords {
     WTF_MAKE_NONCOPYABLE(ExceededDatabaseQuotaRecords); WTF_MAKE_FAST_ALLOCATED;
+    friend NeverDestroyed<ExceededDatabaseQuotaRecords>;
 public:
     struct Record {
         uint64_t frameID;
@@ -163,7 +165,7 @@ private:
 
 ExceededDatabaseQuotaRecords& ExceededDatabaseQuotaRecords::shared()
 {
-    DEFINE_STATIC_LOCAL(ExceededDatabaseQuotaRecords, records, ());
+    static NeverDestroyed<ExceededDatabaseQuotaRecords> records;
     return records;
 }
 
@@ -1058,10 +1060,11 @@ void WebPageProxy::setMaintainsInactiveSelection(bool newValue)
     
 void WebPageProxy::executeEditCommand(const String& commandName)
 {
+    static NeverDestroyed<String> ignoreSpellingCommandName(ASCIILiteral("ignoreSpelling"));
+
     if (!isValid())
         return;
 
-    DEFINE_STATIC_LOCAL(String, ignoreSpellingCommandName, (ASCIILiteral("ignoreSpelling")));
     if (commandName == ignoreSpellingCommandName)
         ++m_pendingLearnOrIgnoreWordMessageCount;
 

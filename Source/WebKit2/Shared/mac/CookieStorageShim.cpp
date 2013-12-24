@@ -58,7 +58,7 @@ static CFDictionaryRef webKitCookieStorageCopyRequestHeaderFieldsForURL(CFHTTPCo
 
 CookieStorageShim& CookieStorageShim::shared()
 {
-    DEFINE_STATIC_LOCAL(CookieStorageShim, storage, ());
+    static NeverDestroyed<CookieStorageShim> storage;
     return storage;
 }
 

@@ -29,6 +29,7 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/ScriptController.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -38,7 +39,7 @@ typedef HashMap<DOMWrapperWorld*, InjectedBundleScriptWorld*> WorldMap;
 
 static WorldMap& allWorlds()
 {
-    DEFINE_STATIC_LOCAL(WorldMap, map, ());
+    static NeverDestroyed<WorldMap> map;
     return map;
 }
 

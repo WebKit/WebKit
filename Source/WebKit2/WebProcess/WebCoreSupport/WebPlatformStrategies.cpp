@@ -74,8 +74,8 @@ namespace WebKit {
 
 void WebPlatformStrategies::initialize()
 {
-    DEFINE_STATIC_LOCAL(WebPlatformStrategies, platformStrategies, ());
-    setPlatformStrategies(&platformStrategies);
+    static NeverDestroyed<WebPlatformStrategies> platformStrategies;
+    setPlatformStrategies(&platformStrategies.get());
 }
 
 WebPlatformStrategies::WebPlatformStrategies()

@@ -31,6 +31,7 @@
 
 #include "APIArray.h"
 #include <WebCore/ContextMenuItem.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
@@ -57,7 +58,7 @@ PassRefPtr<WebContextMenuItem> WebContextMenuItem::create(const String& title, b
 
 WebContextMenuItem* WebContextMenuItem::separatorItem()
 {
-    DEFINE_STATIC_LOCAL(WebContextMenuItem*, separatorItem, (adoptRef(new WebContextMenuItem(WebContextMenuItemData(WebCore::SeparatorType, WebCore::ContextMenuItemTagNoAction, String(), true, false))).leakRef()));
+    static WebContextMenuItem* separatorItem = new WebContextMenuItem(WebContextMenuItemData(WebCore::SeparatorType, WebCore::ContextMenuItemTagNoAction, String(), true, false));
     return separatorItem;
 }
 

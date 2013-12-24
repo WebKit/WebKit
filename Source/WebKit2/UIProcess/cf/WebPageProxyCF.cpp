@@ -41,8 +41,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryKey, (CFSTR("SessionHistory")));
-DEFINE_STATIC_GETTER(CFStringRef, ProvisionalURLKey, (CFSTR("ProvisionalURL")));
+static CFStringRef sessionHistoryKey = CFSTR("SessionHistory");
+static CFStringRef provisionalURLKey = CFSTR("ProvisionalURL");
 
 static const UInt32 CurrentSessionStateDataVersion = 2;
 
@@ -54,7 +54,7 @@ PassRefPtr<API::Data> WebPageProxy::sessionStateData(WebPageProxySessionStateFil
 
     RetainPtr<CFDictionaryRef> sessionHistoryDictionary = adoptCF(m_backForwardList->createCFDictionaryRepresentation(filter, context));
     if (sessionHistoryDictionary) {
-        keys[numValues] = SessionHistoryKey();
+        keys[numValues] = sessionHistoryKey;
         values[numValues] = sessionHistoryDictionary.get();
         ++numValues;
     }
@@ -66,7 +66,7 @@ PassRefPtr<API::Data> WebPageProxy::sessionStateData(WebPageProxySessionStateFil
             provisionalURL = m_mainFrame->provisionalURL();
         if (!provisionalURL.isEmpty()) {
             provisionalURLString = provisionalURL.createCFString();
-            keys[numValues] = ProvisionalURLKey();
+            keys[numValues] = provisionalURLKey;
             values[numValues] = provisionalURLString.get();
             ++numValues;
         }
@@ -136,7 +136,7 @@ void WebPageProxy::restoreFromSessionStateData(API::Data* apiData)
     }
 
     CFDictionaryRef backForwardListDictionary = 0;
-    if (CFTypeRef value = CFDictionaryGetValue(static_cast<CFDictionaryRef>(propertyList.get()), SessionHistoryKey())) {
+    if (CFTypeRef value = CFDictionaryGetValue(static_cast<CFDictionaryRef>(propertyList.get()), sessionHistoryKey)) {
         if (CFGetTypeID(value) != CFDictionaryGetTypeID())
             LOG(SessionState, "SessionState dictionary has a SessionHistory key, but the value is not a dictionary");
         else
@@ -144,7 +144,7 @@ void WebPageProxy::restoreFromSessionStateData(API::Data* apiData)
     }
 
     CFStringRef provisionalURL = 0;
-    if (CFTypeRef value = CFDictionaryGetValue(static_cast<CFDictionaryRef>(propertyList.get()), ProvisionalURLKey())) {
+    if (CFTypeRef value = CFDictionaryGetValue(static_cast<CFDictionaryRef>(propertyList.get()), provisionalURLKey)) {
         if (CFGetTypeID(value) != CFStringGetTypeID())
             LOG(SessionState, "SessionState dictionary has a ProvisionalValue key, but the value is not a string");
         else

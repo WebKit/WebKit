@@ -1,3 +1,118 @@
+2013-12-22  Sam Weinig  <sam@webkit.org>
+
+        [WK2] Replace usage of DEFINE_STATIC_LOCAL with NeverDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=126144
+
+        Reviewed by Anders Carlsson.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::shared):
+        * DatabaseProcess/DatabaseProcess.h:
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::shared):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::shared):
+        (WebKit::NetworkProcess::downloadManager):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        (WebKit::NetworkProcessPlatformStrategies::initialize):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::privateBrowsingStorageSessionIdentifierBase):
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::SyncMessageState::syncMessageStateMap):
+        (CoreIPC::Connection::SyncMessageState::syncMessageStateMapMutex):
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::shared):
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::fullscreenWindowTracker):
+        * Shared/ConnectionStack.cpp:
+        (WebKit::ConnectionStack::shared):
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::initializedNetscapePluginModules):
+        * Shared/WebContextMenuItem.cpp:
+        (WebKit::WebContextMenuItem::separatorItem):
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::boolTestRunnerOverridesMap):
+        * Shared/mac/CookieStorageShim.cpp:
+        (WebKit::CookieStorageShim::shared):
+        * Shared/mac/CookieStorageShim.h:
+        (WebKit::CookieStorageShim::CookieStorageShim):
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::shared):
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::contexts):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::originKey):
+        (WebKit::WebDatabaseManagerProxy::originQuotaKey):
+        (WebKit::WebDatabaseManagerProxy::originUsageKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsNameKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsDisplayNameKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorPageGroups::shared):
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::webPageGroupMap):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::ExceededDatabaseQuotaRecords::shared):
+        (WebKit::WebPageProxy::executeEditCommand):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::globalPageMap):
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::SessionHistoryCurrentVersion):
+        (WebKit::createEmptySessionHistoryDictionary):
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation):
+        (WebKit::WebBackForwardList::restoreFromCFDictionaryRepresentation):
+        (WebKit::WebBackForwardList::restoreFromV0CFDictionaryRepresentation):
+        (WebKit::WebBackForwardList::restoreFromV1CFDictionaryRepresentation):
+        (WebKit::extractBackForwardListEntriesFromArray):
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::sessionStateData):
+        (WebKit::WebPageProxy::restoreFromSessionStateData):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::standardUserAgent):
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        (WebKit::sharedDatabaseBackendMap):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::generateServerConnectionIdentifier):
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        (WebKit::WKDOMNodeCache):
+        (WebKit::WKDOMRangeCache):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::domHandleCache):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::domHandleCache):
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp:
+        (WebKit::allExtensions):
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp:
+        (WebKit::allWorlds):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::globalExceptionString):
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::windowMap):
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::localStorageNamespaceMap):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::didBeginEditing):
+        (WebKit::WebEditorClient::respondToChangedContents):
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        (WebKit::WebEditorClient::didEndEditing):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldFallBack):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::initialize):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::idToHistoryItemMap):
+        (WebKit::historyItemToIDMap):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::downloadManager):
+        * WebProcess/WebProcess.h:
+        * config.h:
+
 2013-12-23  Tim Horton  <timothy_horton@apple.com>
 
         Fix the iOS build after r161013 and r160672.

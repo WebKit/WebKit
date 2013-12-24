@@ -35,10 +35,12 @@
 #include <WebCore/SharedWorkerStrategy.h>
 #include <WebCore/StorageStrategy.h>
 #include <WebCore/VisitedLinkStrategy.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
 class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::StorageStrategy, private WebCore::VisitedLinkStrategy {
+    friend NeverDestroyed<WebPlatformStrategies>;
 public:
     static void initialize();
     

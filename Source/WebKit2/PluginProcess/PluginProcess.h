@@ -30,6 +30,7 @@
 
 #include "ChildProcess.h"
 #include <wtf/Forward.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -40,6 +41,7 @@ struct PluginProcessCreationParameters;
         
 class PluginProcess : public ChildProcess {
     WTF_MAKE_NONCOPYABLE(PluginProcess);
+    friend NeverDestroyed<PluginProcess>;
 public:
     static PluginProcess& shared();
 

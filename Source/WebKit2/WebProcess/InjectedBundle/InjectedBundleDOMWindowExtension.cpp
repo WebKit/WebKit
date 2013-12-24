@@ -34,6 +34,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -42,7 +43,7 @@ namespace WebKit {
 typedef HashMap<WebCore::DOMWindowExtension*, InjectedBundleDOMWindowExtension*> ExtensionMap;
 static ExtensionMap& allExtensions()
 {
-    DEFINE_STATIC_LOCAL(ExtensionMap, map, ());
+    static NeverDestroyed<ExtensionMap> map;
     return map;
 }
 

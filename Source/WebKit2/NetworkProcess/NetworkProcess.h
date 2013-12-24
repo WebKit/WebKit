@@ -34,6 +34,7 @@
 #include "MessageReceiverMap.h"
 #include "NetworkResourceLoadScheduler.h"
 #include <wtf/Forward.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 class CertificateInfo;
@@ -47,6 +48,8 @@ struct NetworkProcessCreationParameters;
 
 class NetworkProcess : public ChildProcess, private DownloadManager::Client {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
+    friend NeverDestroyed<NetworkProcess>;
+    friend NeverDestroyed<DownloadManager>;
 public:
     static NetworkProcess& shared();
 

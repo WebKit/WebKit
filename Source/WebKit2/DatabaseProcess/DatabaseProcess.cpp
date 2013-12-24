@@ -42,7 +42,7 @@ namespace WebKit {
 
 DatabaseProcess& DatabaseProcess::shared()
 {
-    DEFINE_STATIC_LOCAL(DatabaseProcess, databaseProcess, ());
+    static NeverDestroyed<DatabaseProcess> databaseProcess;
     return databaseProcess;
 }
 

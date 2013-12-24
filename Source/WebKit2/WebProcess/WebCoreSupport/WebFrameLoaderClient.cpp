@@ -78,6 +78,7 @@
 #include <WebCore/UIEventWithKeyState.h>
 #include <WebCore/Widget.h>
 #include <WebCore/WindowFeatures.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -1073,13 +1074,13 @@ ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const ResourceResp
 
 bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error)
 {
-    DEFINE_STATIC_LOCAL(const ResourceError, cancelledError, (this->cancelledError(ResourceRequest())));
-    DEFINE_STATIC_LOCAL(const ResourceError, pluginWillHandleLoadError, (this->pluginWillHandleLoadError(ResourceResponse())));
+    static NeverDestroyed<const ResourceError> cancelledError(this->cancelledError(ResourceRequest()));
+    static NeverDestroyed<const ResourceError> pluginWillHandleLoadError(this->pluginWillHandleLoadError(ResourceResponse()));
 
-    if (error.errorCode() == cancelledError.errorCode() && error.domain() == cancelledError.domain())
+    if (error.errorCode() == cancelledError.get().errorCode() && error.domain() == cancelledError.get().domain())
         return false;
 
-    if (error.errorCode() == pluginWillHandleLoadError.errorCode() && error.domain() == pluginWillHandleLoadError.domain())
+    if (error.errorCode() == pluginWillHandleLoadError.get().errorCode() && error.domain() == pluginWillHandleLoadError.get().domain())
         return false;
 
     return true;

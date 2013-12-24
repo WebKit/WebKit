@@ -50,7 +50,7 @@ namespace WebKit {
 
 PluginProcess& PluginProcess::shared()
 {
-    DEFINE_STATIC_LOCAL(PluginProcess, pluginProcess, ());
+    static NeverDestroyed<PluginProcess> pluginProcess;
     return pluginProcess;
 }
 

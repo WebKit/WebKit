@@ -40,6 +40,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -84,6 +85,7 @@ class WebToDatabaseProcessConnection;
 #endif
 
 class WebProcess : public ChildProcess, private DownloadManager::Client {
+    friend NeverDestroyed<DownloadManager>;
 public:
     static WebProcess& shared();
 

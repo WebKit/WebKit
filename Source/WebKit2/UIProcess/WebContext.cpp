@@ -114,8 +114,7 @@ PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
 
 static Vector<WebContext*>& contexts()
 {
-    DEFINE_STATIC_LOCAL(Vector<WebContext*>, contexts, ());
-
+    static NeverDestroyed<Vector<WebContext*>> contexts;
     return contexts;
 }
 

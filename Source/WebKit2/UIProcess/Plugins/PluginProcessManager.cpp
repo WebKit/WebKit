@@ -38,7 +38,7 @@ namespace WebKit {
 
 PluginProcessManager& PluginProcessManager::shared()
 {
-    DEFINE_STATIC_LOCAL(PluginProcessManager, pluginProcessManager, ());
+    static NeverDestroyed<PluginProcessManager> pluginProcessManager;
     return pluginProcessManager;
 }
 

@@ -34,6 +34,7 @@
 #include "WebDatabaseManagerMessages.h"
 #include "WebDatabaseManagerProxyMessages.h"
 #include "WebSecurityOrigin.h"
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -46,49 +47,49 @@ const char* WebDatabaseManagerProxy::supplementName()
 
 String WebDatabaseManagerProxy::originKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerOriginKey")));
+    static NeverDestroyed<String> key(ASCIILiteral("WebDatabaseManagerOriginKey"));
     return key;
 }
 
 String WebDatabaseManagerProxy::originQuotaKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerOriginQuotaKey")));
+    static NeverDestroyed<String> key(ASCIILiteral("WebDatabaseManagerOriginQuotaKey"));
     return key;
 }
 
 String WebDatabaseManagerProxy::originUsageKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerOriginUsageKey")));
+    static NeverDestroyed<String> key(ASCIILiteral("WebDatabaseManagerOriginUsageKey"));
     return key;
 }
 
 String WebDatabaseManagerProxy::databaseDetailsKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerDatabaseDetailsKey")));
+    static NeverDestroyed<String> key(ASCIILiteral("WebDatabaseManagerDatabaseDetailsKey"));
     return key;
 }
 
 String WebDatabaseManagerProxy::databaseDetailsNameKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerDatabaseDetailsNameKey")));
+    static NeverDestroyed<String> key(ASCIILiteral("WebDatabaseManagerDatabaseDetailsNameKey"));
     return key;
 }
 
 String WebDatabaseManagerProxy::databaseDetailsDisplayNameKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerDatabaseDetailsDisplayNameKey")));
+    static NeverDestroyed<String> key(ASCIILiteral("WebDatabaseManagerDatabaseDetailsDisplayNameKey"));
     return key;
 }
 
 String WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerDatabaseDetailsExpectedUsageKey")));
+    static NeverDestroyed<String> key(ASCIILiteral("WebDatabaseManagerDatabaseDetailsExpectedUsageKey"));
     return key;
 }
 
 String WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()
 {
-    DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral("WebDatabaseManagerDatabaseDetailsCurrentUsageKey")));
+    static NeverDestroyed<String> key(ASCIILiteral("WebDatabaseManagerDatabaseDetailsCurrentUsageKey"));
     return key;
 }
 

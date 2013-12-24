@@ -472,7 +472,7 @@ DownloadManager& WebProcess::downloadManager()
     ASSERT(!m_usesNetworkProcess);
 #endif
 
-    DEFINE_STATIC_LOCAL(DownloadManager, downloadManager, (this));
+    static NeverDestroyed<DownloadManager> downloadManager(this);
     return downloadManager;
 }
 

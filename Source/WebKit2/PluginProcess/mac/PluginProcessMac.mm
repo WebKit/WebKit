@@ -43,6 +43,7 @@
 #import <objc/runtime.h>
 #import <sysexits.h>
 #import <wtf/HashSet.h>
+#import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -127,7 +128,7 @@ template<typename T> void FullscreenWindowTracker::windowHidden(T window)
 
 static FullscreenWindowTracker& fullscreenWindowTracker()
 {
-    DEFINE_STATIC_LOCAL(FullscreenWindowTracker, fullscreenWindowTracker, ());
+    static NeverDestroyed<FullscreenWindowTracker> fullscreenWindowTracker;
     return fullscreenWindowTracker;
 }
 

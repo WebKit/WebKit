@@ -47,6 +47,7 @@
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebKitSystemInterface.h>
 #import <mach-o/dyld.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringConcatenate.h>
 
 @interface NSApplication (Details)
@@ -105,12 +106,12 @@ static String userVisibleWebKitVersionString()
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
-    DEFINE_STATIC_LOCAL(String, osVersion, (systemMarketingVersionForUserAgentString()));
-    DEFINE_STATIC_LOCAL(String, webKitVersion, (userVisibleWebKitVersionString()));
+    static NeverDestroyed<String> osVersion(systemMarketingVersionForUserAgentString());
+    static NeverDestroyed<String> webKitVersion(userVisibleWebKitVersionString());
 
     if (applicationNameForUserAgent.isEmpty())
-        return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)");
-    return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) ", applicationNameForUserAgent);
+        return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion.get(), ") AppleWebKit/", webKitVersion.get(), " (KHTML, like Gecko)");
+    return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion.get(), ") AppleWebKit/", webKitVersion.get(), " (KHTML, like Gecko) ", applicationNameForUserAgent);
 }
 
 void WebPageProxy::getIsSpeaking(bool& isSpeaking)

@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenate.h>
 
 namespace WebKit {
@@ -45,7 +46,7 @@ typedef HashMap<uint64_t, WebPageGroup*> WebPageGroupMap;
 
 static WebPageGroupMap& webPageGroupMap()
 {
-    DEFINE_STATIC_LOCAL(WebPageGroupMap, map, ());
+    static NeverDestroyed<WebPageGroupMap> map;
     return map;
 }
 

@@ -39,6 +39,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(INDEXED_DATABASE)
 #if ENABLE(DATABASE_PROCESS)
@@ -51,7 +52,7 @@ typedef HashMap<String, IDBDatabaseBackend*> IDBDatabaseBackendMap;
 
 static IDBDatabaseBackendMap& sharedDatabaseBackendMap()
 {
-    DEFINE_STATIC_LOCAL(IDBDatabaseBackendMap, databaseBackendMap, ());
+    static NeverDestroyed<IDBDatabaseBackendMap> databaseBackendMap;
     return databaseBackendMap;
 }
 

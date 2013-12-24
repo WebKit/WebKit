@@ -29,6 +29,7 @@
 #include "FontSmoothingLevel.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/Settings.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
@@ -37,7 +38,7 @@ namespace WebPreferencesKey {
 #define DEFINE_KEY_GETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
         const String& KeyLower##Key() \
         { \
-            DEFINE_STATIC_LOCAL(String, key, (ASCIILiteral(#KeyUpper))); \
+            static NeverDestroyed<String> key(ASCIILiteral(#KeyUpper)); \
             return key; \
         }
 
@@ -51,7 +52,7 @@ typedef HashMap<String, bool> BoolOverridesMap;
 
 static BoolOverridesMap& boolTestRunnerOverridesMap()
 {
-    DEFINE_STATIC_LOCAL(BoolOverridesMap, map, ());
+    static NeverDestroyed<BoolOverridesMap> map;
     return map;
 }
 

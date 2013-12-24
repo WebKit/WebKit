@@ -94,7 +94,7 @@ ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& reque
 static String& privateBrowsingStorageSessionIdentifierBase()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(String, base, ());
+    static NeverDestroyed<String> base;
     return base;
 }
 

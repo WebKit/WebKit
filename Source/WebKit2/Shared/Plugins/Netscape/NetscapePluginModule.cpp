@@ -31,13 +31,14 @@
 #include "Module.h"
 #include "NPRuntimeUtilities.h"
 #include "NetscapeBrowserFuncs.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
 
 static Vector<NetscapePluginModule*>& initializedNetscapePluginModules()
 {
-    DEFINE_STATIC_LOCAL(Vector<NetscapePluginModule*>, initializedNetscapePluginModules, ());
+    static NeverDestroyed<Vector<NetscapePluginModule*>> initializedNetscapePluginModules;
     return initializedNetscapePluginModules;
 }
 

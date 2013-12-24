@@ -30,6 +30,7 @@
 
 #include "ChildProcess.h"
 #include "UniqueIDBDatabaseIdentifier.h"
+#include <wtf/NeverDestroyed.h>
 
 class WorkQueue;
 
@@ -43,6 +44,7 @@ struct DatabaseProcessCreationParameters;
 
 class DatabaseProcess : public ChildProcess  {
     WTF_MAKE_NONCOPYABLE(DatabaseProcess);
+    friend NeverDestroyed<DatabaseProcess>;
 public:
     static DatabaseProcess& shared();
 

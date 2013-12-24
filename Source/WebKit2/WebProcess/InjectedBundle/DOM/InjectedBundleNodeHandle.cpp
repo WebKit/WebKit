@@ -48,6 +48,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/RenderObject.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -59,7 +60,7 @@ typedef HashMap<Node*, InjectedBundleNodeHandle*> DOMHandleCache;
 
 static DOMHandleCache& domHandleCache()
 {
-    DEFINE_STATIC_LOCAL(DOMHandleCache, cache, ());
+    static NeverDestroyed<DOMHandleCache> cache;
     return cache;
 }
 

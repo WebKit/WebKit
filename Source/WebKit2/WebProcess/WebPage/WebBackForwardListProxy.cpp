@@ -36,6 +36,7 @@
 #include <WebCore/HistoryItem.h>
 #include <WebCore/PageCache.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
@@ -49,13 +50,13 @@ typedef HashMap<RefPtr<HistoryItem>, uint64_t> HistoryItemToIDMap;
 
 static IDToHistoryItemMap& idToHistoryItemMap()
 {
-    DEFINE_STATIC_LOCAL(IDToHistoryItemMap, map, ());
+    static NeverDestroyed<IDToHistoryItemMap> map;;
     return map;
 } 
 
 static HistoryItemToIDMap& historyItemToIDMap()
 {
-    DEFINE_STATIC_LOCAL(HistoryItemToIDMap, map, ());
+    static NeverDestroyed<HistoryItemToIDMap> map;
     return map;
 } 
 

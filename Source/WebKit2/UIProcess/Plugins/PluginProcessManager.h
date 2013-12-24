@@ -34,6 +34,7 @@
 #include "WebProcessProxyMessages.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -50,6 +51,7 @@ class WebPluginSiteDataManager;
 
 class PluginProcessManager {
     WTF_MAKE_NONCOPYABLE(PluginProcessManager);
+    friend NeverDestroyed<PluginProcessManager>;
 public:
     static PluginProcessManager& shared();
 
