@@ -1,3 +1,15 @@
+2013-12-24  Radu Stavila  <stavila@adobe.com>
+
+        Rename fast/regions/repaint/increasing-region-content-height.html to something more clear
+        https://bugs.webkit.org/show_bug.cgi?id=126209
+
+        Reviewed by Mihnea Ovidenie.
+
+        Renamed test file name to better reflect the scenario it tests.
+
+        * fast/regions/repaint/repaint-element-inside-relative-region-expected.txt: Renamed from LayoutTests/fast/regions/repaint/increasing-region-content-height-expected.txt.
+        * fast/regions/repaint/repaint-element-inside-relative-region.html: Renamed from LayoutTests/fast/regions/repaint/increasing-region-content-height.html.
+
 2013-12-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Suppress assertions in js/dom/dfg-custom-getter-throw.html and js/dom/dfg-custom-getter-throw-inlined.html for now.
