@@ -738,6 +738,7 @@ void PlatformCALayerMac::updateCustomAppearance(GraphicsLayer::CustomAppearance 
 {
     m_customAppearance = appearance;
 
+#if ENABLE(RUBBER_BANDING)
     switch (appearance) {
     case GraphicsLayer::NoCustomAppearance:
         ScrollbarThemeMac::removeOverhangAreaBackground(platformLayer());
@@ -750,6 +751,7 @@ void PlatformCALayerMac::updateCustomAppearance(GraphicsLayer::CustomAppearance 
         ScrollbarThemeMac::setUpOverhangAreaShadow(platformLayer());
         break;
     }
+#endif
 }
 
 TiledBacking* PlatformCALayerMac::tiledBacking()

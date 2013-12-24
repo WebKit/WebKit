@@ -61,6 +61,7 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 
 static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearance customAppearance)
 {
+#if ENABLE(RUBBER_BANDING)
     switch (customAppearance) {
     case GraphicsLayer::NoCustomAppearance:
         ScrollbarThemeMac::removeOverhangAreaBackground(layer);
@@ -73,6 +74,9 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
         ScrollbarThemeMac::setUpOverhangAreaShadow(layer);
         break;
     }
+#else
+    UNUSED_PARAM(customAppearance);
+#endif
 }
 
 void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeTransaction::LayerProperties properties, RelatedLayerMap relatedLayers)

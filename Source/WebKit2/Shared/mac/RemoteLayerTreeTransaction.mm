@@ -31,6 +31,7 @@
 #import "MessageEncoder.h"
 #import "PlatformCALayerRemote.h"
 #import "WebCoreArgumentCoders.h"
+#import <QuartzCore/QuartzCore.h>
 #import <WebCore/TextStream.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/StringBuilder.h>
