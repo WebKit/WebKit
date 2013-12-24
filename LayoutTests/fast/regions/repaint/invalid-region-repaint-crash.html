@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../repaint/resources/text-based-repaint.js"></script>
+        <style>
+            .namedFlow1 { -webkit-flow-into: flow1; }
+            .regionFlow1 { -webkit-flow-from: flow1; }
+
+            .namedFlow2 { -webkit-flow-into: flow2; }
+            .regionFlow2 { -webkit-flow-from: flow2; }
+
+            #r1 { width: 50px; height: 100px; background-color: blue; }
+            #r2 { width: 50px; height: 50px; background-color: green; }
+            #r3 { width: 50px; height: 150px; background-color: orange; }
+            #container { position: absolute; top: 50px; left: 50px; }
+        </style>
+    </head>
+    <body onload="runRepaintTest();">
+        <p>Test that an invalid region, part of a dependency cycle, does not try to repaint content from its corresponding named flow.</p>
+        <p>On success it should not crash and you should see 3 rectangles painted in the following order: green, blue, orange.</p>
+
+        <div class="namedFlow1">
+            <div id="r1" class="regionFlow2"></div>
+        </div>
+
+        <div class="namedFlow2">
+            <!--
+                In this test, r2 is considered invalid because adding it as a region would create a dependency cycle.
+                Because of this, r2 should behave like a normal div with green background.
+            -->
+            <div id="r2" class="regionFlow1"></div>
+        </div>
+
+        <div id="container">
+            <div id="r3" class="regionFlow1"></div>
+        </div>
+
+        <script>
+            function repaintTest()
+            {
+                var container = document.getElementById("container");
+                container.style.top = "100px";
+                container.style.left = "100px";
+            }
+        </script>
+    </body>
+</html>

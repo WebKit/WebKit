@@ -1,3 +1,13 @@
+2013-12-24  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Crash while repainting an invalid region
+        https://bugs.webkit.org/show_bug.cgi?id=126152
+
+        Reviewed by Daniel Bates.
+
+        * fast/regions/repaint/invalid-region-repaint-crash-expected.txt: Added.
+        * fast/regions/repaint/invalid-region-repaint-crash.html: Added.
+
 2013-12-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a test for reattaching collapsed whitespace when siblings change style

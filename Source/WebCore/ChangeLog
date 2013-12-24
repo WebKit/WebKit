@@ -1,3 +1,19 @@
+2013-12-24  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Crash while repainting an invalid region
+        https://bugs.webkit.org/show_bug.cgi?id=126152
+
+        Reviewed by Daniel Bates.
+
+        An invalid region, part of a dependency cycle, should not attempt to repaint content from
+        its associated named flow, otherwise there may be the case of an infinite repaint cycle,
+        resulting in a crash due to a stack overflow.
+
+        Test: fast/regions/repaint/invalid-region-repaint-crash.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::repaintIncludingDescendants):
+
 2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         XMLHttpRequest: status and statusText throw DOM Exception 11 when the state is UNSENT or OPENED.

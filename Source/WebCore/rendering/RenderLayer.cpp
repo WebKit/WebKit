@@ -6273,9 +6273,12 @@ void RenderLayer::repaintIncludingDescendants()
         curr->repaintIncludingDescendants();
 
     // If this is a region, we must also repaint the flow thread's layer since it is the one
-    // doing the actual painting of the flowed content.
-    if (renderer().isRenderNamedFlowFragmentContainer())
-        toRenderBlockFlow(&renderer())->renderNamedFlowFragment()->flowThread()->layer()->repaintIncludingDescendants();
+    // doing the actual painting of the flowed content, but only if the region is valid.
+    if (renderer().isRenderNamedFlowFragmentContainer()) {
+        RenderNamedFlowFragment* region = toRenderBlockFlow(renderer()).renderNamedFlowFragment();
+        if (region->isValid())
+            region->flowThread()->layer()->repaintIncludingDescendants();
+    }
 }
 
 #if USE(ACCELERATED_COMPOSITING)
