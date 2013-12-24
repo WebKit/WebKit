@@ -1,3 +1,15 @@
+2013-12-23  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Fix fast/regions/assert-flow-thread-compositing.html test description
+        https://bugs.webkit.org/show_bug.cgi?id=126203
+
+        Reviewed by Dirk Schulze.
+
+        Correct description of successful behaviour for fast/regions/assert-flow-thread-compositing.html.
+
+        * fast/regions/assert-flow-thread-compositing-expected.txt:
+        * fast/regions/assert-flow-thread-compositing.html:
+
 2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a test for submitting a form targeted at an iframe
