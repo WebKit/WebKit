@@ -143,6 +143,7 @@ private:
     void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch);
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
     void generateElementIsFocused(Assembler::JumpList& failureCases);
+    void generateElementIsLink(Assembler::JumpList& failureCases);
 
     Assembler m_assembler;
     RegisterAllocator m_registerAllocator;
@@ -204,6 +205,10 @@ static inline FunctionType mostRestrictiveFunctionType(FunctionType a, FunctionT
 static inline FunctionType addPseudoType(CSSSelector::PseudoType type, HashSet<unsigned>& pseudoClasses)
 {
     switch (type) {
+    case CSSSelector::PseudoAnyLink:
+    case CSSSelector::PseudoLink:
+        pseudoClasses.add(CSSSelector::PseudoLink);
+        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoFocus:
         pseudoClasses.add(CSSSelector::PseudoFocus);
         return FunctionType::SimpleSelectorChecker;
@@ -768,6 +773,9 @@ void SelectorCodeGenerator::generateBacktrackingTailsIfNeeded(const SelectorFrag
 
 void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoLink))
+        generateElementIsLink(failureCases);
+
     if (fragment.tagName)
         generateElementHasTagName(failureCases, *(fragment.tagName));
 
@@ -872,6 +880,11 @@ void SelectorCodeGenerator::generateElementIsFocused(Assembler::JumpList& failur
     functionCall.setFunctionAddress(SelectorChecker::matchesFocusPseudoClass);
     functionCall.setFirstArgument(elementAddress);
     failureCases.append(functionCall.callAndBranchOnCondition(Assembler::Zero));
+}
+
+void SelectorCodeGenerator::generateElementIsLink(Assembler::JumpList& failureCases)
+{
+    failureCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(elementAddressRegister, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink())));
 }
 
 }; // namespace SelectorCompiler.
