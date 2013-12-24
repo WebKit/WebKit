@@ -1,3 +1,23 @@
+2013-12-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r161051.
+        http://trac.webkit.org/changeset/161051
+        https://bugs.webkit.org/show_bug.cgi?id=45994
+
+        Caused two DFG tests to hit assertions due to a separate bug
+
+        * http/tests/xmlhttprequest/exceptions-expected.txt:
+        * http/tests/xmlhttprequest/exceptions.html:
+        * http/tests/xmlhttprequest/status-after-abort-expected.txt:
+        * http/tests/xmlhttprequest/zero-length-response-expected.txt:
+        * js/dom/dfg-custom-getter-throw-expected.txt:
+        * js/dom/script-tests/dfg-custom-getter-throw-inlined.js:
+        (foo):
+        (bar):
+        * js/dom/script-tests/dfg-custom-getter-throw.js:
+        (foo):
+        (bar):
+
 2013-12-24  Radu Stavila  <stavila@adobe.com>
 
         Rename fast/regions/repaint/increasing-region-content-height.html to something more clear

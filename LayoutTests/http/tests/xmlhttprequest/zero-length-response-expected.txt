@@ -8,14 +8,14 @@ after creation: Uninitialized
   ResponseXML serialized: n/a
 after setting onreadystatechange: Uninitialized
 onreadystatechange: Open
-  Status: 0
-  StatusText: ""
+  Exception getting status: InvalidStateError: DOM Exception 11
+  Exception getting StatusText: InvalidStateError: DOM Exception 11
   ResponseText: ""
   ResponseXML: null
   ResponseXML serialized: n/a
 after open(): Open
-  Status: 0
-  StatusText: ""
+  Exception getting status: InvalidStateError: DOM Exception 11
+  Exception getting StatusText: InvalidStateError: DOM Exception 11
   ResponseText: ""
   ResponseXML: null
   ResponseXML serialized: n/a

@@ -64,6 +64,8 @@
     
     shouldThrow('req.setRequestHeader()');
     shouldThrow('req.setRequestHeader("Foo")');
+    shouldThrow('req.status()');
+    shouldThrow('req.statusText()');
     
     req.send(null);
     log("send()");

@@ -85,8 +85,8 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
 
     const URL& url() const { return m_url; }
-    String statusText() const;
-    int status() const;
+    String statusText(ExceptionCode&) const;
+    int status(ExceptionCode&) const;
     State readyState() const;
     bool withCredentials() const { return m_includeCredentials; }
     void setWithCredentials(bool, ExceptionCode&);

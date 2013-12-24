@@ -1,3 +1,17 @@
+2013-12-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r161051.
+        http://trac.webkit.org/changeset/161051
+        https://bugs.webkit.org/show_bug.cgi?id=45994
+
+        Caused two DFG tests to hit assertions due to a separate bug
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::status):
+        (WebCore::XMLHttpRequest::statusText):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+
 2013-12-24  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Crash while repainting an invalid region

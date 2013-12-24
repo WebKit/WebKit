@@ -3,14 +3,13 @@ description(
 );
 
 function foo(x) {
-    return x.responseText;
+    return x.status;
 }
 
-function bar(binary) {
+function bar(doOpen) {
     var x = new XMLHttpRequest();
-    x.open("GET", "http://foo.bar.com/");
-    if (binary)
-        x.responseType = "arraybuffer";
+    if (doOpen)
+        x.open("GET", "http://foo.bar.com/");
     try {
         return "Returned result: " + foo(x);
     } catch (e) {
@@ -19,7 +18,7 @@ function bar(binary) {
 }
 
 for (var i = 0; i < 200; ++i) {
-    shouldBe("bar(i >= 100)", i >= 100 ? "\"Threw exception: Error: InvalidStateError: DOM Exception 11\"" : "\"Returned result: \"");
+    shouldBe("bar(i >= 100)", i >= 100 ? "\"Threw exception: Error: InvalidStateError: DOM Exception 11\"" : "\"Returned result: 0\"");
 }
 
 
