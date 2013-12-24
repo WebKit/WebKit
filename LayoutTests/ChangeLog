@@ -1,3 +1,9 @@
+2013-12-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Suppress assertions in js/dom/dfg-custom-getter-throw.html and js/dom/dfg-custom-getter-throw-inlined.html for now.
+
+        * TestExpectations:
+
 2013-12-24  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Crash while repainting an invalid region

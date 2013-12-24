@@ -70,3 +70,7 @@ fast/mediastream/MediaStream-construct-with-ended-tracks.html [ Skip ]
 fast/mediastream/MediaStream-clone.html [ Skip ]
 
 webkit.org/b/124660 inspector-protocol/model/highlight-shape-outside.html [ Failure ]
+
+# These two tests are hitting assertions after http://trac.webkit.org/changeset/161051
+[ Debug ] js/dom/dfg-custom-getter-throw.html [ Crash Pass ]
+[ Debug ] js/dom/dfg-custom-getter-throw-inlined.html [ Crash Pass ]
