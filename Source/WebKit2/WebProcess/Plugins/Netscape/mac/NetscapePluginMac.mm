@@ -197,7 +197,7 @@ typedef HashMap<WindowRef, NetscapePlugin*> WindowMap;
 
 static WindowMap& windowMap()
 {
-    static NeverDestroyed<WindowMap windowMap;
+    static NeverDestroyed<WindowMap> windowMap;
     return windowMap;
 }
 #endif

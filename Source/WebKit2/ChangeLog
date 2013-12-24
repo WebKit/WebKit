@@ -1,3 +1,10 @@
+2013-12-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        32-bit Mac build fix attempt after r161045.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::windowMap):
+
 2013-12-22  Sam Weinig  <sam@webkit.org>
 
         [WK2] Replace usage of DEFINE_STATIC_LOCAL with NeverDestroyed
