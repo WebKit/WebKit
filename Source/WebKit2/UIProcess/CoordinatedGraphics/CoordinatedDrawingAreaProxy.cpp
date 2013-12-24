@@ -336,8 +336,7 @@ void CoordinatedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
     // choose the most recent one, or the one that is closest to our current size.
 
     // The timeout, in seconds, we use when waiting for a DidUpdateBackingStoreState message when we're asked to paint.
-    static const double didUpdateBackingStoreStateTimeout = 0.5;
-    m_webPageProxy->process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_webPageProxy->pageID(), didUpdateBackingStoreStateTimeout);
+    m_webPageProxy->process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_webPageProxy->pageID(), std::chrono::milliseconds(500));
 #endif
 }
 

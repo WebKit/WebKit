@@ -1,3 +1,11 @@
+2013-12-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix for EFL after r161007
+
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState):
+        Changed the timeout parameter to std::chrono::milliseconds
+
 2013-12-23  Oliver Hunt  <oliver@apple.com>
 
         Refactor PutPropertySlot to be aware of custom properties
