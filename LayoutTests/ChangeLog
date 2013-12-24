@@ -1,5 +1,13 @@
 2013-12-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove the test expectations added after r161051 now that the changeset has been rolled out.
+
+        The assertion failure is tracked by https://webkit.org/b/126219.
+
+        * TestExpectations:
+
+2013-12-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed, rolling out r161051.
         http://trac.webkit.org/changeset/161051
         https://bugs.webkit.org/show_bug.cgi?id=45994
