@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
-
 #import "WebDynamicScrollBarsView.h"
 #import <WebCore/WebCoreFrameView.h>
 
@@ -64,5 +62,3 @@
 // scrollers from inside this class should not fire JS events.
 - (BOOL)inProgrammaticScroll;
 @end
-
-#endif // !PLATFORM(IOS)

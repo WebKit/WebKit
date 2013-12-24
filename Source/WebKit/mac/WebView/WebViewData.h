@@ -38,10 +38,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
-#import "WebCaretChangeListener.h"
-#endif
-
 namespace WebCore {
 class AlternativeTextUIController;
 class HistoryItem;
@@ -68,12 +64,6 @@ class Page;
 #endif
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(IOS)
 @class WebIndicateLayer;
-#endif
-
-#if PLATFORM(IOS)
-@class WAKWindow;
-@class WebEvent;
-@class WebFixedPositionContent;
 #endif
 
 extern BOOL applicationIsTerminating;
@@ -135,10 +125,6 @@ private:
     id editingDelegateForwarder;
     id scriptDebugDelegate;
     id historyDelegate;
-#if PLATFORM(IOS)
-    id resourceProgressDelegateForwarder;
-    id formDelegateForwarder;
-#endif
 
     WebInspector *inspector;
     WebNodeHighlight *currentNodeHighlight;
@@ -154,9 +140,6 @@ private:
     
     WebPreferences *preferences;
     BOOL useSiteSpecificSpoofing;
-#if PLATFORM(IOS)
-    NSURL *userStyleSheetLocation;
-#endif
 
     NSWindow *hostWindow;
 
@@ -170,9 +153,6 @@ private:
     void *observationInfo;
     
     BOOL closed;
-#if PLATFORM(IOS)
-    BOOL closing;
-#endif
     BOOL shouldCloseWithWindow;
     BOOL mainFrameDocumentReady;
     BOOL drawsBackground;
@@ -181,11 +161,7 @@ private:
     BOOL becomingFirstResponderFromOutside;
     BOOL usesPageCache;
 
-#if !PLATFORM(IOS)
     NSColor *backgroundColor;
-#else
-    CGColorRef backgroundColor;
-#endif
 
     NSString *mediaStyle;
     
@@ -199,29 +175,8 @@ private:
     BOOL dashboardBehaviorAllowWheelScrolling;
 #endif
     
-#if PLATFORM(IOS)
-    BOOL isStopping;
-
-    id UIKitDelegate;
-    id UIKitDelegateForwarder;
-
-    id WebMailDelegate;
-
-    BOOL allowsMessaging;
-    NSMutableSet *_caretChangeListeners;
-    id <WebCaretChangeListener> _caretChangeListener;
-
-    CGSize fixedLayoutSize;
-    BOOL mainViewIsScrollingOrZooming;
-    int32_t didDrawTiles;
-    WTF::Mutex pendingFixedPositionLayoutRectMutex;
-    CGRect pendingFixedPositionLayoutRect;
-#endif
-
-#if !PLATFORM(IOS)
     // WebKit has both a global plug-in database and a separate, per WebView plug-in database. Dashboard uses the per WebView database.
     WebPluginDatabase *pluginDatabase;
-#endif
     
     HashMap<unsigned long, RetainPtr<id>> identifierMap;
 
@@ -240,9 +195,7 @@ private:
     RefPtr<LayerFlushController> layerFlushController;
 #endif
 
-#if !PLATFORM(IOS)
     NSPasteboard *insertionPasteboard;
-#endif
             
     NSSize lastLayoutSize;
 
@@ -279,9 +232,6 @@ private:
     int validationMessageTimerMagnification;
 
     float customDeviceScaleFactor;
-#if PLATFORM(IOS)
-    WebFixedPositionContent* _fixedPositionContent;
-#endif
 
 #if USE(DICTATION_ALTERNATIVES)
     OwnPtr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;

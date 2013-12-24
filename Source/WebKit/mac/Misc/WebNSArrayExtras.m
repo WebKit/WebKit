@@ -46,7 +46,6 @@
 
 @end
 
-#if !PLATFORM(IOS)
 @implementation NSMutableArray (WebNSArrayExtras)
 
 - (void)_webkit_removeUselessMenuItemSeparators
@@ -73,4 +72,3 @@
 }
 
 @end
-#endif

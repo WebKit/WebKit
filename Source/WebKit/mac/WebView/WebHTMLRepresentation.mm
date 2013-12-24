@@ -266,7 +266,6 @@ static NSMutableArray *newArrayByConcatenatingArrays(NSArray *first, NSArray *se
     return [[_private->dataSource webFrame] DOMDocument];
 }
 
-#if !PLATFORM(IOS)
 - (NSAttributedString *)attributedText
 {
     // FIXME: Implement
@@ -277,7 +276,6 @@ static NSMutableArray *newArrayByConcatenatingArrays(NSArray *first, NSArray *se
 {
     return [WebHTMLConverter editingAttributedStringFromRange:Range::create(core(startNode)->document(), core(startNode), startOffset, core(endNode), endOffset).get()];
 }
-#endif
 
 static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
 {

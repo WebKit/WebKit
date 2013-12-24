@@ -288,18 +288,5 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
 #endif
 }
 
-#if PLATFORM(IOS)
-- (void)denyOnlyThisRequest
-{
-    ASSERT_NOT_REACHED();
-}
-
-- (BOOL)shouldClearCache
-{
-    ASSERT_NOT_REACHED();
-    return NO;
-}
-#endif
-
 @end
 #endif

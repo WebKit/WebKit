@@ -56,26 +56,6 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
-#import <WebCore/WebCoreThreadMessage.h>
-
-NSString *WebViewportInitialScaleKey = @"initial-scale";
-NSString *WebViewportMinimumScaleKey = @"minimum-scale";
-NSString *WebViewportMaximumScaleKey = @"maximum-scale";
-NSString *WebViewportUserScalableKey = @"user-scalable";
-NSString *WebViewportWidthKey        = @"width";
-NSString *WebViewportHeightKey       = @"height";
-NSString *WebViewportMinimalUIKey    = @"minimal-ui";
-
-static NSString *scaleKey = @"scale";
-static NSString *scaleIsInitialKey = @"scaleIsInitial";
-static NSString *scrollPointXKey = @"scrollPointX";
-static NSString *scrollPointYKey = @"scrollPointY";
-
-static NSString * const bookmarkIDKey = @"bookmarkID";
-static NSString * const sharedLinkUniqueIdentifierKey = @"sharedLinkUniqueIdentifier";
-#endif
-
 // Private keys used in the WebHistoryItem's dictionary representation.
 // see 3245793 for explanation of "lastVisitedDate"
 static NSString *lastVisitedTimeIntervalKey = @"lastVisitedDate";
@@ -107,23 +87,17 @@ static HistoryItemMap& historyItemWrappers()
 
 void WKNotifyHistoryItemChanged(HistoryItem*)
 {
-#if !PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter]
         postNotificationName:WebHistoryItemChangedNotification object:nil userInfo:nil];
-#else
-    WebThreadPostNotification(WebHistoryItemChangedNotification, nil, nil);
-#endif
 }
 
 @implementation WebHistoryItem
 
 + (void)initialize
 {
-#if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
-#endif
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
@@ -205,12 +179,10 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
     return nsStringNilIfEmpty(core(_private)->alternateTitle());
 }
 
-#if !PLATFORM(IOS)
 - (NSImage *)icon
 {
     return [[WebIconDatabase sharedIconDatabase] iconForURL:[self URLString] withSize:WebIconSmallSize];
 }
-#endif
 
 - (NSTimeInterval)lastVisitedTimeInterval
 {
@@ -418,29 +390,6 @@ WebHistoryItem *kit(HistoryItem* item)
         }
     }
 
-#if PLATFORM(IOS)
-    NSNumber *scaleValue = [dict objectForKey:scaleKey];
-    NSNumber *scaleIsInitialValue = [dict objectForKey:scaleIsInitialKey];
-    if (scaleValue && scaleIsInitialValue)
-        core(_private)->setScale([scaleValue floatValue], [scaleIsInitialValue boolValue]);
-
-    if (id viewportArguments = [dict objectForKey:@"WebViewportArguments"])
-        [self _setViewportArguments:viewportArguments];
-
-    NSNumber *scrollPointXValue = [dict objectForKey:scrollPointXKey];
-    NSNumber *scrollPointYValue = [dict objectForKey:scrollPointYKey];
-    if (scrollPointXValue && scrollPointYValue)
-        core(_private)->setScrollPoint(IntPoint([scrollPointXValue intValue], [scrollPointYValue intValue]));
-
-    uint32_t bookmarkIDValue = [[dict objectForKey:bookmarkIDKey] unsignedIntValue];
-    if (bookmarkIDValue)
-        core(_private)->setBookmarkID(bookmarkIDValue);
-
-    NSString *sharedLinkUniqueIdentifierValue = [dict objectForKey:sharedLinkUniqueIdentifierKey];
-    if (sharedLinkUniqueIdentifierValue)
-        core(_private)->setSharedLinkUniqueIdentifier(sharedLinkUniqueIdentifierValue);
-#endif
-
     return self;
 }
 
@@ -469,17 +418,7 @@ WebHistoryItem *kit(HistoryItem* item)
     return [self initWithURLString:[URL _web_originalDataAsString] title:title lastVisitedTimeInterval:0];
 }
 
-// FIXME: The only iOS difference here should be whether YES or NO is passed to dictionaryRepresentationIncludingChildren:
-#if PLATFORM(IOS)
 - (NSDictionary *)dictionaryRepresentation
-{
-    return [self dictionaryRepresentationIncludingChildren:YES];
-}
-
-- (NSDictionary *)dictionaryRepresentationIncludingChildren:(BOOL)includesChildren
-#else
-- (NSDictionary *)dictionaryRepresentation
-#endif
 {
     ASSERT_MAIN_THREAD();
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:8];
@@ -532,12 +471,8 @@ WebHistoryItem *kit(HistoryItem* item)
         [dict setObject:array forKey:weeklyVisitCountKey];
         [array release];
     }    
-
-#if PLATFORM(IOS)
-    if (includesChildren && coreItem->children().size()) {
-#else
+    
     if (coreItem->children().size()) {
-#endif
         const HistoryItemVector& children = coreItem->children();
         NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:children.size()];
         
@@ -545,27 +480,6 @@ WebHistoryItem *kit(HistoryItem* item)
             [childDicts addObject:[kit(children[i].get()) dictionaryRepresentation]];
         [dict setObject: childDicts forKey:childrenKey];
     }
-
-#if PLATFORM(IOS)
-    [dict setObject:[NSNumber numberWithFloat:core(_private)->scale()] forKey:scaleKey];
-    [dict setObject:[NSNumber numberWithBool:core(_private)->scaleIsInitial()] forKey:scaleIsInitialKey];
-
-    NSDictionary *viewportArguments = [self _viewportArguments];
-    if (viewportArguments)
-        [dict setObject:viewportArguments forKey:@"WebViewportArguments"];
-
-    IntPoint scrollPoint = core(_private)->scrollPoint();
-    [dict setObject:[NSNumber numberWithInt:scrollPoint.x()] forKey:scrollPointXKey];
-    [dict setObject:[NSNumber numberWithInt:scrollPoint.y()] forKey:scrollPointYKey];
-
-    uint32_t bookmarkID = core(_private)->bookmarkID();
-    if (bookmarkID)
-        [dict setObject:[NSNumber numberWithUnsignedInt:bookmarkID] forKey:bookmarkIDKey];
-
-    NSString *sharedLinkUniqueIdentifier = [self _sharedLinkUniqueIdentifier];
-    if (sharedLinkUniqueIdentifier)
-        [dict setObject:sharedLinkUniqueIdentifier forKey:sharedLinkUniqueIdentifierKey];
-#endif
 
     return dict;
 }
@@ -640,11 +554,9 @@ WebHistoryItem *kit(HistoryItem* item)
     return kit(core(_private)->targetItem());
 }
 
-#if !PLATFORM(IOS)
 + (void)_releaseAllPendingPageCaches
 {
 }
-#endif
 
 - (id)_transientPropertyForKey:(NSString *)key
 {
@@ -698,80 +610,6 @@ WebHistoryItem *kit(HistoryItem* item)
     *counts = coreItem->weeklyVisitCounts().data();
     return coreItem->weeklyVisitCounts().size();
 }
-
-#if PLATFORM(IOS)
-- (void)_setScale:(float)scale isInitial:(BOOL)aFlag
-{
-    core(_private)->setScale(scale, aFlag);
-}
-
-- (float)_scale
-{
-    return core(_private)->scale();
-}
-
-- (BOOL)_scaleIsInitial
-{
-    return core(_private)->scaleIsInitial();
-}
-
-- (NSDictionary *)_viewportArguments
-{
-    const ViewportArguments& viewportArguments = core(_private)->viewportArguments();
-    NSMutableDictionary *argumentsDictionary = [NSMutableDictionary dictionary];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.zoom] forKey:WebViewportInitialScaleKey];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.minZoom] forKey:WebViewportMinimumScaleKey];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.maxZoom] forKey:WebViewportMaximumScaleKey];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.width] forKey:WebViewportWidthKey];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.height] forKey:WebViewportHeightKey];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.userZoom] forKey:WebViewportUserScalableKey];
-    [argumentsDictionary setObject:[NSNumber numberWithBool:viewportArguments.minimalUI] forKey:WebViewportMinimalUIKey];
-    return argumentsDictionary;
-}
-
-- (void)_setViewportArguments:(NSDictionary *)arguments
-{
-    ViewportArguments viewportArguments;
-    viewportArguments.zoom = [[arguments objectForKey:WebViewportInitialScaleKey] floatValue];
-    viewportArguments.minZoom = [[arguments objectForKey:WebViewportMinimumScaleKey] floatValue];
-    viewportArguments.maxZoom = [[arguments objectForKey:WebViewportMaximumScaleKey] floatValue];
-    viewportArguments.width = [[arguments objectForKey:WebViewportWidthKey] floatValue];
-    viewportArguments.height = [[arguments objectForKey:WebViewportHeightKey] floatValue];
-    viewportArguments.userZoom = [[arguments objectForKey:WebViewportUserScalableKey] floatValue];
-    viewportArguments.minimalUI = [[arguments objectForKey:WebViewportMinimalUIKey] boolValue];
-    core(_private)->setViewportArguments(viewportArguments);
-}
-
-- (CGPoint)_scrollPoint
-{
-    return core(_private)->scrollPoint();
-}
-
-- (void)_setScrollPoint:(CGPoint)scrollPoint
-{
-    core(_private)->setScrollPoint(IntPoint(scrollPoint));
-}
-
-- (uint32_t)_bookmarkID
-{
-    return core(_private)->bookmarkID();
-}
-
-- (void)_setBookmarkID:(uint32_t)bookmarkID
-{
-    core(_private)->setBookmarkID(bookmarkID);
-}
-
-- (NSString *)_sharedLinkUniqueIdentifier
-{
-    return nsStringNilIfEmpty(core(_private)->sharedLinkUniqueIdentifier());
-}
-
-- (void)_setSharedLinkUniqueIdentifier:(NSString *)identifier
-{
-    core(_private)->setSharedLinkUniqueIdentifier(identifier);
-}
-#endif // PLATFORM(IOS)
 
 - (BOOL)_isInPageCache
 {

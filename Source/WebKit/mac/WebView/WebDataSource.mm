@@ -66,10 +66,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 
-#if PLATFORM(IOS)
-#import "WebPDFViewIOS.h"
-#endif
-
 using namespace WebCore;
 
 class WebDataSourcePrivate
@@ -79,9 +75,6 @@ public:
         : loader(loader)
         , representationFinishedLoading(NO)
         , includedInWebKitStatistics(NO)
-#if PLATFORM(IOS)
-        , _dataSourceDelegate(nil)
-#endif
     {
         ASSERT(this->loader);
     }
@@ -97,9 +90,6 @@ public:
     RetainPtr<id<WebDocumentRepresentation> > representation;
     BOOL representationFinishedLoading;
     BOOL includedInWebKitStatistics;
-#if PLATFORM(IOS)
-    NSObject<WebDataSourcePrivateDelegate> *_dataSourceDelegate;
-#endif
 };
 
 static inline WebDataSourcePrivate* toPrivate(void* privateAttribute)
@@ -153,11 +143,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 + (void)initialize
 {
     if (self == [WebDataSource class]) {
-#if !PLATFORM(IOS)
         JSC::initializeThreading();
         WTF::initializeMainThreadToProcessMainThread();
         RunLoop::initializeMainRunLoop();
-#endif
         WebCoreObjCFinalizeOnMainThread(self);
     }
 }
@@ -176,7 +164,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         toPrivate(_private)->loader->addAllArchiveResources([archive _coreLegacyWebArchive]);
 }
 
-#if !PLATFORM(IOS)
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL
 {
     if ([URL isFileURL])
@@ -195,7 +182,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     
     return nil;
 }
-#endif
 
 - (NSString *)_responseMIMEType
 {
@@ -219,13 +205,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
     toPrivate(_private)->loader->setDeferMainResourceDataLoad(flag);
 }
-
-#if PLATFORM(IOS)
-- (void)_setOverrideTextEncodingName:(NSString *)encoding
-{
-    toPrivate(_private)->loader->setOverrideEncoding([encoding UTF8String]);
-}
-#endif
 
 - (void)_setAllowToBeMemoryMapped
 {
@@ -319,13 +298,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         // Since this is a "secret default" we don't both registering it.
         BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
         if (!omitPDFSupport)
-#if PLATFORM(IOS)
-#define WebPDFRepresentation ([WebView _getPDFRepresentationClass])
-#endif
             addTypesFromClass(repTypes, [WebPDFRepresentation class], [WebPDFRepresentation supportedMIMETypes]);
-#if PLATFORM(IOS)
-#undef WebPDFRepresentation
-#endif
     }
     
     if (!addedImageTypes && !allowImageTypeOmission) {
@@ -416,12 +389,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 - (void)_makeRepresentation
 {
     Class repClass = [[self class] _representationClassForMIMEType:[self _responseMIMEType] allowingPlugins:[[[self _webView] preferences] arePlugInsEnabled]];
-
-#if PLATFORM(IOS)
-    if ([repClass respondsToSelector:@selector(_representationClassForWebFrame:)])
-        repClass = [repClass performSelector:@selector(_representationClassForWebFrame:) withObject:[self webFrame]];
-#endif
-
+    
     // Check if the data source was already bound?
     if (![[self representation] isKindOfClass:repClass]) {
         id newRep = repClass != nil ? [[repClass alloc] init] : nil;
@@ -431,9 +399,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
     id<WebDocumentRepresentation> representation = toPrivate(_private)->representation.get();
     [representation setDataSource:self];
-#if PLATFORM(IOS)
-    toPrivate(_private)->loader->setResponseMIMEType([self _responseMIMEType]);
-#endif
 }
 
 - (DocumentLoader*)_documentLoader

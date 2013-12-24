@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if !PLATFORM(IOS)
-
 @class WebView;
 @class WebHTMLView;
 
@@ -45,5 +43,3 @@
 - (BOOL)filterKeyDown:(NSEvent *)event;
 - (void)_reflectSelection;
 @end
-
-#endif

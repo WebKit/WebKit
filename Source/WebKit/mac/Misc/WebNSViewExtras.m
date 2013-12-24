@@ -37,11 +37,6 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebView.h>
 
-#if PLATFORM(IOS)
-#import <WebCore/WAKViewPrivate.h>
-#import <WebCore/WAKWindow.h>
-#endif
-
 #define WebDragStartHysteresisX                 5.0f
 #define WebDragStartHysteresisY                 5.0f
 #define WebMaxDragImageSize                     NSMakeSize(400.0f, 400.0f)
@@ -64,7 +59,6 @@
     return (WebFrameView *)[self _web_superviewOfClass:[WebFrameView class]];
 }
 
-#if !PLATFORM(IOS)
 // FIXME: Mail is the only client of _webView, remove this method once no versions of Mail need it.
 - (WebView *)_webView
 {
@@ -212,7 +206,6 @@
     [self dragImage:dragImage at:origin offset:NSZeroSize event:event pasteboard:pasteboard source:source slideBack:YES];
 #pragma clang diagnostic pop
 }
-#endif // !PLATFORM(IOS)
 
 - (BOOL)_web_firstResponderIsSelfOrDescendantView
 {
@@ -257,22 +250,3 @@
 }
 
 @end
-
-#if PLATFORM(IOS)
-@implementation NSView (WebDocumentViewExtras)
-
-- (WebFrame *)_frame
-{
-    WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    return [webFrameView webFrame];
-}
-
-- (WebView *)_webView
-{
-    // We used to use the view hierarchy exclusively here, but that won't work
-    // right when the first viewDidMoveToSuperview call is done, and this will.
-    return [[self _frame] webView];
-}
-
-@end
-#endif

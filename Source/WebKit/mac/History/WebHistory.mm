@@ -36,10 +36,6 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/PageGroup.h>
 
-#if PLATFORM(IOS)
-#import <WebCore/WebCoreThreadMessage.h>
-#endif
-
 using namespace WebCore;
 
 typedef int64_t WebHistoryDateKey;
@@ -154,7 +150,7 @@ private:
 
 static void getDayBoundaries(NSTimeInterval interval, NSTimeInterval& beginningOfDay, NSTimeInterval& beginningOfNextDay)
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     NSDate *date = [NSDate dateWithTimeIntervalSinceReferenceDate:interval];
     
     NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
@@ -339,7 +335,6 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 
     NSString *URLString = [entry URLString];
 
-#if !PLATFORM(IOS)
     WebHistoryItem *oldEntry = [_entriesByURL objectForKey:URLString];
     if (oldEntry) {
         if (discardDuplicate)
@@ -358,32 +353,6 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 
     [self addItemToDateCaches:entry];
     [_entriesByURL setObject:entry forKey:URLString];
-#else
-    WebHistoryItem *otherEntry = [_entriesByURL objectForKey:URLString];
-    if (otherEntry) {
-        if (discardDuplicate)
-            return NO;
-
-        if ([otherEntry lastVisitedTimeInterval] < [entry lastVisitedTimeInterval]) {
-            // The last reference to oldEntry might be this dictionary, so we hold onto a reference
-            // until we're done with oldEntry.
-            [otherEntry retain];
-            [self removeItemForURLString:URLString];
-
-            // If we already have an item with this URL, we need to merge info that drives the
-            // URL autocomplete heuristics from that item into the new one.
-            [entry _mergeAutoCompleteHints:otherEntry];
-            [otherEntry release];
-
-            [self addItemToDateCaches:entry];
-            [_entriesByURL setObject:entry forKey:URLString];
-        } else
-            return NO; // Special case for merges when new items may be older than pre-existing entries.
-    } else {
-        [self addItemToDateCaches:entry];
-        [_entriesByURL setObject:entry forKey:URLString];
-    }
-#endif
     
     return YES;
 }
@@ -779,12 +748,8 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 - (void)_sendNotification:(NSString *)name entries:(NSArray *)entries
 {
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:entries, WebHistoryItemsKey, nil];
-#if PLATFORM(IOS)
-    WebThreadPostNotification(name, self, userInfo);
-#else    
     [[NSNotificationCenter defaultCenter]
         postNotificationName:name object:self userInfo:userInfo];
-#endif
 }
 
 - (void)removeItems:(NSArray *)entries
@@ -848,13 +813,9 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
         return NO;
     }
 
-#if PLATFORM(IOS)
-    WebThreadPostNotification(WebHistoryLoadedNotification, self, nil);
-#else        
     [[NSNotificationCenter defaultCenter]
         postNotificationName:WebHistoryLoadedNotification
                       object:self];
-#endif
 
     if ([discardedItems count])
         [self _sendNotification:WebHistoryItemsDiscardedWhileLoadingNotification entries:discardedItems];
@@ -867,13 +828,9 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 {
     if (![_historyPrivate saveToURL:URL error:error])
         return NO;
-#if PLATFORM(IOS)
-    WebThreadPostNotification(WebHistorySavedNotification, self, nil);
-#else        
     [[NSNotificationCenter defaultCenter]
         postNotificationName:WebHistorySavedNotification
                       object:self];
-#endif
     return YES;
 }
 

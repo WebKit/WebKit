@@ -26,24 +26,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebDefaultUIDelegate.h"
+#import <Cocoa/Cocoa.h>
 
-#import "WebJavaScriptTextInputPanel.h"
+#import <Foundation/NSURLRequest.h>
+
+#import <WebKit/WebDefaultUIDelegate.h>
+#import <WebKit/WebJavaScriptTextInputPanel.h>
+#import <WebKit/WebView.h>
+#import <WebKit/WebUIDelegatePrivate.h>
+#import <WebKit/DOM.h>
 #import "WebTypesInternal.h"
-#import "WebUIDelegatePrivate.h"
-#import "WebView.h"
 
-#if PLATFORM(IOS)
-#import <WebCore/WAKViewPrivate.h>
-#import <WebCore/WAKWindow.h>
-#import <WebCore/WKViewPrivate.h>
-#endif
-
-#if !PLATFORM(IOS)
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
 @end
-#endif
 
 @implementation WebDefaultUIDelegate
 
@@ -71,38 +67,25 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return nil;
 }
 
-#if PLATFORM(IOS)
-- (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request userGesture:(BOOL)userGesture
-{
-    return nil;
-}
-#endif
-
 - (void)webViewShow: (WebView *)wv
 {
 }
 
 - (void)webViewClose: (WebView *)wv
 {
-#if !PLATFORM(IOS)
     [[wv window] close];
-#endif
 }
 
 - (void)webViewFocus: (WebView *)wv
 {
-#if !PLATFORM(IOS)
     [[wv window] makeKeyAndOrderFront:wv];
-#endif
 }
 
 - (void)webViewUnfocus: (WebView *)wv
 {
-#if !PLATFORM(IOS)
     if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow]) {
         [NSApp _cycleWindowsReversed:FALSE];
     }
-#endif
 }
 
 - (NSResponder *)webViewFirstResponder: (WebView *)wv
@@ -148,27 +131,19 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (BOOL)webViewIsResizable: (WebView *)wv
 {
-#if PLATFORM(IOS)
-    return NO;
-#else
     return [[wv window] showsResizeIndicator];
-#endif
 }
 
 - (void)webView: (WebView *)wv setResizable:(BOOL)resizable
 {
-#if !PLATFORM(IOS)
     // FIXME: This doesn't actually change the resizability of the window,
     // only visibility of the indicator.
     [[wv window] setShowsResizeIndicator:resizable];
-#endif
 }
 
 - (void)webView: (WebView *)wv setFrame:(NSRect)frame
 {
-#if !PLATFORM(IOS)
     [[wv window] setFrame:frame display:YES];
-#endif
 }
 
 - (NSRect)webViewFrame: (WebView *)wv
@@ -190,7 +165,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 
 - (NSString *)webView: (WebView *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WebFrame *)frame
 {
-#if !PLATFORM(IOS)
     WebJavaScriptTextInputPanel *panel = [[WebJavaScriptTextInputPanel alloc] initWithPrompt:prompt text:defaultText];
     [panel showWindow:nil];
     NSString *result;
@@ -202,9 +176,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     [[panel window] close];
     [panel release];
     return result;
-#else
-    return nil;
-#endif
 }
 
 - (void)webView: (WebView *)wv runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
@@ -217,7 +188,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 }
 
 
-#if !PLATFORM(IOS)
 - (BOOL)webView:(WebView *)webView shouldBeginDragForElement:(NSDictionary *)element dragImage:(NSImage *)dragImage mouseDownEvent:(NSEvent *)mouseDownEvent mouseDraggedEvent:(NSEvent *)mouseDraggedEvent
 {
     return YES;
@@ -240,7 +210,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 - (void)webView:(WebView *)webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:(NSPoint)point withPasteboard:(NSPasteboard *)pasteboard
 {
 }
-#endif
 
 - (void)webView:(WebView *)sender didDrawRect:(NSRect)rect
 {
@@ -250,7 +219,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
-#if !PLATFORM(IOS)
 - (void)webView:(WebView *)sender willPopupMenu:(NSMenu *)menu
 {
 }
@@ -258,7 +226,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 - (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element
 {
 }
-#endif
 
 - (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin totalSpaceNeeded:(NSUInteger)totalSpaceNeeded
 {
@@ -273,11 +240,5 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
     return nil;
 }
-
-#if PLATFORM(IOS)
-- (void)webViewSupportedOrientationsUpdated:(WebView *)sender
-{
-}
-#endif
 
 @end

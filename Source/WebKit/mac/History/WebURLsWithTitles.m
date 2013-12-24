@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
-
 #import "WebURLsWithTitles.h"
 
 #import <WebKit/WebNSURLExtras.h>
@@ -107,5 +105,3 @@
 }
 
 @end
-
-#endif // !PLATFORM(IOS)

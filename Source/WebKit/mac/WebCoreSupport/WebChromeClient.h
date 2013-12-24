@@ -31,15 +31,6 @@
 #import <WebCore/FocusDirection.h>
 #import <wtf/Forward.h>
 
-#if PLATFORM(IOS)
-#import <wtf/Platform.h>
-#import <wtf/text/WTFString.h>
-#import <WebCore/Chrome.h>
-
-using WebCore::MessageLevel;
-using WebCore::MessageSource;
-#endif
-
 @class WebView;
 
 class WebChromeClient : public WebCore::ChromeClient {
@@ -132,10 +123,8 @@ public:
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>) OVERRIDE;
     virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*) OVERRIDE;
 
-#if !PLATFORM(IOS)
     virtual void setCursor(const WebCore::Cursor&) OVERRIDE;
     virtual void setCursorHiddenUntilMouseMoves(bool) OVERRIDE;
-#endif
 
     virtual WebCore::FloatRect customHighlightRect(WebCore::Node*, const WTF::AtomicString& type, const WebCore::FloatRect& lineRect) OVERRIDE;
     virtual void paintCustomHighlight(WebCore::Node*, const WTF::AtomicString& type, const WebCore::FloatRect& boxRect, const WebCore::FloatRect& lineRect, bool behindText, bool entireLine) OVERRIDE;
@@ -174,14 +163,11 @@ public:
             VideoTrigger |
             PluginTrigger| 
             CanvasTrigger |
-#if PLATFORM(IOS)
-            AnimatedOpacityTrigger | // Allow opacity animations to trigger compositing mode for iOS: <rdar://problem/7830677>
-#endif
             AnimationTrigger);
     }
 #endif
 
-#if ENABLE(VIDEO) && !PLATFORM(IOS)
+#if ENABLE(VIDEO)
     virtual bool supportsFullscreenForNode(const WebCore::Node*) OVERRIDE;
     virtual void enterFullscreenForNode(WebCore::Node*) OVERRIDE;
     virtual void exitFullscreenForNode(WebCore::Node*) OVERRIDE;
@@ -202,11 +188,7 @@ public:
 
     virtual void numWheelEventHandlersChanged(unsigned) OVERRIDE { }
 
-#if PLATFORM(IOS)
-    WebView* webView() const { return m_webView; }
-#else
     WebView* webView() { return m_webView; }
-#endif
 
 private:
     WebView *m_webView;

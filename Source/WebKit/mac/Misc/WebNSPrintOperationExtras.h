@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
-
 #import <Cocoa/Cocoa.h>
 
 @interface NSPrintOperation (WebKitExtras)
@@ -37,5 +35,3 @@
 - (float)_web_availablePaperHeight;
 
 @end
-
-#endif

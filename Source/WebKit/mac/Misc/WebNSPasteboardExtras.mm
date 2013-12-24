@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
-
 #import "WebNSPasteboardExtras.h"
 
 #import "DOMElementInternal.h"
@@ -295,5 +293,3 @@ static CachedImage* imageFromElement(DOMElement *domElement)
 }
 
 @end
-
-#endif // !PLATFORM(IOS)

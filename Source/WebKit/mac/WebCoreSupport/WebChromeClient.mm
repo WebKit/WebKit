@@ -92,17 +92,6 @@
 #import "NetscapePluginHostManager.h"
 #endif
 
-#if PLATFORM(IOS) && ENABLE(GEOLOCATION)
-#import <WebCore/Geolocation.h>
-#endif
-
-#if PLATFORM(IOS)
-#import <WebCore/Console.h>
-#import <WebCore/WAKClipView.h>
-#import <WebCore/WAKWindow.h>
-#import <WebCore/WebCoreThreadMessage.h>
-#endif
-
 NSString *WebConsoleMessageXMLMessageSource = @"XMLMessageSource";
 NSString *WebConsoleMessageJSMessageSource = @"JSMessageSource";
 NSString *WebConsoleMessageNetworkMessageSource = @"NetworkMessageSource";
@@ -120,11 +109,9 @@ NSString *WebConsoleMessageWarningMessageLevel = @"WarningMessageLevel";
 NSString *WebConsoleMessageErrorMessageLevel = @"ErrorMessageLevel";
 
 
-#if !PLATFORM(IOS)
 @interface NSApplication (WebNSApplicationDetails)
 - (NSCursor *)_cursorRectCursor;
 @end
-#endif
 
 @interface NSView (WebNSViewDetails)
 - (NSView *)_findLastViewInKeyViewLoop;
@@ -135,11 +122,9 @@ NSString *WebConsoleMessageErrorMessageLevel = @"ErrorMessageLevel";
 - (void)setIsSelected:(BOOL)isSelected;
 @end
 
-#if !PLATFORM(IOS)
 @interface NSWindow (AppKitSecretsIKnowAbout)
 - (NSRect)_growBoxRect;
 @end
-#endif
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -159,20 +144,14 @@ void WebChromeClient::chromeDestroyed()
 
 void WebChromeClient::setWindowRect(const FloatRect& rect)
 {
-#if !PLATFORM(IOS)
     NSRect windowRect = toDeviceSpace(rect, [m_webView window]);
     [[m_webView _UIDelegateForwarder] webView:m_webView setFrame:windowRect];
-#endif
 }
 
 FloatRect WebChromeClient::windowRect()
 {
-#if !PLATFORM(IOS)
     NSRect windowRect = [[m_webView _UIDelegateForwarder] webViewFrame:m_webView];
     return toUserSpace(windowRect, [m_webView window]);
-#else
-    return FloatRect();
-#endif
 }
 
 // FIXME: We need to add API for setting and getting this.
@@ -200,7 +179,6 @@ bool WebChromeClient::canTakeFocus(FocusDirection)
 
 void WebChromeClient::takeFocus(FocusDirection direction)
 {
-#if !PLATFORM(IOS)
     if (direction == FocusDirectionForward) {
         // Since we're trying to move focus out of m_webView, and because
         // m_webView may contain subviews within it, we ask it for the next key
@@ -217,7 +195,6 @@ void WebChromeClient::takeFocus(FocusDirection direction)
             return;
         [[m_webView window] selectKeyViewPrecedingView:m_webView];
     }
-#endif
 }
 
 void WebChromeClient::focusedElementChanged(Element* element)
@@ -416,18 +393,7 @@ inline static NSString *stringForMessageLevel(MessageLevel level)
 
 void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned int lineNumber, unsigned columnNumber, const String& sourceURL)
 {
-#if !PLATFORM(IOS)
     id delegate = [m_webView UIDelegate];
-#else
-    if (![m_webView _allowsMessaging])
-        return;
-
-    id delegate = [m_webView _UIKitDelegate];
-    // No delegate means nothing to send this data to so bail.
-    if (!delegate)
-        return;
-#endif
-
     BOOL respondsToNewSelector = NO;
 
     SEL selector = @selector(webView:addMessageToConsole:withSource:);
@@ -452,14 +418,10 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
         stringForMessageLevel(level), @"MessageLevel",
         NULL];
 
-#if PLATFORM(IOS)
-    [[[m_webView _UIKitDelegateForwarder] asyncForwarder] webView:m_webView addMessageToConsole:dictionary withSource:messageSource];
-#else
     if (respondsToNewSelector)
         CallUIDelegate(m_webView, selector, dictionary, messageSource);
     else
         CallUIDelegate(m_webView, selector, dictionary);
-#endif
 
     [dictionary release];
 }
@@ -563,11 +525,7 @@ void WebChromeClient::setStatusbarText(const String& status)
 
 IntRect WebChromeClient::windowResizerRect() const
 {
-#if !PLATFORM(IOS)
     return enclosingIntRect([[m_webView window] _growBoxRect]);
-#else
-    return IntRect();
-#endif
 }
 
 bool WebChromeClient::supportsImmediateInvalidation()
@@ -577,14 +535,10 @@ bool WebChromeClient::supportsImmediateInvalidation()
 
 void WebChromeClient::invalidateRootView(const IntRect&, bool immediate)
 {
-#if !PLATFORM(IOS)
     if (immediate) {
         [[m_webView window] displayIfNeeded];
         [[m_webView window] flushWindowIfNeeded];
     }
-#else
-    UNUSED_PARAM(immediate);
-#endif
 }
 
 void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect, bool immediate)
@@ -684,13 +638,11 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:frame->document()->securityOrigin()];
-#if !PLATFORM(IOS)
     // FIXME: remove this workaround once shipping Safari has the necessary delegate implemented.
     if (WKAppVersionCheckLessThan(@"com.apple.Safari", -1, 3.1)) {
         const unsigned long long defaultQuota = 5 * 1024 * 1024; // 5 megabytes should hopefully be enough to test storage support.
         [[webOrigin databaseQuotaManager] setQuota:defaultQuota];
     } else
-#endif
         CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(frame), webOrigin, (NSString *)databaseName);
     [webOrigin release];
 
@@ -805,7 +757,6 @@ void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIcon
     iconLoader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
-#if !PLATFORM(IOS)
 void WebChromeClient::setCursor(const WebCore::Cursor& cursor)
 {
     if ([NSApp _cursorRectCursor])
@@ -821,7 +772,6 @@ void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 {
     [NSCursor setHiddenUntilMouseMoves:hiddenUntilMouseMoves];
 }
-#endif
 
 KeyboardUIMode WebChromeClient::keyboardUIMode()
 {
@@ -850,16 +800,12 @@ void WebChromeClient::makeFirstResponder(NSResponder *responder)
 
 void WebChromeClient::enableSuddenTermination()
 {
-#if !PLATFORM(IOS)
     [[NSProcessInfo processInfo] enableSuddenTermination];
-#endif
 }
 
 void WebChromeClient::disableSuddenTermination()
 {
-#if !PLATFORM(IOS)
     [[NSProcessInfo processInfo] disableSuddenTermination];
-#endif
 }
 
 bool WebChromeClient::shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename)
@@ -904,30 +850,18 @@ bool WebChromeClient::hasOpenedPopup() const
 
 PassRefPtr<WebCore::PopupMenu> WebChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const
 {
-#if !PLATFORM(IOS)
     return adoptRef(new PopupMenuMac(client));
-#else
-    return nullptr;
-#endif
 }
 
 PassRefPtr<WebCore::SearchPopupMenu> WebChromeClient::createSearchPopupMenu(WebCore::PopupMenuClient* client) const
 {
-#if !PLATFORM(IOS)
     return adoptRef(new SearchPopupMenuMac(client));
-#else
-    return nullptr;
-#endif
 }
 
 bool WebChromeClient::shouldPaintEntireContents() const
 {
-#if PLATFORM(IOS)
-    return false;
-#else
     NSView *documentView = [[[m_webView mainFrame] frameView] documentView];
     return [documentView layer];
-#endif
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -967,7 +901,7 @@ void WebChromeClient::scheduleCompositingLayerFlush()
 
 #endif
 
-#if ENABLE(VIDEO) && !PLATFORM(IOS)
+#if ENABLE(VIDEO)
 
 bool WebChromeClient::supportsFullscreenForNode(const Node* node)
 {
@@ -997,11 +931,7 @@ bool WebChromeClient::supportsFullScreenForElement(const Element* element, bool 
     SEL selector = @selector(webView:supportsFullScreenForElement:withKeyboard:);
     if ([[m_webView UIDelegate] respondsToSelector:selector])
         return CallUIDelegateReturningBoolean(false, m_webView, selector, kit(const_cast<WebCore::Element*>(element)), withKeyboard);
-#if !PLATFORM(IOS)
     return [m_webView _supportsFullScreenForElement:const_cast<WebCore::Element*>(element) withKeyboard:withKeyboard];
-#else
-    return NO;
-#endif
 }
 
 void WebChromeClient::enterFullScreenForElement(Element* element)
@@ -1011,11 +941,8 @@ void WebChromeClient::enterFullScreenForElement(Element* element)
         WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:element];
         CallUIDelegate(m_webView, selector, kit(element), listener);
         [listener release];
-    }
-#if !PLATFORM(IOS)
-    else
+    } else
         [m_webView _enterFullScreenForElement:element];
-#endif
 }
 
 void WebChromeClient::exitFullScreenForElement(Element* element)
@@ -1025,11 +952,8 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
         WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:element];
         CallUIDelegate(m_webView, selector, kit(element), listener);
         [listener release];
-    }
-#if !PLATFORM(IOS)
-    else
+    } else
         [m_webView _exitFullScreenForElement:element];
-#endif
 }
 
 void WebChromeClient::fullScreenRendererChanged(RenderBox* renderer)

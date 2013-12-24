@@ -28,10 +28,7 @@
 #import "WebTypesInternal.h"
 #import <wtf/Vector.h>
 #import <wtf/RetainPtr.h>
-
-#if !PLATFORM(IOS)
 #import <PDFKit/PDFDocument.h>
-#endif
 
 static void appendValuesInPDFNameSubtreeToVector(CGPDFDictionaryRef subtree, Vector<CGPDFObjectRef>& values)
 {

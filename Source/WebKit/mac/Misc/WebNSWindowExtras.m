@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
-
 #import "WebNSWindowExtras.h"
 
 @implementation NSWindow (WebExtras)
@@ -58,5 +56,3 @@
 }
 
 @end
-
-#endif

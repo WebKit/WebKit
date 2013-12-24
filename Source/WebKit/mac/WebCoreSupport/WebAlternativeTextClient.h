@@ -49,16 +49,7 @@ public:
     virtual Vector<String> dictationAlternatives(uint64_t dictationContext) OVERRIDE;
 #endif
 private:
-#if PLATFORM(IOS)
-#pragma clang diagnostic push
-#if defined(__has_warning) && __has_warning("-Wunused-private-field")
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-#endif
     WebView* m_webView;
-#if PLATFORM(IOS)
-#pragma clang diagnostic pop
-#endif
 #if USE(AUTOCORRECTION_PANEL)
     CorrectionPanel m_correctionPanel;
 #endif

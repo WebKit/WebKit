@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
+#if ENABLE(FULLSCREEN_API)
 
 #import "WebFullScreenController.h"
 
@@ -578,4 +578,4 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
 @end
 
 
-#endif /* ENABLE(FULLSCREEN_API) && !PLATFORM(IOS) */
+#endif /* ENABLE(FULLSCREEN_API) */

@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
-
 #import <Cocoa/Cocoa.h>
 #import <Foundation/NSURLCredentialStorage.h>
 
@@ -69,4 +67,3 @@
 @interface WebNonBlockingPanel : NSPanel
 @end
 
-#endif // !PLATFORM(IOS)

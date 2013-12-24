@@ -37,25 +37,13 @@
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 
-#if PLATFORM(IOS)
-#import "MemoryMeasure.h"
-#import "WebFrameInternal.h"
-#import <WebCore/CachedImage.h>
-#import <WebCore/CredentialStorage.h>
-#import <WebCore/Frame.h>
-#import <WebCore/PageCache.h>
-#import <WebCore/WebCoreThreadRun.h>
-#endif
-
 @implementation WebCache
 
 + (void)initialize
 {
-#if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
-#endif
     InitWebCoreSystemInterface();   
 }
 
@@ -152,93 +140,6 @@
     // Empty the Cross-Origin Preflight cache
     WebCore::CrossOriginPreflightResultCache::shared().empty();
 }
-
-#if PLATFORM(IOS)
-+ (void)emptyInMemoryResources
-{
-    // This method gets called from MobileSafari after it calls [WebView
-    // _close]. [WebView _close] schedules its work on the WebThread. So we
-    // schedule this method on the WebThread as well so as to pick up all the
-    // dead resources left behind after closing the WebViews
-    WebThreadRun(^{
-        WebKit::MemoryMeasure measurer("[WebCache emptyInMemoryResources]");
-
-        // Toggling the cache model like this forces the cache to evict all its in-memory resources.
-        WebCacheModel cacheModel = [WebView _cacheModel];
-        [WebView _setCacheModel:WebCacheModelDocumentViewer];
-        [WebView _setCacheModel:cacheModel];
-
-        WebCore::memoryCache()->pruneLiveResources(true);
-    });
-}
-
-+ (void)sizeOfDeadResources:(int *)resources
-{
-    WebCore::MemoryCache::Statistics stats = WebCore::memoryCache()->getStatistics();
-    if (resources) {
-        *resources = (stats.images.size - stats.images.liveSize)
-                     + (stats.cssStyleSheets.size - stats.cssStyleSheets.liveSize)
-#if ENABLE(XSLT)
-                     + (stats.xslStyleSheets.size - stats.xslStyleSheets.liveSize)
-#endif
-                     + (stats.scripts.size - stats.scripts.liveSize);
-    }
-}
-
-+ (void)clearCachedCredentials
-{
-    WebCore::CredentialStorage::clearCredentials();
-}
-
-+ (bool)addImageToCache:(CGImageRef)image forURL:(NSURL *)url
-{
-    return [WebCache addImageToCache:image forURL:url forFrame:nil];
-}
-
-+ (bool)addImageToCache:(CGImageRef)image forURL:(NSURL *)url forFrame:(WebFrame *)frame
-{
-    if (!image || !url || ![[url absoluteString] length])
-        return false;
-    WebCore::SecurityOrigin* topOrigin = nullptr;
-#if ENABLE(CACHE_PARTITIONING)
-    if (frame)
-        topOrigin = core(frame)->document()->topOrigin();
-#endif
-    return WebCore::memoryCache()->addImageToCache(image, url, topOrigin ? topOrigin->cachePartition() : emptyString());
-}
-
-+ (void)removeImageFromCacheForURL:(NSURL *)url
-{
-    [WebCache removeImageFromCacheForURL:url forFrame:nil];
-}
-
-+ (void)removeImageFromCacheForURL:(NSURL *)url forFrame:(WebFrame *)frame
-{
-    if (!url)
-        return;
-    WebCore::SecurityOrigin* topOrigin = nullptr;
-#if ENABLE(CACHE_PARTITIONING)
-    if (frame)
-        topOrigin = core(frame)->document()->topOrigin();
-#endif
-    WebCore::memoryCache()->removeImageFromCache(url, topOrigin ? topOrigin->cachePartition() : emptyString());
-}
-
-+ (CGImageRef)imageForURL:(NSURL *)url
-{
-    if (!url)
-        return nullptr;
-    
-    WebCore::CachedResource* cachedResource = WebCore::memoryCache()->resourceForURL(url);
-    if (!cachedResource || cachedResource->type() != WebCore::CachedResource::ImageResource)
-        return nullptr;
-    WebCore::CachedImage* cachedImage = static_cast<WebCore::CachedImage*>(cachedResource);
-    if (!cachedImage || !cachedImage->hasImage())
-        return nullptr;
-    return cachedImage->image()->getCGImageRef();
-}
-
-#endif // PLATFORM(IOS)
 
 + (void)setDisabled:(BOOL)disabled
 {

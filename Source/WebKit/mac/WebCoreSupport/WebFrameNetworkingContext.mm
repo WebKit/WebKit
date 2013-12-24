@@ -34,12 +34,6 @@
 #include <WebCore/Settings.h>
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(IOS)
-#import <CFNetwork/CFHTTPCookiesPriv.h>
-#import <WebCore/WebCoreThread.h>
-#import <WebKit/WebFrameLoadDelegate.h>
-#endif
-
 using namespace WebCore;
 
 static std::unique_ptr<NetworkStorageSession>& privateSession()
@@ -64,16 +58,6 @@ void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
 
     privateSession() = nullptr;
 }
-
-#if PLATFORM(IOS)
-void WebFrameNetworkingContext::clearPrivateBrowsingSessionCookieStorage()
-{
-    ASSERT(isMainThread());
-    ASSERT(privateSession());
-
-    CFHTTPCookieStorageDeleteAllCookies(privateSession()->cookieStorage().get());
-}
-#endif
 
 bool WebFrameNetworkingContext::needsSiteSpecificQuirks() const
 {

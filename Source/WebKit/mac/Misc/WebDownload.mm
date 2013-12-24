@@ -125,7 +125,6 @@ using namespace WebCore;
 
 - (void)download:(NSURLDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-#if !PLATFORM(IOS)
     // Try previously stored credential first.
     if (![challenge previousFailureCount]) {
         NSURLCredential *credential = mac(CredentialStorage::get(core([challenge protectionSpace])));
@@ -145,18 +144,15 @@ using namespace WebCore;
 
         [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window];
     }
-#endif
 }
 
 - (void)download:(NSURLDownload *)download didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-#if !PLATFORM(IOS)
     if ([realDelegate respondsToSelector:@selector(download:didCancelAuthenticationChallenge:)]) {
         [realDelegate download:download didCancelAuthenticationChallenge:challenge];
     } else {
         [[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:challenge];
     }
-#endif
 }
 
 - (void)download:(NSURLDownload *)download didReceiveResponse:(NSURLResponse *)response

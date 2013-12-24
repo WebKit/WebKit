@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
-
 #import "WebPDFView.h"
 
 #import "DOMNodeInternal.h"
@@ -1583,5 +1581,3 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 }
 
 @end
-
-#endif // !PLATFORM(IOS)

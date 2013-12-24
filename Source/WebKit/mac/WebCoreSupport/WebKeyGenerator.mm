@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !PLATFORM(IOS)
-
 #import <WebKit/WebKeyGenerator.h>
 
 #import <WebKitSystemInterface.h>
@@ -61,5 +59,3 @@ static inline WebCertificateParseResult toWebCertificateParseResult(WKCertificat
 }
 
 @end
-
-#endif // !PLATFORM(IOS)

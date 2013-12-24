@@ -301,7 +301,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 {
     // Ripped from WebCore::Frame::moveSelectionToStartOrEndOfCurrentWord
     
-    // Note: this is the iOS notion, not the unicode notion.
+    // Note: this is the iPhone notion, not the unicode notion.
     // Here, a word starts with non-whitespace or at the start of a line and
     // ends at the next whitespace, or at the end of a line.
     
