@@ -284,6 +284,11 @@ void detachThread(ThreadIdentifier threadID)
     clearThreadHandleForIdentifier(threadID);
 }
 
+void yield()
+{
+    ::Sleep(1);
+}
+
 ThreadIdentifier currentThread()
 {
     return static_cast<ThreadIdentifier>(GetCurrentThreadId());

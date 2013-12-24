@@ -32,7 +32,6 @@
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include <sqlite3.h>
-#include <thread>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -141,7 +140,7 @@ void SQLiteDatabase::interrupt()
         if (!m_db)
             return;
         sqlite3_interrupt(m_db);
-        std::this_thread::yield();
+        yield();
     }
 
     m_lockingMutex.unlock();

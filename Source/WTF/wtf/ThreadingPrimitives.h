@@ -130,12 +130,22 @@ private:
 WTF_EXPORT_PRIVATE DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime);
 #endif
 
+inline void pauseBriefly()
+{
+#if OS(WINDOWS)
+    Sleep(0);
+#else
+    sched_yield();
+#endif
+}
+
 } // namespace WTF
 
 using WTF::Mutex;
 using WTF::MutexLocker;
 using WTF::MutexTryLocker;
 using WTF::ThreadCondition;
+using WTF::pauseBriefly;
 
 #if OS(WINDOWS)
 using WTF::absoluteTimeToWaitTimeoutInterval;

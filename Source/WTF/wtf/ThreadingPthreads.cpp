@@ -303,6 +303,11 @@ void threadDidExit(ThreadIdentifier threadID)
         threadMap().remove(threadID);
 }
 
+void yield()
+{
+    sched_yield();
+}
+
 ThreadIdentifier currentThread()
 {
     ThreadIdentifier id = ThreadIdentifierData::identifier();
