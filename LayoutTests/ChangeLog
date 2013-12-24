@@ -1,3 +1,25 @@
+2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        XMLHttpRequest: status and statusText throw DOM Exception 11 when the state is UNSENT or OPENED.
+        https://bugs.webkit.org/show_bug.cgi?id=45994
+
+        Reviewed by Alexey Proskuryakov.
+
+        Rebaselined and fixed tests as done in https://chromium.googlesource.com/chromium/blink/+/23c90460de16e04c5aba7ed942fba76cb79fdb9b.
+
+        * http/tests/xmlhttprequest/exceptions-expected.txt:
+        * http/tests/xmlhttprequest/exceptions.html:
+        * http/tests/xmlhttprequest/status-after-abort-expected.txt:
+        * http/tests/xmlhttprequest/zero-length-response-expected.txt:
+
+        * js/dom/dfg-custom-getter-throw-expected.txt:
+        * js/dom/script-tests/dfg-custom-getter-throw-inlined.js: Fixed the test.
+        (foo): Use responseText instead of status so that it throws when responseType is "arraybuffer".
+        (bar): Set responseType to "arraybuffer" to cause an exception to be thrown.
+        * js/dom/script-tests/dfg-custom-getter-throw.js: Ditto.
+        (foo):
+        (bar):
+
 2013-12-23  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Fix fast/regions/assert-flow-thread-compositing.html test description

@@ -1,5 +1,23 @@
 2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        XMLHttpRequest: status and statusText throw DOM Exception 11 when the state is UNSENT or OPENED.
+        https://bugs.webkit.org/show_bug.cgi?id=45994
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merged https://chromium.googlesource.com/chromium/blink/+/23c90460de16e04c5aba7ed942fba76cb79fdb9b.
+
+        Latest XHR spec says that XHR should return 0 and an empty string when it's in UNSENT or OPENED state
+        or error flag is set: http://www.w3.org/TR/2012/WD-XMLHttpRequest-20121206/#the-status-attribute
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::status):
+        (WebCore::XMLHttpRequest::statusText):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+
+2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Crash in ReplaceSelectionCommand
         https://bugs.webkit.org/show_bug.cgi?id=126107
 
