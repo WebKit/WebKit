@@ -50,6 +50,18 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
     return sharedManager;
 }
 
+#if PLATFORM(IOS)
+- (id)init
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    WebKitInitializeStorageIfNecessary();
+    
+    return self;
+}
+#endif
+
 - (NSArray *)origins
 {
     Vector<RefPtr<SecurityOrigin>> coreOrigins;
@@ -70,6 +82,11 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
 - (void)deleteAllOrigins
 {
     StorageTracker::tracker().deleteAllOrigins();
+#if PLATFORM(IOS)
+    // FIXME: This needs to be removed once StorageTrackers in multiple processes
+    // are in sync: <rdar://problem/9567500> Remove Website Data pane is not kept in sync with Safari
+    [[NSFileManager defaultManager] removeItemAtPath:[WebStorageManager _storageDirectoryPath] error:NULL];
+#endif
 }
 
 - (void)deleteOrigin:(WebSecurityOrigin *)origin

@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import <WebKit/WebDocumentInternal.h>
 
 @class PDFDocument;
@@ -54,3 +56,5 @@
 - (PDFDocument *)PDFDocument;
 
 @end
+
+#endif

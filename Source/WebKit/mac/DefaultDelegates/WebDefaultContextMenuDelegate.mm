@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import "WebDefaultContextMenuDelegate.h"
 
 #import "WebDOMOperations.h"
@@ -186,3 +188,5 @@
 }
 
 @end
+
+#endif // !PLATFORM(IOS)

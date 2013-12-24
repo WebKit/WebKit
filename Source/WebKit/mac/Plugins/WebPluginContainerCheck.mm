@@ -47,6 +47,12 @@
 
 using namespace WebCore;
 
+#if PLATFORM(IOS)
+@interface WebPluginController (SecretsIKnow)
+- (WebFrame *)webFrame; // FIXME: This file calls -[WebPluginController webFrame], which is not declared in WebPluginController.h.  Merge issue?  Are the plug-in files out of date?
+@end
+#endif
+
 @implementation WebPluginContainerCheck
 
 - (id)initWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller contextInfo:(id)contextInfo /*optional*/

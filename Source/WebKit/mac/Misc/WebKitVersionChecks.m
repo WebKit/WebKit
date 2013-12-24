@@ -34,7 +34,18 @@ static int overridenWebKitLinkTimeVersion;
 
 BOOL WebKitLinkedOnOrAfter(int version)
 {
+#if !PLATFORM(IOS)
     return (WebKitLinkTimeVersion() >= version);
+#else
+    int32_t linkTimeVersion = WebKitLinkTimeVersion();
+    int32_t majorVersion = linkTimeVersion >> 16 & 0x0000FFFF;
+    
+    // The application was not linked against UIKit so assume most recent WebKit
+    if (linkTimeVersion == -1)
+        return YES;
+    
+    return (majorVersion >= version);
+#endif
 }
 
 void setWebKitLinkTimeVersion(int version)
@@ -47,5 +58,11 @@ static int WebKitLinkTimeVersion(void)
     if (overridenWebKitLinkTimeVersion)
         return overridenWebKitLinkTimeVersion;
 
+#if !PLATFORM(IOS)
     return NSVersionOfLinkTimeLibrary("WebKit");
+#else
+    // <rdar://problem/6627758> Need to implement WebKitLinkedOnOrAfter
+    // Third party applications do not link against WebKit, but rather against UIKit.
+    return NSVersionOfLinkTimeLibrary("UIKit");
+#endif
 }

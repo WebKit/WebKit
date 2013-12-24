@@ -30,6 +30,12 @@
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebViewPrivate.h>
 
+#if PLATFORM(IOS)
+#if !defined(IBAction)
+#define IBAction void
+#endif
+#endif
+
 /*!
 @protocol _WebDocumentZooming
 @discussion Optional protocol for a view that wants to handle its own zoom.

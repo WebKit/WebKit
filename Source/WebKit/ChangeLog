@@ -1,3 +1,13 @@
+2013-12-23  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream PLATFORM(IOS) changes to Source/WebKit/
+        https://bugs.webkit.org/show_bug.cgi?id=125746
+
+        Reviewed by David Kilzer.
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebDatabaseManagerInternal.h
+        and iOS.xcconfig.
+
 2013-12-22  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] libtool-compatible soversion calculation

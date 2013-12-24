@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import <WebKit/WebPanelAuthenticationHandler.h>
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
@@ -160,3 +162,5 @@ WebPanelAuthenticationHandler *sharedHandler;
 }
 
 @end
+
+#endif // !PLATFORM(IOS)

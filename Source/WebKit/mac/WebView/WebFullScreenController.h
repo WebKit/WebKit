@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(FULLSCREEN_API)
+#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
 
 #import <WebCore/IntPoint.h>
 #import <wtf/OwnPtr.h>
@@ -73,4 +73,4 @@ namespace WebCore {
 - (void)close;
 @end
 
-#endif // ENABLE(FULLSCREEN_API)
+#endif // ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)

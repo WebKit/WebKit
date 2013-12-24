@@ -39,6 +39,10 @@
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 
+#if PLATFORM(IOS)
+#import "WebGeolocationProviderIOS.h"
+#endif
+
 BOOL applicationIsTerminating = NO;
 int pluginDatabaseClientCount = 0;
 
@@ -72,9 +76,11 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 
 + (void)initialize
 {
+#if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
+#endif
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
@@ -99,7 +105,16 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     dashboardBehaviorAllowWheelScrolling = YES;
 #endif
 
+#if PLATFORM(IOS)
+    isStopping = NO;
+    _geolocationProvider = [WebGeolocationProviderIOS sharedGeolocationProvider];
+#endif
+
+#if !PLATFORM(IOS)
     shouldCloseWithWindow = objc_collectingEnabled();
+#else
+    shouldCloseWithWindow = false;
+#endif
 
     pluginDatabaseClientCount++;
 
@@ -114,13 +129,19 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 {    
     ASSERT(applicationIsTerminating || !page);
     ASSERT(applicationIsTerminating || !preferences);
+#if !PLATFORM(IOS)
     ASSERT(!insertionPasteboard);
+#endif
 #if ENABLE(VIDEO)
     ASSERT(!fullscreenController);
 #endif
 
     [applicationNameForUserAgent release];
+#if !PLATFORM(IOS)
     [backgroundColor release];
+#else
+    CGColorRelease(backgroundColor);
+#endif
     [inspector release];
     [currentNodeHighlight release];
     [hostWindow release];
@@ -138,13 +159,22 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 #endif
 #endif
 
+#if PLATFORM(IOS)
+    [UIKitDelegateForwarder release];
+    [formDelegateForwarder release];
+    [_caretChangeListeners release];
+    [_fixedPositionContent release];
+#endif
+
     [super dealloc];
 }
 
 - (void)finalize
 {
     ASSERT_MAIN_THREAD();
+#if !PLATFORM(IOS)
     ASSERT(!insertionPasteboard);
+#endif
 #if ENABLE(VIDEO)
     ASSERT(!fullscreenController);
 #endif

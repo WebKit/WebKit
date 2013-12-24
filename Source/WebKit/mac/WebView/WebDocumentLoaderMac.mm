@@ -42,9 +42,13 @@ WebDocumentLoaderMac::WebDocumentLoaderMac(const ResourceRequest& request, const
 
 static inline bool needsDataLoadWorkaround(WebView *webView)
 {
+#if !PLATFORM(IOS)
     static bool needsWorkaround = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_ADOBE_INSTALLER_QUIRK) 
                                   && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.adobe.Installers.Setup"];
     return needsWorkaround;
+#else
+    return NO;
+#endif
 }
 
 void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource, WebView *webView)

@@ -65,7 +65,13 @@ DeviceOrientationData* core(WebDeviceOrientation* orientation)
     self = [super init];
     if (!self)
         return nil;
+#if PLATFORM(IOS)
+    // We don't use this API, but make sure that it compiles with the new
+    // compass parameters.
+    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:DeviceOrientationData::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma, false, 0, false, 0)];
+#else
     m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:DeviceOrientationData::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma)];
+#endif
     return self;
 }
 

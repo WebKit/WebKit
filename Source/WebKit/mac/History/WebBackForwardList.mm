@@ -103,9 +103,11 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 + (void)initialize
 {
+#if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
+#endif
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
@@ -164,6 +166,54 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     core(self)->removeItem(core(item));
 }
 
+#if PLATFORM(IOS)
+
+// FIXME: Move into WebCore the code that deals directly with WebCore::BackForwardList.
+
+#define WebBackForwardListDictionaryEntriesKey @"entries"
+#define WebBackForwardListDictionaryCapacityKey @"capacity"
+#define WebBackForwardListDictionaryCurrentKey @"current"
+
+- (NSDictionary *)dictionaryRepresentation
+{
+    BackForwardList *coreBFList = core(self);
+    
+    HistoryItemVector historyItems = coreBFList->entries();
+    NSMutableArray *entriesArray = [[NSMutableArray alloc] init];
+    for (auto it : historyItems)
+        [entriesArray addObject:[(WebHistoryItem *)kit((*it).get()) dictionaryRepresentationIncludingChildren:NO]];
+    
+    NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+        entriesArray, WebBackForwardListDictionaryEntriesKey,
+        [NSNumber numberWithUnsignedInt:coreBFList->current()], WebBackForwardListDictionaryCurrentKey,
+        [NSNumber numberWithInt:coreBFList->capacity()], WebBackForwardListDictionaryCapacityKey,
+        nil];
+        
+    [entriesArray release];
+    
+    return dictionary;
+}
+
+- (void)setToMatchDictionaryRepresentation:(NSDictionary *)dictionary
+{
+    BackForwardList *coreBFList = core(self);
+    
+    coreBFList->setCapacity([[dictionary objectForKey:WebBackForwardListDictionaryCapacityKey] intValue]);
+    
+    for (NSDictionary *itemDictionary in [dictionary objectForKey:WebBackForwardListDictionaryEntriesKey]) {
+        WebHistoryItem *item = [[WebHistoryItem alloc] initFromDictionaryRepresentation:itemDictionary];
+        coreBFList->addItem(core(item));
+        [item release];
+    }
+
+    unsigned currentIndex = [[dictionary objectForKey:WebBackForwardListDictionaryCurrentKey] unsignedIntValue];
+    size_t listSize = coreBFList->entries().size();
+    if (currentIndex >= listSize)
+        currentIndex = listSize - 1;
+    coreBFList->setCurrent(currentIndex);
+}
+#endif // PLATFORM(IOS)
+
 - (BOOL)containsItem:(WebHistoryItem *)item
 {
     return core(self)->containsItem(core(item));
@@ -211,10 +261,14 @@ static NSArray* vectorToNSArray(HistoryItemVector& list)
 
 static bool bumperCarBackForwardHackNeeded() 
 {
+#if !PLATFORM(IOS)
     static bool hackNeeded = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.freeverse.bumpercar"] && 
         !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_BUMPERCAR_BACK_FORWARD_QUIRK);
 
     return hackNeeded;
+#else
+    return false;
+#endif
 }
 
 - (NSArray *)backListWithLimit:(int)limit

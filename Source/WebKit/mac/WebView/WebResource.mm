@@ -66,9 +66,11 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 + (void)initialize
 {
+#if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
+#endif
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
@@ -254,7 +256,11 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSString *)description
 {
+#if !PLATFORM(IOS)
     return [NSString stringWithFormat:@"<%@ %@>", [self className], [self URL]];
+#else
+    return [NSString stringWithFormat:@"<%@ %@>", NSStringFromClass([self class]), [self URL]];
+#endif
 }
 
 @end
@@ -348,6 +354,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     return suggestedFilename;
 }
 
+#if !PLATFORM(IOS)
 - (NSFileWrapper *)_fileWrapperRepresentation
 {
     NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[self data]] autorelease];
@@ -357,6 +364,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     [wrapper setPreferredFilename:filename];
     return wrapper;
 }
+#endif
 
 - (NSURLResponse *)_response
 {

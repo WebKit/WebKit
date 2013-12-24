@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import "WebJavaScriptTextInputPanel.h"
 
 #import <wtf/Assertions.h>
@@ -71,3 +73,5 @@
 }
 
 @end
+
+#endif // !PLATFORM(IOS)

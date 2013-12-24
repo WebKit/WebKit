@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import <JavaVM/jni.h>
 
 /*!
@@ -83,3 +85,4 @@ typedef enum {
        exceptionDescription:(NSString **)exceptionString;
 
 @end
+#endif // PLATFORM(IOS)

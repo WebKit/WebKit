@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import <WebKit/WebAuthenticationPanel.h>
 
 #import "WebLocalizableStringsInternal.h"
@@ -305,3 +307,5 @@
 }
 
 @end
+
+#endif // !PLATFORM(IOS)

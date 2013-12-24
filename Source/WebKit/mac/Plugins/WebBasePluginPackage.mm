@@ -66,9 +66,11 @@ using namespace WebCore;
 
 + (void)initialize
 {
+#if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
+#endif
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
@@ -102,6 +104,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 {
     NSString *newPath = [thePath stringByResolvingSymlinksInPath];
 
+#if !PLATFORM(IOS)
     FSRef fref;
     OSStatus err;
 
@@ -120,6 +123,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         newPath = [(NSURL *)URL path];
         CFRelease(URL);
     }
+#endif
 
     return newPath;
 }

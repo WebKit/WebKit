@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import "WebIconDatabasePrivate.h"
 
 namespace WebCore {
@@ -48,3 +50,5 @@ namespace WebCore {
 @end
 
 NSImage *webGetNSImage(WebCore::Image*, NSSize);
+
+#endif

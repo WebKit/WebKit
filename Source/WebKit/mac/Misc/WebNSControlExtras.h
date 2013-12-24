@@ -26,8 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import <Cocoa/Cocoa.h>
 
 @interface NSControl (WebExtras)
 - (void)sizeToFitAndAdjustWindowHeight;
 @end
+
+#endif

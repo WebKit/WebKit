@@ -40,7 +40,12 @@ public:
     virtual void geolocationDestroyed() OVERRIDE;
     virtual void startUpdating() OVERRIDE;
     virtual void stopUpdating() OVERRIDE;
+#if PLATFORM(IOS)
+    // FIXME: unify this with Mac on OpenSource.
+    virtual void setEnableHighAccuracy(bool) OVERRIDE;
+#else
     virtual void setEnableHighAccuracy(bool) OVERRIDE { }
+#endif
 
     virtual WebCore::GeolocationPosition* lastPosition() OVERRIDE;
 

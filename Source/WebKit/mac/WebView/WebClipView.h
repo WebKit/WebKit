@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import <AppKit/AppKit.h>
 
 @interface WebClipView : NSClipView
@@ -41,3 +43,5 @@
 - (NSRect)additionalClip;
 
 @end
+
+#endif

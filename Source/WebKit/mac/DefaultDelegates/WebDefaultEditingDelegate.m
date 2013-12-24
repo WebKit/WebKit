@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
-
 #import <WebKit/WebDefaultEditingDelegate.h>
 
 #import <WebKit/DOM.h>
@@ -102,9 +100,21 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
     return NO;
 }
 
+#if !PLATFORM(IOS)
 - (void)webView:(WebView *)webView didWriteSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
 }
+#else
+- (NSArray *)supportedPasteboardTypesForCurrentSelection
+{
+    return nil;
+}
+
+- (DOMDocumentFragment *)documentFragmentForPasteboardItemAtIndex:(NSInteger)index
+{
+    return nil;
+}
+#endif
 
 - (void)webViewDidBeginEditing:(NSNotification *)notification
 {

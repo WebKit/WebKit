@@ -124,6 +124,12 @@ OBJC_CLASS NSTextAlternatives;
 
 #endif
 
+#if PLATFORM(IOS)
+@interface NSObject (WebSafeForwarder)
+- (id)asyncForwarder;
+@end
+#endif
+
 // FIXME: Temporary way to expose methods that are in the wrong category inside WebView.
 @interface WebView (WebViewOtherInternal)
 
@@ -136,13 +142,25 @@ OBJC_CLASS NSTextAlternatives;
 - (WTF::String)_userAgentString;
 #endif
 
+#if !PLATFORM(IOS)
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
+#endif
 - (id)_UIDelegateForwarder;
+#if PLATFORM(IOS)
+- (id)_UIDelegateForSelector:(SEL)selector;
+#endif
 - (id)_editingDelegateForwarder;
 - (id)_policyDelegateForwarder;
+#if PLATFORM(IOS)
+- (id)_frameLoadDelegateForwarder;
+- (id)_resourceLoadDelegateForwarder;
+- (id)_UIKitDelegateForwarder;
+#endif
 - (void)_pushPerformingProgrammaticFocus;
 - (void)_popPerformingProgrammaticFocus;
+#if !PLATFORM(IOS)
 - (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame;
+#endif
 + (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType allowingPlugins:(BOOL)allowPlugins;
 - (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType;
 + (void)_registerPluginMIMEType:(NSString *)MIMEType;
@@ -156,16 +174,20 @@ OBJC_CLASS NSTextAlternatives;
 - (BOOL)_isPerformingProgrammaticFocus;
 - (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(NSUInteger)modifierFlags;
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request;
+#if !PLATFORM(IOS)
 - (void)_writeImageForElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 - (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 - (void)_openFrameInNewWindowFromMenu:(NSMenuItem *)sender;
 - (void)_searchWithGoogleFromMenu:(id)sender;
 - (void)_searchWithSpotlightFromMenu:(id)sender;
+#endif
 - (void)_progressCompleted:(WebFrame *)frame;
 - (void)_didCommitLoadForFrame:(WebFrame *)frame;
+#if !PLATFORM(IOS)
 - (void)_didFinishLoadForFrame:(WebFrame *)frame;
 - (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
 - (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame;
+#endif
 - (void)_willChangeValueForKey:(NSString *)key;
 - (void)_didChangeValueForKey:(NSString *)key;
 - (WebBasePluginPackage *)_pluginForMIMEType:(NSString *)MIMEType;
@@ -177,9 +199,11 @@ OBJC_CLASS NSTextAlternatives;
 - (void)setCurrentNodeHighlight:(WebNodeHighlight *)nodeHighlight;
 - (WebNodeHighlight *)currentNodeHighlight;
 
+#if !PLATFORM(IOS)
 - (void)addPluginInstanceView:(NSView *)view;
 - (void)removePluginInstanceView:(NSView *)view;
 - (void)removePluginInstanceViewsFor:(WebFrame*)webFrame;
+#endif
 
 - (void)_addObject:(id)object forIdentifier:(unsigned long)identifier;
 - (id)_objectForIdentifier:(unsigned long)identifier;
@@ -198,16 +222,26 @@ OBJC_CLASS NSTextAlternatives;
 
 + (BOOL)_canHandleRequest:(NSURLRequest *)request forMainFrame:(BOOL)forMainFrame;
 
+#if !PLATFORM(IOS)
 - (void)_setInsertionPasteboard:(NSPasteboard *)pasteboard;
+#endif
+
+#if PLATFORM(IOS)
+- (BOOL)_isStopping;
+- (BOOL)_isClosing;
+
+- (void)_documentScaleChanged;
+- (BOOL)_fetchCustomFixedPositionLayoutRect:(NSRect*)rect;
+#endif
 
 - (void)_preferencesChanged:(WebPreferences *)preferences;
 
-#if ENABLE(VIDEO) && defined(__cplusplus)
+#if ENABLE(VIDEO) && !PLATFORM(IOS) && defined(__cplusplus)
 - (void)_enterFullscreenForNode:(WebCore::Node*)node;
 - (void)_exitFullscreen;
 #endif
 
-#if ENABLE(FULLSCREEN_API) && defined(__cplusplus)
+#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS) && defined(__cplusplus)
 - (BOOL)_supportsFullScreenForElement:(WebCore::Element*)element withKeyboard:(BOOL)withKeyboard;
 - (void)_enterFullScreenForElement:(WebCore::Element*)element;
 - (void)_exitFullScreenForElement:(WebCore::Element*)element;

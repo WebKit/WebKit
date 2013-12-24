@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import "WebPDFRepresentation.h"
 
 #import "WebDataSourcePrivate.h"
@@ -164,3 +166,5 @@
 }
 
 @end
+
+#endif // !PLATFORM(IOS)

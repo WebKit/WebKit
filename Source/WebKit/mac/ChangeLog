@@ -1,3 +1,154 @@
+2013-12-23  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream PLATFORM(IOS) changes to Source/WebKit/
+        https://bugs.webkit.org/show_bug.cgi?id=125746
+
+        Reviewed by David Kilzer.
+
+        This is a straight upstreaming of the various PLATFORM(IOS) changes
+        made to Source/WebKit/ with the following modifications:
+
+        - Includes of <Cocoa/Cocoa.h> were generally replaced with an include
+        of <Foundation/Foundation.h> followed by an include of
+        <AppKit/AppKit.h> on non-iOS platforms. This assumes that nobody was
+        relying on <Cocoa/Cocoa.h>'s inclusion of <CoreData/CoreData.h>.
+
+        - Includes of <Cocoa/Cocoa.h> and <Foundation/Foundation.h> were
+        removed from files that include WebKitPrefix.h.
+
+        - Instances of 'iPhone (OS)' in comments were replaced with 'iOS', and
+        other sensitive terms were elided.
+
+        - Various PLATFORM(IOS) blocks were simplified. For instance:
+
+            #if !PLATFORM(IOS)
+            ...
+            #endif
+            #if PLATFORM(IOS)
+            ...
+            #endif
+
+        Was simplified to:
+
+            #if !PLATFORM(IOS)
+            ...
+            #else
+            ...
+            #endif
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebKit.xcconfig:
+        * Configurations/iOS.xcconfig: Added.
+        * DOM/WebDOMOperations.mm:
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        * DefaultDelegates/WebDefaultEditingDelegate.m:
+        * DefaultDelegates/WebDefaultPolicyDelegate.m:
+        * DefaultDelegates/WebDefaultUIDelegate.h:
+        * DefaultDelegates/WebDefaultUIDelegate.m:
+        * History/WebBackForwardList.mm:
+        * History/WebHistory.mm:
+        * History/WebHistoryItem.mm:
+        * History/WebURLsWithTitles.m:
+        * Misc/WebCache.mm:
+        * Misc/WebDownload.mm:
+        * Misc/WebElementDictionary.mm:
+        * Misc/WebIconDatabase.mm:
+        * Misc/WebIconDatabaseInternal.h:
+        * Misc/WebKitNSStringExtras.mm:
+        * Misc/WebKitSystemBits.m:
+        * Misc/WebKitVersionChecks.h:
+        * Misc/WebKitVersionChecks.m:
+        * Misc/WebLocalizableStrings.mm:
+        * Misc/WebNSArrayExtras.h:
+        * Misc/WebNSArrayExtras.m:
+        * Misc/WebNSControlExtras.h:
+        * Misc/WebNSControlExtras.m:
+        * Misc/WebNSDictionaryExtras.h:
+        * Misc/WebNSDictionaryExtras.m:
+        * Misc/WebNSEventExtras.m:
+        * Misc/WebNSFileManagerExtras.mm:
+        * Misc/WebNSImageExtras.h:
+        * Misc/WebNSImageExtras.m:
+        * Misc/WebNSPasteboardExtras.mm:
+        * Misc/WebNSPrintOperationExtras.h:
+        * Misc/WebNSPrintOperationExtras.m:
+        * Misc/WebNSURLExtras.mm:
+        * Misc/WebNSViewExtras.m:
+        * Misc/WebNSWindowExtras.m:
+        * Panels/WebAuthenticationPanel.h:
+        * Panels/WebAuthenticationPanel.m:
+        * Panels/WebPanelAuthenticationHandler.m:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        * Plugins/WebBasePluginPackage.h:
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebJavaPlugIn.h:
+        * Plugins/WebPluginContainerCheck.mm:
+        * Plugins/WebPluginController.h:
+        * Plugins/WebPluginController.mm:
+        * Plugins/WebPluginDatabase.mm:
+        * Plugins/WebPluginPackage.mm:
+        * Plugins/WebPluginsPrivate.m:
+        * Storage/WebDatabaseManager.mm:
+        * Storage/WebDatabaseManagerClient.h:
+        * Storage/WebDatabaseManagerClient.mm:
+        * Storage/WebDatabaseManagerInternal.h: Added.
+        * Storage/WebStorageManager.mm:
+        * WebCoreSupport/CorrectionPanel.h:
+        * WebCoreSupport/WebAlternativeTextClient.h:
+        * WebCoreSupport/WebApplicationCache.mm:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        * WebCoreSupport/WebGeolocationClient.h:
+        * WebCoreSupport/WebGeolocationClient.mm:
+        * WebCoreSupport/WebJavaScriptTextInputPanel.m:
+        * WebCoreSupport/WebKeyGenerator.mm:
+        * WebCoreSupport/WebNotificationClient.mm:
+        * WebCoreSupport/WebOpenPanelResultListener.mm:
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        * WebCoreSupport/WebSystemInterface.mm:
+        * WebKitPrefix.h:
+        * WebView/WebArchive.mm:
+        * WebView/WebClipView.h:
+        * WebView/WebDataSource.mm:
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebDelegateImplementationCaching.mm:
+        * WebView/WebDeviceOrientation.mm:
+        * WebView/WebDocumentInternal.h:
+        * WebView/WebDocumentLoaderMac.mm:
+        * WebView/WebDynamicScrollBarsViewInternal.h:
+        * WebView/WebFormDelegate.m:
+        * WebView/WebFrame.mm:
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameView.mm:
+        * WebView/WebFullScreenController.h:
+        * WebView/WebFullScreenController.mm:
+        * WebView/WebHTMLRepresentation.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebPDFDocumentExtras.h:
+        * WebView/WebPDFDocumentExtras.mm:
+        * WebView/WebPDFRepresentation.h:
+        * WebView/WebPDFRepresentation.mm:
+        * WebView/WebPDFView.h:
+        * WebView/WebPDFView.mm:
+        * WebView/WebPreferences.mm:
+        * WebView/WebResource.mm:
+        * WebView/WebTextCompletionController.h:
+        * WebView/WebTextIterator.mm:
+        * WebView/WebView.mm:
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        * WebView/WebViewInternal.h:
+
 2013-12-23  Oliver Hunt  <oliver@apple.com>
 
         Refactor PutPropertySlot to be aware of custom properties
@@ -42,9 +193,9 @@
         (core):
         (kit):
         * WebView/WebViewPrivate.h:
-            - removed PageVisibilityStateUnloaded/WebPageVisibilityStateUnloaded
+            - removed PageVisibilityStateUnloaded/WebPageVisibilityStateUnloade
 
-2013-12-15  Andy Estes  <aestes@apple.com>
+2013-12-14  Andy Estes  <aestes@apple.com>
 
         [iOS] Upstream changes to WebKit Public and Private headers
         https://bugs.webkit.org/show_bug.cgi?id=125745
