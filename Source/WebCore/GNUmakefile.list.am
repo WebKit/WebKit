@@ -2738,6 +2738,11 @@ webcore_sources += \
 	Source/WebCore/css/WebKitCSSTransformValue.h \
 	Source/WebCore/css/WebKitCSSViewportRule.cpp \
 	Source/WebCore/css/WebKitCSSViewportRule.h \
+	Source/WebCore/cssjit/FunctionCall.h \
+	Source/WebCore/cssjit/RegisterAllocator.h \
+	Source/WebCore/cssjit/SelectorCompiler.cpp \
+	Source/WebCore/cssjit/SelectorCompiler.h \
+	Source/WebCore/cssjit/StackAllocator.h \
 	Source/WebCore/dom/ActiveDOMObject.cpp \
 	Source/WebCore/dom/ActiveDOMObject.h \
 	Source/WebCore/dom/Attr.cpp \

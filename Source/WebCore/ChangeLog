@@ -1,5 +1,17 @@
 2013-12-23  Benjamin Poulain  <benjamin@webkit.org>
 
+        Add the experimental CSS code generator files to the remaining build systems
+        https://bugs.webkit.org/show_bug.cgi?id=126192
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
+2013-12-23  Benjamin Poulain  <benjamin@webkit.org>
+
         Add the pseudo class :focus to the Selector Code Generator
         https://bugs.webkit.org/show_bug.cgi?id=126189
 

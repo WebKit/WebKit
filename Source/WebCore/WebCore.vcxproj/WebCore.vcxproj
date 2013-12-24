@@ -9539,6 +9539,7 @@
     <ClCompile Include="..\css\WebKitCSSSVGDocumentValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSTransformValue.cpp" />
     <ClCompile Include="..\css\WebKitCSSViewportRule.cpp" />
+    <ClCompile Include="..\cssjit\SelectorCompiler.cpp" />
     <ClCompile Include="..\rendering\AutoTableLayout.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -19899,6 +19900,10 @@
     <ClInclude Include="..\css\WebKitCSSSVGDocumentValue.h" />
     <ClInclude Include="..\css\WebKitCSSTransformValue.h" />
     <ClInclude Include="..\css\WebKitCSSViewportRule.h" />
+    <ClInclude Include="..\cssjit\FunctionCall.h" />
+    <ClInclude Include="..\cssjit\RegisterAllocator.h" />
+    <ClInclude Include="..\cssjit\SelectorCompiler.h" />
+    <ClInclude Include="..\cssjit\StackAllocator.h" />
     <ClInclude Include="..\rendering\AutoTableLayout.h" />
     <ClInclude Include="..\rendering\BidiRun.h" />
     <ClInclude Include="..\rendering\break_lines.h" />

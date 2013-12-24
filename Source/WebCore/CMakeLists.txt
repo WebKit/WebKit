@@ -26,6 +26,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/crypto"
     "${WEBCORE_DIR}/crypto/keys"
     "${WEBCORE_DIR}/css"
+    "${WEBCORE_DIR}/cssjit"
     "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/default"
     "${WEBCORE_DIR}/editing"
@@ -1117,6 +1118,8 @@ set(WebCore_SOURCES
     css/WebKitCSSShaderValue.cpp
     css/WebKitCSSTransformValue.cpp
     css/WebKitCSSViewportRule.cpp
+
+    cssjit/SelectorCompiler.cpp
 
     dom/ActiveDOMObject.cpp
     dom/Attr.cpp

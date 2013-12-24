@@ -2373,6 +2373,9 @@
     <ClCompile Include="..\css\WebKitCSSViewportRule.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\cssjit\SelectorCompiler.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\AutoTableLayout.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
@@ -9303,6 +9306,18 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\WebKitCSSViewportRule.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cssjit\FunctionCall.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cssjit\RegisterAllocator.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cssjit\SelectorCompiler.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cssjit\StackAllocator.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\AutoTableLayout.h">
