@@ -1,3 +1,16 @@
+2013-12-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a test for reattaching collapsed whitespace when siblings change style
+        https://bugs.webkit.org/show_bug.cgi?id=126053
+
+        Reviewed by Dan Bernstein.
+
+        Merge the test from https://chromium.googlesource.com/chromium/blink/+/dd5636728643ff958aebeaf064d38754b0d5904b
+        so that we may not introduce the same regression in WebKit.
+
+        * fast/css/collapsed-whitespace-reattach-in-style-recalc-expected.txt: Added.
+        * fast/css/collapsed-whitespace-reattach-in-style-recalc.html: Added.
+
 2013-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         XMLHttpRequest: status and statusText throw DOM Exception 11 when the state is UNSENT or OPENED.
