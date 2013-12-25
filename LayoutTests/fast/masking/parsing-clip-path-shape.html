@@ -106,6 +106,18 @@ testComputed("-webkit-clip-path", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)", "re
 testComputed("-webkit-clip-path", "ellipse(100%, 100%, 100%, 100%)", "ellipse(100%, 100%, 100%, 100%)");
 testComputed("-webkit-clip-path", "polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)");
 
+// boxes
+testInner("-webkit-clip-path", "content-box", "content-box");
+testInner("-webkit-clip-path", "padding-box", "padding-box");
+testInner("-webkit-clip-path", "border-box", "border-box");
+testInner("-webkit-clip-path", "margin-box", "margin-box");
+testInner("-webkit-clip-path", "bounding-box", "bounding-box");
+testInner("-webkit-clip-path", "circle(50% at 50% 50%) content-box", "circle(50% at 50% 50%) content-box");
+testInner("-webkit-clip-path", "circle(50% at 50% 50%) padding-box", "circle(50% at 50% 50%) padding-box");
+testInner("-webkit-clip-path", "margin-box circle(50% at 50% 50%)", "margin-box circle(50% at 50% 50%)");
+testInner("-webkit-clip-path", "border-box circle(50% at 50% 50%)", "border-box circle(50% at 50% 50%)");
+testInner("-webkit-clip-path", "circle(50% at 50% 50%) bounding-box", "circle(50% at 50% 50%) bounding-box");
+
 // reject non-lengths
 negativeTest("-webkit-clip-path", "circle(1px, 1px, 1)");
 negativeTest("-webkit-clip-path", "circle(1px, 1px, px)");
@@ -128,6 +140,15 @@ negativeTest("-webkit-clip-path", "ellipse(1em, 1em, 1em, -1em)");
 // reject negative height and width
 negativeTest("-webkit-clip-path", "rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)");
 negativeTest("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)");
+
+// reject multiple <box> values
+negativeTest("-webkit-clip-path", "bounding-box circle(50% at 50% 50%) content-box");
+negativeTest("-webkit-clip-path", "margin-box padding-box");
+negativeTest("-webkit-clip-path", "padding-box border-box circle(50% at 50% 50%)");
+negativeTest("-webkit-clip-path", "circle(50% at 50% 50%) content-box bounding-box");
+negativeTest("-webkit-clip-path", "content-box margin-box padding-box");
+negativeTest("-webkit-clip-path", "none content-box");
+negativeTest("-webkit-clip-path", "url(#test) padding-box");
 
 // general negative tests
 negativeTest("-webkit-clip-path", "circle(0, 0)");

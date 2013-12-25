@@ -1,3 +1,16 @@
+2013-12-25  Dirk Schulze  <krit@webkit.org>
+
+        Support <box> values parsing on 'clip-path' property
+        https://bugs.webkit.org/show_bug.cgi?id=126147
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test to check different combinations of the reference boxes
+        content-box, padding-box, border-box, margin-box and bounding-box
+        with other clip-path values.
+
+        * fast/masking/parsing-clip-path-shape.html:
+
 2013-12-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the test expectations added after r161051 now that the changeset has been rolled out.

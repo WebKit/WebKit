@@ -2047,20 +2047,30 @@ public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         if (value->isPrimitiveValue()) {
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-            if (primitiveValue->getValueID() == CSSValueNone)
+            auto& primitiveValue = toCSSPrimitiveValue(*value);
+            if (primitiveValue.getValueID() == CSSValueNone)
                 setValue(styleResolver->style(), 0);
-            else if (primitiveValue->isShape()) {
-                setValue(styleResolver->style(), ShapeClipPathOperation::create(basicShapeForValue(styleResolver->style(), styleResolver->rootElementStyle(), primitiveValue->getShapeValue())));
-            }
 #if ENABLE(SVG)
-            else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_URI) {
-                String cssURLValue = primitiveValue->getStringValue();
+            else if (primitiveValue.primitiveType() == CSSPrimitiveValue::CSS_URI) {
+                String cssURLValue = primitiveValue.getStringValue();
                 URL url = styleResolver->document().completeURL(cssURLValue);
-                // FIXME: It doesn't work with forward or external SVG references (see https://bugs.webkit.org/show_bug.cgi?id=90405)
+                // FIXME: It doesn't work with external SVG references (see https://bugs.webkit.org/show_bug.cgi?id=126133)
                 setValue(styleResolver->style(), ReferenceClipPathOperation::create(cssURLValue, url.fragmentIdentifier()));
             }
 #endif
+            return;
+        }
+        if (!value->isValueList())
+            return;
+        auto& valueList = toCSSValueList(*value);
+        for (unsigned i = 0; i < valueList.length(); ++i) {
+            // FIXME: <box> values are not supported yet.
+            // https://bugs.webkit.org/show_bug.cgi?id=126148
+            auto& primitiveValue = toCSSPrimitiveValue(*valueList.itemWithoutBoundsCheck(i));
+            if (!primitiveValue.isShape())
+                continue;
+            setValue(styleResolver->style(), ShapeClipPathOperation::create(basicShapeForValue(styleResolver->style(), styleResolver->rootElementStyle(), primitiveValue.getShapeValue())));
+            break;
         }
     }
     static PropertyHandler createHandler()

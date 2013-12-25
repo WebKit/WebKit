@@ -277,6 +277,8 @@ public:
 #endif
 #endif
 
+    PassRefPtr<CSSValue> parseClipPath();
+
     static bool isBlendMode(CSSValueID);
     static bool isCompositeOperator(CSSValueID);
 

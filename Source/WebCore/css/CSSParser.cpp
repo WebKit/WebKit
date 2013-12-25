@@ -2919,20 +2919,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             return parseFontVariantLigatures(important);
         break;
     case CSSPropertyWebkitClipPath:
-        if (id == CSSValueNone)
-            validPrimitive = true;
-        else if (value->unit == CSSParserValue::Function) {
-            RefPtr<CSSBasicShape> shapeValue =  parseBasicShape();
-            if (shapeValue)
-                parsedValue = cssValuePool().createValue(shapeValue.release());
-        }
-#if ENABLE(SVG)
-        else if (value->unit == CSSPrimitiveValue::CSS_URI) {
-            parsedValue = CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_URI);
-            addProperty(propId, parsedValue.release(), important);
-            return true;
-        }
-#endif
+        parsedValue = parseClipPath();
         break;
 #if ENABLE(CSS_SHAPES)
     case CSSPropertyWebkitShapeInside:
@@ -5896,6 +5883,49 @@ PassRefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
     return shapeValue ? cssValuePool().createValue(shapeValue.release()) : keywordValue.release();
 }
 #endif
+
+PassRefPtr<CSSValue> CSSParser::parseClipPath()
+{
+    CSSParserValue* value = m_valueList->current();
+    CSSValueID valueId = value->id;
+
+    if (valueId == CSSValueNone) {
+        m_valueList->next();
+        return parseValidPrimitive(valueId, value);
+    }
+#if ENABLE(SVG)
+    if (value->unit == CSSPrimitiveValue::CSS_URI) {
+        m_valueList->next();
+        return CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_URI);
+    }
+#endif
+
+    bool shapeFound = false;
+    bool boxFound = false;
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    for (unsigned i = 0; i < 2; ++i) {
+        if (!value)
+            break;
+        valueId = value->id;
+        if (value->unit == CSSParserValue::Function && !shapeFound) {
+            // parseBasicShape already asks for the next value list item.
+            RefPtr<CSSBasicShape> shapeValue = parseBasicShape();
+            if (!shapeValue)
+                return nullptr;
+            list->append(cssValuePool().createValue(shapeValue.release()));
+            shapeFound = true;
+        } else if ((isBoxValue(valueId) || valueId == CSSValueBoundingBox) && !boxFound) {
+            list->append(parseValidPrimitive(valueId, value));
+            boxFound = true;
+            m_valueList->next();
+        } else
+            return nullptr;
+        value = m_valueList->current();
+    }
+    if (value)
+        return nullptr;
+    return list.release();
+}
 
 // FIXME This function is temporary to allow for an orderly transition between
 // the new CSS Shapes circle and ellipse syntax. It will be removed when the

@@ -48,6 +48,16 @@ PASS computedStyle("-webkit-clip-path", "circle(150% at 50% 100%)") is "circle(1
 PASS computedStyle("-webkit-clip-path", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)") is "rectangle(45%, 45%, 90%, 60%, 25%, 10%)"
 PASS computedStyle("-webkit-clip-path", "ellipse(100%, 100%, 100%, 100%)") is "ellipse(100%, 100%, 100%, 100%)"
 PASS computedStyle("-webkit-clip-path", "polygon(10% 20%, 30% 40%, 40% 50%)") is "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)"
+PASS innerStyle("-webkit-clip-path", "content-box") is "content-box"
+PASS innerStyle("-webkit-clip-path", "padding-box") is "padding-box"
+PASS innerStyle("-webkit-clip-path", "border-box") is "border-box"
+PASS innerStyle("-webkit-clip-path", "margin-box") is "margin-box"
+PASS innerStyle("-webkit-clip-path", "bounding-box") is "bounding-box"
+PASS innerStyle("-webkit-clip-path", "circle(50% at 50% 50%) content-box") is "circle(50% at 50% 50%) content-box"
+PASS innerStyle("-webkit-clip-path", "circle(50% at 50% 50%) padding-box") is "circle(50% at 50% 50%) padding-box"
+PASS innerStyle("-webkit-clip-path", "margin-box circle(50% at 50% 50%)") is "margin-box circle(50% at 50% 50%)"
+PASS innerStyle("-webkit-clip-path", "border-box circle(50% at 50% 50%)") is "border-box circle(50% at 50% 50%)"
+PASS innerStyle("-webkit-clip-path", "circle(50% at 50% 50%) bounding-box") is "circle(50% at 50% 50%) bounding-box"
 PASS innerStyle("-webkit-clip-path", "circle(1px, 1px, 1)") is null
 PASS computedStyle("-webkit-clip-path", "circle(1px, 1px, 1)") is "none"
 PASS innerStyle("-webkit-clip-path", "circle(1px, 1px, px)") is null
@@ -80,6 +90,20 @@ PASS innerStyle("-webkit-clip-path", "rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)")
 PASS computedStyle("-webkit-clip-path", "rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)") is "none"
 PASS innerStyle("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)") is null
 PASS computedStyle("-webkit-clip-path", "rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)") is "none"
+PASS innerStyle("-webkit-clip-path", "bounding-box circle(50% at 50% 50%) content-box") is null
+PASS computedStyle("-webkit-clip-path", "bounding-box circle(50% at 50% 50%) content-box") is "none"
+PASS innerStyle("-webkit-clip-path", "margin-box padding-box") is null
+PASS computedStyle("-webkit-clip-path", "margin-box padding-box") is "none"
+PASS innerStyle("-webkit-clip-path", "padding-box border-box circle(50% at 50% 50%)") is null
+PASS computedStyle("-webkit-clip-path", "padding-box border-box circle(50% at 50% 50%)") is "none"
+PASS innerStyle("-webkit-clip-path", "circle(50% at 50% 50%) content-box bounding-box") is null
+PASS computedStyle("-webkit-clip-path", "circle(50% at 50% 50%) content-box bounding-box") is "none"
+PASS innerStyle("-webkit-clip-path", "content-box margin-box padding-box") is null
+PASS computedStyle("-webkit-clip-path", "content-box margin-box padding-box") is "none"
+PASS innerStyle("-webkit-clip-path", "none content-box") is null
+PASS computedStyle("-webkit-clip-path", "none content-box") is "none"
+PASS innerStyle("-webkit-clip-path", "url(#test) padding-box") is null
+PASS computedStyle("-webkit-clip-path", "url(#test) padding-box") is "none"
 PASS innerStyle("-webkit-clip-path", "circle(0, 0)") is null
 PASS computedStyle("-webkit-clip-path", "circle(0, 0)") is "none"
 PASS innerStyle("-webkit-clip-path", "polygon(0, 0)") is null

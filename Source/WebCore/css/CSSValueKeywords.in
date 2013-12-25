@@ -730,6 +730,9 @@ padding-box
 // CSS_SHAPES
 margin-box
 
+// clip-path
+bounding-box
+
 //
 // background-size
 //
