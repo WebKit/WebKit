@@ -1,5 +1,14 @@
 2013-12-25  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] [CMake] Fix CMake style errors in Source/WebKit2/PlatformGTK.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=126221
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * PlatformGTK.cmake: Fix CMake style errors.
+
+2013-12-25  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] [CMake] Clean up generated sources directories
         https://bugs.webkit.org/show_bug.cgi?id=126216
 

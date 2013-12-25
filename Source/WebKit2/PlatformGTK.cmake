@@ -502,10 +502,13 @@ if (ENABLE_PLUGIN_PROCESS)
     # FIXME: We should figure out a way to avoid compiling files that are common between the plugin
     # process and WebKit2 only once instead of recompiling them for the plugin process.
     list(APPEND PluginProcess_SOURCES
+        Platform/Logging.cpp
+        Platform/Module.cpp
+        Platform/WorkQueue.cpp
+
         Platform/CoreIPC/ArgumentCoders.cpp
         Platform/CoreIPC/ArgumentDecoder.cpp
         Platform/CoreIPC/ArgumentEncoder.cpp
-
         Platform/CoreIPC/Attachment.cpp
         Platform/CoreIPC/Connection.cpp
         Platform/CoreIPC/MessageDecoder.cpp
@@ -516,16 +519,13 @@ if (ENABLE_PLUGIN_PROCESS)
         Platform/CoreIPC/unix/ConnectionUnix.cpp
 
         Platform/IPC/DataReference.cpp
-        Platform/IPC/StringReference.cpp
         Platform/IPC/MessageSender.cpp
-
-        Platform/Logging.cpp
-        Platform/Module.cpp
-        Platform/WorkQueue.cpp
+        Platform/IPC/StringReference.cpp
 
         Platform/gtk/LoggingGtk.cpp
         Platform/gtk/ModuleGtk.cpp
         Platform/gtk/WorkQueueGtk.cpp
+
         Platform/unix/SharedMemoryUnix.cpp
 
         PluginProcess/PluginControllerProxy.cpp
@@ -541,19 +541,6 @@ if (ENABLE_PLUGIN_PROCESS)
         Shared/ChildProcess.cpp
         Shared/ChildProcessProxy.cpp
         Shared/ConnectionStack.cpp
-
-        Shared/Plugins/NPIdentifierData.cpp
-        Shared/Plugins/NPObjectMessageReceiver.cpp
-        Shared/Plugins/NPObjectProxy.cpp
-        Shared/Plugins/NPRemoteObjectMap.cpp
-        Shared/Plugins/NPVariantData.cpp
-
-        Shared/Plugins/Netscape/NetscapePluginModule.cpp
-        Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
-        Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
-
-        Shared/Plugins/PluginProcessCreationParameters.cpp
-
         Shared/ShareableBitmap.cpp
         Shared/WebCoreArgumentCoders.cpp
         Shared/WebEvent.cpp
@@ -561,6 +548,18 @@ if (ENABLE_PLUGIN_PROCESS)
         Shared/WebKit2Initialize.cpp
         Shared/WebMouseEvent.cpp
         Shared/WebWheelEvent.cpp
+
+        Shared/Plugins/NPIdentifierData.cpp
+        Shared/Plugins/NPObjectMessageReceiver.cpp
+        Shared/Plugins/NPObjectProxy.cpp
+        Shared/Plugins/NPRemoteObjectMap.cpp
+        Shared/Plugins/NPVariantData.cpp
+        Shared/Plugins/PluginProcessCreationParameters.cpp
+
+        Shared/Plugins/Netscape/NetscapePluginModule.cpp
+        Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
+
+        Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
 
         Shared/cairo/ShareableBitmapCairo.cpp
 
@@ -573,29 +572,30 @@ if (ENABLE_PLUGIN_PROCESS)
         Shared/soup/WebCoreArgumentCodersSoup.cpp
 
         UIProcess/Launcher/ProcessLauncher.cpp
+
         UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp
 
         UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
+
+        WebProcess/Plugins/Plugin.cpp
 
         WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp
         WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp
         WebProcess/Plugins/Netscape/NetscapePlugin.cpp
         WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
         WebProcess/Plugins/Netscape/NetscapePluginStream.cpp
+
         WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp
 
-        WebProcess/Plugins/Plugin.cpp
-
-        unix/PluginMainUnix.cpp
         unix/PluginMainUnix.cpp
     )
 
     list(APPEND PluginProcess_MESSAGES_IN_FILES
-        Shared/Plugins/NPObjectMessageReceiver.messages.in
-
         PluginProcess/PluginControllerProxy.messages.in
         PluginProcess/PluginProcess.messages.in
         PluginProcess/WebProcessConnection.messages.in
+
+        Shared/Plugins/NPObjectMessageReceiver.messages.in
     )
     GENERATE_WEBKIT2_MESSAGE_SOURCES(PluginProcess_SOURCES "${PluginProcess_MESSAGES_IN_FILES}")
 
