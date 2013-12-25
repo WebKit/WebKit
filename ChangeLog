@@ -1,5 +1,14 @@
 2013-12-25  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] [CMake] Properly name the JavaScriptCore library
+        https://bugs.webkit.org/show_bug.cgi?id=126220
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/cmake/OptionsGTK.cmake: Set the JSC library name properly.
+
+2013-12-25  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] [CMake] Clean up generated sources directories
         https://bugs.webkit.org/show_bug.cgi?id=126216
 

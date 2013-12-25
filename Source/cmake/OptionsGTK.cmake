@@ -100,7 +100,7 @@ set(WTF_USE_ICU_UNICODE 1)
 set(WTF_USE_SOUP 1)
 
 set(WTF_OUTPUT_NAME WTFGTK)
-set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk)
+set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk-3.0)
 set(WebCore_OUTPUT_NAME WebCoreGTK)
 set(WebKit_OUTPUT_NAME webkitgtk-3.0)
 set(WebKit2_OUTPUT_NAME webkit2gtk-3.0)
