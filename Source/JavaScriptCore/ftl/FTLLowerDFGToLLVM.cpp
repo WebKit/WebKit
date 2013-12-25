@@ -4209,6 +4209,12 @@ private:
             case FlushedDouble:
                 exit.m_values[i] = ExitValue::inJSStackAsDouble(flush.virtualRegister());
                 break;
+                
+            case FlushedArguments:
+                // FIXME: implement PhantomArguments.
+                // https://bugs.webkit.org/show_bug.cgi?id=113986
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
             }
         }
         

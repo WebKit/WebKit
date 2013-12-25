@@ -1,3 +1,72 @@
+2013-12-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG PhantomArguments shouldn't rely on a dead Phi graph
+        https://bugs.webkit.org/show_bug.cgi?id=126218
+
+        Reviewed by Oliver Hunt.
+        
+        This change dramatically rationalizes our handling of PhantomArguments (i.e.
+        speculative elision of arguments object allocation).
+        
+        It's now the case that if we decide that we can elide arguments allocation, we just
+        turn the arguments-creating node into a PhantomArguments and mark all locals that
+        it's stored to as being arguments aliases. Being an arguments alias and being a
+        PhantomArguments means basically the same thing: in DFG execution you have the empty
+        value, on OSR exit an arguments object is allocated in your place, and all operations
+        that use the value now just refer directly to the actual arguments in the call frame
+        header (or the arguments we know that we passed to the call, in case of inlining).
+        
+        This means that we no longer have arguments simplification creating a dead Phi graph
+        that then has to be interpreted by the OSR exit logic. That sort of never made any
+        sense.
+        
+        This means that PhantomArguments now has a clear story in SSA: basically SSA just
+        gets rid of the "locals" but everything else is the same.
+        
+        Finally, this means that we can more easily get rid of forward exiting. As I was
+        working on the code to get rid of forward exiting, I realized that I'd have to
+        carefully preserve the special meanings of MovHint and SetLocal in the case of
+        PhantomArguments. It was really bizarre: even the semantics of MovHint were tied to
+        our specific treatment of PhantomArguments. After this change this is no longer the
+        case.
+        
+        One of the really cool things about this change is that arguments reification now
+        just becomes a special kind of FlushFormat. This further unifies things: it means
+        that a MovHint(PhantomArguments) and a SetLocal(PhantomArguments) both have the same
+        meaning, since both of them dictate that the way we recover the local on exit is by
+        reifying arguments. Previously, the SetLocal(PhantomArguments) case needed some
+        special handling to accomplish this.
+        
+        A downside of this approach is that we will now emit code to store the empty value
+        into aliased arguments variables, and we will even emit code to load that empty value
+        as well. As far as I can tell this doesn't cost anything, since PhantomArguments are
+        most profitable in cases where it allows us to simplify control flow and kill the
+        arguments locals entirely. Of course, this isn't an issue in SSA form since SSA form
+        also eliminates the locals.
+
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        (JSC::DFG::ArgumentsSimplificationPhase::detypeArgumentsReferencingPhantomChild):
+        * dfg/DFGFlushFormat.cpp:
+        (WTF::printInternal):
+        * dfg/DFGFlushFormat.h:
+        (JSC::DFG::resultFor):
+        (JSC::DFG::useKindFor):
+        (JSC::DFG::dataFormatFor):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::ValueSource::ValueSource):
+        (JSC::DFG::ValueSource::forFlushFormat):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::flushFormat):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+
 2013-12-23  Oliver Hunt  <oliver@apple.com>
 
         Refactor PutPropertySlot to be aware of custom properties

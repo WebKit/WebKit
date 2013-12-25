@@ -328,6 +328,9 @@ public:
     {
         ASSERT(find() == this);
         
+        if (isArgumentsAlias())
+            return FlushedArguments;
+        
         if (!shouldUnboxIfPossible())
             return FlushedJSValue;
         

@@ -395,16 +395,6 @@ public:
                         || unmodifiedArgumentsRegister(m_graph.argumentsRegisterFor(node->codeOrigin)) == variableAccessData->local())
                         break;
 
-                    ASSERT(!variableAccessData->isCaptured());
-                    
-                    // If this is a store into a VariableAccessData* that is marked as
-                    // arguments aliasing for an InlineCallFrame* that does not create
-                    // arguments, then flag the VariableAccessData as being an
-                    // arguments-aliased. This'll let the OSR exit machinery do the right
-                    // things. Note also that the SetLocal should become dead as soon as
-                    // we replace all uses of this variable with GetMyArgumentsLength and
-                    // GetMyArgumentByVal.
-                    ASSERT(m_argumentsAliasing.find(variableAccessData)->value.isValid());
                     if (variableAccessData->mergeIsArgumentsAlias(true)) {
                         changed = true;
                         
@@ -420,22 +410,6 @@ public:
                     break;
                 }
                     
-                case PhantomLocal: {
-                    VariableAccessData* variableAccessData = node->variableAccessData();
-                    
-                    if (variableAccessData->isCaptured()
-                        || !m_argumentsAliasing.find(variableAccessData)->value.isValid()
-                        || m_createsArguments.contains(node->codeOrigin.inlineCallFrame))
-                        break;
-                    
-                    // Turn PhantomLocals into just GetLocals. This will preserve the threading
-                    // of the local through to this point, but will allow it to die, causing
-                    // only OSR to know about it.
-
-                    node->setOpAndDefaultFlags(GetLocal);
-                    break;
-                }
-
                 case Flush: {
                     VariableAccessData* variableAccessData = node->variableAccessData();
                     
@@ -459,7 +433,7 @@ public:
                     // 2) The Phantom may keep the CreateArguments node alive, which is
                     //    precisely what we don't want.
                     for (unsigned i = 0; i < AdjacencyList::Size; ++i)
-                        removeArgumentsReferencingPhantomChild(node, i);
+                        detypeArgumentsReferencingPhantomChild(node, i);
                     break;
                 }
                     
@@ -470,7 +444,6 @@ public:
                     if (!isOKToOptimize(node->child1().node()))
                         break;
                     node->convertToPhantom();
-                    node->children.setChild1(Edge());
                     break;
                 }
                     
@@ -488,8 +461,11 @@ public:
                     if (!isOKToOptimize(node->child1().node()))
                         break;
                     
-                    node->children.child1() = node->children.child2();
-                    node->children.child2() = Edge();
+                    insertionSet.insertNode(
+                        indexInBlock, SpecNone, Phantom, node->codeOrigin, node->child1());
+                    
+                    node->child1() = node->child2();
+                    node->child2() = Edge();
                     node->setOpAndDefaultFlags(GetMyArgumentByVal);
                     changed = true;
                     --indexInBlock; // Force reconsideration of this op now that it's a GetMyArgumentByVal.
@@ -503,7 +479,10 @@ public:
                     if (!isOKToOptimize(node->child1().node()))
                         break;
                     
-                    node->children.child1() = Edge();
+                    insertionSet.insertNode(
+                        indexInBlock, SpecNone, Phantom, node->codeOrigin, node->child1());
+                    
+                    node->child1() = Edge();
                     node->setOpAndDefaultFlags(GetMyArgumentsLength);
                     changed = true;
                     --indexInBlock; // Force reconsideration of this op noew that it's a GetMyArgumentsLength.
@@ -580,8 +559,7 @@ public:
                         indexInBlock, SpecNone, CheckArgumentsNotCreated,
                         codeOrigin);
                     insertionSet.insertNode(
-                        indexInBlock, SpecNone, Phantom, codeOrigin,
-                        children);
+                        indexInBlock, SpecNone, Phantom, codeOrigin, children);
                     
                     changed = true;
                     break;
@@ -591,8 +569,7 @@ public:
                     if (m_createsArguments.contains(node->codeOrigin.inlineCallFrame))
                         continue;
                     
-                    node->setOpAndDefaultFlags(Phantom);
-                    node->children.reset();
+                    node->convertToPhantom();
                     break;
                 }
                     
@@ -625,6 +602,19 @@ public:
                 changed = true;
             }
             insertionSet.execute(block);
+        }
+        
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
+                Node* node = block->at(indexInBlock);
+                if (node->op() != Phantom)
+                    continue;
+                for (unsigned i = 0; i < AdjacencyList::Size; ++i)
+                    detypeArgumentsReferencingPhantomChild(node, i);
+            }
         }
         
         if (changed) {
@@ -764,35 +754,23 @@ private:
         return false;
     }
     
-    void removeArgumentsReferencingPhantomChild(Node* node, unsigned edgeIndex)
+    void detypeArgumentsReferencingPhantomChild(Node* node, unsigned edgeIndex)
     {
         Edge edge = node->children.child(edgeIndex);
         if (!edge)
             return;
         
         switch (edge->op()) {
-        case Phi: // Arises if we had CSE on a GetLocal of the arguments register.
-        case GetLocal: // Arises if we had CSE on an arguments access to a variable aliased to the arguments.
-        case SetLocal: { // Arises if we had CSE on a GetLocal of the arguments register.
+        case GetLocal: {
             VariableAccessData* variableAccessData = edge->variableAccessData();
-            bool isDeadArgumentsRegister =
-                variableAccessData->local() ==
-                    m_graph.uncheckedArgumentsRegisterFor(edge->codeOrigin)
-                && !m_createsArguments.contains(edge->codeOrigin.inlineCallFrame);
-            bool isAliasedArgumentsRegister =
-                !variableAccessData->isCaptured()
-                && m_argumentsAliasing.find(variableAccessData)->value.isValid()
-                && !m_createsArguments.contains(edge->codeOrigin.inlineCallFrame);
-            if (!isDeadArgumentsRegister && !isAliasedArgumentsRegister)
+            if (!variableAccessData->isArgumentsAlias())
                 break;
-            node->children.removeEdge(edgeIndex);
+            node->children.child(edgeIndex).setUseKind(UntypedUse);
             break;
         }
             
-        case CreateArguments: { // Arises if we CSE two GetLocals to the arguments register and then CSE the second use of the GetLocal to the first.
-            if (m_createsArguments.contains(edge->codeOrigin.inlineCallFrame))
-                break;
-            node->children.removeEdge(edgeIndex);
+        case PhantomArguments: {
+            node->children.child(edgeIndex).setUseKind(UntypedUse);
             break;
         }
             

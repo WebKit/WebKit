@@ -1,3 +1,19 @@
+2013-12-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG PhantomArguments shouldn't rely on a dead Phi graph
+        https://bugs.webkit.org/show_bug.cgi?id=126218
+
+        Reviewed by Oliver Hunt.
+        
+        Added a test for an obvious case that I don't think we had coverage for in
+        microbenchmarks. Of course, this case was already covered by more complex tests.
+
+        * js/regress/inline-arguments-aliased-access-expected.txt: Added.
+        * js/regress/inline-arguments-aliased-access.html: Added.
+        * js/regress/script-tests/inline-arguments-aliased-access.js: Added.
+        (foo):
+        (bar):
+
 2013-12-25  Dirk Schulze  <krit@webkit.org>
 
         Support <box> values parsing on 'clip-path' property

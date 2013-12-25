@@ -1436,9 +1436,7 @@ void SpeculativeJIT::compileCurrentBlock()
         
         VariableAccessData* variable = node->variableAccessData();
         DataFormat format;
-        if (variable->isArgumentsAlias())
-            format = DataFormatArguments;
-        else if (!node->refCount())
+        if (!node->refCount())
             continue; // No need to record dead SetLocal's.
         else
             format = dataFormatFor(variable->flushFormat());

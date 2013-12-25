@@ -56,6 +56,9 @@ void printInternal(PrintStream& out, FlushFormat format)
     case FlushedJSValue:
         out.print("FlushedJSValue");
         return;
+    case FlushedArguments:
+        out.print("FlushedArguments");
+        return;
     case ConflictingFlush:
         out.print("ConflictingFlush");
         return;
