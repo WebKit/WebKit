@@ -1,3 +1,16 @@
+2013-12-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Missing introspection information for WebExtensions
+        https://bugs.webkit.org/show_bug.cgi?id=122407
+
+        Reviewed by Philippe Normand.
+
+        Generate WebKit2WebExtension-3.0.gir with the WebExtensions API
+        and move the DOM bindings API from WebKit2-3.0.gir to
+        WebKit2WebExtension-3.0.gir.
+
+        * GNUmakefile.am:
+
 2013-12-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         32-bit Mac build fix attempt after r161045.

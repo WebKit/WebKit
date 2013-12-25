@@ -318,7 +318,6 @@ WebKit2-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) libwebkit2gtk-@WEBKITGTK_AP
 	     -I$(srcdir)/Source \
 	     -I$(WebKit2) \
 	     -I$(GENSOURCES) \
-	     -I$(GENSOURCES_WEBKITDOM) \
 	     -I$(GENSOURCES_WEBKIT2) \
 	     -I$(top_builddir)/Source/WebKit2/UIProcess/API/gtk \
 	     -I$(top_srcdir)/Source/JavaScriptCore/ForwardingHeaders \
@@ -329,7 +328,6 @@ WebKit2-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) libwebkit2gtk-@WEBKITGTK_AP
 	     -DWEBKIT2_COMPILATION \
 	     $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h \
 	     $(webkit2gtk_h_api) \
-	     $(webkitgtk_gdom_built_h_api) \
 	     $(WebKit2)/UIProcess/API/gtk/*.cpp
 
 WebKit2-@WEBKITGTK_API_VERSION@.typelib: WebKit2-@WEBKITGTK_API_VERSION@.gir $(G_IR_COMPILER)
@@ -337,8 +335,57 @@ WebKit2-@WEBKITGTK_API_VERSION@.typelib: WebKit2-@WEBKITGTK_API_VERSION@.gir $(G
 
 gir_DATA += WebKit2-@WEBKITGTK_API_VERSION@.gir
 typelibs_DATA += WebKit2-@WEBKITGTK_API_VERSION@.typelib
-
 CLEANFILES += WebKit2-@WEBKITGTK_API_VERSION@.gir WebKit2-@WEBKITGTK_API_VERSION@.typelib
+
+WebKit2WebExtension-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) WebKit2-@WEBKITGTK_API_VERSION@.gir
+	$(AM_V_GEN) \
+	     CC="$(CC)" \
+	     CFLAGS="$(CFLAGS) -Wno-deprecated-declarations" \
+	     $(G_IR_SCANNER) \
+	     --quiet \
+	     --warn-all \
+	     --symbol-prefix=webkit \
+	     --identifier-prefix=WebKit \
+	     --namespace=WebKit2WebExtension \
+	     --nsversion=@WEBKITGTK_API_VERSION@ \
+	     --include=GObject-2.0 \
+	     --include=Gtk-3.0 \
+	     --include=JavaScriptCore-@WEBKITGTK_API_VERSION@ \
+	     --include=WebKit2-@WEBKITGTK_API_VERSION@ \
+	     --library=webkit2gtk-@WEBKITGTK_API_VERSION@ \
+	     --library=javascriptcoregtk-@WEBKITGTK_API_VERSION@ \
+	     --libtool="$(LIBTOOL)" \
+	     --pkg=gobject-2.0 \
+	     --pkg=gtk+-@GTK_API_VERSION@ \
+	     --pkg=libsoup-2.4 \
+	     --pkg-export=webkit2gtk-@WEBKITGTK_API_VERSION@ \
+	     --output=$@ \
+	     --add-include-path=$(WebKit2) \
+	     --add-include-path=$(top_builddir) \
+	     --c-include="webkit2/webkit-web-extension.h" \
+	     -I$(srcdir)/Source \
+	     -I$(WebKit2) \
+	     -I$(GENSOURCES) \
+	     -I$(GENSOURCES_WEBKITDOM) \
+	     -I$(GENSOURCES_WEBKIT2) \
+	     -I$(top_builddir)/Source/WebKit2/WebProcess/InjectedBundle/API/gtk \
+	     -I$(top_srcdir)/Source/JavaScriptCore/ForwardingHeaders \
+	     -I$(top_srcdir) \
+	     -I$(GENSOURCES_WEBKIT2)/webkit2gtk/include \
+	     -I$(GENSOURCES_WEBKIT2)/webkit2extension/include \
+	     -I$(GENSOURCES_WEBKIT2)/webkit2gtk \
+	     -DBUILDING_WEBKIT \
+	     -DWEBKIT2_COMPILATION \
+	     $(webkit2_web_extension_h_api) \
+	     $(webkitgtk_gdom_built_h_api) \
+	     $(WebKit2)/WebProcess/InjectedBundle/API/gtk/*.cpp
+
+WebKit2WebExtension-@WEBKITGTK_API_VERSION@.typelib: WebKit2WebExtension-@WEBKITGTK_API_VERSION@.gir $(G_IR_COMPILER)
+	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(WebKit2) --includedir $(top_builddir) $< -o $@
+
+gir_DATA += WebKit2WebExtension-@WEBKITGTK_API_VERSION@.gir
+typelibs_DATA += WebKit2WebExtension-@WEBKITGTK_API_VERSION@.typelib
+CLEANFILES += WebKit2WebExtension-@WEBKITGTK_API_VERSION@.gir WebKit2WebExtension-@WEBKITGTK_API_VERSION@.typelib
 
 endif
 endif
