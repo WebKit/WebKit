@@ -1,3 +1,10 @@
+2013-12-25  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (Lazy tree creation): css3/calc/transitions-dependent.html is frequently failing
+        https://bugs.webkit.org/show_bug.cgi?id=126142
+
+        * TestExpectations: Marked it as flaky.
+
 2013-12-25  Filip Pizlo  <fpizlo@apple.com>
 
         DFG PhantomArguments shouldn't rely on a dead Phi graph
