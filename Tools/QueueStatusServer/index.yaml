@@ -63,6 +63,12 @@ indexes:
 
 - kind: QueueStatus
   properties:
+  - name: bot_id
+  - name: date
+    direction: desc
+
+- kind: QueueStatus
+  properties:
   - name: queue_name
   - name: date
     direction: desc

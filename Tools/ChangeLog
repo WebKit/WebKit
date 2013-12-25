@@ -1,3 +1,31 @@
+2013-12-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a JSON interface for getting EWS queue status
+        https://bugs.webkit.org/show_bug.cgi?id=126182
+
+        Reviewed by Ryosuke Niwa.
+
+        The current goal is to add an indicator of how many patches are in the queue, and
+        the JSON also includes some other information that was easy to add.
+
+        * QueueStatusServer/app.yaml: Updated version for deployment.
+
+        * QueueStatusServer/handlers/queuestatusjson.py: Added. Returns a JSON with some
+        bot and patch queue information.
+
+        * QueueStatusServer/index.yaml: Added an index for a new query that only returns
+        bot ids.
+
+        * QueueStatusServer/main.py: Map /queue-status-json/ directory to QueueStatusJSON
+        handler.
+
+        * QueueStatusServer/config: Added property svn:ignore.
+        * QueueStatusServer/filters: Added property svn:ignore.
+        * QueueStatusServer/loggers: Added property svn:ignore.
+        * QueueStatusServer/handlers: Added property svn:ignore.
+        * QueueStatusServer/model: Added property svn:ignore.
+        Ignore compiled *.pyc files in all directories they appear in when running locally.
+
 2013-12-23  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the build after r161017

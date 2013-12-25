@@ -41,6 +41,7 @@ from handlers.patch import Patch
 from handlers.patchstatus import PatchStatus
 from handlers.queuecharts import QueueCharts
 from handlers.queuestatus import QueueStatus
+from handlers.queuestatusjson import QueueStatusJSON
 from handlers.recentstatus import QueuesOverview
 from handlers.releasepatch import ReleasePatch
 from handlers.showresults import ShowResults
@@ -69,6 +70,7 @@ routes = [
     (r'/queue-charts/(.*)', QueueCharts),
     (r'/queue-status/(.*)/bots/(.*)', QueueStatus),
     (r'/queue-status/(.*)', QueueStatus),
+    (r'/queue-status-json/(.*)', QueueStatusJSON),
     (r'/next-patch/(.*)', NextPatch),
     (r'/release-patch', ReleasePatch),
     ('/update-status', UpdateStatus),
