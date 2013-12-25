@@ -1,5 +1,17 @@
 2013-12-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Fix warnings when generating WebExtensions gobject-instrospection files
+        https://bugs.webkit.org/show_bug.cgi?id=126225
+
+        Reviewed by Philippe Normand.
+
+        Add transfer annotation to webkit_web_page_get_dom_document() and
+        document webkit_web_page_get_main_frame().
+
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+
+2013-12-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Missing introspection information for WebExtensions
         https://bugs.webkit.org/show_bug.cgi?id=122407
 

@@ -411,7 +411,7 @@ void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageNa
  *
  * Get the #WebKitDOMDocument currently loaded in @web_page
  *
- * Returns: the #WebKitDOMDocument currently loaded, or %NULL
+ * Returns: (transfer none): the #WebKitDOMDocument currently loaded, or %NULL
  *    if no document is currently loaded.
  */
 WebKitDOMDocument* webkit_web_page_get_dom_document(WebKitWebPage* webPage)
@@ -459,6 +459,16 @@ const gchar* webkit_web_page_get_uri(WebKitWebPage* webPage)
     return webPage->priv->uri.data();
 }
 
+/**
+ * webkit_web_page_get_main_frame:
+ * @web_page: a #WebKitWebPage
+ *
+ * Returns the main frame of a #WebKitWebPage.
+ *
+ * Returns: (transfer none): the #WebKitFrame that is the main frame of @web_page
+ *
+ * Since: 2.2
+ */
 WebKitFrame* webkit_web_page_get_main_frame(WebKitWebPage* webPage)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), 0);
