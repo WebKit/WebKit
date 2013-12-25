@@ -6,7 +6,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/Source/JavaScriptCore/ForwardingHeaders
     ${CMAKE_SOURCE_DIR}/Source/WebKit/gtk
     ${DERIVED_SOURCES_DIR}
-    ${DERIVED_SOURCES_DIR}/webkit
+    ${DERIVED_SOURCES_WEBKITGTK_DIR}
     ${GLIB_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}

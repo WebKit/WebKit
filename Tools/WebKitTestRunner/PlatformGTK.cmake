@@ -1,12 +1,8 @@
-add_custom_target(gtk-forwarding-headers-for-WebKitTestRunner
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT_TESTRUNNER_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include gtk
+add_custom_target(WebKitTestRunner-forwarding-headers
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT_TESTRUNNER_DIR} ${FORWARDING_HEADERS_DIR} gtk
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT_TESTRUNNER_DIR} ${FORWARDING_HEADERS_DIR} soup
 )
-set(ForwardingHeadersForWebKitTestRunner_NAME gtk-forwarding-headers-for-WebKitTestRunner)
-
-add_custom_target(soup-forwarding-headers-for-WebKitTestRunner
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT_TESTRUNNER_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include soup
-)
-set(ForwardingNetworkHeadersForWebKitTestRunner_NAME soup-forwarding-headers-for-WebKitTestRunner)
+set(ForwardingHeadersForWebKitTestRunner_NAME WebKitTestRunner-forwarding-headers)
 
 list(APPEND WebKitTestRunner_SOURCES
     ${WEBKIT_TESTRUNNER_DIR}/cairo/TestInvocationCairo.cpp
@@ -22,6 +18,7 @@ list(APPEND WebKitTestRunner_SOURCES
 )
 
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
+    ${FORWARDING_HEADERS_DIR}
     ${WTF_DIR}/wtf/gobject
     ${ATK_INCLUDE_DIRS}
     ${CAIRO_INCLUDE_DIRS}

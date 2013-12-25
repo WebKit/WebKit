@@ -1,3 +1,24 @@
+2013-12-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Clean up generated sources directories
+        https://bugs.webkit.org/show_bug.cgi?id=126216
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * DumpRenderTree/PlatformGTK.cmake: Use the new derived sources variables.
+        * GtkLauncher/CMakeLists.txt: Ditto.
+        * MiniBrowser/gtk/CMakeLists.txt: Ditto.
+        * TestWebKitAPI/CMakeLists.txt: Now that the EFL and GTK+ forwarding header locations differ,
+        move the platform-specific includes to the EFL and GTK platform files. Also clean up forwarding
+        header generation into on target.
+        * TestWebKitAPI/PlatformEfl.cmake: Added EFL-specific locations to the include list.
+        * TestWebKitAPI/PlatformGTK.cmake: Added GTK-specific locations to the include list.
+        * WebKitTestRunner/CMakeLists.txt: Same as for TestWebKitAPI.
+        * WebKitTestRunner/PlatformEfl.cmake: Ditto.
+        * WebKitTestRunner/PlatformGTK.cmake: Ditto.
+        * gtk/generate-gtkdoc: Update to select the appropriate derived sources locations for
+        the cmake build.
+
 2013-12-23  Alexey Proskuryakov  <ap@apple.com>
 
         Add a JSON interface for getting EWS queue status

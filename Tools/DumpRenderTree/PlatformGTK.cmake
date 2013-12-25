@@ -30,6 +30,7 @@ list(APPEND DumpRenderTree_LIBRARIES
 
 list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     ${DERIVED_SOURCES_DIR}
+    ${DERIVED_SOURCES_WEBKITGTK_DIR}
     ${WEBKIT_DIR}/gtk
     ${WEBCORE_DIR}/platform/gtk
     ${TOOLS_DIR}/DumpRenderTree/atk

@@ -45,9 +45,6 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/c
     ${WTF_DIR}
-    ${DERIVED_SOURCES_WEBCORE_DIR}
-    ${DERIVED_SOURCES_WEBCORE_DIR}/include
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/include
     ${DERIVED_SOURCES_DIR}/InjectedBundle
     ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/Source
@@ -104,4 +101,3 @@ add_executable(WebKitTestRunner ${WebKitTestRunner_SOURCES})
 target_link_libraries(WebKitTestRunner ${WebKitTestRunner_LIBRARIES})
 
 add_dependencies(WebKit2 ${ForwardingHeadersForWebKitTestRunner_NAME})
-add_dependencies(WebKit2 ${ForwardingNetworkHeadersForWebKitTestRunner_NAME})

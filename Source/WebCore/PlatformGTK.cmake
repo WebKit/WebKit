@@ -437,8 +437,6 @@ target_link_libraries(WebCorePlatformGTK
 )
 
 if (ENABLE_WEBKIT2)
-    set(DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR ${DERIVED_SOURCES_DIR}/webkitdom)
-
     include_directories(
         "${WebCore_INCLUDE_DIRECTORIES}"
         "${DERIVED_SOURCES_DIR}"

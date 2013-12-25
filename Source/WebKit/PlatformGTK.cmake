@@ -1,15 +1,15 @@
-set(DERIVED_SOURCES_WEBKITGTK_DIR ${DERIVED_SOURCES_DIR}/webkit)
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKITGTK_DIR})
-configure_file(gtk/webkit/webkitversion.h.in ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitversion.h)
+file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKITGTK_API_DIR})
+configure_file(gtk/webkit/webkitversion.h.in ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitversion.h)
 configure_file(gtk/webkit.pc.in ${CMAKE_BINARY_DIR}/Source/WebKit/gtk/webkitgtk-3.0.pc @ONLY)
 
 add_definitions(-DPACKAGE_LOCALE_DIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
     ${DERIVED_SOURCES_DIR}
-    ${DERIVED_SOURCES_DIR}/webkitdom
     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}
     ${DERIVED_SOURCES_WEBKITGTK_DIR}
+    ${DERIVED_SOURCES_WEBKITGTK_API_DIR}
     ${THIRDPARTY_DIR}/ANGLE/include/GLSLANG
     ${THIRDPARTY_DIR}/ANGLE/src
     ${THIRDPARTY_DIR}/ANGLE/include
@@ -34,8 +34,8 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKit_SOURCES
-    ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitenumtypes.cpp
-    ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitmarshal.cpp
+    ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.cpp
+    ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitmarshal.cpp
 
     gtk/WebCoreSupport/AcceleratedCompositingContextGL.cpp
     gtk/WebCoreSupport/AssertMatchingEnums.cpp
@@ -137,25 +137,25 @@ list(APPEND WebKit_LIBRARIES
 set(WebKit_MARSHAL_LIST ${WEBKIT_DIR}/gtk/webkitmarshal.list)
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitmarshal.cpp
-           ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitmarshal.h
+    OUTPUT ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitmarshal.cpp
+           ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitmarshal.h
     MAIN_DEPENDENCY ${WebKit_MARSHAL_LIST}
 
-    COMMAND echo extern \"C\" { > ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitmarshal.cpp
-    COMMAND glib-genmarshal --prefix=webkit_marshal ${WebKit_MARSHAL_LIST} --body >> ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitmarshal.cpp
-    COMMAND echo } >> ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitmarshal.cpp
+    COMMAND echo extern \"C\" { > ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitmarshal.cpp
+    COMMAND glib-genmarshal --prefix=webkit_marshal ${WebKit_MARSHAL_LIST} --body >> ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitmarshal.cpp
+    COMMAND echo } >> ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitmarshal.cpp
 
-    COMMAND glib-genmarshal --prefix=webkit_marshal ${WebKit_MARSHAL_LIST} --header > ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitmarshal.h
+    COMMAND glib-genmarshal --prefix=webkit_marshal ${WebKit_MARSHAL_LIST} --header > ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitmarshal.h
     VERBATIM
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitenumtypes.h
-           ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitenumtypes.cpp
+    OUTPUT ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.h
+           ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.cpp
     DEPENDS ${WebKitGTK_INSTALLED_HEADERS}
 
-    COMMAND glib-mkenums --template ${WEBKIT_DIR}/gtk/webkit/webkitenumtypes.h.template ${WebKitGTK_INSTALLED_HEADERS} | sed s/web_kit/webkit/ | sed s/WEBKIT_TYPE_KIT/WEBKIT_TYPE/ > ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitenumtypes.h
+    COMMAND glib-mkenums --template ${WEBKIT_DIR}/gtk/webkit/webkitenumtypes.h.template ${WebKitGTK_INSTALLED_HEADERS} | sed s/web_kit/webkit/ | sed s/WEBKIT_TYPE_KIT/WEBKIT_TYPE/ > ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.h
 
-    COMMAND glib-mkenums --template ${WEBKIT_DIR}/gtk/webkit/webkitenumtypes.cpp.template ${WebKitGTK_INSTALLED_HEADERS} | sed s/web_kit/webkit/ > ${DERIVED_SOURCES_WEBKITGTK_DIR}/webkitenumtypes.cpp
+    COMMAND glib-mkenums --template ${WEBKIT_DIR}/gtk/webkit/webkitenumtypes.cpp.template ${WebKitGTK_INSTALLED_HEADERS} | sed s/web_kit/webkit/ > ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.cpp
     VERBATIM
 )

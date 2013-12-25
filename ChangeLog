@@ -1,3 +1,13 @@
+2013-12-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Clean up generated sources directories
+        https://bugs.webkit.org/show_bug.cgi?id=126216
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/cmake/OptionsGTK.cmake: Pre-define the main derived sources directories
+        so that they definitions can be shared easily throughout the build system.
+
 2013-12-23  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][CMAKE] Case insensitive string comparison of build type

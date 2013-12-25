@@ -76,17 +76,21 @@ def webkitdom_docs_html_path():
     return common.build_path('Documentation', 'webkitdomgtk', 'html')
 
 def get_webkit2_options():
-    def derived_sources_path(*args):
-        return common.build_path(*(('DerivedSources', 'WebKit2') + args))
-    def src_path(*args):
-        return common.top_level_path(*(('Source', 'WebKit2', 'UIProcess', 'API', 'gtk') + args))
-    def injected_bundle_src_path(*args):
-        return common.top_level_path(*(('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk') + args))
+    api_path = common.top_level_path('Source', 'WebKit2', 'UIProcess', 'API', 'gtk')
+    injected_bundle_api_path = common.top_level_path('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk')
+
+    if common.is_cmake_build():
+        generated_api_path = common.build_path('DerivedSources', 'webkit2gtk', 'webkit2')
+    else:
+        generated_api_path = common.build_path('DerivedSources', 'WebKit2', 'webkit2gtk', 'webkit2')
 
     xref_deps = get_common_xref_deps().copy()
     xref_deps.update({
         'gtk+-3.0' : ['gtk3', 'gdk3']
     })
+
+    def src_path(*args):
+        return os.path.join(api_path, *args)
 
     options = get_common_options().copy()
     options.update({
@@ -94,15 +98,20 @@ def get_webkit2_options():
         'namespace' : 'webkit',
         'doc_dir' : src_path('docs'),
         'output_dir' : common.build_path('Documentation', 'webkit2gtk'),
-        'source_dirs' : [src_path(), derived_sources_path('webkit2gtk', 'webkit2'), injected_bundle_src_path()],
-        'cflags' : ' -I' + derived_sources_path('webkit2gtk', 'include') + \
-                   ' -I' + derived_sources_path('webkit2gtk') + \
-                   ' -I' + derived_sources_path('include') + \
-                   ' -I' + common.top_level_path('Source') + \
-                   ' -I' + src_path(),
+        'source_dirs' : [src_path(), generated_api_path, injected_bundle_api_path],
+        'cflags' :
+            # Common paths
+            ' -I' + common.top_level_path('Source') + \
+            ' -I' + api_path + \
+            # Autotools paths
+            ' -I' + common.build_path('DerivedSources', 'webkit2gtk', 'include') + \
+            ' -I' + common.build_path('DerivedSources', 'WebKit2', 'webkit2gtk') + \
+            # CMake paths
+            ' -I' + common.build_path('DerivedSources', 'ForwardingHeaders', 'webkit2gtk') + \
+            ' -I' + common.build_path('DerivedSources', 'webkit2gtk'),
         'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps) + [webkitdom_docs_html_path()],
         'ignored_files': glob.glob(src_path('*Private.h')) + \
-                         glob.glob(injected_bundle_src_path('*Private.h')) + \
+                         glob.glob(os.path.join(injected_bundle_api_path, '*Private.h')) + \
                          glob.glob(src_path('*Client*')) + \
                          glob.glob(src_path('WebKitAuthenticationDialog.*')) + \
                          glob.glob(src_path('WebKitBatteryProvider.*')) + \
@@ -110,8 +119,8 @@ def get_webkit2_options():
                          glob.glob(src_path('WebKitTextChecker.*')) + \
                          glob.glob(src_path('WebKitWebViewBaseAccessible.*')) + \
                          glob.glob(src_path('WebViewBaseInputMethodFilter.*')) + \
-                         glob.glob(derived_sources_path('webkit2gtk', 'webkit2', 'WebKitMarshal.*')) + \
-                         glob.glob(derived_sources_path('webkit2gtk', 'webkit2', 'WebKitEnumTypes.*')) + \
+                         glob.glob(os.path.join(generated_api_path, 'WebKitMarshal.*')) + \
+                         glob.glob(os.path.join(generated_api_path, 'WebKitEnumTypes.*')) + \
                          glob.glob(src_path('tests/*.h'))
     })
     return options
@@ -122,7 +131,7 @@ def get_webkit1_options(gtk_version):
 
     def webkitversionh_path():
         if common.is_cmake_build():
-            return common.build_path('DerivedSources', 'webkit')
+            return common.build_path('DerivedSources', 'webkitgtk')
         else:
             return common.build_path('Source', 'WebKit', 'gtk', 'webkit')
 
