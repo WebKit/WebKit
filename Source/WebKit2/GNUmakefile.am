@@ -350,8 +350,8 @@ WebKit2WebExtension-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) WebKit2-@WEBKIT
 	     --nsversion=@WEBKITGTK_API_VERSION@ \
 	     --include=GObject-2.0 \
 	     --include=Gtk-3.0 \
-	     --include=JavaScriptCore-@WEBKITGTK_API_VERSION@ \
-	     --include=WebKit2-@WEBKITGTK_API_VERSION@ \
+	     --include-uninstalled=JavaScriptCore-@WEBKITGTK_API_VERSION@.gir \
+	     --include-uninstalled=WebKit2-@WEBKITGTK_API_VERSION@.gir \
 	     --library=webkit2gtk-@WEBKITGTK_API_VERSION@ \
 	     --library=javascriptcoregtk-@WEBKITGTK_API_VERSION@ \
 	     --libtool="$(LIBTOOL)" \

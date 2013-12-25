@@ -1,3 +1,10 @@
+2013-12-25  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after r161063
+
+        * GNUmakefile.am: Use locally built .gir dependencies when
+        building the WebExtensions gir file.
+
 2013-12-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix warnings when generating WebExtensions gobject-instrospection files
