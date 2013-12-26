@@ -78,6 +78,16 @@ if (NOT ENABLE_VIDEO AND ENABLE_VIDEO_TRACK)
     message(STATUS "Disabling VIDEO_TRACK since VIDEO support is disabled.")
     set(ENABLE_VIDEO_TRACK OFF)
 endif ()
+
+if (PRODUCTION_MODE)
+    set(ENABLE_TOOLS OFF)
+    set(ENABLE_API_TESTS OFF)
+    set(VERSION_SCRIPT "-Wl,--version-script,${CMAKE_SOURCE_DIR}/Source/autotools/symbols.filter")
+else ()
+    set(ENABLE_TOOLS ON)
+    set(ENABLE_API_TESTS ON)
+endif ()
+
 WEBKIT_OPTION_END()
 
 # These are used to generate the pkg-config files, note we only support GTK 3.0

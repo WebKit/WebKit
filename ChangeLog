@@ -1,3 +1,16 @@
+2013-12-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add a production build type
+        https://bugs.webkit.org/show_bug.cgi?id=126179
+
+        Reviewed by Daniel Bates.
+
+        * Source/PlatformGTK.cmake: When the API tests are enabled compile the WebKit GObject
+        API unit tests. The inclusion of these build files was inadvertently removed in an earlier
+        patch.
+        * Source/cmake/OptionsGTK.cmake: When in production mode turn off all tools and tests and
+        use the autotools linker script.
+
 2013-12-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Properly name the JavaScriptCore library
