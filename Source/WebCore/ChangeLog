@@ -1,3 +1,15 @@
+2013-12-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed attempt at Windows build fix.
+
+        I think Window's "AllInOne.cpp" is causing a using namespace JSC
+        to cause naming conflicts between Inspector::TypeBuilder::Debugger::types
+        and JSC::types. So removing the ambiguity.
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::getProperties):
+        (WebCore::InjectedScript::wrapCallFrames):
+
 2013-12-22  Andreas Kling  <akling@apple.com>
 
         Make Text::createTextRenderer() take a const RenderStyle&.

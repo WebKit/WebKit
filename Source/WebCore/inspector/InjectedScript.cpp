@@ -44,9 +44,7 @@
 #include <wtf/text/WTFString.h>
 
 using Inspector::TypeBuilder::Array;
-using Inspector::TypeBuilder::Debugger::CallFrame;
 using Inspector::TypeBuilder::Debugger::FunctionDetails;
-using Inspector::TypeBuilder::Runtime::PropertyDescriptor;
 using Inspector::TypeBuilder::Runtime::InternalPropertyDescriptor;
 using Inspector::TypeBuilder::Runtime::RemoteObject;
 
@@ -113,7 +111,7 @@ void InjectedScript::getFunctionDetails(ErrorString* errorString, const String& 
     *result = FunctionDetails::runtimeCast(resultValue);
 }
 
-void InjectedScript::getProperties(ErrorString* errorString, const String& objectId, bool ownProperties, RefPtr<Array<PropertyDescriptor>>* properties)
+void InjectedScript::getProperties(ErrorString* errorString, const String& objectId, bool ownProperties, RefPtr<Array<Inspector::TypeBuilder::Runtime::PropertyDescriptor>>* properties)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), "getProperties", WebCore::functionCallHandlerFromAnyThread);
     function.appendArgument(objectId);
@@ -125,7 +123,7 @@ void InjectedScript::getProperties(ErrorString* errorString, const String& objec
         *errorString = "Internal error";
         return;
     }
-    *properties = Array<PropertyDescriptor>::runtimeCast(result);
+    *properties = Array<Inspector::TypeBuilder::Runtime::PropertyDescriptor>::runtimeCast(result);
 }
 
 void InjectedScript::getInternalProperties(ErrorString* errorString, const String& objectId, RefPtr<Array<InternalPropertyDescriptor>>* properties)
@@ -145,7 +143,7 @@ void InjectedScript::getInternalProperties(ErrorString* errorString, const Strin
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-PassRefPtr<Array<CallFrame>> InjectedScript::wrapCallFrames(const Deprecated::ScriptValue& callFrames)
+PassRefPtr<Array<Inspector::TypeBuilder::Debugger::CallFrame>> InjectedScript::wrapCallFrames(const Deprecated::ScriptValue& callFrames)
 {
     ASSERT(!hasNoValue());
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), "wrapCallFrames", WebCore::functionCallHandlerFromAnyThread);
@@ -155,8 +153,8 @@ PassRefPtr<Array<CallFrame>> InjectedScript::wrapCallFrames(const Deprecated::Sc
     ASSERT(!hadException);
     RefPtr<InspectorValue> result = callFramesValue.toInspectorValue(scriptState());
     if (result->type() == InspectorValue::TypeArray)
-        return Array<CallFrame>::runtimeCast(result);
-    return Array<CallFrame>::create();
+        return Array<Inspector::TypeBuilder::Debugger::CallFrame>::runtimeCast(result);
+    return Array<Inspector::TypeBuilder::Debugger::CallFrame>::create();
 }
 #endif
 
