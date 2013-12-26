@@ -562,20 +562,12 @@ void IDBServerConnectionLevelDB::changeDatabaseVersion(IDBTransactionBackend& tr
 
     IDBDatabaseBackend& database = transaction.database();
     int64_t databaseId = database.id();
-    uint64_t oldVersion = database.metadata().version;
 
-    // FIXME: Database versions are now of type uint64_t, but this code expected int64_t.
-    ASSERT(operation.version() > (int64_t)oldVersion);
-    database.setCurrentVersion(operation.version());
     if (!m_backingStore->updateIDBDatabaseVersion(*backingStoreTransaction, databaseId, database.metadata().version)) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error writing data to stable storage when updating version.");
-        operation.callbacks()->onError(error);
         ASYNC_COMPLETION_CALLBACK_WITH_ARG(completionCallback, error);
         return;
     }
-    ASSERT(!database.hasPendingSecondHalfOpen());
-    database.setPendingSecondHalfOpen(IDBPendingOpenCall::create(*operation.callbacks(), *operation.databaseCallbacks(), transaction.id(), operation.version()));
-    operation.callbacks()->onUpgradeNeeded(oldVersion, &database, database.metadata());
 
     ASYNC_COMPLETION_CALLBACK_WITH_NULL_ARG(completionCallback);
 }

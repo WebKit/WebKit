@@ -27,31 +27,66 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
+#include <WebCore/IndexedDB.h>
+#include <WebCore/SQLiteTransaction.h>
+
+using namespace WebCore;
+
 namespace WebKit {
 
-SQLiteIDBTransaction::SQLiteIDBTransaction(const IDBTransactionIdentifier& identifier)
+SQLiteIDBTransaction::SQLiteIDBTransaction(const IDBTransactionIdentifier& identifier, IndexedDB::TransactionMode mode)
     : m_identifier(identifier)
+    , m_mode(mode)
 {
 }
 
-bool SQLiteIDBTransaction::begin()
+SQLiteIDBTransaction::~SQLiteIDBTransaction()
 {
-    return false;
+    if (inProgress())
+        m_sqliteTransaction->rollback();
+}
+
+
+bool SQLiteIDBTransaction::begin(SQLiteDatabase& database)
+{
+    ASSERT(!m_sqliteTransaction);
+    m_sqliteTransaction = std::make_unique<SQLiteTransaction>(database, m_mode == IndexedDB::TransactionMode::ReadOnly);
+
+    m_sqliteTransaction->begin();
+
+    return m_sqliteTransaction->inProgress();
 }
 
 bool SQLiteIDBTransaction::commit()
 {
-    return false;
+    ASSERT(m_sqliteTransaction);
+    if (!m_sqliteTransaction->inProgress())
+        return false;
+
+    m_sqliteTransaction->commit();
+
+    return !m_sqliteTransaction->inProgress();
 }
 
 bool SQLiteIDBTransaction::reset()
 {
-    return false;
+    m_sqliteTransaction = nullptr;
+
+    return true;
 }
 
 bool SQLiteIDBTransaction::rollback()
 {
-    return false;
+    ASSERT(m_sqliteTransaction);
+    if (m_sqliteTransaction->inProgress())
+        m_sqliteTransaction->rollback();
+
+    return true;
+}
+
+bool SQLiteIDBTransaction::inProgress() const
+{
+    return m_sqliteTransaction && m_sqliteTransaction->inProgress();
 }
 
 } // namespace WebKit

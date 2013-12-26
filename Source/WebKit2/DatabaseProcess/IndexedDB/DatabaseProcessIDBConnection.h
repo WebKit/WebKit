@@ -68,6 +68,8 @@ private:
     void commitTransaction(uint64_t requestID, int64_t transactionID);
     void resetTransaction(uint64_t requestID, int64_t transactionID);
     void rollbackTransaction(uint64_t requestID, int64_t transactionID);
+    void changeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion);
+
 
     Ref<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_serverConnectionIdentifier;

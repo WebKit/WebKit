@@ -50,6 +50,8 @@ public:
     virtual bool commitTransaction(const IDBTransactionIdentifier&) = 0;
     virtual bool resetTransaction(const IDBTransactionIdentifier&) = 0;
     virtual bool rollbackTransaction(const IDBTransactionIdentifier&) = 0;
+
+    virtual bool changeDatabaseVersion(const IDBTransactionIdentifier&, uint64_t newVersion) = 0;
 };
 
 } // namespace WebKit

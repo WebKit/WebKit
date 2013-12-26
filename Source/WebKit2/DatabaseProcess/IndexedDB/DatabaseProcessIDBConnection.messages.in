@@ -31,6 +31,8 @@ messages -> DatabaseProcessIDBConnection LegacyReceiver {
     CommitTransaction(uint64_t requestID, int64_t transactionID)
     ResetTransaction(uint64_t requestID, int64_t transactionID)
     RollbackTransaction(uint64_t requestID, int64_t transactionID)
+    
+    ChangeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

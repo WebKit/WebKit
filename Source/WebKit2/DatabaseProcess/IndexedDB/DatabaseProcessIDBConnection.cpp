@@ -31,6 +31,7 @@
 #include "DatabaseProcess.h"
 #include "DatabaseToWebProcessConnection.h"
 #include "IDBTransactionIdentifier.h"
+#include "Logging.h"
 #include "UniqueIDBDatabase.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBServerConnectionMessages.h"
@@ -68,6 +69,8 @@ void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata(uint64_t re
 {
     ASSERT(m_uniqueIDBDatabase);
 
+    LOG(IDB, "DatabaseProcess getOrEstablishIDBDatabaseMetadata request ID %llu", requestID);
+
     RefPtr<DatabaseProcessIDBConnection> connection(this);
     m_uniqueIDBDatabase->getOrEstablishIDBDatabaseMetadata([connection, requestID](bool success, const IDBDatabaseMetadata& metadata) {
         connection->send(Messages::WebIDBServerConnection::DidGetOrEstablishIDBDatabaseMetadata(requestID, success, metadata));
@@ -77,6 +80,8 @@ void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata(uint64_t re
 void DatabaseProcessIDBConnection::openTransaction(uint64_t requestID, int64_t transactionID, const Vector<int64_t>& objectStoreIDs, uint64_t intMode)
 {
     ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess openTransaction request ID %llu", requestID);
 
     if (intMode > IndexedDB::TransactionModeMaximum) {
         send(Messages::WebIDBServerConnection::DidOpenTransaction(requestID, false));
@@ -94,6 +99,8 @@ void DatabaseProcessIDBConnection::beginTransaction(uint64_t requestID, int64_t 
 {
     ASSERT(m_uniqueIDBDatabase);
 
+    LOG(IDB, "DatabaseProcess beginTransaction request ID %llu", requestID);
+
     RefPtr<DatabaseProcessIDBConnection> connection(this);
     m_uniqueIDBDatabase->beginTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidBeginTransaction(requestID, success));
@@ -103,6 +110,8 @@ void DatabaseProcessIDBConnection::beginTransaction(uint64_t requestID, int64_t 
 void DatabaseProcessIDBConnection::commitTransaction(uint64_t requestID, int64_t transactionID)
 {
     ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess commitTransaction request ID %llu", requestID);
 
     RefPtr<DatabaseProcessIDBConnection> connection(this);
     m_uniqueIDBDatabase->commitTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
@@ -114,6 +123,8 @@ void DatabaseProcessIDBConnection::resetTransaction(uint64_t requestID, int64_t 
 {
     ASSERT(m_uniqueIDBDatabase);
 
+    LOG(IDB, "DatabaseProcess resetTransaction request ID %llu", requestID);
+
     RefPtr<DatabaseProcessIDBConnection> connection(this);
     m_uniqueIDBDatabase->resetTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidResetTransaction(requestID, success));
@@ -124,9 +135,23 @@ void DatabaseProcessIDBConnection::rollbackTransaction(uint64_t requestID, int64
 {
     ASSERT(m_uniqueIDBDatabase);
 
+    LOG(IDB, "DatabaseProcess rollbackTransaction request ID %llu", requestID);
+
     RefPtr<DatabaseProcessIDBConnection> connection(this);
     m_uniqueIDBDatabase->rollbackTransaction(IDBTransactionIdentifier(*this, transactionID), [connection, requestID](bool success) {
         connection->send(Messages::WebIDBServerConnection::DidRollbackTransaction(requestID, success));
+    });
+}
+
+void DatabaseProcessIDBConnection::changeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion)
+{
+    ASSERT(m_uniqueIDBDatabase);
+
+    LOG(IDB, "DatabaseProcess changeDatabaseVersion request ID %llu, new version %llu", requestID, newVersion);
+
+    RefPtr<DatabaseProcessIDBConnection> connection(this);
+    m_uniqueIDBDatabase->changeDatabaseVersion(IDBTransactionIdentifier(*this, transactionID), newVersion, [connection, requestID](bool success) {
+        connection->send(Messages::WebIDBServerConnection::DidChangeDatabaseVersion(requestID, success));
     });
 }
 

@@ -73,6 +73,8 @@ public:
     void resetTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
     void rollbackTransaction(const IDBTransactionIdentifier&, std::function<void(bool)> successCallback);
 
+    void changeDatabaseVersion(const IDBTransactionIdentifier&, uint64_t newVersion, std::function<void(bool)> successCallback);
+
 private:
     UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
 
@@ -110,15 +112,22 @@ private:
     void resetBackingStoreTransaction(const IDBTransactionIdentifier&);
     void rollbackBackingStoreTransaction(const IDBTransactionIdentifier&);
 
+    void changeDatabaseVersionInBackingStore(uint64_t requestID, const IDBTransactionIdentifier&, uint64_t newVersion);
+
+    void shutdownBackingStore();
+
     // Callbacks from the database workqueue thread, to be performed on the main thread only
     void performNextMainThreadTask();
     void didOpenBackingStoreAndReadMetadata(const WebCore::IDBDatabaseMetadata&, bool success);
     void didCompleteTransactionOperation(const IDBTransactionIdentifier&, bool success);
+    void didChangeDatabaseVersion(uint64_t requestID, bool success);
+    void didShutdownBackingStore();
 
     bool m_acceptingNewRequests;
 
     Deque<RefPtr<AsyncRequest>> m_pendingMetadataRequests;
     HashMap<IDBTransactionIdentifier, RefPtr<AsyncRequest>> m_pendingTransactionRequests;
+    HashMap<uint64_t, RefPtr<AsyncRequest>> m_pendingDatabaseTasks;
 
     std::unique_ptr<WebCore::IDBDatabaseMetadata> m_metadata;
     bool m_didGetMetadataFromBackingStore;

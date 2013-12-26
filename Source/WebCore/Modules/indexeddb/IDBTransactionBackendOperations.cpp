@@ -173,8 +173,23 @@ void IDBDatabaseBackend::VersionChangeOperation::perform(std::function<void()> c
 {
     LOG(StorageAPI, "VersionChangeOperation");
 
+    uint64_t oldVersion = m_transaction->database().metadata().version;
     RefPtr<IDBDatabaseBackend::VersionChangeOperation> operation(this);
-    STANDARD_DATABASE_ERROR_CALLBACK;
+    ASSERT(static_cast<uint64_t>(m_version) > oldVersion);
+
+    std::function<void(PassRefPtr<IDBDatabaseError>)> operationCallback = [oldVersion, operation, this, completionCallback](PassRefPtr<IDBDatabaseError> prpError) {
+        RefPtr<IDBDatabaseError> error = prpError;
+        if (error) {
+            m_callbacks->onError(error);
+            m_transaction->abort(error);
+        } else {
+            ASSERT(!m_transaction->database().hasPendingSecondHalfOpen());
+            m_transaction->database().setCurrentVersion(m_version);
+            m_transaction->database().setPendingSecondHalfOpen(IDBPendingOpenCall::create(*m_callbacks, *m_databaseCallbacks, m_transaction->id(), m_version));
+            m_callbacks->onUpgradeNeeded(oldVersion, &m_transaction->database(), m_transaction->database().metadata());
+        }
+        completionCallback();
+    };
 
     m_transaction->database().serverConnection().changeDatabaseVersion(*m_transaction, *this, operationCallback);
 }

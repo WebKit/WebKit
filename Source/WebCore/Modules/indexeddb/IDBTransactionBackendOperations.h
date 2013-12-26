@@ -86,6 +86,7 @@ public:
     }
     virtual void perform(std::function<void()> successCallback) OVERRIDE FINAL;
 
+    IDBTransactionBackend* transaction() const { return m_transaction.get(); }
     int64_t version() const { return m_version; }
     IDBCallbacks* callbacks() const { return m_callbacks.get(); }
     IDBDatabaseCallbacks* databaseCallbacks() const { return m_databaseCallbacks.get(); }

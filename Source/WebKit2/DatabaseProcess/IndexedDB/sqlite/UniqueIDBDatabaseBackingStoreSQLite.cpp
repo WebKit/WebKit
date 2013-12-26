@@ -66,44 +66,44 @@ UniqueIDBDatabaseBackingStoreSQLite::~UniqueIDBDatabaseBackingStoreSQLite()
 std::unique_ptr<WebCore::IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata()
 {
     ASSERT(!isMainThread());
-    ASSERT(m_metadataDB);
-    ASSERT(m_metadataDB->isOpen());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
 
-    if (!m_metadataDB->executeCommand("CREATE TABLE IDBDatabaseInfo (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value TEXT NOT NULL ON CONFLICT FAIL);")) {
-        LOG_ERROR("Could not create IDBDatabaseInfo table in database (%i) - %s", m_metadataDB->lastError(), m_metadataDB->lastErrorMsg());
-        m_metadataDB = nullptr;
+    if (!m_sqliteDB->executeCommand("CREATE TABLE IDBDatabaseInfo (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value TEXT NOT NULL ON CONFLICT FAIL);")) {
+        LOG_ERROR("Could not create IDBDatabaseInfo table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        m_sqliteDB = nullptr;
         return nullptr;
     }
 
     {
-        SQLiteStatement sql(*m_metadataDB, "INSERT INTO IDBDatabaseInfo VALUES ('MetadataVersion', ?);");
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IDBDatabaseInfo VALUES ('MetadataVersion', ?);"));
         if (sql.prepare() != SQLResultOk
             || sql.bindInt(1, currentMetadataVersion) != SQLResultOk
             || sql.step() != SQLResultDone) {
-            LOG_ERROR("Could not insert database metadata version into IDBDatabaseInfo table (%i) - %s", m_metadataDB->lastError(), m_metadataDB->lastErrorMsg());
-            m_metadataDB = nullptr;
+            LOG_ERROR("Could not insert database metadata version into IDBDatabaseInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            m_sqliteDB = nullptr;
             return nullptr;
         }
     }
     {
-        SQLiteStatement sql(*m_metadataDB, "INSERT INTO IDBDatabaseInfo VALUES ('DatabaseName', ?);");
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IDBDatabaseInfo VALUES ('DatabaseName', ?);"));
         if (sql.prepare() != SQLResultOk
             || sql.bindText(1, m_identifier.databaseName()) != SQLResultOk
             || sql.step() != SQLResultDone) {
-            LOG_ERROR("Could not insert database name into IDBDatabaseInfo table (%i) - %s", m_metadataDB->lastError(), m_metadataDB->lastErrorMsg());
-            m_metadataDB = nullptr;
+            LOG_ERROR("Could not insert database name into IDBDatabaseInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            m_sqliteDB = nullptr;
             return nullptr;
         }
     }
     {
         // Database versions are defined to be a uin64_t in the spec but sqlite3 doesn't support native binding of unsigned integers.
         // Therefore we'll store the version as a String.
-        SQLiteStatement sql(*m_metadataDB, "INSERT INTO IDBDatabaseInfo VALUES ('DatabaseVersion', ?);");
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("INSERT INTO IDBDatabaseInfo VALUES ('DatabaseVersion', ?);"));
         if (sql.prepare() != SQLResultOk
             || sql.bindText(1, String::number(0)) != SQLResultOk
             || sql.step() != SQLResultDone) {
-            LOG_ERROR("Could not insert default version into IDBDatabaseInfo table (%i) - %s", m_metadataDB->lastError(), m_metadataDB->lastErrorMsg());
-            m_metadataDB = nullptr;
+            LOG_ERROR("Could not insert default version into IDBDatabaseInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            m_sqliteDB = nullptr;
             return nullptr;
         }
     }
@@ -119,20 +119,20 @@ std::unique_ptr<WebCore::IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLit
 std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::extractExistingMetadata()
 {
     ASSERT(!isMainThread());
-    ASSERT(m_metadataDB);
+    ASSERT(m_sqliteDB);
 
-    if (!m_metadataDB->tableExists("IDBDatabaseInfo"))
+    if (!m_sqliteDB->tableExists(ASCIILiteral("IDBDatabaseInfo")))
         return nullptr;
 
     auto metadata = std::make_unique<IDBDatabaseMetadata>();
     {
-        SQLiteStatement sql(*m_metadataDB, "SELECT value FROM IDBDatabaseInfo WHERE key = 'MetadataVersion';");
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT value FROM IDBDatabaseInfo WHERE key = 'MetadataVersion';"));
         if (sql.isColumnNull(0))
             return nullptr;
         metadata->version = sql.getColumnInt(0);
     }
     {
-        SQLiteStatement sql(*m_metadataDB, "SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseName';");
+        SQLiteStatement sql(*m_sqliteDB, "SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseName';");
         if (sql.isColumnNull(0))
             return nullptr;
         metadata->name = sql.getColumnText(0);
@@ -142,7 +142,7 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::extrac
         }
     }
     {
-        SQLiteStatement sql(*m_metadataDB, "SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseVersion';");
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseVersion';"));
         if (sql.isColumnNull(0))
             return nullptr;
         String stringVersion = sql.getColumnText(0);
@@ -168,6 +168,10 @@ std::unique_ptr<SQLiteDatabase> UniqueIDBDatabaseBackingStoreSQLite::openSQLiteD
         return nullptr;
     }
 
+    // Since a WorkQueue isn't bound to a specific thread, we have to disable threading checks
+    // even though we never access the database from different threads simultaneously.
+    sqliteDatabase->disableThreadingChecks();
+
     return sqliteDatabase;
 }
 
@@ -175,9 +179,9 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
 {
     ASSERT(!isMainThread());
 
-    String metadataDBFilename = pathByAppendingComponent(m_absoluteDatabaseDirectory, "IDBMetadata.sqlite3");
-    m_metadataDB = openSQLiteDatabaseAtPath(metadataDBFilename);
-    if (!m_metadataDB)
+    String dbFilename = pathByAppendingComponent(m_absoluteDatabaseDirectory, "IndexedDB.sqlite3");
+    m_sqliteDB = openSQLiteDatabaseAtPath(dbFilename);
+    if (!m_sqliteDB)
         return nullptr;
 
     std::unique_ptr<IDBDatabaseMetadata> metadata = extractExistingMetadata();
@@ -185,7 +189,7 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
         metadata = createAndPopulateInitialMetadata();
 
     if (!metadata)
-        LOG_ERROR("Unable to establish IDB database at path '%s'", metadataDBFilename.utf8().data());
+        LOG_ERROR("Unable to establish IDB database at path '%s'", dbFilename.utf8().data());
 
     // The database id is a runtime concept and doesn't need to be stored in the metadata database.
     metadata->id = generateDatabaseId();
@@ -193,11 +197,11 @@ std::unique_ptr<IDBDatabaseMetadata> UniqueIDBDatabaseBackingStoreSQLite::getOrE
     return metadata;
 }
 
-bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBTransactionIdentifier& identifier, const Vector<int64_t>&, WebCore::IndexedDB::TransactionMode)
+bool UniqueIDBDatabaseBackingStoreSQLite::establishTransaction(const IDBTransactionIdentifier& identifier, const Vector<int64_t>&, WebCore::IndexedDB::TransactionMode mode)
 {
     ASSERT(!isMainThread());
 
-    if (!m_transactions.add(identifier, SQLiteIDBTransaction::create(identifier)).isNewEntry) {
+    if (!m_transactions.add(identifier, SQLiteIDBTransaction::create(identifier, mode)).isNewEntry) {
         LOG_ERROR("Attempt to establish transaction identifier that already exists");
         return false;
     }
@@ -215,7 +219,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::beginTransaction(const IDBTransactionI
         return false;
     }
 
-    return transaction->begin();
+    return transaction->begin(*m_sqliteDB);
 }
 
 bool UniqueIDBDatabaseBackingStoreSQLite::commitTransaction(const IDBTransactionIdentifier& identifier)
@@ -255,6 +259,35 @@ bool UniqueIDBDatabaseBackingStoreSQLite::rollbackTransaction(const IDBTransacti
     }
 
     return transaction->rollback();
+}
+
+bool UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion(const IDBTransactionIdentifier& identifier, uint64_t newVersion)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    SQLiteIDBTransaction* transaction = m_transactions.get(identifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to change database version with an establish, in-progress transaction");
+        return false;
+    }
+    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+        LOG_ERROR("Attempt to change database version during a non version-change transaction");
+        return false;
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("UPDATE IDBDatabaseInfo SET value = ? where key = 'DatabaseVersion';"));
+        if (sql.prepare() != SQLResultOk
+            || sql.bindText(1, String::number(newVersion)) != SQLResultOk
+            || sql.step() != SQLResultDone) {
+            LOG_ERROR("Could not update database version in IDBDatabaseInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return false;
+        }
+    }
+
+    return true;
 }
 
 } // namespace WebKit

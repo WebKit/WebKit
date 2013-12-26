@@ -30,6 +30,7 @@
 
 #include "UniqueIDBDatabase.h" 
 #include "UniqueIDBDatabaseBackingStore.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,6 +60,8 @@ public:
     virtual bool resetTransaction(const IDBTransactionIdentifier&) OVERRIDE;
     virtual bool rollbackTransaction(const IDBTransactionIdentifier&) OVERRIDE;
 
+    virtual bool changeDatabaseVersion(const IDBTransactionIdentifier&, uint64_t newVersion) OVERRIDE;
+
 private:
     UniqueIDBDatabaseBackingStoreSQLite(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
 
@@ -69,7 +72,7 @@ private:
     UniqueIDBDatabaseIdentifier m_identifier;
     String m_absoluteDatabaseDirectory;
 
-    std::unique_ptr<WebCore::SQLiteDatabase> m_metadataDB;
+    std::unique_ptr<WebCore::SQLiteDatabase> m_sqliteDB;
 
     HashMap<IDBTransactionIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
 };

@@ -1,3 +1,70 @@
+2013-12-25  Brady Eidson  <beidson@apple.com>
+
+        DatabaseProcess: Implement version changing
+        https://bugs.webkit.org/show_bug.cgi?id=126099
+
+        Reviewed by Sam Weinig.
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata): Add logging.
+        (WebKit::DatabaseProcessIDBConnection::openTransaction): Ditto.
+        (WebKit::DatabaseProcessIDBConnection::beginTransaction): Ditto.
+        (WebKit::DatabaseProcessIDBConnection::commitTransaction): Ditto.
+        (WebKit::DatabaseProcessIDBConnection::resetTransaction): Ditto.
+        (WebKit::DatabaseProcessIDBConnection::rollbackTransaction): Ditto.
+        (WebKit::DatabaseProcessIDBConnection::changeDatabaseVersion): Implement this!
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::shutdown): Clean up all requests, and also cleanup the backing store
+          on the database queue.
+        (WebKit::UniqueIDBDatabase::shutdownBackingStore): Shutdown the backing store.
+        (WebKit::UniqueIDBDatabase::didShutdownBackingStore):
+        (WebKit::UniqueIDBDatabase::changeDatabaseVersion): Pass along the new version to the database queue.
+        (WebKit::UniqueIDBDatabase::didChangeDatabaseVersion):
+        (WebKit::UniqueIDBDatabase::changeDatabaseVersionInBackingStore): Set the new version in the backing store.
+        (WebKit::UniqueIDBDatabase::postMainThreadTask): Add a ref() to keep the database alive incase it is being
+          shutdown on the main thread.
+        (WebKit::UniqueIDBDatabase::performNextMainThreadTask): Balance the ref() from postMainThreadTask, and
+          accept an empty mainThreadTask queue.
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h: Add changeDatabaseVersion.
+
+        Flesh out SQLiteIDBTransaction to actually operation on a SQLiteTransaction in a real SQLiteDatabase:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp:
+        (WebKit::SQLiteIDBTransaction::SQLiteIDBTransaction):
+        (WebKit::SQLiteIDBTransaction::~SQLiteIDBTransaction):
+        (WebKit::SQLiteIDBTransaction::begin):
+        (WebKit::SQLiteIDBTransaction::commit):
+        (WebKit::SQLiteIDBTransaction::reset):
+        (WebKit::SQLiteIDBTransaction::rollback):
+        (WebKit::SQLiteIDBTransaction::inProgress):
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.h:
+        (WebKit::SQLiteIDBTransaction::create):
+        (WebKit::SQLiteIDBTransaction::mode):
+
+        Rename m_metadataDB to m_sqliteDB, 
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createAndPopulateInitialMetadata):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::extractExistingMetadata):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::openSQLiteDatabaseAtPath): Disable threading checks on the DB
+          as work queues can change threads.
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getOrEstablishMetadata):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::establishTransaction):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::beginTransaction):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::changeDatabaseVersion): After validating the transaction, actually
+          update the version number on disk.
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::~WebIDBServerConnection): Make sure to abort in-flight requests.
+        (WebKit::WebIDBServerConnection::changeDatabaseVersion): 
+        (WebKit::WebIDBServerConnection::didChangeDatabaseVersion):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
 2013-12-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Fix CMake style errors in Source/WebKit2/PlatformGTK.cmake

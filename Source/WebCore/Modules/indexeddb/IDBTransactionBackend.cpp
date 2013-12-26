@@ -201,7 +201,7 @@ void IDBTransactionBackend::start()
 
 void IDBTransactionBackend::commit()
 {
-    LOG(StorageAPI, "IDBTransactionBackend::commit");
+    LOG(StorageAPI, "IDBTransactionBackend::commit (Transaction %lli)", m_id);
 
     // In multiprocess ports, front-end may have requested a commit but an abort has already
     // been initiated asynchronously by the back-end.
@@ -213,8 +213,10 @@ void IDBTransactionBackend::commit()
 
     // Front-end has requested a commit, but there may be tasks like createIndex which
     // are considered synchronous by the front-end but are processed asynchronously.
-    if (hasPendingTasks())
+    if (hasPendingTasks()) {
+        LOG(StorageAPI, "IDBTransactionBackend::commit - Not committing now, transaction still has pending tasks (Transaction %lli)", m_id);
         return;
+    }
 
     // The last reference to this object may be released while performing the
     // commit steps below. We therefore take a self reference to keep ourselves

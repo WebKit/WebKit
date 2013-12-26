@@ -70,6 +70,9 @@ WebIDBServerConnection::WebIDBServerConnection(const String& databaseName, const
 WebIDBServerConnection::~WebIDBServerConnection()
 {
     WebProcess::shared().webToDatabaseProcessConnection()->removeWebIDBServerConnection(*this);
+
+    for (const auto& it : m_serverRequests)
+        it.value->requestAborted();
 }
 
 bool WebIDBServerConnection::isClosed()
@@ -295,8 +298,33 @@ void WebIDBServerConnection::deleteObjectStore(IDBTransactionBackend&, const Del
 {
 }
 
-void WebIDBServerConnection::changeDatabaseVersion(IDBTransactionBackend&, const IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+void WebIDBServerConnection::changeDatabaseVersion(IDBTransactionBackend&, const IDBDatabaseBackend::VersionChangeOperation& operation, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+
+    serverRequest->setAbortHandler([completionCallback]() {
+        completionCallback(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured changing database version"));
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    ASSERT(!m_serverRequests.contains(requestID));
+    m_serverRequests.add(requestID, serverRequest.release());
+
+    LOG(IDB, "WebProcess changeDatabaseVersion request ID %llu", requestID);
+
+    send(Messages::DatabaseProcessIDBConnection::ChangeDatabaseVersion(requestID, operation.transaction()->id(), static_cast<uint64_t>(operation.version())));
+}
+
+void WebIDBServerConnection::didChangeDatabaseVersion(uint64_t requestID, bool success)
+{
+    LOG(IDB, "WebProcess didChangeDatabaseVersion request ID %llu", requestID);
+
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+
+    if (!serverRequest)
+        return;
+
+    serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured changing database version"));
 }
 
 void WebIDBServerConnection::cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void()> completionCallback)
