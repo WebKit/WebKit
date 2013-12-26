@@ -42,11 +42,6 @@ macro(GENERATE_THEME _target_name _name _option)
             widget/entry/img_focused.png
             widget/entry/img_hovered.png
             widget/entry/img_normal.png
-            widget/file/file.edc
-            widget/file/file_focus.png
-            widget/file/file_hover.png
-            widget/file/file_normal.png
-            widget/file/file_press.png
             widget/mediacontrol/fullscreenbutton/enterfullscreenbutton.png
             widget/mediacontrol/fullscreenbutton/exitfullscreenbutton.png
             widget/mediacontrol/fullscreenbutton/fullscreen_button.edc

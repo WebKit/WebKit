@@ -1,3 +1,20 @@
+2013-12-25  Kim Byung Jun  <bj1987.kim@samsung.com>
+
+        [EFL] Delete file.edc and file_*.png.
+        https://bugs.webkit.org/show_bug.cgi?id=125134
+
+        Reviewed by Gyuyoung Kim.
+
+        File_theme uses button form.
+
+        * platform/efl/DefaultTheme/CMakeLists.txt:
+        * platform/efl/DefaultTheme/default.edc:
+        * platform/efl/DefaultTheme/widget/file/file.edc: Removed.
+        * platform/efl/DefaultTheme/widget/file/file_focus.png: Removed.
+        * platform/efl/DefaultTheme/widget/file/file_hover.png: Removed.
+        * platform/efl/DefaultTheme/widget/file/file_normal.png: Removed.
+        * platform/efl/DefaultTheme/widget/file/file_press.png: Removed.
+
 2013-12-25  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [Nix] Adding createDragImageIconForCachedImageFilename method to DragImageNix

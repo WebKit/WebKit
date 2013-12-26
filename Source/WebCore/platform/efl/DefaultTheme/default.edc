@@ -47,7 +47,6 @@ collections {
 #include "widget/combo/combo.edc"
 #include "widget/cursor/cursor.edc"
 #include "widget/entry/entry.edc"
-#include "widget/file/file.edc"
 #include "widget/mediacontrol/fullscreenbutton/fullscreen_button.edc"
 #include "widget/mediacontrol/mutebutton/mute_button.edc"
 #include "widget/mediacontrol/playpausebutton/playpause_button.edc"
