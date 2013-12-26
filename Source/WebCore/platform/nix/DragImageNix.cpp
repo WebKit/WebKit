@@ -58,13 +58,19 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
 DragImageRef createDragImageFromImage(Image*, ImageOrientationDescription)
 {
     notImplemented();
-    return 0;
+    return nullptr;
 }
 
 DragImageRef createDragImageIconForCachedImage(CachedImage*)
 {
     notImplemented();
-    return 0;
+    return nullptr;
+}
+
+DragImageRef createDragImageIconForCachedImageFilename(const String&)
+{
+    notImplemented();
+    return nullptr;
 }
 
 }
