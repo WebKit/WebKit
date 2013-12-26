@@ -47,7 +47,7 @@ public:
     String wholeText() const;
     PassRefPtr<Text> replaceWholeText(const String&, ExceptionCode&);
     
-    RenderText* createTextRenderer(RenderStyle&);
+    RenderText* createTextRenderer(const RenderStyle&);
     
     virtual bool canContainRangeEndPoint() const OVERRIDE FINAL { return true; }
 

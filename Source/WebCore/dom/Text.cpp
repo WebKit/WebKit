@@ -187,7 +187,7 @@ static bool isSVGText(Text* text)
 }
 #endif
 
-RenderText* Text::createTextRenderer(RenderStyle& style)
+RenderText* Text::createTextRenderer(const RenderStyle& style)
 {
 #if ENABLE(SVG)
     if (isSVGText(this) || isSVGShadowText(this))

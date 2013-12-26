@@ -378,8 +378,7 @@ static void createTextRendererIfNeeded(Text& textNode)
     if (!renderingParentNode->childShouldCreateRenderer(textNode))
         return;
 
-    // FIXME: constify this RenderStyle&.
-    RenderStyle& style = parentRenderer->style();
+    const auto& style = parentRenderer->style();
 
     if (!textRendererIsNeeded(textNode, *parentRenderer, style))
         return;

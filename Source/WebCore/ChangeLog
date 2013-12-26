@@ -1,5 +1,14 @@
 2013-12-22  Andreas Kling  <akling@apple.com>
 
+        Make Text::createTextRenderer() take a const RenderStyle&.
+        <https://webkit.org/b/126136>
+
+        Nuke a FIXME about constifying a RenderStyle& local.
+
+        Reviewed by Anders Carlsson.
+
+2013-12-22  Andreas Kling  <akling@apple.com>
+
         Move more inlines from RenderObject to RenderElement.
         <https://webkit.org/b/126134>
 
