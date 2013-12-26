@@ -50,6 +50,10 @@ BuildbotQueueView = function(debugQueues, releaseQueues)
         queue.addEventListener(BuildbotQueue.Event.IterationsAdded, this._queueIterationsAdded, this);
     }.bind(this));
 
+    webkitTrac.addEventListener(Trac.Event.NewCommitsRecorded, this._newCommitsRecorded, this);
+    if (typeof internalTrac != "undefined")
+        internalTrac.addEventListener(Trac.Event.NewCommitsRecorded, this._newCommitsRecorded, this);
+
     this.updateTimer = null;
     this._updateHiddenState();
     settings.addSettingListener("hiddenPlatforms", this._updateHiddenState.bind(this));
@@ -81,12 +85,50 @@ BuildbotQueueView.prototype = {
         // Implemented by subclasses.
     },
 
+    _appendPendingRevisionCount: function(queue)
+    {
+        for (var i = 0; i < queue.iterations.length; ++i) {
+            var iteration = queue.iterations[i];
+            if (!iteration.loaded || !iteration.finished)
+                continue;
+
+            var latestRecordedOpenSourceRevisionNumber = webkitTrac.latestRecordedRevisionNumber;
+            if (!latestRecordedOpenSourceRevisionNumber)
+                return;
+
+            var openSourceRevisionsBehind = latestRecordedOpenSourceRevisionNumber - iteration.openSourceRevision;
+            if (openSourceRevisionsBehind < 0)
+                openSourceRevisionsBehind = 0;
+
+            if (iteration.internalRevision) {
+                var latestRecordedInternalRevisionNumber = internalTrac.latestRecordedRevisionNumber;
+                if (!latestRecordedInternalRevisionNumber)
+                    return;
+
+                var internalRevisionsBehind = latestRecordedInternalRevisionNumber - iteration.internalRevision;
+                if (internalRevisionsBehind < 0)
+                    internalRevisionsBehind = 0;
+                if (openSourceRevisionsBehind || internalRevisionsBehind) {
+                    var message = openSourceRevisionsBehind + " \uff0b " + internalRevisionsBehind + " revisions behind";
+                    var status = new StatusLineView(message, StatusLineView.Status.NoBubble);
+                    this.element.appendChild(status.element);
+                }
+            } else if (openSourceRevisionsBehind) {
+                var message = openSourceRevisionsBehind + " " + (openSourceRevisionsBehind === 1 ? "revision behind" : "revisions behind");
+                var status = new StatusLineView(message, StatusLineView.Status.NoBubble);
+                this.element.appendChild(status.element);
+            }
+
+            return;
+        }
+    },
+
     revisionLinksForIteration: function(iteration)
     {
-        function linkForRevision(revision, internal)
+        function linkForRevision(revision, trac)
         {
             var linkElement = document.createElement("a");
-            linkElement.href = iteration.queue.buildbot.tracRevisionURL(revision, internal);
+            linkElement.href = trac.revisionURL(revision);
             linkElement.target = "_blank";
             linkElement.textContent = "r" + revision;
             linkElement.classList.add("selectable");
@@ -95,12 +137,12 @@ BuildbotQueueView.prototype = {
         }
 
         console.assert(iteration.openSourceRevision);
-        var openSourceLink = linkForRevision(iteration.openSourceRevision, false);
+        var openSourceLink = linkForRevision(iteration.openSourceRevision, webkitTrac);
 
         if (!iteration.internalRevision)
             return openSourceLink;
 
-        var internalLink = linkForRevision(iteration.internalRevision, true);
+        var internalLink = linkForRevision(iteration.internalRevision, internalTrac);
 
         var fragment = document.createDocumentFragment();
         fragment.appendChild(openSourceLink);
@@ -139,6 +181,11 @@ BuildbotQueueView.prototype = {
     },
 
     _iterationUpdated: function(event)
+    {
+        this.updateSoon();
+    },
+    
+    _newCommitsRecorded: function(event)
     {
         this.updateSoon();
     }

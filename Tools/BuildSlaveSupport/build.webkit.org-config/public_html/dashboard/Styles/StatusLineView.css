@@ -121,7 +121,9 @@
 }
 
 .status-line.neutral .label,
-.status-line.neutral .message {
+.status-line.neutral .message,
+.status-line.no-bubble .label,
+.status-line.no-bubble .message {
     color: rgb(145, 135, 95);
 }
 

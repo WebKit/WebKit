@@ -35,7 +35,8 @@ StatusLineView = function(message, status, label, repeatCount, url)
 
     this._statusBubbleElement = document.createElement("div");
     this._statusBubbleElement.classList.add("bubble");
-    this.element.appendChild(this._statusBubbleElement);
+    if (status != StatusLineView.Status.NoBubble)
+        this.element.appendChild(this._statusBubbleElement);
 
     this._labelElement = document.createElement("div");
     this._labelElement.classList.add("label");
@@ -57,6 +58,7 @@ StatusLineView = function(message, status, label, repeatCount, url)
 };
 
 StatusLineView.Status = {
+    NoBubble: "no-bubble",
     Neutral: "neutral",
     Good: "good",
     Danger: "danger",

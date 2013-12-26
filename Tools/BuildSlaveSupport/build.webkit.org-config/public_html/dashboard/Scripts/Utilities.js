@@ -50,6 +50,26 @@ JSON.load = function(url, callback)
     request.send();
 };
 
+function loadXML(url, callback) {
+    console.assert(url);
+
+    if (!(callback instanceof Function))
+        return;
+
+    var request = new XMLHttpRequest;
+    request.onreadystatechange = function() {
+        if (this.readyState !== 4)
+            return;
+
+        // Allow a status of 0 for easier testing with local files.
+        if (!this.status || this.status === 200)
+            callback(request.responseXML);
+    };
+
+    request.open("GET", url);
+    request.send();
+};
+
 Element.prototype.removeChildren = function()
 {
     // This has been tested to be the fastest removal method.

@@ -44,12 +44,7 @@ BuildbotTesterQueueView.prototype = {
 
         function appendBuilderQueueStatus(queue)
         {
-            var pendingRunsCount = queue.pendingIterationsCount;
-            if (pendingRunsCount) {
-                var message = pendingRunsCount === 1 ? "pending test run" : "pending test runs";
-                var status = new StatusLineView(message, StatusLineView.Status.Neutral, null, pendingRunsCount);
-                this.element.appendChild(status.element);
-            }
+            this._appendPendingRevisionCount(queue);
 
             var appendedStatus = false;
 

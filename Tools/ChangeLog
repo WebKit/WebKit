@@ -1,3 +1,59 @@
+2013-12-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Please clarify "pending" reporting at build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=122191
+
+        Reviewed by Timothy Hatcher.
+
+        Reporting the count of pending runs didn't make a lot of sense - first, runs are
+        coalesced and sometimes even out of order, and second, buildbot's notion of pending
+        run was confusingly different from dashboard's.
+
+        Let's display how many SVN revisions are pending. This can be somewhat misleading
+        too, because some revisions (like those for other platforms) don't trigger builds,
+        but it's better than what we had.
+
+        This patch also lays the groundwork for displaying detailed information about
+        pending revisions.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        (BuildbotBuilderQueueView.prototype.update.appendBuilderQueueStatus): Instead of
+        building pending status line directly, call newly added base class method.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus): Ditto.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView): Listen for events when new SVN revisions are landed, and update the view.
+        (BuildbotQueueView.prototype._appendPendingRevisionCount): Add a line for pending
+        SVN revisions. It uses a new style, StatusLineView.Status.NoBubble, because this
+        information is secondary, and doesn't need as much attention.
+        (BuildbotQueueView.prototype.revisionLinksForIteration): Build revisionURL through
+        Trac, not through Buildbot.
+        (BuildbotQueueView.prototype._newCommitsRecorded): Schedule an update, just like when
+        iterations are updated.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Initialization.js:
+        Initialize a global webkitTrac object.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/StatusLineView.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
+        Added a new style for messages without a bubble.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Trac.js:
+        Added a model class for Trac, which keeps track of SVN timeline, and notifies
+        listeners of changes. It uses an RSS interface to Trac, because there is no JSON one.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Utilities.js:
+        (loadXML): Added a function to load XML asynchronouly, just like existing JSON.load.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        Removed tracRevisionURL() function. Now that we have a Trac object, it just makes
+        more sense to build trac URLs through it.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/index.html:
+        Load Trac.js.
+
 2013-12-25  Jongwoo Choi  <jw0330.choi@samsung.com>
 
         [EFL] Activate keyboard homepage shortcut on efl minibrowser.

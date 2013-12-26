@@ -60,12 +60,7 @@ BuildbotBuilderQueueView.prototype = {
 
         function appendBuilderQueueStatus(queue)
         {
-            var pendingBuildCount = queue.pendingIterationsCount;
-            if (pendingBuildCount) {
-                var message = pendingBuildCount === 1 ? "pending build" : "pending builds";
-                var status = new StatusLineView(message, StatusLineView.Status.Neutral, null, pendingBuildCount);
-                this.element.appendChild(status.element);
-            }
+            this._appendPendingRevisionCount(queue)
 
             var firstRecentFailedIteration = queue.firstRecentFailedIteration;
             if (firstRecentFailedIteration && firstRecentFailedIteration.loaded) {

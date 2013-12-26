@@ -59,11 +59,6 @@ WebKitBuildbot.prototype = {
     constructor: WebKitBuildbot,
     __proto__: Buildbot.prototype,
 
-    tracRevisionURL: function(revision)
-    {
-        return "http://trac.webkit.org/changeset/" + revision;
-    },
-
     buildLogURLForIteration: function(iteration)
     {
         return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/compile-webkit/logs/stdio/text";
