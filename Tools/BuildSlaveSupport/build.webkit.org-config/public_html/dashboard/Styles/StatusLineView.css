@@ -29,11 +29,6 @@
     padding: 2px 0;
 }
 
-.status-line.linked,
-.status-line.linked * {
-    cursor: pointer;
-}
-
 .status-line .bubble {
     float: left;
     min-width: 24px;
@@ -48,6 +43,7 @@
     overflow: hidden;
     margin-top: 2px;
     margin-right: 6px;
+    text-decoration: none;
 }
 
 .status-line.neutral .bubble {
@@ -92,6 +88,7 @@
     text-transform: lowercase;
     line-height: 11px;
     padding-top: 1px;
+    display: block;
 }
 
 .status-line .message {
@@ -102,14 +99,6 @@
 
 .status-line .message * {
     color: inherit;
-}
-
-.status-line .message a:link {
-    text-decoration: none;
-}
-
-.status-line .message a:link:hover {
-    text-decoration: underline;
 }
 
 .status-line.no-label .message {
@@ -140,8 +129,4 @@
 .status-line.bad .label,
 .status-line.bad .message {
     color: rgb(191, 67, 41);
-}
-
-.status-line.linked .label:hover {
-    text-decoration: underline;
 }

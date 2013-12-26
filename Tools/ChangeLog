@@ -1,3 +1,31 @@
+2013-12-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Some links at build.webkit.org/dashboard don't show status messages, and aren't keyboard accessible
+        https://bugs.webkit.org/show_bug.cgi?id=126234
+
+        Reviewed by Timothy Hatcher.
+
+        Changed elements that are semantically links from <div> to <a>.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/StatusLineView.js:
+        (StatusLineView): Create <a> or <div> elements conditionally on whether we have a URL.
+        Don't try simulate a link with CSS/JS, it's not needed any more.
+        (StatusLineView.prototype._clicked): Removed.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/BuildbotQueueView.css:
+        Removed text-decoration rules, default ones in Main.css now work for queue elements.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        Simplified cursor rules.
+        Added a universal rule for links to only show underline on hover, as this is what
+        we want almost everywhere.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
+        (.status-line .bubble): Added text-decoration: none, as this is the one place where
+        we don't want it even on hover.
+        (.status-line .label): Force display: block for consistent layout between <a>
+        and <div>.
+
 2013-12-25  Alexey Proskuryakov  <ap@apple.com>
 
         Please clarify "pending" reporting at build.webkit.org/dashboard

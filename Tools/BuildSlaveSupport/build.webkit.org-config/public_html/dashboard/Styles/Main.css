@@ -25,13 +25,16 @@
 
 * {
     box-sizing: border-box;
-    cursor: default;
     -webkit-user-select: none;
     -webkit-user-drag: none;
 }
 
-a:link {
-    cursor: pointer;
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 .selectable {

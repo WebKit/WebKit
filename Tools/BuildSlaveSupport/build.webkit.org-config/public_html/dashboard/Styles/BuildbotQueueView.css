@@ -34,11 +34,6 @@
     font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
     color: rgb(145, 135, 95);
     text-align: left;
-    text-decoration: none;
-}
-
-.queue-view .queueLabel:hover {
-    text-decoration: underline;
 }
 
 .queue-view .queueLabel:not(:first-child) {
