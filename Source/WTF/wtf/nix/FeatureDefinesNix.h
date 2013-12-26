@@ -107,7 +107,7 @@
 #endif
 
 #if !defined(ENABLE_DRAG_SUPPORT)
-#define ENABLE_DRAG_SUPPORT 0
+#define ENABLE_DRAG_SUPPORT 1
 #endif
 
 #if !defined(ENABLE_FAST_MOBILE_SCROLLING)
