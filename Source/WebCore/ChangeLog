@@ -1,3 +1,14 @@
+2013-12-26  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [Nix] Cleanup Source/WebCore/PlatformNix.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=126226
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests needed.
+
+        * PlatformNix.cmake:
+
 2013-12-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed attempt at Windows build fix.
