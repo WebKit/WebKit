@@ -88,12 +88,8 @@ BuildbotQueueView.prototype = {
             var linkElement = document.createElement("a");
             linkElement.href = iteration.queue.buildbot.tracRevisionURL(revision, internal);
             linkElement.target = "_blank";
-            linkElement.textContent = "r";
-
-            var revisionLabel = document.createElement("span");
-            revisionLabel.classList.add("selectable");
-            revisionLabel.textContent = revision;
-            linkElement.appendChild(revisionLabel);
+            linkElement.textContent = "r" + revision;
+            linkElement.classList.add("selectable");
 
             return linkElement;
         }

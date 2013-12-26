@@ -35,7 +35,7 @@ a:link {
 }
 
 .selectable {
-    -webkit-user-select: all;
+    -webkit-user-select: auto;
 }
 
 div.cellButton {
