@@ -1,3 +1,13 @@
+2013-12-25  Jongwoo Choi  <jw0330.choi@samsung.com>
+
+        [EFL] Activate keyboard homepage shortcut on efl minibrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=124636
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c: Added.
+        (on_key_down): Add a homepage shortcut using Alt + Home key. 
+
 2013-12-25  Alexey Proskuryakov  <ap@apple.com>
 
         Revision selection behavior at build.webkit.org/dashboard is annoying

@@ -403,6 +403,9 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
         info("Forward (Alt+Right) was pressed");
         if (!ewk_view_forward(ewk_view))
             info("Forward ignored: No forward history");
+    } else if (!strcmp(ev->key, "Home") && altPressed) {
+        info("Home (Alt+Home) was pressed");
+        ewk_view_url_set(window->ewk_view, DEFAULT_URL);
     } else if (!strcmp(ev->key, "F3")) {
         currentEncoding = (currentEncoding + 1) % (sizeof(encodings) / sizeof(encodings[0]));
         info("Set encoding (F3) pressed. New encoding to %s", encodings[currentEncoding]);
