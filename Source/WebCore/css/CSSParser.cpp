@@ -5818,7 +5818,6 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapePolygon(CSSParserValueList* 
     return shape;
 }
 
-#if ENABLE(CSS_SHAPES)
 static bool isBoxValue(CSSValueID valueId)
 {
     switch (valueId) {
@@ -5833,6 +5832,7 @@ static bool isBoxValue(CSSValueID valueId)
     return false;
 }
 
+#if ENABLE(CSS_SHAPES)
 PassRefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled())

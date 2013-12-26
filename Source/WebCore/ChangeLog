@@ -1,3 +1,11 @@
+2013-12-26  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed build fix after r159526.
+        isBoxValue is used at out of ENABLE_CSS_SHAPES gaurd. It causes a compile failure.
+        So I moved isBoxValue to out side of ENABLE_CSS_SHAPES.
+
+        * css/CSSParser.cpp:
+
 2013-12-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Set m_pos as private in InlineIterator, and use getter and setter functions.
