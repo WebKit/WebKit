@@ -1,3 +1,25 @@
+2013-12-26  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [WK2][CoordinatedGraphics] Removing duplicate scale information from WebVIew.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=126243
+
+        Reviewed by Benjamin Poulain.
+
+        The scale factor of the WebView must reflect the same information present in
+        WebPageProxy.
+        Previously, in WebView.cpp, there was a m_contentScaleFactor member, which adds
+        information duplication and needs to be synchronizing with pageScaleFactor in
+        WebPageProxy. We can avoid this by just making WebView access and set WebPageProxy's
+        pageScaleFactor directly.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::setContentScaleFactor):
+        (WebKit::WebView::transformToScene):
+        (WebKit::WebView::visibleContentsSize):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        (WebKit::WebView::contentScaleFactor):
+
 2013-12-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r161033 and r161074.

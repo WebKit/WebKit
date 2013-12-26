@@ -70,8 +70,8 @@ public:
     bool isVisible() const { return m_visible; }
     void setVisible(bool);
 
-    void setContentScaleFactor(float scaleFactor) { m_contentScaleFactor = scaleFactor; }
-    float contentScaleFactor() const { return m_contentScaleFactor; }
+    void setContentScaleFactor(float);
+    float contentScaleFactor() const { return m_page->pageScaleFactor(); }
 
     void setContentPosition(const WebCore::FloatPoint& position) { m_contentPosition = position; }
     const WebCore::FloatPoint& contentPosition() const { return m_contentPosition; }
@@ -213,7 +213,6 @@ protected:
     WebCore::IntSize m_size; // Size in device units.
     bool m_focused;
     bool m_visible;
-    float m_contentScaleFactor;
     double m_opacity;
     WebCore::FloatPoint m_contentPosition; // Position in UI units.
     WebCore::IntSize m_contentsSize;
