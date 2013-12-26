@@ -1,3 +1,13 @@
+2013-12-22  Andreas Kling  <akling@apple.com>
+
+        Move more inlines from RenderObject to RenderElement.
+        <https://webkit.org/b/126134>
+
+        Lift some inline functions that use style() from RenderObject over
+        to RenderElement, making them branchless.
+
+        Reviewed by Anders Carlsson.
+
 2013-12-26  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Unreviewed build fix after r159526.

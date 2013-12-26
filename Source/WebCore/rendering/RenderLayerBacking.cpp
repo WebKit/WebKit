@@ -1656,7 +1656,7 @@ void RenderLayerBacking::updateRootLayerConfiguration()
     }
 }
 
-static bool supportsDirectBoxDecorationsComposition(const RenderObject& renderer)
+static bool supportsDirectBoxDecorationsComposition(const RenderLayerModelObject& renderer)
 {
     if (!GraphicsLayer::supportsBackgroundColorContent())
         return false;

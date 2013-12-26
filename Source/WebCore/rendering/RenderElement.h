@@ -120,8 +120,12 @@ public:
     bool isTransparent() const { return style().opacity() < 1.0f; }
     float opacity() const { return style().opacity(); }
 
+    bool visibleToHitTesting() const { return style().visibility() == VISIBLE && style().pointerEvents() != PE_NONE; }
+
     bool hasBackground() const { return style().hasBackground(); }
     bool hasMask() const { return style().hasMask(); }
+    bool hasClip() const { return isOutOfFlowPositioned() && style().hasClip(); }
+    bool hasClipOrOverflowClip() const { return hasClip() || hasOverflowClip(); }
     bool hasClipPath() const { return style().clipPath(); }
     bool hasHiddenBackface() const { return style().backfaceVisibility() == BackfaceVisibilityHidden; }
 
