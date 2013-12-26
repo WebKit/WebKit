@@ -1,3 +1,37 @@
+2013-12-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Set m_pos as private in InlineIterator, and use getter and setter functions.
+        https://bugs.webkit.org/show_bug.cgi?id=125614
+
+        Reviewed by Alexey Proskuryakov.
+
+        InlineIterator has been exported m_pos as public directly though it is member variable.
+        This patch set it as private, and add getter/setter functions for it.
+
+        No new tests, no behavior changes.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::setOffset):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::InlineBidiResolver::appendRun):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::appendRunsForObject):
+        (WebCore::constructBidiRunsForLine):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::matchedEndLine):
+        (WebCore::LineBreaker::nextSegmentBreak):
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::BreakingContext::handleFloat):
+        (WebCore::iteratorIsBeyondEndOfRenderCombineText):
+        (WebCore::ensureCharacterGetsLineBox):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::checkMidpoints):
+        (WebCore::BreakingContext::handleEndOfLine):
+        * rendering/line/TrailingObjects.cpp:
+        (WebCore::TrailingObjects::updateMidpointsForTrailingBoxes):
+
 2013-12-25  Kim Byung Jun  <bj1987.kim@samsung.com>
 
         [EFL] Delete file.edc and file_*.png.

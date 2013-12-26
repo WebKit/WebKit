@@ -69,6 +69,7 @@ public:
     RenderObject* renderer() const { return m_renderer; }
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     unsigned offset() const { return m_pos; }
+    void setOffset(unsigned position) { m_pos = position; }
     RenderElement* root() const { return m_root; }
     int nextBreakablePosition() const { return m_nextBreakablePosition; }
     void setNextBreakablePosition(int position) { m_nextBreakablePosition = position; }
@@ -98,20 +99,17 @@ private:
     RenderObject* m_renderer;
 
     int m_nextBreakablePosition;
-
-// FIXME: These should be private.
-public:
     unsigned m_pos;
 };
 
 inline bool operator==(const InlineIterator& it1, const InlineIterator& it2)
 {
-    return it1.m_pos == it2.m_pos && it1.renderer() == it2.renderer();
+    return it1.offset() == it2.offset() && it1.renderer() == it2.renderer();
 }
 
 inline bool operator!=(const InlineIterator& it1, const InlineIterator& it2)
 {
-    return it1.m_pos != it2.m_pos || it1.renderer() != it2.renderer();
+    return it1.offset() != it2.offset() || it1.renderer() != it2.renderer();
 }
 
 static inline UCharDirection embedCharFromDirection(TextDirection direction, EUnicodeBidi unicodeBidi)
@@ -518,7 +516,7 @@ inline void InlineBidiResolver::appendRun()
         // Initialize our state depending on if we're starting in the middle of such an inline.
         // FIXME: Could this initialize from this->inIsolate() instead of walking up the render tree?
         IsolateTracker isolateTracker(numberOfIsolateAncestors(m_sor));
-        int start = m_sor.m_pos;
+        int start = m_sor.offset();
         RenderObject* obj = m_sor.renderer();
         while (obj && obj != m_eor.renderer() && obj != endOfLine.renderer()) {
             if (isolateTracker.inIsolate())
@@ -530,10 +528,10 @@ inline void InlineBidiResolver::appendRun()
             obj = bidiNextSkippingEmptyInlines(*m_sor.root(), obj, &isolateTracker);
         }
         if (obj) {
-            unsigned pos = obj == m_eor.renderer() ? m_eor.m_pos : UINT_MAX;
-            if (obj == endOfLine.renderer() && endOfLine.m_pos <= pos) {
+            unsigned pos = obj == m_eor.renderer() ? m_eor.offset() : UINT_MAX;
+            if (obj == endOfLine.renderer() && endOfLine.offset() <= pos) {
                 m_reachedEndOfLine = true;
-                pos = endOfLine.m_pos;
+                pos = endOfLine.offset();
             }
             // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
             int end = obj->length() ? pos + 1 : 0;
