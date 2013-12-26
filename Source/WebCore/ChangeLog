@@ -1,3 +1,24 @@
+2013-12-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r161033 and r161074.
+        http://trac.webkit.org/changeset/161033
+        http://trac.webkit.org/changeset/161074
+        https://bugs.webkit.org/show_bug.cgi?id=126240
+
+        Oliver says that a rollout would be better (Requested by ap on
+        #webkit).
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject setValue:forKey:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::putByIndex):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_SetProperty):
+
 2013-12-25  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess: Implement version changing

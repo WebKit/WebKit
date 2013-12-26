@@ -239,7 +239,7 @@ void JIT_OPERATION operationPutByIdStrict(ExecState* exec, StructureStubInfo*, E
     NativeCallFrameTracer tracer(vm, exec);
     
     Identifier ident(vm, uid);
-    PutPropertySlot slot(JSValue::decode(encodedBase), true, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     JSValue::decode(encodedBase).put(exec, ident, JSValue::decode(encodedValue), slot);
 }
 
@@ -249,7 +249,7 @@ void JIT_OPERATION operationPutByIdNonStrict(ExecState* exec, StructureStubInfo*
     NativeCallFrameTracer tracer(vm, exec);
     
     Identifier ident(vm, uid);
-    PutPropertySlot slot(JSValue::decode(encodedBase), false, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     JSValue::decode(encodedBase).put(exec, ident, JSValue::decode(encodedValue), slot);
 }
 
@@ -259,7 +259,7 @@ void JIT_OPERATION operationPutByIdDirectStrict(ExecState* exec, StructureStubIn
     NativeCallFrameTracer tracer(vm, exec);
     
     Identifier ident(vm, uid);
-    PutPropertySlot slot(JSValue::decode(encodedBase), true, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     asObject(JSValue::decode(encodedBase))->putDirect(exec->vm(), ident, JSValue::decode(encodedValue), slot);
 }
 
@@ -269,7 +269,7 @@ void JIT_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, StructureStu
     NativeCallFrameTracer tracer(vm, exec);
     
     Identifier ident(vm, uid);
-    PutPropertySlot slot(JSValue::decode(encodedBase), false, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     asObject(JSValue::decode(encodedBase))->putDirect(exec->vm(), ident, JSValue::decode(encodedValue), slot);
 }
 
@@ -283,7 +283,7 @@ void JIT_OPERATION operationPutByIdStrictOptimize(ExecState* exec, StructureStub
 
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue = JSValue::decode(encodedBase);
-    PutPropertySlot slot(baseValue, true, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     
     baseValue.put(exec, ident, value, slot);
     
@@ -306,7 +306,7 @@ void JIT_OPERATION operationPutByIdNonStrictOptimize(ExecState* exec, StructureS
 
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue = JSValue::decode(encodedBase);
-    PutPropertySlot slot(baseValue, false, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     
     baseValue.put(exec, ident, value, slot);
     
@@ -329,7 +329,7 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(ExecState* exec, Structu
 
     JSValue value = JSValue::decode(encodedValue);
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
-    PutPropertySlot slot(baseObject, true, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     
     baseObject->putDirect(exec->vm(), ident, value, slot);
     
@@ -352,7 +352,7 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState* exec, Stru
 
     JSValue value = JSValue::decode(encodedValue);
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
-    PutPropertySlot slot(baseObject, false, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     
     baseObject->putDirect(exec->vm(), ident, value, slot);
     
@@ -375,7 +375,7 @@ void JIT_OPERATION operationPutByIdStrictBuildList(ExecState* exec, StructureStu
 
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue = JSValue::decode(encodedBase);
-    PutPropertySlot slot(baseValue, true, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     
     baseValue.put(exec, ident, value, slot);
     
@@ -395,7 +395,7 @@ void JIT_OPERATION operationPutByIdNonStrictBuildList(ExecState* exec, Structure
 
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue = JSValue::decode(encodedBase);
-    PutPropertySlot slot(baseValue, false, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     
     baseValue.put(exec, ident, value, slot);
     
@@ -415,7 +415,7 @@ void JIT_OPERATION operationPutByIdDirectStrictBuildList(ExecState* exec, Struct
     
     JSValue value = JSValue::decode(encodedValue);
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
-    PutPropertySlot slot(baseObject, true, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     
     baseObject->putDirect(exec->vm(), ident, value, slot);
     
@@ -435,7 +435,7 @@ void JIT_OPERATION operationPutByIdDirectNonStrictBuildList(ExecState* exec, Str
 
     JSValue value = JSValue::decode(encodedValue);
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
-    PutPropertySlot slot(baseObject, false, exec->codeBlock()->putByIdContext());
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     
     baseObject ->putDirect(exec->vm(), ident, value, slot);
     
@@ -469,12 +469,12 @@ static void putByVal(CallFrame* callFrame, JSValue baseValue, JSValue subscript,
         } else
             baseValue.putByIndex(callFrame, i, value, callFrame->codeBlock()->isStrictMode());
     } else if (isName(subscript)) {
-        PutPropertySlot slot(baseValue, callFrame->codeBlock()->isStrictMode());
+        PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
         baseValue.put(callFrame, jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
     } else {
         Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
         if (!callFrame->vm().exception()) { // Don't put to an object if toString threw an exception.
-            PutPropertySlot slot(baseValue, callFrame->codeBlock()->isStrictMode());
+            PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
             baseValue.put(callFrame, property, value, slot);
         }
     }
@@ -486,12 +486,12 @@ static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue s
         uint32_t i = subscript.asUInt32();
         baseObject->putDirectIndex(callFrame, i, value);
     } else if (isName(subscript)) {
-        PutPropertySlot slot(baseObject, callFrame->codeBlock()->isStrictMode());
+        PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
         baseObject->putDirect(callFrame->vm(), jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
     } else {
         Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
         if (!callFrame->vm().exception()) { // Don't put to an object if toString threw an exception.
-            PutPropertySlot slot(baseObject, callFrame->codeBlock()->isStrictMode());
+            PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
             baseObject->putDirect(callFrame->vm(), property, value, slot);
         }
     }
@@ -1668,7 +1668,7 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
         return;
     }
 
-    PutPropertySlot slot(scope, codeBlock->isStrictMode());
+    PutPropertySlot slot(codeBlock->isStrictMode());
     scope->methodTable()->put(scope, exec, ident, value, slot);
     
     if (exec->vm().exception())

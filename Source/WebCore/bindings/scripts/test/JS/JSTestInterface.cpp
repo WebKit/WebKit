@@ -455,7 +455,7 @@ void JSTestInterface::putByIndex(JSCell* cell, ExecState* exec, unsigned index, 
     JSTestInterface* thisObject = jsCast<JSTestInterface*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     PropertyName propertyName = Identifier::from(exec, index);
-    PutPropertySlot slot(thisObject, shouldThrow);
+    PutPropertySlot slot(shouldThrow);
     if (thisObject->putDelegate(exec, propertyName, value, slot))
         return;
     Base::putByIndex(cell, exec, index, value, shouldThrow);

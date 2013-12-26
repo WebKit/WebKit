@@ -96,7 +96,7 @@ void JSCell::put(JSCell* cell, ExecState* exec, PropertyName identifier, JSValue
 void JSCell::putByIndex(JSCell* cell, ExecState* exec, unsigned identifier, JSValue value, bool shouldThrow)
 {
     if (cell->isString()) {
-        PutPropertySlot slot(cell, shouldThrow);
+        PutPropertySlot slot(shouldThrow);
         JSValue(cell).putToPrimitive(exec, Identifier::from(exec, identifier), value, slot);
         return;
     }

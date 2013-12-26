@@ -383,7 +383,7 @@ void JSGenericTypedArrayView<Adaptor>::putByIndex(
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
     
     if (propertyName > MAX_ARRAY_INDEX) {
-        PutPropertySlot slot(JSValue(thisObject), shouldThrow);
+        PutPropertySlot slot(shouldThrow);
         thisObject->methodTable()->put(
             thisObject, exec, Identifier::from(exec, propertyName), value, slot);
         return;

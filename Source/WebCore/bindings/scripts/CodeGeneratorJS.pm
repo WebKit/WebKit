@@ -2130,7 +2130,7 @@ sub GenerateImplementation
 
                     if ($interface->extendedAttributes->{"CustomNamedSetter"}) {
                         push(@implContent, "    PropertyName propertyName = Identifier::from(exec, index);\n");
-                        push(@implContent, "    PutPropertySlot slot(thisObject, shouldThrow);\n");
+                        push(@implContent, "    PutPropertySlot slot(shouldThrow);\n");
                         push(@implContent, "    if (thisObject->putDelegate(exec, propertyName, value, slot))\n");
                         push(@implContent, "        return;\n");
                     }
@@ -2160,12 +2160,6 @@ sub GenerateImplementation
                         push(@implContent, "    UNUSED_PARAM(exec);\n");
                         if (!$attribute->isStatic) {
                             push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
-                            if ($interfaceName eq "DOMWindow") {
-                                push(@implContent, "    if (!castedThis) {\n");
-                                push(@implContent, "        if (JSDOMWindowShell* shell = jsDynamicCast<JSDOMWindowShell*>(JSValue::decode(thisValue)))\n");
-                                push(@implContent, "            castedThis = shell->window();\n");
-                                push(@implContent, "    }\n");
-                            }
                             push(@implContent, "    if (!castedThis) {\n");
                             push(@implContent, "        throwVMTypeError(exec);\n");
                             push(@implContent, "        return;\n");
