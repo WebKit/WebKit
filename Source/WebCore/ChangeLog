@@ -1,3 +1,67 @@
+2013-12-27  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r161096.
+        http://trac.webkit.org/changeset/161096
+        https://bugs.webkit.org/show_bug.cgi?id=126256
+
+        Made lots of tests crash (Requested by ap on #webkit).
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::willRemoveChildren):
+        (WebCore::ContainerNode::appendChild):
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityStateChanged):
+        (WebCore::Document::moveNodeIteratorsToNewDocument):
+        (WebCore::Document::updateRangesAfterChildrenChanged):
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        (WebCore::Document::textInserted):
+        (WebCore::Document::textRemoved):
+        (WebCore::Document::textNodesMerged):
+        (WebCore::Document::textNodeSplit):
+        (WebCore::Document::documentWillSuspendForPageCache):
+        (WebCore::Document::documentDidResumeFromPageCache):
+        (WebCore::Document::mediaVolumeDidChange):
+        (WebCore::Document::privateBrowsingStateDidChange):
+        (WebCore::Document::captionPreferencesChanged):
+        (WebCore::Document::validateAutoSizingNodes):
+        (WebCore::Document::resetAutoSizingNodes):
+        (WebCore::Document::webkitExitFullscreen):
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::disconnect):
+        (WebCore::MutationObserver::getObservedNodes):
+        (WebCore::MutationObserver::deliver):
+        * dom/MutationObserverInterestGroup.cpp:
+        (WebCore::MutationObserverInterestGroup::isOldValueRequested):
+        (WebCore::MutationObserverInterestGroup::enqueueMutationRecord):
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::clearTransientRegistrations):
+        (WebCore::MutationObserverRegistration::addRegistrationNodesToSet):
+        * dom/Node.cpp:
+        (WebCore::Node::dumpStatistics):
+        (WebCore::Document::invalidateNodeListAndCollectionCaches):
+        (WebCore::NodeListsNodeData::invalidateCaches):
+        (WebCore::Node::didMoveToNewDocument):
+        (WebCore::collectMatchingObserversForMutation):
+        (WebCore::Node::notifyMutationObserversNodeWillDetach):
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::adoptDocument):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::stopActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::closeMessagePorts):
+        (WebCore::ScriptExecutionContext::adjustMinimumTimerInterval):
+        (WebCore::ScriptExecutionContext::didChangeTimerAlignmentInterval):
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::getRegionsByContent):
+        (WebCore::WebKitNamedFlow::getRegions):
+        (WebCore::WebKitNamedFlow::getContent):
+
 2013-12-26  Sam Weinig  <sam@webkit.org>
 
         Convert some of WebCore/dom over to range-for loops

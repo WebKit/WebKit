@@ -131,7 +131,9 @@ void Node::dumpStatistics()
     size_t elementsWithRareData = 0;
     size_t elementsWithNamedNodeMap = 0;
 
-    for (auto* node : liveNodeSet) {
+    for (HashSet<Node*>::iterator it = liveNodeSet.begin(); it != liveNodeSet.end(); ++it) {
+        Node* node = *it;
+
         if (node->hasRareData()) {
             ++nodesWithRareData;
             if (node->isElementNode()) {
@@ -237,8 +239,8 @@ void Node::dumpStatistics()
     printf("  Number of ShadowRoot nodes: %zu\n", shadowRootNodes);
 
     printf("Element tag name distibution:\n");
-    for (auto stringSizePair : perTagCount)
-        printf("  Number of <%s> tags: %zu\n", stringSizePair.key.utf8().data(), stringSizePair.value);
+    for (HashMap<String, size_t>::iterator it = perTagCount.begin(); it != perTagCount.end(); ++it)
+        printf("  Number of <%s> tags: %zu\n", it->key.utf8().data(), it->value);
 
     printf("Attributes:\n");
     printf("  Number of Attributes (non-Node and Node): %zu [%zu]\n", attributes, sizeof(Attribute));
@@ -725,10 +727,10 @@ bool Document::shouldInvalidateNodeListAndCollectionCaches(const QualifiedName* 
 
 void Document::invalidateNodeListAndCollectionCaches(const QualifiedName* attrName)
 {
-    for (auto* nodeList : m_listsInvalidatedAtDocument)
-        nodeList->invalidateCache(attrName);
-    for (auto* collection : m_collectionsInvalidatedAtDocument)
-        collection->invalidateCache(attrName);
+    for (HashSet<LiveNodeList*>::iterator it = m_listsInvalidatedAtDocument.begin(), end = m_listsInvalidatedAtDocument.end(); it != end; ++it)
+        (*it)->invalidateCache(attrName);
+    for (HashSet<HTMLCollection*>::iterator it = m_collectionsInvalidatedAtDocument.begin(), end = m_collectionsInvalidatedAtDocument.end(); it != end; ++it)
+        (*it)->invalidateCache(attrName);
 }
 
 void Node::invalidateNodeListAndCollectionCachesInAncestors(const QualifiedName* attrName, Element* attributeOwnerElement)
@@ -1699,20 +1701,20 @@ void Node::showTreeForThisAcrossFrame() const
 
 void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
 {
-    for (auto* nodeList : m_atomicNameCaches.values())
-        nodeList->invalidateCache(attrName);
+    for (auto it = m_atomicNameCaches.begin(), end = m_atomicNameCaches.end(); it != end; ++it)
+        it->value->invalidateCache(attrName);
 
-    for (auto* nodeList : m_nameCaches.values())
-        nodeList->invalidateCache(attrName);
+    for (auto it = m_nameCaches.begin(), end = m_nameCaches.end(); it != end; ++it)
+        it->value->invalidateCache(attrName);
 
-    for (auto* collection : m_cachedCollections.values())
-        collection->invalidateCache(attrName);
+    for (auto it = m_cachedCollections.begin(), end = m_cachedCollections.end(); it != end; ++it)
+        it->value->invalidateCache(attrName);
 
     if (attrName)
         return;
 
-    for (auto* nodeList : m_tagNodeListCacheNS.values())
-        nodeList->invalidateCache();
+    for (auto it = m_tagNodeListCacheNS.begin(), end = m_tagNodeListCacheNS.end(); it != end; ++it)
+        it->value->invalidateCache();
 }
 
 void Node::getSubresourceURLs(ListHashSet<URL>& urls) const
@@ -1776,15 +1778,16 @@ void Node::didMoveToNewDocument(Document* oldDocument)
         }
     }
 
-    if (auto* registry = mutationObserverRegistry()) {
+    if (Vector<OwnPtr<MutationObserverRegistration>>* registry = mutationObserverRegistry()) {
         for (size_t i = 0; i < registry->size(); ++i) {
             document().addMutationObserverTypes(registry->at(i)->mutationTypes());
         }
     }
 
-    if (auto* transientRegistry = transientMutationObserverRegistry()) {
-        for (auto* registration : *transientRegistry)
-            document().addMutationObserverTypes(registration->mutationTypes());
+    if (HashSet<MutationObserverRegistration*>* transientRegistry = transientMutationObserverRegistry()) {
+        for (HashSet<MutationObserverRegistration*>::iterator iter = transientRegistry->begin(); iter != transientRegistry->end(); ++iter) {
+            document().addMutationObserverTypes((*iter)->mutationTypes());
+        }
     }
 }
 
@@ -1925,11 +1928,11 @@ static inline void collectMatchingObserversForMutation(HashMap<MutationObserver*
 {
     if (!registry)
         return;
-
-    for (auto& registration : *registry) {
-        if (registration->shouldReceiveMutationFrom(target, type, attributeName)) {
-            MutationRecordDeliveryOptions deliveryOptions = registration->deliveryOptions();
-            auto result = observers.add(registration->observer(), deliveryOptions);
+    for (typename Registry::iterator iter = registry->begin(); iter != registry->end(); ++iter) {
+        const MutationObserverRegistration& registration = **iter;
+        if (registration.shouldReceiveMutationFrom(target, type, attributeName)) {
+            MutationRecordDeliveryOptions deliveryOptions = registration.deliveryOptions();
+            HashMap<MutationObserver*, MutationRecordDeliveryOptions>::AddResult result = observers.add(registration.observer(), deliveryOptions);
             if (!result.isNewEntry)
                 result.iterator->value |= deliveryOptions;
         }
@@ -2003,15 +2006,15 @@ void Node::notifyMutationObserversNodeWillDetach()
         return;
 
     for (Node* node = parentNode(); node; node = node->parentNode()) {
-        if (auto* registry = node->mutationObserverRegistry()) {
+        if (Vector<OwnPtr<MutationObserverRegistration>>* registry = node->mutationObserverRegistry()) {
             const size_t size = registry->size();
             for (size_t i = 0; i < size; ++i)
                 registry->at(i)->observedSubtreeNodeWillDetach(this);
         }
 
-        if (auto* transientRegistry = node->transientMutationObserverRegistry()) {
-            for (auto* registration : *transientRegistry)
-                registration->observedSubtreeNodeWillDetach(this);
+        if (HashSet<MutationObserverRegistration*>* transientRegistry = node->transientMutationObserverRegistry()) {
+            for (HashSet<MutationObserverRegistration*>::iterator iter = transientRegistry->begin(); iter != transientRegistry->end(); ++iter)
+                (*iter)->observedSubtreeNodeWillDetach(this);
         }
     }
 }

@@ -301,21 +301,23 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
     InspectorInstrumentation::willInsertDOMNode(&document(), this);
 
     ChildListMutationScope mutation(*this);
-    for (auto& child : targets) {
+    for (auto it = targets.begin(), end = targets.end(); it != end; ++it) {
+        Node& child = it->get();
+
         // Due to arbitrary code running in response to a DOM mutation event it's
         // possible that "next" is no longer a child of "this".
         // It's also possible that "child" has been inserted elsewhere.
         // In either of those cases, we'll just stop.
         if (next->parentNode() != this)
             break;
-        if (child->parentNode())
+        if (child.parentNode())
             break;
 
-        treeScope().adoptIfNeeded(&child.get());
+        treeScope().adoptIfNeeded(&child);
 
-        insertBeforeCommon(next.get(), child.get());
+        insertBeforeCommon(next.get(), child);
 
-        updateTreeAfterInsertion(child.get());
+        updateTreeAfterInsertion(child);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -455,28 +457,30 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     InspectorInstrumentation::willInsertDOMNode(&document(), this);
 
     // Add the new child(ren)
-    for (auto& child : targets) {
+    for (auto it = targets.begin(), end = targets.end(); it != end; ++it) {
+        Node& child = it->get();
+
         // Due to arbitrary code running in response to a DOM mutation event it's
         // possible that "next" is no longer a child of "this".
         // It's also possible that "child" has been inserted elsewhere.
         // In either of those cases, we'll just stop.
         if (next && next->parentNode() != this)
             break;
-        if (child->parentNode())
+        if (child.parentNode())
             break;
 
-        treeScope().adoptIfNeeded(&child.get());
+        treeScope().adoptIfNeeded(&child);
 
         // Add child before "next".
         {
             NoEventDispatchAssertion assertNoEventDispatch;
             if (next)
-                insertBeforeCommon(*next, child.get());
+                insertBeforeCommon(*next, child);
             else
-                appendChildToContainer(&child.get(), *this);
+                appendChildToContainer(&child, *this);
         }
 
-        updateTreeAfterInsertion(child.get());
+        updateTreeAfterInsertion(child);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -501,12 +505,13 @@ static void willRemoveChildren(ContainerNode& container)
     getChildNodes(container, children);
 
     ChildListMutationScope mutation(container);
-    for (auto& child : children) {
-        mutation.willRemoveChild(child.get());
-        child->notifyMutationObserversNodeWillDetach();
+    for (auto it = children.begin(); it != children.end(); ++it) {
+        Node& child = it->get();
+        mutation.willRemoveChild(child);
+        child.notifyMutationObserversNodeWillDetach();
 
         // fire removed from document mutation events.
-        dispatchChildRemovalEvents(child.get());
+        dispatchChildRemovalEvents(child);
     }
 
     container.document().nodeChildrenWillBeRemoved(container);
@@ -704,22 +709,24 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec)
 
     // Now actually add the child(ren)
     ChildListMutationScope mutation(*this);
-    for (auto& child : targets) {
+    for (auto it = targets.begin(), end = targets.end(); it != end; ++it) {
+        Node& child = it->get();
+
         // If the child has a parent again, just stop what we're doing, because
         // that means someone is doing something with DOM mutation -- can't re-parent
         // a child that already has a parent.
-        if (child->parentNode())
+        if (child.parentNode())
             break;
 
-        treeScope().adoptIfNeeded(&child.get());
+        treeScope().adoptIfNeeded(&child);
 
         // Append child to the end of the list
         {
             NoEventDispatchAssertion assertNoEventDispatch;
-            appendChildToContainer(&child.get(), *this);
+            appendChildToContainer(&child, *this);
         }
 
-        updateTreeAfterInsertion(child.get());
+        updateTreeAfterInsertion(child);
     }
 
     dispatchSubtreeModifiedEvent();

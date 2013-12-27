@@ -130,11 +130,12 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
     Vector<Ref<Element>> regionElements;
 
     if (inFlowThread(contentNode->renderer(), m_parentFlowThread)) {
-        for (auto* region : m_parentFlowThread->renderRegionList()) {
+        const RenderRegionList& regionList = m_parentFlowThread->renderRegionList();
+        for (auto iter = regionList.begin(), end = regionList.end(); iter != end; ++iter) {
             // FIXME: Pseudo-elements are not included in the list.
             // They will be included when we will properly support the Region interface
             // http://dev.w3.org/csswg/css-regions/#the-region-interface
-            const RenderNamedFlowFragment* renderRegion = toRenderNamedFlowFragment(region);
+            const RenderNamedFlowFragment* renderRegion = toRenderNamedFlowFragment(*iter);
             if (renderRegion->isPseudoElementRegion())
                 continue;
             if (m_parentFlowThread->objectInFlowRegion(contentNode->renderer(), renderRegion)) {
@@ -158,11 +159,13 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegions()
         return StaticElementList::createEmpty();
 
     Vector<Ref<Element>> regionElements;
-    for (auto region : m_parentFlowThread->renderRegionList()) {
+
+    const RenderRegionList& regionList = m_parentFlowThread->renderRegionList();
+    for (auto iter = regionList.begin(), end = regionList.end(); iter != end; ++iter) {
         // FIXME: Pseudo-elements are not included in the list.
         // They will be included when we will properly support the Region interface
         // http://dev.w3.org/csswg/css-regions/#the-region-interface
-        const RenderNamedFlowFragment* renderRegion = toRenderNamedFlowFragment(region);
+        const RenderNamedFlowFragment* renderRegion = toRenderNamedFlowFragment(*iter);
         if (renderRegion->isPseudoElementRegion())
             continue;
         ASSERT(renderRegion->generatingElement());
@@ -183,7 +186,10 @@ PassRefPtr<NodeList> WebKitNamedFlow::getContent()
         return StaticElementList::createEmpty();
 
     Vector<Ref<Element>> contentElements;
-    for (auto* element : m_parentFlowThread->contentElements()) {
+
+    const NamedFlowContentElements& contentElementsList = m_parentFlowThread->contentElements();
+    for (auto it = contentElementsList.begin(), end = contentElementsList.end(); it != end; ++it) {
+        Element* element = *it;
         ASSERT(element->computedStyle()->flowThread() == m_parentFlowThread->flowThreadName());
         contentElements.append(*element);
     }

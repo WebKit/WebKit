@@ -228,25 +228,29 @@ public:
         invalidateCaches();
 
         if (oldDocument != newDocument) {
-            for (auto* list : m_atomicNameCaches.values()) {
-                oldDocument->unregisterNodeList(*list);
-                newDocument->registerNodeList(*list);
+            for (auto it = m_atomicNameCaches.begin(), end = m_atomicNameCaches.end(); it != end; ++it) {
+                LiveNodeList& list = *it->value;
+                oldDocument->unregisterNodeList(list);
+                newDocument->registerNodeList(list);
             }
 
-            for (auto* list : m_nameCaches.values()) {
-                oldDocument->unregisterNodeList(*list);
-                newDocument->registerNodeList(*list);
+            for (auto it = m_nameCaches.begin(), end = m_nameCaches.end(); it != end; ++it) {
+                LiveNodeList& list = *it->value;
+                oldDocument->unregisterNodeList(list);
+                newDocument->registerNodeList(list);
             }
 
-            for (auto* list : m_tagNodeListCacheNS.values()) {
-                ASSERT(!list->isRootedAtDocument());
-                oldDocument->unregisterNodeList(*list);
-                newDocument->registerNodeList(*list);
+            for (auto it = m_tagNodeListCacheNS.begin(), end = m_tagNodeListCacheNS.end(); it != end; ++it) {
+                LiveNodeList& list = *it->value;
+                ASSERT(!list.isRootedAtDocument());
+                oldDocument->unregisterNodeList(list);
+                newDocument->registerNodeList(list);
             }
 
-            for (auto collection : m_cachedCollections.values()) {
-                oldDocument->unregisterCollection(*collection);
-                newDocument->registerCollection(*collection);
+            for (auto it = m_cachedCollections.begin(), end = m_cachedCollections.end(); it != end; ++it) {
+                HTMLCollection& collection = *it->value;
+                oldDocument->unregisterCollection(collection);
+                newDocument->registerCollection(collection);
             }
         }
     }
