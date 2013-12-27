@@ -14584,6 +14584,12 @@
     <ClInclude Include="..\html\canvas\EXTTextureFilterAnisotropic.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\audio\AudioSession.h">
+      <Filter>platform\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\audio\AudioSessionListener.h">
+      <Filter>platform\audio</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\graphics\ANGLEWebKitBridge.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
