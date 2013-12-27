@@ -1,5 +1,3 @@
-set(TEST_BINARY_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit2GObjectAPITests)
-
 add_definitions(-DTEST_PLUGIN_DIR="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 include_directories(
     ${CMAKE_BINARY_DIR}
@@ -10,7 +8,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/Source/WebCore/platform
     ${CMAKE_SOURCE_DIR}/Source/WTF
     ${DERIVED_SOURCES_DIR}
-    ${DERIVED_SOURCES_DIR}/webkit
+    ${DERIVED_SOURCES_WEBKITGTK_DIR}
     ${GLIB_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
@@ -26,7 +24,7 @@ macro(ADD_WK1_TEST test_name)
         ${LIBSOUP_LIBRARIES}
     )
     set_target_properties(${test_name} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${TEST_BINARY_DIR}/WebKit1GObjectAPITests
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit1GObjectAPITests
     )
 endmacro()
 

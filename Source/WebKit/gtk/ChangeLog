@@ -1,3 +1,10 @@
+2013-12-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Small build fix for the GTK+ CMake port
+
+        * tests/CMakeLists.txt: Output the WebKit1 GObject API unit tests to the proper directory
+        and fix the path to the generated API source.
+
 2013-12-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Build the WebKit1 GObject API tests
