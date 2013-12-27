@@ -68,7 +68,7 @@ EWSQueue.prototype = {
     {
         JSON.load(this.baseURL, function(data) {
             var newPatchCount = data.queue.length;
-            if (this._patchCount == newPatchCount && this._latestMessageTime == newLatestMessageTime)
+            if (this._patchCount == newPatchCount)
                 return;
             this._patchCount = newPatchCount;
 
