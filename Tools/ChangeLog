@@ -1,5 +1,16 @@
 2013-12-26  Alexey Proskuryakov  <ap@apple.com>
 
+        EWS status JSON should include Access-Control-Allow-Origin
+        https://bugs.webkit.org/show_bug.cgi?id=126246
+
+        Reviewed by Ryosuke Niwa.
+
+        * QueueStatusServer/app.yaml: Update version.
+        * QueueStatusServer/handlers/queuestatusjson.py:
+        (QueueStatusJSON.get): Add the header field.
+
+2013-12-26  Alexey Proskuryakov  <ap@apple.com>
+
         Some links at build.webkit.org/dashboard don't show status messages, and aren't keyboard accessible
         https://bugs.webkit.org/show_bug.cgi?id=126234
 

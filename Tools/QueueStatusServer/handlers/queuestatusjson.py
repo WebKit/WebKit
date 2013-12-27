@@ -73,6 +73,8 @@ class QueueStatusJSON(webapp.RequestHandler):
         return result
 
     def get(self, queue_name):
+        self.response.headers["Access-Control-Allow-Origin"] = "*"
+
         queue_name = queue_name.lower()
         queue = Queue.queue_with_name(queue_name)
         if not queue:
