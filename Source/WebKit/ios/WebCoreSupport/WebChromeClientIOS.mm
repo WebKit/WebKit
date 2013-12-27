@@ -124,7 +124,7 @@ void WebChromeClientIOS::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
     [listener release];
 }
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS)
 void WebChromeClientIOS::didPreventDefaultForEvent()
 {
     [[webView() _UIKitDelegateForwarder] webViewDidPreventDefaultForEvent:webView()];

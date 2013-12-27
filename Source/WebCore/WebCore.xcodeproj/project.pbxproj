@@ -5466,6 +5466,8 @@
 		CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE057FA41220731100A476D5 /* DocumentMarkerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE08C3D1152B599A0021B8C2 /* AlternativeTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */; };
 		CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */; settings = {ATTRIBUTES = (); }; };
+		FE6938B61045D67E008EABB6 /* EventHandlerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */; };
+		FED13D3D0CEA936A00D89466 /* FrameIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = FED13D3B0CEA936A00D89466 /* FrameIOS.mm */; };
 		CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB41586ABAD0098B3FA /* AlternativeTextUIController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */; };
 		CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12621,6 +12623,8 @@
 		CE057FA41220731100A476D5 /* DocumentMarkerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarkerController.h; sourceTree = "<group>"; };
 		CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlternativeTextController.cpp; sourceTree = "<group>"; };
 		CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternativeTextController.h; sourceTree = "<group>"; };
+		FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventHandlerIOS.mm; sourceTree = "<group>"; };
+		FED13D3B0CEA936A00D89466 /* FrameIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FrameIOS.mm; sourceTree = "<group>"; };
 		CE5CB1B314EDAB6F00BB2795 /* EventSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSender.h; sourceTree = "<group>"; };
 		CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlternativeTextUIController.h; path = mac/AlternativeTextUIController.h; sourceTree = "<group>"; };
 		CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AlternativeTextUIController.mm; path = mac/AlternativeTextUIController.mm; sourceTree = "<group>"; };
@@ -15731,6 +15735,7 @@
 			isa = PBXGroup;
 			children = (
 				316FE1060E6E1D8400BF6088 /* animation */,
+				18A6CD6F0D8F2025001DC3CE /* ios */,
 				93C09A820B064F05005ABD4D /* mac */,
 				1AF62EE114DA22A70041556C /* scrolling */,
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
@@ -20536,6 +20541,15 @@
 				CDF2B00F1820540600F2B424 /* MockTracks.h */,
 			);
 			path = mediasource;
+			sourceTree = "<group>";
+		};
+		18A6CD6F0D8F2025001DC3CE /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */,
+				FED13D3B0CEA936A00D89466 /* FrameIOS.mm */,
+			);
+			path = ios;
 			sourceTree = "<group>";
 		};
 		CE79D68617F220ED00815C00 /* ios */ = {
@@ -26350,6 +26364,7 @@
 				850657010AAB4763002D15C0 /* DOMStyleSheet.mm in Sources */,
 				850657030AAB4763002D15C0 /* DOMStyleSheetList.mm in Sources */,
 				85ACA99D0A9B575900671E90 /* DOMText.mm in Sources */,
+				FED13D3D0CEA936A00D89466 /* FrameIOS.mm in Sources */,
 				933A14AA0B7D1D0900A53FFD /* DOMTextEvent.mm in Sources */,
 				188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */,
 				76FC2B0B12370DA0006A991A /* DOMTokenList.cpp in Sources */,
@@ -28461,6 +28476,7 @@
 				49C7B9E51042D32F0009D447 /* WebGLTexture.cpp in Sources */,
 				0C3F1F5A10C8871200D72CE1 /* WebGLUniformLocation.cpp in Sources */,
 				77A17A7712F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp in Sources */,
+				FE6938B61045D67E008EABB6 /* EventHandlerIOS.mm in Sources */,
 				31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */,
 				976D6C7B122B8A3D001FD1F7 /* WebKitBlobBuilder.cpp in Sources */,
 				150B923915F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp in Sources */,

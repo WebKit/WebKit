@@ -397,8 +397,26 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(touchcancel);
 #endif
 
+#if ENABLE(IOS_GESTURE_EVENTS)
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(gesturestart);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(gesturechange);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(gestureend);
+#endif
+
 #if ENABLE(WEB_TIMING)
         Performance* performance() const;
+#endif
+
+#if PLATFORM(IOS)
+        void incrementScrollEventListenersCount();
+        void decrementScrollEventListenersCount();
+        unsigned scrollEventListenerCount() const { return m_scrollEventListenerCount; }
+#endif
+
+        void resetAllGeolocationPermission();
+
+#if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
+        bool hasTouchEventListeners() const { return m_touchEventListenerCount > 0; }
 #endif
 
         // FIXME: When this DOMWindow is no longer the active DOMWindow (i.e.,
@@ -456,6 +474,17 @@ namespace WebCore {
 
         String m_status;
         String m_defaultStatus;
+
+        enum PageStatus { PageStatusNone, PageStatusShown, PageStatusHidden };
+        PageStatus m_lastPageStatus;
+
+#if PLATFORM(IOS)
+        unsigned m_scrollEventListenerCount;
+#endif
+
+#if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
+        unsigned m_touchEventListenerCount;
+#endif
 
         mutable RefPtr<Storage> m_sessionStorage;
         mutable RefPtr<Storage> m_localStorage;

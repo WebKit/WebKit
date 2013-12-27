@@ -1,3 +1,146 @@
+2013-12-27  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream WebCore/page changes
+        https://bugs.webkit.org/show_bug.cgi?id=126180
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.h:
+        (WebCore::EventNames::isGestureEventType): Added.
+        * page/AlternativeTextClient.h: Do not define WTF_USE_DICTATION_ALTERNATIVES when building for iOS.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::Chrome):
+        (WebCore::Chrome::dispatchViewportPropertiesDidChange): Added; guarded by PLATFORM(IOS).
+        (WebCore::Chrome::setCursor): Make this an empty function when building for iOS.
+        (WebCore::Chrome::setCursorHiddenUntilMouseMoves): Ditto.
+        (WebCore::Chrome::didReceiveDocType): Added; iOS-specific.
+        * page/Chrome.h:
+        (WebCore::Chrome::setDispatchViewportDataDidChangeSuppressed): Added; guarded by PLATFORM(IOS).
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::didFlushCompositingLayers): Added; guarded by PLATFORM(IOS).
+        (WebCore::ChromeClient::fetchCustomFixedPositionLayoutRect): Added; guarded by PLATFORM(IOS).
+        (WebCore::ChromeClient::updateViewportConstrainedLayers): Added; guarded by PLATFORM(IOS).
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install): Added iOS-specific code.
+        (WebCore::DOMTimer::fired): Ditto.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow): Ditto.
+        (WebCore::DOMWindow::innerHeight): Ditto.
+        (WebCore::DOMWindow::innerWidth): Ditto.
+        (WebCore::DOMWindow::scrollX): Ditto.
+        (WebCore::DOMWindow::scrollY): Ditto.
+        (WebCore::DOMWindow::scrollBy): Ditto.
+        (WebCore::DOMWindow::scrollTo): Ditto.
+        (WebCore::DOMWindow::clearTimeout): Ditto.
+        (WebCore::DOMWindow::addEventListener): Ditto.
+        (WebCore::DOMWindow::incrementScrollEventListenersCount): Added; guarded by PLATFORM(IOS).
+        (WebCore::DOMWindow::decrementScrollEventListenersCount): Added; guarded by PLATFORM(IOS).
+        (WebCore::DOMWindow::resetAllGeolocationPermission): Added; Also added FIXME comment.
+        (WebCore::DOMWindow::removeEventListener): Added iOS-specific code.
+        (WebCore::DOMWindow::dispatchEvent): Modified to prevent dispatching duplicate pageshow and pagehide
+        events per <http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-pageshow>.
+        (WebCore::DOMWindow::removeAllEventListeners): Added iOS-specific code.
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl: Added IOS_GESTURE_EVENTS-guarded attributes: ongesture{change, end, start}. Also
+        added IOS_TOUCH_EVENTS-guarded attributes: {Touch, TouchList}Constructor.
+        * page/EditorClient.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler): Added iOS-specific code.
+        (WebCore::EventHandler::clear): Ditto.
+        (WebCore::EventHandler::startPanScrolling): Make this an empty function when building for iOS.
+        (WebCore::EventHandler::handleMousePressEvent): Modified to invalidate a click when the clicked node is
+        null. Also, opt out of code for updating the scrollbars as UIKit manages scrollbars on iOS.
+        (WebCore::EventHandler::handleMouseMoveEvent): Opt of code for updating the scrollbars and cursor when building on iOS.
+        (WebCore::hitTestResultInFrame): Made this a file-local static function since it's only used in EventHandler.cpp.
+        (WebCore::EventHandler::dispatchSyntheticTouchEventIfEnabled): Added iOS-specific code.
+        * page/EventHandler.h:
+        * page/FocusController.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame): Added iOS-specific code.
+        (WebCore::Frame::scrollOverflowLayer): Added; iOS-specific.
+        (WebCore::Frame::overflowAutoScrollTimerFired): Added; iOS-specific.
+        (WebCore::Frame::startOverflowAutoScroll): Added; iOS-specific.
+        (WebCore::Frame::checkOverflowScroll): Added; iOS-specific.
+        (WebCore::Frame::willDetachPage): Added iOS-specific code.
+        (WebCore::Frame::createView): Ditto.
+        (WebCore::Frame::setSelectionChangeCallbacksDisabled): Added; iOS-specific.
+        (WebCore::Frame::selectionChangeCallbacksDisabled): Added; iOS-specific.
+        * page/Frame.h:
+        (WebCore::Frame::timersPaused): Added; guarded by PLATFORM(IOS).
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView): Added iOS-specific code.
+        (WebCore::FrameView::clear): Ditto.
+        (WebCore::FrameView::flushCompositingStateForThisFrame): Ditto.
+        (WebCore::FrameView::graphicsLayerForPlatformWidget): Added.
+        (WebCore::FrameView::scheduleLayerFlushAllowingThrottling): Added.
+        (WebCore::FrameView::layout): Added iOS-specific code.
+        (WebCore::countRenderedCharactersInRenderObjectWithThreshold): Added; helper function used by FrameView::renderedCharactersExceed().
+        Also added FIXME comment.
+        (WebCore::FrameView::renderedCharactersExceed): Added.
+        (WebCore::FrameView::visibleContentsResized): Added iOS-specific code.
+        (WebCore::FrameView::adjustTiledBackingCoverage): Ditto.
+        (WebCore::FrameView::performPostLayoutTasks): Ditto.
+        (WebCore::FrameView::sendResizeEventIfNeeded): Ditto.
+        (WebCore::FrameView::paintContents): Added iOS-specific code. Also added FIXME comments.
+        (WebCore::FrameView::setUseCustomFixedPositionLayoutRect): Added; iOS-specific.
+        (WebCore::FrameView::setCustomFixedPositionLayoutRect): Added; iOS-specific.
+        (WebCore::FrameView::updateFixedPositionLayoutRect): Added; iOS-specific.
+        * page/FrameView.h:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::standalone): Added; iOS-specific.
+        * page/Navigator.h:
+        * page/Navigator.idl: Added WTF_PLATFORM_IOS-guarded attribute: standalone. Also added FIXME comment.
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::platform): Added iOS-specific code.
+        * page/Page.h:
+        (WebCore::Page::hasCustomHTMLTokenizerTimeDelay): Added; guarded by PLATFORM(IOS). Also added FIXME comment
+        to remove this method.
+        (WebCore::Page::customHTMLTokenizerTimeDelay): Added; guarded by PLATFORM(IOS). Also added FIXME comment
+        to remove this method.
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::removeVisitedLink): Added.
+        * page/PageGroup.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setScriptEnabled): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::setStandalone): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::setAudioSessionCategoryOverride): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::audioSessionCategoryOverride): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::setNetworkDataUsageTrackingEnabled): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::networkDataUsageTrackingEnabled): Added; guarded by PLATFORM(IOS).
+        (WebCore::sharedNetworkInterfaceNameGlobal): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::setNetworkInterfaceName): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::networkInterfaceName): Added; guarded by PLATFORM(IOS).
+        * page/Settings.h:
+        (WebCore::Settings::setMaxParseDuration): Added; guarded by PLATFORM(IOS). Also added FIXME comment.
+        (WebCore::Settings::maxParseDuration): Added; guarded by PLATFORM(IOS). Also added FIXME comment.
+        (WebCore::Settings::standalone): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::setTelephoneNumberParsingEnabled): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::telephoneNumberParsingEnabled): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::setMediaDataLoadsAutomatically): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::mediaDataLoadsAutomatically): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::setShouldTransformsAffectOverflow): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::shouldTransformsAffectOverflow): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::setShouldDispatchJavaScriptWindowOnErrorEvents): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::shouldDispatchJavaScriptWindowOnErrorEvents): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::setAlwaysUseBaselineOfPrimaryFont): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::alwaysUseBaselineOfPrimaryFont): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::setAlwaysUseAcceleratedOverflowScroll): Added; guarded by PLATFORM(IOS).
+        (WebCore::Settings::alwaysUseAcceleratedOverflowScroll): Added; guarded by PLATFORM(IOS).
+        * page/Settings.in: Added IOS_AIRPLAY-guarded setting: mediaPlaybackAllowsAirPlay.
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap): Added iOS-specific code and FIXME comment.
+        * page/ios/EventHandlerIOS.mm: Added.
+        * page/ios/FrameIOS.mm: Added.
+        * page/mac/ChromeMac.mm:
+        * page/mac/PageMac.cpp:
+        (WebCore::Page::addSchedulePair): Opt out of code when building for iOS.
+        (WebCore::Page::removeSchedulePair): Ditto.
+        * page/mac/SettingsMac.mm:
+        (WebCore::Settings::shouldEnableScreenFontSubstitutionByDefault): Added iOS-specific code.
+        * page/mac/WebCoreFrameView.h:
+
 2013-12-27  Gavin Barraclough  <barraclough@apple.com>
 
         Merge PageVisibilityState & ViewState::IsVisible in WebKit2

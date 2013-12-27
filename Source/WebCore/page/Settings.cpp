@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Settings.h"
 
+#include "AudioSession.h"
 #include "BackForwardController.h"
 #include "CachedResourceLoader.h"
 #include "CookieStorage.h"
@@ -45,6 +46,8 @@
 #include "StorageMap.h"
 #include "TextAutosizer.h"
 #include <limits>
+#include <wtf/NeverDestroyed.h>
+
 
 namespace WebCore {
 
@@ -92,6 +95,10 @@ bool Settings::gShouldUseHighResolutionTimers = true;
     
 bool Settings::gShouldRespectPriorityInCSSAttributeSetters = false;
 bool Settings::gLowPowerVideoAudioBufferSizeEnabled = false;
+
+#if PLATFORM(IOS)
+bool Settings::gNetworkDataUsageTrackingEnabled = false;
+#endif
 
 // NOTEs
 //  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well as QtWebKit when built on Mac;
@@ -146,6 +153,9 @@ Settings::Settings(Page* page)
     , m_fontGenericFamilies(std::make_unique<FontGenericFamilies>())
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
     , m_layoutInterval(layoutScheduleThreshold)
+#if PLATFORM(IOS)
+    , m_maxParseDuration(-1)
+#endif
 #if ENABLE(TEXT_AUTOSIZING)
     , m_textAutosizingFontScaleFactor(1)
 #if HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP
@@ -168,6 +178,15 @@ Settings::Settings(Page* page)
     , m_usesPageCache(false)
     , m_fontRenderingMode(0)
     , m_isCSSCustomFilterEnabled(false)
+#if PLATFORM(IOS)
+    , m_standalone(false)
+    , m_telephoneNumberParsingEnabled(false)
+    , m_mediaDataLoadsAutomatically(false)
+    , m_shouldTransformsAffectOverflow(true)
+    , m_shouldDispatchJavaScriptWindowOnErrorEvents(false)
+    , m_alwaysUseBaselineOfPrimaryFont(false)
+    , m_alwaysUseAcceleratedOverflowScroll(false)
+#endif
 #if ENABLE(CSS_STICKY_POSITION)
     , m_cssStickyPositionEnabled(true)
 #endif
@@ -382,7 +401,15 @@ void Settings::imageLoadingSettingsTimerFired(Timer<Settings>*)
 
 void Settings::setScriptEnabled(bool isScriptEnabled)
 {
+#if PLATFORM(IOS)
+    if (m_isScriptEnabled == isScriptEnabled)
+        return;
+#endif
+
     m_isScriptEnabled = isScriptEnabled;
+#if PLATFORM(IOS)
+    m_page->setNeedsRecalcStyleInAllFrames();
+#endif
     InspectorInstrumentation::scriptsEnabled(m_page, m_isScriptEnabled);
 }
 
@@ -680,5 +707,48 @@ void Settings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)
 {
     gLowPowerVideoAudioBufferSizeEnabled = flag;
 }
+
+#if PLATFORM(IOS)
+void Settings::setStandalone(bool standalone)
+{
+    m_standalone = standalone;
+}
+
+void Settings::setAudioSessionCategoryOverride(unsigned sessionCategory)
+{
+    AudioSession::sharedSession().setCategoryOverride(static_cast<AudioSession::CategoryType>(sessionCategory));
+}
+
+unsigned Settings::audioSessionCategoryOverride()
+{
+    return AudioSession::sharedSession().categoryOverride();
+}
+
+void Settings::setNetworkDataUsageTrackingEnabled(bool trackingEnabled)
+{
+    gNetworkDataUsageTrackingEnabled = trackingEnabled;
+}
+
+bool Settings::networkDataUsageTrackingEnabled()
+{
+    return gNetworkDataUsageTrackingEnabled;
+}
+
+static String& sharedNetworkInterfaceNameGlobal()
+{
+    static NeverDestroyed<String> networkInterfaceName;
+    return networkInterfaceName;
+}
+
+void Settings::setNetworkInterfaceName(const String& networkInterfaceName)
+{
+    sharedNetworkInterfaceNameGlobal() = networkInterfaceName;
+}
+
+const String& Settings::networkInterfaceName()
+{
+    return sharedNetworkInterfaceNameGlobal();
+}
+#endif
 
 } // namespace WebCore

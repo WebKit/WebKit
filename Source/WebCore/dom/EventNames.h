@@ -290,6 +290,11 @@ public:
     DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_DECLARE)
     #undef DOM_EVENT_NAMES_DECLARE
 
+    inline bool isGestureEventType(const AtomicString& eventType) const
+    {
+        return eventType == gesturestartEvent || eventType == gesturechangeEvent || eventType == gestureendEvent;
+    }
+
     inline bool isTouchEventType(const AtomicString& eventType) const
     {
         return eventType == touchstartEvent

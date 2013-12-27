@@ -155,8 +155,9 @@ public:
 #if ENABLE(INPUT_TYPE_COLOR)
     PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color& initialColor);
 #endif
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    PassRefPtr<DateTimeChooser> openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&);
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !PLATFORM(IOS)
+    PassRefPtr<DateTimeChooser> openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&)
 #endif
 
     void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
@@ -179,6 +180,13 @@ public:
     PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
     PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
 
+#if PLATFORM(IOS)
+    // FIXME: Can we come up with a better name for this setter?
+    void setDispatchViewportDataDidChangeSuppressed(bool dispatchViewportDataDidChangeSuppressed) { m_isDispatchViewportDataDidChangeSuppressed = dispatchViewportDataDidChangeSuppressed; }
+
+    void didReceiveDocType(Frame*);
+#endif
+
     void registerPopupOpeningObserver(PopupOpeningObserver*);
     void unregisterPopupOpeningObserver(PopupOpeningObserver*);
 
@@ -189,6 +197,9 @@ private:
     ChromeClient& m_client;
     PlatformDisplayID m_displayID;
     Vector<PopupOpeningObserver*> m_popupOpeningObservers;
+#if PLATFORM(IOS)
+    bool m_isDispatchViewportDataDidChangeSuppressed;
+#endif
 };
 
 }

@@ -217,6 +217,16 @@ void PageGroup::addVisitedLink(const UChar* characters, size_t length)
     addVisitedLink(visitedLinkHash(characters, length));
 }
 
+void PageGroup::removeVisitedLink(const URL& url)
+{
+    LinkHash hash = visitedLinkHash(url.string());
+    ASSERT(m_visitedLinkHashes.contains(hash));
+    m_visitedLinkHashes.remove(hash);
+
+    Page::allVisitedStateChanged(this);
+    pageCache()->markPagesForVistedLinkStyleRecalc();
+}
+
 void PageGroup::removeVisitedLinks()
 {
     m_visitedLinksPopulated = false;

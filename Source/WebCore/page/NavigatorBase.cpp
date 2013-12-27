@@ -35,8 +35,14 @@
 #include <wtf/StdLibExtras.h>
 #endif
 
+#if PLATFORM(IOS)
+#include "WebCoreSystemInterface.h"
+#endif
+
 #ifndef WEBCORE_NAVIGATOR_PLATFORM
-#if OS(MAC_OS_X) && (CPU(PPC) || CPU(PPC64))
+#if PLATFORM(IOS)
+#define WEBCORE_NAVIGATOR_PLATFORM ""
+#elif OS(MAC_OS_X) && (CPU(PPC) || CPU(PPC64))
 #define WEBCORE_NAVIGATOR_PLATFORM "MacPPC"
 #elif OS(MAC_OS_X) && (CPU(X86) || CPU(X86_64))
 #define WEBCORE_NAVIGATOR_PLATFORM "MacIntel"

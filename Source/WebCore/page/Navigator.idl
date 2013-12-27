@@ -37,6 +37,11 @@
 
     readonly attribute boolean onLine;
 
+    // FIXME: Convert this #if'def to an IDL conditional attribute.
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+    readonly attribute boolean standalone;
+#endif
+
     void getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.
 };
 

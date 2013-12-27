@@ -48,6 +48,10 @@
 #include <wtf/SchedulePair.h>
 #endif
 
+#if PLATFORM(IOS)
+#include "Settings.h"
+#endif
+
 namespace JSC {
 class Debugger;
 }
@@ -321,9 +325,16 @@ public:
     StorageNamespace* sessionStorage(bool optionalCreate = true);
     void setSessionStorage(PassRefPtr<StorageNamespace>);
 
+    // FIXME: We should make Settings::maxParseDuration() platform-independent, remove {has, set}CustomHTMLTokenizerTimeDelay()
+    // and customHTMLTokenizerTimeDelay() and modify theirs callers to update or query Settings::maxParseDuration().
     void setCustomHTMLTokenizerTimeDelay(double);
+#if PLATFORM(IOS)
+    bool hasCustomHTMLTokenizerTimeDelay() const { return m_settings->maxParseDuration() != -1; }
+    double customHTMLTokenizerTimeDelay() const { ASSERT(m_settings->maxParseDuration() != -1); return m_settings->maxParseDuration(); }
+#else
     bool hasCustomHTMLTokenizerTimeDelay() const { return m_customHTMLTokenizerTimeDelay != -1; }
     double customHTMLTokenizerTimeDelay() const { ASSERT(m_customHTMLTokenizerTimeDelay != -1); return m_customHTMLTokenizerTimeDelay; }
+#endif
 
     void setCustomHTMLTokenizerChunkSize(int);
     bool hasCustomHTMLTokenizerChunkSize() const { return m_customHTMLTokenizerChunkSize != -1; }

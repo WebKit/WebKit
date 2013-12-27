@@ -35,6 +35,14 @@
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 
+#if PLATFORM(IOS)
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "Frame.h"
+#include "Page.h"
+#include "WKContentObservation.h"
+#endif
+
 namespace WebCore {
 
 static const int maxIntervalForUserGestureForwarding = 1000; // One second matches Gecko.
@@ -81,6 +89,16 @@ int DOMTimer::install(ScriptExecutionContext* context, PassOwnPtr<ScheduledActio
     // The timer is deleted when context is deleted (DOMTimer::contextDestroyed) or explicitly via DOMTimer::removeById(),
     // or if it is a one-time timer and it has fired (DOMTimer::fired).
     DOMTimer* timer = new DOMTimer(context, action, timeout, singleShot);
+#if PLATFORM(IOS)
+    if (context->isDocument()) {
+        Document& document = toDocument(*context);
+        bool didDeferTimeout = document.frame() && document.frame()->timersPaused();
+        if (!didDeferTimeout && timeout <= 100 && singleShot) {
+            WKSetObservedContentChange(WKContentIndeterminateChange);
+            WebThreadAddObservedContentModifier(timer); // Will only take affect if not already visibility change.
+        }
+    }
+#endif
 
     timer->suspendIfNeeded();
     InspectorInstrumentation::didInstallTimer(context, timer->m_timeoutId, timeout, singleShot);
@@ -104,6 +122,14 @@ void DOMTimer::removeById(ScriptExecutionContext* context, int timeoutId)
 void DOMTimer::fired()
 {
     ScriptExecutionContext* context = scriptExecutionContext();
+    ASSERT(context);
+#if PLATFORM(IOS)
+    Document* document = nullptr;
+    if (!context->isDocument()) {
+        document = toDocument(context);
+        ASSERT(!document->frame()->timersPaused());
+    }
+#endif
     timerNestingLevel = m_nestingLevel;
     ASSERT(!isSuspended());
     ASSERT(!context->activeDOMObjectsAreSuspended());
@@ -136,7 +162,34 @@ void DOMTimer::fired()
     // No access to member variables after this point.
     delete this;
 
+#if PLATFORM(IOS)
+    bool shouldReportLackOfChanges;
+    bool shouldBeginObservingChanges;
+    if (document) {
+        shouldReportLackOfChanges = WebThreadCountOfObservedContentModifiers() == 1;
+        shouldBeginObservingChanges = WebThreadContainsObservedContentModifier(this);
+    } else {
+        shouldReportLackOfChanges = false;
+        shouldBeginObservingChanges = false;
+    }
+
+    if (shouldBeginObservingChanges) {
+        WKBeginObservingContentChanges(false);
+        WebThreadRemoveObservedContentModifier(this);
+    }
+#endif
+
     action->execute(context);
+
+#if PLATFORM(IOS)
+    if (shouldBeginObservingChanges) {
+        WKStopObservingContentChanges();
+
+        if (WKObservedContentChange() == WKContentVisibilityChange || shouldReportLackOfChanges)
+            if (document && document->page())
+                document->page()->chrome().client().observedContentChange(document->frame());
+    }
+#endif
 
     InspectorInstrumentation::didFireTimer(cookie);
 

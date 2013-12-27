@@ -28,18 +28,11 @@
 #import "WebPDFViewIOS.h"
 #import "WebDataSourceInternal.h"
 
-#import <WebKit/WebFrameLoadDelegate.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebFrameView.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebViewPrivate.h>
 #import "WebFrameInternal.h"
 #import "WebJSPDFDoc.h"
+#import "WebKitVersionChecks.h"
 #import "WebPDFDocumentExtras.h"
 #import "WebPDFViewPlaceholder.h"
-#import "WebKitVersionChecks.h"
-
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
@@ -48,7 +41,14 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/StringWithDirection.h>
 #import <WebCore/WKGraphics.h>
+#import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameLoadDelegate.h>
+#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameView.h>
+#import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebViewPrivate.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>

@@ -26,6 +26,7 @@
 #include "DNS.h"
 #include "DateTimeChooser.h"
 #include "Document.h"
+#include "DocumentType.h"
 #include "FileIconLoader.h"
 #include "FileChooser.h"
 #include "FileList.h"
@@ -65,6 +66,9 @@ Chrome::Chrome(Page& page, ChromeClient& client)
     : m_page(page)
     , m_client(client)
     , m_displayID(0)
+#if PLATFORM(IOS)
+    , m_isDispatchViewportDataDidChangeSuppressed(false)
+#endif
 {
 }
 
@@ -477,7 +481,7 @@ PassOwnPtr<ColorChooser> Chrome::createColorChooser(ColorChooserClient* client, 
 }
 #endif
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !PLATFORM(IOS)
 PassRefPtr<DateTimeChooser> Chrome::openDateTimeChooser(DateTimeChooserClient* client, const DateTimeChooserParameters& parameters)
 {
     notifyPopupOpeningObservers();
@@ -498,17 +502,29 @@ void Chrome::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* l
 
 void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
 {
+#if PLATFORM(IOS)
+    if (m_isDispatchViewportDataDidChangeSuppressed)
+        return;
+#endif
     m_client.dispatchViewportPropertiesDidChange(arguments);
 }
 
 void Chrome::setCursor(const Cursor& cursor)
 {
+#if ENABLE(CURSOR_SUPPORT)
     m_client.setCursor(cursor);
+#else
+    UNUSED_PARAM(cursor);
+#endif
 }
 
 void Chrome::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 {
+#if ENABLE(CURSOR_SUPPORT)
     m_client.setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
+#else
+    UNUSED_PARAM(hiddenUntilMouseMoves);
+#endif
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -601,6 +617,26 @@ bool Chrome::requiresFullscreenForVideoPlayback()
 {
     return m_client.requiresFullscreenForVideoPlayback();
 }
+
+#if PLATFORM(IOS)
+// FIXME: Make argument, frame, a reference.
+void Chrome::didReceiveDocType(Frame* frame)
+{
+    ASSERT(frame);
+    if (!frame->isMainFrame())
+        return;
+
+    DocumentType* documentType = frame->document()->doctype();
+    if (!documentType) {
+        // FIXME: We should notify the client when <!DOCTYPE> is removed so that
+        // it can adjust the viewport accordingly. See <rdar://problem/15417894>.
+        return;
+    }
+
+    if (documentType->publicId().contains("xhtml mobile", false))
+        m_client.didReceiveMobileDocType();
+}
+#endif
 
 void Chrome::registerPopupOpeningObserver(PopupOpeningObserver* observer)
 {

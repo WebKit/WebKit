@@ -108,6 +108,7 @@
 #include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
+#include <WebCore/HitTestResult.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MIMETypeRegistry.h>

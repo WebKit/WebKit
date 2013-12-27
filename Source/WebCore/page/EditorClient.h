@@ -41,6 +41,11 @@ OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 #endif
 
+#if PLATFORM(IOS)
+OBJC_CLASS NSArray;
+OBJC_CLASS NSDictionary;
+#endif
+
 namespace WebCore {
 
 class ArchiveResource;
@@ -112,6 +117,21 @@ public:
     virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*) = 0;
     virtual void textWillBeDeletedInTextField(Element*) = 0;
     virtual void textDidChangeInTextArea(Element*) = 0;
+
+#if PLATFORM(IOS)
+    virtual void suppressSelectionNotifications() = 0;
+    virtual void restoreSelectionNotifications() = 0;
+    virtual void startDelayingAndCoalescingContentChangeNotifications() = 0;
+    virtual void stopDelayingAndCoalescingContentChangeNotifications() = 0;
+    virtual void writeDataToPasteboard(NSDictionary*) = 0;
+    virtual NSArray* supportedPasteboardTypesForCurrentSelection() = 0;
+    virtual NSArray* readDataFromPasteboard(NSString* type, int index) = 0;
+    virtual bool hasRichlyEditableSelection() = 0;
+    virtual int getPasteboardItemsCount() = 0;
+    virtual DocumentFragment* documentFragmentFromDelegate(int index) = 0;
+    virtual bool performsTwoStepPaste(DocumentFragment*) = 0;
+    virtual int pasteboardChangeCount() = 0;
+#endif
 
 #if PLATFORM(MAC)
     virtual NSString* userVisibleString(NSURL*) = 0;

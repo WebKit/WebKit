@@ -132,6 +132,13 @@ bool Navigator::javaEnabled() const
     return true;
 }
 
+#if PLATFORM(IOS)
+bool Navigator::standalone() const
+{
+    return m_frame && m_frame->settings().standalone();
+}
+#endif
+
 void Navigator::getStorageUpdates()
 {
     // FIXME: Remove this method or rename to yieldForStorageUpdates.

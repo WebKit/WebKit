@@ -25,18 +25,30 @@
 
 #include "ScrollTypes.h"
 
+// WTF_PLATFORM_IOS
+#ifdef __cplusplus
 namespace WebCore {
     class Frame;
 }
+#endif
 
 @protocol WebCoreFrameScrollView
+// WTF_PLATFORM_IOS
+#ifdef __cplusplus
 - (void)setScrollingModes:(WebCore::ScrollbarMode)hMode vertical:(WebCore::ScrollbarMode)vMode andLock:(BOOL)lock;
 - (void)scrollingModes:(WebCore::ScrollbarMode*)hMode vertical:(WebCore::ScrollbarMode*)vMode;
+#else
+- (void)setScrollingModes:(int)hMode vertical:(int)vMode andLock:(BOOL)lock;
+- (void)scrollingModes:(int*)hMode vertical:(int*)vMode;
+#endif
 - (void)setScrollBarsSuppressed:(BOOL)suppressed repaintOnUnsuppress:(BOOL)repaint;
 - (void)setScrollOrigin:(NSPoint)origin updatePositionAtAll:(BOOL)updatePositionAtAll immediately:(BOOL)updatePositionImmediately;
 - (NSPoint)scrollOrigin;
 @end
 
 @protocol WebCoreFrameView
+// WTF_PLATFORM_IOS
+#ifdef __cplusplus
 - (WebCore::Frame*)_web_frame;
+#endif
 @end

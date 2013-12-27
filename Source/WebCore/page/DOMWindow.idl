@@ -285,6 +285,10 @@
     [Conditional=TOUCH_EVENTS] attribute EventListener ontouchend;
     [Conditional=TOUCH_EVENTS] attribute EventListener ontouchcancel;
 
+    [Conditional=IOS_GESTURE_EVENTS] attribute EventListener ongesturestart;
+    [Conditional=IOS_GESTURE_EVENTS] attribute EventListener ongesturechange;
+    [Conditional=IOS_GESTURE_EVENTS] attribute EventListener ongestureend;
+
     [Conditional=DEVICE_ORIENTATION] attribute EventListener ondevicemotion;
     [Conditional=DEVICE_ORIENTATION] attribute EventListener ondeviceorientation;
 
@@ -308,6 +312,10 @@
     // Mozilla has a separate XMLDocument object for XML documents.
     // We just use Document for this.
     attribute DocumentConstructor XMLDocument;
+
+    [Conditional=IOS_TOUCH_EVENTS, CustomGetter] attribute TouchConstructor Touch; // Usable with the new operator
+    [Conditional=IOS_TOUCH_EVENTS, CustomGetter] attribute TouchListConstructor TouchList; // Usable with the new operator
+
     [Conditional=BLOB] attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
     attribute MutationObserverConstructor WebKitMutationObserver; // FIXME: Add metrics to determine when we can remove this.
     [Conditional=INDEXED_DATABASE] attribute IDBCursorConstructor webkitIDBCursor;

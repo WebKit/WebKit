@@ -77,6 +77,7 @@ namespace WebCore {
         void addVisitedLink(const URL&);
         void addVisitedLink(const UChar*, size_t);
         void addVisitedLinkHash(LinkHash);
+        void removeVisitedLink(const URL&);
         void removeVisitedLinks();
 
         static void setShouldTrackVisitedLinks(bool);

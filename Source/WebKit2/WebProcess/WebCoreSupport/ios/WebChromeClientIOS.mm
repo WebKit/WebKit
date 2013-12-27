@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS)
 void WebChromeClient::didPreventDefaultForEvent()
 {
     notImplemented();
