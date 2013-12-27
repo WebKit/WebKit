@@ -1553,8 +1553,8 @@ void Document::unregisterForVisibilityStateChangedCallbacks(Element* element)
 void Document::visibilityStateChanged()
 {
     dispatchEvent(Event::create(eventNames().visibilitychangeEvent, false, false));
-    for (auto it = m_visibilityStateCallbackElements.begin(); it != m_visibilityStateCallbackElements.end(); ++it)
-        (*it)->visibilityStateChanged();
+    for (auto* element : m_visibilityStateCallbackElements)
+        element->visibilityStateChanged();
 }
 
 PageVisibilityState Document::pageVisibilityState() const
@@ -3530,12 +3530,11 @@ void Document::detachNodeIterator(NodeIterator* ni)
 
 void Document::moveNodeIteratorsToNewDocument(Node* node, Document* newDocument)
 {
-    HashSet<NodeIterator*> nodeIteratorsList = m_nodeIterators;
-    HashSet<NodeIterator*>::const_iterator nodeIteratorsEnd = nodeIteratorsList.end();
-    for (HashSet<NodeIterator*>::const_iterator it = nodeIteratorsList.begin(); it != nodeIteratorsEnd; ++it) {
-        if ((*it)->root() == node) {
-            detachNodeIterator(*it);
-            newDocument->attachNodeIterator(*it);
+    HashSet<NodeIterator*> nodeIteratorsCopy = m_nodeIterators;
+    for (auto* nodeIterator : nodeIteratorsCopy) {
+        if (nodeIterator->root() == node) {
+            detachNodeIterator(nodeIterator);
+            newDocument->attachNodeIterator(nodeIterator);
         }
     }
 }
@@ -3543,21 +3542,21 @@ void Document::moveNodeIteratorsToNewDocument(Node* node, Document* newDocument)
 void Document::updateRangesAfterChildrenChanged(ContainerNode& container)
 {
     if (!m_ranges.isEmpty()) {
-        for (auto it = m_ranges.begin(), end = m_ranges.end(); it != end; ++it)
-            (*it)->nodeChildrenChanged(container);
+        for (auto* range : m_ranges)
+            range->nodeChildrenChanged(container);
     }
 }
 
 void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 {
     if (!m_ranges.isEmpty()) {
-        for (auto it = m_ranges.begin(), end = m_ranges.end(); it != end; ++it)
-            (*it)->nodeChildrenWillBeRemoved(container);
+        for (auto* range : m_ranges)
+            range->nodeChildrenWillBeRemoved(container);
     }
 
-    for (auto it = m_nodeIterators.begin(), end = m_nodeIterators.end(); it != end; ++it) {
+    for (auto* nodeIterator : m_nodeIterators) {
         for (Node* n = container.firstChild(); n; n = n->nextSibling())
-            (*it)->nodeWillBeRemoved(n);
+            nodeIterator->nodeWillBeRemoved(n);
     }
 
     if (Frame* frame = this->frame()) {
@@ -3571,14 +3570,12 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 
 void Document::nodeWillBeRemoved(Node* n)
 {
-    HashSet<NodeIterator*>::const_iterator nodeIteratorsEnd = m_nodeIterators.end();
-    for (HashSet<NodeIterator*>::const_iterator it = m_nodeIterators.begin(); it != nodeIteratorsEnd; ++it)
-        (*it)->nodeWillBeRemoved(n);
+    for (auto* nodeIterator : m_nodeIterators)
+        nodeIterator->nodeWillBeRemoved(n);
 
     if (!m_ranges.isEmpty()) {
-        HashSet<Range*>::const_iterator rangesEnd = m_ranges.end();
-        for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != rangesEnd; ++it)
-            (*it)->nodeWillBeRemoved(n);
+        for (auto* range : m_ranges)
+            range->nodeWillBeRemoved(n);
     }
 
     if (Frame* frame = this->frame()) {
@@ -3591,9 +3588,8 @@ void Document::nodeWillBeRemoved(Node* n)
 void Document::textInserted(Node* text, unsigned offset, unsigned length)
 {
     if (!m_ranges.isEmpty()) {
-        HashSet<Range*>::const_iterator end = m_ranges.end();
-        for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
-            (*it)->textInserted(text, offset, length);
+        for (auto* range : m_ranges)
+            range->textInserted(text, offset, length);
     }
 
     // Update the markers for spelling and grammar checking.
@@ -3603,9 +3599,8 @@ void Document::textInserted(Node* text, unsigned offset, unsigned length)
 void Document::textRemoved(Node* text, unsigned offset, unsigned length)
 {
     if (!m_ranges.isEmpty()) {
-        HashSet<Range*>::const_iterator end = m_ranges.end();
-        for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
-            (*it)->textRemoved(text, offset, length);
+        for (auto* range : m_ranges)
+            range->textRemoved(text, offset, length);
     }
 
     // Update the markers for spelling and grammar checking.
@@ -3617,9 +3612,8 @@ void Document::textNodesMerged(Text* oldNode, unsigned offset)
 {
     if (!m_ranges.isEmpty()) {
         NodeWithIndex oldNodeWithIndex(oldNode);
-        HashSet<Range*>::const_iterator end = m_ranges.end();
-        for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
-            (*it)->textNodesMerged(oldNodeWithIndex, offset);
+        for (auto* range : m_ranges)
+            range->textNodesMerged(oldNodeWithIndex, offset);
     }
 
     // FIXME: This should update markers for spelling and grammar checking.
@@ -3628,9 +3622,8 @@ void Document::textNodesMerged(Text* oldNode, unsigned offset)
 void Document::textNodeSplit(Text* oldNode)
 {
     if (!m_ranges.isEmpty()) {
-        HashSet<Range*>::const_iterator end = m_ranges.end();
-        for (HashSet<Range*>::const_iterator it = m_ranges.begin(); it != end; ++it)
-            (*it)->textNodeSplit(oldNode);
+        for (auto* range : m_ranges)
+            range->textNodeSplit(oldNode);
     }
 
     // FIXME: This should update markers for spelling and grammar checking.
@@ -4095,9 +4088,8 @@ void Document::documentWillSuspendForPageCache()
 {
     documentWillBecomeInactive();
 
-    HashSet<Element*>::iterator end = m_documentSuspensionCallbackElements.end();
-    for (HashSet<Element*>::iterator i = m_documentSuspensionCallbackElements.begin(); i != end; ++i)
-        (*i)->documentWillSuspendForPageCache();
+    for (auto* element : m_documentSuspensionCallbackElements)
+        element->documentWillSuspendForPageCache();
 
 #ifndef NDEBUG
     // Clear the update flag to be able to check if the viewport arguments update
@@ -4110,9 +4102,8 @@ void Document::documentDidResumeFromPageCache()
 {
     Vector<Element*> elements;
     copyToVector(m_documentSuspensionCallbackElements, elements);
-    Vector<Element*>::iterator end = elements.end();
-    for (Vector<Element*>::iterator i = elements.begin(); i != end; ++i)
-        (*i)->documentDidResumeFromPageCache();
+    for (auto* element : elements)
+        element->documentDidResumeFromPageCache();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (renderView())
@@ -4138,9 +4129,8 @@ void Document::unregisterForPageCacheSuspensionCallbacks(Element* e)
 
 void Document::mediaVolumeDidChange() 
 {
-    HashSet<Element*>::iterator end = m_mediaVolumeCallbackElements.end();
-    for (HashSet<Element*>::iterator i = m_mediaVolumeCallbackElements.begin(); i != end; ++i)
-        (*i)->mediaVolumeDidChange();
+    for (auto* element : m_mediaVolumeCallbackElements)
+        element->mediaVolumeDidChange();
 }
 
 void Document::registerForMediaVolumeCallbacks(Element* e)
@@ -4161,9 +4151,8 @@ void Document::storageBlockingStateDidChange()
 
 void Document::privateBrowsingStateDidChange() 
 {
-    HashSet<Element*>::iterator end = m_privateBrowsingStateChangedElements.end();
-    for (HashSet<Element*>::iterator it = m_privateBrowsingStateChangedElements.begin(); it != end; ++it)
-        (*it)->privateBrowsingStateDidChange();
+    for (auto* element : m_privateBrowsingStateChangedElements)
+        element->privateBrowsingStateDidChange();
 }
 
 void Document::registerForPrivateBrowsingStateChangedCallbacks(Element* e)
@@ -4192,9 +4181,8 @@ void Document::unregisterForCaptionPreferencesChangedCallbacks(Element* e)
 
 void Document::captionPreferencesChanged()
 {
-    HashSet<Element*>::iterator end = m_captionPreferencesChangedElements.end();
-    for (HashSet<Element*>::iterator it = m_captionPreferencesChangedElements.begin(); it != end; ++it)
-        (*it)->captionPreferencesChanged();
+    for (auto* element : m_captionPreferencesChangedElements)
+        element->captionPreferencesChanged();
 }
 #endif
 
@@ -4842,8 +4830,8 @@ void Document::addAutoSizingNode(Node* node, float candidateSize)
 void Document::validateAutoSizingNodes()
 {
     Vector<TextAutoSizingKey> nodesForRemoval;
-    for (auto it = m_textAutoSizedNodes.begin(), end = m_textAutoSizedNodes.end(); it != end; ++it) {
-        RefPtr<TextAutoSizingValue> value = it->value;
+    for (auto& autoSizingKeyValuePair : m_textAutoSizedNodes) {
+        RefPtr<TextAutoSizingValue> value = autoSizingKeyValuePair.value;
         // Update all the nodes in the collection to reflect the new
         // candidate size.
         if (!value)
@@ -4851,7 +4839,7 @@ void Document::validateAutoSizingNodes()
 
         value->adjustNodeSizes();
         if (!value->numNodes())
-            nodesForRemoval.append(it->key);
+            nodesForRemoval.append(autoSizingKeyValuePair.key);
     }
     unsigned count = nodesForRemoval.size();
     for (unsigned i = 0; i < count; i++)
@@ -4860,10 +4848,9 @@ void Document::validateAutoSizingNodes()
     
 void Document::resetAutoSizingNodes()
 {
-    for (auto it = m_textAutoSizedNodes.begin(), end = m_textAutoSizedNodes.end(); it != end; ++it) {
-        RefPtr<TextAutoSizingValue> value = it->value;
-        if (value)
-            value->reset();
+    for (auto& autoSizingValue : m_textAutoSizedNodes.values()) {
+        if (autoSizingValue)
+            autoSizingValue->reset();
     }
     m_textAutoSizedNodes.clear();
 }
@@ -5300,9 +5287,9 @@ void Document::webkitExitFullscreen()
         
     // 4. For each descendant in descendants, empty descendant's fullscreen element stack, and queue a
     // task to fire an event named fullscreenchange with its bubbles attribute set to true on descendant.
-    for (Deque<RefPtr<Document>>::iterator i = descendants.begin(); i != descendants.end(); ++i) {
-        (*i)->clearFullscreenElementStack();
-        addDocumentToFullScreenChangeEventQueue(i->get());
+    for (auto& descendant : descendants) {
+        descendant->clearFullscreenElementStack();
+        addDocumentToFullScreenChangeEventQueue(descendant.get());
     }
 
     // 5. While doc is not null, run these substeps:

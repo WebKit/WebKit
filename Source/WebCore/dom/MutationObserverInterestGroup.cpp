@@ -57,8 +57,8 @@ MutationObserverInterestGroup::MutationObserverInterestGroup(HashMap<MutationObs
 
 bool MutationObserverInterestGroup::isOldValueRequested()
 {
-    for (HashMap<MutationObserver*, MutationRecordDeliveryOptions>::iterator iter = m_observers.begin(); iter != m_observers.end(); ++iter) {
-        if (hasOldValue(iter->value))
+    for (auto options : m_observers.values()) {
+        if (hasOldValue(options))
             return true;
     }
     return false;
@@ -68,9 +68,9 @@ void MutationObserverInterestGroup::enqueueMutationRecord(PassRefPtr<MutationRec
 {
     RefPtr<MutationRecord> mutation = prpMutation;
     RefPtr<MutationRecord> mutationWithNullOldValue;
-    for (HashMap<MutationObserver*, MutationRecordDeliveryOptions>::iterator iter = m_observers.begin(); iter != m_observers.end(); ++iter) {
-        MutationObserver* observer = iter->key;
-        if (hasOldValue(iter->value)) {
+    for (auto& observerOptionsPair : m_observers) {
+        MutationObserver* observer = observerOptionsPair.key;
+        if (hasOldValue(observerOptionsPair.value)) {
             observer->enqueueMutationRecord(mutation);
             continue;
         }

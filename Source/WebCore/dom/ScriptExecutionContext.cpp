@@ -103,17 +103,15 @@ ScriptExecutionContext::ScriptExecutionContext()
 ScriptExecutionContext::~ScriptExecutionContext()
 {
     m_inDestructor = true;
-    for (HashSet<ContextDestructionObserver*>::iterator iter = m_destructionObservers.begin(); iter != m_destructionObservers.end(); iter = m_destructionObservers.begin()) {
-        ContextDestructionObserver* observer = *iter;
+    for (auto* observer : m_destructionObservers) {
         m_destructionObservers.remove(observer);
         ASSERT(observer->scriptExecutionContext() == this);
         observer->contextDestroyed();
     }
 
-    HashSet<MessagePort*>::iterator messagePortsEnd = m_messagePorts.end();
-    for (HashSet<MessagePort*>::iterator iter = m_messagePorts.begin(); iter != messagePortsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        (*iter)->contextDestroyed();
+    for (auto* port : m_messagePorts) {
+        ASSERT(port->scriptExecutionContext() == this);
+        port->contextDestroyed();
     }
 #if ENABLE(BLOB)
     if (m_publicURLManager)
@@ -166,11 +164,10 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjects()
 {
     // No protection against m_activeDOMObjects changing during iteration: canSuspend() shouldn't execute arbitrary JS.
     m_iteratingActiveDOMObjects = true;
-    ActiveDOMObjectsSet::iterator activeObjectsEnd = m_activeDOMObjects.end();
-    for (ActiveDOMObjectsSet::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        ASSERT((*iter)->suspendIfNeededCalled());
-        if (!(*iter)->canSuspend()) {
+    for (auto* activeDOMObject : m_activeDOMObjects) {
+        ASSERT(activeDOMObject->scriptExecutionContext() == this);
+        ASSERT(activeDOMObject->suspendIfNeededCalled());
+        if (!activeDOMObject->canSuspend()) {
             m_iteratingActiveDOMObjects = false;
             return false;
         }
@@ -190,11 +187,10 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
 
     // No protection against m_activeDOMObjects changing during iteration: suspend() shouldn't execute arbitrary JS.
     m_iteratingActiveDOMObjects = true;
-    ActiveDOMObjectsSet::iterator activeObjectsEnd = m_activeDOMObjects.end();
-    for (ActiveDOMObjectsSet::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        ASSERT((*iter)->suspendIfNeededCalled());
-        (*iter)->suspend(why);
+    for (auto* activeDOMObject : m_activeDOMObjects) {
+        ASSERT(activeDOMObject->scriptExecutionContext() == this);
+        ASSERT(activeDOMObject->suspendIfNeededCalled());
+        activeDOMObject->suspend(why);
     }
     m_iteratingActiveDOMObjects = false;
     m_activeDOMObjectsAreSuspended = true;
@@ -209,11 +205,10 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ActiveDOMObject::ReasonForSu
     m_activeDOMObjectsAreSuspended = false;
     // No protection against m_activeDOMObjects changing during iteration: resume() shouldn't execute arbitrary JS.
     m_iteratingActiveDOMObjects = true;
-    ActiveDOMObjectsSet::iterator activeObjectsEnd = m_activeDOMObjects.end();
-    for (ActiveDOMObjectsSet::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        ASSERT((*iter)->suspendIfNeededCalled());
-        (*iter)->resume();
+    for (auto* activeDOMObject : m_activeDOMObjects) {
+        ASSERT(activeDOMObject->scriptExecutionContext() == this);
+        ASSERT(activeDOMObject->suspendIfNeededCalled());
+        activeDOMObject->resume();
     }
     m_iteratingActiveDOMObjects = false;
 }
@@ -225,11 +220,10 @@ void ScriptExecutionContext::stopActiveDOMObjects()
     m_activeDOMObjectsAreStopped = true;
     // No protection against m_activeDOMObjects changing during iteration: stop() shouldn't execute arbitrary JS.
     m_iteratingActiveDOMObjects = true;
-    ActiveDOMObjectsSet::iterator activeObjectsEnd = m_activeDOMObjects.end();
-    for (ActiveDOMObjectsSet::iterator iter = m_activeDOMObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        ASSERT((*iter)->suspendIfNeededCalled());
-        (*iter)->stop();
+    for (auto* activeDOMObject : m_activeDOMObjects) {
+        ASSERT(activeDOMObject->scriptExecutionContext() == this);
+        ASSERT(activeDOMObject->suspendIfNeededCalled());
+        activeDOMObject->stop();
     }
     m_iteratingActiveDOMObjects = false;
 
@@ -277,11 +271,11 @@ void ScriptExecutionContext::willDestroyDestructionObserver(ContextDestructionOb
     m_destructionObservers.remove(observer);
 }
 
-void ScriptExecutionContext::closeMessagePorts() {
-    HashSet<MessagePort*>::iterator messagePortsEnd = m_messagePorts.end();
-    for (HashSet<MessagePort*>::iterator iter = m_messagePorts.begin(); iter != messagePortsEnd; ++iter) {
-        ASSERT((*iter)->scriptExecutionContext() == this);
-        (*iter)->close();
+void ScriptExecutionContext::closeMessagePorts()
+{
+    for (auto* port : m_messagePorts) {
+        ASSERT(port->scriptExecutionContext() == this);
+        port->close();
     }
 }
 
@@ -373,10 +367,8 @@ PublicURLManager& ScriptExecutionContext::publicURLManager()
 void ScriptExecutionContext::adjustMinimumTimerInterval(double oldMinimumTimerInterval)
 {
     if (minimumTimerInterval() != oldMinimumTimerInterval) {
-        for (TimeoutMap::iterator iter = m_timeouts.begin(); iter != m_timeouts.end(); ++iter) {
-            DOMTimer* timer = iter->value;
+        for (auto* timer : m_timeouts.values())
             timer->adjustMinimumTimerInterval(oldMinimumTimerInterval);
-        }
     }
 }
 
@@ -392,10 +384,8 @@ double ScriptExecutionContext::minimumTimerInterval() const
 
 void ScriptExecutionContext::didChangeTimerAlignmentInterval()
 {
-    for (TimeoutMap::iterator iter = m_timeouts.begin(); iter != m_timeouts.end(); ++iter) {
-        DOMTimer* timer = iter->value;
+    for (auto* timer : m_timeouts.values())
         timer->didChangeAlignmentInterval();
-    }
 }
 
 double ScriptExecutionContext::timerAlignmentInterval() const
