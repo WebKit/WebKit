@@ -1,3 +1,18 @@
+2013-12-27  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] MiniBrowser scale up/down infinitely after r161087
+        https://bugs.webkit.org/show_bug.cgi?id=126254
+
+        Reviewed by Gyuyoung Kim.
+
+        After r161087, contentScaleFactor of WebView is synced with pageScaleFactor
+        of WebPage. It means that WKViewGetContentScaleFactor might not be same
+        with PageViewportController's current scale value until received PageScaleFactorDidChange.
+
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::setViewportPosition):
+        Use controller's current scale just to update and sync the position.
+
 2013-12-26  Martin Robinson  <mrobinson@igalia.com>
 
         Small build fix for the GTK+ CMake port

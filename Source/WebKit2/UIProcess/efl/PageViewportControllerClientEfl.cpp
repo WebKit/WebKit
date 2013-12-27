@@ -53,10 +53,9 @@ void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPo
 {
     m_contentPosition = contentsPoint;
 
-    float scaleFactor = WKViewGetContentScaleFactor(m_view->wkView());
     WKViewSetContentPosition(m_view->wkView(), WKPointMake(contentsPoint.x(), contentsPoint.y()));
 
-    m_controller->didChangeContentsVisibility(m_contentPosition, scaleFactor);
+    m_controller->didChangeContentsVisibility(m_contentPosition, m_controller->currentScale());
 }
 
 void PageViewportControllerClientEfl::setPageScaleFactor(float newScale)
