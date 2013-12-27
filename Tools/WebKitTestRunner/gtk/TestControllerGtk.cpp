@@ -102,6 +102,11 @@ void TestController::platformInitializeContext()
 {
 }
 
+void TestController::setHidden(bool)
+{
+    // FIXME: Need to implement this to test visibilityState.
+}
+
 void TestController::runModal(PlatformWebView*)
 {
     // FIXME: Need to implement this to test showModalDialog.

@@ -305,9 +305,7 @@ messages -> WebPage LegacyReceiver {
     HandleAlternativeTextUIResult(String result)
 #endif
 
-#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    SetVisibilityState(uint32_t visibilityState, bool isInitialState)
-#endif
+    SetVisibilityStatePrerender()
 
 #if PLATFORM(IOS)
     DidFinishScrolling(WebCore::FloatPoint contentOffset);

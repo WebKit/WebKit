@@ -614,9 +614,8 @@ public:
 
     bool willGoToBackForwardItemCallbackEnabled() const { return m_willGoToBackForwardItemCallbackEnabled; }
 
-#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    void setVisibilityState(uint32_t /* WebCore::PageVisibilityState */, bool isInitialState);
-#endif
+    void setVisibilityStatePrerender();
+    void updateVisibilityState(bool isInitialState = false);
     void setThrottled(bool isThrottled);
 
 #if PLATFORM(IOS)
@@ -1039,9 +1038,6 @@ private:
     bool m_shouldReturnWordAtSelection;
 #endif
 
-#if ENABLE(PAGE_VISIBILITY_API)
-    WebCore::PageVisibilityState m_visibilityState;
-#endif
     WebInspectorClient* m_inspectorClient;
 
     WebCore::Color m_backgroundColor;

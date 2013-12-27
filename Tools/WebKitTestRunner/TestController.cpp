@@ -1167,6 +1167,7 @@ void TestController::setCustomPolicyDelegate(bool enabled, bool permissive)
 
 void TestController::setVisibilityState(WKPageVisibilityState visibilityState, bool isInitialState)
 {
+    setHidden(visibilityState != kWKPageVisibilityStateVisible);
     WKPageSetVisibilityState(m_mainWebView->page(), visibilityState, isInitialState);
 }
 

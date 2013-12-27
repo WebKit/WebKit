@@ -78,6 +78,18 @@ void TestController::platformInitializeContext()
 {
 }
 
+void TestController::setHidden(bool hidden)
+{
+    NSWindow *window = [mainWebView()->platformView() window];
+    if (!window)
+        return;
+
+    if (hidden)
+        [window orderOut:nil];
+    else
+        [window makeKeyAndOrderFront:nil];
+}
+
 void TestController::runModal(PlatformWebView* view)
 {
     NSWindow *window = [view->platformView() window];

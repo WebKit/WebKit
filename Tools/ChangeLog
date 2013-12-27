@@ -1,3 +1,50 @@
+2013-12-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge PageVisibilityState & ViewState::IsVisible in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=126214
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKit2 redundantly tracks the visibility of the view through two mechanisms - the visibility
+        state, and the view state. Remove visibility state from the WebKit2 layer. The visibility
+        state also tracks the prerender state - so split this out and handle it separately (a change
+        we should make in WebCore, too).
+
+        Tools - WebKit2 no longer (poorly) supports a fake visibility state, so to test the page
+        visibility mechanisms we should actually be changing characteristics of the view that will
+        be detected by WebKit2 as a visibility change. This affects three things:
+            1) On setVisibilityState WebKitTestRunner must actually change visibility of the view.
+            2) The 'PageVisibilityState' test in the API tests is useless (as evidenced by the fact
+               that page visibility has been broken in WebKit2 for a couple of months, and didn't
+               catch this fact). Removed in favour of:
+            3) 'PageVisibilityStateWithWindowChanges' - this is the good stuff. This actually tests
+               the visibility mechanism. Beef this test up by adding coverage for: a) the prerender
+            state, b) document.hidden, and c) too many state change notifications (it already looks
+            for too few).
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/PageVisibilityState.cpp: Removed.
+            - Removed PageVisibilityState - this test was ineffective, API no longer supports this
+              test, and behaviour is covered by PageVisibilityStateWithWindowChanges.
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm:
+        (-[PageVisibilityStateDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:]):
+        (runJavaScriptAlert):
+            - Add checking for too many calls to the alert.
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::setPrerender):
+            - Added methods to set visibility to prerender.
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::runTest):
+            - Added checking of 'document.hidden'.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setVisibilityState):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::setHidden):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::setHidden):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::setHidden):
+            - Add setHidden method; call this from setVisibilityState.
+
 2013-12-27  Alexey Proskuryakov  <ap@apple.com>
 
         Display EWS status on bot watcher's dashboard

@@ -281,7 +281,6 @@ Programs_TestWebKitAPI_TestWebKit2_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/PageLoadDidChangeLocationWithinPageForFrame.cpp \
-	Tools/TestWebKitAPI/Tests/WebKit2/PageVisibilityState.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ParentFrame.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/PreventEmptyUserAgent.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/PrivateBrowsingPushStateNoHistoryCallback.cpp \

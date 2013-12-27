@@ -1,3 +1,28 @@
+2013-12-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge PageVisibilityState & ViewState::IsVisible in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=126214
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKit2 redundantly tracks the visibility of the view through two mechanisms - the visibility
+        state, and the view state. Remove visibility state from the WebKit2 layer. The visibility
+        state also tracks the prerender state - so split this out and handle it separately (a change
+        we should make in WebCore, too).
+
+        LayoutTests - remove test for notification on visibility state change to preerender. This test
+        was covering something nonsensical, and not supported by the spec - the page should never see
+        a visibility change to prerender, this should only be an initial state. WebKit2 API now only
+        allows the client to change the state to prerender without sending a notification, and there
+        is no sense in continuing to support the current test case, since the behaviour is neither
+        allowed by API nor available in web content.
+
+        The prerender state is now properly covered by API tests.
+
+        * fast/events/page-visibility-transition-test-expected.txt:
+        * fast/events/page-visibility-transition-test.html:
+            - remove test for notification on visibility state change to preerender.
+
 2013-12-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r161033 and r161074.

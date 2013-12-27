@@ -1,3 +1,23 @@
+2013-12-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge PageVisibilityState & ViewState::IsVisible in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=126214
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKit2 redundantly tracks the visibility of the view through two mechanisms - the visibility
+        state, and the view state. Remove visibility state from the WebKit2 layer. The visibility
+        state also tracks the prerender state - so split this out and handle it separately (a change
+        we should make in WebCore, too).
+
+        WebCore - changes the API tests exposed a bug, a view should only ever come out of the
+        prerender state when it becomes visible - redundant notifications that the view is still
+        hidden should be ignored.
+
+        * page/Page.cpp:
+        (WebCore::Page::setVisibilityState):
+            - ignore visibility state change to hidden, if the current state is prerender.
+
 2013-12-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed Windows build fix for r160946.

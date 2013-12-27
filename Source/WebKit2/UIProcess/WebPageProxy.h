@@ -561,7 +561,7 @@ public:
 
     void listenForLayoutMilestones(WebCore::LayoutMilestones);
 
-    void setVisibilityState(WebCore::PageVisibilityState, bool isInitialState);
+    void setVisibilityStatePrerender();
     void didUpdateViewState() { m_waitingForDidUpdateViewState = false; }
 
     bool hasHorizontalScrollbar() const { return m_mainFrameHasHorizontalScrollbar; }
@@ -1362,10 +1362,6 @@ private:
     WebCore::FloatRect m_lastSentExposedRect;
     bool m_clipsToExposedRect;
     bool m_lastSentClipsToExposedRect;
-#endif
-
-#if ENABLE(PAGE_VISIBILITY_API)
-    WebCore::PageVisibilityState m_visibilityState;
 #endif
 
 #if PLATFORM(MAC)

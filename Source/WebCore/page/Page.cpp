@@ -1246,6 +1246,8 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
 
     if (m_visibilityState == visibilityState)
         return;
+    if (m_visibilityState == PageVisibilityStatePrerender && visibilityState == PageVisibilityStateHidden)
+        return;
     m_visibilityState = visibilityState;
 
     if (!isInitialState) {

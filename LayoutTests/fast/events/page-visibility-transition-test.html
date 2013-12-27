@@ -39,24 +39,11 @@ function checkIsPageHidden() {
     shouldBeTrue("document.hidden");
 }
 
-function checkIsPagePrerendering() {
-    shouldBeEqualToString("document.visibilityState", "prerender");
-    shouldBeTrue("document.hidden");
-}
-
-function checkIsPageInUnloaded() {
-    shouldBeEqualToString("document.visibilityState", "unloaded");
-    shouldBeTrue("document.hidden");
-}
-
 // We will try to change the visibility states as:
 //  0 - visible. (Initial - i.e. on load).
 //  1 - hidden (should fire event).
 //  2 - hidden (no event).
-//  3 - prerender (should fire event).
-//  4 - visible (should fire event).
-//  5 - unloaded (should fire event).
-//  6 - visible (should fire event).
+//  3 - visible (should fire event).
 var numVisibilityChanges = 0;
 
 function startTest() {
@@ -81,18 +68,13 @@ function onVisibilityChange() {
         makePageHidden();
         checkIsPageHidden();
         numVisibilityChanges++;
-        makePagePrerender();
+        makePageVisible();
         return;
     } else if (numVisibilityChanges == 2) {
         testFailed("Invalid event fired on same state change.");
         finishTest();
         return;
     } else if (numVisibilityChanges == 3) {
-        checkIsPagePrerendering();
-        numVisibilityChanges++;
-        makePageVisible();
-        return;
-    } else if (numVisibilityChanges == 4) {
         checkIsPageVisible();
         numVisibilityChanges++;
         finishTest();

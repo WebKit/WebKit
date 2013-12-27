@@ -1,3 +1,57 @@
+2013-12-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge PageVisibilityState & ViewState::IsVisible in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=126214
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKit2 redundantly tracks the visibility of the view through two mechanisms - the visibility
+        state, and the view state. Remove visibility state from the WebKit2 layer. The visibility
+        state also tracks the prerender state - so split this out and handle it separately (a change
+        we should make in WebCore, too).
+
+        Removing the redundancy also removes the ability from the API to set a fake visibility state
+        (IsVisible tracks the actual visibility of the view). Through private API
+        (WKPageSetVisibilityState) a client could previously request the view be reported as hidden or
+        visible, but this didn't really work - the override was not enforced and the API may reset the
+        state at an arbitrary point. The mechanism is only used by testing code, which instead should
+        actually update the view visibility (this tests more of the actual visibility mechanisms used
+        by the browser). The one aspect of the API relied on by existing clients is the ability to
+        initialize a hidden view as prerender - continue to support this specific functionality via
+        WKPageSetVisibilityState, to maintain backwards compatibility.
+
+        - WebKit2 - remove internal state that tracks page visibility separately from the view state
+        visibility. For backwards compatibility continue to support the WKPageSetVisibilityState API,
+        but only to initialize the state to prerender.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetVisibilityState):
+            - only support initializing the visibility state to prerender.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+            - remove m_visibilityState
+        (WebKit::WebPageProxy::initializeWebPage):
+            - no need to send initial visibility state (this is sent as a part of the creation parameters).
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - no need to send visibility state change (this is sent as a part of view state).
+        (WebKit::WebPageProxy::setVisibilityStatePrerender):
+            - setVisibilityState -> setVisibilityStatePrerender.
+        * UIProcess/WebPageProxy.h:
+            - remove m_visibilityState, setVisibilityState -> setVisibilityStatePrerender.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+            - added call to updateVisibilityState.
+        (WebKit::WebPage::setViewIsVisible):
+            - added call to updateVisibilityState.
+        (WebKit::WebPage::updateVisibilityState):
+            - previously setVisibilityState, updates the page visibility state according to the view state.
+        (WebKit::WebPage::setVisibilityStatePrerender):
+            - set visibility state to prerender.
+        * WebProcess/WebPage/WebPage.h:
+            - remove m_visibilityState, setVisibilityState -> setVisibilityStatePrerender.
+        * WebProcess/WebPage/WebPage.messages.in:
+            - SetVisibilityState -> SetVisibilityStatePrerender.
+
 2013-12-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Unnecessary code is built into WebKitPluginProcess

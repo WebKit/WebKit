@@ -307,19 +307,12 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_clipsToExposedRect(false)
     , m_lastSentClipsToExposedRect(false)
 #endif
-#if ENABLE(PAGE_VISIBILITY_API)
-    , m_visibilityState(PageVisibilityStateVisible)
-#endif
     , m_scrollPinningBehavior(DoNotPin)
 {
     updateViewState();
 
     platformInitialize();
 
-#if ENABLE(PAGE_VISIBILITY_API)
-    if (!isViewVisible())
-        m_visibilityState = PageVisibilityStateHidden;
-#endif
 #ifndef NDEBUG
     webPageProxyCounter.increment();
 #endif
@@ -516,12 +509,6 @@ void WebPageProxy::initializeWebPage()
 
     initializeCreationParameters();
     process().send(Messages::WebProcess::CreateWebPage(m_pageID, m_creationParameters), 0);
-
-#if ENABLE(PAGE_VISIBILITY_API)
-    send(Messages::WebPage::SetVisibilityState(m_visibilityState, /* isInitialState */ true));
-#elif ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    send(Messages::WebPage::SetVisibilityState(isViewVisible() ? PageVisibilityStateVisible : PageVisibilityStateHidden, /* isInitialState */ true));
-#endif
 
 #if PLATFORM(MAC)
     send(Messages::WebPage::SetSmartInsertDeleteEnabled(m_isSmartInsertDeleteEnabled));
@@ -977,14 +964,6 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
             // stop the unresponsiveness timer here.
             m_process->responsivenessTimer()->stop();
         }
-
-#if ENABLE(PAGE_VISIBILITY_API)
-        m_visibilityState = isViewVisible() ? PageVisibilityStateVisible : PageVisibilityStateHidden;
-        m_process->send(Messages::WebPage::SetVisibilityState(m_visibilityState, false), m_pageID);
-#elif ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-        PageVisibilityState visibilityState = isViewVisible() ? PageVisibilityStateVisible : PageVisibilityStateHidden;
-        m_process->send(Messages::WebPage::SetVisibilityState(visibilityState, false), m_pageID);
-#endif
     }
 
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
@@ -1679,20 +1658,11 @@ void WebPageProxy::listenForLayoutMilestones(WebCore::LayoutMilestones milestone
     m_process->send(Messages::WebPage::ListenForLayoutMilestones(milestones), m_pageID);
 }
 
-void WebPageProxy::setVisibilityState(WebCore::PageVisibilityState visibilityState, bool isInitialState)
+void WebPageProxy::setVisibilityStatePrerender()
 {
     if (!isValid())
         return;
-
-#if ENABLE(PAGE_VISIBILITY_API)
-    if (visibilityState != m_visibilityState || isInitialState) {
-        m_visibilityState = visibilityState;
-        m_process->send(Messages::WebPage::SetVisibilityState(visibilityState, isInitialState), m_pageID);
-    }
-#else
-    UNUSED_PARAM(visibilityState);
-    UNUSED_PARAM(isInitialState);
-#endif
+    m_process->send(Messages::WebPage::SetVisibilityStatePrerender(), m_pageID);
 }
 
 void WebPageProxy::setSuppressScrollbarAnimations(bool suppressAnimations)

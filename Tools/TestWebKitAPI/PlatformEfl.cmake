@@ -83,7 +83,6 @@ set(test_webkit2_api_BINARIES
     NewFirstVisuallyNonEmptyLayoutForImages
     PageLoadBasic
     PageLoadDidChangeLocationWithinPageForFrame
-    PageVisibilityState
     ParentFrame
     PreventEmptyUserAgent
     PrivateBrowsingPushStateNoHistoryCallback

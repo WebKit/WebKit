@@ -276,9 +276,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if PLATFORM(IOS)
     , m_shouldReturnWordAtSelection(false)
 #endif
-#if ENABLE(PAGE_VISIBILITY_API)
-    , m_visibilityState(WebCore::PageVisibilityStateVisible)
-#endif
     , m_inspectorClient(0)
     , m_backgroundColor(Color::white)
     , m_maximumRenderingSuppressionToken(0)
@@ -426,6 +423,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     if (m_useThreadedScrolling)
         WebProcess::shared().eventDispatcher().addScrollingTreeForPage(this);
 #endif
+
+    updateVisibilityState(true);
 }
 
 WebPage::~WebPage()
@@ -1934,6 +1933,8 @@ void WebPage::setViewIsVisible(bool isVisible)
             m_page->resumeAnimatingImages();
         }
     }
+
+    updateVisibilityState();
 }
 
 void WebPage::setDrawsBackground(bool drawsBackground)
@@ -3705,41 +3706,50 @@ FrameView* WebPage::mainFrameView() const
     return 0;
 }
 
-#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-void WebPage::setVisibilityState(uint32_t visibilityState, bool isInitialState)
+void WebPage::updateVisibilityState(bool isInitialState)
 {
+    bool isVisible = m_viewState & ViewState::IsVisible;
     if (!m_page)
         return;
 
-    WebCore::PageVisibilityState state = static_cast<WebCore::PageVisibilityState>(visibilityState);
-
 #if ENABLE(PAGE_VISIBILITY_API)
-    if (m_visibilityState == state)
-        return;
 
     FrameView* view = m_page->mainFrame().view();
 
-    if (state == WebCore::PageVisibilityStateVisible) {
+    if (isVisible) {
         m_page->didMoveOnscreen();
         if (view)
             view->show();
     }
 
+    PageVisibilityState state = isVisible ? PageVisibilityStateVisible : PageVisibilityStateHidden;
     m_page->setVisibilityState(state, isInitialState);
-    m_visibilityState = state;
 
-    if (state == WebCore::PageVisibilityStateHidden) {
+    if (!isVisible) {
         m_page->willMoveOffscreen();
         if (view)
             view->hide();
     }
-#endif
 
-#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING) && !ENABLE(PAGE_VISIBILITY_API)
+#elif ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+
+    PageVisibilityState state = isVisible ? PageVisibilityStateVisible : PageVisibilityStateHidden;
     m_page->setVisibilityState(state, isInitialState);
+
+#else
+    UNUSED_PARAM(isVisible);
+    UNUSED_PARAM(isInitialState);
 #endif
 }
+
+void WebPage::setVisibilityStatePrerender()
+{
+#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    if (!m_page)
+        return;
+    m_page->setVisibilityState(PageVisibilityStatePrerender, true);
 #endif
+}
 
 void WebPage::setThrottled(bool isThrottled)
 {

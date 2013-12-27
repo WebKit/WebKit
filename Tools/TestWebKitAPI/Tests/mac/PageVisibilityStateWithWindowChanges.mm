@@ -27,11 +27,12 @@
 #import "JavaScriptTest.h"
 #import "Test.h"
 #import "WebKitAgnosticTest.h"
-#import <WebKit/WebView.h>
+#import <WebKit/WebViewPrivate.h>
 #import <WebKit2/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-static bool didGetPageSignalToContinue;
+static bool isWaitingForPageSignalToContinue = false;
+static bool didGetPageSignalToContinue = false;
 
 // WebKit1 WebUIDelegate
 
@@ -42,6 +43,8 @@ static bool didGetPageSignalToContinue;
 
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
 {
+    EXPECT_TRUE(isWaitingForPageSignalToContinue);
+    isWaitingForPageSignalToContinue = false;
     didGetPageSignalToContinue = true;
 }
 
@@ -51,6 +54,8 @@ static bool didGetPageSignalToContinue;
 
 static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
 {
+    EXPECT_TRUE(isWaitingForPageSignalToContinue);
+    isWaitingForPageSignalToContinue = false;
     didGetPageSignalToContinue = true;
 }
 
@@ -72,6 +77,8 @@ public:
     virtual void initializeView(WKView *) OVERRIDE;
     virtual void teardownView(WebView *) OVERRIDE;
     virtual void teardownView(WKView *) OVERRIDE;
+    virtual void setPrerender(WebView *);
+    virtual void setPrerender(WKView *);
 };
 
 void PageVisibilityStateWithWindowChanges::initializeView(WebView *webView)
@@ -85,6 +92,11 @@ void PageVisibilityStateWithWindowChanges::teardownView(WebView *webView)
     id uiDelegate = webView.UIDelegate;
     webView.UIDelegate = nil;
     [uiDelegate release];
+}
+
+void PageVisibilityStateWithWindowChanges::setPrerender(WebView *webView)
+{
+    [webView _setVisibilityState:WebPageVisibilityStatePrerender isInitialState:YES];
 }
 
 void PageVisibilityStateWithWindowChanges::initializeView(WKView *wkView)
@@ -103,6 +115,12 @@ void PageVisibilityStateWithWindowChanges::teardownView(WKView *wkView)
     // We do not need to teardown the WKPageUIClient.
 }
 
+void PageVisibilityStateWithWindowChanges::setPrerender(WKView *wkView)
+{
+    WKPageSetVisibilityState(wkView.pageRef, kWKPageVisibilityStatePrerender, true);
+}
+
+
 template <typename View>
 void PageVisibilityStateWithWindowChanges::runTest(View view)
 {
@@ -110,35 +128,49 @@ void PageVisibilityStateWithWindowChanges::runTest(View view)
     EXPECT_NULL([view window]);
     EXPECT_NULL([view superview]);
     EXPECT_JS_EQ(view, "document.visibilityState", "hidden");
+    EXPECT_JS_EQ(view, "document.hidden", "true");
 
-    // Add it to a non-visible window. PageVisibility should still be "hidden".
+    // Mark the page as being a "prerender".
+    setPrerender(view);
+    EXPECT_JS_EQ(view, "document.visibilityState", "prerender");
+    EXPECT_JS_EQ(view, "document.hidden", "true");
+
+    // Add it to a non-visible window. PageVisibility should still be "prerender".
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
     [window.get().contentView addSubview:view];
     EXPECT_NOT_NULL([view window]);
     EXPECT_NOT_NULL([view superview]);
     EXPECT_FALSE([window.get() isVisible]);
-    EXPECT_JS_EQ(view, "document.visibilityState", "hidden");
+    EXPECT_JS_EQ(view, "document.visibilityState", "prerender");
+    EXPECT_JS_EQ(view, "document.hidden", "true");
 
     // Make the window visible. PageVisibility should become "visible".
-    didGetPageSignalToContinue = false;    
+    isWaitingForPageSignalToContinue = true;
+    didGetPageSignalToContinue = false;
     [window.get() makeKeyAndOrderFront:nil];
     EXPECT_TRUE([window.get() isVisible]);
     Util::run(&didGetPageSignalToContinue);
     EXPECT_JS_EQ(view, "document.visibilityState", "visible");
+    EXPECT_JS_EQ(view, "document.hidden", "false");
 
     // Minimize the window. PageVisibility should become "hidden".
+    isWaitingForPageSignalToContinue = true;
     didGetPageSignalToContinue = false;
     [window.get() miniaturize:nil];
     Util::run(&didGetPageSignalToContinue);
     EXPECT_JS_EQ(view, "document.visibilityState", "hidden");
+    EXPECT_JS_EQ(view, "document.hidden", "true");
 
     // Deminimize the window. PageVisibility should become "visible".
+    isWaitingForPageSignalToContinue = true;
     didGetPageSignalToContinue = false;
     [window.get() deminiaturize:nil];
     Util::run(&didGetPageSignalToContinue);
     EXPECT_JS_EQ(view, "document.visibilityState", "visible");
+    EXPECT_JS_EQ(view, "document.hidden", "false");
 
     // Remove the WebView from its superview. PageVisibility should become "hidden".
+    isWaitingForPageSignalToContinue = true;
     didGetPageSignalToContinue = false;
     [view removeFromSuperview];
     EXPECT_NULL([view window]);
@@ -146,6 +178,7 @@ void PageVisibilityStateWithWindowChanges::runTest(View view)
     EXPECT_TRUE([window.get() isVisible]);
     Util::run(&didGetPageSignalToContinue);
     EXPECT_JS_EQ(view, "document.visibilityState", "hidden");
+    EXPECT_JS_EQ(view, "document.hidden", "true");
 }
     
 TEST_F(PageVisibilityStateWithWindowChanges, WebKit)
