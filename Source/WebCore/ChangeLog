@@ -1,5 +1,20 @@
 2013-12-27  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the Windows build after <http://trac.webkit.org/changeset/161106>
+        (https://bugs.webkit.org/show_bug.cgi?id=126180)
+
+        Add files platform/audio/AudioSession.{cpp, h} and platform/audio/AudioSessionListener.h
+        to the Visual Studio project. Note, the contents of these files are guarded by USE(AUDIO_SESSION),
+        which is only enabled on Mac and iOS at the time of writing.
+
+        I thought to try this approach to fix the build so as to avoid adding an extraneous
+        USE(AUDIO_SESSION)-guard around the #include "AudioSession.h" in Settings.cpp since
+        the contents of the file AudioSession.h is guarded by USE(AUDIO_SESSION).
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+
+2013-12-27  Daniel Bates  <dabates@apple.com>
+
         [iOS] Upstream WebCore/page changes
         https://bugs.webkit.org/show_bug.cgi?id=126180
 
