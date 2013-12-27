@@ -1,3 +1,13 @@
+2013-12-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Unnecessary code is built into WebKitPluginProcess
+        https://bugs.webkit.org/show_bug.cgi?id=126259
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.list.am: Stop building ChildProcessProxy and ProcessLauncher classes into WebKitPluginProcess.
+        That code is not required in the plugin process, as one would expect.
+
 2013-12-27  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] MiniBrowser scale up/down infinitely after r161087
