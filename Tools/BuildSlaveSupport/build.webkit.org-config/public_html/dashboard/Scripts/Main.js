@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+var hasEWS = typeof ews != "undefined";
+var EWSCategory = "ews";
+
 var categorizedQueuesByPlatformAndBuildType = {};
 
 for (var id in buildbot.queues) {
@@ -56,6 +59,25 @@ for (var id in buildbot.queues) {
     buildQueues.push(queue);
 }
 
+if (hasEWS) {
+    for (var id in ews.queues) {
+        var queue = ews.queues[id];
+        var platform = categorizedQueuesByPlatformAndBuildType[queue.platform];
+        if (!platform)
+            platform = categorizedQueuesByPlatformAndBuildType[queue.platform] = {};
+        if (!platform.builders)
+            platform.builders = {};
+
+        var categoryName = EWSCategory;
+
+        platformQueues = platform[categoryName];
+        if (!platformQueues)
+            platformQueues = platform[categoryName] = [];
+
+        platformQueues.push(queue);
+    }
+}
+
 var testNames = {};
 testNames[Buildbot.TestCategory.WebKit2] = "WK2 Tests";
 testNames[Buildbot.TestCategory.WebKit1] = "WK1 Tests";
@@ -64,8 +86,8 @@ function sortedPlatforms()
 {
     var platforms = [];
 
-    for (var platformKey in Buildbot.Platform)
-        platforms.push(Buildbot.Platform[platformKey]);
+    for (var platformKey in Dashboard.Platform)
+        platforms.push(Dashboard.Platform[platformKey]);
 
     platforms.sort(function(a, b) {
         return a.order - b.order;
@@ -120,6 +142,12 @@ function documentReady()
         row.appendChild(header);
     }
 
+    if (hasEWS) {
+        var header = document.createElement("th");
+        header.textContent = "EWS";
+        row.appendChild(header);
+    }
+
     table.appendChild(row);
 
     var platforms = sortedPlatforms();
@@ -166,6 +194,17 @@ function documentReady()
             var testerProperty = Buildbot.TestCategory[testerKey];
             if (platformQueues[testerProperty]) {
                 var view = new BuildbotTesterQueueView(platformQueues[testerProperty].debug, platformQueues[testerProperty].release);
+                cell.appendChild(view.element);
+            }
+
+            row.appendChild(cell);
+        }
+
+        if (hasEWS) {
+            var cell = document.createElement("td");
+
+            if (platformQueues[EWSCategory]) {
+                var view = new EWSQueueView(platformQueues[EWSCategory]);
                 cell.appendChild(view.element);
             }
 

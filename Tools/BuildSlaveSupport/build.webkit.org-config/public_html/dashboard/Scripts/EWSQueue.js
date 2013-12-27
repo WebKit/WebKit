@@ -23,3 +23,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+EWSQueue = function(ews, id, info)
+{
+    BaseObject.call(this);
+
+    console.assert(ews);
+    console.assert(id);
+
+    this.ews = ews;
+    this.id = id;
+    this.title = info.title || "\xa0";
+
+    this.platform = info.platform.name || "unknown";
+
+    this.update();
+};
+
+BaseObject.addConstructorFunctions(EWSQueue);
+
+EWSQueue.Event = {
+    Updated: "updated"
+};
+
+EWSQueue.prototype = {
+    constructor: EWSQueue,
+    __proto__: BaseObject.prototype,
+
+    get baseURL()
+    {
+        return this.ews.baseURL + "queue-status-json/" + encodeURIComponent(this.id) + "-ews";
+    },
+
+    get statusPage()
+    {
+        return this.ews.baseURL + "queue-status/" + encodeURIComponent(this.id) + "-ews";
+    },
+
+    get patchCount()
+    {
+        return this._patchCount;
+    },
+
+    update: function()
+    {
+        JSON.load(this.baseURL, function(data) {
+            var newPatchCount = data.queue.length;
+            if (this._patchCount == newPatchCount && this._latestMessageTime == newLatestMessageTime)
+                return;
+            this._patchCount = newPatchCount;
+
+            this.dispatchEventToListeners(EWSQueue.Event.Updated, null);
+        }.bind(this));
+    }
+};

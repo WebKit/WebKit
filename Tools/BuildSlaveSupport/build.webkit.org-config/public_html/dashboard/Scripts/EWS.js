@@ -23,7 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var settings = new Settings;
-var buildbot = new WebKitBuildbot;
-var webkitTrac = new Trac("http://trac.webkit.org/");
-var ews = new EWS;
+EWS = function()
+{
+    const queueInfo = {
+        "mac": {platform: Dashboard.Platform.MacOSXMountainLion, title: "WebKit1 Release Tests"},
+        "mac-wk2": {platform: Dashboard.Platform.MacOSXMountainLion, title: "WebKit2 Release Tests"},
+        "win": {platform: Dashboard.Platform.Windows7, title: "WebKit1 Release Build"},
+        "gtk": {platform: Dashboard.Platform.LinuxGTK, title: "WebKit1 Release Build"},
+        "gtk-wk2": {platform: Dashboard.Platform.LinuxGTK, title: "WebKit2 Release Build"},
+        "efl": {platform: Dashboard.Platform.LinuxEFL, title: "WebKit1 Release Build"},
+        "efl-wk2": {platform: Dashboard.Platform.LinuxEFL, title: "WebKit2 Release Build"}
+    };
+
+    BaseObject.call(this);
+
+    this.baseURL = "http://webkit-queues.appspot.com/";
+    this.queues = {};
+
+    for (var id in queueInfo)
+        this.queues[id] = new EWSQueue(this, id, queueInfo[id]);
+};
+
+BaseObject.addConstructorFunctions(EWS);
+
+EWS.prototype = {
+    constructor: EWS,
+    __proto__: BaseObject.prototype,
+};

@@ -1,5 +1,52 @@
 2013-12-26  Alexey Proskuryakov  <ap@apple.com>
 
+        Display EWS status on bot watcher's dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=126224
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js: Added.
+        Moved platform definitions out of Buildbot.js, as they are also needed for EWS.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/QueueView.js: Added.
+        (QueueView):
+        (QueueView.prototype.updateSoon):
+        (QueueView.prototype.update):
+        (QueueView.prototype._updateHiddenState):
+        Moved auto-update and hide logic to a base class, as it equally applies to EWS.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWS.js: Added.
+        This is a peer to Buildbot.js and WebKitBuildbot.js.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueue.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/EWSQueueView.js: Added.
+        Quite simple for now, only keeping track of queue size.
+        
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Initialization.js:
+        Initialize EWS.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        Create EWS views.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        Updated for Buildbot.Platform rename, it's now Dashboard.Platform.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/BuildbotBuilderQueueView.css: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/BuildbotQueueView.css: Removed.
+        These were empty, no reason to waste the time loading them.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/BuildbotTesterQueueView.css: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/QueueView.css: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/BuildbotQueueView.css.
+        Renamed, as these styles apply to all queues, not just buildbot ones (and they have to, as columns should look alike).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/index.html:
+            - Changed page title, as it no longer displays just buildbot status.
+            - Updated subresource lists for the new, renamed and removed files.
+
+2013-12-26  Alexey Proskuryakov  <ap@apple.com>
+
         EWS status JSON should include Access-Control-Allow-Origin
         https://bugs.webkit.org/show_bug.cgi?id=126246
 

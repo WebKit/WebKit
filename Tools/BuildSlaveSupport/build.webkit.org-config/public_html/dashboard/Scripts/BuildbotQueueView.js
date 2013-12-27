@@ -25,14 +25,10 @@
 
 BuildbotQueueView = function(debugQueues, releaseQueues)
 {
-    BaseObject.call(this);
+    QueueView.call(this);
 
     this.releaseQueues = releaseQueues || [];
     this.debugQueues = debugQueues || [];
-
-    this.element = document.createElement("div");
-    this.element.classList.add("queue-view");
-    this.element.__queueView = this;
 
     this.releaseQueues.forEach(function(queue) {
         if (this.platform && this.platform != queue.platform)
@@ -53,10 +49,6 @@ BuildbotQueueView = function(debugQueues, releaseQueues)
     webkitTrac.addEventListener(Trac.Event.NewCommitsRecorded, this._newCommitsRecorded, this);
     if (typeof internalTrac != "undefined")
         internalTrac.addEventListener(Trac.Event.NewCommitsRecorded, this._newCommitsRecorded, this);
-
-    this.updateTimer = null;
-    this._updateHiddenState();
-    settings.addSettingListener("hiddenPlatforms", this._updateHiddenState.bind(this));
 };
 
 BaseObject.addConstructorFunctions(BuildbotQueueView);
@@ -66,24 +58,7 @@ BuildbotQueueView.UpdateSoonTimeout = 1000; // 1 second
 
 BuildbotQueueView.prototype = {
     constructor: BuildbotQueueView,
-    __proto__: BaseObject.prototype,
-
-    updateSoon: function()
-    {
-        if (this._updateTimeout)
-            return;
-        this._updateTimeout = setTimeout(this.update.bind(this), BuildbotQueueView.UpdateSoonTimeout);
-    },
-
-    update: function()
-    {
-        if (this._updateTimeout) {
-            clearTimeout(this._updateTimeout);
-            delete this._updateTimeout;
-        }
-
-        // Implemented by subclasses.
-    },
+    __proto__: QueueView.prototype,
 
     _appendPendingRevisionCount: function(queue)
     {
@@ -149,20 +124,6 @@ BuildbotQueueView.prototype = {
         fragment.appendChild(document.createTextNode(" \uff0b "));
         fragment.appendChild(internalLink);
         return fragment;
-    },
-
-    _updateHiddenState: function()
-    {
-        var hiddenPlatforms = settings.getObject("hiddenPlatforms");
-        var wasHidden = !this.updateTimer;
-        var isHidden = hiddenPlatforms && hiddenPlatforms.contains(this.platform);
-
-        if (wasHidden && !isHidden)
-            this.updateTimer = setInterval(this._updateQueues.bind(this), BuildbotQueueView.UpdateInterval);
-        else if (!wasHidden && isHidden) {
-            clearInterval(this.updateTimer);
-            this.updateTimer = null;
-        }
     },
 
     _updateQueues: function()
