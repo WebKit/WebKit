@@ -23,15 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FilterIterator_h
-#define FilterIterator_h
+#ifndef WTF_FilterIterator_h
+#define WTF_FilterIterator_h
 
-#include "APIObject.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
-namespace API {
+namespace WTF {
 
 template<typename Predicate, typename Cast, typename Iterator>
 class FilterIterator {
@@ -73,6 +72,6 @@ private:
     Iterator m_end;
 };
 
-} // namespace API
+} // namespace WTF
 
-#endif // FilterIterator_h
+#endif // WTF_FilterIterator_h

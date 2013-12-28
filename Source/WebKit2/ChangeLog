@@ -1,3 +1,20 @@
+2013-12-26  Sam Weinig  <sam@webkit.org>
+
+        Move FilterIterator and IteratorPair to WTF and reimplement HashMap::keys() and HashMap::values() using IteratorPair
+        https://bugs.webkit.org/show_bug.cgi?id=126253
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/APIArray.h:
+        Update includes and make elementsOfType() a bit easier to read by using a typedef and some
+        judicial indentation.
+
+        * Shared/FilterIterator.h: Moved to WTF.
+        * Shared/IteratorPair.h: Moved to WTF.
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        Remove the two files.
+
 2013-12-28  Kwang Yul Seo  <skyul@company100.net>
 
         [WK2][SOUP] Fix handling of cookies when network process is enabled

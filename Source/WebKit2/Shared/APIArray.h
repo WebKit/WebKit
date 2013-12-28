@@ -27,9 +27,9 @@
 #define APIArray_h
 
 #include "APIObject.h"
-#include "FilterIterator.h"
-#include "IteratorPair.h"
+#include <wtf/FilterIterator.h>
 #include <wtf/Forward.h>
+#include <wtf/IteratorPair.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -66,9 +66,14 @@ public:
     Vector<RefPtr<Object>>& elements() { return m_elements; }
 
     template<typename T>
-    IteratorPair<FilterIterator<decltype(&isType<T>), decltype(&getObject<T>), Vector<RefPtr<Object>>::const_iterator>> elementsOfType()
+    WTF::IteratorPair<WTF::FilterIterator<decltype(&isType<T>), decltype(&getObject<T>), Vector<RefPtr<Object>>::const_iterator>> elementsOfType()
     {
-        return IteratorPair<FilterIterator<decltype(&isType<T>), decltype(&getObject<T>), Vector<RefPtr<Object>>::const_iterator>>(FilterIterator<decltype(&isType<T>), decltype(&getObject<T>), Vector<RefPtr<Object>>::const_iterator>(isType<T>, getObject<T>, m_elements.begin(), m_elements.end()), FilterIterator<decltype(&isType<T>), decltype(&getObject<T>), Vector<RefPtr<Object>>::const_iterator>(isType<T>, getObject<T>, m_elements.end(), m_elements.end()));
+        typedef WTF::FilterIterator<decltype(&isType<T>), decltype(&getObject<T>), Vector<RefPtr<Object>>::const_iterator> Iterator;
+    
+        return WTF::IteratorPair<Iterator>(
+            Iterator(isType<T>, getObject<T>, m_elements.begin(), m_elements.end()),
+            Iterator(isType<T>, getObject<T>, m_elements.end(), m_elements.end())
+        );
     }
 
 private:

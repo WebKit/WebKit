@@ -23,7 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-template<typename Iterator> class IteratorPair {
+#ifndef WTF_IteratorPair_h
+#define WTF_IteratorPair_h
+
+namespace WTF {
+
+template<typename Iterator>
+class IteratorPair {
 public:
     IteratorPair(Iterator begin, Iterator end)
         : m_begin(std::move(begin))
@@ -34,6 +40,14 @@ public:
     Iterator begin() { return m_begin; }
     Iterator end() { return m_end; }
 
+    Iterator begin() const { return m_begin; }
+    Iterator end() const { return m_end; }
+
 private:
-    Iterator m_begin, m_end;
+    Iterator m_begin;
+    Iterator m_end;
 };
+
+} // namespace WTF
+
+#endif // WTF_IteratorPair

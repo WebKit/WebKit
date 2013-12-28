@@ -22,6 +22,7 @@
 #define WTF_HashMap_h
 
 #include <wtf/HashTable.h>
+#include <wtf/IteratorPair.h>
 
 namespace WTF {
 
@@ -91,11 +92,11 @@ public:
     const_iterator begin() const;
     const_iterator end() const;
 
-    HashMapKeysProxy& keys() { return static_cast<HashMapKeysProxy&>(*this); }
-    const HashMapKeysProxy& keys() const { return static_cast<const HashMapKeysProxy&>(*this); }
+    IteratorPair<typename iterator::Keys> keys() { return IteratorPair<typename iterator::Keys>(begin().keys(), end().keys()); }
+    const IteratorPair<typename const_iterator::Keys> keys() const { return IteratorPair<typename const_iterator::Keys>(begin().keys(), end().keys()); }
 
-    HashMapValuesProxy& values() { return static_cast<HashMapValuesProxy&>(*this); }
-    const HashMapValuesProxy& values() const { return static_cast<const HashMapValuesProxy&>(*this); }
+    IteratorPair<typename iterator::Values> values() { return IteratorPair<typename iterator::Values>(begin().values(), end().values()); }
+    const IteratorPair<typename const_iterator::Values> values() const { return IteratorPair<typename const_iterator::Values>(begin().values(), end().values()); }
 
     iterator find(const KeyType&);
     const_iterator find(const KeyType&) const;
@@ -149,81 +150,6 @@ private:
     AddResult inlineAdd(K&&, V&&);
 
     HashTableType m_impl;
-};
-
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
-class HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::HashMapKeysProxy : 
-    private HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> {
-    public:
-        typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
-        typedef typename HashMapType::iterator::Keys iterator;
-        typedef typename HashMapType::const_iterator::Keys const_iterator;
-
-        iterator begin()
-        {
-            return HashMapType::begin().keys();
-        }
-
-        iterator end()
-        {
-            return HashMapType::end().keys();
-        }
-
-        const_iterator begin() const
-        {
-            return HashMapType::begin().keys();
-        }
-
-        const_iterator end() const
-        {
-            return HashMapType::end().keys();
-        }
-
-    private:
-        friend class HashMap;
-
-        HashMapKeysProxy() WTF_DELETED_FUNCTION;
-        HashMapKeysProxy(const HashMapKeysProxy&) WTF_DELETED_FUNCTION;
-        HashMapKeysProxy& operator=(const HashMapKeysProxy&) WTF_DELETED_FUNCTION;
-        ~HashMapKeysProxy() WTF_DELETED_FUNCTION;
-};
-
-template<typename KeyArg, typename MappedArg, typename HashArg,  typename KeyTraitsArg, typename MappedTraitsArg>
-class HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::HashMapValuesProxy : 
-    private HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> {
-    public:
-        typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
-        typedef typename HashMapType::iterator::Values iterator;
-        typedef typename HashMapType::const_iterator::Values const_iterator;
-
-        iterator begin()
-        {
-            return HashMapType::begin().values();
-        }
-
-        iterator end()
-        {
-            return HashMapType::end().values();
-        }
-
-        const_iterator begin() const
-        {
-            return HashMapType::begin().values();
-        }
-
-        const_iterator end() const
-        {
-            return HashMapType::end().values();
-        }
-
-    private:
-        friend class HashMap;
-
-        // These are intentionally not implemented.
-        HashMapValuesProxy() WTF_DELETED_FUNCTION;
-        HashMapValuesProxy(const HashMapValuesProxy&) WTF_DELETED_FUNCTION;
-        HashMapValuesProxy& operator=(const HashMapValuesProxy&) WTF_DELETED_FUNCTION;
-        ~HashMapValuesProxy() WTF_DELETED_FUNCTION;
 };
 
 template<typename ValueTraits, typename HashFunctions>
