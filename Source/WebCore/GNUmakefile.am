@@ -35,6 +35,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/crypto \
 	-I$(srcdir)/Source/WebCore/crypto/keys \
 	-I$(srcdir)/Source/WebCore/css \
+	-I$(srcdir)/Source/WebCore/cssjit \
 	-I$(srcdir)/Source/WebCore/dom \
 	-I$(srcdir)/Source/WebCore/dom/default \
 	-I$(srcdir)/Source/WebCore/editing \
