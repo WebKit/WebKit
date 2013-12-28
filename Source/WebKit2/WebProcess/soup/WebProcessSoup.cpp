@@ -205,6 +205,12 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
         GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(parameters.diskCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER));
         soup_session_add_feature(WebCore::ResourceHandle::defaultSession(), SOUP_SESSION_FEATURE(soupCache.get()));
         soup_cache_load(soupCache.get());
+
+        if (!parameters.cookiePersistentStoragePath.isEmpty()) {
+            supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
+                parameters.cookiePersistentStorageType);
+        }
+        supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy);
 #if ENABLE(NETWORK_PROCESS)
     }
 #endif
@@ -213,12 +219,6 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     for (size_t i = 0; i < parameters.urlSchemesRegistered.size(); i++)
         supplement<WebSoupRequestManager>()->registerURIScheme(parameters.urlSchemesRegistered[i]);
-
-    if (!parameters.cookiePersistentStoragePath.isEmpty()) {
-        supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
-            parameters.cookiePersistentStorageType);
-    }
-    supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy);
 
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
 

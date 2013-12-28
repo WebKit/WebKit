@@ -55,6 +55,9 @@ void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder)
     encoder << httpsProxy;
 #endif
 #if USE(SOUP)
+    encoder << cookiePersistentStoragePath;
+    encoder << cookiePersistentStorageType;
+    encoder.encodeEnum(cookieAcceptPolicy);
     encoder << ignoreTLSErrors;
 #endif
 }
@@ -91,6 +94,12 @@ bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder,
 #endif
 
 #if USE(SOUP)
+    if (!decoder.decode(result.cookiePersistentStoragePath))
+        return false;
+    if (!decoder.decode(result.cookiePersistentStorageType))
+        return false;
+    if (!decoder.decodeEnum(result.cookieAcceptPolicy))
+        return false;
     if (!decoder.decode(result.ignoreTLSErrors))
         return false;
 #endif

@@ -28,11 +28,14 @@
 #include "WebContext.h"
 
 #include "NetworkProcessCreationParameters.h"
+#include "WebCookieManagerProxy.h"
 
 namespace WebKit {
 
 void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
+    supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
+    parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
 }
 

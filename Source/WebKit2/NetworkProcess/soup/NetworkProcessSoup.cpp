@@ -31,6 +31,7 @@
 #include "CertificateInfo.h"
 #include "NetworkProcessCreationParameters.h"
 #include "ResourceCachesToClear.h"
+#include "WebCookieManager.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandle.h>
@@ -79,6 +80,12 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(parameters.diskCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER));
     soup_session_add_feature(WebCore::ResourceHandle::defaultSession(), SOUP_SESSION_FEATURE(soupCache.get()));
     soup_cache_load(soupCache.get());
+
+    if (!parameters.cookiePersistentStoragePath.isEmpty()) {
+        supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
+            parameters.cookiePersistentStorageType);
+    }
+    supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy);
 
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
 }

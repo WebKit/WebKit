@@ -33,6 +33,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(SOUP)
+#include "HTTPCookieAcceptPolicy.h"
+#endif
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
@@ -69,6 +73,9 @@ struct NetworkProcessCreationParameters {
 #endif
 
 #if USE(SOUP)
+    String cookiePersistentStoragePath;
+    uint32_t cookiePersistentStorageType;
+    HTTPCookieAcceptPolicy cookieAcceptPolicy;
     bool ignoreTLSErrors;
 #endif
 };
