@@ -1,5 +1,49 @@
 2013-12-29  Alexey Proskuryakov  <ap@apple.com>
 
+        Please display (and link to) revision ranges at build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=122187
+
+        Reviewed by Timothy Hatcher.
+
+        Added popovers for revision numbers. Removed direct links, because they were misleading -
+        a test run covers a revision range, not just the latest revision. This also makes
+        selecting a revision for copy easier.
+
+        All revision numbers have the popovers for consistency, although they are most useful
+        for iterations that are not the last ones in a view, because the content is a delta
+        from previous iteration.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        (BuildbotBuilderQueueView.prototype.update.appendBuilderQueueStatus):
+        revisionLinksForIteration() is now named revisionContentForIteration().
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus):
+        Ditto.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.get previous): Added a function to go back in iteration history.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        Refactored to support the new popover variation. Replaced revisionLinksForIteration()
+        with a function that builds an element with popover.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/PopoverTracker.js:
+        Changed to take a function for popover presentation instead of delegate object.
+        We only need one delegate function, and it's easier to have multiple popovers per view class
+        this way.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        Removed a rule for selectable class. It's replaced with a semantic rule in StatusLineView.css.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/QueueView.css:
+        Renamed pending-commits-popover class to commit-history-popover.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
+        (.status-line .message .revision-number): Added a rule for revision numbers.
+
+2013-12-29  Alexey Proskuryakov  <ap@apple.com>
+
         Please display information about pending runs in build.webkit.org/dashboard
         https://bugs.webkit.org/show_bug.cgi?id=122180
 

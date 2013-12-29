@@ -23,12 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-PopoverTracker = function(element, delegate, context)
+PopoverTracker = function(element, presentPopoverCallback, context)
 {
     BaseObject.call(this);
 
+    console.assert(element);
+    console.assert(presentPopoverCallback && typeof presentPopoverCallback == "function");
+
     this._element = element;
-    this._delegate = delegate;
+    this._presentPopover = presentPopoverCallback;
     this._context = context;
     this._active = false;
 
@@ -61,11 +64,8 @@ PopoverTracker.prototype = {
         }
         console.assert(!PopoverTracker._popover);
 
-        if (!this._delegate || !this._delegate.presentPopoverForElement || typeof this._delegate.presentPopoverForElement != "function")
-            return;
-
         var popover = new Dashboard.Popover(this);
-        if (!this._delegate.presentPopoverForElement(event.target, popover, this._context))
+        if (!this._presentPopover(event.target, popover, this._context))
             return;
 
         if (popoverWasVisible)

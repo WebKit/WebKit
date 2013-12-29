@@ -66,6 +66,15 @@ BuildbotIteration.prototype = {
         this._finished = x;
     },
 
+    get previous()
+    {
+        for (var i = 0; i < this.queue.iterations.length - 1; ++i) {
+            if (this.queue.iterations[i] === this)
+                return this.queue.iterations[i + 1];
+        }
+        return null;
+    },
+
     update: function()
     {
         if (this.loaded && this._finished)

@@ -105,15 +105,11 @@ BuildbotQueueView.prototype = {
         }
 
         if (status)
-            new PopoverTracker(status.messageElement, this, queue);
+            new PopoverTracker(status.messageElement, this._presentPopoverForPendingCommits.bind(this), queue);
     },
 
-    presentPopoverForElement: function(element, popover, queue)
+    _popoverLinesForCommitRange: function(trac, firstRevisionNumber, lastRevisionNumber)
     {
-        var latestFinishedIteration = this._latestFinishedIteration(queue);
-        if (!latestFinishedIteration)
-            return false;
-
         function lineForCommit(trac, commit)
         {
             var result = document.createElement("div");
@@ -139,32 +135,49 @@ BuildbotQueueView.prototype = {
             return result;
         }
 
-        var content = document.createElement("div");
-        content.className = "pending-commits-popover";
+        // This function only adds lines about commits that the trac object knows about.
+        // Alternatively, it could add links without info and/or trigger loading additional
+        // data, but this probably doesn't matter for Dashboard use.
+        var result = [];
+        for (var i = trac.recordedCommits.length - 1; i >= 0; --i) {
+            var commit = trac.recordedCommits[i];
+            if (commit.revisionNumber > lastRevisionNumber)
+                continue;
 
-        for (var i = webkitTrac.recordedCommits.length - 1; i >= 0; --i) {
-            var commit = webkitTrac.recordedCommits[i];
-            if (commit.revisionNumber <= latestFinishedIteration.openSourceRevision)
+            if (commit.revisionNumber < firstRevisionNumber)
                 break;
 
-            content.appendChild(lineForCommit(webkitTrac, commit));
+            result.push(lineForCommit(trac, commit));
         }
 
-        if (latestFinishedIteration.internalRevision && internalTrac.latestRecordedRevisionNumber) {
-            if (latestFinishedIteration.internalRevision < internalTrac.latestRecordedRevisionNumber && content.hasChildNodes()) {
-                var divider = document.createElement("div");
-                divider.className = "divider";
-                content.appendChild(divider);
-            }
+        return result;
+    },
 
-            for (var i = internalTrac.recordedCommits.length - 1; i >= 0; --i) {
-                var commit = internalTrac.recordedCommits[i];
-                if (commit.revisionNumber <= latestFinishedIteration.internalRevision)
-                    break;
+    _presentPopoverForPendingCommits: function(element, popover, queue)
+    {
+        var latestFinishedIteration = this._latestFinishedIteration(queue);
+        if (!latestFinishedIteration)
+            return false;
 
-                content.appendChild(lineForCommit(internalTrac, commit));
-            }
+        var content = document.createElement("div");
+        content.className = "commit-history-popover";
+
+        var linesForOpenSource = this._popoverLinesForCommitRange(webkitTrac, latestFinishedIteration.openSourceRevision + 1, webkitTrac.latestRecordedRevisionNumber);
+        for (var i = 0; i != linesForOpenSource.length; ++i)
+            content.appendChild(linesForOpenSource[i]);
+
+        var linesForInternal = [];
+        if (latestFinishedIteration.internalRevision && internalTrac.latestRecordedRevisionNumber)
+            var linesForInternal = this._popoverLinesForCommitRange(internalTrac, latestFinishedIteration.internalRevision + 1, internalTrac.latestRecordedRevisionNumber);
+
+        if (linesForOpenSource.length && linesForInternal.length) {
+            var divider = document.createElement("div");
+            divider.className = "divider";
+            content.appendChild(divider);
         }
+
+        for (var i = 0; i != linesForInternal.length; ++i)
+            content.appendChild(linesForInternal[i]);
 
         var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
         popover.present(rect, content, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
@@ -172,31 +185,78 @@ BuildbotQueueView.prototype = {
         return true;
     },
 
-    revisionLinksForIteration: function(iteration)
+    _presentPopoverForRevisionRange: function(element, popover, context)
     {
-        function linkForRevision(revision, trac)
-        {
-            var linkElement = document.createElement("a");
-            linkElement.href = trac.revisionURL(revision);
-            linkElement.target = "_blank";
-            linkElement.textContent = "r" + revision;
-            linkElement.classList.add("selectable");
+        var content = document.createElement("div");
+        content.className = "commit-history-popover";
 
-            return linkElement;
+        var linesForCommits = this._popoverLinesForCommitRange(context.trac, context.firstRevision, context.lastRevision);
+        if (!linesForCommits.length)
+            return false;
+
+        for (var i = 0; i != linesForCommits.length; ++i)
+            content.appendChild(linesForCommits[i]);
+
+        var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
+        popover.present(rect, content, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
+
+        return true;
+    },
+
+    _presentNoChangePopover: function(element, popover, context)
+    {
+        var content = document.createElement("div");
+        content.className = "commit-history-popover";
+
+        var line = document.createElement("div");
+        line.className = "no-commits";
+        line.textContent = "no new commits in this buildbot queue iteration";
+        
+        content.appendChild(line);
+
+        var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
+        popover.present(rect, content, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
+
+        return true;
+    },
+
+    _revisionPopoverContentForIteration: function(iteration, internal)
+    {
+        var contentElement = document.createElement("span");
+        contentElement.textContent = "r" + (internal ? iteration.internalRevision : iteration.openSourceRevision);
+        contentElement.classList.add("revision-number");
+
+        // FIXME: It would be better to display changes from the previous finished run, ignoring those that were interrupted and don't have results.
+        var previousIteration = iteration.previous;
+        if (previousIteration) {
+            var context = {
+                trac: internal ? internalTrac : webkitTrac,
+                firstRevision: (internal ? previousIteration.internalRevision : previousIteration.openSourceRevision) + 1,
+                lastRevision: internal ? iteration.internalRevision : iteration.openSourceRevision
+            };
+            if (context.firstRevision <= context.lastRevision)
+                new PopoverTracker(contentElement, this._presentPopoverForRevisionRange.bind(this), context);
+            else
+                new PopoverTracker(contentElement, this._presentNoChangePopover.bind(this), context);
         }
 
+        return contentElement;
+    },
+
+    revisionContentForIteration: function(iteration)
+    {
         console.assert(iteration.openSourceRevision);
-        var openSourceLink = linkForRevision(iteration.openSourceRevision, webkitTrac);
+        var openSourceContent = this._revisionPopoverContentForIteration(iteration);
 
         if (!iteration.internalRevision)
-            return openSourceLink;
+            return openSourceContent;
 
-        var internalLink = linkForRevision(iteration.internalRevision, internalTrac);
+        var internalContent = this._revisionPopoverContentForIteration(iteration, true);
 
         var fragment = document.createDocumentFragment();
-        fragment.appendChild(openSourceLink);
+        fragment.appendChild(openSourceContent);
         fragment.appendChild(document.createTextNode(" \uff0b "));
-        fragment.appendChild(internalLink);
+        fragment.appendChild(internalContent);
         return fragment;
     },
 

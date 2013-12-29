@@ -65,7 +65,7 @@ BuildbotBuilderQueueView.prototype = {
             var firstRecentFailedIteration = queue.firstRecentFailedIteration;
             if (firstRecentFailedIteration && firstRecentFailedIteration.loaded) {
                 var failureCount = queue.recentFailedIterationCount;
-                var message = this.revisionLinksForIteration(firstRecentFailedIteration);
+                var message = this.revisionContentForIteration(firstRecentFailedIteration);
                 var url = queue.buildbot.buildLogURLForIteration(firstRecentFailedIteration);
                 var status = new StatusLineView(message, StatusLineView.Status.Bad, failureCount > 1 ? "failed builds since" : "failed build", failureCount > 1 ? failureCount : null, url);
                 this.element.appendChild(status.element);
@@ -73,7 +73,7 @@ BuildbotBuilderQueueView.prototype = {
 
             var mostRecentSuccessfulIteration = queue.mostRecentSuccessfulIteration;
             if (mostRecentSuccessfulIteration && mostRecentSuccessfulIteration.loaded) {
-                var message = this.revisionLinksForIteration(mostRecentSuccessfulIteration);
+                var message = this.revisionContentForIteration(mostRecentSuccessfulIteration);
                 var url = queue.buildbot.buildLogURLForIteration(mostRecentSuccessfulIteration);
                 var status = new StatusLineView(message, StatusLineView.Status.Good, firstRecentFailedIteration ? "last successful build" : "latest build", null, url);
                 this.element.appendChild(status.element);

@@ -37,10 +37,6 @@ a:hover {
     text-decoration: underline;
 }
 
-.selectable {
-    -webkit-user-select: auto;
-}
-
 div.cellButton {
     font-family: "HelveticaNeue-Light", sans-serif;
     font-size: 12px;

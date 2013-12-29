@@ -101,6 +101,10 @@
     color: inherit;
 }
 
+.status-line .message .revision-number {
+    -webkit-user-select: auto;
+}
+
 .status-line.no-label .message {
     line-height: 28px;
 }
