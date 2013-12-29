@@ -1,3 +1,5 @@
+add_subdirectory(${WEBCORE_DIR}/platform/gtk/po)
+
 if (ENABLE_API_TESTS)
     if (ENABLE_WEBKIT)
         add_subdirectory(${WEBKIT_DIR}/gtk/tests)
