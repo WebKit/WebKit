@@ -83,17 +83,17 @@ void PseudoElement::didAttachRenderers()
     if (!renderer || renderer->style().hasFlowFrom())
         return;
 
-    RenderStyle& style = renderer->style();
+    const RenderStyle& style = renderer->style();
     ASSERT(style.contentData());
 
     for (const ContentData* content = style.contentData(); content; content = content->next()) {
-        RenderObject* child = content->createRenderer(document(), style);
+        RenderPtr<RenderObject> child = content->createRenderer(document(), style);
         if (renderer->isChildAllowed(*child, style)) {
-            renderer->addChild(child);
-            if (child->isQuote())
-                toRenderQuote(child)->attachQuote();
-        } else
-            child->destroy();
+            auto* childPtr = child.get();
+            renderer->addChild(child.leakPtr());
+            if (childPtr->isQuote())
+                toRenderQuote(childPtr)->attachQuote();
+        }
     }
 }
 

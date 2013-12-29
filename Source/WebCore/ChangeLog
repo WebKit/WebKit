@@ -1,3 +1,25 @@
+2013-12-28  Andreas Kling  <akling@apple.com>
+
+        Add an owning smart pointer for RenderObjects and start using it.
+        <https://webkit.org/b/126251>
+
+        This patch adds a RenderPtr pointer, essentially an OwnPtr for
+        RenderObjects. The difference is that RenderPtr destroys the object
+        by calling destroy() on it.
+
+        This is necessary to implement the willBeDestroyed() mechanism in
+        RenderObject that notifies renderers just before they are about to
+        be deleted, while they can still do tree traversal, etc.
+
+        I also added a make_unique-alike helper so you can write:
+
+            auto renderer = createRenderObject<RenderImage>(...);
+
+        Put it all to use by making ContentData::createRenderer() return
+        RenderPtr<RenderObject> instead of raw RenderObject*.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-28  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a missing include path for GTK

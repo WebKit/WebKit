@@ -27,6 +27,7 @@
 
 #include "CounterContent.h"
 #include "StyleImage.h"
+#include "RenderPtr.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ public:
     virtual bool isQuote() const { return false; }
     virtual bool isText() const { return false; }
 
-    virtual RenderObject* createRenderer(Document&, RenderStyle&) const = 0;
+    virtual RenderPtr<RenderObject> createRenderer(Document&, const RenderStyle&) const = 0;
 
     std::unique_ptr<ContentData> clone() const;
 
@@ -76,7 +77,7 @@ public:
     void setImage(PassRefPtr<StyleImage> image) { m_image = image; }
 
     virtual bool isImage() const OVERRIDE { return true; }
-    virtual RenderObject* createRenderer(Document&, RenderStyle&) const OVERRIDE;
+    virtual RenderPtr<RenderObject> createRenderer(Document&, const RenderStyle&) const OVERRIDE;
 
     virtual bool equals(const ContentData& data) const OVERRIDE
     {
@@ -107,7 +108,7 @@ public:
     void setText(const String& text) { m_text = text; }
 
     virtual bool isText() const OVERRIDE { return true; }
-    virtual RenderObject* createRenderer(Document&, RenderStyle&) const OVERRIDE;
+    virtual RenderPtr<RenderObject> createRenderer(Document&, const RenderStyle&) const OVERRIDE;
 
     virtual bool equals(const ContentData& data) const OVERRIDE
     {
@@ -133,7 +134,7 @@ public:
     void setCounter(std::unique_ptr<CounterContent> counter) { m_counter = std::move(counter); }
 
     virtual bool isCounter() const OVERRIDE { return true; }
-    virtual RenderObject* createRenderer(Document&, RenderStyle&) const OVERRIDE;
+    virtual RenderPtr<RenderObject> createRenderer(Document&, const RenderStyle&) const OVERRIDE;
 
 private:
     virtual std::unique_ptr<ContentData> cloneInternal() const OVERRIDE
@@ -163,7 +164,7 @@ public:
     void setQuote(QuoteType quote) { m_quote = quote; }
 
     virtual bool isQuote() const OVERRIDE { return true; }
-    virtual RenderObject* createRenderer(Document&, RenderStyle&) const OVERRIDE;
+    virtual RenderPtr<RenderObject> createRenderer(Document&, const RenderStyle&) const OVERRIDE;
 
     virtual bool equals(const ContentData& data) const OVERRIDE
     {
