@@ -189,7 +189,7 @@
         listeners of changes. It uses an RSS interface to Trac, because there is no JSON one.
 
         * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Utilities.js:
-        (loadXML): Added a function to load XML asynchronouly, just like existing JSON.load.
+        (loadXML): Added a function to load XML asynchronously, just like existing JSON.load.
 
         * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
         Removed tracRevisionURL() function. Now that we have a Trac object, it just makes
