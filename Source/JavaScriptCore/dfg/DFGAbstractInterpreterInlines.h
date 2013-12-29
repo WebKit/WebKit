@@ -195,10 +195,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case MovHint:
-    case MovHintAndCheck: {
-        // Don't need to do anything. A MovHint is effectively a promise that the SetLocal
-        // was dead.
+    case MovHint: {
+        // Don't need to do anything. A MovHint only informs us about what would have happened
+        // in bytecode, but this code is just concerned with what is actually happening during
+        // DFG execution.
         break;
     }
         
@@ -1583,6 +1583,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
             
     case Phantom:
+    case Check:
     case CountExecution:
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:

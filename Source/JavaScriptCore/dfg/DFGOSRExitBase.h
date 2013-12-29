@@ -64,11 +64,6 @@ struct OSRExitBase {
             return false;
         return considerAddingAsFrequentExitSiteSlow(profiledCodeBlock);
     }
-    
-    // Returns true if the forward conversion is really needed.
-    bool doSearchForForwardConversion(
-        BasicBlock*, Node* currentNode, unsigned nodeIndex, bool hasValueRecovery,
-        Node*& nextBCNode, Node*& lastMovHint);
 
 private:
     bool considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock);

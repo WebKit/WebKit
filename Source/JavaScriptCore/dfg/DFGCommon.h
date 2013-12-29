@@ -182,8 +182,6 @@ enum RefCountState {
 
 enum OperandSpeculationMode { AutomaticOperandSpeculation, ManualOperandSpeculation };
 
-enum SpeculationDirection { ForwardSpeculation, BackwardSpeculation };
-
 enum ProofStatus { NeedsCheck, IsProved };
 
 inline bool isProved(ProofStatus proofStatus)

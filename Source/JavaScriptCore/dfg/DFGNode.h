@@ -274,59 +274,27 @@ struct Node {
         return filterFlags(~flags);
     }
     
-    SpeculationDirection speculationDirection()
-    {
-        if (flags() & NodeExitsForward)
-            return ForwardSpeculation;
-        return BackwardSpeculation;
-    }
-    
-    void setSpeculationDirection(SpeculationDirection direction)
-    {
-        switch (direction) {
-        case ForwardSpeculation:
-            mergeFlags(NodeExitsForward);
-            return;
-        case BackwardSpeculation:
-            clearFlags(NodeExitsForward);
-            return;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-    
     void setOpAndDefaultFlags(NodeType op)
     {
         m_op = op;
         m_flags = defaultFlags(op);
     }
 
-    void setOpAndDefaultNonExitFlags(NodeType op)
-    {
-        ASSERT(!(m_flags & NodeHasVarArgs));
-        setOpAndDefaultNonExitFlagsUnchecked(op);
-    }
-
-    void setOpAndDefaultNonExitFlagsUnchecked(NodeType op)
-    {
-        m_op = op;
-        m_flags = (defaultFlags(op) & ~NodeExitsForward) | (m_flags & NodeExitsForward);
-    }
-
     void convertToPhantom()
     {
-        setOpAndDefaultNonExitFlags(Phantom);
+        setOpAndDefaultFlags(Phantom);
     }
 
     void convertToPhantomUnchecked()
     {
-        setOpAndDefaultNonExitFlagsUnchecked(Phantom);
+        setOpAndDefaultFlags(Phantom);
     }
 
     void convertToIdentity()
     {
         RELEASE_ASSERT(child1());
         RELEASE_ASSERT(!child2());
-        setOpAndDefaultNonExitFlags(Identity);
+        setOpAndDefaultFlags(Identity);
     }
 
     bool mustGenerate()
@@ -531,9 +499,7 @@ struct Node {
     bool containsMovHint()
     {
         switch (op()) {
-        case SetLocal:
         case MovHint:
-        case MovHintAndCheck:
         case ZombieHint:
             return true;
         default:
@@ -567,6 +533,8 @@ struct Node {
         switch (op()) {
         case GetLocalUnlinked:
         case ExtractOSREntryLocal:
+        case MovHint:
+        case ZombieHint:
             return true;
         default:
             return false;
@@ -1190,11 +1158,6 @@ struct Node {
         case SetLocal:
         case MovHint:
         case ZombieHint:
-        case MovHintAndCheck:
-        case Int32ToDouble:
-        case ValueToInt32:
-        case UInt32ToNumber:
-        case DoubleAsInt32:
         case PhantomArguments:
             return true;
         case Phantom:

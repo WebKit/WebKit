@@ -163,33 +163,22 @@ public:
                     if (!iter->value.m_structure && !iter->value.m_arrayModeIsValid)
                         break;
 
-                    // First insert a dead SetLocal to tell OSR that the child's value should
-                    // be dropped into this bytecode variable if the CheckStructure decides
-                    // to exit.
-                    
                     CodeOrigin codeOrigin = node->codeOrigin;
                     Edge child1 = node->child1();
                     
-                    insertionSet.insertNode(
-                        indexInBlock, SpecNone, SetLocal, codeOrigin, OpInfo(variable), child1);
-
-                    // Use NodeExitsForward to indicate that we should exit to the next
-                    // bytecode instruction rather than reexecuting the current one.
-                    Node* newNode = 0;
                     if (iter->value.m_structure) {
-                        newNode = insertionSet.insertNode(
+                        insertionSet.insertNode(
                             indexInBlock, SpecNone, CheckStructure, codeOrigin,
                             OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
                             Edge(child1.node(), CellUse));
                     } else if (iter->value.m_arrayModeIsValid) {
                         ASSERT(iter->value.m_arrayModeHoistingOkay);
-                        newNode = insertionSet.insertNode(
+                        insertionSet.insertNode(
                             indexInBlock, SpecNone, CheckArray, codeOrigin,
                             OpInfo(iter->value.m_arrayMode.asWord()),
                             Edge(child1.node(), CellUse));
                     } else
                         RELEASE_ASSERT_NOT_REACHED();
-                    newNode->mergeFlags(NodeExitsForward);
                     changed = true;
                     break;
                 }
@@ -228,9 +217,6 @@ private:
                 switch (node->op()) {
                 case CheckStructure:
                 case StructureTransitionWatchpoint: {
-                    // We currently rely on the fact that we're the only ones who would
-                    // insert these nodes with NodeExitsForward.
-                    RELEASE_ASSERT(!(node->flags() & NodeExitsForward));
                     Node* child = node->child1().node();
                     if (child->op() != GetLocal)
                         break;
@@ -257,6 +243,7 @@ private:
                 case GetIndexedPropertyStorage:
                 case GetTypedArrayByteOffset:
                 case Phantom:
+                case MovHint:
                     // Don't count these uses.
                     break;
                     
@@ -329,9 +316,6 @@ private:
                 Node* node = block->at(indexInBlock);
                 switch (node->op()) {
                 case CheckArray: {
-                    // We currently rely on the fact that we're the only ones who would
-                    // insert these nodes with NodeExitsForward.
-                    RELEASE_ASSERT(!(node->flags() & NodeExitsForward));
                     Node* child = node->child1().node();
                     if (child->op() != GetLocal)
                         break;
@@ -357,6 +341,7 @@ private:
                 case GetArrayLength:
                 case GetIndexedPropertyStorage:
                 case Phantom:
+                case MovHint:
                     // Don't count these uses.
                     break;
                     

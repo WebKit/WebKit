@@ -68,26 +68,6 @@ void OSRExit::correctJump(LinkBuffer& linkBuffer)
     m_patchableCodeOffset = linkBuffer.offsetOf(label);
 }
 
-void OSRExit::convertToForward(BasicBlock* block, Node* currentNode, unsigned nodeIndex, const ValueRecovery& valueRecovery)
-{
-    Node* node;
-    Node* lastMovHint;
-    if (!doSearchForForwardConversion(block, currentNode, nodeIndex, !!valueRecovery, node, lastMovHint))
-        return;
-
-    ASSERT(node->codeOrigin != currentNode->codeOrigin);
-    
-    m_codeOrigin = node->codeOrigin;
-    
-    if (!valueRecovery)
-        return;
-    
-    ASSERT(lastMovHint);
-    ASSERT(lastMovHint->child1() == currentNode);
-    m_valueRecoveryOverride = adoptRef(
-        new ValueRecoveryOverride(lastMovHint->local(), valueRecovery));
-}
-
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

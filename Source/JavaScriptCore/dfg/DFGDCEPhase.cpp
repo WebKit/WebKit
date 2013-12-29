@@ -113,8 +113,12 @@ public:
             for (unsigned i = depthFirst.size(); i--;)
                 fixupBlock(depthFirst[i]);
         } else {
+            RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
+            
             for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
                 fixupBlock(m_graph.block(blockIndex));
+            
+            cleanVariables(m_graph.m_arguments);
         }
         
         m_graph.m_refCountState = ExactRefCount;
@@ -152,6 +156,36 @@ private:
     {
         if (!block)
             return;
+        
+        switch (m_graph.m_form) {
+        case SSA:
+            break;
+            
+        case ThreadedCPS: {
+            // Clean up variable links for the block. We need to do this before the actual DCE
+            // because we need to see GetLocals, so we can bypass them in situations where the
+            // vars-at-tail point to a GetLocal, the GetLocal is dead, but the Phi it points
+            // to is alive.
+            
+            for (unsigned phiIndex = 0; phiIndex < block->phis.size(); ++phiIndex) {
+                if (!block->phis[phiIndex]->shouldGenerate()) {
+                    // FIXME: We could actually free nodes here. Except that it probably
+                    // doesn't matter, since we don't add any nodes after this phase.
+                    // https://bugs.webkit.org/show_bug.cgi?id=126239
+                    block->phis[phiIndex--] = block->phis.last();
+                    block->phis.removeLast();
+                }
+            }
+            
+            cleanVariables(block->variablesAtHead);
+            cleanVariables(block->variablesAtTail);
+            break;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
 
         for (unsigned indexInBlock = block->size(); indexInBlock--;) {
             Node* node = block->at(indexInBlock);
@@ -159,37 +193,23 @@ private:
                 continue;
                 
             switch (node->op()) {
-            case SetLocal:
             case MovHint: {
-                ASSERT((node->op() == SetLocal) == (m_graph.m_form == ThreadedCPS));
-                if (node->child1().willNotHaveCheck()) {
-                    // Consider the possibility that UInt32ToNumber is dead but its
-                    // child isn't; if so then we should MovHint the child.
-                    if (!node->child1()->shouldGenerate()
-                        && permitsOSRBackwardRewiring(node->child1()->op()))
-                        node->child1() = node->child1()->child1();
-
-                    if (!node->child1()->shouldGenerate()) {
-                        node->setOpAndDefaultFlags(ZombieHint);
-                        node->child1() = Edge();
-                        break;
-                    }
-                    node->setOpAndDefaultFlags(MovHint);
+                ASSERT(node->child1().useKind() == UntypedUse);
+                if (!node->child1()->shouldGenerate()) {
+                    node->setOpAndDefaultFlags(ZombieHint);
+                    node->child1() = Edge();
                     break;
                 }
-                node->setOpAndDefaultFlags(MovHintAndCheck);
-                node->setRefCount(1);
+                node->setOpAndDefaultFlags(MovHint);
                 break;
             }
-                    
-            case GetLocal:
-            case SetArgument: {
-                if (m_graph.m_form == ThreadedCPS) {
-                    // Leave them as not shouldGenerate.
-                    break;
-                }
+                
+            case ZombieHint: {
+                // Currently we assume that DCE runs only once.
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
             }
-
+            
             default: {
                 if (node->flags() & NodeHasVarArgs) {
                     for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++) {
@@ -225,6 +245,27 @@ private:
                 continue;
             if (edge.willNotHaveCheck())
                 node->children.removeEdge(i--);
+        }
+    }
+    
+    template<typename VariablesVectorType>
+    void cleanVariables(VariablesVectorType& variables)
+    {
+        for (unsigned i = variables.size(); i--;) {
+            Node* node = variables[i];
+            if (!node)
+                continue;
+            if (node->op() != Phantom && node->shouldGenerate())
+                continue;
+            if (node->op() == GetLocal) {
+                node = node->child1().node();
+                ASSERT(node->op() == Phi);
+                if (node->shouldGenerate()) {
+                    variables[i] = node;
+                    continue;
+                }
+            }
+            variables[i] = 0;
         }
     }
     

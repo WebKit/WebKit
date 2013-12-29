@@ -61,41 +61,6 @@ CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
         m_patchableCodeOffset);
 }
 
-void OSRExit::convertToForward(
-    BasicBlock* block, Node* currentNode, unsigned nodeIndex,
-    const FormattedValue &value, ExitArgumentList& arguments)
-{
-    Node* node;
-    Node* lastMovHint;
-    if (!doSearchForForwardConversion(block, currentNode, nodeIndex, !!value, node, lastMovHint))
-        return;
-
-    ASSERT(node->codeOrigin != currentNode->codeOrigin);
-    
-    m_codeOrigin = node->codeOrigin;
-    
-    if (!value)
-        return;
-    
-    VirtualRegister overriddenOperand = lastMovHint->local();
-    
-    // Is the value for this operand being passed as an argument to the exit, or is
-    // it something else? If it's an argument already, then replace that argument;
-    // otherwise add another argument.
-    if (m_values.operand(overriddenOperand).isArgument()) {
-        ExitArgument exitArgument = m_values.operand(overriddenOperand).exitArgument();
-        arguments[exitArgument.argument()] = value.value();
-        m_values.operand(overriddenOperand) = ExitValue::exitArgument(
-            exitArgument.withFormat(value.format()));
-        return;
-    }
-    
-    unsigned argument = arguments.size();
-    arguments.append(value.value());
-    m_values.operand(overriddenOperand) = ExitValue::exitArgument(
-        ExitArgument(value.format(), argument));
-}
-
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

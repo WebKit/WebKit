@@ -1,3 +1,190 @@
+2013-12-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of DFG forward exiting
+        https://bugs.webkit.org/show_bug.cgi?id=125531
+
+        Reviewed by Oliver Hunt.
+        
+        This finally gets rid of forward exiting. Forward exiting was always a fragile concept
+        since it involved the compiler trying to figure out how to "roll forward" the
+        execution from some DFG node to the next bytecode index. It was always easy to find
+        counterexamples where it broke, and it has always served as an obstacle to adding
+        compiler improvements - the latest being http://webkit.org/b/125523, which tried to
+        make DCE work for more things.
+        
+        This change finishes the work of removing forward exiting. A lot of forward exiting
+        was already removed in some other bugs, but SetLocal still did forward exits. SetLocal
+        is in many ways the hardest to remove, since the forward exiting of SetLocal also
+        implied that any conversion nodes inserted before the SetLocal would then also be
+        marked as forward-exiting. Hence SetLocal's forward-exiting made a bunch of other
+        things also forward-exiting, and this was always a source of weirdo bugs.
+        
+        SetLocal must be able to exit in case it performs a hoisted type speculation. Nodes
+        inserted just before SetLocal must also be able to exit - for example type check
+        hoisting may insert a CheckStructure, or fixup phase may insert something like
+        Int32ToDouble. But if any of those nodes tried to backward exit, then this could lead
+        to the reexecution of a side-effecting operation, for example:
+        
+            a: Call(...)
+            b: SetLocal(@a, r1)
+        
+        For a long time it seemed like SetLocal *had* to exit forward because of this. But
+        this change side-steps the problem by changing the ByteCodeParser to always emit a
+        kind of "two-phase commit" for stores to local variables. Now when the ByteCodeParser
+        wishes to store to a local, it first emits a MovHint and then enqueues a SetLocal.
+        The SetLocal isn't actually emitted until the beginning of the next bytecode
+        instruction (which the exception of op_enter and op_ret, which emit theirs immediately
+        since it's always safe to reexecute those bytecode instructions and since deferring
+        SetLocals would be weird there - op_enter has many SetLocals and op_ret is a set
+        followed by a jump in case of inlining, so we'd have to emit the SetLocal "after" the
+        jump and that would be awkward). This means that the above IR snippet would look
+        something like:
+        
+            a: Call(..., bc#42)
+            b: MovHint(@a, r1, bc#42)
+            c: SetLocal(@a, r1, bc#47)
+        
+        Where the SetLocal exits "backwards" but appears at the beginning of the next bytecode
+        instruction. This means that by the time we get to that SetLocal, the OSR exit
+        analysis already knows that r1 is associated with @a, and it means that the SetLocal
+        or anything hoisted above it can exit backwards as normal.
+        
+        This change also means that the "forward rewiring" can be killed. Previously, we might
+        have inserted a conversion node on SetLocal and then the SetLocal died (i.e. turned
+        into a MovHint) and the conversion node either died completely or had its lifetime
+        truncated to be less than the actual value's bytecode lifetime. This no longer happens
+        since conversion nodes are only inserted at SetLocals.
+        
+        More precisely, this change introduces two laws that we were basically already
+        following anyway:
+        
+        1) A MovHint's child should never be changed except if all other uses of that child
+           are also replaced. Specifically, this prohibits insertion of conversion nodes at
+           MovHints.
+        
+        2) Anytime any child is replaced with something else, and all other uses aren't also
+           replaced, we must insert a Phantom use of the original child.
+
+        This is a slight compile-time regression but has no effect on code-gen. It unlocks a
+        bunch of optimization opportunities so I think it's worth it.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpAssumingJITType):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::instructionCount):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGArrayifySlowPathGenerator.h:
+        (JSC::DFG::ArrayifySlowPathGenerator::ArrayifySlowPathGenerator):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setDirect):
+        (JSC::DFG::ByteCodeParser::DelayedSetLocal::DelayedSetLocal):
+        (JSC::DFG::ByteCodeParser::DelayedSetLocal::execute):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::eliminate):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommon.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        (JSC::DFG::DCEPhase::fixupBlock):
+        (JSC::DFG::DCEPhase::cleanVariables):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixEdge):
+        (JSC::DFG::FixupPhase::injectInt32ToDoubleNode):
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGMinifiedNode.cpp:
+        (JSC::DFG::MinifiedNode::fromNode):
+        * dfg/DFGMinifiedNode.h:
+        (JSC::DFG::belongsInMinifiedGraph):
+        (JSC::DFG::MinifiedNode::constantNumber):
+        (JSC::DFG::MinifiedNode::weakConstant):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::hasVariableAccessData):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPhantom):
+        (JSC::DFG::Node::convertToPhantomUnchecked):
+        (JSC::DFG::Node::convertToIdentity):
+        (JSC::DFG::Node::containsMovHint):
+        (JSC::DFG::Node::hasUnlinkedLocal):
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGOSRExit.cpp:
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitBase.cpp:
+        * dfg/DFGOSRExitBase.h:
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSite):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::doDoubleVoting):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::emitInvalidationPoint):
+        (JSC::DFG::SpeculativeJIT::typeCheck):
+        (JSC::DFG::SpeculativeJIT::compileMovHint):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::detectPeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::needsTypeCheck):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validateCPS):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetArgument):
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileMovHint):
+        (JSC::FTL::LowerDFGToLLVM::compileZombieHint):
+        (JSC::FTL::LowerDFGToLLVM::compileInt32ToDouble):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::typeCheck):
+        (JSC::FTL::LowerDFGToLLVM::appendTypeCheck):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::LowerDFGToLLVM::emitOSRExitCall):
+        * ftl/FTLOSRExit.cpp:
+        * ftl/FTLOSRExit.h:
+        * tests/stress/dead-int32-to-double.js: Added.
+        (foo):
+        * tests/stress/dead-uint32-to-number.js: Added.
+        (foo):
+
 2013-12-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r161033 and r161074.

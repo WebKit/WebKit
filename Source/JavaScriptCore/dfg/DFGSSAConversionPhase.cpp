@@ -186,8 +186,8 @@ public:
                             // the value was already on the stack.
                         } else {
                             m_insertionSet.insertNode(
-                                0, SpecNone, MovHint, CodeOrigin(), OpInfo(variable),
-                                Edge(node));
+                                0, SpecNone, MovHint, CodeOrigin(),
+                                OpInfo(variable->local().offset()), Edge(node));
                         }
                     }
                 }
@@ -269,7 +269,7 @@ public:
         // - GetLocal over uncaptured variables die and get replaced with references
         //   to the node specified by variablesAtHead.
         // - SetLocal gets NodeMustGenerate if it's flushed, or turns into a
-        //   MovHint otherwise.
+        //   Check otherwise.
         // - Flush loses its children but remains, because we want to know when a
         //   flushed SetLocal's value is no longer needed. This also makes it simpler
         //   to reason about the format of a local, since we can just do a backwards
@@ -308,7 +308,7 @@ public:
                     if (variable->isCaptured() || m_flushedLocalOps.contains(node))
                         node->mergeFlags(NodeMustGenerate);
                     else
-                        node->setOpAndDefaultFlags(MovHint);
+                        node->setOpAndDefaultFlags(Check);
                     node->misc.replacement = node->child1().node(); // Only for Upsilons.
                     break;
                 }

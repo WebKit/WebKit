@@ -1051,7 +1051,7 @@ private:
         if (!node)
             return;
         ASSERT(node->mustGenerate());
-        node->setOpAndDefaultNonExitFlags(phantomType);
+        node->setOpAndDefaultFlags(phantomType);
         if (phantomType == Phantom)
             eliminateIrrelevantPhantomChildren(node);
         

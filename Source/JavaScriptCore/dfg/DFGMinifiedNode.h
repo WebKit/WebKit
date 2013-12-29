@@ -43,16 +43,9 @@ inline bool belongsInMinifiedGraph(NodeType type)
     switch (type) {
     case JSConstant:
     case WeakJSConstant:
-    case ValueToInt32:
-    case Int32ToDouble:
-    case UInt32ToNumber:
-    case DoubleAsInt32:
     case PhantomArguments:
-    case Int52ToValue:
-    case Int52ToDouble:
         return true;
     default:
-        ASSERT(!permitsOSRBackwardRewiring(type) && !permitsOSRForwardRewiring(type));
         return false;
     }
 }
@@ -66,14 +59,6 @@ public:
     MinifiedID id() const { return m_id; }
     NodeType op() const { return m_op; }
     
-    bool hasChild1() const { return hasChild(m_op); }
-    
-    MinifiedID child1() const
-    {
-        ASSERT(hasChild(m_op));
-        return MinifiedID::fromBits(m_childOrInfo);
-    }
-    
     bool hasConstant() const { return hasConstantNumber() || hasWeakConstant(); }
     
     bool hasConstantNumber() const { return hasConstantNumber(m_op); }
@@ -81,7 +66,7 @@ public:
     unsigned constantNumber() const
     {
         ASSERT(hasConstantNumber(m_op));
-        return m_childOrInfo;
+        return m_info;
     }
     
     bool hasWeakConstant() const { return hasWeakConstant(m_op); }
@@ -89,7 +74,7 @@ public:
     JSCell* weakConstant() const
     {
         ASSERT(hasWeakConstant(m_op));
-        return bitwise_cast<JSCell*>(m_childOrInfo);
+        return bitwise_cast<JSCell*>(m_info);
     }
     
     static MinifiedID getID(MinifiedNode* node) { return node->id(); }
@@ -99,20 +84,6 @@ public:
     }
     
 private:
-    static bool hasChild(NodeType type)
-    {
-        switch (type) {
-        case ValueToInt32:
-        case Int32ToDouble:
-        case UInt32ToNumber:
-        case DoubleAsInt32:
-        case Int52ToDouble:
-        case Int52ToValue:
-            return true;
-        default:
-            return false;
-        }
-    }
     static bool hasConstantNumber(NodeType type)
     {
         return type == JSConstant;
@@ -123,7 +94,7 @@ private:
     }
     
     MinifiedID m_id;
-    uintptr_t m_childOrInfo; // Nodes in the minified graph have only one child each.
+    uintptr_t m_info;
     NodeType m_op;
 };
 

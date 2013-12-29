@@ -135,6 +135,7 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
 
     if (codeType() == FunctionCode)
         out.print(specializationKind());
+    out.print(", ", instructionCount());
     if (this->jitType() == JITCode::BaselineJIT && m_shouldAlwaysBeInlined)
         out.print(" (SABI)");
     if (ownerExecutable()->neverInline())

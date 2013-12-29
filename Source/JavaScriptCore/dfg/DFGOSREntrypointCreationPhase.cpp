@@ -104,17 +104,9 @@ public:
                 m_graph, variable->prediction(), ExtractOSREntryLocal, codeOrigin,
                 OpInfo(variable->local().offset()));
             
-            // Create a MovHint. We can't use MovHint's directly at this stage of
-            // compilation, so we cook one up by creating a new VariableAccessData
-            // that isn't unified with any of the others. This ensures that this
-            // SetLocal will turn into a MovHint and will not have any type checks.
-            m_graph.m_variableAccessData.append(
-                VariableAccessData(variable->local(), variable->isCaptured()));
-            VariableAccessData* newVariable = &m_graph.m_variableAccessData.last();
-            Node* setLocal = newRoot->appendNode(
-                m_graph, SpecNone, SetLocal, codeOrigin, OpInfo(newVariable),
+            newRoot->appendNode(
+                m_graph, SpecNone, MovHint, codeOrigin, OpInfo(variable->local().offset()),
                 Edge(locals[local]));
-            setLocal->setSpeculationDirection(BackwardSpeculation);
         }
         for (int local = 0; local < baseline->m_numCalleeRegisters; ++local) {
             Node* previousHead = target->variablesAtHead.local(local);
@@ -122,9 +114,8 @@ public:
                 continue;
             VariableAccessData* variable = previousHead->variableAccessData();
             Node* node = locals[local];
-            Node* setLocal = newRoot->appendNode(
+            newRoot->appendNode(
                 m_graph, SpecNone, SetLocal, codeOrigin, OpInfo(variable), Edge(node));
-            setLocal->setSpeculationDirection(BackwardSpeculation);
         }
         
         newRoot->appendNode(

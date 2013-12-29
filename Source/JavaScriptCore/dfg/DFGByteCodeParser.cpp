@@ -232,15 +232,19 @@ private:
         return getDirect(m_inlineStackTop->remapOperand(operand));
     }
     
-    enum SetMode { NormalSet, SetOnEntry };
+    enum SetMode { NormalSet, ImmediateSet };
     Node* setDirect(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
-        // Is this an argument?
-        if (operand.isArgument())
-            return setArgument(operand, value, setMode);
-
-        // Must be a local.
-        return setLocal(operand, value, setMode);
+        addToGraph(MovHint, OpInfo(operand.offset()), value);
+        
+        DelayedSetLocal delayed = DelayedSetLocal(operand, value);
+        
+        if (setMode == NormalSet) {
+            m_setLocalQueue.append(delayed);
+            return 0;
+        }
+        
+        return delayed.execute(this, setMode);
     }
 
     Node* set(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
@@ -1121,6 +1125,27 @@ private:
     };
     
     InlineStackEntry* m_inlineStackTop;
+    
+    struct DelayedSetLocal {
+        VirtualRegister m_operand;
+        Node* m_value;
+        
+        DelayedSetLocal() { }
+        DelayedSetLocal(VirtualRegister operand, Node* value)
+            : m_operand(operand)
+            , m_value(value)
+        {
+        }
+        
+        Node* execute(ByteCodeParser* parser, SetMode setMode = NormalSet)
+        {
+            if (m_operand.isArgument())
+                return parser->setArgument(m_operand, m_value, setMode);
+            return parser->setLocal(m_operand, m_value, setMode);
+        }
+    };
+    
+    Vector<DelayedSetLocal, 2> m_setLocalQueue;
 
     // Have we built operand maps? We initialize them lazily, and only when doing
     // inlining.
@@ -1325,9 +1350,9 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
         == callLinkStatus.isClosureCall());
     if (callLinkStatus.isClosureCall()) {
         VariableAccessData* calleeVariable =
-            set(VirtualRegister(JSStack::Callee), callTargetNode)->variableAccessData();
+            set(VirtualRegister(JSStack::Callee), callTargetNode, ImmediateSet)->variableAccessData();
         VariableAccessData* scopeVariable =
-            set(VirtualRegister(JSStack::ScopeChain), addToGraph(GetScope, callTargetNode))->variableAccessData();
+            set(VirtualRegister(JSStack::ScopeChain), addToGraph(GetScope, callTargetNode), ImmediateSet)->variableAccessData();
         
         calleeVariable->mergeShouldNeverUnbox(true);
         scopeVariable->mergeShouldNeverUnbox(true);
@@ -1872,6 +1897,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     }
 
     while (true) {
+        for (unsigned i = 0; i < m_setLocalQueue.size(); ++i)
+            m_setLocalQueue[i].execute(this);
+        m_setLocalQueue.resize(0);
+        
         // Don't extend over jump destinations.
         if (m_currentIndex == limit) {
             // Ordinarily we want to plant a jump. But refuse to do this if the block is
@@ -1903,7 +1932,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_enter:
             // Initialize all locals to undefined.
             for (int i = 0; i < m_inlineStackTop->m_codeBlock->m_numVars; ++i)
-                set(virtualRegisterForLocal(i), constantUndefined(), SetOnEntry);
+                set(virtualRegisterForLocal(i), constantUndefined(), ImmediateSet);
             NEXT_OPCODE(op_enter);
             
         case op_touch_entry:
@@ -2908,7 +2937,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             flushArgumentsAndCapturedVariables();
             if (inlineCallFrame()) {
                 ASSERT(m_inlineStackTop->m_returnValue.isValid());
-                setDirect(m_inlineStackTop->m_returnValue, get(VirtualRegister(currentInstruction[1].u.operand)));
+                setDirect(m_inlineStackTop->m_returnValue, get(VirtualRegister(currentInstruction[1].u.operand)), ImmediateSet);
                 m_inlineStackTop->m_didReturn = true;
                 if (m_inlineStackTop->m_unlinkedBlocks.isEmpty()) {
                     // If we're returning from the first block, then we're done parsing.

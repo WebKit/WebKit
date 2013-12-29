@@ -187,6 +187,10 @@ private:
             break;
         }
             
+        case MovHint:
+        case Check:
+            break;
+            
         case BitAnd:
         case BitOr:
         case BitXor:

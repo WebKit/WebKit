@@ -103,17 +103,15 @@ public:
                         break;
                     }
                         
-                    case MovHint:
-                    case MovHintAndCheck: {
-                        VariableAccessData* variable = node->variableAccessData();
-                        availability.operand(variable->local()) =
+                    case MovHint: {
+                        availability.operand(node->unlinkedLocal()) =
                             Availability(node->child1().node());
                         break;
                     }
                         
                     case ZombieHint: {
-                        VariableAccessData* variable = node->variableAccessData();
-                        availability.operand(variable->local()) = Availability::unavailable();
+                        availability.operand(node->unlinkedLocal()) =
+                            Availability::unavailable();
                         break;
                     }
                         

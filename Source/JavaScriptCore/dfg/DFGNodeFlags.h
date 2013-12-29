@@ -68,9 +68,7 @@ namespace JSC { namespace DFG {
 
 #define NodeRelevantToOSR                0x4000
 
-#define NodeExitsForward                 0x8000
-
-#define NodeIsStaticConstant            0x10000 // Used only by the parser, to determine if a constant arose statically and hence could be folded at parse-time.
+#define NodeIsStaticConstant             0x8000 // Used only by the parser, to determine if a constant arose statically and hence could be folded at parse-time.
 
 typedef uint32_t NodeFlags;
 

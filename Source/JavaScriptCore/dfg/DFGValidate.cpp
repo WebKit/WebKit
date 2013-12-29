@@ -245,10 +245,7 @@ private:
                         edge->op() == SetLocal
                         || edge->op() == SetArgument
                         || edge->op() == Flush
-                        || edge->op() == Phi
-                        || edge->op() == ZombieHint
-                        || edge->op() == MovHint
-                        || edge->op() == MovHintAndCheck);
+                        || edge->op() == Phi);
                     
                     if (phisInThisBlock.contains(edge.node()))
                         continue;
@@ -257,9 +254,6 @@ private:
                         VALIDATE(
                             (node, edge),
                             edge->op() == SetLocal
-                            || edge->op() == ZombieHint
-                            || edge->op() == MovHint
-                            || edge->op() == MovHintAndCheck
                             || edge->op() == SetArgument
                             || edge->op() == Flush);
                         
@@ -292,9 +286,6 @@ private:
                         VALIDATE(
                             (local, block->predecessors[k], prevNode),
                             prevNode->op() == SetLocal
-                            || prevNode->op() == MovHint
-                            || prevNode->op() == MovHintAndCheck
-                            || prevNode->op() == ZombieHint
                             || prevNode->op() == SetArgument
                             || prevNode->op() == Phi);
                         if (prevNode == edge.node()) {

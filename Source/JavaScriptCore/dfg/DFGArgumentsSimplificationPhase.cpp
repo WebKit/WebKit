@@ -333,6 +333,11 @@ public:
                     // structures of another variable.
                     break;
                     
+                case MovHint:
+                    // We don't care about MovHints at all, since they represent what happens
+                    // in bytecode. We rematerialize arguments objects on OSR exit anyway.
+                    break;
+                    
                 default:
                     observeBadArgumentsUses(node);
                     break;

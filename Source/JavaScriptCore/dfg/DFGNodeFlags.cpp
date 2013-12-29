@@ -96,9 +96,6 @@ void dumpNodeFlags(PrintStream& actualOut, NodeFlags flags)
     if (!(flags & NodeDoesNotExit))
         out.print(comma, "CanExit");
     
-    if (flags & NodeExitsForward)
-        out.print(comma, "NodeExitsForward");
-    
     CString string = out.toCString();
     if (!string.length())
         actualOut.print("<empty>");

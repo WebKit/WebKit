@@ -244,7 +244,7 @@ public:
 
     bool usesOpcode(OpcodeID);
 
-    unsigned instructionCount() { return m_instructions.size(); }
+    unsigned instructionCount() const { return m_instructions.size(); }
 
     int argumentIndexAfterCapture(size_t argument);
     

@@ -886,7 +886,8 @@ private:
         }
 
         case Phantom:
-        case Identity: {
+        case Identity:
+        case Check: {
             switch (node->child1().useKind()) {
             case NumberUse:
                 if (node->child1()->shouldSpeculateInt32ForArithmetic())
@@ -907,9 +908,6 @@ private:
         case GetIndexedPropertyStorage:
         case GetTypedArrayByteOffset:
         case LastNodeType:
-        case MovHint:
-        case MovHintAndCheck:
-        case ZombieHint:
         case CheckTierUpInLoop:
         case CheckTierUpAtReturn:
         case CheckTierUpAndOSREnter:
@@ -951,7 +949,7 @@ private:
                 observeUseKindOnNode<StringUse>(node);
             }
             break;
-
+            
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:
@@ -1005,6 +1003,8 @@ private:
         case StoreBarrierWithNullCheck:
         case FunctionReentryWatchpoint:
         case TypedArrayWatchpoint:
+        case MovHint:
+        case ZombieHint:
             break;
 #else
         default:
@@ -1012,7 +1012,8 @@ private:
 #endif
         }
         
-        DFG_NODE_DO_TO_CHILDREN(m_graph, node, observeUntypedEdge);
+        if (!node->containsMovHint())
+            DFG_NODE_DO_TO_CHILDREN(m_graph, node, observeUntypedEdge);
     }
     
     void observeUntypedEdge(Node*, Edge& edge)
@@ -1478,7 +1479,7 @@ private:
     {
         if (isDouble(useKind)) {
             if (edge->shouldSpeculateInt32ForArithmetic()) {
-                injectInt32ToDoubleNode(edge, useKind, m_currentNode->speculationDirection());
+                injectInt32ToDoubleNode(edge, useKind);
                 return;
             }
             
@@ -1491,7 +1492,6 @@ private:
                 Node* result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecInt52AsDouble, Int52ToDouble,
                     m_currentNode->codeOrigin, Edge(edge.node(), NumberUse));
-                result->setSpeculationDirection(m_currentNode->speculationDirection());
                 edge = Edge(result, useKind);
                 return;
             }
@@ -1545,7 +1545,6 @@ private:
             Node* result = m_insertionSet.insertNode(
                 m_indexInBlock, SpecInt52, Int52ToValue,
                 m_currentNode->codeOrigin, Edge(edge.node(), UntypedUse));
-            result->setSpeculationDirection(m_currentNode->speculationDirection());
             edge = Edge(result, useKind);
             return;
         }
@@ -1587,13 +1586,11 @@ private:
         edge = newEdge;
     }
     
-    void injectInt32ToDoubleNode(Edge& edge, UseKind useKind = NumberUse, SpeculationDirection direction = BackwardSpeculation)
+    void injectInt32ToDoubleNode(Edge& edge, UseKind useKind = NumberUse)
     {
         Node* result = m_insertionSet.insertNode(
             m_indexInBlock, SpecInt52AsDouble, Int32ToDouble,
             m_currentNode->codeOrigin, Edge(edge.node(), NumberUse));
-        if (direction == ForwardSpeculation)
-            result->mergeFlags(NodeExitsForward);
         
         edge = Edge(result, useKind);
     }

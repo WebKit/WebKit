@@ -110,12 +110,8 @@ private:
                     m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
                     AdjacencyList children = node->children;
                     children.removeEdge(0);
-                    if (!!children.child1()) {
-                        Node phantom(Phantom, node->codeOrigin, children);
-                        if (node->flags() & NodeExitsForward)
-                            phantom.mergeFlags(NodeExitsForward);
-                        m_insertionSet.insertNode(indexInBlock, SpecNone, phantom);
-                    }
+                    if (!!children.child1())
+                        m_insertionSet.insertNode(indexInBlock, SpecNone, Phantom, node->codeOrigin, children);
                     node->children.setChild2(Edge());
                     node->children.setChild3(Edge());
                     node->convertToStructureTransitionWatchpoint(structure);

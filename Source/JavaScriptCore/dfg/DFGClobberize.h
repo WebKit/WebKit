@@ -129,9 +129,9 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case ConstantStoragePointer:
     case UInt32ToNumber:
     case DoubleAsInt32:
+    case Check:
         return;
         
-    case MovHintAndCheck:
     case MovHint:
     case ZombieHint:
     case Upsilon:

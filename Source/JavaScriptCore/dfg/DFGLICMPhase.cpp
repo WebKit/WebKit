@@ -128,7 +128,6 @@ public:
         //   time and preserve some kind of sanity, if we hoist something that must exit.
         //
         // Also, we need to remember to:
-        // - Clear NodeExitsForward for any nodes we hoisted.
         // - Update the state-at-tail with the node we hoisted, so future hoist candidates
         //   know about any type checks we hoisted.
         //
@@ -230,8 +229,6 @@ private:
         
         data.preHeader->insertBeforeLast(node);
         node->misc.owner = data.preHeader;
-        NodeFlags didExitForward = node->flags() & NodeExitsForward;
-        node->clearFlags(NodeExitsForward);
         node->codeOriginForExitTarget = data.preHeader->last()->codeOriginForExitTarget;
         
         // Modify the states at the end of the preHeader of the loop we hoisted to,
@@ -256,7 +253,6 @@ private:
         RELEASE_ASSERT(!(node->flags() & NodeHasVarArgs));
         
         nodeRef = m_graph.addNode(SpecNone, Phantom, node->codeOrigin, node->children);
-        nodeRef->mergeFlags(didExitForward);
         
         return true;
     }

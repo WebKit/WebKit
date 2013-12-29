@@ -166,10 +166,6 @@ struct OSRExit : public DFG::OSRExitBase {
     uint32_t m_stackmapID;
     
     CodeLocationJump codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
-    
-    void convertToForward(
-        DFG::BasicBlock*, DFG::Node* currentNode, unsigned nodeIndex,
-        const FormattedValue&, ExitArgumentList& arguments);
 };
 
 } } // namespace JSC::FTL

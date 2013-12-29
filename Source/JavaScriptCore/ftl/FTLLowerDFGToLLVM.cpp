@@ -228,8 +228,6 @@ private:
         
         bool shouldExecuteEffects = m_interpreter.startExecuting(m_node);
         
-        m_direction = (m_node->flags() & NodeExitsForward) ? ForwardSpeculation : BackwardSpeculation;
-        
         switch (m_node->op()) {
         case Upsilon:
             compileUpsilon();
@@ -259,9 +257,6 @@ private:
             break;
         case ZombieHint:
             compileZombieHint();
-            break;
-        case MovHintAndCheck:
-            compileMovHintAndCheck();
             break;
         case Phantom:
             compilePhantom();
@@ -657,15 +652,15 @@ private:
 
         switch (useKindFor(variable->flushFormat())) {
         case Int32Use:
-            speculateBackward(BadType, jsValueValue(jsValue), m_node, isNotInt32(jsValue));
+            speculate(BadType, jsValueValue(jsValue), m_node, isNotInt32(jsValue));
             setInt32(unboxInt32(jsValue));
             break;
         case CellUse:
-            speculateBackward(BadType, jsValueValue(jsValue), m_node, isNotCell(jsValue));
+            speculate(BadType, jsValueValue(jsValue), m_node, isNotCell(jsValue));
             setJSValue(jsValue);
             break;
         case BooleanUse:
-            speculateBackward(BadType, jsValueValue(jsValue), m_node, isNotBoolean(jsValue));
+            speculate(BadType, jsValueValue(jsValue), m_node, isNotBoolean(jsValue));
             setBoolean(unboxBoolean(jsValue));
             break;
         case UntypedUse:
@@ -701,8 +696,6 @@ private:
     
     void compileSetLocal()
     {
-        observeMovHint(m_node);
-        
         VariableAccessData* variable = m_node->variableAccessData();
         switch (variable->flushFormat()) {
         case FlushedJSValue: {
@@ -753,19 +746,16 @@ private:
     
     void compileMovHint()
     {
-        observeMovHint(m_node);
+        ASSERT(m_node->containsMovHint());
+        ASSERT(m_node->op() != ZombieHint);
+        
+        VirtualRegister operand = m_node->unlinkedLocal();
+        m_availability.operand(operand) = Availability(m_node->child1().node());
     }
     
     void compileZombieHint()
     {
-        VariableAccessData* data = m_node->variableAccessData();
-        m_availability.operand(data->local()) = Availability::unavailable();
-    }
-    
-    void compileMovHintAndCheck()
-    {
-        observeMovHint(m_node);
-        speculate(m_node->child1());
+        m_availability.operand(m_node->unlinkedLocal()) = Availability::unavailable();
     }
     
     void compilePhantom()
@@ -1177,40 +1167,7 @@ private:
     
     void compileInt32ToDouble()
     {
-        if (!m_interpreter.needsTypeCheck(m_node->child1(), SpecFullNumber)
-            || m_node->speculationDirection() == BackwardSpeculation) {
-            setDouble(lowDouble(m_node->child1()));
-            return;
-        }
-        
-        LValue boxedValue = lowJSValue(m_node->child1(), ManualOperandSpeculation);
-        
-        LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("Double unboxing int case"));
-        LBasicBlock doubleCase = FTL_NEW_BLOCK(m_out, ("Double unboxing double case"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Double unboxing continuation"));
-        
-        m_out.branch(isNotInt32(boxedValue), doubleCase, intCase);
-        
-        LBasicBlock lastNext = m_out.appendTo(intCase, doubleCase);
-        
-        ValueFromBlock intToDouble = m_out.anchor(
-            m_out.intToDouble(unboxInt32(boxedValue)));
-        m_out.jump(continuation);
-        
-        m_out.appendTo(doubleCase, continuation);
-
-        forwardTypeCheck(
-            jsValueValue(boxedValue), m_node->child1(), SpecFullNumber,
-            isCellOrMisc(boxedValue), jsValueValue(boxedValue));
-        
-        ValueFromBlock unboxedDouble = m_out.anchor(unboxDouble(boxedValue));
-        m_out.jump(continuation);
-        
-        m_out.appendTo(continuation, lastNext);
-        
-        LValue result = m_out.phi(m_out.doubleType, intToDouble, unboxedDouble);
-        
-        setDouble(result);
+        setDouble(lowDouble(m_node->child1()));
     }
     
     void compileCheckStructure()
@@ -3196,26 +3153,10 @@ private:
         return m_out.phi(m_out.int32, fastResult, slowResult);
     }
     
-    void speculateBackward(
-        ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition)
-    {
-        appendOSRExit(
-            kind, lowValue, highValue, failCondition, BackwardSpeculation, FormattedValue());
-    }
-    
-    void speculateForward(
-        ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition,
-        const FormattedValue& recovery)
-    {
-        appendOSRExit(
-            kind, lowValue, highValue, failCondition, ForwardSpeculation, recovery);
-    }
-    
     void speculate(
         ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition)
     {
-        appendOSRExit(
-            kind, lowValue, highValue, failCondition, m_direction, FormattedValue());
+        appendOSRExit(kind, lowValue, highValue, failCondition);
     }
     
     void terminate(ExitKind kind)
@@ -3223,41 +3164,21 @@ private:
         speculate(kind, noValue(), 0, m_out.booleanTrue);
     }
     
-    void backwardTypeCheck(
-        FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
-        LValue failCondition)
-    {
-        appendTypeCheck(
-            lowValue, highValue, typesPassedThrough, failCondition, BackwardSpeculation,
-            FormattedValue());
-    }
-    
-    void forwardTypeCheck(
-        FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
-        LValue failCondition, const FormattedValue& recovery)
-    {
-        appendTypeCheck(
-            lowValue, highValue, typesPassedThrough, failCondition, ForwardSpeculation,
-            recovery);
-    }
-    
     void typeCheck(
         FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
         LValue failCondition)
     {
-        appendTypeCheck(
-            lowValue, highValue, typesPassedThrough, failCondition, m_direction,
-            FormattedValue());
+        appendTypeCheck(lowValue, highValue, typesPassedThrough, failCondition);
     }
     
     void appendTypeCheck(
         FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
-        LValue failCondition, SpeculationDirection direction, FormattedValue recovery)
+        LValue failCondition)
     {
         if (!m_interpreter.needsTypeCheck(highValue, typesPassedThrough))
             return;
         ASSERT(mayHaveTypeCheck(highValue.useKind()));
-        appendOSRExit(BadType, lowValue, highValue.node(), failCondition, direction, recovery);
+        appendOSRExit(BadType, lowValue, highValue.node(), failCondition);
         m_interpreter.filter(highValue, typesPassedThrough);
     }
     
@@ -4092,8 +4013,7 @@ private:
     }
     
     void appendOSRExit(
-        ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition,
-        SpeculationDirection direction, FormattedValue recovery)
+        ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition)
     {
         if (verboseCompilationEnabled())
             dataLog("    OSR exit #", m_ftlState.jitCode->osrExit.size(), " with availability: ", m_availability, "\n");
@@ -4118,38 +4038,20 @@ private:
         
         lastNext = m_out.appendTo(failCase, continuation);
         
-        emitOSRExitCall(exit, lowValue, direction, recovery);
+        emitOSRExitCall(exit, lowValue);
         
         m_out.unreachable();
         
         m_out.appendTo(continuation, lastNext);
     }
     
-    void emitOSRExitCall(
-        OSRExit& exit, FormattedValue lowValue, SpeculationDirection direction,
-        FormattedValue recovery)
+    void emitOSRExitCall(OSRExit& exit, FormattedValue lowValue)
     {
         ExitArgumentList arguments;
         
         CodeOrigin codeOrigin = exit.m_codeOrigin;
         
-        if (direction == BackwardSpeculation)
-            buildExitArguments(exit, arguments, lowValue, codeOrigin);
-        else {
-            ASSERT(direction == ForwardSpeculation);
-            if (!recovery) {
-                for (unsigned nodeIndex = m_nodeIndex; nodeIndex < m_highBlock->size(); ++nodeIndex) {
-                    Node* node = m_highBlock->at(nodeIndex);
-                    if (node->codeOriginForExitTarget == codeOrigin)
-                        continue;
-                    codeOrigin = node->codeOriginForExitTarget;
-                    break;
-                }
-            }
-            
-            buildExitArguments(exit, arguments, lowValue, codeOrigin);
-            exit.convertToForward(m_highBlock, m_node, m_nodeIndex, recovery, arguments);
-        }
+        buildExitArguments(exit, arguments, lowValue, codeOrigin);
         
         callStackmap(exit, arguments);
     }
@@ -4307,16 +4209,6 @@ private:
     {
         exit.m_values[index] = ExitValue::exitArgument(ExitArgument(format, arguments.size()));
         arguments.append(value);
-    }
-    
-    void observeMovHint(Node* node)
-    {
-        ASSERT(node->containsMovHint());
-        ASSERT(node->op() != ZombieHint);
-        
-        VirtualRegister operand = node->local();
-        
-        m_availability.operand(operand) = Availability(node->child1().node());
     }
     
     void setInt32(Node* node, LValue value)
@@ -4489,7 +4381,6 @@ private:
     CodeOrigin m_codeOriginForExitProfile;
     unsigned m_nodeIndex;
     Node* m_node;
-    SpeculationDirection m_direction;
     
     uint32_t m_stackmapIDs;
 };

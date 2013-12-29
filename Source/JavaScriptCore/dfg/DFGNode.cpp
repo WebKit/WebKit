@@ -46,9 +46,6 @@ bool Node::hasVariableAccessData(Graph& graph)
     case GetLocal:
     case GetArgument:
     case SetLocal:
-    case MovHint:
-    case MovHintAndCheck:
-    case ZombieHint:
     case SetArgument:
     case Flush:
     case PhantomLocal:
