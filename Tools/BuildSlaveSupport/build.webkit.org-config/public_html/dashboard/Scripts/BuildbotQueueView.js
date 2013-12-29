@@ -60,37 +60,35 @@ BuildbotQueueView.prototype = {
     constructor: BuildbotQueueView,
     __proto__: QueueView.prototype,
 
-    _latestFinishedIteration: function(queue)
+    _latestProductiveIteration: function(queue)
     {
-        for (var i = 0; i < queue.iterations.length; ++i) {
-            var iteration = queue.iterations[i];
-            if (!iteration.loaded || !iteration.finished)
-                continue;
-            return iteration;
-        }
-        return null;
+        if (!queue.iterations.length)
+            return null;
+        if (queue.iterations[0].productive)
+            return queue.iterations[0];
+        return queue.iterations[0].previousProductiveIteration;
     },
 
     _appendPendingRevisionCount: function(queue)
     {
-        var latestFinishedIteration = this._latestFinishedIteration(queue);
-        if (!latestFinishedIteration)
+        var latestProductiveIteration = this._latestProductiveIteration(queue);
+        if (!latestProductiveIteration)
             return;
 
         var latestRecordedOpenSourceRevisionNumber = webkitTrac.latestRecordedRevisionNumber;
         if (!latestRecordedOpenSourceRevisionNumber)
             return;
 
-        var openSourceRevisionsBehind = latestRecordedOpenSourceRevisionNumber - latestFinishedIteration.openSourceRevision;
+        var openSourceRevisionsBehind = latestRecordedOpenSourceRevisionNumber - latestProductiveIteration.openSourceRevision;
         if (openSourceRevisionsBehind < 0)
             openSourceRevisionsBehind = 0;
 
-        if (latestFinishedIteration.internalRevision) {
+        if (latestProductiveIteration.internalRevision) {
             var latestRecordedInternalRevisionNumber = internalTrac.latestRecordedRevisionNumber;
             if (!latestRecordedInternalRevisionNumber)
                 return;
 
-            var internalRevisionsBehind = latestRecordedInternalRevisionNumber - latestFinishedIteration.internalRevision;
+            var internalRevisionsBehind = latestRecordedInternalRevisionNumber - latestProductiveIteration.internalRevision;
             if (internalRevisionsBehind < 0)
                 internalRevisionsBehind = 0;
             if (openSourceRevisionsBehind || internalRevisionsBehind) {
@@ -155,20 +153,20 @@ BuildbotQueueView.prototype = {
 
     _presentPopoverForPendingCommits: function(element, popover, queue)
     {
-        var latestFinishedIteration = this._latestFinishedIteration(queue);
-        if (!latestFinishedIteration)
+        var latestProductiveIteration = this._latestProductiveIteration(queue);
+        if (!latestProductiveIteration)
             return false;
 
         var content = document.createElement("div");
         content.className = "commit-history-popover";
 
-        var linesForOpenSource = this._popoverLinesForCommitRange(webkitTrac, latestFinishedIteration.openSourceRevision + 1, webkitTrac.latestRecordedRevisionNumber);
+        var linesForOpenSource = this._popoverLinesForCommitRange(webkitTrac, latestProductiveIteration.openSourceRevision + 1, webkitTrac.latestRecordedRevisionNumber);
         for (var i = 0; i != linesForOpenSource.length; ++i)
             content.appendChild(linesForOpenSource[i]);
 
         var linesForInternal = [];
-        if (latestFinishedIteration.internalRevision && internalTrac.latestRecordedRevisionNumber)
-            var linesForInternal = this._popoverLinesForCommitRange(internalTrac, latestFinishedIteration.internalRevision + 1, internalTrac.latestRecordedRevisionNumber);
+        if (latestProductiveIteration.internalRevision && internalTrac.latestRecordedRevisionNumber)
+            var linesForInternal = this._popoverLinesForCommitRange(internalTrac, latestProductiveIteration.internalRevision + 1, internalTrac.latestRecordedRevisionNumber);
 
         if (linesForOpenSource.length && linesForInternal.length) {
             var divider = document.createElement("div");
@@ -226,8 +224,7 @@ BuildbotQueueView.prototype = {
         contentElement.textContent = "r" + (internal ? iteration.internalRevision : iteration.openSourceRevision);
         contentElement.classList.add("revision-number");
 
-        // FIXME: It would be better to display changes from the previous finished run, ignoring those that were interrupted and don't have results.
-        var previousIteration = iteration.previous;
+        var previousIteration = iteration.previousProductiveIteration;
         if (previousIteration) {
             var context = {
                 trac: internal ? internalTrac : webkitTrac,
