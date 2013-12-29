@@ -41,6 +41,8 @@
 #include "HTMLStyleElement.h"
 #include "ImageLoader.h"
 #include "ProcessingInstruction.h"
+#include "RenderElement.h"
+#include "RenderText.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
