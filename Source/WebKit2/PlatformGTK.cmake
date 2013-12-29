@@ -426,8 +426,10 @@ set(SharedWebKit2Libraries
     ${WebKit2_LIBRARIES}
 )
 
+# Since the GObjectDOMBindings convenience library exports API that is unused except
+# in embedding applications we need to instruct the linker to link all symbols explicitly.
 list(APPEND WebKit2_LIBRARIES
-    GObjectDOMBindings
+    -Wl,--whole-archive GObjectDOMBindings -Wl,--no-whole-archive
     WebCorePlatformGTK
 )
 

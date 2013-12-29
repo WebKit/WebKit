@@ -129,8 +129,10 @@ list(APPEND WebKitGTK_INSTALLED_HEADERS
     ${WEBKIT_DIR}/gtk/webkit/webkitwebwindowfeatures.h
 )
 
+# Since the GObjectDOMBindings convenience library exports API that is unused except
+# in embedding applications we need to instruct the linker to link all symbols explicitly.
 list(APPEND WebKit_LIBRARIES
-    GObjectDOMBindings
+    -Wl,--whole-archive GObjectDOMBindings -Wl,--no-whole-archive
     WebCorePlatformGTK
 )
 
