@@ -70,12 +70,31 @@ Trac.prototype = {
         var link = doc.evaluate("./link", commitElement, null, XPathResult.STRING_TYPE).stringValue;
         var revisionNumber = parseInt(/\d+$/.exec(link))
 
-        var title = doc.evaluate("./title", commitElement, null, XPathResult.STRING_TYPE).stringValue;
-        title = title.replace(/^Changeset \[\d+\]: /, "");
-        var author = doc.evaluate("./author", commitElement, null, XPathResult.STRING_TYPE).stringValue;
+        function tracNSResolver(prefix)
+        {
+            if (prefix == "dc")
+                return "http://purl.org/dc/elements/1.1/";
+            return null;
+        }
+
+        var author = doc.evaluate("./author|dc:creator", commitElement, tracNSResolver, XPathResult.STRING_TYPE).stringValue;
         var date = doc.evaluate("./pubDate", commitElement, null, XPathResult.STRING_TYPE).stringValue;
         date = new Date(Date.parse(date));
         var description = doc.evaluate("./description", commitElement, null, XPathResult.STRING_TYPE).stringValue;
+
+        // The feed contains a <title>, but it's not parsed as well as what we are getting from description.
+        var parsedDescription = document.createElement("div");
+        parsedDescription.innerHTML = description;
+        var title = document.createElement("div");
+        var node = parsedDescription.firstChild.firstChild;
+        while (node && node.tagName != "BR") {
+            title.appendChild(node.cloneNode(true));
+            node = node.nextSibling;
+        }
+
+        // For some reason, trac titles start with a newline. Delete it.
+        if (title.firstChild && title.firstChild.nodeType == Node.TEXT_NODE && title.firstChild.textContent.length > 0 && title.firstChild.textContent[0] == "\n")
+            title.firstChild.textContent = title.firstChild.textContent.substring(1);
 
         return {
             revisionNumber: revisionNumber,

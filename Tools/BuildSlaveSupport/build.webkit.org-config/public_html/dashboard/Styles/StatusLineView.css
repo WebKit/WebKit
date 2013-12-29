@@ -109,6 +109,10 @@
     line-height: 13px;
 }
 
+.status-line.no-bubble .message {
+    display: inline-block; /* Fit block to content, so that popovers are positioned correctly. */
+}
+
 .status-line.neutral .label,
 .status-line.neutral .message,
 .status-line.no-bubble .label,

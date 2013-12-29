@@ -23,41 +23,85 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.queue-view {
-    width: 200px;
-    min-height: 200px;
-    padding: 10px 20px;
+.popover {
+    position: absolute;
+    min-width: 20px;
+    min-height: 20px;
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
 }
 
-.queue-view .queueLabel {
-    display: block;
-    font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
-    color: rgb(145, 135, 95);
-    text-align: left;
+.popover.arrow-up {
+    padding: 16px 5px 5px 5px;
 }
 
-.queue-view .queueLabel:not(:first-child) {
-    margin-top: 10px;
+.popover.arrow-right {
+    padding: 5px 16px 5px 5px;
 }
 
-.pending-commits-popover > .pending-commit {
-    font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
-    color: rgb(145, 135, 95);
-    font-size: 12px;
-    text-align: left;
-    padding: 1px 6px 1px 6px;
-    user-select: auto;
+.popover.arrow-down {
+    padding: 5px 5px 16px 5px;
 }
 
-.pending-commits-popover > .pending-commit > .author {
-    padding-left: 5px;
-    padding-right: 5px;
+.popover.arrow-left {
+    padding: 5px 5px 5px 16px;
 }
 
-.pending-commits-popover > .pending-commit > .title {
-    color: black;
+.popover.visible {
+    opacity: 1;
 }
 
-.pending-commits-popover > .divider {
-    height: 7px;
+.popover.step-in {
+    transition: opacity 0ms;
+    transition-delay: 1s;
+    opacity: 1;
+}
+
+.popover.fade-out {
+    transition: opacity 350ms;
+    transition-delay: 1s;
+    opacity: 0;
+}
+
+.popover > .container {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+
+    padding: 5px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    pointer-events: auto;
+}
+
+.popover > .container.center {
+    display: -webkit-flex;
+    -webkit-justify-content: center;
+    -webkit-align-items: center;
+}
+
+.popover.arrow-up > .container {
+    top: 16px;
+}
+
+.popover.arrow-right > .container {
+    right: 16px;
+}
+
+.popover.arrow-down > .container {
+    bottom: 16px;
+}
+
+.popover.arrow-left > .container {
+    left: 16px;
+}
+
+body.popover-prevent-document-scrolling {
+    overflow: hidden;
 }

@@ -1,3 +1,73 @@
+2013-12-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Please display information about pending runs in build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=122180
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        (BuildbotBuilderQueueView.prototype.update.appendBuilderQueueStatus): Added a semicolon at the end of a line.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._latestFinishedIteration): Factored out of _appendPendingRevisionCount.
+        (BuildbotQueueView.prototype._appendPendingRevisionCount): Install a popover tracker over the element.
+        (BuildbotQueueView.prototype.lineForCommit): Build an element for a particular commit ot be shown in popover.
+        (BuildbotQueueView.prototype.presentPopoverForElement): Build and show popover content when PopoverTracker
+        asks us to.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Geometry.js: Added.
+        Taken from WebInspector with minimal changes:
+        - Changed root name from WebInspector to Dashboard.
+        - Removed some unused functionality.
+        - Added Rect.containsPoint.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Popover.js: Added.
+        Popover has extensive changes compared to WebInspector version, only drawing code is the same:
+        - Fixed to work in scrollable pages - WebInspector version assumes that window
+        and document coordinates are the same, and also erroneously dismisses a scrollable
+        popover if scrolling cascades out of it after reaching a bound.
+        - Simplified API and implementation to Dashboard needs, it is no longer possible to
+        change content of an existing popover.
+        - Rewrote visibility tracking to be more complete, and not rely on external tracker
+        object so much.
+        - Added code to flash scroll bars when showing a scrollable popover.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/PopoverTracker.js: Added.
+        Objects of this class show and hide popovers as appropriate for registered active elements.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/StatusLineView.js:
+        (StatusLineView.prototype.get messageElement): Added an accessor, so that we could
+        install a popover on message element. It's the only visible element in pending commit
+        line, but the line has different bounds, so we can't install a popover on it (it
+        would be incorrectly positioned if we did).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Trac.js:
+        (Trac.prototype._convertCommitInfoElementToObject):
+        - Some trac installations report author in a different element, updated to support that.
+        - Changed to parse title out of description, because trac titles are ugly. Also,
+        we get a nice HTML with links from the description.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Utilities.js:
+        (Node.prototype.isAncestor): Copied from Web Inspector, only changing the form for
+        consistency with the rest of this file (add a property on prototype with assignment
+        instead of using Object.defineProperty).
+        (Node.prototype.isDescendant): Ditto.
+        (Node.prototype.isSelfOrAncestor): Ditto.
+        (Node.prototype.isSelfOrDescendant): Ditto.
+        (DOMTokenList.prototype.contains): Ditto.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Popover.css: Added.
+        Like JS counterpart, mostly lifted from Web Inspector.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/QueueView.css:
+        Added style rules for pending commits popover.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
+        (.status-line.no-bubble .message): Changed to display:inline-block, so that it fits
+        to content, and we can show the popover in a correct place.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/index.html: Added new files.
+
 2013-12-27  Gavin Barraclough  <barraclough@apple.com>
 
         Merge PageVisibilityState & ViewState::IsVisible in WebKit2

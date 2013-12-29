@@ -60,42 +60,116 @@ BuildbotQueueView.prototype = {
     constructor: BuildbotQueueView,
     __proto__: QueueView.prototype,
 
-    _appendPendingRevisionCount: function(queue)
+    _latestFinishedIteration: function(queue)
     {
         for (var i = 0; i < queue.iterations.length; ++i) {
             var iteration = queue.iterations[i];
             if (!iteration.loaded || !iteration.finished)
                 continue;
+            return iteration;
+        }
+        return null;
+    },
 
-            var latestRecordedOpenSourceRevisionNumber = webkitTrac.latestRecordedRevisionNumber;
-            if (!latestRecordedOpenSourceRevisionNumber)
+    _appendPendingRevisionCount: function(queue)
+    {
+        var latestFinishedIteration = this._latestFinishedIteration(queue);
+        if (!latestFinishedIteration)
+            return;
+
+        var latestRecordedOpenSourceRevisionNumber = webkitTrac.latestRecordedRevisionNumber;
+        if (!latestRecordedOpenSourceRevisionNumber)
+            return;
+
+        var openSourceRevisionsBehind = latestRecordedOpenSourceRevisionNumber - latestFinishedIteration.openSourceRevision;
+        if (openSourceRevisionsBehind < 0)
+            openSourceRevisionsBehind = 0;
+
+        if (latestFinishedIteration.internalRevision) {
+            var latestRecordedInternalRevisionNumber = internalTrac.latestRecordedRevisionNumber;
+            if (!latestRecordedInternalRevisionNumber)
                 return;
 
-            var openSourceRevisionsBehind = latestRecordedOpenSourceRevisionNumber - iteration.openSourceRevision;
-            if (openSourceRevisionsBehind < 0)
-                openSourceRevisionsBehind = 0;
-
-            if (iteration.internalRevision) {
-                var latestRecordedInternalRevisionNumber = internalTrac.latestRecordedRevisionNumber;
-                if (!latestRecordedInternalRevisionNumber)
-                    return;
-
-                var internalRevisionsBehind = latestRecordedInternalRevisionNumber - iteration.internalRevision;
-                if (internalRevisionsBehind < 0)
-                    internalRevisionsBehind = 0;
-                if (openSourceRevisionsBehind || internalRevisionsBehind) {
-                    var message = openSourceRevisionsBehind + " \uff0b " + internalRevisionsBehind + " revisions behind";
-                    var status = new StatusLineView(message, StatusLineView.Status.NoBubble);
-                    this.element.appendChild(status.element);
-                }
-            } else if (openSourceRevisionsBehind) {
-                var message = openSourceRevisionsBehind + " " + (openSourceRevisionsBehind === 1 ? "revision behind" : "revisions behind");
+            var internalRevisionsBehind = latestRecordedInternalRevisionNumber - latestFinishedIteration.internalRevision;
+            if (internalRevisionsBehind < 0)
+                internalRevisionsBehind = 0;
+            if (openSourceRevisionsBehind || internalRevisionsBehind) {
+                var message = openSourceRevisionsBehind + " \uff0b " + internalRevisionsBehind + " revisions behind";
                 var status = new StatusLineView(message, StatusLineView.Status.NoBubble);
                 this.element.appendChild(status.element);
             }
-
-            return;
+        } else if (openSourceRevisionsBehind) {
+            var message = openSourceRevisionsBehind + " " + (openSourceRevisionsBehind === 1 ? "revision behind" : "revisions behind");
+            var status = new StatusLineView(message, StatusLineView.Status.NoBubble);
+            this.element.appendChild(status.element);
         }
+
+        if (status)
+            new PopoverTracker(status.messageElement, this, queue);
+    },
+
+    presentPopoverForElement: function(element, popover, queue)
+    {
+        var latestFinishedIteration = this._latestFinishedIteration(queue);
+        if (!latestFinishedIteration)
+            return false;
+
+        function lineForCommit(trac, commit)
+        {
+            var result = document.createElement("div");
+            result.className = "pending-commit";
+
+            var linkElement = document.createElement("a");
+            linkElement.className = "revision";
+            linkElement.href = trac.revisionURL(commit.revisionNumber);
+            linkElement.target = "_blank";
+            linkElement.textContent = "r" + commit.revisionNumber;
+            result.appendChild(linkElement);
+
+            var authorElement = document.createElement("span");
+            authorElement.className = "author";
+            authorElement.textContent = commit.author;
+            result.appendChild(authorElement);
+
+            var titleElement = document.createElement("span");
+            titleElement.className = "title";
+            titleElement.innerHTML = commit.title.innerHTML;
+            result.appendChild(titleElement);
+
+            return result;
+        }
+
+        var content = document.createElement("div");
+        content.className = "pending-commits-popover";
+
+        for (var i = webkitTrac.recordedCommits.length - 1; i >= 0; --i) {
+            var commit = webkitTrac.recordedCommits[i];
+            if (commit.revisionNumber <= latestFinishedIteration.openSourceRevision)
+                break;
+
+            content.appendChild(lineForCommit(webkitTrac, commit));
+        }
+
+        if (latestFinishedIteration.internalRevision && internalTrac.latestRecordedRevisionNumber) {
+            if (latestFinishedIteration.internalRevision < internalTrac.latestRecordedRevisionNumber && content.hasChildNodes()) {
+                var divider = document.createElement("div");
+                divider.className = "divider";
+                content.appendChild(divider);
+            }
+
+            for (var i = internalTrac.recordedCommits.length - 1; i >= 0; --i) {
+                var commit = internalTrac.recordedCommits[i];
+                if (commit.revisionNumber <= latestFinishedIteration.internalRevision)
+                    break;
+
+                content.appendChild(lineForCommit(internalTrac, commit));
+            }
+        }
+
+        var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
+        popover.present(rect, content, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
+
+        return true;
     },
 
     revisionLinksForIteration: function(iteration)

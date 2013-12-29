@@ -60,7 +60,7 @@ BuildbotBuilderQueueView.prototype = {
 
         function appendBuilderQueueStatus(queue)
         {
-            this._appendPendingRevisionCount(queue)
+            this._appendPendingRevisionCount(queue);
 
             var firstRecentFailedIteration = queue.firstRecentFailedIteration;
             if (firstRecentFailedIteration && firstRecentFailedIteration.loaded) {

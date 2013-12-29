@@ -70,12 +70,51 @@ function loadXML(url, callback) {
     request.send();
 };
 
+Node.prototype.isAncestor = function(node)
+{
+    if (!node)
+        return false;
+
+    var currentNode = node.parentNode;
+    while (currentNode) {
+        if (this === currentNode)
+            return true;
+        currentNode = currentNode.parentNode;
+    }
+
+    return false;
+}
+
+Node.prototype.isDescendant = function(descendant)
+{
+    return !!descendant && descendant.isAncestor(this);
+}
+
+Node.prototype.isSelfOrAncestor = function(node)
+{
+    return !!node && (node === this || this.isAncestor(node));
+}
+
+Node.prototype.isSelfOrDescendant = function(node)
+{
+    return !!node && (node === this || this.isDescendant(node));
+}
+
 Element.prototype.removeChildren = function()
 {
     // This has been tested to be the fastest removal method.
     if (this.firstChild)
         this.textContent = "";
 };
+
+DOMTokenList.prototype.contains = function(string)
+{
+    for (var i = 0, end = this.length; i < end; ++i) {
+        if (this.item(i) === string)
+            return true;
+    }
+    return false;
+}
 
 Array.prototype.contains = function(value)
 {
