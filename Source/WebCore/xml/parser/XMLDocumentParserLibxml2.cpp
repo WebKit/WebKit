@@ -47,6 +47,7 @@
 #include "HTMLTemplateElement.h"
 #include "Page.h"
 #include "ProcessingInstruction.h"
+#include "RenderElement.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -854,7 +855,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     pushCurrentNode(newElement.get());
 #endif
 
-    if (m_view && currentNode->attached() && !newElement->attached())
+    if (m_view && currentNode->renderer() && !newElement->renderer())
         Style::attachRenderTree(*newElement);
 
     if (newElement->hasTagName(HTMLNames::htmlTag))
@@ -1030,7 +1031,7 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
 
     RefPtr<CDATASection> newNode = CDATASection::create(m_currentNode->document(), toString(s, len));
     m_currentNode->parserAppendChild(newNode.get());
-    if (m_view && !newNode->attached())
+    if (m_view)
         Style::attachTextRenderer(*newNode);
 }
 

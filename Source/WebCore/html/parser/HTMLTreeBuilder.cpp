@@ -1633,12 +1633,6 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
         //        be in HTMLConstructionSite. My guess is that steps 11--15
         //        should all be in some HTMLConstructionSite function.
         furthestBlockElement->parserAppendChild(newItem->element());
-        // FIXME: Why is this attach logic necessary? Style resolve should attach us if needed.
-        if (furthestBlockElement->attached() && !newItem->element()->attached()) {
-            // Notice that newItem->element() might already be attached if, for example, one of the reparented
-            // children is a style element, which attaches itself automatically.
-            Style::attachRenderTree(*newItem->element());
-        }
         // 14.
         m_tree.activeFormattingElements()->swapTo(formattingElement, newItem, bookmark);
         // 15.

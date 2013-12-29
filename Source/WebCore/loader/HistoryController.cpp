@@ -181,7 +181,7 @@ void HistoryController::saveDocumentState()
     Document* document = m_frame.document();
     ASSERT(document);
     
-    if (item->isCurrentDocument(document) && document->attached()) {
+    if (item->isCurrentDocument(document) && document->hasLivingRenderTree()) {
         LOG(Loading, "WebCoreLoading %s: saving form state to %p", m_frame.tree().uniqueName().string().utf8().data(), item);
         item->setDocumentState(document->formElementsState());
     }

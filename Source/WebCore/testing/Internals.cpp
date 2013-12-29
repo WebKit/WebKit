@@ -1924,6 +1924,7 @@ void Internals::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const 
 
 PassRefPtr<MallocStatistics> Internals::mallocStatistics() const
 {
+//    WTF::releaseFastMallocFreeMemory();
     return MallocStatistics::create();
 }
 

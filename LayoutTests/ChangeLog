@@ -1,3 +1,15 @@
+2013-12-29  Antti Koivisto  <antti@apple.com>
+
+        Remove Node::attached()
+        https://bugs.webkit.org/show_bug.cgi?id=126276
+        
+        Reviewed by Sam Weinig.
+
+        * platform/mac/fast/table/dynamic-caption-add-before-child-expected.png:
+        * platform/mac/fast/table/dynamic-caption-add-before-child-expected.txt:
+        
+            This test result change is a progression. Dynamic captions are now correctly in document order.
+
 2013-12-27  Gavin Barraclough  <barraclough@apple.com>
 
         Merge PageVisibilityState & ViewState::IsVisible in WebKit2

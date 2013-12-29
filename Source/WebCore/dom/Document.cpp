@@ -1953,7 +1953,7 @@ void Document::setRenderView(RenderView* renderView)
 
 void Document::createRenderTree()
 {
-    ASSERT(!attached());
+    ASSERT(!renderView());
     ASSERT(!m_inPageCache);
     ASSERT(!m_axObjectCache || this != topDocument());
 
@@ -1986,7 +1986,7 @@ void Document::didBecomeCurrentDocumentInFrame()
 
     m_frame->script().updateDocument();
 
-    if (!attached())
+    if (!hasLivingRenderTree())
         createRenderTree();
 
     updateViewportArguments();
@@ -2033,7 +2033,7 @@ void Document::disconnectFromFrame()
 
 void Document::destroyRenderTree()
 {
-    ASSERT(attached());
+    ASSERT(hasLivingRenderTree());
     ASSERT(!m_inPageCache);
 
     TemporaryChange<bool> change(m_renderTreeBeingDestroyed, true);
@@ -3210,7 +3210,7 @@ void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
 
     // Don't bother updating, since we haven't loaded all our style info yet
     // and haven't calculated the style selector for the first time.
-    if (!attached() || (!m_didCalculateStyleResolver && !haveStylesheetsLoaded())) {
+    if (!hasLivingRenderTree() || (!m_didCalculateStyleResolver && !haveStylesheetsLoaded())) {
         m_styleResolver.clear();
         return;
     }
@@ -5360,7 +5360,7 @@ bool Document::webkitFullscreenEnabled() const
 
 void Document::webkitWillEnterFullScreenForElement(Element* element)
 {
-    if (!attached() || inPageCache())
+    if (!hasLivingRenderTree() || inPageCache())
         return;
 
     ASSERT(element);
@@ -5405,7 +5405,7 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
     if (!m_fullScreenElement)
         return;
 
-    if (!attached() || inPageCache())
+    if (!hasLivingRenderTree() || inPageCache())
         return;
 
     m_fullScreenElement->didBecomeFullscreenElement();
@@ -5418,7 +5418,7 @@ void Document::webkitWillExitFullScreenForElement(Element*)
     if (!m_fullScreenElement)
         return;
 
-    if (!attached() || inPageCache())
+    if (!hasLivingRenderTree() || inPageCache())
         return;
 
     m_fullScreenElement->willStopBeingFullscreenElement();
@@ -5429,7 +5429,7 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     if (!m_fullScreenElement)
         return;
 
-    if (!attached() || inPageCache())
+    if (!hasLivingRenderTree() || inPageCache())
         return;
 
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);

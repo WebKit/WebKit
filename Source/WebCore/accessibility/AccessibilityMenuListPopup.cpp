@@ -70,7 +70,7 @@ bool AccessibilityMenuListPopup::computeAccessibilityIsIgnored() const
 
 AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibilityObject(HTMLElement* element) const
 {
-    if (!element || !isHTMLOptionElement(element) || !element->attached())
+    if (!element || !isHTMLOptionElement(element) || !element->inRenderedDocument())
         return 0;
 
     AccessibilityObject* object = document()->axObjectCache()->getOrCreate(MenuListOptionRole);
@@ -118,7 +118,7 @@ void AccessibilityMenuListPopup::childrenChanged()
     AXObjectCache* cache = axObjectCache();
     for (size_t i = m_children.size(); i > 0 ; --i) {
         AccessibilityObject* child = m_children[i - 1].get();
-        if (child->actionElement() && !child->actionElement()->attached()) {
+        if (child->actionElement() && !child->actionElement()->inRenderedDocument()) {
             child->detachFromParent();
             cache->remove(child->axObjectID());
         }

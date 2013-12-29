@@ -140,7 +140,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
     for (unsigned i = 0; i < children.size(); ++i) {
         Node& child = children[i].get();
-        if (child.attached())
+        if (child.renderer())
             detachChild(child);
 
         // FIXME: We need a no mutation event version of adoptNode.
@@ -150,7 +150,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
         // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).
         // Can we do better?
         treeScope().adoptIfNeeded(adoptedChild.get());
-        if (attached() && !adoptedChild->attached())
+        if (renderer() && !adoptedChild->renderer())
             attachChild(*adoptedChild.get());
     }
 }
@@ -594,7 +594,8 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
     ASSERT(oldChild.parentNode() == this);
 
     // Remove from rendering tree
-    if (oldChild.attached())
+    // FIXME: Get rid of the named flow test.
+    if (oldChild.renderer() || oldChild.inNamedFlow())
         detachChild(oldChild);
 
     if (nextChild)

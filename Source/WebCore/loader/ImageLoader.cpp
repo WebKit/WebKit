@@ -401,7 +401,7 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
         return;
     if (!m_image)
         return;
-    if (!m_element->document().attached())
+    if (!m_element->document().hasLivingRenderTree())
         return;
     m_hasPendingBeforeLoadEvent = false;
     if (m_element->dispatchBeforeLoadEvent(m_image->url())) {
@@ -431,7 +431,7 @@ void ImageLoader::dispatchPendingLoadEvent()
     if (!m_image)
         return;
     m_hasPendingLoadEvent = false;
-    if (element()->document().attached())
+    if (m_element->document().hasLivingRenderTree())
         dispatchLoadEvent();
 
     // Only consider updating the protection ref-count of the Element immediately before returning
@@ -444,8 +444,8 @@ void ImageLoader::dispatchPendingErrorEvent()
     if (!m_hasPendingErrorEvent)
         return;
     m_hasPendingErrorEvent = false;
-    if (element()->document().attached())
-        element()->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+    if (m_element->document().hasLivingRenderTree())
+        m_element->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 
     // Only consider updating the protection ref-count of the Element immediately before returning
     // from this function as doing so might result in the destruction of this ImageLoader.

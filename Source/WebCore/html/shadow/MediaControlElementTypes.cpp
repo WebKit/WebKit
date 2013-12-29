@@ -258,7 +258,7 @@ void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
     if (event->isMouseEvent() && static_cast<MouseEvent*>(event)->button())
         return;
 
-    if (!attached())
+    if (!renderer())
         return;
 
     MediaControlInputElement::defaultEventHandler(event);
@@ -276,7 +276,7 @@ void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
 
 bool MediaControlVolumeSliderElement::willRespondToMouseMoveEvents()
 {
-    if (!attached())
+    if (!renderer())
         return false;
 
     return MediaControlInputElement::willRespondToMouseMoveEvents();
@@ -284,7 +284,7 @@ bool MediaControlVolumeSliderElement::willRespondToMouseMoveEvents()
 
 bool MediaControlVolumeSliderElement::willRespondToMouseClickEvents()
 {
-    if (!attached())
+    if (!renderer())
         return false;
 
     return MediaControlInputElement::willRespondToMouseClickEvents();

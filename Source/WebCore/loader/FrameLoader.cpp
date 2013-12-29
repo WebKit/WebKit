@@ -617,7 +617,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     if (!m_frame.document()->inPageCache()) {
         m_frame.document()->cancelParsing();
         m_frame.document()->stopActiveDOMObjects();
-        if (m_frame.document()->attached()) {
+        if (m_frame.document()->hasLivingRenderTree()) {
             m_frame.document()->prepareForDestruction();
             m_frame.document()->removeFocusedNodeOfSubtree(m_frame.document());
         }

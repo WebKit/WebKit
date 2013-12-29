@@ -447,7 +447,7 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
         return false;
 
     }
-    if (!m_document.renderView() || !m_document.attached())
+    if (!m_document.hasLivingRenderTree())
         return false;
 
     Vector<RefPtr<StyleSheet>> activeStyleSheets;

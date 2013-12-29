@@ -315,7 +315,7 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
         m_size = size;
         setNeedsValidityCheck();
-        if (m_size != oldSize && attached()) {
+        if (m_size != oldSize && renderer()) {
             Style::reattachRenderTree(*this);
             setRecalcListItems();
         }
@@ -1046,7 +1046,7 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomicString& value)
     bool oldUsesMenuList = usesMenuList();
     m_multiple = !value.isNull();
     setNeedsValidityCheck();
-    if (oldUsesMenuList != usesMenuList() && attached())
+    if (oldUsesMenuList != usesMenuList() && renderer())
         Style::reattachRenderTree(*this);
 }
 

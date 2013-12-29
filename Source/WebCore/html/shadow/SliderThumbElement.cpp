@@ -519,7 +519,7 @@ void SliderThumbElement::handleTouchEvent(TouchEvent* touchEvent)
 
 bool SliderThumbElement::shouldAcceptTouchEvents()
 {
-    return attached() && !isDisabledFormControl();
+    return renderer() && !isDisabledFormControl();
 }
 
 void SliderThumbElement::registerForTouchEvents()

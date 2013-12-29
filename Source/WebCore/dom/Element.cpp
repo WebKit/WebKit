@@ -1096,7 +1096,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ne
     document().incDOMTreeVersion();
 
     StyleResolver* styleResolver = document().styleResolverIfExists();
-    bool testShouldInvalidateStyle = attached() && styleResolver && styleChangeType() < FullStyleChange;
+    bool testShouldInvalidateStyle = inRenderedDocument() && styleResolver && styleChangeType() < FullStyleChange;
     bool shouldInvalidateStyle = false;
 
     if (isIdAttributeName(name)) {
@@ -1197,7 +1197,7 @@ static bool checkSelectorForClassChange(const SpaceSplitString& oldClasses, cons
 void Element::classAttributeChanged(const AtomicString& newClassString)
 {
     StyleResolver* styleResolver = document().styleResolverIfExists();
-    bool testShouldInvalidateStyle = attached() && styleResolver && styleChangeType() < FullStyleChange;
+    bool testShouldInvalidateStyle = inRenderedDocument() && styleResolver && styleChangeType() < FullStyleChange;
     bool shouldInvalidateStyle = false;
 
     if (classStringHasClassName(newClassString)) {
@@ -1496,11 +1496,7 @@ void Element::addShadowRoot(PassRefPtr<ShadowRoot> newShadowRoot)
 
     resetNeedsNodeRenderingTraversalSlowPath();
 
-    // FIXME(94905): ShadowHost should be reattached during recalcStyle.
-    // Set some flag here and recreate shadow hosts' renderer in
-    // Element::recalcStyle.
-    if (attached())
-        setNeedsStyleRecalc(ReconstructRenderTree);
+    setNeedsStyleRecalc(ReconstructRenderTree);
 
     InspectorInstrumentation::didPushShadowRoot(this, shadowRoot);
 }
@@ -1513,7 +1509,7 @@ void Element::removeShadowRoot()
     InspectorInstrumentation::willPopShadowRoot(this, oldRoot.get());
     document().removeFocusedNodeOfSubtree(oldRoot.get());
 
-    ASSERT(!oldRoot->attached());
+    ASSERT(!oldRoot->renderer());
 
     elementRareData()->clearShadowRoot();
 
@@ -1627,8 +1623,7 @@ static void checkForSiblingStyleChanges(Element* parent, SiblingCheckType checkT
         // Find the first element node following |afterChange|
 
         // This is the insert/append case.
-        if (newFirstElement != elementAfterChange && elementAfterChange->attached()
-            && elementAfterChange->renderStyle() && elementAfterChange->renderStyle()->firstChildState())
+        if (newFirstElement != elementAfterChange && elementAfterChange->renderStyle() && elementAfterChange->renderStyle()->firstChildState())
             elementAfterChange->setNeedsStyleRecalc();
             
         // We also have to handle node removal.
@@ -1642,8 +1637,7 @@ static void checkForSiblingStyleChanges(Element* parent, SiblingCheckType checkT
         // Find our new last child.
         Element* newLastElement = ElementTraversal::lastChild(parent);
 
-        if (newLastElement != elementBeforeChange && elementBeforeChange->attached()
-            && elementBeforeChange->renderStyle() && elementBeforeChange->renderStyle()->lastChildState())
+        if (newLastElement != elementBeforeChange && elementBeforeChange->renderStyle() && elementBeforeChange->renderStyle()->lastChildState())
             elementBeforeChange->setNeedsStyleRecalc();
             
         // We also have to handle node removal.  The parser callback case is similar to node removal as well in that we need to change the last child
@@ -1656,8 +1650,7 @@ static void checkForSiblingStyleChanges(Element* parent, SiblingCheckType checkT
     // The + selector.  We need to invalidate the first element following the insertion point.  It is the only possible element
     // that could be affected by this DOM change.
     if (parent->childrenAffectedByDirectAdjacentRules() && elementAfterChange) {
-        if (elementAfterChange->attached())
-            elementAfterChange->setNeedsStyleRecalc();
+        elementAfterChange->setNeedsStyleRecalc();
     }
 
     // Forward positional selectors include the ~ selector, nth-child, nth-of-type, first-of-type and only-of-type.
@@ -1697,8 +1690,7 @@ void Element::removeAllEventListeners()
 void Element::beginParsingChildren()
 {
     clearIsParsingChildrenFinished();
-    StyleResolver* styleResolver = document().styleResolverIfExists();
-    if (styleResolver && attached())
+    if (auto styleResolver = document().styleResolverIfExists())
         styleResolver->pushParentElement(this);
 }
 
@@ -1707,7 +1699,7 @@ void Element::finishParsingChildren()
     ContainerNode::finishParsingChildren();
     setIsParsingChildrenFinished();
     checkForSiblingStyleChanges(this, FinishedParsingChildren, ElementTraversal::lastChild(this), nullptr);
-    if (StyleResolver* styleResolver = document().styleResolverIfExists())
+    if (auto styleResolver = document().styleResolverIfExists())
         styleResolver->popParentElement(this);
 }
 
@@ -2354,7 +2346,7 @@ static void disconnectPseudoElement(PseudoElement* pseudoElement)
 {
     if (!pseudoElement)
         return;
-    if (pseudoElement->attached())
+    if (pseudoElement->renderer())
         Style::detachRenderTree(*pseudoElement);
     ASSERT(pseudoElement->hostElement());
     pseudoElement->clearHostElement();
@@ -2815,7 +2807,8 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
     }
 
     if (oldValue != newValue) {
-        if (attached() && document().styleResolverIfExists() && document().styleResolverIfExists()->hasSelectorForAttribute(name.localName()))
+        auto styleResolver = document().styleResolverIfExists();
+        if (styleResolver && styleResolver->hasSelectorForAttribute(name.localName()))
             setNeedsStyleRecalc();
     }
 

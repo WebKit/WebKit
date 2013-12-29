@@ -678,7 +678,7 @@ void Node::derefEventTarget()
 void Node::setNeedsStyleRecalc(StyleChangeType changeType)
 {
     ASSERT(changeType != NoStyleChange);
-    if (changeType != ReconstructRenderTree && !attached()) // changed compared to what?
+    if (!inRenderedDocument())
         return;
 
     StyleChangeType existingChangeType = styleChangeType();
@@ -2302,11 +2302,9 @@ void Node::updateAncestorConnectedSubframeCountForInsertion() const
         node->incrementConnectedSubframeCount(count);
 }
 
-bool Node::attached() const
+bool Node::inRenderedDocument() const
 {
-    // FIXME: This should go away along with the whole vague 'attached' concept. The conditions here produce
-    // roughly the old behavior based on an explicit attached bit.
-    return inDocument() && document().renderView() && (renderer() || styleChangeType() != ReconstructRenderTree);
+    return inDocument() && document().hasLivingRenderTree();
 }
 
 } // namespace WebCore

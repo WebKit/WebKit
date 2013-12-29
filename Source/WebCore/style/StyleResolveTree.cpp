@@ -135,14 +135,14 @@ static RenderObject* nextSiblingRenderer(const Element& element, const Container
     // Avoid an O(N^2) problem with this function by not checking for
     // nextRenderer() when the parent element hasn't attached yet.
     // FIXME: Why would we get here anyway if parent is not attached?
-    if (renderingParentNode && !renderingParentNode->attached())
-        return 0;
+    if (renderingParentNode && !renderingParentNode->renderer())
+        return nullptr;
     for (Node* sibling = NodeRenderingTraversal::nextSibling(&element); sibling; sibling = NodeRenderingTraversal::nextSibling(sibling)) {
         RenderObject* renderer = sibling->renderer();
         if (renderer && !isRendererReparented(renderer))
             return renderer;
     }
-    return 0;
+    return nullptr;
 }
 
 static bool shouldCreateRenderer(const Element& element, const ContainerNode* renderingParent)
@@ -302,7 +302,7 @@ static void reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded(No
     // the current node gaining or losing the renderer. This can only affect white space text nodes.
     for (Node* sibling = NodeRenderingTraversal::nextSibling(&current); sibling; sibling = NodeRenderingTraversal::nextSibling(sibling)) {
         // Siblings haven't been attached yet. They will be handled normally when they are.
-        if (!sibling->attached())
+        if (sibling->styleChangeType() == ReconstructRenderTree)
             return;
         if (sibling->isElementNode()) {
             // Text renderers beyond rendered elements can't be affected.
@@ -416,8 +416,6 @@ void detachTextRenderer(Text& textNode)
 
 void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
 {
-    if (!textNode.attached())
-        return;
     RenderText* textRenderer = textNode.renderer();
     if (!textRenderer) {
         attachTextRenderer(textNode);
@@ -896,7 +894,7 @@ void detachRenderTreeInReattachMode(Element& element)
 
 void reattachRenderTree(Element& current)
 {
-    if (current.attached())
+    if (current.renderer())
         detachRenderTree(current, ReattachDetach);
     attachRenderTree(current);
 }

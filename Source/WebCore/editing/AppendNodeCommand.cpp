@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "ExceptionCodePlaceholder.h"
+#include "RenderElement.h"
 #include "htmlediting.h"
 
 namespace WebCore {
@@ -42,7 +43,7 @@ AppendNodeCommand::AppendNodeCommand(PassRefPtr<ContainerNode> parent, PassRefPt
     ASSERT(m_node);
     ASSERT(!m_node->parentNode());
 
-    ASSERT(m_parent->hasEditableStyle() || !m_parent->attached());
+    ASSERT(m_parent->hasEditableStyle() || !m_parent->renderer());
 }
 
 static void sendAXTextChangedIgnoringLineBreaks(Node* node, AXObjectCache::AXTextChange textChange)
@@ -58,7 +59,7 @@ static void sendAXTextChangedIgnoringLineBreaks(Node* node, AXObjectCache::AXTex
 
 void AppendNodeCommand::doApply()
 {
-    if (!m_parent->hasEditableStyle() && m_parent->attached())
+    if (!m_parent->hasEditableStyle() && m_parent->renderer())
         return;
 
     m_parent->appendChild(m_node.get(), IGNORE_EXCEPTION);
