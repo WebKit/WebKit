@@ -207,7 +207,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_last(0)
     , m_staticInlinePosition(0)
     , m_staticBlockPosition(0)
-    , m_reflection(0)
     , m_scrollCorner(0)
     , m_resizer(0)
     , m_enclosingPaginationLayer(0)
@@ -6734,7 +6733,7 @@ RenderLayer* RenderLayer::reflectionLayer() const
 void RenderLayer::createReflection()
 {
     ASSERT(!m_reflection);
-    m_reflection = new RenderReplica(renderer().document(), createReflectionStyle());
+    m_reflection = createRenderObject<RenderReplica>(renderer().document(), createReflectionStyle());
     m_reflection->setParent(&renderer()); // We create a 1-way connection.
     m_reflection->initializeStyle();
 }
@@ -6745,8 +6744,7 @@ void RenderLayer::removeReflection()
         m_reflection->removeLayers(this);
 
     m_reflection->setParent(0);
-    m_reflection->destroy();
-    m_reflection = 0;
+    m_reflection = nullptr;
 }
 
 PassRef<RenderStyle> RenderLayer::createReflectionStyle()

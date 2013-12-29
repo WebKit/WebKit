@@ -1,3 +1,22 @@
+2013-12-29  Andreas Kling  <akling@apple.com>
+
+        RenderLayer: Store reflection renderer in a RenderPtr.
+        <https://webkit.org/b/126273>
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::calculateClipRects):
+
+            Turn RenderLayer::m_reflection into a RenderPtr<RenderReplica>
+            instead of a raw pointer.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+            Add RenderPtr.h to private headers.
+
 2013-12-28  Andreas Kling  <akling@apple.com>
 
         Add an owning smart pointer for RenderObjects and start using it.
