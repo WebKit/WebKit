@@ -31,8 +31,7 @@
 #include "CodeBlock.h"
 #include "DeferGC.h"
 #include "DFGLongLivedState.h"
-
-#include <wtf/ThreadingOnce.h>
+#include <mutex>
 
 namespace JSC { namespace DFG {
 
@@ -264,22 +263,20 @@ void Worklist::threadFunction(void* argument)
 
 static Worklist* theGlobalWorklist;
 
-static void initializeGlobalWorklistOnce()
-{
-    unsigned numberOfThreads;
-    
-    if (Options::useExperimentalFTL())
-        numberOfThreads = 1; // We don't yet use LLVM in a thread-safe way.
-    else
-        numberOfThreads = Options::numberOfCompilerThreads();
-    
-    theGlobalWorklist = Worklist::create(numberOfThreads).leakRef();
-}
-
 Worklist* globalWorklist()
 {
-    static WTF::ThreadingOnce initializeGlobalWorklistKeyOnce;
-    initializeGlobalWorklistKeyOnce.callOnce(initializeGlobalWorklistOnce);
+    static std::once_flag initializeGlobalWorklistOnceFlag;
+    std::call_once(initializeGlobalWorklistOnceFlag, [] {
+        unsigned numberOfThreads;
+
+        if (Options::useExperimentalFTL())
+            numberOfThreads = 1; // We don't yet use LLVM in a thread-safe way.
+        else
+            numberOfThreads = Options::numberOfCompilerThreads();
+
+        theGlobalWorklist = Worklist::create(numberOfThreads).leakRef();
+    });
+
     return theGlobalWorklist;
 }
 

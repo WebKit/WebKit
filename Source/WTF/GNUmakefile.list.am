@@ -175,7 +175,6 @@ wtf_sources += \
     Source/WTF/wtf/ThreadSpecificWin.cpp \
     Source/WTF/wtf/Threading.cpp \
     Source/WTF/wtf/Threading.h \
-    Source/WTF/wtf/ThreadingOnce.h \
     Source/WTF/wtf/ThreadingPrimitives.h \
     Source/WTF/wtf/ThreadingPthreads.cpp \
     Source/WTF/wtf/ThreadingWin.cpp \

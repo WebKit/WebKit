@@ -1,3 +1,15 @@
+2013-12-30  Anders Carlsson  <andersca@apple.com>
+
+        Replace WTF::ThreadingOnce with std::call_once
+        https://bugs.webkit.org/show_bug.cgi?id=126215
+
+        Reviewed by Sam Weinig.
+
+        * GNUmakefile.list.am:
+        * wtf/CompilationThread.cpp:
+        (WTF::initializeCompilationThreads):
+        * wtf/ThreadingOnce.h: Removed.
+
 2013-12-26  Sam Weinig  <sam@webkit.org>
 
         Move FilterIterator and IteratorPair to WTF and reimplement HashMap::keys() and HashMap::values() using IteratorPair
