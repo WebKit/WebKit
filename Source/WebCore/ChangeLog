@@ -1,3 +1,17 @@
+2013-12-29  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Remove unused functions in GraphicsContext3D.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=126265
+
+        Reviewed by Andreas Kling.
+
+        platformGraphicsContext3D, platformTexture and platformLayer in GC3D.cpp
+        seem not used by any ports.
+
+        No new tests, no functionality changed.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+
 2013-12-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix build error on 64bit debug build.

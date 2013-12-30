@@ -1799,25 +1799,6 @@ unsigned GraphicsContext3D::getChannelBitsByFormat(GC3Denum format)
     }
 }
 
-#if !PLATFORM(BLACKBERRY) && !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(MAC) && !PLATFORM(WIN) && !PLATFORM(NIX)
-PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D() const
-{
-    return NullPlatformGraphicsContext3D;
-}
-
-Platform3DObject GraphicsContext3D::platformTexture() const
-{
-    return NullPlatform3DObject;
-}
-
-#if USE(ACCELERATED_COMPOSITING)
-PlatformLayer* GraphicsContext3D::platformLayer() const
-{
-    return 0;
-}
-#endif
-#endif
-
 } // namespace WebCore
 
 #endif // USE(3D_GRAPHICS)
