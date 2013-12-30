@@ -1071,4 +1071,11 @@
 #define ENABLE_CSS3_TEXT_DECORATION_SKIP_INK 1
 #endif
 
+#if COMPILER(MSVC)
+#undef __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
+#undef _HAS_EXCEPTIONS
+#define _HAS_EXCEPTIONS 1
+#endif
+
 #endif /* WTF_Platform_h */

@@ -1,3 +1,9 @@
+2013-12-30  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed build fix following r160959.
+
+        * wtf/Platform.h:
+
 2013-12-30  Anders Carlsson  <andersca@apple.com>
 
         Replace WTF::ThreadingOnce with std::call_once
