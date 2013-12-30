@@ -1,5 +1,12 @@
 2013-12-29  Antti Koivisto  <antti@apple.com>
 
+        Remove some accidental commented out code.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::mallocStatistics):
+
+2013-12-29  Antti Koivisto  <antti@apple.com>
+
         Fix build.
 
         * xml/parser/XMLDocumentParser.cpp:
