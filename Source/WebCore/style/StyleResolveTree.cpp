@@ -382,22 +382,21 @@ static void createTextRendererIfNeeded(Text& textNode)
 
     if (!textRendererIsNeeded(textNode, *parentRenderer, style))
         return;
-    RenderText* newRenderer = textNode.createTextRenderer(style);
-    if (!newRenderer)
+
+    auto newRenderer = textNode.createTextRenderer(style);
+    ASSERT(newRenderer);
+
+    if (!parentRenderer->isChildAllowed(*newRenderer, style))
         return;
-    if (!parentRenderer->isChildAllowed(*newRenderer, style)) {
-        newRenderer->destroy();
-        return;
-    }
 
     // Make sure the RenderObject already knows it is going to be added to a RenderFlowThread before we set the style
     // for the first time. Otherwise code using inRenderFlowThread() in the styleWillChange and styleDidChange will fail.
     newRenderer->setFlowThreadState(parentRenderer->flowThreadState());
 
     RenderObject* nextRenderer = nextSiblingRenderer(textNode);
-    textNode.setRenderer(newRenderer);
+    textNode.setRenderer(newRenderer.get());
     // Parent takes care of the animations, no need to call setAnimatableStyle.
-    parentRenderer->addChild(newRenderer, nextRenderer);
+    parentRenderer->addChild(newRenderer.leakPtr(), nextRenderer);
 }
 
 void attachTextRenderer(Text& textNode)

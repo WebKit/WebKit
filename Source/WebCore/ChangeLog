@@ -1,3 +1,14 @@
+2013-12-30  Andreas Kling  <akling@apple.com>
+
+        Text::createTextRenderer() should return a RenderPtr.
+        <https://webkit.org/b/126292>
+
+        Make createTextRenderer() return a RenderPtr and remove one manual
+        destroy() call. Also, since it should always return a valid object,
+        I turned a null check into an assertion instead.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-30  Antti Koivisto  <antti@apple.com>
 
         Remove attachChild

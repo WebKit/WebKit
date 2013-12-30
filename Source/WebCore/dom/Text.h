@@ -24,6 +24,7 @@
 #define Text_h
 
 #include "CharacterData.h"
+#include "RenderPtr.h"
 #include "StyleResolveTree.h"
 
 namespace WebCore {
@@ -47,7 +48,7 @@ public:
     String wholeText() const;
     PassRefPtr<Text> replaceWholeText(const String&, ExceptionCode&);
     
-    RenderText* createTextRenderer(const RenderStyle&);
+    RenderPtr<RenderText> createTextRenderer(const RenderStyle&);
     
     virtual bool canContainRangeEndPoint() const OVERRIDE FINAL { return true; }
 
