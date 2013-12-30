@@ -1,5 +1,12 @@
 2013-12-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::plugInDidStartFromOrigin):
+
+2013-12-30  Anders Carlsson  <andersca@apple.com>
+
         Move more of Connection over to STL threading primitives
         https://bugs.webkit.org/show_bug.cgi?id=126308
 
