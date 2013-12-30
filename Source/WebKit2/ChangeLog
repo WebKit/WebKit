@@ -1,3 +1,30 @@
+2013-12-30  Anders Carlsson  <andersca@apple.com>
+
+        Move more of Connection over to STL threading primitives
+        https://bugs.webkit.org/show_bug.cgi?id=126308
+
+        Reviewed by Andreas Kling.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::BinarySemaphore::BinarySemaphore):
+        (IPC::BinarySemaphore::~BinarySemaphore):
+        (IPC::BinarySemaphore::signal):
+        (IPC::BinarySemaphore::wait):
+        Add a new BinarySemaphore class that uses STL threading primitives.
+
+        (IPC::Connection::SyncMessageState::wait):
+        Change this to take a std::chrono::steady_clock::time_point.
+
+        (IPC::absoluteTimeoutTime):
+        Add a new helper function that returns a time point from the a given timeout duration,
+        correctly handling the max duration.
+
+        (IPC::Connection::sendSyncMessageFromSecondaryThread):
+        Pass a time point to SyncMessageState::wait.
+
+        (IPC::Connection::waitForSyncReply):
+        Ditto.
+
 2013-12-30  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Replace remaning CoreIPC namespace to IPC

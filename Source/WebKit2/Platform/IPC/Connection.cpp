@@ -31,9 +31,43 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace IPC {
+
+class BinarySemaphore {
+public:
+    BinarySemaphore()
+        : m_isSet(false)
+    {
+    }
+    
+    ~BinarySemaphore()
+    {
+    }
+
+    void signal()
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+    
+        m_isSet = true;
+        m_conditionVariable.notify_all();
+    }
+    
+    bool wait(std::chrono::steady_clock::time_point absoluteTime)
+    {
+        std::unique_lock<std::mutex> lock(m_mutex);
+    
+        bool value = m_conditionVariable.wait_until(lock, absoluteTime, [this] { return m_isSet; });
+        
+        return value;
+    }
+
+private:
+    bool m_isSet;
+    
+    std::mutex m_mutex;
+    std::condition_variable m_conditionVariable;
+};
 
 class Connection::SyncMessageState : public ThreadSafeRefCounted<Connection::SyncMessageState> {
 public:
@@ -45,7 +79,7 @@ public:
         m_waitForSyncReplySemaphore.signal();
     }
 
-    bool wait(double absoluteTime)
+    bool wait(std::chrono::steady_clock::time_point absoluteTime)
     {
         return m_waitForSyncReplySemaphore.wait(absoluteTime);
     }
@@ -376,6 +410,15 @@ bool Connection::sendSyncReply(std::unique_ptr<MessageEncoder> encoder)
     return sendMessage(std::move(encoder));
 }
 
+static std::chrono::steady_clock::time_point absoluteTimeoutTime(std::chrono::milliseconds timeout)
+{
+    // We use std::chrono::milliseconds::max() to mean no timeout.
+    if (timeout == std::chrono::milliseconds::max())
+        return std::chrono::steady_clock::time_point::max();
+    
+    return std::chrono::steady_clock::now() + timeout;
+}
+    
 std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout)
 {
     // First, check if this message is already in the incoming messages queue.
@@ -500,7 +543,8 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(u
 
     sendMessage(std::move(encoder), 0);
 
-    pendingReply.semaphore.wait(currentTime() + (timeout.count() / 1000.0));
+    auto timeoutTime = absoluteTimeoutTime(timeout);
+    pendingReply.semaphore.wait(timeoutTime);
 
     // Finally, pop the pending sync reply information.
     {
@@ -514,7 +558,7 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(u
 
 std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, std::chrono::milliseconds timeout, unsigned syncSendFlags)
 {
-    double absoluteTime = currentTime() + (timeout.count() / 1000.0);
+    auto timeoutTime = absoluteTimeoutTime(timeout);
 
     bool timedOut = false;
     while (!timedOut) {
@@ -550,10 +594,10 @@ std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncReques
             // FIXME: Although we run forever, any events incoming will cause us to drop out and exit out. This however doesn't
             // account for a timeout value passed in. Timeout is always NoTimeout in these cases, but that could change.
             RunLoop::current()->runForDuration(1e10);
-            timedOut = currentTime() >= absoluteTime;
+            timedOut = std::chrono::steady_clock::now() >= timeoutTime;
 #endif
         } else
-            timedOut = !m_syncMessageState->wait(absoluteTime);
+            timedOut = !m_syncMessageState->wait(timeoutTime);
         
     }
 
