@@ -1,5 +1,13 @@
 2013-12-30  Anders Carlsson  <andersca@apple.com>
 
+        Remove empty directories.
+
+        * Platform/CoreIPC: Removed.
+        * Platform/CoreIPC/mac: Removed.
+        * Platform/CoreIPC/unix: Removed.
+
+2013-12-30  Anders Carlsson  <andersca@apple.com>
+
         Move code over to the IPC namespace.
 
         Rubber-stamped by Andreas Kling.
