@@ -3684,7 +3684,19 @@
 			path = cf;
 			sourceTree = "<group>";
 		};
-		1AB5A1BA10E021D30040F6CF /* CoreIPC */ = {
+		1AB7D4C71288AA9A00CFD08C /* Downloads */ = {
+			isa = PBXGroup;
+			children = (
+				1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */,
+				1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */,
+				1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */,
+				1AD25E93167AB08100EA9BCD /* DownloadProxyMap.cpp */,
+				1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */,
+			);
+			path = Downloads;
+			sourceTree = "<group>";
+		};
+		1AE00D6818327C1200087DD7 /* IPC */ = {
 			isa = PBXGroup;
 			children = (
 				BCC56F751159955E001CCAF9 /* mac */,
@@ -3709,25 +3721,6 @@
 				1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */,
 				1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */,
 				1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */,
-			);
-			path = CoreIPC;
-			sourceTree = "<group>";
-		};
-		1AB7D4C71288AA9A00CFD08C /* Downloads */ = {
-			isa = PBXGroup;
-			children = (
-				1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */,
-				1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */,
-				1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */,
-				1AD25E93167AB08100EA9BCD /* DownloadProxyMap.cpp */,
-				1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */,
-			);
-			path = Downloads;
-			sourceTree = "<group>";
-		};
-		1AE00D6818327C1200087DD7 /* IPC */ = {
-			isa = PBXGroup;
-			children = (
 				1AAB0377185A7C6A00EDF501 /* MessageSender.cpp */,
 				1AAB0378185A7C6A00EDF501 /* MessageSender.h */,
 				1AC7537D183BE50F0072CB15 /* DataReference.cpp */,
@@ -5046,7 +5039,6 @@
 			children = (
 				1AE00D6818327C1200087DD7 /* IPC */,
 				1AA2E51A12E4C05600BC4966 /* cg */,
-				1AB5A1BA10E021D30040F6CF /* CoreIPC */,
 				1A7E814E1152D2240003695B /* mac */,
 				51B15A7D138439B200321AD8 /* unix */,
 				51A7F2F4125BF8D4008AEB1D /* Logging.cpp */,

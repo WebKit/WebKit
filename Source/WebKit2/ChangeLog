@@ -1,3 +1,37 @@
+2013-12-30  Anders Carlsson  <andersca@apple.com>
+
+        Move remaining IPC related files to Platform/IPC.
+
+        Rubber-stamped by Andreas Kling.
+
+        * Platform/IPC/ArgumentCoder.h: Renamed from Source/WebKit2/Platform/CoreIPC/ArgumentCoder.h.
+        * Platform/IPC/ArgumentCoders.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/ArgumentCoders.cpp.
+        * Platform/IPC/ArgumentCoders.h: Renamed from Source/WebKit2/Platform/CoreIPC/ArgumentCoders.h.
+        * Platform/IPC/ArgumentDecoder.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/ArgumentDecoder.cpp.
+        * Platform/IPC/ArgumentDecoder.h: Renamed from Source/WebKit2/Platform/CoreIPC/ArgumentDecoder.h.
+        * Platform/IPC/ArgumentEncoder.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/ArgumentEncoder.cpp.
+        * Platform/IPC/ArgumentEncoder.h: Renamed from Source/WebKit2/Platform/CoreIPC/ArgumentEncoder.h.
+        * Platform/IPC/Arguments.h: Renamed from Source/WebKit2/Platform/CoreIPC/Arguments.h.
+        * Platform/IPC/Attachment.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/Attachment.cpp.
+        * Platform/IPC/Attachment.h: Renamed from Source/WebKit2/Platform/CoreIPC/Attachment.h.
+        * Platform/IPC/Connection.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/Connection.cpp.
+        * Platform/IPC/Connection.h: Renamed from Source/WebKit2/Platform/CoreIPC/Connection.h.
+        * Platform/IPC/HandleMessage.h: Renamed from Source/WebKit2/Platform/CoreIPC/HandleMessage.h.
+        * Platform/IPC/MessageDecoder.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/MessageDecoder.cpp.
+        * Platform/IPC/MessageDecoder.h: Renamed from Source/WebKit2/Platform/CoreIPC/MessageDecoder.h.
+        * Platform/IPC/MessageEncoder.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/MessageEncoder.cpp.
+        * Platform/IPC/MessageEncoder.h: Renamed from Source/WebKit2/Platform/CoreIPC/MessageEncoder.h.
+        * Platform/IPC/MessageFlags.h: Renamed from Source/WebKit2/Platform/CoreIPC/MessageFlags.h.
+        * Platform/IPC/MessageReceiver.h: Renamed from Source/WebKit2/Platform/CoreIPC/MessageReceiver.h.
+        * Platform/IPC/MessageReceiverMap.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.cpp.
+        * Platform/IPC/MessageReceiverMap.h: Renamed from Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.h.
+        * Platform/IPC/mac/ConnectionMac.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/mac/ConnectionMac.cpp.
+        * Platform/IPC/mac/ImportanceAssertion.h: Renamed from Source/WebKit2/Platform/CoreIPC/mac/ImportanceAssertion.h.
+        * Platform/IPC/mac/MachPort.h: Renamed from Source/WebKit2/Platform/CoreIPC/mac/MachPort.h.
+        * Platform/IPC/unix/AttachmentUnix.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/unix/AttachmentUnix.cpp.
+        * Platform/IPC/unix/ConnectionUnix.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/unix/ConnectionUnix.cpp.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-12-30  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Parallel build sometimes fails when building libWebKit2APITestCore
