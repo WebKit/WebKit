@@ -42,18 +42,12 @@ bool EWKTestView::init(EwkViewType testViewType, int width, int height)
     if (!evas)
         return false;
 
-    switch (testViewType) {
-    case SingleView:
-        m_webView = adoptRef(ewk_view_single_add(evas));
-        break;
-
-    case TiledView:
-        m_webView = adoptRef(ewk_view_tiled_add(evas));
-        break;
-    }
-
+    m_webView = adoptRef(ewk_view_single_add(evas));
     if (!m_webView)
         return false;
+
+    if (testViewType == TiledView)
+        ewk_view_setting_tiled_backing_store_enabled_set(m_webView.get(), EINA_TRUE);
 
     ewk_view_theme_set(m_webView.get(), Config::defaultThemePath);
 

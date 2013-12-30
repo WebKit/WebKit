@@ -113,8 +113,6 @@ static const Ecore_Getopt options = {
         ECORE_GETOPT_CALLBACK_NOARGS
             ('E', "list-engines", "list ecore-evas engines.",
              ecore_getopt_callback_ecore_evas_list_engines, NULL),
-        ECORE_GETOPT_CHOICE
-            ('b', "backing-store", "choose backing store to use.", backingStores),
         ECORE_GETOPT_STORE_DOUBLE
             ('r', "device-pixel-ratio", "Ratio between the CSS units and device pixels."),
         ECORE_GETOPT_STORE_DEF_BOOL
@@ -149,7 +147,6 @@ static const Ecore_Getopt options = {
 typedef struct _User_Arguments {
     char *engine;
     Eina_Bool quitOption;
-    char *backingStore;
     double device_pixel_ratio;
     Eina_Bool enableEncodingDetector;
     Eina_Bool enableTiledBackingStore;
@@ -849,15 +846,8 @@ windowCreate(User_Arguments *userArgs)
         return NULL;
     }
 
-    if (userArgs->backingStore && !strcasecmp(userArgs->backingStore, "tiled")) {
-        app->browser = ewk_view_tiled_add(app->evas);
-        info("backing store: tiled");
-    } else {
-        app->browser = ewk_view_single_add(app->evas);
-        info("backing store: single");
-
-        ewk_view_setting_tiled_backing_store_enabled_set(app->browser, userArgs->enableTiledBackingStore);
-    }
+    app->browser = ewk_view_single_add(app->evas);
+    ewk_view_setting_tiled_backing_store_enabled_set(app->browser, userArgs->enableTiledBackingStore);
 
     ewk_view_theme_set(app->browser, themePath);
     if (userArgs->userAgent)
@@ -941,7 +931,6 @@ parseUserArguments(int argc, char *argv[], User_Arguments *userArgs)
 
     userArgs->engine = NULL;
     userArgs->quitOption = EINA_FALSE;
-    userArgs->backingStore = (char *)backingStores[1];
     userArgs->device_pixel_ratio = 1.0;
     userArgs->enableEncodingDetector = EINA_FALSE;
     userArgs->enableTiledBackingStore = EINA_FALSE;
@@ -957,7 +946,6 @@ parseUserArguments(int argc, char *argv[], User_Arguments *userArgs)
     Ecore_Getopt_Value values[] = {
         ECORE_GETOPT_VALUE_STR(userArgs->engine),
         ECORE_GETOPT_VALUE_BOOL(userArgs->quitOption),
-        ECORE_GETOPT_VALUE_STR(userArgs->backingStore),
         ECORE_GETOPT_VALUE_DOUBLE(userArgs->device_pixel_ratio),
         ECORE_GETOPT_VALUE_BOOL(userArgs->enableEncodingDetector),
         ECORE_GETOPT_VALUE_BOOL(userArgs->isFlattening),

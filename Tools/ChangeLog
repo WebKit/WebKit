@@ -1,3 +1,21 @@
+2013-12-29  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove ewk_view_tiled
+        https://bugs.webkit.org/show_bug.cgi?id=125961
+
+        Reviewed by Gyuyoung Kim.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (shouldUseTiledBackingStore):
+        Moved from DumpRenderTreeChrome to enable WebCore's TiledBackingStore
+        instead of switching ewk_view_tiled.
+        (DumpRenderTreeChrome::createView):
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (drtViewAdd):
+        * EWebLauncher/main.c: Removed ewk_view_tiled option.
+        (windowCreate):
+        (parseUserArguments):
+
 2013-12-29  Alexey Proskuryakov  <ap@apple.com>
 
         Pending revision popover is slightly misplaced at build.webkit.org/dashboard

@@ -95,11 +95,20 @@ Evas_Object* DumpRenderTreeChrome::createNewWindow()
     return newView;
 }
 
+static bool shouldUseTiledBackingStore()
+{
+    const char* useTiledBackingStore = getenv("DRT_USE_TILED_BACKING_STORE");
+    return useTiledBackingStore && *useTiledBackingStore == '1';
+}
+
 Evas_Object* DumpRenderTreeChrome::createView() const
 {
     Evas_Object* view = drtViewAdd(m_evas);
     if (!view)
         return 0;
+
+    if (shouldUseTiledBackingStore())
+        ewk_view_setting_tiled_backing_store_enabled_set(view, EINA_TRUE);
 
     ewk_view_theme_set(view, TEST_THEME_DIR "/default.edj");
 

@@ -172,17 +172,6 @@ static int64_t onExceededApplicationCacheQuota(Ewk_View_Smart_Data*, Ewk_Securit
     return defaultOriginQuota;
 }
 
-static bool shouldUseTiledBackingStore()
-{
-    const char* useTiledBackingStore = getenv("DRT_USE_TILED_BACKING_STORE");
-    return useTiledBackingStore && *useTiledBackingStore == '1';
-}
-
-static bool chooseAndInitializeAppropriateSmartClass(Ewk_View_Smart_Class* api)
-{
-    return !shouldUseTiledBackingStore() ? ewk_view_single_smart_set(api) : ewk_view_tiled_smart_set(api);
-}
-
 // Taken from the file "WebKit/Tools/DumpRenderTree/chromium/WebViewHost.cpp".
 static inline const char* navigationTypeToString(const Ewk_Navigation_Type type)
 {
@@ -227,7 +216,7 @@ Evas_Object* drtViewAdd(Evas* evas)
 {
     static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("DRT_View");
 
-    if (!chooseAndInitializeAppropriateSmartClass(&api))
+    if (!ewk_view_single_smart_set(&api))
         return 0;
 
     if (EINA_UNLIKELY(!gParentSmartClass.sc.add))

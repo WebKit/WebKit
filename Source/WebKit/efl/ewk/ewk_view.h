@@ -501,84 +501,6 @@ enum _Ewk_Editor_Command {
 typedef enum _Ewk_Editor_Command Ewk_Editor_Command;
 
 /**
- * @brief Creates a type name for @a _Ewk_Tile_Unused_Cache.
- *
- * Cache (pool) that contains unused tiles for ewk_view_tiled.
- *
- * This cache will maintain unused tiles and flush them when the total
- * memory exceeds the set amount when
- * ewk_tile_unused_cache_auto_flush() or explicitly set value when
- * ewk_tile_unused_cache_flush() is called.
- *
- * The tile may be shared among different ewk_view_tiled instances to
- * group maximum unused memory resident in the system.
- */
-typedef struct _Ewk_Tile_Unused_Cache Ewk_Tile_Unused_Cache;
-
-/**
- * Changes cache capacity of unused tiles.
- *
- * @param tuc cache of unused tiles to set a new capacity of unused tiles
- *
- * @param max a new capacity of cache, in bytes
- *
- * @note This will not flush cache, use ewk_tile_unused_cache_flush() or
- * ewk_tile_unused_cache_auto_flush() to do so.
- */
-EAPI void   ewk_tile_unused_cache_max_set(Ewk_Tile_Unused_Cache *tuc, size_t max);
-
-/**
- * Retrieves maximum cache capacity of unused tiles.
- *
- * @param tuc cache of unused tiles to get maximum cache capacity of unused tiles
- *
- * @return maximum cache capacity, in bytes on success or @c 0 on failure
- */
-EAPI size_t ewk_tile_unused_cache_max_get(const Ewk_Tile_Unused_Cache *tuc);
-
-/**
- * Retrieves the used cache capacity of unused tiles.
- *
- * @param tuc cache of unused tiles to get used cache capacity of unused tiles
- *
- * @return used cache capacity, in bytes on success or @c 0 on failure
- */
-EAPI size_t ewk_tile_unused_cache_used_get(const Ewk_Tile_Unused_Cache *tuc);
-
-/**
- * Flushes given amount of bytes from cache of unused tiles.
- *
- * After calling this function, near @a bytes are freed from cache. It
- * may be less if cache did not contain that amount of bytes (ie: an
- * empty cache has nothing to free!) or more if the cache just
- * contained objects that were larger than the requested amount (this
- * is usually the case).
- *
- * @param tuc cache of unused tiles to flush @bytes from cache
- * @param bytes amount bytes to free
- *
- * @return amount really freed bytes
- *
- * @see ewk_tile_unused_cache_used_get()
- */
-EAPI size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache *tuc, size_t bytes);
-
-/**
- * Flushes enough bytes to make cache of unused tiles usage lower than maximum.
- *
- * Just like ewk_tile_unused_cache_flush(), but this will make the cache
- * free enough tiles to respect maximum cache size as defined with
- * ewk_tile_unused_cache_max_set().
- *
- * This function is usually called when system becomes idle. This way
- * we keep memory low but do not impact performance when
- * creating/deleting tiles.
- *
- * @param tuc cache of unused tiles to flush cache of unused tiles
- */
-EAPI void   ewk_tile_unused_cache_auto_flush(Ewk_Tile_Unused_Cache *tuc);
-
-/**
  * Sets the smart class api without any backing store, enabling view
  * to be inherited.
  *
@@ -595,7 +517,6 @@ EAPI void   ewk_tile_unused_cache_auto_flush(Ewk_Tile_Unused_Cache *tuc);
  *         version mismatch)
  *
  * @see ewk_view_single_smart_set()
- * @see ewk_view_tiled_smart_set()
  */
 EAPI Eina_Bool    ewk_view_base_smart_set(Ewk_View_Smart_Class *api);
 
@@ -620,26 +541,6 @@ EAPI Eina_Bool    ewk_view_base_smart_set(Ewk_View_Smart_Class *api);
 EAPI Eina_Bool    ewk_view_single_smart_set(Ewk_View_Smart_Class *api);
 
 /**
- * Sets the smart class api using tiled backing store, enabling view
- * to be inherited.
- *
- * @param api class definition to set, all members with the
- *        exception of @a Evas_Smart_Class->data may be overridden, must
- *        @b not be @c NULL
- *
- * @note @a Evas_Smart_Class->data is used to implement type checking and
- *       is not supposed to be changed/overridden. If you need extra
- *       data for your smart class to work, just extend
- *       Ewk_View_Smart_Class instead.
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure (probably
- *         version mismatch)
- *
- * @see ewk_view_base_smart_set()
- */
-EAPI Eina_Bool    ewk_view_tiled_smart_set(Ewk_View_Smart_Class *api);
-
-/**
  * Creates a new EFL WebKit View object.
  *
  * View objects are the recommended way to deal with EFL WebKit as it
@@ -656,47 +557,6 @@ EAPI Eina_Bool    ewk_view_tiled_smart_set(Ewk_View_Smart_Class *api);
  * @see ewk_view_uri_set()
  */
 EAPI Evas_Object *ewk_view_single_add(Evas *e);
-
-/**
- * Creates a new EFL WebKit View object using tiled backing store.
- *
- * View objects are the recommended way to deal with EFL WebKit as it
- * abstracts the complex pieces of the process.
- *
- * This object is almost the same as the one returned by the ewk_view_single_add()
- * function, but it uses the tiled backing store instead of the default
- * backing store.
- *
- * @param e canvas object where to create the view object
- *
- * @return the view object on success or @c NULL on failure
- *
- * @see ewk_view_uri_set()
- */
-EAPI Evas_Object *ewk_view_tiled_add(Evas *e);
-
-/**
- * Gets the cache object of unused tiles used by this view.
- *
- * @param o the view object to get the cache object
- *
- * @return the cache object of unused tiles or @c NULL on failure
- */
-EAPI Ewk_Tile_Unused_Cache *ewk_view_tiled_unused_cache_get(const Evas_Object *o);
-
-/**
- * Sets the cache object of unused tiles used by this view.
- *
- * It can be used to share a single cache amongst different views.
- * The tiles from one view will not be used by the other!
- * This is just to limit the group with amount of unused memory.
- *
- * @note If @c NULL is provided as a @a cache, then a new one is created.
- *
- * @param o the view object to set the cache object
- * @param the cache object of unused tiles
- */
-EAPI void                   ewk_view_tiled_unused_cache_set(Evas_Object *o, Ewk_Tile_Unused_Cache *cache);
 
 /**
  * Sets a fixed layout size to be used, dissociating it from viewport size.

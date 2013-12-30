@@ -130,7 +130,6 @@ void ewk_view_editor_client_contents_changed(Evas_Object* ewkView);
 void ewk_view_editor_client_selection_changed(Evas_Object* ewkView);
 
 bool ewk_view_focus_can_cycle(Evas_Object* ewkView, Ewk_Focus_Direction direction);
-void ewk_view_frame_view_creation_notify(Evas_Object* ewkView);
 
 Eina_Bool ewk_view_paint(Ewk_View_Private_Data* priv, Ewk_Paint_Context* context, const Eina_Rectangle* area);
 Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data* priv, Ewk_Paint_Context* context, const Eina_Rectangle* area);

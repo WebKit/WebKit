@@ -3431,22 +3431,6 @@ void ewk_view_add_console_message(Evas_Object* ewkView, const char* message, uns
     smartData->api->add_console_message(smartData, message, lineNumber, sourceID);
 }
 
-/**
- * @internal
- *
- * Reports that FrameView object has been created.
- * Allows to repaint the frame completely even if the areas are out of the screen
- * when @ewkView is an instance of ewk_view_tiled.
- *
- * @param ewkView view object
- */
-void ewk_view_frame_view_creation_notify(Evas_Object* ewkView)
-{
-    EWK_VIEW_TYPE_CHECK_OR_RETURN(ewkView, ewkViewTiledName);
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    ewk_frame_paint_full_set(smartData->main_frame, true);
-}
-
 bool ewk_view_focus_can_cycle(Evas_Object* ewkView, Ewk_Focus_Direction direction)
 {
     DBG("ewkView=%p direction=%d", ewkView, direction);
