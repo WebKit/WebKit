@@ -43,7 +43,7 @@ void WebEditorClient::getEditorCommandsForKeyEvent(const KeyboardEvent* event, V
        UI needs to receive event type because only knows current NativeWebKeyboardEvent.*/
     WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::GetEditorCommandsForKeyEvent(event->type()),
                                                 Messages::WebPageProxy::GetEditorCommandsForKeyEvent::Reply(pendingEditorCommands),
-                                                m_page->pageID(), CoreIPC::Connection::NoTimeout);
+                                                m_page->pageID(), std::chrono::milliseconds::max());
 }
 
 bool WebEditorClient::executePendingEditorCommands(Frame* frame, Vector<WTF::String> pendingEditorCommands, bool allowTextInsertion)

@@ -1,3 +1,10 @@
+2013-12-30  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attempt on GTK port after 161152
+
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::getEditorCommandsForKeyEvent):
+
 2013-12-30  Anders Carlsson  <andersca@apple.com>
 
         Use std::chrono::milliseconds for all IPC message timeouts
