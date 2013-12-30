@@ -1,3 +1,15 @@
+2013-12-29  Joone Hur  <joone.hur@intel.com>
+
+        Reverted r156742. The same fix was reverted from Blink due to heap-use-after-free on ClusterFuzz.
+        https://bugs.webkit.org/show_bug.cgi?id=126275
+
+        https://codereview.chromium.org/102993011
+
+        Reviewed by Darin Adler.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+
 2013-12-29  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Remove unused functions in GraphicsContext3D.cpp

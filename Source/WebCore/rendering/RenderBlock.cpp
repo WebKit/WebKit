@@ -4989,6 +4989,8 @@ void RenderBlock::updateFirstLetter()
     if (style().styleType() == FIRST_LETTER)
         return;
 
+    // FIXME: We need to destroy the first-letter object if it is no longer the first child. Need to find
+    // an efficient way to check for that situation though before implementing anything.
     RenderElement* firstLetterBlock = findFirstLetterBlock(this);
     if (!firstLetterBlock)
         return;
@@ -5020,27 +5022,9 @@ void RenderBlock::updateFirstLetter()
     if (!descendant)
         return;
 
+    // If the child already has style, then it has already been created, so we just want
+    // to update it.
     if (descendant->parent()->style().styleType() == FIRST_LETTER) {
-        // Destroy the first-letter object if it is no longer the first child.
-        RenderObject* remainingText = descendant->parent()->nextSibling();
-        if (remainingText && descendant->node() != remainingText->node()) {
-            if (!remainingText->isText() || remainingText->isBR())
-                return;
-
-            if (auto oldFirstLetter = descendant->parent()->isBoxModelObject() ?  toRenderBoxModelObject(descendant->parent()) : nullptr) { 
-                if (auto oldRemainingText = oldFirstLetter->firstLetterRemainingText()) {
-                    LayoutStateDisabler layoutStateDisabler(&view());
-                    // Destroy the text fragment for the old first-letter and update oldRemainingText with its DOM text.
-                    oldRemainingText->setText(oldRemainingText->textNode()->data());
-                    createFirstLetterRenderer(firstLetterBlock, toRenderText(remainingText));
-                }    
-            }    
-
-            return;
-        }    
-
-        // If the child already has style, then it has already been created, so we just want
-        // to update it.
         updateFirstLetterStyle(firstLetterBlock, descendant);
         return;
     }
