@@ -215,3 +215,12 @@ set(DERIVED_SOURCES_WEBKIT2GTK_API_DIR ${DERIVED_SOURCES_WEBKIT2GTK_DIR}/webkit2
 set(FORWARDING_HEADERS_DIR ${DERIVED_SOURCES_DIR}/ForwardingHeaders)
 set(FORWARDING_HEADERS_WEBKIT2GTK_DIR ${FORWARDING_HEADERS_DIR}/webkit2gtk)
 set(FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR ${FORWARDING_HEADERS_DIR}/webkit2gtk-webextension)
+
+# Add a typelib file to the list of all typelib dependencies. This makes it easy to
+# expose a 'gir' target with all gobject-introspection files.
+macro(ADD_TYPELIB typelib)
+    get_filename_component(target_name ${typelib} NAME_WE)
+    add_custom_target(${target_name}-gir ALL DEPENDS ${typelib})
+    list(APPEND GObjectIntrospectionTargets ${target_name}-gir)
+    set(GObjectIntrospectionTargets ${GObjectIntrospectionTargets} PARENT_SCOPE)
+endmacro()

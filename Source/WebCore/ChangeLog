@@ -1,3 +1,13 @@
+2013-12-30  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] [GTK] Add support for GObject introspection
+        https://bugs.webkit.org/show_bug.cgi?id=126162
+
+        Reviewed by Daniel Bates.
+
+        * PlatformGTK.cmake: Build a list of WebKitDOM headers and expose it to the
+        parent scope of the build.
+
 2013-12-30  Andreas Kling  <akling@apple.com>
 
         Text::createTextRenderer() should return a RenderPtr.

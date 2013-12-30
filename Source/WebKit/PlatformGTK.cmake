@@ -95,7 +95,6 @@ list(APPEND WebKit_SOURCES
 list(APPEND WebKitGTK_INSTALLED_HEADERS
     ${WEBKIT_DIR}/gtk/webkit/webkit.h
     ${WEBKIT_DIR}/gtk/webkit/webkitapplicationcache.h
-    ${WEBKIT_DIR}/gtk/webkit/webkitauthenticationdialog.h
     ${WEBKIT_DIR}/gtk/webkit/webkitdefines.h
     ${WEBKIT_DIR}/gtk/webkit/webkitdom.h
     ${WEBKIT_DIR}/gtk/webkit/webkitdownload.h
@@ -111,7 +110,6 @@ list(APPEND WebKitGTK_INSTALLED_HEADERS
     ${WEBKIT_DIR}/gtk/webkit/webkitsecurityorigin.h
     ${WEBKIT_DIR}/gtk/webkit/webkitsoupauthdialog.h
     ${WEBKIT_DIR}/gtk/webkit/webkitspellchecker.h
-    ${WEBKIT_DIR}/gtk/webkit/webkitspellcheckerenchant.h
     ${WEBKIT_DIR}/gtk/webkit/webkitviewportattributes.h
     ${WEBKIT_DIR}/gtk/webkit/webkitwebbackforwardlist.h
     ${WEBKIT_DIR}/gtk/webkit/webkitwebdatabase.h
@@ -161,3 +159,50 @@ add_custom_command(
     COMMAND glib-mkenums --template ${WEBKIT_DIR}/gtk/webkit/webkitenumtypes.cpp.template ${WebKitGTK_INSTALLED_HEADERS} | sed s/web_kit/webkit/ > ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.cpp
     VERBATIM
 )
+
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/WebKit-3.0.gir
+    DEPENDS WebKit
+    DEPENDS JavaScriptCore-3-gir
+    COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations
+        g-ir-scanner
+        --quiet
+        --warn-all
+        --symbol-prefix=webkit
+        --identifier-prefix=WebKit
+        --namespace=WebKit
+        --nsversion=3.0
+        --include=GObject-2.0
+        --include=Gtk-3.0
+        --include=Soup-2.4
+        --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-3.0.gir
+        --library=webkitgtk-3.0
+        --library=javascriptcoregtk-3.0
+        -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+        --no-libtool
+        --pkg=gobject-2.0
+        --pkg=gtk+-3.0
+        --pkg=libsoup-2.4
+        --pkg-export=webkitgtk-3.0
+        --output=${CMAKE_BINARY_DIR}/WebKit-3.0.gir
+        --c-include="webkit/webkit.h"
+        -DBUILDING_WEBKIT
+        -I${CMAKE_SOURCE_DIR}/Source
+        -I${WEBKIT_DIR}/gtk
+        -I${JAVASCRIPTCORE_DIR}/ForwardingHeaders
+        -I${DERIVED_SOURCES_DIR}
+        -I${DERIVED_SOURCES_WEBKITGTK_DIR}
+        -I${WEBCORE_DIR}/platform/gtk
+        ${GObjectDOMBindings_INSTALLED_HEADERS}
+        ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.h
+        ${WebKitGTK_INSTALLED_HEADERS}
+        ${WEBKIT_DIR}/gtk/webkit/*.cpp
+)
+
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/WebKit-3.0.typelib
+    DEPENDS ${CMAKE_BINARY_DIR}/WebKit-3.0.gir
+    COMMAND g-ir-compiler --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit-3.0.gir -o ${CMAKE_BINARY_DIR}/WebKit-3.0.typelib
+)
+
+ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit-3.0.typelib)

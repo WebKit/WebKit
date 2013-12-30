@@ -1,3 +1,14 @@
+2013-12-30  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] [GTK] Add support for GObject introspection
+        https://bugs.webkit.org/show_bug.cgi?id=126162
+
+        Reviewed by Daniel Bates.
+
+        * Source/PlatformGTK.cmake: Add a 'gir' target that builds all GIR files.
+        * Source/cmake/OptionsGTK.cmake: Add a macro for propagating typelib
+        targets to the Source level of the build.
+
 2013-12-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][CMake] Translations must be built

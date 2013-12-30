@@ -445,22 +445,13 @@ if (ENABLE_WEBKIT2)
 
     list(APPEND GObjectDOMBindings_SOURCES
         bindings/gobject/ConvertToUTF8String.cpp
-        bindings/gobject/ConvertToUTF8String.h
         bindings/gobject/DOMObjectCache.cpp
-        bindings/gobject/DOMObjectCache.h
         bindings/gobject/GObjectEventListener.cpp
-        bindings/gobject/GObjectEventListener.h
         bindings/gobject/WebKitDOMCustom.cpp
-        bindings/gobject/WebKitDOMCustom.h
         bindings/gobject/WebKitDOMEventTarget.cpp
-        bindings/gobject/WebKitDOMEventTarget.h
-        bindings/gobject/WebKitDOMEventTargetPrivate.h
         bindings/gobject/WebKitDOMHTMLPrivate.cpp
-        bindings/gobject/WebKitDOMHTMLPrivate.h
         bindings/gobject/WebKitDOMObject.cpp
-        bindings/gobject/WebKitDOMObject.h
         bindings/gobject/WebKitDOMPrivate.cpp
-        bindings/gobject/WebKitDOMPrivate.h
         ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
         ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
     )
@@ -636,10 +627,21 @@ if (ENABLE_WEBKIT2)
         )
     endif ()
 
-    foreach (file Custom EventTarget Object Deprecated ${GObjectDOMBindings_IDL_FILES})
-        get_filename_component(file ${file} NAME_WE)
-        list(APPEND GObjectDOMBindings_CLASS_LIST ${file})
+    set(GObjectDOMBindings_CLASS_LIST Custom EventTarget Object Deprecated)
+    set(GObjectDOMBindings_INSTALLED_HEADERS
+         ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
+         ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
+         ${WEBCORE_DIR}/bindings/gobject/WebKitDOMCustom.h
+    )
+
+    foreach (file ${GObjectDOMBindings_IDL_FILES})
+        get_filename_component(classname ${file} NAME_WE)
+        list(APPEND GObjectDOMBindings_CLASS_LIST ${classname})
+        list(APPEND GObjectDOMBindings_INSTALLED_HEADERS ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/WebKitDOM${classname}.h)
     endforeach ()
+
+    # Propagate this variable to the parent scope, so that it can be used in other parts of the build.
+    set(GObjectDOMBindings_INSTALLED_HEADERS ${GObjectDOMBindings_INSTALLED_HEADERS} PARENT_SCOPE)
 
     set(GOBJECT_DOM_BINDINGS_FEATURES_DEFINES "LANGUAGE_GOBJECT=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
     string(REPLACE "ENABLE_INDEXED_DATABASE=1" "" GOBJECT_DOM_BINDINGS_FEATURES_DEFINES ${GOBJECT_DOM_BINDINGS_FEATURES_DEFINES})

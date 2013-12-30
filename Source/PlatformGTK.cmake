@@ -1,5 +1,8 @@
 add_subdirectory(${WEBCORE_DIR}/platform/gtk/po)
 
+# This allows exposing a 'gir' target which builds all GObject introspection files.
+add_custom_target(gir ALL DEPENDS ${GObjectIntrospectionTargets})
+
 if (ENABLE_API_TESTS)
     if (ENABLE_WEBKIT)
         add_subdirectory(${WEBKIT_DIR}/gtk/tests)
