@@ -457,7 +457,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, bool 
     , m_isViewSource(false)
     , m_sawElementsInKnownNamespaces(false)
     , m_isSrcdocDocument(false)
-    , m_renderView(nullptr)
     , m_eventQueue(*this)
     , m_weakFactory(this)
     , m_idAttributeName(idAttr)
@@ -1945,12 +1944,6 @@ void Document::clearStyleResolver()
     m_styleResolver.clear();
 }
 
-void Document::setRenderView(RenderView* renderView)
-{
-    m_renderView = renderView;
-    Node::setRenderer(renderView);
-}
-
 void Document::createRenderTree()
 {
     ASSERT(!renderView());
@@ -1958,7 +1951,9 @@ void Document::createRenderTree()
     ASSERT(!m_axObjectCache || this != topDocument());
 
     // FIXME: It would be better if we could pass the resolved document style directly here.
-    setRenderView(new RenderView(*this, RenderStyle::create()));
+    m_renderView = createRenderObject<RenderView>(*this, RenderStyle::create());
+    Node::setRenderer(m_renderView.get());
+
 #if USE(ACCELERATED_COMPOSITING)
     renderView()->setIsInWindow(true);
 #endif
@@ -2062,9 +2057,8 @@ void Document::destroyRenderTree()
 
     unscheduleStyleRecalc();
 
-    if (renderView())
-        renderView()->destroy();
-    setRenderView(nullptr);
+    m_renderView = nullptr;
+    Node::setRenderer(nullptr);
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     // Do this before the arena is cleared, which is needed to deref the RenderStyle on TextAutoSizingKey.

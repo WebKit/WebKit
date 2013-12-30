@@ -43,6 +43,7 @@
 #include "PlatformScreen.h"
 #include "QualifiedName.h"
 #include "ReferrerPolicy.h"
+#include "RenderPtr.h"
 #include "ScriptExecutionContext.h"
 #include "StringWithDirection.h"
 #include "StyleResolveTree.h"
@@ -565,7 +566,7 @@ public:
     virtual void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) OVERRIDE;
     virtual void stopActiveDOMObjects() OVERRIDE;
 
-    RenderView* renderView() const { return m_renderView; }
+    RenderView* renderView() const { return m_renderView.get(); }
 
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
     bool hasLivingRenderTree() const { return renderView() && !renderTreeBeingDestroyed(); }
@@ -1233,7 +1234,6 @@ private:
 
     RenderObject* renderer() const WTF_DELETED_FUNCTION;
     void setRenderer(RenderObject*) WTF_DELETED_FUNCTION;
-    void setRenderView(RenderView*);
 
     virtual void createRenderTree();
     virtual void dropChildren() OVERRIDE;
@@ -1502,7 +1502,7 @@ private:
     bool m_sawElementsInKnownNamespaces;
     bool m_isSrcdocDocument;
 
-    RenderView* m_renderView;
+    RenderPtr<RenderView> m_renderView;
     mutable DocumentEventQueue m_eventQueue;
 
     WeakPtrFactory<Document> m_weakFactory;

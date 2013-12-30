@@ -1,3 +1,14 @@
+2013-12-30  Andreas Kling  <akling@apple.com>
+
+        Document should store its RenderView in a RenderPtr.
+        <https://webkit.org/b/126299>
+
+        Make Document::m_renderView a RenderPtr<RenderView> and remove one
+        manual destroy() call. Also removed the setRenderView() helper and
+        inlined it at the two call sites.
+
+        Reviewed by Antti Koivisto.
+
 2013-12-30  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] [GTK] Add support for GObject introspection
