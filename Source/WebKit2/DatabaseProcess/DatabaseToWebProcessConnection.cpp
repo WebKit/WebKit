@@ -35,14 +35,14 @@
 
 namespace WebKit {
 
-PassRefPtr<DatabaseToWebProcessConnection> DatabaseToWebProcessConnection::create(CoreIPC::Connection::Identifier connectionIdentifier)
+PassRefPtr<DatabaseToWebProcessConnection> DatabaseToWebProcessConnection::create(IPC::Connection::Identifier connectionIdentifier)
 {
     return adoptRef(new DatabaseToWebProcessConnection(connectionIdentifier));
 }
 
-DatabaseToWebProcessConnection::DatabaseToWebProcessConnection(CoreIPC::Connection::Identifier connectionIdentifier)
+DatabaseToWebProcessConnection::DatabaseToWebProcessConnection(IPC::Connection::Identifier connectionIdentifier)
 {
-    m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
+    m_connection = IPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
     m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
     m_connection->open();
 }
@@ -52,7 +52,7 @@ DatabaseToWebProcessConnection::~DatabaseToWebProcessConnection()
 
 }
 
-void DatabaseToWebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+void DatabaseToWebProcessConnection::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::DatabaseToWebProcessConnection::messageReceiverName()) {
         didReceiveDatabaseToWebProcessConnectionMessage(connection, decoder);
@@ -69,12 +69,12 @@ void DatabaseToWebProcessConnection::didReceiveMessage(CoreIPC::Connection* conn
     ASSERT_NOT_REACHED();
 }
 
-void DatabaseToWebProcessConnection::didClose(CoreIPC::Connection*)
+void DatabaseToWebProcessConnection::didClose(IPC::Connection*)
 {
 
 }
 
-void DatabaseToWebProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
+void DatabaseToWebProcessConnection::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
 
 }

@@ -74,7 +74,7 @@ void WebIconDatabaseProxy::releaseIconForPageURL(const String& pageURL)
 
 Image* WebIconDatabaseProxy::synchronousIconForPageURL(const String& pageURL, const IntSize& /*size*/)
 {
-    CoreIPC::DataReference result;
+    IPC::DataReference result;
     if (!m_process->parentProcessConnection()->sendSync(Messages::WebIconDatabase::SynchronousIconDataForPageURL(pageURL), Messages::WebIconDatabase::SynchronousIconDataForPageURL::Reply(result), 0))
         return 0;
     
@@ -135,7 +135,7 @@ void WebIconDatabaseProxy::setIconURLForPageURL(const String& iconURL, const Str
 
 void WebIconDatabaseProxy::setIconDataForIconURL(PassRefPtr<SharedBuffer> iconData, const String& iconURL)
 {
-    CoreIPC::DataReference data(reinterpret_cast<const uint8_t*>(iconData ? iconData->data() : 0), iconData ? iconData->size() : 0);
+    IPC::DataReference data(reinterpret_cast<const uint8_t*>(iconData ? iconData->data() : 0), iconData ? iconData->size() : 0);
     m_process->parentProcessConnection()->send(Messages::WebIconDatabase::SetIconDataForIconURL(data, iconURL), 0);
 }
 

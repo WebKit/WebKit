@@ -30,7 +30,7 @@
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>
 
-namespace CoreIPC {
+namespace IPC {
     class DataReference;
 }
 

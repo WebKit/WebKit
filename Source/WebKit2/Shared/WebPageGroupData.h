@@ -31,7 +31,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace CoreIPC {
+namespace IPC {
 class ArgumentDecoder;
 class ArgumentEncoder;
 }
@@ -39,8 +39,8 @@ class ArgumentEncoder;
 namespace WebKit {
 
 struct WebPageGroupData {
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, WebPageGroupData&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, WebPageGroupData&);
 
     String identifer;
     uint64_t pageGroupID;

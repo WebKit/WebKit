@@ -59,7 +59,7 @@ WebHitTestResult::Data::~Data()
 {
 }
 
-void WebHitTestResult::Data::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebHitTestResult::Data::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << absoluteImageURL;
     encoder << absolutePDFURL;
@@ -72,7 +72,7 @@ void WebHitTestResult::Data::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << isScrollbar;
 }
 
-bool WebHitTestResult::Data::decode(CoreIPC::ArgumentDecoder& decoder, WebHitTestResult::Data& hitTestResultData)
+bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestResult::Data& hitTestResultData)
 {
     if (!decoder.decode(hitTestResultData.absoluteImageURL)
         || !decoder.decode(hitTestResultData.absolutePDFURL)

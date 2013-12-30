@@ -29,7 +29,7 @@
 #include "MessageDecoder.h"
 #include "MessageReceiver.h"
 
-namespace CoreIPC {
+namespace IPC {
 
 MessageReceiverMap::MessageReceiverMap()
 {
@@ -108,4 +108,4 @@ bool MessageReceiverMap::dispatchSyncMessage(Connection* connection, MessageDeco
     return false;
 }
 
-} // namespace CoreIPC
+} // namespace IPC

@@ -28,7 +28,7 @@
 
 #include <wtf/RetainPtr.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 class ArgumentEncoder;
 class ArgumentDecoder;
@@ -77,6 +77,6 @@ bool decode(ArgumentDecoder&, RetainPtr<NSDate>&);
 void encode(ArgumentEncoder&, NSData *);
 bool decode(ArgumentDecoder&, RetainPtr<NSData>&);
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // ArgumentCodersMac_h

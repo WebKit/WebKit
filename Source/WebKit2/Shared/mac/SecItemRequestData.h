@@ -28,7 +28,7 @@
 
 #include <wtf/RetainPtr.h>
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -49,8 +49,8 @@ public:
     SecItemRequestData(Type, CFDictionaryRef query);
     SecItemRequestData(Type, CFDictionaryRef query, CFDictionaryRef attributesToMatch);
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, SecItemRequestData&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, SecItemRequestData&);
 
     Type type() const { return m_type; }
 

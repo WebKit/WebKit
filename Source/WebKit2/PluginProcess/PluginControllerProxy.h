@@ -38,7 +38,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
 
-namespace CoreIPC {
+namespace IPC {
     class DataReference;
 }
 
@@ -61,8 +61,8 @@ public:
     bool initialize(const PluginCreationParameters&);
     void destroy();
 
-    void didReceivePluginControllerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    void didReceiveSyncPluginControllerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
+    void didReceivePluginControllerProxyMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveSyncPluginControllerProxyMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     bool wantsWheelEvents() const;
 
@@ -124,11 +124,11 @@ private:
     void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform, float contentsScaleFactor, const ShareableBitmap::Handle& backingStoreHandle);
     void didEvaluateJavaScript(uint64_t requestID, const String& result);
     void streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers);
-    void streamDidReceiveData(uint64_t streamID, const CoreIPC::DataReference& data);
+    void streamDidReceiveData(uint64_t streamID, const IPC::DataReference& data);
     void streamDidFinishLoading(uint64_t streamID);
     void streamDidFail(uint64_t streamID, bool wasCancelled);
     void manualStreamDidReceiveResponse(const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers);
-    void manualStreamDidReceiveData(const CoreIPC::DataReference& data);
+    void manualStreamDidReceiveData(const IPC::DataReference& data);
     void manualStreamDidFinishLoading();
     void manualStreamDidFail(bool wasCancelled);
     void handleMouseEvent(const WebMouseEvent&, PassRefPtr<Messages::PluginControllerProxy::HandleMouseEvent::DelayedReply>);

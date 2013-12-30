@@ -67,7 +67,7 @@ NPIdentifier NPIdentifierData::createNPIdentifier() const
     return static_cast<NPIdentifier>(IdentifierRep::get(m_number));
 }
 
-void NPIdentifierData::encode(CoreIPC::ArgumentEncoder& encoder) const
+void NPIdentifierData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_isString;
     if (m_isString)
@@ -76,7 +76,7 @@ void NPIdentifierData::encode(CoreIPC::ArgumentEncoder& encoder) const
         encoder << m_number;
 }
 
-bool NPIdentifierData::decode(CoreIPC::ArgumentDecoder& decoder, NPIdentifierData& result)
+bool NPIdentifierData::decode(IPC::ArgumentDecoder& decoder, NPIdentifierData& result)
 {
     if (!decoder.decode(result.m_isString))
         return false;

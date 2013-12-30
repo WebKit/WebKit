@@ -54,7 +54,7 @@ namespace WTF {
 class RunLoop;
 }
 
-namespace CoreIPC {
+namespace IPC {
 
 enum MessageSendFlags {
     // Whether this message should be dispatched when waiting for a sync reply.
@@ -351,6 +351,6 @@ template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t des
     return true;
 }
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // Connection_h

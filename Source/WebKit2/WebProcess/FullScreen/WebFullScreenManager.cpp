@@ -79,7 +79,7 @@ WebCore::Element* WebFullScreenManager::element()
     return m_element.get(); 
 }
 
-void WebFullScreenManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+void WebFullScreenManager::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
     didReceiveWebFullScreenManagerMessage(connection, decoder);
 }

@@ -38,32 +38,32 @@ namespace WebKit {
 class WebIDBServerConnection;
 class WebProcessIDBDatabaseBackend;
 
-class WebToDatabaseProcessConnection : public RefCounted<WebToDatabaseProcessConnection>, public CoreIPC::Connection::Client, public CoreIPC::MessageSender {
+class WebToDatabaseProcessConnection : public RefCounted<WebToDatabaseProcessConnection>, public IPC::Connection::Client, public IPC::MessageSender {
 public:
-    static PassRefPtr<WebToDatabaseProcessConnection> create(CoreIPC::Connection::Identifier connectionIdentifier)
+    static PassRefPtr<WebToDatabaseProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
     {
         return adoptRef(new WebToDatabaseProcessConnection(connectionIdentifier));
     }
     ~WebToDatabaseProcessConnection();
     
-    CoreIPC::Connection* connection() const { return m_connection.get(); }
+    IPC::Connection* connection() const { return m_connection.get(); }
 
     void registerWebIDBServerConnection(WebIDBServerConnection&);
     void removeWebIDBServerConnection(WebIDBServerConnection&);
 
 private:
-    WebToDatabaseProcessConnection(CoreIPC::Connection::Identifier);
+    WebToDatabaseProcessConnection(IPC::Connection::Identifier);
 
-    // CoreIPC::Connection::Client
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-    virtual void didClose(CoreIPC::Connection*) OVERRIDE;
-    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
+    // IPC::Connection::Client
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didClose(IPC::Connection*) OVERRIDE;
+    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) OVERRIDE;
 
-    // CoreIPC::MessageSender
-    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE { return m_connection.get(); }
+    // IPC::MessageSender
+    virtual IPC::Connection* messageSenderConnection() OVERRIDE { return m_connection.get(); }
     virtual uint64_t messageSenderDestinationID() OVERRIDE { return 0; }
 
-    RefPtr<CoreIPC::Connection> m_connection;
+    RefPtr<IPC::Connection> m_connection;
 
     HashMap<uint64_t, WebIDBServerConnection*> m_webIDBServerConnections;
 };

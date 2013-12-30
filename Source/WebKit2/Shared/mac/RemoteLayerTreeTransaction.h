@@ -36,7 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
-namespace CoreIPC {
+namespace IPC {
 class ArgumentDecoder;
 class ArgumentEncoder;
 }
@@ -83,8 +83,8 @@ public:
     struct LayerCreationProperties {
         LayerCreationProperties();
 
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, LayerCreationProperties&);
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, LayerCreationProperties&);
 
         LayerID layerID;
         WebCore::PlatformCALayer::LayerType type;
@@ -95,8 +95,8 @@ public:
     struct LayerProperties {
         LayerProperties();
 
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, LayerProperties&);
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, LayerProperties&);
 
         void notePropertiesChanged(LayerChange layerChanges)
         {
@@ -139,8 +139,8 @@ public:
     explicit RemoteLayerTreeTransaction();
     ~RemoteLayerTreeTransaction();
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, RemoteLayerTreeTransaction&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, RemoteLayerTreeTransaction&);
 
     LayerID rootLayerID() const { return m_rootLayerID; }
     void setRootLayerID(LayerID rootLayerID);

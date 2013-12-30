@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-void StatisticsData::encode(CoreIPC::ArgumentEncoder& encoder) const
+void StatisticsData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << statisticsNumbers;
     encoder << javaScriptProtectedObjectTypeCounts;
@@ -38,7 +38,7 @@ void StatisticsData::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << webCoreCacheStatistics;
 }
 
-bool StatisticsData::decode(CoreIPC::ArgumentDecoder& decoder, StatisticsData& statisticsData)
+bool StatisticsData::decode(IPC::ArgumentDecoder& decoder, StatisticsData& statisticsData)
 {
     if (!decoder.decode(statisticsData.statisticsNumbers))
         return false;

@@ -36,7 +36,7 @@ namespace WebKit {
 class ChildProcess;
 struct SecurityOriginData;
 
-class WebApplicationCacheManager : public WebProcessSupplement, public CoreIPC::MessageReceiver {
+class WebApplicationCacheManager : public WebProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebApplicationCacheManager);
 public:
     WebApplicationCacheManager(ChildProcess*);
@@ -50,8 +50,8 @@ private:
     void getApplicationCacheOrigins(uint64_t callbackID);
     void deleteEntriesForOrigin(const SecurityOriginData&);
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     ChildProcess* m_childProcess;
 };

@@ -34,7 +34,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-namespace CoreIPC {
+namespace IPC {
     class Connection;
 }
 
@@ -45,7 +45,7 @@ struct SecurityOriginData;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebApplicationCacheManagerProxy : public API::ObjectImpl<API::Object::Type::ApplicationCacheManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebApplicationCacheManagerProxy : public API::ObjectImpl<API::Object::Type::ApplicationCacheManager>, public WebContextSupplement, private IPC::MessageReceiver {
 public:
     static const char* supplementName();
 
@@ -71,8 +71,8 @@ private:
     virtual void refWebContextSupplement() OVERRIDE;
     virtual void derefWebContextSupplement() OVERRIDE;
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     HashMap<uint64_t, RefPtr<ArrayCallback>> m_arrayCallbacks;
 };

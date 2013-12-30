@@ -27,7 +27,7 @@
 #include "SessionState.h"
 #include "WebCoreArgumentCoders.h"
 
-namespace CoreIPC {
+namespace IPC {
 
 // This assumes that when we encode a RefPtr we want to encode the object it points to and it is never null.
 template<typename T> struct ArgumentCoder<RefPtr<T>> {
@@ -43,7 +43,7 @@ template<typename T> struct ArgumentCoder<RefPtr<T>> {
     }
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 namespace WebKit {
 
@@ -65,13 +65,13 @@ bool SessionState::isEmpty() const
     return m_list.isEmpty();
 }
     
-void SessionState::encode(CoreIPC::ArgumentEncoder& encoder) const
+void SessionState::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_list;
     encoder << m_currentIndex;
 }
 
-bool SessionState::decode(CoreIPC::ArgumentDecoder& decoder, SessionState& state)
+bool SessionState::decode(IPC::ArgumentDecoder& decoder, SessionState& state)
 {
     if (!decoder.decode(state.m_list))
         return false;

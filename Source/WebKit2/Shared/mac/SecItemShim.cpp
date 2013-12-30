@@ -138,7 +138,7 @@ void SecItemShim::initialize(ChildProcess* process)
     func(callbacks);
 }
 
-void SecItemShim::initializeConnection(CoreIPC::Connection* connection)
+void SecItemShim::initializeConnection(IPC::Connection* connection)
 {
     connection->addWorkQueueMessageReceiver(Messages::SecItemShim::messageReceiverName(), m_queue.get(), this);
 }

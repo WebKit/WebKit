@@ -37,7 +37,7 @@
 #include "HTTPCookieAcceptPolicy.h"
 #endif
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -47,8 +47,8 @@ namespace WebKit {
 struct NetworkProcessCreationParameters {
     NetworkProcessCreationParameters();
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, NetworkProcessCreationParameters&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, NetworkProcessCreationParameters&);
 
     bool privateBrowsingEnabled;
     CacheModel cacheModel;

@@ -79,7 +79,7 @@ void EventDispatcher::removeScrollingTreeForPage(WebPage* webPage)
 }
 #endif
 
-void EventDispatcher::initializeConnection(CoreIPC::Connection* connection)
+void EventDispatcher::initializeConnection(IPC::Connection* connection)
 {
     connection->addWorkQueueMessageReceiver(Messages::EventDispatcher::messageReceiverName(), m_queue.get(), this);
 }

@@ -175,7 +175,7 @@ void DownloadProxy::didFinish()
     m_downloadProxyMap.downloadFinished(this);
 }
 
-static PassRefPtr<API::Data> createData(const CoreIPC::DataReference& data)
+static PassRefPtr<API::Data> createData(const IPC::DataReference& data)
 {
     if (data.isEmpty())
         return 0;
@@ -183,7 +183,7 @@ static PassRefPtr<API::Data> createData(const CoreIPC::DataReference& data)
     return API::Data::create(data.data(), data.size());
 }
 
-void DownloadProxy::didFail(const ResourceError& error, const CoreIPC::DataReference& resumeData)
+void DownloadProxy::didFail(const ResourceError& error, const IPC::DataReference& resumeData)
 {
     if (!m_webContext)
         return;
@@ -196,7 +196,7 @@ void DownloadProxy::didFail(const ResourceError& error, const CoreIPC::DataRefer
     m_downloadProxyMap.downloadFinished(this);
 }
 
-void DownloadProxy::didCancel(const CoreIPC::DataReference& resumeData)
+void DownloadProxy::didCancel(const IPC::DataReference& resumeData)
 {
     m_resumeData = createData(resumeData);
 

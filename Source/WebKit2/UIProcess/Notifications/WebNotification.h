@@ -32,12 +32,12 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 class ArgumentDecoder;
 class ArgumentEncoder;
 
-} // namespace CoreIPC
+} // namespace IPC
 
 namespace WebKit {
 

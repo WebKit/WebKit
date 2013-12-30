@@ -39,7 +39,7 @@ class WebProcessProxy;
 class WebContextObjCObjectGraphEncoder {
 public:
     explicit WebContextObjCObjectGraphEncoder(ObjCObjectGraph*, WebProcessProxy&);
-    void encode(CoreIPC::ArgumentEncoder&) const;
+    void encode(IPC::ArgumentEncoder&) const;
 
 private:
     ObjCObjectGraph* m_objectGraph;
@@ -49,7 +49,7 @@ private:
 class WebContextObjCObjectGraphDecoder {
 public:
     explicit WebContextObjCObjectGraphDecoder(RefPtr<ObjCObjectGraph>&, WebProcessProxy&);
-    static bool decode(CoreIPC::ArgumentDecoder&, WebContextObjCObjectGraphDecoder&);
+    static bool decode(IPC::ArgumentDecoder&, WebContextObjCObjectGraphDecoder&);
 
 private:
     RefPtr<ObjCObjectGraph>& m_objectGraph;
@@ -60,7 +60,7 @@ private:
 class InjectedBundleObjCObjectGraphEncoder {
 public:
     explicit InjectedBundleObjCObjectGraphEncoder(ObjCObjectGraph*, WebProcess&);
-    void encode(CoreIPC::ArgumentEncoder&) const;
+    void encode(IPC::ArgumentEncoder&) const;
 
 private:
     ObjCObjectGraph* m_objectGraph;
@@ -70,7 +70,7 @@ private:
 class InjectedBundleObjCObjectGraphDecoder {
 public:
     explicit InjectedBundleObjCObjectGraphDecoder(RefPtr<ObjCObjectGraph>&, WebProcess&);
-    static bool decode(CoreIPC::ArgumentDecoder&, InjectedBundleObjCObjectGraphDecoder&);
+    static bool decode(IPC::ArgumentDecoder&, InjectedBundleObjCObjectGraphDecoder&);
 
 private:
     RefPtr<ObjCObjectGraph>& m_objectGraph;

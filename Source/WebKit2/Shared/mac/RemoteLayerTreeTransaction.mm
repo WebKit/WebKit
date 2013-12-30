@@ -44,7 +44,7 @@ RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties()
 {
 }
 
-void RemoteLayerTreeTransaction::LayerCreationProperties::encode(CoreIPC::ArgumentEncoder& encoder) const
+void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << layerID;
     encoder.encodeEnum(type);
@@ -53,7 +53,7 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(CoreIPC::Argume
         encoder << hostingContextID;
 }
 
-bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(CoreIPC::ArgumentDecoder& decoder, LayerCreationProperties& result)
+bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::ArgumentDecoder& decoder, LayerCreationProperties& result)
 {
     if (!decoder.decode(result.layerID))
         return false;
@@ -94,7 +94,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
 {
 }
 
-void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncoder& encoder) const
+void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder.encodeEnum(changedProperties);
 
@@ -180,7 +180,7 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncode
         encoder.encodeEnum(customAppearance);
 }
 
-bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder& decoder, LayerProperties& result)
+bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::ArgumentDecoder& decoder, LayerProperties& result)
 {
     if (!decoder.decodeEnum(result.changedProperties))
         return false;
@@ -336,7 +336,7 @@ RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction()
 {
 }
 
-void RemoteLayerTreeTransaction::encode(CoreIPC::ArgumentEncoder& encoder) const
+void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_rootLayerID;
     encoder << m_createdLayers;
@@ -344,7 +344,7 @@ void RemoteLayerTreeTransaction::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_destroyedLayerIDs;
 }
 
-bool RemoteLayerTreeTransaction::decode(CoreIPC::ArgumentDecoder& decoder, RemoteLayerTreeTransaction& result)
+bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLayerTreeTransaction& result)
 {
     if (!decoder.decode(result.m_rootLayerID))
         return false;

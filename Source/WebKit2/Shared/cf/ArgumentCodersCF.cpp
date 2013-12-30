@@ -38,7 +38,7 @@
 
 using namespace WebCore;
 
-namespace CoreIPC {
+namespace IPC {
 
 CFTypeRef tokenNullTypeRef()
 {
@@ -299,12 +299,12 @@ void encode(ArgumentEncoder& encoder, CFDataRef data)
     CFIndex length = CFDataGetLength(data);
     const UInt8* bytePtr = CFDataGetBytePtr(data);
 
-    encoder << CoreIPC::DataReference(bytePtr, length);
+    encoder << IPC::DataReference(bytePtr, length);
 }
 
 bool decode(ArgumentDecoder& decoder, RetainPtr<CFDataRef>& result)
 {
-    CoreIPC::DataReference dataReference;
+    IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
         return false;
 
@@ -384,7 +384,7 @@ void encode(ArgumentEncoder& encoder, CFNumberRef number)
     ASSERT_UNUSED(result, result);
 
     encoder.encodeEnum(numberType);
-    encoder << CoreIPC::DataReference(buffer);
+    encoder << IPC::DataReference(buffer);
 }
 
 static size_t sizeForNumberType(CFNumberType numberType)
@@ -441,7 +441,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFNumberRef>& result)
     if (!decoder.decodeEnum(numberType))
         return false;
 
-    CoreIPC::DataReference dataReference;
+    IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
         return false;
 
@@ -472,7 +472,7 @@ void encode(ArgumentEncoder& encoder, CFStringRef string)
     ASSERT(numConvertedBytes == length);
 
     encoder.encodeEnum(encoding);
-    encoder << CoreIPC::DataReference(buffer);
+    encoder << IPC::DataReference(buffer);
 }
 
 bool decode(ArgumentDecoder& decoder, RetainPtr<CFStringRef>& result)
@@ -484,7 +484,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFStringRef>& result)
     if (!CFStringIsEncodingAvailable(encoding))
         return false;
     
-    CoreIPC::DataReference dataReference;
+    IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
         return false;
 
@@ -505,7 +505,7 @@ void encode(ArgumentEncoder& encoder, CFURLRef url)
 
     URLCharBuffer urlBytes;
     getURLBytes(url, urlBytes);
-    CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(urlBytes.data()), urlBytes.size());
+    IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(urlBytes.data()), urlBytes.size());
     encoder << dataReference;
 }
 
@@ -520,7 +520,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFURLRef>& result)
             return false;
     }
 
-    CoreIPC::DataReference urlBytes;
+    IPC::DataReference urlBytes;
     if (!decoder.decode(urlBytes))
         return false;
 
@@ -568,7 +568,7 @@ void encode(ArgumentEncoder& encoder, SecKeychainItemRef keychainItem)
 bool decode(ArgumentDecoder& decoder, RetainPtr<SecKeychainItemRef>& result)
 {
     RetainPtr<CFDataRef> data;
-    if (!CoreIPC::decode(decoder, data))
+    if (!IPC::decode(decoder, data))
         return false;
 
     SecKeychainItemRef item;
@@ -580,4 +580,4 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<SecKeychainItemRef>& result)
 }
 #endif
 
-} // namespace CoreIPC
+} // namespace IPC

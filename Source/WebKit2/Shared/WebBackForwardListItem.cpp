@@ -61,16 +61,16 @@ void WebBackForwardListItem::setBackForwardData(const uint8_t* data, size_t size
     m_backForwardData.append(data, size);
 }
 
-void WebBackForwardListItem::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebBackForwardListItem::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_originalURL;
     encoder << m_url;
     encoder << m_title;
     encoder << m_itemID;
-    encoder << CoreIPC::DataReference(m_backForwardData);
+    encoder << IPC::DataReference(m_backForwardData);
 }
 
-PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::decode(CoreIPC::ArgumentDecoder& decoder)
+PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::decode(IPC::ArgumentDecoder& decoder)
 {
     String originalURL;
     if (!decoder.decode(originalURL))
@@ -88,7 +88,7 @@ PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::decode(CoreIPC::Argum
     if (!decoder.decode(itemID))
         return 0;
     
-    CoreIPC::DataReference data;
+    IPC::DataReference data;
     if (!decoder.decode(data))
         return 0;
 

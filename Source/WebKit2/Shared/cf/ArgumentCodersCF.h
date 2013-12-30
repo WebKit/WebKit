@@ -33,7 +33,7 @@
 #include <Security/SecKeychainItem.h>
 #endif
 
-namespace CoreIPC {
+namespace IPC {
 
 class ArgumentEncoder;
 class ArgumentDecoder;
@@ -86,6 +86,6 @@ bool decode(ArgumentDecoder&, RetainPtr<SecKeychainItemRef>& result);
 
 CFTypeRef tokenNullTypeRef();
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // ArgumentCodersCF_h

@@ -44,7 +44,7 @@ namespace WebKit {
 class StorageAreaImpl;
 class StorageNamespaceImpl;
 
-class StorageAreaMap : public RefCounted<StorageAreaMap>, private CoreIPC::MessageReceiver {
+class StorageAreaMap : public RefCounted<StorageAreaMap>, private IPC::MessageReceiver {
 public:
     static PassRefPtr<StorageAreaMap> create(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
     ~StorageAreaMap();
@@ -62,8 +62,8 @@ public:
 private:
     StorageAreaMap(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     void didGetValues(uint64_t storageMapSeed);
     void didSetItem(uint64_t storageMapSeed, const String& key, bool quotaError);

@@ -51,7 +51,7 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
 {
 }
 
-void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
+void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << identifier;
     encoder << webPageID;
@@ -99,7 +99,7 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
     encoder << isMainResource;
 }
 
-bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder& decoder, NetworkResourceLoadParameters& result)
+bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, NetworkResourceLoadParameters& result)
 {
     if (!decoder.decode(result.identifier))
         return false;
@@ -118,7 +118,7 @@ bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder& decoder, Ne
         return false;
 
     if (hasHTTPBody) {
-        CoreIPC::DataReference formData;
+        IPC::DataReference formData;
         if (!decoder.decode(formData))
             return false;
         DecoderAdapter httpBodyDecoderAdapter(formData.data(), formData.size());

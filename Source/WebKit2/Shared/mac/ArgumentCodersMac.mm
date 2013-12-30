@@ -34,7 +34,7 @@
 
 using namespace WebCore;
 
-namespace CoreIPC {
+namespace IPC {
 
 enum NSType {
     NSAttributedStringType,
@@ -216,7 +216,7 @@ void encode(ArgumentEncoder& encoder, NSAttributedString *string)
 
     NSString *plainString = [string string];
     NSUInteger length = [plainString length];
-    CoreIPC::encode(encoder, plainString);
+    IPC::encode(encoder, plainString);
 
     Vector<pair<NSRange, RetainPtr<NSDictionary>>> ranges;
 
@@ -239,14 +239,14 @@ void encode(ArgumentEncoder& encoder, NSAttributedString *string)
     for (size_t i = 0; i < ranges.size(); ++i) {
         encoder << static_cast<uint64_t>(ranges[i].first.location);
         encoder << static_cast<uint64_t>(ranges[i].first.length);
-        CoreIPC::encode(encoder, ranges[i].second.get());
+        IPC::encode(encoder, ranges[i].second.get());
     }
 }
 
 bool decode(ArgumentDecoder& decoder, RetainPtr<NSAttributedString>& result)
 {
     RetainPtr<NSString> plainString;
-    if (!CoreIPC::decode(decoder, plainString))
+    if (!IPC::decode(decoder, plainString))
         return false;
 
     NSUInteger stringLength = [plainString.get() length];
@@ -271,7 +271,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSAttributedString>& result)
         if (rangeLocation + rangeLength <= rangeLocation || rangeLocation + rangeLength > stringLength)
             return false;
 
-        if (!CoreIPC::decode(decoder, attributes))
+        if (!IPC::decode(decoder, attributes))
             return false;
         [resultString.get() addAttributes:attributes.get() range:NSMakeRange(rangeLocation, rangeLength)];
     }
@@ -462,4 +462,4 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSData>& result)
     return true;
 }
 
-} // namespace CoreIPC
+} // namespace IPC

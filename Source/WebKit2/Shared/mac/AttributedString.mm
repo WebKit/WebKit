@@ -32,22 +32,22 @@
 
 namespace WebKit {
 
-void AttributedString::encode(CoreIPC::ArgumentEncoder& encoder) const
+void AttributedString::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << static_cast<bool>(!string);
     if (!string)
         return;
-    CoreIPC::encode(encoder, string.get());
+    IPC::encode(encoder, string.get());
 }
 
-bool AttributedString::decode(CoreIPC::ArgumentDecoder& decoder, AttributedString& attributedString)
+bool AttributedString::decode(IPC::ArgumentDecoder& decoder, AttributedString& attributedString)
 {
     bool isNull;
     if (!decoder.decode(isNull))
         return false;
     if (isNull)
         return true;
-    return CoreIPC::decode(decoder, attributedString.string);
+    return IPC::decode(decoder, attributedString.string);
 }
 
 }

@@ -38,7 +38,7 @@ namespace WebKit {
 
 class WebProcess;
 
-class WebIconDatabaseProxy : public WebCore::IconDatabaseBase, private CoreIPC::MessageReceiver {
+class WebIconDatabaseProxy : public WebCore::IconDatabaseBase, private IPC::MessageReceiver {
 public:
     explicit WebIconDatabaseProxy(WebProcess*);
     virtual ~WebIconDatabaseProxy();
@@ -63,8 +63,8 @@ public:
     virtual void iconDataForIconURL(const String&, PassRefPtr<WebCore::IconDataCallback>);
 
 private:
-    // CoreIPC::MessageReceiver
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
     
     // Callbacks from the UIProcess
     void urlImportFinished();

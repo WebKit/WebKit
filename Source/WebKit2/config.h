@@ -80,6 +80,3 @@
 #define ENABLE_SEC_ITEM_SHIM 1
 #endif
 #endif
-
-// FIXME: Remove this once everything has been moved over to the IPC namespace.
-#define CoreIPC IPC

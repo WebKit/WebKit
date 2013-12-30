@@ -55,7 +55,7 @@ DatabaseProcess::~DatabaseProcess()
 {
 }
 
-void DatabaseProcess::initializeConnection(CoreIPC::Connection* connection)
+void DatabaseProcess::initializeConnection(IPC::Connection* connection)
 {
     ChildProcess::initializeConnection(connection);
 }
@@ -65,12 +65,12 @@ bool DatabaseProcess::shouldTerminate()
     return true;
 }
 
-void DatabaseProcess::didClose(CoreIPC::Connection*)
+void DatabaseProcess::didClose(IPC::Connection*)
 {
     RunLoop::current()->stop();
 }
 
-void DatabaseProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
+void DatabaseProcess::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
 {
     RunLoop::current()->stop();
 }
@@ -155,10 +155,10 @@ void DatabaseProcess::createDatabaseToWebProcessConnection()
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
 
     // Create a listening connection.
-    RefPtr<DatabaseToWebProcessConnection> connection = DatabaseToWebProcessConnection::create(CoreIPC::Connection::Identifier(listeningPort));
+    RefPtr<DatabaseToWebProcessConnection> connection = DatabaseToWebProcessConnection::create(IPC::Connection::Identifier(listeningPort));
     m_databaseToWebProcessConnections.append(connection.release());
 
-    CoreIPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+    IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidCreateDatabaseToWebProcessConnection(clientPort), 0);
 #else
     notImplemented();

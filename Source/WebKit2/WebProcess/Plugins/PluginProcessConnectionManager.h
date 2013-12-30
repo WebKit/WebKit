@@ -42,23 +42,23 @@ namespace WebKit {
 
 class PluginProcessConnection;
         
-class PluginProcessConnectionManager : public CoreIPC::Connection::WorkQueueMessageReceiver {
+class PluginProcessConnectionManager : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     static PassRefPtr<PluginProcessConnectionManager> create();
     ~PluginProcessConnectionManager();
 
-    void initializeConnection(CoreIPC::Connection*);
+    void initializeConnection(IPC::Connection*);
 
     PluginProcessConnection* getPluginProcessConnection(uint64_t pluginProcessToken);
     void removePluginProcessConnection(PluginProcessConnection*);
 
-    void didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&);
+    void didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(IPC::Connection*, OwnPtr<IPC::MessageDecoder>&);
 
 private:
     PluginProcessConnectionManager();
 
-    // CoreIPC::Connection::WorkQueueMessageReceiver.
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::Connection::WorkQueueMessageReceiver.
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     void pluginProcessCrashed(uint64_t pluginProcessToken);
 
@@ -67,7 +67,7 @@ private:
     Vector<RefPtr<PluginProcessConnection>> m_pluginProcessConnections;
 
     Mutex m_tokensAndConnectionsMutex;
-    HashMap<uint64_t, RefPtr<CoreIPC::Connection>> m_tokensAndConnections;
+    HashMap<uint64_t, RefPtr<IPC::Connection>> m_tokensAndConnections;
 };
 
 }

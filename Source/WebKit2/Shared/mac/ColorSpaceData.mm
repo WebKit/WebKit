@@ -38,21 +38,21 @@ enum EncodedDataType {
     Data,
 };
 
-void ColorSpaceData::encode(CoreIPC::ArgumentEncoder& encoder) const
+void ColorSpaceData::encode(IPC::ArgumentEncoder& encoder) const
 {
 #if !PLATFORM(IOS)
     if (cgColorSpace) {
         // Try to encode the name.
         if (RetainPtr<CFStringRef> name = adoptCF(CGColorSpaceCopyName(cgColorSpace.get()))) {
             encoder.encodeEnum(Name);
-            CoreIPC::encode(encoder, name.get());
+            IPC::encode(encoder, name.get());
             return;
         }
 
         // Failing that, just encode the ICC data.
         if (RetainPtr<CFDataRef> profileData = adoptCF(CGColorSpaceCopyICCProfile(cgColorSpace.get()))) {
             encoder.encodeEnum(Data);
-            CoreIPC::encode(encoder, profileData.get());
+            IPC::encode(encoder, profileData.get());
             return;
         }
     }
@@ -62,7 +62,7 @@ void ColorSpaceData::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder.encodeEnum(Null);
 }
 
-bool ColorSpaceData::decode(CoreIPC::ArgumentDecoder& decoder, ColorSpaceData& colorSpaceData)
+bool ColorSpaceData::decode(IPC::ArgumentDecoder& decoder, ColorSpaceData& colorSpaceData)
 {
     EncodedDataType dataType;
     if (!decoder.decodeEnum(dataType))
@@ -74,7 +74,7 @@ bool ColorSpaceData::decode(CoreIPC::ArgumentDecoder& decoder, ColorSpaceData& c
         return true;
     case Name: {
         RetainPtr<CFStringRef> name;
-        if (!CoreIPC::decode(decoder, name))
+        if (!IPC::decode(decoder, name))
             return false;
 
         colorSpaceData.cgColorSpace = adoptCF(CGColorSpaceCreateWithName(name.get()));
@@ -82,7 +82,7 @@ bool ColorSpaceData::decode(CoreIPC::ArgumentDecoder& decoder, ColorSpaceData& c
     }
     case Data: {
         RetainPtr<CFDataRef> data;
-        if (!CoreIPC::decode(decoder, data))
+        if (!IPC::decode(decoder, data))
             return false;
 
         colorSpaceData.cgColorSpace = adoptCF(CGColorSpaceCreateWithICCProfile(data.get()));

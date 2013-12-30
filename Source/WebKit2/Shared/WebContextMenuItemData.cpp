@@ -104,7 +104,7 @@ void WebContextMenuItemData::setUserData(API::Object* userData)
     m_userData = userData;
 }
     
-void WebContextMenuItemData::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebContextMenuItemData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder.encodeEnum(m_type);
     encoder.encodeEnum(m_action);
@@ -114,7 +114,7 @@ void WebContextMenuItemData::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_submenu;
 }
 
-bool WebContextMenuItemData::decode(CoreIPC::ArgumentDecoder& decoder, WebContextMenuItemData& item)
+bool WebContextMenuItemData::decode(IPC::ArgumentDecoder& decoder, WebContextMenuItemData& item)
 {
     WebCore::ContextMenuItemType type;
     if (!decoder.decodeEnum(type))

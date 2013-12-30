@@ -45,7 +45,7 @@ class ChildProcess;
 class Download;
 class WebFrame;
 
-class AuthenticationManager : public WebProcessSupplement, public NetworkProcessSupplement, public CoreIPC::MessageReceiver {
+class AuthenticationManager : public WebProcessSupplement, public NetworkProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 public:
     explicit AuthenticationManager(ChildProcess*);
@@ -66,8 +66,8 @@ public:
     uint64_t outstandingAuthenticationChallengeCount() const { return m_challenges.size(); }
 
 private:
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     bool tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const WebCore::CertificateInfo&);
 

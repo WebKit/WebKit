@@ -47,27 +47,27 @@ class NetworkResourceLoader;
 class SyncNetworkResourceLoader;
 typedef uint64_t ResourceLoadIdentifier;
 
-class NetworkConnectionToWebProcess : public RefCounted<NetworkConnectionToWebProcess>, CoreIPC::Connection::Client {
+class NetworkConnectionToWebProcess : public RefCounted<NetworkConnectionToWebProcess>, IPC::Connection::Client {
 public:
-    static PassRefPtr<NetworkConnectionToWebProcess> create(CoreIPC::Connection::Identifier);
+    static PassRefPtr<NetworkConnectionToWebProcess> create(IPC::Connection::Identifier);
     virtual ~NetworkConnectionToWebProcess();
 
-    CoreIPC::Connection* connection() const { return m_connection.get(); }
+    IPC::Connection* connection() const { return m_connection.get(); }
 
     bool isSerialLoadingEnabled() const { return m_serialLoadingEnabled; }
 
 private:
-    NetworkConnectionToWebProcess(CoreIPC::Connection::Identifier);
+    NetworkConnectionToWebProcess(IPC::Connection::Identifier);
 
-    // CoreIPC::Connection::Client
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
-    virtual void didClose(CoreIPC::Connection*);
-    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName);
+    // IPC::Connection::Client
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
+    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    virtual void didClose(IPC::Connection*);
+    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName);
 
     // Message handlers.
-    void didReceiveNetworkConnectionToWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    void didReceiveSyncNetworkConnectionToWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
+    void didReceiveNetworkConnectionToWebProcessMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveSyncNetworkConnectionToWebProcessMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
     
     void scheduleResourceLoad(const NetworkResourceLoadParameters&);
     void performSynchronousLoad(const NetworkResourceLoadParameters&, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
@@ -90,7 +90,7 @@ private:
     void registerBlobURLFromURL(const WebCore::URL&, const WebCore::URL& srcURL);
     void unregisterBlobURL(const WebCore::URL&);
 
-    RefPtr<CoreIPC::Connection> m_connection;
+    RefPtr<IPC::Connection> m_connection;
 
     HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>> m_networkResourceLoaders;
 

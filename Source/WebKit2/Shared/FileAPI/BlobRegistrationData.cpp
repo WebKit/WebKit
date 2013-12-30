@@ -70,7 +70,7 @@ std::unique_ptr<BlobData> BlobRegistrationData::releaseData() const
     return std::move(m_data);
 }
 
-void BlobRegistrationData::encode(CoreIPC::ArgumentEncoder& encoder) const
+void BlobRegistrationData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_data->contentType();
     encoder << m_data->contentDisposition();
@@ -85,7 +85,7 @@ void BlobRegistrationData::encode(CoreIPC::ArgumentEncoder& encoder) const
             // There is no way to create a partial data item.
             ASSERT(!item.offset);
             ASSERT(item.length == BlobDataItem::toEndOfFile);
-            encoder << CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(item.data->data()), item.data->length());
+            encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(item.data->data()), item.data->length());
             break;
         case BlobDataItem::File:
             encoder << static_cast<int64_t>(item.offset);
@@ -104,7 +104,7 @@ void BlobRegistrationData::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_sandboxExtensions;
 }
 
-bool BlobRegistrationData::decode(CoreIPC::ArgumentDecoder& decoder, BlobRegistrationData& result)
+bool BlobRegistrationData::decode(IPC::ArgumentDecoder& decoder, BlobRegistrationData& result)
 {
     ASSERT(!result.m_data);
     result.m_data = std::make_unique<BlobData>();
@@ -129,7 +129,7 @@ bool BlobRegistrationData::decode(CoreIPC::ArgumentDecoder& decoder, BlobRegistr
             return false;
         switch (type) {
         case BlobDataItem::Data: {
-            CoreIPC::DataReference data;
+            IPC::DataReference data;
             if (!decoder.decode(data))
                 return false;
             RefPtr<RawData> rawData = RawData::create();

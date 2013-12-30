@@ -33,7 +33,7 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/threads/BinarySemaphore.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 class Connection::SyncMessageState : public ThreadSafeRefCounted<Connection::SyncMessageState> {
 public:
@@ -218,7 +218,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     , m_shouldExitOnSyncMessageSendFailure(false)
     , m_didCloseOnConnectionWorkQueueCallback(0)
     , m_isConnected(false)
-    , m_connectionQueue(WorkQueue::create("com.apple.CoreIPC.ReceiveQueue"))
+    , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"))
     , m_clientRunLoop(clientRunLoop)
     , m_inSendSyncCount(0)
     , m_inDispatchMessageCount(0)
@@ -837,4 +837,4 @@ void Connection::wakeUpRunLoop()
     m_clientRunLoop->wakeUp();
 }
 
-} // namespace CoreIPC
+} // namespace IPC

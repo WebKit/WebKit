@@ -42,12 +42,12 @@ struct PluginCreationParameters;
     
 // A connection from a plug-in process to a web process.
 
-class WebProcessConnection : public RefCounted<WebProcessConnection>, CoreIPC::Connection::Client {
+class WebProcessConnection : public RefCounted<WebProcessConnection>, IPC::Connection::Client {
 public:
-    static PassRefPtr<WebProcessConnection> create(CoreIPC::Connection::Identifier);
+    static PassRefPtr<WebProcessConnection> create(IPC::Connection::Identifier);
     virtual ~WebProcessConnection();
 
-    CoreIPC::Connection* connection() const { return m_connection.get(); }
+    IPC::Connection* connection() const { return m_connection.get(); }
     NPRemoteObjectMap* npRemoteObjectMap() const { return m_npRemoteObjectMap.get(); }
 
     void removePluginControllerProxy(PluginControllerProxy*, Plugin*);
@@ -55,28 +55,28 @@ public:
     static void setGlobalException(const String&);
 
 private:
-    WebProcessConnection(CoreIPC::Connection::Identifier);
+    WebProcessConnection(IPC::Connection::Identifier);
 
     void addPluginControllerProxy(std::unique_ptr<PluginControllerProxy>);
 
     void destroyPluginControllerProxy(PluginControllerProxy*);
 
-    // CoreIPC::Connection::Client
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&) OVERRIDE;
-    virtual void didClose(CoreIPC::Connection*);
-    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName);
+    // IPC::Connection::Client
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) OVERRIDE;
+    virtual void didClose(IPC::Connection*);
+    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName);
 
     // Message handlers.
-    void didReceiveWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    void didReceiveSyncWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
+    void didReceiveWebProcessConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveSyncWebProcessConnectionMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
     void createPlugin(const PluginCreationParameters&, PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply>);
     void createPluginAsynchronously(const PluginCreationParameters&);
     void destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete);
     
     void createPluginInternal(const PluginCreationParameters&, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID);
 
-    RefPtr<CoreIPC::Connection> m_connection;
+    RefPtr<IPC::Connection> m_connection;
 
     HashMap<uint64_t, std::unique_ptr<PluginControllerProxy>> m_pluginControllers;
     RefPtr<NPRemoteObjectMap> m_npRemoteObjectMap;

@@ -36,7 +36,7 @@ class ResourceRequest;
 class ResourceResponse;
 }
 
-namespace CoreIPC {
+namespace IPC {
 class Connection;
 }
 
@@ -56,7 +56,7 @@ public:
 
         virtual void didCreateDownload() = 0;
         virtual void didDestroyDownload() = 0;
-        virtual CoreIPC::Connection* downloadProxyConnection() = 0;
+        virtual IPC::Connection* downloadProxyConnection() = 0;
         virtual AuthenticationManager& downloadsAuthenticationManager() = 0;
     };
 
@@ -74,7 +74,7 @@ public:
     void didCreateDownload();
     void didDestroyDownload();
 
-    CoreIPC::Connection* downloadProxyConnection();
+    IPC::Connection* downloadProxyConnection();
     AuthenticationManager& downloadsAuthenticationManager();
 
 private:

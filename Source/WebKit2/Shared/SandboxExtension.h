@@ -36,7 +36,7 @@
 typedef struct __WKSandboxExtension* WKSandboxExtensionRef;
 #endif
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentEncoder;
     class ArgumentDecoder;
 }
@@ -57,8 +57,8 @@ public:
         Handle();
         ~Handle();
 
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, Handle&);
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, Handle&);
 
     private:
         friend class SandboxExtension;
@@ -77,8 +77,8 @@ public:
         Handle& operator[](size_t i);
         const Handle& operator[](size_t i) const;
         size_t size() const;
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, HandleArray&);
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, HandleArray&);
        
     private:
 #if ENABLE(WEB_PROCESS_SANDBOX)
@@ -113,16 +113,16 @@ private:
 #if !ENABLE(WEB_PROCESS_SANDBOX)
 inline SandboxExtension::Handle::Handle() { }
 inline SandboxExtension::Handle::~Handle() { }
-inline void SandboxExtension::Handle::encode(CoreIPC::ArgumentEncoder&) const { }
-inline bool SandboxExtension::Handle::decode(CoreIPC::ArgumentDecoder&, Handle&) { return true; }
+inline void SandboxExtension::Handle::encode(IPC::ArgumentEncoder&) const { }
+inline bool SandboxExtension::Handle::decode(IPC::ArgumentDecoder&, Handle&) { return true; }
 inline SandboxExtension::HandleArray::HandleArray() { }
 inline SandboxExtension::HandleArray::~HandleArray() { }
 inline void SandboxExtension::HandleArray::allocate(size_t) { }
 inline size_t SandboxExtension::HandleArray::size() const { return 0; }    
 inline const SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t) const { return m_emptyHandle; }
 inline SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t) { return m_emptyHandle; }
-inline void SandboxExtension::HandleArray::encode(CoreIPC::ArgumentEncoder&) const { }
-inline bool SandboxExtension::HandleArray::decode(CoreIPC::ArgumentDecoder&, HandleArray&) { return true; }
+inline void SandboxExtension::HandleArray::encode(IPC::ArgumentEncoder&) const { }
+inline bool SandboxExtension::HandleArray::decode(IPC::ArgumentDecoder&, HandleArray&) { return true; }
 inline PassRefPtr<SandboxExtension> SandboxExtension::create(const Handle&) { return 0; }
 inline void SandboxExtension::createHandle(const String&, Type, Handle&) { }
 inline void SandboxExtension::createHandleForReadWriteDirectory(const String&, Handle&) { }

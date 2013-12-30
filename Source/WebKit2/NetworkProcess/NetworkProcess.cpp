@@ -106,7 +106,7 @@ bool NetworkProcess::shouldTerminate()
     return false;
 }
 
-void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+void NetworkProcess::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
     if (messageReceiverMap().dispatchMessage(connection, decoder))
         return;
@@ -114,18 +114,18 @@ void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
     didReceiveNetworkProcessMessage(connection, decoder);
 }
 
-void NetworkProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)
+void NetworkProcess::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
     messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
-void NetworkProcess::didClose(CoreIPC::Connection*)
+void NetworkProcess::didClose(IPC::Connection*)
 {
     // The UIProcess just exited.
     RunLoop::current()->stop();
 }
 
-void NetworkProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
+void NetworkProcess::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
 {
     RunLoop::current()->stop();
 }
@@ -140,7 +140,7 @@ void NetworkProcess::didDestroyDownload()
     enableTermination();
 }
 
-CoreIPC::Connection* NetworkProcess::downloadProxyConnection()
+IPC::Connection* NetworkProcess::downloadProxyConnection()
 {
     return parentProcessConnection();
 }
@@ -172,7 +172,7 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
         it->value->initialize(parameters);
 }
 
-void NetworkProcess::initializeConnection(CoreIPC::Connection* connection)
+void NetworkProcess::initializeConnection(IPC::Connection* connection)
 {
     ChildProcess::initializeConnection(connection);
 
@@ -194,18 +194,18 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
 
     // Create a listening connection.
-    RefPtr<NetworkConnectionToWebProcess> connection = NetworkConnectionToWebProcess::create(CoreIPC::Connection::Identifier(listeningPort));
+    RefPtr<NetworkConnectionToWebProcess> connection = NetworkConnectionToWebProcess::create(IPC::Connection::Identifier(listeningPort));
     m_webProcessConnections.append(connection.release());
 
-    CoreIPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+    IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientPort), 0);
 #elif USE(UNIX_DOMAIN_SOCKETS)
-    CoreIPC::Connection::SocketPair socketPair = CoreIPC::Connection::createPlatformConnection();
+    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
 
     RefPtr<NetworkConnectionToWebProcess> connection = NetworkConnectionToWebProcess::create(socketPair.server);
     m_webProcessConnections.append(connection.release());
 
-    CoreIPC::Attachment clientSocket(socketPair.client);
+    IPC::Attachment clientSocket(socketPair.client);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientSocket), 0);
 #else
     notImplemented();

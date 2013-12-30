@@ -42,7 +42,7 @@
 #include "ColorSpaceData.h"
 #endif
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -50,8 +50,8 @@ namespace CoreIPC {
 namespace WebKit {
 
 struct WebPageCreationParameters {
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, WebPageCreationParameters&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, WebPageCreationParameters&);
 
     WebCore::IntSize viewSize;
 

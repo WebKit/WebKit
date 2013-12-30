@@ -41,7 +41,7 @@ class WebProcessProxy;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebMediaCacheManagerProxy : public API::ObjectImpl<API::Object::Type::MediaCacheManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebMediaCacheManagerProxy : public API::ObjectImpl<API::Object::Type::MediaCacheManager>, public WebContextSupplement, private IPC::MessageReceiver {
 public:
     static const char* supplementName();
 
@@ -67,8 +67,8 @@ private:
     virtual void refWebContextSupplement() OVERRIDE;
     virtual void derefWebContextSupplement() OVERRIDE;
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     HashMap<uint64_t, RefPtr<ArrayCallback>> m_arrayCallbacks;
 };

@@ -56,7 +56,7 @@ WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position,
     ASSERT(isMouseEventType(type));
 }
 
-void WebMouseEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebMouseEvent::encode(IPC::ArgumentEncoder& encoder) const
 {
     WebEvent::encode(encoder);
 
@@ -69,7 +69,7 @@ void WebMouseEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_clickCount;
 }
 
-bool WebMouseEvent::decode(CoreIPC::ArgumentDecoder& decoder, WebMouseEvent& result)
+bool WebMouseEvent::decode(IPC::ArgumentDecoder& decoder, WebMouseEvent& result)
 {
     if (!WebEvent::decode(decoder, result))
         return false;

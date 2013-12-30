@@ -34,7 +34,7 @@
 #include "MachPort.h"
 #endif
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -44,8 +44,8 @@ namespace WebKit {
 struct PluginProcessCreationParameters {
     PluginProcessCreationParameters();
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, PluginProcessCreationParameters&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, PluginProcessCreationParameters&);
 
     PluginProcessType processType;
     bool supportsAsynchronousPluginInitialization;
@@ -54,7 +54,7 @@ struct PluginProcessCreationParameters {
     double terminationTimeout;
 
 #if PLATFORM(MAC)
-    CoreIPC::MachPort acceleratedCompositingPort;
+    IPC::MachPort acceleratedCompositingPort;
 #endif
 };
 

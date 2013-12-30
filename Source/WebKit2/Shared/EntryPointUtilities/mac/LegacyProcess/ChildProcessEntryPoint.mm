@@ -55,7 +55,7 @@ void ChildProcessMainDelegate::doPreInitializationWork()
 {
 }
 
-bool ChildProcessMainDelegate::getConnectionIdentifier(CoreIPC::Connection::Identifier& identifier)
+bool ChildProcessMainDelegate::getConnectionIdentifier(IPC::Connection::Identifier& identifier)
 {
     String serviceName = m_commandLine["servicename"];
     if (serviceName.isEmpty())

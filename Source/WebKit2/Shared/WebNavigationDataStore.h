@@ -36,7 +36,7 @@
 namespace WebKit {
 
 struct WebNavigationDataStore {
-    void encode(CoreIPC::ArgumentEncoder& encoder) const
+    void encode(IPC::ArgumentEncoder& encoder) const
     {
         encoder << url;
         encoder << title;
@@ -44,7 +44,7 @@ struct WebNavigationDataStore {
         encoder << response;
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder& decoder, WebNavigationDataStore& store)
+    static bool decode(IPC::ArgumentDecoder& decoder, WebNavigationDataStore& store)
     {
         if (!decoder.decode(store.url))
             return false;

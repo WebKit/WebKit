@@ -70,7 +70,7 @@
 using namespace WebCore;
 using namespace WebKit;
 
-namespace CoreIPC {
+namespace IPC {
 
 void ArgumentCoder<AffineTransform>::encode(ArgumentEncoder& encoder, const AffineTransform& affineTransform)
 {
@@ -1547,4 +1547,4 @@ bool ArgumentCoder<IDBObjectStoreMetadata>::decode(ArgumentDecoder& decoder, IDB
 }
 #endif
 
-} // namespace CoreIPC
+} // namespace IPC

@@ -60,7 +60,7 @@ WebPreferencesStore::WebPreferencesStore()
 {
 }
 
-void WebPreferencesStore::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebPreferencesStore::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_stringValues;
     encoder << m_boolValues;
@@ -69,7 +69,7 @@ void WebPreferencesStore::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_floatValues;
 }
 
-bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder& decoder, WebPreferencesStore& result)
+bool WebPreferencesStore::decode(IPC::ArgumentDecoder& decoder, WebPreferencesStore& result)
 {
     if (!decoder.decode(result.m_stringValues))
         return false;

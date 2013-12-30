@@ -44,7 +44,7 @@ DecoderAdapter::DecoderAdapter(const uint8_t* buffer, size_t bufferSize)
 
 bool DecoderAdapter::decodeBytes(Vector<uint8_t>& bytes)
 {
-    CoreIPC::DataReference dataReference;
+    IPC::DataReference dataReference;
     if (!m_decoder.decode(dataReference))
         return false;
 
@@ -94,9 +94,9 @@ bool DecoderAdapter::decodeDouble(double& value)
 
 bool DecoderAdapter::decodeString(String& value)
 {
-    // This mimics the CoreIPC binary encoding of Strings prior to r88886.
-    // Whenever the CoreIPC binary encoding changes, we'll have to "undo" the changes here.
-    // FIXME: We shouldn't use the CoreIPC binary encoding format for history,
+    // This mimics the IPC binary encoding of Strings prior to r88886.
+    // Whenever the IPC binary encoding changes, we'll have to "undo" the changes here.
+    // FIXME: We shouldn't use the IPC binary encoding format for history,
     // and we should come up with a migration strategy so we can actually bump the version number
     // without breaking encoding/decoding of the history tree.
 

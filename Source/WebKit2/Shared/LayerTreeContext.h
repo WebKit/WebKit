@@ -28,7 +28,7 @@
 
 #include <stdint.h>
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -47,8 +47,8 @@ public:
     LayerTreeContext();
     ~LayerTreeContext();
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, LayerTreeContext&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, LayerTreeContext&);
 
     bool isEmpty() const;
 

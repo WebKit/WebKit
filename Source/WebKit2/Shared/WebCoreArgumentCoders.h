@@ -92,7 +92,7 @@ struct ViewportArguments;
 }
 #endif
 
-namespace CoreIPC {
+namespace IPC {
 
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
     static void encode(ArgumentEncoder&, const WebCore::AffineTransform&);
@@ -357,6 +357,6 @@ template<> struct ArgumentCoder<WebCore::IDBObjectStoreMetadata> {
 };
 #endif
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // WebCoreArgumentCoders_h

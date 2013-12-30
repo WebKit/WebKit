@@ -35,7 +35,7 @@
 extern "C" int proc_importance_assertion_begin_with_msg(mach_msg_header_t*, mach_msg_trailer_t*, uint64_t*);
 extern "C" int proc_importance_assertion_complete(uint64_t assertion_handle);
 
-namespace CoreIPC {
+namespace IPC {
 
 class ImportanceAssertion {
     WTF_MAKE_NONCOPYABLE(ImportanceAssertion);

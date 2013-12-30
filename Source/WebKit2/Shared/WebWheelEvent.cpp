@@ -69,7 +69,7 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
 }
 #endif
 
-void WebWheelEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebWheelEvent::encode(IPC::ArgumentEncoder& encoder) const
 {
     WebEvent::encode(encoder);
 
@@ -88,7 +88,7 @@ void WebWheelEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
 #endif
 }
 
-bool WebWheelEvent::decode(CoreIPC::ArgumentDecoder& decoder, WebWheelEvent& t)
+bool WebWheelEvent::decode(IPC::ArgumentDecoder& decoder, WebWheelEvent& t)
 {
     if (!WebEvent::decode(decoder, t))
         return false;

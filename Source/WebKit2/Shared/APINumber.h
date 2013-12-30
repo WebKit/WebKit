@@ -43,12 +43,12 @@ public:
 
     NumberType value() const { return m_value; }
 
-    void encode(CoreIPC::ArgumentEncoder& encoder) const
+    void encode(IPC::ArgumentEncoder& encoder) const
     {
         encoder << m_value;
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
+    static bool decode(IPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
     {
         NumberType value;
         if (!decoder.decode(value))

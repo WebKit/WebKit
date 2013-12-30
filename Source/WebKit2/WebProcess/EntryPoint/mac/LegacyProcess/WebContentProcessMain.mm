@@ -85,7 +85,7 @@ public:
 #endif // PLATFORM(IOS)
     }
 
-    virtual bool getConnectionIdentifier(CoreIPC::Connection::Identifier& identifier)
+    virtual bool getConnectionIdentifier(IPC::Connection::Identifier& identifier)
     {
         String clientExecutable = m_commandLine["client-executable"];
         if (clientExecutable.isEmpty())

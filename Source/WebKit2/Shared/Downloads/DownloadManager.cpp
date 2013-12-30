@@ -81,7 +81,7 @@ void DownloadManager::didDestroyDownload()
     m_client->didDestroyDownload();
 }
 
-CoreIPC::Connection* DownloadManager::downloadProxyConnection()
+IPC::Connection* DownloadManager::downloadProxyConnection()
 {
     return m_client->downloadProxyConnection();
 }

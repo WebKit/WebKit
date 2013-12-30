@@ -42,7 +42,7 @@ public:
 
     virtual ~XPCServiceInitializerDelegate();
 
-    virtual bool getConnectionIdentifier(CoreIPC::Connection::Identifier& identifier);
+    virtual bool getConnectionIdentifier(IPC::Connection::Identifier& identifier);
     virtual bool getClientIdentifier(String& clientIdentifier);
     virtual bool getClientProcessName(String& clientProcessName);
     virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData);

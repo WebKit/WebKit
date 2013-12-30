@@ -42,12 +42,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, uint64_t pluginProcessToken, CoreIPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousPluginInitialization)
+PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, uint64_t pluginProcessToken, IPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousPluginInitialization)
     : m_pluginProcessConnectionManager(pluginProcessConnectionManager)
     , m_pluginProcessToken(pluginProcessToken)
     , m_supportsAsynchronousPluginInitialization(supportsAsynchronousPluginInitialization)
 {
-    m_connection = CoreIPC::Connection::createClientConnection(connectionIdentifier, this, RunLoop::main());
+    m_connection = IPC::Connection::createClientConnection(connectionIdentifier, this, RunLoop::main());
 
     m_npRemoteObjectMap = NPRemoteObjectMap::create(m_connection.get());
 
@@ -88,7 +88,7 @@ void PluginProcessConnection::removePluginProxy(PluginProxy* plugin)
     m_pluginProcessConnectionManager->removePluginProcessConnection(this);
 }
 
-void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+void PluginProcessConnection::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
     ASSERT(decoder.destinationID());
 
@@ -99,7 +99,7 @@ void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection,
     pluginProxy->didReceivePluginProxyMessage(connection, decoder);
 }
 
-void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)
+void PluginProcessConnection::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
     if (decoder.messageReceiverName() == Messages::NPObjectMessageReceiver::messageReceiverName()) {
         m_npRemoteObjectMap->didReceiveSyncMessage(connection, decoder, replyEncoder);
@@ -120,7 +120,7 @@ void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connect
     pluginProxy->didReceiveSyncPluginProxyMessage(connection, decoder, replyEncoder);
 }
 
-void PluginProcessConnection::didClose(CoreIPC::Connection*)
+void PluginProcessConnection::didClose(IPC::Connection*)
 {
     // The plug-in process must have crashed.
     for (HashMap<uint64_t, PluginProxy*>::const_iterator::Values it = m_plugins.begin().values(), end = m_plugins.end().values(); it != end; ++it) {
@@ -130,7 +130,7 @@ void PluginProcessConnection::didClose(CoreIPC::Connection*)
     }
 }
 
-void PluginProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
+void PluginProcessConnection::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
 {
 }
 

@@ -37,7 +37,7 @@
 
 using namespace WebCore;
 
-namespace CoreIPC {
+namespace IPC {
 
 void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
@@ -57,8 +57,8 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder
         [(NSMutableURLRequest *)requestToSerialize setHTTPBodyStream:nil];
     }
 
-    RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKNSURLRequestCreateSerializableRepresentation(requestToSerialize.get(), CoreIPC::tokenNullTypeRef()));
-    CoreIPC::encode(encoder, dictionary.get());
+    RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKNSURLRequestCreateSerializableRepresentation(requestToSerialize.get(), IPC::tokenNullTypeRef()));
+    IPC::encode(encoder, dictionary.get());
 
     // The fallback array is part of NSURLRequest, but it is not encoded by WKNSURLRequestCreateSerializableRepresentation.
     encoder << resourceRequest.responseContentDispositionEncodingFallbackArray();
@@ -76,10 +76,10 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
     }
 
     RetainPtr<CFDictionaryRef> dictionary;
-    if (!CoreIPC::decode(decoder, dictionary))
+    if (!IPC::decode(decoder, dictionary))
         return false;
 
-    RetainPtr<NSURLRequest> nsURLRequest = WKNSURLRequestFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
+    RetainPtr<NSURLRequest> nsURLRequest = WKNSURLRequestFromSerializableRepresentation(dictionary.get(), IPC::tokenNullTypeRef());
     if (!nsURLRequest)
         return false;
 
@@ -106,8 +106,8 @@ void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder& encode
     if (!responseIsPresent)
         return;
 
-    RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKNSURLResponseCreateSerializableRepresentation(resourceResponse.nsURLResponse(), CoreIPC::tokenNullTypeRef()));
-    CoreIPC::encode(encoder, dictionary.get());
+    RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKNSURLResponseCreateSerializableRepresentation(resourceResponse.nsURLResponse(), IPC::tokenNullTypeRef()));
+    IPC::encode(encoder, dictionary.get());
 }
 
 bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decoder, ResourceResponse& resourceResponse)
@@ -122,10 +122,10 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decode
     }
 
     RetainPtr<CFDictionaryRef> dictionary;
-    if (!CoreIPC::decode(decoder, dictionary))
+    if (!IPC::decode(decoder, dictionary))
         return false;
 
-    RetainPtr<NSURLResponse> nsURLResponse = WKNSURLResponseFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
+    RetainPtr<NSURLResponse> nsURLResponse = WKNSURLResponseFromSerializableRepresentation(dictionary.get(), IPC::tokenNullTypeRef());
 
     if (!nsURLResponse)
         return false;
@@ -143,7 +143,7 @@ void ArgumentCoder<CertificateInfo>::encode(ArgumentEncoder& encoder, const Cert
     }
 
     encoder << true;
-    CoreIPC::encode(encoder, certificateChain);
+    IPC::encode(encoder, certificateChain);
 }
 
 bool ArgumentCoder<CertificateInfo>::decode(ArgumentDecoder& decoder, CertificateInfo& certificateInfo)
@@ -156,7 +156,7 @@ bool ArgumentCoder<CertificateInfo>::decode(ArgumentDecoder& decoder, Certificat
         return true;
 
     RetainPtr<CFArrayRef> certificateChain;
-    if (!CoreIPC::decode(decoder, certificateChain))
+    if (!IPC::decode(decoder, certificateChain))
         return false;
 
     certificateInfo.setCertificateChain(certificateChain.get());
@@ -189,7 +189,7 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, 
             CFDictionarySetValue(filteredUserInfo.get(), key, value);
     }];
 
-    CoreIPC::encode(encoder, filteredUserInfo.get());
+    IPC::encode(encoder, filteredUserInfo.get());
 
     id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
     if (!peerCertificateChain) {
@@ -224,7 +224,7 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, 
         return false;
 
     RetainPtr<CFDictionaryRef> userInfo;
-    if (!CoreIPC::decode(decoder, userInfo))
+    if (!IPC::decode(decoder, userInfo))
         return false;
 
     CertificateInfo certificate;
@@ -258,4 +258,4 @@ bool ArgumentCoder<KeypressCommand>::decode(ArgumentDecoder& decoder, KeypressCo
     return true;
 }
 
-} // namespace CoreIPC
+} // namespace IPC

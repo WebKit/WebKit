@@ -37,7 +37,7 @@ namespace WebKit {
 class ChildProcess;
 struct SecurityOriginData;
 
-class WebOriginDataManager : public WebProcessSupplement, public CoreIPC::MessageReceiver {
+class WebOriginDataManager : public WebProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebOriginDataManager);
 public:
     WebOriginDataManager(ChildProcess*);
@@ -52,8 +52,8 @@ private:
     void startObservingChanges(WKOriginDataTypes);
     void stopObservingChanges(WKOriginDataTypes);
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     ChildProcess* m_childProcess;
 };

@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-void UpdateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
+void UpdateInfo::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << viewSize;
     encoder << deviceScaleFactor;
@@ -43,7 +43,7 @@ void UpdateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << bitmapOffset;
 }
 
-bool UpdateInfo::decode(CoreIPC::ArgumentDecoder& decoder, UpdateInfo& result)
+bool UpdateInfo::decode(IPC::ArgumentDecoder& decoder, UpdateInfo& result)
 {
     if (!decoder.decode(result.viewSize))
         return false;

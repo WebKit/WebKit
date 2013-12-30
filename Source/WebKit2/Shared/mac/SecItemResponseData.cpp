@@ -41,15 +41,15 @@ SecItemResponseData::SecItemResponseData(OSStatus resultCode, CFTypeRef resultOb
 {
 }
 
-void SecItemResponseData::encode(CoreIPC::ArgumentEncoder& encoder) const
+void SecItemResponseData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << static_cast<int64_t>(m_resultCode);
     encoder << static_cast<bool>(m_resultObject.get());
     if (m_resultObject)
-        CoreIPC::encode(encoder, m_resultObject.get());
+        IPC::encode(encoder, m_resultObject.get());
 }
 
-bool SecItemResponseData::decode(CoreIPC::ArgumentDecoder& decoder, SecItemResponseData& secItemResponseData)
+bool SecItemResponseData::decode(IPC::ArgumentDecoder& decoder, SecItemResponseData& secItemResponseData)
 {
     int64_t resultCode;
     if (!decoder.decode(resultCode))
@@ -61,7 +61,7 @@ bool SecItemResponseData::decode(CoreIPC::ArgumentDecoder& decoder, SecItemRespo
     if (!decoder.decode(expectResultObject))
         return false;
 
-    if (expectResultObject && !CoreIPC::decode(decoder, secItemResponseData.m_resultObject))
+    if (expectResultObject && !IPC::decode(decoder, secItemResponseData.m_resultObject))
         return false;
 
     return true;

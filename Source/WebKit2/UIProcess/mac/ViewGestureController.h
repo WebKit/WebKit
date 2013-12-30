@@ -33,7 +33,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class ViewGestureController : private CoreIPC::MessageReceiver {
+class ViewGestureController : private IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(ViewGestureController);
 public:
     ViewGestureController(WebPageProxy&);
@@ -53,8 +53,8 @@ public:
     };
 
 private:
-    // CoreIPC::MessageReceiver.
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver.
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     // Message handlers.
     void didCollectGeometryForMagnificationGesture(WebCore::FloatRect visibleContentBounds);

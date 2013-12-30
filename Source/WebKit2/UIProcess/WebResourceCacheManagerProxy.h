@@ -44,7 +44,7 @@ class WebSecurityOrigin;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebResourceCacheManagerProxy : public API::ObjectImpl<API::Object::Type::CacheManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebResourceCacheManagerProxy : public API::ObjectImpl<API::Object::Type::CacheManager>, public WebContextSupplement, private IPC::MessageReceiver {
 public:
     static const char* supplementName();
 
@@ -68,8 +68,8 @@ private:
     virtual void refWebContextSupplement() OVERRIDE;
     virtual void derefWebContextSupplement() OVERRIDE;
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     // Message handlers.
     void didGetCacheOrigins(const Vector<SecurityOriginData>& originIdentifiers, uint64_t callbackID);

@@ -407,7 +407,7 @@ void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, b
     [m_wkView _setFindIndicator:findIndicator fadeOut:fadeOut animate:animate];
 }
 
-void PageClientImpl::accessibilityWebProcessTokenReceived(const CoreIPC::DataReference& data)
+void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReference& data)
 {
     NSData* remoteToken = [NSData dataWithBytes:data.data() length:data.size()];
     [m_wkView _setAccessibilityWebProcessToken:remoteToken];

@@ -77,11 +77,11 @@ messages -> WebPage LegacyReceiver {
     LoadURL(String url, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadURLInFrame(String url, uint64_t frameID)
     LoadURLRequest(WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::WebContextUserMessageEncoder userData) Variadic
-    LoadData(CoreIPC::DataReference data, String MIMEType, String encoding, String baseURL, WebKit::WebContextUserMessageEncoder userData) Variadic
+    LoadData(IPC::DataReference data, String MIMEType, String encoding, String baseURL, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadHTMLString(String htmlString, String baseURL, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadAlternateHTMLString(String htmlString, String baseURL, String unreachableURL, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadPlainTextString(String string, WebKit::WebContextUserMessageEncoder userData) Variadic
-    LoadWebArchiveData(CoreIPC::DataReference webArchiveData, WebKit::WebContextUserMessageEncoder userData) Variadic
+    LoadWebArchiveData(IPC::DataReference webArchiveData, WebKit::WebContextUserMessageEncoder userData) Variadic
 
     LinkClicked(String url, WebKit::WebMouseEvent event)
 
@@ -267,7 +267,7 @@ messages -> WebPage LegacyReceiver {
     WindowAndViewFramesChanged(WebCore::FloatRect windowFrameInScreenCoordinates, WebCore::FloatRect windowFrameInUnflippedScreenCoordinates, WebCore::FloatRect viewFrameInWindowCoordinates, WebCore::FloatPoint accessibilityViewCoordinates)
     ViewExposedRectChanged(WebCore::FloatRect exposedRect, bool clipsToExposedRect)
     SetMainFrameIsScrollable(bool isScrollable)
-    RegisterUIProcessAccessibilityTokens(CoreIPC::DataReference elemenToken, CoreIPC::DataReference windowToken)
+    RegisterUIProcessAccessibilityTokens(IPC::DataReference elemenToken, IPC::DataReference windowToken)
     GetStringSelectionForPasteboard() -> (String stringValue)
     GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
     ReadSelectionFromPasteboard(String pasteboardName) -> (bool result)

@@ -39,9 +39,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebToDatabaseProcessConnection::WebToDatabaseProcessConnection(CoreIPC::Connection::Identifier connectionIdentifier)
+WebToDatabaseProcessConnection::WebToDatabaseProcessConnection(IPC::Connection::Identifier connectionIdentifier)
 {
-    m_connection = CoreIPC::Connection::createClientConnection(connectionIdentifier, this, RunLoop::main());
+    m_connection = IPC::Connection::createClientConnection(connectionIdentifier, this, RunLoop::main());
     m_connection->open();
 }
 
@@ -49,7 +49,7 @@ WebToDatabaseProcessConnection::~WebToDatabaseProcessConnection()
 {
 }
 
-void WebToDatabaseProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+void WebToDatabaseProcessConnection::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::WebIDBServerConnection::messageReceiverName()) {
         HashMap<uint64_t, WebIDBServerConnection*>::iterator connectionIterator = m_webIDBServerConnections.find(decoder.destinationID());
@@ -61,12 +61,12 @@ void WebToDatabaseProcessConnection::didReceiveMessage(CoreIPC::Connection* conn
     ASSERT_NOT_REACHED();
 }
 
-void WebToDatabaseProcessConnection::didClose(CoreIPC::Connection* connection)
+void WebToDatabaseProcessConnection::didClose(IPC::Connection* connection)
 {
     WebProcess::shared().webToDatabaseProcessConnectionClosed(this);
 }
 
-void WebToDatabaseProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
+void WebToDatabaseProcessConnection::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
 }
 

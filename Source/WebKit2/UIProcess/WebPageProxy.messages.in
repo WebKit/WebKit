@@ -141,10 +141,10 @@ messages -> WebPageProxy {
 
     # Callback messages
     VoidCallback(uint64_t callbackID)
-    DataCallback(CoreIPC::DataReference resultData, uint64_t callbackID)
+    DataCallback(IPC::DataReference resultData, uint64_t callbackID)
     ImageCallback(WebKit::ShareableBitmap::Handle bitmapHandle, uint64_t callbackID)
     StringCallback(String resultString, uint64_t callbackID)
-    ScriptValueCallback(CoreIPC::DataReference resultData, uint64_t callbackID)
+    ScriptValueCallback(IPC::DataReference resultData, uint64_t callbackID)
     ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
     ValidateCommandCallback(String command, bool isEnabled, int32_t state, uint64_t callbackID)
 #if PLATFORM(IOS)
@@ -258,7 +258,7 @@ messages -> WebPageProxy {
     ExecuteSavedCommandBySelector(String selector) -> (bool handled)
 
     # Remote accessibility messages
-    RegisterWebProcessAccessibilityToken(CoreIPC::DataReference data)
+    RegisterWebProcessAccessibilityToken(IPC::DataReference data)
 
     # Plug-in complex text input support messages
     PluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
@@ -320,10 +320,10 @@ messages -> WebPageProxy {
     DidReceiveURIRequest(String uriString, uint64_t requestID);
 #endif
 
-    SavePDFToFileInDownloadsFolder(String suggestedFilename, String originatingURLString, CoreIPC::DataReference data)
+    SavePDFToFileInDownloadsFolder(String suggestedFilename, String originatingURLString, IPC::DataReference data)
 
 #if PLATFORM(MAC)
-    SavePDFToTemporaryFolderAndOpenWithNativeApplication(String suggestedFilename, String originatingURLString, CoreIPC::DataReference data, String pdfUUID)
+    SavePDFToTemporaryFolderAndOpenWithNativeApplication(String suggestedFilename, String originatingURLString, IPC::DataReference data, String pdfUUID)
     OpenPDFFromTemporaryFolderWithNativeApplication(String pdfUUID)
 #endif
 

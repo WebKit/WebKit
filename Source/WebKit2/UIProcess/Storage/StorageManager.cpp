@@ -48,14 +48,14 @@ public:
 
     SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
-    void addListener(CoreIPC::Connection*, uint64_t storageMapID);
-    void removeListener(CoreIPC::Connection*, uint64_t storageMapID);
+    void addListener(IPC::Connection*, uint64_t storageMapID);
+    void removeListener(IPC::Connection*, uint64_t storageMapID);
 
     PassRefPtr<StorageArea> clone() const;
 
-    void setItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException);
-    void removeItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
-    void clear(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& urlString);
+    void setItem(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException);
+    void removeItem(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString);
+    void clear(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& urlString);
 
     const HashMap<String, String>& items();
     void clear();
@@ -65,7 +65,7 @@ private:
 
     void openDatabaseAndImportItemsIfNeeded();
 
-    void dispatchEvents(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
+    void dispatchEvents(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
 
     // Will be null if the storage area belongs to a session storage namespace.
     LocalStorageNamespace* m_localStorageNamespace;
@@ -76,7 +76,7 @@ private:
     unsigned m_quotaInBytes;
 
     RefPtr<StorageMap> m_storageMap;
-    HashSet<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>> m_eventListeners;
+    HashSet<std::pair<RefPtr<IPC::Connection>, uint64_t>> m_eventListeners;
 };
 
 class StorageManager::LocalStorageNamespace : public ThreadSafeRefCounted<LocalStorageNamespace> {
@@ -128,13 +128,13 @@ StorageManager::StorageArea::~StorageArea()
         m_localStorageNamespace->didDestroyStorageArea(this);
 }
 
-void StorageManager::StorageArea::addListener(CoreIPC::Connection* connection, uint64_t storageMapID)
+void StorageManager::StorageArea::addListener(IPC::Connection* connection, uint64_t storageMapID)
 {
     ASSERT(!m_eventListeners.contains(std::make_pair(connection, storageMapID)));
     m_eventListeners.add(std::make_pair(connection, storageMapID));
 }
 
-void StorageManager::StorageArea::removeListener(CoreIPC::Connection* connection, uint64_t storageMapID)
+void StorageManager::StorageArea::removeListener(IPC::Connection* connection, uint64_t storageMapID)
 {
     ASSERT(m_eventListeners.contains(std::make_pair(connection, storageMapID)));
     m_eventListeners.remove(std::make_pair(connection, storageMapID));
@@ -150,7 +150,7 @@ PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::clone() con
     return storageArea.release();
 }
 
-void StorageManager::StorageArea::setItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException)
+void StorageManager::StorageArea::setItem(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException)
 {
     openDatabaseAndImportItemsIfNeeded();
 
@@ -169,7 +169,7 @@ void StorageManager::StorageArea::setItem(CoreIPC::Connection* sourceConnection,
     dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, value, urlString);
 }
 
-void StorageManager::StorageArea::removeItem(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
+void StorageManager::StorageArea::removeItem(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& urlString)
 {
     openDatabaseAndImportItemsIfNeeded();
 
@@ -187,7 +187,7 @@ void StorageManager::StorageArea::removeItem(CoreIPC::Connection* sourceConnecti
     dispatchEvents(sourceConnection, sourceStorageAreaID, key, oldValue, String(), urlString);
 }
 
-void StorageManager::StorageArea::clear(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& urlString)
+void StorageManager::StorageArea::clear(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& urlString)
 {
     openDatabaseAndImportItemsIfNeeded();
 
@@ -238,9 +238,9 @@ void StorageManager::StorageArea::openDatabaseAndImportItemsIfNeeded()
     m_didImportItemsFromDatabase = true;
 }
 
-void StorageManager::StorageArea::dispatchEvents(CoreIPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
+void StorageManager::StorageArea::dispatchEvents(IPC::Connection* sourceConnection, uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
 {
-    for (HashSet<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>>::const_iterator it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
+    for (HashSet<std::pair<RefPtr<IPC::Connection>, uint64_t>>::const_iterator it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
         uint64_t storageAreaID = it->first == sourceConnection ? sourceStorageAreaID : 0;
 
         it->first->send(Messages::StorageAreaMap::DispatchStorageEvent(storageAreaID, key, oldValue, newValue, urlString), it->second);
@@ -306,33 +306,33 @@ void StorageManager::LocalStorageNamespace::clearAllStorageAreas()
 
 class StorageManager::SessionStorageNamespace : public ThreadSafeRefCounted<SessionStorageNamespace> {
 public:
-    static PassRefPtr<SessionStorageNamespace> create(CoreIPC::Connection* allowedConnection, unsigned quotaInBytes);
+    static PassRefPtr<SessionStorageNamespace> create(IPC::Connection* allowedConnection, unsigned quotaInBytes);
     ~SessionStorageNamespace();
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
 
-    CoreIPC::Connection* allowedConnection() const { return m_allowedConnection.get(); }
-    void setAllowedConnection(CoreIPC::Connection*);
+    IPC::Connection* allowedConnection() const { return m_allowedConnection.get(); }
+    void setAllowedConnection(IPC::Connection*);
 
     PassRefPtr<StorageArea> getOrCreateStorageArea(PassRefPtr<SecurityOrigin>);
 
     void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
 
 private:
-    SessionStorageNamespace(CoreIPC::Connection* allowedConnection, unsigned quotaInBytes);
+    SessionStorageNamespace(IPC::Connection* allowedConnection, unsigned quotaInBytes);
 
-    RefPtr<CoreIPC::Connection> m_allowedConnection;
+    RefPtr<IPC::Connection> m_allowedConnection;
     unsigned m_quotaInBytes;
 
     HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>> m_storageAreaMap;
 };
 
-PassRefPtr<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)
+PassRefPtr<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(IPC::Connection* allowedConnection, unsigned quotaInBytes)
 {
     return adoptRef(new SessionStorageNamespace(allowedConnection, quotaInBytes));
 }
 
-StorageManager::SessionStorageNamespace::SessionStorageNamespace(CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)
+StorageManager::SessionStorageNamespace::SessionStorageNamespace(IPC::Connection* allowedConnection, unsigned quotaInBytes)
     : m_allowedConnection(allowedConnection)
     , m_quotaInBytes(quotaInBytes)
 {
@@ -342,7 +342,7 @@ StorageManager::SessionStorageNamespace::~SessionStorageNamespace()
 {
 }
 
-void StorageManager::SessionStorageNamespace::setAllowedConnection(CoreIPC::Connection* allowedConnection)
+void StorageManager::SessionStorageNamespace::setAllowedConnection(IPC::Connection* allowedConnection)
 {
     ASSERT(!allowedConnection || !m_allowedConnection);
 
@@ -388,9 +388,9 @@ void StorageManager::setLocalStorageDirectory(const String& localStorageDirector
     m_localStorageDatabaseTracker->setLocalStorageDirectory(localStorageDirectory);
 }
 
-void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)
+void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, IPC::Connection* allowedConnection, unsigned quotaInBytes)
 {
-    m_queue->dispatch(bind(&StorageManager::createSessionStorageNamespaceInternal, this, storageNamespaceID, RefPtr<CoreIPC::Connection>(allowedConnection), quotaInBytes));
+    m_queue->dispatch(bind(&StorageManager::createSessionStorageNamespaceInternal, this, storageNamespaceID, RefPtr<IPC::Connection>(allowedConnection), quotaInBytes));
 }
 
 void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
@@ -398,9 +398,9 @@ void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
     m_queue->dispatch(bind(&StorageManager::destroySessionStorageNamespaceInternal, this, storageNamespaceID));
 }
 
-void StorageManager::setAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection)
+void StorageManager::setAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection* allowedConnection)
 {
-    m_queue->dispatch(bind(&StorageManager::setAllowedSessionStorageNamespaceConnectionInternal, this, storageNamespaceID, RefPtr<CoreIPC::Connection>(allowedConnection)));
+    m_queue->dispatch(bind(&StorageManager::setAllowedSessionStorageNamespaceConnectionInternal, this, storageNamespaceID, RefPtr<IPC::Connection>(allowedConnection)));
 }
 
 void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
@@ -417,7 +417,7 @@ void StorageManager::processWillCloseConnection(WebProcessProxy* webProcessProxy
 {
     webProcessProxy->connection()->removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
 
-    m_queue->dispatch(bind(&StorageManager::invalidateConnectionInternal, this, RefPtr<CoreIPC::Connection>(webProcessProxy->connection())));
+    m_queue->dispatch(bind(&StorageManager::invalidateConnectionInternal, this, RefPtr<IPC::Connection>(webProcessProxy->connection())));
 }
 
 void StorageManager::getOrigins(FunctionDispatcher* callbackDispatcher, void* context, void (*callback)(const Vector<RefPtr<WebCore::SecurityOrigin>>& securityOrigins, void* context))
@@ -435,14 +435,14 @@ void StorageManager::deleteAllEntries()
     m_queue->dispatch(bind(&StorageManager::deleteAllEntriesInternal, this));
 }
 
-void StorageManager::createLocalStorageMap(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
+void StorageManager::createLocalStorageMap(IPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
 {
-    std::pair<RefPtr<CoreIPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
+    std::pair<RefPtr<IPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
 
     // FIXME: This should be a message check.
-    ASSERT((HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair)));
+    ASSERT((HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair)));
 
-    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>>::AddResult result = m_storageAreasByConnection.add(connectionAndStorageMapIDPair, nullptr);
+    HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::AddResult result = m_storageAreasByConnection.add(connectionAndStorageMapIDPair, nullptr);
 
     // FIXME: These should be a message checks.
     ASSERT(result.isNewEntry);
@@ -459,7 +459,7 @@ void StorageManager::createLocalStorageMap(CoreIPC::Connection* connection, uint
     result.iterator->value = storageArea.release();
 }
 
-void StorageManager::createSessionStorageMap(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
+void StorageManager::createSessionStorageMap(IPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
 {
     // FIXME: This should be a message check.
     ASSERT((HashMap<uint64_t, RefPtr<SessionStorageNamespace>>::isValidKey(storageNamespaceID)));
@@ -470,12 +470,12 @@ void StorageManager::createSessionStorageMap(CoreIPC::Connection* connection, ui
         return;
     }
 
-    std::pair<RefPtr<CoreIPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
+    std::pair<RefPtr<IPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
 
     // FIXME: This should be a message check.
-    ASSERT((HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair)));
+    ASSERT((HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair)));
 
-    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>>::AddResult result = m_storageAreasByConnection.add(connectionAndStorageMapIDPair, nullptr);
+    HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::AddResult result = m_storageAreasByConnection.add(connectionAndStorageMapIDPair, nullptr);
 
     // FIXME: This should be a message check.
     ASSERT(result.isNewEntry);
@@ -489,14 +489,14 @@ void StorageManager::createSessionStorageMap(CoreIPC::Connection* connection, ui
     result.iterator->value = storageArea.release();
 }
 
-void StorageManager::destroyStorageMap(CoreIPC::Connection* connection, uint64_t storageMapID)
+void StorageManager::destroyStorageMap(IPC::Connection* connection, uint64_t storageMapID)
 {
-    std::pair<RefPtr<CoreIPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
+    std::pair<RefPtr<IPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
 
     // FIXME: This should be a message check.
-    ASSERT((HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair)));
+    ASSERT((HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair)));
 
-    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>>::iterator it = m_storageAreasByConnection.find(connectionAndStorageMapIDPair);
+    HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::iterator it = m_storageAreasByConnection.find(connectionAndStorageMapIDPair);
     if (it == m_storageAreasByConnection.end()) {
         // The connection has been removed because the last page was closed.
         return;
@@ -506,7 +506,7 @@ void StorageManager::destroyStorageMap(CoreIPC::Connection* connection, uint64_t
     m_storageAreasByConnection.remove(connectionAndStorageMapIDPair);
 }
 
-void StorageManager::getValues(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageMapSeed, HashMap<String, String>& values)
+void StorageManager::getValues(IPC::Connection* connection, uint64_t storageMapID, uint64_t storageMapSeed, HashMap<String, String>& values)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
     if (!storageArea) {
@@ -518,7 +518,7 @@ void StorageManager::getValues(CoreIPC::Connection* connection, uint64_t storage
     connection->send(Messages::StorageAreaMap::DidGetValues(storageMapSeed), storageMapID);
 }
 
-void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString)
+void StorageManager::setItem(IPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
     if (!storageArea) {
@@ -531,7 +531,7 @@ void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageMa
     connection->send(Messages::StorageAreaMap::DidSetItem(storageMapSeed, key, quotaError), storageMapID);
 }
 
-void StorageManager::removeItem(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString)
+void StorageManager::removeItem(IPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
     if (!storageArea) {
@@ -543,7 +543,7 @@ void StorageManager::removeItem(CoreIPC::Connection* connection, uint64_t storag
     connection->send(Messages::StorageAreaMap::DidRemoveItem(storageMapSeed, key), storageMapID);
 }
 
-void StorageManager::clear(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString)
+void StorageManager::clear(IPC::Connection* connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
     if (!storageArea) {
@@ -555,7 +555,7 @@ void StorageManager::clear(CoreIPC::Connection* connection, uint64_t storageMapI
     connection->send(Messages::StorageAreaMap::DidClear(storageMapSeed), storageMapID);
 }
 
-void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)
+void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, IPC::Connection* allowedConnection, unsigned quotaInBytes)
 {
     ASSERT(!m_sessionStorageNamespaces.contains(storageNamespaceID));
 
@@ -568,7 +568,7 @@ void StorageManager::destroySessionStorageNamespaceInternal(uint64_t storageName
     m_sessionStorageNamespaces.remove(storageNamespaceID);
 }
 
-void StorageManager::setAllowedSessionStorageNamespaceConnectionInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection)
+void StorageManager::setAllowedSessionStorageNamespaceConnectionInternal(uint64_t storageNamespaceID, IPC::Connection* allowedConnection)
 {
     ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
 
@@ -586,11 +586,11 @@ void StorageManager::cloneSessionStorageNamespaceInternal(uint64_t storageNamesp
     sessionStorageNamespace->cloneTo(*newSessionStorageNamespace);
 }
 
-void StorageManager::invalidateConnectionInternal(CoreIPC::Connection* connection)
+void StorageManager::invalidateConnectionInternal(IPC::Connection* connection)
 {
-    Vector<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>> connectionAndStorageMapIDPairsToRemove;
-    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>> storageAreasByConnection = m_storageAreasByConnection;
-    for (HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>>::const_iterator it = storageAreasByConnection.begin(), end = storageAreasByConnection.end(); it != end; ++it) {
+    Vector<std::pair<RefPtr<IPC::Connection>, uint64_t>> connectionAndStorageMapIDPairsToRemove;
+    HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>> storageAreasByConnection = m_storageAreasByConnection;
+    for (HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::const_iterator it = storageAreasByConnection.begin(), end = storageAreasByConnection.end(); it != end; ++it) {
         if (it->key.first != connection)
             continue;
 
@@ -602,10 +602,10 @@ void StorageManager::invalidateConnectionInternal(CoreIPC::Connection* connectio
         m_storageAreasByConnection.remove(connectionAndStorageMapIDPairsToRemove[i]);
 }
 
-StorageManager::StorageArea* StorageManager::findStorageArea(CoreIPC::Connection* connection, uint64_t storageMapID) const
+StorageManager::StorageArea* StorageManager::findStorageArea(IPC::Connection* connection, uint64_t storageMapID) const
 {
-    std::pair<CoreIPC::Connection*, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
-    if (!HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair))
+    std::pair<IPC::Connection*, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
+    if (!HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::isValidKey(connectionAndStorageMapIDPair))
         return 0;
 
     return m_storageAreasByConnection.get(connectionAndStorageMapIDPair);

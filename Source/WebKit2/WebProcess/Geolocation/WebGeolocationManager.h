@@ -43,7 +43,7 @@ namespace WebKit {
 class WebProcess;
 class WebPage;
 
-class WebGeolocationManager : public WebProcessSupplement, public CoreIPC::MessageReceiver {
+class WebGeolocationManager : public WebProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebGeolocationManager);
 public:
     explicit WebGeolocationManager(WebProcess*);
@@ -57,8 +57,8 @@ public:
     void requestPermission(WebCore::Geolocation*);
 
 private:
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     bool isUpdating() const { return !m_pageSet.isEmpty(); }
     bool isHighAccuracyEnabled() const { return !m_highAccuracyPageSet.isEmpty(); }

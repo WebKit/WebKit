@@ -47,7 +47,7 @@ ProcessLauncher::ProcessLauncher(Client* client, const LaunchOptions& launchOpti
     processLauncherWorkQueue()->dispatch(bind(&ProcessLauncher::launchProcess, this));
 }
 
-void ProcessLauncher::didFinishLaunchingProcess(PlatformProcessIdentifier processIdentifier, CoreIPC::Connection::Identifier identifier)
+void ProcessLauncher::didFinishLaunchingProcess(PlatformProcessIdentifier processIdentifier, IPC::Connection::Identifier identifier)
 {
     m_processIdentifier = processIdentifier;
     m_isLaunching = false;

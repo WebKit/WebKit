@@ -38,7 +38,7 @@ namespace WebKit {
 
 class WebProcess;
 
-class WebDatabaseManager : public WebCore::DatabaseManagerClient, public WebProcessSupplement, public CoreIPC::MessageReceiver {
+class WebDatabaseManager : public WebCore::DatabaseManagerClient, public WebProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebDatabaseManager);
 public:
     explicit WebDatabaseManager(WebProcess*);
@@ -52,8 +52,8 @@ private:
     // WebProcessSupplement
     virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     void getDatabasesByOrigin(uint64_t callbackID) const;
     void getDatabaseOrigins(uint64_t callbackID) const;

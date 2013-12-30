@@ -33,7 +33,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
-namespace CoreIPC {
+namespace IPC {
 class Connection;
 class MessageDecoder;
 }
@@ -60,7 +60,7 @@ public:
     static std::unique_ptr<DrawingArea> create(WebPage*, const WebPageCreationParameters&);
     virtual ~DrawingArea();
     
-    void didReceiveDrawingAreaMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    void didReceiveDrawingAreaMessage(IPC::Connection*, IPC::MessageDecoder&);
 
     virtual void setNeedsDisplay() = 0;
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) = 0;
@@ -100,7 +100,7 @@ public:
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
-    virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) = 0;
+    virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection*, IPC::MessageDecoder&) = 0;
 #endif
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&);
@@ -116,7 +116,7 @@ protected:
     WebPage* m_webPage;
 
 private:
-    // CoreIPC message handlers.
+    // Message handlers.
     // FIXME: These should be pure virtual.
     virtual void updateBackingStoreState(uint64_t /*backingStoreStateID*/, bool /*respondImmediately*/, float /*deviceScaleFactor*/, const WebCore::IntSize& /*size*/, 
                                          const WebCore::IntSize& /*scrollOffset*/) { }

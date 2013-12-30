@@ -51,7 +51,7 @@ void WebConnection::postMessage(const String& messageName, API::Object* messageB
     if (!hasValidConnection())
         return;
 
-    auto encoder = std::make_unique<CoreIPC::MessageEncoder>(Messages::WebConnection::HandleMessage::receiverName(), Messages::WebConnection::HandleMessage::name(), 0);
+    auto encoder = std::make_unique<IPC::MessageEncoder>(Messages::WebConnection::HandleMessage::receiverName(), Messages::WebConnection::HandleMessage::name(), 0);
     encoder->encode(messageName);
     encodeMessageBody(*encoder, messageBody);
 
@@ -63,12 +63,12 @@ void WebConnection::didClose()
     m_client.didClose(this);
 }
 
-void WebConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+void WebConnection::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
     didReceiveWebConnectionMessage(connection, decoder);
 }
 
-void WebConnection::handleMessage(CoreIPC::MessageDecoder& decoder)
+void WebConnection::handleMessage(IPC::MessageDecoder& decoder)
 {
     String messageName;
     if (!decoder.decode(messageName))

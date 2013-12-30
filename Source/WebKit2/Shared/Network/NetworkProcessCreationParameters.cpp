@@ -36,7 +36,7 @@ NetworkProcessCreationParameters::NetworkProcessCreationParameters()
 {
 }
 
-void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
+void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << privateBrowsingEnabled;
     encoder.encodeEnum(cacheModel);
@@ -62,7 +62,7 @@ void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder)
 #endif
 }
 
-bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, NetworkProcessCreationParameters& result)
+bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, NetworkProcessCreationParameters& result)
 {
     if (!decoder.decode(result.privateBrowsingEnabled))
         return false;

@@ -35,7 +35,7 @@
 #include <wtf/RunLoop.h>
 #include <xpc/xpc.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 static const size_t inlineMessageMaxSize = 4096;
 
@@ -491,4 +491,4 @@ void Connection::setShouldCloseConnectionOnMachExceptions()
         ASSERT_NOT_REACHED();
 }
 
-} // namespace CoreIPC
+} // namespace IPC

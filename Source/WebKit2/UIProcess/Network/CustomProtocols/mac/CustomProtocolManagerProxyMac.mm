@@ -38,7 +38,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 
-using namespace CoreIPC;
+using namespace IPC;
 using namespace WebCore;
 using namespace WebKit;
 
@@ -103,7 +103,7 @@ using namespace WebKit;
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-    CoreIPC::DataReference coreData(static_cast<const uint8_t*>([data bytes]), [data length]);
+    IPC::DataReference coreData(static_cast<const uint8_t*>([data bytes]), [data length]);
     _connection->send(Messages::CustomProtocolManager::DidLoadData(_customProtocolID, coreData), 0);
 }
 

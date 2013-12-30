@@ -37,7 +37,7 @@ typedef struct _GtkPageSetup GtkPageSetup;
 class NSPrintInfo;
 #endif
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -67,8 +67,8 @@ struct PrintInfo {
     PrintMode printMode;
 #endif
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, PrintInfo&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, PrintInfo&);
 };
 
 }

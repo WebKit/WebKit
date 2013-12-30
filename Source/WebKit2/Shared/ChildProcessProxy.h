@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-class ChildProcessProxy : ProcessLauncher::Client, public CoreIPC::Connection::Client, public ThreadSafeRefCounted<ChildProcessProxy> {
+class ChildProcessProxy : ProcessLauncher::Client, public IPC::Connection::Client, public ThreadSafeRefCounted<ChildProcessProxy> {
     WTF_MAKE_NONCOPYABLE(ChildProcessProxy);
 
 public:
@@ -42,7 +42,7 @@ public:
     virtual ~ChildProcessProxy();
 
     // FIXME: This function does an unchecked upcast, and it is only used in a deprecated code path. Would like to get rid of it.
-    static ChildProcessProxy* fromConnection(CoreIPC::Connection*);
+    static ChildProcessProxy* fromConnection(IPC::Connection*);
 
     void connect();
     void terminate();
@@ -50,15 +50,15 @@ public:
     template<typename T> bool send(T&& message, uint64_t destinationID, unsigned messageSendFlags = 0);
     template<typename T> bool sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, double timeout = 1);
     
-    CoreIPC::Connection* connection() const
+    IPC::Connection* connection() const
     {
         ASSERT(m_connection);
         return m_connection.get();
     }
 
-    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver&);
-    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver&);
-    void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
+    void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver&);
+    void addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver&);
+    void removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID);
 
     bool isValid() const { return m_connection; }
     bool isLaunching() const;
@@ -66,27 +66,27 @@ public:
 
     PlatformProcessIdentifier processIdentifier() const { return m_processLauncher->processIdentifier(); }
 
-    bool sendMessage(std::unique_ptr<CoreIPC::MessageEncoder>, unsigned messageSendFlags);
+    bool sendMessage(std::unique_ptr<IPC::MessageEncoder>, unsigned messageSendFlags);
 
 protected:
     void clearConnection();
     void abortProcessLaunchIfNeeded();
 
     // ProcessLauncher::Client
-    virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) OVERRIDE;
+    virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) OVERRIDE;
 
-    bool dispatchMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    bool dispatchSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
+    bool dispatchMessage(IPC::Connection*, IPC::MessageDecoder&);
+    bool dispatchSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
 private:
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) = 0;
-    virtual void connectionWillOpen(CoreIPC::Connection*);
-    virtual void connectionWillClose(CoreIPC::Connection*);
+    virtual void connectionWillOpen(IPC::Connection*);
+    virtual void connectionWillClose(IPC::Connection*);
 
-    Vector<std::pair<std::unique_ptr<CoreIPC::MessageEncoder>, unsigned>> m_pendingMessages;
+    Vector<std::pair<std::unique_ptr<IPC::MessageEncoder>, unsigned>> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
-    RefPtr<CoreIPC::Connection> m_connection;
-    CoreIPC::MessageReceiverMap m_messageReceiverMap;
+    RefPtr<IPC::Connection> m_connection;
+    IPC::MessageReceiverMap m_messageReceiverMap;
 };
 
 template<typename T>
@@ -94,7 +94,7 @@ bool ChildProcessProxy::send(T&& message, uint64_t destinationID, unsigned messa
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    auto encoder = std::make_unique<CoreIPC::MessageEncoder>(T::receiverName(), T::name(), destinationID);
+    auto encoder = std::make_unique<IPC::MessageEncoder>(T::receiverName(), T::name(), destinationID);
     encoder->encode(message.arguments());
 
     return sendMessage(std::move(encoder), messageSendFlags);

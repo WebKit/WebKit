@@ -39,7 +39,7 @@ messages -> PluginControllerProxy LegacyReceiver {
     StreamDidReceiveResponse(uint64_t streamID, String responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, String mimeType, String headers)
 
     # Sent when the plug-in receives data for a stream.
-    StreamDidReceiveData(uint64_t streamID, CoreIPC::DataReference data)
+    StreamDidReceiveData(uint64_t streamID, IPC::DataReference data)
 
     # Sent when a plug-in stream has finishes loading.
     StreamDidFinishLoading(uint64_t streamID)
@@ -51,7 +51,7 @@ messages -> PluginControllerProxy LegacyReceiver {
     ManualStreamDidReceiveResponse(String responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, String mimeType, String headers)
 
     # Sent when the plug-in receives data for the manual stream.
-    ManualStreamDidReceiveData(CoreIPC::DataReference data)
+    ManualStreamDidReceiveData(IPC::DataReference data)
 
     # Sent when the plug-in manual stream has finishes loading.
     ManualStreamDidFinishLoading()

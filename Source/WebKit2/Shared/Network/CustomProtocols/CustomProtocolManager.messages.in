@@ -24,7 +24,7 @@
 
 messages -> CustomProtocolManager {
     DidFailWithError(uint64_t customProtocolID, WebCore::ResourceError error)
-    DidLoadData(uint64_t customProtocolID, CoreIPC::DataReference data)
+    DidLoadData(uint64_t customProtocolID, IPC::DataReference data)
     DidReceiveResponse(uint64_t customProtocolID, WebCore::ResourceResponse response, uint32_t cacheStoragePolicy)
     DidFinishLoading(uint64_t customProtocolID)
 

@@ -58,7 +58,7 @@ public:
     {
     }
 
-    void encode(CoreIPC::ArgumentEncoder& encoder) const
+    void encode(IPC::ArgumentEncoder& encoder) const
     {
         API::Object::Type type = API::Object::Type::Null;
         if (baseEncode(encoder, *this, type))
@@ -113,7 +113,7 @@ public:
     {
     }
 
-    static bool decode(CoreIPC::ArgumentDecoder& decoder, InjectedBundleUserMessageDecoder& coder)
+    static bool decode(IPC::ArgumentDecoder& decoder, InjectedBundleUserMessageDecoder& coder)
     {
         API::Object::Type type = API::Object::Type::Null;
         if (!Base::baseDecode(decoder, coder, type))

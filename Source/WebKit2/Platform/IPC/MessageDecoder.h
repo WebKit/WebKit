@@ -29,7 +29,7 @@
 #include "ArgumentDecoder.h"
 #include "StringReference.h"
 
-namespace CoreIPC {
+namespace IPC {
 
 class DataReference;
 class ImportanceAssertion;
@@ -62,6 +62,6 @@ private:
 #endif
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // MessageDecoder_h

@@ -39,14 +39,14 @@ EncoderAdapter::EncoderAdapter()
     m_encoder << static_cast<uint64_t>(0);
 }
 
-CoreIPC::DataReference EncoderAdapter::dataReference() const
+IPC::DataReference EncoderAdapter::dataReference() const
 {
-    return CoreIPC::DataReference(m_encoder.buffer(), m_encoder.bufferSize());
+    return IPC::DataReference(m_encoder.buffer(), m_encoder.bufferSize());
 }
 
 void EncoderAdapter::encodeBytes(const uint8_t* bytes, size_t size)
 {
-    m_encoder << CoreIPC::DataReference(bytes, size);
+    m_encoder << IPC::DataReference(bytes, size);
 }
 
 void EncoderAdapter::encodeBool(bool value)
@@ -91,9 +91,9 @@ void EncoderAdapter::encodeDouble(double value)
 
 void EncoderAdapter::encodeString(const String& value)
 {
-    // This mimics the CoreIPC binary encoding of Strings prior to r88886.
-    // Whenever the CoreIPC binary encoding changes, we'll have to "undo" the changes here.
-    // FIXME: We shouldn't use the CoreIPC binary encoding format for history,
+    // This mimics the IPC binary encoding of Strings prior to r88886.
+    // Whenever the IPC binary encoding changes, we'll have to "undo" the changes here.
+    // FIXME: We shouldn't use the IPC binary encoding format for history,
     // and we should come up with a migration strategy so we can actually bump the version number
     // without breaking encoding/decoding of the history tree.
 

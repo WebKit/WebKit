@@ -430,7 +430,7 @@ void WebPageProxy::didPerformDictionaryLookup(const AttributedString& text, cons
     m_pageClient.didPerformDictionaryLookup(text, dictionaryPopupInfo);
 }
     
-void WebPageProxy::registerWebProcessAccessibilityToken(const CoreIPC::DataReference& data)
+void WebPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference& data)
 {
     m_pageClient.accessibilityWebProcessTokenReceived(data);
 }    
@@ -445,7 +445,7 @@ ColorSpaceData WebPageProxy::colorSpace()
     return m_pageClient.colorSpace();
 }
 
-void WebPageProxy::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elementToken, const CoreIPC::DataReference& windowToken)
+void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
 {
     if (!isValid())
         return;
@@ -587,7 +587,7 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(const
     [[NSWorkspace sharedWorkspace] openFile:nsPath];
 }
 
-void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const CoreIPC::DataReference& data, const String& pdfUUID)
+void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const IPC::DataReference& data, const String& pdfUUID)
 {
     if (data.isEmpty()) {
         WTFLogAlways("Cannot save empty PDF file to the temporary directory.");

@@ -28,7 +28,7 @@
 
 #include <wtf/RetainPtr.h>
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -36,8 +36,8 @@ namespace CoreIPC {
 namespace WebKit {
 
 struct ColorSpaceData {
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, ColorSpaceData&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, ColorSpaceData&);
 
     RetainPtr<CGColorSpaceRef> cgColorSpace;
 };

@@ -132,7 +132,7 @@ CustomProtocolManager::CustomProtocolManager(ChildProcess* childProcess)
     sharedCustomProtocolManager = this;
 }
 
-void CustomProtocolManager::initializeConnection(CoreIPC::Connection* connection)
+void CustomProtocolManager::initializeConnection(IPC::Connection* connection)
 {
     connection->addWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName(), m_messageQueue.get(), this);
 }
@@ -222,7 +222,7 @@ void CustomProtocolManager::didFailWithError(uint64_t customProtocolID, const We
     removeCustomProtocol(protocol.get());
 }
 
-void CustomProtocolManager::didLoadData(uint64_t customProtocolID, const CoreIPC::DataReference& data)
+void CustomProtocolManager::didLoadData(uint64_t customProtocolID, const IPC::DataReference& data)
 {
     RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
     if (!protocol)

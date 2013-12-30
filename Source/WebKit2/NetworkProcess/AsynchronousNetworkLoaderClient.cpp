@@ -49,7 +49,7 @@ void AsynchronousNetworkLoaderClient::willSendRequest(NetworkResourceLoader* loa
 {
     // This message is DispatchMessageEvenWhenWaitingForSyncReply to avoid a situation where the NetworkProcess is deadlocked
     // waiting for 6 connections to complete while the WebProcess is waiting for a 7th (Synchronous XHR) to complete.
-    loader->sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    loader->sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
@@ -57,7 +57,7 @@ void AsynchronousNetworkLoaderClient::canAuthenticateAgainstProtectionSpace(Netw
 {
     // This message is DispatchMessageEvenWhenWaitingForSyncReply to avoid a situation where the NetworkProcess is deadlocked
     // waiting for 6 connections to complete while the WebProcess is waiting for a 7th (Synchronous XHR) to complete.
-    loader->sendAbortingOnFailure(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    loader->sendAbortingOnFailure(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 #endif
 
@@ -79,7 +79,7 @@ void AsynchronousNetworkLoaderClient::didReceiveBuffer(NetworkResourceLoader* lo
     }
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
-    CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+    IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
     loader->sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
 }
 

@@ -30,7 +30,7 @@
 
 OBJC_CLASS NSAttributedString;
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -38,8 +38,8 @@ namespace CoreIPC {
 namespace WebKit {
 
 struct AttributedString {
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, AttributedString&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, AttributedString&);
     
     RetainPtr<NSAttributedString> string;
 };

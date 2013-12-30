@@ -58,11 +58,11 @@ void DatabaseProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& laun
     platformGetLaunchOptions(launchOptions);
 }
 
-void DatabaseProcessProxy::connectionWillOpen(CoreIPC::Connection*)
+void DatabaseProcessProxy::connectionWillOpen(IPC::Connection*)
 {
 }
 
-void DatabaseProcessProxy::connectionWillClose(CoreIPC::Connection*)
+void DatabaseProcessProxy::connectionWillClose(IPC::Connection*)
 {
 }
 
@@ -75,35 +75,35 @@ void DatabaseProcessProxy::getDatabaseProcessConnection(PassRefPtr<Messages::Web
         return;
     }
 
-    connection()->send(Messages::DatabaseProcess::CreateDatabaseToWebProcessConnection(), 0, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    connection()->send(Messages::DatabaseProcess::CreateDatabaseToWebProcessConnection(), 0, IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-void DatabaseProcessProxy::didClose(CoreIPC::Connection*)
+void DatabaseProcessProxy::didClose(IPC::Connection*)
 {
 }
 
-void DatabaseProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
+void DatabaseProcessProxy::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
 }
 
-void DatabaseProcessProxy::didCreateDatabaseToWebProcessConnection(const CoreIPC::Attachment& connectionIdentifier)
+void DatabaseProcessProxy::didCreateDatabaseToWebProcessConnection(const IPC::Attachment& connectionIdentifier)
 {
     ASSERT(!m_pendingConnectionReplies.isEmpty());
 
     RefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
 #if PLATFORM(MAC)
-    reply->send(CoreIPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
+    reply->send(IPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
 #else
     notImplemented();
 #endif
 }
 
-void DatabaseProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Connection::Identifier connectionIdentifier)
+void DatabaseProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
-    if (CoreIPC::Connection::identifierIsNull(connectionIdentifier)) {
+    if (IPC::Connection::identifierIsNull(connectionIdentifier)) {
         // FIXME: Do better cleanup here.
         return;
     }

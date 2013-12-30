@@ -155,7 +155,7 @@ void DatabaseProcessIDBConnection::changeDatabaseVersion(uint64_t requestID, int
     });
 }
 
-CoreIPC::Connection* DatabaseProcessIDBConnection::messageSenderConnection()
+IPC::Connection* DatabaseProcessIDBConnection::messageSenderConnection()
 {
     return m_connection->connection();
 }

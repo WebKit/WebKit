@@ -30,7 +30,7 @@
 #include "WebPageGroupData.h"
 #include <wtf/PassRefPtr.h>
 
-namespace CoreIPC {
+namespace IPC {
 class Connection;
 class MessageDecoder;
 }
@@ -52,7 +52,7 @@ public:
     bool isVisibleToHistoryClient() const { return m_data.visibleToHistoryClient; }
     WebCore::PageGroup* corePageGroup() const { return m_pageGroup; }
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
 
 private:
     WebPageGroupProxy(const WebPageGroupData&);

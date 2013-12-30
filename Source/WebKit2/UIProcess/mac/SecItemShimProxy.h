@@ -34,20 +34,20 @@ namespace WebKit {
 
 class SecItemRequestData;
 
-class SecItemShimProxy : public CoreIPC::Connection::WorkQueueMessageReceiver {
+class SecItemShimProxy : public IPC::Connection::WorkQueueMessageReceiver {
 WTF_MAKE_NONCOPYABLE(SecItemShimProxy);
 public:
     static SecItemShimProxy& shared();
 
-    void initializeConnection(CoreIPC::Connection*);
+    void initializeConnection(IPC::Connection*);
 
 private:
     SecItemShimProxy();
 
-    // CoreIPC::Connection::WorkQueueMessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::Connection::WorkQueueMessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
-    void secItemRequest(CoreIPC::Connection*, uint64_t requestID, const SecItemRequestData&);
+    void secItemRequest(IPC::Connection*, uint64_t requestID, const SecItemRequestData&);
 
     RefPtr<WorkQueue> m_queue;
 };

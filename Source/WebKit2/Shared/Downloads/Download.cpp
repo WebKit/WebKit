@@ -130,7 +130,7 @@ void Download::didFinish()
     m_downloadManager.downloadFinished(this);
 }
 
-void Download::didFail(const ResourceError& error, const CoreIPC::DataReference& resumeData)
+void Download::didFail(const ResourceError& error, const IPC::DataReference& resumeData)
 {
     send(Messages::DownloadProxy::DidFail(error, resumeData));
 
@@ -141,7 +141,7 @@ void Download::didFail(const ResourceError& error, const CoreIPC::DataReference&
     m_downloadManager.downloadFinished(this);
 }
 
-void Download::didCancel(const CoreIPC::DataReference& resumeData)
+void Download::didCancel(const IPC::DataReference& resumeData)
 {
     send(Messages::DownloadProxy::DidCancel(resumeData));
 
@@ -152,7 +152,7 @@ void Download::didCancel(const CoreIPC::DataReference& resumeData)
     m_downloadManager.downloadFinished(this);
 }
 
-CoreIPC::Connection* Download::messageSenderConnection()
+IPC::Connection* Download::messageSenderConnection()
 {
     return m_downloadManager.downloadProxyConnection();
 }

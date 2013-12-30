@@ -29,7 +29,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 
-namespace CoreIPC {
+namespace IPC {
 
 Attachment::Attachment()
     : m_type(Uninitialized)
@@ -62,4 +62,4 @@ bool Attachment::decode(ArgumentDecoder& decoder, Attachment& attachment)
     return true;
 }
 
-} // namespace CoreIPC
+} // namespace IPC

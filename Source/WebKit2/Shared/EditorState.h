@@ -77,8 +77,8 @@ struct EditorState {
     WebCore::IntRect cursorRect;
 #endif
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, EditorState&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, EditorState&);
 };
 
 }

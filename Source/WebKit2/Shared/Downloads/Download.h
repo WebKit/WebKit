@@ -46,7 +46,7 @@ OBJC_CLASS WKDownloadAsDelegate;
 #include <CFNetwork/CFURLDownloadPriv.h>
 #endif
 
-namespace CoreIPC {
+namespace IPC {
     class DataReference;
 }
 
@@ -65,7 +65,7 @@ class DownloadManager;
 class SandboxExtension;
 class WebPage;
 
-class Download : public CoreIPC::MessageSender {
+class Download : public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(Download);
 public:
     Download(DownloadManager&, uint64_t downloadID, const WebCore::ResourceRequest&);
@@ -86,8 +86,8 @@ public:
     void didCreateDestination(const String& path);
     void didFinish();
     void platformDidFinish();
-    void didFail(const WebCore::ResourceError&, const CoreIPC::DataReference& resumeData);
-    void didCancel(const CoreIPC::DataReference& resumeData);
+    void didFail(const WebCore::ResourceError&, const IPC::DataReference& resumeData);
+    void didCancel(const IPC::DataReference& resumeData);
     void didDecideDestination(const String&, bool allowOverwrite);
 
 #if USE(CFNETWORK)
@@ -105,8 +105,8 @@ public:
     void cancelAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
 
 private:
-    // CoreIPC::MessageSender
-    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    // IPC::MessageSender
+    virtual IPC::Connection* messageSenderConnection() OVERRIDE;
     virtual uint64_t messageSenderDestinationID() OVERRIDE;
 
     void platformInvalidate();

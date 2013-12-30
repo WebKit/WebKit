@@ -36,7 +36,7 @@ namespace WebKit {
 
 class WebProcess;
 
-class WebMediaCacheManager : public WebProcessSupplement, public CoreIPC::MessageReceiver {
+class WebMediaCacheManager : public WebProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebMediaCacheManager);
 public:
     explicit WebMediaCacheManager(WebProcess*);
@@ -44,7 +44,7 @@ public:
     static const char* supplementName();
 
 private:
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     void getHostnamesWithMediaCache(uint64_t callbackID);
     void clearCacheForHostname(const String&);

@@ -36,24 +36,24 @@
 
 namespace WebKit {
 
-class DatabaseToWebProcessConnection : public RefCounted<DatabaseToWebProcessConnection>, public CoreIPC::Connection::Client, public CoreIPC::MessageSender {
+class DatabaseToWebProcessConnection : public RefCounted<DatabaseToWebProcessConnection>, public IPC::Connection::Client, public IPC::MessageSender {
 public:
-    static PassRefPtr<DatabaseToWebProcessConnection> create(CoreIPC::Connection::Identifier);
+    static PassRefPtr<DatabaseToWebProcessConnection> create(IPC::Connection::Identifier);
     ~DatabaseToWebProcessConnection();
 
-    CoreIPC::Connection* connection() const { return m_connection.get(); }
+    IPC::Connection* connection() const { return m_connection.get(); }
 
 private:
-    DatabaseToWebProcessConnection(CoreIPC::Connection::Identifier);
+    DatabaseToWebProcessConnection(IPC::Connection::Identifier);
 
-    // CoreIPC::Connection::Client
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-    virtual void didClose(CoreIPC::Connection*) OVERRIDE;
-    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
-    void didReceiveDatabaseToWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    // IPC::Connection::Client
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didClose(IPC::Connection*) OVERRIDE;
+    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName) OVERRIDE;
+    void didReceiveDatabaseToWebProcessConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);
 
-    // CoreIPC::MessageSender
-    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE { return m_connection.get(); }
+    // IPC::MessageSender
+    virtual IPC::Connection* messageSenderConnection() OVERRIDE { return m_connection.get(); }
     virtual uint64_t messageSenderDestinationID() OVERRIDE { return 0; }
 
 #if ENABLE(INDEXED_DATABASE)
@@ -65,7 +65,7 @@ private:
     IDBConnectionMap m_idbConnections;
 #endif // ENABLE(INDEXED_DATABASE)
 
-    RefPtr<CoreIPC::Connection> m_connection;
+    RefPtr<IPC::Connection> m_connection;
 };
 
 } // namespace WebKit

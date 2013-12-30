@@ -23,7 +23,7 @@
 #if ENABLE(DATABASE_PROCESS)
 
 messages -> DatabaseProcessProxy {
-    DidCreateDatabaseToWebProcessConnection(CoreIPC::Attachment connectionIdentifier)
+    DidCreateDatabaseToWebProcessConnection(IPC::Attachment connectionIdentifier)
 }
 
 #endif // ENABLE(DATABASE_PROCESS)

@@ -26,7 +26,7 @@
 #ifndef ArgumentCoder_h
 #define ArgumentCoder_h
 
-namespace CoreIPC {
+namespace IPC {
 
 class ArgumentDecoder;
 class ArgumentEncoder;

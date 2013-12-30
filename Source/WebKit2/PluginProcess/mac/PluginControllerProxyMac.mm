@@ -47,7 +47,7 @@ void PluginControllerProxy::pluginFocusOrWindowFocusChanged(bool pluginHasFocusA
 
 void PluginControllerProxy::setComplexTextInputState(PluginComplexTextInputState pluginComplexTextInputState)
 {
-    m_connection->connection()->send(Messages::PluginProxy::SetComplexTextInputState(pluginComplexTextInputState), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_connection->connection()->send(Messages::PluginProxy::SetComplexTextInputState(pluginComplexTextInputState), m_pluginInstanceID, IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 mach_port_t PluginControllerProxy::compositingRenderServerPort()

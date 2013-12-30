@@ -5,7 +5,7 @@
 #include "MessageDecoder.h"
 #include "MessageEncoder.h"
 
-namespace CoreIPC {
+namespace IPC {
 
 // Dispatch functions with no reply arguments.
 template<typename C, typename MF>
@@ -445,6 +445,6 @@ void handleMessageDelayed(Connection* connection, MessageDecoder& decoder, std::
     callMemberFunction(std::move(arguments), delayedReply.release(), object, function);
 }
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // HandleMessage_h

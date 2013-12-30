@@ -34,7 +34,7 @@
 #include <sys/mman.h>
 #endif
 
-namespace CoreIPC {
+namespace IPC {
 
 static inline void* allocBuffer(size_t size)
 {
@@ -195,4 +195,4 @@ Vector<Attachment> ArgumentEncoder::releaseAttachments()
     return newList;
 }
 
-} // namespace CoreIPC
+} // namespace IPC

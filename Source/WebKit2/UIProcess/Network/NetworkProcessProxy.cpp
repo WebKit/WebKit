@@ -72,14 +72,14 @@ void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launc
     platformGetLaunchOptions(launchOptions);
 }
 
-void NetworkProcessProxy::connectionWillOpen(CoreIPC::Connection* connection)
+void NetworkProcessProxy::connectionWillOpen(IPC::Connection* connection)
 {
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShimProxy::shared().initializeConnection(connection);
 #endif
 }
 
-void NetworkProcessProxy::connectionWillClose(CoreIPC::Connection*)
+void NetworkProcessProxy::connectionWillClose(IPC::Connection*)
 {
 }
 
@@ -92,7 +92,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebPr
         return;
     }
 
-    connection()->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(), 0, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    connection()->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(), 0, IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 DownloadProxy* NetworkProcessProxy::createDownloadProxy()
@@ -110,9 +110,9 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
         RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
 #if PLATFORM(MAC)
-        reply->send(CoreIPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND));
+        reply->send(IPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND));
 #elif USE(UNIX_DOMAIN_SOCKETS)
-        reply->send(CoreIPC::Attachment());
+        reply->send(IPC::Attachment());
 #else
         notImplemented();
 #endif
@@ -122,7 +122,7 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
     m_webContext.networkProcessCrashed(this);
 }
 
-void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+void NetworkProcessProxy::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
     if (dispatchMessage(connection, decoder))
         return;
@@ -133,7 +133,7 @@ void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, Cor
     didReceiveNetworkProcessProxyMessage(connection, decoder);
 }
 
-void NetworkProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)
+void NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
     if (dispatchSyncMessage(connection, decoder, replyEncoder))
         return;
@@ -141,7 +141,7 @@ void NetworkProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection,
     ASSERT_NOT_REACHED();
 }
 
-void NetworkProcessProxy::didClose(CoreIPC::Connection*)
+void NetworkProcessProxy::didClose(IPC::Connection*)
 {
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
@@ -150,11 +150,11 @@ void NetworkProcessProxy::didClose(CoreIPC::Connection*)
     networkProcessCrashedOrFailedToLaunch();
 }
 
-void NetworkProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
+void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
 {
 }
 
-void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const CoreIPC::Attachment& connectionIdentifier)
+void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const IPC::Attachment& connectionIdentifier)
 {
     ASSERT(!m_pendingConnectionReplies.isEmpty());
 
@@ -162,7 +162,7 @@ void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const CoreIPC::
     RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
 #if PLATFORM(MAC)
-    reply->send(CoreIPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
+    reply->send(IPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
 #elif USE(UNIX_DOMAIN_SOCKETS)
     reply->send(connectionIdentifier);
 #else
@@ -179,11 +179,11 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageID, uin
     page->didReceiveAuthenticationChallengeProxy(frameID, authenticationChallenge.release());
 }
 
-void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Connection::Identifier connectionIdentifier)
+void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
-    if (CoreIPC::Connection::identifierIsNull(connectionIdentifier)) {
+    if (IPC::Connection::identifierIsNull(connectionIdentifier)) {
         // FIXME: Do better cleanup here.
         return;
     }

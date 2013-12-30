@@ -35,9 +35,9 @@ XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate()
 {
 }
 
-bool XPCServiceInitializerDelegate::getConnectionIdentifier(CoreIPC::Connection::Identifier& identifier)
+bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Identifier& identifier)
 {
-    identifier = CoreIPC::Connection::Identifier(xpc_dictionary_copy_mach_send(m_initializerMessage, "server-port"), m_connection);
+    identifier = IPC::Connection::Identifier(xpc_dictionary_copy_mach_send(m_initializerMessage, "server-port"), m_connection);
     return true;
 }
 

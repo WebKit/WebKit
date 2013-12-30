@@ -51,14 +51,14 @@ PassRefPtr<SecurityOrigin> SecurityOriginData::securityOrigin() const
     return SecurityOrigin::create(protocol, host, port);
 }
 
-void SecurityOriginData::encode(CoreIPC::ArgumentEncoder& encoder) const
+void SecurityOriginData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << protocol;
     encoder << host;
     encoder << port;
 }
 
-bool SecurityOriginData::decode(CoreIPC::ArgumentDecoder& decoder, SecurityOriginData& securityOriginData)
+bool SecurityOriginData::decode(IPC::ArgumentDecoder& decoder, SecurityOriginData& securityOriginData)
 {
     if (!decoder.decode(securityOriginData.protocol))
         return false;

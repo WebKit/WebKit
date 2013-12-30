@@ -42,7 +42,7 @@ public:
     public:
         virtual ~Client() { }
         
-        virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) = 0;
+        virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) = 0;
     };
     
     enum ProcessType {
@@ -92,7 +92,7 @@ private:
     ProcessLauncher(Client*, const LaunchOptions& launchOptions);
 
     void launchProcess();
-    void didFinishLaunchingProcess(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
+    void didFinishLaunchingProcess(PlatformProcessIdentifier, IPC::Connection::Identifier);
 
     void platformInvalidate();
 

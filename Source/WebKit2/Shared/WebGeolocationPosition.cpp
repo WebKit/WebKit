@@ -51,14 +51,14 @@ WebGeolocationPosition::~WebGeolocationPosition()
 {
 }
 
-void WebGeolocationPosition::Data::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebGeolocationPosition::Data::encode(IPC::ArgumentEncoder& encoder) const
 {
-    CoreIPC::SimpleArgumentCoder<WebGeolocationPosition::Data>::encode(encoder, *this);
+    IPC::SimpleArgumentCoder<WebGeolocationPosition::Data>::encode(encoder, *this);
 }
 
-bool WebGeolocationPosition::Data::decode(CoreIPC::ArgumentDecoder& decoder, Data& data)
+bool WebGeolocationPosition::Data::decode(IPC::ArgumentDecoder& decoder, Data& data)
 {
-    return CoreIPC::SimpleArgumentCoder<WebGeolocationPosition::Data>::decode(decoder, data);
+    return IPC::SimpleArgumentCoder<WebGeolocationPosition::Data>::decode(decoder, data);
 }
 
 } // namespace WebKit

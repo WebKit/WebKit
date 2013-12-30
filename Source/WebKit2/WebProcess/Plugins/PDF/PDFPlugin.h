@@ -49,7 +49,7 @@ OBJC_CLASS PDFSelection;
 OBJC_CLASS WKPDFPluginAccessibilityObject;
 OBJC_CLASS WKPDFLayerControllerDelegate;
 
-namespace CoreIPC {
+namespace IPC {
 class DataReference;
 }
 

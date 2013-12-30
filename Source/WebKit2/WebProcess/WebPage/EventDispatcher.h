@@ -42,7 +42,7 @@ class WebEvent;
 class WebPage;
 class WebWheelEvent;
 
-class EventDispatcher : public CoreIPC::Connection::WorkQueueMessageReceiver {
+class EventDispatcher : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     static PassRefPtr<EventDispatcher> create();
     ~EventDispatcher();
@@ -52,13 +52,13 @@ public:
     void removeScrollingTreeForPage(WebPage*);
 #endif
 
-    void initializeConnection(CoreIPC::Connection*);
+    void initializeConnection(IPC::Connection*);
 
 private:
     EventDispatcher();
 
-    // CoreIPC::Connection::WorkQueueMessageReceiver.
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::Connection::WorkQueueMessageReceiver.
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     // Message handlers
     void wheelEvent(uint64_t pageID, const WebWheelEvent&, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom);

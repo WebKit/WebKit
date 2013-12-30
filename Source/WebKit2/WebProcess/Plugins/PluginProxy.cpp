@@ -286,7 +286,7 @@ void PluginProxy::geometryDidChange()
         m_pluginBackingStoreContainsValidData = false;
     }
 
-    m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(m_pluginSize, m_clipRect, m_pluginToRootViewTransform, contentsScaleFactor(), pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(m_pluginSize, m_clipRect, m_pluginToRootViewTransform, contentsScaleFactor(), pluginBackingStoreHandle), m_pluginInstanceID, IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void PluginProxy::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform)
@@ -331,7 +331,7 @@ void PluginProxy::streamDidReceiveResponse(uint64_t streamID, const URL& respons
                                            
 void PluginProxy::streamDidReceiveData(uint64_t streamID, const char* bytes, int length)
 {
-    m_connection->connection()->send(Messages::PluginControllerProxy::StreamDidReceiveData(streamID, CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(bytes), length)), m_pluginInstanceID);
+    m_connection->connection()->send(Messages::PluginControllerProxy::StreamDidReceiveData(streamID, IPC::DataReference(reinterpret_cast<const uint8_t*>(bytes), length)), m_pluginInstanceID);
 }
 
 void PluginProxy::streamDidFinishLoading(uint64_t streamID)
@@ -351,7 +351,7 @@ void PluginProxy::manualStreamDidReceiveResponse(const URL& responseURL, uint32_
 
 void PluginProxy::manualStreamDidReceiveData(const char* bytes, int length)
 {
-    m_connection->connection()->send(Messages::PluginControllerProxy::ManualStreamDidReceiveData(CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(bytes), length)), m_pluginInstanceID);
+    m_connection->connection()->send(Messages::PluginControllerProxy::ManualStreamDidReceiveData(IPC::DataReference(reinterpret_cast<const uint8_t*>(bytes), length)), m_pluginInstanceID);
 }
 
 void PluginProxy::manualStreamDidFinishLoading()

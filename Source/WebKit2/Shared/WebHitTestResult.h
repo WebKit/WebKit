@@ -27,7 +27,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace CoreIPC {
+namespace IPC {
 class ArgumentDecoder;
 class ArgumentEncoder;
 }
@@ -57,8 +57,8 @@ public:
         explicit Data(const WebCore::HitTestResult&);
         ~Data();
 
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, WebHitTestResult::Data&);
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, WebHitTestResult::Data&);
 
         WebCore::IntRect elementBoundingBoxInWindowCoordinates(const WebCore::HitTestResult&);
     };

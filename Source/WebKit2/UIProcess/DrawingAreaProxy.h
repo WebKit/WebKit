@@ -43,7 +43,7 @@ class CoordinatedLayerTreeHostProxy;
 class UpdateInfo;
 class WebPageProxy;
 
-class DrawingAreaProxy : public CoreIPC::MessageReceiver {
+class DrawingAreaProxy : public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(DrawingAreaProxy);
 
 public:
@@ -85,10 +85,10 @@ protected:
 private:
     virtual void sizeDidChange() = 0;
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
-    // CoreIPC message handlers.
+    // Message handlers.
     // FIXME: These should be pure virtual.
     virtual void update(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
     virtual void didUpdateBackingStoreState(uint64_t /* backingStoreStateID */, const UpdateInfo&, const LayerTreeContext&) { }

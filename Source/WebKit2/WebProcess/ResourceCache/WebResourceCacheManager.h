@@ -39,7 +39,7 @@ namespace WebKit {
 class WebProcess;
 struct SecurityOriginData;
 
-class WebResourceCacheManager : public WebProcessSupplement, public CoreIPC::MessageReceiver {
+class WebResourceCacheManager : public WebProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebResourceCacheManager);
 public:
     WebResourceCacheManager(WebProcess*);
@@ -47,9 +47,9 @@ public:
     static const char* supplementName();
 
 private:
-    // CoreIPC::MessageReceiver
+    // IPC::MessageReceiver
     // Implemented in generated WebResourceCacheManagerMessageReceiver.cpp
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     void getCacheOrigins(uint64_t callbackID) const;
     void returnCacheOrigins(uint64_t callbackID, const WebCore::MemoryCache::SecurityOriginSet&) const;

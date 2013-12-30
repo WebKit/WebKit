@@ -29,7 +29,7 @@
 #include "ArgumentEncoder.h"
 #include <wtf/Forward.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 class StringReference;
 
@@ -42,6 +42,6 @@ public:
     void setShouldDispatchMessageWhenWaitingForSyncReply(bool);
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // MessageEncoder_h

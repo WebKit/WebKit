@@ -57,7 +57,7 @@ WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state,
 {
 }
 
-void WebPlatformTouchPoint::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebPlatformTouchPoint::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_id;
     encoder << m_state;
@@ -68,7 +68,7 @@ void WebPlatformTouchPoint::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_force;
 }
 
-bool WebPlatformTouchPoint::decode(CoreIPC::ArgumentDecoder& decoder, WebPlatformTouchPoint& result)
+bool WebPlatformTouchPoint::decode(IPC::ArgumentDecoder& decoder, WebPlatformTouchPoint& result)
 {
     if (!decoder.decode(result.m_id))
         return false;

@@ -33,7 +33,7 @@ namespace API {
 class Object;
 }
 
-namespace CoreIPC {
+namespace IPC {
 class ArgumentEncoder;
 class ArgumentDecoder;
 }
@@ -49,14 +49,14 @@ public:
 
     API::Object* object() const { return m_object.get(); }
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, UserData&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, UserData&);
 
 private:
-    void encode(CoreIPC::ArgumentEncoder&, const API::Object*) const;
-    void encode(CoreIPC::ArgumentEncoder&, const API::Object&) const;
+    void encode(IPC::ArgumentEncoder&, const API::Object*) const;
+    void encode(IPC::ArgumentEncoder&, const API::Object&) const;
 
-    static bool decode(CoreIPC::ArgumentDecoder&, RefPtr<API::Object>&);
+    static bool decode(IPC::ArgumentDecoder&, RefPtr<API::Object>&);
 
     RefPtr<API::Object> m_object;
 };

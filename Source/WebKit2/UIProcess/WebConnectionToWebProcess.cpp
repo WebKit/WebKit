@@ -50,12 +50,12 @@ void WebConnectionToWebProcess::invalidate()
 
 // WebConnection
 
-void WebConnectionToWebProcess::encodeMessageBody(CoreIPC::ArgumentEncoder& encoder, API::Object* messageBody)
+void WebConnectionToWebProcess::encodeMessageBody(IPC::ArgumentEncoder& encoder, API::Object* messageBody)
 {
     encoder << WebContextUserMessageEncoder(messageBody, *m_process);
 }
 
-bool WebConnectionToWebProcess::decodeMessageBody(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& messageBody)
+bool WebConnectionToWebProcess::decodeMessageBody(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& messageBody)
 {
     WebContextUserMessageDecoder messageBodyDecoder(messageBody, *m_process);
     return decoder.decode(messageBodyDecoder);
@@ -66,7 +66,7 @@ bool WebConnectionToWebProcess::hasValidConnection() const
     return m_process;
 }
 
-CoreIPC::Connection* WebConnectionToWebProcess::messageSenderConnection()
+IPC::Connection* WebConnectionToWebProcess::messageSenderConnection()
 {
     return m_process->connection();
 }

@@ -110,7 +110,7 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
     platformGetLaunchOptions(launchOptions);
 }
 
-void WebProcessProxy::connectionWillOpen(CoreIPC::Connection* connection)
+void WebProcessProxy::connectionWillOpen(IPC::Connection* connection)
 {
     ASSERT(this->connection() == connection);
 
@@ -124,7 +124,7 @@ void WebProcessProxy::connectionWillOpen(CoreIPC::Connection* connection)
     m_context->processWillOpenConnection(this);
 }
 
-void WebProcessProxy::connectionWillClose(CoreIPC::Connection* connection)
+void WebProcessProxy::connectionWillClose(IPC::Connection* connection)
 {
     ASSERT(this->connection() == connection);
 
@@ -287,7 +287,7 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 }
 #endif
 
-void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& originalURL, const String& url, const String& title, const CoreIPC::DataReference& backForwardData)
+void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& originalURL, const String& url, const String& title, const IPC::DataReference& backForwardData)
 {
     MESSAGE_CHECK_URL(originalURL);
     MESSAGE_CHECK_URL(url);
@@ -348,7 +348,7 @@ void WebProcessProxy::getDatabaseProcessConnection(PassRefPtr<Messages::WebProce
 }
 #endif // ENABLE(DATABASE_PROCESS)
 
-void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+void WebProcessProxy::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
     if (dispatchMessage(connection, decoder))
         return;
@@ -364,7 +364,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
     // FIXME: Add unhandled message logging.
 }
 
-void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)
+void WebProcessProxy::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
     if (dispatchSyncMessage(connection, decoder, replyEncoder))
         return;
@@ -380,7 +380,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
     // FIXME: Add unhandled message logging.
 }
 
-void WebProcessProxy::didClose(CoreIPC::Connection*)
+void WebProcessProxy::didClose(IPC::Connection*)
 {
     // Protect ourselves, as the call to disconnect() below may otherwise cause us
     // to be deleted before we can finish our work.
@@ -398,7 +398,7 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
 
 }
 
-void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection* connection, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
+void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection* connection, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
     WTFLogAlways("Received an invalid message \"%s.%s\" from the web process.\n", messageReceiverName.toString().data(), messageName.toString().data());
 
@@ -407,7 +407,7 @@ void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection* connection, 
     // Terminate the WebProcess.
     terminate();
 
-    // Since we've invalidated the connection we'll never get a CoreIPC::Connection::Client::didClose
+    // Since we've invalidated the connection we'll never get a IPC::Connection::Client::didClose
     // callback so we'll explicitly call it here instead.
     didClose(connection);
 }
@@ -436,7 +436,7 @@ void WebProcessProxy::didBecomeResponsive(ResponsivenessTimer*)
         pages[i]->processDidBecomeResponsive();
 }
 
-void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Connection::Identifier connectionIdentifier)
+void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 

@@ -43,9 +43,9 @@ OBJC_CLASS WKCustomProtocol;
 #endif
 
 
-namespace CoreIPC {
+namespace IPC {
 class DataReference;
-} // namespace CoreIPC
+} // namespace IPC
 
 namespace WebCore {
 class ResourceError;
@@ -57,7 +57,7 @@ namespace WebKit {
 class ChildProcess;
 struct NetworkProcessCreationParameters;
 
-class CustomProtocolManager : public WebProcessSupplement, public NetworkProcessSupplement, public CoreIPC::Connection::WorkQueueMessageReceiver {
+class CustomProtocolManager : public WebProcessSupplement, public NetworkProcessSupplement, public IPC::Connection::WorkQueueMessageReceiver {
     WTF_MAKE_NONCOPYABLE(CustomProtocolManager);
 public:
     explicit CustomProtocolManager(ChildProcess*);
@@ -77,7 +77,7 @@ public:
 
 private:
     // ChildProcessSupplement
-    void initializeConnection(CoreIPC::Connection*) OVERRIDE;
+    void initializeConnection(IPC::Connection*) OVERRIDE;
 
     // WebProcessSupplement
     void initialize(const WebProcessCreationParameters&) OVERRIDE;
@@ -87,11 +87,11 @@ private:
     void initialize(const NetworkProcessCreationParameters&) OVERRIDE;
 #endif
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     void didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError&);
-    void didLoadData(uint64_t customProtocolID, const CoreIPC::DataReference&);
+    void didLoadData(uint64_t customProtocolID, const IPC::DataReference&);
     void didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse&, uint32_t cacheStoragePolicy);
     void didFinishLoading(uint64_t customProtocolID);
 

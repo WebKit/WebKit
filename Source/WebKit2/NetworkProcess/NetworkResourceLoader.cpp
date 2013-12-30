@@ -336,7 +336,7 @@ void NetworkResourceLoader::didCancelAuthenticationChallenge(ResourceHandle* han
     notImplemented();
 }
 
-CoreIPC::Connection* NetworkResourceLoader::messageSenderConnection()
+IPC::Connection* NetworkResourceLoader::messageSenderConnection()
 {
     return connectionToWebProcess()->connection();
 }

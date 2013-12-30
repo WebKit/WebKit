@@ -37,7 +37,7 @@ namespace WebKit {
 
 class AsyncRequest;
 
-class WebIDBServerConnection FINAL : public WebCore::IDBServerConnection, public CoreIPC::MessageSender {
+class WebIDBServerConnection FINAL : public WebCore::IDBServerConnection, public IPC::MessageSender {
 public:
     static PassRefPtr<WebIDBServerConnection> create(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin);
 
@@ -82,16 +82,16 @@ public:
     virtual void cursorPrefetchReset(WebCore::IDBCursorBackend&, int usedPrefetches) OVERRIDE;
 
     // Message handlers.
-    void didReceiveWebIDBServerConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    void didReceiveWebIDBServerConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);
 
-    // CoreIPC::MessageSender
+    // IPC::MessageSender
     virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_serverConnectionIdentifier; }
 
 private:
     WebIDBServerConnection(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin);
 
-    // CoreIPC::MessageSender
-    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    // IPC::MessageSender
+    virtual IPC::Connection* messageSenderConnection() OVERRIDE;
 
     void didGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, const WebCore::IDBDatabaseMetadata&);
     void didOpenTransaction(uint64_t requestID, bool success);

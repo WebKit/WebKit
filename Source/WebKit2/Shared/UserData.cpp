@@ -84,17 +84,17 @@ RefPtr<API::Object> UserData::transform(API::Object* object, const std::function
     return object;
 }
 
-void UserData::encode(CoreIPC::ArgumentEncoder& encoder) const
+void UserData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encode(encoder, m_object.get());
 }
 
-bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, UserData& userData)
+bool UserData::decode(IPC::ArgumentDecoder& decoder, UserData& userData)
 {
     return decode(decoder, userData.m_object);
 }
 
-void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object* object) const
+void UserData::encode(IPC::ArgumentEncoder& encoder, const API::Object* object) const
 {
     if (!object) {
         encoder.encodeEnum(API::Object::Type::Null);
@@ -104,7 +104,7 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object* obje
     encode(encoder, *object);
 }
 
-void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& object) const
+void UserData::encode(IPC::ArgumentEncoder& encoder, const API::Object& object) const
 {
     API::Object::Type type = object.type();
     encoder.encodeEnum(type);
@@ -192,7 +192,7 @@ void UserData::encode(CoreIPC::ArgumentEncoder& encoder, const API::Object& obje
     }
 }
 
-bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
+bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
 {
     API::Object::Type type;
     if (!decoder.decodeEnum(type))
@@ -284,7 +284,7 @@ bool UserData::decode(CoreIPC::ArgumentDecoder& decoder, RefPtr<API::Object>& re
         break;
 
     case API::Object::Type::SerializedScriptValue: {
-        CoreIPC::DataReference dataReference;
+        IPC::DataReference dataReference;
         if (!decoder.decode(dataReference))
             return false;
 

@@ -38,14 +38,14 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class RemoteLayerTreeHost : private CoreIPC::MessageReceiver {
+class RemoteLayerTreeHost : private IPC::MessageReceiver {
 public:
     explicit RemoteLayerTreeHost(WebPageProxy*);
     ~RemoteLayerTreeHost();
 
 private:
-    // CoreIPC::MessageReceiver.
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver.
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     // Message handlers.
     void commit(const RemoteLayerTreeTransaction&);

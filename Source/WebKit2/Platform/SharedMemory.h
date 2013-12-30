@@ -35,7 +35,7 @@
 #include <wtf/text/WTFString.h>
 #endif
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -57,11 +57,11 @@ public:
 
         bool isNull() const;
 
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, Handle&);
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, Handle&);
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-        CoreIPC::Attachment releaseToAttachment() const;
+        IPC::Attachment releaseToAttachment() const;
         void adoptFromAttachment(int fileDescriptor, size_t);
 #endif
     private:

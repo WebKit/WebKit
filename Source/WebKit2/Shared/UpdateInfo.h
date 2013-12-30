@@ -30,7 +30,7 @@
 #include <WebCore/IntRect.h>
 #include <wtf/Noncopyable.h>
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -43,8 +43,8 @@ class UpdateInfo {
 public:
     UpdateInfo() { }
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, UpdateInfo&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, UpdateInfo&);
 
     // The size of the web view.
     WebCore::IntSize viewSize;

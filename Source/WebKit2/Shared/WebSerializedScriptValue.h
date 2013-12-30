@@ -59,7 +59,7 @@ public:
         return m_serializedScriptValue->deserialize(context, exception);
     }
 
-    CoreIPC::DataReference dataReference() const { return m_serializedScriptValue->data(); }
+    IPC::DataReference dataReference() const { return m_serializedScriptValue->data(); }
 
     void* internalRepresentation() { return m_serializedScriptValue.get(); }
 

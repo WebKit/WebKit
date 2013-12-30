@@ -43,7 +43,7 @@ class Plugin;
 
 class NPRemoteObjectMap : public RefCounted<NPRemoteObjectMap> {
 public:
-    static PassRefPtr<NPRemoteObjectMap> create(CoreIPC::Connection*);
+    static PassRefPtr<NPRemoteObjectMap> create(IPC::Connection*);
     ~NPRemoteObjectMap();
 
     // Creates an NPObjectProxy wrapper for the remote object with the given remote object ID.
@@ -54,21 +54,18 @@ public:
     uint64_t registerNPObject(NPObject*, Plugin*);
     void unregisterNPObject(uint64_t);
 
-    // Given an NPVariant, creates an NPVariantData object (a CoreIPC representation of an NPVariant).
     NPVariantData npVariantToNPVariantData(const NPVariant&, Plugin*);
-
-    // Given an NPVariantData, creates an NPVariant object.
     NPVariant npVariantDataToNPVariant(const NPVariantData&, Plugin*);
 
-    CoreIPC::Connection* connection() const { return m_connection; }
+    IPC::Connection* connection() const { return m_connection; }
 
     void pluginDestroyed(Plugin*);
 
-    void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
+    void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
 private:
-    explicit NPRemoteObjectMap(CoreIPC::Connection*);
-    CoreIPC::Connection* m_connection;
+    explicit NPRemoteObjectMap(IPC::Connection*);
+    IPC::Connection* m_connection;
 
     // A map of NPObjectMessageReceiver classes, wrapping objects that we export to the
     // other end of the connection.

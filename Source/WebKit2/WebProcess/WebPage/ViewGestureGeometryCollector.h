@@ -36,14 +36,14 @@ namespace WebKit {
 
 class WebPage;
 
-class ViewGestureGeometryCollector : private CoreIPC::MessageReceiver {
+class ViewGestureGeometryCollector : private IPC::MessageReceiver {
 public:
     ViewGestureGeometryCollector(WebPage&);
     ~ViewGestureGeometryCollector();
 
 private:
-    // CoreIPC::MessageReceiver.
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver.
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     // Message handlers.
     void collectGeometryForMagnificationGesture();

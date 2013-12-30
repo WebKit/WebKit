@@ -30,7 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 class Connection;
 class MessageDecoder;

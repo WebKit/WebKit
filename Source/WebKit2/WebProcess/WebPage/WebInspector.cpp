@@ -78,7 +78,7 @@ WebPage* WebInspector::createInspectorPage()
 
     if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebInspectorProxy::CreateInspectorPage(),
             Messages::WebInspectorProxy::CreateInspectorPage::Reply(inspectorPageID, parameters),
-            m_page->pageID(), CoreIPC::Connection::NoTimeout)) {
+            m_page->pageID(), IPC::Connection::NoTimeout)) {
         return 0;
     }
 

@@ -29,7 +29,7 @@
 #include "DataReference.h"
 #include <stdio.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize)
 {
@@ -224,4 +224,4 @@ bool ArgumentDecoder::removeAttachment(Attachment& attachment)
     return true;
 }
 
-} // namespace CoreIPC
+} // namespace IPC

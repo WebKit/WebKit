@@ -35,19 +35,19 @@ namespace WebKit {
 class ChildProcess;
 class SecItemResponseData;
 
-class SecItemShim : public CoreIPC::Connection::WorkQueueMessageReceiver {
+class SecItemShim : public IPC::Connection::WorkQueueMessageReceiver {
 WTF_MAKE_NONCOPYABLE(SecItemShim);
 public:
     static SecItemShim& shared();
 
     void initialize(ChildProcess*);
-    void initializeConnection(CoreIPC::Connection*);
+    void initializeConnection(IPC::Connection*);
 
 private:
     SecItemShim();
 
-    // CoreIPC::Connection::WorkQueueMessageReceiver.
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::Connection::WorkQueueMessageReceiver.
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     void secItemResponse(uint64_t requestID, const SecItemResponseData&);
 

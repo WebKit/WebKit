@@ -475,7 +475,7 @@ void WebPage::dummy(bool&)
 {
 }
 
-CoreIPC::Connection* WebPage::messageSenderConnection()
+IPC::Connection* WebPage::messageSenderConnection()
 {
     return WebProcess::shared().parentProcessConnection();
 }
@@ -864,7 +864,7 @@ void WebPage::sendClose()
     send(Messages::WebPageProxy::ClosePage(false));
 }
 
-void WebPage::loadURL(const String& url, const SandboxExtension::Handle& sandboxExtensionHandle, CoreIPC::MessageDecoder& decoder)
+void WebPage::loadURL(const String& url, const SandboxExtension::Handle& sandboxExtensionHandle, IPC::MessageDecoder& decoder)
 {
     loadURLRequest(ResourceRequest(URL(URL(), url)), sandboxExtensionHandle, decoder);
 }
@@ -878,7 +878,7 @@ void WebPage::loadURLInFrame(const String& url, uint64_t frameID)
     frame->coreFrame()->loader().load(FrameLoadRequest(frame->coreFrame(), ResourceRequest(URL(URL(), url))));
 }
 
-void WebPage::loadURLRequest(const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle, CoreIPC::MessageDecoder& decoder)
+void WebPage::loadURLRequest(const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle, IPC::MessageDecoder& decoder)
 {
     SendStopResponsivenessTimer stopper(this);
 
@@ -897,7 +897,7 @@ void WebPage::loadURLRequest(const ResourceRequest& request, const SandboxExtens
     m_mainFrame->coreFrame()->loader().load(FrameLoadRequest(m_mainFrame->coreFrame(), request));
 }
 
-void WebPage::loadDataImpl(PassRefPtr<SharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& unreachableURL, CoreIPC::MessageDecoder& decoder)
+void WebPage::loadDataImpl(PassRefPtr<SharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& unreachableURL, IPC::MessageDecoder& decoder)
 {
     SendStopResponsivenessTimer stopper(this);
 
@@ -917,7 +917,7 @@ void WebPage::loadDataImpl(PassRefPtr<SharedBuffer> sharedBuffer, const String& 
     m_mainFrame->coreFrame()->loader().load(FrameLoadRequest(m_mainFrame->coreFrame(), request, substituteData));
 }
 
-void WebPage::loadString(const String& htmlString, const String& MIMEType, const URL& baseURL, const URL& unreachableURL, CoreIPC::MessageDecoder& decoder)
+void WebPage::loadString(const String& htmlString, const String& MIMEType, const URL& baseURL, const URL& unreachableURL, IPC::MessageDecoder& decoder)
 {
     if (!htmlString.isNull() && htmlString.is8Bit()) {
         RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(htmlString.characters8()), htmlString.length() * sizeof(LChar));
@@ -928,32 +928,32 @@ void WebPage::loadString(const String& htmlString, const String& MIMEType, const
     }
 }
 
-void WebPage::loadData(const CoreIPC::DataReference& data, const String& MIMEType, const String& encodingName, const String& baseURLString, CoreIPC::MessageDecoder& decoder)
+void WebPage::loadData(const IPC::DataReference& data, const String& MIMEType, const String& encodingName, const String& baseURLString, IPC::MessageDecoder& decoder)
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(data.data()), data.size());
     URL baseURL = baseURLString.isEmpty() ? blankURL() : URL(URL(), baseURLString);
     loadDataImpl(sharedBuffer, MIMEType, encodingName, baseURL, URL(), decoder);
 }
 
-void WebPage::loadHTMLString(const String& htmlString, const String& baseURLString, CoreIPC::MessageDecoder& decoder)
+void WebPage::loadHTMLString(const String& htmlString, const String& baseURLString, IPC::MessageDecoder& decoder)
 {
     URL baseURL = baseURLString.isEmpty() ? blankURL() : URL(URL(), baseURLString);
     loadString(htmlString, ASCIILiteral("text/html"), baseURL, URL(), decoder);
 }
 
-void WebPage::loadAlternateHTMLString(const String& htmlString, const String& baseURLString, const String& unreachableURLString, CoreIPC::MessageDecoder& decoder)
+void WebPage::loadAlternateHTMLString(const String& htmlString, const String& baseURLString, const String& unreachableURLString, IPC::MessageDecoder& decoder)
 {
     URL baseURL = baseURLString.isEmpty() ? blankURL() : URL(URL(), baseURLString);
     URL unreachableURL = unreachableURLString.isEmpty() ? URL() : URL(URL(), unreachableURLString);
     loadString(htmlString, ASCIILiteral("text/html"), baseURL, unreachableURL, decoder);
 }
 
-void WebPage::loadPlainTextString(const String& string, CoreIPC::MessageDecoder& decoder)
+void WebPage::loadPlainTextString(const String& string, IPC::MessageDecoder& decoder)
 {
     loadString(string, ASCIILiteral("text/plain"), blankURL(), URL(), decoder);
 }
 
-void WebPage::loadWebArchiveData(const CoreIPC::DataReference& webArchiveData, CoreIPC::MessageDecoder& decoder)
+void WebPage::loadWebArchiveData(const IPC::DataReference& webArchiveData, IPC::MessageDecoder& decoder)
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(webArchiveData.data()), webArchiveData.size() * sizeof(uint8_t));
     loadDataImpl(sharedBuffer, ASCIILiteral("application/x-webarchive"), ASCIILiteral("utf-16"), blankURL(), URL(), decoder);
@@ -1373,7 +1373,7 @@ void WebPage::setGapBetweenPages(double gap)
     m_page->setPagination(pagination);
 }
 
-void WebPage::postInjectedBundleMessage(const String& messageName, CoreIPC::MessageDecoder& decoder)
+void WebPage::postInjectedBundleMessage(const String& messageName, IPC::MessageDecoder& decoder)
 {
     InjectedBundle* injectedBundle = WebProcess::shared().injectedBundle();
     if (!injectedBundle)
@@ -2198,7 +2198,7 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
     // Retain the SerializedScriptValue at this level so it (and the internal data) lives
     // long enough for the DataReference to be encoded by the sent message.
     RefPtr<SerializedScriptValue> serializedResultValue;
-    CoreIPC::DataReference dataReference;
+    IPC::DataReference dataReference;
 
     JSLockHolder lock(JSDOMWindow::commonVM());
     if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScript(script, true).jsValue()) {
@@ -2218,14 +2218,14 @@ void WebPage::getContentsAsString(uint64_t callbackID)
 #if ENABLE(MHTML)
 void WebPage::getContentsAsMHTMLData(uint64_t callbackID, bool useBinaryEncoding)
 {
-    CoreIPC::DataReference dataReference;
+    IPC::DataReference dataReference;
 
     RefPtr<SharedBuffer> buffer = useBinaryEncoding
         ? MHTMLArchive::generateMHTMLDataUsingBinaryEncoding(m_page.get())
         : MHTMLArchive::generateMHTMLData(m_page.get());
 
     if (buffer)
-        dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+        dataReference = IPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
 
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
@@ -2249,7 +2249,7 @@ static Frame* frameWithSelection(Page* page)
 
 void WebPage::getSelectionAsWebArchiveData(uint64_t callbackID)
 {
-    CoreIPC::DataReference dataReference;
+    IPC::DataReference dataReference;
 
 #if PLATFORM(MAC)
     RefPtr<LegacyWebArchive> archive;
@@ -2259,7 +2259,7 @@ void WebPage::getSelectionAsWebArchiveData(uint64_t callbackID)
     if (frame) {
         archive = LegacyWebArchive::createFromSelection(frame);
         data = archive->rawDataRepresentation();
-        dataReference = CoreIPC::DataReference(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
+        dataReference = IPC::DataReference(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
     }
 #endif
 
@@ -2285,20 +2285,20 @@ void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
 
 void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
 {
-    CoreIPC::DataReference dataReference;
+    IPC::DataReference dataReference;
 
     RefPtr<ResourceBuffer> buffer;
     RefPtr<SharedBuffer> pdfResource;
     if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
         if (PluginView* pluginView = pluginViewForFrame(frame->coreFrame())) {
             if ((pdfResource = pluginView->liveResourceData()))
-                dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(pdfResource->data()), pdfResource->size());
+                dataReference = IPC::DataReference(reinterpret_cast<const uint8_t*>(pdfResource->data()), pdfResource->size());
         }
 
         if (dataReference.isEmpty()) {
             if (DocumentLoader* loader = frame->coreFrame()->loader().documentLoader()) {
                 if ((buffer = loader->mainResourceData()))
-                    dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+                    dataReference = IPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
             }
         }
     }
@@ -2321,7 +2321,7 @@ static PassRefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& re
 
 void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceURLString, uint64_t callbackID)
 {
-    CoreIPC::DataReference dataReference;
+    IPC::DataReference dataReference;
     URL resourceURL(URL(), resourceURLString);
 
     RefPtr<SharedBuffer> buffer;
@@ -2333,7 +2333,7 @@ void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceU
         }
 
         if (buffer)
-            dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+            dataReference = IPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
     }
 
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
@@ -2341,13 +2341,13 @@ void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceU
 
 void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
 {
-    CoreIPC::DataReference dataReference;
+    IPC::DataReference dataReference;
 
 #if PLATFORM(MAC)
     RetainPtr<CFDataRef> data;
     if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
         if ((data = frame->webArchiveData(0, 0)))
-            dataReference = CoreIPC::DataReference(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
+            dataReference = IPC::DataReference(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
     }
 #else
     UNUSED_PARAM(frameID);
@@ -3125,7 +3125,7 @@ bool WebPage::windowAndWebPageAreFocused() const
     return m_page->focusController().isFocused() && m_page->focusController().isActive();
 }
 
-void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::DrawingArea::messageReceiverName()) {
         if (m_drawingArea)
@@ -3159,7 +3159,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
     didReceiveWebPageMessage(connection, decoder);
 }
 
-void WebPage::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)
+void WebPage::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {   
     didReceiveSyncWebPageMessage(connection, decoder, replyEncoder);
 }
@@ -3498,7 +3498,7 @@ void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint3
     }
 #endif
 
-    send(Messages::WebPageProxy::DataCallback(CoreIPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
+    send(Messages::WebPageProxy::DataCallback(IPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
 }
 
 #elif PLATFORM(GTK)
@@ -3517,13 +3517,13 @@ void WebPage::drawPagesForPrinting(uint64_t frameID, const PrintInfo& printInfo,
 
 void WebPage::savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size)
 {
-    send(Messages::WebPageProxy::SavePDFToFileInDownloadsFolder(suggestedFilename, originatingURLString, CoreIPC::DataReference(data, size)));
+    send(Messages::WebPageProxy::SavePDFToFileInDownloadsFolder(suggestedFilename, originatingURLString, IPC::DataReference(data, size)));
 }
 
 #if PLATFORM(MAC)
 void WebPage::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID)
 {
-    send(Messages::WebPageProxy::SavePDFToTemporaryFolderAndOpenWithNativeApplication(suggestedFilename, originatingURLString, CoreIPC::DataReference(data, size), pdfUUID));
+    send(Messages::WebPageProxy::SavePDFToTemporaryFolderAndOpenWithNativeApplication(suggestedFilename, originatingURLString, IPC::DataReference(data, size), pdfUUID));
 }
 #endif
 

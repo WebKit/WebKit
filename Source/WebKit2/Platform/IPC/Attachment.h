@@ -31,7 +31,7 @@
 #include <mach/mach_traps.h>
 #endif
 
-namespace CoreIPC {
+namespace IPC {
 
 class ArgumentDecoder;
 class ArgumentEncoder;
@@ -90,6 +90,6 @@ private:
 #endif
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // Attachment_h

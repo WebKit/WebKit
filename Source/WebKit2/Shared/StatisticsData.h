@@ -36,8 +36,8 @@
 namespace WebKit {
 
 struct StatisticsData {
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, StatisticsData&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, StatisticsData&);
     
     HashMap<String, uint64_t> statisticsNumbers;
     HashMap<String, uint64_t> javaScriptProtectedObjectTypeCounts;

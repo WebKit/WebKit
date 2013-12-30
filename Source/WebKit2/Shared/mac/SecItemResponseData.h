@@ -28,7 +28,7 @@
 
 #include <wtf/RetainPtr.h>
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -40,8 +40,8 @@ public:
     SecItemResponseData();
     SecItemResponseData(OSStatus, CFTypeRef result);
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, SecItemResponseData&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, SecItemResponseData&);
 
     RetainPtr<CFTypeRef>& resultObject() { return m_resultObject; }
     OSStatus resultCode() const { return m_resultCode; }

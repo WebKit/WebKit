@@ -30,7 +30,7 @@
 #include "ArgumentEncoder.h"
 #include "Attachment.h"
 
-namespace CoreIPC {
+namespace IPC {
 
 class MachPort {
 public:
@@ -70,6 +70,6 @@ private:
     mach_msg_type_name_t m_disposition;
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // MachPort_h

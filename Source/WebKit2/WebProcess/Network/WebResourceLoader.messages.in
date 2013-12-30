@@ -30,7 +30,7 @@ messages -> WebResourceLoader LegacyReceiver {
     WillSendRequest(WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse)
     DidSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
     DidReceiveResponseWithCertificateInfo(WebCore::ResourceResponse response, WebCore::CertificateInfo certificateInfo, bool needsContinueDidReceiveResponseMessage)
-    DidReceiveData(CoreIPC::DataReference data, int64_t encodedDataLength)
+    DidReceiveData(IPC::DataReference data, int64_t encodedDataLength)
     DidFinishResourceLoad(double finishTime)
     DidFailResourceLoad(WebCore::ResourceError error)
 

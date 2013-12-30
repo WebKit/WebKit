@@ -53,10 +53,10 @@ SandboxExtension::Handle::~Handle()
     }
 }
 
-void SandboxExtension::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
+void SandboxExtension::Handle::encode(IPC::ArgumentEncoder& encoder) const
 {
     if (!m_sandboxExtension) {
-        encoder << CoreIPC::DataReference();
+        encoder << IPC::DataReference();
         return;
     }
 
@@ -64,18 +64,18 @@ void SandboxExtension::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
     const char *serializedFormat = WKSandboxExtensionGetSerializedFormat(m_sandboxExtension, &length);
     ASSERT(serializedFormat);
 
-    encoder << CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(serializedFormat), length);
+    encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(serializedFormat), length);
 
     // Encoding will destroy the sandbox extension locally.
     WKSandboxExtensionDestroy(m_sandboxExtension);
     m_sandboxExtension = 0;
 }
 
-bool SandboxExtension::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& result)
+bool SandboxExtension::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& result)
 {
     ASSERT(!result.m_sandboxExtension);
 
-    CoreIPC::DataReference dataReference;
+    IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
         return false;
 
@@ -123,7 +123,7 @@ size_t SandboxExtension::HandleArray::size() const
     return m_size;
 }
 
-void SandboxExtension::HandleArray::encode(CoreIPC::ArgumentEncoder& encoder) const
+void SandboxExtension::HandleArray::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << static_cast<uint64_t>(size());
     for (size_t i = 0; i < m_size; ++i)
@@ -131,7 +131,7 @@ void SandboxExtension::HandleArray::encode(CoreIPC::ArgumentEncoder& encoder) co
     
 }
 
-bool SandboxExtension::HandleArray::decode(CoreIPC::ArgumentDecoder& decoder, SandboxExtension::HandleArray& handles)
+bool SandboxExtension::HandleArray::decode(IPC::ArgumentDecoder& decoder, SandboxExtension::HandleArray& handles)
 {
     uint64_t size;
     if (!decoder.decode(size))

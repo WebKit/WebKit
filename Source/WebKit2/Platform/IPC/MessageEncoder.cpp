@@ -30,7 +30,7 @@
 #include "MessageFlags.h"
 #include "StringReference.h"
 
-namespace CoreIPC {
+namespace IPC {
 
 static uint8_t defaultMessageFlags = 0;
 
@@ -64,4 +64,4 @@ void MessageEncoder::setShouldDispatchMessageWhenWaitingForSyncReply(bool should
         *buffer() &= ~DispatchMessageWhenWaitingForSyncReply;
 }
 
-} // namespace CoreIPC
+} // namespace IPC

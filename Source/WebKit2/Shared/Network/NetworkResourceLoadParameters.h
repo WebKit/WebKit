@@ -33,7 +33,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -46,8 +46,8 @@ class NetworkResourceLoadParameters {
 public:
     NetworkResourceLoadParameters();
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, NetworkResourceLoadParameters&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, NetworkResourceLoadParameters&);
 
     ResourceLoadIdentifier identifier;
     uint64_t webPageID;

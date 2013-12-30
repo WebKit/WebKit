@@ -32,19 +32,19 @@
 
 namespace WebContextLegacyMessages {
 
-inline CoreIPC::StringReference messageReceiverName()
+inline IPC::StringReference messageReceiverName()
 {
-    return CoreIPC::StringReference("WebContextLegacyMessage");
+    return IPC::StringReference("WebContextLegacyMessage");
 }
 
-inline CoreIPC::StringReference postMessageMessageName()
+inline IPC::StringReference postMessageMessageName()
 {
-    return CoreIPC::StringReference("PostMessage");
+    return IPC::StringReference("PostMessage");
 }
 
-inline CoreIPC::StringReference postSynchronousMessageMessageName()
+inline IPC::StringReference postSynchronousMessageMessageName()
 {
-    return CoreIPC::StringReference("PostSynchronousMessage");
+    return IPC::StringReference("PostSynchronousMessage");
 }
 
 } // namespace WebContextLegacyMessages

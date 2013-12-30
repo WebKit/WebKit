@@ -87,7 +87,7 @@ void Download::cancel()
     [m_nsURLDownload.get() cancel];
 
     RetainPtr<NSData> resumeData = [m_nsURLDownload.get() resumeData];
-    didCancel(CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([resumeData.get() bytes]), [resumeData.get() length]));
+    didCancel(IPC::DataReference(reinterpret_cast<const uint8_t*>([resumeData.get() bytes]), [resumeData.get() length]));
 }
 
 void Download::platformInvalidate()
@@ -263,7 +263,7 @@ static void dispatchOnMainThread(void (^block)())
             return;
 
         RetainPtr<NSData> resumeData = [download resumeData];
-        CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>([resumeData.get() bytes]), [resumeData.get() length]);
+        IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>([resumeData.get() bytes]), [resumeData.get() length]);
 
         _download->didFail(error, dataReference);
     });

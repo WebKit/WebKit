@@ -35,7 +35,7 @@
 #include "ImportanceAssertion.h"
 #endif
 
-namespace CoreIPC {
+namespace IPC {
 
 MessageDecoder::~MessageDecoder()
 {
@@ -73,4 +73,4 @@ void MessageDecoder::setImportanceAssertion(std::unique_ptr<ImportanceAssertion>
 }
 #endif
 
-} // namespace CoreIPC
+} // namespace IPC

@@ -85,7 +85,7 @@ class WebNetworkInfoManagerProxy;
 struct NetworkProcessCreationParameters;
 #endif
 
-class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private CoreIPC::MessageReceiver
+class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private IPC::MessageReceiver
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , private PluginInfoStoreClient
 #endif
@@ -110,12 +110,12 @@ public:
         m_supplements.add(T::supplementName(), T::create(this));
     }
 
-    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver&);
-    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver&);
-    void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
+    void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver&);
+    void addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver&);
+    void removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID);
 
-    bool dispatchMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    bool dispatchSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
+    bool dispatchMessage(IPC::Connection*, IPC::MessageDecoder&);
+    bool dispatchSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     void initializeClient(const WKContextClientBase*);
     void initializeInjectedBundleClient(const WKContextInjectedBundleClientBase*);
@@ -130,7 +130,7 @@ public:
     unsigned maximumNumberOfProcesses() const { return m_webProcessCountLimit; }
 
     // WebProcess or NetworkProcess as approporiate for current process model. The connection must be non-null.
-    CoreIPC::Connection* networkingProcessConnection();
+    IPC::Connection* networkingProcessConnection();
 
     template<typename T> void sendToAllProcesses(const T& message);
     template<typename T> void sendToAllProcessesRelaunchingThemIfNecessary(const T& message);
@@ -186,8 +186,8 @@ public:
     void addVisitedLinkHash(WebCore::LinkHash);
 
     // MessageReceiver.
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) OVERRIDE;
 
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }
@@ -300,7 +300,7 @@ public:
 #endif
 
     static void setInvalidMessageCallback(void (*)(WKStringRef));
-    static void didReceiveInvalidMessage(const CoreIPC::StringReference& messageReceiverName, const CoreIPC::StringReference& messageName);
+    static void didReceiveInvalidMessage(const IPC::StringReference& messageReceiverName, const IPC::StringReference& messageName);
 
     void processDidCachePage(WebProcessProxy*);
 
@@ -366,8 +366,8 @@ private:
     void didGetStatistics(const StatisticsData&, uint64_t callbackID);
         
     // Implemented in generated WebContextMessageReceiver.cpp
-    void didReceiveWebContextMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    void didReceiveSyncWebContextMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
+    void didReceiveWebContextMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveSyncWebContextMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     static void languageChanged(void* context);
     void languageChanged();
@@ -405,7 +405,7 @@ private:
     virtual void pluginInfoStoreDidLoadPlugins(PluginInfoStore*) OVERRIDE;
 #endif
 
-    CoreIPC::MessageReceiverMap m_messageReceiverMap;
+    IPC::MessageReceiverMap m_messageReceiverMap;
 
     ProcessModel m_processModel;
     unsigned m_webProcessCountLimit; // The limit has no effect when process model is ProcessModelSharedSecondaryProcess.

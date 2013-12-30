@@ -46,7 +46,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebProcessConnection> WebProcessConnection::create(CoreIPC::Connection::Identifier connectionIdentifier)
+PassRefPtr<WebProcessConnection> WebProcessConnection::create(IPC::Connection::Identifier connectionIdentifier)
 {
     return adoptRef(new WebProcessConnection(connectionIdentifier));
 }
@@ -58,9 +58,9 @@ WebProcessConnection::~WebProcessConnection()
     ASSERT(!m_connection);
 }
     
-WebProcessConnection::WebProcessConnection(CoreIPC::Connection::Identifier connectionIdentifier)
+WebProcessConnection::WebProcessConnection(IPC::Connection::Identifier connectionIdentifier)
 {
-    m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
+    m_connection = IPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
     m_npRemoteObjectMap = NPRemoteObjectMap::create(m_connection.get());
 
     m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
@@ -110,14 +110,14 @@ void WebProcessConnection::removePluginControllerProxy(PluginControllerProxy* pl
 
 void WebProcessConnection::setGlobalException(const String& exceptionString)
 {
-    CoreIPC::Connection* connection = ConnectionStack::shared().current();
+    IPC::Connection* connection = ConnectionStack::shared().current();
     if (!connection)
         return;
 
     connection->sendSync(Messages::PluginProcessConnection::SetException(exceptionString), Messages::PluginProcessConnection::SetException::Reply(), 0);
 }
 
-void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+void WebProcessConnection::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
     ConnectionStack::CurrentConnectionPusher currentConnection(ConnectionStack::shared(), connection);
 
@@ -139,7 +139,7 @@ void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, Co
     pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, decoder);
 }
 
-void WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)
+void WebProcessConnection::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
     // Force all timers to run at full speed when processing a synchronous message
     ActivityAssertion activityAssertion(PluginProcess::shared());
@@ -166,7 +166,7 @@ void WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection
     pluginControllerProxy->didReceiveSyncPluginControllerProxyMessage(connection, decoder, replyEncoder);
 }
 
-void WebProcessConnection::didClose(CoreIPC::Connection*)
+void WebProcessConnection::didClose(IPC::Connection*)
 {
     // The web process crashed. Destroy all the plug-in controllers. Destroying the last plug-in controller
     // will cause the web process connection itself to be destroyed.
@@ -198,7 +198,7 @@ void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID, bool asynchr
     destroyPluginControllerProxy(pluginControllerProxy);
 }
 
-void WebProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
+void WebProcessConnection::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
 {
     // FIXME: Implement.
 }

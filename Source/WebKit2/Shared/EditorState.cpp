@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-void EditorState::encode(CoreIPC::ArgumentEncoder& encoder) const
+void EditorState::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << shouldIgnoreCompositionSelectionChange;
     encoder << selectionIsNone;
@@ -62,7 +62,7 @@ void EditorState::encode(CoreIPC::ArgumentEncoder& encoder) const
 #endif
 }
 
-bool EditorState::decode(CoreIPC::ArgumentDecoder& decoder, EditorState& result)
+bool EditorState::decode(IPC::ArgumentDecoder& decoder, EditorState& result)
 {
     if (!decoder.decode(result.shouldIgnoreCompositionSelectionChange))
         return false;

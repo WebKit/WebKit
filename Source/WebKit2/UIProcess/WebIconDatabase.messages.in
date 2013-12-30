@@ -24,9 +24,9 @@ messages -> WebIconDatabase {
     RetainIconForPageURL(String pageURL)
     ReleaseIconForPageURL(String pageURL)
     SetIconURLForPageURL(String iconURL, String pageURL)
-    SetIconDataForIconURL(CoreIPC::DataReference iconData, String iconURL)
+    SetIconDataForIconURL(IPC::DataReference iconData, String iconURL)
     
-    SynchronousIconDataForPageURL(String pageURL) -> (CoreIPC::DataReference iconData)
+    SynchronousIconDataForPageURL(String pageURL) -> (IPC::DataReference iconData)
     SynchronousIconURLForPageURL(String pageURL) -> (String iconURL)
     SynchronousIconDataKnownForIconURL(String iconURL) -> (bool dataKnown)
     SynchronousLoadDecisionForIconURL(String iconURL) -> (int loadDecision)

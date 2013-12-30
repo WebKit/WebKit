@@ -32,7 +32,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -40,8 +40,8 @@ namespace CoreIPC {
 namespace WebKit {
 
 struct OriginAndDatabases {
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, OriginAndDatabases&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, OriginAndDatabases&);
 
     String originIdentifier;
     uint64_t originQuota;

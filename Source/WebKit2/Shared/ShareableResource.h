@@ -51,8 +51,8 @@ public:
         bool isNull() const { return m_handle.isNull(); }
         unsigned size() const { return m_size; }
 
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, Handle&);
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, Handle&);
 
         PassRefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() const;
 

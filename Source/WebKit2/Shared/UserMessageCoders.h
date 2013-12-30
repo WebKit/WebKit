@@ -71,7 +71,7 @@ namespace WebKit {
 template<typename Owner>
 class UserMessageEncoder {
 public:
-    bool baseEncode(CoreIPC::ArgumentEncoder& encoder, const Owner& coder, API::Object::Type& type) const
+    bool baseEncode(IPC::ArgumentEncoder& encoder, const Owner& coder, API::Object::Type& type) const
     {
         if (!m_root) {
             encoder << static_cast<uint32_t>(API::Object::Type::Null);
@@ -260,7 +260,7 @@ protected:
 template<typename Owner>
 class UserMessageDecoder {
 public:
-    static bool baseDecode(CoreIPC::ArgumentDecoder& decoder, Owner& coder, API::Object::Type& type)
+    static bool baseDecode(IPC::ArgumentDecoder& decoder, Owner& coder, API::Object::Type& type)
     {
         uint32_t typeAsUInt32;
         if (!decoder.decode(typeAsUInt32))
@@ -318,7 +318,7 @@ public:
             break;
         }
         case API::Object::Type::SerializedScriptValue: {
-            CoreIPC::DataReference dataReference;
+            IPC::DataReference dataReference;
             if (!decoder.decode(dataReference))
                 return false;
             
@@ -497,7 +497,7 @@ public:
             return true;
         }
         case API::Object::Type::Data: {
-            CoreIPC::DataReference dataReference;
+            IPC::DataReference dataReference;
             if (!decoder.decode(dataReference))
                 return false;
             coder.m_root = API::Data::create(dataReference.data(), dataReference.size());

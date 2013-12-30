@@ -39,7 +39,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
-namespace CoreIPC {
+namespace IPC {
 class ArgumentDecoder;
 class DataReference;
 }
@@ -53,7 +53,7 @@ namespace WebKit {
 
 class WebContext;
 
-class WebIconDatabase : public API::ObjectImpl<API::Object::Type::IconDatabase>, public WebCore::IconDatabaseClient, private CoreIPC::MessageReceiver {
+class WebIconDatabase : public API::ObjectImpl<API::Object::Type::IconDatabase>, public WebCore::IconDatabaseClient, private IPC::MessageReceiver {
 public:
     static PassRefPtr<WebIconDatabase> create(WebContext*);
     virtual ~WebIconDatabase();
@@ -66,9 +66,9 @@ public:
     void retainIconForPageURL(const String&);
     void releaseIconForPageURL(const String&);
     void setIconURLForPageURL(const String&, const String&);
-    void setIconDataForIconURL(const CoreIPC::DataReference&, const String&);
+    void setIconDataForIconURL(const IPC::DataReference&, const String&);
     
-    void synchronousIconDataForPageURL(const String&, CoreIPC::DataReference&);
+    void synchronousIconDataForPageURL(const String&, IPC::DataReference&);
     void synchronousIconURLForPageURL(const String&, String&);
     void synchronousIconDataKnownForIconURL(const String&, bool&) const;
     void synchronousLoadDecisionForIconURL(const String&, int&) const;
@@ -99,9 +99,9 @@ private:
     virtual void didRemoveAllIcons();
     virtual void didFinishURLImport();
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) OVERRIDE;
 
     void notifyIconDataReadyForPageURL(const String&);
 

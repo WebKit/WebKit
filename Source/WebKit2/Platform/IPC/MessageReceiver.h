@@ -29,7 +29,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/OwnPtr.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 class MessageDecoder;
 class MessageEncoder;
@@ -46,6 +46,6 @@ public:
     }
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // MessageReceiver_h

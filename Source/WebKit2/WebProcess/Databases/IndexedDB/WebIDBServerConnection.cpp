@@ -343,7 +343,7 @@ void WebIDBServerConnection::cursorPrefetchReset(IDBCursorBackend&, int usedPref
 {
 }
 
-CoreIPC::Connection* WebIDBServerConnection::messageSenderConnection()
+IPC::Connection* WebIDBServerConnection::messageSenderConnection()
 {
     return WebProcess::shared().webToDatabaseProcessConnection()->connection();
 }

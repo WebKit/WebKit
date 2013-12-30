@@ -45,7 +45,7 @@ namespace WebKit {
 class WebPage;
 class WebProcess;
 
-class WebNotificationManager : public WebProcessSupplement, public CoreIPC::MessageReceiver {
+class WebNotificationManager : public WebProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebNotificationManager);
 public:
     explicit WebNotificationManager(WebProcess*);
@@ -71,9 +71,9 @@ private:
     // WebProcessSupplement
     virtual void initialize(const WebProcessCreationParameters&) OVERRIDE;
 
-    // CoreIPC::MessageReceiver
+    // IPC::MessageReceiver
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
     
     void didShowNotification(uint64_t notificationID);
     void didClickNotification(uint64_t notificationID);

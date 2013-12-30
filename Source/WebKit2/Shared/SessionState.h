@@ -28,7 +28,7 @@
 
 #include "WebBackForwardListItem.h"
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -45,8 +45,8 @@ public:
 
     bool isEmpty() const;
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, SessionState&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, SessionState&);
 
 private:
     BackForwardListItemVector m_list;

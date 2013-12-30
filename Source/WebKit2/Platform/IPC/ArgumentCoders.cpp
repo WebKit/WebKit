@@ -30,7 +30,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 void ArgumentCoder<AtomicString>::encode(ArgumentEncoder& encoder, const AtomicString& atomicString)
 {
@@ -147,4 +147,4 @@ bool ArgumentCoder<String>::decode(ArgumentDecoder& decoder, String& result)
     return decodeStringText<UChar>(decoder, length, result);
 }
 
-} // namespace CoreIPC
+} // namespace IPC

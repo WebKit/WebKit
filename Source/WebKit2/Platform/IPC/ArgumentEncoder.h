@@ -30,7 +30,7 @@
 #include "Attachment.h"
 #include <wtf/Vector.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 class ArgumentEncoder;
 class DataReference;
@@ -91,6 +91,6 @@ private:
     Vector<Attachment> m_attachments;
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // ArgumentEncoder_h

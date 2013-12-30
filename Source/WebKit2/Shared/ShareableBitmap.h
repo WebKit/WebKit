@@ -63,8 +63,8 @@ public:
 
         bool isNull() const { return m_handle.isNull(); }
 
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, Handle&);
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, Handle&);
 
     private:
         friend class ShareableBitmap;

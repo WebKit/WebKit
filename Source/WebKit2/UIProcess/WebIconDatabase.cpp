@@ -127,7 +127,7 @@ void WebIconDatabase::setIconURLForPageURL(const String& iconURL, const String& 
         m_iconDatabaseImpl->setIconURLForPageURL(iconURL, pageURL);
 }
 
-void WebIconDatabase::setIconDataForIconURL(const CoreIPC::DataReference& iconData, const String& iconURL)
+void WebIconDatabase::setIconDataForIconURL(const IPC::DataReference& iconData, const String& iconURL)
 {
     LOG(IconDatabase, "WK2 UIProcess setting icon data (%i bytes) for page URL %s", (int)iconData.size(), iconURL.ascii().data());
     if (!m_iconDatabaseImpl)
@@ -137,9 +137,9 @@ void WebIconDatabase::setIconDataForIconURL(const CoreIPC::DataReference& iconDa
     m_iconDatabaseImpl->setIconDataForIconURL(buffer.release(), iconURL);
 }
 
-void WebIconDatabase::synchronousIconDataForPageURL(const String&, CoreIPC::DataReference& iconData)
+void WebIconDatabase::synchronousIconDataForPageURL(const String&, IPC::DataReference& iconData)
 {
-    iconData = CoreIPC::DataReference();
+    iconData = IPC::DataReference();
 }
 
 void WebIconDatabase::synchronousIconURLForPageURL(const String& pageURL, String& iconURL)

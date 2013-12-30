@@ -43,20 +43,20 @@ PrintInfo::PrintInfo()
 {
 }
 
-void PrintInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
+void PrintInfo::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << pageSetupScaleFactor;
     encoder << availablePaperWidth;
     encoder << availablePaperHeight;
 
 #if PLATFORM(GTK)
-    CoreIPC::encode(encoder, printSettings.get());
-    CoreIPC::encode(encoder, pageSetup.get());
+    IPC::encode(encoder, printSettings.get());
+    IPC::encode(encoder, pageSetup.get());
     encoder.encodeEnum(printMode);
 #endif
 }
 
-bool PrintInfo::decode(CoreIPC::ArgumentDecoder& decoder, PrintInfo& info)
+bool PrintInfo::decode(IPC::ArgumentDecoder& decoder, PrintInfo& info)
 {
     if (!decoder.decode(info.pageSetupScaleFactor))
         return false;
@@ -66,9 +66,9 @@ bool PrintInfo::decode(CoreIPC::ArgumentDecoder& decoder, PrintInfo& info)
         return false;
 
 #if PLATFORM(GTK)
-    if (!CoreIPC::decode(decoder, info.printSettings))
+    if (!IPC::decode(decoder, info.printSettings))
         return false;
-    if (!CoreIPC::decode(decoder, info.pageSetup))
+    if (!IPC::decode(decoder, info.pageSetup))
         return false;
     if (!decoder.decodeEnum(info.printMode))
         return false;

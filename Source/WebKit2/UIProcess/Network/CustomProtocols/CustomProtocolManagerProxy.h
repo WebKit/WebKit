@@ -44,7 +44,7 @@ namespace WebKit {
 
 class ChildProcessProxy;
 
-class CustomProtocolManagerProxy : public CoreIPC::MessageReceiver {
+class CustomProtocolManagerProxy : public IPC::MessageReceiver {
 public:
     explicit CustomProtocolManagerProxy(ChildProcessProxy*);
 
@@ -52,8 +52,8 @@ public:
     void stopLoading(uint64_t customProtocolID);
 
 private:
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     ChildProcessProxy* m_childProcessProxy;
 

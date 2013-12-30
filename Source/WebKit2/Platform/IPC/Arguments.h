@@ -29,7 +29,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 
-namespace CoreIPC {
+namespace IPC {
 
 template<size_t index, typename... Elements>
 struct TupleCoder {
@@ -386,6 +386,6 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5, typena
     T10 argument10;
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // Arguments_h

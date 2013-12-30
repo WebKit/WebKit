@@ -26,13 +26,13 @@
 #ifndef MessageFlags_h
 #define MessageFlags_h
 
-namespace CoreIPC {
+namespace IPC {
 
 enum MessageFlags {
     SyncMessage = 1 << 0,
     DispatchMessageWhenWaitingForSyncReply = 1 << 1,
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // MessageFlags_h

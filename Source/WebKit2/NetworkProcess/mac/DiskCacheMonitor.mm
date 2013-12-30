@@ -94,7 +94,7 @@ DiskCacheMonitor::DiskCacheMonitor(CFCachedURLResponseRef cachedResponse, Networ
     _CFCachedURLResponseSetBecameFileBackedCallBackBlock(cachedResponse, block, dispatch_get_main_queue());
 }
 
-CoreIPC::Connection* DiskCacheMonitor::messageSenderConnection()
+IPC::Connection* DiskCacheMonitor::messageSenderConnection()
 {
     return m_connectionToWebProcess->connection();
 }

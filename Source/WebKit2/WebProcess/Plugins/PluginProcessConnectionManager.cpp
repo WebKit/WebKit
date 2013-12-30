@@ -56,7 +56,7 @@ PluginProcessConnectionManager::~PluginProcessConnectionManager()
 {
 }
 
-void PluginProcessConnectionManager::initializeConnection(CoreIPC::Connection* connection)
+void PluginProcessConnectionManager::initializeConnection(IPC::Connection* connection)
 {
     connection->addWorkQueueMessageReceiver(Messages::PluginProcessConnectionManager::messageReceiverName(), m_queue.get(), this);
 }
@@ -68,18 +68,18 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
             return m_pluginProcessConnections[i].get();
     }
 
-    CoreIPC::Attachment encodedConnectionIdentifier;
+    IPC::Attachment encodedConnectionIdentifier;
     bool supportsAsynchronousInitialization;
     if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPluginProcessConnection(pluginProcessToken),
                                                      Messages::WebProcessProxy::GetPluginProcessConnection::Reply(encodedConnectionIdentifier, supportsAsynchronousInitialization), 0))
         return 0;
 
 #if PLATFORM(MAC)
-    CoreIPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
-    if (CoreIPC::Connection::identifierIsNull(connectionIdentifier))
+    IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
+    if (IPC::Connection::identifierIsNull(connectionIdentifier))
         return 0;
 #elif USE(UNIX_DOMAIN_SOCKETS)
-    CoreIPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.fileDescriptor();
+    IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.fileDescriptor();
     if (connectionIdentifier == -1)
         return 0;
 #endif
@@ -115,7 +115,7 @@ void PluginProcessConnectionManager::removePluginProcessConnection(PluginProcess
 void PluginProcessConnectionManager::pluginProcessCrashed(uint64_t pluginProcessToken)
 {
     MutexLocker locker(m_tokensAndConnectionsMutex);
-    CoreIPC::Connection* connection = m_tokensAndConnections.get(pluginProcessToken);
+    IPC::Connection* connection = m_tokensAndConnections.get(pluginProcessToken);
 
     // It's OK for connection to be null here; it will happen if this web process doesn't know
     // anything about the plug-in process.

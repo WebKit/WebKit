@@ -34,7 +34,7 @@ PlatformPopupMenuData::PlatformPopupMenuData()
 {
 }
 
-void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder& encoder) const
+void PlatformPopupMenuData::encode(IPC::ArgumentEncoder& encoder) const
 {
 #if PLATFORM(MAC)
     encoder << fontInfo;
@@ -44,7 +44,7 @@ void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder& encoder) const
 #endif
 }
 
-bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder& decoder, PlatformPopupMenuData& data)
+bool PlatformPopupMenuData::decode(IPC::ArgumentDecoder& decoder, PlatformPopupMenuData& data)
 {
 #if PLATFORM(MAC)
     if (!decoder.decode(data.fontInfo))

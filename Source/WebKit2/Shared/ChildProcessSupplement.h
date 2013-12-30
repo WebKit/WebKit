@@ -26,9 +26,9 @@
 #ifndef ChildProcessSupplement_h
 #define ChildProcessSupplement_h
 
-namespace CoreIPC {
+namespace IPC {
 class Connection;
-} // namespace CoreIPC
+} // namespace IPC
 
 namespace WebKit {
 
@@ -38,7 +38,7 @@ public:
     {
     }
 
-    virtual void initializeConnection(CoreIPC::Connection*)
+    virtual void initializeConnection(IPC::Connection*)
     {
     }
 };

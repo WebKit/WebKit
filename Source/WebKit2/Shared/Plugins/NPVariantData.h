@@ -30,14 +30,12 @@
 
 #include <wtf/text/CString.h>
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
 
 namespace WebKit {
-
-// The CoreIPC representation of an NPVariant.
 
 class NPVariantData {
 public:
@@ -100,8 +98,8 @@ public:
         return m_remoteNPObjectIDValue;
     }
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, NPVariantData&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, NPVariantData&);
 
 private:
     uint32_t m_type;

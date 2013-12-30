@@ -69,7 +69,7 @@ enum AttachmentSide {
     AttachmentSideRight
 };
 
-class WebInspectorProxy : public API::ObjectImpl<API::Object::Type::Inspector>, public CoreIPC::MessageReceiver {
+class WebInspectorProxy : public API::ObjectImpl<API::Object::Type::Inspector>, public IPC::MessageReceiver {
 public:
     static PassRefPtr<WebInspectorProxy> create(WebPageProxy* page)
     {
@@ -149,9 +149,9 @@ public:
 private:
     explicit WebInspectorProxy(WebPageProxy*);
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) OVERRIDE;
 
     WebPageProxy* platformCreateInspectorPage();
     void platformOpen();

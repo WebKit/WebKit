@@ -33,7 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 // An argument coder works on POD types
 template<typename T> struct SimpleArgumentCoder {
@@ -208,6 +208,6 @@ template<> struct ArgumentCoder<String> {
     static bool decode(ArgumentDecoder&, String&);
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // ArgumentCoders_h

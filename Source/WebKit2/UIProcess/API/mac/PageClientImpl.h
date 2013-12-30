@@ -115,7 +115,7 @@ private:
     virtual void exitAcceleratedCompositingMode();
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
 
-    virtual void accessibilityWebProcessTokenReceived(const CoreIPC::DataReference&);
+    virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&);
 
     virtual void pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus);
     virtual void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, PluginComplexTextInputState);

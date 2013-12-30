@@ -28,7 +28,7 @@
 
 #include <wtf/Vector.h>
 
-namespace CoreIPC {
+namespace IPC {
     class Connection;
 }
 
@@ -38,14 +38,14 @@ class ConnectionStack {
 public:
     static ConnectionStack& shared();
 
-    CoreIPC::Connection* current()
+    IPC::Connection* current()
     {
         return m_connectionStack.last();
     }
 
     class CurrentConnectionPusher {
     public:
-        CurrentConnectionPusher(ConnectionStack& connectionStack, CoreIPC::Connection* connection)
+        CurrentConnectionPusher(ConnectionStack& connectionStack, IPC::Connection* connection)
             : m_connectionStack(connectionStack)
 #if !ASSERT_DISABLED
             , m_connection(connection)
@@ -63,7 +63,7 @@ public:
     private:
         ConnectionStack& m_connectionStack;
 #if !ASSERT_DISABLED
-        CoreIPC::Connection* m_connection;
+        IPC::Connection* m_connection;
 #endif
     };
 
@@ -71,7 +71,7 @@ private:
     // It's OK for these to be weak pointers because we only push object on the stack
     // from within didReceiveMessage and didReceiveSyncMessage and the Connection objects are
     // already ref'd for the duration of those functions.
-    Vector<CoreIPC::Connection*, 4> m_connectionStack;
+    Vector<IPC::Connection*, 4> m_connectionStack;
 };
 
 } // namespace WebKit

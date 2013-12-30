@@ -30,7 +30,7 @@
 #include "ShareableBitmap.h"
 #include <wtf/text/WTFString.h>
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -40,8 +40,8 @@ namespace WebKit {
 struct PlatformPopupMenuData {
     PlatformPopupMenuData();
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, PlatformPopupMenuData&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, PlatformPopupMenuData&);
 
 #if PLATFORM(MAC)
     FontInfo fontInfo;

@@ -51,12 +51,12 @@ SecItemShimProxy::SecItemShimProxy()
 {
 }
 
-void SecItemShimProxy::initializeConnection(CoreIPC::Connection* connection)
+void SecItemShimProxy::initializeConnection(IPC::Connection* connection)
 {
     connection->addWorkQueueMessageReceiver(Messages::SecItemShimProxy::messageReceiverName(), m_queue.get(), this);
 }
 
-void SecItemShimProxy::secItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecItemRequestData& request)
+void SecItemShimProxy::secItemRequest(IPC::Connection* connection, uint64_t requestID, const SecItemRequestData& request)
 {
     SecItemResponseData response;
 

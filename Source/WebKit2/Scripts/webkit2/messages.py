@@ -94,7 +94,7 @@ def reply_parameter_type(type):
 
 
 def arguments_type_old(parameters, parameter_type_function):
-    arguments_type = 'CoreIPC::Arguments%d' % len(parameters)
+    arguments_type = 'IPC::Arguments%d' % len(parameters)
     if len(parameters):
         arguments_type = '%s<%s>' % (arguments_type, ', '.join(parameter_type_function(parameter.type) for parameter in parameters))
     return arguments_type
@@ -130,22 +130,22 @@ def message_to_struct_declaration(message):
     result.append('public:\n')
     result.append('    typedef %s DecodeType;\n' % decode_type(message))
     result.append('\n')
-    result.append('    static CoreIPC::StringReference receiverName() { return messageReceiverName(); }\n')
-    result.append('    static CoreIPC::StringReference name() { return CoreIPC::StringReference("%s"); }\n' % message.name)
+    result.append('    static IPC::StringReference receiverName() { return messageReceiverName(); }\n')
+    result.append('    static IPC::StringReference name() { return IPC::StringReference("%s"); }\n' % message.name)
     result.append('    static const bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters != None])
     result.append('\n')
     if message.reply_parameters != None:
         if message.has_attribute(DELAYED_ATTRIBUTE):
             send_parameters = [(function_parameter_type(x.type), x.name) for x in message.reply_parameters]
             result.append('    struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {\n')
-            result.append('        DelayedReply(PassRefPtr<CoreIPC::Connection>, std::unique_ptr<CoreIPC::MessageEncoder>);\n')
+            result.append('        DelayedReply(PassRefPtr<IPC::Connection>, std::unique_ptr<IPC::MessageEncoder>);\n')
             result.append('        ~DelayedReply();\n')
             result.append('\n')
             result.append('        bool send(%s);\n' % ', '.join([' '.join(x) for x in send_parameters]))
             result.append('\n')
             result.append('    private:\n')
-            result.append('        RefPtr<CoreIPC::Connection> m_connection;\n')
-            result.append('        std::unique_ptr<CoreIPC::MessageEncoder> m_encoder;\n')
+            result.append('        RefPtr<IPC::Connection> m_connection;\n')
+            result.append('        std::unique_ptr<IPC::MessageEncoder> m_encoder;\n')
             result.append('    };\n\n')
 
         result.append('    typedef %s Reply;\n' % reply_type(message))
@@ -251,7 +251,7 @@ def forward_declarations_and_headers(receiver):
     for message in receiver.messages:
         if message.reply_parameters != None and message.has_attribute(DELAYED_ATTRIBUTE):
             headers.add('<wtf/ThreadSafeRefCounted.h>')
-            types_by_namespace['CoreIPC'].update(['Connection'])
+            types_by_namespace['IPC'].update(['Connection'])
 
     for parameter in receiver.iterparameters():
         type = parameter.type
@@ -305,9 +305,9 @@ def generate_messages_header(file):
 
     result.append('namespace Messages {\nnamespace %s {\n' % receiver.name)
     result.append('\n')
-    result.append('static inline CoreIPC::StringReference messageReceiverName()\n')
+    result.append('static inline IPC::StringReference messageReceiverName()\n')
     result.append('{\n')
-    result.append('    return CoreIPC::StringReference("%s");\n' % receiver.name)
+    result.append('    return IPC::StringReference("%s");\n' % receiver.name)
     result.append('}\n')
     result.append('\n')
     result.append('\n'.join([message_to_struct_declaration(x) for x in receiver.messages]))
@@ -340,7 +340,7 @@ def async_message_statement(receiver, message):
 
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
-    result.append('        CoreIPC::%s<Messages::%s::%s>(%s);\n' % (dispatch_function, receiver.name, message.name, ', '.join(dispatch_function_args)))
+    result.append('        IPC::%s<Messages::%s::%s>(%s);\n' % (dispatch_function, receiver.name, message.name, ', '.join(dispatch_function_args)))
     result.append('        return;\n')
     result.append('    }\n')
     return surround_in_condition(''.join(result), message.condition)
@@ -357,7 +357,7 @@ def sync_message_statement(receiver, message):
 
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
-    result.append('        CoreIPC::%s<Messages::%s::%s>(%sdecoder, %sreplyEncoder, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if wants_connection else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) else '*', handler_function(receiver, message)))
+    result.append('        IPC::%s<Messages::%s::%s>(%sdecoder, %sreplyEncoder, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if wants_connection else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) else '*', handler_function(receiver, message)))
     result.append('        return;\n')
     result.append('    }\n')
     return surround_in_condition(''.join(result), message.condition)
@@ -460,7 +460,7 @@ def headers_for_type(type):
         if len(split) < 2:
             continue
 
-        if split[0] == 'WebKit' or split[0] == 'CoreIPC':
+        if split[0] == 'WebKit' or split[0] == 'IPC':
             headers.append('"%s.h"' % split[1])
         else:
             headers.append('<%s/%s.h>' % tuple(split))
@@ -551,7 +551,7 @@ def generate_message_handler(file):
             if message.condition:
                 result.append('#if %s\n\n' % message.condition)
 
-            result.append('%s::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, std::unique_ptr<CoreIPC::MessageEncoder> encoder)\n' % message.name)
+            result.append('%s::DelayedReply::DelayedReply(PassRefPtr<IPC::Connection> connection, std::unique_ptr<IPC::MessageEncoder> encoder)\n' % message.name)
             result.append('    : m_connection(connection)\n')
             result.append('    , m_encoder(std::move(encoder))\n')
             result.append('{\n')
@@ -589,9 +589,9 @@ def generate_message_handler(file):
 
     if async_messages:
         if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
-            result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
+            result.append('void %s::didReceive%sMessage(IPC::Connection*, IPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
         else:
-            result.append('void %s::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name))
+            result.append('void %s::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)\n' % (receiver.name))
 
         result.append('{\n')
         result += [async_message_statement(receiver, message) for message in async_messages]
@@ -603,9 +603,9 @@ def generate_message_handler(file):
     if sync_messages:
         result.append('\n')
         if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
-            result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
+            result.append('void %s::didReceiveSync%sMessage(IPC::Connection*%s, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
         else:
-            result.append('void %s::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name))
+            result.append('void %s::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)\n' % (receiver.name))
         result.append('{\n')
         result += [sync_message_statement(receiver, message) for message in sync_messages]
         if not receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):

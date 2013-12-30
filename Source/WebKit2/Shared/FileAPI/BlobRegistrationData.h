@@ -43,8 +43,8 @@ public:
     BlobRegistrationData(std::unique_ptr<WebCore::BlobData>);
     ~BlobRegistrationData();
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, BlobRegistrationData&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, BlobRegistrationData&);
 
     std::unique_ptr<WebCore::BlobData> releaseData() const;
     const SandboxExtension::HandleArray& sandboxExtensions() const { return m_sandboxExtensions; }

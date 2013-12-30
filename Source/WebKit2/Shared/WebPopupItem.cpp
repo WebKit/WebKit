@@ -66,7 +66,7 @@ WebPopupItem::WebPopupItem(Type type, const String& text, TextDirection textDire
 {
 }
 
-void WebPopupItem::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebPopupItem::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder.encodeEnum(m_type);
     encoder << m_text;
@@ -79,7 +79,7 @@ void WebPopupItem::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_isSelected;
 }
 
-bool WebPopupItem::decode(CoreIPC::ArgumentDecoder& decoder, WebPopupItem& item)
+bool WebPopupItem::decode(IPC::ArgumentDecoder& decoder, WebPopupItem& item)
 {
     Type type;
     if (!decoder.decodeEnum(type))

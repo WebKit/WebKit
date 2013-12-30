@@ -30,7 +30,7 @@
 #include "GenericCallback.h"
 #include <wtf/text/WTFString.h>
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
 }
@@ -43,8 +43,8 @@ struct SecurityOriginData {
     static SecurityOriginData fromSecurityOrigin(const WebCore::SecurityOrigin*);
     PassRefPtr<WebCore::SecurityOrigin> securityOrigin() const;
 
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, SecurityOriginData&);
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, SecurityOriginData&);
 
     // FIXME <rdar://9018386>: We should be sending more state across the wire than just the protocol,
     // host, and port.

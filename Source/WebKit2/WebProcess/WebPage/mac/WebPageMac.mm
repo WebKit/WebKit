@@ -92,7 +92,7 @@ void WebPage::platformInitialize()
     
     // send data back over
     NSData* remoteToken = (NSData *)WKAXRemoteTokenForElement(mockAccessibilityElement); 
-    CoreIPC::DataReference dataToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
+    IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
     send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
     m_mockAccessibilityElement = mockAccessibilityElement;
 }
@@ -653,7 +653,7 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
     return false;
 }
 
-void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elementToken, const CoreIPC::DataReference& windowToken)
+void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
 {
     NSData* elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
     NSData* windowTokenData = [NSData dataWithBytes:windowToken.data() length:windowToken.size()];

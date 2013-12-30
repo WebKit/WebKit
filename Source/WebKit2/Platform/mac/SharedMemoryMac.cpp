@@ -55,14 +55,14 @@ bool SharedMemory::Handle::isNull() const
     return !m_port;
 }
 
-void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
+void SharedMemory::Handle::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << static_cast<uint64_t>(m_size);
-    encoder << CoreIPC::MachPort(m_port, MACH_MSG_TYPE_MOVE_SEND);
+    encoder << IPC::MachPort(m_port, MACH_MSG_TYPE_MOVE_SEND);
     m_port = MACH_PORT_NULL;
 }
 
-bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& handle)
+bool SharedMemory::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& handle)
 {
     ASSERT(!handle.m_port);
     ASSERT(!handle.m_size);
@@ -71,7 +71,7 @@ bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& han
     if (!decoder.decode(size))
         return false;
 
-    CoreIPC::MachPort machPort;
+    IPC::MachPort machPort;
     if (!decoder.decode(machPort))
         return false;
     

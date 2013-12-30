@@ -44,7 +44,7 @@ OBJC_CLASS PDFDocument;
 
 struct NPObject;
 
-namespace CoreIPC {
+namespace IPC {
     class ArgumentEncoder;
     class ArgumentDecoder;
 }
@@ -83,8 +83,8 @@ public:
         LayerHostingMode layerHostingMode;
 #endif
 
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, Parameters&);
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, Parameters&);
     };
 
     // Sets the active plug-in controller and initializes the plug-in.

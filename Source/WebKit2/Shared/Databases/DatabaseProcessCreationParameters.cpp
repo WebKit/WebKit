@@ -36,12 +36,12 @@ DatabaseProcessCreationParameters::DatabaseProcessCreationParameters()
 {
 }
 
-void DatabaseProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
+void DatabaseProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << indexedDatabaseDirectory;
 }
 
-bool DatabaseProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, DatabaseProcessCreationParameters& result)
+bool DatabaseProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, DatabaseProcessCreationParameters& result)
 {
     if (!decoder.decode(result.indexedDatabaseDirectory))
         return false;
