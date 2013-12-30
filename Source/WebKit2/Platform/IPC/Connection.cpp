@@ -430,7 +430,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
     return nullptr;
 }
 
-std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<MessageEncoder> encoder, double timeout, unsigned syncSendFlags)
+std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<MessageEncoder> encoder, std::chrono::milliseconds timeout, unsigned syncSendFlags)
 {
     if (RunLoop::current() != m_clientRunLoop) {
         // No flags are supported for synchronous messages sent from secondary threads.
@@ -479,7 +479,7 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequest
     return reply;
 }
 
-std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, std::unique_ptr<MessageEncoder> encoder, double timeout)
+std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, std::unique_ptr<MessageEncoder> encoder, std::chrono::milliseconds timeout)
 {
     ASSERT(RunLoop::current() != m_clientRunLoop);
 
@@ -500,11 +500,7 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(u
 
     sendMessage(std::move(encoder), 0);
 
-    // Use a really long timeout.
-    if (timeout == NoTimeout)
-        timeout = 1e10;
-
-    pendingReply.semaphore.wait(currentTime() + timeout);
+    pendingReply.semaphore.wait(currentTime() + (timeout.count() / 1000.0));
 
     // Finally, pop the pending sync reply information.
     {
@@ -516,13 +512,9 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(u
     return std::move(pendingReply.replyDecoder);
 }
 
-std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, double timeout, unsigned syncSendFlags)
+std::unique_ptr<MessageDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, std::chrono::milliseconds timeout, unsigned syncSendFlags)
 {
-    // Use a really long timeout.
-    if (timeout == NoTimeout)
-        timeout = 1e10;
-
-    double absoluteTime = currentTime() + timeout;
+    double absoluteTime = currentTime() + (timeout.count() / 1000.0);
 
     bool timedOut = false;
     while (!timedOut) {

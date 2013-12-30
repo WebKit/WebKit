@@ -48,7 +48,7 @@ public:
     void terminate();
 
     template<typename T> bool send(T&& message, uint64_t destinationID, unsigned messageSendFlags = 0);
-    template<typename T> bool sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, double timeout = 1);
+    template<typename T> bool sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, std::chrono::milliseconds timeout = std::chrono::seconds(1));
     
     IPC::Connection* connection() const
     {
@@ -101,7 +101,7 @@ bool ChildProcessProxy::send(T&& message, uint64_t destinationID, unsigned messa
 }
 
 template<typename U> 
-bool ChildProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_t destinationID, double timeout)
+bool ChildProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout)
 {
     COMPILE_ASSERT(U::isSync, SyncMessageExpected);
 

@@ -51,7 +51,7 @@ public:
     }
 
     template<typename T>
-    bool sendSync(T&& message, typename T::Reply&& reply, double timeout = Connection::NoTimeout, unsigned syncSendFlags = 0)
+    bool sendSync(T&& message, typename T::Reply&& reply, std::chrono::milliseconds timeout = std::chrono::milliseconds::max(), unsigned syncSendFlags = 0)
     {
         static_assert(T::isSync, "Message is not sync!");
 
@@ -59,7 +59,7 @@ public:
     }
 
     template<typename T>
-    bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, double timeout = Connection::NoTimeout, unsigned syncSendFlags = 0)
+    bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout = std::chrono::milliseconds::max(), unsigned syncSendFlags = 0)
     {
         ASSERT(messageSenderConnection());
 

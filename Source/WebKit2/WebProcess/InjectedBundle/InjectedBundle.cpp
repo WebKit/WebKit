@@ -116,7 +116,7 @@ void InjectedBundle::postSynchronousMessage(const String& messageName, API::Obje
     encoder->encode(messageName);
     encoder->encode(InjectedBundleUserMessageEncoder(messageBody));
 
-    std::unique_ptr<IPC::MessageDecoder> replyDecoder = WebProcess::shared().parentProcessConnection()->sendSyncMessage(syncRequestID, std::move(encoder), IPC::Connection::NoTimeout);
+    std::unique_ptr<IPC::MessageDecoder> replyDecoder = WebProcess::shared().parentProcessConnection()->sendSyncMessage(syncRequestID, std::move(encoder), std::chrono::milliseconds::max());
     if (!replyDecoder || !replyDecoder->decode(messageDecoder)) {
         returnData = nullptr;
         return;

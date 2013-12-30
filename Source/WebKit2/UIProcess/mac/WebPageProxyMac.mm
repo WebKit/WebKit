@@ -321,7 +321,7 @@ String WebPageProxy::stringSelectionForPasteboard()
     if (!isValid())
         return value;
     
-    const double messageTimeout = 20;
+    const auto messageTimeout = std::chrono::seconds(20);
     process().sendSync(Messages::WebPage::GetStringSelectionForPasteboard(), Messages::WebPage::GetStringSelectionForPasteboard::Reply(value), m_pageID, messageTimeout);
     return value;
 }
@@ -332,7 +332,7 @@ PassRefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const
         return 0;
     SharedMemory::Handle handle;
     uint64_t size = 0;
-    const double messageTimeout = 20;
+    const auto messageTimeout = std::chrono::seconds(20);
     process().sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType),
                                                 Messages::WebPage::GetDataSelectionForPasteboard::Reply(handle, size), m_pageID, messageTimeout);
     if (handle.isNull())
@@ -347,7 +347,7 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
         return false;
 
     bool result = false;
-    const double messageTimeout = 20;
+    const auto messageTimeout = std::chrono::seconds(20);
     process().sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), Messages::WebPage::ReadSelectionFromPasteboard::Reply(result), m_pageID, messageTimeout);
     return result;
 }
@@ -478,7 +478,7 @@ bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent
         return false;
 
     bool result = false;
-    const double messageTimeout = 3;
+    const auto messageTimeout = std::chrono::seconds(3);
     process().sendSync(Messages::WebPage::ShouldDelayWindowOrderingEvent(event), Messages::WebPage::ShouldDelayWindowOrderingEvent::Reply(result), m_pageID, messageTimeout);
     return result;
 }
@@ -489,7 +489,7 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEven
         return false;
 
     bool result = false;
-    const double messageTimeout = 3;
+    const auto messageTimeout = std::chrono::seconds(3);
     process().sendSync(Messages::WebPage::AcceptsFirstMouse(eventNumber, event), Messages::WebPage::AcceptsFirstMouse::Reply(result), m_pageID, messageTimeout);
     return result;
 }
