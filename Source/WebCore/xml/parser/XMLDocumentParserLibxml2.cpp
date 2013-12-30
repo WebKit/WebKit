@@ -47,7 +47,6 @@
 #include "HTMLTemplateElement.h"
 #include "Page.h"
 #include "ProcessingInstruction.h"
-#include "RenderElement.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -845,7 +844,6 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (!m_currentNode) // Synchronous DOM events may have removed the current node.
         return;
 
-    const ContainerNode* currentNode = m_currentNode;
 #if ENABLE(TEMPLATE_ELEMENT)
     if (newElement->hasTagName(HTMLNames::templateTag))
         pushCurrentNode(toHTMLTemplateElement(newElement.get())->content());
@@ -854,9 +852,6 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
 #else
     pushCurrentNode(newElement.get());
 #endif
-
-    if (m_view && currentNode->renderer() && !newElement->renderer())
-        Style::attachRenderTree(*newElement);
 
     if (newElement->hasTagName(HTMLNames::htmlTag))
         toHTMLHtmlElement(newElement.get())->insertedByParser();
@@ -1030,9 +1025,7 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
     exitText();
 
     RefPtr<CDATASection> newNode = CDATASection::create(m_currentNode->document(), toString(s, len));
-    m_currentNode->parserAppendChild(newNode.get());
-    if (m_view)
-        Style::attachTextRenderer(*newNode);
+    m_currentNode->parserAppendChild(newNode.release());
 }
 
 void XMLDocumentParser::comment(const xmlChar* s)
@@ -1048,7 +1041,7 @@ void XMLDocumentParser::comment(const xmlChar* s)
     exitText();
 
     RefPtr<Comment> newNode = Comment::create(m_currentNode->document(), toString(s));
-    m_currentNode->parserAppendChild(newNode.get());
+    m_currentNode->parserAppendChild(newNode.release());
 }
 
 enum StandaloneInfo {

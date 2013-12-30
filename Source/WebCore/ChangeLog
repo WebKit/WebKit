@@ -1,3 +1,37 @@
+2013-12-30  Antti Koivisto  <antti@apple.com>
+
+        XML document builder should create render tree asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=126285
+
+        Reviewed by Andreas Kling.
+        
+        Stop creating renderers explicitly. 
+        Fix SVG <use> element to not rely on parse time render tree construction.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        
+            Remove renderer check, we may not have created the render tree yet.
+
+        (WebCore::SVGUseElement::willAttachRenderers):
+        
+            Switch to willAttachRenderers from willRecalcStyle. The latter is only called as long as style
+            recalc doesn't start creating new renderers.
+
+        (WebCore::SVGUseElement::invalidateShadowTree):
+        
+            Remove renderer check, we may not have created the render tree yet. 
+            Invalidate with ReconstructRenderTree so willAttachRenderers will always get called.
+
+        * svg/SVGUseElement.h:
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::exitText):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+        (WebCore::XMLDocumentParser::cdataBlock):
+        
+            Remove explicit call to attachRenderTree. The render tree will be created lazily.
+
 2013-12-29  Joone Hur  <joone.hur@intel.com>
 
         Reverted r156742. The same fix was reverted from Blink due to heap-use-after-free on ClusterFuzz.

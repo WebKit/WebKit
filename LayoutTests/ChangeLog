@@ -1,3 +1,23 @@
+2013-12-30  Antti Koivisto  <antti@apple.com>
+
+        XML document builder should create render tree asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=126285
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/fast/table/dynamic-caption-add-before-child-expected.png:
+        * platform/mac/fast/table/dynamic-caption-add-before-child-expected.txt:
+        
+            This is progression. Captions are now correctly in document order.
+
+        * svg/custom/object-no-size-attributes-expected.txt:
+        
+            Unnecessary text renderer disappears.
+
+        * svg/custom/resource-invalidation-crash-expected.txt:
+        
+            Progression, the dump has the correct fill.
+
 2013-12-29  Joone Hur  <joone.hur@intel.com>
 
         Reverted r156742. The same fix was reverted from Blink due to heap-use-after-free on ClusterFuzz.

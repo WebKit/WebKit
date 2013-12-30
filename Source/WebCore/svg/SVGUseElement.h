@@ -67,7 +67,7 @@ private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual bool willRecalcStyle(Style::Change);
+    virtual void willAttachRenderers() OVERRIDE;
 
     virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
     virtual void toClipPath(Path&);

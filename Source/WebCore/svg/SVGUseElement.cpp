@@ -257,9 +257,6 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (!renderer)
-        return;
-
     if (SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         invalidateShadowTree();
@@ -269,11 +266,10 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-bool SVGUseElement::willRecalcStyle(Style::Change)
+void SVGUseElement::willAttachRenderers()
 {
-    if (!m_wasInsertedByParser && m_needsShadowTreeRecreation && renderer() && needsStyleRecalc())
+    if (m_needsShadowTreeRecreation)
         buildPendingResource();
-    return true;
 }
 
 #ifdef DUMP_INSTANCE_TREE
@@ -889,10 +885,10 @@ SVGElementInstance* SVGUseElement::instanceForShadowTreeElement(Node* element, S
 
 void SVGUseElement::invalidateShadowTree()
 {
-    if (!renderer() || m_needsShadowTreeRecreation)
+    if (m_needsShadowTreeRecreation)
         return;
     m_needsShadowTreeRecreation = true;
-    setNeedsStyleRecalc();
+    setNeedsStyleRecalc(ReconstructRenderTree);
     invalidateDependentShadowTrees();
 }
 

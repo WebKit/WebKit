@@ -41,8 +41,6 @@
 #include "HTMLStyleElement.h"
 #include "ImageLoader.h"
 #include "ProcessingInstruction.h"
-#include "RenderElement.h"
-#include "RenderText.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -167,9 +165,6 @@ void XMLDocumentParser::exitText()
     m_leafTextNode->appendData(toString(m_bufferedText.data(), m_bufferedText.size()), IGNORE_EXCEPTION);
     Vector<xmlChar> empty;
     m_bufferedText.swap(empty);
-
-    if (m_view && m_leafTextNode->parentNode() && m_leafTextNode->parentNode()->renderer() && !m_leafTextNode->renderer())
-        Style::attachTextRenderer(*m_leafTextNode);
 
     m_leafTextNode = 0;
 }
