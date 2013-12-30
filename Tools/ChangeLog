@@ -1,5 +1,23 @@
 2013-12-29  Alexey Proskuryakov  <ap@apple.com>
 
+        Pending revision popover is slightly misplaced at build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=126278
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._appendPendingRevisionCount): Create a span for the text,
+        as StatusLineView message element has extra padding, and doesn't fit the text snugly.
+        (BuildbotQueueView.prototype._revisionPopoverContentForIteration): Added bug number to a FIXME.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/StatusLineView.js:
+        (StatusLineView.prototype.set messageElement): Removed the getter, as we no longer need it.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
+        Removed display:inline-block hack for messageElement div, as we no longer use it for measuring text bounds.
+
+2013-12-29  Alexey Proskuryakov  <ap@apple.com>
+
         Interrupted test runs should not count at build.webkit.org/dashboard
         https://bugs.webkit.org/show_bug.cgi?id=126279
 

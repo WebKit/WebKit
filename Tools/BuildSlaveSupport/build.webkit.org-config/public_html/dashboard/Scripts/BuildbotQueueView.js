@@ -91,19 +91,20 @@ BuildbotQueueView.prototype = {
             var internalRevisionsBehind = latestRecordedInternalRevisionNumber - latestProductiveIteration.internalRevision;
             if (internalRevisionsBehind < 0)
                 internalRevisionsBehind = 0;
-            if (openSourceRevisionsBehind || internalRevisionsBehind) {
-                var message = openSourceRevisionsBehind + " \uff0b " + internalRevisionsBehind + " revisions behind";
-                var status = new StatusLineView(message, StatusLineView.Status.NoBubble);
-                this.element.appendChild(status.element);
-            }
-        } else if (openSourceRevisionsBehind) {
-            var message = openSourceRevisionsBehind + " " + (openSourceRevisionsBehind === 1 ? "revision behind" : "revisions behind");
-            var status = new StatusLineView(message, StatusLineView.Status.NoBubble);
-            this.element.appendChild(status.element);
-        }
+            if (openSourceRevisionsBehind || internalRevisionsBehind)
+                var messageText = openSourceRevisionsBehind + " \uff0b " + internalRevisionsBehind + " revisions behind";
+        } else if (openSourceRevisionsBehind)
+            var messageText = openSourceRevisionsBehind + " " + (openSourceRevisionsBehind === 1 ? "revision behind" : "revisions behind");
 
-        if (status)
-            new PopoverTracker(status.messageElement, this._presentPopoverForPendingCommits.bind(this), queue);
+        if (!messageText)
+            return;
+
+        var messageElement = document.createElement("span"); // We can't just pass text to StatusLineView here, because we need an element that perfectly fits the text for popover positioning.
+        messageElement.textContent = messageText;
+        var status = new StatusLineView(messageElement, StatusLineView.Status.NoBubble);
+        this.element.appendChild(status.element);
+
+        new PopoverTracker(messageElement, this._presentPopoverForPendingCommits.bind(this), queue);
     },
 
     _popoverLinesForCommitRange: function(trac, firstRevisionNumber, lastRevisionNumber)
