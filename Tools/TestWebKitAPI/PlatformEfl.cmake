@@ -68,7 +68,6 @@ set(test_webkit2_api_BINARIES
     ForceRepaint
     FrameMIMETypeHTML
     FrameMIMETypePNG
-    Geolocation
     GetInjectedBundleInitializationUserDataCallback
     HitTestResultNodeHandle
     InjectedBundleBasic
@@ -108,6 +107,7 @@ set(test_webkit2_api_fail_BINARIES
     CanHandleRequest
     DOMWindowExtensionBasic
     DownloadDecideDestinationCrash
+    Geolocation
     NewFirstVisuallyNonEmptyLayoutFrames
     ResizeReversePaginatedWebView
     RestoreSessionStateContainingFormData

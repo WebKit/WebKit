@@ -1,3 +1,14 @@
+2013-12-29  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][WK2] Disable geolocation API test
+        https://bugs.webkit.org/show_bug.cgi?id=125851
+
+        Reviewed by Gyuyoung Kim.
+
+        Geolocation is turned off by default in EFL port, so it shouldn't be tested.
+
+        * TestWebKitAPI/PlatformEfl.cmake: Move Geolocation to test_webkit2_api_fail_BINARIES.
+
 2013-12-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove ewk_view_tiled
