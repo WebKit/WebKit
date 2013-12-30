@@ -1317,10 +1317,10 @@ private:
     
     // May ultimately be extended to many replicas (with their own paint order).
     RenderPtr<RenderReplica> m_reflection;
-        
+
     // Renderers to hold our custom scroll corner and resizer.
-    RenderScrollbarPart* m_scrollCorner;
-    RenderScrollbarPart* m_resizer;
+    RenderPtr<RenderScrollbarPart> m_scrollCorner;
+    RenderPtr<RenderScrollbarPart> m_resizer;
 
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
     RenderLayer* m_enclosingPaginationLayer;

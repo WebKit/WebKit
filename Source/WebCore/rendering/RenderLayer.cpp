@@ -207,8 +207,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_last(0)
     , m_staticInlinePosition(0)
     , m_staticBlockPosition(0)
-    , m_scrollCorner(0)
-    , m_resizer(0)
     , m_enclosingPaginationLayer(0)
 {
     m_isNormalFlowOnly = shouldBeNormalFlowOnly();
@@ -270,11 +268,6 @@ RenderLayer::~RenderLayer()
 #if USE(ACCELERATED_COMPOSITING)
     clearBacking(true);
 #endif
-    
-    if (m_scrollCorner)
-        m_scrollCorner->destroy();
-    if (m_resizer)
-        m_resizer->destroy();
 }
 
 String RenderLayer::name() const
@@ -6695,34 +6688,36 @@ void RenderLayer::updateScrollCornerStyle()
 {
     RenderElement* actualRenderer = rendererForScrollbar(renderer());
     RefPtr<RenderStyle> corner = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(SCROLLBAR_CORNER), &actualRenderer->style()) : PassRefPtr<RenderStyle>(0);
-    if (corner) {
-        if (!m_scrollCorner) {
-            m_scrollCorner = new RenderScrollbarPart(renderer().document(), corner.releaseNonNull());
-            m_scrollCorner->setParent(&renderer());
-            m_scrollCorner->initializeStyle();
-        } else
-            m_scrollCorner->setStyle(corner.releaseNonNull());
-    } else if (m_scrollCorner) {
-        m_scrollCorner->destroy();
-        m_scrollCorner = 0;
+
+    if (!corner) {
+        m_scrollCorner = nullptr;
+        return;
     }
+
+    if (!m_scrollCorner) {
+        m_scrollCorner = createRenderObject<RenderScrollbarPart>(renderer().document(), corner.releaseNonNull());
+        m_scrollCorner->setParent(&renderer());
+        m_scrollCorner->initializeStyle();
+    } else
+        m_scrollCorner->setStyle(corner.releaseNonNull());
 }
 
 void RenderLayer::updateResizerStyle()
 {
     RenderElement* actualRenderer = rendererForScrollbar(renderer());
     RefPtr<RenderStyle> resizer = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(RESIZER), &actualRenderer->style()) : PassRefPtr<RenderStyle>(0);
-    if (resizer) {
-        if (!m_resizer) {
-            m_resizer = new RenderScrollbarPart(renderer().document(), resizer.releaseNonNull());
-            m_resizer->setParent(&renderer());
-            m_resizer->initializeStyle();
-        } else
-            m_resizer->setStyle(resizer.releaseNonNull());
-    } else if (m_resizer) {
-        m_resizer->destroy();
-        m_resizer = 0;
+
+    if (!resizer) {
+        m_resizer = nullptr;
+        return;
     }
+
+    if (!m_resizer) {
+        m_resizer = createRenderObject<RenderScrollbarPart>(renderer().document(), resizer.releaseNonNull());
+        m_resizer->setParent(&renderer());
+        m_resizer->initializeStyle();
+    } else
+        m_resizer->setStyle(resizer.releaseNonNull());
 }
 
 RenderLayer* RenderLayer::reflectionLayer() const

@@ -1,3 +1,14 @@
+2013-12-29  Andreas Kling  <akling@apple.com>
+
+        RenderLayer: Store corner and resizer renderers in RenderPtrs.
+        <https://webkit.org/b/126274>
+
+        Turn RenderLayer::m_scrollCorner and m_resizer into RenderPtrs.
+        Removed manual destroy() calls as appropriate. Also tweaked some
+        code to reduce nesting.
+
+        Reviewed by Anders Carlsson.
+
 2013-12-30  Antti Koivisto  <antti@apple.com>
 
         XML document builder should create render tree asynchronously
