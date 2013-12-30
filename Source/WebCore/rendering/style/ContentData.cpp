@@ -47,9 +47,9 @@ std::unique_ptr<ContentData> ContentData::clone() const
     return result;
 }
 
-RenderPtr<RenderObject> ImageContentData::createRenderer(Document& document, const RenderStyle& pseudoStyle) const
+RenderPtr<RenderObject> ImageContentData::createContentRenderer(Document& document, const RenderStyle& pseudoStyle) const
 {
-    auto image = createRenderObject<RenderImage>(document, RenderImage::createStyleInheritingFromPseudoStyle(pseudoStyle));
+    auto image = createRenderer<RenderImage>(document, RenderImage::createStyleInheritingFromPseudoStyle(pseudoStyle));
     image->initializeStyle();
     image->setAltText(altText());
     if (m_image)
@@ -59,21 +59,21 @@ RenderPtr<RenderObject> ImageContentData::createRenderer(Document& document, con
     return std::move(image);
 }
 
-RenderPtr<RenderObject> TextContentData::createRenderer(Document& document, const RenderStyle&) const
+RenderPtr<RenderObject> TextContentData::createContentRenderer(Document& document, const RenderStyle&) const
 {
-    auto fragment = createRenderObject<RenderTextFragment>(document, m_text);
+    auto fragment = createRenderer<RenderTextFragment>(document, m_text);
     fragment->setAltText(altText());
     return std::move(fragment);
 }
 
-RenderPtr<RenderObject> CounterContentData::createRenderer(Document& document, const RenderStyle&) const
+RenderPtr<RenderObject> CounterContentData::createContentRenderer(Document& document, const RenderStyle&) const
 {
-    return createRenderObject<RenderCounter>(document, *m_counter);
+    return createRenderer<RenderCounter>(document, *m_counter);
 }
 
-RenderPtr<RenderObject> QuoteContentData::createRenderer(Document& document, const RenderStyle&) const
+RenderPtr<RenderObject> QuoteContentData::createContentRenderer(Document& document, const RenderStyle&) const
 {
-    return createRenderObject<RenderQuote>(document, m_quote);
+    return createRenderer<RenderQuote>(document, m_quote);
 }
 
 } // namespace WebCore

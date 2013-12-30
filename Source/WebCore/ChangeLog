@@ -1,5 +1,11 @@
 2013-12-30  Andreas Kling  <akling@apple.com>
 
+        Rename createRenderObject() to createRenderer().
+
+        Somewhat rubber-stamped by Antti Koivisto.
+
+2013-12-30  Andreas Kling  <akling@apple.com>
+
         Document should store its RenderView in a RenderPtr.
         <https://webkit.org/b/126299>
 

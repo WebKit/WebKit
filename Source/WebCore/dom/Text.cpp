@@ -191,12 +191,12 @@ RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)
 {
 #if ENABLE(SVG)
     if (isSVGText(this) || isSVGShadowText(this))
-        return createRenderObject<RenderSVGInlineText>(*this, dataImpl());
+        return createRenderer<RenderSVGInlineText>(*this, dataImpl());
 #endif
     if (style.hasTextCombine())
-        return createRenderObject<RenderCombineText>(*this, dataImpl());
+        return createRenderer<RenderCombineText>(*this, dataImpl());
 
-    return createRenderObject<RenderText>(*this, dataImpl());
+    return createRenderer<RenderText>(*this, dataImpl());
 }
 
 bool Text::childTypeAllowed(NodeType) const

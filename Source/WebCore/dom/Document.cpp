@@ -1951,7 +1951,7 @@ void Document::createRenderTree()
     ASSERT(!m_axObjectCache || this != topDocument());
 
     // FIXME: It would be better if we could pass the resolved document style directly here.
-    m_renderView = createRenderObject<RenderView>(*this, RenderStyle::create());
+    m_renderView = createRenderer<RenderView>(*this, RenderStyle::create());
     Node::setRenderer(m_renderView.get());
 
 #if USE(ACCELERATED_COMPOSITING)

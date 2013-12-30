@@ -6695,7 +6695,7 @@ void RenderLayer::updateScrollCornerStyle()
     }
 
     if (!m_scrollCorner) {
-        m_scrollCorner = createRenderObject<RenderScrollbarPart>(renderer().document(), corner.releaseNonNull());
+        m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer().document(), corner.releaseNonNull());
         m_scrollCorner->setParent(&renderer());
         m_scrollCorner->initializeStyle();
     } else
@@ -6713,7 +6713,7 @@ void RenderLayer::updateResizerStyle()
     }
 
     if (!m_resizer) {
-        m_resizer = createRenderObject<RenderScrollbarPart>(renderer().document(), resizer.releaseNonNull());
+        m_resizer = createRenderer<RenderScrollbarPart>(renderer().document(), resizer.releaseNonNull());
         m_resizer->setParent(&renderer());
         m_resizer->initializeStyle();
     } else
@@ -6728,7 +6728,7 @@ RenderLayer* RenderLayer::reflectionLayer() const
 void RenderLayer::createReflection()
 {
     ASSERT(!m_reflection);
-    m_reflection = createRenderObject<RenderReplica>(renderer().document(), createReflectionStyle());
+    m_reflection = createRenderer<RenderReplica>(renderer().document(), createReflectionStyle());
     m_reflection->setParent(&renderer()); // We create a 1-way connection.
     m_reflection->initializeStyle();
 }

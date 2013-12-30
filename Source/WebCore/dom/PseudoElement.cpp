@@ -87,7 +87,7 @@ void PseudoElement::didAttachRenderers()
     ASSERT(style.contentData());
 
     for (const ContentData* content = style.contentData(); content; content = content->next()) {
-        RenderPtr<RenderObject> child = content->createRenderer(document(), style);
+        auto child = content->createContentRenderer(document(), style);
         if (renderer->isChildAllowed(*child, style)) {
             auto* childPtr = child.get();
             renderer->addChild(child.leakPtr());

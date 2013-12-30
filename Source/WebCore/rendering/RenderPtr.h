@@ -152,7 +152,7 @@ template<typename T> inline typename RenderPtr<T>::PtrType getPtr(const RenderPt
 }
 
 template<class T, class... Args> inline RenderPtr<T>
-createRenderObject(Args&&... args)
+createRenderer(Args&&... args)
 {
     return RenderPtr<T>(new T(std::forward<Args>(args)...));
 }
