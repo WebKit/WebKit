@@ -1,3 +1,21 @@
+2013-12-30  Antti Koivisto  <antti@apple.com>
+
+        Remove attachChild
+        https://bugs.webkit.org/show_bug.cgi?id=126288
+
+        Reviewed by Andreas Kling.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::destroyRenderTreeIfNeeded):
+        
+            Rename detachChild and move the tests here.
+
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        
+            No need to call attachRenderTree explicitly anymore.
+
+        (WebCore::ContainerNode::removeBetween):
+
 2013-12-29  Andreas Kling  <akling@apple.com>
 
         RenderLayer: Store corner and resizer renderers in RenderPtrs.

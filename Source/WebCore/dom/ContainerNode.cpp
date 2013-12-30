@@ -104,16 +104,11 @@ void ContainerNode::removeDetachedChildren()
     removeDetachedChildrenInContainer<Node, ContainerNode>(*this);
 }
 
-static inline void attachChild(Node& child)
+static inline void destroyRenderTreeIfNeeded(Node& child)
 {
-    if (child.isElementNode())
-        Style::attachRenderTree(toElement(child));
-    else if (child.isTextNode())
-        Style::attachTextRenderer(toText(child));
-}
-
-static inline void detachChild(Node& child)
-{
+    // FIXME: Get rid of the named flow test.
+    if (!child.renderer() && !child.inNamedFlow())
+        return;
     if (child.isElementNode())
         Style::detachRenderTree(toElement(child));
     else if (child.isTextNode())
@@ -140,8 +135,8 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
     for (unsigned i = 0; i < children.size(); ++i) {
         Node& child = children[i].get();
-        if (child.renderer())
-            detachChild(child);
+
+        destroyRenderTreeIfNeeded(child);
 
         // FIXME: We need a no mutation event version of adoptNode.
         RefPtr<Node> adoptedChild = document().adoptNode(&children[i].get(), ASSERT_NO_EXCEPTION);
@@ -150,8 +145,6 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
         // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).
         // Can we do better?
         treeScope().adoptIfNeeded(adoptedChild.get());
-        if (renderer() && !adoptedChild->renderer())
-            attachChild(*adoptedChild.get());
     }
 }
 
@@ -593,10 +586,7 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
 
     ASSERT(oldChild.parentNode() == this);
 
-    // Remove from rendering tree
-    // FIXME: Get rid of the named flow test.
-    if (oldChild.renderer() || oldChild.inNamedFlow())
-        detachChild(oldChild);
+    destroyRenderTreeIfNeeded(oldChild);
 
     if (nextChild)
         nextChild->setPreviousSibling(previousChild);
