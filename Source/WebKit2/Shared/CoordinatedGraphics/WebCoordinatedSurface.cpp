@@ -39,7 +39,7 @@ WebCoordinatedSurface::Handle::Handle()
 {
 }
 
-void WebCoordinatedSurface::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebCoordinatedSurface::Handle::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_size << m_flags;
 #if USE(GRAPHICS_SURFACE)
@@ -50,7 +50,7 @@ void WebCoordinatedSurface::Handle::encode(CoreIPC::ArgumentEncoder& encoder) co
     encoder << m_bitmapHandle;
 }
 
-bool WebCoordinatedSurface::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& handle)
+bool WebCoordinatedSurface::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& handle)
 {
     if (!decoder.decode(handle.m_size))
         return false;

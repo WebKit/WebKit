@@ -45,7 +45,7 @@ WebBatteryStatus::~WebBatteryStatus()
 {
 }
 
-void WebBatteryStatus::Data::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebBatteryStatus::Data::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << isCharging;
     encoder << chargingTime;
@@ -53,7 +53,7 @@ void WebBatteryStatus::Data::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << level;
 }
 
-bool WebBatteryStatus::Data::decode(CoreIPC::ArgumentDecoder& decoder, Data& result)
+bool WebBatteryStatus::Data::decode(IPC::ArgumentDecoder& decoder, Data& result)
 {
     if (!decoder.decode(result.isCharging))
         return false;

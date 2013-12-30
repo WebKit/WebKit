@@ -281,29 +281,29 @@ webkit2gtk_built_sources += \
 	DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitVersion.h
 
 webkit2platform_sources += \
-	Source/WebKit2/Platform/CoreIPC/ArgumentCoder.h \
-	Source/WebKit2/Platform/CoreIPC/ArgumentCoders.cpp \
-	Source/WebKit2/Platform/CoreIPC/ArgumentCoders.h \
-	Source/WebKit2/Platform/CoreIPC/ArgumentDecoder.cpp \
-	Source/WebKit2/Platform/CoreIPC/ArgumentDecoder.h \
-	Source/WebKit2/Platform/CoreIPC/ArgumentEncoder.cpp \
-	Source/WebKit2/Platform/CoreIPC/ArgumentEncoder.h \
-	Source/WebKit2/Platform/CoreIPC/Arguments.h \
-	Source/WebKit2/Platform/CoreIPC/Attachment.cpp \
-	Source/WebKit2/Platform/CoreIPC/Attachment.h \
-	Source/WebKit2/Platform/CoreIPC/Connection.cpp \
-	Source/WebKit2/Platform/CoreIPC/Connection.h \
-	Source/WebKit2/Platform/CoreIPC/HandleMessage.h \
-	Source/WebKit2/Platform/CoreIPC/MessageDecoder.cpp \
-	Source/WebKit2/Platform/CoreIPC/MessageDecoder.h \
-	Source/WebKit2/Platform/CoreIPC/MessageEncoder.cpp \
-	Source/WebKit2/Platform/CoreIPC/MessageEncoder.h \
-	Source/WebKit2/Platform/CoreIPC/MessageFlags.h \
-	Source/WebKit2/Platform/CoreIPC/MessageReceiver.h \
-	Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.cpp \
-	Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.h \
-	Source/WebKit2/Platform/CoreIPC/unix/AttachmentUnix.cpp \
-	Source/WebKit2/Platform/CoreIPC/unix/ConnectionUnix.cpp \
+	Source/WebKit2/Platform/IPC/ArgumentCoder.h \
+	Source/WebKit2/Platform/IPC/ArgumentCoders.cpp \
+	Source/WebKit2/Platform/IPC/ArgumentCoders.h \
+	Source/WebKit2/Platform/IPC/ArgumentDecoder.cpp \
+	Source/WebKit2/Platform/IPC/ArgumentDecoder.h \
+	Source/WebKit2/Platform/IPC/ArgumentEncoder.cpp \
+	Source/WebKit2/Platform/IPC/ArgumentEncoder.h \
+	Source/WebKit2/Platform/IPC/Arguments.h \
+	Source/WebKit2/Platform/IPC/Attachment.cpp \
+	Source/WebKit2/Platform/IPC/Attachment.h \
+	Source/WebKit2/Platform/IPC/Connection.cpp \
+	Source/WebKit2/Platform/IPC/Connection.h \
+	Source/WebKit2/Platform/IPC/HandleMessage.h \
+	Source/WebKit2/Platform/IPC/MessageDecoder.cpp \
+	Source/WebKit2/Platform/IPC/MessageDecoder.h \
+	Source/WebKit2/Platform/IPC/MessageEncoder.cpp \
+	Source/WebKit2/Platform/IPC/MessageEncoder.h \
+	Source/WebKit2/Platform/IPC/MessageFlags.h \
+	Source/WebKit2/Platform/IPC/MessageReceiver.h \
+	Source/WebKit2/Platform/IPC/MessageReceiverMap.cpp \
+	Source/WebKit2/Platform/IPC/MessageReceiverMap.h \
+	Source/WebKit2/Platform/IPC/unix/AttachmentUnix.cpp \
+	Source/WebKit2/Platform/IPC/unix/ConnectionUnix.cpp \
 	Source/WebKit2/Platform/IPC/DataReference.cpp \
 	Source/WebKit2/Platform/IPC/DataReference.h \
 	Source/WebKit2/Platform/IPC/MessageSender.cpp \

@@ -161,7 +161,7 @@ std::unique_ptr<SyscallResult> OpenSyscall::execute(const SyscallPolicy& policy)
     return std::make_unique<OpenSyscallResult>(fd, errorNumber);
 }
 
-void OpenSyscall::encode(CoreIPC::ArgumentEncoder& encoder) const
+void OpenSyscall::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << type();
     encoder << m_path;
@@ -169,7 +169,7 @@ void OpenSyscall::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_mode;
 }
 
-bool OpenSyscall::decode(CoreIPC::ArgumentDecoder* decoder)
+bool OpenSyscall::decode(IPC::ArgumentDecoder* decoder)
 {
     // m_type already decoded by the parent class.
 
@@ -194,19 +194,19 @@ OpenSyscallResult::~OpenSyscallResult()
         close(m_fd);
 }
 
-void OpenSyscallResult::encode(CoreIPC::ArgumentEncoder& encoder) const
+void OpenSyscallResult::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << type();
 
     if (m_fd >= 0) {
-        CoreIPC::Attachment attachment(m_fd);
+        IPC::Attachment attachment(m_fd);
         encoder.addAttachment(attachment);
     }
 
     encoder << m_errorNumber;
 }
 
-bool OpenSyscallResult::decode(CoreIPC::ArgumentDecoder* decoder, int fd)
+bool OpenSyscallResult::decode(IPC::ArgumentDecoder* decoder, int fd)
 {
     if (fd >= 0)
         m_fd = fd;

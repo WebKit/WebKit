@@ -41,7 +41,7 @@ namespace WebKit {
 class WebPage;
 class WebProcess;
 
-class WebBatteryManager : public WebProcessSupplement, private CoreIPC::MessageReceiver {
+class WebBatteryManager : public WebProcessSupplement, private IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebBatteryManager);
 
 public:
@@ -57,8 +57,8 @@ public:
     void updateBatteryStatus(const WebBatteryStatus::Data&);
 
 private:
-    // CoreIPC::MessageReceiver
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     WebProcess* m_process;
     HashSet<WebPage*> m_pageSet;

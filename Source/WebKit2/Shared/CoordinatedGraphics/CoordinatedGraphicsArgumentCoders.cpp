@@ -77,7 +77,7 @@
 using namespace WebCore;
 using namespace WebKit;
 
-namespace CoreIPC {
+namespace IPC {
 
 #if ENABLE(CSS_FILTERS)
 void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, const WebCore::FilterOperations& filters)
@@ -1184,6 +1184,6 @@ bool ArgumentCoder<CoordinatedGraphicsState>::decode(ArgumentDecoder& decoder, C
     return true;
 }
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // USE(COORDINATED_GRAPHICS)

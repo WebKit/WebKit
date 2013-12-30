@@ -41,7 +41,7 @@ namespace WebKit {
 class WebPage;
 class WebProcess;
 
-class WebNetworkInfoManager : public WebProcessSupplement, private CoreIPC::MessageReceiver {
+class WebNetworkInfoManager : public WebProcessSupplement, private IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebNetworkInfoManager);
 public:
     explicit WebNetworkInfoManager(WebProcess*);
@@ -55,8 +55,8 @@ public:
     double bandwidth(WebPage*) const;
     bool metered(WebPage*) const;
 private:
-    // CoreIPC::MessageReceiver
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     void didChangeNetworkInformation(const AtomicString& eventType, const WebNetworkInfo::Data&);
 

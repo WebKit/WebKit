@@ -22,7 +22,7 @@
 
 messages -> WebSoupRequestManager {
     RegisterURIScheme(String uriScheme);
-    DidHandleURIRequest(CoreIPC::DataReference requestData, uint64_t contentLength, String mimeType, uint64_t requestID);
-    DidReceiveURIRequestData(CoreIPC::DataReference requestData, uint64_t requestID);
+    DidHandleURIRequest(IPC::DataReference requestData, uint64_t contentLength, String mimeType, uint64_t requestID);
+    DidReceiveURIRequestData(IPC::DataReference requestData, uint64_t requestID);
     DidFailURIRequest(WebCore::ResourceError error, uint64_t requestID);
 }

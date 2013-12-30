@@ -57,7 +57,7 @@ struct GraphicsSurfaceToken;
 #endif
 }
 
-namespace CoreIPC {
+namespace IPC {
 
 #if ENABLE(CSS_FILTERS)
 template<> struct ArgumentCoder<WebCore::FilterOperations> {
@@ -120,7 +120,7 @@ template<> struct ArgumentCoder<WebCore::CoordinatedGraphicsState> {
     static bool decode(ArgumentDecoder&, WebCore::CoordinatedGraphicsState&);
 };
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // USE(COORDINATED_GRAPHICS)
 

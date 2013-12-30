@@ -18,9 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// FIXME: Remove this once everything has been moved over to the IPC namespace.
-#define CoreIPC IPC
-
 #include "config.h"
 #include "ewk_view_private.h"
 #include "PlatformWebView.h"

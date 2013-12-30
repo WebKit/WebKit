@@ -74,7 +74,7 @@ public:
     virtual void deviceOrPageScaleFactorChanged() OVERRIDE;
     virtual void pageBackgroundTransparencyChanged() OVERRIDE;
 
-    virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection*, IPC::MessageDecoder&);
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
     WebCore::CoordinatedGraphicsLayer* mainContentsLayer();
 

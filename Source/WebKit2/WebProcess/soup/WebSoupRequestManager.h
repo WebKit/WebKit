@@ -38,7 +38,7 @@ namespace WebKit {
 class WebProcess;
 struct WebSoupRequestAsyncData;
 
-class WebSoupRequestManager : public WebProcessSupplement, private CoreIPC::MessageReceiver {
+class WebSoupRequestManager : public WebProcessSupplement, private IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebSoupRequestManager);
 public:
     explicit WebSoupRequestManager(WebProcess*);
@@ -52,11 +52,11 @@ public:
     void registerURIScheme(const String& scheme);
 
 private:
-    // CoreIPC::MessageReceiver
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
-    void didHandleURIRequest(const CoreIPC::DataReference&, uint64_t contentLength, const String& mimeType, uint64_t requestID);
-    void didReceiveURIRequestData(const CoreIPC::DataReference&, uint64_t requestID);
+    void didHandleURIRequest(const IPC::DataReference&, uint64_t contentLength, const String& mimeType, uint64_t requestID);
+    void didReceiveURIRequestData(const IPC::DataReference&, uint64_t requestID);
     void didFailURIRequest(const WebCore::ResourceError&, uint64_t requestID);
 
     WebProcess* m_process;

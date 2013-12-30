@@ -40,12 +40,12 @@ LayerTreeContext::~LayerTreeContext()
 {
 }
 
-void LayerTreeContext::encode(CoreIPC::ArgumentEncoder& encoder) const
+void LayerTreeContext::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << coordinatedLayerID;
 }
 
-bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder& decoder, LayerTreeContext& context)
+bool LayerTreeContext::decode(IPC::ArgumentDecoder& decoder, LayerTreeContext& context)
 {
     return decoder.decode(context.coordinatedLayerID);
 }

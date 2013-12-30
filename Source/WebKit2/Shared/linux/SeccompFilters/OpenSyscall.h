@@ -31,7 +31,7 @@
 #include "Syscall.h"
 #include <wtf/text/CString.h>
 
-namespace CoreIPC {
+namespace IPC {
 class ArgumentDecoder;
 class ArgumentEncoder;
 }
@@ -52,8 +52,8 @@ public:
     // Syscall implementation.
     virtual void setResult(const SyscallResult*);
     virtual std::unique_ptr<SyscallResult> execute(const SyscallPolicy&);
-    virtual void encode(CoreIPC::ArgumentEncoder&) const;
-    virtual bool decode(CoreIPC::ArgumentDecoder*);
+    virtual void encode(IPC::ArgumentEncoder&) const;
+    virtual bool decode(IPC::ArgumentDecoder*);
 
 private:
     CString m_path;
@@ -70,8 +70,8 @@ public:
     int errorNumber() const { return m_errorNumber; }
 
     // SyscallResult implementation.
-    virtual void encode(CoreIPC::ArgumentEncoder&) const;
-    virtual bool decode(CoreIPC::ArgumentDecoder*, int fd);
+    virtual void encode(IPC::ArgumentEncoder&) const;
+    virtual bool decode(IPC::ArgumentDecoder*, int fd);
 
 private:
     int m_fd;

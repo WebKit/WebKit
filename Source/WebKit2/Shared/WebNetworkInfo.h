@@ -38,8 +38,8 @@ namespace WebKit {
 class WebNetworkInfo : public API::ObjectImpl<API::Object::Type::NetworkInfo> {
 public:
     struct Data {
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, Data&);
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, Data&);
 
         double bandwidth;
         bool metered;

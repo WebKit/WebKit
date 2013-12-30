@@ -43,13 +43,13 @@ WebNetworkInfo::~WebNetworkInfo()
 {
 }
 
-void WebNetworkInfo::Data::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebNetworkInfo::Data::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << bandwidth;
     encoder << metered;
 }
 
-bool WebNetworkInfo::Data::decode(CoreIPC::ArgumentDecoder& decoder, Data& result)
+bool WebNetworkInfo::Data::decode(IPC::ArgumentDecoder& decoder, Data& result)
 {
     if (!decoder.decode(result.bandwidth))
         return false;

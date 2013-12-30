@@ -426,7 +426,7 @@ NSView* PDFViewController::pdfView() const
     return m_wkPDFView.get(); 
 }
     
-static RetainPtr<CFDataRef> convertPostScriptDataSourceToPDF(const CoreIPC::DataReference& dataReference)
+static RetainPtr<CFDataRef> convertPostScriptDataSourceToPDF(const IPC::DataReference& dataReference)
 {
     // Convert PostScript to PDF using Quartz 2D API
     // http://developer.apple.com/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_ps_convert/chapter_16_section_1.html
@@ -454,7 +454,7 @@ static RetainPtr<CFDataRef> convertPostScriptDataSourceToPDF(const CoreIPC::Data
     return result;
 }
 
-void PDFViewController::setPDFDocumentData(const String& mimeType, const String& suggestedFilename, const CoreIPC::DataReference& dataReference)
+void PDFViewController::setPDFDocumentData(const String& mimeType, const String& suggestedFilename, const IPC::DataReference& dataReference)
 {
     if (equalIgnoringCase(mimeType, "application/postscript")) {
         m_pdfData = convertPostScriptDataSourceToPDF(dataReference);

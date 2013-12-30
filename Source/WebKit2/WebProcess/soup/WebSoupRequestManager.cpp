@@ -104,7 +104,7 @@ void WebSoupRequestManager::registerURIScheme(const String& scheme)
     soup_session_add_feature_by_type(session, WEBKIT_TYPE_SOUP_REQUEST_GENERIC);
 }
 
-void WebSoupRequestManager::didHandleURIRequest(const CoreIPC::DataReference& requestData, uint64_t contentLength, const String& mimeType, uint64_t requestID)
+void WebSoupRequestManager::didHandleURIRequest(const IPC::DataReference& requestData, uint64_t contentLength, const String& mimeType, uint64_t requestID)
 {
     WebSoupRequestAsyncData* data = m_requestMap.get(requestID);
     ASSERT(data);
@@ -133,7 +133,7 @@ void WebSoupRequestManager::didHandleURIRequest(const CoreIPC::DataReference& re
     g_task_return_pointer(task.get(), dataStream, g_object_unref);
 }
 
-void WebSoupRequestManager::didReceiveURIRequestData(const CoreIPC::DataReference& requestData, uint64_t requestID)
+void WebSoupRequestManager::didReceiveURIRequestData(const IPC::DataReference& requestData, uint64_t requestID)
 {
     WebSoupRequestAsyncData* data = m_requestMap.get(requestID);
     // The data might have been removed from the request map if a previous chunk failed

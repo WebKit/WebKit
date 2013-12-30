@@ -38,8 +38,8 @@ namespace WebKit {
 class WebBatteryStatus : public API::ObjectImpl<API::Object::Type::BatteryStatus> {
 public:
     struct Data {
-        void encode(CoreIPC::ArgumentEncoder&) const;
-        static bool decode(CoreIPC::ArgumentDecoder&, Data&);
+        void encode(IPC::ArgumentEncoder&) const;
+        static bool decode(IPC::ArgumentDecoder&, Data&);
 
         bool isCharging;
         double chargingTime;

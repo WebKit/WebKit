@@ -4,7 +4,6 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/NetworkProcess"
     "${WEBKIT2_DIR}/NetworkProcess/FileAPI"
     "${WEBKIT2_DIR}/Platform"
-    "${WEBKIT2_DIR}/Platform/CoreIPC"
     "${WEBKIT2_DIR}/Platform/IPC"
     "${WEBKIT2_DIR}/PluginProcess"
     "${WEBKIT2_DIR}/Shared"
@@ -162,16 +161,15 @@ set(WebKit2_SOURCES
     Platform/Module.cpp
     Platform/WorkQueue.cpp
 
-    Platform/CoreIPC/ArgumentCoders.cpp
-    Platform/CoreIPC/ArgumentDecoder.cpp
-    Platform/CoreIPC/ArgumentEncoder.cpp
-    Platform/CoreIPC/Attachment.cpp
-    Platform/CoreIPC/Connection.cpp
-    Platform/CoreIPC/MessageDecoder.cpp
-    Platform/CoreIPC/MessageEncoder.cpp
-    Platform/CoreIPC/MessageReceiverMap.cpp
-
+    Platform/IPC/ArgumentCoders.cpp
+    Platform/IPC/ArgumentDecoder.cpp
+    Platform/IPC/ArgumentEncoder.cpp
+    Platform/IPC/Attachment.cpp
+    Platform/IPC/Connection.cpp
     Platform/IPC/DataReference.cpp
+    Platform/IPC/MessageDecoder.cpp
+    Platform/IPC/MessageEncoder.cpp
+    Platform/IPC/MessageReceiverMap.cpp
     Platform/IPC/MessageSender.cpp
     Platform/IPC/StringReference.cpp
 

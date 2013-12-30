@@ -202,7 +202,7 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
     return false;
 }
 
-void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference&, const CoreIPC::DataReference&)
+void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference&, const IPC::DataReference&)
 {
     notImplemented();
 }

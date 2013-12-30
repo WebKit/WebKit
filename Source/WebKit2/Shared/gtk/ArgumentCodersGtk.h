@@ -37,7 +37,7 @@ class DataObjectGtk;
 class DragData;
 }
 
-namespace CoreIPC {
+namespace IPC {
 
 template<> struct ArgumentCoder<WebCore::DragData> {
     static void encode(ArgumentEncoder&, const WebCore::DragData&);
@@ -50,6 +50,6 @@ bool decode(ArgumentDecoder&, GRefPtr<GtkPrintSettings>&);
 void encode(ArgumentEncoder&, GtkPageSetup*);
 bool decode(ArgumentDecoder&, GRefPtr<GtkPageSetup>&);
 
-} // namespace CoreIPC
+} // namespace IPC
 
 #endif // ArgumentCodersGtk_h

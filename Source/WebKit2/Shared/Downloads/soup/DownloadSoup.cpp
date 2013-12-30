@@ -61,7 +61,7 @@ public:
 
     void downloadFailed(const ResourceError& error)
     {
-        m_download->didFail(error, CoreIPC::DataReference());
+        m_download->didFail(error, IPC::DataReference());
     }
 
     void didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
@@ -204,7 +204,7 @@ void Download::cancel()
     if (!m_resourceHandle)
         return;
     m_resourceHandle->cancel();
-    didCancel(CoreIPC::DataReference());
+    didCancel(IPC::DataReference());
     m_resourceHandle = 0;
 }
 

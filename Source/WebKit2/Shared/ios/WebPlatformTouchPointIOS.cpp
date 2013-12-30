@@ -35,14 +35,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebPlatformTouchPoint::encode(CoreIPC::ArgumentEncoder& encoder) const
+void WebPlatformTouchPoint::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_identifier;
     encoder << m_location;
     encoder << m_phase;
 }
 
-bool WebPlatformTouchPoint::decode(CoreIPC::ArgumentDecoder& decoder, WebPlatformTouchPoint& result)
+bool WebPlatformTouchPoint::decode(IPC::ArgumentDecoder& decoder, WebPlatformTouchPoint& result)
 {
     if (!decoder.decode(result.m_identifier))
         return false;

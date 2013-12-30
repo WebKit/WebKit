@@ -18,8 +18,8 @@ list(APPEND WebKit2_SOURCES
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitMarshal.cpp
 
-    Platform/CoreIPC/unix/AttachmentUnix.cpp
-    Platform/CoreIPC/unix/ConnectionUnix.cpp
+    Platform/IPC/unix/AttachmentUnix.cpp
+    Platform/IPC/unix/ConnectionUnix.cpp
 
     Platform/gtk/LoggingGtk.cpp
     Platform/gtk/ModuleGtk.cpp
@@ -504,21 +504,20 @@ if (ENABLE_PLUGIN_PROCESS)
         Platform/Module.cpp
         Platform/WorkQueue.cpp
 
-        Platform/CoreIPC/ArgumentCoders.cpp
-        Platform/CoreIPC/ArgumentDecoder.cpp
-        Platform/CoreIPC/ArgumentEncoder.cpp
-        Platform/CoreIPC/Attachment.cpp
-        Platform/CoreIPC/Connection.cpp
-        Platform/CoreIPC/MessageDecoder.cpp
-        Platform/CoreIPC/MessageEncoder.cpp
-        Platform/CoreIPC/MessageReceiverMap.cpp
-
-        Platform/CoreIPC/unix/AttachmentUnix.cpp
-        Platform/CoreIPC/unix/ConnectionUnix.cpp
-
+        Platform/IPC/ArgumentCoders.cpp
+        Platform/IPC/ArgumentDecoder.cpp
+        Platform/IPC/ArgumentEncoder.cpp
+        Platform/IPC/Attachment.cpp
+        Platform/IPC/Connection.cpp
         Platform/IPC/DataReference.cpp
+        Platform/IPC/MessageDecoder.cpp
+        Platform/IPC/MessageEncoder.cpp
+        Platform/IPC/MessageReceiverMap.cpp
         Platform/IPC/MessageSender.cpp
         Platform/IPC/StringReference.cpp
+
+        Platform/IPC/unix/AttachmentUnix.cpp
+        Platform/IPC/unix/ConnectionUnix.cpp
 
         Platform/gtk/LoggingGtk.cpp
         Platform/gtk/ModuleGtk.cpp

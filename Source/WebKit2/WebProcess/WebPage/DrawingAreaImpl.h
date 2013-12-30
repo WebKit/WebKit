@@ -73,7 +73,7 @@ private:
     virtual void scheduleCompositingLayerFlush() OVERRIDE;
 #endif
 
-    // CoreIPC message handlers.
+    // IPC message handlers.
     virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
     virtual void didUpdate();
     virtual void suspendPainting();

@@ -59,7 +59,7 @@ private:
     virtual void setBackingStoreIsDiscardable(bool);
     virtual void waitForBackingStoreUpdateOnNextPaint();
 
-    // CoreIPC message handlers
+    // IPC message handlers
     virtual void update(uint64_t backingStoreStateID, const UpdateInfo&);
     virtual void didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo&, const LayerTreeContext&);
     virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&);

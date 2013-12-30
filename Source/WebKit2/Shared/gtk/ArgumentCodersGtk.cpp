@@ -39,7 +39,7 @@
 using namespace WebCore;
 using namespace WebKit;
 
-namespace CoreIPC {
+namespace IPC {
 
 static void encodeImage(ArgumentEncoder& encoder, const GdkPixbuf* pixbuf)
 {

@@ -63,17 +63,17 @@ bool SharedMemory::Handle::isNull() const
     return m_fileDescriptor == -1;
 }
 
-void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
+void SharedMemory::Handle::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << releaseToAttachment();
 }
 
-bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& handle)
+bool SharedMemory::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& handle)
 {
     ASSERT_ARG(handle, !handle.m_size);
     ASSERT_ARG(handle, handle.isNull());
 
-    CoreIPC::Attachment attachment;
+    IPC::Attachment attachment;
     if (!decoder.decode(attachment))
         return false;
 
@@ -81,11 +81,11 @@ bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& han
     return true;
 }
 
-CoreIPC::Attachment SharedMemory::Handle::releaseToAttachment() const
+IPC::Attachment SharedMemory::Handle::releaseToAttachment() const
 {
     int temp = m_fileDescriptor;
     m_fileDescriptor = -1;
-    return CoreIPC::Attachment(temp, m_size);
+    return IPC::Attachment(temp, m_size);
 }
 
 void SharedMemory::Handle::adoptFromAttachment(int fileDescriptor, size_t size)

@@ -301,7 +301,7 @@ void WebPageProxy::setSmartInsertDeleteEnabled(bool)
     notImplemented();
 }
 
-void WebPageProxy::registerWebProcessAccessibilityToken(const CoreIPC::DataReference&)
+void WebPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference&)
 {
     notImplemented();
 }    
@@ -311,7 +311,7 @@ void WebPageProxy::makeFirstResponder()
     notImplemented();
 }
 
-void WebPageProxy::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference&, const CoreIPC::DataReference&)
+void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference&, const IPC::DataReference&)
 {
     notImplemented();
 }
@@ -396,7 +396,7 @@ void WebPageProxy::didPerformDictionaryLookup(const AttributedString&, const Dic
     notImplemented();
 }
 
-void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String&, const String&, const CoreIPC::DataReference&, const String&)
+void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String&, const String&, const IPC::DataReference&, const String&)
 {
     notImplemented();
 }

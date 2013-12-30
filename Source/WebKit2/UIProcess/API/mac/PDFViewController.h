@@ -37,7 +37,7 @@
 @class WKView;
 @class WKPDFView;
 
-namespace CoreIPC {
+namespace IPC {
     class DataReference;
 }
 
@@ -56,7 +56,7 @@ public:
     WebPageProxy* page() const;
     NSView* pdfView() const;
     
-    void setPDFDocumentData(const String& mimeType, const String& suggestedFilename, const CoreIPC::DataReference&);
+    void setPDFDocumentData(const String& mimeType, const String& suggestedFilename, const IPC::DataReference&);
 
     double zoomFactor() const;
     void setZoomFactor(double);

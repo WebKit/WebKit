@@ -53,7 +53,7 @@
 #endif
 #endif // SOCK_SEQPACKET
 
-namespace CoreIPC {
+namespace IPC {
 
 static const size_t messageMaxSize = 4096;
 static const size_t attachmentMaxAmount = 255;
@@ -533,4 +533,4 @@ Connection::SocketPair Connection::createPlatformConnection()
     return socketPair;
 }
 
-} // namespace CoreIPC
+} // namespace IPC

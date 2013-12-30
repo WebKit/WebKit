@@ -52,7 +52,7 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear)
     notImplemented();
 }
 
-void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters&, CoreIPC::MessageDecoder&)
+void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters&, IPC::MessageDecoder&)
 {
     notImplemented();
 }

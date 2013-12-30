@@ -37,7 +37,7 @@
 
 using namespace WebCore;
 
-namespace CoreIPC {
+namespace IPC {
 
 void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
@@ -84,7 +84,7 @@ void ArgumentCoder<CertificateInfo>::encode(ArgumentEncoder& encoder, const Cert
 
     encoder << true;
     GRefPtr<GByteArray> certificate = adoptGRef(certificateData);
-    encoder.encodeVariableLengthByteArray(CoreIPC::DataReference(certificate->data, certificate->len));
+    encoder.encodeVariableLengthByteArray(IPC::DataReference(certificate->data, certificate->len));
     encoder << static_cast<uint32_t>(certificateInfo.tlsErrors());
 }
 
@@ -97,7 +97,7 @@ bool ArgumentCoder<CertificateInfo>::decode(ArgumentDecoder& decoder, Certificat
     if (!hasCertificate)
         return true;
 
-    CoreIPC::DataReference certificateDataReference;
+    IPC::DataReference certificateDataReference;
     if (!decoder.decodeVariableLengthByteArray(certificateDataReference))
         return false;
 

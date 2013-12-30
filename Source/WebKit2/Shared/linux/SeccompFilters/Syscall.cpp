@@ -60,7 +60,7 @@ std::unique_ptr<Syscall> Syscall::createFromContext(ucontext_t* ucontext)
     return nullptr;
 }
 
-std::unique_ptr<Syscall> Syscall::createFromDecoder(CoreIPC::ArgumentDecoder* decoder)
+std::unique_ptr<Syscall> Syscall::createFromDecoder(IPC::ArgumentDecoder* decoder)
 {
     int type;
     if (!decoder->decode(type))
@@ -82,7 +82,7 @@ Syscall::Syscall(int type, mcontext_t* context)
 {
 }
 
-std::unique_ptr<SyscallResult> SyscallResult::createFromDecoder(CoreIPC::ArgumentDecoder* decoder, int fd)
+std::unique_ptr<SyscallResult> SyscallResult::createFromDecoder(IPC::ArgumentDecoder* decoder, int fd)
 {
     int type;
     if (!decoder->decode(type))

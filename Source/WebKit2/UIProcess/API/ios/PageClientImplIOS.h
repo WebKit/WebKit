@@ -71,7 +71,7 @@ private:
     virtual void clearAllEditCommands() OVERRIDE;
     virtual bool canUndoRedo(WebPageProxy::UndoOrRedo) OVERRIDE;
     virtual void executeUndoRedo(WebPageProxy::UndoOrRedo) OVERRIDE;
-    virtual void accessibilityWebProcessTokenReceived(const CoreIPC::DataReference&) OVERRIDE;
+    virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&) OVERRIDE;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, Vector<WebCore::KeypressCommand>&) OVERRIDE;
     virtual bool executeSavedCommandBySelector(const String& selector) OVERRIDE;
     virtual void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag) OVERRIDE;

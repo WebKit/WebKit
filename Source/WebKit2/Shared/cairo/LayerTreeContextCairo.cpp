@@ -40,12 +40,12 @@ LayerTreeContext::~LayerTreeContext()
     notImplemented();
 }
 
-void LayerTreeContext::encode(CoreIPC::ArgumentEncoder&) const
+void LayerTreeContext::encode(IPC::ArgumentEncoder&) const
 {
     notImplemented();
 }
 
-bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder&, LayerTreeContext&)
+bool LayerTreeContext::decode(IPC::ArgumentDecoder&, LayerTreeContext&)
 {
     notImplemented();
     return true;

@@ -1,5 +1,113 @@
 2013-12-30  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        Replace remaning CoreIPC namespace to IPC
+        https://bugs.webkit.org/show_bug.cgi?id=126305
+
+        Reviewed by Anders Carlsson.
+
+        This patch replaces CoreIPC to IPC in build scripts and source codes to fix
+        build break on CMake based ports and Gtk (and maybe IOS).
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Platform/IPC/unix/AttachmentUnix.cpp:
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::encode):
+        (WebKit::SharedMemory::Handle::decode):
+        (WebKit::SharedMemory::Handle::releaseToAttachment):
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::Handle::encode):
+        (WebKit::WebCoordinatedSurface::Handle::decode):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::downloadFailed):
+        (WebKit::Download::cancel):
+        * Shared/WebBatteryStatus.cpp:
+        (WebKit::WebBatteryStatus::Data::encode):
+        (WebKit::WebBatteryStatus::Data::decode):
+        * Shared/WebBatteryStatus.h:
+        * Shared/WebNetworkInfo.cpp:
+        (WebKit::WebNetworkInfo::Data::encode):
+        (WebKit::WebNetworkInfo::Data::decode):
+        * Shared/WebNetworkInfo.h:
+        * Shared/cairo/LayerTreeContextCairo.cpp:
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        * Shared/efl/LayerTreeContextEfl.cpp:
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        * Shared/gtk/ArgumentCodersGtk.h:
+        * Shared/gtk/LayerTreeContextGtk.cpp:
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        * Shared/ios/WebPlatformTouchPointIOS.cpp:
+        (WebKit::WebPlatformTouchPoint::encode):
+        (WebKit::WebPlatformTouchPoint::decode):
+        * Shared/ios/WebTouchEventIOS.cpp:
+        (WebKit::WebTouchEvent::encode):
+        (WebKit::WebTouchEvent::decode):
+        * Shared/linux/SeccompFilters/OpenSyscall.cpp:
+        (WebKit::OpenSyscall::encode):
+        (WebKit::OpenSyscall::decode):
+        (WebKit::OpenSyscallResult::encode):
+        (WebKit::OpenSyscallResult::decode):
+        * Shared/linux/SeccompFilters/OpenSyscall.h:
+        * Shared/linux/SeccompFilters/SeccompBroker.cpp:
+        (WebKit::SeccompBrokerClient::dispatch):
+        (WebKit::SeccompBroker::runLoop):
+        * Shared/linux/SeccompFilters/Syscall.cpp:
+        (WebKit::Syscall::createFromDecoder):
+        (WebKit::SyscallResult::createFromDecoder):
+        * Shared/linux/SeccompFilters/Syscall.h:
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<CertificateInfo>::encode):
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::accessibilityWebProcessTokenReceived):
+        * UIProcess/API/mac/PDFViewController.h:
+        * UIProcess/API/mac/PDFViewController.mm:
+        (WebKit::convertPostScriptDataSourceToPDF):
+        (WebKit::PDFViewController::setPDFDocumentData):
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.h:
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/WebBatteryManagerProxy.h:
+        * UIProcess/WebNetworkInfoManagerProxy.h:
+        * UIProcess/WebVibrationProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::registerWebProcessAccessibilityToken):
+        (WebKit::WebPageProxy::registerUIProcessAccessibilityTokens):
+        (WebKit::WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication):
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+        * WebProcess/Battery/WebBatteryManager.h:
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::registerUIProcessAccessibilityTokens):
+        * WebProcess/ios/WebProcessIOS.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestManager::didHandleURIRequest):
+        (WebKit::WebSoupRequestManager::didReceiveURIRequestData):
+        * WebProcess/soup/WebSoupRequestManager.h:
+        * WebProcess/soup/WebSoupRequestManager.messages.in:
+
+2013-12-30  Ryuan Choi  <ryuan.choi@samsung.com>
+
         Unreviewed build fix attempt on GTK port after 161152
 
         * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:

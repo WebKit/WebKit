@@ -1,3 +1,15 @@
+2013-12-30  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Replace remaning CoreIPC namespace to IPC
+        https://bugs.webkit.org/show_bug.cgi?id=126305
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/CMakeLists.txt: Replaced CoreIPC includes to IPC.
+        * TestWebKitAPI/efl/PlatformWebView.cpp: Removed temporal define for IPC.
+        * WebKitTestRunner/CMakeLists.txt: Replaced CoreIPC includes to IPC.
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp: Removed temporal define for IPC.
+
 2013-12-30  Brendan Long  <self@brendanlong.com>
 
         Add myself to the committers list.

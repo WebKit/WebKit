@@ -5,8 +5,8 @@ list(APPEND WebKit2_SOURCES
 
     NetworkProcess/unix/NetworkProcessMainUnix.cpp
 
-    Platform/CoreIPC/unix/AttachmentUnix.cpp
-    Platform/CoreIPC/unix/ConnectionUnix.cpp
+    Platform/IPC/unix/AttachmentUnix.cpp
+    Platform/IPC/unix/ConnectionUnix.cpp
 
     Platform/efl/DispatchQueueEfl.cpp
     Platform/efl/LoggingEfl.cpp

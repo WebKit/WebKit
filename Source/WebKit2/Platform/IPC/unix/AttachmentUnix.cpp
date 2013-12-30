@@ -29,7 +29,7 @@
 
 #include <wtf/UniStdExtras.h>
 
-namespace CoreIPC {
+namespace IPC {
 
 Attachment::Attachment(int fileDescriptor, size_t size)
     : m_type(MappedMemoryType)
@@ -51,4 +51,4 @@ void Attachment::dispose()
         closeWithRetry(m_fileDescriptor);
 }
 
-} // namespace CoreIPC
+} // namespace IPC

@@ -191,7 +191,7 @@ void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo)
     notImplemented();
 }
 
-void PageClientImpl::accessibilityWebProcessTokenReceived(const CoreIPC::DataReference&)
+void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReference&)
 {
     notImplemented();
 }

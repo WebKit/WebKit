@@ -37,7 +37,7 @@ namespace WebKit {
 
 class CoordinatedDrawingAreaProxy;
 
-class CoordinatedLayerTreeHostProxy : public WebCore::CoordinatedGraphicsSceneClient, public CoreIPC::MessageReceiver {
+class CoordinatedLayerTreeHostProxy : public WebCore::CoordinatedGraphicsSceneClient, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(CoordinatedLayerTreeHostProxy);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -59,8 +59,8 @@ public:
 protected:
     void dispatchUpdate(const Function<void()>&);
 
-    // CoreIPC::MessageReceiver
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    // IPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     CoordinatedDrawingAreaProxy* m_drawingAreaProxy;
     RefPtr<WebCore::CoordinatedGraphicsScene> m_scene;
