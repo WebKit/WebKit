@@ -401,6 +401,16 @@
             "bbudge"
          ]
       },
+      "Brendan Long" : {
+         "emails" : [
+            "self@brendanlong.com",
+            "b.long@cablelabs.com"
+         ],
+         "expertise" : "WebKitGTK+, GStreamer",
+         "nicks" : [
+            "brendanlong"
+         ]
+      },
       "Brett Wilson" : {
          "emails" : [
             "brettw@chromium.org"
