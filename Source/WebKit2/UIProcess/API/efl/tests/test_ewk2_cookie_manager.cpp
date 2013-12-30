@@ -182,15 +182,11 @@ TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_changes_watch)
     // Check for cookie changes notifications
     ASSERT_TRUE(loadUrlSync(httpServer->getURLForPath("/index.html").data()));
 
-    while (!cookiesChanged)
-        ecore_main_loop_iterate();
-    ASSERT_TRUE(cookiesChanged);
+    ASSERT_TRUE(waitUntilTrue(cookiesChanged));
 
     cookiesChanged = false;
     ewk_cookie_manager_cookies_clear(cookieManager);
-    while (!cookiesChanged)
-        ecore_main_loop_iterate();
-    ASSERT_TRUE(cookiesChanged);
+    ASSERT_TRUE(waitUntilTrue(cookiesChanged));
 
     // Stop watching for notifications
     ewk_cookie_manager_changes_watch(cookieManager, 0, 0);

@@ -155,21 +155,18 @@ TEST_F(EWK2ColorPickerTest, ewk_color_picker_color_set)
 
     bool handled = false;
     evas_object_smart_callback_add(webView(), "input,type,color,request", onColorPickerDone, &handled);
-    while (!handled)
-        ecore_main_loop_iterate();
+    waitUntilTrue(handled);
 
     clickButton(ShowColorPickerButton);
 
     handled = false;
-    while (!handled)
-        ecore_main_loop_iterate();
+    waitUntilTrue(handled);
 
     api->input_picker_color_dismiss = hideColorPickerByRemovingElement;
     clickButton(HideColorPickerButton);
 
     handled = false;
-    while (!handled)
-        ecore_main_loop_iterate();
+    waitUntilTrue(handled);
     evas_object_smart_callback_del(webView(), "input,type,color,request", onColorPickerDone);
 }
 #endif // ENABLE(INPUT_TYPE_COLOR)

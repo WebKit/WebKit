@@ -54,6 +54,7 @@ public:
     struct VibrationCbData {
         bool didReceiveVibrate; // Whether the vibration event received.
         bool didReceiveCancelVibration; // Whether the cancel vibration event received.
+        bool testFinished;
         unsigned vibrateCalledCount; // Vibrate callbacks count.
         unsigned expectedVibrationTime; // Expected vibration time.
     };
@@ -158,8 +159,10 @@ public:
     {
         VibrationCbData* data = static_cast<VibrationCbData*>(userData);
         unsigned* vibrationTime = static_cast<unsigned*>(eventInfo);
-        if (*vibrationTime == data->expectedVibrationTime)
+        if (*vibrationTime == data->expectedVibrationTime) {
             data->didReceiveVibrate = true;
+            data->testFinished = true;
+        }
         data->vibrateCalledCount++;
     }
 
@@ -167,6 +170,7 @@ public:
     {
         VibrationCbData* data = static_cast<VibrationCbData*>(userData);
         data->didReceiveCancelVibration = true;
+        data->testFinished = true;
     }
 
     static void loadVibrationHTMLString(Evas_Object* webView, const char* vibrationPattern, bool waitForVibrationEvent, VibrationCbData* data)
@@ -178,6 +182,7 @@ public:
         data->didReceiveVibrate = false;
         data->didReceiveCancelVibration = false;
         data->vibrateCalledCount = 0;
+        data->testFinished = false;
         Eina_Strbuf* buffer = eina_strbuf_new();
         eina_strbuf_append_printf(buffer, content, vibrationPattern);
         ewk_view_html_string_load(webView, eina_strbuf_string_get(buffer), 0, 0);
@@ -185,9 +190,6 @@ public:
 
         if (!waitForVibrationEvent)
             return;
-
-        while (!data->didReceiveVibrate && !data->didReceiveCancelVibration)
-            ecore_main_loop_iterate();
     }
 
     static void onContentsSizeChangedPortrait(void* userData, Evas_Object*, void* eventInfo)
@@ -361,9 +363,7 @@ TEST_F(EWK2ViewTest, ewk_view_form_submission_request)
     ewk_view_html_string_load(webView(), formHTML, "file:///", 0);
     bool handled = false;
     evas_object_smart_callback_add(webView(), "form,submission,request", onFormAboutToBeSubmitted, &handled);
-    while (!handled)
-        ecore_main_loop_iterate();
-    ASSERT_TRUE(handled);
+    ASSERT_TRUE(waitUntilTrue(handled));
     evas_object_smart_callback_del(webView(), "form,submission,request", onFormAboutToBeSubmitted);
 }
 
@@ -924,19 +924,23 @@ TEST_F(EWK2ViewTest, ewk_context_vibration_client_callbacks_set)
 
     // Vibrate for 5 seconds.
     loadVibrationHTMLString(webView(), "5000", true, &data);
+    waitUntilTrue(data.testFinished);
     ASSERT_TRUE(data.didReceiveVibrate);
 
     // Cancel any existing vibrations.
     loadVibrationHTMLString(webView(), "0", true, &data);
+    waitUntilTrue(data.testFinished);
     ASSERT_TRUE(data.didReceiveCancelVibration);
 
     // This case the pattern will cause the device to vibrate for 200 ms, be still for 100 ms, and then vibrate for 5000 ms.
     loadVibrationHTMLString(webView(), "[200, 100, 5000]", true, &data);
+    waitUntilTrue(data.testFinished);
     ASSERT_EQ(2, data.vibrateCalledCount);
     ASSERT_TRUE(data.didReceiveVibrate);
 
     // Cancel outstanding vibration pattern.
     loadVibrationHTMLString(webView(), "[0]", true, &data);
+    waitUntilTrue(data.testFinished);
     ASSERT_TRUE(data.didReceiveCancelVibration);
 
     // Stop listening for vibration events, by calling the function with null for the callbacks.
@@ -945,12 +949,14 @@ TEST_F(EWK2ViewTest, ewk_context_vibration_client_callbacks_set)
 
     // Make sure we don't receive vibration event.
     loadVibrationHTMLString(webView(), "[5000]", false, &data);
+    waitUntilTrue(data.testFinished);
     ASSERT_TRUE(waitUntilTitleChangedTo("Loaded"));
     ASSERT_STREQ("Loaded", ewk_view_title_get(webView()));
     ASSERT_FALSE(data.didReceiveVibrate);
 
     // Make sure we don't receive cancel vibration event.
     loadVibrationHTMLString(webView(), "0", false, &data);
+    waitUntilTrue(data.testFinished);
     ASSERT_TRUE(waitUntilTitleChangedTo("Loaded"));
     ASSERT_STREQ("Loaded", ewk_view_title_get(webView()));
     ASSERT_FALSE(data.didReceiveCancelVibration);
@@ -968,30 +974,26 @@ TEST_F(EWK2ViewTest, ewk_view_contents_size_changed)
     bool sizeChanged = false;
     evas_object_smart_callback_add(webView(), "contents,size,changed", onContentsSizeChangedPortrait, &sizeChanged);
     ewk_view_html_string_load(webView(), contentsSizeHTMLPortrait, 0, 0);
-    while (!sizeChanged)
-        ecore_main_loop_iterate();
+    waitUntilTrue(sizeChanged);
     evas_object_smart_callback_del(webView(), "contents,size,changed", onContentsSizeChangedPortrait);
 
     evas_object_smart_callback_add(webView(), "contents,size,changed", onContentsSizeChangedLandscape, &sizeChanged);
     ewk_view_device_pixel_ratio_set(webView(), 2);
     ewk_view_html_string_load(webView(), contentsSizeHTMLLandscape, 0, 0);
     sizeChanged = false;
-    while (!sizeChanged)
-        ecore_main_loop_iterate();
+    waitUntilTrue(sizeChanged);
     evas_object_smart_callback_del(webView(), "contents,size,changed", onContentsSizeChangedLandscape);
 
     evas_object_smart_callback_add(webView(), "contents,size,changed", onContentsSizeChangedPortrait, &sizeChanged);
     ewk_view_scale_set(webView(), 3, 0, 0);
     ewk_view_html_string_load(webView(), contentsSizeHTMLPortrait, 0, 0);
     sizeChanged = false;
-    while (!sizeChanged)
-        ecore_main_loop_iterate();
+    waitUntilTrue(sizeChanged);
 
     // Make sure we get signal after loaded the contents having same size with previous one.
     sizeChanged = false;
     ewk_view_html_string_load(webView(), contentsSizeHTMLPortrait, 0, 0);
-    while (!sizeChanged)
-        ecore_main_loop_iterate();
+    waitUntilTrue(sizeChanged);
 
     evas_object_smart_callback_del(webView(), "contents,size,changed", onContentsSizeChangedPortrait);
 }
@@ -1003,13 +1005,11 @@ TEST_F(EWK2ViewTest, ewk_view_page_contents_get)
     waitUntilLoadFinished();
 
     ASSERT_TRUE(ewk_view_page_contents_get(webView(), EWK_PAGE_CONTENTS_TYPE_MHTML, PageContentsAsMHTMLCallback, 0));
-    while (!obtainedPageContents)
-        ecore_main_loop_iterate();
+    waitUntilTrue(obtainedPageContents);
 
     obtainedPageContents = false;
     ASSERT_TRUE(ewk_view_page_contents_get(webView(), EWK_PAGE_CONTENTS_TYPE_STRING, PageContentsAsStringCallback, 0));
-    while (!obtainedPageContents)
-        ecore_main_loop_iterate();
+    waitUntilTrue(obtainedPageContents);
 }
 
 TEST_F(EWK2ViewTest, ewk_view_source_mode)

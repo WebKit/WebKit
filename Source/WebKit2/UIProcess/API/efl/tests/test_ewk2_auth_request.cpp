@@ -182,8 +182,7 @@ TEST_F(EWK2AuthRequestTest, ewk_auth_request_cancel)
     // Will attempt to continue without authentication by default.
     ewk_object_unref(authenticationRequest);
 
-    while (!isFinished)
-        ecore_main_loop_iterate();
+    waitUntilTrue(isFinished);
 
     ASSERT_STRNE(expectedSuccessTitle, ewk_view_title_get(webView()));
 
