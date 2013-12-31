@@ -26,11 +26,11 @@
 #ifndef ByteSpinLock_h
 #define ByteSpinLock_h
 
+#include <thread>
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/ThreadingPrimitives.h>
 
 namespace WTF {
 
@@ -45,7 +45,7 @@ public:
     void lock()
     {
         while (!weakCompareAndSwap(&m_lock, 0, 1))
-            pauseBriefly();
+            std::this_thread::yield();
         memoryBarrierAfterLock();
     }
     

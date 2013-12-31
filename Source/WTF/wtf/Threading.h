@@ -100,8 +100,6 @@ WTF_EXPORT_PRIVATE ThreadIdentifier currentThread();
 WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
 WTF_EXPORT_PRIVATE void detachThread(ThreadIdentifier);
 
-WTF_EXPORT_PRIVATE void yield();
-
 WTF_EXPORT_PRIVATE void lockAtomicallyInitializedStaticMutex();
 WTF_EXPORT_PRIVATE void unlockAtomicallyInitializedStaticMutex();
 
@@ -112,6 +110,5 @@ using WTF::createThread;
 using WTF::currentThread;
 using WTF::detachThread;
 using WTF::waitForThreadCompletion;
-using WTF::yield;
 
 #endif // Threading_h
