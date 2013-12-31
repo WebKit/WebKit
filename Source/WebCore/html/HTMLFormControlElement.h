@@ -193,6 +193,8 @@ template <> inline bool isElementOfType<const HTMLFormControlElement>(const Elem
 
 NODE_TYPE_CASTS(HTMLFormControlElement)
 
+FORM_ASSOCIATED_ELEMENT_TYPE_CASTS(HTMLFormControlElement, isFormControlElement())
+
 } // namespace
 
 #endif

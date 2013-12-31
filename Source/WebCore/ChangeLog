@@ -1,3 +1,29 @@
+2013-12-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Cleanup static_cast<HTMLFormElement*> by using toHTMLFormElement()
+        https://bugs.webkit.org/show_bug.cgi?id=126309
+
+        Reviewed by Andreas Kling.
+
+        To detect bad type casts, it would be good to use toHTMLFormElement() instead of
+        using manual type cast. Additionally FORM_ASSOCIATED_ELEMENT_TYPE_CASTS is introduced newly
+        to do it.
+
+        No new tests, no behavior changes.
+
+        * html/FormAssociatedElement.h:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submitImplicitly):
+        (WebCore::HTMLFormElement::validateInteractively):
+        (WebCore::HTMLFormElement::submit):
+        (WebCore::HTMLFormElement::reset):
+        (WebCore::HTMLFormElement::defaultButton):
+        (WebCore::HTMLFormElement::checkInvalidControlsAndCollectUnhandled):
+        (WebCore::HTMLFormElement::documentDidResumeFromPageCache):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+
 2013-12-30  Anders Carlsson  <andersca@apple.com>
 
         Replace yield() and pauseBriefly() with std::this_thread::yield()

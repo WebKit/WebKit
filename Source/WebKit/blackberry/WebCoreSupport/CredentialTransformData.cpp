@@ -143,7 +143,7 @@ bool CredentialTransformData::findPasswordFormFields(const HTMLFormElement* form
     for (size_t i = 0; i < formElements.size(); i++) {
         if (!formElements[i]->isFormControlElement())
             continue;
-        HTMLFormControlElement* formElement = static_cast<HTMLFormControlElement*>(formElements[i]);
+        HTMLFormControlElement* formElement = toHTMLFormControlElement(formElements[i]);
         if (!isHTMLInputElement(formElement))
             continue;
 
@@ -165,7 +165,7 @@ bool CredentialTransformData::findPasswordFormFields(const HTMLFormElement* form
         for (int i = firstPasswordIndex - 1; i >= 0; i--) {
             if (!formElements[i]->isFormControlElement())
                 continue;
-            HTMLFormControlElement* formElement = static_cast<HTMLFormControlElement*>(formElements[i]);
+            HTMLFormControlElement* formElement = toHTMLFormControlElement(formElements[i]);
             if (!isHTMLInputElement(formElement))
                 continue;
 

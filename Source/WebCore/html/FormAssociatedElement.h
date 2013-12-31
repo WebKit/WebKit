@@ -118,6 +118,9 @@ private:
     String m_customValidationMessage;
 };
 
+#define FORM_ASSOCIATED_ELEMENT_TYPE_CASTS(ToClassName, predicate) \
+    TYPE_CASTS_BASE(ToClassName, FormAssociatedElement, element, element->predicate, element.predicate)
+
 } // namespace
 
 #endif // FormAssociatedElement_h

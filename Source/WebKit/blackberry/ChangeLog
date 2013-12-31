@@ -1,3 +1,22 @@
+2013-12-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Cleanup static_cast<HTMLFormElement*> by using toHTMLFormElement()
+        https://bugs.webkit.org/show_bug.cgi?id=126309
+
+        Reviewed by Andreas Kling.
+
+        To detect bad type casts, it would be good to use toHTMLFormElement() instead of
+        using manual type cast. Additionally FORM_ASSOCIATED_ELEMENT_TYPE_CASTS is introduced newly
+        to do it.
+
+        * WebCoreSupport/CredentialTransformData.cpp:
+        (WebCore::CredentialTransformData::findPasswordFormFields):
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::toTextControlElement):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::updateFormState):
+        (BlackBerry::WebKit::InputHandler::submitForm):
+
 2013-12-16  Peter Szanka  <h868064@stud.u-szeged.hu>
 
         Delete RVCT related code parts.

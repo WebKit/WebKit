@@ -166,7 +166,7 @@ HTMLTextFormControlElement* toTextControlElement(Node* node)
     if (!element->isFormControlElement())
         return 0;
 
-    HTMLFormControlElement* formElement = static_cast<HTMLFormControlElement*>(element);
+    HTMLFormControlElement* formElement = toHTMLFormControlElement(element);
     if (!formElement->isTextFormControl())
         return 0;
 

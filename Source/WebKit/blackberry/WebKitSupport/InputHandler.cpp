@@ -940,7 +940,7 @@ void InputHandler::updateFormState()
     if (!m_currentFocusElement || !m_currentFocusElement->isFormControlElement())
         return;
 
-    HTMLFormElement* formElement = static_cast<HTMLFormControlElement*>(m_currentFocusElement.get())->form();
+    HTMLFormElement* formElement = toHTMLFormControlElement(m_currentFocusElement.get())->form();
     if (!formElement)
         return;
 
@@ -1074,7 +1074,7 @@ void InputHandler::submitForm()
     if (!m_hasSubmitButton)
         return;
 
-    HTMLFormElement* formElement = static_cast<HTMLFormControlElement*>(m_currentFocusElement.get())->form();
+    HTMLFormElement* formElement = toHTMLFormControlElement(m_currentFocusElement.get())->form();
     if (!formElement)
         return;
 
