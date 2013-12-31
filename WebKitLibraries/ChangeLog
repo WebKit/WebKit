@@ -1,3 +1,9 @@
+2013-12-30  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Disable some annoying build warnings.
+
+        * win/tools/vsprops/common.props:
+
 2013-12-23  Lucas Forschler  <lforschler@apple.com>
 
         <rdar://problem/15682948> Update copyright strings
