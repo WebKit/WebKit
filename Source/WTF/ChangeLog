@@ -1,3 +1,25 @@
+2013-12-30  Sam Weinig  <sam@webkit.org>
+
+        Remove WTF's BinarySemaphore
+        https://bugs.webkit.org/show_bug.cgi?id=126310
+
+        Reviewed by Anders Carlsson.
+
+        It's unused. Also remove the now empty wtf/threads directory.
+
+        * GNUmakefile.list.am:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Forward.h:
+        * wtf/PlatformWin.cmake:
+        * wtf/threads: Removed.
+        * wtf/threads/BinarySemaphore.cpp: Removed.
+        * wtf/threads/BinarySemaphore.h: Removed.
+        * wtf/threads/win: Removed.
+        * wtf/threads/win/BinarySemaphoreWin.cpp: Removed.
+
 2013-12-30  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Unreviewed build fix following r160959.

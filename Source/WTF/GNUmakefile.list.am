@@ -244,8 +244,6 @@ wtf_sources += \
     Source/WTF/wtf/text/TextPosition.h \
     Source/WTF/wtf/text/WTFString.cpp \
     Source/WTF/wtf/text/WTFString.h \
-    Source/WTF/wtf/threads/BinarySemaphore.cpp \
-    Source/WTF/wtf/threads/BinarySemaphore.h \
     Source/WTF/wtf/unicode/CharacterNames.h \
     Source/WTF/wtf/unicode/Collator.h \
     Source/WTF/wtf/unicode/CollatorDefault.cpp \
