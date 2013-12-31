@@ -35,6 +35,10 @@
 typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 #endif
 
+#if PLATFORM(IOS)
+#import <WebCore/WAKAppKitStubs.h>
+#endif
+
 @class WebPluginDatabase;
 
 @protocol WebPluginManualLoader

@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import "WebDocument.h"
 
 @protocol WebDocumentRepresentation;
@@ -33,3 +35,5 @@
 @interface WebPDFRepresentation : NSObject <WebDocumentRepresentation>
 + (NSArray *)supportedMIMETypes;
 @end
+
+#endif

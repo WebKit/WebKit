@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import <Cocoa/Cocoa.h>
 
 @interface NSImage (WebExtras)
@@ -38,3 +40,5 @@
 - (void)_web_saveAndOpen;
 
 @end
+
+#endif

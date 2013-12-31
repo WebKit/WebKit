@@ -63,6 +63,9 @@ private:
     virtual void makeRepresentation(WebCore::DocumentLoader*) OVERRIDE;
     virtual bool hasHTMLView() const OVERRIDE;
     virtual void forceLayout() OVERRIDE;
+#if PLATFORM(IOS)
+    virtual void forceLayoutWithoutRecalculatingStyles() OVERRIDE;
+#endif
     virtual void forceLayoutForNonHTML() OVERRIDE;
 
     virtual void setCopiesOnScroll() OVERRIDE;
@@ -81,6 +84,11 @@ private:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual bool canAuthenticateAgainstProtectionSpace(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ProtectionSpace&) OVERRIDE;
 #endif
+
+#if PLATFORM(IOS)
+    virtual RetainPtr<CFDictionaryRef> connectionProperties(WebCore::DocumentLoader*, unsigned long identifier) OVERRIDE;
+#endif
+
     virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceResponse&) OVERRIDE;
     virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int dataLength) OVERRIDE;
     virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long identifier) OVERRIDE;
@@ -126,11 +134,17 @@ private:
     virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&) OVERRIDE;
     virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length) OVERRIDE;
 
+#if !PLATFORM(IOS)
     virtual void willChangeEstimatedProgress() OVERRIDE;
     virtual void didChangeEstimatedProgress() OVERRIDE;
+#endif
     virtual void postProgressStartedNotification() OVERRIDE;
     virtual void postProgressEstimateChangedNotification() OVERRIDE;
+#if !PLATFORM(IOS)
     virtual void postProgressFinishedNotification() OVERRIDE;
+#else
+    virtual void postProgressFinishedNotification() OVERRIDE { }
+#endif
     
     virtual void setMainFrameDocumentReady(bool) OVERRIDE;
 
@@ -167,6 +181,9 @@ private:
     
     virtual void savePlatformDataToCachedFrame(WebCore::CachedFrame*) OVERRIDE;
     virtual void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) OVERRIDE;
+#if PLATFORM(IOS)
+    virtual void didRestoreFrameHierarchyForCachedFrame() OVERRIDE;
+#endif
     virtual void transitionToCommittedForNewPage() OVERRIDE;
 
     virtual void didSaveToPageCache() OVERRIDE;
@@ -215,6 +232,10 @@ private:
     virtual void didPerformFirstNavigation() const OVERRIDE;
 
     virtual void registerForIconNotification(bool listen) OVERRIDE;
+
+#if PLATFORM(IOS)
+    virtual bool shouldLoadMediaElementURL(const WebCore::URL&) const OVERRIDE;
+#endif
 
 #if PLATFORM(MAC)
     virtual RemoteAXObjectRef accessibilityRemoteObject() OVERRIDE { return 0; }

@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import <WebKit/WebNSImageExtras.h>
 
 #import <WebKit/WebKitLogging.h>
@@ -104,3 +106,5 @@
 }
 
 @end
+
+#endif // !PLATFORM(IOS)

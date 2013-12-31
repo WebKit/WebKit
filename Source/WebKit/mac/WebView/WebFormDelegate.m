@@ -69,10 +69,12 @@ static WebFormDelegate *sharedDelegate = nil;
     return NO;
 }
 
+#if !PLATFORM(IOS)    
 - (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event inFrame:(WebFrame *)frame
 {
     return NO;
 }
+#endif
 
 - (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form
     withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener

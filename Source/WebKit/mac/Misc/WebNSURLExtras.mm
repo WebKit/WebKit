@@ -43,8 +43,17 @@
 #import <unicode/uchar.h>
 #import <unicode/uscript.h>
 
+#if PLATFORM(IOS)
+#import <Foundation/NSString_NSURLExtras.h>
+#endif
+
 using namespace WebCore;
 using namespace WTF;
+
+#if PLATFORM(IOS)
+// Fake URL scheme.
+#define WebDataProtocolScheme @"webkit-fake-url"
+#endif
 
 #define URL_BYTES_BUFFER_LENGTH 2048
 
@@ -280,6 +289,113 @@ using namespace WTF;
     return [NSURL URLWithString:[@"file:" stringByAppendingString:[self absoluteString]]];
 }
 
+#if PLATFORM(IOS)
+static inline NSURL *createYouTubeURL(NSString *videoID, NSString *timeID)
+{
+    // This method creates a youtube: URL, which is an internal format that is passed to YouTube.app.
+    // If the format of these internal links is changed below, then the app probably needs to be updated as well.
+
+    ASSERT(videoID && [videoID length] > 0 && ![videoID isEqualToString:@"/"]);
+
+    if ([timeID length])
+        return [NSURL URLWithString:[NSString stringWithFormat:@"youtube:%@?t=%@", videoID, timeID]];
+    return [NSURL URLWithString:[NSString stringWithFormat:@"youtube:%@", videoID]];
+}
+
+- (NSURL *)_webkit_youTubeURL
+{
+    // Bail out early if we aren't even on www.youtube.com or youtube.com.
+    NSString *scheme = [[self scheme] lowercaseString];
+    if (![scheme isEqualToString:@"http"] && ![scheme isEqualToString:@"https"])
+        return nil;
+
+    NSString *hostName = [[self host] lowercaseString];
+    BOOL isYouTubeMobileWebAppURL = [hostName isEqualToString:@"m.youtube.com"];
+    BOOL isYouTubeShortenedURL = [hostName isEqualToString:@"youtu.be"];
+    if (!isYouTubeMobileWebAppURL
+        && !isYouTubeShortenedURL
+        && ![hostName isEqualToString:@"www.youtube.com"]
+        && ![hostName isEqualToString:@"youtube.com"])
+        return nil;
+
+    NSString *path = [self path];
+
+    // Short URL of the form: http://youtu.be/v1d301D
+    if (isYouTubeShortenedURL) {
+        NSString *videoID = [path lastPathComponent];
+        if (videoID && ![videoID isEqualToString:@"/"])
+            return createYouTubeURL(videoID, nil);
+        return nil;
+    }
+
+    NSString *query = [self query];
+    NSString *fragment = [self fragment];
+
+    // On the YouTube mobile web app, the path and query string are put into the
+    // fragment so that one web page is only ever loaded (see <rdar://problem/9550639>).
+    if (isYouTubeMobileWebAppURL) {
+        NSRange range = [fragment rangeOfString:@"?"];
+        if (range.location == NSNotFound) {
+            path = fragment;
+            query = nil;
+        } else {
+            path = [fragment substringToIndex:range.location];
+            query = [fragment substringFromIndex:(range.location + 1)];
+        }
+        fragment = nil;
+    }
+
+    if ([[path lowercaseString] isEqualToString:@"/watch"]) {
+        if ([query length]) {
+            NSString *videoID = [[query _webkit_queryKeysAndValues] objectForKey:@"v"];
+            if (videoID) {
+                NSDictionary *fragmentDict = [[self fragment] _webkit_queryKeysAndValues];
+                NSString *timeID = [fragmentDict objectForKey:@"t"];
+                return createYouTubeURL(videoID, timeID);
+            }
+        }
+
+        // May be a new-style link (see <rdar://problem/7733692>).
+        if ([fragment hasPrefix:@"!"]) {
+            query = [fragment substringFromIndex:1];
+
+            if ([query length]) {
+                NSDictionary *queryDict = [query _webkit_queryKeysAndValues];
+                NSString *videoID = [queryDict objectForKey:@"v"];
+                if (videoID) {
+                    NSString *timeID = [queryDict objectForKey:@"t"];
+                    return createYouTubeURL(videoID, timeID);
+                }
+            }
+        }
+    } else if ([path _web_hasCaseInsensitivePrefix:@"/v/"] || [path _web_hasCaseInsensitivePrefix:@"/e/"]) {
+        NSString *videoID = [path lastPathComponent];
+
+        // These URLs are funny - they don't have a ? for the first query parameter.
+        // Strip all characters after and including '&' to remove extraneous parameters after the video ID.
+        NSRange ampersand = [videoID rangeOfString:@"&"];
+        if (ampersand.location != NSNotFound)
+            videoID = [videoID substringToIndex:ampersand.location];
+
+        if (videoID)
+            return createYouTubeURL(videoID, nil);
+    }
+
+    return nil;
+}
+
++ (NSURL *)uniqueURLWithRelativePart:(NSString *)relativePart
+{
+    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *UUIDString = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
+    CFRelease(UUIDRef);
+    NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@/%@", WebDataProtocolScheme, UUIDString, relativePart]];
+    CFRelease(UUIDString);
+    
+    return URL;
+}
+
+#endif // PLATFORM(IOS)
 @end
 
 @implementation NSString (WebNSURLExtras)
@@ -389,5 +505,74 @@ using namespace WTF;
         return nil;
     return [self substringFromIndex:fragmentRange.location + 1];
 }
+
+#if PLATFORM(IOS)
+
+- (NSString *)_webkit_unescapedQueryValue
+{
+    NSMutableString *string = [[[self stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] mutableCopy] autorelease];
+    if (!string) // If we failed to decode the URL as UTF8, fall back to Latin1
+        string = [[[self stringByReplacingPercentEscapesUsingEncoding:NSISOLatin1StringEncoding] mutableCopy] autorelease];
+    [string replaceOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, [string length])];
+    return string;
+}
+
+- (NSDictionary *)_webkit_queryKeysAndValues
+{
+    unsigned queryLength = [self length];
+    if (!queryLength)
+        return nil;
+    
+    NSMutableDictionary *queryKeysAndValues = nil;
+    NSRange equalSearchRange = NSMakeRange(0, queryLength);
+    
+    while (equalSearchRange.location < queryLength - 1 && equalSearchRange.length) {
+        
+        // Search for "=".
+        NSRange equalRange = [self rangeOfString:@"=" options:NSLiteralSearch range:equalSearchRange];
+        if (equalRange.location == NSNotFound)
+            break;
+        
+        unsigned indexAfterEqual = equalRange.location + 1;
+        if (indexAfterEqual > queryLength - 1)
+            break;
+                        
+        // Get the key before the "=".
+        NSRange keyRange = NSMakeRange(equalSearchRange.location, equalRange.location - equalSearchRange.location);
+        
+        // Seach for the ampersand.
+        NSRange ampersandSearchRange = NSMakeRange(indexAfterEqual, queryLength - indexAfterEqual);
+        NSRange ampersandRange = [self rangeOfString:@"&" options:NSLiteralSearch range:ampersandSearchRange];
+        
+        // Get the value after the "=", before the ampersand.
+        NSRange valueRange;
+        if (ampersandRange.location != NSNotFound)
+            valueRange = NSMakeRange(indexAfterEqual, ampersandRange.location - indexAfterEqual);
+        else 
+            valueRange = NSMakeRange(indexAfterEqual, queryLength - indexAfterEqual);
+                
+        // Save the key and the value.
+        if (keyRange.length && valueRange.length) {
+            if (queryKeysAndValues == nil)
+                queryKeysAndValues = [NSMutableDictionary dictionary];
+            NSString *key = [[self substringWithRange:keyRange] lowercaseString];
+            NSString *value = [[self substringWithRange:valueRange] _webkit_unescapedQueryValue];
+            if ([key length] && [value length])
+                [queryKeysAndValues setObject:value forKey:key];
+        }
+        
+        // At the end.
+        if (ampersandRange.location == NSNotFound)
+            break;
+        
+        // Continue searching after the ampersand.
+        unsigned indexAfterAmpersand = ampersandRange.location + 1;
+        equalSearchRange = NSMakeRange(indexAfterAmpersand, queryLength - indexAfterAmpersand);
+    }
+    
+    return queryKeysAndValues;
+}
+
+#endif // PLATFORM(IOS)
 
 @end

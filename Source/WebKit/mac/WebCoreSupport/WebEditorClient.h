@@ -42,11 +42,20 @@ public:
     virtual ~WebEditorClient();
     virtual void pageDestroyed() OVERRIDE;
 
+#if !PLATFORM(IOS)
     virtual bool isGrammarCheckingEnabled() OVERRIDE;
     virtual void toggleGrammarChecking() OVERRIDE;
     virtual bool isContinuousSpellCheckingEnabled() OVERRIDE;
     virtual void toggleContinuousSpellChecking() OVERRIDE;
     virtual int spellCheckerDocumentTag() OVERRIDE;
+#else
+    virtual bool isGrammarCheckingEnabled() OVERRIDE { return false; }
+    virtual void toggleGrammarChecking() OVERRIDE { }
+    // Note: isContinuousSpellCheckingEnabled() is implemented.
+    virtual bool isContinuousSpellCheckingEnabled() OVERRIDE;
+    virtual void toggleContinuousSpellChecking() OVERRIDE { }
+    virtual int spellCheckerDocumentTag() OVERRIDE { return 0; }
+#endif
 
     virtual bool smartInsertDeleteEnabled() OVERRIDE;
     virtual bool isSelectTrailingWhitespaceEnabled() OVERRIDE;
@@ -127,7 +136,23 @@ public:
     virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) OVERRIDE;
     virtual void textWillBeDeletedInTextField(WebCore::Element*) OVERRIDE;
     virtual void textDidChangeInTextArea(WebCore::Element*) OVERRIDE;
+
+#if PLATFORM(IOS)
+    virtual void suppressSelectionNotifications() OVERRIDE;
+    virtual void restoreSelectionNotifications() OVERRIDE;
+    virtual void startDelayingAndCoalescingContentChangeNotifications() OVERRIDE;
+    virtual void stopDelayingAndCoalescingContentChangeNotifications() OVERRIDE;
+    virtual void writeDataToPasteboard(NSDictionary*) OVERRIDE;
+    virtual NSArray* supportedPasteboardTypesForCurrentSelection() OVERRIDE;
+    virtual NSArray* readDataFromPasteboard(NSString* type, int index) OVERRIDE;
+    virtual bool hasRichlyEditableSelection() OVERRIDE;
+    virtual int getPasteboardItemsCount() OVERRIDE;
+    virtual WebCore::DocumentFragment* documentFragmentFromDelegate(int index) OVERRIDE;
+    virtual bool performsTwoStepPaste(WebCore::DocumentFragment*) OVERRIDE;
+    virtual int pasteboardChangeCount() OVERRIDE;
+#endif
     
+#if !PLATFORM(IOS)
     virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const OVERRIDE;
     virtual void ignoreWordInSpellDocument(const WTF::String&) OVERRIDE;
     virtual void learnWord(const WTF::String&) OVERRIDE;
@@ -140,6 +165,21 @@ public:
     virtual void showSpellingUI(bool show) OVERRIDE;
     virtual bool spellingUIIsShowing() OVERRIDE;
     virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses) OVERRIDE;
+#else
+    virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const OVERRIDE { return true; }
+    virtual void ignoreWordInSpellDocument(const WTF::String&) OVERRIDE { }
+    virtual void learnWord(const WTF::String&) OVERRIDE { }
+    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) OVERRIDE { }
+    virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) OVERRIDE { return ""; }
+    virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) OVERRIDE { }
+    // Note: checkTextOfParagraph() is implemented. 
+    virtual void checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, WTF::Vector<WebCore::TextCheckingResult>& results) OVERRIDE;
+    virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) OVERRIDE { }
+    virtual void updateSpellingUIWithMisspelledWord(const WTF::String&) OVERRIDE { }
+    virtual void showSpellingUI(bool show) OVERRIDE { }
+    virtual bool spellingUIIsShowing() OVERRIDE { return false; }
+    virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses) OVERRIDE { }
+#endif // PLATFORM(IOS)
     virtual void willSetInputMethodState() OVERRIDE;
     virtual void setInputMethodState(bool enabled) OVERRIDE;
     virtual void requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest>) OVERRIDE;
@@ -154,4 +194,9 @@ private:
     RetainPtr<WebEditorUndoTarget> m_undoTarget;
     bool m_haveUndoRedoOperations;
     RefPtr<WebCore::TextCheckingRequest> m_textCheckingRequest;
+#if PLATFORM(IOS)
+    int m_selectionNotificationSuppressions;
+    bool m_delayingContentChangeNotifications;
+    bool m_hasDelayedContentChangeNotification;
+#endif
 };

@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import "WebIconDatabaseInternal.h"
 
 #import "WebIconDatabaseClient.h"
@@ -492,3 +494,5 @@ NSImage *webGetNSImage(Image* image, NSSize size)
     }
     return nsImage;
 }
+
+#endif // !PLATFORM(IOS)

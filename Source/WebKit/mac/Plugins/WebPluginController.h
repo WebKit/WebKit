@@ -34,6 +34,9 @@
 @class WebPluginPackage;
 @class WebView;
 @class WebDataSource;
+#if PLATFORM(IOS)
+@class CALayer;
+#endif
 
 @interface WebPluginController : NSObject <WebPluginManualLoader, WebPluginContainerCheckController>
 {
@@ -61,9 +64,18 @@
 + (void)pluginViewHidden:(NSView *)view;
 #endif
 
+#if PLATFORM(IOS)
++ (void)addPlugInView:(NSView *)view;
+- (BOOL)plugInsAreRunning;
+- (CALayer *)superlayerForPluginView:(NSView *)view;
+#endif
 - (void)startAllPlugins;
 - (void)stopAllPlugins;
 - (void)destroyAllPlugins;
+#if PLATFORM(IOS)
+- (void)stopPluginsForPageCache;
+- (void)restorePluginsFromCache;
+#endif
 
 - (WebFrame *)webFrame;
 - (WebView *)webView;

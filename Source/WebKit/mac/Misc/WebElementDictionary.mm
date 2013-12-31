@@ -65,9 +65,11 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 + (void)initialize
 {
+#if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
+#endif
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
@@ -210,8 +212,12 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSValue *)_imageRect
 {
+#if !PLATFORM(IOS)
     IntRect rect = _result->imageRect();
     return rect.isEmpty() ? nil : [NSValue valueWithRect:rect];
+#else
+    return nil;
+#endif
 }
 
 - (NSURL *)_absoluteImageURL

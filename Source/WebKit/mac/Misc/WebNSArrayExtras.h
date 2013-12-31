@@ -27,7 +27,6 @@
  */
 
 #import "WebTypesInternal.h"
-#import <Cocoa/Cocoa.h>
 
 @interface NSArray (WebNSArrayExtras)
 
@@ -36,8 +35,10 @@
 
 @end
 
+#if !PLATFORM(IOS)
 @interface NSMutableArray (WebNSArrayExtras)
 
 - (void)_webkit_removeUselessMenuItemSeparators;
 
 @end
+#endif

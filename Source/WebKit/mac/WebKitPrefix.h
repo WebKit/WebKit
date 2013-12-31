@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <TargetConditionals.h>
+
 #ifdef __cplusplus
 #define NULL __null
 #else
@@ -54,6 +56,7 @@
 
 #endif
 
+#if !TARGET_OS_IPHONE
 #import <ApplicationServices/ApplicationServices.h>
 #import <Carbon/Carbon.h>
 
@@ -65,9 +68,14 @@ typedef float CGFloat;
 #endif
 #define CGFLOAT_DEFINED 1
 #endif
+#endif
 
 #ifdef __OBJC__
+#if !TARGET_OS_IPHONE
 #import <Cocoa/Cocoa.h>
+#else
+#import <Foundation/Foundation.h>
+#endif
 #endif
 
 #include <wtf/Platform.h>

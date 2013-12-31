@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #import "WebContextMenuClient.h"
 
 #import "WebDelegateImplementationCaching.h"
@@ -371,3 +373,5 @@ void WebContextMenuClient::showContextMenu()
     if (nsMenu)
         [NSMenu popUpContextMenu:nsMenu withEvent:event forView:view];
 }
+
+#endif // !PLATFORM(IOS)
