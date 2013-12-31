@@ -57,9 +57,16 @@ public:
     {
         std::unique_lock<std::mutex> lock(m_mutex);
     
-        bool value = m_conditionVariable.wait_until(lock, absoluteTime, [this] { return m_isSet; });
+        while (!m_isSet) {
+            std::cv_status status = m_conditionVariable.wait_until(lock, absoluteTime);
+            if (status == std::cv_status::timeout)
+                return false;
+        }
         
-        return value;
+        // Reset the semaphore.
+        m_isSet = false;
+
+        return true;
     }
 
 private:

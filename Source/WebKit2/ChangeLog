@@ -1,5 +1,14 @@
 2013-12-30  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the test failures seen on the bots.
+
+        Restore the BinarySemaphore behavior that existed in the old binary semaphore.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::BinarySemaphore::wait):
+
+2013-12-30  Anders Carlsson  <andersca@apple.com>
+
         Fix.
 
         * WebProcess/WebProcess.cpp:
