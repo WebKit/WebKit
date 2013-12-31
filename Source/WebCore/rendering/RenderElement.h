@@ -31,7 +31,7 @@ class RenderElement : public RenderObject {
 public:
     virtual ~RenderElement();
 
-    static RenderElement* createFor(Element&, PassRef<RenderStyle>);
+    static RenderPtr<RenderElement> createFor(Element&, PassRef<RenderStyle>);
 
     bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 

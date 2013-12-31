@@ -75,7 +75,7 @@ private:
 
     virtual void willAttachRenderers() OVERRIDE;
     virtual bool rendererIsNeeded(const RenderStyle&);
-    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
     
     virtual void defaultEventHandler(Event*);
 

@@ -188,9 +188,9 @@ void SVGFilterElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout();
 }
 
-RenderElement* SVGFilterElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGFilterElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGResourceFilter(*this, std::move(style));
+    return createRenderer<RenderSVGResourceFilter>(*this, std::move(style));
 }
 
 bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const

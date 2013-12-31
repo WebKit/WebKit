@@ -67,13 +67,13 @@ bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style)
     return HTMLElement::rendererIsNeeded(style); 
 }
 
-RenderElement* HTMLVideoElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLVideoElement::createElementRenderer(PassRef<RenderStyle> style)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (shouldUseVideoPluginProxy())
-        return HTMLMediaElement::createRenderer(std::move(style));
+        return HTMLMediaElement::createElementRenderer(std::move(style));
 #endif
-    return new RenderVideo(*this, std::move(style));
+    return createRenderer<RenderVideo>(*this, std::move(style));
 }
 
 void HTMLVideoElement::didAttachRenderers()

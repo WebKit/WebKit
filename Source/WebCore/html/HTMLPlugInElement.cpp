@@ -274,12 +274,12 @@ NPObject* HTMLPlugInElement::getNPObject()
 
 #endif /* ENABLE(NETSCAPE_PLUGIN_API) */
 
-RenderElement* HTMLPlugInElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (m_pluginReplacement && m_pluginReplacement->willCreateRenderer())
-        return m_pluginReplacement->createRenderer(*this, std::move(style));
+        return m_pluginReplacement->createElementRenderer(*this, std::move(style));
 
-    return new RenderEmbeddedObject(*this, std::move(style));
+    return createRenderer<RenderEmbeddedObject>(*this, std::move(style));
 }
 
 void HTMLPlugInElement::swapRendererTimerFired(Timer<HTMLPlugInElement>*)

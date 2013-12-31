@@ -45,7 +45,7 @@ public:
 private:
     DetailsMarkerControl(Document&);
 
-    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
     virtual bool rendererIsNeeded(const RenderStyle&);
     virtual const AtomicString& shadowPseudoId() const;
 

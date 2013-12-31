@@ -57,9 +57,9 @@ void HTMLButtonElement::setType(const AtomicString& type)
     setAttribute(typeAttr, type);
 }
 
-RenderElement* HTMLButtonElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderButton(*this, std::move(style));
+    return createRenderer<RenderButton>(*this, std::move(style));
 }
 
 const AtomicString& HTMLButtonElement::formControlType() const

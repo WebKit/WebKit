@@ -130,9 +130,9 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
         object->setNeedsLayout();
 }
 
-RenderElement* SVGRadialGradientElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGResourceRadialGradient(*this, std::move(style));
+    return createRenderer<RenderSVGResourceRadialGradient>(*this, std::move(style));
 }
 
 bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttributes& attributes)

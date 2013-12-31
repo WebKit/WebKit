@@ -110,9 +110,9 @@ HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document& d
     ASSERT(hasTagName(detailsTag));
 }
 
-RenderElement* HTMLDetailsElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLDetailsElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderBlockFlow(*this, std::move(style));
+    return createRenderer<RenderBlockFlow>(*this, std::move(style));
 }
 
 void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)

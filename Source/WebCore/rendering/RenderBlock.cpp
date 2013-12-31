@@ -511,8 +511,8 @@ RenderBlock* RenderBlock::clone() const
         cloneBlock = createAnonymousBlock();
         cloneBlock->setChildrenInline(childrenInline());
     } else {
-        auto cloneRenderer = element()->createRenderer(style());
-        cloneBlock = toRenderBlock(cloneRenderer);
+        auto cloneRenderer = element()->createElementRenderer(style());
+        cloneBlock = toRenderBlock(cloneRenderer.leakPtr());
         cloneBlock->initializeStyle();
 
         // This takes care of setting the right value of childrenInline in case

@@ -36,7 +36,7 @@ public:
 private:
     SVGGElement(const QualifiedName&, Document&);
 
-    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
 
     virtual bool isValid() const OVERRIDE { return SVGTests::isValid(); }
     virtual bool supportsFocus() const OVERRIDE { return true; }

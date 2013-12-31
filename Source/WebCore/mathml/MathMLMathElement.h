@@ -40,7 +40,7 @@ private:
     MathMLMathElement(const QualifiedName& tagName, Document&);
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
 };
     
 }

@@ -214,9 +214,9 @@ void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
     svgAttributeChanged(orientAnglePropertyInfo()->attributeName);
 }
 
-RenderElement* SVGMarkerElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGResourceMarker(*this, std::move(style));
+    return createRenderer<RenderSVGResourceMarker>(*this, std::move(style));
 }
 
 bool SVGMarkerElement::selfHasRelativeLengths() const

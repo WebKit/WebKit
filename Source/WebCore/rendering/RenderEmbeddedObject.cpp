@@ -116,9 +116,9 @@ RenderEmbeddedObject::~RenderEmbeddedObject()
     view().frameView().removeEmbeddedObjectToUpdate(*this);
 }
 
-RenderEmbeddedObject* RenderEmbeddedObject::createForApplet(HTMLAppletElement& applet, PassRef<RenderStyle> style)
+RenderPtr<RenderEmbeddedObject> RenderEmbeddedObject::createForApplet(HTMLAppletElement& applet, PassRef<RenderStyle> style)
 {
-    RenderEmbeddedObject* renderer = new RenderEmbeddedObject(applet, std::move(style));
+    auto renderer = createRenderer<RenderEmbeddedObject>(applet, std::move(style));
     renderer->setInline(true);
     return renderer;
 }

@@ -310,7 +310,7 @@ public:
 
     void lazyReattach();
 
-    virtual RenderElement* createRenderer(PassRef<RenderStyle>);
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>);
     virtual bool rendererIsNeeded(const RenderStyle&);
     void didAffectSelector(AffectedSelectorMask);
 

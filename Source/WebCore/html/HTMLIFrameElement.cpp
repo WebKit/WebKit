@@ -95,9 +95,9 @@ bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
     return isURLAllowed() && style.display() != NONE;
 }
 
-RenderElement* HTMLIFrameElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderIFrame(*this, std::move(style));
+    return createRenderer<RenderIFrame>(*this, std::move(style));
 }
 
 bool HTMLIFrameElement::shouldDisplaySeamlessly() const

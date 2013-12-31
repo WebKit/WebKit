@@ -157,9 +157,9 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout();
 }
 
-RenderElement* SVGMaskElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGResourceMasker(*this, std::move(style));
+    return createRenderer<RenderSVGResourceMasker>(*this, std::move(style));
 }
 
 bool SVGMaskElement::selfHasRelativeLengths() const

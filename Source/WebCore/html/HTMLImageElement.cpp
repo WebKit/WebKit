@@ -174,14 +174,14 @@ String HTMLImageElement::altText() const
     return alt;
 }
 
-RenderElement* HTMLImageElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLImageElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (style.get().hasContent())
         return RenderElement::createFor(*this, std::move(style));
 
-    RenderImage* image = new RenderImage(*this, std::move(style));
+    auto image = createRenderer<RenderImage>(*this, std::move(style));
     image->setImageResource(RenderImageResource::create());
-    return image;
+    return std::move(image);
 }
 
 bool HTMLImageElement::canStartSelection() const

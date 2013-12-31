@@ -38,7 +38,7 @@ public:
     RenderEmbeddedObject(HTMLFrameOwnerElement&, PassRef<RenderStyle>);
     virtual ~RenderEmbeddedObject();
 
-    static RenderEmbeddedObject* createForApplet(HTMLAppletElement&, PassRef<RenderStyle>);
+    static RenderPtr<RenderEmbeddedObject> createForApplet(HTMLAppletElement&, PassRef<RenderStyle>);
 
     enum PluginUnavailabilityReason {
         PluginMissing,

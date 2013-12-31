@@ -122,7 +122,7 @@ RenderElement::~RenderElement()
     }
 }
 
-RenderElement* RenderElement::createFor(Element& element, PassRef<RenderStyle> style)
+RenderPtr<RenderElement> RenderElement::createFor(Element& element, PassRef<RenderStyle> style)
 {
     Document& document = element.document();
 
@@ -131,64 +131,64 @@ RenderElement* RenderElement::createFor(Element& element, PassRef<RenderStyle> s
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style.get().contentData();
     if (contentData && !contentData->next() && contentData->isImage() && !element.isPseudoElement()) {
-        RenderImage* image = new RenderImage(element, std::move(style));
+        auto image = createRenderer<RenderImage>(element, std::move(style));
         if (const StyleImage* styleImage = static_cast<const ImageContentData*>(contentData)->image()) {
             image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage&>(*styleImage)));
             image->setIsGeneratedContent();
         } else
             image->setImageResource(RenderImageResource::create());
-        return image;
+        return std::move(image);
     }
 
     if (element.hasTagName(HTMLNames::rubyTag)) {
         if (style.get().display() == INLINE)
-            return new RenderRubyAsInline(element, std::move(style));
+            return createRenderer<RenderRubyAsInline>(element, std::move(style));
         if (style.get().display() == BLOCK)
-            return new RenderRubyAsBlock(element, std::move(style));
+            return createRenderer<RenderRubyAsBlock>(element, std::move(style));
     }
     // treat <rt> as ruby text ONLY if it still has its default treatment of block
     if (element.hasTagName(HTMLNames::rtTag) && style.get().display() == BLOCK)
-        return new RenderRubyText(element, std::move(style));
+        return createRenderer<RenderRubyText>(element, std::move(style));
     switch (style.get().display()) {
     case NONE:
         style.dropRef();
         return nullptr;
     case INLINE:
-        return new RenderInline(element, std::move(style));
+        return createRenderer<RenderInline>(element, std::move(style));
     case BLOCK:
     case INLINE_BLOCK:
     case RUN_IN:
     case COMPACT:
         if ((!style.get().hasAutoColumnCount() || !style.get().hasAutoColumnWidth()) && document.regionBasedColumnsEnabled())
-            return new RenderMultiColumnBlock(element, std::move(style));
-        return new RenderBlockFlow(element, std::move(style));
+            return createRenderer<RenderMultiColumnBlock>(element, std::move(style));
+        return createRenderer<RenderBlockFlow>(element, std::move(style));
     case LIST_ITEM:
-        return new RenderListItem(element, std::move(style));
+        return createRenderer<RenderListItem>(element, std::move(style));
     case TABLE:
     case INLINE_TABLE:
-        return new RenderTable(element, std::move(style));
+        return createRenderer<RenderTable>(element, std::move(style));
     case TABLE_ROW_GROUP:
     case TABLE_HEADER_GROUP:
     case TABLE_FOOTER_GROUP:
-        return new RenderTableSection(element, std::move(style));
+        return createRenderer<RenderTableSection>(element, std::move(style));
     case TABLE_ROW:
-        return new RenderTableRow(element, std::move(style));
+        return createRenderer<RenderTableRow>(element, std::move(style));
     case TABLE_COLUMN_GROUP:
     case TABLE_COLUMN:
-        return new RenderTableCol(element, std::move(style));
+        return createRenderer<RenderTableCol>(element, std::move(style));
     case TABLE_CELL:
-        return new RenderTableCell(element, std::move(style));
+        return createRenderer<RenderTableCell>(element, std::move(style));
     case TABLE_CAPTION:
-        return new RenderTableCaption(element, std::move(style));
+        return createRenderer<RenderTableCaption>(element, std::move(style));
     case BOX:
     case INLINE_BOX:
-        return new RenderDeprecatedFlexibleBox(element, std::move(style));
+        return createRenderer<RenderDeprecatedFlexibleBox>(element, std::move(style));
     case FLEX:
     case INLINE_FLEX:
-        return new RenderFlexibleBox(element, std::move(style));
+        return createRenderer<RenderFlexibleBox>(element, std::move(style));
     case GRID:
     case INLINE_GRID:
-        return new RenderGrid(element, std::move(style));
+        return createRenderer<RenderGrid>(element, std::move(style));
     }
     ASSERT_NOT_REACHED();
     return nullptr;

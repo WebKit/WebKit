@@ -649,22 +649,22 @@ bool HTMLMediaElement::rendererIsNeeded(const RenderStyle& style)
     return controls() && HTMLElement::rendererIsNeeded(style);
 }
 
-RenderElement* HTMLMediaElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLMediaElement::createElementRenderer(PassRef<RenderStyle> style)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (shouldUseVideoPluginProxy()) {
         // Setup the renderer if we already have a proxy widget.
-        RenderEmbeddedObject* mediaRenderer = new RenderEmbeddedObject(*this, std::move(style));
+        auto mediaRenderer = createRenderer<RenderEmbeddedObject>(*this, std::move(style));
         if (m_proxyWidget) {
             mediaRenderer->setWidget(m_proxyWidget);
 
             if (Frame* frame = document().frame())
                 frame->loader().client().showMediaPlayerProxyPlugin(m_proxyWidget.get());
         }
-        return mediaRenderer;
+        return std::move(mediaRenderer);
     }
 #endif
-    return new RenderMedia(*this, std::move(style));
+    return createRenderer<RenderMedia>(*this, std::move(style));
 }
 
 bool HTMLMediaElement::childShouldCreateRenderer(const Node& child) const

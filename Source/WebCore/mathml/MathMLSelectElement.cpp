@@ -47,9 +47,9 @@ PassRefPtr<MathMLSelectElement> MathMLSelectElement::create(const QualifiedName&
     return adoptRef(new MathMLSelectElement(tagName, document));
 }
 
-RenderElement* MathMLSelectElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> MathMLSelectElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderMathMLRow(*this, std::move(style));
+    return createRenderer<RenderMathMLRow>(*this, std::move(style));
 }
 
 bool MathMLSelectElement::childShouldCreateRenderer(const Node& child) const

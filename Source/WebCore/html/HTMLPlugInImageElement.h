@@ -133,7 +133,7 @@ protected:
     virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues) OVERRIDE;
 
 private:
-    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
     virtual bool willRecalcStyle(Style::Change) OVERRIDE;
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;

@@ -798,10 +798,10 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
     return StyledElement::rendererIsNeeded(style);
 }
 
-RenderElement* HTMLElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (hasLocalName(wbrTag))
-        return new RenderLineBreak(*this, std::move(style));
+        return createRenderer<RenderLineBreak>(*this, std::move(style));
     return RenderElement::createFor(*this, std::move(style));
 }
 

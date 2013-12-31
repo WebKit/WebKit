@@ -112,16 +112,16 @@ void HTMLCanvasElement::parseAttribute(const QualifiedName& name, const AtomicSt
     HTMLElement::parseAttribute(name, value);
 }
 
-RenderElement* HTMLCanvasElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     Frame* frame = document().frame();
     if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript)) {
         m_rendererIsCanvas = true;
-        return new RenderHTMLCanvas(*this, std::move(style));
+        return createRenderer<RenderHTMLCanvas>(*this, std::move(style));
     }
 
     m_rendererIsCanvas = false;
-    return HTMLElement::createRenderer(std::move(style));
+    return HTMLElement::createElementRenderer(std::move(style));
 }
 
 void HTMLCanvasElement::willAttachRenderers()

@@ -89,16 +89,16 @@ void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
 
-RenderElement* SVGGElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGGElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     // SVG 1.1 testsuite explicitely uses constructs like <g display="none"><linearGradient>
     // We still have to create renderers for the <g> & <linearGradient> element, though the
     // subtree may be hidden - we only want the resource renderers to exist so they can be
     // referenced from somewhere else.
     if (style.get().display() == NONE)
-        return new RenderSVGHiddenContainer(*this, std::move(style));
+        return createRenderer<RenderSVGHiddenContainer>(*this, std::move(style));
 
-    return new RenderSVGTransformableContainer(*this, std::move(style));
+    return createRenderer<RenderSVGTransformableContainer>(*this, std::move(style));
 }
 
 bool SVGGElement::rendererIsNeeded(const RenderStyle&)

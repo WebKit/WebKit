@@ -347,14 +347,14 @@ bool HTMLSelectElement::canSelectAll() const
     return !usesMenuList();
 }
 
-RenderElement* HTMLSelectElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(PassRef<RenderStyle> style)
 {
 #if !PLATFORM(IOS)
     if (usesMenuList())
-        return new RenderMenuList(*this, std::move(style));
-    return new RenderListBox(*this, std::move(style));
+        return createRenderer<RenderMenuList>(*this, std::move(style));
+    return createRenderer<RenderListBox>(*this, std::move(style));
 #else
-    return new RenderMenuList(*this, std::move(style));
+    return createRenderer<RenderMenuList>(*this, std::move(style));
 #endif
 }
 

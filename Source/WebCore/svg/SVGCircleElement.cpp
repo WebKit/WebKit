@@ -139,9 +139,9 @@ bool SVGCircleElement::selfHasRelativeLengths() const
         || r().isRelative();
 }
 
-RenderElement* SVGCircleElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGCircleElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGEllipse(*this, std::move(style));
+    return createRenderer<RenderSVGEllipse>(*this, std::move(style));
 }
 
 }

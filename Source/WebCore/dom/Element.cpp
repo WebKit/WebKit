@@ -1340,7 +1340,7 @@ bool Element::rendererIsNeeded(const RenderStyle& style)
     return style.display() != NONE;
 }
 
-RenderElement* Element::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> Element::createElementRenderer(PassRef<RenderStyle> style)
 {
     return RenderElement::createFor(*this, std::move(style));
 }

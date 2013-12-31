@@ -63,14 +63,14 @@ void MathMLTextElement::childrenChanged(const ChildChange& change)
         renderer()->updateFromElement();
 }
 
-RenderElement* MathMLTextElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> MathMLTextElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (hasLocalName(MathMLNames::moTag))
-        return new RenderMathMLOperator(*this, std::move(style));
+        return createRenderer<RenderMathMLOperator>(*this, std::move(style));
     if (hasLocalName(MathMLNames::mspaceTag))
-        return new RenderMathMLSpace(*this, std::move(style));
+        return createRenderer<RenderMathMLSpace>(*this, std::move(style));
 
-    return MathMLElement::createRenderer(std::move(style));
+    return MathMLElement::createElementRenderer(std::move(style));
 }
 
 bool MathMLTextElement::childShouldCreateRenderer(const Node& child) const

@@ -404,10 +404,10 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     return renderer->path().boundingRect();
 }
 
-RenderElement* SVGPathElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> SVGPathElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     // By default, any subclass is expected to do path-based drawing
-    return new RenderSVGPath(*this, std::move(style));
+    return createRenderer<RenderSVGPath>(*this, std::move(style));
 }
 
 }

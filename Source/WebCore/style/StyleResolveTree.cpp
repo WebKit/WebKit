@@ -237,7 +237,7 @@ static void createRendererIfNeeded(Element& element, PassRefPtr<RenderStyle> res
         nextRenderer = nextSiblingRenderer(element, renderingParentNode);
     }
 
-    RenderElement* newRenderer = element.createRenderer(style.releaseNonNull());
+    RenderElement* newRenderer = element.createElementRenderer(style.releaseNonNull()).leakPtr();
     if (!newRenderer)
         return;
     if (!parentRenderer->isChildAllowed(*newRenderer, newRenderer->style())) {

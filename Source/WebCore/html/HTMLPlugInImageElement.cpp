@@ -196,10 +196,10 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
     return false;
 }
 
-RenderElement* HTMLPlugInImageElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (displayState() >= PreparingPluginReplacement)
-        return HTMLPlugInElement::createRenderer(std::move(style));
+        return HTMLPlugInElement::createElementRenderer(std::move(style));
 
     // Once a PlugIn Element creates its renderer, it needs to be told when the Document goes
     // inactive or reactivates so it can clear the renderer before going into the page cache.
@@ -209,9 +209,9 @@ RenderElement* HTMLPlugInImageElement::createRenderer(PassRef<RenderStyle> style
     }
 
     if (displayState() == DisplayingSnapshot) {
-        RenderSnapshottedPlugIn* renderSnapshottedPlugIn = new RenderSnapshottedPlugIn(*this, std::move(style));
+        auto renderSnapshottedPlugIn = createRenderer<RenderSnapshottedPlugIn>(*this, std::move(style));
         renderSnapshottedPlugIn->updateSnapshot(m_snapshotImage);
-        return renderSnapshottedPlugIn;
+        return std::move(renderSnapshottedPlugIn);
     }
 
     // Fallback content breaks the DOM->Renderer class relationship of this
@@ -221,19 +221,19 @@ RenderElement* HTMLPlugInImageElement::createRenderer(PassRef<RenderStyle> style
         return RenderElement::createFor(*this, std::move(style));
 
     if (isImageType()) {
-        RenderImage* image = new RenderImage(*this, std::move(style));
+        auto image = createRenderer<RenderImage>(*this, std::move(style));
         image->setImageResource(RenderImageResource::create());
-        return image;
+        return std::move(image);
     }
 
 #if PLATFORM(IOS)
     if (ShadowRoot* shadowRoot = this->shadowRoot()) {
         Element* shadowElement = toElement(shadowRoot->firstChild());
         if (shadowElement && shadowElement->shadowPseudoId() == "-apple-youtube-shadow-iframe")
-            return new RenderBlockFlow(*this, std::move(style));
+            return createRenderer<RenderBlockFlow>(*this, std::move(style));
     }
 #endif
-    return HTMLPlugInElement::createRenderer(std::move(style));
+    return HTMLPlugInElement::createElementRenderer(std::move(style));
 }
 
 bool HTMLPlugInImageElement::willRecalcStyle(Style::Change)

@@ -1,3 +1,17 @@
+2013-12-31  Andreas Kling  <akling@apple.com>
+
+        Element's renderer factory should return RenderPtrs.
+        <https://webkit.org/b/126318>
+
+        Rename Element::createRenderer() to createElementRenderer() and have
+        it return RenderPtr<RenderElement>. Propagate signature until it
+        builds again.
+
+        We leakPtr() the renderer at two call sites when handing things over
+        to raw pointer API. This'll get tidied up in subsequent patches.
+
+        Reviewed by Sam Weinig.
+
 2013-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Return early in ResourceHandle::receivedCancellation if the load has already cancelled

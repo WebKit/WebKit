@@ -26,6 +26,7 @@
 #ifndef PluginReplacement_h
 #define PluginReplacement_h
 
+#include "RenderPtr.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,7 +49,7 @@ public:
     virtual JSC::JSObject* scriptObject() { return 0; }
 
     virtual bool willCreateRenderer() { return false; }
-    virtual RenderElement* createRenderer(HTMLPlugInElement&, PassRef<RenderStyle>) = 0;
+    virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, PassRef<RenderStyle>) = 0;
 
 protected:
     PluginReplacement() { }

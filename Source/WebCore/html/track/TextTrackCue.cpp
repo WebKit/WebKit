@@ -176,9 +176,9 @@ const AtomicString& TextTrackCueBox::textTrackCueBoxShadowPseudoId()
     return trackDisplayBoxShadowPseudoId;
 }
 
-RenderElement* TextTrackCueBox::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> TextTrackCueBox::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderTextTrackCue(*this, std::move(style));
+    return createRenderer<RenderTextTrackCue>(*this, std::move(style));
 }
 
 // ----------------------------

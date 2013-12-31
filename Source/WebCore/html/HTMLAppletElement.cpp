@@ -75,7 +75,7 @@ bool HTMLAppletElement::rendererIsNeeded(const RenderStyle& style)
     return HTMLPlugInImageElement::rendererIsNeeded(style);
 }
 
-RenderElement* HTMLAppletElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLAppletElement::createElementRenderer(PassRef<RenderStyle> style)
 {
     if (!canEmbedJava())
         return RenderElement::createFor(*this, std::move(style));

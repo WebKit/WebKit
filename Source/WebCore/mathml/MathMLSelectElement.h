@@ -37,7 +37,7 @@ public:
 
 private:
     MathMLSelectElement(const QualifiedName& tagName, Document&);
-    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
 
     virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
 

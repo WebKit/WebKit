@@ -81,9 +81,9 @@ const AtomicString& HTMLFieldSetElement::formControlType() const
     return fieldset;
 }
 
-RenderElement* HTMLFieldSetElement::createRenderer(PassRef<RenderStyle> style)
+RenderPtr<RenderElement> HTMLFieldSetElement::createElementRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderFieldset(*this, std::move(style));
+    return createRenderer<RenderFieldset>(*this, std::move(style));
 }
 
 HTMLLegendElement* HTMLFieldSetElement::legend() const
