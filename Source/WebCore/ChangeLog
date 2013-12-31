@@ -1,5 +1,22 @@
 2013-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] The initiating page is lost after a redirection
+        https://bugs.webkit.org/show_bug.cgi?id=126293
+
+        Reviewed by Martin Robinson.
+
+        The initiating page id is attached to the initial soup request
+        object, but not to the one created after a redirection.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::createSoupRequestAndMessageForHandle): Call
+        setSoupRequestInitiatingPageIDFromNetworkingContext() here if the
+        soup request is created successfully.
+        (WebCore::ResourceHandle::start): Remove the call to
+        setSoupRequestInitiatingPageIDFromNetworkingContext().
+
+2013-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Implement ResourceHandle::continueWillSendRequest()
         https://bugs.webkit.org/show_bug.cgi?id=126291
 

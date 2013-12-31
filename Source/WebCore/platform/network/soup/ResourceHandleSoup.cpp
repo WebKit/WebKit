@@ -1048,6 +1048,8 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, const R
         return false;
     }
 
+    setSoupRequestInitiatingPageIDFromNetworkingContext(d->m_soupRequest.get(), d->m_context.get());
+
     return true;
 }
 
@@ -1077,8 +1079,6 @@ bool ResourceHandle::start()
         this->scheduleFailure(InvalidURLFailure); // Error must not be reported immediately
         return true;
     }
-
-    setSoupRequestInitiatingPageIDFromNetworkingContext(d->m_soupRequest.get(), d->m_context.get());
 
     // Send the request only if it's not been explicitly deferred.
     if (!d->m_defersLoading)
