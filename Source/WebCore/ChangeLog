@@ -1,5 +1,15 @@
 2013-12-31  Andreas Kling  <akling@apple.com>
 
+        RenderListItem should store its marker in a RenderPtr.
+        <https://webkit.org/b/126298>
+
+        Make RenderListItem::m_marker a RenderPtr<RenderListMarker> and
+        remove two manual destroy() calls. Tweaked code to reduce nesting.
+
+        Reviewed by Anders Carlsson.
+
+2013-12-31  Andreas Kling  <akling@apple.com>
+
         Element's renderer factory should return RenderPtrs.
         <https://webkit.org/b/126318>
 

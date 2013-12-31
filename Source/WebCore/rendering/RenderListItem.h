@@ -24,6 +24,7 @@
 #define RenderListItem_h
 
 #include "RenderBlockFlow.h"
+#include "RenderPtr.h"
 
 namespace WebCore {
 
@@ -84,7 +85,7 @@ private:
     void explicitValueChanged();
 
     int m_explicitValue;
-    RenderListMarker* m_marker;
+    RenderPtr<RenderListMarker> m_marker;
     mutable int m_value;
 
     bool m_hasExplicitValue : 1;
