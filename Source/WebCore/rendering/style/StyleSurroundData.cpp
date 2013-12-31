@@ -30,13 +30,18 @@ StyleSurroundData::StyleSurroundData()
 {
 }
 
-StyleSurroundData::StyleSurroundData(const StyleSurroundData& o)
+inline StyleSurroundData::StyleSurroundData(const StyleSurroundData& o)
     : RefCounted<StyleSurroundData>()
     , offset(o.offset)
     , margin(o.margin)
     , padding(o.padding)
     , border(o.border)
 {
+}
+
+PassRef<StyleSurroundData> StyleSurroundData::copy() const
+{
+    return adoptRef(*new StyleSurroundData(*this));
 }
 
 bool StyleSurroundData::operator==(const StyleSurroundData& o) const

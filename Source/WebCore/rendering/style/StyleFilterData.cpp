@@ -39,10 +39,15 @@ StyleFilterData::StyleFilterData()
 {
 }
 
-StyleFilterData::StyleFilterData(const StyleFilterData& o)
+inline StyleFilterData::StyleFilterData(const StyleFilterData& o)
     : RefCounted<StyleFilterData>()
     , m_operations(o.m_operations)
 {
+}
+
+PassRef<StyleFilterData> StyleFilterData::copy() const
+{
+    return adoptRef(*new StyleFilterData(*this));
 }
 
 bool StyleFilterData::operator==(const StyleFilterData& o) const

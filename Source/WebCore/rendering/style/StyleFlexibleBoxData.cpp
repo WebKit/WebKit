@@ -39,7 +39,7 @@ StyleFlexibleBoxData::StyleFlexibleBoxData()
 {
 }
 
-StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
+inline StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
     : RefCounted<StyleFlexibleBoxData>()
     , m_flexGrow(o.m_flexGrow)
     , m_flexShrink(o.m_flexShrink)
@@ -47,6 +47,11 @@ StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
     , m_flexDirection(o.m_flexDirection)
     , m_flexWrap(o.m_flexWrap)
 {
+}
+
+PassRef<StyleFlexibleBoxData> StyleFlexibleBoxData::copy() const
+{
+    return adoptRef(*new StyleFlexibleBoxData(*this));
 }
 
 bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const

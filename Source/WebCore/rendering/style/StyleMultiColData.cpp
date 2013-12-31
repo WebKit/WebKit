@@ -43,7 +43,7 @@ StyleMultiColData::StyleMultiColData()
 {
 }
 
-StyleMultiColData::StyleMultiColData(const StyleMultiColData& o)
+inline StyleMultiColData::StyleMultiColData(const StyleMultiColData& o)
     : RefCounted<StyleMultiColData>()
     , m_width(o.m_width)
     , m_count(o.m_count)
@@ -61,6 +61,11 @@ StyleMultiColData::StyleMultiColData(const StyleMultiColData& o)
     , m_axis(o.m_axis)
     , m_progression(o.m_progression)
 {
+}
+
+PassRef<StyleMultiColData> StyleMultiColData::copy() const
+{
+    return adoptRef(*new StyleMultiColData(*this));
 }
 
 bool StyleMultiColData::operator==(const StyleMultiColData& o) const

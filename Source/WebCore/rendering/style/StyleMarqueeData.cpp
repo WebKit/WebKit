@@ -35,7 +35,7 @@ StyleMarqueeData::StyleMarqueeData()
 {
 }
 
-StyleMarqueeData::StyleMarqueeData(const StyleMarqueeData& o)
+inline StyleMarqueeData::StyleMarqueeData(const StyleMarqueeData& o)
     : RefCounted<StyleMarqueeData>()
     , increment(o.increment)
     , speed(o.speed)
@@ -43,6 +43,11 @@ StyleMarqueeData::StyleMarqueeData(const StyleMarqueeData& o)
     , behavior(o.behavior)
     , direction(o.direction) 
 {
+}
+
+PassRef<StyleMarqueeData> StyleMarqueeData::copy() const
+{
+    return adoptRef(*new StyleMarqueeData(*this));
 }
 
 bool StyleMarqueeData::operator==(const StyleMarqueeData& o) const

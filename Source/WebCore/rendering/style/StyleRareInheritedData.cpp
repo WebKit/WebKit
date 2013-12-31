@@ -135,7 +135,7 @@ StyleRareInheritedData::StyleRareInheritedData()
 {
 }
 
-StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
+inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     : RefCounted<StyleRareInheritedData>()
     , listStyleImage(o.listStyleImage)
     , textStrokeColor(o.textStrokeColor)
@@ -217,6 +217,11 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , tapHighlightColor(o.tapHighlightColor)
 #endif
 {
+}
+
+PassRef<StyleRareInheritedData> StyleRareInheritedData::copy() const
+{
+    return adoptRef(*new StyleRareInheritedData(*this));
 }
 
 StyleRareInheritedData::~StyleRareInheritedData()

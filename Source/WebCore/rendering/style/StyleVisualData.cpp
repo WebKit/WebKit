@@ -40,7 +40,7 @@ StyleVisualData::~StyleVisualData()
 {
 }
 
-StyleVisualData::StyleVisualData(const StyleVisualData& o)
+inline StyleVisualData::StyleVisualData(const StyleVisualData& o)
     : RefCounted<StyleVisualData>()
     , clip(o.clip)
     , hasClip(o.hasClip)
@@ -50,6 +50,11 @@ StyleVisualData::StyleVisualData(const StyleVisualData& o)
 #endif
     , m_zoom(RenderStyle::initialZoom())
 {
+}
+
+PassRef<StyleVisualData> StyleVisualData::copy() const
+{
+    return adoptRef(*new StyleVisualData(*this));
 }
 
 } // namespace WebCore

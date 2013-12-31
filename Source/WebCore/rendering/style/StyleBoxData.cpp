@@ -49,7 +49,7 @@ StyleBoxData::StyleBoxData()
 {
 }
 
-StyleBoxData::StyleBoxData(const StyleBoxData& o)
+inline StyleBoxData::StyleBoxData(const StyleBoxData& o)
     : RefCounted<StyleBoxData>()
     , m_width(o.m_width)
     , m_height(o.m_height)
@@ -65,6 +65,11 @@ StyleBoxData::StyleBoxData(const StyleBoxData& o)
     , m_boxDecorationBreak(o.m_boxDecorationBreak)
 #endif
 {
+}
+
+PassRef<StyleBoxData> StyleBoxData::copy() const
+{
+    return adoptRef(*new StyleBoxData(*this));
 }
 
 bool StyleBoxData::operator==(const StyleBoxData& o) const

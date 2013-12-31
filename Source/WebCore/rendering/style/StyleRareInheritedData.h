@@ -48,7 +48,7 @@ class StyleImage;
 class StyleRareInheritedData : public RefCounted<StyleRareInheritedData> {
 public:
     static PassRef<StyleRareInheritedData> create() { return adoptRef(*new StyleRareInheritedData); }
-    PassRef<StyleRareInheritedData> copy() const { return adoptRef(*new StyleRareInheritedData(*this)); }
+    PassRef<StyleRareInheritedData> copy() const;
     ~StyleRareInheritedData();
 
     bool operator==(const StyleRareInheritedData& o) const;

@@ -102,7 +102,7 @@ namespace WebCore {
     class StyleFillData : public RefCounted<StyleFillData> {
     public:
         static PassRef<StyleFillData> create() { return adoptRef(*new StyleFillData); }
-        PassRef<StyleFillData> copy() const { return adoptRef(*new StyleFillData(*this)); }
+        PassRef<StyleFillData> copy() const;
 
         bool operator==(const StyleFillData&) const;
         bool operator!=(const StyleFillData& other) const
@@ -126,7 +126,7 @@ namespace WebCore {
     class StyleStrokeData : public RefCounted<StyleStrokeData> {
     public:
         static PassRef<StyleStrokeData> create() { return adoptRef(*new StyleStrokeData); }
-        PassRef<StyleStrokeData> copy() const { return adoptRef(*new StyleStrokeData(*this)); }
+        PassRef<StyleStrokeData> copy() const;
 
         bool operator==(const StyleStrokeData&) const;
         bool operator!=(const StyleStrokeData& other) const
@@ -156,7 +156,7 @@ namespace WebCore {
     class StyleStopData : public RefCounted<StyleStopData> {
     public:
         static PassRef<StyleStopData> create() { return adoptRef(*new StyleStopData); }
-        PassRef<StyleStopData> copy() const { return adoptRef(*new StyleStopData(*this)); }
+        PassRef<StyleStopData> copy() const;
 
         bool operator==(const StyleStopData&) const;
         bool operator!=(const StyleStopData& other) const
@@ -175,7 +175,7 @@ namespace WebCore {
     class StyleTextData : public RefCounted<StyleTextData> {
     public:
         static PassRef<StyleTextData> create() { return adoptRef(*new StyleTextData); }
-        PassRef<StyleTextData> copy() const { return adoptRef(*new StyleTextData(*this)); }
+        PassRef<StyleTextData> copy() const;
         
         bool operator==(const StyleTextData& other) const;
         bool operator!=(const StyleTextData& other) const
@@ -194,7 +194,7 @@ namespace WebCore {
     class StyleMiscData : public RefCounted<StyleMiscData> {
     public:
         static PassRef<StyleMiscData> create() { return adoptRef(*new StyleMiscData); }
-        PassRef<StyleMiscData> copy() const { return adoptRef(*new StyleMiscData(*this)); }
+        PassRef<StyleMiscData> copy() const;
 
         bool operator==(const StyleMiscData&) const;
         bool operator!=(const StyleMiscData& other) const
@@ -217,7 +217,7 @@ namespace WebCore {
     class StyleShadowSVGData : public RefCounted<StyleShadowSVGData> {
     public:
         static PassRef<StyleShadowSVGData> create() { return adoptRef(*new StyleShadowSVGData); }
-        PassRef<StyleShadowSVGData> copy() const { return adoptRef(*new StyleShadowSVGData(*this)); }
+        PassRef<StyleShadowSVGData> copy() const;
 
         bool operator==(const StyleShadowSVGData&) const;
         bool operator!=(const StyleShadowSVGData& other) const
@@ -236,7 +236,7 @@ namespace WebCore {
     class StyleResourceData : public RefCounted<StyleResourceData> {
     public:
         static PassRef<StyleResourceData> create() { return adoptRef(*new StyleResourceData); }
-        PassRef<StyleResourceData> copy() const { return adoptRef(*new StyleResourceData(*this)); }
+        PassRef<StyleResourceData> copy() const;
 
         bool operator==(const StyleResourceData&) const;
         bool operator!=(const StyleResourceData& other) const
@@ -257,7 +257,7 @@ namespace WebCore {
     class StyleInheritedResourceData : public RefCounted<StyleInheritedResourceData> {
     public:
         static PassRef<StyleInheritedResourceData> create() { return adoptRef(*new StyleInheritedResourceData); }
-        PassRef<StyleInheritedResourceData> copy() const { return adoptRef(*new StyleInheritedResourceData(*this)); }
+        PassRef<StyleInheritedResourceData> copy() const;
 
         bool operator==(const StyleInheritedResourceData&) const;
         bool operator!=(const StyleInheritedResourceData& other) const

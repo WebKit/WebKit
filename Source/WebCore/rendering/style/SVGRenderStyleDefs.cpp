@@ -46,7 +46,7 @@ StyleFillData::StyleFillData()
 {
 }
 
-StyleFillData::StyleFillData(const StyleFillData& other)
+inline StyleFillData::StyleFillData(const StyleFillData& other)
     : RefCounted<StyleFillData>()
     , opacity(other.opacity)
     , paintType(other.paintType)
@@ -56,6 +56,11 @@ StyleFillData::StyleFillData(const StyleFillData& other)
     , visitedLinkPaintColor(other.visitedLinkPaintColor)
     , visitedLinkPaintUri(other.visitedLinkPaintUri)
 {
+}
+
+PassRef<StyleFillData> StyleFillData::copy() const
+{
+    return adoptRef(*new StyleFillData(*this));
 }
 
 bool StyleFillData::operator==(const StyleFillData& other) const
@@ -84,7 +89,7 @@ StyleStrokeData::StyleStrokeData()
 {
 }
 
-StyleStrokeData::StyleStrokeData(const StyleStrokeData& other)
+inline StyleStrokeData::StyleStrokeData(const StyleStrokeData& other)
     : RefCounted<StyleStrokeData>()
     , opacity(other.opacity)
     , miterLimit(other.miterLimit)
@@ -98,6 +103,11 @@ StyleStrokeData::StyleStrokeData(const StyleStrokeData& other)
     , visitedLinkPaintColor(other.visitedLinkPaintColor)
     , visitedLinkPaintUri(other.visitedLinkPaintUri)
 {
+}
+
+PassRef<StyleStrokeData> StyleStrokeData::copy() const
+{
+    return adoptRef(*new StyleStrokeData(*this));
 }
 
 bool StyleStrokeData::operator==(const StyleStrokeData& other) const
@@ -121,11 +131,16 @@ StyleStopData::StyleStopData()
 {
 }
 
-StyleStopData::StyleStopData(const StyleStopData& other)
+inline StyleStopData::StyleStopData(const StyleStopData& other)
     : RefCounted<StyleStopData>()
     , opacity(other.opacity)
     , color(other.color)
 {
+}
+
+PassRef<StyleStopData> StyleStopData::copy() const
+{
+    return adoptRef(*new StyleStopData(*this));
 }
 
 bool StyleStopData::operator==(const StyleStopData& other) const
@@ -139,10 +154,15 @@ StyleTextData::StyleTextData()
 {
 }
 
-StyleTextData::StyleTextData(const StyleTextData& other)
+inline StyleTextData::StyleTextData(const StyleTextData& other)
     : RefCounted<StyleTextData>()
     , kerning(other.kerning)
 {
+}
+
+PassRef<StyleTextData> StyleTextData::copy() const
+{
+    return adoptRef(*new StyleTextData(*this));
 }
 
 bool StyleTextData::operator==(const StyleTextData& other) const
@@ -158,13 +178,18 @@ StyleMiscData::StyleMiscData()
 {
 }
 
-StyleMiscData::StyleMiscData(const StyleMiscData& other)
+inline StyleMiscData::StyleMiscData(const StyleMiscData& other)
     : RefCounted<StyleMiscData>()
     , floodColor(other.floodColor)
     , floodOpacity(other.floodOpacity)
     , lightingColor(other.lightingColor)
     , baselineShiftValue(other.baselineShiftValue)
 {
+}
+
+PassRef<StyleMiscData> StyleMiscData::copy() const
+{
+    return adoptRef(*new StyleMiscData(*this));
 }
 
 bool StyleMiscData::operator==(const StyleMiscData& other) const
@@ -179,10 +204,15 @@ StyleShadowSVGData::StyleShadowSVGData()
 {
 }
 
-StyleShadowSVGData::StyleShadowSVGData(const StyleShadowSVGData& other)
+inline StyleShadowSVGData::StyleShadowSVGData(const StyleShadowSVGData& other)
     : RefCounted<StyleShadowSVGData>()
     , shadow(other.shadow ? adoptPtr(new ShadowData(*other.shadow)) : nullptr)
 {
+}
+
+PassRef<StyleShadowSVGData> StyleShadowSVGData::copy() const
+{
+    return adoptRef(*new StyleShadowSVGData(*this));
 }
 
 bool StyleShadowSVGData::operator==(const StyleShadowSVGData& other) const
@@ -201,12 +231,17 @@ StyleResourceData::StyleResourceData()
 {
 }
 
-StyleResourceData::StyleResourceData(const StyleResourceData& other)
+inline StyleResourceData::StyleResourceData(const StyleResourceData& other)
     : RefCounted<StyleResourceData>()
     , clipper(other.clipper)
     , filter(other.filter)
     , masker(other.masker)
 {
+}
+
+PassRef<StyleResourceData> StyleResourceData::copy() const
+{
+    return adoptRef(*new StyleResourceData(*this));
 }
 
 bool StyleResourceData::operator==(const StyleResourceData& other) const
@@ -223,12 +258,17 @@ StyleInheritedResourceData::StyleInheritedResourceData()
 {
 }
 
-StyleInheritedResourceData::StyleInheritedResourceData(const StyleInheritedResourceData& other)
+inline StyleInheritedResourceData::StyleInheritedResourceData(const StyleInheritedResourceData& other)
     : RefCounted<StyleInheritedResourceData>()
     , markerStart(other.markerStart)
     , markerMid(other.markerMid)
     , markerEnd(other.markerEnd)
 {
+}
+
+PassRef<StyleInheritedResourceData> StyleInheritedResourceData::copy() const
+{
+    return adoptRef(*new StyleInheritedResourceData(*this));
 }
 
 bool StyleInheritedResourceData::operator==(const StyleInheritedResourceData& other) const

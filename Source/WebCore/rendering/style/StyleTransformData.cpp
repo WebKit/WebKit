@@ -34,13 +34,18 @@ StyleTransformData::StyleTransformData()
 {
 }
 
-StyleTransformData::StyleTransformData(const StyleTransformData& o)
+inline StyleTransformData::StyleTransformData(const StyleTransformData& o)
     : RefCounted<StyleTransformData>()
     , m_operations(o.m_operations)
     , m_x(o.m_x)
     , m_y(o.m_y)
     , m_z(o.m_z)
 {
+}
+
+PassRef<StyleTransformData> StyleTransformData::copy() const
+{
+    return adoptRef(*new StyleTransformData(*this));
 }
 
 bool StyleTransformData::operator==(const StyleTransformData& o) const

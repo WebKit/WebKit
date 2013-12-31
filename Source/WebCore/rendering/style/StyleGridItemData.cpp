@@ -42,13 +42,18 @@ StyleGridItemData::StyleGridItemData()
 {
 }
 
-StyleGridItemData::StyleGridItemData(const StyleGridItemData& o)
+inline StyleGridItemData::StyleGridItemData(const StyleGridItemData& o)
     : RefCounted<StyleGridItemData>()
     , m_gridColumnStart(o.m_gridColumnStart)
     , m_gridColumnEnd(o.m_gridColumnEnd)
     , m_gridRowStart(o.m_gridRowStart)
     , m_gridRowEnd(o.m_gridRowEnd)
 {
+}
+
+PassRef<StyleGridItemData> StyleGridItemData::copy() const
+{
+    return adoptRef(*new StyleGridItemData(*this));
 }
 
 } // namespace WebCore

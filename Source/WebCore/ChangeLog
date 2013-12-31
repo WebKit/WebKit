@@ -1,5 +1,20 @@
 2013-12-31  Andreas Kling  <akling@apple.com>
 
+        Out-of-line RenderStyle substructure copying helpers.
+        <https://webkit.org/b/126340>
+
+        This shrinks the .access() calls by moving memory allocation logic
+        out-of-line, though I'm really doing this to make Instruments.app
+        allocations output more readable.
+
+        Writes to e.g 'font' or 'color' will now be grouped under a single
+        StyleInheritedData::copy() call instead of being spread out over
+        setFontDescription(), setLineHeight(), setColor(), etc.
+
+        Reviewed by Anders Carlsson.
+
+2013-12-31  Andreas Kling  <akling@apple.com>
+
         RenderListItem should store its marker in a RenderPtr.
         <https://webkit.org/b/126298>
 

@@ -42,7 +42,7 @@ namespace WebCore {
 class StyleGridItemData : public RefCounted<StyleGridItemData> {
 public:
     static PassRef<StyleGridItemData> create() { return adoptRef(*new StyleGridItemData); }
-    PassRef<StyleGridItemData> copy() const { return adoptRef(*new StyleGridItemData(*this)); }
+    PassRef<StyleGridItemData> copy() const;
 
     bool operator==(const StyleGridItemData& o) const
     {

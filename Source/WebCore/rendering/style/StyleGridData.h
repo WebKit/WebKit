@@ -41,7 +41,7 @@ typedef HashMap<String, Vector<size_t>> NamedGridLinesMap;
 class StyleGridData : public RefCounted<StyleGridData> {
 public:
     static PassRef<StyleGridData> create() { return adoptRef(*new StyleGridData); }
-    PassRef<StyleGridData> copy() const { return adoptRef(*new StyleGridData(*this)); }
+    PassRef<StyleGridData> copy() const;
 
     bool operator==(const StyleGridData& o) const
     {

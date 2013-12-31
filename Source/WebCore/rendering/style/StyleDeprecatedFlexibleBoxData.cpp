@@ -37,7 +37,7 @@ StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData()
 {
 }
 
-StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData(const StyleDeprecatedFlexibleBoxData& o)
+inline StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData(const StyleDeprecatedFlexibleBoxData& o)
     : RefCounted<StyleDeprecatedFlexibleBoxData>()
     , flex(o.flex)
     , flex_group(o.flex_group)
@@ -47,6 +47,11 @@ StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData(const StyleDeprec
     , orient(o.orient)
     , lines(o.lines)
 {
+}
+
+PassRef<StyleDeprecatedFlexibleBoxData> StyleDeprecatedFlexibleBoxData::copy() const
+{
+    return adoptRef(*new StyleDeprecatedFlexibleBoxData(*this));
 }
 
 bool StyleDeprecatedFlexibleBoxData::operator==(const StyleDeprecatedFlexibleBoxData& o) const

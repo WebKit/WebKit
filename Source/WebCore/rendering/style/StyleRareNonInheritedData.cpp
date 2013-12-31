@@ -103,7 +103,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     m_maskBoxImage.setMaskDefaults();
 }
 
-StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInheritedData& o)
+inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInheritedData& o)
     : RefCounted<StyleRareNonInheritedData>()
     , opacity(o.opacity)
     , m_aspectRatioDenominator(o.m_aspectRatioDenominator)
@@ -187,6 +187,11 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
 #endif
     , m_objectFit(o.m_objectFit)
 {
+}
+
+PassRef<StyleRareNonInheritedData> StyleRareNonInheritedData::copy() const
+{
+    return adoptRef(*new StyleRareNonInheritedData(*this));
 }
 
 StyleRareNonInheritedData::~StyleRareNonInheritedData()

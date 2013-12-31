@@ -33,7 +33,7 @@ namespace WebCore {
 class StyleDeprecatedFlexibleBoxData : public RefCounted<StyleDeprecatedFlexibleBoxData> {
 public:
     static PassRef<StyleDeprecatedFlexibleBoxData> create() { return adoptRef(*new StyleDeprecatedFlexibleBoxData); }
-    PassRef<StyleDeprecatedFlexibleBoxData> copy() const { return adoptRef(*new StyleDeprecatedFlexibleBoxData(*this)); }
+    PassRef<StyleDeprecatedFlexibleBoxData> copy() const;
 
     bool operator==(const StyleDeprecatedFlexibleBoxData&) const;
     bool operator!=(const StyleDeprecatedFlexibleBoxData& o) const

@@ -76,7 +76,7 @@ SVGRenderStyle::SVGRenderStyle(CreateDefaultType)
     setBitDefaults();
 }
 
-SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
+inline SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
     : RefCounted<SVGRenderStyle>()
     , svg_inherited_flags(other.svg_inherited_flags)
     , svg_noninherited_flags(other.svg_noninherited_flags)
@@ -89,6 +89,11 @@ SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
     , shadowSVG(other.shadowSVG)
     , resources(other.resources)
 {
+}
+
+PassRef<SVGRenderStyle> SVGRenderStyle::copy() const
+{
+    return adoptRef(*new SVGRenderStyle(*this));
 }
 
 SVGRenderStyle::~SVGRenderStyle()

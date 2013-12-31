@@ -61,7 +61,7 @@ NinePieceImageData::NinePieceImageData()
 {
 }
 
-NinePieceImageData::NinePieceImageData(const NinePieceImageData& other)
+inline NinePieceImageData::NinePieceImageData(const NinePieceImageData& other)
     : RefCounted<NinePieceImageData>()
     , fill(other.fill)
     , horizontalRule(other.horizontalRule)
@@ -71,6 +71,11 @@ NinePieceImageData::NinePieceImageData(const NinePieceImageData& other)
     , borderSlices(other.borderSlices)
     , outset(other.outset)
 {
+}
+
+PassRef<NinePieceImageData> NinePieceImageData::copy() const
+{
+    return adoptRef(*new NinePieceImageData(*this));
 }
 
 bool NinePieceImageData::operator==(const NinePieceImageData& other) const

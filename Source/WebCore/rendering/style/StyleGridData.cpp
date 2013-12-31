@@ -44,7 +44,7 @@ StyleGridData::StyleGridData()
 {
 }
 
-StyleGridData::StyleGridData(const StyleGridData& o)
+inline StyleGridData::StyleGridData(const StyleGridData& o)
     : RefCounted<StyleGridData>()
     , m_gridColumns(o.m_gridColumns)
     , m_gridRows(o.m_gridRows)
@@ -57,6 +57,11 @@ StyleGridData::StyleGridData(const StyleGridData& o)
     , m_namedGridAreaRowCount(o.m_namedGridAreaRowCount)
     , m_namedGridAreaColumnCount(o.m_namedGridAreaColumnCount)
 {
+}
+
+PassRef<StyleGridData> StyleGridData::copy() const
+{
+    return adoptRef(*new StyleGridData(*this));
 }
 
 } // namespace WebCore

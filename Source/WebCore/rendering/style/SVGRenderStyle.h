@@ -43,7 +43,7 @@ class SVGRenderStyle : public RefCounted<SVGRenderStyle> {
 public:
     static PassRef<SVGRenderStyle> createDefaultStyle();
     static PassRef<SVGRenderStyle> create() { return adoptRef(*new SVGRenderStyle); }
-    PassRef<SVGRenderStyle> copy() const { return adoptRef(*new SVGRenderStyle(*this));}
+    PassRef<SVGRenderStyle> copy() const;
     ~SVGRenderStyle();
 
     bool inheritedNotEqual(const SVGRenderStyle*) const;
