@@ -101,11 +101,11 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
     event->setDefaultHandled();
 }
 
-RenderElement* ImageInputType::createRenderer(PassRef<RenderStyle> style) const
+RenderPtr<RenderElement> ImageInputType::createInputRenderer(PassRef<RenderStyle> style)
 {
-    RenderImage* image = new RenderImage(element(), std::move(style));
+    auto image = createRenderer<RenderImage>(element(), std::move(style));
     image->setImageResource(RenderImageResource::create());
-    return image;
+    return std::move(image);
 }
 
 void ImageInputType::altAttributeChanged()

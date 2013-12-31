@@ -1,3 +1,13 @@
+2013-12-30  Andreas Kling  <akling@apple.com>
+
+        InputType should return input renderers wrapped in RenderPtr.
+        <https://webkit.org/b/126307>
+
+        Rename InputType::createRenderer() to createInputRenderer() and
+        make it return RenderPtr<RenderElement>. Also made it non-const.
+
+        Reviewed by Anders Carlsson.
+
 2013-12-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Cleanup static_cast<HTMLFormElement*> by using toHTMLFormElement()

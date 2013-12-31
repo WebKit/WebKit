@@ -289,9 +289,9 @@ HTMLElement* RangeInputType::sliderThumbElement() const
     return &typedSliderThumbElement();
 }
 
-RenderElement* RangeInputType::createRenderer(PassRef<RenderStyle> style) const
+RenderPtr<RenderElement> RangeInputType::createInputRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSlider(element(), std::move(style));
+    return createRenderer<RenderSlider>(element(), std::move(style));
 }
 
 Decimal RangeInputType::parseToNumber(const String& src, const Decimal& defaultValue) const

@@ -782,7 +782,7 @@ bool HTMLInputElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderElement* HTMLInputElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return m_inputType->createRenderer(std::move(style));
+    return m_inputType->createInputRenderer(std::move(style)).leakPtr();
 }
 
 void HTMLInputElement::willAttachRenderers()

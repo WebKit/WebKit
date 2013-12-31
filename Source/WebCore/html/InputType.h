@@ -35,6 +35,7 @@
 
 #include "FeatureObserver.h"
 #include "HTMLTextFormControlElement.h"
+#include "RenderPtr.h"
 #include "StepRange.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
@@ -236,7 +237,7 @@ public:
     // Miscellaneous functions
 
     virtual bool rendererIsNeeded();
-    virtual RenderElement* createRenderer(PassRef<RenderStyle>) const;
+    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>);
     virtual void addSearchResult();
     virtual void attach();
     virtual void detach();

@@ -48,7 +48,7 @@ public:
 private:
     virtual void attach() OVERRIDE;
     virtual void addSearchResult() OVERRIDE;
-    virtual RenderElement* createRenderer(PassRef<RenderStyle>) const OVERRIDE;
+    virtual RenderPtr<RenderElement> createInputRenderer(PassRef<RenderStyle>) OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool shouldRespectSpeechAttribute() OVERRIDE;
     virtual bool isSearchField() const OVERRIDE;

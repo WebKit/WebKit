@@ -37,6 +37,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
+#include "RenderElement.h"
 
 namespace WebCore {
 
@@ -66,10 +67,10 @@ bool HiddenInputType::supportsValidation() const
     return false;
 }
 
-RenderElement* HiddenInputType::createRenderer(PassRef<RenderStyle>) const
+RenderPtr<RenderElement> HiddenInputType::createInputRenderer(PassRef<RenderStyle>)
 {
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 void HiddenInputType::accessKeyAction(bool)
