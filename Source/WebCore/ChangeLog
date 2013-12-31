@@ -1,5 +1,20 @@
 2013-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Return early in ResourceHandle::receivedCancellation if the load has already cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=126287
+
+        Reviewed by Martin Robinson.
+
+        This situation can happen when using the network process, because
+        the ReceivedCancellation message can be received when the resource
+        loader has already been removed, but the authentication challenge
+        still has a reference to the ResourceHandleClient.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::receivedCancellation):
+
+2013-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] The initiating page is lost after a redirection
         https://bugs.webkit.org/show_bug.cgi?id=126293
 

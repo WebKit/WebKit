@@ -1263,6 +1263,13 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     if (challenge != d->m_currentWebChallenge)
         return;
 
+    if (cancelledOrClientless()) {
+        clearAuthentication();
+        return;
+    }
+
+    ASSERT(challenge.soupSession());
+    ASSERT(challenge.soupMessage());
     soup_session_unpause_message(challenge.soupSession(), challenge.soupMessage());
 
     if (client())
