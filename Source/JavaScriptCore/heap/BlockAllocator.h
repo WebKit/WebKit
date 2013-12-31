@@ -29,6 +29,7 @@
 #include "GCActivityCallback.h"
 #include "HeapBlock.h"
 #include "Region.h"
+#include <condition_variable>
 #include <mutex>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
