@@ -47,6 +47,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <thread>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringPrintStream.h>
@@ -549,17 +550,11 @@ EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)
 int jscmain(int argc, char** argv);
 
 static double s_desiredTimeout;
-static double s_timeToWake;
 
 static NO_RETURN_DUE_TO_CRASH void timeoutThreadMain(void*)
 {
-    // WTF doesn't provide for a portable sleep(), so we use the ThreadCondition, which
-    // is close enough.
-    Mutex mutex;
-    ThreadCondition condition;
-    mutex.lock();
-    while (currentTime() < s_timeToWake)
-        condition.timedWait(mutex, s_timeToWake);
+    auto timeout = std::chrono::microseconds(static_cast<std::chrono::microseconds::rep>(s_desiredTimeout * 1000000));
+    std::this_thread::sleep_for(timeout);
     
     dataLog("Timed out after ", s_desiredTimeout, " seconds!\n");
     CRASH();
@@ -616,10 +611,8 @@ int main(int argc, char** argv)
             dataLog(
                 "WARNING: timeout string is malformed, got ", timeoutString,
                 " but expected a number. Not using a timeout.\n");
-        } else {
-            s_timeToWake = currentTime() + s_desiredTimeout;
+        } else
             createThread(timeoutThreadMain, 0, "jsc Timeout Thread");
-        }
     }
 #endif
 

@@ -1,5 +1,16 @@
 2013-12-30  Anders Carlsson  <andersca@apple.com>
 
+        Stop using ThreadCondition in jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=126311
+
+        Reviewed by Sam Weinig.
+
+        * jsc.cpp:
+        (timeoutThreadMain):
+        (main):
+
+2013-12-30  Anders Carlsson  <andersca@apple.com>
+
         Replace WTF::ThreadingOnce with std::call_once
         https://bugs.webkit.org/show_bug.cgi?id=126215
 
