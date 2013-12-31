@@ -79,7 +79,7 @@ static void startTestServerMonitor()
 static void startTestServer()
 {
     // Prepare argv[] for spawning the server process.
-    GOwnPtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "WebKit2APITests", gTestServerAppName, NULL));
+    GOwnPtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "WebKit2GObjectAPITests", gTestServerAppName, NULL));
 
     // We install a handler to ensure that we kill the child process
     // if the parent dies because of whatever the reason is.

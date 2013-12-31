@@ -87,7 +87,7 @@ static void startTestServerMonitor()
 static void startTestServer()
 {
     // Prepare argv[] for spawning the server process.
-    GOwnPtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "WebKit2APITests", kTestServerAppName, NULL));
+    GOwnPtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "WebKit2GObjectAPITests", kTestServerAppName, NULL));
 
     char* testServerArgv[2];
     testServerArgv[0] = testServerPath.get();

@@ -1,38 +1,38 @@
 if ENABLE_WEBKIT2
 
 TEST_PROGS += \
-	Programs/WebKit2APITests/InspectorTestServer \
-	Programs/WebKit2APITests/TestAuthentication \
-	Programs/WebKit2APITests/TestBackForwardList \
-	Programs/WebKit2APITests/TestContextMenu \
-	Programs/WebKit2APITests/TestCookieManager \
-	Programs/WebKit2APITests/TestDOMNode \
-	Programs/WebKit2APITests/TestDownloads \
-	Programs/WebKit2APITests/TestFrame \
-	Programs/WebKit2APITests/TestInspector \
-	Programs/WebKit2APITests/TestInspectorServer \
-	Programs/WebKit2APITests/TestLoaderClient \
-	Programs/WebKit2APITests/TestPrinting \
-	Programs/WebKit2APITests/TestResources \
-	Programs/WebKit2APITests/TestSSL \
-	Programs/WebKit2APITests/TestUIClient \
-	Programs/WebKit2APITests/TestWebExtensions \
-	Programs/WebKit2APITests/TestWebKitVersion \
-	Programs/WebKit2APITests/TestWebKitFaviconDatabase \
-	Programs/WebKit2APITests/TestWebKitFindController \
-	Programs/WebKit2APITests/TestWebKitPolicyClient \
-	Programs/WebKit2APITests/TestWebKitSettings \
-	Programs/WebKit2APITests/TestWebKitWebContext \
-	Programs/WebKit2APITests/TestWebKitWebView \
-	Programs/WebKit2APITests/TestWebKitWebViewGroup \
-	Programs/WebKit2APITests/TestWebViewEditor
+	Programs/WebKit2GObjectAPITests/InspectorTestServer \
+	Programs/WebKit2GObjectAPITests/TestAuthentication \
+	Programs/WebKit2GObjectAPITests/TestBackForwardList \
+	Programs/WebKit2GObjectAPITests/TestContextMenu \
+	Programs/WebKit2GObjectAPITests/TestCookieManager \
+	Programs/WebKit2GObjectAPITests/TestDOMNode \
+	Programs/WebKit2GObjectAPITests/TestDownloads \
+	Programs/WebKit2GObjectAPITests/TestFrame \
+	Programs/WebKit2GObjectAPITests/TestInspector \
+	Programs/WebKit2GObjectAPITests/TestInspectorServer \
+	Programs/WebKit2GObjectAPITests/TestLoaderClient \
+	Programs/WebKit2GObjectAPITests/TestPrinting \
+	Programs/WebKit2GObjectAPITests/TestResources \
+	Programs/WebKit2GObjectAPITests/TestSSL \
+	Programs/WebKit2GObjectAPITests/TestUIClient \
+	Programs/WebKit2GObjectAPITests/TestWebExtensions \
+	Programs/WebKit2GObjectAPITests/TestWebKitVersion \
+	Programs/WebKit2GObjectAPITests/TestWebKitFaviconDatabase \
+	Programs/WebKit2GObjectAPITests/TestWebKitFindController \
+	Programs/WebKit2GObjectAPITests/TestWebKitPolicyClient \
+	Programs/WebKit2GObjectAPITests/TestWebKitSettings \
+	Programs/WebKit2GObjectAPITests/TestWebKitWebContext \
+	Programs/WebKit2GObjectAPITests/TestWebKitWebView \
+	Programs/WebKit2GObjectAPITests/TestWebKitWebViewGroup \
+	Programs/WebKit2GObjectAPITests/TestWebViewEditor
 
 noinst_PROGRAMS += $(TEST_PROGS)
 
 if HAVE_ATSPI2
-TEST_PROGS += Programs/WebKit2APITests/TestWebKitAccessibility
+TEST_PROGS += Programs/WebKit2GObjectAPITests/TestWebKitAccessibility
 
-noinst_PROGRAMS += Programs/WebKit2APITests/AccessibilityTestServer
+noinst_PROGRAMS += Programs/WebKit2GObjectAPITests/AccessibilityTestServer
 endif
 
 webkit2_tests_cppflags = \
@@ -159,169 +159,169 @@ EXTRA_DIST += \
 	Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml \
 	Source/WebKit2/UIProcess/API/gtk/tests/resources/link-title.js
 
-Programs_WebKit2APITests_TestWebKitWebContext_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestWebKitWebContext_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebContext.cpp
-Programs_WebKit2APITests_TestWebKitWebContext_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestWebKitWebContext_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestWebKitWebContext_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestWebKitWebContext_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestWebKitWebContext_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestWebKitWebContext_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestWebKitWebView_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestWebKitWebView_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebView.cpp
-Programs_WebKit2APITests_TestWebKitWebView_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestWebKitWebView_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestWebKitWebView_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestWebKitWebView_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestWebKitWebView_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestWebKitWebView_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestLoaderClient_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestLoaderClient_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestLoaderClient.cpp
-Programs_WebKit2APITests_TestLoaderClient_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestLoaderClient_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestLoaderClient_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestLoaderClient_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestLoaderClient_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestLoaderClient_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestWebKitSettings_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestWebKitSettings_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitSettings.cpp
-Programs_WebKit2APITests_TestWebKitSettings_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestWebKitSettings_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestWebKitSettings_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestWebKitSettings_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestWebKitSettings_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestWebKitSettings_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_InspectorTestServer_SOURCES = \
+Programs_WebKit2GObjectAPITests_InspectorTestServer_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/InspectorTestServer.cpp
-Programs_WebKit2APITests_InspectorTestServer_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_InspectorTestServer_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_InspectorTestServer_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_InspectorTestServer_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_InspectorTestServer_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_InspectorTestServer_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestBackForwardList_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestBackForwardList_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestBackForwardList.cpp
-Programs_WebKit2APITests_TestBackForwardList_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestBackForwardList_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestBackForwardList_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestBackForwardList_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestBackForwardList_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestBackForwardList_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestWebKitPolicyClient_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestWebKitPolicyClient_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitPolicyClient.cpp
-Programs_WebKit2APITests_TestWebKitPolicyClient_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestWebKitPolicyClient_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestWebKitPolicyClient_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestWebKitPolicyClient_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestWebKitPolicyClient_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestWebKitPolicyClient_LDFLAGS = $(webkit2_tests_ldflags)
 
 if HAVE_ATSPI2
-Programs_WebKit2APITests_AccessibilityTestServer_SOURCES = \
+Programs_WebKit2GObjectAPITests_AccessibilityTestServer_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/AccessibilityTestServer.cpp
-Programs_WebKit2APITests_AccessibilityTestServer_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_AccessibilityTestServer_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_AccessibilityTestServer_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_AccessibilityTestServer_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_AccessibilityTestServer_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_AccessibilityTestServer_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestWebKitAccessibility_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestWebKitAccessibility_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitAccessibility.cpp
-Programs_WebKit2APITests_TestWebKitAccessibility_CPPFLAGS = $(webkit2_tests_cppflags) $(ATSPI2_CFLAGS)
-Programs_WebKit2APITests_TestWebKitAccessibility_LDADD = $(webkit2_tests_ldadd) $(ATSPI2_LIBS)
-Programs_WebKit2APITests_TestWebKitAccessibility_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestWebKitAccessibility_CPPFLAGS = $(webkit2_tests_cppflags) $(ATSPI2_CFLAGS)
+Programs_WebKit2GObjectAPITests_TestWebKitAccessibility_LDADD = $(webkit2_tests_ldadd) $(ATSPI2_LIBS)
+Programs_WebKit2GObjectAPITests_TestWebKitAccessibility_LDFLAGS = $(webkit2_tests_ldflags)
 endif
 
-Programs_WebKit2APITests_TestDownloads_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestDownloads_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestDownloads.cpp
-Programs_WebKit2APITests_TestDownloads_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestDownloads_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestDownloads_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestDownloads_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestDownloads_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestDownloads_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestWebViewEditor_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestWebViewEditor_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestWebViewEditor.cpp
-Programs_WebKit2APITests_TestWebViewEditor_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestWebViewEditor_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestWebViewEditor_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestWebViewEditor_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestWebViewEditor_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestWebViewEditor_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestPrinting_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestPrinting_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestPrinting.cpp
-Programs_WebKit2APITests_TestPrinting_CPPFLAGS = $(webkit2_tests_cppflags) $(GTK_UNIX_PRINTING_CFLAGS)
-Programs_WebKit2APITests_TestPrinting_LDADD = $(webkit2_tests_ldadd) $(GTK_UNIX_PRINTING_LIBS)
-Programs_WebKit2APITests_TestPrinting_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestPrinting_CPPFLAGS = $(webkit2_tests_cppflags) $(GTK_UNIX_PRINTING_CFLAGS)
+Programs_WebKit2GObjectAPITests_TestPrinting_LDADD = $(webkit2_tests_ldadd) $(GTK_UNIX_PRINTING_LIBS)
+Programs_WebKit2GObjectAPITests_TestPrinting_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestWebKitFaviconDatabase_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestWebKitFaviconDatabase_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitFaviconDatabase.cpp
-Programs_WebKit2APITests_TestWebKitFaviconDatabase_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestWebKitFaviconDatabase_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestWebKitFaviconDatabase_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestWebKitFaviconDatabase_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestWebKitFaviconDatabase_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestWebKitFaviconDatabase_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestWebKitFindController_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestWebKitFindController_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitFindController.cpp
-Programs_WebKit2APITests_TestWebKitFindController_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestWebKitFindController_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestWebKitFindController_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestWebKitFindController_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestWebKitFindController_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestWebKitFindController_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestResources_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestResources_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestResources.cpp
-Programs_WebKit2APITests_TestResources_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestResources_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestResources_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestResources_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestResources_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestResources_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestCookieManager_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestCookieManager_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestCookieManager.cpp
-Programs_WebKit2APITests_TestCookieManager_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestCookieManager_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestCookieManager_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestCookieManager_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestCookieManager_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestCookieManager_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestInspector_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestInspector_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestInspector.cpp
-Programs_WebKit2APITests_TestInspector_CPPFLAGS = \
+Programs_WebKit2GObjectAPITests_TestInspector_CPPFLAGS = \
 	$(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestInspector_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestInspector_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestInspector_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestInspector_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestInspectorServer_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestInspectorServer_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestInspectorServer.cpp
-Programs_WebKit2APITests_TestInspectorServer_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestInspectorServer_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestInspectorServer_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestInspectorServer_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestInspectorServer_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestInspectorServer_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestWebKitVersion_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestWebKitVersion_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitVersion.cpp
-Programs_WebKit2APITests_TestWebKitVersion_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestWebKitVersion_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestWebKitVersion_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestWebKitVersion_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestWebKitVersion_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestWebKitVersion_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestContextMenu_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestContextMenu_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestContextMenu.cpp
-Programs_WebKit2APITests_TestContextMenu_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestContextMenu_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestContextMenu_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestContextMenu_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestContextMenu_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestContextMenu_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestSSL_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestSSL_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestSSL.cpp
-Programs_WebKit2APITests_TestSSL_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestSSL_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestSSL_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestSSL_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestSSL_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestSSL_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestWebExtensions_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestWebExtensions_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestWebExtensions.cpp
-Programs_WebKit2APITests_TestWebExtensions_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestWebExtensions_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestWebExtensions_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestWebExtensions_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestWebExtensions_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestWebExtensions_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestWebKitWebViewGroup_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestWebKitWebViewGroup_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebViewGroup.cpp
-Programs_WebKit2APITests_TestWebKitWebViewGroup_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestWebKitWebViewGroup_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestWebKitWebViewGroup_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestWebKitWebViewGroup_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestWebKitWebViewGroup_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestWebKitWebViewGroup_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestDOMNode_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestDOMNode_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestDOMNode.cpp
-Programs_WebKit2APITests_TestDOMNode_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestDOMNode_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestDOMNode_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestDOMNode_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestDOMNode_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestDOMNode_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestFrame_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestFrame_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestFrame.cpp
-Programs_WebKit2APITests_TestFrame_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestFrame_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestFrame_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestFrame_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestFrame_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestFrame_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestAuthentication_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestAuthentication_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestAuthentication.cpp
-Programs_WebKit2APITests_TestAuthentication_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestAuthentication_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestAuthentication_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestAuthentication_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestAuthentication_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestAuthentication_LDFLAGS = $(webkit2_tests_ldflags)
 
-Programs_WebKit2APITests_TestUIClient_SOURCES = \
+Programs_WebKit2GObjectAPITests_TestUIClient_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestUIClient.cpp
-Programs_WebKit2APITests_TestUIClient_CPPFLAGS = $(webkit2_tests_cppflags)
-Programs_WebKit2APITests_TestUIClient_LDADD = $(webkit2_tests_ldadd)
-Programs_WebKit2APITests_TestUIClient_LDFLAGS = $(webkit2_tests_ldflags)
+Programs_WebKit2GObjectAPITests_TestUIClient_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2GObjectAPITests_TestUIClient_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2GObjectAPITests_TestUIClient_LDFLAGS = $(webkit2_tests_ldflags)
 
 endif # ENABLE_WEBKIT2

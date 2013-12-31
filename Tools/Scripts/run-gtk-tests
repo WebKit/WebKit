@@ -58,18 +58,18 @@ class TestTimeout(Exception):
     pass
 
 class TestRunner:
-    TEST_DIRS = [ "unittests", "WebKit2APITests", "TestWebKitAPI" ]
+    TEST_DIRS = [ "WebKit1GObjectAPITests", "WebKit2GObjectAPITests", "TestWebKitAPI" ]
 
     SKIPPED = [
-        SkippedTest("unittests/testdownload", "/webkit/download/not-found", "Test fails in GTK Linux 64-bit Release bot", 82329),
-        SkippedTest("unittests/testwebinspector", "/webkit/webinspector/close-and-inspect", "Test is flaky in GTK Linux 32-bit Release bot", 82869),
-        SkippedTest("unittests/testwebresource", "/webkit/webresource/loading", "Test fails", 104689),
-        SkippedTest("unittests/testwebresource", "/webkit/webresource/sub_resource_loading", "Test fails in GTK Linux 64-bit Release bot", 82330),
-        SkippedTest("unittests/testwebview", "/webkit/webview/icon-uri", "Test times out in GTK Linux 64-bit Release bot", 82328),
-        SkippedTest("WebKit2APITests/TestResources", "/webkit2/WebKitWebView/resources", "Test is flaky in GTK Linux 32-bit Release bot", 82868),
-        SkippedTest("WebKit2APITests/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
-        SkippedTest("WebKit2APITests/TestAuthentication", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
-        SkippedTest("WebKit2APITests/TestContextMenu", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
+        SkippedTest("WebKit1GObjectAPITests/testdownload", "/webkit/download/not-found", "Test fails in GTK Linux 64-bit Release bot", 82329),
+        SkippedTest("WebKit1GObjectAPITests/testwebinspector", "/webkit/webinspector/close-and-inspect", "Test is flaky in GTK Linux 32-bit Release bot", 82869),
+        SkippedTest("WebKit1GObjectAPITests/testwebresource", "/webkit/webresource/loading", "Test fails", 104689),
+        SkippedTest("WebKit1GObjectAPITests/testwebresource", "/webkit/webresource/sub_resource_loading", "Test fails in GTK Linux 64-bit Release bot", 82330),
+        SkippedTest("WebKit1GObjectAPITests/testwebview", "/webkit/webview/icon-uri", "Test times out in GTK Linux 64-bit Release bot", 82328),
+        SkippedTest("WebKit2GObjectAPITests/TestResources", "/webkit2/WebKitWebView/resources", "Test is flaky in GTK Linux 32-bit Release bot", 82868),
+        SkippedTest("WebKit2GObjectAPITests/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
+        SkippedTest("WebKit2GObjectAPITests/TestAuthentication", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
+        SkippedTest("WebKit2GObjectAPITests/TestContextMenu", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.MouseMoveAfterCrash", "Test is flaky", 85066),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutFrames", "Test fails", 85037),
@@ -86,7 +86,7 @@ class TestRunner:
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.TerminateTwice", "Test causes crash on the next test", 121970),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.GeolocationTransitionToHighAccuracy", "Test causes crash on the next test", 125068),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.GeolocationTransitionToLowAccuracy", "Test causes crash on the next test", 125068),
-        SkippedTest("WebKit2APITests/TestInspectorServer", SkippedTest.ENTIRE_SUITE, "Timing out on the bot", 122571),
+        SkippedTest("WebKit2GObjectAPITests/TestInspectorServer", SkippedTest.ENTIRE_SUITE, "Timing out on the bot", 122571),
     ]
 
     def __init__(self, options, tests=[]):
@@ -359,7 +359,7 @@ class TestRunner:
         return 0
 
     def _run_test(self, test_program):
-        if "unittests" in test_program or "WebKit2APITests" in test_program:
+        if "GObjectAPITest" in test_program:
             return self._run_test_glib(test_program)
 
         if "TestWebKitAPI" in test_program:
