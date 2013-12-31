@@ -117,7 +117,7 @@ def _interpret_test_failures(failures):
 
     return test_dict
 
-
+# These results must match ones in print_unexpected_results() in views/buildbot_results.py.
 def summarize_results(port_obj, expectations, initial_results, retry_results, enabled_pixel_tests_in_retry, include_passes=False, include_time_and_modifiers=False):
     """Returns a dictionary containing a summary of the test runs, with the following fields:
         'version': a version indicator
@@ -179,25 +179,32 @@ def summarize_results(port_obj, expectations, initial_results, retry_results, en
         elif result_type == test_expectations.CRASH:
             if test_name in initial_results.unexpected_results_by_name:
                 num_regressions += 1
+                test_dict['report'] = 'REGRESSION'
         elif result_type == test_expectations.MISSING:
             if test_name in initial_results.unexpected_results_by_name:
                 num_missing += 1
+                test_dict['report'] = 'MISSING'
         elif test_name in initial_results.unexpected_results_by_name:
             if retry_results and test_name not in retry_results.unexpected_results_by_name:
                 actual.extend(expectations.model().get_expectations_string(test_name).split(" "))
                 num_flaky += 1
+                test_dict['report'] = 'FLAKY'
             elif retry_results:
                 retry_result_type = retry_results.unexpected_results_by_name[test_name].type
                 if result_type != retry_result_type:
                     if enabled_pixel_tests_in_retry and result_type == test_expectations.TEXT and retry_result_type == test_expectations.IMAGE_PLUS_TEXT:
                         num_regressions += 1
+                        test_dict['report'] = 'REGRESSION'
                     else:
                         num_flaky += 1
+                        test_dict['report'] = 'FLAKY'
                     actual.append(keywords[retry_result_type])
                 else:
                     num_regressions += 1
+                    test_dict['report'] = 'REGRESSION'
             else:
                 num_regressions += 1
+                test_dict['report'] = 'REGRESSION'
 
         test_dict['expected'] = expected
         test_dict['actual'] = " ".join(actual)

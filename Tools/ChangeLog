@@ -1,3 +1,21 @@
+2013-12-30  Alexey Proskuryakov  <ap@apple.com>
+
+        full_results.json should distinguish unexpected failures from expected ones
+        https://bugs.webkit.org/show_bug.cgi?id=126300
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (summarize_results): Add "report" element to JSON, which tells the consumer how
+        this result was counted for summary.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        Updated results to include the new element.
+
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py:
+        (print_unexpected_results): Added a comment pointing to another place that
+        summarizes results, and should stay in sync.
+
 2013-12-30  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Replace remaning CoreIPC namespace to IPC

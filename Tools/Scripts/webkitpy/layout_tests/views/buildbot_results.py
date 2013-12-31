@@ -88,6 +88,7 @@ class BuildBotPrinter(object):
                 pct = len(results) * 100.0 / not_passing
                 self._print("  %5d %-24s (%4.1f%%)" % (len(results), desc, pct))
 
+    # These results must match ones in summarize_results() in models/test_run_results.py.
     def print_unexpected_results(self, summarized_results, enabled_pixel_tests_in_retry=False):
         passes = {}
         flaky = {}
