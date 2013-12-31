@@ -37,9 +37,6 @@ public:
     {
     }
 
-    Iterator begin() { return m_begin; }
-    Iterator end() { return m_end; }
-
     Iterator begin() const { return m_begin; }
     Iterator end() const { return m_end; }
 
