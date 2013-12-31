@@ -568,7 +568,10 @@ public:
         if (resource != m_resource)
             return;
 
-        g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, m_expectedNewResourceURI.data());
+        if (redirectResponse)
+            g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, m_expectedNewResourceURIAfterRedirection.data());
+        else
+            g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, m_expectedNewResourceURI.data());
         g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, webkit_web_resource_get_uri(resource));
 
         SingleResourceLoadTest::resourceSentRequest(resource, request, redirectResponse);
@@ -595,8 +598,14 @@ public:
         m_expectedCancelledResourceURI = uri;
     }
 
+    void setExpectedNewResourceURIAfterRedirection(const CString& uri)
+    {
+        m_expectedNewResourceURIAfterRedirection = uri;
+    }
+
     CString m_expectedNewResourceURI;
     CString m_expectedCancelledResourceURI;
+    CString m_expectedNewResourceURIAfterRedirection;
 };
 
 static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)
@@ -625,6 +634,36 @@ static void testWebResourceSendRequest(SendRequestTest* test, gconstpointer)
     g_assert_cmpint(events[0], ==, SingleResourceLoadTest::Started);
     g_assert_cmpint(events[1], ==, SingleResourceLoadTest::Failed);
     g_assert_cmpint(events[2], ==, SingleResourceLoadTest::Finished);
+    events.clear();
+
+    // URI changed after a redirect.
+    test->setExpectedNewResourceURI(kServer->getURIForPath("/redirected.js"));
+    test->setExpectedNewResourceURIAfterRedirection(kServer->getURIForPath("/javascript.js"));
+    test->loadURI(kServer->getURIForPath("redirected-javascript.html").data());
+    test->waitUntilResourceLoadFinished();
+    g_assert(test->m_resource);
+
+    g_assert_cmpint(events.size(), ==, 6);
+    g_assert_cmpint(events[0], ==, SingleResourceLoadTest::Started);
+    g_assert_cmpint(events[1], ==, SingleResourceLoadTest::SentRequest);
+    g_assert_cmpint(events[2], ==, SingleResourceLoadTest::Redirected);
+    g_assert_cmpint(events[3], ==, SingleResourceLoadTest::ReceivedResponse);
+    g_assert_cmpint(events[4], ==, SingleResourceLoadTest::ReceivedData);
+    g_assert_cmpint(events[5], ==, SingleResourceLoadTest::Finished);
+    events.clear();
+
+    // Cancel after a redirect.
+    test->setExpectedNewResourceURI(kServer->getURIForPath("/redirected-to-cancel.js"));
+    test->setExpectedCancelledResourceURI(kServer->getURIForPath("/redirected-to-cancel.js"));
+    test->loadURI(kServer->getURIForPath("/redirected-to-cancel.html").data());
+    test->waitUntilResourceLoadFinished();
+    g_assert(test->m_resource);
+
+    g_assert_cmpint(events.size(), ==, 4);
+    g_assert_cmpint(events[0], ==, SingleResourceLoadTest::Started);
+    g_assert_cmpint(events[1], ==, SingleResourceLoadTest::SentRequest);
+    g_assert_cmpint(events[2], ==, SingleResourceLoadTest::Failed);
+    g_assert_cmpint(events[3], ==, SingleResourceLoadTest::Finished);
     events.clear();
 }
 
@@ -688,6 +727,12 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     } else if (g_str_equal(path, "/resource-to-cancel.html")) {
         static const char* resourceToCancelHTML = "<html><head><script language='javascript' src='cancel-this.js'></script></head><body></body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, resourceToCancelHTML, strlen(resourceToCancelHTML));
+    } else if (g_str_equal(path, "/redirected-javascript.html")) {
+        static const char* javascriptRelativeHTML = "<html><head><script language='javascript' src='/redirected.js'></script></head><body></body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, javascriptRelativeHTML, strlen(javascriptRelativeHTML));
+    } else if (g_str_equal(path, "/redirected-to-cancel.html")) {
+        static const char* javascriptRelativeHTML = "<html><head><script language='javascript' src='/redirected-to-cancel.js'></script></head><body></body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, javascriptRelativeHTML, strlen(javascriptRelativeHTML));
     } else if (g_str_equal(path, "/blank.ico")) {
         GOwnPtr<char> filePath(g_build_filename(Test::getWebKit1TestResoucesDir().data(), path, NULL));
         char* contents;
@@ -707,6 +752,12 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     } else if (g_str_equal(path, "/redirected.css")) {
         soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
         soup_message_headers_append(message->response_headers, "Location", "/simple-style.css");
+    } else if (g_str_equal(path, "/redirected.js")) {
+        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
+        soup_message_headers_append(message->response_headers, "Location", "/remove-this/javascript.js");
+    } else if (g_str_equal(path, "/redirected-to-cancel.js")) {
+        soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
+        soup_message_headers_append(message->response_headers, "Location", "/cancel-this.js");
     } else if (g_str_equal(path, "/invalid.css"))
         soup_message_set_status(message, SOUP_STATUS_CANT_CONNECT);
     else

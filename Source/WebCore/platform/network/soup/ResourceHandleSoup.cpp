@@ -502,12 +502,6 @@ static void doRedirect(ResourceHandle* handle)
     } else
         applyAuthenticationToRequest(handle, newRequest, true);
 
-    cleanupSoupRequestOperation(handle);
-    if (!createSoupRequestAndMessageForHandle(handle, newRequest, true)) {
-        d->client()->cannotShowURL(handle);
-        return;
-    }
-
     // If we sent credentials with this request's URL, we don't want the response to carry them to
     // the WebKit layer. They were only placed in the URL for the benefit of libsoup.
     newRequest.removeCredentials();
@@ -516,6 +510,18 @@ static void doRedirect(ResourceHandle* handle)
         d->client()->willSendRequestAsync(handle, newRequest, d->m_response);
     else
         d->client()->willSendRequest(handle, newRequest, d->m_response);
+
+    cleanupSoupRequestOperation(handle);
+
+    // willSendRequest might cancel the load.
+    if (handle->cancelledOrClientless())
+        return;
+
+    if (!createSoupRequestAndMessageForHandle(handle, newRequest, true)) {
+        d->client()->cannotShowURL(handle);
+        return;
+    }
+
     handle->sendPendingRequest();
 }
 
