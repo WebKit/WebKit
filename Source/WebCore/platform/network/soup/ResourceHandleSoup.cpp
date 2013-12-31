@@ -455,6 +455,20 @@ static bool shouldRedirectAsGET(SoupMessage* message, URL& newURL, bool crossOri
     return false;
 }
 
+static void continueAfterWillSendRequest(ResourceHandle* handle, const ResourceRequest& newRequest)
+{
+    // willSendRequest might cancel the load.
+    if (handle->cancelledOrClientless())
+        return;
+
+    if (!createSoupRequestAndMessageForHandle(handle, newRequest, true)) {
+        handle->getInternal()->client()->cannotShowURL(handle);
+        return;
+    }
+
+    handle->sendPendingRequest();
+}
+
 static void doRedirect(ResourceHandle* handle)
 {
     ResourceHandleInternal* d = handle->getInternal();
@@ -506,23 +520,15 @@ static void doRedirect(ResourceHandle* handle)
     // the WebKit layer. They were only placed in the URL for the benefit of libsoup.
     newRequest.removeCredentials();
 
-    if (d->client()->usesAsyncCallbacks())
-        d->client()->willSendRequestAsync(handle, newRequest, d->m_response);
-    else
-        d->client()->willSendRequest(handle, newRequest, d->m_response);
-
     cleanupSoupRequestOperation(handle);
 
-    // willSendRequest might cancel the load.
-    if (handle->cancelledOrClientless())
-        return;
-
-    if (!createSoupRequestAndMessageForHandle(handle, newRequest, true)) {
-        d->client()->cannotShowURL(handle);
-        return;
+    if (d->client()->usesAsyncCallbacks())
+        d->client()->willSendRequestAsync(handle, newRequest, d->m_response);
+    else {
+        d->client()->willSendRequest(handle, newRequest, d->m_response);
+        continueAfterWillSendRequest(handle, newRequest);
     }
 
-    handle->sendPendingRequest();
 }
 
 static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
@@ -1392,7 +1398,7 @@ void ResourceHandle::continueWillSendRequest(const ResourceRequest& request)
 {
     ASSERT(client());
     ASSERT(client()->usesAsyncCallbacks());
-    // FIXME: Implement this method if needed: https://bugs.webkit.org/show_bug.cgi?id=126114.
+    continueAfterWillSendRequest(this, request);
 }
 
 void ResourceHandle::continueDidReceiveResponse()

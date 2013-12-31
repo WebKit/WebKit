@@ -1,3 +1,18 @@
+2013-12-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Implement ResourceHandle::continueWillSendRequest()
+        https://bugs.webkit.org/show_bug.cgi?id=126291
+
+        Reviewed by Martin Robinson.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::continueAfterWillSendRequest): Helper function that
+        continues with the load after willSendRequest has been called.
+        (WebCore::doRedirect): Call continueAfterWillSendRequest() when
+        client doesn't use async callbacks.
+        (WebCore::ResourceHandle::continueWillSendRequest): Call
+        continueAfterWillSendRequest().
+
 2013-12-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] willSendRequest doesn't work after a redirect
