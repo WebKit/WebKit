@@ -61,9 +61,9 @@ BlockAllocator::~BlockAllocator()
 {
     releaseFreeRegions();
     {
-        std::lock_guard<std::mutex> lock(m_emptyRegionConditionMutex);
+        MutexLocker locker(m_emptyRegionConditionLock);
         m_blockFreeingThreadShouldQuit = true;
-        m_emptyRegionCondition.notify_all();
+        m_emptyRegionCondition.broadcast();
     }
     if (m_blockFreeingThread)
         waitForThreadCompletion(m_blockFreeingThread);
@@ -101,17 +101,22 @@ void BlockAllocator::releaseFreeRegions()
     }
 }
 
-void BlockAllocator::waitForDuration(std::chrono::milliseconds duration)
+void BlockAllocator::waitForRelativeTimeWhileHoldingLock(double relative)
 {
-    std::unique_lock<std::mutex> lock(m_emptyRegionConditionMutex);
-
-    // If this returns early, that's fine, so long as it doesn't do it too
-    // frequently. It would only be a bug if this function failed to return
-    // when it was asked to do so.
     if (m_blockFreeingThreadShouldQuit)
         return;
 
-    m_emptyRegionCondition.wait_for(lock, duration);
+    m_emptyRegionCondition.timedWait(m_emptyRegionConditionLock, currentTime() + relative);
+}
+
+void BlockAllocator::waitForRelativeTime(double relative)
+{
+    // If this returns early, that's fine, so long as it doesn't do it too
+    // frequently. It would only be a bug if this function failed to return
+    // when it was asked to do so.
+    
+    MutexLocker locker(m_emptyRegionConditionLock);
+    waitForRelativeTimeWhileHoldingLock(relative);
 }
 
 void BlockAllocator::blockFreeingThreadStartFunc(void* blockAllocator)
@@ -125,7 +130,7 @@ void BlockAllocator::blockFreeingThreadMain()
     while (!m_blockFreeingThreadShouldQuit) {
         // Generally wait for one second before scavenging free blocks. This
         // may return early, particularly when we're being asked to quit.
-        waitForDuration(std::chrono::seconds(1));
+        waitForRelativeTime(1.0);
         if (m_blockFreeingThreadShouldQuit)
             break;
         
@@ -136,11 +141,11 @@ void BlockAllocator::blockFreeingThreadMain()
 
         // Sleep until there is actually work to do rather than waking up every second to check.
         {
-            std::unique_lock<std::mutex> lock(m_emptyRegionConditionMutex);
+            MutexLocker locker(m_emptyRegionConditionLock);
             SpinLockHolder regionLocker(&m_regionLock);
             while (!m_numberOfEmptyRegions && !m_blockFreeingThreadShouldQuit) {
                 m_regionLock.Unlock();
-                m_emptyRegionCondition.wait(lock);
+                m_emptyRegionCondition.wait(m_emptyRegionConditionLock);
                 m_regionLock.Lock();
             }
             currentNumberOfEmptyRegions = m_numberOfEmptyRegions;

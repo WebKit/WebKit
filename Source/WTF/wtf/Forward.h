@@ -38,6 +38,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler> class Vect
 
 class AtomicString;
 class AtomicStringImpl;
+class BinarySemaphore;
 class CString;
 class Decoder;
 class Encoder;
@@ -51,6 +52,7 @@ class StringImpl;
 
 using WTF::AtomicString;
 using WTF::AtomicStringImpl;
+using WTF::BinarySemaphore;
 using WTF::CString;
 using WTF::Decoder;
 using WTF::Encoder;

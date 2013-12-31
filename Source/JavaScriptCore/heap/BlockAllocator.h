@@ -29,8 +29,6 @@
 #include "GCActivityCallback.h"
 #include "HeapBlock.h"
 #include "Region.h"
-#include <condition_variable>
-#include <mutex>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
 #include <wtf/PageAllocationAligned.h>
@@ -62,7 +60,8 @@ public:
     template <typename T> void deallocateCustomSize(T*);
 
 private:
-    void waitForDuration(std::chrono::milliseconds);
+    void waitForRelativeTimeWhileHoldingLock(double relative);
+    void waitForRelativeTime(double relative);
 
     friend ThreadIdentifier createBlockFreeingThread(BlockAllocator*);
     void blockFreeingThreadMain();
@@ -106,8 +105,8 @@ private:
     bool m_isCurrentlyAllocating;
     bool m_blockFreeingThreadShouldQuit;
     SpinLock m_regionLock;
-    std::mutex m_emptyRegionConditionMutex;
-    std::condition_variable m_emptyRegionCondition;
+    Mutex m_emptyRegionConditionLock;
+    ThreadCondition m_emptyRegionCondition;
     ThreadIdentifier m_blockFreeingThread;
 };
 
@@ -200,8 +199,8 @@ inline void BlockAllocator::deallocate(T* block)
     }
 
     if (shouldWakeBlockFreeingThread) {
-        std::lock_guard<std::mutex> lock(m_emptyRegionConditionMutex);
-        m_emptyRegionCondition.notify_one();
+        MutexLocker mutexLocker(m_emptyRegionConditionLock);
+        m_emptyRegionCondition.signal();
     }
 
     if (!m_blockFreeingThread)

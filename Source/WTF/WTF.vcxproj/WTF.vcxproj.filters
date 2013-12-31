@@ -87,6 +87,12 @@
     <ClCompile Include="..\wtf\win\MainThreadWin.cpp">
       <Filter>win</Filter>
     </ClCompile>
+    <ClCompile Include="..\wtf\threads\win\BinarySemaphoreWin.cpp">
+      <Filter>threads\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\threads\BinarySemaphore.cpp">
+      <Filter>threads</Filter>
+    </ClCompile>
     <ClCompile Include="..\wtf\threadspecificWin.cpp">
       <Filter>wtf</Filter>
     </ClCompile>
@@ -314,6 +320,9 @@
     </ClInclude>
     <ClInclude Include="..\wtf\text\WTFString.h">
       <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\threads\BinarySemaphore.h">
+      <Filter>threads</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\threadsafeRefCounted.h">
       <Filter>wtf</Filter>
