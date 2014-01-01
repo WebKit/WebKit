@@ -35,18 +35,18 @@
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingStateTree* stateTree, ScrollingNodeID nodeID)
+PassOwnPtr<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
 {
     return adoptPtr(new ScrollingStateStickyNode(stateTree, nodeID));
 }
 
-ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingStateTree* tree, ScrollingNodeID nodeID)
+ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
     : ScrollingStateNode(StickyNode, tree, nodeID)
 {
 }
 
-ScrollingStateStickyNode::ScrollingStateStickyNode(const ScrollingStateStickyNode& node)
-    : ScrollingStateNode(node)
+ScrollingStateStickyNode::ScrollingStateStickyNode(const ScrollingStateStickyNode& node, ScrollingStateTree& adoptiveTree)
+    : ScrollingStateNode(node, adoptiveTree)
     , m_constraints(StickyPositionViewportConstraints(node.viewportConstraints()))
 {
 }
@@ -55,9 +55,9 @@ ScrollingStateStickyNode::~ScrollingStateStickyNode()
 {
 }
 
-PassOwnPtr<ScrollingStateNode> ScrollingStateStickyNode::clone()
+PassOwnPtr<ScrollingStateNode> ScrollingStateStickyNode::clone(ScrollingStateTree& adoptiveTree)
 {
-    return adoptPtr(new ScrollingStateStickyNode(*this));
+    return adoptPtr(new ScrollingStateStickyNode(*this, adoptiveTree));
 }
 
 void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportConstraints& constraints)
@@ -67,7 +67,7 @@ void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportCon
 
     m_constraints = constraints;
     setPropertyChanged(ViewportConstraints);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateStickyNode::syncLayerPositionForViewportRect(const LayoutRect& viewportRect)

@@ -1,5 +1,68 @@
 2013-12-31  Simon Fraser  <simon.fraser@apple.com>
 
+        ScrollingStateNodes should have a reference to the ScrollingStateTree
+        https://bugs.webkit.org/show_bug.cgi?id=126348
+
+        Reviewed by Sam Weinig.
+
+        Make ScrollingStateNodes always belong to a ScrollingStateTree, and thus
+        have a reference to the tree rather than a pointer. When cloning nodes,
+        they are adopted by a new ScrollingStateTree, which adds them to its
+        node map (which didn't happen before).
+        
+        In subclasses access the ScrollingStateTree through a member function.
+
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::create):
+        (WebCore::ScrollingStateFixedNode::ScrollingStateFixedNode):
+        (WebCore::ScrollingStateFixedNode::clone):
+        (WebCore::ScrollingStateFixedNode::updateConstraints):
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::ScrollingStateNode):
+        (WebCore::ScrollingStateNode::cloneAndReset):
+        (WebCore::ScrollingStateNode::cloneAndResetChildren):
+        (WebCore::ScrollingStateNode::willBeRemovedFromStateTree):
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::scrollingStateTree):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::create):
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::clone):
+        (WebCore::ScrollingStateScrollingNode::setViewportRect):
+        (WebCore::ScrollingStateScrollingNode::setTotalContentsSize):
+        (WebCore::ScrollingStateScrollingNode::setScrollOrigin):
+        (WebCore::ScrollingStateScrollingNode::setScrollableAreaParameters):
+        (WebCore::ScrollingStateScrollingNode::setFrameScaleFactor):
+        (WebCore::ScrollingStateScrollingNode::setNonFastScrollableRegion):
+        (WebCore::ScrollingStateScrollingNode::setWheelEventHandlerCount):
+        (WebCore::ScrollingStateScrollingNode::setSynchronousScrollingReasons):
+        (WebCore::ScrollingStateScrollingNode::setScrollBehaviorForFixedElements):
+        (WebCore::ScrollingStateScrollingNode::setRequestedScrollPosition):
+        (WebCore::ScrollingStateScrollingNode::setHeaderHeight):
+        (WebCore::ScrollingStateScrollingNode::setFooterHeight):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::create):
+        (WebCore::ScrollingStateStickyNode::ScrollingStateStickyNode):
+        (WebCore::ScrollingStateStickyNode::clone):
+        (WebCore::ScrollingStateStickyNode::updateConstraints):
+        * page/scrolling/ScrollingStateStickyNode.h:
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::attachNode):
+        (WebCore::ScrollingStateTree::commit):
+        (WebCore::ScrollingStateTree::addNode):
+        * page/scrolling/ScrollingStateTree.h:
+        * page/scrolling/mac/ScrollingStateNodeMac.mm:
+        (WebCore::ScrollingStateNode::setScrollLayer):
+        * page/scrolling/mac/ScrollingStateScrollingNodeMac.mm:
+        (WebCore::ScrollingStateScrollingNode::setCounterScrollingLayer):
+        (WebCore::ScrollingStateScrollingNode::setHeaderLayer):
+        (WebCore::ScrollingStateScrollingNode::setFooterLayer):
+        (WebCore::ScrollingStateScrollingNode::setScrollbarPaintersFromScrollbars):
+
+2013-12-31  Simon Fraser  <simon.fraser@apple.com>
+
         Give ScrollingStateNodes a nodeType()
         https://bugs.webkit.org/show_bug.cgi?id=126347
 

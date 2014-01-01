@@ -39,9 +39,9 @@ class StickyPositionViewportConstraints;
 
 class ScrollingStateStickyNode FINAL : public ScrollingStateNode {
 public:
-    static PassOwnPtr<ScrollingStateStickyNode> create(ScrollingStateTree*, ScrollingNodeID);
+    static PassOwnPtr<ScrollingStateStickyNode> create(ScrollingStateTree&, ScrollingNodeID);
 
-    virtual PassOwnPtr<ScrollingStateNode> clone();
+    virtual PassOwnPtr<ScrollingStateNode> clone(ScrollingStateTree&);
 
     virtual ~ScrollingStateStickyNode();
 
@@ -53,8 +53,8 @@ public:
     const StickyPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
 
 private:
-    ScrollingStateStickyNode(ScrollingStateTree*, ScrollingNodeID);
-    ScrollingStateStickyNode(const ScrollingStateStickyNode&);
+    ScrollingStateStickyNode(ScrollingStateTree&, ScrollingNodeID);
+    ScrollingStateStickyNode(const ScrollingStateStickyNode&, ScrollingStateTree&);
 
     virtual void syncLayerPositionForViewportRect(const LayoutRect& viewportRect) OVERRIDE;
 

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStateTree* scrollingStateTree, ScrollingNodeID nodeID)
+ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStateTree& scrollingStateTree, ScrollingNodeID nodeID)
     : m_nodeType(nodeType)
     , m_nodeID(nodeID)
     , m_changedProperties(0)
@@ -48,40 +48,41 @@ ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStat
 // This copy constructor is used for cloning nodes in the tree, and it doesn't make sense
 // to clone the relationship pointers, so don't copy that information from the original
 // node.
-ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode)
+ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, ScrollingStateTree& adoptiveTree)
     : m_nodeType(stateNode.nodeType())
     , m_nodeID(stateNode.scrollingNodeID())
     , m_changedProperties(stateNode.changedProperties())
-    , m_scrollingStateTree(0)
+    , m_scrollingStateTree(adoptiveTree)
     , m_parent(0)
 {
     // FIXME: why doesn't this set the GraphicsLayer?
     setScrollPlatformLayer(stateNode.platformScrollLayer());
+    scrollingStateTree().addNode(this);
 }
 
 ScrollingStateNode::~ScrollingStateNode()
 {
 }
 
-PassOwnPtr<ScrollingStateNode> ScrollingStateNode::cloneAndReset()
+PassOwnPtr<ScrollingStateNode> ScrollingStateNode::cloneAndReset(ScrollingStateTree& adoptiveTree)
 {
-    OwnPtr<ScrollingStateNode> clone = this->clone();
+    OwnPtr<ScrollingStateNode> clone = this->clone(adoptiveTree);
 
     // Now that this node is cloned, reset our change properties.
     resetChangedProperties();
 
-    cloneAndResetChildren(clone.get());
+    cloneAndResetChildren(*clone, adoptiveTree);
     return clone.release();
 }
 
-void ScrollingStateNode::cloneAndResetChildren(ScrollingStateNode* clone)
+void ScrollingStateNode::cloneAndResetChildren(ScrollingStateNode& clone, ScrollingStateTree& adoptiveTree)
 {
     if (!m_children)
         return;
 
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
-        clone->appendChild(m_children->at(i)->cloneAndReset());
+        clone.appendChild(m_children->at(i)->cloneAndReset(adoptiveTree));
 }
 
 void ScrollingStateNode::appendChild(PassOwnPtr<ScrollingStateNode> childNode)
@@ -116,9 +117,7 @@ void ScrollingStateNode::removeChild(ScrollingStateNode* node)
 
 void ScrollingStateNode::willBeRemovedFromStateTree()
 {
-    ASSERT(m_scrollingStateTree);
-
-    m_scrollingStateTree->didRemoveNode(scrollingNodeID());
+    scrollingStateTree().didRemoveNode(scrollingNodeID());
 
     if (!m_children)
         return;

@@ -46,14 +46,14 @@ class TextStream;
 
 class ScrollingStateNode {
 public:
-    ScrollingStateNode(ScrollingNodeType, ScrollingStateTree*, ScrollingNodeID);
+    ScrollingStateNode(ScrollingNodeType, ScrollingStateTree&, ScrollingNodeID);
     virtual ~ScrollingStateNode();
     
     ScrollingNodeType nodeType() const { return m_nodeType; }
 
-    virtual PassOwnPtr<ScrollingStateNode> clone() = 0;
-    PassOwnPtr<ScrollingStateNode> cloneAndReset();
-    void cloneAndResetChildren(ScrollingStateNode*);
+    virtual PassOwnPtr<ScrollingStateNode> clone(ScrollingStateTree& adoptiveTree) = 0;
+    PassOwnPtr<ScrollingStateNode> cloneAndReset(ScrollingStateTree& adoptiveTree);
+    void cloneAndResetChildren(ScrollingStateNode&, ScrollingStateTree& adoptiveTree);
 
     enum {
         ScrollLayer = 0,
@@ -73,8 +73,7 @@ public:
     void setScrollLayer(GraphicsLayer*);
     void setScrollPlatformLayer(PlatformLayer*);
 
-    ScrollingStateTree* scrollingStateTree() const { return m_scrollingStateTree; }
-    void setScrollingStateTree(ScrollingStateTree* tree) { m_scrollingStateTree = tree; }
+    ScrollingStateTree& scrollingStateTree() const { return m_scrollingStateTree; }
 
     ScrollingNodeID scrollingNodeID() const { return m_nodeID; }
 
@@ -89,7 +88,7 @@ public:
     String scrollingStateTreeAsText() const;
 
 protected:
-    ScrollingStateNode(const ScrollingStateNode&);
+    ScrollingStateNode(const ScrollingStateNode&, ScrollingStateTree&);
 
 private:
     void dump(TextStream&, int indent) const;
@@ -102,10 +101,8 @@ private:
     ScrollingNodeID m_nodeID;
     ChangedProperties m_changedProperties;
 
-protected:
-    ScrollingStateTree* m_scrollingStateTree; // FIXME: this should be a reference.
+    ScrollingStateTree& m_scrollingStateTree;
 
-private:
     ScrollingStateNode* m_parent;
     OwnPtr<Vector<OwnPtr<ScrollingStateNode>>> m_children;
 

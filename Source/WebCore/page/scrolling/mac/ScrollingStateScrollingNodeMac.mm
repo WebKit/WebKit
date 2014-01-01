@@ -50,8 +50,7 @@ void ScrollingStateScrollingNode::setCounterScrollingLayer(GraphicsLayer* graphi
     m_counterScrollingLayer = graphicsLayer;
 
     setPropertyChanged(CounterScrollingLayer);
-    if (m_scrollingStateTree)
-        m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 PlatformLayer* ScrollingStateScrollingNode::headerPlatformLayer() const
@@ -69,8 +68,7 @@ void ScrollingStateScrollingNode::setHeaderLayer(GraphicsLayer* graphicsLayer)
     m_headerLayer = graphicsLayer;
 
     setPropertyChanged(HeaderLayer);
-    if (m_scrollingStateTree)
-        m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 PlatformLayer* ScrollingStateScrollingNode::footerPlatformLayer() const
@@ -88,8 +86,7 @@ void ScrollingStateScrollingNode::setFooterLayer(GraphicsLayer* graphicsLayer)
     m_footerLayer = graphicsLayer;
 
     setPropertyChanged(FooterLayer);
-    if (m_scrollingStateTree)
-        m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setScrollbarPaintersFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar)
@@ -111,8 +108,7 @@ void ScrollingStateScrollingNode::setScrollbarPaintersFromScrollbars(Scrollbar* 
     m_horizontalScrollbarPainter = horizontalPainter;
 
     setPropertyChanged(PainterForScrollbar);
-    if (m_scrollingStateTree)
-        m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 } // namespace WebCore

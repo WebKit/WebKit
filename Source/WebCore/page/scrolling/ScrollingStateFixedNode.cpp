@@ -35,18 +35,18 @@
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingStateTree* stateTree, ScrollingNodeID nodeID)
+PassOwnPtr<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
 {
     return adoptPtr(new ScrollingStateFixedNode(stateTree, nodeID));
 }
 
-ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingStateTree* tree, ScrollingNodeID nodeID)
+ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
     : ScrollingStateNode(FixedNode, tree, nodeID)
 {
 }
 
-ScrollingStateFixedNode::ScrollingStateFixedNode(const ScrollingStateFixedNode& node)
-    : ScrollingStateNode(node)
+ScrollingStateFixedNode::ScrollingStateFixedNode(const ScrollingStateFixedNode& node, ScrollingStateTree& adoptiveTree)
+    : ScrollingStateNode(node, adoptiveTree)
     , m_constraints(FixedPositionViewportConstraints(node.viewportConstraints()))
 {
 }
@@ -55,9 +55,9 @@ ScrollingStateFixedNode::~ScrollingStateFixedNode()
 {
 }
 
-PassOwnPtr<ScrollingStateNode> ScrollingStateFixedNode::clone()
+PassOwnPtr<ScrollingStateNode> ScrollingStateFixedNode::clone(ScrollingStateTree& adoptiveTree)
 {
-    return adoptPtr(new ScrollingStateFixedNode(*this));
+    return adoptPtr(new ScrollingStateFixedNode(*this, adoptiveTree));
 }
 
 void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConstraints& constraints)
@@ -67,7 +67,7 @@ void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConst
 
     m_constraints = constraints;
     setPropertyChanged(ViewportConstraints);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateFixedNode::syncLayerPositionForViewportRect(const LayoutRect& viewportRect)

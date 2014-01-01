@@ -68,6 +68,7 @@ private:
     ScrollingStateTree();
 
     void setRootStateNode(PassOwnPtr<ScrollingStateScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
+    void addNode(ScrollingStateNode*);
     void removeNode(ScrollingStateNode*);
     void didRemoveNode(ScrollingNodeID);
 

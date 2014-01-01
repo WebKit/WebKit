@@ -69,7 +69,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
 
-        setRootStateNode(ScrollingStateScrollingNode::create(this, newNodeID));
+        setRootStateNode(ScrollingStateScrollingNode::create(*this, newNodeID));
         newNode = rootStateNode();
         m_hasNewRootStateNode = true;
     } else {
@@ -79,13 +79,13 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
 
         switch (nodeType) {
         case FixedNode: {
-            OwnPtr<ScrollingStateFixedNode> fixedNode = ScrollingStateFixedNode::create(this, newNodeID);
+            OwnPtr<ScrollingStateFixedNode> fixedNode = ScrollingStateFixedNode::create(*this, newNodeID);
             newNode = fixedNode.get();
             parent->appendChild(fixedNode.release());
             break;
         }
         case StickyNode: {
-            OwnPtr<ScrollingStateStickyNode> stickyNode = ScrollingStateStickyNode::create(this, newNodeID);
+            OwnPtr<ScrollingStateStickyNode> stickyNode = ScrollingStateStickyNode::create(*this, newNodeID);
             newNode = stickyNode.get();
             parent->appendChild(stickyNode.release());
             break;
@@ -93,7 +93,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         case ScrollingNode: {
             // FIXME: We currently only support child nodes that are fixed.
             ASSERT_NOT_REACHED();
-            OwnPtr<ScrollingStateScrollingNode> scrollingNode = ScrollingStateScrollingNode::create(this, newNodeID);
+            OwnPtr<ScrollingStateScrollingNode> scrollingNode = ScrollingStateScrollingNode::create(*this, newNodeID);
             newNode = scrollingNode.get();
             parent->appendChild(scrollingNode.release());
             break;
@@ -129,7 +129,7 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit()
     // This function clones and resets the current state tree, but leaves the tree structure intact.
     OwnPtr<ScrollingStateTree> treeStateClone = ScrollingStateTree::create();
     if (m_rootStateNode)
-        treeStateClone->setRootStateNode(static_pointer_cast<ScrollingStateScrollingNode>(m_rootStateNode->cloneAndReset()));
+        treeStateClone->setRootStateNode(static_pointer_cast<ScrollingStateScrollingNode>(m_rootStateNode->cloneAndReset(*treeStateClone)));
 
     // Copy the IDs of the nodes that have been removed since the last commit into the clone.
     treeStateClone->m_nodesRemovedSinceLastCommit.swap(m_nodesRemovedSinceLastCommit);
@@ -142,6 +142,11 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit()
     m_hasNewRootStateNode = false;
 
     return treeStateClone.release();
+}
+
+void ScrollingStateTree::addNode(ScrollingStateNode* node)
+{
+    m_stateNodeMap.add(node->scrollingNodeID(), node);
 }
 
 void ScrollingStateTree::removeNode(ScrollingStateNode* node)

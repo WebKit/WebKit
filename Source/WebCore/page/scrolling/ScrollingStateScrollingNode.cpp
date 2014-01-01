@@ -34,12 +34,12 @@
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingStateScrollingNode> ScrollingStateScrollingNode::create(ScrollingStateTree* stateTree, ScrollingNodeID nodeID)
+PassOwnPtr<ScrollingStateScrollingNode> ScrollingStateScrollingNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
 {
     return adoptPtr(new ScrollingStateScrollingNode(stateTree, nodeID));
 }
 
-ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* stateTree, ScrollingNodeID nodeID)
+ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
     : ScrollingStateNode(ScrollingNode, stateTree, nodeID)
     , m_counterScrollingLayer(0)
     , m_headerLayer(0)
@@ -58,8 +58,8 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* sta
 {
 }
 
-ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScrollingNode& stateNode)
-    : ScrollingStateNode(stateNode)
+ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)
+    : ScrollingStateNode(stateNode, adoptiveTree)
 #if PLATFORM(MAC)
     , m_verticalScrollbarPainter(stateNode.verticalScrollbarPainter())
     , m_horizontalScrollbarPainter(stateNode.horizontalScrollbarPainter())
@@ -87,9 +87,9 @@ ScrollingStateScrollingNode::~ScrollingStateScrollingNode()
 {
 }
 
-PassOwnPtr<ScrollingStateNode> ScrollingStateScrollingNode::clone()
+PassOwnPtr<ScrollingStateNode> ScrollingStateScrollingNode::clone(ScrollingStateTree& adoptiveTree)
 {
-    return adoptPtr(new ScrollingStateScrollingNode(*this));
+    return adoptPtr(new ScrollingStateScrollingNode(*this, adoptiveTree));
 }
 
 void ScrollingStateScrollingNode::setViewportRect(const IntRect& viewportRect)
@@ -99,7 +99,7 @@ void ScrollingStateScrollingNode::setViewportRect(const IntRect& viewportRect)
 
     m_viewportRect = viewportRect;
     setPropertyChanged(ViewportRect);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setTotalContentsSize(const IntSize& totalContentsSize)
@@ -109,7 +109,7 @@ void ScrollingStateScrollingNode::setTotalContentsSize(const IntSize& totalConte
 
     m_totalContentsSize = totalContentsSize;
     setPropertyChanged(TotalContentsSize);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setScrollOrigin(const IntPoint& scrollOrigin)
@@ -119,7 +119,7 @@ void ScrollingStateScrollingNode::setScrollOrigin(const IntPoint& scrollOrigin)
 
     m_scrollOrigin = scrollOrigin;
     setPropertyChanged(ScrollOrigin);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setScrollableAreaParameters(const ScrollableAreaParameters& parameters)
@@ -129,7 +129,7 @@ void ScrollingStateScrollingNode::setScrollableAreaParameters(const ScrollableAr
 
     m_scrollableAreaParameters = parameters;
     setPropertyChanged(ScrollableAreaParams);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setFrameScaleFactor(float scaleFactor)
@@ -140,7 +140,7 @@ void ScrollingStateScrollingNode::setFrameScaleFactor(float scaleFactor)
     m_frameScaleFactor = scaleFactor;
 
     setPropertyChanged(FrameScaleFactor);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setNonFastScrollableRegion(const Region& nonFastScrollableRegion)
@@ -150,7 +150,7 @@ void ScrollingStateScrollingNode::setNonFastScrollableRegion(const Region& nonFa
 
     m_nonFastScrollableRegion = nonFastScrollableRegion;
     setPropertyChanged(NonFastScrollableRegion);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setWheelEventHandlerCount(unsigned wheelEventHandlerCount)
@@ -160,7 +160,7 @@ void ScrollingStateScrollingNode::setWheelEventHandlerCount(unsigned wheelEventH
 
     m_wheelEventHandlerCount = wheelEventHandlerCount;
     setPropertyChanged(WheelEventHandlerCount);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setSynchronousScrollingReasons(SynchronousScrollingReasons reasons)
@@ -170,7 +170,7 @@ void ScrollingStateScrollingNode::setSynchronousScrollingReasons(SynchronousScro
 
     m_synchronousScrollingReasons = reasons;
     setPropertyChanged(ReasonsForSynchronousScrolling);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setScrollBehaviorForFixedElements(ScrollBehaviorForFixedElements behaviorForFixed)
@@ -180,7 +180,7 @@ void ScrollingStateScrollingNode::setScrollBehaviorForFixedElements(ScrollBehavi
 
     m_behaviorForFixed = behaviorForFixed;
     setPropertyChanged(BehaviorForFixedElements);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setRequestedScrollPosition(const IntPoint& requestedScrollPosition, bool representsProgrammaticScroll)
@@ -188,7 +188,7 @@ void ScrollingStateScrollingNode::setRequestedScrollPosition(const IntPoint& req
     m_requestedScrollPosition = requestedScrollPosition;
     m_requestedScrollPositionRepresentsProgrammaticScroll = representsProgrammaticScroll;
     setPropertyChanged(RequestedScrollPosition);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setHeaderHeight(int headerHeight)
@@ -198,7 +198,7 @@ void ScrollingStateScrollingNode::setHeaderHeight(int headerHeight)
 
     m_headerHeight = headerHeight;
     setPropertyChanged(HeaderHeight);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::setFooterHeight(int footerHeight)
@@ -208,7 +208,7 @@ void ScrollingStateScrollingNode::setFooterHeight(int footerHeight)
 
     m_footerHeight = footerHeight;
     setPropertyChanged(FooterHeight);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent) const

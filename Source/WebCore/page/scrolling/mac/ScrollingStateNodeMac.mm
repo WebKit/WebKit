@@ -54,7 +54,7 @@ void ScrollingStateNode::setScrollLayer(GraphicsLayer* graphicsLayer)
     m_graphicsLayer = graphicsLayer;
 
     setPropertyChanged(ScrollLayer);
-    m_scrollingStateTree->setHasChangedProperties(true);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 } // namespace WebCore
