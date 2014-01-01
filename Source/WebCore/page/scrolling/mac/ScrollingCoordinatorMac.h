@@ -36,6 +36,7 @@ class Scrollbar;
 class ScrollingStateNode;
 class ScrollingStateScrollingNode;
 class ScrollingStateTree;
+class ThreadedScrollingTree;
 
 class ScrollingCoordinatorMac : public ScrollingCoordinator {
 public:
@@ -114,7 +115,7 @@ private:
     void commitTreeState();
 
     OwnPtr<ScrollingStateTree> m_scrollingStateTree;
-    RefPtr<ScrollingTree> m_scrollingTree;
+    RefPtr<ThreadedScrollingTree> m_scrollingTree;
     Timer<ScrollingCoordinatorMac> m_scrollingStateTreeCommitterTimer;
 };
 

@@ -39,7 +39,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/ScrollingThread.h>
-#include <WebCore/ScrollingTree.h>
+#include <WebCore/ThreadedScrollingTree.h>
 #endif
 
 using namespace WebCore;
@@ -67,7 +67,7 @@ void EventDispatcher::addScrollingTreeForPage(WebPage* webPage)
 
     ASSERT(webPage->corePage()->scrollingCoordinator());
     ASSERT(!m_scrollingTrees.contains(webPage->pageID()));
-    m_scrollingTrees.set(webPage->pageID(), webPage->corePage()->scrollingCoordinator()->scrollingTree());
+    m_scrollingTrees.set(webPage->pageID(), toThreadedScrollingTree(webPage->corePage()->scrollingCoordinator()->scrollingTree()));
 }
 
 void EventDispatcher::removeScrollingTreeForPage(WebPage* webPage)
@@ -88,7 +88,7 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
 {
 #if ENABLE(ASYNC_SCROLLING)
     MutexLocker locker(m_scrollingTreesMutex);
-    if (ScrollingTree* scrollingTree = m_scrollingTrees.get(pageID)) {
+    if (ThreadedScrollingTree* scrollingTree = m_scrollingTrees.get(pageID)) {
         PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
 
         // FIXME: It's pretty horrible that we're updating the back/forward state here.
@@ -96,7 +96,7 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
         // scrolling tree can be notified.
         // We only need to do this at the beginning of the gesture.
         if (platformWheelEvent.phase() == PlatformWheelEventPhaseBegan)
-            ScrollingThread::dispatch(bind(&ScrollingTree::setCanRubberBandState, scrollingTree, canRubberBandAtLeft, canRubberBandAtRight, canRubberBandAtTop, canRubberBandAtBottom));
+            ScrollingThread::dispatch(bind(&ThreadedScrollingTree::setCanRubberBandState, scrollingTree, canRubberBandAtLeft, canRubberBandAtRight, canRubberBandAtTop, canRubberBandAtBottom));
 
         ScrollingTree::EventResult result = scrollingTree->tryToHandleWheelEvent(platformWheelEvent);
         if (result == ScrollingTree::DidHandleEvent || result == ScrollingTree::DidNotHandleEvent) {

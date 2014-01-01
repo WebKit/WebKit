@@ -46,7 +46,7 @@
 #include "ScrollingStateStickyNode.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingThread.h"
-#include "ScrollingTree.h"
+#include "ThreadedScrollingTree.h"
 #include "TiledBacking.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
@@ -61,7 +61,7 @@ class ScrollingCoordinatorPrivate {
 ScrollingCoordinatorMac::ScrollingCoordinatorMac(Page* page)
     : ScrollingCoordinator(page)
     , m_scrollingStateTree(ScrollingStateTree::create())
-    , m_scrollingTree(ScrollingTree::create(this))
+    , m_scrollingTree(ThreadedScrollingTree::create(this))
     , m_scrollingStateTreeCommitterTimer(this, &ScrollingCoordinatorMac::scrollingStateTreeCommitterTimerFired)
 {
 }
@@ -232,8 +232,7 @@ bool ScrollingCoordinatorMac::handleWheelEvent(FrameView*, const PlatformWheelEv
     if (m_scrollingTree->willWheelEventStartSwipeGesture(wheelEvent))
         return false;
 
-    ScrollingThread::dispatch(bind(&ScrollingTree::handleWheelEvent, m_scrollingTree.get(), wheelEvent));
-
+    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::handleWheelEvent, m_scrollingTree.get(), wheelEvent));
     return true;
 }
 

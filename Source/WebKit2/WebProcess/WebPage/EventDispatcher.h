@@ -33,7 +33,7 @@
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WebCore {
-    class ScrollingTree;
+class ThreadedScrollingTree;
 }
 
 namespace WebKit {
@@ -74,7 +74,7 @@ private:
 
 #if ENABLE(ASYNC_SCROLLING)
     Mutex m_scrollingTreesMutex;
-    HashMap<uint64_t, RefPtr<WebCore::ScrollingTree>> m_scrollingTrees;
+    HashMap<uint64_t, RefPtr<WebCore::ThreadedScrollingTree>> m_scrollingTrees;
 #endif
 };
 

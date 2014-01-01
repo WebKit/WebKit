@@ -1,3 +1,53 @@
+2014-01-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Create a ThreadedScrollingTree subclass of ScrollingTree, and push all knowledge of the scrolling thread into it
+        https://bugs.webkit.org/show_bug.cgi?id=126362
+
+        Reviewed by Sam Weinig.
+
+        Eventually we'll have a ScrollingTree in situations where there is no scrolling
+        thread, so make the ScrollingTree base class thread-agnostic (but threadsafe),
+        and subclass it in ThreadedScrollingTree for scrolling-thread-specific functionality.
+        
+        The ScrollingTree base class also no longer needs to know about the
+        ScrollingCoordinator.
+
+        ScrollingCoordinatorMac creates a ThreadedScrollingTree.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj: Add ThreadedScrollingTree.*
+        Make some headers Private that we'll need in WebKit2 soon.
+        * page/scrolling/ScrollingStateTree.h: Drive-by cleanup: clone() was unimplemented.
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+        (WebCore::ScrollingTree::~ScrollingTree):
+        (WebCore::ScrollingTree::shouldHandleWheelEventSynchronously): Wrap up some logic that
+        involves taking the mutex, so ThreadedScrollingTree can conveniently call it.
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::commitNewTreeState):
+        (WebCore::ScrollingTree::setMainFrameScrollPosition):
+        (WebCore::ScrollingTree::isHandlingProgrammaticScroll):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::isThreadedScrollingTree):
+        (WebCore::ScrollingTree::invalidate):
+        * page/scrolling/ThreadedScrollingTree.cpp: Added.
+        (WebCore::ThreadedScrollingTree::create):
+        (WebCore::ThreadedScrollingTree::ThreadedScrollingTree):
+        (WebCore::ThreadedScrollingTree::~ThreadedScrollingTree):
+        (WebCore::ThreadedScrollingTree::tryToHandleWheelEvent):
+        (WebCore::ThreadedScrollingTree::handleWheelEvent):
+        (WebCore::derefScrollingCoordinator):
+        (WebCore::ThreadedScrollingTree::invalidate):
+        (WebCore::ThreadedScrollingTree::commitNewTreeState):
+        (WebCore::ThreadedScrollingTree::updateMainFrameScrollPosition):
+        (WebCore::ThreadedScrollingTree::handleWheelEventPhase):
+        * page/scrolling/ThreadedScrollingTree.h: Added.
+        (WebCore::ThreadedScrollingTree::isThreadedScrollingTree):
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::ScrollingCoordinatorMac):
+        (WebCore::ScrollingCoordinatorMac::handleWheelEvent):
+
 2014-01-01  Andreas Kling  <akling@apple.com>
 
         FrameView: Store scroll corner renderer in a RenderPtr.

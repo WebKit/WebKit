@@ -1,5 +1,26 @@
 2014-01-01  Simon Fraser  <simon.fraser@apple.com>
 
+        Create a ThreadedScrollingTree subclass of ScrollingTree, and push all knowledge of the scrolling thread into it
+        https://bugs.webkit.org/show_bug.cgi?id=126362
+
+        Reviewed by Sam Weinig.
+
+        Eventually we'll have a ScrollingTree in situations where there is no scrolling
+        thread, so make the ScrollingTree base class thread-agnostic (but threadsafe),
+        and subclass it in ThreadedScrollingTree for scrolling-thread-specific functionality.
+        
+        The ScrollingTree base class also no longer needs to know about the
+        ScrollingCoordinator.
+
+        ScrollingCoordinatorMac creates a ThreadedScrollingTree.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::addScrollingTreeForPage):
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+
+2014-01-01  Simon Fraser  <simon.fraser@apple.com>
+
         Add a typedef for PlatformLayerID on GraphicsLayer, and migrate RemoteLayerTreeTransaction to use it
         https://bugs.webkit.org/show_bug.cgi?id=126346
 
