@@ -18,7 +18,6 @@ layer at (0,0) size 800x600
         RenderInline {FONT} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderInline {B} at (0,0) size 0x0
-        RenderInline {B} at (0,0) size 0x0
       RenderBlock {P} at (0,202) size 784x17
         RenderInline {B} at (0,0) size 97x17
           RenderInline {I} at (0,0) size 97x17

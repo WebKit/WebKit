@@ -1,3 +1,31 @@
+2014-01-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+        Updating test baselines after the introduction of lazy render tree attaching,
+        enabling the saturated layout arithmetics for the GTK port, and other changes.
+
+        * platform/gtk/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/gtk/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt:
+        * platform/gtk/fast/block/float/016-expected.txt:
+        * platform/gtk/fast/css-generated-content/table-row-group-to-inline-expected.txt:
+        * platform/gtk/fast/dynamic/011-expected.txt:
+        * platform/gtk/fast/forms/formmove3-expected.txt:
+        * platform/gtk/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/gtk/fast/invalid/001-expected.txt:
+        * platform/gtk/fast/invalid/003-expected.txt:
+        * platform/gtk/fast/invalid/004-expected.txt:
+        * platform/gtk/fast/invalid/007-expected.txt:
+        * platform/gtk/fast/invalid/019-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/gtk/fast/ruby/ruby-base-merge-block-children-crash-expected.txt:
+        * platform/gtk/fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction-expected.txt:
+        * platform/gtk/fast/table/empty-cells-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug113235-1-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug647-expected.txt:
+        * platform/gtk/tables/mozilla/other/wa_table_tr_align-expected.txt:
+
 2014-01-01  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Rename libtestnetscapeplugin to libTestNetscapePlugin
