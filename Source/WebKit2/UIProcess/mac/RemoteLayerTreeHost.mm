@@ -68,7 +68,7 @@ void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
     }
 
     for (auto changedLayer : transaction.changedLayers()) {
-        RemoteLayerTreeTransaction::LayerID layerID = changedLayer.key;
+        auto layerID = changedLayer.key;
         const auto& properties = changedLayer.value;
 
         CALayer *layer = getLayer(layerID);
@@ -90,7 +90,7 @@ void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
         m_layers.remove(destroyedLayer);
 }
 
-CALayer *RemoteLayerTreeHost::getLayer(RemoteLayerTreeTransaction::LayerID layerID)
+CALayer *RemoteLayerTreeHost::getLayer(GraphicsLayer::PlatformLayerID layerID) const
 {
     return m_layers.get(layerID).get();
 }

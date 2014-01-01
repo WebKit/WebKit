@@ -44,9 +44,7 @@ public:
 
     virtual ~PlatformCALayerRemote();
 
-    RemoteLayerTreeTransaction::LayerID layerID() { return m_layerID; }
-
-    virtual bool isRemote() const OVERRIDE { return true; }
+    WebCore::GraphicsLayer::PlatformLayerID layerID() { return m_layerID; }
 
     virtual bool usesTiledBackingLayer() const OVERRIDE { return layerType() == LayerTypePageTiledBackingLayer || layerType() == LayerTypeTiledBackingLayer; }
 
@@ -157,12 +155,13 @@ protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context);
 
 private:
+    virtual bool isPlatformCALayerRemote() const OVERRIDE { return false; }
     void ensureBackingStore();
     void removeSublayer(PlatformCALayerRemote*);
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
-    RemoteLayerTreeTransaction::LayerID m_layerID;
+    const WebCore::GraphicsLayer::PlatformLayerID m_layerID;
     RemoteLayerTreeTransaction::LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
     PlatformCALayerRemote* m_superlayer;
@@ -171,6 +170,8 @@ private:
 
     RemoteLayerTreeContext* m_context;
 };
+
+PLATFORM_CALAYER_TYPE_CASTS(PlatformCALayerRemote, isPlatformCALayerRemote())
 
 } // namespace WebKit
 

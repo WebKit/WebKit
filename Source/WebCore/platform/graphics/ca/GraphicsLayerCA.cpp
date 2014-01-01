@@ -389,7 +389,7 @@ void GraphicsLayerCA::setName(const String& name)
 {
     String caLayerDescription;
 
-    if (!m_layer->isRemote())
+    if (!m_layer->isPlatformCALayerRemote())
         caLayerDescription = String::format("CALayer(%p) ", m_layer->platformLayer());
 
     String longName = caLayerDescription + String::format("GraphicsLayer(%p) ", this) + name;

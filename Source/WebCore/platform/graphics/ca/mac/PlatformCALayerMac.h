@@ -148,6 +148,7 @@ public:
 
 private:
     PlatformCALayerMac(LayerType, PlatformLayer*, PlatformCALayerClient* owner);
+    virtual bool isPlatformCALayerMac() const OVERRIDE { return true; }
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
@@ -155,6 +156,8 @@ private:
     OwnPtr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance;
 };
+
+PLATFORM_CALAYER_TYPE_CASTS(PlatformCALayerMac, isPlatformCALayerMac())
 
 } // namespace WebCore
 

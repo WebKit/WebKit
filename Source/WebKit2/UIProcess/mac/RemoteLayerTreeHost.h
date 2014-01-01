@@ -50,13 +50,13 @@ private:
     // Message handlers.
     void commit(const RemoteLayerTreeTransaction&);
 
-    CALayer *getLayer(RemoteLayerTreeTransaction::LayerID);
+    CALayer *getLayer(WebCore::GraphicsLayer::PlatformLayerID) const;
     CALayer *createLayer(RemoteLayerTreeTransaction::LayerCreationProperties);
 
     WebPageProxy* m_webPageProxy;
 
     CALayer *m_rootLayer;
-    HashMap<RemoteLayerTreeTransaction::LayerID, RetainPtr<CALayer>> m_layers;
+    HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<CALayer>> m_layers;
 };
 
 } // namespace WebKit

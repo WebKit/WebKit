@@ -226,6 +226,8 @@ class GraphicsLayer {
 public:
     static std::unique_ptr<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient*);
     
+    typedef uint64_t PlatformLayerID;
+
     virtual ~GraphicsLayer();
 
     virtual void initialize() { }

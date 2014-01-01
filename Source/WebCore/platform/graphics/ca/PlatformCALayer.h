@@ -80,6 +80,9 @@ public:
 
     virtual ~PlatformCALayer();
 
+    virtual bool isPlatformCALayerMac() const { return false; }
+    virtual bool isPlatformCALayerRemote() const { return false; }
+
     // This function passes the layer as a void* rather than a PlatformLayer because PlatformLayer
     // is defined differently for Obj C and C++. This allows callers from both languages.
     static PlatformCALayer* platformCALayer(void* platformLayer);
@@ -98,7 +101,6 @@ public:
     virtual void setContentsChanged() = 0;
 
     LayerType layerType() const { return m_layerType; }
-    virtual bool isRemote() const { return false; }
 
     virtual PlatformCALayer* superlayer() const = 0;
     virtual void removeFromSuperlayer() = 0;
@@ -211,16 +213,17 @@ protected:
     PlatformCALayer(LayerType layerType, PlatformCALayerClient* owner)
         : m_layerType(layerType)
         , m_owner(owner)
-    {
-
-    }
+    { }
 
     LayerType m_layerType;
     RetainPtr<PlatformLayer> m_layer;
     PlatformCALayerClient* m_owner;
 };
 
-}
+#define PLATFORM_CALAYER_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, WebCore::PlatformCALayer, object, object->predicate, object.predicate)
+
+} // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)
 

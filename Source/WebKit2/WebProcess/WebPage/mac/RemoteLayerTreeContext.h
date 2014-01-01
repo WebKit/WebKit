@@ -74,7 +74,7 @@ private:
     Vector<WebCore::GraphicsLayer*> m_outOfTreeLayers;
 
     Vector<RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
-    Vector<RemoteLayerTreeTransaction::LayerID> m_destroyedLayers;
+    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayers;
 
     bool m_isFlushingSuspended;
     bool m_hasDeferredFlush;

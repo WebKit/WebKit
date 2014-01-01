@@ -47,16 +47,10 @@
 using namespace WebCore;
 using namespace WebKit;
 
-static RemoteLayerTreeTransaction::LayerID generateLayerID()
+static WebCore::GraphicsLayer::PlatformLayerID generateLayerID()
 {
-    static RemoteLayerTreeTransaction::LayerID layerID;
+    static WebCore::GraphicsLayer::PlatformLayerID layerID;
     return ++layerID;
-}
-
-static PlatformCALayerRemote* toPlatformCALayerRemote(PlatformCALayer* layer)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!layer || layer->isRemote());
-    return static_cast<PlatformCALayerRemote*>(layer);
 }
 
 PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)

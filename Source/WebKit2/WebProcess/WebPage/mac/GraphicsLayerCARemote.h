@@ -44,6 +44,8 @@ public:
     }
 
     virtual ~GraphicsLayerCARemote();
+    
+    PlatformLayerID primaryLayerID() const;
 
 #if ENABLE(CSS_FILTERS)
     virtual bool filtersCanBeComposited(const WebCore::FilterOperations& filters) OVERRIDE;

@@ -1,3 +1,42 @@
+2014-01-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a typedef for PlatformLayerID on GraphicsLayer, and migrate RemoteLayerTreeTransaction to use it
+        https://bugs.webkit.org/show_bug.cgi?id=126346
+
+        Reviewed by Tim Horton.
+        
+        Remote scrolling tree code is soon going to use RemoteLayerTreeTransaction::LayerID,
+        so it makes more sense to put this layerID type on GraphicsLayer as
+        GraphicsLayer::PlatformLayerID.
+        
+        Also add some type cast macros for PlatformCALayer and subclasses, and use them
+        where appropriate.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.h:
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::rootLayerID):
+        (WebKit::RemoteLayerTreeTransaction::changedLayers):
+        (WebKit::RemoteLayerTreeTransaction::destroyedLayers):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::setRootLayerID):
+        (WebKit::RemoteLayerTreeTransaction::setDestroyedLayerIDs):
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+        (WebKit::dumpChangedLayers):
+        (WebKit::RemoteLayerTreeTransaction::description):
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit):
+        (WebKit::RemoteLayerTreeHost::getLayer):
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.cpp:
+        (WebKit::GraphicsLayerCARemote::primaryLayerID):
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (generateLayerID):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        (WebKit::PlatformCALayerRemote::layerID):
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+
 2014-01-01  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Fix the WEBKIT_SRC_DIR define when building the WebKit2 GObject API unit tests
