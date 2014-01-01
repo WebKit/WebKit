@@ -238,9 +238,10 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(PassRef<R
 
 bool HTMLPlugInImageElement::willRecalcStyle(Style::Change)
 {
-    // FIXME: Why is this necessary?  Manual re-attach is almost always wrong.
+    // FIXME: There shoudn't be need to force render tree reconstruction here.
+    // It is only done because loading and load event dispatching is tied to render tree construction.
     if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType() && (displayState() != DisplayingSnapshot))
-        Style::reattachRenderTree(*this);
+        setNeedsStyleRecalc(ReconstructRenderTree);
     return true;
 }
 
@@ -463,9 +464,6 @@ void HTMLPlugInImageElement::createShadowIFrameSubtree(const String& src)
     // Disable frame flattening for this iframe.
     iframeElement->setAttribute(HTMLNames::scrollingAttr, AtomicString("no", AtomicString::ConstructFromLiteral));
     shadowElement->appendChild(iframeElement, ASSERT_NO_EXCEPTION);
-
-    if (renderer())
-        Style::reattachRenderTree(*this);
 }
 #endif
 
@@ -572,7 +570,7 @@ void HTMLPlugInImageElement::restartSnapshottedPlugIn()
         return;
 
     setDisplayState(Restarting);
-    Style::reattachRenderTree(*this);
+    setNeedsStyleRecalc(ReconstructRenderTree);
 }
 
 void HTMLPlugInImageElement::dispatchPendingMouseClick()

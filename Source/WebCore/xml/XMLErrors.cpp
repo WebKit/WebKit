@@ -140,11 +140,6 @@ void XMLErrors::insertErrorMessageBlock()
         body->parserAppendChild(documentElement);
         m_document->parserAppendChild(rootElement.get());
 
-        if (m_document->hasLivingRenderTree())
-            // In general, rootElement shouldn't be attached right now, but it will be if there is a style element
-            // in the SVG content.
-            Style::reattachRenderTree(*rootElement);
-
         documentElement = body.get();
     }
 #endif
