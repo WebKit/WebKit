@@ -203,9 +203,9 @@ if TARGET_X11
 # Build TestNetscapePlugin only for X11
 # since we don't support plugins for non-X11 builds at the moment.
 noinst_LTLIBRARIES += \
-	TestNetscapePlugin/libtestnetscapeplugin.la
+	TestNetscapePlugin/libTestNetscapePlugin.la
 
-TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
+TestNetscapePlugin_libTestNetscapePlugin_la_CPPFLAGS = \
 	-I$(srcdir)/Tools/DumpRenderTree \
 	-I$(srcdir)/Source/WebCore \
 	-I$(srcdir)/Source/WebCore/bridge \
@@ -218,15 +218,15 @@ TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
 
 # For the Gtk port we want to use XP_UNIX both on X11 and Mac
 if !TARGET_WIN32
-TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS += -DXP_UNIX
+TestNetscapePlugin_libTestNetscapePlugin_la_CPPFLAGS += -DXP_UNIX
 endif
 
 # Add MOZ_X11 only for X11 targets
 if TARGET_X11
-TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS += -DMOZ_X11
+TestNetscapePlugin_libTestNetscapePlugin_la_CPPFLAGS += -DMOZ_X11
 endif
 
-TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
+TestNetscapePlugin_libTestNetscapePlugin_la_SOURCES = \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/FormValue.cpp \
@@ -258,13 +258,13 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders/WebKit/npfunctions.h \
 	Tools/DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders/WebKit/npruntime.h
 
-TestNetscapePlugin_libtestnetscapeplugin_la_LDFLAGS = \
+TestNetscapePlugin_libTestNetscapePlugin_la_LDFLAGS = \
 	-rpath ${shell pwd}/$(top_builddir)/../unix/TestNetscapePlugin/.libs \
 	$(no_undefined) \
 	-avoid-version \
 	-module
 
-CLEANFILES += TestNetscapePlugin/libtestnetscapeplugin.la
+CLEANFILES += TestNetscapePlugin/libTestNetscapePlugin.la
 endif
 
 check-local:

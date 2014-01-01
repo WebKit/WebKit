@@ -2,7 +2,7 @@ Name: WebKit Test PlugIn
 
 Description: Simple Netscape® plug-in that handles test content for WebKit
 
-Filename: libtestnetscapeplugin.so
+Filename: libTestNetscapePlugin.so
 
 Mime Types:
 
