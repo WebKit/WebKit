@@ -439,7 +439,7 @@ bool AccessibilityNodeObject::canvasHasFallbackContent() const
     // If it has any children that are elements, we'll assume it might be fallback
     // content. If it has no children or its only children are not elements
     // (e.g. just text nodes), it doesn't have fallback content.
-    return elementChildren(canvasElement).first();
+    return childrenOfType<Element>(canvasElement).first();
 }
 
 bool AccessibilityNodeObject::isImageButton() const
@@ -1183,7 +1183,7 @@ static Element* siblingWithAriaRole(String role, Node* node)
     if (!parent)
         return nullptr;
 
-    for (auto& sibling : elementChildren(*parent)) {
+    for (auto& sibling : childrenOfType<Element>(*parent)) {
         const AtomicString& siblingAriaRole = sibling.fastGetAttribute(roleAttr);
         if (equalIgnoringCase(siblingAriaRole, role))
             return &sibling;

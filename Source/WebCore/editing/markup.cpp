@@ -99,7 +99,7 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
 
     URL parsedBaseURL(ParsedURLString, baseURL);
 
-    for (auto& element : elementDescendants(*fragment)) {
+    for (auto& element : descendantsOfType<Element>(*fragment)) {
         if (!element.hasAttributes())
             continue;
         unsigned length = element.attributeCount();

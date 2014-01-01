@@ -2930,7 +2930,7 @@ void Element::resetComputedStyle()
     if (!hasRareData() || !elementRareData()->computedStyle())
         return;
     elementRareData()->resetComputedStyle();
-    for (auto& child : elementDescendants(*this)) {
+    for (auto& child : descendantsOfType<Element>(*this)) {
         if (child.hasRareData())
             child.elementRareData()->resetComputedStyle();
     }

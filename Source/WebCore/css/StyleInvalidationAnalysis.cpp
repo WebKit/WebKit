@@ -118,8 +118,8 @@ void StyleInvalidationAnalysis::invalidateStyle(Document& document)
     if (m_idScopes.isEmpty() && m_classScopes.isEmpty())
         return;
 
-    auto it = elementDescendants(document).begin();
-    auto end = elementDescendants(document).end();
+    auto it = descendantsOfType<Element>(document).begin();
+    auto end = descendantsOfType<Element>(document).end();
     while (it != end) {
         if (elementMatchesSelectorScopes(*it, m_idScopes, m_classScopes)) {
             it->setNeedsStyleRecalc();

@@ -72,8 +72,6 @@ private:
     const RenderElement& m_parent;
 };
 
-RenderChildIteratorAdapter<RenderObject> elementChildren(RenderElement&);
-RenderChildConstIteratorAdapter<RenderObject> elementChildren(const RenderElement&);
 template <typename T> RenderChildIteratorAdapter<T> childrenOfType(RenderElement&);
 template <typename T> RenderChildConstIteratorAdapter<T> childrenOfType(const RenderElement&);
 

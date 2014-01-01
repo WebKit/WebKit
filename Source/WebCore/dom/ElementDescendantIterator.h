@@ -78,8 +78,6 @@ private:
     const ContainerNode& m_root;
 };
 
-ElementDescendantIteratorAdapter<Element> elementDescendants(ContainerNode&);
-ElementDescendantConstIteratorAdapter<Element> elementDescendants(const ContainerNode&);
 template <typename ElementType> ElementDescendantIteratorAdapter<ElementType> descendantsOfType(ContainerNode&);
 template <typename ElementType> ElementDescendantConstIteratorAdapter<ElementType> descendantsOfType(const ContainerNode&);
 
@@ -230,20 +228,10 @@ inline const ElementType* ElementDescendantConstIteratorAdapter<ElementType>::la
 
 // Standalone functions
 
-inline ElementDescendantIteratorAdapter<Element> elementDescendants(ContainerNode& root)
-{
-    return ElementDescendantIteratorAdapter<Element>(root);
-}
-
 template <typename ElementType>
 inline ElementDescendantIteratorAdapter<ElementType> descendantsOfType(ContainerNode& root)
 {
     return ElementDescendantIteratorAdapter<ElementType>(root);
-}
-
-inline ElementDescendantConstIteratorAdapter<Element> elementDescendants(const ContainerNode& root)
-{
-    return ElementDescendantConstIteratorAdapter<Element>(root);
 }
 
 template <typename ElementType>

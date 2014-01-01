@@ -775,7 +775,7 @@ Element* SVGSVGElement::getElementById(const AtomicString& id)
 
     // Fall back to traversing our subtree. Duplicate ids are allowed, the first found will
     // be returned.
-    for (auto& element : elementDescendants(*this)) {
+    for (auto& element : descendantsOfType<Element>(*this)) {
         if (element.getIdAttribute() == id)
             return &element;
     }

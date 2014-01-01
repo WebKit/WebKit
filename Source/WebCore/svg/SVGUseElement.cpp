@@ -365,7 +365,7 @@ static bool isDisallowedElement(const Element& element)
 
 static bool subtreeContainsDisallowedElement(SVGElement& start)
 {
-    for (auto& element : elementDescendants(start)) {
+    for (auto& element : descendantsOfType<Element>(start)) {
         if (isDisallowedElement(element))
             return true;
     }
@@ -658,8 +658,8 @@ static inline void removeDisallowedElementsFromSubtree(SVGElement& subtree)
 {
     ASSERT(!subtree.inDocument());
     Vector<Element*> toRemove;
-    auto it = elementDescendants(subtree).begin();
-    auto end = elementDescendants(subtree).end();
+    auto it = descendantsOfType<Element>(subtree).begin();
+    auto end = descendantsOfType<Element>(subtree).end();
     while (it != end) {
         if (isDisallowedElement(*it)) {
             toRemove.append(&*it);

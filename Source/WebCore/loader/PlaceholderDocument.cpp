@@ -34,7 +34,7 @@ void PlaceholderDocument::createRenderTree()
 {
     ASSERT(!renderView());
 
-    for (auto& child : elementChildren(*this))
+    for (auto& child : childrenOfType<Element>(*this))
         Style::attachRenderTree(child);
 }
 

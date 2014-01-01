@@ -461,7 +461,7 @@ bool HTMLObjectElement::containsJavaApplet() const
     if (MIMETypeRegistry::isJavaAppletMIMEType(getAttribute(typeAttr)))
         return true;
 
-    for (auto& child : elementChildren(*this)) {
+    for (auto& child : childrenOfType<Element>(*this)) {
         if (child.hasTagName(paramTag) && equalIgnoringCase(child.getNameAttribute(), "type")
             && MIMETypeRegistry::isJavaAppletMIMEType(child.getAttribute(valueAttr).string()))
             return true;

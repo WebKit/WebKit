@@ -72,8 +72,6 @@ private:
     const ContainerNode& m_parent;
 };
 
-ElementChildIteratorAdapter<Element> elementChildren(ContainerNode&);
-ElementChildConstIteratorAdapter<Element> elementChildren(const ContainerNode&);
 template <typename ElementType> ElementChildIteratorAdapter<ElementType> childrenOfType(ContainerNode&);
 template <typename ElementType> ElementChildConstIteratorAdapter<ElementType> childrenOfType(const ContainerNode&);
 
@@ -183,20 +181,10 @@ inline const ElementType* ElementChildConstIteratorAdapter<ElementType>::last() 
 
 // Standalone functions
 
-inline ElementChildIteratorAdapter<Element> elementChildren(ContainerNode& parent)
-{
-    return ElementChildIteratorAdapter<Element>(parent);
-}
-
 template <typename ElementType>
 inline ElementChildIteratorAdapter<ElementType> childrenOfType(ContainerNode& parent)
 {
     return ElementChildIteratorAdapter<ElementType>(parent);
-}
-
-inline ElementChildConstIteratorAdapter<Element> elementChildren(const ContainerNode& parent)
-{
-    return ElementChildConstIteratorAdapter<Element>(parent);
 }
 
 template <typename ElementType>

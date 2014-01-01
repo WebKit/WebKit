@@ -686,7 +686,7 @@ void Document::buildAccessKeyMap(TreeScope* scope)
 {
     ASSERT(scope);
     ContainerNode* rootNode = scope->rootNode();
-    for (auto& element : elementDescendants(*rootNode)) {
+    for (auto& element : descendantsOfType<Element>(*rootNode)) {
         const AtomicString& accessKey = element.fastGetAttribute(accesskeyAttr);
         if (!accessKey.isEmpty())
             m_elementsByAccessKey.set(accessKey.impl(), &element);
@@ -806,7 +806,7 @@ void Document::childrenChanged(const ChildChange& change)
     }
 #endif
 
-    Element* newDocumentElement = elementChildren(*this).first();
+    Element* newDocumentElement = childrenOfType<Element>(*this).first();
 
     if (newDocumentElement == m_documentElement)
         return;

@@ -1,5 +1,57 @@
 2014-01-01  Antti Koivisto  <antti@apple.com>
 
+        Remove elementChildren/elementDescendants shorthands
+        https://bugs.webkit.org/show_bug.cgi?id=126363
+
+        Reviewed by Anders Carlsson.
+
+        Just use childrenOfType<Element>/descendantsOfType<Element> instead. They are not that much longer
+        and consistency is valuable.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canvasHasFallbackContent):
+        (WebCore::siblingWithAriaRole):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable):
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::StyleInvalidationAnalysis::invalidateStyle):
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::namedItem):
+        * dom/Document.cpp:
+        (WebCore::Document::buildAccessKeyMap):
+        (WebCore::Document::childrenChanged):
+        * dom/Element.cpp:
+        (WebCore::Element::resetComputedStyle):
+        * dom/ElementChildIterator.h:
+        * dom/ElementDescendantIterator.h:
+        * dom/SelectorQuery.cpp:
+        (WebCore::elementsForLocalName):
+        (WebCore::anyElement):
+        (WebCore::SelectorDataList::executeSingleTagNameSelectorData):
+        (WebCore::SelectorDataList::executeSingleClassNameSelectorData):
+        (WebCore::SelectorDataList::executeSingleSelectorData):
+        (WebCore::SelectorDataList::executeSingleMultiSelectorData):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::cleanupUnstyledAppleStyleSpans):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::removeHeadContents):
+        * editing/markup.cpp:
+        (WebCore::completeURLs):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::refreshElementsIfNeeded):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::containsJavaApplet):
+        * loader/PlaceholderDocument.cpp:
+        (WebCore::PlaceholderDocument::createRenderTree):
+        * rendering/RenderChildIterator.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getElementById):
+        * svg/SVGUseElement.cpp:
+        (WebCore::subtreeContainsDisallowedElement):
+        (WebCore::removeDisallowedElementsFromSubtree):
+
+2014-01-01  Antti Koivisto  <antti@apple.com>
+
         Do less synchronous render tree construction
         https://bugs.webkit.org/show_bug.cgi?id=126359
 
