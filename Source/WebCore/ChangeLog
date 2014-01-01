@@ -1,3 +1,13 @@
+2014-01-01  Andreas Kling  <akling@apple.com>
+
+        FrameView: Store scroll corner renderer in a RenderPtr.
+        <https://webkit.org/b/126364>
+
+        Make FrameView::m_scrollCorner a RenderPtr<RenderScrollbarPart> and
+        remove two manual destroy() calls.
+
+        Reviewed by Antti Koivisto.
+
 2014-01-01  Antti Koivisto  <antti@apple.com>
 
         Remove elementChildren/elementDescendants shorthands

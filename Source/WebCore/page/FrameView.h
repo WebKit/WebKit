@@ -31,6 +31,7 @@
 #include "LayoutRect.h"
 #include "Pagination.h"
 #include "PaintPhase.h"
+#include "RenderPtr.h"
 #include "ScrollView.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
@@ -644,7 +645,7 @@ private:
     RefPtr<Node> m_maintainScrollPositionAnchor;
 
     // Renderer to hold our custom scroll corner.
-    RenderScrollbarPart* m_scrollCorner;
+    RenderPtr<RenderScrollbarPart> m_scrollCorner;
 
 #if PLATFORM(IOS)
     bool m_useCustomFixedPositionLayoutRect;

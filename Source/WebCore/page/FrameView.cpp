@@ -203,7 +203,6 @@ FrameView::FrameView(Frame& frame)
     , m_shouldUpdateWhileOffscreen(true)
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
-    , m_scrollCorner(0)
 #if PLATFORM(IOS)
     , m_useCustomFixedPositionLayoutRect(false)
 #endif
@@ -376,10 +375,7 @@ void FrameView::detachCustomScrollbars()
     if (verticalBar && verticalBar->isCustomScrollbar())
         setHasVerticalScrollbar(false);
 
-    if (m_scrollCorner) {
-        m_scrollCorner->destroy();
-        m_scrollCorner = 0;
-    }
+    m_scrollCorner = nullptr;
 }
 
 void FrameView::recalculateScrollbarOverlayStyle()
@@ -3320,16 +3316,15 @@ void FrameView::updateScrollCorner()
         }
     }
 
-    if (cornerStyle) {
+    if (!cornerStyle)
+        m_scrollCorner = nullptr;
+    else {
         if (!m_scrollCorner) {
-            m_scrollCorner = new RenderScrollbarPart(renderer->document(), cornerStyle.releaseNonNull());
+            m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer->document(), cornerStyle.releaseNonNull());
             m_scrollCorner->initializeStyle();
         } else
             m_scrollCorner->setStyle(cornerStyle.releaseNonNull());
         invalidateScrollCorner(cornerRect);
-    } else if (m_scrollCorner) {
-        m_scrollCorner->destroy();
-        m_scrollCorner = 0;
     }
 
     ScrollView::updateScrollCorner();
