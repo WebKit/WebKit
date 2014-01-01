@@ -132,8 +132,6 @@ private:
     ScrollingStateScrollingNode(ScrollingStateTree*, ScrollingNodeID);
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&);
 
-    virtual bool isScrollingNode() const OVERRIDE { return true; }
-
     GraphicsLayer* m_counterScrollingLayer;
     GraphicsLayer* m_headerLayer;
     GraphicsLayer* m_footerLayer;
@@ -161,7 +159,7 @@ private:
     bool m_requestedScrollPositionRepresentsProgrammaticScroll;
 };
 
-SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateScrollingNode, isScrollingNode());
+SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateScrollingNode, nodeType() == ScrollingNode);
 
 } // namespace WebCore
 

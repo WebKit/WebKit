@@ -1,3 +1,34 @@
+2013-12-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Give ScrollingStateNodes a nodeType()
+        https://bugs.webkit.org/show_bug.cgi?id=126347
+
+        Reviewed by Tim Horton.
+
+        When we start serializing ScrollingStateNodes to send to the UI process,
+        it's more convenient if they have a nodeType member rather than virtual functions,
+        so give them one, and fix the casting macros to use it. This allows us to use
+        a switch() on node creation, so the compiler will tell us if we forgot to create
+        a node type.
+
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::ScrollingStateFixedNode):
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::ScrollingStateNode):
+        * page/scrolling/ScrollingStateNode.h: const ScrollingNodeType field
+        (can't be modified after construction), and move the m_scrollingStateTree
+        member after it (the awkward protected:/private: will be cleaned up in a later patch).
+        (WebCore::ScrollingStateNode::nodeType):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::ScrollingStateStickyNode):
+        * page/scrolling/ScrollingStateStickyNode.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+
 2013-12-31  Andreas Kling  <akling@apple.com>
 
         Out-of-line RenderStyle substructure copying helpers.

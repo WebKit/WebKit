@@ -36,10 +36,11 @@
 
 namespace WebCore {
 
-ScrollingStateNode::ScrollingStateNode(ScrollingStateTree* scrollingStateTree, ScrollingNodeID nodeID)
-    : m_scrollingStateTree(scrollingStateTree)
+ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStateTree* scrollingStateTree, ScrollingNodeID nodeID)
+    : m_nodeType(nodeType)
     , m_nodeID(nodeID)
     , m_changedProperties(0)
+    , m_scrollingStateTree(scrollingStateTree)
     , m_parent(0)
 {
 }
@@ -48,9 +49,10 @@ ScrollingStateNode::ScrollingStateNode(ScrollingStateTree* scrollingStateTree, S
 // to clone the relationship pointers, so don't copy that information from the original
 // node.
 ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode)
-    : m_scrollingStateTree(0)
+    : m_nodeType(stateNode.nodeType())
     , m_nodeID(stateNode.scrollingNodeID())
     , m_changedProperties(stateNode.changedProperties())
+    , m_scrollingStateTree(0)
     , m_parent(0)
 {
     // FIXME: why doesn't this set the GraphicsLayer?

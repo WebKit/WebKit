@@ -56,8 +56,6 @@ private:
     ScrollingStateFixedNode(ScrollingStateTree*, ScrollingNodeID);
     ScrollingStateFixedNode(const ScrollingStateFixedNode&);
 
-    virtual bool isFixedNode() const OVERRIDE { return true; }
-
     virtual void syncLayerPositionForViewportRect(const LayoutRect& viewportRect) OVERRIDE;
 
     virtual void dumpProperties(TextStream&, int indent) const OVERRIDE;
@@ -65,7 +63,7 @@ private:
     FixedPositionViewportConstraints m_constraints;
 };
 
-SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateFixedNode, isFixedNode());
+SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateFixedNode, nodeType() == FixedNode);
 
 } // namespace WebCore
 

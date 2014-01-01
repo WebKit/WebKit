@@ -41,7 +41,7 @@ PassOwnPtr<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingS
 }
 
 ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingStateTree* tree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(tree, nodeID)
+    : ScrollingStateNode(StickyNode, tree, nodeID)
 {
 }
 

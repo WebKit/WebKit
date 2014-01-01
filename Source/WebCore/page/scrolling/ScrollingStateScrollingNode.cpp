@@ -40,7 +40,7 @@ PassOwnPtr<ScrollingStateScrollingNode> ScrollingStateScrollingNode::create(Scro
 }
 
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* stateTree, ScrollingNodeID nodeID)
-    : ScrollingStateNode(stateTree, nodeID)
+    : ScrollingStateNode(ScrollingNode, stateTree, nodeID)
     , m_counterScrollingLayer(0)
     , m_headerLayer(0)
     , m_footerLayer(0)

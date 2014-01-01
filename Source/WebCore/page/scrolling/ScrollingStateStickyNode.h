@@ -56,8 +56,6 @@ private:
     ScrollingStateStickyNode(ScrollingStateTree*, ScrollingNodeID);
     ScrollingStateStickyNode(const ScrollingStateStickyNode&);
 
-    virtual bool isStickyNode() const OVERRIDE { return true; }
-
     virtual void syncLayerPositionForViewportRect(const LayoutRect& viewportRect) OVERRIDE;
 
     virtual void dumpProperties(TextStream&, int indent) const OVERRIDE;
@@ -65,7 +63,7 @@ private:
     StickyPositionViewportConstraints m_constraints;
 };
 
-SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateStickyNode, isStickyNode());
+SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateStickyNode, nodeType() == StickyNode);
 
 } // namespace WebCore
 

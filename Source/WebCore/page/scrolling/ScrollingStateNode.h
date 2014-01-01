@@ -46,12 +46,10 @@ class TextStream;
 
 class ScrollingStateNode {
 public:
-    ScrollingStateNode(ScrollingStateTree*, ScrollingNodeID);
+    ScrollingStateNode(ScrollingNodeType, ScrollingStateTree*, ScrollingNodeID);
     virtual ~ScrollingStateNode();
-
-    virtual bool isScrollingNode() const { return false; }
-    virtual bool isFixedNode() const { return false; }
-    virtual bool isStickyNode() const { return false; }
+    
+    ScrollingNodeType nodeType() const { return m_nodeType; }
 
     virtual PassOwnPtr<ScrollingStateNode> clone() = 0;
     PassOwnPtr<ScrollingStateNode> cloneAndReset();
@@ -93,8 +91,6 @@ public:
 protected:
     ScrollingStateNode(const ScrollingStateNode&);
 
-    ScrollingStateTree* m_scrollingStateTree;
-
 private:
     void dump(TextStream&, int indent) const;
 
@@ -102,9 +98,14 @@ private:
     ChangedProperties changedProperties() const { return m_changedProperties; }
     void willBeRemovedFromStateTree();
 
+    const ScrollingNodeType m_nodeType;
     ScrollingNodeID m_nodeID;
     ChangedProperties m_changedProperties;
 
+protected:
+    ScrollingStateTree* m_scrollingStateTree; // FIXME: this should be a reference.
+
+private:
     ScrollingStateNode* m_parent;
     OwnPtr<Vector<OwnPtr<ScrollingStateNode>>> m_children;
 

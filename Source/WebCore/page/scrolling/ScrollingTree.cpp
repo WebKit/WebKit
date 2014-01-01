@@ -180,14 +180,17 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
             node = m_rootNode.get();
         } else {
             OwnPtr<ScrollingTreeNode> newNode;
-            if (stateNode->isScrollingNode())
+            switch (stateNode->nodeType()) {
+            case ScrollingNode:
                 newNode = ScrollingTreeScrollingNode::create(*this, nodeID);
-            else if (stateNode->isFixedNode())
+                break;
+            case FixedNode:
                 newNode = ScrollingTreeFixedNode::create(*this, nodeID);
-            else if (stateNode->isStickyNode())
+                break;
+            case StickyNode:
                 newNode = ScrollingTreeStickyNode::create(*this, nodeID);
-            else
-                ASSERT_NOT_REACHED();
+                break;
+            }
 
             node = newNode.get();
             m_nodeMap.set(nodeID, node);

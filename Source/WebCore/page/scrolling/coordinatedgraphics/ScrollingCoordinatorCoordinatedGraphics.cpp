@@ -61,7 +61,7 @@ ScrollingNodeID ScrollingCoordinatorCoordinatedGraphics::attachToStateTree(Scrol
 void ScrollingCoordinatorCoordinatedGraphics::detachFromStateTree(ScrollingNodeID nodeID)
 {
     ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
-    if (node && node->isFixedNode())
+    if (node && node->nodeType() == FixedNode)
         toCoordinatedGraphicsLayer(node->graphicsLayer())->setFixedToViewport(false);
 
     m_scrollingStateTree->detachNode(nodeID);
