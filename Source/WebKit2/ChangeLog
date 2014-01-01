@@ -1,5 +1,14 @@
 2014-01-01  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] [CMake] Fix the WEBKIT_SRC_DIR define when building the WebKit2 GObject API unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=126350
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/tests/CMakeLists.txt: Fix the define.
+
+2014-01-01  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] Rename libtestnetscapeplugin to libTestNetscapePlugin
         https://bugs.webkit.org/show_bug.cgi?id=126349
 
