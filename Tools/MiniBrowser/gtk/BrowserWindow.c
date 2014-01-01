@@ -230,14 +230,14 @@ static void browserWindowUpdateNavigationActions(BrowserWindow *window, WebKitBa
     gtk_widget_set_sensitive(window->backItem, webkit_web_view_can_go_back(window->webView));
     gtk_widget_set_sensitive(window->forwardItem, webkit_web_view_can_go_forward(window->webView));
 
-    GList *list = webkit_back_forward_list_get_back_list_with_limit(backForwadlist, 10);
+    GList *list = g_list_reverse(webkit_back_forward_list_get_back_list_with_limit(backForwadlist, 10));
     gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(window->backItem),
-                                  browserWindowCreateBackForwardMenu(window, list));
+        browserWindowCreateBackForwardMenu(window, list));
     g_list_free(list);
 
     list = webkit_back_forward_list_get_forward_list_with_limit(backForwadlist, 10);
     gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(window->forwardItem),
-                                  browserWindowCreateBackForwardMenu(window, list));
+        browserWindowCreateBackForwardMenu(window, list));
     g_list_free(list);
 }
 

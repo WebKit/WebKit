@@ -1,3 +1,16 @@
+2014-01-01  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK][WK2] Back items are shown in reverse order in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=126354
+
+        Reviewed by Carlos Garcia Campos.
+
+        The latest visited site for backward history should be placed on the top of a history stack
+        as a common behavior. However currently its order is reverse.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowUpdateNavigationActions):
+
 2013-12-30  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Make the output directory of GObject unit tests binaries consistent with the CMake build
