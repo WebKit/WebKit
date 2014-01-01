@@ -327,7 +327,8 @@ WebKitWebInspector* webkitWebInspectorCreate(WebInspectorProxy* webInspector)
         inspectedURLChanged,
         attach,
         detach,
-        didChangeAttachedHeight
+        didChangeAttachedHeight,
+        nullptr // didChangeAttachedWidth
     };
     WKInspectorSetInspectorClientGtk(toAPI(webInspector), &wkInspectorClientGtk.base);
 
