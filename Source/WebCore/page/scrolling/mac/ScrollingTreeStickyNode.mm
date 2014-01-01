@@ -47,15 +47,15 @@ ScrollingTreeStickyNode::~ScrollingTreeStickyNode()
 {
 }
 
-void ScrollingTreeStickyNode::updateBeforeChildren(ScrollingStateNode* stateNode)
+void ScrollingTreeStickyNode::updateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingStateStickyNode* stickyStateNode = toScrollingStateStickyNode(stateNode);
+    const ScrollingStateStickyNode& stickyStateNode = toScrollingStateStickyNode(stateNode);
 
-    if (stickyStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
-        m_layer = stickyStateNode->platformScrollLayer();
+    if (stickyStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
+        m_layer = stickyStateNode.platformScrollLayer();
 
-    if (stateNode->hasChangedProperty(ScrollingStateStickyNode::ViewportConstraints))
-        m_constraints = stickyStateNode->viewportConstraints();
+    if (stateNode.hasChangedProperty(ScrollingStateStickyNode::ViewportConstraints))
+        m_constraints = stickyStateNode.viewportConstraints();
 }
 
 static inline CGPoint operator*(CGPoint& a, const CGSize& b)

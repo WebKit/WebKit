@@ -47,15 +47,15 @@ ScrollingTreeFixedNode::~ScrollingTreeFixedNode()
 {
 }
 
-void ScrollingTreeFixedNode::updateBeforeChildren(ScrollingStateNode* stateNode)
+void ScrollingTreeFixedNode::updateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingStateFixedNode* fixedStateNode = toScrollingStateFixedNode(stateNode);
+    const ScrollingStateFixedNode& fixedStateNode = toScrollingStateFixedNode(stateNode);
 
-    if (fixedStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
-        m_layer = fixedStateNode->platformScrollLayer();
+    if (fixedStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
+        m_layer = fixedStateNode.platformScrollLayer();
 
-    if (stateNode->hasChangedProperty(ScrollingStateFixedNode::ViewportConstraints))
-        m_constraints = fixedStateNode->viewportConstraints();
+    if (stateNode.hasChangedProperty(ScrollingStateFixedNode::ViewportConstraints))
+        m_constraints = fixedStateNode.viewportConstraints();
 }
 
 static inline CGPoint operator*(CGPoint& a, const CGSize& b)

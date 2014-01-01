@@ -1,5 +1,39 @@
 2014-01-01  Simon Fraser  <simon.fraser@apple.com>
 
+        Updating the scrolling tree should use references to state nodes
+        https://bugs.webkit.org/show_bug.cgi?id=126360
+
+        Reviewed by Anders Carlsson.
+
+        Change functions related to ScrollingTreeNode updating to take
+        const references to state nodes rather than pointers.
+
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::hasChangedProperty):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitNewTreeState):
+        (WebCore::ScrollingTree::updateTreeFromStateNode): The node can be nil so
+        this continues to take a pointer.
+        (WebCore::ScrollingTree::removeDestroyedNodes):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::updateAfterChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::updateBeforeChildren):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::updateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNodeMac::updateAfterChildren):
+        * page/scrolling/mac/ScrollingTreeStickyNode.h:
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::updateBeforeChildren):
+
+2014-01-01  Simon Fraser  <simon.fraser@apple.com>
+
         Add a typedef for PlatformLayerID on GraphicsLayer, and migrate RemoteLayerTreeTransaction to use it
         https://bugs.webkit.org/show_bug.cgi?id=126346
 

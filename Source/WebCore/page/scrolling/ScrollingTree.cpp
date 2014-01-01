@@ -146,11 +146,11 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingS
     bool scrollRequestIsProgammatic = rootNode ? rootNode->requestedScrollPositionRepresentsProgrammaticScroll() : false;
     TemporaryChange<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollRequestIsProgammatic);
 
-    removeDestroyedNodes(scrollingStateTree.get());
+    removeDestroyedNodes(*scrollingStateTree);
     updateTreeFromStateNode(rootNode);
 }
 
-void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
+void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode)
 {
     if (!stateNode) {
         m_nodeMap.clear();
@@ -165,7 +165,7 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
     ScrollingTreeNode* node;
     if (it != m_nodeMap.end()) {
         node = it->value;
-        node->updateBeforeChildren(stateNode);
+        node->updateBeforeChildren(*stateNode);
     } else {
         // If the node isn't found, it's either new and needs to be added to the tree, or there is a new ID for our
         // root node.
@@ -176,7 +176,7 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
 
             m_rootNode = ScrollingTreeScrollingNode::create(*this, nodeID);
             m_nodeMap.set(nodeID, m_rootNode.get());
-            m_rootNode->updateBeforeChildren(stateNode);
+            m_rootNode->updateBeforeChildren(*stateNode);
             node = m_rootNode.get();
         } else {
             OwnPtr<ScrollingTreeNode> newNode;
@@ -201,7 +201,7 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
                 newNode->setParent(parent);
                 parent->appendChild(newNode.release());
             }
-            node->updateBeforeChildren(stateNode);
+            node->updateBeforeChildren(*stateNode);
         }
     }
 
@@ -212,12 +212,12 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
         for (size_t i = 0; i < size; ++i)
             updateTreeFromStateNode(stateNodeChildren->at(i).get());
     }
-    node->updateAfterChildren(stateNode);
+    node->updateAfterChildren(*stateNode);
 }
 
-void ScrollingTree::removeDestroyedNodes(ScrollingStateTree* stateTree)
+void ScrollingTree::removeDestroyedNodes(const ScrollingStateTree& stateTree)
 {
-    const Vector<ScrollingNodeID>& removedNodes = stateTree->removedNodes();
+    const Vector<ScrollingNodeID>& removedNodes = stateTree.removedNodes();
     size_t size = removedNodes.size();
     for (size_t i = 0; i < size; ++i) {
         ScrollingTreeNode* node = m_nodeMap.take(removedNodes[i]);

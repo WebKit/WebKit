@@ -43,8 +43,8 @@ class ScrollingTreeNode {
 public:
     virtual ~ScrollingTreeNode();
 
-    virtual void updateBeforeChildren(ScrollingStateNode*) = 0;
-    virtual void updateAfterChildren(ScrollingStateNode*) { }
+    virtual void updateBeforeChildren(const ScrollingStateNode&) = 0;
+    virtual void updateAfterChildren(const ScrollingStateNode&) { }
 
     virtual void parentScrollPositionDidChange(const IntRect& viewportRect, const FloatSize& cumulativeDelta) = 0;
 

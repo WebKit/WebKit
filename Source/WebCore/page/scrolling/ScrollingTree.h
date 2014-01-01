@@ -112,8 +112,8 @@ public:
 private:
     explicit ScrollingTree(ScrollingCoordinator*);
 
-    void removeDestroyedNodes(ScrollingStateTree*);
-    void updateTreeFromStateNode(ScrollingStateNode*);
+    void removeDestroyedNodes(const ScrollingStateTree&);
+    void updateTreeFromStateNode(const ScrollingStateNode*);
 
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
     OwnPtr<ScrollingTreeScrollingNode> m_rootNode;
