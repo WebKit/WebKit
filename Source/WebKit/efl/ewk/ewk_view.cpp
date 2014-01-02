@@ -4238,7 +4238,9 @@ Eina_Bool ewk_view_visibility_state_set(Evas_Object* ewkView, Ewk_Page_Visibilit
     if (pageVisibilityState == EWK_PAGE_VISIBILITY_STATE_UNLOADED)
         return false;
 
-    priv->page->setVisibilityState(static_cast<WebCore::PageVisibilityState>(pageVisibilityState), initialState);
+    priv->page->setIsVisible(pageVisibilityState == EWK_PAGE_VISIBILITY_STATE_VISIBLE, initialState);
+    if (pageVisibilityState == EWK_PAGE_VISIBILITY_STATE_PRERENDER)
+        priv->page->setIsPrerender();
 
     return true;
 #else

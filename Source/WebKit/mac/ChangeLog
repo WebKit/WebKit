@@ -1,3 +1,28 @@
+2014-01-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge didMoveOnscreen / page visibility to isVisible
+        https://bugs.webkit.org/show_bug.cgi?id=126268
+
+        Reviewed by Tim Horton.
+
+        The onscreen state most closely tracks view visibility (though currently
+        also tracks a mix of in-window state). Make more consistent, simplify,
+        and move all animation suspension logic to Page, so it can be controlled
+        by the PageThrottler.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _updateVisibilityState]):
+            - _setVisibilityState:isInitialState: -> _setIsVisibile:isInitialState:.
+        (-[WebView _setIsVisible:isInitialState:]):
+            - added.
+        (-[WebView _setVisibilityState:isInitialState:]):
+            - setVisibilityState -> setIsVisible/setIsPrerender.
+        (-[WebView viewWillMoveToWindow:]):
+        (-[WebView viewDidMoveToWindow]):
+            - remove redundant calls to willMoveOffscreen/didMoveOnscreen
+              (this is handled by _updateVisibilityState).
+
 2013-12-23  Oliver Hunt  <oliver@apple.com>
 
         Refactor PutPropertySlot to be aware of custom properties

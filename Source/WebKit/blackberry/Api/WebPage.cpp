@@ -3118,7 +3118,8 @@ void WebPagePrivate::setPageVisibilityState()
 
         static bool s_initialVisibilityState = true;
 
-        m_page->setVisibilityState(m_visible && m_activationState == ActivationActive ? PageVisibilityStateVisible : PageVisibilityStateHidden, s_initialVisibilityState);
+        m_page->setIsVisible(m_visible && m_activationState == ActivationActive, s_initialVisibilityState);
+
         s_initialVisibilityState = false;
     }
 }

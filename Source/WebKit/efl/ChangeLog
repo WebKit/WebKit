@@ -1,3 +1,19 @@
+2014-01-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge didMoveOnscreen / page visibility to isVisible
+        https://bugs.webkit.org/show_bug.cgi?id=126268
+
+        Reviewed by Tim Horton.
+
+        The onscreen state most closely tracks view visibility (though currently
+        also tracks a mix of in-window state). Make more consistent, simplify,
+        and move all animation suspension logic to Page, so it can be controlled
+        by the PageThrottler.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_visibility_state_set):
+            - setVisibilityState -> setIsVisible/setIsPrerender.
+
 2013-12-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove ewk_view_tiled

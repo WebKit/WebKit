@@ -425,7 +425,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
         WebProcess::shared().eventDispatcher().addScrollingTreeForPage(this);
 #endif
 
-    updateVisibilityState(true);
+    m_page->setIsVisible(m_viewState & ViewState::IsVisible, true);
 }
 
 WebPage::~WebPage()
@@ -1922,20 +1922,12 @@ void WebPage::setActive(bool isActive)
 
 void WebPage::setViewIsVisible(bool isVisible)
 {
-    if (!isVisible) {
-        m_drawingArea->suspendPainting();
-        m_page->suspendScriptedAnimations();
-    } else {
+    if (isVisible)
         m_drawingArea->resumePainting();
-        // FIXME: this seems redundant; for the view to be visible the window must be visible too!
-        // refactoring for now, will change the logic later.
-        if (m_windowIsVisible) {
-            m_page->resumeScriptedAnimations();
-            m_page->resumeAnimatingImages();
-        }
-    }
+    else
+        m_drawingArea->suspendPainting();
 
-    updateVisibilityState();
+    m_page->setIsVisible(m_viewState & ViewState::IsVisible, false);
 }
 
 void WebPage::setDrawsBackground(bool drawsBackground)
@@ -2059,7 +2051,6 @@ void WebPage::setIsInWindow(bool isInWindow)
     if (!isInWindow) {
         m_setCanStartMediaTimer.stop();
         m_page->setCanStartMedia(false);
-        m_page->willMoveOffscreen();
         
         if (pageWasInWindow)
             WebProcess::shared().pageWillLeaveWindow(m_pageID);
@@ -2070,8 +2061,6 @@ void WebPage::setIsInWindow(bool isInWindow)
         if (m_mayStartMediaWhenInWindow)
             m_setCanStartMediaTimer.startOneShot(0);
 
-        m_page->didMoveOnscreen();
-        
         if (!pageWasInWindow)
             WebProcess::shared().pageDidEnterWindow(m_pageID);
     }
@@ -3538,7 +3527,7 @@ void WebPage::setMayStartMediaWhenInWindow(bool mayStartMedia)
         return;
 
     m_mayStartMediaWhenInWindow = mayStartMedia;
-    if (m_mayStartMediaWhenInWindow && m_page->isOnscreen())
+    if (m_mayStartMediaWhenInWindow && m_page->isInWindow())
         m_setCanStartMediaTimer.startOneShot(0);
 }
 
@@ -3707,49 +3696,10 @@ FrameView* WebPage::mainFrameView() const
     return 0;
 }
 
-void WebPage::updateVisibilityState(bool isInitialState)
-{
-    bool isVisible = m_viewState & ViewState::IsVisible;
-    if (!m_page)
-        return;
-
-#if ENABLE(PAGE_VISIBILITY_API)
-
-    FrameView* view = m_page->mainFrame().view();
-
-    if (isVisible) {
-        m_page->didMoveOnscreen();
-        if (view)
-            view->show();
-    }
-
-    PageVisibilityState state = isVisible ? PageVisibilityStateVisible : PageVisibilityStateHidden;
-    m_page->setVisibilityState(state, isInitialState);
-
-    if (!isVisible) {
-        m_page->willMoveOffscreen();
-        if (view)
-            view->hide();
-    }
-
-#elif ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-
-    PageVisibilityState state = isVisible ? PageVisibilityStateVisible : PageVisibilityStateHidden;
-    m_page->setVisibilityState(state, isInitialState);
-
-#else
-    UNUSED_PARAM(isVisible);
-    UNUSED_PARAM(isInitialState);
-#endif
-}
-
 void WebPage::setVisibilityStatePrerender()
 {
-#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    if (!m_page)
-        return;
-    m_page->setVisibilityState(PageVisibilityStatePrerender, true);
-#endif
+    if (m_page)
+        m_page->setIsPrerender();
 }
 
 void WebPage::setThrottled(bool isThrottled)

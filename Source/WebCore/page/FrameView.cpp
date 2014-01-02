@@ -1691,7 +1691,7 @@ bool FrameView::isHandlingWheelEvent() const
 bool FrameView::shouldSetCursor() const
 {
     Page* page = frame().page();
-    return page && page->isOnscreen() && page->focusController().isActive();
+    return page && page->isVisible() && page->focusController().isActive();
 }
 
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)

@@ -699,6 +699,8 @@ void DumpRenderTreeSupportGtk::setPageVisibility(WebKitWebView* webView, WebCore
     if (!page)
         return;
 
-    page->setVisibilityState(visibilityState, isInitialState);
+    page->setIsVisible(visibilityState == PageVisibilityStateVisible, isInitialState);
+    if (visibilityState == PageVisibilityStatePrerender)
+        page->setIsPrerender();
 #endif
 }

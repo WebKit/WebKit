@@ -507,21 +507,6 @@ WebLayoutMilestones kitLayoutMilestones(LayoutMilestones milestones)
         | (milestones & DidHitRelevantRepaintedObjectsAreaThreshold ? WebDidHitRelevantRepaintedObjectsAreaThreshold : 0);
 }
 
-static PageVisibilityState core(WebPageVisibilityState visibilityState)
-{
-    switch (visibilityState) {
-    case WebPageVisibilityStateVisible:
-        return PageVisibilityStateVisible;
-    case WebPageVisibilityStateHidden:
-        return PageVisibilityStateHidden;
-    case WebPageVisibilityStatePrerender:
-        return PageVisibilityStatePrerender;
-    }
-
-    ASSERT_NOT_REACHED();
-    return PageVisibilityStateVisible;
-}
-
 static WebPageVisibilityState kit(PageVisibilityState visibilityState)
 {
     switch (visibilityState) {
@@ -1050,7 +1035,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     [self _registerDraggedTypes];
 #endif
 
-    [self _setVisibilityState:([self _isViewVisible] ? WebPageVisibilityStateVisible : WebPageVisibilityStateHidden) isInitialState:YES];
+    [self _setIsVisible:[self _isViewVisible] isInitialState:YES];
 
     WebPreferences *prefs = [self preferences];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
@@ -4009,7 +3994,7 @@ static inline IMP getMethod(id o, SEL s)
 - (void)_updateVisibilityState
 {
     if (_private && _private->page)
-        [self _setVisibilityState:([self _isViewVisible] ? WebPageVisibilityStateVisible : WebPageVisibilityStateHidden) isInitialState:NO];
+        [self _setIsVisible:[self _isViewVisible] isInitialState:NO];
 }
 
 - (void)_updateActiveState
@@ -4374,12 +4359,19 @@ static Vector<String> toStringVector(NSArray* patterns)
     return WebPageVisibilityStateVisible;
 }
 
+- (void)_setIsVisible:(BOOL)isVisible isInitialState:(BOOL)isInitialState
+{
+    if (_private->page)
+        _private->page->setIsVisible(isVisible, isInitialState);
+}
+
 - (void)_setVisibilityState:(WebPageVisibilityState)visibilityState isInitialState:(BOOL)isInitialState
 {
-#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    if (_private->page)
-        _private->page->setVisibilityState(core(visibilityState), isInitialState);
-#endif
+    if (_private->page) {
+        _private->page->setIsVisible(visibilityState == WebPageVisibilityStateVisible, isInitialState);
+        if (visibilityState == WebPageVisibilityStatePrerender)
+            _private->page->setIsPrerender();
+    }
 }
 
 - (void)_setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns
@@ -5283,7 +5275,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         WKSetNSWindowShouldPostEventNotifications(window, YES);
     } else {
         _private->page->setCanStartMedia(false);
-        _private->page->willMoveOffscreen();
         _private->page->setIsInWindow(false);
     }
         
@@ -5305,7 +5296,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
     if ([self window]) {
         _private->page->setCanStartMedia(true);
-        _private->page->didMoveOnscreen();
         _private->page->setIsInWindow(true);
 
 #if PLATFORM(IOS)

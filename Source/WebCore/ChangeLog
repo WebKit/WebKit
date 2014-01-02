@@ -1,3 +1,38 @@
+2014-01-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge didMoveOnscreen / page visibility to isVisible
+        https://bugs.webkit.org/show_bug.cgi?id=126268
+
+        Reviewed by Tim Horton.
+
+        The onscreen state most closely tracks view visibility (though currently
+        also tracks a mix of in-window state). Make more consistent, simplify,
+        and move all animation suspension logic to Page, so it can be controlled
+        by the PageThrottler.
+
+        * WebCore.exp.in:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::shouldSetCursor):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+            - initialize new variables.
+        (WebCore::Page::setIsVisible):
+            - merge setVisibilityState, didMoveOnscreen, willMoveOffscreen.
+        (WebCore::Page::setIsPrerender):
+            - switches visibility state from hidden to prerender.
+        (WebCore::Page::visibilityState):
+            - computed from m_isVisible, m_isPrerender.
+        (WebCore::Page::hiddenPageCSSAnimationSuspensionStateChanged):
+            - m_visibilityState -> m_isVisible.
+        * page/Page.h:
+            - remove didMoveOnscreen/willMoveOffscreen
+              m_isOnscreen & m_visibilityState -> m_isVisible & m_isPrerender
+              setVisibilityState -> setIsVisible & setIsPrerender.
+        (WebCore::Page::isVisible):
+            - isOnscreen -> isVisible.
+
 2014-01-02  Oliver Hunt  <oliver@apple.com>
 
         Update bindings test results

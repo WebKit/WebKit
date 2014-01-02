@@ -82,7 +82,7 @@ typedef GenericCallback<WKDictionaryRef> DictionaryCallback;
 class WebNetworkInfoManagerProxy;
 #endif
 #if ENABLE(NETWORK_PROCESS)
-struct NetworkProcessCreationParameters;
+struc   t NetworkProcessCreationParameters;
 #endif
 
 class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private IPC::MessageReceiver

@@ -294,9 +294,9 @@ public:
     unsigned pageCount() const;
 
     // Notifications when the Page starts and stops being presented via a native window.
-    void didMoveOnscreen();
-    void willMoveOffscreen();
-    bool isOnscreen() const { return m_isOnscreen; }
+    void setIsVisible(bool isVisible, bool isInitial);
+    void setIsPrerender();
+    bool isVisible() const { return m_isVisible; }
 
     // Notification that this Page was moved into or out of a native window.
     void setIsInWindow(bool);
@@ -354,9 +354,6 @@ public:
 
 #if ENABLE(PAGE_VISIBILITY_API)
     PageVisibilityState visibilityState() const;
-#endif
-#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    void setVisibilityState(PageVisibilityState, bool);
 #endif
     void resumeAnimatingImages();
 
@@ -525,12 +522,9 @@ private:
     double m_timerAlignmentInterval;
 
     bool m_isEditable;
-    bool m_isOnscreen;
     bool m_isInWindow;
-
-#if ENABLE(PAGE_VISIBILITY_API)
-    PageVisibilityState m_visibilityState;
-#endif
+    bool m_isVisible;
+    bool m_isPrerender;
 
     LayoutMilestones m_requestedLayoutMilestones;
 
