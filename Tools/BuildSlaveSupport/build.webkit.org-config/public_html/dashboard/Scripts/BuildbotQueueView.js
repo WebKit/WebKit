@@ -79,9 +79,9 @@ BuildbotQueueView.prototype = {
         if (!latestRecordedOpenSourceRevisionNumber)
             return;
 
-        var openSourceRevisionsBehind = latestRecordedOpenSourceRevisionNumber - latestProductiveIteration.openSourceRevision;
-        if (openSourceRevisionsBehind < 0)
-            openSourceRevisionsBehind = 0;
+        var totalRevisionsBehind = latestRecordedOpenSourceRevisionNumber - latestProductiveIteration.openSourceRevision;
+        if (totalRevisionsBehind < 0)
+            totalRevisionsBehind = 0;
 
         if (latestProductiveIteration.internalRevision) {
             var latestRecordedInternalRevisionNumber = internalTrac.latestRecordedRevisionNumber;
@@ -89,18 +89,15 @@ BuildbotQueueView.prototype = {
                 return;
 
             var internalRevisionsBehind = latestRecordedInternalRevisionNumber - latestProductiveIteration.internalRevision;
-            if (internalRevisionsBehind < 0)
-                internalRevisionsBehind = 0;
-            if (openSourceRevisionsBehind || internalRevisionsBehind)
-                var messageText = openSourceRevisionsBehind + " \uff0b " + internalRevisionsBehind + " revisions behind";
-        } else if (openSourceRevisionsBehind)
-            var messageText = openSourceRevisionsBehind + " " + (openSourceRevisionsBehind === 1 ? "revision behind" : "revisions behind");
+            if (internalRevisionsBehind > 0)
+                totalRevisionsBehind += internalRevisionsBehind;
+        }
 
-        if (!messageText)
+        if (!totalRevisionsBehind)
             return;
 
         var messageElement = document.createElement("span"); // We can't just pass text to StatusLineView here, because we need an element that perfectly fits the text for popover positioning.
-        messageElement.textContent = messageText;
+        messageElement.textContent = totalRevisionsBehind + " " + (totalRevisionsBehind === 1 ? "revision behind" : "revisions behind");
         var status = new StatusLineView(messageElement, StatusLineView.Status.NoBubble);
         this.element.appendChild(status.element);
 

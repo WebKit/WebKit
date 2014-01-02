@@ -1,5 +1,17 @@
 2014-01-02  Alexey Proskuryakov  <ap@apple.com>
 
+        "+" is very confusing at http://build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=126400
+
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._appendPendingRevisionCount): Instead of listing open
+        source and internal counts separately, simply add them. One can always open a popover
+        for more detail.
+
+2014-01-02  Alexey Proskuryakov  <ap@apple.com>
+
         Accessing Trac from build.webkit.org/dashboard should enable XMLHttpRequest.withCredentials
         https://bugs.webkit.org/show_bug.cgi?id=126391
 
