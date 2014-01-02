@@ -73,10 +73,6 @@ public:
     static bool causesRecompilation() { return true; }
     static bool isSampling() { return false; }
     static bool hasHeapProfiler() { return false; }
-    // FIXME: Support these methods for JSC. See bug 90358.
-    static void visitExternalStrings(ExternalStringVisitor*) { }
-    static void visitExternalArrays(ExternalArrayVisitor*) { }
-    static size_t profilerSnapshotsSize() { return 0; }
     static HashMap<String, double>* currentProfileNameIdleTimeMap() { return 0; }
 };
 
