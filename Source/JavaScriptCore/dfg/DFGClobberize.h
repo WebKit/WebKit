@@ -204,24 +204,10 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case In:
     case GetMyArgumentsLengthSafe:
     case GetMyArgumentByValSafe:
+    case ValueAdd:
         read(World);
         write(World);
         return;
-        
-    case ValueAdd:
-        switch (node->binaryUseKind()) {
-        case Int32Use:
-        case NumberUse:
-        case MachineIntUse:
-            return;
-        case UntypedUse:
-            read(World);
-            write(World);
-            return;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return;
-        }
         
     case GetCallee:
         read(AbstractHeap(Variables, JSStack::Callee));
@@ -579,26 +565,13 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         }
         return;
         
+    case CompareEq:
     case CompareLess:
     case CompareLessEq:
     case CompareGreater:
     case CompareGreaterEq:
-        if (graph.isPredictedNumerical(node))
+        if (!node->isBinaryUseKind(UntypedUse))
             return;
-        read(World);
-        write(World);
-        return;
-        
-    case CompareEq:
-        if (graph.isPredictedNumerical(node)
-            || node->isBinaryUseKind(StringUse)
-            || node->isBinaryUseKind(StringIdentUse))
-            return;
-        
-        if ((node->child1().useKind() == ObjectUse || node->child1().useKind() == ObjectOrOtherUse)
-            && (node->child2().useKind() == ObjectUse || node->child2().useKind() == ObjectOrOtherUse))
-            return;
-        
         read(World);
         write(World);
         return;

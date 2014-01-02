@@ -1239,7 +1239,6 @@ private:
             
         // Handle nodes that are conditionally pure: these are pure, and can
         // be CSE'd, so long as the prediction is the one we want.
-        case ValueAdd:
         case CompareLess:
         case CompareLessEq:
         case CompareGreater:

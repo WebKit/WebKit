@@ -1806,25 +1806,6 @@ void SpeculativeJIT::compileDoubleCompare(Node* node, MacroAssembler::DoubleCond
     jsValueResult(result.gpr(), node, DataFormatJSBoolean);
 }
 
-void SpeculativeJIT::compileValueAdd(Node* node)
-{
-    JSValueOperand op1(this, node->child1());
-    JSValueOperand op2(this, node->child2());
-    
-    GPRReg op1GPR = op1.gpr();
-    GPRReg op2GPR = op2.gpr();
-    
-    flushRegisters();
-    
-    GPRResult result(this);
-    if (isKnownNotNumber(node->child1().node()) || isKnownNotNumber(node->child2().node()))
-        callOperation(operationValueAddNotNumber, result.gpr(), op1GPR, op2GPR);
-    else
-        callOperation(operationValueAdd, result.gpr(), op1GPR, op2GPR);
-    
-    jsValueResult(result.gpr(), node);
-}
-
 void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
 {
     JSValueOperand value(this, nodeUse, ManualOperandSpeculation);
@@ -2403,7 +2384,25 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case ValueAdd:
+    case ValueAdd: {
+        JSValueOperand op1(this, node->child1());
+        JSValueOperand op2(this, node->child2());
+        
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+        
+        flushRegisters();
+        
+        GPRResult result(this);
+        if (isKnownNotNumber(node->child1().node()) || isKnownNotNumber(node->child2().node()))
+            callOperation(operationValueAddNotNumber, result.gpr(), op1GPR, op2GPR);
+        else
+            callOperation(operationValueAdd, result.gpr(), op1GPR, op2GPR);
+        
+        jsValueResult(result.gpr(), node);
+        break;
+    }
+        
     case ArithAdd:
         compileAdd(node);
         break;

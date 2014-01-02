@@ -2685,12 +2685,6 @@ void SpeculativeJIT::compileAdd(Node* node)
         return;
     }
         
-    case UntypedUse: {
-        RELEASE_ASSERT(node->op() == ValueAdd);
-        compileValueAdd(node);
-        return;
-    }
-        
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;

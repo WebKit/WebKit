@@ -340,7 +340,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case ValueAdd:
+    case ValueAdd: {
+        JSValue left = forNode(node->child1()).value();
+        JSValue right = forNode(node->child2()).value();
+        if (left && right && left.isNumber() && right.isNumber()) {
+            setConstant(node, JSValue(left.asNumber() + right.asNumber()));
+            break;
+        }
+        ASSERT(node->binaryUseKind() == UntypedUse);
+        clobberWorld(node->codeOrigin, clobberLimit);
+        forNode(node).setType(SpecString | SpecBytecodeNumber);
+        break;
+    }
+        
     case ArithAdd: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
@@ -368,9 +380,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 forNode(node).setType(SpecDouble);
             break;
         default:
-            RELEASE_ASSERT(node->op() == ValueAdd);
-            clobberWorld(node->codeOrigin, clobberLimit);
-            forNode(node).setType(SpecString | SpecBytecodeNumber);
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         break;

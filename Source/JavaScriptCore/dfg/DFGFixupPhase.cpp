@@ -154,11 +154,16 @@ private:
         }
             
         case ValueAdd: {
-            if (attemptToMakeIntegerAdd(node))
+            if (attemptToMakeIntegerAdd(node)) {
+                node->setOp(ArithAdd);
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
+            }
             if (Node::shouldSpeculateNumberExpectingDefined(node->child1().node(), node->child2().node())) {
                 fixEdge<NumberUse>(node->child1());
                 fixEdge<NumberUse>(node->child2());
+                node->setOp(ArithAdd);
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
             
@@ -326,17 +331,20 @@ private:
             if (Node::shouldSpeculateInt32(node->child1().node(), node->child2().node())) {
                 fixEdge<Int32Use>(node->child1());
                 fixEdge<Int32Use>(node->child2());
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
             if (enableInt52()
                 && Node::shouldSpeculateMachineInt(node->child1().node(), node->child2().node())) {
                 fixEdge<MachineIntUse>(node->child1());
                 fixEdge<MachineIntUse>(node->child2());
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
             if (Node::shouldSpeculateNumber(node->child1().node(), node->child2().node())) {
                 fixEdge<NumberUse>(node->child1());
                 fixEdge<NumberUse>(node->child2());
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
             if (node->op() != CompareEq)
@@ -344,31 +352,37 @@ private:
             if (Node::shouldSpeculateBoolean(node->child1().node(), node->child2().node())) {
                 fixEdge<BooleanUse>(node->child1());
                 fixEdge<BooleanUse>(node->child2());
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
             if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
                 fixEdge<StringIdentUse>(node->child1());
                 fixEdge<StringIdentUse>(node->child2());
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
             if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && GPRInfo::numberOfRegisters >= 7) {
                 fixEdge<StringUse>(node->child1());
                 fixEdge<StringUse>(node->child2());
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
             if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
                 fixEdge<ObjectUse>(node->child1());
                 fixEdge<ObjectUse>(node->child2());
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
             if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObjectOrOther()) {
                 fixEdge<ObjectUse>(node->child1());
                 fixEdge<ObjectOrOtherUse>(node->child2());
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
             if (node->child1()->shouldSpeculateObjectOrOther() && node->child2()->shouldSpeculateObject()) {
                 fixEdge<ObjectOrOtherUse>(node->child1());
                 fixEdge<ObjectUse>(node->child2());
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
             }
             break;

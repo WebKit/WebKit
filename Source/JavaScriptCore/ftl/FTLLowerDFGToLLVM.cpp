@@ -261,8 +261,10 @@ private:
         case Phantom:
             compilePhantom();
             break;
-        case ArithAdd:
         case ValueAdd:
+            compileValueAdd();
+            break;
+        case ArithAdd:
             compileAddSub();
             break;
         case ArithSub:
@@ -761,6 +763,19 @@ private:
     void compilePhantom()
     {
         DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, speculate);
+    }
+    
+    void compileValueAdd()
+    {
+        J_JITOperation_EJJ operation;
+        if (!(m_state.forNode(m_node->child1()).m_type & SpecFullNumber)
+            && !(m_state.forNode(m_node->child2()).m_type & SpecFullNumber))
+            operation = operationValueAddNotNumber;
+        else
+            operation = operationValueAdd;
+        setJSValue(vmCall(
+            m_out.operation(operation), m_callFrame,
+            lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
     }
     
     void compileAddSub()

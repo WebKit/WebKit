@@ -259,7 +259,7 @@ private:
                 continue;
             if (node->op() == GetLocal) {
                 node = node->child1().node();
-                ASSERT(node->op() == Phi);
+                ASSERT(node->op() == Phi || node->op() == SetArgument);
                 if (node->shouldGenerate()) {
                     variables[i] = node;
                     continue;
