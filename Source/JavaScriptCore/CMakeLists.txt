@@ -631,6 +631,12 @@ set(JavaScriptCore_FORWARDING_HEADERS_FILES
     API/JavaScriptCore.h
     API/OpaqueJSString.h
     API/WebKitAvailability.h
+
+    assembler/LinkBuffer.h
+    assembler/MacroAssembler.h
+    assembler/MacroAssemblerCodeRef.h
+    jit/GPRInfo.h
+    runtime/VM.h
 )
 
 
