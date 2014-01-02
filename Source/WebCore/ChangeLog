@@ -1,3 +1,35 @@
+2014-01-01  Antti Koivisto  <antti@apple.com>
+
+        Remove reattachRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=126366
+
+        Reviewed by Andreas Kling.
+
+        Remove the last remaining client.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseAttribute):
+        
+            Reconstruct render tree asynchronously.
+
+        (WebCore::HTMLSelectElement::scrollToSelection):
+        (WebCore::HTMLSelectElement::setOptionsChangedOnRenderer):
+        (WebCore::HTMLSelectElement::selectOption):
+        
+            It is not safe to cast the renderer based on usesMenuList test. Switch to RenderObject::isMenuList test.
+
+        (WebCore::HTMLSelectElement::parseMultipleAttribute):
+        
+            Reconstruct render tree asynchronously.
+
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent):
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::defaultEventHandler):
+        * style/StyleResolveTree.cpp:
+        * style/StyleResolveTree.h:
+        
+            Remove the function.
+
 2014-01-01  Simon Fraser  <simon.fraser@apple.com>
 
         Create a ThreadedScrollingTree subclass of ScrollingTree, and push all knowledge of the scrolling thread into it

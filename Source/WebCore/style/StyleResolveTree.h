@@ -43,7 +43,6 @@ void resolveTree(Document&, Change);
 
 void attachRenderTree(Element&);
 void detachRenderTree(Element&);
-void reattachRenderTree(Element&);
 // FIXME: This is only used for "lazy reattach" for shadow trees.
 void detachRenderTreeInReattachMode(Element&);
 

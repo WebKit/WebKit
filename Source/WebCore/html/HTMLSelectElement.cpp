@@ -315,8 +315,8 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
         m_size = size;
         setNeedsValidityCheck();
-        if (m_size != oldSize && renderer()) {
-            Style::reattachRenderTree(*this);
+        if (m_size != oldSize) {
+            setNeedsStyleRecalc(ReconstructRenderTree);
             setRecalcListItems();
         }
     } else if (name == multipleAttr)
@@ -708,8 +708,10 @@ void HTMLSelectElement::scrollToSelection()
     if (usesMenuList())
         return;
 
-    if (auto renderer = this->renderer())
-        toRenderListBox(renderer)->selectionChanged();
+    auto renderer = this->renderer();
+    if (!renderer || !renderer->isListBox())
+        return;
+    toRenderListBox(renderer)->selectionChanged();
 #else
     if (auto renderer = this->renderer())
         renderer->repaint();
@@ -720,7 +722,7 @@ void HTMLSelectElement::setOptionsChangedOnRenderer()
 {
     if (auto renderer = this->renderer()) {
 #if !PLATFORM(IOS)
-        if (usesMenuList())
+        if (renderer->isMenuList())
             toRenderMenuList(renderer)->setOptionsChanged(true);
         else
             toRenderListBox(renderer)->setOptionsChanged(true);
@@ -898,9 +900,9 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
         if (flags & DispatchChangeEvent)
             dispatchChangeEventForMenuList();
         if (auto renderer = this->renderer()) {
-            if (usesMenuList())
+            if (renderer->isMenuList())
                 toRenderMenuList(renderer)->didSetSelectedIndex(listIndex);
-            else if (renderer->isListBox())
+            else
                 toRenderListBox(renderer)->selectionChanged();
         }
     }
@@ -1046,8 +1048,8 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomicString& value)
     bool oldUsesMenuList = usesMenuList();
     m_multiple = !value.isNull();
     setNeedsValidityCheck();
-    if (oldUsesMenuList != usesMenuList() && renderer())
-        Style::reattachRenderTree(*this);
+    if (oldUsesMenuList != usesMenuList())
+        setNeedsStyleRecalc(ReconstructRenderTree);
 }
 
 bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
@@ -1119,7 +1121,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
             // Calling focus() may cause us to lose our renderer. Return true so
             // that our caller doesn't process the event further, but don't set
             // the event as handled.
-            if (!renderer())
+            if (!renderer() || !renderer()->isMenuList())
                 return true;
 
             // Save the selection so it can be compared to the new selection
@@ -1127,8 +1129,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
             // gets called from RenderMenuList::valueChanged, which gets called
             // after the user makes a selection from the menu.
             saveLastSelection();
-            if (RenderMenuList* menuList = toRenderMenuList(renderer()))
-                menuList->showPopup();
+            toRenderMenuList(renderer())->showPopup();
             event->setDefaultHandled();
         }
         return true;
@@ -1140,11 +1141,13 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 
 void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 {
+    ASSERT(renderer() && renderer()->isMenuList());
+
     const Page* page = document().page();
     RefPtr<RenderTheme> renderTheme = page ? &page->theme() : RenderTheme::defaultTheme();
 
     if (event->type() == eventNames().keydownEvent) {
-        if (!renderer() || !event->isKeyboardEvent())
+        if (!event->isKeyboardEvent())
             return;
 
         if (platformHandleKeydownEvent(static_cast<KeyboardEvent*>(event)))
@@ -1196,7 +1199,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
     if (event->type() == eventNames().keypressEvent) {
-        if (!renderer() || !event->isKeyboardEvent())
+        if (!event->isKeyboardEvent())
             return;
 
         int keyCode = static_cast<KeyboardEvent*>(event)->keyCode();
@@ -1223,8 +1226,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
                 // gets called from RenderMenuList::valueChanged, which gets called
                 // after the user makes a selection from the menu.
                 saveLastSelection();
-                if (RenderMenuList* menuList = toRenderMenuList(renderer()))
-                    menuList->showPopup();
+                toRenderMenuList(renderer())->showPopup();
                 handled = true;
             }
         } else if (renderTheme->popsMenuByArrowKeys()) {
@@ -1241,8 +1243,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
                 // gets called from RenderMenuList::valueChanged, which gets called
                 // after the user makes a selection from the menu.
                 saveLastSelection();
-                if (RenderMenuList* menuList = toRenderMenuList(renderer()))
-                    menuList->showPopup();
+                toRenderMenuList(renderer())->showPopup();
                 handled = true;
             } else if (keyCode == '\r') {
                 if (form())
@@ -1260,18 +1261,17 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
         focus();
 #if !PLATFORM(IOS)
         if (renderer() && renderer()->isMenuList()) {
-            if (RenderMenuList* menuList = toRenderMenuList(renderer())) {
-                if (menuList->popupIsVisible())
-                    menuList->hidePopup();
-                else {
-                    // Save the selection so it can be compared to the new
-                    // selection when we call onChange during selectOption,
-                    // which gets called from RenderMenuList::valueChanged,
-                    // which gets called after the user makes a selection from
-                    // the menu.
-                    saveLastSelection();
-                    menuList->showPopup();
-                }
+            auto& menuList = toRenderMenuList(*renderer());
+            if (menuList.popupIsVisible())
+                menuList.hidePopup();
+            else {
+                // Save the selection so it can be compared to the new
+                // selection when we call onChange during selectOption,
+                // which gets called from RenderMenuList::valueChanged,
+                // which gets called after the user makes a selection from
+                // the menu.
+                saveLastSelection();
+                    menuList.showPopup();
             }
         }
 #endif
@@ -1280,10 +1280,9 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 
 #if !PLATFORM(IOS)
     if (event->type() == eventNames().blurEvent && !focused()) {
-        if (RenderMenuList* menuList = toRenderMenuList(renderer())) {
-            if (menuList->popupIsVisible())
-                menuList->hidePopup();
-        }
+        auto& menuList = toRenderMenuList(*renderer());
+        if (menuList.popupIsVisible())
+            menuList.hidePopup();
     }
 #endif
 }
@@ -1512,7 +1511,7 @@ void HTMLSelectElement::defaultEventHandler(Event* event)
         return;
     }
 
-    if (usesMenuList())
+    if (renderer()->isMenuList())
         menuListDefaultEventHandler(event);
     else 
         listBoxDefaultEventHandler(event);

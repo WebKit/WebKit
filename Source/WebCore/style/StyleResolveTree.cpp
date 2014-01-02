@@ -891,12 +891,5 @@ void detachRenderTreeInReattachMode(Element& element)
     detachRenderTree(element, ReattachDetach);
 }
 
-void reattachRenderTree(Element& current)
-{
-    if (current.renderer())
-        detachRenderTree(current, ReattachDetach);
-    attachRenderTree(current);
-}
-
 }
 }
