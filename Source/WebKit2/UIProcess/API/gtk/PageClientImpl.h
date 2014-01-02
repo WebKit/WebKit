@@ -96,7 +96,6 @@ private:
     virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&) OVERRIDE;
     virtual void updateTextInputState() OVERRIDE;
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) OVERRIDE;
-    virtual bool isWindowVisible() OVERRIDE;
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) OVERRIDE;

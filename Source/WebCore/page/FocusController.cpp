@@ -163,7 +163,7 @@ FocusController::FocusController(Page& page)
     , m_isActive(false)
     , m_isFocused(false)
     , m_isChangingFocusedFrame(false)
-    , m_containingWindowIsVisible(false)
+    , m_contentIsVisible(false)
 {
 }
 
@@ -663,18 +663,18 @@ static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didSho
         scrollableArea->contentAreaDidHide();
 }
 
-void FocusController::setContainingWindowIsVisible(bool containingWindowIsVisible)
+void FocusController::setContentIsVisible(bool contentIsVisible)
 {
-    if (m_containingWindowIsVisible == containingWindowIsVisible)
+    if (m_contentIsVisible == contentIsVisible)
         return;
 
-    m_containingWindowIsVisible = containingWindowIsVisible;
+    m_contentIsVisible = contentIsVisible;
 
     FrameView* view = m_page.mainFrame().view();
     if (!view)
         return;
 
-    contentAreaDidShowOrHide(view, containingWindowIsVisible);
+    contentAreaDidShowOrHide(view, contentIsVisible);
 
     for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* frameView = frame->view();
@@ -689,7 +689,7 @@ void FocusController::setContainingWindowIsVisible(bool containingWindowIsVisibl
             ScrollableArea* scrollableArea = *it;
             ASSERT(scrollableArea->scrollbarsCanBeActive() || m_page.shouldSuppressScrollbarAnimations());
 
-            contentAreaDidShowOrHide(scrollableArea, containingWindowIsVisible);
+            contentAreaDidShowOrHide(scrollableArea, contentIsVisible);
         }
     }
 }

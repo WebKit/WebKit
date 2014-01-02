@@ -103,12 +103,6 @@ bool PageClientImpl::isViewVisible()
     return true;
 }
 
-bool PageClientImpl::isWindowVisible()
-{
-    notImplemented();
-    return true;
-}
-
 bool PageClientImpl::isViewInWindow()
 {
     return [m_view window];

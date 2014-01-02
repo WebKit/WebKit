@@ -196,7 +196,7 @@ static gboolean toplevelWindowVisibilityEvent(GtkWidget*, GdkEventVisibility* vi
     bool isWindowVisible = visibilityEvent->state != GDK_VISIBILITY_FULLY_OBSCURED;
     if (priv->isWindowVisible != isWindowVisible) {
         priv->isWindowVisible = isWindowVisible;
-        priv->pageProxy->viewStateDidChange(ViewState::WindowIsVisible);
+        priv->pageProxy->viewStateDidChange(ViewState::IsVisible);
     }
 
     return FALSE;

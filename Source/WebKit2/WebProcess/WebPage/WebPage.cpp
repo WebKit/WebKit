@@ -235,7 +235,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_artificialPluginInitializationDelayEnabled(false)
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_mainFrameIsScrollable(true)
-    , m_windowIsVisible(false)
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     , m_readyToFindPrimarySnapshottedPlugin(false)
     , m_didFindPrimarySnapshottedPlugin(false)
@@ -1916,6 +1915,8 @@ void WebPage::setActive(bool isActive)
 
 void WebPage::setViewIsVisible(bool isVisible)
 {
+    corePage()->focusController().setContentIsVisible(isVisible);
+
     m_page->setIsVisible(m_viewState & ViewState::IsVisible, false);
 }
 
@@ -2069,8 +2070,6 @@ void WebPage::setViewState(ViewState::Flags viewState, bool wantsDidUpdateViewSt
 
     // We want to make sure to update the active state while hidden, so if the view is hidden then update the active state
     // early (in case it becomes visible), and if the view was visible then update active state later (in case it hides).
-    if (changed & ViewState::WindowIsVisible)
-        setWindowIsVisible(viewState & ViewState::WindowIsVisible);
     if (changed & ViewState::IsFocused)
         setFocused(viewState & ViewState::IsFocused);
     if (changed & ViewState::WindowIsActive && !(m_viewState & ViewState::IsVisible))
@@ -3037,13 +3036,6 @@ void WebPage::sendSetWindowFrame(const FloatRect& windowFrame)
     send(Messages::WebPageProxy::SetWindowFrame(windowFrame));
 }
 
-void WebPage::setWindowIsVisible(bool windowIsVisible)
-{
-    m_windowIsVisible = windowIsVisible;
-
-    corePage()->focusController().setContainingWindowIsVisible(windowIsVisible);
-}
-
 #if PLATFORM(MAC)
 void WebPage::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoordinates, const FloatRect& windowFrameInUnflippedScreenCoordinates, const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
 {
@@ -3084,7 +3076,7 @@ bool WebPage::windowIsFocused() const
 
 bool WebPage::windowAndWebPageAreFocused() const
 {
-    if (!m_windowIsVisible)
+    if (!isVisible())
         return false;
 
     return m_page->focusController().isFocused() && m_page->focusController().isActive();

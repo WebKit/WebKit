@@ -921,8 +921,6 @@ void WebPageProxy::scrollView(const IntRect& scrollRect, const IntSize& scrollOf
 void WebPageProxy::updateViewState(ViewState::Flags flagsToUpdate)
 {
     m_viewState &= ~flagsToUpdate;
-    if (flagsToUpdate & ViewState::WindowIsVisible && m_pageClient.isWindowVisible())
-        m_viewState |= ViewState::WindowIsVisible;
     if (flagsToUpdate & ViewState::IsFocused && m_pageClient.isViewFocused())
         m_viewState |= ViewState::IsFocused;
     if (flagsToUpdate & ViewState::WindowIsActive && m_pageClient.isViewWindowActive())

@@ -501,8 +501,8 @@ void PluginView::platformViewStateDidChange(ViewState::Flags changed)
         return;
     }
 
-    if (changed & ViewState::WindowIsVisible)
-        m_plugin->windowVisibilityChanged(m_webPage->windowIsVisible());
+    if (changed & ViewState::IsVisible)
+        m_plugin->windowVisibilityChanged(m_webPage->isVisible());
     if (changed & ViewState::WindowIsActive)
         m_plugin->windowFocusChanged(m_webPage->windowIsFocused());
 #if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
@@ -624,7 +624,7 @@ void PluginView::didInitializePlugin()
             m_pluginElement->dispatchPendingMouseClick();
     }
 
-    m_plugin->windowVisibilityChanged(m_webPage->windowIsVisible());
+    m_plugin->windowVisibilityChanged(m_webPage->isVisible());
     m_plugin->windowFocusChanged(m_webPage->windowIsFocused());
 #endif
 

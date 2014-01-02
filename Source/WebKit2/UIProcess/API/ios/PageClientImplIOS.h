@@ -54,7 +54,6 @@ private:
     virtual bool isViewWindowActive() OVERRIDE;
     virtual bool isViewFocused() OVERRIDE;
     virtual bool isViewVisible() OVERRIDE;
-    virtual bool isWindowVisible() OVERRIDE;
     virtual bool isViewInWindow() OVERRIDE;
     virtual void processDidCrash() OVERRIDE;
     virtual void didRelaunchProcess() OVERRIDE;

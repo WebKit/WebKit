@@ -1,5 +1,24 @@
 2014-01-02  Gavin Barraclough  <barraclough@apple.com>
 
+        Remove WindowIsVisible
+        https://bugs.webkit.org/show_bug.cgi?id=126270
+
+        Reviewed by Tim Horton.
+
+        We currently track visibility in two ways - ViewState::IsVisible and ViewState::WindowIsVisible.
+        The latter detects that the content is hidden in fewer cases than the former, and as such, the
+        former is always preferable.
+
+        This affects the hidden state provided to FocusController::contentAreaDidShowOrHide and to
+        Plugin::windowVisibilityChanged.
+
+        * WebView/WebView.mm:
+        (-[WebView _windowWillOrderOnScreen:]):
+        (-[WebView _windowWillOrderOffScreen:]):
+            - rename ContainingWindowIsVisible -> ContentIsVisible.
+
+2014-01-02  Gavin Barraclough  <barraclough@apple.com>
+
         Merge didMoveOnscreen / page visibility to isVisible
         https://bugs.webkit.org/show_bug.cgi?id=126268
 

@@ -340,12 +340,6 @@ bool WebView::isViewVisible()
     return isVisible();
 }
 
-bool WebView::isWindowVisible()
-{
-    notImplemented();
-    return true;
-}
-
 bool WebView::isViewInWindow()
 {
     notImplemented();

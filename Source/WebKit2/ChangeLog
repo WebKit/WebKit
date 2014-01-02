@@ -1,5 +1,50 @@
 2014-01-02  Gavin Barraclough  <barraclough@apple.com>
 
+        Remove WindowIsVisible
+        https://bugs.webkit.org/show_bug.cgi?id=126270
+
+        Reviewed by Tim Horton.
+
+        We currently track visibility in two ways - ViewState::IsVisible and ViewState::WindowIsVisible.
+        The latter detects that the content is hidden in fewer cases than the former, and as such, the
+        former is always preferable.
+
+        This affects the hidden state provided to FocusController::contentAreaDidShowOrHide and to
+        Plugin::windowVisibilityChanged.
+
+        * Shared/ViewState.h:
+            - remove WindowIsVisible.
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+            - remove isWindowVisible.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _windowDidMiniaturize:]):
+        (-[WKView _windowDidDeminiaturize:]):
+        (-[WKView _windowDidOrderOffScreen:]):
+        (-[WKView _windowDidOrderOnScreen:]):
+            - remove ViewState::WindowIsVisible.
+        * UIProcess/PageClient.h:
+            - remove isWindowVisible.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateViewState):
+            - remove handling of ViewState::WindowIsVisible.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setIsVisible):
+        (WebKit::PluginView::didInitializePlugin):
+        * WebProcess/Plugins/PluginView.h:
+            - setWindowIsVisible -> setIsVisible.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setViewIsVisible):
+        (WebKit::WebPage::setViewState):
+        (WebKit::WebPage::windowAndWebPageAreFocused):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isVisible):
+            - remove m_windowIsVisible, setWindowIsVisible (implementation moved to setViewIsVisible).
+
+2014-01-02  Gavin Barraclough  <barraclough@apple.com>
+
         Refactor ViewState handling for drawing area / plugins
         https://bugs.webkit.org/show_bug.cgi?id=126272
 

@@ -79,8 +79,7 @@ public:
     void setFocused(bool);
     bool isFocused() const { return m_isFocused; }
 
-    void setContainingWindowIsVisible(bool);
-    bool containingWindowIsVisible() const { return m_containingWindowIsVisible; }
+    void setContentIsVisible(bool);
 
     // These methods are used in WebCore/bindings/objc/DOM.mm.
     Element* nextFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
@@ -115,7 +114,7 @@ private:
     bool m_isActive;
     bool m_isFocused;
     bool m_isChangingFocusedFrame;
-    bool m_containingWindowIsVisible;
+    bool m_contentIsVisible;
 
 };
 
