@@ -4031,8 +4031,6 @@ webcore_sources += \
 	Source/WebCore/loader/NetscapePlugInStreamLoader.h \
 	Source/WebCore/loader/PingLoader.cpp \
 	Source/WebCore/loader/PingLoader.h \
-	Source/WebCore/loader/PlaceholderDocument.cpp \
-	Source/WebCore/loader/PlaceholderDocument.h \
 	Source/WebCore/loader/PolicyCallback.cpp \
 	Source/WebCore/loader/PolicyCallback.h \
 	Source/WebCore/loader/PolicyChecker.cpp \

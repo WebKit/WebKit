@@ -1,3 +1,33 @@
+2014-01-02  Antti Koivisto  <antti@apple.com>
+
+        Remove PlaceholderDocument
+        https://bugs.webkit.org/show_bug.cgi?id=126382
+
+        Reviewed by Andreas Kling.
+
+        Remove PlaceholderDocument class and replace it with a bit in Document.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::createRenderTree):
+        * dom/Document.h:
+        
+            Also make Synthesized a construction flag instead of a boolean parameter.
+
+        (WebCore::Document::createNonRenderedPlaceholder):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument):
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::create):
+        (WebCore::HTMLDocument::createSynthesizedDocument):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::createDocument):
+        * loader/PlaceholderDocument.cpp: Removed.
+        * loader/PlaceholderDocument.h: Removed.
+        * pdf/ios/PDFDocument.h:
+        (WebCore::PDFDocument::PDFDocument):
+
 2014-01-01  Antti Koivisto  <antti@apple.com>
 
         Remove public attachRenderTree

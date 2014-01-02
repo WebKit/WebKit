@@ -252,6 +252,10 @@ public:
     {
         return adoptRef(new Document(frame, url, XHTMLDocumentClass));
     }
+    static PassRefPtr<Document> createNonRenderedPlaceholder(Frame* frame, const URL& url)
+    {
+        return adoptRef(new Document(frame, url, DefaultDocumentClass, NonRenderedPlaceholder));
+    }
     virtual ~Document();
 
     MediaQueryMatcher& mediaQueryMatcher();
@@ -1220,7 +1224,8 @@ public:
     void setVisualUpdatesAllowedByClient(bool);
 
 protected:
-    Document(Frame*, const URL&, unsigned = DefaultDocumentClass, bool isSynthesized = false);
+    enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
+    Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 
@@ -1235,10 +1240,10 @@ private:
     RenderObject* renderer() const WTF_DELETED_FUNCTION;
     void setRenderer(RenderObject*) WTF_DELETED_FUNCTION;
 
-    virtual void createRenderTree();
-    virtual void dropChildren() OVERRIDE;
-
+    void createRenderTree();
     void detachParser();
+
+    virtual void dropChildren() OVERRIDE;
 
     typedef void (*ArgumentsCallback)(const String& keyString, const String& valueString, Document*, void* data);
     void processArguments(const String& features, void* data, ArgumentsCallback);
@@ -1497,6 +1502,7 @@ private:
     DocumentClassFlags m_documentClasses;
 
     bool m_isSynthesized;
+    bool m_isNonRenderedPlaceholder;
 
     bool m_isViewSource;
     bool m_sawElementsInKnownNamespaces;

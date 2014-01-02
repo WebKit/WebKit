@@ -33,12 +33,12 @@ class HTMLDocument : public Document, public CachedResourceClient {
 public:
     static PassRefPtr<HTMLDocument> create(Frame* frame, const URL& url)
     {
-        return adoptRef(new HTMLDocument(frame, url));
+        return adoptRef(new HTMLDocument(frame, url, HTMLDocumentClass));
     }
 
     static PassRefPtr<HTMLDocument> createSynthesizedDocument(Frame* frame, const URL& url)
     {
-        return adoptRef(new HTMLDocument(frame, url, true));
+        return adoptRef(new HTMLDocument(frame, url, HTMLDocumentClass, Synthesized));
     }
 
     virtual ~HTMLDocument();
@@ -86,7 +86,7 @@ public:
     static bool isCaseSensitiveAttribute(const QualifiedName&);
 
 protected:
-    HTMLDocument(Frame*, const URL&, DocumentClassFlags = 0, bool isSynthesized = false);
+    HTMLDocument(Frame*, const URL&, DocumentClassFlags = 0, unsigned constructionFlags = 0);
 
 private:
     virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);

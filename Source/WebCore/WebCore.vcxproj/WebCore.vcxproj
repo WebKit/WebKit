@@ -7114,7 +7114,6 @@
     <ClCompile Include="..\loader\NavigationScheduler.cpp" />
     <ClCompile Include="..\loader\NetscapePlugInStreamLoader.cpp" />
     <ClCompile Include="..\loader\PingLoader.cpp" />
-    <ClCompile Include="..\loader\PlaceholderDocument.cpp" />
     <ClCompile Include="..\loader\PolicyCallback.cpp" />
     <ClCompile Include="..\loader\PolicyChecker.cpp" />
     <ClCompile Include="..\loader\ProgressTracker.cpp" />
@@ -19005,7 +19004,6 @@
     <ClInclude Include="..\loader\NavigationScheduler.h" />
     <ClInclude Include="..\loader\NetscapePlugInStreamLoader.h" />
     <ClInclude Include="..\loader\PingLoader.h" />
-    <ClInclude Include="..\loader\PlaceholderDocument.h" />
     <ClInclude Include="..\loader\PolicyCallback.h" />
     <ClInclude Include="..\loader\PolicyChecker.h" />
     <ClInclude Include="..\loader\ProgressTracker.h" />

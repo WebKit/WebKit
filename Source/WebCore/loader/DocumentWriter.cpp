@@ -36,7 +36,6 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameView.h"
-#include "PlaceholderDocument.h"
 #include "PluginDocument.h"
 #include "RawDataDocumentParser.h"
 #include "ScriptController.h"
@@ -116,7 +115,7 @@ PassRefPtr<Document> DocumentWriter::createDocument(const URL& url)
         return PDFDocument::create(m_frame, url);
 #endif
     if (!m_frame->loader().client().hasHTMLView())
-        return PlaceholderDocument::create(m_frame, url);
+        return Document::createNonRenderedPlaceholder(m_frame, url);
     return DOMImplementation::createDocument(m_mimeType, m_frame, url, m_frame->inViewSourceMode());
 }
 

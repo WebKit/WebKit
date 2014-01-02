@@ -390,7 +390,7 @@ bool TextAutoSizingTraits::isDeletedValue(const TextAutoSizingKey& value)
 }
 #endif
 
-Document::Document(Frame* frame, const URL& url, unsigned documentClasses, bool isSynthesized)
+Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsigned constructionFlags)
     : ContainerNode(nullptr, CreateDocument)
     , TreeScope(this)
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS)
@@ -453,7 +453,8 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, bool 
     , m_inPageCache(false)
     , m_accessKeyMapValid(false)
     , m_documentClasses(documentClasses)
-    , m_isSynthesized(isSynthesized)
+    , m_isSynthesized(constructionFlags & Synthesized)
+    , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
     , m_isViewSource(false)
     , m_sawElementsInKnownNamespaces(false)
     , m_isSrcdocDocument(false)
@@ -1949,6 +1950,9 @@ void Document::createRenderTree()
     ASSERT(!renderView());
     ASSERT(!m_inPageCache);
     ASSERT(!m_axObjectCache || this != topDocument());
+
+    if (m_isNonRenderedPlaceholder)
+        return;
 
     // FIXME: It would be better if we could pass the resolved document style directly here.
     m_renderView = createRenderer<RenderView>(*this, RenderStyle::create());
