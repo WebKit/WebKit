@@ -1628,6 +1628,9 @@
     <ClInclude Include="..\heap\CopyWorkList.h">
       <Filter>heap</Filter>
     </ClInclude>
+    <ClInclude Include="..\heap\CopyWriteBarrier.h">
+      <Filter>heap</Filter>
+    </ClInclude>
     <ClInclude Include="..\heap\DeferGC.h">
       <Filter>heap</Filter>
     </ClInclude>

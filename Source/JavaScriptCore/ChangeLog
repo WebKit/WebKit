@@ -1,3 +1,62 @@
+2014-01-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Storing new CopiedSpace memory into a JSObject should fire a write barrier
+        https://bugs.webkit.org/show_bug.cgi?id=126025
+
+        Reviewed by Filip Pizlo.
+
+        Technically this is creating a pointer between a (potentially) old generation object and a young 
+        generation chunk of memory, thus there needs to be a barrier.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGOperations.cpp:
+        * heap/CopyWriteBarrier.h: Added. This class functions similarly to the WriteBarrier class. It 
+        acts as a proxy for pointers to CopiedSpace. Assignments to the field cause a write barrier to 
+        fire for the object that is the owner of the CopiedSpace memory. This is to ensure during nursery 
+        collections that objects with new backing stores are visited, even if they are old generation objects. 
+        (JSC::CopyWriteBarrier::CopyWriteBarrier):
+        (JSC::CopyWriteBarrier::operator!):
+        (JSC::CopyWriteBarrier::operator UnspecifiedBoolType*):
+        (JSC::CopyWriteBarrier::get):
+        (JSC::CopyWriteBarrier::operator*):
+        (JSC::CopyWriteBarrier::operator->):
+        (JSC::CopyWriteBarrier::set):
+        (JSC::CopyWriteBarrier::setWithoutWriteBarrier):
+        (JSC::CopyWriteBarrier::clear):
+        * heap/Heap.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        * runtime/JSCell.h:
+        (JSC::JSCell::unvalidatedStructure):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyButterfly):
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists):
+        (JSC::JSObject::createInitialIndexedStorage):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::countElements):
+        (JSC::JSObject::increaseVectorLength):
+        (JSC::JSObject::ensureLengthSlow):
+        * runtime/JSObject.h:
+        (JSC::JSObject::butterfly):
+        (JSC::JSObject::setStructureAndButterfly):
+        (JSC::JSObject::setButterflyWithoutChangingStructure):
+        (JSC::JSObject::JSObject):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirectWithoutTransition):
+        * runtime/MapData.cpp:
+        (JSC::MapData::ensureSpaceForAppend):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyMap):
+
 2013-12-23  Oliver Hunt  <oliver@apple.com>
 
         Refactor PutPropertySlot to be aware of custom properties

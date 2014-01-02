@@ -273,7 +273,7 @@ void Structure::materializePropertyMap(VM& vm)
     findStructuresAndMapForMaterialization(structures, structure, table);
     
     if (table) {
-        table = table->copy(vm, 0, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
+        table = table->copy(vm, structure, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
         structure->m_lock.unlock();
     }
     

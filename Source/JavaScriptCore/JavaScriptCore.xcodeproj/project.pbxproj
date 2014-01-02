@@ -720,6 +720,7 @@
 		2A48D1911772365B00C65A5F /* APICallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = C211B574176A224D000E2A23 /* APICallbackFunction.h */; };
 		2A4EC90B1860D6C20094F782 /* WriteBarrierBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A4EC9091860D6C20094F782 /* WriteBarrierBuffer.cpp */; };
 		2A4EC90C1860D6C20094F782 /* WriteBarrierBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A4EC90A1860D6C20094F782 /* WriteBarrierBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2A68295B1875F80500B6C3E2 /* CopyWriteBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A68295A1875F80500B6C3E2 /* CopyWriteBarrier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A6F462617E959CE00C45C98 /* HeapOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A6F462517E959CE00C45C98 /* HeapOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A7A58EF1808A4C40020BDF7 /* DeferGC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */; };
 		2AAD964A18569417001F93BE /* RecursiveAllocationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAD964918569417001F93BE /* RecursiveAllocationScope.h */; };
@@ -2027,6 +2028,7 @@
 		2A2825CF18341F2D0087FBA9 /* DelayedReleaseScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelayedReleaseScope.h; sourceTree = "<group>"; };
 		2A4EC9091860D6C20094F782 /* WriteBarrierBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WriteBarrierBuffer.cpp; sourceTree = "<group>"; };
 		2A4EC90A1860D6C20094F782 /* WriteBarrierBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrierBuffer.h; sourceTree = "<group>"; };
+		2A68295A1875F80500B6C3E2 /* CopyWriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyWriteBarrier.h; sourceTree = "<group>"; };
 		2A6F462517E959CE00C45C98 /* HeapOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapOperation.h; sourceTree = "<group>"; };
 		2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferGC.cpp; sourceTree = "<group>"; };
 		2AAD964918569417001F93BE /* RecursiveAllocationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecursiveAllocationScope.h; sourceTree = "<group>"; };
@@ -3212,6 +3214,7 @@
 				0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */,
 				2A2825CF18341F2D0087FBA9 /* DelayedReleaseScope.h */,
 				2AAD964918569417001F93BE /* RecursiveAllocationScope.h */,
+				2A68295A1875F80500B6C3E2 /* CopyWriteBarrier.h */,
 			);
 			path = heap;
 			sourceTree = "<group>";
@@ -4373,6 +4376,7 @@
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */,
+				2A68295B1875F80500B6C3E2 /* CopyWriteBarrier.h in Headers */,
 				2A4EC90C1860D6C20094F782 /* WriteBarrierBuffer.h in Headers */,
 				A532439218569709002ED692 /* CodeGeneratorInspector.py in Headers */,
 				A532439318569709002ED692 /* CodeGeneratorInspectorStrings.py in Headers */,

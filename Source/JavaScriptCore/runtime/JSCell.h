@@ -146,7 +146,7 @@ public:
     }
         
 #if ENABLE(GC_VALIDATION)
-    Structure* unvalidatedStructure() { return m_structure.unvalidatedGet(); }
+    Structure* unvalidatedStructure() const { return m_structure.unvalidatedGet(); }
 #endif
         
     static const TypedArrayType TypedArrayStorageType = NotTypedArray;

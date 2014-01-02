@@ -984,6 +984,7 @@
     <ClInclude Include="..\heap\CopyVisitor.h" />
     <ClInclude Include="..\heap\CopyVisitorInlines.h" />
     <ClInclude Include="..\heap\CopyWorkList.h" />
+    <ClInclude Include="..\heap\CopyWriteBarrier.h" />
     <ClInclude Include="..\heap\DeferGC.h" />
     <ClInclude Include="..\heap\DelayedReleaseScope.h" />
     <ClInclude Include="..\heap\GCAssertions.h" />

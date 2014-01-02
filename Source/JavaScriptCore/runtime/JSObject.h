@@ -27,10 +27,13 @@
 #include "ArrayConventions.h"
 #include "ArrayStorage.h"
 #include "Butterfly.h"
+#include "CallFrame.h"
 #include "ClassInfo.h"
 #include "CommonIdentifiers.h"
-#include "CallFrame.h"
+#include "CopyWriteBarrier.h"
 #include "DeferGC.h"
+#include "Heap.h"
+#include "IndexingHeaderInlines.h"
 #include "JSCell.h"
 #include "PropertySlot.h"
 #include "PropertyStorage.h"
@@ -539,8 +542,8 @@ public:
         return inlineStorageUnsafe();
     }
         
-    const Butterfly* butterfly() const { return m_butterfly; }
-    Butterfly* butterfly() { return m_butterfly; }
+    const Butterfly* butterfly() const { return m_butterfly.get(); }
+    Butterfly* butterfly() { return m_butterfly.get(); }
         
     ConstPropertyStorage outOfLineStorage() const { return m_butterfly->propertyStorage(); }
     PropertyStorage outOfLineStorage() { return m_butterfly->propertyStorage(); }
@@ -605,7 +608,7 @@ public:
     void reifyStaticFunctionsForDelete(ExecState* exec);
 
     JS_EXPORT_PRIVATE Butterfly* growOutOfLineStorage(VM&, size_t oldSize, size_t newSize);
-    void setButterflyWithoutChangingStructure(Butterfly*); // You probably don't want to call this.
+    void setButterflyWithoutChangingStructure(VM&, Butterfly*);
         
     void setStructure(VM&, Structure*);
     void setStructureAndButterfly(VM&, Structure*, Butterfly*);
@@ -975,7 +978,7 @@ private:
     ContiguousJSValues ensureContiguousSlow(VM&, DoubleToContiguousMode);
     
 protected:
-    Butterfly* m_butterfly;
+    CopyWriteBarrier<Butterfly> m_butterfly;
 };
 
 // JSNonFinalObject is a type of JSObject that has some internal storage,
@@ -1135,7 +1138,9 @@ inline bool JSObject::isErrorInstance() const
 
 inline void JSObject::setStructureAndButterfly(VM& vm, Structure* structure, Butterfly* butterfly)
 {
-    m_butterfly = butterfly;
+    ASSERT(structure);
+    ASSERT(!butterfly == (!structure->outOfLineCapacity() && !structure->hasIndexingHeader(this)));
+    m_butterfly.set(vm, this, butterfly);
     setStructure(vm, structure);
 }
 
@@ -1146,9 +1151,9 @@ inline void JSObject::setStructure(VM& vm, Structure* structure)
     JSCell::setStructure(vm, structure);
 }
 
-inline void JSObject::setButterflyWithoutChangingStructure(Butterfly* butterfly)
+inline void JSObject::setButterflyWithoutChangingStructure(VM& vm, Butterfly* butterfly)
 {
-    m_butterfly = butterfly;
+    m_butterfly.set(vm, this, butterfly);
 }
 
 inline CallType getCallData(JSValue value, CallData& callData)
@@ -1178,7 +1183,7 @@ inline JSObject* asObject(JSValue value)
 
 inline JSObject::JSObject(VM& vm, Structure* structure, Butterfly* butterfly)
     : JSCell(vm, structure)
-    , m_butterfly(butterfly)
+    , m_butterfly(vm, this, butterfly)
 {
     vm.heap.ascribeOwner(this, butterfly);
 }
@@ -1302,7 +1307,7 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
             return false;
 
         DeferGC deferGC(vm.heap);
-        Butterfly* newButterfly = m_butterfly;
+        Butterfly* newButterfly = butterfly();
         if (structure()->putWillGrowOutOfLineStorage())
             newButterfly = growOutOfLineStorage(vm, structure()->outOfLineCapacity(), structure()->suggestedNewOutOfLineStorageCapacity());
         offset = structure()->addPropertyWithoutTransition(vm, propertyName, attributes, specificFunction);
@@ -1323,9 +1328,11 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
     size_t currentCapacity = structure()->outOfLineCapacity();
     if (Structure* structure = Structure::addPropertyTransitionToExistingStructure(this->structure(), propertyName, attributes, specificFunction, offset)) {
         DeferGC deferGC(vm.heap);
-        Butterfly* newButterfly = m_butterfly;
-        if (currentCapacity != structure->outOfLineCapacity())
+        Butterfly* newButterfly = butterfly();
+        if (currentCapacity != structure->outOfLineCapacity()) {
+            ASSERT(structure != this->structure());
             newButterfly = growOutOfLineStorage(vm, currentCapacity, structure->outOfLineCapacity());
+        }
 
         validateOffset(offset);
         ASSERT(structure->isValidOffset(offset));
@@ -1436,7 +1443,7 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
 {
     DeferGC deferGC(vm.heap);
     ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
-    Butterfly* newButterfly = m_butterfly;
+    Butterfly* newButterfly = m_butterfly.get();
     if (structure()->putWillGrowOutOfLineStorage())
         newButterfly = growOutOfLineStorage(vm, structure()->outOfLineCapacity(), structure()->suggestedNewOutOfLineStorageCapacity());
     PropertyOffset offset = structure()->addPropertyWithoutTransition(vm, propertyName, attributes, getCallableObject(value));

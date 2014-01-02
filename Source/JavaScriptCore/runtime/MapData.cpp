@@ -198,16 +198,17 @@ CheckedBoolean MapData::ensureSpaceForAppend(CallFrame* callFrame)
 
     size_t requiredSize = std::max(m_capacity + (m_capacity / 2) + 1, minimumMapSize);
     void* newStorage = 0;
+    DeferGC defer(*callFrame->heap());
     if (!callFrame->heap()->tryAllocateStorage(this, requiredSize * sizeof(Entry), &newStorage)) {
         throwOutOfMemoryError(callFrame);
         return false;
     }
-    DeferGC defer(*callFrame->heap());
     Entry* newEntries = static_cast<Entry*>(newStorage);
     if (shouldPack())
         replaceAndPackBackingStore(newEntries, requiredSize);
     else
         replaceBackingStore(newEntries, requiredSize);
+    Heap::writeBarrier(this);
     return true;
 }
 

@@ -506,15 +506,16 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
     size_t size = thisObject->byteSize();
     
     if (thisObject->m_mode == FastTypedArray
-        && !thisObject->m_butterfly && size >= sizeof(IndexingHeader)) {
+        && !thisObject->butterfly() && size >= sizeof(IndexingHeader)) {
         ASSERT(thisObject->m_vector);
         // Reuse already allocated memory if at all possible.
-        thisObject->m_butterfly =
-            static_cast<IndexingHeader*>(thisObject->m_vector)->butterfly();
+        thisObject->m_butterfly.setWithoutWriteBarrier(
+            static_cast<IndexingHeader*>(thisObject->m_vector)->butterfly());
     } else {
-        thisObject->m_butterfly = Butterfly::createOrGrowArrayRight(
-            thisObject->m_butterfly, *heap->vm(), thisObject, thisObject->structure(),
-            thisObject->structure()->outOfLineCapacity(), false, 0, 0);
+        VM& vm = *heap->vm();
+        thisObject->m_butterfly.set(vm, thisObject, Butterfly::createOrGrowArrayRight(
+            thisObject->butterfly(), vm, thisObject, thisObject->structure(),
+            thisObject->structure()->outOfLineCapacity(), false, 0, 0));
     }
 
     RefPtr<ArrayBuffer> buffer;
