@@ -21,7 +21,7 @@
  */
 
 #ifndef webkitwebnavigationactionprivate_h
-#define webkitnavigationactionprivate_h
+#define webkitwebnavigationactionprivate_h
 
 #include <webkit/webkitwebnavigationaction.h>
 

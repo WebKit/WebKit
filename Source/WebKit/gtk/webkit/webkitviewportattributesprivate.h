@@ -21,7 +21,7 @@
  */
 
 #ifndef webkitviewportattributesprivate_h
-#define webkitnavigationactionprivate_h
+#define webkitviewportattributesprivate_h
 
 #include <webkit/webkitviewportattributes.h>
 

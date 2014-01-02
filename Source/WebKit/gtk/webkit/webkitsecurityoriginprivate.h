@@ -21,7 +21,7 @@
  */
 
 #ifndef webkitsecurityoriginprivate_h
-#define webkitnavigationactionprivate_h
+#define webkitsecurityoriginprivate_h
 
 #include "SecurityOrigin.h"
 #include "webkitsecurityorigin.h"
