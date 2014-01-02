@@ -5465,18 +5465,11 @@ void Document::setFullScreenRenderer(RenderFullScreen* renderer)
     ASSERT(!m_fullScreenRenderer);
 
     m_fullScreenRenderer = renderer;
-    
-    // This notification can come in after the page has been destroyed.
-    if (page())
-        page()->chrome().client().fullScreenRendererChanged(m_fullScreenRenderer);
 }
 
 void Document::fullScreenRendererDestroyed()
 {
     m_fullScreenRenderer = nullptr;
-
-    if (page())
-        page()->chrome().client().fullScreenRendererChanged(nullptr);
 }
 
 void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)

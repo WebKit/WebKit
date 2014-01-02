@@ -191,7 +191,6 @@ public:
     virtual bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) OVERRIDE;
     virtual void enterFullScreenForElement(WebCore::Element*) OVERRIDE;
     virtual void exitFullScreenForElement(WebCore::Element*) OVERRIDE;
-    virtual void fullScreenRendererChanged(WebCore::RenderBox*) OVERRIDE;
 #endif
 
     virtual bool selectItemWritingDirectionIsNatural() OVERRIDE;

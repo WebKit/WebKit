@@ -245,7 +245,6 @@ OBJC_CLASS NSTextAlternatives;
 - (BOOL)_supportsFullScreenForElement:(WebCore::Element*)element withKeyboard:(BOOL)withKeyboard;
 - (void)_enterFullScreenForElement:(WebCore::Element*)element;
 - (void)_exitFullScreenForElement:(WebCore::Element*)element;
-- (void)_fullScreenRendererChanged:(WebCore::RenderBox*)renderer;
 #endif
 
 // Conversion functions between WebCore root view coordinates and web view coordinates.

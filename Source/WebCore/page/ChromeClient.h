@@ -335,7 +335,6 @@ public:
     virtual bool supportsFullScreenForElement(const Element*, bool) { return false; }
     virtual void enterFullScreenForElement(Element*) { }
     virtual void exitFullScreenForElement(Element*) { }
-    virtual void fullScreenRendererChanged(RenderBox*) { }
     virtual void setRootFullScreenLayer(GraphicsLayer*) { }
 #endif
 

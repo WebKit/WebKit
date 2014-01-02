@@ -1,3 +1,14 @@
+2014-01-01  Andreas Kling  <akling@apple.com>
+
+        Remove ChromeClient::fullScreenRendererChanged().
+        <https://webkit.org/b/126370>
+
+        This hook was added in r75277 to notify WebFullScreenController when
+        the full screen renderer changed. In r110216 the code was refactored,
+        making this notification unnecessary.
+
+        Reviewed by Antti Koivisto.
+
 2014-01-01  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the build by exposing some more scrolling state node headers
