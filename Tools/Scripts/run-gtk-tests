@@ -91,9 +91,11 @@ class TestRunner:
 
     def __init__(self, options, tests=[]):
         self._options = options
-        self._build_type = "Debug" if self._options.debug else "Release"
 
-        self._programs_path = common.build_path_for_build_types((self._build_type,), "Programs")
+        self._build_type = "Debug" if self._options.debug else "Release"
+        common.set_build_types((self._build_type,))
+
+        self._programs_path = common.binary_build_path()
         self._tests = self._get_tests(tests)
         self._skipped_tests = TestRunner.SKIPPED
         self._disabled_tests = []
@@ -194,7 +196,7 @@ class TestRunner:
         self._test_env = os.environ
         self._test_env['GSETTINGS_BACKEND'] = 'memory'
         self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit2")
-        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.build_path_for_build_types((self._build_type,), "Libraries")
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.library_build_path()
         self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
 
         if not self._run_xvfb():

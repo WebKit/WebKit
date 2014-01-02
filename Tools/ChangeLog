@@ -1,3 +1,20 @@
+2014-01-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] run-gtk-tests should run with the cmake build
+        https://bugs.webkit.org/show_bug.cgi?id=126341
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.__init__): Use the new calling conventions for the common script.
+        (TestRunner._setup_testing_environment): Ditto.
+        * gtk/common.py:
+        (set_build_types): Added set_build_types, to avoid having build_type arguments
+        for all functions in common.
+        (binary_build_path): Added this function which gets the path to the built binaries.
+        (get_build_path): Removed the build_types argument.
+        (build_path): Removed the build_types argument and call get_build_path directly now.
+
 2014-01-02  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=126391
