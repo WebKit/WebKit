@@ -53,7 +53,7 @@ namespace WebCore {
 
 static RetainPtr<WebEvent>& currentEventSlot()
 {
-    NeverDestroyed<RetainPtr<WebEvent>> event;
+    static NeverDestroyed<RetainPtr<WebEvent>> event;
     return event;
 }
 

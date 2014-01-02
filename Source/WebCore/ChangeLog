@@ -1,3 +1,15 @@
+2014-01-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Tapping any link crashes in WebCore::EventHandler::mouseMoved()
+        (also crashes when scrolling certain sites)
+        https://bugs.webkit.org/show_bug.cgi?id=126401
+        <rdar://problem/15739334>
+
+        Reviewed by Tim Horton.
+
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::currentEventSlot): Make the shared variable have static-storage duration.
+
 2014-01-02  Gavin Barraclough  <barraclough@apple.com>
 
         Merge didMoveOnscreen / page visibility to isVisible
