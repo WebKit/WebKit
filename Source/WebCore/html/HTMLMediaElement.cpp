@@ -2565,15 +2565,15 @@ double HTMLMediaElement::playbackRate() const
 void HTMLMediaElement::setPlaybackRate(double rate)
 {
     LOG(Media, "HTMLMediaElement::setPlaybackRate(%f)", rate);
-    
+
+    if (m_player && potentiallyPlaying() && m_player->rate() != rate && !m_mediaController)
+        m_player->setRate(rate);
+
     if (m_playbackRate != rate) {
         m_playbackRate = rate;
         invalidateCachedTime();
         scheduleEvent(eventNames().ratechangeEvent);
     }
-
-    if (m_player && potentiallyPlaying() && m_player->rate() != rate && !m_mediaController)
-        m_player->setRate(rate);
 }
 
 void HTMLMediaElement::updatePlaybackRate()

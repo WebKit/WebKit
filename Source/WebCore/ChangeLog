@@ -1,3 +1,18 @@
+2014-01-02  Piotr Grad  <p.grad@samsung.com>
+
+        Video-seek-with-negative-playback was flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=126379
+
+        Reviewed by Eric Carlson.
+
+        No new tests. Covered by existing tests.
+
+        m_player->setRate() should be called before updating m_playbackRate, because potentiallyPlaying() depends
+        on endedPlayback(), which checks m_playbackRate.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setPlaybackRate):
+
 2014-01-02  Daniel Bates  <dabates@apple.com>
 
         [iOS] Tapping any link crashes in WebCore::EventHandler::mouseMoved()
