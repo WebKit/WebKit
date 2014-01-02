@@ -64,6 +64,7 @@ enum DetachType { NormalDetach, ReattachDetach };
 static void attachRenderTree(Element&, PassRefPtr<RenderStyle>);
 static void attachTextRenderer(Text&);
 static void detachRenderTree(Element&, DetachType);
+static void resolveTree(Element&, Change);
 
 Change determineChange(const RenderStyle* s1, const RenderStyle* s2, Settings* settings)
 {

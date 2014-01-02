@@ -33,7 +33,6 @@
 #include "DocumentFragment.h"
 #include "Element.h"
 #include "ExceptionCode.h"
-#include "StyleResolveTree.h"
 #include "TreeScope.h"
 
 namespace WebCore {

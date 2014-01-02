@@ -198,6 +198,8 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
 
 RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(PassRef<RenderStyle> style)
 {
+    ASSERT(!document().inPageCache());
+
     if (displayState() >= PreparingPluginReplacement)
         return HTMLPlugInElement::createElementRenderer(std::move(style));
 
@@ -309,30 +311,17 @@ void HTMLPlugInImageElement::didMoveToNewDocument(Document* oldDocument)
 
 void HTMLPlugInImageElement::documentWillSuspendForPageCache()
 {
-    if (RenderStyle* renderStyle = this->renderStyle()) {
-        m_customStyleForPageCache = RenderStyle::clone(renderStyle);
-        m_customStyleForPageCache->setDisplay(NONE);
-        Style::resolveTree(*this, Style::Force);
-    }
+    if (renderer())
+        Style::detachRenderTree(*this);
 
     HTMLPlugInElement::documentWillSuspendForPageCache();
 }
 
 void HTMLPlugInImageElement::documentDidResumeFromPageCache()
 {
-    if (m_customStyleForPageCache) {
-        m_customStyleForPageCache = 0;
-        Style::resolveTree(*this, Style::Force);
-    }
+    setNeedsStyleRecalc(ReconstructRenderTree);
 
     HTMLPlugInElement::documentDidResumeFromPageCache();
-}
-
-PassRefPtr<RenderStyle> HTMLPlugInImageElement::customStyleForRenderer()
-{
-    if (!m_customStyleForPageCache)
-        return document().ensureStyleResolver().styleForElement(this);
-    return m_customStyleForPageCache;
 }
 
 void HTMLPlugInImageElement::updateWidgetCallback(Node& node, unsigned)

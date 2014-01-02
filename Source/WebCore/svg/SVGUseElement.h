@@ -30,7 +30,6 @@
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
-#include "StyleResolveTree.h"
 
 namespace WebCore {
 

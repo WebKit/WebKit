@@ -25,7 +25,6 @@
 
 #include "CharacterData.h"
 #include "RenderPtr.h"
-#include "StyleResolveTree.h"
 
 namespace WebCore {
 

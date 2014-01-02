@@ -1,5 +1,41 @@
 2014-01-02  Antti Koivisto  <antti@apple.com>
 
+        Always resolve style from root
+        https://bugs.webkit.org/show_bug.cgi?id=126380
+
+        Reviewed by Andreas Kling.
+        
+        Forced style resolve that does not start from the root is never really correct. 
+        Remove the few remaining instances.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setResetStyleInheritance):
+        
+            Update style asynchronously.
+
+        * dom/ShadowRoot.h:
+        * dom/Text.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::createElementRenderer):
+        (WebCore::HTMLPlugInImageElement::documentWillSuspendForPageCache):
+        (WebCore::HTMLPlugInImageElement::documentDidResumeFromPageCache):
+        
+            Delete the render tree synchronously on suspend and rebuild it asynchronously on resume.
+            No need for m_customStyleForPageCache hack.
+
+        * html/HTMLPlugInImageElement.h:
+        
+            Remove m_customStyleForPageCache.
+
+        * style/StyleResolveTree.cpp:
+        * style/StyleResolveTree.h:
+        
+            Remove Element version of resolveTree from the interface.
+
+        * svg/SVGUseElement.h:
+
+2014-01-02  Antti Koivisto  <antti@apple.com>
+
         Remove PlaceholderDocument
         https://bugs.webkit.org/show_bug.cgi?id=126382
 

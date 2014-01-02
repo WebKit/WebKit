@@ -127,8 +127,6 @@ protected:
     virtual void documentWillSuspendForPageCache() OVERRIDE;
     virtual void documentDidResumeFromPageCache() OVERRIDE;
 
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
-
     virtual bool isRestartedPlugin() const OVERRIDE { return m_isRestartedPlugin; }
     virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues) OVERRIDE;
 
@@ -158,7 +156,6 @@ private:
     bool m_needsWidgetUpdate;
     bool m_shouldPreferPlugInsForImages;
     bool m_needsDocumentActivationCallbacks;
-    RefPtr<RenderStyle> m_customStyleForPageCache;
     RefPtr<MouseEvent> m_pendingClickEventFromSnapshot;
     DeferrableOneShotTimer<HTMLPlugInImageElement> m_simulatedMouseClickTimer;
     Timer<HTMLPlugInImageElement> m_removeSnapshotTimer;

@@ -140,8 +140,8 @@ void ShadowRoot::setResetStyleInheritance(bool value)
 
     if (value != m_resetStyleInheritance) {
         m_resetStyleInheritance = value;
-        if (renderer() && hostElement())
-            Style::resolveTree(*hostElement(), Style::Force);
+        if (hostElement())
+            setNeedsStyleRecalc();
     }
 }
 
