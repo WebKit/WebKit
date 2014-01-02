@@ -106,10 +106,8 @@ public:
     virtual ~ScrollingCoordinator();
 
     virtual void pageDestroyed();
-
-#if ENABLE(ASYNC_SCROLLING)
-    virtual ScrollingTree* scrollingTree() const { return 0; }
-#endif
+    
+    virtual bool isAsyncScrollingCoordinator() const { return false; }
 
     // Return whether this scrolling coordinator handles scrolling for the given frame view.
     bool coordinatesScrollingForFrameView(FrameView*) const;
@@ -218,6 +216,9 @@ private:
 
     bool m_forceSynchronousScrollLayerPositionUpdates;
 };
+
+#define SCROLLING_COORDINATOR_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, ScrollingCoordinator, value, value->predicate, value.predicate)
 
 } // namespace WebCore
 

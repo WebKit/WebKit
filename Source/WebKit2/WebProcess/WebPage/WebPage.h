@@ -1047,7 +1047,7 @@ private:
     
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
 
-    bool m_useThreadedScrolling;
+    bool m_useAsyncScrolling;
 
     ViewState::Flags m_viewState;
 };

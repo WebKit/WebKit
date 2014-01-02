@@ -1,3 +1,61 @@
+2014-01-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Add AsyncScrollingCoordinator, which is a base class for threaded and future remote ScrollingCoordinators
+        https://bugs.webkit.org/show_bug.cgi?id=126389
+
+        Reviewed by Tim Horton.
+
+        Add AsyncScrollingCoordinator, a ScrollingCoordinator that knows about ScrollingStateTrees
+        and ScrollingTrees, but leaves it up to subclasses to decide when and how to commit.
+
+        * WebCore.xcodeproj/project.pbxproj: Added AsyncScrollingCoordinator.*
+        * page/scrolling/AsyncScrollingCoordinator.cpp: Copied from Source/WebCore/page/scrolling/mac/ScrollingCoordinatorMac.mm.
+        (WebCore::AsyncScrollingCoordinator::AsyncScrollingCoordinator):
+        (WebCore::AsyncScrollingCoordinator::~AsyncScrollingCoordinator):
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::attachToStateTree):
+        (WebCore::AsyncScrollingCoordinator::detachFromStateTree):
+        (WebCore::AsyncScrollingCoordinator::clearStateTree):
+        (WebCore::AsyncScrollingCoordinator::syncChildPositions):
+        (WebCore::AsyncScrollingCoordinator::ensureRootStateNodeForFrameView):
+        (WebCore::AsyncScrollingCoordinator::updateScrollingNode):
+        (WebCore::AsyncScrollingCoordinator::updateViewportConstrainedNode):
+        (WebCore::AsyncScrollingCoordinator::setScrollLayerForNode):
+        (WebCore::AsyncScrollingCoordinator::setCounterScrollingLayerForNode):
+        (WebCore::AsyncScrollingCoordinator::setHeaderLayerForNode):
+        (WebCore::AsyncScrollingCoordinator::setFooterLayerForNode):
+        (WebCore::AsyncScrollingCoordinator::setNonFastScrollableRegionForNode):
+        (WebCore::AsyncScrollingCoordinator::setWheelEventHandlerCountForNode):
+        (WebCore::AsyncScrollingCoordinator::setScrollBehaviorForFixedElementsForNode):
+        (WebCore::AsyncScrollingCoordinator::setScrollbarPaintersFromScrollbarsForNode):
+        (WebCore::AsyncScrollingCoordinator::setSynchronousScrollingReasons):
+        (WebCore::AsyncScrollingCoordinator::updateMainFrameScrollLayerPosition):
+        (WebCore::AsyncScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView):
+        (WebCore::AsyncScrollingCoordinator::isRubberBandInProgress):
+        (WebCore::AsyncScrollingCoordinator::setScrollPinningBehavior):
+        (WebCore::AsyncScrollingCoordinator::scrollingStateTreeAsText):
+        * page/scrolling/AsyncScrollingCoordinator.h: Copied from Source/WebCore/page/scrolling/mac/ScrollingCoordinatorMac.h.
+        (WebCore::AsyncScrollingCoordinator::scrollingTree):
+        (WebCore::AsyncScrollingCoordinator::setScrollingTree):
+        (WebCore::AsyncScrollingCoordinator::scrollingStateTree):
+        (WebCore::AsyncScrollingCoordinator::releaseScrollingTree):
+        * page/scrolling/ScrollingCoordinator.h: Add casting support.
+        (WebCore::ScrollingCoordinator::isAsyncScrollingCoordinator):
+        * page/scrolling/ThreadedScrollingTree.h: commitNewTreeState() needs to be public.
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm: Lots of code moved to AsyncScrollingCoordinator.
+        (WebCore::ScrollingCoordinatorMac::ScrollingCoordinatorMac):
+        (WebCore::ScrollingCoordinatorMac::~ScrollingCoordinatorMac):
+        (WebCore::ScrollingCoordinatorMac::pageDestroyed):
+        (WebCore::ScrollingCoordinatorMac::commitTreeStateIfNeeded):
+        (WebCore::ScrollingCoordinatorMac::handleWheelEvent):
+        (WebCore::ScrollingCoordinatorMac::scheduleTreeStateCommit):
+        (WebCore::ScrollingCoordinatorMac::commitTreeState):
+        (WebCore::ScrollingCoordinatorMac::updateTiledScrollingIndicator):
+
 2014-01-02  Andreas Kling  <akling@apple.com>
 
         Simplify the insides of DocumentSharedObjectPool and reduce memory usage.

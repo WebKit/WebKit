@@ -1,3 +1,24 @@
+2014-01-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Add AsyncScrollingCoordinator, which is a base class for threaded and future remote ScrollingCoordinators
+        https://bugs.webkit.org/show_bug.cgi?id=126389
+
+        Reviewed by Tim Horton.
+        
+        Add AsyncScrollingCoordinator, a ScrollingCoordinator that knows about ScrollingStateTrees
+        and ScrollingTrees, but leaves it up to subclasses to decide when and how to commit.
+        
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::addScrollingTreeForPage): The ScrollingTree is exposed on
+        AsyncScrollingCoordinator now, not ScrollingCoordinator, so we have to cast here.
+        * WebProcess/WebPage/WebPage.cpp: m_useThreadedScrolling -> m_useAsyncScrolling terminology change.
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::~WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences): Cast to AsyncScrollingCoordinator in order
+        to get to the ScrollingTree.
+
 2014-01-01  Simon Fraser  <simon.fraser@apple.com>
 
         Create a ThreadedScrollingTree subclass of ScrollingTree, and push all knowledge of the scrolling thread into it

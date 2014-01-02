@@ -281,7 +281,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_backgroundColor(Color::white)
     , m_maximumRenderingSuppressionToken(0)
     , m_scrollPinningBehavior(DoNotPin)
-    , m_useThreadedScrolling(false)
+    , m_useAsyncScrolling(false)
     , m_viewState(parameters.viewState)
 {
     ASSERT(m_pageID);
@@ -315,10 +315,10 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_drawingArea->setPaintingEnabled(false);
 
 #if ENABLE(ASYNC_SCROLLING)
-    m_useThreadedScrolling = parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey());
+    m_useAsyncScrolling = parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey());
     if (!m_drawingArea->supportsThreadedScrolling())
-        m_useThreadedScrolling = false;
-    m_page->settings().setScrollingCoordinatorEnabled(m_useThreadedScrolling);
+        m_useAsyncScrolling = false;
+    m_page->settings().setScrollingCoordinatorEnabled(m_useAsyncScrolling);
 #endif
 
     m_mainFrame = WebFrame::createWithCoreMainFrame(this, &m_page->mainFrame());
@@ -421,7 +421,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 
 #if ENABLE(ASYNC_SCROLLING)
-    if (m_useThreadedScrolling)
+    if (m_useAsyncScrolling)
         WebProcess::shared().eventDispatcher().addScrollingTreeForPage(this);
 #endif
 
@@ -436,7 +436,7 @@ WebPage::~WebPage()
     ASSERT(!m_page);
 
 #if ENABLE(ASYNC_SCROLLING)
-    if (m_useThreadedScrolling)
+    if (m_useAsyncScrolling)
         WebProcess::shared().eventDispatcher().removeScrollingTreeForPage(this);
 #endif
 

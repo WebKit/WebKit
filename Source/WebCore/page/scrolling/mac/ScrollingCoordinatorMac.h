@@ -28,7 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "ScrollingCoordinator.h"
+#include "AsyncScrollingCoordinator.h"
 
 namespace WebCore {
 
@@ -38,84 +38,26 @@ class ScrollingStateScrollingNode;
 class ScrollingStateTree;
 class ThreadedScrollingTree;
 
-class ScrollingCoordinatorMac : public ScrollingCoordinator {
+class ScrollingCoordinatorMac : public AsyncScrollingCoordinator {
 public:
     explicit ScrollingCoordinatorMac(Page*);
     virtual ~ScrollingCoordinatorMac();
 
     virtual void pageDestroyed();
 
-    virtual ScrollingTree* scrollingTree() const;
-    virtual void commitTreeStateIfNeeded();
-
-    // Should be called whenever the given frame view has been laid out.
-    virtual void frameViewLayoutUpdated(FrameView*);
-
-    // Should be called whenever the root layer for the given frame view changes.
-    virtual void frameViewRootLayerDidChange(FrameView*);
-
-    // Should be called whenever the scrollbar layer for the given scrollable area changes.
-    virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea*, ScrollbarOrientation);
-
-    // Requests that the scrolling coordinator updates the scroll position of the given frame view. If this function returns true, it means that the
-    // position will be updated asynchronously. If it returns false, the caller should update the scrolling position itself.
-    virtual bool requestScrollPositionUpdate(FrameView*, const IntPoint&);
+    virtual void commitTreeStateIfNeeded() OVERRIDE;
 
     // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
-    virtual bool handleWheelEvent(FrameView*, const PlatformWheelEvent&);
-
-    // These functions are used to indicate that a layer should be (or should not longer be) represented by a node
-    // in the scrolling tree.
-    virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID);
-    virtual void detachFromStateTree(ScrollingNodeID);
-
-    // This function wipes out the current tree.
-    virtual void clearStateTree();
-
-    virtual String scrollingStateTreeAsText() const OVERRIDE;
-
-    virtual bool isRubberBandInProgress() const OVERRIDE;
-    
-    virtual void setScrollPinningBehavior(ScrollPinningBehavior) OVERRIDE;
+    virtual bool handleWheelEvent(FrameView*, const PlatformWheelEvent&) OVERRIDE;
 
 private:
-    // Return whether this scrolling coordinator can keep fixed position layers fixed to their
-    // containers while scrolling.
-    virtual bool supportsFixedPositionLayers() const OVERRIDE { return true; }
-
-    // This function will update the ScrollingStateNode for the given viewport constrained object.
-    virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) OVERRIDE;
-
-    virtual void updateScrollingNode(ScrollingNodeID, GraphicsLayer* scrollLayer, GraphicsLayer* counterScrollingLayer) OVERRIDE;
-
-    // Called to synch the GraphicsLayer positions for child layers when their CALayers have been moved by the scrolling thread.
-    virtual void syncChildPositions(const LayoutRect& viewportRect) OVERRIDE;
-
-    virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*);
-    virtual void setSynchronousScrollingReasons(SynchronousScrollingReasons);
-
-    virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(FrameView*) const { return false; }
-
-    void ensureRootStateNodeForFrameView(FrameView*);
-
-    void setScrollLayerForNode(GraphicsLayer*, ScrollingStateNode*);
-    void setCounterScrollingLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
-    void setHeaderLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
-    void setFooterLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
-    void setScrollbarPaintersFromScrollbarsForNode(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar, ScrollingStateScrollingNode*);
-    void setNonFastScrollableRegionForNode(const Region&, ScrollingStateScrollingNode*);
-    void setWheelEventHandlerCountForNode(unsigned, ScrollingStateScrollingNode*);
-    void setScrollBehaviorForFixedElementsForNode(ScrollBehaviorForFixedElements, ScrollingStateScrollingNode*);
-
-    void updateMainFrameScrollLayerPosition();
-
-    void scheduleTreeStateCommit();
+    virtual void scheduleTreeStateCommit() OVERRIDE;
 
     void scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinatorMac>*);
     void commitTreeState();
+    
+    void updateTiledScrollingIndicator();
 
-    OwnPtr<ScrollingStateTree> m_scrollingStateTree;
-    RefPtr<ThreadedScrollingTree> m_scrollingTree;
     Timer<ScrollingCoordinatorMac> m_scrollingStateTreeCommitterTimer;
 };
 

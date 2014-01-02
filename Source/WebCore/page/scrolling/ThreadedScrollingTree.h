@@ -47,6 +47,8 @@ public:
 
     virtual bool isThreadedScrollingTree() const { return true; }
 
+    virtual void commitNewTreeState(PassOwnPtr<ScrollingStateTree>) OVERRIDE;
+
     virtual void handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
 
     // Can be called from any thread. Will try to handle the wheel event on the scrolling thread.
@@ -59,7 +61,6 @@ public:
 private:
     explicit ThreadedScrollingTree(ScrollingCoordinator*);
 
-    virtual void commitNewTreeState(PassOwnPtr<ScrollingStateTree>) OVERRIDE;
     virtual void updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) OVERRIDE;
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) OVERRIDE;

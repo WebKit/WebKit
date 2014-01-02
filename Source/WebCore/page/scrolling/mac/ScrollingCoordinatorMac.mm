@@ -29,21 +29,11 @@
 
 #import "ScrollingCoordinatorMac.h"
 
-#include "GraphicsLayer.h"
 #include "FrameView.h"
-#include "IntRect.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PlatformWheelEvent.h"
-#include "PluginViewBase.h"
 #include "Region.h"
-#include "RenderLayerCompositor.h"
-#include "RenderView.h"
-#include "ScrollAnimator.h"
-#include "ScrollingConstraints.h"
-#include "ScrollingStateFixedNode.h"
-#include "ScrollingStateScrollingNode.h"
-#include "ScrollingStateStickyNode.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingThread.h"
 #include "ThreadedScrollingTree.h"
@@ -52,176 +42,38 @@
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 
-
 namespace WebCore {
 
-class ScrollingCoordinatorPrivate {
-};
-
 ScrollingCoordinatorMac::ScrollingCoordinatorMac(Page* page)
-    : ScrollingCoordinator(page)
-    , m_scrollingStateTree(ScrollingStateTree::create())
-    , m_scrollingTree(ThreadedScrollingTree::create(this))
+    : AsyncScrollingCoordinator(page)
     , m_scrollingStateTreeCommitterTimer(this, &ScrollingCoordinatorMac::scrollingStateTreeCommitterTimerFired)
 {
+    setScrollingTree(ThreadedScrollingTree::create(this));
 }
 
 ScrollingCoordinatorMac::~ScrollingCoordinatorMac()
 {
-    ASSERT(!m_scrollingTree);
+    ASSERT(!scrollingTree());
 }
 
 void ScrollingCoordinatorMac::pageDestroyed()
 {
-    ScrollingCoordinator::pageDestroyed();
+    AsyncScrollingCoordinator::pageDestroyed();
 
     m_scrollingStateTreeCommitterTimer.stop();
 
     // Invalidating the scrolling tree will break the reference cycle between the ScrollingCoordinator and ScrollingTree objects.
-    ScrollingThread::dispatch(bind(&ScrollingTree::invalidate, m_scrollingTree.release()));
-}
-
-ScrollingTree* ScrollingCoordinatorMac::scrollingTree() const
-{
-    ASSERT(m_scrollingTree);
-    return m_scrollingTree.get();
-}
-
-bool ScrollingCoordinatorMac::isRubberBandInProgress() const
-{
-    return scrollingTree()->isRubberBandInProgress();
-}
-
-void ScrollingCoordinatorMac::setScrollPinningBehavior(ScrollPinningBehavior pinning)
-{
-    scrollingTree()->setScrollPinningBehavior(pinning);
+    RefPtr<ThreadedScrollingTree> scrollingTree = static_pointer_cast<ThreadedScrollingTree>(releaseScrollingTree());
+    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::invalidate, scrollingTree));
 }
 
 void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
 {
-    if (!m_scrollingStateTree->hasChangedProperties())
+    if (!scrollingStateTree()->hasChangedProperties())
         return;
 
     commitTreeState();
     m_scrollingStateTreeCommitterTimer.stop();
-}
-
-void ScrollingCoordinatorMac::frameViewLayoutUpdated(FrameView* frameView)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-
-    // If there isn't a root node yet, don't do anything. We'll be called again after creating one.
-    if (!m_scrollingStateTree->rootStateNode())
-        return;
-
-    // Compute the region of the page that we can't do fast scrolling for. This currently includes
-    // all scrollable areas, such as subframes, overflow divs and list boxes. We need to do this even if the
-    // frame view whose layout was updated is not the main frame.
-    Region nonFastScrollableRegion = computeNonFastScrollableRegion(&m_page->mainFrame(), IntPoint());
-
-    // In the future, we may want to have the ability to set non-fast scrolling regions for more than
-    // just the root node. But right now, this concept only applies to the root.
-    setNonFastScrollableRegionForNode(nonFastScrollableRegion, m_scrollingStateTree->rootStateNode());
-
-    if (!coordinatesScrollingForFrameView(frameView))
-        return;
-
-    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
-    if (!node)
-        return;
-
-    Scrollbar* verticalScrollbar = frameView->verticalScrollbar();
-    Scrollbar* horizontalScrollbar = frameView->horizontalScrollbar();
-    setScrollbarPaintersFromScrollbarsForNode(verticalScrollbar, horizontalScrollbar, node);
-
-    node->setFrameScaleFactor(frameView->frame().frameScaleFactor());
-    node->setHeaderHeight(frameView->headerHeight());
-    node->setFooterHeight(frameView->footerHeight());
-
-    node->setScrollOrigin(frameView->scrollOrigin());
-    node->setViewportRect(IntRect(IntPoint(), frameView->visibleContentRect().size()));
-    node->setTotalContentsSize(frameView->totalContentsSize());
-
-    ScrollableAreaParameters scrollParameters;
-    scrollParameters.horizontalScrollElasticity = frameView->horizontalScrollElasticity();
-    scrollParameters.verticalScrollElasticity = frameView->verticalScrollElasticity();
-    scrollParameters.hasEnabledHorizontalScrollbar = horizontalScrollbar && horizontalScrollbar->enabled();
-    scrollParameters.hasEnabledVerticalScrollbar = verticalScrollbar && verticalScrollbar->enabled();
-    scrollParameters.horizontalScrollbarMode = frameView->horizontalScrollbarMode();
-    scrollParameters.verticalScrollbarMode = frameView->verticalScrollbarMode();
-
-    node->setScrollableAreaParameters(scrollParameters);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::recomputeWheelEventHandlerCountForFrameView(FrameView* frameView)
-{
-    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
-    if (!node)
-        return;
-    setWheelEventHandlerCountForNode(computeCurrentWheelEventHandlerCount(), node);
-}
-
-void ScrollingCoordinatorMac::frameViewRootLayerDidChange(FrameView* frameView)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-
-    if (!coordinatesScrollingForFrameView(frameView))
-        return;
-
-    // If the root layer does not have a ScrollingStateNode, then we should create one.
-    ensureRootStateNodeForFrameView(frameView);
-    ASSERT(m_scrollingStateTree->rootStateNode());
-
-    ScrollingCoordinator::frameViewRootLayerDidChange(frameView);
-
-    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
-    setScrollLayerForNode(scrollLayerForFrameView(frameView), node);
-    setCounterScrollingLayerForNode(counterScrollingLayerForFrameView(frameView), node);
-    setHeaderLayerForNode(headerLayerForFrameView(frameView), node);
-    setFooterLayerForNode(footerLayerForFrameView(frameView), node);
-    setScrollBehaviorForFixedElementsForNode(frameView->scrollBehaviorForFixedElements(), node);
-}
-
-void ScrollingCoordinatorMac::scrollableAreaScrollbarLayerDidChange(ScrollableArea* scrollableArea, ScrollbarOrientation orientation)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-
-    if (scrollableArea != static_cast<ScrollableArea*>(m_page->mainFrame().view()))
-        return;
-
-    if (orientation == VerticalScrollbar)
-        scrollableArea->verticalScrollbarLayerDidChange();
-    else
-        scrollableArea->horizontalScrollbarLayerDidChange();
-}
-
-bool ScrollingCoordinatorMac::requestScrollPositionUpdate(FrameView* frameView, const IntPoint& scrollPosition)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-
-    if (!coordinatesScrollingForFrameView(frameView))
-        return false;
-
-    if (frameView->inProgrammaticScroll() || frameView->frame().document()->inPageCache())
-        updateMainFrameScrollPosition(scrollPosition, frameView->inProgrammaticScroll(), SetScrollingLayerPosition);
-
-    // If this frame view's document is being put into the page cache, we don't want to update our
-    // main frame scroll position. Just let the FrameView think that we did.
-    if (frameView->frame().document()->inPageCache())
-        return true;
-
-    ScrollingStateScrollingNode* stateNode = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));
-    if (!stateNode)
-        return false;
-
-    stateNode->setRequestedScrollPosition(scrollPosition, frameView->inProgrammaticScroll());
-    scheduleTreeStateCommit();
-    return true;
 }
 
 bool ScrollingCoordinatorMac::handleWheelEvent(FrameView*, const PlatformWheelEvent& wheelEvent)
@@ -229,169 +81,11 @@ bool ScrollingCoordinatorMac::handleWheelEvent(FrameView*, const PlatformWheelEv
     ASSERT(isMainThread());
     ASSERT(m_page);
 
-    if (m_scrollingTree->willWheelEventStartSwipeGesture(wheelEvent))
+    if (scrollingTree()->willWheelEventStartSwipeGesture(wheelEvent))
         return false;
 
-    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::handleWheelEvent, m_scrollingTree.get(), wheelEvent));
+    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::handleWheelEvent, toThreadedScrollingTree(scrollingTree()), wheelEvent));
     return true;
-}
-
-ScrollingNodeID ScrollingCoordinatorMac::attachToStateTree(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)
-{
-    return m_scrollingStateTree->attachNode(nodeType, newNodeID, parentID);
-}
-
-void ScrollingCoordinatorMac::detachFromStateTree(ScrollingNodeID nodeID)
-{
-    m_scrollingStateTree->detachNode(nodeID);
-}
-
-void ScrollingCoordinatorMac::clearStateTree()
-{
-    m_scrollingStateTree->clear();
-}
-
-void ScrollingCoordinatorMac::ensureRootStateNodeForFrameView(FrameView* frameView)
-{
-    ASSERT(frameView->scrollLayerID());
-    attachToStateTree(ScrollingNode, frameView->scrollLayerID(), 0);
-}
-
-void ScrollingCoordinatorMac::setScrollLayerForNode(GraphicsLayer* scrollLayer, ScrollingStateNode* node)
-{
-    node->setScrollLayer(scrollLayer);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::setCounterScrollingLayerForNode(GraphicsLayer* layer, ScrollingStateScrollingNode* node)
-{
-    node->setCounterScrollingLayer(layer);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::setHeaderLayerForNode(GraphicsLayer* headerLayer, ScrollingStateScrollingNode* node)
-{
-    // Headers and footers are only supported on the root node.
-    ASSERT(node == m_scrollingStateTree->rootStateNode());
-
-    node->setHeaderLayer(headerLayer);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::setFooterLayerForNode(GraphicsLayer* footerLayer, ScrollingStateScrollingNode* node)
-{
-    // Headers and footers are only supported on the root node.
-    ASSERT(node == m_scrollingStateTree->rootStateNode());
-
-    node->setFooterLayer(footerLayer);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::setScrollbarPaintersFromScrollbarsForNode(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar, ScrollingStateScrollingNode* node)
-{
-    node->setScrollbarPaintersFromScrollbars(verticalScrollbar, horizontalScrollbar);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::setNonFastScrollableRegionForNode(const Region& region, ScrollingStateScrollingNode* node)
-{
-    node->setNonFastScrollableRegion(region);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::setWheelEventHandlerCountForNode(unsigned wheelEventHandlerCount, ScrollingStateScrollingNode* node)
-{
-    node->setWheelEventHandlerCount(wheelEventHandlerCount);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::setScrollBehaviorForFixedElementsForNode(ScrollBehaviorForFixedElements behaviorForFixed, ScrollingStateScrollingNode* node)
-{
-    node->setScrollBehaviorForFixedElements(behaviorForFixed);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::setSynchronousScrollingReasons(SynchronousScrollingReasons reasons)
-{
-    if (!m_scrollingStateTree->rootStateNode())
-        return;
-
-    // The FrameView's GraphicsLayer is likely to be out-of-synch with the PlatformLayer
-    // at this point. So we'll update it before we switch back to main thread scrolling
-    // in order to avoid layer positioning bugs.
-    if (reasons)
-        updateMainFrameScrollLayerPosition();
-    m_scrollingStateTree->rootStateNode()->setSynchronousScrollingReasons(reasons);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::updateMainFrameScrollLayerPosition()
-{
-    ASSERT(isMainThread());
-
-    if (!m_page)
-        return;
-
-    FrameView* frameView = m_page->mainFrame().view();
-    if (!frameView)
-        return;
-
-    if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView))
-        scrollLayer->setPosition(-frameView->scrollPosition());
-}
-
-void ScrollingCoordinatorMac::syncChildPositions(const LayoutRect& viewportRect)
-{
-    if (!m_scrollingStateTree->rootStateNode())
-        return;
-
-    Vector<OwnPtr<ScrollingStateNode>>* children = m_scrollingStateTree->rootStateNode()->children();
-    if (!children)
-        return;
-
-    // FIXME: We'll have to traverse deeper into the tree at some point.
-    size_t size = children->size();
-    for (size_t i = 0; i < size; ++i) {
-        ScrollingStateNode* child = children->at(i).get();
-        child->syncLayerPositionForViewportRect(viewportRect);
-    }
-}
-
-void ScrollingCoordinatorMac::updateScrollingNode(ScrollingNodeID nodeID, GraphicsLayer* scrollLayer, GraphicsLayer* counterScrollingLayer)
-{
-    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(nodeID));
-    ASSERT(node);
-    if (!node)
-        return;
-
-    node->setScrollLayer(scrollLayer);
-    node->setCounterScrollingLayer(counterScrollingLayer);
-    scheduleTreeStateCommit();
-}
-
-void ScrollingCoordinatorMac::updateViewportConstrainedNode(ScrollingNodeID nodeID, const ViewportConstraints& constraints, GraphicsLayer* graphicsLayer)
-{
-    ASSERT(supportsFixedPositionLayers());
-
-    ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
-    if (!node)
-        return;
-
-    switch (constraints.constraintType()) {
-    case ViewportConstraints::FixedPositionConstraint: {
-        ScrollingStateFixedNode* fixedNode = toScrollingStateFixedNode(node);
-        setScrollLayerForNode(graphicsLayer, fixedNode);
-        fixedNode->updateConstraints((const FixedPositionViewportConstraints&)constraints);
-        break;
-    }
-    case ViewportConstraints::StickyPositionConstraint: {
-        ScrollingStateStickyNode* stickyNode = toScrollingStateStickyNode(node);
-        setScrollLayerForNode(graphicsLayer, stickyNode);
-        stickyNode->updateConstraints((const StickyPositionViewportConstraints&)constraints);
-        break;
-    }
-    }
-    scheduleTreeStateCommit();
 }
 
 void ScrollingCoordinatorMac::scheduleTreeStateCommit()
@@ -399,7 +93,7 @@ void ScrollingCoordinatorMac::scheduleTreeStateCommit()
     if (m_scrollingStateTreeCommitterTimer.isActive())
         return;
 
-    if (!m_scrollingStateTree->hasChangedProperties())
+    if (!scrollingStateTree()->hasChangedProperties())
         return;
 
     m_scrollingStateTreeCommitterTimer.startOneShot(0);
@@ -412,11 +106,16 @@ void ScrollingCoordinatorMac::scrollingStateTreeCommitterTimerFired(Timer<Scroll
 
 void ScrollingCoordinatorMac::commitTreeState()
 {
-    ASSERT(m_scrollingStateTree->hasChangedProperties());
+    ASSERT(scrollingStateTree()->hasChangedProperties());
 
-    OwnPtr<ScrollingStateTree> treeState = m_scrollingStateTree->commit();
-    ScrollingThread::dispatch(bind(&ScrollingTree::commitNewTreeState, m_scrollingTree.get(), treeState.release()));
+    OwnPtr<ScrollingStateTree> treeState = scrollingStateTree()->commit();
+    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::commitNewTreeState, toThreadedScrollingTree(scrollingTree()), treeState.release()));
 
+    updateTiledScrollingIndicator();
+}
+
+void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
+{
     FrameView* frameView = m_page->mainFrame().view();
     if (!frameView)
         return;
@@ -428,20 +127,12 @@ void ScrollingCoordinatorMac::commitTreeState()
     ScrollingModeIndication indicatorMode;
     if (shouldUpdateScrollLayerPositionSynchronously())
         indicatorMode = SynchronousScrollingBecauseOfStyleIndication;
-    else if (m_scrollingStateTree->rootStateNode() && m_scrollingStateTree->rootStateNode()->wheelEventHandlerCount())
+    else if (scrollingStateTree()->rootStateNode() && scrollingStateTree()->rootStateNode()->wheelEventHandlerCount())
         indicatorMode =  SynchronousScrollingBecauseOfEventHandlersIndication;
     else
         indicatorMode = AsyncScrollingIndication;
     
     tiledBacking->setScrollingModeIndication(indicatorMode);
-}
-
-String ScrollingCoordinatorMac::scrollingStateTreeAsText() const
-{
-    if (m_scrollingStateTree->rootStateNode())
-        return m_scrollingStateTree->rootStateNode()->scrollingStateTreeAsText();
-
-    return String();
 }
 
 } // namespace WebCore

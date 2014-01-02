@@ -37,7 +37,7 @@
 #include <wtf/RunLoop.h>
 
 #if ENABLE(ASYNC_SCROLLING)
-#include <WebCore/ScrollingCoordinator.h>
+#include <WebCore/AsyncScrollingCoordinator.h>
 #include <WebCore/ScrollingThread.h>
 #include <WebCore/ThreadedScrollingTree.h>
 #endif
@@ -67,7 +67,9 @@ void EventDispatcher::addScrollingTreeForPage(WebPage* webPage)
 
     ASSERT(webPage->corePage()->scrollingCoordinator());
     ASSERT(!m_scrollingTrees.contains(webPage->pageID()));
-    m_scrollingTrees.set(webPage->pageID(), toThreadedScrollingTree(webPage->corePage()->scrollingCoordinator()->scrollingTree()));
+
+    AsyncScrollingCoordinator* scrollingCoordinator = toAsyncScrollingCoordinator(webPage->corePage()->scrollingCoordinator());
+    m_scrollingTrees.set(webPage->pageID(), toThreadedScrollingTree(scrollingCoordinator->scrollingTree()));
 }
 
 void EventDispatcher::removeScrollingTreeForPage(WebPage* webPage)
