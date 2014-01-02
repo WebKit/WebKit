@@ -83,6 +83,6 @@ Buildbot.prototype = {
 
     bindingsTestResultsURLForIteration: function(iteration)
     {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/bindings-generation-test/logs/stdio";
+        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/bindings-generation-tests/logs/stdio";
     }
 };
