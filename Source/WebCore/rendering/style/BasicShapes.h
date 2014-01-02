@@ -63,7 +63,8 @@ public:
         ContentBox,
         PaddingBox,
         BorderBox,
-        MarginBox
+        MarginBox,
+        BoundingBox
     };
 
     bool canBlend(const BasicShape*) const;

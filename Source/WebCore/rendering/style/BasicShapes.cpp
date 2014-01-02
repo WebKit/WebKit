@@ -86,6 +86,8 @@ FloatSize BasicShape::referenceBoxSize(const RenderBox& renderer) const
     case MarginBox:
         return FloatSize(renderer.marginLeft() + renderer.width() + renderer.marginRight(),
             renderer.marginTop() + renderer.height() + renderer.marginBottom());
+    case BoundingBox:
+        break;
     }
 
     ASSERT_NOT_REACHED();

@@ -3916,7 +3916,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
     RenderStyle& style = renderer().style();
 
     ASSERT(style.clipPath());
-    if (style.clipPath()->type() == ClipPathOperation::SHAPE) {
+    if (style.clipPath()->type() == ClipPathOperation::Shape) {
         ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(style.clipPath());
 
         if (!rootRelativeBoundsComputed) {
@@ -3925,12 +3925,12 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
         }
 
         context->save();
-        context->clipPath(clipPath->path(rootRelativeBounds), clipPath->windRule());
+        context->clipPath(clipPath->pathForReferenceRect(rootRelativeBounds), clipPath->windRule());
         return true;
     }
 
 #if ENABLE(SVG)
-    if (style.clipPath()->type() == ClipPathOperation::REFERENCE) {
+    if (style.clipPath()->type() == ClipPathOperation::Reference) {
         ReferenceClipPathOperation* referenceClipPathOperation = static_cast<ReferenceClipPathOperation*>(style.clipPath());
         Element* element = renderer().document().getElementById(referenceClipPathOperation->fragment());
         if (element && element->hasTagName(SVGNames::clipPathTag) && element->renderer()) {

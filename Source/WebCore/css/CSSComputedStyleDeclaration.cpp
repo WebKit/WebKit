@@ -4,6 +4,7 @@
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2011 Sencha, Inc. All rights reserved.
+ * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -2859,18 +2860,29 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return counterToCSSValue(style.get(), propertyID);
         case CSSPropertyCounterReset:
             return counterToCSSValue(style.get(), propertyID);
-        case CSSPropertyWebkitClipPath:
-            if (ClipPathOperation* operation = style->clipPath()) {
-                if (operation->type() == ClipPathOperation::SHAPE)
-                    return valueForBasicShape(style.get(), static_cast<ShapeClipPathOperation*>(operation)->basicShape());
+        case CSSPropertyWebkitClipPath: {
+            ClipPathOperation* operation = style->clipPath();
+            if (!operation)
+                return cssValuePool().createIdentifierValue(CSSValueNone);
 #if ENABLE(SVG)
-                if (operation->type() == ClipPathOperation::REFERENCE) {
-                    ReferenceClipPathOperation* referenceOperation = static_cast<ReferenceClipPathOperation*>(operation);
-                    return CSSPrimitiveValue::create(referenceOperation->url(), CSSPrimitiveValue::CSS_URI);
-                }
-#endif
+            if (operation->type() == ClipPathOperation::Reference) {
+                ReferenceClipPathOperation& referenceOperation = toReferenceClipPathOperation(*operation);
+                return CSSPrimitiveValue::create(referenceOperation.url(), CSSPrimitiveValue::CSS_URI);
             }
-            return cssValuePool().createIdentifierValue(CSSValueNone);
+#endif
+            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+            if (operation->type() == ClipPathOperation::Shape) {
+                ShapeClipPathOperation& shapeOperation = toShapeClipPathOperation(*operation);
+                list->append(valueForBasicShape(style.get(), shapeOperation.basicShape()));
+                if (shapeOperation.referenceBox() != BasicShape::ReferenceBox::None)
+                    list->append(valueForBox(shapeOperation.referenceBox()));
+            }
+            if (operation->type() == ClipPathOperation::Box) {
+                BoxClipPathOperation& boxOperation = toBoxClipPathOperation(*operation);
+                list->append(valueForBox(boxOperation.referenceBox()));
+            }
+            return list.release();
+        }
 #if ENABLE(CSS_REGIONS)
         case CSSPropertyWebkitFlowInto:
             if (style->flowThread().isNull())

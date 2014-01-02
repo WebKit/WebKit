@@ -89,6 +89,7 @@ public:
             logicalHeight -= m_renderer.borderAndPaddingLogicalHeight();
             logicalWidth -= m_renderer.borderAndPaddingLogicalWidth();
             break;
+        case BasicShape::BoundingBox:
         case BasicShape::None:
             ASSERT_NOT_REACHED();
             break;
@@ -175,6 +176,7 @@ protected:
         case BasicShape::BorderBox: return LayoutUnit();
         case BasicShape::PaddingBox: return m_renderer.borderBefore();
         case BasicShape::ContentBox: return m_renderer.borderAndPaddingBefore();
+        case BasicShape::BoundingBox: break;
         case BasicShape::None: break;
         }
         ASSERT_NOT_REACHED();
@@ -191,6 +193,7 @@ protected:
         case BasicShape::BorderBox: return LayoutUnit();
         case BasicShape::PaddingBox: return m_renderer.borderStart();
         case BasicShape::ContentBox: return m_renderer.borderAndPaddingStart();
+        case BasicShape::BoundingBox: break;
         case BasicShape::None: break;
         }
         ASSERT_NOT_REACHED();

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2062,16 +2063,30 @@ public:
         }
         if (!value->isValueList())
             return;
+        BasicShape::ReferenceBox referenceBox = BasicShape::ReferenceBox::None;
+        RefPtr<ClipPathOperation> operation;
         auto& valueList = toCSSValueList(*value);
         for (unsigned i = 0; i < valueList.length(); ++i) {
-            // FIXME: <box> values are not supported yet.
-            // https://bugs.webkit.org/show_bug.cgi?id=126148
             auto& primitiveValue = toCSSPrimitiveValue(*valueList.itemWithoutBoundsCheck(i));
-            if (!primitiveValue.isShape())
-                continue;
-            setValue(styleResolver->style(), ShapeClipPathOperation::create(basicShapeForValue(styleResolver->style(), styleResolver->rootElementStyle(), primitiveValue.getShapeValue())));
-            break;
+            if (primitiveValue.isShape() && !operation)
+                operation = ShapeClipPathOperation::create(basicShapeForValue(styleResolver->style(), styleResolver->rootElementStyle(), primitiveValue.getShapeValue()));
+            else if ((primitiveValue.getValueID() == CSSValueContentBox
+                || primitiveValue.getValueID() == CSSValueBorderBox
+                || primitiveValue.getValueID() == CSSValuePaddingBox
+                || primitiveValue.getValueID() == CSSValueMarginBox
+                || primitiveValue.getValueID() == CSSValueBoundingBox)
+                && referenceBox == BasicShape::ReferenceBox::None)
+                referenceBox = boxForValue(&primitiveValue);
+            else
+                return;
         }
+        if (!operation) {
+            if (referenceBox == BasicShape::ReferenceBox::None)
+                return;
+            operation = BoxClipPathOperation::create(referenceBox);
+        } else
+            toShapeClipPathOperation(operation.get())->setReferenceBox(referenceBox);
+        setValue(styleResolver->style(), operation.release());
     }
     static PropertyHandler createHandler()
     {

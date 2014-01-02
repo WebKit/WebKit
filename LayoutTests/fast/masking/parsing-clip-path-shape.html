@@ -118,6 +118,17 @@ testInner("-webkit-clip-path", "margin-box circle(50% at 50% 50%)", "margin-box 
 testInner("-webkit-clip-path", "border-box circle(50% at 50% 50%)", "border-box circle(50% at 50% 50%)");
 testInner("-webkit-clip-path", "circle(50% at 50% 50%) bounding-box", "circle(50% at 50% 50%) bounding-box");
 
+testComputed("-webkit-clip-path", "content-box", "content-box");
+testComputed("-webkit-clip-path", "padding-box", "padding-box");
+testComputed("-webkit-clip-path", "border-box", "border-box");
+testComputed("-webkit-clip-path", "margin-box", "margin-box");
+testComputed("-webkit-clip-path", "bounding-box", "bounding-box");
+testComputed("-webkit-clip-path", "circle(50% at 50% 50%) content-box", "circle(50% at 50% 50%) content-box");
+testComputed("-webkit-clip-path", "circle(50% at 50% 50%) padding-box", "circle(50% at 50% 50%) padding-box");
+testComputed("-webkit-clip-path", "margin-box circle(50% at 50% 50%)", "circle(50% at 50% 50%) margin-box");
+testComputed("-webkit-clip-path", "border-box circle(50% at 50% 50%)", "circle(50% at 50% 50%) border-box");
+testComputed("-webkit-clip-path", "circle(50% at 50% 50%) bounding-box", "circle(50% at 50% 50%) bounding-box");
+
 // reject non-lengths
 negativeTest("-webkit-clip-path", "circle(1px, 1px, 1)");
 negativeTest("-webkit-clip-path", "circle(1px, 1px, px)");

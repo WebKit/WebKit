@@ -1,3 +1,38 @@
+2014-01-02  Dirk Schulze  <krit@webkit.org>
+
+        Support <box> values computed style for 'clip-path' property
+        https://bugs.webkit.org/show_bug.cgi?id=126148
+
+        Reviewed by Simon Fraser.
+
+        Calculate computed style for 'clip-path' property.
+
+        Updated tests to check for computed style.
+
+        * css/BasicShapeFunctions.cpp: Add box value bounding-box.
+        (WebCore::valueForBox):
+        (WebCore::boxForValue):
+        * css/CSSComputedStyleDeclaration.cpp: Return the computed style
+            for 'clip-path'.
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/DeprecatedStyleBuilder.cpp: Create CSSValueLists for 'clip-th'.
+        (WebCore::ApplyPropertyClipPath::applyValue):
+        * rendering/ClipPathOperation.h: Add bounding-box value.
+        (WebCore::ShapeClipPathOperation::pathForReferenceRect):
+        (WebCore::ShapeClipPathOperation::setReferenceBox):
+        (WebCore::ShapeClipPathOperation::referenceBox):
+        (WebCore::BoxClipPathOperation::create):
+        (WebCore::BoxClipPathOperation::pathForReferenceRect):
+        (WebCore::BoxClipPathOperation::referenceBox):
+        (WebCore::BoxClipPathOperation::BoxClipPathOperation):
+        * rendering/shapes/ShapeInfo.h: Add bounding-box value.
+        (WebCore::ShapeInfo::setShapeSize):
+        (WebCore::ShapeInfo::logicalTopOffset):
+        (WebCore::ShapeInfo::logicalLeftOffset):
+        * rendering/style/BasicShapes.cpp: Add bounding-box value.
+        (WebCore::BasicShape::referenceBoxSize):
+        * rendering/style/BasicShapes.h:
+
 2014-01-02  Antti Koivisto  <antti@apple.com>
 
         Always resolve style from root

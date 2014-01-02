@@ -50,6 +50,8 @@ PassRefPtr<CSSPrimitiveValue> valueForBox(BasicShape::ReferenceBox box)
         return cssValuePool().createIdentifierValue(CSSValueBorderBox);
     case BasicShape::MarginBox:
         return cssValuePool().createIdentifierValue(CSSValueMarginBox);
+    case BasicShape::BoundingBox:
+        return cssValuePool().createIdentifierValue(CSSValueBoundingBox);
     case BasicShape::None:
         return nullptr;
     }
@@ -71,6 +73,8 @@ BasicShape::ReferenceBox boxForValue(const CSSPrimitiveValue* value)
         return BasicShape::BorderBox;
     case CSSValueMarginBox:
         return BasicShape::MarginBox;
+    case CSSValueBoundingBox:
+        return BasicShape::BoundingBox;
     default:
         ASSERT_NOT_REACHED();
         return BasicShape::None;

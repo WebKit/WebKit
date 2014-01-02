@@ -131,7 +131,7 @@ static inline PassRefPtr<ClipPathOperation> blendFunc(const AnimationBase* anim,
         return to;
 
     // Other clip-path operations than BasicShapes can not be animated.
-    if (from->type() != ClipPathOperation::SHAPE || to->type() != ClipPathOperation::SHAPE)
+    if (from->type() != ClipPathOperation::Shape || to->type() != ClipPathOperation::Shape)
         return to;
 
     const BasicShape* fromShape = static_cast<ShapeClipPathOperation*>(from)->basicShape();

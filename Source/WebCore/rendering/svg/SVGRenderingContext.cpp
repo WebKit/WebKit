@@ -123,9 +123,9 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     }
 
     ClipPathOperation* clipPathOperation = style.clipPath();
-    if (clipPathOperation && clipPathOperation->type() == ClipPathOperation::SHAPE) {
+    if (clipPathOperation && clipPathOperation->type() == ClipPathOperation::Shape) {
         ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(clipPathOperation);
-        m_paintInfo->context->clipPath(clipPath->path(renderer.objectBoundingBox()), clipPath->windRule());
+        m_paintInfo->context->clipPath(clipPath->pathForReferenceRect(renderer.objectBoundingBox()), clipPath->windRule());
     }
 
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(*m_renderer);
