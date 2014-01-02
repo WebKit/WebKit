@@ -1,3 +1,10 @@
+2014-01-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Unreviewed build fix after r160903 when ACCESSIBILITY is disabled
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::children):
+
 2014-01-01  Andreas Kling  <akling@apple.com>
 
         RenderScrollbar: Map of scrollbar parts should use RenderPtr.
