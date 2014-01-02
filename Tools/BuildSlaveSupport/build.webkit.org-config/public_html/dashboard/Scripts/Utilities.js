@@ -50,7 +50,7 @@ JSON.load = function(url, callback)
     request.send();
 };
 
-function loadXML(url, callback) {
+function loadXML(url, callback, options) {
     console.assert(url);
 
     if (!(callback instanceof Function))
@@ -67,9 +67,8 @@ function loadXML(url, callback) {
     };
 
     request.open("GET", url);
-    // FIXME: It's not nice that one of the loading helpers here enables credentials, and
-    // others don't. Credentials are needed for some trac installations.
-    request.withCredentials = true;
+    if ((typeof options === "object") && options.hasOwnProperty("withCredentials"))
+        request.withCredentials = options.withCredentials;
     request.send();
 };
 

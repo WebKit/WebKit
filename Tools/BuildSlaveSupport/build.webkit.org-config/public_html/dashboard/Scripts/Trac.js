@@ -23,13 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-Trac = function(baseURL)
+Trac = function(baseURL, options)
 {
     BaseObject.call(this);
 
     console.assert(baseURL);
 
     this.baseURL = baseURL;
+    this._needsAuthentication = (typeof options === "object") && options[Trac.NeedsAuthentication] === true;
+
     this.recordedCommits = []; // Will be sorted in ascending order.
 
     this.update();
@@ -38,6 +40,7 @@ Trac = function(baseURL)
 
 BaseObject.addConstructorFunctions(Trac);
 
+Trac.NeedsAuthentication = "needsAuthentication";
 Trac.UpdateInterval = 45000; // 45 seconds
 
 Trac.Event = {
@@ -130,6 +133,6 @@ Trac.prototype = {
             this.recordedCommits = this.recordedCommits.concat(newCommits.reverse());
 
             this.dispatchEventToListeners(Trac.Event.NewCommitsRecorded, {newCommits: newCommits});
-        }.bind(this));
+        }.bind(this), this._needsAuthentication ? { withCredentials: true } : {});
     }
 };
