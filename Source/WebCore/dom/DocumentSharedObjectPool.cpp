@@ -31,64 +31,32 @@
 
 namespace WebCore {
 
-class ShareableElementDataCacheKey {
-public:
-    ShareableElementDataCacheKey(const Attribute* attributes, unsigned attributeCount)
-        : m_attributes(attributes)
-        , m_attributeCount(attributeCount)
-    { }
+inline unsigned attributeHash(const Vector<Attribute>& attributes)
+{
+    return StringHasher::hashMemory(attributes.data(), attributes.size() * sizeof(Attribute));
+}
 
-    bool operator!=(const ShareableElementDataCacheKey& other) const
-    {
-        if (m_attributeCount != other.m_attributeCount)
-            return true;
-        return memcmp(m_attributes, other.m_attributes, sizeof(Attribute) * m_attributeCount);
-    }
-
-    unsigned hash() const
-    {
-        return StringHasher::hashMemory(m_attributes, m_attributeCount * sizeof(Attribute));
-    }
-
-private:
-    const Attribute* m_attributes;
-    unsigned m_attributeCount;
-};
-
-class ShareableElementDataCacheEntry {
-public:
-    ShareableElementDataCacheEntry(const ShareableElementDataCacheKey& k, ShareableElementData& v)
-        : key(k)
-        , value(v)
-    { }
-
-    ShareableElementDataCacheKey key;
-    Ref<ShareableElementData> value;
-};
+inline bool hasSameAttributes(const Vector<Attribute>& attributes, ShareableElementData& elementData)
+{
+    if (attributes.size() != elementData.length())
+        return false;
+    return !memcmp(attributes.data(), elementData.m_attributeArray, attributes.size() * sizeof(Attribute));
+}
 
 PassRef<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(const Vector<Attribute>& attributes)
 {
     ASSERT(!attributes.isEmpty());
 
-    ShareableElementDataCacheKey cacheKey(attributes.data(), attributes.size());
-    unsigned cacheHash = cacheKey.hash();
+    auto& cachedData = m_shareableElementDataCache.add(attributeHash(attributes), nullptr).iterator->value;
 
-    ShareableElementDataCache::iterator cacheIterator = m_shareableElementDataCache.add(cacheHash, nullptr).iterator;
-    if (cacheIterator->value && cacheIterator->value->key != cacheKey)
-        cacheHash = 0;
+    // FIXME: This prevents sharing when there's a hash collision.
+    if (cachedData && !hasSameAttributes(attributes, *cachedData))
+        return ShareableElementData::createWithAttributes(attributes);
 
-    RefPtr<ShareableElementData> elementData;
-    if (cacheHash && cacheIterator->value)
-        elementData = &cacheIterator->value->value.get();
-    else
-        elementData = ShareableElementData::createWithAttributes(attributes);
+    if (!cachedData)
+        cachedData = ShareableElementData::createWithAttributes(attributes);
 
-    if (!cacheHash || cacheIterator->value)
-        return elementData.releaseNonNull();
-
-    cacheIterator->value = adoptPtr(new ShareableElementDataCacheEntry(ShareableElementDataCacheKey(elementData->m_attributeArray, elementData->length()), *elementData));
-
-    return elementData.releaseNonNull();
+    return *cachedData;
 }
 
 DocumentSharedObjectPool::DocumentSharedObjectPool()

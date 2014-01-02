@@ -1,3 +1,21 @@
+2014-01-02  Andreas Kling  <akling@apple.com>
+
+        Simplify the insides of DocumentSharedObjectPool and reduce memory usage.
+
+        Merging Blink r164152 by Elliott Sprehn.
+
+        Instead of storing an OwnPtr to an object that has a pointer to the
+        ShareableElementData as well as a pointer into the ShareableElementData
+        and the length we can just store a RefPtr to the SharableElementData.
+
+        This also reduces the memory usage of the pool by 2 pointers per entry.
+
+        * dom/DocumentSharedObjectPool.h:
+        * dom/DocumentSharedObjectPool.cpp:
+        (WebCore::attributeHash):
+        (WebCore::hasSameAttributes):
+        (WebCore::DocumentSharedObjectPool::cachedShareableElementDataWithAttributes):
+
 2014-01-02  Dirk Schulze  <krit@webkit.org>
 
         Support <box> values computed style for 'clip-path' property

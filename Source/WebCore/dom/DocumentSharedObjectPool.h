@@ -29,13 +29,13 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
 class Attribute;
 class ShareableElementData;
-class ShareableElementDataCacheEntry;
 
 class DocumentSharedObjectPool {
 public:
@@ -47,7 +47,7 @@ public:
 private:
     DocumentSharedObjectPool();
 
-    typedef HashMap<unsigned, OwnPtr<ShareableElementDataCacheEntry>, AlreadyHashed> ShareableElementDataCache;
+    typedef HashMap<unsigned, RefPtr<ShareableElementData>, AlreadyHashed> ShareableElementDataCache;
     ShareableElementDataCache m_shareableElementDataCache;
 };
 
