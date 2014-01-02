@@ -28,6 +28,7 @@
 
 #include "DrawingAreaInfo.h"
 #include "LayerTreeContext.h"
+#include "ViewState.h"
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
 #include <wtf/Forward.h>
@@ -105,9 +106,7 @@ public:
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&);
 
-    virtual void suspendPainting() { }
-    virtual void resumePainting() { }
-    virtual void setLayerHostingMode(LayerHostingMode) { }
+    virtual void viewStateDidChange(ViewState::Flags changed) { }
 
 protected:
     DrawingArea(DrawingAreaType, WebPage*);

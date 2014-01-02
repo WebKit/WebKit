@@ -1,3 +1,41 @@
+2014-01-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Refactor ViewState handling for drawing area / plugins
+        https://bugs.webkit.org/show_bug.cgi?id=126272
+
+        Reviewed by Tim Horton.
+
+        Instead of all ViewState changes being handled by the WebPage, notify the DrawingArea & PluginView to better encapsulate.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::viewStateDidChange):
+        (WebKit::PluginView::platformViewStateDidChange):
+            - added, handle changes in ViewState relevant to PluginView.
+        (WebKit::PluginView::didInitializePlugin):
+            - helper function removed.
+        * WebProcess/Plugins/PluginView.h:
+            - added/removed function declarations.
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::viewStateDidChange):
+            - declare viewStateDidChange.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActive):
+            - no need to notify plugin.
+        (WebKit::WebPage::setViewIsVisible):
+            - no need to notify drawing area.
+        (WebKit::WebPage::setViewState):
+            - send viewStateDidChange to drawing area / plugin.
+        (WebKit::WebPage::setWindowIsVisible):
+            - no need to notify plugin.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::layerHostingMode):
+            - removed setLayerHostingMode.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+            - declare viewStateDidChange.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::viewStateDidChange):
+            - added, handle changes in ViewState relevant to DrawingArea.
+
 2014-01-02  Alexey Proskuryakov  <ap@apple.com>
 
         Merge didMoveOnscreen / page visibility to isVisible

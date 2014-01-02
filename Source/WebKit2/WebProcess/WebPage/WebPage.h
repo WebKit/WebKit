@@ -347,6 +347,7 @@ public:
     void removePluginView(PluginView*);
 
     bool windowIsVisible() const { return m_windowIsVisible; }
+    bool isVisible() const { return m_viewState & ViewState::IsVisible; }
 
 #if PLATFORM(MAC)
     LayerHostingMode layerHostingMode() const
@@ -357,7 +358,6 @@ public:
         return LayerHostingModeDefault;
 #endif
     }
-    void setLayerHostingMode(LayerHostingMode);
 
     void updatePluginsActiveAndFocusedState();
     const WebCore::FloatRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }

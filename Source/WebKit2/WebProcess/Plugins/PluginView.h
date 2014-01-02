@@ -29,6 +29,7 @@
 #include "NPRuntimeObjectMap.h"
 #include "Plugin.h"
 #include "PluginController.h"
+#include "ViewState.h"
 #include "WebFrame.h"
 #include <WebCore/FindOptions.h>
 #include <WebCore/Image.h>
@@ -68,13 +69,13 @@ public:
     void manualLoadDidFinishLoading();
     void manualLoadDidFail(const WebCore::ResourceError&);
 
+    void viewStateDidChange(ViewState::Flags changed);
+
 #if PLATFORM(MAC)
-    void setWindowIsVisible(bool);
-    void setWindowIsFocused(bool);
+    void platformViewStateDidChange(ViewState::Flags changed);
     void setDeviceScaleFactor(float);
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates);
     bool sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
-    void setLayerHostingMode(LayerHostingMode);
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return m_plugin->pdfDocumentForPrinting(); }
     NSObject *accessibilityObject() const;
 #endif

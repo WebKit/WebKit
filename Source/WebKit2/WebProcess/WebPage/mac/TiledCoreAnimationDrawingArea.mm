@@ -389,6 +389,21 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
     return returnValue;
 }
 
+void TiledCoreAnimationDrawingArea::viewStateDidChange(ViewState::Flags changed)
+{
+    if (changed & ViewState::IsVisible) {
+        if (m_webPage->isVisible())
+            resumePainting();
+        else
+            suspendPainting();
+    }
+
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    if (changed & ViewState::IsLayerWindowServerHosted)
+        setLayerHostingMode(m_webPage->layerHostingMode());
+#endif
+}
+
 void TiledCoreAnimationDrawingArea::suspendPainting()
 {
     ASSERT(!m_isPaintingSuspended);

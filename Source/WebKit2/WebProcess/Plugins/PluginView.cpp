@@ -481,21 +481,34 @@ void PluginView::webPageDestroyed()
     m_webPage = 0;
 }
 
-#if PLATFORM(MAC)    
-void PluginView::setWindowIsVisible(bool windowIsVisible)
+void PluginView::viewStateDidChange(ViewState::Flags changed)
 {
-    if (!m_isInitialized || !m_plugin)
-        return;
-
-    m_plugin->windowVisibilityChanged(windowIsVisible);
+#if PLATFORM(MAC)
+    platformViewStateDidChange(changed);
+#endif
 }
 
-void PluginView::setWindowIsFocused(bool windowIsFocused)
+#if PLATFORM(MAC)
+void PluginView::platformViewStateDidChange(ViewState::Flags changed)
 {
-    if (!m_isInitialized || !m_plugin)
+    if (!m_plugin)
         return;
 
-    m_plugin->windowFocusChanged(windowIsFocused);    
+    if (!m_isInitialized) {
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+        m_parameters.layerHostingMode = m_webPage->layerHostingMode();
+#endif
+        return;
+    }
+
+    if (changed & ViewState::WindowIsVisible)
+        m_plugin->windowVisibilityChanged(m_webPage->windowIsVisible());
+    if (changed & ViewState::WindowIsActive)
+        m_plugin->windowFocusChanged(m_webPage->windowIsFocused());
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    if (changed & ViewState::IsLayerWindowServerHosted)
+        m_plugin->setLayerHostingMode(m_webPage->layerHostingMode());
+#endif
 }
 
 void PluginView::setDeviceScaleFactor(float scaleFactor)
@@ -526,19 +539,6 @@ bool PluginView::sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier,
     return true;
 }
 
-void PluginView::setLayerHostingMode(LayerHostingMode layerHostingMode)
-{
-    if (!m_plugin)
-        return;
-
-    if (!m_isInitialized) {
-        m_parameters.layerHostingMode = layerHostingMode;
-        return;
-    }
-
-    m_plugin->setLayerHostingMode(layerHostingMode);
-}
-    
 NSObject *PluginView::accessibilityObject() const
 {
     if (!m_isInitialized || !m_plugin)
@@ -624,8 +624,8 @@ void PluginView::didInitializePlugin()
             m_pluginElement->dispatchPendingMouseClick();
     }
 
-    setWindowIsVisible(m_webPage->windowIsVisible());
-    setWindowIsFocused(m_webPage->windowIsFocused());
+    m_plugin->windowVisibilityChanged(m_webPage->windowIsVisible());
+    m_plugin->windowFocusChanged(m_webPage->windowIsFocused());
 #endif
 
     if (wantsWheelEvents()) {

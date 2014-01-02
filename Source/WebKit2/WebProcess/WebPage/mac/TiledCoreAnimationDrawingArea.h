@@ -55,8 +55,7 @@ public:
     TiledCoreAnimationDrawingArea(WebPage*, const WebPageCreationParameters&);
     virtual ~TiledCoreAnimationDrawingArea();
 
-    virtual void suspendPainting() OVERRIDE;
-    virtual void resumePainting() OVERRIDE;
+    virtual void viewStateDidChange(ViewState::Flags changed) OVERRIDE;
 
 private:
     // DrawingArea
@@ -101,7 +100,9 @@ private:
     // Message handlers.
     virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition) OVERRIDE;
     virtual void setDeviceScaleFactor(float) OVERRIDE;
-    virtual void setLayerHostingMode(LayerHostingMode) OVERRIDE;
+    void suspendPainting();
+    void resumePainting();
+    void setLayerHostingMode(LayerHostingMode);
     virtual void setColorSpace(const ColorSpaceData&) OVERRIDE;
 
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) OVERRIDE;

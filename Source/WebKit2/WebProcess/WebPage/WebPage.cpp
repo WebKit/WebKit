@@ -1912,21 +1912,10 @@ void WebPage::centerSelectionInVisibleArea()
 void WebPage::setActive(bool isActive)
 {
     m_page->focusController().setActive(isActive);
-
-#if PLATFORM(MAC)    
-    // Tell all our plug-in views that the window focus changed.
-    for (auto* pluginView : m_pluginViews)
-        pluginView->setWindowIsFocused(isActive);
-#endif
 }
 
 void WebPage::setViewIsVisible(bool isVisible)
 {
-    if (isVisible)
-        m_drawingArea->resumePainting();
-    else
-        m_drawingArea->suspendPainting();
-
     m_page->setIsVisible(m_viewState & ViewState::IsVisible, false);
 }
 
@@ -2076,6 +2065,8 @@ void WebPage::setViewState(ViewState::Flags viewState, bool wantsDidUpdateViewSt
     ViewState::Flags changed = m_viewState ^ viewState;
     m_viewState = viewState;
 
+    m_drawingArea->viewStateDidChange(changed);
+
     // We want to make sure to update the active state while hidden, so if the view is hidden then update the active state
     // early (in case it becomes visible), and if the view was visible then update active state later (in case it hides).
     if (changed & ViewState::WindowIsVisible)
@@ -2090,10 +2081,9 @@ void WebPage::setViewState(ViewState::Flags viewState, bool wantsDidUpdateViewSt
         setActive(viewState & ViewState::WindowIsActive);
     if (changed & ViewState::IsInWindow)
         setIsInWindow(viewState & ViewState::IsInWindow);
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    if (changed & ViewState::IsLayerWindowServerHosted)
-        setLayerHostingMode(layerHostingMode());
-#endif
+
+    for (auto* pluginView : m_pluginViews)
+        pluginView->viewStateDidChange(changed);
 
     if (wantsDidUpdateViewState)
         m_sendDidUpdateViewStateTimer.startOneShot(0);
@@ -3052,23 +3042,9 @@ void WebPage::setWindowIsVisible(bool windowIsVisible)
     m_windowIsVisible = windowIsVisible;
 
     corePage()->focusController().setContainingWindowIsVisible(windowIsVisible);
-
-#if PLATFORM(MAC)
-    // Tell all our plug-in views that the window visibility changed.
-    for (auto* pluginView : m_pluginViews)
-        pluginView->setWindowIsVisible(windowIsVisible);
-#endif
 }
 
 #if PLATFORM(MAC)
-void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
-{
-    for (auto* pluginView : m_pluginViews)
-        pluginView->setLayerHostingMode(layerHostingMode);
-
-    m_drawingArea->setLayerHostingMode(layerHostingMode);
-}
-
 void WebPage::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoordinates, const FloatRect& windowFrameInUnflippedScreenCoordinates, const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
 {
     m_windowFrameInScreenCoordinates = windowFrameInScreenCoordinates;
