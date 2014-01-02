@@ -1,3 +1,51 @@
+2014-01-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow ImageBuffer to re-use IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=125477
+
+        Reviewed by Geoff Garen. Modifications reviewed by Tim Horton.
+
+        This patch is taken from r160945, but the modifications to ImageBufferCG.cpp
+        have been reverted.
+
+        This test adds a static class, ImageBufferBackingStoreCache, that vends 
+        IOSurfaces. It remembers IOSurfaces that have been returned to it until 
+        a configurable timeout. 
+
+        The storage used by this class is in the form of a HashMap from a 
+        bucketed size to the IOSurface. There are many other data structures 
+        that could be used, but this implementation gives a 80% hit rate on 
+        normal browsing of some example sites with Canvas and 
+        text-decoration-skip: ink. Because the buckets are fairly 
+        small (rounding the width and height up to multiples of 8), traversing the 
+        bucket contents takes on average 2 steps.  
+
+        Test: fast/canvas/canvas-backing-store-reuse.html 
+
+        * WebCore.xcodeproj/project.pbxproj: Added new caching class 
+        * platform/graphics/cg/ImageBufferBackingStoreCache.cpp: Added. 
+        (WebCore::createIOSurface): Copied from ImageBufferCG.cpp 
+        (WebCore::ImageBufferBackingStoreCache::timerFired): Forget the cache 
+        contents 
+        (WebCore::ImageBufferBackingStoreCache::schedulePurgeTimer): 
+        (WebCore::ImageBufferBackingStoreCache::get): Static getter 
+        (WebCore::ImageBufferBackingStoreCache::ImageBufferBackingStoreCache): 
+        (WebCore::ImageBufferBackingStoreCache::insertIntoCache): Memory-management 
+        creation function 
+        (WebCore::ImageBufferBackingStoreCache::takeFromCache): Memory-management 
+        deletion function 
+        (WebCore::ImageBufferBackingStoreCache::isAcceptableSurface): Does this cached 
+        IOSurface fit the bill? 
+        (WebCore::ImageBufferBackingStoreCache::tryTakeFromCache): Lookup 
+        a bucket and walk through its contents 
+        (WebCore::ImageBufferBackingStoreCache::getOrAllocate): Public function 
+        for clients who want a IOSurface from the cache 
+        (WebCore::ImageBufferBackingStoreCache::deallocate): Public 
+        function for clients to return an IOSurface to the pool 
+        * platform/graphics/cg/ImageBufferBackingStoreCache.h: Added. 
+        (WebCore::ImageBuffer::ImageBuffer): 
+        (WebCore::ImageBuffer::~ImageBuffer): 
+
 2014-01-02  Piotr Grad  <p.grad@samsung.com>
 
         Video-seek-with-negative-playback was flaky.
