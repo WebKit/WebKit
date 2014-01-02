@@ -433,9 +433,11 @@ EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* exec, EncodedJSValue s
 
 #endif
 
-EncodedJSValue jsTestInterfaceConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestInterfaceConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
-    JSTestInterface* domObject = jsDynamicCast<JSTestInterface*>(JSValue::decode(slotBase));
+    JSTestInterface* domObject = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestInterface::getConstructor(exec->vm(), domObject->globalObject()));

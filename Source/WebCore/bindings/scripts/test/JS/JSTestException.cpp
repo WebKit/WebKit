@@ -133,9 +133,11 @@ EncodedJSValue jsTestExceptionName(ExecState* exec, EncodedJSValue slotBase, Enc
 }
 
 
-EncodedJSValue jsTestExceptionConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestExceptionConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
-    JSTestException* domObject = jsDynamicCast<JSTestException*>(JSValue::decode(slotBase));
+    JSTestException* domObject = jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestException::getConstructor(exec->vm(), domObject->globalObject()));

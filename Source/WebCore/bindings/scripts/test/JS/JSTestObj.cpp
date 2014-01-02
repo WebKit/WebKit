@@ -1307,9 +1307,11 @@ EncodedJSValue jsTestObjAttributeWithReservedEnumType(ExecState* exec, EncodedJS
 }
 
 
-EncodedJSValue jsTestObjConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestObjConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
-    JSTestObj* domObject = jsDynamicCast<JSTestObj*>(JSValue::decode(slotBase));
+    JSTestObj* domObject = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestObj::getConstructor(exec->vm(), domObject->globalObject()));

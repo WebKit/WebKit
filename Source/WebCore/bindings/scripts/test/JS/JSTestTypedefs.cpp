@@ -266,9 +266,11 @@ EncodedJSValue jsTestTypedefsStringAttrWithSetterException(ExecState* exec, Enco
 }
 
 
-EncodedJSValue jsTestTypedefsConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestTypedefsConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
-    JSTestTypedefs* domObject = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(slotBase));
+    JSTestTypedefs* domObject = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestTypedefs::getConstructor(exec->vm(), domObject->globalObject()));

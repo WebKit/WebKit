@@ -193,9 +193,11 @@ EncodedJSValue jsTestEventConstructorAttr2(ExecState* exec, EncodedJSValue slotB
 }
 
 
-EncodedJSValue jsTestEventConstructorConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestEventConstructorConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
-    JSTestEventConstructor* domObject = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(slotBase));
+    JSTestEventConstructor* domObject = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestEventConstructor::getConstructor(exec->vm(), domObject->globalObject()));

@@ -133,9 +133,11 @@ EncodedJSValue jsattributeReadonly(ExecState* exec, EncodedJSValue slotBase, Enc
 }
 
 
-EncodedJSValue jsattributeConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsattributeConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
-    JSattribute* domObject = jsDynamicCast<JSattribute*>(JSValue::decode(slotBase));
+    JSattribute* domObject = jsDynamicCast<JSattribute*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSattribute::getConstructor(exec->vm(), domObject->globalObject()));

@@ -200,9 +200,11 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState
 }
 
 
-EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)
 {
-    JSTestSerializedScriptValueInterface* domObject = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(slotBase));
+    JSTestSerializedScriptValueInterface* domObject = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
+    if (!domObject)
+        return throwVMTypeError(exec);
     if (!domObject)
         return throwVMTypeError(exec);
     return JSValue::encode(JSTestSerializedScriptValueInterface::getConstructor(exec->vm(), domObject->globalObject()));
