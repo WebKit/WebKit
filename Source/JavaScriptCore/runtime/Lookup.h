@@ -26,6 +26,7 @@
 #include "Identifier.h"
 #include "JSGlobalObject.h"
 #include "PropertySlot.h"
+#include "PutPropertySlot.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {
@@ -41,7 +42,7 @@ namespace JSC {
     // FIXME: There is no reason this get function can't be simpler.
     // ie. typedef JSValue (*GetFunction)(ExecState*, JSObject* baseObject)
     typedef PropertySlot::GetValueFunc GetFunction;
-    typedef void (*PutFunction)(ExecState*, EncodedJSValue base, EncodedJSValue value);
+    typedef PutPropertySlot::PutValueFunc PutFunction;
 
     class HashEntry {
         WTF_MAKE_FAST_ALLOCATED;
@@ -290,15 +291,15 @@ namespace JSC {
         return true;
     }
 
-    template <class ThisImp>
-    inline void putEntry(ExecState* exec, const HashEntry* entry, PropertyName propertyName, JSValue value, ThisImp* thisObj, bool shouldThrow = false)
+    inline void putEntry(ExecState* exec, const HashEntry* entry, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
     {
         // If this is a function put it as an override property.
         if (entry->attributes() & Function)
-            thisObj->putDirect(exec->vm(), propertyName, value);
-        else if (!(entry->attributes() & ReadOnly))
-            entry->propertyPutter()(exec, JSValue::encode(thisObj), JSValue::encode(value));
-        else if (shouldThrow)
+            slot.base()->putDirect(exec->vm(), propertyName, value);
+        else if (!(entry->attributes() & ReadOnly)) {
+            entry->propertyPutter()(exec, JSValue::encode(slot.thisValue()), JSValue::encode(value));
+            slot.setCustomProperty(slot.base(), entry->propertyPutter());
+        } else if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     }
 
@@ -307,15 +308,14 @@ namespace JSC {
      * It looks up a hash entry for the property to be set.  If an entry
      * is found it sets the value and returns true, else it returns false.
      */
-    template <class ThisImp>
-    inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSValue value, const HashTable& table, ThisImp* thisObj, bool shouldThrow = false)
+    inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSValue value, const HashTable& table, PutPropertySlot& slot)
     {
         const HashEntry* entry = table.entry(exec, propertyName);
         
         if (!entry)
             return false;
 
-        putEntry<ThisImp>(exec, entry, propertyName, value, thisObj, shouldThrow);
+        putEntry(exec, entry, propertyName, value, slot);
         return true;
     }
 
@@ -328,7 +328,7 @@ namespace JSC {
     template <class ThisImp, class ParentImp>
     inline void lookupPut(ExecState* exec, PropertyName propertyName, JSValue value, const HashTable& table, ThisImp* thisObj, PutPropertySlot& slot)
     {
-        if (!lookupPut<ThisImp>(exec, propertyName, value, table, thisObj, slot.isStrictMode()))
+        if (!lookupPut(exec, propertyName, value, table, slot))
             ParentImp::put(thisObj, exec, propertyName, value, slot); // not found: forward to parent
     }
 

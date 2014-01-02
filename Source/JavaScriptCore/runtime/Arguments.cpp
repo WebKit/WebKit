@@ -187,7 +187,7 @@ void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue va
     if (thisObject->trySetArgument(exec->vm(), i, value))
         return;
 
-    PutPropertySlot slot(shouldThrow);
+    PutPropertySlot slot(thisObject, shouldThrow);
     JSObject::put(thisObject, exec, Identifier::from(exec, i), value, slot);
 }
 

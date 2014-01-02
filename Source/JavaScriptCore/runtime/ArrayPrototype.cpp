@@ -160,7 +160,7 @@ static JSValue getProperty(ExecState* exec, JSObject* obj, unsigned index)
 
 static void putProperty(ExecState* exec, JSObject* obj, PropertyName propertyName, JSValue value)
 {
-    PutPropertySlot slot;
+    PutPropertySlot slot(obj);
     obj->methodTable()->put(obj, exec, propertyName, value, slot);
 }
 
@@ -501,7 +501,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
         if (length + n >= length)
             thisObj->methodTable()->putByIndex(thisObj, exec, length + n, exec->uncheckedArgument(n), true);
         else {
-            PutPropertySlot slot;
+            PutPropertySlot slot(thisObj);
             Identifier propertyName(exec, JSValue(static_cast<int64_t>(length) + static_cast<int64_t>(n)).toWTFString(exec));
             thisObj->methodTable()->put(thisObj, exec, propertyName, exec->uncheckedArgument(n), slot);
         }

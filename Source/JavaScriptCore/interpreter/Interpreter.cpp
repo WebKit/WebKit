@@ -798,7 +798,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
             JSValue JSONPValue = JSONPData[entry].m_value.get();
             if (JSONPPath.size() == 1 && JSONPPath[0].m_type == JSONPPathEntryTypeDeclare) {
                 globalObject->addVar(callFrame, JSONPPath[0].m_pathEntryName);
-                PutPropertySlot slot;
+                PutPropertySlot slot(globalObject);
                 globalObject->methodTable()->put(globalObject, callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
                 result = jsUndefined();
                 continue;
@@ -833,7 +833,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
                     return jsUndefined();
                 }
             }
-            PutPropertySlot slot;
+            PutPropertySlot slot(baseObject);
             switch (JSONPPath.last().m_type) {
             case JSONPPathEntryTypeCall: {
                 JSValue function = baseObject.get(callFrame, JSONPPath.last().m_pathEntryName);
@@ -1162,14 +1162,14 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         for (unsigned i = 0; i < numVariables; ++i) {
             const Identifier& ident = codeBlock->variable(i);
             if (!variableObject->hasProperty(callFrame, ident)) {
-                PutPropertySlot slot;
+                PutPropertySlot slot(variableObject);
                 variableObject->methodTable()->put(variableObject, callFrame, ident, jsUndefined(), slot);
             }
         }
 
         for (int i = 0; i < numFunctions; ++i) {
             FunctionExecutable* function = codeBlock->functionDecl(i);
-            PutPropertySlot slot;
+            PutPropertySlot slot(variableObject);
             variableObject->methodTable()->put(variableObject, callFrame, function->name(), JSFunction::create(vm, function, scope), slot);
         }
     }

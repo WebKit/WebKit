@@ -578,7 +578,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     const Identifier& ident = codeBlock->identifier(pc[2].u.operand);
     
     JSValue baseValue = LLINT_OP_C(1).jsValue();
-    PutPropertySlot slot(codeBlock->isStrictMode(), codeBlock->putByIdContext());
+    PutPropertySlot slot(baseValue, codeBlock->isStrictMode(), codeBlock->putByIdContext());
     if (pc[8].u.operand)
         asObject(baseValue)->putDirect(vm, ident, LLINT_OP_C(3).jsValue(), slot);
     else
@@ -734,14 +734,14 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
     }
 
     if (isName(subscript)) {
-        PutPropertySlot slot(exec->codeBlock()->isStrictMode());
+        PutPropertySlot slot(baseValue, exec->codeBlock()->isStrictMode());
         baseValue.put(exec, jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
         LLINT_END();
     }
 
     Identifier property(exec, subscript.toString(exec)->value(exec));
     LLINT_CHECK_EXCEPTION();
-    PutPropertySlot slot(exec->codeBlock()->isStrictMode());
+    PutPropertySlot slot(baseValue, exec->codeBlock()->isStrictMode());
     baseValue.put(exec, property, value, slot);
     LLINT_END();
 }
@@ -759,12 +759,12 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
         uint32_t i = subscript.asUInt32();
         baseObject->putDirectIndex(exec, i, value);
     } else if (isName(subscript)) {
-        PutPropertySlot slot(exec->codeBlock()->isStrictMode());
+        PutPropertySlot slot(baseObject, exec->codeBlock()->isStrictMode());
         baseObject->putDirect(exec->vm(), jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
     } else {
         Identifier property(exec, subscript.toString(exec)->value(exec));
         if (!exec->vm().exception()) { // Don't put to an object if toString threw an exception.
-            PutPropertySlot slot(exec->codeBlock()->isStrictMode());
+            PutPropertySlot slot(baseObject, exec->codeBlock()->isStrictMode());
             baseObject->putDirect(exec->vm(), property, value, slot);
         }
     }
@@ -1368,7 +1368,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     if (modeAndType.mode() == ThrowIfNotFound && !scope->hasProperty(exec, ident))
         LLINT_THROW(createUndefinedVariableError(exec, ident));
 
-    PutPropertySlot slot(codeBlock->isStrictMode());
+    PutPropertySlot slot(scope, codeBlock->isStrictMode());
     scope->methodTable()->put(scope, exec, ident, value, slot);
 
     // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.

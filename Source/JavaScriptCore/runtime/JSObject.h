@@ -1422,7 +1422,7 @@ inline bool JSObject::putOwnDataProperty(VM& vm, PropertyName propertyName, JSVa
 inline void JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
-    PutPropertySlot slot;
+    PutPropertySlot slot(this);
     putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot, getCallableObject(value));
 }
 

@@ -389,7 +389,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         thisObject->m_allocationProfile.clear();
         thisObject->m_allocationProfileWatchpoint.fireAll();
         // Don't allow this to be cached, since a [[Put]] must clear m_allocationProfile.
-        PutPropertySlot dontCache;
+        PutPropertySlot dontCache(thisObject);
         Base::put(thisObject, exec, propertyName, value, dontCache);
         return;
     }

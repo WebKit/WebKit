@@ -1929,8 +1929,8 @@ sub GenerateImplementation
             }
 
             if ($interface->extendedAttributes->{"CheckSecurity"} &&
-            !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"} &&
-            !$attribute->signature->extendedAttributes->{"DoNotCheckSecurityOnGetter"}) {
+                !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"} &&
+                !$attribute->signature->extendedAttributes->{"DoNotCheckSecurityOnGetter"}) {
                 push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))\n");
                 push(@implContent, "        return JSValue::encode(jsUndefined());\n");
             }
@@ -2064,9 +2064,19 @@ sub GenerateImplementation
         if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
             my $constructorFunctionName = "js" . $interfaceName . "Constructor";
 
-            push(@implContent, "EncodedJSValue ${constructorFunctionName}(ExecState* exec, EncodedJSValue slotBase, EncodedJSValue, PropertyName)\n");
+            push(@implContent, "EncodedJSValue ${constructorFunctionName}(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue, PropertyName)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    ${className}* domObject = jsDynamicCast<$className*>(JSValue::decode(slotBase));\n");
+            if ($interfaceName eq "DOMWindow") {
+                push(@implContent, "    ${className}* domObject = jsCast<$className*>(JSValue::decode(thisValue));\n");
+                push(@implContent, "    if (!domObject) {\n");
+                push(@implContent, "        if (JSDOMWindowShell* shell = jsDynamicCast<JSDOMWindowShell*>(JSValue::decode(thisValue)))\n");
+                push(@implContent, "            domObject = shell->window();\n");
+                push(@implContent, "    }\n");
+            } else {
+                push(@implContent, "    ${className}* domObject = jsDynamicCast<$className*>(JSValue::decode(thisValue));\n");
+                push(@implContent, "    if (!domObject)\n");
+                push(@implContent, "        return throwVMTypeError(exec);\n");
+            }
             push(@implContent, "    if (!domObject)\n");
             push(@implContent, "        return throwVMTypeError(exec);\n");
 
@@ -2130,7 +2140,7 @@ sub GenerateImplementation
 
                     if ($interface->extendedAttributes->{"CustomNamedSetter"}) {
                         push(@implContent, "    PropertyName propertyName = Identifier::from(exec, index);\n");
-                        push(@implContent, "    PutPropertySlot slot(shouldThrow);\n");
+                        push(@implContent, "    PutPropertySlot slot(thisObject, shouldThrow);\n");
                         push(@implContent, "    if (thisObject->putDelegate(exec, propertyName, value, slot))\n");
                         push(@implContent, "        return;\n");
                     }
@@ -2160,6 +2170,12 @@ sub GenerateImplementation
                         push(@implContent, "    UNUSED_PARAM(exec);\n");
                         if (!$attribute->isStatic) {
                             push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
+                            if ($interfaceName eq "DOMWindow") {
+                                push(@implContent, "    if (!castedThis) {\n");
+                                push(@implContent, "        if (JSDOMWindowShell* shell = jsDynamicCast<JSDOMWindowShell*>(JSValue::decode(thisValue)))\n");
+                                push(@implContent, "            castedThis = shell->window();\n");
+                                push(@implContent, "    }\n");
+                            }
                             push(@implContent, "    if (!castedThis) {\n");
                             push(@implContent, "        throwVMTypeError(exec);\n");
                             push(@implContent, "        return;\n");
@@ -2167,9 +2183,9 @@ sub GenerateImplementation
                         }
                         if ($interface->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                             if ($interfaceName eq "DOMWindow") {
-                                push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, jsCast<$className*>(castedThis)->impl()))\n");
+                                push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))\n");
                             } else {
-                                push(@implContent, "    if (!shouldAllowAccessToFrame(exec, jsCast<$className*>(castedThis)->impl().frame()))\n");
+                                push(@implContent, "    if (!shouldAllowAccessToFrame(exec, castedThis->impl().frame()))\n");
                             }
                             push(@implContent, "        return;\n");
                         }
@@ -2312,6 +2328,12 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, "    JSValue value = JSValue::decode(encodedValue);");
             push(@implContent, "    ${className}* castedThis = jsDynamicCast<${className}*>(JSValue::decode(thisValue));\n");
+            if ($interfaceName eq "DOMWindow") {
+                push(@implContent, "    if (!castedThis) {\n");
+                push(@implContent, "        if (JSDOMWindowShell* shell = jsDynamicCast<JSDOMWindowShell*>(JSValue::decode(thisValue)))\n");
+                push(@implContent, "            castedThis = shell->window();\n");
+                push(@implContent, "    }\n");
+            }
             push(@implContent, "    if (!castedThis) {\n");
             push(@implContent, "        throwVMTypeError(exec);\n");
             push(@implContent, "        return;\n");

@@ -1,3 +1,53 @@
+2013-12-23  Oliver Hunt  <oliver@apple.com>
+
+        Refactor PutPropertySlot to be aware of custom properties
+        https://bugs.webkit.org/show_bug.cgi?id=126187
+
+        Reviewed by Antti Koivisto.
+
+        Refactor PutPropertySlot, making the constructor take the thisValue
+        used as a target.  This results in a wide range of boilerplate changes
+        to pass the new parameter.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetProperty):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::putByIndex):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::putProperty):
+        (JSC::arrayProtoFuncPush):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitiveByIndex):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::putByIndex):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::putByIndex):
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::putDirectNonIndexAccessor):
+        (JSC::JSObject::deleteProperty):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirect):
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        (JSC::lookupPut):
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::setCustomProperty):
+        (JSC::PutPropertySlot::thisValue):
+        (JSC::PutPropertySlot::isCacheable):
+
 2014-01-01  Filip Pizlo  <fpizlo@apple.com>
 
         Rationalize DFG DCE
