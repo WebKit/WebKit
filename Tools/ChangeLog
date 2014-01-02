@@ -1,3 +1,13 @@
+2014-01-02  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=126391
+        Accessing Trac from build.webkit.org/dashboard should enable XMLHttpRequest.withCredentials
+
+        Rubber-stamped by Dan Bernstein.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Utilities.js:
+        (loadXML): Quick and dirty fix, with a FIXME.
+
 2014-01-01  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Rename libtestnetscapeplugin to libTestNetscapePlugin

@@ -67,6 +67,9 @@ function loadXML(url, callback) {
     };
 
     request.open("GET", url);
+    // FIXME: It's not nice that one of the loading helpers here enables credentials, and
+    // others don't. Credentials are needed for some trac installations.
+    request.withCredentials = true;
     request.send();
 };
 
