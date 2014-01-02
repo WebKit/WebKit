@@ -1,3 +1,28 @@
+2014-01-01  Andreas Kling  <akling@apple.com>
+
+        RenderScrollbar: Map of scrollbar parts should use RenderPtr.
+        <https://webkit.org/b/126367>
+
+        Turn RenderScrollbar::m_parts into HashMap of RenderPtrs. This makes
+        renderer destruction automatic and lets us remove some code.
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/RenderPtr.h:
+
+            Add HashTraits for RenderPtr so we can use them as values in
+            WTF hash tables.
+
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::~RenderScrollbar):
+        (WebCore::RenderScrollbar::setParent):
+        (WebCore::RenderScrollbar::updateScrollbarParts):
+        (WebCore::RenderScrollbar::updateScrollbarPart):
+
+            Remove now-unneeded kludges of logic to manually delete scrollbar
+            part renderers in various scenarios.
+
 2014-01-01  Antti Koivisto  <antti@apple.com>
 
         Remove reattachRenderTree

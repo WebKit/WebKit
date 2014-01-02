@@ -26,10 +26,11 @@
 #ifndef RenderPtr_h
 #define RenderPtr_h
 
-#include <wtf/Assertions.h>
 #include <algorithm>
 #include <cstddef>
 #include <memory>
+#include <wtf/Assertions.h>
+#include <wtf/HashTraits.h>
 
 namespace WebCore {
 
@@ -158,5 +159,18 @@ createRenderer(Args&&... args)
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename T> struct HashTraits<WebCore::RenderPtr<T>> : SimpleClassHashTraits<WebCore::RenderPtr<T>> {
+    typedef std::nullptr_t EmptyValueType;
+    static EmptyValueType emptyValue() { return nullptr; }
+
+    typedef T* PeekType;
+    static T* peek(const WebCore::RenderPtr<T>& value) { return value.get(); }
+    static T* peek(std::nullptr_t) { return nullptr; }
+};
+
+} // namespace WTF
 
 #endif // RenderPtr_h

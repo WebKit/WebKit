@@ -26,6 +26,7 @@
 #ifndef RenderScrollbar_h
 #define RenderScrollbar_h
 
+#include "RenderPtr.h"
 #include "RenderStyleConstants.h"
 #include "Scrollbar.h"
 #include <wtf/HashMap.h>
@@ -75,9 +76,9 @@ private:
 
     virtual bool isCustomScrollbar() const OVERRIDE { return true; }
 
-    void updateScrollbarParts(bool destroy = false);
+    void updateScrollbarParts();
 
-    void updateScrollbarPart(ScrollbarPart, bool destroy = false);
+    void updateScrollbarPart(ScrollbarPart);
 
     // This Scrollbar(Widget) may outlive the DOM which created it (during tear down),
     // so we keep a reference to the Element which caused this custom scrollbar creation.
@@ -86,7 +87,7 @@ private:
     RefPtr<Element> m_ownerElement;
 
     Frame* m_owningFrame;
-    HashMap<unsigned, RenderScrollbarPart*> m_parts;
+    HashMap<unsigned, RenderPtr<RenderScrollbarPart>> m_parts;
 };
 
 inline RenderScrollbar* toRenderScrollbar(ScrollbarThemeClient* scrollbar)

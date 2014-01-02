@@ -68,15 +68,6 @@ RenderScrollbar::RenderScrollbar(ScrollableArea* scrollableArea, ScrollbarOrient
 
 RenderScrollbar::~RenderScrollbar()
 {
-    if (!m_parts.isEmpty()) {
-        // When a scrollbar is detached from its parent (causing all parts removal) and 
-        // ready to be destroyed, its destruction can be delayed because of RefPtr
-        // maintained in other classes such as EventHandler (m_lastScrollbarUnderMouse).
-        // Meanwhile, we can have a call to updateScrollbarPart which recreates the 
-        // scrollbar part. So, we need to destroy these parts since we don't want them
-        // to call on a destroyed scrollbar. See webkit bug 68009.
-        updateScrollbarParts(true);
-    }
 }
 
 RenderBox* RenderScrollbar::owningRenderer() const
@@ -92,10 +83,8 @@ RenderBox* RenderScrollbar::owningRenderer() const
 void RenderScrollbar::setParent(ScrollView* parent)
 {
     Scrollbar::setParent(parent);
-    if (!parent) {
-        // Destroy all of the scrollbar's RenderBoxes.
-        updateScrollbarParts(true);
-    }
+    if (!parent)
+        m_parts.clear();
 }
 
 void RenderScrollbar::setEnabled(bool e)
@@ -163,21 +152,18 @@ PassRefPtr<RenderStyle> RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart p
     return result;
 }
 
-void RenderScrollbar::updateScrollbarParts(bool destroy)
+void RenderScrollbar::updateScrollbarParts()
 {
-    updateScrollbarPart(ScrollbarBGPart, destroy);
-    updateScrollbarPart(BackButtonStartPart, destroy);
-    updateScrollbarPart(ForwardButtonStartPart, destroy);
-    updateScrollbarPart(BackTrackPart, destroy);
-    updateScrollbarPart(ThumbPart, destroy);
-    updateScrollbarPart(ForwardTrackPart, destroy);
-    updateScrollbarPart(BackButtonEndPart, destroy);
-    updateScrollbarPart(ForwardButtonEndPart, destroy);
-    updateScrollbarPart(TrackBGPart, destroy);
+    updateScrollbarPart(ScrollbarBGPart);
+    updateScrollbarPart(BackButtonStartPart);
+    updateScrollbarPart(ForwardButtonStartPart);
+    updateScrollbarPart(BackTrackPart);
+    updateScrollbarPart(ThumbPart);
+    updateScrollbarPart(ForwardTrackPart);
+    updateScrollbarPart(BackButtonEndPart);
+    updateScrollbarPart(ForwardButtonEndPart);
+    updateScrollbarPart(TrackBGPart);
     
-    if (destroy)
-        return;
-
     // See if the scrollbar's thickness changed.  If so, we need to mark our owning object as needing a layout.
     bool isHorizontal = orientation() == HorizontalScrollbar;    
     int oldThickness = isHorizontal ? height() : width();
@@ -220,12 +206,12 @@ static PseudoId pseudoForScrollbarPart(ScrollbarPart part)
     return SCROLLBAR;
 }
 
-void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, bool destroy)
+void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType)
 {
     if (partType == NoPart)
         return;
 
-    RefPtr<RenderStyle> partStyle = destroy ? nullptr : getScrollbarPseudoStyle(partType, pseudoForScrollbarPart(partType));
+    RefPtr<RenderStyle> partStyle = getScrollbarPseudoStyle(partType, pseudoForScrollbarPart(partType));
     bool needRenderer = partStyle && partStyle->display() != NONE;
 
     if (needRenderer && partStyle->display() != BLOCK) {
@@ -251,17 +237,16 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, bool destroy)
         }
     }
 
-    if (needRenderer) {
-        RenderScrollbarPart*& partRendererSlot = m_parts.add(partType, nullptr).iterator->value;
-        if (partRendererSlot)
-            partRendererSlot->setStyle(partStyle.releaseNonNull());
-        else {
-            partRendererSlot = new RenderScrollbarPart(owningRenderer()->document(), partStyle.releaseNonNull(), this, partType);
-            partRendererSlot->initializeStyle();
-        }
-    } else {
-        if (RenderScrollbarPart* partRenderer = m_parts.take(partType))
-            partRenderer->destroy();
+    if (!needRenderer) {
+        m_parts.remove(partType);
+        return;
+    }
+
+    if (auto& partRendererSlot = m_parts.add(partType, nullptr).iterator->value)
+        partRendererSlot->setStyle(partStyle.releaseNonNull());
+    else {
+        partRendererSlot = createRenderer<RenderScrollbarPart>(owningRenderer()->document(), partStyle.releaseNonNull(), this, partType);
+        partRendererSlot->initializeStyle();
     }
 }
 
