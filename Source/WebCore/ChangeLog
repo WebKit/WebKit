@@ -1,3 +1,46 @@
+2014-01-01  Antti Koivisto  <antti@apple.com>
+
+        Remove public attachRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=126368
+
+        Reviewed by Andreas Kling.
+
+        Remove the remaining explicit render tree construction.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createRenderTree):
+        
+           Use recalcStyle() instead of calling attachRenderTree directly.
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addText):
+        
+            Remove forgotten attachTextRenderer.
+
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::InsertionPoint):
+        
+            Remove willAttachRenderers/didAttachRenderers hack.
+
+        * html/shadow/InsertionPoint.h:
+        (WebCore::toInsertionPoint):
+        * loader/PlaceholderDocument.cpp:
+        (WebCore::PlaceholderDocument::createRenderTree):
+        
+            Seriously, nothing to do here.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::attachDistributedChildren):
+        (WebCore::Style::attachChildren):
+        (WebCore::Style::detachDistributedChildren):
+        (WebCore::Style::detachChildren):
+        
+            Making attaching and detaching distributed insertion point children part of ResolveTree internals.
+
+        * style/StyleResolveTree.h:
+        
+            Remove interfaces with no clients.
+
 2014-01-01  Seokju Kwon  <seokju@webkit.org>
 
         Remove stale ScriptProfiler methods

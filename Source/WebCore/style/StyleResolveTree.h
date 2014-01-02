@@ -41,12 +41,8 @@ enum Change { NoChange, NoInherit, Inherit, Detach, Force };
 void resolveTree(Element&, Change);
 void resolveTree(Document&, Change);
 
-void attachRenderTree(Element&);
 void detachRenderTree(Element&);
-// FIXME: This is only used for "lazy reattach" for shadow trees.
-void detachRenderTreeInReattachMode(Element&);
 
-void attachTextRenderer(Text&);
 void detachTextRenderer(Text&);
 void updateTextRendererAfterContentChange(Text&, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 

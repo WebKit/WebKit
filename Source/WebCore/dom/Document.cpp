@@ -1959,9 +1959,6 @@ void Document::createRenderTree()
 #endif
 
     recalcStyle(Style::Force);
-
-    if (m_documentElement)
-        Style::attachRenderTree(*m_documentElement);
 }
 
 static void pageWheelEventHandlerCountChanged(Page& page)

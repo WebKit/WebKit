@@ -55,9 +55,6 @@ public:
 
     virtual MatchType matchTypeFor(Node*) const { return AlwaysMatches; }
 
-    virtual void willAttachRenderers() OVERRIDE;
-    virtual void willDetachRenderers() OVERRIDE;
-
     bool shouldUseFallbackElements() const;
 
     Node* firstDistributed() const;
@@ -78,17 +75,9 @@ private:
     bool m_hasDistribution;
 };
 
-inline InsertionPoint* toInsertionPoint(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isInsertionPoint());
-    return static_cast<InsertionPoint*>(node);
-}
+inline bool isInsertionPoint(const Node& node) { return node.isInsertionPoint(); }
 
-inline const InsertionPoint* toInsertionPoint(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isInsertionPoint());
-    return static_cast<const InsertionPoint*>(node);
-}
+NODE_TYPE_CASTS(InsertionPoint);
 
 inline bool isActiveInsertionPoint(const Node* node)
 {

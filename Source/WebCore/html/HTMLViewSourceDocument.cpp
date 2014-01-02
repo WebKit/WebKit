@@ -240,7 +240,6 @@ void HTMLViewSourceDocument::addText(const String& text, const AtomicString& cla
         }
         RefPtr<Text> text = Text::create(*this, substring);
         m_current->parserAppendChild(text);
-        Style::attachTextRenderer(*text);
         if (i < size - 1)
             finishLine();
     }
