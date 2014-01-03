@@ -63,11 +63,7 @@ public:
     void deallocate(IOSurfaceRef);
 
 private:
-    ImageBufferBackingStoreCache()
-        : m_purgeTimer(this, &ImageBufferBackingStoreCache::timerFired)
-        , m_pixelsCached(0)
-    {
-    }
+    ImageBufferBackingStoreCache();
 
     struct IOSurfaceAndContextWithCreationParams : public IOSurfaceAndContext, public DoublyLinkedListNode<IOSurfaceAndContextWithCreationParams> {
         IOSurfaceAndContextWithCreationParams()
@@ -102,10 +98,10 @@ private:
     bool tryTakeFromCache(const IntSize&, CGColorSpaceRef, bool needExactSize, IOSurfaceAndContextWithCreationParams& outInfo);
     bool isAcceptableSurface(const IOSurfaceAndContextWithCreationParams&, const IntSize&, CGColorSpaceRef, bool needExactSize) const;
 
-    void timerFired(Timer<ImageBufferBackingStoreCache>*);
+    void timerFired(DeferrableOneShotTimer<ImageBufferBackingStoreCache>*);
     void schedulePurgeTimer();
 
-    Timer<ImageBufferBackingStoreCache> m_purgeTimer;
+    DeferrableOneShotTimer<ImageBufferBackingStoreCache> m_purgeTimer;
     ActiveSurfaceMap m_activeSurfaces;
     CachedSurfaceMap m_cachedSurfaces;
     int m_pixelsCached;

@@ -29,6 +29,8 @@
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 #include <IOSurface/IOSurface.h>
 
+static const double purgeInterval = 5;
+
 namespace WebCore {
 
 static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
@@ -68,6 +70,12 @@ static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
 
     return adoptCF(IOSurfaceCreate(dict.get()));
 }
+
+ImageBufferBackingStoreCache::ImageBufferBackingStoreCache()
+    : m_purgeTimer(this, &ImageBufferBackingStoreCache::timerFired, purgeInterval)
+    , m_pixelsCached(0)
+    {
+    }
 
 ImageBufferBackingStoreCache& ImageBufferBackingStoreCache::get()
 {
@@ -200,7 +208,7 @@ void ImageBufferBackingStoreCache::deallocate(IOSurfaceRef surface)
     schedulePurgeTimer();
 }
 
-void ImageBufferBackingStoreCache::timerFired(Timer<ImageBufferBackingStoreCache>*)
+void ImageBufferBackingStoreCache::timerFired(DeferrableOneShotTimer<ImageBufferBackingStoreCache>*)
 {
     while (!m_cachedSurfaces.isEmpty()) {
         CachedSurfaceMap::iterator iter = m_cachedSurfaces.begin();
@@ -210,11 +218,7 @@ void ImageBufferBackingStoreCache::timerFired(Timer<ImageBufferBackingStoreCache
 
 void ImageBufferBackingStoreCache::schedulePurgeTimer()
 {
-    if (m_purgeTimer.isActive())
-        m_purgeTimer.stop();
-
-    static const double purgeInterval = 5;
-    m_purgeTimer.startOneShot(purgeInterval);
+    m_purgeTimer.restart();
 }
 
 }

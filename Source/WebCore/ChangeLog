@@ -1,3 +1,21 @@
+2014-01-02  Tim Horton  <timothy_horton@apple.com>
+
+        ImageBufferBackingStoreCache should use DeferrableOneShotTimer
+        https://bugs.webkit.org/show_bug.cgi?id=126155
+
+        Reviewed by Anders Carlsson.
+
+        Since ImageBufferBackingStoreCache's purge timer is pushed out every time
+        a backing store is deallocated, we can easily waste a lot of time rescheduling
+        the timer. Since it's a cache purge timer and doesn't need that kind of precision,
+        adopt DeferrableOneShotTimer, which is much more performant when deferred frequently.
+
+        * platform/graphics/cg/ImageBufferBackingStoreCache.cpp:
+        (WebCore::ImageBufferBackingStoreCache::ImageBufferBackingStoreCache):
+        (WebCore::ImageBufferBackingStoreCache::timerFired):
+        (WebCore::ImageBufferBackingStoreCache::schedulePurgeTimer):
+        * platform/graphics/cg/ImageBufferBackingStoreCache.h:
+
 2014-01-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow ImageBuffer to re-use IOSurfaces
