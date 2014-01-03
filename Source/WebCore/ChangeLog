@@ -1,3 +1,15 @@
+2014-01-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Correct symbol lookup logic to handle 1-element arrays
+        https://bugs.webkit.org/show_bug.cgi?id=126411
+        <rdar://problem/15394564>
+
+        Reviewed by Dean Jackson.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getUniformLocation): Revise code to handle the case of single-element
+        arrays.
+
 2014-01-02  Sam Weinig  <sam@webkit.org>
 
         Update Promises to the https://github.com/domenic/promises-unwrapping spec

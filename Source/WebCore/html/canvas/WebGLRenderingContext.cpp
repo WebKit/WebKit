@@ -3162,7 +3162,7 @@ PassRefPtr<WebGLUniformLocation> WebGLRenderingContext::getUniformLocation(WebGL
     GC3Dint uniformLocation = m_context->getUniformLocation(objectOrZero(program), name);
     if (uniformLocation == -1)
         return 0;
-    
+
     GC3Dint activeUniforms = 0;
     m_context->getProgramiv(objectOrZero(program), GraphicsContext3D::ACTIVE_UNIFORMS, &activeUniforms);
     for (GC3Dint i = 0; i < activeUniforms; i++) {
@@ -3170,17 +3170,14 @@ PassRefPtr<WebGLUniformLocation> WebGLRenderingContext::getUniformLocation(WebGL
         if (!m_context->getActiveUniform(objectOrZero(program), i, info))
             return 0;
         // Strip "[0]" from the name if it's an array.
-        if (info.size > 1 && info.name.endsWith("[0]"))
+        if (info.name.endsWith("[0]"))
             info.name = info.name.left(info.name.length() - 3);
         // If it's an array, we need to iterate through each element, appending "[index]" to the name.
         for (GC3Dint index = 0; index < info.size; ++index) {
-            String uniformName = info.name;
             if (info.size > 1) {
-                uniformName.append('[');
-                uniformName.append(String::number(index));
-                uniformName.append(']');
-            }
-            if (info.size > 1) {
+                String arrayBrackets = "[" + String::number(index) + "]";
+                String uniformName = info.name + arrayBrackets;
+
                 if (name == uniformName || name == info.name)
                     return WebGLUniformLocation::create(program, uniformLocation, info.type);
             } else {
