@@ -48,6 +48,7 @@ using namespace WebKit;
 struct _WebKitResponsePolicyDecisionPrivate {
     GRefPtr<WebKitURIRequest> request;
     GRefPtr<WebKitURIResponse> response;
+    bool canShowMIMEType;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitResponsePolicyDecision, webkit_response_policy_decision, WEBKIT_TYPE_POLICY_DECISION)
@@ -137,11 +138,29 @@ WebKitURIResponse* webkit_response_policy_decision_get_response(WebKitResponsePo
     return decision->priv->response.get();
 }
 
-WebKitResponsePolicyDecision* webkitResponsePolicyDecisionCreate(API::URLRequest* request, API::URLResponse* response, WebFramePolicyListenerProxy* listener)
+/**
+ * webkit_response_policy_decision_is_mime_type_supported:
+ * @decision: a #WebKitResponsePolicyDecision
+ *
+ * Gets whether the MIME type of the response can be displayed in the #WebKitWebView
+ * that triggered this policy decision request. See also webkit_web_view_can_show_mime_type().
+ *
+ * Returns: %TRUE if the MIME type of the response is supported or %FALSE otherwise
+ *
+ * Since: 2.4
+ */
+gboolean webkit_response_policy_decision_is_mime_type_supported(WebKitResponsePolicyDecision* decision)
+{
+    g_return_val_if_fail(WEBKIT_IS_RESPONSE_POLICY_DECISION(decision), FALSE);
+    return decision->priv->canShowMIMEType;
+}
+
+WebKitResponsePolicyDecision* webkitResponsePolicyDecisionCreate(API::URLRequest* request, API::URLResponse* response, bool canShowMIMEType, WebFramePolicyListenerProxy* listener)
 {
     WebKitResponsePolicyDecision* decision = WEBKIT_RESPONSE_POLICY_DECISION(g_object_new(WEBKIT_TYPE_RESPONSE_POLICY_DECISION, NULL));
     decision->priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(request->resourceRequest()));
     decision->priv->response = adoptGRef(webkitURIResponseCreateForResourceResponse(response->resourceResponse()));
+    decision->priv->canShowMIMEType = canShowMIMEType;
     webkitPolicyDecisionSetListener(WEBKIT_POLICY_DECISION(decision), listener);
     return decision;
 }

@@ -157,6 +157,16 @@ static void testResponsePolicy(PolicyClientTest* test, gconstpointer)
     g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);
     g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
 
+    WebKitResponsePolicyDecision* decision = WEBKIT_RESPONSE_POLICY_DECISION(test->m_previousPolicyDecision.get());
+    WebKitURIRequest* request = webkit_response_policy_decision_get_request(decision);
+    g_assert(WEBKIT_IS_URI_REQUEST(request));
+    ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/"));
+    WebKitURIResponse* response = webkit_response_policy_decision_get_response(decision);
+    g_assert(WEBKIT_IS_URI_RESPONSE(response));
+    ASSERT_CMP_CSTRING(webkit_uri_response_get_uri(response), ==, kServer->getURIForPath("/"));
+    g_assert(webkit_web_view_can_show_mime_type(test->m_webView, webkit_uri_response_get_mime_type(response)) ==
+        webkit_response_policy_decision_is_mime_type_supported(decision));
+
     test->m_respondToPolicyDecisionAsynchronously = true;
     test->loadURI(kServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();

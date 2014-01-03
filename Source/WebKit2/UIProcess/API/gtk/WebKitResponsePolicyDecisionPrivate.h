@@ -23,6 +23,6 @@
 #include "WebKitPrivate.h"
 #include "WebKitResponsePolicyDecision.h"
 
-WebKitResponsePolicyDecision* webkitResponsePolicyDecisionCreate(API::URLRequest*, API::URLResponse*, WebKit::WebFramePolicyListenerProxy*);
+WebKitResponsePolicyDecision* webkitResponsePolicyDecisionCreate(API::URLRequest*, API::URLResponse*, bool canShowMIMEType, WebKit::WebFramePolicyListenerProxy*);
 
 #endif // WebKitResponsePolicyDecisionPrivate_h

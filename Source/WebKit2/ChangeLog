@@ -1,5 +1,29 @@
 2014-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add API to WebKitResponsePolicyDecision to check if the MIME type can be shown
+        https://bugs.webkit.org/show_bug.cgi?id=124652
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitPolicyClient.cpp:
+        (decidePolicyForResponse): Pass canShowMIMEType to
+        webkitResponsePolicyDecisionCreate.
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:
+        (webkit_response_policy_decision_is_mime_type_supported): Return
+        canShowMIMEType.
+        (webkitResponsePolicyDecisionCreate): Set the canShowMIMEType
+        member from the given parameter.
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.h:
+        * UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewDecidePolicy): Use the new API instead of
+        webkit_web_view_can_show_mime_type() since it's more efficient.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+        * UIProcess/API/gtk/tests/TestWebKitPolicyClient.cpp:
+        (testResponsePolicy): Test the new API.
+
+2014-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r160304): [GTK] Disable libtool fast install
         https://bugs.webkit.org/show_bug.cgi?id=126381
 

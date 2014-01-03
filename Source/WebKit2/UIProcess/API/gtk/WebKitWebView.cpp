@@ -279,7 +279,7 @@ static gboolean webkitWebViewDecidePolicy(WebKitWebView* webView, WebKitPolicyDe
         return TRUE;
     }
 
-    if (webkit_web_view_can_show_mime_type(webView, webkit_uri_response_get_mime_type(response)))
+    if (webkit_response_policy_decision_is_mime_type_supported(WEBKIT_RESPONSE_POLICY_DECISION(decision)))
         webkit_policy_decision_use(decision);
     else
         webkit_policy_decision_ignore(decision);

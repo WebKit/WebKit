@@ -60,13 +60,16 @@ struct _WebKitResponsePolicyDecisionClass {
 };
 
 WEBKIT_API GType
-webkit_response_policy_decision_get_type            (void);
+webkit_response_policy_decision_get_type               (void);
 
 WEBKIT_API WebKitURIRequest *
-webkit_response_policy_decision_get_request         (WebKitResponsePolicyDecision *decision);
+webkit_response_policy_decision_get_request            (WebKitResponsePolicyDecision *decision);
 
 WEBKIT_API WebKitURIResponse *
-webkit_response_policy_decision_get_response        (WebKitResponsePolicyDecision *decision);
+webkit_response_policy_decision_get_response           (WebKitResponsePolicyDecision *decision);
+
+WEBKIT_API gboolean
+webkit_response_policy_decision_is_mime_type_supported (WebKitResponsePolicyDecision *decision);
 
 G_END_DECLS
 

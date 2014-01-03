@@ -378,10 +378,7 @@ static gboolean webViewDecidePolicy(WebKitWebView *webView, WebKitPolicyDecision
     }
     case WEBKIT_POLICY_DECISION_TYPE_RESPONSE: {
         WebKitResponsePolicyDecision *responseDecision = WEBKIT_RESPONSE_POLICY_DECISION(decision);
-        WebKitURIResponse *response = webkit_response_policy_decision_get_response(responseDecision);
-        const char *mimeType = webkit_uri_response_get_mime_type(response);
-
-        if (webkit_web_view_can_show_mime_type(webView, mimeType))
+        if (webkit_response_policy_decision_is_mime_type_supported(responseDecision))
             return FALSE;
 
         WebKitWebResource *mainResource = webkit_web_view_get_main_resource(webView);

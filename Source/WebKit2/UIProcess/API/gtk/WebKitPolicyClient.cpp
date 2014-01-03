@@ -60,7 +60,7 @@ static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKF
 static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     GRefPtr<WebKitResponsePolicyDecision> decision =
-        adoptGRef(webkitResponsePolicyDecisionCreate(toImpl(request), toImpl(response), toImpl(listener)));
+        adoptGRef(webkitResponsePolicyDecisionCreate(toImpl(request), toImpl(response), canShowMIMEType, toImpl(listener)));
     webkitWebViewMakePolicyDecision(WEBKIT_WEB_VIEW(clientInfo),
                                     WEBKIT_POLICY_DECISION_TYPE_RESPONSE,
                                     WEBKIT_POLICY_DECISION(decision.get()));
