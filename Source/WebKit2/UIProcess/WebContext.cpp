@@ -452,6 +452,13 @@ void WebContext::willStopUsingPrivateBrowsing()
         contexts[i]->setAnyPageGroupMightHavePrivateBrowsingEnabled(false);
 }
 
+void WebContext::windowServerConnectionStateChanged()
+{
+    size_t processCount = m_processes.size();
+    for (size_t i = 0; i < processCount; ++i)
+        m_processes[i]->windowServerConnectionStateChanged();
+}
+
 void WebContext::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
     m_iconDatabase->setPrivateBrowsingEnabled(privateBrowsingEnabled);

@@ -125,6 +125,8 @@ public:
 
     RefPtr<API::Object> apiObjectByConvertingToHandles(API::Object*);
 
+    void windowServerConnectionStateChanged();
+
 private:
     explicit WebProcessProxy(WebContext&);
 

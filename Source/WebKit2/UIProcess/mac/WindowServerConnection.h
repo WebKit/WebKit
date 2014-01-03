@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ViewState_h
-#define ViewState_h
+#ifndef WindowServerConnection_h
+#define WindowServerConnection_h
 
 namespace WebKit {
 
-struct ViewState {
-    enum {
-        WindowIsActive = 1 << 0,
-        IsFocused = 1 << 1,
-        IsVisible = 1 << 2,
-        IsInWindow = 1 << 3,
-        IsVisuallyIdle = 1 << 4,
-        IsLayerWindowServerHosted = 1 << 5,
-    };
+class WindowServerConnection {
+public:
+    static WindowServerConnection& shared();
 
-    typedef unsigned Flags;
+    bool applicationIsOccluded() const { return m_applicationIsOccluded; }
+    bool applicationWindowModificationsHaveStopped() const { return m_applicationWindowModificationsHaveStopped; }
 
-    static const Flags NoFlags = 0;
-    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsInWindow | IsLayerWindowServerHosted | IsVisuallyIdle;
+private:
+    WindowServerConnection();
+
+#if HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
+    void windowServerConnectionStateChanged();
+
+    void applicationBecameOccluded(bool occluded);
+    void applicationWindowModificationsStopped(bool stopped);
+
+    static void applicationBecameVisible(uint32_t, void*, uint32_t, void*, uint32_t);
+    static void applicationBecameOccluded(uint32_t, void*, uint32_t, void*, uint32_t);
+    static void applicationWindowModificationsStarted(uint32_t, void*, uint32_t, void*, uint32_t);
+    static void applicationWindowModificationsStopped(uint32_t, void*, uint32_t, void*, uint32_t);
+#endif
+
+    bool m_applicationIsOccluded;
+    bool m_applicationWindowModificationsHaveStopped;
 };
 
 } // namespace WebKit
 
-#endif // ViewState_h
+#endif // WindowServerConnection_h

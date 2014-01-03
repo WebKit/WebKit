@@ -291,6 +291,8 @@ public:
     void updateProcessSuppressionStateOfChildProcesses();
 #endif
 
+    void windowServerConnectionStateChanged();
+
     static void willStartUsingPrivateBrowsing();
     static void willStopUsingPrivateBrowsing();
 
@@ -314,6 +316,10 @@ public:
     static HashSet<String>& globalURLSchemesWithCustomProtocolHandlers();
     static void registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
     static void unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String&);
+#endif
+
+#if PLATFORM(MAC)
+    static void updateProcessSuppressionStateOfGlobalChildProcesses();
 #endif
 
 private:

@@ -1,5 +1,71 @@
 2014-01-02  Gavin Barraclough  <barraclough@apple.com>
 
+        Propagate WindowServer modifications state to WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=126356
+
+        Reviewed by Sam Weinig.
+
+        This will be necessary to move control of process suppression to the WebProcess.
+        IsVisuallyIdle implies the process has stopped painting, or painted rects are
+        occluded and not actually being composited. State is provided on a per
+        WindowServer connection basis, and as such may produce (safe) false positives.
+
+        * Shared/ViewState.h:
+            - added IsVisuallyIdle.
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isVisuallyIdle):
+            - added, on mac checks WindowServerConnection.
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::isVisuallyIdle):
+            - base implementation purely based on isViewVisible.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::windowServerConnectionStateChanged):
+            - broadcast the state change.
+        * UIProcess/WebContext.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateViewState):
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - propagate IsVisuallyIdle.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::windowServerConnectionStateChanged):
+            - broadcast the state change.
+        * UIProcess/WebProcessProxy.h:
+            - add windowServerConnectionStateChanged.
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::updateProcessSuppressionStateOfGlobalChildProcesses):
+            - moved from static in fle to static member of class.
+        (WebKit::WebContext::platformInitialize):
+            - no need to enableOcclusionNotifications.
+        (WebKit::WebContext::canEnableProcessSuppressionForNetworkProcess):
+        (WebKit::WebContext::canEnableProcessSuppressionForWebProcess):
+        (WebKit::WebContext::canEnableProcessSuppressionForGlobalChildProcesses):
+            - changed to call WindowServerConnection.
+        (WebKit::WebContext::processSuppressionEnabledChanged):
+            - don't remove/reregister occlusion notifications.
+        * UIProcess/mac/WindowServerConnection.h: Added.
+        (WebKit::WindowServerConnection::applicationIsOccluded):
+        (WebKit::WindowServerConnection::applicationWindowModificationsHaveStopped):
+            - accessors.
+        * UIProcess/mac/WindowServerConnection.mm: Added.
+        (WebKit::WindowServerConnection::applicationBecameOccluded):
+        (WebKit::WindowServerConnection::applicationWindowModificationsStopped):
+        (WebKit::WindowServerConnection::applicationBecameVisible):
+        (WebKit::WindowServerConnection::applicationWindowModificationsStarted):
+            - handle notifications from the WindowServer.
+        (WebKit::WindowServerConnection::windowServerConnectionStateChanged):
+            - broadcast the state change.
+        (WebKit::WindowServerConnection::shared):
+            - accessor for singleton object.
+        (WebKit::WindowServerConnection::WindowServerConnection):
+            - constructor inizializes fields & register notification handlers.
+        * WebKit2.xcodeproj/project.pbxproj:
+            - added new files.
+        * config.h:
+            - added HAVE_WINDOW_SERVER_OCCLUSION_NOTIFICATIONS.
+
+2014-01-02  Gavin Barraclough  <barraclough@apple.com>
+
         Remove WindowIsVisible
         https://bugs.webkit.org/show_bug.cgi?id=126270
 

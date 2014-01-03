@@ -638,6 +638,11 @@ void WebProcessProxy::releasePageCache()
         send(Messages::WebProcess::ReleasePageCache(), 0);
 }
 
+void WebProcessProxy::windowServerConnectionStateChanged()
+{
+    for (const auto& page : m_pageMap.values())
+        page->viewStateDidChange(ViewState::IsVisuallyIdle);
+}
 
 void WebProcessProxy::requestTermination()
 {
@@ -651,7 +656,6 @@ void WebProcessProxy::requestTermination()
 
     disconnect();
 }
-
 
 void WebProcessProxy::enableSuddenTermination()
 {
