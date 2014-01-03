@@ -166,7 +166,6 @@ Programs_DumpRenderTree_LDADD = \
 	$(XT_LIBS)
 
 Programs_DumpRenderTree_LDFLAGS = \
-	-no-fast-install \
 	-no-install
 
 # ImageDiff
@@ -189,7 +188,6 @@ Programs_ImageDiff_LDADD = \
    $(GTK_LIBS)
 
 Programs_ImageDiff_LDFLAGS = \
-   -no-fast-install \
    -no-install
 
 # clean target

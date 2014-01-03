@@ -45,7 +45,6 @@ Programs_MiniBrowser_LDADD = \
 	$(LIBSOUP_LIBS)
 
 Programs_MiniBrowser_LDFLAGS = \
-	-no-fast-install \
 	-no-install
 
 CLEANFILES += \

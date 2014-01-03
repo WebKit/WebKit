@@ -131,8 +131,7 @@ Programs_minidom_LDADD = \
 	-lstdc++
 
 Programs_minidom_LDFLAGS = \
-	-no-install \
-	-no-fast-install
+	-no-install
 
 Programs_LLIntOffsetsExtractor_CPPFLAGS = \
 	$(global_cppflags) \
@@ -155,8 +154,7 @@ Programs_LLIntOffsetsExtractor_LDADD = \
 	-lstdc++
 
 Programs_LLIntOffsetsExtractor_LDFLAGS = \
-	-no-install \
-	-no-fast-install
+	-no-install
 
 # jsc
 Programs/jsc$(EXEEXT): Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@$(EXEEXT)

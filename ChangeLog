@@ -1,3 +1,18 @@
+2014-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r160304): [GTK] Disable libtool fast install
+        https://bugs.webkit.org/show_bug.cgi?id=126381
+
+        Reviewed by Martin Robinson.
+
+        After r160304 we are building some of our binaries that are
+        installed with the -no-fast-install ld flag. This makes that the
+        binaries are installed with the source code path hardcoded in
+        binary RPATH. Disabling fast install globally, the libtool script
+        always relinks the binaries right before being installed.
+
+        * Source/autotools/SetupLibtool.m4: Add AC_DISABLE_FAST_INSTALL.
+
 2014-01-02  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [CMake][EFL] Fix some typos in OptionsEfl.cmake

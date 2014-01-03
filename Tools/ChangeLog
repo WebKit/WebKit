@@ -1,3 +1,19 @@
+2014-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r160304): [GTK] Disable libtool fast install
+        https://bugs.webkit.org/show_bug.cgi?id=126381
+
+        Reviewed by Martin Robinson.
+
+        Remove -no-fast-install ld flag since fast install is now disabled
+        globally.
+
+        * GNUmakefile.am:
+        * GtkLauncher/GNUmakefile.am:
+        * MiniBrowser/gtk/GNUmakefile.am:
+        * TestWebKitAPI/GNUmakefile.am:
+        * WebKitTestRunner/GNUmakefile.am:
+
 2014-01-02  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed. Add myself to EFL and related watch lists.

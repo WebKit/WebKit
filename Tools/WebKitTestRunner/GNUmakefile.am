@@ -64,7 +64,6 @@ Programs_WebKitTestRunner_LDADD = \
 	$(XT_LIBS)
 
 Programs_WebKitTestRunner_LDFLAGS = \
-	-no-fast-install \
 	-no-install
 
 # The InjectedBundle library allows the render process to load harness code.

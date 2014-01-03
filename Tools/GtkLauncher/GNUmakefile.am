@@ -38,6 +38,5 @@ Programs_GtkLauncher_LDADD = \
 	$(GSTREAMER_LIBS)
 
 Programs_GtkLauncher_LDFLAGS = \
-	-no-fast-install \
 	-no-install
 

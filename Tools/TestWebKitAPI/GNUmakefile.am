@@ -48,8 +48,7 @@ Programs_TestWebKitAPI_TestWTF_LDADD = \
 	$(GLIB_LIBS)
 
 Programs_TestWebKitAPI_TestWTF_LDFLAGS = \
-	-no-install \
-	-no-fast-install
+	-no-install
 
 Programs_TestWebKitAPI_TestWTF_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WTF/AtomicString.cpp \
@@ -93,8 +92,7 @@ Programs_TestWebKitAPI_TestJavaScriptCore_LDADD = \
 	$(GTK_LIBS)
 
 Programs_TestWebKitAPI_TestJavaScriptCore_LDFLAGS = \
-	-no-install \
-	-no-fast-install
+	-no-install
 
 Programs_TestWebKitAPI_TestJavaScriptCore_SOURCES = \
 	Tools/TestWebKitAPI/Tests/JavaScriptCore/VMInspector.cpp
@@ -167,8 +165,7 @@ Programs_TestWebKitAPI_TestWebCore_LDADD = \
 	$(ZLIB_LIBS)
 
 Programs_TestWebKitAPI_TestWebCore_LDFLAGS = \
-	-no-install \
-	-no-fast-install
+	-no-install
 
 Programs_TestWebKitAPI_TestWebCore_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebCore/URL.cpp \

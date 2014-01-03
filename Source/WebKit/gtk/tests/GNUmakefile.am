@@ -27,8 +27,7 @@ webkit_tests_ldadd = \
 	$(XRENDER_LIBS)
 
 webkit_tests_ldflags = \
-	-no-install \
-	-no-fast-install
+	-no-install
 
 if ENABLE_WEBKIT1
 noinst_PROGRAMS += \

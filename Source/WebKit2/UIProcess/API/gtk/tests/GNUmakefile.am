@@ -67,8 +67,7 @@ webkit2_tests_ldadd = \
 	$(LIBSOUP_LIBS)
 
 webkit2_tests_ldflags = \
-	-no-install \
-	-no-fast-install
+	-no-install
 
 Programs/resources/webkit2gtk-tests-resources.gresource: Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml $(shell $(GLIB_COMPILE_RESOURCES) --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml)
 	$(AM_V_at)mkdir -p ${GENPROGRAMS}/resources
