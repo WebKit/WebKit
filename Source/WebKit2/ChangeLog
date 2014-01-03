@@ -1,3 +1,37 @@
+2014-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Define WebProcess::usesNetworkProcess unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=126208
+
+        Reviewed by Martin Robinson.
+
+        Returning false when network process is not enabled like
+        WebContext does. This way we reduce the amount of ifdefs used when
+        checking whether network process is in use.
+
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess): Remove #ifdef
+        and only setup network features when not using network process.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::isAvailable): Remove #ifdef.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::downloadManager):
+        (WebKit::WebProcess::shouldTerminate):
+        (WebKit::WebProcess::usesNetworkProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformSetCacheModel): Remove #ifdef.
+        (WebKit::WebProcess::platformInitializeWebProcess): Ditto.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformSetCacheModel): Ditto.
+        (WebKit::WebProcess::platformClearResourceCaches): Ditto.
+        (WebKit::WebProcess::platformInitializeWebProcess): Ditto.
+        (WebKit::WebProcess::platformTerminate): Only remove the language
+        observer when not using network process.
+        (WebKit::WebProcess::setIgnoreTLSErrors): Assert when this is
+        called with network process enabled.
+        (WebKit::WebProcess::allowSpecificHTTPSCertificateForHost): Ditto.
+
 2014-01-03  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         VibrationPattern should allocate an single vector instance for single integer input

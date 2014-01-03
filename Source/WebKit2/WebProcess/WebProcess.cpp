@@ -468,9 +468,7 @@ void WebProcess::destroyPrivateBrowsingSession()
 
 DownloadManager& WebProcess::downloadManager()
 {
-#if ENABLE(NETWORK_PROCESS)
-    ASSERT(!m_usesNetworkProcess);
-#endif
+    ASSERT(!usesNetworkProcess());
 
     static NeverDestroyed<DownloadManager> downloadManager(this);
     return downloadManager;
@@ -597,12 +595,7 @@ void WebProcess::removeWebPage(uint64_t pageID)
 bool WebProcess::shouldTerminate()
 {
     ASSERT(m_pageMap.isEmpty());
-
-#if ENABLE(NETWORK_PROCESS)
-    ASSERT(m_usesNetworkProcess || !downloadManager().isDownloading());
-#else
-    ASSERT(!downloadManager().isDownloading());
-#endif
+    ASSERT(usesNetworkProcess() || !downloadManager().isDownloading());
 
     // FIXME: the ShouldTerminate message should also send termination parameters, such as any session cookies that need to be preserved.
     bool shouldTerminate = false;
@@ -991,6 +984,15 @@ void WebProcess::postInjectedBundleMessage(const IPC::DataReference& messageData
         return;
 
     injectedBundle->didReceiveMessage(messageName, messageBody.get());
+}
+
+bool WebProcess::usesNetworkProcess() const
+{
+#if ENABLE(NETWORK_PROCESS)
+    return m_usesNetworkProcess;
+#else
+    return false;
+#endif
 }
 
 #if ENABLE(NETWORK_PROCESS)

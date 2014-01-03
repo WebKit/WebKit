@@ -93,15 +93,11 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     uint64_t diskFreeSize = 0;
     SoupCache* cache = nullptr;
 
-#if ENABLE(NETWORK_PROCESS)
-    if (!m_usesNetworkProcess) {
-#endif
-        SoupSession* session = WebCore::ResourceHandle::defaultSession();
-        cache = SOUP_CACHE(soup_session_get_feature(session, SOUP_TYPE_CACHE));
+    if (!usesNetworkProcess()) {
+        cache = SOUP_CACHE(soup_session_get_feature(WebCore::ResourceHandle::defaultSession(), SOUP_TYPE_CACHE));
         diskFreeSize = getCacheDiskFreeSize(cache) / 1024 / 1024;
-#if ENABLE(NETWORK_PROCESS)
     }
-#endif
+
     uint64_t memSize = getMemorySize();
     calculateCacheSizes(cacheModel, memSize, diskFreeSize,
                         cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
@@ -111,16 +107,10 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     WebCore::memoryCache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
     WebCore::pageCache()->setCapacity(pageCacheCapacity);
 
-#if ENABLE(NETWORK_PROCESS)
-    if (!m_usesNetworkProcess) {
-#endif
+    if (!usesNetworkProcess()) {
         if (urlCacheDiskCapacity > soup_cache_get_max_size(cache))
             soup_cache_set_max_size(cache, urlCacheDiskCapacity);
-#if ENABLE(NETWORK_PROCESS)
     }
-#endif
-    if (urlCacheDiskCapacity > soup_cache_get_max_size(cache))
-        soup_cache_set_max_size(cache, urlCacheDiskCapacity);
 }
 
 void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear)
@@ -129,12 +119,10 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
         return;
 
     // If we're using the network process then it is the only one that needs to clear the disk cache.
-#if ENABLE(NETWORK_PROCESS)
-    if (m_usesNetworkProcess)
+    if (usesNetworkProcess())
         return;
-#endif
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
-    soup_cache_clear(SOUP_CACHE(soup_session_get_feature(session, SOUP_TYPE_CACHE)));
+
+    soup_cache_clear(SOUP_CACHE(soup_session_get_feature(WebCore::ResourceHandle::defaultSession(), SOUP_TYPE_CACHE)));
 }
 
 // This function is based on Epiphany code in ephy-embed-prefs.c.
@@ -198,22 +186,20 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     }
 #endif
 
-#if ENABLE(NETWORK_PROCESS)
-    if (!m_usesNetworkProcess) {
-#endif
-        ASSERT(!parameters.diskCacheDirectory.isEmpty());
-        GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(parameters.diskCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER));
-        soup_session_add_feature(WebCore::ResourceHandle::defaultSession(), SOUP_SESSION_FEATURE(soupCache.get()));
-        soup_cache_load(soupCache.get());
+    if (usesNetworkProcess())
+        return;
 
-        if (!parameters.cookiePersistentStoragePath.isEmpty()) {
-            supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
-                parameters.cookiePersistentStorageType);
-        }
-        supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy);
-#if ENABLE(NETWORK_PROCESS)
+    ASSERT(!parameters.diskCacheDirectory.isEmpty());
+    GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(parameters.diskCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER));
+    soup_session_add_feature(WebCore::ResourceHandle::defaultSession(), SOUP_SESSION_FEATURE(soupCache.get()));
+    soup_cache_load(soupCache.get());
+
+    if (!parameters.cookiePersistentStoragePath.isEmpty()) {
+        supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
+            parameters.cookiePersistentStorageType);
     }
-#endif
+    supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy);
+
     if (!parameters.languages.isEmpty())
         setSoupSessionAcceptLanguage(parameters.languages);
 
@@ -227,16 +213,19 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
 void WebProcess::platformTerminate()
 {
-    WebCore::removeLanguageChangeObserver(this);
+    if (!usesNetworkProcess())
+        WebCore::removeLanguageChangeObserver(this);
 }
 
 void WebProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
+    ASSERT(!usesNetworkProcess());
     WebCore::ResourceHandle::setIgnoreSSLErrors(ignoreTLSErrors);
 }
 
 void WebProcess::allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo& certificateInfo, const String& host)
 {
+    ASSERT(!usesNetworkProcess());
     WebCore::ResourceHandle::setClientCertificate(host, certificateInfo.certificate());
 }
 

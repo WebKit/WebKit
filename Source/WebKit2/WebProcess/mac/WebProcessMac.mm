@@ -112,15 +112,13 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
 
-#if ENABLE(NETWORK_PROCESS)
     // FIXME: Once there is no loading being done in the WebProcess, we should remove this,
     // as calling [NSURLCache sharedURLCache] initializes the cache, which we would rather not do.
-    if (m_usesNetworkProcess) {
+    if (usesNetworkProcess()) {
         [nsurlCache setMemoryCapacity:0];
         [nsurlCache setDiskCapacity:0];
         return;
     }
-#endif
 
     [nsurlCache setMemoryCapacity:urlCacheMemoryCapacity];
     [nsurlCache setDiskCapacity:std::max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
@@ -162,18 +160,14 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     // When the network process is enabled, each web process wants a stand-alone
     // NSURLCache, which it can disable to save memory.
-#if ENABLE(NETWORK_PROCESS)
-    if (!m_usesNetworkProcess) {
-#endif
+    if (!usesNetworkProcess()) {
         if (!parameters.diskCacheDirectory.isNull()) {
             [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
                 initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
                 diskCapacity:parameters.nsURLCacheDiskCapacity
                 diskPath:parameters.diskCacheDirectory]).get()];
         }
-#if ENABLE(NETWORK_PROCESS)
     }
-#endif
 
     m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
     Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);

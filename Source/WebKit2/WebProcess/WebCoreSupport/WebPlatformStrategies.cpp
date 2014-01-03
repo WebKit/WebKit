@@ -321,11 +321,7 @@ void WebPlatformStrategies::getPluginInfo(const WebCore::Page* page, Vector<WebC
 bool WebPlatformStrategies::isAvailable() const
 {
     // Shared workers do not work across multiple processes, and using network process is tied to multiple secondary process model. 
-#if ENABLE(NETWORK_PROCESS) 
-    return !WebProcess::shared().usesNetworkProcess(); 
-#else 
-    return true; 
-#endif
+    return !WebProcess::shared().usesNetworkProcess();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

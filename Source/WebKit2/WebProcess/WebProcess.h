@@ -152,10 +152,11 @@ public:
 
     EventDispatcher& eventDispatcher() { return *m_eventDispatcher; }
 
+    bool usesNetworkProcess() const;
+
 #if ENABLE(NETWORK_PROCESS)
     NetworkProcessConnection* networkConnection();
     void networkProcessConnectionClosed(NetworkProcessConnection*);
-    bool usesNetworkProcess() const { return m_usesNetworkProcess; }
     WebResourceLoadScheduler& webResourceLoadScheduler();
 #endif
 
