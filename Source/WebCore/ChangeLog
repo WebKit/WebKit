@@ -1,3 +1,9 @@
+2014-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Maybe fix Windows build.
+
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+
 2014-01-03  Jer Noble  <jer.noble@apple.com>
 
         [MediaControls][iOS] Enable JavaScript Media Controls on iOS.
