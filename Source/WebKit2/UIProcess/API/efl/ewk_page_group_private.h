@@ -41,7 +41,7 @@ public:
     EWK_OBJECT_DECLARE(EwkPageGroup)
 
     static PassRefPtr<EwkPageGroup> findOrCreateWrapper(WKPageGroupRef pageGroupRef);
-    static PassRefPtr<EwkPageGroup> create(const String& identifier = String());
+    static PassRefPtr<EwkPageGroup> create(const char*);
 
     ~EwkPageGroup();
 
@@ -52,8 +52,6 @@ public:
 
 private:
     explicit EwkPageGroup(WKPageGroupRef pageGroupRef);    
-
-    static const char defaultIdentifier[];
 
     WKRetainPtr<WKPageGroupRef> m_pageGroupRef;
 };

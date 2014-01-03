@@ -35,8 +35,6 @@
 
 using namespace WebKit;
 
-const char EwkPageGroup::defaultIdentifier[] = "defaultPageGroupIdentifier";
-
 typedef HashMap<WKPageGroupRef, EwkPageGroup*> PageGroupMap;
 
 static inline PageGroupMap& pageGroupMap()
@@ -58,9 +56,9 @@ PassRefPtr<EwkPageGroup> EwkPageGroup::findOrCreateWrapper(WKPageGroupRef pageGr
     return adoptRef(new EwkPageGroup(pageGroupRef));
 }
 
-PassRefPtr<EwkPageGroup> EwkPageGroup::create(const String& identifier)
+PassRefPtr<EwkPageGroup> EwkPageGroup::create(const char* identifier)
 {
-    WKRetainPtr<WKStringRef> identifierRef = adoptWK(toCopiedAPI(identifier.isEmpty() ? defaultIdentifier : identifier));
+    WKRetainPtr<WKStringRef> identifierRef = adoptWK(toCopiedAPI(identifier));
     WKRetainPtr<WKPageGroupRef> pageGroupRef = adoptWK(WKPageGroupCreateWithIdentifier(identifierRef.get()));
 
     return adoptRef(new EwkPageGroup(pageGroupRef.get()));

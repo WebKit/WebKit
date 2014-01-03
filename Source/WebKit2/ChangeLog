@@ -1,3 +1,20 @@
+2014-01-02  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Remove defaultPageGroupIdentifier not to make the confusion
+        https://bugs.webkit.org/show_bug.cgi?id=126249
+
+        Reviewed by Gyuyoung Kim.
+
+        ewk_page_group_create always creates new page group,
+        but the identifiers of page groups will be same as "defaultPageGroupIdentifier" when passed 0 or "".
+        It is unnecessary and just makes the confusion.
+
+        This patch let WebPageGroup generate unique identifier if 0 or "" is passed as argument.
+
+        * UIProcess/API/efl/ewk_page_group.cpp:
+        (EwkPageGroup::create):
+        * UIProcess/API/efl/ewk_page_group_private.h:
+
 2014-01-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Switch from WTF::Function to std::function in WebProcessTest
