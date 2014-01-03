@@ -1,3 +1,13 @@
+2014-01-03  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Enable video using GStreamer.
+        https://bugs.webkit.org/show_bug.cgi?id=126015
+
+        Reviewed by Darin Adler.
+
+        * win/tools/vsprops/FeatureDefinesCairo.props:
+        Define ENABLE_MEDIA_CONTROLS_SCRIPT, ENABLE_VIDEO_TRACK, and ENABLE_VIDEO.
+
 2013-12-30  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Disable some annoying build warnings.
