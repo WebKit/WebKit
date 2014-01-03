@@ -101,7 +101,8 @@ void internalNormalizeLineEndingsToCRLF(const CString& from, OutputBuffer& buffe
     // Compute the new length.
     size_t newLen = 0;
     const char* p = from.data();
-    while (char c = *p++) {
+    while (p < from.data() + from.length()) {
+        char c = *p++;
         if (c == '\r') {
             // Safe to look ahead because of trailing '\0'.
             if (*p != '\n') {
@@ -128,7 +129,8 @@ void internalNormalizeLineEndingsToCRLF(const CString& from, OutputBuffer& buffe
     char* q = buffer.allocate(newLen);
 
     // Make a copy of the string.
-    while (char c = *p++) {
+    while (p < from.data() + from.length()) {
+        char c = *p++;
         if (c == '\r') {
             // Safe to look ahead because of trailing '\0'.
             if (*p != '\n') {
@@ -162,7 +164,8 @@ void normalizeToCROrLF(const CString& from, Vector<char>& result, bool toCR)
     const char* p = from.data();
     char fromEndingChar = toCR ? '\n' : '\r';
     char toEndingChar = toCR ? '\r' : '\n';
-    while (char c = *p++) {
+    while (p < from.data() + from.length()) {
+        char c = *p++;
         if (c == '\r' && *p == '\n') {
             // Turn CRLF into CR or LF.
             p++;
@@ -187,7 +190,8 @@ void normalizeToCROrLF(const CString& from, Vector<char>& result, bool toCR)
     }
 
     // Make a copy of the string.
-    while (char c = *p++) {
+    while (p < from.data() + from.length()) {
+        char c = *p++;
         if (c == '\r' && *p == '\n') {
             // Turn CRLF or CR into CR or LF.
             p++;

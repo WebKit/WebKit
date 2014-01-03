@@ -1,3 +1,16 @@
+2014-01-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Line ending conversion should be able to handle strings with null chars
+        https://bugs.webkit.org/show_bug.cgi?id=126202
+
+        This is a merge from Blink.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: http/tests/local/formdata/send-form-data-with-string-containing-null.html
+
+        * platform/text/LineEnding.cpp: (WebCore::normalizeToCROrLF): Do it right.
+
 2014-01-03  Alberto Garcia  <berto@igalia.com>
 
         WebKit-GTK 1.8.1 does not build on OS X 10.7
