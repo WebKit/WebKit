@@ -1,3 +1,15 @@
+2014-01-03  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=126428
+
+        Reviewed by Brent Fulgham.
+
+        The NativeImagePtr type is not an CGImageRef on WinCairo, cannot use CFRetain.
+
+        * loader/cache/MemoryCache.cpp: Replace USE(CF) with USE(CG).
+        * loader/cache/MemoryCache.h: Ditto.
+
 2014-01-03  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Simplify FloatRoundedRect, BoxShape construction

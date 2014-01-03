@@ -188,8 +188,8 @@ public:
     unsigned liveSize() const { return m_liveSize; }
     unsigned deadSize() const { return m_deadSize; }
 
-#if USE(CF)
-    // FIXME: Remove the USE(CF) once we either make NativeImagePtr a smart pointer on all platforms or
+#if USE(CG)
+    // FIXME: Remove the USE(CG) once we either make NativeImagePtr a smart pointer on all platforms or
     // remove the usage of CFRetain() in MemoryCache::addImageToCache() so as to make the code platform-independent.
     bool addImageToCache(NativeImagePtr, const URL&, const String& cachePartition);
     void removeImageFromCache(const URL&, const String& cachePartition);
