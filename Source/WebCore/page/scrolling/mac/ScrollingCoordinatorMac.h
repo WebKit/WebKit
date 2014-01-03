@@ -51,6 +51,7 @@ public:
     virtual bool handleWheelEvent(FrameView*, const PlatformWheelEvent&) OVERRIDE;
 
 private:
+    virtual PassOwnPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) OVERRIDE;
     virtual void scheduleTreeStateCommit() OVERRIDE;
 
     void scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinatorMac>*);

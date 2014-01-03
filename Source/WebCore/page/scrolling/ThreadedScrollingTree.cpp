@@ -28,8 +28,8 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "AsyncScrollingCoordinator.h"
 #include "PlatformWheelEvent.h"
-#include "ScrollingCoordinator.h"
 #include "ScrollingThread.h"
 #include "ScrollingTreeFixedNode.h"
 #include "ScrollingTreeNode.h"
@@ -40,12 +40,12 @@
 
 namespace WebCore {
 
-RefPtr<ThreadedScrollingTree> ThreadedScrollingTree::create(ScrollingCoordinator* scrollingCoordinator)
+RefPtr<ThreadedScrollingTree> ThreadedScrollingTree::create(AsyncScrollingCoordinator* scrollingCoordinator)
 {
     return adoptRef(new ThreadedScrollingTree(scrollingCoordinator));
 }
 
-ThreadedScrollingTree::ThreadedScrollingTree(ScrollingCoordinator* scrollingCoordinator)
+ThreadedScrollingTree::ThreadedScrollingTree(AsyncScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
 {
 }
@@ -119,6 +119,11 @@ void ThreadedScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
     callOnMainThread(bind(&ScrollingCoordinator::handleWheelEventPhase, m_scrollingCoordinator.get(), phase));
 }
 #endif
+
+PassOwnPtr<ScrollingTreeNode> ThreadedScrollingTree::createNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+{
+    return m_scrollingCoordinator->createScrollingTreeNode(nodeType, nodeID);
+}
 
 } // namespace WebCore
 

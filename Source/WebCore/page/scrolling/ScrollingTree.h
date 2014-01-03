@@ -103,6 +103,8 @@ private:
     void removeDestroyedNodes(const ScrollingStateTree&);
     void updateTreeFromStateNode(const ScrollingStateNode*);
 
+    virtual PassOwnPtr<ScrollingTreeNode> createNode(ScrollingNodeType, ScrollingNodeID) = 0;
+
     OwnPtr<ScrollingTreeScrollingNode> m_rootNode;
 
     typedef HashMap<ScrollingNodeID, ScrollingTreeNode*> ScrollingTreeNodeMap;

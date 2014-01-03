@@ -1,3 +1,35 @@
+2014-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow different types of ScrollingTrees to have different types of ScrollingTreeNode subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=126445
+
+        Reviewed by Tim Horton.
+        
+        Make it possible to have ScrollingTree subclasses with different subclasses of ScrollingTreeNodes,
+        by giving ScrollingTree a pure virtual createNode() function. ThreadedScrollingTree implements
+        this, and then delegates node creation to its AsyncScrollingCoordinator (since we have
+        a ScrollingCoordinatorMac but no real need for a ThreadedScrollingTreeMac).
+        
+        Also made ThreadedScrollingTree's m_scrollingCoordinator an AsyncScrollingCoordinator,
+        since by definition a threaded scrolling tree uses an async coordinator.
+
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::create):
+        (WebCore::ThreadedScrollingTree::ThreadedScrollingTree):
+        (WebCore::ThreadedScrollingTree::createNode):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::createScrollingTreeNode):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::create):
+
 2014-01-03  Gavin Barraclough  <barraclough@apple.com>
 
         Refactor NSActivity handling code from ChildProcess to UserActivity

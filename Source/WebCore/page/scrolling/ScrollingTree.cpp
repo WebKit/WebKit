@@ -30,10 +30,8 @@
 
 #include "PlatformWheelEvent.h"
 #include "ScrollingStateTree.h"
-#include "ScrollingTreeFixedNode.h"
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeScrollingNode.h"
-#include "ScrollingTreeStickyNode.h"
 #include <wtf/TemporaryChange.h>
 
 namespace WebCore {
@@ -133,24 +131,12 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode)
             // This is the root node. Nuke the node map.
             m_nodeMap.clear();
 
-            m_rootNode = ScrollingTreeScrollingNode::create(*this, nodeID);
+            m_rootNode = static_pointer_cast<ScrollingTreeScrollingNode>(createNode(ScrollingNode, nodeID));
             m_nodeMap.set(nodeID, m_rootNode.get());
             m_rootNode->updateBeforeChildren(*stateNode);
             node = m_rootNode.get();
         } else {
-            OwnPtr<ScrollingTreeNode> newNode;
-            switch (stateNode->nodeType()) {
-            case ScrollingNode:
-                newNode = ScrollingTreeScrollingNode::create(*this, nodeID);
-                break;
-            case FixedNode:
-                newNode = ScrollingTreeFixedNode::create(*this, nodeID);
-                break;
-            case StickyNode:
-                newNode = ScrollingTreeStickyNode::create(*this, nodeID);
-                break;
-            }
-
+            OwnPtr<ScrollingTreeNode> newNode = createNode(stateNode->nodeType(), nodeID);
             node = newNode.get();
             m_nodeMap.set(nodeID, node);
             ScrollingTreeNodeMap::const_iterator it = m_nodeMap.find(stateNode->parent()->scrollingNodeID());

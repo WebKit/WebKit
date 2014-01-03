@@ -36,6 +36,9 @@
 #include "Region.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingThread.h"
+#include "ScrollingTreeFixedNode.h"
+#include "ScrollingTreeScrollingNodeMac.h"
+#include "ScrollingTreeStickyNode.h"
 #include "ThreadedScrollingTree.h"
 #include "TiledBacking.h"
 #include <wtf/Functional.h>
@@ -134,6 +137,22 @@ void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
     
     tiledBacking->setScrollingModeIndication(indicatorMode);
 }
+
+PassOwnPtr<ScrollingTreeNode> ScrollingCoordinatorMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+{
+    ASSERT(scrollingTree());
+
+    switch (nodeType) {
+    case ScrollingNode:
+        return ScrollingTreeScrollingNodeMac::create(*scrollingTree(), nodeID);
+    case FixedNode:
+        return ScrollingTreeFixedNode::create(*scrollingTree(), nodeID);
+    case StickyNode:
+        return ScrollingTreeStickyNode::create(*scrollingTree(), nodeID);
+    }
+    return nullptr;
+}
+
 
 } // namespace WebCore
 

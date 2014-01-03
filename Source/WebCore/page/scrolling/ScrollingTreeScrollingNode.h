@@ -42,7 +42,6 @@ class ScrollingStateScrollingNode;
 
 class ScrollingTreeScrollingNode : public ScrollingTreeNode {
 public:
-    static PassOwnPtr<ScrollingTreeScrollingNode> create(ScrollingTree&, ScrollingNodeID);
     virtual ~ScrollingTreeScrollingNode();
 
     virtual void updateBeforeChildren(const ScrollingStateNode&) OVERRIDE;

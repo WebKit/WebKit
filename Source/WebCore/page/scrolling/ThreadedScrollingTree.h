@@ -35,13 +35,15 @@
 
 namespace WebCore {
 
+class AsyncScrollingCoordinator;
+
 // The ThreadedScrollingTree class lives almost exclusively on the scrolling thread and manages the
 // hierarchy of scrollable regions on the page. It's also responsible for dispatching events
 // to the correct scrolling tree nodes or dispatching events back to the ScrollingCoordinator
 // object on the main thread if they can't be handled on the scrolling thread for various reasons.
 class ThreadedScrollingTree : public ScrollingTree {
 public:
-    static RefPtr<ThreadedScrollingTree> create(ScrollingCoordinator*);
+    static RefPtr<ThreadedScrollingTree> create(AsyncScrollingCoordinator*);
 
     virtual ~ThreadedScrollingTree();
 
@@ -59,14 +61,16 @@ public:
     virtual void invalidate() OVERRIDE;
 
 private:
-    explicit ThreadedScrollingTree(ScrollingCoordinator*);
+    explicit ThreadedScrollingTree(AsyncScrollingCoordinator*);
+
+    virtual PassOwnPtr<ScrollingTreeNode> createNode(ScrollingNodeType, ScrollingNodeID) OVERRIDE;
 
     virtual void updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) OVERRIDE;
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) OVERRIDE;
 #endif
 
-    RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
+    RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
 };
 
 SCROLLING_TREE_TYPE_CASTS(ThreadedScrollingTree, isThreadedScrollingTree());
