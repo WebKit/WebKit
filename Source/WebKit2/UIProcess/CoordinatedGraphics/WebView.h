@@ -204,7 +204,6 @@ protected:
     virtual void beganExitFullScreen(const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE { }
 #endif
 
-protected:
     WebViewClient m_client;
     RefPtr<WebPageProxy> m_page;
     DefaultUndoController m_undoController;
