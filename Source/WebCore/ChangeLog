@@ -1,3 +1,15 @@
+2014-01-03  Andreas Kling  <akling@apple.com>
+
+        Remove unused Document::openSearchDescriptionURL().
+        <https://webkit.org/b/126419>
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+
+            Scrub leftovers from the defunct Chromium port.
+
 2014-01-03  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         VibrationPattern should allocate an single vector instance for single integer input

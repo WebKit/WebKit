@@ -4247,37 +4247,6 @@ String Document::queryCommandValue(const String& commandName)
     return command(this, commandName).value();
 }
 
-URL Document::openSearchDescriptionURL()
-{
-    static const char* const openSearchMIMEType = "application/opensearchdescription+xml";
-    static const char* const openSearchRelation = "search";
-
-    // FIXME: Why do only top-level frames have openSearchDescriptionURLs?
-    if (!frame() || frame()->tree().parent())
-        return URL();
-
-    // FIXME: Why do we need to wait for FrameStateComplete?
-    if (frame()->loader().state() != FrameStateComplete)
-        return URL();
-
-    if (!head())
-        return URL();
-
-    RefPtr<HTMLCollection> children = head()->children();
-    for (unsigned i = 0; Node* child = children->item(i); i++) {
-        if (!child->hasTagName(linkTag))
-            continue;
-        HTMLLinkElement* linkElement = toHTMLLinkElement(child);
-        if (!equalIgnoringCase(linkElement->type(), openSearchMIMEType) || !equalIgnoringCase(linkElement->rel(), openSearchRelation))
-            continue;
-        if (linkElement->href().isEmpty())
-            continue;
-        return linkElement->href();
-    }
-
-    return URL();
-}
-
 void Document::pushCurrentScript(PassRefPtr<HTMLScriptElement> newCurrentScript)
 {
     ASSERT(newCurrentScript);
