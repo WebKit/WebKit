@@ -1,4 +1,5 @@
 set(TESTWEBKITAPI_DIR "${TOOLS_DIR}/TestWebKitAPI")
+set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI")
 
 include_directories(${CMAKE_BINARY_DIR}
     ${TESTWEBKITAPI_DIR}
@@ -90,7 +91,7 @@ add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=1
     -DTEST_INJECTED_BUNDLE_PATH=\"${TestWebKitAPIInjectedBundle_PATH}\"
 )
 
-add_executable(test_wtf
+add_executable(TestWTF
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/AtomicString.cpp
@@ -117,16 +118,22 @@ add_executable(test_wtf
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WTFString.cpp
 )
 
-target_link_libraries(test_wtf ${test_wtf_LIBRARIES})
-add_dependencies(test_wtf ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
-add_test(test_wtf ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_wtf)
-set_tests_properties(test_wtf PROPERTIES TIMEOUT 60)
+target_link_libraries(TestWTF ${test_wtf_LIBRARIES})
+add_dependencies(TestWTF ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
+add_test(TestWTF ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WTF/TestWTF)
+set_tests_properties(TestWTF PROPERTIES TIMEOUT 60)
+    set_target_properties(TestWTF PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WTF
+    )
 
 foreach (testName ${test_webcore_BINARIES})
-    add_executable(test_webcore_${testName} ${test_main_SOURCES} ${TESTWEBKITAPI_DIR}/TestsController.cpp ${TESTWEBKITAPI_DIR}/Tests/WebCore/${testName}.cpp)
-    add_test(test_webcore_${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_webcore_${testName})
-    set_tests_properties(test_webcore_${testName} PROPERTIES TIMEOUT 60)
-    target_link_libraries(test_webcore_${testName} ${test_webcore_LIBRARIES})
+    add_executable(${testName} ${test_main_SOURCES} ${TESTWEBKITAPI_DIR}/TestsController.cpp ${TESTWEBKITAPI_DIR}/Tests/WebCore/${testName}.cpp)
+    add_test(${testName} ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore/${testName})
+    set_tests_properties(${testName} PROPERTIES TIMEOUT 60)
+    target_link_libraries(${testName} ${test_webcore_LIBRARIES})
+    set_target_properties(${testName} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore
+    )
 endforeach ()
 
 add_library(TestWebKitAPIBase
@@ -141,10 +148,13 @@ add_dependencies(TestWebKitAPIBase WebKit2 ${ForwardingHeadersForTestWebKitAPI_N
 
 foreach (testName ${test_webkit2_api_BINARIES})
     get_filename_component(testBaseName ${testName} NAME)
-    add_executable(test_webkit2_api_${testBaseName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
-    add_test(test_webkit2_api_${testBaseName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_webkit2_api_${testBaseName})
-    set_tests_properties(test_webkit2_api_${testBaseName} PROPERTIES TIMEOUT 60)
-    target_link_libraries(test_webkit2_api_${testBaseName} ${test_webkit2_api_LIBRARIES})
+    add_executable(${testBaseName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
+    add_test(${testBaseName} ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2/${testBaseName})
+    set_tests_properties(${testBaseName} PROPERTIES TIMEOUT 60)
+    target_link_libraries(${testBaseName} ${test_webkit2_api_LIBRARIES})
+    set_target_properties(${testBaseName} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2
+    )
 endforeach ()
 
 # We don't run tests that are expected to fail. We could use the WILL_FAIL
@@ -152,6 +162,9 @@ endforeach ()
 # make the bot red.
 
 foreach (testName ${test_webkit2_api_fail_BINARIES})
-    add_executable(test_webkit2_api_fail_${testName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
-    target_link_libraries(test_webkit2_api_fail_${testName} ${test_webkit2_api_LIBRARIES})
+    add_executable(${testName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
+    target_link_libraries(${testName} ${test_webkit2_api_LIBRARIES})
+    set_target_properties(${testBaseName} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2
+    )
 endforeach ()

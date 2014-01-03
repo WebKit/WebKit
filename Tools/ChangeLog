@@ -1,3 +1,17 @@
+2014-01-03  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] Build TestWebKitAPI tests into a directory structure
+        https://bugs.webkit.org/show_bug.cgi?id=126358
+
+        Reviewed by Gyuyoung Kim.
+
+        WebKitGTK+ builds the TestWebKitAPI tests into a "TestWebKitAPI" directory. This
+        is useful for keeping the "bin" directory tidy during building and will make it easier
+        to integrate the CMake build into the existing WebKitGTK+ scripts.
+
+        * TestWebKitAPI/CMakeLists.txt: Set the output directory of all TestWebKitAPI binaries
+        and make the names simpler now that the directory identifies what category the test is in.
+
 2014-01-03  Alexey Proskuryakov  <ap@apple.com>
 
         Provide a visual clue when element has a popover at build.webkit.org/dashboard
