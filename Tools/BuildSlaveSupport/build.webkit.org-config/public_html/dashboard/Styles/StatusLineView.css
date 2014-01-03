@@ -103,6 +103,7 @@
 
 .status-line .message .revision-number {
     -webkit-user-select: auto;
+    cursor: text;
 }
 
 .status-line.no-label .message {
@@ -133,4 +134,8 @@
 .status-line.bad .label,
 .status-line.bad .message {
     color: rgb(191, 67, 41);
+}
+
+.status-line .bubble.popover-tracking:hover {
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.7)
 }

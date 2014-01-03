@@ -27,6 +27,11 @@
     box-sizing: border-box;
     -webkit-user-select: none;
     -webkit-user-drag: none;
+    cursor: default;
+}
+
+*:link {
+    cursor: pointer;
 }
 
 a {
@@ -191,3 +196,6 @@ table.queue-grid tr.platform.linux-efl img.logo {
     content: -webkit-image-set(url(../Images/EFL@2x.png) 2x, url(../Images/EFL.png) 1x);
 }
 
+.popover-tracking:hover {
+    text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.2)
+}

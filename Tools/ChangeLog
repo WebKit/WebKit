@@ -1,3 +1,25 @@
+2014-01-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Provide a visual clue when element has a popover at build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=126281
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/PopoverTracker.js:
+        (PopoverTracker): Add a class name to elements with popovers.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (*): We have -webkit-user-select:none, so let's also not show text selection cursor.
+        I might have broke that recently.
+        (*:link): Show hand cursor over links.
+        (.popover-tracking:hover): Put a shadow on hover over element with popovers.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
+        (.status-line .message .revision-number): Show text selection cursor on our only
+        selectable text element.
+        (.status-line .bubble.popover-tracking:hover): Text in a bubble looks better with
+        a white shadow than with a dark one on hover.
+
 2014-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to WebKitResponsePolicyDecision to check if the MIME type can be shown

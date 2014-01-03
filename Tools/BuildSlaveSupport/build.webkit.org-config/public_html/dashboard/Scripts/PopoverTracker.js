@@ -35,6 +35,7 @@ PopoverTracker = function(element, presentPopoverCallback, context)
     this._context = context;
     this._active = false;
 
+    element.classList.add("popover-tracking");
     element.addEventListener("mouseenter", this._mouseEnteredPopoverOrElement.bind(this), true);
     element.addEventListener("mouseleave", this._mouseExitedPopoverOrElement.bind(this), true);
 };
