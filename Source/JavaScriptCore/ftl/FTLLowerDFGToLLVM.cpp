@@ -466,6 +466,15 @@ private:
         case Int52ToValue:
             compileInt52ToValue();
             break;
+        case StoreBarrier:
+            compileStoreBarrier();
+            break;
+        case ConditionalStoreBarrier:
+            compileConditionalStoreBarrier();
+            break;
+        case StoreBarrierWithNullCheck:
+            compileStoreBarrierWithNullCheck();
+            break;
         case Flush:
         case PhantomLocal:
         case SetArgument:
@@ -582,6 +591,34 @@ private:
     void compileInt52ToValue()
     {
         setJSValue(lowJSValue(m_node->child1()));
+    }
+
+    void compileStoreBarrier()
+    {
+        emitStoreBarrier(lowCell(m_node->child1()));
+    }
+
+    void compileConditionalStoreBarrier()
+    {
+        LValue base = lowCell(m_node->child1());
+        LValue value = lowJSValue(m_node->child2());
+        emitStoreBarrier(base, value, m_node->child2());
+    }
+
+    void compileStoreBarrierWithNullCheck()
+    {
+#if ENABLE(GGC)
+        LBasicBlock isNotNull = FTL_NEW_BLOCK(m_out, ("Store barrier with null check value not null"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
+
+        LValue base = lowJSValue(m_node->child1());
+        m_out.branch(m_out.isZero64(base), continuation, isNotNull);
+        LBasicBlock lastNext = m_out.appendTo(isNotNull, continuation);
+        emitStoreBarrier(base);
+        m_out.appendTo(continuation, lastNext);
+#else
+        speculate(m_node->child1());
+#endif
     }
 
     void compileUpsilon()
@@ -3947,6 +3984,72 @@ private:
         return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(m_node->codeOrigin);
     }
     
+    LValue loadMarkByte(LValue base)
+    {
+        LValue markedBlock = m_out.bitAnd(base, m_out.constInt64(MarkedBlock::blockMask));
+        LValue baseOffset = m_out.bitAnd(base, m_out.constInt64(~MarkedBlock::blockMask));
+        LValue markByteIndex = m_out.lShr(baseOffset, m_out.constInt64(MarkedBlock::atomShiftAmount + MarkedBlock::markByteShiftAmount));
+        return m_out.load8(m_out.baseIndex(m_heaps.MarkedBlock_markBits, markedBlock, markByteIndex, ScaleOne, MarkedBlock::offsetOfMarks()));
+    }
+
+    void emitStoreBarrier(LValue base, LValue value, Edge& valueEdge)
+    {
+#if ENABLE(GGC)
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
+        LBasicBlock isCell = FTL_NEW_BLOCK(m_out, ("Store barrier is cell block"));
+
+        if (m_state.forNode(valueEdge.node()).couldBeType(SpecCell))
+            m_out.branch(isNotCell(value), continuation, isCell);
+        else
+            m_out.jump(isCell);
+
+        LBasicBlock lastNext = m_out.appendTo(isCell, continuation);
+        emitStoreBarrier(base);
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+#else
+        UNUSED_PARAM(base);
+        UNUSED_PARAM(value);
+        UNUSED_PARAM(valueEdge);
+#endif
+    }
+
+    void emitStoreBarrier(LValue base)
+    {
+#if ENABLE(GGC)
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
+        LBasicBlock isMarked = FTL_NEW_BLOCK(m_out, ("Store barrier is marked block"));
+        LBasicBlock bufferHasSpace = FTL_NEW_BLOCK(m_out, ("Store barrier buffer is full"));
+        LBasicBlock bufferIsFull = FTL_NEW_BLOCK(m_out, ("Store barrier buffer is full"));
+
+        // Check the mark byte. 
+        m_out.branch(m_out.isZero8(loadMarkByte(base)), continuation, isMarked);
+
+        // Append to the write barrier buffer.
+        LBasicBlock lastNext = m_out.appendTo(isMarked, bufferHasSpace);
+        LValue currentBufferIndex = m_out.load32(m_out.absolute(&vm().heap.writeBarrierBuffer().m_currentIndex));
+        LValue bufferCapacity = m_out.load32(m_out.absolute(&vm().heap.writeBarrierBuffer().m_capacity));
+        m_out.branch(m_out.lessThan(currentBufferIndex, bufferCapacity), bufferHasSpace, bufferIsFull);
+
+        // Buffer has space, store to it.
+        m_out.appendTo(bufferHasSpace, bufferIsFull);
+        LValue writeBarrierBufferBase = m_out.loadPtr(m_out.absolute(&vm().heap.writeBarrierBuffer().m_buffer));
+        m_out.storePtr(base, m_out.baseIndex(m_heaps.WriteBarrierBuffer_bufferContents, writeBarrierBufferBase, m_out.zeroExt(currentBufferIndex, m_out.intPtr), ScalePtr));
+        m_out.store32(m_out.add(currentBufferIndex, m_out.constInt32(1)), m_out.absolute(&vm().heap.writeBarrierBuffer().m_currentIndex));
+        m_out.jump(continuation);
+
+        // Buffer is out of space, flush it.
+        m_out.appendTo(bufferIsFull, continuation);
+        vmCall(m_out.operation(operationFlushWriteBarrierBuffer), m_callFrame, base);
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+#else
+        UNUSED_PARAM(base);
+#endif
+    }
+
     enum ExceptionCheckMode { NoExceptions, CheckExceptions };
     
     LValue vmCall(LValue function, ExceptionCheckMode mode = CheckExceptions)

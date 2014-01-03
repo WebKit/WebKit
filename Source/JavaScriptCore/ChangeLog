@@ -1,5 +1,28 @@
 2014-01-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Add support for StoreBarrier and friends to the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=126040
+
+        Reviewed by Filip Pizlo.
+
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileStoreBarrier):
+        (JSC::FTL::LowerDFGToLLVM::compileConditionalStoreBarrier):
+        (JSC::FTL::LowerDFGToLLVM::compileStoreBarrierWithNullCheck):
+        (JSC::FTL::LowerDFGToLLVM::loadMarkByte):
+        (JSC::FTL::LowerDFGToLLVM::emitStoreBarrier):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        * heap/Heap.h:
+        (JSC::Heap::writeBarrierBuffer):
+
+2014-01-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Storing new CopiedSpace memory into a JSObject should fire a write barrier
         https://bugs.webkit.org/show_bug.cgi?id=126025
 

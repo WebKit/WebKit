@@ -37,7 +37,8 @@ namespace JSC { namespace FTL {
 
 #define FOR_EACH_ABSTRACT_HEAP(macro) \
     macro(length) \
-    macro(typedArrayProperties)
+    macro(typedArrayProperties) \
+    macro(WriteBarrierBuffer_bufferContents)
 
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
     macro(Butterfly_publicLength, Butterfly::offsetOfPublicLength()) \
@@ -53,6 +54,7 @@ namespace JSC { namespace FTL {
     macro(JSString_value, JSString::offsetOfValue()) \
     macro(JSVariableObject_registers, JSVariableObject::offsetOfRegisters()) \
     macro(MarkedAllocator_freeListHead, MarkedAllocator::offsetOfFreeListHead()) \
+    macro(MarkedBlock_markBits, MarkedBlock::offsetOfMarks()) \
     macro(StringImpl_data, StringImpl::dataOffset()) \
     macro(StringImpl_hashAndFlags, StringImpl::flagsOffset()) \
     macro(Structure_classInfo, Structure::classInfoOffset()) \
