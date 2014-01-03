@@ -465,4 +465,8 @@ user-zoom
 #endif
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
 -webkit-touch-callout [Inherited]
+
+// FIXME: This property shouldn't be iOS-specific. Once we fix up its usage in InlineTextBox::paintCompositionBackground()
+// we should move it outside the WTF_PLATFORM_IOS-guard.
+-webkit-composition-fill-color [Inherited]
 #endif

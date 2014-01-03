@@ -1,3 +1,56 @@
+2014-01-03  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream WebCore/css changes
+        https://bugs.webkit.org/show_bug.cgi?id=126237
+
+        Reviewed by Simon Fraser.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Added iOS-specific code and FIXME comment.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext): Ditto.
+        (WebCore::CSSParser::parseValue): Ditto.
+        * css/CSSPropertyNames.in: Added property -webkit-composition-fill-color. Also added FIXME comment.
+        * css/CSSValueKeywords.in: Added iOS-specific -apple-system-* values.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder): Added iOS-specific code and FIXME comments.
+        * css/MediaFeatureNames.h: Added media feature -webkit-video-playable-inline.
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::isRunningOnIPhoneOrIPod): Added. Also added FIXME comment.
+        (WebCore::video_playable_inlineMediaFeatureEval): Added.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement): Substitute toHTMLMediaElement() for toMediaElement().
+        (WebCore::StyleResolver::applyProperty): Added iOS-specific code and FIXME comment.
+        * css/html.css: Added iOS-specific CSS styles.
+        (input, textarea, keygen, select, button, isindex):
+        (isindex):
+        (input[type="date"]):
+        (input[type="datetime"]):
+        (input[type="datetime-local"]):
+        (input[type="month"]):
+        (input[type="time"]):
+        (textarea):
+        (input:-webkit-autofill):
+        (input[type="radio"], input[type="checkbox"]):
+        (input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button):
+        (input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb):
+        (input[type="range"]::-webkit-slider-thumb:active):
+        (input:disabled, textarea:disabled):
+        (input[readonly], textarea[readonly]):
+        (textarea::-webkit-input-placeholder):
+        (input[type="checkbox"]):
+        (input[type="radio"]):
+        (input[type="checkbox"]:checked, input[type="radio"]:checked):
+        (input[type="checkbox"]:checked:disabled, input[type="radio"]:checked:disabled):
+        (select:focus):
+        (select):
+        * css/mathml.css: Added iOS-specific CSS styles.
+        (math, mfenced > *):
+        (mo, mfenced):
+        * css/mediaControlsiOS.css: Added.
+        * css/svg.css: Added iOS-specific CSS styles.
+        (text, tspan, tref):
+
 2014-01-03  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] glScissor test is not accounted for when generating internal rendering textures.

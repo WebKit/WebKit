@@ -73,6 +73,7 @@ namespace WebCore {
     macro(transform_3d, "-webkit-transform-3d") \
     macro(transition, "-webkit-transition") \
     macro(animation, "-webkit-animation") \
+    macro(video_playable_inline, "-webkit-video-playable-inline") \
     CSS_MEDIAQUERY_VIEW_MODE(macro)
 
 // end of macro

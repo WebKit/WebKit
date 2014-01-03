@@ -264,6 +264,12 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
     , enforcesCSSMIMETypeInNoQuirksMode(true)
     , useLegacyBackgroundSizeShorthandBehavior(false)
 {
+#if PLATFORM(IOS)
+    // FIXME: Force the site specific quirk below to work on iOS. Investigating other site specific quirks
+    // to see if we can enable the preference all together is to be handled by:
+    // <rdar://problem/8493309> Investigate Enabling Site Specific Quirks in MobileSafari and UIWebView
+    needsSiteSpecificQuirks = true;
+#endif
 }
 
 CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const String& charset)
@@ -280,6 +286,12 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
     , enforcesCSSMIMETypeInNoQuirksMode(!document.settings() || document.settings()->enforceCSSMIMETypeInNoQuirksMode())
     , useLegacyBackgroundSizeShorthandBehavior(document.settings() ? document.settings()->useLegacyBackgroundSizeShorthandBehavior() : false)
 {
+#if PLATFORM(IOS)
+    // FIXME: Force the site specific quirk below to work on iOS. Investigating other site specific quirks
+    // to see if we can enable the preference all together is to be handled by:
+    // <rdar://problem/8493309> Investigate Enabling Site Specific Quirks in MobileSafari and UIWebView
+    needsSiteSpecificQuirks = true;
+#endif
 }
 
 bool operator==(const CSSParserContext& a, const CSSParserContext& b)
@@ -2760,6 +2772,19 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #endif
 
 #if PLATFORM(IOS)
+    // FIXME: CSSPropertyWebkitCompositionFillColor shouldn't be iOS-specific. Once we fix up its usage in
+    // InlineTextBox::paintCompositionBackground() we should move it outside the PLATFORM(IOS)-guard.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=126296>.
+    case CSSPropertyWebkitCompositionFillColor:
+        if ((id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu
+            || (id >= CSSValueWebkitFocusRingColor && id < CSSValueWebkitText && inQuirksMode())) {
+            validPrimitive = true;
+        } else {
+            parsedValue = parseColor();
+            if (parsedValue)
+                m_valueList->next();
+        }
+        break;
     case CSSPropertyWebkitTouchCallout:
         if (id == CSSValueDefault || id == CSSValueNone)
             validPrimitive = true;
@@ -12729,7 +12754,8 @@ static CSSValueID cssValueKeywordID(const CharacterType* valueKeyword, unsigned 
     if (buffer[0] == '-') {
         // If the prefix is -apple- or -khtml-, change it to -webkit-.
         // This makes the string one character longer.
-        if (hasPrefix(buffer, length, "-apple-") || hasPrefix(buffer, length, "-khtml-")) {
+        // On iOS we don't want to change values starting with -apple-system to -webkit-system.
+        if ((hasPrefix(buffer, length, "-apple-") && !hasPrefix(buffer, length, "-apple-system")) || hasPrefix(buffer, length, "-khtml-")) {
             memmove(buffer + 7, buffer + 6, length + 1 - 6);
             memcpy(buffer, "-webkit", 7);
             ++length;

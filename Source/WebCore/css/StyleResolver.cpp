@@ -712,7 +712,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     // With proxying, the media elements are backed by a RenderEmbeddedObject.
-    if ((element->hasTagName(videoTag) || element->hasTagName(audioTag)) && toMediaElement(element)->shouldUseVideoPluginProxy())
+    if ((element->hasTagName(videoTag) || element->hasTagName(audioTag)) && toHTMLMediaElement(element)->shouldUseVideoPluginProxy())
         return false;
 #endif
 
@@ -2607,6 +2607,17 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             break;
 
         state.style()->setTouchCalloutEnabled(primitiveValue->getStringValue().lower() != "none");
+        return;
+    }
+
+    // FIXME: CSSPropertyWebkitCompositionFillColor shouldn't be iOS-specific. Once we fix up its usage in
+    // InlineTextBox::paintCompositionBackground() we should move it outside the PLATFORM(IOS)-guard.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=126296>.
+    case CSSPropertyWebkitCompositionFillColor: {
+        HANDLE_INHERIT_AND_INITIAL(compositionFillColor, CompositionFillColor);
+        if (!primitiveValue)
+            break;
+        state.style()->setCompositionFillColor(colorFromPrimitiveValue(primitiveValue));
         return;
     }
 #endif

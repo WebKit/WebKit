@@ -55,6 +55,12 @@ text, tspan, textPath {
    white-space: nowrap
 }
 
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+text, tspan, tref {
+   -webkit-text-size-adjust: none;
+}
+#endif
+
 /* states */
 
 :focus {

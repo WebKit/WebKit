@@ -59,6 +59,10 @@
 #include "RenderLayerCompositor.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "WebCoreSystemInterface.h"
+#endif
+
 namespace WebCore {
 
 using namespace MediaFeatureNames;
@@ -623,6 +627,22 @@ static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fram
     return result;
 }
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
+
+// FIXME: Find a better place for this function. Maybe ChromeClient?
+static inline bool isRunningOnIPhoneOrIPod()
+{
+#if PLATFORM(IOS)
+    static wkDeviceClass deviceClass = iosDeviceClass();
+    return deviceClass == wkDeviceClassiPhone || deviceClass == wkDeviceClassiPod;
+#else
+    return false;
+#endif
+}
+
+static bool video_playable_inlineMediaFeatureEval(CSSValue*, RenderStyle*, Frame* frame, MediaFeaturePrefix)
+{
+    return !isRunningOnIPhoneOrIPod() || frame->settings().mediaPlaybackAllowsInline();
+}
 
 enum PointerDeviceType { TouchPointer, MousePointer, NoPointer, UnknownPointer };
 

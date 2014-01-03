@@ -31,6 +31,23 @@ small-caption
 -webkit-mini-control
 -webkit-small-control
 -webkit-control
+
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+-apple-system-headline
+-apple-system-body
+-apple-system-subheadline
+-apple-system-footnote
+-apple-system-caption1
+-apple-system-caption2
+-apple-system-short-headline
+-apple-system-short-body
+-apple-system-short-subheadline
+-apple-system-short-footnote
+-apple-system-short-caption1
+-apple-system-tall-body
+#endif
+
+// This has to go after the -apple-system versions.
 status-bar
 
 //
