@@ -42,9 +42,6 @@ public:
 
     virtual void setFrameRect(const IntRect&);
 
-    virtual void show() OVERRIDE;
-    virtual void hide() OVERRIDE;
-
     virtual bool handleMouseMoveEvent(const PlatformMouseEvent&) { return false; }
     virtual bool handleMouseOutEvent(const PlatformMouseEvent&) { return false; }
     virtual bool handleMousePressEvent(const PlatformMouseEvent&) { return false; }
@@ -52,6 +49,7 @@ public:
 
     virtual void frameRectsChanged();
 
+    virtual void invalidate() OVERRIDE;
 protected:
     ScrollbarEfl(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
 

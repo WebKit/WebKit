@@ -90,18 +90,6 @@ static void scrollbarEflEdjeMessage(void* data, Evas_Object*, Edje_Message_Type 
     that->scrollableArea()->scrollToOffsetWithoutAnimation(that->orientation(), value);
 }
 
-void ScrollbarEfl::show()
-{
-    if (Evas_Object* object = evasObject())
-        evas_object_show(object);
-}
-
-void ScrollbarEfl::hide()
-{
-    if (Evas_Object* object = evasObject())
-        evas_object_hide(object);
-}
-
 void ScrollbarEfl::setParent(ScrollView* view)
 {
     Widget::setParent(view);
@@ -211,4 +199,16 @@ void ScrollbarEfl::frameRectsChanged()
     evas_object_geometry_get(root()->evasObject(), &x, &y, 0, 0);
     evas_object_move(object, x + rect.x(), y + rect.y());
     evas_object_resize(object, rect.width(), rect.height());
+}
+
+void ScrollbarEfl::invalidate()
+{
+    if (Evas_Object* object = evasObject()) {
+        if (suppressInvalidation())
+            evas_object_hide(object);
+        else
+            evas_object_show(object);
+    }
+
+    Widget::invalidate();
 }

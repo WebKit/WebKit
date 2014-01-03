@@ -1,3 +1,16 @@
+2014-01-02  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Previous scrollbar is remained sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=126414
+
+        Reviewed by Gyuyoung Kim.
+
+        * platform/efl/ScrollbarEfl.cpp:
+        (ScrollbarEfl::invalidate):
+        Updated scrollbar visibility in Scrollbar::invalidate().
+        * platform/efl/ScrollbarEfl.h:
+        Removed show()/hide() which never been called() for scrollbar.
+
 2014-01-02  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Correct symbol lookup logic to handle 1-element arrays
