@@ -40,7 +40,7 @@ NavigatorVibration::~NavigatorVibration()
 
 bool NavigatorVibration::vibrate(Navigator* navigator, unsigned time)
 {
-    return NavigatorVibration::vibrate(navigator, VibrationPattern(time));
+    return NavigatorVibration::vibrate(navigator, VibrationPattern(1, time));
 }
 
 bool NavigatorVibration::vibrate(Navigator* navigator, const VibrationPattern& pattern)

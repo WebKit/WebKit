@@ -1,3 +1,16 @@
+2014-01-03  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        VibrationPattern should allocate an single vector instance for single integer input
+        https://bugs.webkit.org/show_bug.cgi?id=126417
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix a vibration unit test regression after r161139. Also remove unnecessary test cases. 
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (EWK2ViewTest::loadVibrationHTMLString):
+        (TEST_F):
+
 2014-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to WebKitResponsePolicyDecision to check if the MIME type can be shown

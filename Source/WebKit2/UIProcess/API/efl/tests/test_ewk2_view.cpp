@@ -173,7 +173,7 @@ public:
         data->testFinished = true;
     }
 
-    static void loadVibrationHTMLString(Evas_Object* webView, const char* vibrationPattern, bool waitForVibrationEvent, VibrationCbData* data)
+    static void loadVibrationHTMLString(Evas_Object* webView, const char* vibrationPattern, VibrationCbData* data)
     {
         const char* content =
             "<html><head><script type='text/javascript'>function vibrate() { navigator.vibrate(%s);"
@@ -187,9 +187,6 @@ public:
         eina_strbuf_append_printf(buffer, content, vibrationPattern);
         ewk_view_html_string_load(webView, eina_strbuf_string_get(buffer), 0, 0);
         eina_strbuf_free(buffer);
-
-        if (!waitForVibrationEvent)
-            return;
     }
 
     static void onContentsSizeChangedPortrait(void* userData, Evas_Object*, void* eventInfo)
@@ -918,48 +915,34 @@ TEST_F(EWK2ViewTest, ewk_view_pagination)
 
 TEST_F(EWK2ViewTest, ewk_context_vibration_client_callbacks_set)
 {
-    VibrationCbData data = { false, false, 0, 5000 };
+    VibrationCbData data = { false, false, false, 0, 5000 };
     evas_object_smart_callback_add(webView(), "vibrate", onVibrate, &data);
     evas_object_smart_callback_add(webView(), "cancel,vibration", onCancelVibration, &data);
 
     // Vibrate for 5 seconds.
-    loadVibrationHTMLString(webView(), "5000", true, &data);
+    loadVibrationHTMLString(webView(), "5000", &data);
     waitUntilTrue(data.testFinished);
     ASSERT_TRUE(data.didReceiveVibrate);
 
     // Cancel any existing vibrations.
-    loadVibrationHTMLString(webView(), "0", true, &data);
+    loadVibrationHTMLString(webView(), "0", &data);
     waitUntilTrue(data.testFinished);
     ASSERT_TRUE(data.didReceiveCancelVibration);
 
     // This case the pattern will cause the device to vibrate for 200 ms, be still for 100 ms, and then vibrate for 5000 ms.
-    loadVibrationHTMLString(webView(), "[200, 100, 5000]", true, &data);
+    loadVibrationHTMLString(webView(), "[200, 100, 5000]", &data);
     waitUntilTrue(data.testFinished);
     ASSERT_EQ(2, data.vibrateCalledCount);
     ASSERT_TRUE(data.didReceiveVibrate);
 
     // Cancel outstanding vibration pattern.
-    loadVibrationHTMLString(webView(), "[0]", true, &data);
+    loadVibrationHTMLString(webView(), "[0]", &data);
     waitUntilTrue(data.testFinished);
     ASSERT_TRUE(data.didReceiveCancelVibration);
 
     // Stop listening for vibration events, by calling the function with null for the callbacks.
     evas_object_smart_callback_del(webView(), "vibrate", onVibrate);
     evas_object_smart_callback_del(webView(), "cancel,vibration", onCancelVibration);
-
-    // Make sure we don't receive vibration event.
-    loadVibrationHTMLString(webView(), "[5000]", false, &data);
-    waitUntilTrue(data.testFinished);
-    ASSERT_TRUE(waitUntilTitleChangedTo("Loaded"));
-    ASSERT_STREQ("Loaded", ewk_view_title_get(webView()));
-    ASSERT_FALSE(data.didReceiveVibrate);
-
-    // Make sure we don't receive cancel vibration event.
-    loadVibrationHTMLString(webView(), "0", false, &data);
-    waitUntilTrue(data.testFinished);
-    ASSERT_TRUE(waitUntilTitleChangedTo("Loaded"));
-    ASSERT_STREQ("Loaded", ewk_view_title_get(webView()));
-    ASSERT_FALSE(data.didReceiveCancelVibration);
 }
 
 TEST_F(EWK2ViewTest, ewk_view_contents_size_changed)
