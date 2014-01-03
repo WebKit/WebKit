@@ -49,6 +49,7 @@
 #include "RenderFlowThread.h"
 #include "RenderGeometryMap.h"
 #include "RenderInline.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderNamedFlowThread.h"
@@ -472,14 +473,11 @@ void RenderObject::resetTextAutosizing()
 
 RenderLayer* RenderObject::enclosingLayer() const
 {
-    const RenderObject* curr = this;
-    while (curr) {
-        RenderLayer* layer = curr->hasLayer() ? toRenderLayerModelObject(curr)->layer() : 0;
-        if (layer)
-            return layer;
-        curr = curr->parent();
+    for (auto& renderer : lineageOfType<RenderLayerModelObject>(*this)) {
+        if (renderer.layer())
+            return renderer.layer();
     }
-    return 0;
+    return nullptr;
 }
 
 bool RenderObject::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
@@ -494,28 +492,14 @@ bool RenderObject::scrollRectToVisible(const LayoutRect& rect, const ScrollAlign
 
 RenderBox* RenderObject::enclosingBox() const
 {
-    RenderObject* curr = const_cast<RenderObject*>(this);
-    while (curr) {
-        if (curr->isBox())
-            return toRenderBox(curr);
-        curr = curr->parent();
-    }
-    
-    ASSERT_NOT_REACHED();
-    return 0;
+    // FIXME: This should return a reference; it can always find the root RenderView.
+    return lineageOfType<RenderBox>(const_cast<RenderObject&>(*this)).first();
 }
 
 RenderBoxModelObject* RenderObject::enclosingBoxModelObject() const
 {
-    RenderObject* curr = const_cast<RenderObject*>(this);
-    while (curr) {
-        if (curr->isBoxModelObject())
-            return toRenderBoxModelObject(curr);
-        curr = curr->parent();
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    // FIXME: This should return a reference; it can always find the root RenderView.
+    return lineageOfType<RenderBoxModelObject>(const_cast<RenderObject&>(*this)).first();
 }
 
 bool RenderObject::fixedPositionedWithNamedFlowContainingBlock() const

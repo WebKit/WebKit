@@ -72,6 +72,8 @@ private:
 
 template <typename T> RenderAncestorIteratorAdapter<T> ancestorsOfType(RenderObject&);
 template <typename T> RenderAncestorConstIteratorAdapter<T> ancestorsOfType(const RenderObject&);
+template <typename T> RenderAncestorIteratorAdapter<T> lineageOfType(RenderObject&);
+template <typename T> RenderAncestorConstIteratorAdapter<T> lineageOfType(const RenderObject&);
 
 // RenderAncestorIterator
 
@@ -179,6 +181,22 @@ inline RenderAncestorConstIteratorAdapter<T> ancestorsOfType(const RenderObject&
 {
     const T* first = RenderTraversal::findAncestorOfType<const T>(descendant);
     return RenderAncestorConstIteratorAdapter<T>(first);
+}
+
+template <typename T>
+inline RenderAncestorIteratorAdapter<T> lineageOfType(RenderObject& first)
+{
+    if (isRendererOfType<const T>(first))
+        return RenderAncestorIteratorAdapter<T>(static_cast<T*>(&first));
+    return ancestorsOfType<T>(first);
+}
+
+template <typename T>
+inline RenderAncestorConstIteratorAdapter<T> lineageOfType(const RenderObject& first)
+{
+    if (isRendererOfType<const T>(first))
+        return RenderAncestorConstIteratorAdapter<T>(static_cast<const T*>(&first));
+    return ancestorsOfType<T>(first);
 }
 
 }

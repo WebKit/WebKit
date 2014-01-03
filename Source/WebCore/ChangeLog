@@ -1,3 +1,36 @@
+2014-01-03  Andreas Kling  <akling@apple.com>
+
+        Add lineageOfType renderer iterator and start using it.
+        <https://webkit.org/b/126456>
+
+        Add a convenient way to iterate over a renderers ancestry *including*
+        the starting point renderer (if it meets the type criteria.)
+
+        This works just like lineageOfType for Elements.
+
+        Reviewed by Geoffrey Garen.
+
+        * rendering/RenderAncestorIterator.h:
+        (WebCore::lineageOfType):
+
+            Added. Returns an adapter for walking a renderer's entire lineage
+            matching any renderer of the given type.
+
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderLayerModelObject.h:
+
+            Add the requisite isRendererOfType<T> helpers.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::enclosingFloatPaintingLayer):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingLayer):
+        (WebCore::RenderObject::enclosingBox):
+        (WebCore::RenderObject::enclosingBoxModelObject):
+
+            Simplify with lineageOfType. Added some FIXMEs about functions
+            that should return references instead of pointers.
+
 2014-01-03  Martin Robinson  <mrobinson@igalia.com>
 
         Small build fix for the GTK+ CMake port

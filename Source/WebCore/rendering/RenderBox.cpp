@@ -4485,14 +4485,11 @@ int RenderBox::baselinePosition(FontBaseline baselineType, bool /*firstLine*/, L
 
 RenderLayer* RenderBox::enclosingFloatPaintingLayer() const
 {
-    const RenderElement* curr = this;
-    while (curr) {
-        RenderLayer* layer = curr->hasLayer() && curr->isBox() ? toRenderBox(curr)->layer() : 0;
-        if (layer && layer->isSelfPaintingLayer())
-            return layer;
-        curr = curr->parent();
+    for (auto& box : lineageOfType<RenderBox>(*this)) {
+        if (box.layer() && box.layer()->isSelfPaintingLayer())
+            return box.layer();
     }
-    return 0;
+    return nullptr;
 }
 
 LayoutRect RenderBox::logicalVisualOverflowRectForPropagation(RenderStyle* parentStyle) const
