@@ -23,16 +23,16 @@
 #include <gio/gio.h>
 #include <wtf/gobject/GOwnPtr.h>
 
-typedef HashMap<String, Function<PassOwnPtr<WebProcessTest>()>> TestsMap;
+typedef HashMap<String, std::function<PassOwnPtr<WebProcessTest> ()>> TestsMap;
 static TestsMap& testsMap()
 {
     DEFINE_STATIC_LOCAL(TestsMap, s_testsMap, ());
     return s_testsMap;
 }
 
-void WebProcessTest::add(const String& testName, Function<PassOwnPtr<WebProcessTest>()> closure)
+void WebProcessTest::add(const String& testName, std::function<PassOwnPtr<WebProcessTest> ()> closure)
 {
-    testsMap().add(testName, closure);
+    testsMap().add(testName, std::forward<std::function<PassOwnPtr<WebProcessTest> ()>>(closure));
 }
 
 PassOwnPtr<WebProcessTest> WebProcessTest::create(const String& testName)

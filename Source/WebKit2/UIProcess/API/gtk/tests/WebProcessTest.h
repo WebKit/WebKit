@@ -18,7 +18,6 @@
  */
 
 #include <webkit2/webkit-web-extension.h>
-#include <wtf/Functional.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -30,10 +29,10 @@ public:
     virtual ~WebProcessTest() { }
     virtual bool runTest(const char* testName, WebKitWebExtension*, GVariant* args) = 0;
 
-    static void add(const String& testName, Function<PassOwnPtr<WebProcessTest>()>);
+    static void add(const String& testName, std::function<PassOwnPtr<WebProcessTest> ()>);
     static PassOwnPtr<WebProcessTest> create(const String& testName);
 };
 
 #define REGISTER_TEST(ClassName, TestName) \
-    WebProcessTest::add(String::fromUTF8(TestName), WTF::bind(&ClassName::create))
+    WebProcessTest::add(String::fromUTF8(TestName), ClassName::create)
 

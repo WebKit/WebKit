@@ -1,3 +1,17 @@
+2014-01-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Switch from WTF::Function to std::function in WebProcessTest
+        https://bugs.webkit.org/show_bug.cgi?id=126397
+
+        Reviewed by Anders Carlsson.
+
+        Use std::function<> and std::bind() instead of WTF::Function and WTF::bind,
+        following the effort of using STL concepts where possible.
+
+        * UIProcess/API/gtk/tests/WebProcessTest.cpp:
+        (WebProcessTest::add):
+        * UIProcess/API/gtk/tests/WebProcessTest.h:
+
 2014-01-02  Gavin Barraclough  <barraclough@apple.com>
 
         Propagate WindowServer modifications state to WebProcess
