@@ -11,6 +11,14 @@
 
 2014-01-02  Jinwoo Song  <jinwoo7.song@samsung.com>
 
+        Unreviewed EFL gardening. Remove warnings in parsing TestExpectations.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
+2014-01-02  Jinwoo Song  <jinwoo7.song@samsung.com>
+
         Unreviewed EFL gardening. Rebaselining after r161140.
 
         * platform/efl/fast/table/dynamic-caption-add-before-child-expected.png:

@@ -360,7 +360,6 @@ compositing/tiling/rotated-tiled-preserve3d-clamped.html [ Missing ]
 # Failing after r142758.
 webkit.org/b/109948 fast/dom/Window/mozilla-focus-blur.html [ Failure Pass ]
 
-webkit.org/b/119789 fast/events/touch/frame-hover-update.html [ Crash ]
 webkit.org/b/119789 fast/events/touch/multi-touch-inside-iframes.html [ Crash ]
 webkit.org/b/119789 fast/events/touch/multi-touch-inside-nested-iframes.html [ Crash ]
 webkit.org/b/119789 fast/events/touch/touch-before-pressing-spin-button.html [ Crash ]
