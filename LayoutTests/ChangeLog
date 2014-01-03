@@ -1,3 +1,10 @@
+2014-01-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Add failure and flakiness expectations for a couple of tests.
+        * platform/gtk/svg/custom/object-no-size-attributes-expected.txt: Rebaseline.
+
 2014-01-02  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Correct symbol lookup logic to handle 1-element arrays

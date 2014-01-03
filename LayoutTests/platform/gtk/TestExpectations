@@ -299,6 +299,9 @@ webkit.org/b/99065 media/media-source/media-source-append-failed.html [ Timeout 
 webkit.org/b/99065 media/media-source/media-source-canplaythrough.html [ Timeout ]
 webkit.org/b/99065 media/media-source/media-source-play.html [ Timeout ]
 webkit.org/b/99065 media/media-source/media-source-end-of-stream.html [ Timeout ]
+webkit.org/b/99065 media/media-source/media-source-duration-after-append.html [ Failure ]
+webkit.org/b/99065 media/media-source/media-source-monitor-source-buffers.html [ Failure ]
+webkit.org/b/99065 media/media-source/media-source-video-playback-quality.html [ Failure ]
 
 # Encrypted Media Extensions are not enabled.
 webkit.org/b/99024 media/encrypted-media [ Failure Timeout ]
@@ -756,6 +759,9 @@ webkit.org/b/124512 media/video-seek-with-negative-playback.html [ Failure Pass 
 webkit.org/b/124513 media/video-ended-event-negative-playback.html [ Failure Pass ]
 
 webkit.org/b/125407 plugins/plugin-clip-subframe.html [ Failure Pass ]
+
+webkit.org/b/126420 fast/table/dynamic-caption-add-before-child.xhtml [ Failure Pass ]
+webkit.org/b/126420 svg/custom/resource-invalidation-crash.svg [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1516,6 +1522,9 @@ webkit.org/b/125071 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top
 webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]
 
 webkit.org/b/125406 fast/regions/relative-in-absolute-borders-overflow.html [ ImageOnlyFailure ]
+
+webkit.org/b/126425 fast/block/float/overhanging-tall-block.html [ Failure ]
+webkit.org/b/126425 scrollbars/scrollbar-large-overflow-rectangle.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
