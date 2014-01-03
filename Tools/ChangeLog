@@ -1,3 +1,27 @@
+2014-01-02  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        [GTK] fixing ycm_extra_conf.py file
+        https://bugs.webkit.org/show_bug.cgi?id=126371
+
+        It's an attempt to fix three problems with the current ycm_extra_conf file.
+        The current implementation assumes that it's a symlink, which is not true.
+        Usually python creates a pyc file, and this is what you get in __file__.
+        the .pyc is not a symlink, and the current implementation doesn't work
+        if that's the case.
+
+        It also assumes that the user is in the root folder.
+        If the user is in WebkitBuild/Debug and open a file as ../../Source/* it won't work.
+
+        Last but not least, "elif flag in FLAGS_PRECEDING_PATHS" emits an
+        exception since "flag" doesn't exists.
+
+        All those things were fixed.
+
+        Reviewed by Martin Robinson.
+
+        * gtk/ycm_extra_conf.py:
+        (transform_relative_paths_to_absolute_paths):
+
 2014-01-02  Alexey Proskuryakov  <ap@apple.com>
 
         Bindings tests results links are broken at build.webkit.org/dashboard
