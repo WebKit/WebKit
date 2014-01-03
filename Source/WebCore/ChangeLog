@@ -1,3 +1,14 @@
+2014-01-03  Alberto Garcia  <berto@igalia.com>
+
+        WebKit-GTK 1.8.1 does not build on OS X 10.7
+        https://bugs.webkit.org/show_bug.cgi?id=88407
+
+        Reviewed by Carlos Garcia Campos.
+
+        Replace non-portable 'echo -n' with 'true'.
+
+        * GNUmakefile.am:
+
 2014-01-03  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error.
