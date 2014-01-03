@@ -86,19 +86,16 @@ static DashArray translateIntersectionPointsToSkipInkBoundaries(const DashArray&
     Vector<std::pair<float, float>> intermediateTuples;
     if (tuples.size() >= 2) {
         intermediateTuples.append(*tuples.begin());
-        auto lastIntermediate = intermediateTuples.begin();
         for (auto i = tuples.begin() + 1; i != tuples.end(); i++) {
-            float& firstEnd = lastIntermediate->second;
+            float& firstEnd = intermediateTuples.last().second;
             float secondStart = i->first;
             float secondEnd = i->second;
             if (secondStart <= firstEnd && secondEnd <= firstEnd) {
                 // Ignore this range completely
             } else if (secondStart <= firstEnd)
                 firstEnd = secondEnd;
-            else {
+            else
                 intermediateTuples.append(*i);
-                ++lastIntermediate;
-            }
         }
     } else
         intermediateTuples = tuples;
