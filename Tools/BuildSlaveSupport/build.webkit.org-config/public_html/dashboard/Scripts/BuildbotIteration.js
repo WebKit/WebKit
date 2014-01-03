@@ -48,6 +48,14 @@ BuildbotIteration = function(queue, id, finished)
 
 BaseObject.addConstructorFunctions(BuildbotIteration);
 
+// JSON result values for both individual steps and the whole iteration.
+BuildbotIteration.SUCCESS = 0;
+BuildbotIteration.WARNINGS = 1;
+BuildbotIteration.FAILURE = 2;
+BuildbotIteration.SKIPPED = 3;
+BuildbotIteration.EXCEPTION = 4;
+BuildbotIteration.RETRY = 5;
+
 BuildbotIteration.Event = {
     Updated: "updated"
 };
@@ -154,6 +162,10 @@ BuildbotIteration.prototype = {
             var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision"; });
             this.internalRevision = internalRevisionProperty ? parseInt(internalRevisionProperty[1], 10) : null;
 
+            var compileWebKitStep = data.steps.findFirst(function(step) { return step.name === "compile-webkit"; });
+            if (compileWebKitStep)
+                this.webkitCompilationFailed = compileWebKitStep.results[0] !== BuildbotIteration.SUCCESS;
+
             var layoutTestResults = collectTestResults.call(this, data, "layout-test");
             this.layoutTestResults = layoutTestResults ? new BuildbotTestResults(this, layoutTestResults) : null;
 
@@ -174,10 +186,8 @@ BuildbotIteration.prototype = {
 
             this.loaded = true;
 
-            // Results values (same for the iteration and for each of its steps):
-            // SUCCESS: 0, WARNINGS: 1, FAILURE: 2, SKIPPED: 3, EXCEPTION: 4, RETRY: 5.
             this.failed = !!data.results;
-            this.willRetry = data.results === 5;
+            this.willRetry = data.results === BuildbotIteration.RETRY;
 
             this.text = data.text.join(" ");
 

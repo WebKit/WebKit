@@ -66,15 +66,25 @@ BuildbotBuilderQueueView.prototype = {
             if (firstRecentFailedIteration && firstRecentFailedIteration.loaded) {
                 var failureCount = queue.recentFailedIterationCount;
                 var message = this.revisionContentForIteration(firstRecentFailedIteration);
-                var url = queue.buildbot.buildLogURLForIteration(firstRecentFailedIteration);
-                var status = new StatusLineView(message, StatusLineView.Status.Bad, failureCount > 1 ? "failed builds since" : "failed build", failureCount > 1 ? failureCount : null, url);
+                if (firstRecentFailedIteration.webkitCompilationFailed) {
+                    // Link directly to compiler output.
+                    // FIXME: Results JSON may contain multiple log links, including one for nicely filtered result.
+                    // Which one is best to use? Do we want the filtered one in a popover?
+                    var url = queue.buildbot.buildLogURLForIteration(firstRecentFailedIteration);
+                    var status = StatusLineView.Status.Bad;
+                } else {
+                    // Some other step failed, link to main buildbot page for the iteration.
+                    var url = queue.buildbot.buildPageURLForIteration(firstRecentFailedIteration);
+                    var status = StatusLineView.Status.Danger;
+                }
+                var status = new StatusLineView(message, status, failureCount > 1 ? "failures since" : firstRecentFailedIteration.text, failureCount > 1 ? failureCount : null, url);
                 this.element.appendChild(status.element);
             }
 
             var mostRecentSuccessfulIteration = queue.mostRecentSuccessfulIteration;
             if (mostRecentSuccessfulIteration && mostRecentSuccessfulIteration.loaded) {
                 var message = this.revisionContentForIteration(mostRecentSuccessfulIteration);
-                var url = queue.buildbot.buildLogURLForIteration(mostRecentSuccessfulIteration);
+                var url = queue.buildbot.buildPageURLForIteration(mostRecentSuccessfulIteration);
                 var status = new StatusLineView(message, StatusLineView.Status.Good, firstRecentFailedIteration ? "last successful build" : "latest build", null, url);
                 this.element.appendChild(status.element);
             } else {
