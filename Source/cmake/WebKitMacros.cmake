@@ -203,17 +203,24 @@ endmacro()
 
 
 macro(WEBKIT_CREATE_FORWARDING_HEADER _target_directory _file)
+    get_filename_component(_source_path "${CMAKE_SOURCE_DIR}/Source/" ABSOLUTE)
     get_filename_component(_absolute "${_file}" ABSOLUTE)
     get_filename_component(_name "${_file}" NAME)
-    set(_content "#include \"${_absolute}\"\n")
-    set(_filename "${_target_directory}/${_name}")
+    set(_target_filename "${_target_directory}/${_name}")
 
-    if (EXISTS "${_filename}")
-        file(READ "${_filename}" _old_content)
+    # Try to make the path in the forwarding header relative to the Source directory
+    # so that these forwarding headers are compatible with the ones created by the
+    # WebKit2 generate-forwarding-headers script.
+    string(REGEX REPLACE "${_source_path}/" "" _relative ${_absolute})
+
+    set(_content "#include \"${_relative}\"\n")
+
+    if (EXISTS "${_target_filename}")
+        file(READ "${_target_filename}" _old_content)
     endif ()
 
     if (NOT _old_content STREQUAL _content)
-        file(WRITE "${_filename}" "${_content}")
+        file(WRITE "${_target_filename}" "${_content}")
     endif ()
 endmacro()
 
@@ -226,7 +233,7 @@ macro(WEBKIT_CREATE_FORWARDING_HEADERS _framework)
     foreach (_file ${_files})
         file(READ "${_file}" _content)
         string(REGEX MATCH "^#include \"([^\"]*)\"" _matched ${_content})
-        if (_matched AND NOT EXISTS "${CMAKE_MATCH_1}")
+        if (_matched AND NOT EXISTS "${CMAKE_SOURCE_DIR}/Source/${CMAKE_MATCH_1}")
            file(REMOVE "${_file}")
         endif ()
     endforeach ()
