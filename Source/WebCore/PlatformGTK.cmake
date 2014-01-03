@@ -461,6 +461,7 @@ if (ENABLE_WEBKIT2)
         Modules/gamepad/Gamepad.idl
         Modules/gamepad/GamepadList.idl
         Modules/geolocation/Geolocation.idl
+        Modules/mediasource/VideoPlaybackQuality.idl
         Modules/quota/StorageInfo.idl
         Modules/quota/StorageQuota.idl
         Modules/webdatabase/Database.idl
