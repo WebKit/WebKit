@@ -160,5 +160,10 @@ StatusLineView.prototype = {
         } else {
             this._messageElement.textContent = x;
         }
+    },
+
+    get statusBubbleElement()
+    {
+        return this._statusBubbleElement;
     }
 };

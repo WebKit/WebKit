@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var settings = new Settings;
-var buildbot = new WebKitBuildbot;
-var webkitTrac = new Trac("http://trac.webkit.org/");
-var ews = new EWS;
-var testHistory = new TestHistory;
+TestHistory = function()
+{
+    this._baseURL = "http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html";
+};
+
+BaseObject.addConstructorFunctions(TestHistory);
+
+TestHistory.prototype = {
+    constructor: TestHistory,
+    __proto__: BaseObject.prototype,
+
+    historyPageURLForTest: function(path)
+    {
+        return this._baseURL + "#showAllRuns=true&tests=" + encodeURIComponent(path);
+    }
+};

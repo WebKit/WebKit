@@ -64,8 +64,8 @@ WebKitBuildbot.prototype = {
         return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/compile-webkit/logs/stdio/text";
     },
 
-    layoutTestResultsURLForIteration: function(iteration)
+    layoutTestResultsDirectoryURLForIteration: function(iteration)
     {
-        return this.baseURL + "results/" + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent("r" + iteration.openSourceRevision + " (" + iteration.id + ")") + "/results.html";
+        return this.baseURL + "results/" + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent("r" + iteration.openSourceRevision + " (" + iteration.id + ")");
     }
 };

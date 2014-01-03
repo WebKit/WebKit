@@ -1,3 +1,78 @@
+2014-01-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Please add a way to quick peek at failing tests at build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=122181
+
+        Reviewed by Timothy Hatcher and Timothy Horton.
+
+        Detailed results are saved by run-webkit-tests to full_results.json (which is actually
+        JSONP). Dashboard will load them on demand.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.layoutTestResultsURLForIteration): Moved from WebKitBuildbot.js
+        and made it use a function from WebKitBuildbot that builds results directory path.
+        (Buildbot.prototype.layoutTestFullResultsURLForIteration): Added a function that builds
+        a URL for full_results.json.
+        (Buildbot.prototype.layoutTestCrashLogForIteration): Added a function that builds
+        a URL for a crash log.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.loadLayoutTestResults): Load and cache layout test results for
+        the iteration.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:        
+        (BuildbotQueueView.prototype._presentPopoverForPendingCommits): Updated for changed
+        popover API (see below).
+        (BuildbotQueueView.prototype._presentPopoverForRevisionRange): Ditto.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus): Added a check
+        for iterations that were interrupted (previously, they were displayed incorrectly,
+        often as passes). Install popover trackers for failure bubbles for which we can currently
+        display something useful.
+        (BuildbotTesterQueueView.prototype._popoverContentForLayoutTestRegressions): Build
+        a popover for layout test regressions when we have the data loaded on demand.
+        We have test paths, special indicators for crashes/timeouts, and links to test history
+        at flakiness dashboard.
+        (BuildbotTesterQueueView.prototype._presentPopoverForLayoutTestRegressions): Show
+        the popover for layout test regressions. Just shows "Loading..." until the data is
+        loaded.
+        (BuildbotTesterQueueView.prototype._presentPopoverForMultipleFailureKinds): List
+        types of failures if there are multiple. There is a lot of similarity with
+        appendBuilderQueueStatus(), but I couldn't find a good way to share the code.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Initialization.js:
+        Create a global test history object, which is used for links in layout test popover.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Popover.js:
+        Changed the API to be more like WebInspector again, allowing for changing content
+        of an existing popover. As the size of a popover can change, making the mouse pointer
+        enter it without a mousenter event, install a handler for mousewheel instead, and block
+        document scrolling from this event handler when needed.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/StatusLineView.js:
+        (StatusLineView.prototype.get statusBubbleElement): Added an accessor for status
+        bubble element, making it possible to install a popover on it.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Utilities.js:
+        (JSON.load): Added the ability to load JSONP by providing an optional callback name.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot.prototype.layoutTestResultsDirectoryURLForIteration): Switched from
+        building a complete results URL to only building one for root results path. This is
+        the part that depends on specific buildbot installation, everything relative to it
+        is the same.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitTestHistory.js: Added.
+        Build a path to test history page. In the future, we may consider adding code to
+        load the data and display it inline.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/QueueView.css:
+        Added styles for this new popover.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/index.html: Added
+        a new file, WebKitTestHistory.js.
+
 2014-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r161214): [GTK] WebKit2 C API tests fail to run after r161214

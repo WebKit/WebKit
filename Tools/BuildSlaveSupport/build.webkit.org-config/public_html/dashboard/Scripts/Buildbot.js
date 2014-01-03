@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,5 +84,21 @@ Buildbot.prototype = {
     bindingsTestResultsURLForIteration: function(iteration)
     {
         return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/bindings-generation-tests/logs/stdio";
+    },
+
+    layoutTestResultsURLForIteration: function(iteration)
+    {
+        return this.layoutTestResultsDirectoryURLForIteration(iteration) + "/results.html";
+    },
+
+    layoutTestFullResultsURLForIteration: function(iteration)
+    {
+        return this.layoutTestResultsDirectoryURLForIteration(iteration) + "/full_results.json";
+    },
+
+    layoutTestCrashLogForIteration: function(iteration, testPath)
+    {
+        var crashLogPath = testPath.replace(/^(.*)\.(?:.*)$/, "$1-crash-log.txt");
+        return this.layoutTestResultsDirectoryURLForIteration(iteration) + "/" + crashLogPath;
     }
 };

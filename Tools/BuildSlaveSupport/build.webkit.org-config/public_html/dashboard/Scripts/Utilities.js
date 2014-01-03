@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-JSON.load = function(url, callback)
+JSON.load = function(url, callback, jsonpCallbackName)
 {
     console.assert(url);
 
@@ -36,7 +36,10 @@ JSON.load = function(url, callback)
             return;
 
         try {
-            var data = JSON.parse(request.responseText);
+            var responseText = request.responseText;
+            if (jsonpCallbackName)
+                responseText = responseText.replace(new RegExp("^" + jsonpCallbackName + "\\((.*)\\);?$"), "$1");
+            var data = JSON.parse(responseText);
         } catch (e) {
             var data = {error: e.message};
         }

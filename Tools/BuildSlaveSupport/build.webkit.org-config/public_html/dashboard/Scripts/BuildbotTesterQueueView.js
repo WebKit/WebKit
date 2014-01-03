@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,6 +68,9 @@ BuildbotTesterQueueView.prototype = {
                 if (!iteration.failed) {
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Good, "all tests passed");
                     limit = 0;
+                } else if (!iteration.productive) {
+                    var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
+                    var status = new StatusLineView(messageElement, StatusLineView.Status.Danger, iteration.text, undefined, url);
                 } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && !bindingTestResults.errorOccurred) {
                     // Something wrong happened, but it was not a test failure.
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
@@ -75,6 +78,7 @@ BuildbotTesterQueueView.prototype = {
                 } else if (layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && !bindingTestResults.errorOccurred) {
                     var url = iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration);
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, layoutTestResults.failureCount === 1 ? "layout test failure" : "layout test failures", layoutTestResults.tooManyFailures ? layoutTestResults.failureCount + "\uff0b" : layoutTestResults.failureCount, url);
+                    new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
                 } else if (!layoutTestResults.failureCount && javascriptTestResults.failureCount && !apiTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && !bindingTestResults.errorOccurred) {
                     var url = iteration.queue.buildbot.javascriptTestResultsURLForIteration(iteration);
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, javascriptTestResults.failureCount === 1 ? "javascript test failure" : "javascript test failures", javascriptTestResults.failureCount, url);
@@ -94,6 +98,7 @@ BuildbotTesterQueueView.prototype = {
                     var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                     var totalFailures = layoutTestResults.failureCount + javascriptTestResults.failureCount + apiTestResults.failureCount + pythonTestResults.failureCount + perlTestResults.failureCount + bindingTestResults.errorOccurred;
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, totalFailures === 1 ? "test failure" : "test failures", totalFailures, url);
+                    new PopoverTracker(status.statusBubbleElement, this._presentPopoverForMultipleFailureKinds.bind(this), iteration);
                 }
 
                 this.element.appendChild(status.element);
@@ -123,4 +128,141 @@ BuildbotTesterQueueView.prototype = {
         appendBuild.call(this, this.releaseQueues, "Release");
         appendBuild.call(this, this.debugQueues, "Debug");
     },
+
+    _popoverContentForLayoutTestRegressions: function(iteration)
+    {
+        var hasTestHistory = typeof testHistory !== "undefined";
+
+        var content = document.createElement("div");
+        content.className = "test-results-popover";
+
+        if (!iteration.layoutTestResults.regressions) {
+            var message = document.createElement("div");
+            message.className = "loading-failure";
+            message.textContent = "Test results couldn\u2019t be loaded";
+            content.appendChild(message);
+            return content;
+        }
+
+        var sortedRegressions = iteration.layoutTestResults.regressions.slice().sort(function(a, b) { return (a.path === b.path) ? 0 : (a.path > b.path) ? 1 : -1; });
+
+        for (var i = 0, end = sortedRegressions.length; i != end; ++i) {
+            var test = sortedRegressions[i];
+
+            var rowElement = document.createElement("div");
+
+            var testPathElement = document.createElement("span");
+            testPathElement.className = "test-path";
+            testPathElement.textContent = test.path;
+            rowElement.appendChild(testPathElement);
+
+            if (test.crash) {
+                var failureKindElement = document.createElement("a");
+                failureKindElement.className = "failure-kind-indicator"
+                failureKindElement.textContent = "crash";
+                failureKindElement.href = iteration.queue.buildbot.layoutTestCrashLogForIteration(iteration, test.path);
+                failureKindElement.target = "_blank";
+                rowElement.appendChild(failureKindElement);
+            }
+
+            if (test.timeout) {
+                var failureKindElement = document.createElement("span");
+                failureKindElement.className = "failure-kind-indicator"
+                failureKindElement.textContent = "timeout";
+                rowElement.appendChild(failureKindElement);
+            }
+
+            if (hasTestHistory) {
+                var testHistoryLink = document.createElement("a");
+                testHistoryLink.className = "test-history-link";
+                testHistoryLink.textContent = "history";
+                testHistoryLink.href = testHistory.historyPageURLForTest(test.path);
+                testHistoryLink.target = "_blank";
+                rowElement.appendChild(testHistoryLink);
+            }
+
+            content.appendChild(rowElement);
+        }
+
+        return content;
+    },
+
+    _presentPopoverForLayoutTestRegressions: function(element, popover, iteration)
+    {
+        if (iteration.layoutTestResults.regressions)
+            var content = this._popoverContentForLayoutTestRegressions(iteration);
+        else {
+            var content = document.createElement("div");
+            content.className = "test-results-popover";
+
+            var loadingIndicator = document.createElement("div");
+            loadingIndicator.className = "loading-indicator";
+            loadingIndicator.textContent = "Loading\u2026";
+            content.appendChild(loadingIndicator);
+
+            iteration.loadLayoutTestResults(function() {
+                popover.content = this._popoverContentForLayoutTestRegressions(iteration);
+            }.bind(this));
+        }
+        var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
+        popover.content = content;
+        popover.present(rect, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
+        return true;
+    },
+
+    _presentPopoverForMultipleFailureKinds: function(element, popover, iteration)
+    {
+        function addResultKind(message, url) {
+            var line = document.createElement("a");
+            line.className = "failing-test-kind-summary";
+            line.href = url;
+            line.textContent = message;
+            line.target = "_blank";
+            content.appendChild(line);            
+        }
+
+        var layoutTestResults = iteration.layoutTestResults || {failureCount: 0};
+        var javascriptTestResults = iteration.javascriptTestResults || {failureCount: 0};
+        var apiTestResults = iteration.apiTestResults || {failureCount: 0};
+        var pythonTestResults = iteration.pythonTestResults || {failureCount: 0};
+        var perlTestResults = iteration.perlTestResults || {failureCount: 0};
+        var bindingTestResults = iteration.bindingTestResults || {errorOccurred: false};
+
+        var content = document.createElement("div");
+        content.className = "test-results-popover";
+
+        if (layoutTestResults.failureCount) {
+            var message = (layoutTestResults.tooManyFailures ? layoutTestResults.failureCount + "\uff0b" : layoutTestResults.failureCount) + "\u00a0" +
+                (layoutTestResults.failureCount === 1 ? "layout test failure" : "layout test failures");
+            addResultKind(message, iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
+        }
+
+        if (javascriptTestResults.failureCount) {
+            var message = javascriptTestResults.failureCount + "\u00a0" + (javascriptTestResults.failureCount === 1 ? "javascript test failure" : "javascript test failures");
+            addResultKind(message, iteration.queue.buildbot.javascriptTestResultsURLForIteration(iteration));
+        }
+
+        if (apiTestResults.failureCount) {
+            var message = apiTestResults.failureCount + "\u00a0" + (apiTestResults.failureCount === 1 ? "api test failure" : "api test failures");
+            addResultKind(message, iteration.queue.buildbot.apiTestResultsURLForIteration(iteration));
+        }
+
+        if (pythonTestResults.failureCount) {
+            var message = pythonTestResults.failureCount + "\u00a0" + (pythonTestResults.failureCount === 1 ? "webkitpy test failure" : "webkitpy test failures");
+            addResultKind(message, iteration.queue.buildbot.bindingsTestResultsURLForIteration(iteration));
+        }
+
+        if (perlTestResults.failureCount) {
+            var message = perlTestResults.failureCount + "\u00a0" + (perlTestResults.failureCount === 1 ? "webkitperl test failure" : "webkitperl test failures");
+            addResultKind(message, iteration.queue.buildbot.webkitperlTestResultsURLForIteration(iteration));
+        }
+
+        if (bindingTestResults.errorOccurred)
+            addResultKind("bindings tests failed", iteration.queue.buildbot.bindingsTestResultsURLForIteration(iteration));
+
+        var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
+        popover.content = content;
+        popover.present(rect, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
+        return true;
+    }
 };

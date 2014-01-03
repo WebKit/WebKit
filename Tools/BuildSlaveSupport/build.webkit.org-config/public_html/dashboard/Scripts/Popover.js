@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,8 @@ Dashboard.Popover = function(delegate)
     this._content = null;
     this._targetFrame = new Dashboard.Rect;
     this._preferredEdges = null;
+
+    this._contentNeedsUpdate = false;
 
     this._element = document.createElement("div");
     this._element.className = Dashboard.Popover.StyleClassName;
@@ -92,18 +94,51 @@ Dashboard.Popover.prototype = {
             && !this._element.classList.contains(Dashboard.Popover.StepInClassName);
     },
 
+    get potentiallyVisible()
+    {
+        return this._element.parentNode === document.body;
+    },
+
+    set content(content)
+    {
+        if (content === this._content)
+            return;
+
+        console.assert(content);
+
+        this._content = content;
+
+        this._contentNeedsUpdate = true;
+
+        if (this.potentiallyVisible)
+            this._update();
+    },
+
+    update: function()
+    {
+        if (!this.potentiallyVisible)
+            return;
+
+        var previouslyFocusedElement = document.activeElement;
+
+        this._contentNeedsUpdate = true;
+        this._update();
+
+        if (previouslyFocusedElement)
+            previouslyFocusedElement.focus();
+    },
+
     /**
      * @param {Dashboard.Rect} targetFrame
      * @param {Element} content
      * @param {Dashboard.RectEdge}[] preferredEdges
      */
-    present: function(targetFrame, content, preferredEdges)
+    present: function(targetFrame, preferredEdges)
     {
-        console.assert(!this._content)
-
         this._targetFrame = targetFrame;
-        this._content = content;
         this._preferredEdges = preferredEdges;
+
+        console.assert(this._content);
 
         window.addEventListener("mousedown", this, true);
         window.addEventListener("scroll", this, true);
@@ -112,11 +147,8 @@ Dashboard.Popover.prototype = {
 
         this._element.classList.add(Dashboard.Popover.StepInClassName);
 
-        // Scrolling inside a popover should not cascade to document when reaching a bound, because that would make it disappear unexpectedly.
-        if (this._container.offsetHeight < this._container.scrollHeight) {
-            this._element.addEventListener("mouseenter", this, true);
-            this._element.addEventListener("mouseleave", this, true);
-        }
+        this._element.addEventListener("mousewheel", this, true);
+        this._element.addEventListener("mouseleave", this, true);
     },
 
     makeVisibleImmediately: function()
@@ -156,8 +188,11 @@ Dashboard.Popover.prototype = {
             else if (this._element.classList.contains(Dashboard.Popover.FadeOutClassName))
                 this._finalizeDismissal();
             break;
-        case "mouseenter":
-            document.body.classList.add(Dashboard.Popover.PreventDocumentScrollingClassName);
+        case "mousewheel":
+            // Scrolling inside a popover should not cascade to document when reaching a bound, because that would make it disappear unexpectedly.
+            // FIXME: We should use mouseenter for better performance once it works reliably, see <https://bugs.webkit.org/show_bug.cgi?id=120786>.
+            if (this._container.offsetHeight < this._container.scrollHeight)
+                document.body.classList.add(Dashboard.Popover.PreventDocumentScrollingClassName);
             break;
         case "mouseleave":
             if (!this._element.isSelfOrAncestor(event.toElement))
@@ -180,20 +215,22 @@ Dashboard.Popover.prototype = {
         else
             this._element.classList.remove(Dashboard.Popover.FadeOutClassName);
 
-        // Reset CSS properties on element so that the element may be sized to fit its content.
-        this._element.style.removeProperty("left");
-        this._element.style.removeProperty("top");
-        this._element.style.removeProperty("width");
-        this._element.style.removeProperty("height");
-        if (this._edge !== null)
-            this._element.classList.remove(this._cssClassNameForEdge());
+        if (this._contentNeedsUpdate) {
+            // Reset CSS properties on element so that the element may be sized to fit its content.
+            this._element.style.removeProperty("left");
+            this._element.style.removeProperty("top");
+            this._element.style.removeProperty("width");
+            this._element.style.removeProperty("height");
+            if (this._edge !== null)
+                this._element.classList.remove(this._cssClassNameForEdge());
 
-        // Add the content in place of the wrapper to get the raw metrics.
-        this._element.replaceChild(this._content, this._container);
+            // Add the content in place of the wrapper to get the raw metrics.
+            this._element.replaceChild(this._content, this._container);
 
-        // Get the ideal size for the popover to fit its content.
-        var popoverBounds = this._element.getBoundingClientRect();
-        this._preferredSize = new Dashboard.Size(Math.ceil(popoverBounds.width), Math.ceil(popoverBounds.height));
+            // Get the ideal size for the popover to fit its content.
+            var popoverBounds = this._element.getBoundingClientRect();
+            this._preferredSize = new Dashboard.Size(Math.ceil(popoverBounds.width), Math.ceil(popoverBounds.height));
+        }
 
         // The frame of the window with a little inset to make sure we have room for shadows.
         var containerFrame = new Dashboard.Rect(0, 0, window.innerWidth, window.innerHeight);
@@ -267,9 +304,13 @@ Dashboard.Popover.prototype = {
         }
 
         // Wrap the content in the container so that it's located correctly.
-        this._container.textContent = "";
-        this._element.replaceChild(this._container, this._content);
-        this._container.appendChild(this._content);
+        if (this._contentNeedsUpdate) {
+            this._container.textContent = "";
+            this._element.replaceChild(this._container, this._content);
+            this._container.appendChild(this._content);
+        }
+
+        this._contentNeedsUpdate = false;
     },
 
     _cssClassNameForEdge: function()
