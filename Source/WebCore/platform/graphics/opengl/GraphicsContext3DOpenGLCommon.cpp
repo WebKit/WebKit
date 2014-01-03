@@ -195,6 +195,12 @@ void GraphicsContext3D::prepareTexture()
         return;
 
     makeContextCurrent();
+
+    GLboolean isScissorEnabled = ::glIsEnabled(GL_SCISSOR_TEST);
+    ::glDisable(GL_SCISSOR_TEST);
+    GLboolean isDitherEnabled = ::glIsEnabled(GL_DITHER);
+    ::glDisable(GL_DITHER);
+    
     if (m_attrs.antialias)
         resolveMultisamplingIfNecessary();
 
@@ -208,6 +214,11 @@ void GraphicsContext3D::prepareTexture()
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
     ::glFinish();
     m_layerComposited = true;
+
+    if (isScissorEnabled)
+        ::glEnable(GL_SCISSOR_TEST);
+    if (isDitherEnabled)
+        ::glEnable(GL_DITHER);
 }
 #endif
 

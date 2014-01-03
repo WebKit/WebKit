@@ -1,3 +1,17 @@
+2014-01-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] glScissor test is not accounted for when generating internal rendering textures.
+        https://bugs.webkit.org/show_bug.cgi?id=126455
+        <rdar://problem/15744206>
+
+        Reviewed by Dean Jackson.
+
+        Covered by webgl/1.0.2/conformance/rendering/gl-scissor-test.html
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::prepareTexture): Check state of GL_SCISSOR_TEST and GL_DITHER, deactivate them during
+        our internal drawing, then turn them back on for further processing.
+
 2014-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Maybe fix Windows build.
