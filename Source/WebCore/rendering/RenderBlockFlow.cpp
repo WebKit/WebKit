@@ -386,12 +386,11 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     if (oldHeight != newHeight) {
         if (oldHeight > newHeight && maxFloatLogicalBottom > newHeight && !childrenInline()) {
             // One of our children's floats may have become an overhanging float for us. We need to look for it.
-            for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-                if (child->isRenderBlockFlow() && !child->isFloatingOrOutOfFlowPositioned()) {
-                    RenderBlockFlow& block = toRenderBlockFlow(*child);
-                    if (block.lowestFloatLogicalBottom() + block.logicalTop() > newHeight)
-                        addOverhangingFloats(block, false);
-                }
+            for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
+                if (blockFlow.isFloatingOrOutOfFlowPositioned())
+                    continue;
+                if (blockFlow.lowestFloatLogicalBottom() + blockFlow.logicalTop() > newHeight)
+                    addOverhangingFloats(blockFlow, false);
             }
         }
     }
@@ -2462,21 +2461,21 @@ void RenderBlockFlow::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRe
     if (floatToRemove)
         removeFloatingObject(*floatToRemove);
 
+    if (childrenInline())
+        return;
+
     // Iterate over our children and mark them as needed.
-    if (!childrenInline()) {
-        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if ((!floatToRemove && child->isFloatingOrOutOfFlowPositioned()) || !child->isRenderBlock())
-                continue;
-            if (!child->isRenderBlockFlow()) {
-                RenderBlock* childBlock = toRenderBlock(child);
-                if (childBlock->shrinkToAvoidFloats() && childBlock->everHadLayout())
-                    childBlock->setChildNeedsLayout(markParents);
-                continue;
-            }
-            RenderBlockFlow* childBlock = toRenderBlockFlow(child);
-            if ((floatToRemove ? childBlock->containsFloat(*floatToRemove) : childBlock->containsFloats()) || childBlock->shrinkToAvoidFloats())
-                childBlock->markAllDescendantsWithFloatsForLayout(floatToRemove, inLayout);
+    for (auto& block : childrenOfType<RenderBlock>(*this)) {
+        if (!floatToRemove && block.isFloatingOrOutOfFlowPositioned())
+            continue;
+        if (!block.isRenderBlockFlow()) {
+            if (block.shrinkToAvoidFloats() && block.everHadLayout())
+                block.setChildNeedsLayout(markParents);
+            continue;
         }
+        auto& blockFlow = toRenderBlockFlow(block);
+        if ((floatToRemove ? blockFlow.containsFloat(*floatToRemove) : blockFlow.containsFloats()) || blockFlow.shrinkToAvoidFloats())
+            blockFlow.markAllDescendantsWithFloatsForLayout(floatToRemove, inLayout);
     }
 }
 
@@ -2862,9 +2861,9 @@ void RenderBlockFlow::setRenderNamedFlowFragment(RenderNamedFlowFragment* flowFr
     rareData.m_renderNamedFlowFragment = flowFragment;
 }
 
-static bool shouldCheckLines(RenderObject& obj)
+static bool shouldCheckLines(const RenderBlockFlow& blockFlow)
 {
-    return !obj.isFloatingOrOutOfFlowPositioned() && !obj.isRunIn() && obj.isRenderBlockFlow() && obj.style().height().isAuto() && (!obj.isDeprecatedFlexibleBox() || obj.style().boxOrient() == VERTICAL);
+    return !blockFlow.isFloatingOrOutOfFlowPositioned() && !blockFlow.isRunIn() && blockFlow.style().height().isAuto();
 }
 
 RootInlineBox* RenderBlockFlow::lineAtIndex(int i) const
@@ -2879,13 +2878,14 @@ RootInlineBox* RenderBlockFlow::lineAtIndex(int i) const
             if (!i--)
                 return box;
         }
-    } else {
-        for (auto child = firstChild(); child; child = child->nextSibling()) {
-            if (!shouldCheckLines(*child))
-                continue;
-            if (RootInlineBox* box = toRenderBlockFlow(child)->lineAtIndex(i))
-                return box;
-        }
+        return nullptr;
+    }
+
+    for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
+        if (!shouldCheckLines(blockFlow))
+            continue;
+        if (RootInlineBox* box = blockFlow.lineAtIndex(i))
+            return box;
     }
 
     return nullptr;
@@ -2907,17 +2907,18 @@ int RenderBlockFlow::lineCount(const RootInlineBox* stopRootInlineBox, bool* fou
                 break;
             }
         }
-    } else {
-        for (auto child = firstChild(); child; child = child->nextSibling()) {
-            if (shouldCheckLines(*child)) {
-                bool recursiveFound = false;
-                count += toRenderBlockFlow(child)->lineCount(stopRootInlineBox, &recursiveFound);
-                if (recursiveFound) {
-                    if (found)
-                        *found = true;
-                    break;
-                }
-            }
+        return count;
+    }
+
+    for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
+        if (!shouldCheckLines(blockFlow))
+            continue;
+        bool recursiveFound = false;
+        count += blockFlow.lineCount(stopRootInlineBox, &recursiveFound);
+        if (recursiveFound) {
+            if (found)
+                *found = true;
+            break;
         }
     }
 
@@ -2937,7 +2938,7 @@ static int getHeightForLineCount(const RenderBlockFlow& block, int lineCount, bo
     } else {
         RenderBox* normalFlowChildWithoutLines = 0;
         for (auto obj = block.firstChildBox(); obj; obj = obj->nextSiblingBox()) {
-            if (shouldCheckLines(*obj)) {
+            if (obj->isRenderBlockFlow() && shouldCheckLines(toRenderBlockFlow(*obj))) {
                 int result = getHeightForLineCount(toRenderBlockFlow(*obj), lineCount, false, count);
                 if (result != -1)
                     return result + obj->y() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : LayoutUnit());
@@ -2968,11 +2969,12 @@ void RenderBlockFlow::clearTruncation()
         setHasMarkupTruncation(false);
         for (auto box = firstRootBox(); box; box = box->nextRootBox())
             box->clearTruncation();
-    } else {
-        for (auto child = firstChild(); child; child = child->nextSibling()) {
-            if (shouldCheckLines(*child))
-                toRenderBlockFlow(child)->clearTruncation();
-        }
+        return;
+    }
+
+    for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
+        if (shouldCheckLines(blockFlow))
+            blockFlow.clearTruncation();
     }
 }
 

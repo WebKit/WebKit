@@ -1,3 +1,26 @@
+2014-01-03  Andreas Kling  <akling@apple.com>
+
+        Deploy more child renderer iterators in RenderBlockFlow.
+        <https://webkit.org/b/126434>
+
+        Reviewed by Sam Weinig.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::shouldCheckLines):
+
+            Make this helper take a RenderBlockFlow instead of a RenderObject
+            and simplified it a bit. RenderDeprecatedFlexibleBox does not
+            derive from RenderBlockFlow so those checks can be omitted.
+
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::markAllDescendantsWithFloatsForLayout):
+        (WebCore::RenderBlockFlow::lineAtIndex):
+        (WebCore::RenderBlockFlow::lineCount):
+        (WebCore::RenderBlockFlow::clearTruncation):
+
+            Use childrenOfType to iterate over block and block-flow children.
+            Tweaked some early return/continue to reduce nesting.
+
 2014-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Allow different types of ScrollingTrees to have different types of ScrollingTreeNode subclasses
