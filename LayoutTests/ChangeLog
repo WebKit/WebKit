@@ -1,3 +1,14 @@
+2014-01-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Correct symbol lookup logic to handle 1-element arrays
+        https://bugs.webkit.org/show_bug.cgi?id=126411
+        <rdar://problem/15394564>
+
+        Reviewed by Dean Jackson.
+
+        * webgl/1.0.2/resources/webgl_test_files/conformance/glsl/misc/shader-with-array-of-structs-containing-arrays.html: Add test for accessing the
+        single-element array.
+
 2014-01-02  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening. Rebaselining after r161140.
