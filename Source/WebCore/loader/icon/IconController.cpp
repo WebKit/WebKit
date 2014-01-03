@@ -47,6 +47,7 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "Settings.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

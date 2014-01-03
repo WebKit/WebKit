@@ -1,3 +1,18 @@
+2014-01-02  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        IconController.cpp needs to include <wtf/text/CString.h>
+        https://bugs.webkit.org/show_bug.cgi?id=126415
+
+        Reviewed by Gyuyoung Kim.
+
+        Build fails in IconController.cpp when ICONDATABASE is disabled.
+        WebKit/Source/WebCore/loader/icon/IconController.cpp:124:110: error: invalid use of incomplete type ‘class WTF::CString’
+        IconController.cpp needs #include <wtf/text/CString.h>.
+
+        No new tests. Just build fix.
+
+        * loader/icon/IconController.cpp: Add #include statement.
+
 2014-01-02  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Previous scrollbar is remained sometimes
