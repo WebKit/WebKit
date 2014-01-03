@@ -1,3 +1,9 @@
+2014-01-02  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed. Add myself to EFL and related watch lists.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-01-02  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         [GTK] fixing ycm_extra_conf.py file
