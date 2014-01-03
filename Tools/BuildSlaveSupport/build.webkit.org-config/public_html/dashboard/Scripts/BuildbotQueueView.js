@@ -213,7 +213,8 @@ BuildbotQueueView.prototype = {
         content.appendChild(line);
 
         var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
-        popover.present(rect, content, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
+        popover.content = content;
+        popover.present(rect, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
 
         return true;
     },

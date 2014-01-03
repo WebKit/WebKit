@@ -3,6 +3,15 @@
         Please add a way to quick peek at failing tests at build.webkit.org/dashboard
         https://bugs.webkit.org/show_bug.cgi?id=122181
 
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._presentNoChangePopover): Update one more place for
+        popover.present signature change.
+
+2014-01-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Please add a way to quick peek at failing tests at build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=122181
+
         Reviewed by Timothy Hatcher and Timothy Horton.
 
         Detailed results are saved by run-webkit-tests to full_results.json (which is actually
