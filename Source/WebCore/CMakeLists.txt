@@ -1841,6 +1841,7 @@ set(WebCore_SOURCES
     platform/ThreadGlobalData.cpp
     platform/ThreadTimers.cpp
     platform/Timer.cpp
+    platform/UserActivity.cpp
     platform/UUID.cpp
     platform/Widget.cpp
 

@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "MessageReceiverMap.h"
 #include "MessageSender.h"
+#include <WebCore/UserActivity.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
@@ -61,16 +62,13 @@ public:
     void addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver&);
     void removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID);
 
-#if PLATFORM(MAC)
     void setProcessSuppressionEnabled(bool);
-    bool processSuppressionEnabled() const { return !m_processSuppressionAssertion; }
+    bool processSuppressionEnabled() const { return !m_processSuppressionDisabled.isActive(); }
     void incrementActiveTaskCount();
     void decrementActiveTaskCount();
 
+#if PLATFORM(MAC)
     void setApplicationIsDaemon();
-#else
-    void incrementActiveTaskCount() { }
-    void decrementActiveTaskCount() { }
 #endif
 
     IPC::Connection* parentProcessConnection() const { return m_connection.get(); }
@@ -119,14 +117,8 @@ private:
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
 
-#if PLATFORM(MAC)
-    void suspensionHysteresisTimerFired();
-    void setProcessSuppressionEnabledInternal(bool);
-    size_t m_activeTaskCount;
-    bool m_shouldSuspend;
-    RunLoop::Timer<ChildProcess> m_suspensionHysteresisTimer;
-    RetainPtr<id> m_processSuppressionAssertion;
-#endif
+    UserActivity m_processSuppressionDisabled;
+    UserActivity m_activeTasks;
 };
 
 } // namespace WebKit

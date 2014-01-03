@@ -35,11 +35,8 @@ ChildProcess::ChildProcess()
     : m_terminationTimeout(0)
     , m_terminationCounter(0)
     , m_terminationTimer(RunLoop::main(), this, &ChildProcess::terminationTimerFired)
-#if PLATFORM(MAC)
-    , m_activeTaskCount(0)
-    , m_shouldSuspend(false)
-    , m_suspensionHysteresisTimer(RunLoop::main(), this, &ChildProcess::suspensionHysteresisTimerFired)
-#endif
+    , m_processSuppressionDisabled("Process Suppression Disabled by UIProcess")
+    , m_activeTasks("Process Suppression Disabled by WebProcess")
 {
 }
 
@@ -78,6 +75,27 @@ void ChildProcess::initialize(const ChildProcessInitializationParameters& parame
     m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
     initializeConnection(m_connection.get());
     m_connection->open();
+}
+
+void ChildProcess::setProcessSuppressionEnabled(bool enabled)
+{
+    if (processSuppressionEnabled() == enabled)
+        return;
+
+    if (enabled)
+        m_processSuppressionDisabled.endActivity();
+    else
+        m_processSuppressionDisabled.beginActivity();
+}
+
+void ChildProcess::incrementActiveTaskCount()
+{
+    m_activeTasks.beginActivity();
+}
+
+void ChildProcess::decrementActiveTaskCount()
+{
+    m_activeTasks.endActivity();
 }
 
 void ChildProcess::initializeProcess(const ChildProcessInitializationParameters&)

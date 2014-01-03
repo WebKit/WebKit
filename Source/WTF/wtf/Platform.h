@@ -1078,4 +1078,8 @@
 #define _HAS_EXCEPTIONS 1
 #endif
 
+#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#define HAVE_NS_ACTIVITY 1
+#endif
+
 #endif /* WTF_Platform_h */

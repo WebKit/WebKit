@@ -1,3 +1,42 @@
+2014-01-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Refactor NSActivity handling code from ChildProcess to UserActivity
+        https://bugs.webkit.org/show_bug.cgi?id=126330
+
+        Reviewed by Sam Weinig.
+
+        UserActivity is a mechanism to express to the operating system (where appropriate)
+        that a user initiated activity is taking place, and as such that resources should be
+        made available to the process accordingly.
+
+        Currently we hold a single NSActivity, at the WebKit layer. This refactoring allows us
+        to hold different activity tokens for different user actions (which simplifies the
+        handling, and aides debugging since the token can more accurately express the activity
+        taking place), and also will allow us to avoid the layering difficulty of calling back
+        up the stack to WebKit to register that an activity is taking place.
+
+        * WebCore.xcodeproj/project.pbxproj:
+            - added new files.
+        * platform/UserActivity.cpp: Added.
+        (WebCore::UserActivity::UserActivity):
+            - nop implementation - ignore description.
+        (WebCore::UserActivity::beginActivity):
+        (WebCore::UserActivity::endActivity):
+            - nop implementation - just inc/dec m_count.
+        * platform/UserActivity.h: Added.
+        (WebCore::UserActivity::isActive):
+            - returns true if one or more instance of this activity is in progress.
+        * platform/mac/UserActivityMac.mm: Added.
+        (WebCore::UserActivity::UserActivity):
+            - constructor accepts one argument, a description string.
+        (WebCore::UserActivity::isValid):
+            - used by assertions.
+        (WebCore::UserActivity::beginActivity):
+        (WebCore::UserActivity::endActivity):
+            - track start/end of an activity - calls to these methods should be balanced.
+        (WebCore::UserActivity::hysteresisTimerFired):
+              - used to implement hysteresis in releasing  NSActivity.
+
 2014-01-03  Alexey Proskuryakov  <ap@apple.com>
 
         Line ending conversion should be able to handle strings with null chars

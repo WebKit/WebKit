@@ -81,6 +81,39 @@
 
 2014-01-02  Gavin Barraclough  <barraclough@apple.com>
 
+        Refactor NSActivity handling code from ChildProcess to UserActivity
+        https://bugs.webkit.org/show_bug.cgi?id=126330
+
+        Reviewed by Sam Weinig.
+
+        UserActivity is a mechanism to express to the operating system (where appropriate)
+        that a user initiated activity is taking place, and as such that resources should be
+        made available to the process accordingly.
+
+        Currently we hold a single NSActivity, at the WebKit layer. This refactoring allows us
+        to hold different activity tokens for different user actions (which simplifies the
+        handling, and aides debugging since the token can more accurately express the activity
+        taking place), and also will allow us to avoid the layering difficulty of calling back
+        up the stack to WebKit to register that an activity is taking place.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::ChildProcess):
+            - removed fields to directly manage NSActivity, use UserActivity objects instead.
+        * Shared/ChildProcess.h:
+        (WebKit::ChildProcess::processSuppressionEnabled):
+            - changed to initialize new fields.
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::setProcessSuppressionEnabled):
+            - implemented in terms of UserActivity m_processSuppressionDisabled.
+        (WebKit::ChildProcess::incrementActiveTaskCount):
+            - implemented in terms of UserActivity m_activeTasks.
+        (WebKit::ChildProcess::decrementActiveTaskCount):
+            - implemented in terms of UserActivity m_activeTasks.
+        (WebKit::ChildProcess::platformInitialize):
+            - implemented in terms of UserActivity m_processSuppressionDisabled.
+
+2014-01-02  Gavin Barraclough  <barraclough@apple.com>
+
         Propagate WindowServer modifications state to WebProcess
         https://bugs.webkit.org/show_bug.cgi?id=126356
 

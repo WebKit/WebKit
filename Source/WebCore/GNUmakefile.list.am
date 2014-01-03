@@ -5531,7 +5531,9 @@ webcore_platform_sources += \
 	Source/WebCore/platform/ScrollAnimatorNone.cpp \
 	Source/WebCore/platform/ScrollAnimatorNone.h \
 	Source/WebCore/platform/ThreadGlobalData.cpp \
-	Source/WebCore/platform/ThreadGlobalData.h
+	Source/WebCore/platform/ThreadGlobalData.h \
+	Source/WebCore/platform/UserActivity.cpp \
+	Source/WebCore/platform/UserActivity.h
 
 platform_sources += \
 	Source/WebCore/platform/animation/AnimationUtilities.h \
