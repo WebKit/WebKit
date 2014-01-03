@@ -24,6 +24,7 @@ import sys
 script_dir = None
 build_dir = None
 library_build_dir = None
+tests_library_build_dir = None
 is_cmake = None
 build_types = ('Release', 'Debug')
 
@@ -48,6 +49,16 @@ def library_build_path(*args):
         else:
             library_build_dir = build_path('.libs', *args)
     return library_build_dir
+
+
+def tests_library_build_path(*args):
+    if is_cmake_build():
+        return library_build_path(*args)
+
+    global tests_library_build_dir
+    if not tests_library_build_dir:
+        tests_library_build_dir = build_path('Libraries', *args)
+    return tests_library_build_dir
 
 
 def binary_build_path(*args):

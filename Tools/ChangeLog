@@ -1,3 +1,16 @@
+2014-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r161214): [GTK] WebKit2 C API tests fail to run after r161214
+        https://bugs.webkit.org/show_bug.cgi?id=126430
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._setup_testing_environment):
+        * gtk/common.py: Use common.tests_library_build_path() instead.
+        (tests_library_build_path): Helper funtion that returns the path
+        where the tests libraries are built.
+
 2014-01-03  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Build TestWebKitAPI tests into a directory structure
