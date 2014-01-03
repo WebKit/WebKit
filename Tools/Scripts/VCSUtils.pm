@@ -1880,7 +1880,7 @@ sub mergeChangeLogs($$$)
 
 sub gitConfig($)
 {
-    return unless $isGit;
+    return unless isGit();
 
     my ($config) = @_;
 

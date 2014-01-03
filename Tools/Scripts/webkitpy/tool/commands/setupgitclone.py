@@ -28,7 +28,7 @@
 
 from webkitpy.tool.multicommandtool import Command
 from webkitpy.common.checkout.scm.git import Git
-
+from webkitpy.common.system.executive import ScriptError
 
 class SetupGitClone(Command):
     name = "setup-git-clone"
@@ -43,24 +43,14 @@ class SetupGitClone(Command):
             print "There are local changes; aborting the command."
             return
 
+        username, email = self._get_username_and_email(tool)
+
         # FIXME: We shouldn't be using a privatd method
         run_git = tool.scm()._run_git
         run_git(["pull"])
         run_git(["svn", "init", "--prefix=origin/", "-T", "trunk", "http://svn.webkit.org/repository/webkit"])
         run_git(["config", "--replace", "svn-remote.svn.fetch", "trunk:refs/remotes/origin/master"])
         run_git(["svn", "fetch"])
-
-        original_path = tool.filesystem.abspath(".")
-
-        tool.filesystem.chdir("Tools/Scripts/")
-        username = tool.executive.run_and_throw_if_fail(["perl", "-e", "use VCSUtils; print STDOUT changeLogName();"], quiet=True)
-        if not username:
-            username = tool.user.prompt("Your name:")
-
-        email = tool.executive.run_and_throw_if_fail(["perl", "-e", "use VCSUtils; print STDOUT changeLogEmailAddress();"], quiet=True)
-        if not email:
-            email = tool.user.prompt("Your email address:")
-        tool.filesystem.chdir(original_path)
 
         run_git(["config", "user.name", username])
         run_git(["config", "user.email", email])
@@ -84,3 +74,25 @@ class SetupGitClone(Command):
             print "You can override this option via git config branch.$branchName.webKitBranchBuild (true|false)"
 
         print "Done"
+
+    def _get_username_and_email(self, tool):
+        try:
+            original_path = tool.filesystem.abspath(".")
+
+            tool.filesystem.chdir("Tools/Scripts/")
+            username = tool.executive.run_and_throw_if_fail(["perl", "-e", "use VCSUtils; print STDOUT changeLogName();"], quiet=True)
+            if not username:
+                username = tool.user.prompt("Your name:")
+
+            email = tool.executive.run_and_throw_if_fail(["perl", "-e", "use VCSUtils; print STDOUT changeLogEmailAddress();"], quiet=True)
+            if not email:
+                email = tool.user.prompt("Your email address:")
+
+            tool.filesystem.chdir(original_path)
+
+            return (username, email)
+        except ScriptError as error:
+            # VCSUtils prints useful error messages on failure, we shouldn't hide these
+            if error.output:
+                print error.output
+            raise

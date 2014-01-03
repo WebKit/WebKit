@@ -1,3 +1,26 @@
+2014-01-03  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        setup-git-clone fails to get email address from git
+        https://bugs.webkit.org/show_bug.cgi?id=126446
+
+        Reviewed by Ryosuke Niwa.
+
+        The setup-git-clone command fails to get an email address from git
+        because of a bug in VCSUtils. This patch fixes that bug, and also
+        makes it so that when VCSUtils fails for real because of a local
+        misconfiguration, the error message is actually presented to the user
+        of setup-git-clone.
+
+        * Scripts/VCSUtils.pm:
+        (gitConfig): Call isGit() instead of accessing $isGit directly to make
+            sure that $isGit is properly initialized.
+        * Scripts/webkitpy/tool/commands/setupgitclone.py:
+        (SetupGitClone.execute): Pull out username and email acquistion to
+            it's own method.
+        (SetupGitClone._get_username_and_email): Catch the exception thrown
+            when VCSUtils fails and print out the error message so that the
+            user actually knows why the command failed.
+
 2014-01-03  Alexey Proskuryakov  <ap@apple.com>
 
         It feels too hard to get rid of a popover at build.webkit.org/dashboard
