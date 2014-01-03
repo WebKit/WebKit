@@ -32,6 +32,7 @@
 
 namespace JSC {
 
+class JSPromise;
 class JSPromisePrototype;
 
 class JSPromiseConstructor : public InternalFunction {
@@ -53,6 +54,8 @@ private:
     static CallType getCallData(JSCell*, CallData&);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
+
+JSPromise* constructPromise(ExecState*, JSGlobalObject*, JSFunction*);
 
 } // namespace JSC
 

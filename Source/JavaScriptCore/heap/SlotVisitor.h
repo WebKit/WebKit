@@ -53,6 +53,7 @@ public:
     
     template<typename T> void append(JITWriteBarrier<T>*);
     template<typename T> void append(WriteBarrierBase<T>*);
+    template<typename Iterator> void append(Iterator begin , Iterator end);
     void appendValues(WriteBarrierBase<Unknown>*, size_t count);
     
     template<typename T>

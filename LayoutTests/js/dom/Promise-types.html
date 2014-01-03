@@ -27,10 +27,10 @@ shouldBe("String(aPromise)", "'[object Promise]'");
 
 shouldBeDefined("aPromise.then");
 shouldBeType("aPromise.then", "Function");
-shouldBe("aPromise.then.length", "0");
+shouldBe("aPromise.then.length", "2");
 shouldBeDefined("aPromise.catch");
 shouldBeType("aPromise.catch", "Function");
-shouldBe("aPromise.catch.length", "0");
+shouldBe("aPromise.catch.length", "1");
 
 
 // Promise constructor
@@ -43,17 +43,12 @@ shouldBe("Promise.length", "1");
 shouldThrow("new Promise()");
 
 // Parameter must be a function.
-shouldThrow("new Promise(1)", "'TypeError: Expected function as as first argument'");
-shouldThrow("new Promise('hello')", "'TypeError: Expected function as as first argument'");
-shouldThrow("new Promise([])", "'TypeError: Expected function as as first argument'");
-shouldThrow("new Promise({})", "'TypeError: Expected function as as first argument'");
-shouldThrow("new Promise(null)", "'TypeError: Expected function as as first argument'");
-shouldThrow("new Promise(undefined)", "'TypeError: Expected function as as first argument'");
-shouldNotThrow("new Promise(function(resolver) { resolver.resolve(1); })");
-
-// Can't be called as a function
-shouldThrow("Promise()");
-
+shouldThrow("new Promise(1)", "'TypeError: Promise constructor takes a function argument'");
+shouldThrow("new Promise('hello')", "'TypeError: Promise constructor takes a function argument'");
+shouldThrow("new Promise([])", "'TypeError: Promise constructor takes a function argument'");
+shouldThrow("new Promise({})", "'TypeError: Promise constructor takes a function argument'");
+shouldThrow("new Promise(null)", "'TypeError: Promise constructor takes a function argument'");
+shouldThrow("new Promise(undefined)", "'TypeError: Promise constructor takes a function argument'");
 
 // Promise statics
 debug("");
@@ -62,68 +57,23 @@ debug("");
 
 
 // Need at least one parameter.
-shouldBeType("Promise.fulfill", "Function");
-shouldBe("Promise.fulfill.length", "1");
-shouldThrow("Promise.fulfill()", "'TypeError: Expected at least one argument'");
-shouldNotThrow("Promise.fulfill(1)");
-
 shouldBeType("Promise.resolve", "Function");
 shouldBe("Promise.resolve.length", "1");
-shouldThrow("Promise.resolve()", "'TypeError: Expected at least one argument'");
 shouldNotThrow("Promise.resolve(1)");
 
 shouldBeType("Promise.reject", "Function");
 shouldBe("Promise.reject.length", "1");
-shouldThrow("Promise.reject()", "'TypeError: Expected at least one argument'");
 shouldNotThrow("Promise.reject(1)");
 
+shouldBeType("Promise.cast", "Function");
+shouldBe("Promise.cast.length", "1");
+shouldNotThrow("Promise.cast(1)");
+
 // Should return Promise objects.
-shouldBeType("Promise.fulfill(1)", "Promise");
 shouldBeType("Promise.resolve(1)", "Promise");
 shouldBeType("Promise.reject(1)", "Promise");
+shouldBeType("Promise.cast(1)", "Promise");
 
-
-
-// PromiseResolver
-debug("");
-debug("PromiseResolver");
-debug("");
-
-var aResolver;
-var resolverFulfill;
-var resolverResolve;
-var resolverReject;
-
-new Promise(function(r) {
-    aResolver = r;
-
-    // The resolver should be of type PromiseResolver.
-    debug("aResolver is from new Promise(function(aResolver) { ... })")
-    shouldBeType("aResolver", "PromiseResolver");
-    shouldBe("String(aResolver)", "'[object PromiseResolver]'");
-    shouldBeType("aResolver.fulfill", "Function");
-    shouldBe("aResolver.fulfill.length", "1");
-    shouldBeType("aResolver.resolve", "Function");
-    shouldBe("aResolver.resolve.length", "1");
-    shouldBeType("aResolver.reject", "Function");
-    shouldBe("aResolver.reject.length", "1");
-
-    // Resolvers functions must be called on the resolver.
-    resolverFulfill = aResolver.fulfill;
-    shouldThrow("resolverFulfill()", "'TypeError: Receiver of fulfill must be a PromiseResolver'");
-    resolverResolve = aResolver.resolve;
-    shouldThrow("resolverResolve()", "'TypeError: Receiver of resolve must be a PromiseResolver'");
-    resolverReject = aResolver.reject;
-    shouldThrow("resolverReject()", "'TypeError: Receiver of reject must be a PromiseResolver'");
-});
-
-debug("");
-debug("PromiseResolver constructor");
-debug("");
-
-shouldThrow("new PromiseResolver()");
-
-debug("");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

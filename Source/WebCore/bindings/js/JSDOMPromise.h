@@ -29,76 +29,79 @@
 #include "JSCryptoKey.h"
 #include "JSCryptoKeyPair.h"
 #include "JSDOMBinding.h"
-#include <runtime/JSGlobalObject.h>
-#include <runtime/JSPromise.h>
-#include <runtime/JSPromiseResolver.h>
 #include <heap/StrongInlines.h>
+#include <runtime/JSPromiseDeferred.h>
 
 namespace WebCore {
 
-class PromiseWrapper {
+class DeferredWrapper {
 public:
-    PromiseWrapper(JSDOMGlobalObject*, JSC::JSPromise*);
+    DeferredWrapper(JSC::ExecState*, JSDOMGlobalObject*);
 
-    template<class FulfillResultType>
-    void fulfill(const FulfillResultType&);
+    template<class ResolveResultType>
+    void resolve(const ResolveResultType&);
 
     template<class RejectResultType>
     void reject(const RejectResultType&);
 
+    JSC::JSObject* promise() const;
+
 private:
+    void resolve(JSC::ExecState*, JSC::JSValue);
+    void reject(JSC::ExecState*, JSC::JSValue);
+
     JSC::Strong<JSDOMGlobalObject> m_globalObject;
-    JSC::Strong<JSC::JSPromise> m_promise;
+    JSC::Strong<JSC::JSPromiseDeferred> m_deferred;
 };
 
-template<class FulfillResultType>
-inline void PromiseWrapper::fulfill(const FulfillResultType& result)
+template<class ResolveResultType>
+inline void DeferredWrapper::resolve(const ResolveResultType& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    m_promise->resolver()->fulfillIfNotResolved(exec, toJS(exec, m_globalObject.get(), result));
+    resolve(exec, toJS(exec, m_globalObject.get(), result));
 }
 
 template<class RejectResultType>
-inline void PromiseWrapper::reject(const RejectResultType& result)
+inline void DeferredWrapper::reject(const RejectResultType& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    m_promise->resolver()->rejectIfNotResolved(exec, toJS(exec, m_globalObject.get(), result));
+    reject(exec, toJS(exec, m_globalObject.get(), result));
 }
 
 template<>
-inline void PromiseWrapper::reject(const std::nullptr_t&)
+inline void DeferredWrapper::reject(const std::nullptr_t&)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    m_promise->resolver()->rejectIfNotResolved(exec, JSC::jsNull());
+    reject(exec, JSC::jsNull());
 }
 
 template<>
-inline void PromiseWrapper::fulfill<String>(const String& result)
+inline void DeferredWrapper::resolve<String>(const String& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    m_promise->resolver()->fulfillIfNotResolved(exec, jsString(exec, result));
+    resolve(exec, jsString(exec, result));
 }
 
 template<>
-inline void PromiseWrapper::fulfill<bool>(const bool& result)
+inline void DeferredWrapper::resolve<bool>(const bool& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    m_promise->resolver()->fulfillIfNotResolved(exec, JSC::jsBoolean(result));
+    resolve(exec, JSC::jsBoolean(result));
 }
 
 template<>
-inline void PromiseWrapper::fulfill<Vector<unsigned char>>(const Vector<unsigned char>& result)
+inline void DeferredWrapper::resolve<Vector<unsigned char>>(const Vector<unsigned char>& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
     RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(result.data(), result.size());
-    m_promise->resolver()->fulfillIfNotResolved(exec, toJS(exec, m_globalObject.get(), buffer.get()));
+    resolve(exec, toJS(exec, m_globalObject.get(), buffer.get()));
 }
 
 template<>
-inline void PromiseWrapper::reject<String>(const String& result)
+inline void DeferredWrapper::reject<String>(const String& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
-    m_promise->resolver()->rejectIfNotResolved(exec, jsString(exec, result));
+    reject(exec, jsString(exec, result));
 }
 
 }

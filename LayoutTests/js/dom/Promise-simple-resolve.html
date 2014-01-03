@@ -11,17 +11,13 @@ description('Test Promise.');
 
 window.jsTestIsAsync = true;
 
-new Promise(function(resolver) {
-  resolver.fulfill('foo');
-  resolver.fulfill('fulfill');
-  resolver.resolve('resolve');
-  resolver.reject('reject');
+var future = new Promise(function(resolve) {
+  setTimeout(function() {
+    resolve('hello');
+  }, 0);
 }).then(function(result) {
   window.result = result;
-  shouldBeEqualToString('result', 'foo');
-  finishJSTest();
-}, function() {
-  testFailed('rejected');
+  shouldBeEqualToString('result', 'hello');
   finishJSTest();
 });
 

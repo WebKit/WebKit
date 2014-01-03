@@ -104,7 +104,6 @@ namespace JSC  {
 #if ENABLE(PROMISES)
         static const HashTable& promisePrototypeTable(CallFrame* callFrame) { return *callFrame->vm().promisePrototypeTable; }
         static const HashTable& promiseConstructorTable(CallFrame* callFrame) { return *callFrame->vm().promiseConstructorTable; }
-        static const HashTable& promiseResolverPrototypeTable(CallFrame* callFrame) { return *callFrame->vm().promiseResolverPrototypeTable; }
 #endif
 
         static CallFrame* create(Register* callFrameBase) { return static_cast<CallFrame*>(callFrameBase); }

@@ -32,61 +32,58 @@
 
 namespace JSC {
 
-class JSPromiseResolver;
-class InternalFunction;
-class TaskContext;
+class JSPromiseReaction;
+class JSPromiseConstructor;
 
 class JSPromise : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSPromise* create(VM&, Structure*);
+    static JSPromise* create(VM&, JSGlobalObject*, JSPromiseConstructor*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    JS_EXPORT_PRIVATE static JSPromise* createWithResolver(VM&, JSGlobalObject*);
 
     DECLARE_INFO;
 
-    void setResolver(VM&, JSPromiseResolver*);
-    JS_EXPORT_PRIVATE JSPromiseResolver* resolver() const;
-
-    enum State {
-        Pending,
-        Fulfilled,
-        Rejected,
+    enum class Status {
+        Unresolved,
+        HasResolution,
+        HasRejection
     };
 
-    void setState(State);
-    State state() const;
+    Status status() const
+    {
+        return m_status;
+    }
 
-    void setResult(VM&, JSValue);
-    JSValue result() const;
+    JSValue result() const
+    {
+        ASSERT(m_status != Status::Unresolved);
+        return m_result.get();
+    }
 
-    void appendCallbacks(ExecState*, InternalFunction* fulfillCallback, InternalFunction* rejectCallback);
+    JSPromiseConstructor* constructor() const
+    {
+        return m_constructor.get();
+    }
 
-    void queueTaskToProcessFulfillCallbacks(ExecState*);
-    void queueTaskToProcessRejectCallbacks(ExecState*);
-    void processFulfillCallbacksWithValue(ExecState*, JSValue);
-    void processRejectCallbacksWithValue(ExecState*, JSValue);
+    void reject(VM&, JSValue);
+    void resolve(VM&, JSValue);
 
-protected:
-    void finishCreation(VM&);
-    static const unsigned StructureFlags = OverridesVisitChildren | JSObject::StructureFlags;
+    void appendResolveReaction(VM&, JSPromiseReaction*);
+    void appendRejectReaction(VM&, JSPromiseReaction*);
 
 private:
     JSPromise(VM&, Structure*);
-
-    static void processFulfillCallbacksForTask(ExecState*, TaskContext*);
-    static void processRejectCallbacksForTask(ExecState*, TaskContext*);
-
+    void finishCreation(VM&, JSPromiseConstructor*);
+    static const unsigned StructureFlags = OverridesVisitChildren | JSObject::StructureFlags;
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    WriteBarrier<JSPromiseResolver> m_resolver;
+    Status m_status;
     WriteBarrier<Unknown> m_result;
-    Vector<WriteBarrier<InternalFunction>> m_fulfillCallbacks;
-    Vector<WriteBarrier<InternalFunction>> m_rejectCallbacks;
-    State m_state;
+    WriteBarrier<JSPromiseConstructor> m_constructor;
+    Vector<WriteBarrier<JSPromiseReaction>> m_resolveReactions;
+    Vector<WriteBarrier<JSPromiseReaction>> m_rejectReactions;
 };
 
 } // namespace JSC

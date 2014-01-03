@@ -748,20 +748,19 @@
 		65C0285C1717966800351E35 /* ARMv7DOpcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C0285A1717966800351E35 /* ARMv7DOpcode.cpp */; };
 		65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C0285B1717966800351E35 /* ARMv7DOpcode.h */; };
 		65FB5117184EEE7000C12B70 /* ProtoCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */; };
-		7C15F65D17C199CE00794D40 /* JSPromiseCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C15F65B17C199CE00794D40 /* JSPromiseCallback.cpp */; };
-		7C15F65E17C199CE00794D40 /* JSPromiseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C15F65C17C199CE00794D40 /* JSPromiseCallback.h */; };
+		7C008CD2186F8A9300955C24 /* JSPromiseFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C008CD0186F8A9300955C24 /* JSPromiseFunctions.cpp */; };
+		7C008CD3186F8A9300955C24 /* JSPromiseFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C008CD1186F8A9300955C24 /* JSPromiseFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C008CDA187124BB00955C24 /* JSPromiseDeferred.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */; };
+		7C008CDB187124BB00955C24 /* JSPromiseDeferred.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C008CD9187124BB00955C24 /* JSPromiseDeferred.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C008CDE1871258D00955C24 /* JSPromiseReaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C008CDC1871258D00955C24 /* JSPromiseReaction.cpp */; };
+		7C008CDF1871258D00955C24 /* JSPromiseReaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C008CDD1871258D00955C24 /* JSPromiseReaction.h */; };
+		7C008CE7187631B600955C24 /* Microtask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C008CE5187631B600955C24 /* Microtask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C184E1A17BEDBD3007CB63A /* JSPromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C184E1817BEDBD3007CB63A /* JSPromise.cpp */; };
 		7C184E1B17BEDBD3007CB63A /* JSPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E1917BEDBD3007CB63A /* JSPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C184E1E17BEE22E007CB63A /* JSPromisePrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C184E1C17BEE22E007CB63A /* JSPromisePrototype.cpp */; };
 		7C184E1F17BEE22E007CB63A /* JSPromisePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E1D17BEE22E007CB63A /* JSPromisePrototype.h */; };
 		7C184E2217BEE240007CB63A /* JSPromiseConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C184E2017BEE240007CB63A /* JSPromiseConstructor.cpp */; };
 		7C184E2317BEE240007CB63A /* JSPromiseConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E2117BEE240007CB63A /* JSPromiseConstructor.h */; };
-		7C3BA29417C039560072DDC9 /* JSPromiseResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BA28E17C039560072DDC9 /* JSPromiseResolver.cpp */; };
-		7C3BA29517C039560072DDC9 /* JSPromiseResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3BA28F17C039560072DDC9 /* JSPromiseResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7C3BA29617C039560072DDC9 /* JSPromiseResolverConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BA29017C039560072DDC9 /* JSPromiseResolverConstructor.cpp */; };
-		7C3BA29717C039560072DDC9 /* JSPromiseResolverConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3BA29117C039560072DDC9 /* JSPromiseResolverConstructor.h */; };
-		7C3BA29817C039560072DDC9 /* JSPromiseResolverPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BA29217C039560072DDC9 /* JSPromiseResolverPrototype.cpp */; };
-		7C3BA29917C039560072DDC9 /* JSPromiseResolverPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3BA29317C039560072DDC9 /* JSPromiseResolverPrototype.h */; };
 		7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4EE7080EBB7963005934AA /* StructureChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E4EE70F0EBB7A5B005934AA /* StructureChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */; };
 		7EFF00640EC05A9A00AA7C93 /* NodeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EFF00630EC05A9A00AA7C93 /* NodeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2080,8 +2079,13 @@
 		65FB5115184EE8F800C12B70 /* ProtoCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtoCallFrame.h; sourceTree = "<group>"; };
 		65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProtoCallFrame.cpp; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
-		7C15F65B17C199CE00794D40 /* JSPromiseCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseCallback.cpp; sourceTree = "<group>"; };
-		7C15F65C17C199CE00794D40 /* JSPromiseCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseCallback.h; sourceTree = "<group>"; };
+		7C008CD0186F8A9300955C24 /* JSPromiseFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseFunctions.cpp; sourceTree = "<group>"; };
+		7C008CD1186F8A9300955C24 /* JSPromiseFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseFunctions.h; sourceTree = "<group>"; };
+		7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseDeferred.cpp; sourceTree = "<group>"; };
+		7C008CD9187124BB00955C24 /* JSPromiseDeferred.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseDeferred.h; sourceTree = "<group>"; };
+		7C008CDC1871258D00955C24 /* JSPromiseReaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseReaction.cpp; sourceTree = "<group>"; };
+		7C008CDD1871258D00955C24 /* JSPromiseReaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseReaction.h; sourceTree = "<group>"; };
+		7C008CE5187631B600955C24 /* Microtask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Microtask.h; sourceTree = "<group>"; };
 		7C184E1817BEDBD3007CB63A /* JSPromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromise.cpp; sourceTree = "<group>"; };
 		7C184E1917BEDBD3007CB63A /* JSPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromise.h; sourceTree = "<group>"; };
 		7C184E1C17BEE22E007CB63A /* JSPromisePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromisePrototype.cpp; sourceTree = "<group>"; };
@@ -2090,13 +2094,6 @@
 		7C184E2117BEE240007CB63A /* JSPromiseConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseConstructor.h; sourceTree = "<group>"; };
 		7C184E2417BFFA36007CB63A /* JSPromiseConstructor.lut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSPromiseConstructor.lut.h; sourceTree = "<group>"; };
 		7C184E2517BFFA36007CB63A /* JSPromisePrototype.lut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSPromisePrototype.lut.h; sourceTree = "<group>"; };
-		7C3BA28E17C039560072DDC9 /* JSPromiseResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseResolver.cpp; sourceTree = "<group>"; };
-		7C3BA28F17C039560072DDC9 /* JSPromiseResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseResolver.h; sourceTree = "<group>"; };
-		7C3BA29017C039560072DDC9 /* JSPromiseResolverConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseResolverConstructor.cpp; sourceTree = "<group>"; };
-		7C3BA29117C039560072DDC9 /* JSPromiseResolverConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseResolverConstructor.h; sourceTree = "<group>"; };
-		7C3BA29217C039560072DDC9 /* JSPromiseResolverPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseResolverPrototype.cpp; sourceTree = "<group>"; };
-		7C3BA29317C039560072DDC9 /* JSPromiseResolverPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseResolverPrototype.h; sourceTree = "<group>"; };
-		7C3BA29A17C03BE10072DDC9 /* JSPromiseResolverPrototype.lut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSPromiseResolverPrototype.lut.h; sourceTree = "<group>"; };
 		7E4EE7080EBB7963005934AA /* StructureChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureChain.h; sourceTree = "<group>"; };
 		7E4EE70E0EBB7A5B005934AA /* StructureChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureChain.cpp; sourceTree = "<group>"; };
 		7EFF00630EC05A9A00AA7C93 /* NodeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeInfo.h; sourceTree = "<group>"; };
@@ -3359,7 +3356,6 @@
 				BC87CDB810712ACA000614CF /* JSONObject.lut.h */,
 				7C184E2417BFFA36007CB63A /* JSPromiseConstructor.lut.h */,
 				7C184E2517BFFA36007CB63A /* JSPromisePrototype.lut.h */,
-				7C3BA29A17C03BE10072DDC9 /* JSPromiseResolverPrototype.lut.h */,
 				A7C225CD1399849C00FF1662 /* KeywordLookup.h */,
 				BC18C52D0E16FCE100B34460 /* Lexer.lut.h */,
 				BC2680E60E16D52300A06E92 /* NumberConstructor.lut.h */,
@@ -3621,18 +3617,16 @@
 				A7F9935D0FD7325100A0B2D0 /* JSONObject.h */,
 				7C184E1817BEDBD3007CB63A /* JSPromise.cpp */,
 				7C184E1917BEDBD3007CB63A /* JSPromise.h */,
-				7C15F65B17C199CE00794D40 /* JSPromiseCallback.cpp */,
-				7C15F65C17C199CE00794D40 /* JSPromiseCallback.h */,
+				7C008CD0186F8A9300955C24 /* JSPromiseFunctions.cpp */,
+				7C008CD1186F8A9300955C24 /* JSPromiseFunctions.h */,
 				7C184E2017BEE240007CB63A /* JSPromiseConstructor.cpp */,
 				7C184E2117BEE240007CB63A /* JSPromiseConstructor.h */,
 				7C184E1C17BEE22E007CB63A /* JSPromisePrototype.cpp */,
 				7C184E1D17BEE22E007CB63A /* JSPromisePrototype.h */,
-				7C3BA28E17C039560072DDC9 /* JSPromiseResolver.cpp */,
-				7C3BA28F17C039560072DDC9 /* JSPromiseResolver.h */,
-				7C3BA29017C039560072DDC9 /* JSPromiseResolverConstructor.cpp */,
-				7C3BA29117C039560072DDC9 /* JSPromiseResolverConstructor.h */,
-				7C3BA29217C039560072DDC9 /* JSPromiseResolverPrototype.cpp */,
-				7C3BA29317C039560072DDC9 /* JSPromiseResolverPrototype.h */,
+				7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */,
+				7C008CD9187124BB00955C24 /* JSPromiseDeferred.h */,
+				7C008CDC1871258D00955C24 /* JSPromiseReaction.cpp */,
+				7C008CDD1871258D00955C24 /* JSPromiseReaction.h */,
 				A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */,
 				A727FF650DA3053B00E548D7 /* JSPropertyNameIterator.h */,
 				862553CE16136AA5009F17D0 /* JSProxy.cpp */,
@@ -3691,6 +3685,7 @@
 				F692A86B0255597D01FF60F7 /* MathObject.h */,
 				90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */,
 				90213E3C123A40C200D422F3 /* MemoryStatistics.h */,
+				7C008CE5187631B600955C24 /* Microtask.h */,
 				86EBF2F91560F036008E9222 /* NameConstructor.cpp */,
 				86EBF2FA1560F036008E9222 /* NameConstructor.h */,
 				86EBF2FB1560F036008E9222 /* NameInstance.cpp */,
@@ -4795,13 +4790,9 @@
 				BC87CDB910712AD4000614CF /* JSONObject.lut.h in Headers */,
 				9534AAFB0E5B7A9600B8A45B /* JSProfilerPrivate.h in Headers */,
 				7C184E1B17BEDBD3007CB63A /* JSPromise.h in Headers */,
-				7C15F65E17C199CE00794D40 /* JSPromiseCallback.h in Headers */,
 				7C184E2317BEE240007CB63A /* JSPromiseConstructor.h in Headers */,
 				7C184E1F17BEE22E007CB63A /* JSPromisePrototype.h in Headers */,
-				7C3BA29517C039560072DDC9 /* JSPromiseResolver.h in Headers */,
 				A74DEF96182D991400522C22 /* JSMapIterator.h in Headers */,
-				7C3BA29717C039560072DDC9 /* JSPromiseResolverConstructor.h in Headers */,
-				7C3BA29917C039560072DDC9 /* JSPromiseResolverPrototype.h in Headers */,
 				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
 				BC18C4260E16F5CD00B34460 /* JSRetainPtr.h in Headers */,
 				14874AE615EBDE4A002E3587 /* JSScope.h in Headers */,
@@ -4859,6 +4850,7 @@
 				0F4680A314BA7F8D00BFE272 /* LLIntExceptions.h in Headers */,
 				0F4680CB14BBB17200BFE272 /* LLIntOfflineAsmConfig.h in Headers */,
 				FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */,
+				7C008CDB187124BB00955C24 /* JSPromiseDeferred.h in Headers */,
 				0F4680A514BA7F8D00BFE272 /* LLIntSlowPaths.h in Headers */,
 				0F0B839D14BCF46600885B4F /* LLIntThunks.h in Headers */,
 				0FCEFACE1805E75500472CE4 /* LLVMAPI.h in Headers */,
@@ -4960,6 +4952,7 @@
 				1474C33B16AA2D950062F01D /* PrototypeMap.h in Headers */,
 				0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */,
 				0F0CD4C215F1A6070032F1C0 /* PutDirectIndexMode.h in Headers */,
+				7C008CE7187631B600955C24 /* Microtask.h in Headers */,
 				0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */,
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,
 				A593CF7D1840360300BFCE27 /* InspectorBackendDispatcher.h in Headers */,
@@ -4967,6 +4960,7 @@
 				BC18C45A0E16F5CD00B34460 /* RegExp.h in Headers */,
 				A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */,
 				BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */,
+				7C008CDF1871258D00955C24 /* JSPromiseReaction.h in Headers */,
 				BCD202D60E170708002C7E82 /* RegExpConstructor.lut.h in Headers */,
 				A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */,
 				0F3AC752183EA1040032029F /* StackAlignment.h in Headers */,
@@ -4989,6 +4983,7 @@
 				A7299DA217D12848005F5FF9 /* SetPrototype.h in Headers */,
 				86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */,
 				0F2B670517B6B5AB00A7AE3F /* SimpleTypedArrayController.h in Headers */,
+				7C008CD3186F8A9300955C24 /* JSPromiseFunctions.h in Headers */,
 				A790DD6C182F499700588807 /* SetIteratorConstructor.h in Headers */,
 				14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */,
 				C2160FE715F7E95E00942DFC /* SlotVisitorInlines.h in Headers */,
@@ -5670,6 +5665,7 @@
 				0FEA0A1E1708B00700BB722C /* FTLAbstractHeapRepository.cpp in Sources */,
 				0FEA0A09170513DB00BB722C /* FTLCapabilities.cpp in Sources */,
 				0FEA0A271709623B00BB722C /* FTLCommonValues.cpp in Sources */,
+				7C008CDA187124BB00955C24 /* JSPromiseDeferred.cpp in Sources */,
 				A532438918568335002ED692 /* InspectorJSFrontendDispatchers.cpp in Sources */,
 				0FEA0A0B170513DB00BB722C /* FTLCompile.cpp in Sources */,
 				0F235BD317178E1C00690C7F /* FTLExitArgument.cpp in Sources */,
@@ -5695,6 +5691,7 @@
 				0F25F1B3181635F300522F39 /* FTLSlowPathCallKey.cpp in Sources */,
 				0F9D339A1803ADB70073C2BC /* FTLStackMaps.cpp in Sources */,
 				0FEA0A161706BB9000BB722C /* FTLState.cpp in Sources */,
+				7C008CD2186F8A9300955C24 /* JSPromiseFunctions.cpp in Sources */,
 				0F235BE117178E1C00690C7F /* FTLThunks.cpp in Sources */,
 				A593CF7C1840360300BFCE27 /* InspectorBackendDispatcher.cpp in Sources */,
 				0F235BE317178E1C00690C7F /* FTLValueFormat.cpp in Sources */,
@@ -5706,6 +5703,7 @@
 				C2239D1A16262BDD005AC5FD /* GCThread.cpp in Sources */,
 				C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */,
 				0F93329F14CA7DCA0085F3C6 /* GetByIdStatus.cpp in Sources */,
+				7C008CDE1871258D00955C24 /* JSPromiseReaction.cpp in Sources */,
 				14280855107EC0E70013E7B2 /* GetterSetter.cpp in Sources */,
 				142E3135134FF0A600AFADB5 /* HandleSet.cpp in Sources */,
 				142E3137134FF0A600AFADB5 /* HandleStack.cpp in Sources */,
@@ -5782,12 +5780,8 @@
 				A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */,
 				95F6E6950E5B5F970091E860 /* JSProfilerPrivate.cpp in Sources */,
 				7C184E1A17BEDBD3007CB63A /* JSPromise.cpp in Sources */,
-				7C15F65D17C199CE00794D40 /* JSPromiseCallback.cpp in Sources */,
 				7C184E2217BEE240007CB63A /* JSPromiseConstructor.cpp in Sources */,
 				7C184E1E17BEE22E007CB63A /* JSPromisePrototype.cpp in Sources */,
-				7C3BA29417C039560072DDC9 /* JSPromiseResolver.cpp in Sources */,
-				7C3BA29617C039560072DDC9 /* JSPromiseResolverConstructor.cpp in Sources */,
-				7C3BA29817C039560072DDC9 /* JSPromiseResolverPrototype.cpp in Sources */,
 				A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */,
 				862553D116136DA9009F17D0 /* JSProxy.cpp in Sources */,
 				14874AE515EBDE4A002E3587 /* JSScope.cpp in Sources */,

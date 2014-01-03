@@ -46,7 +46,6 @@
     macro(Number) \
     macro(Object) \
     macro(Promise) \
-    macro(PromiseResolver) \
     macro(RangeError) \
     macro(ReferenceError) \
     macro(RegExp) \
@@ -205,6 +204,15 @@
     macro(with) \
     macro(yield)
 
+#define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
+    macro(iterator) \
+    macro(iteratorNext) \
+    macro(resolve) \
+    macro(reject) \
+    macro(promise) \
+    macro(fulfillmentHandler) \
+    macro(rejectionHandler)
+
 namespace JSC {
 
     class CommonIdentifiers {
@@ -219,10 +227,7 @@ namespace JSC {
         const Identifier underscoreProto;
         const Identifier thisIdentifier;
         const Identifier useStrictIdentifier;
-        const Identifier iteratorPrivateName;
-        const Identifier iteratorNextPrivateName;
         const Identifier hasNextIdentifier;
-
         
 #define JSC_IDENTIFIER_DECLARE_KEYWORD_NAME_GLOBAL(name) const Identifier name##Keyword;
         JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(JSC_IDENTIFIER_DECLARE_KEYWORD_NAME_GLOBAL)
@@ -231,6 +236,10 @@ namespace JSC {
 #define JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL(name) const Identifier name;
         JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL
+
+#define JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL(name) const Identifier name##PrivateName;
+        JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL)
+#undef JSC_IDENTIFIER_DECLARE_PRIVATE_PROPERTY_NAME_GLOBAL
     };
 
 } // namespace JSC

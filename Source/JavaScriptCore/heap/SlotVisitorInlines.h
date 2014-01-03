@@ -116,6 +116,12 @@ template<typename T> inline void SlotVisitor::append(WriteBarrierBase<T>* slot)
     internalAppend(slot, *slot->slot());
 }
 
+template<typename Iterator> inline void SlotVisitor::append(Iterator begin, Iterator end)
+{
+    for (auto it = begin; it != end; ++it)
+        append(&*it);
+}
+
 ALWAYS_INLINE void SlotVisitor::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count)
 {
     append(barriers->slot(), count);

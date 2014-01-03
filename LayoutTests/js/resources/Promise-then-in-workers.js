@@ -6,30 +6,46 @@ var global = this;
 
 global.jsTestIsAsync = true;
 
-var resolver;
+var resolve;
 
-var firstPromise = new Promise(function(newResolver) {
+var firstPromise = new Promise(function(newResolve) {
   global.thisInInit = this;
-  resolver = newResolver;
+  resolve = newResolve;
 });
 
 var secondPromise = firstPromise.then(function(result) {
   global.thisInFulfillCallback = this;
   shouldBeFalse('thisInFulfillCallback === firstPromise');
-  shouldBeTrue('thisInFulfillCallback === secondPromise');
+  shouldBeFalse('thisInFulfillCallback === secondPromise');
+  shouldBeTrue('thisInFulfillCallback === global');
   global.result = result;
   shouldBeEqualToString('result', 'hello');
-  finishJSTest();
+  return 'world';
 });
 
-shouldBeTrue('thisInInit === firstPromise');
+shouldBeFalse('thisInInit === firstPromise');
+shouldBeTrue('thisInInit === global');
 shouldBeTrue('firstPromise instanceof Promise');
 shouldBeTrue('secondPromise instanceof Promise');
 
-shouldThrow('firstPromise.then(null)', '"TypeError: Expected function or undefined as as first argument"');
-shouldThrow('firstPromise.then(undefined, null)', '"TypeError: Expected function or undefined as as second argument"');
-shouldThrow('firstPromise.then(37)', '"TypeError: Expected function or undefined as as first argument"');
+secondPromise.then(null, 37).then(function(result) {
+  global.result = result;
+  shouldBeEqualToString('result', 'world');
+  throw 'exception'
+}).then(1, 2).then(function() {
+  testFailed('resolved');
+}, function(result) {
+  testPassed('rejected');
+  global.result = result;
+  shouldBeEqualToString('result', 'exception');
+}).then(function() {
+  testPassed('resolved');
+  finishJSTest();
+}, function() {
+  testFailed('rejected');
+  finishJSTest();
+});
 
-resolver.fulfill('hello');
+resolve('hello');
 
 

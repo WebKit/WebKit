@@ -11,24 +11,26 @@ description('Test Promise.');
 
 window.jsTestIsAsync = true;
 
-var resolver;
+var resolve;
 
-var firstPromise = new Promise(function(newResolver) {
+var firstPromise = new Promise(function(newResolve) {
   window.thisInInit = this;
-  resolver = newResolver;
+  resolve = newResolve;
 });
 
 var secondPromise = firstPromise.then(function(result) {
   window.thisInFulfillCallback = this;
-  shouldBeTrue('thisInFulfillCallback === secondPromise');
+  shouldBeFalse('thisInFulfillCallback === secondPromise');
+  shouldBeTrue('thisInFulfillCallback === window');
   window.result = result;
   shouldBeEqualToString('result', 'hello');
   finishJSTest();
 });
 
-shouldBeTrue('thisInInit === firstPromise');
+shouldBeFalse('thisInInit === firstPromise');
+shouldBeTrue('thisInInit === window');
 
-resolver.fulfill('hello');
+resolve('hello');
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

@@ -11,8 +11,8 @@ description('Test Promise.');
 
 window.jsTestIsAsync = true;
 var callback;
-var promise = new Promise(function(resolver) {
-  resolver.resolve({then: function(fulfillCallback, rejectCallback) {
+var promise = new Promise(function(resolve) {
+  resolve({then: function(fulfillCallback, rejectCallback) {
     throw 'hello';
   }}, true);
 });

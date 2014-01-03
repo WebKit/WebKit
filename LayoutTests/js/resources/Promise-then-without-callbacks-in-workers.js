@@ -6,7 +6,7 @@ var global = this;
 
 global.jsTestIsAsync = true;
 
-new Promise(function(r) { r.fulfill('hello'); })
+new Promise(function(resolve) { resolve('hello'); })
   .then()
   .then(function(result) {
     global.result = result;

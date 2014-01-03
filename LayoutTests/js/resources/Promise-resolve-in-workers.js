@@ -5,13 +5,14 @@ description('Test Promise.');
 var global = this;
 global.jsTestIsAsync = true;
 
-var firstPromise = new Promise(function(resolver) {
-  resolver.resolve('hello');
+var firstPromise = new Promise(function(resolve) {
+  resolve('hello');
 });
 
 var secondPromise = firstPromise.then(function(result) {
   global.thisInFulfillCallback = this;
-  shouldBeTrue('thisInFulfillCallback === secondPromise');
+  shouldBeFalse('thisInFulfillCallback === secondPromise');
+  shouldBeTrue('thisInFulfillCallback === global');
   global.result = result;
   shouldBeEqualToString('result', 'hello');
   finishJSTest();

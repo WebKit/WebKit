@@ -361,12 +361,11 @@ set(JavaScriptCore_SOURCES
     runtime/JSONObject.cpp
     runtime/JSObject.cpp
     runtime/JSPromise.cpp
-    runtime/JSPromiseCallback.cpp
     runtime/JSPromiseConstructor.cpp
+    runtime/JSPromiseDeferred.cpp
+    runtime/JSPromiseFunctions.cpp
+    runtime/JSPromiseReaction.cpp
     runtime/JSPromisePrototype.cpp
-    runtime/JSPromiseResolver.cpp
-    runtime/JSPromiseResolverConstructor.cpp
-    runtime/JSPromiseResolverPrototype.cpp
     runtime/JSPropertyNameIterator.cpp
     runtime/JSProxy.cpp
     runtime/JSScope.cpp
@@ -467,7 +466,6 @@ set(JavaScriptCore_LUT_FILES
     runtime/JSONObject.cpp
     runtime/JSPromiseConstructor.cpp
     runtime/JSPromisePrototype.cpp
-    runtime/JSPromiseResolverPrototype.cpp
     runtime/NamePrototype.cpp
     runtime/NumberConstructor.cpp
     runtime/NumberPrototype.cpp

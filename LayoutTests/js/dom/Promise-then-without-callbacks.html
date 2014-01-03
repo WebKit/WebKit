@@ -11,7 +11,7 @@ description('Test Promise.');
 
 window.jsTestIsAsync = true;
 
-new Promise(function(r) { r.fulfill('hello'); })
+new Promise(function(resolve) { resolve('hello'); })
   .then()
   .then(function(result) {
     window.result = result;

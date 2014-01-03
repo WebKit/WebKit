@@ -23,56 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSPromiseResolver_h
-#define JSPromiseResolver_h
+#ifndef JSPromiseDeferred_h
+#define JSPromiseDeferred_h
 
-#if ENABLE(PROMISES)
-
-#include "JSObject.h"
+#include "JSCell.h"
+#include "Structure.h"
 
 namespace JSC {
 
-class JSPromise;
-
-class JSPromiseResolver : public JSNonFinalObject {
+class JSPromiseDeferred : public JSCell {
 public:
-    typedef JSNonFinalObject Base;
+    typedef JSCell Base;
 
-    static JSPromiseResolver* create(VM&, Structure*, JSPromise*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE static JSPromiseDeferred* create(ExecState*, JSGlobalObject*);
+    JS_EXPORT_PRIVATE static JSPromiseDeferred* create(VM&, JSObject* promise, JSValue resolve, JSValue reject);
 
-    DECLARE_INFO;
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), info());
+    }
 
-    JSPromise* promise() const;
+    static const bool hasImmortalStructure = true;
 
-    JS_EXPORT_PRIVATE void fulfillIfNotResolved(ExecState*, JSValue);
-    void resolveIfNotResolved(ExecState*, JSValue);
-    JS_EXPORT_PRIVATE void rejectIfNotResolved(ExecState*, JSValue);
+    DECLARE_EXPORT_INFO;
 
-    enum ResolverMode {
-        ResolveSynchronously,
-        ResolveAsynchronously,
-    };
-
-    void fulfill(ExecState*, JSValue, ResolverMode = ResolveAsynchronously);
-    void resolve(ExecState*, JSValue, ResolverMode = ResolveAsynchronously);
-    void reject(ExecState*, JSValue, ResolverMode = ResolveAsynchronously);
-
-protected:
-    void finishCreation(VM&, JSPromise*);
-    static const unsigned StructureFlags = OverridesVisitChildren | JSObject::StructureFlags;
+    JSObject* promise() const { return m_promise.get(); }
+    JSValue resolve() const { return m_resolve.get(); }
+    JSValue reject() const { return m_reject.get(); }
 
 private:
-    JSPromiseResolver(VM&, Structure*);
-
+    JSPromiseDeferred(VM&);
+    void finishCreation(VM&, JSObject*, JSValue, JSValue);
+    static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    WriteBarrier<JSPromise> m_promise;
-    bool m_isResolved;
+    WriteBarrier<JSObject> m_promise;
+    WriteBarrier<Unknown> m_resolve;
+    WriteBarrier<Unknown> m_reject;
 };
+
+enum ThenableStatus {
+    WasAThenable,
+    NotAThenable
+};
+
+JSValue createJSPromiseDeferredFromConstructor(ExecState*, JSValue constructor);
+ThenableStatus updateDeferredFromPotentialThenable(ExecState*, JSValue, JSPromiseDeferred*);
 
 } // namespace JSC
 
-#endif // ENABLE(PROMISES)
-
-#endif // JSPromiseResolver_h
+#endif // JSPromiseDeferred_h

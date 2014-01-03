@@ -89,6 +89,7 @@
 #include "MapIteratorPrototype.h"
 #include "MapPrototype.h"
 #include "MathObject.h"
+#include "Microtask.h"
 #include "NameConstructor.h"
 #include "NameInstance.h"
 #include "NamePrototype.h"
@@ -117,12 +118,8 @@
 
 #if ENABLE(PROMISES)
 #include "JSPromise.h"
-#include "JSPromiseCallback.h"
 #include "JSPromiseConstructor.h"
 #include "JSPromisePrototype.h"
-#include "JSPromiseResolver.h"
-#include "JSPromiseResolverConstructor.h"
-#include "JSPromiseResolverPrototype.h"
 #endif // ENABLE(PROMISES)
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -337,11 +334,6 @@ void JSGlobalObject::reset(JSValue prototype)
 #if ENABLE(PROMISES)
     m_promisePrototype.set(vm, this, JSPromisePrototype::create(exec, this, JSPromisePrototype::createStructure(vm, this, m_objectPrototype.get())));
     m_promiseStructure.set(vm, this, JSPromise::createStructure(vm, this, m_promisePrototype.get()));
-
-    m_promiseResolverPrototype.set(vm, this, JSPromiseResolverPrototype::create(exec, this, JSPromiseResolverPrototype::createStructure(vm, this, m_objectPrototype.get())));
-    m_promiseResolverStructure.set(vm, this, JSPromiseResolver::createStructure(vm, this, m_promiseResolverPrototype.get()));
-    m_promiseCallbackStructure.set(vm, this, JSPromiseCallback::createStructure(vm, this, m_functionPrototype.get()));
-    m_promiseWrapperCallbackStructure.set(vm, this, JSPromiseWrapperCallback::createStructure(vm, this, m_functionPrototype.get()));
 #endif // ENABLE(PROMISES)
 
 #define CREATE_PROTOTYPE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
@@ -357,11 +349,6 @@ void JSGlobalObject::reset(JSValue prototype)
     JSCell* objectConstructor = ObjectConstructor::create(vm, ObjectConstructor::createStructure(vm, this, m_functionPrototype.get()), m_objectPrototype.get());
     JSCell* functionConstructor = FunctionConstructor::create(vm, FunctionConstructor::createStructure(vm, this, m_functionPrototype.get()), m_functionPrototype.get());
     JSCell* arrayConstructor = ArrayConstructor::create(vm, ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_arrayPrototype.get());
-
-#if ENABLE(PROMISES)
-    JSCell* promiseConstructor = JSPromiseConstructor::create(vm, JSPromiseConstructor::createStructure(vm, this, m_functionPrototype.get()), m_promisePrototype.get());
-    JSCell* promiseResolverConstructor = JSPromiseResolverConstructor::create(vm, JSPromiseResolverConstructor::createStructure(vm, this, m_functionPrototype.get()), m_promiseResolverPrototype.get());
-#endif // ENABLE(PROMISES)
 
     m_regExpConstructor.set(vm, this, RegExpConstructor::create(vm, RegExpConstructor::createStructure(vm, this, m_functionPrototype.get()), m_regExpPrototype.get()));
 
@@ -383,14 +370,14 @@ void JSGlobalObject::reset(JSValue prototype)
     m_syntaxErrorConstructor.set(vm, this, NativeErrorConstructor::create(vm, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("SyntaxError")));
     m_typeErrorConstructor.set(vm, this, NativeErrorConstructor::create(vm, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("TypeError")));
     m_URIErrorConstructor.set(vm, this, NativeErrorConstructor::create(vm, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("URIError")));
+    m_promiseConstructor.set(vm, this, JSPromiseConstructor::create(vm, JSPromiseConstructor::createStructure(vm, this, m_functionPrototype.get()), m_promisePrototype.get()));
 
     m_objectPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, objectConstructor, DontEnum);
     m_functionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, functionConstructor, DontEnum);
     m_arrayPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, arrayConstructor, DontEnum);
     m_regExpPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, m_regExpConstructor.get(), DontEnum);
 #if ENABLE(PROMISES)
-    m_promisePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, promiseConstructor, DontEnum);
-    m_promiseResolverPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, promiseResolverConstructor, DontEnum);
+    m_promisePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, m_promiseConstructor.get(), DontEnum);
 #endif
 
     putDirectWithoutTransition(vm, vm.propertyNames->Object, objectConstructor, DontEnum);
@@ -403,10 +390,7 @@ void JSGlobalObject::reset(JSValue prototype)
     putDirectWithoutTransition(vm, vm.propertyNames->SyntaxError, m_syntaxErrorConstructor.get(), DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->TypeError, m_typeErrorConstructor.get(), DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->URIError, m_URIErrorConstructor.get(), DontEnum);
-#if ENABLE(PROMISES)
-    putDirectWithoutTransition(vm, vm.propertyNames->Promise, promiseConstructor, DontEnum);
-    putDirectWithoutTransition(vm, vm.propertyNames->PromiseResolver, promiseResolverConstructor, DontEnum);
-#endif
+    putDirectWithoutTransition(vm, vm.propertyNames->Promise, m_promiseConstructor.get(), DontEnum);
 
 
 #define PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
@@ -624,6 +608,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_syntaxErrorConstructor);
     visitor.append(&thisObject->m_typeErrorConstructor);
     visitor.append(&thisObject->m_URIErrorConstructor);
+    visitor.append(&thisObject->m_promiseConstructor);
 
     visitor.append(&thisObject->m_evalFunction);
     visitor.append(&thisObject->m_callFunction);
@@ -636,7 +621,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_errorPrototype);
 #if ENABLE(PROMISES)
     visitor.append(&thisObject->m_promisePrototype);
-    visitor.append(&thisObject->m_promiseResolverPrototype);
 #endif
 
     visitor.append(&thisObject->m_withScopeStructure);
@@ -668,9 +652,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 #if ENABLE(PROMISES)
     visitor.append(&thisObject->m_promiseStructure);
-    visitor.append(&thisObject->m_promiseResolverStructure);
-    visitor.append(&thisObject->m_promiseCallbackStructure);
-    visitor.append(&thisObject->m_promiseWrapperCallbackStructure);
 #endif // ENABLE(PROMISES)
 
 #define VISIT_SIMPLE_TYPE(CapitalName, lowerName, properName, instanceType, jsName) \
@@ -796,6 +777,14 @@ void JSGlobalObject::setName(const String& name)
 #if ENABLE(REMOTE_INSPECTOR)
     m_inspectorDebuggable->update();
 #endif
+}
+
+void JSGlobalObject::queueMicrotask(PassRefPtr<Microtask> task)
+{
+    if (globalObjectMethodTable()->queueTaskToEventLoop)
+        globalObjectMethodTable()->queueTaskToEventLoop(this, task);
+    else
+        WTFLogAlways("ERROR: Event loop not supported.");
 }
 
 } // namespace JSC

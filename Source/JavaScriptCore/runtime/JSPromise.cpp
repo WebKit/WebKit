@@ -31,48 +31,22 @@
 #include "Error.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
-#include "JSPromiseResolver.h"
+#include "JSPromiseConstructor.h"
+#include "JSPromiseReaction.h"
+#include "Microtask.h"
 #include "SlotVisitorInlines.h"
-#include "StrongInlines.h"
 #include "StructureInlines.h"
 
 namespace JSC {
 
-class JSPromiseTaskContext : public TaskContext {
-public:
-    static PassRefPtr<JSPromiseTaskContext> create(VM& vm, JSPromise* promise)
-    {
-        return adoptRef(new JSPromiseTaskContext(vm, promise));
-    }
-
-    JSPromise& promise() const { return *m_promise.get(); }
-
-private:
-    JSPromiseTaskContext(VM& vm, JSPromise* promise)
-    {
-        m_promise.set(vm, promise);
-    }
-
-    Strong<JSPromise> m_promise;
-};
+static void triggerPromiseReactions(VM&, JSGlobalObject*, Vector<WriteBarrier<JSPromiseReaction>>&, JSValue);
 
 const ClassInfo JSPromise::s_info = { "Promise", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSPromise) };
 
-JSPromise* JSPromise::create(VM& vm, Structure* structure)
-{
-    JSPromise* promise = new (NotNull, allocateCell<JSPromise>(vm.heap)) JSPromise(vm, structure);
-    promise->finishCreation(vm);
-    return promise;
-}
-
-JSPromise* JSPromise::createWithResolver(VM& vm, JSGlobalObject* globalObject)
+JSPromise* JSPromise::create(VM& vm, JSGlobalObject* globalObject, JSPromiseConstructor* constructor)
 {
     JSPromise* promise = new (NotNull, allocateCell<JSPromise>(vm.heap)) JSPromise(vm, globalObject->promiseStructure());
-    promise->finishCreation(vm);
-
-    JSPromiseResolver* resolver = JSPromiseResolver::create(vm, globalObject->promiseResolverStructure(), promise);
-    promise->setResolver(vm, resolver);
-
+    promise->finishCreation(vm, constructor);
     return promise;
 }
 
@@ -83,14 +57,16 @@ Structure* JSPromise::createStructure(VM& vm, JSGlobalObject* globalObject, JSVa
 
 JSPromise::JSPromise(VM& vm, Structure* structure)
     : JSDestructibleObject(vm, structure)
-    , m_state(Pending)
+    , m_status(Status::Unresolved)
 {
 }
 
-void JSPromise::finishCreation(VM& vm)
+void JSPromise::finishCreation(VM& vm, JSPromiseConstructor* constructor)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
+    
+    m_constructor.set(vm, this, constructor);
 }
 
 void JSPromise::destroy(JSCell* cell)
@@ -107,137 +83,87 @@ void JSPromise::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_resolver);
     visitor.append(&thisObject->m_result);
-
-    for (size_t i = 0; i < thisObject->m_fulfillCallbacks.size(); ++i)
-        visitor.append(&thisObject->m_fulfillCallbacks[i]);
-    for (size_t i = 0; i < thisObject->m_rejectCallbacks.size(); ++i)
-        visitor.append(&thisObject->m_rejectCallbacks[i]);
+    visitor.append(&thisObject->m_constructor);
+    visitor.append(thisObject->m_resolveReactions.begin(), thisObject->m_resolveReactions.end());
+    visitor.append(thisObject->m_rejectReactions.begin(), thisObject->m_rejectReactions.end());
 }
 
-void JSPromise::setResolver(VM& vm, JSPromiseResolver* resolver)
+void JSPromise::reject(VM& vm, JSValue reason)
 {
-    m_resolver.set(vm, this, resolver);
-}
-
-JSPromiseResolver* JSPromise::resolver() const
-{
-    return m_resolver.get();
-}
-
-void JSPromise::setResult(VM& vm, JSValue result)
-{
-    m_result.set(vm, this, result);
-}
-
-JSValue JSPromise::result() const
-{
-    return m_result.get();
-}
-
-void JSPromise::setState(JSPromise::State state)
-{
-    ASSERT(m_state == Pending);
-    m_state = state;
-}
-
-JSPromise::State JSPromise::state() const
-{
-    return m_state;
-}
-
-void JSPromise::appendCallbacks(ExecState* exec, InternalFunction* fulfillCallback, InternalFunction* rejectCallback)
-{
-    // 1. Append fulfillCallback to promise's fulfill callbacks.
-    m_fulfillCallbacks.append(WriteBarrier<InternalFunction>(exec->vm(), this, fulfillCallback));
-    
-    // 2. Append rejectCallback to promise' reject callbacks.
-    m_rejectCallbacks.append(WriteBarrier<InternalFunction>(exec->vm(), this, rejectCallback));
-
-    // 3. If promise's state is fulfilled, queue a task to process promise's fulfill callbacks with promise's result.
-    if (m_state == Fulfilled) {
-        queueTaskToProcessFulfillCallbacks(exec);
+    // 1. If the value of promise's internal slot [[PromiseStatus]] is not "unresolved", return.
+    if (m_status != Status::Unresolved)
         return;
-    }
 
-    // 4. If promise's state is rejected, queue a task to process promise's reject callbacks with promise's result.
-    if (m_state == Rejected) {
-        queueTaskToProcessRejectCallbacks(exec);
+    DeferGC deferGC(vm.heap);
+
+    // 2. Let 'reactions' be the value of promise's [[RejectReactions]] internal slot.
+    Vector<WriteBarrier<JSPromiseReaction>> reactions;
+    reactions.swap(m_rejectReactions);
+
+    // 3. Set the value of promise's [[Result]] internal slot to reason.
+    m_result.set(vm, this, reason);
+
+    // 4. Set the value of promise's [[ResolveReactions]] internal slot to undefined.
+    m_resolveReactions.clear();
+
+    // 5. Set the value of promise's [[RejectReactions]] internal slot to undefined.
+    // NOTE: Handled by the swap above.
+
+    // 6. Set the value of promise's [[PromiseStatus]] internal slot to "has-rejection".
+    m_status = Status::HasRejection;
+
+    // 7. Return the result of calling TriggerPromiseReactions(reactions, reason).
+    triggerPromiseReactions(vm, globalObject(), reactions, reason);
+}
+
+void JSPromise::resolve(VM& vm, JSValue resolution)
+{
+    // 1. If the value of promise's internal slot [[PromiseStatus]] is not "unresolved", return.
+    if (m_status != Status::Unresolved)
         return;
-    }
+
+    DeferGC deferGC(vm.heap);
+
+    // 2. Let 'reactions' be the value of promise's [[ResolveReactions]] internal slot.
+    Vector<WriteBarrier<JSPromiseReaction>> reactions;
+    reactions.swap(m_resolveReactions);
+    
+    // 3. Set the value of promise's [[Result]] internal slot to resolution.
+    m_result.set(vm, this, resolution);
+
+    // 4. Set the value of promise's [[ResolveReactions]] internal slot to undefined.
+    // NOTE: Handled by the swap above.
+
+    // 5. Set the value of promise's [[RejectReactions]] internal slot to undefined.
+    m_rejectReactions.clear();
+
+    // 6. Set the value of promise's [[PromiseStatus]] internal slot to "has-resolution".
+    m_status = Status::HasResolution;
+
+    // 7. Return the result of calling TriggerPromiseReactions(reactions, resolution).
+    triggerPromiseReactions(vm, globalObject(), reactions, resolution);
 }
 
-void JSPromise::queueTaskToProcessFulfillCallbacks(ExecState* exec)
+void JSPromise::appendResolveReaction(VM& vm, JSPromiseReaction* reaction)
 {
-    JSGlobalObject* globalObject = this->globalObject();
-    if (globalObject->globalObjectMethodTable()->queueTaskToEventLoop)
-        globalObject->globalObjectMethodTable()->queueTaskToEventLoop(globalObject, processFulfillCallbacksForTask, JSPromiseTaskContext::create(exec->vm(), this));
-    else
-        WTFLogAlways("ERROR: Event loop not supported.");
+    m_resolveReactions.append(WriteBarrier<JSPromiseReaction>(vm, this, reaction));
 }
 
-void JSPromise::queueTaskToProcessRejectCallbacks(ExecState* exec)
+void JSPromise::appendRejectReaction(VM& vm, JSPromiseReaction* reaction)
 {
-    JSGlobalObject* globalObject = this->globalObject();
-    if (globalObject->globalObjectMethodTable()->queueTaskToEventLoop)
-        globalObject->globalObjectMethodTable()->queueTaskToEventLoop(globalObject, processRejectCallbacksForTask, JSPromiseTaskContext::create(exec->vm(), this));
-    else
-        WTFLogAlways("ERROR: Event loop not supported.");
+    m_rejectReactions.append(WriteBarrier<JSPromiseReaction>(vm, this, reaction));
 }
 
-void JSPromise::processFulfillCallbacksForTask(ExecState* exec, TaskContext* taskContext)
+void triggerPromiseReactions(VM& vm, JSGlobalObject* globalObject, Vector<WriteBarrier<JSPromiseReaction>>& reactions, JSValue argument)
 {
-    JSPromiseTaskContext* promiseTaskContext = static_cast<JSPromiseTaskContext*>(taskContext);
-    JSPromise& promise = promiseTaskContext->promise();
-
-    promise.processFulfillCallbacksWithValue(exec, promise.result());
-}
-
-void JSPromise::processRejectCallbacksForTask(ExecState* exec, TaskContext* taskContext)
-{
-    JSPromiseTaskContext* promiseTaskContext = static_cast<JSPromiseTaskContext*>(taskContext);
-    JSPromise& promise = promiseTaskContext->promise();
-
-    promise.processRejectCallbacksWithValue(exec, promise.result());
-}
-
-void JSPromise::processFulfillCallbacksWithValue(ExecState* exec, JSValue value)
-{
-    ASSERT(m_state == Fulfilled);
-
-    for (size_t i = 0; i < m_fulfillCallbacks.size(); ++i) {
-        JSValue callback = m_fulfillCallbacks[i].get();
-
-        CallData callData;
-        CallType callType = JSC::getCallData(callback, callData);
-        ASSERT(callType != CallTypeNone);
-
-        MarkedArgumentBuffer arguments;
-        arguments.append(value);
-        call(exec, callback, callType, callData, this, arguments);
+    // 1. Repeat for each reaction in reactions, in original insertion order
+    for (auto& reaction : reactions) {
+        // i. Call QueueMicrotask(ExecutePromiseReaction, (reaction, argument)).
+        globalObject->queueMicrotask(createExecutePromiseReactionMicrotask(vm, reaction.get(), argument));
     }
     
-    m_fulfillCallbacks.clear();
-}
-
-void JSPromise::processRejectCallbacksWithValue(ExecState* exec, JSValue value)
-{
-    ASSERT(m_state == Rejected);
-
-    for (size_t i = 0; i < m_rejectCallbacks.size(); ++i) {
-        JSValue callback = m_rejectCallbacks[i].get();
-
-        CallData callData;
-        CallType callType = JSC::getCallData(callback, callData);
-        ASSERT(callType != CallTypeNone);
-
-        MarkedArgumentBuffer arguments;
-        arguments.append(value);
-        call(exec, callback, callType, callData, this, arguments);
-    }
-    
-    m_rejectCallbacks.clear();
+    // 2. Return.
 }
 
 } // namespace JSC

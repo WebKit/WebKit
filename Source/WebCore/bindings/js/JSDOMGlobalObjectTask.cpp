@@ -29,6 +29,7 @@
 #include "ActiveDOMCallback.h"
 #include "JSMainThreadExecState.h"
 #include <heap/StrongInlines.h>
+#include <runtime/Microtask.h>
 #include <wtf/Ref.h>
 
 using namespace JSC;
@@ -37,9 +38,9 @@ namespace WebCore {
 
 class JSGlobalObjectCallback FINAL : public RefCounted<JSGlobalObjectCallback>, private ActiveDOMCallback {
 public:
-    static PassRefPtr<JSGlobalObjectCallback> create(JSDOMGlobalObject* globalObject, GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr functionPtr, PassRefPtr<TaskContext> taskContext)
+    static PassRefPtr<JSGlobalObjectCallback> create(JSDOMGlobalObject* globalObject, PassRefPtr<Microtask> task)
     {
-        return adoptRef(new JSGlobalObjectCallback(globalObject, functionPtr, taskContext));
+        return adoptRef(new JSGlobalObjectCallback(globalObject, task));
     }
 
     void call()
@@ -61,27 +62,25 @@ public:
         // push the current ExecState on to the JSMainThreadExecState stack.
         if (context->isDocument()) {
             JSMainThreadExecState currentState(exec);
-            m_functionPtr(exec, m_taskContext.get());
+            m_task->run(exec);
         } else
-            m_functionPtr(exec, m_taskContext.get());
+            m_task->run(exec);
     }
 
 private:
-    JSGlobalObjectCallback(JSDOMGlobalObject* globalObject, GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr functionPtr, PassRefPtr<TaskContext> taskContext)
+    JSGlobalObjectCallback(JSDOMGlobalObject* globalObject, PassRefPtr<Microtask> task)
         : ActiveDOMCallback(globalObject->scriptExecutionContext())
         , m_globalObject(globalObject->vm(), globalObject)
-        , m_functionPtr(functionPtr)
-        , m_taskContext(taskContext)
+        , m_task(task)
     {
     }
 
     Strong<JSDOMGlobalObject> m_globalObject;
-    GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr m_functionPtr;
-    RefPtr<TaskContext> m_taskContext;
+    RefPtr<Microtask> m_task;
 };
 
-JSGlobalObjectTask::JSGlobalObjectTask(JSDOMGlobalObject* globalObject, GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr functionPtr, PassRefPtr<TaskContext> taskContext)
-    : m_callback(JSGlobalObjectCallback::create(globalObject, functionPtr, taskContext))
+JSGlobalObjectTask::JSGlobalObjectTask(JSDOMGlobalObject* globalObject, PassRefPtr<Microtask> task)
+    : m_callback(JSGlobalObjectCallback::create(globalObject, task))
 {
 }
 

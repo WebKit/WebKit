@@ -10,17 +10,15 @@
 description('Test Promise.');
 
 window.jsTestIsAsync = true;
-var callback;
 var value = {
   then: function(fulfillCallback, rejectCallback) {
     testPassed('value.then is called.');
     window.thisValue = this;
     shouldBe('thisValue', 'value');
-    callback = fulfillCallback;
+    fulfillCallback('hello');
   }
 };
-finishJSTest();
-var promise = new Promise(function(r) { r.resolve(value); });
+var promise = new Promise(function(resolve) { resolve(value); });
 
 promise.then(function(result) {
   testPassed('fulfilled');
@@ -34,7 +32,6 @@ promise.then(function(result) {
 
 debug('The promise is not fulfilled now.');
 
-callback('hello');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

@@ -11,8 +11,8 @@ description('Test Promise.');
 
 window.jsTestIsAsync = true;
 
-var resolver;
-var promise = new Promise(function (r) {resolver = r;});
+var resolve;
+var promise = new Promise(function (r) {resolve = r;});
 var operation;
 
 promise.then(function(result) {  // fulfilled - continue
@@ -57,7 +57,7 @@ promise.then(function(result) {  // fulfilled - continue
 });
 
 operation = 'synchronous';
-resolver.fulfill('hello');
+resolve('hello');
 
 // The chain should be executed asynchronously.
 operation = 'asynchronous';

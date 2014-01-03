@@ -12,8 +12,8 @@ description('Test Promise.');
 window.jsTestIsAsync = true;
 result = undefined;
 
-var resolver;
-var promise = Promise.resolve(new Promise(function (r) { resolver = r;} ));
+var resolve;
+var promise = Promise.resolve(new Promise(function (r) { resolve = r;} ));
 
 promise.then(function(result) {
   window.result = result;
@@ -24,7 +24,7 @@ promise.then(function(result) {
   finishJSTest();
 });
 
-resolver.resolve('hello');
+resolve('hello');
 shouldBe('result', 'undefined');
 </script>
 <script src="../../resources/js-test-post.js"></script>

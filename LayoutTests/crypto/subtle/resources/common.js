@@ -107,15 +107,16 @@ if (!Promise.all) {
         var results = [];
         var resultCount = 0;
         var resolver;
+        var rejector;
         function next(result) {
             results[resultCount++] = result;
             if (resultCount < promises.length)
                 promises[resultCount].then(next);
             else
-                resolver.fulfill(results);
+                resolver(results);
         }
-        promises[0].then(next, function() { resolver.reject(null) });
-        return new Promise(function(r) { resolver = r; });
+        promises[0].then(next, function() { rejector(null) });
+        return new Promise(function(resolve, reject) { resolver = resolve; rejector = reject; });
     }
 }
 

@@ -1,3 +1,94 @@
+2014-01-02  Sam Weinig  <sam@webkit.org>
+
+        Update Promises to the https://github.com/domenic/promises-unwrapping spec
+        https://bugs.webkit.org/show_bug.cgi?id=120954
+
+        Reviewed by Filip Pizlo.
+
+        * crypto/subtle/argument-conversion.html:
+        * crypto/subtle/resources/common.js:
+        * crypto/subtle/sha-1.html:
+        * crypto/subtle/sha-224.html:
+        * crypto/subtle/sha-256.html:
+        * crypto/subtle/sha-384.html:
+        * crypto/subtle/sha-512.html:
+        * js/dom/Promise-already-fulfilled-expected.txt: Removed.
+        * js/dom/Promise-already-fulfilled.html: Removed.
+        * js/dom/Promise-already-rejected.html:
+        * js/dom/Promise-already-resolved.html:
+        * js/dom/Promise-catch-expected.txt:
+        * js/dom/Promise-catch-in-workers-expected.txt:
+        * js/dom/Promise-catch.html:
+        * js/dom/Promise-chain.html:
+        * js/dom/Promise-exception-expected.txt:
+        * js/dom/Promise-exception.html:
+        * js/dom/Promise-expected.txt:
+        * js/dom/Promise-fulfill-expected.txt: Removed.
+        * js/dom/Promise-fulfill-in-workers-expected.txt: Removed.
+        * js/dom/Promise-fulfill-in-workers.html: Removed.
+        * js/dom/Promise-fulfill.html: Removed.
+        * js/dom/Promise-init-callback-receiver-expected.txt: Added.
+        * js/dom/Promise-init-callback-receiver.html: Added.
+        * js/dom/Promise-init-expected.txt:
+        * js/dom/Promise-init-in-workers-expected.txt:
+        * js/dom/Promise-init.html:
+        * js/dom/Promise-onFulfilled-deep-expected.txt: Added.
+        * js/dom/Promise-onFulfilled-deep.html: Added.
+        * js/dom/Promise-onRejected-deep-expected.txt: Added.
+        * js/dom/Promise-onRejected-deep.html: Added.
+        * js/dom/Promise-reject.html:
+        * js/dom/Promise-resolve-chain.html:
+        * js/dom/Promise-resolve-expected.txt:
+        * js/dom/Promise-resolve-in-workers-expected.txt:
+        * js/dom/Promise-resolve-state-expected.txt: Added.
+        * js/dom/Promise-resolve-state-in-workers-expected.txt: Added.
+        * js/dom/Promise-resolve-state-in-workers.html: Added.
+        * js/dom/Promise-resolve-state.html: Added.
+        * js/dom/Promise-resolve-with-itself-expected.txt: Added.
+        * js/dom/Promise-resolve-with-itself.html: Added.
+        * js/dom/Promise-resolve-with-then-exception.html:
+        * js/dom/Promise-resolve-with-then-fulfill-expected.txt:
+        * js/dom/Promise-resolve-with-then-fulfill.html:
+        * js/dom/Promise-resolve-with-then-reject-expected.txt:
+        * js/dom/Promise-resolve-with-then-reject.html:
+        * js/dom/Promise-resolve.html:
+        * js/dom/Promise-simple-expected.txt:
+        * js/dom/Promise-simple-fulfill-expected.txt: Removed.
+        * js/dom/Promise-simple-fulfill-inside-callback-expected.txt: Removed.
+        * js/dom/Promise-simple-fulfill-inside-callback.html: Removed.
+        * js/dom/Promise-simple-fulfill.html: Removed.
+        * js/dom/Promise-simple-in-workers-expected.txt:
+        * js/dom/Promise-simple-resolve-expected.txt: Added.
+        * js/dom/Promise-simple-resolve.html: Added.
+        * js/dom/Promise-simple.html:
+        * js/dom/Promise-static-all-expected.txt: Added.
+        * js/dom/Promise-static-all.html: Added.
+        * js/dom/Promise-static-cast-expected.txt: Added.
+        * js/dom/Promise-static-cast.html: Added.
+        * js/dom/Promise-static-fulfill-expected.txt: Removed.
+        * js/dom/Promise-static-fulfill.html: Removed.
+        * js/dom/Promise-static-race-expected.txt: Added.
+        * js/dom/Promise-static-race.html: Added.
+        * js/dom/Promise-static-resolve.html:
+        * js/dom/Promise-then-callback-receiver-expected.txt: Added.
+        * js/dom/Promise-then-callback-receiver.html: Added.
+        * js/dom/Promise-then-expected.txt:
+        * js/dom/Promise-then-in-workers-expected.txt:
+        * js/dom/Promise-then-without-callbacks.html:
+        * js/dom/Promise-then.html:
+        * js/dom/Promise-types-expected.txt:
+        * js/dom/Promise-types.html:
+        * js/dom/Promise.html:
+        * js/resources/Promise-catch-in-workers.js:
+        * js/resources/Promise-fulfill-in-workers.js: Removed.
+        * js/resources/Promise-init-in-workers.js:
+        * js/resources/Promise-reject-in-workers.js:
+        * js/resources/Promise-resolve-in-workers.js:
+        * js/resources/Promise-resolve-state-in-workers.js: Added.
+        * js/resources/Promise-simple-in-workers.js:
+        * js/resources/Promise-then-in-workers.js:
+        * js/resources/Promise-then-without-callbacks-in-workers.js:
+
 2014-01-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow ImageBuffer to re-use IOSurfaces

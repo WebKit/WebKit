@@ -11,14 +11,13 @@ description('Test Promise.');
 
 window.jsTestIsAsync = true;
 
-new Promise(function(resolver) {
-  var anotherResolver;
-  resolver.resolve(new Promise(function(r) { anotherResolver = r; }));
-  resolver.fulfill('fulfill');
-  resolver.resolve('resolve');
-  resolver.reject('reject');
+new Promise(function(resolve, reject) {
+  var anotherResolve;
+  resolve(new Promise(function(r) { anotherResolve = r; }));
+  resolve('resolve');
+  reject('reject');
 
-  anotherResolver.fulfill('foo');
+  anotherResolve('foo');
 }).then(function(result) {
   window.result = result;
   shouldBeEqualToString('result', 'foo');

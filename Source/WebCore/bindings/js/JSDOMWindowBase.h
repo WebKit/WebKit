@@ -65,8 +65,7 @@ namespace WebCore {
         static bool shouldInterruptScript(const JSC::JSGlobalObject*);
         static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
         static bool javaScriptExperimentsEnabled(const JSC::JSGlobalObject*);
-
-        static void queueTaskToEventLoop(const JSC::JSGlobalObject*, JSC::GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr, PassRefPtr<JSC::TaskContext>);
+        static void queueTaskToEventLoop(const JSC::JSGlobalObject*, PassRefPtr<JSC::Microtask>);
         
         void printErrorMessage(const String&) const;
 

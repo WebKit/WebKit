@@ -37,6 +37,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
+#include <runtime/Microtask.h>
 #include <wtf/MainThread.h>
 
 using namespace JSC;
@@ -181,10 +182,10 @@ bool JSDOMWindowBase::javaScriptExperimentsEnabled(const JSGlobalObject* object)
     return frame->settings().javaScriptExperimentsEnabled();
 }
 
-void JSDOMWindowBase::queueTaskToEventLoop(const JSGlobalObject* object, GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr functionPtr, PassRefPtr<TaskContext> taskContext)
+void JSDOMWindowBase::queueTaskToEventLoop(const JSGlobalObject* object, PassRefPtr<Microtask> task)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
-    thisObject->scriptExecutionContext()->postTask(JSGlobalObjectTask::create((JSDOMWindowBase*)thisObject, functionPtr, taskContext));
+    thisObject->scriptExecutionContext()->postTask(JSGlobalObjectTask::create((JSDOMWindowBase*)thisObject, task));
 }
 
 void JSDOMWindowBase::willRemoveFromWindowShell()

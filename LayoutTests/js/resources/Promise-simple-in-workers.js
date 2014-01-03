@@ -6,21 +6,23 @@ var global = this;
 
 global.jsTestIsAsync = true;
 
-var resolver;
+var resolve;
 
-var firstPromise = new Promise(function(newResolver) {
+var firstPromise = new Promise(function(newResolve) {
   global.thisInInit = this;
-  resolver = newResolver;
+  resolve = newResolve;
 });
 
 var secondPromise = firstPromise.then(function(result) {
   global.thisInFulfillCallback = this;
-  shouldBeTrue('thisInFulfillCallback === secondPromise');
+  shouldBeFalse('thisInFulfillCallback === secondPromise');
+  shouldBeTrue('thisInFulfillCallback === global');
   global.result = result;
   shouldBeEqualToString('result', 'hello');
   finishJSTest();
 });
 
-shouldBeTrue('thisInInit === firstPromise');
+shouldBeFalse('thisInInit === firstPromise');
+shouldBeTrue('thisInInit === global');
 
-resolver.fulfill('hello');
+resolve('hello');

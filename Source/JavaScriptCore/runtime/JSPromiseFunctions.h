@@ -23,35 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSPromiseResolverPrototype_h
-#define JSPromiseResolverPrototype_h
+#ifndef JSPromiseFunctions_h
+#define JSPromiseFunctions_h
 
 #if ENABLE(PROMISES)
 
-#include "JSObject.h"
+#include "JSFunction.h"
 
 namespace JSC {
 
-class JSPromiseResolverPrototype : public JSNonFinalObject {
-public:
-    typedef JSNonFinalObject Base;
-
-    static JSPromiseResolverPrototype* create(ExecState*, JSGlobalObject*, Structure*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    DECLARE_INFO;
-
-protected:
-    void finishCreation(VM&, Structure*);
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
-
-private:
-    JSPromiseResolverPrototype(ExecState*, Structure*);
-    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-};
+JSFunction* createDeferredConstructionFunction(VM&, JSGlobalObject*);
+JSFunction* createIdentifyFunction(VM&, JSGlobalObject*);
+JSFunction* createPromiseResolutionHandlerFunction(VM&, JSGlobalObject*);
+JSFunction* createRejectPromiseFunction(VM&, JSGlobalObject*);
+JSFunction* createResolvePromiseFunction(VM&, JSGlobalObject*);
+JSFunction* createThrowerFunction(VM&, JSGlobalObject*);
 
 } // namespace JSC
 
 #endif // ENABLE(PROMISES)
 
-#endif // JSPromiseResolverPrototype_h
+#endif // JSPromiseFunctions_h

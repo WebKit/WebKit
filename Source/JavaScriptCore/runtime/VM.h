@@ -252,7 +252,6 @@ namespace JSC {
 #if ENABLE(PROMISES)
         const OwnPtr<const HashTable> promisePrototypeTable;
         const OwnPtr<const HashTable> promiseConstructorTable;
-        const OwnPtr<const HashTable> promiseResolverPrototypeTable;
 #endif
 
         Strong<Structure> structureStructure;
@@ -283,6 +282,8 @@ namespace JSC {
         Strong<Structure> propertyTableStructure;
         Strong<Structure> mapDataStructure;
         Strong<Structure> weakMapDataStructure;
+        Strong<Structure> promiseDeferredStructure;
+        Strong<Structure> promiseReactionStructure;
         Strong<JSCell> iterationTerminator;
 
         IdentifierTable* identifierTable;

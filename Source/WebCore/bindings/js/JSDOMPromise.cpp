@@ -26,12 +26,47 @@
 #include "config.h"
 #include "JSDOMPromise.h"
 
+using namespace JSC;
+
 namespace WebCore {
 
-PromiseWrapper::PromiseWrapper(JSDOMGlobalObject* globalObject, JSC::JSPromise* promise)
-    : m_globalObject(globalObject->vm(), globalObject)
-    , m_promise(globalObject->vm(), promise)
+DeferredWrapper::DeferredWrapper(ExecState* exec, JSDOMGlobalObject* globalObject)
+    : m_globalObject(exec->vm(), globalObject)
+    , m_deferred(exec->vm(), JSPromiseDeferred::create(exec, globalObject))
 {
+}
+
+JSObject* DeferredWrapper::promise() const
+{
+    return m_deferred->promise();
+}
+
+void DeferredWrapper::resolve(ExecState* exec, JSValue resolution)
+{
+    JSValue deferredResolve = m_deferred->resolve();
+
+    CallData resolveCallData;
+    CallType resolveCallType = getCallData(deferredResolve, resolveCallData);
+    ASSERT(resolveCallType != CallTypeNone);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(resolution);
+
+    call(exec, deferredResolve, resolveCallType, resolveCallData, jsUndefined(), arguments);
+}
+
+void DeferredWrapper::reject(ExecState* exec, JSValue reason)
+{
+    JSValue deferredReject = m_deferred->reject();
+
+    CallData rejectCallData;
+    CallType rejectCallType = getCallData(deferredReject, rejectCallData);
+    ASSERT(rejectCallType != CallTypeNone);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(reason);
+
+    call(exec, deferredReject, rejectCallType, rejectCallData, jsUndefined(), arguments);
 }
 
 }

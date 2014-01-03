@@ -11,11 +11,10 @@ description('Test Promise.');
 
 window.jsTestIsAsync = true;
 
-new Promise(function(resolver) {
-  resolver.reject('foo');
-  resolver.fulfill('fulfill');
-  resolver.resolve('resolve');
-  resolver.reject('reject');
+new Promise(function(resolve, reject) {
+  reject('foo');
+  resolve('resolve');
+  reject('reject');
 }).then(function() {
   testFailed('fulfilled');
   finishJSTest();

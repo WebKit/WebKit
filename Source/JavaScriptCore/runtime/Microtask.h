@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSPromiseResolverConstructor_h
-#define JSPromiseResolverConstructor_h
+#ifndef Microtask_h
+#define Microtask_h
 
-#if ENABLE(PROMISES)
-
-#include "InternalFunction.h"
+#include <wtf/RefCounted.h>
 
 namespace JSC {
 
-class JSPromiseResolverPrototype;
+class ExecState;
 
-class JSPromiseResolverConstructor : public InternalFunction {
+class Microtask : public RefCounted<Microtask> {
 public:
-    typedef InternalFunction Base;
+    virtual ~Microtask()
+    {
+    }
 
-    static JSPromiseResolverConstructor* create(VM&, Structure*, JSPromiseResolverPrototype*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    DECLARE_INFO;
-
-protected:
-    void finishCreation(VM&, JSPromiseResolverPrototype*);
-    static const unsigned StructureFlags = InternalFunction::StructureFlags;
-
-private:
-    JSPromiseResolverConstructor(VM&, Structure*);
-    static ConstructType getConstructData(JSCell*, ConstructData&);
-    static CallType getCallData(JSCell*, CallData&);
+    virtual void run(ExecState*) = 0;
 };
 
 } // namespace JSC
 
-#endif // ENABLE(PROMISES)
-
-#endif // JSPromiseResolverConstructor_h
+#endif // Microtask_h

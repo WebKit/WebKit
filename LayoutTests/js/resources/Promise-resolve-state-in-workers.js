@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-<script src="../../resources/js-test-pre.js"></script>
-</head>
-<body>
-<div id="description"></div>
-<div id="console"></div>
-<script>
+importScripts('../../resources/js-test-pre.js');
+
 description('Test Promise.');
 
-window.jsTestIsAsync = true;
+jsTestIsAsync = true;
 
-var resolver;
-var promise = new Promise(function(r) { resolver = r; });
+var resolve;
+var promise = new Promise(function(r) { resolve = r; });
 var promiseState = 'pending';
 var promiseResult = undefined;
 promise.then(function(result) {
@@ -25,7 +18,7 @@ promise.then(function(result) {
 
 shouldBeEqualToString('promiseState', 'pending');
 
-resolver.fulfill('hello');
+resolve('hello');
 
 shouldBeEqualToString('promiseState', 'pending');
 
@@ -37,8 +30,3 @@ promise.then(function() {
   testFailed('promise is rejected.');
   finishJSTest();
 });
-
-</script>
-<script src="../../resources/js-test-post.js"></script>
-</body>
-</html>

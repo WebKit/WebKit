@@ -57,6 +57,8 @@
 #include "JSLock.h"
 #include "JSNameScope.h"
 #include "JSNotAnObject.h"
+#include "JSPromiseDeferred.h"
+#include "JSPromiseReaction.h"
 #include "JSPropertyNameIterator.h"
 #include "JSWithScope.h"
 #include "Lexer.h"
@@ -114,7 +116,6 @@ extern const HashTable stringConstructorTable;
 #if ENABLE(PROMISES)
 extern const HashTable promisePrototypeTable;
 extern const HashTable promiseConstructorTable;
-extern const HashTable promiseResolverPrototypeTable;
 #endif
 
 // Note: Platform.h will enforce that ENABLE(ASSEMBLER) is true if either
@@ -185,7 +186,6 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(PROMISES)
     , promisePrototypeTable(adoptPtr(new HashTable(JSC::promisePrototypeTable)))
     , promiseConstructorTable(adoptPtr(new HashTable(JSC::promiseConstructorTable)))
-    , promiseResolverPrototypeTable(adoptPtr(new HashTable(JSC::promiseResolverPrototypeTable)))
 #endif
     , identifierTable(vmType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
@@ -258,6 +258,8 @@ VM::VM(VMType vmType, HeapType heapType)
     propertyTableStructure.set(*this, PropertyTable::createStructure(*this, 0, jsNull()));
     mapDataStructure.set(*this, MapData::createStructure(*this, 0, jsNull()));
     weakMapDataStructure.set(*this, WeakMapData::createStructure(*this, 0, jsNull()));
+    promiseDeferredStructure.set(*this, JSPromiseDeferred::createStructure(*this, 0, jsNull()));
+    promiseReactionStructure.set(*this, JSPromiseReaction::createStructure(*this, 0, jsNull()));
     iterationTerminator.set(*this, JSFinalObject::create(*this, JSFinalObject::createStructure(*this, 0, jsNull(), 1)));
     smallStrings.initializeCommonStrings(*this);
 
@@ -350,7 +352,6 @@ VM::~VM()
 #if ENABLE(PROMISES)
     promisePrototypeTable->deleteTable();
     promiseConstructorTable->deleteTable();
-    promiseResolverPrototypeTable->deleteTable();
 #endif
 
     delete emptyList;

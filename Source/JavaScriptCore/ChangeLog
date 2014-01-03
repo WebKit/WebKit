@@ -1,3 +1,112 @@
+2014-01-02  Sam Weinig  <sam@webkit.org>
+
+        Update Promises to the https://github.com/domenic/promises-unwrapping spec
+        https://bugs.webkit.org/show_bug.cgi?id=120954
+
+        Reviewed by Filip Pizlo.
+
+        Update Promises to the revised spec. Notable changes:
+        - JSPromiseResolver is gone.
+        - TaskContext has been renamed Microtask and now has a virtual run() function.
+        - Instead of using custom InternalFunction subclasses, JSFunctions are used
+          with PrivateName properties for internal slots.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::promiseConstructorTable):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        (JSC::JSGlobalObject::queueMicrotask):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::promiseConstructor):
+        (JSC::JSGlobalObject::promisePrototype):
+        (JSC::JSGlobalObject::promiseStructure):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::create):
+        (JSC::JSPromise::JSPromise):
+        (JSC::JSPromise::finishCreation):
+        (JSC::JSPromise::visitChildren):
+        (JSC::JSPromise::reject):
+        (JSC::JSPromise::resolve):
+        (JSC::JSPromise::appendResolveReaction):
+        (JSC::JSPromise::appendRejectReaction):
+        (JSC::triggerPromiseReactions):
+        * runtime/JSPromise.h:
+        (JSC::JSPromise::status):
+        (JSC::JSPromise::result):
+        (JSC::JSPromise::constructor):
+        * runtime/JSPromiseCallback.cpp: Removed.
+        * runtime/JSPromiseCallback.h: Removed.
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        (JSC::JSPromiseConstructor::getCallData):
+        (JSC::JSPromiseConstructorFuncCast):
+        (JSC::JSPromiseConstructorFuncResolve):
+        (JSC::JSPromiseConstructorFuncReject):
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSPromiseDeferred.cpp: Added.
+        (JSC::JSPromiseDeferred::create):
+        (JSC::JSPromiseDeferred::JSPromiseDeferred):
+        (JSC::JSPromiseDeferred::finishCreation):
+        (JSC::JSPromiseDeferred::visitChildren):
+        (JSC::createJSPromiseDeferredFromConstructor):
+        (JSC::updateDeferredFromPotentialThenable):
+        * runtime/JSPromiseDeferred.h: Added.
+        (JSC::JSPromiseDeferred::createStructure):
+        (JSC::JSPromiseDeferred::promise):
+        (JSC::JSPromiseDeferred::resolve):
+        (JSC::JSPromiseDeferred::reject):
+        * runtime/JSPromiseFunctions.cpp: Added.
+        (JSC::deferredConstructionFunction):
+        (JSC::createDeferredConstructionFunction):
+        (JSC::identifyFunction):
+        (JSC::createIdentifyFunction):
+        (JSC::promiseAllCountdownFunction):
+        (JSC::createPromiseAllCountdownFunction):
+        (JSC::promiseResolutionHandlerFunction):
+        (JSC::createPromiseResolutionHandlerFunction):
+        (JSC::rejectPromiseFunction):
+        (JSC::createRejectPromiseFunction):
+        (JSC::resolvePromiseFunction):
+        (JSC::createResolvePromiseFunction):
+        (JSC::throwerFunction):
+        (JSC::createThrowerFunction):
+        * runtime/JSPromiseFunctions.h: Added.
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototypeFuncThen):
+        (JSC::JSPromisePrototypeFuncCatch):
+        * runtime/JSPromiseReaction.cpp: Added.
+        (JSC::createExecutePromiseReactionMicroTask):
+        (JSC::ExecutePromiseReactionMicroTask::run):
+        (JSC::JSPromiseReaction::create):
+        (JSC::JSPromiseReaction::JSPromiseReaction):
+        (JSC::JSPromiseReaction::finishCreation):
+        (JSC::JSPromiseReaction::visitChildren):
+        * runtime/JSPromiseReaction.h: Added.
+        (JSC::JSPromiseReaction::createStructure):
+        (JSC::JSPromiseReaction::deferred):
+        (JSC::JSPromiseReaction::handler):
+        * runtime/JSPromiseResolver.cpp: Removed.
+        * runtime/JSPromiseResolver.h: Removed.
+        * runtime/JSPromiseResolverConstructor.cpp: Removed.
+        * runtime/JSPromiseResolverConstructor.h: Removed.
+        * runtime/JSPromiseResolverPrototype.cpp: Removed.
+        * runtime/JSPromiseResolverPrototype.h: Removed.
+        * runtime/Microtask.h: Added.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+
 2014-01-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add support for StoreBarrier and friends to the FTL

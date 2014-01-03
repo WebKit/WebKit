@@ -6,20 +6,22 @@ global.jsTestIsAsync = true;
 description('Test Promise.');
 
 var thisInInit;
-var resolver;
-var promise = new Promise(function(r) {
+var resolve, reject;
+var promise = new Promise(function(newResolve, newReject) {
   thisInInit = this;
-  resolver = r;
+  resolve = newResolve;
+  reject = newReject;
 });
 
 shouldBeTrue('promise instanceof Promise');
 shouldBe('promise.constructor', 'Promise');
-shouldBe('thisInInit', 'promise');
-shouldBeTrue('resolver instanceof PromiseResolver');
-shouldBe('resolver.constructor', 'PromiseResolver');
+shouldBeFalse('thisInInit === promise');
+shouldBeTrue('thisInInit === global');
+shouldBeTrue('resolve instanceof Function');
+shouldBeTrue('reject instanceof Function');
 
-shouldThrow('new Promise()', '"TypeError: Expected at least one argument"');
-shouldThrow('new Promise(37)', '"TypeError: Expected function as as first argument"');
+shouldThrow('new Promise()', '"TypeError: Promise constructor takes a function argument"');
+shouldThrow('new Promise(37)', '"TypeError: Promise constructor takes a function argument"');
 
 shouldNotThrow('promise = new Promise(function() { throw Error("foo"); })');
 promise.then(undefined, function(result) {
@@ -27,8 +29,8 @@ promise.then(undefined, function(result) {
   shouldBeEqualToString('result.message', 'foo');
 });
 
-new Promise(function(resolver) {
-  resolver.fulfill("hello");
+new Promise(function(resolve) {
+  resolve("hello");
   throw Error("foo");
 }).then(function(result) {
   global.result = result;

@@ -34,6 +34,7 @@
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSWorkerGlobalScope.h"
 #include "WorkerGlobalScope.h"
+#include <runtime/Microtask.h>
 
 #if ENABLE(SHARED_WORKERS)
 #include "JSSharedWorkerGlobalScope.h"
@@ -99,10 +100,10 @@ bool JSWorkerGlobalScopeBase::javaScriptExperimentsEnabled(const JSGlobalObject*
     return JSGlobalObject::javaScriptExperimentsEnabled(object);
 }
 
-void JSWorkerGlobalScopeBase::queueTaskToEventLoop(const JSGlobalObject* object, GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr functionPtr, PassRefPtr<TaskContext> taskContext)
+void JSWorkerGlobalScopeBase::queueTaskToEventLoop(const JSGlobalObject* object, PassRefPtr<Microtask> task)
 {
     const JSWorkerGlobalScopeBase* thisObject = static_cast<const JSWorkerGlobalScopeBase*>(object);
-    thisObject->scriptExecutionContext()->postTask(JSGlobalObjectTask::create((JSDOMGlobalObject*)thisObject, functionPtr, taskContext));
+    thisObject->scriptExecutionContext()->postTask(JSGlobalObjectTask::create((JSDOMGlobalObject*)thisObject, task));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject*, WorkerGlobalScope* workerGlobalScope)

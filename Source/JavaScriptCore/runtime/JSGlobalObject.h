@@ -61,10 +61,11 @@ class FunctionPrototype;
 class GetterSetter;
 class GlobalCodeBlock;
 class JSGlobalObjectDebuggable;
+class JSPromiseConstructor;
 class JSPromisePrototype;
-class JSPromiseResolverPrototype;
 class JSStack;
 class LLIntOffsetsExtractor;
+class Microtask;
 class NativeErrorConstructor;
 class ProgramCodeBlock;
 class ProgramExecutable;
@@ -103,13 +104,6 @@ FOR_EACH_SIMPLE_BUILTIN_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
 
 typedef Vector<ExecState*, 16> ExecStateStack;
 
-class TaskContext : public RefCounted<TaskContext> {
-public:
-    virtual ~TaskContext()
-    {
-    }
-};
-
 struct GlobalObjectMethodTable {
     typedef bool (*AllowsAccessFromFunctionPtr)(const JSGlobalObject*, ExecState*);
     AllowsAccessFromFunctionPtr allowsAccessFrom;
@@ -126,8 +120,7 @@ struct GlobalObjectMethodTable {
     typedef bool (*JavaScriptExperimentsEnabledFunctionPtr)(const JSGlobalObject*);
     JavaScriptExperimentsEnabledFunctionPtr javaScriptExperimentsEnabled;
 
-    typedef void (*QueueTaskToEventLoopCallbackFunctionPtr)(ExecState*, TaskContext*);
-    typedef void (*QueueTaskToEventLoopFunctionPtr)(const JSGlobalObject*, QueueTaskToEventLoopCallbackFunctionPtr, PassRefPtr<TaskContext>);
+    typedef void (*QueueTaskToEventLoopFunctionPtr)(const JSGlobalObject*, PassRefPtr<Microtask>);
     QueueTaskToEventLoopFunctionPtr queueTaskToEventLoop;
 
     typedef bool (*ShouldInterruptScriptBeforeTimeoutPtr)(const JSGlobalObject*);
@@ -152,7 +145,6 @@ private:
     };
 
 protected:
-
     Register m_globalCallFrame[JSStack::CallFrameHeaderSize];
 
     WriteBarrier<JSObject> m_globalThis;
@@ -165,6 +157,7 @@ protected:
     WriteBarrier<NativeErrorConstructor> m_syntaxErrorConstructor;
     WriteBarrier<NativeErrorConstructor> m_typeErrorConstructor;
     WriteBarrier<NativeErrorConstructor> m_URIErrorConstructor;
+    WriteBarrier<JSPromiseConstructor> m_promiseConstructor;
 
     WriteBarrier<JSFunction> m_evalFunction;
     WriteBarrier<JSFunction> m_callFunction;
@@ -176,7 +169,6 @@ protected:
     WriteBarrier<ArrayPrototype> m_arrayPrototype;
     WriteBarrier<RegExpPrototype> m_regExpPrototype;
     WriteBarrier<JSPromisePrototype> m_promisePrototype;
-    WriteBarrier<JSPromiseResolverPrototype> m_promiseResolverPrototype;
 
     WriteBarrier<Structure> m_withScopeStructure;
     WriteBarrier<Structure> m_strictEvalActivationStructure;
@@ -210,9 +202,6 @@ protected:
 
 #if ENABLE(PROMISES)
     WriteBarrier<Structure> m_promiseStructure;
-    WriteBarrier<Structure> m_promiseResolverStructure;
-    WriteBarrier<Structure> m_promiseCallbackStructure;
-    WriteBarrier<Structure> m_promiseWrapperCallbackStructure;
 #endif // ENABLE(PROMISES)
 
 #define DEFINE_STORAGE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
@@ -347,6 +336,7 @@ public:
     NativeErrorConstructor* syntaxErrorConstructor() const { return m_syntaxErrorConstructor.get(); }
     NativeErrorConstructor* typeErrorConstructor() const { return m_typeErrorConstructor.get(); }
     NativeErrorConstructor* URIErrorConstructor() const { return m_URIErrorConstructor.get(); }
+    JSPromiseConstructor* promiseConstructor() const { return m_promiseConstructor.get(); }
 
     JSFunction* evalFunction() const { return m_evalFunction.get(); }
     JSFunction* callFunction() const { return m_callFunction.get(); }
@@ -368,7 +358,6 @@ public:
     RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
     ErrorPrototype* errorPrototype() const { return m_errorPrototype.get(); }
     JSPromisePrototype* promisePrototype() const { return m_promisePrototype.get(); }
-    JSPromiseResolverPrototype* promiseResolverPrototype() const { return m_promiseResolverPrototype.get(); }
 
     Structure* withScopeStructure() const { return m_withScopeStructure.get(); }
     Structure* strictEvalActivationStructure() const { return m_strictEvalActivationStructure.get(); }
@@ -423,9 +412,6 @@ public:
 
 #if ENABLE(PROMISES)
     Structure* promiseStructure() const { return m_promiseStructure.get(); }
-    Structure* promiseResolverStructure() const { return m_promiseResolverStructure.get(); }
-    Structure* promiseCallbackStructure() const { return m_promiseCallbackStructure.get(); }
-    Structure* promiseWrapperCallbackStructure() const { return m_promiseWrapperCallbackStructure.get(); }
 #endif // ENABLE(PROMISES)
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
@@ -499,6 +485,8 @@ public:
     static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
     static bool shouldInterruptScriptBeforeTimeout(const JSGlobalObject*) { return false; }
     static bool javaScriptExperimentsEnabled(const JSGlobalObject*) { return false; }
+
+    void queueMicrotask(PassRefPtr<Microtask>);
 
     bool evalEnabled() const { return m_evalEnabled; }
     const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }

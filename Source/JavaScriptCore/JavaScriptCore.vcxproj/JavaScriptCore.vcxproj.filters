@@ -876,25 +876,22 @@
     <ClCompile Include="..\runtime\SimpleTypedArrayController.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\JSPromiseResolverPrototype.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="..\runtime\JSPromiseResolverConstructor.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="..\runtime\JSPromiseResolver.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
-    <ClCompile Include="..\runtime\JSPromisePrototype.cpp">
+    <ClCompile Include="..\runtime\JSPromise.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\JSPromiseConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\JSPromiseCallback.cpp">
+    <ClCompile Include="..\runtime\JSPromiseDeferred.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\JSPromise.cpp">
+    <ClCompile Include="..\runtime\JSPromiseFunctions.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\JSPromiseReaction.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\JSPromisePrototype.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\WeakMapConstructor.cpp">
@@ -2571,25 +2568,22 @@
     <ClInclude Include="..\runtime\JSGenericTypedArrayViewPrototype.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\JSPromiseResolverPrototype.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\JSPromise.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\JSPromiseCallback.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSPromiseConstructor.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\JSPromiseDeferred.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSPromiseFunctions.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSPromiseReaction.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\JSPromisePrototype.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\JSPromiseResolver.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\JSPromiseResolverConstructor.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSInt8Array.h">
@@ -2701,9 +2695,6 @@
       <Filter>Derived Sources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSPromisePrototype.lut.h">
-      <Filter>Derived Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSPromiseResolverPrototype.lut.h">
       <Filter>Derived Sources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\KeywordLookup.lut.h">
@@ -3154,6 +3145,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\MapIteratorConstructor.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Microtask.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\AssemblyHelpers.h">

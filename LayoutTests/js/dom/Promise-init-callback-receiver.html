@@ -9,14 +9,17 @@
 <script>
 description('Test Promise.');
 
-window.jsTestIsAsync = true;
+var receiverInSloppy;
+new Promise(function () {
+    window.receiverInSloppy = this;
+    shouldBe('receiverInSloppy', 'window');
+});
 
-var future = new Promise(function(resolver) {
-  resolver.fulfill('hello');
-}).then(function(result) {
-  window.result = result;
-  shouldBeEqualToString('result', 'hello');
-  finishJSTest();
+var receiverInStrict;
+new Promise(function () {
+    'use strict';
+    window.receiverInStrict = this;
+    shouldBe('receiverInStrict', 'undefined');
 });
 
 </script>

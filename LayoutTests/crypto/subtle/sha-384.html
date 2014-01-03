@@ -13,7 +13,7 @@ description("Test crypto.subtle.digest.");
 
 jsTestIsAsync = true;
 
-Promise.fulfill(null).then(function() {
+Promise.resolve(null).then(function() {
     debug("SHA384 of []");
     return crypto.subtle.digest('sha-384', new Uint8Array([]));
 }).then(function(result) {

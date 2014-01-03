@@ -13,7 +13,7 @@ description("Test crypto.subtle argument conversion");
 
 jsTestIsAsync = true;
 
-Promise.fulfill(null).then(function() {
+Promise.resolve(null).then(function() {
     debug("\nPassing algorithm name as a string object...");
     return crypto.subtle.digest(new String('sha-1'), new Uint8Array([]));
 }).then(function(result) {

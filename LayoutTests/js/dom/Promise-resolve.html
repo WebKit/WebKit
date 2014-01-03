@@ -11,13 +11,14 @@ description('Test Promise.');
 
 window.jsTestIsAsync = true;
 
-var firstPromise = new Promise(function(resolver) {
-  resolver.resolve('hello');
+var firstPromise = new Promise(function(resolve) {
+  resolve('hello');
 });
 
 var secondPromise = firstPromise.then(function(result) {
   window.thisInFulfillCallback = this;
-  shouldBeTrue('thisInFulfillCallback === secondPromise');
+  shouldBeFalse('thisInFulfillCallback === secondPromise');
+  shouldBeTrue('thisInFulfillCallback === window');
   window.result = result;
   shouldBeEqualToString('result', 'hello');
   finishJSTest();
