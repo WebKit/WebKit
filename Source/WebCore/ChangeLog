@@ -1,3 +1,40 @@
+2014-01-03  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Simplify FloatRoundedRect, BoxShape construction
+        https://bugs.webkit.org/show_bug.cgi?id=125995
+
+        Reviewed by Andreas Kling.
+
+        Cleanup of various internal Shape issues:
+        - Removed unnecessary Shape() initialization list entries in Shape subclasses
+          per https://bugs.webkit.org/show_bug.cgi?id=125548#c2.
+        - Used const references instead of pointers for non-deprecated Shape:createShape() logic.
+        - Replaced createShape() overloads for Rasters and Boxes with functions named
+          createRasterShape() and createBoxShape().
+        - Added a FloatRoundedRect::Radii() constructor to reduce the parameter list
+          length of the FloatRoundedRect constructor in createBoxShape().
+
+        There are no new tests, this is just internal refactoring.
+
+        * platform/graphics/FloatRoundedRect.h:
+        (WebCore::FloatRoundedRect::Radii::Radii):
+        * rendering/shapes/BoxShape.h:
+        (WebCore::BoxShape::BoxShape):
+        * rendering/shapes/PolygonShape.h:
+        (WebCore::PolygonShape::PolygonShape):
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShape::RasterShape):
+        * rendering/shapes/RectangleShape.h:
+        (WebCore::RectangleShape::RectangleShape):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::createInsetShape):
+        (WebCore::Shape::createShape):
+        (WebCore::Shape::createRasterShape):
+        (WebCore::Shape::createBoxShape):
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::ShapeInfo<RenderType>::computedShape):
+
 2014-01-03  Andreas Kling  <akling@apple.com>
 
         Remove unused Document::openSearchDescriptionURL().

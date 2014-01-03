@@ -42,8 +42,7 @@ namespace WebCore {
 class RectangleShape : public Shape {
 public:
     RectangleShape(const FloatRect& bounds, const FloatSize& radii)
-        : Shape()
-        , m_bounds(bounds)
+        : m_bounds(bounds)
         , m_radii(radii)
     {
     }

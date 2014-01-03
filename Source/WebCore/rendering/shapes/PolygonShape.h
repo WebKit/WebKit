@@ -83,8 +83,7 @@ class PolygonShape : public Shape {
     WTF_MAKE_NONCOPYABLE(PolygonShape);
 public:
     PolygonShape(PassOwnPtr<Vector<FloatPoint>> vertices, WindRule fillRule)
-        : Shape()
-        , m_polygon(vertices, fillRule)
+        : m_polygon(vertices, fillRule)
         , m_marginBounds(nullptr)
         , m_paddingBounds(nullptr)
     {

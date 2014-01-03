@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-static PassOwnPtr<Shape> createBoxShape(const FloatRoundedRect& bounds)
+static PassOwnPtr<Shape> createInsetShape(const FloatRoundedRect& bounds)
 {
     ASSERT(bounds.rect().width() >= 0 && bounds.rect().height() >= 0);
     return adoptPtr(new BoxShape(bounds));
@@ -123,15 +123,15 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
     switch (basicShape->type()) {
 
     case BasicShape::BasicShapeRectangleType: {
-        const BasicShapeRectangle* rectangle = static_cast<const BasicShapeRectangle*>(basicShape);
+        const BasicShapeRectangle& rectangle = *static_cast<const BasicShapeRectangle*>(basicShape);
         FloatRect bounds(
-            floatValueForLength(rectangle->x(), boxWidth),
-            floatValueForLength(rectangle->y(), boxHeight),
-            floatValueForLength(rectangle->width(), boxWidth),
-            floatValueForLength(rectangle->height(), boxHeight));
+            floatValueForLength(rectangle.x(), boxWidth),
+            floatValueForLength(rectangle.y(), boxHeight),
+            floatValueForLength(rectangle.width(), boxWidth),
+            floatValueForLength(rectangle.height(), boxHeight));
         FloatSize cornerRadii(
-            floatValueForLength(rectangle->cornerRadiusX(), boxWidth),
-            floatValueForLength(rectangle->cornerRadiusY(), boxHeight));
+            floatValueForLength(rectangle.cornerRadiusX(), boxWidth),
+            floatValueForLength(rectangle.cornerRadiusY(), boxHeight));
         ensureRadiiDoNotOverlap(bounds, cornerRadii);
         FloatRect logicalBounds = physicalRectToLogical(bounds, logicalBoxSize.height(), writingMode);
 
@@ -187,8 +187,8 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
     }
 
     case BasicShape::BasicShapePolygonType: {
-        const BasicShapePolygon* polygon = static_cast<const BasicShapePolygon*>(basicShape);
-        const Vector<Length>& values = polygon->values();
+        const BasicShapePolygon& polygon = *static_cast<const BasicShapePolygon*>(basicShape);
+        const Vector<Length>& values = polygon.values();
         size_t valuesSize = values.size();
         ASSERT(!(valuesSize % 2));
         OwnPtr<Vector<FloatPoint>> vertices = adoptPtr(new Vector<FloatPoint>(valuesSize / 2));
@@ -199,22 +199,22 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
             (*vertices)[i / 2] = physicalPointToLogical(vertex, logicalBoxSize.height(), writingMode);
         }
 
-        shape = createPolygonShape(vertices.release(), polygon->windRule());
+        shape = createPolygonShape(vertices.release(), polygon.windRule());
         break;
     }
 
     case BasicShape::BasicShapeInsetRectangleType: {
-        const BasicShapeInsetRectangle* rectangle = static_cast<const BasicShapeInsetRectangle*>(basicShape);
-        float left = floatValueForLength(rectangle->left(), boxWidth);
-        float top = floatValueForLength(rectangle->top(), boxHeight);
+        const BasicShapeInsetRectangle& rectangle = *static_cast<const BasicShapeInsetRectangle*>(basicShape);
+        float left = floatValueForLength(rectangle.left(), boxWidth);
+        float top = floatValueForLength(rectangle.top(), boxHeight);
         FloatRect bounds(
             left,
             top,
-            boxWidth - left - floatValueForLength(rectangle->right(), boxWidth),
-            boxHeight - top - floatValueForLength(rectangle->bottom(), boxHeight));
+            boxWidth - left - floatValueForLength(rectangle.right(), boxWidth),
+            boxHeight - top - floatValueForLength(rectangle.bottom(), boxHeight));
         FloatSize cornerRadii(
-            floatValueForLength(rectangle->cornerRadiusX(), boxWidth),
-            floatValueForLength(rectangle->cornerRadiusY(), boxHeight));
+            floatValueForLength(rectangle.cornerRadiusX(), boxWidth),
+            floatValueForLength(rectangle.cornerRadiusY(), boxHeight));
         ensureRadiiDoNotOverlap(bounds, cornerRadii);
         FloatRect logicalBounds = physicalRectToLogical(bounds, logicalBoxSize.height(), writingMode);
 
@@ -223,24 +223,20 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
     }
 
     case BasicShape::BasicShapeInsetType: {
-        const BasicShapeInset* rectangle = static_cast<const BasicShapeInset*>(basicShape);
-        float left = floatValueForLength(rectangle->left(), boxWidth);
-        float top = floatValueForLength(rectangle->top(), boxHeight);
-
+        const BasicShapeInset& inset = *static_cast<const BasicShapeInset*>(basicShape);
+        float left = floatValueForLength(inset.left(), boxWidth);
+        float top = floatValueForLength(inset.top(), boxHeight);
         FloatRect rect(left,
             top,
-            boxWidth - left - floatValueForLength(rectangle->right(), boxWidth),
-            boxHeight - top - floatValueForLength(rectangle->bottom(), boxHeight));
+            boxWidth - left - floatValueForLength(inset.right(), boxWidth),
+            boxHeight - top - floatValueForLength(inset.bottom(), boxHeight));
         FloatRect logicalRect = physicalRectToLogical(rect, logicalBoxSize.height(), writingMode);
 
-        // FloatRoundedRect constuctor has different order for the corners: topLeft, topRight, bottomLeft, bottomRight
-        FloatRoundedRect logicalBounds(logicalRect,
-            rectangle->topLeftRadius().floatSize(),
-            rectangle->topRightRadius().floatSize(),
-            rectangle->bottomLeftRadius().floatSize(),
-            rectangle->bottomRightRadius().floatSize());
-
-        shape = createBoxShape(logicalBounds);
+        shape = createInsetShape(FloatRoundedRect(logicalRect,
+            inset.topLeftRadius().floatSize(),
+            inset.topRightRadius().floatSize(),
+            inset.bottomLeftRadius().floatSize(),
+            inset.bottomRightRadius().floatSize()));
         break;
     }
 
@@ -255,7 +251,7 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
     return shape.release();
 }
 
-PassOwnPtr<Shape> Shape::createShape(const StyleImage* styleImage, float threshold, const LayoutSize&, WritingMode writingMode, Length margin, Length padding)
+PassOwnPtr<Shape> Shape::createRasterShape(const StyleImage* styleImage, float threshold, const LayoutSize&, WritingMode writingMode, Length margin, Length padding)
 {
     ASSERT(styleImage && styleImage->isCachedImage() && styleImage->cachedImage() && styleImage->cachedImage()->image());
 
@@ -298,16 +294,18 @@ PassOwnPtr<Shape> Shape::createShape(const StyleImage* styleImage, float thresho
     return rasterShape.release();
 }
 
-PassOwnPtr<Shape> Shape::createShape(const RoundedRect& roundedRect, WritingMode writingMode, Length margin, Length padding)
+PassOwnPtr<Shape> Shape::createBoxShape(const RoundedRect& roundedRect, WritingMode writingMode, Length margin, Length padding)
 {
-    FloatRect rect(0, 0, roundedRect.rect().width(), roundedRect.rect().height());
-    FloatRoundedRect bounds(rect, roundedRect.radii().topLeft(), roundedRect.radii().topRight(), roundedRect.radii().bottomLeft(), roundedRect.radii().bottomRight());
+    ASSERT(roundedRect.rect().width() >= 0 && roundedRect.rect().height() >= 0);
 
-    OwnPtr<Shape> shape = createBoxShape(bounds);
+    FloatRect rect(0, 0, roundedRect.rect().width(), roundedRect.rect().height());
+    FloatRoundedRect bounds(rect, roundedRect.radii());
+    OwnPtr<Shape> shape = adoptPtr(new BoxShape(bounds));
     shape->m_writingMode = writingMode;
     shape->m_margin = floatValueForLength(margin, 0);
     shape->m_padding = floatValueForLength(padding, 0);
 
     return shape.release();
 }
+
 } // namespace WebCore

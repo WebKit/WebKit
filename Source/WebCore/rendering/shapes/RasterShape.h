@@ -90,8 +90,7 @@ class RasterShape : public Shape {
     WTF_MAKE_NONCOPYABLE(RasterShape);
 public:
     RasterShape(PassOwnPtr<RasterShapeIntervals> intervals, const IntSize& imageSize)
-        : Shape()
-        , m_intervals(intervals)
+        : m_intervals(intervals)
         , m_imageSize(imageSize)
     {
     }

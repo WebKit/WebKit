@@ -32,6 +32,7 @@
 
 #include "FloatRect.h"
 #include "FloatSize.h"
+#include "RoundedRect.h"
 
 namespace WebCore {
 
@@ -45,6 +46,14 @@ public:
             , m_topRight(topRight)
             , m_bottomLeft(bottomLeft)
             , m_bottomRight(bottomRight)
+        {
+        }
+
+        Radii(const RoundedRect::Radii& intRadii)
+            : m_topLeft(intRadii.topLeft())
+            , m_topRight(intRadii.topRight())
+            , m_bottomLeft(intRadii.bottomLeft())
+            , m_bottomRight(intRadii.bottomRight())
         {
         }
 
