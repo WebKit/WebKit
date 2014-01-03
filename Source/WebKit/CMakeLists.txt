@@ -35,6 +35,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/loader/cache"
     "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/animation"
+    "${WEBCORE_DIR}/page/scrolling"
     "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/animation"
     "${WEBCORE_DIR}/platform/graphics"
