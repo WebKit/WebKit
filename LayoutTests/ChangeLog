@@ -1,3 +1,16 @@
+2014-01-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Revise WebGL DataView test to match ECMAScript Draft Specification
+        https://bugs.webkit.org/show_bug.cgi?id=126032
+
+        Based on the ECMAScript specification, we believe that the current test is wrong. We are working to get this
+        fixed upstream. 
+
+        Reviewed by Dean Jackson.
+
+        * webgl/1.0.2/resources/webgl_test_files/conformance/typedarrays/data-view-test.html: Do not
+        prohibit using DataView as a function.
+
 2014-01-03  Alexey Proskuryakov  <ap@apple.com>
 
         Line ending conversion should be able to handle strings with null chars
