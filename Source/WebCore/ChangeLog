@@ -1,3 +1,50 @@
+2014-01-03  Jer Noble  <jer.noble@apple.com>
+
+        [MediaControls][iOS] Enable JavaScript Media Controls on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=126440
+
+        Reviewed by Eric Carlson.
+
+        Drive-by misspelling fix, and add a convenience function to check if the
+        controls are currently hidden:
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handleWrapperMouseMove):
+        (Controller.prototype.handleWrapperMouseOut):
+        (Controller.prototype.updatePlaying):
+        (Controller.prototype.controlsAreHidden): Added.
+
+        Add a new subclass of Controller for iOS and a matching CSS:
+        * Modules/mediacontrols/mediaControlsiOS.css: Added.
+        * Modules/mediacontrols/mediaControlsiOS.js: Added.
+        (createControls): Override the createControls() in mediaControlsApple.js.
+        (ControllerIOS): Define a new class.
+        (ControllerIOS.prototype.inheritFrom): Convenience method to mixin parent
+            prototype methods.
+        (ControllerIOS.prototype.createBase): Override, listen for touches instead of mouse events.
+        (ControllerIOS.prototype.createControls): Ditto.
+        (ControllerIOS.prototype.configureInlineControls): Override, only add play, timeline, and full
+            screen butttons.
+        (ControllerIOS.prototype.configureFullScreenControls): Override, and add no buttons.
+        (ControllerIOS.prototype.handlePlayButtonTouchStart): Activate.
+        (ControllerIOS.prototype.handlePlayButtonTouchEnd): De-activate and do action.
+        (ControllerIOS.prototype.handlePlayButtonTouchCancel): De-activate and cancel.
+        (ControllerIOS.prototype.handleWrapperTouchStart): Show controls.
+        (ControllerIOS.prototype.handlePanelTouchStart): Disable video selection.
+        (ControllerIOS.prototype.handlePanelTouchEnd): Re-enable video selection.
+        (ControllerIOS.prototype.handlePanelTouchCancel): Ditto.
+
+        Drive-by fix to enable the JavaScript controls when the plugin is disabled:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
+        Add the iOS JavaScript by appending it to the generic (Apple) JavaScript:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsScript):
+
+        Add new files to project:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Allow the ChromeClient to provide a custom ScrollingCoordinator

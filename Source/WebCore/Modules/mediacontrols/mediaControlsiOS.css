@@ -1,0 +1,279 @@
+/*
+ * Copyright (C) 2012, 2013 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+audio {
+    width: 200px;
+    height: 44px;
+}
+
+body:-webkit-full-page-media {
+    background-color: rgb(38, 38, 38);
+}
+
+video:-webkit-full-page-media {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+video:-webkit-full-page-media::-webkit-media-controls-panel {
+    bottom: 0px;
+}
+
+::-webkit-media-controls {
+    width: inherit;
+    height: inherit;
+    position: relative;
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-justify-content: flex-end;
+    -webkit-flex-direction: column;
+}
+
+video::-webkit-media-text-track-container,
+audio::-webkit-media-text-track-container {
+    position: relative;
+    -webkit-flex: 1 1 auto;
+}
+
+video::-webkit-media-controls-panel,
+audio::-webkit-media-controls-panel {
+    box-sizing: border-box;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    padding-top: 1px;
+    height: 44px;
+    line-height: 44px;
+    -webkit-user-select: none;
+    background-color: rgba(255, 255, 255, .5);
+
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-user-select: none;
+
+    transition: opacity 0.25s linear;
+}
+
+video::-webkit-media-controls-panel {
+    opacity: 0;
+}
+
+video::-webkit-media-controls-panel.show,
+video::-webkit-media-controls-panel.paused,
+video::-webkit-media-controls-panel:hover {
+    opacity: 1;
+}
+
+
+video::-webkit-media-controls-rewind-button,
+audio::-webkit-media-controls-rewind-button,
+video::-webkit-media-controls-panel .mute-box,
+audio::-webkit-media-controls-panel .mute-box,
+video::-webkit-media-controls-mute-button,
+audio::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-volume-max-button,
+video::-webkit-media-controls-panel .volume-box,
+audio::-webkit-media-controls-panel .volume-box,
+audio::-webkit-media-controls-volume-slider,
+video::-webkit-media-controls-volume-slider {
+    display: none !important;
+}
+
+video::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-play-button,
+video::-webkit-media-controls-fullscreen-button,
+audio::-webkit-media-controls-fullscreen-button {
+    -webkit-appearance: none;
+    display: block;
+    padding: 0;
+    border: 0;
+    background-color: black;
+    -webkit-mask-origin: content-box;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    -webkit-user-select: none;
+}
+
+video::-webkit-media-controls-play-button:active,
+audio::-webkit-media-controls-play-button:active,
+video::-webkit-media-controls-fullscreen-button:active,
+audio::-webkit-media-controls-fullscreen-button:active, {
+    background-color: white;
+}
+
+video::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-play-button {
+    margin-left: 34px;
+    margin-right: 13px;
+    width: 18px;
+    height: 16px;
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16"><rect x="1" y="0" width="5" height="16" fill="white"/><rect x="12" y="0" width="5" height="16" fill="white"/></svg>');
+}
+
+video::-webkit-media-controls-play-button.paused,
+audio::-webkit-media-controls-play-button.paused {
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16"><path d="M 0,0 18,8 0,16 z" fill="white"/></svg>');
+}
+
+video::-webkit-media-controls-fullscreen-button,
+audio::-webkit-media-controls-fullscreen-button {
+    margin-right: 34px;
+    margin-left: 13px;
+    width: 16px;
+    height: 16px;
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16px" height="16px"><g stroke="white" fill="transparent"><path d="M .5,5 v -4.5 h 4.5M .5,.5 l 5.5,5.5" /> <path d="M 15.5,11 v 4.5 h -4.5 M 15.5,15.5 l -5.5,-5.5" /></g></svg>')
+}
+
+/* Retina images */
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+    video::-webkit-media-controls-fullscreen-button,
+    audio::-webkit-media-controls-fullscreen-button {
+        -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><g stroke="white" stroke-width="2" fill="transparent"><path d="M 1,9 v -8 h 8 M 1,1 l 11,11" /> <path d="M 29,21 v 8 h -8 M 29,29 l -11,-11" /></g></svg>');
+    }
+}
+
+video::-webkit-media-controls-timeline,
+audio::-webkit-media-controls-timeline {
+    -webkit-appearance: none;
+    -webkit-flex: 1 1 0;
+    height: 3px;
+    margin: 0;
+
+    border-radius: 1.5px;
+    background-color: black;
+}
+
+video::-webkit-media-controls-timeline::-webkit-slider-thumb,
+audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    border: 0;
+    border-radius: 7.5px;
+    background-color: white !important;
+    color: white;
+    box-shadow: 0 0 1px rgba(0, 0, 0, .5);
+
+    /* rotateZ() forces the layer into compositing mode. Slider 
+       thumbs are small, so forcing a compositing layer is inexpensive,
+       and it keeps the slider from having to repaint while sliding. */
+    -webkit-transform: rotateZ(0deg);
+}
+
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display,
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+    -webkit-user-select: none;
+    -webkit-flex: 0 0 0;
+    display: -webkit-flex;
+    -webkit-justify-content: center;
+    -webkit-align-items: center;
+    cursor: default;
+    font: -webkit-small-control;
+    font-size: 10px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    width: 45px;
+    min-width: 45px;
+    color: black;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-decoration: none;
+}
+
+video::-webkit-media-controls-timeline-container,
+audio::-webkit-media-controls-timeline-container {
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-user-select: none;
+    -webkit-flex: 1 1 0;
+    position: relative;
+    padding: 0;
+}
+
+video::-webkit-media-controls-panel .hidden,
+audio::-webkit-media-controls-panel .hidden {
+    display: none;
+}
+
+video::-webkit-media-text-track-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding-bottom: 5px;
+
+    text-align: center;
+    color: rgba(255, 255, 255, 1);
+
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-decoration: none;
+    pointer-events: none;
+    -webkit-user-select: none;
+    word-break: break-word;
+
+    -webkit-flex: 1 1;
+
+    -webkit-line-box-contain: block inline-box replaced;
+}
+
+video::cue {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+video::-webkit-media-text-track-display {
+    position: absolute;
+    overflow: hidden;
+    white-space: pre-wrap;
+    -webkit-box-sizing: border-box;
+    font: 22px sans-serif;
+}
+
+video::cue(:future) {
+    color: gray;
+}
+
+video::-webkit-media-text-track-container b {
+    font-weight: bold;
+}
+
+video::-webkit-media-text-track-container u {
+    text-decoration: underline;
+}
+
+video::-webkit-media-text-track-container i {
+    font-style: italic;
+}

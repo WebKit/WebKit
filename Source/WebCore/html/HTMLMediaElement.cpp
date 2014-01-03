@@ -5652,9 +5652,9 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     // JavaScript controls are not enabled with the video plugin proxy.
-    UNUSED_PARAM(root);
-    return;
-#else
+    if (shouldUseVideoPluginProxy())
+        return;
+#endif
     Page* page = document().page();
     if (!page)
         return;
@@ -5691,7 +5691,6 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     JSC::call(exec, overlay, callType, callData, globalObject, argList);
     if (exec->hadException())
         exec->clearException();
-#endif
 }
 #endif // ENABLE(MEDIA_CONTROLS_SCRIPT)
 

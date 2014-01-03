@@ -12470,6 +12470,7 @@
 		CD27F6E3145767580078207D /* JSMediaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaController.h; sourceTree = "<group>"; };
 		CD27F6E4145767870078207D /* MediaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaController.h; sourceTree = "<group>"; };
 		CD27F6E6145770D30078207D /* MediaController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaController.cpp; sourceTree = "<group>"; };
+		CD32A189184EB46A0029B1BB /* mediaControlsiOS.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = mediaControlsiOS.js; sourceTree = "<group>"; };
 		CD336F5F17F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVTrackPrivateAVFObjCImpl.mm; sourceTree = "<group>"; };
 		CD336F6017F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVTrackPrivateAVFObjCImpl.h; sourceTree = "<group>"; };
 		CD336F6317FA0A4D00DDDCD0 /* VideoTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTrackPrivateAVF.h; sourceTree = "<group>"; };
@@ -12565,6 +12566,7 @@
 		CDA98E0C1603CF3C00FEA3B1 /* CDMPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMPrivate.h; sourceTree = "<group>"; };
 		CDAA8D0714D385600061EA60 /* PlatformClockCM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformClockCM.h; sourceTree = "<group>"; };
 		CDAA8D0814D385600061EA60 /* PlatformClockCM.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformClockCM.mm; sourceTree = "<group>"; };
+		CDAAF45D1869094E003C1717 /* mediaControlsiOS.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = mediaControlsiOS.css; sourceTree = "<group>"; };
 		CDAB6D2517C7DE5700C60B34 /* MediaControlsHost.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaControlsHost.idl; sourceTree = "<group>"; };
 		CDAB6D2617C7DE6C00C60B34 /* MediaControlsHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlsHost.cpp; sourceTree = "<group>"; };
 		CDAB6D2717C7DE6C00C60B34 /* MediaControlsHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlsHost.h; sourceTree = "<group>"; };
@@ -20501,9 +20503,11 @@
 			children = (
 				CDC1DD4117CC2C48008CB55D /* mediaControlsApple.css */,
 				CDE6560E17CA6E7600526BA7 /* mediaControlsApple.js */,
-				CDAB6D2517C7DE5700C60B34 /* MediaControlsHost.idl */,
 				CDAB6D2617C7DE6C00C60B34 /* MediaControlsHost.cpp */,
 				CDAB6D2717C7DE6C00C60B34 /* MediaControlsHost.h */,
+				CDAB6D2517C7DE5700C60B34 /* MediaControlsHost.idl */,
+				CDAAF45D1869094E003C1717 /* mediaControlsiOS.css */,
+				CD32A189184EB46A0029B1BB /* mediaControlsiOS.js */,
 			);
 			path = mediacontrols;
 			sourceTree = "<group>";

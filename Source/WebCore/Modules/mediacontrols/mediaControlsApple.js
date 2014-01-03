@@ -57,7 +57,7 @@ Controller.prototype = {
         volumechange: 'handleVolumeChange',
         webkitfullscreenchange: 'handleFullscreenChange',
     },
-    HideContrtolsDelay: 4 * 1000,
+    HideControlsDelay: 4 * 1000,
     RewindAmount: 30,
     MaximumSeekRate: 8,
     SeekDelay: 1500,
@@ -547,7 +547,7 @@ Controller.prototype = {
         this.showControls();
         if (this.hideTimer)
             clearTimeout(this.hideTimer);
-        this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideContrtolsDelay);
+        this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideControlsDelay);
 
         if (!this.isDragging)
             return;
@@ -559,7 +559,7 @@ Controller.prototype = {
 
     handleWrapperMouseOut: function(event)
     {
-        this.controls.panel.classList.remove(this.ClassNames.show);
+        this.hideControls();
         if (this.hideTimer)
             clearTimeout(this.hideTimer);
     },
@@ -836,10 +836,10 @@ Controller.prototype = {
             this.controls.playButton.classList.remove(this.ClassNames.paused);
             this.controls.playButton.setAttribute('aria-label', this.UIString('Pause'));
 
-            this.controls.panel.classList.remove(this.ClassNames.show);
+            this.hideControls();
             if (this.hideTimer)
                 clearTimeout(this.hideTimer);
-            this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideContrtolsDelay);
+            this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideControlsDelay);
         }
     },
 
@@ -852,6 +852,11 @@ Controller.prototype = {
     hideControls: function()
     {
         this.controls.panel.classList.remove(this.ClassNames.show);
+    },
+
+    controlsAreHidden: function()
+    {
+        return !this.controls.panel.classList.contains(this.ClassNames.show) || this.controls.panel.classList.contains(this.ClassNames.hidden);
     },
 
     removeControls: function()

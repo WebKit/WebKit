@@ -1205,7 +1205,10 @@ String RenderThemeIOS::mediaControlsStyleSheet()
 String RenderThemeIOS::mediaControlsScript()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    return String(mediaControlsAppleJavaScript, sizeof(mediaControlsAppleJavaScript));
+    StringBuilder scriptBuilder;
+    scriptBuilder.append(mediaControlsAppleJavaScript, sizeof(mediaControlsAppleJavaScript));
+    scriptBuilder.append(mediaControlsIOSJavaScript, sizeof(mediaControlsIOSJavaScript));
+    return scriptBuilder.toString();
 #else
     return emptyString();
 #endif
