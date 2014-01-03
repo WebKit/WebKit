@@ -34,6 +34,7 @@
 #include "PopupMenuClient.h"
 #include "RenderEmbeddedObject.h"
 #include "ScrollTypes.h"
+#include "ScrollingCoordinator.h"
 #include "SearchPopupMenu.h"
 #include "WebCoreKeyboardUIMode.h"
 #include <wtf/Forward.h>
@@ -321,6 +322,8 @@ public:
     // Returns true if layer tree updates are disabled.
     virtual bool layerTreeStateIsFrozen() const { return false; }
 #endif
+
+    virtual PassRefPtr<ScrollingCoordinator> createScrollingCoordinator(Page*) const { return nullptr; }
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     virtual GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return 0; }

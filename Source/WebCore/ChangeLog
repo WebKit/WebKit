@@ -1,3 +1,18 @@
+2014-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow the ChromeClient to provide a custom ScrollingCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=126450
+
+        Reviewed by Tim Horton.
+        
+        Some platforms will want to provide a custom ScrollingCoordinator, so let
+        them do so by asking ChromeClient first for one.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::createScrollingCoordinator):
+        * page/Page.cpp:
+        (WebCore::Page::scrollingCoordinator):
+
 2014-01-03  Andreas Kling  <akling@apple.com>
 
         Deploy more child renderer iterators in RenderBlockFlow.
