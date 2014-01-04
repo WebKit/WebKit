@@ -47,12 +47,6 @@
 using namespace WebCore;
 using namespace WebKit;
 
-static WebCore::GraphicsLayer::PlatformLayerID generateLayerID()
-{
-    static WebCore::GraphicsLayer::PlatformLayerID layerID;
-    return ++layerID;
-}
-
 PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
 {
     RefPtr<PlatformCALayerRemote> layer;
@@ -78,7 +72,6 @@ PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *p
 
 PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
     : PlatformCALayer(layerType, owner)
-    , m_layerID(generateLayerID())
     , m_superlayer(nullptr)
     , m_maskLayer(nullptr)
     , m_acceleratesDrawing(false)
@@ -112,7 +105,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
         if (m_properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
             m_properties.children.clear();
             for (auto layer : m_children)
-                m_properties.children.append(toPlatformCALayerRemote(layer.get())->layerID());
+                m_properties.children.append(layer->layerID());
         }
 
         if (m_layerType == LayerTypeCustom) {

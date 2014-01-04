@@ -147,7 +147,11 @@ public:
     virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) OVERRIDE;
 
 private:
-    PlatformCALayerMac(LayerType, PlatformLayer*, PlatformCALayerClient* owner);
+    PlatformCALayerMac(LayerType, PlatformCALayerClient* owner);
+    PlatformCALayerMac(PlatformLayer*, PlatformCALayerClient* owner);
+
+    void commonInit();
+
     virtual bool isPlatformCALayerMac() const OVERRIDE { return true; }
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;

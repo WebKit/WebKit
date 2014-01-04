@@ -44,8 +44,6 @@ public:
 
     virtual ~PlatformCALayerRemote();
 
-    WebCore::GraphicsLayer::PlatformLayerID layerID() { return m_layerID; }
-
     virtual bool usesTiledBackingLayer() const OVERRIDE { return layerType() == LayerTypePageTiledBackingLayer || layerType() == LayerTypeTiledBackingLayer; }
 
     virtual PlatformLayer* platformLayer() const OVERRIDE { return nullptr; }
@@ -161,7 +159,6 @@ private:
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
-    const WebCore::GraphicsLayer::PlatformLayerID m_layerID;
     RemoteLayerTreeTransaction::LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
     PlatformCALayerRemote* m_superlayer;

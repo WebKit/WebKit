@@ -1,3 +1,26 @@
+2014-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Give all PlatformCALayers a PlatformLayerID, not just remote ones
+        https://bugs.webkit.org/show_bug.cgi?id=126466
+
+        Reviewed by Tim Horton.
+
+        The ScrollingStateTree has references to both GraphicsLayers and PlatformLayers
+        which is confusing, and is necessary because the underlying PlatformLayer
+        inside a GraphicsLayer can change. In order to hide some of this complexity,
+        expose GraphicsLayer::primaryLayerID() which is a PlatformLayerID that clients
+        can hold onto to test for underlying layer swapping.
+        
+        GraphicsLayerCARemote and PlatformCALayerRemote can now just use the
+        primaryLayerID() function exposed via the base class.
+
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.cpp:
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::PlatformCALayerRemote):
+        (PlatformCALayerRemote::recursiveBuildTransaction):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
 2014-01-03  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose session state API

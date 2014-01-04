@@ -397,6 +397,11 @@ void GraphicsLayerCA::setName(const String& name)
     noteLayerPropertyChanged(NameChanged);
 }
 
+GraphicsLayer::PlatformLayerID GraphicsLayerCA::primaryLayerID() const
+{
+    return primaryLayer()->layerID();
+}
+
 PlatformLayer* GraphicsLayerCA::platformLayer() const
 {
     return primaryLayer()->platformLayer();

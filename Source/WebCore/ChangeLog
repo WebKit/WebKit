@@ -1,3 +1,37 @@
+2014-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Give all PlatformCALayers a PlatformLayerID, not just remote ones
+        https://bugs.webkit.org/show_bug.cgi?id=126466
+
+        Reviewed by Tim Horton.
+
+        The ScrollingStateTree has references to both GraphicsLayers and PlatformLayers
+        which is confusing, and is necessary because the underlying PlatformLayer
+        inside a GraphicsLayer can change. In order to hide some of this complexity,
+        expose GraphicsLayer::primaryLayerID() which is a PlatformLayerID that clients
+        can hold onto to test for underlying layer swapping.
+        
+        Also constify LayerType m_layerType on PlatformCALayer, which required
+        cleaning up the construction of PlatformCALayerMac in the case where a
+        PlatformCALayerMac is wrapping an existing CALayer (which happens for video).
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::primaryLayerID):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::primaryLayerID):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::generateLayerID):
+        (WebCore::PlatformCALayer::PlatformCALayer):
+        * platform/graphics/ca/PlatformCALayer.h:
+        (WebCore::PlatformCALayer::layerID):
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::create):
+        (PlatformCALayerMac::PlatformCALayerMac):
+        (PlatformCALayerMac::commonInit):
+
 2014-01-03  Andreas Kling  <akling@apple.com>
 
         Add lineageOfType renderer iterator and start using it.

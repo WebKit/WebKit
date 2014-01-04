@@ -55,12 +55,12 @@ using namespace WebCore;
 
 PassRefPtr<PlatformCALayer> PlatformCALayerMac::create(LayerType layerType, PlatformCALayerClient* owner)
 {
-    return adoptRef(new PlatformCALayerMac(layerType, 0, owner));
+    return adoptRef(new PlatformCALayerMac(layerType, owner));
 }
 
 PassRefPtr<PlatformCALayer> PlatformCALayerMac::create(void* platformLayer, PlatformCALayerClient* owner)
 {
-    return adoptRef(new PlatformCALayerMac(LayerTypeCustom, static_cast<PlatformLayer*>(platformLayer), owner));
+    return adoptRef(new PlatformCALayerMac(static_cast<PlatformLayer*>(platformLayer), owner));
 }
 
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
@@ -177,50 +177,57 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
     }
 }
 
-PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformLayer* layer, PlatformCALayerClient* owner)
-    : PlatformCALayer(layer ? LayerTypeCustom : layerType, owner)
+PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClient* owner)
+    : PlatformCALayer(layerType, owner)
     , m_customAppearance(GraphicsLayer::NoCustomAppearance)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    if (layer) {
-        if ([layer isKindOfClass:getAVPlayerLayerClass()])
-            m_layerType = LayerTypeAVPlayerLayer;
-        m_layer = layer;
-    } else {
-        Class layerClass = Nil;
-        switch (layerType) {
-        case LayerTypeLayer:
-        case LayerTypeRootLayer:
-            layerClass = [CALayer class];
-            break;
-        case LayerTypeWebLayer:
-            layerClass = [WebLayer class];
-            break;
-        case LayerTypeSimpleLayer:
-        case LayerTypeTiledBackingTileLayer:
-            layerClass = [WebSimpleLayer class];
-            break;
-        case LayerTypeTransformLayer:
-            layerClass = [CATransformLayer class];
-            break;
-        case LayerTypeWebTiledLayer:
-            ASSERT_NOT_REACHED();
-            break;
-        case LayerTypeTiledBackingLayer:
-        case LayerTypePageTiledBackingLayer:
-            layerClass = [WebTiledBackingLayer class];
-            break;
-        case LayerTypeAVPlayerLayer:
-            layerClass = getAVPlayerLayerClass();
-            break;
-        case LayerTypeCustom:
-            break;
-        }
-
-        if (layerClass)
-            m_layer = adoptNS([[layerClass alloc] init]);
+    Class layerClass = Nil;
+    switch (layerType) {
+    case LayerTypeLayer:
+    case LayerTypeRootLayer:
+        layerClass = [CALayer class];
+        break;
+    case LayerTypeWebLayer:
+        layerClass = [WebLayer class];
+        break;
+    case LayerTypeSimpleLayer:
+    case LayerTypeTiledBackingTileLayer:
+        layerClass = [WebSimpleLayer class];
+        break;
+    case LayerTypeTransformLayer:
+        layerClass = [CATransformLayer class];
+        break;
+    case LayerTypeWebTiledLayer:
+        ASSERT_NOT_REACHED();
+        break;
+    case LayerTypeTiledBackingLayer:
+    case LayerTypePageTiledBackingLayer:
+        layerClass = [WebTiledBackingLayer class];
+        break;
+    case LayerTypeAVPlayerLayer:
+        layerClass = getAVPlayerLayerClass();
+        break;
+    case LayerTypeCustom:
+        break;
     }
+
+    if (layerClass)
+        m_layer = adoptNS([[layerClass alloc] init]);
     
+    commonInit();
+}
+
+PlatformCALayerMac::PlatformCALayerMac(PlatformLayer* layer, PlatformCALayerClient* owner)
+    : PlatformCALayer([layer isKindOfClass:getAVPlayerLayerClass()] ? LayerTypeAVPlayerLayer : LayerTypeCustom, owner)
+    , m_customAppearance(GraphicsLayer::NoCustomAppearance)
+{
+    m_layer = layer;
+    commonInit();
+}
+
+void PlatformCALayerMac::commonInit()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     // Save a pointer to 'this' in the CALayer
     [m_layer.get() setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];
     

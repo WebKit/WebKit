@@ -38,11 +38,6 @@ GraphicsLayerCARemote::~GraphicsLayerCARemote()
 {
 }
 
-GraphicsLayer::PlatformLayerID GraphicsLayerCARemote::primaryLayerID() const
-{
-    return toPlatformCALayerRemote(platformCALayer())->layerID();
-}
-
 #if ENABLE(CSS_FILTERS)
 bool GraphicsLayerCARemote::filtersCanBeComposited(const FilterOperations& filters)
 {

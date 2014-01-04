@@ -60,6 +60,8 @@ public:
 
     virtual void setName(const String&);
 
+    virtual PlatformLayerID primaryLayerID() const OVERRIDE;
+
     virtual PlatformLayer* platformLayer() const;
     virtual PlatformCALayer* platformCALayer() const { return primaryLayer(); }
 

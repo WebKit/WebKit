@@ -29,6 +29,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsContext.h"
+#include "GraphicsLayer.h"
 #include "PlatformCAAnimation.h"
 #include "PlatformCALayerClient.h"
 #include <QuartzCore/CABase.h>
@@ -79,6 +80,8 @@ public:
     virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient*) const = 0;
 
     virtual ~PlatformCALayer();
+
+    GraphicsLayer::PlatformLayerID layerID() const { return m_layerID; }
 
     virtual bool isPlatformCALayerMac() const { return false; }
     virtual bool isPlatformCALayerRemote() const { return false; }
@@ -210,12 +213,10 @@ public:
 #endif
 
 protected:
-    PlatformCALayer(LayerType layerType, PlatformCALayerClient* owner)
-        : m_layerType(layerType)
-        , m_owner(owner)
-    { }
+    PlatformCALayer(LayerType, PlatformCALayerClient* owner);
 
-    LayerType m_layerType;
+    const LayerType m_layerType;
+    const GraphicsLayer::PlatformLayerID m_layerID;
     RetainPtr<PlatformLayer> m_layer;
     PlatformCALayerClient* m_owner;
 };

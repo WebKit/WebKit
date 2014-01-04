@@ -30,6 +30,19 @@
 
 namespace WebCore {
 
+static GraphicsLayer::PlatformLayerID generateLayerID()
+{
+    static GraphicsLayer::PlatformLayerID layerID;
+    return ++layerID;
+}
+
+PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformCALayerClient* owner)
+    : m_layerType(layerType)
+    , m_layerID(generateLayerID())
+    , m_owner(owner)
+{
+}
+
 PlatformCALayer::~PlatformCALayer()
 {
     // Clear the owner, which also clears it in the delegate to prevent attempts
