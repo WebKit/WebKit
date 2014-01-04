@@ -8,6 +8,7 @@ include_directories(
     ${DERIVED_SOURCES_DIR}
     ${DERIVED_SOURCES_WEBKITGTK_DIR}
     ${GLIB_INCLUDE_DIRS}
+    ${GSTREAMER_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
 )
@@ -22,6 +23,7 @@ target_link_libraries(GtkLauncher
     ${JavaScriptCore_LIBRARY_NAME}
     WebKit
     ${GLIB_LIBRARIES}
+    ${GSTREAMER_LIBRARIES}
     ${GTK3_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
 )

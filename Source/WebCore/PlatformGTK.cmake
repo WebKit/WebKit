@@ -67,10 +67,21 @@ list(APPEND WebCore_SOURCES
     platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
     platform/graphics/freetype/SimpleFontDataFreeType.cpp
 
+    platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp
     platform/graphics/gstreamer/GRefPtrGStreamer.cpp
     platform/graphics/gstreamer/GStreamerUtilities.cpp
     platform/graphics/gstreamer/ImageGStreamerCairo.cpp
+    platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
+    platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+    platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
+    platform/graphics/gstreamer/MediaSourceGStreamer.cpp
+    platform/graphics/gstreamer/SourceBufferPrivateGStreamer.cpp
+    platform/graphics/gstreamer/TextCombinerGStreamer.cpp
+    platform/graphics/gstreamer/TextSinkGStreamer.cpp
+    platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp
     platform/graphics/gstreamer/VideoSinkGStreamer.cpp
+    platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp
+    platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp
     platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
 
     platform/graphics/harfbuzz/HarfBuzzFace.cpp
@@ -154,9 +165,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/graphics/freetype/FontPlatformDataFreeType.cpp
 
     platform/graphics/glx/GLContextGLX.cpp
-
-    platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
-    platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
 
     platform/graphics/gtk/ColorGtk.cpp
     platform/graphics/gtk/GdkCairoUtilities.cpp
