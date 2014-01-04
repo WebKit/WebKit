@@ -138,11 +138,18 @@ using namespace WebKit;
 - (void)setViewportSize:(CGSize)size
 {
     _page->setFixedLayoutSize(IntSize(size));
+    _page->viewExposedRectChanged(FloatRect(_page->viewExposedRect().location(), FloatSize(size)), WebPageProxy::ClipsToExposedRect::Clip);
+}
+
+- (void)didFinishScrollTo:(CGPoint)contentOffset
+{
+    _page->didFinishScrolling(contentOffset);
+    _page->viewExposedRectChanged(FloatRect(FloatPoint(contentOffset), _page->fixedLayoutSize()), WebPageProxy::ClipsToExposedRect::Clip);
 }
 
 - (void)didScrollTo:(CGPoint)contentOffset
 {
-    _page->didFinishScrolling(contentOffset);
+    _page->viewExposedRectChanged(FloatRect(FloatPoint(contentOffset), _page->fixedLayoutSize()), WebPageProxy::ClipsToExposedRect::Clip);
 }
 
 - (void)didZoomToScale:(CGFloat)scale

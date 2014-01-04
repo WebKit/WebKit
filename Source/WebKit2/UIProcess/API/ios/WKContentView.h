@@ -64,6 +64,7 @@ WK_API_CLASS
 - (void)setMinimumSize:(CGSize)size;
 - (void)setViewportSize:(CGSize)size;
 
+- (void)didFinishScrollTo:(CGPoint)contentOffset;
 - (void)didScrollTo:(CGPoint)contentOffset;
 - (void)didZoomToScale:(CGFloat)scale;
 

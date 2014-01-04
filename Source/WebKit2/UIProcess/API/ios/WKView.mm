@@ -187,27 +187,33 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
         _userHasChangedPageScale = YES;
 }
 
-- (void)_didScroll
+- (void)_didFinishScroll
 {
     CGPoint position = [_scrollView convertPoint:[_scrollView contentOffset] toView:_contentView.get()];
-    [_contentView didScrollTo:position];
+    [_contentView didFinishScrollTo:position];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     // If we're decelerating, scroll offset will be updated when scrollViewDidFinishDecelerating: is called.
     if (!decelerate)
-        [self _didScroll];
+        [self _didFinishScroll];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    [self _didScroll];
+    [self _didFinishScroll];
 }
 
 - (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
 {
-    [self _didScroll];
+    [self _didFinishScroll];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    CGPoint position = [_scrollView convertPoint:[_scrollView contentOffset] toView:_contentView.get()];
+    [_contentView didScrollTo:position];
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale

@@ -1,3 +1,52 @@
+2014-01-03  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] [WK2] TileController creates all tiles on first paint, making it slow and consuming lots of memory
+        https://bugs.webkit.org/show_bug.cgi?id=126457
+
+        Reviewed by Simon Fraser.
+
+        Instead of making all of the tiles all of the time, we should use the
+        view-exposed-rect mechanism to inform TileController about what portion
+        of the WKContentView is currently exposed by the WKScrollView.
+
+        * UIProcess/API/ios/WKContentView.h:
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView setViewportSize:]):
+        (-[WKContentView didFinishScrollTo:]):
+        (-[WKContentView didScrollTo:]):
+        Inform the WebPageProxy that our exposed rect changed.
+
+        * UIProcess/API/ios/WKView.mm:
+        (-[WKView scrollViewDidScroll:]):
+        Inform the WKContentView that we've scrolled at all.
+        Rename the existing WKContentView didScrollTo: to didFinishScrollTo:,
+        because it is expected to only fire when a scroll lands. Add didScrollTo:,
+        which fires continually as scrolling progresses.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::viewExposedRectChanged):
+        (WebKit::WebPageProxy::exposedRectChangedTimerFired):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::viewExposedRect):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        Move view-exposed-rect stuff to WebPageProxy so it can be built on both
+        Mac and iOS, and un-!PLATFORM(IOS) some of the related members.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::setExposedRect):
+        (WebKit::RemoteLayerTreeDrawingArea::setClipsToExposedRect):
+        (WebKit::RemoteLayerTreeDrawingArea::updateScrolledExposedRect):
+        (WebKit::RemoteLayerTreeDrawingArea::updateMainFrameClipsToExposedRect):
+        (WebKit::RemoteLayerTreeDrawingArea::mainFrameTiledBacking):
+        Steal TiledCoreAnimationDrawingArea's exposed-rect code.
+        Note that on iOS, we don't need to manually offset the exposed rect by
+        the scroll position, because the scroll position is already baked into
+        the exposed rect, and WebCore's notion of the scroll position will be
+        inaccurate until the scroll lands.
+
 2014-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Give all PlatformCALayers a PlatformLayerID, not just remote ones

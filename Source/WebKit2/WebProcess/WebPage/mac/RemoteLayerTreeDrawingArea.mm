@@ -34,6 +34,7 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Settings.h>
+#import <WebCore/TiledBacking.h>
 
 using namespace WebCore;
 
@@ -42,10 +43,12 @@ namespace WebKit {
 RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const WebPageCreationParameters&)
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
     , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
+    , m_clipsToExposedRect(false)
 {
     webPage->corePage()->settings().setForceCompositingMode(true);
 #if PLATFORM(IOS)
     webPage->corePage()->settings().setDelegatesPageScaling(true);
+    setClipsToExposedRect(true);
 #endif
 }
 
@@ -205,6 +208,65 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 void RemoteLayerTreeDrawingArea::forceRepaint()
 {
     m_remoteLayerTreeContext->forceRepaint();
+}
+
+void RemoteLayerTreeDrawingArea::setExposedRect(const FloatRect& exposedRect)
+{
+    m_exposedRect = exposedRect;
+    updateScrolledExposedRect();
+}
+
+void RemoteLayerTreeDrawingArea::setClipsToExposedRect(bool clipsToExposedRect)
+{
+    m_clipsToExposedRect = clipsToExposedRect;
+    updateScrolledExposedRect();
+    updateMainFrameClipsToExposedRect();
+}
+
+void RemoteLayerTreeDrawingArea::updateScrolledExposedRect()
+{
+    if (!m_clipsToExposedRect)
+        return;
+
+    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
+    if (!frameView)
+        return;
+
+    m_scrolledExposedRect = m_exposedRect;
+
+#if !PLATFORM(IOS)
+    IntPoint scrollPositionWithOrigin = frameView->scrollPosition() + toIntSize(frameView->scrollOrigin());
+    m_scrolledExposedRect.moveBy(scrollPositionWithOrigin);
+#endif
+
+    mainFrameTiledBacking()->setExposedRect(m_scrolledExposedRect);
+
+    for (auto it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it) {
+        if (TiledBacking* tiledBacking = it->value->tiledBacking())
+            tiledBacking->setExposedRect(m_scrolledExposedRect);
+    }
+}
+
+void RemoteLayerTreeDrawingArea::updateMainFrameClipsToExposedRect()
+{
+    if (TiledBacking* tiledBacking = mainFrameTiledBacking())
+        tiledBacking->setClipsToExposedRect(m_clipsToExposedRect);
+
+    for (auto it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it)
+        if (TiledBacking* tiledBacking = it->value->tiledBacking())
+            tiledBacking->setClipsToExposedRect(m_clipsToExposedRect);
+
+    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
+    if (!frameView)
+        return;
+    
+    frameView->adjustTiledBackingCoverage();
+}
+
+TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
+{
+    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
+    return frameView ? frameView->tiledBacking() : 0;
 }
 
 } // namespace WebKit
