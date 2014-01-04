@@ -53,12 +53,16 @@ ScrollingStateTree::~ScrollingStateTree()
 
 void ScrollingStateTree::setHasChangedProperties(bool changedProperties)
 {
+#if ENABLE(ASYNC_SCROLLING)
     bool gainedChangedProperties = !m_hasChangedProperties && changedProperties;
+#endif
 
     m_hasChangedProperties = changedProperties;
 
+#if ENABLE(ASYNC_SCROLLING)
     if (gainedChangedProperties && m_scrollingCoordinator)
         m_scrollingCoordinator->scrollingStateTreePropertiesChanged();
+#endif
 }
 
 ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)

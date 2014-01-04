@@ -1,5 +1,12 @@
 2014-01-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Attempt to fix EFL build.
+
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::setHasChangedProperties):
+
+2014-01-03  Simon Fraser  <simon.fraser@apple.com>
+
         Clean up the means of committing the scrolling state tree
         https://bugs.webkit.org/show_bug.cgi?id=126482
 
