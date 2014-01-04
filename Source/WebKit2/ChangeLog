@@ -1,3 +1,9 @@
+2014-01-03  Seokju Kwon  <seokju@webkit.org>
+
+        Unreviewed build fix on non-Mac port
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp: Add ENABLE(MAC) guard for "WKContextPrivateMac.h".
+
 2014-01-03  Gavin Barraclough  <barraclough@apple.com>
 
         Simplify process suppression state calculation

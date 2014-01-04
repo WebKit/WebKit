@@ -27,9 +27,12 @@
 
 #include "MutableDictionary.h"
 #include "WKArray.h"
-#include "WKContextPrivateMac.h"
 #include "WKMutableDictionary.h"
 #include "WKSharedAPICast.h"
+
+#if PLATFORM(MAC)
+#include "WKContextPrivateMac.h"
+#endif
 
 // Deprecated functions that should be removed from the framework once nobody uses them.
 
