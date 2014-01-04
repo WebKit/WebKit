@@ -283,8 +283,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    void setProcessSuppressionEnabled(bool);
-    bool processSuppressionEnabled() const { return m_processSuppressionEnabled; }
+    bool processSuppressionEnabled() const;
     bool canEnableProcessSuppressionForNetworkProcess() const;
     bool canEnableProcessSuppressionForWebProcess(const WebProcessProxy*) const;
     static bool canEnableProcessSuppressionForGlobalChildProcesses();
@@ -396,7 +395,6 @@ private:
     String platformDefaultCookieStorageDirectory() const;
 
 #if PLATFORM(MAC)
-    void processSuppressionEnabledChanged();
     void registerNotificationObservers();
     void unregisterNotificationObservers();
 #endif
@@ -504,10 +502,6 @@ private:
     
     HashMap<uint64_t, RefPtr<DictionaryCallback>> m_dictionaryCallbacks;
     HashMap<uint64_t, RefPtr<StatisticsRequest>> m_statisticsRequests;
-
-#if PLATFORM(MAC)
-    bool m_processSuppressionEnabled;
-#endif
 
 #if USE(SOUP)
     bool m_ignoreTLSErrors;

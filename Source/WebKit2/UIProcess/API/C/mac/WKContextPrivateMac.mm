@@ -44,16 +44,6 @@
 
 using namespace WebKit;
 
-bool WKContextGetProcessSuppressionEnabled(WKContextRef contextRef)
-{
-    return toImpl(contextRef)->processSuppressionEnabled();
-}
-
-void WKContextSetProcessSuppressionEnabled(WKContextRef contextRef, bool enabled)
-{
-    toImpl(contextRef)->setProcessSuppressionEnabled(enabled);
-}
-
 bool WKContextIsPlugInUpdateAvailable(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
 {
 #if PLATFORM(IOS)

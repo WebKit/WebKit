@@ -146,9 +146,6 @@ WebContext::WebContext(const String& injectedBundlePath)
 #if ENABLE(NETWORK_PROCESS)
     , m_usesNetworkProcess(false)
 #endif
-#if PLATFORM(MAC)
-    , m_processSuppressionEnabled(true)
-#endif
 #if USE(SOUP)
     , m_ignoreTLSErrors(true)
 #endif

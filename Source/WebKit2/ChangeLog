@@ -1,3 +1,34 @@
+2014-01-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove SPI, user default for disabling process suppression
+        https://bugs.webkit.org/show_bug.cgi?id=126458
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKContextGetProcessSuppressionEnabled):
+        (WKContextSetProcessSuppressionEnabled):
+            - depracated SPI.
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+            - depracated SPI.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+            - removed m_processSuppressionEnabled.
+        * UIProcess/WebContext.h:
+            - removed setProcessSuppressionEnabled, processSuppressionEnabled implementation,
+              processSuppressionEnabledChanged, m_processSuppressionEnabled.
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitialize):
+            - removed m_processSuppressionEnabled.
+        (WebKit::WebContext::processSuppressionEnabled):
+            - check whether all pages in all processes are suppressible.
+        (WebKit::WebContext::canEnableProcessSuppressionForNetworkProcess):
+            - removed call to omitProcessSuppression, m_processSuppressionEnabled -> processSuppressionEnabled().
+        (WebKit::WebContext::canEnableProcessSuppressionForWebProcess):
+            - removed call to omitProcessSuppression, processSuppressionEnabled (we don't care if a page in a difference process is not suppresible).
+        (WebKit::WebContext::canEnableProcessSuppressionForGlobalChildProcesses):
+            - removed call to omitProcessSuppression, s_processSuppressionEnabledForAllContexts -> processSuppressionIsEnabledForAllContexts().
+
 2014-01-03  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [WK2][CoordinatedGraphics] Removing repeated protected keyword in WebView

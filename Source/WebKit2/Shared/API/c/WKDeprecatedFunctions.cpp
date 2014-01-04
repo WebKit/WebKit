@@ -27,6 +27,7 @@
 
 #include "MutableDictionary.h"
 #include "WKArray.h"
+#include "WKContextPrivateMac.h"
 #include "WKMutableDictionary.h"
 #include "WKSharedAPICast.h"
 
@@ -71,5 +72,14 @@ void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionaryRef, WKStringRef ke
 CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphicsContext)
 {
     return nullptr;
+}
+
+bool WKContextGetProcessSuppressionEnabled(WKContextRef)
+{
+    return true;
+}
+
+void WKContextSetProcessSuppressionEnabled(WKContextRef, bool)
+{
 }
 #endif
