@@ -1,5 +1,19 @@
 2014-01-03  Brent Fulgham  <bfulgham@apple.com>
 
+        [WebGL] Blit operation from Multisample FBO to rendering FBO must ignore GL_SCISSOR test
+        https://bugs.webkit.org/show_bug.cgi?id=126470
+        <rdar://problem/15201370>
+
+        Reviewed by Dean Jackson.
+
+        Covered by webgl/1.0.2/resources/webgl_test_files/conformance/rendering/gl-scissor-test.html
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::resolveMultisamplingIfNecessary): Temporarily deactivate the GL_SCISSOR
+        test while we do our blit, then reactivate if necessary.
+
+2014-01-03  Brent Fulgham  <bfulgham@apple.com>
+
         [WebGL] CGLPixelFormat should specify SampleBuffer and Sample count when using MSAA
         https://bugs.webkit.org/show_bug.cgi?id=126468
 
