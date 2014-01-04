@@ -1,3 +1,60 @@
+2014-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify ScrollingStateNode references to various layer types
+        https://bugs.webkit.org/show_bug.cgi?id=126477
+
+        Reviewed by Tim Horton.
+        
+        ScrollingStateNodes referenced both GraphicsLayer and PlatformLayers, in
+        confusing ways. In the main thread they have a GraphicsLayer*, but need
+        to check to see if the underlying PlatformLayer changed. Then, when
+        cloned to commit to the scrolling thread, they drop the GraphicsLayer
+        and store a PlatformLayer.
+        
+        Hide the complexity (and prepare for the future) by adding LayerRepresentation,
+        which wraps various different flavors of layers, and knows how to check whether
+        the PlatformLayer underlying a GraphicsLayer changed.
+        
+        ScrollingStateNode layer setters then just take and compare LayerRepresentations.
+        Copy constructors convert to a PlatformLayer representation (though not really
+        in the right place currently), and ScrollingTreeNodes get PlatformLayers.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollingNode):
+        (WebCore::AsyncScrollingCoordinator::setScrollLayerForNode):
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::syncLayerPositionForViewportRect):
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::ScrollingStateNode):
+        (WebCore::ScrollingStateNode::setLayer):
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::LayerRepresentation::LayerRepresentation):
+        (WebCore::LayerRepresentation::operator GraphicsLayer*):
+        (WebCore::LayerRepresentation::operator PlatformLayer*):
+        (WebCore::LayerRepresentation::operator GraphicsLayer::PlatformLayerID):
+        (WebCore::LayerRepresentation::operator ==):
+        (WebCore::LayerRepresentation::toPlatformLayer):
+        (WebCore::LayerRepresentation::representsGraphicsLayer):
+        (WebCore::LayerRepresentation::representsPlatformLayer):
+        (WebCore::LayerRepresentation::representsPlatformLayerID):
+        (WebCore::ScrollingStateNode::layer):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setCounterScrollingLayer):
+        (WebCore::ScrollingStateScrollingNode::setHeaderLayer):
+        (WebCore::ScrollingStateScrollingNode::setFooterLayer):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::syncLayerPositionForViewportRect):
+        * page/scrolling/mac/ScrollingStateNodeMac.mm:
+        * page/scrolling/mac/ScrollingStateScrollingNodeMac.mm:
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::updateBeforeChildren):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::updateBeforeChildren):
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::updateBeforeChildren):
+
 2014-01-03  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Blit operation from Multisample FBO to rendering FBO must ignore GL_SCISSOR test

@@ -73,7 +73,7 @@ void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConst
 void ScrollingStateFixedNode::syncLayerPositionForViewportRect(const LayoutRect& viewportRect)
 {
     FloatPoint position = m_constraints.layerPositionForViewportRect(viewportRect);
-    graphicsLayer()->syncPosition(position);
+    static_cast<GraphicsLayer*>(layer())->syncPosition(position);
 }
 
 void ScrollingStateFixedNode::dumpProperties(TextStream& ts, int indent) const

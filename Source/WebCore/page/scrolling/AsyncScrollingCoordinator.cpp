@@ -206,7 +206,7 @@ void AsyncScrollingCoordinator::updateScrollingNode(ScrollingNodeID nodeID, Grap
     if (!node)
         return;
 
-    node->setScrollLayer(scrollLayer);
+    node->setLayer(scrollLayer);
     node->setCounterScrollingLayer(counterScrollingLayer);
     scheduleTreeStateCommit();
 }
@@ -238,7 +238,8 @@ void AsyncScrollingCoordinator::updateViewportConstrainedNode(ScrollingNodeID no
 
 void AsyncScrollingCoordinator::setScrollLayerForNode(GraphicsLayer* scrollLayer, ScrollingStateNode* node)
 {
-    node->setScrollLayer(scrollLayer);
+    node->setLayer(scrollLayer);
+    // FIXME: only schedule a commit if something changed.
     scheduleTreeStateCommit();
 }
 

@@ -46,8 +46,7 @@ ScrollingStateNode::ScrollingStateNode(ScrollingNodeType nodeType, ScrollingStat
 }
 
 // This copy constructor is used for cloning nodes in the tree, and it doesn't make sense
-// to clone the relationship pointers, so don't copy that information from the original
-// node.
+// to clone the relationship pointers, so don't copy that information from the original node.
 ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, ScrollingStateTree& adoptiveTree)
     : m_nodeType(stateNode.nodeType())
     , m_nodeID(stateNode.scrollingNodeID())
@@ -55,8 +54,9 @@ ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, Scro
     , m_scrollingStateTree(adoptiveTree)
     , m_parent(0)
 {
-    // FIXME: why doesn't this set the GraphicsLayer?
-    setScrollPlatformLayer(stateNode.platformScrollLayer());
+    // The cloned tree references PlatformLayers, which are safe to send to the scrolling thread.
+    // FIXME: this Mac threaded-scrolling assumption doesn't belong here.
+    setLayer(stateNode.layer().toPlatformLayer());
     scrollingStateTree().addNode(this);
 }
 
@@ -125,6 +125,17 @@ void ScrollingStateNode::willBeRemovedFromStateTree()
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
         m_children->at(i)->willBeRemovedFromStateTree();
+}
+
+void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation)
+{
+    if (layerRepresentation == m_layer)
+        return;
+    
+    m_layer = layerRepresentation;
+
+    setPropertyChanged(ScrollLayer);
+    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateNode::dump(TextStream& ts, int indent) const

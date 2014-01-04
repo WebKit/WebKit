@@ -28,6 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
+#include "GraphicsLayer.h"
 #include "IntRect.h"
 #include "Region.h"
 #include "ScrollTypes.h"
@@ -104,19 +105,16 @@ public:
     void setFooterHeight(int);
 
     // This is a layer moved in the opposite direction to scrolling, for example for background-attachment:fixed
-    GraphicsLayer* counterScrollingLayer() const { return m_counterScrollingLayer; }
-    void setCounterScrollingLayer(GraphicsLayer*);
-    PlatformLayer* counterScrollingPlatformLayer() const;
+    const LayerRepresentation& counterScrollingLayer() const { return m_counterScrollingLayer; }
+    void setCounterScrollingLayer(const LayerRepresentation&);
 
     // The header and footer layers scroll vertically with the page, they should remain fixed when scrolling horizontally.
-    GraphicsLayer* headerLayer() const { return m_headerLayer; }
-    void setHeaderLayer(GraphicsLayer*);
-    PlatformLayer* headerPlatformLayer() const;
+    const LayerRepresentation& headerLayer() const { return m_headerLayer; }
+    void setHeaderLayer(const LayerRepresentation&);
 
     // The header and footer layers scroll vertically with the page, they should remain fixed when scrolling horizontally.
-    GraphicsLayer* footerLayer() const { return m_footerLayer; }
-    void setFooterLayer(GraphicsLayer*);
-    PlatformLayer* footerPlatformLayer() const;
+    const LayerRepresentation& footerLayer() const { return m_footerLayer; }
+    void setFooterLayer(const LayerRepresentation&);
 
 #if PLATFORM(MAC)
     ScrollbarPainter verticalScrollbarPainter() const { return m_verticalScrollbarPainter; }
@@ -132,13 +130,11 @@ private:
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&, ScrollingStateTree&);
 
-    GraphicsLayer* m_counterScrollingLayer;
-    GraphicsLayer* m_headerLayer;
-    GraphicsLayer* m_footerLayer;
+    LayerRepresentation m_counterScrollingLayer;
+    LayerRepresentation m_headerLayer;
+    LayerRepresentation m_footerLayer;
+
 #if PLATFORM(MAC)
-    RetainPtr<PlatformLayer> m_counterScrollingPlatformLayer;
-    RetainPtr<PlatformLayer> m_headerPlatformLayer;
-    RetainPtr<PlatformLayer> m_footerPlatformLayer;
     ScrollbarPainter m_verticalScrollbarPainter;
     ScrollbarPainter m_horizontalScrollbarPainter;
 #endif

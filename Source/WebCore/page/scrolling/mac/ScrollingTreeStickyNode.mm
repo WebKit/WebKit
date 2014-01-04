@@ -52,7 +52,7 @@ void ScrollingTreeStickyNode::updateBeforeChildren(const ScrollingStateNode& sta
     const ScrollingStateStickyNode& stickyStateNode = toScrollingStateStickyNode(stateNode);
 
     if (stickyStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-        m_layer = stickyStateNode.platformScrollLayer();
+        m_layer = stickyStateNode.layer();
 
     if (stateNode.hasChangedProperty(ScrollingStateStickyNode::ViewportConstraints))
         m_constraints = stickyStateNode.viewportConstraints();

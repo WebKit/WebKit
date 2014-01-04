@@ -28,7 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
-#include "PlatformLayer.h"
+#include "GraphicsLayer.h"
 #include "ScrollingCoordinator.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -43,6 +43,102 @@ namespace WebCore {
 class GraphicsLayer;
 class ScrollingStateTree;
 class TextStream;
+
+// Used to allow ScrollingStateNodes to refer to layers in various contexts:
+// a) Async scrolling, main thread: ScrollingStateNode holds onto a GraphicsLayer, and uses m_layerID
+//    to detect whether that GraphicsLayer's underlying PlatformLayer changed.
+// b) Threaded scrolling, commit to scrolling thread: ScrollingStateNode wraps a PlatformLayer, which
+//    can be passed to the Scrolling Thread
+// c) Remote scrolling UI process, where LayerRepresentation wraps just a PlatformLayerID.
+class LayerRepresentation {
+public:
+    enum LayerRepresentationType {
+        EmptyRepresentation,
+        GraphicsLayerRepresentation,
+        PlatformLayerRepresentation,
+        PlatformLayerIDRepresentation
+    };
+
+    LayerRepresentation()
+        : m_graphicsLayer(nullptr)
+        , m_layerID(0)
+        , m_representation(EmptyRepresentation)
+    { }
+
+    LayerRepresentation(GraphicsLayer* graphicsLayer)
+        : m_graphicsLayer(graphicsLayer)
+        , m_layerID(graphicsLayer ? graphicsLayer->primaryLayerID() : 0)
+        , m_representation(GraphicsLayerRepresentation)
+    { }
+
+    LayerRepresentation(PlatformLayer* platformLayer)
+        : m_platformLayer(platformLayer)
+        , m_layerID(0)
+        , m_representation(PlatformLayerRepresentation)
+    { }
+
+    LayerRepresentation(GraphicsLayer::PlatformLayerID layerID)
+        : m_graphicsLayer(nullptr)
+        , m_layerID(layerID)
+        , m_representation(PlatformLayerIDRepresentation)
+    { }
+    
+    operator GraphicsLayer*() const
+    {
+        ASSERT(m_representation == GraphicsLayerRepresentation);
+        return m_graphicsLayer;
+    }
+
+    operator PlatformLayer*() const
+    {
+        ASSERT(m_representation == PlatformLayerRepresentation);
+        return m_platformLayer;
+    }
+
+    operator GraphicsLayer::PlatformLayerID() const
+    {
+        ASSERT(m_representation == PlatformLayerIDRepresentation || m_representation == GraphicsLayerRepresentation);
+        return m_layerID;
+    }
+    
+    bool operator ==(const LayerRepresentation& other) const
+    {
+        if (m_representation != other.m_representation)
+            return false;
+        switch (m_representation) {
+        case EmptyRepresentation:
+            return true;
+        case GraphicsLayerRepresentation:
+            return m_graphicsLayer == other.m_graphicsLayer
+                && m_layerID == other.m_layerID;
+        case PlatformLayerRepresentation:
+            return m_platformLayer == other.m_platformLayer;
+        case PlatformLayerIDRepresentation:
+            return m_layerID == other.m_layerID;
+        }
+        ASSERT_NOT_REACHED();
+        return true;
+    }
+    
+    LayerRepresentation toPlatformLayer() const
+    {
+        ASSERT(m_representation == GraphicsLayerRepresentation);
+        return m_graphicsLayer ? m_graphicsLayer->platformLayer() : nullptr;
+    }
+    
+    bool representsGraphicsLayer() const { return m_representation == GraphicsLayerRepresentation; }
+    bool representsPlatformLayer() const { return m_representation == PlatformLayerRepresentation; }
+    bool representsPlatformLayerID() const { return m_representation == PlatformLayerIDRepresentation; }
+
+private:
+    union {
+        GraphicsLayer* m_graphicsLayer;
+        PlatformLayer *m_platformLayer;
+    };
+
+    GraphicsLayer::PlatformLayerID m_layerID;
+    LayerRepresentationType m_representation;
+};
 
 class ScrollingStateNode {
 public:
@@ -68,10 +164,8 @@ public:
 
     virtual void syncLayerPositionForViewportRect(const LayoutRect& /*viewportRect*/) { }
 
-    GraphicsLayer* graphicsLayer() { return m_graphicsLayer; }
-    PlatformLayer* platformScrollLayer() const;
-    void setScrollLayer(GraphicsLayer*);
-    void setScrollPlatformLayer(PlatformLayer*);
+    const LayerRepresentation& layer() const { return m_layer; }
+    void setLayer(const LayerRepresentation&);
 
     ScrollingStateTree& scrollingStateTree() const { return m_scrollingStateTree; }
 
@@ -106,10 +200,7 @@ private:
     ScrollingStateNode* m_parent;
     OwnPtr<Vector<OwnPtr<ScrollingStateNode>>> m_children;
 
-#if PLATFORM(MAC)
-    RetainPtr<PlatformLayer> m_platformScrollLayer;
-#endif
-    GraphicsLayer* m_graphicsLayer;
+    LayerRepresentation m_layer;
 };
 
 #define SCROLLING_STATE_NODE_TYPE_CASTS(ToValueTypeName, predicate) \

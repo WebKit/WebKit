@@ -41,9 +41,6 @@ PassOwnPtr<ScrollingStateScrollingNode> ScrollingStateScrollingNode::create(Scro
 
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
     : ScrollingStateNode(ScrollingNode, stateTree, nodeID)
-    , m_counterScrollingLayer(0)
-    , m_headerLayer(0)
-    , m_footerLayer(0)
 #if PLATFORM(MAC)
     , m_verticalScrollbarPainter(0)
     , m_horizontalScrollbarPainter(0)
@@ -78,9 +75,11 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
 {
-    setCounterScrollingLayer(stateNode.counterScrollingLayer());
-    setHeaderLayer(stateNode.headerLayer());
-    setFooterLayer(stateNode.footerLayer());
+    // The cloned tree references PlatformLayers, which are safe to send to the scrolling thread.
+    // FIXME: this Mac threaded-scrolling assumption doesn't belong here.
+    setCounterScrollingLayer(stateNode.counterScrollingLayer().toPlatformLayer());
+    setHeaderLayer(stateNode.headerLayer().toPlatformLayer());
+    setFooterLayer(stateNode.footerLayer().toPlatformLayer());
 }
 
 ScrollingStateScrollingNode::~ScrollingStateScrollingNode()
@@ -208,6 +207,40 @@ void ScrollingStateScrollingNode::setFooterHeight(int footerHeight)
 
     m_footerHeight = footerHeight;
     setPropertyChanged(FooterHeight);
+    scrollingStateTree().setHasChangedProperties(true);
+}
+
+void ScrollingStateScrollingNode::setCounterScrollingLayer(const LayerRepresentation& layerRepresentation)
+{
+    if (layerRepresentation == m_counterScrollingLayer)
+        return;
+    
+    m_counterScrollingLayer = layerRepresentation;
+
+    setPropertyChanged(CounterScrollingLayer);
+    scrollingStateTree().setHasChangedProperties(true);
+}
+
+void ScrollingStateScrollingNode::setHeaderLayer(const LayerRepresentation& layerRepresentation)
+{
+    if (layerRepresentation == m_headerLayer)
+        return;
+    
+    m_headerLayer = layerRepresentation;
+
+    setPropertyChanged(HeaderLayer);
+    scrollingStateTree().setHasChangedProperties(true);
+}
+
+
+void ScrollingStateScrollingNode::setFooterLayer(const LayerRepresentation& layerRepresentation)
+{
+    if (layerRepresentation == m_footerLayer)
+        return;
+    
+    m_footerLayer = layerRepresentation;
+
+    setPropertyChanged(FooterLayer);
     scrollingStateTree().setHasChangedProperties(true);
 }
 

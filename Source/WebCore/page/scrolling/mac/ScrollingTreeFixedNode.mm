@@ -52,7 +52,7 @@ void ScrollingTreeFixedNode::updateBeforeChildren(const ScrollingStateNode& stat
     const ScrollingStateFixedNode& fixedStateNode = toScrollingStateFixedNode(stateNode);
 
     if (fixedStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-        m_layer = fixedStateNode.platformScrollLayer();
+        m_layer = fixedStateNode.layer();
 
     if (stateNode.hasChangedProperty(ScrollingStateFixedNode::ViewportConstraints))
         m_constraints = fixedStateNode.viewportConstraints();

@@ -76,16 +76,16 @@ void ScrollingTreeScrollingNodeMac::updateBeforeChildren(const ScrollingStateNod
     const auto& scrollingStateNode = toScrollingStateScrollingNode(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-        m_scrollLayer = scrollingStateNode.platformScrollLayer();
+        m_scrollLayer = scrollingStateNode.layer();
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
-        m_counterScrollingLayer = scrollingStateNode.counterScrollingPlatformLayer();
+        m_counterScrollingLayer = scrollingStateNode.counterScrollingLayer();
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::HeaderLayer))
-        m_headerLayer = scrollingStateNode.headerPlatformLayer();
+        m_headerLayer = scrollingStateNode.headerLayer();
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::FooterLayer))
-        m_footerLayer = scrollingStateNode.footerPlatformLayer();
+        m_footerLayer = scrollingStateNode.footerLayer();
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::PainterForScrollbar)) {
         m_verticalScrollbarPainter = scrollingStateNode.verticalScrollbarPainter();
