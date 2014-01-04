@@ -1,3 +1,18 @@
+2014-01-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] CGLPixelFormat should specify SampleBuffer and Sample count when using MSAA
+        https://bugs.webkit.org/show_bug.cgi?id=126468
+
+        Reviewed by Dean Jackson.
+
+        Covered by webgl/1.0.2/resources/webgl_test_files/conformance/rendering/gl-scissor-test.html
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::setPixelFormat): Add kCGLPFAMultisample, kCGLPFASampleBuffers (and count), and
+        kCGLPFASamples (and count) to our pixel format when 'antialias=true'.
+        (WebCore::GraphicsContext3D::GraphicsContext3D): Pass a new 'antialias' flag to the setPixelFormat
+        method so we can turn on MSAA features when needed.
+
 2014-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Give all PlatformCALayers a PlatformLayerID, not just remote ones

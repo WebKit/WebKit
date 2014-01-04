@@ -61,7 +61,7 @@ public:
     ~GraphicsContext3DPrivate() { }
 };
 
-static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBits, int depthBits, bool accelerated, bool supersample, bool closest)
+static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBits, int depthBits, bool accelerated, bool supersample, bool closest, bool antialias)
 {
     attribs.clear();
     
@@ -77,11 +77,19 @@ static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBi
         attribs.append(static_cast<CGLPixelFormatAttribute>(kCGLRendererGenericFloatID));
     }
         
-    if (supersample)
+    if (supersample && !antialias)
         attribs.append(kCGLPFASupersample);
         
     if (closest)
         attribs.append(kCGLPFAClosestPolicy);
+
+    if (antialias) {
+        attribs.append(kCGLPFAMultisample);
+        attribs.append(kCGLPFASampleBuffers);
+        attribs.append(static_cast<CGLPixelFormatAttribute>(1));
+        attribs.append(kCGLPFASamples);
+        attribs.append(static_cast<CGLPixelFormatAttribute>(4));
+    }
         
     attribs.append(static_cast<CGLPixelFormatAttribute>(0));
 }
@@ -132,20 +140,23 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     //
     // If none of that works, we simply fail and set m_contextObj to 0.
 
-    setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, true, false);
+    bool useMultisampling = m_attrs.antialias;
+    
+    setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, true, false, useMultisampling);
     CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
     if (numPixelFormats == 0) {
-        setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, false, false);
+        setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, false, false, useMultisampling);
         CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
         if (numPixelFormats == 0) {
-            setPixelFormat(attribs, 32, 16, !attrs.forceSoftwareRenderer, false, false);
+            setPixelFormat(attribs, 32, 16, !attrs.forceSoftwareRenderer, false, false, useMultisampling);
             CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
              if (!attrs.forceSoftwareRenderer && numPixelFormats == 0) {
-                 setPixelFormat(attribs, 32, 16, false, false, true);
+                 setPixelFormat(attribs, 32, 16, false, false, true, false);
                  CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
+                 useMultisampling = false;
             }
         }
     }
@@ -183,6 +194,9 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
         [m_webGLLayer.get() setName:@"WebGL Layer"];
 #endif    
     END_BLOCK_OBJC_EXCEPTIONS
+
+    if (useMultisampling)
+        ::glEnable(GL_MULTISAMPLE);
     
     // create a texture to render into
     ::glGenTextures(1, &m_texture);
