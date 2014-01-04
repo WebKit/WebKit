@@ -4,7 +4,7 @@ configure_file(JavaScriptCore.gir.in ${CMAKE_BINARY_DIR}/JavaScriptCore-3.0.gir 
 add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/JavaScriptCore-3.0.typelib
     DEPENDS ${CMAKE_BINARY_DIR}/JavaScriptCore-3.0.gir
-    COMMAND g-ir-compiler ${CMAKE_BINARY_DIR}/JavaScriptCore-3.0.gir -o ${CMAKE_BINARY_DIR}/JavaScriptCore-3.0.typelib
+    COMMAND ${INTROSPECTION_COMPILER} ${CMAKE_BINARY_DIR}/JavaScriptCore-3.0.gir -o ${CMAKE_BINARY_DIR}/JavaScriptCore-3.0.typelib
 )
 
 ADD_TYPELIB(${CMAKE_BINARY_DIR}/JavaScriptCore-3.0.typelib)

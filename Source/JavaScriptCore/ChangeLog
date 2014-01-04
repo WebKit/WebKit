@@ -1,3 +1,12 @@
+2014-01-04  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Improve the way we locate gobject-introspection
+        https://bugs.webkit.org/show_bug.cgi?id=126452
+
+        Reviewed by Philippe Normand.
+
+        * PlatformGTK.cmake: Use the new introspection variables.
+
 2014-01-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Explicitly use the std:: nested name specifier when using std::pair, std::make_pair

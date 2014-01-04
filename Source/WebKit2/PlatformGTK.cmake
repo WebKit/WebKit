@@ -651,7 +651,7 @@ add_custom_command(
     DEPENDS WebKit2
     DEPENDS JavaScriptCore-3-gir
     COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations
-        g-ir-scanner
+        ${INTROSPECTION_SCANNER}
         --quiet
         --warn-all
         --symbol-prefix=webkit
@@ -690,7 +690,7 @@ add_custom_command(
     DEPENDS JavaScriptCore-3-gir
     DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-3.0.gir
     COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations
-        g-ir-scanner
+        ${INTROSPECTION_SCANNER}
         --quiet
         --warn-all
         --symbol-prefix=webkit
@@ -731,13 +731,13 @@ add_custom_command(
 add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-3.0.typelib
     DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-3.0.gir
-    COMMAND g-ir-compiler --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2-3.0.gir -o ${CMAKE_BINARY_DIR}/WebKit2-3.0.typelib
+    COMMAND ${INTROSPECTION_COMPILER} --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2-3.0.gir -o ${CMAKE_BINARY_DIR}/WebKit2-3.0.typelib
 )
 
 add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.typelib
     DEPENDS ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.gir
-    COMMAND g-ir-compiler --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.gir -o ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.typelib
+    COMMAND ${INTROSPECTION_COMPILER} --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.gir -o ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.typelib
 )
 
 ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit2-3.0.typelib)
