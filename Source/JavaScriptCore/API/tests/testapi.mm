@@ -169,6 +169,9 @@ bool testXYZTested = false;
 - (void)dealloc
 {
     [[m_onclickHandler value].context.virtualMachine removeManagedReference:m_onclickHandler withOwner:self];
+#if !__has_feature(objc_arc)
+    [super dealloc];
+#endif
 }
 @end
 
@@ -437,6 +440,9 @@ static bool evilAllocationObjectWasDealloced = false;
 {
     [self doEvilThingsWithContext:m_context];
     evilAllocationObjectWasDealloced = true;
+#if !__has_feature(objc_arc)
+    [super dealloc];
+#endif
 }
 
 - (JSValue *)doEvilThingsWithContext:(JSContext *)context

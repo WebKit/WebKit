@@ -1,3 +1,16 @@
+2014-01-03  David Farler  <dfarler@apple.com>
+
+        [super dealloc] missing in Source/JavaScriptCore/API/tests/testapi.mm, fails to build with -Werror,-Wobjc-missing-super-calls
+        https://bugs.webkit.org/show_bug.cgi?id=126454
+
+        Reviewed by Geoffrey Garen.
+
+        * API/tests/testapi.mm:
+        (-[TextXYZ dealloc]):
+        add [super dealloc]
+        (-[EvilAllocationObject dealloc]):
+        add [super dealloc]
+
 2014-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r160304): [GTK] Disable libtool fast install
