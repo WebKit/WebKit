@@ -1,3 +1,21 @@
+2014-01-03  Piotr Grad  <p.grad@samsung.com>
+
+        Build brake after 161045 on EFL port with WebKit2 and gcc 4.6.3
+        https://bugs.webkit.org/show_bug.cgi?id=126383
+
+        Reviewed by Sam Weinig.
+
+        Class identifier was missing.
+
+        * DatabaseProcess/DatabaseProcess.h:
+        * NetworkProcess/NetworkProcess.h:
+        * PluginProcess/PluginProcess.h:
+        * Shared/mac/CookieStorageShim.h:
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebProcess.h:
+
 2014-01-03  Seokju Kwon  <seokju@webkit.org>
 
         Unreviewed build fix on non-Mac port

@@ -40,7 +40,7 @@
 namespace WebKit {
 
 class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::StorageStrategy, private WebCore::VisitedLinkStrategy {
-    friend NeverDestroyed<WebPlatformStrategies>;
+    friend class NeverDestroyed<WebPlatformStrategies>;
 public:
     static void initialize();
     

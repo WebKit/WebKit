@@ -85,7 +85,7 @@ class WebToDatabaseProcessConnection;
 #endif
 
 class WebProcess : public ChildProcess, private DownloadManager::Client {
-    friend NeverDestroyed<DownloadManager>;
+    friend class NeverDestroyed<DownloadManager>;
 public:
     static WebProcess& shared();
 

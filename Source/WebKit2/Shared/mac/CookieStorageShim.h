@@ -35,7 +35,7 @@ namespace WebKit {
 
 class CookieStorageShim {
     WTF_MAKE_NONCOPYABLE(CookieStorageShim);
-    friend NeverDestroyed<CookieStorageShim>;
+    friend class NeverDestroyed<CookieStorageShim>;
 public:
     static CookieStorageShim& shared();
 

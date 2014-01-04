@@ -51,7 +51,7 @@ class WebPluginSiteDataManager;
 
 class PluginProcessManager {
     WTF_MAKE_NONCOPYABLE(PluginProcessManager);
-    friend NeverDestroyed<PluginProcessManager>;
+    friend class NeverDestroyed<PluginProcessManager>;
 public:
     static PluginProcessManager& shared();
 

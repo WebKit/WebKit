@@ -44,7 +44,7 @@ struct DatabaseProcessCreationParameters;
 
 class DatabaseProcess : public ChildProcess  {
     WTF_MAKE_NONCOPYABLE(DatabaseProcess);
-    friend NeverDestroyed<DatabaseProcess>;
+    friend class NeverDestroyed<DatabaseProcess>;
 public:
     static DatabaseProcess& shared();
 

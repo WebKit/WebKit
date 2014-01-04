@@ -48,8 +48,8 @@ struct NetworkProcessCreationParameters;
 
 class NetworkProcess : public ChildProcess, private DownloadManager::Client {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
-    friend NeverDestroyed<NetworkProcess>;
-    friend NeverDestroyed<DownloadManager>;
+    friend class NeverDestroyed<NetworkProcess>;
+    friend class NeverDestroyed<DownloadManager>;
 public:
     static NetworkProcess& shared();
 
