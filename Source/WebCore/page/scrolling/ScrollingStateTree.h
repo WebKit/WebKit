@@ -57,14 +57,23 @@ public:
     void clear();
     
     const Vector<ScrollingNodeID>& removedNodes() const { return m_nodesRemovedSinceLastCommit; }
+    void setRemovedNodes(Vector<ScrollingNodeID>);
 
     // Copies the current tree state and clears the changed properties mask in the original.
-    PassOwnPtr<ScrollingStateTree> commit();
+    PassOwnPtr<ScrollingStateTree> commit(LayerRepresentation::Type preferredLayerRepresentation);
 
     void setHasChangedProperties(bool = true);
     bool hasChangedProperties() const { return m_hasChangedProperties; }
 
     bool hasNewRootStateNode() const { return m_hasNewRootStateNode; }
+    
+    int nodeCount() const { return m_stateNodeMap.size(); }
+
+    typedef HashMap<ScrollingNodeID, ScrollingStateNode*> StateNodeMap;
+    const StateNodeMap& nodeMap() const { return m_stateNodeMap; }
+
+    LayerRepresentation::Type preferredLayerRepresentation() const { return m_preferredLayerRepresentation; }
+    void setPreferredLayerRepresentation(LayerRepresentation::Type representation) { m_preferredLayerRepresentation = representation; }
 
 private:
     ScrollingStateTree(AsyncScrollingCoordinator*);
@@ -75,11 +84,12 @@ private:
     void didRemoveNode(ScrollingNodeID);
 
     AsyncScrollingCoordinator* m_scrollingCoordinator;
-    HashMap<ScrollingNodeID, ScrollingStateNode*> m_stateNodeMap;
+    StateNodeMap m_stateNodeMap;
     OwnPtr<ScrollingStateScrollingNode> m_rootStateNode;
     Vector<ScrollingNodeID> m_nodesRemovedSinceLastCommit;
     bool m_hasChangedProperties;
     bool m_hasNewRootStateNode;
+    LayerRepresentation::Type m_preferredLayerRepresentation;
 };
 
 } // namespace WebCore

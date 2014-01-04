@@ -44,6 +44,7 @@ ScrollingStateTree::ScrollingStateTree(AsyncScrollingCoordinator* scrollingCoord
     : m_scrollingCoordinator(scrollingCoordinator)
     , m_hasChangedProperties(false)
     , m_hasNewRootStateNode(false)
+    , m_preferredLayerRepresentation(LayerRepresentation::GraphicsLayerRepresentation)
 {
 }
 
@@ -140,10 +141,12 @@ void ScrollingStateTree::clear()
     m_stateNodeMap.clear();
 }
 
-PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit()
+PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::Type preferredLayerRepresentation)
 {
     // This function clones and resets the current state tree, but leaves the tree structure intact.
     OwnPtr<ScrollingStateTree> treeStateClone = ScrollingStateTree::create();
+    treeStateClone->setPreferredLayerRepresentation(preferredLayerRepresentation);
+
     if (m_rootStateNode)
         treeStateClone->setRootStateNode(static_pointer_cast<ScrollingStateScrollingNode>(m_rootStateNode->cloneAndReset(*treeStateClone)));
 
@@ -192,12 +195,17 @@ void ScrollingStateTree::didRemoveNode(ScrollingNodeID nodeID)
     setHasChangedProperties();
 }
 
+void ScrollingStateTree::setRemovedNodes(Vector<ScrollingNodeID> nodes)
+{
+    m_nodesRemovedSinceLastCommit = std::move(nodes);
+}
+
 ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLayerID)
 {
     if (!scrollLayerID)
         return 0;
 
-    HashMap<ScrollingNodeID, ScrollingStateNode*>::const_iterator it = m_stateNodeMap.find(scrollLayerID);
+    auto it = m_stateNodeMap.find(scrollLayerID);
     if (it == m_stateNodeMap.end())
         return 0;
 

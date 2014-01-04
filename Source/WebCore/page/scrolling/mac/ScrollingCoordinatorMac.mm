@@ -110,7 +110,7 @@ void ScrollingCoordinatorMac::commitTreeState()
 {
     ASSERT(scrollingStateTree()->hasChangedProperties());
 
-    OwnPtr<ScrollingStateTree> treeState = scrollingStateTree()->commit();
+    OwnPtr<ScrollingStateTree> treeState = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
     ScrollingThread::dispatch(bind(&ThreadedScrollingTree::commitNewTreeState, toThreadedScrollingTree(scrollingTree()), treeState.release()));
 
     updateTiledScrollingIndicator();

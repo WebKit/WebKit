@@ -52,7 +52,7 @@ class TextStream;
 // c) Remote scrolling UI process, where LayerRepresentation wraps just a PlatformLayerID.
 class LayerRepresentation {
 public:
-    enum LayerRepresentationType {
+    enum Type {
         EmptyRepresentation,
         GraphicsLayerRepresentation,
         PlatformLayerRepresentation,
@@ -97,7 +97,7 @@ public:
 
     operator GraphicsLayer::PlatformLayerID() const
     {
-        ASSERT(m_representation == PlatformLayerIDRepresentation || m_representation == GraphicsLayerRepresentation);
+        ASSERT(m_representation != PlatformLayerRepresentation);
         return m_layerID;
     }
     
@@ -120,16 +120,25 @@ public:
         return true;
     }
     
-    LayerRepresentation toPlatformLayer() const
+    LayerRepresentation toRepresentation(Type representation) const
     {
-        ASSERT(m_representation == GraphicsLayerRepresentation);
-        return m_graphicsLayer ? m_graphicsLayer->platformLayer() : nullptr;
+        switch (representation) {
+        case EmptyRepresentation:
+            return LayerRepresentation();
+        case GraphicsLayerRepresentation:
+            ASSERT(m_representation == GraphicsLayerRepresentation);
+            return *this;
+        case PlatformLayerRepresentation:
+            return m_graphicsLayer ? m_graphicsLayer->platformLayer() : nullptr;
+        case PlatformLayerIDRepresentation:
+            return LayerRepresentation(m_layerID);
+        }
+        return LayerRepresentation();
     }
-    
-    bool representsGraphicsLayer() const { return m_representation == GraphicsLayerRepresentation; }
-    bool representsPlatformLayer() const { return m_representation == PlatformLayerRepresentation; }
-    bool representsPlatformLayerID() const { return m_representation == PlatformLayerIDRepresentation; }
 
+    bool representsGraphicsLayer() const { return m_representation == GraphicsLayerRepresentation; }
+    bool representsPlatformLayerID() const { return m_representation == PlatformLayerIDRepresentation; }
+    
 private:
     union {
         GraphicsLayer* m_graphicsLayer;
@@ -137,7 +146,7 @@ private:
     };
 
     GraphicsLayer::PlatformLayerID m_layerID;
-    LayerRepresentationType m_representation;
+    Type m_representation;
 };
 
 class ScrollingStateNode {
@@ -162,6 +171,9 @@ public:
     void resetChangedProperties() { m_changedProperties = 0; }
     void setPropertyChanged(unsigned propertyBit);
 
+    ChangedProperties changedProperties() const { return m_changedProperties; }
+    void setChangedProperties(ChangedProperties changedProperties) { m_changedProperties = changedProperties; }
+    
     virtual void syncLayerPositionForViewportRect(const LayoutRect& /*viewportRect*/) { }
 
     const LayerRepresentation& layer() const { return m_layer; }
@@ -173,6 +185,7 @@ public:
 
     ScrollingStateNode* parent() const { return m_parent; }
     void setParent(ScrollingStateNode* parent) { m_parent = parent; }
+    ScrollingNodeID parentNodeID() const { return m_parent ? m_parent->scrollingNodeID() : 0; }
 
     Vector<OwnPtr<ScrollingStateNode>>* children() const { return m_children.get(); }
 
@@ -188,7 +201,6 @@ private:
     void dump(TextStream&, int indent) const;
 
     virtual void dumpProperties(TextStream&, int indent) const = 0;
-    ChangedProperties changedProperties() const { return m_changedProperties; }
     void willBeRemovedFromStateTree();
 
     const ScrollingNodeType m_nodeType;

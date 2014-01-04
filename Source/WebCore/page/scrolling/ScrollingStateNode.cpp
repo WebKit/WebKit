@@ -54,9 +54,8 @@ ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, Scro
     , m_scrollingStateTree(adoptiveTree)
     , m_parent(0)
 {
-    // The cloned tree references PlatformLayers, which are safe to send to the scrolling thread.
-    // FIXME: this Mac threaded-scrolling assumption doesn't belong here.
-    setLayer(stateNode.layer().toPlatformLayer());
+    if (hasChangedProperty(ScrollLayer))
+        setLayer(stateNode.layer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
     scrollingStateTree().addNode(this);
 }
 

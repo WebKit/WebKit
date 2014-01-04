@@ -72,7 +72,8 @@ void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportCon
 void ScrollingStateStickyNode::syncLayerPositionForViewportRect(const LayoutRect& viewportRect)
 {
     FloatPoint position = m_constraints.layerPositionForConstrainingRect(viewportRect);
-    static_cast<GraphicsLayer*>(layer())->syncPosition(position);
+    if (layer().representsGraphicsLayer())
+        static_cast<GraphicsLayer*>(layer())->syncPosition(position);
 }
 
 void ScrollingStateStickyNode::dumpProperties(TextStream& ts, int indent) const

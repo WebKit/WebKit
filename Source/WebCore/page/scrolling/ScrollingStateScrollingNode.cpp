@@ -75,11 +75,14 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
 {
-    // The cloned tree references PlatformLayers, which are safe to send to the scrolling thread.
-    // FIXME: this Mac threaded-scrolling assumption doesn't belong here.
-    setCounterScrollingLayer(stateNode.counterScrollingLayer().toPlatformLayer());
-    setHeaderLayer(stateNode.headerLayer().toPlatformLayer());
-    setFooterLayer(stateNode.footerLayer().toPlatformLayer());
+    if (hasChangedProperty(CounterScrollingLayer))
+        setCounterScrollingLayer(stateNode.counterScrollingLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
+
+    if (hasChangedProperty(HeaderLayer))
+        setHeaderLayer(stateNode.headerLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
+
+    if (hasChangedProperty(FooterLayer))
+        setFooterLayer(stateNode.footerLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 }
 
 ScrollingStateScrollingNode::~ScrollingStateScrollingNode()

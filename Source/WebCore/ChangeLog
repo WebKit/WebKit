@@ -1,3 +1,51 @@
+2014-01-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Prepare the ScrollingTree for remote use
+        https://bugs.webkit.org/show_bug.cgi?id=126493
+
+        Reviewed by Sam Weinig.
+
+        When committing the scrolling tree, we clone the ScrollingStateTree
+        to hand off to another thread, or (in future) to encode to send to the
+        UI process. During this cloning process, two types of layer transformations
+        take place: for threaded scrolling, we replace GraphicsLayer with PlatformLayers.
+        For remote scrolling, we'll replace GraphicsLayers with PlatformLayerIDs.
+        Allow the ScrollingCoordinator to specify which type of transformation occurs
+        by giving ScrollingStateTree a LayerRepresentation::Type member,
+        which is consulted during ScrollingStateNode cloning.
+        
+        Also only copy layers that have changed to avoid setting dirty bits.
+        
+        Expose some other stuff on ScrollingStateTree which will be needed for
+        remote scrolling.
+
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::syncLayerPositionForViewportRect):
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::ScrollingStateNode):
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::LayerRepresentation::operator GraphicsLayer::PlatformLayerID):
+        (WebCore::LayerRepresentation::toRepresentation):
+        (WebCore::ScrollingStateNode::changedProperties):
+        (WebCore::ScrollingStateNode::setChangedProperties):
+        (WebCore::ScrollingStateNode::parentNodeID):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::syncLayerPositionForViewportRect):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::ScrollingStateTree):
+        (WebCore::ScrollingStateTree::commit):
+        (WebCore::ScrollingStateTree::setRemovedNodes):
+        (WebCore::ScrollingStateTree::stateNodeForID):
+        * page/scrolling/ScrollingStateTree.h:
+        (WebCore::ScrollingStateTree::nodeCount):
+        (WebCore::ScrollingStateTree::nodeMap):
+        (WebCore::ScrollingStateTree::preferredLayerRepresentation):
+        (WebCore::ScrollingStateTree::setPreferredLayerRepresentation):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::commitTreeState):
+
 2014-01-04  Sam Weinig  <sam@webkit.org>
 
         Move LineBreaker functions to LineBreaker.cpp
