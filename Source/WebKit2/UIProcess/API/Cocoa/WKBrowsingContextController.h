@@ -111,6 +111,9 @@ WK_API_CLASS
 
 @property(readonly) WKBackForwardList *backForwardList;
 
+@property (readonly) NSData *sessionState;
+- (void)restoreFromSessionState:(NSData *)sessionState;
+
 #pragma mark Active Load Introspection
 
 @property (readonly, getter=isLoading) BOOL loading;

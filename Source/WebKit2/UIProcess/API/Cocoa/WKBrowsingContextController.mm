@@ -42,6 +42,7 @@
 #import "WKFrame.h"
 #import "WKFramePolicyListener.h"
 #import "WKNSArray.h"
+#import "WKNSData.h"
 #import "WKNSError.h"
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLExtras.h"
@@ -329,6 +330,17 @@ static void releaseNSData(unsigned char*, const void* data)
 - (WKBackForwardList *)backForwardList
 {
     return wrapper(_page->backForwardList());
+}
+
+- (NSData *)sessionState
+{
+    return [wrapper(*_page->sessionStateData(nullptr, nullptr).leakRef()) autorelease];
+}
+
+- (void)restoreFromSessionState:(NSData *)sessionState
+{
+    [sessionState retain];
+    _page->restoreFromSessionStateData(API::Data::createWithoutCopying((const unsigned char*)sessionState.bytes, sessionState.length, releaseNSData, sessionState).get());
 }
 
 #pragma mark Active Load Introspection

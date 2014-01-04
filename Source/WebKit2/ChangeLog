@@ -1,3 +1,16 @@
+2014-01-03  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose session state API
+        https://bugs.webkit.org/show_bug.cgi?id=126463
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h: Declared new property and method.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController sessionState]): Added. Calls WebPageProxy::sessionStateData.
+        (-[WKBrowsingContextController restoreFromSessionState:]): Added. Calls
+        WebPageProxy::restoreFromSessionState.
+
 2014-01-03  Gavin Barraclough  <barraclough@apple.com>
 
         Remove SPI, user default for disabling process suppression
