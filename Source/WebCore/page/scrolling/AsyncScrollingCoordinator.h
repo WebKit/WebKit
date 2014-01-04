@@ -54,6 +54,8 @@ public:
 
     virtual PassOwnPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) = 0;
 
+    void scrollingStateTreePropertiesChanged();
+
 protected:
     AsyncScrollingCoordinator(Page*);
 

@@ -1,5 +1,72 @@
 2014-01-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Clean up the means of committing the scrolling state tree
+        https://bugs.webkit.org/show_bug.cgi?id=126482
+
+        Reviewed by Tim Horton.
+
+        ScrollingStateNodes would manually call scrollingStateTree().setHasChangedProperties()
+        after setPropertyChanged() in lots of places, which was repetitive, and
+        AsyncScrollingCoordinator manually called scheduleTreeStateCommit() in many places.
+        
+        Clean up both of these with a clearer trigger for state tree commits.
+        ScrollingStateNodes::setPropertyChanged() calls ScrollingStateTree::setHasChangedProperties(),
+        which turns around and tells the ScrollingCoordinator that the state tree became dirty.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::AsyncScrollingCoordinator):
+        (WebCore::AsyncScrollingCoordinator::scrollingStateTreePropertiesChanged):
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::AsyncScrollingCoordinator::updateScrollingNode):
+        (WebCore::AsyncScrollingCoordinator::updateViewportConstrainedNode):
+        (WebCore::AsyncScrollingCoordinator::setScrollLayerForNode):
+        (WebCore::AsyncScrollingCoordinator::setCounterScrollingLayerForNode):
+        (WebCore::AsyncScrollingCoordinator::setHeaderLayerForNode):
+        (WebCore::AsyncScrollingCoordinator::setFooterLayerForNode):
+        (WebCore::AsyncScrollingCoordinator::setNonFastScrollableRegionForNode):
+        (WebCore::AsyncScrollingCoordinator::setWheelEventHandlerCountForNode):
+        (WebCore::AsyncScrollingCoordinator::setScrollBehaviorForFixedElementsForNode):
+        (WebCore::AsyncScrollingCoordinator::setScrollbarPaintersFromScrollbarsForNode):
+        (WebCore::AsyncScrollingCoordinator::setSynchronousScrollingReasons):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::updateConstraints):
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::setPropertyChanged):
+        (WebCore::ScrollingStateNode::setLayer):
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::setViewportRect):
+        (WebCore::ScrollingStateScrollingNode::setTotalContentsSize):
+        (WebCore::ScrollingStateScrollingNode::setScrollOrigin):
+        (WebCore::ScrollingStateScrollingNode::setScrollableAreaParameters):
+        (WebCore::ScrollingStateScrollingNode::setFrameScaleFactor):
+        (WebCore::ScrollingStateScrollingNode::setNonFastScrollableRegion):
+        (WebCore::ScrollingStateScrollingNode::setWheelEventHandlerCount):
+        (WebCore::ScrollingStateScrollingNode::setSynchronousScrollingReasons):
+        (WebCore::ScrollingStateScrollingNode::setScrollBehaviorForFixedElements):
+        (WebCore::ScrollingStateScrollingNode::setRequestedScrollPosition):
+        (WebCore::ScrollingStateScrollingNode::setHeaderHeight):
+        (WebCore::ScrollingStateScrollingNode::setFooterHeight):
+        (WebCore::ScrollingStateScrollingNode::setCounterScrollingLayer):
+        (WebCore::ScrollingStateScrollingNode::setHeaderLayer):
+        (WebCore::ScrollingStateScrollingNode::setFooterLayer):
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::updateConstraints):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::create):
+        (WebCore::ScrollingStateTree::ScrollingStateTree):
+        (WebCore::ScrollingStateTree::setHasChangedProperties):
+        (WebCore::ScrollingStateTree::didRemoveNode):
+        * page/scrolling/ScrollingStateTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::scheduleTreeStateCommit):
+        * page/scrolling/mac/ScrollingStateScrollingNodeMac.mm:
+        (WebCore::ScrollingStateScrollingNode::setScrollbarPaintersFromScrollbars):
+
+2014-01-03  Simon Fraser  <simon.fraser@apple.com>
+
         Try to fix CoordinatedGraphics build after r161303. Remove implementations
         which are now in the cross-platform file.
 

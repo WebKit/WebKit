@@ -34,7 +34,9 @@
 #include <wtf/RefPtr.h>
  
 namespace WebCore {
- 
+
+class AsyncScrollingCoordinator;
+
 // The ScrollingStateTree is a tree that managed ScrollingStateNodes. The nodes keep track of the current
 // state of scrolling related properties. Whenever any properties change, the scrolling coordinator
 // will be informed and will schedule a timer that will clone the new state tree and send it over to
@@ -44,7 +46,7 @@ class ScrollingStateTree {
     friend class ScrollingStateNode;
 public:
     
-    static PassOwnPtr<ScrollingStateTree> create();
+    static PassOwnPtr<ScrollingStateTree> create(AsyncScrollingCoordinator* = 0);
     ~ScrollingStateTree();
 
     ScrollingStateScrollingNode* rootStateNode() const { return m_rootStateNode.get(); }
@@ -59,19 +61,20 @@ public:
     // Copies the current tree state and clears the changed properties mask in the original.
     PassOwnPtr<ScrollingStateTree> commit();
 
-    void setHasChangedProperties(bool changedProperties) { m_hasChangedProperties = changedProperties; }
+    void setHasChangedProperties(bool = true);
     bool hasChangedProperties() const { return m_hasChangedProperties; }
 
     bool hasNewRootStateNode() const { return m_hasNewRootStateNode; }
 
 private:
-    ScrollingStateTree();
+    ScrollingStateTree(AsyncScrollingCoordinator*);
 
     void setRootStateNode(PassOwnPtr<ScrollingStateScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
     void addNode(ScrollingStateNode*);
     void removeNode(ScrollingStateNode*);
     void didRemoveNode(ScrollingNodeID);
 
+    AsyncScrollingCoordinator* m_scrollingCoordinator;
     HashMap<ScrollingNodeID, ScrollingStateNode*> m_stateNodeMap;
     OwnPtr<ScrollingStateScrollingNode> m_rootStateNode;
     Vector<ScrollingNodeID> m_nodesRemovedSinceLastCommit;

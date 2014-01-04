@@ -93,10 +93,9 @@ bool ScrollingCoordinatorMac::handleWheelEvent(FrameView*, const PlatformWheelEv
 
 void ScrollingCoordinatorMac::scheduleTreeStateCommit()
 {
-    if (m_scrollingStateTreeCommitterTimer.isActive())
-        return;
+    ASSERT(scrollingStateTree()->hasChangedProperties());
 
-    if (!scrollingStateTree()->hasChangedProperties())
+    if (m_scrollingStateTreeCommitterTimer.isActive())
         return;
 
     m_scrollingStateTreeCommitterTimer.startOneShot(0);

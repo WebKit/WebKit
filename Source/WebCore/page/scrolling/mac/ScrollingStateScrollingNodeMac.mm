@@ -53,7 +53,6 @@ void ScrollingStateScrollingNode::setScrollbarPaintersFromScrollbars(Scrollbar* 
     m_horizontalScrollbarPainter = horizontalPainter;
 
     setPropertyChanged(PainterForScrollbar);
-    scrollingStateTree().setHasChangedProperties(true);
 }
 
 } // namespace WebCore

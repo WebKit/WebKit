@@ -64,6 +64,15 @@ ScrollingStateNode::~ScrollingStateNode()
 {
 }
 
+void ScrollingStateNode::setPropertyChanged(unsigned propertyBit)
+{
+    if (m_changedProperties & (1 << propertyBit))
+        return;
+
+    m_changedProperties |= (1 << propertyBit);
+    m_scrollingStateTree.setHasChangedProperties();
+}
+
 PassOwnPtr<ScrollingStateNode> ScrollingStateNode::cloneAndReset(ScrollingStateTree& adoptiveTree)
 {
     OwnPtr<ScrollingStateNode> clone = this->clone(adoptiveTree);
@@ -135,7 +144,6 @@ void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation
     m_layer = layerRepresentation;
 
     setPropertyChanged(ScrollLayer);
-    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateNode::dump(TextStream& ts, int indent) const

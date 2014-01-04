@@ -67,7 +67,6 @@ void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportCon
 
     m_constraints = constraints;
     setPropertyChanged(ViewportConstraints);
-    scrollingStateTree().setHasChangedProperties(true);
 }
 
 void ScrollingStateStickyNode::syncLayerPositionForViewportRect(const LayoutRect& viewportRect)

@@ -28,25 +28,37 @@
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
+#include "AsyncScrollingCoordinator.h"
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingStateScrollingNode.h"
 #include "ScrollingStateStickyNode.h"
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingStateTree> ScrollingStateTree::create()
+PassOwnPtr<ScrollingStateTree> ScrollingStateTree::create(AsyncScrollingCoordinator* scrollingCoordinator)
 {
-    return adoptPtr(new ScrollingStateTree);
+    return adoptPtr(new ScrollingStateTree(scrollingCoordinator));
 }
 
-ScrollingStateTree::ScrollingStateTree()
-    : m_hasChangedProperties(false)
+ScrollingStateTree::ScrollingStateTree(AsyncScrollingCoordinator* scrollingCoordinator)
+    : m_scrollingCoordinator(scrollingCoordinator)
+    , m_hasChangedProperties(false)
     , m_hasNewRootStateNode(false)
 {
 }
 
 ScrollingStateTree::~ScrollingStateTree()
 {
+}
+
+void ScrollingStateTree::setHasChangedProperties(bool changedProperties)
+{
+    bool gainedChangedProperties = !m_hasChangedProperties && changedProperties;
+
+    m_hasChangedProperties = changedProperties;
+
+    if (gainedChangedProperties && m_scrollingCoordinator)
+        m_scrollingCoordinator->scrollingStateTreePropertiesChanged();
 }
 
 ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)
@@ -173,7 +185,7 @@ void ScrollingStateTree::removeNode(ScrollingStateNode* node)
 void ScrollingStateTree::didRemoveNode(ScrollingNodeID nodeID)
 {
     m_nodesRemovedSinceLastCommit.append(nodeID);
-    m_hasChangedProperties = true;
+    setHasChangedProperties();
 }
 
 ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLayerID)

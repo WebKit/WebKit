@@ -43,12 +43,17 @@ namespace WebCore {
 
 AsyncScrollingCoordinator::AsyncScrollingCoordinator(Page* page)
     : ScrollingCoordinator(page)
-    , m_scrollingStateTree(ScrollingStateTree::create())
+    , m_scrollingStateTree(ScrollingStateTree::create(this))
 {
 }
 
 AsyncScrollingCoordinator::~AsyncScrollingCoordinator()
 {
+}
+
+void AsyncScrollingCoordinator::scrollingStateTreePropertiesChanged()
+{
+    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
@@ -97,7 +102,6 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     scrollParameters.verticalScrollbarMode = frameView->verticalScrollbarMode();
 
     node->setScrollableAreaParameters(scrollParameters);
-    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
@@ -143,7 +147,6 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView
         return false;
 
     stateNode->setRequestedScrollPosition(scrollPosition, frameView->inProgrammaticScroll());
-    scheduleTreeStateCommit();
     return true;
 }
 
@@ -208,7 +211,6 @@ void AsyncScrollingCoordinator::updateScrollingNode(ScrollingNodeID nodeID, Grap
 
     node->setLayer(scrollLayer);
     node->setCounterScrollingLayer(counterScrollingLayer);
-    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::updateViewportConstrainedNode(ScrollingNodeID nodeID, const ViewportConstraints& constraints, GraphicsLayer* graphicsLayer)
@@ -233,63 +235,51 @@ void AsyncScrollingCoordinator::updateViewportConstrainedNode(ScrollingNodeID no
         break;
     }
     }
-    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::setScrollLayerForNode(GraphicsLayer* scrollLayer, ScrollingStateNode* node)
 {
     node->setLayer(scrollLayer);
-    // FIXME: only schedule a commit if something changed.
-    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::setCounterScrollingLayerForNode(GraphicsLayer* layer, ScrollingStateScrollingNode* node)
 {
     node->setCounterScrollingLayer(layer);
-    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::setHeaderLayerForNode(GraphicsLayer* headerLayer, ScrollingStateScrollingNode* node)
 {
     // Headers and footers are only supported on the root node.
     ASSERT(node == m_scrollingStateTree->rootStateNode());
-
     node->setHeaderLayer(headerLayer);
-    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::setFooterLayerForNode(GraphicsLayer* footerLayer, ScrollingStateScrollingNode* node)
 {
     // Headers and footers are only supported on the root node.
     ASSERT(node == m_scrollingStateTree->rootStateNode());
-
     node->setFooterLayer(footerLayer);
-    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::setNonFastScrollableRegionForNode(const Region& region, ScrollingStateScrollingNode* node)
 {
     node->setNonFastScrollableRegion(region);
-    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::setWheelEventHandlerCountForNode(unsigned wheelEventHandlerCount, ScrollingStateScrollingNode* node)
 {
     node->setWheelEventHandlerCount(wheelEventHandlerCount);
-    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::setScrollBehaviorForFixedElementsForNode(ScrollBehaviorForFixedElements behaviorForFixed, ScrollingStateScrollingNode* node)
 {
     node->setScrollBehaviorForFixedElements(behaviorForFixed);
-    scheduleTreeStateCommit();
 }
 
 // FIXME: not sure if this belongs here.
 void AsyncScrollingCoordinator::setScrollbarPaintersFromScrollbarsForNode(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar, ScrollingStateScrollingNode* node)
 {
     node->setScrollbarPaintersFromScrollbars(verticalScrollbar, horizontalScrollbar);
-    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::setSynchronousScrollingReasons(SynchronousScrollingReasons reasons)
@@ -303,7 +293,6 @@ void AsyncScrollingCoordinator::setSynchronousScrollingReasons(SynchronousScroll
     if (reasons)
         updateMainFrameScrollLayerPosition();
     m_scrollingStateTree->rootStateNode()->setSynchronousScrollingReasons(reasons);
-    scheduleTreeStateCommit();
 }
 
 void AsyncScrollingCoordinator::updateMainFrameScrollLayerPosition()
