@@ -225,7 +225,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::I
     m_numPendingConnectionRequests = 0;
 
 #if PLATFORM(MAC)
-    if (WebContext::canEnableProcessSuppressionForGlobalChildProcesses())
+    if (WebContext::processSuppressionIsEnabledForAllContexts())
         setProcessSuppressionEnabled(true);
 #endif
 }

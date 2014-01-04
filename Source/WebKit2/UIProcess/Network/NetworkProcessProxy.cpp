@@ -194,7 +194,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     m_numPendingConnectionRequests = 0;
 
 #if PLATFORM(MAC)
-    if (m_webContext.canEnableProcessSuppressionForNetworkProcess())
+    if (m_webContext.processSuppressionEnabled())
         setProcessSuppressionEnabled(true);
 #endif
 }

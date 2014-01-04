@@ -32,7 +32,6 @@ class WindowServerConnection {
 public:
     static WindowServerConnection& shared();
 
-    bool applicationIsOccluded() const { return m_applicationIsOccluded; }
     bool applicationWindowModificationsHaveStopped() const { return m_applicationWindowModificationsHaveStopped; }
 
 private:
@@ -41,16 +40,12 @@ private:
 #if HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
     void windowServerConnectionStateChanged();
 
-    void applicationBecameOccluded(bool occluded);
     void applicationWindowModificationsStopped(bool stopped);
 
-    static void applicationBecameVisible(uint32_t, void*, uint32_t, void*, uint32_t);
-    static void applicationBecameOccluded(uint32_t, void*, uint32_t, void*, uint32_t);
     static void applicationWindowModificationsStarted(uint32_t, void*, uint32_t, void*, uint32_t);
     static void applicationWindowModificationsStopped(uint32_t, void*, uint32_t, void*, uint32_t);
 #endif
 
-    bool m_applicationIsOccluded;
     bool m_applicationWindowModificationsHaveStopped;
 };
 

@@ -515,6 +515,11 @@ void WebPageProxy::initializeWebPage()
 #endif
 }
 
+bool WebPageProxy::isProcessSuppressible() const
+{
+    return (m_viewState & ViewState::IsVisuallyIdle) && m_pageGroup->preferences()->pageVisibilityBasedProcessSuppressionEnabled();
+}
+
 void WebPageProxy::close()
 {
     if (!isValid())
@@ -958,9 +963,10 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     if (changed)
         m_process->send(Messages::WebPage::SetViewState(m_viewState, wantsReply == WantsReplyOrNot::DoesWantReply), m_pageID);
 
-    if (changed & ViewState::IsVisible) {
-        m_process->pageVisibilityChanged(this);
+    if (changed & ViewState::IsVisuallyIdle)
+        m_process->pageSuppressibilityChanged(this);
 
+    if (changed & ViewState::IsVisible) {
         if (!isViewVisible()) {
             // If we've started the responsiveness timer as part of telling the web process to update the backing store
             // state, it might not send back a reply (since it won't paint anything if the web page is hidden) so we

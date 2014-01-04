@@ -425,6 +425,7 @@ public:
     WebCore::IntSize viewSize() const;
     bool isViewVisible() const { return m_viewState & ViewState::IsVisible; }
     bool isViewWindowActive() const;
+    bool isProcessSuppressible() const;
 
     void executeEditCommand(const String& commandName);
     void validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback>);

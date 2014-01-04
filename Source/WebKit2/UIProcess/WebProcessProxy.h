@@ -106,7 +106,7 @@ public:
 
     DownloadProxy* createDownloadProxy();
 
-    void pageVisibilityChanged(WebPageProxy*);
+    void pageSuppressibilityChanged(WebPageProxy*);
     void pagePreferencesChanged(WebPageProxy*);
 
     void didSaveToPageCache();
@@ -114,7 +114,6 @@ public:
 
 #if PLATFORM(MAC)
     bool allPagesAreProcessSuppressible() const;
-    static bool pageIsProcessSuppressible(WebPageProxy*);
     void updateProcessSuppressionState();
 #endif
 

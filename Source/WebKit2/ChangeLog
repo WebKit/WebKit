@@ -1,3 +1,52 @@
+2014-01-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Simplify process suppression state calculation
+        https://bugs.webkit.org/show_bug.cgi?id=126473
+
+        Reviewed by Geoffrey Garen & Sam Weinig.
+
+        Don't check the application occlusion state (this is covered by the pages already),
+        and let the page check visually idle. Remove layers of functions.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+            - Let the network process nap if all processes in its context are napping.*
+              (* Except not really. We currently leak a boost onto the process anyway.)
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+            - Let the plugin process nap if all processes in all contexts are napping.
+        * UIProcess/WebContext.h:
+            - Remove canEnableProcessSuppressionForNetworkProcess & canEnableProcessSuppressionForWebProcess
+            - canEnableProcessSuppressionForGlobalChildProcesses -> processSuppressionIsEnabledForAllContexts
+            - combine updateProcessSuppressionStateOfChildProcesses & updateProcessSuppressionStateOfGlobalChildProcesses
+                -> updateProcessSuppressionState
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isProcessSuppressible):
+            - WebProcess is supressible if IsVisuallyIdle.
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - WebProcessProxy should updateProcessSuppressionState when IsVisuallyIdle changes.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        (WebKit::WebProcessProxy::pageSuppressibilityChanged):
+        (WebKit::WebProcessProxy::pagePreferencesChanged):
+            - pageIsProcessSuppressible -> isProcessSuppressible
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::updateProcessSuppressionState):
+            - Update supression state of network & plugin processes.
+        (WebKit::WebContext::processSuppressionIsEnabledForAllContexts):
+            - Changed iterator style, made a static member of WebContext.
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::updateProcessSuppressionState):
+            - Ask the WebContext to update supression state.
+        * UIProcess/mac/WindowServerConnection.h:
+        * UIProcess/mac/WindowServerConnection.mm:
+        (WebKit::WindowServerConnection::windowServerConnectionStateChanged):
+        (WebKit::WindowServerConnection::WindowServerConnection):
+            - Remove application occlusion state.
+
 2014-01-03  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] [WK2] TileController creates all tiles on first paint, making it slow and consuming lots of memory

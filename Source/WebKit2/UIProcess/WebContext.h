@@ -284,10 +284,7 @@ public:
 
 #if PLATFORM(MAC)
     bool processSuppressionEnabled() const;
-    bool canEnableProcessSuppressionForNetworkProcess() const;
-    bool canEnableProcessSuppressionForWebProcess(const WebProcessProxy*) const;
-    static bool canEnableProcessSuppressionForGlobalChildProcesses();
-    void updateProcessSuppressionStateOfChildProcesses();
+    static bool processSuppressionIsEnabledForAllContexts();
 #endif
 
     void windowServerConnectionStateChanged();
@@ -318,7 +315,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    static void updateProcessSuppressionStateOfGlobalChildProcesses();
+    void updateProcessSuppressionState() const;
 #endif
 
 private:

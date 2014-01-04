@@ -59,11 +59,6 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
     launchOptions.useXPC = shouldUseXPC();
 }
 
-bool WebProcessProxy::pageIsProcessSuppressible(WebPageProxy* page)
-{
-    return !page->isViewVisible() && page->pageGroup().preferences()->pageVisibilityBasedProcessSuppressionEnabled();
-}
-
 bool WebProcessProxy::allPagesAreProcessSuppressible() const
 {
     return (m_processSuppressiblePages.size() == m_pageMap.size()) && !m_processSuppressiblePages.isEmpty();
@@ -74,12 +69,14 @@ void WebProcessProxy::updateProcessSuppressionState()
     if (!isValid())
         return;
 
-    bool canEnable = m_context->canEnableProcessSuppressionForWebProcess(this);
+    bool canEnable = allPagesAreProcessSuppressible();
     if (m_processSuppressionEnabled == canEnable)
         return;
     m_processSuppressionEnabled = canEnable;
 
     connection()->send(Messages::WebProcess::SetProcessSuppressionEnabled(m_processSuppressionEnabled), 0);
+
+    m_context->updateProcessSuppressionState();
 }
 
 } // namespace WebKit

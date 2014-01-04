@@ -33,30 +33,12 @@ namespace WebKit {
 
 #if HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
 
-void WindowServerConnection::applicationBecameOccluded(bool occluded)
-{
-    if (m_applicationIsOccluded == occluded)
-        return;
-    m_applicationIsOccluded = occluded;
-    windowServerConnectionStateChanged();
-}
-
 void WindowServerConnection::applicationWindowModificationsStopped(bool stopped)
 {
     if (m_applicationWindowModificationsHaveStopped == stopped)
         return;
     m_applicationWindowModificationsHaveStopped = stopped;
     windowServerConnectionStateChanged();
-}
-
-void WindowServerConnection::applicationBecameVisible(uint32_t, void*, uint32_t, void*, uint32_t)
-{
-    WindowServerConnection::shared().applicationBecameOccluded(false);
-}
-
-void WindowServerConnection::applicationBecameOccluded(uint32_t, void*, uint32_t, void*, uint32_t)
-{
-    WindowServerConnection::shared().applicationBecameOccluded(true);
 }
 
 void WindowServerConnection::applicationWindowModificationsStarted(uint32_t, void*, uint32_t, void*, uint32_t)
@@ -71,13 +53,8 @@ void WindowServerConnection::applicationWindowModificationsStopped(uint32_t, voi
 
 void WindowServerConnection::windowServerConnectionStateChanged()
 {
-    for (auto* context : WebContext::allContexts()) {
+    for (auto* context : WebContext::allContexts())
         context->windowServerConnectionStateChanged();
-        if (context->processSuppressionEnabled())
-            context->updateProcessSuppressionStateOfChildProcesses();
-    }
-
-    WebContext::updateProcessSuppressionStateOfGlobalChildProcesses();
 }
 
 #endif
@@ -89,8 +66,7 @@ WindowServerConnection& WindowServerConnection::shared()
 }
 
 WindowServerConnection::WindowServerConnection()
-    : m_applicationIsOccluded(false)
-    , m_applicationWindowModificationsHaveStopped(false)
+    : m_applicationWindowModificationsHaveStopped(false)
 {
 #if HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
     struct OcclusionNotificationHandler {
@@ -100,8 +76,6 @@ WindowServerConnection::WindowServerConnection()
     };
 
     static const OcclusionNotificationHandler occlusionNotificationHandlers[] = {
-        { WKOcclusionNotificationTypeApplicationBecameVisible, applicationBecameVisible, "Application Became Visible" },
-        { WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameOccluded, "Application Became Occluded" },
         { WKOcclusionNotificationTypeApplicationWindowModificationsStarted, applicationWindowModificationsStarted, "Application Window Modifications Started" },
         { WKOcclusionNotificationTypeApplicationWindowModificationsStopped, applicationWindowModificationsStopped, "Application Window Modifications Stopped" },
     };

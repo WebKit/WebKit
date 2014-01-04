@@ -170,7 +170,7 @@ PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, 
     m_pageMap.set(pageID, webPage.get());
     globalPageMap().set(pageID, webPage.get());
 #if PLATFORM(MAC)
-    if (pageIsProcessSuppressible(webPage.get()))
+    if (webPage->isProcessSuppressible())
         m_processSuppressiblePages.add(pageID);
     updateProcessSuppressionState();
 #endif
@@ -182,7 +182,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy* webPage, uint64_t pageID)
     m_pageMap.set(pageID, webPage);
     globalPageMap().set(pageID, webPage);
 #if PLATFORM(MAC)
-    if (pageIsProcessSuppressible(webPage))
+    if (webPage->isProcessSuppressible())
         m_processSuppressiblePages.add(pageID);
     updateProcessSuppressionState();
 #endif
@@ -601,10 +601,10 @@ void WebProcessProxy::didUpdateHistoryTitle(uint64_t pageID, const String& title
     m_context->historyClient().didUpdateHistoryTitle(&m_context.get(), page, title, url, frame);
 }
 
-void WebProcessProxy::pageVisibilityChanged(WebKit::WebPageProxy *page)
+void WebProcessProxy::pageSuppressibilityChanged(WebKit::WebPageProxy *page)
 {
 #if PLATFORM(MAC)
-    if (pageIsProcessSuppressible(page))
+    if (page->isProcessSuppressible())
         m_processSuppressiblePages.add(page->pageID());
     else
         m_processSuppressiblePages.remove(page->pageID());
@@ -617,7 +617,7 @@ void WebProcessProxy::pageVisibilityChanged(WebKit::WebPageProxy *page)
 void WebProcessProxy::pagePreferencesChanged(WebKit::WebPageProxy *page)
 {
 #if PLATFORM(MAC)
-    if (pageIsProcessSuppressible(page))
+    if (page->isProcessSuppressible())
         m_processSuppressiblePages.add(page->pageID());
     else
         m_processSuppressiblePages.remove(page->pageID());
