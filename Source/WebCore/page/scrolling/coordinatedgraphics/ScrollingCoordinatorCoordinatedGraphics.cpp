@@ -62,7 +62,7 @@ void ScrollingCoordinatorCoordinatedGraphics::detachFromStateTree(ScrollingNodeI
 {
     ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
     if (node && node->nodeType() == FixedNode)
-        toCoordinatedGraphicsLayer(node->graphicsLayer())->setFixedToViewport(false);
+        toCoordinatedGraphicsLayer(node->layer())->setFixedToViewport(false);
 
     m_scrollingStateTree->detachNode(nodeID);
 }
@@ -84,7 +84,7 @@ void ScrollingCoordinatorCoordinatedGraphics::updateViewportConstrainedNode(Scro
     case ViewportConstraints::FixedPositionConstraint: {
         toCoordinatedGraphicsLayer(graphicsLayer)->setFixedToViewport(true); // FIXME : Use constraints!
         ScrollingStateFixedNode* fixedNode = toScrollingStateFixedNode(node);
-        fixedNode->setScrollLayer(graphicsLayer);
+        fixedNode->setLayer(graphicsLayer);
         break;
     }
     case ViewportConstraints::StickyPositionConstraint:

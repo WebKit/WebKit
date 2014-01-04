@@ -34,22 +34,6 @@
 
 namespace WebCore {
 
-PlatformLayer* ScrollingStateNode::platformScrollLayer() const
-{
-    notImplemented();
-    return 0;
-}
-
-void ScrollingStateNode::setScrollPlatformLayer(PlatformLayer*)
-{
-    notImplemented();
-}
-
-void ScrollingStateNode::setScrollLayer(GraphicsLayer* graphicsLayer)
-{
-    m_graphicsLayer = graphicsLayer;
-}
-
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

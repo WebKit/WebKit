@@ -1,5 +1,16 @@
 2014-01-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Try to fix CoordinatedGraphics build after r161303. Remove implementations
+        which are now in the cross-platform file.
+
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp:
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::detachFromStateTree):
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::updateViewportConstrainedNode):
+        * page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp:
+        * page/scrolling/coordinatedgraphics/ScrollingStateScrollingNodeCoordinatedGraphics.cpp:
+
+2014-01-03  Simon Fraser  <simon.fraser@apple.com>
+
         Simplify ScrollingStateNode references to various layer types
         https://bugs.webkit.org/show_bug.cgi?id=126477
 
