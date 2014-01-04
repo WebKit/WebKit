@@ -519,8 +519,8 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
             if (!child->isTableCell())
                 continue;
             
-            pair<unsigned, unsigned> columnRange;
-            pair<unsigned, unsigned> rowRange;
+            std::pair<unsigned, unsigned> columnRange;
+            std::pair<unsigned, unsigned> rowRange;
             AccessibilityTableCell* tableCellChild = toAccessibilityTableCell(child);
             tableCellChild->columnIndexRange(columnRange);
             tableCellChild->rowIndexRange(rowRange);

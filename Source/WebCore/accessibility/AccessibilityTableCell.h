@@ -44,9 +44,9 @@ public:
     virtual bool isTableCell() const OVERRIDE;
     
     // fills in the start location and row span of cell
-    virtual void rowIndexRange(pair<unsigned, unsigned>& rowRange);
+    virtual void rowIndexRange(std::pair<unsigned, unsigned>& rowRange);
     // fills in the start location and column span of cell
-    virtual void columnIndexRange(pair<unsigned, unsigned>& columnRange);
+    virtual void columnIndexRange(std::pair<unsigned, unsigned>& columnRange);
     
 protected:
     virtual AccessibilityObject* parentTable() const;

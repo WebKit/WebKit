@@ -157,7 +157,7 @@ void CachedImage::allClientsRemoved()
         m_image->resetAnimation();
 }
 
-pair<Image*, float> CachedImage::brokenImage(float deviceScaleFactor) const
+std::pair<Image*, float> CachedImage::brokenImage(float deviceScaleFactor) const
 {
     if (deviceScaleFactor >= 2) {
         DEFINE_STATIC_LOCAL(Image*, brokenImageHiRes, (Image::loadPlatformResource("missingImage@2x").leakRef()));

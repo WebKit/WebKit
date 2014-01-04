@@ -83,8 +83,8 @@ private:
     std::unique_ptr<Inspector::InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorInspectorBackendDispatcher> m_backendDispatcher;
 
-    Vector<pair<long, String>> m_pendingEvaluateTestCommands;
-    pair<RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>, RefPtr<Inspector::InspectorObject>> m_pendingInspectData;
+    Vector<std::pair<long, String>> m_pendingEvaluateTestCommands;
+    std::pair<RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>, RefPtr<Inspector::InspectorObject>> m_pendingInspectData;
 
     bool m_enabled;
 };

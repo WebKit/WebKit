@@ -104,7 +104,7 @@ AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
     return CellRole;
 }
     
-void AccessibilityTableCell::rowIndexRange(pair<unsigned, unsigned>& rowRange)
+void AccessibilityTableCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRange)
 {
     if (!m_renderer || !m_renderer->isTableCell())
         return;
@@ -131,7 +131,7 @@ void AccessibilityTableCell::rowIndexRange(pair<unsigned, unsigned>& rowRange)
     rowRange.first += rowOffset;
 }
     
-void AccessibilityTableCell::columnIndexRange(pair<unsigned, unsigned>& columnRange)
+void AccessibilityTableCell::columnIndexRange(std::pair<unsigned, unsigned>& columnRange)
 {
     if (!m_renderer || !m_renderer->isTableCell())
         return;

@@ -35,8 +35,8 @@ SVGAnimatedNumberOptionalNumberAnimator::SVGAnimatedNumberOptionalNumberAnimator
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberOptionalNumberAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createNumberOptionalNumber(std::make_unique<pair<float, float>>());
-    pair<float, float>& animatedNumber = animatedType->numberOptionalNumber();
+    auto animatedType = SVGAnimatedType::createNumberOptionalNumber(std::make_unique<std::pair<float, float>>());
+    std::pair<float, float>& animatedNumber = animatedType->numberOptionalNumber();
     if (!parseNumberOptionalNumber(string, animatedNumber.first, animatedNumber.second)) {
         animatedNumber.first = 0;
         animatedNumber.second = 0;
@@ -74,8 +74,8 @@ void SVGAnimatedNumberOptionalNumberAnimator::addAnimatedTypes(SVGAnimatedType* 
     ASSERT(from->type() == AnimatedNumberOptionalNumber);
     ASSERT(from->type() == to->type());
 
-    const pair<float, float>& fromNumberPair = from->numberOptionalNumber();
-    pair<float, float>& toNumberPair = to->numberOptionalNumber();
+    const std::pair<float, float>& fromNumberPair = from->numberOptionalNumber();
+    std::pair<float, float>& toNumberPair = to->numberOptionalNumber();
 
     toNumberPair.first += fromNumberPair.first;
     toNumberPair.second += fromNumberPair.second;
@@ -86,10 +86,10 @@ void SVGAnimatedNumberOptionalNumberAnimator::calculateAnimatedValue(float perce
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const pair<float, float>& fromNumberPair = m_animationElement->animationMode() == ToAnimation ? animated->numberOptionalNumber() :  from->numberOptionalNumber();
-    const pair<float, float>& toNumberPair = to->numberOptionalNumber();
-    const pair<float, float>& toAtEndOfDurationNumberPair = toAtEndOfDuration->numberOptionalNumber();
-    pair<float, float>& animatedNumberPair = animated->numberOptionalNumber();
+    const std::pair<float, float>& fromNumberPair = m_animationElement->animationMode() == ToAnimation ? animated->numberOptionalNumber() :  from->numberOptionalNumber();
+    const std::pair<float, float>& toNumberPair = to->numberOptionalNumber();
+    const std::pair<float, float>& toAtEndOfDurationNumberPair = toAtEndOfDuration->numberOptionalNumber();
+    std::pair<float, float>& animatedNumberPair = animated->numberOptionalNumber();
 
     m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberPair.first, toNumberPair.first, toAtEndOfDurationNumberPair.first, animatedNumberPair.first);
     m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberPair.second, toNumberPair.second, toAtEndOfDurationNumberPair.second, animatedNumberPair.second);

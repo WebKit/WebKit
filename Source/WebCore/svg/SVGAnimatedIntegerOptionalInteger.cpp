@@ -35,8 +35,8 @@ SVGAnimatedIntegerOptionalIntegerAnimator::SVGAnimatedIntegerOptionalIntegerAnim
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerOptionalIntegerAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createIntegerOptionalInteger(std::make_unique<pair<int, int>>());
-    pair<int, int>& animatedInteger = animatedType->integerOptionalInteger();
+    auto animatedType = SVGAnimatedType::createIntegerOptionalInteger(std::make_unique<std::pair<int, int>>());
+    std::pair<int, int>& animatedInteger = animatedType->integerOptionalInteger();
     float firstNumber = 0;
     float secondNumber = 0;
     if (!parseNumberOptionalNumber(string, firstNumber, secondNumber)) {
@@ -79,8 +79,8 @@ void SVGAnimatedIntegerOptionalIntegerAnimator::addAnimatedTypes(SVGAnimatedType
     ASSERT(from->type() == AnimatedIntegerOptionalInteger);
     ASSERT(from->type() == to->type());
 
-    const pair<int, int>& fromIntegerPair = from->integerOptionalInteger();
-    pair<int, int>& toIntegerPair = to->integerOptionalInteger();
+    const std::pair<int, int>& fromIntegerPair = from->integerOptionalInteger();
+    std::pair<int, int>& toIntegerPair = to->integerOptionalInteger();
 
     toIntegerPair.first += fromIntegerPair.first;
     toIntegerPair.second += fromIntegerPair.second;
@@ -91,10 +91,10 @@ void SVGAnimatedIntegerOptionalIntegerAnimator::calculateAnimatedValue(float per
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const pair<int, int>& fromIntegerPair = m_animationElement->animationMode() == ToAnimation ? animated->integerOptionalInteger() : from->integerOptionalInteger();
-    const pair<int, int>& toIntegerPair = to->integerOptionalInteger();
-    const pair<int, int>& toAtEndOfDurationIntegerPair = toAtEndOfDuration->integerOptionalInteger();
-    pair<int, int>& animatedIntegerPair = animated->integerOptionalInteger();
+    const std::pair<int, int>& fromIntegerPair = m_animationElement->animationMode() == ToAnimation ? animated->integerOptionalInteger() : from->integerOptionalInteger();
+    const std::pair<int, int>& toIntegerPair = to->integerOptionalInteger();
+    const std::pair<int, int>& toAtEndOfDurationIntegerPair = toAtEndOfDuration->integerOptionalInteger();
+    std::pair<int, int>& animatedIntegerPair = animated->integerOptionalInteger();
 
     SVGAnimatedIntegerAnimator::calculateAnimatedInteger(m_animationElement, percentage, repeatCount, fromIntegerPair.first, toIntegerPair.first, toAtEndOfDurationIntegerPair.first, animatedIntegerPair.first);
     SVGAnimatedIntegerAnimator::calculateAnimatedInteger(m_animationElement, percentage, repeatCount, fromIntegerPair.second, toIntegerPair.second, toAtEndOfDurationIntegerPair.second, animatedIntegerPair.second);

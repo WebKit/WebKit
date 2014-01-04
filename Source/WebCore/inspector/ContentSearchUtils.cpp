@@ -79,9 +79,9 @@ TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEnd
     return TextPosition(OrdinalNumber::fromZeroBasedInt(lineIndex), OrdinalNumber::fromZeroBasedInt(column));
 }
 
-static Vector<pair<int, String>> getRegularExpressionMatchesByLines(const RegularExpression& regex, const String& text)
+static Vector<std::pair<int, String>> getRegularExpressionMatchesByLines(const RegularExpression& regex, const String& text)
 {
-    Vector<pair<int, String>> result;
+    Vector<std::pair<int, String>> result;
     if (text.isEmpty())
         return result;
 
@@ -96,7 +96,7 @@ static Vector<pair<int, String>> getRegularExpressionMatchesByLines(const Regula
 
         int matchLength;
         if (regex.match(line, 0, &matchLength) != -1)
-            result.append(pair<int, String>(lineNumber, line));
+            result.append(std::pair<int, String>(lineNumber, line));
 
         start = lineEnd + 1;
     }
@@ -159,9 +159,9 @@ PassRefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::S
     RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>> result = Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>::create();
 
     RegularExpression regex = ContentSearchUtils::createSearchRegex(query, caseSensitive, isRegex);
-    Vector<pair<int, String>> matches = getRegularExpressionMatchesByLines(regex, text);
+    Vector<std::pair<int, String>> matches = getRegularExpressionMatchesByLines(regex, text);
 
-    for (Vector<pair<int, String>>::const_iterator it = matches.begin(); it != matches.end(); ++it)
+    for (Vector<std::pair<int, String>>::const_iterator it = matches.begin(); it != matches.end(); ++it)
         result->addItem(buildObjectForSearchMatch(it->first, it->second));
 
     return result;

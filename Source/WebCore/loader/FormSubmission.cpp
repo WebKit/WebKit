@@ -181,7 +181,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
 
     TextEncoding dataEncoding = isMailtoForm ? UTF8Encoding() : FormDataBuilder::encodingFromAcceptCharset(copiedAttributes.acceptCharset(), document);
     RefPtr<DOMFormData> domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmission());
-    Vector<pair<String, String>> formValues;
+    Vector<std::pair<String, String>> formValues;
 
     bool containsPasswordData = false;
     for (unsigned i = 0; i < form->associatedElements().size(); ++i) {
@@ -192,7 +192,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
         if (isHTMLInputElement(element)) {
             HTMLInputElement& input = toHTMLInputElement(element);
             if (input.isTextField()) {
-                formValues.append(pair<String, String>(input.name().string(), input.value()));
+                formValues.append(std::pair<String, String>(input.name().string(), input.value()));
                 input.addSearchResult();
             }
             if (input.isPasswordField() && !input.value().isEmpty())

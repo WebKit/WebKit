@@ -1124,7 +1124,7 @@ static Mutex& notificationMutex()
     return mutex;
 }
 
-typedef Vector<pair<RefPtr<SecurityOrigin>, String>> NotificationQueue;
+typedef Vector<std::pair<RefPtr<SecurityOrigin>, String>> NotificationQueue;
 
 static NotificationQueue& notificationQueue()
 {
@@ -1136,7 +1136,7 @@ void DatabaseTracker::scheduleNotifyDatabaseChanged(SecurityOrigin* origin, cons
 {
     MutexLocker locker(notificationMutex());
 
-    notificationQueue().append(pair<RefPtr<SecurityOrigin>, String>(origin->isolatedCopy(), name.isolatedCopy()));
+    notificationQueue().append(std::pair<RefPtr<SecurityOrigin>, String>(origin->isolatedCopy(), name.isolatedCopy()));
     scheduleForNotification();
 }
 

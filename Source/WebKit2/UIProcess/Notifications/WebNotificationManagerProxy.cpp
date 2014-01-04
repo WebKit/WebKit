@@ -104,21 +104,21 @@ void WebNotificationManagerProxy::show(WebPageProxy* webPage, const String& titl
 {
     uint64_t globalNotificationID = generateGlobalNotificationID();
     RefPtr<WebNotification> notification = WebNotification::create(title, body, iconURL, tag, lang, dir, originString, globalNotificationID);
-    pair<uint64_t, uint64_t> notificationIDPair = make_pair(webPage->pageID(), pageNotificationID);
+    std::pair<uint64_t, uint64_t> notificationIDPair = std::make_pair(webPage->pageID(), pageNotificationID);
     m_globalNotificationMap.set(globalNotificationID, notificationIDPair);
-    m_notifications.set(notificationIDPair, make_pair(globalNotificationID, notification));
+    m_notifications.set(notificationIDPair, std::make_pair(globalNotificationID, notification));
     m_provider.show(webPage, notification.get());
 }
 
 void WebNotificationManagerProxy::cancel(WebPageProxy* webPage, uint64_t pageNotificationID)
 {
-    if (WebNotification* notification = m_notifications.get(make_pair(webPage->pageID(), pageNotificationID)).second.get())
+    if (WebNotification* notification = m_notifications.get(std::make_pair(webPage->pageID(), pageNotificationID)).second.get())
         m_provider.cancel(notification);
 }
     
 void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy* webPage, uint64_t pageNotificationID)
 {
-    auto globalIDNotificationPair = m_notifications.take(make_pair(webPage->pageID(), pageNotificationID));
+    auto globalIDNotificationPair = m_notifications.take(std::make_pair(webPage->pageID(), pageNotificationID));
     if (uint64_t globalNotificationID = globalIDNotificationPair.first) {
         WebNotification* notification = globalIDNotificationPair.second.get();
         m_globalNotificationMap.remove(globalNotificationID);

@@ -71,7 +71,7 @@ bool StructureTransitionTable::contains(StringImpl* rep, unsigned attributes) co
         Structure* transition = singleTransition();
         return transition && transition->m_nameInPrevious == rep && transition->m_attributesInPrevious == attributes;
     }
-    return map()->get(make_pair(rep, attributes));
+    return map()->get(std::make_pair(rep, attributes));
 }
 
 inline Structure* StructureTransitionTable::get(StringImpl* rep, unsigned attributes) const
@@ -80,7 +80,7 @@ inline Structure* StructureTransitionTable::get(StringImpl* rep, unsigned attrib
         Structure* transition = singleTransition();
         return (transition && transition->m_nameInPrevious == rep && transition->m_attributesInPrevious == attributes) ? transition : 0;
     }
-    return map()->get(make_pair(rep, attributes));
+    return map()->get(std::make_pair(rep, attributes));
 }
 
 inline void StructureTransitionTable::add(VM& vm, Structure* structure)
@@ -105,7 +105,7 @@ inline void StructureTransitionTable::add(VM& vm, Structure* structure)
     // Newer versions of the STL have an std::make_pair function that takes rvalue references.
     // When either of the parameters are bitfields, the C++ compiler will try to bind them as lvalues, which is invalid. To work around this, use unary "+" to make the parameter an rvalue.
     // See https://bugs.webkit.org/show_bug.cgi?id=59261 for more details
-    map()->set(make_pair(structure->m_nameInPrevious.get(), +structure->m_attributesInPrevious), structure);
+    map()->set(std::make_pair(structure->m_nameInPrevious.get(), +structure->m_attributesInPrevious), structure);
 }
 
 void Structure::dumpStatistics()

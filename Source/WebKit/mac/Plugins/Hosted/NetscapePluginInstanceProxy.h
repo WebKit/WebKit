@@ -334,7 +334,7 @@ private:
         HashMap<uint32_t, JSC::Strong<JSC::JSObject>> m_idToJSObjectMap;
         // The pair consists of object ID and a reference count. One reference belongs to remote plug-in,
         // and the proxy will add transient references for arguments that are being sent out.
-        HashMap<JSC::JSObject*, pair<uint32_t, uint32_t>> m_jsObjectToIDMap;
+        HashMap<JSC::JSObject*, std::pair<uint32_t, uint32_t>> m_jsObjectToIDMap;
         uint32_t m_objectIDCounter;
     };
 

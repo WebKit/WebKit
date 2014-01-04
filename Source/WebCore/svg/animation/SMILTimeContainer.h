@@ -86,7 +86,7 @@ private:
     
     Timer<SMILTimeContainer> m_timer;
 
-    typedef pair<SVGElement*, QualifiedName> ElementAttributePair;
+    typedef std::pair<SVGElement*, QualifiedName> ElementAttributePair;
     typedef Vector<SVGSMILElement*> AnimationsVector;
     typedef HashMap<ElementAttributePair, std::unique_ptr<AnimationsVector>> GroupedAnimationsMap;
     GroupedAnimationsMap m_scheduledAnimations;

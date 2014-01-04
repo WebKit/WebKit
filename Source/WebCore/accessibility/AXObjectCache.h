@@ -235,7 +235,7 @@ private:
     HashSet<AXID> m_idsInUse;
     
     Timer<AXObjectCache> m_notificationPostTimer;
-    Vector<pair<RefPtr<AccessibilityObject>, AXNotification>> m_notificationsToPost;
+    Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>> m_notificationsToPost;
     void notificationPostTimerFired(Timer<AXObjectCache>*);
     
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);

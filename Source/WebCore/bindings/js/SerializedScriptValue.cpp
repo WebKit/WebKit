@@ -354,7 +354,7 @@ static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
  *    <factorSize:uint32_t> <factor:byte{factorSize}> <crtExponentSize:uint32_t> <crtExponent:byte{crtExponentSize}> <crtCoefficientSize:uint32_t> <crtCoefficient:byte{crtCoefficientSize}>
  */
 
-typedef pair<JSC::JSValue, SerializationReturnCode> DeserializationResult;
+typedef std::pair<JSC::JSValue, SerializationReturnCode> DeserializationResult;
 
 class CloneBase {
 protected:

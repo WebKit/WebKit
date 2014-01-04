@@ -1565,7 +1565,7 @@ void RenderTableSection::setCachedCollapsedBorder(const RenderTableCell* cell, C
 CollapsedBorderValue& RenderTableSection::cachedCollapsedBorder(const RenderTableCell* cell, CollapsedBorderSide side)
 {
     ASSERT(table()->collapseBorders());
-    HashMap<pair<const RenderTableCell*, int>, CollapsedBorderValue>::iterator it = m_cellsCollapsedBorders.find(std::make_pair(cell, side));
+    HashMap<std::pair<const RenderTableCell*, int>, CollapsedBorderValue>::iterator it = m_cellsCollapsedBorders.find(std::make_pair(cell, side));
     ASSERT(it != m_cellsCollapsedBorders.end());
     return it->value;
 }

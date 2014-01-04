@@ -68,7 +68,7 @@ AccessibilityObject* AccessibilityARIAGridCell::parentTable() const
     return parent;
 }
     
-void AccessibilityARIAGridCell::rowIndexRange(pair<unsigned, unsigned>& rowRange)
+void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRange)
 {
     AccessibilityObject* parent = parentObjectUnignored();
     if (!parent)
@@ -98,7 +98,7 @@ void AccessibilityARIAGridCell::rowIndexRange(pair<unsigned, unsigned>& rowRange
     rowRange.second = 1;
 }
 
-void AccessibilityARIAGridCell::columnIndexRange(pair<unsigned, unsigned>& columnRange)
+void AccessibilityARIAGridCell::columnIndexRange(std::pair<unsigned, unsigned>& columnRange)
 {
     AccessibilityObject* parent = parentObjectUnignored();
     if (!parent)

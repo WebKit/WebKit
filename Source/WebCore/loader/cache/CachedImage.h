@@ -135,7 +135,7 @@ private:
 
     void addIncrementalDataBuffer(ResourceBuffer*);
 
-    typedef pair<IntSize, float> SizeAndZoom;
+    typedef std::pair<IntSize, float> SizeAndZoom;
     typedef HashMap<const CachedImageClient*, SizeAndZoom> ContainerSizeRequests;
     ContainerSizeRequests m_pendingContainerSizeRequests;
 

@@ -446,7 +446,7 @@ private:
 
     // Messages that were posted before any pages were created.
     // The client should use initialization messages instead, so that a restarted process would get the same state.
-    Vector<pair<String, RefPtr<API::Object>>> m_messagesToInjectedBundlePostedToEmptyContext;
+    Vector<std::pair<String, RefPtr<API::Object>>> m_messagesToInjectedBundlePostedToEmptyContext;
 
     CacheModel m_cacheModel;
 

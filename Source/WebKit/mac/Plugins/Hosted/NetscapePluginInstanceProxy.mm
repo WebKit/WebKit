@@ -143,7 +143,7 @@ uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(VM& vm, JSObje
 
     uint32_t objectID = 0;
     
-    HashMap<JSC::JSObject*, pair<uint32_t, uint32_t>>::iterator iter = m_jsObjectToIDMap.find(object);
+    HashMap<JSC::JSObject*, std::pair<uint32_t, uint32_t>>::iterator iter = m_jsObjectToIDMap.find(object);
     if (iter != m_jsObjectToIDMap.end())
         return iter->value.first;
     
@@ -159,7 +159,7 @@ uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(VM& vm, JSObje
 
 void NetscapePluginInstanceProxy::LocalObjectMap::retain(JSC::JSObject* object)
 {
-    HashMap<JSC::JSObject*, pair<uint32_t, uint32_t>>::iterator iter = m_jsObjectToIDMap.find(object);
+    HashMap<JSC::JSObject*, std::pair<uint32_t, uint32_t>>::iterator iter = m_jsObjectToIDMap.find(object);
     ASSERT(iter != m_jsObjectToIDMap.end());
 
     iter->value.second = iter->value.second + 1;
@@ -167,7 +167,7 @@ void NetscapePluginInstanceProxy::LocalObjectMap::retain(JSC::JSObject* object)
 
 void NetscapePluginInstanceProxy::LocalObjectMap::release(JSC::JSObject* object)
 {
-    HashMap<JSC::JSObject*, pair<uint32_t, uint32_t>>::iterator iter = m_jsObjectToIDMap.find(object);
+    HashMap<JSC::JSObject*, std::pair<uint32_t, uint32_t>>::iterator iter = m_jsObjectToIDMap.find(object);
     ASSERT(iter != m_jsObjectToIDMap.end());
 
     ASSERT(iter->value.second > 0);
@@ -197,7 +197,7 @@ bool NetscapePluginInstanceProxy::LocalObjectMap::forget(uint32_t objectID)
         return true;
     }
 
-    HashMap<JSC::JSObject*, pair<uint32_t, uint32_t>>::iterator rIter = m_jsObjectToIDMap.find(iter->value.get());
+    HashMap<JSC::JSObject*, std::pair<uint32_t, uint32_t>>::iterator rIter = m_jsObjectToIDMap.find(iter->value.get());
 
     // If the object is being sent to plug-in right now, then it's not the time to forget.
     if (rIter->value.second != 1)

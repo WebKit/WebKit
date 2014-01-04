@@ -813,8 +813,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return nil;
     
     // Get the row and column range, so we can use them to find the headers.
-    pair<unsigned, unsigned> rowRange;
-    pair<unsigned, unsigned> columnRange;
+    std::pair<unsigned, unsigned> rowRange;
+    std::pair<unsigned, unsigned> columnRange;
     tableCell->rowIndexRange(rowRange);
     tableCell->columnIndexRange(columnRange);
     
@@ -877,7 +877,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!tableCell)
         return NSMakeRange(NSNotFound, 0);
     
-    pair<unsigned, unsigned> rowRange;
+    std::pair<unsigned, unsigned> rowRange;
     tableCell->rowIndexRange(rowRange);
     return NSMakeRange(rowRange.first, rowRange.second);
 }
@@ -891,7 +891,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!tableCell)
         return NSMakeRange(NSNotFound, 0);
     
-    pair<unsigned, unsigned> columnRange;
+    std::pair<unsigned, unsigned> columnRange;
     tableCell->columnIndexRange(columnRange);
     return NSMakeRange(columnRange.first, columnRange.second);
 }

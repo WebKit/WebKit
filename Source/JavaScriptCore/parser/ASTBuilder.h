@@ -720,8 +720,8 @@ private:
     Scope m_scope;
     Vector<BinaryOperand, 10, UnsafeVectorOverflow> m_binaryOperandStack;
     Vector<AssignmentInfo, 10, UnsafeVectorOverflow> m_assignmentInfoStack;
-    Vector<pair<int, int>, 10, UnsafeVectorOverflow> m_binaryOperatorStack;
-    Vector<pair<int, JSTextPosition>, 10, UnsafeVectorOverflow> m_unaryTokenStack;
+    Vector<std::pair<int, int>, 10, UnsafeVectorOverflow> m_binaryOperatorStack;
+    Vector<std::pair<int, JSTextPosition>, 10, UnsafeVectorOverflow> m_unaryTokenStack;
     int m_evalCount;
 };
 
@@ -898,7 +898,7 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
     return node;
 }
 
-ExpressionNode* ASTBuilder::makeBinaryNode(const JSTokenLocation& location, int token, pair<ExpressionNode*, BinaryOpInfo> lhs, pair<ExpressionNode*, BinaryOpInfo> rhs)
+ExpressionNode* ASTBuilder::makeBinaryNode(const JSTokenLocation& location, int token, std::pair<ExpressionNode*, BinaryOpInfo> lhs, std::pair<ExpressionNode*, BinaryOpInfo> rhs)
 {
     switch (token) {
     case OR:

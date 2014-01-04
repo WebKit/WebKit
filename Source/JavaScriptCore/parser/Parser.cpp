@@ -1427,7 +1427,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         return context.createIfStatement(ifLocation, condition, trueBlock, 0, start, end);
 
     Vector<TreeExpression> exprStack;
-    Vector<pair<int, int>> posStack;
+    Vector<std::pair<int, int>> posStack;
     Vector<JSTokenLocation> tokenLocationStack;
     Vector<TreeStatement> statementStack;
     bool trailingElse = false;
@@ -1456,7 +1456,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         failIfFalse(innerTrueBlock, "Expected a statement as the body of an if block");
         tokenLocationStack.append(tempLocation);
         exprStack.append(innerCondition);
-        posStack.append(make_pair(innerStart, innerEnd));
+        posStack.append(std::make_pair(innerStart, innerEnd));
         statementStack.append(innerTrueBlock);
     } while (match(ELSE));
 
@@ -1465,7 +1465,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         exprStack.removeLast();
         TreeStatement trueBlock = statementStack.last();
         statementStack.removeLast();
-        pair<int, int> pos = posStack.last();
+        std::pair<int, int> pos = posStack.last();
         posStack.removeLast();
         JSTokenLocation elseLocation = tokenLocationStack.last();
         tokenLocationStack.removeLast();
@@ -1479,7 +1479,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         statementStack.removeLast();
         TreeStatement trueBlock = statementStack.last();
         statementStack.removeLast();
-        pair<int, int> pos = posStack.last();
+        std::pair<int, int> pos = posStack.last();
         posStack.removeLast();
         JSTokenLocation elseLocation = tokenLocationStack.last();
         tokenLocationStack.removeLast();

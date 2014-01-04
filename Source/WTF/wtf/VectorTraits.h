@@ -27,8 +27,6 @@
 #include <utility>
 #include <memory>
 
-using std::pair;
-
 namespace WTF {
 
     class AtomicString;

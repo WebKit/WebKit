@@ -82,7 +82,7 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:length];
     for (unsigned i = 0; i < length; ++i) {
         NSMutableDictionary *pairDictionary = [NSMutableDictionary dictionary];
-        pair<AccessibilityObject*, AccessibilityObject*> pair = pairs[i];
+        std::pair<AccessibilityObject*, AccessibilityObject*> pair = pairs[i];
         if (pair.first && pair.first->wrapper() && !pair.first->accessibilityIsIgnored())
             [pairDictionary setObject:pair.first->wrapper() forKey:subscriptKey];
         if (pair.second && pair.second->wrapper() && !pair.second->accessibilityIsIgnored())

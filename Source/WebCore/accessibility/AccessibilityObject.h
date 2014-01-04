@@ -858,7 +858,7 @@ public:
     virtual int mathLineThickness() const { return 0; }
     
     // Multiscripts components.
-    typedef Vector<pair<AccessibilityObject*, AccessibilityObject*>> AccessibilityMathMultiscriptPairs;
+    typedef Vector<std::pair<AccessibilityObject*, AccessibilityObject*>> AccessibilityMathMultiscriptPairs;
     virtual void mathPrescripts(AccessibilityMathMultiscriptPairs&) { }
     virtual void mathPostscripts(AccessibilityMathMultiscriptPairs&) { }
     

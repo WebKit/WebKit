@@ -34,8 +34,8 @@ SVGAnimatedAngleAnimator::SVGAnimatedAngleAnimator(SVGAnimationElement* animatio
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedAngleAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createAngleAndEnumeration(std::make_unique<pair<SVGAngle, unsigned>>());
-    pair<SVGAngle, unsigned>& animatedPair = animatedType->angleAndEnumeration();
+    auto animatedType = SVGAnimatedType::createAngleAndEnumeration(std::make_unique<std::pair<SVGAngle, unsigned>>());
+    std::pair<SVGAngle, unsigned>& animatedPair = animatedType->angleAndEnumeration();
 
     SVGAngle angle;
     SVGMarkerOrientType orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(string,  angle);
@@ -77,8 +77,8 @@ void SVGAnimatedAngleAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimat
     ASSERT(from->type() == AnimatedAngle);
     ASSERT(from->type() == to->type());
 
-    const pair<SVGAngle, unsigned>& fromAngleAndEnumeration = from->angleAndEnumeration();
-    pair<SVGAngle, unsigned>& toAngleAndEnumeration = to->angleAndEnumeration();
+    const std::pair<SVGAngle, unsigned>& fromAngleAndEnumeration = from->angleAndEnumeration();
+    std::pair<SVGAngle, unsigned>& toAngleAndEnumeration = to->angleAndEnumeration();
     // Only respect by animations, if from and by are both specified in angles (and not eg. 'auto').
     if (fromAngleAndEnumeration.second != toAngleAndEnumeration.second || fromAngleAndEnumeration.second != SVGMarkerOrientAngle)
         return;
@@ -92,10 +92,10 @@ void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const pair<SVGAngle, unsigned>& fromAngleAndEnumeration = m_animationElement->animationMode() == ToAnimation ? animated->angleAndEnumeration() : from->angleAndEnumeration();
-    const pair<SVGAngle, unsigned>& toAngleAndEnumeration = to->angleAndEnumeration();
-    const pair<SVGAngle, unsigned>& toAtEndOfDurationAngleAndEnumeration = toAtEndOfDuration->angleAndEnumeration();
-    pair<SVGAngle, unsigned>& animatedAngleAndEnumeration = animated->angleAndEnumeration();
+    const std::pair<SVGAngle, unsigned>& fromAngleAndEnumeration = m_animationElement->animationMode() == ToAnimation ? animated->angleAndEnumeration() : from->angleAndEnumeration();
+    const std::pair<SVGAngle, unsigned>& toAngleAndEnumeration = to->angleAndEnumeration();
+    const std::pair<SVGAngle, unsigned>& toAtEndOfDurationAngleAndEnumeration = toAtEndOfDuration->angleAndEnumeration();
+    std::pair<SVGAngle, unsigned>& animatedAngleAndEnumeration = animated->angleAndEnumeration();
 
     if (fromAngleAndEnumeration.second != toAngleAndEnumeration.second) {
         // Animating from eg. auto to 90deg, or auto to 90deg.

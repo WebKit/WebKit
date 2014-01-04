@@ -85,7 +85,7 @@ void InspectorAgent::enable(ErrorString*)
     if (m_pendingInspectData.first)
         inspect(m_pendingInspectData.first, m_pendingInspectData.second);
 
-    for (Vector<pair<long, String>>::iterator it = m_pendingEvaluateTestCommands.begin(); m_frontendDispatcher && it != m_pendingEvaluateTestCommands.end(); ++it)
+    for (Vector<std::pair<long, String>>::iterator it = m_pendingEvaluateTestCommands.begin(); m_frontendDispatcher && it != m_pendingEvaluateTestCommands.end(); ++it)
         m_frontendDispatcher->evaluateForTestInFrontend(static_cast<int>((*it).first), (*it).second);
     m_pendingEvaluateTestCommands.clear();
 }
@@ -100,7 +100,7 @@ void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script
     if (m_enabled && m_frontendDispatcher)
         m_frontendDispatcher->evaluateForTestInFrontend(static_cast<int>(callId), script);
     else
-        m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
+        m_pendingEvaluateTestCommands.append(std::pair<long, String>(callId, script));
 }
 
 void InspectorAgent::inspect(PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints)

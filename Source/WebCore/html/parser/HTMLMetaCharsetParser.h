@@ -48,7 +48,7 @@ public:
 
     const TextEncoding& encoding() { return m_encoding; }
 
-    typedef Vector<pair<String, String>> AttributeList;
+    typedef Vector<std::pair<String, String>> AttributeList;
     // The returned encoding might not be valid.
     static TextEncoding encodingFromMetaAttributes(const AttributeList&
 );

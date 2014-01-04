@@ -211,7 +211,7 @@ bool DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, Excep
     return result;
 }
 
-pair<DOMPatchSupport::ResultMap, DOMPatchSupport::ResultMap>
+std::pair<DOMPatchSupport::ResultMap, DOMPatchSupport::ResultMap>
 DOMPatchSupport::diff(const Vector<OwnPtr<Digest>>& oldList, const Vector<OwnPtr<Digest>>& newList)
 {
     ResultMap newMap(newList.size());
@@ -296,12 +296,12 @@ DOMPatchSupport::diff(const Vector<OwnPtr<Digest>>& oldList, const Vector<OwnPtr
     dumpMap(newMap, "NEW");
 #endif
 
-    return make_pair(oldMap, newMap);
+    return std::make_pair(oldMap, newMap);
 }
 
 bool DOMPatchSupport::innerPatchChildren(ContainerNode* parentNode, const Vector<OwnPtr<Digest>>& oldList, const Vector<OwnPtr<Digest>>& newList, ExceptionCode& ec)
 {
-    pair<ResultMap, ResultMap> resultMaps = diff(oldList, newList);
+    std::pair<ResultMap, ResultMap> resultMaps = diff(oldList, newList);
     ResultMap& oldMap = resultMaps.first;
     ResultMap& newMap = resultMaps.second;
 

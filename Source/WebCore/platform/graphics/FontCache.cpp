@@ -313,7 +313,7 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     }
 };
 
-typedef HashMap<FontPlatformData, pair<RefPtr<SimpleFontData>, unsigned>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
+typedef HashMap<FontPlatformData, std::pair<RefPtr<SimpleFontData>, unsigned>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
 
 static FontDataCache* gFontDataCache = 0;
 
@@ -347,7 +347,7 @@ PassRefPtr<SimpleFontData> FontCache::getCachedFontData(const FontPlatformData* 
 
     FontDataCache::iterator result = gFontDataCache->find(*platformData);
     if (result == gFontDataCache->end()) {
-        pair<RefPtr<SimpleFontData>, unsigned> newValue(SimpleFontData::create(*platformData), shouldRetain == Retain ? 1 : 0);
+        std::pair<RefPtr<SimpleFontData>, unsigned> newValue(SimpleFontData::create(*platformData), shouldRetain == Retain ? 1 : 0);
         gFontDataCache->set(*platformData, newValue);
         if (shouldRetain == DoNotRetain)
             gInactiveFontData->add(newValue.first);

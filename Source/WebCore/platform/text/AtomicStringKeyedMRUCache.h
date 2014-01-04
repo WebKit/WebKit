@@ -63,7 +63,7 @@ private:
     T createValueForNullKey();
     T createValueForKey(const AtomicString&);
 
-    typedef pair<AtomicString, T> Entry;
+    typedef std::pair<AtomicString, T> Entry;
     typedef Vector<Entry, capacity> Cache;
     Cache m_cache;
 };

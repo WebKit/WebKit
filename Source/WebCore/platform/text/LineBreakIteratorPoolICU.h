@@ -98,7 +98,7 @@ private:
 
     static const size_t capacity = 4;
 
-    typedef pair<AtomicString, UBreakIterator*> Entry;
+    typedef std::pair<AtomicString, UBreakIterator*> Entry;
     typedef Vector<Entry, capacity> Pool;
     Pool m_pool;
     HashMap<UBreakIterator*, AtomicString> m_vendedIterators;

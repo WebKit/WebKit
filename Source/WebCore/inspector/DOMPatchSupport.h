@@ -61,7 +61,7 @@ public:
 
 private:
     struct Digest;
-    typedef Vector<pair<Digest*, size_t>> ResultMap;
+    typedef Vector<std::pair<Digest*, size_t>> ResultMap;
     typedef HashMap<String, Digest*> UnusedNodesMap;
 
     bool innerPatchNode(Digest* oldNode, Digest* newNode, ExceptionCode&);
