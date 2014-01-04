@@ -25,7 +25,9 @@
 #include "config.h"
 #include "LineBreaker.h"
 
+#include "BreakingContextInlineHeaders.h"
 #include "RenderCombineText.h"
+#include "ShapeInsideInfo.h"
 
 namespace WebCore {
 
@@ -74,6 +76,115 @@ void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& 
         resolver.increment();
     }
     resolver.commitExplicitEmbedding();
+}
+
+InlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
+{
+#if !ENABLE(CSS_SHAPES)
+    return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+#else
+    ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo();
+
+    if (!shapeInsideInfo || !shapeInsideInfo->lineOverlapsShapeBounds())
+        return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+
+    InlineIterator end = resolver.position();
+    InlineIterator oldEnd = end;
+
+    if (!shapeInsideInfo->hasSegments()) {
+        end = nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+        resolver.setPositionIgnoringNestedIsolates(oldEnd);
+        return oldEnd;
+    }
+
+    const SegmentList& segments = shapeInsideInfo->segments();
+    SegmentRangeList& segmentRanges = shapeInsideInfo->segmentRanges();
+
+    for (unsigned i = 0; i < segments.size() && !end.atEnd(); i++) {
+        InlineIterator segmentStart = resolver.position();
+        end = nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+
+        ASSERT(segmentRanges.size() == i);
+        if (resolver.position().atEnd()) {
+            segmentRanges.append(LineSegmentRange(segmentStart, end));
+            break;
+        }
+        if (resolver.position() == end) {
+            // Nothing fit this segment
+            end = segmentStart;
+            segmentRanges.append(LineSegmentRange(segmentStart, segmentStart));
+            resolver.setPositionIgnoringNestedIsolates(segmentStart);
+        } else {
+            // Note that resolver.position is already skipping some of the white space at the beginning of the line,
+            // so that's why segmentStart might be different than resolver.position().
+            LineSegmentRange range(resolver.position(), end);
+            segmentRanges.append(range);
+            resolver.setPosition(end, numberOfIsolateAncestors(end));
+
+            if (lineInfo.previousLineBrokeCleanly()) {
+                // If we hit a new line break, just stop adding anything to this line.
+                break;
+            }
+        }
+    }
+    resolver.setPositionIgnoringNestedIsolates(oldEnd);
+    return end;
+#endif
+}
+
+InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
+{
+    reset();
+
+    ASSERT(resolver.position().root() == &m_block);
+
+    bool appliedStartWidth = resolver.position().offset();
+
+    LineWidth width(m_block, lineInfo.isFirstLine(), requiresIndent(lineInfo.isFirstLine(), lineInfo.previousLineBrokeCleanly(), m_block.style()));
+
+    skipLeadingWhitespace(resolver, lineInfo, lastFloatFromPreviousLine, width);
+
+    if (resolver.position().atEnd())
+        return resolver.position();
+
+    BreakingContext context(*this, resolver, lineInfo, width, renderTextInfo, lastFloatFromPreviousLine, appliedStartWidth, m_block);
+
+    while (context.currentObject()) {
+        context.initializeForCurrentObject();
+        if (context.currentObject()->isBR()) {
+            context.handleBR(m_clear);
+        } else if (context.currentObject()->isOutOfFlowPositioned()) {
+            context.handleOutOfFlowPositioned(m_positionedObjects);
+        } else if (context.currentObject()->isFloating()) {
+            context.handleFloat();
+        } else if (context.currentObject()->isRenderInline()) {
+            context.handleEmptyInline();
+        } else if (context.currentObject()->isReplaced()) {
+            context.handleReplaced();
+        } else if (context.currentObject()->isText()) {
+            if (context.handleText(wordMeasurements, m_hyphenated, consecutiveHyphenatedLines)) {
+                // We've hit a hard text line break. Our line break iterator is updated, so go ahead and early return.
+                return context.lineBreak();
+            }
+        } else if (context.currentObject()->isLineBreakOpportunity())
+            context.commitLineBreakAtCurrentWidth(context.currentObject());
+        else
+            ASSERT_NOT_REACHED();
+
+        if (context.atEnd())
+            return context.handleEndOfLine();
+
+        context.commitAndUpdateLineBreakIfNeeded();
+
+        if (context.atEnd())
+            return context.handleEndOfLine();
+
+        context.increment();
+    }
+
+    context.clearLineBreakIfFitsOnLine(true);
+
+    return context.handleEndOfLine();
 }
 
 }

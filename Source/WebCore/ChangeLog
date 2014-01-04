@@ -1,3 +1,29 @@
+2014-01-04  Sam Weinig  <sam@webkit.org>
+
+        Move LineBreaker functions to LineBreaker.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=126491
+
+        Reviewed by Simon Fraser.
+
+        - Moves LineBreaker::nextLineBreak() and LineBreaker::nextSegmentBreak() to
+          LineBreaker.cpp from RenderBlockLineLayout.cpp
+        - Moves requiresIndent() to LineWidth.h/cpp from RenderBlockLineLayout.cpp
+          so it can be shared.
+        - Adds missing inline specifier to BreakingContext::handleEndOfLine() to avoid
+          duplicate symbols.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::updateLogicalInlinePositions):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForLine):
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleEndOfLine):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::nextLineBreak):
+        (WebCore::LineBreaker::nextSegmentBreak):
+        * rendering/line/LineWidth.cpp:
+        (WebCore::requiresIndent):
+        * rendering/line/LineWidth.h:
+
 2014-01-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Fix the video and audio build

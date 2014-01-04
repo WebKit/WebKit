@@ -1085,7 +1085,7 @@ inline void checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator&
     }
 }
 
-InlineIterator BreakingContext::handleEndOfLine()
+inline InlineIterator BreakingContext::handleEndOfLine()
 {
 #if ENABLE(CSS_SHAPES)
     ShapeInsideInfo* shapeInfo = m_block.layoutShapeInsideInfo();

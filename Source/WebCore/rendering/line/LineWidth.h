@@ -38,6 +38,7 @@ class FloatingObject;
 class RenderBlockFlow;
 class RenderObject;
 class RenderRubyRun;
+class RenderStyle;
 
 struct LineSegment;
 
@@ -91,6 +92,8 @@ private:
     bool m_isFirstLine;
     IndentTextOrNot m_shouldIndentText;
 };
+
+IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBreak, const RenderStyle&);
 
 }
 

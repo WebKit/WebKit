@@ -241,4 +241,22 @@ bool LineWidth::fitsOnLineExcludingTrailingCollapsedWhitespace() const
     return currentWidth() - m_trailingCollapsedWhitespaceWidth <= m_availableWidth;
 }
 
+IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBreak, const RenderStyle& style)
+{
+    IndentTextOrNot shouldIndentText = DoNotIndentText;
+    if (isFirstLine)
+        shouldIndentText = IndentText;
+#if ENABLE(CSS3_TEXT)
+    else if (isAfterHardLineBreak && style.textIndentLine() == TextIndentEachLine)
+        shouldIndentText = IndentText;
+
+    if (style.textIndentType() == TextIndentHanging)
+        shouldIndentText = shouldIndentText == IndentText ? DoNotIndentText : IndentText;
+#else
+    UNUSED_PARAM(isAfterHardLineBreak);
+    UNUSED_PARAM(style);
+#endif
+    return shouldIndentText;
+}
+
 }
