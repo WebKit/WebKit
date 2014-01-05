@@ -1,5 +1,11 @@
 2014-01-05  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix the Mac build too.
+
+        * page/PageThrottler.h:
+
+2014-01-05  Csaba Osztrogonác  <ossy@webkit.org>
+
         Weekend URTBF after r161319 to make non Mac builds work again.
 
         * page/PageThrottler.h:
