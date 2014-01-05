@@ -32,6 +32,7 @@
 
 #include "RenderRuby.h"
 
+#include "RenderIterator.h"
 #include "RenderRubyRun.h"
 #include "RenderStyle.h"
 #include "StyleInheritedData.h"
@@ -101,11 +102,7 @@ static RenderRubyRun* lastRubyRun(const RenderElement* ruby)
 
 static inline RenderRubyRun& findRubyRunParent(RenderObject& child)
 {
-    RenderObject* ancestor = &child;
-    while (ancestor && !ancestor->isRubyRun())
-        ancestor = ancestor->parent();
-    ASSERT(ancestor);
-    return toRenderRubyRun(*ancestor);
+    return *lineageOfType<RenderRubyRun>(child).first();
 }
 
 //=== ruby as inline object ===

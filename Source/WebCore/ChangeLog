@@ -1,3 +1,22 @@
+2014-01-05  Andreas Kling  <akling@apple.com>
+
+        Use lineageOfType to simplify two rendering helpers.
+        <https://webkit.org/b/126498>
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/RenderRuby.cpp:
+        (WebCore::findRubyRunParent):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::findTreeRootObject):
+
+            Simplify two functions that walk their parent chain to find the
+            closest ancestor of a certain type.
+
+        * rendering/RenderRubyRun.h:
+
+            Add requisite isRendererOfType<RenderRubyRun>().
+
 2014-01-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the Mac build too.
