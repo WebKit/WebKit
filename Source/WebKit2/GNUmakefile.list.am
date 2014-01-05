@@ -1,112 +1,4 @@
-webkit2_h_api += \
-	$(WebKit2)/Shared/API/c/gtk/WKBaseGtk.h \
-	$(WebKit2)/Shared/API/c/soup/WKBaseSoup.h \
-	$(WebKit2)/Shared/API/c/WKArray.h \
-	$(WebKit2)/Shared/API/c/WKBase.h \
-	$(WebKit2)/Shared/API/c/WKCertificateInfo.h \
-	$(WebKit2)/Shared/API/c/WKConnectionRef.h \
-	$(WebKit2)/Shared/API/c/WKContextMenuItem.h \
-	$(WebKit2)/Shared/API/c/WKContextMenuItemTypes.h \
-	$(WebKit2)/Shared/API/c/WKData.h \
-	$(WebKit2)/Shared/API/c/WKDeclarationSpecifiers.h \
-	$(WebKit2)/Shared/API/c/WKDictionary.h \
-	$(WebKit2)/Shared/API/c/WKError.h \
-	$(WebKit2)/Shared/API/c/WKEvent.h \
-	$(WebKit2)/Shared/API/c/WKFindOptions.h \
-	$(WebKit2)/Shared/API/c/WKGeometry.h \
-	$(WebKit2)/Shared/API/c/WKImage.h \
-	$(WebKit2)/Shared/API/c/WKMutableArray.h \
-	$(WebKit2)/Shared/API/c/WKMutableDictionary.h \
-	$(WebKit2)/Shared/API/c/WKNumber.h \
-	$(WebKit2)/Shared/API/c/WKPageLoadTypes.h \
-	$(WebKit2)/Shared/API/c/WKPageVisibilityTypes.h \
-	$(WebKit2)/Shared/API/c/WKPluginInformation.h \
-	$(WebKit2)/Shared/API/c/WKRenderLayer.h \
-	$(WebKit2)/Shared/API/c/WKRenderObject.h \
-	$(WebKit2)/Shared/API/c/WKSecurityOrigin.h \
-	$(WebKit2)/Shared/API/c/WKSerializedScriptValue.h \
-	$(WebKit2)/Shared/API/c/WKSerializedScriptValuePrivate.h \
-	$(WebKit2)/Shared/API/c/WKSharedAPICast.h \
-	$(WebKit2)/Shared/API/c/WKString.h \
-	$(WebKit2)/Shared/API/c/WKStringPrivate.h \
-	$(WebKit2)/Shared/API/c/WKType.h \
-	$(WebKit2)/Shared/API/c/WKURL.h \
-	$(WebKit2)/Shared/API/c/WKURLRequest.h \
-	$(WebKit2)/Shared/API/c/WKURLResponse.h \
-	$(WebKit2)/Shared/API/c/WKUserContentInjectedFrames.h \
-	$(WebKit2)/Shared/API/c/WKUserContentURLPattern.h \
-	$(WebKit2)/Shared/API/c/WKUserScriptInjectionTime.h \
-	$(WebKit2)/UIProcess/API/C/gtk/WKAPICastGtk.h \
-	$(WebKit2)/UIProcess/API/C/gtk/WKFullScreenClientGtk.h \
-	$(WebKit2)/UIProcess/API/C/gtk/WKInspectorClientGtk.h \
-	$(WebKit2)/UIProcess/API/C/gtk/WKView.h \
-	$(WebKit2)/UIProcess/API/C/soup/WKAPICastSoup.h \
-	$(WebKit2)/UIProcess/API/C/soup/WKContextSoup.h \
-	$(WebKit2)/UIProcess/API/C/soup/WKSoupRequestManager.h \
-	$(WebKit2)/UIProcess/API/C/WebKit2_C.h \
-	$(WebKit2)/UIProcess/API/C/WKAPICast.h \
-	$(WebKit2)/UIProcess/API/C/WKApplicationCacheManager.h \
-	$(WebKit2)/UIProcess/API/C/WKAuthenticationChallenge.h \
-	$(WebKit2)/UIProcess/API/C/WKAuthenticationDecisionListener.h \
-	$(WebKit2)/UIProcess/API/C/WKBackForwardListRef.h \
-	$(WebKit2)/UIProcess/API/C/WKBackForwardListItemRef.h \
-	$(WebKit2)/UIProcess/API/C/WKBatteryManager.h \
-	$(WebKit2)/UIProcess/API/C/WKBatteryStatus.h \
-	$(WebKit2)/UIProcess/API/C/WKColorPickerResultListener.h \
-	$(WebKit2)/UIProcess/API/C/WKContext.h \
-	$(WebKit2)/UIProcess/API/C/WKContextConnectionClient.h \
-	$(WebKit2)/UIProcess/API/C/WKContextDownloadClient.h \
-	$(WebKit2)/UIProcess/API/C/WKContextHistoryClient.h \
-	$(WebKit2)/UIProcess/API/C/WKContextInjectedBundleClient.h \
-	$(WebKit2)/UIProcess/API/C/WKContextPrivate.h \
-	$(WebKit2)/UIProcess/API/C/WKCookieManager.h \
-	$(WebKit2)/UIProcess/API/C/WKCredential.h \
-	$(WebKit2)/UIProcess/API/C/WKCredentialTypes.h \
-	$(WebKit2)/UIProcess/API/C/WKDatabaseManager.h \
-	$(WebKit2)/UIProcess/API/C/WKDownload.h \
-	$(WebKit2)/UIProcess/API/C/WKFormSubmissionListener.h \
-	$(WebKit2)/UIProcess/API/C/WKFrame.h \
-	$(WebKit2)/UIProcess/API/C/WKFramePolicyListener.h \
-	$(WebKit2)/UIProcess/API/C/WKGeolocationManager.h \
-	$(WebKit2)/UIProcess/API/C/WKGeolocationPermissionRequest.h \
-	$(WebKit2)/UIProcess/API/C/WKGeolocationPosition.h \
-	$(WebKit2)/UIProcess/API/C/WKGrammarDetail.h \
-	$(WebKit2)/UIProcess/API/C/WKHitTestResult.h \
-	$(WebKit2)/UIProcess/API/C/WKInspector.h \
-	$(WebKit2)/UIProcess/API/C/WKKeyValueStorageManager.h \
-	$(WebKit2)/UIProcess/API/C/WKMediaCacheManager.h \
-	$(WebKit2)/UIProcess/API/C/WKNativeEvent.h \
-	$(WebKit2)/UIProcess/API/C/WKNavigationDataRef.h \
-	$(WebKit2)/UIProcess/API/C/WKNetworkInfo.h \
-	$(WebKit2)/UIProcess/API/C/WKNetworkInfoManager.h \
-	$(WebKit2)/UIProcess/API/C/WKNotification.h \
-	$(WebKit2)/UIProcess/API/C/WKNotificationManager.h \
-	$(WebKit2)/UIProcess/API/C/WKNotificationPermissionRequest.h \
-	$(WebKit2)/UIProcess/API/C/WKNotificationProvider.h \
-	$(WebKit2)/UIProcess/API/C/WKOpenPanelParameters.h \
-	$(WebKit2)/UIProcess/API/C/WKOpenPanelResultListener.h \
-	$(WebKit2)/UIProcess/API/C/WKOriginDataManager.h \
-	$(WebKit2)/UIProcess/API/C/WKPageGroup.h \
-	$(WebKit2)/UIProcess/API/C/WKPage.h \
-	$(WebKit2)/UIProcess/API/C/WKPagePrivate.h \
-	$(WebKit2)/UIProcess/API/C/WKPageContextMenuClient.h \
-	$(WebKit2)/UIProcess/API/C/WKPageFindClient.h \
-	$(WebKit2)/UIProcess/API/C/WKPageFindMatchesClient.h \
-	$(WebKit2)/UIProcess/API/C/WKPageFormClient.h \
-	$(WebKit2)/UIProcess/API/C/WKPageLoaderClient.h \
-	$(WebKit2)/UIProcess/API/C/WKPagePolicyClient.h \
-	$(WebKit2)/UIProcess/API/C/WKPageUIClient.h \
-	$(WebKit2)/UIProcess/API/C/WKPluginSiteDataManager.h \
-	$(WebKit2)/UIProcess/API/C/WKPreferences.h \
-	$(WebKit2)/UIProcess/API/C/WKPreferencesPrivate.h \
-	$(WebKit2)/UIProcess/API/C/WKProtectionSpace.h \
-	$(WebKit2)/UIProcess/API/C/WKProtectionSpaceTypes.h \
-	$(WebKit2)/UIProcess/API/C/WKResourceCacheManager.h \
-	$(WebKit2)/UIProcess/API/C/WKTextChecker.h \
-	$(WebKit2)/UIProcess/API/C/WKVibration.cpp \
-	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h
-
-webkit2gtk_h_api += \
+webkit2gtk_ui_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitAuthenticationRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardList.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardListItem.h \
@@ -150,7 +42,7 @@ webkit2gtk_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWindowProperties.h \
 	$(WebKit2)/UIProcess/API/gtk/webkit2.h
 
-webkit2_web_extension_h_api += \
+webkit2gtk_web_extension_h_api += \
 	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h \
 	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitFrame.h \
 	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h \
