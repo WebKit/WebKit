@@ -475,6 +475,10 @@ public:
     static void appendRunsForObject(BidiRunList<BidiRun>&, int start, int end, RenderObject*, InlineBidiResolver&);
     RootInlineBox* createAndAppendRootInlineBox();
 
+    LayoutUnit startAlignedOffsetForLine(LayoutUnit position, bool shouldIndentText);
+    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
+    virtual void adjustInlineDirectionLineBounds(int /* expansionOpportunityCount */, float& /* logicalLeft */, float& /* logicalWidth */) const { }
+
 private:
     void layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     void layoutSimpleLines(LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
@@ -515,6 +519,7 @@ private:
     // region/page/column that has a different available line width than the old one. Used to know when you have to dirty a
     // line, i.e., that it can't be re-used.
     bool lineWidthForPaginatedLineChanged(RootInlineBox*, LayoutUnit lineDelta, RenderFlowThread*) const;
+    void updateLogicalWidthForAlignment(const ETextAlign&, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount);
 
 // END METHODS DEFINED IN RenderBlockLineLayout
 

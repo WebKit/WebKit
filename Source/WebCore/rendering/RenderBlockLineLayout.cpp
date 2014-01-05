@@ -352,7 +352,7 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
     return lastRootBox();
 }
 
-ETextAlign RenderBlock::textAlignmentForLine(bool endsWithSoftBreak) const
+ETextAlign RenderBlockFlow::textAlignmentForLine(bool endsWithSoftBreak) const
 {
     ETextAlign alignment = style().textAlign();
     if (!endsWithSoftBreak && alignment == JUSTIFY)
@@ -548,7 +548,7 @@ static inline void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* 
     }
 }
 
-void RenderBlock::updateLogicalWidthForAlignment(const ETextAlign& textAlign, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount)
+void RenderBlockFlow::updateLogicalWidthForAlignment(const ETextAlign& textAlign, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount)
 {
     // Armed with the total width of the line (without justification),
     // we now examine our text-align property in order to determine where to position the
@@ -2128,7 +2128,7 @@ bool RenderBlockFlow::positionNewFloatOnLine(FloatingObject* newFloat, FloatingO
     return true;
 }
 
-LayoutUnit RenderBlock::startAlignedOffsetForLine(LayoutUnit position, bool firstLine)
+LayoutUnit RenderBlockFlow::startAlignedOffsetForLine(LayoutUnit position, bool firstLine)
 {
     ETextAlign textAlign = style().textAlign();
 

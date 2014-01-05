@@ -190,7 +190,6 @@ public:
             : logicalWidth() - logicalRightOffsetForLine(position, shouldIndentText, logicalHeight);
     }
 
-    LayoutUnit startAlignedOffsetForLine(LayoutUnit position, bool shouldIndentText);
     LayoutUnit textIndentOffset() const;
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
@@ -299,8 +298,6 @@ public:
     LayoutUnit collapsedMarginBeforeForChild(const RenderBox& child) const;
     LayoutUnit collapsedMarginAfterForChild(const RenderBox& child) const;
 
-    void updateLogicalWidthForAlignment(const ETextAlign&, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount);
-
     virtual void updateFirstLetter();
 
     virtual void scrollbarsChanged(bool /*horizontalScrollbarChanged*/, bool /*verticalScrollbarChanged*/) { }
@@ -406,9 +403,6 @@ protected:
     {
         return adjustLogicalLeftOffsetForLine(logicalLeftFloatOffsetForLine(logicalTop, fixedOffset, logicalHeight), applyTextIndent);
     }
-
-    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
-    virtual void adjustInlineDirectionLineBounds(int /* expansionOpportunityCount */, float& /* logicalLeft */, float& /* logicalWidth */) const { }
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 

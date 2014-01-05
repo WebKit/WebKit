@@ -1,3 +1,19 @@
+2014-01-04  Sam Weinig  <sam@webkit.org>
+
+        Move a few more functions from RenderBlock to RenderBlockFlow
+        https://bugs.webkit.org/show_bug.cgi?id=126494
+
+        Reviewed by Andreas Kling.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::adjustInlineDirectionLineBounds):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::textAlignmentForLine):
+        (WebCore::RenderBlockFlow::updateLogicalWidthForAlignment):
+        (WebCore::RenderBlockFlow::startAlignedOffsetForLine):
+        These are only used by RenderBlockFlow, so move them there.
+
 2014-01-04  Simon Fraser  <simon.fraser@apple.com>
 
         Prepare the ScrollingTree for remote use
