@@ -548,19 +548,6 @@ WebPage* WebProcess::focusedWebPage() const
     return 0;
 }
     
-#if PLATFORM(MAC)
-void WebProcess::setProcessSuppressionEnabled(bool processSuppressionEnabled)
-{
-    HashMap<uint64_t, RefPtr<WebPage>>::const_iterator end = m_pageMap.end();
-    for (HashMap<uint64_t, RefPtr<WebPage>>::const_iterator it = m_pageMap.begin(); it != end; ++it) {
-        WebPage* page = (*it).value.get();
-        page->setThrottled(processSuppressionEnabled);
-    }
-    
-    ChildProcess::setProcessSuppressionEnabled(processSuppressionEnabled);
-}
-#endif
-
 WebPage* WebProcess::webPage(uint64_t pageID) const
 {
     return m_pageMap.get(pageID);

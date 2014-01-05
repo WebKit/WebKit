@@ -137,8 +137,6 @@ public:
 #if PLATFORM(MAC)
     pid_t presenterApplicationPid() const { return m_presenterApplicationPid; }
     bool shouldForceScreenFontSubstitution() const { return m_shouldForceScreenFontSubstitution; }
-
-    void setProcessSuppressionEnabled(bool);
 #endif
     
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }

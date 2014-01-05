@@ -909,9 +909,9 @@ void Page::resumeScriptedAnimations()
     }
 }
 
-void Page::setThrottled(bool throttled)
+void Page::setIsVisuallyIdle(bool isVisuallyIdle)
 {
-    m_pageThrottler->setThrottled(throttled);
+    m_pageThrottler->setIsVisuallyIdle(isVisuallyIdle);
 }
 
 void Page::userStyleSheetLocationChanged()

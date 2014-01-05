@@ -305,7 +305,7 @@ public:
     void suspendScriptedAnimations();
     void resumeScriptedAnimations();
     bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
-    void setThrottled(bool);
+    void setIsVisuallyIdle(bool);
 
     void userStyleSheetLocationChanged();
     const String& userStyleSheet() const;

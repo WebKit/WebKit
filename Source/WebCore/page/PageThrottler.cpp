@@ -41,13 +41,14 @@ PageThrottler::PageThrottler(Page& page)
     : m_page(page)
     , m_throttleState(PageNotThrottledState)
     , m_throttleHysteresisTimer(this, &PageThrottler::throttleHysteresisTimerFired)
+    , m_visuallyNonIdle("Page is not visually idle.")
 {
     m_page.chrome().client().incrementActivePageCount();
 }
 
 PageThrottler::~PageThrottler()
 {
-    setThrottled(false);
+    setIsVisuallyIdle(false);
 
     for (auto it = m_activityTokens.begin(), end = m_activityTokens.end(); it != end; ++it)
         (*it)->invalidate();
@@ -94,14 +95,18 @@ void PageThrottler::unthrottlePage()
     m_page.unthrottleTimers();
 }
 
-void PageThrottler::setThrottled(bool isThrottled)
+void PageThrottler::setIsVisuallyIdle(bool isVisuallyIdle)
 {
-    if (isThrottled) {
+    if (isVisuallyIdle) {
         m_throttleState = PageWaitingToThrottleState;
         startThrottleHysteresisTimer();
+        if (m_visuallyNonIdle.isActive())
+            m_visuallyNonIdle.endActivity();
     } else {
         unthrottlePage();
         stopThrottleHysteresisTimer();
+        if (!m_visuallyNonIdle.isActive())
+            m_visuallyNonIdle.beginActivity();
     }
 }
 

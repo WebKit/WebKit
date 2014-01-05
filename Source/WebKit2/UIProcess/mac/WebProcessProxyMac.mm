@@ -74,8 +74,6 @@ void WebProcessProxy::updateProcessSuppressionState()
         return;
     m_processSuppressionEnabled = canEnable;
 
-    connection()->send(Messages::WebProcess::SetProcessSuppressionEnabled(m_processSuppressionEnabled), 0);
-
     m_context->updateProcessSuppressionState();
 }
 

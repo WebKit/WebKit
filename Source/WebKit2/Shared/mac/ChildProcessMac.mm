@@ -88,8 +88,6 @@ void ChildProcess::platformInitialize()
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     initializeTimerCoalescingPolicy();
 #endif
-    // Start with process suppression disabled.
-    m_processSuppressionDisabled.beginActivity();
 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }

@@ -57,6 +57,7 @@
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/TextChecking.h>
+#include <WebCore/UserActivity.h>
 #include <WebCore/WebCoreKeyboardUIMode.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -615,7 +616,6 @@ public:
 
     void setVisibilityStatePrerender();
     void updateVisibilityState(bool isInitialState = false);
-    void setThrottled(bool isThrottled);
 
 #if PLATFORM(IOS)
     void didFinishScrolling(const WebCore::FloatPoint& contentOffset);
@@ -731,6 +731,7 @@ private:
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&);
     void setWindowResizerSize(const WebCore::IntSize&);
     void setIsInWindow(bool);
+    void setIsVisuallyIdle(bool);
     void setViewState(ViewState::Flags, bool wantsDidUpdateViewState);
     void validateCommand(const String&, uint64_t);
     void executeEditCommand(const String&);
@@ -1045,6 +1046,8 @@ private:
     bool m_useAsyncScrolling;
 
     ViewState::Flags m_viewState;
+
+    UserActivity m_processSuppressionDisabledByWebPreference;
 };
 
 } // namespace WebKit

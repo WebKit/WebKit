@@ -1,3 +1,36 @@
+2014-01-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Move process suppression of WebProcess to Page (from UIProcess)
+        https://bugs.webkit.org/show_bug.cgi?id=126480
+
+        Reviewed by Sam Weinig.
+
+        Let each page take a UserActivity rather than having to coalesce this state, and take different activity
+        tokens for normal visibility and suppression disabled, so we can see why the process is not suppressed.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::platformInitialize):
+            - Don't start with process supression disabled; this is unnecessary,
+              message from the UIProcess should wake.
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::updateProcessSuppressionState):
+            - Don't send explicit messages to supress the WebProcess, it handles this for itself.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+            - call setIsVisuallyIdle.
+        (WebKit::WebPage::setViewState):
+            - call setIsVisuallyIdle.
+        (WebKit::WebPage::updatePreferences):
+            - Use m_suppressionDisabled to disable supression if the WebPreference is set.
+        (WebKit::WebPage::setIsVisuallyIdle):
+            - setThrottled -> setIsVisuallyIdle.
+        * WebProcess/WebPage/WebPage.h:
+            - setThrottled -> setIsVisuallyIdle, added m_suppressionDisabled.
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::shouldForceScreenFontSubstitution):
+            - Removed setProcessSuppressionEnabled - WebPage now detects the supression change.
+
 2014-01-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Improve the way we locate gobject-introspection

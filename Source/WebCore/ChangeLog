@@ -1,3 +1,28 @@
+2014-01-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Move process suppression of WebProcess to Page (from UIProcess)
+        https://bugs.webkit.org/show_bug.cgi?id=126480
+
+        Reviewed by Sam Weinig.
+
+        Let each page take a UserActivity rather than having to coalesce this state, and take different activity
+        tokens for normal visibility and suppression disabled, so we can see why the process is not suppressed.
+
+        * WebCore.exp.in:
+        * page/Page.cpp:
+        (WebCore::Page::setIsVisuallyIdle):
+        * page/Page.h:
+            - setThrottled -> setIsVisuallyIdle.
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+            - Initialize m_visuallyNonIdle.
+        (WebCore::PageThrottler::~PageThrottler):
+            - setThrottled -> setIsVisuallyIdle.
+        (WebCore::PageThrottler::setIsVisuallyIdle):
+            - Use m_visuallyNonIdle to disable supression when the page is not visually idle.
+        * page/PageThrottler.h:
+            - setThrottled -> setIsVisuallyIdle, added m_visuallyNonIdle.
+
 2014-01-04  Sam Weinig  <sam@webkit.org>
 
         Move a few more functions from RenderBlock to RenderBlockFlow
