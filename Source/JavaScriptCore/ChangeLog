@@ -1,3 +1,12 @@
+2014-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use Compiler macros instead of raw "final" and "override"
+        https://bugs.webkit.org/show_bug.cgi?id=126490
+
+        Reviewed by Sam Weinig.
+
+        * runtime/JSPromiseReaction.cpp:
+
 2014-01-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Improve the way we locate gobject-introspection
