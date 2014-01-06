@@ -45,6 +45,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSPromiseConstructor);
 static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncCast(ExecState*);
 static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncResolve(ExecState*);
 static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncReject(ExecState*);
+static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncRace(ExecState*);
 }
 
 #include "JSPromiseConstructor.lut.h"
@@ -58,6 +59,7 @@ const ClassInfo JSPromiseConstructor::s_info = { "Function", &InternalFunction::
   cast            JSPromiseConstructorFuncCast                DontEnum|Function 1
   resolve         JSPromiseConstructorFuncResolve             DontEnum|Function 1
   reject          JSPromiseConstructorFuncReject              DontEnum|Function 1
+  race            JSPromiseConstructorFuncRace                DontEnum|Function 1
 @end
 */
 
@@ -287,6 +289,146 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncReject(ExecState* exec)
 
     // 6. Return deferred.[[Promise]].
     return JSValue::encode(deferred->promise());
+}
+
+static JSValue abruptRejection(ExecState* exec, JSPromiseDeferred* deferred)
+{
+    ASSERT(exec->hadException());
+    JSValue argument = exec->exception();
+    exec->clearException();
+
+    // i. Let 'rejectResult' be the result of calling the [[Call]] internal method
+    // of deferred.[[Reject]] with undefined as thisArgument and a List containing
+    // argument.[[value]] as argumentsList.
+    JSValue deferredReject = deferred->reject();
+
+    CallData rejectCallData;
+    CallType rejectCallType = getCallData(deferredReject, rejectCallData);
+    ASSERT(rejectCallType != CallTypeNone);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(argument);
+
+    call(exec, deferredReject, rejectCallType, rejectCallData, jsUndefined(), arguments);
+
+    // ii. ReturnIfAbrupt(rejectResult).
+    if (exec->hadException())
+        return jsUndefined();
+
+    // iii. Return deferred.[[Promise]].
+    return deferred->promise();
+}
+
+EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncRace(ExecState* exec)
+{
+    // -- Promise.race(iterable) --
+    JSValue iterable = exec->argument(0);
+    VM& vm = exec->vm();
+
+    // 1. Let 'C' be the this value.
+    JSValue C = exec->thisValue();
+
+    // 2. Let 'deferred' be the result of calling GetDeferred(C).
+    JSValue deferredValue = createJSPromiseDeferredFromConstructor(exec, C);
+
+    // 3. ReturnIfAbrupt(deferred).
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    JSPromiseDeferred* deferred = jsCast<JSPromiseDeferred*>(deferredValue);
+
+    // 4. Let 'iterator' be the result of calling GetIterator(iterable).
+    JSValue iteratorFunction = iterable.get(exec, vm.propertyNames->iteratorPrivateName);
+    if (exec->hadException())
+        return JSValue::encode(abruptRejection(exec, deferred));
+
+    CallData iteratorFunctionCallData;
+    CallType iteratorFunctionCallType = getCallData(iteratorFunction, iteratorFunctionCallData);
+    if (iteratorFunctionCallType == CallTypeNone) {
+        throwTypeError(exec);
+        return JSValue::encode(abruptRejection(exec, deferred));
+    }
+
+    ArgList iteratorFunctionArguments;
+    JSValue iterator = call(exec, iteratorFunction, iteratorFunctionCallType, iteratorFunctionCallData, iterable, iteratorFunctionArguments);
+
+    // 5. RejectIfAbrupt(iterator, deferred).
+    if (exec->hadException())
+        return JSValue::encode(abruptRejection(exec, deferred));
+
+    // 6. Repeat
+    do {
+        // i. Let 'next' be the result of calling IteratorStep(iterator).
+        JSValue nextFunction = iterator.get(exec, exec->vm().propertyNames->iteratorNextPrivateName);
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+
+        CallData nextFunctionCallData;
+        CallType nextFunctionCallType = getCallData(nextFunction, nextFunctionCallData);
+        if (nextFunctionCallType == CallTypeNone) {
+            throwTypeError(exec);
+            return JSValue::encode(abruptRejection(exec, deferred));
+        }
+
+        MarkedArgumentBuffer nextFunctionArguments;
+        nextFunctionArguments.append(jsUndefined());
+        JSValue next = call(exec, nextFunction, nextFunctionCallType, nextFunctionCallData, iterator, nextFunctionArguments);
+        
+        // ii. RejectIfAbrupt(next, deferred).
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+    
+        // iii. If 'next' is false, return deferred.[[Promise]].
+        // Note: We implement this as an iterationTerminator
+        if (next == vm.iterationTerminator.get())
+            return JSValue::encode(deferred->promise());
+        
+        // iv. Let 'nextValue' be the result of calling IteratorValue(next).
+        // v. RejectIfAbrupt(nextValue, deferred).
+        // Note: 'next' is already the value, so there is nothing to do here.
+
+        // vi. Let 'nextPromise' be the result of calling Invoke(C, "cast", (nextValue)).
+        JSValue castFunction = C.get(exec, vm.propertyNames->cast);
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+
+        CallData castFunctionCallData;
+        CallType castFunctionCallType = getCallData(castFunction, castFunctionCallData);
+        if (castFunctionCallType == CallTypeNone) {
+            throwTypeError(exec);
+            return JSValue::encode(abruptRejection(exec, deferred));
+        }
+
+        MarkedArgumentBuffer castFunctionArguments;
+        castFunctionArguments.append(next);
+        JSValue nextPromise = call(exec, castFunction, castFunctionCallType, castFunctionCallData, C, castFunctionArguments);
+
+        // vii. RejectIfAbrupt(nextPromise, deferred).
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+
+        // viii. Let 'result' be the result of calling Invoke(nextPromise, "then", (deferred.[[Resolve]], deferred.[[Reject]])).
+        JSValue thenFunction = nextPromise.get(exec, vm.propertyNames->then);
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+
+        CallData thenFunctionCallData;
+        CallType thenFunctionCallType = getCallData(thenFunction, thenFunctionCallData);
+        if (thenFunctionCallType == CallTypeNone) {
+            throwTypeError(exec);
+            return JSValue::encode(abruptRejection(exec, deferred));
+        }
+
+        MarkedArgumentBuffer thenFunctionArguments;
+        thenFunctionArguments.append(deferred->resolve());
+        thenFunctionArguments.append(deferred->reject());
+
+        call(exec, thenFunction, thenFunctionCallType, thenFunctionCallData, nextPromise, thenFunctionArguments);
+
+        // ix. RejectIfAbrupt(result, deferred).
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+    } while (true);
 }
 
 JSPromise* constructPromise(ExecState* exec, JSGlobalObject* globalObject, JSFunction* resolver)

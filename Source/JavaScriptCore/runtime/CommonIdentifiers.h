@@ -76,6 +76,7 @@
     macro(call) \
     macro(callee) \
     macro(caller) \
+    macro(cast) \
     macro(clear) \
     macro(compilationKind) \
     macro(compilations) \

@@ -1,3 +1,20 @@
+2014-01-05  Sam Weinig  <sam@webkit.org>
+
+        [JS] Implement Promise.race()
+        https://bugs.webkit.org/show_bug.cgi?id=126506
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/CommonIdentifiers.h:
+        Add identifier for "cast".
+    
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::abruptRejection):
+        Helper for the RejectIfAbrupt abstract operation.
+  
+        (JSC::JSPromiseConstructorFuncRace):
+        Add implementation of Promise.race()
+
 2014-01-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Ensure that the autotools build and the CMake install the same files
