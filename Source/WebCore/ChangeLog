@@ -1,3 +1,24 @@
+2014-01-06  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        <hr> appears gray instead of green because of color attribute is defined followed by noshade attribute
+        https://bugs.webkit.org/show_bug.cgi?id=17674
+
+        Reviewed by Simon Fraser.
+
+        The noshade attribute is a boolean attribute and when set on hr element
+        it shows a gray color. When there is color attribute the default gray
+        color should be replaced by the color mentioned by the color attribute.
+        Firefox and IE show the same behaviour but Webkit is different. Making
+        the behaviour of Webkit similiar to Firefox and IE's behaviour.
+
+        Test: fast/dom/HTMLHrElement/hr-color-noshade-attribute.html
+
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::collectStyleForPresentationAttribute):
+        When the color attribute is present that value is applied and the 
+        default gray color is ignored. Incase of no color attribute the default
+        gray color is applied.
+
 2014-01-06  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/126499> Move WebKit off the legacy WebKit availability macros
