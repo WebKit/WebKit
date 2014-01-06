@@ -504,15 +504,14 @@ RenderBlock* RenderBlock::containingColumnsBlock(bool allowAnonymousColumnBlock)
     return 0;
 }
 
-RenderBlock* RenderBlock::clone() const
+RenderPtr<RenderBlock> RenderBlock::clone() const
 {
-    RenderBlock* cloneBlock;
+    RenderPtr<RenderBlock> cloneBlock;
     if (isAnonymousBlock()) {
-        cloneBlock = createAnonymousBlock();
+        cloneBlock = RenderPtr<RenderBlock>(createAnonymousBlock());
         cloneBlock->setChildrenInline(childrenInline());
     } else {
-        auto cloneRenderer = element()->createElementRenderer(style());
-        cloneBlock = toRenderBlock(cloneRenderer.leakPtr());
+        cloneBlock = static_pointer_cast<RenderBlock>(element()->createElementRenderer(style()));
         cloneBlock->initializeStyle();
 
         // This takes care of setting the right value of childrenInline in case
@@ -529,7 +528,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
                               RenderObject* beforeChild, RenderBoxModelObject* oldCont)
 {
     // Create a clone of this inline.
-    RenderBlock* cloneBlock = clone();
+    RenderPtr<RenderBlock> cloneBlock = clone();
     if (!isAnonymousBlock())
         cloneBlock->setContinuation(oldCont);
 
@@ -543,11 +542,11 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
 
     // Now take all of the children from beforeChild to the end and remove
     // them from |this| and place them in the clone.
-    moveChildrenTo(cloneBlock, beforeChild, 0, true);
+    moveChildrenTo(cloneBlock.get(), beforeChild, 0, true);
     
     // Hook |clone| up as the continuation of the middle block.
     if (!cloneBlock->isAnonymousBlock())
-        middleBlock->setContinuation(cloneBlock);
+        middleBlock->setContinuation(cloneBlock.get());
 
     // We have been reparented and are now under the fromBlock.  We need
     // to walk up our block parent chain until we hit the containing anonymous columns block.
@@ -562,11 +561,11 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
         RenderBlock* blockCurr = toRenderBlock(curr);
         
         // Create a new clone.
-        RenderBlock* cloneChild = cloneBlock;
+        RenderPtr<RenderBlock> cloneChild = std::move(cloneBlock);
         cloneBlock = blockCurr->clone();
 
         // Insert our child clone as the first child.
-        cloneBlock->addChildIgnoringContinuation(cloneChild, 0);
+        cloneBlock->addChildIgnoringContinuation(cloneChild.leakPtr(), 0);
 
         // Hook the clone up as a continuation of |curr|.  Note we do encounter
         // anonymous blocks possibly as we walk up the block chain.  When we split an
@@ -574,13 +573,13 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
         // actually split a real element.
         if (!blockCurr->isAnonymousBlock()) {
             oldCont = blockCurr->continuation();
-            blockCurr->setContinuation(cloneBlock);
+            blockCurr->setContinuation(cloneBlock.get());
             cloneBlock->setContinuation(oldCont);
         }
 
         // Now we need to take all of the children starting from the first child
         // *after* currChild and append them all to the clone.
-        blockCurr->moveChildrenTo(cloneBlock, currChildNextSibling, 0, true);
+        blockCurr->moveChildrenTo(cloneBlock.get(), currChildNextSibling, 0, true);
 
         // Keep walking up the chain.
         currChild = curr;
@@ -589,7 +588,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     }
 
     // Now we are at the columns block level. We need to put the clone into the toBlock.
-    toBlock->insertChildInternal(cloneBlock, nullptr, NotifyChildren);
+    toBlock->insertChildInternal(cloneBlock.leakPtr(), nullptr, NotifyChildren);
 
     // Now take all the children after currChild and remove them from the fromBlock
     // and put them in the toBlock.

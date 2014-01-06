@@ -158,6 +158,11 @@ createRenderer(Args&&... args)
     return RenderPtr<T>(new T(std::forward<Args>(args)...));
 }
 
+template<typename T, typename U> inline RenderPtr<T> static_pointer_cast(RenderPtr<U>&& p)
+{
+    return RenderPtr<T>(static_cast<T*>(p.leakPtr()));
+}
+
 } // namespace WebCore
 
 namespace WTF {

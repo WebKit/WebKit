@@ -1,5 +1,27 @@
 2014-01-06  Andreas Kling  <akling@apple.com>
 
+        RenderBlock::clone() should return RenderPtr.
+        <https://webkit.org/b/126513>
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clone):
+
+            Tweaked to return RenderPtr<RenderBlock>.
+
+        (WebCore::RenderBlock::splitBlocks):
+
+            Store cloned RenderBlocks in RenderPtrs. Use leakPtr() to sink
+            them into ownership-taking APIs that still use raw pointers.
+
+        * rendering/RenderPtr.h:
+
+            Add a simple static_pointer_cast for RenderPtr&&.
+
+2014-01-06  Andreas Kling  <akling@apple.com>
+
         RenderInline::clone() should return RenderPtr.
         <https://webkit.org/b/126514>
 

@@ -583,7 +583,7 @@ private:
                      RenderObject* beforeChild, RenderBoxModelObject* oldCont);
     void splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
                    RenderObject* newChild, RenderBoxModelObject* oldCont);
-    RenderBlock* clone() const;
+    RenderPtr<RenderBlock> clone() const;
     RenderBlock* continuationBefore(RenderObject* beforeChild);
     RenderBlock* containingColumnsBlock(bool allowAnonymousColumnBlock = true);
     RenderBlock* columnsBlockForSpanningElement(RenderObject* newChild);
