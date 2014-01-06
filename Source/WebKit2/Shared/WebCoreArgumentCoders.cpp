@@ -50,6 +50,8 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/ScrollingConstraints.h>
+#include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/URL.h>
@@ -1271,6 +1273,158 @@ bool ArgumentCoder<WebCore::UserScript>::decode(ArgumentDecoder& decoder, WebCor
         return false;
 
     userScript = WebCore::UserScript(source, url, whitelist, blacklist, injectionTime, injectedFrames);
+    return true;
+}
+
+void ArgumentCoder<WebCore::ScrollableAreaParameters>::encode(ArgumentEncoder& encoder, const WebCore::ScrollableAreaParameters& parameters)
+{
+    encoder.encodeEnum(parameters.horizontalScrollElasticity);
+    encoder.encodeEnum(parameters.verticalScrollElasticity);
+
+    encoder.encodeEnum(parameters.horizontalScrollbarMode);
+    encoder.encodeEnum(parameters.verticalScrollbarMode);
+
+    encoder << parameters.hasEnabledHorizontalScrollbar;
+    encoder << parameters.hasEnabledHorizontalScrollbar;
+}
+
+bool ArgumentCoder<WebCore::ScrollableAreaParameters>::decode(ArgumentDecoder& decoder, WebCore::ScrollableAreaParameters& params)
+{
+    if (!decoder.decodeEnum(params.horizontalScrollElasticity))
+        return false;
+    if (!decoder.decodeEnum(params.verticalScrollElasticity))
+        return false;
+
+    if (!decoder.decodeEnum(params.horizontalScrollbarMode))
+        return false;
+    if (!decoder.decodeEnum(params.verticalScrollbarMode))
+        return false;
+
+    if (!decoder.decode(params.hasEnabledHorizontalScrollbar))
+        return false;
+    if (!decoder.decode(params.hasEnabledVerticalScrollbar))
+        return false;
+    
+    return true;
+}
+
+void ArgumentCoder<WebCore::FixedPositionViewportConstraints>::encode(ArgumentEncoder& encoder, const WebCore::FixedPositionViewportConstraints& viewportConstraints)
+{
+    encoder << viewportConstraints.alignmentOffset();
+    encoder << viewportConstraints.anchorEdges();
+
+    encoder << viewportConstraints.viewportRectAtLastLayout();
+    encoder << viewportConstraints.layerPositionAtLastLayout();
+}
+
+bool ArgumentCoder<WebCore::FixedPositionViewportConstraints>::decode(ArgumentDecoder& decoder, WebCore::FixedPositionViewportConstraints& viewportConstraints)
+{
+    FloatSize alignmentOffset;
+    if (!decoder.decode(alignmentOffset))
+        return false;
+    
+    ViewportConstraints::AnchorEdges anchorEdges;
+    if (!decoder.decode(anchorEdges))
+        return false;
+
+    FloatRect viewportRectAtLastLayout;
+    if (!decoder.decode(viewportRectAtLastLayout))
+        return false;
+
+    FloatPoint layerPositionAtLastLayout;
+    if (!decoder.decode(layerPositionAtLastLayout))
+        return false;
+
+    viewportConstraints = WebCore::FixedPositionViewportConstraints();
+    viewportConstraints.setAlignmentOffset(alignmentOffset);
+    viewportConstraints.setAnchorEdges(anchorEdges);
+
+    viewportConstraints.setViewportRectAtLastLayout(viewportRectAtLastLayout);
+    viewportConstraints.setLayerPositionAtLastLayout(layerPositionAtLastLayout);
+    
+    return true;
+}
+
+void ArgumentCoder<WebCore::StickyPositionViewportConstraints>::encode(ArgumentEncoder& encoder, const WebCore::StickyPositionViewportConstraints& viewportConstraints)
+{
+    encoder << viewportConstraints.alignmentOffset();
+    encoder << viewportConstraints.anchorEdges();
+
+    encoder << viewportConstraints.leftOffset();
+    encoder << viewportConstraints.rightOffset();
+    encoder << viewportConstraints.topOffset();
+    encoder << viewportConstraints.bottomOffset();
+
+    encoder << viewportConstraints.constrainingRectAtLastLayout();
+    encoder << viewportConstraints.containingBlockRect();
+    encoder << viewportConstraints.stickyBoxRect();
+
+    encoder << viewportConstraints.stickyOffsetAtLastLayout();
+    encoder << viewportConstraints.layerPositionAtLastLayout();
+}
+
+bool ArgumentCoder<WebCore::StickyPositionViewportConstraints>::decode(ArgumentDecoder& decoder, WebCore::StickyPositionViewportConstraints& viewportConstraints)
+{
+    FloatSize alignmentOffset;
+    if (!decoder.decode(alignmentOffset))
+        return false;
+    
+    ViewportConstraints::AnchorEdges anchorEdges;
+    if (!decoder.decode(anchorEdges))
+        return false;
+    
+    float leftOffset;
+    if (!decoder.decode(leftOffset))
+        return false;
+
+    float rightOffset;
+    if (!decoder.decode(rightOffset))
+        return false;
+
+    float topOffset;
+    if (!decoder.decode(topOffset))
+        return false;
+
+    float bottomOffset;
+    if (!decoder.decode(bottomOffset))
+        return false;
+    
+    FloatRect constrainingRectAtLastLayout;
+    if (!decoder.decode(constrainingRectAtLastLayout))
+        return false;
+
+    FloatRect containingBlockRect;
+    if (!decoder.decode(containingBlockRect))
+        return false;
+
+    FloatRect stickyBoxRect;
+    if (!decoder.decode(stickyBoxRect))
+        return false;
+
+    FloatSize stickyOffsetAtLastLayout;
+    if (!decoder.decode(stickyOffsetAtLastLayout))
+        return false;
+    
+    FloatPoint layerPositionAtLastLayout;
+    if (!decoder.decode(layerPositionAtLastLayout))
+        return false;
+    
+    viewportConstraints = WebCore::StickyPositionViewportConstraints();
+    viewportConstraints.setAlignmentOffset(alignmentOffset);
+    viewportConstraints.setAnchorEdges(anchorEdges);
+
+    viewportConstraints.setLeftOffset(leftOffset);
+    viewportConstraints.setRightOffset(rightOffset);
+    viewportConstraints.setTopOffset(topOffset);
+    viewportConstraints.setBottomOffset(bottomOffset);
+    
+    viewportConstraints.setConstrainingRectAtLastLayout(constrainingRectAtLastLayout);
+    viewportConstraints.setContainingBlockRect(containingBlockRect);
+    viewportConstraints.setStickyBoxRect(stickyBoxRect);
+
+    viewportConstraints.setStickyOffsetAtLastLayout(stickyOffsetAtLastLayout);
+    viewportConstraints.setLayerPositionAtLastLayout(layerPositionAtLastLayout);
+
     return true;
 }
 

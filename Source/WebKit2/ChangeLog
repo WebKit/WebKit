@@ -1,3 +1,22 @@
+2014-01-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Add encoding of ViewportConstraint and ScrollingParameter types
+        https://bugs.webkit.org/show_bug.cgi?id=126497
+
+        Reviewed by Andreas Kling.
+        
+        Add encoding/decoding of ScrollableAreaParameters, FixedPositionViewportConstraints
+        and StickyPositionViewportConstraints.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::ScrollableAreaParameters>::encode):
+        (IPC::ArgumentCoder<WebCore::ScrollableAreaParameters>::decode):
+        (IPC::ArgumentCoder<WebCore::FixedPositionViewportConstraints>::encode):
+        (IPC::ArgumentCoder<WebCore::FixedPositionViewportConstraints>::decode):
+        (IPC::ArgumentCoder<WebCore::StickyPositionViewportConstraints>::encode):
+        (IPC::ArgumentCoder<WebCore::StickyPositionViewportConstraints>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
 2014-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         Move responsibility for remote layer tree committing to RemoteLayerTreeDrawingArea

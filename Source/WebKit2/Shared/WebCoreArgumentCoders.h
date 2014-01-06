@@ -41,6 +41,7 @@ class FloatPoint;
 class FloatPoint3D;
 class FloatRect;
 class FloatSize;
+class FixedPositionViewportConstraints;
 class HTTPHeaderMap;
 class IDBKeyPath;
 class IntPoint;
@@ -53,6 +54,7 @@ class ProtectionSpace;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+class StickyPositionViewportConstraints;
 class TextCheckingRequestData;
 class TransformationMatrix;
 class UserStyleSheet;
@@ -71,6 +73,7 @@ struct MimeClassInfo;
 struct PasteboardImage;
 struct PasteboardWebContent;
 struct PluginInfo;
+struct ScrollableAreaParameters;
 struct TextCheckingResult;
 struct ViewportAttributes;
 struct WindowFeatures;
@@ -326,6 +329,21 @@ template<> struct ArgumentCoder<WebCore::UserStyleSheet> {
 template<> struct ArgumentCoder<WebCore::UserScript> {
     static void encode(ArgumentEncoder&, const WebCore::UserScript&);
     static bool decode(ArgumentDecoder&, WebCore::UserScript&);
+};
+
+template<> struct ArgumentCoder<WebCore::ScrollableAreaParameters> {
+    static void encode(ArgumentEncoder&, const WebCore::ScrollableAreaParameters&);
+    static bool decode(ArgumentDecoder&, WebCore::ScrollableAreaParameters&);
+};
+
+template<> struct ArgumentCoder<WebCore::FixedPositionViewportConstraints> {
+    static void encode(ArgumentEncoder&, const WebCore::FixedPositionViewportConstraints&);
+    static bool decode(ArgumentDecoder&, WebCore::FixedPositionViewportConstraints&);
+};
+
+template<> struct ArgumentCoder<WebCore::StickyPositionViewportConstraints> {
+    static void encode(ArgumentEncoder&, const WebCore::StickyPositionViewportConstraints&);
+    static bool decode(ArgumentDecoder&, WebCore::StickyPositionViewportConstraints&);
 };
 
 #if ENABLE(CSS_FILTERS) && !USE(COORDINATED_GRAPHICS)
