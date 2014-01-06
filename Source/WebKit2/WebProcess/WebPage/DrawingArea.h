@@ -90,7 +90,7 @@ public:
     virtual void setClipsToExposedRect(bool) { }
     virtual void mainFrameScrollabilityChanged(bool) { }
 
-    virtual bool supportsThreadedScrolling() { return false; }
+    virtual bool supportsAsyncScrolling() { return false; }
 
     virtual void didChangeScrollOffsetForAnyFrame() { }
 

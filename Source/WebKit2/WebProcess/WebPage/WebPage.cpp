@@ -317,7 +317,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
 #if ENABLE(ASYNC_SCROLLING)
     m_useAsyncScrolling = parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey());
-    if (!m_drawingArea->supportsThreadedScrolling())
+    if (!m_drawingArea->supportsAsyncScrolling())
         m_useAsyncScrolling = false;
     m_page->settings().setScrollingCoordinatorEnabled(m_useAsyncScrolling);
 #endif

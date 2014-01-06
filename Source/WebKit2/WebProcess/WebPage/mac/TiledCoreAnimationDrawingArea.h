@@ -79,7 +79,7 @@ private:
 
     virtual void setExposedRect(const WebCore::FloatRect&) OVERRIDE;
     virtual void setClipsToExposedRect(bool) OVERRIDE;
-    virtual bool supportsThreadedScrolling() OVERRIDE { return true; }
+    virtual bool supportsAsyncScrolling() OVERRIDE { return true; }
 
     virtual void didChangeScrollOffsetForAnyFrame() OVERRIDE;
 
