@@ -67,7 +67,7 @@ extern "C" {
  *    Non-Carbon CFM:   not available
  */
 extern OSStatus 
-HIWebViewCreate(HIViewRef * outControl) CF_DEPRECATED_MAC(10_3, 10_6, "Use WebView instead.");
+HIWebViewCreate(HIViewRef * outControl) CF_DEPRECATED_MAC(10_3, 10_6);
 
 #ifdef __OBJC__
 

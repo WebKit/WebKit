@@ -1,5 +1,12 @@
 2014-01-06  Mark Rowe  <mrowe@apple.com>
 
+        Mountain Lion build fix after r161332.
+
+        * Carbon/HIWebView.h: Mountain Lion's version of CF_AVAILABLE_MAC doesn't accept a message
+        argument so remove it.
+
+2014-01-06  Mark Rowe  <mrowe@apple.com>
+
         <https://webkit.org/b/126499> Move WebKit off the legacy WebKit availability macros
 
         The legacy WebKit availability macros are verbose, confusing, and provide no benefit
