@@ -22,6 +22,9 @@ if (ENABLE_WEBKIT)
         "${CMAKE_SOURCE_DIR}/Source/WebKit/gtk/docs/webkitgtk-docs.sgml"
         "${CMAKE_SOURCE_DIR}/Source/WebKit/gtk/docs/webkitgtk-sections.txt"
     )
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/webkitgtk/html/
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/gtk-doc/html/webkitgtk
+    )
 endif ()
 
 if (ENABLE_WEBKIT2)
@@ -29,6 +32,9 @@ if (ENABLE_WEBKIT2)
         WebKit2
         "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml"
         "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt"
+    )
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk/html/
+            DESTINATION ${CMAKE_INSTALL_DATADIR}/gtk-doc/html/webkit2gtk
     )
 endif ()
 

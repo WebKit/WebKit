@@ -1,3 +1,12 @@
+2014-01-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Ensure that the autotools build and the CMake install the same files
+        https://bugs.webkit.org/show_bug.cgi?id=116379
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * PlatformGTK.cmake: Install API headers, gir files, and the pkg-config file.
+
 2014-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use Compiler macros instead of raw "final" and "override"

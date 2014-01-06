@@ -1,3 +1,13 @@
+2014-01-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Ensure that the autotools build and the CMake install the same files
+        https://bugs.webkit.org/show_bug.cgi?id=116379
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * PlatformGTK.cmake: Reformat some install directives to be consistent with the rest of them.
+        Install the GObject DOM bindings headers.
+
 2014-01-05  Andreas Kling  <akling@apple.com>
 
         Use lineageOfType to simplify two rendering helpers.

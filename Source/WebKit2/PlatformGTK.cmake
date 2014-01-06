@@ -297,7 +297,9 @@ list(APPEND WebKit2_SOURCES
     WebProcess/soup/WebSoupRequestManager.cpp
 )
 
-set(WebKit2_INSTALLED_HEADERS
+set(WebKit2GTK_INSTALLED_HEADERS
+    ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h
+    ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitVersion.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitAuthenticationRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitBackForwardList.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitBackForwardListItem.h
@@ -445,11 +447,11 @@ add_custom_command(
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h
            ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
-    DEPENDS ${WebKit2_INSTALLED_HEADERS}
+    DEPENDS ${WebKit2GTK_INSTALLED_HEADERS}
 
-    COMMAND glib-mkenums --template ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitEnumTypes.h.template ${WebKit2_INSTALLED_HEADERS} | sed s/web_kit/webkit/ | sed s/WEBKIT_TYPE_KIT/WEBKIT_TYPE/ > ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h
+    COMMAND glib-mkenums --template ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitEnumTypes.h.template ${WebKit2GTK_INSTALLED_HEADERS} | sed s/web_kit/webkit/ | sed s/WEBKIT_TYPE_KIT/WEBKIT_TYPE/ > ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h
 
-    COMMAND glib-mkenums --template ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitEnumTypes.cpp.template ${WebKit2_INSTALLED_HEADERS} | sed s/web_kit/webkit/ > ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
+    COMMAND glib-mkenums --template ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitEnumTypes.cpp.template ${WebKit2GTK_INSTALLED_HEADERS} | sed s/web_kit/webkit/ > ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.cpp
     VERBATIM)
 
 add_custom_command(
@@ -596,18 +598,18 @@ if (ENABLE_PLUGIN_PROCESS)
     )
     GENERATE_WEBKIT2_MESSAGE_SOURCES(PluginProcess_SOURCES "${PluginProcess_MESSAGES_IN_FILES}")
 
-    add_executable(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_SOURCES})
+    add_executable(WebKitPluginProcess ${PluginProcess_SOURCES})
 
     # We need ENABLE_PLUGIN_PROCESS for all targets in this directory, but
     # we only want GTK_API_VERSION_2 for the plugin process target.
     add_definitions(-DENABLE_PLUGIN_PROCESS=1)
     set_property(
-        TARGET ${PluginProcess_EXECUTABLE_NAME}
+        TARGET WebKitPluginProcess
         APPEND
         PROPERTY COMPILE_DEFINITIONS GTK_API_VERSION_2=1
     )
     set_property(
-        TARGET ${PluginProcess_EXECUTABLE_NAME}
+        TARGET WebKitPluginProcess
         APPEND
         PROPERTY INCLUDE_DIRECTORIES
             ${WebKit2CommonIncludeDirectories}
@@ -615,15 +617,15 @@ if (ENABLE_PLUGIN_PROCESS)
             ${GDK2_INCLUDE_DIRS}
     )
 
-    target_link_libraries(${PluginProcess_EXECUTABLE_NAME}
+    target_link_libraries(WebKitPluginProcess
         ${SharedWebKit2Libraries}
         WebCorePlatformGTK2
         WebCore
     )
 
-    add_dependencies(${PluginProcess_EXECUTABLE_NAME} WebKit2)
+    add_dependencies(WebKitPluginProcess WebKit2)
 
-    install(TARGETS ${PluginProcess_EXECUTABLE_NAME} DESTINATION "${EXEC_INSTALL_DIR}")
+    install(TARGETS WebKitPluginProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
 endif () # ENABLE_PLUGIN_PROCESS
 
 # Commands for building the built-in injected bundle.
@@ -680,8 +682,7 @@ add_custom_command(
         -I${DERIVED_SOURCES_DIR}
         -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
         -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
-        ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h
-        ${WebKit2_INSTALLED_HEADERS}
+        ${WebKit2GTK_INSTALLED_HEADERS}
         ${WEBKIT2_DIR}/UIProcess/API/gtk/*.cpp
 )
 
@@ -742,3 +743,22 @@ add_custom_command(
 
 ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit2-3.0.typelib)
 ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.typelib)
+
+install(TARGETS webkit2gtkinjectedbundle
+        DESTINATION "${LIB_INSTALL_DIR}/webkit2gtk-3.0/injected-bundle"
+)
+install(FILES "${CMAKE_BINARY_DIR}/Source/WebKit2/webkit2gtk-3.0.pc"
+        DESTINATION "${LIB_INSTALL_DIR}/pkgconfig"
+)
+install(FILES ${WebKit2GTK_INSTALLED_HEADERS}
+              ${WebKit2WebExtension_INSTALLED_HEADERS}
+        DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkit2"
+)
+install(FILES ${CMAKE_BINARY_DIR}/WebKit2-3.0.gir
+              ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.gir
+        DESTINATION ${INTROSPECTION_INSTALL_GIRDIR}
+)
+install(FILES ${CMAKE_BINARY_DIR}/WebKit2-3.0.typelib
+              ${CMAKE_BINARY_DIR}/WebKit2WebExtension-3.0.typelib
+        DESTINATION ${INTROSPECTION_INSTALL_TYPELIBDIR}
+)

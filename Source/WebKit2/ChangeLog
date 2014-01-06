@@ -1,3 +1,17 @@
+2014-01-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Ensure that the autotools build and the CMake install the same files
+        https://bugs.webkit.org/show_bug.cgi?id=116379
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Install the plugin process to the new LIBEXEC directory, which
+        for non-GTK+ platforms is the same as EXEC.
+        * PlatformGTK.cmake: Install API headers, gir files, and the pkg-config file. Move
+        a couple installed and generated headers to the installed headers list. Rename the
+        headers list to be consistent with the WebKit1 build. No longer use a variable for
+        the name of the plugin process, as it's unnecessary.
+
 2014-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Stop installing WebKit2 C API headers

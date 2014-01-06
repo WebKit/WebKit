@@ -42,7 +42,10 @@ if (UNIX AND NOT APPLE)
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined ${CMAKE_SHARED_LINKER_FLAGS}")
 endif ()
 
-set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
-
-set(LIB_INSTALL_DIR "lib${LIB_SUFFIX}" CACHE PATH "Where to install libraries (lib${LIB_SUFFIX})")
-set(EXEC_INSTALL_DIR "bin" CACHE PATH "Where to install executables")
+# GTK uses the GNU installation directories.
+if (NOT PORT STREQUAL "GTK")
+    set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
+    set(LIB_INSTALL_DIR "lib${LIB_SUFFIX}" CACHE PATH "Where to install libraries (lib${LIB_SUFFIX})")
+    set(EXEC_INSTALL_DIR "bin" CACHE PATH "Where to install executables")
+    set(LIBEXEC_INSTALL_DIR "bin" CACHE PATH "Where to install executables executed by the library")
+endif ()

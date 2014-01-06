@@ -385,22 +385,20 @@ if (WTF_USE_EGL)
     )
 endif ()
 
-install(FILES
-            "${WEBCORE_DIR}/Resources/textAreaResizeCorner.png"
-            "${WEBCORE_DIR}/Resources/nullPlugin.png"
-            "${WEBCORE_DIR}/Resources/urlIcon.png"
-            "${WEBCORE_DIR}/Resources/missingImage.png"
-            "${WEBCORE_DIR}/Resources/panIcon.png"
-            "${WEBCORE_DIR}/Resources/deleteButton.png"
-            "${WEBCORE_DIR}/Resources/inputSpeech.png"
-        DESTINATION
-            "${DATA_INSTALL_DIR}/images")
+install(FILES "${WEBCORE_DIR}/Resources/textAreaResizeCorner.png"
+              "${WEBCORE_DIR}/Resources/nullPlugin.png"
+              "${WEBCORE_DIR}/Resources/urlIcon.png"
+              "${WEBCORE_DIR}/Resources/missingImage.png"
+              "${WEBCORE_DIR}/Resources/panIcon.png"
+              "${WEBCORE_DIR}/Resources/deleteButton.png"
+              "${WEBCORE_DIR}/Resources/inputSpeech.png"
+        DESTINATION "${DATA_INSTALL_DIR}/images"
+)
 
 if (ENABLE_WEB_AUDIO)
-    install(FILES
-                "${WEBCORE_DIR}/platform/audio/resources/Composite.wav"
-            DESTINATION
-                "${DATA_INSTALL_DIR}/resources/audio")
+    install(FILES "${WEBCORE_DIR}/platform/audio/resources/Composite.wav"
+            DESTINATION "${DATA_INSTALL_DIR}/resources/audio"
+    )
 endif ()
 
 if (ENABLE_WEBKIT2)
@@ -695,6 +693,13 @@ if (ENABLE_WEBKIT2)
     add_dependencies(GObjectDOMBindings
         WebCore
         fake-installed-webkitdom-headers
+    )
+
+    install(FILES ${GObjectDOMBindings_INSTALLED_HEADERS}
+                  bindings/gobject/WebKitDOMEventTarget.h
+                  bindings/gobject/WebKitDOMDeprecated.h
+                  bindings/gobject/WebKitDOMObject.h
+            DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkitdom"
     )
 endif ()
 

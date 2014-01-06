@@ -93,6 +93,8 @@ list(APPEND WebKit_SOURCES
 )
 
 list(APPEND WebKitGTK_INSTALLED_HEADERS
+    ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.h
+    ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitversion.h
     ${WEBKIT_DIR}/gtk/webkit/webkit.h
     ${WEBKIT_DIR}/gtk/webkit/webkitapplicationcache.h
     ${WEBKIT_DIR}/gtk/webkit/webkitdefines.h
@@ -194,7 +196,6 @@ add_custom_command(
         -I${DERIVED_SOURCES_WEBKITGTK_DIR}
         -I${WEBCORE_DIR}/platform/gtk
         ${GObjectDOMBindings_INSTALLED_HEADERS}
-        ${DERIVED_SOURCES_WEBKITGTK_API_DIR}/webkitenumtypes.h
         ${WebKitGTK_INSTALLED_HEADERS}
         ${WEBKIT_DIR}/gtk/webkit/*.cpp
 )
@@ -206,3 +207,19 @@ add_custom_command(
 )
 
 ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit-3.0.typelib)
+
+install(FILES "${CMAKE_BINARY_DIR}/Source/WebKit/gtk/webkitgtk-3.0.pc"
+        DESTINATION "${LIB_INSTALL_DIR}/pkgconfig"
+)
+install(FILES "${WEBKIT_DIR}/gtk/resources/error.html"
+        DESTINATION "${DATA_INSTALL_DIR}/resources"
+)
+install(FILES ${WebKitGTK_INSTALLED_HEADERS}
+        DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/webkit"
+)
+install(FILES ${CMAKE_BINARY_DIR}/WebKit-3.0.gir
+        DESTINATION ${INTROSPECTION_INSTALL_GIRDIR}
+)
+install(FILES ${CMAKE_BINARY_DIR}/WebKit-3.0.typelib
+        DESTINATION ${INTROSPECTION_INSTALL_TYPELIBDIR}
+)

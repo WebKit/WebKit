@@ -1,3 +1,18 @@
+2014-01-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Ensure that the autotools build and the CMake install the same files
+        https://bugs.webkit.org/show_bug.cgi?id=116379
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/PlatformGTK.cmake: Install the documentation.
+        * Source/cmake/OptionsCommon.cmake: Add a LIBEXEC variable for WebKit2 executables, and
+        don't use the default locations on GTK+. We will get them from the CMake-provided GNU installation
+        variables.
+        * Source/cmake/OptionsGTK.cmake: Setup the installation variables using the ones provided
+        by CMake's GNU installation directory support. Fix the definition of DATADIR. Always install
+        the jsc binary.
+
 2014-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Stop installing WebKit2 C API headers
