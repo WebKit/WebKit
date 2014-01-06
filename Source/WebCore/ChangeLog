@@ -1,3 +1,134 @@
+2014-01-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [Nix] Adding new strings to LocalizedStringsNix
+        https://bugs.webkit.org/show_bug.cgi?id=126228
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests needed.
+
+        * platform/nix/LocalizedStringsNix.cpp:
+        (WebCore::submitButtonDefaultLabel):
+        (WebCore::inputElementAltText):
+        (WebCore::resetButtonDefaultLabel):
+        (WebCore::defaultDetailsSummaryText):
+        (WebCore::searchableIndexIntroduction):
+        (WebCore::fileButtonChooseFileLabel):
+        (WebCore::fileButtonChooseMultipleFilesLabel):
+        (WebCore::fileButtonNoFileSelectedLabel):
+        (WebCore::fileButtonNoFilesSelectedLabel):
+        (WebCore::contextMenuItemTagOpenLinkInNewWindow):
+        (WebCore::contextMenuItemTagDownloadLinkToDisk):
+        (WebCore::contextMenuItemTagCopyLinkToClipboard):
+        (WebCore::contextMenuItemTagOpenImageInNewWindow):
+        (WebCore::contextMenuItemTagDownloadImageToDisk):
+        (WebCore::contextMenuItemTagCopyImageToClipboard):
+        (WebCore::contextMenuItemTagCopyImageUrlToClipboard):
+        (WebCore::contextMenuItemTagOpenVideoInNewWindow):
+        (WebCore::contextMenuItemTagOpenAudioInNewWindow):
+        (WebCore::contextMenuItemTagDownloadVideoToDisk):
+        (WebCore::contextMenuItemTagDownloadAudioToDisk):
+        (WebCore::contextMenuItemTagCopyVideoLinkToClipboard):
+        (WebCore::contextMenuItemTagCopyAudioLinkToClipboard):
+        (WebCore::contextMenuItemTagToggleMediaControls):
+        (WebCore::contextMenuItemTagShowMediaControls):
+        (WebCore::contextMenuitemTagHideMediaControls):
+        (WebCore::contextMenuItemTagToggleMediaLoop):
+        (WebCore::contextMenuItemTagEnterVideoFullscreen):
+        (WebCore::contextMenuItemTagMediaPlay):
+        (WebCore::contextMenuItemTagMediaPause):
+        (WebCore::contextMenuItemTagMediaMute):
+        (WebCore::contextMenuItemTagOpenFrameInNewWindow):
+        (WebCore::contextMenuItemTagCopy):
+        (WebCore::contextMenuItemTagDelete):
+        (WebCore::contextMenuItemTagSelectAll):
+        (WebCore::contextMenuItemTagUnicode):
+        (WebCore::contextMenuItemTagInputMethods):
+        (WebCore::contextMenuItemTagGoBack):
+        (WebCore::contextMenuItemTagGoForward):
+        (WebCore::contextMenuItemTagStop):
+        (WebCore::contextMenuItemTagReload):
+        (WebCore::contextMenuItemTagCut):
+        (WebCore::contextMenuItemTagPaste):
+        (WebCore::contextMenuItemTagNoGuessesFound):
+        (WebCore::contextMenuItemTagIgnoreSpelling):
+        (WebCore::contextMenuItemTagLearnSpelling):
+        (WebCore::contextMenuItemTagSearchWeb):
+        (WebCore::contextMenuItemTagLookUpInDictionary):
+        (WebCore::contextMenuItemTagOpenLink):
+        (WebCore::contextMenuItemTagIgnoreGrammar):
+        (WebCore::contextMenuItemTagSpellingMenu):
+        (WebCore::contextMenuItemTagShowSpellingPanel):
+        (WebCore::contextMenuItemTagCheckSpelling):
+        (WebCore::contextMenuItemTagCheckSpellingWhileTyping):
+        (WebCore::contextMenuItemTagCheckGrammarWithSpelling):
+        (WebCore::contextMenuItemTagFontMenu):
+        (WebCore::contextMenuItemTagBold):
+        (WebCore::contextMenuItemTagItalic):
+        (WebCore::contextMenuItemTagUnderline):
+        (WebCore::contextMenuItemTagOutline):
+        (WebCore::contextMenuItemTagInspectElement):
+        (WebCore::contextMenuItemTagRightToLeft):
+        (WebCore::contextMenuItemTagLeftToRight):
+        (WebCore::contextMenuItemTagWritingDirectionMenu):
+        (WebCore::contextMenuItemTagTextDirectionMenu):
+        (WebCore::contextMenuItemTagDefaultDirection):
+        (WebCore::searchMenuNoRecentSearchesText):
+        (WebCore::searchMenuRecentSearchesText):
+        (WebCore::searchMenuClearRecentSearchesText):
+        (WebCore::AXDefinitionText):
+        (WebCore::AXDescriptionListText):
+        (WebCore::AXDescriptionListTermText):
+        (WebCore::AXDescriptionListDetailText):
+        (WebCore::AXFooterRoleDescriptionText):
+        (WebCore::AXSearchFieldCancelButtonText):
+        (WebCore::AXButtonActionVerb):
+        (WebCore::AXRadioButtonActionVerb):
+        (WebCore::AXTextFieldActionVerb):
+        (WebCore::AXCheckedCheckBoxActionVerb):
+        (WebCore::AXUncheckedCheckBoxActionVerb):
+        (WebCore::AXLinkActionVerb):
+        (WebCore::unknownFileSizeText):
+        (WebCore::imageTitle):
+        (WebCore::AXListItemActionVerb):
+        (WebCore::localizedMediaControlElementString):
+        (WebCore::localizedMediaControlElementHelpText):
+        (WebCore::localizedMediaTimeDescription):
+        (WebCore::mediaElementLoadingStateText):
+        (WebCore::mediaElementLiveBroadcastStateText):
+        (WebCore::validationMessagePatternMismatchText):
+        (WebCore::validationMessageRangeOverflowText):
+        (WebCore::validationMessageRangeUnderflowText):
+        (WebCore::validationMessageStepMismatchText):
+        (WebCore::validationMessageTooLongText):
+        (WebCore::validationMessageTypeMismatchText):
+        (WebCore::validationMessageTypeMismatchForEmailText):
+        (WebCore::validationMessageTypeMismatchForMultipleEmailText):
+        (WebCore::validationMessageTypeMismatchForURLText):
+        (WebCore::validationMessageValueMissingText):
+        (WebCore::validationMessageValueMissingForCheckboxText):
+        (WebCore::validationMessageValueMissingForFileText):
+        (WebCore::validationMessageValueMissingForMultipleFileText):
+        (WebCore::validationMessageValueMissingForRadioText):
+        (WebCore::validationMessageValueMissingForSelectText):
+        (WebCore::validationMessageBadInputForNumberText):
+        (WebCore::missingPluginText):
+        (WebCore::AXMenuListPopupActionVerb):
+        (WebCore::AXMenuListActionVerb):
+        (WebCore::multipleFileUploadText):
+        (WebCore::crashedPluginText):
+        (WebCore::blockedPluginByContentSecurityPolicyText):
+        (WebCore::insecurePluginVersionText):
+        (WebCore::inactivePluginText):
+        (WebCore::unacceptableTLSCertificate):
+        (WebCore::textTrackClosedCaptionsText):
+        (WebCore::textTrackSubtitlesText):
+        (WebCore::textTrackOffMenuItemText):
+        (WebCore::textTrackAutomaticMenuItemText):
+        (WebCore::textTrackNoLabelText):
+        (WebCore::snapshottedPlugInLabelTitle):
+        (WebCore::snapshottedPlugInLabelSubtitle):
+
 2014-01-06  László Langó  <lango@inf.u-szeged.hu>
 
         Use unsigned consistently, and check for invalid casts when calling into SharedBuffer from other code.
