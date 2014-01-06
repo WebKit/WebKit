@@ -1,3 +1,26 @@
+2014-01-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add write barriers to the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=126527
+
+        Reviewed by Filip Pizlo.
+
+        This patch takes a similar approach to how write barriers work in the baseline JIT.
+        We execute the write barrier at the beginning of the opcode so we don't have to 
+        worry about saving and restoring live registers across write barrier slow path calls 
+        to C code.
+
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_write_barrier_slow):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+
 2014-01-05  Sam Weinig  <sam@webkit.org>
 
         [JS] Implement Promise.all()

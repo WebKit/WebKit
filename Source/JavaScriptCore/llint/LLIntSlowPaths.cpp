@@ -1388,6 +1388,11 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     LLINT_END();
 }
 
+extern "C" void llint_write_barrier_slow(ExecState*, JSCell* cell)
+{
+    Heap::writeBarrier(cell);
+}
+
 } } // namespace JSC::LLInt
 
 #endif // ENABLE(LLINT)

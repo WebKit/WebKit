@@ -148,4 +148,10 @@
 #define OFFLINE_ASM_ALWAYS_ALLOCATE_SLOW 0
 #endif
 
+#if ENABLE(GGC)
+#define OFFLINE_ASM_GGC 1
+#else
+#define OFFLINE_ASM_GGC 0
+#endif
+
 #endif // LLIntOfflineAsmConfig_h

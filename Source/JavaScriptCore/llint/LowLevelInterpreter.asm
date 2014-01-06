@@ -170,7 +170,11 @@ const Dynamic = 6
 
 const ResolveModeMask = 0xffff
 
-const MarkedBlockMask = ~0xffff
+const MarkedBlockSize = 64 * 1024
+const MarkedBlockMask = ~(MarkedBlockSize - 1)
+# Constants for checking mark bits.
+const AtomNumberShift = 3
+const BitMapWordShift = 4
 
 # Allocation constants
 if JSVALUE64
@@ -261,6 +265,18 @@ macro arrayProfile(structureAndIndexingType, profile, scratch)
     const indexingType = structureAndIndexingType
     storep structure, ArrayProfile::m_lastSeenStructure[profile]
     loadb Structure::m_indexingType[structure], indexingType
+end
+
+macro checkMarkByte(cell, scratch1, scratch2, continuation)
+    move cell, scratch1
+    move cell, scratch2
+
+    andp MarkedBlockMask, scratch1
+    andp ~MarkedBlockMask, scratch2
+
+    rshiftp AtomNumberShift + BitMapWordShift, scratch2
+    loadb MarkedBlock::m_marks[scratch1, scratch2, 1], scratch1
+    continuation(scratch1)
 end
 
 macro checkSwitchToJIT(increment, action)

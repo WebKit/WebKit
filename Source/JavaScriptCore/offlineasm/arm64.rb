@@ -566,11 +566,24 @@ class Instruction
             # FIXME: Remove it or support it.
             raise "ARM64 does not support this opcode yet, #{codeOriginString}"
         when "pop"
-            # FIXME: Remove it or support it.
-            raise "ARM64 does not support this opcode yet, #{codeOriginString}"
+            operands.each_slice(2) {
+                | ops |
+                # Note that the operands are in the reverse order of the case for push.
+                # This is due to the fact that order matters for pushing and popping, and 
+                # on platforms that only push/pop one slot at a time they pop their 
+                # arguments in the reverse order that they were pushed. In order to remain 
+                # compatible with those platforms we assume here that that's what has been done.
+
+                # So for example, if we did push(A, B, C, D), we would then pop(D, C, B, A).
+                # But since the ordering of arguments doesn't change on arm64 between the stp and ldp 
+                # instructions we need to flip flop the argument positions that were passed to us.
+                $asm.puts "ldp #{ops[1].arm64Operand(:ptr)}, #{ops[0].arm64Operand(:ptr)}, [sp], #16"
+            }
         when "push"
-            # FIXME: Remove it or support it.
-            raise "ARM64 does not support this opcode yet, #{codeOriginString}"
+            operands.each_slice(2) {
+                | ops |
+                $asm.puts "stp #{ops[0].arm64Operand(:ptr)}, #{ops[1].arm64Operand(:ptr)}, [sp, #-16]!"
+            }
         when "popLRAndFP"
             $asm.puts "ldp fp, lr, [sp], #16"
         when "pushLRAndFP"

@@ -457,9 +457,15 @@ class Instruction
             # FIXME: either support this or remove it.
             raise "ARM does not support this opcode yet, #{codeOrigin}"
         when "pop"
-            $asm.puts "pop { #{operands[0].armOperand} }"
+            operands.each {
+                | op |
+                $asm.puts "pop { #{op.armOperand} }"
+            }
         when "push"
-            $asm.puts "push { #{operands[0].armOperand} }"
+            operands.each {
+                | op |
+                $asm.puts "push { #{op.armOperand} }"
+            }
         when "popCalleeSaves"
             if isARMv7
                 $asm.puts "pop {r4-r6, r8-r11}"                
