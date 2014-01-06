@@ -85,7 +85,7 @@ public:
     BlobResourceSynchronousLoader(ResourceError&, ResourceResponse&, Vector<char>&);
 
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) OVERRIDE;
-    virtual void didReceiveData(ResourceHandle*, const char*, int, int /*encodedDataLength*/) OVERRIDE;
+    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) OVERRIDE;
     virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) OVERRIDE;
     virtual void didFail(ResourceHandle*, const ResourceError&) OVERRIDE;
 
@@ -117,7 +117,7 @@ void BlobResourceSynchronousLoader::didReceiveResponse(ResourceHandle* handle, c
     static_cast<BlobResourceHandle*>(handle)->readSync(m_data.data(), static_cast<int>(m_data.size()));
 }
 
-void BlobResourceSynchronousLoader::didReceiveData(ResourceHandle*, const char*, int, int)
+void BlobResourceSynchronousLoader::didReceiveData(ResourceHandle*, const char*, unsigned, int)
 {
 }
 

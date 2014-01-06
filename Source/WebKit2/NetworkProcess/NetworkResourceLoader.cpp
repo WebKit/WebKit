@@ -191,7 +191,7 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
     }
 }
 
-void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
+void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, unsigned length, int encodedDataLength)
 {
     // The NetworkProcess should never get a didReceiveData callback.
     // We should always be using didReceiveBuffer.
@@ -398,7 +398,7 @@ void NetworkResourceLoader::didReceiveDataArray(ResourceHandle*, CFArrayRef)
 #endif
 
 #if PLATFORM(MAC)
-void NetworkResourceLoader::willStopBufferingData(ResourceHandle*, const char*, int)
+void NetworkResourceLoader::willStopBufferingData(ResourceHandle*, const char*, unsigned)
 {
     notImplemented();
 }

@@ -67,7 +67,7 @@ public:
     DownloadClient(WebKitDownload*);
 
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-    virtual void didReceiveData(ResourceHandle*, const char*, int, int);
+    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int);
     virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int encodedLength);
     virtual void didFinishLoading(ResourceHandle*, double);
     virtual void didFail(ResourceHandle*, const ResourceError&);
@@ -941,7 +941,7 @@ void DownloadClient::didReceiveResponse(ResourceHandle*, const ResourceResponse&
     }
 }
 
-void DownloadClient::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
+void DownloadClient::didReceiveData(ResourceHandle*, const char* data, unsigned length, int encodedDataLength)
 {
     ASSERT_NOT_REACHED();
 }

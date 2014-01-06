@@ -94,7 +94,7 @@ void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& resp
         cancel(frameLoader()->client().fileDoesNotExistError(response));
 }
 
-void NetscapePlugInStreamLoader::didReceiveData(const char* data, int length, long long encodedDataLength, DataPayloadType dataPayloadType)
+void NetscapePlugInStreamLoader::didReceiveData(const char* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     didReceiveDataOrBuffer(data, length, 0, encodedDataLength, dataPayloadType);
 }

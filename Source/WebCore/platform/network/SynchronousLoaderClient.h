@@ -60,7 +60,7 @@ private:
     virtual bool shouldUseCredentialStorage(ResourceHandle*) OVERRIDE;
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) OVERRIDE;
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) OVERRIDE;
-    virtual void didReceiveData(ResourceHandle*, const char*, int, int /*encodedDataLength*/) OVERRIDE;
+    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) OVERRIDE;
     virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) OVERRIDE;
     virtual void didFail(ResourceHandle*, const ResourceError&) OVERRIDE;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

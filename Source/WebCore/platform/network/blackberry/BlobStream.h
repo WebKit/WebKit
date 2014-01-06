@@ -38,7 +38,7 @@ public:
     virtual const BlackBerry::Platform::String mimeType() const OVERRIDE;
 
     // From class ResourceHandleClient.
-    virtual void didReceiveData(ResourceHandle*, const char*, int, int) OVERRIDE;
+    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int) OVERRIDE;
     virtual void didFinishLoading(ResourceHandle*, double) OVERRIDE;
     virtual void didFail(ResourceHandle*, const ResourceError&) OVERRIDE;
 

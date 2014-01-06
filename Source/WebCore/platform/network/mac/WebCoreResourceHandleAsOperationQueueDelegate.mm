@@ -303,7 +303,7 @@ using namespace WebCore;
         // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
         // However, with today's computers and networking speeds, this won't happen in practice.
         // Could be an issue with a giant local file.
-        m_handle->client()->willStopBufferingData(m_handle, (const char*)[data bytes], static_cast<int>([data length]));
+        m_handle->client()->willStopBufferingData(m_handle, (const char*)[data bytes], static_cast<unsigned>([data length]));
     });
 }
 

@@ -37,7 +37,7 @@ BlobStream::~BlobStream()
 {
 }
 
-void BlobStream::didReceiveData(ResourceHandle*, const char* data, int len, int)
+void BlobStream::didReceiveData(ResourceHandle*, const char* data, unsigned len, int)
 {
     notifyDataReceived(BlackBerry::Platform::createNetworkBufferByWrappingData(data, len));
 }

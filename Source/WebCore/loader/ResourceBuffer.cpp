@@ -35,7 +35,7 @@ ResourceBuffer::ResourceBuffer()
 {
 }
 
-ResourceBuffer::ResourceBuffer(const char* data, int size)
+ResourceBuffer::ResourceBuffer(const char* data, unsigned size)
     : m_sharedBuffer(SharedBuffer::create(data, size))
 {
 }

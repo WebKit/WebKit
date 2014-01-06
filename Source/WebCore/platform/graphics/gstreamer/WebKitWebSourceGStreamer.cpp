@@ -99,7 +99,7 @@ class ResourceHandleStreamingClient : public ResourceHandleClient, public Stream
         virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize);
         virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&);
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-        virtual void didReceiveData(ResourceHandle*, const char*, int, int);
+        virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int);
         virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedLength);
         virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
         virtual void didFail(ResourceHandle*, const ResourceError&);
@@ -1117,7 +1117,7 @@ void ResourceHandleStreamingClient::didReceiveResponse(ResourceHandle*, const Re
     handleResponseReceived(response);
 }
 
-void ResourceHandleStreamingClient::didReceiveData(ResourceHandle*, const char* data, int length, int)
+void ResourceHandleStreamingClient::didReceiveData(ResourceHandle*, const char* data, unsigned length, int)
 {
     ASSERT_NOT_REACHED();
 }

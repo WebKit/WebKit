@@ -82,7 +82,7 @@ public:
     virtual void willSendRequestAsync(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) OVERRIDE;
     virtual void didSendData(WebCore::ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) OVERRIDE;
     virtual void didReceiveResponseAsync(WebCore::ResourceHandle*, const WebCore::ResourceResponse&) OVERRIDE;
-    virtual void didReceiveData(WebCore::ResourceHandle*, const char*, int, int encodedDataLength) OVERRIDE;
+    virtual void didReceiveData(WebCore::ResourceHandle*, const char*, unsigned, int encodedDataLength) OVERRIDE;
     virtual void didReceiveBuffer(WebCore::ResourceHandle*, PassRefPtr<WebCore::SharedBuffer>, int encodedDataLength) OVERRIDE;
     virtual void didFinishLoading(WebCore::ResourceHandle*, double finishTime) OVERRIDE;
     virtual void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError&) OVERRIDE;
@@ -108,7 +108,7 @@ public:
 #if !PLATFORM(IOS)
     virtual void willCacheResponseAsync(WebCore::ResourceHandle*, NSCachedURLResponse *) OVERRIDE;
 #endif
-    virtual void willStopBufferingData(WebCore::ResourceHandle*, const char*, int) OVERRIDE;
+    virtual void willStopBufferingData(WebCore::ResourceHandle*, const char*, unsigned) OVERRIDE;
 #endif // PLATFORM(MAC)
 
     // Message handlers.

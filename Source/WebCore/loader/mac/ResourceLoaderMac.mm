@@ -79,7 +79,7 @@ void ResourceLoader::didReceiveDataArray(CFArrayRef dataArray)
     CFIndex arrayCount = CFArrayGetCount(dataArray);
     for (CFIndex i = 0; i < arrayCount; ++i) {
         CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
-        int dataLen = static_cast<int>(CFDataGetLength(data));
+        unsigned dataLen = static_cast<unsigned>(CFDataGetLength(data));
 
         if (m_options.dataBufferingPolicy == BufferData) {
             if (!m_resourceData)

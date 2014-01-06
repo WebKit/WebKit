@@ -110,7 +110,7 @@ public:
         m_download->didCreateDestination(destinationURI);
     }
 
-    void didReceiveData(ResourceHandle*, const char* data, int length, int /*encodedDataLength*/)
+    void didReceiveData(ResourceHandle*, const char* data, unsigned length, int /*encodedDataLength*/)
     {
         if (m_handleResponseLaterID) {
             g_source_remove(m_handleResponseLaterID);

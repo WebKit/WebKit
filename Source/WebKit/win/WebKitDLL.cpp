@@ -202,7 +202,7 @@ PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
     void* resource = LockResource(res);
     if (!resource)
         return 0;
-    int size = SizeofResource(gInstance, resInfo);
+    unsigned size = SizeofResource(gInstance, resInfo);
 
     return WebCore::SharedBuffer::create(reinterpret_cast<const char*>(resource), size);
 }

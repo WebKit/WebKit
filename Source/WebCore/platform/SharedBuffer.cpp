@@ -75,7 +75,7 @@ SharedBuffer::SharedBuffer()
 {
 }
 
-SharedBuffer::SharedBuffer(size_t size)
+SharedBuffer::SharedBuffer(unsigned size)
     : m_size(size)
     , m_buffer(size)
 #if ENABLE(DISK_IMAGE_CACHE)
@@ -87,7 +87,7 @@ SharedBuffer::SharedBuffer(size_t size)
 {
 }
 
-SharedBuffer::SharedBuffer(const char* data, int size)
+SharedBuffer::SharedBuffer(const char* data, unsigned size)
     : m_size(0)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
@@ -96,14 +96,10 @@ SharedBuffer::SharedBuffer(const char* data, int size)
     , m_notifyMemoryMappedCallbackData(nullptr)
 #endif
 {
-    // FIXME: Use unsigned consistently, and check for invalid casts when calling into SharedBuffer from other code.
-    if (size < 0)
-        CRASH();
-
     append(data, size);
 }
 
-SharedBuffer::SharedBuffer(const unsigned char* data, int size)
+SharedBuffer::SharedBuffer(const unsigned char* data, unsigned size)
     : m_size(0)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
@@ -112,10 +108,6 @@ SharedBuffer::SharedBuffer(const unsigned char* data, int size)
     , m_notifyMemoryMappedCallbackData(nullptr)
 #endif
 {
-    // FIXME: Use unsigned consistently, and check for invalid casts when calling into SharedBuffer from other code.
-    if (size < 0)
-        CRASH();
-
     append(reinterpret_cast<const char*>(data), size);
 }
     

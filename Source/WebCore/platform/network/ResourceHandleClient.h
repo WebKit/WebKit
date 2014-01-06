@@ -67,7 +67,7 @@ namespace WebCore {
 
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { }
         
-        virtual void didReceiveData(ResourceHandle*, const char*, int, int /*encodedDataLength*/) { }
+        virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) { }
         virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedDataLength);
         
         virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) { }
@@ -122,7 +122,7 @@ namespace WebCore {
 
 #elif PLATFORM(MAC)
         virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *response) { return response; }
-        virtual void willStopBufferingData(ResourceHandle*, const char*, int) { }
+        virtual void willStopBufferingData(ResourceHandle*, const char*, unsigned) { }
 #endif
 
     };

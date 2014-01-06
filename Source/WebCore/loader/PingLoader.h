@@ -65,7 +65,7 @@ private:
     PingLoader(Frame*, ResourceRequest&);
 
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) OVERRIDE { delete this; }
-    virtual void didReceiveData(ResourceHandle*, const char*, int, int) OVERRIDE { delete this; }
+    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int) OVERRIDE { delete this; }
     virtual void didFinishLoading(ResourceHandle*, double) OVERRIDE { delete this; }
     virtual void didFail(ResourceHandle*, const ResourceError&) OVERRIDE { delete this; }
     virtual bool shouldUseCredentialStorage(ResourceHandle*)  OVERRIDE { return m_shouldUseCredentialStorage; }

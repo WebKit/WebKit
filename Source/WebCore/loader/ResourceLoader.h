@@ -92,9 +92,9 @@ public:
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(const ResourceResponse&);
-    virtual void didReceiveData(const char*, int, long long encodedDataLength, DataPayloadType);
+    virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType);
     virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
-    void willStopBufferingData(const char*, int);
+    void willStopBufferingData(const char*, unsigned);
     virtual void didFinishLoading(double finishTime);
     virtual void didFail(const ResourceError&);
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
@@ -114,14 +114,14 @@ public:
     virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse) OVERRIDE;
     virtual void didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) OVERRIDE;
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) OVERRIDE;
-    virtual void didReceiveData(ResourceHandle*, const char*, int, int encodedDataLength) OVERRIDE;
+    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int encodedDataLength) OVERRIDE;
     virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedDataLength) OVERRIDE;
     virtual void didFinishLoading(ResourceHandle*, double finishTime) OVERRIDE;
     virtual void didFail(ResourceHandle*, const ResourceError&) OVERRIDE;
     virtual void wasBlocked(ResourceHandle*) OVERRIDE;
     virtual void cannotShowURL(ResourceHandle*) OVERRIDE;
 #if PLATFORM(MAC)
-    virtual void willStopBufferingData(ResourceHandle*, const char* data, int length) OVERRIDE { willStopBufferingData(data, length); }
+    virtual void willStopBufferingData(ResourceHandle*, const char* data, unsigned length) OVERRIDE { willStopBufferingData(data, length); }
 #endif
     virtual bool shouldUseCredentialStorage(ResourceHandle*) OVERRIDE { return shouldUseCredentialStorage(); }
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) OVERRIDE { didReceiveAuthenticationChallenge(challenge); } 
@@ -171,7 +171,7 @@ protected:
 
     bool wasCancelled() const { return m_cancellationStatus >= Cancelled; }
 
-    void didReceiveDataOrBuffer(const char*, int, PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
+    void didReceiveDataOrBuffer(const char*, unsigned, PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
 
     const ResourceLoaderOptions& options() { return m_options; }
 
@@ -184,7 +184,7 @@ private:
     virtual void willCancel(const ResourceError&) = 0;
     virtual void didCancel(const ResourceError&) = 0;
 
-    void addDataOrBuffer(const char*, int, SharedBuffer*, DataPayloadType);
+    void addDataOrBuffer(const char*, unsigned, SharedBuffer*, DataPayloadType);
 
     ResourceRequest m_request;
     ResourceRequest m_originalRequest; // Before redirects.

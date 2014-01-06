@@ -144,7 +144,7 @@ public:
         m_response = response;
     }
 
-    virtual void didReceiveData(ResourceHandle*, const char* /* data */, int /* length */, int)
+    virtual void didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int)
     {
         ASSERT_NOT_REACHED();
     }

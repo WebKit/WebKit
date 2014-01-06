@@ -67,7 +67,7 @@ void SynchronousLoaderClient::didReceiveResponse(ResourceHandle*, const Resource
     m_response = response;
 }
 
-void SynchronousLoaderClient::didReceiveData(ResourceHandle*, const char* data, int length, int /*encodedDataLength*/)
+void SynchronousLoaderClient::didReceiveData(ResourceHandle*, const char* data, unsigned length, int /*encodedDataLength*/)
 {
     m_data.append(data, length);
 }
