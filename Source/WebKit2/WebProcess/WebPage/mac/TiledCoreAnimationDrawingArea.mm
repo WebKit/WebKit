@@ -397,11 +397,6 @@ void TiledCoreAnimationDrawingArea::viewStateDidChange(ViewState::Flags changed)
         else
             suspendPainting();
     }
-
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    if (changed & ViewState::IsLayerWindowServerHosted)
-        setLayerHostingMode(m_webPage->layerHostingMode());
-#endif
 }
 
 void TiledCoreAnimationDrawingArea::suspendPainting()

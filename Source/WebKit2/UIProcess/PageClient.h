@@ -111,10 +111,8 @@ public:
     // Return whether the view is visually idle.
     virtual bool isVisuallyIdle() { return !isViewVisible(); }
 
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    // Return whether the layer is window server hosted.
-    virtual bool isLayerWindowServerHosted() = 0;
-#endif
+    // Return the layer hosting mode for the view.
+    virtual LayerHostingMode viewLayerHostingMode() { return LayerHostingModeDefault; }
 
     virtual void processDidCrash() = 0;
     virtual void didRelaunchProcess() = 0;

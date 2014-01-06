@@ -364,6 +364,21 @@ void PluginView::recreateAndInitialize(PassRefPtr<Plugin> plugin)
     initializePlugin();
 }
 
+void PluginView::setLayerHostingMode(LayerHostingMode layerHostingMode)
+{
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    if (!m_plugin)
+        return;
+
+    if (m_isInitialized)
+        m_plugin->setLayerHostingMode(layerHostingMode);
+    else
+        m_parameters.layerHostingMode = layerHostingMode;
+#else
+    UNUSED_PARAM(layerHostingMode);
+#endif
+}
+
 Frame* PluginView::frame() const
 {
     return m_pluginElement->document().frame();
@@ -491,24 +506,13 @@ void PluginView::viewStateDidChange(ViewState::Flags changed)
 #if PLATFORM(MAC)
 void PluginView::platformViewStateDidChange(ViewState::Flags changed)
 {
-    if (!m_plugin)
+    if (!m_plugin || !m_isInitialized)
         return;
-
-    if (!m_isInitialized) {
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-        m_parameters.layerHostingMode = m_webPage->layerHostingMode();
-#endif
-        return;
-    }
 
     if (changed & ViewState::IsVisible)
         m_plugin->windowVisibilityChanged(m_webPage->isVisible());
     if (changed & ViewState::WindowIsActive)
         m_plugin->windowFocusChanged(m_webPage->windowIsFocused());
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    if (changed & ViewState::IsLayerWindowServerHosted)
-        m_plugin->setLayerHostingMode(m_webPage->layerHostingMode());
-#endif
 }
 
 void PluginView::setDeviceScaleFactor(float scaleFactor)

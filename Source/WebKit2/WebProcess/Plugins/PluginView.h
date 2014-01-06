@@ -26,10 +26,10 @@
 #ifndef PluginView_h
 #define PluginView_h
 
+#include "LayerTreeContext.h"
 #include "NPRuntimeObjectMap.h"
 #include "Plugin.h"
 #include "PluginController.h"
-#include "ViewState.h"
 #include "WebFrame.h"
 #include <WebCore/FindOptions.h>
 #include <WebCore/Image.h>
@@ -38,6 +38,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/Timer.h>
+#include <WebCore/ViewState.h>
 #include <wtf/Deque.h>
 #include <wtf/RunLoop.h>
 
@@ -69,10 +70,11 @@ public:
     void manualLoadDidFinishLoading();
     void manualLoadDidFail(const WebCore::ResourceError&);
 
-    void viewStateDidChange(ViewState::Flags changed);
+    void viewStateDidChange(WebCore::ViewState::Flags changed);
+    void setLayerHostingMode(LayerHostingMode);
 
 #if PLATFORM(MAC)
-    void platformViewStateDidChange(ViewState::Flags changed);
+    void platformViewStateDidChange(WebCore::ViewState::Flags changed);
     void setDeviceScaleFactor(float);
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates);
     bool sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput);

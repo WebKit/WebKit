@@ -66,9 +66,7 @@ private:
     virtual bool isViewVisible();
     virtual bool isViewInWindow();
     virtual bool isVisuallyIdle();
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    virtual bool isLayerWindowServerHosted();
-#endif
+    virtual LayerHostingMode viewLayerHostingMode() OVERRIDE;
     virtual ColorSpaceData colorSpace() OVERRIDE;
     virtual void setAcceleratedCompositingRootLayer(CALayer *) OVERRIDE;
 
@@ -164,9 +162,6 @@ private:
 #endif
 #if USE(DICTATION_ALTERNATIVES)
     OwnPtr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
-#endif
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    bool m_isLayerWindowServerHosted;
 #endif
 };
 

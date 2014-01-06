@@ -31,7 +31,6 @@
 #import "DataReference.h"
 #import "DictionaryPopupInfo.h"
 #import "FindIndicator.h"
-#import "LayerTreeContext.h"
 #import "NativeWebKeyboardEvent.h"
 #import "StringUtilities.h"
 #import "WKAPICast.h"
@@ -129,9 +128,6 @@ PageClientImpl::PageClientImpl(WKView* wkView)
 #if USE(DICTATION_ALTERNATIVES)
     , m_alternativeTextUIController(adoptPtr(new AlternativeTextUIController))
 #endif
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    , m_isLayerWindowServerHosted(true)
-#endif
 {
 }
 
@@ -220,16 +216,14 @@ bool PageClientImpl::isVisuallyIdle()
     return WindowServerConnection::shared().applicationWindowModificationsHaveStopped() || !isViewVisible();
 }
 
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-bool PageClientImpl::isLayerWindowServerHosted()
+LayerHostingMode PageClientImpl::viewLayerHostingMode()
 {
-    // Only update m_isLayerWindowServerHosted when the view is in a window - otherwise just report the last value.
-    if ([m_wkView window])
-        m_isLayerWindowServerHosted = [[m_wkView window] _hostsLayersInWindowServer];
-
-    return m_isLayerWindowServerHosted;
-}
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    if ([m_wkView window] && [[m_wkView window] _hostsLayersInWindowServer])
+        return LayerHostingModeInWindowServer;
 #endif
+    return LayerHostingModeDefault;
+}
 
 void PageClientImpl::viewWillMoveToAnotherWindow()
 {

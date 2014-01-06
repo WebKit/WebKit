@@ -245,6 +245,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_pageScaleFactor(1)
     , m_intrinsicDeviceScaleFactor(1)
     , m_customDeviceScaleFactor(0)
+    , m_layerHostingMode(LayerHostingModeDefault)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
     , m_areMemoryCacheClientCallsEnabled(true)
@@ -310,6 +311,10 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_scrollPinningBehavior(DoNotPin)
 {
     updateViewState();
+
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    m_layerHostingMode = m_viewState & ViewState::IsInWindow ? m_pageClient.viewLayerHostingMode() : LayerHostingModeInWindowServer;
+#endif
 
     platformInitialize();
 
@@ -936,10 +941,6 @@ void WebPageProxy::updateViewState(ViewState::Flags flagsToUpdate)
         m_viewState |= ViewState::IsInWindow;
     if (flagsToUpdate & ViewState::IsVisuallyIdle && m_pageClient.isVisuallyIdle())
         m_viewState |= ViewState::IsVisuallyIdle;
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    if (flagsToUpdate & ViewState::IsLayerWindowServerHosted && m_pageClient.isLayerWindowServerHosted())
-        m_viewState |= ViewState::IsLayerWindowServerHosted;
-#endif
 }
 
 void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsReplyOrNot wantsReply)
@@ -947,9 +948,6 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     if (!isValid())
         return;
 
-    // If the in-window state may have changed, then so may the layer hosting.
-    if (mayHaveChanged & ViewState::IsInWindow)
-        mayHaveChanged |= ViewState::IsLayerWindowServerHosted;
     // If the visibility state may have changed, then so may the visually idle.
     if (mayHaveChanged & ViewState::IsVisible)
         mayHaveChanged |= ViewState::IsVisuallyIdle;
@@ -966,17 +964,22 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     if (changed & ViewState::IsVisuallyIdle)
         m_process->pageSuppressibilityChanged(this);
 
-    if (changed & ViewState::IsVisible) {
-        if (!isViewVisible()) {
-            // If we've started the responsiveness timer as part of telling the web process to update the backing store
-            // state, it might not send back a reply (since it won't paint anything if the web page is hidden) so we
-            // stop the unresponsiveness timer here.
-            m_process->responsivenessTimer()->stop();
+    // If we've started the responsiveness timer as part of telling the web process to update the backing store
+    // state, it might not send back a reply (since it won't paint anything if the web page is hidden) so we
+    // stop the unresponsiveness timer here.
+    if ((changed & ViewState::IsVisible) && !isViewVisible())
+        m_process->responsivenessTimer()->stop();
+
+    if ((mayHaveChanged & ViewState::IsInWindow) && (m_viewState & ViewState::IsInWindow)) {
+        LayerHostingMode layerHostingMode = m_pageClient.viewLayerHostingMode();
+        if (m_layerHostingMode != layerHostingMode) {
+            m_layerHostingMode = layerHostingMode;
+            m_process->send(Messages::WebPage::SetLayerHostingMode(layerHostingMode), m_pageID);
         }
     }
 
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
-    if (mayHaveChanged & ViewState::IsInWindow && !(m_viewState & ViewState::IsInWindow)) {
+    if ((mayHaveChanged & ViewState::IsInWindow) && !(m_viewState & ViewState::IsInWindow)) {
         // When leaving the current page, close the popover color well.
         if (m_colorPicker)
             endColorPicker();
@@ -3888,6 +3891,7 @@ void WebPageProxy::initializeCreationParameters()
     m_creationParameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;
     m_creationParameters.scrollPinningBehavior = m_scrollPinningBehavior;
     m_creationParameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
+    m_creationParameters.layerHostingMode = m_layerHostingMode;
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     m_creationParameters.colorSpace = m_pageClient.colorSpace();

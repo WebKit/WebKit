@@ -60,6 +60,7 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << autoSizingShouldExpandToViewHeight;
     encoder.encodeEnum(scrollPinningBehavior);
     encoder << backgroundExtendsBeyondPage;
+    encoder.encodeEnum(layerHostingMode);
 
 #if PLATFORM(MAC)
     encoder << colorSpace;
@@ -121,6 +122,8 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
     if (!decoder.decodeEnum(parameters.scrollPinningBehavior))
         return false;
     if (!decoder.decode(parameters.backgroundExtendsBeyondPage))
+        return false;
+    if (!decoder.decodeEnum(parameters.layerHostingMode))
         return false;
     
 #if PLATFORM(MAC)

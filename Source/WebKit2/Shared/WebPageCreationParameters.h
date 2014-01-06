@@ -27,8 +27,8 @@
 #define WebPageCreationParameters_h
 
 #include "DrawingAreaInfo.h"
+#include "LayerTreeContext.h"
 #include "SessionState.h"
-#include "ViewState.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageGroupData.h"
 #include "WebPreferencesStore.h"
@@ -36,6 +36,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/ViewState.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -55,7 +56,7 @@ struct WebPageCreationParameters {
 
     WebCore::IntSize viewSize;
 
-    ViewState::Flags viewState;
+    WebCore::ViewState::Flags viewState;
     
     WebPreferencesStore store;
     DrawingAreaType drawingAreaType;
@@ -97,6 +98,8 @@ struct WebPageCreationParameters {
     WebCore::ScrollPinningBehavior scrollPinningBehavior;
 
     bool backgroundExtendsBeyondPage;
+
+    LayerHostingMode layerHostingMode;
 
 #if PLATFORM(MAC)
     ColorSpaceData colorSpace;

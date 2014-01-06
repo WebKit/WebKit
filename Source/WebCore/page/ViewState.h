@@ -26,7 +26,7 @@
 #ifndef ViewState_h
 #define ViewState_h
 
-namespace WebKit {
+namespace WebCore {
 
 struct ViewState {
     enum {
@@ -35,15 +35,14 @@ struct ViewState {
         IsVisible = 1 << 2,
         IsInWindow = 1 << 3,
         IsVisuallyIdle = 1 << 4,
-        IsLayerWindowServerHosted = 1 << 5,
     };
 
     typedef unsigned Flags;
 
     static const Flags NoFlags = 0;
-    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsInWindow | IsLayerWindowServerHosted | IsVisuallyIdle;
+    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsInWindow | IsVisuallyIdle;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ViewState_h

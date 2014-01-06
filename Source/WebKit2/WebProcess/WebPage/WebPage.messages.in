@@ -23,6 +23,7 @@
 messages -> WebPage LegacyReceiver {
     SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event)
     SetViewState(unsigned viewState, bool wantsDidUpdateViewState)
+    SetLayerHostingMode(unsigned layerHostingMode)
 
     SetDrawsBackground(bool drawsBackground)
     SetDrawsTransparentBackground(bool drawsTransparentBackground)

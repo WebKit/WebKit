@@ -1,3 +1,67 @@
+2014-01-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Move ViewState to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=126488
+
+        Reviewed by Anders Carlson.
+
+        This change also partial reverts handling of LayerHostingMode, making this
+        a separate message again. With hindsight the new way of doing this wasn't
+        in all ways simpler, and it won't make sense to move this to WebCore.
+
+        * Shared/ViewState.h: Removed.
+            - Moved to WebCore.
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+            - Added layerHostingMode.
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::viewLayerHostingMode):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::viewLayerHostingMode):
+            - Revert isLayerWindowServerHosted -> viewLayerHostingMode.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+            - Added back m_layerHostingMode.
+        (WebKit::WebPageProxy::updateViewState):
+            - Removed IsLayerWindowServerHosted from ViewState.
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - Added SetLayerHostingMode message.
+        (WebKit::WebPageProxy::initializeCreationParameters):
+            - Pass layerHostingMode.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isInWindow):
+        (WebKit::WebPageProxy::isViewVisible):
+            - ViewState moved to WebCore.
+        * WebKit2.xcodeproj/project.pbxproj:
+            - Removed ViewState.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setLayerHostingMode):
+        (WebKit::PluginView::platformViewStateDidChange):
+            - Separated setLayerHostingMode from platformViewStateDidChange.
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::viewStateDidChange):
+        (WebKit::DrawingArea::setLayerHostingMode):
+            - Added virtual function, overridden in TiledCoreAnimationDrawingArea.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setLayerHostingMode):
+            - Separated setLayerHostingMode from platformViewStateDidChange.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isVisible):
+        (WebKit::WebPage::layerHostingMode):
+            - ViewState moved to WebCore.
+        * WebProcess/WebPage/WebPage.messages.in:
+            - Added SetLayerHostingMode message.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::viewStateDidChange):
+            - viewStateDidChange no longer calls setLayerHostingMode (this is called by WebPage).
+
 2014-01-06  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Parallel builds still fail when building WebKit2 GObject API unit tests

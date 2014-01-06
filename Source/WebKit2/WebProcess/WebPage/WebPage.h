@@ -45,7 +45,6 @@
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
-#include "ViewState.h"
 #include "WebUndoStep.h"
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DragData.h>
@@ -58,6 +57,7 @@
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/TextChecking.h>
 #include <WebCore/UserActivity.h>
+#include <WebCore/ViewState.h>
 #include <WebCore/WebCoreKeyboardUIMode.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -347,18 +347,12 @@ public:
     void addPluginView(PluginView*);
     void removePluginView(PluginView*);
 
-    bool isVisible() const { return m_viewState & ViewState::IsVisible; }
+    bool isVisible() const { return m_viewState & WebCore::ViewState::IsVisible; }
+
+    LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
+    void setLayerHostingMode(unsigned);
 
 #if PLATFORM(MAC)
-    LayerHostingMode layerHostingMode() const
-    {
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-        return m_viewState & ViewState::IsLayerWindowServerHosted ? LayerHostingModeInWindowServer : LayerHostingModeDefault;
-#else
-        return LayerHostingModeDefault;
-#endif
-    }
-
     void updatePluginsActiveAndFocusedState();
     const WebCore::FloatRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
     const WebCore::FloatRect& windowFrameInUnflippedScreenCoordinates() const { return m_windowFrameInUnflippedScreenCoordinates; }
@@ -732,7 +726,7 @@ private:
     void setWindowResizerSize(const WebCore::IntSize&);
     void setIsInWindow(bool);
     void setIsVisuallyIdle(bool);
-    void setViewState(ViewState::Flags, bool wantsDidUpdateViewState);
+    void setViewState(WebCore::ViewState::Flags, bool wantsDidUpdateViewState);
     void validateCommand(const String&, uint64_t);
     void executeEditCommand(const String&);
 
@@ -913,6 +907,9 @@ private:
     RunLoop::Timer<WebPage> m_determinePrimarySnapshottedPlugInTimer;
 #endif
 
+    // The layer hosting mode.
+    LayerHostingMode m_layerHostingMode;
+
 #if PLATFORM(MAC)
     bool m_pdfPluginEnabled;
 
@@ -1045,7 +1042,7 @@ private:
 
     bool m_useAsyncScrolling;
 
-    ViewState::Flags m_viewState;
+    WebCore::ViewState::Flags m_viewState;
 
     UserActivity m_processSuppressionDisabledByWebPreference;
 };

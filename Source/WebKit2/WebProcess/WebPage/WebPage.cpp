@@ -241,6 +241,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_numberOfPrimarySnapshotDetectionAttempts(0)
     , m_determinePrimarySnapshottedPlugInTimer(RunLoop::main(), this, &WebPage::determinePrimarySnapshottedPlugInTimerFired)
 #endif
+    , m_layerHostingMode(parameters.layerHostingMode)
 #if PLATFORM(MAC)
     , m_pdfPluginEnabled(false)
     , m_hasCachedWindowFrame(false)
@@ -2090,6 +2091,16 @@ void WebPage::setViewState(ViewState::Flags viewState, bool wantsDidUpdateViewSt
 
     if (wantsDidUpdateViewState)
         m_sendDidUpdateViewStateTimer.startOneShot(0);
+}
+
+void WebPage::setLayerHostingMode(unsigned layerHostingMode)
+{
+    m_layerHostingMode = static_cast<LayerHostingMode>(layerHostingMode);
+
+    m_drawingArea->setLayerHostingMode(m_layerHostingMode);
+
+    for (auto* pluginView : m_pluginViews)
+        pluginView->setLayerHostingMode(m_layerHostingMode);
 }
 
 void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)
