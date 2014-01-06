@@ -1158,6 +1158,9 @@
     <ClCompile Include="..\platform\Timer.cpp">
       <Filter>platform</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\UserActivity.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\UUID.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -8226,6 +8229,9 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\TreeShared.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\UserActivity.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\UUID.h">
