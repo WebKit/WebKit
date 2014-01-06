@@ -18,6 +18,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/ForwardingHeaders
     ${WEBCORE_DIR}/accessibility/atk
     ${WEBCORE_DIR}/platform/cairo
+    ${WEBCORE_DIR}/platform/geoclue
     ${WEBCORE_DIR}/platform/graphics/cairo
     ${WEBCORE_DIR}/platform/graphics/gtk
     ${WEBCORE_DIR}/platform/graphics/opentype

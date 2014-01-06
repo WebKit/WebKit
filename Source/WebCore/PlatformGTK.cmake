@@ -3,6 +3,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/editing/atk"
     "${WEBCORE_DIR}/page/gtk"
     "${WEBCORE_DIR}/platform/cairo"
+    "${WEBCORE_DIR}/platform/geoclue"
     "${WEBCORE_DIR}/platform/gtk"
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/graphics/egl"
@@ -15,6 +16,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/linux"
     "${WEBCORE_DIR}/platform/mediastream/gstreamer"
+    "${WEBCORE_DIR}/platform/mock/mediasource"
     "${WEBCORE_DIR}/platform/network/gtk"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/gtk"
@@ -36,6 +38,8 @@ list(APPEND WebCore_SOURCES
     platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
     platform/audio/gstreamer/FFTFrameGStreamer.cpp
     platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
+
+    platform/geoclue/GeolocationProviderGeoclue.cpp
 
     platform/graphics/GraphicsContext3DPrivate.cpp
     platform/graphics/OpenGLShims.cpp
@@ -95,6 +99,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
 
     platform/graphics/opentype/OpenTypeVerticalData.cpp
+
+    platform/gtk/GamepadsGtk.cpp
 
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
 
@@ -187,7 +193,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/FileSystemGtk.cpp
     platform/gtk/GOwnPtrGtk.cpp
     platform/gtk/GRefPtrGtk.cpp
-    platform/gtk/GamepadsGtk.cpp
     platform/gtk/GtkClickCounter.cpp
     platform/gtk/GtkDragAndDropHelper.cpp
     platform/gtk/GtkInputMethodFilter.cpp
@@ -290,10 +295,12 @@ list(APPEND WebCore_LIBRARIES
     ${ENCHANT_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
     ${FREETYPE_LIBRARIES}
+    ${GEOCLUE_LIBRARIES}
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
     ${GLIB_LIBRARIES}
+    ${GUDEV_LIBRARIES}
     ${HARFBUZZ_LIBRARIES}
     ${ICU_LIBRARIES}
     ${JPEG_LIBRARIES}
@@ -313,19 +320,22 @@ list(APPEND WebCore_LIBRARIES
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${ATK_INCLUDE_DIRS}
-    ${ENCHANT_INCLUDE_DIRS}
     ${CAIRO_INCLUDE_DIRS}
+    ${ENCHANT_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
+    ${GEOCLUE_INCLUDE_DIRS}
+    ${GIO_UNIX_INCLUDE_DIRS}
+    ${GLIB_INCLUDE_DIRS}
+    ${GUDEV_INCLUDE_DIRS}
+    ${HARFBUZZ_INCLUDE_DIRS}
     ${ICU_INCLUDE_DIRS}
+    ${LIBSOUP_INCLUDE_DIRS}
     ${LIBXML2_INCLUDE_DIR}
     ${LIBXSLT_INCLUDE_DIR}
     ${SQLITE_INCLUDE_DIR}
-    ${GLIB_INCLUDE_DIRS}
-    ${LIBSOUP_INCLUDE_DIRS}
-    ${ZLIB_INCLUDE_DIRS}
-    ${HARFBUZZ_INCLUDE_DIRS}
     ${WEBP_INCLUDE_DIRS}
     ${XT_INCLUDE_DIRS}
+    ${ZLIB_INCLUDE_DIRS}
 )
 
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)

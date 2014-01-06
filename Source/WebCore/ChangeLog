@@ -1,3 +1,16 @@
+2014-01-06  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] [GTK] Fix the build for the WebKitGTK+ developer configuration
+        https://bugs.webkit.org/show_bug.cgi?id=126505
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Add missing IDLS and source files to the lists.
+        * PlatformGTK.cmake: Add missing include directories and source files to the lists.
+        Use the GeoClue, GUdev, and gio-unix include paths and libraries and sort the list
+        of WebCore include directories.
+        * UseJSC.cmake: Align the sourced list with the contents of the bindings/js directory.
+
 2014-01-06  Gavin Barraclough  <barraclough@apple.com>
 
         Refactor NSActivity handling code from ChildProcess to UserActivity

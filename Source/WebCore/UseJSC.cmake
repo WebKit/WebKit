@@ -28,7 +28,13 @@ list(APPEND WebCore_SOURCES
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/Dictionary.cpp
     bindings/js/GCController.cpp
+    bindings/js/IDBBindingUtilities.cpp
     bindings/js/JSAttrCustom.cpp
+    bindings/js/JSAudioBufferSourceNodeCustom.cpp
+    bindings/js/JSAudioContextCustom.cpp
+    bindings/js/JSAudioTrackCustom.cpp
+    bindings/js/JSAudioTrackListCustom.cpp
+    bindings/js/JSBiquadFilterNodeCustom.cpp
     bindings/js/JSBlobCustom.cpp
     bindings/js/JSCDATASectionCustom.cpp
     bindings/js/JSCSSRuleCustom.cpp
@@ -40,9 +46,15 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSCanvasRenderingContextCustom.cpp
     bindings/js/JSClipboardCustom.cpp
     bindings/js/JSCommandLineAPIHostCustom.cpp
+    bindings/js/JSCryptoAlgorithmBuilder.cpp
+    bindings/js/JSCryptoAlgorithmDictionary.cpp
     bindings/js/JSCryptoCustom.cpp
+    bindings/js/JSCryptoKeyCustom.cpp
+    bindings/js/JSCryptoKeyPairCustom.cpp
+    bindings/js/JSCryptoKeySerializationJWK.cpp
+    bindings/js/JSCryptoOperationData.cpp
+    bindings/js/JSCustomSQLStatementErrorCallback.cpp
     bindings/js/JSCustomXPathNSResolver.cpp
-    bindings/js/JSDictionary.cpp
     bindings/js/JSDOMBinding.cpp
     bindings/js/JSDOMFormDataCustom.cpp
     bindings/js/JSDOMGlobalObject.cpp
@@ -50,14 +62,17 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSDOMMimeTypeArrayCustom.cpp
     bindings/js/JSDOMPluginArrayCustom.cpp
     bindings/js/JSDOMPluginCustom.cpp
+    bindings/js/JSDOMPromise.cpp
     bindings/js/JSDOMStringListCustom.cpp
     bindings/js/JSDOMStringMapCustom.cpp
     bindings/js/JSDOMWindowBase.cpp
     bindings/js/JSDOMWindowCustom.cpp
     bindings/js/JSDOMWindowShell.cpp
     bindings/js/JSDOMWrapper.cpp
+    bindings/js/JSDedicatedWorkerGlobalScopeCustom.cpp
     bindings/js/JSDeviceMotionEventCustom.cpp
     bindings/js/JSDeviceOrientationEventCustom.cpp
+    bindings/js/JSDictionary.cpp
     bindings/js/JSDocumentCustom.cpp
     bindings/js/JSElementCustom.cpp
     bindings/js/JSErrorHandler.cpp
@@ -65,6 +80,7 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSEventListener.cpp
     bindings/js/JSEventTargetCustom.cpp
     bindings/js/JSExceptionBase.cpp
+    bindings/js/JSFileReaderCustom.cpp
     bindings/js/JSGeolocationCustom.cpp
     bindings/js/JSHTMLAllCollectionCustom.cpp
     bindings/js/JSHTMLAppletElementCustom.cpp
@@ -85,6 +101,9 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSHTMLSelectElementCustom.cpp
     bindings/js/JSHTMLTemplateElementCustom.cpp
     bindings/js/JSHistoryCustom.cpp
+    bindings/js/JSIDBAnyCustom.cpp
+    bindings/js/JSIDBDatabaseCustom.cpp
+    bindings/js/JSIDBObjectStoreCustom.cpp
     bindings/js/JSImageConstructor.cpp
     bindings/js/JSImageDataCustom.cpp
     bindings/js/JSInjectedScriptHostCustom.cpp
@@ -94,6 +113,8 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSLazyEventListener.cpp
     bindings/js/JSLocationCustom.cpp
     bindings/js/JSMainThreadExecState.cpp
+    bindings/js/JSMediaSourceStatesCustom.cpp
+    bindings/js/JSMediaStreamCapabilitiesCustom.cpp
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp
     bindings/js/JSMessagePortCustom.cpp
@@ -105,16 +126,43 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSNodeFilterCustom.cpp
     bindings/js/JSNodeIteratorCustom.cpp
     bindings/js/JSNodeListCustom.cpp
+    bindings/js/JSOscillatorNodeCustom.cpp
+    bindings/js/JSPannerNodeCustom.cpp
+    bindings/js/JSPerformanceEntryCustom.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSPopStateEventCustom.cpp
+    bindings/js/JSRTCIceCandidateCustom.cpp
+    bindings/js/JSRTCPeerConnectionCustom.cpp
+    bindings/js/JSRTCSessionDescriptionCustom.cpp
+    bindings/js/JSRTCStatsResponseCustom.cpp
+    bindings/js/JSRequestAnimationFrameCallbackCustom.cpp
+    bindings/js/JSSQLResultSetRowListCustom.cpp
+    bindings/js/JSSQLTransactionCustom.cpp
+    bindings/js/JSSQLTransactionSyncCustom.cpp
+    bindings/js/JSSVGElementInstanceCustom.cpp
+    bindings/js/JSSVGLengthCustom.cpp
+    bindings/js/JSSVGPathSegCustom.cpp
+    bindings/js/JSSharedWorkerCustom.cpp
     bindings/js/JSStorageCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSStyleSheetListCustom.cpp
+    bindings/js/JSSubtleCryptoCustom.cpp
     bindings/js/JSTextCustom.cpp
+    bindings/js/JSTextTrackCueCustom.cpp
+    bindings/js/JSTextTrackCustom.cpp
+    bindings/js/JSTextTrackListCustom.cpp
     bindings/js/JSTouchCustom.cpp
     bindings/js/JSTouchListCustom.cpp
+    bindings/js/JSTrackCustom.cpp
+    bindings/js/JSTrackEventCustom.cpp
     bindings/js/JSTreeWalkerCustom.cpp
+    bindings/js/JSVideoTrackCustom.cpp
+    bindings/js/JSVideoTrackListCustom.cpp
+    bindings/js/JSWebGLRenderingContextCustom.cpp
     bindings/js/JSWebKitPointCustom.cpp
+    bindings/js/JSWorkerCustom.cpp
+    bindings/js/JSWorkerGlobalScopeBase.cpp
+    bindings/js/JSWorkerGlobalScopeCustom.cpp
     bindings/js/JSXMLHttpRequestCustom.cpp
     bindings/js/JSXPathResultCustom.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
@@ -131,6 +179,8 @@ list(APPEND WebCore_SOURCES
     bindings/js/ScriptState.cpp
     bindings/js/SerializedScriptValue.cpp
     bindings/js/WebCoreTypedArrayController.cpp
+    bindings/js/WorkerScriptController.cpp
+    bindings/js/WorkerScriptDebugServer.cpp
 
     bridge/IdentifierRep.cpp
     bridge/NP_jsobject.cpp

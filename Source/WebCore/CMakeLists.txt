@@ -549,9 +549,11 @@ set(WebCore_IDL_FILES
     page/History.idl
     page/Location.idl
     page/Navigator.idl
-    page/Performance.idl
     page/PerformanceEntry.idl
     page/PerformanceEntryList.idl
+    page/Performance.idl
+    page/PerformanceMark.idl
+    page/PerformanceMeasure.idl
     page/PerformanceNavigation.idl
     page/PerformanceResourceTiming.idl
     page/PerformanceTiming.idl
@@ -830,8 +832,10 @@ set(WebCore_SOURCES
     Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp
     Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp
 
+    Modules/mediasource/DOMURLMediaSource.cpp
     Modules/mediasource/MediaSource.cpp
     Modules/mediasource/MediaSourceRegistry.cpp
+    Modules/mediasource/SampleMap.cpp
     Modules/mediasource/SourceBuffer.cpp
     Modules/mediasource/SourceBufferList.cpp
     Modules/mediasource/VideoPlaybackQuality.cpp
@@ -1411,6 +1415,7 @@ set(WebCore_SOURCES
     html/HTMLMapElement.cpp
     html/HTMLMarqueeElement.cpp
     html/HTMLMediaElement.cpp
+    html/HTMLMediaSource.cpp
     html/HTMLMenuElement.cpp
     html/HTMLMetaElement.cpp
     html/HTMLMeterElement.cpp
@@ -1765,6 +1770,7 @@ set(WebCore_SOURCES
     page/PerformanceNavigation.cpp
     page/PerformanceResourceTiming.cpp
     page/PerformanceTiming.cpp
+    page/PerformanceUserTiming.cpp
     page/PrintContext.cpp
     page/Screen.cpp
     page/SecurityOrigin.cpp
@@ -2997,6 +3003,12 @@ set(WebCoreTestSupport_IDL_FILES
 
 set(WebCoreTestSupport_SOURCES
     platform/mock/PlatformSpeechSynthesizerMock.cpp
+
+    platform/mock/mediasource/MockBox.cpp
+    platform/mock/mediasource/MockMediaPlayerMediaSource.cpp
+    platform/mock/mediasource/MockMediaSourcePrivate.cpp
+    platform/mock/mediasource/MockSourceBufferPrivate.cpp
+    platform/mock/mediasource/MockTracks.cpp
 
     testing/InternalSettings.cpp
     testing/Internals.cpp
