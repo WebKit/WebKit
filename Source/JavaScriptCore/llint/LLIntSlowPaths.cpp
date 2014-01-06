@@ -119,7 +119,6 @@ namespace JSC { namespace LLInt {
         LLINT_END_IMPL();                       \
     } while (false)
 
-#if ENABLE(VALUE_PROFILER)
 #define LLINT_RETURN_PROFILED(opcode, value) do {               \
         JSValue __rp_returnValue = (value);                     \
         LLINT_CHECK_EXCEPTION();                                \
@@ -132,13 +131,6 @@ namespace JSC { namespace LLInt {
         pc[OPCODE_LENGTH(opcode) - 1].u.profile->m_buckets[0] = \
         JSValue::encode(value);                  \
     } while (false)
-
-#else // ENABLE(VALUE_PROFILER)
-#define LLINT_RETURN_PROFILED(opcode, value) LLINT_RETURN(value)
-
-#define LLINT_PROFILE_VALUE(opcode, value) do { } while (false)
-
-#endif // ENABLE(VALUE_PROFILER)
 
 #define LLINT_CALL_END_IMPL(exec, callTarget) LLINT_RETURN_TWO((callTarget), (exec))
 
@@ -565,16 +557,12 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         && isJSArray(baseValue)
         && ident == exec->propertyNames().length) {
         pc[0].u.opcode = LLInt::getOpcode(llint_op_get_array_length);
-#if ENABLE(VALUE_PROFILER)
         ArrayProfile* arrayProfile = codeBlock->getOrAddArrayProfile(pc - codeBlock->instructions().begin());
         arrayProfile->observeStructure(baseValue.asCell()->structure());
         pc[4].u.arrayProfile = arrayProfile;
-#endif
     }
 
-#if ENABLE(VALUE_PROFILER)    
     pc[OPCODE_LENGTH(op_get_by_id) - 1].u.profile->m_buckets[0] = JSValue::encode(result);
-#endif
     LLINT_END();
 }
 

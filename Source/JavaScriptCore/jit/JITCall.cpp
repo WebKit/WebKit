@@ -48,7 +48,7 @@ namespace JSC {
 void JIT::emitPutCallResult(Instruction* instruction)
 {
     int dst = instruction[1].u.operand;
-    emitValueProfilingSite(regT4);
+    emitValueProfilingSite();
     emitPutVirtualRegister(dst);
 }
 

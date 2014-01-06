@@ -259,9 +259,7 @@ end
 macro arrayProfile(structureAndIndexingType, profile, scratch)
     const structure = structureAndIndexingType
     const indexingType = structureAndIndexingType
-    if VALUE_PROFILER
-        storep structure, ArrayProfile::m_lastSeenStructure[profile]
-    end
+    storep structure, ArrayProfile::m_lastSeenStructure[profile]
     loadb Structure::m_indexingType[structure], indexingType
 end
 
@@ -343,37 +341,35 @@ end
 # Expects that CodeBlock is in t1, which is what prologue() leaves behind.
 # Must call dispatch(0) after calling this.
 macro functionInitialization(profileArgSkip)
-    if VALUE_PROFILER
-        # Profile the arguments. Unfortunately, we have no choice but to do this. This
-        # code is pretty horrendous because of the difference in ordering between
-        # arguments and value profiles, the desire to have a simple loop-down-to-zero
-        # loop, and the desire to use only three registers so as to preserve the PC and
-        # the code block. It is likely that this code should be rewritten in a more
-        # optimal way for architectures that have more than five registers available
-        # for arbitrary use in the interpreter.
-        loadi CodeBlock::m_numParameters[t1], t0
-        addp -profileArgSkip, t0 # Use addi because that's what has the peephole
-        assert(macro (ok) bpgteq t0, 0, ok end)
-        btpz t0, .argumentProfileDone
-        loadp CodeBlock::m_argumentValueProfiles + VectorBufferOffset[t1], t3
-        mulp sizeof ValueProfile, t0, t2 # Aaaaahhhh! Need strength reduction!
-        lshiftp 3, t0
-        addp t2, t3
-    .argumentProfileLoop:
-        if JSVALUE64
-            loadq ThisArgumentOffset - 8 + profileArgSkip * 8[cfr, t0], t2
-            subp sizeof ValueProfile, t3
-            storeq t2, profileArgSkip * sizeof ValueProfile + ValueProfile::m_buckets[t3]
-        else
-            loadi ThisArgumentOffset + TagOffset - 8 + profileArgSkip * 8[cfr, t0], t2
-            subp sizeof ValueProfile, t3
-            storei t2, profileArgSkip * sizeof ValueProfile + ValueProfile::m_buckets + TagOffset[t3]
-            loadi ThisArgumentOffset + PayloadOffset - 8 + profileArgSkip * 8[cfr, t0], t2
-            storei t2, profileArgSkip * sizeof ValueProfile + ValueProfile::m_buckets + PayloadOffset[t3]
-        end
-        baddpnz -8, t0, .argumentProfileLoop
-    .argumentProfileDone:
+    # Profile the arguments. Unfortunately, we have no choice but to do this. This
+    # code is pretty horrendous because of the difference in ordering between
+    # arguments and value profiles, the desire to have a simple loop-down-to-zero
+    # loop, and the desire to use only three registers so as to preserve the PC and
+    # the code block. It is likely that this code should be rewritten in a more
+    # optimal way for architectures that have more than five registers available
+    # for arbitrary use in the interpreter.
+    loadi CodeBlock::m_numParameters[t1], t0
+    addp -profileArgSkip, t0 # Use addi because that's what has the peephole
+    assert(macro (ok) bpgteq t0, 0, ok end)
+    btpz t0, .argumentProfileDone
+    loadp CodeBlock::m_argumentValueProfiles + VectorBufferOffset[t1], t3
+    mulp sizeof ValueProfile, t0, t2 # Aaaaahhhh! Need strength reduction!
+    lshiftp 3, t0
+    addp t2, t3
+.argumentProfileLoop:
+    if JSVALUE64
+        loadq ThisArgumentOffset - 8 + profileArgSkip * 8[cfr, t0], t2
+        subp sizeof ValueProfile, t3
+        storeq t2, profileArgSkip * sizeof ValueProfile + ValueProfile::m_buckets[t3]
+    else
+        loadi ThisArgumentOffset + TagOffset - 8 + profileArgSkip * 8[cfr, t0], t2
+        subp sizeof ValueProfile, t3
+        storei t2, profileArgSkip * sizeof ValueProfile + ValueProfile::m_buckets + TagOffset[t3]
+        loadi ThisArgumentOffset + PayloadOffset - 8 + profileArgSkip * 8[cfr, t0], t2
+        storei t2, profileArgSkip * sizeof ValueProfile + ValueProfile::m_buckets + PayloadOffset[t3]
     end
+    baddpnz -8, t0, .argumentProfileLoop
+.argumentProfileDone:
         
     # Check stack height.
     loadi CodeBlock::m_numCalleeRegisters[t1], t0

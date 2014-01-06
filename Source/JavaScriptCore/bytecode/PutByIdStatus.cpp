@@ -88,7 +88,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
-#if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
+#if ENABLE(JIT)
     if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex))
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
     

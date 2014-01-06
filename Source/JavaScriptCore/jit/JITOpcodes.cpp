@@ -1071,7 +1071,7 @@ void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
 
     signExtend32ToPtr(regT1, regT1);
     load64(BaseIndex(callFrameRegister, regT1, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT0);
-    emitValueProfilingSite(regT4);
+    emitValueProfilingSite();
     emitPutVirtualRegister(dst, regT0);
 }
 

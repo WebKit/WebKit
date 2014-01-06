@@ -496,11 +496,9 @@ macro writeBarrier(tag, payload)
 end
 
 macro valueProfile(tag, payload, operand, scratch)
-    if VALUE_PROFILER
-        loadp operand[PC], scratch
-        storei tag, ValueProfile::m_buckets + TagOffset[scratch]
-        storei payload, ValueProfile::m_buckets + PayloadOffset[scratch]
-    end
+    loadp operand[PC], scratch
+    storei tag, ValueProfile::m_buckets + TagOffset[scratch]
+    storei payload, ValueProfile::m_buckets + PayloadOffset[scratch]
 end
 
 
@@ -1483,10 +1481,8 @@ _llint_op_get_by_val:
     dispatch(6)
 
 .opGetByValOutOfBounds:
-    if VALUE_PROFILER
-        loadpFromInstruction(4, t0)
-        storeb 1, ArrayProfile::m_outOfBounds[t0]
-    end
+    loadpFromInstruction(4, t0)
+    storeb 1, ArrayProfile::m_outOfBounds[t0]
 .opGetByValSlow:
     callSlowPath(_llint_slow_path_get_by_val)
     dispatch(6)
@@ -1556,10 +1552,8 @@ macro contiguousPutByVal(storeCallback)
 
 .outOfBounds:
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t0], .opPutByValOutOfBounds
-    if VALUE_PROFILER
-        loadp 16[PC], t2
-        storeb 1, ArrayProfile::m_mayStoreToHole[t2]
-    end
+    loadp 16[PC], t2
+    storeb 1, ArrayProfile::m_mayStoreToHole[t2]
     addi 1, t3, t2
     storei t2, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0]
     jmp .storeResult
@@ -1626,10 +1620,8 @@ macro putByVal(holeCheck, slowPath)
     dispatch(5)
 
 .opPutByValArrayStorageEmpty:
-    if VALUE_PROFILER
-        loadp 16[PC], t1
-        storeb 1, ArrayProfile::m_mayStoreToHole[t1]
-    end
+    loadp 16[PC], t1
+    storeb 1, ArrayProfile::m_mayStoreToHole[t1]
     addi 1, ArrayStorage::m_numValuesInVector[t0]
     bib t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], .opPutByValArrayStorageStoreResult
     addi 1, t3, t1
@@ -1637,10 +1629,8 @@ macro putByVal(holeCheck, slowPath)
     jmp .opPutByValArrayStorageStoreResult
 
 .opPutByValOutOfBounds:
-    if VALUE_PROFILER
-        loadpFromInstruction(4, t0)
-        storeb 1, ArrayProfile::m_outOfBounds[t0]
-    end
+    loadpFromInstruction(4, t0)
+    storeb 1, ArrayProfile::m_outOfBounds[t0]
 .opPutByValSlow:
     callSlowPath(slowPath)
     dispatch(5)
@@ -1857,16 +1847,14 @@ _llint_op_new_captured_func:
 
 
 macro arrayProfileForCall()
-    if VALUE_PROFILER
-        loadi 16[PC], t3
-        negi t3
-        bineq ThisArgumentOffset + TagOffset[cfr, t3, 8], CellTag, .done
-        loadi ThisArgumentOffset + PayloadOffset[cfr, t3, 8], t0
-        loadp JSCell::m_structure[t0], t0
-        loadp 24[PC], t1
-        storep t0, ArrayProfile::m_lastSeenStructure[t1]
-    .done:
-    end
+    loadi 16[PC], t3
+    negi t3
+    bineq ThisArgumentOffset + TagOffset[cfr, t3, 8], CellTag, .done
+    loadi ThisArgumentOffset + PayloadOffset[cfr, t3, 8], t0
+    loadp JSCell::m_structure[t0], t0
+    loadp 24[PC], t1
+    storep t0, ArrayProfile::m_lastSeenStructure[t1]
+.done:
 end
 
 macro doCall(slowPath)

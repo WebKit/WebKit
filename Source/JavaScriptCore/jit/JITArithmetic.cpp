@@ -668,16 +668,13 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, int, int op1, int op2, Operand
     emitGetVirtualRegisters(op1, regT0, op2, regT1);
     emitJumpSlowCaseIfNotImmediateInteger(regT0);
     emitJumpSlowCaseIfNotImmediateInteger(regT1);
-#if ENABLE(VALUE_PROFILER)
     RareCaseProfile* profile = m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
-#endif
     if (opcodeID == op_add)
         addSlowCase(branchAdd32(Overflow, regT1, regT0));
     else if (opcodeID == op_sub)
         addSlowCase(branchSub32(Overflow, regT1, regT0));
     else {
         ASSERT(opcodeID == op_mul);
-#if ENABLE(VALUE_PROFILER)
         if (shouldEmitProfiling()) {
             // We want to be able to measure if this is taking the slow case just
             // because of negative zero. If this produces positive zero, then we
@@ -701,10 +698,6 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, int, int op1, int op2, Operand
             addSlowCase(branchMul32(Overflow, regT1, regT0));
             addSlowCase(branchTest32(Zero, regT0));
         }
-#else
-        addSlowCase(branchMul32(Overflow, regT1, regT0));
-        addSlowCase(branchTest32(Zero, regT0));
-#endif
     }
     emitFastArithIntToImmNoCheck(regT0, regT0);
 }
@@ -849,19 +842,15 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
     // For now, only plant a fast int case if the constant operand is greater than zero.
     int32_t value;
     if (isOperandConstantImmediateInt(op1) && ((value = getConstantOperandImmediateInt(op1)) > 0)) {
-#if ENABLE(VALUE_PROFILER)
         // Add a special fast case profile because the DFG JIT will expect one.
         m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
-#endif
         emitGetVirtualRegister(op2, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
         addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT1));
         emitFastArithReTagImmediate(regT1, regT0);
     } else if (isOperandConstantImmediateInt(op2) && ((value = getConstantOperandImmediateInt(op2)) > 0)) {
-#if ENABLE(VALUE_PROFILER)
         // Add a special fast case profile because the DFG JIT will expect one.
         m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
-#endif
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
         addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT1));
@@ -930,7 +919,6 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     }
     divDouble(fpRegT1, fpRegT0);
     
-#if ENABLE(VALUE_PROFILER)
     // Is the result actually an integer? The DFG JIT would really like to know. If it's
     // not an integer, we increment a count. If this together with the slow case counter
     // are below threshold then the DFG JIT will compile this division with a specualtion
@@ -957,11 +945,6 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     move(tagTypeNumberRegister, regT0);
     trueDouble.link(this);
     isInteger.link(this);
-#else
-    // Double result.
-    moveDoubleTo64(fpRegT0, regT0);
-    sub64(tagTypeNumberRegister, regT0);
-#endif
 
     emitPutVirtualRegister(dst, regT0);
 }

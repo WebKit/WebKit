@@ -277,12 +277,12 @@ public:
         return result;
     }
 
-#if ENABLE(JIT)
     bool hasBaselineJITProfiling() const
     {
         return jitType() == JITCode::BaselineJIT;
     }
     
+#if ENABLE(JIT)
     virtual CodeBlock* replacement() = 0;
 
     virtual DFG::CapabilityLevel capabilityLevelInternal() = 0;
@@ -410,7 +410,6 @@ public:
     CallLinkInfo& callLinkInfo(int index) { return m_callLinkInfos[index]; }
 #endif
 
-#if ENABLE(VALUE_PROFILER)
     unsigned numberOfArgumentValueProfiles()
     {
         ASSERT(m_numParameters >= 0);
@@ -429,13 +428,12 @@ public:
     ValueProfile* valueProfileForBytecodeOffset(int bytecodeOffset)
     {
         ValueProfile* result = binarySearch<ValueProfile, int>(
-                                                               m_valueProfiles, m_valueProfiles.size(), bytecodeOffset,
-                                                               getValueProfileBytecodeOffset<ValueProfile>);
+            m_valueProfiles, m_valueProfiles.size(), bytecodeOffset,
+            getValueProfileBytecodeOffset<ValueProfile>);
         ASSERT(result->m_bytecodeOffset != -1);
         ASSERT(instructions()[bytecodeOffset + opcodeLength(
-                                                            m_vm->interpreter->getOpcodeID(
-                                                                                           instructions()[
-                                                                                                          bytecodeOffset].u.opcode)) - 1].u.profile == result);
+            m_vm->interpreter->getOpcodeID(
+                instructions()[bytecodeOffset].u.opcode)) - 1].u.profile == result);
         return result;
     }
     SpeculatedType valueProfilePredictionForBytecodeOffset(const ConcurrentJITLocker& locker, int bytecodeOffset)
@@ -543,7 +541,6 @@ public:
     }
     ArrayProfile* getArrayProfile(unsigned bytecodeOffset);
     ArrayProfile* getOrAddArrayProfile(unsigned bytecodeOffset);
-#endif
 
     // Exception handling support
 
@@ -884,22 +881,11 @@ public:
     unsigned numberOfDFGCompiles() { return 0; }
 #endif
 
-#if ENABLE(VALUE_PROFILER)
     bool shouldOptimizeNow();
     void updateAllValueProfilePredictions();
     void updateAllArrayPredictions();
     void updateAllPredictions();
-#else
-    bool updateAllPredictionsAndCheckIfShouldOptimizeNow() { return false; }
-    void updateAllValueProfilePredictions() { }
-    void updateAllArrayPredictions() { }
-    void updateAllPredictions() { }
-#endif
 
-#if ENABLE(VERBOSE_VALUE_PROFILE)
-    void dumpValueProfiles();
-#endif
-    
     unsigned frameRegisterCount();
 
     // FIXME: Make these remaining members private.
@@ -959,9 +945,7 @@ private:
     ClosureCallStubRoutine* findClosureCallForReturnPC(ReturnAddressPtr);
 #endif
         
-#if ENABLE(VALUE_PROFILER)
     void updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
-#endif
 
     void setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants)
     {
@@ -996,9 +980,7 @@ private:
     void beginDumpProfiling(PrintStream&, bool& hasPrintedProfiling);
     void dumpValueProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
     void dumpArrayProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
-#if ENABLE(VALUE_PROFILER)
     void dumpRareCaseProfile(PrintStream&, const char* name, RareCaseProfile*, bool& hasPrintedProfiling);
-#endif
         
 #if ENABLE(DFG_JIT)
     bool shouldImmediatelyAssumeLivenessDuringScan()
@@ -1080,14 +1062,12 @@ private:
     DFG::ExitProfile m_exitProfile;
     CompressedLazyOperandValueProfileHolder m_lazyOperandValueProfiles;
 #endif
-#if ENABLE(VALUE_PROFILER)
     Vector<ValueProfile> m_argumentValueProfiles;
     Vector<ValueProfile> m_valueProfiles;
     SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
     SegmentedVector<RareCaseProfile, 8> m_specialFastCaseProfiles;
     Vector<ArrayAllocationProfile> m_arrayAllocationProfiles;
     ArrayProfileVector m_arrayProfiles;
-#endif
     Vector<ObjectAllocationProfile> m_objectAllocationProfiles;
 
     // Constant Pool

@@ -574,10 +574,6 @@ public:
     static const GPRReg returnValueGPR2 = ARM64Registers::x1; // regT1
     static const GPRReg nonPreservedNonReturnGPR = ARM64Registers::x2;
 
-#if ENABLE(VALUE_PROFILER)
-    static const GPRReg bucketCounterRegister = ARM64Registers::x7;
-#endif
-
     // GPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the GPR RegisterBank.
     COMPILE_ASSERT(ARM64Registers::q0 == 0, q0_is_0);

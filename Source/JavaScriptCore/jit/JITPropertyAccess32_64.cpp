@@ -168,7 +168,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     resultOK.link(this);
 #endif
 
-    emitValueProfilingSite(regT4);
+    emitValueProfilingSite();
     emitStore(dst, regT1, regT0);
     
     m_byValCompilationInfo.append(ByValCompilationInfo(m_bytecodeOffset, badType, mode, done));
@@ -263,7 +263,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
     m_byValInstructionIndex++;
 
-    emitValueProfilingSite(regT4);
+    emitValueProfilingSite();
 }
 
 void JIT::emit_op_put_by_val(Instruction* currentInstruction)
@@ -487,7 +487,7 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
 
-    emitValueProfilingSite(regT4);
+    emitValueProfilingSite();
     emitStore(dst, regT1, regT0);
 }
 
@@ -783,7 +783,7 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
         addSlowCase(jump());
         break;
     }
-    emitValueProfilingSite(regT4);
+    emitValueProfilingSite();
     emitStore(dst, regT1, regT0);
 }
 

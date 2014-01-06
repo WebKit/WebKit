@@ -622,16 +622,11 @@ void CodeBlock::dumpValueProfiling(PrintStream& out, const Instruction*& it, boo
     ConcurrentJITLocker locker(m_lock);
     
     ++it;
-#if ENABLE(VALUE_PROFILER)
     CString description = it->u.profile->briefDescription(locker);
     if (!description.length())
         return;
     beginDumpProfiling(out, hasPrintedProfiling);
     out.print(description);
-#else
-    UNUSED_PARAM(out);
-    UNUSED_PARAM(hasPrintedProfiling);
-#endif
 }
 
 void CodeBlock::dumpArrayProfiling(PrintStream& out, const Instruction*& it, bool& hasPrintedProfiling)
@@ -639,7 +634,6 @@ void CodeBlock::dumpArrayProfiling(PrintStream& out, const Instruction*& it, boo
     ConcurrentJITLocker locker(m_lock);
     
     ++it;
-#if ENABLE(VALUE_PROFILER)
     if (!it->u.arrayProfile)
         return;
     CString description = it->u.arrayProfile->briefDescription(locker, this);
@@ -647,13 +641,8 @@ void CodeBlock::dumpArrayProfiling(PrintStream& out, const Instruction*& it, boo
         return;
     beginDumpProfiling(out, hasPrintedProfiling);
     out.print(description);
-#else
-    UNUSED_PARAM(out);
-    UNUSED_PARAM(hasPrintedProfiling);
-#endif
 }
 
-#if ENABLE(VALUE_PROFILER)
 void CodeBlock::dumpRareCaseProfile(PrintStream& out, const char* name, RareCaseProfile* profile, bool& hasPrintedProfiling)
 {
     if (!profile || !profile->m_counter)
@@ -662,7 +651,6 @@ void CodeBlock::dumpRareCaseProfile(PrintStream& out, const char* name, RareCase
     beginDumpProfiling(out, hasPrintedProfiling);
     out.print(name, profile->m_counter);
 }
-#endif
 
 void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instruction* begin, const Instruction*& it, const StubInfoMap& map)
 {
@@ -1422,10 +1410,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
 #endif
     }
 
-#if ENABLE(VALUE_PROFILER)
     dumpRareCaseProfile(out, "rare case: ", rareCaseProfileForBytecodeOffset(location), hasPrintedProfiling);
     dumpRareCaseProfile(out, "special fast case: ", specialFastCaseProfileForBytecodeOffset(location), hasPrintedProfiling);
-#endif
     
 #if ENABLE(DFG_JIT)
     Vector<DFG::FrequentExitSite> exitSites = exitProfile().exitSitesFor(location);
@@ -1799,12 +1785,10 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
 
         case op_get_from_scope: {
-#if ENABLE(VALUE_PROFILER)
             ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
             instructions[i + opLength - 1] = profile;
-#endif
 
             // get_from_scope dst, scope, id, ResolveModeAndType, Structure, Operand
             const Identifier& ident = identifier(pc[i + 3].u.operand);
@@ -1924,9 +1908,7 @@ void CodeBlock::setNumParameters(int newValue)
 {
     m_numParameters = newValue;
 
-#if ENABLE(VALUE_PROFILER)
     m_argumentValueProfiles.resizeToFit(newValue);
-#endif
 }
 
 void EvalCodeCache::visitAggregate(SlotVisitor& visitor)
@@ -2596,10 +2578,8 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 #if ENABLE(JIT)
     m_callLinkInfos.shrinkToFit();
 #endif
-#if ENABLE(VALUE_PROFILER)
     m_rareCaseProfiles.shrinkToFit();
     m_specialFastCaseProfiles.shrinkToFit();
-#endif
     
     if (shrinkMode == EarlyShrink) {
         m_additionalIdentifiers.shrinkToFit();
@@ -3181,7 +3161,6 @@ bool CodeBlock::shouldReoptimizeFromLoopNow()
 }
 #endif
 
-#if ENABLE(VALUE_PROFILER)
 ArrayProfile* CodeBlock::getArrayProfile(unsigned bytecodeOffset)
 {
     for (unsigned i = 0; i < m_arrayProfiles.size(); ++i) {
@@ -3254,10 +3233,6 @@ bool CodeBlock::shouldOptimizeNow()
     if (Options::verboseOSR())
         dataLog("Considering optimizing ", *this, "...\n");
 
-#if ENABLE(VERBOSE_VALUE_PROFILE)
-    dumpValueProfiles();
-#endif
-
     if (m_optimizationDelayCounter >= Options::maximumOptimizationDelay())
         return true;
     
@@ -3286,7 +3261,6 @@ bool CodeBlock::shouldOptimizeNow()
     optimizeAfterWarmUp();
     return false;
 }
-#endif
 
 #if ENABLE(DFG_JIT)
 void CodeBlock::tallyFrequentExitSites()

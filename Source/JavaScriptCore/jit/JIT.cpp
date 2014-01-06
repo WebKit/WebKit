@@ -81,10 +81,8 @@ JIT::JIT(VM* vm, CodeBlock* codeBlock)
     , m_byValInstructionIndex(UINT_MAX)
     , m_callLinkInfoIndex(UINT_MAX)
     , m_randomGenerator(cryptographicallyRandomNumber())
-#if ENABLE(VALUE_PROFILER)
     , m_canBeOptimized(false)
     , m_shouldEmitProfiling(false)
-#endif
 {
 }
 
@@ -329,7 +327,6 @@ void JIT::privateCompileSlowCases()
     m_byValInstructionIndex = 0;
     m_callLinkInfoIndex = 0;
     
-#if ENABLE(VALUE_PROFILER)
     // Use this to assert that slow-path code associates new profiling sites with existing
     // ValueProfiles rather than creating new ones. This ensures that for a given instruction
     // (say, get_by_id) we get combined statistics for both the fast-path executions of that
@@ -337,7 +334,6 @@ void JIT::privateCompileSlowCases()
     // new ValueProfiles then the ValueProfiles would no longer be sorted by bytecode offset,
     // which would break the invariant necessary to use CodeBlock::valueProfileForBytecodeOffset().
     unsigned numberOfValueProfiles = m_codeBlock->numberOfValueProfiles();
-#endif
 
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {
         m_bytecodeOffset = iter->to;
@@ -346,11 +342,9 @@ void JIT::privateCompileSlowCases()
 
         Instruction* currentInstruction = instructionsBegin + m_bytecodeOffset;
         
-#if ENABLE(VALUE_PROFILER)
         RareCaseProfile* rareCaseProfile = 0;
         if (shouldEmitProfiling())
             rareCaseProfile = m_codeBlock->addRareCaseProfile(m_bytecodeOffset);
-#endif
 
 #if ENABLE(JIT_VERBOSE)
         dataLogF("Old JIT emitting slow code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
@@ -431,10 +425,8 @@ void JIT::privateCompileSlowCases()
         RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo != iter->to, "Not enough jumps linked in slow case codegen.");
         RELEASE_ASSERT_WITH_MESSAGE(firstTo == (iter - 1)->to, "Too many jumps linked in slow case codegen.");
         
-#if ENABLE(VALUE_PROFILER)
         if (shouldEmitProfiling())
             add32(TrustedImm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));
-#endif
 
         emitJumpSlowToHot(jump(), 0);
     }
@@ -442,9 +434,7 @@ void JIT::privateCompileSlowCases()
     RELEASE_ASSERT(m_getByIdIndex == m_getByIds.size());
     RELEASE_ASSERT(m_putByIdIndex == m_putByIds.size());
     RELEASE_ASSERT(m_callLinkInfoIndex == m_callStructureStubCompilationInfo.size());
-#if ENABLE(VALUE_PROFILER)
     RELEASE_ASSERT(numberOfValueProfiles == m_codeBlock->numberOfValueProfiles());
-#endif
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
@@ -454,7 +444,6 @@ void JIT::privateCompileSlowCases()
 
 CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 {
-#if ENABLE(VALUE_PROFILER)
     DFG::CapabilityLevel level = m_codeBlock->capabilityLevel();
     switch (level) {
     case DFG::CannotCompile:
@@ -489,7 +478,6 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         m_codeBlock->m_shouldAlwaysBeInlined &= canInline(level) && DFG::mightInlineFunction(m_codeBlock);
         break;
     }
-#endif
     
     if (Options::showDisassembly() || m_vm->m_perBytecodeProfiler)
         m_disassembler = adoptPtr(new JITDisassembler(m_codeBlock));
@@ -521,7 +509,6 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 
     Jump stackCheck;
     if (m_codeBlock->codeType() == FunctionCode) {
-#if ENABLE(VALUE_PROFILER)
         ASSERT(m_bytecodeOffset == (unsigned)-1);
         if (shouldEmitProfiling()) {
             for (int argument = 0; argument < m_codeBlock->numParameters(); ++argument) {
@@ -536,10 +523,9 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
                 load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
                 load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
 #endif
-                emitValueProfilingSite(m_codeBlock->valueProfileForArgument(argument), regT4);
+                emitValueProfilingSite(m_codeBlock->valueProfileForArgument(argument));
             }
         }
-#endif
 
         addPtr(TrustedImm32(virtualRegisterForLocal(frameRegisterCountFor(m_codeBlock)).offset() * sizeof(Register)), callFrameRegister, regT1);
         stackCheck = branchPtr(Above, AbsoluteAddress(m_vm->addressOfJSStackLimit()), regT1);

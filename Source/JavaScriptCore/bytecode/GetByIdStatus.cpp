@@ -69,7 +69,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 
 void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBlock, StringImpl* uid)
 {
-#if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
+#if ENABLE(JIT)
     // Validate the chain. If the chain is invalid, then currently the best thing
     // we can do is to assume that TakesSlow is true. In the future, it might be
     // worth exploring reifying the structure chain from the structure we've got
@@ -123,7 +123,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
-#if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
+#if ENABLE(JIT)
     StructureStubInfo* stubInfo = map.get(CodeOrigin(bytecodeIndex));
     if (!stubInfo || !stubInfo->seen)
         return computeFromLLInt(profiledBlock, bytecodeIndex, uid);

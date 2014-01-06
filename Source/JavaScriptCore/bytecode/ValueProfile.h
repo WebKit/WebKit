@@ -29,10 +29,6 @@
 #ifndef ValueProfile_h
 #define ValueProfile_h
 
-#include <wtf/Platform.h>
-
-#if ENABLE(VALUE_PROFILER)
-
 #include "ConcurrentJITLock.h"
 #include "Heap.h"
 #include "JSArray.h"
@@ -211,8 +207,6 @@ inline int getRareCaseProfileBytecodeOffset(RareCaseProfile* rareCaseProfile)
 }
 
 } // namespace JSC
-
-#endif // ENABLE(VALUE_PROFILER)
 
 #endif // ValueProfile_h
 

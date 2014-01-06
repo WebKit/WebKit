@@ -331,16 +331,11 @@ namespace JSC {
         template<typename StructureType> // StructureType can be RegisterID or ImmPtr.
         void emitAllocateJSObject(RegisterID allocator, StructureType, RegisterID result, RegisterID scratch);
         
-#if ENABLE(VALUE_PROFILER)
         // This assumes that the value to profile is in regT0 and that regT3 is available for
         // scratch.
-        void emitValueProfilingSite(ValueProfile*, RegisterID);
-        void emitValueProfilingSite(unsigned bytecodeOffset, RegisterID);
-        void emitValueProfilingSite(RegisterID);
-#else
-        void emitValueProfilingSite(unsigned, RegisterID) { }
-        void emitValueProfilingSite(RegisterID) { }
-#endif
+        void emitValueProfilingSite(ValueProfile*);
+        void emitValueProfilingSite(unsigned bytecodeOffset);
+        void emitValueProfilingSite();
         void emitArrayProfilingSite(RegisterID structureAndIndexingType, RegisterID scratch, ArrayProfile*);
         void emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndIndexingType, RegisterID scratch, unsigned bytecodeIndex);
         void emitArrayProfileStoreToHoleSpecialCase(ArrayProfile*);
@@ -827,11 +822,9 @@ namespace JSC {
         WeakRandom m_randomGenerator;
         static CodeRef stringGetByValStubGenerator(VM*);
 
-#if ENABLE(VALUE_PROFILER)
         bool m_canBeOptimized;
         bool m_canBeOptimizedOrInlined;
         bool m_shouldEmitProfiling;
-#endif
     } JIT_CLASS_ALIGNMENT;
 
 } // namespace JSC

@@ -148,10 +148,4 @@
 #define OFFLINE_ASM_ALWAYS_ALLOCATE_SLOW 0
 #endif
 
-#if ENABLE(VALUE_PROFILER)
-#define OFFLINE_ASM_VALUE_PROFILER 1
-#else
-#define OFFLINE_ASM_VALUE_PROFILER 0
-#endif
-
 #endif // LLIntOfflineAsmConfig_h

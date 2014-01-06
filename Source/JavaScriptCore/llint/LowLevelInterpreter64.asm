@@ -336,10 +336,8 @@ macro writeBarrier(value)
 end
 
 macro valueProfile(value, operand, scratch)
-    if VALUE_PROFILER
-        loadpFromInstruction(operand, scratch)
-        storeq value, ValueProfile::m_buckets[scratch]
-    end
+    loadpFromInstruction(operand, scratch)
+    storeq value, ValueProfile::m_buckets[scratch]
 end
 
 
@@ -1284,10 +1282,8 @@ _llint_op_get_by_val:
     dispatch(6)
 
 .opGetByValOutOfBounds:
-    if VALUE_PROFILER
-        loadpFromInstruction(4, t0)
-        storeb 1, ArrayProfile::m_outOfBounds[t0]
-    end
+    loadpFromInstruction(4, t0)
+    storeb 1, ArrayProfile::m_outOfBounds[t0]
 .opGetByValSlow:
     callSlowPath(_llint_slow_path_get_by_val)
     dispatch(6)
@@ -1357,10 +1353,8 @@ macro contiguousPutByVal(storeCallback)
 
 .outOfBounds:
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t0], .opPutByValOutOfBounds
-    if VALUE_PROFILER
-        loadp 32[PB, PC, 8], t2
-        storeb 1, ArrayProfile::m_mayStoreToHole[t2]
-    end
+    loadp 32[PB, PC, 8], t2
+    storeb 1, ArrayProfile::m_mayStoreToHole[t2]
     addi 1, t3, t2
     storei t2, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0]
     jmp .storeResult
@@ -1423,10 +1417,8 @@ macro putByVal(holeCheck, slowPath)
     dispatch(5)
 
 .opPutByValArrayStorageEmpty:
-    if VALUE_PROFILER
-        loadpFromInstruction(4, t1)
-        storeb 1, ArrayProfile::m_mayStoreToHole[t1]
-    end
+    loadpFromInstruction(4, t1)
+    storeb 1, ArrayProfile::m_mayStoreToHole[t1]
     addi 1, ArrayStorage::m_numValuesInVector[t0]
     bib t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], .opPutByValArrayStorageStoreResult
     addi 1, t3, t1
@@ -1434,10 +1426,8 @@ macro putByVal(holeCheck, slowPath)
     jmp .opPutByValArrayStorageStoreResult
 
 .opPutByValOutOfBounds:
-    if VALUE_PROFILER
-        loadpFromInstruction(4, t0)
-        storeb 1, ArrayProfile::m_outOfBounds[t0]
-    end
+    loadpFromInstruction(4, t0)
+    storeb 1, ArrayProfile::m_outOfBounds[t0]
 .opPutByValSlow:
     callSlowPath(slowPath)
     dispatch(5)
@@ -1659,16 +1649,14 @@ _llint_op_new_captured_func:
 
 
 macro arrayProfileForCall()
-    if VALUE_PROFILER
-        loadisFromInstruction(4, t3)
-        negp t3
-        loadq ThisArgumentOffset[cfr, t3, 8], t0
-        btqnz t0, tagMask, .done
-        loadp JSCell::m_structure[t0], t0
-        loadpFromInstruction(6, t1)
-        storep t0, ArrayProfile::m_lastSeenStructure[t1]
-    .done:
-    end
+    loadisFromInstruction(4, t3)
+    negp t3
+    loadq ThisArgumentOffset[cfr, t3, 8], t0
+    btqnz t0, tagMask, .done
+    loadp JSCell::m_structure[t0], t0
+    loadpFromInstruction(6, t1)
+    storep t0, ArrayProfile::m_lastSeenStructure[t1]
+.done:
 end
 
 macro doCall(slowPath)

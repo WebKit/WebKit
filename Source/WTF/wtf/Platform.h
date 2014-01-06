@@ -772,18 +772,6 @@
 #error You have to have at least one execution model enabled to build JSC
 #endif
 
-/* Profiling of types and values used by JIT code. DFG_JIT depends on it, but you
-   can enable it manually with DFG turned off if you want to use it as a standalone
-   profiler. In that case, you probably want to also enable VERBOSE_VALUE_PROFILE
-   below. */
-#if !defined(ENABLE_VALUE_PROFILER) && ENABLE(DFG_JIT)
-#define ENABLE_VALUE_PROFILER 1
-#endif
-
-#if !defined(ENABLE_VERBOSE_VALUE_PROFILE) && ENABLE(VALUE_PROFILER)
-#define ENABLE_VERBOSE_VALUE_PROFILE 0
-#endif
-
 /* Generational collector for JSC */
 #if !defined(ENABLE_GGC)
 #define ENABLE_GGC 0

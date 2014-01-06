@@ -1,5 +1,87 @@
 2014-01-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Get rid of ENABLE(VALUE_PROFILER). It's on all the time now.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpValueProfiling):
+        (JSC::CodeBlock::dumpArrayProfiling):
+        (JSC::CodeBlock::dumpRareCaseProfile):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::setNumParameters):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::valueProfileForBytecodeOffset):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForChain):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/LazyOperandValueProfile.cpp:
+        * bytecode/LazyOperandValueProfile.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/ValueProfile.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::newArrayProfile):
+        (JSC::BytecodeGenerator::newArrayAllocationProfile):
+        (JSC::BytecodeGenerator::emitProfiledOpcode):
+        * jit/GPRInfo.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emit_op_div):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_div):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emitPutCallResult):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emitPutCallResult):
+        * jit/JITInlines.h:
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile):
+        (JSC::JIT::emitValueProfilingSite):
+        (JSC::JIT::emitArrayProfilingSiteForBytecodeIndex):
+        (JSC::JIT::emitArrayProfileStoreToHoleSpecialCase):
+        (JSC::JIT::emitArrayProfileOutOfBoundsSpecialCase):
+        (JSC::arrayProfileSaw):
+        (JSC::JIT::chooseArrayMode):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_from_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_from_scope):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * profiler/ProfilerBytecodeSequence.cpp:
+        (JSC::Profiler::BytecodeSequence::BytecodeSequence):
+        * runtime/CommonSlowPaths.cpp:
+
+2014-01-06  Filip Pizlo  <fpizlo@apple.com>
+
         LLInt shouldn't check for ENABLE(JIT).
 
         Rubber stamped by Mark Hahnenberg.

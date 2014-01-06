@@ -742,7 +742,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
                 emitLoadDouble(op1, fpRegT1);
                 divDouble(fpRegT0, fpRegT1);
 
-#if ENABLE(VALUE_PROFILER)
                 // Is the result actually an integer? The DFG JIT would really like to know. If it's
                 // not an integer, we increment a count. If this together with the slow case counter
                 // are below threshold then the DFG JIT will compile this division with a specualtion
@@ -766,9 +765,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
                 add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->specialFastCaseProfileForBytecodeOffset(m_bytecodeOffset)->m_counter));
                 emitStoreDouble(dst, fpRegT1);
                 isInteger.link(this);
-#else
-                emitStoreDouble(dst, fpRegT1);
-#endif
                 break;
             }
             case op_jless:
@@ -846,7 +842,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
             case op_div: {
                 emitLoadDouble(op2, fpRegT2);
                 divDouble(fpRegT2, fpRegT0);
-#if ENABLE(VALUE_PROFILER)
                 // Is the result actually an integer? The DFG JIT would really like to know. If it's
                 // not an integer, we increment a count. If this together with the slow case counter
                 // are below threshold then the DFG JIT will compile this division with a specualtion
@@ -870,9 +865,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
                 add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->specialFastCaseProfileForBytecodeOffset(m_bytecodeOffset)->m_counter));
                 emitStoreDouble(dst, fpRegT0);
                 isInteger.link(this);
-#else
-                emitStoreDouble(dst, fpRegT0);
-#endif
                 break;
             }
             case op_jless:
@@ -924,9 +916,7 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
     int op2 = currentInstruction[3].u.operand;
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
-#if ENABLE(VALUE_PROFILER)
     m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
-#endif
 
     JumpList notInt32Op1;
     JumpList notInt32Op2;
@@ -969,12 +959,10 @@ void JIT::emitSlow_op_mul(Instruction* currentInstruction, Vector<SlowCaseEntry>
     emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_mul));
 
     negZero.link(this);
-#if ENABLE(VALUE_PROFILER)
     // We only get here if we have a genuine negative zero. Record this,
     // so that the speculative JIT knows that we failed speculation
     // because of a negative zero.
     add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->specialFastCaseProfileForBytecodeOffset(m_bytecodeOffset)->m_counter));
-#endif
     overflow.link(this);
 
     if (!supportsFloatingPoint()) {
@@ -1005,9 +993,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     int op2 = currentInstruction[3].u.operand;
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
-#if ENABLE(VALUE_PROFILER)
     m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
-#endif
 
     if (!supportsFloatingPoint()) {
         addSlowCase(jump());
@@ -1028,7 +1014,6 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     convertInt32ToDouble(regT0, fpRegT0);
     convertInt32ToDouble(regT2, fpRegT1);
     divDouble(fpRegT1, fpRegT0);
-#if ENABLE(VALUE_PROFILER)
     // Is the result actually an integer? The DFG JIT would really like to know. If it's
     // not an integer, we increment a count. If this together with the slow case counter
     // are below threshold then the DFG JIT will compile this division with a specualtion
@@ -1051,9 +1036,6 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     notInteger.link(this);
     add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->specialFastCaseProfileForBytecodeOffset(m_bytecodeOffset)->m_counter));
     emitStoreDouble(dst, fpRegT0);
-#else
-    emitStoreDouble(dst, fpRegT0);
-#endif
     end.append(jump());
 
     // Double divide.
