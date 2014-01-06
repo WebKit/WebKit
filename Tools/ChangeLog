@@ -1,3 +1,27 @@
+2014-01-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][CMake] Add support for building the GTK+ port with cmake to build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=126212
+
+        Reviewed by Daniel Bates.
+
+        Allow building the GTK+ cmake port with --gtkcmake.
+
+        * Scripts/build-webkit: Use the new isGtkCMake function to head down the CMake path
+        when appropriate. Skip the autotoos path when isGtkAutotools is false.
+        * Scripts/webkitdirs.pm: Add an isGtkCMake path in addition to the newly renamed isGtkAutotools.
+        Add isGtk which checks isGtkCMake || isGtkAutotools
+        (determineArchitecture): Use the CMake path for GTK+ when appropriate.
+        (argumentsForConfiguration): use --gtkcmake when appropriate.
+        (jscProductDir): Look in the CMake directory when appropriate.
+        (builtDylibPathForName): CMake builds the library into a different directory, so handle that.
+        (determineIsGtkCMake): Added.
+        (isGtkCMake): Added.
+        (isGtkAutotools): Renamed from isGtk.
+        (isGtk): New function which returns isGtkAutotools || isGtkCMake.
+        (determineIsGtkAutotools): Renamed from determineIsGtk.
+        (cmakeBasedPortName): Added a GTK+ path.
+
 2014-01-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Fix the video and audio build

@@ -90,7 +90,8 @@ my $debugger;
 my $nmPath;
 my $osXVersion;
 my $generateDsym;
-my $isGtk;
+my $isGtkAutotools;
+my $isGtkCMake;
 my $isWinCE;
 my $isWinCairo;
 my $isWin64;
@@ -291,7 +292,7 @@ sub determineArchitecture
     determineBaseProductDir();
     determineXcodeSDK();
 
-    if (isGtk()) {
+    if (isGtkAutotools()) {
         determineConfigurationProductDir();
         my $host_triple = `grep -E '^host = ' $configurationProductDir/GNUmakefile 2> /dev/null`;
         if ($host_triple =~ m/^host = ([^-]+)-/) {
@@ -316,7 +317,7 @@ sub determineArchitecture
                 $architecture = 'armv7';
             }
         }
-    } elsif (isEfl() || isNix()) {
+    } elsif (isEfl() || isNix() || isGtkCMake()) {
         my $host_processor = "";
         $host_processor = `cmake --system-information | grep CMAKE_SYSTEM_PROCESSOR`;
         if ($host_processor =~ m/^CMAKE_SYSTEM_PROCESSOR \"([^"]+)\"/) {
@@ -379,7 +380,8 @@ sub argumentsForConfiguration()
     push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
-    push(@args, '--gtk') if isGtk();
+    push(@args, '--gtk') if isGtkAutotools();
+    push(@args, '--gtkcmake') if isGtkCMake();
     push(@args, '--efl') if isEfl();
     push(@args, '--nix') if isNix();
     push(@args, '--wincairo') if isWinCairo();
@@ -532,8 +534,8 @@ sub productDir
 sub jscProductDir
 {
     my $productDir = productDir();
-    $productDir .= "/bin" if (isEfl() || isNix());
-    $productDir .= "/Programs" if isGtk();
+    $productDir .= "/bin" if (isEfl() || isNix() || isGtkCMake());
+    $productDir .= "/Programs" if isGtkAutotools();
 
     return $productDir;
 }
@@ -777,8 +779,13 @@ sub builtDylibPathForName
         my @libraries = ("libwebkitgtk-1.0", "libwebkitgtk-3.0", "libwebkit2gtk-3.0");
         my $extension = isDarwin() ? ".dylib" : ".so";
 
+        my $builtLibraryPath = "$configurationProductDir/.libs/";
+        if (isGtkCMake()) {
+            $builtLibraryPath = "$configurationProductDir/lib/";
+        }
+
         foreach $libraryName (@libraries) {
-            my $libraryPath = "$configurationProductDir/.libs/" . $libraryName . $extension;
+            my $libraryPath = "$builtLibraryPath" . $libraryName . $extension;
             return $libraryPath if -e $libraryPath;
         }
         return "NotFound";
@@ -1045,6 +1052,18 @@ sub isEfl()
     return $isEfl;
 }
 
+sub determineIsGtkCMake()
+{
+    return if defined($isGtkCMake);
+    $isGtkCMake = checkForArgumentAndRemoveFromARGV("--gtkcmake");
+}
+
+sub isGtkCMake()
+{
+    determineIsGtkCMake();
+    return $isGtkCMake;
+}
+
 sub determineIsNix()
 {
     return if defined($isNix);
@@ -1056,16 +1075,22 @@ sub isNix()
     determineIsNix();
     return $isNix;
 }
-sub isGtk()
+
+sub isGtkAutotools()
 {
-    determineIsGtk();
-    return $isGtk;
+    determineIsGtkAutotools();
+    return $isGtkAutotools;
 }
 
-sub determineIsGtk()
+sub isGtk()
 {
-    return if defined($isGtk);
-    $isGtk = checkForArgumentAndRemoveFromARGV("--gtk");
+    return isGtkCMake() || isGtkAutotools();
+}
+
+sub determineIsGtkAutotools()
+{
+    return if defined($isGtkAutotools);
+    $isGtkAutotools = checkForArgumentAndRemoveFromARGV("--gtk");
 }
 
 sub isWinCE()
@@ -2096,6 +2121,7 @@ sub cmakeBasedPortName()
     return "Efl" if isEfl();
     return "WinCE" if isWinCE();
     return "Nix" if isNix();
+    return "GTK" if isGtk();
     return "";
 }
 
