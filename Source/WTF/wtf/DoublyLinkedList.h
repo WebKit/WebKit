@@ -82,6 +82,7 @@ public:
     void push(T*);
     void append(T*);
     void remove(T*);
+    void append(DoublyLinkedList<T>&);
 
 private:
     T* m_head;
@@ -184,6 +185,31 @@ template<typename T> inline T* DoublyLinkedList<T>::removeHead()
     if (node)
         remove(node);
     return node;
+}
+
+template<typename T> inline void DoublyLinkedList<T>::append(DoublyLinkedList<T>& other)
+{
+    if (!other.head())
+        return;
+
+    if (!head()) {
+        m_head = other.head();
+        m_tail = other.tail();
+        other.clear();
+        return;
+    }
+
+    ASSERT(tail());
+    ASSERT(other.head());
+    T* otherHead = other.head();
+    T* otherTail = other.tail();
+    other.clear();
+
+    ASSERT(!m_tail->next());
+    m_tail->setNext(otherHead);
+    ASSERT(!otherHead->prev());
+    otherHead->setPrev(m_tail);
+    m_tail = otherTail;
 }
 
 } // namespace WTF
