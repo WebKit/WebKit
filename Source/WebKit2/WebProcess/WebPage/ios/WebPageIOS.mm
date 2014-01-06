@@ -722,6 +722,87 @@ void WebPage::applyAutocorrection(const String& correction, const String& origin
     send(Messages::WebPageProxy::StringCallback(correction, callbackID));
 }
 
+static void computeAutocorrectionContext(Frame& frame, String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length)
+{
+    RefPtr<Range> range;
+    VisiblePosition startPosition = frame.selection().selection().start();
+    VisiblePosition endPosition = frame.selection().selection().end();
+    location = NSNotFound;
+    length = 0;
+    const unsigned minContextWordCount = 3;
+    const unsigned minContextLenght = 12;
+    const unsigned maxContextLength = 30;
+
+    if (frame.selection().isRange())
+        selectedText = plainText(frame.selection().selection().toNormalizedRange().get());
+
+    if (frame.editor().hasComposition()) {
+        range = Range::create(*frame.document(), frame.editor().compositionRange()->startPosition(), startPosition);
+        String markedTextBefore;
+        if (range)
+            markedTextBefore = plainText(range.get());
+        range = Range::create(*frame.document(), endPosition, frame.editor().compositionRange()->endPosition());
+        String markedTextAfter;
+        if (range)
+            markedTextAfter = plainText(range.get());
+        markedText = markedTextBefore + selectedText + markedTextAfter;
+        if (!markedText.isEmpty()) {
+            location = markedTextBefore.length();
+            length = selectedText.length();
+        }
+    } else {
+        if (startPosition != startOfEditableContent(startPosition)) {
+            VisiblePosition currentPosition = startPosition;
+            VisiblePosition previousPosition;
+            unsigned totalContextLength = 0;
+            for (unsigned i = 0; i < minContextWordCount; ++i) {
+                if (contextBefore.length() >= minContextLenght)
+                    break;
+                previousPosition = startOfWord(positionOfNextBoundaryOfGranularity(currentPosition, WordGranularity, DirectionBackward));
+                if (previousPosition.isNull())
+                    break;
+                String currentWord = plainText(Range::create(*frame.document(), previousPosition, currentPosition).get());
+                totalContextLength += currentWord.length();
+                if (totalContextLength >= maxContextLength)
+                    break;
+                currentPosition = previousPosition;
+            }
+            if (currentPosition.isNotNull() && currentPosition != startPosition) {
+                contextBefore = plainText(Range::create(*frame.document(), currentPosition, startPosition).get());
+                if (atBoundaryOfGranularity(currentPosition, ParagraphGranularity, DirectionBackward))
+                    contextBefore = ASCIILiteral("\n ") + contextBefore;
+            }
+        }
+
+        if (endPosition != endOfEditableContent(endPosition)) {
+            VisiblePosition nextPosition;
+            if (!atBoundaryOfGranularity(endPosition, WordGranularity, DirectionForward) && withinTextUnitOfGranularity(endPosition, WordGranularity, DirectionForward))
+                nextPosition = positionOfNextBoundaryOfGranularity(endPosition, WordGranularity, DirectionForward);
+            if (nextPosition.isNotNull())
+                contextAfter = plainText(Range::create(*frame.document(), endPosition, nextPosition).get());
+        }
+    }
+}
+
+void WebPage::requestAutocorrectionContext(uint64_t callbackID)
+{
+    String contextBefore;
+    String contextAfter;
+    String selectedText;
+    String markedText;
+    uint64_t location;
+    uint64_t length;
+
+    computeAutocorrectionContext(m_page->focusController().focusedOrMainFrame(), contextBefore, markedText, selectedText, contextAfter, location, length);
+
+    send(Messages::WebPageProxy::AutocorrectionContextCallback(contextBefore, markedText, selectedText, contextAfter, location, length, callbackID));
+}
+
+void WebPage::getAutocorrectionContext(String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length)
+{
+    computeAutocorrectionContext(m_page->focusController().focusedOrMainFrame(), contextBefore, markedText, selectedText, contextAfter, location, length);
+}
+
 void WebPage::elementDidFocus(WebCore::Node* node)
 {
     m_assistedNode = node;

@@ -88,6 +88,12 @@ void callMemberFunction(std::tuple<>&&, std::tuple<R1, R2>& replyArgs, C* object
     (object->*function)(std::get<0>(replyArgs), std::get<1>(replyArgs));
 }
 
+template<typename C, typename MF, typename R1, typename R2, typename R3, typename R4, typename R5, typename R6>
+void callMemberFunction(std::tuple<>&&, std::tuple<R1, R2, R3, R4, R5, R6>& replyArgs, C* object, MF function)
+{
+    (object->*function)(std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs), std::get<3>(replyArgs), std::get<4>(replyArgs), std::get<5>(replyArgs));
+}
+
 template<typename C, typename MF, typename P1>
 void callMemberFunction(std::tuple<P1>&& args, std::tuple<>&, C* object, MF function)
 {

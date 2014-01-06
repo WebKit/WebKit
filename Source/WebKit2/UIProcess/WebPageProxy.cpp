@@ -3801,6 +3801,7 @@ void WebPageProxy::resetState()
     invalidateCallbackMap(m_gestureCallbacks);
     invalidateCallbackMap(m_touchesCallbacks);
     invalidateCallbackMap(m_autocorrectionCallbacks);
+    invalidateCallbackMap(m_autocorrectionContextCallbacks);
 #endif
 #if PLATFORM(GTK)
     invalidateCallbackMap(m_printFinishedCallbacks);

@@ -69,8 +69,51 @@ public:
     }
 
 private:
-
     AutocorrectionDataCallback(void* context, CallbackFunction callback)
+        : CallbackBase(context)
+        , m_callback(callback)
+    {
+        ASSERT(m_callback);
+    }
+    
+    CallbackFunction m_callback;
+};
+
+class AutocorrectionContextCallback : public CallbackBase {
+public:
+    typedef void (*CallbackFunction)(const String&, const String&, const String&, const String&, uint64_t, uint64_t, WKErrorRef, void*);
+
+    static PassRefPtr<AutocorrectionContextCallback> create(void* context, CallbackFunction callback)
+    {
+        return adoptRef(new AutocorrectionContextCallback(context, callback));
+    }
+
+    virtual ~AutocorrectionContextCallback()
+    {
+        ASSERT(!m_callback);
+    }
+
+    void performCallbackWithReturnValue(const String& returnValue1, const String& returnValue2, const String& returnValue3, const String& returnValue4, uint64_t returnValue5, uint64_t returnValue6)
+    {
+        ASSERT(m_callback);
+
+        m_callback(returnValue1, returnValue2, returnValue3, returnValue4, returnValue5, returnValue6, 0, context());
+
+        m_callback = 0;
+    }
+
+    void invalidate()
+    {
+        ASSERT(m_callback);
+
+        RefPtr<API::Error> error = API::Error::create();
+        m_callback(String(), String(), String(), String(), 0, 0, toAPI(error.get()), context());
+
+        m_callback = 0;
+    }
+
+private:
+    AutocorrectionContextCallback(void* context, CallbackFunction callback)
         : CallbackBase(context)
         , m_callback(callback)
     {

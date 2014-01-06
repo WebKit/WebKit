@@ -1,3 +1,47 @@
+2014-01-06  Enrica Casucci  <enrica@apple.com>
+
+        Add support to retrieve the autocorrection context.
+        https://bugs.webkit.org/show_bug.cgi?id=126479
+
+        Reviewed by Sam Weinig.
+        
+        We are adding the support to retrieve the input context for autocorrection
+        and input methods on iOS. The implementation is provided both via synchronous
+        and asynchronous calls to the WebProcess.
+
+        * Platform/IPC/HandleMessage.h: Added template with zero input parameters and six reply parameters.
+        * UIProcess/API/ios/WKInteractionView.mm:
+        (autocorrectionData):
+        (-[WKInteractionView requestAutocorrectionRectsForString:withCompletionHandler:]):
+        (autocorrectionResult):
+        (-[WKInteractionView applyAutocorrection:toString:withCompletionHandler:]):
+        (autocorrectionContext):
+        (-[WKInteractionView requestAutocorrectionContextWithCompletionHandler:]):
+        (-[WKInteractionView hasMarkedText]):
+        (-[WKInteractionView _startAssistingNode]):
+        (+[WKAutocorrectionContext autocorrectionContextWithData:markedText:selectedText:afterText:selectedRangeInMarkedText:]):
+        (-[WKAutocorrectionContext dealloc]):
+        * UIProcess/AutoCorrectionCallback.h:
+        (WebKit::AutocorrectionContextCallback::create):
+        (WebKit::AutocorrectionContextCallback::~AutocorrectionContextCallback):
+        (WebKit::AutocorrectionContextCallback::performCallbackWithReturnValue):
+        (WebKit::AutocorrectionContextCallback::invalidate):
+        (WebKit::AutocorrectionContextCallback::AutocorrectionContextCallback):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::autocorrectionContextCallback):
+        (WebKit::WebPageProxy::requestAutocorrectionContext):
+        (WebKit::WebPageProxy::getAutocorrectionContext):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::computeAutocorrectionContext):
+        (WebKit::WebPage::requestAutocorrectionContext):
+        (WebKit::WebPage::getAutocorrectionContext):
+
 2014-01-06  Gavin Barraclough  <barraclough@apple.com>
 
         Move ViewState to WebCore

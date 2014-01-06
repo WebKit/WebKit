@@ -100,6 +100,17 @@ static const float highlightDelay = 0.12;
 
 @end
 
+@interface WKAutocorrectionContext : UIWKAutocorrectionContext {
+    NSString *_contextBeforeSelection;
+    NSString *_selectedText;
+    NSString *_markedText;
+    NSString *_contextAfterSelection;
+    NSRange _rangeInMarkedText;
+}
+
++ (WKAutocorrectionContext *)autocorrectionContextWithData:(NSString *)beforeText markedText:(NSString *)markedText selectedText:(NSString *)selectedText afterText:(NSString *)afterText selectedRangeInMarkedText:(NSRange)range;
+@end
+
 @interface UITextInteractionAssistant (UITextInteractionAssistant_Internal)
 // FIXME: this needs to be moved from the internal header to the private.
 - (id)initWithView:(UIResponder <UITextInput> *)view;
@@ -107,6 +118,7 @@ static const float highlightDelay = 0.12;
 @end
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
+typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
 
 struct WKAutoCorrectionData{
     String fontName;
@@ -114,7 +126,8 @@ struct WKAutoCorrectionData{
     uint64_t fontTraits;
     CGRect textFirstRect;
     CGRect textLastRect;
-    UIWKAutocorrectionCompletionHandler completionHandler;
+    UIWKAutocorrectionCompletionHandler autocorrectionHandler;
+    UIWKAutocorrectionContextHandler autocorrectionContextHandler;
 };
 
 @interface WKInteractionView (Private)
@@ -808,9 +821,9 @@ static void autocorrectionData(const Vector<FloatRect>& rects, const String& fon
     autocorrectionData->textFirstRect = firstRect;
     autocorrectionData->textLastRect = lastRect;
 
-    autocorrectionData->completionHandler(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
-    [autocorrectionData->completionHandler release];
-    autocorrectionData->completionHandler = nil;
+    autocorrectionData->autocorrectionHandler(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
+    [autocorrectionData->autocorrectionHandler release];
+    autocorrectionData->autocorrectionHandler = nil;
 }
 
 // The completion handler can pass nil if input does not match the actual text preceding the insertion point.
@@ -820,7 +833,7 @@ static void autocorrectionData(const Vector<FloatRect>& rects, const String& fon
         completionHandler(nil);
         return;
     }
-    _autocorrectionData.completionHandler = [completionHandler copy];
+    _autocorrectionData.autocorrectionHandler = [completionHandler copy];
     _page->requestAutocorrectionData(input, AutocorrectionDataCallback::create(self, autocorrectionData));
 }
 
@@ -840,22 +853,44 @@ static void autocorrectionResult(WKStringRef correction, WKErrorRef error, void*
     ASSERT(view);
     WKAutoCorrectionData *autocorrectionData = view.autocorrectionData;
 
-    autocorrectionData->completionHandler(correction ? [WKAutocorrectionRects autocorrectionRectsWithRects:autocorrectionData->textFirstRect lastRect:autocorrectionData->textLastRect] : nil);
-    [autocorrectionData->completionHandler release];
-    autocorrectionData->completionHandler = nil;
+    autocorrectionData->autocorrectionHandler(correction ? [WKAutocorrectionRects autocorrectionRectsWithRects:autocorrectionData->textFirstRect lastRect:autocorrectionData->textLastRect] : nil);
+    [autocorrectionData->autocorrectionHandler release];
+    autocorrectionData->autocorrectionHandler = nil;
 }
 
 // The completion handler should pass the rect of the correction text after replacing the input text, or nil if the replacement could not be performed.
 - (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler
 {
-    _autocorrectionData.completionHandler = [completionHandler copy];
+    _autocorrectionData.autocorrectionHandler = [completionHandler copy];
     _page->applyAutocorrection(correction, input, StringCallback::create(self, autocorrectionResult));
+}
+
+static void autocorrectionContext(const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length, WKErrorRef error, void* context)
+{
+    WKInteractionView* view = static_cast<WKInteractionView*>(context);
+    ASSERT(view);
+    WKAutoCorrectionData *autocorrectionData = view.autocorrectionData;
+    autocorrectionData->autocorrectionContextHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
 }
 
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler
 {
-    // FIXME: Need to retrieve the information from the WebProcess.
-    completionHandler(nil);
+    // FIXME: Remove the synchronous call as soon as Keyboard removes locking of the main thread.
+    const bool useSyncRequest = true;
+
+    if (useSyncRequest) {
+        String beforeText;
+        String markedText;
+        String selectedText;
+        String afterText;
+        uint64_t location;
+        uint64_t length;
+        _page->getAutocorrectionContext(beforeText, markedText, selectedText, afterText, location, length);
+        completionHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
+    } else {
+        _autocorrectionData.autocorrectionContextHandler = [completionHandler copy];
+        _page->requestAutocorrectionContext(AutocorrectionContextCallback::create(self, autocorrectionContext));
+    }
 }
 
 // UIWebFormAccessoryDelegate
@@ -944,7 +979,7 @@ static void autocorrectionResult(WKStringRef correction, WKErrorRef error, void*
 
 - (BOOL)hasMarkedText
 {
-    return _page->editorState().hasComposition || [_markedText length];
+    return [_markedText length];
 }
 
 - (NSString *)markedText
@@ -1386,7 +1421,6 @@ static void autocorrectionResult(WKStringRef correction, WKErrorRef error, void*
 
     [self _startAssistingKeyboard];
     [self _updateAccessory];
-    [self reloadInputViews];
 }
 
 - (void)_stopAssistingNode
@@ -1598,6 +1632,36 @@ static void autocorrectionResult(WKStringRef correction, WKErrorRef error, void*
     rects.firstRect = firstRect;
     rects.lastRect = lastRect;
     return [rects autorelease];
+}
+
+@end
+
+@implementation WKAutocorrectionContext
+
++ (WKAutocorrectionContext *)autocorrectionContextWithData:(NSString *)beforeText markedText:(NSString *)markedText selectedText:(NSString *)selectedText afterText:(NSString *)afterText selectedRangeInMarkedText:(NSRange)range
+{
+    WKAutocorrectionContext *context = [[WKAutocorrectionContext alloc] init];
+
+    if ([beforeText length])
+        context.contextBeforeSelection = [beforeText copy];
+    if ([selectedText length])
+        context.selectedText = [selectedText copy];
+    if ([markedText length])
+        context.markedText = [markedText copy];
+    if ([afterText length])
+        context.contextAfterSelection = [afterText copy];
+    context.rangeInMarkedText = range;
+    return [context autorelease];
+}
+
+- (void)dealloc
+{
+    [self.contextBeforeSelection release];
+    [self.markedText release];
+    [self.selectedText release];
+    [self.contextAfterSelection release];
+
+    [super dealloc];
 }
 
 @end
