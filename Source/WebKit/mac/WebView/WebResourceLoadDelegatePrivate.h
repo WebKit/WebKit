@@ -37,15 +37,13 @@
 - (void)webView:(WebView *)webView didLoadResourceFromMemoryCache:(NSURLRequest *)request response:(NSURLResponse *)response length:(NSInteger)length fromDataSource:(WebDataSource *)dataSource;
 - (BOOL)webView:(WebView *)webView resource:(id)identifier shouldUseCredentialStorageForDataSource:(WebDataSource *)dataSource;
 
-#if WEBKIT_VERSION_MAX_ALLOWED > WEBKIT_VERSION_4_0
 /*!
  @method webView:resource:canAuthenticateAgainstProtectionSpace:forDataSource:
  @abstract Inspect an NSURLProtectionSpace before an authentication attempt is made. Only used on Snow Leopard or newer.
  @param protectionSpace an NSURLProtectionSpace that will be used to generate an authentication challenge
  @result Return YES if the resource load delegate is prepared to respond to an authentication challenge generated with protectionSpace, NO otherwise
  */
-- (BOOL)webView:(WebView *)sender resource:(id)identifier canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace forDataSource:(WebDataSource *)dataSource;
-#endif
+- (BOOL)webView:(WebView *)sender resource:(id)identifier canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace forDataSource:(WebDataSource *)dataSource WEBKIT_AVAILABLE_MAC(10_6);
 
 /*!
  @method webView:shouldPaintBrokenImageForURL:(NSURL*)imageURL

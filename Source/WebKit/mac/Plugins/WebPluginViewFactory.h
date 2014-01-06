@@ -27,7 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <JavaScriptCore/WebKitAvailability.h>
+#import <WebKit/WebKitAvailability.h>
 
 #if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
@@ -70,7 +70,7 @@ extern NSString *WebPlugInContainingElementKey;
  For compatibility with older versions of WebKit, the plug-in should assume that the value for
  WebPlugInShouldLoadMainResourceKey is NO if it is absent from the arguments dictionary.
  */
-extern NSString *WebPlugInShouldLoadMainResourceKey AVAILABLE_IN_WEBKIT_VERSION_4_0;
+extern NSString *WebPlugInShouldLoadMainResourceKey WEBKIT_AVAILABLE_MAC(10_6);
 
 /*!
     @protocol WebPlugInViewFactory

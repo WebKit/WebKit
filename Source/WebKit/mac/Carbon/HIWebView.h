@@ -33,7 +33,7 @@
 
 #include <Carbon/Carbon.h>
 
-#include <JavaScriptCore/WebKitAvailability.h>
+#include <WebKit/WebKitAvailability.h>
 
 #if PRAGMA_ONCE
 #pragma once
@@ -67,7 +67,7 @@ extern "C" {
  *    Non-Carbon CFM:   not available
  */
 extern OSStatus 
-HIWebViewCreate(HIViewRef * outControl) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_4_0;
+HIWebViewCreate(HIViewRef * outControl) CF_DEPRECATED_MAC(10_3, 10_6, "Use WebView instead.");
 
 #ifdef __OBJC__
 
@@ -91,7 +91,7 @@ HIWebViewCreate(HIViewRef * outControl) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_B
  *    Non-Carbon CFM:   not available
  */
 extern WebView *
-HIWebViewGetWebView(HIViewRef inView) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_4_0;
+HIWebViewGetWebView(HIViewRef inView) CF_DEPRECATED_MAC(10_3, 10_6);
 
 #endif
 
