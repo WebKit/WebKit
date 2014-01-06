@@ -37,12 +37,9 @@
 #include <wtf/unicode/UTF8.h>
 #include <wtf/unicode/Unicode.h>
 
-using namespace std;
-
 namespace WTF {
 
 using namespace Unicode;
-using namespace std;
 
 // Construct a string with UTF-16 data.
 String::String(const UChar* characters, unsigned length)
@@ -104,7 +101,7 @@ void String::append(const String& str)
         if (m_impl) {
             if (m_impl->is8Bit() && str.m_impl->is8Bit()) {
                 LChar* data;
-                if (str.length() > numeric_limits<unsigned>::max() - m_impl->length())
+                if (str.length() > std::numeric_limits<unsigned>::max() - m_impl->length())
                     CRASH();
                 RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(m_impl->length() + str.length(), data);
                 memcpy(data, m_impl->characters8(), m_impl->length() * sizeof(LChar));
@@ -113,7 +110,7 @@ void String::append(const String& str)
                 return;
             }
             UChar* data;
-            if (str.length() > numeric_limits<unsigned>::max() - m_impl->length())
+            if (str.length() > std::numeric_limits<unsigned>::max() - m_impl->length())
                 CRASH();
             RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(m_impl->length() + str.length(), data);
             memcpy(data, m_impl->characters(), m_impl->length() * sizeof(UChar));
@@ -133,7 +130,7 @@ inline void String::appendInternal(CharacterType c)
     // call to fastMalloc every single time.
     if (m_impl) {
         UChar* data;
-        if (m_impl->length() >= numeric_limits<unsigned>::max())
+        if (m_impl->length() >= std::numeric_limits<unsigned>::max())
             CRASH();
         RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(m_impl->length() + 1, data);
         memcpy(data, m_impl->characters(), m_impl->length() * sizeof(UChar));
@@ -187,7 +184,7 @@ void String::append(const LChar* charactersToAppend, unsigned lengthToAppend)
     unsigned strLength = m_impl->length();
 
     if (m_impl->is8Bit()) {
-        if (lengthToAppend > numeric_limits<unsigned>::max() - strLength)
+        if (lengthToAppend > std::numeric_limits<unsigned>::max() - strLength)
             CRASH();
         LChar* data;
         RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(strLength + lengthToAppend, data);
@@ -197,7 +194,7 @@ void String::append(const LChar* charactersToAppend, unsigned lengthToAppend)
         return;
     }
 
-    if (lengthToAppend > numeric_limits<unsigned>::max() - strLength)
+    if (lengthToAppend > std::numeric_limits<unsigned>::max() - strLength)
         CRASH();
     UChar* data;
     RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(length() + lengthToAppend, data);
@@ -221,7 +218,7 @@ void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
     unsigned strLength = m_impl->length();
     
     ASSERT(charactersToAppend);
-    if (lengthToAppend > numeric_limits<unsigned>::max() - strLength)
+    if (lengthToAppend > std::numeric_limits<unsigned>::max() - strLength)
         CRASH();
     UChar* data;
     RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(strLength + lengthToAppend, data);
@@ -248,7 +245,7 @@ void String::insert(const UChar* charactersToInsert, unsigned lengthToInsert, un
 
     ASSERT(charactersToInsert);
     UChar* data;
-    if (lengthToInsert > numeric_limits<unsigned>::max() - length())
+    if (lengthToInsert > std::numeric_limits<unsigned>::max() - length())
         CRASH();
     RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(length() + lengthToInsert, data);
     memcpy(data, characters(), position * sizeof(UChar));
@@ -316,8 +313,8 @@ String String::substringSharingImpl(unsigned offset, unsigned length) const
     // FIXME: We used to check against a limit of Heap::minExtraCost / sizeof(UChar).
 
     unsigned stringLength = this->length();
-    offset = min(offset, stringLength);
-    length = min(length, stringLength - offset);
+    offset = std::min(offset, stringLength);
+    length = std::min(length, stringLength - offset);
 
     if (!offset && length == stringLength)
         return *this;
@@ -833,7 +830,7 @@ String String::make16BitFrom8BitSource(const LChar* source, size_t length)
 
 String String::fromUTF8(const LChar* stringStart, size_t length)
 {
-    if (length > numeric_limits<unsigned>::max())
+    if (length > std::numeric_limits<unsigned>::max())
         CRASH();
 
     if (!stringStart)
@@ -898,8 +895,8 @@ static bool isCharacterAllowedInBase(UChar c, int base)
 template <typename IntegralType, typename CharType>
 static inline IntegralType toIntegralType(const CharType* data, size_t length, bool* ok, int base)
 {
-    static const IntegralType integralMax = numeric_limits<IntegralType>::max();
-    static const bool isSigned = numeric_limits<IntegralType>::is_signed;
+    static const IntegralType integralMax = std::numeric_limits<IntegralType>::max();
+    static const bool isSigned = std::numeric_limits<IntegralType>::is_signed;
     const IntegralType maxMultiplier = integralMax / base;
 
     IntegralType value = 0;

@@ -1,3 +1,39 @@
+2014-01-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove using directives for the std namespace from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=126524
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove the using directives for the std namespace throughout the WTF code.
+        The more explicit std:: nested name specifier should be used instead.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::createWithFloat):
+        (WTF::MediaTime::createWithDouble):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::create):
+        (WTF::StringImpl::lower):
+        (WTF::StringImpl::upper):
+        (WTF::StringImpl::foldCase):
+        (WTF::StringImpl::find):
+        (WTF::StringImpl::findIgnoringCase):
+        (WTF::reverseFindInner):
+        (WTF::StringImpl::reverseFind):
+        (WTF::reverseFindIgnoringCaseInner):
+        (WTF::StringImpl::reverseFindIgnoringCase):
+        (WTF::StringImpl::replace):
+        (WTF::StringImpl::utf8ForCharacters):
+        (WTF::StringImpl::utf8ForRange):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::append):
+        (WTF::String::appendInternal):
+        (WTF::String::insert):
+        (WTF::String::substringSharingImpl):
+        (WTF::String::fromUTF8):
+        (WTF::toIntegralType):
+        * wtf/win/RunLoopWin.cpp:
+
 2014-01-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         DoublyLinkedLists can't be concatenated
