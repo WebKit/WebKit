@@ -71,6 +71,11 @@ Buildbot.prototype = {
         return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/run-api-tests/logs/stdio";
     },
 
+    platformAPITestResultsURLForIteration: function(iteration)
+    {
+        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/API%20tests/logs/stdio";
+    },
+
     webkitpyTestResultsURLForIteration: function(iteration)
     {
         return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/webkitpy-test/logs/stdio";

@@ -39,6 +39,8 @@ BuildbotIteration = function(queue, id, finished)
 
     this.layoutTestResults = null;
     this.javascriptTestResults = null;
+    this.apiTestResults = null;
+    this.platformAPITestResults = null;
     this.pythonTestResults = null;
     this.perlTestResults = null;
     this.bindingTestResults = null;
@@ -174,6 +176,9 @@ BuildbotIteration.prototype = {
 
             var apiTestResults = collectTestResults.call(this, data, "run-api-tests");
             this.apiTestResults = apiTestResults ? new BuildbotTestResults(this, apiTestResults) : null;
+
+            var platformAPITestResults = collectTestResults.call(this, data, "API tests");
+            this.platformAPITestResults = platformAPITestResults ? new BuildbotTestResults(this, platformAPITestResults) : null;
 
             var pythonTestResults = collectTestResults.call(this, data, "webkitpy-test");
             this.pythonTestResults = pythonTestResults ? new BuildbotTestResults(this, pythonTestResults) : null;
