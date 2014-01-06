@@ -1,3 +1,12 @@
+2014-01-02  Roger Fong  <roger_fong@apple.com>
+
+        Set VSINSTALLDIR in win ews start script.
+        https://bugs.webkit.org/show_bug.cgi?id=126407
+
+        Reviewed by Brent Fulgham.
+
+        * EWSTools/start-queue-win.sh:
+
 2014-01-06  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Adding myself as a reviewer.
