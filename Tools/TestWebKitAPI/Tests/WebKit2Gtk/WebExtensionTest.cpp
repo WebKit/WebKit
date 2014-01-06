@@ -210,9 +210,8 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         JSRetainPtr<JSStringRef> jsScript(Adopt, JSStringCreateWithUTF8CString(script));
         JSEvaluateScript(jsContext, jsScript.get(), 0, 0, 0, 0);
         g_dbus_method_invocation_return_value(invocation, 0);
-    } else if (!g_strcmp0(methodName, "AbortProcess")) {
+    } else if (!g_strcmp0(methodName, "AbortProcess"))
         abort();
-    }
 }
 
 static const GDBusInterfaceVTable interfaceVirtualTable = {
@@ -221,7 +220,7 @@ static const GDBusInterfaceVTable interfaceVirtualTable = {
 
 static void busAcquiredCallback(GDBusConnection* connection, const char* name, gpointer userData)
 {
-    static GDBusNodeInfo *introspectionData = 0;
+    static GDBusNodeInfo* introspectionData = 0;
     if (!introspectionData)
         introspectionData = g_dbus_node_info_new_for_xml(introspectionXML, 0);
 

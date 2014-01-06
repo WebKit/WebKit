@@ -37,8 +37,8 @@ WebKitTestServer::WebKitTestServer(ServerType type)
     soup_address_resolve_sync(address.get(), 0);
 
     m_soupServer = adoptGRef(soup_server_new(SOUP_SERVER_INTERFACE, address.get(),
-                                             SOUP_SERVER_SSL_CERT_FILE, sslCertificateFile.get(),
-                                             SOUP_SERVER_SSL_KEY_FILE, sslKeyFile.get(), NULL));
+        SOUP_SERVER_SSL_CERT_FILE, sslCertificateFile.get(),
+        SOUP_SERVER_SSL_KEY_FILE, sslKeyFile.get(), nullptr));
     m_baseURI = type == ServerHTTPS ? soup_uri_new("https://127.0.0.1/") : soup_uri_new("http://127.0.0.1/");
     soup_uri_set_port(m_baseURI, soup_server_get_port(m_soupServer.get()));
 }

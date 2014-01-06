@@ -76,7 +76,7 @@ static const GDBusInterfaceVTable interfaceVirtualTable = {
 
 static void busAcquiredCallback(GDBusConnection* connection, const char* name, gpointer userData)
 {
-    static GDBusNodeInfo *introspectionData = 0;
+    static GDBusNodeInfo* introspectionData = 0;
     if (!introspectionData)
         introspectionData = g_dbus_node_info_new_for_xml(introspectionXML, 0);
 

@@ -24,7 +24,7 @@ macro(ADD_WK1_TEST test_name)
         ${LIBSOUP_LIBRARIES}
     )
     set_target_properties(${test_name} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit1GObjectAPITests
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/WebKitGtk
     )
 endmacro()
 

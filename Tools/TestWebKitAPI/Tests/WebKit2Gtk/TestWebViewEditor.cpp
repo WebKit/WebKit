@@ -25,8 +25,8 @@ class EditorTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(EditorTest);
 
-    static const unsigned int kClipboardWaitTimeout = 50;
-    static const unsigned int kClipboardWaitMaxTries = 2;
+    static const unsigned kClipboardWaitTimeout = 50;
+    static const unsigned kClipboardWaitMaxTries = 2;
 
     EditorTest()
         : m_clipboard(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD))

@@ -1,5 +1,6 @@
-set(TEST_LIBRARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit2GObjectAPITests)
-set(TEST_RESOURCES_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources)
+set(TEST_LIBRARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit2GtkAPITests)
+set(TEST_BINARY_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/WebKit2Gtk)
+set(TEST_RESOURCES_DIR ${TEST_BINARY_DIR}/resources)
 file(MAKE_DIRECTORY ${TEST_RESOURCES_DIR})
 
 add_definitions(
@@ -19,6 +20,7 @@ include_directories(
     ${FORWARDING_HEADERS_DIR}
     ${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
     ${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}
+    ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk
     ${ATSPI_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}
@@ -26,20 +28,22 @@ include_directories(
 )
 
 add_library(WebKit2APITestCore STATIC
-    LoadTrackingTest.cpp
-    WebKitTestBus.cpp
-    WebKitTestServer.cpp
-    WebProcessTestRunner.cpp
-    TestMain.cpp
-    WebViewTest.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestBus.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestServer.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/WebProcessTestRunner.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/TestMain.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp
 )
-
 target_link_libraries(WebKit2APITestCore WebKit2)
 
 add_custom_target(test-gresource-bundle
     DEPENDS resources/webkit2gtk-tests.gresource.xml
             resources/link-title.js
-    COMMAND glib-compile-resources --target=${TEST_RESOURCES_DIR}/webkit2gtk-tests-resources.gresource --sourcedir=${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml
+    COMMAND glib-compile-resources
+            --target=${TEST_RESOURCES_DIR}/webkit2gtk-tests-resources.gresource
+            --sourcedir=${CMAKE_SOURCE_DIR}
+            ${CMAKE_CURRENT_LIST_DIR}/resources/webkit2gtk-tests.gresource.xml
 )
 
 macro(ADD_WK2_TEST_WEB_EXTENSION extension_name)
@@ -71,7 +75,7 @@ macro(ADD_WK2_TEST test_name)
         ${LIBSOUP_LIBRARIES}
     )
     set_target_properties(${test_name} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit2GObjectAPITests
+        RUNTIME_OUTPUT_DIRECTORY ${TEST_BINARY_DIR}
     )
 endmacro()
 

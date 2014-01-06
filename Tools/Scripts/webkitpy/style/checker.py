@@ -317,7 +317,7 @@ _CMAKE_FILE_EXTENSION = 'cmake'
 # WebKit maintains some files in Mozilla style on purpose to ease
 # future merges.
 _SKIPPED_FILES_WITH_WARNING = [
-    "Source/WebKit/gtk/tests/",
+    "Tools/TestWebKitAPI/Tests/WebKitGtk/",
     # All WebKit*.h files in Source/WebKit2/UIProcess/API/gtk,
     # except those ending in ...Private.h are GTK+ API headers,
     # which differ greatly from WebKit coding style.

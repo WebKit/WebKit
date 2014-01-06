@@ -30,7 +30,7 @@ void afterAll();
 
 static void registerGResource(void)
 {
-    GOwnPtr<char> resourcesPath(g_build_filename(WEBKIT_EXEC_PATH, "resources", "webkit2gtk-tests-resources.gresource", NULL));
+    GOwnPtr<char> resourcesPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", "resources", "webkit2gtk-tests-resources.gresource", NULL));
     GResource* resource = g_resource_load(resourcesPath.get(), 0);
     g_assert(resource);
 

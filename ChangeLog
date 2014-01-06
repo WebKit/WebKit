@@ -1,3 +1,13 @@
+2014-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move all GTK/GObject unit tests to Tools/TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=126342
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Remove unused variable.
+        * Source/PlatformGTK.cmake: No longer include the old unit tests directories.
+
 2014-01-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] configure errors out when building with libc++

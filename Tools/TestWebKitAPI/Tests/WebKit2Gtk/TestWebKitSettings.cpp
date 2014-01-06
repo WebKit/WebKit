@@ -278,10 +278,11 @@ static void testWebKitSettings(Test*, gconstpointer)
 
 void testWebKitSettingsNewWithSettings(Test* test, gconstpointer)
 {
-    GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new_with_settings("enable-javascript", FALSE,
-                                                                                   "auto-load-images", FALSE,
-                                                                                   "load-icons-ignoring-image-load-setting", TRUE,
-                                                                                   NULL));
+    GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new_with_settings(
+        "enable-javascript", FALSE,
+        "auto-load-images", FALSE,
+        "load-icons-ignoring-image-load-setting", TRUE,
+        nullptr));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(settings.get()));
     g_assert(!webkit_settings_get_enable_javascript(settings.get()));
     g_assert(!webkit_settings_get_auto_load_images(settings.get()));

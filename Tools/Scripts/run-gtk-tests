@@ -58,35 +58,35 @@ class TestTimeout(Exception):
     pass
 
 class TestRunner:
-    TEST_DIRS = [ "WebKit1GObjectAPITests", "WebKit2GObjectAPITests", "TestWebKitAPI" ]
+    TEST_DIRS = [ "WebKit2Gtk", "WebKitGtk", "WebKit2", "JavaScriptCore", "WTF", "WebCore",  "WebCoreGtk" ]
 
     SKIPPED = [
-        SkippedTest("WebKit1GObjectAPITests/testdownload", "/webkit/download/not-found", "Test fails in GTK Linux 64-bit Release bot", 82329),
-        SkippedTest("WebKit1GObjectAPITests/testwebinspector", "/webkit/webinspector/close-and-inspect", "Test is flaky in GTK Linux 32-bit Release bot", 82869),
-        SkippedTest("WebKit1GObjectAPITests/testwebresource", "/webkit/webresource/loading", "Test fails", 104689),
-        SkippedTest("WebKit1GObjectAPITests/testwebresource", "/webkit/webresource/sub_resource_loading", "Test fails in GTK Linux 64-bit Release bot", 82330),
-        SkippedTest("WebKit1GObjectAPITests/testwebview", "/webkit/webview/icon-uri", "Test times out in GTK Linux 64-bit Release bot", 82328),
-        SkippedTest("WebKit2GObjectAPITests/TestResources", "/webkit2/WebKitWebView/resources", "Test is flaky in GTK Linux 32-bit Release bot", 82868),
-        SkippedTest("WebKit2GObjectAPITests/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
-        SkippedTest("WebKit2GObjectAPITests/TestAuthentication", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
-        SkippedTest("WebKit2GObjectAPITests/TestContextMenu", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.MouseMoveAfterCrash", "Test is flaky", 85066),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutFrames", "Test fails", 85037),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.RestoreSessionStateContainingFormData", "Session State is not implemented in GTK+ port", 84960),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.SpacebarScrolling", "Test fails", 84961),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.WKConnection", "Tests fail and time out out", 84959),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.WKPageGetScaleFactorNotZero", "Test fails and times out", 88455),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.ForceRepaint", "Test times out", 105532),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.ReloadPageAfterCrash", "Test flakily times out", 110129),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.DidAssociateFormControls", "Test times out", 120302),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.InjectedBundleFrameHitTest", "Test times out", 120303),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.ResizeReversePaginatedWebView", "Test fails", 120305),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.ScrollPinningBehaviors", "Test fails", 120306),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.TerminateTwice", "Test causes crash on the next test", 121970),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.GeolocationTransitionToHighAccuracy", "Test causes crash on the next test", 125068),
-        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.GeolocationTransitionToLowAccuracy", "Test causes crash on the next test", 125068),
-        SkippedTest("WebKit2GObjectAPITests/TestInspectorServer", SkippedTest.ENTIRE_SUITE, "Timing out on the bot", 122571),
+        SkippedTest("WebKitGtk/testdownload", "/webkit/download/not-found", "Test fails in GTK Linux 64-bit Release bot", 82329),
+        SkippedTest("WebKitGtk/testwebinspector", "/webkit/webinspector/close-and-inspect", "Test is flaky in GTK Linux 32-bit Release bot", 82869),
+        SkippedTest("WebKitGtk/testwebresource", "/webkit/webresource/loading", "Test fails", 104689),
+        SkippedTest("WebKitGtk/testwebresource", "/webkit/webresource/sub_resource_loading", "Test fails in GTK Linux 64-bit Release bot", 82330),
+        SkippedTest("WebKitGtk/testwebview", "/webkit/webview/icon-uri", "Test times out in GTK Linux 64-bit Release bot", 82328),
+        SkippedTest("WebKit2Gtk/TestResources", "/webkit2/WebKitWebView/resources", "Test is flaky in GTK Linux 32-bit Release bot", 82868),
+        SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
+        SkippedTest("WebKit2Gtk/TestAuthentication", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
+        SkippedTest("WebKit2Gtk/TestContextMenu", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.MouseMoveAfterCrash", "Test is flaky", 85066),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutFrames", "Test fails", 85037),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.RestoreSessionStateContainingFormData", "Session State is not implemented in GTK+ port", 84960),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.SpacebarScrolling", "Test fails", 84961),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.WKConnection", "Tests fail and time out out", 84959),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.WKPageGetScaleFactorNotZero", "Test fails and times out", 88455),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.ForceRepaint", "Test times out", 105532),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.ReloadPageAfterCrash", "Test flakily times out", 110129),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.DidAssociateFormControls", "Test times out", 120302),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.InjectedBundleFrameHitTest", "Test times out", 120303),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.ResizeReversePaginatedWebView", "Test fails", 120305),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.ScrollPinningBehaviors", "Test fails", 120306),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.TerminateTwice", "Test causes crash on the next test", 121970),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.GeolocationTransitionToHighAccuracy", "Test causes crash on the next test", 125068),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.GeolocationTransitionToLowAccuracy", "Test causes crash on the next test", 125068),
+        SkippedTest("WebKit2Gtk/TestInspectorServer", SkippedTest.ENTIRE_SUITE, "Timing out on the bot", 122571),
     ]
 
     def __init__(self, options, tests=[]):
@@ -105,6 +105,9 @@ class TestRunner:
         # These SPI daemons need to be active for the accessibility tests to work.
         self._spi_registryd = None
         self._spi_bus_launcher = None
+
+    def _test_programs_base_dir(self):
+        return os.path.join(self._programs_path, "TestWebKitAPI")
 
     def _get_tests_from_dir(self, test_dir):
         if not os.path.isdir(test_dir):
@@ -131,7 +134,7 @@ class TestRunner:
 
         tests = []
         for test_dir in self.TEST_DIRS:
-            absolute_test_dir = os.path.join(self._programs_path, test_dir)
+            absolute_test_dir = os.path.join(self._test_programs_base_dir(), test_dir)
             tests.extend(self._get_tests_from_dir(absolute_test_dir))
         return tests
 
@@ -361,17 +364,18 @@ class TestRunner:
         return 0
 
     def _run_test(self, test_program):
-        if "GObjectAPITest" in test_program:
+        basedir = os.path.basename(os.path.dirname(test_program))
+        if basedir in ["WebKit2Gtk", "WebKitGtk"]:
             return self._run_test_glib(test_program)
 
-        if "TestWebKitAPI" in test_program:
+        if basedir in ["WebKit2", "JavaScriptCore", "WTF", "WebCore",  "WebCoreGtk"]:
             return self._run_google_test_suite(test_program)
 
         return 1
 
     def run_tests(self):
         if not self._tests:
-            sys.stderr.write("ERROR: tests not found in %s.\n" % (self._programs_path))
+            sys.stderr.write("ERROR: tests not found in %s.\n" % (self._test_programs_base_dir()))
             sys.stderr.flush()
             return 1
 
@@ -405,17 +409,17 @@ class TestRunner:
             self._tear_down_testing_environment()
 
         if failed_tests:
-            names = [test.replace(self._programs_path, '', 1) for test in failed_tests]
+            names = [test.replace(self._test_programs_base_dir(), '', 1) for test in failed_tests]
             sys.stdout.write("Tests failed (%d): %s\n" % (len(names), ", ".join(names)))
             sys.stdout.flush()
 
         if crashed_tests:
-            names = [test.replace(self._programs_path, '', 1) for test in crashed_tests]
+            names = [test.replace(self._test_programs_base_dir(), '', 1) for test in crashed_tests]
             sys.stdout.write("Tests that crashed (%d): %s\n" % (len(names), ", ".join(names)))
             sys.stdout.flush()
 
         if timed_out_tests:
-            names = [test.replace(self._programs_path, '', 1) for test in timed_out_tests]
+            names = [test.replace(self._test_programs_base_dir(), '', 1) for test in timed_out_tests]
             sys.stdout.write("Tests that timed out (%d): %s\n" % (len(names), ", ".join(names)))
             sys.stdout.flush()
 

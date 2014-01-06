@@ -42,10 +42,15 @@
     }
 
 #define ASSERT_CMP_CSTRING(s1, cmp, s2) \
-    do { CString __s1 = (s1); CString __s2 = (s2); \
-        if (g_strcmp0(__s1.data(), __s2.data()) cmp 0) ; else \
-            g_assertion_message_cmpstr(G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
-                #s1 " " #cmp " " #s2, __s1.data(), #cmp, __s2.data()); } while (0)
+    do {                                                                 \
+        CString __s1 = (s1);                                             \
+        CString __s2 = (s2);                                             \
+        if (g_strcmp0(__s1.data(), __s2.data()) cmp 0) ;                 \
+        else                                                             \
+            g_assertion_message_cmpstr(G_LOG_DOMAIN, __FILE__, __LINE__, \
+                G_STRFUNC, #s1 " " #cmp " " #s2, __s1.data(), #cmp, __s2.data()); \
+    } while (0)
+
 
 class Test {
 public:
@@ -78,13 +83,13 @@ public:
 
     static CString getWebKit1TestResoucesDir()
     {
-        GOwnPtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Source", "WebKit", "gtk", "tests", "resources", NULL));
+        GOwnPtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKitGtk", "resources", NULL));
         return resourcesDir.get();
     }
 
     static CString getResourcesDir()
     {
-        GOwnPtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Source", "WebKit2", "UIProcess", "API", "gtk", "tests", "resources", NULL));
+        GOwnPtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit2Gtk", "resources", NULL));
         return resourcesDir.get();
     }
 

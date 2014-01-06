@@ -280,7 +280,7 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
         """Test should_skip_with_warning()."""
         # Check skipped files.
         paths_to_skip = [
-           "Source/WebKit/gtk/tests/testatk.c",
+           "Tools/TestWebKitAPI/Tests/WebKitGtk/testatk.c",
            "Source/WebKit2/UIProcess/API/gtk/webkit2.h",
            "Source/WebKit2/UIProcess/API/gtk/WebKitWebView.h",
            "Source/WebKit2/UIProcess/API/gtk/WebKitLoader.h",
@@ -297,8 +297,8 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
            "Source/WebKit2/UIProcess/API/gtk/HelperClass.h",
            "Source/WebKit2/UIProcess/API/gtk/WebKitWebView.cpp",
            "Source/WebKit2/UIProcess/API/gtk/WebKitWebViewPrivate.h",
-           "Source/WebKit2/UIProcess/API/gtk/tests/WebViewTest.cpp",
-           "Source/WebKit2/UIProcess/API/gtk/tests/WebViewTest.h",
+           "Tools/TestWebKitAPI/Tests/WebKit2Gtk/WebViewTest.cpp",
+           "Tools/TestWebKitAPI/Tests/WebKit2Gtk/WebViewTest.h",
             ]
 
         for path in paths_not_to_skip:

@@ -38,14 +38,14 @@ int main(int argc, char** argv)
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
     webkit_web_view_load_html(webView,
-                              "<html>"
-                              "  <body>"
-                              "   <h1>This is a test</h1>"
-                              "   <p>This is a paragraph with some plain text.</p>"
-                              "   <p>This paragraph contains <a href=\"http://www.webkitgtk.org\">a link</a> in the middle.</p>"
-                              "  </body>"
-                              "</html>",
-                              0);
+        "<html>"
+        "  <body>"
+        "   <h1>This is a test</h1>"
+        "   <p>This is a paragraph with some plain text.</p>"
+        "   <p>This paragraph contains <a href=\"http://www.webkitgtk.org\">a link</a> in the middle.</p>"
+        "  </body>"
+        "</html>",
+        0);
 
     GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(webView));
