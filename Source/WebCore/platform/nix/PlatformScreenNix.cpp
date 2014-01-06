@@ -26,8 +26,12 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "FloatRect.h"
+#include "HostWindow.h"
 #include "NotImplemented.h"
+#include "ScrollView.h"
 #include "Widget.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -64,10 +68,9 @@ bool screenIsMonochrome(Widget*)
     return false;
 }
 
-FloatRect screenRect(Widget*)
+FloatRect screenRect(Widget* widget)
 {
-    notImplemented();
-    return FloatRect(0, 0, 1024, 768);
+    return static_cast<Chrome*>(widget->root()->hostWindow())->client().screenRect();
 }
 
 FloatRect screenAvailableRect(Widget* widget)
