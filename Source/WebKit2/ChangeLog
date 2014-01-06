@@ -1,3 +1,54 @@
+2014-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Move responsibility for remote layer tree committing to RemoteLayerTreeDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=126501
+
+        Reviewed by Sam Weinig.
+        
+        Soon we shall need to do atomic commits of both the remote layer tree, and
+        the remote scrolling tree. Pave the way by moving responsibility for remote
+        layer tree committing to RemoteLayerTreeDrawingArea.
+        
+        So move the flushing logic from RemoteLayerTreeHost to RemoteLayerTreeDrawingArea.
+        After this change, RemoteLayerTreeHost doesn't do much and could possibly be
+        removed in future.
+        
+        Also add type-safe casting to GraphicsLayer and DrawingArea.
+
+        * DerivedSources.make: Out with RemoteLayerTreeHost, in with RemoteLayerTreeDrawingAreaProxy
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::remoteLayerTreeHost):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.messages.in: Renamed from Source/WebKit2/UIProcess/mac/RemoteLayerTreeHost.messages.in.
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy): Add message receiver.
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy): Remove message receiver.
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree): Hand the transaction off to the layer
+        tree host.
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::RemoteLayerTreeHost): No longer a message receiver.
+        (WebKit::RemoteLayerTreeHost::~RemoteLayerTreeHost):
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::type):
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::RemoteLayerTreeContext):
+        (WebKit::RemoteLayerTreeContext::flushOutOfTreeLayers):
+        (WebKit::RemoteLayerTreeContext::buildTransaction):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::setRootCompositingLayer):
+        (WebKit::RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen):
+        (WebKit::RemoteLayerTreeDrawingArea::forceRepaint):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush):
+        (WebKit::RemoteLayerTreeDrawingArea::layerFlushTimerFired):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+
 2014-01-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Ensure that the autotools build and the CMake install the same files

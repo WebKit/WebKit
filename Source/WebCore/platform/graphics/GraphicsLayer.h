@@ -493,6 +493,9 @@ public:
 
     virtual bool canThrottleLayerFlush() const { return false; }
 
+    virtual bool isGraphicsLayerCA() const { return false; }
+    virtual bool isGraphicsLayerCARemote() const { return false; }
+
 protected:
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.
     virtual void willBeDestroyed();
@@ -587,6 +590,8 @@ protected:
     CustomAppearance m_customAppearance;
 };
 
+#define GRAPHICSLAYER_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, WebCore::GraphicsLayer, value, value->predicate, value.predicate)
 
 } // namespace WebCore
 

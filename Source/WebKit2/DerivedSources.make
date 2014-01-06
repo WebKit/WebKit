@@ -85,7 +85,7 @@ MESSAGE_RECEIVERS = \
     PluginProcessConnectionManager \
     PluginProcessProxy \
     PluginProxy \
-    RemoteLayerTreeHost \
+    RemoteLayerTreeDrawingAreaProxy \
     RemoteObjectRegistry \
     SecItemShim \
     SecItemShimProxy \

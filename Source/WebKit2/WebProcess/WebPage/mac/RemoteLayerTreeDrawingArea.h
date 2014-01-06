@@ -29,6 +29,7 @@
 #include "DrawingArea.h"
 #include "GraphicsLayerCARemote.h"
 #include <WebCore/GraphicsLayerClient.h>
+#include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -86,6 +87,9 @@ private:
     void updateMainFrameClipsToExposedRect();
     void updateScrolledExposedRect();
 
+    void layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeDrawingArea>*);
+    void flushLayers();
+
     WebCore::TiledBacking* mainFrameTiledBacking() const;
 
     std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
@@ -98,7 +102,13 @@ private:
     WebCore::FloatRect m_exposedRect;
     WebCore::FloatRect m_scrolledExposedRect;
     bool m_clipsToExposedRect;
+
+    WebCore::Timer<RemoteLayerTreeDrawingArea> m_layerFlushTimer;
+    bool m_isFlushingSuspended;
+    bool m_hasDeferredFlush;
 };
+
+DRAWING_AREA_TYPE_CASTS(RemoteLayerTreeDrawingArea, type() == DrawingAreaTypeRemoteLayerTree);
 
 } // namespace WebKit
 

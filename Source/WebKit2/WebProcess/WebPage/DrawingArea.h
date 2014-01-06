@@ -61,6 +61,8 @@ public:
     static std::unique_ptr<DrawingArea> create(WebPage*, const WebPageCreationParameters&);
     virtual ~DrawingArea();
     
+    DrawingAreaType type() const { return m_type; }
+    
     void didReceiveDrawingAreaMessage(IPC::Connection*, IPC::MessageDecoder&);
 
     virtual void setNeedsDisplay() = 0;
@@ -106,7 +108,7 @@ public:
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&);
 
-    virtual void viewStateDidChange(ViewState::Flags changed) { }
+    virtual void viewStateDidChange(ViewState::Flags) { }
 
 protected:
     DrawingArea(DrawingAreaType, WebPage*);
@@ -131,6 +133,9 @@ private:
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }
 #endif
 };
+
+#define DRAWING_AREA_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, DrawingArea, value, value->predicate, value.predicate)
 
 } // namespace WebKit
 

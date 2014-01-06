@@ -27,7 +27,6 @@
 #import "RemoteLayerTreeHost.h"
 
 #import "Logging.h"
-#import "RemoteLayerTreeHostMessages.h"
 #import "RemoteLayerTreePropertyApplier.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "ShareableBitmap.h"
@@ -46,15 +45,13 @@ RemoteLayerTreeHost::RemoteLayerTreeHost(WebPageProxy* webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_rootLayer(nullptr)
 {
-    m_webPageProxy->process().addMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID(), *this);
 }
 
 RemoteLayerTreeHost::~RemoteLayerTreeHost()
 {
-    m_webPageProxy->process().removeMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID());
 }
 
-void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
+void RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction)
 {
     LOG(RemoteLayerTree, "%s", transaction.description().data());
 

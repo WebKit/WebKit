@@ -29,6 +29,7 @@
 #import "DrawingAreaProxyMessages.h"
 #import "GraphicsLayerCARemote.h"
 #import "RemoteLayerTreeContext.h"
+#import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "WebPage.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
@@ -44,6 +45,9 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const W
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
     , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
     , m_clipsToExposedRect(false)
+    , m_layerFlushTimer(this, &RemoteLayerTreeDrawingArea::layerFlushTimerFired)
+    , m_isFlushingSuspended(false)
+    , m_hasDeferredFlush(false)
 {
     webPage->corePage()->settings().setForceCompositingMode(true);
 #if PLATFORM(IOS)
@@ -75,14 +79,7 @@ GraphicsLayerFactory* RemoteLayerTreeDrawingArea::graphicsLayerFactory()
 
 void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLayer)
 {
-    m_rootLayer = rootLayer ? static_cast<GraphicsLayerCARemote*>(rootLayer)->platformCALayer() : nullptr;
-
-    m_remoteLayerTreeContext->setRootLayer(rootLayer);
-}
-
-void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
-{
-    m_remoteLayerTreeContext->scheduleLayerFlush();
+    m_rootLayer = rootLayer ? toGraphicsLayerCARemote(rootLayer)->platformCALayer() : nullptr;
 }
 
 void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition)
@@ -202,12 +199,31 @@ void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 
 void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 {
-    m_remoteLayerTreeContext->setIsFlushingSuspended(isFrozen);
+    if (m_isFlushingSuspended == isFrozen)
+        return;
+
+    m_isFlushingSuspended = isFrozen;
+
+    if (!m_isFlushingSuspended && m_hasDeferredFlush) {
+        m_hasDeferredFlush = false;
+        scheduleCompositingLayerFlush();
+    }
 }
 
 void RemoteLayerTreeDrawingArea::forceRepaint()
 {
-    m_remoteLayerTreeContext->forceRepaint();
+    if (m_isFlushingSuspended)
+        return;
+
+    for (Frame* frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        FrameView* frameView = frame->view();
+        if (!frameView || !frameView->tiledBacking())
+            continue;
+
+        frameView->tiledBacking()->forceRepaint();
+    }
+
+    flushLayers();
 }
 
 void RemoteLayerTreeDrawingArea::setExposedRect(const FloatRect& exposedRect)
@@ -267,6 +283,43 @@ TiledBacking* RemoteLayerTreeDrawingArea::mainFrameTiledBacking() const
 {
     FrameView* frameView = m_webPage->corePage()->mainFrame().view();
     return frameView ? frameView->tiledBacking() : 0;
+}
+
+void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
+{
+    if (m_layerFlushTimer.isActive())
+        return;
+
+    m_layerFlushTimer.startOneShot(0);
+}
+
+void RemoteLayerTreeDrawingArea::layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeDrawingArea>*)
+{
+    flushLayers();
+}
+
+void RemoteLayerTreeDrawingArea::flushLayers()
+{
+    if (!m_rootLayer)
+        return;
+
+    if (m_isFlushingSuspended) {
+        m_hasDeferredFlush = true;
+        return;
+    }
+
+    m_webPage->layoutIfNeeded();
+    m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
+
+    m_remoteLayerTreeContext->flushOutOfTreeLayers();
+
+    ASSERT(m_rootLayer);
+
+    // FIXME: minize these transactions if nothing changed.
+    RemoteLayerTreeTransaction layerTransaction;
+    m_remoteLayerTreeContext->buildTransaction(layerTransaction, *m_rootLayer);
+
+    m_webPage->send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree(layerTransaction));
 }
 
 } // namespace WebKit

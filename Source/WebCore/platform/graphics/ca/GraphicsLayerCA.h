@@ -163,6 +163,8 @@ protected:
     virtual void setOpacityInternal(float);
 
 private:
+    virtual bool isGraphicsLayerCA() const { return true; }
+
     virtual void willBeDestroyed();
 
     // PlatformCALayerClient overrides
@@ -525,6 +527,8 @@ private:
     LayerChangeFlags m_uncommittedChanges;
     bool m_isCommittingChanges;
 };
+
+GRAPHICSLAYER_TYPE_CASTS(GraphicsLayerCA, isGraphicsLayerCA());
 
 } // namespace WebCore
 

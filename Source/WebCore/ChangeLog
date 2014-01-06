@@ -1,3 +1,18 @@
+2014-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Move responsibility for remote layer tree committing to RemoteLayerTreeDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=126501
+
+        Reviewed by Sam Weinig.
+
+        Add type-safe casting to GraphicsLayer.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::isGraphicsLayerCA):
+        (WebCore::GraphicsLayer::isGraphicsLayerCARemote):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::isGraphicsLayerCA):
+
 2014-01-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Ensure that the autotools build and the CMake install the same files

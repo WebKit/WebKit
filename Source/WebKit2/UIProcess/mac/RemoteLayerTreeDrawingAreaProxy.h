@@ -33,16 +33,26 @@
 
 namespace WebKit {
 
+class RemoteLayerTreeTransaction;
+
 class RemoteLayerTreeDrawingAreaProxy : public DrawingAreaProxy {
 public:
     explicit RemoteLayerTreeDrawingAreaProxy(WebPageProxy*);
     virtual ~RemoteLayerTreeDrawingAreaProxy();
 
+    const RemoteLayerTreeHost& remoteLayerTreeHost() const { return m_remoteLayerTreeHost; }
+    
 private:
     virtual void sizeDidChange() OVERRIDE;
     virtual void deviceScaleFactorDidChange() OVERRIDE;
     virtual void didUpdateGeometry() OVERRIDE;
 
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+
+    // Message handlers
+    void commitLayerTree(const RemoteLayerTreeTransaction&);
+    
     void sendUpdateGeometry();
 
     RemoteLayerTreeHost m_remoteLayerTreeHost;

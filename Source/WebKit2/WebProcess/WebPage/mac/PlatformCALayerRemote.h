@@ -153,7 +153,7 @@ protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context);
 
 private:
-    virtual bool isPlatformCALayerRemote() const OVERRIDE { return false; }
+    virtual bool isPlatformCALayerRemote() const OVERRIDE { return true; }
     void ensureBackingStore();
     void removeSublayer(PlatformCALayerRemote*);
 

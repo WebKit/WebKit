@@ -30,7 +30,6 @@
 #import "GraphicsLayerCARemote.h"
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeTransaction.h"
-#import "RemoteLayerTreeHostMessages.h"
 #import "WebPage.h"
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
@@ -43,24 +42,11 @@ namespace WebKit {
 
 RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage* webPage)
     : m_webPage(webPage)
-    , m_layerFlushTimer(this, &RemoteLayerTreeContext::layerFlushTimerFired)
-    , m_isFlushingSuspended(false)
-    , m_hasDeferredFlush(false)
 {
 }
 
 RemoteLayerTreeContext::~RemoteLayerTreeContext()
 {
-}
-
-void RemoteLayerTreeContext::setRootLayer(GraphicsLayer* rootLayer)
-{
-    if (!rootLayer) {
-        m_rootLayer = nullptr;
-        return;
-    }
-
-    m_rootLayer = static_cast<PlatformCALayerRemote*>(static_cast<GraphicsLayerCARemote*>(rootLayer)->platformCALayer());
 }
 
 void RemoteLayerTreeContext::layerWasCreated(PlatformCALayerRemote* layer, PlatformCALayer::LayerType type)
@@ -94,78 +80,26 @@ void RemoteLayerTreeContext::outOfTreeLayerWillBeRemoved(GraphicsLayer* layer)
     m_outOfTreeLayers.remove(layerIndex);
 }
 
-void RemoteLayerTreeContext::scheduleLayerFlush()
-{
-    if (m_layerFlushTimer.isActive())
-        return;
-
-    m_layerFlushTimer.startOneShot(0);
-}
-
 std::unique_ptr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(GraphicsLayerClient* client)
 {
     return std::make_unique<GraphicsLayerCARemote>(client, this);
 }
 
-void RemoteLayerTreeContext::layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeContext>*)
+void RemoteLayerTreeContext::flushOutOfTreeLayers()
 {
-    flushLayers();
-}
-
-void RemoteLayerTreeContext::flushLayers()
-{
-    if (!m_rootLayer)
-        return;
-
-    if (m_isFlushingSuspended) {
-        m_hasDeferredFlush = true;
-        return;
-    }
-
-    RemoteLayerTreeTransaction transaction;
-
-    transaction.setRootLayerID(m_rootLayer->layerID());
-
-    m_webPage->layoutIfNeeded();
-    m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
-
     for (const auto& layer : m_outOfTreeLayers)
         layer->flushCompositingStateForThisLayerOnly();
+}
 
+void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transaction, PlatformCALayer& rootLayer)
+{
+    PlatformCALayerRemote& rootLayerRemote = toPlatformCALayerRemote(rootLayer);
+    transaction.setRootLayerID(rootLayerRemote.layerID());
+    
     transaction.setCreatedLayers(std::move(m_createdLayers));
     transaction.setDestroyedLayerIDs(std::move(m_destroyedLayers));
-    m_rootLayer->recursiveBuildTransaction(transaction);
 
-    m_webPage->send(Messages::RemoteLayerTreeHost::Commit(transaction));
-}
-
-void RemoteLayerTreeContext::setIsFlushingSuspended(bool isFrozen)
-{
-    if (m_isFlushingSuspended == isFrozen)
-        return;
-
-    m_isFlushingSuspended = isFrozen;
-
-    if (!m_isFlushingSuspended && m_hasDeferredFlush) {
-        m_hasDeferredFlush = false;
-        scheduleLayerFlush();
-    }
-}
-
-void RemoteLayerTreeContext::forceRepaint()
-{
-    if (m_isFlushingSuspended)
-        return;
-
-    for (Frame* frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        FrameView* frameView = frame->view();
-        if (!frameView || !frameView->tiledBacking())
-            continue;
-
-        frameView->tiledBacking()->forceRepaint();
-    }
-
-    flushLayers();
+    rootLayerRemote.recursiveBuildTransaction(transaction);
 }
 
 } // namespace WebKit

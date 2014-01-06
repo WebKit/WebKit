@@ -26,7 +26,6 @@
 #ifndef RemoteLayerTreeHost_h
 #define RemoteLayerTreeHost_h
 
-#include "MessageReceiver.h"
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/PlatformCALayer.h>
 #include <wtf/HashMap.h>
@@ -38,19 +37,16 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class RemoteLayerTreeHost : private IPC::MessageReceiver {
+class RemoteLayerTreeHost {
 public:
     explicit RemoteLayerTreeHost(WebPageProxy*);
-    ~RemoteLayerTreeHost();
-
-private:
-    // IPC::MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
-
-    // Message handlers.
-    void commit(const RemoteLayerTreeTransaction&);
+    virtual ~RemoteLayerTreeHost();
 
     CALayer *getLayer(WebCore::GraphicsLayer::PlatformLayerID) const;
+
+    void updateLayerTree(const RemoteLayerTreeTransaction&);
+
+private:
     CALayer *createLayer(RemoteLayerTreeTransaction::LayerCreationProperties);
 
     WebPageProxy* m_webPageProxy;
