@@ -1,3 +1,17 @@
+2014-01-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] configure errors out when building with libc++
+        https://bugs.webkit.org/show_bug.cgi?id=126431
+
+        Reviewed by Martin Robinson.
+
+        Ease up the Clang and libstdc++ combination test to only fail if libstdc++ < 4.8.1 is actually used.
+        This allows for libc++ to be used as well. The test is moved into SetupCompilerFlags.m4 and is done
+        after the CXXFLAGS variable is properly set up, that is when all the C++ compiler options are determined.
+
+        * Source/autotools/CheckSystemAndBasicDependencies.m4:
+        * Source/autotools/SetupCompilerFlags.m4:
+
 2014-01-06  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] [GTK] Fix the build for the WebKitGTK+ developer configuration
