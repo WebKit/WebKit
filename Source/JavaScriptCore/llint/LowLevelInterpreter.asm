@@ -266,12 +266,10 @@ macro arrayProfile(structureAndIndexingType, profile, scratch)
 end
 
 macro checkSwitchToJIT(increment, action)
-    if JIT_ENABLED
-        loadp CodeBlock[cfr], t0
-        baddis increment, CodeBlock::m_llintExecuteCounter + ExecutionCounter::m_counter[t0], .continue
-        action()
+    loadp CodeBlock[cfr], t0
+    baddis increment, CodeBlock::m_llintExecuteCounter + ExecutionCounter::m_counter[t0], .continue
+    action()
     .continue:
-    end
 end
 
 macro checkSwitchToJITForEpilogue()
@@ -321,18 +319,16 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         callSlowPath(traceSlowPath)
     end
     codeBlockGetter(t1)
-    if JIT_ENABLED
-        baddis 5, CodeBlock::m_llintExecuteCounter + ExecutionCounter::m_counter[t1], .continue
-        cCall2(osrSlowPath, cfr, PC)
-        move t1, cfr
-        btpz t0, .recover
-        loadp ReturnPC[cfr], t2
-        restoreReturnAddressBeforeReturn(t2)
-        jmp t0
-    .recover:
-        codeBlockGetter(t1)
-    .continue:
-    end
+    baddis 5, CodeBlock::m_llintExecuteCounter + ExecutionCounter::m_counter[t1], .continue
+    cCall2(osrSlowPath, cfr, PC)
+    move t1, cfr
+    btpz t0, .recover
+    loadp ReturnPC[cfr], t2
+    restoreReturnAddressBeforeReturn(t2)
+    jmp t0
+.recover:
+    codeBlockGetter(t1)
+.continue:
     codeBlockSetter(t1)
     
     # Set up the PC.

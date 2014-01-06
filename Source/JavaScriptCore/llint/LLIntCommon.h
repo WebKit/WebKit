@@ -43,14 +43,5 @@
 // Disable inline caching of get_by_id and put_by_id.
 #define LLINT_ALWAYS_ACCESS_SLOW 0
 
-// Enable OSR into the JIT. Disabling this while the LLInt is enabled effectively
-// turns off all JIT'ing, since in LLInt's parlance, OSR subsumes any form of JIT
-// invocation.
-#if ENABLE(JIT) && !ENABLE(ALLOCATION_LOGGING)
-#define LLINT_OSR_TO_JIT 1
-#else
-#define LLINT_OSR_TO_JIT 0
-#endif
-
 #endif // LLIntCommon_h
 

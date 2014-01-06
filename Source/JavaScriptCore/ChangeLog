@@ -1,5 +1,18 @@
 2014-01-06  Filip Pizlo  <fpizlo@apple.com>
 
+        LLInt shouldn't check for ENABLE(JIT).
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * llint/LLIntCommon.h:
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+
+2014-01-06  Filip Pizlo  <fpizlo@apple.com>
+
         LLInt shouldnt check for ENABLE(JAVASCRIPT_DEBUGGER).
 
         Rubber stamped by Mark Hahnenberg.

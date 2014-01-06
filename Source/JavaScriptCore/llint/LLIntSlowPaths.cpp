@@ -268,6 +268,8 @@ LLINT_SLOW_PATH_DECL(special_trace)
     LLINT_END_IMPL();
 }
 
+enum EntryKind { Prologue, ArityCheck };
+
 #if ENABLE(JIT)
 inline bool shouldJIT(ExecState* exec)
 {
@@ -321,7 +323,6 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
     }
 }
 
-enum EntryKind { Prologue, ArityCheck };
 static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* codeBlock, const char *name, EntryKind kind)
 {
     if (Options::verboseOSR()) {
@@ -342,6 +343,13 @@ static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* cod
     ASSERT(kind == ArityCheck);
     LLINT_RETURN_TWO(codeBlock->jitCodeWithArityCheck().executableAddress(), exec);
 }
+#else // ENABLE(JIT)
+static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* codeBlock, const char*, EntryKind)
+{
+    codeBlock->dontJITAnytimeSoon();
+    LLINT_RETURN_TWO(0, exec);
+}
+#endif // ENABLE(JIT)
 
 LLINT_SLOW_PATH_DECL(entry_osr)
 {
@@ -372,6 +380,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
 {
     CodeBlock* codeBlock = exec->codeBlock();
 
+#if ENABLE(JIT)
     if (Options::verboseOSR()) {
         dataLog(
             *codeBlock, ": Entered loop_osr with executeCounter = ",
@@ -398,12 +407,17 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     ASSERT(jumpTarget);
     
     LLINT_RETURN_TWO(jumpTarget, exec);
+#else // ENABLE(JIT)
+    codeBlock->dontJITAnytimeSoon();
+    LLINT_RETURN_TWO(0, exec);
+#endif // ENABLE(JIT)
 }
 
 LLINT_SLOW_PATH_DECL(replace)
 {
     CodeBlock* codeBlock = exec->codeBlock();
 
+#if ENABLE(JIT)
     if (Options::verboseOSR()) {
         dataLog(
             *codeBlock, ": Entered replace with executeCounter = ",
@@ -415,8 +429,11 @@ LLINT_SLOW_PATH_DECL(replace)
     else
         codeBlock->dontJITAnytimeSoon();
     LLINT_END_IMPL();
-}
+#else // ENABLE(JIT)
+    codeBlock->dontJITAnytimeSoon();
+    LLINT_END_IMPL();
 #endif // ENABLE(JIT)
+}
 
 LLINT_SLOW_PATH_DECL(stack_check)
 {
