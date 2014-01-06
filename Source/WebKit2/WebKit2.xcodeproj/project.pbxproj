@@ -49,6 +49,14 @@
 /* Begin PBXBuildFile section */
 		0F174AA3142A4CB70039250F /* APIGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F174AA2142A4CB60039250F /* APIGeometry.h */; };
 		0F174AA7142AAC610039250F /* WKGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F174AA6142AAC610039250F /* WKGeometry.cpp */; };
+		0F594790187B3B3A00437857 /* RemoteScrollingCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F59478D187B3B3A00437857 /* RemoteScrollingCoordinator.h */; };
+		0F594792187B3B3A00437857 /* RemoteScrollingCoordinator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F59478F187B3B3A00437857 /* RemoteScrollingCoordinator.mm */; };
+		0F59479A187B3B6000437857 /* RemoteScrollingCoordinatorProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F594794187B3B6000437857 /* RemoteScrollingCoordinatorProxy.cpp */; };
+		0F59479B187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F594795187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h */; };
+		0F59479C187B3B6000437857 /* RemoteScrollingTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F594796187B3B6000437857 /* RemoteScrollingTree.cpp */; };
+		0F59479D187B3B6000437857 /* RemoteScrollingTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F594797187B3B6000437857 /* RemoteScrollingTree.h */; };
+		0F5947A3187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */; };
+		0F5947A4187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */; };
 		0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB659221208B4DB0044816C /* DrawingAreaInfo.h */; };
 		0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */; };
 		0FF24A2E1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */; };
@@ -1586,6 +1594,15 @@
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0F174AA2142A4CB60039250F /* APIGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIGeometry.h; sourceTree = "<group>"; };
 		0F174AA6142AAC610039250F /* WKGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGeometry.cpp; sourceTree = "<group>"; };
+		0F59478D187B3B3A00437857 /* RemoteScrollingCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingCoordinator.h; path = Scrolling/RemoteScrollingCoordinator.h; sourceTree = "<group>"; };
+		0F59478E187B3B3A00437857 /* RemoteScrollingCoordinator.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = RemoteScrollingCoordinator.messages.in; path = Scrolling/RemoteScrollingCoordinator.messages.in; sourceTree = "<group>"; };
+		0F59478F187B3B3A00437857 /* RemoteScrollingCoordinator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RemoteScrollingCoordinator.mm; path = Scrolling/RemoteScrollingCoordinator.mm; sourceTree = "<group>"; };
+		0F594794187B3B6000437857 /* RemoteScrollingCoordinatorProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteScrollingCoordinatorProxy.cpp; path = Scrolling/RemoteScrollingCoordinatorProxy.cpp; sourceTree = "<group>"; };
+		0F594795187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingCoordinatorProxy.h; path = Scrolling/RemoteScrollingCoordinatorProxy.h; sourceTree = "<group>"; };
+		0F594796187B3B6000437857 /* RemoteScrollingTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteScrollingTree.cpp; path = Scrolling/RemoteScrollingTree.cpp; sourceTree = "<group>"; };
+		0F594797187B3B6000437857 /* RemoteScrollingTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingTree.h; path = Scrolling/RemoteScrollingTree.h; sourceTree = "<group>"; };
+		0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteScrollingCoordinatorTransaction.cpp; path = Scrolling/RemoteScrollingCoordinatorTransaction.cpp; sourceTree = "<group>"; };
+		0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingCoordinatorTransaction.h; path = Scrolling/RemoteScrollingCoordinatorTransaction.h; sourceTree = "<group>"; };
 		0FB659221208B4DB0044816C /* DrawingAreaInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaInfo.h; sourceTree = "<group>"; };
 		0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaProxyMessages.h; sourceTree = "<group>"; };
@@ -3235,6 +3252,36 @@
 			tabWidth = 8;
 			usesTabs = 0;
 		};
+		0F59478C187B3B2A00437857 /* Scrolling */ = {
+			isa = PBXGroup;
+			children = (
+				0F59478D187B3B3A00437857 /* RemoteScrollingCoordinator.h */,
+				0F59478E187B3B3A00437857 /* RemoteScrollingCoordinator.messages.in */,
+				0F59478F187B3B3A00437857 /* RemoteScrollingCoordinator.mm */,
+			);
+			name = Scrolling;
+			sourceTree = "<group>";
+		};
+		0F594793187B3B4C00437857 /* Scrolling */ = {
+			isa = PBXGroup;
+			children = (
+				0F594794187B3B6000437857 /* RemoteScrollingCoordinatorProxy.cpp */,
+				0F594795187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h */,
+				0F594796187B3B6000437857 /* RemoteScrollingTree.cpp */,
+				0F594797187B3B6000437857 /* RemoteScrollingTree.h */,
+			);
+			name = Scrolling;
+			sourceTree = "<group>";
+		};
+		0F5947A0187B3B7100437857 /* Scrolling */ = {
+			isa = PBXGroup;
+			children = (
+				0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */,
+				0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */,
+			);
+			name = Scrolling;
+			sourceTree = "<group>";
+		};
 		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -3496,6 +3543,7 @@
 				BC111B5A112F628200337BAB /* mac */,
 				51A8A60D1627F2AC000D90E9 /* Network */,
 				1AAE058C1279DCD400852418 /* Plugins */,
+				0F5947A0187B3B7100437857 /* Scrolling */,
 				BC64696D11DBE603006455B0 /* APIArray.cpp */,
 				BC64696E11DBE603006455B0 /* APIArray.h */,
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
@@ -4430,6 +4478,7 @@
 				31099974146C8AA80029DEB9 /* Notifications (User) */,
 				1A6FB7AA11E64B4900DB1371 /* Plugins */,
 				3336762B130C9978006C9DE2 /* ResourceCache */,
+				0F59478C187B3B2A00437857 /* Scrolling */,
 				1AAC4DDE16B1CBF6009425E3 /* Storage */,
 				BC032D5D10F437220058C15A /* WebCoreSupport */,
 				BC032D5E10F4372B0058C15A /* WebPage */,
@@ -4547,6 +4596,7 @@
 				510CC7E716138E7200D03ED3 /* Network */,
 				31A2EC401489973700810D71 /* Notifications */,
 				1AEFCC0511D01F34008219D3 /* Plugins */,
+				0F594793187B3B4C00437857 /* Scrolling */,
 				1A44B95816B73F8C00B7BBD8 /* Storage */,
 				BCF69FA11176D01400471A52 /* APINavigationData.cpp */,
 				BCF69FA01176D01400471A52 /* APINavigationData.h */,
@@ -5737,6 +5787,7 @@
 				1AB474D8184D43FD0051B622 /* WKBundlePageLoaderClient.h in Headers */,
 				1AEFD27911D16C81008219D3 /* ArgumentCoder.h in Headers */,
 				1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */,
+				0F59479D187B3B6000437857 /* RemoteScrollingTree.h in Headers */,
 				1AAF0C4A12B16334008E49E2 /* ArgumentCodersCF.h in Headers */,
 				E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */,
 				BC032DA610F437D10058C15A /* ArgumentDecoder.h in Headers */,
@@ -5937,6 +5988,7 @@
 				1A043B5E124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h in Headers */,
 				1A043DC1124FF87500FFBFB5 /* PluginProxy.h in Headers */,
 				1A8EFA711252B84100F7067F /* PluginProxyMessages.h in Headers */,
+				0F594790187B3B3A00437857 /* RemoteScrollingCoordinator.h in Headers */,
 				1A4A9F3312B844E2008FE984 /* PluginQuirks.h in Headers */,
 				7CD622781739D863005BD7FF /* PluginSandboxProfile.h in Headers */,
 				1AAB037A185A7C6A00EDF501 /* MessageSender.h in Headers */,
@@ -6108,6 +6160,7 @@
 				37C4C08D1814AC5C003688B9 /* WKBackForwardList.h in Headers */,
 				371A19421824D29300F32A5E /* WKNSDictionary.h in Headers */,
 				33D3A3BB1339606200709BE4 /* WebMediaCacheManagerProxy.h in Headers */,
+				0F5947A4187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h in Headers */,
 				33D3A3CB1339617900709BE4 /* WebMediaCacheManagerProxyMessages.h in Headers */,
 				909854ED12BC4E18000AD080 /* WebMemorySampler.h in Headers */,
 				BCF69FA21176D01400471A52 /* APINavigationData.h in Headers */,
@@ -6188,6 +6241,7 @@
 				512F58F812A88A5400629530 /* WKAuthenticationDecisionListener.h in Headers */,
 				512A976A180E09B80039A149 /* DatabaseProcessProxyMessages.h in Headers */,
 				BC646C1B11DD399F006455B0 /* WKBackForwardListRef.h in Headers */,
+				0F59479B187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h in Headers */,
 				37C4C0951814B9E6003688B9 /* WKBackForwardListInternal.h in Headers */,
 				BC646C1D11DD399F006455B0 /* WKBackForwardListItemRef.h in Headers */,
 				1AB474DA184D44250051B622 /* WKBundlePageResourceLoadClient.h in Headers */,
@@ -7187,6 +7241,7 @@
 				BC8147AA12F64CDA007B2C32 /* InjectedBundlePagePolicyClient.cpp in Sources */,
 				659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */,
 				BCA8C6AF11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp in Sources */,
+				0F5947A3187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp in Sources */,
 				BC33E0D212408E8600360F3F /* InjectedBundleRangeHandle.cpp in Sources */,
 				BC14DF78120B5B7900826C0C /* InjectedBundleScriptWorld.cpp in Sources */,
 				1AE49A4A11FFA8CE0048B464 /* JSNPMethod.cpp in Sources */,
@@ -7312,6 +7367,7 @@
 				1AAB0379185A7C6A00EDF501 /* MessageSender.cpp in Sources */,
 				1AB16ADD1648598400290D62 /* RemoteLayerTreeDrawingArea.mm in Sources */,
 				1AB16AE11648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.mm in Sources */,
+				0F59479C187B3B6000437857 /* RemoteScrollingTree.cpp in Sources */,
 				1AA3D75B1651B44F008713D0 /* RemoteLayerTreeHost.mm in Sources */,
 				1AF1AC6B1651759E00C17D7F /* RemoteLayerTreeTransaction.mm in Sources */,
 				E1B78473163F253E0007B692 /* RemoteNetworkingContext.mm in Sources */,
@@ -7604,6 +7660,7 @@
 				293EBEAC1627D9C9005F89F1 /* WKDOMText.mm in Sources */,
 				BC017D2016263308007054F5 /* WKDOMTextIterator.mm in Sources */,
 				1AB7D78E1288CD9A00CFD08C /* WKDownload.cpp in Sources */,
+				0F594792187B3B3A00437857 /* RemoteScrollingCoordinator.mm in Sources */,
 				BC4075FB124FF0270068F20A /* WKError.cpp in Sources */,
 				BCFD548B132D82680055D816 /* WKErrorCF.cpp in Sources */,
 				BCE469591214EDF4000B98EB /* WKFormSubmissionListener.cpp in Sources */,
@@ -7622,6 +7679,7 @@
 				2D8949F0182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp in Sources */,
 				51032F1D180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp in Sources */,
 				BCCF6AC212C91F34008F9C35 /* WKImage.cpp in Sources */,
+				0F59479A187B3B6000437857 /* RemoteScrollingCoordinatorProxy.cpp in Sources */,
 				BCCF6AC912C91F59008F9C35 /* WKImageCG.cpp in Sources */,
 				1C8E293A12761E5B00BC7BD0 /* WKInspector.cpp in Sources */,
 				51A9E10A1315CD18009E7031 /* WKKeyValueStorageManager.cpp in Sources */,

@@ -57,6 +57,7 @@ public:
     };
     
     virtual bool isThreadedScrollingTree() const { return false; }
+    virtual bool isRemoteScrollingTree() const { return false; }
 
     virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) = 0;
     bool shouldHandleWheelEventSynchronously(const PlatformWheelEvent&);
@@ -133,7 +134,7 @@ private:
 };
 
 #define SCROLLING_TREE_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, ScrollingTree, value, value->predicate, value.predicate)
+    TYPE_CASTS_BASE(ToValueTypeName, WebCore::ScrollingTree, value, value->predicate, value.predicate)
 
 } // namespace WebCore
 

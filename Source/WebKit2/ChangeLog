@@ -1,3 +1,85 @@
+2014-01-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename DrawingArea::supportsThreadedScrolling() to supportsAsyncScrolling()
+        https://bugs.webkit.org/show_bug.cgi?id=126529
+
+        Reviewed by Tim Horton.
+        
+        Change function name from using "threaded" to "async" terminology.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::supportsAsyncScrolling):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+
+2014-01-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Add new files for UI-side scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=126532
+
+        Reviewed by Anders Carlson.
+        
+        Add RemoteScrollingCoordinator, RemoteScrollingCoordinatorProxy,
+        RemoteScrollingCoordinatorTransaction, RemoteScrollingTree. 
+        
+        These allow the scrolling tree to be used in the UI process.
+        RemoteScrollingCoordinator builds a ScrollingStateTree, which is
+        encoded by RemoteScrollingCoordinatorTransaction. Decoding the
+        transaction recreates that ScrollingStateTree in the UI process,
+        and RemoteScrollingCoordinatorProxy "commits" that to update
+        the RemoteScrollingTree.
+        
+        New classes are not hooked up to anything yet.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp: Added.
+        (ArgumentCoder<ScrollingStateNode>::encode):
+        (ArgumentCoder<ScrollingStateNode>::decode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+        (ArgumentCoder<ScrollingStateFixedNode>::encode):
+        (ArgumentCoder<ScrollingStateFixedNode>::decode):
+        (ArgumentCoder<ScrollingStateStickyNode>::encode):
+        (ArgumentCoder<ScrollingStateStickyNode>::decode):
+        (WebKit::encodeNodeAndDescendants):
+        (WebKit::RemoteScrollingCoordinatorTransaction::encode):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.h: Added.
+        (WebKit::RemoteScrollingCoordinatorTransaction::setStateTreeToEncode):
+        (WebKit::RemoteScrollingCoordinatorTransaction::scrollingStateTree):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp: Added.
+        (WebKit::RemoteScrollingCoordinatorProxy::RemoteScrollingCoordinatorProxy):
+        (WebKit::RemoteScrollingCoordinatorProxy::~RemoteScrollingCoordinatorProxy):
+        (WebKit::RemoteScrollingCoordinatorProxy::layerTreeHost):
+        (WebKit::RemoteScrollingCoordinatorProxy::updateScrollingTree):
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        (WebKit::RemoteScrollingCoordinatorProxy::handleWheelEvent):
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollPositionChanged):
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h: Added.
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp: Added.
+        (WebKit::RemoteScrollingTree::create):
+        (WebKit::RemoteScrollingTree::RemoteScrollingTree):
+        (WebKit::RemoteScrollingTree::~RemoteScrollingTree):
+        (WebKit::RemoteScrollingTree::tryToHandleWheelEvent):
+        (WebKit::RemoteScrollingTree::handleWheelEventPhase):
+        (WebKit::RemoteScrollingTree::updateMainFrameScrollPosition):
+        (WebKit::RemoteScrollingTree::createNode):
+        * UIProcess/Scrolling/RemoteScrollingTree.h: Added.
+        (WebKit::RemoteScrollingTree::scrollingCoordinatorProxy):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.h: Added.
+        (WebKit::RemoteScrollingCoordinator::create):
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.messages.in: Added.
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm: Added.
+        (WebKit::RemoteScrollingCoordinator::RemoteScrollingCoordinator):
+        (WebKit::RemoteScrollingCoordinator::~RemoteScrollingCoordinator):
+        (WebKit::RemoteScrollingCoordinator::scheduleTreeStateCommit):
+        (WebKit::RemoteScrollingCoordinator::createScrollingTreeNode):
+        (WebKit::RemoteScrollingCoordinator::isRubberBandInProgress):
+        (WebKit::RemoteScrollingCoordinator::setScrollPinningBehavior):
+        (WebKit::RemoteScrollingCoordinator::buildTransaction):
+        (WebKit::RemoteScrollingCoordinator::scrollPositionChangedForNode):
+
 2014-01-06  Martin Robinson  <mrobinson@igalia.com>
 
         Small build fix for the GTK+ CMake port

@@ -108,6 +108,7 @@ public:
     virtual void pageDestroyed();
     
     virtual bool isAsyncScrollingCoordinator() const { return false; }
+    virtual bool isRemoteScrollingCoordinator() const { return false; }
 
     // Return whether this scrolling coordinator handles scrolling for the given frame view.
     bool coordinatesScrollingForFrameView(FrameView*) const;
@@ -158,6 +159,8 @@ public:
     // Generated a unique id for scroll layers.
     ScrollingNodeID uniqueScrollLayerID();
 
+    void scheduleUpdateScrollPositionForNode(ScrollingNodeID, const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
+
     // Dispatched by the scrolling tree whenever the main frame scroll position changes.
     void scheduleUpdateMainFrameScrollPosition(const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
     void updateMainFrameScrollPosition(const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
@@ -198,7 +201,7 @@ protected:
     GraphicsLayer* headerLayerForFrameView(FrameView*);
     GraphicsLayer* footerLayerForFrameView(FrameView*);
 
-    Page* m_page;
+    Page* m_page; // FIXME: ideally this would be a reference but it gets nulled on async teardown.
 
 private:
     virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*) { }
@@ -218,7 +221,7 @@ private:
 };
 
 #define SCROLLING_COORDINATOR_TYPE_CASTS(ToValueTypeName, predicate) \
-    TYPE_CASTS_BASE(ToValueTypeName, ScrollingCoordinator, value, value->predicate, value.predicate)
+    TYPE_CASTS_BASE(ToValueTypeName, WebCore::ScrollingCoordinator, value, value->predicate, value.predicate)
 
 } // namespace WebCore
 

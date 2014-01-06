@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerTreeDrawingAreaProxy_h
-#define RemoteLayerTreeDrawingAreaProxy_h
+#ifndef RemoteScrollingCoordinatorProxy_h
+#define RemoteScrollingCoordinatorProxy_h
 
-#include "DrawingAreaProxy.h"
-#include "RemoteLayerTreeHost.h"
-#include <WebCore/IntPoint.h>
-#include <WebCore/IntSize.h>
+#include "MessageReceiver.h"
+#include "RemoteScrollingCoordinator.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
+
+namespace WebCore {
+class FloatPoint;
+class PlatformWheelEvent;
+}
 
 namespace WebKit {
 
-class RemoteLayerTreeTransaction;
+class RemoteLayerTreeHost;
+class RemoteScrollingCoordinatorTransaction;
+class RemoteScrollingTree;
+class WebPageProxy;
 
-class RemoteLayerTreeDrawingAreaProxy : public DrawingAreaProxy {
+class RemoteScrollingCoordinatorProxy {
+    WTF_MAKE_NONCOPYABLE(RemoteScrollingCoordinatorProxy);
 public:
-    explicit RemoteLayerTreeDrawingAreaProxy(WebPageProxy*);
-    virtual ~RemoteLayerTreeDrawingAreaProxy();
-
-    const RemoteLayerTreeHost& remoteLayerTreeHost() const { return m_remoteLayerTreeHost; }
+    explicit RemoteScrollingCoordinatorProxy(WebPageProxy&);
+    virtual ~RemoteScrollingCoordinatorProxy();
     
+    // Inform the web process that the scroll position changed.
+    void scrollPositionChanged(WebCore::ScrollingNodeID, const WebCore::FloatPoint& newScrollPosition);
+
+    // FIXME: expose the tree and pass this to that?
+    bool handleWheelEvent(const WebCore::PlatformWheelEvent&);
+    
+    WebCore::ScrollingNodeID rootScrollingNodeID() const;
+
+    const RemoteLayerTreeHost* layerTreeHost() const;
+
+    void updateScrollingTree(const RemoteScrollingCoordinatorTransaction&);
+
 private:
-    virtual void sizeDidChange() OVERRIDE;
-    virtual void deviceScaleFactorDidChange() OVERRIDE;
-    virtual void didUpdateGeometry() OVERRIDE;
+    void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&);
 
-    // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
-
-    // Message handlers
-    void commitLayerTree(const RemoteLayerTreeTransaction&);
-    
-    void sendUpdateGeometry();
-
-    RemoteLayerTreeHost m_remoteLayerTreeHost;
-    bool m_isWaitingForDidUpdateGeometry;
-
-    WebCore::IntSize m_lastSentSize;
-    WebCore::IntSize m_lastSentLayerPosition;
+    WebPageProxy& m_webPageProxy;
+    RefPtr<RemoteScrollingTree> m_scrollingTree;
 };
 
 } // namespace WebKit
 
-#endif // RemoteLayerTreeDrawingAreaProxy_h
+#endif // RemoteScrollingCoordinatorProxy_h

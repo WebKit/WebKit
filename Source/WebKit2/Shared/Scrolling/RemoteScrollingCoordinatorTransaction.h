@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerTreeDrawingAreaProxy_h
-#define RemoteLayerTreeDrawingAreaProxy_h
+#ifndef RemoteScrollingCoordinatorTransaction_h
+#define RemoteScrollingCoordinatorTransaction_h
 
-#include "DrawingAreaProxy.h"
-#include "RemoteLayerTreeHost.h"
-#include <WebCore/IntPoint.h>
-#include <WebCore/IntSize.h>
+#include <WebCore/ScrollingStateTree.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-class RemoteLayerTreeTransaction;
-
-class RemoteLayerTreeDrawingAreaProxy : public DrawingAreaProxy {
+class RemoteScrollingCoordinatorTransaction {
 public:
-    explicit RemoteLayerTreeDrawingAreaProxy(WebPageProxy*);
-    virtual ~RemoteLayerTreeDrawingAreaProxy();
-
-    const RemoteLayerTreeHost& remoteLayerTreeHost() const { return m_remoteLayerTreeHost; }
+    void setStateTreeToEncode(PassOwnPtr<WebCore::ScrollingStateTree> stateTree) { m_scrollingStateTree = stateTree; }
+    OwnPtr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
     
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, RemoteScrollingCoordinatorTransaction&);
+
 private:
-    virtual void sizeDidChange() OVERRIDE;
-    virtual void deviceScaleFactorDidChange() OVERRIDE;
-    virtual void didUpdateGeometry() OVERRIDE;
-
-    // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
-
-    // Message handlers
-    void commitLayerTree(const RemoteLayerTreeTransaction&);
+    bool decode(IPC::ArgumentDecoder&);
     
-    void sendUpdateGeometry();
-
-    RemoteLayerTreeHost m_remoteLayerTreeHost;
-    bool m_isWaitingForDidUpdateGeometry;
-
-    WebCore::IntSize m_lastSentSize;
-    WebCore::IntSize m_lastSentLayerPosition;
+    OwnPtr<WebCore::ScrollingStateTree> m_scrollingStateTree;
 };
 
 } // namespace WebKit
 
-#endif // RemoteLayerTreeDrawingAreaProxy_h
+#endif // RemoteScrollingCoordinatorTransaction_h

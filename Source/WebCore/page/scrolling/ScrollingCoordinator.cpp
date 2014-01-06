@@ -274,6 +274,12 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
     updateSynchronousScrollingReasons();
 }
 
+void ScrollingCoordinator::scheduleUpdateScrollPositionForNode(ScrollingNodeID, const IntPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
+{
+    // FIXME: need to handle non-main nodes.
+    scheduleUpdateMainFrameScrollPosition(scrollPosition, programmaticScroll, scrollingLayerPositionAction);
+}
+
 void ScrollingCoordinator::scheduleUpdateMainFrameScrollPosition(const IntPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     if (m_updateMainFrameScrollPositionTimer.isActive()) {
