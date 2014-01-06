@@ -1,3 +1,20 @@
+2014-01-05  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Fix failing WebKit1 API test of ewk_view_setting_tiled_backing_store
+        https://bugs.webkit.org/show_bug.cgi?id=126509
+
+        Reviewed by Gyuyoung Kim.
+
+        In WebKit1 EFL port, unit test was using a webview based on tiled backing store,
+        so ewk_view_setting_tiled_backing_store_enabled_set() was set as true as default.
+        As we do not need to use tiled backing store, we disable tiled backing store
+        and remove unnecessary EwkViewType in unit test webview.
+
+        * tests/UnitTestUtils/EWKTestView.cpp:
+        (EWKUnitTests::EWKTestView::init):
+        * tests/UnitTestUtils/EWKTestView.h:
+        * tests/test_ewk_view.cpp: Fix wrong comment in the unit test.
+
 2014-01-02  Gavin Barraclough  <barraclough@apple.com>
 
         Merge didMoveOnscreen / page visibility to isVisible

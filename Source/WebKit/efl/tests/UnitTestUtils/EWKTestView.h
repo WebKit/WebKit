@@ -29,16 +29,11 @@ namespace EWKUnitTests {
 
 class EWKTestView {
 public:
-    enum EwkViewType {
-        SingleView = 0,
-        TiledView
-    };
-
     EWKTestView();
 
     Evas_Object* webView() { return m_webView.get(); }
 
-    bool init(EwkViewType testViewType = TiledView, int width = Config::defaultViewWidth, int height = Config::defaultViewHeight);
+    bool init(int width = Config::defaultViewWidth, int height = Config::defaultViewHeight);
 private:
     EWKTestView(const EWKTestView&);
     EWKTestView& operator=(const EWKTestView&);

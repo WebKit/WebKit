@@ -72,7 +72,7 @@ TEST_F(EWKTestBase, ewk_view_setting_enable_fullscreen)
 }
 
 /**
-* @brief Checking whether function properly get/set fullscreen setting value.
+* @brief Checking whether function properly get/set tiled backing store setting value.
 */
 TEST_F(EWKTestBase, ewk_view_setting_tiled_backing_store)
 {
