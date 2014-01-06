@@ -3174,8 +3174,7 @@ PassRefPtr<WebGLUniformLocation> WebGLRenderingContext::getUniformLocation(WebGL
             info.name = info.name.left(info.name.length() - 3);
         // If it's an array, we need to iterate through each element, appending "[index]" to the name.
         for (GC3Dint index = 0; index < info.size; ++index) {
-            String arrayBrackets = "[" + String::number(index) + "]";
-            String uniformName = info.name + arrayBrackets;
+            String uniformName = info.name + "[" + String::number(index) + "]";
 
             if (name == uniformName || name == info.name)
                 return WebGLUniformLocation::create(program, uniformLocation, info.type);
