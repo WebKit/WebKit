@@ -33,7 +33,8 @@ add_library(WebKit2APITestCore STATIC
     TestMain.cpp
     WebViewTest.cpp
 )
-add_dependencies(WebKit2APITestCore WebKit2)
+
+target_link_libraries(WebKit2APITestCore WebKit2)
 
 add_custom_target(test-gresource-bundle
     DEPENDS resources/webkit2gtk-tests.gresource.xml
@@ -43,6 +44,7 @@ add_custom_target(test-gresource-bundle
 
 macro(ADD_WK2_TEST_WEB_EXTENSION extension_name)
     add_library(${extension_name} MODULE ${ARGN})
+    add_dependencies(${extension_name} WebKit2)
     set_property(
         TARGET ${extension_name}
         APPEND
