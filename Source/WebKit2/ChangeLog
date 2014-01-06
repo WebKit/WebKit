@@ -1,5 +1,13 @@
 2014-01-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Another build fix.
+        
+        Need to look in the WebProcess/Scrolling directory for .messages.in files.
+
+        * DerivedSources.make:
+
+2014-01-06  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the build.
         
         Need to add RemoteScrollingCoordinator to MESSAGE_RECEIVERS so that
