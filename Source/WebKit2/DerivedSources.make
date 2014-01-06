@@ -87,6 +87,7 @@ MESSAGE_RECEIVERS = \
     PluginProxy \
     RemoteLayerTreeDrawingAreaProxy \
     RemoteObjectRegistry \
+    RemoteScrollingCoordinator \
     SecItemShim \
     SecItemShimProxy \
     StorageAreaMap \
