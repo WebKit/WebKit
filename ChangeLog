@@ -1,3 +1,15 @@
+2014-01-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Use libc++ for C++11 on darwin
+        https://bugs.webkit.org/show_bug.cgi?id=126325
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/SetupCompilerFlags.m4: Don't default to libstdc++ when compiling with Clang.
+        Instead, the compiler should determine itself what standard library to use, except on Darwin,
+        where libc++ should be enforced. The standard library of user's choosing can still be enforced
+        through the CXXFLAGS environment variable.
+
 2014-01-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Ensure that the autotools build and the CMake install the same files
