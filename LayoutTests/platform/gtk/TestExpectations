@@ -768,6 +768,8 @@ webkit.org/b/126432 fast/css/acid2.html [ Failure Pass ]
 webkit.org/b/126432 http/tests/misc/acid2-pixel.html [ Failure Pass ]
 webkit.org/b/126432 http/tests/misc/acid2.html [ Failure Pass ]
 
+webkit.org/b/126523 accessibility/menu-list-sends-change-notification.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

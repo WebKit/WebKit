@@ -1,6 +1,13 @@
 2014-01-06  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations:
+        Mark accessibility/menu-list-sends-change-notification.html as flaky.
+
+2014-01-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
         Adding failure expectations for the set of currently failing tests.
 
         * platform/gtk/TestExpectations:
