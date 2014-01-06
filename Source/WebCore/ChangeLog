@@ -1,3 +1,13 @@
+2014-01-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Refactor NSActivity handling code from ChildProcess to UserActivity
+        https://bugs.webkit.org/show_bug.cgi?id=126330
+
+        Unreviewed speculative Windows build fix.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+            - Added UserActivity.cpp/.h.
+
 2014-01-06  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Link error.
