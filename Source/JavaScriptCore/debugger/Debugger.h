@@ -195,7 +195,7 @@ private:
 
 class Debugger {
 public:
-    Debugger(bool = false) { }
+    Debugger(bool = false) : m_needsOpDebugCallbacks(false) { }
     bool needsOpDebugCallbacks() const { return false; }
     bool needsExceptionCallbacks() const { return false; }
     void detach(JSGlobalObject*) { }
@@ -207,6 +207,8 @@ public:
     void willExecuteProgram(CallFrame*) { }
     void didExecuteProgram(CallFrame*) { }
     void didReachBreakpoint(CallFrame*) { }
+
+    bool m_needsOpDebugCallbacks;
 };
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)

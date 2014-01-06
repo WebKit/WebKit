@@ -1,3 +1,14 @@
+2014-01-06  Filip Pizlo  <fpizlo@apple.com>
+
+        LLInt shouldnt check for ENABLE(JAVASCRIPT_DEBUGGER).
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * debugger/Debugger.h:
+        (JSC::Debugger::Debugger):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+
 2014-01-05  Sam Weinig  <sam@webkit.org>
 
         [JS] Implement Promise.race()
