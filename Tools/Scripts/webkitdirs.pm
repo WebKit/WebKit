@@ -2121,7 +2121,7 @@ sub cmakeBasedPortName()
     return "Efl" if isEfl();
     return "WinCE" if isWinCE();
     return "Nix" if isNix();
-    return "GTK" if isGtk();
+    return "GTK" if isGtkCMake();
     return "";
 }
 
