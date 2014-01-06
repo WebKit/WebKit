@@ -64,6 +64,9 @@ QueueView.prototype = {
 
     _updateHiddenState: function()
     {
+        if (!settings.available())
+            return;
+
         var hiddenPlatforms = settings.getObject("hiddenPlatforms");
         var wasHidden = !this.updateTimer;
         var isHidden = hiddenPlatforms && hiddenPlatforms.contains(this.platform);

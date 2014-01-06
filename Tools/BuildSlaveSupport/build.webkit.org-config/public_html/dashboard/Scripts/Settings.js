@@ -46,6 +46,21 @@ Settings.prototype = {
         return JSON.parse(localStorage.getItem(key));
     },
 
+    available: function()
+    {
+        try {
+            localStorage.setItem("testLocalStorage", "test");
+            if (localStorage.getItem("testLocalStorage") != "test")
+                return false;
+            localStorage.removeItem("testLocalStorage");
+        } catch(e) {
+            console.log("Couldn't use localStorage, settings won't work: " + e);
+            return false;
+        }
+
+        return true;
+    },
+
     addSettingListener: function(key, callback)
     {
         if (!this.changeCallbacks[key])

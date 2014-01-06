@@ -216,13 +216,15 @@ function documentReady()
 
     document.body.appendChild(table);
 
-    var settingsButton = document.createElement("div");
-    settingsButton.addEventListener("click", function () { settings.toggleSettingsDisplay(); });
-    settingsButton.classList.add("settings");
-    document.body.appendChild(settingsButton);
+    if (settings.available()) {
+        var settingsButton = document.createElement("div");
+        settingsButton.addEventListener("click", function () { settings.toggleSettingsDisplay(); });
+        settingsButton.classList.add("settings");
+        document.body.appendChild(settingsButton);
 
-    updateHiddenPlatforms();
-    settings.addSettingListener("hiddenPlatforms", updateHiddenPlatforms);
+        updateHiddenPlatforms();
+        settings.addSettingListener("hiddenPlatforms", updateHiddenPlatforms);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", documentReady);
