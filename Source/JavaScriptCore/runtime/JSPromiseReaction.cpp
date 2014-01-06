@@ -89,17 +89,7 @@ void ExecutePromiseReactionMicrotask::run(ExecState* exec)
         JSValue exception = exec->exception();
         exec->clearException();
 
-        JSValue deferredReject = deferred->reject();
-
-        CallData rejectCallData;
-        CallType rejectCallType = getCallData(deferredReject, rejectCallData);
-        ASSERT(rejectCallType != CallTypeNone);
-
-        MarkedArgumentBuffer rejectArguments;
-        rejectArguments.append(exception);
-
-        call(exec, deferredReject, rejectCallType, rejectCallData, jsUndefined(), rejectArguments);
-        // FIXME: Should we return the result somewhere?
+        performDeferredReject(exec, deferred, exception);
     }
     
     // 5. Let 'handlerResult' be handlerResult.[[value]].
@@ -109,19 +99,10 @@ void ExecutePromiseReactionMicrotask::run(ExecState* exec)
     if (sameValue(exec, handlerResult, deferred->promise())) {
         // i. Let 'selfResolutionError' be a newly-created TypeError object.
         JSObject* selfResolutionError = createTypeError(exec, ASCIILiteral("Resolve a promise with itself"));
+
         // ii. Return the result of calling the [[Call]] internal method of deferred.[[Reject]] passing
         //     undefined as thisArgument and a List containing selfResolutionError as argumentsList.
-        JSValue deferredReject = deferred->reject();
-
-        CallData rejectCallData;
-        CallType rejectCallType = getCallData(deferredReject, rejectCallData);
-        ASSERT(rejectCallType != CallTypeNone);
-
-        MarkedArgumentBuffer rejectArguments;
-        rejectArguments.append(selfResolutionError);
-
-        call(exec, deferredReject, rejectCallType, rejectCallData, jsUndefined(), rejectArguments);
-        // FIXME: Should we return the result somewhere?
+        performDeferredReject(exec, deferred, selfResolutionError);
     }
 
     // 7. Let 'updateResult' be the result of calling UpdateDeferredFromPotentialThenable(handlerResult, deferred).
@@ -135,18 +116,7 @@ void ExecutePromiseReactionMicrotask::run(ExecState* exec)
     if (updateResult == NotAThenable) {
         // i. Return the result of calling the [[Call]] internal method of deferred.[[Resolve]]
         //    passing undefined as thisArgument and a List containing handlerResult as argumentsList.
-
-        JSValue deferredResolve = deferred->resolve();
-
-        CallData resolveCallData;
-        CallType resolveCallType = getCallData(deferredResolve, resolveCallData);
-        ASSERT(resolveCallType != CallTypeNone);
-
-        MarkedArgumentBuffer arguments;
-        arguments.append(handlerResult);
-
-        call(exec, deferredResolve, resolveCallType, resolveCallData, jsUndefined(), arguments);
-        // FIXME: Should we return the result somewhere?
+        performDeferredResolve(exec, deferred, handlerResult);
     }
 }
 

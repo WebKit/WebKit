@@ -9,7 +9,6 @@
 <script>
 description('Test Promise.all');
 
-/*
 window.jsTestIsAsync = true;
 result = undefined;
 
@@ -30,11 +29,9 @@ Promise.all([p1, p2, p5]).then(function(result) {
 });
 
 Promise.all().then(function(result) {
-  testPassed('Promise.all() is fulfilled.');
-  window.result = result;
-  shouldBe('result.length', '0');
+  testFailed('Promise.all() is fulfilled.');
 }, function() {
-  testFailed('Promise.all() is rejected.');
+  testPassed('Promise.all() is rejected.');
 }).then(function() {
   return Promise.all([p1, p2, p3]).then(function(result) {
     testPassed('Promise.all([p1, p2, p3]) is fulfilled.');
@@ -90,16 +87,13 @@ Promise.all().then(function(result) {
 }).then(function() {
   // Not iterable object case.
   return Promise.all({}).then(function(result) {
-    testPassed('Promise.all({}) is fulfilled.');
-    window.result = result;
-    shouldBe('result.length', '0');
+    testFailed('Promise.all({}) is fulfilled.');
   }, function(result) {
-    testFailed('Promise.all({}) is rejected.');
+    testPassed('Promise.all({}) is rejected.');
   });
 }).then(finishJSTest, finishJSTest);
 
 shouldBe('result', 'undefined');
-*/
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

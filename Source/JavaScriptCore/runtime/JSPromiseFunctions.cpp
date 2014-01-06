@@ -34,6 +34,7 @@
 #include "JSPromise.h"
 #include "JSPromiseConstructor.h"
 #include "JSPromiseDeferred.h"
+#include "NumberObject.h"
 
 namespace JSC {
 
@@ -69,6 +70,55 @@ static EncodedJSValue JSC_HOST_CALL identifyFunction(ExecState* exec)
 JSFunction* createIdentifyFunction(VM& vm, JSGlobalObject* globalObject)
 {
     return JSFunction::create(vm, globalObject, 1, ASCIILiteral("IdentityFunction"), identifyFunction);
+}
+
+// Promise.All Countdown Functions
+
+static EncodedJSValue JSC_HOST_CALL promiseAllCountdownFunction(ExecState* exec)
+{
+    JSValue x = exec->argument(0);
+    VM& vm = exec->vm();
+    JSObject* F = exec->callee();
+
+    // 1. Let 'index' be the value of F's [[Index]] internal slot.
+    uint32_t index = F->get(exec, vm.propertyNames->indexPrivateName).asUInt32();
+
+    // 2. Let 'values' be the value of F's [[Values]] internal slot..
+    JSArray* values = jsCast<JSArray*>(F->get(exec, vm.propertyNames->valuesPrivateName));
+
+    // 3. Let 'deferred' be the value of F's [[Deferred]] internal slot.
+    JSPromiseDeferred* deferred = jsCast<JSPromiseDeferred*>(F->get(exec, vm.propertyNames->deferredPrivateName));
+
+    // 4. Let 'countdownHolder' be the value of F's [[CountdownHolder]] internal slot.
+    NumberObject* countdownHolder = jsCast<NumberObject*>(F->get(exec, vm.propertyNames->countdownHolderPrivateName));
+
+    // 5. Let 'result' be the result of calling the [[DefineOwnProperty]] internal method
+    //    of 'values' with arguments 'index' and Property Descriptor { [[Value]]: x,
+    //    [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true }.
+    values->putDirectIndex(exec, index, x);
+
+    // 6. RejectIfAbrupt(result, deferred).
+    if (exec->hadException())
+        abruptRejection(exec, deferred);
+
+    // 7. Set countdownHolder.[[Countdown]] to countdownHolder.[[Countdown]] - 1.
+    uint32_t newCountdownValue = countdownHolder->internalValue().asUInt32() - 1;
+    countdownHolder->setInternalValue(vm, JSValue(newCountdownValue));
+
+    // 8. If countdownHolder.[[Countdown]] is 0,
+    if (!newCountdownValue) {
+        // i. Return the result of calling the [[Call]] internal method of deferred.[[Resolve]]
+        //    with undefined as thisArgument and a List containing 'values' as argumentsList.
+        performDeferredResolve(exec, deferred, values);
+    }
+
+    // 9. Return.
+    return JSValue::encode(jsUndefined());
+}
+
+JSFunction* createPromiseAllCountdownFunction(VM& vm, JSGlobalObject* globalObject)
+{
+    return JSFunction::create(vm, globalObject, 1, ASCIILiteral("PromiseAllCountdownFunction"), promiseAllCountdownFunction);
 }
 
 // Promise Resolution Handler Functions

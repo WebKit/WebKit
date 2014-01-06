@@ -1,3 +1,33 @@
+2014-01-05  Sam Weinig  <sam@webkit.org>
+
+        [JS] Implement Promise.all()
+        https://bugs.webkit.org/show_bug.cgi?id=126510
+
+        Reviewed by Gavin Barraclough.
+
+        Add Promise.all() implementation and factor out performing resolves and rejects
+        on deferreds to share a bit of code. Also moves the abruptRejection helper to
+        JSPromiseDeferred so it can be used in JSPromiseFunctions.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructorFuncCast):
+        (JSC::JSPromiseConstructorFuncResolve):
+        (JSC::JSPromiseConstructorFuncReject):
+        (JSC::JSPromiseConstructorFuncAll):
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::updateDeferredFromPotentialThenable):
+        (JSC::performDeferredResolve):
+        (JSC::performDeferredReject):
+        (JSC::abruptRejection):
+        * runtime/JSPromiseDeferred.h:
+        * runtime/JSPromiseFunctions.cpp:
+        (JSC::promiseAllCountdownFunction):
+        (JSC::createPromiseAllCountdownFunction):
+        * runtime/JSPromiseFunctions.h:
+        * runtime/JSPromiseReaction.cpp:
+        (JSC::ExecutePromiseReactionMicrotask::run):
+
 2014-01-06  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of ENABLE(VALUE_PROFILER). It's on all the time now.

@@ -36,6 +36,7 @@
 #include "JSPromiseFunctions.h"
 #include "JSPromisePrototype.h"
 #include "Lookup.h"
+#include "NumberObject.h"
 #include "StructureInlines.h"
 
 namespace JSC {
@@ -46,6 +47,7 @@ static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncCast(ExecState*);
 static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncResolve(ExecState*);
 static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncReject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncRace(ExecState*);
+static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncAll(ExecState*);
 }
 
 #include "JSPromiseConstructor.lut.h"
@@ -60,6 +62,7 @@ const ClassInfo JSPromiseConstructor::s_info = { "Function", &InternalFunction::
   resolve         JSPromiseConstructorFuncResolve             DontEnum|Function 1
   reject          JSPromiseConstructorFuncReject              DontEnum|Function 1
   race            JSPromiseConstructorFuncRace                DontEnum|Function 1
+  all             JSPromiseConstructorFuncAll                 DontEnum|Function 1
 @end
 */
 
@@ -191,17 +194,7 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncCast(ExecState* exec)
     // 5. Let 'resolveResult' be the result of calling the [[Call]] internal method
     //    of deferred.[[Resolve]] with undefined as thisArgument and a List containing x
     //    as argumentsList.
-    
-    JSValue deferredResolve = deferred->resolve();
-
-    CallData resolveCallData;
-    CallType resolveCallType = getCallData(deferredResolve, resolveCallData);
-    ASSERT(resolveCallType != CallTypeNone);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(x);
-
-    call(exec, deferredResolve, resolveCallType, resolveCallData, jsUndefined(), arguments);
+    performDeferredResolve(exec, deferred, x);
 
     // 6. ReturnIfAbrupt(resolveResult).
     if (exec->hadException())
@@ -231,17 +224,7 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncResolve(ExecState* exec)
     // 4. Let 'resolveResult' be the result of calling the [[Call]] internal method
     //    of deferred.[[Resolve]] with undefined as thisArgument and a List containing x
     //    as argumentsList.
-
-    JSValue deferredResolve = deferred->resolve();
-
-    CallData resolveCallData;
-    CallType resolveCallType = getCallData(deferredResolve, resolveCallData);
-    ASSERT(resolveCallType != CallTypeNone);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(x);
-
-    call(exec, deferredResolve, resolveCallType, resolveCallData, jsUndefined(), arguments);
+    performDeferredResolve(exec, deferred, x);
     
     // 5. ReturnIfAbrupt(resolveResult).
     if (exec->hadException())
@@ -271,17 +254,7 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncReject(ExecState* exec)
     // 4. Let 'rejectResult' be the result of calling the [[Call]] internal method
     //    of deferred.[[Reject]] with undefined as thisArgument and a List containing r
     //    as argumentsList.
-
-    JSValue deferredReject = deferred->reject();
-
-    CallData rejectCallData;
-    CallType rejectCallType = getCallData(deferredReject, rejectCallData);
-    ASSERT(rejectCallType != CallTypeNone);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(r);
-
-    call(exec, deferredReject, rejectCallType, rejectCallData, jsUndefined(), arguments);
+    performDeferredReject(exec, deferred, r);
 
     // 5. ReturnIfAbrupt(resolveResult).
     if (exec->hadException())
@@ -289,34 +262,6 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncReject(ExecState* exec)
 
     // 6. Return deferred.[[Promise]].
     return JSValue::encode(deferred->promise());
-}
-
-static JSValue abruptRejection(ExecState* exec, JSPromiseDeferred* deferred)
-{
-    ASSERT(exec->hadException());
-    JSValue argument = exec->exception();
-    exec->clearException();
-
-    // i. Let 'rejectResult' be the result of calling the [[Call]] internal method
-    // of deferred.[[Reject]] with undefined as thisArgument and a List containing
-    // argument.[[value]] as argumentsList.
-    JSValue deferredReject = deferred->reject();
-
-    CallData rejectCallData;
-    CallType rejectCallType = getCallData(deferredReject, rejectCallData);
-    ASSERT(rejectCallType != CallTypeNone);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(argument);
-
-    call(exec, deferredReject, rejectCallType, rejectCallData, jsUndefined(), arguments);
-
-    // ii. ReturnIfAbrupt(rejectResult).
-    if (exec->hadException())
-        return jsUndefined();
-
-    // iii. Return deferred.[[Promise]].
-    return deferred->promise();
 }
 
 EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncRace(ExecState* exec)
@@ -428,6 +373,167 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncRace(ExecState* exec)
         // ix. RejectIfAbrupt(result, deferred).
         if (exec->hadException())
             return JSValue::encode(abruptRejection(exec, deferred));
+    } while (true);
+}
+
+EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncAll(ExecState* exec)
+{
+    // -- Promise.all(iterable) --
+
+    JSValue iterable = exec->argument(0);
+    VM& vm = exec->vm();
+
+    // 1. Let 'C' be the this value.
+    JSValue C = exec->thisValue();
+
+    // 2. Let 'deferred' be the result of calling GetDeferred(C).
+    JSValue deferredValue = createJSPromiseDeferredFromConstructor(exec, C);
+
+    // 3. ReturnIfAbrupt(deferred).
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    // NOTE: A non-abrupt completion of createJSPromiseDeferredFromConstructor implies that
+    // C and deferredValue are objects.
+    JSObject* thisObject = asObject(C);
+    JSPromiseDeferred* deferred = jsCast<JSPromiseDeferred*>(deferredValue);
+
+    // 4. Let 'iterator' be the result of calling GetIterator(iterable).
+    JSValue iteratorFunction = iterable.get(exec, vm.propertyNames->iteratorPrivateName);
+    if (exec->hadException())
+        return JSValue::encode(abruptRejection(exec, deferred));
+
+    CallData iteratorFunctionCallData;
+    CallType iteratorFunctionCallType = getCallData(iteratorFunction, iteratorFunctionCallData);
+    if (iteratorFunctionCallType == CallTypeNone) {
+        throwTypeError(exec);
+        return JSValue::encode(abruptRejection(exec, deferred));
+    }
+
+    ArgList iteratorFunctionArguments;
+    JSValue iterator = call(exec, iteratorFunction, iteratorFunctionCallType, iteratorFunctionCallData, iterable, iteratorFunctionArguments);
+
+    // 5. RejectIfAbrupt(iterator, deferred).
+    if (exec->hadException())
+        return JSValue::encode(abruptRejection(exec, deferred));
+
+    // 6. Let 'values' be the result of calling ArrayCreate(0).
+    JSArray* values = constructEmptyArray(exec, nullptr, thisObject->globalObject());
+    
+    // 7. Let 'countdownHolder' be Record { [[Countdown]]: 0 }.
+    NumberObject* countdownHolder = constructNumber(exec, thisObject->globalObject(), JSValue(0));
+    
+    // 8. Let 'index' be 0.
+    unsigned index = 0;
+    
+    // 9. Repeat.
+    do {
+        // i. Let 'next' be the result of calling IteratorStep(iterator).
+        JSValue nextFunction = iterator.get(exec, exec->vm().propertyNames->iteratorNextPrivateName);
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+
+        CallData nextFunctionCallData;
+        CallType nextFunctionCallType = getCallData(nextFunction, nextFunctionCallData);
+        if (nextFunctionCallType == CallTypeNone) {
+            throwTypeError(exec);
+            return JSValue::encode(abruptRejection(exec, deferred));
+        }
+
+        MarkedArgumentBuffer nextFunctionArguments;
+        nextFunctionArguments.append(jsUndefined());
+        JSValue next = call(exec, nextFunction, nextFunctionCallType, nextFunctionCallData, iterator, nextFunctionArguments);
+        
+        // ii. RejectIfAbrupt(next, deferred).
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+
+        // iii. If 'next' is false,
+        // Note: We implement this as an iterationTerminator
+        if (next == vm.iterationTerminator.get()) {
+            // a. If 'index' is 0,
+            if (!index) {
+                // a. Let 'resolveResult' be the result of calling the [[Call]] internal method
+                //    of deferred.[[Resolve]] with undefined as thisArgument and a List containing
+                //    values as argumentsList.
+                performDeferredResolve(exec, deferred, values);
+
+                // b. ReturnIfAbrupt(resolveResult).
+                if (exec->hadException())
+                    return JSValue::encode(jsUndefined());
+            }
+            
+            // b. Return deferred.[[Promise]].
+            return JSValue::encode(deferred->promise());
+        }
+        
+        // iv. Let 'nextValue' be the result of calling IteratorValue(next).
+        // v. RejectIfAbrupt(nextValue, deferred).
+        // Note: 'next' is already the value, so there is nothing to do here.
+
+        // vi. Let 'nextPromise' be the result of calling Invoke(C, "cast", (nextValue)).
+        JSValue castFunction = C.get(exec, vm.propertyNames->cast);
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+
+        CallData castFunctionCallData;
+        CallType castFunctionCallType = getCallData(castFunction, castFunctionCallData);
+        if (castFunctionCallType == CallTypeNone) {
+            throwTypeError(exec);
+            return JSValue::encode(abruptRejection(exec, deferred));
+        }
+
+        MarkedArgumentBuffer castFunctionArguments;
+        castFunctionArguments.append(next);
+        JSValue nextPromise = call(exec, castFunction, castFunctionCallType, castFunctionCallData, C, castFunctionArguments);
+
+        // vii. RejectIfAbrupt(nextPromise, deferred).
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+
+        // viii. Let 'countdownFunction' be a new built-in function object as defined in Promise.all Countdown Functions.
+        JSFunction* countdownFunction = createPromiseAllCountdownFunction(vm, thisObject->globalObject());
+        
+        // ix. Set the [[Index]] internal slot of 'countdownFunction' to 'index'.
+        countdownFunction->putDirect(vm, vm.propertyNames->indexPrivateName, JSValue(index));
+
+        // x. Set the [[Values]] internal slot of 'countdownFunction' to 'values'.
+        countdownFunction->putDirect(vm, vm.propertyNames->valuesPrivateName, values);
+
+        // xi. Set the [[Deferred]] internal slot of 'countdownFunction' to 'deferred'.
+        countdownFunction->putDirect(vm, vm.propertyNames->deferredPrivateName, deferred);
+
+        // xii. Set the [[CountdownHolder]] internal slot of 'countdownFunction' to 'countdownHolder'.
+        countdownFunction->putDirect(vm, vm.propertyNames->countdownHolderPrivateName, countdownHolder);
+
+        // xiii. Let 'result' be the result of calling Invoke(nextPromise, "then", (countdownFunction, deferred.[[Reject]])).
+        JSValue thenFunction = nextPromise.get(exec, vm.propertyNames->then);
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+
+        CallData thenFunctionCallData;
+        CallType thenFunctionCallType = getCallData(thenFunction, thenFunctionCallData);
+        if (thenFunctionCallType == CallTypeNone) {
+            throwTypeError(exec);
+            return JSValue::encode(abruptRejection(exec, deferred));
+        }
+
+        MarkedArgumentBuffer thenFunctionArguments;
+        thenFunctionArguments.append(countdownFunction);
+        thenFunctionArguments.append(deferred->reject());
+
+        call(exec, thenFunction, thenFunctionCallType, thenFunctionCallData, nextPromise, thenFunctionArguments);
+
+        // xiv. RejectIfAbrupt(result, deferred).
+        if (exec->hadException())
+            return JSValue::encode(abruptRejection(exec, deferred));
+
+        // xv. Set index to index + 1.
+        index++;
+
+        // xvi. Set countdownHolder.[[Countdown]] to countdownHolder.[[Countdown]] + 1.
+        uint32_t newCountdownValue = countdownHolder->internalValue().asUInt32() + 1;
+        countdownHolder->setInternalValue(vm, JSValue(newCountdownValue));
     } while (true);
 }
 

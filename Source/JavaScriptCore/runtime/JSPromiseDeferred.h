@@ -70,6 +70,11 @@ enum ThenableStatus {
 JSValue createJSPromiseDeferredFromConstructor(ExecState*, JSValue constructor);
 ThenableStatus updateDeferredFromPotentialThenable(ExecState*, JSValue, JSPromiseDeferred*);
 
+void performDeferredResolve(ExecState*, JSPromiseDeferred*, JSValue argument);
+void performDeferredReject(ExecState*, JSPromiseDeferred*, JSValue argument);
+
+JSValue abruptRejection(ExecState*, JSPromiseDeferred*);
+
 } // namespace JSC
 
 #endif // JSPromiseDeferred_h

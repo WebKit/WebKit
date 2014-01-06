@@ -34,6 +34,7 @@ namespace JSC {
 
 JSFunction* createDeferredConstructionFunction(VM&, JSGlobalObject*);
 JSFunction* createIdentifyFunction(VM&, JSGlobalObject*);
+JSFunction* createPromiseAllCountdownFunction(VM&, JSGlobalObject*);
 JSFunction* createPromiseResolutionHandlerFunction(VM&, JSGlobalObject*);
 JSFunction* createRejectPromiseFunction(VM&, JSGlobalObject*);
 JSFunction* createResolvePromiseFunction(VM&, JSGlobalObject*);

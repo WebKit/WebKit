@@ -152,16 +152,7 @@ ThenableStatus updateDeferredFromPotentialThenable(ExecState* exec, JSValue x, J
         JSValue exception = exec->exception();
         exec->clearException();
 
-        JSValue deferredReject = deferred->reject();
-
-        CallData rejectCallData;
-        CallType rejectCallType = getCallData(deferredReject, rejectCallData);
-        ASSERT(rejectCallType != CallTypeNone);
-
-        MarkedArgumentBuffer rejectArguments;
-        rejectArguments.append(exception);
-
-        call(exec, deferredReject, rejectCallType, rejectCallData, jsUndefined(), rejectArguments);
+        performDeferredReject(exec, deferred, exception);
 
         // ii. ReturnIfAbrupt(rejectResult).
         // NOTE: Nothing to do.
@@ -196,22 +187,60 @@ ThenableStatus updateDeferredFromPotentialThenable(ExecState* exec, JSValue x, J
         JSValue exception = exec->exception();
         exec->clearException();
 
-        JSValue deferredReject = deferred->reject();
-
-        CallData rejectCallData;
-        CallType rejectCallType = getCallData(deferredReject, rejectCallData);
-        ASSERT(rejectCallType != CallTypeNone);
-
-        MarkedArgumentBuffer rejectArguments;
-        rejectArguments.append(exception);
-
-        call(exec, deferredReject, rejectCallType, rejectCallData, jsUndefined(), rejectArguments);
+        performDeferredReject(exec, deferred, exception);
 
         // ii. ReturnIfAbrupt(rejectResult).
         // NOTE: Nothing to do.
     }
 
     return WasAThenable;
+}
+
+void performDeferredResolve(ExecState* exec, JSPromiseDeferred* deferred, JSValue argument)
+{
+    JSValue deferredResolve = deferred->resolve();
+
+    CallData resolveCallData;
+    CallType resolveCallType = getCallData(deferredResolve, resolveCallData);
+    ASSERT(resolveCallType != CallTypeNone);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(argument);
+
+    call(exec, deferredResolve, resolveCallType, resolveCallData, jsUndefined(), arguments);
+}
+
+void performDeferredReject(ExecState* exec, JSPromiseDeferred* deferred, JSValue argument)
+{
+    JSValue deferredReject = deferred->reject();
+
+    CallData rejectCallData;
+    CallType rejectCallType = getCallData(deferredReject, rejectCallData);
+    ASSERT(rejectCallType != CallTypeNone);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(argument);
+
+    call(exec, deferredReject, rejectCallType, rejectCallData, jsUndefined(), arguments);
+}
+
+JSValue abruptRejection(ExecState* exec, JSPromiseDeferred* deferred)
+{
+    ASSERT(exec->hadException());
+    JSValue argument = exec->exception();
+    exec->clearException();
+
+    // i. Let 'rejectResult' be the result of calling the [[Call]] internal method
+    // of deferred.[[Reject]] with undefined as thisArgument and a List containing
+    // argument.[[value]] as argumentsList.
+    performDeferredReject(exec, deferred, argument);
+
+    // ii. ReturnIfAbrupt(rejectResult).
+    if (exec->hadException())
+        return jsUndefined();
+
+    // iii. Return deferred.[[Promise]].
+    return deferred->promise();
 }
 
 } // namespace JSC
