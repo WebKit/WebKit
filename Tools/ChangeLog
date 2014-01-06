@@ -1,3 +1,11 @@
+2014-01-06  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Adding myself as a reviewer.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2014-01-06  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Unbreaking JSC tests after r161328.

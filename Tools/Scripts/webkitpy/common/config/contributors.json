@@ -383,15 +383,6 @@
             "otte"
          ]
       },
-      "Bem Jones-Bey" : {
-         "emails" : [
-            "bjonesbe@adobe.com"
-         ],
-         "expertise" : "CSS Shapes, Floats",
-         "nicks" : [
-            "bemjb"
-         ]
-      },
       "Bill Budge" : {
          "emails" : [
             "bbudge@chromium.org",
@@ -3304,6 +3295,15 @@
          "expertise" : "The QtWebKit Port",
          "nicks" : [
             "ariya"
+         ]
+      },
+      "Bem Jones-Bey" : {
+         "emails" : [
+            "bjonesbe@adobe.com"
+         ],
+         "expertise" : "CSS Shapes, Floats",
+         "nicks" : [
+            "bemjb"
          ]
       },
       "Benjamin Poulain" : {
