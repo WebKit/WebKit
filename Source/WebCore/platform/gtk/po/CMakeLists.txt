@@ -1,5 +1,12 @@
+include(FindGettext)
+
+# GETTEXT_CREATE_TRANSLATIONS automatically runs msgmerge, which is something we
+# didn't do in the old autotools build. This overwrites all the po files in the
+# Source directory. Perhaps we want this, but for now disable it to maintain compatibility.
+set(GETTEXT_MSGMERGE_EXECUTABLE :)
+
 set(domain WebKitGTK-3.0)
-set(build_directory ${CMAKE_BINARY_DIR}/po)
+set(build_directory ${CMAKE_BINARY_DIR}/Source/WebCore/platform/gtk/po)
 set(pot_file ${build_directory}/${domain}.pot)
 set(potfiles_file ${build_directory}/POTFILES)
 
@@ -23,25 +30,4 @@ add_custom_command(
 )
 
 file(GLOB po_files *.po)
-foreach (file ${po_files})
-    get_filename_component(language ${file} NAME_WE)
-    set(mo_file ${build_directory}/${language}.mo)
-    list(APPEND mo_files ${mo_file})
-
-    add_custom_command(
-        OUTPUT ${mo_file}
-        DEPENDS ${file}
-        DEPENDS ${pot_file}
-        COMMAND msgfmt -c -o ${mo_file} ${file}
-    )
-endforeach ()
-
-add_custom_target(update-mo-files ALL
-                  DEPENDS ${mo_files}
-)
-
-add_custom_target(update-po ALL
-                  DEPENDS update-mo-files
-                  DEPENDS ${pot_file}
-)
-
+GETTEXT_CREATE_TRANSLATIONS(${pot_file} ALL ${po_files})

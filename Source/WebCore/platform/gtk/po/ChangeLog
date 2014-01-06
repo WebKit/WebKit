@@ -1,3 +1,14 @@
+2014-01-06  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Improve the way that translations are built with the built-in gettext support CMake
+        https://bugs.webkit.org/show_bug.cgi?id=126453
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * CMakeLists.txt: Use the built-in CMake support for gettext to simplify the way we
+        build translation files and to automatically take care of installing them. Also adjust
+        the pot file build location to make the CMake build more similar to autotools.
+
 2014-01-05  Reinout van Schouwen  <reinouts@gnome.org>
 
         [GTK] Updated Dutch translation
