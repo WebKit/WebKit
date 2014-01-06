@@ -4280,7 +4280,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     ClipRect backgroundRectInFlowThread;
     ClipRect foregroundRectInFlowThread;
     ClipRect outlineRectInFlowThread;
-    calculateRects(paginationClipRectsContext, PaintInfo::infiniteRect(), layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread,
+    calculateRects(paginationClipRectsContext, IntRect::infiniteRect(), layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread,
         outlineRectInFlowThread, &offsetWithinPaginatedLayer);
     
     // Take our bounding box within the flow thread and clip it.
@@ -5346,7 +5346,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
 {
     if (!parent()) {
         // The root layer's clip rect is always infinite.
-        clipRects.reset(PaintInfo::infiniteRect());
+        clipRects.reset(IntRect::infiniteRect());
         return;
     }
     
@@ -5372,7 +5372,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             parentLayer->calculateClipRects(parentContext, clipRects);
         }
     } else
-        clipRects.reset(PaintInfo::infiniteRect());
+        clipRects.reset(IntRect::infiniteRect());
 
     // A fixed object is essentially the root of its containing block hierarchy, so when
     // we encounter such an object, we reset our clip rects to the fixedClipRect.
@@ -5465,7 +5465,7 @@ ClipRect RenderLayer::backgroundClipRect(const ClipRectsContext& clipRectsContex
     RenderView& view = renderer().view();
 
     // Note: infinite clipRects should not be scrolled here, otherwise they will accidentally no longer be considered infinite.
-    if (parentRects.fixed() && &clipRectsContext.rootLayer->renderer() == &view && backgroundClipRect != PaintInfo::infiniteRect())
+    if (parentRects.fixed() && &clipRectsContext.rootLayer->renderer() == &view && backgroundClipRect != IntRect::infiniteRect())
         backgroundClipRect.move(view.frameView().scrollOffsetForFixedPosition());
 
     return backgroundClipRect;
@@ -5596,10 +5596,10 @@ LayoutRect RenderLayer::localClipRect() const
     LayoutRect layerBounds;
     ClipRect backgroundRect, foregroundRect, outlineRect;
     ClipRectsContext clipRectsContext(clippingRootLayer, 0, PaintingClipRects);
-    calculateRects(clipRectsContext, PaintInfo::infiniteRect(), layerBounds, backgroundRect, foregroundRect, outlineRect);
+    calculateRects(clipRectsContext, IntRect::infiniteRect(), layerBounds, backgroundRect, foregroundRect, outlineRect);
 
     LayoutRect clipRect = backgroundRect.rect();
-    if (clipRect == PaintInfo::infiniteRect())
+    if (clipRect == IntRect::infiniteRect())
         return clipRect;
 
     LayoutPoint clippingRootOffset;
@@ -5792,7 +5792,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
 
     if (flags & UseLocalClipRectIfPossible) {
         LayoutRect localClipRect = this->localClipRect();
-        if (localClipRect != PaintInfo::infiniteRect()) {
+        if (localClipRect != IntRect::infiniteRect()) {
             if ((flags & IncludeSelfTransform) && paintsWithTransform(PaintBehaviorNormal))
                 localClipRect = transform()->mapRect(localClipRect);
 
@@ -6955,12 +6955,12 @@ void RenderLayer::paintFlowThreadIfRegion(GraphicsContext* context, const LayerP
     }
 
     // Optimize clipping for the single fragment case.
-    if (!regionClipRect.isEmpty() && regionClipRect != PaintInfo::infiniteRect())
+    if (!regionClipRect.isEmpty() && regionClipRect != IntRect::infiniteRect())
         clipToRect(paintingInfo.rootLayer, context, paintingInfo.paintDirtyRect, regionClipRect);
 
     flowThreadLayer->paintNamedFlowThreadInsideRegion(context, region, paintingInfo.paintDirtyRect, paintOffset, paintingInfo.paintBehavior, paintFlags);
 
-    if (!regionClipRect.isEmpty() && regionClipRect != PaintInfo::infiniteRect())
+    if (!regionClipRect.isEmpty() && regionClipRect != IntRect::infiniteRect())
         restoreClip(context, paintingInfo.paintDirtyRect, regionClipRect);
 }
 

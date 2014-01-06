@@ -705,10 +705,7 @@ bool GraphicsLayerCA::setFilters(const FilterOperations& filterOperations)
 
 void GraphicsLayerCA::setNeedsDisplay()
 {
-    FloatRect hugeRect(-std::numeric_limits<float>::max() / 2, -std::numeric_limits<float>::max() / 2,
-                       std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-
-    setNeedsDisplayInRect(hugeRect);
+    setNeedsDisplayInRect(FloatRect::infiniteRect());
 }
 
 void GraphicsLayerCA::setNeedsDisplayInRect(const FloatRect& r)

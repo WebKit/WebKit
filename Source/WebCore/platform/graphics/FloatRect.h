@@ -193,6 +193,9 @@ public:
 
     void dump(PrintStream& out) const;
 
+    static FloatRect infiniteRect();
+    bool isInfinite() const;
+
 private:
     FloatPoint m_location;
     FloatSize m_size;
@@ -244,6 +247,17 @@ inline bool operator==(const FloatRect& a, const FloatRect& b)
 inline bool operator!=(const FloatRect& a, const FloatRect& b)
 {
     return a.location() != b.location() || a.size() != b.size();
+}
+
+inline FloatRect FloatRect::infiniteRect()
+{
+    static FloatRect infiniteRect(-std::numeric_limits<float>::max() / 2, -std::numeric_limits<float>::max() / 2, std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+    return infiniteRect;
+}
+
+inline bool FloatRect::isInfinite() const
+{
+    return *this == infiniteRect();
 }
 
 IntRect enclosingIntRect(const FloatRect&);

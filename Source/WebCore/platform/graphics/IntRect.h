@@ -203,6 +203,9 @@ public:
 
     void dump(PrintStream& out) const;
 
+    static IntRect infiniteRect();
+    bool isInfinite() const;
+
 private:
     IntPoint m_location;
     IntSize m_size;
@@ -232,6 +235,17 @@ inline bool operator==(const IntRect& a, const IntRect& b)
 inline bool operator!=(const IntRect& a, const IntRect& b)
 {
     return a.location() != b.location() || a.size() != b.size();
+}
+
+inline IntRect IntRect::infiniteRect()
+{
+    static IntRect infiniteRect(-std::numeric_limits<int>::max() / 2, -std::numeric_limits<int>::max() / 2, std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
+    return infiniteRect;
+}
+
+inline bool IntRect::isInfinite() const
+{
+    return *this == infiniteRect();
 }
 
 #if USE(CG)

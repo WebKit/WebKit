@@ -98,14 +98,12 @@ struct PaintInfo {
 
         context->concatCTM(localToAncestorTransform);
 
-        if (rect == infiniteRect())
+        if (rect.isInfinite())
             return;
 
         rect = localToAncestorTransform.inverse().mapRect(rect);
     }
 #endif
-
-    static IntRect infiniteRect() { return IntRect(LayoutRect::infiniteRect()); }
 
     GraphicsContext* context;
     IntRect rect;

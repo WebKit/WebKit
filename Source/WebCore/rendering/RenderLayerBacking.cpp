@@ -646,7 +646,7 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
 
 static IntRect clipBox(RenderBox& renderer)
 {
-    LayoutRect result = PaintInfo::infiniteRect();
+    LayoutRect result = IntRect::infiniteRect();
     if (renderer.hasOverflowClip())
         result = renderer.overflowClipRect(LayoutPoint(), 0); // FIXME: Incorrect for CSS regions.
 
@@ -753,7 +753,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         // for a compositing layer, rootLayer is the layer itself.
         RenderLayer::ClipRectsContext clipRectsContext(compAncestor, 0, TemporaryClipRects, IgnoreOverlayScrollbarSize, IgnoreOverflowClip);
         IntRect parentClipRect = pixelSnappedIntRect(m_owningLayer.backgroundClipRect(clipRectsContext).rect()); // FIXME: Incorrect for CSS regions.
-        ASSERT(parentClipRect != PaintInfo::infiniteRect());
+        ASSERT(parentClipRect != IntRect::infiniteRect());
         m_ancestorClippingLayer->setPosition(FloatPoint(parentClipRect.location() - graphicsLayerParentLocation));
         m_ancestorClippingLayer->setSize(parentClipRect.size());
 

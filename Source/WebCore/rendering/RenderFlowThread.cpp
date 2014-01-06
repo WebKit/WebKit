@@ -1089,7 +1089,7 @@ LayoutRect RenderFlowThread::fragmentsBoundingBox(const LayoutRect& layerBoundin
     for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         LayerFragments fragments;
-        region->collectLayerFragments(fragments, layerBoundingBox, PaintInfo::infiniteRect());
+        region->collectLayerFragments(fragments, layerBoundingBox, IntRect::infiniteRect());
         for (size_t i = 0; i < fragments.size(); ++i) {
             const LayerFragment& fragment = fragments.at(i);
             LayoutRect fragmentRect(layerBoundingBox);
