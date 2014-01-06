@@ -169,7 +169,7 @@ private:
     
     virtual void updateFromStyle() OVERRIDE FINAL;
     
-    RenderInline* clone() const;
+    RenderPtr<RenderInline> clone() const;
 
     void paintOutlineForLine(GraphicsContext*, const LayoutPoint&, const LayoutRect& prevLine, const LayoutRect& thisLine,
                              const LayoutRect& nextLine, const Color);
