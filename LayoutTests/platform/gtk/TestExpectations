@@ -763,6 +763,11 @@ webkit.org/b/125407 plugins/plugin-clip-subframe.html [ Failure Pass ]
 webkit.org/b/126420 fast/table/dynamic-caption-add-before-child.xhtml [ Failure Pass ]
 webkit.org/b/126420 svg/custom/resource-invalidation-crash.svg [ Failure Pass ]
 
+webkit.org/b/126432 fast/css/acid2-pixel.html [ Failure Pass ]
+webkit.org/b/126432 fast/css/acid2.html [ Failure Pass ]
+webkit.org/b/126432 http/tests/misc/acid2-pixel.html [ Failure Pass ]
+webkit.org/b/126432 http/tests/misc/acid2.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1525,6 +1530,15 @@ webkit.org/b/125406 fast/regions/relative-in-absolute-borders-overflow.html [ Im
 
 webkit.org/b/126425 fast/block/float/overhanging-tall-block.html [ Failure ]
 webkit.org/b/126425 scrollbars/scrollbar-large-overflow-rectangle.html [ Failure ]
+
+webkit.org/b/126518 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
+webkit.org/b/126518 http/tests/security/redirect-BLOCKED-to-localURL.html [ Failure ]
+
+webkit.org/b/126519 inspector-protocol/model/highlight-shape-outside-margin.html [ Failure ]
+
+webkit.org/b/126520 media/click-volume-bar-not-pausing.html [ Failure ]
+
+webkit.org/b/126521 accessibility/menu-list-sends-change-notification.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

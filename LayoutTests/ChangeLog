@@ -1,3 +1,10 @@
+2014-01-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+        Adding failure expectations for the set of currently failing tests.
+
+        * platform/gtk/TestExpectations:
+
 2014-01-06  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         <hr> appears gray instead of green because of color attribute is defined followed by noshade attribute
