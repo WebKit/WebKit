@@ -95,8 +95,6 @@ public:
 
     virtual bool handleJavaScriptDialog(bool, const String*) { return false; }
 
-    virtual bool canSetFileInputFiles() { return false; }
-
     static bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
 };
 

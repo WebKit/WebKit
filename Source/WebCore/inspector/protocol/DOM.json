@@ -377,14 +377,6 @@
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to focus." }
             ],
             "description": "Focuses the given element."
-        },
-        {
-            "name": "setFileInputFiles",
-            "parameters": [
-                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the file input node to set files for." },
-                { "name": "files", "type": "array", "items": { "type": "string" }, "description": "Array of file paths to set." }
-            ],
-            "description": "Sets files for the given file input element."
         }
     ],
     "events": [

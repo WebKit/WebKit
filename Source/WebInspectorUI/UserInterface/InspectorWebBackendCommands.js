@@ -126,7 +126,6 @@ InspectorBackend.registerCommand("DOM.undo", [], []);
 InspectorBackend.registerCommand("DOM.redo", [], []);
 InspectorBackend.registerCommand("DOM.markUndoableState", [], []);
 InspectorBackend.registerCommand("DOM.focus", [{"name": "nodeId", "type": "number", "optional": false}], []);
-InspectorBackend.registerCommand("DOM.setFileInputFiles", [{"name": "nodeId", "type": "number", "optional": false}, {"name": "files", "type": "object", "optional": false}], []);
 
 // DOMDebugger.
 InspectorBackend.registerEnum("DOMDebugger.DOMBreakpointType", {SubtreeModified: "subtree-modified", AttributeModified: "attribute-modified", NodeRemoved: "node-removed"});

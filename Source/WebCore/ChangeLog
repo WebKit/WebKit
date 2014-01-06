@@ -1,3 +1,24 @@
+2014-01-06  Seokju Kwon  <seokju@webkit.org>
+
+        Web Inspector: Get rid of DOM.setFileInputFiles from Protocol
+        https://bugs.webkit.org/show_bug.cgi?id=126312
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests, No changes in behavior.
+
+        It is a dead code as all ports in WebKit don't support it.
+        And this patch removes all things related to DOM.setFileInputFiles in Frontend.
+
+        * inspector/InspectorClient.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+        * inspector/protocol/DOM.json:
+
 2014-01-06  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Revise String Concatenation (Follow-up to r161247)
