@@ -1,3 +1,18 @@
+2014-01-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] FBO Depth Buffer Attachment Function Improperly Clearing with 0
+        https://bugs.webkit.org/show_bug.cgi?id=126538
+        <rdar://problem/15201336>
+
+        Reviewed by Dean Jackson.
+
+        Tested by webgl/1.0.2/resources/webgl_test_files/conformance/renderbuffers/framebuffer-object-attachment.html
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::initializeAttachments): Clear depth buffer with 1.0f (rather than 0), to match expected
+        default (clear) buffer state for OpenGL. Using 0 would require us to flip the clear mask for the depth attachment
+        type.
+
 2014-01-06  Simon Fraser  <simon.fraser@apple.com>
 
         Add new files for UI-side scrolling

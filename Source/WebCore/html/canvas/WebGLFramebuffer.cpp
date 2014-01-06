@@ -538,7 +538,7 @@ bool WebGLFramebuffer::initializeAttachments(GraphicsContext3D* g3d, const char*
     if (initDepth) {
         g3d->getFloatv(GraphicsContext3D::DEPTH_CLEAR_VALUE, &depthClearValue);
         g3d->getBooleanv(GraphicsContext3D::DEPTH_WRITEMASK, &depthMask);
-        g3d->clearDepth(0);
+        g3d->clearDepth(1.0f);
         g3d->depthMask(true);
     }
     if (initStencil) {
