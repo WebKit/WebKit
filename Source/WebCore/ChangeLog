@@ -1,3 +1,23 @@
+2014-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r161381): [GTK] Rendering is broken in GTK after r161381
+        https://bugs.webkit.org/show_bug.cgi?id=126570
+
+        Reviewed by Tim Horton.
+
+        Use LayoutRect::infiniteRect() instead of IntRect::infiniteRect()
+        when a LayoutRect is expected.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::fragmentsBoundingBox):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::clipBox):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::clippedByAncestor):
+
 2014-01-07  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Change default value from 'auto' to 'none'
