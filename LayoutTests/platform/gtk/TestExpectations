@@ -1522,8 +1522,6 @@ webkit.org/b/124770 fast/forms/select-accesskey.html [ Failure ]
 
 webkit.org/b/124834 fast/block/float/clear-negative-margin-top.html [ ImageOnlyFailure ]
 
-webkit.org/b/124835 fast/regions/repaint/repaint-regions-overflow.html [ Failure ]
-
 webkit.org/b/125071 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ ImageOnlyFailure ]
 
 webkit.org/b/125348 accessibility/document-attributes.html [ Failure ]

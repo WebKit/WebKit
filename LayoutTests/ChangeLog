@@ -1,3 +1,15 @@
+2014-01-07  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] fast/repaint/repaint-regions-overflow.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=124835
+
+        Unreviewed gardening.
+
+        Added new baseline for failing test.
+
+        * platform/gtk/TestExpectations: Unskipped faling test.
+        * platform/gtk/fast/regions/repaint/repaint-regions-overflow-expected.txt: Added.
+
 2014-01-07  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose aria-checked mixed state as ATK_STATE_INDETERMINATE
