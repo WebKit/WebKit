@@ -1,3 +1,18 @@
+2014-01-07  Mark Lam  <mark.lam@apple.com>
+
+        r161364 caused JSC tests regression on non-DFG builds (e.g. C Loop and Windows).
+        https://bugs.webkit.org/show_bug.cgi?id=126589.
+
+        Reviewed by Filip Pizlo.
+
+        After the removal of ENABLE(VALUE_PROFILER), the LLINT is now expecting the
+        relevant opcode operands to point to ValueProfiler data structures and will
+        write profiling data into them. Hence, we need to allocate these data
+        structures even though the profiling data won't be used in non-DFG builds.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+
 2014-01-07  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERT in compileArithNegate on pdfjs

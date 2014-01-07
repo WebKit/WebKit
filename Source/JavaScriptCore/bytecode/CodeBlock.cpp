@@ -1644,14 +1644,12 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     if (size_t size = unlinkedCodeBlock->numberOfLLintCallLinkInfos())
         m_llintCallLinkInfos.resizeToFit(size);
 #endif
-#if ENABLE(DFG_JIT)
     if (size_t size = unlinkedCodeBlock->numberOfArrayProfiles())
         m_arrayProfiles.grow(size);
     if (size_t size = unlinkedCodeBlock->numberOfArrayAllocationProfiles())
         m_arrayAllocationProfiles.resizeToFit(size);
     if (size_t size = unlinkedCodeBlock->numberOfValueProfiles())
         m_valueProfiles.resizeToFit(size);
-#endif
     if (size_t size = unlinkedCodeBlock->numberOfObjectAllocationProfiles())
         m_objectAllocationProfiles.resizeToFit(size);
 
@@ -1668,7 +1666,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + j].u.operand = pc[i + j].u.operand;
         }
         switch (pc[i].u.opcode) {
-#if ENABLE(DFG_JIT)
         case op_get_by_val:
         case op_get_argument_by_val: {
             int arrayProfileIndex = pc[i + opLength - 2].u.operand;
@@ -1705,7 +1702,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + opLength - 1] = &m_arrayAllocationProfiles[arrayAllocationProfileIndex];
             break;
         }
-#endif
         case op_new_object: {
             int objectAllocationProfileIndex = pc[i + opLength - 1].u.operand;
             ObjectAllocationProfile* objectAllocationProfile = &m_objectAllocationProfiles[objectAllocationProfileIndex];
@@ -1719,7 +1715,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
         case op_call:
         case op_call_eval: {
-#if ENABLE(DFG_JIT)
             ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
@@ -1727,7 +1722,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             int arrayProfileIndex = pc[i + opLength - 2].u.operand;
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
             instructions[i + opLength - 2] = &m_arrayProfiles[arrayProfileIndex];
-#endif
 #if ENABLE(LLINT)
             instructions[i + 5] = &m_llintCallLinkInfos[pc[i + 5].u.operand];
 #endif
@@ -1737,12 +1731,10 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 #if ENABLE(LLINT)
             instructions[i + 5] = &m_llintCallLinkInfos[pc[i + 5].u.operand];
 #endif
-#if ENABLE(DFG_JIT)
             ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
             instructions[i + opLength - 1] = profile;
-#endif
             break;
         }
         case op_get_by_id_out_of_line:
