@@ -1958,7 +1958,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.store32(value.payloadGPR(), JITCompiler::payloadFor(node->machineLocal()));
             m_jit.store32(value.tagGPR(), JITCompiler::tagFor(node->machineLocal()));
             noResult(node);
-            recordSetLocal(DataFormatJS);
+            recordSetLocal(dataFormatFor(node->variableAccessData()->flushFormat()));
             break;
         }
             

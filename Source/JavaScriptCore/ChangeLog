@@ -1,3 +1,21 @@
+2014-01-07  Filip Pizlo  <fpizlo@apple.com>
+
+        SetLocal for a FlushedArguments should not claim that the dataFormat is DataFormatJS
+        https://bugs.webkit.org/show_bug.cgi?id=126563
+
+        Reviewed by Gavin Barraclough.
+        
+        This was a rookie arguments simplification mistake: the SetLocal needs to record the fact
+        that although it set JSValue(), OSR should think it set Arguments. DataFormatArguments
+        conveys this, and dataFormatFor(FlushFormat) will do the right thing.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * tests/stress/phantom-arguments-set-local-then-exit-in-same-block.js: Added.
+        (foo):
+
 2014-01-06  Filip Pizlo  <fpizlo@apple.com>
 
         Make the different flavors of integer arithmetic more explicit, and don't rely on (possibly stale) results of the backwards propagator to decide integer arithmetic semantics

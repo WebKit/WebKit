@@ -2275,7 +2275,7 @@ void SpeculativeJIT::compile(Node* node)
             JSValueOperand value(this, node->child1());
             m_jit.store64(value.gpr(), JITCompiler::addressFor(node->machineLocal()));
             noResult(node);
-            recordSetLocal(DataFormatJS);
+            recordSetLocal(dataFormatFor(node->variableAccessData()->flushFormat()));
             break;
         }
             
