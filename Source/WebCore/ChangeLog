@@ -1,3 +1,19 @@
+2014-01-07  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] shape-outside layout incorrect when line spans rounded box rounded corners
+        https://bugs.webkit.org/show_bug.cgi?id=126528
+
+        Reviewed by Andreas Kling.
+
+        BoxShape::getExcludedIntervals() now checks for the special case where the line spans the
+        top and bottom rounded corners - which implies that the excluded interval is the box's
+        horizontal extent.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-line-spans-box-corners.html
+
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::BoxShape::getExcludedIntervals):
+
 2014-01-07  Alexey Proskuryakov  <ap@apple.com>
 
         Debug biuld fix.

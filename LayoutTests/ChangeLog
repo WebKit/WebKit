@@ -1,3 +1,16 @@
+2014-01-07  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] shape-outside layout incorrect when line spans rounded box rounded corners
+        https://bugs.webkit.org/show_bug.cgi?id=126528
+
+        Reviewed by Andreas Kling.
+
+        Verify that a line that spans a shape-outside box's top and bottom rounded corners begins
+        at the box's right edge.
+
+        * fast/shapes/shape-outside-floats/shape-outside-line-spans-box-corners-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-line-spans-box-corners.html: Added.
+
 2014-01-07  Frédéric Wang  <fred.wang@free.fr>
 
         Add Support for the semantics element.

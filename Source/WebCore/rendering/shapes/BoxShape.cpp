@@ -85,6 +85,14 @@ void BoxShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHei
         return;
     }
 
+    float topCornerMaxY = std::max<float>(marginBounds.topLeftCorner().maxY(), marginBounds.topRightCorner().maxY());
+    float bottomCornerMinY = std::min<float>(marginBounds.bottomLeftCorner().y(), marginBounds.bottomRightCorner().y());
+
+    if (y1 <= topCornerMaxY && y2 >= bottomCornerMinY) {
+        result.append(LineSegment(rect.x(), rect.maxX()));
+        return;
+    }
+
     float x1 = rect.maxX();
     float x2 = rect.x();
     float minXIntercept;
