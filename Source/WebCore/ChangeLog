@@ -1,3 +1,58 @@
+2014-01-07  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r160479
+
+    2013-12-11  Darin Adler  <darin@apple.com>
+
+            StylePendingImage needs to correctly manage the CSSValue pointer lifetime
+            https://bugs.webkit.org/show_bug.cgi?id=125468
+
+            Reviewed by Andreas Kling.
+
+            Test: fast/css/pending-image-crash.xhtml
+
+            Disconnect the reference counted StylePendingImage from the CSSValue that owns
+            it when it's not needed any more, otherwise we could end up using a pointer
+            that might no longer be valid.
+
+            * css/CSSCursorImageValue.cpp:
+            (WebCore::CSSCursorImageValue::detachPendingImage): Added. Calls detachFromCSSValue
+            on the current image if it is a StylePendingImage.
+            (WebCore::CSSCursorImageValue::~CSSCursorImageValue): Call detachPendingImage.
+            (WebCore::CSSCursorImageValue::cachedImage): Call detachPendingImage before changing
+            m_image to a new value.
+            (WebCore::CSSCursorImageValue::clearCachedImage): Ditto.
+            * css/CSSCursorImageValue.h: Added detachPendingImage.
+
+            * css/CSSImageSetValue.cpp:
+            (WebCore::CSSImageSetValue::detachPendingImage): Added. Calls detachFromCSSValue
+            on the current image set if it is a StylePendingImage.
+            (WebCore::CSSImageSetValue::~CSSImageSetValue): Call detachPendingImage.
+            (WebCore::CSSImageSetValue::cachedImageSet): Call detachPendingImage before changing
+            m_imageSet to a new value.
+            * css/CSSImageSetValue.h: Added detachPendingImage.
+
+            * css/CSSImageValue.cpp:
+            (WebCore::CSSImageValue::detachPendingImage): Added. Calls detachFromCSSValue on the
+            current image if it is a StylePendingImage.
+            (WebCore::CSSImageValue::~CSSImageValue): Call detachPendingImage.
+            (WebCore::CSSImageValue::cachedImage): Call detachPendingImage before changing m_image
+            to a new value.
+            * css/CSSImageValue.h: Added detachPendingImage.
+
+            * rendering/style/StylePendingImage.h:
+            (WebCore::StylePendingImage::cssImageValue): Added a null check.
+            (WebCore::StylePendingImage::cssImageGeneratorValue): Added a null check.
+            (WebCore::StylePendingImage::cssCursorImageValue): Added a null check.
+            (WebCore::StylePendingImage::cssImageSetValue): Added a null check.
+            (WebCore::StylePendingImage::detachFromCSSValue): Added. Sets m_value to null since
+            the style is no longer using this StylePendingImage.
+            (WebCore::StylePendingImage::data): Changed to use the "this" pointer since all we
+            need is some arbitrary pointer uniquely identifying the image. Before loading the image,
+            we have no suitable weak identifier, so it suffices to use the unique pointer to each
+            StylePendingImage object. This function is used only in a limited way; it would be nice
+            to find a way to make the code less strange long term.
+
 2013-12-23  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge 161050: <rdar://problem/15754482>

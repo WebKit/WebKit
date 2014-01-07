@@ -49,8 +49,16 @@ CSSImageSetValue::CSSImageSetValue()
 {
 }
 
+inline void CSSImageSetValue::detachPendingImage()
+{
+    if (m_imageSet && m_imageSet->isPendingImage())
+        static_cast<StylePendingImage&>(*m_imageSet).detachFromCSSValue();
+}
+
 CSSImageSetValue::~CSSImageSetValue()
 {
+    detachPendingImage();
+
     if (m_imageSet && m_imageSet->isCachedImageSet())
         static_cast<StyleCachedImageSet*>(m_imageSet.get())->clearImageSetValue();
 }
@@ -114,6 +122,7 @@ StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* load
         CachedResourceRequest request(ResourceRequest(document->completeURL(image.imageURL)));
         request.setInitiator(cachedResourceRequestInitiators().css);
         if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request)) {
+            detachPendingImage();
             m_imageSet = StyleCachedImageSet::create(cachedImage.get(), image.scaleFactor, this);
             m_accessedBestFitImage = true;
         }
