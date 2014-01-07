@@ -5026,6 +5026,19 @@ class WebKitStyleTest(CppStyleTestBase):
         # FIXME: Implement this.
         pass
 
+    def test_define_constants(self):
+        bad_name_error = " is incorrect. #defined constants should use all uppercase names with words separated by underscores.  [readability/naming/define/constants] [4]"
+
+        self.assert_lint('#define lower1case', 'lower1case' + bad_name_error)
+        self.assert_lint('#define UPPER1CASE', '')
+        self.assert_lint('#define mixed1CASE', 'mixed1CASE' + bad_name_error)
+        self.assert_lint('#define lower_1case', 'lower_1case' + bad_name_error)
+        self.assert_lint('#define UPPER_1CASE', '')
+        self.assert_lint('#define mixed_1CASE', 'mixed_1CASE' + bad_name_error)
+        self.assert_lint('#define dlower1case some(bla)', 'dlower1case' + bad_name_error)
+        self.assert_lint('#define DUPPER1CASE dd(foo)', '')
+        self.assert_lint('#define Dmixed1CASE dkjgh[sdf]', 'Dmixed1CASE' + bad_name_error)
+
 
 class CppCheckerTest(unittest.TestCase):
 

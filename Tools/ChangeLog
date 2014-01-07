@@ -1,3 +1,16 @@
+2014-01-07  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
+
+        defined constants should use all uppercase names with words separated by underscores.
+        https://bugs.webkit.org/show_bug.cgi?id=126055
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_style):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_define_constants):
+
 2014-01-07  Brian Holt  <brian.holt@samsung.com>
 
         Unreviewed. Add myself as a committer.

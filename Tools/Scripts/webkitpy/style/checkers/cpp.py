@@ -2719,6 +2719,14 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_indentation_amount(clean_lines, line_number, error)
     check_enum_casing(clean_lines, line_number, enum_state, error)
 
+    # #defined constants should use all uppercase names with words separated by underscores.
+    define_check = match(r'#define\s(?P<name>[\w_]+)(\s.*|\s?)$', line)
+    if define_check:
+        name = define_check.group('name')
+        if not match(r'^[0-9A-Z_]+$', name):
+            error(line_number, 'readability/naming/define/constants', 4,
+                name + " is incorrect. #defined constants should use all uppercase names with words separated by underscores.")
+
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#include +"[^/]+\.h"')
 _RE_PATTERN_INCLUDE = re.compile(r'^\s*#\s*include\s*([<"])([^>"]*)[>"].*$')
@@ -3700,6 +3708,7 @@ class CppChecker(object):
         'readability/parameter_name',
         'readability/naming',
         'readability/naming/underscores',
+        'readability/naming/define/constants',
         'readability/null',
         'readability/pass_ptr',
         'readability/streams',
