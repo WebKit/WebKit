@@ -1,3 +1,14 @@
+2014-01-07  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Change ATK version to 2.11.4
+        https://bugs.webkit.org/show_bug.cgi?id=126573
+
+        Reviewed by Gyuyoung Kim.
+
+        ATK 2.11.4 introduces some new roles, that are already being used by WebKit.
+
+        * efl/jhbuild.modules:
+
 2014-01-07  Alberto Garcia  <berto@igalia.com>
 
         [GTK][EFL] Use function jhbuildWrapperPrefixIfNeeded to run launcher
