@@ -411,6 +411,15 @@
             "brettx"
          ]
       },
+      "Brian Holt" : {
+         "emails" : [
+            "brian.holt@samsung.com"
+         ],
+         "expertise" : "WebKitGTK+, memory leak detection",
+         "nicks" : [
+            "bdholt1"
+         ]
+      },
       "Bruno de Oliveira Abinader" : {
          "emails" : [
             "bruno.d@partner.samsung.com",
