@@ -411,6 +411,17 @@
             "brettx"
          ]
       },
+      "Brian Burg" : {
+         "emails" : [
+            "bburg@apple.com",
+            "burg@cs.washington.edu"
+         ],
+         "expertise" : "Developer Tools, Web Inspector",
+         "nicks" : [
+            "bburg",
+            "brrian"
+         ]
+      },
       "Brian Holt" : {
          "emails" : [
             "brian.holt@samsung.com"
