@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMTestActiveDOMObject.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class TestActiveDOMObject;
 }
 
 WebCore::TestActiveDOMObject* core(DOMTestActiveDOMObject *);
 DOMTestActiveDOMObject *kit(WebCore::TestActiveDOMObject*);
-
-#endif

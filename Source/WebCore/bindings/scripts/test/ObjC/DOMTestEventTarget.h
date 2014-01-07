@@ -26,18 +26,15 @@
 
 #import <WebCore/DOMObject.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 @class DOMEvent;
 @class DOMNode;
 @class NSString;
 @protocol DOMEventListener;
 
+WEBKIT_CLASS_AVAILABLE_MAC(TBD)
 @interface DOMTestEventTarget : DOMObject
 - (DOMNode *)item:(unsigned)index;
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture;
 - (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture;
 - (BOOL)dispatchEvent:(DOMEvent *)evt;
 @end
-
-#endif

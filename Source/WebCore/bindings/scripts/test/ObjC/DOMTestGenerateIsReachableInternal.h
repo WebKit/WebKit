@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMTestGenerateIsReachable.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class TestGenerateIsReachable;
 }
 
 WebCore::TestGenerateIsReachable* core(DOMTestGenerateIsReachable *);
 DOMTestGenerateIsReachable *kit(WebCore::TestGenerateIsReachable*);
-
-#endif

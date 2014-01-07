@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMTestInterface.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class TestInterface;
 }
 
 WebCore::TestInterface* core(DOMTestInterface *);
 DOMTestInterface *kit(WebCore::TestInterface*);
-
-#endif

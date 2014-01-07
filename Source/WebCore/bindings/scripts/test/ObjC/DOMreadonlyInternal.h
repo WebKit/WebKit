@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMreadonly.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class readonly;
 }
 
 WebCore::readonly* core(DOMreadonly *);
 DOMreadonly *kit(WebCore::readonly*);
-
-#endif

@@ -1,3 +1,66 @@
+2014-01-05  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/126500> Move Objective-C DOM bindings off the legacy WebKit availability macros
+
+        The legacy WebKit availability macros are verbose, confusing, and provide no benefit
+        over using the system availability macros directly. The original vision was that
+        they'd serve a cross-platform purpose but that never came to be.
+
+        The OS X version used in the new availability macros is based on the mapping in
+        JavaScriptCore/WebKitAvailability.h.
+
+        Part of <rdar://problem/15512304>.
+
+        Reviewed by Sam Weinig.
+
+        * bindings/objc/DOMCSS.h:
+        * bindings/objc/DOMEventException.h:
+        * bindings/objc/DOMException.h:
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMObject.h:
+        * bindings/objc/DOMRangeException.h:
+        * bindings/objc/DOMXPathException.h:
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/objc/WebScriptObject.h:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (ReadPublicInterfaces):
+        (GenerateHeader): Tag enums with WK_ENUM_AVAILABLE_MAC and classes with WEBKIT_CLASS_AVAILABLE_MAC.
+        Remove the #ifs that we were previously generating now that enums are appropriately tagged.
+        * bindings/scripts/test/ObjC/DOMTestActiveDOMObject.h:
+        * bindings/scripts/test/ObjC/DOMTestActiveDOMObjectInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestCallback.h:
+        * bindings/scripts/test/ObjC/DOMTestCallbackInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestCustomNamedGetter.h:
+        * bindings/scripts/test/ObjC/DOMTestCustomNamedGetterInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestEventConstructor.h:
+        * bindings/scripts/test/ObjC/DOMTestEventConstructorInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestEventTarget.h:
+        * bindings/scripts/test/ObjC/DOMTestEventTargetInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestException.h:
+        * bindings/scripts/test/ObjC/DOMTestExceptionInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestGenerateIsReachable.h:
+        * bindings/scripts/test/ObjC/DOMTestGenerateIsReachableInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestInterfaceInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestMediaQueryListListener.h:
+        * bindings/scripts/test/ObjC/DOMTestMediaQueryListListenerInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestNamedConstructor.h:
+        * bindings/scripts/test/ObjC/DOMTestNamedConstructorInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestNode.h:
+        * bindings/scripts/test/ObjC/DOMTestNodeInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObjInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestOverloadedConstructors.h:
+        * bindings/scripts/test/ObjC/DOMTestOverloadedConstructorsInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestSerializedScriptValueInterfaceInternal.h:
+        * bindings/scripts/test/ObjC/DOMTestTypedefs.h:
+        * bindings/scripts/test/ObjC/DOMTestTypedefsInternal.h:
+        * bindings/scripts/test/ObjC/DOMattribute.h:
+        * bindings/scripts/test/ObjC/DOMattributeInternal.h:
+        * bindings/scripts/test/ObjC/DOMreadonly.h:
+        * bindings/scripts/test/ObjC/DOMreadonlyInternal.h:
+
 2014-01-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r157851): trailing space inside an editable region could be erroneously collapsed

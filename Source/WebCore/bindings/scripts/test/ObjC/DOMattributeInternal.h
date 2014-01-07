@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMattribute.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class attribute;
 }
 
 WebCore::attribute* core(DOMattribute *);
 DOMattribute *kit(WebCore::attribute*);
-
-#endif

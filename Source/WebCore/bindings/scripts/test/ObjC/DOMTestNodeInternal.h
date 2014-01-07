@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMTestNode.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class TestNode;
 }
 
 WebCore::TestNode* core(DOMTestNode *);
 DOMTestNode *kit(WebCore::TestNode*);
-
-#endif

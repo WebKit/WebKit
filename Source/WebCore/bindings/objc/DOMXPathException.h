@@ -24,17 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <JavaScriptCore/WebKitAvailability.h>
-
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_3_0
+#import <WebCore/WebKitAvailability.h>
 
 @class NSString;
 
-extern NSString * const DOMXPathException;
+extern NSString * const DOMXPathException WEBKIT_AVAILABLE_MAC(10_4);
 
 enum DOMXPathExceptionCode {
     DOM_INVALID_EXPRESSION_ERR      = 51,
     DOM_TYPE_ERR                    = 52
-};
-
-#endif
+} WEBKIT_ENUM_AVAILABLE_MAC(10_4);

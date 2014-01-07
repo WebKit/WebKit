@@ -24,17 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <JavaScriptCore/WebKitAvailability.h>
-
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_1_3
+#import <WebCore/WebKitAvailability.h>
 
 @class NSString;
 
-extern NSString * const DOMRangeException;
+extern NSString * const DOMRangeException WEBKIT_AVAILABLE_MAC(10_4);
 
 enum DOMRangeExceptionCode {
     DOM_BAD_BOUNDARYPOINTS_ERR        = 1,
     DOM_INVALID_NODE_TYPE_ERR         = 2
-};
-
-#endif
+} WEBKIT_ENUM_AVAILABLE_MAC(10_4);

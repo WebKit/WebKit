@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMTestEventTarget.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class TestEventTarget;
 }
 
 WebCore::TestEventTarget* core(DOMTestEventTarget *);
 DOMTestEventTarget *kit(WebCore::TestEventTarget*);
-
-#endif

@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMTestSerializedScriptValueInterface.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class TestSerializedScriptValueInterface;
 }
 
 WebCore::TestSerializedScriptValueInterface* core(DOMTestSerializedScriptValueInterface *);
 DOMTestSerializedScriptValueInterface *kit(WebCore::TestSerializedScriptValueInterface*);
-
-#endif

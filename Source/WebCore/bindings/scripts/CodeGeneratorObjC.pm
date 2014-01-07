@@ -240,7 +240,7 @@ sub ReadPublicInterfaces
             $interfaceAvailabilityVersion = $2 if defined $2;
             $found = 1;
             next;
-        } elsif ($isProtocol && $line =~ /^\s*\@protocol $class\s*<[^>]+>\s*([A-Z0-9_]*)/) {
+        } elsif ($isProtocol && $line =~ /^\s*\@protocol $class\s*<[^>]+>\s*([A-Z0-9_()]*)/) {
             $interfaceAvailabilityVersion = $1 if defined $1;
             $found = 1;
             next;
@@ -254,7 +254,7 @@ sub ReadPublicInterfaces
             $line =~ s/\s+$//;
 
             my $availabilityMacro = "";
-            $line =~ s/\s([A-Z0-9_]+)\s*;$/;/;
+            $line =~ s/\s([A-Z0-9_(), ]+)\s*;$/;/;
             $availabilityMacro = $1 if defined $1;
 
             $publicInterfaces{$line} = $availabilityMacro if length $line;
@@ -263,7 +263,7 @@ sub ReadPublicInterfaces
 
     # If this class was not found in PublicDOMInterfaces.h then it should be considered as an entirely new public class.
     $newPublicClass = !$found;
-    $interfaceAvailabilityVersion = "WEBKIT_VERSION_LATEST" if $newPublicClass;
+    $interfaceAvailabilityVersion = "TBD" if $newPublicClass;
 }
 
 sub AddMethodsConstantsAndAttributesFromParentInterfaces
@@ -778,12 +778,9 @@ sub GenerateHeader
         $includedWebKitAvailabilityHeader = 1;
     }
 
-    push(@headerContentHeader, "#import <JavaScriptCore/WebKitAvailability.h>\n") unless $includedWebKitAvailabilityHeader;
-
-    my $interfaceAvailabilityVersionCheck = "#if WEBKIT_VERSION_MAX_ALLOWED >= $interfaceAvailabilityVersion\n\n";
+    push(@headerContentHeader, "#import <WebCore/WebKitAvailability.h>\n") unless $includedWebKitAvailabilityHeader;
 
     push(@headerContentHeader, "\n");
-    push(@headerContentHeader, $interfaceAvailabilityVersionCheck) if length $interfaceAvailabilityVersion;
 
     # - Add constants.
     if ($numConstants > 0) {
@@ -815,7 +812,9 @@ sub GenerateHeader
         # FIXME: enums are unconditionally placed in the public header.
         push(@headerContent, "enum {\n");
         push(@headerContent, $combinedConstants);
-        push(@headerContent, "\n};\n\n");        
+        push(@headerContent, "\n}");
+        push(@headerContent, " WEBKIT_ENUM_AVAILABLE_MAC($interfaceAvailabilityVersion)") if length $interfaceAvailabilityVersion;
+        push(@headerContent, ";\n\n");
     }
 
     # - Begin @interface or @protocol
@@ -823,6 +822,7 @@ sub GenerateHeader
     $interfaceDeclaration .= " <" . join(", ", @protocolsToImplement) . ">" if @protocolsToImplement > 0;
     $interfaceDeclaration .= "\n";
 
+    push(@headerContent, "WEBKIT_CLASS_AVAILABLE_MAC($interfaceAvailabilityVersion)\n") if length $interfaceAvailabilityVersion;
     push(@headerContent, $interfaceDeclaration);
 
     my @headerAttributes = ();
@@ -967,7 +967,7 @@ sub GenerateHeader
 
                 $publicInterfaceKey = $deprecatedFunctionSig . ";";
 
-                my $availabilityMacro = "AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0";
+                my $availabilityMacro = "WEBKIT_DEPRECATED_MAC(10_4, 10_5)";
                 if (defined $publicInterfaces{$publicInterfaceKey} and length $publicInterfaces{$publicInterfaceKey}) {
                     $availabilityMacro = $publicInterfaces{$publicInterfaceKey};
                 }
@@ -1011,8 +1011,6 @@ sub GenerateHeader
         push(@headerContent, "\@end\n");
     }
 
-    push(@headerContent, "\n#endif\n") if length $interfaceAvailabilityVersion;
-
     my %alwaysGenerateForNoSVGBuild = map { $_ => 1 } qw(DOMHTMLEmbedElement DOMHTMLObjectElement);
 
     if (@privateHeaderAttributes > 0 or @privateHeaderFunctions > 0 or exists $alwaysGenerateForNoSVGBuild{$className}) {
@@ -1022,7 +1020,6 @@ sub GenerateHeader
 
         my $classHeaderName = GetClassHeaderName($className);
         push(@privateHeaderContentHeader, "#import <WebCore/$classHeaderName.h>\n\n");
-        push(@privateHeaderContentHeader, $interfaceAvailabilityVersionCheck) if length $interfaceAvailabilityVersion;
 
         @privateHeaderContent = ();
         push(@privateHeaderContent, "\@interface $className (" . $className . "Private)\n");
@@ -1030,8 +1027,6 @@ sub GenerateHeader
         push(@privateHeaderContent, "\n") if @privateHeaderAttributes > 0 and @privateHeaderFunctions > 0;
         push(@privateHeaderContent, @privateHeaderFunctions) if @privateHeaderFunctions > 0;
         push(@privateHeaderContent, "\@end\n");
-
-        push(@privateHeaderContent, "\n#endif\n") if length $interfaceAvailabilityVersion;
     }
 
     unless ($isProtocol) {
@@ -1053,7 +1048,6 @@ sub GenerateHeader
             push(@internalHeaderContent, "#import <WebCore/SVGTransformListPropertyTearOff.h>\n\n") if $svgListPropertyType =~ /SVGTransformList/;
             push(@internalHeaderContent, "#import <WebCore/SVGPathSegListPropertyTearOff.h>\n\n") if $svgListPropertyType =~ /SVGPathSegList/;
         }
-        push(@internalHeaderContent, $interfaceAvailabilityVersionCheck) if length $interfaceAvailabilityVersion;
 
         if ($interfaceName eq "Node") {
             push(@internalHeaderContent, "\@protocol DOMEventTarget;\n\n");
@@ -1084,8 +1078,6 @@ sub GenerateHeader
         if ($interfaceName eq "Node") {
             push(@internalHeaderContent, "id <DOMEventTarget> kit(WebCore::EventTarget*);\n");
         }
-
-        push(@internalHeaderContent, "\n#endif\n") if length $interfaceAvailabilityVersion;
     }
 }
 

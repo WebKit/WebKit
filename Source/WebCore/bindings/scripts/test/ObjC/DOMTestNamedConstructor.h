@@ -26,9 +26,6 @@
 
 #import <WebCore/DOMObject.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
+WEBKIT_CLASS_AVAILABLE_MAC(TBD)
 @interface DOMTestNamedConstructor : DOMObject
 @end
-
-#endif

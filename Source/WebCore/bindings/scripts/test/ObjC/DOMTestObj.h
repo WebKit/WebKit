@@ -26,8 +26,6 @@
 
 #import <WebCore/DOMObject.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 @class DOMDictionary;
 @class DOMDocument;
 @class DOMNode;
@@ -62,8 +60,9 @@ enum {
     DOM_CONST_VALUE_14 = 0x1abc,
     DOM_CONST_JAVASCRIPT = 15,
     DOM_readonly = 0
-};
+} WEBKIT_ENUM_AVAILABLE_MAC(TBD);
 
+WEBKIT_CLASS_AVAILABLE_MAC(TBD)
 @interface DOMTestObj : DOMObject
 @property (readonly) int readOnlyLongAttr;
 @property (readonly, copy) NSString *readOnlyStringAttr;
@@ -192,5 +191,3 @@ enum {
 - (void)variadicNodeMethod:(DOMNode *)head tail:(DOMNode *)tail;
 - (void)any:(float)a b:(int)b;
 @end
-
-#endif

@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMTestOverloadedConstructors.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class TestOverloadedConstructors;
 }
 
 WebCore::TestOverloadedConstructors* core(DOMTestOverloadedConstructors *);
 DOMTestOverloadedConstructors *kit(WebCore::TestOverloadedConstructors*);
-
-#endif

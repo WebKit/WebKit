@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMTestTypedefs.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class TestTypedefs;
 }
 
 WebCore::TestTypedefs* core(DOMTestTypedefs *);
 DOMTestTypedefs *kit(WebCore::TestTypedefs*);
-
-#endif

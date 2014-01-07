@@ -24,13 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <JavaScriptCore/WebKitAvailability.h>
-
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_1_3
+#import <WebCore/WebKitAvailability.h>
 
 @class NSString;
 
-extern NSString * const DOMException;
+extern NSString * const DOMException WEBKIT_AVAILABLE_MAC(10_4);
 
 enum DOMExceptionCode {
     DOM_INDEX_SIZE_ERR                = 1,
@@ -48,6 +46,4 @@ enum DOMExceptionCode {
     DOM_INVALID_MODIFICATION_ERR      = 13,
     DOM_NAMESPACE_ERR                 = 14,
     DOM_INVALID_ACCESS_ERR            = 15
-};
-
-#endif
+} WEBKIT_ENUM_AVAILABLE_MAC(10_4);

@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMTestEventConstructor.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class TestEventConstructor;
 }
 
 WebCore::TestEventConstructor* core(DOMTestEventConstructor *);
 DOMTestEventConstructor *kit(WebCore::TestEventConstructor*);
-
-#endif

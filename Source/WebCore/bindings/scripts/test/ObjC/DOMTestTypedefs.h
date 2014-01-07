@@ -26,11 +26,10 @@
 
 #import <WebCore/DOMObject.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 @class DOMSVGPoint;
 @class NSString;
 
+WEBKIT_CLASS_AVAILABLE_MAC(TBD)
 @interface DOMTestTypedefs : DOMObject
 @property unsigned long long unsignedLongLongAttr;
 @property (strong) NSString *immutableSerializedScriptValue;
@@ -43,5 +42,3 @@
 - (DOMSVGPoint *)immutablePointFunction;
 - (void)methodWithException;
 @end
-
-#endif

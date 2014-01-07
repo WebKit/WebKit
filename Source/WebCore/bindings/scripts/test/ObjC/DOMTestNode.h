@@ -26,9 +26,6 @@
 
 #import <WebCore/DOMNode.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
+WEBKIT_CLASS_AVAILABLE_MAC(TBD)
 @interface DOMTestNode : DOMNode
 @end
-
-#endif

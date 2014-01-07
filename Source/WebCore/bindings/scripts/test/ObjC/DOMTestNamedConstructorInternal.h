@@ -26,13 +26,9 @@
 
 #import <WebCore/DOMTestNamedConstructor.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 namespace WebCore {
 class TestNamedConstructor;
 }
 
 WebCore::TestNamedConstructor* core(DOMTestNamedConstructor *);
 DOMTestNamedConstructor *kit(WebCore::TestNamedConstructor*);
-
-#endif

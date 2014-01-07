@@ -26,15 +26,12 @@
 
 #import <WebCore/DOMObject.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 @class NSString;
 
+WEBKIT_CLASS_AVAILABLE_MAC(TBD)
 @interface DOMTestSerializedScriptValueInterface : DOMObject
 @property (strong) NSString *value;
 @property (readonly, strong) NSString *readonlyValue;
 @property (strong) NSString *cachedValue;
 @property (readonly, strong) NSString *cachedReadonlyValue;
 @end
-
-#endif

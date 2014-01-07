@@ -26,13 +26,10 @@
 
 #import <WebCore/DOMObject.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 @class NSString;
 
+WEBKIT_CLASS_AVAILABLE_MAC(TBD)
 @interface DOMTestEventConstructor : DOMObject
 @property (readonly, copy) NSString *attr1;
 @property (readonly, copy) NSString *attr2;
 @end
-
-#endif

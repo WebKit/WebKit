@@ -26,16 +26,13 @@
 
 #import <WebCore/DOMObject.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 @class DOMNode;
 @class NSString;
 
+WEBKIT_CLASS_AVAILABLE_MAC(TBD)
 @interface DOMTestActiveDOMObject : DOMObject
 @property (readonly) int excitingAttr;
 
 - (void)excitingFunction:(DOMNode *)nextChild;
 - (void)postMessage:(NSString *)message;
 @end
-
-#endif

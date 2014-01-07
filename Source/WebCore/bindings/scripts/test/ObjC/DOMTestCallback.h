@@ -26,8 +26,6 @@
 
 #import <WebCore/DOMObject.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 @class DOMClass5;
 @class DOMClass6;
 @class DOMDOMStringList;
@@ -35,6 +33,7 @@
 @class DOMTestNode;
 @class NSString;
 
+WEBKIT_CLASS_AVAILABLE_MAC(TBD)
 @interface DOMTestCallback : DOMObject
 - (BOOL)callbackWithNoParam;
 - (BOOL)callbackWithArrayParam:(DOMFloat32Array *)arrayParam;
@@ -45,5 +44,3 @@
 - (BOOL)callbackWithBoolean:(BOOL)boolParam;
 - (BOOL)callbackRequiresThisToPass:(int)longParam testNodeParam:(DOMTestNode *)testNodeParam;
 @end
-
-#endif

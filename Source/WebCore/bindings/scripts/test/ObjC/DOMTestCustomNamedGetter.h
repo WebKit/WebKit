@@ -26,12 +26,9 @@
 
 #import <WebCore/DOMObject.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
-
 @class NSString;
 
+WEBKIT_CLASS_AVAILABLE_MAC(TBD)
 @interface DOMTestCustomNamedGetter : DOMObject
 - (void)anotherFunction:(NSString *)str;
 @end
-
-#endif

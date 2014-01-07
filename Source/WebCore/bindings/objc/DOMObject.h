@@ -27,14 +27,13 @@
 #import <WebCore/DOMException.h>
 #import <WebCore/WebScriptObject.h>
 
-#if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_1_3
-
 @class DOMStyleSheet;
 
 typedef unsigned long long DOMTimeStamp;
 
 typedef struct DOMObjectInternal DOMObjectInternal;
 
+WEBKIT_CLASS_AVAILABLE_MAC(10_4)
 @interface DOMObject : WebScriptObject <NSCopying>
 {
 @private
@@ -43,7 +42,5 @@ typedef struct DOMObjectInternal DOMObjectInternal;
 @end
 
 @interface DOMObject (DOMLinkStyle)
-@property(readonly, retain) DOMStyleSheet *sheet;
+@property (readonly, strong) DOMStyleSheet *sheet WEBKIT_AVAILABLE_MAC(10_4);
 @end
-
-#endif
