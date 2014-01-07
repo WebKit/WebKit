@@ -32,7 +32,7 @@ function testComputedStyleValue(value, expected) {
 
 function testInvalidValue(property, value) {
     testStyleValue(value, null);
-    testComputedStyleValue(value, 'auto');
+    testComputedStyleValue(value, 'none');
 }
 
 // absolute lengths - number serialization, units

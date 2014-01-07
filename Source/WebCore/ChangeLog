@@ -1,3 +1,21 @@
+2014-01-07  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Change default value from 'auto' to 'none'
+        https://bugs.webkit.org/show_bug.cgi?id=126544
+
+        Reviewed by Sam Weinig.
+
+        Update the CSS infrastructure to accept 'none' as the default value
+        for shape-inside and shape-outside.
+
+        Updated existing parsing tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseShapeProperty):
+        * rendering/style/ShapeValue.h:
+
 2014-01-07  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] shape-outside layout incorrect when line spans rounded box rounded corners

@@ -41,7 +41,7 @@ namespace WebCore {
 class ShapeValue : public RefCounted<ShapeValue> {
 public:
     enum ShapeValueType {
-        // The Auto value is defined by a null ShapeValue*
+        // The None value is defined by a null ShapeValue*
         Shape,
         Box,
         Outside,

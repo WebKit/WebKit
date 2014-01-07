@@ -5,7 +5,7 @@
 // or: ["specified value", "CSS Text value/computed style value"]
 // or: ["specified value", "CSS Text value", "Computed style value"]
 var validShapeValues = [
-    "auto",
+    "none",
     ["rectangle(10px, 20px, 30px, 40px)", "rectangle(10px, 20px, 30px, 40px)", "rectangle(10px, 20px, 30px, 40px, 0px, 0px)"],
     ["rectangle(10px, 20px, 30px, 40px, 5px)", "rectangle(10px, 20px, 30px, 40px, 5px)", "rectangle(10px, 20px, 30px, 40px, 5px, 5px)"],
     "rectangle(10px, 20px, 30px, 40px, 5px, 10px)",
@@ -77,7 +77,7 @@ var validShapeValues = [
 // shape property's computed value is the same as its default.
 var invalidShapeValues = [
     "calc()",
-    "none",
+    "auto",
 
     "rectangle()",
     "rectangle(10px)",
@@ -149,7 +149,7 @@ var invalidShapeValues = [
     "content-box content-box",
     "polygon(nonzero, 0 0, 10px 10px, 10px 0) polygon(nonzero, 0 0, 10px 10px, 10px 0)",
     "content-box polygon(nonzero, 0 0, 10px 10px, 10px 0) content-box",
-    "auto content-box",
+    "none content-box",
     "url('shape.svg') content-box",
     "url('shape.svg') polygon(nonzero, 0 0, 10px 10px, 10px 0)"
 ];
@@ -169,7 +169,7 @@ var validShapeLengths = [
 // Invalid length values for shape-margin and shape-padding.
 var invalidShapeLengths = [
     "-5px",
-    "auto",
+    "none",
     "120%",
     "\'string\'"
 ];

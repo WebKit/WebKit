@@ -2920,7 +2920,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return cssValuePool().createValue(style->shapeImageThreshold(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitShapeInside:
             if (!style->shapeInside())
-                return cssValuePool().createIdentifierValue(CSSValueAuto);
+                return cssValuePool().createIdentifierValue(CSSValueNone);
             if (style->shapeInside()->type() == ShapeValue::Box)
                 return valueForBox(style->shapeInside()->box());
             if (style->shapeInside()->type() == ShapeValue::Outside)
@@ -2934,7 +2934,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return valueForBasicShape(style.get(), style->shapeInside()->shape());
         case CSSPropertyWebkitShapeOutside:
             if (!style->shapeOutside())
-                return cssValuePool().createIdentifierValue(CSSValueAuto);
+                return cssValuePool().createIdentifierValue(CSSValueNone);
             if (style->shapeOutside()->type() == ShapeValue::Box)
                 return valueForBox(style->shapeOutside()->box());
             if (style->shapeOutside()->type() == ShapeValue::Image) {

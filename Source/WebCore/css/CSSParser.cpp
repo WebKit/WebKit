@@ -5868,7 +5868,7 @@ PassRefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
     RefPtr<CSSPrimitiveValue> keywordValue;
     RefPtr<CSSBasicShape> shapeValue;
 
-    if (valueId == CSSValueAuto
+    if (valueId == CSSValueNone
         || (valueId == CSSValueOutsideShape && propId == CSSPropertyWebkitShapeInside)) {
         keywordValue = parseValidPrimitive(valueId, value);
         m_valueList->next();

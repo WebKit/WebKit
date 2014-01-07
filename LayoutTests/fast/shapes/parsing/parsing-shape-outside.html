@@ -20,20 +20,20 @@ validShapeValues.forEach(function(elt, i, a) {
 testLocalURLShapeProperty("-webkit-shape-outside", "url(\'image\')", "url(image)");
 
 invalidShapeValues.forEach(function(value, i, a) { 
-    testShapePropertyParsingFailure("-webkit-shape-outside", value, "auto") 
+    testShapePropertyParsingFailure("-webkit-shape-outside", value, "none")
 });
 
-testShapePropertyParsingFailure("-webkit-shape-outside", "outside-shape", "auto");
+testShapePropertyParsingFailure("-webkit-shape-outside", "outside-shape", "none");
 
 applyToEachArglist(
     testNotInheritedShapeProperty,
     [// [property, parentValue, childValue, expectedValue]
-     ["-webkit-shape-outside", "auto", "rectangle(10px, 20px, 30px, 40px)", "parent: auto, child: rectangle(10px, 20px, 30px, 40px, 0px, 0px)"],
-     ["-webkit-shape-outside", "rectangle(10px, 20px, 30px, 40px)", "initial", "parent: rectangle(10px, 20px, 30px, 40px, 0px, 0px), child: auto"],
-     ["-webkit-shape-outside", "rectangle(10px, 20px, 30px, 40px)", "", "parent: rectangle(10px, 20px, 30px, 40px, 0px, 0px), child: auto"],
+     ["-webkit-shape-outside", "none", "rectangle(10px, 20px, 30px, 40px)", "parent: none, child: rectangle(10px, 20px, 30px, 40px, 0px, 0px)"],
+     ["-webkit-shape-outside", "rectangle(10px, 20px, 30px, 40px)", "initial", "parent: rectangle(10px, 20px, 30px, 40px, 0px, 0px), child: none"],
+     ["-webkit-shape-outside", "rectangle(10px, 20px, 30px, 40px)", "", "parent: rectangle(10px, 20px, 30px, 40px, 0px, 0px), child: none"],
      ["-webkit-shape-outside", "rectangle(10px, 20px, 30px, 40px)", "inherit", "parent: rectangle(10px, 20px, 30px, 40px, 0px, 0px), child: rectangle(10px, 20px, 30px, 40px, 0px, 0px)"],
-     ["-webkit-shape-outside", "", "inherit", "parent: auto, child: auto"],
-     ["-webkit-shape-outside", "auto", "inherit", "parent: auto, child: auto"]]
+     ["-webkit-shape-outside", "", "inherit", "parent: none, child: none"],
+     ["-webkit-shape-outside", "none", "inherit", "parent: none, child: none"]]
 );
 </script>
 <script src="../../../resources/js-test-post.js"></script>
