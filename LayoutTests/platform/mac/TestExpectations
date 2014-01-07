@@ -1306,3 +1306,6 @@ webkit.org/b/74384 fast/forms/select/menulist-onchange-fired-with-key-up-down.ht
 webkit.org/b/123029 [ Debug ] platform/mac/editing/attributed-string [ Pass Crash ]
 
 webkit.org/b/124933 svg/animations/getCurrentTime-pause-unpause.html [ Pass Failure ]
+
+# GL Scissors don't work properly in Mountain Lion.
+webkit.org/b/126455 [ MountainLion ] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Failure ]

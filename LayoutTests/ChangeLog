@@ -2,6 +2,13 @@
 
         [WebGL] Unreviewed build fix for Mountain Lion drivers.
 
+        * platform/mac-mountainlion/TestExpectations: Removed. Moved test to the mac/TestExpectations file.
+        * platform/mac/TestExpectations: Add failure entry for MountainLion test.
+
+2014-01-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Unreviewed build fix for Mountain Lion drivers.
+
         Add new TestExpectations file for Mountain Lion.
 
         * platform/mac-mountainlion/TestExpectations: Added.
