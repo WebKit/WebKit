@@ -1168,7 +1168,8 @@ void RenderBlockFlow::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsi
         shapeBottomInFlowThread = shapeInsideInfo->shapeLogicalBottom() + currentRegion->logicalTopForFlowThreadContent();
 
     bool lineOverLapsWithShapeBottom = shapeBottomInFlowThread < logicalLineBottomInFlowThread;
-    bool lineOverLapsWithRegionBottom = logicalLineBottomInFlowThread > logicalRegionBottomInFlowThread;
+    bool lineTopAdjustedIntoNextRegion = layoutState.adjustedLogicalLineTop() >= currentRegion->logicalHeight();
+    bool lineOverLapsWithRegionBottom = logicalLineBottomInFlowThread > logicalRegionBottomInFlowThread || lineTopAdjustedIntoNextRegion;
     bool overFlowsToNextRegion = nextRegion && (lineOverLapsWithShapeBottom || lineOverLapsWithRegionBottom);
 
     // If the line is between two shapes/regions we position the line to the top of the next shape/region
@@ -1184,6 +1185,9 @@ void RenderBlockFlow::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsi
         logicalLineBottomInFlowThread = logicalLineTopInFlowThread + lineHeight;
         logicalRegionTopInFlowThread = currentRegion->logicalTopForFlowThreadContent();
         logicalRegionBottomInFlowThread = logicalRegionTopInFlowThread + currentRegion->logicalHeight() - currentRegion->borderAndPaddingBefore() - currentRegion->borderAndPaddingAfter();
+
+        if (lineTopAdjustedIntoNextRegion)
+            layoutState.setAdjustedLogicalLineTop(0);
     }
 
     if (!shapeInsideInfo)
