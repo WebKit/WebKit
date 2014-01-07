@@ -351,6 +351,7 @@
     <ClCompile Include="..\dfg\DFGAbstractHeap.cpp" />
     <ClCompile Include="..\dfg\DFGAbstractValue.cpp" />
     <ClCompile Include="..\dfg\DFGArgumentsSimplificationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGArithMode.cpp" />
     <ClCompile Include="..\dfg\DFGArrayMode.cpp" />
     <ClCompile Include="..\dfg\DFGAtTailAbstractState.cpp" />
     <ClCompile Include="..\dfg\DFGAvailability.cpp" />
@@ -849,6 +850,7 @@
     <ClInclude Include="..\dfg\DFGArgumentPosition.h" />
     <ClInclude Include="..\dfg\DFGArgumentsSimplificationPhase.h" />
     <ClInclude Include="..\dfg\DFGArrayifySlowPathGenerator.h" />
+    <ClInclude Include="..\dfg\DFGArithMode.h" />
     <ClInclude Include="..\dfg\DFGArrayMode.h" />
     <ClInclude Include="..\dfg\DFGAtTailAbstractState.h" />
     <ClInclude Include="..\dfg\DFGAvailability.h" />

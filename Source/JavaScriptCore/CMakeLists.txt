@@ -95,6 +95,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGAbstractHeap.cpp
     dfg/DFGAbstractValue.cpp
     dfg/DFGArgumentsSimplificationPhase.cpp
+    dfg/DFGArithMode.cpp
     dfg/DFGArrayMode.cpp
     dfg/DFGAtTailAbstractState.cpp
     dfg/DFGAvailability.cpp

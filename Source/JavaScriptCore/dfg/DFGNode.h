@@ -34,6 +34,7 @@
 #include "CodeOrigin.h"
 #include "DFGAbstractValue.h"
 #include "DFGAdjacencyList.h"
+#include "DFGArithMode.h"
 #include "DFGArrayMode.h"
 #include "DFGCommon.h"
 #include "DFGLazyJSValue.h"
@@ -180,6 +181,8 @@ struct Node {
         , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
         , m_prediction(SpecNone)
+        , m_opInfo(0)
+        , m_opInfo2(0)
     {
         misc.replacement = 0;
         setOpAndDefaultFlags(op);
@@ -195,6 +198,7 @@ struct Node {
         , m_refCount(1)
         , m_prediction(SpecNone)
         , m_opInfo(imm.m_value)
+        , m_opInfo2(0)
     {
         misc.replacement = 0;
         setOpAndDefaultFlags(op);
@@ -1116,6 +1120,34 @@ struct Node {
             return false;
         m_opInfo = arrayMode.asWord();
         return true;
+    }
+    
+    bool hasArithMode()
+    {
+        switch (op()) {
+        case ArithAdd:
+        case ArithSub:
+        case ArithNegate:
+        case ArithMul:
+        case ArithDiv:
+        case ArithMod:
+        case UInt32ToNumber:
+        case DoubleAsInt32:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    Arith::Mode arithMode()
+    {
+        ASSERT(hasArithMode());
+        return static_cast<Arith::Mode>(m_opInfo);
+    }
+    
+    void setArithMode(Arith::Mode mode)
+    {
+        m_opInfo = mode;
     }
     
     bool hasVirtualRegister()

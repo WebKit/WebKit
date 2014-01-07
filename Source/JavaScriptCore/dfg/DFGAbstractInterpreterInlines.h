@@ -202,11 +202,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case ZombieHint: {
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-    }
-            
     case SetArgument:
         // Assert that the state of arguments has been set.
         ASSERT(!m_state.block()->valuesAtHead.operand(node->local()).isClear());
@@ -254,18 +249,24 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case UInt32ToNumber: {
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
-            ASSERT(child.isInt32());
-            uint32_t value = child.asInt32();
-            setConstant(node, jsNumber(value));
+        if (doesOverflow(node->arithMode())) {
+            if (child && child.isInt32()) {
+                uint32_t value = child.asInt32();
+                setConstant(node, jsNumber(value));
+                break;
+            }
+            forNode(node).setType(SpecDouble);
             break;
         }
-        if (!node->canSpeculateInt32())
-            forNode(node).setType(SpecDouble);
-        else {
-            forNode(node).setType(SpecInt32);
-            node->setCanExit(true);
+        if (child && child.isInt32()) {
+            int32_t value = child.asInt32();
+            if (value >= 0) {
+                setConstant(node, jsNumber(value));
+                break;
+            }
         }
+        forNode(node).setType(SpecInt32);
+        node->setCanExit(true);
         break;
     }
             
@@ -341,12 +342,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case ValueAdd: {
-        JSValue left = forNode(node->child1()).value();
-        JSValue right = forNode(node->child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()) {
-            setConstant(node, JSValue(left.asNumber() + right.asNumber()));
-            break;
-        }
         ASSERT(node->binaryUseKind() == UntypedUse);
         clobberWorld(node->codeOrigin, clobberLimit);
         forNode(node).setType(SpecString | SpecBytecodeNumber);
@@ -356,23 +351,41 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithAdd: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()) {
-            setConstant(node, JSValue(left.asNumber() + right.asNumber()));
-            break;
-        }
         switch (node->binaryUseKind()) {
         case Int32Use:
+            if (left && right && left.isInt32() && right.isInt32()) {
+                if (!shouldCheckOverflow(node->arithMode())) {
+                    setConstant(node, jsNumber(left.asInt32() + right.asInt32()));
+                    break;
+                }
+                JSValue result = jsNumber(left.asNumber() + right.asNumber());
+                if (result.isInt32()) {
+                    setConstant(node, result);
+                    break;
+                }
+            }
             forNode(node).setType(SpecInt32);
-            if (!bytecodeCanTruncateInteger(node->arithNodeFlags()))
+            if (shouldCheckOverflow(node->arithMode()))
                 node->setCanExit(true);
             break;
         case MachineIntUse:
+            if (left && right && left.isMachineInt() && right.isMachineInt()) {
+                JSValue result = jsNumber(left.asMachineInt() + right.asMachineInt());
+                if (result.isMachineInt()) {
+                    setConstant(node, result);
+                    break;
+                }
+            }
             forNode(node).setType(SpecInt52);
             if (!forNode(node->child1()).isType(SpecInt32)
                 || !forNode(node->child2()).isType(SpecInt32))
                 node->setCanExit(true);
             break;
         case NumberUse:
+            if (left && right && left.isNumber() && right.isNumber()) {
+                setConstant(node, jsNumber(left.asNumber() + right.asNumber()));
+                break;
+            }
             if (isFullRealNumberSpeculation(forNode(node->child1()).m_type)
                 && isFullRealNumberSpeculation(forNode(node->child2()).m_type))
                 forNode(node).setType(SpecDoubleReal);
@@ -394,23 +407,41 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithSub: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()) {
-            setConstant(node, JSValue(left.asNumber() - right.asNumber()));
-            break;
-        }
         switch (node->binaryUseKind()) {
         case Int32Use:
+            if (left && right && left.isInt32() && right.isInt32()) {
+                if (!shouldCheckOverflow(node->arithMode())) {
+                    setConstant(node, jsNumber(left.asInt32() - right.asInt32()));
+                    break;
+                }
+                JSValue result = jsNumber(left.asNumber() - right.asNumber());
+                if (result.isInt32()) {
+                    setConstant(node, result);
+                    break;
+                }
+            }
             forNode(node).setType(SpecInt32);
-            if (!bytecodeCanTruncateInteger(node->arithNodeFlags()))
+            if (shouldCheckOverflow(node->arithMode()))
                 node->setCanExit(true);
             break;
         case MachineIntUse:
+            if (left && right && left.isMachineInt() && right.isMachineInt()) {
+                JSValue result = jsNumber(left.asMachineInt() - right.asMachineInt());
+                if (result.isMachineInt() || !shouldCheckOverflow(node->arithMode())) {
+                    setConstant(node, result);
+                    break;
+                }
+            }
             forNode(node).setType(SpecInt52);
             if (!forNode(node->child1()).isType(SpecInt32)
                 || !forNode(node->child2()).isType(SpecInt32))
                 node->setCanExit(true);
             break;
         case NumberUse:
+            if (left && right && left.isNumber() && right.isNumber()) {
+                setConstant(node, jsNumber(left.asNumber() - right.asNumber()));
+                break;
+            }
             forNode(node).setType(SpecDouble);
             break;
         default:
@@ -422,24 +453,52 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case ArithNegate: {
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
-            setConstant(node, JSValue(-child.asNumber()));
-            break;
-        }
         switch (node->child1().useKind()) {
         case Int32Use:
+            if (child && child.isInt32()) {
+                if (!shouldCheckOverflow(node->arithMode())) {
+                    setConstant(node, jsNumber(-child.asInt32()));
+                    break;
+                }
+                double doubleResult;
+                if (shouldCheckNegativeZero(node->arithMode()))
+                    doubleResult = -child.asNumber();
+                else
+                    doubleResult = 0 - child.asNumber();
+                JSValue valueResult = jsNumber(doubleResult);
+                if (valueResult.isInt32()) {
+                    setConstant(node, valueResult);
+                    break;
+                }
+            }
             forNode(node).setType(SpecInt32);
-            if (!bytecodeCanTruncateInteger(node->arithNodeFlags()))
+            if (shouldCheckOverflow(node->arithMode()))
                 node->setCanExit(true);
             break;
         case MachineIntUse:
+            if (child && child.isMachineInt()) {
+                double doubleResult;
+                if (shouldCheckNegativeZero(node->arithMode()))
+                    doubleResult = -child.asNumber();
+                else
+                    doubleResult = 0 - child.asNumber();
+                JSValue valueResult = jsNumber(doubleResult);
+                if (valueResult.isMachineInt()) {
+                    setConstant(node, valueResult);
+                    break;
+                }
+            }
             forNode(node).setType(SpecInt52);
             if (m_state.forNode(node->child1()).couldBeType(SpecInt52))
                 node->setCanExit(true);
-            if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+            if (shouldCheckNegativeZero(node->arithMode()))
                 node->setCanExit(true);
             break;
         case NumberUse:
+            if (child && child.isNumber()) {
+                setConstant(node, jsNumber(-child.asNumber()));
+                break;
+            }
             forNode(node).setType(SpecDouble);
             break;
         default:
@@ -452,22 +511,45 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithMul: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()) {
-            setConstant(node, JSValue(left.asNumber() * right.asNumber()));
-            break;
-        }
         switch (node->binaryUseKind()) {
         case Int32Use:
+            if (left && right && left.isInt32() && right.isInt32()) {
+                if (!shouldCheckOverflow(node->arithMode())) {
+                    setConstant(node, jsNumber(left.asInt32() * right.asInt32()));
+                    break;
+                }
+                double doubleResult = left.asNumber() * right.asNumber();
+                if (!shouldCheckNegativeZero(node->arithMode()))
+                    doubleResult += 0; // Sanitizes zero.
+                JSValue valueResult = jsNumber(doubleResult);
+                if (valueResult.isInt32()) {
+                    setConstant(node, valueResult);
+                    break;
+                }
+            }
             forNode(node).setType(SpecInt32);
-            if (!bytecodeCanTruncateInteger(node->arithNodeFlags())
-                || !bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+            if (shouldCheckOverflow(node->arithMode()))
                 node->setCanExit(true);
             break;
         case MachineIntUse:
+            if (left && right && left.isMachineInt() && right.isMachineInt()) {
+                double doubleResult = left.asNumber() * right.asNumber();
+                if (!shouldCheckNegativeZero(node->arithMode()))
+                    doubleResult += 0;
+                JSValue valueResult = jsNumber(doubleResult);
+                if (valueResult.isMachineInt()) {
+                    setConstant(node, valueResult);
+                    break;
+                }
+            }
             forNode(node).setType(SpecInt52);
             node->setCanExit(true);
             break;
         case NumberUse:
+            if (left && right && left.isNumber() && right.isNumber()) {
+                setConstant(node, jsNumber(left.asNumber() * right.asNumber()));
+                break;
+            }
             if (isFullRealNumberSpeculation(forNode(node->child1()).m_type)
                 || isFullRealNumberSpeculation(forNode(node->child2()).m_type))
                 forNode(node).setType(SpecDoubleReal);
@@ -480,46 +562,122 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
         break;
     }
-
-    case ArithIMul: {
-        forNode(node).setType(SpecInt32);
-        break;
-    }
         
-    case ArithDiv:
-    case ArithMin:
-    case ArithMax:
-    case ArithMod: {
+    case ArithDiv: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()) {
-            double a = left.asNumber();
-            double b = right.asNumber();
-            switch (node->op()) {
-            case ArithDiv:
-                setConstant(node, JSValue(a / b));
-                break;
-            case ArithMin:
-                setConstant(node, JSValue(a < b ? a : (b <= a ? b : a + b)));
-                break;
-            case ArithMax:
-                setConstant(node, JSValue(a > b ? a : (b >= a ? b : a + b)));
-                break;
-            case ArithMod:
-                setConstant(node, JSValue(fmod(a, b)));
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
-            break;
-        }
         switch (node->binaryUseKind()) {
         case Int32Use:
+            if (left && right && left.isInt32() && right.isInt32()) {
+                double doubleResult = left.asNumber() / right.asNumber();
+                if (!shouldCheckOverflow(node->arithMode()))
+                    doubleResult = toInt32(doubleResult);
+                else if (!shouldCheckNegativeZero(node->arithMode()))
+                    doubleResult += 0; // Sanitizes zero.
+                JSValue valueResult = jsNumber(doubleResult);
+                if (valueResult.isInt32()) {
+                    setConstant(node, valueResult);
+                    break;
+                }
+            }
             forNode(node).setType(SpecInt32);
             node->setCanExit(true);
             break;
         case NumberUse:
+            if (left && right && left.isNumber() && right.isNumber()) {
+                setConstant(node, jsNumber(left.asNumber() / right.asNumber()));
+                break;
+            }
+            forNode(node).setType(SpecDouble);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+
+    case ArithMod: {
+        JSValue left = forNode(node->child1()).value();
+        JSValue right = forNode(node->child2()).value();
+        switch (node->binaryUseKind()) {
+        case Int32Use:
+            if (left && right && left.isInt32() && right.isInt32()) {
+                double doubleResult = fmod(left.asNumber(), right.asNumber());
+                if (!shouldCheckOverflow(node->arithMode()))
+                    doubleResult = toInt32(doubleResult);
+                else if (!shouldCheckNegativeZero(node->arithMode()))
+                    doubleResult += 0; // Sanitizes zero.
+                JSValue valueResult = jsNumber(doubleResult);
+                if (valueResult.isInt32()) {
+                    setConstant(node, valueResult);
+                    break;
+                }
+            }
+            forNode(node).setType(SpecInt32);
+            node->setCanExit(true);
+            break;
+        case NumberUse:
+            if (left && right && left.isNumber() && right.isNumber()) {
+                setConstant(node, jsNumber(fmod(left.asNumber(), right.asNumber())));
+                break;
+            }
+            forNode(node).setType(SpecDouble);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+
+    case ArithMin: {
+        JSValue left = forNode(node->child1()).value();
+        JSValue right = forNode(node->child2()).value();
+        switch (node->binaryUseKind()) {
+        case Int32Use:
+            if (left && right && left.isInt32() && right.isInt32()) {
+                setConstant(node, jsNumber(std::min(left.asInt32(), right.asInt32())));
+                break;
+            }
+            forNode(node).setType(SpecInt32);
+            node->setCanExit(true);
+            break;
+        case NumberUse:
+            if (left && right && left.isNumber() && right.isNumber()) {
+                double a = left.asNumber();
+                double b = right.asNumber();
+                setConstant(node, jsNumber(a < b ? a : (b <= a ? b : a + b)));
+                break;
+            }
+            forNode(node).setType(SpecDouble);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+            
+    case ArithMax: {
+        JSValue left = forNode(node->child1()).value();
+        JSValue right = forNode(node->child2()).value();
+        switch (node->binaryUseKind()) {
+        case Int32Use:
+            if (left && right && left.isInt32() && right.isInt32()) {
+                setConstant(node, jsNumber(std::max(left.asInt32(), right.asInt32())));
+                break;
+            }
+            forNode(node).setType(SpecInt32);
+            node->setCanExit(true);
+            break;
+        case NumberUse:
+            if (left && right && left.isNumber() && right.isNumber()) {
+                double a = left.asNumber();
+                double b = right.asNumber();
+                setConstant(node, jsNumber(a > b ? a : (b >= a ? b : a + b)));
+                break;
+            }
             forNode(node).setType(SpecDouble);
             break;
         default:
@@ -531,16 +689,23 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case ArithAbs: {
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
-            setConstant(node, JSValue(fabs(child.asNumber())));
-            break;
-        }
         switch (node->child1().useKind()) {
         case Int32Use:
+            if (child && child.isInt32()) {
+                JSValue result = jsNumber(fabs(child.asNumber()));
+                if (result.isInt32()) {
+                    setConstant(node, result);
+                    break;
+                }
+            }
             forNode(node).setType(SpecInt32);
             node->setCanExit(true);
             break;
         case NumberUse:
+            if (child && child.isNumber()) {
+                setConstant(node, jsNumber(child.asNumber()));
+                break;
+            }
             forNode(node).setType(SpecDouble);
             break;
         default:
@@ -1621,11 +1786,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         node->setCanExit(true);
         break;
 
+    case ZombieHint:
     case Unreachable:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-
     case LastNodeType:
+    case ArithIMul:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

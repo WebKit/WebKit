@@ -234,6 +234,8 @@
 		0F4680D314BBD16700BFE272 /* LLIntData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4680CF14BBB3D100BFE272 /* LLIntData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F4680D414BBD24900BFE272 /* HostCallReturnValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4680D014BBC5F800BFE272 /* HostCallReturnValue.cpp */; };
 		0F4680D514BBD24B00BFE272 /* HostCallReturnValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F485321187750560083B687 /* DFGArithMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F48531F187750560083B687 /* DFGArithMode.cpp */; };
+		0F485322187750560083B687 /* DFGArithMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F485320187750560083B687 /* DFGArithMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F493AFA16D0CAD30084508B /* SourceProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F493AF816D0CAD10084508B /* SourceProvider.cpp */; };
 		0F4B94DC17B9F07500DD03A4 /* TypedArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4B94DB17B9F07500DD03A4 /* TypedArrayInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5541B11613C1FB00CE3E25 /* SpecialPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5541AF1613C1FB00CE3E25 /* SpecialPointer.cpp */; };
@@ -1578,6 +1580,8 @@
 		0F4680CF14BBB3D100BFE272 /* LLIntData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntData.h; path = llint/LLIntData.h; sourceTree = "<group>"; };
 		0F4680D014BBC5F800BFE272 /* HostCallReturnValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HostCallReturnValue.cpp; sourceTree = "<group>"; };
 		0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostCallReturnValue.h; sourceTree = "<group>"; };
+		0F48531F187750560083B687 /* DFGArithMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArithMode.cpp; path = dfg/DFGArithMode.cpp; sourceTree = "<group>"; };
+		0F485320187750560083B687 /* DFGArithMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArithMode.h; path = dfg/DFGArithMode.h; sourceTree = "<group>"; };
 		0F493AF816D0CAD10084508B /* SourceProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceProvider.cpp; sourceTree = "<group>"; };
 		0F4B94DB17B9F07500DD03A4 /* TypedArrayInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedArrayInlines.h; sourceTree = "<group>"; };
 		0F5541AF1613C1FB00CE3E25 /* SpecialPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpecialPointer.cpp; sourceTree = "<group>"; };
@@ -3855,8 +3859,6 @@
 		86EC9DB31328DF44002B2AD7 /* dfg */ = {
 			isa = PBXGroup;
 			children = (
-				2ACCF3DC185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp */,
-				2ACCF3DD185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h */,
 				A77A423617A0BBFD00A8DB81 /* DFGAbstractHeap.cpp */,
 				A77A423717A0BBFD00A8DB81 /* DFGAbstractHeap.h */,
 				A704D8FE17A0BAA8006BA554 /* DFGAbstractInterpreter.h */,
@@ -3869,6 +3871,8 @@
 				0F1E3A431534CBAD000F9456 /* DFGArgumentPosition.h */,
 				0F16015A156198BF00C2587C /* DFGArgumentsSimplificationPhase.cpp */,
 				0F16015B156198BF00C2587C /* DFGArgumentsSimplificationPhase.h */,
+				0F48531F187750560083B687 /* DFGArithMode.cpp */,
+				0F485320187750560083B687 /* DFGArithMode.h */,
 				0F05C3B21683CF8F00BAF45B /* DFGArrayifySlowPathGenerator.h */,
 				0F63948115E48114006A597C /* DFGArrayMode.cpp */,
 				0F63948215E48114006A597C /* DFGArrayMode.h */,
@@ -4043,6 +4047,8 @@
 				0FC20CB818556A3500C9E954 /* DFGSSALoweringPhase.h */,
 				0F9FB4F217FCB91700CB67F8 /* DFGStackLayoutPhase.cpp */,
 				0F9FB4F317FCB91700CB67F8 /* DFGStackLayoutPhase.h */,
+				2ACCF3DC185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp */,
+				2ACCF3DD185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h */,
 				0FC20CB31852E2C600C9E954 /* DFGStrengthReductionPhase.cpp */,
 				0FC20CB41852E2C600C9E954 /* DFGStrengthReductionPhase.h */,
 				0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */,
@@ -4799,6 +4805,7 @@
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
 				0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */,
 				A7299D9E17D12837005F5FF9 /* JSSet.h in Headers */,
+				0F485322187750560083B687 /* DFGArithMode.h in Headers */,
 				BC18C45E0E16F5CD00B34460 /* JSStack.h in Headers */,
 				A7C1EAF017987AB600299DB2 /* JSStackInlines.h in Headers */,
 				BC18C4270E16F5CD00B34460 /* JSString.h in Headers */,
@@ -5503,6 +5510,7 @@
 				0F8335B71639C1E6001443B5 /* ArrayAllocationProfile.cpp in Sources */,
 				A7A8AF3417ADB5F3005AB174 /* ArrayBuffer.cpp in Sources */,
 				A7A8AF3617ADB5F3005AB174 /* ArrayBufferView.cpp in Sources */,
+				0F485321187750560083B687 /* DFGArithMode.cpp in Sources */,
 				147F39BF107EC37600427A48 /* ArrayConstructor.cpp in Sources */,
 				A7BDAEC617F4EA1400F6140C /* ArrayIteratorConstructor.cpp in Sources */,
 				A7BDAEC817F4EA1400F6140C /* ArrayIteratorPrototype.cpp in Sources */,

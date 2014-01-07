@@ -2052,7 +2052,6 @@ public:
     void compileArithSub(Node*);
     void compileArithNegate(Node*);
     void compileArithMul(Node*);
-    void compileArithIMul(Node*);
     void compileArithDiv(Node*);
     void compileArithMod(Node*);
     void compileConstantStoragePointer(Node*);

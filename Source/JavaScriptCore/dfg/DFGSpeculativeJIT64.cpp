@@ -2423,10 +2423,6 @@ void SpeculativeJIT::compile(Node* node)
         compileArithMul(node);
         break;
 
-    case ArithIMul:
-        compileArithIMul(node);
-        break;
-
     case ArithDiv: {
         compileArithDiv(node);
         break;
@@ -5002,6 +4998,7 @@ void SpeculativeJIT::compile(Node* node)
     case GetArgument:
     case ExtractOSREntryLocal:
     case CheckInBounds:
+    case ArithIMul:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

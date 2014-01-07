@@ -355,6 +355,21 @@ private:
             }
                 
             m_interpreter.execute(indexInBlock);
+            if (!m_state.isValid()) {
+                // If we invalidated then we shouldn't attempt to constant-fold. Here's an
+                // example:
+                //
+                //     c: JSConstant(4.2)
+                //     x: ValueToInt32(Check:Int32:@const)
+                //
+                // It would be correct for an analysis to assume that execution cannot
+                // proceed past @x. Therefore, constant-folding @x could be rather bad. But,
+                // the CFA may report that it found a constant even though it also reported
+                // that everything has been invalidated. This will only happen in a couple of
+                // the constant folding cases; most of them are also separately defensive
+                // about such things.
+                break;
+            }
             if (!node->shouldGenerate() || m_state.didClobber() || node->hasConstant())
                 continue;
             JSValue value = m_state.forNode(node).value();

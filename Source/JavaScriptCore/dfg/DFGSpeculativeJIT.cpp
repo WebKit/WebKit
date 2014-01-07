@@ -2017,7 +2017,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 
 void SpeculativeJIT::compileUInt32ToNumber(Node* node)
 {
-    if (!nodeCanSpeculateInt32(node->arithNodeFlags())) {
+    if (doesOverflow(node->arithMode())) {
         // We know that this sometimes produces doubles. So produce a double every
         // time. This at least allows subsequent code to not have weird conditionals.
             
@@ -2037,7 +2037,7 @@ void SpeculativeJIT::compileUInt32ToNumber(Node* node)
         return;
     }
     
-    RELEASE_ASSERT(!bytecodeCanTruncateInteger(node->arithNodeFlags()));
+    RELEASE_ASSERT(node->arithMode() == Arith::CheckOverflow);
 
     SpeculateInt32Operand op1(this, node->child1());
     GPRTemporary result(this);
@@ -2060,8 +2060,10 @@ void SpeculativeJIT::compileDoubleAsInt32(Node* node)
     GPRReg resultGPR = result.gpr();
 
     JITCompiler::JumpList failureCases;
-    bool negZeroCheck = !bytecodeCanIgnoreNegativeZero(node->arithNodeFlags());
-    m_jit.branchConvertDoubleToInt32(valueFPR, resultGPR, failureCases, scratchFPR, negZeroCheck);
+    RELEASE_ASSERT(shouldCheckOverflow(node->arithMode()));
+    m_jit.branchConvertDoubleToInt32(
+        valueFPR, resultGPR, failureCases, scratchFPR,
+        shouldCheckNegativeZero(node->arithMode()));
     speculationCheck(Overflow, JSValueRegs(), 0, failureCases);
 
     int32Result(resultGPR, node);
@@ -2585,12 +2587,14 @@ void SpeculativeJIT::compileAdd(Node* node)
 {
     switch (node->binaryUseKind()) {
     case Int32Use: {
+        ASSERT(!shouldCheckNegativeZero(node->arithMode()));
+        
         if (isNumberConstant(node->child1().node())) {
             int32_t imm1 = valueOfInt32Constant(node->child1().node());
             SpeculateInt32Operand op2(this, node->child2());
             GPRTemporary result(this);
 
-            if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+            if (!shouldCheckOverflow(node->arithMode())) {
                 m_jit.move(op2.gpr(), result.gpr());
                 m_jit.add32(Imm32(imm1), result.gpr());
             } else
@@ -2605,7 +2609,7 @@ void SpeculativeJIT::compileAdd(Node* node)
             int32_t imm2 = valueOfInt32Constant(node->child2().node());
             GPRTemporary result(this);
                 
-            if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+            if (!shouldCheckOverflow(node->arithMode())) {
                 m_jit.move(op1.gpr(), result.gpr());
                 m_jit.add32(Imm32(imm2), result.gpr());
             } else
@@ -2623,7 +2627,7 @@ void SpeculativeJIT::compileAdd(Node* node)
         GPRReg gpr2 = op2.gpr();
         GPRReg gprResult = result.gpr();
 
-        if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+        if (!shouldCheckOverflow(node->arithMode())) {
             if (gpr1 == gprResult)
                 m_jit.add32(gpr2, gprResult);
             else {
@@ -2647,6 +2651,9 @@ void SpeculativeJIT::compileAdd(Node* node)
         
 #if USE(JSVALUE64)
     case MachineIntUse: {
+        ASSERT(shouldCheckOverflow(node->arithMode()));
+        ASSERT(!shouldCheckNegativeZero(node->arithMode()));
+
         // Will we need an overflow check? If we can prove that neither input can be
         // Int52 then the overflow check will not be necessary.
         if (!m_state.forNode(node->child1()).couldBeType(SpecInt52)
@@ -2760,12 +2767,14 @@ void SpeculativeJIT::compileArithSub(Node* node)
 {
     switch (node->binaryUseKind()) {
     case Int32Use: {
+        ASSERT(!shouldCheckNegativeZero(node->arithMode()));
+        
         if (isNumberConstant(node->child2().node())) {
             SpeculateInt32Operand op1(this, node->child1());
             int32_t imm2 = valueOfInt32Constant(node->child2().node());
             GPRTemporary result(this);
 
-            if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+            if (!shouldCheckOverflow(node->arithMode())) {
                 m_jit.move(op1.gpr(), result.gpr());
                 m_jit.sub32(Imm32(imm2), result.gpr());
             } else {
@@ -2783,7 +2792,7 @@ void SpeculativeJIT::compileArithSub(Node* node)
             GPRTemporary result(this);
                 
             m_jit.move(Imm32(imm1), result.gpr());
-            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+            if (!shouldCheckOverflow(node->arithMode()))
                 m_jit.sub32(op2.gpr(), result.gpr());
             else
                 speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchSub32(MacroAssembler::Overflow, op2.gpr(), result.gpr()));
@@ -2796,7 +2805,7 @@ void SpeculativeJIT::compileArithSub(Node* node)
         SpeculateInt32Operand op2(this, node->child2());
         GPRTemporary result(this);
 
-        if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+        if (!shouldCheckOverflow(node->arithMode())) {
             m_jit.move(op1.gpr(), result.gpr());
             m_jit.sub32(op2.gpr(), result.gpr());
         } else
@@ -2808,6 +2817,9 @@ void SpeculativeJIT::compileArithSub(Node* node)
         
 #if USE(JSVALUE64)
     case MachineIntUse: {
+        ASSERT(shouldCheckOverflow(node->arithMode()));
+        ASSERT(!shouldCheckNegativeZero(node->arithMode()));
+
         // Will we need an overflow check? If we can prove that neither input can be
         // Int52 then the overflow check will not be necessary.
         if (!m_state.forNode(node->child1()).couldBeType(SpecInt52)
@@ -2864,9 +2876,9 @@ void SpeculativeJIT::compileArithNegate(Node* node)
         // Note: there is no notion of being not used as a number, but someone
         // caring about negative zero.
         
-        if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+        if (!shouldCheckOverflow(node->arithMode()))
             m_jit.neg32(result.gpr());
-        else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+        else if (!shouldCheckNegativeZero(node->arithMode()))
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchNeg32(MacroAssembler::Overflow, result.gpr()));
         else {
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Zero, result.gpr(), TrustedImm32(0x7fffffff)));
@@ -2879,6 +2891,8 @@ void SpeculativeJIT::compileArithNegate(Node* node)
 
 #if USE(JSVALUE64)
     case MachineIntUse: {
+        ASSERT(shouldCheckOverflow(node->arithMode()));
+        
         if (!m_state.forNode(node->child1()).couldBeType(SpecInt52)) {
             SpeculateWhicheverInt52Operand op1(this, node->child1());
             GPRTemporary result(this);
@@ -2886,7 +2900,7 @@ void SpeculativeJIT::compileArithNegate(Node* node)
             GPRReg resultGPR = result.gpr();
             m_jit.move(op1GPR, resultGPR);
             m_jit.neg64(resultGPR);
-            if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+            if (!shouldCheckNegativeZero(node->arithMode())) {
                 speculationCheck(
                     NegativeZero, JSValueRegs(), 0,
                     m_jit.branchTest64(MacroAssembler::Zero, resultGPR));
@@ -2903,7 +2917,7 @@ void SpeculativeJIT::compileArithNegate(Node* node)
         speculationCheck(
             Int52Overflow, JSValueRegs(), 0,
             m_jit.branchNeg64(MacroAssembler::Overflow, resultGPR));
-        if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        if (!shouldCheckNegativeZero(node->arithMode())) {
             speculationCheck(
                 NegativeZero, JSValueRegs(), 0,
                 m_jit.branchTest64(MacroAssembler::Zero, resultGPR));
@@ -2928,21 +2942,6 @@ void SpeculativeJIT::compileArithNegate(Node* node)
         return;
     }
 }
-void SpeculativeJIT::compileArithIMul(Node* node)
-{
-    SpeculateInt32Operand op1(this, node->child1());
-    SpeculateInt32Operand op2(this, node->child2());
-    GPRTemporary result(this);
-
-    GPRReg reg1 = op1.gpr();
-    GPRReg reg2 = op2.gpr();
-
-    m_jit.move(reg1, result.gpr());
-    m_jit.mul32(reg2, result.gpr());
-    int32Result(result.gpr(), node);
-    return;
-}
-
 void SpeculativeJIT::compileArithMul(Node* node)
 {
     switch (node->binaryUseKind()) {
@@ -2957,7 +2956,7 @@ void SpeculativeJIT::compileArithMul(Node* node)
         // We can perform truncated multiplications if we get to this point, because if the
         // fixup phase could not prove that it would be safe, it would have turned us into
         // a double multiplication.
-        if (bytecodeCanTruncateInteger(node->arithNodeFlags())) {
+        if (!shouldCheckOverflow(node->arithMode())) {
             m_jit.move(reg1, result.gpr());
             m_jit.mul32(reg2, result.gpr());
         } else {
@@ -2967,7 +2966,7 @@ void SpeculativeJIT::compileArithMul(Node* node)
         }
             
         // Check for negative zero, if the users of this node care about such things.
-        if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        if (shouldCheckNegativeZero(node->arithMode())) {
             MacroAssembler::Jump resultNonZero = m_jit.branchTest32(MacroAssembler::NonZero, result.gpr());
             speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, reg1, TrustedImm32(0)));
             speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, reg2, TrustedImm32(0)));
@@ -2980,6 +2979,8 @@ void SpeculativeJIT::compileArithMul(Node* node)
     
 #if USE(JSVALUE64)   
     case MachineIntUse: {
+        ASSERT(shouldCheckOverflow(node->arithMode()));
+        
         // This is super clever. We want to do an int52 multiplication and check the
         // int52 overflow bit. There is no direct hardware support for this, but we do
         // have the ability to do an int64 multiplication and check the int64 overflow
@@ -3017,7 +3018,7 @@ void SpeculativeJIT::compileArithMul(Node* node)
             Int52Overflow, JSValueRegs(), 0,
             m_jit.branchMul64(MacroAssembler::Overflow, op2GPR, resultGPR));
         
-        if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        if (shouldCheckNegativeZero(node->arithMode())) {
             MacroAssembler::Jump resultNonZero = m_jit.branchTest64(
                 MacroAssembler::NonZero, resultGPR);
             speculationCheck(
@@ -3087,7 +3088,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
         JITCompiler::Jump safeDenominator = m_jit.branch32(JITCompiler::Above, temp, JITCompiler::TrustedImm32(1));
     
         JITCompiler::JumpList done;
-        if (bytecodeUsesAsNumber(node->arithNodeFlags())) {
+        if (shouldCheckOverflow(node->arithMode())) {
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, op2GPR));
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483647-1)));
         } else {
@@ -3115,7 +3116,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
     
         // If the user cares about negative zero, then speculate that we're not about
         // to produce negative zero.
-        if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        if (shouldCheckNegativeZero(node->arithMode())) {
             MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
             speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
             numeratorNonZero.link(&m_jit);
@@ -3135,7 +3136,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
 
         // Check that there was no remainder. If there had been, then we'd be obligated to
         // produce a double result instead.
-        if (bytecodeUsesAsNumber(node->arithNodeFlags()))
+        if (shouldCheckOverflow(node->arithMode()))
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::NonZero, edx.gpr()));
         
         done.link(&m_jit);
@@ -3150,7 +3151,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
 
         // If the user cares about negative zero, then speculate that we're not about
         // to produce negative zero.
-        if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        if (shouldCheckNegativeZero(node->arithMode())) {
             MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
             speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
             numeratorNonZero.link(&m_jit);
@@ -3160,7 +3161,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
 
         // Check that there was no remainder. If there had been, then we'd be obligated to
         // produce a double result instead.
-        if (bytecodeUsesAsNumber(node->arithNodeFlags())) {
+        if (shouldCheckOverflow(node->arithMode())) {
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotient.gpr(), op2GPR, multiplyAnswer.gpr()));
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::NotEqual, multiplyAnswer.gpr(), op1GPR));
         }
@@ -3176,7 +3177,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
 
         // If the user cares about negative zero, then speculate that we're not about
         // to produce negative zero.
-        if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        if (shouldCheckNegativeZero(node->arithMode())) {
             MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
             speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
             numeratorNonZero.link(&m_jit);
@@ -3186,7 +3187,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
 
         // Check that there was no remainder. If there had been, then we'd be obligated to
         // produce a double result instead.
-        if (bytecodeUsesAsNumber(node->arithNodeFlags())) {
+        if (shouldCheckOverflow(node->arithMode())) {
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotient.gpr(), op2GPR, multiplyAnswer.gpr()));
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::NotEqual, multiplyAnswer.gpr(), op1GPR));
         }
@@ -3274,7 +3275,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
                 m_jit.neg32(resultGPR);
                 m_jit.add32(dividendGPR, resultGPR);
                 
-                if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+                if (shouldCheckNegativeZero(node->arithMode())) {
                     // Check that we're not about to create negative zero.
                     JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
                     speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, resultGPR));
@@ -3311,7 +3312,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
                 m_jit.move(TrustedImm32(divisor), scratchGPR);
                 m_jit.assembler().cdq();
                 m_jit.assembler().idivl_r(scratchGPR);
-                if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+                if (shouldCheckNegativeZero(node->arithMode())) {
                     JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
                     speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
                     numeratorPositive.link(&m_jit);
@@ -3368,7 +3369,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
         
         // FIXME: -2^31 / -1 will actually yield negative zero, so we could have a
         // separate case for that. But it probably doesn't matter so much.
-        if (bytecodeUsesAsNumber(node->arithNodeFlags())) {
+        if (shouldCheckOverflow(node->arithMode())) {
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, op2GPR));
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483647-1)));
         } else {
@@ -3407,7 +3408,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
             unlock(op2TempGPR);
 
         // Check that we're not about to create negative zero.
-        if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        if (shouldCheckNegativeZero(node->arithMode())) {
             JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
             numeratorPositive.link(&m_jit);
@@ -3429,12 +3430,15 @@ void SpeculativeJIT::compileArithMod(Node* node)
         GPRReg multiplyAnswerGPR = multiplyAnswer.gpr();
 
         m_jit.assembler().sdiv(quotientThenRemainderGPR, dividendGPR, divisorGPR);
+        // FIXME: It seems like there are cases where we don't need this? What if we have
+        // arithMode() == Arith::Unchecked?
+        // https://bugs.webkit.org/show_bug.cgi?id=126444
         speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotientThenRemainderGPR, divisorGPR, multiplyAnswerGPR));
         m_jit.assembler().sub(quotientThenRemainderGPR, dividendGPR, multiplyAnswerGPR);
 
         // If the user cares about negative zero, then speculate that we're not about
         // to produce negative zero.
-        if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        if (shouldCheckNegativeZero(node->arithMode())) {
             // Check that we're not about to create negative zero.
             JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, quotientThenRemainderGPR));
@@ -3452,12 +3456,15 @@ void SpeculativeJIT::compileArithMod(Node* node)
         GPRReg multiplyAnswerGPR = multiplyAnswer.gpr();
 
         m_jit.assembler().sdiv<32>(quotientThenRemainderGPR, dividendGPR, divisorGPR);
+        // FIXME: It seems like there are cases where we don't need this? What if we have
+        // arithMode() == Arith::Unchecked?
+        // https://bugs.webkit.org/show_bug.cgi?id=126444
         speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotientThenRemainderGPR, divisorGPR, multiplyAnswerGPR));
         m_jit.assembler().sub<32>(quotientThenRemainderGPR, dividendGPR, multiplyAnswerGPR);
 
         // If the user cares about negative zero, then speculate that we're not about
         // to produce negative zero.
-        if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        if (shouldCheckNegativeZero(node->arithMode())) {
             // Check that we're not about to create negative zero.
             JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, quotientThenRemainderGPR));

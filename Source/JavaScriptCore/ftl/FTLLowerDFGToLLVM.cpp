@@ -824,7 +824,7 @@ private:
             LValue right = lowInt32(m_node->child2());
             LValue result = isSub ? m_out.sub(left, right) : m_out.add(left, right);
 
-            if (bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
+            if (!shouldCheckOverflow(m_node->arithMode())) {
                 setInt32(result);
                 break;
             }
@@ -878,12 +878,12 @@ private:
             LValue right = lowInt32(m_node->child2());
             LValue result = m_out.mul(left, right);
 
-            if (!bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
+            if (shouldCheckOverflow(m_node->arithMode())) {
                 LValue overflowResult = m_out.mulWithOverflow32(left, right);
                 speculate(Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
             }
             
-            if (!bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
+            if (shouldCheckNegativeZero(m_node->arithMode())) {
                 LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ArithMul slow case"));
                 LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithMul continuation"));
                 
@@ -910,7 +910,7 @@ private:
             LValue overflowResult = m_out.mulWithOverflow64(left, right);
             speculate(Int52Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
 
-            if (!bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
+            if (shouldCheckNegativeZero(m_node->arithMode())) {
                 LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ArithMul slow case"));
                 LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithMul continuation"));
                 
@@ -960,7 +960,7 @@ private:
             
             LValue neg2ToThe31 = m_out.constInt32(-2147483647-1);
             
-            if (bytecodeUsesAsNumber(m_node->arithNodeFlags())) {
+            if (shouldCheckOverflow(m_node->arithMode())) {
                 LValue cond = m_out.bitOr(m_out.isZero32(denominator), m_out.equal(numerator, neg2ToThe31));
                 speculate(Overflow, noValue(), 0, cond);
                 m_out.jump(continuation);
@@ -990,7 +990,7 @@ private:
             
             m_out.appendTo(continuation, done);
             
-            if (!bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
+            if (shouldCheckNegativeZero(m_node->arithMode())) {
                 LBasicBlock zeroNumerator = FTL_NEW_BLOCK(m_out, ("ArithDivMod zero numerator"));
                 LBasicBlock numeratorContinuation = FTL_NEW_BLOCK(m_out, ("ArithDivMod numerator continuation"));
                 
@@ -1010,7 +1010,7 @@ private:
                 ? m_out.div(numerator, denominator)
                 : m_out.rem(numerator, denominator);
             
-            if (bytecodeUsesAsNumber(m_node->arithNodeFlags())) {
+            if (shouldCheckOverflow(m_node->arithMode())) {
                 speculate(
                     Overflow, noValue(), 0,
                     m_out.notEqual(m_out.mul(divModResult, denominator), numerator));
@@ -1122,8 +1122,8 @@ private:
             LValue value = lowInt32(m_node->child1());
             
             LValue result = m_out.neg(value);
-            if (!bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
-                if (bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
+            if (shouldCheckOverflow(m_node->arithMode())) {
+                if (!shouldCheckNegativeZero(m_node->arithMode())) {
                     // We don't have a negate-with-overflow intrinsic. Hopefully this
                     // does the trick, though.
                     LValue overflowResult = m_out.subWithOverflow32(m_out.int32Zero, value);
@@ -1142,7 +1142,7 @@ private:
                 Int52Kind kind;
                 LValue value = lowWhicheverInt52(m_node->child1(), kind);
                 LValue result = m_out.neg(value);
-                if (!bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags()))
+                if (shouldCheckNegativeZero(m_node->arithMode()))
                     speculate(NegativeZero, noValue(), 0, m_out.isZero64(result));
                 setInt52(result, kind);
                 break;
@@ -1208,7 +1208,7 @@ private:
     {
         LValue value = lowInt32(m_node->child1());
 
-        if (!nodeCanSpeculateInt32(m_node->arithNodeFlags())) {
+        if (doesOverflow(m_node->arithMode())) {
             setDouble(m_out.unsignedToDouble(value));
             return;
         }

@@ -198,6 +198,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, SpeculationDump(node->prediction()));
     if (node->hasArrayMode())
         out.print(comma, node->arrayMode());
+    if (node->hasArithMode())
+        out.print(comma, node->arithMode());
     if (node->hasVarNumber())
         out.print(comma, node->varNumber());
     if (node->hasRegisterPointer())

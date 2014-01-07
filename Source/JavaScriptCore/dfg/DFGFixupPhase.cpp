@@ -103,10 +103,19 @@ private:
         case BitXor:
         case BitRShift:
         case BitLShift:
-        case BitURShift:
+        case BitURShift: {
+            fixIntEdge(node->child1());
+            fixIntEdge(node->child2());
+            break;
+        }
+            
         case ArithIMul: {
             fixIntEdge(node->child1());
             fixIntEdge(node->child2());
+            node->setOp(ArithMul);
+            node->setArithMode(Arith::Unchecked);
+            node->child1().setUseKind(Int32Use);
+            node->child2().setUseKind(Int32Use);
             break;
         }
             
@@ -114,6 +123,10 @@ private:
             fixEdge<KnownInt32Use>(node->child1());
             if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                 node->convertToIdentity();
+            else if (nodeCanSpeculateInt32(node->arithNodeFlags()))
+                node->setArithMode(Arith::CheckOverflow);
+            else
+                node->setArithMode(Arith::DoOverflow);
             break;
         }
             
@@ -210,10 +223,20 @@ private:
         case ArithNegate: {
             if (m_graph.negateShouldSpeculateInt32(node)) {
                 fixEdge<Int32Use>(node->child1());
+                if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                    node->setArithMode(Arith::Unchecked);
+                else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithMode(Arith::CheckOverflow);
+                else
+                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 break;
             }
             if (m_graph.negateShouldSpeculateMachineInt(node)) {
                 fixEdge<MachineIntUse>(node->child1());
+                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithMode(Arith::CheckOverflow);
+                else
+                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 break;
             }
             fixEdge<NumberUse>(node->child1());
@@ -224,11 +247,21 @@ private:
             if (m_graph.mulShouldSpeculateInt32(node)) {
                 fixEdge<Int32Use>(node->child1());
                 fixEdge<Int32Use>(node->child2());
+                if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                    node->setArithMode(Arith::Unchecked);
+                else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithMode(Arith::CheckOverflow);
+                else
+                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 break;
             }
             if (m_graph.mulShouldSpeculateMachineInt(node)) {
                 fixEdge<MachineIntUse>(node->child1());
                 fixEdge<MachineIntUse>(node->child2());
+                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithMode(Arith::CheckOverflow);
+                else
+                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 break;
             }
             fixEdge<NumberUse>(node->child1());
@@ -243,6 +276,12 @@ private:
                 if (optimizeForX86() || optimizeForARM64() || optimizeForARMv7s()) {
                     fixEdge<Int32Use>(node->child1());
                     fixEdge<Int32Use>(node->child2());
+                    if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                        node->setArithMode(Arith::Unchecked);
+                    else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                        node->setArithMode(Arith::CheckOverflow);
+                    else
+                        node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                     break;
                 }
                 Edge child1 = node->child1();
@@ -258,6 +297,10 @@ private:
                 
                 node->setOp(DoubleAsInt32);
                 node->children.initialize(Edge(newDivision, KnownNumberUse), Edge(), Edge());
+                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithMode(Arith::CheckOverflow);
+                else
+                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 
                 m_insertionSet.insertNode(m_indexInBlock + 1, SpecNone, Phantom, node->codeOrigin, child1, child2);
                 break;
@@ -1655,12 +1698,17 @@ private:
             truncateConstantsIfNecessary(node, mode);
             fixEdge<Int32Use>(node->child1());
             fixEdge<Int32Use>(node->child2());
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                node->setArithMode(Arith::Unchecked);
+            else
+                node->setArithMode(Arith::CheckOverflow);
             return true;
         }
         
         if (m_graph.addShouldSpeculateMachineInt(node)) {
             fixEdge<MachineIntUse>(node->child1());
             fixEdge<MachineIntUse>(node->child2());
+            node->setArithMode(Arith::CheckOverflow);
             return true;
         }
         

@@ -1,3 +1,67 @@
+2014-01-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Make the different flavors of integer arithmetic more explicit, and don't rely on (possibly stale) results of the backwards propagator to decide integer arithmetic semantics
+        https://bugs.webkit.org/show_bug.cgi?id=125519
+
+        Reviewed by Geoffrey Garen.
+        
+        Adds the Arith::Mode enum to arithmetic nodes, which makes it explicit what sorts of
+        checks and overflows the node should do. Previously this would be deduced from
+        backwards analysis results.
+        
+        This also makes "unchecked" variants really mean that you want the int32 wrapped
+        result, so ArithIMul is now done in terms of ArithMul(Unchecked). That means that the
+        constant folder needs to compute exactly the result implied by ArithMode, instead of
+        just folding the double result.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArithMode.cpp: Added.
+        (WTF::printInternal):
+        * dfg/DFGArithMode.h: Added.
+        (JSC::DFG::doesOverflow):
+        (JSC::DFG::shouldCheckOverflow):
+        (JSC::DFG::shouldCheckNegativeZero):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::pureCSE):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::attemptToMakeIntegerAdd):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::hasArithMode):
+        (JSC::DFG::Node::arithMode):
+        (JSC::DFG::Node::setArithMode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileUInt32ToNumber):
+        (JSC::DFG::SpeculativeJIT::compileDoubleAsInt32):
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileAddSub):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::LowerDFGToLLVM::compileArithDivMod):
+        (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+        (JSC::FTL::LowerDFGToLLVM::compileUInt32ToNumber):
+
 2014-01-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add write barriers to the LLInt
