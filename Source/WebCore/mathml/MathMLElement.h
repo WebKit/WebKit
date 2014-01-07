@@ -30,6 +30,7 @@
 
 #if ENABLE(MATHML)
 
+#include "MathMLNames.h"
 #include "StyledElement.h"
 
 namespace WebCore {
@@ -41,17 +42,30 @@ public:
     int colSpan() const;
     int rowSpan() const;
 
+    bool isMathMLToken() const
+    {
+        return hasTagName(MathMLNames::miTag) || hasTagName(MathMLNames::mnTag) || hasTagName(MathMLNames::moTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mtextTag);
+    }
+
+    bool isSemanticAnnotation() const
+    {
+        return hasTagName(MathMLNames::annotationTag) || hasTagName(MathMLNames::annotation_xmlTag);
+    }
+
+    virtual bool isPresentationMathML() const;
+
 protected:
     MathMLElement(const QualifiedName& tagName, Document&);
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
+    virtual void attributeChanged(const QualifiedName&, const AtomicString& newValue, AttributeModificationReason) OVERRIDE;
 
 private:    
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
 
-    inline bool isMathMLToken() const;
+    virtual void updateSelectedChild() { };
 };
 
 void isMathMLElement(const MathMLElement&); // Catch unnecessary runtime check of type known at compile time.

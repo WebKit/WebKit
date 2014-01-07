@@ -34,8 +34,18 @@ mprescripts interfaceName=MathMLInlineContainerElement
 none interfaceName=MathMLInlineContainerElement
 semantics interfaceName=MathMLSelectElement
 
-#if 0 // Curently only for MathMLNames used by HTMLTreeBuilder.
-ms
-mglyph
-malignmark
-#endif
+# These presentation MathML elements are not implemented.
+maligngroup interfaceName=MathMLElement
+malignmark interfaceName=MathMLElement
+menclose interfaceName=MathMLElement # http://wkbug/85729
+mglyph interfaceName=MathMLElement
+mlabeledtr interfaceName=MathMLElement # http://wkbug/85732
+mlongdiv interfaceName=MathMLElement
+mpadded interfaceName=MathMLElement # http://wkbug/85730
+ms interfaceName=MathMLElement # http://wkbug/125859
+mscarries interfaceName=MathMLElement
+mscarry interfaceName=MathMLElement
+msgroup interfaceName=MathMLElement
+msline interfaceName=MathMLElement
+msrow interfaceName=MathMLElement
+mstack interfaceName=MathMLElement

@@ -1,3 +1,38 @@
+2014-01-07  Frédéric Wang  <fred.wang@free.fr>
+
+        Add Support for the semantics element.
+        https://bugs.webkit.org/show_bug.cgi?id=100626
+
+
+        Reviewed by Chris Fleizach.
+
+        Tests: mathml/presentation/semantics-2.html
+               mathml/presentation/semantics-3.html
+               mathml/presentation/semantics-4.html
+
+        This provides a complete support for the semantics element. When the first child is a content MathML, an annotation can be selected and displayed. The selection algorithm is identical to Gecko's one. The recognized annotations are text (e.g. LaTeX), presentation MathML, SVG and HTML.
+
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::childShouldCreateRenderer):
+        (WebCore::MathMLElement::attributeChanged):
+        (WebCore::MathMLElement::isPresentationMathML):
+        * mathml/MathMLElement.h:
+        (WebCore::MathMLElement::isMathMLToken):
+        (WebCore::MathMLElement::isSemanticAnnotation):
+        (WebCore::MathMLElement::isPresentationMathML):
+        (WebCore::MathMLElement::updateSelectedChild):
+        * mathml/MathMLInlineContainerElement.h:
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::getSelectedActionChildAndIndex):
+        (WebCore::MathMLSelectElement::getSelectedActionChild):
+        (WebCore::MathMLSelectElement::getSelectedSemanticsChild):
+        (WebCore::MathMLSelectElement::updateSelectedChild):
+        (WebCore::MathMLSelectElement::toggle):
+        * mathml/MathMLSelectElement.h:
+        * mathml/MathMLTextElement.h:
+        * mathml/mathattrs.in:
+        * mathml/mathtags.in:
+
 2014-01-07  Pascal Jacquemart  <p.jacquemart@samsung.com>
 
         Fix compilation issue with GLES2 after http://webkit.org/b/126548

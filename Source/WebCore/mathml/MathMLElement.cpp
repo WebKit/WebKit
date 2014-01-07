@@ -48,6 +48,11 @@ PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Do
     return adoptRef(new MathMLElement(tagName, document));
 }
 
+bool MathMLElement::isPresentationMathML() const
+{
+    return hasTagName(MathMLNames::mtrTag) || hasTagName(MathMLNames::mtdTag) || hasTagName(MathMLNames::maligngroupTag) || hasTagName(MathMLNames::malignmarkTag) || hasTagName(MathMLNames::mencloseTag) || hasTagName(MathMLNames::mglyphTag) || hasTagName(MathMLNames::mlabeledtrTag) || hasTagName(MathMLNames::mlongdivTag) || hasTagName(MathMLNames::mpaddedTag) || hasTagName(MathMLNames::msTag) || hasTagName(MathMLNames::mscarriesTag) || hasTagName(MathMLNames::mscarryTag) || hasTagName(MathMLNames::msgroupTag) || hasTagName(MathMLNames::mslineTag) || hasTagName(MathMLNames::msrowTag) || hasTagName(MathMLNames::mstackTag);
+}
+
 int MathMLElement::colSpan() const
 {
     if (!hasTagName(mtdTag))
@@ -118,13 +123,23 @@ void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& na
 
 bool MathMLElement::childShouldCreateRenderer(const Node& child) const
 {
+    if (hasTagName(annotationTag))
+        return child.isTextNode();
+    if (hasTagName(annotation_xmlTag))
+        return StyledElement::childShouldCreateRenderer(child);
+
     // Only create renderers for MathML elements or text. MathML prohibits non-MathML markup inside a <math> element.
     return child.isTextNode() || child.isMathMLElement();
 }
 
-bool MathMLElement::isMathMLToken() const
+void MathMLElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue, AttributeModificationReason reason)
 {
-    return hasTagName(miTag) || hasTagName(mnTag) || hasTagName(moTag) || hasTagName(msTag) || hasTagName(mtextTag);
+    if (isSemanticAnnotation() && (name == MathMLNames::srcAttr || name == MathMLNames::encodingAttr)) {
+        Element* parent = parentElement();
+        if (parent && parent->isMathMLElement() && parent->hasTagName(semanticsTag))
+            toMathMLElement(parent)->updateSelectedChild();
+    }
+    StyledElement::attributeChanged(name, newValue, reason);
 }
 
 }

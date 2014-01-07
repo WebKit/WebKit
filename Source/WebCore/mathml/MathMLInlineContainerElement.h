@@ -36,6 +36,8 @@ class MathMLInlineContainerElement : public MathMLElement {
 public:
     static PassRefPtr<MathMLInlineContainerElement> create(const QualifiedName& tagName, Document&);
 
+    virtual bool isPresentationMathML() const OVERRIDE { return true; }
+
 protected:
     MathMLInlineContainerElement(const QualifiedName& tagName, Document&);
 

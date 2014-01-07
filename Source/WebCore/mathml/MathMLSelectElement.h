@@ -48,9 +48,11 @@ private:
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
     void toggle();
-    int getSelectedChildAndIndex(Element*& selectedChild);
+    int getSelectedActionChildAndIndex(Element*& selectedChild);
+    Element* getSelectedActionChild();
+    Element* getSelectedSemanticsChild();
 
-    void updateSelectedChild();
+    void updateSelectedChild() OVERRIDE;
     Element* m_selectedChild;
 };
 
