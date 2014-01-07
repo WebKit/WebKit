@@ -727,14 +727,18 @@ void Heap::collectAllGarbage()
 {
     if (!m_isSafeToCollect)
         return;
-    
+
+    collect();
+
+    SamplingRegion samplingRegion("Garbage Collection: Sweeping");
     DelayedReleaseScope delayedReleaseScope(m_objectSpace);
-    collect(DoSweep);
+    m_objectSpace.sweep();
+    m_objectSpace.shrink();
 }
 
 static double minute = 60.0;
 
-void Heap::collect(SweepToggle sweepToggle)
+void Heap::collect()
 {
 #if ENABLE(ALLOCATION_LOGGING)
     dataLogF("JSC GC starting collection.\n");
@@ -742,7 +746,7 @@ void Heap::collect(SweepToggle sweepToggle)
     
     double before = 0;
     if (Options::logGC()) {
-        dataLog("[GC", sweepToggle == DoSweep ? " (eager sweep)" : "", ": ");
+        dataLog("[GC: ");
         before = currentTimeMS();
     }
     
@@ -815,13 +819,6 @@ void Heap::collect(SweepToggle sweepToggle)
         m_vm->clearSourceProviderCaches();
     }
 
-    if (sweepToggle == DoSweep) {
-        SamplingRegion samplingRegion("Garbage Collection: Sweeping");
-        GCPHASE(Sweeping);
-        m_objectSpace.sweep();
-        m_objectSpace.shrink();
-    }
-
     m_sweeper->startSweeping(m_blockSnapshot);
     m_bytesAbandoned = 0;
 
@@ -880,7 +877,7 @@ bool Heap::collectIfNecessaryOrDefer()
     if (!shouldCollect())
         return false;
     
-    collect(DoNotSweep);
+    collect();
     return true;
 }
 

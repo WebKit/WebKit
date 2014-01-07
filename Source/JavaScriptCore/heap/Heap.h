@@ -139,9 +139,8 @@ namespace JSC {
         bool isSafeToCollect() const { return m_isSafeToCollect; }
 
         JS_EXPORT_PRIVATE void collectAllGarbage();
-        enum SweepToggle { DoNotSweep, DoSweep };
         bool shouldCollect();
-        void collect(SweepToggle);
+        void collect();
         bool collectIfNecessaryOrDefer(); // Returns true if it did collect.
 
         void reportExtraMemoryCost(size_t cost);
