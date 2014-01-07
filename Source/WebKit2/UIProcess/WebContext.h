@@ -512,7 +512,7 @@ void WebContext::sendToNetworkingProcess(T&& message)
     case ProcessModelSharedSecondaryProcess:
 #if ENABLE(NETWORK_PROCESS)
         if (m_usesNetworkProcess) {
-            if (m_networkProcess->canSendMessage())
+            if (m_networkProcess && m_networkProcess->canSendMessage())
                 m_networkProcess->send(std::forward<T>(message), 0);
             return;
         }
@@ -522,7 +522,7 @@ void WebContext::sendToNetworkingProcess(T&& message)
         return;
     case ProcessModelMultipleSecondaryProcesses:
 #if ENABLE(NETWORK_PROCESS)
-        if (m_networkProcess->canSendMessage())
+        if (m_networkProcess && m_networkProcess->canSendMessage())
             m_networkProcess->send(std::forward<T>(message), 0);
         return;
 #else
