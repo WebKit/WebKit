@@ -1,3 +1,15 @@
+2014-01-06  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/126560> Fix incorrectness in use of some AppKit enums
+
+        Reviewed by Ryosuke Niwa.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (-[DRTMockScroller rectForPart:]): Move to using an if with early return instead of a switch
+        with a single case. This avoids the potential for warnings about unhandled cases.
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView): Cast the argument to NSBackingStoreType.
+
 2014-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move all GTK/GObject unit tests to Tools/TestWebKitAPI

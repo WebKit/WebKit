@@ -479,24 +479,21 @@ static void adjustFonts()
 
 - (NSRect)rectForPart:(NSScrollerPart)partCode
 {
-    switch (partCode) {
-    case NSScrollerKnob: {
-        NSRect frameRect = [self frame];
-        NSRect bounds = [self bounds];
-        BOOL isHorizontal = frameRect.size.width > frameRect.size.height;
-        CGFloat trackLength = isHorizontal ? bounds.size.width : bounds.size.height;
-        CGFloat minKnobSize = isHorizontal ? bounds.size.height : bounds.size.width;
-        CGFloat knobLength = max(minKnobSize, static_cast<CGFloat>(round(trackLength * [self knobProportion])));
-        CGFloat knobPosition = static_cast<CGFloat>((round([self doubleValue] * (trackLength - knobLength))));
-        
-        if (isHorizontal)
-            return NSMakeRect(bounds.origin.x + knobPosition, bounds.origin.y, knobLength, bounds.size.height);
+    if (partCode != NSScrollerKnob)
+        return [super rectForPart:partCode];
 
-        return NSMakeRect(bounds.origin.x, bounds.origin.y +  + knobPosition, bounds.size.width, knobLength);
-    }
-    }
+    NSRect frameRect = [self frame];
+    NSRect bounds = [self bounds];
+    BOOL isHorizontal = frameRect.size.width > frameRect.size.height;
+    CGFloat trackLength = isHorizontal ? bounds.size.width : bounds.size.height;
+    CGFloat minKnobSize = isHorizontal ? bounds.size.height : bounds.size.width;
+    CGFloat knobLength = max(minKnobSize, static_cast<CGFloat>(round(trackLength * [self knobProportion])));
+    CGFloat knobPosition = static_cast<CGFloat>((round([self doubleValue] * (trackLength - knobLength))));
     
-    return [super rectForPart:partCode];
+    if (isHorizontal)
+        return NSMakeRect(bounds.origin.x + knobPosition, bounds.origin.y, knobLength, bounds.size.height);
+
+    return NSMakeRect(bounds.origin.x, bounds.origin.y +  + knobPosition, bounds.size.width, knobLength);
 }
 
 - (void)drawKnob
