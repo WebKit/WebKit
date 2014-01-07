@@ -1,5 +1,20 @@
 2014-01-06  Seokju Kwon  <seokju@webkit.org>
 
+        Web Inspector: Remove support for FileSystem in Frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=126369
+
+        Reviewed by Joseph Pecoraro.
+
+        Update InspectorWebBackendCommands after removing 'FileSystem' domain.
+
+        * UserInterface/InspectorWebBackendCommands.js:
+        * UserInterface/Legacy/6.0/InspectorWebBackendCommands.js:
+        * UserInterface/Legacy/7.0/InspectorWebBackendCommands.js:
+        * Versions/Inspector-iOS-6.0.json:
+        * Versions/Inspector-iOS-7.0.json:
+
+2014-01-06  Seokju Kwon  <seokju@webkit.org>
+
         Web Inspector: Get rid of DOM.setFileInputFiles from Protocol
         https://bugs.webkit.org/show_bug.cgi?id=126312
 

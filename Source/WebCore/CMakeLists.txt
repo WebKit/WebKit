@@ -766,7 +766,6 @@ set(WebCore_INSPECTOR_DOMAINS
     inspector/protocol/DOMDebugger.json
     inspector/protocol/DOMStorage.json
     inspector/protocol/Database.json
-    inspector/protocol/FileSystem.json
     inspector/protocol/HeapProfiler.json
     inspector/protocol/IndexedDB.json
     inspector/protocol/Input.json

@@ -313,31 +313,6 @@ String InspectorFrontendHost::loadResourceSynchronously(const String& url)
     return String::fromUTF8(data.data(), data.size());
 }
 
-bool InspectorFrontendHost::supportsFileSystems()
-{
-    if (m_client)
-        return m_client->supportsFileSystems();
-    return false;
-}
-
-void InspectorFrontendHost::requestFileSystems()
-{
-    if (m_client)
-        m_client->requestFileSystems();
-}
-
-void InspectorFrontendHost::addFileSystem()
-{
-    if (m_client)
-        m_client->addFileSystem();
-}
-
-void InspectorFrontendHost::removeFileSystem(const String& fileSystemPath)
-{
-    if (m_client)
-        m_client->removeFileSystem(fileSystemPath);
-}
-
 bool InspectorFrontendHost::isUnderTest()
 {
     return m_client && m_client->isUnderTest();

@@ -84,11 +84,6 @@ public:
 
     String loadResourceSynchronously(const String& url);
 
-    bool supportsFileSystems();
-    void requestFileSystems();
-    void addFileSystem();
-    void removeFileSystem(const String& fileSystemPath);
-
     bool isUnderTest();
 
     void beep();

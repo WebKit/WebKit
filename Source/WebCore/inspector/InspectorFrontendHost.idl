@@ -71,11 +71,6 @@
 
     DOMString loadResourceSynchronously(DOMString url);
 
-    boolean supportsFileSystems();
-    void requestFileSystems();
-    void addFileSystem();
-    void removeFileSystem(DOMString fileSystemPath);
-
     boolean isUnderTest();
 
     void beep();
