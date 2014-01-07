@@ -29,11 +29,14 @@
 #import <TargetConditionals.h>
 
 #if !TARGET_OS_IPHONE
+#import <Foundation/Foundation.h>
 
 #define WEBKIT_AVAILABLE_MAC(introduced) NS_AVAILABLE_MAC(introduced)
 #define WEBKIT_CLASS_AVAILABLE_MAC(introduced) NS_CLASS_AVAILABLE_MAC(introduced)
 #define WEBKIT_ENUM_AVAILABLE_MAC(introduced) NS_ENUM_AVAILABLE_MAC(introduced)
 #define WEBKIT_DEPRECATED_MAC(introduced, deprecated) NS_DEPRECATED_MAC(introduced, deprecated)
+
+#define __AVAILABILITY_INTERNAL__MAC_TBD __attribute__((availability(macosx,introduced=9876.5)))
 
 #else
 
