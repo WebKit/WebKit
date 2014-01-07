@@ -1,3 +1,12 @@
+2014-01-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test correction.
+
+        * webgl/1.0.2/resources/webgl_test_files/conformance/renderbuffers/framebuffer-object-attachment.html: Remove commented-out
+        line from debugging code.
+        * webgl/1.0.2/resources/webgl_test_files/conformance/resources/webgl-test-utils.js:
+        (WebGLTestUtils): Return to normal behavior of exiting immediately on test failure.
+
 2014-01-06  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Get rid of DOM.setFileInputFiles from Protocol

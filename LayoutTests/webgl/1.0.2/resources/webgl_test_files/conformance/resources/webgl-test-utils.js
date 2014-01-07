@@ -863,7 +863,7 @@ var checkCanvasRectColor = function(gl, x, y, width, height, color, opt_errorRan
         }
         logFn('at (' + (x + (i % width)) + ', ' + (y + Math.floor(i / width)) +
               ') expected: ' + color + ' was ' + was);
-        //return;
+        return;
       }
     }
   }

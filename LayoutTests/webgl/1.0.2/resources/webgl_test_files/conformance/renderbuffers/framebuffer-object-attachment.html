@@ -206,7 +206,6 @@ function testDepthStencilDepthStencil()
             gl.framebufferRenderbuffer(gl.FRAMEBUFFER, test.firstAttach, gl.RENDERBUFFER, firstRb);
 
             shouldBe('gl.checkFramebufferStatus(gl.FRAMEBUFFER)', 'gl.FRAMEBUFFER_COMPLETE');
-            //gl.clear(gl.DEPTH_BUFFER_BIT);
             gl.enable(gl.DEPTH_TEST);
             var program = wtu.setupColorQuad(gl);
             // Test it works
