@@ -26,6 +26,7 @@
 #ifndef HTMLTableSectionElement_h
 #define HTMLTableSectionElement_h
 
+#include "HTMLNames.h"
 #include "HTMLTablePartElement.h"
 
 namespace WebCore {
@@ -58,6 +59,13 @@ private:
 
     virtual const StyleProperties* additionalPresentationAttributeStyle() OVERRIDE;
 };
+
+inline bool isHTMLTableSectionElement(const Node& node)
+{
+    return node.hasTagName(HTMLNames::theadTag) || node.hasTagName(HTMLNames::tfootTag) || node.hasTagName(HTMLNames::tbodyTag);
+}
+
+NODE_TYPE_CASTS(HTMLTableSectionElement)
 
 } //namespace
 
