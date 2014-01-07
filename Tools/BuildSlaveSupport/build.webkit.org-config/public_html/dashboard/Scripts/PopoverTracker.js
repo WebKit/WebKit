@@ -28,7 +28,7 @@ PopoverTracker = function(element, presentPopoverCallback, context)
     BaseObject.call(this);
 
     console.assert(element);
-    console.assert(presentPopoverCallback && typeof presentPopoverCallback == "function");
+    console.assert(presentPopoverCallback && typeof presentPopoverCallback === "function");
 
     this._element = element;
     this._presentPopover = presentPopoverCallback;
@@ -40,37 +40,70 @@ PopoverTracker = function(element, presentPopoverCallback, context)
     element.addEventListener("mouseleave", this._mouseExitedPopoverOrElement.bind(this), true);
 };
 
-PopoverTracker._popover = null; // Only one popover may be active at any time.
+// Only one popover may be active at any time. An active popover is not necessarily visible already.
+PopoverTracker._popover = null;
+
+// A candidate timer may be active whether we have an active popover or not.
+PopoverTracker._candidateTracker = null;
+PopoverTracker._candidateTimer = null;
+PopoverTracker.CandidateSwitchDelay = 200;
 
 BaseObject.addConstructorFunctions(PopoverTracker);
+
+PopoverTracker._setCandidatePopoverTracker = function(popoverTracker)
+{
+    console.assert(!popoverTracker || !popoverTracker._active);
+
+    if (PopoverTracker._candidateTracker) {
+        clearTimeout(PopoverTracker._candidateTimer);
+        PopoverTracker._candidateTimer = null;
+    }
+
+    console.assert(!PopoverTracker._candidateTimer);
+    
+    PopoverTracker._candidateTracker = popoverTracker;
+
+    if (popoverTracker)
+        PopoverTracker._candidateTimer = setTimeout(PopoverTracker._candidatePopoverTrackerTimerFired, PopoverTracker.CandidateSwitchDelay);
+}
+
+PopoverTracker._candidatePopoverTrackerTimerFired = function()
+{
+    var hadPopover = !!PopoverTracker._popover;
+    if (hadPopover) {
+        console.assert(PopoverTracker._popover.visible);
+        PopoverTracker._popover.dismissImmediately();
+    }
+    console.assert(!PopoverTracker._popover);
+
+    var tracker = PopoverTracker._candidateTracker;
+
+    PopoverTracker._setCandidatePopoverTracker(null);
+    tracker._showPopover();
+
+    if (PopoverTracker._popover && hadPopover)
+        PopoverTracker._popover.makeVisibleImmediately();
+}
+
+PopoverTracker._onblur = function()
+{
+    if (PopoverTracker._popover)
+        PopoverTracker._popover.dismissImmediately();
+
+    PopoverTracker._setCandidatePopoverTracker(null);
+}
+
+window.addEventListener("blur", PopoverTracker._onblur, true);
 
 PopoverTracker.prototype = {
     constructor: PopoverTracker,
     __proto__: BaseObject.prototype,
 
-    _mouseEnteredPopoverOrElement: function(event)
+    _showPopover: function()
     {
-        var popover = PopoverTracker._popover;
-        var popoverWasVisible = popover && popover.visible;
-        if (popover) {
-            // Abort fade-out when re-entering the same element or an existing popover.
-            if ((this._active && this._element.isSelfOrAncestor(event.toElement))
-                || popover.element.isSelfOrAncestor(event.toElement)) {
-                popover.makeVisibleImmediately();
-                return;
-            }
-
-            // We entered a different element, dismiss the old popover.
-            popover.dismissImmediately();
-        }
-        console.assert(!PopoverTracker._popover);
-
         var popover = new Dashboard.Popover(this);
-        if (!this._presentPopover(event.target, popover, this._context))
+        if (!this._presentPopover(this._element, popover, this._context))
             return;
-
-        if (popoverWasVisible)
-            popover.makeVisibleImmediately();
 
         this._active = true;
         PopoverTracker._popover = popover;
@@ -78,8 +111,45 @@ PopoverTracker.prototype = {
         popover.element.addEventListener("mouseleave", this._mouseExitedPopoverOrElement.bind(this), true);
     },
 
+    _mouseEnteredPopoverOrElement: function(event)
+    {
+        var popover = PopoverTracker._popover;
+
+        if (popover) {
+            // Abort fade-out when re-entering the same element or an existing popover.
+            if ((this._active && this._element.isSelfOrAncestor(event.toElement))
+                || popover.element.isSelfOrAncestor(event.toElement)) {
+                popover.makeVisibleImmediately();
+                PopoverTracker._setCandidatePopoverTracker(null);
+                return;
+            }
+
+            // We entered a different element.
+            if (popover.visible) {
+                PopoverTracker._setCandidatePopoverTracker(this);
+                return;
+            }
+
+            // The popover wasn't visible yet, so it was effectively non-existent.
+            popover.dismissImmediately();
+        }
+
+        console.assert(!PopoverTracker._popover);
+        console.assert(!PopoverTracker._candidateTracker);
+        console.assert(!PopoverTracker._candidateTimer);
+
+        PopoverTracker._setCandidatePopoverTracker(this);
+    },
+
     _mouseExitedPopoverOrElement: function(event)
     {
+        if (this === PopoverTracker._candidateTracker) {
+            if (this._element.isSelfOrAncestor(event.toElement))
+                return;
+            PopoverTracker._setCandidatePopoverTracker(null);
+            return;
+        }
+
         var popover = PopoverTracker._popover;
 
         if (!popover)

@@ -208,12 +208,9 @@ Dashboard.Popover.prototype = {
         var targetFrame = this._targetFrame;
         var preferredEdges = this._preferredEdges;
 
-        // Ensure our element is on display so that its metrics can be resolved
-        // or interrupt any pending transition to remove it from display.
+        // Ensure our element is on display so that its metrics can be resolved.
         if (this._element.parentNode !== document.body)
             document.body.appendChild(this._element);
-        else
-            this._element.classList.remove(Dashboard.Popover.FadeOutClassName);
 
         if (this._contentNeedsUpdate) {
             // Reset CSS properties on element so that the element may be sized to fit its content.

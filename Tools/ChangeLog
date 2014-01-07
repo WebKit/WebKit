@@ -1,5 +1,32 @@
 2014-01-07  Alexey Proskuryakov  <ap@apple.com>
 
+        There should be a delay when quickly switching to a different popover at build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=126472
+
+        Reviewed by Timothy Hatcher.
+
+        Added a delay when quickly switching to a different popover, making it easier to
+        move mouse pointer from active element to its popover without accidentally opening
+        a different popover.
+
+        Used this code to add a delay before creating a popover. This doesn't change UI
+        behavior, as there was alerady a delay before it became visible, but it avoids
+        flooding buildbot server with http requests when quickly moving the mouse over
+        dashboard page.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Popover.js:
+        Fixed a case where popover could get stuck. If content was updated while fade-out
+        transition was already in place, the transition was removed for no good reason.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/PopoverTracker.js:
+        (PopoverTracker._onblur): While at it, also taught popovers to disappear on window blur.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Popover.css:
+        (.popover.step-in): Now that PopoverTracker has a 200ms delay of its own, reduced
+        popover delay from 1s to 800ms.
+
+2014-01-07  Alexey Proskuryakov  <ap@apple.com>
+
         Improve display of failed builds at build.webkit.org/dashboard
         https://bugs.webkit.org/show_bug.cgi?id=126542
         <rdar://problem/15753550>
