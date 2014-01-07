@@ -20,14 +20,12 @@
  */
 
 #include "config.h"
-#include "XSLStyleSheet.h"
 
 #if ENABLE(XSLT)
 
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "Frame.h"
-#include "Node.h"
 #include "Page.h"
 #include "PageConsole.h"
 #include "TransformSource.h"
@@ -35,7 +33,6 @@
 #include "XMLDocumentParserScope.h"
 #include "XSLImportRule.h"
 #include "XSLTProcessor.h"
-#include <wtf/text/CString.h>
 
 #include <libxml/uri.h>
 #include <libxslt/xsltutils.h>

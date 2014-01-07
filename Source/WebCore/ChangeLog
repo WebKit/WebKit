@@ -1,3 +1,33 @@
+2014-01-07  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Remove some extra includes from XML.
+        https://bugs.webkit.org/show_bug.cgi?id=126572
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, no functionality changed.
+
+        * xml/XMLHttpRequest.cpp:
+        * xml/XMLHttpRequestUpload.cpp:
+        * xml/XMLHttpRequestUpload.h:
+        * xml/XPathEvaluator.cpp:
+        * xml/XPathExpression.cpp:
+        * xml/XPathExpressionNode.cpp:
+        * xml/XPathFunctions.cpp:
+        * xml/XPathNodeSet.cpp:
+        * xml/XPathParser.cpp:
+        * xml/XPathPath.cpp:
+        * xml/XPathPredicate.cpp:
+        * xml/XPathPredicate.h:
+        * xml/XPathResult.cpp:
+        * xml/XPathValue.cpp:
+        * xml/XPathVariableReference.cpp:
+        * xml/XSLImportRule.cpp:
+        * xml/XSLStyleSheetLibxslt.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+        * xml/parser/XMLDocumentParser.cpp:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+
 2014-01-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add toHTMLTableSectionElement() functions, and use it

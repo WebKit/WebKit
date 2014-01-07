@@ -28,7 +28,6 @@
 #define XPathPredicate_h
 
 #include "XPathExpressionNode.h"
-#include "XPathValue.h"
 
 namespace WebCore {
 

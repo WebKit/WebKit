@@ -31,7 +31,6 @@
 #include "Document.h"
 #include "XPathPredicate.h"
 #include "XPathStep.h"
-#include "XPathValue.h"
 
 namespace WebCore {
 namespace XPath {

@@ -27,7 +27,6 @@
 #include "config.h"
 #include "XPathValue.h"
 
-#include "Node.h"
 #include "XPathExpressionNode.h"
 #include "XPathUtil.h"
 #include <limits>

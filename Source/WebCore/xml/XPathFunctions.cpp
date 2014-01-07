@@ -33,7 +33,6 @@
 #include "TreeScope.h"
 #include "XMLNames.h"
 #include "XPathUtil.h"
-#include "XPathValue.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>

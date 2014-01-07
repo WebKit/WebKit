@@ -27,7 +27,6 @@
 #include "config.h"
 #include "XPathExpressionNode.h"
 
-#include "Node.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 

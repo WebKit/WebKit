@@ -58,13 +58,11 @@
 #include "TransformSource.h"
 #include "XMLNSNames.h"
 #include "XMLDocumentParserScope.h"
-#include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <wtf/Ref.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
-#include <wtf/text/CString.h>
 #include <wtf/unicode/UTF8.h>
 
 #if ENABLE(XSLT)

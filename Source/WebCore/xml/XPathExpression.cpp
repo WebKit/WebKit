@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "XPathException.h"
-#include "XPathExpressionNode.h"
 #include "XPathNSResolver.h"
 #include "XPathParser.h"
 #include "XPathResult.h"

@@ -27,8 +27,6 @@
 #include "config.h"
 #include "XPathVariableReference.h"
 
-#include "Node.h"
-#include "XPathValue.h"
 
 namespace WebCore {
 namespace XPath {

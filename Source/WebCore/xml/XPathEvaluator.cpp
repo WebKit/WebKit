@@ -29,7 +29,6 @@
 
 #include "ExceptionCode.h"
 #include "NativeXPathNSResolver.h"
-#include "Node.h"
 #include "XPathExpression.h"
 #include "XPathResult.h"
 #include "XPathUtil.h"

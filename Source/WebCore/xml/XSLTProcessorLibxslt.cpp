@@ -37,7 +37,6 @@
 #include "SecurityOrigin.h"
 #include "TransformSource.h"
 #include "XMLDocumentParser.h"
-#include "XSLStyleSheet.h"
 #include "XSLTExtensions.h"
 #include "XSLTUnicodeSort.h"
 #include "markup.h"
@@ -47,7 +46,6 @@
 #include <libxslt/xsltutils.h>
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/unicode/UTF8.h>
 

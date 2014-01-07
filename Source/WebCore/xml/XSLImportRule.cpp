@@ -28,7 +28,6 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "Document.h"
-#include "XSLStyleSheet.h"
 
 namespace WebCore {
 

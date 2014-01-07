@@ -33,7 +33,6 @@
 #include "XPathException.h"
 #include "XPathNSResolver.h"
 #include "XPathPath.h"
-#include "XPathStep.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>

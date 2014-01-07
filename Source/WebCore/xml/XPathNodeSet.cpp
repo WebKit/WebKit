@@ -28,7 +28,6 @@
 
 #include "Attr.h"
 #include "Element.h"
-#include "Node.h"
 #include "NodeTraversal.h"
 
 namespace WebCore {
