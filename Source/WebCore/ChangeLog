@@ -1,3 +1,12 @@
+2014-01-07  Pascal Jacquemart  <p.jacquemart@samsung.com>
+
+        Fix compilation issue with GLES2 after http://webkit.org/b/126548
+        https://bugs.webkit.org/show_bug.cgi?id=126578
+
+        Reviewed by  Brent Fulgham
+
+        * platform/graphics/opengl/TemporaryOpenGLSetting.cpp: added GLES2/gl2.h include
+
 2014-01-07  László Langó  <llango.u-szeged@partner.samsung.com>
 
         Remove some extra includes from XML.
