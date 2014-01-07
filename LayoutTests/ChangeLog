@@ -1,3 +1,15 @@
+2014-01-06  Jer Noble  <jer.noble@apple.com>
+
+        HTML5 video tag Does Not Load in Apache htaccess/htpasswd Protected Directory
+        https://bugs.webkit.org/show_bug.cgi?id=40382
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/resources/video-auth.php: Added.
+        * http/tests/media/video-auth-expected.txt: Added.
+        * http/tests/media/video-auth.html: Added.
+        * platform/mac/TestExpectations:
+
 2014-01-07  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test expectation update.

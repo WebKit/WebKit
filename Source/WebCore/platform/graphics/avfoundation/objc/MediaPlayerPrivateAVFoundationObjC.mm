@@ -29,8 +29,9 @@
 
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 
-#import "AudioTrackPrivateAVFObjC.h"
 #import "AVTrackPrivateAVFObjCImpl.h"
+#import "AudioTrackPrivateAVFObjC.h"
+#import "AuthenticationChallenge.h"
 #import "BlockExceptions.h"
 #import "ExceptionCodePlaceholder.h"
 #import "FloatConversion.h"
@@ -1015,6 +1016,13 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
     m_resourceLoaderMap.add(avRequest, resourceLoader);
     resourceLoader->startLoading();
     return true;
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForResponseToAuthenticationChallenge(NSURLAuthenticationChallenge* nsChallenge)
+{
+    AuthenticationChallenge challenge(nsChallenge);
+
+    return player()->shouldWaitForResponseToAuthenticationChallenge(challenge);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResourceLoadingRequest* avRequest)
@@ -2044,6 +2052,25 @@ NSArray* itemKVOProperties()
 
         if (!m_callback->shouldWaitForLoadingOfResource(loadingRequest))
             [loadingRequest finishLoadingWithError:nil];
+    });
+
+    return YES;
+}
+
+- (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForResponseToAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    UNUSED_PARAM(resourceLoader);
+    if (!m_callback)
+        return NO;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!m_callback) {
+            [[challenge sender] cancelAuthenticationChallenge:challenge];
+            return;
+        }
+
+        if (!m_callback->shouldWaitForResponseToAuthenticationChallenge(challenge))
+            [[challenge sender] cancelAuthenticationChallenge:challenge];
     });
 
     return YES;

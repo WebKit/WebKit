@@ -68,6 +68,7 @@ class QTMovieVisualContext;
 namespace WebCore {
 
 class AudioSourceProvider;
+class AuthenticationChallenge;
 class Document;
 #if ENABLE(MEDIA_SOURCE)
 class HTMLMediaSource;
@@ -252,6 +253,8 @@ public:
 
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) { }
 #endif
+
+    virtual bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) { return false; }
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -520,6 +523,8 @@ public:
     unsigned long corruptedVideoFrames();
     double totalFrameDelay();
 #endif
+
+    bool shouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&);
 
 private:
     MediaPlayer(MediaPlayerClient*);

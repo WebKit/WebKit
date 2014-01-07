@@ -62,6 +62,7 @@
 #include "MIMETypeRegistry.h"
 #include "PageActivityAssertionToken.h"
 #include "PageGroup.h"
+#include "ProgressTracker.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptController.h"
@@ -5575,6 +5576,27 @@ IntRect HTMLMediaElement::mediaPlayerWindowClipRect()
 CachedResourceLoader* HTMLMediaElement::mediaPlayerCachedResourceLoader()
 {
     return mediaPlayerOwningDocument()->cachedResourceLoader();
+}
+
+bool HTMLMediaElement::mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge& challenge)
+{
+    Frame* frame = document().frame();
+    if (!frame)
+        return false;
+
+    Page* page = frame->page();
+    if (!page)
+        return false;
+
+    ResourceRequest request(m_currentSrc);
+    ResourceLoadNotifier& notifier = frame->loader().notifier();
+    DocumentLoader* documentLoader = document().loader();
+    unsigned long identifier = page->progress().createUniqueIdentifier();
+
+    notifier.assignIdentifierToInitialRequest(identifier, documentLoader, request);
+    notifier.didReceiveAuthenticationChallenge(identifier, documentLoader, challenge);
+
+    return true;
 }
 
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()

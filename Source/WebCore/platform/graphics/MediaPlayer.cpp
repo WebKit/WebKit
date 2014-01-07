@@ -1271,6 +1271,14 @@ double MediaPlayer::totalFrameDelay()
 }
 #endif
 
+bool MediaPlayer::shouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge& challenge)
+{
+    if (!m_mediaPlayerClient)
+        return false;
+
+    return m_mediaPlayerClient->mediaPlayerShouldWaitForResponseToAuthenticationChallenge(challenge);
+}
+
 void MediaPlayerFactorySupport::callRegisterMediaEngine(MediaEngineRegister registerMediaEngine)
 {
     registerMediaEngine(addMediaEngine);
