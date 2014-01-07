@@ -774,7 +774,7 @@ static V_JITOperation_ESsiJJI appropriateListBuildingPutByIdFunction(const PutPr
 }
 
 #if ENABLE(GGC)
-static MacroAssembler::Call storeToWriteBarrierBuffer(CCallHelpers& jit, GPRReg cell, GPRReg scratch1, GPRReg scratch2, ScratchRegisterAllocator& allocator)
+static MacroAssembler::Call storeToWriteBarrierBuffer(CCallHelpers& jit, GPRReg cell, GPRReg scratch1, GPRReg scratch2, GPRReg callFrameRegister, ScratchRegisterAllocator& allocator)
 {
     ASSERT(scratch1 != scratch2);
     WriteBarrierBuffer* writeBarrierBuffer = &jit.vm()->heap.writeBarrierBuffer();
@@ -795,17 +795,23 @@ static MacroAssembler::Call storeToWriteBarrierBuffer(CCallHelpers& jit, GPRReg 
     ScratchBuffer* scratchBuffer = jit.vm()->scratchBufferForSize(allocator.desiredScratchBufferSize());
     allocator.preserveUsedRegistersToScratchBuffer(jit, scratchBuffer, scratch1);
 
-    // We need these extra slots because setupArgumentsWithExecState will use poke on x86.
+    unsigned bytesFromBase = allocator.numberOfReusedRegisters() * sizeof(void*);
+    unsigned bytesToSubtract = 0;
 #if CPU(X86)
-    jit.subPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 3), MacroAssembler::stackPointerRegister);
+    bytesToSubtract += 2 * sizeof(void*);
+    bytesFromBase += bytesToSubtract;
 #endif
+    unsigned currentAlignment = bytesFromBase % stackAlignmentBytes();
+    bytesToSubtract += currentAlignment;
 
-    jit.setupArgumentsWithExecState(cell);
+    if (bytesToSubtract)
+        jit.subPtr(MacroAssembler::TrustedImm32(bytesToSubtract), MacroAssembler::stackPointerRegister); 
+
+    jit.setupArguments(callFrameRegister, cell);
     MacroAssembler::Call call = jit.call();
 
-#if CPU(X86)
-    jit.addPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 3), MacroAssembler::stackPointerRegister);
-#endif
+    if (bytesToSubtract)
+        jit.addPtr(MacroAssembler::TrustedImm32(bytesToSubtract), MacroAssembler::stackPointerRegister);
     allocator.restoreUsedRegistersFromScratchBuffer(jit, scratchBuffer, scratch1);
 
     done.link(&jit);
@@ -813,13 +819,13 @@ static MacroAssembler::Call storeToWriteBarrierBuffer(CCallHelpers& jit, GPRReg 
     return call;
 }
 
-static MacroAssembler::Call writeBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2, ScratchRegisterAllocator& allocator)
+static MacroAssembler::Call writeBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2, GPRReg callFrameRegister, ScratchRegisterAllocator& allocator)
 {
     ASSERT(owner != scratch1);
     ASSERT(owner != scratch2);
 
     MacroAssembler::Jump definitelyNotMarked = DFG::SpeculativeJIT::genericWriteBarrier(jit, owner, scratch1, scratch2);
-    MacroAssembler::Call call = storeToWriteBarrierBuffer(jit, owner, scratch1, scratch2, allocator);
+    MacroAssembler::Call call = storeToWriteBarrierBuffer(jit, owner, scratch1, scratch2, callFrameRegister, allocator);
     definitelyNotMarked.link(&jit);
     return call;
 }
@@ -837,6 +843,9 @@ static void emitPutReplaceStub(
     RefPtr<JITStubRoutine>& stubRoutine)
 {
     VM* vm = &exec->vm();
+#if ENABLE(GGC)
+    GPRReg callFrameRegister = static_cast<GPRReg>(stubInfo.patch.callFrameRegister);
+#endif
     GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.baseGPR);
 #if USE(JSVALUE32_64)
     GPRReg valueTagGPR = static_cast<GPRReg>(stubInfo.patch.valueTagGPR);
@@ -883,7 +892,7 @@ static void emitPutReplaceStub(
 #endif
     
 #if ENABLE(GGC)
-    MacroAssembler::Call writeBarrierOperation = writeBarrier(stubJit, baseGPR, scratchGPR1, scratchGPR2, allocator);
+    MacroAssembler::Call writeBarrierOperation = writeBarrier(stubJit, baseGPR, scratchGPR1, scratchGPR2, callFrameRegister, allocator);
 #endif
     
     MacroAssembler::Jump success;
@@ -1050,7 +1059,7 @@ static void emitPutTransitionStub(
 #endif
     
 #if ENABLE(GGC)
-    MacroAssembler::Call writeBarrierOperation = writeBarrier(stubJit, baseGPR, scratchGPR1, scratchGPR2, allocator);
+    MacroAssembler::Call writeBarrierOperation = writeBarrier(stubJit, baseGPR, scratchGPR1, scratchGPR2, callFrameRegister, allocator);
 #endif
     
     MacroAssembler::Jump success;

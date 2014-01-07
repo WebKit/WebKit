@@ -340,7 +340,7 @@ macro writeBarrierOnOperand(cellOperand)
                 btbz marked, .writeBarrierDone
                 push PB, PC
                 cCall2(_llint_write_barrier_slow, cfr, t0)
-                push PC, PB
+                pop PC, PB
             end
         )
     .writeBarrierDone:

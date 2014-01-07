@@ -41,7 +41,7 @@ class ScratchRegisterAllocator {
 public:
     ScratchRegisterAllocator(const TempRegisterSet& usedRegisters)
         : m_usedRegisters(usedRegisters)
-        , m_didReuseRegisters(false)
+        , m_numberOfReusedRegisters(0)
     {
     }
 
@@ -80,7 +80,7 @@ public:
             typename BankInfo::RegisterType reg = BankInfo::toRegister(i);
             if (!m_lockedRegisters.get(reg) && !m_scratchRegisters.get(reg)) {
                 m_scratchRegisters.set(reg);
-                m_didReuseRegisters = true;
+                m_numberOfReusedRegisters++;
                 return reg;
             }
         }
@@ -96,12 +96,17 @@ public:
     
     bool didReuseRegisters() const
     {
-        return m_didReuseRegisters;
+        return !!m_numberOfReusedRegisters;
+    }
+    
+    unsigned numberOfReusedRegisters() const
+    {
+        return m_numberOfReusedRegisters;
     }
     
     void preserveReusedRegistersByPushing(MacroAssembler& jit)
     {
-        if (!m_didReuseRegisters)
+        if (!didReuseRegisters())
             return;
         
         for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
@@ -116,7 +121,7 @@ public:
     
     void restoreReusedRegistersByPopping(MacroAssembler& jit)
     {
-        if (!m_didReuseRegisters)
+        if (!didReuseRegisters())
             return;
         
         for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
@@ -199,7 +204,7 @@ private:
     TempRegisterSet m_usedRegisters;
     TempRegisterSet m_lockedRegisters;
     TempRegisterSet m_scratchRegisters;
-    bool m_didReuseRegisters;
+    unsigned m_numberOfReusedRegisters;
 };
 
 } // namespace JSC

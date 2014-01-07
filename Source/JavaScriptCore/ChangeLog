@@ -1,3 +1,29 @@
+2014-01-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Repatch write barrier slow path call doesn't align the stack in the presence of saved registers
+        https://bugs.webkit.org/show_bug.cgi?id=126093
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/Repatch.cpp: Reworked the stack alignment code for calling out to C code on the write barrier slow path.
+        We need to properly account for the number of reused registers that were saved to the stack, so we have to 
+        pass the ScratchRegisterAllocator around.
+        (JSC::storeToWriteBarrierBuffer):
+        (JSC::writeBarrier):
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStub):
+        * jit/ScratchRegisterAllocator.h: Previously the ScratchRegisterAllocator only knew whether or not it had
+        reused registers, but not how many. In order to correctly align the stack for calls to C slow paths for 
+        the write barriers in inline caches we need to know how the stack is aligned. So now ScratchRegisterAllocator
+        tracks how many registers it has reused.
+        (JSC::ScratchRegisterAllocator::ScratchRegisterAllocator):
+        (JSC::ScratchRegisterAllocator::allocateScratch):
+        (JSC::ScratchRegisterAllocator::didReuseRegisters):
+        (JSC::ScratchRegisterAllocator::numberOfReusedRegisters):
+        (JSC::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        * llint/LowLevelInterpreter64.asm: Random typo fix.
+
 2014-01-07  Mark Lam  <mark.lam@apple.com>
 
         r161364 caused JSC tests regression on non-DFG builds (e.g. C Loop and Windows).
