@@ -7433,6 +7433,7 @@
     <ClCompile Include="..\platform\graphics\opengl\GLPlatformSurface.cpp" />
     <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLCommon.cpp" />
     <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLES.cpp" />
+    <ClCompile Include="..\platform\graphics\opengl\TemporaryOpenGLSetting.cpp" />
     <ClCompile Include="..\platform\graphics\texmap\coordinated\AreaAllocator.cpp" />
     <ClCompile Include="..\platform\graphics\texmap\coordinated\CompositingCoordinator.cpp" />
     <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedBackingStore.cpp" />

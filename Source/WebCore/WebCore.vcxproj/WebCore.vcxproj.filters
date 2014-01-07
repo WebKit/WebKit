@@ -6814,6 +6814,9 @@
     <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLCommon.cpp">
       <Filter>platform\graphics\opengl</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\opengl\TemporaryOpenGLSetting.cpp">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClCompile>
     <ClCompile Include="..\page\CaptionUserPreferencesMediaAF.cpp">
       <Filter>page</Filter>
     </ClCompile>

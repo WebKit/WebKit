@@ -177,6 +177,7 @@ if (ENABLE_WEBGL)
         platform/graphics/opengl/Extensions3DOpenGLES.cpp
         platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
         platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
+        platform/graphics/opengl/TemporaryOpenGLSetting.cpp
     )
 endif ()
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
+#include "TemporaryOpenGLSetting.h"
 
 #include <algorithm>
 #include <cstring>
@@ -161,11 +162,9 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
 void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
 {
-    GLboolean isScissorEnabled = ::glIsEnabled(GL_SCISSOR_TEST);
-    ::glDisable(GL_SCISSOR_TEST);
-    GLboolean isDitherEnabled = ::glIsEnabled(GL_DITHER);
-    ::glDisable(GL_DITHER);
-    
+    TemporaryOpenGLSetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
+    TemporaryOpenGLSetting scopedDither(GL_SCISSOR_TEST, GL_FALSE);
+
     ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
     ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
 
@@ -174,11 +173,6 @@ void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
         resolveRect = IntRect(0, 0, m_currentWidth, m_currentHeight);
 
     ::glBlitFramebufferEXT(resolveRect.x(), resolveRect.y(), resolveRect.maxX(), resolveRect.maxY(), resolveRect.x(), resolveRect.y(), resolveRect.maxX(), resolveRect.maxY(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-    if (isScissorEnabled)
-        ::glEnable(GL_SCISSOR_TEST);
-    if (isDitherEnabled)
-        ::glEnable(GL_DITHER);
 }
 
 void GraphicsContext3D::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)

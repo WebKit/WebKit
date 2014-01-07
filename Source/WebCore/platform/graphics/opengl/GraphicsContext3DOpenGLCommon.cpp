@@ -44,6 +44,7 @@
 #include "IntSize.h"
 #include "Logging.h"
 #include "NotImplemented.h"
+#include "TemporaryOpenGLSetting.h"
 #include <cstring>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
@@ -196,10 +197,8 @@ void GraphicsContext3D::prepareTexture()
 
     makeContextCurrent();
 
-    GLboolean isScissorEnabled = ::glIsEnabled(GL_SCISSOR_TEST);
-    ::glDisable(GL_SCISSOR_TEST);
-    GLboolean isDitherEnabled = ::glIsEnabled(GL_DITHER);
-    ::glDisable(GL_DITHER);
+    TemporaryOpenGLSetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
+    TemporaryOpenGLSetting scopedDither(GL_SCISSOR_TEST, GL_FALSE);
     
     if (m_attrs.antialias)
         resolveMultisamplingIfNecessary();
@@ -214,11 +213,6 @@ void GraphicsContext3D::prepareTexture()
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
     ::glFinish();
     m_layerComposited = true;
-
-    if (isScissorEnabled)
-        ::glEnable(GL_SCISSOR_TEST);
-    if (isDitherEnabled)
-        ::glEnable(GL_DITHER);
 }
 #endif
 
@@ -284,8 +278,6 @@ void GraphicsContext3D::reshape(int width, int height)
     GLint clearStencil = 0;
     GLboolean colorMask[] = {GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE}, depthMask = GL_TRUE;
     GLuint stencilMask = 0xffffffff;
-    GLboolean isScissorEnabled = GL_FALSE;
-    GLboolean isDitherEnabled = GL_FALSE;
     GLbitfield clearMask = GL_COLOR_BUFFER_BIT;
     ::glGetFloatv(GL_COLOR_CLEAR_VALUE, clearColor);
     ::glClearColor(0, 0, 0, 0);
@@ -305,10 +297,9 @@ void GraphicsContext3D::reshape(int width, int height)
         ::glStencilMaskSeparate(GL_FRONT, 0xffffffff);
         clearMask |= GL_STENCIL_BUFFER_BIT;
     }
-    isScissorEnabled = ::glIsEnabled(GL_SCISSOR_TEST);
-    ::glDisable(GL_SCISSOR_TEST);
-    isDitherEnabled = ::glIsEnabled(GL_DITHER);
-    ::glDisable(GL_DITHER);
+
+    TemporaryOpenGLSetting scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
+    TemporaryOpenGLSetting scopedDither(GL_SCISSOR_TEST, GL_FALSE);
 
     ::glClear(clearMask);
 
@@ -322,14 +313,6 @@ void GraphicsContext3D::reshape(int width, int height)
         ::glClearStencil(clearStencil);
         ::glStencilMaskSeparate(GL_FRONT, stencilMask);
     }
-    if (isScissorEnabled)
-        ::glEnable(GL_SCISSOR_TEST);
-    else
-        ::glDisable(GL_SCISSOR_TEST);
-    if (isDitherEnabled)
-        ::glEnable(GL_DITHER);
-    else
-        ::glDisable(GL_DITHER);
 
     if (mustRestoreFBO)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
