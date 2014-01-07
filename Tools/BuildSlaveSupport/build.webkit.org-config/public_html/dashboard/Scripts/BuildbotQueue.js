@@ -88,20 +88,20 @@ BuildbotQueue.prototype = {
         return this.iterations[0];
     },
 
-    get firstRecentFailedIteration()
+    get firstRecentUnsuccessfulIteration()
     {
         if (!this.iterations.length)
             return null;
 
         for (var i = 0; i < this.iterations.length; ++i) {
-            if (!this.iterations[i].finished || this.iterations[i].failed)
+            if (!this.iterations[i].finished || !this.iterations[i].successful)
                 continue;
-            if (this.iterations[i - 1] && this.iterations[i - 1].failed)
+            if (this.iterations[i - 1] && this.iterations[i - 1].finished && !this.iterations[i - 1].successful)
                 return this.iterations[i - 1];
             return null;
         }
 
-        if (this.iterations[this.iterations.length - 1].failed)
+        if (!this.iterations[this.iterations.length - 1].successful)
             return this.iterations[this.iterations.length - 1];
 
         return null;
@@ -121,7 +121,7 @@ BuildbotQueue.prototype = {
     get mostRecentSuccessfulIteration()
     {
         for (var i = 0; i < this.iterations.length; ++i) {
-            if (!this.iterations[i].finished || this.iterations[i].failed)
+            if (!this.iterations[i].finished || !this.iterations[i].successful)
                 continue;
             return this.iterations[i];
         }

@@ -59,11 +59,6 @@ WebKitBuildbot.prototype = {
     constructor: WebKitBuildbot,
     __proto__: Buildbot.prototype,
 
-    buildLogURLForIteration: function(iteration)
-    {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/compile-webkit/logs/stdio/text";
-    },
-
     layoutTestResultsDirectoryURLForIteration: function(iteration)
     {
         return this.baseURL + "results/" + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent("r" + iteration.openSourceRevision + " (" + iteration.id + ")");

@@ -1,3 +1,46 @@
+2014-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Improve display of failed builds at build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=126542
+        <rdar://problem/15753550>
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        Instead of hardcoding step name, look for the first step that failed.
+        While at it, added a popover with more links. There are multiple, and it's good
+        to have a choice of which one to look at in each situation.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.get successful): Being successful is not the opposite
+        of having failed. Many iterations are interrupted for whatever reason internal to
+        Buildbot, and these are suppoed to be orange, not red.
+        (BuildbotIteration.prototype.get productive): Changed to exclude inerrupted iterations,
+        not only WillRetry ones.
+        (BuildbotIteration.prototype.get failed): Changed to only include iterations that
+        actually failed, more likely indicating a problem with code base.
+        (BuildbotIteration.prototype.get firstFailedStepName):
+        (BuildbotIteration.prototype.failureLogURL): Expose informaiton about failure.
+        (BuildbotIteration.prototype.get failureLogs): Ditto.
+        (BuildbotIteration.prototype.update): Store complete results for the failed step.
+        Not every failure stops the iteration, so we could have multiple failed steps,
+        but let's see if seeing just the first one will be enough.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype.get firstRecentUnsuccessfulIteration): Updated to work in
+        terms of successful iterations.
+        (BuildbotQueue.prototype.get mostRecentSuccessfulIteration): Ditto.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus): Updated to work in
+        terms of successful iterations.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        Removed code to create a path to build output, we now take it from results JSON.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/QueueView.css:
+        Added styles for the new popover.
+
 2014-01-07  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
 
         defined constants should use all uppercase names with words separated by underscores.

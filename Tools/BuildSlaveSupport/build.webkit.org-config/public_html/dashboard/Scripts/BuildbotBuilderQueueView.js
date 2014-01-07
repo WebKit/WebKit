@@ -62,36 +62,43 @@ BuildbotBuilderQueueView.prototype = {
         {
             this._appendPendingRevisionCount(queue);
 
-            var firstRecentFailedIteration = queue.firstRecentFailedIteration;
-            if (firstRecentFailedIteration && firstRecentFailedIteration.loaded) {
+            var firstRecentUnsuccessfulIteration = queue.firstRecentUnsuccessfulIteration;
+            if (firstRecentUnsuccessfulIteration && firstRecentUnsuccessfulIteration.loaded) {
                 var failureCount = queue.recentFailedIterationCount;
-                var message = this.revisionContentForIteration(firstRecentFailedIteration);
-                if (firstRecentFailedIteration.webkitCompilationFailed) {
-                    // Link directly to compiler output.
-                    // FIXME: Results JSON may contain multiple log links, including one for nicely filtered result.
-                    // Which one is best to use? Do we want the filtered one in a popover?
-                    var url = queue.buildbot.buildLogURLForIteration(firstRecentFailedIteration);
+                var message = this.revisionContentForIteration(firstRecentUnsuccessfulIteration);
+                if (firstRecentUnsuccessfulIteration.failed) {
+                    // Assume it was a build step that failed, and link directly to output.
+                    var url = firstRecentUnsuccessfulIteration.failureLogURL("build log");
+                    if (!url)
+                        url = firstRecentUnsuccessfulIteration.failureLogURL("stdio");
                     var status = StatusLineView.Status.Bad;
-                } else {
-                    // Some other step failed, link to main buildbot page for the iteration.
-                    var url = queue.buildbot.buildPageURLForIteration(firstRecentFailedIteration);
+                } else
                     var status = StatusLineView.Status.Danger;
-                }
-                var status = new StatusLineView(message, status, failureCount > 1 ? "failures since" : firstRecentFailedIteration.text, failureCount > 1 ? failureCount : null, url);
+
+                // Show a popover when the URL is not a main build page one, because there are usually multiple logs, and it's good to provide a choice.
+                var needsPopover = !!url;
+
+                // Some other step failed, link to main buildbot page for the iteration.
+                if (!url)
+                    url = queue.buildbot.buildPageURLForIteration(firstRecentUnsuccessfulIteration);
+                var status = new StatusLineView(message, status, failureCount > 1 ? "failures since" : firstRecentUnsuccessfulIteration.text, failureCount > 1 ? failureCount : null, url);
                 this.element.appendChild(status.element);
+
+                if (needsPopover)
+                    new PopoverTracker(status.statusBubbleElement, this._presentPopoverFailureLogs.bind(this), firstRecentUnsuccessfulIteration);
             }
 
             var mostRecentSuccessfulIteration = queue.mostRecentSuccessfulIteration;
             if (mostRecentSuccessfulIteration && mostRecentSuccessfulIteration.loaded) {
                 var message = this.revisionContentForIteration(mostRecentSuccessfulIteration);
                 var url = queue.buildbot.buildPageURLForIteration(mostRecentSuccessfulIteration);
-                var status = new StatusLineView(message, StatusLineView.Status.Good, firstRecentFailedIteration ? "last successful build" : "latest build", null, url);
+                var status = new StatusLineView(message, StatusLineView.Status.Good, firstRecentUnsuccessfulIteration ? "last successful build" : "latest build", null, url);
                 this.element.appendChild(status.element);
             } else {
-                var status = new StatusLineView("unknown", StatusLineView.Status.Neutral, firstRecentFailedIteration ? "last successful build" : "latest build");            
+                var status = new StatusLineView("unknown", StatusLineView.Status.Neutral, firstRecentUnsuccessfulIteration ? "last successful build" : "latest build");            
                 this.element.appendChild(status.element);
 
-                if (firstRecentFailedIteration) {
+                if (firstRecentUnsuccessfulIteration) {
                     // We have a failed iteration but no successful. It might be further back in time.
                     // Update all the iterations so we get more history.
                     queue.iterations.forEach(function(iteration) { iteration.update(); });
@@ -120,5 +127,45 @@ BuildbotBuilderQueueView.prototype = {
         appendBuildArchitecture.call(this, this.universalDebugQueues, this.hasMultipleDebugBuilds ? "Debug (Universal)" : "Debug");
         appendBuildArchitecture.call(this, this.sixtyFourBitDebugQueues, this.hasMultipleDebugBuilds ? "Debug (64-bit)" : "Debug");
         appendBuildArchitecture.call(this, this.thirtyTwoBitDebugQueues, this.hasMultipleDebugBuilds ? "Debug (32-bit)" : "Debug");
+    },
+
+    _presentPopoverFailureLogs: function(element, popover, iteration)
+    {
+        var content = document.createElement("div");
+        content.className = "build-logs-popover";
+
+        function addLog(name, url) {
+            var line = document.createElement("a");
+            line.className = "build-log-link";
+            line.href = url;
+            line.textContent = name;
+            line.target = "_blank";
+            content.appendChild(line);
+        }
+
+        var title = document.createElement("div");
+        title.className = "build-logs-popover-title";
+        title.textContent = iteration.queue.id;
+        content.appendChild(title);
+        
+        var builderPageLine = document.createElement("a");
+        builderPageLine.className = "build-page-link";
+        builderPageLine.href = iteration.queue.buildbot.buildPageURLForIteration(iteration);
+        builderPageLine.textContent = "build #" + iteration.id;
+        builderPageLine.target = "_blank";
+        content.appendChild(builderPageLine);
+
+        var logsHeadingLine = document.createElement("div");
+        logsHeadingLine.className = "build-logs-heading";
+        logsHeadingLine.textContent = iteration.firstFailedStepName + " failed";
+        content.appendChild(logsHeadingLine);
+
+        for (var i = 0, end = iteration.failureLogs.length; i < end; ++i)
+            addLog(iteration.failureLogs[i][0], iteration.failureLogs[i][1]);
+
+        var rect = Dashboard.Rect.rectFromClientRect(element.getBoundingClientRect());
+        popover.content = content;
+        popover.present(rect, [Dashboard.RectEdge.MIN_Y, Dashboard.RectEdge.MAX_Y, Dashboard.RectEdge.MAX_X, Dashboard.RectEdge.MIN_X]);
+        return true;
     }
 };

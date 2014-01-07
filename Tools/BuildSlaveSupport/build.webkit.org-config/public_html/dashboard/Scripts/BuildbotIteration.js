@@ -76,9 +76,51 @@ BuildbotIteration.prototype = {
         this._finished = x;
     },
 
+    get successful()
+    {
+        return this._result === BuildbotIteration.SUCCESS;
+    },
+
     get productive()
     {
-        return this.loaded && this._finished && !this.willRetry;
+        return this.loaded && this._finished && this._result !== BuildbotIteration.EXCEPTION && this._result !== BuildbotIteration.RETRY;
+    },
+
+    // It is not a real failure if Buildbot itself failed with codes like EXCEPTION or RETRY.
+    get failed()
+    {
+        return this._result === BuildbotIteration.FAILURE;
+    },
+
+    get firstFailedStepName()
+    {
+        if (!this._firstFailedStep)
+            return undefined;
+        return this._firstFailedStep.name;
+    },
+
+    failureLogURL: function(kind)
+    {
+        if (!this.failed)
+            return undefined;
+
+        console.assert(this._firstFailedStep);
+
+        for (var i = 0; i < this._firstFailedStep.logs.length; ++i) {
+            if (this._firstFailedStep.logs[i][0] == kind)
+                return this._firstFailedStep.logs[i][1];
+        }
+
+        return undefined;
+    },
+
+    get failureLogs()
+    {
+        if (!this.failed)
+            return undefined;
+
+        console.assert(this._firstFailedStep);
+        return this._firstFailedStep.logs;
     },
 
     get previousProductiveIteration()
@@ -164,10 +206,6 @@ BuildbotIteration.prototype = {
             var internalRevisionProperty = data.properties.findFirst(function(property) { return property[0] === "internal_got_revision"; });
             this.internalRevision = internalRevisionProperty ? parseInt(internalRevisionProperty[1], 10) : null;
 
-            var compileWebKitStep = data.steps.findFirst(function(step) { return step.name === "compile-webkit"; });
-            if (compileWebKitStep)
-                this.webkitCompilationFailed = compileWebKitStep.results[0] !== BuildbotIteration.SUCCESS;
-
             var layoutTestResults = collectTestResults.call(this, data, "layout-test");
             this.layoutTestResults = layoutTestResults ? new BuildbotTestResults(this, layoutTestResults) : null;
 
@@ -191,8 +229,10 @@ BuildbotIteration.prototype = {
 
             this.loaded = true;
 
-            this.failed = !!data.results;
-            this.willRetry = data.results === BuildbotIteration.RETRY;
+            this._firstFailedStep = data.steps.findFirst(function(step) { return step.results[0] === BuildbotIteration.FAILURE; });
+
+            console.assert(data.results === null || typeof data.results === "number");
+            this._result = data.results;
 
             this.text = data.text.join(" ");
 

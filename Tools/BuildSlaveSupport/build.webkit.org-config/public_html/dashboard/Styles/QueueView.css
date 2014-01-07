@@ -63,6 +63,26 @@
     height: 7px;
 }
 
+.build-logs-popover {
+    font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
+    color: rgb(145, 135, 95);
+    font-size: 12px;
+    text-align: left;
+    padding: 1px 6px 1px 6px;
+}
+
+.build-logs-popover .build-logs-heading {
+    display: inline;
+}
+
+.build-logs-popover .build-page-link {
+    display: block;
+}
+
+.build-logs-popover .build-log-link {
+    padding-left: 5px;
+}
+
 .test-results-popover {
     font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
     color: rgb(145, 135, 95);

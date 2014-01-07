@@ -66,7 +66,7 @@ BuildbotTesterQueueView.prototype = {
                 var perlTestResults = iteration.perlTestResults || {failureCount: 0};
                 var bindingTestResults = iteration.bindingTestResults || {errorOccurred: false};
 
-                if (!iteration.failed) {
+                if (iteration.successful) {
                     var status = new StatusLineView(messageElement, StatusLineView.Status.Good, "all tests passed");
                     limit = 0;
                 } else if (!iteration.productive) {
