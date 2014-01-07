@@ -607,11 +607,11 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             }
             m_updateScrollbarsPass--;
         }
-
-        if (scrollbarAddedOrRemoved)
-            addedOrRemovedScrollbar();
     }
-    
+
+    if (scrollbarAddedOrRemoved)
+        addedOrRemovedScrollbar();
+
     // Set up the range (and page step/line step), but only do this if we're not in a nested call (to avoid
     // doing it multiple times).
     if (m_updateScrollbarsPass)
