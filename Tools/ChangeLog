@@ -1,3 +1,16 @@
+2014-01-07  Alberto Garcia  <berto@igalia.com>
+
+        [GTK][EFL] Use function jhbuildWrapperPrefixIfNeeded to run launcher
+        https://bugs.webkit.org/show_bug.cgi?id=117275
+
+        Reviewed by Carlos Garcia Campos.
+
+        If we are not using the internal jhbuild we must not use the
+        jhbuild-wrapper script, else it will try to download and install
+        it.
+
+        * Scripts/run-launcher:
+
 2014-01-07  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose aria-checked mixed state as ATK_STATE_INDETERMINATE
