@@ -1285,7 +1285,7 @@ void ArgumentCoder<WebCore::ScrollableAreaParameters>::encode(ArgumentEncoder& e
     encoder.encodeEnum(parameters.verticalScrollbarMode);
 
     encoder << parameters.hasEnabledHorizontalScrollbar;
-    encoder << parameters.hasEnabledHorizontalScrollbar;
+    encoder << parameters.hasEnabledVerticalScrollbar;
 }
 
 bool ArgumentCoder<WebCore::ScrollableAreaParameters>::decode(ArgumentDecoder& decoder, WebCore::ScrollableAreaParameters& params)
