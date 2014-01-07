@@ -362,8 +362,6 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
     , m_lastScriptIdentifier(0)
     , m_screenWidthOverride(0)
     , m_screenHeightOverride(0)
-    , m_fontScaleFactorOverride(1)
-    , m_fitWindowOverride(false)
     , m_enabled(false)
     , m_isFirstLayoutAfterOnLoad(false)
     , m_originalScriptExecutionDisabled(false)
@@ -413,15 +411,9 @@ void InspectorPageAgent::disable(ErrorString*)
     setEmulatedMedia(0, "");
     setContinuousPaintingEnabled(0, false);
 
-    if (!deviceMetricsChanged(0, 0, 1, false))
-        return;
-
     // When disabling the agent, reset the override values if necessary.
-    updateViewMetrics(0, 0, 1, false);
     m_screenWidthOverride = 0;
     m_screenHeightOverride = 0;
-    m_fontScaleFactorOverride = 1;
-    m_fitWindowOverride = false;
 }
 
 void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source, String* identifier)
@@ -690,46 +682,6 @@ void InspectorPageAgent::setDocumentContent(ErrorString* errorString, const Stri
         return;
     }
     DOMPatchSupport::patchDocument(document, html);
-}
-
-void InspectorPageAgent::canOverrideDeviceMetrics(ErrorString*, bool* result)
-{
-    *result = m_client->canOverrideDeviceMetrics();
-}
-
-void InspectorPageAgent::setDeviceMetricsOverride(ErrorString* errorString, int width, int height, double fontScaleFactor, bool fitWindow)
-{
-    const static long maxDimension = 10000000;
-
-    if (width < 0 || height < 0 || width > maxDimension || height > maxDimension) {
-        *errorString = makeString("Width and height values must be positive, not greater than ", String::number(maxDimension));
-        return;
-    }
-
-    if (!width ^ !height) {
-        *errorString = "Both width and height must be either zero or non-zero at once";
-        return;
-    }
-
-    if (fontScaleFactor <= 0) {
-        *errorString = "fontScaleFactor must be positive";
-        return;
-    }
-
-    if (!deviceMetricsChanged(width, height, fontScaleFactor, fitWindow))
-        return;
-
-    m_screenWidthOverride = width;
-    m_screenHeightOverride = height;
-    m_fontScaleFactorOverride = fontScaleFactor;
-    m_fitWindowOverride = fitWindow;
-
-    updateViewMetrics(width, height, fontScaleFactor, fitWindow);
-}
-
-bool InspectorPageAgent::deviceMetricsChanged(int width, int height, double fontScaleFactor, bool fitWindow)
-{
-    return width != m_screenWidthOverride || height != m_screenHeightOverride || fontScaleFactor != m_fontScaleFactorOverride || fitWindow != m_fitWindowOverride;
 }
 
 void InspectorPageAgent::setShowPaintRects(ErrorString*, bool show)
@@ -1092,16 +1044,6 @@ PassRefPtr<Inspector::TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::
         childrenArray->addItem(buildObjectForFrameTree(child));
     }
     return result;
-}
-
-void InspectorPageAgent::updateViewMetrics(int width, int height, double fontScaleFactor, bool fitWindow)
-{
-    m_client->overrideDeviceMetrics(width, height, static_cast<float>(fontScaleFactor), fitWindow);
-
-    Document* document = mainFrame()->document();
-    if (document)
-        document->styleResolverChanged(RecalcStyleImmediately);
-    InspectorInstrumentation::mediaQueryResultChanged(document);
 }
 
 #if ENABLE(TOUCH_EVENTS)

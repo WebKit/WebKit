@@ -112,8 +112,6 @@ public:
     virtual void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>>&);
     virtual void searchInResources(ErrorString*, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::SearchResult>>&);
     virtual void setDocumentContent(ErrorString*, const String& frameId, const String& html);
-    virtual void canOverrideDeviceMetrics(ErrorString*, bool*);
-    virtual void setDeviceMetricsOverride(ErrorString*, int width, int height, double fontScaleFactor, bool fitWindow);
     virtual void setShowPaintRects(ErrorString*, bool show);
     virtual void canShowDebugBorders(ErrorString*, bool*);
     virtual void setShowDebugBorders(ErrorString*, bool show);
@@ -185,8 +183,6 @@ public:
 
 private:
     InspectorPageAgent(InstrumentingAgents*, Page*, InspectorAgent*, InjectedScriptManager*, InspectorClient*, InspectorOverlay*);
-    bool deviceMetricsChanged(int width, int height, double fontScaleFactor, bool fitWindow);
-    void updateViewMetrics(int, int, double, bool);
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchEventEmulationInPage(bool);
 #endif
@@ -213,8 +209,6 @@ private:
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
     int m_screenWidthOverride;
     int m_screenHeightOverride;
-    double m_fontScaleFactorOverride;
-    bool m_fitWindowOverride;
     bool m_enabled;
     bool m_isFirstLayoutAfterOnLoad;
     bool m_originalScriptExecutionDisabled;

@@ -86,11 +86,6 @@ void InspectorClientBlackBerry::clearBrowserCookies()
     m_webPagePrivate->m_client->clearCookies();
 }
 
-bool InspectorClientBlackBerry::canOverrideDeviceMetrics()
-{
-    return true;
-}
-
 void InspectorClientBlackBerry::overrideDeviceMetrics(int width, int height, float fontScaleFactor, bool)
 {
     // Note: when width and height = 0, and fontScaleFactor = 1, this is the signal for restoring to default size.

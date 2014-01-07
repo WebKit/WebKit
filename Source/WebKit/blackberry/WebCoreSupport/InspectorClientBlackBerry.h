@@ -55,7 +55,6 @@ public:
     virtual bool canClearBrowserCookies() { return true; }
     virtual void paintInspectorOverlay(WebCore::GraphicsContext&);
 
-    virtual bool canOverrideDeviceMetrics();
     virtual void overrideDeviceMetrics(int, int, float, bool);
     virtual bool supportsFrameInstrumentation();
 
