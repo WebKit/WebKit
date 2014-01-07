@@ -1,3 +1,23 @@
+2014-01-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r157851): trailing space inside an editable region could be erroneously collapsed
+        https://bugs.webkit.org/show_bug.cgi?id=126549
+
+        Reviewed by Sam Weinig.
+
+        The regression was caused by erroneous use of m_currentCharacterIsSpace in place of m_currentCharacterIsWS.
+
+        See the following two lines before the refactoring:
+        http://trac.webkit.org/browser/trunk/Source/WebCore/rendering/RenderBlockLineLayout.cpp?rev=157850#L3074
+        http://trac.webkit.org/browser/trunk/Source/WebCore/rendering/RenderBlockLineLayout.cpp?rev=157850#L3198
+
+        I've also cross-checked other places where m_currentCharacterIsSpace and m_currentCharacterIsWS are used.
+
+        Test: editing/inserting/inserting-trailing-space-and-letter.html
+
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleText):
+
 2014-01-06  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove canOverrideDeviceMetrics and setDeviceMetricsOverride from protocol
