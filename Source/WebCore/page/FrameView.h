@@ -445,6 +445,9 @@ public:
 
     void addTrackedRepaintRect(const IntRect&);
 
+    void setExposedRect(FloatRect);
+    FloatRect exposedRect() const { return m_exposedRect; }
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) OVERRIDE;
     virtual void scrollContentsSlowPath(const IntRect& updateRect) OVERRIDE;
@@ -629,6 +632,8 @@ private:
     Vector<IntRect> m_trackedRepaintRects;
 
     bool m_shouldUpdateWhileOffscreen;
+
+    FloatRect m_exposedRect;
 
     unsigned m_deferSetNeedsLayouts;
     bool m_setNeedsLayoutWasDeferred;

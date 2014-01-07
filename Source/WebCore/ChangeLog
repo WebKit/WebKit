@@ -1,3 +1,52 @@
+2014-01-07  Tim Horton  <timothy_horton@apple.com>
+
+        TileController can fail to receive exposedRect from the drawing area if set at the wrong time
+        https://bugs.webkit.org/show_bug.cgi?id=126536
+
+        Reviewed by Anders Carlsson.
+
+        Move exposedRect to FrameView so it can be pushed in from WebKit before we have
+        a TiledBacking, and can be retrieved by the TiledBacking when it needs to.
+
+        * WebCore.exp.in:
+        Export some things.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::setExposedRect):
+        * page/FrameView.h:
+        Store the exposed rect on FrameView. When it changes, if the main frame
+        has a TiledBacking, inform it of the change.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::exposedRect):
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        Plumbing so that TileController can retrieve the exposedRect from FrameView.
+
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::platformCALayerExposedRect):
+        (WebCore::TileController::tilesWouldChangeForVisibleRect):
+        (WebCore::TileController::exposedRectDidChange):
+        (WebCore::TileController::computeTileCoverageRect):
+        (WebCore::TileController::revalidateTiles):
+        (WebCore::TileController::updateTileCoverageMap):
+        Don't store the exposed rect or clipsToExposedRect on TileController.
+        Instead, retrieve it from our client.
+        Make use of the fact that we can test if a rect is infinite
+        instead of having a separate boolean property for that.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::computeTileCoverage):
+        (WebCore::RenderLayerBacking::exposedRect):
+        Hand the FrameView's exposedRect back to our GraphicsLayer.
+        We only support clipping for the main frame TileController for now.
+
+        * rendering/RenderLayerBacking.h:
+
 2014-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r161381): [GTK] Rendering is broken in GTK after r161381

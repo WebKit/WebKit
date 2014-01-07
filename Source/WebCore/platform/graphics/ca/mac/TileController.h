@@ -102,9 +102,7 @@ private:
     // TiledBacking member functions.
     virtual void setVisibleRect(const FloatRect&) OVERRIDE;
     virtual bool tilesWouldChangeForVisibleRect(const FloatRect&) const OVERRIDE;
-    virtual void setExposedRect(const FloatRect&) OVERRIDE;
-    virtual bool clipsToExposedRect() OVERRIDE { return m_clipsToExposedRect; }
-    virtual void setClipsToExposedRect(bool) OVERRIDE;
+    virtual void exposedRectDidChange() OVERRIDE;
     virtual void prepopulateRect(const FloatRect&) OVERRIDE;
     virtual void setIsInWindow(bool) OVERRIDE;
     virtual void setTileCoverage(TileCoverage) OVERRIDE;
@@ -146,6 +144,7 @@ private:
 
     virtual void platformCALayerSetNeedsToRevalidateTiles() OVERRIDE { }
     virtual float platformCALayerDeviceScaleFactor() const OVERRIDE;
+    virtual FloatRect platformCALayerExposedRect() const OVERRIDE;
 
     IntRect bounds() const;
     IntRect boundsWithoutMargin() const;
@@ -200,7 +199,6 @@ private:
     IntSize m_tileSize;
     FloatRect m_visibleRect;
     FloatRect m_visibleRectAtLastRevalidate;
-    FloatRect m_exposedRect; // The exposed area of containing platform views.
     IntRect m_boundsAtLastRevalidate;
     
     Vector<FloatRect> m_secondaryTileCoverageRects;
@@ -245,7 +243,6 @@ private:
     bool m_unparentsOffscreenTiles;
     bool m_acceleratesDrawing;
     bool m_tilesAreOpaque;
-    bool m_clipsToExposedRect;
     bool m_hasTilesWithTemporaryScaleFactor; // Used to make low-res tiles when zooming.
 
     Color m_tileDebugBorderColor;

@@ -28,7 +28,7 @@
 
 #include "DrawingAreaInfo.h"
 #include "LayerTreeContext.h"
-#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/ViewState.h>
 #include <wtf/Forward.h>
@@ -86,8 +86,8 @@ public:
     virtual void updatePreferences(const WebPreferencesStore&) { }
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
 
-    virtual void setExposedRect(const WebCore::FloatRect&) { }
-    virtual void setClipsToExposedRect(bool) { }
+    virtual void setExposedRect(const WebCore::FloatRect&) = 0;
+    virtual WebCore::FloatRect exposedRect() const = 0;
     virtual void mainFrameScrollabilityChanged(bool) { }
 
     virtual bool supportsAsyncScrolling() { return false; }
