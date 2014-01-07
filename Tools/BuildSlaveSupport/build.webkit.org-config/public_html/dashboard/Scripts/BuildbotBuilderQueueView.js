@@ -143,18 +143,9 @@ BuildbotBuilderQueueView.prototype = {
             content.appendChild(line);
         }
 
-        var title = document.createElement("div");
-        title.className = "build-logs-popover-title";
-        title.textContent = iteration.queue.id;
-        content.appendChild(title);
+        this._addIterationHeadingToPopover(iteration, content);
+        this._addDividerToPopover(content);
         
-        var builderPageLine = document.createElement("a");
-        builderPageLine.className = "build-page-link";
-        builderPageLine.href = iteration.queue.buildbot.buildPageURLForIteration(iteration);
-        builderPageLine.textContent = "build #" + iteration.id;
-        builderPageLine.target = "_blank";
-        content.appendChild(builderPageLine);
-
         var logsHeadingLine = document.createElement("div");
         logsHeadingLine.className = "build-logs-heading";
         logsHeadingLine.textContent = iteration.firstFailedStepName + " failed";

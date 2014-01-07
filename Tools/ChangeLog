@@ -1,5 +1,37 @@
 2014-01-07  Alexey Proskuryakov  <ap@apple.com>
 
+        Popovers at build.webkit.org/dashboard could have titles
+        https://bugs.webkit.org/show_bug.cgi?id=126495
+
+        Reviewed by Timothy Hatcher.
+
+        Added titles to all popovers except for pending revisions one, which I would like
+        to improve more (probably add an ETA).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        (BuildbotBuilderQueueView.prototype._presentPopoverFailureLogs): Moved code for 
+        adding a title to base class.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype._presentPopoverForPendingCommits): Moved code for inserting
+        a divider to a separate function.
+        (BuildbotQueueView.prototype._presentPopoverForRevisionRange): Added a title.
+        (BuildbotQueueView.prototype._presentNoChangePopover): Updated the text to match
+        title from above function.
+        (BuildbotQueueView.prototype._revisionPopoverContentForIteration): Renamed "contentElement"
+        variable to "content" to match all other code.
+        (BuildbotQueueView.prototype._addIterationHeadingToPopover): Added.
+        (BuildbotQueueView.prototype._addDividerToPopover): Added.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype._popoverContentForLayoutTestRegressions): Add a title.
+        (BuildbotTesterQueueView.prototype._presentPopoverForLayoutTestRegressions): Ditto.
+        (BuildbotTesterQueueView.prototype._presentPopoverForMultipleFailureKinds): Ditto.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/QueueView.css:
+
+2014-01-07  Alexey Proskuryakov  <ap@apple.com>
+
         There should be a delay when quickly switching to a different popover at build.webkit.org/dashboard
         https://bugs.webkit.org/show_bug.cgi?id=126472
 

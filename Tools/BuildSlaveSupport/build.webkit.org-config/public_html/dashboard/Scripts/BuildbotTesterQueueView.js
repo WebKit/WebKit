@@ -140,6 +140,9 @@ BuildbotTesterQueueView.prototype = {
         var content = document.createElement("div");
         content.className = "test-results-popover";
 
+        this._addIterationHeadingToPopover(iteration, content, "layout test failures");
+        this._addDividerToPopover(content);
+
         if (!iteration.layoutTestResults.regressions) {
             var message = document.createElement("div");
             message.className = "loading-failure";
@@ -199,6 +202,9 @@ BuildbotTesterQueueView.prototype = {
             var content = document.createElement("div");
             content.className = "test-results-popover";
 
+            this._addIterationHeadingToPopover(iteration, content, "layout test failures");
+            this._addDividerToPopover(content);
+
             var loadingIndicator = document.createElement("div");
             loadingIndicator.className = "loading-indicator";
             loadingIndicator.textContent = "Loading\u2026";
@@ -235,6 +241,9 @@ BuildbotTesterQueueView.prototype = {
 
         var content = document.createElement("div");
         content.className = "test-results-popover";
+
+        this._addIterationHeadingToPopover(iteration, content);
+        this._addDividerToPopover(content);
 
         if (layoutTestResults.failureCount) {
             var message = (layoutTestResults.tooManyFailures ? layoutTestResults.failureCount + "\uff0b" : layoutTestResults.failureCount) + "\u00a0" +

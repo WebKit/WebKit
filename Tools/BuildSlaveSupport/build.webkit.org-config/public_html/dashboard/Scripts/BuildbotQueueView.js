@@ -166,11 +166,8 @@ BuildbotQueueView.prototype = {
         if (latestProductiveIteration.internalRevision && internalTrac.latestRecordedRevisionNumber)
             var linesForInternal = this._popoverLinesForCommitRange(internalTrac, latestProductiveIteration.internalRevision + 1, internalTrac.latestRecordedRevisionNumber);
 
-        if (linesForOpenSource.length && linesForInternal.length) {
-            var divider = document.createElement("div");
-            divider.className = "divider";
-            content.appendChild(divider);
-        }
+        if (linesForOpenSource.length && linesForInternal.length)
+            this._addDividerToPopover(content);
 
         for (var i = 0; i != linesForInternal.length; ++i)
             content.appendChild(linesForInternal[i]);
@@ -191,6 +188,12 @@ BuildbotQueueView.prototype = {
         if (!linesForCommits.length)
             return false;
 
+        var line = document.createElement("div");
+        line.className = "title";
+        line.textContent = "new commits in this build";
+        content.appendChild(line);
+        this._addDividerToPopover(content);
+
         for (var i = 0; i != linesForCommits.length; ++i)
             content.appendChild(linesForCommits[i]);
 
@@ -208,7 +211,7 @@ BuildbotQueueView.prototype = {
 
         var line = document.createElement("div");
         line.className = "no-commits";
-        line.textContent = "no new commits in this buildbot queue iteration";
+        line.textContent = "no new commits in this build";
         
         content.appendChild(line);
 
@@ -221,9 +224,9 @@ BuildbotQueueView.prototype = {
 
     _revisionPopoverContentForIteration: function(iteration, internal)
     {
-        var contentElement = document.createElement("span");
-        contentElement.textContent = "r" + (internal ? iteration.internalRevision : iteration.openSourceRevision);
-        contentElement.classList.add("revision-number");
+        var content = document.createElement("span");
+        content.textContent = "r" + (internal ? iteration.internalRevision : iteration.openSourceRevision);
+        content.classList.add("revision-number");
 
         var previousIteration = iteration.previousProductiveIteration;
         if (previousIteration) {
@@ -233,12 +236,46 @@ BuildbotQueueView.prototype = {
                 lastRevision: internal ? iteration.internalRevision : iteration.openSourceRevision
             };
             if (context.firstRevision <= context.lastRevision)
-                new PopoverTracker(contentElement, this._presentPopoverForRevisionRange.bind(this), context);
+                new PopoverTracker(content, this._presentPopoverForRevisionRange.bind(this), context);
             else
-                new PopoverTracker(contentElement, this._presentNoChangePopover.bind(this), context);
+                new PopoverTracker(content, this._presentNoChangePopover.bind(this), context);
         }
 
-        return contentElement;
+        return content;
+    },
+
+    _addIterationHeadingToPopover: function(iteration, content, additionalText)
+    {
+        var title = document.createElement("div");
+        title.className = "popover-iteration-heading";
+
+        var queueName = document.createElement("span");
+        queueName.className = "queue-name";
+        queueName.textContent = iteration.queue.id;
+        title.appendChild(queueName);
+
+        var buildbotLink = document.createElement("a");
+        buildbotLink.className = "buildbot-link";
+        buildbotLink.textContent = "build #" + iteration.id;
+        buildbotLink.href = iteration.queue.buildbot.buildPageURLForIteration(iteration);
+        buildbotLink.target = "_blank";
+        title.appendChild(buildbotLink);
+
+        if (additionalText) {
+            var additionalTextElement = document.createElement("span");
+            additionalTextElement.className = "additional-text";
+            additionalTextElement.textContent = additionalText;
+            title.appendChild(additionalTextElement);
+        }
+
+        content.appendChild(title);
+    },
+
+    _addDividerToPopover: function(content)
+    {
+        var divider = document.createElement("div");
+        divider.className = "divider";
+        content.appendChild(divider);
     },
 
     revisionContentForIteration: function(iteration)
