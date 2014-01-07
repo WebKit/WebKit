@@ -1,3 +1,17 @@
+2014-01-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Typo "clipboarPrefixString"
+        https://bugs.webkit.org/show_bug.cgi?id=126595
+
+        Reviewed by Sam Weinig.
+
+        * UserInterface/ConsoleCommandResult.js:
+        (WebInspector.ConsoleCommandResult.prototype.toMessageElement):
+        (WebInspector.ConsoleCommandResult.prototype.get clipboardPrefixString):
+        * UserInterface/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype.get clipboardPrefixString):
+        (WebInspector.ConsoleMessageImpl.prototype.toClipboardString):
+
 2014-01-06  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove canOverrideDeviceMetrics and setDeviceMetricsOverride from protocol

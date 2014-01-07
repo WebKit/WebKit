@@ -664,7 +664,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
         }
     },
 
-    get clipboarPrefixString ()
+    get clipboardPrefixString()
     {
         return "[" + this.levelString + "] ";
     },
@@ -680,7 +680,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
             clipboardString = this.type === WebInspector.ConsoleMessage.MessageType.Trace ? "console.trace()" : this._message || this._messageText;
 
         if (!isPrefixOptional || this.enforcesClipboardPrefixString)
-            clipboardString = this.clipboarPrefixString + clipboardString;
+            clipboardString = this.clipboardPrefixString + clipboardString;
 
         if (isTrace) {
             this._stackTrace.forEach(function(frame) {
