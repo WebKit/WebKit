@@ -1,3 +1,11 @@
+2014-01-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Unreviewed build fix for Mountain Lion drivers.
+
+        Add new TestExpectations file for Mountain Lion.
+
+        * platform/mac-mountainlion/TestExpectations: Added.
+
 2014-01-06  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Shapes] ASSERTION FAILED: m_segmentRanges.size() < m_segments.size()

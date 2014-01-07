@@ -1,0 +1,2 @@
+# Skip some WebGL 1.0.2 conformance tests that will not work under Mountain Lion
+webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Failure ] 
