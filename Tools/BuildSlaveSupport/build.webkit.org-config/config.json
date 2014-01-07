@@ -38,8 +38,6 @@
 
                     { "name": "wincairo-1", "platform": "wincairo" },
 
-                    { "name": "wince-1", "platform": "wince" },
-
                     { "name": "efl-linux-slave-1", "platform": "efl" },
                     { "name": "efl-linux-slave-2", "platform": "efl" },
                     { "name": "efl-linux-slave-3", "platform": "efl" }
@@ -167,11 +165,6 @@
                       "slavenames": ["wincairo-1"]
                     },
                     {
-                      "name": "WinCE Release (Build)", "type": "Build", "builddir": "wince-release",
-                      "platform": "wince", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["wince-1"]
-                    },
-                    {
                       "name": "EFL Linux 64-bit Release WK1", "type": "BuildAndTestWebKit1Only", "builddir": "efl-linux-64-release-wk1",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-slave-1"]
@@ -191,7 +184,7 @@
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release", "GTK Linux 64-bit Debug WK1",
                                        "EFL Linux 64-bit Release WK1", "EFL Linux 64-bit Release WK2", "EFL Linux 32-bit Release (Build)",
-                                       "WinCairo Release", "WinCE Release (Build)"]
+                                       "WinCairo Release"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mountainlion", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple MountainLion Release (Build)", "Apple MountainLion Debug (Build)", "Apple MountainLion Release (32-bit Build)"]

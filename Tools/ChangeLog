@@ -1,3 +1,14 @@
+2014-01-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove the WinCE buildbot from build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=126517
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (appendCustomBuildFlags):
+
 2014-01-07  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Change ATK version to 2.11.4
