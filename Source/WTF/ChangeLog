@@ -1,3 +1,13 @@
+2014-01-07  David Farler  <dfarler@apple.com>
+
+        [ASAN] Building with trunk clang corrupts sandbox profile with comment from Compiler.h
+        https://bugs.webkit.org/show_bug.cgi?id=124532
+
+        Reviewed by David Kilzer.
+
+        * wtf/Compiler.h:
+        Remove this quirk - it does nothing.
+
 2014-01-06  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of ENABLE(VALUE_PROFILER). It's on all the time now.
