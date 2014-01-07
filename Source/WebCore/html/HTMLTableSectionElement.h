@@ -26,6 +26,7 @@
 #ifndef HTMLTableSectionElement_h
 #define HTMLTableSectionElement_h
 
+#include "HTMLNames.h"
 #include "HTMLTablePartElement.h"
 
 namespace WebCore {
@@ -58,6 +59,39 @@ private:
 
     virtual const StyleProperties* additionalPresentationAttributeStyle() OVERRIDE;
 };
+
+// FIXME: These manual isHTMLFoo and toHTMLFoo should be clean up by using toFoo generation template.
+inline bool isHTMLTableSectionElement(const Node& node)
+{
+    return node.hasTagName(HTMLNames::trTag) || node.hasTagName(HTMLNames::tfootTag) || node.hasTagName(HTMLNames::tbodyTag);
+}
+
+inline HTMLTableSectionElement* toHTMLTableSectionElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTableSectionElement(*node));
+    return static_cast<HTMLTableSectionElement*>(node);
+}
+
+inline const HTMLTableSectionElement* toHTMLTableSectionElement(const Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTableSectionElement(*node));
+    return static_cast<const HTMLTableSectionElement*>(node);
+}
+
+inline HTMLTableSectionElement& toHTMLTableSectionElement(Node& node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(isHTMLTableSectionElement(node));
+    return static_cast<HTMLTableSectionElement&>(node);
+}
+
+inline const HTMLTableSectionElement& toHTMLTableSectionElement(const Node& node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(isHTMLTableSectionElement(node));
+    return static_cast<const HTMLTableSectionElement&>(node);
+}
+
+void toHTMLTableSectionElement(const HTMLTableSectionElement*);
+void toHTMLTableSectionElement(const HTMLTableSectionElement&);
 
 } //namespace
 
