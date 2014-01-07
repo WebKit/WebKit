@@ -1216,6 +1216,12 @@
 - (DOMXPathResult *)evaluate:(DOMNode *)contextNode :(unsigned short)type :(DOMXPathResult *)inResult WEBKIT_DEPRECATED_MAC(10_5, 10_5);
 @end
 
+@interface DOMProgressEvent : DOMEvent 10_6
+@property (readonly) BOOL lengthComputable;
+@property (readonly) unsigned long long loaded;
+@property (readonly) unsigned long long total;
+@end
+
 // Protocols
 
 @protocol DOMEventListener <NSObject> 10_4

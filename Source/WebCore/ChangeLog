@@ -1,5 +1,13 @@
 2014-01-07  Mark Rowe  <mrowe@apple.com>
 
+        <https://webkit.org/b/126562> DOMProgressEvent has unspecified availability
+
+        Reviewed by Ryosuke Niwa.
+
+        * bindings/objc/PublicDOMInterfaces.h: Add DOMProgressEvent. It first appeared in 10.6.
+
+2014-01-07  Mark Rowe  <mrowe@apple.com>
+
         Another Mountain Lion build fix.
 
         The Mountain Lion version of NS_DEPRECATED_MAC generates a reference to a nonexistent

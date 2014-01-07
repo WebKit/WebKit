@@ -192,14 +192,17 @@ all : \
 
 REPLACE_RULES = -e s/\<WebCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
 HEADER_MIGRATE_CMD = sed $(REPLACE_RULES) $< > $@
+PUBLIC_HEADER_CHECK_CMD = @if grep -q "AVAILABLE.*TBD" "$<"; then line=$$(awk "/AVAILABLE.*TBD/ { print FNR; exit }" "$<" ); echo "$<:$$line: error: A class within a public header has unspecified availability."; false; fi
 
 $(PUBLIC_HEADERS_DIR)/DOM% : DOMDOM% MigrateHeaders.make
+	$(PUBLIC_HEADER_CHECK_CMD)
 	$(HEADER_MIGRATE_CMD)
 
 $(PRIVATE_HEADERS_DIR)/DOM% : DOMDOM% MigrateHeaders.make
 	$(HEADER_MIGRATE_CMD)
 
 $(PUBLIC_HEADERS_DIR)/% : % MigrateHeaders.make
+	$(PUBLIC_HEADER_CHECK_CMD)
 	$(HEADER_MIGRATE_CMD)
 
 $(PRIVATE_HEADERS_DIR)/% : % MigrateHeaders.make
