@@ -28,6 +28,7 @@
 
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "DrawingAreaMessages.h"
+#import "RemoteScrollingCoordinatorProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 
@@ -82,9 +83,10 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
     m_isWaitingForDidUpdateGeometry = true;
 }
 
-void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction)
+void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)
 {
     m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction);
+    m_webPageProxy->scrollingCoordinatorProxy()->updateScrollingTree(scrollingTreeTransaction);
 }
 
 } // namespace WebKit

@@ -230,12 +230,16 @@ static void encodeNodeAndDescendants(IPC::ArgumentEncoder& encoder, const Scroll
 
 void RemoteScrollingCoordinatorTransaction::encode(IPC::ArgumentEncoder& encoder) const
 {
-    encoder << m_scrollingStateTree->nodeCount();
-    
-    if (const ScrollingStateNode* rootNode = m_scrollingStateTree->rootStateNode())
-        encodeNodeAndDescendants(encoder, *rootNode);
-    
-    encoder << m_scrollingStateTree->removedNodes();
+    int numNodes = m_scrollingStateTree ? m_scrollingStateTree->nodeCount() : 0;
+    encoder << numNodes;
+
+    if (m_scrollingStateTree) {
+        if (const ScrollingStateNode* rootNode = m_scrollingStateTree->rootStateNode())
+            encodeNodeAndDescendants(encoder, *rootNode);
+
+        encoder << m_scrollingStateTree->removedNodes();
+    } else
+        encoder << Vector<ScrollingNodeID>();
 }
 
 bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteScrollingCoordinatorTransaction& transaction)

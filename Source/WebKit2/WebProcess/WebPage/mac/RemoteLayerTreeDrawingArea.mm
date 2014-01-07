@@ -30,6 +30,8 @@
 #import "GraphicsLayerCARemote.h"
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
+#import "RemoteScrollingCoordinator.h"
+#import "RemoteScrollingCoordinatorTransaction.h"
 #import "WebPage.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
@@ -319,7 +321,11 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     RemoteLayerTreeTransaction layerTransaction;
     m_remoteLayerTreeContext->buildTransaction(layerTransaction, *m_rootLayer);
 
-    m_webPage->send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree(layerTransaction));
+    RemoteScrollingCoordinatorTransaction scrollingTransaction;
+    if (m_webPage->scrollingCoordinator())
+        toRemoteScrollingCoordinator(m_webPage->scrollingCoordinator())->buildTransaction(scrollingTransaction);
+    
+    m_webPage->send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree(layerTransaction, scrollingTransaction));
 }
 
 } // namespace WebKit

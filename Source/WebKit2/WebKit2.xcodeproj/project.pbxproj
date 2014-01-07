@@ -57,6 +57,8 @@
 		0F59479D187B3B6000437857 /* RemoteScrollingTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F594797187B3B6000437857 /* RemoteScrollingTree.h */; };
 		0F5947A3187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */; };
 		0F5947A4187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */; };
+		0F5947A7187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5947A5187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp */; };
+		0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5947A6187B517600437857 /* RemoteScrollingCoordinatorMessages.h */; };
 		0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB659221208B4DB0044816C /* DrawingAreaInfo.h */; };
 		0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */; };
 		0FF24A2E1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */; };
@@ -1603,6 +1605,8 @@
 		0F594797187B3B6000437857 /* RemoteScrollingTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingTree.h; path = Scrolling/RemoteScrollingTree.h; sourceTree = "<group>"; };
 		0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteScrollingCoordinatorTransaction.cpp; path = Scrolling/RemoteScrollingCoordinatorTransaction.cpp; sourceTree = "<group>"; };
 		0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingCoordinatorTransaction.h; path = Scrolling/RemoteScrollingCoordinatorTransaction.h; sourceTree = "<group>"; };
+		0F5947A5187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteScrollingCoordinatorMessageReceiver.cpp; path = RemoteScrollingCoordinatorMessageReceiver.cpp; sourceTree = "<group>"; };
+		0F5947A6187B517600437857 /* RemoteScrollingCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingCoordinatorMessages.h; path = RemoteScrollingCoordinatorMessages.h; sourceTree = "<group>"; };
 		0FB659221208B4DB0044816C /* DrawingAreaInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaInfo.h; sourceTree = "<group>"; };
 		0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaProxyMessages.h; sourceTree = "<group>"; };
@@ -5594,6 +5598,8 @@
 				1AC1338418590C4600F3EC05 /* RemoteObjectRegistryMessages.h */,
 				0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */,
 				0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */,
+				0F5947A5187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp */,
+				0F5947A6187B517600437857 /* RemoteScrollingCoordinatorMessages.h */,
 				E18E6911169B667B009B6670 /* SecItemShimMessageReceiver.cpp */,
 				E18E6912169B667B009B6670 /* SecItemShimMessages.h */,
 				E18E6913169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp */,
@@ -6107,6 +6113,7 @@
 				BC032D7B10F4378D0058C15A /* WebDragClient.h in Headers */,
 				BCA0EF9F12332642007D3CFB /* WebEditCommandProxy.h in Headers */,
 				BC032D7D10F4378D0058C15A /* WebEditorClient.h in Headers */,
+				0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */,
 				516A4A5D120A2CCD00C05B7F /* APIError.h in Headers */,
 				1A433F0D113C53DD00FACDE9 /* WebErrors.h in Headers */,
 				BC032DB910F4380F0058C15A /* WebEvent.h in Headers */,
@@ -7597,6 +7604,7 @@
 				51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */,
 				378E1A3D181ED6FF0031007A /* APIObject.mm in Sources */,
 				51FB08FF1639DE1A00EC324A /* WebResourceLoadScheduler.cpp in Sources */,
+				0F5947A7187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp in Sources */,
 				D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */,
 				BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.mm in Sources */,
 				C0337DD8127A51B6008FF4F4 /* WebTouchEvent.cpp in Sources */,

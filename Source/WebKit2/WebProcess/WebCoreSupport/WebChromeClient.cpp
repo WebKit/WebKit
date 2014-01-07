@@ -32,6 +32,7 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "LayerTreeHost.h"
 #include "PageBanner.h"
+#include "RemoteScrollingCoordinator.h"
 #include "WebColorChooser.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -797,6 +798,15 @@ bool WebChromeClient::layerTreeStateIsFrozen() const
     return false;
 }
 #endif
+
+PassRefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page* page) const
+{
+    ASSERT(m_page->corePage() == page);
+    if (m_page->drawingArea()->type() == DrawingAreaTypeRemoteLayerTree)
+        return RemoteScrollingCoordinator::create(m_page);
+
+    return 0;
+}
 
 #if ENABLE(TOUCH_EVENTS)
 void WebChromeClient::needTouchEvents(bool needTouchEvents)

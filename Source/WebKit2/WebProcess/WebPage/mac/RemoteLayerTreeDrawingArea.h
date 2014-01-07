@@ -64,6 +64,7 @@ private:
     virtual void didUninstallPageOverlay(PageOverlay*) OVERRIDE;
     virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) OVERRIDE;
     virtual void setPageOverlayOpacity(PageOverlay*, float) OVERRIDE;
+    virtual bool supportsAsyncScrolling() OVERRIDE { return true; }
 
     virtual void setLayerTreeStateIsFrozen(bool) OVERRIDE;
 

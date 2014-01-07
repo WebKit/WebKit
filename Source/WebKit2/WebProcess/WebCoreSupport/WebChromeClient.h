@@ -227,6 +227,8 @@ private:
     virtual bool layerTreeStateIsFrozen() const OVERRIDE;
 #endif
 
+    virtual PassRefPtr<WebCore::ScrollingCoordinator> createScrollingCoordinator(WebCore::Page*) const OVERRIDE;
+
 #if ENABLE(TOUCH_EVENTS)
     virtual void needTouchEvents(bool) OVERRIDE;
 #endif

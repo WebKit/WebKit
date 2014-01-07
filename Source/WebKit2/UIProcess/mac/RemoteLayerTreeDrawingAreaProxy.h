@@ -34,6 +34,7 @@
 namespace WebKit {
 
 class RemoteLayerTreeTransaction;
+class RemoteScrollingCoordinatorTransaction;
 
 class RemoteLayerTreeDrawingAreaProxy : public DrawingAreaProxy {
 public:
@@ -51,7 +52,7 @@ private:
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     // Message handlers
-    void commitLayerTree(const RemoteLayerTreeTransaction&);
+    void commitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     
     void sendUpdateGeometry();
 

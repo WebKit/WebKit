@@ -61,6 +61,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebEditCommandProxy.h"
 #include "WebEvent.h"
+#include "WebEventConversion.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFullScreenManagerProxy.h"
@@ -92,6 +93,10 @@
 #include <WebCore/WindowFeatures.h>
 #include <wtf/NeverDestroyed.h>
 #include <stdio.h>
+
+#if ENABLE(ASYNC_SCROLLING)
+#include "RemoteScrollingCoordinatorProxy.h"
+#endif
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedLayerTreeHostProxyMessages.h"
@@ -506,6 +511,11 @@ void WebPageProxy::initializeWebPage()
 
     m_drawingArea = m_pageClient.createDrawingAreaProxy();
     ASSERT(m_drawingArea);
+
+#if ENABLE(ASYNC_SCROLLING)
+    if (m_drawingArea->type() == DrawingAreaTypeRemoteLayerTree)
+        m_scrollingCoordinatorProxy = std::make_unique<RemoteScrollingCoordinatorProxy>(*this);
+#endif
 
 #if ENABLE(INSPECTOR_SERVER)
     if (pageGroup().preferences()->developerExtrasEnabled())
@@ -1235,6 +1245,11 @@ static WebWheelEvent coalescedWheelEvent(Deque<NativeWebWheelEvent>& queue, Vect
 
 void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 {
+#if ENABLE(ASYNC_SCROLLING)
+    if (m_scrollingCoordinatorProxy && m_scrollingCoordinatorProxy->handleWheelEvent(platform(event)))
+        return;
+#endif
+
     if (!isValid())
         return;
 

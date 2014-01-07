@@ -136,6 +136,7 @@ class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
 class NativeWebWheelEvent;
 class PageClient;
+class RemoteScrollingCoordinatorProxy;
 class StringPairVector;
 class WebBackForwardList;
 class WebBackForwardListItem;
@@ -335,6 +336,8 @@ public:
     WebFrameProxy* frameSetLargestFrame() const { return m_frameSetLargestFrame.get(); }
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
+    
+    RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy.get(); }
 
     WebBackForwardList& backForwardList() { return m_backForwardList.get(); }
 
@@ -1169,6 +1172,8 @@ private:
 #endif
 
     std::unique_ptr<DrawingAreaProxy> m_drawingArea;
+    std::unique_ptr<RemoteScrollingCoordinatorProxy> m_scrollingCoordinatorProxy;
+
     Ref<WebProcessProxy> m_process;
     Ref<WebPageGroup> m_pageGroup;
     RefPtr<WebFrameProxy> m_mainFrame;

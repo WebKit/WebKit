@@ -89,6 +89,9 @@ void RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
 
 CALayer *RemoteLayerTreeHost::getLayer(GraphicsLayer::PlatformLayerID layerID) const
 {
+    if (!layerID)
+        return nil;
+
     return m_layers.get(layerID).get();
 }
 
