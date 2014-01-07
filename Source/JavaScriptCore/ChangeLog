@@ -1,3 +1,15 @@
+2014-01-07  Filip Pizlo  <fpizlo@apple.com>
+
+        ASSERT in compileArithNegate on pdfjs
+        https://bugs.webkit.org/show_bug.cgi?id=126584
+
+        Reviewed by Mark Hahnenberg.
+        
+        Check negative zero when we should check it, not when we shouldn't check it. :-/
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+
 2014-01-07  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         pushFinallyContext saves wrong m_labelScopes size

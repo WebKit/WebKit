@@ -2900,7 +2900,7 @@ void SpeculativeJIT::compileArithNegate(Node* node)
             GPRReg resultGPR = result.gpr();
             m_jit.move(op1GPR, resultGPR);
             m_jit.neg64(resultGPR);
-            if (!shouldCheckNegativeZero(node->arithMode())) {
+            if (shouldCheckNegativeZero(node->arithMode())) {
                 speculationCheck(
                     NegativeZero, JSValueRegs(), 0,
                     m_jit.branchTest64(MacroAssembler::Zero, resultGPR));
@@ -2917,7 +2917,7 @@ void SpeculativeJIT::compileArithNegate(Node* node)
         speculationCheck(
             Int52Overflow, JSValueRegs(), 0,
             m_jit.branchNeg64(MacroAssembler::Overflow, resultGPR));
-        if (!shouldCheckNegativeZero(node->arithMode())) {
+        if (shouldCheckNegativeZero(node->arithMode())) {
             speculationCheck(
                 NegativeZero, JSValueRegs(), 0,
                 m_jit.branchTest64(MacroAssembler::Zero, resultGPR));
