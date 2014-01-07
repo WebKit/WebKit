@@ -1138,6 +1138,11 @@ bool AccessibilityUIElement::isChecked() const
     return checkElementState(m_element.get(), ATK_STATE_CHECKED);
 }
 
+bool AccessibilityUIElement::isIndeterminate() const
+{
+    return checkElementState(m_element.get(), ATK_STATE_INDETERMINATE);
+}
+
 int AccessibilityUIElement::hierarchicalLevel() const
 {
     // FIXME: implement

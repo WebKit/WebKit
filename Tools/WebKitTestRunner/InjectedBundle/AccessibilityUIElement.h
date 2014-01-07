@@ -146,6 +146,7 @@ public:
     bool isValid() const;
     bool isExpanded() const;
     bool isChecked() const;
+    bool isIndeterminate() const;
     bool isVisible() const;
     bool isOffScreen() const;
     bool isCollapsed() const;

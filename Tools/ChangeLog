@@ -1,3 +1,32 @@
+2014-01-07  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-checked mixed state as ATK_STATE_INDETERMINATE
+        https://bugs.webkit.org/show_bug.cgi?id=125855
+
+        Reviewed by Mario Sanchez Prada.
+
+        Added new function isIndeterminate for testing aria-checked mixed state.
+        I provided respective, but empty function in mac port. Mac testing it differently.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getIsIndeterminate):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::isIndeterminate):
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm: Added empty function.
+        (AccessibilityUIElement::isIndeterminate):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm: Added empty function.
+        (AccessibilityUIElement::isIndeterminate):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp: Added empty function.
+        (AccessibilityUIElement::isIndeterminate):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::isIndeterminate):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::isIndeterminate):
+
 2014-01-06  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/126560> Fix incorrectness in use of some AppKit enums

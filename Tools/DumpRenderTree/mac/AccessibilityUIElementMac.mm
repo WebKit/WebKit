@@ -1385,6 +1385,12 @@ bool AccessibilityUIElement::isCollapsed() const
     return false;
 }
 
+bool AccessibilityUIElement::isIndeterminate() const
+{
+    // FIXME: implement
+    return false;
+}
+
 bool AccessibilityUIElement::isIgnored() const
 {
     BOOL result = NO;

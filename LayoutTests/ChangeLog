@@ -1,3 +1,15 @@
+2014-01-07  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-checked mixed state as ATK_STATE_INDETERMINATE
+        https://bugs.webkit.org/show_bug.cgi?id=125855
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/aria-checked-mixed-value-expected.txt: Added.
+        * accessibility/aria-checked-mixed-value.html: Added.
+        * platform/mac/TestExpectations: Skipped it, missing implementation.
+        * platform/win/TestExpectations: Skipped it, missing implementation.
+
 2014-01-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r157851): trailing space inside an editable region could be erroneously collapsed

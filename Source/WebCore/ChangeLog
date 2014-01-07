@@ -1,3 +1,18 @@
+2014-01-07  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Expose aria-checked mixed state as ATK_STATE_INDETERMINATE
+        https://bugs.webkit.org/show_bug.cgi?id=125855
+
+        Reviewed by Mario Sanchez Prada.
+
+        Test: accessibility/aria-checked-mixed-value.html
+
+        Expose ATK_STATE_INDETERMINATE to support aria-checked mixed state
+        for radio and checkbox types.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkStateSetFromCoreObject):
+
 2014-01-07  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/126562> DOMProgressEvent has unspecified availability

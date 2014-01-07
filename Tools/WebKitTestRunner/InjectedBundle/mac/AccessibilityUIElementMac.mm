@@ -853,6 +853,12 @@ bool AccessibilityUIElement::isSelectedOptionActive() const
     return false;
 }
 
+bool AccessibilityUIElement::isIndeterminate() const
+{
+    // FIXME: implement
+    return false;
+}
+
 bool AccessibilityUIElement::isExpanded() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS

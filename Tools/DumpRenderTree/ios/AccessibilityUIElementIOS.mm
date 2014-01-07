@@ -558,6 +558,12 @@ bool AccessibilityUIElement::isChecked() const
     return false;
 }
 
+bool AccessibilityUIElement::isIndeterminate() const
+{
+    // FIXME: implement
+    return false;
+}
+
 int AccessibilityUIElement::hierarchicalLevel() const
 {
     return 0;
