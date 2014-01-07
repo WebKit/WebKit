@@ -23,7 +23,6 @@
 #include "RenderSVGHiddenContainer.h"
 
 #include "RenderSVGPath.h"
-#include "SVGElement.h"
 #include <wtf/StackStats.h>
 
 namespace WebCore {

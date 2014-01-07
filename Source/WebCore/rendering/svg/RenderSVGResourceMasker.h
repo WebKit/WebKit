@@ -21,7 +21,6 @@
 #define RenderSVGResourceMasker_h
 
 #if ENABLE(SVG)
-#include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "IntSize.h"

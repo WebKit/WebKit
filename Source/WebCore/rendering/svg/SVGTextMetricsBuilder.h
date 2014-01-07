@@ -22,10 +22,8 @@
 
 #if ENABLE(SVG)
 #include "SVGTextLayoutAttributes.h"
-#include "SVGTextMetrics.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

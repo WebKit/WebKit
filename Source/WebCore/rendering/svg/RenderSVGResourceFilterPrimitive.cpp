@@ -30,9 +30,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "RenderSVGResourceFilterPrimitive.h"
 
-#include "RenderSVGResource.h"
 #include "SVGFEImage.h"
-#include "SVGFilter.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
 

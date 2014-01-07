@@ -22,7 +22,6 @@
 #if ENABLE(SVG)
 #include "SVGTextLayoutEngine.h"
 
-#include "RenderSVGInlineText.h"
 #include "RenderSVGTextPath.h"
 #include "SVGElement.h"
 #include "SVGInlineTextBox.h"

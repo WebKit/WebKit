@@ -33,7 +33,6 @@
 #include "Page.h"
 #include "RenderLayer.h"
 #include "RenderSVGImage.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"

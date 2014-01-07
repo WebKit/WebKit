@@ -22,21 +22,12 @@
 #if ENABLE(SVG)
 #include "RenderSVGResourceMasker.h"
 
-#include "AffineTransform.h"
 #include "Element.h"
 #include "ElementIterator.h"
 #include "FloatPoint.h"
-#include "FloatRect.h"
-#include "GraphicsContext.h"
 #include "Image.h"
-#include "ImageBuffer.h"
 #include "IntRect.h"
-#include "RenderSVGResource.h"
-#include "SVGElement.h"
-#include "SVGMaskElement.h"
 #include "SVGRenderingContext.h"
-#include "SVGUnitTypes.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

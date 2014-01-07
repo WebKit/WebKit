@@ -35,7 +35,6 @@
 
 #include "RenderLayerModelObject.h"
 #include "RenderSVGResource.h"
-#include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGResourcesCache.h"
 #include "ShadowRoot.h"

@@ -29,7 +29,6 @@
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
 #include "SVGPreserveAspectRatio.h"
-#include "SVGRenderSupport.h"
 
 namespace WebCore {
 

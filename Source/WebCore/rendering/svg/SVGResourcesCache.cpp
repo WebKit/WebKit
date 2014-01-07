@@ -23,8 +23,6 @@
 #if ENABLE(SVG)
 #include "HTMLNames.h"
 #include "RenderSVGResourceContainer.h"
-#include "SVGDocumentExtensions.h"
-#include "SVGElement.h"
 #include "SVGResources.h"
 #include "SVGResourcesCycleSolver.h"
 

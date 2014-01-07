@@ -25,9 +25,7 @@
 #include "InlineFlowBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
-#include "RenderSVGInlineText.h"
 #include "SVGInlineTextBox.h"
-#include "SVGTextMetrics.h"
 #include "VisiblePosition.h"
 
 #include <wtf/MathExtras.h>

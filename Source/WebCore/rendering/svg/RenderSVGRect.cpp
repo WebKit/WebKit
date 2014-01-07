@@ -31,7 +31,6 @@
 #include "RenderSVGRect.h"
 
 #include "SVGNames.h"
-#include "SVGRectElement.h"
 
 namespace WebCore {
 

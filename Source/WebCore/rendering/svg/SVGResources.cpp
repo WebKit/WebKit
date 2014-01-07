@@ -25,7 +25,6 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
-#include "SVGFilterElement.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
 #include "SVGPaint.h"

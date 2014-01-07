@@ -26,32 +26,23 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "RenderSVGResourceFilter.h"
 
-#include "AffineTransform.h"
 #include "ElementChildIterator.h"
 #include "FilterEffect.h"
 #include "FloatPoint.h"
-#include "FloatRect.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "Image.h"
-#include "ImageBuffer.h"
 #include "ImageData.h"
 #include "IntRect.h"
 #include "Page.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 #include "RenderView.h"
-#include "SVGElement.h"
-#include "SVGFilter.h"
-#include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
 #include "SVGRenderingContext.h"
-#include "SVGUnitTypes.h"
 #include "Settings.h"
 #include "SourceAlpha.h"
 #include "SourceGraphic.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

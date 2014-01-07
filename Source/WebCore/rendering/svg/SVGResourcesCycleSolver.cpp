@@ -30,7 +30,6 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
-#include "SVGFilterElement.h"
 #include "SVGGradientElement.h"
 #include "SVGPatternElement.h"
 #include "SVGResources.h"

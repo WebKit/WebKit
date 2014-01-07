@@ -29,7 +29,6 @@
 
 #if ENABLE(SVG)
 #include "RenderSVGShape.h"
-#include "SVGGraphicsElement.h"
 
 namespace WebCore {
 

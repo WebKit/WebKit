@@ -25,8 +25,6 @@
 #include "SVGTextChunkBuilder.h"
 #include "SVGTextFragment.h"
 #include "SVGTextLayoutAttributes.h"
-#include "SVGTextMetrics.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

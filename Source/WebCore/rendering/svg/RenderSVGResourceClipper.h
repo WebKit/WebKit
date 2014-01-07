@@ -21,11 +21,9 @@
 #define RenderSVGResourceClipper_h
 
 #if ENABLE(SVG)
-#include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "IntSize.h"
-#include "Path.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGClipPathElement.h"
 #include "SVGUnitTypes.h"

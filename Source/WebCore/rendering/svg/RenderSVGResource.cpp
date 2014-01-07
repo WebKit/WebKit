@@ -28,7 +28,6 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "RenderSVGResourceClipper.h"
-#include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGResourceSolidColor.h"

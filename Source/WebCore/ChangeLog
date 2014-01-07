@@ -1,3 +1,66 @@
+2014-01-07  László Langó  <llango.u-szeged@partner.samsung.com>
+
+        Remove some extra includes from SVG.
+        https://bugs.webkit.org/show_bug.cgi?id=126565
+
+        Reviewed by Dirk Schulze.
+
+        No new tests, no functionality changed.
+
+        * rendering/svg/RenderSVGBlock.cpp:
+        * rendering/svg/RenderSVGContainer.cpp:
+        * rendering/svg/RenderSVGEllipse.cpp:
+        * rendering/svg/RenderSVGEllipse.h:
+        * rendering/svg/RenderSVGHiddenContainer.cpp:
+        * rendering/svg/RenderSVGImage.cpp:
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        * rendering/svg/RenderSVGPath.cpp:
+        * rendering/svg/RenderSVGRect.cpp:
+        * rendering/svg/RenderSVGResource.cpp:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        * rendering/svg/RenderSVGResourceFilterPrimitive.h:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceLinearGradient.cpp:
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        * rendering/svg/RenderSVGResourceMarker.h:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/RenderSVGResourceRadialGradient.cpp:
+        * rendering/svg/RenderSVGResourceSolidColor.cpp:
+        * rendering/svg/RenderSVGResourceSolidColor.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        * rendering/svg/RenderSVGShape.cpp:
+        * rendering/svg/RenderSVGText.cpp:
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        * rendering/svg/SVGRenderSupport.cpp:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        * rendering/svg/SVGRenderingContext.cpp:
+        * rendering/svg/SVGResources.cpp:
+        * rendering/svg/SVGResourcesCache.cpp:
+        * rendering/svg/SVGResourcesCycleSolver.cpp:
+        * rendering/svg/SVGRootInlineBox.cpp:
+        * rendering/svg/SVGTextChunk.cpp:
+        * rendering/svg/SVGTextChunkBuilder.cpp:
+        * rendering/svg/SVGTextLayoutAttributes.h:
+        * rendering/svg/SVGTextLayoutAttributesBuilder.h:
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        * rendering/svg/SVGTextLayoutEngine.h:
+        * rendering/svg/SVGTextMetricsBuilder.h:
+        * rendering/svg/SVGTextQuery.cpp:
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+
 2014-01-07  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Expose aria-checked mixed state as ATK_STATE_INDETERMINATE

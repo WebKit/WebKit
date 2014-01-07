@@ -22,7 +22,6 @@
 
 #if ENABLE(SVG)
 #include "Color.h"
-#include "FloatRect.h"
 #include "RenderSVGResource.h"
 
 namespace WebCore {

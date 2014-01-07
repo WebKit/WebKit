@@ -22,8 +22,6 @@
 #define RenderSVGResourcePattern_h
 
 #if ENABLE(SVG)
-#include "AffineTransform.h"
-#include "FloatRect.h"
 #include "ImageBuffer.h"
 #include "Pattern.h"
 #include "PatternAttributes.h"
@@ -32,7 +30,6 @@
 #include "SVGUnitTypes.h"
 
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

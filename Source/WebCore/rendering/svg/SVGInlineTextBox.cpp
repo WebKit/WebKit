@@ -23,7 +23,6 @@
 #include "SVGInlineTextBox.h"
 
 #if ENABLE(SVG)
-#include "FloatConversion.h"
 #include "FontCache.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -32,8 +31,6 @@
 #include "InlineFlowBox.h"
 #include "PointerEventsHitRules.h"
 #include "RenderBlock.h"
-#include "RenderSVGInlineText.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "RenderView.h"
 #include "SVGRenderingContext.h"

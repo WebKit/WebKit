@@ -23,8 +23,6 @@
 #if ENABLE(SVG)
 #include "RenderSVGResourceLinearGradient.h"
 
-#include "LinearGradientAttributes.h"
-#include "SVGLinearGradientElement.h"
 
 namespace WebCore {
 

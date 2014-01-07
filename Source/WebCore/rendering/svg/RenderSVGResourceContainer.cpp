@@ -25,7 +25,6 @@
 #include "RenderLayer.h"
 #include "RenderSVGRoot.h"
 #include "RenderView.h"
-#include "SVGGraphicsElement.h"
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include <wtf/StackStats.h>

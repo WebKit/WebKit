@@ -38,7 +38,6 @@
 #include "SVGRootInlineBox.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
-#include "Text.h"
 #include "VisiblePosition.h"
 
 namespace WebCore {

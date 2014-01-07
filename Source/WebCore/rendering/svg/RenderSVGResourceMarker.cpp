@@ -25,12 +25,7 @@
 #include "RenderSVGResourceMarker.h"
 
 #include "GraphicsContext.h"
-#include "RenderSVGContainer.h"
 #include "RenderSVGRoot.h"
-#include "SVGElement.h"
-#include "SVGGraphicsElement.h"
-#include "SVGMarkerElement.h"
-#include "SVGRenderSupport.h"
 #include <wtf/StackStats.h>
 
 namespace WebCore {

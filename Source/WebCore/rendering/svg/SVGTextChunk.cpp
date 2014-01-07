@@ -23,7 +23,6 @@
 #include "SVGTextChunk.h"
 
 #include "SVGInlineTextBox.h"
-#include "SVGTextFragment.h"
 
 namespace WebCore {
 

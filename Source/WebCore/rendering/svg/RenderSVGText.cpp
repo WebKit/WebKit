@@ -29,7 +29,6 @@
 #if ENABLE(SVG)
 #include "RenderSVGText.h"
 
-#include "FloatConversion.h"
 #include "FloatQuad.h"
 #include "FontCache.h"
 #include "GraphicsContext.h"
@@ -41,11 +40,9 @@
 #include "RenderSVGResource.h"
 #include "RenderSVGRoot.h"
 #include "SVGLengthList.h"
-#include "SVGRenderSupport.h"
 #include "SVGResourcesCache.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextElement.h"
-#include "SVGTextLayoutAttributesBuilder.h"
 #include "SVGTextRunRenderingContext.h"
 #include "SVGTransformList.h"
 #include "SVGURIReference.h"

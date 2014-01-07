@@ -26,7 +26,6 @@
 
 #if ENABLE(SVG)
 #include "GraphicsContext.h"
-#include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
 #include "SVGInlineFlowBox.h"
 #include "SVGInlineTextBox.h"

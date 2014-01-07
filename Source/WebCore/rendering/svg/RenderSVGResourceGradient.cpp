@@ -27,9 +27,7 @@
 
 #include "GradientAttributes.h"
 #include "GraphicsContext.h"
-#include "RenderSVGShape.h"
 #include "RenderSVGText.h"
-#include "SVGRenderSupport.h"
 #include "SVGRenderingContext.h"
 
 namespace WebCore {

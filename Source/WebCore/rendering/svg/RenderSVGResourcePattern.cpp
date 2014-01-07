@@ -26,10 +26,8 @@
 #include "ElementIterator.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "PatternAttributes.h"
 #include "RenderSVGRoot.h"
 #include "SVGFitToViewBox.h"
-#include "SVGRenderSupport.h"
 #include "SVGRenderingContext.h"
 
 namespace WebCore {

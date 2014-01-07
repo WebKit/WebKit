@@ -22,7 +22,6 @@
 
 #if ENABLE(SVG)
 #include "SVGTextMetricsBuilder.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

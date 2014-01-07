@@ -25,7 +25,6 @@
 #define RenderSVGResourceFilter_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "FloatRect.h"
 #include "ImageBuffer.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGFilter.h"
