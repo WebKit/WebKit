@@ -3151,10 +3151,12 @@ InjectedBundleBackForwardList* WebPage::backForwardList()
     return m_backForwardList.get();
 }
 
+#if ENABLE(ASYNC_SCROLLING)
 ScrollingCoordinator* WebPage::scrollingCoordinator() const
 {
     return m_page->scrollingCoordinator();
 }
+#endif
 
 WebPage::SandboxExtensionTracker::~SandboxExtensionTracker()
 {

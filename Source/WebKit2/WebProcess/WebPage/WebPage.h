@@ -183,7 +183,9 @@ public:
     
     InjectedBundleBackForwardList* backForwardList();
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
+#if ENABLE(ASYNC_SCROLLING)
     WebCore::ScrollingCoordinator* scrollingCoordinator() const;
+#endif
 
     WebPageGroupProxy* pageGroup() const { return m_pageGroup.get(); }
 

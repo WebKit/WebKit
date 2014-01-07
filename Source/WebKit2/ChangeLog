@@ -1,3 +1,18 @@
+2014-01-07  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        WebKit2 EFL build fix after r161387
+        https://bugs.webkit.org/show_bug.cgi?id=126566
+
+        Reviewed by Andreas Kling.
+
+        Add missing ASYNC_SCROLLING macro.
+
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+
 2014-01-06  Simon Fraser  <simon.fraser@apple.com>
 
         Hook up the RemoteScrollingCoordinator

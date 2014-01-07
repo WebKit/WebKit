@@ -32,7 +32,6 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "LayerTreeHost.h"
 #include "PageBanner.h"
-#include "RemoteScrollingCoordinator.h"
 #include "WebColorChooser.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -69,6 +68,10 @@
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
+
+#if ENABLE(ASYNC_SCROLLING)
+#include "RemoteScrollingCoordinator.h"
+#endif
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -799,6 +802,7 @@ bool WebChromeClient::layerTreeStateIsFrozen() const
 }
 #endif
 
+#if ENABLE(ASYNC_SCROLLING)
 PassRefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page* page) const
 {
     ASSERT(m_page->corePage() == page);
@@ -807,6 +811,7 @@ PassRefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Pag
 
     return 0;
 }
+#endif
 
 #if ENABLE(TOUCH_EVENTS)
 void WebChromeClient::needTouchEvents(bool needTouchEvents)

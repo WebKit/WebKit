@@ -337,7 +337,9 @@ public:
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
     
+#if ENABLE(ASYNC_SCROLLING)
     RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy.get(); }
+#endif
 
     WebBackForwardList& backForwardList() { return m_backForwardList.get(); }
 
@@ -1172,7 +1174,9 @@ private:
 #endif
 
     std::unique_ptr<DrawingAreaProxy> m_drawingArea;
+#if ENABLE(ASYNC_SCROLLING)
     std::unique_ptr<RemoteScrollingCoordinatorProxy> m_scrollingCoordinatorProxy;
+#endif
 
     Ref<WebProcessProxy> m_process;
     Ref<WebPageGroup> m_pageGroup;
