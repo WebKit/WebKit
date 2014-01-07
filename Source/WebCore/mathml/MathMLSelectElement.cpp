@@ -79,7 +79,7 @@ void MathMLSelectElement::attributeChanged(const QualifiedName& name, const Atom
 
 int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)
 {
-    ASSERT(hasLocalName(actionTag));
+    ASSERT(hasLocalName(mactionTag));
 
     // We "round up or down to the closest allowable value" of the selection attribute, as suggested by the MathML specification.
     selectedChild = firstElementChild();
@@ -100,7 +100,7 @@ int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)
 
 Element* MathMLSelectElement::getSelectedActionChild()
 {
-    ASSERT(hasLocalName(actionTag));
+    ASSERT(hasLocalName(mactionTag));
 
     Element* child = firstElementChild();
     if (!child)

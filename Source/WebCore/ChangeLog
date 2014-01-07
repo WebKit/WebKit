@@ -1,8 +1,17 @@
+2014-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Debug biuld fix.
+
+        Replace actionTag with mactionTag in assertions.
+
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::getSelectedActionChildAndIndex):
+        (WebCore::MathMLSelectElement::getSelectedActionChild):
+
 2014-01-07  Frédéric Wang  <fred.wang@free.fr>
 
         Add Support for the semantics element.
         https://bugs.webkit.org/show_bug.cgi?id=100626
-
 
         Reviewed by Chris Fleizach.
 
