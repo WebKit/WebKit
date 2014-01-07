@@ -12401,9 +12401,6 @@
     <ClInclude Include="..\bridge\runtime_root.h">
       <Filter>bridge</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\BindingVisitors.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
     <ClInclude Include="..\inspector\CommandLineAPIHost.h">
       <Filter>inspector</Filter>
     </ClInclude>

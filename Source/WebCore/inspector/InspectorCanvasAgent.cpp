@@ -34,7 +34,6 @@
 
 #include "InspectorCanvasAgent.h"
 
-#include "BindingVisitors.h"
 #include "DOMWindow.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"

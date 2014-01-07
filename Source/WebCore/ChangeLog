@@ -1,3 +1,23 @@
+2014-01-06  Seokju Kwon  <seokju@webkit.org>
+
+        Web Inspector: Get rid of Inspector/BindingVisitors.h
+        https://bugs.webkit.org/show_bug.cgi?id=126374
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests, No change in behavior.
+
+        In r161204, methods related to BindingVisitors was removed.
+
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptProfiler.h:
+        * inspector/BindingVisitors.h: Removed.
+        * inspector/InspectorCanvasAgent.cpp:
+        * inspector/InspectorMemoryAgent.cpp:
+
 2014-01-06  Tim Horton  <timothy_horton@apple.com>
 
         Add {IntRect, FloatRect}::infiniteRect() and ::isInfinite()

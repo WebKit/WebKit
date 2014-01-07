@@ -3775,7 +3775,6 @@ webcore_sources += \
 	Source/WebCore/icu/unicode/utf_old.h \
 	Source/WebCore/icu/unicode/utypes.h \
 	Source/WebCore/icu/unicode/uversion.h \
-	Source/WebCore/inspector/BindingVisitors.h \
 	Source/WebCore/inspector/CommandLineAPIHost.cpp \
 	Source/WebCore/inspector/CommandLineAPIHost.h \
 	Source/WebCore/inspector/CommandLineAPIModule.cpp \

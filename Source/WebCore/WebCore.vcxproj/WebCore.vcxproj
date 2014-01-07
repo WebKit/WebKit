@@ -21001,7 +21001,6 @@
     <ClInclude Include="..\bridge\runtime_method.h" />
     <ClInclude Include="..\bridge\runtime_object.h" />
     <ClInclude Include="..\bridge\runtime_root.h" />
-    <ClInclude Include="..\inspector\BindingVisitors.h" />
     <ClInclude Include="..\inspector\ConsoleAPITypes.h" />
     <ClInclude Include="..\inspector\CommandLineAPIHost.h" />
     <ClInclude Include="..\inspector\CommandLineAPIModule.h" />

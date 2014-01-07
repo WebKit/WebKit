@@ -34,7 +34,6 @@
 
 #include "InspectorMemoryAgent.h"
 
-#include "BindingVisitors.h"
 #include "CharacterData.h"
 #include "Document.h"
 #include "EventListenerMap.h"
