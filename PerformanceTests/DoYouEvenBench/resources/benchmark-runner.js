@@ -1,4 +1,3 @@
-
 // FIXME: Use the real promise if available.
 // FIXME: Make sure this interface is compatible with the real Promise.
 function SimplePromise() {
@@ -8,7 +7,7 @@ function SimplePromise() {
 
 SimplePromise.prototype.then = function (callback) {
     if (this._callback)
-    throw "SimplePromise doesn't support multiple calls to then";
+        throw "SimplePromise doesn't support multiple calls to then";
     this._callback = callback;
     this._chainedPromise = new SimplePromise;
     
@@ -33,11 +32,19 @@ SimplePromise.prototype.resolve = function (value) {
         this._chainedPromise.resolve(result);
 }
 
-var BenchmarkRunner = {_suites: [], _prepareReturnValue: null, _measuredValues: {}};
+function BenchmarkTestStep(testName, testFunction) {
+    this.name = testName;
+    this.run = testFunction;
+}
+
+var BenchmarkRunner = {_suites: [], _prepareReturnValue: null, _measuredValues: {}, _client: null};
 
 BenchmarkRunner.suite = function (suite) {
-    var self = BenchmarkRunner;
-    self._suites.push(suite);
+    BenchmarkRunner._suites.push(suite);
+}
+
+BenchmarkRunner.setClient = function (client) {
+    BenchmarkRunner._client = client;
 }
 
 BenchmarkRunner.waitForElement = function (selector) {
@@ -67,6 +74,8 @@ BenchmarkRunner._removeFrame = function () {
 BenchmarkRunner._appendFrame = function (src) {
     var self = BenchmarkRunner;
     var frame = document.createElement('iframe');
+    frame.style.width = '800px';
+    frame.style.height = '600px'
     document.body.appendChild(frame);
     self._frame = frame;
     return frame;
@@ -120,76 +129,6 @@ BenchmarkRunner._testName = function (suite, testName, metric) {
     return suite.name + '/' + testName + (metric ? '/' + metric : '');
 }
 
-BenchmarkRunner._testItemId = function (suite, testName) {
-    return suite.name + '-' + testName;
-}
-
-BenchmarkRunner.listSuites = function () {
-    var self = BenchmarkRunner;
-
-    var control = document.createElement('nav');
-
-    var suites = self._suites;
-    var ol = document.createElement('ol');
-    var checkboxes = [];
-    for (var suiteIndex = 0; suiteIndex < suites.length; suiteIndex++) {
-        var suite = suites[suiteIndex];
-        var li = document.createElement('li');
-        var checkbox = document.createElement('input');
-        checkbox.id = suite.name;
-        checkbox.type = 'checkbox';
-        checkbox.checked = true;
-        checkboxes.push(checkbox);
-
-        li.appendChild(checkbox);
-        var label = document.createElement('label');
-        label.appendChild(document.createTextNode(self._testName(suite)));
-        li.appendChild(label);
-        label.htmlFor = checkbox.id;
-
-        var testList = document.createElement('ol');
-        for (var testIndex = 0; testIndex < suite.tests.length; testIndex++) {
-            var testItem = document.createElement('li');
-            var test = suite.tests[testIndex];
-            var anchor = document.createElement('a');
-            anchor.id = self._testItemId(suite, test[0]);
-            anchor.appendChild(document.createTextNode(self._testName(suite, test[0])));
-            testItem.appendChild(anchor);
-            testList.appendChild(testItem);
-        }
-        li.appendChild(testList);
-
-        ol.appendChild(li);
-    }
-
-    control.appendChild(ol);
-
-    var currentState = null;
-
-    // Don't call step while step is already executing.
-    var button = document.createElement('button');
-    button.textContent = 'Step';
-    button.onclick = function () {
-        self.step(currentState).then(function (state) { currentState = state; });
-    }
-    control.appendChild(button);
-
-    function callNextStep(state) {
-        self.step(state).then(function (newState) {
-            currentState = newState;
-            if (newState)
-                callNextStep(newState);
-        });
-    }
-
-    var button = document.createElement('button');
-    button.textContent = 'Run';
-    button.onclick = function () { callNextStep(currentState); }
-    control.appendChild(button);
-
-    document.body.appendChild(control);
-}
-
 function BenchmarkState(suites) {
     this._suites = suites;
     this._suiteIndex = -1;
@@ -216,7 +155,7 @@ BenchmarkState.prototype.next = function () {
     this._testIndex = 0;
     do {
         this._suiteIndex++;
-    } while (this._suiteIndex < this._suites.length && !document.getElementById(this._suites[this._suiteIndex].name).checked);
+    } while (this._suiteIndex < this._suites.length && this._suites[this._suiteIndex].disabled);
 
     return this;
 }
@@ -267,26 +206,22 @@ BenchmarkRunner._runTestAndRecordResults = function (state) {
     var suite = state.currentSuite();
     var test = state.currentTest();
 
-    var testName = test[0];
-    var testItem = document.getElementById(self._testItemId(suite, testName));
-    testItem.classList.add('running');
+    if (self._client && self._client.willRunTest)
+        self._client.willRunTest(suite, test);
+
     setTimeout(function () {
-        self._runTest(suite, test[1], self._prepareReturnValue, function (syncTime, asyncTime) {
-            self._masuredValuesForCurrentSuite[self._testName(suite, testName, 'Sync')] = syncTime;
-            self._masuredValuesForCurrentSuite[self._testName(suite, testName, 'Async')] = asyncTime;
-            testItem.classList.remove('running');
-            testItem.classList.add('ran');
+        self._runTest(suite, test.run, self._prepareReturnValue, function (syncTime, asyncTime) {
+            var suiteResults = self._measuredValues[suite.name] || {tests:{}, total: 0};
+            self._measuredValues[suite.name] = suiteResults;
+            suiteResults.tests[test.name] = {'Sync': syncTime, 'Async': asyncTime};
+            suiteResults.total += syncTime + asyncTime;
+
+            if (self._client && self._client.willRunTest)
+                self._client.didRunTest(suite, test);
+
             state.next();
-            if (state.currentSuite() != suite) {
-                var total = 0;
-                for (var title in self._masuredValuesForCurrentSuite) {
-                    var value = self._masuredValuesForCurrentSuite[title];
-                    total += value;
-                    self._measuredValues[title] = value;
-                }
-                self._measuredValues[self._testName(suite)] = total;
+            if (state.currentSuite() != suite)
                 self._removeFrame();
-            }
             promise.resolve(state);
         });
     }, 0);
@@ -296,34 +231,11 @@ BenchmarkRunner._runTestAndRecordResults = function (state) {
 BenchmarkRunner._finalize = function () {
     var self = BenchmarkRunner;
 
-    var results = '';
-    var total = 0; // FIXME: Compute the total properly.
-    for (var title in self._measuredValues) {
-        results += title + ' : ' + self._measuredValues[title] + ' ms\n';
-        total += self._measuredValues[title];
-    }
-    results += 'Total : ' + (total / 2) + ' ms\n';
-    self._measuredValues = {};
-
     self._removeFrame();
 
-    if (!results)
-        return;
+    if (self._client && self._client.didRunSuites)
+        self._client.didRunSuites(self._measuredValues);
 
-    var pre = document.createElement('pre');
-    document.body.appendChild(pre);
-    pre.textContent = results;
+    // FIXME: This should be done when we start running tests.
+    self._measuredValues = {};
 }
-
-window.addEventListener('load', function () { BenchmarkRunner.listSuites(); });
-
-(function () {
-    var style = document.createElement('style');
-    style.appendChild(document.createTextNode('iframe { width: 1000px; height: 500px; border: 2px solid black; }'
-        + 'ol { list-style: none; margin: 0; padding: 0; }'
-        + 'ol ol { margin-left: 2em; list-position: outside; }'
-        + '.running { text-decoration: underline; }'
-        + '.ran {color: grey}'
-        + 'nav { position: absolute; right: 10px; }'));
-    document.head.appendChild(style);
-})();

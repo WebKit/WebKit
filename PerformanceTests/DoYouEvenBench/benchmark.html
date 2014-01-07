@@ -2,296 +2,123 @@
 <html>
 <head>
 <title>DoYouEvenBench</title>
-<script src="benchmark.js"></script>
+<script src="resources/benchmark-runner.js" defer></script>
+<script src="resources/tests.js" defer></script>
+<style>
+iframe { border: 1px solid black; }
+ol { list-style: none; margin: 0; padding: 0; }
+ol ol { margin-left: 2em; list-position: outside; }
+.running { text-decoration: underline; }
+.ran { color: grey; }
+nav { position: absolute; right: 10px; }
+</style>
+</head>
+<body>
 <script>
 
-var numberOfItemsToAdd = 100;
+window.addEventListener('load', function () {
+    var self = BenchmarkRunner;
+    var control = document.createElement('nav');
 
-BenchmarkRunner.suite({
-    name: 'VanillaJS/TodoMVC',
-    url: 'todomvc/vanilla-examples/vanillajs/index.html',
-    prepare: function (contentWindow, contentDocument) {
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
-        });
-    },
-    tests: [
-        ['Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            var todoController = contentWindow.todo.controller;
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                newTodo.value = 'Something to do ' + i;
-                todoController.addItem({keyCode: todoController.ENTER_KEY, target: newTodo});
-            }
-        }],
-        ['CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
-                checkboxes[i].click();
-        }],
-        ['DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
-        }],
-    ]
-});
+    var suites = BenchmarkRunner._suites;
+    var ol = document.createElement('ol');
+    var checkboxes = [];
+    for (var suiteIndex = 0; suiteIndex < suites.length; suiteIndex++) {
+        var suite = suites[suiteIndex];
+        var li = document.createElement('li');
+        var checkbox = document.createElement('input');
+        checkbox.id = suite.name;
+        checkbox.type = 'checkbox';
+        checkbox.checked = true;
+        checkbox.onchange = (function (suite, checkbox) { return function () { suite.disabled = !checkbox.checked; } })(suite, checkbox);
+        checkbox.onchange();
+        checkboxes.push(checkbox);
 
-BenchmarkRunner.suite({
-    name: 'EmberJS/TodoMVC',
-    url: 'todomvc/architecture-examples/emberjs/index.html',
-    prepare: function (contentWindow, contentDocument) {
-        contentWindow.Todos.Store = contentWindow.DS.Store.extend({
-            revision: 12,
-            adapter: 'Todos.LSAdapter',
-            commit: function () { }
-        });
+        li.appendChild(checkbox);
+        var label = document.createElement('label');
+        label.appendChild(document.createTextNode(self._testName(suite)));
+        li.appendChild(label);
+        label.htmlFor = checkbox.id;
 
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return {
-                views: contentWindow.Ember.View.views,
-                emberRun: contentWindow.Ember.run,
-            }
-        });
-    },
-    tests: [
-        ['Adding' + numberOfItemsToAdd + 'Items', function (params) {
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                params.emberRun(function () { params.views["new-todo"].set('value', 'Something to do' + i); });
-                params.emberRun(function () { params.views["new-todo"].insertNewline(document.createEvent('Event')); });
-            }
-        }],
-        ['CompletingAllItems', function (params, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.ember-checkbox');
-            for (var i = 0; i < checkboxes.length; i++) {
-                var view = params.views[checkboxes[i].id];
-                params.emberRun(function () { view.set('checked', true); });
-            }
-        }],
-        ['DeletingItems', function (params, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                params.emberRun(function () { deleteButtons[i].click(); });
-        }],
-    ]
-});
+        var testList = document.createElement('ol');
+        for (var testIndex = 0; testIndex < suite.tests.length; testIndex++) {
+            var testItem = document.createElement('li');
+            var test = suite.tests[testIndex];
+            var anchor = document.createElement('a');
+            anchor.id = suite.name + '-' + test.name;
+            test.anchor = anchor;
+            anchor.appendChild(document.createTextNode(self._testName(suite, test.name)));
+            testItem.appendChild(anchor);
+            testList.appendChild(testItem);
+        }
+        li.appendChild(testList);
 
-BenchmarkRunner.suite({
-    name: 'BackboneJS/TodoMVC',
-    url: 'todomvc/architecture-examples/backbone/index.html',
-    prepare: function (contentWindow, contentDocument) {
-    contentWindow.Backbone.sync = function () {}
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
-        });
-    },
-    tests: [
-        ['Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            var appView = contentWindow.appView;
-            var fakeEvent = {which: contentWindow.ENTER_KEY};
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                newTodo.value = 'Something to do ' + i;
-                appView.createOnEnter(fakeEvent);
-            }
-        }],
-        ['CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
-                checkboxes[i].click();
-        }],
-        ['DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
-        }],
-    ]
-});
+        ol.appendChild(li);
+    }
 
-BenchmarkRunner.suite({
-    name: 'jQuery/TodoMVC',
-    url: 'todomvc/architecture-examples/jquery/index.html',
-    prepare: function (contentWindow, contentDocument) {
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
-        });
-    },
-    tests: [
-        ['Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            var app = contentWindow.app;
-            var fakeEvent = {which: app.ENTER_KEY};
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                newTodo.value = 'Something to do ' + i;
-                app.create.call(newTodo, fakeEvent);
-            }
-        }],
-        ['CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var app = contentWindow.app;
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
-            var $ = contentWindow.$;
+    control.appendChild(ol);
 
-            itemIndexToId = new Array(checkboxes.length);
-            for (var i = 0; i < checkboxes.length; i++)
-                itemIndexToId[i] = $(checkboxes[i]).closest('li').data('id');
-
-            app.getTodo = function (element, callback) {
-                var self = this;
-                var id = itemIndexToId[this.currentItemIndex];
-                $.each(this.todos, function (j, val) {
-                    if (val.id === id) {
-                        callback.apply(self, arguments);
-                        return false;
+    BenchmarkRunner.setClient({
+        willRunTest: function (suite, test) {
+            test.anchor.classList.add('running');
+        },
+        didRunTest: function (suite, test) {
+            var classList = test.anchor.classList;
+            classList.remove('running');
+            classList.add('ran');
+        },
+        didRunSuites: function (measuredValues) {
+            var results = '';
+            var total = 0; // FIXME: Compute the total properly.
+            for (var suiteName in measuredValues) {
+                var suiteResults = measuredValues[suiteName];
+                for (var testName in suiteResults.tests) {
+                    var testResults = suiteResults.tests[testName];
+                    for (var subtestName in testResults) {
+                        results += suiteName + ' : ' + testName + ' : ' + subtestName
+                            + ': ' + testResults[subtestName] + ' ms\n';
                     }
-                });
+                }
+                results += suiteName + ' : ' + suiteResults.total + ' ms\n';
+                total += suiteResults.total;
             }
+            results += 'Total : ' + total + ' ms\n';
 
-            for (var i = 0; i < checkboxes.length; i++) {
-                app.currentItemIndex = i;
-                app.toggle.call(checkboxes[i]);
-            }
-        }],
-        ['DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            contentDocument.querySelector('#clear-completed').click();
-            var app = contentWindow.app;
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
+            if (!results)
+                return;
 
-            for (var i = 0; i < deleteButtons.length; i++) {
-                app.currentItemIndex = i;
-                app.destroy.call(deleteButtons[i]);
-            }
-        }],
-    ]
-});
+            var pre = document.createElement('pre');
+            document.body.appendChild(pre);
+            pre.textContent = results;
+        }
+    });
 
-BenchmarkRunner.suite({
-    name: 'AngularJS/TodoMVC',
-    url: 'todomvc/architecture-examples/angularjs/index.html',
-    prepare: function (contentWindow, contentDocument) {
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
+    var currentState = null;
+
+    // Don't call step while step is already executing.
+    var button = document.createElement('button');
+    button.textContent = 'Step';
+    button.onclick = function () {
+        self.step(currentState).then(function (state) { currentState = state; });
+    }
+    control.appendChild(button);
+
+    function callNextStep(state) {
+        self.step(state).then(function (newState) {
+            currentState = newState;
+            if (newState)
+                callNextStep(newState);
         });
-    },
-    tests: [
-        ['Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            var todomvc = contentWindow.todomvc;
-            var submitEvent = document.createEvent('Event');
-            submitEvent.initEvent('submit', true, true);
-            var inputEvent = document.createEvent('Event');
-            inputEvent.initEvent('input', true, true);
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                newTodo.value = 'Something to do ' + i;
-                newTodo.dispatchEvent(inputEvent);
-                newTodo.form.dispatchEvent(submitEvent);
-            }
-        }],
-        ['CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
-                checkboxes[i].click();
-        }],
-        ['DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
-        }],
-    ]
-});
+    }
 
-BenchmarkRunner.suite({
-    name: 'React/TodoMVC',
-    url: 'todomvc/labs/architecture-examples/react/index.html',
-    prepare: function (contentWindow, contentDocument) {
-        contentWindow.Utils.store = function () {}
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
-        });
-    },
-    tests: [
-        ['Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            var todomvc = contentWindow.todomvc;
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                newTodo.value = 'Something to do ' + i;
+    var button = document.createElement('button');
+    button.textContent = 'Run';
+    button.onclick = function () { callNextStep(currentState); }
+    control.appendChild(button);
 
-                var keydownEvent = document.createEvent('Event');
-                keydownEvent.initEvent('keydown', true, true);
-                keydownEvent.which = 13; // VK_ENTER
-                newTodo.dispatchEvent(keydownEvent);
-            }
-        }],
-        ['CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
-                checkboxes[i].click();
-        }],
-        ['DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-                deleteButtons[i].click();
-        }],
-    ]
-});
-
-var actionCount = 50;
-BenchmarkRunner.suite({
-    name: 'FlightJS/MailClient',
-    url: 'flightjs-example-app/index.html',
-    prepare: function (contentWindow, contentDocument) {
-        return BenchmarkRunner.waitForElement('.span8').then(function (element) {
-            element.focus();
-            return element;
-        });
-    },
-    tests: [
-        ['OpeningTabs' + actionCount + 'Times', function (newTodo, contentWindow, contentDocument) {
-            contentDocument.getElementById('inbox').click();
-            for (var i = 0; i < actionCount; i++) {
-                contentDocument.getElementById('later').click();
-                contentDocument.getElementById('sent').click();
-                contentDocument.getElementById('trash').click();
-                contentDocument.getElementById('inbox').click();
-            }
-        }],
-        ['MovingEmails' + actionCount + 'Times', function (newTodo, contentWindow, contentDocument) {
-            contentDocument.getElementById('inbox').click();
-            for (var i = 0; i < actionCount; i++) {
-                contentDocument.getElementById('mail_2139').click();
-                contentDocument.getElementById('move_mail').click();
-                contentDocument.querySelector('#move_to_selector #later').click();
-                contentDocument.getElementById('later').click();
-                contentDocument.getElementById('mail_2139').click();
-                contentDocument.getElementById('move_mail').click();
-                contentDocument.querySelector('#move_to_selector #trash').click();
-                contentDocument.getElementById('trash').click();
-                contentDocument.getElementById('mail_2139').click();
-                contentDocument.getElementById('move_mail').click();
-                contentDocument.querySelector('#move_to_selector #inbox').click();
-                contentDocument.getElementById('inbox').click();
-            }
-        }],
-        ['Sending' + actionCount + 'NewEmails', function (newTodo, contentWindow, contentDocument) {
-            for (var i = 0; i < actionCount; i++) {
-                contentDocument.getElementById('new_mail').click();
-                contentDocument.getElementById('recipient_select').selectedIndex = 1;
-                var subject = contentDocument.getElementById('compose_subject');
-                var message = contentDocument.getElementById('compose_message');
-                subject.focus();
-                contentWindow.$(subject).trigger('keydown');
-                contentWindow.$(subject).text('Hello');
-                message.focus();
-                contentWindow.$(message).trigger('keydown');
-                contentWindow.$(message).text('Hello,\n\nThis is a test message.\n\n- WebKitten');
-                contentDocument.getElementById('send_composed').click();
-            }
-        }],
-    ]
+    document.body.appendChild(control);
 });
 
 </script>
-</head>
-<body>
 </body>
 </html>

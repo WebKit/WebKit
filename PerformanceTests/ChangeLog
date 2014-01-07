@@ -1,3 +1,48 @@
+2014-01-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DoYouEvenBench: Extract tests and runner code from benchmark.js/html
+        https://bugs.webkit.org/show_bug.cgi?id=126596
+
+        Reviewed by Stephanie Lewis.
+        
+        Extracted benchmark-runner.js and tests.js out of benchmark.js and benchmark.html.
+
+        Added a "client" interface to BenchmarkRunner so that benchmark.html could register necessary hooks to
+        update its UI. Also made BenchmarkRunner store a tree of results so that the serialization of test names
+        could be isolated from BenchmarkRunner itself in the future.
+
+        * DoYouEvenBench/benchmark.html:
+        Moved the code to instantiate and update UI here from benchmark.js. The test code was moved out of this
+        file into resources/tests.js.
+
+        * DoYouEvenBench/resources/benchmark-runner.js: Renamed from PerformanceTests/DoYouEvenBench/benchmark.js.
+        (SimplePromise): Moved from benchmark.js
+        (SimplePromise.prototype.then): Ditto.
+        (SimplePromise.prototype.resolve): Ditto.
+        (BenchmarkTestStep): Added. Wraps each test step.
+        (BenchmarkRunner.suite): Moved from benchmark.js.
+        (BenchmarkRunner.setClient): Added.
+        (BenchmarkRunner.waitForElement): Moved.
+        (BenchmarkRunner._removeFrame): Ditto.
+        (BenchmarkRunner._appendFrame): Ditto. Set the width and the height of the iframe as they're more than
+        presentational as they affect performance.
+        (BenchmarkRunner._waitAndWarmUp): Ditto.
+        (BenchmarkRunner._runTest): Ditto.
+        (BenchmarkRunner._testName): Ditto.
+        (BenchmarkState): Ditto.
+        (BenchmarkState.prototype.currentSuite): Ditto.
+        (BenchmarkState.prototype.currentTest): Ditto.
+        (BenchmarkState.prototype.next): Ditto.
+        (BenchmarkState.prototype.isFirstTest): Ditto.
+        (BenchmarkState.prototype.prepareCurrentSuite): Ditto.
+        (BenchmarkRunner.step): Ditto.
+        (BenchmarkRunner._runTestAndRecordResults): Ditto. Note the code to update the UI has been move to
+        benchmark.html. Also moved the code to accumulate the totals here from _finalize.
+        (BenchmarkRunner._finalize): Moved. 
+
+        * DoYouEvenBench/resources/tests.js: Copied from PerformanceTests/DoYouEvenBench/benchmark.html.
+        Uses BenchmarkTestStep instead of an array for each test step.
+
 2014-01-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow ImageBuffer to re-use IOSurfaces
