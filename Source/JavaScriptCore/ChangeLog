@@ -1,3 +1,15 @@
+2014-01-07  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        pushFinallyContext saves wrong m_labelScopes size
+        https://bugs.webkit.org/show_bug.cgi?id=124529
+
+        Remove free label scopes before saving finally context.
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::pushFinallyContext):
+
 2014-01-06  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Heap::collect shouldn't be responsible for sweeping

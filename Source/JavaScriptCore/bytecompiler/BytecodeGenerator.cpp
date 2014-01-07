@@ -1954,6 +1954,10 @@ void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, unsigned line, un
 
 void BytecodeGenerator::pushFinallyContext(StatementNode* finallyBlock)
 {
+    // Reclaim free label scopes.
+    while (m_labelScopes.size() && !m_labelScopes.last().refCount())
+        m_labelScopes.removeLast();
+
     ControlFlowContext scope;
     scope.isFinallyBlock = true;
     FinallyContext context = {

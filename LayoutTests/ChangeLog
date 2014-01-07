@@ -1,3 +1,17 @@
+2014-01-07  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        pushFinallyContext saves wrong m_labelScopes size
+        https://bugs.webkit.org/show_bug.cgi?id=124529
+
+        Remove free label scopes before saving finally context.
+
+        Reviewed by Geoffrey Garen.
+
+        * js/script-tests/try-return-finally-break.js: Added.
+        (foo):
+        * js/try-return-finally-break-expected.txt: Added.
+        * js/try-return-finally-break.html: Added.
+
 2014-01-07  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Change default value from 'auto' to 'none'
