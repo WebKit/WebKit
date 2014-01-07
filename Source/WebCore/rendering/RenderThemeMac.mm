@@ -991,7 +991,7 @@ IntRect RenderThemeMac::progressBarRectForBounds(const RenderObject* renderObjec
         return bounds;
 
     float zoomLevel = renderObject->style().effectiveZoom();
-    int controlSize = controlSizeForFont(&renderObject->style());
+    NSControlSize controlSize = controlSizeForFont(&renderObject->style());
     IntSize size = progressBarSizes()[controlSize];
     size.setHeight(size.height() * zoomLevel);
     size.setWidth(bounds.width());
@@ -1029,7 +1029,7 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
         return true;
 
     IntRect inflatedRect = progressBarRectForBounds(renderObject, rect);
-    int controlSize = controlSizeForFont(&renderObject->style());
+    NSControlSize controlSize = controlSizeForFont(&renderObject->style());
 
     RenderProgress* renderProgress = toRenderProgress(renderObject);
     HIThemeTrackDrawInfo trackInfo;

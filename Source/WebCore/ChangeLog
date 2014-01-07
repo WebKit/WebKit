@@ -1,3 +1,18 @@
+2014-01-06  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/126559> Be more correct in dealing with NSControlSize
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::scrollbarControlSizeToNSControlSize): Helper function to map from ScrollbarControlSize
+        to NSControlSize.
+        (WebCore::ScrollbarThemeMac::registerScrollbar): Use the helper rather than casting.
+        (WebCore::ScrollbarThemeMac::scrollbarThickness): Use the helper.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::progressBarRectForBounds): Update the type of the local to NSControlSize.
+        (WebCore::RenderThemeMac::paintProgressBar): Ditto.
+
 2014-01-06  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Be safer about toggling OpenGL state by using a scoped object to control setting lifetime.
