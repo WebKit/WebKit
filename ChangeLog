@@ -1,3 +1,11 @@
+2014-01-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        Unreviewed GTK/CMake build fix: use the correct location for docs-build.stamp
+        in output and dependencies declarations, so docs are not built needlessly
+        every build.
+
+        * Source/PlatformGTK.cmake:
+
 2014-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move all GTK/GObject unit tests to Tools/TestWebKitAPI

@@ -30,7 +30,7 @@ if (ENABLE_WEBKIT2)
 endif ()
 
 add_custom_command(
-    OUTPUT docs-build.stamp
+    OUTPUT "${CMAKE_BINARY_DIR}/docs-build.stamp"
     DEPENDS ${DocumentationDependencies}
     COMMAND CC="${CMAKE_C_COMPILER}" ${CMAKE_SOURCE_DIR}/Tools/gtk/generate-gtkdoc
     COMMAND touch docs-build.stamp
@@ -38,7 +38,7 @@ add_custom_command(
 )
 
 add_custom_target(fake-docs-target ALL
-    DEPENDS docs-build.stamp
+    DEPENDS "${CMAKE_BINARY_DIR}/docs-build.stamp"
 )
 
 if (ENABLE_WEBKIT)
