@@ -29,10 +29,9 @@
 
 #include "DrawingAreaInfo.h"
 #include "MessageReceiver.h"
-#include <WebCore/FloatRect.h>
+#include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
-#include <WebCore/Timer.h>
 #include <chrono>
 #include <stdint.h>
 #include <wtf/Noncopyable.h>
@@ -73,12 +72,6 @@ public:
     virtual void adjustTransientZoom(double, WebCore::FloatPoint) { }
     virtual void commitTransientZoom(double, WebCore::FloatPoint) { }
 
-#if PLATFORM(MAC)
-    void setExposedRect(const WebCore::FloatRect&);
-    WebCore::FloatRect exposedRect() const { return m_exposedRect; }
-    void exposedRectChangedTimerFired(WebCore::Timer<DrawingAreaProxy>*);
-#endif
-
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy*);
 
@@ -107,10 +100,6 @@ private:
 #if PLATFORM(MAC)
     virtual void didUpdateGeometry() { }
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& newIntrinsicContentSize) { }
-
-    WebCore::Timer<DrawingAreaProxy> m_exposedRectChangedTimer;
-    WebCore::FloatRect m_exposedRect;
-    WebCore::FloatRect m_lastSentExposedRect;
 #endif
 };
 

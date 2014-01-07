@@ -184,7 +184,7 @@ private:
     virtual void platformCALayerSetNeedsToRevalidateTiles() OVERRIDE;
     virtual float platformCALayerDeviceScaleFactor() const OVERRIDE;
     virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const OVERRIDE;
-    virtual FloatRect platformCALayerExposedRect() const OVERRIDE { return m_client->exposedRect(); }
+
     virtual bool isCommittingChanges() const OVERRIDE { return m_isCommittingChanges; }
 
     virtual double backingStoreMemoryEstimate() const;

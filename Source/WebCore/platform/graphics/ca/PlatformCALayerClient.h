@@ -63,8 +63,6 @@ public:
     virtual float platformCALayerDeviceScaleFactor() const = 0;
     virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const { return 1; }
 
-    virtual FloatRect platformCALayerExposedRect() const = 0;
-
     virtual bool isCommittingChanges() const { return false; }
 
 protected:

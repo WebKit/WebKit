@@ -308,6 +308,11 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Web
     , m_mediaVolume(1)
     , m_mayStartMediaWhenInWindow(true)
     , m_waitingForDidUpdateViewState(false)
+#if PLATFORM(MAC)
+    , m_exposedRectChangedTimer(this, &WebPageProxy::exposedRectChangedTimerFired)
+    , m_clipsToExposedRect(ClipsToExposedRect::DoNotClip)
+    , m_lastSentClipsToExposedRect(ClipsToExposedRect::DoNotClip)
+#endif
     , m_scrollPinningBehavior(DoNotPin)
 {
     updateViewState();
@@ -555,6 +560,10 @@ void WebPageProxy::close()
     m_findMatchesClient.initialize(0);
 #if ENABLE(CONTEXT_MENUS)
     m_contextMenuClient.initialize(0);
+#endif
+
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    m_exposedRectChangedTimer.stop();
 #endif
 
     m_process->send(Messages::WebPage::Close(), m_pageID);
@@ -4410,5 +4419,32 @@ void WebPageProxy::setScrollPinningBehavior(ScrollPinningBehavior pinning)
     if (isValid())
         m_process->send(Messages::WebPage::SetScrollPinningBehavior(pinning), m_pageID);
 }
+
+#if PLATFORM(MAC) || PLATFORM(IOS)
+void WebPageProxy::viewExposedRectChanged(const FloatRect& exposedRect, ClipsToExposedRect clipsToExposedRect)
+{
+    if (!isValid())
+        return;
+
+    m_exposedRect = exposedRect;
+    m_clipsToExposedRect = clipsToExposedRect;
+
+    if (!m_exposedRectChangedTimer.isActive())
+        m_exposedRectChangedTimer.startOneShot(0);
+}
+
+void WebPageProxy::exposedRectChangedTimerFired(Timer<WebPageProxy>*)
+{
+    if (!isValid())
+        return;
+
+    if (m_exposedRect == m_lastSentExposedRect && m_clipsToExposedRect == m_lastSentClipsToExposedRect)
+        return;
+
+    process().send(Messages::WebPage::ViewExposedRectChanged(m_exposedRect, m_clipsToExposedRect == ClipsToExposedRect::Clip), m_pageID);
+    m_lastSentExposedRect = m_exposedRect;
+    m_lastSentClipsToExposedRect = m_clipsToExposedRect;
+}
+#endif
 
 } // namespace WebKit

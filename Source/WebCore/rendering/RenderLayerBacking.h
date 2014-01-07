@@ -180,8 +180,6 @@ public:
     virtual bool shouldSkipLayerInDump(const GraphicsLayer*) const OVERRIDE;
     virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName) const OVERRIDE;
 
-    virtual FloatRect exposedRect() const OVERRIDE;
-
 #ifndef NDEBUG
     virtual void verifyNotPainting();
 #endif

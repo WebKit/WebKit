@@ -228,7 +228,7 @@ static TiledBacking::TileCoverage computeTileCoverage(RenderLayerBacking* backin
             backing->setDidSwitchToFullTileCoverageDuringLoading();
     }
     if (!(useMinimalTilesDuringLoading || useMinimalTilesDuringLiveResize)) {
-        bool clipsToExposedRect = !frameView.exposedRect().isInfinite();
+        bool clipsToExposedRect = backing->tiledBacking()->clipsToExposedRect();
         if (frameView.horizontalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForHorizontalScrolling;
 
@@ -2596,15 +2596,6 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
         backingMemory += m_layerForScrollCorner->backingStoreMemoryEstimate();
     
     return backingMemory;
-}
-
-FloatRect RenderLayerBacking::exposedRect() const
-{
-    // FIXME: We should support clipping to the exposed rect for subframes as well.
-    if (m_isMainFrameRenderViewLayer)
-        return owningLayer().renderer().view().frameView().exposedRect();
-
-    return FloatRect::infiniteRect();
 }
 
 } // namespace WebCore

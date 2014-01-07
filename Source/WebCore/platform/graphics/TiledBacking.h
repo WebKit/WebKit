@@ -47,7 +47,9 @@ public:
     virtual FloatRect visibleRect() const = 0;
     virtual bool tilesWouldChangeForVisibleRect(const FloatRect&) const = 0;
 
-    virtual void exposedRectDidChange() = 0;
+    virtual void setExposedRect(const FloatRect&) = 0;
+    virtual void setClipsToExposedRect(bool) = 0;
+    virtual bool clipsToExposedRect() = 0;
 
     virtual void prepopulateRect(const FloatRect&) = 0;
 

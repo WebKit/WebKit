@@ -67,6 +67,7 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_unparentsOffscreenTiles(false)
     , m_acceleratesDrawing(false)
     , m_tilesAreOpaque(false)
+    , m_clipsToExposedRect(false)
     , m_hasTilesWithTemporaryScaleFactor(false)
     , m_tileDebugBorderWidth(0)
     , m_indicatorMode(AsyncScrollingIndication)
@@ -209,11 +210,6 @@ bool TileController::platformCALayerShowRepaintCounter(PlatformCALayer*) const
     return owningGraphicsLayer()->platformCALayerShowRepaintCounter(0);
 }
 
-FloatRect TileController::platformCALayerExposedRect() const
-{
-    return owningGraphicsLayer()->platformCALayerExposedRect();
-}
-
 void TileController::setScale(float scale)
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
@@ -281,7 +277,9 @@ void TileController::setVisibleRect(const FloatRect& visibleRect)
 bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect) const
 {
     FloatRect visibleRect = newVisibleRect;
-    visibleRect.intersect(owningGraphicsLayer()->platformCALayerExposedRect());
+
+    if (m_clipsToExposedRect)
+        visibleRect.intersect(m_exposedRect);
 
     if (visibleRect.isEmpty() || bounds().isEmpty())
         return false;
@@ -305,9 +303,25 @@ bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleR
     return coverageRect != m_primaryTileCoverageRect;
 }
 
-void TileController::exposedRectDidChange()
+void TileController::setExposedRect(const FloatRect& exposedRect)
 {
+    if (m_exposedRect == exposedRect)
+        return;
+
+    m_exposedRect = exposedRect;
     setNeedsRevalidateTiles();
+}
+
+void TileController::setClipsToExposedRect(bool clipsToExposedRect)
+{
+    if (m_clipsToExposedRect == clipsToExposedRect)
+        return;
+
+    m_clipsToExposedRect = clipsToExposedRect;
+
+    // Going from not clipping to clipping, we don't need to revalidate right away.
+    if (clipsToExposedRect)
+        setNeedsRevalidateTiles();
 }
 
 void TileController::prepopulateRect(const FloatRect& rect)
@@ -473,7 +487,9 @@ void TileController::getTileIndexRangeForRect(const IntRect& rect, TileIndex& to
 FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect) const
 {
     FloatRect visibleRect = currentVisibleRect;
-    visibleRect.intersect(owningGraphicsLayer()->platformCALayerExposedRect());
+
+    if (m_clipsToExposedRect)
+        visibleRect.intersect(m_exposedRect);
 
     // If the page is not in a window (for example if it's in a background tab), we limit the tile coverage rect to the visible rect.
     if (!m_isInWindow)
@@ -672,7 +688,8 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
     FloatRect visibleRect = m_visibleRect;
     IntRect bounds = this->bounds();
 
-    visibleRect.intersect(owningGraphicsLayer()->platformCALayerExposedRect());
+    if (m_clipsToExposedRect)
+        visibleRect.intersect(m_exposedRect);
 
     if (visibleRect.isEmpty() || bounds.isEmpty())
         return;
@@ -915,7 +932,9 @@ void TileController::updateTileCoverageMap()
     FloatRect containerBounds = bounds();
     FloatRect visibleRect = this->visibleRect();
 
-    visibleRect.intersect(owningGraphicsLayer()->platformCALayerExposedRect());
+    if (m_clipsToExposedRect)
+        visibleRect.intersect(m_exposedRect);
+
     visibleRect.contract(4, 4); // Layer is positioned 2px from top and left edges.
 
     float widthScale = 1;
@@ -929,8 +948,8 @@ void TileController::updateTileCoverageMap()
     FloatRect mapBounds = containerBounds;
     mapBounds.scale(indicatorScale, indicatorScale);
 
-    if (!owningGraphicsLayer()->platformCALayerExposedRect().isInfinite())
-        m_tiledScrollingIndicatorLayer->setPosition(owningGraphicsLayer()->platformCALayerExposedRect().location() + FloatPoint(2, 2));
+    if (m_clipsToExposedRect)
+        m_tiledScrollingIndicatorLayer->setPosition(m_exposedRect.location() + FloatPoint(2, 2));
     else
         m_tiledScrollingIndicatorLayer->setPosition(FloatPoint(2, 2));
 

@@ -28,8 +28,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "FloatRect.h"
-
 namespace WebCore {
 
 class FloatPoint;
@@ -96,8 +94,6 @@ public:
 
     virtual bool shouldSkipLayerInDump(const GraphicsLayer*) const { return false; }
     virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char*) const { return true; }
-
-    virtual FloatRect exposedRect() const { return FloatRect::infiniteRect(); }
 
 #ifndef NDEBUG
     // RenderLayerBacking overrides this to verify that it is not
