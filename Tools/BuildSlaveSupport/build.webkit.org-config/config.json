@@ -93,7 +93,7 @@
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-mini-142", "apple-mini-211"]
                     },
-                    { "name": "Apple Mavericks CLOOP (BuildAndTest)", "type": "BuildAndTestCLOOP", "builddir": "mavericks-debug",
+                    { "name": "Apple Mavericks CLOOP (BuildAndTest)", "type": "BuildAndTestCLOOP", "builddir": "mavericks-cloop-debug",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-mini-180"]
                     },
