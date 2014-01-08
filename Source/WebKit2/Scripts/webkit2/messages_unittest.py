@@ -31,14 +31,23 @@ print os.getcwd()
 
 script_directory = os.path.dirname(os.path.realpath(__file__))
 
+with open(os.path.join(script_directory, 'test-legacy-messages.in')) as file:
+    _legacy_messages_file_contents = file.read()
+
 with open(os.path.join(script_directory, 'test-messages.in')) as file:
     _messages_file_contents = file.read()
 
+with open(os.path.join(script_directory, 'LegacyMessages-expected.h')) as file:
+    _expected_legacy_receiver_header = file.read()
+
 with open(os.path.join(script_directory, 'Messages-expected.h')) as file:
-    _expected_header = file.read()
+    _expected_receiver_header = file.read()
 
 with open(os.path.join(script_directory, 'MessageReceiver-expected.cpp')) as file:
     _expected_receiver_implementation = file.read()
+
+with open(os.path.join(script_directory, 'LegacyMessageReceiver-expected.cpp')) as file:
+    _expected_legacy_receiver_implementation = file.read()
 
 _expected_results = {
     'name': 'WebPage',
@@ -218,6 +227,7 @@ _expected_results = {
 class MessagesTest(unittest.TestCase):
     def setUp(self):
         self.receiver = parser.parse(StringIO(_messages_file_contents))
+        self.legacy_receiver = parser.parse(StringIO(_legacy_messages_file_contents))
 
 
 class ParsingTest(MessagesTest):
@@ -250,6 +260,12 @@ class ParsingTest(MessagesTest):
         for index, message in enumerate(self.receiver.messages):
             self.check_message(message, _expected_results['messages'][index])
 
+        self.assertEquals(self.legacy_receiver.name, _expected_results['name'])
+        self.assertEquals(self.legacy_receiver.condition, _expected_results['conditions'])
+        self.assertEquals(len(self.legacy_receiver.messages), len(_expected_results['messages']))
+        for index, message in enumerate(self.legacy_receiver.messages):
+            self.check_message(message, _expected_results['messages'][index])
+
 
 
 class GeneratedFileContentsTest(unittest.TestCase):
@@ -265,12 +281,18 @@ class GeneratedFileContentsTest(unittest.TestCase):
 
 class HeaderTest(GeneratedFileContentsTest):
     def test_header(self):
+        legacy_file_contents = messages.generate_messages_header(StringIO(_legacy_messages_file_contents))
+        self.assertGeneratedFileContentsEqual(legacy_file_contents, _expected_legacy_receiver_header)
+
         file_contents = messages.generate_messages_header(StringIO(_messages_file_contents))
-        self.assertGeneratedFileContentsEqual(file_contents, _expected_header)
+        self.assertGeneratedFileContentsEqual(file_contents, _expected_receiver_header)
 
 
 class ReceiverImplementationTest(GeneratedFileContentsTest):
     def test_receiver_implementation(self):
+        legacy_file_contents = messages.generate_message_handler(StringIO(_legacy_messages_file_contents))
+        self.assertGeneratedFileContentsEqual(legacy_file_contents, _expected_legacy_receiver_implementation)
+
         file_contents = messages.generate_message_handler(StringIO(_messages_file_contents))
         self.assertGeneratedFileContentsEqual(file_contents, _expected_receiver_implementation)
 

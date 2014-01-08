@@ -103,7 +103,7 @@ bool TestMultipleAttributes::DelayedReply::send()
 
 namespace WebKit {
 
-void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+void WebPage::didReceiveWebPageMessage(IPC::Connection*, IPC::MessageDecoder& decoder)
 {
     if (decoder.messageName() == Messages::WebPage::LoadURL::name()) {
         IPC::handleMessage<Messages::WebPage::LoadURL>(decoder, this, &WebPage::loadURL);
@@ -179,11 +179,10 @@ void WebPage::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder
         return;
     }
 #endif
-    UNUSED_PARAM(connection);
     ASSERT_NOT_REACHED();
 }
 
-void WebPage::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+void WebPage::didReceiveSyncWebPageMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
     if (decoder.messageName() == Messages::WebPage::CreatePlugin::name()) {
         IPC::handleMessage<Messages::WebPage::CreatePlugin>(decoder, *replyEncoder, this, &WebPage::createPlugin);
@@ -211,7 +210,6 @@ void WebPage::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDec
         return;
     }
 #endif
-    UNUSED_PARAM(connection);
     ASSERT_NOT_REACHED();
 }
 
