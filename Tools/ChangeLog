@@ -1,3 +1,16 @@
+2014-01-08  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK][WK2] unskip passing unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=126637
+
+        Reviewed by Carlos Garcia Campos.
+
+        Unskip TestResources and TestAuthentication unit tests since they
+        are passing both under Xvfb and X.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2014-01-08  Alberto Garcia  <berto@igalia.com>
 
         REGRESSION(r160304): [GTK] Disable libtool fast install
