@@ -1,5 +1,29 @@
 2014-01-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Make it possible for MessageReceivers to pass messages to their superclass, and use it for RemoteLayerTreeDrawingAreaProxy
+        https://bugs.webkit.org/show_bug.cgi?id=126558
+
+        Reviewed by Anders Carlsson.
+        
+        In a message.in file it's now possible to say:
+        
+        messages -> Subclass : Superclass { ... } and the generated code will
+        call Superclass::didReceiveMessage().
+        
+        Use this to have RemoteLayerTreeDrawingAreaProxy pass messages up to
+        DrawingAreaProxy.
+
+        * Scripts/webkit2/messages.py:
+        (generate_message_handler):
+        * Scripts/webkit2/model.py:
+        (MessageReceiver.__init__):
+        * Scripts/webkit2/parser.py:
+        (parse):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.messages.in:
+
+2014-01-07  Simon Fraser  <simon.fraser@apple.com>
+
         Add message-generation test for non-legacy message receiver
         https://bugs.webkit.org/show_bug.cgi?id=126603
 

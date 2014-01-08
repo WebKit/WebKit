@@ -48,11 +48,13 @@ def parse(file):
     messages = []
     conditions = []
     master_condition = None
+    superclass = []
     for line in file:
-        match = re.search(r'messages -> (?P<destination>[A-Za-z_0-9]+) \s*(?:(?P<attributes>.*?)\s+)?{', line)
+        match = re.search(r'messages -> (?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)
         if match:
             receiver_attributes = parse_attributes_string(match.group('attributes'))
-
+            if match.group('superclass'):
+                superclass = match.group('superclass')
             if conditions:
                 master_condition = conditions
                 conditions = []
@@ -89,7 +91,7 @@ def parse(file):
                 reply_parameters = None
 
             messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions)))
-    return model.MessageReceiver(destination, receiver_attributes, messages, combine_condition(master_condition))
+    return model.MessageReceiver(destination, superclass, receiver_attributes, messages, combine_condition(master_condition))
 
 
 def parse_attributes_string(attributes_string):

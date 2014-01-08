@@ -24,8 +24,9 @@ import itertools
 
 
 class MessageReceiver(object):
-    def __init__(self, name, attributes, messages, condition):
+    def __init__(self, name, superclass, attributes, messages, condition):
         self.name = name
+        self.superclass = superclass
         self.attributes = frozenset(attributes or [])
         self.messages = messages
         self.condition = condition

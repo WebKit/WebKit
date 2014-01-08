@@ -82,11 +82,11 @@ protected:
     WebCore::IntSize m_layerPosition;
     WebCore::IntSize m_scrollOffset;
 
-private:
-    virtual void sizeDidChange() = 0;
-
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
+
+private:
+    virtual void sizeDidChange() = 0;
 
     // Message handlers.
     // FIXME: These should be pure virtual.
