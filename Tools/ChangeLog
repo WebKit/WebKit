@@ -1,3 +1,11 @@
+2014-01-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Skipping the snapshot test case from the TestWebKitWebView test suite.
+        The test is failing due to issues with Xvfb, with the problem being handled in bug #120404.
+
 2014-01-07  Lucas Forschler  <lforschler@apple.com>
 
         Add buildbot infrasctructure for building and testing JSC cloop
