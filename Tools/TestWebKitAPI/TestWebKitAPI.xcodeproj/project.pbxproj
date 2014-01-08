@@ -176,8 +176,6 @@
 		BC575BD9126F58E2006F0F12 /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
 		BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
 		BC7B61AA129A038700D174A4 /* WKPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */; };
-		BC901E241492ADCE0074A667 /* WKConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC901E221492ADCE0074A667 /* WKConnection.cpp */; };
-		BC901E331492AF390074A667 /* WKConnection_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC901E311492AF390074A667 /* WKConnection_Bundle.cpp */; };
 		BC90955D125548AA00083756 /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC90955C125548AA00083756 /* PlatformWebViewMac.mm */; };
 		BC90977A125571AB00083756 /* PageLoadBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC909779125571AB00083756 /* PageLoadBasic.cpp */; };
 		BC909784125571CF00083756 /* simple.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = BC909778125571AB00083756 /* simple.html */; };
@@ -505,8 +503,6 @@
 		BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = InjectedBundle.xcconfig; sourceTree = "<group>"; };
 		BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformUtilities.cpp; sourceTree = "<group>"; };
 		BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPreferences.cpp; sourceTree = "<group>"; };
-		BC901E221492ADCE0074A667 /* WKConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKConnection.cpp; sourceTree = "<group>"; };
-		BC901E311492AF390074A667 /* WKConnection_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKConnection_Bundle.cpp; sourceTree = "<group>"; };
 		BC90951B125533D700083756 /* PlatformWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWebView.h; sourceTree = "<group>"; };
 		BC90955C125548AA00083756 /* PlatformWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewMac.mm; sourceTree = "<group>"; };
 		BC90957E12554CF900083756 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -815,8 +811,6 @@
 				7CFBCAE31743238E00B2BFCF /* WillLoad_Bundle.cpp */,
 				76E182D91547550100F1FADD /* WillSendSubmitEvent.cpp */,
 				76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */,
-				BC901E221492ADCE0074A667 /* WKConnection.cpp */,
-				BC901E311492AF390074A667 /* WKConnection_Bundle.cpp */,
 				51E93016156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp */,
 				BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */,
 				BC90995D12567BC100083756 /* WKString.cpp */,
@@ -1278,7 +1272,6 @@
 				F6B7BE9417469209008A3445 /* DidAssociateFormControls.cpp in Sources */,
 				BC3C4C7F14587AA60025FB62 /* WKBrowsingContextGroupTest.mm in Sources */,
 				BC3C4C7214575B6A0025FB62 /* WKBrowsingContextLoadDelegateTest.mm in Sources */,
-				BC901E241492ADCE0074A667 /* WKConnection.cpp in Sources */,
 				51E93017156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp in Sources */,
 				BC7B61AA129A038700D174A4 /* WKPreferences.cpp in Sources */,
 				BC90995E12567BC100083756 /* WKString.cpp in Sources */,
@@ -1325,7 +1318,6 @@
 				BC22D31914DC68B900FFB1DD /* UserMessage_Bundle.cpp in Sources */,
 				520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */,
 				76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */,
-				BC901E331492AF390074A667 /* WKConnection_Bundle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
