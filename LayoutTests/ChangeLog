@@ -1,3 +1,20 @@
+2014-01-07  Victor Costan  <costan@gmail.com>
+
+        createElementNS handles element name 'xmlns' correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=126553
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/dom/createElementNS-namespace-errors-expected.txt: Added.
+        * fast/dom/createElementNS-namespace-errors.html: Added. Covers all the corner cases in the DOM4 spec.
+        * fast/dom/script-tests/setAttributeNS-prefix-and-null-namespace.js: Removed.
+        * fast/dom/setAttributeNS-expected.txt: Updated to match cleaned up test.
+        * fast/dom/setAttributeNS-namespace-errors-expected.txt: Added.
+        * fast/dom/setAttributeNS-namespace-errors.html: Added. Covers all the corner cases in the DOM4 spec.
+        * fast/dom/setAttributeNS-prefix-and-null-namespace-expected.txt: Removed.
+        * fast/dom/setAttributeNS-prefix-and-null-namespace.html: Removed. Subsumed by setAttributeNS-namespace-errors.
+        * fast/dom/setAttributeNS.html: Cleaned up.
+
 2014-01-06  Jer Noble  <jer.noble@apple.com>
 
         HTML5 video tag Does Not Load in Apache htaccess/htpasswd Protected Directory

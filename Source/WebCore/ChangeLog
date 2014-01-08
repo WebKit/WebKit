@@ -1,3 +1,17 @@
+2014-01-07  Victor Costan  <costan@gmail.com>
+
+        createElementNS handles element name 'xmlns' correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=126553
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests: fast/dom/createElementNS-namespace-errors.html
+               fast/dom/setAttributeNS-namespace-errors.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::hasValidNamespaceForElements): updated to match DOM3/DOM4 spec.
+        (WebCore::Document::hasValidNamespaceForAttributes): updated to match DOM3/DOM4 spec.
+
 2014-01-07  Jer Noble  <jer.noble@apple.com>
 
         PlatformLayer containing scrollbars does not disappear when setting overflow:hidden on page root, until resize.
