@@ -1,3 +1,12 @@
+2014-01-08  Enrico Nicoletto  <liverig@gmail.com>
+
+        Updated Brazilian Portuguese translation of WebKitGTK+ - December 30, 2013
+        https://bugs.webkit.org/show_bug.cgi?id=126315
+
+        Reviewed by Gustavo Noronha.
+
+        * pt_BR.po: updated translation.
+
 2014-01-06  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Improve the way that translations are built with the built-in gettext support CMake
