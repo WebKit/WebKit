@@ -1312,7 +1312,7 @@ webkit.org/b/124933 svg/animations/getCurrentTime-pause-unpause.html [ Pass Fail
 
 # GL Scissors don't work properly in Mountain Lion.
 webkit.org/b/126455 [ MountainLion ] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Failure ]
-webkit.org/b/126586 [ Mavericks Debug] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Pass Failure ]
+webkit.org/b/126586 [ Mavericks Debug ] webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Pass Failure ]
 
 # HTTP Auth in Media is not supported in Mavericks and Mountain Lion
 webkit.org/b/40382 http/tests/media/video-auth.html [ Skip ]

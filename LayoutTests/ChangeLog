@@ -1,3 +1,9 @@
+2014-01-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix: Correct whitespace around ]
+
+        * platform/mac/TestExpectations: "Debug]" should be "Debug ]"
+
 2014-01-07  Victor Costan  <costan@gmail.com>
 
         createElementNS handles element name 'xmlns' correctly.
