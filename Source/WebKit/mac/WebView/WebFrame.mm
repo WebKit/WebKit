@@ -126,6 +126,11 @@
 #import <WebCore/WebCoreThreadRun.h>
 #endif
 
+#if USE(QUICK_LOOK)
+#import <WebCore/QuickLook.h>
+#import <WebCore/WebCoreURLResponseIOS.h>
+#endif
+
 using namespace WebCore;
 using namespace HTMLNames;
 
@@ -2431,6 +2436,19 @@ static NSURL *createUniqueWebDataURL()
         responseURL = createUniqueWebDataURL();
     }
     
+#if USE(QUICK_LOOK)
+    if (shouldUseQuickLookForMIMEType(MIMEType)) {
+        URL qlURL = responseURL;
+        if (qlURL.isEmpty())
+            qlURL = [baseURL absoluteURL];
+        OwnPtr<ResourceRequest> qlRequest(registerQLPreviewConverterIfNeeded((NSURL *)qlURL, MIMEType, data));
+        if (qlRequest) {
+            _private->coreFrame->loader().load(FrameLoadRequest(_private->coreFrame, *qlRequest));
+            return;
+        }
+    }
+#endif // USE(QUICK_LOOK)
+
     ResourceRequest request([baseURL absoluteURL]);
 
 #if !PLATFORM(IOS)

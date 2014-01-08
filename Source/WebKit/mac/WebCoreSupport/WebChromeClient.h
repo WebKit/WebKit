@@ -152,6 +152,10 @@ public:
     virtual void enableSuddenTermination() OVERRIDE;
     virtual void disableSuddenTermination() OVERRIDE;
     
+#if ENABLE(TOUCH_EVENTS)
+    virtual void needTouchEvents(bool) OVERRIDE { }
+#endif
+
     virtual bool shouldReplaceWithGeneratedFileForUpload(const WTF::String& path, WTF::String &generatedFilename) OVERRIDE;
     virtual WTF::String generateReplacementFile(const WTF::String& path) OVERRIDE;
 

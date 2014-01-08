@@ -263,6 +263,19 @@
 #import <glib.h>
 #endif
 
+#if USE(QUICK_LOOK)
+#include <WebCore/QuickLook.h>
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+#import <WebCore/WebEventRegion.h>
+#endif
+
+#if ENABLE(DISK_IMAGE_CACHE)
+#import "WebDiskImageCacheClientIOS.h"
+#import <WebCore/DiskImageCacheIOS.h>
+#endif
+
 #if !PLATFORM(IOS)
 @interface NSSpellChecker (WebNSSpellCheckerDetails)
 - (void)_preflightChosenSpellServer;
@@ -585,6 +598,11 @@ NSString *_WebMainFrameIconKey =        @"mainFrameIcon";
 NSString *_WebMainFrameTitleKey =       @"mainFrameTitle";
 NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
+#endif
+
+#if USE(QUICK_LOOK)
+NSString *WebQuickLookFileNameKey = @"WebQuickLookFileNameKey";
+NSString *WebQuickLookUTIKey      = @"WebQuickLookUTIKey";
 #endif
 
 NSString *_WebViewDidStartAcceleratedCompositingNotification = @"_WebViewDidStartAcceleratedCompositing";
@@ -2476,6 +2494,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     if (_private->zoomsTextOnly != zoomsTextOnly)
         [self _setZoomMultiplier:_private->zoomMultiplier isTextOnly:zoomsTextOnly];
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    settings.setMinimumZoomFontSize([preferences _minimumZoomFontSize]);
+#endif
+
 #if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
     DiskImageCache& diskImageCache = WebCore::diskImageCache();
     diskImageCache.setEnabled([preferences diskImageCacheEnabled]);
@@ -2588,7 +2610,9 @@ static inline IMP getMethod(id o, SEL s)
     cache->didFirstVisuallyNonEmptyLayoutInFrameFunc = getMethod(delegate, @selector(webView:didFirstVisuallyNonEmptyLayoutInFrame:));
     cache->didLayoutFunc = getMethod(delegate, @selector(webView:didLayout:));
     cache->didHandleOnloadEventsForFrameFunc = getMethod(delegate, @selector(webView:didHandleOnloadEventsForFrame:));
+#if ENABLE(ICONDATABASE)
     cache->didReceiveIconForFrameFunc = getMethod(delegate, @selector(webView:didReceiveIcon:forFrame:));
+#endif
     cache->didReceiveServerRedirectForProvisionalLoadForFrameFunc = getMethod(delegate, @selector(webView:didReceiveServerRedirectForProvisionalLoadForFrame:));
     cache->didReceiveTitleForFrameFunc = getMethod(delegate, @selector(webView:didReceiveTitle:forFrame:));
     cache->didStartProvisionalLoadForFrameFunc = getMethod(delegate, @selector(webView:didStartProvisionalLoadForFrame:));
@@ -3597,6 +3621,21 @@ static inline IMP getMethod(id o, SEL s)
     return _private->page->setDefersLoading(defer);
 }
 
+#if USE(QUICK_LOOK)
+- (NSDictionary *)quickLookContentForURL:(NSURL *)url
+{
+    NSString *uti = qlPreviewConverterUTIForURL(url);
+    if (!uti)
+        return nil;
+
+    NSString *fileName = qlPreviewConverterFileNameForURL(url);
+    if (!fileName)
+        return nil;
+
+    return [NSDictionary dictionaryWithObjectsAndKeys: fileName, WebQuickLookFileNameKey, uti, WebQuickLookUTIKey, nil];
+}
+#endif
+
 #if PLATFORM(IOS)
 - (BOOL)_isStopping
 {
@@ -3722,6 +3761,50 @@ static inline IMP getMethod(id o, SEL s)
 }
 #endif // PLATFORM(IOS)
 
+#if ENABLE(TOUCH_EVENTS)
+- (NSArray *)_touchEventRegions
+{
+    Frame* frame = [self _mainCoreFrame];
+    if (!frame)
+        return nil;
+    
+    Document* document = frame->document();
+    if (!document)
+        return nil;
+
+    Vector<IntRect> rects;
+    document->getTouchRects(rects);
+
+    if (rects.size() == 0)
+        return nil;
+
+    NSMutableArray *eventRegionArray = [[[NSMutableArray alloc] initWithCapacity:rects.size()] autorelease];
+
+    Vector<IntRect>::const_iterator end = rects.end();
+    for (Vector<IntRect>::const_iterator it = rects.begin(); it != end; ++it) {
+        const IntRect& rect = *it;
+        if (rect.isEmpty())
+            continue;
+
+        // The event region wants this points in this order:
+        //  p2------p3
+        //  |       |
+        //  p1------p4
+        //
+        WebEventRegion *eventRegion = [[WebEventRegion alloc] initWithPoints:FloatPoint(rect.x(), rect.maxY())
+                                                                            :FloatPoint(rect.x(), rect.y())
+                                                                            :FloatPoint(rect.maxX(), rect.y())
+                                                                            :FloatPoint(rect.maxX(), rect.maxY())];
+        if (eventRegion) {
+            [eventRegionArray addObject:eventRegion];
+            [eventRegion release];
+        }
+    }
+
+    return eventRegionArray;
+}
+#endif // ENABLE(TOUCH_EVENTS)
+
 // For backwards compatibility with the WebBackForwardList API, we honor both
 // a per-WebView and a per-preferences setting for whether to use the page cache.
 
@@ -3766,11 +3849,13 @@ static inline IMP getMethod(id o, SEL s)
     return [[[WebTextIterator alloc] initWithRange:kit(selectionInsideRect.toNormalizedRange().get())] autorelease];
 }
 
+#if ENABLE(DASHBOARD_SUPPORT)
 - (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource 
 {
     NSWindow *window = [self hostWindow] ? [self hostWindow] : [self window]; 
     [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window]; 
 } 
+#endif
 
 #if !PLATFORM(IOS)
 - (void)_clearUndoRedoOperations

@@ -3052,6 +3052,17 @@ WEBCORE_COMMAND(toggleUnderline)
 
 - (BOOL)maintainsInactiveSelection
 {
+#if USE(UIKIT_EDITING)
+    // We want to maintain an inactive selection, when in editable content.
+    if ([[self _webView] maintainsInactiveSelection])
+        return YES;
+
+    if ([[self window] _newFirstResponderAfterResigning] == self)
+        return YES;
+    
+    Frame* coreFrame = core([self _frame]);
+    return coreFrame && coreFrame->selection().isContentEditable();
+#else
     // This method helps to determine whether the WebHTMLView should maintain
     // an inactive selection when it's not first responder.
     // Traditionally, these views have not maintained such selections,
@@ -3086,6 +3097,7 @@ WEBCORE_COMMAND(toggleUnderline)
         && [nextResponder isDescendantOf:[[[self _webView] mainFrame] frameView]];
 
     return selectionIsEditable && nextResponderIsInWebView;
+#endif
 }
 
 #if !PLATFORM(IOS)
@@ -3952,6 +3964,18 @@ static void setMenuTargets(NSMenu* menu)
 
     _private->handlingMouseDownEvent = NO;
 }
+
+#if ENABLE(TOUCH_EVENTS)
+- (void)touch:(WebEvent *)event
+{
+    RetainPtr<WebHTMLView> protector = self;
+
+    // Let WebCore get a chance to deal with the event. This will call back to us
+    // to start the autoscroll timer if appropriate.
+    if (Frame* coreframe = core([self _frame]))
+        coreframe->eventHandler().touchEvent(event);
+}
+#endif
 
 #if ENABLE(DRAG_SUPPORT)
 - (void)dragImage:(NSImage *)dragImage

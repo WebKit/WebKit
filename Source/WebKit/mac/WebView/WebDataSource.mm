@@ -488,6 +488,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         }
     }
 #endif
+    
+#if USE(QUICK_LOOK)
+    // Added in -[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:].
+    if (NSURL *url = [[self response] URL])
+        removeQLPreviewConverterForURL(url);
+#endif
 
     delete toPrivate(_private);
 

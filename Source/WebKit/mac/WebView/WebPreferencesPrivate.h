@@ -268,6 +268,21 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setNetworkInterfaceName:(NSString *)name;
 - (NSString *)networkInterfaceName;
 
+- (void)_setMinimumZoomFontSize:(float)size;
+- (float)_minimumZoomFontSize;
+
+- (BOOL)diskImageCacheEnabled;
+- (void)setDiskImageCacheEnabled:(BOOL)enabled;
+
+- (unsigned)diskImageCacheMinimumImageSize;
+- (void)setDiskImageCacheMinimumImageSize:(unsigned)minimumSize;
+
+- (unsigned)diskImageCacheMaximumCacheSize;
+- (void)setDiskImageCacheMaximumCacheSize:(unsigned)maximumSize;
+
+- (NSString *)_diskImageCacheSavedCacheDirectory;
+- (void)_setDiskImageCacheSavedCacheDirectory:(NSString *)path;
+
 - (void)setMediaPlaybackAllowsAirPlay:(BOOL)flag;
 - (BOOL)mediaPlaybackAllowsAirPlay;
 #endif

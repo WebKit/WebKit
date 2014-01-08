@@ -47,6 +47,10 @@
 #import <WebCore/WebCoreThreadRun.h>
 #endif
 
+#if ENABLE(CACHE_PARTITIONING)
+#import <WebCore/Document.h>
+#endif
+
 @implementation WebCache
 
 + (void)initialize

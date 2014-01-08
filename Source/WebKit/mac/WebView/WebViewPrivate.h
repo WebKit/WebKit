@@ -101,6 +101,11 @@ extern NSString *_WebViewDidStartAcceleratedCompositingNotification;
 extern NSString *_WebViewRemoteInspectorHasSessionChangedNotification;
 #endif
 
+#if TARGET_OS_IPHONE
+extern NSString *WebQuickLookFileNameKey;
+extern NSString *WebQuickLookUTIKey;
+#endif
+
 extern NSString * const WebViewWillCloseNotification;
 
 #if ENABLE_DASHBOARD_SUPPORT
@@ -466,6 +471,10 @@ Could be worth adding to the API.
 + (void)_clearPrivateBrowsingSessionCookieStorage;
 
 - (void)_replaceCurrentHistoryItem:(WebHistoryItem *)item;
+#endif // PLATFORM(IOS)
+
+#if TARGET_OS_IPHONE
+- (NSDictionary *)quickLookContentForURL:(NSURL *)url;
 #endif
 
 // May well become public

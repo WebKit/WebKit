@@ -31,8 +31,8 @@
 @class DOMHTMLElement;
 
 @interface NSObject (WebViewEditingDelegatePrivate)
-- (BOOL)webView:(WebView *)webView shouldShowDeleteInterfaceForElement:(DOMHTMLElement *)element;
 #if !TARGET_OS_IPHONE
+- (BOOL)webView:(WebView *)webView shouldShowDeleteInterfaceForElement:(DOMHTMLElement *)element;
 - (void)webView:(WebView *)webView didWriteSelectionToPasteboard:(NSPasteboard *)pasteboard;
 #else
 - (NSArray *)supportedPasteboardTypesForCurrentSelection;

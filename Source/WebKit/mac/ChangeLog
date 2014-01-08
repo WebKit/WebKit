@@ -1,5 +1,44 @@
 2014-01-02  Andy Estes  <aestes@apple.com>
 
+        [iOS] Upstream WebKit support for various features
+        https://bugs.webkit.org/show_bug.cgi?id=126413
+
+        Reviewed by Sam Weinig.
+
+        Upstream iOS WebKit changes needed for these features:
+
+        - ENABLE(DELETION_UI)
+        - ENABLE(TOUCH_EVENTS)
+        - USE(QUICK_LOOK)
+        - USE(UIKIT_EDITING)
+        - ENABLE(DISK_IMAGE_CACHE)
+        - ENABLE(IOS_TEXT_AUTOSIZING)
+        - ENABLE(ICONDATABASE)
+        - ENABLE(DASHBOARD_SUPPORT)
+
+        * DefaultDelegates/WebDefaultEditingDelegate.m:
+        * Misc/WebCache.mm:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource dealloc]):
+        * WebView/WebEditingDelegatePrivate.h:
+        * WebView/WebFrame.mm:
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView maintainsInactiveSelection]):
+        (-[WebHTMLView touch:]):
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        (-[WebView _cacheFrameLoadDelegateImplementations]):
+        (-[WebView quickLookContentForURL:]):
+        (-[WebView _touchEventRegions]):
+        * WebView/WebViewPrivate.h:
+
+2014-01-02  Andy Estes  <aestes@apple.com>
+
         [iOS] Upstream a bug fix for plugin-backed media elements
         https://bugs.webkit.org/show_bug.cgi?id=126412
 
