@@ -768,7 +768,7 @@ webkit.org/b/126432 fast/css/acid2.html [ Failure Pass ]
 webkit.org/b/126432 http/tests/misc/acid2-pixel.html [ Failure Pass ]
 webkit.org/b/126432 http/tests/misc/acid2.html [ Failure Pass ]
 
-webkit.org/b/126523 accessibility/menu-list-sends-change-notification.html [ Failure Pass ]
+webkit.org/b/126523 perf/accessibility-title-ui-element.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1539,6 +1539,8 @@ webkit.org/b/126519 inspector-protocol/model/highlight-shape-outside-margin.html
 webkit.org/b/126520 media/click-volume-bar-not-pausing.html [ Failure ]
 
 webkit.org/b/126521 accessibility/menu-list-sends-change-notification.html [ Failure ]
+
+webkit.org/b/126619 http/tests/media/video-auth.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

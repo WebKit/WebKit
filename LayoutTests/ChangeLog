@@ -1,3 +1,11 @@
+2014-01-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+        Add a flaky expectation for perf/accessibility-title-ui-element.html and a failure expectation
+        for http/tests/media/video-auth.html.
+
+        * platform/gtk/TestExpectations:
+
 2014-01-07  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r161195): Acid2 regression tests frequently fail
