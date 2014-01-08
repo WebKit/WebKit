@@ -1318,3 +1318,5 @@ webkit.org/b/126586 [ Mavericks Debug ] webgl/1.0.2/conformance/rendering/gl-sci
 
 # HTTP Auth in Media is not supported in Mavericks and Mountain Lion
 webkit.org/b/40382 http/tests/media/video-auth.html [ Skip ]
+
+webkit.org/b/52016 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Pass Failure Timeout ]
