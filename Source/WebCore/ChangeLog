@@ -1,3 +1,12 @@
+2014-01-02  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream remainder of minimal-ui viewport changes
+        https://bugs.webkit.org/show_bug.cgi?id=126410
+
+        Reviewed by Sam Weinig.
+
+        * dom/ViewportArguments.h:
+
 2014-01-07  Victor Costan  <costan@gmail.com>
 
         createElementNS handles element name 'xmlns' correctly.

@@ -51,9 +51,6 @@ struct ViewportAttributes {
 
     float userScalable;
     float orientation;
-#if PLATFORM(IOS)
-    bool minimalUI;
-#endif
 };
 
 struct ViewportArguments {
@@ -115,6 +112,9 @@ struct ViewportArguments {
     float maxZoom;
     float userZoom;
     float orientation;
+#if PLATFORM(IOS)
+    bool minimalUI;
+#endif
 
     bool operator==(const ViewportArguments& other) const
     {

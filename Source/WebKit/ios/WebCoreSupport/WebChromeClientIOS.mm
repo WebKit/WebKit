@@ -162,7 +162,8 @@ static inline NSDictionary* dictionaryForViewportArguments(const WebCore::Viewpo
               @"maximum-scale":@(arguments.maxZoom),
               @"user-scalable":@(arguments.userZoom),
               @"width":@(arguments.width),
-              @"height":@(arguments.height) };
+              @"height":@(arguments.height),
+              @"minimal-ui":@(arguments.minimalUI) };
 }
 
 void WebChromeClientIOS::dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments& arguments) const
