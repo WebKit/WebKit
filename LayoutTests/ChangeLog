@@ -1,3 +1,27 @@
+2014-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        a fractional value of the css letter-spacing property is not rendered as expected
+        https://bugs.webkit.org/show_bug.cgi?id=20606
+
+        Reviewed by Simon Fraser.
+
+        Manually verified that these tests are correct after enabling fractional letter-spacing and word spacing
+
+        * platform/mac/css1/text_properties/letter_spacing-expected.png:
+        * platform/mac/css1/text_properties/letter_spacing-expected.txt:
+        * platform/mac/css1/text_properties/word_spacing-expected.png:
+        * platform/mac/css1/text_properties/word_spacing-expected.txt:
+        * platform/mac/fast/text/basic/013-expected.png:
+        * platform/mac/fast/text/basic/013-expected.txt:
+        * platform/mac/fast/text/text-letter-spacing-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-spacing-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-spacing-01-b-expected.txt:
+        * platform/mac/svg/batik/text/textLayout-expected.txt:
+        * platform/mac/svg/custom/text-letter-spacing-expected.png:
+        * platform/mac/svg/custom/text-letter-spacing-expected.txt:
+        * platform/mac/svg/text/text-spacing-01-b-expected.png:
+        * platform/mac/svg/text/text-spacing-01-b-expected.txt:
+
 2014-01-08  Alexey Proskuryakov  <ap@apple.com>
 
         Flaky Test: http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html

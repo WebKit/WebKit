@@ -79,7 +79,7 @@ struct GlyphOverflow {
 class Font {
 public:
     Font();
-    Font(const FontDescription&, short letterSpacing, short wordSpacing);
+    Font(const FontDescription&, float letterSpacing, float wordSpacing);
     // This constructor is only used if the platform wants to start with a native font.
     Font(const FontPlatformData&, bool isPrinting, FontSmoothingMode = AutoSmoothing);
     ~Font();
@@ -115,10 +115,10 @@ public:
 
     bool isSmallCaps() const { return m_fontDescription.smallCaps(); }
 
-    short wordSpacing() const { return m_wordSpacing; }
-    short letterSpacing() const { return m_letterSpacing; }
-    void setWordSpacing(short s) { m_wordSpacing = s; }
-    void setLetterSpacing(short s) { m_letterSpacing = s; }
+    float wordSpacing() const { return m_wordSpacing; }
+    float letterSpacing() const { return m_letterSpacing; }
+    void setWordSpacing(float s) { m_wordSpacing = s; }
+    void setLetterSpacing(float s) { m_letterSpacing = s; }
     bool isFixedPitch() const;
     bool isPrinterFont() const { return m_fontDescription.usePrinterFont(); }
     bool isSVGFont() const { return primaryFont()->isSVGFont(); }
@@ -304,8 +304,8 @@ private:
 
     FontDescription m_fontDescription;
     mutable RefPtr<FontGlyphs> m_glyphs;
-    short m_letterSpacing;
-    short m_wordSpacing;
+    float m_letterSpacing;
+    float m_wordSpacing;
     mutable bool m_useBackslashAsYenSymbol;
     mutable unsigned m_typesettingFeatures : 2; // (TypesettingFeatures) Caches values computed from m_fontDescription.
 };

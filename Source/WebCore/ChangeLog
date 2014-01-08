@@ -1,3 +1,35 @@
+2014-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        a fractional value of the css letter-spacing property is not rendered as expected
+        https://bugs.webkit.org/show_bug.cgi?id=20606
+
+        Reviewed by Simon Fraser.
+
+        This turns on fractional letter-spacing and word-spacing CSS values.
+        It is taken mostly from Blink r153727 and iOS. Updating the relevant
+        types is all that is necessary
+
+        Existing tests have been updated.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::width):
+        * platform/graphics/Font.h:
+        (WebCore::Font::wordSpacing):
+        (WebCore::Font::letterSpacing):
+        (WebCore::Font::setWordSpacing):
+        (WebCore::Font::setLetterSpacing):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::wordSpacing):
+        (WebCore::RenderStyle::letterSpacing):
+        (WebCore::RenderStyle::setWordSpacing):
+        (WebCore::RenderStyle::setLetterSpacing):
+        * rendering/style/RenderStyle.h:
+
 2014-01-08  Anders Carlsson  <andersca@apple.com>
 
         Add WTF::StringView and use it for grammar checking

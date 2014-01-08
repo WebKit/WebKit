@@ -1399,8 +1399,8 @@ float RenderStyle::specifiedFontSize() const { return fontDescription().specifie
 float RenderStyle::computedFontSize() const { return fontDescription().computedSize(); }
 int RenderStyle::fontSize() const { return inherited->font.pixelSize(); }
 
-int RenderStyle::wordSpacing() const { return inherited->font.wordSpacing(); }
-int RenderStyle::letterSpacing() const { return inherited->font.letterSpacing(); }
+float RenderStyle::wordSpacing() const { return inherited->font.wordSpacing(); }
+float RenderStyle::letterSpacing() const { return inherited->font.letterSpacing(); }
 
 bool RenderStyle::setFontDescription(const FontDescription& v)
 {
@@ -1451,8 +1451,8 @@ int RenderStyle::computedLineHeight(RenderView* renderView) const
     return lh.value();
 }
 
-void RenderStyle::setWordSpacing(int v) { inherited.access()->font.setWordSpacing(v); }
-void RenderStyle::setLetterSpacing(int v) { inherited.access()->font.setLetterSpacing(v); }
+void RenderStyle::setWordSpacing(float v) { inherited.access()->font.setWordSpacing(v); }
+void RenderStyle::setLetterSpacing(float v) { inherited.access()->font.setLetterSpacing(v); }
 
 void RenderStyle::setFontSize(float size)
 {
