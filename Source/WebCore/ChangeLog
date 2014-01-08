@@ -1,3 +1,24 @@
+2014-01-08  Andreas Kling  <akling@apple.com>
+
+        RenderMathMLRow::createAnonymousWithParentRenderer() should return RenderPtr.
+        <https://webkit.org/b/126631>
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/mathml/RenderMathMLRow.h:
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::createAnonymousWithParentRenderer):
+
+            Tweak to return RenderPtr<RenderMathMLRow> and removed comment(!)
+            about how this should return a smart pointer. Also take the
+            parent renderer as a RenderMathMLRoot& instead of a RenderObject*
+            since that's all we ever pass.
+
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::addChild):
+
+            Updated for new createAnonymousWithParentRenderer() signature.
+
 2014-01-08  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         AX: Make roleValue() return DescriptionListRole for <dl> elements

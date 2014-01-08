@@ -31,13 +31,15 @@
 #include "RenderMathMLBlock.h"
 
 namespace WebCore {
-    
+
+class RenderMathMLRoot;
+
 class RenderMathMLRow : public RenderMathMLBlock {
 public:
     RenderMathMLRow(Element&, PassRef<RenderStyle>);
     RenderMathMLRow(Document&, PassRef<RenderStyle>);
 
-    static RenderMathMLRow* createAnonymousWithParentRenderer(const RenderObject*);
+    static RenderPtr<RenderMathMLRow> createAnonymousWithParentRenderer(RenderMathMLRoot&);
 
 protected:
     virtual void layout();

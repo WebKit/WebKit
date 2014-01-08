@@ -32,6 +32,7 @@
 #include "MathMLNames.h"
 #include "RenderIterator.h"
 #include "RenderMathMLOperator.h"
+#include "RenderMathMLRoot.h"
 
 namespace WebCore {
 
@@ -47,10 +48,9 @@ RenderMathMLRow::RenderMathMLRow(Document& document, PassRef<RenderStyle> style)
 {
 }
 
-// FIXME: Change all these createAnonymous... routines to return a PassOwnPtr<>.
-RenderMathMLRow* RenderMathMLRow::createAnonymousWithParentRenderer(const RenderObject* parent)
+RenderPtr<RenderMathMLRow> RenderMathMLRow::createAnonymousWithParentRenderer(RenderMathMLRoot& parent)
 {
-    RenderMathMLRow* newMRow = new RenderMathMLRow(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(&parent->style(), FLEX));
+    RenderPtr<RenderMathMLRow> newMRow = createRenderer<RenderMathMLRow>(parent.document(), RenderStyle::createAnonymousStyleWithDisplay(&parent.style(), FLEX));
     newMRow->initializeStyle();
     return newMRow;
 }

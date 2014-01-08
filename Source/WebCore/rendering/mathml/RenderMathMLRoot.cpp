@@ -163,7 +163,7 @@ void RenderMathMLRoot::addChild(RenderObject* newChild, RenderObject* beforeChil
     // Insert an implicit <mrow> for <mroot> as well as <msqrt>, to ensure firstChild() will have a box
     // to measure and store a glyph-based height for preferredLogicalHeightAfterSizing.
     if (!firstChild())
-        RenderMathMLBlock::addChild(RenderMathMLRow::createAnonymousWithParentRenderer(this));
+        RenderMathMLBlock::addChild(RenderMathMLRow::createAnonymousWithParentRenderer(*this).leakPtr());
     
     // An <mroot>'s index has { position: absolute }.
     if (newChild->style().position() == AbsolutePosition)
