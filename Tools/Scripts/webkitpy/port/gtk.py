@@ -47,9 +47,9 @@ class GtkPort(Port):
     def __init__(self, *args, **kwargs):
         super(GtkPort, self).__init__(*args, **kwargs)
         self._pulseaudio_sanitizer = PulseAudioSanitizer()
-        self._leakdetector = LeakDetectorValgrind(self._filesystem, self.results_directory())
 
         if self.get_option("leaks"):
+            self._leakdetector = LeakDetectorValgrind(self._filesystem, self.results_directory())
             if not self.get_option("wrapper"):
                 raise ValueError('use --wrapper=\"valgrind\" for memory leak detection on GTK')
 

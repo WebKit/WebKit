@@ -1,3 +1,10 @@
+2014-01-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Attempting to fix webkitpy tests after r161512.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.__init__): Construct LeakDetectorValgrin only if leak detection is enabled.
+
 2014-01-08  Brian Holt  <brian.holt@samsung.com>
 
         [GTK] Parse Valgrind xml leak files
