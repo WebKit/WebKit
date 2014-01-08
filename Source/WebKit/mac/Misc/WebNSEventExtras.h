@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !TARGET_OS_IPHONE
-
 #import <AppKit/AppKit.h>
 
 @interface NSEvent (WebExtras)
@@ -41,5 +39,3 @@
 -(BOOL)_web_isTabKeyEvent;
 
 @end
-
-#endif

@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !TARGET_OS_IPHONE
-
 #import <Foundation/Foundation.h>
 
 @class DOMElement;
@@ -89,5 +87,3 @@ extern NSString *WebURLNamePboardType;
 #ifdef __cplusplus
 }
 #endif
-
-#endif // !TARGET_OS_IPHONE

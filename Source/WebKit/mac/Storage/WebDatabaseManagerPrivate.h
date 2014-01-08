@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: We shouldn't use ENABLE() macros in exported headers
 #if ENABLE(SQL_DATABASE)
 
 extern NSString *WebDatabaseDirectoryDefaultsKey;

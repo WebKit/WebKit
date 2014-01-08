@@ -1,3 +1,37 @@
+2014-01-02  Andy Estes  <aestes@apple.com>
+
+        [iOS] Clean up some exported headers
+        https://bugs.webkit.org/show_bug.cgi?id=126403
+
+        Reviewed by Simon Fraser.
+
+        Public header files that are completely excluded on iOS don't need
+        !TARGET_OS_IPHONE guards since they are already listed in
+        EXCLUDED_SOURCE_FILE_NAMES.
+
+        I also took the opportunity to sort EXCLUDED_SOURCE_FILE_NAMES and to
+        clean up some #imports.
+
+        * Configurations/WebKit.xcconfig:
+        * Misc/WebCache.h:
+        * Misc/WebIconDatabasePrivate.h:
+        * Misc/WebLocalizableStrings.h:
+        * Misc/WebNSEventExtras.h:
+        * Misc/WebNSPasteboardExtras.h:
+        * Misc/WebNSWindowExtras.h:
+        * Panels/WebPanelAuthenticationHandler.h:
+        * Plugins/WebPluginsPrivate.h:
+        * Storage/WebDatabaseManagerPrivate.h:
+        * WebCoreSupport/WebJavaScriptTextInputPanel.h:
+        * WebCoreSupport/WebKeyGenerator.h:
+        * WebCoreSupport/WebSecurityOriginPrivate.h:
+        * WebView/WebDashboardRegion.h:
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebFrameView.h:
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebResourceLoadDelegatePrivate.h:
+        * WebView/WebView.h:
+
 2014-01-07  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove leftover 'device metrics' code

@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if !TARGET_OS_IPHONE
-
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
 #define ENABLE_DASHBOARD_SUPPORT 1
 #endif
@@ -49,7 +47,5 @@ typedef enum {
 - (NSRect)dashboardRegionRect;
 - (WebDashboardRegionType)dashboardRegionType;
 @end
-
-#endif
 
 #endif

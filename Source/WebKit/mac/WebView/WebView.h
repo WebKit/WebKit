@@ -26,8 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+
 #if !TARGET_OS_IPHONE
-#import <Cocoa/Cocoa.h>
+#import <AppKit/AppKit.h>
 #else
 #import <WebKit/WAKAppKitStubs.h>
 #if !defined(IBAction)
