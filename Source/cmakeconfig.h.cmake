@@ -42,6 +42,7 @@
 #cmakedefine01 ENABLE_FILTERS
 #cmakedefine01 ENABLE_FIXED_REPORTED_SIZE
 #cmakedefine01 ENABLE_FTPDIR
+#cmakedefine01 ENABLE_FTL_JIT
 #cmakedefine01 ENABLE_FONT_LOAD_EVENTS
 #cmakedefine01 ENABLE_FULLSCREEN_API
 #cmakedefine01 ENABLE_GAMEPAD
@@ -125,5 +126,6 @@
 #cmakedefine01 ENABLE_XSLT
 #cmakedefine01 USE_SYSTEM_MALLOC
 #cmakedefine01 WTF_USE_TILED_BACKING_STORE
+#cmakedefine01 HAVE_LLVM
 
 #endif /* CMAKECONFIG_H */

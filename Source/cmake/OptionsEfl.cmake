@@ -281,3 +281,8 @@ if (ENABLE_INDEXED_DATABASE)
     set(WTF_USE_LEVELDB 1)
     add_definitions(-DWTF_USE_LEVELDB=1)
 endif ()
+
+if (ENABLE_FTL_JIT)
+    find_package(LLVM REQUIRED)
+    set(HAVE_LLVM ON)
+endif ()

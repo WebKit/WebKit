@@ -16,6 +16,7 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/interpreter"
     "${JAVASCRIPTCORE_DIR}/jit"
     "${JAVASCRIPTCORE_DIR}/llint"
+    "${JAVASCRIPTCORE_DIR}/llvm"
     "${JAVASCRIPTCORE_DIR}/parser"
     "${JAVASCRIPTCORE_DIR}/profiler"
     "${JAVASCRIPTCORE_DIR}/runtime"
@@ -576,6 +577,81 @@ if (ENABLE_LLINT)
     )
 endif ()
 
+if (ENABLE_FTL_JIT)
+    if (NOT LLVM_STATIC_LIBRARIES)
+        message(FATAL_ERROR "No LLVM libs found, but FTL is enabled. Stopping build.")
+    endif ()
+
+    # Configure llvmForJSC.so
+    set(llvmForJSC_SOURCES
+        llvm/library/LLVMAnchor.cpp
+        llvm/library/LLVMExports.cpp
+        llvm/library/LLVMOverrides.cpp
+    )
+    set(llvmForJSC_INCLUDE_DIRECTORIES
+        ${LLVM_INCLUDE_DIRS}
+        "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
+    )
+
+    add_custom_command(
+        OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h
+        DEPENDS ${LLVM_STATIC_LIBRARIES}
+        COMMAND ${CMAKE_COMMAND} -E touch ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h
+        VERBATIM)
+
+    WEBKIT_WRAP_SOURCELIST(${llvmForJSC_SOURCES})
+    add_library(llvmForJSC SHARED ${llvmForJSC_SOURCES} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h)
+    target_link_libraries(llvmForJSC ${LLVM_STATIC_LIBRARIES} "pthread" "dl")
+
+    # Added extra items for JavaScriptCore
+    list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
+        ${LLVM_INCLUDE_DIRS}
+    )
+
+    list(APPEND JavaScriptCore_SOURCES
+        llvm/InitializeLLVM.cpp
+        llvm/InitializeLLVMPOSIX.cpp
+        llvm/InitializeLLVMLinux.cpp
+        llvm/LLVMAPI.cpp
+
+        dfg/DFGToFTLDeferredCompilationCallback.cpp
+        dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp
+
+        disassembler/LLVMDisassembler.cpp
+        disassembler/X86Disassembler.cpp
+
+        ftl/FTLAbstractHeap.cpp
+        ftl/FTLAbstractHeapRepository.cpp
+        ftl/FTLCapabilities.cpp
+        ftl/FTLCommonValues.cpp
+        ftl/FTLCompile.cpp
+        ftl/FTLExitArgument.cpp
+        ftl/FTLExitArgumentForOperand.cpp
+        ftl/FTLExitThunkGenerator.cpp
+        ftl/FTLExitValue.cpp
+        ftl/FTLFail.cpp
+        ftl/FTLForOSREntryJITCode.cpp
+        ftl/FTLInlineCacheSize.cpp
+        ftl/FTLIntrinsicRepository.cpp
+        ftl/FTLJITCode.cpp
+        ftl/FTLJITFinalizer.cpp
+        ftl/FTLLink.cpp
+        ftl/FTLLocation.cpp
+        ftl/FTLLowerDFGToLLVM.cpp
+        ftl/FTLOSREntry.cpp
+        ftl/FTLOSRExit.cpp
+        ftl/FTLOSRExitCompiler.cpp
+        ftl/FTLOutput.cpp
+        ftl/FTLSaveRestore.cpp
+        ftl/FTLSlowPathCall.cpp
+        ftl/FTLSlowPathCallKey.cpp
+        ftl/FTLStackMaps.cpp
+        ftl/FTLState.cpp
+        ftl/FTLThunks.cpp
+        ftl/FTLValueFormat.cpp
+    )
+endif ()
+
 set(HASH_LUT_GENERATOR ${CMAKE_CURRENT_SOURCE_DIR}/create_hash_table)
 macro(GENERATE_HASH_LUT _input _output)
     add_custom_command(
@@ -596,7 +672,6 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     assembler
     bindings
     bytecode
-    collector/handles
     debugger
     heap
     inspector
@@ -607,6 +682,8 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     profiler
     runtime
     yarr
+
+    collector/handles
 )
 
 set(JavaScriptCore_FORWARDING_HEADERS_FILES
@@ -770,4 +847,8 @@ if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "SHARED")
     POPULATE_LIBRARY_VERSION(JAVASCRIPTCORE)
     set_target_properties(JavaScriptCore PROPERTIES VERSION ${JAVASCRIPTCORE_VERSION} SOVERSION ${JAVASCRIPTCORE_VERSION_MAJOR})
     install(TARGETS JavaScriptCore DESTINATION "${LIB_INSTALL_DIR}")
+endif ()
+
+if (ENABLE_FTL_JIT)
+    add_dependencies(JavaScriptCore llvmForJSC)
 endif ()
