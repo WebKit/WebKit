@@ -1,3 +1,17 @@
+2014-01-08  Alberto Garcia  <berto@igalia.com>
+
+        Fix some compilation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=126635
+
+        Reviewed by Csaba Osztrogonác.
+
+        Remove code that is no longer being used.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/gtk/PopupMenuGtk.cpp:
+        * platform/gtk/RedirectedXCompositeWindow.h:
+
 2014-01-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [Automake] Scripts for generated build targets do not necessarily produce their output

@@ -167,7 +167,6 @@ private:
 
     int m_changeMask;
     bool m_needsDisplay;
-    bool m_hasOwnBackingStore;
     bool m_fixedToViewport;
     Color m_solidColor;
 

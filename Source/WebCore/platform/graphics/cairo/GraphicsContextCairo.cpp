@@ -1024,14 +1024,6 @@ void GraphicsContext::clipOut(const IntRect& r)
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
-static inline FloatPoint getPhase(const FloatRect& dest, const FloatRect& tile)
-{
-    FloatPoint phase = dest.location();
-    phase.move(-tile.x(), -tile.y());
-
-    return phase;
-}
-
 void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace)
 {
     if (paintingDisabled())

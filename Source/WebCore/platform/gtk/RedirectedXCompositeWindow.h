@@ -70,7 +70,6 @@ private:
     GLContextNeeded m_needsContext;
     OwnPtr<GLContext> m_context;
     RefPtr<cairo_surface_t> m_surface;
-    unsigned int m_pendingResizeSourceId;
     bool m_needsNewPixmapAfterResize;
 
     Damage m_damage;
