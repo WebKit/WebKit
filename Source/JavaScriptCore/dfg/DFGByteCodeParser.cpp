@@ -505,30 +505,6 @@ private:
         flush(m_inlineStackTop);
     }
 
-    // Get an operand, and perform a ToInt32/ToNumber conversion on it.
-    Node* getToInt32(int operand)
-    {
-        return toInt32(get(VirtualRegister(operand)));
-    }
-
-    // Perform an ES5 ToInt32 operation - returns a node of type NodeResultInt32.
-    Node* toInt32(Node* node)
-    {
-        if (node->hasInt32Result())
-            return node;
-
-        // Check for numeric constants boxed as JSValues.
-        if (canFold(node)) {
-            JSValue v = valueOfJSConstant(node);
-            if (v.isInt32())
-                return getJSConstant(node->constantNumber());
-            if (v.isNumber())
-                return getJSConstantForValue(JSValue(JSC::toInt32(v.asNumber())));
-        }
-
-        return addToGraph(ValueToInt32, node);
-    }
-
     // NOTE: Only use this to construct constants that arise from non-speculative
     // constant folding. I.e. creating constants using this if we had constant
     // field inference would be a bad idea, since the bytecode parser's folding
@@ -1577,9 +1553,9 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         if (argumentCountIncludingThis != 2)
             return false;
 
-        int thisOperand = virtualRegisterForArgument(0, registerOffset).offset();
-        int indexOperand = virtualRegisterForArgument(1, registerOffset).offset();
-        Node* charCode = addToGraph(StringCharCodeAt, OpInfo(ArrayMode(Array::String).asWord()), get(VirtualRegister(thisOperand)), getToInt32(indexOperand));
+        VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
+        VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
+        Node* charCode = addToGraph(StringCharCodeAt, OpInfo(ArrayMode(Array::String).asWord()), get(thisOperand), get(indexOperand));
 
         set(VirtualRegister(resultOperand), charCode);
         return true;
@@ -1589,9 +1565,9 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         if (argumentCountIncludingThis != 2)
             return false;
 
-        int thisOperand = virtualRegisterForArgument(0, registerOffset).offset();
-        int indexOperand = virtualRegisterForArgument(1, registerOffset).offset();
-        Node* charCode = addToGraph(StringCharAt, OpInfo(ArrayMode(Array::String).asWord()), get(VirtualRegister(thisOperand)), getToInt32(indexOperand));
+        VirtualRegister thisOperand = virtualRegisterForArgument(0, registerOffset);
+        VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
+        Node* charCode = addToGraph(StringCharAt, OpInfo(ArrayMode(Array::String).asWord()), get(thisOperand), get(indexOperand));
 
         set(VirtualRegister(resultOperand), charCode);
         return true;
@@ -1600,8 +1576,8 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         if (argumentCountIncludingThis != 2)
             return false;
 
-        int indexOperand = virtualRegisterForArgument(1, registerOffset).offset();
-        Node* charCode = addToGraph(StringFromCharCode, getToInt32(indexOperand));
+        VirtualRegister indexOperand = virtualRegisterForArgument(1, registerOffset);
+        Node* charCode = addToGraph(StringFromCharCode, get(indexOperand));
 
         set(VirtualRegister(resultOperand), charCode);
 
@@ -1631,10 +1607,10 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
     case IMulIntrinsic: {
         if (argumentCountIncludingThis != 3)
             return false;
-        int leftOperand = virtualRegisterForArgument(1, registerOffset).offset();
-        int rightOperand = virtualRegisterForArgument(2, registerOffset).offset();
-        Node* left = getToInt32(leftOperand);
-        Node* right = getToInt32(rightOperand);
+        VirtualRegister leftOperand = virtualRegisterForArgument(1, registerOffset);
+        VirtualRegister rightOperand = virtualRegisterForArgument(2, registerOffset);
+        Node* left = get(leftOperand);
+        Node* right = get(rightOperand);
         set(VirtualRegister(resultOperand), addToGraph(ArithIMul, left, right));
         return true;
     }
@@ -2053,45 +2029,45 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         // === Bitwise operations ===
 
         case op_bitand: {
-            Node* op1 = getToInt32(currentInstruction[2].u.operand);
-            Node* op2 = getToInt32(currentInstruction[3].u.operand);
+            Node* op1 = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* op2 = get(VirtualRegister(currentInstruction[3].u.operand));
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(BitAnd, op1, op2));
             NEXT_OPCODE(op_bitand);
         }
 
         case op_bitor: {
-            Node* op1 = getToInt32(currentInstruction[2].u.operand);
-            Node* op2 = getToInt32(currentInstruction[3].u.operand);
+            Node* op1 = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* op2 = get(VirtualRegister(currentInstruction[3].u.operand));
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(BitOr, op1, op2));
             NEXT_OPCODE(op_bitor);
         }
 
         case op_bitxor: {
-            Node* op1 = getToInt32(currentInstruction[2].u.operand);
-            Node* op2 = getToInt32(currentInstruction[3].u.operand);
+            Node* op1 = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* op2 = get(VirtualRegister(currentInstruction[3].u.operand));
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(BitXor, op1, op2));
             NEXT_OPCODE(op_bitxor);
         }
 
         case op_rshift: {
-            Node* op1 = getToInt32(currentInstruction[2].u.operand);
-            Node* op2 = getToInt32(currentInstruction[3].u.operand);
+            Node* op1 = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* op2 = get(VirtualRegister(currentInstruction[3].u.operand));
             set(VirtualRegister(currentInstruction[1].u.operand),
                 addToGraph(BitRShift, op1, op2));
             NEXT_OPCODE(op_rshift);
         }
 
         case op_lshift: {
-            Node* op1 = getToInt32(currentInstruction[2].u.operand);
-            Node* op2 = getToInt32(currentInstruction[3].u.operand);
+            Node* op1 = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* op2 = get(VirtualRegister(currentInstruction[3].u.operand));
             set(VirtualRegister(currentInstruction[1].u.operand),
                 addToGraph(BitLShift, op1, op2));
             NEXT_OPCODE(op_lshift);
         }
 
         case op_urshift: {
-            Node* op1 = getToInt32(currentInstruction[2].u.operand);
-            Node* op2 = getToInt32(currentInstruction[3].u.operand);
+            Node* op1 = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* op2 = get(VirtualRegister(currentInstruction[3].u.operand));
             set(VirtualRegister(currentInstruction[1].u.operand),
                 addToGraph(BitURShift, op1, op2));
             NEXT_OPCODE(op_urshift);
@@ -2099,7 +2075,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
         case op_unsigned: {
             set(VirtualRegister(currentInstruction[1].u.operand),
-                makeSafe(addToGraph(UInt32ToNumber, getToInt32(currentInstruction[2].u.operand))));
+                makeSafe(addToGraph(UInt32ToNumber, get(VirtualRegister(currentInstruction[2].u.operand)))));
             NEXT_OPCODE(op_unsigned);
         }
 

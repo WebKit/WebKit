@@ -1,3 +1,37 @@
+2014-01-07  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG fixup phase should be responsible for inserting ValueToInt32's as needed and it should use Phantom to keep the original values alive in case of OSR exit
+        https://bugs.webkit.org/show_bug.cgi?id=126600
+
+        Reviewed by Michael Saboff.
+        
+        This fixes an embarrassing OSR exit liveness bug. It also simplifies the code. We were
+        already using FixupPhase as the place where conversion nodes get inserted. ValueToInt32
+        was the only exception to that rule, and that was one of the reasons why we had this bug.
+        
+        Henceforth ValueToInt32 is only inserted by FixupPhase, and only when it is necessary:
+        we have a BitOp that will want a ToInt32 conversion and the operand is not predicted to
+        already be an int32. If FixupPhase inserts any ValueToInt32's then the BitOp will no
+        longer appear to use the original operand, which will make OSR exit think that the
+        original operand is dead. We work around this they way we always do: insert a Phantom on
+        the original operands right after the BitOp. This ensures that any OSR exit in any of the
+        ValueToInt32's or in the BitOp itself will have values for the original inputs.
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwo):
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixIntEdge):
+        (JSC::DFG::FixupPhase::fixBinaryIntEdges):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * tests/stress/bit-op-value-to-int32-input-liveness.js: Added.
+        (foo):
+
 2014-01-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Repatch write barrier slow path call doesn't align the stack in the presence of saved registers

@@ -168,11 +168,6 @@ private:
             break;
         }
             
-        case ValueToInt32: {
-            changed |= setPrediction(SpecInt32);
-            break;
-        }
-            
         case ArrayPop:
         case ArrayPush:
         case RegExpExec:
@@ -510,7 +505,8 @@ private:
         case InvalidationPoint:
         case Int52ToValue:
         case Int52ToDouble:
-        case CheckInBounds: {
+        case CheckInBounds:
+        case ValueToInt32: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             RELEASE_ASSERT_NOT_REACHED();

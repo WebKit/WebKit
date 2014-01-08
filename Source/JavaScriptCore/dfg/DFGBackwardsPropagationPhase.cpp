@@ -114,8 +114,7 @@ private:
             
         case BitOr:
         case BitXor:
-        case BitLShift:
-        case ValueToInt32: {
+        case BitLShift: {
             return power > 31;
         }
             
@@ -202,13 +201,6 @@ private:
             flags &= ~(NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther);
             node->child1()->mergeFlags(flags);
             node->child2()->mergeFlags(flags);
-            break;
-        }
-            
-        case ValueToInt32: {
-            flags |= NodeBytecodeUsesAsInt;
-            flags &= ~(NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther);
-            node->child1()->mergeFlags(flags);
             break;
         }
             
