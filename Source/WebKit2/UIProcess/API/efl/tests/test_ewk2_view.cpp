@@ -210,16 +210,20 @@ public:
         // Check the type
         ASSERT_EQ(EWK_PAGE_CONTENTS_TYPE_MHTML, type);
 
-        // The variable data should have below text block.
-        const String expectedMHTML = "\r\n\r\n<=00h=00t=00m=00l=00>=00<=00h=00e=00a=00d=00>=00<=00m=00e=00t=00a=00 =00c=\r\n"
-            "=00h=00a=00r=00s=00e=00t=00=3D=00\"=00U=00T=00F=00-=001=006=00L=00E=00\"=00>=\r\n"
-            "=00<=00/=00h=00e=00a=00d=00>=00<=00b=00o=00d=00y=00>=00<=00p=00>=00S=00i=00=\r\n"
-            "m=00p=00l=00e=00 =00H=00T=00M=00L=00<=00/=00p=00>=00<=00/=00b=00o=00d=00y=\r\n"
-            "=00>=00<=00/=00h=00t=00m=00l=00>=00\r\n";
+        // We should have exactly the same amount of bytes in the file
+        // than those coming from the callback data. We don't compare the
+        // strings read since the 'Date' field and the boundaries will be
+        // different on each case. MHTML functionality will be tested by
+        // layout tests, so checking the amount of bytes is enough.
+        Eina_File* f = eina_file_open(TEST_RESOURCES_DIR "/resultMHTML.mht", false);
+        if (!f)
+            return;
 
-        ASSERT_TRUE(String(data).contains(expectedMHTML));
+        size_t fileSize = eina_file_size_get(f);
+        EXPECT_EQ(fileSize, String(data).length());
 
         obtainedPageContents = true;
+        eina_file_close(f);
     }
 
     static void PageContentsAsStringCallback(Ewk_Page_Contents_Type type, const char* data, void*)
