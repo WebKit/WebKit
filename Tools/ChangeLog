@@ -1,3 +1,10 @@
+2014-01-08  Seokju Kwon  <seokju@webkit.org>
+
+        [EFL] Unreviewed build fix after r161522.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformEfl.cmake:
+
 2014-01-08  Anders Carlsson  <andersca@apple.com>
 
         Remove WKConnectionRef tests
