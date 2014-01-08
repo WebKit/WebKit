@@ -1,5 +1,18 @@
 2014-01-08  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
+        Remove run-webkit-tests wrapper script as all platform are using NRWT now.
+        https://bugs.webkit.org/show_bug.cgi?id=126580
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests): Passing --debug-rwt-logging here instead of the
+        run-webkit-tests script.
+        * Scripts/new-run-webkit-tests: Renamed to run-webkit-tests.
+        * Scripts/run-webkit-tests: Removed, as it was just a temporary hack.
+
+2014-01-08  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
         Update the list of non-committer u-szeged contributors
         https://bugs.webkit.org/show_bug.cgi?id=126640
 
