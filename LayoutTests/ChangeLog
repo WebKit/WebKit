@@ -1,3 +1,13 @@
+2014-01-07  Seokju Kwon  <seokju@webkit.org>
+
+        Web Inspector: Remove leftover 'device metrics' code
+        https://bugs.webkit.org/show_bug.cgi?id=126607
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/styles/override-screen-size-expected.txt: Removed.
+        * inspector/styles/override-screen-size.html: Removed.
+
 2014-01-07  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix: Correct whitespace around ]

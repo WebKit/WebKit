@@ -625,38 +625,6 @@ void InspectorInstrumentation::applyUserAgentOverrideImpl(InstrumentingAgents* i
         resourceAgent->applyUserAgentOverride(userAgent);
 }
 
-void InspectorInstrumentation::applyScreenWidthOverrideImpl(InstrumentingAgents* instrumentingAgents, long* width)
-{
-    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
-        pageAgent->applyScreenWidthOverride(width);
-}
-
-void InspectorInstrumentation::applyScreenHeightOverrideImpl(InstrumentingAgents* instrumentingAgents, long* height)
-{
-    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
-        pageAgent->applyScreenHeightOverride(height);
-}
-
-bool InspectorInstrumentation::shouldApplyScreenWidthOverrideImpl(InstrumentingAgents* instrumentingAgents)
-{
-    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent()) {
-        long width = 0;
-        pageAgent->applyScreenWidthOverride(&width);
-        return !!width;
-    }
-    return false;
-}
-
-bool InspectorInstrumentation::shouldApplyScreenHeightOverrideImpl(InstrumentingAgents* instrumentingAgents)
-{
-    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent()) {
-        long height = 0;
-        pageAgent->applyScreenHeightOverride(&height);
-        return !!height;
-    }
-    return false;
-}
-
 void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents* instrumentingAgents, String* media)
 {
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())

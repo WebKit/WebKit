@@ -155,8 +155,6 @@ public:
     void frameClearedScheduledNavigation(Frame*);
     void willRunJavaScriptDialog(const String& message);
     void didRunJavaScriptDialog();
-    void applyScreenWidthOverride(long*);
-    void applyScreenHeightOverride(long*);
     void applyEmulatedMedia(String*);
     void didPaint(GraphicsContext*, const LayoutRect&);
     void didLayout();
@@ -207,8 +205,6 @@ private:
     HashMap<Frame*, String> m_frameToIdentifier;
     HashMap<String, Frame*> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
-    int m_screenWidthOverride;
-    int m_screenHeightOverride;
     bool m_enabled;
     bool m_isFirstLayoutAfterOnLoad;
     bool m_originalScriptExecutionDisabled;

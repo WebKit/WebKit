@@ -114,10 +114,8 @@ bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
 
     // Window area, in logical (density-independent) pixels.
     windowInfo.windowSize = m_document->settings()->textAutosizingWindowSizeOverride();
-    if (windowInfo.windowSize.isEmpty()) {
-        bool includeScrollbars = !InspectorInstrumentation::shouldApplyScreenWidthOverride(&mainFrame);
-        windowInfo.windowSize = mainFrame.view()->unscaledVisibleContentSize(includeScrollbars ? ScrollableArea::IncludeScrollbars : ScrollableArea::ExcludeScrollbars);
-    }
+    if (windowInfo.windowSize.isEmpty())
+        windowInfo.windowSize = mainFrame.view()->unscaledVisibleContentSize(ScrollableArea::IncludeScrollbars);
 
     // Largest area of block that can be visible at once (assuming the main
     // frame doesn't get scaled to less than overview scale), in CSS pixels.

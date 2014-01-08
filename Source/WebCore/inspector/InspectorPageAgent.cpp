@@ -360,8 +360,6 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
     , m_client(client)
     , m_overlay(overlay)
     , m_lastScriptIdentifier(0)
-    , m_screenWidthOverride(0)
-    , m_screenHeightOverride(0)
     , m_enabled(false)
     , m_isFirstLayoutAfterOnLoad(false)
     , m_originalScriptExecutionDisabled(false)
@@ -410,10 +408,6 @@ void InspectorPageAgent::disable(ErrorString*)
     setShowFPSCounter(0, false);
     setEmulatedMedia(0, "");
     setContinuousPaintingEnabled(0, false);
-
-    // When disabling the agent, reset the override values if necessary.
-    m_screenWidthOverride = 0;
-    m_screenHeightOverride = 0;
 }
 
 void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source, String* identifier)
@@ -924,18 +918,6 @@ void InspectorPageAgent::didRunJavaScriptDialog()
     m_frontendDispatcher->javascriptDialogClosed();
 }
 
-void InspectorPageAgent::applyScreenWidthOverride(long* width)
-{
-    if (m_screenWidthOverride)
-        *width = m_screenWidthOverride;
-}
-
-void InspectorPageAgent::applyScreenHeightOverride(long* height)
-{
-    if (m_screenHeightOverride)
-        *height = m_screenHeightOverride;
-}
-
 void InspectorPageAgent::didPaint(GraphicsContext* context, const LayoutRect& rect)
 {
     if (!m_enabled || m_client->overridesShowPaintRects() || !m_showPaintRects)
@@ -962,10 +944,6 @@ void InspectorPageAgent::didLayout()
     if (!m_enabled)
         return;
 
-    if (isFirstLayout) {
-        if (m_screenWidthOverride && m_screenHeightOverride)
-            m_client->autoZoomPageToFitWidth();
-    }
     m_overlay->update();
 }
 

@@ -50,7 +50,6 @@ unsigned Screen::height() const
     if (!m_frame)
         return 0;
     long height = static_cast<long>(screenRect(m_frame->view()).height());
-    InspectorInstrumentation::applyScreenHeightOverride(m_frame, &height);
     return static_cast<unsigned>(height);
 }
 
@@ -59,7 +58,6 @@ unsigned Screen::width() const
     if (!m_frame)
         return 0;
     long width = static_cast<long>(screenRect(m_frame->view()).width());
-    InspectorInstrumentation::applyScreenWidthOverride(m_frame, &width);
     return static_cast<unsigned>(width);
 }
 
