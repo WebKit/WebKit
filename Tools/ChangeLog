@@ -1,3 +1,17 @@
+2014-01-07  Lucas Forschler  <lforschler@apple.com>
+
+        Add buildbot infrasctructure for building and testing JSC cloop
+        https://bugs.webkit.org/show_bug.cgi?id=126604
+
+        Reviewed by Geoffrey Garen.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CompileCLOOP):
+        (RunCLOOPTests):
+        (RunCLOOPTests.countFailures):
+        (BuildAndTestCLOOP):
+
 2014-01-07  Brian Burg  <bburg@apple.com>
 
         Unreviewed. Add myself as a committer.
