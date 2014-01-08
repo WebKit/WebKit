@@ -1,3 +1,15 @@
+2014-01-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Automake] Scripts for generated build targets do not necessarily produce their output
+        https://bugs.webkit.org/show_bug.cgi?id=126378
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Don't pass the -n option to the ln command that links the build's include
+        directories to actual source directories. This doesn't replace the original symbolic link,
+        which can lead to the actual link being older than its dependencies and subsequent constant
+        relinking at every build.
+
 2014-01-07  Eric Carlson  <eric.carlson@apple.com>
 
         Teach MediaSessionManager to manage interruptions

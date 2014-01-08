@@ -1,3 +1,16 @@
+2014-01-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Automake] Scripts for generated build targets do not necessarily produce their output
+        https://bugs.webkit.org/show_bug.cgi?id=126378
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Touch the build targets that are generated through helper scripts that don't
+        assure the output is generated every time the script is invoked, most commonly due to unchanged
+        * bindings/gobject/GNUmakefile.am: Simply move the gdom-gen-symbols file into the output file
+        instead of copying it if the contents differ and removing it. This again ensures that the output
+        file is always newer than its dependencies, even if the input hasn't changed.
+
 2014-01-08  Frédéric Wang  <fred.wang@free.fr>
 
         Remove invalid comments from mathtags.ing

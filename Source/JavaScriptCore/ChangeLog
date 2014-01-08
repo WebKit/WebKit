@@ -1,3 +1,15 @@
+2014-01-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Automake] Scripts for generated build targets do not necessarily produce their output
+        https://bugs.webkit.org/show_bug.cgi?id=126378
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Touch the build targets that are generated through helper scripts that don't
+        assure the output is generated every time the script is invoked, most commonly due to unchanged
+        input. This assures the build targets are up-to-date and can't be older that their dependencies,
+        which would result in constant regeneration at every build.
+
 2014-01-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG fixup phase should be responsible for inserting ValueToInt32's as needed and it should use Phantom to keep the original values alive in case of OSR exit
