@@ -1,5 +1,20 @@
 2014-01-08  Commit Queue  <commit-queue@webkit.org>
 
+        Unreviewed, rolling out r161512.
+        http://trac.webkit.org/changeset/161512
+        https://bugs.webkit.org/show_bug.cgi?id=126655
+
+        Broke webkitpy tests (Requested by ap on #webkit).
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.__init__):
+        (GtkPort.setup_test_run):
+        (GtkPort._port_specific_expectations_files):
+        * Scripts/webkitpy/port/leakdetector_valgrind.py: Removed.
+        * Scripts/webkitpy/port/leakdetector_valgrind_unittest.py: Removed.
+
+2014-01-08  Commit Queue  <commit-queue@webkit.org>
+
         Unreviewed, rolling out r161517.
         http://trac.webkit.org/changeset/161517
         https://bugs.webkit.org/show_bug.cgi?id=126659
