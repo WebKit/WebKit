@@ -69,8 +69,3 @@ fast/mediastream/MediaStream-clone.html [ Skip ]
 webkit.org/b/124660 inspector-protocol/model/highlight-shape-outside.html [ Failure ]
 
 webkit.org/b/126142 css3/calc/transitions-dependent.html [ Pass Failure ]
-
-webkit.org/b/126432 fast/css/acid2-pixel.html [ Pass Failure ]
-webkit.org/b/126432 fast/css/acid2.html [ Pass Failure ]
-webkit.org/b/126432 http/tests/misc/acid2-pixel.html [ Pass Failure ]
-webkit.org/b/126432 http/tests/misc/acid2.html [ Pass Failure ]

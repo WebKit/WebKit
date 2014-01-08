@@ -386,6 +386,11 @@ void HTMLObjectElement::renderFallbackContent()
     }
 
     m_useFallbackContent = true;
+
+    // This is here mainly to keep acid2 non-flaky. A style recalc is required to make fallback resources to load. Without forcing
+    // this may happen after all the other resources have been loaded and the document is already considered complete.
+    // FIXME: Disentangle fallback content handling from style recalcs.
+    document().updateStyleIfNeeded();
 }
 
 // FIXME: This should be removed, all callers are almost certainly wrong.
