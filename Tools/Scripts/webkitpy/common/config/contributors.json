@@ -2653,14 +2653,6 @@
             "amarinichev"
          ]
       },
-      "Andras Piroska" : {
-         "emails" : [
-            "pandras@inf.u-szeged.hu"
-         ],
-         "nicks" : [
-            "andris88"
-         ]
-      },
       "Anne van Kesteren" : {
          "emails" : [
             "annevk@annevk.nl"
@@ -2699,14 +2691,6 @@
          ],
          "nicks" : [
             "AryehGregor"
-         ]
-      },
-      "Balazs Ankes" : {
-         "emails" : [
-            "bank@inf.u-szeged.hu"
-         ],
-         "nicks" : [
-            "abalazs"
          ]
       },
       "Brian Salomon" : {
@@ -2748,6 +2732,15 @@
             "reveman"
          ]
       },
+      "D\u00E1niel B\u00E1tyai" : {
+         "emails" : [
+            "dbatyai.u-szeged@partner.samsung.com",
+            "Batyai.Daniel@stud.u-szeged.hu"
+         ],
+         "nicks" : [
+            "dbatyai"
+         ]
+      },
       "Douglas Davidson" : {
          "emails" : [
             "ddavidso@apple.com"
@@ -2775,15 +2768,6 @@
          ],
          "nicks" : [
             "epenner"
-         ]
-      },
-      "Felician Marton" : {
-         "emails" : [
-            "felician@inf.u-szeged.hu",
-            "marton.felician.zoltan@stud.u-szeged.hu"
-         ],
-         "nicks" : [
-            "Felician"
          ]
       },
       "Frédéric Wang" : {
@@ -2822,6 +2806,15 @@
          ],
          "nicks" : [
             "bgabor"
+         ]
+      },
+      "Gergo Balogh" : {
+         "emails" : [
+            "gbalogh.u-szeged@partner.samsung.com",
+            "geryxyz@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "geryxyz"
          ]
       },
       "Grace Kloba" : {
@@ -2939,6 +2932,24 @@
             "kvel"
          ]
       },
+      "L\u00E1szl\u00F3 Lang\u00F3" : {
+         "emails" : [
+            "llango.u-szeged@partner.samsung.com",
+            "lango@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "llango"
+         ]
+      },
+      "Laszlo Vidacs" : {
+         "emails" : [
+            "lvidacs.u-szeged@partner.samsung.com",
+            "lac@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "lvidacs"
+         ]
+      },
       "Lia Chen" : {
          "emails" : [
             "liachen@rim.com"
@@ -2965,14 +2976,6 @@
             "qinmin@chromium.org"
          ]
       },
-      "Nandor Huszka" : {
-         "emails" : [
-            "hnandor@inf.u-szeged.hu"
-         ],
-         "nicks" : [
-            "hnandor"
-         ]
-      },
       "Nils Barth" : {
          "emails" : [
             "nbarth@chromium.org"
@@ -2981,21 +2984,20 @@
             "nbarth"
          ]
       },
-      "Oliver Varga" : {
-         "emails" : [
-            "voliver@inf.u-szeged.hu",
-            "Varga.Oliver@stud.u-szeged.hu"
-         ],
-         "nicks" : [
-            "TwistO"
-         ]
-      },
       "Peter Linss" : {
          "emails" : [
             "peter.linss@hp.com"
          ],
          "nicks" : [
             "plinss"
+         ]
+      },
+      "Peter Molnar" : {
+         "emails" : [
+            "pmolnar.u-szeged@partner.samsung.com"
+         ],
+         "nicks" : [
+            "molnarp"
          ]
       },
       "Radar WebKit Bug Importer" : {
@@ -3035,6 +3037,15 @@
          ],
          "nicks" : [
             "tczene"
+         ]
+      },
+      "Tamas Gergely" : {
+         "emails" : [
+            "tgergely.u-szeged@partner.samsung.com",
+            "gertom@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "gertom"
          ]
       },
       "Tien-Ren Chen" : {
@@ -3086,14 +3097,6 @@
       "Zeev Lieber" : {
          "emails" : [
             "zlieber@chromium.org"
-         ]
-      },
-      "Zsolt Feher" : {
-         "emails" : [
-            "feherzs@inf.u-szeged.hu"
-         ],
-         "nicks" : [
-            "Smith"
          ]
       }
    },
