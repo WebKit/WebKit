@@ -37,20 +37,16 @@ function BenchmarkTestStep(testName, testFunction) {
     this.run = testFunction;
 }
 
-var BenchmarkRunner = {_suites: [], _prepareReturnValue: null, _measuredValues: {}, _client: null};
-
-BenchmarkRunner.suite = function (suite) {
-    BenchmarkRunner._suites.push(suite);
+function BenchmarkRunner(suites, client) {
+    this._suites = suites;
+    this._prepareReturnValue = null;
+    this._measuredValues = {};
+    this._client = client;
 }
 
-BenchmarkRunner.setClient = function (client) {
-    BenchmarkRunner._client = client;
-}
-
-BenchmarkRunner.waitForElement = function (selector) {
-    var self = BenchmarkRunner;
+BenchmarkRunner.prototype.waitForElement = function (selector) {
     var promise = new SimplePromise;
-    var contentDocument = self._frame.contentDocument;
+    var contentDocument = this._frame.contentDocument;
 
     function resolveIfReady() {
         var element = contentDocument.querySelector(selector);
@@ -63,25 +59,23 @@ BenchmarkRunner.waitForElement = function (selector) {
     return promise;
 }
 
-BenchmarkRunner._removeFrame = function () {
-    var self = BenchmarkRunner;
-    if (self._frame) {
-        self._frame.parentNode.removeChild(self._frame);
-        self._frame = null;
+BenchmarkRunner.prototype._removeFrame = function () {
+    if (this._frame) {
+        this._frame.parentNode.removeChild(this._frame);
+        this._frame = null;
     }
 }
 
-BenchmarkRunner._appendFrame = function (src) {
-    var self = BenchmarkRunner;
+BenchmarkRunner.prototype._appendFrame = function (src) {
     var frame = document.createElement('iframe');
     frame.style.width = '800px';
     frame.style.height = '600px'
     document.body.appendChild(frame);
-    self._frame = frame;
+    this._frame = frame;
     return frame;
 }
 
-BenchmarkRunner._waitAndWarmUp = function () {
+BenchmarkRunner.prototype._waitAndWarmUp = function () {
     var startTime = Date.now();
 
     function Fibonacci(n) {
@@ -103,13 +97,12 @@ BenchmarkRunner._waitAndWarmUp = function () {
 }
 
 // This function ought be as simple as possible. Don't even use SimplePromise.
-BenchmarkRunner._runTest = function(suite, testFunction, prepareReturnValue, callback)
+BenchmarkRunner.prototype._runTest = function(suite, testFunction, prepareReturnValue, callback)
 {
-    var self = BenchmarkRunner;
     var now = window.performance && window.performance.now ? function () { return window.performance.now(); } : Date.now;
 
-    var contentWindow = self._frame.contentWindow;
-    var contentDocument = self._frame.contentDocument;
+    var contentWindow = this._frame.contentWindow;
+    var contentDocument = this._frame.contentDocument;
 
     var startTime = now();
     testFunction(prepareReturnValue, contentWindow, contentDocument);
@@ -121,12 +114,6 @@ BenchmarkRunner._runTest = function(suite, testFunction, prepareReturnValue, cal
         var endTime = now();
         callback(syncTime, endTime - startTime);
     }, 0);
-}
-
-BenchmarkRunner._testName = function (suite, testName, metric) {
-    if (!testName)
-        return suite.name;
-    return suite.name + '/' + testName + (metric ? '/' + metric : '');
 }
 
 function BenchmarkState(suites) {
@@ -164,51 +151,49 @@ BenchmarkState.prototype.isFirstTest = function () {
     return !this._testIndex;
 }
 
-BenchmarkState.prototype.prepareCurrentSuite = function (frame) {
-    var self = this;
+BenchmarkState.prototype.prepareCurrentSuite = function (runner, frame) {
     var suite = this.currentSuite();
     var promise = new SimplePromise;
     frame.onload = function () {
-        suite.prepare(frame.contentWindow, frame.contentDocument).then(function (result) { promise.resolve(result); });
+        suite.prepare(runner, frame.contentWindow, frame.contentDocument).then(function (result) { promise.resolve(result); });
     }
     frame.src = suite.url;
     return promise;
 }
 
-BenchmarkRunner.step = function (state) {
-    var self = BenchmarkRunner;
-
+BenchmarkRunner.prototype.step = function (state) {
     if (!state)
-        state = new BenchmarkState(self._suites);
+        state = new BenchmarkState(this._suites);
 
     var suite = state.currentSuite();
     if (!suite) {
-        self._finalize();
+        this._finalize();
         var promise = new SimplePromise;
         promise.resolve();
         return promise;
     }
 
     if (state.isFirstTest()) {
-        self._masuredValuesForCurrentSuite = {};
-        return state.prepareCurrentSuite(self._appendFrame()).then(function (prepareReturnValue) {
+        this._masuredValuesForCurrentSuite = {};
+        var self = this;
+        return state.prepareCurrentSuite(this, this._appendFrame()).then(function (prepareReturnValue) {
             self._prepareReturnValue = prepareReturnValue;
             return self._runTestAndRecordResults(state);
         });
     }
 
-    return self._runTestAndRecordResults(state);
+    return this._runTestAndRecordResults(state);
 }
 
-BenchmarkRunner._runTestAndRecordResults = function (state) {
-    var self = BenchmarkRunner;
+BenchmarkRunner.prototype._runTestAndRecordResults = function (state) {
     var promise = new SimplePromise;
     var suite = state.currentSuite();
     var test = state.currentTest();
 
-    if (self._client && self._client.willRunTest)
-        self._client.willRunTest(suite, test);
+    if (this._client && this._client.willRunTest)
+        this._client.willRunTest(suite, test);
 
+    var self = this;
     setTimeout(function () {
         self._runTest(suite, test.run, self._prepareReturnValue, function (syncTime, asyncTime) {
             var suiteResults = self._measuredValues[suite.name] || {tests:{}, total: 0};
@@ -228,14 +213,12 @@ BenchmarkRunner._runTestAndRecordResults = function (state) {
     return promise;
 }
 
-BenchmarkRunner._finalize = function () {
-    var self = BenchmarkRunner;
+BenchmarkRunner.prototype._finalize = function () {
+    this._removeFrame();
 
-    self._removeFrame();
-
-    if (self._client && self._client.didRunSuites)
-        self._client.didRunSuites(self._measuredValues);
+    if (this._client && this._client.didRunSuites)
+        this._client.didRunSuites(this._measuredValues);
 
     // FIXME: This should be done when we start running tests.
-    self._measuredValues = {};
+    this._measuredValues = {};
 }

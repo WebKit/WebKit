@@ -1,10 +1,11 @@
 var numberOfItemsToAdd = 100;
+var Suites = [];
 
-BenchmarkRunner.suite({
+Suites.push({
     name: 'VanillaJS-TodoMVC',
     url: 'todomvc/vanilla-examples/vanillajs/index.html',
-    prepare: function (contentWindow, contentDocument) {
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
+    prepare: function (runner, contentWindow, contentDocument) {
+        return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
             return element;
         });
@@ -30,17 +31,17 @@ BenchmarkRunner.suite({
     ]
 });
 
-BenchmarkRunner.suite({
+Suites.push({
     name: 'EmberJS-TodoMVC',
     url: 'todomvc/architecture-examples/emberjs/index.html',
-    prepare: function (contentWindow, contentDocument) {
+    prepare: function (runner, contentWindow, contentDocument) {
         contentWindow.Todos.Store = contentWindow.DS.Store.extend({
             revision: 12,
             adapter: 'Todos.LSAdapter',
             commit: function () { }
         });
 
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
+        return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
             return {
                 views: contentWindow.Ember.View.views,
@@ -70,12 +71,12 @@ BenchmarkRunner.suite({
     ]
 });
 
-BenchmarkRunner.suite({
+Suites.push({
     name: 'BackboneJS-TodoMVC',
     url: 'todomvc/architecture-examples/backbone/index.html',
-    prepare: function (contentWindow, contentDocument) {
+    prepare: function (runner, contentWindow, contentDocument) {
     contentWindow.Backbone.sync = function () {}
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
+        return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
             return element;
         });
@@ -102,11 +103,11 @@ BenchmarkRunner.suite({
     ]
 });
 
-BenchmarkRunner.suite({
+Suites.push({
     name: 'jQuery-TodoMVC',
     url: 'todomvc/architecture-examples/jquery/index.html',
-    prepare: function (contentWindow, contentDocument) {
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
+    prepare: function (runner, contentWindow, contentDocument) {
+        return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
             return element;
         });
@@ -158,11 +159,11 @@ BenchmarkRunner.suite({
     ]
 });
 
-BenchmarkRunner.suite({
+Suites.push({
     name: 'AngularJS-TodoMVC',
     url: 'todomvc/architecture-examples/angularjs/index.html',
-    prepare: function (contentWindow, contentDocument) {
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
+    prepare: function (runner, contentWindow, contentDocument) {
+        return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
             return element;
         });
@@ -193,12 +194,12 @@ BenchmarkRunner.suite({
     ]
 });
 
-BenchmarkRunner.suite({
+Suites.push({
     name: 'React-TodoMVC',
     url: 'todomvc/labs/architecture-examples/react/index.html',
-    prepare: function (contentWindow, contentDocument) {
+    prepare: function (runner, contentWindow, contentDocument) {
         contentWindow.Utils.store = function () {}
-        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
+        return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
             return element;
         });
@@ -229,11 +230,11 @@ BenchmarkRunner.suite({
 });
 
 var actionCount = 50;
-BenchmarkRunner.suite({
+Suites.push({
     name: 'FlightJS-MailClient',
     url: 'flightjs-example-app/index.html',
-    prepare: function (contentWindow, contentDocument) {
-        return BenchmarkRunner.waitForElement('.span8').then(function (element) {
+    prepare: function (runner, contentWindow, contentDocument) {
+        return runner.waitForElement('.span8').then(function (element) {
             element.focus();
             return element;
         });

@@ -1,5 +1,32 @@
 2014-01-07  Ryosuke Niwa  <rniwa@webkit.org>
 
+        DoYouEvenBench: Turn BenchmarkRunner into a real class
+        https://bugs.webkit.org/show_bug.cgi?id=126613
+
+        Reviewed by Stephanie Lewis.
+
+        Made BenchmarkRunner an instantiatable class. Made tests.js simply create an array of suite objects
+        instead of calling BenchmarkRunner.Suite now that we can have mulitple instances of BenchmarkRunner.
+
+        * DoYouEvenBench/benchmark.html:
+        (formatTestName): Moved and renamed from BenchmarkRunner._testName.
+        (createUIForSuites): Extracted from a giant blob of code.
+        (startTest): Ditto.
+        * DoYouEvenBench/resources/benchmark-runner.js:
+        (BenchmarkRunner): Added.
+        (BenchmarkRunner.prototype.waitForElement):
+        (BenchmarkRunner.prototype._removeFrame):
+        (BenchmarkRunner.prototype._appendFrame):
+        (BenchmarkRunner.prototype._waitAndWarmUp):
+        (BenchmarkRunner.prototype._runTest):
+        (BenchmarkState.prototype.prepareCurrentSuite):
+        (BenchmarkRunner.prototype.step):
+        (BenchmarkRunner.prototype._runTestAndRecordResults):
+        (BenchmarkRunner.prototype._finalize):
+        * DoYouEvenBench/resources/tests.js:
+
+2014-01-07  Ryosuke Niwa  <rniwa@webkit.org>
+
         DoYouEvenBench: Extract tests and runner code from benchmark.js/html
         https://bugs.webkit.org/show_bug.cgi?id=126596
 

@@ -16,11 +16,12 @@ nav { position: absolute; right: 10px; }
 <body>
 <script>
 
-window.addEventListener('load', function () {
-    var self = BenchmarkRunner;
-    var control = document.createElement('nav');
+function formatTestName(suiteName, testName) {
+    return suiteName + (testName ? '/' + testName : '');
+}
 
-    var suites = BenchmarkRunner._suites;
+function createUIForSuites(suites, onstep, onrun) {
+    var control = document.createElement('nav');
     var ol = document.createElement('ol');
     var checkboxes = [];
     for (var suiteIndex = 0; suiteIndex < suites.length; suiteIndex++) {
@@ -36,7 +37,7 @@ window.addEventListener('load', function () {
 
         li.appendChild(checkbox);
         var label = document.createElement('label');
-        label.appendChild(document.createTextNode(self._testName(suite)));
+        label.appendChild(document.createTextNode(formatTestName(suite.name)));
         li.appendChild(label);
         label.htmlFor = checkbox.id;
 
@@ -47,7 +48,7 @@ window.addEventListener('load', function () {
             var anchor = document.createElement('a');
             anchor.id = suite.name + '-' + test.name;
             test.anchor = anchor;
-            anchor.appendChild(document.createTextNode(self._testName(suite, test.name)));
+            anchor.appendChild(document.createTextNode(formatTestName(suite.name, test.name)));
             testItem.appendChild(anchor);
             testList.appendChild(testItem);
         }
@@ -58,7 +59,21 @@ window.addEventListener('load', function () {
 
     control.appendChild(ol);
 
-    BenchmarkRunner.setClient({
+    var button = document.createElement('button');
+    button.textContent = 'Step';
+    button.onclick = onstep;
+    control.appendChild(button);
+
+    var button = document.createElement('button');
+    button.textContent = 'Run';
+    button.onclick = onrun;
+    control.appendChild(button);
+
+    return control;
+}
+
+function startTest() {
+    var runner = new BenchmarkRunner(Suites, {
         willRunTest: function (suite, test) {
             test.anchor.classList.add('running');
         },
@@ -94,30 +109,21 @@ window.addEventListener('load', function () {
     });
 
     var currentState = null;
-
-    // Don't call step while step is already executing.
-    var button = document.createElement('button');
-    button.textContent = 'Step';
-    button.onclick = function () {
-        self.step(currentState).then(function (state) { currentState = state; });
-    }
-    control.appendChild(button);
-
     function callNextStep(state) {
-        self.step(state).then(function (newState) {
+        runner.step(state).then(function (newState) {
             currentState = newState;
             if (newState)
                 callNextStep(newState);
         });
     }
 
-    var button = document.createElement('button');
-    button.textContent = 'Run';
-    button.onclick = function () { callNextStep(currentState); }
-    control.appendChild(button);
+    // Don't call step while step is already executing.
+    document.body.appendChild(createUIForSuites(Suites,
+        function () { runner.step(currentState).then(function (state) { currentState = state; }); },
+        function () { callNextStep(currentState); }));
+}
 
-    document.body.appendChild(control);
-});
+window.addEventListener('load', startTest);
 
 </script>
 </body>
