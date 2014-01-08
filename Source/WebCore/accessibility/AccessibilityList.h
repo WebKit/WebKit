@@ -46,7 +46,7 @@ public:
     bool isOrderedList() const;
     bool isDescriptionList() const;
 
-    virtual AccessibilityRole roleValue() const OVERRIDE { return ListRole; }
+    virtual AccessibilityRole roleValue() const OVERRIDE FINAL;
 private:
     virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 };

@@ -1,3 +1,23 @@
+2014-01-08  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        AX: Make roleValue() return DescriptionListRole for <dl> elements
+        https://bugs.webkit.org/show_bug.cgi?id=126579
+
+        Reviewed by Chris Fleizach.
+
+        Implement AccessibilityList::roleValue() so it will return
+        ListRole or DescriptionListRole depending on the type of list.
+
+        No new tests needed, as no new functionality was added and ports
+        should still be exposing the right role for <dl> elements
+
+        * accessibility/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::roleValue): Implemented.
+        * accessibility/AccessibilityList.h:
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole): Removed extra checks for objects with ListRole role.
+
 2014-01-08  Andreas Kling  <akling@apple.com>
 
         createMathMLOperator() should return RenderPtr.

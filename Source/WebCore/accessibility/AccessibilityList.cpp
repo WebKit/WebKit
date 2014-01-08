@@ -93,6 +93,13 @@ bool AccessibilityList::isDescriptionList() const
     Node* node = m_renderer->node();
     return node && node->hasTagName(dlTag);    
 }
+
+AccessibilityRole AccessibilityList::roleValue() const
+{
+    if (isDescriptionList())
+        return DescriptionListRole;
     
+    return ListRole;
+}
     
 } // namespace WebCore
