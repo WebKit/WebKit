@@ -36,6 +36,7 @@
 #import "DOMElementInternal.h"
 #import "DOMHTMLFormElementInternal.h"
 #import "WebBackForwardList.h"
+#import "WebBasePluginPackage.h"
 #import "WebCachedFramePlatformData.h"
 #import "WebChromeClient.h"
 #import "WebDataSourceInternal.h"
@@ -1837,8 +1838,17 @@ static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
         LOG(Plugins, "arguments:\n%@", arguments);
     }
 
-    view = [WebPluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
+    view = [pluginController plugInViewWithArguments:arguments fromPluginPackage:pluginPackage];
     [attributes release];
+
+    if (!view)
+        return nil;
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    Element* node = core(element);
+    if (node->hasTagName(HTMLNames::videoTag) || node->hasTagName(HTMLNames::audioTag))
+        [pluginController mediaPlugInProxyViewCreated:view];
+#endif
     return view;
 }
 

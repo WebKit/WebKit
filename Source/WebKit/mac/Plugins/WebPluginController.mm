@@ -30,6 +30,7 @@
 #import "WebPluginController.h"
 
 #import "DOMNodeInternal.h"
+#import "WebBasePluginPackage.h"
 #import "WebDataSourceInternal.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
@@ -117,17 +118,36 @@ static void initializeAudioSession()
 }
 #endif
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+@interface NSView (WebPluginControllerAdditions)
+@property (nonatomic) BOOL isMediaPlugInProxyView;
+@end
+
+@implementation NSView (WebPluginControllerAdditions)
+
+- (BOOL)isMediaPlugInProxyView
+{
+    return [(NSNumber *)objc_getAssociatedObject(self, @selector(isMediaPlugInProxyView)) boolValue];
+}
+
+- (void)setIsMediaPlugInProxyView:(BOOL)isMediaPlugInProxyView
+{
+    objc_setAssociatedObject(self, @selector(isMediaPlugInProxyView), [NSNumber numberWithBool:isMediaPlugInProxyView], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+@end
+#endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+
 @implementation WebPluginController
 
-+ (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)pluginPackage
+- (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)pluginPackage
 {
 #if PLATFORM(IOS)
     initializeAudioSession();
 #endif
 
     [pluginPackage load];
-    Class viewFactory = [pluginPackage viewFactory];
-    
+
     NSView *view = nil;
 
 #if PLATFORM(IOS)
@@ -137,6 +157,7 @@ static void initializeAudioSession()
         view = [[webView _UIKitDelegateForwarder] webView:webView plugInViewWithArguments:arguments fromPlugInPackage:pluginPackage];
     }
 #else
+    Class viewFactory = [pluginPackage viewFactory];
     if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
         JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
         view = [viewFactory plugInViewWithArguments:arguments];
@@ -145,7 +166,7 @@ static void initializeAudioSession()
         view = [viewFactory pluginViewWithArguments:arguments];
     }
 #endif
-    
+
     if (view == nil) {
         return nil;
     }
@@ -154,7 +175,7 @@ static void initializeAudioSession()
         pluginViews = [[NSMutableSet alloc] init];
     }
     [pluginViews addObject:view];
-    
+
     return view;
 }
 
@@ -347,8 +368,9 @@ static void initializeAudioSession()
 #endif // PLATFORM(IOS)
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-- (void)pluginViewCreated:(NSView *)view
+- (void)mediaPlugInProxyViewCreated:(NSView *)view
 {
+    view.isMediaPlugInProxyView = YES;
     if (!_viewsNotInDocument)
         _viewsNotInDocument= [[NSMutableArray alloc] init];
     if (![_viewsNotInDocument containsObject:view])
@@ -423,10 +445,15 @@ static void initializeAudioSession()
 - (void)destroyPlugin:(NSView *)view
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if ([_views containsObject:view] || [_viewsNotInDocument containsObject:view]) {
-#else
-    if ([_views containsObject:view]) {
+    // destroyPlugin: is called when a plug-in view is removed from its parent
+    // view, but native media players continue to exist even when they aren't in
+    // the view hierarchy. So if this plug-in view is a proxy for a native media
+    // player, don't destroy it here.
+    if (view.isMediaPlugInProxyView)
+        return;
 #endif
+
+    if ([_views containsObject:view]) {
         if (_started)
             [self stopOnePlugin:view];
         [self destroyOnePlugin:view];
@@ -441,9 +468,6 @@ static void initializeAudioSession()
         [[_documentView _webView] removePluginInstanceView:view];
 #endif
         [_views removeObject:view];
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        [_viewsNotInDocument removeObject:view];
-#endif
     }
 }
 

@@ -50,7 +50,7 @@
 #endif
 }
 
-+ (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)plugin;
+- (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)plugin;
 + (BOOL)isPlugInView:(NSView *)view;
 
 - (id)initWithDocumentView:(NSView *)view;
@@ -60,7 +60,7 @@
 - (void)addPlugin:(NSView *)view;
 - (void)destroyPlugin:(NSView *)view;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-- (void)pluginViewCreated:(NSView *)view;
+- (void)mediaPlugInProxyViewCreated:(NSView *)view;
 + (void)pluginViewHidden:(NSView *)view;
 #endif
 
