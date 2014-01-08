@@ -1,3 +1,18 @@
+2014-01-08  Andreas Kling  <akling@apple.com>
+
+        Deploy RenderPtr in RenderMathMLOperator::updateFromElement().
+        <https://webkit.org/b/126628>
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::updateFromElement):
+
+            Use RenderPtr/createRenderer for renderer creation.
+            Removed an unnecessary null check (text is always created.)
+            Also use RenderStyle::createAnonymousStyleWithDisplay()
+            helper to shorten down the code a bit.
+
 2014-01-08  Alberto Garcia  <berto@igalia.com>
 
         Fix some compilation warnings
