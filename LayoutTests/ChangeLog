@@ -1,3 +1,14 @@
+2014-01-08  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed GTK gardening.
+
+        setFileInputFiles.html was removed after r161380. string-replacement-outofmemory.html,
+        toString-and-valueOf-override.html and exceptions-thrown-in-callbacks.html
+        were moved into other directory.
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2014-01-08  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html is very flaky
