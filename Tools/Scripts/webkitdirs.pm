@@ -1784,6 +1784,9 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
     # Also, always enable developer mode for developer/test builds.
     unshift(@buildArgs, "--enable-developer-mode");
 
+    # Optimize for running WebKit inside the build tree
+    unshift(@buildArgs, "--disable-fast-install");
+
     my $joinedBuildArgs = join(" ", @buildArgs);
 
     if (-e "GNUmakefile") {

@@ -1,3 +1,20 @@
+2014-01-08  Alberto Garcia  <berto@igalia.com>
+
+        REGRESSION(r160304): [GTK] Disable libtool fast install
+        https://bugs.webkit.org/show_bug.cgi?id=126381
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Disable the libtool fast-install mode in developer/test builds.
+
+        In this mode binaries are generated ready to be used directly from
+        the build tree. Otherwise they would need to be relinked when they
+        are executed, which can take a lot of resources, particularly in
+        debug builds.
+
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary):
+
 2014-01-08  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
