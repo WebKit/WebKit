@@ -1,3 +1,12 @@
+2014-01-08  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=126534
+
+        Reviewed by Brent Fulgham.
+
+        * WebKitPrefix.h: Define __STDC_LIMIT_MACROS, so INTMAX_MAX will be defined (needed by std C++ library).
+
 2014-01-06  László Langó  <lango@inf.u-szeged.hu>
 
         Use unsigned consistently, and check for invalid casts when calling into SharedBuffer from other code.
