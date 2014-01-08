@@ -1,3 +1,12 @@
+2014-01-08  Frédéric Wang  <fred.wang@free.fr>
+
+        Remove invalid comments from mathtags.ing
+        https://bugs.webkit.org/show_bug.cgi?id=126629
+
+        Reviewed by Chris Fleizach.
+
+        * mathml/mathtags.in:
+
 2014-01-08  Andreas Kling  <akling@apple.com>
 
         RenderMathMLRow::createAnonymousWithParentRenderer() should return RenderPtr.
