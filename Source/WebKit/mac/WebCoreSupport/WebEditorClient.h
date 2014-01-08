@@ -159,7 +159,7 @@ public:
     virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength) OVERRIDE;
     virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) OVERRIDE;
     virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) OVERRIDE;
-    virtual void checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, WTF::Vector<WebCore::TextCheckingResult>& results) OVERRIDE;
+    virtual Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, WebCore::TextCheckingTypeMask checkingTypes) OVERRIDE;
     virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) OVERRIDE;
     virtual void updateSpellingUIWithMisspelledWord(const WTF::String&) OVERRIDE;
     virtual void showSpellingUI(bool show) OVERRIDE;
@@ -173,7 +173,7 @@ public:
     virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) OVERRIDE { return ""; }
     virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) OVERRIDE { }
     // Note: checkTextOfParagraph() is implemented. 
-    virtual void checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, WTF::Vector<WebCore::TextCheckingResult>& results) OVERRIDE;
+    virtual Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, WebCore::TextCheckingTypeMask checkingTypes) OVERRIDE;
     virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) OVERRIDE { }
     virtual void updateSpellingUIWithMisspelledWord(const WTF::String&) OVERRIDE { }
     virtual void showSpellingUI(bool show) OVERRIDE { }

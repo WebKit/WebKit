@@ -157,9 +157,9 @@ wtf_sources += \
     Source/WTF/wtf/StreamBuffer.h \
     Source/WTF/wtf/StringExtras.h \
     Source/WTF/wtf/StringHashDumpContext.h \
+    Source/WTF/wtf/StringHasher.h \
     Source/WTF/wtf/StringPrintStream.cpp \
     Source/WTF/wtf/StringPrintStream.h \
-    Source/WTF/wtf/StringHasher.h \
     Source/WTF/wtf/TCPackedCache.h \
     Source/WTF/wtf/TCPageMap.h \
     Source/WTF/wtf/TCSpinLock.h \
@@ -241,6 +241,7 @@ wtf_sources += \
     Source/WTF/wtf/text/StringImpl.h \
     Source/WTF/wtf/text/StringOperators.h \
     Source/WTF/wtf/text/StringStatics.cpp \
+    Source/WTF/wtf/text/StringView.h \
     Source/WTF/wtf/text/TextPosition.h \
     Source/WTF/wtf/text/WTFString.cpp \
     Source/WTF/wtf/text/WTFString.h \

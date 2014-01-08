@@ -49,7 +49,7 @@ public:
     virtual void checkGrammarOfString(const UChar*, int length, Vector<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) = 0;
 
 #if USE(UNIFIED_TEXT_CHECKING)
-    virtual void checkTextOfParagraph(const UChar* text, int length, TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results) = 0;
+    virtual Vector<TextCheckingResult> checkTextOfParagraph(StringView, TextCheckingTypeMask checkingTypes) = 0;
 #endif
 
     // For spellcheckers that support multiple languages, it's often important to be able to identify the language in order to

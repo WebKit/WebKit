@@ -42,6 +42,7 @@
 #include "InspectorClient.h"
 #include "Page.h"
 #include "ResourceError.h"
+#include <wtf/text/StringView.h>
 
 /*
  This file holds empty Client stubs for use by WebCore.
@@ -425,7 +426,7 @@ public:
     virtual void checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*) OVERRIDE { }
 
 #if USE(UNIFIED_TEXT_CHECKING)
-    virtual void checkTextOfParagraph(const UChar*, int, TextCheckingTypeMask, Vector<TextCheckingResult>&) OVERRIDE { };
+    virtual Vector<TextCheckingResult> checkTextOfParagraph(StringView, TextCheckingTypeMask) OVERRIDE { return Vector<TextCheckingResult>(); }
 #endif
 
     virtual void getGuessesForWord(const String&, const String&, Vector<String>&) OVERRIDE { }

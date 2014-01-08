@@ -1,3 +1,20 @@
+2014-01-08  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF::StringView and use it for grammar checking
+        https://bugs.webkit.org/show_bug.cgi?id=126644
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::checkTextOfParagraph):
+        Update to match the new signature.
+
+        (nsStringWithoutCopying):
+        New function that creates an NSString that references StringView data
+        without copying the data. (If this function proves to be useful elsewhere, it could
+        potentially be added to StringView).
+
 2014-01-02  Andy Estes  <aestes@apple.com>
 
         [iOS] Clean up some exported headers

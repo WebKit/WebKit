@@ -36,6 +36,7 @@
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -639,7 +640,7 @@ void checkTextOfParagraph(TextCheckerClient* client, const UChar* text, int leng
                           TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
 {
 #if USE(UNIFIED_TEXT_CHECKING)
-    client->checkTextOfParagraph(text, length, checkingTypes, results);
+    results = client->checkTextOfParagraph(StringView(text, length), checkingTypes);
 #else
     Vector<TextCheckingResult> spellingResult;
     if (checkingTypes & TextCheckingTypeSpelling)

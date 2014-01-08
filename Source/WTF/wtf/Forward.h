@@ -47,6 +47,7 @@ class PrintStream;
 class String;
 class StringBuilder;
 class StringImpl;
+class StringView;
 
 }
 
@@ -69,6 +70,7 @@ using WTF::String;
 using WTF::StringBuffer;
 using WTF::StringBuilder;
 using WTF::StringImpl;
+using WTF::StringView;
 using WTF::Vector;
 
 #endif // WTF_Forward_h

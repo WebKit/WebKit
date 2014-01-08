@@ -51,6 +51,7 @@
 #include <WebCore/UndoStep.h>
 #include <WebCore/UserTypingGestureIndicator.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringView.h>
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -442,10 +443,13 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
 }
 
 #if USE(UNIFIED_TEXT_CHECKING)
-void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
+Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stringView, WebCore::TextCheckingTypeMask checkingTypes)
 {
-    // FIXME: It would be nice if we wouldn't have to copy the text here.
-    m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(String(text, length), checkingTypes), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
+    Vector<TextCheckingResult> results;
+
+    m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(stringView.toStringWithoutCopying(), checkingTypes), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
+
+    return results;
 }
 #endif
 

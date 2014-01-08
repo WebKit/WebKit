@@ -291,6 +291,7 @@
     <ClInclude Include="..\wtf\text\StringHash.h" />
     <ClInclude Include="..\wtf\text\StringImpl.h" />
     <ClInclude Include="..\wtf\text\StringOperators.h" />
+    <ClInclude Include="..\wtf\text\StringView.h" />
     <ClInclude Include="..\wtf\text\WTFString.h" />
     <ClInclude Include="..\wtf\Threading.h" />
     <ClInclude Include="..\wtf\ThreadingPrimitives.h" />

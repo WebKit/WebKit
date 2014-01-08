@@ -40,6 +40,7 @@
 #include "TextCheckerClient.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/text/StringView.h>
 
 struct Ewk_Should_Insert_Node_Event {
     WebCore::Node* node;
@@ -147,7 +148,7 @@ public:
     virtual void setInputMethodState(bool enabled);
     virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) { }
 #if USE(UNIFIED_TEXT_CHECKING)
-    virtual void checkTextOfParagraph(const UChar*, int, TextCheckingTypeMask, Vector<TextCheckingResult>&) { }
+    virtual Vector<TextCheckingResult> checkTextOfParagraph(StringView, TextCheckingTypeMask checkingTypes) { return Vector<TextCheckingResult>(); }
 #endif
     virtual TextCheckerClient* textChecker() { return this; }
 

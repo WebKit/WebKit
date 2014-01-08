@@ -71,6 +71,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/text/StringView.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
@@ -874,12 +875,14 @@ int WebEditorClient::pasteboardChangeCount()
     return 0;
 }
 
-void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
+void WebEditorClient::checkTextOfParagraph(StringView string, TextCheckingTypeMask checkingTypes)
 {
     ASSERT(checkingTypes & NSTextCheckingTypeSpelling);
-    NSString *textString = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO];
-    NSArray *incomingResults = [[m_webView _UIKitDelegateForwarder] checkSpellingOfString:textString];
-    [textString release];
+
+    NSArray *incomingResults = [[m_webView _UIKitDelegateForwarder] checkSpellingOfString:nsStringWithoutCopying(string).get()];
+
+    Vector<TextCheckingResult> results;
+
     for (NSValue *incomingResult in incomingResults) {
         NSRange resultRange = [incomingResult rangeValue];
         ASSERT(resultRange.location != NSNotFound && resultRange.length > 0);
@@ -889,8 +892,18 @@ void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, TextCh
         result.length = resultRange.length;
         results.append(result);
     }
+
+    return results;
 }
 #endif // PLATFORM(IOS)
+
+static RetainPtr<NSString> nsStringWithoutCopying(StringView stringView)
+{
+    if (stringView.is8Bit())
+        return adoptNS([[NSString alloc] initWithBytesNoCopy:const_cast<LChar*>(stringView.characters8()) length:stringView.length() encoding:NSISOLatin1StringEncoding freeWhenDone:NO]);
+
+    return adoptNS([[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(stringView.characters16()) length:stringView.length() freeWhenDone:NO]);
+}
 
 #if !PLATFORM(IOS)
 bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(TextCheckingType type) const
@@ -1042,12 +1055,13 @@ static Vector<TextCheckingResult> core(NSArray *incomingResults, TextCheckingTyp
     return results;
 }
 
-void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
+Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView string, TextCheckingTypeMask checkingTypes)
 {
-    NSString *textString = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO];
-    NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString range:NSMakeRange(0, [textString length]) types:(checkingTypes|NSTextCheckingTypeOrthography) options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL];
-    [textString release];
-    results = core(incomingResults, checkingTypes);
+    auto textString = nsStringWithoutCopying(string);
+
+    NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString.get() range:NSMakeRange(0, [textString length]) types:(checkingTypes|NSTextCheckingTypeOrthography) options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL];
+
+    return core(incomingResults, checkingTypes);
 }
 
 void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)

@@ -139,7 +139,7 @@ private:
     virtual String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord) OVERRIDE;
     virtual void checkGrammarOfString(const UChar*, int length, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) OVERRIDE;
 #if USE(UNIFIED_TEXT_CHECKING)
-    virtual void checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, Vector<WebCore::TextCheckingResult>& results) OVERRIDE;
+    virtual Vector<WebCore::TextCheckingResult> checkTextOfParagraph(StringView, WebCore::TextCheckingTypeMask checkingTypes) OVERRIDE;
 #endif
     virtual void updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail&) OVERRIDE;
     virtual void updateSpellingUIWithMisspelledWord(const String&) OVERRIDE;

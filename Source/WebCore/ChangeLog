@@ -1,3 +1,22 @@
+2014-01-08  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF::StringView and use it for grammar checking
+        https://bugs.webkit.org/show_bug.cgi?id=126644
+
+        Reviewed by Antti Koivisto.
+
+        Use a StringView in TextCheckerClient::checkTextOfParagraph to avoid upconverting strings unnecessarily.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::checkTextOfParagraph):
+        Pass a StringView to TextCheckerClient::checkTextOfParagraph.
+        
+        * loader/EmptyClients.h:
+        Update for TextCheckerClient changes.
+
+        * platform/text/TextCheckerClient.h:
+        Change TextCheckerClient::checkTextOfParagraph to take a StringView.
+        
 2014-01-08  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed Windows build fix attempt after r161481.
