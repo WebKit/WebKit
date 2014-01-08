@@ -1,3 +1,21 @@
+2014-01-08  Andreas Kling  <akling@apple.com>
+
+        createMathMLOperator() should return RenderPtr.
+        <https://webkit.org/b/126622>
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/mathml/RenderMathMLFenced.h:
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::createMathMLOperator):
+
+            Make this return a RenderPtr<RenderMathMLOperator>.
+
+        (WebCore::RenderMathMLFenced::makeFences):
+        (WebCore::RenderMathMLFenced::addChild):
+
+            Updated for the new createMathMLOperator() signature.
+
 2014-01-07  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r161195): Acid2 regression tests frequently fail

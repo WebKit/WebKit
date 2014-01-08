@@ -82,14 +82,14 @@ void RenderMathMLFenced::updateFromElement()
         makeFences();
 }
 
-RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar, RenderMathMLOperator::OperatorType operatorType)
+RenderPtr<RenderMathMLOperator> RenderMathMLFenced::createMathMLOperator(UChar uChar, RenderMathMLOperator::OperatorType operatorType)
 {
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
     newStyle.get().setFlexDirection(FlowColumn);
     newStyle.get().setMarginEnd(Length((operatorType == RenderMathMLOperator::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style().fontSize(), Fixed));
     if (operatorType == RenderMathMLOperator::Fence)
         newStyle.get().setMarginStart(Length(gFenceMarginEms * style().fontSize(), Fixed));
-    RenderMathMLOperator* newOperator = new RenderMathMLOperator(element(), std::move(newStyle), uChar);
+    RenderPtr<RenderMathMLOperator> newOperator = createRenderer<RenderMathMLOperator>(element(), std::move(newStyle), uChar);
     newOperator->setOperatorType(operatorType);
     newOperator->initializeStyle();
     return newOperator;
@@ -97,11 +97,15 @@ RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar, Rend
 
 void RenderMathMLFenced::makeFences()
 {
-    RenderMathMLOperator* openFence = createMathMLOperator(m_open, RenderMathMLOperator::Fence);
-    RenderMathMLRow::addChild(openFence, firstChild());
-    m_closeFenceRenderer = createMathMLOperator(m_close, RenderMathMLOperator::Fence);
-    RenderMathMLRow::addChild(m_closeFenceRenderer);
-    openFence->updateFromElement();
+    RenderPtr<RenderMathMLOperator> openFence = createMathMLOperator(m_open, RenderMathMLOperator::Fence);
+    RenderMathMLOperator* openFencePtr = openFence.get();
+    RenderMathMLRow::addChild(openFence.leakPtr(), firstChild());
+
+    RenderPtr<RenderMathMLOperator> closeFence = createMathMLOperator(m_close, RenderMathMLOperator::Fence);
+    m_closeFenceRenderer = closeFence.get();
+    RenderMathMLRow::addChild(closeFence.leakPtr());
+
+    openFencePtr->updateFromElement();
     m_closeFenceRenderer->updateFromElement();
 }
 
@@ -114,7 +118,7 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
     // FIXME: Adding or removing a child should possibly cause all later separators to shift places if they're different,
     // as later child positions change by +1 or -1.
     
-    RenderMathMLOperator* separatorRenderer = nullptr;
+    RenderPtr<RenderMathMLOperator> separatorRenderer;
     if (m_separators.get()) {
         unsigned int count = 0;
         for (Node* position = child->node(); position; position = position->previousSibling()) {
@@ -144,11 +148,11 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
         // Adding |x| before an existing |y| e.g. in element (y) - first insert our new child |x|, then its separator, to get (x, y).
         RenderMathMLRow::addChild(child, beforeChild);
         if (separatorRenderer)
-            RenderMathMLRow::addChild(separatorRenderer, beforeChild);
+            RenderMathMLRow::addChild(separatorRenderer.leakPtr(), beforeChild);
     } else {
         // Adding |y| at the end of an existing element e.g. (x) - insert the separator first before the closing fence, then |y|, to get (x, y).
         if (separatorRenderer)
-            RenderMathMLRow::addChild(separatorRenderer, m_closeFenceRenderer);
+            RenderMathMLRow::addChild(separatorRenderer.leakPtr(), m_closeFenceRenderer);
         RenderMathMLRow::addChild(child, m_closeFenceRenderer);
     }
 }
