@@ -1,3 +1,22 @@
+2014-01-07  Andreas Kling  <akling@apple.com>
+
+        createAnonymousMathMLBlock() should return RenderPtr.
+        <https://webkit.org/b/126583>
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::createAnonymousMathMLBlock):
+
+            Make this return a RenderPtr<RenderMathMLBlock> and removed the
+            EDisplay argument since it was always using the default (FLEX.)
+
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::addChild):
+
+            Updated for the new createAnonymousMathMLBlock() signature.
+
 2014-01-07  Eric Carlson  <eric.carlson@apple.com>
 
         Teach MediaSessionManager to manage interruptions

@@ -60,9 +60,9 @@ bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const RenderSt
     return child.node() && isElement(*child.node());
 }
 
-RenderMathMLBlock* RenderMathMLBlock::createAnonymousMathMLBlock(EDisplay display)
+RenderPtr<RenderMathMLBlock> RenderMathMLBlock::createAnonymousMathMLBlock()
 {
-    RenderMathMLBlock* newBlock = new RenderMathMLBlock(document(), RenderStyle::createAnonymousStyleWithDisplay(&style(), display));
+    RenderPtr<RenderMathMLBlock> newBlock = createRenderer<RenderMathMLBlock>(document(), RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX));
     newBlock->initializeStyle();
     return newBlock;
 }

@@ -62,7 +62,7 @@ public:
 #endif
     
     // Create a new RenderMathMLBlock, with a new style inheriting from this->style().
-    RenderMathMLBlock* createAnonymousMathMLBlock(EDisplay = FLEX);
+    RenderPtr<RenderMathMLBlock> createAnonymousMathMLBlock();
     
     void setIgnoreInAccessibilityTree(bool flag) { m_ignoreInAccessibilityTree = flag; }
     bool ignoreInAccessibilityTree() const { return m_ignoreInAccessibilityTree; }

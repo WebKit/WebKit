@@ -90,13 +90,13 @@ void RenderMathMLFraction::updateFromElement()
 void RenderMathMLFraction::addChild(RenderObject* child, RenderObject* /* beforeChild */)
 {
     if (isEmpty()) {
-        RenderMathMLBlock* numeratorWrapper = createAnonymousMathMLBlock();
-        RenderMathMLBlock::addChild(numeratorWrapper);
-        fixChildStyle(numeratorWrapper);
+        RenderPtr<RenderMathMLBlock> numeratorWrapper = createAnonymousMathMLBlock();
+        fixChildStyle(numeratorWrapper.get());
+        RenderMathMLBlock::addChild(numeratorWrapper.leakPtr());
         
-        RenderMathMLBlock* denominatorWrapper = createAnonymousMathMLBlock();
-        RenderMathMLBlock::addChild(denominatorWrapper);
-        fixChildStyle(denominatorWrapper);
+        RenderPtr<RenderMathMLBlock> denominatorWrapper = createAnonymousMathMLBlock();
+        fixChildStyle(denominatorWrapper.get());
+        RenderMathMLBlock::addChild(denominatorWrapper.leakPtr());
     }
     
     if (firstChild()->isEmpty())
