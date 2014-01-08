@@ -278,4 +278,7 @@
     [RaisesException] ClientRect selectionBounds();
     
     [Conditional=MEDIA_SOURCE] void initializeMockMediaSource();
+
+    void beginMediaSessionInterruption();
+    void endMediaSessionInterruption(DOMString flags);
 };

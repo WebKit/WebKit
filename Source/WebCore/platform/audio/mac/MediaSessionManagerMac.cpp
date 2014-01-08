@@ -42,14 +42,14 @@ static const size_t kLowPowerVideoBufferSize = 4096;
 
 void MediaSessionManager::updateSessionState()
 {
-    LOG(Media, "MediaSessionManager::updateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(Video), count(Audio), count(WebAudio));
+    LOG(Media, "MediaSessionManager::updateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(MediaSession::Video), count(MediaSession::Audio), count(MediaSession::WebAudio));
 
-    if (has(WebAudio))
+    if (has(MediaSession::WebAudio))
         AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);
     // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
     // causes media LayoutTests to fail on 10.8.
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    else if ((has(Video) || has(Audio)) && Settings::lowPowerVideoAudioBufferSizeEnabled())
+    else if ((has(MediaSession::Video) || has(MediaSession::Audio)) && Settings::lowPowerVideoAudioBufferSizeEnabled())
         AudioSession::sharedSession().setPreferredBufferSize(kLowPowerVideoBufferSize);
 #endif
 }

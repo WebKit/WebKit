@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSessionManager_h
-#define MediaSessionManager_h
-
+#include "config.h"
 #include "MediaSession.h"
-#include "Settings.h"
-#include <wtf/Vector.h>
+
+#include "HTMLMediaElement.h"
+#include "Logging.h"
+#include "MediaSessionManager.h"
+#include "Page.h"
+#include "ScriptController.h"
 
 namespace WebCore {
 
-class HTMLMediaElement;
-class MediaSession;
-
-class MediaSessionManager {
-public:
-    static MediaSessionManager& sharedManager();
-
-    bool has(MediaSession::MediaType) const;
-    int count(MediaSession::MediaType) const;
-
-    void beginInterruption();
-    void endInterruption(MediaSession::EndInterruptionFlags);
-
-protected:
-    friend class MediaSession;
-    void addSession(MediaSession&);
-    void removeSession(MediaSession&);
-
-private:
-    MediaSessionManager();
-
-    void updateSessionState();
-
-    Vector<MediaSession*> m_sessions;
-    int m_interruptions;
-};
-
+std::unique_ptr<MediaSession> MediaSession::create(MediaSessionClient& client)
+{
+    return std::make_unique<MediaSession>(client);
 }
 
-#endif // MediaSessionManager_h
+MediaSession::MediaSession(MediaSessionClient& client)
+    : m_client(client)
+    , m_state(Running)
+{
+    m_type = m_client.mediaType();
+    ASSERT(m_type >= None && m_type <= WebAudio);
+    MediaSessionManager::sharedManager().addSession(*this);
+}
+
+MediaSession::~MediaSession()
+{
+    MediaSessionManager::sharedManager().removeSession(*this);
+}
+
+void MediaSession::beginInterruption()
+{
+    m_state = Interrupted;
+    m_client.beginInterruption();
+}
+
+void MediaSession::endInterruption(EndInterruptionFlags flags)
+{
+    m_state = Running;
+    m_client.endInterruption(flags);
+}
+
+}

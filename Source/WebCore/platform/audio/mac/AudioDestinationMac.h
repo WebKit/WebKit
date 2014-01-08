@@ -31,7 +31,7 @@
 
 #include "AudioBus.h"
 #include "AudioDestination.h"
-#include "MediaSessionManager.h"
+#include "MediaSession.h"
 #include <AudioUnit/AudioUnit.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -40,7 +40,7 @@ namespace WebCore {
 
 // An AudioDestination using CoreAudio's default output AudioUnit
 
-class AudioDestinationMac : public AudioDestination, public MediaSessionManagerClient {
+class AudioDestinationMac : public AudioDestination, public MediaSessionClient {
 public:
     AudioDestinationMac(AudioIOCallback&, float sampleRate);
     virtual ~AudioDestinationMac();
@@ -59,7 +59,7 @@ private:
 
     OSStatus render(UInt32 numberOfFrames, AudioBufferList* ioData);
 
-    virtual MediaSessionManager::MediaType mediaType() const { return MediaSessionManager::WebAudio; }
+    virtual MediaSession::MediaType mediaType() const { return MediaSession::WebAudio; }
 
     AudioUnit m_outputUnit;
     AudioIOCallback& m_callback;
@@ -69,7 +69,7 @@ private:
     bool m_isPlaying;
 
 #if USE(AUDIO_SESSION)
-    std::unique_ptr<MediaSessionManagerToken> m_mediaSessionManagerToken;
+    std::unique_ptr<MediaSession> m_mediaSession;
 #endif
 };
 

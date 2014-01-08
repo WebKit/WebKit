@@ -33,6 +33,7 @@
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
 #include "MediaPlayer.h"
+#include "MediaSession.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLFrameOwnerElement.h"
@@ -53,9 +54,6 @@
 #include "MediaStream.h"
 #endif
 
-#if USE(AUDIO_SESSION)
-#include "MediaSessionManager.h"
-#endif
 
 namespace WebCore {
 
@@ -105,7 +103,7 @@ class HTMLMediaElement
 #else
     : public HTMLElement
 #endif
-    , private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface
+    , private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface , public MediaSessionClient
 #if ENABLE(VIDEO_TRACK)
     , private AudioTrackClient
     , private TextTrackClient
@@ -113,9 +111,6 @@ class HTMLMediaElement
 #endif
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     , public PlatformTextTrackMenuClient
-#endif
-#if USE(AUDIO_SESSION)
-    , public MediaSessionManagerClient
 #endif
 {
 public:
@@ -481,6 +476,8 @@ protected:
 
     virtual RenderPtr<RenderElement> createElementRenderer(PassRef<RenderStyle>) OVERRIDE;
 
+    MediaSession& mediaSession() const { return *m_mediaSession; }
+
 private:
     void createMediaPlayer();
 
@@ -654,7 +651,6 @@ private:
 
 #if PLATFORM(IOS)
     bool parseMediaPlayerAttribute(const QualifiedName&, const AtomicString&);
-    void userRequestsMediaLoading();
 #endif
 
     // Pauses playback without changing any states or generating events
@@ -697,9 +693,10 @@ private:
     bool ensureMediaControlsInjectedScript();
 #endif
 
-#if USE(AUDIO_SESSION)
-    virtual MediaSessionManager::MediaType mediaType() const OVERRIDE;
-#endif
+    virtual MediaSession::MediaType mediaType() const OVERRIDE;
+
+    virtual void beginInterruption() OVERRIDE;
+    virtual void endInterruption(MediaSession::EndInterruptionFlags) OVERRIDE;
 
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
@@ -796,7 +793,6 @@ private:
     bool m_needWidgetUpdate : 1;
 #endif
 
-    bool m_loadInitiatedByUserGesture : 1;
     bool m_completelyLoaded : 1;
     bool m_havePreparedToPlay : 1;
     bool m_parsingInProgress : 1;
@@ -806,8 +802,9 @@ private:
 
 #if PLATFORM(IOS)
     bool m_requestingPlay : 1;
-    bool m_userStartedPlayback : 1;
 #endif
+
+    bool m_resumePlaybackAfterInterruption : 1;
 
 #if ENABLE(VIDEO_TRACK)
     bool m_tracksAreReady : 1;
@@ -855,10 +852,7 @@ private:
     RefPtr<PlatformTextTrackMenuInterface> m_platformMenu;
 #endif
 
-#if USE(AUDIO_SESSION)
-    std::unique_ptr<MediaSessionManagerToken> m_mediaSessionManagerToken;
-#endif
-
+    std::unique_ptr<MediaSession> m_mediaSession;
     std::unique_ptr<PageActivityAssertionToken> m_activityToken;
     size_t m_reportedExtraMemoryCost;
 

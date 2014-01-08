@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,66 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSessionManager_h
-#define MediaSessionManager_h
+#ifndef MediaSession_h
+#define MediaSession_h
 
-#include "MediaSession.h"
-#include "Settings.h"
-#include <wtf/Vector.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
+class MediaSessionClient;
 class HTMLMediaElement;
-class MediaSession;
 
-class MediaSessionManager {
+class MediaSession {
 public:
-    static MediaSessionManager& sharedManager();
+    static std::unique_ptr<MediaSession> create(MediaSessionClient&);
 
-    bool has(MediaSession::MediaType) const;
-    int count(MediaSession::MediaType) const;
+    MediaSession(MediaSessionClient&);
+    ~MediaSession();
 
+    enum MediaType {
+        None,
+        Video,
+        Audio,
+        WebAudio,
+    };
+    
+    MediaType mediaType() const { return m_type; }
+
+    enum State {
+        Running,
+        Interrupted,
+    };
+    State state() const { return m_state; }
+    void setState(State state) { m_state = state; }
+
+    enum EndInterruptionFlags {
+        NoFlags = 0,
+        MayResumePlaying = 1 << 0,
+    };
     void beginInterruption();
-    void endInterruption(MediaSession::EndInterruptionFlags);
-
-protected:
-    friend class MediaSession;
-    void addSession(MediaSession&);
-    void removeSession(MediaSession&);
+    void endInterruption(EndInterruptionFlags);
 
 private:
-    MediaSessionManager();
+    MediaSessionClient& m_client;
+    MediaType m_type;
+    State m_state;
+};
 
-    void updateSessionState();
-
-    Vector<MediaSession*> m_sessions;
-    int m_interruptions;
+class MediaSessionClient {
+    WTF_MAKE_NONCOPYABLE(MediaSessionClient);
+public:
+    MediaSessionClient() { }
+    
+    virtual MediaSession::MediaType mediaType() const = 0;
+    
+    virtual void beginInterruption() { }
+    virtual void endInterruption(MediaSession::EndInterruptionFlags) { }
+    
+protected:
+    virtual ~MediaSessionClient() { }
 };
 
 }
 
-#endif // MediaSessionManager_h
+#endif // MediaSession_h

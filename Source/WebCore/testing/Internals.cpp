@@ -70,6 +70,7 @@
 #include "MainFrame.h"
 #include "MallocStatistics.h"
 #include "MediaPlayer.h"
+#include "MediaSessionManager.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
 #include "Page.h"
@@ -2270,5 +2271,20 @@ void Internals::initializeMockMediaSource()
     MediaPlayerFactorySupport::callRegisterMediaEngine(MockMediaPlayerMediaSource::registerMediaEngine);
 }
 #endif
+
+void Internals::beginMediaSessionInterruption()
+{
+    MediaSessionManager::sharedManager().beginInterruption();
+}
+
+void Internals::endMediaSessionInterruption(const String& flagsString)
+{
+    MediaSession::EndInterruptionFlags flags = MediaSession::NoFlags;
+
+    if (equalIgnoringCase(flagsString, "MayResumePlaying"))
+        flags = MediaSession::MayResumePlaying;
+    
+    MediaSessionManager::sharedManager().endInterruption(flags);
+}
 
 }

@@ -26,25 +26,9 @@
 #include "config.h"
 #include "MediaSessionManager.h"
 
-using namespace WebCore;
+#include "MediaSession.h"
 
-
-std::unique_ptr<MediaSessionManagerToken> MediaSessionManagerToken::create(MediaSessionManagerClient& client)
-{
-    return std::make_unique<MediaSessionManagerToken>(client);
-}
-
-MediaSessionManagerToken::MediaSessionManagerToken(MediaSessionManagerClient& client)
-    : m_client(client)
-{
-    m_type = m_client.mediaType();
-    MediaSessionManager::sharedManager().addToken(*this);
-}
-
-MediaSessionManagerToken::~MediaSessionManagerToken()
-{
-    MediaSessionManager::sharedManager().removeToken(*this);
-}
+namespace WebCore {
 
 MediaSessionManager& MediaSessionManager::sharedManager()
 {
@@ -53,48 +37,69 @@ MediaSessionManager& MediaSessionManager::sharedManager()
 }
 
 MediaSessionManager::MediaSessionManager()
+    : m_interruptions(0)
 {
 }
 
-bool MediaSessionManager::has(MediaSessionManager::MediaType type) const
+bool MediaSessionManager::has(MediaSession::MediaType type) const
 {
-    ASSERT(type >= MediaSessionManager::None && type <= MediaSessionManager::WebAudio);
+    ASSERT(type >= MediaSession::None && type <= MediaSession::WebAudio);
 
-    for (auto it = m_tokens.begin(), end = m_tokens.end(); it != end; ++it) {
-        if ((*it)->mediaType() == type)
+    for (auto* session : m_sessions) {
+        if (session->mediaType() == type)
             return true;
     }
-    
+
     return false;
 }
 
-int MediaSessionManager::count(MediaSessionManager::MediaType type) const
+int MediaSessionManager::count(MediaSession::MediaType type) const
 {
-    ASSERT(type >= MediaSessionManager::None && type <= MediaSessionManager::WebAudio);
+    ASSERT(type >= MediaSession::None && type <= MediaSession::WebAudio);
     
     int count = 0;
-    for (auto it = m_tokens.begin(), end = m_tokens.end(); it != end; ++it) {
-        if ((*it)->mediaType() == type)
+    for (auto* session : m_sessions) {
+        if (session->mediaType() == type)
             ++count;
     }
-    
+
     return count;
 }
 
-void MediaSessionManager::addToken(MediaSessionManagerToken& token)
+void MediaSessionManager::beginInterruption()
 {
-    m_tokens.append(&token);
+    if (++m_interruptions > 1)
+        return;
+
+    for (auto* session : m_sessions)
+        session->beginInterruption();
+}
+
+void MediaSessionManager::endInterruption(MediaSession::EndInterruptionFlags flags)
+{
+    ASSERT(m_interruptions > 0);
+    if (--m_interruptions)
+        return;
+    
+    for (auto* session : m_sessions)
+        session->endInterruption(flags);
+}
+
+void MediaSessionManager::addSession(MediaSession& session)
+{
+    m_sessions.append(&session);
+    session.setState(m_interruptions ? MediaSession::Interrupted : MediaSession::Running);
     updateSessionState();
 }
 
-void MediaSessionManager::removeToken(MediaSessionManagerToken& token)
+void MediaSessionManager::removeSession(MediaSession& session)
 {
-    size_t index = m_tokens.find(&token);
+    size_t index = m_sessions.find(&session);
     ASSERT(index != notFound);
     if (index == notFound)
         return;
 
-    m_tokens.remove(index);
+    m_sessions.remove(index);
     updateSessionState();
 }
 
@@ -103,3 +108,5 @@ void MediaSessionManager::updateSessionState()
 {
 }
 #endif
+
+}

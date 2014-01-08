@@ -1,3 +1,17 @@
+2014-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Teach MediaSessionManager to manage interruptions
+        https://bugs.webkit.org/show_bug.cgi?id=126530
+
+        Reviewed by Sam Weinig.
+
+        * media/video-interruption-active-when-element-created-expected.txt: Added.
+        * media/video-interruption-active-when-element-created.html: Added.
+        * media/video-interruption-with-resume-allowing-play-expected.txt: Added.
+        * media/video-interruption-with-resume-allowing-play.html: Added.
+        * media/video-interruption-with-resume-not-allowing-play-expected.txt: Added.
+        * media/video-interruption-with-resume-not-allowing-play.html: Added.
+
 2014-01-07  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove leftover 'device metrics' code

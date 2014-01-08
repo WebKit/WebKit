@@ -30,13 +30,13 @@
 #include "ApplicationCacheHost.h"
 #include "ApplicationCacheResource.h"
 #include "Attribute.h"
+#include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "ChromeClient.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "ContentSecurityPolicy.h"
 #include "ContentType.h"
-#include "CSSPropertyNames.h"
-#include "CSSValueKeywords.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
 #include "ElementIterator.h"
@@ -50,6 +50,7 @@
 #include "JSHTMLMediaElement.h"
 #include "Language.h"
 #include "Logging.h"
+#include "MIMETypeRegistry.h"
 #include "MainFrame.h"
 #include "MediaController.h"
 #include "MediaControls.h"
@@ -59,7 +60,7 @@
 #include "MediaKeyEvent.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
-#include "MIMETypeRegistry.h"
+#include "MediaSessionManager.h"
 #include "PageActivityAssertionToken.h"
 #include "PageGroup.h"
 #include "ProgressTracker.h"
@@ -136,10 +137,6 @@
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
 #include "PlatformTextTrack.h"
-#endif
-
-#if USE(AUDIO_SESSION)
-#include "MediaSessionManager.h"
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
@@ -317,7 +314,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_needWidgetUpdate(false)
 #endif
-    , m_loadInitiatedByUserGesture(false)
     , m_completelyLoaded(false)
     , m_havePreparedToPlay(false)
     , m_parsingInProgress(createdByParser)
@@ -326,7 +322,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #endif
 #if PLATFORM(IOS)
     , m_requestingPlay(false)
-    , m_userStartedPlayback(false)
 #endif
 #if ENABLE(VIDEO_TRACK)
     , m_tracksAreReady(true)
@@ -342,9 +337,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if ENABLE(WEB_AUDIO)
     , m_audioSourceNode(0)
 #endif
-#if USE(AUDIO_SESSION)
-    , m_mediaSessionManagerToken(MediaSessionManagerToken::create(*this))
-#endif
+    , m_mediaSession(MediaSession::create(*this))
     , m_reportedExtraMemoryCost(0)
 #if ENABLE(MEDIA_STREAM)
     , m_mediaStreamSrcObject(nullptr)
@@ -374,8 +367,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if ENABLE(IOS_AIRPLAY)
         addBehaviorRestriction(RequireUserGestureToShowPlaybackTargetPicker);
 #endif
-    } else
-        m_restrictions = NoRestrictions;
+    }
 #endif // !PLATFORM(IOS)
 
     addElementToDocumentMap(*this, document);
@@ -903,21 +895,11 @@ void HTMLMediaElement::load()
     
     if (userGestureRequiredForLoad() && !ScriptController::processingUserGesture())
         return;
-    
-    m_loadInitiatedByUserGesture = ScriptController::processingUserGesture();
-    if (m_loadInitiatedByUserGesture)
+    if (ScriptController::processingUserGesture())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
+
     prepareForLoad();
     loadInternal();
-
-#if PLATFORM(IOS)
-    // Unless this method was called directly by the user or the application allows any script to trigger playback,
-    // return now because prepareToPlay() tells the media engine to start loading data as soon as the movie validates.
-    Settings* settings = document().settings();
-    if (!m_loadInitiatedByUserGesture && (!settings || settings->mediaPlaybackRequiresUserGesture()))
-        return;
-#endif
-
     prepareToPlay();
 }
 
@@ -2657,10 +2639,11 @@ void HTMLMediaElement::play()
     if (ScriptController::processingUserGesture())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
-#if PLATFORM(IOS)
-    userRequestsMediaLoading();
-#endif
-
+    if (m_mediaSession->state() == MediaSession::Interrupted) {
+        m_resumePlaybackAfterInterruption = true;
+        return;
+    }
+    
     playInternal();
 }
 
@@ -2703,6 +2686,11 @@ void HTMLMediaElement::pause()
     if (userGestureRequiredForRateChange() && !ScriptController::processingUserGesture())
         return;
 
+    if (m_mediaSession->state() == MediaSession::Interrupted) {
+        m_resumePlaybackAfterInterruption = false;
+        return;
+    }
+    
     pauseInternal();
 }
 
@@ -4122,12 +4110,28 @@ bool HTMLMediaElement::potentiallyPlaying() const
     // when it ran out of buffered data. A movie is this state is "potentially playing", modulo the
     // checks in couldPlayIfEnoughData().
     bool pausedToBuffer = m_readyStateMaximum >= HAVE_FUTURE_DATA && m_readyState < HAVE_FUTURE_DATA;
-    return (pausedToBuffer || m_readyState >= HAVE_FUTURE_DATA) && couldPlayIfEnoughData() && !isBlockedOnMediaController();
+    
+    if (!pausedToBuffer && m_readyState < HAVE_FUTURE_DATA)
+        return false;
+
+    return couldPlayIfEnoughData() && !isBlockedOnMediaController();
 }
 
 bool HTMLMediaElement::couldPlayIfEnoughData() const
 {
-    return !paused() && !endedPlayback() && !stoppedDueToErrors() && !pausedForUserInteraction();
+    if (paused())
+        return false;
+
+    if (endedPlayback())
+        return false;
+
+    if (stoppedDueToErrors())
+        return false;
+
+    if (pausedForUserInteraction())
+        return false;
+
+    return true;
 }
 
 bool HTMLMediaElement::endedPlayback() const
@@ -4171,7 +4175,9 @@ bool HTMLMediaElement::stoppedDueToErrors() const
 
 bool HTMLMediaElement::pausedForUserInteraction() const
 {
-//    return !paused() && m_readyState >= HAVE_FUTURE_DATA && [UA requires a decitions from the user]
+    if (m_mediaSession->state() == MediaSession::Interrupted)
+        return true;
+
     return false;
 }
 
@@ -4558,7 +4564,7 @@ void HTMLMediaElement::deliverNotification(MediaPlayerProxyNotificationType noti
 {
     if (notification == MediaPlayerNotificationPlayPauseButtonPressed) {
 #if PLATFORM(IOS)
-        userRequestsMediaLoading();
+        removeBehaviorsRestrictionsAfterFirstUserGesture();
 #endif
         togglePlayState();
         return;
@@ -5299,16 +5305,6 @@ AudioSourceProvider* HTMLMediaElement::audioSourceProvider()
 }
 #endif
 
-#if PLATFORM(IOS)
-void HTMLMediaElement::userRequestsMediaLoading()
-{
-    // The user is requesting data loading and/or playback, so remove the "only change playback in response
-    // to a user gesture" restriction on this movie.
-    m_userStartedPlayback = true;
-    m_restrictions = NoRestrictions;
-}
-#endif
-
 const String& HTMLMediaElement::mediaGroup() const
 {
     return m_mediaGroup;
@@ -5601,7 +5597,12 @@ bool HTMLMediaElement::mediaPlayerShouldWaitForResponseToAuthenticationChallenge
 
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 {
-    m_restrictions = NoRestrictions;
+    removeBehaviorRestriction(RequireUserGestureForLoadRestriction);
+    removeBehaviorRestriction(RequireUserGestureForRateChangeRestriction);
+    removeBehaviorRestriction(RequireUserGestureForFullscreenRestriction);
+#if ENABLE(IOS_AIRPLAY)
+    removeBehaviorRestriction(RequireUserGestureToShowPlaybackTargetPickerRestriction);
+#endif
 }
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -5724,15 +5725,34 @@ unsigned long long HTMLMediaElement::fileSize() const
     return 0;
 }
 
-#if USE(AUDIO_SESSION)
-MediaSessionManager::MediaType HTMLMediaElement::mediaType() const
+MediaSession::MediaType HTMLMediaElement::mediaType() const
 {
     if (hasTagName(HTMLNames::videoTag))
-        return MediaSessionManager::Video;
+        return MediaSession::Video;
 
-    return MediaSessionManager::Audio;
+    return MediaSession::Audio;
 }
-#endif
+
+void HTMLMediaElement::beginInterruption()
+{
+    LOG(Media, "HTMLMediaElement::beginInterruption");
+    
+    m_resumePlaybackAfterInterruption = !paused();
+    if (m_resumePlaybackAfterInterruption)
+        pause();
+}
+
+void HTMLMediaElement::endInterruption(MediaSession::EndInterruptionFlags flags)
+{
+    bool shouldResumePlayback = m_resumePlaybackAfterInterruption;
+    m_resumePlaybackAfterInterruption = false;
+
+    if (!flags & MediaSession::MayResumePlaying)
+        return;
+
+    if (shouldResumePlayback)
+        play();
+}
 
 }
 

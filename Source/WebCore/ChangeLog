@@ -1,3 +1,77 @@
+2014-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Teach MediaSessionManager to manage interruptions
+        https://bugs.webkit.org/show_bug.cgi?id=126530
+
+        Reviewed by Sam Weinig.
+
+        Tests: media/video-interruption-active-when-element-created.html
+               media/video-interruption-with-resume-allowing-play.html
+               media/video-interruption-with-resume-not-allowing-play.html
+
+        * WebCore.exp.in: Export functions needed by Internals.
+
+        Add MediaSession and MediaSessionManager.
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Automatically pause/play for interruptions. Move media restriction management to a MediaSession.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Get rid of m_loadInitiatedByUserGesture and m_userStartedPlayback,
+            they aren't needed.
+        (WebCore::HTMLMediaElement::load): Ditto.
+        (WebCore::HTMLMediaElement::loadInternal): Use the media session to manage restrictions.
+        (WebCore::HTMLMediaElement::play): Remove redundant iOS code. Postpone playback if called 
+            during an interruption.
+        (WebCore::HTMLMediaElement::pause): Remember to not resume playback when it ends if called during
+            an interruption.
+        (WebCore::HTMLMediaElement::potentiallyPlaying): Rearrange code to make it easier to understand.
+        (WebCore::HTMLMediaElement::couldPlayIfEnoughData): Ditto.
+        (WebCore::HTMLMediaElement::pausedForUserInteraction): Return true if paused because of an interruption.
+        (WebCore::HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture): Be explicit about
+            which restrictions are removed.
+        (WebCore::HTMLMediaElement::mediaType): MediaSessionManager::<Type> -> MediaSession::<Type>.
+        (WebCore::HTMLMediaElement::beginInterruption): New.
+        (WebCore::HTMLMediaElement::endInterruption): Ditto.
+        * html/HTMLMediaElement.h:
+
+        Pulled MediaSessionManagerToken out of MediaSessionManager.cpp, added functionality to manage interruptions.
+        * platform/audio/MediaSession.cpp: Added.
+        (WebCore::MediaSession::create):
+        (WebCore::MediaSession::MediaSession):
+        (WebCore::MediaSession::~MediaSession):
+        (WebCore::MediaSession::beginInterruption): Inform client of interruption state change.
+        (WebCore::MediaSession::endInterruption): Ditto.
+        * platform/audio/MediaSession.h: Added.
+
+        * platform/audio/MediaSessionManager.cpp:
+        (WebCore::MediaSessionManager::MediaSessionManager): Initialize interruption counter.
+        (WebCore::MediaSessionManager::has): MediaType is defined in MediaSession.
+        (WebCore::MediaSessionManager::count): Ditto.
+        (WebCore::MediaSessionManager::beginInterruption): Inform all clients of interruption start if
+            not already in an interruption.
+        (WebCore::MediaSessionManager::endInterruption): Inform all clients if interruption has ended.
+        (WebCore::MediaSessionManager::addSession): Renamed from addToken. Set session interruption state.
+        (WebCore::MediaSessionManager::removeSession): Renamed from removeToken.
+        * platform/audio/MediaSessionManager.h:
+
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestinationMac::AudioDestinationMac): MediaSessionManagerToken -> MediaSession.
+        * platform/audio/mac/AudioDestinationMac.h:
+
+        * platform/audio/mac/MediaSessionManagerMac.cpp:
+        (MediaSessionManager::updateSessionState): Ditto.
+
+        Make it possible for tests to begin and end interruptions.
+        * testing/Internals.cpp:
+        (WebCore::Internals::beginMediaSessionInterruption):
+        (WebCore::Internals::endMediaSessionInterruption):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-01-07  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove leftover 'device metrics' code

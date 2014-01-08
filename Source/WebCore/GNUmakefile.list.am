@@ -5350,6 +5350,10 @@ webcore_platform_sources += \
 	Source/WebCore/platform/audio/HRTFPanner.h \
 	Source/WebCore/platform/audio/Panner.cpp \
 	Source/WebCore/platform/audio/Panner.h \
+	Source/WebCore/platform/audio/MediaSession.cpp \
+	Source/WebCore/platform/audio/MediaSession.h \
+	Source/WebCore/platform/audio/MediaSessionManager.cpp \
+	Source/WebCore/platform/audio/MediaSessionManager.h \
 	Source/WebCore/platform/CalculationValue.cpp \
 	Source/WebCore/platform/CalculationValue.h \
 	Source/WebCore/platform/CrossThreadCopier.cpp \

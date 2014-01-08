@@ -332,6 +332,9 @@ public:
     void initializeMockMediaSource();
 #endif
 
+    void beginMediaSessionInterruption();
+    void endMediaSessionInterruption(const String&);
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

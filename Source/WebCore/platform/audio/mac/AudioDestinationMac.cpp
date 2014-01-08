@@ -83,7 +83,7 @@ AudioDestinationMac::AudioDestinationMac(AudioIOCallback& callback, float sample
     , m_renderBus(AudioBus::create(2, kBufferSize, false))
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
-    , m_mediaSessionManagerToken(MediaSessionManagerToken::create(*this))
+    , m_mediaSession(MediaSession::create(*this))
 {
     // Open and initialize DefaultOutputUnit
     AudioComponent comp;
