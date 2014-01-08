@@ -60,6 +60,10 @@
 		0F5947A7187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5947A5187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp */; };
 		0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5947A6187B517600437857 /* RemoteScrollingCoordinatorMessages.h */; };
 		0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB659221208B4DB0044816C /* DrawingAreaInfo.h */; };
+		0FC08572187CE0B100780D86 /* __init__.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC0856E187CE0A900780D86 /* __init__.py */; };
+		0FC08573187CE0B300780D86 /* messages.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC0856F187CE0A900780D86 /* messages.py */; };
+		0FC08574187CE0B400780D86 /* model.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC08570187CE0A900780D86 /* model.py */; };
+		0FC08575187CE0B600780D86 /* parser.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC08571187CE0A900780D86 /* parser.py */; };
 		0FF24A2D1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */; };
 		0FF24A2E1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */; };
 		1A043976124D034800FFBFB5 /* PluginProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043974124D034800FFBFB5 /* PluginProcess.h */; };
@@ -736,7 +740,6 @@
 		51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */; };
 		5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5272B2881406985D0096A5D0 /* StatisticsData.cpp */; };
 		5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272B2891406985D0096A5D0 /* StatisticsData.h */; };
-		5D1A239115E75B220023E981 /* webkit2 in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 5D1A238E15E75AD50023E981 /* webkit2 */; };
 		5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */; };
 		5DA6ED0B1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DA6ED091490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm */; };
 		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
@@ -1543,10 +1546,13 @@
 		5D1A239015E75B100023E981 /* Copy Message Generation Scripts */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = PrivateHeaders;
+			dstPath = PrivateHeaders/webkit2;
 			dstSubfolderSpec = 1;
 			files = (
-				5D1A239115E75B220023E981 /* webkit2 in Copy Message Generation Scripts */,
+				0FC08572187CE0B100780D86 /* __init__.py in Copy Message Generation Scripts */,
+				0FC08573187CE0B300780D86 /* messages.py in Copy Message Generation Scripts */,
+				0FC08574187CE0B400780D86 /* model.py in Copy Message Generation Scripts */,
+				0FC08575187CE0B600780D86 /* parser.py in Copy Message Generation Scripts */,
 			);
 			name = "Copy Message Generation Scripts";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1605,9 +1611,13 @@
 		0F594797187B3B6000437857 /* RemoteScrollingTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingTree.h; path = Scrolling/RemoteScrollingTree.h; sourceTree = "<group>"; };
 		0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteScrollingCoordinatorTransaction.cpp; path = Scrolling/RemoteScrollingCoordinatorTransaction.cpp; sourceTree = "<group>"; };
 		0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingCoordinatorTransaction.h; path = Scrolling/RemoteScrollingCoordinatorTransaction.h; sourceTree = "<group>"; };
-		0F5947A5187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteScrollingCoordinatorMessageReceiver.cpp; path = RemoteScrollingCoordinatorMessageReceiver.cpp; sourceTree = "<group>"; };
-		0F5947A6187B517600437857 /* RemoteScrollingCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingCoordinatorMessages.h; path = RemoteScrollingCoordinatorMessages.h; sourceTree = "<group>"; };
+		0F5947A5187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteScrollingCoordinatorMessageReceiver.cpp; sourceTree = "<group>"; };
+		0F5947A6187B517600437857 /* RemoteScrollingCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingCoordinatorMessages.h; sourceTree = "<group>"; };
 		0FB659221208B4DB0044816C /* DrawingAreaInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaInfo.h; sourceTree = "<group>"; };
+		0FC0856E187CE0A900780D86 /* __init__.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = __init__.py; path = webkit2/__init__.py; sourceTree = "<group>"; };
+		0FC0856F187CE0A900780D86 /* messages.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = messages.py; path = webkit2/messages.py; sourceTree = "<group>"; };
+		0FC08570187CE0A900780D86 /* model.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = model.py; path = webkit2/model.py; sourceTree = "<group>"; };
+		0FC08571187CE0A900780D86 /* parser.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = parser.py; path = webkit2/parser.py; sourceTree = "<group>"; };
 		0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaProxyMessages.h; sourceTree = "<group>"; };
 		0FF24A2F1879E4FE003ABF0C /* RemoteLayerTreeDrawingAreaProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteLayerTreeDrawingAreaProxy.messages.in; sourceTree = "<group>"; };
@@ -2360,7 +2370,6 @@
 		51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoader.h; path = NetworkProcess/NetworkResourceLoader.h; sourceTree = "<group>"; };
 		5272B2881406985D0096A5D0 /* StatisticsData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatisticsData.cpp; sourceTree = "<group>"; };
 		5272B2891406985D0096A5D0 /* StatisticsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsData.h; sourceTree = "<group>"; };
-		5D1A238E15E75AD50023E981 /* webkit2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = webkit2; sourceTree = "<group>"; };
 		5D442A5516D5856700AC3331 /* PluginService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PluginService.entitlements; sourceTree = "<group>"; };
 		5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerEnvironmentExtractor.h; sourceTree = "<group>"; };
 		5DA6ED091490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DynamicLinkerEnvironmentExtractor.mm; sourceTree = "<group>"; };
@@ -5682,9 +5691,12 @@
 		C0CE73351247F70E00BC0EC4 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
-				5D1A238E15E75AD50023E981 /* webkit2 */,
 				C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */,
 				C0CE73371247F70E00BC0EC4 /* generate-messages-header.py */,
+				0FC0856E187CE0A900780D86 /* __init__.py */,
+				0FC0856F187CE0A900780D86 /* messages.py */,
+				0FC08570187CE0A900780D86 /* model.py */,
+				0FC08571187CE0A900780D86 /* parser.py */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
