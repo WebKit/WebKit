@@ -53,7 +53,7 @@ public:
 
     ElementChildIterator<ElementType> begin();
     ElementChildIterator<ElementType> end();
-    ElementChildIterator<ElementType> find(Element&);
+    ElementChildIterator<ElementType> beginAt(ElementType&);
 
     ElementType* first();
     ElementType* last();
@@ -69,7 +69,7 @@ public:
 
     ElementChildConstIterator<ElementType> begin() const;
     ElementChildConstIterator<ElementType> end() const;
-    ElementChildConstIterator<ElementType> find(const Element&) const;
+    ElementChildConstIterator<ElementType> beginAt(const ElementType&) const;
 
     const ElementType* first() const;
     const ElementType* last() const;
@@ -154,13 +154,10 @@ inline ElementType* ElementChildIteratorAdapter<ElementType>::last()
 }
 
 template <typename ElementType>
-inline ElementChildIterator<ElementType> ElementChildIteratorAdapter<ElementType>::find(Element& child)
+inline ElementChildIterator<ElementType> ElementChildIteratorAdapter<ElementType>::beginAt(ElementType& child)
 {
-    if (!isElementOfType<const ElementType>(child))
-        return end();
-    if (child.parentNode() != &m_parent)
-        return end();
-    return ElementChildIterator<ElementType>(m_parent, static_cast<ElementType*>(&child));
+    ASSERT(child.parentNode() == &m_parent);
+    return ElementChildIterator<ElementType>(m_parent, &child);
 }
 
 // ElementChildConstIteratorAdapter
@@ -196,13 +193,10 @@ inline const ElementType* ElementChildConstIteratorAdapter<ElementType>::last() 
 }
 
 template <typename ElementType>
-inline ElementChildConstIterator<ElementType> ElementChildConstIteratorAdapter<ElementType>::find(const Element& child) const
+inline ElementChildConstIterator<ElementType> ElementChildConstIteratorAdapter<ElementType>::beginAt(const ElementType& child) const
 {
-    if (!isElementOfType<const ElementType>(child))
-        return end();
-    if (child.parentNode() != &m_parent)
-        return end();
-    return ElementChildConstIterator<ElementType>(m_parent, static_cast<const ElementType*>(&child));
+    ASSERT(child.parentNode() == &m_parent);
+    return ElementChildConstIterator<ElementType>(m_parent, &child);
 }
 
 // Standalone functions

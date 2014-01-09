@@ -211,7 +211,7 @@ const Vector<Element*>* DocumentOrderedMap::getAllElementsById(const AtomicStrin
     if (entry.orderedList.isEmpty()) {
         entry.orderedList.reserveCapacity(entry.count);
         auto elementDescandents = descendantsOfType<Element>(*scope.rootNode());
-        auto it = entry.element ? elementDescandents.find(*entry.element) : elementDescandents.begin();
+        auto it = entry.element ? elementDescandents.beginAt(*entry.element) : elementDescandents.begin();
         auto end = elementDescandents.end();
         for (; it != end; ++it) {
             auto& element = *it;

@@ -1,3 +1,27 @@
+2014-01-09  Antti Koivisto  <antti@apple.com>
+
+        Replace ElementIteratorAdapter find() with beginAt()
+        https://bugs.webkit.org/show_bug.cgi?id=126714
+
+        Reviewed by Andreas Kling.
+
+        ElementIteratorAdapter find() would return iterator for the argument element if it was
+        of correct type and in the right subtree. This is not really what you would expect from find()
+        so replace it with a simple beginAt() iterator construction function.
+
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::getAllElementsById):
+        * dom/ElementChildIterator.h:
+        (WebCore::ElementChildIteratorAdapter<ElementType>::beginAt):
+        (WebCore::ElementChildConstIteratorAdapter<ElementType>::beginAt):
+        * dom/ElementDescendantIterator.h:
+        (WebCore::ElementDescendantIteratorAdapter<ElementType>::beginAt):
+        (WebCore::ElementDescendantConstIteratorAdapter<ElementType>::beginAt):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formElementIndex):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::rowAfter):
+
 2014-01-09  Brian Burg  <bburg@apple.com>
 
         REGRESSION (r160152): Selection drag snapshot doesn't appear or has the wrong content on Retina

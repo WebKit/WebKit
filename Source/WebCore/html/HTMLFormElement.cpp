@@ -504,14 +504,17 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
     unsigned currentAssociatedElementsAfterIndex = m_associatedElementsAfterIndex;
     ++m_associatedElementsAfterIndex;
 
+    if (!associatedHTMLElement.isDescendantOf(this))
+        return currentAssociatedElementsAfterIndex;
+
     // Check for the special case where this element is the very last thing in
     // the form's tree of children; we don't want to walk the entire tree in that
     // common case that occurs during parsing; instead we'll just return a value
     // that says "add this form element to the end of the array".
     auto descendants = descendantsOfType<HTMLElement>(*this);
-    auto it = descendants.find(associatedHTMLElement);
+    auto it = descendants.beginAt(associatedHTMLElement);
     auto end = descendants.end();
-    if (it == end || ++it == end)
+    if (++it == end)
         return currentAssociatedElementsAfterIndex;
 
     unsigned i = m_associatedElementsBeforeIndex;

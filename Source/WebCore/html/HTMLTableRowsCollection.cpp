@@ -70,9 +70,9 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
 
     // Start by looking for the next row in this section. Continue only if there is none.
     if (previous && previous->parentNode() != table) {
-        auto rows = childrenOfType<HTMLTableRowElement>(*previous->parentNode());
-        auto row = rows.find(*previous);
-        if (++row != rows.end())
+        auto childRows = childrenOfType<HTMLTableRowElement>(*previous->parentNode());
+        auto row = childRows.beginAt(*previous);
+        if (++row != childRows.end())
             return &*row;
     }
 
