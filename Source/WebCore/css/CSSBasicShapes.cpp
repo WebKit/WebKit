@@ -78,7 +78,7 @@ String CSSBasicShapeRectangle::cssText() const
         m_height->cssText(),
         m_radiusX.get() ? m_radiusX->cssText() : String(),
         m_radiusY.get() ? m_radiusY->cssText() : String(),
-        m_box ? m_box->cssText() : String());
+        m_layoutBox ? m_layoutBox->cssText() : String());
 }
 
 bool CSSBasicShapeRectangle::equals(const CSSBasicShape& shape) const
@@ -93,7 +93,7 @@ bool CSSBasicShapeRectangle::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_height, other.m_height)
         && compareCSSValuePtr(m_radiusX, other.m_radiusX)
         && compareCSSValuePtr(m_radiusY, other.m_radiusY)
-        && compareCSSValuePtr(m_box, other.m_box);
+        && compareCSSValuePtr(m_layoutBox, other.m_layoutBox);
 }
 
 static String buildCircleString(const String& radius, const String& centerX, const String& centerY, const String& box)
@@ -128,7 +128,7 @@ String CSSBasicShapeCircle::cssText() const
     return buildCircleString(m_radius ? m_radius->cssText() : String(),
         m_centerX ? m_centerX->cssText() : String(),
         m_centerY ? m_centerY->cssText() : String(),
-        m_box ? m_box->cssText() : String());
+        m_layoutBox ? m_layoutBox->cssText() : String());
 }
 
 bool CSSBasicShapeCircle::equals(const CSSBasicShape& shape) const
@@ -140,7 +140,7 @@ bool CSSBasicShapeCircle::equals(const CSSBasicShape& shape) const
     return compareCSSValuePtr(m_centerX, other.m_centerX)
         && compareCSSValuePtr(m_centerY, other.m_centerY)
         && compareCSSValuePtr(m_radius, other.m_radius)
-        && compareCSSValuePtr(m_box, other.m_box);
+        && compareCSSValuePtr(m_layoutBox, other.m_layoutBox);
 }
 
 static String buildDeprecatedCircleString(const String& x, const String& y, const String& radius, const String& box)
@@ -164,7 +164,7 @@ static String buildDeprecatedCircleString(const String& x, const String& y, cons
 
 String CSSDeprecatedBasicShapeCircle::cssText() const
 {
-    return buildDeprecatedCircleString(m_centerX->cssText(), m_centerY->cssText(), m_radius->cssText(), m_box ? m_box->cssText() : String());
+    return buildDeprecatedCircleString(m_centerX->cssText(), m_centerY->cssText(), m_radius->cssText(), m_layoutBox ? m_layoutBox->cssText() : String());
 }
 
 bool CSSDeprecatedBasicShapeCircle::equals(const CSSBasicShape& shape) const
@@ -176,7 +176,7 @@ bool CSSDeprecatedBasicShapeCircle::equals(const CSSBasicShape& shape) const
     return compareCSSValuePtr(m_centerX, other.m_centerX)
         && compareCSSValuePtr(m_centerY, other.m_centerY)
         && compareCSSValuePtr(m_radius, other.m_radius)
-        && compareCSSValuePtr(m_box, other.m_box);
+        && compareCSSValuePtr(m_layoutBox, other.m_layoutBox);
 }
 
 static String buildEllipseString(const String& radiusX, const String& radiusY, const String& centerX, const String& centerY, const String& box)
@@ -221,7 +221,7 @@ String CSSBasicShapeEllipse::cssText() const
         m_radiusY ? m_radiusY->cssText() : String(),
         m_centerX ? m_centerX->cssText() : String(),
         m_centerY ? m_centerY->cssText() : String(),
-        m_box ? m_box->cssText() : String());
+        m_layoutBox ? m_layoutBox->cssText() : String());
 }
 
 bool CSSBasicShapeEllipse::equals(const CSSBasicShape& shape) const
@@ -234,7 +234,7 @@ bool CSSBasicShapeEllipse::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_centerY, other.m_centerY)
         && compareCSSValuePtr(m_radiusX, other.m_radiusX)
         && compareCSSValuePtr(m_radiusY, other.m_radiusY)
-        && compareCSSValuePtr(m_box, other.m_box);
+        && compareCSSValuePtr(m_layoutBox, other.m_layoutBox);
 }
 
 static String buildDeprecatedEllipseString(const String& x, const String& y, const String& radiusX, const String& radiusY, const String& box)
@@ -260,7 +260,7 @@ static String buildDeprecatedEllipseString(const String& x, const String& y, con
 
 String CSSDeprecatedBasicShapeEllipse::cssText() const
 {
-    return buildDeprecatedEllipseString(m_centerX->cssText(), m_centerY->cssText(), m_radiusX->cssText(), m_radiusY->cssText(), m_box ? m_box->cssText() : String());
+    return buildDeprecatedEllipseString(m_centerX->cssText(), m_centerY->cssText(), m_radiusX->cssText(), m_radiusY->cssText(), m_layoutBox ? m_layoutBox->cssText() : String());
 }
 
 bool CSSDeprecatedBasicShapeEllipse::equals(const CSSBasicShape& shape) const
@@ -273,7 +273,7 @@ bool CSSDeprecatedBasicShapeEllipse::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_centerY, other.m_centerY)
         && compareCSSValuePtr(m_radiusX, other.m_radiusX)
         && compareCSSValuePtr(m_radiusY, other.m_radiusY)
-        && compareCSSValuePtr(m_box, other.m_box);
+        && compareCSSValuePtr(m_layoutBox, other.m_layoutBox);
 }
 
 static String buildPolygonString(const WindRule& windRule, const Vector<String>& points, const String& box)
@@ -331,7 +331,7 @@ String CSSBasicShapePolygon::cssText() const
     for (size_t i = 0; i < m_values.size(); ++i)
         points.append(m_values.at(i)->cssText());
 
-    return buildPolygonString(m_windRule, points, m_box ? m_box->cssText() : String());
+    return buildPolygonString(m_windRule, points, m_layoutBox ? m_layoutBox->cssText() : String());
 }
 
 bool CSSBasicShapePolygon::equals(const CSSBasicShape& shape) const
@@ -340,7 +340,7 @@ bool CSSBasicShapePolygon::equals(const CSSBasicShape& shape) const
         return false;
 
     const CSSBasicShapePolygon& rhs = static_cast<const CSSBasicShapePolygon&>(shape);
-    return compareCSSValuePtr(m_box, rhs.m_box)
+    return compareCSSValuePtr(m_layoutBox, rhs.m_layoutBox)
         && compareCSSValueVector<CSSPrimitiveValue>(m_values, rhs.m_values);
 }
 
@@ -383,7 +383,7 @@ String CSSBasicShapeInsetRectangle::cssText() const
         m_left->cssText(),
         m_radiusX.get() ? m_radiusX->cssText() : String(),
         m_radiusY.get() ? m_radiusY->cssText() : String(),
-        m_box ? m_box->cssText() : String());
+        m_layoutBox ? m_layoutBox->cssText() : String());
 }
 
 bool CSSBasicShapeInsetRectangle::equals(const CSSBasicShape& shape) const
@@ -398,7 +398,7 @@ bool CSSBasicShapeInsetRectangle::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_left, other.m_left)
         && compareCSSValuePtr(m_radiusX, other.m_radiusX)
         && compareCSSValuePtr(m_radiusY, other.m_radiusY)
-        && compareCSSValuePtr(m_box, other.m_box);
+        && compareCSSValuePtr(m_layoutBox, other.m_layoutBox);
 }
 
 static String buildInsetString(const String& top, const String& right, const String& bottom, const String& left,
@@ -514,7 +514,7 @@ String CSSBasicShapeInset::cssText() const
         bottomRightRadiusHeight,
         bottomLeftRadiusWidth,
         bottomLeftRadiusHeight,
-        m_box ? m_box->cssText() : String());
+        m_layoutBox ? m_layoutBox->cssText() : String());
 }
 
 bool CSSBasicShapeInset::equals(const CSSBasicShape& shape) const

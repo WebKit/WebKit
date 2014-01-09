@@ -549,6 +549,8 @@ enum TextIndentLine { TextIndentFirstLine, TextIndentEachLine };
 enum TextIndentType { TextIndentNormal, TextIndentHanging };
 #endif
 
+enum LayoutBox { BoxMissing = 0, MarginBox, BorderBox, PaddingBox, ContentBox, BoundingBox };
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h

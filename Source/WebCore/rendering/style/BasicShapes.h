@@ -32,6 +32,7 @@
 
 #include "Length.h"
 #include "LengthSize.h"
+#include "RenderStyleConstants.h"
 #include "WindRule.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -58,15 +59,6 @@ public:
         BasicShapeInsetType
     };
 
-    enum ReferenceBox {
-        None,
-        ContentBox,
-        PaddingBox,
-        BorderBox,
-        MarginBox,
-        BoundingBox
-    };
-
     bool canBlend(const BasicShape*) const;
 
     virtual void path(Path&, const FloatRect&) = 0;
@@ -75,19 +67,19 @@ public:
 
     virtual Type type() const = 0;
 
-    ReferenceBox box() const { return m_box; }
-    void setBox(ReferenceBox box) { m_box = box; }
+    LayoutBox layoutBox() const { return m_layoutBox; }
+    void setLayoutBox(LayoutBox layoutBox) { m_layoutBox = layoutBox; }
 
 protected:
     BasicShape()
-    : m_box(None)
+        : m_layoutBox(BoxMissing)
     {
     }
 
     FloatSize referenceBoxSize(const RenderBox&) const;
 
 private:
-    ReferenceBox m_box;
+    LayoutBox m_layoutBox;
 };
 
 class BasicShapeRectangle : public BasicShape {

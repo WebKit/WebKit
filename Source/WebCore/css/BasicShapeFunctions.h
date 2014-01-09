@@ -43,8 +43,8 @@ class RenderStyle;
 PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle*, const BasicShape*);
 PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle*, const RenderStyle* rootStyle, const CSSBasicShape*);
 
-PassRefPtr<CSSPrimitiveValue> valueForBox(BasicShape::ReferenceBox);
-BasicShape::ReferenceBox boxForValue(const CSSPrimitiveValue*);
+PassRefPtr<CSSPrimitiveValue> valueForBox(LayoutBox);
+LayoutBox boxForValue(const CSSPrimitiveValue*);
 
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate&, float);
 }

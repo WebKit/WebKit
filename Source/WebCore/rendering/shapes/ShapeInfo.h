@@ -73,24 +73,24 @@ public:
 
     void setShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight)
     {
-        BasicShape::ReferenceBox box = resolvedBox();
+        LayoutBox box = resolvedLayoutBox();
         switch (box) {
-        case BasicShape::MarginBox:
+        case MarginBox:
             logicalHeight += m_renderer.marginLogicalHeight();
             logicalWidth += m_renderer.marginLogicalWidth();
             break;
-        case BasicShape::BorderBox:
+        case BorderBox:
             break;
-        case BasicShape::PaddingBox:
+        case PaddingBox:
             logicalHeight -= m_renderer.borderLogicalHeight();
             logicalWidth -= m_renderer.borderLogicalWidth();
             break;
-        case BasicShape::ContentBox:
+        case ContentBox:
             logicalHeight -= m_renderer.borderAndPaddingLogicalHeight();
             logicalWidth -= m_renderer.borderAndPaddingLogicalWidth();
             break;
-        case BasicShape::BoundingBox:
-        case BasicShape::None:
+        case BoundingBox:
+        case BoxMissing:
             ASSERT_NOT_REACHED();
             break;
         }
@@ -161,7 +161,7 @@ protected:
     {
     }
 
-    virtual BasicShape::ReferenceBox resolvedBox() const = 0;
+    virtual LayoutBox resolvedLayoutBox() const = 0;
     virtual LayoutRect computedShapeLogicalBoundingBox() const = 0;
     virtual ShapeValue* shapeValue() const = 0;
     virtual void getIntervals(LayoutUnit, LayoutUnit, SegmentList&) const = 0;
@@ -170,14 +170,14 @@ protected:
 
     LayoutUnit logicalTopOffset() const
     {
-        BasicShape::ReferenceBox box = resolvedBox();
+        LayoutBox box = resolvedLayoutBox();
         switch (box) {
-        case BasicShape::MarginBox: return -m_renderer.marginBefore();
-        case BasicShape::BorderBox: return LayoutUnit();
-        case BasicShape::PaddingBox: return m_renderer.borderBefore();
-        case BasicShape::ContentBox: return m_renderer.borderAndPaddingBefore();
-        case BasicShape::BoundingBox: break;
-        case BasicShape::None: break;
+        case MarginBox: return -m_renderer.marginBefore();
+        case BorderBox: return LayoutUnit();
+        case PaddingBox: return m_renderer.borderBefore();
+        case ContentBox: return m_renderer.borderAndPaddingBefore();
+        case BoundingBox: break;
+        case BoxMissing: break;
         }
         ASSERT_NOT_REACHED();
         return LayoutUnit();
@@ -187,14 +187,14 @@ protected:
     {
         if (m_renderer.isRenderRegion())
             return LayoutUnit();
-        BasicShape::ReferenceBox box = resolvedBox();
+        LayoutBox box = resolvedLayoutBox();
         switch (box) {
-        case BasicShape::MarginBox: return -m_renderer.marginStart();
-        case BasicShape::BorderBox: return LayoutUnit();
-        case BasicShape::PaddingBox: return m_renderer.borderStart();
-        case BasicShape::ContentBox: return m_renderer.borderAndPaddingStart();
-        case BasicShape::BoundingBox: break;
-        case BasicShape::None: break;
+        case MarginBox: return -m_renderer.marginStart();
+        case BorderBox: return LayoutUnit();
+        case PaddingBox: return m_renderer.borderStart();
+        case ContentBox: return m_renderer.borderAndPaddingStart();
+        case BoundingBox: break;
+        case BoxMissing: break;
         }
         ASSERT_NOT_REACHED();
         return LayoutUnit();

@@ -61,14 +61,14 @@ public:
     }
 
 protected:
-    virtual BasicShape::ReferenceBox resolvedBox() const OVERRIDE
+    virtual LayoutBox resolvedLayoutBox() const OVERRIDE
     {
-        if (shapeValue()->box() == BasicShape::None) {
+        if (shapeValue()->layoutBox() == BoxMissing) {
             if (shapeValue()->type() == ShapeValue::Image)
-                return BasicShape::ContentBox;
-            return BasicShape::MarginBox;
+                return ContentBox;
+            return MarginBox;
         }
-        return shapeValue()->box();
+        return shapeValue()->layoutBox();
     }
 
 private:

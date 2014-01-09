@@ -53,9 +53,9 @@ public:
         return adoptRef(new ShapeValue(shape));
     }
 
-    static PassRefPtr<ShapeValue> createBoxValue(BasicShape::ReferenceBox box)
+    static PassRefPtr<ShapeValue> createLayoutBoxValue(LayoutBox layoutBox)
     {
-        return adoptRef(new ShapeValue(box));
+        return adoptRef(new ShapeValue(layoutBox));
     }
 
     static PassRefPtr<ShapeValue> createOutsideValue()
@@ -70,7 +70,7 @@ public:
 
     ShapeValueType type() const { return m_type; }
     BasicShape* shape() const { return m_shape.get(); }
-    BasicShape::ReferenceBox box() const { return m_box; }
+    LayoutBox layoutBox() const { return m_layoutBox; }
 
     StyleImage* image() const { return m_image.get(); }
     bool isImageValid() const { return image() && image()->cachedImage() && image()->cachedImage()->hasImage(); }
@@ -87,30 +87,30 @@ private:
     ShapeValue(PassRefPtr<BasicShape> shape)
         : m_type(Shape)
         , m_shape(shape)
-        , m_box(m_shape->box())
+        , m_layoutBox(m_shape->layoutBox())
     {
     }
     ShapeValue(ShapeValueType type)
         : m_type(type)
-        , m_box(BasicShape::None)
+        , m_layoutBox(BoxMissing)
     {
     }
     ShapeValue(PassRefPtr<StyleImage> image)
         : m_type(Image)
         , m_image(image)
-        , m_box(BasicShape::None)
+        , m_layoutBox(BoxMissing)
     {
     }
-    ShapeValue(BasicShape::ReferenceBox box)
+    ShapeValue(LayoutBox layoutBox)
         : m_type(Box)
-        , m_box(box)
+        , m_layoutBox(layoutBox)
     {
     }
 
     ShapeValueType m_type;
     RefPtr<BasicShape> m_shape;
     RefPtr<StyleImage> m_image;
-    BasicShape::ReferenceBox m_box;
+    LayoutBox m_layoutBox;
 };
 
 }

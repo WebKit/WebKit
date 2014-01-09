@@ -2884,7 +2884,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             if (operation->type() == ClipPathOperation::Shape) {
                 ShapeClipPathOperation& shapeOperation = toShapeClipPathOperation(*operation);
                 list->append(valueForBasicShape(style.get(), shapeOperation.basicShape()));
-                if (shapeOperation.referenceBox() != BasicShape::ReferenceBox::None)
+                if (shapeOperation.referenceBox() != BoxMissing)
                     list->append(valueForBox(shapeOperation.referenceBox()));
             }
             if (operation->type() == ClipPathOperation::Box) {
@@ -2922,7 +2922,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             if (!style->shapeInside())
                 return cssValuePool().createIdentifierValue(CSSValueNone);
             if (style->shapeInside()->type() == ShapeValue::Box)
-                return valueForBox(style->shapeInside()->box());
+                return valueForBox(style->shapeInside()->layoutBox());
             if (style->shapeInside()->type() == ShapeValue::Outside)
                 return cssValuePool().createIdentifierValue(CSSValueOutsideShape);
             if (style->shapeInside()->type() == ShapeValue::Image) {
@@ -2936,7 +2936,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             if (!style->shapeOutside())
                 return cssValuePool().createIdentifierValue(CSSValueNone);
             if (style->shapeOutside()->type() == ShapeValue::Box)
-                return valueForBox(style->shapeOutside()->box());
+                return valueForBox(style->shapeOutside()->layoutBox());
             if (style->shapeOutside()->type() == ShapeValue::Image) {
                 if (style->shapeOutside()->image())
                     return style->shapeOutside()->image()->cssValue();

@@ -39,45 +39,45 @@
 
 namespace WebCore {
 
-PassRefPtr<CSSPrimitiveValue> valueForBox(BasicShape::ReferenceBox box)
+PassRefPtr<CSSPrimitiveValue> valueForBox(LayoutBox box)
 {
     switch (box) {
-    case BasicShape::ContentBox:
+    case ContentBox:
         return cssValuePool().createIdentifierValue(CSSValueContentBox);
-    case BasicShape::PaddingBox:
+    case PaddingBox:
         return cssValuePool().createIdentifierValue(CSSValuePaddingBox);
-    case BasicShape::BorderBox:
+    case BorderBox:
         return cssValuePool().createIdentifierValue(CSSValueBorderBox);
-    case BasicShape::MarginBox:
+    case MarginBox:
         return cssValuePool().createIdentifierValue(CSSValueMarginBox);
-    case BasicShape::BoundingBox:
+    case BoundingBox:
         return cssValuePool().createIdentifierValue(CSSValueBoundingBox);
-    case BasicShape::None:
+    case BoxMissing:
         return nullptr;
     }
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-BasicShape::ReferenceBox boxForValue(const CSSPrimitiveValue* value)
+LayoutBox boxForValue(const CSSPrimitiveValue* value)
 {
     if (!value)
-        return BasicShape::None;
+        return BoxMissing;
 
     switch (value->getValueID()) {
     case CSSValueContentBox:
-        return BasicShape::ContentBox;
+        return ContentBox;
     case CSSValuePaddingBox:
-        return BasicShape::PaddingBox;
+        return PaddingBox;
     case CSSValueBorderBox:
-        return BasicShape::BorderBox;
+        return BorderBox;
     case CSSValueMarginBox:
-        return BasicShape::MarginBox;
+        return MarginBox;
     case CSSValueBoundingBox:
-        return BasicShape::BoundingBox;
+        return BoundingBox;
     default:
         ASSERT_NOT_REACHED();
-        return BasicShape::None;
+        return BoxMissing;
     }
 }
 
@@ -230,7 +230,7 @@ PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicSha
         break;
     }
 
-    basicShapeValue->setBox(valueForBox(basicShape->box()));
+    basicShapeValue->setLayoutBox(valueForBox(basicShape->layoutBox()));
 
     return pool.createValue(basicShapeValue.release());
 }
@@ -460,7 +460,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         break;
     }
 
-    basicShape->setBox(boxForValue(basicShapeValue->box()));
+    basicShape->setLayoutBox(boxForValue(basicShapeValue->layoutBox()));
 
     return basicShape.release();
 }

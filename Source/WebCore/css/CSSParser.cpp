@@ -5903,7 +5903,7 @@ PassRefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
     }
 
     if (shapeValue && keywordValue)
-        shapeValue->setBox(keywordValue.release());
+        shapeValue->setLayoutBox(keywordValue.release());
 
     return shapeValue ? cssValuePool().createValue(shapeValue.release()) : keywordValue.release();
 }

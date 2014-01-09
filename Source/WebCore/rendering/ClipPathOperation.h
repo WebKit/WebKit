@@ -32,6 +32,7 @@
 
 #include "BasicShapes.h"
 #include "Path.h"
+#include "RenderStyleConstants.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -113,8 +114,8 @@ public:
         return path;
     }
 
-    void setReferenceBox(BasicShape::ReferenceBox referenceBox) { m_referenceBox = referenceBox; }
-    BasicShape::ReferenceBox referenceBox() const { return m_referenceBox; }
+    void setReferenceBox(LayoutBox referenceBox) { m_referenceBox = referenceBox; }
+    LayoutBox referenceBox() const { return m_referenceBox; }
 
 private:
     virtual bool operator==(const ClipPathOperation& o) const OVERRIDE
@@ -128,17 +129,17 @@ private:
     explicit ShapeClipPathOperation(PassRefPtr<BasicShape> shape)
         : ClipPathOperation(Shape)
         , m_shape(shape)
-        , m_referenceBox(BasicShape::ReferenceBox::None)
+        , m_referenceBox(BoxMissing)
     {
     }
 
     RefPtr<BasicShape> m_shape;
-    BasicShape::ReferenceBox m_referenceBox;
+    LayoutBox m_referenceBox;
 };
 
 class BoxClipPathOperation : public ClipPathOperation {
 public:
-    static PassRefPtr<BoxClipPathOperation> create(BasicShape::ReferenceBox referenceBox)
+    static PassRefPtr<BoxClipPathOperation> create(LayoutBox referenceBox)
     {
         return adoptRef(new BoxClipPathOperation(referenceBox));
     }
@@ -150,7 +151,7 @@ public:
         // https://bugs.webkit.org/show_bug.cgi?id=126205
         return path;
     }
-    BasicShape::ReferenceBox referenceBox() const { return m_referenceBox; }
+    LayoutBox referenceBox() const { return m_referenceBox; }
 
 private:
     virtual bool operator==(const ClipPathOperation& o) const OVERRIDE
@@ -161,13 +162,13 @@ private:
         return m_referenceBox == other->m_referenceBox;
     }
 
-    explicit BoxClipPathOperation(BasicShape::ReferenceBox referenceBox)
+    explicit BoxClipPathOperation(LayoutBox referenceBox)
         : ClipPathOperation(Box)
         , m_referenceBox(referenceBox)
     {
     }
 
-    BasicShape::ReferenceBox m_referenceBox;
+    LayoutBox m_referenceBox;
 };
 
 #define CLIP_PATH_OPERATION_CASTS(ToValueTypeName, predicate) \

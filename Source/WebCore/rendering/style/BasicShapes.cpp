@@ -46,7 +46,7 @@ bool BasicShape::canBlend(const BasicShape* other) const
         return false;
 
     // Both shapes must use the same reference box.
-    if (box() != other->box())
+    if (layoutBox() != other->layoutBox())
         return false;
 
     // Just polygons with same number of vertices can be animated.
@@ -75,14 +75,14 @@ bool BasicShape::canBlend(const BasicShape* other) const
 
 FloatSize BasicShape::referenceBoxSize(const RenderBox& renderer) const
 {
-    switch (box()) {
+    switch (layoutBox()) {
     case ContentBox:
         return renderer.contentBoxRect().size();
     case PaddingBox:
         return renderer.paddingBoxRect().size();
     case BorderBox:
         return renderer.size();
-    case None: // If <box> is not supplied, then the reference box defaults to margin-box.
+    case BoxMissing: // If <box> is not supplied, then the reference box defaults to margin-box.
     case MarginBox:
         return FloatSize(renderer.marginLeft() + renderer.width() + renderer.marginRight(),
             renderer.marginTop() + renderer.height() + renderer.marginBottom());

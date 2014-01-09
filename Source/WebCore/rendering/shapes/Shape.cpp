@@ -294,7 +294,7 @@ PassOwnPtr<Shape> Shape::createRasterShape(const StyleImage* styleImage, float t
     return rasterShape.release();
 }
 
-PassOwnPtr<Shape> Shape::createBoxShape(const RoundedRect& roundedRect, WritingMode writingMode, Length margin, Length padding)
+PassOwnPtr<Shape> Shape::createLayoutBoxShape(const RoundedRect& roundedRect, WritingMode writingMode, Length margin, Length padding)
 {
     ASSERT(roundedRect.rect().width() >= 0 && roundedRect.rect().height() >= 0);
 

@@ -107,12 +107,12 @@ public:
     }
 
 protected:
-    virtual BasicShape::ReferenceBox resolvedBox() const OVERRIDE
+    virtual LayoutBox resolvedLayoutBox() const OVERRIDE
     {
-        if (shapeValue()->box() == BasicShape::None)
-            return BasicShape::ContentBox;
+        if (shapeValue()->layoutBox() == BoxMissing)
+            return ContentBox;
 
-        return shapeValue()->box();
+        return shapeValue()->layoutBox();
     }
 
 private:

@@ -1,3 +1,79 @@
+2014-01-09  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Factor the ReferenceBox type out of BasicShapes
+        https://bugs.webkit.org/show_bug.cgi?id=126648
+
+        Reviewed by Dirk Schulze.
+
+        Moving ReferenceBox out of BasicShapes and into RenderStyleConstants
+        as the LayoutBox enum. Most of the changes are removing the BasicShape
+        namespace.
+
+        Refactoring, no new tests.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBox):
+        (WebCore::boxForValue):
+        (WebCore::valueForBasicShape):
+        (WebCore::basicShapeForValue):
+        * css/BasicShapeFunctions.h:
+        * css/CSSBasicShapes.cpp:
+        (WebCore::CSSBasicShapeRectangle::cssText):
+        (WebCore::CSSBasicShapeRectangle::equals):
+        (WebCore::CSSBasicShapeCircle::cssText):
+        (WebCore::CSSBasicShapeCircle::equals):
+        (WebCore::CSSDeprecatedBasicShapeCircle::cssText):
+        (WebCore::CSSDeprecatedBasicShapeCircle::equals):
+        (WebCore::CSSBasicShapeEllipse::cssText):
+        (WebCore::CSSBasicShapeEllipse::equals):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::cssText):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::equals):
+        (WebCore::CSSBasicShapePolygon::cssText):
+        (WebCore::CSSBasicShapePolygon::equals):
+        (WebCore::CSSBasicShapeInsetRectangle::cssText):
+        (WebCore::CSSBasicShapeInsetRectangle::equals):
+        (WebCore::CSSBasicShapeInset::cssText):
+        * css/CSSBasicShapes.h:
+        (WebCore::CSSBasicShape::layoutBox):
+        (WebCore::CSSBasicShape::setLayoutBox):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseShapeProperty):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyClipPath::applyValue):
+        (WebCore::ApplyPropertyShape::applyValue):
+        * rendering/ClipPathOperation.h:
+        (WebCore::ShapeClipPathOperation::setReferenceBox):
+        (WebCore::ShapeClipPathOperation::referenceBox):
+        (WebCore::ShapeClipPathOperation::ShapeClipPathOperation):
+        (WebCore::BoxClipPathOperation::create):
+        (WebCore::BoxClipPathOperation::referenceBox):
+        (WebCore::BoxClipPathOperation::BoxClipPathOperation):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createLayoutBoxShape):
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::ShapeInfo<RenderType>::computedShape):
+        * rendering/shapes/ShapeInfo.h:
+        (WebCore::ShapeInfo::setShapeSize):
+        (WebCore::ShapeInfo::logicalTopOffset):
+        (WebCore::ShapeInfo::logicalLeftOffset):
+        * rendering/shapes/ShapeInsideInfo.h:
+        * rendering/shapes/ShapeOutsideInfo.h:
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend):
+        (WebCore::BasicShape::referenceBoxSize):
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShape::layoutBox):
+        (WebCore::BasicShape::setLayoutBox):
+        (WebCore::BasicShape::BasicShape):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/ShapeValue.h:
+        (WebCore::ShapeValue::createLayoutBoxValue):
+        (WebCore::ShapeValue::layoutBox):
+        (WebCore::ShapeValue::ShapeValue):
+
 2014-01-09  Tim Horton  <timothy_horton@apple.com>
 
         PDFDocumentImage can be very slow to do the initial paint

@@ -2063,7 +2063,7 @@ public:
         }
         if (!value->isValueList())
             return;
-        BasicShape::ReferenceBox referenceBox = BasicShape::ReferenceBox::None;
+        LayoutBox referenceBox = BoxMissing;
         RefPtr<ClipPathOperation> operation;
         auto& valueList = toCSSValueList(*value);
         for (unsigned i = 0; i < valueList.length(); ++i) {
@@ -2075,13 +2075,13 @@ public:
                 || primitiveValue.getValueID() == CSSValuePaddingBox
                 || primitiveValue.getValueID() == CSSValueMarginBox
                 || primitiveValue.getValueID() == CSSValueBoundingBox)
-                && referenceBox == BasicShape::ReferenceBox::None)
+                && referenceBox == BoxMissing)
                 referenceBox = boxForValue(&primitiveValue);
             else
                 return;
         }
         if (!operation) {
-            if (referenceBox == BasicShape::ReferenceBox::None)
+            if (referenceBox == BoxMissing)
                 return;
             operation = BoxClipPathOperation::create(referenceBox);
         } else
@@ -2110,7 +2110,7 @@ public:
                 || primitiveValue->getValueID() == CSSValueBorderBox
                 || primitiveValue->getValueID() == CSSValuePaddingBox
                 || primitiveValue->getValueID() == CSSValueMarginBox)
-                setValue(styleResolver->style(), ShapeValue::createBoxValue(boxForValue(primitiveValue)));
+                setValue(styleResolver->style(), ShapeValue::createLayoutBoxValue(boxForValue(primitiveValue)));
             else if (primitiveValue->getValueID() == CSSValueOutsideShape)
                 setValue(styleResolver->style(), ShapeValue::createOutsideValue());
             else if (primitiveValue->isShape()) {
