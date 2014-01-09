@@ -1,3 +1,31 @@
+2014-01-09  Antti Koivisto  <antti@apple.com>
+
+        DocumentOrderedMap should use iterator
+        https://bugs.webkit.org/show_bug.cgi?id=126696
+
+        Reviewed by Andreas Kling.
+
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesId):
+        (WebCore::keyMatchesName):
+        (WebCore::keyMatchesMapName):
+        (WebCore::keyMatchesLowercasedMapName):
+        (WebCore::keyMatchesLowercasedUsemap):
+        (WebCore::keyMatchesLabelForAttribute):
+        (WebCore::keyMatchesWindowNamedItem):
+        (WebCore::keyMatchesDocumentNamedItem):
+        
+            Switch to Element references.
+
+        (WebCore::DocumentOrderedMap::add):
+        (WebCore::DocumentOrderedMap::remove):
+        (WebCore::DocumentOrderedMap::get):
+        (WebCore::DocumentOrderedMap::getAllElementsById):
+        
+             Use element iterator instead of ElementTraversal.
+
+        * dom/DocumentOrderedMap.h:
+
 2014-01-09  Beth Dakin  <bdakin@apple.com>
 
         Margin tiles are not repainted when background color changes

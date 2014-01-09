@@ -31,7 +31,7 @@
 #include "config.h"
 #include "DocumentOrderedMap.h"
 
-#include "ElementTraversal.h"
+#include "ElementIterator.h"
 #include "HTMLImageElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
@@ -41,45 +41,45 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline bool keyMatchesId(const AtomicStringImpl& key, Element* element)
+inline bool keyMatchesId(const AtomicStringImpl& key, const Element& element)
 {
-    return element->getIdAttribute().impl() == &key;
+    return element.getIdAttribute().impl() == &key;
 }
 
-inline bool keyMatchesName(const AtomicStringImpl& key, Element* element)
+inline bool keyMatchesName(const AtomicStringImpl& key, const Element& element)
 {
-    return element->getNameAttribute().impl() == &key;
+    return element.getNameAttribute().impl() == &key;
 }
 
-inline bool keyMatchesMapName(const AtomicStringImpl& key, Element* element)
+inline bool keyMatchesMapName(const AtomicStringImpl& key, const Element& element)
 {
-    return isHTMLMapElement(element) && toHTMLMapElement(element)->getName().impl() == &key;
+    return isHTMLMapElement(element) && toHTMLMapElement(element).getName().impl() == &key;
 }
 
-inline bool keyMatchesLowercasedMapName(const AtomicStringImpl& key, Element* element)
+inline bool keyMatchesLowercasedMapName(const AtomicStringImpl& key, const Element& element)
 {
-    return isHTMLMapElement(element) && toHTMLMapElement(element)->getName().lower().impl() == &key;
+    return isHTMLMapElement(element) && toHTMLMapElement(element).getName().lower().impl() == &key;
 }
 
-inline bool keyMatchesLowercasedUsemap(const AtomicStringImpl& key, Element* element)
+inline bool keyMatchesLowercasedUsemap(const AtomicStringImpl& key, const Element& element)
 {
     // FIXME: HTML5 specification says we should match both image and object elements.
-    return isHTMLImageElement(element) && toHTMLImageElement(element)->matchesLowercasedUsemap(key);
+    return isHTMLImageElement(element) && toHTMLImageElement(element).matchesLowercasedUsemap(key);
 }
 
-inline bool keyMatchesLabelForAttribute(const AtomicStringImpl& key, Element* element)
+inline bool keyMatchesLabelForAttribute(const AtomicStringImpl& key, const Element& element)
 {
-    return isHTMLLabelElement(element) && element->getAttribute(forAttr).impl() == &key;
+    return isHTMLLabelElement(element) && element.getAttribute(forAttr).impl() == &key;
 }
 
-inline bool keyMatchesWindowNamedItem(const AtomicStringImpl& key, Element* element)
+inline bool keyMatchesWindowNamedItem(const AtomicStringImpl& key, const Element& element)
 {
-    return WindowNameCollection::nodeMatches(element, &key);
+    return WindowNameCollection::nodeMatches(const_cast<Element*>(&element), &key);
 }
 
-inline bool keyMatchesDocumentNamedItem(const AtomicStringImpl& key, Element* element)
+inline bool keyMatchesDocumentNamedItem(const AtomicStringImpl& key, const Element& element)
 {
-    return DocumentNameCollection::nodeMatches(element, &key);
+    return DocumentNameCollection::nodeMatches(const_cast<Element*>(&element), &key);
 }
 
 void DocumentOrderedMap::clear()
@@ -99,7 +99,7 @@ void DocumentOrderedMap::add(const AtomicStringImpl& key, Element& element, cons
 
     MapEntry& entry = addResult.iterator->value;
     ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
-    entry.element = 0;
+    entry.element = nullptr;
     entry.count++;
     entry.orderedList.clear();
 }
@@ -119,20 +119,20 @@ void DocumentOrderedMap::remove(const AtomicStringImpl& key, Element& element)
         m_map.remove(it);
     } else {
         if (entry.element == &element)
-            entry.element = 0;
+            entry.element = nullptr;
         entry.count--;
         entry.orderedList.clear(); // FIXME: Remove the element instead if there are only few items left.
     }
 }
 
-template<bool keyMatches(const AtomicStringImpl&, Element*)>
+template<bool keyMatches(const AtomicStringImpl&, const Element&)>
 inline Element* DocumentOrderedMap::get(const AtomicStringImpl& key, const TreeScope& scope) const
 {
     m_map.checkConsistency();
 
     auto it = m_map.find(&key);
     if (it == m_map.end())
-        return 0;
+        return nullptr;
 
     MapEntry& entry = it->value;
     ASSERT(entry.count);
@@ -143,16 +143,16 @@ inline Element* DocumentOrderedMap::get(const AtomicStringImpl& key, const TreeS
     }
 
     // We know there's at least one node that matches; iterate to find the first one.
-    for (Element* element = ElementTraversal::firstWithin(scope.rootNode()); element; element = ElementTraversal::next(element)) {
+    for (auto& element : descendantsOfType<Element>(*scope.rootNode())) {
         if (!keyMatches(key, element))
             continue;
-        entry.element = element;
-        ASSERT_WITH_SECURITY_IMPLICATION(element->isInTreeScope());
-        ASSERT_WITH_SECURITY_IMPLICATION(&element->treeScope() == &scope);
-        return element;
+        entry.element = &element;
+        ASSERT_WITH_SECURITY_IMPLICATION(element.isInTreeScope());
+        ASSERT_WITH_SECURITY_IMPLICATION(&element.treeScope() == &scope);
+        return &element;
     }
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 Element* DocumentOrderedMap::getElementById(const AtomicStringImpl& key, const TreeScope& scope) const
@@ -201,19 +201,23 @@ const Vector<Element*>* DocumentOrderedMap::getAllElementsById(const AtomicStrin
 
     auto it = m_map.find(&key);
     if (it == m_map.end())
-        return 0;
+        return nullptr;
 
     MapEntry& entry = it->value;
     ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
     if (!entry.count)
-        return 0;
+        return nullptr;
 
     if (entry.orderedList.isEmpty()) {
         entry.orderedList.reserveCapacity(entry.count);
-        for (Element* element = entry.element ? entry.element : ElementTraversal::firstWithin(scope.rootNode()); element; element = ElementTraversal::next(element)) {
+        auto elementDescandents = descendantsOfType<Element>(*scope.rootNode());
+        auto it = entry.element ? elementDescandents.find(*entry.element) : elementDescandents.begin();
+        auto end = elementDescandents.end();
+        for (; it != end; ++it) {
+            auto& element = *it;
             if (!keyMatchesId(key, element))
                 continue;
-            entry.orderedList.append(element);
+            entry.orderedList.append(&element);
         }
         ASSERT(entry.orderedList.size() == entry.count);
     }
