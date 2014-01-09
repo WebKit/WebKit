@@ -129,6 +129,7 @@ public:
         PageGroup,
         PluginSiteDataManager,
         Preferences,
+        Session,
         TextChecker,
         Vibration,
         ViewportAttributes,
