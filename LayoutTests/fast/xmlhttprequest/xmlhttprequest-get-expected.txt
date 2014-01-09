@@ -53,9 +53,9 @@ eventPhase : '2'
 initEvent : 'function initEvent() {
     [native code]
 }'
-lengthComputable : 'false'
-loaded : '0'
-position : '0'
+lengthComputable : 'true'
+loaded : '174'
+position : '174'
 preventDefault : 'function preventDefault() {
     [native code]
 }'
@@ -68,7 +68,7 @@ stopPropagation : 'function stopPropagation() {
     [native code]
 }'
 target : '[object XMLHttpRequest]'
-total : '0'
-totalSize : '0'
+total : '174'
+totalSize : '174'
 type : 'load'
 

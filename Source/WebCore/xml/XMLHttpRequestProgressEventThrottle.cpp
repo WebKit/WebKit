@@ -36,6 +36,8 @@ const double XMLHttpRequestProgressEventThrottle::minimumProgressEventDispatchin
 
 XMLHttpRequestProgressEventThrottle::XMLHttpRequestProgressEventThrottle(EventTarget* target)
     : m_target(target)
+    , m_hasThrottledProgressEvent(false)
+    , m_lengthComputable(false)
     , m_loaded(0)
     , m_total(0)
     , m_deferEvents(false)
@@ -48,8 +50,12 @@ XMLHttpRequestProgressEventThrottle::~XMLHttpRequestProgressEventThrottle()
 {
 }
 
-void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total)
+void XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total)
 {
+    m_lengthComputable = lengthComputable;
+    m_loaded = loaded;
+    m_total = total;
+    
     if (m_deferEvents) {
         // Only store the latest progress event while suspended.
         m_deferredProgressEvent = XMLHttpRequestProgressEvent::create(eventNames().progressEvent, lengthComputable, loaded, total);
@@ -66,13 +72,12 @@ void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(bool lengthCompu
 
         dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, lengthComputable, loaded, total));
         startRepeating(minimumProgressEventDispatchingIntervalInSeconds);
+        m_hasThrottledProgressEvent = false;
         return;
     }
 
     // The timer is already active so minimumProgressEventDispatchingIntervalInSeconds is the least frequent event.
-    m_lengthComputable = lengthComputable;
-    m_loaded = loaded;
-    m_total = total;
+    m_hasThrottledProgressEvent = true;
 }
 
 void XMLHttpRequestProgressEventThrottle::dispatchReadyStateChangeEvent(PassRefPtr<Event> event, ProgressEventAction progressEventAction)
@@ -96,12 +101,17 @@ void XMLHttpRequestProgressEventThrottle::dispatchEvent(PassRefPtr<Event> event)
         m_target->dispatchEvent(event);
 }
 
-void XMLHttpRequestProgressEventThrottle::dispatchEventAndLoadEnd(PassRefPtr<Event> event)
+void XMLHttpRequestProgressEventThrottle::dispatchProgressEvent(const AtomicString &type)
 {
-    ASSERT(event->type() == eventNames().loadEvent || event->type() == eventNames().abortEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().timeoutEvent);
+    ASSERT(type == eventNames().loadEvent || type == eventNames().loadstartEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
 
-    dispatchEvent(event);
-    dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().loadendEvent));
+    if (type == eventNames().loadstartEvent) {
+        m_lengthComputable = false;
+        m_loaded = 0;
+        m_total = 0;
+    }
+
+    dispatchEvent(XMLHttpRequestProgressEvent::create(type, m_lengthComputable, m_loaded, m_total));
 }
 
 void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
@@ -115,10 +125,8 @@ void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
 
     if (!hasEventToDispatch())
         return;
-
     PassRefPtr<Event> event = XMLHttpRequestProgressEvent::create(eventNames().progressEvent, m_lengthComputable, m_loaded, m_total);
-    m_loaded = 0;
-    m_total = 0;
+    m_hasThrottledProgressEvent = false;
 
     // We stop the timer as this is called when no more events are supposed to occur.
     stop();
@@ -160,13 +168,12 @@ void XMLHttpRequestProgressEventThrottle::fired()
     }
 
     dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, m_lengthComputable, m_loaded, m_total));
-    m_total = 0;
-    m_loaded = 0;
+    m_hasThrottledProgressEvent = false;
 }
 
 bool XMLHttpRequestProgressEventThrottle::hasEventToDispatch() const
 {
-    return (m_total || m_loaded) && isActive();
+    return m_hasThrottledProgressEvent && isActive();
 }
 
 void XMLHttpRequestProgressEventThrottle::suspend()
@@ -187,8 +194,7 @@ void XMLHttpRequestProgressEventThrottle::suspend()
     // just defer it.
     if (hasEventToDispatch()) {
         m_deferredProgressEvent = XMLHttpRequestProgressEvent::create(eventNames().progressEvent, m_lengthComputable, m_loaded, m_total);
-        m_total = 0;
-        m_loaded = 0;
+        m_hasThrottledProgressEvent = false;
     }
     stop();
 }
