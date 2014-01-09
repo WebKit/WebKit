@@ -90,17 +90,12 @@ std::unique_ptr<ImageBuffer> snapshotFrameRect(Frame& frame, const IntRect& imag
     // Other paint behaviors are set by paintContentsForSnapshot.
     frame.view()->setPaintBehavior(paintBehavior);
 
-    float deviceScaleFactor = frame.page()->deviceScaleFactor();
-    IntRect usedRect(imageRect);
-    usedRect.scale(deviceScaleFactor);
-
-    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(usedRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB);
+    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(imageRect.size(), frame.page()->deviceScaleFactor(), ColorSpaceDeviceRGB);
     if (!buffer)
         return nullptr;
-    buffer->context()->translate(-usedRect.x(), -usedRect.y());
-    buffer->context()->clip(FloatRect(0, 0, usedRect.maxX(), usedRect.maxY()));
+    buffer->context()->translate(-imageRect.x(), -imageRect.y());
 
-    frame.view()->paintContentsForSnapshot(buffer->context(), usedRect, shouldIncludeSelection, coordinateSpace);
+    frame.view()->paintContentsForSnapshot(buffer->context(), imageRect, shouldIncludeSelection, coordinateSpace);
     return buffer;
 }
 

@@ -79,7 +79,6 @@ static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const In
 void WebDragClient::startDrag(RetainPtr<NSImage> image, const IntPoint& point, const IntPoint&, Clipboard&, Frame& frame, bool linkDrag)
 {
     IntSize bitmapSize([image.get() size]);
-    bitmapSize.scale(frame.page()->deviceScaleFactor());
     RefPtr<ShareableBitmap> bitmap = convertImageToBitmap(image.get(), bitmapSize);
     ShareableBitmap::Handle handle;
     if (!bitmap || !bitmap->createHandle(handle))

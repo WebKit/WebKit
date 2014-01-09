@@ -108,7 +108,7 @@ static DragImageRef createDragImageFromSnapshot(std::unique_ptr<ImageBuffer> sna
 #else
     UNUSED_PARAM(node);
 #endif
-    RefPtr<Image> image = snapshot->copyImage(ImageBuffer::fastCopyImageMode());
+    RefPtr<Image> image = snapshot->copyImage(ImageBuffer::fastCopyImageMode(), Unscaled);
     if (!image)
         return nullptr;
     return createDragImageFromImage(image.get(), orientation);

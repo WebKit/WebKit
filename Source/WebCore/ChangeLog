@@ -1,3 +1,35 @@
+2014-01-09  Brian Burg  <bburg@apple.com>
+
+        REGRESSION (r160152): Selection drag snapshot doesn't appear or has the wrong content on Retina
+        https://bugs.webkit.org/show_bug.cgi?id=125375
+
+        Reviewed by Darin Adler.
+
+        Move scaling of drag images by the device scale factor out of DragClient
+        and into WebCore. This removes several redundant copies and scaling operations.
+
+        Fix scaling bugs that were cancelled out by over-allocating the backing store.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag): Scale the drag image for a link
+        according to the device scale factor before giving it to the OS.
+
+        (WebCore::DragController::doImageDrag): Scale the drag image for an image
+        according to the device scale factor before giving it to the OS.
+
+        * page/FrameSnapshotting.cpp:
+        (WebCore::snapshotFrameRect): Don't pre-scale or clip the snapshot. The
+        ImageBuffer does this already.
+
+        * platform/DragImage.cpp:
+        (WebCore::createDragImageFromSnapshot): Don't scale the backing store
+        when copying an ImageBuffer into an Image.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::copyImage): Draw the image in user-space coordinates,
+        not in backing-store coordinates. Remove unnecessary assertions. Crop the
+        buffer before drawing the image into it.
+
 2014-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Narrow underlines are too tall

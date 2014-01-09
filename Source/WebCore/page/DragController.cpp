@@ -828,6 +828,8 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             IntSize size = dragImageSize(dragImage);
             m_dragOffset = IntPoint(-size.width() / 2, -LinkDragBorderInset);
             dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());
+            // Later code expects the drag image to be scaled by device's scale factor.
+            dragImage = scaleDragImage(dragImage, FloatSize(m_page.deviceScaleFactor(), m_page.deviceScaleFactor()));
         }
         doSystemDrag(dragImage, dragLoc, mouseDraggedPoint, clipboard, src, true);
     } else if (state.type == DragSourceActionDHTML) {
@@ -869,6 +871,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
         dragImage = fitDragImageToMaxSize(dragImage, layoutRect.size(), maxDragImageSize());
         IntSize fittedSize = dragImageSize(dragImage);
 
+        dragImage = scaleDragImage(dragImage, FloatSize(m_page.deviceScaleFactor(), m_page.deviceScaleFactor()));
         dragImage = dissolveDragImageToFraction(dragImage, DragImageAlpha);
 
         // Properly orient the drag image and orient it differently if it's smaller than the original.
