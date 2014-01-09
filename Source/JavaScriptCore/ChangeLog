@@ -1,3 +1,15 @@
+2014-01-09  Filip Pizlo  <fpizlo@apple.com>
+
+        AI for CreateArguments should pass through non-SpecEmpty input values
+        https://bugs.webkit.org/show_bug.cgi?id=126709
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * tests/stress/use-arguments-as-object-pointer.js: Added.
+        (foo):
+
 2014-01-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Constructors for Objective-C classes do not work properly with instanceof

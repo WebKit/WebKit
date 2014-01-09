@@ -1327,7 +1327,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     
     case CreateArguments:
-        forNode(node).setType(SpecArguments);
+        forNode(node) = forNode(node->child1());
+        forNode(node).filter(~SpecEmpty);
+        forNode(node).merge(SpecArguments);
         break;
         
     case TearOffActivation:
