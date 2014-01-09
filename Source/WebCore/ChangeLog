@@ -1,3 +1,16 @@
+2014-01-08  Seokju Kwon  <seokju@webkit.org>
+
+        Web Inspector: Remove InspectorClient::captureScreenshot()
+        https://bugs.webkit.org/show_bug.cgi?id=126616
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests, No change in behavior.
+
+        Remove leftover mothod as Page.captureScreenshot API was removed in r160202.
+
+        * inspector/InspectorClient.h:
+
 2014-01-08  Youenn Fablet  <youennf@gmail.com>
 
         Correctly set XHR loadend attributes (loaded and total).
