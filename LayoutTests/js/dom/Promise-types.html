@@ -19,7 +19,7 @@ debug("");
 
 // Promises should be of type Promise.
 
-var aPromise = new Promise(function(resolver) { resolver.resolve(1); });
+var aPromise = new Promise(function(resolve, reject) { resolve(1); });
 
 debug("aPromise = new Promise(...)")
 shouldBeType("aPromise", "Promise");
@@ -32,6 +32,11 @@ shouldBeDefined("aPromise.catch");
 shouldBeType("aPromise.catch", "Function");
 shouldBe("aPromise.catch.length", "1");
 
+var aPromise2 = Promise(function(resolve, reject) { resolve(1); });
+
+debug("aPromise2 = Promise(...)")
+shouldBeType("aPromise2", "Promise");
+shouldBe("String(aPromise2)", "'[object Promise]'");
 
 // Promise constructor
 debug("");
@@ -41,6 +46,7 @@ debug("");
 // Need at least one parameter.
 shouldBe("Promise.length", "1");
 shouldThrow("new Promise()");
+shouldThrow("Promise()");
 
 // Parameter must be a function.
 shouldThrow("new Promise(1)", "'TypeError: Promise constructor takes a function argument'");
@@ -49,6 +55,13 @@ shouldThrow("new Promise([])", "'TypeError: Promise constructor takes a function
 shouldThrow("new Promise({})", "'TypeError: Promise constructor takes a function argument'");
 shouldThrow("new Promise(null)", "'TypeError: Promise constructor takes a function argument'");
 shouldThrow("new Promise(undefined)", "'TypeError: Promise constructor takes a function argument'");
+
+shouldThrow("Promise(1)", "'TypeError: Promise constructor takes a function argument'");
+shouldThrow("Promise('hello')", "'TypeError: Promise constructor takes a function argument'");
+shouldThrow("Promise([])", "'TypeError: Promise constructor takes a function argument'");
+shouldThrow("Promise({})", "'TypeError: Promise constructor takes a function argument'");
+shouldThrow("Promise(null)", "'TypeError: Promise constructor takes a function argument'");
+shouldThrow("Promise(undefined)", "'TypeError: Promise constructor takes a function argument'");
 
 // Promise statics
 debug("");

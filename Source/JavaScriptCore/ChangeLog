@@ -1,3 +1,15 @@
+2014-01-08  Sam Weinig  <sam@webkit.org>
+
+        [JS] Should be able to create a promise by calling the Promise constructor as a function
+        https://bugs.webkit.org/show_bug.cgi?id=126561
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::getCallData):
+        Add support for calling the Promise constructor as a function (e.g. var p = Promise(...), note
+        the missing "new").
+
 2014-01-08  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         [EFL] Make FTL buildable

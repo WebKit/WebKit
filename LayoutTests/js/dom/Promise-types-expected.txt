@@ -15,17 +15,27 @@ PASS aPromise.then.length is 2
 PASS aPromise.catch is defined.
 PASS aPromise.catch is an instance of Function
 PASS aPromise.catch.length is 1
+aPromise2 = Promise(...)
+PASS aPromise2 is an instance of Promise
+PASS String(aPromise2) is '[object Promise]'
 
 Promise constructor
 
 PASS Promise.length is 1
 PASS new Promise() threw exception TypeError: Promise constructor takes a function argument.
+PASS Promise() threw exception TypeError: Promise constructor takes a function argument.
 PASS new Promise(1) threw exception TypeError: Promise constructor takes a function argument.
 PASS new Promise('hello') threw exception TypeError: Promise constructor takes a function argument.
 PASS new Promise([]) threw exception TypeError: Promise constructor takes a function argument.
 PASS new Promise({}) threw exception TypeError: Promise constructor takes a function argument.
 PASS new Promise(null) threw exception TypeError: Promise constructor takes a function argument.
 PASS new Promise(undefined) threw exception TypeError: Promise constructor takes a function argument.
+PASS Promise(1) threw exception TypeError: Promise constructor takes a function argument.
+PASS Promise('hello') threw exception TypeError: Promise constructor takes a function argument.
+PASS Promise([]) threw exception TypeError: Promise constructor takes a function argument.
+PASS Promise({}) threw exception TypeError: Promise constructor takes a function argument.
+PASS Promise(null) threw exception TypeError: Promise constructor takes a function argument.
+PASS Promise(undefined) threw exception TypeError: Promise constructor takes a function argument.
 
 Promise statics
 

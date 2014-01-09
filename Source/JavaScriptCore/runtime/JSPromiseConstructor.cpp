@@ -153,10 +153,10 @@ ConstructType JSPromiseConstructor::getConstructData(JSCell*, ConstructData& con
     return ConstructTypeHost;
 }
 
-CallType JSPromiseConstructor::getCallData(JSCell*, CallData&)
+CallType JSPromiseConstructor::getCallData(JSCell*, CallData& callData)
 {
-    // FIXME: Implement
-    return CallTypeNone;
+    callData.native.function = constructPromise;
+    return CallTypeHost;
 }
 
 bool JSPromiseConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
