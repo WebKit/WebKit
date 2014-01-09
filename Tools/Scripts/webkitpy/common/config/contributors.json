@@ -2105,6 +2105,14 @@
             "rolandsteiner@chromium.org"
          ]
       },
+      "Roland Takacs" : {
+         "emails" : [
+            "rtakacs@inf.u-szeged.hu"
+         ],
+         "nicks" : [
+            "rtakacs"
+         ]
+      },
       "Ruth Fong" : {
          "emails" : [
             "ruth_fong@apple.com",
@@ -3011,14 +3019,6 @@
          ],
          "nicks" : [
             "rhudea"
-         ]
-      },
-      "Roland Takacs" : {
-         "emails" : [
-            "rtakacs@inf.u-szeged.hu"
-         ],
-         "nicks" : [
-            "rtakacs"
          ]
       },
       "Tab Atkins" : {
