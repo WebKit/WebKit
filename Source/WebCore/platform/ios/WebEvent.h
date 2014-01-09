@@ -23,12 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Rename this file to WebEventIOS.h after we upstream the iOS port.
+// FIXME: Rename this file to WebEventIOS.mm after we upstream the iOS port and remove the PLATFORM(IOS)-guard.
 #ifndef WebEventIOS_h
 #define WebEventIOS_h
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
+
+#if PLATFORM(IOS)
 
 typedef enum {
     WebEventMouseDown,
@@ -189,4 +191,5 @@ typedef enum {
 @interface WebIOSEvent : WebEvent
 @end
 
+#endif // PLATFORM(IOS)
 #endif // WebEventIOS_h

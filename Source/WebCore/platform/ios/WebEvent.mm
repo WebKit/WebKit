@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Rename this file to WebEventIOS.mm after we upstream the iOS port.
+// FIXME: Rename this file to WebEventIOS.mm after we upstream the iOS port and remove the PLATFORM(IOS)-guard.
 
 #import "config.h"
 #import "WebEvent.h"
@@ -33,6 +33,8 @@
 #import <wtf/Assertions.h>
 
 using namespace WebCore;
+
+#if PLATFORM(IOS)
 
 @implementation WebEvent
 
@@ -493,3 +495,5 @@ static int windowsKeyCodeForCharCodeIOS(unichar charCode)
 }
 
 @end
+
+#endif // PLATFORM(IOS)

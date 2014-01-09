@@ -1,5 +1,13 @@
 2014-01-09  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the Mountain Lion Release (32-bit) build following <http://trac.webkit.org/changeset/161589>
+        (https://bugs.webkit.org/show_bug.cgi?id=126654)
+
+        * platform/ios/WebEvent.h:
+        * platform/ios/WebEvent.mm:
+
+2014-01-09  Daniel Bates  <dabates@apple.com>
+
         [iOS] Upstream WebCore/platform changes
         https://bugs.webkit.org/show_bug.cgi?id=126654
 
