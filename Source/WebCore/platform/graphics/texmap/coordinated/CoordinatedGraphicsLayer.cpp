@@ -538,7 +538,7 @@ void CoordinatedGraphicsLayer::setNeedsDisplay()
     setNeedsDisplayInRect(FloatRect(FloatPoint(), size()));
 }
 
-void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect)
+void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect, ShouldClipToLayer)
 {
     if (m_mainBackingStore)
         m_mainBackingStore->invalidate(IntRect(rect));

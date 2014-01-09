@@ -6275,7 +6275,7 @@ void RenderLayer::repaintIncludingDescendants()
 
 #if USE(ACCELERATED_COMPOSITING)
 
-void RenderLayer::setBackingNeedsRepaint()
+void RenderLayer::setBackingNeedsRepaint(GraphicsLayer::ShouldClipToLayer shouldClip)
 {
     ASSERT(isComposited());
     if (backing()->paintsIntoWindow()) {
@@ -6283,7 +6283,7 @@ void RenderLayer::setBackingNeedsRepaint()
         // repaint to the native view system.
         renderer().view().repaintViewRectangle(absoluteBoundingBox());
     } else
-        backing()->setContentsNeedDisplay();
+        backing()->setContentsNeedDisplay(shouldClip);
 }
 
 void RenderLayer::setBackingNeedsRepaintInRect(const LayoutRect& r)

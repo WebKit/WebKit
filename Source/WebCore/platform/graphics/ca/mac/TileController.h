@@ -145,7 +145,7 @@ private:
     virtual void platformCALayerSetNeedsToRevalidateTiles() OVERRIDE { }
     virtual float platformCALayerDeviceScaleFactor() const OVERRIDE;
 
-    IntRect bounds() const;
+    virtual IntRect bounds() const OVERRIDE;
     IntRect boundsWithoutMargin() const;
     IntRect boundsAtLastRevalidateWithoutMargin() const;
 

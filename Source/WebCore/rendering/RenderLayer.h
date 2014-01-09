@@ -44,6 +44,7 @@
 #ifndef RenderLayer_h
 #define RenderLayer_h
 
+#include "GraphicsLayer.h"
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderPtr.h"
@@ -346,7 +347,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     // Indicate that the layer contents need to be repainted. Only has an effect
     // if layer compositing is being used,
-    void setBackingNeedsRepaint();
+    void setBackingNeedsRepaint(GraphicsLayer::ShouldClipToLayer = GraphicsLayer::ClipToLayer);
     void setBackingNeedsRepaintInRect(const LayoutRect&); // r is in the coordinate space of the layer's render object
     void repaintIncludingNonCompositingDescendants(RenderLayerModelObject* repaintContainer);
 #endif

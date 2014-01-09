@@ -126,7 +126,7 @@ public:
 
     void setRequiresOwnBackingStore(bool);
 
-    void setContentsNeedDisplay();
+    void setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer = GraphicsLayer::ClipToLayer);
     // r is in the coordinate space of the layer's render object
     void setContentsNeedDisplayInRect(const IntRect&);
 

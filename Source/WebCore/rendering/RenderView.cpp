@@ -574,7 +574,7 @@ void RenderView::repaintRootContents()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (layer()->isComposited()) {
-        layer()->setBackingNeedsRepaint();
+        layer()->setBackingNeedsRepaint(GraphicsLayer::DoNotClipToLayer);
         return;
     }
 #endif

@@ -349,9 +349,14 @@ public:
     GraphicsLayerPaintingPhase paintingPhase() const { return m_paintingPhase; }
     void setPaintingPhase(GraphicsLayerPaintingPhase phase) { m_paintingPhase = phase; }
 
+    enum ShouldClipToLayer {
+        DoNotClipToLayer,
+        ClipToLayer
+    };
+
     virtual void setNeedsDisplay() = 0;
     // mark the given rect (in layer coords) as needing dispay. Never goes deep.
-    virtual void setNeedsDisplayInRect(const FloatRect&) = 0;
+    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) = 0;
 
     virtual void setContentsNeedsDisplay() { };
 

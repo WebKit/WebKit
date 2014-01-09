@@ -708,14 +708,17 @@ void GraphicsLayerCA::setNeedsDisplay()
     setNeedsDisplayInRect(FloatRect::infiniteRect());
 }
 
-void GraphicsLayerCA::setNeedsDisplayInRect(const FloatRect& r)
+void GraphicsLayerCA::setNeedsDisplayInRect(const FloatRect& r, ShouldClipToLayer shouldClip)
 {
     if (!drawsContent())
         return;
 
     FloatRect rect(r);
-    FloatRect layerBounds(FloatPoint(), m_size);
-    rect.intersect(layerBounds);
+    if (shouldClip == ClipToLayer) {
+        FloatRect layerBounds(FloatPoint(), m_size);
+        rect.intersect(layerBounds);
+    }
+
     if (rect.isEmpty())
         return;
     

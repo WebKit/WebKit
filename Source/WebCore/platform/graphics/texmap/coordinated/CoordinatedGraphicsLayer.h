@@ -96,7 +96,7 @@ public:
     virtual void setMaskLayer(GraphicsLayer*) OVERRIDE;
     virtual void setReplicatedByLayer(GraphicsLayer*) OVERRIDE;
     virtual void setNeedsDisplay() OVERRIDE;
-    virtual void setNeedsDisplayInRect(const FloatRect&) OVERRIDE;
+    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) OVERRIDE;
     virtual void setContentsNeedsDisplay() OVERRIDE;
     virtual void deviceOrPageScaleFactorChanged() OVERRIDE;
     virtual void flushCompositingState(const FloatRect&) OVERRIDE;

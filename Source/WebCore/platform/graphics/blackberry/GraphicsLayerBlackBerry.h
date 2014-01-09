@@ -90,7 +90,7 @@ public:
     virtual void setOpacity(float);
 
     virtual void setNeedsDisplay();
-    virtual void setNeedsDisplayInRect(const FloatRect&);
+    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer);
 
     virtual void setContentsNeedsDisplay();
 

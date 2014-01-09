@@ -105,7 +105,7 @@ void GraphicsLayerTextureMapper::setContentsNeedsDisplay()
 
 /* \reimp (GraphicsLayer.h)
 */
-void GraphicsLayerTextureMapper::setNeedsDisplayInRect(const FloatRect& rect)
+void GraphicsLayerTextureMapper::setNeedsDisplayInRect(const FloatRect& rect, ShouldClipToLayer)
 {
     if (!drawsContent())
         return;

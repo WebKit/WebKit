@@ -1,3 +1,59 @@
+2014-01-09  Beth Dakin  <bdakin@apple.com>
+
+        Margin tiles are not repainted when background color changes
+        https://bugs.webkit.org/show_bug.cgi?id=126541
+        -and corresponding-
+        <rdar://problem/15578131>
+
+        Reviewed by Simon Fraser.
+
+        This patch adds an optional parameter to GraphicsLayer::setNeedsDisplayInRect, 
+        RenderLayerBacking::setContentsNeedDisplay(), and 
+        RenderLayer::setBackingNeedsRepaint() that is used to determine whether or not to 
+        clip the invalidation rect to the size of the layer. Then whenever the margin 
+        needs to be repainted, we can call setNeedsDisplayInRect() with a rect that 
+        includes the margin, and also indicate that it should not be clipped.
+
+        GraphicsLayer now takes an optional parameter which is an enum called 
+        ShouldClipToLayer.
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/blackberry/GraphicsLayerBlackBerry.cpp:
+        (WebCore::GraphicsLayerBlackBerry::setNeedsDisplayInRect):
+        * platform/graphics/blackberry/GraphicsLayerBlackBerry.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setNeedsDisplayInRect):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setNeedsDisplayInRect):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setNeedsDisplayInRect):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
+        Make TileController::bounds() a virtual function, and declare it on TiledBacking 
+        so that we can call it from RenderLayerBacking.
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/mac/TileController.h:
+
+        RenderLayer also now takes an optional parameter which is an enum called 
+        ShouldClipToLayer.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+
+        If the margin needs to be repainted, call GraphicsLayer::setNeedsDisplayInRect 
+        with a big enough rect and a ShouldClipToLayer value of DoNotClipToLayer.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setContentsNeedDisplay):
+        * rendering/RenderLayerBacking.h:
+
+        Whenever all of the root contents need to be repainted the margin will also need 
+        to be repainted, so call setBackingNeedsRepaint() with the new parameter 
+        indicating the the invalidation should NOT be clipped to the layer size.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintRootContents):
+
 2014-01-09  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Factor the ReferenceBox type out of BasicShapes

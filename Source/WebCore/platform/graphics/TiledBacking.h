@@ -89,6 +89,9 @@ public:
     virtual int leftMarginWidth() const = 0;
     virtual int rightMarginWidth() const = 0;
 
+    // Includes margins.
+    virtual IntRect bounds() const = 0;
+
     // Exposed for testing
     virtual IntRect tileCoverageRect() const = 0;
     virtual IntRect tileGridExtent() const = 0;

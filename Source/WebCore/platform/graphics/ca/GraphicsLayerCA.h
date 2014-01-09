@@ -106,7 +106,7 @@ public:
 #endif
 
     virtual void setNeedsDisplay();
-    virtual void setNeedsDisplayInRect(const FloatRect&);
+    virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer);
     virtual void setContentsNeedsDisplay();
     
     virtual void setContentsRect(const IntRect&);

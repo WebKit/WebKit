@@ -2075,7 +2075,7 @@ void RenderLayerBacking::setBlendMode(BlendMode)
 }
 #endif
 
-void RenderLayerBacking::setContentsNeedDisplay()
+void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer shouldClip)
 {
     ASSERT(!paintsIntoCompositedAncestor());
 
@@ -2083,8 +2083,14 @@ void RenderLayerBacking::setContentsNeedDisplay()
     if (m_isMainFrameRenderViewLayer && frameView.isTrackingRepaints())
         frameView.addTrackedRepaintRect(owningLayer().absoluteBoundingBox());
     
-    if (m_graphicsLayer && m_graphicsLayer->drawsContent())
-        m_graphicsLayer->setNeedsDisplay();
+    if (m_graphicsLayer && m_graphicsLayer->drawsContent()) {
+        // By default, setNeedsDisplay will clip to the size of the GraphicsLayer, which does not include margin tiles.
+        // So if the TiledBacking has a margin that needs to be invalidated, we need to send in a rect to setNeedsDisplayInRect
+        // that is large enough to include the margin. TiledBacking::bounds() includes the margin.
+        TiledBacking* tiledBacking = this->tiledBacking();
+        FloatRect rectToRepaint = tiledBacking ? tiledBacking->bounds() : FloatRect(FloatPoint(0, 0), m_graphicsLayer->size());
+        m_graphicsLayer->setNeedsDisplayInRect(rectToRepaint, shouldClip);
+    }
     
     if (m_foregroundLayer && m_foregroundLayer->drawsContent())
         m_foregroundLayer->setNeedsDisplay();

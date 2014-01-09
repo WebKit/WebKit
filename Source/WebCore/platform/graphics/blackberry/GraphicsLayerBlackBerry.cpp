@@ -364,7 +364,7 @@ void GraphicsLayerBlackBerry::setNeedsDisplay()
         m_layer->setNeedsDisplay();
 }
 
-void GraphicsLayerBlackBerry::setNeedsDisplayInRect(const FloatRect& rect)
+void GraphicsLayerBlackBerry::setNeedsDisplayInRect(const FloatRect& rect, ShouldClipToLayer)
 {
     if (drawsContent())
         m_layer->setNeedsDisplayInRect(rect);
