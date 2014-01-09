@@ -98,6 +98,16 @@ done:
     return result;
 }
 
+static bool constructorHasInstance(JSContextRef ctx, JSObjectRef constructorRef, JSValueRef possibleInstance, JSValueRef*)
+{
+    JSC::ExecState* exec = toJS(ctx);
+    JSC::APIEntryShim entryShim(exec);
+
+    JSC::JSObject* constructor = toJS(constructorRef);
+    JSC::JSValue instance = toJS(exec, possibleInstance);
+    return JSC::JSObject::defaultHasInstance(exec, instance, constructor->get(exec, exec->propertyNames().prototype));
+}
+
 static JSObjectRef makeWrapper(JSContextRef ctx, JSClassRef jsClass, id wrappedObject)
 {
     JSC::ExecState* exec = toJS(ctx);
@@ -120,6 +130,18 @@ static JSValue *objectWithCustomBrand(JSContext *context, NSString *brand, Class
     JSClassDefinition definition;
     definition = kJSClassDefinitionEmpty;
     definition.className = [brand UTF8String];
+    JSClassRef classRef = JSClassCreate(&definition);
+    JSObjectRef result = makeWrapper([context JSGlobalContextRef], classRef, cls);
+    JSClassRelease(classRef);
+    return [JSValue valueWithJSValueRef:result inContext:context];
+}
+
+static JSValue *constructorWithCustomBrand(JSContext *context, NSString *brand, Class cls)
+{
+    JSClassDefinition definition;
+    definition = kJSClassDefinitionEmpty;
+    definition.className = [brand UTF8String];
+    definition.hasInstance = constructorHasInstance;
     JSClassRef classRef = JSClassCreate(&definition);
     JSObjectRef result = makeWrapper([context JSGlobalContextRef], classRef, cls);
     JSClassRelease(classRef);
@@ -379,7 +401,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 static JSValue *allocateConstructorForCustomClass(JSContext *context, const char* className, Class cls)
 {
     if (!supportsInitMethodConstructors())
-        return objectWithCustomBrand(context, [NSString stringWithFormat:@"%sConstructor", className], cls);
+        return constructorWithCustomBrand(context, [NSString stringWithFormat:@"%sConstructor", className], cls);
 
     // For each protocol that the class implements, gather all of the init family methods into a hash table.
     __block HashMap<String, Protocol *> initTable;
@@ -425,7 +447,7 @@ static JSValue *allocateConstructorForCustomClass(JSContext *context, const char
         JSObjectRef method = objCCallbackFunctionForInit(context, cls, initProtocol, initMethod, types);
         return [JSValue valueWithJSValueRef:method inContext:context];
     }
-    return objectWithCustomBrand(context, [NSString stringWithFormat:@"%sConstructor", className], cls);
+    return constructorWithCustomBrand(context, [NSString stringWithFormat:@"%sConstructor", className], cls);
 }
 
 - (void)allocateConstructorAndPrototypeWithSuperClassInfo:(JSObjCClassInfo*)superClassInfo

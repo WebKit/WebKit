@@ -1,3 +1,23 @@
+2014-01-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Constructors for Objective-C classes do not work properly with instanceof
+        https://bugs.webkit.org/show_bug.cgi?id=126670
+
+        Reviewed by Oliver Hunt.
+
+        This bug is due to the fact that the JS constructors created for Objective-C classes via the JSC 
+        API inherit from JSCallbackObject, which overrides hasInstance with its own customHasInstance. 
+        JSCallbackObject::customHasInstance only checks the JSClassRefs for hasInstance callbacks. 
+        If it doesn't find any callbacks, it returns false.
+
+        This patch adds a hasInstance callback to constructors created for Objective-C wrapper classes.
+
+        * API/JSWrapperMap.mm:
+        (constructorHasInstance):
+        (constructorWithCustomBrand):
+        (allocateConstructorForCustomClass):
+        * API/tests/testapi.mm:
+
 2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move InjectedScript classes into JavaScriptCore

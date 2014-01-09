@@ -37,6 +37,12 @@ extern "C" void testObjectiveCAPI(void);
 
 #if JSC_OBJC_API_ENABLED
 
+@interface UnexportedObject : NSObject
+@end
+
+@implementation UnexportedObject
+@end
+
 @protocol ParentObject <JSExport>
 @end
 
@@ -1214,6 +1220,16 @@ void testObjectiveCAPI()
         checkResult(@"fetched context.name was expected", [fetchedName1 isEqualToString:name1]);
         checkResult(@"fetched context.name was expected", [fetchedName2 isEqualToString:name2]);
         checkResult(@"fetched context.name was expected", ![fetchedName1 isEqualToString:fetchedName2]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        context[@"UnexportedObject"] = [UnexportedObject class];
+        context[@"makeObject"] = ^{
+            return [[UnexportedObject alloc] init];
+        };
+        JSValue *result = [context evaluateScript:@"(makeObject() instanceof UnexportedObject)"];
+        checkResult(@"makeObject() instanceof UnexportedObject", [result isBoolean] && [result toBool]);
     }
 
     currentThisInsideBlockGetterTest();
