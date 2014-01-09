@@ -1,3 +1,12 @@
+2014-01-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Specify the executable and library output locations in the build
+        https://bugs.webkit.org/show_bug.cgi?id=126671
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/cmake/OptionsGTK.cmake: Explicitly specify the output locations.
+
 2014-01-08  Dániel Bátyai  <dbatyai.u-szeged@partner.samsung.com>
 
         [EFL] Make FTL buildable
