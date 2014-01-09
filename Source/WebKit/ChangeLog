@@ -1,3 +1,13 @@
+2014-01-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the WebKit layer of the Blackberry port
+        https://bugs.webkit.org/show_bug.cgi?id=126715
+
+        Reviewed by Anders Carlsson.
+
+        * PlatformBlackBerry.cmake: Removed.
+        * blackberry: Removed.
+
 2014-01-08  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Merge ewk_view_single into ewk_view
