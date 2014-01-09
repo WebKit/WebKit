@@ -34,9 +34,9 @@ layer at (0,0) size 800x345
         RenderText {#text} at (0,0) size 384x24
           text run at (0,0) width 384: "xx xx xx"
       RenderBlock {DIV} at (0,249) size 432x48 [color=#00FFFF] [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 275x48
-          text run at (0,0) width 275: "xx xx"
-          text run at (0,24) width 110: "xx"
+        RenderText {#text} at (0,0) size 277x48
+          text run at (0,0) width 277: "xx xx"
+          text run at (0,24) width 111: "xx"
       RenderBlock {DIV} at (0,297) size 432x24 [color=#00FFFF] [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 384x24
           text run at (0,0) width 384: "xx xx xx"

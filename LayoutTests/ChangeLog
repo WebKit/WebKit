@@ -1,3 +1,23 @@
+2014-01-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Rebaselining after r161521.
+
+        * platform/gtk/css1/text_properties/letter_spacing-expected.png:
+        * platform/gtk/css1/text_properties/letter_spacing-expected.txt:
+        * platform/gtk/css1/text_properties/word_spacing-expected.png:
+        * platform/gtk/css1/text_properties/word_spacing-expected.txt:
+        * platform/gtk/css2.1/t1604-c542-letter-sp-00-b-a-expected.txt:
+        * platform/gtk/fast/text/basic/013-expected.png:
+        * platform/gtk/fast/text/basic/013-expected.txt:
+        * platform/gtk/fast/text/text-letter-spacing-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/text-spacing-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/text-spacing-01-b-expected.txt: Added.
+        * platform/gtk/svg/batik/text/textLayout-expected.txt: Added.
+        * platform/gtk/svg/custom/text-letter-spacing-expected.png:
+        * platform/gtk/svg/custom/text-letter-spacing-expected.txt:
+        * platform/gtk/svg/text/text-spacing-01-b-expected.png:
+        * platform/gtk/svg/text/text-spacing-01-b-expected.txt: Added.
+
 2014-01-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r161176): http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html is failing on GTK
