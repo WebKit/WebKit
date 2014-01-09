@@ -57,8 +57,8 @@ private:
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) OVERRIDE;
 
     // Message handlers.
-    void didCollectGeometryForMagnificationGesture(WebCore::FloatRect visibleContentBounds);
-    void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement);
+    void didCollectGeometryForMagnificationGesture(WebCore::FloatRect visibleContentBounds, bool frameHandlesMagnificationGesture);
+    void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement, bool frameHandlesMagnificationGesture);
 
     void endMagnificationGesture();
     WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
@@ -74,6 +74,7 @@ private:
 
     WebCore::FloatRect m_visibleContentRect;
     bool m_visibleContentRectIsValid;
+    bool m_frameHandlesMagnificationGesture;
 };
 
 } // namespace WebKit

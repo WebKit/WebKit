@@ -29,6 +29,7 @@
 #include "ViewGestureControllerMessages.h"
 #include "ViewGestureGeometryCollectorMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/FrameView.h>
@@ -53,12 +54,14 @@ ViewGestureGeometryCollector::~ViewGestureGeometryCollector()
 void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
 {
     FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);
-    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect));
+    bool frameHandlesMagnificationGesture = m_webPage.mainWebFrame()->handlesPageScaleGesture();
+    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect, frameHandlesMagnificationGesture));
 }
 
 void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(FloatPoint origin)
 {
     FloatRect visibleContentRect = m_webPage.mainFrameView()->visibleContentRect(ScrollableArea::IncludeScrollbars);
+    bool frameHandlesMagnificationGesture = m_webPage.mainWebFrame()->handlesPageScaleGesture();
 
     FloatPoint scrolledOrigin = origin;
     scrolledOrigin.moveBy(m_webPage.mainFrameView()->scrollPosition());
@@ -70,7 +73,7 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     if (hitTestResult.innerNode()) {
         bool isReplaced;
         FloatRect renderRect = hitTestResult.innerNode()->renderRect(&isReplaced);
-        m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, renderRect, visibleContentRect, isReplaced));
+        m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, renderRect, visibleContentRect, isReplaced, frameHandlesMagnificationGesture));
     }
 }
 

@@ -51,6 +51,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_activeGestureType(ViewGestureType::None)
     , m_visibleContentRectIsValid(false)
+    , m_frameHandlesMagnificationGesture(false)
 {
     m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID(), *this);
 }
@@ -88,11 +89,12 @@ FloatPoint ViewGestureController::scaledMagnificationOrigin(FloatPoint origin, d
     return scaledMagnificationOrigin;
 }
 
-void ViewGestureController::didCollectGeometryForMagnificationGesture(FloatRect visibleContentRect)
+void ViewGestureController::didCollectGeometryForMagnificationGesture(FloatRect visibleContentRect, bool frameHandlesMagnificationGesture)
 {
     m_activeGestureType = ViewGestureType::Magnification;
     m_visibleContentRect = visibleContentRect;
     m_visibleContentRectIsValid = true;
+    m_frameHandlesMagnificationGesture = frameHandlesMagnificationGesture;
 }
 
 void ViewGestureController::handleMagnificationGesture(double scale, FloatPoint origin)
@@ -111,6 +113,8 @@ void ViewGestureController::handleMagnificationGesture(double scale, FloatPoint 
     if (!m_visibleContentRectIsValid)
         return;
 
+    m_activeGestureType = ViewGestureType::Magnification;
+
     double scaleWithResistance = resistanceForDelta(scale, m_magnification) * scale;
 
     m_magnification += m_magnification * scaleWithResistance;
@@ -118,9 +122,10 @@ void ViewGestureController::handleMagnificationGesture(double scale, FloatPoint 
 
     m_magnificationOrigin = origin;
 
-    m_webPageProxy.drawingArea()->adjustTransientZoom(m_magnification, scaledMagnificationOrigin(origin, m_magnification));
-
-    m_activeGestureType = ViewGestureType::Magnification;
+    if (m_frameHandlesMagnificationGesture)
+        m_webPageProxy.scalePage(m_magnification, roundedIntPoint(origin));
+    else
+        m_webPageProxy.drawingArea()->adjustTransientZoom(m_magnification, scaledMagnificationOrigin(origin, m_magnification));
 }
 
 void ViewGestureController::endMagnificationGesture()
@@ -128,7 +133,11 @@ void ViewGestureController::endMagnificationGesture()
     ASSERT(m_activeGestureType == ViewGestureType::Magnification);
 
     double newMagnification = std::min(std::max(m_magnification, minMagnification), maxMagnification);
-    m_webPageProxy.drawingArea()->commitTransientZoom(newMagnification, scaledMagnificationOrigin(m_magnificationOrigin, newMagnification));
+
+    if (m_frameHandlesMagnificationGesture)
+        m_webPageProxy.scalePage(newMagnification, roundedIntPoint(m_magnificationOrigin));
+    else
+        m_webPageProxy.drawingArea()->commitTransientZoom(newMagnification, scaledMagnificationOrigin(m_magnificationOrigin, newMagnification));
 }
 
 void ViewGestureController::handleSmartMagnificationGesture(FloatPoint origin)
@@ -144,8 +153,11 @@ static float maximumRectangleComponentDelta(FloatRect a, FloatRect b)
     return std::max(fabs(a.x() - b.x()), std::max(fabs(a.y() - b.y()), std::max(fabs(a.width() - b.width()), fabs(a.height() - b.height()))));
 }
 
-void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect renderRect, FloatRect visibleContentRect, bool isReplacedElement)
+void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect renderRect, FloatRect visibleContentRect, bool isReplacedElement, bool frameHandlesMagnificationGesture)
 {
+    if (frameHandlesMagnificationGesture)
+        return;
+
     double currentScaleFactor = m_webPageProxy.pageScaleFactor();
 
     FloatRect unscaledTargetRect = renderRect;

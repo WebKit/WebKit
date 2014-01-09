@@ -1,3 +1,32 @@
+2014-01-09  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2 View Gestures: Support plugins that take over the page scale gesture
+        https://bugs.webkit.org/show_bug.cgi?id=126399
+        <rdar://problem/15738928>
+
+        Reviewed by Sam Weinig.
+
+        Teach ViewGestureController how to handle WebFrame::handlesPageScaleGesture=true,
+        which is used so that PDFPlugin can deal with magnification itself.
+
+        * UIProcess/mac/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::didCollectGeometryForMagnificationGesture):
+        (WebKit::ViewGestureController::handleMagnificationGesture):
+        (WebKit::ViewGestureController::endMagnificationGesture):
+        (WebKit::ViewGestureController::didCollectGeometryForSmartMagnificationGesture):
+        If the WebFrame is going to handle the page scale gesture itself (which currently
+        simply means that it is a main-frame PDFPlugin), send the magnification information
+        straight through to it. Also, don't provide smart-zoom in this case, since there
+        is currently no way to collect geometry information from the plugin.
+
+        * UIProcess/mac/ViewGestureController.h:
+        * UIProcess/mac/ViewGestureController.messages.in:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForMagnificationGesture):
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture):
+        Retrieve WebFrame::handlesPageScaleGesture and return it to the UI process.
+
 2014-01-09  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Promote WKBackForwardList{,Item}.h to public
