@@ -34,6 +34,7 @@ typedef struct CGPoint CGPoint;
 #endif
 
 
+#if !PLATFORM(IOS)
 #if OS(DARWIN)
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGPoint NSPoint;
@@ -41,6 +42,7 @@ typedef struct CGPoint NSPoint;
 typedef struct _NSPoint NSPoint;
 #endif
 #endif
+#endif // !PLATFORM(IOS)
 
 #if PLATFORM(WIN)
 typedef struct tagPOINT POINT;
@@ -111,10 +113,12 @@ public:
     operator CGPoint() const;
 #endif
 
+#if !PLATFORM(IOS)
 #if OS(DARWIN) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     explicit IntPoint(const NSPoint&); // don't do this implicitly since it's lossy
     operator NSPoint() const;
 #endif
+#endif // !PLATFORM(IOS)
 
 #if PLATFORM(WIN)
     IntPoint(const POINT&);

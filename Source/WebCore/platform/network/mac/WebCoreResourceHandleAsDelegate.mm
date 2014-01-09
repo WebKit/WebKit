@@ -93,10 +93,14 @@ using namespace WebCore;
 
     LOG(Network, "Handle %p delegate connectionShouldUseCredentialStorage:%p", m_handle, connection);
 
+#if PLATFORM(IOS)
+    return NO;
+#else
     if (!m_handle)
         return NO;
 
     return m_handle->shouldUseCredentialStorage();
+#endif
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -141,7 +145,9 @@ using namespace WebCore;
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)r
 {
+#if !PLATFORM(IOS)
     UNUSED_PARAM(connection);
+#endif
 
     LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, reported MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
 
@@ -153,8 +159,16 @@ using namespace WebCore;
     if (statusCode != 304)
         adjustMIMETypeIfNecessary([r _CFURLResponse]);
 
+#if !PLATFORM(IOS)
     if ([m_handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) _propertyForKey:@"ForceHTMLMIMEType"])
         [r _setMIMEType:@"text/html"];
+#endif
+
+#if USE(QUICK_LOOK)
+    m_handle->setQuickLookHandle(QuickLookHandle::create(m_handle, connection, r, self));
+    if (m_handle->quickLookHandle())
+        r = m_handle->quickLookHandle()->nsResponse();
+#endif
 
     m_handle->client()->didReceiveResponse(m_handle, r);
 }
@@ -171,6 +185,11 @@ using namespace WebCore;
     if (!m_handle || !m_handle->client())
         return;
 
+#if USE(QUICK_LOOK)
+    if (m_handle->quickLookHandle() && m_handle->quickLookHandle()->didReceiveDataArray(reinterpret_cast<CFArrayRef>(dataArray)))
+        return;
+#endif
+
     m_handle->handleDataArray(reinterpret_cast<CFArrayRef>(dataArray));
     // The call to didReceiveData above can cancel a load, and if so, the delegate (self) could have been deallocated by this point.
 }
@@ -183,11 +202,21 @@ using namespace WebCore;
 
     LOG(Network, "Handle %p delegate connection:%p didReceiveData:%p lengthReceived:%lld", m_handle, connection, data, lengthReceived);
 
+#if PLATFORM(IOS)
+    if ([data length] == 0) // <rdar://problem/5532931>
+        return;
+#endif
+
     if (!m_handle || !m_handle->client())
         return;
     // FIXME: If we get more than 2B bytes in a single chunk, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
+
+#if USE(QUICK_LOOK)
+    if (m_handle->quickLookHandle() && m_handle->quickLookHandle()->didReceiveData(reinterpret_cast<CFDataRef>(data)))
+        return;
+#endif
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
     // -1 means we do not provide any data about transfer size to inspector so it would use
@@ -230,6 +259,11 @@ using namespace WebCore;
     if (!m_handle || !m_handle->client())
         return;
 
+#if USE(QUICK_LOOK)
+    if (m_handle->quickLookHandle() && m_handle->quickLookHandle()->didFinishLoading())
+        return;
+#endif
+
     m_handle->client()->didFinishLoading(m_handle, 0);
 }
 
@@ -241,6 +275,11 @@ using namespace WebCore;
 
     if (!m_handle || !m_handle->client())
         return;
+
+#if USE(QUICK_LOOK)
+    if (m_handle->quickLookHandle())
+        m_handle->quickLookHandle()->didFail();
+#endif
 
     m_handle->client()->didFail(m_handle, error);
 }

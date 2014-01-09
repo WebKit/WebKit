@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
+
 #ifndef WebCoreFullScreenPlaceholderView_h
 #define WebCoreFullScreenPlaceholderView_h
 
@@ -40,3 +42,5 @@
 @end
 
 #endif // WebCoreFullScreenPlaceholderView_h
+
+#endif // !PLATFORM(IOS)

@@ -31,10 +31,30 @@
 
 #include <wtf/AutodrainedPool.h>
 
+#if PLATFORM(IOS)
+#include "RuntimeApplicationChecksIOS.h"
+#include <CoreFoundation/CFBundle.h>
+#include <WebCore/WebCoreThread.h>
+#endif
+
 namespace WebCore {
 
 static const CFIndex CoreAnimationRunLoopOrder = 2000000;
 static const CFIndex LayerFlushRunLoopOrder = CoreAnimationRunLoopOrder - 1;
+
+static CFRunLoopRef currentRunLoop()
+{
+#if PLATFORM(IOS)
+    // A race condition during WebView deallocation can lead to a crash if the layer sync run loop
+    // observer is added to the main run loop <rdar://problem/9798550>. However, for responsiveness,
+    // we still allow this, see <rdar://problem/7403328>. Since the race condition and subsequent
+    // crash are especially troublesome for iBooks, we never allow the observer to be added to the
+    // main run loop in iBooks.
+    if (applicationIsIBooksOnIOS())
+        return WebThreadRunLoop();
+#endif
+    return CFRunLoopGetCurrent();
+}
 
 LayerFlushScheduler::LayerFlushScheduler(LayerFlushSchedulerClient* client)
     : m_isSuspended(false)
@@ -68,10 +88,10 @@ void LayerFlushScheduler::schedule()
     if (m_isSuspended)
         return;
 
-    CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
+    CFRunLoopRef runLoop = currentRunLoop();
 
     // Make sure we wake up the loop or the observer could be delayed until some other source fires.
-    CFRunLoopWakeUp(currentRunLoop);
+    CFRunLoopWakeUp(runLoop);
 
     if (m_runLoopObserver)
         return;
@@ -79,7 +99,7 @@ void LayerFlushScheduler::schedule()
     CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
     m_runLoopObserver = adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, LayerFlushRunLoopOrder, runLoopObserverCallback, &context));
 
-    CFRunLoopAddObserver(currentRunLoop, m_runLoopObserver.get(), kCFRunLoopCommonModes);
+    CFRunLoopAddObserver(runLoop, m_runLoopObserver.get(), kCFRunLoopCommonModes);
 }
 
 void LayerFlushScheduler::invalidate()

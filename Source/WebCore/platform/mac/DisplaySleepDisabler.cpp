@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DisplaySleepDisabler.h"
 
+#if !PLATFORM(IOS)
+
 #include <IOKit/pwr_mgt/IOPMLib.h>
 #include <wtf/RetainPtr.h>
 
@@ -54,3 +56,12 @@ DisplaySleepDisabler::~DisplaySleepDisabler()
 }
 
 }
+
+#else
+
+namespace WebCore {
+DisplaySleepDisabler::DisplaySleepDisabler(const char *) { }
+DisplaySleepDisabler::~DisplaySleepDisabler() { }
+}
+
+#endif // !PLATFORM(IOS)

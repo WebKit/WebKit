@@ -30,17 +30,21 @@
 #include "FloatPoint.h"
 #include <wtf/Vector.h>
 
+#if PLATFORM(IOS)
+#include <CoreGraphics/CGGeometry.h>
+#endif
+
 #if USE(CG)
 typedef struct CGRect CGRect;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGRect NSRect;
 #else
 typedef struct _NSRect NSRect;
 #endif
-#endif
+#endif // PLATFORM(MAC) && !PLATFORM(IOS)
 
 #if PLATFORM(BLACKBERRY)
 namespace BlackBerry {
@@ -181,10 +185,12 @@ public:
     operator CGRect() const;
 #endif
 
+#if !PLATFORM(IOS)
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     FloatRect(const NSRect&);
     operator NSRect() const;
 #endif
+#endif // !PLATFORM(IOS)
 
 #if USE(CAIRO)
     FloatRect(const cairo_rectangle_t&);

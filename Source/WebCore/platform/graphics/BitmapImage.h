@@ -36,7 +36,9 @@
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
+#if !PLATFORM(IOS)
 OBJC_CLASS NSImage;
+#endif // PLATFORM(IOS)
 #endif
 
 #if PLATFORM(WIN)
@@ -67,6 +69,10 @@ public:
     FrameData()
         : m_frame(0)
         , m_orientation(DefaultImageOrientation)
+#if PLATFORM(IOS)
+        , m_scale(0)
+        , m_haveInfo(false)
+#endif
         , m_duration(0)
         , m_haveMetadata(false)
         , m_isComplete(false)
@@ -86,6 +92,10 @@ public:
 
     NativeImagePtr m_frame;
     ImageOrientation m_orientation;
+#if PLATFORM(IOS)
+    float m_scale;
+    bool m_haveInfo;
+#endif
     float m_duration;
     bool m_haveMetadata : 1;
     bool m_isComplete : 1;
@@ -96,6 +106,9 @@ public:
 // =================================================
 // BitmapImage Class
 // =================================================
+
+// FIXME: We should better integrate the iOS and non-iOS code in this class. Unlike other ports, the
+// iOS port caches the metadata for a frame without decoding the image.
 
 class BitmapImage FINAL : public Image {
     friend class GeneratedImage;
@@ -122,6 +135,10 @@ public:
 
     virtual IntSize size() const OVERRIDE;
     IntSize sizeRespectingOrientation(ImageOrientationDescription = ImageOrientationDescription()) const;
+#if PLATFORM(IOS)
+    virtual IntSize originalSize() const;
+    IntSize originalSizeRespectingOrientation() const;
+#endif
     IntSize currentFrameSize() const;
     virtual bool getHotSpot(IntPoint&) const OVERRIDE;
 
@@ -141,7 +158,9 @@ public:
 
 #if PLATFORM(MAC)
     // Accessors for native image formats.
+#if !PLATFORM(IOS)
     virtual NSImage* getNSImage() OVERRIDE;
+#endif
     virtual CFDataRef getTIFFRepresentation() OVERRIDE;
 #endif
 
@@ -195,6 +214,10 @@ protected:
 #endif
 
     size_t currentFrame() const { return m_currentFrame; }
+#if PLATFORM(IOS)
+    PassNativeImagePtr frameAtIndex(size_t, float scaleHint);
+    PassNativeImagePtr copyUnscaledFrameAtIndex(size_t);
+#endif
     size_t frameCount();
     PassNativeImagePtr frameAtIndex(size_t);
     bool frameIsCompleteAtIndex(size_t);
@@ -203,9 +226,18 @@ protected:
     ImageOrientation frameOrientationAtIndex(size_t);
 
     // Decodes and caches a frame. Never accessed except internally.
+#if PLATFORM(IOS)
+    void cacheFrame(size_t index, float scaleHint);
+
+    // Cache frame metadata without decoding image.
+    void cacheFrameInfo(size_t index);
+    // Called before accessing m_frames[index] for info without decoding. Returns false on index out of bounds.
+    bool ensureFrameInfoIsCached(size_t index);
+#else
     void cacheFrame(size_t index);
     // Called before accessing m_frames[index]. Returns false on index out of bounds.
     bool ensureFrameIsCached(size_t index);
+#endif
 
     // Called to invalidate cached data.  When |destroyAll| is true, we wipe out
     // the entire frame buffer cache and tell the image source to destroy
@@ -268,6 +300,10 @@ private:
     mutable unsigned m_imageOrientation : 4; // ImageOrientationEnum
     mutable unsigned m_shouldRespectImageOrientation : 1; // RespectImageOrientationEnum
 
+#if PLATFORM(IOS)
+    mutable IntSize m_originalSize; // The size of the unsubsampled image.
+    mutable IntSize m_originalSizeRespectingOrientation;
+#endif
     size_t m_currentFrame; // The index of the current frame of animation.
     Vector<FrameData, 1> m_frames; // An array of the cached frames of the animation. We have to ref frames to pin them in the cache.
 
@@ -278,7 +314,9 @@ private:
     double m_desiredFrameStartTime;  // The system time at which we hope to see the next call to startAnimation().
 
 #if PLATFORM(MAC)
+#if !PLATFORM(IOS)
     mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
+#endif
     mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for frame 0.  Only built lazily if someone queries for one.
 #endif
 
@@ -287,6 +325,12 @@ private:
     unsigned m_decodedSize; // The current size of all decoded frames.
     mutable unsigned m_decodedPropertiesSize; // The size of data decoded by the source to determine image properties (e.g. size, frame count, etc).
     size_t m_frameCount;
+
+#if PLATFORM(IOS)
+    // FIXME: We should expose a setting to enable/disable progressive loading remove the PLATFORM(IOS)-guard.
+    double m_progressiveLoadChunkTime;
+    uint16_t m_progressiveLoadChunkCount;
+#endif
 
     bool m_isSolidColor : 1; // Whether or not we are a 1x1 solid image.
     bool m_checkedForSolidColor : 1; // Whether we've checked the frame for solid color.

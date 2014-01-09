@@ -29,6 +29,21 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
+#if PLATFORM(IOS)
+#include "SoftLinking.h"
+#include <MobileCoreServices/MobileCoreServices.h>
+
+SOFT_LINK_FRAMEWORK(MobileCoreServices)
+
+SOFT_LINK(MobileCoreServices, UTTypeCopyPreferredTagWithClass, CFStringRef, (CFStringRef inUTI, CFStringRef inTagClass), (inUTI, inTagClass))
+
+SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassFilenameExtension, CFStringRef)
+SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassMIMEType, CFStringRef)
+
+#define kUTTagClassFilenameExtension getkUTTagClassFilenameExtension()
+#define kUTTagClassMIMEType getkUTTagClassMIMEType()
+#endif
+
 namespace WebCore {
 
 String MIMETypeForImageSourceType(const String& uti)

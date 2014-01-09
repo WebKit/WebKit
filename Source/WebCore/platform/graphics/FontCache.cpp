@@ -45,14 +45,50 @@
 #include "OpenTypeVerticalData.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "MemoryPressureHandler.h"
+#include <wtf/Noncopyable.h>
+
+// FIXME: We may be able to simplify this code using C++11 threading primitives, including std::call_once().
+static pthread_mutex_t fontDataLock;
+
+static void initFontCacheLockOnce()
+{
+    pthread_mutexattr_t mutexAttribute;
+    pthread_mutexattr_init(&mutexAttribute);
+    pthread_mutexattr_settype(&mutexAttribute, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(&fontDataLock, &mutexAttribute);
+    pthread_mutexattr_destroy(&mutexAttribute);
+}
+
+static pthread_once_t initFontLockControl = PTHREAD_ONCE_INIT;
+
+class FontLocker {
+    WTF_MAKE_NONCOPYABLE(FontLocker);
+public:
+    FontLocker()
+    {
+        pthread_once(&initFontLockControl, initFontCacheLockOnce);
+        int lockcode = pthread_mutex_lock(&fontDataLock);
+        ASSERT_WITH_MESSAGE_UNUSED(lockcode, !lockcode, "fontDataLock lock failed with code:%d", lockcode);    
+    }
+    ~FontLocker()
+    {
+        int lockcode = pthread_mutex_unlock(&fontDataLock);
+        ASSERT_WITH_MESSAGE_UNUSED(lockcode, !lockcode, "fontDataLock unlock failed with code:%d", lockcode);
+    }
+};
+#endif // PLATFORM(IOS)
+
 using namespace WTF;
 
 namespace WebCore {
 
+// FIXME: We should return a reference instead of a pointer since we never return a nullptr.
 FontCache* fontCache()
 {
-    DEFINE_STATIC_LOCAL(FontCache, globalFontCache, ());
-    return &globalFontCache;
+    static NeverDestroyed<FontCache> globalFontCache;
+    return &globalFontCache.get();
 }
 
 FontCache::FontCache()
@@ -184,6 +220,10 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
                                                        const AtomicString& passedFamilyName,
                                                        bool checkingAlternateName)
 {
+#if PLATFORM(IOS)
+    FontLocker fontLocker;
+#endif
+    
 #if OS(WINDOWS) && ENABLE(OPENTYPE_VERTICAL)
     // Leading "@" in the font name enables Windows vertical flow flag for the font.
     // Because we do vertical flow by ourselves, we don't want to use the Windows feature.
@@ -317,8 +357,15 @@ typedef HashMap<FontPlatformData, std::pair<RefPtr<SimpleFontData>, unsigned>, F
 
 static FontDataCache* gFontDataCache = 0;
 
+#if PLATFORM(IOS)
+const int cMaxInactiveFontData = 120;
+const int cTargetInactiveFontData = 100;
+const int cMaxUnderMemoryPressureInactiveFontData = 50;
+const int cTargetUnderMemoryPressureInactiveFontData = 30;
+#else
 const int cMaxInactiveFontData = 225;
 const int cTargetInactiveFontData = 200;
+#endif
 static ListHashSet<RefPtr<SimpleFontData>>* gInactiveFontData = 0;
 
 PassRefPtr<SimpleFontData> FontCache::getCachedFontData(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName, ShouldRetain shouldRetain)
@@ -340,6 +387,10 @@ PassRefPtr<SimpleFontData> FontCache::getCachedFontData(const FontPlatformData* 
         ASSERT(m_purgePreventCount);
 #endif
 
+#if PLATFORM(IOS)
+    FontLocker fontLocker;
+#endif
+    
     if (!gFontDataCache) {
         gFontDataCache = new FontDataCache;
         gInactiveFontData = new ListHashSet<RefPtr<SimpleFontData>>;
@@ -380,6 +431,10 @@ void FontCache::releaseFontData(const SimpleFontData* fontData)
     ASSERT(gFontDataCache);
     ASSERT(!fontData->isCustomFont());
 
+#if PLATFORM(IOS)
+    FontLocker fontLocker;
+#endif
+    
     FontDataCache::iterator it = gFontDataCache->find(fontData->platformData());
     ASSERT(it != gFontDataCache->end());
     if (it == gFontDataCache->end())
@@ -392,8 +447,17 @@ void FontCache::releaseFontData(const SimpleFontData* fontData)
 
 void FontCache::purgeInactiveFontDataIfNeeded()
 {
+#if PLATFORM(IOS)
+    bool underMemoryPressure = memoryPressureHandler().hasReceivedMemoryPressure();
+    int inactiveFontDataLimit = underMemoryPressure ? cMaxUnderMemoryPressureInactiveFontData : cMaxInactiveFontData;
+    int targetFontDataLimit = underMemoryPressure ? cTargetUnderMemoryPressureInactiveFontData : cTargetInactiveFontData;
+
+    if (gInactiveFontData && !m_purgePreventCount && gInactiveFontData->size() > inactiveFontDataLimit)
+        purgeInactiveFontData(gInactiveFontData->size() - targetFontDataLimit);
+#else
     if (gInactiveFontData && !m_purgePreventCount && gInactiveFontData->size() > cMaxInactiveFontData)
         purgeInactiveFontData(gInactiveFontData->size() - cTargetInactiveFontData);
+#endif
 }
 
 void FontCache::purgeInactiveFontData(int count)
@@ -408,6 +472,10 @@ void FontCache::purgeInactiveFontData(int count)
         return;
 
     isPurging = true;
+
+#if PLATFORM(IOS)
+    FontLocker fontLocker;
+#endif
 
     Vector<RefPtr<SimpleFontData>, 20> fontDataToDelete;
     ListHashSet<RefPtr<SimpleFontData>>::iterator end = gInactiveFontData->end();

@@ -124,12 +124,12 @@ static void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const S
 
     [catalog drawGlyphs:glyphs atPositions:positions.data() inContext:context withFont:ctFont count:count stylePresetName:@"_UIKitNewLetterpressStyle" styleConfiguration:styleConfiguration foregroundColor:CGContextGetFillColorAsColor(context)];
 #else
-UNUSED_PARAM(point);
-UNUSED_PARAM(font);
-UNUSED_PARAM(context);
-UNUSED_PARAM(glyphs);
-UNUSED_PARAM(advances);
-UNUSED_PARAM(count);
+    UNUSED_PARAM(point);
+    UNUSED_PARAM(font);
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(glyphs);
+    UNUSED_PARAM(advances);
+    UNUSED_PARAM(count);
 #endif
 }
 
@@ -179,7 +179,7 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
     }
 }
 
-void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
+void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& anchorPoint) const
 {
     const FontPlatformData& platformData = font->platformData();
     if (!platformData.size())
@@ -221,11 +221,13 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         changeFontSmoothing = true;
     }
 
+#if !PLATFORM(IOS)
     bool originalShouldUseFontSmoothing = false;
     if (changeFontSmoothing) {
         originalShouldUseFontSmoothing = wkCGContextGetShouldSmoothFonts(cgContext);
         CGContextSetShouldSmoothFonts(cgContext, shouldSmoothFonts);
     }
+#endif
 
 #if !PLATFORM(IOS)
     NSFont* drawFont;
@@ -246,9 +248,38 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     CGContextSetFont(cgContext, platformData.cgFont());
 
     bool useLetterpressEffect = shouldUseLetterpressEffect(*context);
+    FloatPoint point = anchorPoint;
 #if PLATFORM(IOS)
     float fontSize = platformData.size();
     CGAffineTransform matrix = useLetterpressEffect || platformData.isColorBitmapFont() ? CGAffineTransformIdentity : CGAffineTransformMakeScale(fontSize, fontSize);
+    if (platformData.m_isEmoji) {
+        if (!context->emojiDrawingEnabled())
+            return;
+
+        // Mimic the positioining of non-bitmap glyphs, which are not subpixel-positioned.
+        point.setY(ceilf(point.y()));
+
+        // Emoji glyphs snap to the CSS pixel grid.
+        point.setX(floorf(point.x()));
+
+        // Emoji glyphs are offset one CSS pixel to the right.
+        point.move(1, 0);
+
+        // Emoji glyphs are offset vertically based on font size.
+        float y = point.y();
+        if (fontSize <= 15) {
+            // Undo Core Text's y adjustment.
+            static float yAdjustmentFactor = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_6_0) ? .19 : .1;
+            point.setY(floorf(y - yAdjustmentFactor * (fontSize + 2) + 2));
+        } else {
+            if (fontSize < 26)
+                y -= .35f * fontSize - 10;
+
+            // Undo Core Text's y adjustment.
+            static float yAdjustment = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_6_0) ? 3.8 : 2;
+            point.setY(floorf(y - yAdjustment));
+        }
+    }
 #else
     CGAffineTransform matrix = CGAffineTransformIdentity;
     if (drawFont && !platformData.isColorBitmapFont())
@@ -303,7 +334,11 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
         float shadowTextY = point.y() + shadowOffset.height() * (context->shadowsIgnoreTransforms() ? -1 : 1);
         showGlyphsWithAdvances(FloatPoint(shadowTextX, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
+#if !PLATFORM(IOS)
         if (syntheticBoldOffset)
+#else
+        if (syntheticBoldOffset && !platformData.m_isEmoji)
+#endif
             showGlyphsWithAdvances(FloatPoint(shadowTextX + syntheticBoldOffset, shadowTextY), font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
         context->setFillColor(fillColor, fillColorSpace);
     }
@@ -312,7 +347,11 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         showLetterpressedGlyphsWithAdvances(point, font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
     else
         showGlyphsWithAdvances(point, font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
+#if !PLATFORM(IOS)
     if (syntheticBoldOffset)
+#else
+    if (syntheticBoldOffset && !platformData.m_isEmoji)
+#endif
         showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
 
     if (hasSimpleShadow)

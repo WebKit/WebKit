@@ -39,17 +39,21 @@ class FloatSize;
 }
 #endif
 
+#if PLATFORM(IOS)
+#include <CoreGraphics/CoreGraphics.h>
+#endif
+
 #if USE(CG)
 typedef struct CGSize CGSize;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGSize NSSize;
 #else
 typedef struct _NSSize NSSize;
 #endif
-#endif
+#endif // PLATFORM(MAC) && !PLATFORM(IOS)
 
 namespace WebCore {
 
@@ -122,10 +126,12 @@ public:
     operator CGSize() const;
 #endif
 
+#if !PLATFORM(IOS)
 #if (PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES))
     explicit FloatSize(const NSSize &); // don't do this implicitly since it's lossy
     operator NSSize() const;
 #endif
+#endif // !PLATFORM(IOS)
 
     void dump(PrintStream& out) const;
 

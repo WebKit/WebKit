@@ -76,12 +76,21 @@ private:
     int m_offset;
 };
 
+#if !PLATFORM(IOS)
 GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContext)
     : m_updatingControlTints(false)
     , m_transparencyCount(0)
 {
     platformInit(platformGraphicsContext);
 }
+#else
+GraphicsContext::GraphicsContext(PlatformGraphicsContext* platformGraphicsContext, bool shouldUseContextColors)
+    : m_updatingControlTints(false)
+    , m_transparencyCount(0)
+{
+    platformInit(platformGraphicsContext, shouldUseContextColors);
+}
+#endif
 
 GraphicsContext::~GraphicsContext()
 {
@@ -114,6 +123,28 @@ void GraphicsContext::restore()
 
     restorePlatformState();
 }
+
+#if PLATFORM(IOS)
+void GraphicsContext::drawRaisedEllipse(const FloatRect& rect, const Color& ellipseColor, ColorSpace ellipseColorSpace, const Color& shadowColor, ColorSpace shadowColorSpace)
+{
+    if (paintingDisabled())
+        return;
+
+    save();
+
+    setStrokeColor(shadowColor, shadowColorSpace);
+    setFillColor(shadowColor, shadowColorSpace);
+
+    drawEllipse(FloatRect(rect.x(), rect.y() + 1, rect.width(), rect.height()));
+
+    setStrokeColor(ellipseColor, ellipseColorSpace);
+    setFillColor(ellipseColor, ellipseColorSpace);
+
+    drawEllipse(rect);  
+
+    restore();
+}
+#endif
 
 void GraphicsContext::setStrokeThickness(float thickness)
 {
@@ -404,6 +435,9 @@ bool GraphicsContext::paintingDisabled() const
     return m_state.paintingDisabled;
 }
 
+// FIXME: Replace the non-iOS implementation with the iOS implementation since the latter computes returns
+// the width of the drawn text. Ensure that there aren't noticeable differences in layout.
+#if !PLATFORM(IOS)
 #if !USE(WINGDI)
 void GraphicsContext::drawText(const Font& font, const TextRun& run, const FloatPoint& point, int from, int to)
 {
@@ -413,6 +447,15 @@ void GraphicsContext::drawText(const Font& font, const TextRun& run, const Float
     font.drawText(this, run, point, from, to);
 }
 #endif
+#else
+float GraphicsContext::drawText(const Font& font, const TextRun& run, const FloatPoint& point, int from, int to)
+{
+    if (paintingDisabled())
+        return 0;
+
+    return font.drawText(this, run, point, from, to);
+}
+#endif // !PLATFORM(IOS)
 
 void GraphicsContext::drawEmphasisMarks(const Font& font, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to)
 {
@@ -422,21 +465,44 @@ void GraphicsContext::drawEmphasisMarks(const Font& font, const TextRun& run, co
     font.drawEmphasisMarks(this, run, mark, point, from, to);
 }
 
+// FIXME: Better merge the iOS and non-iOS differences. In particular, make this method use the
+// returned width of the drawn text, Font::drawText(), instead of computing it. Ensure that there
+// aren't noticeable differences in layout with such a change.
+#if !PLATFORM(IOS)
 void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const FloatPoint& point, Font::CustomFontNotReadyAction customFontNotReadyAction)
+#else
+float GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const FloatPoint& point, Font::CustomFontNotReadyAction customFontNotReadyAction, BidiStatus* status, int length)
+#endif
 {
     if (paintingDisabled())
+#if !PLATFORM(IOS)
         return;
+#else
+        return 0;
+#endif
 
     BidiResolver<TextRunIterator, BidiCharacterRun> bidiResolver;
+#if !PLATFORM(IOS)
     bidiResolver.setStatus(BidiStatus(run.direction(), run.directionalOverride()));
+#else
+    bidiResolver.setStatus(status ? *status : BidiStatus(run.direction(), run.directionalOverride()));
+#endif
     bidiResolver.setPositionIgnoringNestedIsolates(TextRunIterator(&run, 0));
 
     // FIXME: This ownership should be reversed. We should pass BidiRunList
     // to BidiResolver in createBidiRunsForLine.
     BidiRunList<BidiCharacterRun>& bidiRuns = bidiResolver.runs();
+#if !PLATFORM(IOS)
     bidiResolver.createBidiRunsForLine(TextRunIterator(&run, run.length()));
+#else
+    bidiResolver.createBidiRunsForLine(TextRunIterator(&run, length < 0 ? run.length() : length));
+#endif    
     if (!bidiRuns.runCount())
+#if !PLATFORM(IOS)
         return;
+#else
+        return 0;
+#endif
 
     FloatPoint currPoint = point;
     BidiCharacterRun* bidiRun = bidiRuns.firstRun();
@@ -446,15 +512,30 @@ void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const F
         subrun.setDirection(isRTL ? RTL : LTR);
         subrun.setDirectionalOverride(bidiRun->dirOverride(false));
 
+#if !PLATFORM(IOS)
         font.drawText(this, subrun, currPoint, 0, -1, customFontNotReadyAction);
 
         bidiRun = bidiRun->next();
         // FIXME: Have Font::drawText return the width of what it drew so that we don't have to re-measure here.
         if (bidiRun)
             currPoint.move(font.width(subrun), 0);
+#else
+        float width = font.drawText(this, subrun, currPoint, 0, -1, customFontNotReadyAction);
+        currPoint.move(width, 0);
+
+        bidiRun = bidiRun->next();
+#endif
     }
 
+#if PLATFORM(IOS)
+    if (status)
+        *status = bidiResolver.status();
+#endif
     bidiRuns.deleteRuns();
+
+#if PLATFORM(IOS)
+    return currPoint.x() - static_cast<float>(point.x());
+#endif
 }
 
 void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run, const FloatPoint& point, int h, const Color& backgroundColor, ColorSpace colorSpace, int from, int to)
@@ -615,6 +696,18 @@ void GraphicsContext::clipRoundedRect(const RoundedRect& rect)
     clip(path);
 }
 
+// FIXME: Consider writing this in terms of a specialized RoundedRect that uses FloatRect and FloatSize radii.
+void GraphicsContext::clipRoundedRect(const FloatRect& rect, const FloatSize& topLeft, const FloatSize& topRight,
+    const FloatSize& bottomLeft, const FloatSize& bottomRight)
+{
+    if (paintingDisabled())
+        return;
+
+    Path path;
+    path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+    clip(path);
+}
+
 void GraphicsContext::clipOutRoundedRect(const RoundedRect& rect)
 {
     if (paintingDisabled())
@@ -731,6 +824,18 @@ BlendMode GraphicsContext::blendModeOperation() const
 {
     return m_state.blendMode;
 }
+
+#if PLATFORM(IOS)
+bool GraphicsContext::emojiDrawingEnabled()
+{
+    return m_state.emojiDrawingEnabled;
+}
+
+void GraphicsContext::setEmojiDrawingEnabled(bool emojiDrawingEnabled)
+{
+    m_state.emojiDrawingEnabled = emojiDrawingEnabled;
+}
+#endif
 
 void GraphicsContext::setDrawLuminanceMask(bool drawLuminanceMask)
 {

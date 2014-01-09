@@ -1,3 +1,657 @@
+2014-01-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream WebCore/platform changes
+        https://bugs.webkit.org/show_bug.cgi?id=126654
+
+        Rubber-stamped by David Kilzer.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ContentFilter.h:
+        * platform/DragData.h:
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::chooseMediaFiles):
+        * platform/FileChooser.h:
+        * platform/FileSystem.cpp:
+        (WebCore::setMetadataURL):
+        * platform/FileSystem.h:
+        * platform/KillRingNone.cpp:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::fileButtonChooseMediaFileLabel):
+        (WebCore::fileButtonChooseMultipleMediaFilesLabel):
+        (WebCore::fileButtonNoMediaFileSelectedLabel):
+        (WebCore::fileButtonNoMediaFilesSelectedLabel):
+        * platform/LocalizedStrings.h:
+        * platform/Logging.h:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedNonImageMimeTypes):
+        (WebCore::initializeUnsupportedTextMIMETypes):
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::MemoryPressureHandler):
+        * platform/MemoryPressureHandler.h:
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::event):
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/PlatformScreen.h:
+        * platform/RuntimeApplicationChecks.cpp:
+        (WebCore::mainBundleIsEqualTo):
+        * platform/RuntimeApplicationChecksIOS.h: Copied from Source/WebCore/platform/graphics/StringTruncator.h.
+        * platform/RuntimeApplicationChecksIOS.mm: Added.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleTouchEvent):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollTypes.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unscaledVisibleContentSize):
+        (WebCore::ScrollView::visibleContentRect):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::actualScrollX):
+        (WebCore::ScrollView::actualScrollY):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::handleTouchEvent):
+        (WebCore::ScrollableArea::isPinnedInBothDirections):
+        (WebCore::ScrollableArea::isPinnedHorizontallyInDirection):
+        (WebCore::ScrollableArea::isPinnedVerticallyInDirection):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::isTouchScrollable):
+        (WebCore::ScrollableArea::isOverflowScroll):
+        (WebCore::ScrollableArea::didStartScroll):
+        (WebCore::ScrollableArea::didEndScroll):
+        (WebCore::ScrollableArea::didUpdateScroll):
+        (WebCore::ScrollableArea::setIsUserScroll):
+        (WebCore::ScrollableArea::isHorizontalScrollerPinnedToMinimumPosition):
+        (WebCore::ScrollableArea::isHorizontalScrollerPinnedToMaximumPosition):
+        (WebCore::ScrollableArea::isVerticalScrollerPinnedToMinimumPosition):
+        (WebCore::ScrollableArea::isVerticalScrollerPinnedToMaximumPosition):
+        * platform/Scrollbar.cpp:
+        * platform/Scrollbar.h:
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::createPurgeableBuffer):
+        (WebCore::SharedBuffer::data):
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::shouldUsePurgeableMemory):
+        * platform/SuddenTermination.h:
+        * platform/Supplementable.h:
+        (WebCore::Supplementable::provideSupplement):
+        (WebCore::Supplementable::removeSupplement):
+        (WebCore::Supplementable::requireSupplement):
+        * platform/SystemMemory.h: Copied from Source/WebCore/platform/graphics/StringTruncator.h.
+        * platform/ThreadCheck.h:
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        (WebCore::ThreadGlobalData::destroy):
+        (WebCore::ThreadGlobalData::setWebCoreThreadData):
+        (WebCore::threadGlobalData):
+        * platform/ThreadGlobalData.h:
+        * platform/ThreadTimers.cpp:
+        (WebCore::ThreadTimers::ThreadTimers):
+        (WebCore::ThreadTimers::sharedTimerFiredInternal):
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::start):
+        (WebCore::TimerBase::stop):
+        (WebCore::TimerBase::setNextFireTime):
+        * platform/Timer.h:
+        (WebCore::TimerBase::isActive):
+        * platform/URL.cpp:
+        (WebCore::enableURLSchemeCanonicalization):
+        (WebCore::equal):
+        (WebCore::URL::parse):
+        * platform/URL.h:
+        * platform/Widget.h:
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        * platform/audio/ios/AudioDestinationIOS.h:
+        * platform/audio/ios/AudioFileReaderIOS.cpp: Copied from Source/WebCore/platform/audio/mac/AudioFileReaderMac.cpp.
+        (WebCore::createAudioBufferList):
+        (WebCore::destroyAudioBufferList):
+        (WebCore::AudioFileReader::AudioFileReader):
+        (WebCore::AudioFileReader::~AudioFileReader):
+        (WebCore::AudioFileReader::readProc):
+        (WebCore::AudioFileReader::getSizeProc):
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::createBusFromAudioFile):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/audio/ios/AudioFileReaderIOS.h: Copied from Source/WebCore/platform/graphics/StringTruncator.h.
+        (WebCore::AudioFileReader::data):
+        (WebCore::AudioFileReader::dataSize):
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (SOFT_LINK_POINTER):
+        (-[WebAudioSessionHelper initWithCallback:WebCore::]):
+        (-[WebAudioSessionHelper dealloc]):
+        (-[WebAudioSessionHelper interruption:]):
+        (WebCore::AudioSession::setCategory):
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::AudioFileReader):
+        (WebCore::createBusFromAudioFile):
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/audio/mac/AudioSessionMac.cpp:
+        * platform/audio/mac/MediaSessionManagerMac.cpp:
+        (MediaSessionManager::updateSessionState):
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        * platform/cf/URLCF.cpp:
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::windowsKeyCodeForCharCode):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::destroyDecodedDataIfNecessary):
+        (WebCore::BitmapImage::cacheFrame):
+        (WebCore::BitmapImage::cacheFrameInfo):
+        (WebCore::BitmapImage::updateSize):
+        (WebCore::BitmapImage::originalSize):
+        (WebCore::BitmapImage::originalSizeRespectingOrientation):
+        (WebCore::BitmapImage::dataChanged):
+        (WebCore::BitmapImage::ensureFrameInfoIsCached):
+        (WebCore::BitmapImage::frameAtIndex):
+        (WebCore::BitmapImage::frameIsCompleteAtIndex):
+        (WebCore::BitmapImage::frameDurationAtIndex):
+        (WebCore::BitmapImage::frameHasAlphaAtIndex):
+        (WebCore::BitmapImage::frameOrientationAtIndex):
+        (WebCore::BitmapImage::startAnimation):
+        (WebCore::BitmapImage::internalAdvanceAnimation):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::FrameData::FrameData):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::isDark):
+        * platform/graphics/Color.h:
+        * platform/graphics/DisplayRefreshMonitor.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::drawText):
+        (WebCore::Font::width):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCache.cpp:
+        (initFontCacheLockOnce):
+        (FontLocker::FontLocker):
+        (FontLocker::~FontLocker):
+        (WebCore::fontCache):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::getCachedFontData):
+        (WebCore::FontCache::releaseFontData):
+        (WebCore::FontCache::purgeInactiveFontDataIfNeeded):
+        (WebCore::FontCache::purgeInactiveFontData):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawGlyphBuffer):
+        * platform/graphics/FontGlyphs.h:
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::font):
+        (WebCore::FontPlatformData::roundsGlyphAdvances):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::hashTableDeletedFontValue):
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::drawRaisedEllipse):
+        (WebCore::GraphicsContext::drawText):
+        (WebCore::GraphicsContext::drawBidiText):
+        (WebCore::GraphicsContext::clipRoundedRect):
+        (WebCore::GraphicsContext::emojiDrawingEnabled):
+        (WebCore::GraphicsContext::setEmojiDrawingEnabled):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::willBeDestroyed):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::contentsLayerForMedia):
+        (WebCore::GraphicsLayer::pixelAlignmentOffset):
+        (WebCore::GraphicsLayer::hasFlattenedPerspectiveTransform):
+        * platform/graphics/Icon.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::isSubsampled):
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines):
+        (WebCore::MediaPlayer::isCurrentPlaybackTargetWireless):
+        (WebCore::MediaPlayer::showPlaybackTargetPicker):
+        (WebCore::MediaPlayer::hasWirelessPlaybackTargets):
+        (WebCore::MediaPlayer::wirelessVideoPlaybackDisabled):
+        (WebCore::MediaPlayer::setWirelessVideoPlaybackDisabled):
+        (WebCore::MediaPlayer::setHasPlaybackTargetAvailabilityListeners):
+        (WebCore::MediaPlayer::currentPlaybackTargetIsWirelessChanged):
+        (WebCore::MediaPlayer::playbackTargetAvailabilityChanged):
+        (WebCore::MediaPlayer::attributeChanged):
+        (WebCore::MediaPlayer::readyForPlayback):
+        (WebCore::MediaPlayer::volumeChanged):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerCurrentPlaybackTargetIsWirelessChanged):
+        (WebCore::MediaPlayerClient::mediaPlayerPlaybackTargetAvailabilityChanged):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::volume):
+        (WebCore::MediaPlayerPrivateInterface::isCurrentPlaybackTargetWireless):
+        (WebCore::MediaPlayerPrivateInterface::showPlaybackTargetPicker):
+        (WebCore::MediaPlayerPrivateInterface::hasWirelessPlaybackTargets):
+        (WebCore::MediaPlayerPrivateInterface::wirelessVideoPlaybackDisabled):
+        (WebCore::MediaPlayerPrivateInterface::setWirelessVideoPlaybackDisabled):
+        (WebCore::MediaPlayerPrivateInterface::setHasPlaybackTargetAvailabilityListeners):
+        (WebCore::MediaPlayerPrivateInterface::attributeChanged):
+        (WebCore::MediaPlayerPrivateInterface::readyForPlayback):
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::centerTruncateToBuffer):
+        (WebCore::rightTruncateToBuffer):
+        (WebCore::rightClipToCharacterBuffer):
+        (WebCore::rightClipToWordBuffer):
+        (WebCore::leftTruncateToBuffer):
+        (WebCore::truncateString):
+        (WebCore::StringTruncator::centerTruncate):
+        (WebCore::StringTruncator::rightTruncate):
+        (WebCore::StringTruncator::leftTruncate):
+        (WebCore::StringTruncator::rightClipToCharacter):
+        (WebCore::StringTruncator::rightClipToWord):
+        * platform/graphics/StringTruncator.h:
+        * platform/graphics/TextTrackRepresentation.cpp:
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::supportsTypesettingFeatures):
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        (WebCore::AVTrackPrivateAVFObjCImpl::label):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded):
+        (WebCore::wkAVAssetResolvedURL):
+        * platform/graphics/blackberry/FontBlackBerry.cpp:
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::supportsAcceleratedFilterAnimations):
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+        (WebCore::GraphicsLayerCA::contentsLayerForMedia):
+        (WebCore::GraphicsLayerCA::computeVisibleRect):
+        (WebCore::GraphicsLayerCA::updateGeometry):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        (WebCore::GraphicsLayerCA::setupContentsLayer):
+        (WebCore::GraphicsLayerCA::mediaLayerMustBeUpdatedOnMainThread):
+        (WebCore::GraphicsLayerCA::computePixelAlignment):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCAFilters.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/LayerFlushSchedulerMac.cpp:
+        (WebCore::currentRunLoop):
+        (WebCore::LayerFlushScheduler::schedule):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (-[WebAnimationDelegate animationDidStart:]):
+        (PlatformCALayerMac::setContentsScale):
+        (PlatformCALayer::isWebLayer):
+        (PlatformCALayer::setBoundsOnMainThread):
+        (PlatformCALayer::setPositionOnMainThread):
+        (PlatformCALayer::setAnchorPointOnMainThread):
+        (PlatformCALayer::setTileSize):
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::platformCALayerPaintContents):
+        (WebCore::TileController::removeAllTiles):
+        (WebCore::TileController::removeAllSecondaryTiles):
+        (WebCore::TileController::removeTilesInCohort):
+        (WebCore::TileController::revalidateTiles):
+        (WebCore::TileController::createTileLayer):
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::FrameData::clear):
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::checkForSolidColor):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::copyUnscaledFrameAtIndex):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::createCGColorWithDeviceWhite):
+        (WebCore::createCGColorWithDeviceRGBA):
+        (WebCore::Color::Color):
+        * platform/graphics/cg/FloatPointCG.cpp:
+        * platform/graphics/cg/FloatRectCG.cpp:
+        * platform/graphics/cg/FloatSizeCG.cpp:
+        * platform/graphics/cg/GradientCG.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::sRGBColorSpaceRef):
+        (WebCore::setStrokeAndFillColor):
+        (WebCore::GraphicsContext::platformInit):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::createIOSurface):
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::draw):
+        (WebCore::jpegUTI):
+        (WebCore::utiFromMIMEType):
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::getData):
+        (WebCore::ImageBufferData::putData):
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::drawPatternCallback):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::imageSourceOptions):
+        (WebCore::ImageSource::imageSourceOptions):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::originalSize):
+        (WebCore::ImageSource::createFrameAtIndex):
+        * platform/graphics/cg/ImageSourceCGMac.mm:
+        * platform/graphics/cg/IntPointCG.cpp:
+        * platform/graphics/cg/IntRectCG.cpp:
+        * platform/graphics/cg/IntSizeCG.cpp:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        * platform/graphics/cg/PathCG.cpp:
+        * platform/graphics/cg/PatternCG.cpp:
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::platformDataAssign):
+        (WebCore::FontPlatformData::platformIsEqual):
+        (WebCore::FontPlatformData::setFont):
+        (WebCore::FontPlatformData::allowsLigatures):
+        (WebCore::FontPlatformData::ctFont):
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm: Added.
+        (WebCore::DisplayRefreshMonitor::~DisplayRefreshMonitor):
+        (WebCore::DisplayRefreshMonitor::requestRefreshCallback):
+        (WebCore::DisplayRefreshMonitor::displayLinkFired):
+        * platform/graphics/ios/FontCacheIOS.mm: Added.
+        * platform/graphics/ios/FontServicesIOS.h: Added.
+        * platform/graphics/ios/FontServicesIOS.mm: Added.
+        (WebCore::FontServicesIOS::FontServicesIOS):
+        * platform/graphics/ios/GraphicsContext3DIOS.h: Added.
+        * platform/graphics/ios/IconIOS.mm: Copied from Source/WebCore/platform/mac/DisplaySleepDisabler.cpp.
+        * platform/graphics/ios/InbandTextTrackPrivateAVFIOS.h: Copied from Source/WebCore/platform/graphics/cg/ImageBufferDataCG.h.
+        (WebCore::InbandTextTrackPrivateAVFIOS::create):
+        (WebCore::InbandTextTrackPrivateAVFIOS::internalID):
+        * platform/graphics/ios/InbandTextTrackPrivateAVFIOS.mm: Copied from Source/WebCore/platform/graphics/mac/IntRectMac.mm.
+        (WebCore::InbandTextTrackPrivateAVFIOS::InbandTextTrackPrivateAVFIOS):
+        (WebCore::InbandTextTrackPrivateAVFIOS::~InbandTextTrackPrivateAVFIOS):
+        (WebCore::InbandTextTrackPrivateAVFIOS::kind):
+        * platform/graphics/ios/MediaPlayerPrivateIOS.h: Added.
+        * platform/graphics/ios/MediaPlayerPrivateIOS.mm: Added.
+        * platform/graphics/ios/SimpleFontDataIOS.mm: Added.
+        (WebCore::fontFamilyShouldNotBeUsedForArabic):
+        (WebCore::fontHasVerticalGlyphs):
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        (WebCore::SimpleFontData::platformCreateScaledFontData):
+        (WebCore::SimpleFontData::containsCharacters):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/ios/TextTrackRepresentationIOS.h: Copied from Source/WebCore/platform/graphics/TextTrackRepresentation.cpp.
+        * platform/graphics/ios/TextTrackRepresentationIOS.mm: Added.
+        * platform/graphics/mac/ColorMac.h:
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/FloatPointMac.mm:
+        * platform/graphics/mac/FloatRectMac.mm:
+        * platform/graphics/mac/FloatSizeMac.mm:
+        * platform/graphics/mac/FontCacheMac.mm:
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::fontDataForCombiningCharacterSequence):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::showLetterpressedGlyphsWithAdvances):
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::setRenderbufferStorageFromDrawable):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::endPaint):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing):
+        (WebCore::createDotPattern):
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+        * platform/graphics/mac/IconMac.mm:
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::invalidatePlatformData):
+        * platform/graphics/mac/IntPointMac.mm:
+        * platform/graphics/mac/IntRectMac.mm:
+        * platform/graphics/mac/IntSizeMac.mm:
+        * platform/graphics/mac/MediaPlayerProxy.h:
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        * platform/graphics/mac/WebGLLayer.h:
+        * platform/graphics/mac/WebGLLayer.mm:
+        (-[WebGLLayer copyImageSnapshotWithColorSpace:]):
+        (-[WebGLLayer display]):
+        * platform/graphics/mac/WebLayer.mm:
+        (WebCore::drawLayerContents):
+        (-[WebSimpleLayer display]):
+        (-[WebSimpleLayer drawInContext:]):
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (+[WebTiledLayer shouldDrawOnMainThread]):
+        (-[WebTiledLayer display]):
+        (-[WebTiledLayer drawInContext:]):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::blitFramebuffer):
+        (WebCore::Extensions3DOpenGL::bindVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+        (WebCore::Extensions3DOpenGL::drawBuffersEXT):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::Extensions3DOpenGLCommon):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore::GraphicsContext3D::resolveMultisamplingIfNecessary):
+        (WebCore::GraphicsContext3D::renderbufferStorage):
+        (WebCore::GraphicsContext3D::getIntegerv):
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::depthRange):
+        (WebCore::GraphicsContext3D::clearDepth):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::multiply):
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/wince/FontWinCE.cpp:
+        (WebCore::Font::drawComplexText):
+        * platform/ios/ContentFilterIOS.mm: Copied from Source/WebCore/platform/ContentFilter.h.
+        * platform/ios/DeviceMotionClientIOS.h: Added.
+        (WebCore::DeviceMotionClientIOS::create):
+        * platform/ios/DeviceMotionClientIOS.mm: Added.
+        * platform/ios/DeviceOrientationClientIOS.h: Added.
+        (WebCore::DeviceOrientationClientIOS::create):
+        * platform/ios/DeviceOrientationClientIOS.mm: Added.
+        * platform/ios/KeyEventIOS.mm:
+        * platform/ios/MIMETypeRegistryIOS.mm: Copied from Source/WebCore/platform/network/mac/CredentialStorageMac.mm.
+        * platform/ios/MemoryPressureHandlerIOS.mm: Added.
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::write):
+        (WebCore::Pasteboard::resourceMIMEType):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::read):
+        (WebCore::supportedImageTypes):
+        (WebCore::Pasteboard::supportedPasteboardTypes):
+        (WebCore::Pasteboard::hasData):
+        (WebCore::Pasteboard::readString):
+        * platform/ios/PlatformEventFactoryIOS.h: Copied from Source/WebCore/platform/mac/DisplaySleepDisabler.h.
+        * platform/ios/PlatformEventFactoryIOS.mm: Added.
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+        * platform/ios/PlatformScreenIOS.mm: Added.
+        * platform/ios/PlatformSpeechSynthesizerIOS.mm: Added.
+        * platform/ios/SSLKeyGeneratorIOS.cpp: Added.
+        * platform/ios/ScrollAnimatorIOS.h: Copied from Source/WebCore/platform/mac/DisplaySleepDisabler.h.
+        * platform/ios/ScrollAnimatorIOS.mm: Added.
+        * platform/ios/ScrollViewIOS.mm: Added.
+        * platform/ios/ScrollbarThemeIOS.h: Added.
+        * platform/ios/ScrollbarThemeIOS.mm: Added.
+        * platform/ios/SelectionRect.cpp: Added.
+        * platform/ios/SelectionRect.h: Added.
+        * platform/ios/SoundIOS.mm: Copied from Source/WebCore/platform/text/mac/CharsetData.h.
+        * platform/ios/SystemMemoryIOS.cpp: Added.
+        * platform/ios/ThemeIOS.h: Copied from Source/WebCore/platform/KillRingNone.cpp.
+        * platform/ios/ThemeIOS.mm: Copied from Source/WebCore/platform/KillRingNone.cpp.
+        * platform/ios/TileCache.h: Added.
+        (WebCore::TileCache::isSpeculativeTileCreationEnabled):
+        * platform/ios/TileCache.mm: Added.
+        * platform/ios/TileGrid.h: Added.
+        * platform/ios/TileGrid.mm: Added.
+        * platform/ios/TileGridTile.h: Copied from Source/WebCore/platform/ContentFilter.h.
+        * platform/ios/TileGridTile.mm: Added.
+        * platform/ios/TileLayer.h: Copied from Source/WebCore/platform/mac/DisplaySleepDisabler.h.
+        * platform/ios/TileLayer.mm: Added.
+        * platform/ios/TileLayerPool.mm: Added.
+        * platform/ios/WebCoreMotionManager.h: Copied from Source/WebCore/platform/KillRingNone.cpp.
+        * platform/ios/WebCoreMotionManager.mm: Added.
+        * platform/ios/WebCoreSystemInterfaceIOS.h: Added.
+        * platform/ios/WebCoreSystemInterfaceIOS.mm: Added.
+        * platform/ios/WebEvent.h: Added.
+        * platform/ios/WebEvent.mm: Added.
+        * platform/ios/WidgetIOS.mm: Added.
+        * platform/mac/DisplaySleepDisabler.cpp:
+        (WebCore::DisplaySleepDisabler::DisplaySleepDisabler):
+        (WebCore::DisplaySleepDisabler::~DisplaySleepDisabler):
+        * platform/mac/DisplaySleepDisabler.h:
+        * platform/mac/FileSystemMac.mm:
+        * platform/mac/KillRingMac.mm:
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::install):
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        * platform/mac/PlatformClockCM.mm:
+        (PlatformClockCM::PlatformClockCM):
+        * platform/mac/SoftLinking.h:
+        * platform/mac/SystemVersionMac.mm:
+        * platform/mac/WebCoreFullScreenPlaceholderView.h:
+        * platform/mac/WebCoreFullScreenPlaceholderView.mm:
+        * platform/mac/WebCoreFullScreenWarningView.h:
+        * platform/mac/WebCoreFullScreenWarningView.mm:
+        * platform/mac/WebCoreFullScreenWindow.h:
+        * platform/mac/WebCoreFullScreenWindow.mm:
+        * platform/mac/WebCoreNSCellExtras.h:
+        * platform/mac/WebCoreNSCellExtras.m:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebFontCache.mm:
+        (+[WebFontCache fontWithFamily:traits:size:]):
+        * platform/network/BlobRegistry.cpp:
+        * platform/network/BlobRegistryImpl.cpp:
+        * platform/network/Credential.h:
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::CredentialStorage::set):
+        (WebCore::CredentialStorage::clearCredentials):
+        * platform/network/CredentialStorage.h:
+        * platform/network/NetworkStateNotifier.h:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::builtinResourceHandleConstructorMap):
+        (WebCore::ResourceHandle::continueWillSendRequest):
+        (WebCore::ResourceHandle::continueDidReceiveResponse):
+        (WebCore::ResourceHandle::continueShouldUseCredentialStorage):
+        (WebCore::ResourceHandle::continueCanAuthenticateAgainstProtectionSpace):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setDefaultAllowCookies):
+        (WebCore::ResourceRequestBase::defaultAllowCookies):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+        * platform/network/cf/CredentialStorageCFNet.cpp:
+        (WebCore::CredentialStorage::saveToPersistentStorage):
+        * platform/network/cf/DNSCFNet.cpp:
+        * platform/network/cf/ProxyServerCFNet.cpp:
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::setMainResourceRequest):
+        (WebCore::ResourceRequest::isMainResourceRequest):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldHTTPBody):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::applyWebArchiveHackForMail):
+        (WebCore::initializeHTTPConnectionSettingsOnStartup):
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::reportErrorToClient):
+        * platform/network/ios/NetworkStateNotifierIOS.cpp: Copied from Source/WebCore/platform/KillRingNone.cpp.
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        (WebCore::NetworkStateNotifier::setIsOnLine):
+        * platform/network/ios/QuickLook.h: Added.
+        * platform/network/ios/QuickLook.mm: Added.
+        * platform/network/ios/ResourceHandleIOS.mm: Added.
+        * platform/network/ios/WebCoreURLResponseIOS.h: Copied from Source/WebCore/platform/graphics/StringTruncator.h.
+        * platform/network/ios/WebCoreURLResponseIOS.mm: Added.
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::mac):
+        * platform/network/mac/CredentialStorageMac.mm:
+        (WebCore::CredentialStorage::saveToPersistentStorage):
+        * platform/network/mac/ResourceErrorMac.mm:
+        (dictionaryThatCanCode):
+        (-[WebCustomNSURLError encodeWithCoder:]):
+        (NSErrorFromCFError):
+        (WebCore::ResourceError::nsError):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::synchronousWillSendRequestEnabled):
+        (WebCore::ResourceHandle::createNSURLConnection):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::schedule):
+        (WebCore::ResourceHandle::unschedule):
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::updateNSURLRequest):
+        (WebCore::ResourceRequest::applyWebArchiveHackForMail):
+        (WebCore::ResourceRequest::useQuickLookResourceCachingQuirks):
+        * platform/network/mac/UTIUtilities.mm:
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connectionShouldUseCredentialStorage:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveDataArray:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveData:lengthReceived:]):
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didFailWithError:]):
+        * platform/sql/SQLiteDatabase.h:
+        (WebCore::SQLiteDatabase::sqlite3Handle):
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::truncateDatabaseFile):
+        * platform/sql/SQLiteFileSystem.h:
+        * platform/sql/SQLiteTransaction.cpp:
+        (WebCore::SQLiteTransaction::begin):
+        (WebCore::SQLiteTransaction::commit):
+        (WebCore::SQLiteTransaction::rollback):
+        (WebCore::SQLiteTransaction::stop):
+        * platform/sql/ios/SQLiteDatabaseTracker.cpp: Added.
+        * platform/sql/ios/SQLiteDatabaseTracker.h: Copied from Source/WebCore/platform/MemoryPressureHandler.cpp.
+        * platform/sql/ios/SQLiteDatabaseTrackerClient.h: Copied from Source/WebCore/platform/KillRingNone.cpp.
+        * platform/text/PlatformLocale.cpp:
+        * platform/text/PlatformLocale.h:
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::cursorMovementIterator):
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerEncodingNames):
+        (WebCore::TextCodecICU::registerCodecs):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::extendTextCodecMaps):
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::canHyphenate):
+        * platform/text/ios/LocalizedDateCache.h: Copied from Source/WebCore/platform/MemoryPressureHandler.h.
+        * platform/text/ios/LocalizedDateCache.mm: Added.
+        * platform/text/mac/CharsetData.h:
+        * platform/text/mac/LocaleMac.h:
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::formatDateTime):
+        (WebCore::LocaleMac::maximumWidthForDateType):
+        * platform/text/mac/TextBoundaries.mm:
+        (WebCore::isSkipCharacter):
+        (WebCore::isWhitespaceCharacter):
+        (WebCore::isWordDelimitingCharacter):
+        (WebCore::isSymbolCharacter):
+        (WebCore::isAmbiguousBoundaryCharacter):
+        (WebCore::tokenizerForString):
+        (WebCore::findSimpleWordBoundary):
+        (WebCore::findComplexWordBoundary):
+        (WebCore::findWordBoundary):
+        (WebCore::findNextWordFromIndex):
+        * platform/text/mac/TextCodecMac.cpp:
+        * platform/text/mac/TextCodecMac.h:
+
 2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Consolidate developerExtrasEnabled to just InspectorEnvironment

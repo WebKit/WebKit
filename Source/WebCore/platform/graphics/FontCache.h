@@ -33,11 +33,16 @@
 #include "FontDescription.h"
 #include <limits.h>
 #include <wtf/Forward.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/Unicode.h>
+
+#if PLATFORM(IOS)
+#include <CoreText/CTFont.h>
+#endif
 
 #if OS(WINDOWS)
 #include <windows.h>
@@ -100,9 +105,9 @@ struct FontDescriptionFontDataCacheKey {
 };
 
 class FontCache {
-    friend class FontCachePurgePreventer;
-
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
+    friend class FontCachePurgePreventer;
+    friend class NeverDestroyed<FontCache>;
 public:
     friend FontCache* fontCache();
 
@@ -117,6 +122,9 @@ public:
     // Also implemented by the platform.
     void platformInit();
 
+#if PLATFORM(IOS)
+    static float weightOfCTFont(CTFontRef);
+#endif
 #if PLATFORM(WIN)
     IMLangFontLinkType* getFontLinkInterface();
     static void comInitialize();
@@ -178,6 +186,10 @@ private:
     FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);
 
     // These methods are implemented by each platform.
+#if PLATFORM(IOS)
+    FontPlatformData* getCustomFallbackFont(const UInt32, const FontDescription&);
+    PassRefPtr<SimpleFontData> getSystemFontFallbackForCharacters(const FontDescription&, const SimpleFontData*, const UChar* characters, int length);
+#endif
     PassOwnPtr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family);
 #if PLATFORM(MAC)
     PassRefPtr<SimpleFontData> similarFontPlatformData(const FontDescription&);
@@ -193,6 +205,9 @@ private:
 #endif
     friend class SimpleFontData; // For getCachedFontData(const FontPlatformData*)
     friend class FontGlyphs;
+#if PLATFORM(IOS)
+    friend class ComplexTextController;
+#endif
 };
 
 // Get the global fontCache.

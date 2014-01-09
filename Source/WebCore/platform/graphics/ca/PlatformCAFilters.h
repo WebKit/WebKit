@@ -33,7 +33,7 @@
 #include "PlatformLayer.h"
 #include <wtf/RetainPtr.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 #define USE_CA_FILTERS 1
 #else
 #define USE_CA_FILTERS 0

@@ -29,7 +29,9 @@
 #import "IntRect.h"
 #import "PlatformCALayer.h"
 #import "Region.h"
+#if !PLATFORM(IOS)
 #import "LayerPool.h"
+#endif
 #import "WebLayer.h"
 #import <wtf/MainThread.h>
 #import <utility>
@@ -166,6 +168,11 @@ void TileController::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileI
 
 void TileController::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const IntRect&)
 {
+#if PLATFORM(IOS)
+    if (pthread_main_np())
+        WebThreadLock();
+#endif
+
     if (platformCALayer == m_tiledScrollingIndicatorLayer.get()) {
         drawTileMapContents(context.platformContext(), m_tiledScrollingIndicatorLayer->bounds());
         return;
@@ -621,7 +628,9 @@ void TileController::removeAllTiles()
 
     for (size_t i = 0; i < tilesToRemove.size(); ++i) {
         TileInfo tileInfo = m_tiles.take(tilesToRemove[i]);
+#if !PLATFORM(IOS)
         LayerPool::sharedPool()->addLayer(tileInfo.layer);
+#endif
     }
 }
 
@@ -639,7 +648,9 @@ void TileController::removeAllSecondaryTiles()
 
     for (size_t i = 0; i < tilesToRemove.size(); ++i) {
         TileInfo tileInfo = m_tiles.take(tilesToRemove[i]);
+#if !PLATFORM(IOS)
         LayerPool::sharedPool()->addLayer(tileInfo.layer);
+#endif
     }
 }
 
@@ -658,7 +669,9 @@ void TileController::removeTilesInCohort(TileCohort cohort)
 
     for (size_t i = 0; i < tilesToRemove.size(); ++i) {
         TileInfo tileInfo = m_tiles.take(tilesToRemove[i]);
+#if !PLATFORM(IOS)
         LayerPool::sharedPool()->addLayer(tileInfo.layer);
+#endif
     }
 }
 
@@ -787,7 +800,9 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
 
         for (size_t i = 0, size = tilesToRemove.size(); i < size; ++i) {
             TileInfo tileInfo = m_tiles.take(tilesToRemove[i]);
+#if !PLATFORM(IOS)
             LayerPool::sharedPool()->addLayer(tileInfo.layer);
+#endif
         }
     }
 
@@ -1061,7 +1076,11 @@ int TileController::rightMarginWidth() const
 
 RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect)
 {
+#if PLATFORM(IOS)
+    RefPtr<PlatformCALayer> layer;
+#else
     RefPtr<PlatformCALayer> layer = LayerPool::sharedPool()->takeLayerWithSize(tileRect.size());
+#endif
 
     if (layer) {
         m_tileRepaintCounts.remove(layer.get());

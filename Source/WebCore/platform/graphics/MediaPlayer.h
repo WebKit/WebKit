@@ -224,6 +224,11 @@ public:
     virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) { return false; }
 #endif
     
+#if ENABLE(IOS_AIRPLAY)
+    virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*) { };
+    virtual void mediaPlayerPlaybackTargetAvailabilityChanged(MediaPlayer*) { };
+#endif
+
     virtual String mediaPlayerReferrer() const { return String(); }
     virtual String mediaPlayerUserAgent() const { return String(); }
     virtual CORSMode mediaPlayerCORSMode() const { return Unspecified; }
@@ -433,6 +438,21 @@ public:
     void exitFullscreen();
 #endif
 
+#if ENABLE(IOS_AIRPLAY)
+    bool isCurrentPlaybackTargetWireless() const;
+    void showPlaybackTargetPicker();
+
+    bool hasWirelessPlaybackTargets() const;
+
+    bool wirelessVideoPlaybackDisabled() const;
+    void setWirelessVideoPlaybackDisabled(bool);
+
+    void currentPlaybackTargetIsWirelessChanged();
+    void playbackTargetAvailabilityChanged();
+
+    void setHasPlaybackTargetAvailabilityListeners(bool);
+#endif
+
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     bool canEnterFullscreen() const;
 #endif
@@ -485,6 +505,11 @@ public:
     String userAgent() const;
 
     String engineDescription() const;
+
+#if PLATFORM(IOS)
+    void attributeChanged(const String& name, const String& value);
+    bool readyForPlayback() const;
+#endif
 
     CachedResourceLoader* cachedResourceLoader();
 

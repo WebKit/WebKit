@@ -35,6 +35,24 @@
 
 #include <wtf/HashSet.h>
 
+#if PLATFORM(IOS)
+#ifdef __OBJC__
+@class WAKScrollView;
+@class WAKView;
+#else
+class WAKScrollView;
+class WAKView;
+#endif
+
+#ifndef NSScrollView
+#define NSScrollView WAKScrollView
+#endif
+
+#ifndef NSView
+#define NSView WAKView
+#endif
+#endif // PLATFORM(IOS)
+
 #if PLATFORM(MAC) && defined __OBJC__
 @protocol WebCoreFrameScrollView;
 #endif
@@ -43,6 +61,7 @@ namespace WebCore {
 
 class HostWindow;
 class Scrollbar;
+class TileCache;
 
 class ScrollView : public Widget, public ScrollableArea {
 public:
@@ -141,9 +160,20 @@ public:
     // the setFixedVisibleContentRect instead for the mainframe, though this must be updated manually, e.g just before resuming the page
     // which usually will happen when panning, pinching and rotation ends, or when scale or position are changed manually.
     virtual IntRect visibleContentRect(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const OVERRIDE;
+#if !PLATFORM(IOS)
     virtual void setFixedVisibleContentRect(const IntRect& visibleContentRect) { m_fixedVisibleContentRect = visibleContentRect; }
     IntRect fixedVisibleContentRect() const { return m_fixedVisibleContentRect; }
+#endif
     IntSize visibleSize() const { return visibleContentRect().size(); }
+#if PLATFORM(IOS)
+    // This is the area that is not covered by UI elements.
+    IntRect actualVisibleContentRect() const;
+    // This is the area that is partially or fully exposed, and may extend under overlapping UI elements.
+    IntRect visibleExtentContentRect() const;
+
+    void setActualScrollPosition(const IntPoint&);
+    TileCache* tileCache();
+#endif
     virtual int visibleWidth() const OVERRIDE { return visibleContentRect().width(); }
     virtual int visibleHeight() const OVERRIDE { return visibleContentRect().height(); }
 
@@ -180,6 +210,11 @@ public:
     IntPoint adjustScrollPositionWithinRange(const IntPoint&) const; 
     int scrollX() const { return scrollPosition().x(); }
     int scrollY() const { return scrollPosition().y(); }
+
+#if PLATFORM(IOS)
+    int actualScrollX() const { return actualVisibleContentRect().x(); }
+    int actualScrollY() const { return actualVisibleContentRect().y(); }
+#endif
 
     // scrollOffset() anchors its (0,0) point at the top end of the header if this ScrollableArea
     // has a header, so it is relative to the totalContentsSize(). scrollOffsetRelativeToDocument()
@@ -354,7 +389,9 @@ private:
     // whether it is safe to blit on scroll.
     bool m_canBlitOnScroll;
 
+#if !PLATFORM(IOS)
     IntRect m_fixedVisibleContentRect;
+#endif
     IntSize m_scrollOffset; // FIXME: Would rather store this as a position, but we will wait to make this change until more code is shared.
     IntPoint m_cachedScrollPosition;
     IntSize m_fixedLayoutSize;

@@ -37,14 +37,18 @@
 
 namespace WebCore {
 
-void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int, int) const
+float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int, int) const
 {
     GlyphBuffer glyphBuffer;
     HarfBuzzShaper shaper(this, run);
-    if (shaper.shape(&glyphBuffer))
-        drawGlyphBuffer(context, run, glyphBuffer, point);
-    else
-        LOG_ERROR("Shaper couldn't shape glyphBuffer.");
+    if (shaper.shape(&glyphBuffer)) {
+        FloatPoint startPoint = point;
+        float startX = startPoint.x();
+        drawGlyphBuffer(context, run, glyphBuffer, startPoint);
+        return startPoint.x() - startX;
+    }
+    LOG_ERROR("Shaper couldn't shape glyphBuffer.");
+    return 0;
 }
 
 void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const

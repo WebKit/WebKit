@@ -35,7 +35,11 @@ namespace WebCore {
     class GraphicsContext3D;
 }
 
-@interface WebGLLayer : CAOpenGLLayer 
+#if PLATFORM(IOS)
+@interface WebGLLayer : CAEAGLLayer
+#else
+@interface WebGLLayer : CAOpenGLLayer
+#endif
 {
     WebCore::GraphicsLayer* m_layerOwner;
     WebCore::GraphicsContext3D* m_context;

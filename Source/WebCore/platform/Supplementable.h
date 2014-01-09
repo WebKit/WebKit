@@ -28,6 +28,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -99,20 +100,20 @@ class Supplementable {
 public:
     void provideSupplement(const char* key, PassOwnPtr<Supplement<T>> supplement)
     {
-        ASSERT(m_threadId == currentThread());
+        ASSERT(canAccessThreadLocalDataForThread(m_threadId));
         ASSERT(!m_supplements.get(key));
         m_supplements.set(key, supplement);
     }
 
     void removeSupplement(const char* key)
     {
-        ASSERT(m_threadId == currentThread());
+        ASSERT(canAccessThreadLocalDataForThread(m_threadId));
         m_supplements.remove(key);
     }
 
     Supplement<T>* requireSupplement(const char* key)
     {
-        ASSERT(m_threadId == currentThread());
+        ASSERT(canAccessThreadLocalDataForThread(m_threadId));
         return m_supplements.get(key);
     }
 

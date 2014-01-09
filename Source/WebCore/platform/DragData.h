@@ -34,7 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -55,10 +55,9 @@ namespace WebCore {
 class DataObjectGtk;
 }
 typedef WebCore::DataObjectGtk* DragDataRef;
-#elif PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(NIX)
+#elif PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(NIX) || PLATFORM(IOS)
 typedef void* DragDataRef;
 #endif
-
 
 namespace WebCore {
 

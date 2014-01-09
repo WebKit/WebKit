@@ -332,6 +332,10 @@ inline unsigned URL::pathAfterLastSlash() const
     return m_pathAfterLastSlash;
 }
 
+#if PLATFORM(IOS)
+void enableURLSchemeCanonicalization(bool);
+#endif
+
 } // namespace WebCore
 
 namespace WTF {

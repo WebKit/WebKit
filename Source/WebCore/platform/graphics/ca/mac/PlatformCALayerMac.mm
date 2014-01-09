@@ -48,6 +48,13 @@
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(IOS)
+#import "WebCoreThread.h"
+#import "WebTiledLayer.h"
+#import <Foundation/NSGeometry.h>
+#import <QuartzCore/CATiledLayerPrivate.h>
+#endif
+
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 
@@ -99,6 +106,9 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 - (void)animationDidStart:(CAAnimation *)animation
 {
+#if PLATFORM(IOS)
+    WebThreadLock();
+#endif
     // hasNonZeroBeginTime is stored in a key in the animation
     bool hasNonZeroBeginTime = [[animation valueForKey:WKNonZeroBeginTimeFlag] boolValue];
     CFTimeInterval startTime;
@@ -726,6 +736,16 @@ void PlatformCALayerMac::setContentsScale(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setContentsScale:value];
+#if PLATFORM(IOS)
+    [m_layer.get() setRasterizationScale:value];
+
+    if (m_layerType == LayerTypeWebTiledLayer) {
+        // This will invalidate all the tiles so we won't end up with stale tiles with the wrong scale in the wrong place,
+        // see <rdar://problem/9434765> for more information.
+        static NSDictionary *optionsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], kCATiledLayerRemoveImmediately, nil];
+        [(CATiledLayer *)m_layer.get() setNeedsDisplayInRect:[m_layer.get() bounds] levelOfDetail:0 options:optionsDictionary];
+    }
+#endif
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -769,6 +789,58 @@ TiledBacking* PlatformCALayerMac::tiledBacking()
     WebTiledBackingLayer *tiledBackingLayer = static_cast<WebTiledBackingLayer *>(m_layer.get());
     return [tiledBackingLayer tiledBacking];
 }
+
+#if PLATFORM(IOS)
+bool PlatformCALayer::isWebLayer()
+{
+    BOOL result = NO;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    result = [m_layer.get() isKindOfClass:[WebLayer self]];
+    END_BLOCK_OBJC_EXCEPTIONS
+    return result;
+}
+
+void PlatformCALayer::setBoundsOnMainThread(CGRect bounds)
+{
+    CALayer *layer = m_layer.get();
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [layer setBounds:bounds];
+        END_BLOCK_OBJC_EXCEPTIONS
+    });
+}
+
+void PlatformCALayer::setPositionOnMainThread(CGPoint position)
+{
+    CALayer *layer = m_layer.get();
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [layer setPosition:position];
+        END_BLOCK_OBJC_EXCEPTIONS
+    });
+}
+
+void PlatformCALayer::setAnchorPointOnMainThread(FloatPoint3D value)
+{
+    CALayer *layer = m_layer.get();
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [layer setAnchorPoint:CGPointMake(value.x(), value.y())];
+        [layer setAnchorPointZ:value.z()];
+        END_BLOCK_OBJC_EXCEPTIONS
+    });
+}
+
+void PlatformCALayer::setTileSize(const IntSize& tileSize)
+{
+    if (m_layerType != LayerTypeWebTiledLayer)
+        return;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [static_cast<WebTiledLayer*>(m_layer.get()) setTileSize:tileSize];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+#endif // PLATFORM(IOS)
 
 PassRefPtr<PlatformCALayer> PlatformCALayerMac::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {

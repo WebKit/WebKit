@@ -42,7 +42,7 @@
 #if USE(ICU_UNICODE)
 #include "TextCodecICU.h"
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 #include "TextCodecMac.h"
 #endif
 #if OS(WINDOWS) && USE(WCHAR_UNICODE)
@@ -284,7 +284,7 @@ static void extendTextCodecMaps()
     TextCodecICU::registerCodecs(addToTextCodecMap);
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     TextCodecMac::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecMac::registerCodecs(addToTextCodecMap);
 #endif

@@ -54,6 +54,7 @@ namespace WebCore {
     M(LiveConnect) \
     M(Loading) \
     M(Media) \
+    M(MemoryPressure) \
     M(Network) \
     M(NotYetImplemented) \
     M(PageCache) \
@@ -61,6 +62,7 @@ namespace WebCore {
     M(Plugins) \
     M(PopupBlocking) \
     M(Progress) \
+    M(RemoteInspector) \
     M(ResourceLoading) \
     M(SQLDatabase) \
     M(SpellingAndGrammar) \

@@ -30,6 +30,11 @@
 #include <CoreFoundation/CFURL.h>
 #include <wtf/text/CString.h>
 
+#if PLATFORM(IOS)
+#include "RuntimeApplicationChecksIOS.h"
+#include <CoreFoundation/CFPriv.h>
+#endif
+
 namespace WebCore {
 
 URL::URL(CFURLRef url)

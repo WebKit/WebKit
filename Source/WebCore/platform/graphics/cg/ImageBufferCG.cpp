@@ -33,8 +33,13 @@
 #include "GraphicsContextCG.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
-#include <ApplicationServices/ApplicationServices.h>
 #include <math.h>
+#if !PLATFORM(IOS)
+#include <ApplicationServices/ApplicationServices.h>
+#else
+#include <CoreGraphics/CoreGraphics.h>
+#include <ImageIO/ImageIO.h>
+#endif
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
@@ -50,10 +55,17 @@
 #include <IOSurface/IOSurface.h>
 #endif
 
+// CA uses ARGB32 for textures and ARGB32 -> ARGB32 resampling is optimized.
+#define USE_ARGB32 PLATFORM(IOS)
+
 namespace WebCore {
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
+#if PLATFORM(IOS)
+static const int maxIOSurfaceDimension = 2048;
+#else
 static const int maxIOSurfaceDimension = 4096;
+#endif
 
 static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
 {
@@ -70,8 +82,13 @@ static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
     if (!allocSize)
         return 0;
 
-    const void *keys[6];
-    const void *values[6];
+#if !PLATFORM(IOS)
+    const void* keys[6];
+    const void* values[6];
+#else
+    const void* keys[7];
+    const void* values[7];
+#endif
     keys[0] = kIOSurfaceWidth;
     values[0] = CFNumberCreate(0, kCFNumberIntType, &width);
     keys[1] = kIOSurfaceHeight;
@@ -84,9 +101,14 @@ static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
     values[4] = CFNumberCreate(0, kCFNumberLongType, &bytesPerRow);
     keys[5] = kIOSurfaceAllocSize;
     values[5] = CFNumberCreate(0, kCFNumberLongType, &allocSize);
+#if PLATFORM(IOS)
+    keys[6] = kIOSurfaceCacheMode;
+    int cacheMode = kIOMapWriteCombineCache;
+    values[6] = CFNumberCreate(0, kCFNumberIntType, &cacheMode);
+#endif
 
-    RetainPtr<CFDictionaryRef> dict = adoptCF(CFDictionaryCreate(0, keys, values, 6, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    for (unsigned i = 0; i < 6; i++)
+    RetainPtr<CFDictionaryRef> dict = adoptCF(CFDictionaryCreate(0, keys, values, WTF_ARRAY_LENGTH(values), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(values); ++i)
         CFRelease(values[i]);
 
     return adoptCF(IOSurfaceCreate(dict.get()));
@@ -169,7 +191,11 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace 
             return;
         ASSERT(!(reinterpret_cast<intptr_t>(m_data.m_data) & 3));
 
+#if USE_ARGB32
+        m_data.m_bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
+#else
         m_data.m_bitmapInfo = kCGImageAlphaPremultipliedLast;
+#endif
         cgContext = adoptCF(CGBitmapContextCreate(m_data.m_data, m_data.m_backingStoreSize.width(), m_data.m_backingStoreSize.height(), 8, m_data.m_bytesPerRow.unsafeGet(), m_data.m_colorSpace, m_data.m_bitmapInfo));
         // Create a live image that wraps the data.
         m_data.m_dataProvider = adoptCF(CGDataProviderCreateWithData(0, m_data.m_data, numBytes.unsafeGet(), releaseImageData));
@@ -276,7 +302,13 @@ void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace,
 
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(m_resolutionScale, m_resolutionScale);
-    destContext->drawNativeImage(image.get(), m_data.m_backingStoreSize, colorSpace, destRect, adjustedSrcRect, op, blendMode);
+    destContext->drawNativeImage(image.get(), m_data.m_backingStoreSize, colorSpace, destRect, adjustedSrcRect,
+#if PLATFORM(IOS)
+        1.0f, // Default scale of 1.0
+#endif
+        op,
+        blendMode
+    );
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
@@ -373,7 +405,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
 
 static inline CFStringRef jpegUTI()
 {
-#if PLATFORM(WIN)
+#if PLATFORM(IOS) || PLATFORM(WIN)
     static const CFStringRef kUTTypeJPEG = CFSTR("public.jpeg");
 #endif
     return kUTTypeJPEG;
@@ -381,7 +413,7 @@ static inline CFStringRef jpegUTI()
     
 static RetainPtr<CFStringRef> utiFromMIMEType(const String& mimeType)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     return adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString().get(), 0));
 #else
     ASSERT(isMainThread()); // It is unclear if CFSTR is threadsafe.

@@ -43,22 +43,34 @@ namespace WebCore {
     public:
         ResourceRequest(const String& url) 
             : ResourceRequestBase(URL(ParsedURLString, url), UseProtocolCachePolicy)
+#if PLATFORM(IOS)
+            , m_mainResourceRequest(false)
+#endif
         {
         }
 
         ResourceRequest(const URL& url) 
             : ResourceRequestBase(url, UseProtocolCachePolicy)
+#if PLATFORM(IOS)
+            , m_mainResourceRequest(false)
+#endif
         {
         }
 
         ResourceRequest(const URL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy) 
             : ResourceRequestBase(url, policy)
+#if PLATFORM(IOS)
+            , m_mainResourceRequest(false)
+#endif
         {
             setHTTPReferrer(referrer);
         }
         
         ResourceRequest()
             : ResourceRequestBase(URL(), UseProtocolCachePolicy)
+#if PLATFORM(IOS)
+            , m_mainResourceRequest(false)
+#endif
         {
         }
         
@@ -70,6 +82,9 @@ namespace WebCore {
 
         ResourceRequest(CFURLRequestRef cfRequest)
             : ResourceRequestBase()
+#if PLATFORM(IOS)
+            , m_mainResourceRequest(false)
+#endif
             , m_cfRequest(cfRequest)
         {
 #if PLATFORM(MAC)
@@ -79,6 +94,9 @@ namespace WebCore {
 #else
         ResourceRequest(NSURLRequest *nsRequest)
             : ResourceRequestBase()
+#if PLATFORM(IOS)
+            , m_mainResourceRequest(false)
+#endif
             , m_nsRequest(nsRequest)
         {
         }
@@ -107,6 +125,14 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         static bool useQuickLookResourceCachingQuirks();
+#endif
+
+#if PLATFORM(IOS)
+        void setMainResourceRequest(bool isMainResourceRequest) const { m_mainResourceRequest = isMainResourceRequest; }
+        bool isMainResourceRequest() const { return m_mainResourceRequest; }
+
+    private:
+        mutable bool m_mainResourceRequest;
 #endif
 
     private:

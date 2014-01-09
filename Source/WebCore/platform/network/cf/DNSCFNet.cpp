@@ -37,6 +37,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
+#if PLATFORM(IOS)
+#include <CFNetwork/CFNetwork.h>
+#endif
+
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
 #include <CFNetwork/CFNetwork.h>

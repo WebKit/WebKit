@@ -26,7 +26,11 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS)
+#include "NativeImagePtr.h"
+#include <CoreGraphics/CoreGraphics.h>
+#include <wtf/RetainPtr.h>
+#elif PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSImage;
 #elif PLATFORM(WIN)
@@ -52,8 +56,16 @@ public:
     static PassRefPtr<Icon> create(HICON hIcon) { return adoptRef(new Icon(hIcon)); }
 #endif
 
+#if PLATFORM(IOS)
+    // FIXME: Make this work for non-iOS ports and remove the PLATFORM(IOS)-guard.
+    static PassRefPtr<Icon> createIconForImage(NativeImagePtr);
+#endif
+
 private:
-#if PLATFORM(MAC)
+#if PLATFORM(IOS)
+    Icon(CGImageRef);
+    RetainPtr<CGImageRef> m_cgImage;
+#elif PLATFORM(MAC)
     Icon(NSImage*);
     RetainPtr<NSImage> m_nsImage;
 #elif PLATFORM(WIN)

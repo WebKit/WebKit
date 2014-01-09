@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class FloatPoint;
+class PlatformTouchEvent;
 class ScrollableArea;
 class Scrollbar;
 
@@ -61,6 +62,10 @@ public:
     ScrollableArea* scrollableArea() const { return m_scrollableArea; }
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
+
+#if ENABLE(TOUCH_EVENTS)
+    virtual bool handleTouchEvent(const PlatformTouchEvent&);
+#endif
 
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) { }

@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if !PLATFORM(IOS)
+
 #include "config.h"
 #include "TextCodecMac.h"
 
@@ -325,3 +327,5 @@ CString TextCodecMac::encode(const UChar* characters, size_t length, Unencodable
 }
 
 } // namespace WebCore
+
+#endif // !PLATFORM(IOS)

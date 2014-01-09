@@ -107,7 +107,9 @@ public:
     const char* lastErrorMsg();
     
     sqlite3* sqlite3Handle() const {
+#if !PLATFORM(IOS)
         ASSERT(m_sharable || currentThread() == m_openingThread || !m_db);
+#endif
         return m_db;
     }
     

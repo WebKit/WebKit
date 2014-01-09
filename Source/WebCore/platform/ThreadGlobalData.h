@@ -62,8 +62,12 @@ namespace WebCore {
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
         TECConverterWrapper& cachedConverterTEC() { return *m_cachedConverterTEC; }
+#endif
+
+#if ENABLE(WORKERS) && USE(WEB_THREAD)
+        void setWebCoreThreadData();
 #endif
 
 #if ENABLE(INSPECTOR)
@@ -83,7 +87,7 @@ namespace WebCore {
         OwnPtr<ICUConverterWrapper> m_cachedConverterICU;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
         OwnPtr<TECConverterWrapper> m_cachedConverterTEC;
 #endif
 
@@ -92,10 +96,17 @@ namespace WebCore {
 #endif
 
         static ThreadSpecific<ThreadGlobalData>* staticData;
+#if USE(WEB_THREAD)
+        static ThreadGlobalData* sharedMainThreadStaticData;
+#endif
         friend ThreadGlobalData& threadGlobalData();
     };
 
+#if USE(WEB_THREAD)
+ThreadGlobalData& threadGlobalData();
+#else
 ThreadGlobalData& threadGlobalData() PURE_FUNCTION;
+#endif
     
 } // namespace WebCore
 

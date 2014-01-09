@@ -334,6 +334,7 @@ void Scrollbar::setPressedPart(ScrollbarPart part)
         theme()->invalidatePart(this, m_hoveredPart);
 }
 
+#if !PLATFORM(IOS)
 bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
 {
     if (m_pressedPart == ThumbPart) {
@@ -372,6 +373,7 @@ bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
 
     return true;
 }
+#endif
 
 void Scrollbar::mouseEntered()
 {

@@ -38,13 +38,14 @@ namespace WebCore {
 
 SharedBuffer::SharedBuffer(CFDataRef cfData)
     : m_size(0)
-    , m_cfData(cfData)
+    , m_shouldUsePurgeableMemory(false)
 #if ENABLE(DISK_IMAGE_CACHE)
     , m_isMemoryMapped(false)
     , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)
     , m_notifyMemoryMappedCallback(nullptr)
     , m_notifyMemoryMappedCallbackData(nullptr)
 #endif
+    , m_cfData(cfData)
 {
 }
 

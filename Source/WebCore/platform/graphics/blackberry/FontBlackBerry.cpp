@@ -38,10 +38,10 @@ static inline FS_FIXED FloatToFSFixed(float n) { return static_cast<FS_FIXED>(n 
 
 namespace WebCore {
 
-void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
+float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     if (!run.length())
-        return;
+        return 0;
 
     GlyphBuffer glyphBuffer;
     HarfBuzzShaper shaper(this, run);
@@ -49,8 +49,10 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     if (!shaper.shape(&glyphBuffer))
         return;
     FloatPoint adjustedPoint = shaper.adjustStartPoint(point);
+    float startX = adjustedPoint.x();
 
     drawGlyphBuffer(context, run, glyphBuffer, adjustedPoint);
+    return adjustedPoint.x() - startX;
 }
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */, GlyphOverflow* /* glyphOverflow */) const

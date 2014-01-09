@@ -33,6 +33,10 @@
 #include "PlatformStrategies.h"
 #include <wtf/MainThread.h>
 
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#endif
+
 namespace WebCore {
 
 BlobRegistry& blobRegistry()

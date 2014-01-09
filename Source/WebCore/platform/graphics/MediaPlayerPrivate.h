@@ -97,6 +97,9 @@ public:
 
     virtual void setVolume(float) { }
     virtual void setVolumeDouble(double volume) { return setVolume(volume); }
+#if PLATFORM(IOS)
+    virtual float volume() const { return 1; }
+#endif
 
     virtual bool supportsMuting() const { return false; }
     virtual void setMuted(bool) { }
@@ -139,6 +142,18 @@ public:
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO) || USE(NATIVE_FULLSCREEN_VIDEO)
     virtual void enterFullscreen() { }
     virtual void exitFullscreen() { }
+#endif
+
+#if ENABLE(IOS_AIRPLAY)
+    virtual bool isCurrentPlaybackTargetWireless() const { return false; }
+    virtual void showPlaybackTargetPicker() { }
+
+    virtual bool hasWirelessPlaybackTargets() const { return false; }
+
+    virtual bool wirelessVideoPlaybackDisabled() const { return false; }
+    virtual void setWirelessVideoPlaybackDisabled(bool) { }
+
+    virtual void setHasPlaybackTargetAvailabilityListeners(bool) { }
 #endif
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
@@ -209,7 +224,12 @@ public:
 #if USE(GSTREAMER)
     virtual void simulateAudioInterruption() { }
 #endif
-    
+
+#if PLATFORM(IOS)
+    virtual void attributeChanged(const String&, const String&) { }
+    virtual bool readyForPlayback() const { return true; }
+#endif
+
     virtual String languageOfPrimaryAudioTrack() const { return emptyString(); }
 
     virtual size_t extraMemoryCost() const { return 0; }

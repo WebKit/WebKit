@@ -28,10 +28,19 @@
 
 #import "GraphicsContextCG.h"
 #import "GraphicsContextPlatformPrivateCG.h"
+#if USE(APPKIT)
 #import <AppKit/AppKit.h>
+#endif
 #import <wtf/StdLibExtras.h>
 
+#if PLATFORM(IOS)
+#import "Color.h"
+#import "WKGraphics.h"
+#endif
+
+#if !PLATFORM(IOS)
 #import "LocalCurrentGraphicsContext.h"
+#endif
 #import "WebCoreSystemInterface.h"
 
 @class NSColor;
@@ -45,6 +54,7 @@ namespace WebCore {
 // calls in this file are all exception-safe, so we don't block
 // exceptions for those.
 
+#if !PLATFORM(IOS)
 static void drawFocusRingToContext(CGContextRef context, CGPathRef focusRingPath, CGColorRef color, int radius)
 {
     CGContextBeginPath(context);
@@ -64,9 +74,11 @@ void GraphicsContext::drawFocusRing(const Path& path, int width, int /*offset*/,
 
     drawFocusRingToContext(platformContext(), path.platformPath(), colorRef, radius);
 }
+#endif // !PLATFORM(IOS)
 
 void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
 {
+#if !PLATFORM(IOS)
     if (paintingDisabled())
         return;
 
@@ -80,9 +92,16 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
         CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rects[i], -offset, -offset));
 
     drawFocusRingToContext(platformContext(), focusRingPath.get(), colorRef, radius);
+#else
+    UNUSED_PARAM(rects);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(color);
+#endif
 }
 
 
+#if !PLATFORM(IOS)
 static NSColor* makePatternColor(NSString* firstChoiceName, NSString* secondChoiceName, NSColor* defaultColor, bool& usingDot)
 {
     // Eventually we should be able to get rid of the secondChoiceName. For the time being we need both to keep
@@ -98,6 +117,15 @@ static NSColor* makePatternColor(NSString* firstChoiceName, NSString* secondChoi
         color = defaultColor;
     return color;
 }
+#else
+static RetainPtr<CGPatternRef> createDotPattern(bool& usingDot, const char* resourceName)
+{
+    RetainPtr<CGImageRef> image = adoptCF(WKGraphicsCreateImageFromBundleWithName(resourceName));
+    ASSERT(image); // if image is not available, we want to know
+    usingDot = true;
+    return adoptCF(WKCreatePatternFromCGImage(image.get()));
+}
+#endif // !PLATFORM(IOS)
 
 static NSColor *spellingPatternColor = nullptr;
 static NSColor *grammarPatternColor = nullptr;
@@ -121,20 +149,31 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     float patternWidth = cMisspellingLinePatternWidth;
 
     bool usingDot;
+#if !PLATFORM(IOS)
     NSColor *patternColor;
+#else
+    CGPatternRef dotPattern;
+#endif
     switch (style) {
         case DocumentMarkerSpellingLineStyle:
         {
             // Constants for spelling pattern color.
             static bool usingDotForSpelling = false;
+#if !PLATFORM(IOS)
             if (!spellingPatternColor)
                 spellingPatternColor = [makePatternColor(@"NSSpellingDot", @"SpellingDot", [NSColor redColor], usingDotForSpelling) retain];
             usingDot = usingDotForSpelling;
             patternColor = spellingPatternColor;
+#else
+            static CGPatternRef spellingPattern = createDotPattern(usingDotForSpelling, "SpellingDot").leakRef();
+            dotPattern = spellingPattern;
+#endif
+            usingDot = usingDotForSpelling;
             break;
         }
         case DocumentMarkerGrammarLineStyle:
         {
+#if !PLATFORM(IOS)
             // Constants for grammar pattern color.
             static bool usingDotForGrammar = false;
             if (!grammarPatternColor)
@@ -142,8 +181,12 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
             usingDot = usingDotForGrammar;
             patternColor = grammarPatternColor;
             break;
+#else
+            ASSERT_NOT_REACHED();
+            return;
+#endif
         }
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS) && PLATFORM(MAC)
         // To support correction panel.
         case DocumentMarkerAutocorrectionReplacementLineStyle:
         case DocumentMarkerDictationAlternativesLineStyle:
@@ -157,7 +200,21 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
             break;
         }
 #endif
+#if PLATFORM(IOS)
+        case TextCheckingDictationPhraseWithAlternativesLineStyle:
+        {
+            static bool usingDotForDictationPhraseWithAlternatives = false;
+            static CGPatternRef dictationPhraseWithAlternativesPattern = createDotPattern(usingDotForDictationPhraseWithAlternatives, "DictationPhraseWithAlternativesDot").leakRef();
+            dotPattern = dictationPhraseWithAlternativesPattern;
+            usingDot = usingDotForDictationPhraseWithAlternatives;
+            break;
+        }
+#endif // PLATFORM(IOS)
         default:
+#if PLATFORM(IOS)
+            // FIXME: Should remove default case so we get compile-time errors.
+            ASSERT_NOT_REACHED();
+#endif // PLATFORM(IOS)
             return;
     }
     
@@ -182,20 +239,33 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     // for transforms.
 
     // Draw underline.
+#if !PLATFORM(IOS)
     LocalCurrentGraphicsContext localContext(this);
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     CGContextRef context = (CGContextRef)[currentContext graphicsPort];
+#else
+    CGContextRef context = platformContext();
+#endif
     CGContextSaveGState(context);
 
+#if !PLATFORM(IOS)
     [patternColor set];
+#else
+    WKSetPattern(context, dotPattern, YES, YES);
+#endif
 
     wkSetPatternPhaseInUserSpace(context, offsetPoint);
 
+#if !PLATFORM(IOS)
     NSRectFillUsingOperation(NSMakeRect(offsetPoint.x(), offsetPoint.y(), width, patternHeight), NSCompositeSourceOver);
+#else
+    WKRectFillUsingOperation(context, CGRectMake(offsetPoint.x(), offsetPoint.y(), width, patternHeight), kCGCompositeSover);
+#endif
     
     CGContextRestoreGState(context);
 }
 
+#if !PLATFORM(IOS)
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
     static CGColorSpaceRef linearSRGBSpace = 0;
@@ -215,5 +285,6 @@ CGColorSpaceRef linearRGBColorSpaceRef()
 
     return linearSRGBSpace;
 }
+#endif
 
 }

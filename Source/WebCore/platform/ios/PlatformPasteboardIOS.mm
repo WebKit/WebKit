@@ -24,10 +24,13 @@
  */
 
 #import "config.h"
+#import "PlatformPasteboard.h"
+
 #import "Color.h"
 #import "URL.h"
 #import "Image.h"
-#import "PlatformPasteboard.h"
+#import "Pasteboard.h"
+#import "SharedBuffer.h"
 #import "SoftLinking.h"
 
 SOFT_LINK_FRAMEWORK(UIKit)
@@ -152,12 +155,12 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
 
     if (content.dataInWebArchiveFormat)
-        [representations setValue:(NSData *)content.dataInWebArchiveFormat->createNSData() forKey:WebArchivePboardType];
+        [representations setValue:(NSData *)content.dataInWebArchiveFormat->createNSData().get() forKey:WebArchivePboardType];
 
     if (content.dataInRTFDFormat)
-        [representations setValue:content.dataInRTFDFormat->createNSData() forKey:(NSString *)kUTTypeRTFD];
+        [representations setValue:content.dataInRTFDFormat->createNSData().get() forKey:(NSString *)kUTTypeRTFD];
     if (content.dataInRTFFormat)
-        [representations setValue:content.dataInRTFFormat->createNSData() forKey:(NSString *)kUTTypeRTF];
+        [representations setValue:content.dataInRTFFormat->createNSData().get() forKey:(NSString *)kUTTypeRTF];
     [representations setValue:content.dataInStringFormat forKey:(NSString *)kUTTypeText];
     [m_pasteboard setItems:@[representations.get()]];
 }
@@ -166,7 +169,7 @@ void PlatformPasteboard::write(const PasteboardImage& pasteboardImage)
 {
     RetainPtr<NSMutableDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
     if (!pasteboardImage.resourceMIMEType.isNull()) {
-        [representations setObject:pasteboardImage.image->data()->createNSData() forKey:pasteboardImage.resourceMIMEType];
+        [representations setObject:pasteboardImage.image->data()->createNSData().get() forKey:pasteboardImage.resourceMIMEType];
         [representations setObject:(NSString *)pasteboardImage.url.url forKey:(NSString *)kUTTypeURL];
     }
     [m_pasteboard setItems:@[representations.get()]];
@@ -177,7 +180,7 @@ void PlatformPasteboard::write(const String& pasteboardType, const String& text)
     RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
 
     if (pasteboardType == String(kUTTypeURL))
-        [representations setValue:[adoptNS([NSURL alloc] initWithString:text]).get() forKey:pasteboardType];
+        [representations setValue:adoptNS([[NSURL alloc] initWithString:text]).get() forKey:pasteboardType];
     else if (!pasteboardType.isNull())
         [representations setValue:text forKey:pasteboardType];
     [m_pasteboard setItems:@[representations.get()]];

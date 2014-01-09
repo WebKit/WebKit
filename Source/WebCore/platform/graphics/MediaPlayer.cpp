@@ -54,7 +54,12 @@
 #endif
 
 #if PLATFORM(MAC)
+#if PLATFORM(IOS)
+#include "MediaPlayerPrivateIOS.h"
+#define PlatformMediaEngineClassName MediaPlayerPrivateIOS
+#else
 #include "MediaPlayerPrivateQTKit.h"
+#endif
 #if USE(AVFOUNDATION)
 #include "MediaPlayerPrivateAVFoundationObjC.h"
 #if ENABLE(MEDIA_SOURCE)
@@ -212,7 +217,7 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions r
 
 #if USE(AVFOUNDATION)
         if (Settings::isAVFoundationEnabled()) {
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(MAC)
             MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
 #if ENABLE(MEDIA_SOURCE)
             MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(addMediaEngine);
@@ -223,9 +228,11 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions r
         }
 #endif
 
+#if !PLATFORM(IOS)
 #if PLATFORM(MAC)
         if (Settings::isQTKitEnabled())
             MediaPlayerPrivateQTKit::registerMediaEngine(addMediaEngine);
+#endif
 #endif
 
 #if defined(PlatformMediaEngineClassName)
@@ -837,6 +844,50 @@ void MediaPlayer::exitFullscreen()
 }
 #endif
 
+#if ENABLE(IOS_AIRPLAY)
+bool MediaPlayer::isCurrentPlaybackTargetWireless() const
+{
+    return m_private->isCurrentPlaybackTargetWireless();
+}
+
+void MediaPlayer::showPlaybackTargetPicker()
+{
+    m_private->showPlaybackTargetPicker();
+}
+
+bool MediaPlayer::hasWirelessPlaybackTargets() const
+{
+    return m_private->hasWirelessPlaybackTargets();
+}
+
+bool MediaPlayer::wirelessVideoPlaybackDisabled() const
+{
+    return m_private->wirelessVideoPlaybackDisabled();
+}
+
+void MediaPlayer::setWirelessVideoPlaybackDisabled(bool disabled)
+{
+    m_private->setWirelessVideoPlaybackDisabled(disabled);
+}
+
+void MediaPlayer::setHasPlaybackTargetAvailabilityListeners(bool hasListeners)
+{
+    m_private->setHasPlaybackTargetAvailabilityListeners(hasListeners);
+}
+
+void MediaPlayer::currentPlaybackTargetIsWirelessChanged()
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerCurrentPlaybackTargetIsWirelessChanged(this);
+}
+
+void MediaPlayer::playbackTargetAvailabilityChanged()
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerPlaybackTargetAvailabilityChanged(this);
+}
+#endif
+
 #if USE(NATIVE_FULLSCREEN_VIDEO)
 bool MediaPlayer::canEnterFullscreen() const
 {
@@ -956,6 +1007,18 @@ void MediaPlayer::setPrivateBrowsingMode(bool privateBrowsingMode)
     m_private->setPrivateBrowsingMode(m_privateBrowsing);
 }
 
+#if PLATFORM(IOS)
+void MediaPlayer::attributeChanged(const String& name, const String& value) 
+{
+    m_private->attributeChanged(name, value);
+}
+
+bool MediaPlayer::readyForPlayback() const
+{
+    return m_private->readyForPlayback();
+}
+#endif
+
 // Client callbacks.
 void MediaPlayer::networkStateChanged()
 {
@@ -981,7 +1044,12 @@ void MediaPlayer::readyStateChanged()
 
 void MediaPlayer::volumeChanged(double newVolume)
 {
+#if PLATFORM(IOS)
+    UNUSED_PARAM(newVolume);
+    m_volume = m_private->volume();
+#else
     m_volume = newVolume;
+#endif
     if (m_mediaPlayerClient)
         m_mediaPlayerClient->mediaPlayerVolumeChanged(this);
 }

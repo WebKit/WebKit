@@ -392,6 +392,9 @@ public:
     virtual void setContentsToImage(Image*) { }
     virtual bool shouldDirectlyCompositeImage(Image*) const { return true; }
     virtual void setContentsToMedia(PlatformLayer*) { } // video or plug-in
+#if PLATFORM(IOS)
+    virtual PlatformLayer* contentsLayerForMedia() const { return 0; }
+#endif
     // Pass an invalid color to remove the contents layer.
     virtual void setContentsToSolidColor(const Color&) { }
     virtual void setContentsToCanvas(PlatformLayer*) { }
@@ -442,6 +445,10 @@ public:
 
     virtual void setMaintainsPixelAlignment(bool maintainsAlignment) { m_maintainsPixelAlignment = maintainsAlignment; }
     virtual bool maintainsPixelAlignment() const { return m_maintainsPixelAlignment; }
+#if PLATFORM(IOS)
+    virtual FloatSize pixelAlignmentOffset() const { return FloatSize(); }
+    bool hasFlattenedPerspectiveTransform() const { return !preserves3D() && m_childrenTransform.hasPerspective(); }
+#endif
     
     virtual void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
     virtual bool appliesPageScale() const { return m_appliesPageScale; }

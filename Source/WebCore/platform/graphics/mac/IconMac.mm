@@ -18,6 +18,8 @@
  *
  */
 
+#if !PLATFORM(IOS)
+
 #import "config.h"
 #import "Icon.h"
 
@@ -82,3 +84,5 @@ void Icon::paint(GraphicsContext* context, const IntRect& rect)
 }
 
 }
+
+#endif // !PLATFORM(IOS)

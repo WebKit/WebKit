@@ -27,6 +27,12 @@
 #ifndef Widget_h
 #define Widget_h
 
+#if PLATFORM(IOS)
+#ifndef NSView
+#define NSView WAKView
+#endif
+#endif
+
 #include "IntRect.h"
 #include "PlatformScreen.h"
 #include <wtf/Forward.h>
@@ -189,6 +195,9 @@ public:
     NSView* getOuterView() const;
 
     void removeFromSuperview();
+#endif
+#if PLATFORM(IOS)
+    void addToSuperview(NSView*);
 #endif
 
 #if PLATFORM(EFL)

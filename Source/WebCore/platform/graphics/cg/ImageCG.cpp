@@ -32,7 +32,11 @@
 #include "FloatRect.h"
 #include "GraphicsContextCG.h"
 #include "ImageObserver.h"
+#if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
+#else
+#include <CoreGraphics/CoreGraphics.h>
+#endif
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -70,7 +74,12 @@ RetainPtr<CGImageRef> Image::imageWithColorSpace(CGImageRef originalImage, Color
 static void drawPatternCallback(void* info, CGContextRef context)
 {
     CGImageRef image = (CGImageRef)info;
-    CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(0, 0, CGImageGetWidth(image), CGImageGetHeight(image))), image);
+    CGFloat height = CGImageGetHeight(image);
+#if PLATFORM(IOS)
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -height);
+#endif
+    CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(0, 0, CGImageGetWidth(image), height)), image);
 }
 
 static void patternReleaseOnMainThreadCallback(void* info)
@@ -138,6 +147,10 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
         matrix = CGAffineTransformConcat(matrix, CGContextGetCTM(context));
         // The top of a partially-decoded image is drawn at the bottom of the tile. Map it to the top.
         matrix = CGAffineTransformTranslate(matrix, 0, size().height() - h);
+#if PLATFORM(IOS)
+        matrix = CGAffineTransformScale(matrix, 1, -1);
+        matrix = CGAffineTransformTranslate(matrix, 0, -h);
+#endif
         CGImageRef platformImage = CGImageRetain(subImage.get());
         RetainPtr<CGPatternRef> pattern = adoptCF(CGPatternCreate(platformImage, CGRectMake(0, 0, tileRect.width(), tileRect.height()), matrix,
             tileRect.width() + spaceSize().width() * (1 / narrowPrecisionToFloat(patternTransform.a())),

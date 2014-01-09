@@ -32,11 +32,18 @@
 #include "GraphicsContext3D.h"
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS)
+#include "ANGLE/ShaderLang.h"
+#include <OpenGLES/ES2/glext.h>
+#elif PLATFORM(MAC)
 #include "ANGLE/ShaderLang.h"
 #include <OpenGL/gl.h>
 #elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(NIX)
 #include "OpenGLShims.h"
+#endif
+
+#if PLATFORM(IOS)
+#include "GraphicsContext3DIOS.h"
 #endif
 
 namespace WebCore {
@@ -53,7 +60,21 @@ Extensions3DOpenGL::~Extensions3DOpenGL()
 
 void Extensions3DOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
 {
+#if PLATFORM(IOS)
+    UNUSED_PARAM(srcX0);
+    UNUSED_PARAM(srcY0);
+    UNUSED_PARAM(srcX1);
+    UNUSED_PARAM(srcY1);
+    UNUSED_PARAM(dstX0);
+    UNUSED_PARAM(dstY0);
+    UNUSED_PARAM(dstX1);
+    UNUSED_PARAM(dstY1);
+    UNUSED_PARAM(mask);
+    UNUSED_PARAM(filter);
+    ::glResolveMultisampleFramebufferAPPLE();
+#else
     ::glBlitFramebufferEXT(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+#endif
 }
 
 void Extensions3DOpenGL::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
@@ -105,6 +126,10 @@ GC3Dboolean Extensions3DOpenGL::isVertexArrayOES(Platform3DObject array)
 
 void Extensions3DOpenGL::bindVertexArrayOES(Platform3DObject array)
 {
+#if PLATFORM(IOS)
+    UNUSED_PARAM(array);
+#endif
+
     m_context->makeContextCurrent();
 #if (PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(NIX))
     if (isVertexArrayObjectSupported())
@@ -186,13 +211,19 @@ bool Extensions3DOpenGL::supportsExtension(const String& name)
         return false;
 #endif
     }
+
+#if PLATFORM(IOS)
+    if (name == "GL_EXT_packed_depth_stencil")
+        return m_availableExtensions.contains("GL_OES_packed_depth_stencil");
+#endif
+
     return m_availableExtensions.contains(name);
 }
 
 void Extensions3DOpenGL::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
 {
     //  FIXME: implement support for other platforms.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     ::glDrawBuffersARB(n, bufs);
 #else
     UNUSED_PARAM(n);

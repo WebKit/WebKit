@@ -40,6 +40,14 @@ MemoryPressureHandler::MemoryPressureHandler()
     : m_installed(false)
     , m_lastRespondTime(0)
     , m_lowMemoryHandler(releaseMemory)
+#if PLATFORM(IOS)
+    // FIXME: Can we share more of this with OpenSource?
+    , m_receivedMemoryPressure(0)
+    , m_memoryPressureReason(MemoryPressureReasonNone)
+    , m_clearPressureOnMemoryRelease(true)
+    , m_releaseMemoryBlock(0)
+    , m_observer(0)
+#endif
 {
 }
 
@@ -49,7 +57,9 @@ void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }
 void MemoryPressureHandler::holdOff(unsigned) { }
 void MemoryPressureHandler::respondToMemoryPressure() { }
+#if !PLATFORM(IOS)
 void MemoryPressureHandler::releaseMemory(bool) { }
+#endif // !PLATFORM(IOS)
 
 #endif
 

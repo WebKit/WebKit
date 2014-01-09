@@ -328,6 +328,7 @@ String Locale::convertFromLocalizedNumber(const String& localized)
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
+#if !PLATFORM(IOS)
 String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
 {
     if (date.type() == DateComponents::Invalid)
@@ -363,6 +364,8 @@ String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
     }
     return builder.toString();
 }
+#endif // !PLATFORM(IOS)
+
 #endif
 
 }

@@ -40,6 +40,10 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringBuilder.h>
 
+#if PLATFORM(IOS)
+#import "LocalizedDateCache.h"
+#endif
+
 namespace WebCore {
 
 static inline String languageFromLocale(const String& locale)
@@ -115,6 +119,35 @@ RetainPtr<NSDateFormatter> LocaleMac::shortDateFormatter()
 {
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterNoStyle);
 }
+
+#if PLATFORM(IOS)
+String LocaleMac::formatDateTime(const DateComponents& dateComponents, FormatType)
+{
+    double msec = dateComponents.millisecondsSinceEpoch();
+    DateComponents::Type type = dateComponents.type();
+
+    // "week" type not supported.
+    ASSERT(type != DateComponents::Invalid);
+    if (type == DateComponents::Week)
+        return String();
+
+    // Incoming msec value is milliseconds since 1970-01-01 00:00:00 UTC. The 1970 epoch.
+    NSTimeInterval secondsSince1970 = (msec / 1000);
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:secondsSince1970];
+
+    // Return a formatted string.
+    NSDateFormatter *dateFormatter = localizedDateCache().formatterForDateType(type);
+    return [dateFormatter stringFromDate:date];
+}
+
+float LocaleMac::maximumWidthForDateType(DateComponents::Type type, const Font& font)
+{
+    ASSERT(type != DateComponents::Invalid);
+    ASSERT(type != DateComponents::Week);
+
+    return localizedDateCache().maximumWidthForDateType(type, font);
+}
+#endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 const Vector<String>& LocaleMac::monthLabels()

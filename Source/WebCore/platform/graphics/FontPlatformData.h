@@ -49,6 +49,10 @@
 #if OS(DARWIN)
 OBJC_CLASS NSFont;
 
+#if PLATFORM(IOS)
+#import <CoreGraphics/CoreGraphics.h>
+#endif
+
 typedef struct CGFont* CGFontRef;
 typedef const struct __CTFont* CTFontRef;
 #endif
@@ -79,7 +83,7 @@ namespace WebCore {
 class FontDescription;
 class SharedBuffer;
 
-#if OS(DARWIN)
+#if OS(DARWIN) && USE(APPKIT)
 inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef>(nsFont); }
 #endif
 
@@ -92,8 +96,14 @@ public:
     FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
 
 #if OS(DARWIN)
+#if USE(APPKIT)
     FontPlatformData(NSFont*, float size, bool isPrinterFont = false, bool syntheticBold = false, bool syntheticOblique = false,
                      FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
+#else
+    FontPlatformData(CTFontRef, float size, bool isPrinterFont = false, bool syntheticBold = false, bool syntheticOblique = false,
+                     FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
+#endif
+
 #if USE(CG)
     FontPlatformData(CGFontRef, float size, bool syntheticBold, bool syntheticOblique, FontOrientation, FontWidthVariant);
 #endif
@@ -107,11 +117,18 @@ public:
 #endif
 #endif
 
+#if PLATFORM(IOS)
+    FontPlatformData(CTFontRef, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
+#endif
+
     ~FontPlatformData();
 
 #if PLATFORM(WIN)
     HFONT hfont() const { return m_font ? m_font->get() : 0; }
     bool useGDI() const { return m_useGDI; }
+#elif PLATFORM(IOS)
+    CTFontRef font() const { return m_font; }
+    void setFont(CTFontRef);
 #elif OS(DARWIN)
     NSFont* font() const { return m_font; }
     void setFont(NSFont*);
@@ -122,7 +139,12 @@ public:
     CGFontRef cgFont() const { return m_cgFont.get(); }
     CTFontRef ctFont() const;
 
+#if !PLATFORM(IOS)
     bool roundsGlyphAdvances() const;
+#else
+    bool roundsGlyphAdvances() const { return false; }
+#endif // !PLATFORM(IOS)
+
     bool allowsLigatures() const;
 #else
     CGFontRef cgFont() const { return m_cgFont.get(); }
@@ -153,10 +175,15 @@ public:
 #if PLATFORM(WIN) && !USE(CAIRO)
         return m_font ? m_font->hash() : 0;
 #elif OS(DARWIN)
+#if !PLATFORM(IOS)
 #if USE(CG)
         ASSERT(m_font || !m_cgFont);
 #endif
         uintptr_t hashCodes[3] = { (uintptr_t)m_font, m_widthVariant, static_cast<uintptr_t>(m_isPrinterFont << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique) };
+#else
+        ASSERT(m_font || !m_cgFont || m_isEmoji);
+        uintptr_t hashCodes[3] = { static_cast<uintptr_t>(CFHash(m_font)), m_widthVariant, static_cast<uintptr_t>(m_isEmoji << 4 | m_isPrinterFont << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique) };
+#endif // !PLATFORM(IOS)
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 #elif USE(CAIRO)
         return PtrHash<cairo_scaled_font_t*>::hash(m_scaledFont);
@@ -203,7 +230,9 @@ private:
     bool platformIsEqual(const FontPlatformData&) const;
     void platformDataInit(const FontPlatformData&);
     const FontPlatformData& platformDataAssign(const FontPlatformData&);
-#if OS(DARWIN)
+#if PLATFORM(IOS)
+    static CTFontRef hashTableDeletedFontValue() { return reinterpret_cast<CTFontRef>(-1); }
+#elif OS(DARWIN)
     // Load various data about the font specified by |nsFont| with the size fontSize into the following output paramters:
     void loadFont(NSFont*, float fontSize, NSFont*& outNSFont, CGFontRef&);
     static NSFont* hashTableDeletedFontValue() { return reinterpret_cast<NSFont *>(-1); }
@@ -219,11 +248,16 @@ public:
     bool m_syntheticBold;
     bool m_syntheticOblique;
     FontOrientation m_orientation;
+#if PLATFORM(IOS)
+    bool m_isEmoji;
+#endif
     float m_size;
     FontWidthVariant m_widthVariant;
 
 private:
-#if OS(DARWIN)
+#if PLATFORM(IOS)
+    CTFontRef m_font;
+#elif OS(DARWIN)
     NSFont* m_font;
 #elif PLATFORM(WIN)
     RefPtr<SharedGDIObject<HFONT>> m_font;

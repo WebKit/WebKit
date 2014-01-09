@@ -33,6 +33,11 @@
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
 
+#if PLATFORM(IOS)
+#import "WebCoreThread.h"
+#import "WebCoreThreadRun.h"
+#endif
+
 using namespace WebCore;
 
 @implementation WebTiledLayer
@@ -46,7 +51,14 @@ using namespace WebCore;
 // Make sure that tiles are drawn on the main thread
 + (BOOL)shouldDrawOnMainThread
 {
+#if PLATFORM(IOS)
+    // FIXME: WebKit2 always wants to draw on the main thread, but there is
+    // probably a better way to check for WebKit2 than using the existance of
+    // the web thread as a proxy.
+    return !WebThreadIsEnabled();
+#else
     return YES;
+#endif
 }
 
 + (unsigned int)prefetchedTiles
@@ -98,6 +110,13 @@ using namespace WebCore;
 - (void)display
 {
     [super display];
+#if PLATFORM(IOS)
+    // CATiledLayer never calls display on a background thread, so it's safe
+    // to assume we're either on the main thread or on the web thread.
+    if (pthread_main_np())
+        WebThreadLock();
+    ASSERT(WebThreadIsLockedOrDisabled());
+#endif
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
     if (layer && layer->owner())
         layer->owner()->platformCALayerLayerDidDisplay(self);
@@ -105,9 +124,20 @@ using namespace WebCore;
 
 - (void)drawInContext:(CGContextRef)context
 {
+#if PLATFORM(IOS)
+    void (^draw)() = ^{
+#endif
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
     if (layer)
         drawLayerContents(context, layer);
+#if PLATFORM(IOS)
+    };
+    if (pthread_main_np()) {
+        WebThreadLock();
+        draw();
+    } else
+        WebThreadRunSync(draw);
+#endif
 }
 
 @end // implementation WebTiledLayer

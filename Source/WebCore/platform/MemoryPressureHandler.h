@@ -29,7 +29,19 @@
 #include <time.h>
 #include <wtf/FastMalloc.h>
 
+#if PLATFORM(IOS)
+#include <wtf/ThreadingPrimitives.h>
+#endif
+
 namespace WebCore {
+
+#if PLATFORM(IOS)
+enum MemoryPressureReason {
+    MemoryPressureReasonNone = 0 << 0,
+    MemoryPressureReasonVMPressure = 1 << 0,
+    MemoryPressureReasonVMStatus = 1 << 1,
+};
+#endif
 
 typedef void (*LowMemoryHandler)(bool critical);
 
@@ -46,6 +58,16 @@ public:
         m_lowMemoryHandler = handler;
     }
 
+#if PLATFORM(IOS)
+    // FIXME: Can we share more of this with OpenSource?
+    void installMemoryReleaseBlock(void (^releaseMemoryBlock)(), bool clearPressureOnMemoryRelease = true);
+    void setReceivedMemoryPressure(MemoryPressureReason);
+    bool hasReceivedMemoryPressure();
+    void clearMemoryPressure();
+    bool shouldWaitForMemoryClearMessage();
+    void respondToMemoryPressureIfNeeded();
+#endif
+
 private:
     void uninstall();
 
@@ -60,6 +82,15 @@ private:
     bool m_installed;
     time_t m_lastRespondTime;
     LowMemoryHandler m_lowMemoryHandler;
+
+#if PLATFORM(IOS)
+    uint32_t m_receivedMemoryPressure;
+    uint32_t m_memoryPressureReason;
+    bool m_clearPressureOnMemoryRelease;
+    void (^m_releaseMemoryBlock)();
+    CFRunLoopObserverRef m_observer;
+    Mutex m_observerMutex;
+#endif
 };
  
 // Function to obtain the global memory pressure object.

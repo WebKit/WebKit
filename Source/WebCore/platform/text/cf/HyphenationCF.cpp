@@ -60,7 +60,17 @@ static AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>& cfLocaleCache()
 
 bool canHyphenate(const AtomicString& localeIdentifier)
 {
+#if !PLATFORM(IOS)
     return cfLocaleCache().get(localeIdentifier);
+#else
+#if !(defined(WTF_ARM_ARCH_VERSION) && WTF_ARM_ARCH_VERSION == 6)
+    return cfLocaleCache().get(localeIdentifier);
+#else
+    // Hyphenation is not available on devices with ARMv6 processors. See <rdar://8352570>.
+    UNUSED_PARAM(localeIdentifier);
+    return false;
+#endif
+#endif // PLATFORM(IOS)
 }
 
 size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeIndex, const AtomicString& localeIdentifier)

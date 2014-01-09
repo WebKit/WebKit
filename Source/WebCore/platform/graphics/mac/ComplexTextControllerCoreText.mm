@@ -31,7 +31,11 @@
 #include "TextRun.h"
 #include "WebCoreSystemInterface.h"
 
+#if PLATFORM(IOS)
+#include <CoreText/CoreText.h>
+#else
 #include <ApplicationServices/ApplicationServices.h>
+#endif
 
 @interface WebCascadeList : NSArray {
     @private
@@ -266,12 +270,17 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                         continue;
                     }
                     runFontData = fontCache()->getCachedFontData(m_font.fontDescription(), fontName.get(), false, FontCache::DoNotRetain).get();
+#if !PLATFORM(IOS)
                     // Core Text may have used a font that is not known to NSFontManager. In that case, fall back on
                     // using the font as returned, even though it may not have the best NSFontRenderingMode.
                     if (!runFontData) {
                         FontPlatformData runFontPlatformData((NSFont *)runFont, CTFontGetSize(runFont), m_font.fontDescription().usePrinterFont());
                         runFontData = fontCache()->getCachedFontData(&runFontPlatformData, FontCache::DoNotRetain).get();
                     }
+#else
+                    // FIXME: Just assert for now, until we can devise a better fix that works with iOS.
+                    ASSERT(runFontData);
+#endif
                 }
                 if (m_fallbackFonts && runFontData != m_font.primaryFont())
                     m_fallbackFonts->add(runFontData);

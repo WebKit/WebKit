@@ -99,6 +99,13 @@ public:
     // fileName - The file name.
     static bool deleteDatabaseFile(const String& fileName);
 
+#if PLATFORM(IOS)
+    // Truncates a database file. Used when MobileSafariSettings deletes a database file,
+    // since deleting the file nukes the POSIX file locks which would potentially cause Safari
+    // to corrupt the new db if it's running in the background.
+    static bool truncateDatabaseFile(sqlite3* database);
+#endif
+    
     // Returns the size of the database file.
     //
     // fileName - The file name.

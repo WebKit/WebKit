@@ -67,6 +67,8 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileH
     return String::fromUTF8(temporaryFilePath.data());
 }
 
+#if !PLATFORM(IOS)
+
 void setMetadataURL(String& URLString, const String& referrer, const String& path)
 {
     NSURL *URL = URLWithUserTypedString(URLString, nil);
@@ -82,7 +84,6 @@ void setMetadataURL(String& URLString, const String& referrer, const String& pat
     });
 }
 
-#if !PLATFORM(IOS)
 bool canExcludeFromBackup()
 {
     return true;
@@ -94,6 +95,7 @@ bool excludeFromBackup(const String& path)
     CSBackupSetItemExcluded(pathAsURL(path).get(), TRUE, FALSE); 
     return true;
 }
+
 #endif
 
 } // namespace WebCore

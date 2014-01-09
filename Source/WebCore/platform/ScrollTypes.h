@@ -26,6 +26,8 @@
 #ifndef ScrollTypes_h
 #define ScrollTypes_h
 
+#ifdef __cplusplus
+
 namespace WebCore {
 
     enum ScrollDirection {
@@ -177,5 +179,7 @@ namespace WebCore {
         StickToViewportBounds
     };
 }
+
+#endif // __cplusplus
 
 #endif

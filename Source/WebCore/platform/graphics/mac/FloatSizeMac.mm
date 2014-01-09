@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+#if !PLATFORM(IOS)
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 
 FloatSize::FloatSize(const NSSize& s) : m_width(s.width), m_height(s.height)
@@ -41,5 +42,6 @@ FloatSize::operator NSSize() const
 }
 
 #endif
+#endif // !PLATFORM(IOS)
 
 }

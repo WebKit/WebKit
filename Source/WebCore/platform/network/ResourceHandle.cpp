@@ -35,6 +35,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
+#if PLATFORM(IOS)
+#include "NotImplemented.h"
+#endif
+
 namespace WebCore {
 
 static bool shouldForceContentSniffing;
@@ -42,7 +46,11 @@ static bool shouldForceContentSniffing;
 typedef HashMap<AtomicString, ResourceHandle::BuiltinConstructor> BuiltinResourceHandleConstructorMap;
 static BuiltinResourceHandleConstructorMap& builtinResourceHandleConstructorMap()
 {
+#if PLATFORM(IOS)
+    ASSERT(WebThreadIsLockedOrDisabled());
+#else
     ASSERT(isMainThread());
+#endif
     DEFINE_STATIC_LOCAL(BuiltinResourceHandleConstructorMap, map, ());
     return map;
 }
@@ -151,23 +159,23 @@ void ResourceHandle::setClient(ResourceHandleClient* client)
 // ResourceHandle never uses async client calls on these platforms yet.
 void ResourceHandle::continueWillSendRequest(const ResourceRequest&)
 {
-    ASSERT_NOT_REACHED();
+    notImplemented();
 }
 
 void ResourceHandle::continueDidReceiveResponse()
 {
-    ASSERT_NOT_REACHED();
+    notImplemented();
 }
 
 void ResourceHandle::continueShouldUseCredentialStorage(bool)
 {
-    ASSERT_NOT_REACHED();
+    notImplemented();
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool)
 {
-    ASSERT_NOT_REACHED();
+    notImplemented();
 }
 #endif
 #endif

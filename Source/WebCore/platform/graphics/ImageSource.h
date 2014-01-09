@@ -135,6 +135,11 @@ public:
     IntSize size(ImageOrientationDescription = ImageOrientationDescription()) const;
     IntSize frameSizeAtIndex(size_t, ImageOrientationDescription = ImageOrientationDescription()) const;
 
+#if PLATFORM(IOS)
+    IntSize originalSize(RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
+    bool isSubsampled() const { return m_baseSubsampling; }
+#endif
+
     bool getHotSpot(IntPoint&) const;
 
     size_t bytesDecodedToDetermineProperties() const;

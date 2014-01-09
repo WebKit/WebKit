@@ -180,11 +180,15 @@ public:
     virtual String description() const OVERRIDE;
 #endif
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     const SimpleFontData* getCompositeFontReferenceFontData(NSFont *key) const;
     NSFont* getNSFont() const { return m_platformData.font(); }
 #endif
 
+#if PLATFORM(IOS)
+    CTFontRef getCTFont() const { return m_platformData.font(); }
+    bool shouldNotBeUsedForArabic() const { return m_shouldNotBeUsedForArabic; };
+#endif
 #if PLATFORM(MAC)
     CFDictionaryRef getCFStringAttributes(TypesettingFeatures, FontOrientation) const;
 #endif
@@ -197,7 +201,7 @@ public:
     {
         if (isSVGFont())
             return false;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
         wkCTFontTransformOptions options = (typesettingFeatures & Kerning ? wkCTFontTransformApplyPositioning : 0) | (typesettingFeatures & Ligatures ? wkCTFontTransformApplyShaping : 0);
         return wkCTFontTransformGlyphs(m_platformData.ctFont(), glyphs, reinterpret_cast<CGSize*>(advances), glyphCount, options);
 #else
@@ -314,6 +318,9 @@ private:
     mutable SCRIPT_CACHE m_scriptCache;
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
 #endif
+#endif
+#if PLATFORM(IOS)
+    bool m_shouldNotBeUsedForArabic;
 #endif
 };
 

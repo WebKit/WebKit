@@ -115,7 +115,7 @@ AtomicString AVTrackPrivateAVFObjCImpl::label() const
         return emptyAtom;
 
     // If possible, return a title in one of the user's preferred languages.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     NSArray *titlesForPreferredLanguages = [AVMetadataItem metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
 #else
     NSArray *titlesForPreferredLanguages = [AVMetadataItem metadataItemsFromArray:titles withLocale:[NSLocale currentLocale]];

@@ -42,6 +42,11 @@ public:
     // OS persistent storage.
     static Credential getFromPersistentStorage(const ProtectionSpace&);
 
+#if PLATFORM(IOS)
+    static void saveToPersistentStorage(const ProtectionSpace&, const Credential&);
+    static void clearCredentials();
+#endif
+
     // These methods work for authentication schemes that support sending credentials without waiting for a request. E.g., for HTTP Basic authentication scheme
     // a client should assume that all paths at or deeper than the depth of a known protected resource share are within the same protection space.
     static bool set(const Credential&, const URL&); // Returns true if the URL corresponds to a known protection space, so credentials could be updated.

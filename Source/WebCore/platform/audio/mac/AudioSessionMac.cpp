@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AudioSession.h"
 
-#if USE(AUDIO_SESSION) && PLATFORM(MAC)
+#if USE(AUDIO_SESSION) && PLATFORM(MAC) && !PLATFORM(IOS)
 
 #include "FloatConversion.h"
 #include "Logging.h"

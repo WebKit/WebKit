@@ -36,6 +36,9 @@
 #include <BlackBerryPlatformLog.h>
 #endif
 
+#if PLATFORM(IOS)
+#include <OpenGLES/ES2/glext.h>
+#else
 #if USE(OPENGL_ES_2)
 #include "OpenGLESShims.h"
 #include <GLES2/gl2.h>
@@ -44,6 +47,7 @@
 #include <OpenGL/gl.h>
 #elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(NIX)
 #include "OpenGLShims.h"
+#endif
 #endif
 
 #include <wtf/MainThread.h>
@@ -71,7 +75,7 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
     if (vendorComponents.contains("intel"))
         m_isIntel = true;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     if (m_isAMD || m_isIntel)
         m_requiresBuiltInFunctionEmulation = true;
 

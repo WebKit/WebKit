@@ -27,6 +27,8 @@
 #ifndef TextCodecMac_h
 #define TextCodecMac_h
 
+#if !PLATFORM(IOS)
+
 #include "TextCodec.h"
 #include <CoreServices/CoreServices.h>
 
@@ -69,5 +71,7 @@ namespace WebCore {
     };
 
 } // namespace WebCore
+
+#endif // !PLATFORM(IOS)
 
 #endif // TextCodecMac_h

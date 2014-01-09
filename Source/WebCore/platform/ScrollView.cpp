@@ -241,8 +241,10 @@ IntSize ScrollView::unscaledVisibleContentSize(VisibleContentRectIncludesScrollb
     if (platformWidget())
         return platformVisibleContentSize(scrollbarInclusion == IncludeScrollbars);
 
+#if !PLATFORM(IOS)
     if (!m_fixedVisibleContentRect.isEmpty())
         return m_fixedVisibleContentRect.size();
+#endif
 
     int verticalScrollbarWidth = 0;
     int horizontalScrollbarHeight = 0;
@@ -264,8 +266,10 @@ IntRect ScrollView::visibleContentRect(VisibleContentRectIncludesScrollbars scol
     if (platformWidget())
         return platformVisibleContentRect(scollbarInclusion == IncludeScrollbars);
 
+#if !PLATFORM(IOS)
     if (!m_fixedVisibleContentRect.isEmpty())
         return m_fixedVisibleContentRect;
+#endif
 
     FloatSize visibleContentSize = unscaledVisibleContentSize(scollbarInclusion);
     visibleContentSize.scale(1 / visibleContentScaleFactor());

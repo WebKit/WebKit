@@ -130,11 +130,66 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
         return;
     }
 
+#if PLATFORM(IOS)
+    // When using accelerated drawing on iOS, it's faster to stretch an image than to tile it.
+    if (ctxt->isAcceleratedContext()) {
+        if (size().width() == 1 && intersection(oneTileRect, destRect).height() == destRect.height()) {
+            FloatRect visibleSrcRect;
+            visibleSrcRect.setX(0);
+            visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
+            visibleSrcRect.setWidth(1);
+            visibleSrcRect.setHeight(destRect.height() / scale.height());
+            draw(ctxt, destRect, visibleSrcRect, styleColorSpace, op, BlendModeNormal, ImageOrientationDescription());
+            return;
+        }
+        if (size().height() == 1 && intersection(oneTileRect, destRect).width() == destRect.width()) {
+            FloatRect visibleSrcRect;
+            visibleSrcRect.setX((destRect.x() - oneTileRect.x()) / scale.width());
+            visibleSrcRect.setY(0);
+            visibleSrcRect.setWidth(destRect.width() / scale.width());
+            visibleSrcRect.setHeight(1);
+            draw(ctxt, destRect, visibleSrcRect, styleColorSpace, op, BlendModeNormal, ImageOrientationDescription());
+            return;
+        }
+    }
+#endif
+
+#if PLATFORM(IOS)
+    // CGPattern uses lots of memory got caching when the tile size is large (<rdar://problem/4691859>,
+    // <rdar://problem/6239505>). Memory consumption depends on the transformed tile size which can get
+    // larger than the original tile if user zooms in enough.
+    const float maxPatternTilePixels = 512 * 512;
+    FloatRect transformedTileSize = ctxt->getCTM().mapRect(FloatRect(FloatPoint(), scaledTileSize));
+    float transformedTileSizePixels = transformedTileSize.width() * transformedTileSize.height();
+    if (transformedTileSizePixels > maxPatternTilePixels) {
+        float fromY = (destRect.y() - oneTileRect.y()) / scale.height();
+        float toY = oneTileRect.y();
+        while (toY < CGRectGetMaxY(destRect)) {
+            float fromX = (destRect.x() - oneTileRect.x()) / scale.width();
+            float toX = oneTileRect.x();
+            while (toX < CGRectGetMaxX(destRect)) {
+                CGRect toRect = CGRectIntersection(destRect, CGRectMake(toX, toY, oneTileRect.width(), oneTileRect.height()));
+                CGRect fromRect = CGRectMake(fromX, fromY, toRect.size.width / scale.width(), toRect.size.height / scale.height());
+                draw(ctxt, toRect, fromRect, styleColorSpace, op, BlendModeNormal, ImageOrientationDescription());
+                toX += oneTileRect.width();
+                fromX = 0;
+            }
+            toY += oneTileRect.height();
+            fromY = 0;
+        }
+        return;
+    }
+#endif    
+
     AffineTransform patternTransform = AffineTransform().scaleNonUniform(scale.width(), scale.height());
     FloatRect tileRect(FloatPoint(), intrinsicTileSize);
     drawPattern(ctxt, tileRect, patternTransform, oneTileRect.location(), styleColorSpace, op, destRect, blendMode);
 
+#if PLATFORM(IOS)
+    startAnimation(false);
+#else
     startAnimation();
+#endif
 }
 
 // FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
@@ -168,7 +223,11 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& dstRect, const Flo
     
     drawPattern(ctxt, srcRect, patternTransform, patternPhase, styleColorSpace, op, dstRect);
 
+#if PLATFORM(IOS)
+    startAnimation(false);
+#else
     startAnimation();
+#endif
 }
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)

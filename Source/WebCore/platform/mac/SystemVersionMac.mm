@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+#if !PLATFORM(IOS)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
 static NSString *createSystemMarketingVersion()
@@ -64,11 +65,15 @@ static NSString *createSystemMarketingVersion()
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
-
 NSString *systemMarketingVersion()
 {
     static NSString *version = createSystemMarketingVersion();
     return version;
 }
+#else
+
+}
+
+#endif // !PLATFORM(IOS)
 
 }

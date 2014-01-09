@@ -31,7 +31,11 @@
 #include "RenderText.h"
 #include "TextBreakIterator.h"
 #include "TextRun.h"
+#if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
+#else
+#include <CoreText/CoreText.h>
+#endif
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -572,6 +576,9 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
         unsigned glyphCount = complexTextRun.glyphCount();
         const SimpleFontData* fontData = complexTextRun.fontData();
+#if PLATFORM(IOS)
+        bool isEmoji = fontData->platformData().m_isEmoji;
+#endif
 
         // Represent the initial advance for a text run by adjusting the advance
         // of the last glyph of the previous text run in the glyph buffer.
@@ -620,6 +627,10 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             bool treatAsSpace = Font::treatAsSpace(ch);
             CGGlyph glyph = treatAsSpace ? fontData->spaceGlyph() : glyphs[i];
             CGSize advance = treatAsSpace ? CGSizeMake(spaceWidth, advances[i].height) : advances[i];
+#if PLATFORM(IOS)
+            if (isEmoji && advance.width)
+                advance.width = fontData->widthForGlyph(glyph);
+#endif
 
             if (ch == '\t' && m_run.allowTabs())
                 advance.width = m_font.tabWidth(*fontData, m_run.tabSize(), m_run.xPos() + m_totalWidth + widthSinceLastCommit);

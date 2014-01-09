@@ -62,8 +62,12 @@
 #import <wtf/text/CString.h>
 
 #import <AVFoundation/AVFoundation.h>
-#import <CoreMedia/CoreMedia.h>
+#if PLATFORM(IOS)
+#import <CoreImage/CoreImage.h>
+#else
 #import <QuartzCore/CoreImage.h>
+#endif
+#import <CoreMedia/CoreMedia.h>
 
 #if USE(VIDEOTOOLBOX)
 #import <CoreVideo/CoreVideo.h>
@@ -779,7 +783,7 @@ double MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable() const
 
 float MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded() const
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
     // AVFoundation on Mountain Lion will occasionally not send a KVO notification
     // when loadedTimeRanges changes when there is no video output. In that case
     // update the cached value explicitly.
@@ -1231,6 +1235,14 @@ void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
     // Cache the natural size (setNaturalSize will notify the player if it has changed).
     setNaturalSize(IntSize(naturalSize));
 }
+
+#if PLATFORM(IOS)
+// FIXME: Implement for iOS in WebKit System Interface.
+static inline NSURL *wkAVAssetResolvedURL(AVAsset*)
+{
+    return nil;
+}
+#endif
 
 bool MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin() const 
 {

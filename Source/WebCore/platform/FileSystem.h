@@ -151,6 +151,8 @@ String homeDirectoryPath();
 String pathGetFileName(const String&);
 String directoryName(const String&);
 
+void setMetadataURL(String& URLString, const String& referrer, const String& path);
+
 bool canExcludeFromBackup(); // Returns true if any file can ever be excluded from backup.
 bool excludeFromBackup(const String&); // Returns true if successful.
 
@@ -187,10 +189,6 @@ String encodeForFileName(const String&);
 
 #if USE(CF)
 RetainPtr<CFURLRef> pathAsURL(const String&);
-#endif
-
-#if PLATFORM(MAC)
-void setMetadataURL(String& URLString, const String& referrer, const String& path);
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(NIX)

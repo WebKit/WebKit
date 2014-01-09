@@ -206,6 +206,14 @@ public:
 #endif // NDEBUG
 #endif // PLATFORM(WIN)
 
+#if PLATFORM(IOS)
+    bool isWebLayer();
+    void setBoundsOnMainThread(CGRect);
+    void setPositionOnMainThread(CGPoint);
+    void setAnchorPointOnMainThread(FloatPoint3D);
+    void setTileSize(const IntSize&);
+#endif
+
     virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*) const = 0;
 
 #if PLATFORM(MAC)

@@ -571,6 +571,7 @@ bool isWordTextBreak(TextBreakIterator* iterator)
     return ruleStatus != UBRK_WORD_NONE;
 }
 
+#if !PLATFORM(IOS)
 static TextBreakIterator* setUpIteratorWithRules(bool& createdIterator, TextBreakIterator*& iterator,
     const char* breakRules, const UChar* string, int length)
 {
@@ -595,9 +596,11 @@ static TextBreakIterator* setUpIteratorWithRules(bool& createdIterator, TextBrea
 
     return iterator;
 }
+#endif // !PLATFORM(IOS)
 
 TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
 {
+#if !PLATFORM(IOS)
     // This rule set is based on character-break iterator rules of ICU 4.0
     // <http://source.icu-project.org/repos/icu/icu/tags/release-4-0/source/data/brkitr/char.txt>.
     // The major differences from the original ones are listed below:
@@ -683,6 +686,30 @@ TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
     static bool createdCursorMovementIterator = false;
     static TextBreakIterator* staticCursorMovementIterator;
     return setUpIteratorWithRules(createdCursorMovementIterator, staticCursorMovementIterator, kRules, string, length);
+#else // PLATFORM(IOS)
+    // Use the special Thai character break iterator for all locales
+    static bool createdCursorBreakIterator;
+    static TextBreakIterator* staticCursorBreakIterator;
+
+    if (!string)
+        return nullptr;
+
+    if (!createdCursorBreakIterator) {
+        UErrorCode openStatus = U_ZERO_ERROR;
+        staticCursorBreakIterator = reinterpret_cast<TextBreakIterator*>(ubrk_open(UBRK_CHARACTER, "th", 0, 0, &openStatus));
+        createdCursorBreakIterator = true;
+        ASSERT_WITH_MESSAGE(U_SUCCESS(openStatus), "ICU could not open a break iterator: %s (%d)", u_errorName(openStatus), openStatus);
+    }
+    if (!staticCursorBreakIterator)
+        return nullptr;
+
+    UErrorCode setTextStatus = U_ZERO_ERROR;
+    ubrk_setText(reinterpret_cast<UBreakIterator*>(staticCursorBreakIterator), string, length, &setTextStatus);
+    if (U_FAILURE(setTextStatus))
+        return nullptr;
+
+    return staticCursorBreakIterator;
+#endif // !PLATFORM(IOS)
 }
 
 }

@@ -43,7 +43,11 @@
 @end
 
 @interface NSURLAuthenticationChallenge (Details)
+#if PLATFORM(IOS)
++(NSURLAuthenticationChallenge *)_createAuthenticationChallengeForCFAuthChallenge:(CFURLAuthChallengeRef)cfChallenge sender:(id <NSURLAuthenticationChallengeSender>)sender;
+#else
 +(NSURLAuthenticationChallenge *)_authenticationChallengeForCFAuthChallenge:(CFURLAuthChallengeRef)cfChallenge sender:(id <NSURLAuthenticationChallengeSender>)sender;
+#endif
 @end
 
 @interface NSURLCredential (Details)
@@ -154,7 +158,11 @@ NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
     if (!authChallenge)
         authChallenge = adoptCF(createCF(coreChallenge));
     [challengeSender.get() setCFChallenge:authChallenge.get()];
+#if PLATFORM(IOS)
+    return [[NSURLAuthenticationChallenge _createAuthenticationChallengeForCFAuthChallenge:authChallenge.get() sender:challengeSender.get()] autorelease];
+#else
     return [[NSURLAuthenticationChallenge _authenticationChallengeForCFAuthChallenge:authChallenge.get() sender:challengeSender.get()] autorelease];
+#endif
 }
 
 NSURLCredential *mac(const Credential& coreCredential)

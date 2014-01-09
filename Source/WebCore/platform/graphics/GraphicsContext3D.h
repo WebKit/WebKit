@@ -54,6 +54,12 @@
 #endif
 
 #if PLATFORM(MAC)
+#if PLATFORM(IOS)
+#include <OpenGLES/ES2/gl.h>
+#ifdef __OBJC__
+#import <OpenGLES/EAGL.h>
+#endif // __OBJC__
+#endif // PLATFORM(IOS)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
@@ -61,7 +67,13 @@ OBJC_CLASS WebGLLayer;
 typedef unsigned int GLuint;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS)
+#ifdef __OBJC__
+typedef EAGLContext* PlatformGraphicsContext3D;
+#else
+typedef void* PlatformGraphicsContext3D;
+#endif // __OBJC__
+#elif PLATFORM(MAC)
 typedef struct _CGLContextObject *CGLContextObj;
 
 typedef CGLContextObj PlatformGraphicsContext3D;
@@ -791,6 +803,10 @@ public:
     PassRefPtr<ImageData> paintRenderingResultsToImageData(DrawingBuffer*);
     bool paintCompositedResultsToCanvas(ImageBuffer*);
 
+#if PLATFORM(IOS)
+    void endPaint();
+#endif
+
 #if PLATFORM(BLACKBERRY)
     bool paintsIntoCanvasBuffer() const;
 #endif
@@ -933,6 +949,10 @@ private:
     void readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels);
 #endif
 
+#if PLATFORM(IOS)
+    bool setRenderbufferStorageFromDrawable(GC3Dsizei width, GC3Dsizei height);
+#endif
+
 #if PLATFORM(BLACKBERRY)
     void logFrameBufferStatus(int line);
     void readPixelsIMG(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data);
@@ -947,7 +967,10 @@ private:
     int m_currentWidth, m_currentHeight;
     bool isResourceSafe();
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS)
+    PlatformGraphicsContext3D m_contextObj;
+    RetainPtr<PlatformLayer> m_webGLLayer;
+#elif PLATFORM(MAC)
     CGLContextObj m_contextObj;
     RetainPtr<WebGLLayer> m_webGLLayer;
 #elif PLATFORM(WIN) && USE(CA)

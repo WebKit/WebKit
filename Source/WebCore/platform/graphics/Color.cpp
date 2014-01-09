@@ -310,6 +310,17 @@ Color Color::dark() const
                  alpha());
 }
 
+bool Color::isDark() const
+{
+    float red;
+    float green;
+    float blue;
+    float alpha;
+    getRGBA(red, green, blue, alpha);
+    float largestNonAlphaChannel = std::max(red, std::max(green, blue));
+    return alpha > 0.5 && largestNonAlphaChannel < 0.5;
+}
+
 static int blendComponent(int c, int a)
 {
     // We use white.

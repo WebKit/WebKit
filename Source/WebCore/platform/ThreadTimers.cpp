@@ -33,6 +33,10 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#endif
+
 namespace WebCore {
 
 // Fire timers for this length of time, and then quit to let the run loop process user input events.
@@ -54,7 +58,7 @@ ThreadTimers::ThreadTimers()
     , m_firingTimers(false)
     , m_pendingSharedTimerFireTime(0)
 {
-    if (isMainThread())
+    if (isUIThread())
         setSharedTimer(mainThreadSharedTimer());
 }
 
@@ -105,6 +109,7 @@ void ThreadTimers::sharedTimerFired()
 
 void ThreadTimers::sharedTimerFiredInternal()
 {
+    ASSERT(isMainThread() || !isWebThread() && !isUIThread());
     // Do a re-entrancy check.
     if (m_firingTimers)
         return;

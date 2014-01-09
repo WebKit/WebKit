@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+#if !PLATFORM(IOS)
+
 #include "WebCoreFullScreenWarningView.h"
 
 #include "LocalizedStrings.h"
@@ -103,3 +105,5 @@ static const CGFloat WarningViewShadowRadius = 5;
     return self;
 }
 @end
+
+#endif // !PLATFORM(IOS)

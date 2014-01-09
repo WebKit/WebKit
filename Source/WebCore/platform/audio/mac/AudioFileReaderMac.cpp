@@ -30,6 +30,8 @@
 
 #if ENABLE(WEB_AUDIO)
 
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+
 #include "AudioFileReaderMac.h"
 
 #include "AudioBus.h"
@@ -58,7 +60,7 @@ static void destroyAudioBufferList(AudioBufferList* bufferList)
 }
 
 AudioFileReader::AudioFileReader(const char* filePath)
-    : m_data(0)
+    : m_data(nullptr)
     , m_dataSize(0)
     , m_audioFileID(0)
     , m_extAudioFileRef(0)
@@ -237,16 +239,16 @@ PassRefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
 
 PassRefPtr<AudioBus> createBusFromAudioFile(const char* filePath, bool mixToMono, float sampleRate)
 {
-    AudioFileReader reader(filePath);
-    return reader.createBus(sampleRate, mixToMono);
+    return AudioFileReader(filePath).createBus(sampleRate, mixToMono);
 }
 
 PassRefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
 {
-    AudioFileReader reader(data, dataSize);
-    return reader.createBus(sampleRate, mixToMono);
+    return AudioFileReader(data, dataSize).createBus(sampleRate, mixToMono);
 }
 
-} // WebCore
+} // namespace WebCore
+
+#endif // PLATFORM(MAC) && !PLATFORM(IOS)
 
 #endif // ENABLE(WEB_AUDIO)

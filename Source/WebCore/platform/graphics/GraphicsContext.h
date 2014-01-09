@@ -93,6 +93,9 @@ namespace WebCore {
     class GraphicsContext3D;
     class TextRun;
     class TransformationMatrix;
+#if PLATFORM(IOS)
+    struct BidiStatus;
+#endif
 
     enum TextDrawingMode {
         TextModeFill = 1 << 0,
@@ -136,6 +139,10 @@ namespace WebCore {
             , shadowColorSpace(ColorSpaceDeviceRGB)
             , compositeOperator(CompositeSourceOver)
             , blendMode(BlendModeNormal)
+#if PLATFORM(IOS)
+            , emojiDrawingEnabled(true)
+            , shouldUseContextColors(true)
+#endif
             , shouldAntialias(true)
             , shouldSmoothFonts(true)
             , shouldSubpixelQuantizeFonts(true)
@@ -177,6 +184,10 @@ namespace WebCore {
         CompositeOperator compositeOperator;
         BlendMode blendMode;
 
+#if PLATFORM(IOS)
+        bool emojiDrawingEnabled : 1;
+        bool shouldUseContextColors : 1;
+#endif
         bool shouldAntialias : 1;
         bool shouldSmoothFonts : 1;
         bool shouldSubpixelQuantizeFonts : 1;
@@ -188,10 +199,18 @@ namespace WebCore {
         bool drawLuminanceMask : 1;
     };
 
+#if PLATFORM(IOS)
+    void setStrokeAndFillColor(PlatformGraphicsContext*, CGColorRef);
+#endif
+
     class GraphicsContext {
         WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;
     public:
+#if !PLATFORM(IOS)
         GraphicsContext(PlatformGraphicsContext*);
+#else
+        GraphicsContext(PlatformGraphicsContext*, bool shouldUseContextColors = true);
+#endif
         ~GraphicsContext();
 
         PlatformGraphicsContext* platformContext() const;
@@ -243,7 +262,11 @@ namespace WebCore {
         void applyFillPattern();
         void drawPath(const Path&);
 
+#if PLATFORM(IOS)
+        void drawNativeImage(PassNativeImagePtr, const FloatSize& selfSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, float scale, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, ImageOrientation = DefaultImageOrientation);
+#else
         void drawNativeImage(PassNativeImagePtr, const FloatSize& selfSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, ImageOrientation = DefaultImageOrientation);
+#endif
 
         // Allow font smoothing (LCD antialiasing). Not part of the graphics state.
         void setAllowsFontSmoothing(bool);
@@ -264,7 +287,16 @@ namespace WebCore {
         // stroke color).
         void drawRect(const IntRect&);
         void drawLine(const IntPoint&, const IntPoint&);
+
+#if PLATFORM(IOS)
+        void drawJoinedLines(CGPoint points[], unsigned count, bool antialias, CGLineCap = kCGLineCapButt);
+#endif
+
         void drawEllipse(const IntRect&);
+#if PLATFORM(IOS)
+        void drawEllipse(const FloatRect&);
+        void drawRaisedEllipse(const FloatRect&, const Color& ellipseColor, ColorSpace ellipseColorSpace, const Color& shadowColor, ColorSpace shadowColorSpace);
+#endif
         void drawConvexPolygon(size_t numPoints, const FloatPoint*, bool shouldAntialias = false);
 
         void fillPath(const Path&);
@@ -311,6 +343,10 @@ namespace WebCore {
         void clip(const IntRect&);
         void clip(const FloatRect&);
         void clipRoundedRect(const RoundedRect&);
+
+        // FIXME: Consider writing this in terms of a specialized RoundedRect that uses FloatRect and FloatSize radii.
+        void clipRoundedRect(const FloatRect&, const FloatSize& topLeft, const FloatSize& topRight, const FloatSize& bottomLeft, const FloatSize& bottomRight);
+
         void clipOut(const IntRect&);
         void clipOutRoundedRect(const RoundedRect&);
         void clipPath(const Path&, WindRule);
@@ -322,9 +358,22 @@ namespace WebCore {
         TextDrawingModeFlags textDrawingMode() const;
         void setTextDrawingMode(TextDrawingModeFlags);
 
+#if PLATFORM(IOS)
+        bool emojiDrawingEnabled();
+        void setEmojiDrawingEnabled(bool);
+#endif
+        
+#if !PLATFORM(IOS)
         void drawText(const Font&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
+#else
+        float drawText(const Font&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
+#endif
         void drawEmphasisMarks(const Font&, const TextRun& , const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1);
+#if !PLATFORM(IOS)
         void drawBidiText(const Font&, const TextRun&, const FloatPoint&, Font::CustomFontNotReadyAction = Font::DoNotPaintIfFontNotReady);
+#else
+        float drawBidiText(const Font&, const TextRun&, const FloatPoint&, Font::CustomFontNotReadyAction = Font::DoNotPaintIfFontNotReady, BidiStatus* = 0, int length = -1);
+#endif
         void drawHighlightForText(const Font&, const TextRun&, const FloatPoint&, int h, const Color& backgroundColor, ColorSpace, int from = 0, int to = -1);
 
         enum RoundingMode {
@@ -336,6 +385,9 @@ namespace WebCore {
         FloatRect computeLineBoundsForText(const FloatPoint&, float width, bool printing);
         void drawLineForText(const FloatPoint&, float width, bool printing);
         enum DocumentMarkerLineStyle {
+#if PLATFORM(IOS)
+            TextCheckingDictationPhraseWithAlternativesLineStyle,
+#endif
             DocumentMarkerSpellingLineStyle,
             DocumentMarkerGrammarLineStyle,
             DocumentMarkerAutocorrectionReplacementLineStyle,
@@ -496,7 +548,11 @@ namespace WebCore {
         static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 
     private:
+#if !PLATFORM(IOS)
         void platformInit(PlatformGraphicsContext*);
+#else
+        void platformInit(PlatformGraphicsContext*, bool shouldUseContextColors);
+#endif
         void platformDestroy();
 
 #if PLATFORM(WIN) && !USE(WINGDI)

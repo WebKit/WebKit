@@ -33,6 +33,10 @@
 
 namespace WebCore {
 
+#if PLATFORM(IOS)
+class Font;
+#endif
+
 class Locale {
     WTF_MAKE_NONCOPYABLE(Locale);
 
@@ -113,7 +117,17 @@ public:
     // display to the user. If an implementation doesn't support
     // localized dates the function should return an empty string.
     // FormatType can be used to specify if you want the short format. 
+#if !PLATFORM(IOS)
     String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified);
+#else
+    virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) = 0;
+#endif // !PLATFORM(IOS)
+#endif
+
+#if PLATFORM(IOS)
+    // FIXME: This code should be merged with Open Source in a way that is future compatible.
+    // Maximum width for a formatted date string with a specified font.
+    virtual float maximumWidthForDateType(DateComponents::Type, const Font&) = 0;
 #endif
 
     virtual ~Locale();

@@ -31,11 +31,19 @@
 
 #import "MediaTimeMac.h"
 #import "SoftLinking.h"
+#if PLATFORM(IOS)
+#import <CoreMedia/CMAudioClock.h>
+#else
 #import <CoreMedia/CMAudioDeviceClock.h>
+#endif
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
 
+#if PLATFORM(IOS)
+SOFT_LINK(CoreMedia, CMAudioClockCreate, OSStatus, (CFAllocatorRef allocator, CMClockRef *clockOut), (allocator, clockOut))
+#else
 SOFT_LINK(CoreMedia, CMAudioDeviceClockCreate, OSStatus, (CFAllocatorRef allocator, CFStringRef deviceUID, CMClockRef *clockOut), (allocator, deviceUID, clockOut))
+#endif
 SOFT_LINK(CoreMedia, CMTimebaseCreateWithMasterClock, OSStatus, (CFAllocatorRef allocator, CMClockRef masterClock, CMTimebaseRef *timebaseOut), (allocator, masterClock, timebaseOut))
 SOFT_LINK(CoreMedia, CMTimebaseSetTime, OSStatus, (CMTimebaseRef timebase, CMTime time), (timebase, time))
 SOFT_LINK(CoreMedia, CMTimebaseGetTime, CMTime, (CMTimebaseRef timebase), (timebase))
@@ -54,7 +62,11 @@ PlatformClockCM::PlatformClockCM()
     , m_running(false)
 {
     CMClockRef rawClockPtr = 0;
+#if PLATFORM(IOS)
+    CMAudioClockCreate(kCFAllocatorDefault, &rawClockPtr);
+#else
     CMAudioDeviceClockCreate(kCFAllocatorDefault, NULL, &rawClockPtr);
+#endif
     RetainPtr<CMClockRef> clock = adoptCF(rawClockPtr);
     initializeWithTimingSource(clock.get());
 }

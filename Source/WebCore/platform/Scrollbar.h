@@ -125,7 +125,9 @@ public:
     // These methods are used for platform scrollbars to give :hover feedback.  They will not get called
     // when the mouse went down in a scrollbar, since it is assumed the scrollbar will start
     // grabbing all events in that case anyway.
+#if !PLATFORM(IOS)
     bool mouseMoved(const PlatformMouseEvent&);
+#endif
     void mouseEntered();
     bool mouseExited();
 

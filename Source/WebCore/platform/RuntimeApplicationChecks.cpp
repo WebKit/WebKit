@@ -37,7 +37,9 @@ namespace WebCore {
     
 static bool mainBundleIsEqualTo(const String& bundleIdentifierString)
 {
-#if USE(CF)
+    // FIXME: We should consider merging this file with RuntimeApplicationChecksIOS.mm.
+    // Then we can remove the PLATFORM(IOS)-guard.
+#if USE(CF) && !PLATFORM(IOS)
     CFBundleRef mainBundle = CFBundleGetMainBundle();
     if (!mainBundle)
         return false;

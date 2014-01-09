@@ -31,9 +31,147 @@
 #import <CoreFoundation/CFError.h>
 #import <Foundation/Foundation.h>
 
+#if PLATFORM(IOS)
+#import <CFNetwork/CFSocketStreamPriv.h>
+#import <Foundation/NSURLError.h>
+#endif
+
 @interface NSError (WebExtras)
 - (NSString *)_web_localizedDescription;
 @end
+
+#if PLATFORM(IOS)
+
+// This workaround code exists here because we can't call translateToCFError in Foundation. Once we
+// have that, we can remove this code. <rdar://problem/9837415> Need SPI for translateCFError
+// The code is mostly identical to Foundation - I changed the class name and fixed minor compile errors.
+// We need this because client code (Safari) wants an NSError with NSURLErrorDomain as its domain.
+// The Foundation code below does that and sets up appropriate certificate keys in the NSError.
+
+@interface WebCustomNSURLError : NSError
+
+@end
+
+@implementation WebCustomNSURLError
+
+static NSDictionary* dictionaryThatCanCode(NSDictionary* src)
+{
+    // This function makes a copy of input dictionary, modifies it such that it "should" (as much as we can help it)
+    // not contain any objects that do not conform to NSCoding protocol, and returns it autoreleased.
+
+    NSMutableDictionary* dst = [src mutableCopy];
+
+    // Kill the known problem entries.
+    [dst removeObjectForKey:@"NSErrorPeerCertificateChainKey"]; // NSArray with SecCertificateRef objects
+    [dst removeObjectForKey:@"NSErrorClientCertificateChainKey"]; // NSArray with SecCertificateRef objects
+    [dst removeObjectForKey:NSURLErrorFailingURLPeerTrustErrorKey]; // SecTrustRef object
+    [dst removeObjectForKey:NSUnderlyingErrorKey]; // (Immutable) CFError containing kCF equivalent of the above
+    // We could reconstitute this but it's more trouble than it's worth
+
+    // Non-comprehensive safety check:  Kill top-level dictionary entries that don't conform to NSCoding.
+    // We may hit ones we just removed, but that's fine.
+    // We don't handle arbitrary objects that clients have stuffed into the dictionary, since we may not know how to
+    // get at its conents (e.g., a CFError object -- you'd have to know it had a userInfo dictionary and kill things
+    // inside it).
+    [src enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL*) {
+        if (! [obj conformsToProtocol:@protocol(NSCoding)]) {
+            [dst removeObjectForKey:key];
+        }
+        // FIXME: We could drill down into subdictionaries, but it seems more trouble than it's worth
+    }];
+
+    return [dst autorelease];
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    NSDictionary* newUserInfo = dictionaryThatCanCode([self userInfo]);
+
+    [[NSError errorWithDomain:[self domain] code:[self code] userInfo:newUserInfo] encodeWithCoder:coder];
+}
+
+@end
+
+
+#if USE(CFNETWORK)
+static NSError *NSErrorFromCFError(CFErrorRef cfError, NSURL *url)
+{
+    CFIndex errCode = CFErrorGetCode(cfError);
+    if (CFEqual(CFErrorGetDomain(cfError), kCFErrorDomainCFNetwork) && errCode <= kCFURLErrorUnknown && errCode > -4000) {
+        // This is an URL error and needs to be translated to the NSURLErrorDomain
+        id keys[10], values[10];
+        CFDictionaryRef userInfo = CFErrorCopyUserInfo(cfError);
+        NSError *result;
+        NSInteger count = 0;
+
+        if (url) {
+            keys[count] = NSURLErrorFailingURLErrorKey;
+            values[count] = url;
+            count ++;
+
+            keys[count] = NSURLErrorFailingURLStringErrorKey;
+            values[count] = [url absoluteString];
+            count ++;
+        }
+
+        values[count] = (id)CFDictionaryGetValue(userInfo, kCFErrorLocalizedDescriptionKey);
+        if (values[count]) {
+            keys[count] = NSLocalizedDescriptionKey;
+            count ++;
+        }
+
+        values[count] = (id)CFDictionaryGetValue(userInfo, kCFErrorLocalizedFailureReasonKey);
+        if (values[count]) {
+            keys[count] = NSLocalizedFailureReasonErrorKey;
+            count ++;
+        }
+
+        values[count] = (id)CFDictionaryGetValue(userInfo, kCFErrorLocalizedRecoverySuggestionKey);
+        if (values[count]) {
+            keys[count] = NSLocalizedRecoverySuggestionErrorKey;
+            count ++;
+        }
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        if (userInfo && (values[count] = (id)CFDictionaryGetValue(userInfo, kCFStreamPropertySSLPeerCertificates)) != nil) {
+            // Need to translate the cert
+            keys[count] = @"NSErrorPeerCertificateChainKey";
+            count ++;
+
+            values[count] = (id)CFDictionaryGetValue(userInfo, _kCFStreamPropertySSLClientCertificates);
+            if (values[count]) {
+                keys[count] = @"NSErrorClientCertificateChainKey";
+                count ++;
+            }
+
+            values[count] = (id)CFDictionaryGetValue(userInfo, _kCFStreamPropertySSLClientCertificateState);
+            if (values[count]) {
+                keys[count] = @"NSErrorClientCertificateStateKey";
+                count ++;
+            }
+        }
+#pragma clang diagnostic pop
+
+        if (userInfo && (values[count] = (id)CFDictionaryGetValue(userInfo, kCFStreamPropertySSLPeerTrust)) != nil) {
+            keys[count] = NSURLErrorFailingURLPeerTrustErrorKey;
+            count++;
+        }
+
+        keys[count] = NSUnderlyingErrorKey;
+        values[count] = (id)cfError;
+        count ++;
+
+        result = [WebCustomNSURLError errorWithDomain:NSURLErrorDomain code:(errCode == kCFURLErrorUnknown ? (CFIndex)NSURLErrorUnknown : errCode) userInfo:[NSDictionary dictionaryWithObjects:values forKeys:keys count:count]];
+        if (userInfo)
+            CFRelease(userInfo);
+        return result;
+    }
+    return (NSError *)cfError;
+}
+#endif // USE(CFNETWORK)
+
+#endif // PLATFORM(IOS)
 
 namespace WebCore {
 
@@ -77,6 +215,14 @@ NSError *ResourceError::nsError() const
     if (m_platformError) {
         CFErrorRef error = m_platformError.get();
         RetainPtr<CFDictionaryRef> userInfo = adoptCF(CFErrorCopyUserInfo(error));
+#if PLATFORM(IOS)
+        m_platformNSError = NSErrorFromCFError(error, (NSURL *)[(NSDictionary *)userInfo.get() objectForKey:(id) kCFURLErrorFailingURLErrorKey]);
+        // If NSErrorFromCFError created a new NSError for us, return that.
+        if (m_platformNSError.get() != (NSError *)error)
+            return m_platformNSError.get();
+
+        // Otherwise fall through to create a new NSError from the CFError.
+#endif
         m_platformNSError = adoptNS([[NSError alloc] initWithDomain:(NSString *)CFErrorGetDomain(error) code:CFErrorGetCode(error) userInfo:(NSDictionary *)userInfo.get()]);
         return m_platformNSError.get();
     }

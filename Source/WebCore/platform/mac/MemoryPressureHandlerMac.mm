@@ -67,7 +67,7 @@ void MemoryPressureHandler::install()
         return;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if !PLATFORM(IOS) && MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         _cache_event_source = wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue();
 #else
         _cache_event_source = wkCreateVMPressureDispatchOnMainQueue();
@@ -158,7 +158,9 @@ void MemoryPressureHandler::releaseMemory(bool)
 
     memoryCache()->pruneToPercentage(0);
 
+#if !PLATFORM(IOS)
     LayerPool::sharedPool()->drain();
+#endif
 
     cssValuePool().drain();
 

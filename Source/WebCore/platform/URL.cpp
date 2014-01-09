@@ -986,9 +986,27 @@ void URL::parse(const String& string)
     parse(buffer.data(), &string);
 }
 
+#if PLATFORM(IOS)
+static bool shouldCanonicalizeScheme = true;
+
+void enableURLSchemeCanonicalization(bool enableSchemeCanonicalization)
+{
+    shouldCanonicalizeScheme = enableSchemeCanonicalization;
+}
+#endif
+
 template<size_t length>
 static inline bool equal(const char* a, const char (&b)[length])
 {
+#if PLATFORM(IOS)
+    if (!shouldCanonicalizeScheme) {
+        for (size_t i = 0; i < length; ++i) {
+            if (toASCIILower(a[i]) != b[i])
+                return false;
+        }
+        return true;
+    }
+#endif
     for (size_t i = 0; i < length; ++i) {
         if (a[i] != b[i])
             return false;
@@ -1262,8 +1280,18 @@ void URL::parse(const char* url, const String* originalString)
 
     // copy in the scheme
     const char *schemeEndPtr = url + schemeEnd;
+#if PLATFORM(IOS)
+    if (shouldCanonicalizeScheme || m_protocolIsInHTTPFamily) {
+        while (strPtr < schemeEndPtr)
+            *p++ = toASCIILower(*strPtr++);
+    } else {
+        while (strPtr < schemeEndPtr)
+            *p++ = *strPtr++;
+    }
+#else
     while (strPtr < schemeEndPtr)
         *p++ = toASCIILower(*strPtr++);
+#endif
     m_schemeEnd = p - buffer.data();
 
     bool hostIsLocalHost = portEnd - userStart == 9

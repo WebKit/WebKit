@@ -28,58 +28,11 @@
 
 #if PLATFORM(IOS)
 
-#import "KeyEventCocoa.h"
-#import "Logging.h"
 #import "NotImplemented.h"
-#import "WebEvent.h"
 
 using namespace WTF;
 
 namespace WebCore {
-
-static String keyIdentifierForKeyEvent(WebEvent *event)
-{
-    NSString *s = event.charactersIgnoringModifiers;
-    if ([s length] != 1) {
-        LOG(Events, "received an unexpected number of characters in key event: %u", [s length]);
-        return "Unidentified";
-    }
-
-    unichar c = CFStringGetCharacterAtIndex((CFStringRef)s, 0);
-    return keyIdentifierForCharCode(c);
-}
-
-PlatformKeyboardEvent::PlatformKeyboardEvent(WebEvent *event)
-    : PlatformEvent(event.type == WebEventKeyUp ? PlatformEvent::KeyUp : PlatformEvent::KeyDown, event.modifierFlags & WebEventFlagMaskShift, event.modifierFlags & WebEventFlagMaskControl, event.modifierFlags & WebEventFlagMaskAlternate, event.modifierFlags & WebEventFlagMaskCommand)
-    , m_text(event.characters)
-    , m_unmodifiedText(event.charactersIgnoringModifiers)
-    , m_keyIdentifier(keyIdentifierForKeyEvent(event))
-    , m_autoRepeat(event.isKeyRepeating)
-    , m_windowsVirtualKeyCode(event.keyCode)
-    , m_isKeypad(false) // iPhone does not distinguish the numpad <rdar://problem/7190835>
-    , m_Event(event)
-{
-    ASSERT(event.type == WebEventKeyDown || event.type == WebEventKeyUp);
-
-    // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
-    if (m_windowsVirtualKeyCode == '\r') {
-        m_text = "\r";
-        m_unmodifiedText = "\r";
-    }
-
-    // The adjustments below are only needed in backward compatibility mode, but we cannot tell what mode we are in from here.
-
-    // Turn 0x7F into 8, because backspace needs to always be 8.
-    if (m_text == "\x7F")
-        m_text = "\x8";
-    if (m_unmodifiedText == "\x7F")
-        m_unmodifiedText = "\x8";
-    // Always use 9 for tab -- we don't want to use AppKit's different character for shift-tab.
-    if (m_windowsVirtualKeyCode == 9) {
-        m_text = "\x9";
-        m_unmodifiedText = "\x9";
-    }
-}
 
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCompatibilityMode)
 {

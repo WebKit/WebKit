@@ -23,8 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !PLATFORM(IOS)
 #import <AppKit/AppKit.h>
 
 @interface NSCell (WebCoreFocusRingDrawing)
 - (void)_web_drawFocusRingWithFrame:(NSRect)cellFrame inView:(NSView *)controlView;
 @end
+
+#endif // !PLATFORM(IOS)
+

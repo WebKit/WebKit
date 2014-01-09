@@ -31,6 +31,9 @@
 #if USE(3D_GRAPHICS)
 
 #include "GraphicsContext3D.h"
+#if PLATFORM(IOS)
+#include "GraphicsContext3DIOS.h"
+#endif
 
 #if USE(OPENGL_ES_2)
 #include "Extensions3DOpenGLES.h"
@@ -54,12 +57,19 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
+#if PLATFORM(IOS)
+#import <OpenGLES/ES2/glext.h>
+// From <OpenGLES/glext.h>
+#define GL_RGBA32F_ARB                      0x8814
+#define GL_RGB32F_ARB                       0x8815
+#else
 #if USE(OPENGL_ES_2)
 #include "OpenGLESShims.h"
 #elif PLATFORM(MAC)
 #include <OpenGL/gl.h>
 #elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(NIX)
 #include "OpenGLShims.h"
+#endif
 #endif
 
 #if PLATFORM(BLACKBERRY)
@@ -160,6 +170,10 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer, 
 #else
     paintToCanvas(pixels.get(), m_currentWidth, m_currentHeight,
                   imageBuffer->internalSize().width(), imageBuffer->internalSize().height(), imageBuffer->context()->platformContext());
+#endif
+
+#if PLATFORM(IOS)
+    endPaint();
 #endif
 }
 

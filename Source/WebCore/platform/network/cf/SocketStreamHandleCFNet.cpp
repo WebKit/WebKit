@@ -41,6 +41,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(IOS)
+#include <CFNetwork/CFNetwork.h>
+#endif
+
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
 #include <CFNetwork/CFNetwork.h>
@@ -571,7 +575,7 @@ void SocketStreamHandle::reportErrorToClient(CFErrorRef error)
     CFIndex errorCode = CFErrorGetCode(error);
     String description;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 
 #if COMPILER(CLANG)
 #pragma clang diagnostic push

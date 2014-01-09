@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+#if !PLATFORM(IOS)
+
 #include "WebCoreFullScreenPlaceholderView.h"
 
 #include "LocalizedStrings.h"
@@ -93,3 +95,5 @@ using namespace WebCore;
 }
 
 @end
+
+#endif // !PLATFORM(IOS)

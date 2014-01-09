@@ -36,6 +36,14 @@
 OBJC_CLASS NSEvent;
 #endif
 
+#if PLATFORM(IOS)
+#ifdef __OBJC__
+@class WebEvent;
+#else
+class WebEvent;
+#endif
+#endif
+
 #if PLATFORM(GTK)
 typedef struct _GdkEventKey GdkEventKey;
 #include "CompositionResults.h"
@@ -127,7 +135,11 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(MAC)
+#if !PLATFORM(IOS)
         NSEvent* macEvent() const { return m_macEvent.get(); }
+#else
+        WebEvent *event() const { return m_Event.get(); }
+#endif
 #endif
 
 #if PLATFORM(WIN)
@@ -170,7 +182,11 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(MAC)
+#if !PLATFORM(IOS)
         RetainPtr<NSEvent> m_macEvent;
+#else
+        RetainPtr<WebEvent> m_Event;
+#endif
 #endif
 #if PLATFORM(GTK)
         GdkEventKey* m_gdkEventKey;

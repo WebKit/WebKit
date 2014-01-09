@@ -138,6 +138,8 @@ public:
     //      }
     unsigned getSomeData(const char*& data, unsigned position = 0) const;
 
+    void shouldUsePurgeableMemory(bool use) { m_shouldUsePurgeableMemory = use; }
+
 #if ENABLE(DISK_IMAGE_CACHE)
     enum MemoryMappingState { QueuedForMapping, PreviouslyQueuedForMapping, SuccessAlreadyMapped, FailureCacheFull };
 
@@ -187,6 +189,7 @@ private:
 
     unsigned m_size;
     mutable Vector<char> m_buffer;
+    bool m_shouldUsePurgeableMemory;
     mutable OwnPtr<PurgeableBuffer> m_purgeableBuffer;
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     mutable Vector<RetainPtr<CFDataRef>> m_dataArray;

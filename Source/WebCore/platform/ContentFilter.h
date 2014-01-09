@@ -32,6 +32,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(IOS)
+#include <wtf/Functional.h>
+#endif
+
 #if PLATFORM(MAC)
 OBJC_CLASS WebFilterEvaluator;
 #endif
@@ -51,6 +55,11 @@ public:
     bool didBlockData() const;
     const char* getReplacementData(int& length) const;
     
+#if PLATFORM(IOS)
+    static const char* scheme();
+    void requestUnblockAndDispatchIfSuccessful(Function<void()>);
+#endif
+
 private:
     explicit ContentFilter(const ResourceResponse&);
     

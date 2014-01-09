@@ -158,7 +158,7 @@ float Font::getGlyphsAndAdvancesForSimpleText(const TextRun& run, int from, int 
     return beforeWidth;
 }
 
-void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
+float Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     // This glyph buffer holds our glyphs+advances+font data for each glyph.
     GlyphBuffer glyphBuffer;
@@ -166,10 +166,12 @@ void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const Fl
     float startX = point.x() + getGlyphsAndAdvancesForSimpleText(run, from, to, glyphBuffer);
 
     if (glyphBuffer.isEmpty())
-        return;
+        return 0;
 
     FloatPoint startPoint(startX, point.y());
     drawGlyphBuffer(context, run, glyphBuffer, startPoint);
+
+    return startPoint.x() - startX;
 }
 
 void Font::drawEmphasisMarksForSimpleText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
@@ -183,8 +185,8 @@ void Font::drawEmphasisMarksForSimpleText(GraphicsContext* context, const TextRu
     drawEmphasisMarks(context, run, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
 }
 
-void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const GlyphBuffer& glyphBuffer, const FloatPoint& point) const
-{   
+void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const GlyphBuffer& glyphBuffer, FloatPoint& point) const
+{
 #if !ENABLE(SVG_FONTS)
     UNUSED_PARAM(run);
 #endif
@@ -226,9 +228,11 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const G
 #if ENABLE(SVG_FONTS)
     if (renderingContext && fontData->isSVGFont())
         renderingContext->drawSVGGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
-    else
+    else {
 #endif
         drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+        point.setX(nextX);
+    }
 }
 
 inline static float offsetToMiddleOfGlyph(const SimpleFontData* fontData, Glyph glyph)

@@ -42,10 +42,12 @@ public:
     virtual IntRect bounds() const { return IntRect(); }
 };
 
+#if !PLATFORM(IOS)
 PassOwnPtr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient*)
 {
     return WTF::adoptPtr(new NullTextTrackRepresentation());
 }
+#endif
 
 }
 

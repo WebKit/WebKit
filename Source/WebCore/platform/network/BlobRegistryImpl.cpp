@@ -43,6 +43,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#endif
+
 namespace WebCore {
 
 BlobRegistryImpl::~BlobRegistryImpl()

@@ -81,3 +81,4 @@ void KillRing::setToYankedState()
 }
 
 } // namespace WebCore
+

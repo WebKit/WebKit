@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebCoreNSCellExtras.h"
 
+#if !PLATFORM(IOS)
+
 @implementation NSCell (WebCoreFocusRingDrawing)
 
 - (void)_web_drawFocusRingWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
@@ -40,3 +42,6 @@
 }
 
 @end
+
+#endif // !PLATFORM(IOS)
+

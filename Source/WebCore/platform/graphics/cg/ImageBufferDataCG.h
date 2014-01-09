@@ -31,7 +31,9 @@
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC) && USE(CA)
+#if !PLATFORM(IOS_SIMULATOR)
 #define WTF_USE_IOSURFACE_CANVAS_BACKING_STORE 1
+#endif // !PLATFORM(IOS_SIMULATOR)
 #endif
 
 typedef struct __IOSurface *IOSurfaceRef;

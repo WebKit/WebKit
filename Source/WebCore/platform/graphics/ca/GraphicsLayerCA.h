@@ -121,6 +121,9 @@ public:
 
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
+#if PLATFORM(IOS)
+    virtual PlatformLayer* contentsLayerForMedia() const OVERRIDE;
+#endif
     virtual void setContentsToCanvas(PlatformLayer*);
     virtual void setContentsToSolidColor(const Color&);
 
@@ -137,6 +140,9 @@ public:
     virtual void layerDidDisplay(PlatformLayer*);
 
     virtual void setMaintainsPixelAlignment(bool);
+#if PLATFORM(IOS)
+    virtual FloatSize pixelAlignmentOffset() const OVERRIDE { return m_pixelAlignmentOffset; }
+#endif
     virtual void deviceOrPageScaleFactorChanged();
 
     struct CommitState {
@@ -255,6 +261,10 @@ private:
     
     void setupContentsLayer(PlatformCALayer*);
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    bool mediaLayerMustBeUpdatedOnMainThread() const;
+#endif
 
     virtual void setReplicatedByLayer(GraphicsLayer*);
 

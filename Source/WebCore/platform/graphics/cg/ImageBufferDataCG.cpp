@@ -48,6 +48,9 @@ struct ScanlineData {
 };
 #endif
 
+// CA uses ARGB32 for textures and ARGB32 -> ARGB32 resampling is optimized.
+#define USE_ARGB32 PLATFORM(IOS)
+
 namespace WebCore {
 
 ImageBufferData::ImageBufferData(const IntSize&)
@@ -60,7 +63,7 @@ ImageBufferData::ImageBufferData(const IntSize&)
 
 #if USE(ACCELERATE)
 
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+#if USE_ARGB32 || USE(IOSURFACE_CANVAS_BACKING_STORE)
 static void convertScanline(void* data, size_t tileNumber, bool premultiply)
 {
     ScanlineData* scanlineData = static_cast<ScanlineData*>(data);
@@ -122,13 +125,13 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
     
     int originx = rect.x();
     int destx = 0;
-    int destw = rect.width();
+    Checked<int> destw = rect.width();
     if (originx < 0) {
         destw += originx;
         destx = -originx;
         originx = 0;
     }
-    destw = std::min<int>(destw, ceilf(size.width() / resolutionScale) - originx);
+    destw = std::min<int>(destw.unsafeGet(), ceilf(size.width() / resolutionScale) - originx);
     originx *= resolutionScale;
     if (endx.unsafeGet() > size.width())
         endx = size.width();
@@ -136,13 +139,13 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
     
     int originy = rect.y();
     int desty = 0;
-    int desth = rect.height();
+    Checked<int> desth = rect.height();
     if (originy < 0) {
         desth += originy;
         desty = -originy;
         originy = 0;
     }
-    desth = std::min<int>(desth, ceilf(size.height() / resolutionScale) - originy);
+    desth = std::min<int>(desth.unsafeGet(), ceilf(size.height() / resolutionScale) - originy);
     originy *= resolutionScale;
     if (endy.unsafeGet() > size.height())
         endy = size.height();
@@ -163,6 +166,16 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         
 #if USE(ACCELERATE)
         if (unmultiplied) {
+#if USE_ARGB32
+            ScanlineData scanlineData;
+            scanlineData.scanlineWidth = destw.unsafeGet();
+            scanlineData.srcData = srcRows;
+            scanlineData.srcRowBytes = srcBytesPerRow;
+            scanlineData.destData = destRows;
+            scanlineData.destRowBytes = destBytesPerRow;
+
+            dispatch_apply_f(desth.unsafeGet(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, unpremultitplyScanline);
+#else
             vImage_Buffer src;
             src.height = height.unsafeGet();
             src.width = width.unsafeGet();
@@ -170,8 +183,8 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
             src.data = srcRows;
             
             vImage_Buffer dst;
-            dst.height = desth;
-            dst.width = destw;
+            dst.height = desth.unsafeGet();
+            dst.width = destw.unsafeGet();
             dst.rowBytes = destBytesPerRow;
             dst.data = destRows;
 
@@ -184,13 +197,14 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
             }
 
             vImageUnpremultiplyData_RGBA8888(&src, &dst, kvImageNoFlags);
+#endif
             return result.release();
         }
 #endif
         if (resolutionScale != 1) {
             RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             RetainPtr<CGImageRef> sourceImage = adoptCF(CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw, desth, 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
             CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
             if (!unmultiplied)
@@ -208,6 +222,20 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
                 for (int x = 0; x < width.unsafeGet(); x++) {
                     int basex = x * 4;
                     unsigned char alpha = srcRows[basex + 3];
+#if USE_ARGB32
+                    // Byte order is different as we use image buffers of ARGB32
+                    if (alpha) {
+                        destRows[basex] = (srcRows[basex + 2] * 255) / alpha;
+                        destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
+                        destRows[basex + 2] = (srcRows[basex] * 255) / alpha;
+                        destRows[basex + 3] = alpha;
+                    } else {
+                        destRows[basex] = srcRows[basex + 2];
+                        destRows[basex + 1] = srcRows[basex + 1];
+                        destRows[basex + 2] = srcRows[basex];
+                        destRows[basex + 3] = alpha;
+                    }
+#else
                     if (alpha) {
                         destRows[basex] = (srcRows[basex] * 255) / alpha;
                         destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
@@ -215,14 +243,25 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
                         destRows[basex + 3] = alpha;
                     } else
                         reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+#endif
                 }
                 srcRows += srcBytesPerRow;
                 destRows += destBytesPerRow;
             }
         } else {
             for (int y = 0; y < height.unsafeGet(); ++y) {
+#if USE_ARGB32
+                for (int x = 0; x < width.unsafeGet(); x++) {
+                    int basex = x * 4;
+                    destRows[basex] = srcRows[basex + 2];
+                    destRows[basex + 1] = srcRows[basex + 1];
+                    destRows[basex + 2] = srcRows[basex];
+                    destRows[basex + 3] = srcRows[basex + 3];
+                }
+#else
                 for (int x = 0; x < (width * 4).unsafeGet(); x += 4)
                     reinterpret_cast<uint32_t*>(destRows + x)[0] = reinterpret_cast<uint32_t*>(srcRows + x)[0];
+#endif
                 srcRows += srcBytesPerRow;
                 destRows += destBytesPerRow;
             }
@@ -242,8 +281,8 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         src.data = srcRows;
 
         vImage_Buffer dest;
-        dest.height = desth;
-        dest.width = destw;
+        dest.height = desth.unsafeGet();
+        dest.width = destw.unsafeGet();
         dest.rowBytes = destBytesPerRow;
         dest.data = destRows;
 
@@ -263,13 +302,13 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
 
         if (unmultiplied) {
             ScanlineData scanlineData;
-            scanlineData.scanlineWidth = width.unsafeGet();
+            scanlineData.scanlineWidth = destw.unsafeGet();
             scanlineData.srcData = srcRows;
             scanlineData.srcRowBytes = srcBytesPerRow;
             scanlineData.destData = destRows;
             scanlineData.destRowBytes = destBytesPerRow;
 
-            dispatch_apply_f(height.unsafeGet(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, unpremultitplyScanline);
+            dispatch_apply_f(desth.unsafeGet(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, unpremultitplyScanline);
         } else {
             // Swap pixel channels from BGRA to RGBA.
             const uint8_t map[4] = { 2, 1, 0, 3 };
@@ -279,7 +318,7 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         if (resolutionScale != 1) {
             RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             RetainPtr<CGImageRef> sourceImage = adoptCF(CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw, desth, 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
             CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
 
@@ -390,6 +429,17 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
         
 #if  USE(ACCELERATE)
         if (unmultiplied) {
+#if USE_ARGB32
+            // FIXME: Are scanlineData.scanlineWidth and the number of iterations specified to dispatch_apply_f() correct?
+            ScanlineData scanlineData;
+            scanlineData.scanlineWidth = width.unsafeGet();
+            scanlineData.srcData = srcRows;
+            scanlineData.srcRowBytes = srcBytesPerRow;
+            scanlineData.destData = destRows;
+            scanlineData.destRowBytes = destBytesPerRow;
+
+            dispatch_apply_f(height.unsafeGet(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, premultitplyScanline);
+#else
             vImage_Buffer src;
             src.height = height.unsafeGet();
             src.width = width.unsafeGet();
@@ -411,6 +461,7 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
             }
 
             vImagePremultiplyData_RGBA8888(&src, &dst, kvImageNoFlags);
+#endif
             return;
         }
 #endif
@@ -433,6 +484,20 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
             for (int x = 0; x < width.unsafeGet(); x++) {
                 int basex = x * 4;
                 unsigned char alpha = srcRows[basex + 3];
+#if USE_ARGB32
+                // Byte order is different as we use image buffers of ARGB32
+                if (unmultiplied && alpha != 255) {
+                    destRows[basex] = (srcRows[basex + 2] * alpha + 254) / 255;
+                    destRows[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
+                    destRows[basex + 2] = (srcRows[basex + 0] * alpha + 254) / 255;
+                    destRows[basex + 3] = alpha;
+                } else {
+                    destRows[basex] = srcRows[basex + 2];
+                    destRows[basex + 1] = srcRows[basex + 1];
+                    destRows[basex + 2] = srcRows[basex];
+                    destRows[basex + 3] = alpha;
+                }
+#else
                 if (unmultiplied && alpha != 255) {
                     destRows[basex] = (srcRows[basex] * alpha + 254) / 255;
                     destRows[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
@@ -440,6 +505,7 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
                     destRows[basex + 3] = alpha;
                 } else
                     reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
+#endif
             }
             destRows += destBytesPerRow;
             srcRows += srcBytesPerRow;

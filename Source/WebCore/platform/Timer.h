@@ -30,6 +30,10 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#endif
+
 namespace WebCore {
 
 // Time intervals are all in seconds.
@@ -120,7 +124,18 @@ private:
 
 inline bool TimerBase::isActive() const
 {
+    // FIXME: Write this in terms of USE(WEB_THREAD) instead of PLATFORM(IOS).
+#if !PLATFORM(IOS)
     ASSERT(m_thread == currentThread());
+#else
+    // On iOS timers are always run on the main thread or the Web Thread.
+    // Unless we have workers enabled in which case timers can run on other threads.
+#if ENABLE(WORKERS)
+    ASSERT(WebThreadIsCurrent() || pthread_main_np() || m_thread == currentThread());
+#else
+    ASSERT(WebThreadIsCurrent() || pthread_main_np());
+#endif
+#endif // PLATFORM(IOS)
     return m_nextFireTime;
 }
 

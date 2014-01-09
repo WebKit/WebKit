@@ -30,6 +30,8 @@
 #import "config.h"
 #import "FontCache.h"
 
+#if !PLATFORM(IOS)
+
 #import "Font.h"
 #import "SimpleFontData.h"
 #import "FontPlatformData.h"
@@ -220,3 +222,5 @@ PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescrip
 }
 
 } // namespace WebCore
+
+#endif // !PLATFORM(IOS)

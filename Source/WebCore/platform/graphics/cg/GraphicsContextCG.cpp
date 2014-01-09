@@ -51,10 +51,17 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
+#if PLATFORM(IOS)
+#include <CoreGraphics/CGContextGState.h>
+#include <wtf/HashMap.h>
+#endif
+
+#if !PLATFORM(IOS)
 extern "C" {
     CG_EXTERN void CGContextSetCTM(CGContextRef, CGAffineTransform);
     CG_EXTERN CGAffineTransform CGContextGetBaseCTM(CGContextRef);
 };
+#endif // !PLATFORM(IOS)
 
 // FIXME: The following using declaration should be in <wtf/HashFunctions.h>.
 using WTF::pairIntHash;
@@ -82,6 +89,9 @@ CGColorSpaceRef deviceRGBColorSpaceRef()
 
 CGColorSpaceRef sRGBColorSpaceRef()
 {
+#if PLATFORM(IOS)
+    return deviceRGBColorSpaceRef();
+#endif // PLATFORM(IOS)
     static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
 #if PLATFORM(WIN)
     // Out-of-date CG installations will not honor kCGColorSpaceSRGB. This logic avoids
@@ -93,7 +103,15 @@ CGColorSpaceRef sRGBColorSpaceRef()
     return sRGBSpace;
 }
 
-#if PLATFORM(WIN)
+#if PLATFORM(IOS)
+void setStrokeAndFillColor(CGContextRef context, CGColorRef color)
+{
+    CGContextSetStrokeColorWithColor(context, color);
+    CGContextSetFillColorWithColor(context, color);
+}
+#endif // PLATFORM(IOS)
+
+#if PLATFORM(WIN) || PLATFORM(IOS)
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
     // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
@@ -101,11 +119,20 @@ CGColorSpaceRef linearRGBColorSpaceRef()
 }
 #endif
 
+#if !PLATFORM(IOS)
 void GraphicsContext::platformInit(CGContextRef cgContext)
+#else
+void GraphicsContext::platformInit(CGContextRef cgContext, bool shouldUseContextColors)
+#endif
 {
     m_data = new GraphicsContextPlatformPrivate(cgContext);
     setPaintingDisabled(!cgContext);
+#if !PLATFORM(IOS)
     if (cgContext) {
+#else
+    m_state.shouldUseContextColors = shouldUseContextColors;
+    if (cgContext && shouldUseContextColors) {
+#endif
         // Make sure the context starts in sync with our state.
         setPlatformFillColor(fillColor(), fillColorSpace());
         setPlatformStrokeColor(strokeColor(), strokeColorSpace());
@@ -141,17 +168,30 @@ void GraphicsContext::restorePlatformState()
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
+#if PLATFORM(IOS)
+void GraphicsContext::drawNativeImage(PassNativeImagePtr imagePtr, const FloatSize& imageSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, float scale, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+#else
 void GraphicsContext::drawNativeImage(PassNativeImagePtr imagePtr, const FloatSize& imageSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+#endif
 {
     RetainPtr<CGImageRef> image(imagePtr);
 
     float currHeight = orientation.usesWidthAsHeight() ? CGImageGetWidth(image.get()) : CGImageGetHeight(image.get());
+#if PLATFORM(IOS)
+    // Unapply the scaling since we are getting this from a scaled bitmap.
+    currHeight /= scale;
+#endif
 
     if (currHeight <= srcRect.y())
         return;
 
     CGContextRef context = platformContext();
     CGContextSaveGState(context);
+
+#if PLATFORM(IOS)
+    // Anti-aliasing is on by default on the iPhone. Need to turn it off when drawing images.
+    CGContextSetShouldAntialias(context, false);
+#endif
 
     bool shouldUseSubimage = false;
 
@@ -182,6 +222,9 @@ void GraphicsContext::drawNativeImage(PassNativeImagePtr imagePtr, const FloatSi
             subimageRect.setHeight(ceilf(subimageRect.height() + topPadding));
             adjustedDestRect.setHeight(subimageRect.height() / yScale);
 
+#if PLATFORM(IOS)
+            subimageRect.scale(scale, scale);
+#endif
 #if CACHE_SUBIMAGES
             image = subimageCache().getSubimage(image.get(), subimageRect);
 #else
@@ -203,6 +246,11 @@ void GraphicsContext::drawNativeImage(PassNativeImagePtr imagePtr, const FloatSi
     // If the image is only partially loaded, then shrink the destination rect that we're drawing into accordingly.
     if (!shouldUseSubimage && currHeight < imageSize.height())
         adjustedDestRect.setHeight(adjustedDestRect.height() * currHeight / imageSize.height());
+
+#if PLATFORM(IOS)
+    // Align to pixel boundaries
+    adjustedDestRect = roundToDevicePixels(adjustedDestRect);
+#endif
 
     setPlatformCompositeOperation(op, blendMode);
 
@@ -323,8 +371,14 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
 
     CGContextRef context = platformContext();
 
-    if (shouldAntialias())
-        CGContextSetShouldAntialias(context, false);
+    if (shouldAntialias()) {
+        bool willAntialias = false;
+#if PLATFORM(IOS)
+        // Force antialiasing on for line patterns as they don't look good with it turned off (<rdar://problem/5459772>).
+        willAntialias = patWidth;
+#endif
+        CGContextSetShouldAntialias(context, willAntialias);
+    }
 
     if (patWidth) {
         CGContextSaveGState(context);
@@ -385,6 +439,36 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
         CGContextSetShouldAntialias(context, true);
 }
 
+#if PLATFORM(IOS)
+void GraphicsContext::drawJoinedLines(CGPoint points[], unsigned count, bool antialias, CGLineCap lineCap)
+{
+    if (paintingDisabled() || !count)
+        return;
+
+    CGContextRef context = platformContext();
+    float width = CGContextGetLineWidth(context);
+
+    CGContextSaveGState(context);
+    
+    CGContextSetShouldAntialias(context, antialias);
+
+    CGContextSetLineWidth(context, width < 1 ? 1 : width);
+
+    CGContextBeginPath(context);
+    
+    CGContextSetLineCap(context, lineCap);
+    
+    CGContextMoveToPoint(context, points[0].x, points[0].y);
+    
+    for (unsigned i = 1; i < count; ++i)
+        CGContextAddLineToPoint(context, points[i].x, points[i].y);
+
+    CGContextStrokePath(context);
+
+    CGContextRestoreGState(context);
+}
+#endif
+
 // This method is only used to draw the little circles used in lists.
 void GraphicsContext::drawEllipse(const IntRect& rect)
 {
@@ -395,6 +479,31 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     path.addEllipse(rect);
     drawPath(path);
 }
+
+#if PLATFORM(IOS)
+void GraphicsContext::drawEllipse(const FloatRect& rect)
+{
+    if (paintingDisabled())
+        return;
+
+    CGContextRef context(platformContext());
+
+    CGContextSaveGState(context);
+
+    setCGFillColor(context, fillColor(), fillColorSpace());
+    setCGStrokeColor(context, strokeColor(), strokeColorSpace());
+
+    CGContextSetLineWidth(context, strokeThickness());
+    
+    CGContextBeginPath(context);
+    CGContextAddEllipseInRect(context, rect);
+
+    CGContextFillPath(context);
+    CGContextStrokePath(context);
+    
+    CGContextRestoreGState(context);
+}
+#endif
 
 static void addConvexPolygonToPath(Path& path, size_t numberOfPoints, const FloatPoint* points)
 {
@@ -903,7 +1012,11 @@ bool GraphicsContext::supportsTransparencyLayers()
 
 static void applyShadowOffsetWorkaroundIfNeeded(const GraphicsContext& context, CGFloat& xOffset, CGFloat& yOffset)
 {
-#if !PLATFORM(IOS)
+#if PLATFORM(IOS)
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(xOffset);
+    UNUSED_PARAM(yOffset);
+#else
     if (context.isAcceleratedContext())
         return;
 
@@ -1235,6 +1348,59 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
     return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
 }
 
+// FIXME: We should look to consolidate the iOS and non-iOS implementations of
+// computeLineBoundsAndAntialiasingModeForText() and computeLineBoundsForText().
+#if PLATFORM(IOS)
+static FloatRect computeLineBoundsAndAntialiasingModeForText(GraphicsContext& initialContext, const FloatPoint& point, float width, bool printing, bool& shouldAntialias, Color& color)
+{
+    CGContextRef context = initialContext.platformContext();
+    CGPoint origin;
+    CGFloat thickness = std::max(initialContext.strokeThickness(), 0.5f);
+
+    shouldAntialias = true;
+    if (printing)
+        origin = CGPointMake(point.x(), point.y());
+    else {
+        CGAffineTransform t = CGContextGetUserSpaceToDeviceSpaceTransform(context);
+        if (AffineTransform(t).preservesAxisAlignment())
+            shouldAntialias = false;
+
+        // This code always draws a line that is at least one-pixel line high,
+        // which tends to visually overwhelm text at small scales. To counter this
+        // effect, an alpha is applied to the underline color when text is at small scales.
+
+        // Just compute scale in x dimension, assuming x and y scales are equal.
+        CGFloat scale = t.b ? sqrtf(t.a * t.a + t.b * t.b) : t.a;
+        if (scale < 1.0) {
+            static const float MinUnderlineAlpha = 0.4f;
+            float shade = scale > MinUnderlineAlpha ? scale : MinUnderlineAlpha;
+            int alpha = color.alpha() * shade;
+            color = Color(color.red(), color.green(), color.blue(), alpha);
+        }
+
+        // Don't offset line from bottom of text if scale is less than OffsetUnderlineScale.
+        static const CGFloat OffsetUnderlineScale = 0.4f;
+        CGFloat dy = scale < OffsetUnderlineScale ? 0 : 1;
+
+        // If we've increased the thickness of the line, make sure to move the location too.
+        if (thickness > 1)
+            dy += roundf(thickness) - 1;
+
+        CGPoint devicePoint = CGPointApplyAffineTransform(point, t);
+        CGPoint deviceOrigin = CGPointMake(roundf(devicePoint.x), ceilf(devicePoint.y) + dy);
+        origin = CGPointApplyAffineTransform(deviceOrigin, CGAffineTransformInvert(t));
+        thickness /= scale;
+    }
+    return FloatRect(origin.x, origin.y, width, thickness);
+}
+
+FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& point, float width, bool printing)
+{
+    bool dummyBool;
+    Color dummyColor;
+    return computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, dummyBool, dummyColor);
+}
+#else
 static FloatRect computeLineBoundsAndAntialiasingModeForText(GraphicsContext& context, const FloatPoint& point, float width, bool printing, bool& shouldAntialias)
 {
     shouldAntialias = true;
@@ -1270,6 +1436,7 @@ FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& point, flo
     bool dummy;
     return computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, dummy);
 }
+#endif
 
 void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing)
 {
@@ -1279,6 +1446,7 @@ void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool
     if (width <= 0)
         return;
 
+#if !PLATFORM(IOS)
     bool shouldAntialiasLine;
     FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, shouldAntialiasLine);
 
@@ -1297,10 +1465,26 @@ void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool
 
     if (restoreAntialiasMode)
         CGContextSetShouldAntialias(platformContext(), true);
+#else
+    CGContextRef context = platformContext();
+    CGContextSaveGState(context);
+
+    Color color(strokeColor());
+    
+    bool shouldAntialiasLine;
+    FloatRect rect = computeLineBoundsAndAntialiasingModeForText(*this, point, width, printing, shouldAntialiasLine, color);
+
+    if (m_state.shouldUseContextColors)
+        setCGFillColor(context, color, strokeColorSpace());
+    CGContextFillRect(context, rect);
+
+    CGContextRestoreGState(context);
+#endif
 }
 
 void GraphicsContext::setURLForRect(const URL& link, const IntRect& destRect)
 {
+#if !PLATFORM(IOS)
     if (paintingDisabled())
         return;
 
@@ -1319,6 +1503,10 @@ void GraphicsContext::setURLForRect(const URL& link, const IntRect& destRect)
 
     CGPDFContextSetURLForRect(context, urlRef.get(),
         CGRectApplyAffineTransform(rect, CGContextGetCTM(context)));
+#else
+    UNUSED_PARAM(link);
+    UNUSED_PARAM(destRect);
+#endif
 }
 
 void GraphicsContext::setImageInterpolationQuality(InterpolationQuality mode)

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-#if !ENABLE(SMOOTH_SCROLLING)
+#if !ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS)
 PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
 {
     return adoptPtr(new ScrollAnimator(scrollableArea));
@@ -122,6 +122,13 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
     }
     return handled;
 }
+
+#if ENABLE(TOUCH_EVENTS)
+bool ScrollAnimator::handleTouchEvent(const PlatformTouchEvent&)
+{
+    return false;
+}
+#endif
 
 void ScrollAnimator::setCurrentPosition(const FloatPoint& position)
 {

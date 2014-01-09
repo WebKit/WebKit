@@ -266,6 +266,13 @@ bool isMainThread()
 }
 #endif
 
+#if !USE(WEB_THREAD)
+bool canAccessThreadLocalDataForThread(ThreadIdentifier threadId)
+{
+    return threadId == currentThread();
+}
+#endif
+
 #if ENABLE(PARALLEL_GC)
 static ThreadSpecific<bool>* isGCThread;
 #endif

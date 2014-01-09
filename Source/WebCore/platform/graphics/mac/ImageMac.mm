@@ -37,6 +37,18 @@
 @implementation WebCoreBundleFinder
 @end
 
+#if PLATFORM(IOS)
+#import "SoftLinking.h"
+
+#import <CoreGraphics/CoreGraphics.h>
+#import <ImageIO/ImageIO.h>
+#import <MobileCoreServices/MobileCoreServices.h>
+
+SOFT_LINK_FRAMEWORK(MobileCoreServices)
+SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeTIFF, CFStringRef)
+#define kUTTypeTIFF getkUTTypeTIFF()
+#endif
+
 namespace WebCore {
 
 void BitmapImage::invalidatePlatformData()
@@ -44,7 +56,9 @@ void BitmapImage::invalidatePlatformData()
     if (m_frames.size() != 1)
         return;
 
+#if !PLATFORM(IOS)
     m_nsImage = 0;
+#endif
     m_tiffRep = 0;
 }
 
@@ -103,6 +117,7 @@ CFDataRef BitmapImage::getTIFFRepresentation()
     return m_tiffRep.get();
 }
 
+#if !PLATFORM(IOS)
 NSImage* BitmapImage::getNSImage()
 {
     if (m_nsImage)
@@ -115,5 +130,6 @@ NSImage* BitmapImage::getNSImage()
     m_nsImage = adoptNS([[NSImage alloc] initWithData:(NSData*)data]);
     return m_nsImage.get();
 }
+#endif
 
 }

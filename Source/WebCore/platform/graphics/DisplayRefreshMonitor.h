@@ -131,11 +131,18 @@ private:
     void stopAnimationClient();
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 public:
     void displayLinkFired(double nowSeconds, double outputTimeSeconds);
 private:
     CVDisplayLinkRef m_displayLink;
+#endif
+
+#if PLATFORM(IOS)
+public:
+    void displayLinkFired(double nowSeconds);
+private:
+    void* m_displayLink;
 #endif
 };
 

@@ -176,6 +176,13 @@ bool ScrollableArea::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     return scrollAnimator()->handleWheelEvent(wheelEvent);
 }
 
+#if ENABLE(TOUCH_EVENTS)
+bool ScrollableArea::handleTouchEvent(const PlatformTouchEvent& touchEvent)
+{
+    return scrollAnimator()->handleTouchEvent(touchEvent);
+}
+#endif
+
 // NOTE: Only called from Internals for testing.
 void ScrollableArea::setScrollOffsetFromInternals(const IntPoint& offset)
 {
@@ -388,6 +395,31 @@ void ScrollableArea::serviceScrollAnimations()
     if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->serviceScrollAnimations();
 }
+
+#if PLATFORM(IOS)
+bool ScrollableArea::isPinnedInBothDirections(const IntSize& scrollDelta) const
+{
+    return isPinnedHorizontallyInDirection(scrollDelta.width()) && isPinnedVerticallyInDirection(scrollDelta.height());
+}
+
+bool ScrollableArea::isPinnedHorizontallyInDirection(int horizontalScrollDelta) const
+{
+    if (horizontalScrollDelta < 0 && isHorizontalScrollerPinnedToMinimumPosition())
+        return true;
+    if (horizontalScrollDelta > 0 && isHorizontalScrollerPinnedToMaximumPosition())
+        return true;
+    return false;
+}
+
+bool ScrollableArea::isPinnedVerticallyInDirection(int verticalScrollDelta) const
+{
+    if (verticalScrollDelta < 0 && isVerticalScrollerPinnedToMinimumPosition())
+        return true;
+    if (verticalScrollDelta > 0 && isVerticalScrollerPinnedToMaximumPosition())
+        return true;
+    return false;
+}
+#endif // PLATFORM(IOS)
 
 IntPoint ScrollableArea::scrollPosition() const
 {

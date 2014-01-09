@@ -51,6 +51,11 @@ public:
     static PassOwnPtr<LocaleMac> create(NSLocale*);
     ~LocaleMac();
 
+#if PLATFORM(IOS)
+    virtual float maximumWidthForDateType(DateComponents::Type, const Font&) OVERRIDE;
+    virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) OVERRIDE;
+#endif
+
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     virtual String dateFormat() OVERRIDE;
     virtual String monthFormat() OVERRIDE;

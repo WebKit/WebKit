@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class FileChooser;
+class Icon;
 
 struct FileChooserFileInfo {
     FileChooserFileInfo(const String& path, const String& displayName = String())
@@ -70,6 +71,11 @@ public:
     virtual ~FileChooserClient() { }
 
     virtual void filesChosen(const Vector<FileChooserFileInfo>&) = 0;
+#if PLATFORM(IOS)
+    // FIXME: This function is almost identical to FileChooser::filesChosen(). We should merge this
+    // function with FileChooser::filesChosen() and hence remove the PLATFORM(IOS)-guard.
+    virtual void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString, Icon*) = 0;
+#endif
 };
 
 class FileChooser : public RefCounted<FileChooser> {
@@ -81,6 +87,11 @@ public:
 
     void chooseFile(const String& path);
     void chooseFiles(const Vector<String>& paths);
+#if PLATFORM(IOS)
+    // FIXME: This function is almost identical to FileChooser::chooseFiles(). We should merge this
+    // function with FileChooser::chooseFiles() and hence remove the PLATFORM(IOS)-guard.
+    void chooseMediaFiles(const Vector<String>& paths, const String& displayString, Icon*);
+#endif    
 
     // FIXME: We should probably just pass file paths that could be virtual paths with proper display names rather than passing structs.
     void chooseFiles(const Vector<FileChooserFileInfo>& files);

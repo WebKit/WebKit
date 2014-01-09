@@ -36,6 +36,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#endif
+
 namespace WebCore {
 
 typedef HashMap<ProtectionSpace, Credential> ProtectionSpaceToCredentialMap;
@@ -93,6 +97,11 @@ void CredentialStorage::set(const Credential& credential, const ProtectionSpace&
     ASSERT(protectionSpace.isProxy() || url.isValid());
 
     protectionSpaceToCredentialMap().set(protectionSpace, credential);
+
+#if PLATFORM(IOS)
+    saveToPersistentStorage(protectionSpace, credential);
+#endif
+
     if (!protectionSpace.isProxy()) {
         originsWithCredentials().add(originStringFromURL(url));
 
@@ -162,6 +171,15 @@ Credential CredentialStorage::get(const URL& url)
         return Credential();
     return protectionSpaceToCredentialMap().get(iter->value);
 }
+
+#if PLATFORM(IOS)
+void CredentialStorage::clearCredentials()
+{
+    pathToDefaultProtectionSpaceMap().clear();
+    originsWithCredentials().clear();
+    protectionSpaceToCredentialMap().clear();
+}
+#endif
 
 void CredentialStorage::setPrivateMode(bool mode)
 {

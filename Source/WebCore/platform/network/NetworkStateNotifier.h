@@ -30,7 +30,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 
 #include <wtf/RetainPtr.h>
 #include "Timer.h"
@@ -62,6 +62,10 @@ public:
     void addNetworkStateChangeListener(NetworkStateChangeListener);
 
     bool onLine() const { return m_isOnLine; }
+    
+#if PLATFORM(IOS)
+    void setIsOnLine(bool);
+#endif
 
 #if PLATFORM(BLACKBERRY)
     void networkStateChange(bool online);
@@ -74,7 +78,7 @@ private:
     void notifyNetworkStateChange();
     void updateState();
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     void networkStateChangeTimerFired(Timer<NetworkStateNotifier>*);
 
     static void dynamicStoreCallback(SCDynamicStoreRef, CFArrayRef changedKeys, void *info); 

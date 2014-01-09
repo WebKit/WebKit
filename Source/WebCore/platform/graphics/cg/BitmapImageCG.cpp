@@ -32,7 +32,11 @@
 #include "GraphicsContextCG.h"
 #include "ImageObserver.h"
 #include "SubimageCacheWithTimer.h"
+#if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
+#else
+#include <CoreGraphics/CGContextPrivate.h>
+#endif
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -51,6 +55,12 @@ bool FrameData::clear(bool clearMetadata)
         m_haveMetadata = false;
 
     m_orientation = DefaultImageOrientation;
+
+#if PLATFORM(IOS)
+    m_frameBytes = 0;
+    m_scale = 1;
+    m_haveInfo = false;
+#endif
 
     if (m_frame) {
 #if CACHE_SUBIMAGES
@@ -90,10 +100,19 @@ BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
     // Set m_sizeRespectingOrientation to be the same as m_size so it's not 0x0.
     m_sizeRespectingOrientation = IntSize(width, height);
 
+#if PLATFORM(IOS)
+    m_originalSize = IntSize(width, height);
+    m_originalSizeRespectingOrientation = IntSize(width, height);
+#endif
+
     m_frames.grow(1);
     m_frames[0].m_frame = CGImageRetain(cgImage);
     m_frames[0].m_hasAlpha = true;
     m_frames[0].m_haveMetadata = true;
+
+#if PLATFORM(IOS)
+    m_frames[0].m_scale = 1;
+#endif
 
     checkForSolidColor();
 }
@@ -108,10 +127,24 @@ void BitmapImage::checkForSolidColor()
         return;
     }
 
+#if !PLATFORM(IOS)
     CGImageRef image = frameAtIndex(0);
-    
+#else
+    // Note, checkForSolidColor() may be called from frameAtIndex(). On iOS frameAtIndex() gets passed a scaleHint
+    // argument which it uses to tell CG to create a scaled down image. Since we don't know the scaleHint here, if
+    // we call frameAtIndex() again, we would pass it the default scale of 1 and would end up recreating the image.
+    // So we do a quick check and call frameAtIndex(0) only if we haven't yet created an image.
+    CGImageRef image = nullptr;
+    if (m_frames.size())
+        image = m_frames[0].m_frame;
+
+    if (!image)
+        image = frameAtIndex(0);
+#endif
+
     // Currently we only check for solid color in the important special case of a 1x1 image.
     if (image && CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
+#if !PLATFORM(IOS)
         unsigned char pixel[4]; // RGBA
         RetainPtr<CGContextRef> bmap = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), deviceRGBColorSpaceRef(),
             kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big));
@@ -124,6 +157,23 @@ void BitmapImage::checkForSolidColor()
             m_solidColor = Color(0, 0, 0, 0);
         else
             m_solidColor = Color(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
+#else
+        // FIXME: Can we share more code with the Mac port? Formerly the Mac port created a floating point bitmap context,
+        // but such a context wasn't support on iOS (rdar://problem/5106514). So, on iOS we created an integral bitmap
+        // context. Since <https://trac.webkit.org/changeset/23939> the Mac port creates an integral bitmap context.
+        unsigned char pixel[4] = {0, 0, 0, 0}; // RGBA
+        RetainPtr<CGContextRef> bitmap = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), deviceRGBColorSpaceRef(),
+            kCGImageAlphaPremultipliedLast));
+        if (!bitmap)
+            return;
+        GraphicsContext(bitmap.get()).setCompositeOperation(CompositeCopy);
+        CGRect destinationRect = { {0, 0}, {1, 1} };
+        CGContextDrawImage(bitmap.get(), destinationRect, image);
+        if (!pixel[3])
+            m_solidColor = Color(0, 0, 0, 0);
+        else
+            m_solidColor = Color(static_cast<int>(pixel[0]), static_cast<int>(pixel[1]), static_cast<int>(pixel[2]), static_cast<int>(pixel[3]));
+#endif
         m_isSolidColor = true;
     }
 }
@@ -162,9 +212,21 @@ RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription description)
 {
+#if !PLATFORM(IOS)
     startAnimation();
 
     CGImageRef image = frameAtIndex(m_currentFrame);
+#else
+    startAnimation(false);
+
+    CGRect transformedDestinationRect = CGRectApplyAffineTransform(destRect, CGContextGetCTM(ctxt->platformContext()));
+    RetainPtr<CGImageRef> image;
+    // Never use subsampled images for drawing into PDF contexts.
+    if (CGContextGetType(ctxt->platformContext()) == kCGContextTypePDF)
+        image = adoptCF(copyUnscaledFrameAtIndex(m_currentFrame));
+    else
+        image = frameAtIndex(m_currentFrame, std::min<float>(1.0f, std::max(transformedDestinationRect.size.width  / srcRect.width(), transformedDestinationRect.size.height / srcRect.height())));
+#endif
     if (!image) // If it's too early we won't have an image yet.
         return;
     
@@ -173,17 +235,40 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
         return;
     }
 
+#if PLATFORM(IOS)
+    float scale = m_frames[m_currentFrame].m_scale;
+#endif
     FloatSize selfSize = currentFrameSize();
     ImageOrientation orientation;
 
     if (description.respectImageOrientation() == RespectImageOrientation)
         orientation = frameOrientationAtIndex(m_currentFrame);
 
+#if PLATFORM(IOS)
+    ctxt->drawNativeImage(image.get(), selfSize, styleColorSpace, destRect, srcRect, scale, compositeOp, blendMode, orientation);
+#else
     ctxt->drawNativeImage(image, selfSize, styleColorSpace, destRect, srcRect, compositeOp, blendMode, orientation);
+#endif
 
     if (imageObserver())
         imageObserver()->didDraw(this);
 }
+
+#if PLATFORM(IOS)
+PassNativeImagePtr BitmapImage::copyUnscaledFrameAtIndex(size_t index)
+{
+    if (index >= frameCount())
+        return nullptr;
+
+    if (index >= m_frames.size() || !m_frames[index].m_frame)
+        cacheFrame(index, 1);
+
+    if (m_frames[index].m_scale == 1 && !m_source.isSubsampled())
+        return CGImageRetain(m_frames[index].m_frame);
+
+    return m_source.createFrameAtIndex(index);
+}
+#endif
 
 }
 

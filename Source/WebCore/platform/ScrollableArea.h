@@ -33,6 +33,7 @@ namespace WebCore {
 
 class FloatPoint;
 class GraphicsContext;
+class PlatformTouchEvent;
 class PlatformWheelEvent;
 class ScrollAnimator;
 #if USE(ACCELERATED_COMPOSITING)
@@ -56,6 +57,19 @@ public:
     virtual bool requestScrollPositionUpdate(const IntPoint&) { return false; }
 
     bool handleWheelEvent(const PlatformWheelEvent&);
+
+#if ENABLE(TOUCH_EVENTS)
+    virtual bool isTouchScrollable() const { return false; }
+    virtual bool handleTouchEvent(const PlatformTouchEvent&);
+#endif
+
+#if PLATFORM(IOS)
+    virtual bool isOverflowScroll() const { return false; }
+    virtual void didStartScroll() { }
+    virtual void didEndScroll() { }
+    virtual void didUpdateScroll() { }
+    virtual void setIsUserScroll(bool) { }
+#endif
 
     // Functions for controlling if you can scroll past the end of the document.
     bool constrainsScrollingToContentEdge() const { return m_constrainsScrollingToContentEdge; }
@@ -181,6 +195,17 @@ public:
     // animations.
     virtual bool scheduleAnimation() { return false; }
     void serviceScrollAnimations();
+
+#if PLATFORM(IOS)
+    bool isHorizontalScrollerPinnedToMinimumPosition() const { return !horizontalScrollbar() || scrollPosition(horizontalScrollbar()) <= minimumScrollPosition().x(); }
+    bool isHorizontalScrollerPinnedToMaximumPosition() const { return !horizontalScrollbar() || scrollPosition(horizontalScrollbar()) >= maximumScrollPosition().x(); }
+    bool isVerticalScrollerPinnedToMinimumPosition() const { return !verticalScrollbar() || scrollPosition(verticalScrollbar()) <= minimumScrollPosition().y(); }
+    bool isVerticalScrollerPinnedToMaximumPosition() const { return !verticalScrollbar() || scrollPosition(verticalScrollbar()) >= maximumScrollPosition().y(); } 
+
+    bool isPinnedInBothDirections(const IntSize&) const; 
+    bool isPinnedHorizontallyInDirection(int horizontalScrollDelta) const; 
+    bool isPinnedVerticallyInDirection(int verticalScrollDelta) const;
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual TiledBacking* tiledBacking() { return 0; }

@@ -50,6 +50,8 @@ template <> void deleteOwnedPtr<WebCore::TextLayout>(WebCore::TextLayout* ptr)
 
 namespace WebCore {
 
+static PassRef<FontGlyphs> retrieveOrAddCachedFontGlyphs(const FontDescription&, PassRefPtr<FontSelector>);
+
 const uint8_t Font::s_roundingHackCharacterTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\t*/, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     1 /*space*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*-*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*?*/,
@@ -116,6 +118,7 @@ Font::Font(const FontDescription& fd, float letterSpacing, float wordSpacing)
 {
 }
 
+// FIXME: We should make this constructor platform-independent.
 Font::Font(const FontPlatformData& fontData, bool isPrinterFont, FontSmoothingMode fontSmoothingMode)
     : m_glyphs(FontGlyphs::createForPlatformFont(fontData))
     , m_letterSpacing(0)
@@ -125,7 +128,31 @@ Font::Font(const FontPlatformData& fontData, bool isPrinterFont, FontSmoothingMo
 {
     m_fontDescription.setUsePrinterFont(isPrinterFont);
     m_fontDescription.setFontSmoothing(fontSmoothingMode);
+#if PLATFORM(IOS)
+    m_fontDescription.setSpecifiedSize(CTFontGetSize(fontData.font()));
+    m_fontDescription.setComputedSize(CTFontGetSize(fontData.font()));
+    m_fontDescription.setItalic(CTFontGetSymbolicTraits(fontData.font()) & kCTFontTraitItalic);
+    m_fontDescription.setWeight((CTFontGetSymbolicTraits(fontData.font()) & kCTFontTraitBold) ? FontWeightBold : FontWeightNormal);
+#endif
 }
+
+// FIXME: We should make this constructor platform-independent.
+#if PLATFORM(IOS)
+Font::Font(const FontPlatformData& fontData, PassRefPtr<FontSelector> fontSelector)
+    : m_glyphs(FontGlyphs::createForPlatformFont(fontData))
+    , m_letterSpacing(0)
+    , m_wordSpacing(0)
+    , m_typesettingFeatures(computeTypesettingFeatures())
+{
+    CTFontRef primaryFont = fontData.font();
+    m_fontDescription.setSpecifiedSize(CTFontGetSize(primaryFont));
+    m_fontDescription.setComputedSize(CTFontGetSize(primaryFont));
+    m_fontDescription.setItalic(CTFontGetSymbolicTraits(primaryFont) & kCTFontTraitItalic);
+    m_fontDescription.setWeight((CTFontGetSymbolicTraits(primaryFont) & kCTFontTraitBold) ? FontWeightBold : FontWeightNormal);
+    m_fontDescription.setUsePrinterFont(fontData.isPrinterFont());
+    m_glyphs = retrieveOrAddCachedFontGlyphs(m_fontDescription, fontSelector.get());
+}
+#endif
 
 Font::Font(const Font& other)
     : m_fontDescription(other.m_fontDescription)
@@ -297,14 +324,14 @@ void Font::update(PassRefPtr<FontSelector> fontSelector) const
     m_typesettingFeatures = computeTypesettingFeatures();
 }
 
-void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to, CustomFontNotReadyAction customFontNotReadyAction) const
+float Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     // Don't draw anything while we are using custom fonts that are in the process of loading,
     // except if the 'force' argument is set to true (in which case it will use a fallback
     // font).
     if (loadingCustomFonts() && customFontNotReadyAction == DoNotPaintIfFontNotReady)
-        return;
-    
+        return 0;
+
     to = (to == -1 ? run.length() : to);
 
     if (codePath(run) != Complex)

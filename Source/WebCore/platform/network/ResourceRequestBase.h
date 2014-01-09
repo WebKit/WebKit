@@ -142,6 +142,11 @@ namespace WebCore {
         static double defaultTimeoutInterval(); // May return 0 when using platform default.
         static void setDefaultTimeoutInterval(double);
 
+#if PLATFORM(IOS)
+        static bool defaultAllowCookies();
+        static void setDefaultAllowCookies(bool);
+#endif
+
         static bool compare(const ResourceRequest&, const ResourceRequest&);
 
     protected:
@@ -163,7 +168,11 @@ namespace WebCore {
             , m_cachePolicy(policy)
             , m_timeoutInterval(s_defaultTimeoutInterval)
             , m_httpMethod(ASCIILiteral("GET"))
+#if !PLATFORM(IOS)
             , m_allowCookies(true)
+#else
+            , m_allowCookies(ResourceRequestBase::defaultAllowCookies())
+#endif
             , m_resourceRequestUpdated(true)
             , m_platformRequestUpdated(false)
             , m_resourceRequestBodyUpdated(true)
@@ -204,6 +213,9 @@ namespace WebCore {
         const ResourceRequest& asResourceRequest() const;
 
         static double s_defaultTimeoutInterval;
+#if PLATFORM(IOS)
+        static bool s_defaultAllowCookies;
+#endif
     };
 
     bool equalIgnoringHeaderFields(const ResourceRequestBase&, const ResourceRequestBase&);
@@ -230,7 +242,9 @@ namespace WebCore {
     };
     
     unsigned initializeMaximumHTTPConnectionCountPerHost();
-
+#if PLATFORM(IOS)
+    void initializeHTTPConnectionSettingsOnStartup();
+#endif
 } // namespace WebCore
 
 #endif // ResourceRequestBase_h

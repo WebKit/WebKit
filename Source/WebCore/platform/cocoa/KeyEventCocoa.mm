@@ -531,9 +531,8 @@ int windowsKeyCodeForCharCode(unichar charCode)
         case NSPrintFunctionKey: return VK_PRINT;
         case NSExecuteFunctionKey: return VK_EXECUTE;
         case NSPrintScreenFunctionKey: return VK_SNAPSHOT;
-        case NSInsertFunctionKey: return VK_INSERT;
 #if PLATFORM(IOS)
-        case NSHelpFunctionKey: return VK_INSERT;
+        case NSInsertFunctionKey: case NSHelpFunctionKey: return VK_INSERT;
 
         case NSF1FunctionKey: return VK_F1;
         case NSF2FunctionKey: return VK_F2;
@@ -555,6 +554,8 @@ int windowsKeyCodeForCharCode(unichar charCode)
         case NSF18FunctionKey: return VK_F18;
         case NSF19FunctionKey: return VK_F19;
         case NSF20FunctionKey: return VK_F20;
+#else
+        case NSInsertFunctionKey: return VK_INSERT;
 #endif
         case NSF21FunctionKey: return VK_F21;
         case NSF22FunctionKey: return VK_F22;

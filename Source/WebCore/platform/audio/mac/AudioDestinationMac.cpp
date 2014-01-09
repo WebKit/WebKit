@@ -30,6 +30,8 @@
 
 #if ENABLE(WEB_AUDIO)
 
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+
 #include "AudioDestinationMac.h"
 
 #include "AudioIOCallback.h"
@@ -180,5 +182,7 @@ OSStatus AudioDestinationMac::inputProc(void* userData, AudioUnitRenderActionFla
 }
 
 } // namespace WebCore
+
+#endif // PLATFORM(MAC) && !PLATFORM(IOS)
 
 #endif // ENABLE(WEB_AUDIO)
