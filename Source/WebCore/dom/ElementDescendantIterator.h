@@ -146,7 +146,7 @@ template <typename ElementType>
 inline ElementDescendantIterator<ElementType> ElementDescendantIteratorAdapter<ElementType>::beginAt(ElementType& descendant)
 {
     ASSERT(descendant.isDescendantOf(&m_root));
-    return ElementDescendantIterator<ElementType>(m_root, static_cast<ElementType*>(&descendant));
+    return ElementDescendantIterator<ElementType>(m_root, &descendant);
 }
 
 template <typename ElementType>

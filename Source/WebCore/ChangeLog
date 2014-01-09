@@ -1,5 +1,12 @@
 2014-01-09  Antti Koivisto  <antti@apple.com>
 
+        Remove an accidentally left-behind static_cast.
+
+        * dom/ElementDescendantIterator.h:
+        (WebCore::ElementDescendantIteratorAdapter<ElementType>::beginAt):
+
+2014-01-09  Antti Koivisto  <antti@apple.com>
+
         Replace ElementIteratorAdapter find() with beginAt()
         https://bugs.webkit.org/show_bug.cgi?id=126714
 
