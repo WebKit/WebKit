@@ -1,3 +1,16 @@
+2014-01-09  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        Regression: failing RegExp tests on 32 bit architectures.
+        https://bugs.webkit.org/show_bug.cgi?id=126699
+
+        Reviewed by Michael Saboff.
+
+        Fix setRegExpConstructor functions for 32 bit architectures.
+
+        * runtime/RegExpConstructor.cpp:
+        (JSC::setRegExpConstructorInput):
+        (JSC::setRegExpConstructorMultiline):
+
 2014-01-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r161540.
