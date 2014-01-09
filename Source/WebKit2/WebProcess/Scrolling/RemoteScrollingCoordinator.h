@@ -26,6 +26,8 @@
 #ifndef RemoteScrollingCoordinator_h
 #define RemoteScrollingCoordinator_h
 
+#if ENABLE(ASYNC_SCROLLING)
+
 #include "MessageReceiver.h"
 #include <WebCore/AsyncScrollingCoordinator.h>
 #include <WebCore/ScrollTypes.h>
@@ -77,5 +79,7 @@ private:
 SCROLLING_COORDINATOR_TYPE_CASTS(RemoteScrollingCoordinator, isRemoteScrollingCoordinator());
 
 } // namespace WebKit
+
+#endif // ENABLE(ASYNC_SCROLLING)
 
 #endif // RemoteScrollingCoordinator_h

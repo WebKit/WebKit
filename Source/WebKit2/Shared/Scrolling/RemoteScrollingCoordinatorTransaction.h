@@ -26,6 +26,8 @@
 #ifndef RemoteScrollingCoordinatorTransaction_h
 #define RemoteScrollingCoordinatorTransaction_h
 
+#if ENABLE(ASYNC_SCROLLING)
+
 #include <WebCore/ScrollingStateTree.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -52,5 +54,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(ASYNC_SCROLLING)
 
 #endif // RemoteScrollingCoordinatorTransaction_h

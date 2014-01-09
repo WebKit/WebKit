@@ -26,6 +26,8 @@
 #ifndef RemoteScrollingCoordinatorProxy_h
 #define RemoteScrollingCoordinatorProxy_h
 
+#if ENABLE(ASYNC_SCROLLING)
+
 #include "MessageReceiver.h"
 #include "RemoteScrollingCoordinator.h"
 #include <wtf/Noncopyable.h>
@@ -69,5 +71,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(ASYNC_SCROLLING)
 
 #endif // RemoteScrollingCoordinatorProxy_h

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
 
+#if ENABLE(ASYNC_SCROLLING)
+
 #include "ArgumentCoders.h"
 #include "MessageDecoder.h"
 #include "MessageEncoder.h"
@@ -301,3 +303,5 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(ASYNC_SCROLLING)

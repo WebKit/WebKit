@@ -26,6 +26,8 @@
 #ifndef RemoteScrollingTree_h
 #define RemoteScrollingTree_h
 
+#if ENABLE(ASYNC_SCROLLING)
+
 #include "RemoteScrollingCoordinator.h"
 #include <WebCore/ScrollElasticityController.h>
 #include <WebCore/ScrollingConstraints.h>
@@ -61,5 +63,7 @@ private:
 SCROLLING_TREE_TYPE_CASTS(RemoteScrollingTree, isRemoteScrollingTree());
 
 } // namespace WebKit
+
+#endif // ENABLE(ASYNC_SCROLLING)
 
 #endif // RemoteScrollingTree_h

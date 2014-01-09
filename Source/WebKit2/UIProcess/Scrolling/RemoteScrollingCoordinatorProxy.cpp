@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteScrollingCoordinatorProxy.h"
 
+#if ENABLE(ASYNC_SCROLLING)
+
 #include "ArgumentCoders.h"
 #include "MessageDecoder.h"
 #include "MessageEncoder.h"
@@ -124,3 +126,5 @@ void RemoteScrollingCoordinatorProxy::scrollPositionChanged(WebCore::ScrollingNo
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(ASYNC_SCROLLING)

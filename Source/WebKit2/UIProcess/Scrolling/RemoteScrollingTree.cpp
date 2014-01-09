@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteScrollingTree.h"
 
+#if ENABLE(ASYNC_SCROLLING)
+
 #include "RemoteLayerTreeHost.h"
 #include "RemoteScrollingCoordinatorProxy.h"
 #include <WebCore/ScrollingTreeFixedNode.h>
@@ -89,3 +91,5 @@ PassOwnPtr<ScrollingTreeNode> RemoteScrollingTree::createNode(ScrollingNodeType 
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(ASYNC_SCROLLING)

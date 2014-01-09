@@ -26,6 +26,8 @@
 #import "config.h"
 #import "RemoteScrollingCoordinator.h"
 
+#if ENABLE(ASYNC_SCROLLING)
+
 #import "ArgumentCoders.h"
 #import "GraphicsLayerCARemote.h"
 #import "MessageDecoder.h"
@@ -95,3 +97,5 @@ void RemoteScrollingCoordinator::scrollPositionChangedForNode(ScrollingNodeID no
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(ASYNC_SCROLLING)
