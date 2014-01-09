@@ -1,3 +1,16 @@
+2014-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Narrow underlines are too tall
+        https://bugs.webkit.org/show_bug.cgi?id=126708
+
+        Reviewed by Simon Fraser.
+
+        This test clips to a region that should not be drawn in, then draws a scaled underline. It then compares
+        the output to an empty element.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-tall-underlines-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-tall-underlines.html: Added.
+
 2014-01-09  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r161429?): Frequent crashes on media/track/media-element-enqueue-event-crash.html

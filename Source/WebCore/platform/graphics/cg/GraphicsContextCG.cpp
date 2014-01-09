@@ -1251,7 +1251,7 @@ static FloatRect computeLineBoundsAndAntialiasingModeForText(GraphicsContext& co
 
     // On screen, use a minimum thickness of 1.0 in user space (later rounded to an integral number in device space).
     FloatRect adjustedBounds = initialBounds;
-    adjustedBounds.setHeight(std::max(initialBounds.width(), 1.0f));
+    adjustedBounds.setHeight(std::max(initialBounds.height(), 1.0f));
 
     // FIXME: This should be done a better way.
     // We try to round all parameters to integer boundaries in device space. If rounding pixels in device space
