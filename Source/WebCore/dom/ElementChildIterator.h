@@ -50,8 +50,11 @@ template <typename ElementType>
 class ElementChildIteratorAdapter {
 public:
     ElementChildIteratorAdapter(ContainerNode& parent);
+
     ElementChildIterator<ElementType> begin();
     ElementChildIterator<ElementType> end();
+    ElementChildIterator<ElementType> find(Element&);
+
     ElementType* first();
     ElementType* last();
 
@@ -63,8 +66,11 @@ template <typename ElementType>
 class ElementChildConstIteratorAdapter {
 public:
     ElementChildConstIteratorAdapter(const ContainerNode& parent);
+
     ElementChildConstIterator<ElementType> begin() const;
     ElementChildConstIterator<ElementType> end() const;
+    ElementChildConstIterator<ElementType> find(const Element&) const;
+
     const ElementType* first() const;
     const ElementType* last() const;
 
@@ -147,6 +153,16 @@ inline ElementType* ElementChildIteratorAdapter<ElementType>::last()
     return Traversal<ElementType>::lastChild(&m_parent);
 }
 
+template <typename ElementType>
+inline ElementChildIterator<ElementType> ElementChildIteratorAdapter<ElementType>::find(Element& child)
+{
+    if (!isElementOfType<const ElementType>(child))
+        return end();
+    if (child.parentNode() != &m_parent)
+        return end();
+    return ElementChildIterator<ElementType>(m_parent, static_cast<ElementType*>(&child));
+}
+
 // ElementChildConstIteratorAdapter
 
 template <typename ElementType>
@@ -177,6 +193,16 @@ template <typename ElementType>
 inline const ElementType* ElementChildConstIteratorAdapter<ElementType>::last() const
 {
     return Traversal<ElementType>::lastChild(&m_parent);
+}
+
+template <typename ElementType>
+inline ElementChildConstIterator<ElementType> ElementChildConstIteratorAdapter<ElementType>::find(const Element& child) const
+{
+    if (!isElementOfType<const ElementType>(child))
+        return end();
+    if (child.parentNode() != &m_parent)
+        return end();
+    return ElementChildConstIterator<ElementType>(m_parent, static_cast<const ElementType*>(&child));
 }
 
 // Standalone functions

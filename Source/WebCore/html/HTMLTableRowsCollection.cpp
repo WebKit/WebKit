@@ -29,7 +29,7 @@
 #include "config.h"
 #include "HTMLTableRowsCollection.h"
 
-#include "ElementTraversal.h"
+#include "ElementIterator.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "HTMLTableRowElement.h"
@@ -70,11 +70,13 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
 
     // Start by looking for the next row in this section. Continue only if there is none.
     if (previous && previous->parentNode() != table) {
-        if (auto row = Traversal<HTMLTableRowElement>::nextSibling(previous))
-            return row;
+        auto rows = childrenOfType<HTMLTableRowElement>(*previous->parentNode());
+        auto row = rows.find(*previous);
+        if (++row != rows.end())
+            return &*row;
     }
 
-    Element* child = 0;
+    Element* child = nullptr;
 
     // If still looking at head sections, find the first row in the next head section.
     if (!previous)
@@ -83,7 +85,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
         child = ElementTraversal::nextSibling(previous->parentNode());
     for (; child; child = ElementTraversal::nextSibling(child)) {
         if (child->hasTagName(theadTag)) {
-            if (auto row = Traversal<HTMLTableRowElement>::firstChild(child))
+            if (auto row = childrenOfType<HTMLTableRowElement>(*child).first())
                 return row;
         }
     }
@@ -99,7 +101,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
         if (isHTMLTableRowElement(child))
             return toHTMLTableRowElement(child);
         if (child->hasTagName(tbodyTag)) {
-            if (auto row = Traversal<HTMLTableRowElement>::firstChild(child))
+            if (auto row = childrenOfType<HTMLTableRowElement>(*child).first())
                 return row;
         }
     }
@@ -111,19 +113,19 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
         child = ElementTraversal::nextSibling(previous->parentNode());
     for (; child; child = ElementTraversal::nextSibling(child)) {
         if (child->hasTagName(tfootTag)) {
-            if (auto row = Traversal<HTMLTableRowElement>::firstChild(child))
+            if (auto row = childrenOfType<HTMLTableRowElement>(*child).first())
                 return row;
         }
     }
 
-    return 0;
+    return nullptr;
 }
 
 HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
 {
     for (auto child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(child)) {
         if (child->hasTagName(tfootTag)) {
-            if (auto row = Traversal<HTMLTableRowElement>::lastChild(child))
+            if (auto row = childrenOfType<HTMLTableRowElement>(*child).last())
                 return row;
         }
     }
@@ -132,19 +134,19 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
         if (isHTMLTableRowElement(child))
             return toHTMLTableRowElement(child);
         if (child->hasTagName(tbodyTag)) {
-            if (auto row = Traversal<HTMLTableRowElement>::lastChild(child))
+            if (auto row = childrenOfType<HTMLTableRowElement>(*child).last())
                 return row;
         }
     }
 
     for (auto child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(child)) {
         if (child->hasTagName(theadTag)) {
-            if (auto row = Traversal<HTMLTableRowElement>::lastChild(child))
+            if (auto row = childrenOfType<HTMLTableRowElement>(*child).last())
                 return row;
         }
     }
 
-    return 0;
+    return nullptr;
 }
 
 HTMLTableRowsCollection::HTMLTableRowsCollection(HTMLTableElement& table)
