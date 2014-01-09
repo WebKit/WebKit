@@ -1,3 +1,23 @@
+2014-01-09  Pascal Jacquemart  <p.jacquemart@samsung.com>
+
+        Cannot select multiple non-adjacent items in a multiple select control with the keyboard only
+        https://bugs.webkit.org/show_bug.cgi?id=15816
+
+        Reviewed by Chris Fleizach.
+
+        Test: fast/forms/listbox-non-contiguous-keyboard-selection.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement):
+        New member m_allowsNonContiguousSelection defaults to false
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        Tracking CTRL modifier to start multiple non contiguous selection
+        * html/HTMLSelectElement.h: New member m_allowsNonContiguousSelection
+        (WebCore::HTMLSelectElement::allowsNonContiguousSelection): New getter
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::addFocusRingRects):
+        Following implementation made for spatial navigation
+
 2014-01-09  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove unused overriding protocols.

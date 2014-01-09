@@ -565,6 +565,9 @@ webkit.org/b/92352 css3/flexbox/flex-rounding.html
 fast/events/show-modal-dialog-onblur-onfocus.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 
+# Multiple non contiguous selection with keyboard not enabled on mac
+webkit.org/b/15816 fast/forms/listbox-non-contiguous-keyboard-selection.html [ Skip ]
+
 # <rdar://problem/11224894> Several Japanese vertical text tests failing on Mountain Lion
 fast/dynamic/text-combine.html
 fast/repaint/japanese-rl-selection-clear.html

@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('&lt;select&gt; selection test for multiple but non contiguous selection with keyboard.');
+
+function keyDownOnSelect(selId, identifier, modifier) {
+    document.getElementById(selId).focus();
+    if (window.eventSender)
+        eventSender.keyDown(identifier, [modifier]);
+}
+
+function createSelect(idName, sz, mlt, selIndex) {
+    var sl = document.createElement("select");
+    var i = 0;
+    sl.size = sz;
+    while (i < sz) {
+        var opt = document.createElement("option");
+        if (i == selIndex)
+            opt.selected = true;
+        opt.textContent = "item " + i;
+        sl.appendChild(opt);
+        i++;
+    }
+    sl.multiple = mlt;
+    sl.id = idName;
+    var parent = document.getElementById("parent");
+    parent.appendChild(sl);
+}
+
+function selectionPattern(selId) {
+    var sl = document.getElementById(selId);
+    var result = '';
+    for (var i = 0; i < sl.options.length; i++)
+        result += sl.options[i].selected ? '1' : '0';
+    return result;
+}
+
+var parent = document.createElement('div');
+parent.id = "parent";
+document.body.appendChild(parent);
+
+createSelect("sl1", 5, true, -1);
+
+debug("1) Select multiple non-adjacent items with the keyboard");
+// Move to second item.
+keyDownOnSelect("sl1", "downArrow", "addSelectionKey");
+keyDownOnSelect("sl1", "downArrow", "addSelectionKey");
+// Select it.
+keyDownOnSelect("sl1", " ");
+// Move to fourth item.
+keyDownOnSelect("sl1", "downArrow", "addSelectionKey");
+keyDownOnSelect("sl1", "downArrow", "addSelectionKey");
+// Select it.
+keyDownOnSelect("sl1", " ");
+shouldBe('selectionPattern("sl1")', '"01010"');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

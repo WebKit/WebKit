@@ -1,3 +1,15 @@
+2014-01-09  Pascal Jacquemart  <p.jacquemart@samsung.com>
+
+        Cannot select multiple non-adjacent items in a multiple select control with the keyboard only
+        https://bugs.webkit.org/show_bug.cgi?id=15816
+
+        Reviewed by Chris Fleizach.
+
+        * fast/forms/listbox-non-contiguous-keyboard-selection-expected.txt: Added.
+        * fast/forms/listbox-non-contiguous-keyboard-selection.html: Added.
+        * platform/mac/TestExpectations:
+        Multiple non contiguous selection with keyboard not enabled on Mac
+
 2014-01-09  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove unused overriding protocols.

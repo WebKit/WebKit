@@ -74,6 +74,7 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document& doc
     , m_isProcessingUserDrivenChange(false)
     , m_multiple(false)
     , m_activeSelectionState(false)
+    , m_allowsNonContiguousSelection(false)
     , m_shouldRecalcListItems(false)
 {
     ASSERT(hasTagName(selectTag));
@@ -1457,7 +1458,13 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             ASSERT_UNUSED(listItems, !listItems.size() || static_cast<size_t>(endIndex) < listItems.size());
             setActiveSelectionEndIndex(endIndex);
 
-            bool selectNewItem = !m_multiple || static_cast<KeyboardEvent*>(event)->shiftKey() || !isSpatialNavigationEnabled(document().frame());
+#if PLATFORM(MAC)
+            m_allowsNonContiguousSelection = m_multiple && isSpatialNavigationEnabled(document().frame());
+#else
+            m_allowsNonContiguousSelection = m_multiple && (isSpatialNavigationEnabled(document().frame()) || static_cast<KeyboardEvent*>(event)->ctrlKey());
+#endif
+            bool selectNewItem = static_cast<KeyboardEvent*>(event)->shiftKey() || !m_allowsNonContiguousSelection;
+
             if (selectNewItem)
                 m_activeSelectionState = true;
             // If the anchor is unitialized, or if we're going to deselect all
@@ -1487,7 +1494,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             if (form())
                 form()->submitImplicitly(event, false);
             event->setDefaultHandled();
-        } else if (m_multiple && keyCode == ' ' && isSpatialNavigationEnabled(document().frame())) {
+        } else if (m_multiple && keyCode == ' ' && m_allowsNonContiguousSelection) {
             // Use space to toggle selection change.
             m_activeSelectionState = !m_activeSelectionState;
             ASSERT(m_activeSelectionEndIndex >= 0

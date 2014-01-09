@@ -111,6 +111,7 @@ public:
     
     // For use in the implementation of HTMLOptionElement.
     void optionSelectionStateChanged(HTMLOptionElement*, bool optionIsSelected);
+    bool allowsNonContiguousSelection() const { return m_allowsNonContiguousSelection; };
 
 protected:
     HTMLSelectElement(const QualifiedName&, Document&, HTMLFormElement*);
@@ -208,6 +209,7 @@ private:
     bool m_isProcessingUserDrivenChange;
     bool m_multiple;
     bool m_activeSelectionState;
+    bool m_allowsNonContiguousSelection;
     mutable bool m_shouldRecalcListItems;
 };
 

@@ -319,7 +319,7 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
 void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer)
 {
-    if (!isSpatialNavigationEnabled(&frame()))
+    if (!selectElement().allowsNonContiguousSelection())
         return RenderBlockFlow::addFocusRingRects(rects, additionalOffset, paintContainer);
 
     // Focus the last selected item.
