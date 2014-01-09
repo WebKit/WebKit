@@ -1,3 +1,15 @@
+2014-01-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Revert back to using the -n option when producing symbolic links to the GTK-specific
+        API directories under Source/WebKit2/. Removing the option in r161497 resulted in
+        recursive links being created under those directories since the links were dereferenced.
+
+        To actually ensure that the link is created anew, remove it so it is reconstructed.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * GNUmakefile.am:
+
 2014-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Crash when starting a download before the network process has been launched
