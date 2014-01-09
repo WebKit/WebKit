@@ -1,4 +1,4 @@
-layer at (0,0) size 163023x1728
+layer at (0,0) size 9600207x1728
   RenderView at (0,0) size 785x585
 layer at (0,0) size 785x1728
   RenderBlock {HTML} at (0,0) size 785x1728
@@ -40,10 +40,10 @@ layer at (0,0) size 785x1728
           text run at (0,18) width 37: "a 'w', "
           text run at (37,18) width 407: "perhaps on two different lines, unless you scroll way to the right."
       RenderBlock {P} at (0,398) size 769x36 [bgcolor=#EEEEEE]
-        RenderInline {SPAN} at (0,0) size 163015x35
-          RenderText {#text} at (160,0) size 163015x35
-            text run at (160,0) width 162855: "Hello,"
-            text run at (0,18) width 135717: "world"
+        RenderInline {SPAN} at (0,0) size 9600199x35
+          RenderText {#text} at (160,0) size 9600199x35
+            text run at (160,0) width 9600039: "Hello,"
+            text run at (0,18) width 8000037: "world"
       RenderBlock {P} at (0,450) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 528x17
           text run at (0,0) width 528: "The next line tests a small negative line spacing, and should be crammed backwards"
@@ -158,11 +158,11 @@ layer at (8,858) size 19399x35
     RenderText {#text} at (160,0) size 19399x35
       text run at (160,0) width 19239: "Hello,"
       text run at (0,18) width 16037: "world"
-layer at (8,944) size 163015x35
-  RenderInline {SPAN} at (0,0) size 163015x35 [bgcolor=#CCCCFF]
-    RenderText {#text} at (160,0) size 163015x35
-      text run at (160,0) width 162855: "Hello,"
-      text run at (0,18) width 135717: "world"
+layer at (8,944) size 9600199x35
+  RenderInline {SPAN} at (0,0) size 9600199x35 [bgcolor=#CCCCFF]
+    RenderText {#text} at (160,0) size 9600199x35
+      text run at (160,0) width 9600039: "Hello,"
+      text run at (0,18) width 8000037: "world"
 layer at (8,1030) size 0x17
   RenderInline {SPAN} at (0,0) size 0x17 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 0x17

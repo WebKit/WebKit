@@ -1,3 +1,22 @@
+2014-01-08  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening. Rebaseline after r161521.
+
+        * platform/efl/css1/text_properties/letter_spacing-expected.png:
+        * platform/efl/css1/text_properties/letter_spacing-expected.txt:
+        * platform/efl/css1/text_properties/word_spacing-expected.png:
+        * platform/efl/css1/text_properties/word_spacing-expected.txt:
+        * platform/efl/fast/text/basic/013-expected.png:
+        * platform/efl/fast/text/basic/013-expected.txt:
+        * platform/efl/fast/text/text-letter-spacing-expected.txt:
+        * platform/efl/svg/W3C-SVG-1.1/text-spacing-01-b-expected.png:
+        * platform/efl/svg/W3C-SVG-1.1/text-spacing-01-b-expected.txt: Added.
+        * platform/efl/svg/batik/text/textLayout-expected.txt: Added.
+        * platform/efl/svg/custom/text-letter-spacing-expected.png: Added.
+        * platform/efl/svg/custom/text-letter-spacing-expected.txt: Added.
+        * platform/efl/svg/text/text-spacing-01-b-expected.png:
+        * platform/efl/svg/text/text-spacing-01-b-expected.txt: Added.
+
 2014-01-08  Sam Weinig  <sam@webkit.org>
 
         [JS] Should be able to create a promise by calling the Promise constructor as a function
