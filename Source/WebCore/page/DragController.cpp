@@ -848,11 +848,11 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     return startedDrag;
 }
 
-void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, const IntRect& rect, Clipboard& clipboard, Frame& frame, IntPoint& dragImageOffset)
+void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, const IntRect& layoutRect, Clipboard& clipboard, Frame& frame, IntPoint& dragImageOffset)
 {
     IntPoint mouseDownPoint = dragOrigin;
-    DragImageRef dragImage = 0;
-    IntPoint origin;
+    DragImageRef dragImage = nullptr;
+    IntPoint scaledOrigin;
 
     if (!element.renderer())
         return;
@@ -865,34 +865,31 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
     Image* image = getImage(element);
     if (image && image->size().height() * image->size().width() <= MaxOriginalImageArea
         && (dragImage = createDragImageFromImage(image, element.renderer() ? orientationDescription : ImageOrientationDescription()))) {
-        IntSize originalSize = rect.size();
-        origin = rect.location();
 
-        dragImage = fitDragImageToMaxSize(dragImage, rect.size(), maxDragImageSize());
+        dragImage = fitDragImageToMaxSize(dragImage, layoutRect.size(), maxDragImageSize());
+        IntSize fittedSize = dragImageSize(dragImage);
+
         dragImage = dissolveDragImageToFraction(dragImage, DragImageAlpha);
-        IntSize newSize = dragImageSize(dragImage);
 
-        // Properly orient the drag image and orient it differently if it's smaller than the original
-        float scale = newSize.width() / (float)originalSize.width();
-        float dx = origin.x() - mouseDownPoint.x();
-        dx *= scale;
-        origin.setX((int)(dx + 0.5));
+        // Properly orient the drag image and orient it differently if it's smaller than the original.
+        float scale = fittedSize.width() / (float)layoutRect.width();
+        float dx = scale * (layoutRect.x() - mouseDownPoint.x());
+        float originY = layoutRect.y();
 #if PLATFORM(MAC)
-        //Compensate for accursed flipped coordinates in cocoa
-        origin.setY(origin.y() + originalSize.height());
+        // Compensate for accursed flipped coordinates in Cocoa.
+        originY += layoutRect.height();
 #endif
-        float dy = origin.y() - mouseDownPoint.y();
-        dy *= scale;
-        origin.setY((int)(dy + 0.5));
+        float dy = scale * (originY - mouseDownPoint.y());
+        scaledOrigin = IntPoint((int)(dx + 0.5), (int)(dy + 0.5));
     } else {
         if (CachedImage* cachedImage = getCachedImage(element)) {
             dragImage = createDragImageIconForCachedImageFilename(cachedImage->response().suggestedFilename());
             if (dragImage)
-                origin = IntPoint(DragIconRightInset - dragImageSize(dragImage).width(), DragIconBottomInset);
+                scaledOrigin = IntPoint(DragIconRightInset - dragImageSize(dragImage).width(), DragIconBottomInset);
         }
     }
 
-    dragImageOffset = mouseDownPoint + origin;
+    dragImageOffset = mouseDownPoint + scaledOrigin;
     doSystemDrag(dragImage, dragImageOffset, dragOrigin, clipboard, frame, false);
 
     deleteDragImage(dragImage);

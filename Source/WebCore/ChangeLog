@@ -1,3 +1,19 @@
+2014-01-08  Brian Burg  <bburg@apple.com>
+
+        Clean up confusing names and calculations in image-dragging functions
+        https://bugs.webkit.org/show_bug.cgi?id=126661
+
+        Reviewed by Timothy Hatcher.
+
+        No new tests.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::doImageDrag): rename variables and
+        simplify the calculation of the image's scaled origin.
+
+        * platform/DragImage.cpp:
+        (WebCore::fitDragImageToMaxSize): rename variables.
+
 2014-01-08  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove InspectorClient::captureScreenshot()
