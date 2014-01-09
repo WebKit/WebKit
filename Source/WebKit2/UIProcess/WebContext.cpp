@@ -763,7 +763,7 @@ DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const Resource
 #if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess() && networkProcess()) {
         // FIXME (NetworkProcess): Replicate whatever FrameLoader::setOriginalURLForDownloadRequest does with the request here.
-        networkProcess()->connection()->send(Messages::NetworkProcess::DownloadRequest(downloadProxy->downloadID(), request), 0);
+        networkProcess()->send(Messages::NetworkProcess::DownloadRequest(downloadProxy->downloadID(), request), 0);
         return downloadProxy;
     }
 #endif
@@ -938,8 +938,11 @@ void WebContext::addVisitedLinkHash(LinkHash linkHash)
 DownloadProxy* WebContext::createDownloadProxy()
 {
 #if ENABLE(NETWORK_PROCESS)
-    if (usesNetworkProcess())
+    if (usesNetworkProcess()) {
+        ensureNetworkProcess();
+        ASSERT(m_networkProcess);
         return m_networkProcess->createDownloadProxy();
+    }
 #endif
 
     return ensureSharedWebProcess().createDownloadProxy();

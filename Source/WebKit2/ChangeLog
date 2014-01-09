@@ -1,5 +1,22 @@
 2014-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Crash when starting a download before the network process has been launched
+        https://bugs.webkit.org/show_bug.cgi?id=126258
+
+        Reviewed by Anders Carlsson.
+
+        We need to ensure there's a network process running before
+        starting a new download like we do when using the web process.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::download): Use ChildProcessProxy::send()
+        instead of using the connection to make sure messages are queued
+        if the process is still launching.
+        (WebKit::WebContext::createDownloadProxy): Call
+        ensureNetworkProcess() before creating the download proxy.
+
+2014-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Partial file left on disk after a download fails or is cancelled in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=126686
 
