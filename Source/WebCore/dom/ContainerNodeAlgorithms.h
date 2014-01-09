@@ -23,7 +23,7 @@
 #define ContainerNodeAlgorithms_h
 
 #include "Document.h"
-#include "ElementTraversal.h"
+#include "ElementIterator.h"
 #include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorInstrumentation.h"
@@ -262,80 +262,17 @@ inline void ChildNodeRemovalNotifier::notify(Node& node)
         notifyNodeRemovedFromTree(toContainerNode(node));
 }
 
-class ChildFrameDisconnector {
-public:
-    enum DisconnectPolicy {
-        RootAndDescendants,
-        DescendantsOnly
-    };
-
-    explicit ChildFrameDisconnector(ContainerNode& root)
-        : m_root(root)
-    {
-    }
-
-    void disconnect(DisconnectPolicy = RootAndDescendants);
-
-private:
-    void collectFrameOwners(ContainerNode& root);
-    void disconnectCollectedFrameOwners();
-
-    Vector<Ref<HTMLFrameOwnerElement>, 10> m_frameOwners;
-    ContainerNode& m_root;
+enum SubframeDisconnectPolicy {
+    RootAndDescendants,
+    DescendantsOnly
 };
+void disconnectSubframes(ContainerNode& root, SubframeDisconnectPolicy);
 
-#ifndef NDEBUG
-unsigned assertConnectedSubrameCountIsConsistent(Node&);
-#endif
-
-inline void ChildFrameDisconnector::collectFrameOwners(ContainerNode& root)
+inline void disconnectSubframesIfNeeded(ContainerNode& root, SubframeDisconnectPolicy policy)
 {
     if (!root.connectedSubframeCount())
         return;
-
-    if (root.isHTMLElement() && root.isFrameOwnerElement())
-        m_frameOwners.append(toHTMLFrameOwnerElement(root));
-
-    for (Element* child = ElementTraversal::firstChild(&root); child; child = ElementTraversal::nextSibling(child))
-        collectFrameOwners(*child);
-
-    ShadowRoot* shadow = root.isElementNode() ? toElement(root).shadowRoot() : 0;
-    if (shadow)
-        collectFrameOwners(*shadow);
-}
-
-inline void ChildFrameDisconnector::disconnectCollectedFrameOwners()
-{
-    // Must disable frame loading in the subtree so an unload handler cannot
-    // insert more frames and create loaded frames in detached subtrees.
-    SubframeLoadingDisabler disabler(m_root);
-
-    for (unsigned i = 0; i < m_frameOwners.size(); ++i) {
-        HTMLFrameOwnerElement& owner = m_frameOwners[i].get();
-        // Don't need to traverse up the tree for the first owner since no
-        // script could have moved it.
-        if (!i || m_root.containsIncludingShadowDOM(&owner))
-            owner.disconnectContentFrame();
-    }
-}
-
-inline void ChildFrameDisconnector::disconnect(DisconnectPolicy policy)
-{
-#ifndef NDEBUG
-    assertConnectedSubrameCountIsConsistent(m_root);
-#endif
-
-    if (!m_root.connectedSubframeCount())
-        return;
-
-    if (policy == RootAndDescendants)
-        collectFrameOwners(m_root);
-    else {
-        for (Element* child = ElementTraversal::firstChild(&m_root); child; child = ElementTraversal::nextSibling(child))
-            collectFrameOwners(*child);
-    }
-
-    disconnectCollectedFrameOwners();
+    disconnectSubframes(root, policy);
 }
 
 } // namespace WebCore

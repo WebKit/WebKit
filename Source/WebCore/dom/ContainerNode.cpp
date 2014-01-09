@@ -489,7 +489,7 @@ static void willRemoveChild(Node& child)
     dispatchChildRemovalEvents(child);
     child.document().nodeWillBeRemoved(&child); // e.g. mutation event listener can create a new range.
     if (child.isContainerNode())
-        ChildFrameDisconnector(toContainerNode(child)).disconnect();
+        disconnectSubframesIfNeeded(toContainerNode(child), RootAndDescendants);
 }
 
 static void willRemoveChildren(ContainerNode& container)
@@ -509,12 +509,12 @@ static void willRemoveChildren(ContainerNode& container)
 
     container.document().nodeChildrenWillBeRemoved(container);
 
-    ChildFrameDisconnector(container).disconnect(ChildFrameDisconnector::DescendantsOnly);
+    disconnectSubframesIfNeeded(container, DescendantsOnly);
 }
 
 void ContainerNode::disconnectDescendantFrames()
 {
-    ChildFrameDisconnector(*this).disconnect();
+    disconnectSubframesIfNeeded(*this, RootAndDescendants);
 }
 
 bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)

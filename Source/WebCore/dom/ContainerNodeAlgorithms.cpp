@@ -98,7 +98,7 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromTree(ContainerNode& no
 }
 
 #ifndef NDEBUG
-unsigned assertConnectedSubrameCountIsConsistent(Node& node)
+static unsigned assertConnectedSubrameCountIsConsistent(ContainerNode& node)
 {
     unsigned count = 0;
 
@@ -110,20 +110,70 @@ unsigned assertConnectedSubrameCountIsConsistent(Node& node)
             count += assertConnectedSubrameCountIsConsistent(*root);
     }
 
-    for (Node* child = node.firstChild(); child; child = child->nextSibling())
-        count += assertConnectedSubrameCountIsConsistent(*child);
+    for (auto& child : childrenOfType<Element>(node))
+        count += assertConnectedSubrameCountIsConsistent(child);
 
     // If we undercount there's possibly a security bug since we'd leave frames
     // in subtrees outside the document.
     ASSERT(node.connectedSubframeCount() >= count);
 
     // If we overcount it's safe, but not optimal because it means we'll traverse
-    // through the document in ChildFrameDisconnector looking for frames that have
+    // through the document in disconnectSubframes looking for frames that have
     // already been disconnected.
     ASSERT(node.connectedSubframeCount() == count);
 
     return count;
 }
 #endif
+
+static void collectFrameOwners(Vector<Ref<HTMLFrameOwnerElement>>& frameOwners, ContainerNode& root)
+{
+    auto elementDescendants = descendantsOfType<Element>(root);
+    auto it = elementDescendants.begin();
+    auto end = elementDescendants.end();
+    while (it != end) {
+        Element& element = *it;
+        if (!element.connectedSubframeCount()) {
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+
+        if (element.isHTMLElement() && element.isFrameOwnerElement())
+            frameOwners.append(toHTMLFrameOwnerElement(element));
+
+        if (ShadowRoot* shadowRoot = element.shadowRoot())
+            collectFrameOwners(frameOwners, *shadowRoot);
+        ++it;
+    }
+}
+
+void disconnectSubframes(ContainerNode& root, SubframeDisconnectPolicy policy)
+{
+#ifndef NDEBUG
+    assertConnectedSubrameCountIsConsistent(root);
+#endif
+    ASSERT(root.connectedSubframeCount());
+
+    Vector<Ref<HTMLFrameOwnerElement>> frameOwners;
+
+    if (policy == RootAndDescendants) {
+        if (root.isHTMLElement() && root.isFrameOwnerElement())
+            frameOwners.append(toHTMLFrameOwnerElement(root));
+    }
+
+    collectFrameOwners(frameOwners, root);
+
+    // Must disable frame loading in the subtree so an unload handler cannot
+    // insert more frames and create loaded frames in detached subtrees.
+    SubframeLoadingDisabler disabler(root);
+
+    for (unsigned i = 0; i < frameOwners.size(); ++i) {
+        auto& owner = frameOwners[i].get();
+        // Don't need to traverse up the tree for the first owner since no
+        // script could have moved it.
+        if (!i || root.containsIncludingShadowDOM(&owner))
+            owner.disconnectContentFrame();
+    }
+}
 
 }

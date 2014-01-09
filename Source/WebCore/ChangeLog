@@ -1,3 +1,26 @@
+2014-01-09  Antti Koivisto  <antti@apple.com>
+
+        Disconnect child frames iteratively
+        https://bugs.webkit.org/show_bug.cgi?id=126700
+
+        Reviewed by Andreas Kling.
+
+        Use descendant iterator instead of recursion for traversal.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::willRemoveChild):
+        (WebCore::willRemoveChildren):
+        (WebCore::ContainerNode::disconnectDescendantFrames):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::assertConnectedSubrameCountIsConsistent):
+        (WebCore::collectFrameOwners):
+        (WebCore::disconnectSubframes):
+        
+            Get rid of the strange ChildFrameDisconnector class in favor of a function.
+
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::disconnectSubframesIfNeeded):
+
 2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed Windows build fix for r161563.
