@@ -103,8 +103,6 @@ private:
     virtual void setVisibleRect(const FloatRect&) OVERRIDE;
     virtual bool tilesWouldChangeForVisibleRect(const FloatRect&) const OVERRIDE;
     virtual void setExposedRect(const FloatRect&) OVERRIDE;
-    virtual bool clipsToExposedRect() OVERRIDE { return m_clipsToExposedRect; }
-    virtual void setClipsToExposedRect(bool) OVERRIDE;
     virtual void prepopulateRect(const FloatRect&) OVERRIDE;
     virtual void setIsInWindow(bool) OVERRIDE;
     virtual void setTileCoverage(TileCoverage) OVERRIDE;
@@ -245,7 +243,6 @@ private:
     bool m_unparentsOffscreenTiles;
     bool m_acceleratesDrawing;
     bool m_tilesAreOpaque;
-    bool m_clipsToExposedRect;
     bool m_hasTilesWithTemporaryScaleFactor; // Used to make low-res tiles when zooming.
 
     Color m_tileDebugBorderColor;

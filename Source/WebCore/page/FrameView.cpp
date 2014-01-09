@@ -201,6 +201,7 @@ FrameView::FrameView(Frame& frame)
     , m_deferredRepaintTimer(this, &FrameView::deferredRepaintTimerFired)
     , m_isTrackingRepaints(false)
     , m_shouldUpdateWhileOffscreen(true)
+    , m_exposedRect(FloatRect::infiniteRect())
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
 #if PLATFORM(IOS)
@@ -4369,6 +4370,22 @@ void FrameView::notifyWidgets(WidgetNotification notification)
 
     for (unsigned i = 0, size = protectedWidgets.size(); i < size; ++i)
         protectedWidgets[i]->notifyWidget(notification);
+}
+
+void FrameView::setExposedRect(FloatRect exposedRect)
+{
+    if (m_exposedRect == exposedRect)
+        return;
+
+    m_exposedRect = exposedRect;
+
+#if USE(ACCELERATED_COMPOSITING)
+    // FIXME: We should support clipping to the exposed rect for subframes as well.
+    if (m_frame->isMainFrame()) {
+        if (TiledBacking* tiledBacking = this->tiledBacking())
+            tiledBacking->setExposedRect(exposedRect);
+    }
+#endif
 }
 
 } // namespace WebCore

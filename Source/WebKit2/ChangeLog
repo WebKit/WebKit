@@ -1,3 +1,50 @@
+2014-01-08  Tim Horton  <timothy_horton@apple.com>
+
+        TileController can fail to receive exposedRect from the drawing area if set at the wrong time
+        https://bugs.webkit.org/show_bug.cgi?id=126536
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/WebKit2.xcconfig:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateViewExposedRect]):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        (WebKit::DrawingAreaProxy::setExposedRect):
+        (WebKit::DrawingAreaProxy::exposedRectChangedTimerFired):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::exposedRect):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        * UIProcess/WebPageProxy.h:
+        Move exposedRect stuff from WebPageProxy to DrawingAreaProxy.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Push the exposedRect down into WebCore.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::updateScrolledExposedRect):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::updateScrolledExposedRect):
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::didCommitChangesForLayer):
+        Get rid of "clipsToExposedRect", we just use infinite-ness of the rect
+        to indicate that now.
+        Don't scroll an infinite rect; it won't work.
+
 2014-01-08  Simon Fraser  <simon.fraser@apple.com>
 
         Add ENABLE(ASYNC_SCROLLING) guards around WK2 scrolling files

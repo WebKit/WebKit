@@ -29,7 +29,8 @@ messages -> DrawingArea LegacyReceiver {
     UpdateGeometry(WebCore::IntSize viewSize, WebCore::IntSize layerPosition)
     SetDeviceScaleFactor(float deviceScaleFactor)
     SetColorSpace(WebKit::ColorSpaceData colorSpace)
-    
+    SetExposedRect(WebCore::FloatRect exposedRect)
+
     AdjustTransientZoom(double scale, WebCore::FloatPoint origin)
     CommitTransientZoom(double scale, WebCore::FloatPoint origin)
 #endif

@@ -472,10 +472,6 @@ public:
 
 #if PLATFORM(MAC)
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
-    enum class ClipsToExposedRect { DoNotClip, Clip };
-    void viewExposedRectChanged(const WebCore::FloatRect& exposedRect, ClipsToExposedRect);
-    WebCore::FloatRect viewExposedRect() const { return m_exposedRect; }
-    void exposedRectChangedTimerFired(WebCore::Timer<WebPageProxy>*);
     void setMainFrameIsScrollable(bool);
 
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
@@ -1372,14 +1368,6 @@ private:
     bool m_mayStartMediaWhenInWindow;
 
     bool m_waitingForDidUpdateViewState;
-
-#if PLATFORM(MAC)
-    WebCore::Timer<WebPageProxy> m_exposedRectChangedTimer;
-    WebCore::FloatRect m_exposedRect;
-    WebCore::FloatRect m_lastSentExposedRect;
-    ClipsToExposedRect m_clipsToExposedRect;
-    ClipsToExposedRect m_lastSentClipsToExposedRect;
-#endif
 
 #if PLATFORM(MAC)
     HashMap<String, String> m_temporaryPDFFiles;

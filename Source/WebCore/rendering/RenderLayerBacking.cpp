@@ -142,6 +142,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
         tiledBacking->setIsInWindow(page->isInWindow());
 
         if (m_isMainFrameRenderViewLayer) {
+            tiledBacking->setExposedRect(renderer().frame().view()->exposedRect());
             tiledBacking->setUnparentsOffscreenTiles(true);
             if (page->settings().backgroundShouldExtendBeyondPage())
                 tiledBacking->setTileMargins(512, 512, 512, 512);
@@ -228,7 +229,7 @@ static TiledBacking::TileCoverage computeTileCoverage(RenderLayerBacking* backin
             backing->setDidSwitchToFullTileCoverageDuringLoading();
     }
     if (!(useMinimalTilesDuringLoading || useMinimalTilesDuringLiveResize)) {
-        bool clipsToExposedRect = backing->tiledBacking()->clipsToExposedRect();
+        bool clipsToExposedRect = !frameView.exposedRect().isInfinite();
         if (frameView.horizontalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForHorizontalScrolling;
 

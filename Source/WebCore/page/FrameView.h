@@ -445,6 +445,13 @@ public:
 
     void addTrackedRepaintRect(const IntRect&);
 
+    // exposedRect represents WebKit's understanding of what part
+    // of the view is actually exposed on screen (taking into account
+    // clipping by other UI elements), whereas visibleContentRect is
+    // internal to WebCore and doesn't respect those things.
+    void setExposedRect(FloatRect);
+    FloatRect exposedRect() const { return m_exposedRect; }
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) OVERRIDE;
     virtual void scrollContentsSlowPath(const IntRect& updateRect) OVERRIDE;
@@ -629,6 +636,8 @@ private:
     Vector<IntRect> m_trackedRepaintRects;
 
     bool m_shouldUpdateWhileOffscreen;
+
+    FloatRect m_exposedRect;
 
     unsigned m_deferSetNeedsLayouts;
     bool m_setNeedsLayoutWasDeferred;

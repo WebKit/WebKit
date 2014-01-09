@@ -78,7 +78,8 @@ private:
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) OVERRIDE;
 
     virtual void setExposedRect(const WebCore::FloatRect&) OVERRIDE;
-    virtual void setClipsToExposedRect(bool) OVERRIDE;
+    virtual WebCore::FloatRect exposedRect() const OVERRIDE { return m_scrolledExposedRect; }
+
     virtual bool supportsAsyncScrolling() OVERRIDE { return true; }
 
     virtual void didChangeScrollOffsetForAnyFrame() OVERRIDE;
@@ -119,7 +120,6 @@ private:
     void updateDebugInfoLayer(bool showLayer);
 
     void updateIntrinsicContentSizeTimerFired(WebCore::Timer<TiledCoreAnimationDrawingArea>*);
-    void updateMainFrameClipsToExposedRect();
     void updateScrolledExposedRect();
     
     void invalidateAllPageOverlays();
@@ -143,7 +143,6 @@ private:
 
     WebCore::FloatRect m_exposedRect;
     WebCore::FloatRect m_scrolledExposedRect;
-    bool m_clipsToExposedRect;
 
     WebCore::IntSize m_lastSentIntrinsicContentSize;
     WebCore::Timer<TiledCoreAnimationDrawingArea> m_updateIntrinsicContentSizeTimer;

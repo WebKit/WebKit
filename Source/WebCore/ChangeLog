@@ -1,3 +1,37 @@
+2014-01-08  Tim Horton  <timothy_horton@apple.com>
+
+        TileController can fail to receive exposedRect from the drawing area if set at the wrong time
+        https://bugs.webkit.org/show_bug.cgi?id=126536
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        Export some things.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::setExposedRect):
+        Store the exposed rect on FrameView. When it changes, if the main frame
+        has a TiledBacking, inform it of the change.
+
+        * page/FrameView.h:
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::tilesWouldChangeForVisibleRect):
+        (WebCore::TileController::computeTileCoverageRect):
+        (WebCore::TileController::revalidateTiles):
+        (WebCore::TileController::updateTileCoverageMap):
+        Make use of the fact that we can test if a rect is infinite
+        instead of having a separate boolean property for that.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::computeTileCoverage):
+        Push the FrameView's cached exposed rect down into the TiledBacking when it is created.
+        We only support clipping for the main frame TileController for now.
+
 2014-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         a fractional value of the css letter-spacing property is not rendered as expected

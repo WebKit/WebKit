@@ -390,7 +390,7 @@ struct WKViewInterpretKeyEventsParameters {
     if (_data->_useContentPreparationRectForVisibleRect)
         exposedRect = NSUnionRect(_data->_contentPreparationRect, exposedRect);
 
-    _data->_page->viewExposedRectChanged(exposedRect, _data->_clipsToVisibleRect ? WebPageProxy::ClipsToExposedRect::Clip : WebPageProxy::ClipsToExposedRect::DoNotClip);
+    _data->_page->drawingArea()->setExposedRect(_data->_clipsToVisibleRect ? FloatRect(exposedRect) : FloatRect::infiniteRect());
 }
 
 - (void)setFrameSize:(NSSize)size
