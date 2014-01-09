@@ -316,4 +316,17 @@ bool CopiedSpace::isPagedOut(double deadline)
         || isBlockListPagedOut(deadline, &m_oversizeBlocks);
 }
 
+void CopiedSpace::didStartFullCollection()
+{
+    ASSERT(heap()->operationInProgress() == FullCollection);
+
+    ASSERT(m_fromSpace->isEmpty());
+
+    for (CopiedBlock* block = m_toSpace->head(); block; block = block->next())
+        block->didSurviveGC();
+
+    for (CopiedBlock* block = m_oversizeBlocks.head(); block; block = block->next())
+        block->didSurviveGC();
+}
+
 } // namespace JSC

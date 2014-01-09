@@ -197,6 +197,45 @@ void MarkedBlock::stopAllocating(const FreeList& freeList)
     m_state = Marked;
 }
 
+void MarkedBlock::clearMarks()
+{
+    if (heap()->operationInProgress() == JSC::EdenCollection)
+        this->clearMarksWithCollectionType<EdenCollection>();
+    else
+        this->clearMarksWithCollectionType<FullCollection>();
+}
+
+void MarkedBlock::clearRememberedSet()
+{
+    m_rememberedSet.clearAll();
+}
+
+template <HeapOperation collectionType>
+void MarkedBlock::clearMarksWithCollectionType()
+{
+    ASSERT(collectionType == FullCollection || collectionType == EdenCollection);
+    HEAP_LOG_BLOCK_STATE_TRANSITION(this);
+
+    ASSERT(m_state != New && m_state != FreeListed);
+    if (collectionType == FullCollection) {
+        m_marks.clearAll();
+        m_rememberedSet.clearAll();
+    }
+
+    // This will become true at the end of the mark phase. We set it now to
+    // avoid an extra pass to do so later.
+    m_state = Marked;
+}
+
+void MarkedBlock::lastChanceToFinalize()
+{
+    m_weakSet.lastChanceToFinalize();
+
+    clearNewlyAllocated();
+    clearMarksWithCollectionType<FullCollection>();
+    sweep();
+}
+
 MarkedBlock::FreeList MarkedBlock::resumeAllocating()
 {
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);

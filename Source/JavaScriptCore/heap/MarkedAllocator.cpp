@@ -10,10 +10,10 @@
 
 namespace JSC {
 
-bool MarkedAllocator::isPagedOut(double deadline)
+static bool isListPagedOut(double deadline, DoublyLinkedList<MarkedBlock>& list)
 {
     unsigned itersSinceLastTimeCheck = 0;
-    MarkedBlock* block = m_blockList.head();
+    MarkedBlock* block = list.head();
     while (block) {
         block = block->next();
         ++itersSinceLastTimeCheck;
@@ -24,7 +24,13 @@ bool MarkedAllocator::isPagedOut(double deadline)
             itersSinceLastTimeCheck = 0;
         }
     }
+    return false;
+}
 
+bool MarkedAllocator::isPagedOut(double deadline)
+{
+    if (isListPagedOut(deadline, m_blockList))
+        return true;
     return false;
 }
 
@@ -36,15 +42,23 @@ inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
     while (!m_freeList.head) {
         DelayedReleaseScope delayedReleaseScope(*m_markedSpace);
         if (m_currentBlock) {
-            ASSERT(m_currentBlock == m_blocksToSweep);
+            ASSERT(m_currentBlock == m_nextBlockToSweep);
             m_currentBlock->didConsumeFreeList();
-            m_blocksToSweep = m_currentBlock->next();
+            m_nextBlockToSweep = m_currentBlock->next();
         }
 
-        for (MarkedBlock*& block = m_blocksToSweep; block; block = block->next()) {
+        MarkedBlock* next;
+        for (MarkedBlock*& block = m_nextBlockToSweep; block; block = next) {
+            next = block->next();
+
             MarkedBlock::FreeList freeList = block->sweep(MarkedBlock::SweepToFreeList);
+            
             if (!freeList.head) {
                 block->didConsumeEmptyFreeList();
+                m_blockList.remove(block);
+                m_blockList.push(block);
+                if (!m_lastFullBlock)
+                    m_lastFullBlock = block;
                 continue;
             }
 
@@ -68,6 +82,7 @@ inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
     MarkedBlock::FreeCell* head = m_freeList.head;
     m_freeList.head = head->next;
     ASSERT(head);
+    m_markedSpace->didAllocateInBlock(m_currentBlock);
     return head;
 }
     
@@ -136,7 +151,7 @@ void MarkedAllocator::addBlock(MarkedBlock* block)
     ASSERT(!m_freeList.head);
     
     m_blockList.append(block);
-    m_blocksToSweep = m_currentBlock = block;
+    m_nextBlockToSweep = m_currentBlock = block;
     m_freeList = block->sweep(MarkedBlock::SweepToFreeList);
     m_markedSpace->didAddBlock(block);
 }
@@ -147,9 +162,27 @@ void MarkedAllocator::removeBlock(MarkedBlock* block)
         m_currentBlock = m_currentBlock->next();
         m_freeList = MarkedBlock::FreeList();
     }
-    if (m_blocksToSweep == block)
-        m_blocksToSweep = m_blocksToSweep->next();
+    if (m_nextBlockToSweep == block)
+        m_nextBlockToSweep = m_nextBlockToSweep->next();
+
+    if (block == m_lastFullBlock)
+        m_lastFullBlock = m_lastFullBlock->prev();
+    
     m_blockList.remove(block);
+}
+
+void MarkedAllocator::reset()
+{
+    m_lastActiveBlock = 0;
+    m_currentBlock = 0;
+    m_freeList = MarkedBlock::FreeList();
+    if (m_heap->operationInProgress() == FullCollection)
+        m_lastFullBlock = 0;
+
+    if (m_lastFullBlock)
+        m_nextBlockToSweep = m_lastFullBlock->next() ? m_lastFullBlock->next() : m_lastFullBlock;
+    else
+        m_nextBlockToSweep = m_blockList.head();
 }
 
 } // namespace JSC

@@ -28,7 +28,7 @@
 
 namespace JSC {
 
-enum HeapOperation { NoOperation, Allocation, Collection };
+enum HeapOperation { NoOperation, Allocation, FullCollection, EdenCollection };
 
 } // namespace JSC
 

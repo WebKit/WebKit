@@ -33,7 +33,7 @@ SlotVisitor::SlotVisitor(GCThreadSharedData& shared)
 
 SlotVisitor::~SlotVisitor()
 {
-    ASSERT(m_stack.isEmpty());
+    clearMarkStack();
 }
 
 void SlotVisitor::setup()
@@ -61,6 +61,11 @@ void SlotVisitor::reset()
         m_uniqueStrings.clear();
         m_shouldHashCons = false;
     }
+}
+
+void SlotVisitor::clearMarkStack()
+{
+    m_stack.clear();
 }
 
 void SlotVisitor::append(ConservativeRoots& conservativeRoots)
