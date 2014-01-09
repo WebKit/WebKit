@@ -1,3 +1,10 @@
+2014-01-09  Tim Horton  <timothy_horton@apple.com>
+
+        Rebaseline after r161568.
+
+        * platform/mac/fast/images/pdf-as-image-landscape-expected.png:
+        * platform/mac/fast/images/pdf-as-image-landscape-expected.txt:
+
 2014-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Narrow underlines are too tall
