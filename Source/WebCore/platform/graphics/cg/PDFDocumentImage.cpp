@@ -48,7 +48,7 @@ namespace WebCore {
 PDFDocumentImage::PDFDocumentImage(ImageObserver* observer)
     : Image(observer)
     , m_cachedBytes(0)
-    , m_rotation(0.0f)
+    , m_rotationDegrees(0)
     , m_hasPage(false)
 {
 }
@@ -64,14 +64,11 @@ String PDFDocumentImage::filenameExtension() const
 
 IntSize PDFDocumentImage::size() const
 {
-    const float sina = sinf(-m_rotation);
-    const float cosa = cosf(-m_rotation);
-    const float width = m_cropBox.size().width();
-    const float height = m_cropBox.size().height();
-    const float rotWidth = fabsf(width * cosa - height * sina);
-    const float rotHeight = fabsf(width * sina + height * cosa);
-    
-    return expandedIntSize(FloatSize(rotWidth, rotHeight));
+    IntSize expandedCropBoxSize = expandedIntSize(m_cropBox.size());
+
+    if (m_rotationDegrees == 90 || m_rotationDegrees == 270)
+        return expandedCropBoxSize.transposedSize();
+    return expandedCropBoxSize;
 }
 
 void PDFDocumentImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
@@ -93,26 +90,6 @@ bool PDFDocumentImage::dataChanged(bool allDataReceived)
         }
     }
     return m_document; // Return true if size is available.
-}
-
-void PDFDocumentImage::applyRotationForPainting(GraphicsContext* context) const
-{
-    // Rotate the crop box and calculate bounding box.
-    float sina = sinf(-m_rotation);
-    float cosa = cosf(-m_rotation);
-    float width = m_cropBox.width();
-    float height = m_cropBox.height();
-
-    // Calculate rotated x and y edges of the crop box. If they're negative, it means part of the image has
-    // been rotated outside of the bounds and we need to shift over the image so it lies inside the bounds again.
-    CGPoint rx = CGPointMake(width * cosa, width * sina);
-    CGPoint ry = CGPointMake(-height * sina, height * cosa);
-
-    // Adjust so we are at the crop box origin.
-    const CGFloat zero = 0;
-    context->translate(floorf(-std::min(zero, std::min(rx.x, ry.x))), floorf(-std::min(zero, std::min(rx.y, ry.y))));
-
-    context->rotate(-m_rotation);
 }
 
 bool PDFDocumentImage::cacheParametersMatch(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect) const
@@ -138,6 +115,17 @@ static void transformContextForPainting(GraphicsContext* context, const FloatRec
 {
     float hScale = dstRect.width() / srcRect.width();
     float vScale = dstRect.height() / srcRect.height();
+
+    float minimumScale = std::max((dstRect.width() - 0.5) / srcRect.width(), (dstRect.height() - 0.5) / srcRect.height());
+    float maximumScale = std::min((dstRect.width() + 0.5) / srcRect.width(), (dstRect.height() + 0.5) / srcRect.height());
+
+    // If the difference between the two scales is due to integer rounding of image sizes,
+    // use the average scale for both axes.
+    if (minimumScale <= maximumScale) {
+        hScale = (maximumScale + minimumScale) / 2;
+        vScale = hScale;
+    }
+
     context->translate(srcRect.x() * hScale, srcRect.y() * vScale);
     context->scale(FloatSize(hScale, -vScale));
     context->translate(0, -srcRect.height());
@@ -228,7 +216,7 @@ void PDFDocumentImage::computeBoundsForCurrentPage()
     else
         m_cropBox = mediaBox;
 
-    m_rotation = deg2rad(static_cast<float>(CGPDFPageGetRotationAngle(cgPage)));
+    m_rotationDegrees = CGPDFPageGetRotationAngle(cgPage);
 }
 
 unsigned PDFDocumentImage::pageCount() const
@@ -236,9 +224,21 @@ unsigned PDFDocumentImage::pageCount() const
     return CGPDFDocumentGetNumberOfPages(m_document.get());
 }
 
+static void applyRotationForPainting(GraphicsContext* context, IntSize size, int rotationDegrees)
+{
+    if (rotationDegrees == 90)
+        context->translate(0, size.height());
+    else if (rotationDegrees == 180)
+        context->translate(size.width(), size.height());
+    else if (rotationDegrees == 270)
+        context->translate(size.width(), 0);
+
+    context->rotate(-deg2rad(static_cast<float>(rotationDegrees)));
+}
+
 void PDFDocumentImage::drawPDFPage(GraphicsContext* context)
 {
-    applyRotationForPainting(context);
+    applyRotationForPainting(context, size(), m_rotationDegrees);
 
     context->translate(-m_cropBox.x(), -m_cropBox.y());
 

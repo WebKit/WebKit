@@ -1,3 +1,31 @@
+2014-01-09  Tim Horton  <timothy_horton@apple.com>
+
+        PDFDocumentImage can be very slow to do the initial paint
+        https://bugs.webkit.org/show_bug.cgi?id=126633
+        <rdar://problem/15770980>
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::PDFDocumentImage):
+        (WebCore::PDFDocumentImage::size):
+        (WebCore::transformContextForPainting):
+        (WebCore::PDFDocumentImage::computeBoundsForCurrentPage):
+        (WebCore::applyRotationForPainting):
+        (WebCore::PDFDocumentImage::drawPDFPage):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/mac/PDFDocumentImageMac.mm:
+        (WebCore::PDFDocumentImage::computeBoundsForCurrentPage):
+        Store rotation from the PDF in degrees, since it can
+        only be 0, 90, 180, or 270, and don't do any trig to
+        perform the rotation, to avoid introducing minor rounding
+        issues in the size.
+
+        Once we're going to paint, if the difference between the
+        computed scale for each axis is due only to integer rounding
+        of the image size, use the same scale for both axes, to avoid
+        a CG slow-path which occurs whenever the scale is nonuniform.
+
 2014-01-09  Antti Koivisto  <antti@apple.com>
 
         Disconnect child frames iteratively

@@ -74,8 +74,6 @@ private:
     // FIXME: Implement this to be less conservative.
     virtual bool currentFrameKnownToBeOpaque() OVERRIDE { return false; }
 
-    void applyRotationForPainting(GraphicsContext*) const;
-
     void createPDFDocument();
     void computeBoundsForCurrentPage();
     unsigned pageCount() const;
@@ -97,7 +95,7 @@ private:
     size_t m_cachedBytes;
 
     FloatRect m_cropBox;
-    float m_rotation;
+    int m_rotationDegrees; // Can only be 0, 90, 180, or 270 degrees.
     bool m_hasPage;
 };
 
