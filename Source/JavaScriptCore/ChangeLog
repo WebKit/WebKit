@@ -1,3 +1,84 @@
+2014-01-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r161540.
+        http://trac.webkit.org/changeset/161540
+        https://bugs.webkit.org/show_bug.cgi?id=126704
+
+        Caused assertion failures on multiple tests (Requested by ap
+        on #webkit).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlockSet::mark):
+        * dfg/DFGOperations.cpp:
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::add):
+        (JSC::CodeBlockSet::traceMarked):
+        * heap/CodeBlockSet.h:
+        * heap/CopiedBlockInlines.h:
+        (JSC::CopiedBlock::reportLiveBytes):
+        * heap/CopiedSpace.cpp:
+        * heap/CopiedSpace.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::didAbandon):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::copyBackingStores):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::collect):
+        (JSC::Heap::didAllocate):
+        * heap/Heap.h:
+        (JSC::Heap::shouldCollect):
+        (JSC::Heap::isCollecting):
+        (JSC::Heap::isWriteBarrierEnabled):
+        (JSC::Heap::writeBarrier):
+        * heap/HeapOperation.h:
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackArray::~MarkStackArray):
+        * heap/MarkStack.h:
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::isPagedOut):
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::addBlock):
+        (JSC::MarkedAllocator::removeBlock):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::reset):
+        * heap/MarkedBlock.cpp:
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::lastChanceToFinalize):
+        (JSC::MarkedBlock::didConsumeEmptyFreeList):
+        (JSC::MarkedBlock::clearMarks):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::~MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::visitWeakSets):
+        (JSC::MarkedSpace::reapWeakSets):
+        * heap/MarkedSpace.h:
+        (JSC::ClearMarks::operator()):
+        (JSC::MarkedSpace::clearMarks):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::~SlotVisitor):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::sharedData):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::internalAppend):
+        (JSC::SlotVisitor::copyLater):
+        (JSC::SlotVisitor::reportExtraMemoryUsage):
+        * jit/Repatch.cpp:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::StructureRareData::setEnumerationCache):
+        * runtime/JSString.cpp:
+        (JSC::JSString::visitChildren):
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::setPreviousID):
+        (JSC::StructureRareData::setObjectToStringValue):
+        * runtime/WeakMapData.cpp:
+        (JSC::WeakMapData::visitChildren):
+
 2014-01-09  Andreas Kling  <akling@apple.com>
 
         Shrink WatchpointSet.

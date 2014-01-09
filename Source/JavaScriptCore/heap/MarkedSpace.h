@@ -46,17 +46,7 @@ class WeakGCHandle;
 class SlotVisitor;
 
 struct ClearMarks : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock* block)
-    {
-        block->clearMarks();
-    }
-};
-
-struct ClearRememberedSet : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock* block)
-    {
-        block->clearRememberedSet();
-    }
+    void operator()(MarkedBlock* block) { block->clearMarks(); }
 };
 
 struct Sweep : MarkedBlock::VoidFunctor {
@@ -115,10 +105,8 @@ public:
 
     void didAddBlock(MarkedBlock*);
     void didConsumeFreeList(MarkedBlock*);
-    void didAllocateInBlock(MarkedBlock*);
 
     void clearMarks();
-    void clearRememberedSet();
     void clearNewlyAllocated();
     void sweep();
     size_t objectCount();
@@ -162,7 +150,6 @@ private:
     size_t m_capacity;
     bool m_isIterating;
     MarkedBlockSet m_blocks;
-    Vector<MarkedBlock*> m_blocksWithNewObjects;
 
     DelayedReleaseScope* m_currentDelayedReleaseScope;
 };
@@ -275,14 +262,9 @@ inline void MarkedSpace::didAddBlock(MarkedBlock* block)
     m_blocks.add(block);
 }
 
-inline void MarkedSpace::didAllocateInBlock(MarkedBlock* block)
+inline void MarkedSpace::clearMarks()
 {
-    m_blocksWithNewObjects.append(block);
-}
-
-inline void MarkedSpace::clearRememberedSet()
-{
-    forEachBlock<ClearRememberedSet>();
+    forEachBlock<ClearMarks>();
 }
 
 inline size_t MarkedSpace::objectCount()

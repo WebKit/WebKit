@@ -52,8 +52,7 @@ private:
     MarkedBlock::FreeList m_freeList;
     MarkedBlock* m_currentBlock;
     MarkedBlock* m_lastActiveBlock;
-    MarkedBlock* m_nextBlockToSweep;
-    MarkedBlock* m_lastFullBlock;
+    MarkedBlock* m_blocksToSweep;
     DoublyLinkedList<MarkedBlock> m_blockList;
     size_t m_cellSize;
     MarkedBlock::DestructorType m_destructorType;
@@ -69,8 +68,7 @@ inline ptrdiff_t MarkedAllocator::offsetOfFreeListHead()
 inline MarkedAllocator::MarkedAllocator()
     : m_currentBlock(0)
     , m_lastActiveBlock(0)
-    , m_nextBlockToSweep(0)
-    , m_lastFullBlock(0)
+    , m_blocksToSweep(0)
     , m_cellSize(0)
     , m_destructorType(MarkedBlock::None)
     , m_heap(0)
@@ -102,6 +100,14 @@ inline void* MarkedAllocator::allocate(size_t bytes)
     memset(head, 0xCD, bytes);
 #endif
     return head;
+}
+
+inline void MarkedAllocator::reset()
+{
+    m_lastActiveBlock = 0;
+    m_currentBlock = 0;
+    m_freeList = MarkedBlock::FreeList();
+    m_blocksToSweep = m_blockList.head();
 }
 
 inline void MarkedAllocator::stopAllocating()

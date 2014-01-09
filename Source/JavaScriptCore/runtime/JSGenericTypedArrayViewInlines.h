@@ -447,7 +447,7 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     }
         
     case OversizeTypedArray: {
-        visitor.reportExtraMemoryUsage(thisObject, thisObject->byteSize());
+        visitor.reportExtraMemoryUsage(thisObject->byteSize());
         break;
     }
         

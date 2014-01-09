@@ -39,7 +39,6 @@
 #include "PolymorphicPutByIdList.h"
 #include "RepatchBuffer.h"
 #include "ScratchRegisterAllocator.h"
-#include "StackAlignment.h"
 #include "StructureRareDataInlines.h"
 #include "StructureStubClearingWatchpoint.h"
 #include "ThunkGenerators.h"

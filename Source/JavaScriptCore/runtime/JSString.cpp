@@ -72,7 +72,7 @@ void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
     else {
         StringImpl* impl = thisObject->m_value.impl();
         ASSERT(impl);
-        visitor.reportExtraMemoryUsage(thisObject, impl->costDuringGC());
+        visitor.reportExtraMemoryUsage(impl->costDuringGC());
     }
 }
 

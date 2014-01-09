@@ -49,10 +49,6 @@ public:
     SlotVisitor(GCThreadSharedData&);
     ~SlotVisitor();
 
-    MarkStackArray& markStack() { return m_stack; }
-
-    Heap* heap() const;
-
     void append(ConservativeRoots&);
     
     template<typename T> void append(JITWriteBarrier<T>*);
@@ -65,19 +61,17 @@ public:
     void appendUnbarrieredValue(JSValue*);
     template<typename T>
     void appendUnbarrieredWeak(Weak<T>*);
-    void unconditionallyAppend(JSCell*);
     
     void addOpaqueRoot(void*);
     bool containsOpaqueRoot(void*);
     TriState containsOpaqueRootTriState(void*);
     int opaqueRootCount();
 
-    GCThreadSharedData& sharedData() const { return m_shared; }
+    GCThreadSharedData& sharedData() { return m_shared; }
     bool isEmpty() { return m_stack.isEmpty(); }
 
     void setup();
     void reset();
-    void clearMarkStack();
 
     size_t bytesVisited() const { return m_bytesVisited; }
     size_t bytesCopied() const { return m_bytesCopied; }
@@ -95,7 +89,7 @@ public:
 
     void copyLater(JSCell*, CopyToken, void*, size_t);
     
-    void reportExtraMemoryUsage(JSCell* owner, size_t);
+    void reportExtraMemoryUsage(size_t size);
     
     void addWeakReferenceHarvester(WeakReferenceHarvester*);
     void addUnconditionalFinalizer(UnconditionalFinalizer*);

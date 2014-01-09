@@ -60,8 +60,6 @@ public:
     
     CopiedAllocator& allocator() { return m_allocator; }
 
-    void didStartFullCollection();
-
     void startedCopying();
     void doneCopying();
     bool isInCopyPhase() { return m_inCopyingPhase; }
@@ -81,8 +79,6 @@ public:
     bool shouldDoCopyPhase() { return m_shouldDoCopyPhase; }
 
     static CopiedBlock* blockFor(void*);
-
-    Heap* heap() const { return m_heap; }
 
 private:
     static bool isOversize(size_t);

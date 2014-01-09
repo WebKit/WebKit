@@ -94,17 +94,11 @@ namespace JSC {
         static bool testAndSetMarked(const void*);
         static void setMarked(const void*);
 
-        JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);
-        bool isInRememberedSet(const JSCell* cell) const
-        {
-            ASSERT(cell);
-            ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
-            return MarkedBlock::blockFor(cell)->isRemembered(cell);
-        }
         static bool isWriteBarrierEnabled();
-        JS_EXPORT_PRIVATE static void writeBarrier(const JSCell*);
+        static void writeBarrier(const JSCell*);
         static void writeBarrier(const JSCell*, JSValue);
         static void writeBarrier(const JSCell*, JSCell*);
+        static uint8_t* addressOfCardFor(JSCell*);
 
         WriteBarrierBuffer& writeBarrierBuffer() { return m_writeBarrierBuffer; }
         void flushWriteBarrierBuffer(JSCell*);
@@ -126,7 +120,6 @@ namespace JSC {
 
         // true if collection is in progress
         inline bool isCollecting();
-        inline HeapOperation operationInProgress() { return m_operationInProgress; }
         // true if an allocation or collection is in progress
         inline bool isBusy();
         
@@ -243,7 +236,6 @@ namespace JSC {
         void markRoots();
         void markProtectedObjects(HeapRootVisitor&);
         void markTempSortVectors(HeapRootVisitor&);
-        template <HeapOperation collectionType>
         void copyBackingStores();
         void harvestWeakReferences();
         void finalizeUnconditionalFinalizers();
@@ -265,11 +257,10 @@ namespace JSC {
         const size_t m_minBytesPerCycle;
         size_t m_sizeAfterLastCollect;
 
-        size_t m_bytesAllocatedThisCycle;
-        size_t m_bytesAbandonedThisCycle;
-        size_t m_maxEdenSize;
-        size_t m_maxHeapSize;
-        bool m_shouldDoFullCollection;
+        size_t m_bytesAllocatedLimit;
+        size_t m_bytesAllocated;
+        size_t m_bytesAbandoned;
+
         size_t m_totalBytesVisited;
         size_t m_totalBytesCopied;
         
@@ -279,8 +270,6 @@ namespace JSC {
         CopiedSpace m_storageSpace;
         GCIncomingRefCountedSet<ArrayBuffer> m_arrayBuffers;
         size_t m_extraMemoryUsage;
-
-        HashSet<const JSCell*> m_copyingRememberedSet;
 
         ProtectCountSet m_protectedValues;
         Vector<Vector<ValueStringPair, 0, UnsafeVectorOverflow>* > m_tempSortingVectors;
@@ -333,8 +322,8 @@ namespace JSC {
         if (isDeferred())
             return false;
         if (Options::gcMaxHeapSize())
-            return m_bytesAllocatedThisCycle > Options::gcMaxHeapSize() && m_isSafeToCollect && m_operationInProgress == NoOperation;
-        return m_bytesAllocatedThisCycle > m_maxEdenSize && m_isSafeToCollect && m_operationInProgress == NoOperation;
+            return m_bytesAllocated > Options::gcMaxHeapSize() && m_isSafeToCollect && m_operationInProgress == NoOperation;
+        return m_bytesAllocated > m_bytesAllocatedLimit && m_isSafeToCollect && m_operationInProgress == NoOperation;
     }
 
     bool Heap::isBusy()
@@ -344,7 +333,7 @@ namespace JSC {
 
     bool Heap::isCollecting()
     {
-        return m_operationInProgress == FullCollection || m_operationInProgress == EdenCollection;
+        return m_operationInProgress == Collection;
     }
 
     inline Heap* Heap::heap(const JSCell* cell)
@@ -381,33 +370,26 @@ namespace JSC {
 
     inline bool Heap::isWriteBarrierEnabled()
     {
-#if ENABLE(WRITE_BARRIER_PROFILING) || ENABLE(GGC)
+#if ENABLE(WRITE_BARRIER_PROFILING)
         return true;
 #else
         return false;
 #endif
     }
 
-    inline void Heap::writeBarrier(const JSCell* from, JSCell* to)
+    inline void Heap::writeBarrier(const JSCell*)
     {
-#if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::countWriteBarrier();
-#endif
-        if (!from || !isMarked(from))
-            return;
-        if (!to || isMarked(to))
-            return;
-        Heap::heap(from)->addToRememberedSet(from);
     }
 
-    inline void Heap::writeBarrier(const JSCell* from, JSValue to)
+    inline void Heap::writeBarrier(const JSCell*, JSCell*)
     {
-#if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::countWriteBarrier();
-#endif
-        if (!to.isCell())
-            return;
-        writeBarrier(from, to.asCell());
+    }
+
+    inline void Heap::writeBarrier(const JSCell*, JSValue)
+    {
+        WriteBarrierCounters::countWriteBarrier();
     }
 
     inline void Heap::reportExtraMemoryCost(size_t cost)
