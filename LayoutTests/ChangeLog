@@ -1,3 +1,14 @@
+2014-01-09  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r161581
+
+    2014-01-09  Tim Horton  <timothy_horton@apple.com>
+
+            Rebaseline after r161568.
+
+            * platform/mac/fast/images/pdf-as-image-landscape-expected.png:
+            * platform/mac/fast/images/pdf-as-image-landscape-expected.txt:
+
 2014-01-07  Lucas Forschler  <lforschler@apple.com>
 
         Merge r160479
