@@ -279,6 +279,12 @@ typedef enum {
 } Ewk_Pagination_Mode;
 
 /**
+ * @typedef Ewk_View_Script_Execute_Cb Ewk_View_Script_Execute_Cb
+ * @brief Callback type for use with ewk_view_script_execute()
+ */
+typedef void (*Ewk_View_Script_Execute_Cb)(Evas_Object *o, const char *return_value, void *user_data);
+
+/**
  * Creates a type name for the callback function used to get the page contents.
  *
  * @param type type of the contents
@@ -883,6 +889,20 @@ EAPI Eina_Bool ewk_view_source_mode_set(Evas_Object *o, Eina_Bool enabled);
  *         @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool ewk_view_source_mode_get(const Evas_Object *o);
+
+/**
+ * Requests execution of the given script.
+ *
+ * The result value for the execution can be retrieved from the asynchronous callback.
+ *
+ * @param o The view to execute script
+ * @param script JavaScript to execute
+ * @param callback The function to call when the execution is completed, may be @c NULL
+ * @param user_data User data, may be @c NULL
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_view_script_execute(Evas_Object *o, const char *script, Ewk_View_Script_Execute_Cb callback, void *user_data);
 
 #ifdef __cplusplus
 }

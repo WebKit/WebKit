@@ -1,3 +1,30 @@
+2014-01-08  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add API to execute js script
+        https://bugs.webkit.org/show_bug.cgi?id=101904
+
+        Reviewed by Gyuyoung Kim.
+
+        Add ewk_view_script_execute() which provides a way to execute user
+        script.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        Added JS Global Contexta which is required to deserialize to the script
+        value from the callback.
+        (EwkContext::EwkContext):
+        (EwkContext::~EwkContext):
+        (EwkContext::jsGlobalContext):
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_View_Script_Execute_Callback_Context::Ewk_View_Script_Execute_Callback_Context):
+        (runJavaScriptCallback):
+        (ewk_view_script_execute):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        Added unit test for ewk_view_script_execute.
+        (scriptExecuteCallback):
+        (TEST_F):
+
 2014-01-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Move efl API test binaries to TestWebKitAPI/EWebKit|EWebKit2

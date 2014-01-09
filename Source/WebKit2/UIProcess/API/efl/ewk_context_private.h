@@ -22,6 +22,7 @@
 
 #include "ewk_context.h"
 #include "ewk_object_private.h"
+#include <JavaScriptCore/JSContextRef.h>
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/RefPtr.h>
@@ -85,6 +86,8 @@ public:
 
     void clearResourceCache();
 
+    JSGlobalContextRef jsGlobalContext();
+
 private:
     explicit EwkContext(WKContextRef);
 
@@ -106,6 +109,8 @@ private:
     std::unique_ptr<WebKit::RequestManagerClientEfl> m_requestManagerClient;
 
     std::unique_ptr<WebKit::ContextHistoryClientEfl> m_historyClient;
+
+    JSGlobalContextRef m_jsGlobalContext;
 };
 
 #endif // ewk_context_private_h

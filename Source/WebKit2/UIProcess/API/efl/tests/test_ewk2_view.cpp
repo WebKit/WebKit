@@ -30,6 +30,7 @@ extern EWK2UnitTestEnvironment* environment;
 
 static bool fullScreenCallbackCalled;
 static bool obtainedPageContents = false;
+static bool scriptExecuteCallbackCalled;
 
 static struct {
     const char* expectedMessage;
@@ -1032,4 +1033,53 @@ TEST_F(EWK2ViewTest, ewk_view_user_agent)
     ASSERT_TRUE(ewk_view_user_agent_set(webView(), 0));
     ASSERT_STREQ(defaultUserAgent, ewk_view_user_agent_get(webView()));
     eina_stringshare_del(defaultUserAgent);
+}
+
+static void scriptExecuteCallback(Evas_Object*, const char* returnValue, void* userData)
+{
+    Eina_Strbuf* buffer = static_cast<Eina_Strbuf*>(userData);
+    eina_strbuf_reset(buffer);
+
+    if (returnValue)
+        eina_strbuf_append(buffer, returnValue);
+
+    scriptExecuteCallbackCalled = true;
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_script_execute)
+{
+    const char scriptExecuteHTML[] =
+        "<!DOCTYPE html>"
+        "<body>"
+        "<p id=\"TestContent\">test content</p>"
+        "</body>";
+
+    ewk_view_html_string_load(webView(), scriptExecuteHTML, 0, 0);
+    ASSERT_TRUE(waitUntilLoadFinished());
+
+    Eina_Strbuf* result = eina_strbuf_new();
+
+    // 1. Get the innerHTML for "TestContent"
+    const char getDataScript[] = "document.getElementById('TestContent').innerHTML";
+
+    scriptExecuteCallbackCalled = false;
+    ASSERT_TRUE(ewk_view_script_execute(webView(), getDataScript, scriptExecuteCallback, static_cast<void*>(result)));
+    waitUntilTrue(scriptExecuteCallbackCalled);
+    ASSERT_STREQ("test content", eina_strbuf_string_get(result));
+
+    // 2. Change the innerHTML for "TestContent"
+    const char changeDataScript[] =
+    "document.getElementById('TestContent').innerHTML = \"test\";";
+    ASSERT_TRUE(ewk_view_script_execute(webView(), changeDataScript, 0, 0));
+
+    // 3. Check the change of the innerHTML.
+    eina_strbuf_reset(result);
+    scriptExecuteCallbackCalled = false;
+    ASSERT_TRUE(ewk_view_script_execute(webView(), getDataScript, scriptExecuteCallback, static_cast<void*>(result)));
+    waitUntilTrue(scriptExecuteCallbackCalled);
+    ASSERT_STREQ("test", eina_strbuf_string_get(result));
+
+    eina_strbuf_free(result);
+
+    ASSERT_FALSE(ewk_view_script_execute(webView(), 0, 0, 0));
 }

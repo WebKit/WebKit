@@ -39,6 +39,7 @@
 #include "ewk_private.h"
 #include "ewk_storage_manager_private.h"
 #include "ewk_url_scheme_request_private.h"
+#include <JavaScriptCore/JSContextRef.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <wtf/HashMap.h>
@@ -72,6 +73,7 @@ EwkContext::EwkContext(WKContextRef context)
     , m_downloadManager(std::make_unique<DownloadManagerEfl>(context))
     , m_requestManagerClient(std::make_unique<RequestManagerClientEfl>(context))
     , m_historyClient(std::make_unique<ContextHistoryClientEfl>(context))
+    , m_jsGlobalContext(nullptr)
 {
     ContextMap::AddResult result = contextMap().add(context, this);
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -96,6 +98,10 @@ EwkContext::EwkContext(WKContextRef context)
 EwkContext::~EwkContext()
 {
     ASSERT(contextMap().get(m_context.get()) == this);
+
+    if (m_jsGlobalContext)
+        JSGlobalContextRelease(m_jsGlobalContext);
+
     contextMap().remove(m_context.get());
 }
 
@@ -212,6 +218,15 @@ void EwkContext::setAdditionalPluginPath(const String& path)
 void EwkContext::clearResourceCache()
 {
     WKResourceCacheManagerClearCacheForAllOrigins(WKContextGetResourceCacheManager(m_context.get()), WKResourceCachesToClearAll);
+}
+
+
+JSGlobalContextRef EwkContext::jsGlobalContext()
+{
+    if (!m_jsGlobalContext)
+        m_jsGlobalContext = JSGlobalContextCreate(0);
+
+    return m_jsGlobalContext;
 }
 
 Ewk_Cookie_Manager* ewk_context_cookie_manager_get(const Ewk_Context* ewkContext)
