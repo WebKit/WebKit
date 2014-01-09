@@ -1,3 +1,51 @@
+2014-01-09  Andrei Bucur  <abucur@adobe.com>
+
+        [CSSRegions] Move regions auto-size code into RenderNamedFlowFragment
+        https://bugs.webkit.org/show_bug.cgi?id=122959
+
+        Reviewed by Mihnea Ovidenie.
+
+        Move the auto-height logic from RenderRegion to RenderNamedFlowFragment because it's
+        used only by the CSS Regions implementation.
+
+        Bug 126642 covers the auto-height logic move from RenderFlowThread to RenderNamedFlowThread.
+
+        Tests: No new tests, just refactorings.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::styleDidChange):
+        (WebCore::RenderFlowThread::validateRegions):
+        (WebCore::RenderFlowThread::isAutoLogicalHeightRegionsCountConsistent):
+        (WebCore::RenderFlowThread::initializeRegionsComputedAutoHeight):
+        (WebCore::RenderFlowThread::markAutoLogicalHeightRegionsForLayout):
+        (WebCore::RenderFlowThread::updateRegionsFlowThreadPortionRect):
+        (WebCore::RenderFlowThread::addForcedRegionBreak):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::RenderNamedFlowFragment):
+        (WebCore::RenderNamedFlowFragment::styleDidChange):
+        (WebCore::RenderNamedFlowFragment::incrementAutoLogicalHeightCount):
+        (WebCore::RenderNamedFlowFragment::decrementAutoLogicalHeightCount):
+        (WebCore::RenderNamedFlowFragment::updateRegionHasAutoLogicalHeightFlag):
+        (WebCore::RenderNamedFlowFragment::updateLogicalHeight):
+        (WebCore::RenderNamedFlowFragment::pageLogicalHeight):
+        (WebCore::RenderNamedFlowFragment::layoutBlock):
+        (WebCore::RenderNamedFlowFragment::attachRegion):
+        (WebCore::RenderNamedFlowFragment::detachRegion):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::pageLogicalHeight):
+        (WebCore::RenderRegion::logicalHeightOfAllFlowThreadContent):
+        (WebCore::RenderRegion::isLastRegion):
+        (WebCore::RenderRegion::styleDidChange):
+        (WebCore::RenderRegion::attachRegion):
+        (WebCore::RenderRegion::detachRegion):
+        * rendering/RenderRegion.h:
+        * rendering/RenderRegionSet.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderRegionList):
+
 2014-01-09  Antti Koivisto  <antti@apple.com>
 
         Switch HTMLTableRowsCollection from Traversal<> to iterators

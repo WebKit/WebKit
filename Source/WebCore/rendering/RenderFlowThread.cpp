@@ -173,7 +173,8 @@ void RenderFlowThread::validateRegions()
                 // Also, if we have auto-height regions we can't assume m_regionsHaveUniformLogicalHeight to be true in the first phase
                 // because the auto-height regions don't have their height computed yet.
                 if (inMeasureContentLayoutPhase() && region->hasAutoLogicalHeight()) {
-                    region->setComputedAutoHeight(region->maxPageLogicalHeight());
+                    RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(region);
+                    namedFlowFragment->setComputedAutoHeight(namedFlowFragment->maxPageLogicalHeight());
                     m_regionsHaveUniformLogicalHeight = false;
                 }
 
@@ -916,8 +917,10 @@ void RenderFlowThread::initializeRegionsComputedAutoHeight(RenderRegion* startRe
     for (auto regionIter = startRegion ? m_regionList.find(startRegion) : m_regionList.begin(),
         end = m_regionList.end(); regionIter != end; ++regionIter) {
         RenderRegion* region = *regionIter;
-        if (region->hasAutoLogicalHeight())
-            region->setComputedAutoHeight(region->maxPageLogicalHeight());
+        if (region->hasAutoLogicalHeight()) {
+            RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(region);
+            namedFlowFragment->setComputedAutoHeight(namedFlowFragment->maxPageLogicalHeight());
+        }
     }
 }
 
@@ -960,7 +963,7 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect(const RenderRegion* la
 
         // If we find an empty auto-height region, clear the computedAutoHeight value.
         if (emptyRegionsSegment && region->hasAutoLogicalHeight())
-            region->clearComputedAutoHeight();
+            toRenderNamedFlowFragment(region)->clearComputedAutoHeight();
 
         LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
         LayoutUnit regionLogicalHeight = std::min<LayoutUnit>(RenderFlowThread::maxLogicalHeight() - logicalHeight, region->logicalHeightOfAllFlowThreadContent());
@@ -1022,22 +1025,24 @@ bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit
     LayoutUnit offsetBreakInCurrentRegion = offsetBreakInFlowThread - currentRegionOffsetInFlowThread;
 
     if (region->hasAutoLogicalHeight()) {
+        RenderNamedFlowFragment* namedFlowFragment = toRenderNamedFlowFragment(region);
+
         // A forced break can appear only in an auto-height region that didn't have a forced break before.
         // This ASSERT is a good-enough heuristic to verify the above condition.
-        ASSERT(region->maxPageLogicalHeight() == region->computedAutoHeight());
+        ASSERT(namedFlowFragment->maxPageLogicalHeight() == namedFlowFragment->computedAutoHeight());
 
-        mapToUse.set(breakChild, region);
+        mapToUse.set(breakChild, namedFlowFragment);
 
         hasComputedAutoHeight = true;
 
         // Compute the region height pretending that the offsetBreakInCurrentRegion is the logicalHeight for the auto-height region.
-        LayoutUnit regionComputedAutoHeight = region->constrainContentBoxLogicalHeightByMinMax(offsetBreakInCurrentRegion);
+        LayoutUnit regionComputedAutoHeight = namedFlowFragment->constrainContentBoxLogicalHeightByMinMax(offsetBreakInCurrentRegion);
 
         // The new height of this region needs to be smaller than the initial value, the max height. A forced break is the only way to change the initial
         // height of an auto-height region besides content ending.
-        ASSERT(regionComputedAutoHeight <= region->maxPageLogicalHeight());
+        ASSERT(regionComputedAutoHeight <= namedFlowFragment->maxPageLogicalHeight());
 
-        region->setComputedAutoHeight(regionComputedAutoHeight);
+        namedFlowFragment->setComputedAutoHeight(regionComputedAutoHeight);
 
         currentRegionOffsetInFlowThread += regionComputedAutoHeight;
     } else

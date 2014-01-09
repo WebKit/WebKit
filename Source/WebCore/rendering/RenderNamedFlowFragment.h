@@ -57,7 +57,8 @@ public:
     virtual bool isRenderNamedFlowFragment() const OVERRIDE FINAL { return true; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
-    virtual LayoutUnit maxPageLogicalHeight() const;
+    virtual LayoutUnit pageLogicalHeight() const;
+    LayoutUnit maxPageLogicalHeight() const;
 
     bool isPseudoElementRegion() const { return parent() && parent()->isPseudoElement(); }
 
@@ -79,17 +80,48 @@ public:
 
     RenderNamedFlowThread* namedFlowThread() const;
 
+    virtual bool hasAutoLogicalHeight() const OVERRIDE { return m_hasAutoLogicalHeight; }
+
+    LayoutUnit computedAutoHeight() const { return m_computedAutoHeight; }
+
+    void setComputedAutoHeight(LayoutUnit computedAutoHeight)
+    {
+        m_hasComputedAutoHeight = true;
+        m_computedAutoHeight = computedAutoHeight;
+    }
+
+    void clearComputedAutoHeight()
+    {
+        m_hasComputedAutoHeight = false;
+        m_computedAutoHeight = 0;
+    }
+
+    bool hasComputedAutoHeight() const { return m_hasComputedAutoHeight; }
+
+    virtual void attachRegion() OVERRIDE;
+    virtual void detachRegion() OVERRIDE;
+
+    virtual void updateLogicalHeight() OVERRIDE;
+
 // FIXME: Temporarily public until we move all the CSSRegions functionality from RenderRegion to here.
 public:
     void checkRegionStyle();
 
 private:
-    virtual bool shouldHaveAutoLogicalHeight() const OVERRIDE;
     virtual const char* renderName() const OVERRIDE { return "RenderNamedFlowFragment"; }
 
     PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
     void computeChildrenStyleInRegion(const RenderElement*);
     void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
+
+    void updateRegionHasAutoLogicalHeightFlag();
+
+    void incrementAutoLogicalHeightCount();
+    void decrementAutoLogicalHeightCount();
+
+    bool shouldHaveAutoLogicalHeight() const;
+
+    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
 
     struct ObjectRegionStyleInfo {
         // Used to store the original style of the object in region
@@ -106,6 +138,10 @@ private:
     RenderObjectRegionStyleMap m_renderObjectRegionStyle;
 
     bool m_hasCustomRegionStyle : 1;
+    bool m_hasAutoLogicalHeight : 1;
+    bool m_hasComputedAutoHeight : 1;
+
+    LayoutUnit m_computedAutoHeight;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderNamedFlowFragment, isRenderNamedFlowFragment())

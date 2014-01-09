@@ -38,11 +38,16 @@
 #include "RenderView.h"
 #include "StyleResolver.h"
 
+#include <wtf/StackStats.h>
+
 namespace WebCore {
 
 RenderNamedFlowFragment::RenderNamedFlowFragment(Document& document, PassRef<RenderStyle> style)
     : RenderRegion(document, std::move(style), nullptr)
     , m_hasCustomRegionStyle(false)
+    , m_hasAutoLogicalHeight(false)
+    , m_hasComputedAutoHeight(false)
+    , m_computedAutoHeight(0)
 {
 }
 
@@ -78,6 +83,8 @@ void RenderNamedFlowFragment::styleDidChange(StyleDifference diff, const RenderS
         return;
     }
 
+    updateRegionHasAutoLogicalHeightFlag();
+
     checkRegionStyle();
 
     if (parent() && parent()->needsLayout())
@@ -94,6 +101,82 @@ bool RenderNamedFlowFragment::shouldHaveAutoLogicalHeight() const
     return styleToUse.logicalHeight().isAuto() && !hasAnchoredEndpointsForHeight;
 }
 
+void RenderNamedFlowFragment::incrementAutoLogicalHeightCount()
+{
+    ASSERT(isValid());
+    ASSERT(m_hasAutoLogicalHeight);
+
+    m_flowThread->incrementAutoLogicalHeightRegions();
+}
+
+void RenderNamedFlowFragment::decrementAutoLogicalHeightCount()
+{
+    ASSERT(isValid());
+
+    m_flowThread->decrementAutoLogicalHeightRegions();
+}
+
+void RenderNamedFlowFragment::updateRegionHasAutoLogicalHeightFlag()
+{
+    ASSERT(m_flowThread);
+
+    if (!isValid())
+        return;
+
+    bool didHaveAutoLogicalHeight = m_hasAutoLogicalHeight;
+    m_hasAutoLogicalHeight = shouldHaveAutoLogicalHeight();
+    if (m_hasAutoLogicalHeight != didHaveAutoLogicalHeight) {
+        if (m_hasAutoLogicalHeight)
+            incrementAutoLogicalHeightCount();
+        else {
+            clearComputedAutoHeight();
+            decrementAutoLogicalHeightCount();
+        }
+    }
+}
+
+void RenderNamedFlowFragment::updateLogicalHeight()
+{
+    RenderRegion::updateLogicalHeight();
+
+    if (!hasAutoLogicalHeight())
+        return;
+
+    // We want to update the logical height based on the computed auto-height
+    // only after the measure cotnent layout phase when all the
+    // auto logical height regions have a computed auto-height.
+    if (m_flowThread->inMeasureContentLayoutPhase())
+        return;
+
+    // There may be regions with auto logical height that during the prerequisite layout phase
+    // did not have the chance to layout flow thread content. Because of that, these regions do not
+    // have a computedAutoHeight and they will not be able to fragment any flow
+    // thread content.
+    if (!hasComputedAutoHeight())
+        return;
+
+    LayoutUnit newLogicalHeight = computedAutoHeight() + borderAndPaddingLogicalHeight();
+    ASSERT(newLogicalHeight < RenderFlowThread::maxLogicalHeight());
+    if (newLogicalHeight > logicalHeight()) {
+        setLogicalHeight(newLogicalHeight);
+        // Recalculate position of the render block after new logical height is set.
+        // (needed in absolute positioning case with bottom alignment for example)
+        RenderRegion::updateLogicalHeight();
+    }
+}
+
+LayoutUnit RenderNamedFlowFragment::pageLogicalHeight() const
+{
+    ASSERT(m_flowThread);
+    if (hasComputedAutoHeight() && m_flowThread->inMeasureContentLayoutPhase()) {
+        ASSERT(hasAutoLogicalHeight());
+        return computedAutoHeight();
+    }
+    return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
+}
+
+// This method returns the maximum page size of a region with auto-height. This is the initial
+// height value for auto-height regions in the first layout phase of the parent named flow.
 LayoutUnit RenderNamedFlowFragment::maxPageLogicalHeight() const
 {
     ASSERT(m_flowThread);
@@ -103,6 +186,31 @@ LayoutUnit RenderNamedFlowFragment::maxPageLogicalHeight() const
 
     const RenderStyle& styleToUse = parent()->style();
     return styleToUse.logicalMaxHeight().isUndefined() ? RenderFlowThread::maxLogicalHeight() : toRenderBlock(parent())->computeReplacedLogicalHeightUsing(styleToUse.logicalMaxHeight());
+}
+
+void RenderNamedFlowFragment::layoutBlock(bool relayoutChildren, LayoutUnit)
+{
+    StackStats::LayoutCheckPoint layoutCheckPoint;
+    RenderRegion::layoutBlock(relayoutChildren);
+
+    if (isValid()) {
+        LayoutRect oldRegionRect(flowThreadPortionRect());
+        if (!isHorizontalWritingMode())
+            oldRegionRect = oldRegionRect.transposedRect();
+
+        if (m_flowThread->inOverflowLayoutPhase() || m_flowThread->inFinalLayoutPhase())
+            computeOverflowFromFlowThread();
+
+        if (hasAutoLogicalHeight() && m_flowThread->inMeasureContentLayoutPhase()) {
+            m_flowThread->invalidateRegions();
+            clearComputedAutoHeight();
+            return;
+        }
+
+        if ((oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight()) && !m_flowThread->inFinalLayoutPhase())
+            // This can happen even if we are in the inConstrainedLayoutPhase and it will trigger a pathological layout of the flow thread.
+            m_flowThread->invalidateRegions();
+    }
 }
 
 void RenderNamedFlowFragment::checkRegionStyle()
@@ -275,6 +383,33 @@ LayoutRect RenderNamedFlowFragment::visualOverflowRect() const
     }
     
     return RenderRegion::visualOverflowRect();
+}
+
+void RenderNamedFlowFragment::attachRegion()
+{
+    RenderRegion::attachRegion();
+
+    if (documentBeingDestroyed() || !m_flowThread)
+        return;
+
+    // The region just got attached to the flow thread, lets check whether
+    // it has region styling rules associated.
+    checkRegionStyle();
+
+    if (!isValid())
+        return;
+
+    m_hasAutoLogicalHeight = shouldHaveAutoLogicalHeight();
+    if (hasAutoLogicalHeight())
+        incrementAutoLogicalHeightCount();
+}
+
+void RenderNamedFlowFragment::detachRegion()
+{
+    if (m_flowThread && hasAutoLogicalHeight())
+        decrementAutoLogicalHeightCount();
+    
+    RenderRegion::detachRegion();
 }
 
 } // namespace WebCore
