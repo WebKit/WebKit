@@ -132,10 +132,11 @@ private:
     void fireAllWatchpoints();
     
     friend class InlineWatchpointSet;
-    
-    SentinelLinkedList<Watchpoint, BasicRawSentinelNode<Watchpoint>> m_set;
+
     int8_t m_state;
     int8_t m_setIsNotEmpty;
+
+    SentinelLinkedList<Watchpoint, BasicRawSentinelNode<Watchpoint>> m_set;
 };
 
 // InlineWatchpointSet is a low-overhead, non-copyable watchpoint set in which
