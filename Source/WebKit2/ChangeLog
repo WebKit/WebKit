@@ -1,3 +1,23 @@
+2014-01-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Make WK2 build when ENABLE(ASYNC_SCROLLING) is not defined
+        https://bugs.webkit.org/show_bug.cgi?id=126675
+
+        Reviewed by Tim Horton.
+        
+        We need a stub RemoteScrollingCoordinatorTransaction outside
+        the #ifdef so that RemoteLayerTreeDrawingAreaProxy messages
+        work.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::RemoteScrollingCoordinatorTransaction::encode):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+
 2014-01-08  Tim Horton  <timothy_horton@apple.com>
 
         TileController can fail to receive exposedRect from the drawing area if set at the wrong time

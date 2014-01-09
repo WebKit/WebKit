@@ -300,9 +300,11 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     m_remoteLayerTreeContext->buildTransaction(layerTransaction, *m_rootLayer);
 
     RemoteScrollingCoordinatorTransaction scrollingTransaction;
+#if ENABLE(ASYNC_SCROLLING)
     if (m_webPage->scrollingCoordinator())
         toRemoteScrollingCoordinator(m_webPage->scrollingCoordinator())->buildTransaction(scrollingTransaction);
-    
+#endif
+
     m_webPage->send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree(layerTransaction, scrollingTransaction));
 }
 

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
 
-#if ENABLE(ASYNC_SCROLLING)
-
 #include "ArgumentCoders.h"
 #include "MessageDecoder.h"
 #include "MessageEncoder.h"
@@ -40,6 +38,8 @@
 #include <wtf/HashMap.h>
 
 using namespace WebCore;
+
+#if ENABLE(ASYNC_SCROLLING)
 
 namespace IPC {
 
@@ -299,6 +299,21 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder
     if (removedNodes.size())
         m_scrollingStateTree->setRemovedNodes(removedNodes);
 
+    return true;
+}
+
+} // namespace WebKit
+
+#else // !ENABLE(ASYNC_SCROLLING)
+
+namespace WebKit {
+
+void RemoteScrollingCoordinatorTransaction::encode(IPC::ArgumentEncoder&) const
+{
+}
+
+bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteScrollingCoordinatorTransaction& transaction)
+{
     return true;
 }
 

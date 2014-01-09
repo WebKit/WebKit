@@ -86,7 +86,9 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)
 {
     m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction);
+#if ENABLE(ASYNC_SCROLLING)
     m_webPageProxy->scrollingCoordinatorProxy()->updateScrollingTree(scrollingTreeTransaction);
+#endif
 }
 
 } // namespace WebKit
