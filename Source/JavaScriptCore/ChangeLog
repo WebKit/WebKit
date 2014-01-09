@@ -1,3 +1,11 @@
+2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed Windows build fix for r161563.
+
+        Copy all scripts, some may not be .py.
+
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+
 2014-01-09  Filip Pizlo  <fpizlo@apple.com>
 
         AI for CreateArguments should pass through non-SpecEmpty input values
