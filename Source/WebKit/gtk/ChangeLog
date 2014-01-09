@@ -1,3 +1,16 @@
+2014-01-08  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Add xdg.origin.url extended attribute to downloads
+        https://bugs.webkit.org/show_bug.cgi?id=126638
+
+        Reviewed by Carlos Garcia Campos.
+
+        This is proposed by fdo in
+        http://www.freedesktop.org/wiki/CommonExtendedAttributes/
+
+        * webkit/webkitdownload.cpp:
+        (webkit_download_open_stream_for_uri):
+
 2014-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move all GTK/GObject unit tests to Tools/TestWebKitAPI
