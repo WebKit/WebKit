@@ -1,3 +1,28 @@
+2014-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Partial file left on disk after a download fails or is cancelled in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=126686
+
+        Reviewed by Martin Robinson.
+
+        Test that partial files are not left on disk after a download has
+        been cancelled after the destination has been decided. To make
+        sure the download is cancelled after the destination has been
+        decided and before the operation finishes, we cancel the download
+        in the destination decided callback, and we use an infinite
+        resource that writes chunks to the response body and never
+        completes the body.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp:
+        (addContentDispositionHTTPHeaderToResponse): Helper function to
+        add the Content-Disposition to the response headers.
+        (writeNextChunkIdle): Write next chunk to response body.
+        (writeNextChunk): Write next chunk in an idle to avoid flooding
+        the network with the inifnite resource.
+        (serverCallback): Add an inifinite resource.
+        (testDownloadRemoteFileError): Check that partial file is not
+        present after the download has been cancelled.
+
 2014-01-09  Roland Takacs  <rtakacs@inf.u-szeged.hu>
 
         Move myself to the committers list.
