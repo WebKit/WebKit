@@ -1,3 +1,36 @@
+2014-01-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r161532.
+        http://trac.webkit.org/changeset/161532
+        https://bugs.webkit.org/show_bug.cgi?id=126677
+
+        Caused lots of assertion failures (Requested by ap on
+        #webkit).
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::networkError):
+        (WebCore::XMLHttpRequest::abortError):
+        (WebCore::XMLHttpRequest::didSendData):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        (WebCore::XMLHttpRequest::didTimeout):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::XMLHttpRequestProgressEventThrottle):
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchProgressEvent):
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchEventAndLoadEnd):
+        (WebCore::XMLHttpRequestProgressEventThrottle::flushProgressEvent):
+        (WebCore::XMLHttpRequestProgressEventThrottle::fired):
+        (WebCore::XMLHttpRequestProgressEventThrottle::hasEventToDispatch):
+        (WebCore::XMLHttpRequestProgressEventThrottle::suspend):
+        * xml/XMLHttpRequestProgressEventThrottle.h:
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::XMLHttpRequestUpload):
+        (WebCore::XMLHttpRequestUpload::dispatchEventAndLoadEnd):
+        * xml/XMLHttpRequestUpload.h:
+
 2014-01-08  Brian Burg  <bburg@apple.com>
 
         Clean up confusing names and calculations in image-dragging functions

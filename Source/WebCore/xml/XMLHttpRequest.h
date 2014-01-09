@@ -208,8 +208,6 @@ private:
 
     bool shouldDecodeResponse() const { return m_responseTypeCode < FirstBinaryResponseType; }
 
-    void dispatchErrorEvents(const AtomicString&);
-
     std::unique_ptr<XMLHttpRequestUpload> m_upload;
 
     URL m_url;
