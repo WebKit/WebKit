@@ -1,3 +1,16 @@
+2014-01-08  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
+
+        Missleading style error when mixing system and non-system header include lines.
+        https://bugs.webkit.org/show_bug.cgi?id=126564
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_include_line):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_check_alphabetical_include_order):
+        (OrderOfIncludesTest.test_public_primary_header):
+
 2014-01-08  Seokju Kwon  <seokju@webkit.org>
 
         [EFL] Unreviewed build fix after r161522.

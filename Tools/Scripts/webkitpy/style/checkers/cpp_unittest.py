@@ -2623,7 +2623,7 @@ class OrderOfIncludesTest(CppStyleTestBase):
         self.assert_language_rules_check('foo.h',
                                          '#include <assert.h>\n'
                                          '#include "bar.h"\n',
-                                         'Alphabetical sorting problem.  [build/include_order] [4]')
+                                         'Bad include order. Mixing system and custom headers.  [build/include_order] [4]')
 
         self.assert_language_rules_check('foo.h',
                                          '#include "bar.h"\n'
@@ -2775,7 +2775,7 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include <other/foo.h>\n'
                                          '\n'
                                          '#include "a.h"\n',
-                                         'Alphabetical sorting problem.  [build/include_order] [4]')
+                                         'Bad include order. Mixing system and custom headers.  [build/include_order] [4]')
 
         # ...except that it starts with public/.
         self.assert_language_rules_check('foo.cpp',
@@ -2791,7 +2791,7 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include <public/foop.h>\n'
                                          '\n'
                                          '#include "a.h"\n',
-                                         'Alphabetical sorting problem.  [build/include_order] [4]')
+                                         'Bad include order. Mixing system and custom headers.  [build/include_order] [4]')
 
     def test_check_wtf_includes(self):
         self.assert_language_rules_check('foo.cpp',

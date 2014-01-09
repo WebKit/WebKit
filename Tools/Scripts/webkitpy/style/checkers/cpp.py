@@ -2916,12 +2916,15 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
             previous_match = _RE_PATTERN_INCLUDE.search(previous_line)
          if previous_match:
             previous_header_type = include_state.header_types[previous_line_number]
-            if previous_header_type == _OTHER_HEADER and previous_line.strip() > line.strip():
-                # This type of error is potentially a problem with this line or the previous one,
-                # so if the error is filtered for one line, report it for the next. This is so that
-                # we properly handle patches, for which only modified lines produce errors.
-                if not error(line_number - 1, 'build/include_order', 4, 'Alphabetical sorting problem.'):
-                    error(line_number, 'build/include_order', 4, 'Alphabetical sorting problem.')
+            if previous_header_type == _OTHER_HEADER:
+                if '<' in previous_line and '"' in line:
+                    error(line_number, 'build/include_order', 4, 'Bad include order. Mixing system and custom headers.')
+                elif previous_line.strip() > line.strip():
+                    # This type of error is potentially a problem with this line or the previous one,
+                    # so if the error is filtered for one line, report it for the next. This is so that
+                    # we properly handle patches, for which only modified lines produce errors.
+                    if not error(line_number - 1, 'build/include_order', 4, 'Alphabetical sorting problem.'):
+                        error(line_number, 'build/include_order', 4, 'Alphabetical sorting problem.')
 
     if error_message:
         if file_extension == 'h':
