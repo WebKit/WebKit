@@ -1,3 +1,17 @@
+2014-01-08  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        WebKit2 EFL build fix after r161530
+        https://bugs.webkit.org/show_bug.cgi?id=126678
+
+        Reviewed by Tim Horton.
+
+        Add PLATFORM(MAC) guards around setExposedRect() and exposedRect()
+        in DrawingArea and WebFrameLoaderClient.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/DrawingArea.h:
+
 2014-01-08  Martin Hock  <mhock@apple.com>
 
         Stub for Session API

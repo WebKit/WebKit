@@ -86,8 +86,10 @@ public:
     virtual void updatePreferences(const WebPreferencesStore&) { }
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
 
+#if PLATFORM(MAC)
     virtual void setExposedRect(const WebCore::FloatRect&) = 0;
     virtual WebCore::FloatRect exposedRect() const = 0;
+#endif
     virtual void mainFrameScrollabilityChanged(bool) { }
 
     virtual bool supportsAsyncScrolling() { return false; }
