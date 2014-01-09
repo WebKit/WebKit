@@ -48,7 +48,10 @@ def build_header_maps
       $HEADER_NAMES_TO_TYPE[$1] = :public
       $HEADERS_BY_TYPE[:public] << header
     elsif /\/PrivateHeaders\/(.*)/.match(header)
-      $HEADER_NAMES_TO_TYPE[$1] = :private
+      # If the same header exists both as a public header and as a private header, assume that it
+      # has been promoted to public, and the private instance is stale.
+      # FIXME: This can be improved by checking time stamps.
+      $HEADER_NAMES_TO_TYPE[$1] = :private if !$HEADER_NAMES_TO_TYPE[$1]
       $HEADERS_BY_TYPE[:private] << header
     else
       print_error "Unknown header type: #{header}"
@@ -65,13 +68,6 @@ def resolve_include(header, included_header, permitted_types)
   # Ignore includes that aren't related to other WebKit headers.
   return unless framework =~ /^Web/
   
-  # Ignore iOS headers that were mistakenly made Private on Mac builds in
-  # http://trac.webkit.org/r158443. Even though this issue was resolved in
-  # http://trac.webkit.org/r158454, stale copies might still exist in the build
-  # directory.
-  # FIXME: Remove this after some reasonable amount of time.
-  return if ['MemoryMeasure.h', 'WebGeolocationCoreLocationProvider.h', 'WebGeolocationProviderIOS.h', 'WebNSStringDrawing.h', 'WebNSStringExtrasIOS.h', 'WebNSStringExtrasIPhone.h', 'WebUIKitSupport.h', 'WebCaretChangeListener.h', 'WebFixedPositionContent.h', 'WebFrameIOS.h', 'WebFrameIPhone.h', 'WebGeolocationPrivate.h', 'WebMIMETypeRegistry.h', 'WebSelectionRect.h', 'WebVisiblePosition.h', 'WebUIKitDelegate.h', 'WebPDFViewIOS.h', 'WebPDFViewIPhone.h', 'WebPDFViewPlaceholder.h'].include?(File.basename(header))
-
   # A header of any type including a WebCore header is a recipe for disaster.
   if framework == "WebCore"
     print_error "#{header} included #{included_header}!"

@@ -23,14 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <WebKit2/WKBackForwardListRef.h>
-
-#ifdef __OBJC__
-
-#import <WebKit2/WKBackForwardListItem.h>
 #import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
+
+#import <WebKit2/WKBackForwardListItem.h>
 
 WK_API_CLASS
 @interface WKBackForwardList : NSObject
@@ -50,5 +47,3 @@ WK_API_CLASS
 @end
 
 #endif // WK_API_ENABLED
-
-#endif // defined(__OBJC__)

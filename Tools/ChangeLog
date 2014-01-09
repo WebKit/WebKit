@@ -1,3 +1,13 @@
+2014-01-09  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Promote WKBackForwardList{,Item}.h to public
+        https://bugs.webkit.org/show_bug.cgi?id=126707
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/check-for-webkit-framework-include-consistency: Account for stale private headers
+        left behind in the build products directory after a private header is made public.
+
 2014-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Partial file left on disk after a download fails or is cancelled in WebKit2
