@@ -1,3 +1,9 @@
+2014-01-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Reverting accidental GC logging
+
+        * heap/Heap.cpp:
+
 2014-01-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Marking should be generational
