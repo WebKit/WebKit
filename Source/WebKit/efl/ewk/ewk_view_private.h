@@ -148,8 +148,6 @@ bool ewk_view_need_touch_events_get(const Evas_Object*);
 #endif
 
 const Eina_Rectangle* ewk_view_repaints_pop(Ewk_View_Private_Data* priv, size_t* count);
-const Vector<WebCore::IntSize>& ewk_view_scroll_offsets_get(const Ewk_View_Private_Data*);
-const Vector<WebCore::IntRect>& ewk_view_scroll_rects_get(const Ewk_View_Private_Data*);
 
 void ewk_view_repaint_add(Ewk_View_Private_Data* priv, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height);
 

@@ -142,7 +142,6 @@ list(APPEND WebKit_SOURCES
     efl/ewk/ewk_settings.cpp
     efl/ewk/ewk_touch_event.cpp
     efl/ewk/ewk_view.cpp
-    efl/ewk/ewk_view_single.cpp
     efl/ewk/ewk_web_database.cpp
     efl/ewk/ewk_window_features.cpp
 )

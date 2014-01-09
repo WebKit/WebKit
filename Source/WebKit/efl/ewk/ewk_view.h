@@ -153,15 +153,12 @@ struct _Ewk_View_Smart_Class {
 
     Evas_Object *(*window_create)(Ewk_View_Smart_Data *sd, Eina_Bool javascript, const Ewk_Window_Features *window_features); /**< creates a new window, requested by webkit */
     void (*window_close)(Ewk_View_Smart_Data *sd); /**< closes a window */
-    // hooks to allow different backing stores
-    Evas_Object *(*backing_store_add)(Ewk_View_Smart_Data *sd); /**< must be defined */
-    Eina_Bool (*scrolls_process)(Ewk_View_Smart_Data *sd); /**< must be defined */
+    void (*scrolls_process)(Ewk_View_Smart_Data *sd); /**< must be defined */
     Eina_Bool (*repaints_process)(Ewk_View_Smart_Data *sd); /**< must be defined */
     Eina_Bool (*contents_resize)(Ewk_View_Smart_Data *sd, int w, int h);
     Eina_Bool (*zoom_set)(Ewk_View_Smart_Data *sd, float zoom, Evas_Coord cx, Evas_Coord cy);
     Eina_Bool (*zoom_weak_set)(Ewk_View_Smart_Data *sd, float zoom, Evas_Coord cx, Evas_Coord cy);
     void (*zoom_weak_smooth_scale_set)(Ewk_View_Smart_Data *sd, Eina_Bool smooth_scale);
-    void (*bg_color_set)(Ewk_View_Smart_Data *sd, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
     void (*flush)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*pre_render_region)(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
     Eina_Bool (*pre_render_relative_radius)(Ewk_View_Smart_Data *sd, unsigned int n, float zoom);
@@ -203,7 +200,7 @@ struct _Ewk_View_Smart_Class {
  * The version you have to put into the version field
  * in the @a Ewk_View_Smart_Class structure.
  */
-#define EWK_VIEW_SMART_CLASS_VERSION 7UL
+#define EWK_VIEW_SMART_CLASS_VERSION 8UL
 
 /**
  * Initializes a whole @a Ewk_View_Smart_Class structure.
@@ -215,7 +212,7 @@ struct _Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializes to zero a whole @a Ewk_View_Smart_Class structure.

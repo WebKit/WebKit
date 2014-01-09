@@ -906,7 +906,6 @@ static void _ewk_view_smart_add(Evas_Object* ewkView)
     const Evas_Smart* smart = evas_object_smart_smart_get(ewkView);
     const Evas_Smart_Class* smartClass = evas_smart_class_get(smart);
     const Ewk_View_Smart_Class* api = reinterpret_cast<const Ewk_View_Smart_Class*>(smartClass);
-    EINA_SAFETY_ON_NULL_RETURN(api->backing_store_add);
     EWK_VIEW_SD_GET(ewkView, smartData);
 
     if (!smartData) {
@@ -934,15 +933,22 @@ static void _ewk_view_smart_add(Evas_Object* ewkView)
 
     EWK_VIEW_PRIV_GET(smartData, priv);
 
-    smartData->backing_store = api->backing_store_add(smartData);
-    if (!smartData->backing_store) {
+    smartData->backing_store = evas_object_image_add(smartData->base.evas);
+    if (EINA_UNLIKELY(!smartData->backing_store)) {
         ERR("Could not create backing store object.");
         return;
     }
 
+    const Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
+    const char* engine = ecore_evas_engine_name_get(ecoreEvas);
+    if (!strncmp(engine, "opengl_x11", strlen("opengl_x11")))
+        evas_object_image_content_hint_set(smartData->backing_store, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
+
+    evas_object_image_alpha_set(smartData->backing_store, false);
+    evas_object_image_smooth_scale_set(smartData->backing_store, smartData->zoom_weak_smooth_scale);
+    evas_object_pass_events_set(smartData->backing_store, true);
     evas_object_smart_member_add(smartData->backing_store, ewkView);
     evas_object_show(smartData->backing_store);
-    evas_object_pass_events_set(smartData->backing_store, true);
 
     smartData->events_rect = evas_object_rectangle_add(smartData->base.evas);
     evas_object_color_set(smartData->events_rect, 0, 0, 0, 0);
@@ -998,9 +1004,24 @@ static void _ewk_view_smart_resize(Evas_Object* ewkView, Evas_Coord w, Evas_Coor
 
     // these should be queued and processed in calculate as well!
     evas_object_resize(smartData->backing_store, w, h);
+    evas_object_image_size_set(smartData->backing_store, w, h);
 
     smartData->changed.size = true;
     _ewk_view_smart_changed(smartData);
+
+    if (smartData->animated_zoom.zoom.current < std::numeric_limits<float>::epsilon()) {
+        Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
+        Evas_Coord x, y, contentWidth, contentHeight;
+        evas_object_image_fill_set(smartData->backing_store, 0, 0, w, h);
+        evas_object_geometry_get(smartData->backing_store, &x, &y, 0, 0);
+        evas_object_move(clip, x, y);
+        ewk_frame_contents_size_get(smartData->main_frame, &contentWidth, &contentHeight);
+        if (w > contentWidth)
+            w = contentWidth;
+        if (h > contentHeight)
+            h = contentHeight;
+        evas_object_resize(clip, w, h);
+    }
 }
 
 static void _ewk_view_smart_move(Evas_Object* ewkView, Evas_Coord /*x*/, Evas_Coord /*y*/)
@@ -1010,12 +1031,212 @@ static void _ewk_view_smart_move(Evas_Object* ewkView, Evas_Coord /*x*/, Evas_Co
     _ewk_view_smart_changed(smartData);
 }
 
+static inline void _ewk_view_screen_move(uint32_t* image, size_t destinationX, size_t destinationY, size_t sourceX, size_t sourceY, size_t copyWidth, size_t copyHeight, size_t imageWidth)
+{
+    uint32_t* sourceBegin = image + (imageWidth * sourceY) + sourceX;
+    uint32_t* destinationBegin = image + (imageWidth * destinationY) + destinationX;
+
+    size_t copyLength = copyWidth * 4;
+
+    int moveLineUpDown;
+    int row;
+
+    if (sourceY >= destinationY) {
+        row = 0;
+        moveLineUpDown = 1;
+    } else {
+        row = copyHeight - 1;
+        moveLineUpDown = -1;
+    }
+
+    uint32_t* source, * destination;
+    if ((destinationX > sourceX && destinationX < sourceX + copyWidth)
+        || (destinationX < sourceX && destinationX + copyWidth > sourceX)) {
+        for (size_t i = 0; i < copyHeight; ++i, row += moveLineUpDown) {
+            source = sourceBegin + (imageWidth * row);
+            destination = destinationBegin + (imageWidth * row);
+            memmove(destination, source, copyLength);
+        }
+    } else {
+        for (size_t i = 0; i < copyHeight; ++i, row += moveLineUpDown) {
+            source = sourceBegin + (imageWidth * row);
+            destination = destinationBegin + (imageWidth * row);
+            memcpy(destination, source, copyLength);
+        }
+    }
+}
+
+static inline void _ewk_view_scroll_process(Ewk_View_Smart_Data* smartData, void* pixels, Evas_Coord width, Evas_Coord height, const WebCore::IntSize& scrollOffset, const WebCore::IntRect& rectToScroll)
+{
+    int scrollX = rectToScroll.x();
+    int scrollY = rectToScroll.y();
+    int scrollWidth = rectToScroll.width();
+    int scrollHeight = rectToScroll.height();
+
+    if (abs(scrollOffset.width()) >= scrollWidth || abs(scrollOffset.height()) >= scrollHeight) {
+        ewk_view_repaint_add(smartData->_priv, scrollX, scrollY, scrollWidth, scrollHeight);
+        return;
+    }
+
+    if (scrollX < 0) {
+        scrollWidth += scrollX;
+        scrollX = 0;
+    }
+    if (scrollY < 0) {
+        scrollHeight += scrollY;
+        scrollY = 0;
+    }
+
+    if (scrollX + scrollWidth > width)
+        scrollWidth = width - scrollX;
+    if (scrollY + scrollHeight > height)
+        scrollHeight = height - scrollY;
+
+    if (scrollWidth <= 0 || scrollHeight <= 0)
+        return;
+
+    int sourceX = scrollOffset.width() < 0 ? abs(scrollOffset.width()) : 0;
+    int sourceY = scrollOffset.height() < 0 ? abs(scrollOffset.height()) : 0;
+    int destinationX = scrollOffset.width() < 0 ? 0 : scrollOffset.width();
+    int destinationY = scrollOffset.height() < 0 ? 0 : scrollOffset.height();
+    int copyWidth = scrollWidth - abs(scrollOffset.width());
+    int copyHeight = scrollHeight - abs(scrollOffset.height());
+    if (scrollOffset.width() || scrollOffset.height()) {
+        _ewk_view_screen_move(static_cast<uint32_t*>(pixels), destinationX, destinationY, sourceX, sourceY, copyWidth, copyHeight, width);
+        evas_object_image_data_update_add(smartData->backing_store, destinationX, destinationY, copyWidth, copyHeight);
+    }
+
+    Eina_Rectangle verticalUpdate;
+    verticalUpdate.x = destinationX ? 0 : copyWidth - 1;
+    verticalUpdate.y = 0;
+    verticalUpdate.w = abs(scrollOffset.width());
+    verticalUpdate.h = scrollHeight;
+    if (verticalUpdate.w && verticalUpdate.h)
+        ewk_view_repaint_add(smartData->_priv, verticalUpdate.x, verticalUpdate.y, verticalUpdate.w, verticalUpdate.h);
+
+    Eina_Rectangle horizontalUpdate;
+    horizontalUpdate.x = destinationX;
+    horizontalUpdate.y = destinationY ? 0 : copyHeight - 1;
+    horizontalUpdate.w = copyWidth;
+    horizontalUpdate.h = abs(scrollOffset.height());
+    if (horizontalUpdate.w && horizontalUpdate.h)
+        ewk_view_repaint_add(smartData->_priv, horizontalUpdate.x, horizontalUpdate.y, horizontalUpdate.w, horizontalUpdate.h);
+}
+
+static void _ewk_view_smart_scrolls_process(Ewk_View_Smart_Data* smartData)
+{
+    Evas_Coord imageWidth, imageHeight;
+    const WTF::Vector<WebCore::IntSize>& scrollOffsets = smartData->_priv->m_scrollOffsets;
+    const WTF::Vector<WebCore::IntRect>& rectsToScroll = smartData->_priv->m_rectsToScroll;
+
+    if (!scrollOffsets.size())
+        return;
+
+    evas_object_image_size_get(smartData->backing_store, &imageWidth, &imageHeight);
+
+    WebCore::IntRect rectToScroll(0, 0, imageWidth, imageHeight);
+    WebCore::IntSize scrollOffset;
+    for (size_t i = 0; i < scrollOffsets.size(); ++i) {
+        rectToScroll.intersect(rectsToScroll[i]);
+        scrollOffset += scrollOffsets[i];
+    }
+
+    if (scrollOffset.isZero())
+        return;
+
+    void* pixels = evas_object_image_data_get(smartData->backing_store, 1);
+    _ewk_view_scroll_process(smartData, pixels, imageWidth, imageHeight, scrollOffset, rectToScroll);
+
+    evas_object_image_data_set(smartData->backing_store, pixels);
+
+    return;
+}
+
+static Eina_Bool _ewk_view_smart_repaints_process(Ewk_View_Smart_Data* smartData)
+{
+    if (smartData->animated_zoom.zoom.current < std::numeric_limits<float>::epsilon()) {
+        Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
+
+        // reset effects of zoom_weak_set()
+        evas_object_image_fill_set(smartData->backing_store, 0, 0, smartData->view.w, smartData->view.h);
+        evas_object_move(clip, smartData->view.x, smartData->view.y);
+
+        Evas_Coord width = smartData->view.w;
+        Evas_Coord height = smartData->view.h;
+
+        Evas_Coord centerWidth, centerHeight;
+        ewk_frame_contents_size_get(smartData->main_frame, &centerWidth, &centerHeight);
+        if (width > centerWidth)
+            width = centerWidth;
+
+        if (height > centerHeight)
+            height = centerHeight;
+
+        evas_object_resize(clip, width, height);
+    }
+
+    Evas_Coord imageWidth, imageHeight;
+    evas_object_image_size_get(smartData->backing_store, &imageWidth, &imageHeight);
+
+    Eina_Tiler* tiler = eina_tiler_new(imageWidth, imageHeight);
+    if (!tiler) {
+        ERR("could not create tiler %dx%d", imageWidth, imageHeight);
+        return false;
+    }
+
+    ewk_view_layout_if_needed_recursive(smartData->_priv);
+
+    size_t count;
+    const Eina_Rectangle* paintRequest = ewk_view_repaints_pop(smartData->_priv, &count);
+    const Eina_Rectangle* paintRequestEnd = paintRequest + count;
+    for (; paintRequest < paintRequestEnd; paintRequest++)
+        eina_tiler_rect_add(tiler, paintRequest);
+
+    Eina_Iterator* iterator = eina_tiler_iterator_new(tiler);
+    if (!iterator) {
+        ERR("could not get iterator for tiler");
+        eina_tiler_free(tiler);
+        return false;
+    }
+
+#if USE(TILED_BACKING_STORE)
+    WebCore::Frame* mainFrame = EWKPrivate::coreFrame(smartData->main_frame);
+    if (mainFrame && mainFrame->tiledBackingStore())
+        mainFrame->tiledBackingStore()->coverWithTilesIfNeeded();
+#endif
+
+    Ewk_Paint_Context* context = ewk_paint_context_from_image_new(smartData->backing_store);
+    ewk_paint_context_save(context);
+
+    Eina_Rectangle* rect;
+    EINA_ITERATOR_FOREACH(iterator, rect) {
+        ewk_view_paint(smartData->_priv, context, rect);
+        evas_object_image_data_update_add(smartData->backing_store, rect->x, rect->y, rect->w, rect->h);
+    }
+
+#if ENABLE(INSPECTOR)
+    WebCore::Page* page = EWKPrivate::corePage(smartData->self);
+    if (page) {
+        WebCore::InspectorController* controller = page->inspectorController();
+        if (controller->highlightedNode())
+            controller->drawHighlight(*context->graphicContext);
+    }
+#endif
+
+    ewk_paint_context_restore(context);
+    ewk_paint_context_free(context);
+
+    eina_tiler_free(tiler);
+    eina_iterator_free(iterator);
+
+    return true;
+}
+
 static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET(ewkView, smartData);
     EWK_VIEW_PRIV_GET(smartData, priv);
     EINA_SAFETY_ON_NULL_RETURN(smartData->api->contents_resize);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api->scrolls_process);
     EINA_SAFETY_ON_NULL_RETURN(smartData->api->repaints_process);
     Evas_Coord x, y, width, height;
 
@@ -1059,8 +1280,7 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
     }
     smartData->changed.position = false;
 
-    if (!smartData->api->scrolls_process(smartData))
-        ERR("failed to process scrolls.");
+    smartData->api->scrolls_process(smartData);
     _ewk_view_scrolls_flush(priv);
 
     if (!smartData->api->repaints_process(smartData))
@@ -1187,6 +1407,48 @@ static float _ewk_view_zoom_animated_current(Ewk_View_Private_Data* priv)
             + priv->animatedZoom.zoom.start);
 }
 
+static Eina_Bool _ewk_view_smart_zoom_weak_set(Ewk_View_Smart_Data* smartData, float zoom, Evas_Coord centerX, Evas_Coord centerY)
+{
+    float scale = zoom / smartData->animated_zoom.zoom.start;
+    Evas_Coord w = smartData->view.w * scale;
+    Evas_Coord h = smartData->view.h * scale;
+    Evas_Coord deltaX, deltaY, contentWidth, contentHeight;
+    Evas_Object* clip = evas_object_clip_get(smartData->backing_store);
+
+    ewk_frame_contents_size_get(smartData->main_frame, &contentWidth, &contentHeight);
+    if (smartData->view.w > 0 && smartData->view.h > 0) {
+        deltaX = (w * (smartData->view.w - centerX)) / smartData->view.w;
+        deltaY = (h * (smartData->view.h - centerY)) / smartData->view.h;
+    } else {
+        deltaX = 0;
+        deltaY = 0;
+    }
+
+    evas_object_image_fill_set(smartData->backing_store, centerX + deltaX, centerY + deltaY, w, h);
+
+    if (smartData->view.w > 0 && smartData->view.h > 0) {
+        deltaX = ((smartData->view.w - w) * centerX) / smartData->view.w;
+        deltaY = ((smartData->view.h - h) * centerY) / smartData->view.h;
+    } else {
+        deltaX = 0;
+        deltaY = 0;
+    }
+    evas_object_move(clip, smartData->view.x + deltaX, smartData->view.y + deltaY);
+
+    if (contentWidth < smartData->view.w)
+        w = contentWidth * scale;
+    if (contentHeight < smartData->view.h)
+        h = contentHeight * scale;
+    evas_object_resize(clip, w, h);
+
+    return true;
+}
+
+static void _ewk_view_smart_zoom_weak_smooth_scale_set(Ewk_View_Smart_Data* smartData, Eina_Bool smooth_scale)
+{
+    evas_object_image_smooth_scale_set(smartData->backing_store, smooth_scale);
+}
+
 static Eina_Bool _ewk_view_zoom_animator_cb(void* data)
 {
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -1288,7 +1550,11 @@ Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class* api)
     api->sc.callbacks = _ewk_view_callback_names;
 
     api->contents_resize = _ewk_view_smart_contents_resize;
+    api->scrolls_process = _ewk_view_smart_scrolls_process;
+    api->repaints_process = _ewk_view_smart_repaints_process;
     api->zoom_set = _ewk_view_smart_zoom_set;
+    api->zoom_weak_set = _ewk_view_smart_zoom_weak_set;
+    api->zoom_weak_smooth_scale_set = _ewk_view_smart_zoom_weak_smooth_scale_set;
     api->flush = _ewk_view_smart_flush;
     api->pre_render_region = _ewk_view_smart_pre_render_region;
     api->pre_render_relative_radius = _ewk_view_smart_pre_render_relative_radius;
@@ -1314,6 +1580,29 @@ Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class* api)
     api->should_interrupt_javascript = _ewk_view_smart_should_interrupt_javascript;
 
     return true;
+}
+
+Eina_Bool ewk_view_single_smart_set(Ewk_View_Smart_Class* api)
+{
+    return ewk_view_base_smart_set(api);
+}
+
+static inline Evas_Smart* _ewk_view_single_smart_class_new(void)
+{
+    static Ewk_View_Smart_Class api = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(ewkViewSingleName);
+    static Evas_Smart* smart = 0;
+
+    if (EINA_UNLIKELY(!smart)) {
+        ewk_view_base_smart_set(&api);
+        smart = evas_smart_class_new(&api.sc);
+    }
+
+    return smart;
+}
+
+Evas_Object* ewk_view_single_add(Evas* canvas)
+{
+    return evas_object_smart_add(canvas, _ewk_view_single_smart_class_new());
 }
 
 void ewk_view_fixed_layout_size_set(Evas_Object* ewkView, Evas_Coord width, Evas_Coord height)
@@ -1424,7 +1713,6 @@ void ewk_view_bg_color_set(Evas_Object* ewkView, int red, int green, int blue, i
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EINA_SAFETY_ON_NULL_RETURN(smartData->api);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api->bg_color_set);
 
     if (alpha < 0) {
         WARN("Alpha less than zero (%d).", alpha);
@@ -1453,7 +1741,7 @@ void ewk_view_bg_color_set(Evas_Object* ewkView, int red, int green, int blue, i
     smartData->bg_color.b = blue;
     smartData->bg_color.a = alpha;
 
-    smartData->api->bg_color_set(smartData, red, green, blue, alpha);
+    evas_object_image_alpha_set(smartData->backing_store, alpha < 255);
 
     WebCore::FrameView* view = smartData->_priv->mainFrame->view();
     if (view) {
@@ -1926,7 +2214,6 @@ Eina_Bool ewk_view_pre_render_region(Evas_Object* ewkView, Evas_Coord x, Evas_Co
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api->pre_render_region, false);
-    float currentZoom;
     Evas_Coord contentsWidth, contentsHeight;
 
     /* When doing animated zoom it's not possible to call pre-render since it
@@ -1935,10 +2222,10 @@ Eina_Bool ewk_view_pre_render_region(Evas_Object* ewkView, Evas_Coord x, Evas_Co
     if (priv->animatedZoom.animator)
         return false;
 
-    currentZoom = ewk_frame_page_zoom_get(smartData->main_frame);
-
-    if (currentZoom < 0.00001)
+    float currentZoom = ewk_frame_page_zoom_get(smartData->main_frame);
+    if (currentZoom < std::numeric_limits<float>::epsilon())
         return false;
+
     if (!ewk_frame_contents_size_get(smartData->main_frame, &contentsWidth, &contentsHeight))
         return false;
 
@@ -2726,18 +3013,6 @@ const Eina_Rectangle* ewk_view_repaints_pop(Ewk_View_Private_Data* priv, size_t*
     return priv->repaints.array;
 }
 
-const Vector<WebCore::IntSize>& ewk_view_scroll_offsets_get(const Ewk_View_Private_Data* priv)
-{
-    ASSERT(priv);
-    return priv->m_scrollOffsets;
-}
-
-const Vector<WebCore::IntRect>& ewk_view_scroll_rects_get(const Ewk_View_Private_Data* priv)
-{
-    ASSERT(priv);
-    return priv->m_rectsToScroll;
-}
-
 /**
  * Add a new repaint request to queue.
  *
@@ -2782,8 +3057,8 @@ void ewk_view_scrolls_process(Ewk_View_Smart_Data* smartData)
 {
     EINA_SAFETY_ON_NULL_RETURN(smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-    if (!smartData->api->scrolls_process(smartData))
-        ERR("failed to process scrolls.");
+
+    smartData->api->scrolls_process(smartData);
     _ewk_view_scrolls_flush(priv);
 }
 

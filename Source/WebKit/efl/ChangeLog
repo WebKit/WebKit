@@ -1,3 +1,37 @@
+2014-01-08  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Merge ewk_view_single into ewk_view
+        https://bugs.webkit.org/show_bug.cgi?id=126508
+
+        Reviewed by Gyuyoung Kim.
+
+        Since ewk_view_tiled is removed at r161134, we don't need to keep
+        ewk_view_single out of ewk_view.cpp.
+
+        This patch moves the logic of ewk_view_single to ewk_view and refactors it.
+        In addition, replaces 0.00001 to episilon.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_add):
+        (_ewk_view_smart_resize): Merged with the logic of ewk_view_single.
+        (_ewk_view_screen_move): Moved from ewk_view_single.cpp.
+        (_ewk_view_scroll_process): Ditto.
+        (_ewk_view_smart_scrolls_process): Ditto.
+        (_ewk_view_smart_repaints_process): Ditto.
+        (_ewk_view_smart_calculate): Removed unnecessary check routine for scrolls_process.
+        (_ewk_view_smart_zoom_weak_set):
+        (_ewk_view_smart_zoom_weak_smooth_scale_set):
+        (ewk_view_base_smart_set): Merged smart method of ewk_view_single.
+        (ewk_view_single_smart_set):
+        (_ewk_view_single_smart_class_new):
+        (ewk_view_single_add):
+        (ewk_view_bg_color_set):
+        (ewk_view_pre_render_region):
+        (ewk_view_scrolls_process):
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_private.h: Removed unncessary functions.
+        * ewk/ewk_view_single.cpp: Removed.
+
 2014-01-08  Anders Carlsson  <andersca@apple.com>
 
         Add WTF::StringView and use it for grammar checking
