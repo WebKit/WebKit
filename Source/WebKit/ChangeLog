@@ -1,3 +1,16 @@
+2014-01-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Move efl API test binaries to TestWebKitAPI/EWebKit|EWebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=126615
+
+        Reviewed by Martin Robinson.
+
+        Now EFL API test binaries created in *bin* directory with other executables.
+        It would be good to move them to their folder. This patch moves them to
+        *TestWebKitAPI/EWebKit|EWebKit2* directories.
+
+        * PlatformEfl.cmake:
+
 2014-01-08  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix.

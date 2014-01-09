@@ -443,6 +443,7 @@ set(EWK2UnitTests_LIBRARIES
 set(WEBKIT2_EFL_TEST_DIR "${WEBKIT2_DIR}/UIProcess/API/efl/tests")
 set(TEST_RESOURCES_DIR ${WEBKIT2_EFL_TEST_DIR}/resources)
 set(TEST_INJECTED_BUNDLE_DIR ${WEBKIT2_EFL_TEST_DIR}/InjectedBundle)
+set(WEBKIT2_EFL_TEST_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/EWebKit2)
 
 add_definitions(-DTEST_RESOURCES_DIR=\"${TEST_RESOURCES_DIR}\"
     -DTEST_LIB_DIR=\"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\"
@@ -496,8 +497,9 @@ set(EWK2UnitTests_BINARIES
 if (ENABLE_API_TESTS)
     foreach (testName ${EWK2UnitTests_BINARIES})
         add_executable(${testName} ${WEBKIT2_EFL_TEST_DIR}/${testName}.cpp)
-        add_test(${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName})
+        add_test(${testName} ${WEBKIT2_EFL_TEST_RUNTIME_OUTPUT_DIRECTORY}/${testName})
         set_tests_properties(${testName} PROPERTIES TIMEOUT 60)
+        set_target_properties(${testName} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${WEBKIT2_EFL_TEST_RUNTIME_OUTPUT_DIRECTORY})
         target_link_libraries(${testName} ${EWK2UnitTests_LIBRARIES} ewk2UnitTestUtils)
     endforeach ()
 

@@ -262,6 +262,7 @@ add_library(ewkTestUtils
 target_link_libraries(ewkTestUtils ${EWKUnitTests_LIBRARIES})
 
 set(WEBKIT_EFL_TEST_DIR "${WEBKIT_DIR}/efl/tests/")
+set(WEBKIT_EFL_TEST_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/EWebKit)
 
 set(EWKUnitTests_BINARIES
     test_ewk_contextmenu
@@ -273,10 +274,10 @@ set(EWKUnitTests_BINARIES
 if (ENABLE_API_TESTS)
     foreach (testName ${EWKUnitTests_BINARIES})
         add_executable(${testName} ${WEBKIT_EFL_TEST_DIR}/${testName}.cpp ${WEBKIT_EFL_TEST_DIR}/test_runner.cpp)
-        add_test(${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName})
+        add_test(${testName} ${WEBKIT_EFL_TEST_RUNTIME_OUTPUT_DIRECTORY}/${testName})
         set_tests_properties(${testName} PROPERTIES TIMEOUT 60)
+        set_target_properties(${testName} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${WEBKIT_EFL_TEST_RUNTIME_OUTPUT_DIRECTORY})
         target_link_libraries(${testName} ${EWKUnitTests_LIBRARIES} ewkTestUtils)
-        set_target_properties(${testName} PROPERTIES FOLDER "WebKit")
     endforeach ()
 endif ()
 
