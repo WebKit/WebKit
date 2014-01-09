@@ -36,6 +36,8 @@
 #include "ScriptDebugServer.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
+#include <inspector/InjectedScript.h>
+#include <inspector/InjectedScriptManager.h>
 #include <wtf/MessageQueue.h>
 
 using namespace Inspector;

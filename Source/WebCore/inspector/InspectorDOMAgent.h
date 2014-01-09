@@ -31,8 +31,6 @@
 #define InspectorDOMAgent_h
 
 #include "EventTarget.h"
-#include "InjectedScript.h"
-#include "InjectedScriptManager.h"
 #include "InspectorOverlay.h"
 #include "InspectorWebAgentBase.h"
 #include "InspectorWebBackendDispatchers.h"
@@ -51,6 +49,10 @@
 
 namespace Deprecated {
 class ScriptValue;
+}
+
+namespace Inspector {
+class InjectedScriptManager;
 }
 
 namespace WebCore {
@@ -104,7 +106,7 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay)
+    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, Inspector::InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay)
     {
         return adoptPtr(new InspectorDOMAgent(instrumentingAgents, pageAgent, injectedScriptManager, overlay));
     }
@@ -213,7 +215,7 @@ public:
     InspectorPageAgent* pageAgent() { return m_pageAgent; }
 
 private:
-    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InjectedScriptManager*, InspectorOverlay*);
+    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, Inspector::InjectedScriptManager*, InspectorOverlay*);
 
     void setSearchingForNode(ErrorString*, bool enabled, Inspector::InspectorObject* highlightConfig);
     PassOwnPtr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString*, Inspector::InspectorObject* highlightInspectorObject);
@@ -246,7 +248,7 @@ private:
     void innerHighlightQuad(PassOwnPtr<FloatQuad>, const RefPtr<Inspector::InspectorObject>* color, const RefPtr<Inspector::InspectorObject>* outlineColor, const bool* usePageCoordinates);
 
     InspectorPageAgent* m_pageAgent;
-    InjectedScriptManager* m_injectedScriptManager;
+    Inspector::InjectedScriptManager* m_injectedScriptManager;
     InspectorOverlay* m_overlay;
     std::unique_ptr<Inspector::InspectorDOMFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorDOMBackendDispatcher> m_backendDispatcher;

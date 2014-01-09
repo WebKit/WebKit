@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,23 +30,23 @@
  */
 
 #include "config.h"
+#include "InjectedScriptModule.h"
 
 #if ENABLE(INSPECTOR)
 
-#include "InjectedScriptModule.h"
-
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
-#include "JSMainThreadExecState.h"
-#include <bindings/ScriptFunctionCall.h>
-#include <bindings/ScriptObject.h>
+#include "ScriptFunctionCall.h"
+#include "ScriptObject.h"
 
-using namespace Inspector;
-
-namespace WebCore {
+namespace Inspector {
 
 InjectedScriptModule::InjectedScriptModule(const String& name)
     : InjectedScriptBase(name)
+{
+}
+
+InjectedScriptModule::~InjectedScriptModule()
 {
 }
 
@@ -62,13 +63,13 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         return;
 
     // FIXME: Make the InjectedScript a module itself.
-    Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), "module", WebCore::functionCallHandlerFromAnyThread);
+    Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), ASCIILiteral("module"), injectedScriptManager->inspectorEnvironment().functionCallHandler());
     function.appendArgument(name());
     bool hadException = false;
     Deprecated::ScriptValue resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
     ASSERT(!hadException);
     if (hadException || resultValue.hasNoValue() || !resultValue.isObject()) {
-        Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), "injectModule", WebCore::functionCallHandlerFromAnyThread);
+        Deprecated::ScriptFunctionCall function(injectedScript.injectedScriptObject(), ASCIILiteral("injectModule"), injectedScriptManager->inspectorEnvironment().functionCallHandler());
         function.appendArgument(name());
         function.appendArgument(source());
         function.appendArgument(host(injectedScriptManager, injectedScript.scriptState()));
@@ -81,10 +82,10 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
 
     if (returnsObject()) {
         Deprecated::ScriptObject moduleObject(injectedScript.scriptState(), resultValue);
-        initialize(moduleObject, injectedScriptManager->inspectedStateAccessCheck());
+        initialize(moduleObject, &injectedScriptManager->inspectorEnvironment());
     }
 }
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)

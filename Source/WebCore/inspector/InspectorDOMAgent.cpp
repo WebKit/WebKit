@@ -64,7 +64,6 @@
 #include "HTMLTemplateElement.h"
 #include "HitTestResult.h"
 #include "IdentifiersFactory.h"
-#include "InjectedScriptManager.h"
 #include "InspectorHistory.h"
 #include "InspectorNodeFinder.h"
 #include "InspectorOverlay.h"
@@ -79,7 +78,6 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "Page.h"
-#include "PageInjectedScriptManager.h"
 #include "Pasteboard.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
@@ -93,6 +91,8 @@
 #include "XPathResult.h"
 #include "htmlediting.h"
 #include "markup.h"
+#include <inspector/InjectedScript.h>
+#include <inspector/InjectedScriptManager.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>

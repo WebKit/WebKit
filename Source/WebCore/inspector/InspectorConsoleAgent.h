@@ -43,8 +43,8 @@ namespace WebCore {
 
 class ConsoleMessage;
 class DOMWindow;
-class InjectedScriptManager;
 class InstrumentingAgents;
+class PageInjectedScriptManager;
 class ResourceError;
 class ResourceResponse;
 class ScriptArguments;
@@ -56,7 +56,7 @@ typedef String ErrorString;
 class InspectorConsoleAgent : public InspectorAgentBase, public Inspector::InspectorConsoleBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
-    InspectorConsoleAgent(InstrumentingAgents*, InjectedScriptManager*);
+    InspectorConsoleAgent(InstrumentingAgents*, PageInjectedScriptManager*);
     virtual ~InspectorConsoleAgent();
 
     virtual void enable(ErrorString*);
@@ -100,7 +100,7 @@ protected:
 
     virtual bool developerExtrasEnabled() = 0;
 
-    InjectedScriptManager* m_injectedScriptManager;
+    PageInjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<Inspector::InspectorConsoleFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorConsoleBackendDispatcher> m_backendDispatcher;
     ConsoleMessage* m_previousMessage;

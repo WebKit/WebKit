@@ -35,17 +35,19 @@
 #include "WorkerInspectorController.h"
 
 #include "CommandLineAPIHost.h"
-#include "InjectedScriptHost.h"
-#include "InjectedScriptManager.h"
 #include "InspectorClient.h"
 #include "InspectorConsoleAgent.h"
 #include "InspectorForwarding.h"
 #include "InspectorHeapProfilerAgent.h"
+#include "InspectorInstrumentation.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InspectorWebBackendDispatchers.h"
 #include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
+#include "JSMainThreadExecState.h"
+#include "PageInjectedScriptHost.h"
+#include "PageInjectedScriptManager.h"
 #include "WorkerConsoleAgent.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerGlobalScope.h"
@@ -80,7 +82,7 @@ private:
 WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope* workerGlobalScope)
     : m_workerGlobalScope(workerGlobalScope)
     , m_instrumentingAgents(InstrumentingAgents::create())
-    , m_injectedScriptManager(InjectedScriptManager::createForWorker())
+    , m_injectedScriptManager(std::make_unique<PageInjectedScriptManager>(*this, PageInjectedScriptHost::create()))
     , m_runtimeAgent(0)
 {
     OwnPtr<InspectorRuntimeAgent> runtimeAgent = WorkerRuntimeAgent::create(m_instrumentingAgents.get(), m_injectedScriptManager.get(), workerGlobalScope);
@@ -149,6 +151,30 @@ void WorkerInspectorController::resume()
 }
 #endif
 
+InspectorFunctionCallHandler WorkerInspectorController::functionCallHandler() const
+{
+    return WebCore::functionCallHandlerFromAnyThread;
 }
 
-#endif
+InspectorEvaluateHandler WorkerInspectorController::evaluateHandler() const
+{
+    return WebCore::evaluateHandlerFromAnyThread;
+}
+
+void WorkerInspectorController::willCallInjectedScriptFunction(JSC::ExecState* scriptState, const String& scriptName, int scriptLine)
+{
+    ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromExecState(scriptState);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willCallFunction(scriptExecutionContext, scriptName, scriptLine);
+    m_injectedScriptInstrumentationCookies.append(cookie);
+}
+
+void WorkerInspectorController::didCallInjectedScriptFunction()
+{
+    ASSERT(!m_injectedScriptInstrumentationCookies.isEmpty());
+    InspectorInstrumentationCookie cookie = m_injectedScriptInstrumentationCookies.takeLast();
+    InspectorInstrumentation::didCallFunction(cookie);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

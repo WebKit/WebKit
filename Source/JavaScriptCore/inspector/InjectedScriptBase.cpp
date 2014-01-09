@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,45 +30,43 @@
  */
 
 #include "config.h"
+#include "InjectedScriptBase.h"
 
 #if ENABLE(INSPECTOR)
 
-#include "InjectedScriptBase.h"
-
-#include "InspectorInstrumentation.h"
-#include <bindings/ScriptFunctionCall.h>
-#include <inspector/InspectorValues.h>
-#include <runtime/JSGlobalObject.h>
+#include "InspectorValues.h"
+#include "JSGlobalObject.h"
+#include "ScriptFunctionCall.h"
 #include <wtf/text/WTFString.h>
 
-using Inspector::TypeBuilder::Runtime::RemoteObject;
-
-using namespace Inspector;
-
-namespace WebCore {
+namespace Inspector {
 
 InjectedScriptBase::InjectedScriptBase(const String& name)
     : m_name(name)
-    , m_inspectedStateAccessCheck(0)
+    , m_environment(nullptr)
 {
 }
 
-InjectedScriptBase::InjectedScriptBase(const String& name, Deprecated::ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
+InjectedScriptBase::InjectedScriptBase(const String& name, Deprecated::ScriptObject injectedScriptObject, InspectorEnvironment* environment)
     : m_name(name)
     , m_injectedScriptObject(injectedScriptObject)
-    , m_inspectedStateAccessCheck(accessCheck)
+    , m_environment(environment)
 {
 }
 
-void InjectedScriptBase::initialize(Deprecated::ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
+InjectedScriptBase::~InjectedScriptBase()
+{
+}
+
+void InjectedScriptBase::initialize(Deprecated::ScriptObject injectedScriptObject, InspectorEnvironment* environment)
 {
     m_injectedScriptObject = injectedScriptObject;
-    m_inspectedStateAccessCheck = accessCheck;
+    m_environment = environment;
 }
 
-bool InjectedScriptBase::canAccessInspectedWindow() const
+bool InjectedScriptBase::hasAccessToInspectedScriptState() const
 {
-    return m_inspectedStateAccessCheck(m_injectedScriptObject.scriptState());
+    return m_environment && m_environment->canAccessInspectedScriptState(m_injectedScriptObject.scriptState());
 }
 
 const Deprecated::ScriptObject& InjectedScriptBase::injectedScriptObject() const
@@ -77,8 +76,8 @@ const Deprecated::ScriptObject& InjectedScriptBase::injectedScriptObject() const
 
 Deprecated::ScriptValue InjectedScriptBase::callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall& function, bool& hadException) const
 {
-    ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromExecState(m_injectedScriptObject.scriptState());
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willCallFunction(scriptExecutionContext, name(), 1);
+    if (m_environment)
+        m_environment->willCallInjectedScriptFunction(m_injectedScriptObject.scriptState(), name(), 1);
 
     JSC::ExecState* scriptState = m_injectedScriptObject.scriptState();
     bool evalIsDisabled = false;
@@ -94,13 +93,15 @@ Deprecated::ScriptValue InjectedScriptBase::callFunctionWithEvalEnabled(Deprecat
     if (evalIsDisabled)
         scriptState->lexicalGlobalObject()->setEvalEnabled(false);
 
-    InspectorInstrumentation::didCallFunction(cookie);
+    if (m_environment)
+        m_environment->didCallInjectedScriptFunction();
+
     return resultValue;
 }
 
 void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefPtr<InspectorValue>* result)
 {
-    if (hasNoValue() || !canAccessInspectedWindow()) {
+    if (hasNoValue() || !hasAccessToInspectedScriptState()) {
         *result = InspectorValue::null();
         return;
     }
@@ -112,39 +113,43 @@ void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefP
     if (!hadException) {
         *result = resultValue.toInspectorValue(m_injectedScriptObject.scriptState());
         if (!*result)
-            *result = InspectorString::create(String::format("Object has too long reference chain(must not be longer than %d)", InspectorValue::maxDepth));
+            *result = InspectorString::create(String::format("Object has too long reference chain (must not be longer than %d)", InspectorValue::maxDepth));
     } else
         *result = InspectorString::create("Exception while making a call.");
 }
 
-void InjectedScriptBase::makeEvalCall(ErrorString* errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>* objectResult, Inspector::TypeBuilder::OptOutput<bool>* wasThrown)
+void InjectedScriptBase::makeEvalCall(ErrorString* errorString, Deprecated::ScriptFunctionCall& function, RefPtr<TypeBuilder::Runtime::RemoteObject>* objectResult, TypeBuilder::OptOutput<bool>* wasThrown)
 {
     RefPtr<InspectorValue> result;
     makeCall(function, &result);
     if (!result) {
-        *errorString = "Internal error: result value is empty";
+        *errorString = ASCIILiteral("Internal error: result value is empty");
         return;
     }
+
     if (result->type() == InspectorValue::TypeString) {
         result->asString(errorString);
         ASSERT(errorString->length());
         return;
     }
+
     RefPtr<InspectorObject> resultPair = result->asObject();
     if (!resultPair) {
-        *errorString = "Internal error: result is not an Object";
+        *errorString = ASCIILiteral("Internal error: result is not an Object");
         return;
     }
-    RefPtr<InspectorObject> resultObj = resultPair->getObject("result");
+
+    RefPtr<InspectorObject> resultObj = resultPair->getObject(ASCIILiteral("result"));
     bool wasThrownVal = false;
-    if (!resultObj || !resultPair->getBoolean("wasThrown", &wasThrownVal)) {
-        *errorString = "Internal error: result is not a pair of value and wasThrown flag";
+    if (!resultObj || !resultPair->getBoolean(ASCIILiteral("wasThrown"), &wasThrownVal)) {
+        *errorString = ASCIILiteral("Internal error: result is not a pair of value and wasThrown flag");
         return;
     }
-    *objectResult = Inspector::TypeBuilder::Runtime::RemoteObject::runtimeCast(resultObj);
+
+    *objectResult = TypeBuilder::Runtime::RemoteObject::runtimeCast(resultObj);
     *wasThrown = wasThrownVal;
 }
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)

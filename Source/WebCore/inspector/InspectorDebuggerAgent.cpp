@@ -34,14 +34,14 @@
 
 #include "CachedResource.h"
 #include "ContentSearchUtils.h"
-#include "InjectedScript.h"
-#include "InjectedScriptManager.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "RegularExpression.h"
 #include "ScriptDebugServer.h"
 #include <bindings/ScriptObject.h>
 #include <bindings/ScriptValue.h>
+#include <inspector/InjectedScript.h>
+#include <inspector/InjectedScriptManager.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/text/WTFString.h>
 

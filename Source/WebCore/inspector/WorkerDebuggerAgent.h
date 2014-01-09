@@ -44,19 +44,19 @@ class WorkerDebuggerAgent : public InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(WorkerDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<WorkerDebuggerAgent> create(InstrumentingAgents*, WorkerGlobalScope*, InjectedScriptManager*);
+    static PassOwnPtr<WorkerDebuggerAgent> create(InstrumentingAgents*, WorkerGlobalScope*, Inspector::InjectedScriptManager*);
     virtual ~WorkerDebuggerAgent();
 
     static const char* debuggerTaskMode;
     static void interruptAndDispatchInspectorCommands(WorkerThread*);
 
 private:
-    WorkerDebuggerAgent(InstrumentingAgents*, WorkerGlobalScope*, InjectedScriptManager*);
+    WorkerDebuggerAgent(InstrumentingAgents*, WorkerGlobalScope*, Inspector::InjectedScriptManager*);
 
     virtual void startListeningScriptDebugServer();
     virtual void stopListeningScriptDebugServer();
     virtual WorkerScriptDebugServer& scriptDebugServer();
-    virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
+    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
     virtual void muteConsole();
     virtual void unmuteConsole();
 

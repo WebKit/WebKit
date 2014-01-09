@@ -35,13 +35,14 @@
 
 #include "InspectorWebAgentBase.h"
 #include "InspectorWebBackendDispatchers.h"
-#include "ScriptState.h"
 #include <inspector/InspectorJSBackendDispatchers.h>
 #include <inspector/InspectorJSFrontendDispatchers.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace Inspector {
+class InjectedScript;
+class InjectedScriptManager;
 class InspectorArray;
 class InspectorObject;
 class InspectorValue;
@@ -49,8 +50,6 @@ class InspectorValue;
 
 namespace WebCore {
 
-class InjectedScript;
-class InjectedScriptManager;
 class InstrumentingAgents;
 class ScriptDebugServer;
 class WorkerGlobalScope;
@@ -95,17 +94,17 @@ public:
 #endif
 
 protected:
-    InspectorRuntimeAgent(InstrumentingAgents*, InjectedScriptManager*);
-    virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) = 0;
+    InspectorRuntimeAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*);
+    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) = 0;
 
     virtual void muteConsole() = 0;
     virtual void unmuteConsole() = 0;
 
-    InjectedScriptManager* injectedScriptManager() { return m_injectedScriptManager; }
+    Inspector::InjectedScriptManager* injectedScriptManager() { return m_injectedScriptManager; }
     bool m_enabled;
 
 private:
-    InjectedScriptManager* m_injectedScriptManager;
+    Inspector::InjectedScriptManager* m_injectedScriptManager;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptDebugServer* m_scriptDebugServer;
 #endif

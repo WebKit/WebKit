@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-class InjectedScriptManager;
+class PageInjectedScriptManager;
 class ScriptHeapSnapshot;
 class ScriptProfile;
 
@@ -53,7 +53,7 @@ typedef String ErrorString;
 class InspectorHeapProfilerAgent : public InspectorAgentBase, public Inspector::InspectorHeapProfilerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorHeapProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<InspectorHeapProfilerAgent> create(InstrumentingAgents*, InjectedScriptManager*);
+    static PassOwnPtr<InspectorHeapProfilerAgent> create(InstrumentingAgents*, PageInjectedScriptManager*);
     virtual ~InspectorHeapProfilerAgent();
 
     virtual void collectGarbage(ErrorString*);
@@ -75,7 +75,7 @@ public:
     virtual void getHeapObjectId(ErrorString*, const String& objectId, String* heapSnapshotObjectId);
 
 private:
-    InspectorHeapProfilerAgent(InstrumentingAgents*, InjectedScriptManager*);
+    InspectorHeapProfilerAgent(InstrumentingAgents*, PageInjectedScriptManager*);
 
     typedef HashMap<unsigned, RefPtr<ScriptHeapSnapshot>> IdToHeapSnapshotMap;
 
@@ -83,7 +83,7 @@ private:
 
     PassRefPtr<Inspector::TypeBuilder::HeapProfiler::ProfileHeader> createSnapshotHeader(const ScriptHeapSnapshot&);
 
-    InjectedScriptManager* m_injectedScriptManager;
+    PageInjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<Inspector::InspectorHeapProfilerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorHeapProfilerBackendDispatcher> m_backendDispatcher;
     unsigned m_nextUserInitiatedHeapSnapshotNumber;

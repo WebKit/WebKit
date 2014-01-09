@@ -1,3 +1,176 @@
+2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move InjectedScript classes into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=126598
+
+        Part 6: Put it all together. Make WebCore use the JavaScriptCore InjectedScript files.
+
+        Reviewed by Timothy Hatcher.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove old InjectedScript files.
+
+        * ForwardingHeaders/inspector/InjectedScript.h: Added.
+        * ForwardingHeaders/inspector/InjectedScriptBase.h: Added.
+        * ForwardingHeaders/inspector/InjectedScriptHost.h: Added.
+        * ForwardingHeaders/inspector/InjectedScriptManager.h: Added.
+        * ForwardingHeaders/inspector/InjectedScriptModule.h: Added.
+        * ForwardingHeaders/inspector/InspectorEnvironment.h: Added.
+        Expose headers to WebCore.
+
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::developerExtrasEnabled):
+        (WebCore::InspectorController::canAccessInspectedScriptState):
+        (WebCore::InspectorController::functionCallHandler):
+        (WebCore::InspectorController::evaluateHandler):
+        (WebCore::InspectorController::willCallInjectedScriptFunction):
+        (WebCore::InspectorController::didCallInjectedScriptFunction):
+        * inspector/WorkerInspectorController.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::functionCallHandler):
+        (WebCore::WorkerInspectorController::evaluateHandler):
+        (WebCore::WorkerInspectorController::willCallInjectedScriptFunction):
+        (WebCore::WorkerInspectorController::didCallInjectedScriptFunction):
+        Make both InspectorControllers in WebCore be InspectorEnvironments.
+
+        * bindings/js/JSMainThreadExecState.h:
+        * bindings/js/JSMainThreadExecState.cpp:
+        (WebCore::evaluateHandlerFromAnyThread):
+        Make JSC::evaluate wrapper like the existing JSC::call wrapper.
+        These will be the ScriptFunctionCall implementations when debugging
+        a WebCore::Page or worker, instead of the pure JSC versions.
+
+        * inspector/PageInjectedScriptHost.h: Copied from Source/WebCore/inspector/CommandLineAPIModule.h.
+        * inspector/PageInjectedScriptHost.cpp: Copied from Source/WebCore/inspector/PageInjectedScriptManager.cpp.
+        (WebCore::PageInjectedScriptHost::type):
+        (WebCore::PageInjectedScriptHost::isHTMLAllCollection):
+        WebCore InjectedScriptHost implementation for DOM type handling.
+
+        * inspector/PageInjectedScriptManager.h:
+        * inspector/PageInjectedScriptManager.cpp:
+        (WebCore::PageInjectedScriptManager::PageInjectedScriptManager):
+        (WebCore::PageInjectedScriptManager::discardInjectedScriptsFor):
+        WebCore InjectedScriptManager implementation for CommandLineAPI and
+        specialized DOMWindow injected script management.
+
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * inspector/CommandLineAPIHost.cpp:
+        * inspector/CommandLineAPIHost.h:
+        * inspector/CommandLineAPIModule.cpp:
+        (WebCore::CommandLineAPIModule::host):
+        * inspector/CommandLineAPIModule.h:
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/ConsoleMessage.h:
+        * inspector/InjectedScriptCanvasModule.cpp:
+        (WebCore::InjectedScriptCanvasModule::InjectedScriptCanvasModule):
+        * inspector/InjectedScriptCanvasModule.h:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorCanvasAgent.cpp:
+        * inspector/InspectorCanvasAgent.h:
+        (WebCore::InspectorCanvasAgent::create):
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::InspectorConsoleAgent):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+        * inspector/InspectorDebuggerAgent.cpp:
+        * inspector/InspectorDebuggerAgent.h:
+        (WebCore::InspectorDebuggerAgent::injectedScriptManager):
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        (WebCore::InspectorHeapProfilerAgent::create):
+        (WebCore::InspectorHeapProfilerAgent::InspectorHeapProfilerAgent):
+        * inspector/InspectorHeapProfilerAgent.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * inspector/InspectorIndexedDBAgent.h:
+        (WebCore::InspectorIndexedDBAgent::create):
+        * inspector/InspectorPageAgent.cpp:
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::PageProfilerAgent::PageProfilerAgent):
+        (WebCore::InspectorProfilerAgent::create):
+        (WebCore::WorkerProfilerAgent::WorkerProfilerAgent):
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        * inspector/InspectorRuntimeAgent.h:
+        (WebCore::InspectorRuntimeAgent::injectedScriptManager):
+        * inspector/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::PageConsoleAgent):
+        * inspector/PageConsoleAgent.h:
+        (WebCore::PageConsoleAgent::create):
+        * inspector/PageDebuggerAgent.cpp:
+        * inspector/PageDebuggerAgent.h:
+        * inspector/PageRuntimeAgent.cpp:
+        * inspector/PageRuntimeAgent.h:
+        (WebCore::PageRuntimeAgent::create):
+        * inspector/WorkerConsoleAgent.cpp:
+        (WebCore::WorkerConsoleAgent::WorkerConsoleAgent):
+        * inspector/WorkerConsoleAgent.h:
+        (WebCore::WorkerConsoleAgent::create):
+        * inspector/WorkerDebuggerAgent.cpp:
+        * inspector/WorkerDebuggerAgent.h:
+        * inspector/WorkerRuntimeAgent.cpp:
+        * inspector/WorkerRuntimeAgent.h:
+        (WebCore::WorkerRuntimeAgent::create):
+        Switch to using the Inspector namespace and JSC InjectedScript files.
+
+        * bindings/js/JSInjectedScriptManager.cpp: Removed.
+        * inspector/InjectedScript.h: Removed.
+        * inspector/InjectedScriptHost.cpp: Removed.
+        * inspector/InjectedScriptHost.h: Removed.
+        * inspector/InjectedScriptHost.idl: Removed.
+
+
+        Part 4: Move all inspector scripts into JavaScriptCore and update generators.
+
+        With the updated location switch to using the appropriate INSPECTOR_SCRIPTS_DIR
+        variable which defines where the scripts are.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
+
+        Part 1: Extract InspectorInstrumentationCookie class from InspectorInstrumentation.
+
+        Currently InjectedScriptBase uses InspectorInstrumentation directly
+        to track calling into JavaScript for timeline purposes. We will remove
+        the direct call from InjectedScriptBase and extracting the Cookie class
+        will make that easier.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorInstrumentationCookie.cpp: Added.
+        (WebCore::InspectorInstrumentationCookie::InspectorInstrumentationCookie):
+        (WebCore::InspectorInstrumentationCookie::operator=):
+        (WebCore::InspectorInstrumentationCookie::~InspectorInstrumentationCookie):
+        * inspector/InspectorInstrumentationCookie.h: Added.
+        (WebCore::InspectorInstrumentationCookie::isValid):
+        (WebCore::InspectorInstrumentationCookie::instrumentingAgents):
+        (WebCore::InspectorInstrumentationCookie::hasMatchingTimelineAgentId):
+
 2014-01-09  Pascal Jacquemart  <p.jacquemart@samsung.com>
 
         Cannot select multiple non-adjacent items in a multiple select control with the keyboard only

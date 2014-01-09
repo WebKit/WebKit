@@ -39,13 +39,13 @@
 #include <wtf/Vector.h>
 
 namespace Inspector {
+class InjectedScriptManager;
 class InspectorObject;
 }
 
 namespace WebCore {
 
 class DOMWindow;
-class InjectedScriptManager;
 class ScriptArguments;
 class ScriptCallFrame;
 class ScriptCallStack;
@@ -59,7 +59,7 @@ public:
     ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, JSC::ExecState*, unsigned long requestIdentifier = 0);
     ~ConsoleMessage();
 
-    void addToFrontend(Inspector::InspectorConsoleFrontendDispatcher*, InjectedScriptManager*, bool generatePreview);
+    void addToFrontend(Inspector::InspectorConsoleFrontendDispatcher*, Inspector::InjectedScriptManager*, bool generatePreview);
     void updateRepeatCountInConsole(Inspector::InspectorConsoleFrontendDispatcher*);
     void incrementCount() { ++m_repeatCount; }
     bool isEqual(ConsoleMessage* msg) const;

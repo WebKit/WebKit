@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,9 @@
 #ifndef InjectedScriptManager_h
 #define InjectedScriptManager_h
 
+#include "InjectedScript.h"
+#include "InjectedScriptHost.h"
+#include "InspectorEnvironment.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -43,59 +46,40 @@ class ExecState;
 }
 
 namespace Inspector {
-class InspectorObject;
-}
 
-namespace WebCore {
-
-class DOMWindow;
-class InjectedScript;
-class InjectedScriptHost;
-class CommandLineAPIHost;
-
-class InjectedScriptManager {
+class JS_EXPORT_PRIVATE InjectedScriptManager {
     WTF_MAKE_NONCOPYABLE(InjectedScriptManager); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<InjectedScriptManager> createForPage();
-    static PassOwnPtr<InjectedScriptManager> createForWorker();
+    InjectedScriptManager(InspectorEnvironment&, PassRefPtr<InjectedScriptHost>);
     virtual ~InjectedScriptManager();
 
     virtual void disconnect();
 
     InjectedScriptHost* injectedScriptHost();
-    virtual CommandLineAPIHost* commandLineAPIHost() const { return nullptr; }
+    InspectorEnvironment& inspectorEnvironment() const { return m_environment; }
 
     InjectedScript injectedScriptFor(JSC::ExecState*);
     InjectedScript injectedScriptForId(int);
     int injectedScriptIdFor(JSC::ExecState*);
     InjectedScript injectedScriptForObjectId(const String& objectId);
     void discardInjectedScripts();
-    void discardInjectedScriptsFor(DOMWindow*);
     void releaseObjectGroup(const String& objectGroup);
 
-    typedef bool (*InspectedStateAccessCheck)(JSC::ExecState*);
-    InspectedStateAccessCheck inspectedStateAccessCheck() const { return m_inspectedStateAccessCheck; }
-
 protected:
-    explicit InjectedScriptManager(InspectedStateAccessCheck);
     virtual void didCreateInjectedScript(InjectedScript);
+
+    HashMap<int, InjectedScript> m_idToInjectedScript;
+    HashMap<JSC::ExecState*, int> m_scriptStateToId;
 
 private:
     String injectedScriptSource();
     Deprecated::ScriptObject createInjectedScript(const String& source, JSC::ExecState*, int id);
 
-    static bool canAccessInspectedWindow(JSC::ExecState*);
-    static bool canAccessInspectedWorkerGlobalScope(JSC::ExecState*);
-
-    int m_nextInjectedScriptId;
-    typedef HashMap<int, InjectedScript> IdToInjectedScriptMap;
-    IdToInjectedScriptMap m_idToInjectedScript;
+    InspectorEnvironment& m_environment;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
-    InspectedStateAccessCheck m_inspectedStateAccessCheck;
-    typedef HashMap<JSC::ExecState*, int> ExecStateToId;
-    ExecStateToId m_scriptStateToId;
+    int m_nextInjectedScriptId;
 };
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // !defined(InjectedScriptManager_h)

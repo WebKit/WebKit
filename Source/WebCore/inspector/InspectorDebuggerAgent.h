@@ -34,10 +34,10 @@
 
 #include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
-#include "InjectedScript.h"
 #include "InspectorWebAgentBase.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
+#include <bindings/ScriptValue.h>
 #include <debugger/Debugger.h>
 #include <inspector/InspectorJSBackendDispatchers.h>
 #include <inspector/InspectorJSFrontendDispatchers.h>
@@ -48,11 +48,9 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
-namespace Deprecated {
-class ScriptValue;
-}
-
 namespace Inspector {
+class InjectedScript;
+class InjectedScriptManager;
 class InspectorArray;
 class InspectorObject;
 class InspectorValue;
@@ -60,7 +58,6 @@ class InspectorValue;
 
 namespace WebCore {
 
-class InjectedScriptManager;
 class InstrumentingAgents;
 class ScriptDebugServer;
 
@@ -136,14 +133,14 @@ public:
     virtual ScriptDebugServer& scriptDebugServer() = 0;
 
 protected:
-    InspectorDebuggerAgent(InstrumentingAgents*, InjectedScriptManager*);
+    InspectorDebuggerAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*);
 
     virtual void startListeningScriptDebugServer() = 0;
     virtual void stopListeningScriptDebugServer() = 0;
     virtual void muteConsole() = 0;
     virtual void unmuteConsole() = 0;
-    InjectedScriptManager* injectedScriptManager() { return m_injectedScriptManager; }
-    virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) = 0;
+    Inspector::InjectedScriptManager* injectedScriptManager() const { return m_injectedScriptManager; }
+    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) = 0;
 
     virtual void enable();
     virtual void disable();
@@ -168,7 +165,7 @@ private:
     typedef HashMap<String, Vector<JSC::BreakpointID>> BreakpointIdentifierToDebugServerBreakpointIDsMap;
     typedef HashMap<String, RefPtr<Inspector::InspectorObject>> BreakpointIdentifierToBreakpointMap;
 
-    InjectedScriptManager* m_injectedScriptManager;
+    Inspector::InjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<Inspector::InspectorDebuggerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorDebuggerBackendDispatcher> m_backendDispatcher;
     JSC::ExecState* m_pausedScriptState;

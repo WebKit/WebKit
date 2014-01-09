@@ -34,9 +34,9 @@
 
 #include "InspectorRuntimeAgent.h"
 
-#include "InjectedScript.h"
-#include "InjectedScriptManager.h"
 #include "JSDOMWindowBase.h"
+#include <inspector/InjectedScript.h>
+#include <inspector/InjectedScriptManager.h>
 #include <inspector/InspectorValues.h>
 #include <parser/ParserError.h>
 #include <parser/SourceCode.h>

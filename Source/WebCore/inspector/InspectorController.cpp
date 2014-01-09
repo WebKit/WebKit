@@ -29,17 +29,14 @@
  */
 
 #include "config.h"
+#include "InspectorController.h"
 
 #if ENABLE(INSPECTOR)
-
-#include "InspectorController.h"
 
 #include "CommandLineAPIHost.h"
 #include "DOMWrapperWorld.h"
 #include "GraphicsContext.h"
 #include "IdentifiersFactory.h"
-#include "InjectedScriptHost.h"
-#include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCSSAgent.h"
@@ -66,21 +63,28 @@
 #include "InspectorWebFrontendDispatchers.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSDOMWindow.h"
+#include "JSDOMWindowCustom.h"
+#include "JSMainThreadExecState.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageConsoleAgent.h"
 #include "PageDebuggerAgent.h"
+#include "PageInjectedScriptHost.h"
+#include "PageInjectedScriptManager.h"
 #include "PageRuntimeAgent.h"
 #include "Settings.h"
 #include <inspector/InspectorBackendDispatcher.h>
+#include <runtime/JSLock.h>
 
+using namespace JSC;
 using namespace Inspector;
 
 namespace WebCore {
 
 InspectorController::InspectorController(Page* page, InspectorClient* inspectorClient)
     : m_instrumentingAgents(InstrumentingAgents::create())
-    , m_injectedScriptManager(InjectedScriptManager::createForPage())
+    , m_injectedScriptManager(std::make_unique<PageInjectedScriptManager>(*this, PageInjectedScriptHost::create()))
     , m_overlay(InspectorOverlay::create(page, inspectorClient))
     , m_inspectorFrontendChannel(nullptr)
     , m_page(page)
@@ -96,7 +100,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_inspectorAgent = inspectorAgentPtr.get();
     m_agents.append(inspectorAgentPtr.release());
 
-    OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_inspectorAgent, m_injectedScriptManager.get(), inspectorClient, m_overlay.get()));
+    OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_inspectorAgent, inspectorClient, m_overlay.get()));
     InspectorPageAgent* pageAgent = pageAgentPtr.get();
     m_pageAgent = pageAgentPtr.get();
     m_agents.append(pageAgentPtr.release());
@@ -237,6 +241,9 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
 {
     if (&world != &mainThreadNormalWorld())
         return;
+
+    if (frame->isMainFrame())
+        m_injectedScriptManager->discardInjectedScripts();
 
     // If the page is supposed to serve as InspectorFrontend notify inspector frontend
     // client that it's cleared so that the client can expose inspector bindings.
@@ -442,6 +449,48 @@ void InspectorController::didComposite()
 {
     if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didComposite();
+}
+
+bool InspectorController::developerExtrasEnabled() const
+{
+    if (!m_page)
+        return false;
+
+    return m_page->settings().developerExtrasEnabled();
+}
+
+bool InspectorController::canAccessInspectedScriptState(JSC::ExecState* scriptState) const
+{
+    JSLockHolder lock(scriptState);
+    JSDOMWindow* inspectedWindow = toJSDOMWindow(scriptState->lexicalGlobalObject());
+    if (!inspectedWindow)
+        return false;
+
+    return BindingSecurity::shouldAllowAccessToDOMWindow(scriptState, inspectedWindow->impl(), DoNotReportSecurityError);
+}
+
+InspectorFunctionCallHandler InspectorController::functionCallHandler() const
+{
+    return WebCore::functionCallHandlerFromAnyThread;
+}
+
+InspectorEvaluateHandler InspectorController::evaluateHandler() const
+{
+    return WebCore::evaluateHandlerFromAnyThread;
+}
+
+void InspectorController::willCallInjectedScriptFunction(JSC::ExecState* scriptState, const String& scriptName, int scriptLine)
+{
+    ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromExecState(scriptState);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willCallFunction(scriptExecutionContext, scriptName, scriptLine);
+    m_injectedScriptInstrumentationCookies.append(cookie);
+}
+
+void InspectorController::didCallInjectedScriptFunction()
+{
+    ASSERT(!m_injectedScriptInstrumentationCookies.isEmpty());
+    InspectorInstrumentationCookie cookie = m_injectedScriptInstrumentationCookies.takeLast();
+    InspectorInstrumentation::didCallFunction(cookie);
 }
 
 } // namespace WebCore

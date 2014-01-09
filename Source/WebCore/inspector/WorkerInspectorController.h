@@ -33,13 +33,16 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "InspectorInstrumentationCookie.h"
 #include "InspectorWebAgentBase.h"
 #include <inspector/InspectorAgentRegistry.h>
+#include <inspector/InspectorEnvironment.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace Inspector {
 class InspectorBackendDispatcher;
@@ -47,13 +50,13 @@ class InspectorBackendDispatcher;
 
 namespace WebCore {
 
-class InjectedScriptManager;
 class InspectorInstrumentation;
 class InspectorRuntimeAgent;
 class InstrumentingAgents;
+class PageInjectedScriptManager;
 class WorkerGlobalScope;
 
-class WorkerInspectorController {
+class WorkerInspectorController FINAL : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(WorkerInspectorController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -67,16 +70,24 @@ public:
     void resume();
 #endif
 
+    virtual bool developerExtrasEnabled() const OVERRIDE { return true; }
+    virtual bool canAccessInspectedScriptState(JSC::ExecState*) const OVERRIDE { return true; }
+    virtual Inspector::InspectorFunctionCallHandler functionCallHandler() const OVERRIDE;
+    virtual Inspector::InspectorEvaluateHandler evaluateHandler() const OVERRIDE;
+    virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) OVERRIDE;
+    virtual void didCallInjectedScriptFunction() OVERRIDE;
+
 private:
     friend InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope*);
 
     WorkerGlobalScope* m_workerGlobalScope;
     RefPtr<InstrumentingAgents> m_instrumentingAgents;
-    OwnPtr<InjectedScriptManager> m_injectedScriptManager;
+    std::unique_ptr<PageInjectedScriptManager> m_injectedScriptManager;
     InspectorRuntimeAgent* m_runtimeAgent;
     Inspector::InspectorAgentRegistry m_agents;
     OwnPtr<InspectorFrontendChannel> m_frontendChannel;
     RefPtr<Inspector::InspectorBackendDispatcher> m_backendDispatcher;
+    Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;
 };
 
 }

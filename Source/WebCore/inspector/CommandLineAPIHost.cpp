@@ -37,7 +37,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
-#include "InjectedScript.h"
 #include "InspectorAgent.h"
 #include "InspectorClient.h"
 #include "InspectorConsoleAgent.h"

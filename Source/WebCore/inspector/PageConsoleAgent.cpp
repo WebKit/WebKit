@@ -29,24 +29,22 @@
  */
 
 #include "config.h"
+#include "PageConsoleAgent.h"
 
 #if ENABLE(INSPECTOR)
 
-#include "PageConsoleAgent.h"
-
 #include "CommandLineAPIHost.h"
 #include "DOMWindow.h"
-#include "InjectedScriptHost.h"
-#include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
 #include "InspectorDOMAgent.h"
 #include "Node.h"
+#include "PageInjectedScriptManager.h"
 
 using namespace Inspector;
 
 namespace WebCore {
 
-PageConsoleAgent::PageConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorAgent* inspectorAgent, InjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
+PageConsoleAgent::PageConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorAgent* inspectorAgent, PageInjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
     : InspectorConsoleAgent(instrumentingAgents, injectedScriptManager)
     , m_inspectorAgent(inspectorAgent)
     , m_inspectorDOMAgent(domAgent)

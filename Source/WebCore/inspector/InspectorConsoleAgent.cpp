@@ -33,9 +33,9 @@
 #include "Console.h"
 #include "ConsoleMessage.h"
 #include "DOMWindow.h"
-#include "InjectedScriptManager.h"
 #include "InspectorWebFrontendDispatchers.h"
 #include "InstrumentingAgents.h"
+#include "PageInjectedScriptManager.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "ScriptArguments.h"
@@ -60,7 +60,7 @@ static const int expireConsoleMessagesStep = 100;
 
 int InspectorConsoleAgent::s_enabledAgentCount = 0;
 
-InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager)
+InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, PageInjectedScriptManager* injectedScriptManager)
     : InspectorAgentBase(ASCIILiteral("Console"), instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
     , m_previousMessage(0)

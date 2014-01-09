@@ -188,13 +188,17 @@ EXTRA_DIST += \
 	Source/JavaScriptCore/create_regex_tables \
 	Source/JavaScriptCore/icu/LICENSE \
 	Source/JavaScriptCore/icu/README \
+	Source/JavaScriptCore/inspector/InjectedScriptSource.js \
 	Source/JavaScriptCore/inspector/protocol/Debugger.json \
 	Source/JavaScriptCore/inspector/protocol/GenericTypes.json \
 	Source/JavaScriptCore/inspector/protocol/InspectorDomain.json \
 	Source/JavaScriptCore/inspector/protocol/Runtime.json \
 	Source/JavaScriptCore/inspector/scripts/CodeGeneratorInspector.py \
 	Source/JavaScriptCore/inspector/scripts/CodeGeneratorInspectorStrings.py \
+	Source/JavaScriptCore/inspector/scripts/cssmin.py \
 	Source/JavaScriptCore/inspector/scripts/generate-combined-inspector-json.py \
+	Source/JavaScriptCore/inspector/scripts/jsmin.py \
+	Source/JavaScriptCore/inspector/scripts/xxd.pl \
 	Source/JavaScriptCore/KeywordLookupGenerator.py \
 	Source/JavaScriptCore/parser/Keywords.table \
 	Source/JavaScriptCore/THANKS \
@@ -246,3 +250,7 @@ DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.h: DerivedSources/J
 DerivedSources/JavaScriptCore/InspectorJSFrontendDispatchers.cpp: DerivedSources/JavaScriptCore/InspectorJSBackendCommands.js
 DerivedSources/JavaScriptCore/InspectorJSBackendCommands.js: DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.h
 DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.h: DerivedSources/JavaScriptCore/InspectorJSBackendDispatchers.cpp
+
+DerivedSources/JavaScriptCore/InjectedScriptSource.h: $(JavaScriptCore)/inspector/InjectedScriptSource.js
+	$(AM_V_GEN)$(PYTHON) $(INSPECTOR_SCRIPTS_DIR)/jsmin.py <$(JavaScriptCore)/inspector/InjectedScriptSource.js > $(GENSOURCES_JAVASCRIPTCORE)/InjectedScriptSource.min.js
+	$(AM_V_GEN)$(PERL) $(INSPECTOR_SCRIPTS_DIR)/xxd.pl InjectedScriptSource_js $(GENSOURCES_JAVASCRIPTCORE)/InjectedScriptSource.min.js $(GENSOURCES_JAVASCRIPTCORE)/InjectedScriptSource.h

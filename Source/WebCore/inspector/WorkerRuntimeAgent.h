@@ -42,7 +42,7 @@ class WorkerGlobalScope;
 
 class WorkerRuntimeAgent : public InspectorRuntimeAgent {
 public:
-    static PassOwnPtr<WorkerRuntimeAgent> create(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, WorkerGlobalScope* context)
+    static PassOwnPtr<WorkerRuntimeAgent> create(InstrumentingAgents* instrumentingAgents, Inspector::InjectedScriptManager* injectedScriptManager, WorkerGlobalScope* context)
     {
         return adoptPtr(new WorkerRuntimeAgent(instrumentingAgents, injectedScriptManager, context));
     }
@@ -59,8 +59,8 @@ public:
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 private:
-    WorkerRuntimeAgent(InstrumentingAgents*, InjectedScriptManager*, WorkerGlobalScope*);
-    virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
+    WorkerRuntimeAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*, WorkerGlobalScope*);
+    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
     virtual void muteConsole();
     virtual void unmuteConsole();
     WorkerGlobalScope* m_workerGlobalScope;

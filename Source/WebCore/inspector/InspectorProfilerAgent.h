@@ -48,10 +48,10 @@ class InspectorObject;
 
 namespace WebCore {
 
-class InjectedScriptManager;
 class InspectorConsoleAgent;
 class InstrumentingAgents;
 class Page;
+class PageInjectedScriptManager;
 class ScriptHeapSnapshot;
 class ScriptProfile;
 class WorkerGlobalScope;
@@ -61,8 +61,8 @@ typedef String ErrorString;
 class InspectorProfilerAgent : public InspectorAgentBase, public Inspector::InspectorProfilerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<InspectorProfilerAgent> create(InstrumentingAgents*, InspectorConsoleAgent*, Page*, InjectedScriptManager*);
-    static PassOwnPtr<InspectorProfilerAgent> create(InstrumentingAgents*, InspectorConsoleAgent*, WorkerGlobalScope*, InjectedScriptManager*);
+    static PassOwnPtr<InspectorProfilerAgent> create(InstrumentingAgents*, InspectorConsoleAgent*, Page*, PageInjectedScriptManager*);
+    static PassOwnPtr<InspectorProfilerAgent> create(InstrumentingAgents*, InspectorConsoleAgent*, WorkerGlobalScope*, PageInjectedScriptManager*);
 
     virtual ~InspectorProfilerAgent();
 
@@ -102,7 +102,7 @@ public:
     virtual void getHeapObjectId(ErrorString*, const String& objectId, String* heapSnapshotObjectId);
 
 protected:
-    InspectorProfilerAgent(InstrumentingAgents*, InspectorConsoleAgent*, InjectedScriptManager*);
+    InspectorProfilerAgent(InstrumentingAgents*, InspectorConsoleAgent*, PageInjectedScriptManager*);
     virtual void startProfiling(const String& title) = 0;
     virtual PassRefPtr<ScriptProfile> stopProfiling(const String& title) = 0;
 
@@ -117,7 +117,7 @@ private:
     PassRefPtr<Inspector::TypeBuilder::Profiler::ProfileHeader> createSnapshotHeader(const ScriptHeapSnapshot&);
 
     InspectorConsoleAgent* m_consoleAgent;
-    InjectedScriptManager* m_injectedScriptManager;
+    PageInjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<Inspector::InspectorProfilerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorProfilerBackendDispatcher> m_backendDispatcher;
     bool m_enabled;

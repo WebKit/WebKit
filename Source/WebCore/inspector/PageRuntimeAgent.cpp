@@ -35,8 +35,6 @@
 #include "PageRuntimeAgent.h"
 
 #include "Document.h"
-#include "InjectedScript.h"
-#include "InjectedScriptManager.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
@@ -44,6 +42,8 @@
 #include "PageConsole.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
+#include <inspector/InjectedScript.h>
+#include <inspector/InjectedScriptManager.h>
 
 using Inspector::TypeBuilder::Runtime::ExecutionContextDescription;
 

@@ -29,18 +29,18 @@
  */
 
 #include "config.h"
+#include "WorkerRuntimeAgent.h"
 
 #if ENABLE(INSPECTOR)
 
-#include "WorkerRuntimeAgent.h"
-
-#include "InjectedScript.h"
 #include "InstrumentingAgents.h"
 #include "ScriptState.h"
 #include "WorkerDebuggerAgent.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
+#include <inspector/InjectedScript.h>
+#include <inspector/InjectedScriptManager.h>
 
 using namespace Inspector;
 

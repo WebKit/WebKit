@@ -41,6 +41,8 @@
 #include "PageConsole.h"
 #include "PageScriptDebugServer.h"
 #include "ScriptState.h"
+#include <inspector/InjectedScript.h>
+#include <inspector/InjectedScriptManager.h>
 
 using namespace Inspector;
 

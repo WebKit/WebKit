@@ -1,7 +1,6 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,16 +29,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    NoInterfaceObject,
-    Conditional=INSPECTOR,
-    ImplementationLacksVTable
-] interface InjectedScriptHost {
-    [Custom] any internalConstructorName(any object);
-    [Custom] boolean isHTMLAllCollection(any object);
-    [Custom] DOMString type(any object);
-    [Custom] any functionDetails(any object);
-    [Custom] Array getInternalProperties(any object);
+#ifndef InjectedScriptModule_h
+#define InjectedScriptModule_h
 
-    [Custom] readonly attribute any evaluate;
+#include "InjectedScriptBase.h"
+#include <wtf/text/WTFString.h>
+
+#if ENABLE(INSPECTOR)
+
+namespace JSC {
+class JSValue;
+}
+
+namespace Inspector {
+
+class InjectedScript;
+class InjectedScriptManager;
+
+class JS_EXPORT_PRIVATE InjectedScriptModule : public InjectedScriptBase {
+public:
+    virtual ~InjectedScriptModule();
+    virtual String source() const = 0;
+    virtual JSC::JSValue host(InjectedScriptManager*, JSC::ExecState*) const = 0;
+    virtual bool returnsObject() const = 0;
+
+protected:
+    // Do not expose constructor in the child classes as well. Instead provide
+    // a static factory method that would create a new instance of the class
+    // and call its ensureInjected() method immediately.
+    InjectedScriptModule(const String& name);
+    void ensureInjected(InjectedScriptManager*, JSC::ExecState*);
+    void ensureInjected(InjectedScriptManager*, InjectedScript);
 };
+
+} // namespace Inspector
+
+#endif // ENABLE(INSPECTOR)
+
+#endif // InjectedScriptModule_h

@@ -56,7 +56,6 @@ class DocumentLoader;
 class Frame;
 class Frontend;
 class GraphicsContext;
-class InjectedScriptManager;
 class InspectorAgent;
 class InspectorClient;
 class InspectorOverlay;
@@ -83,7 +82,7 @@ public:
         OtherResource
     };
 
-    static PassOwnPtr<InspectorPageAgent> create(InstrumentingAgents*, Page*, InspectorAgent*, InjectedScriptManager*, InspectorClient*, InspectorOverlay*);
+    static PassOwnPtr<InspectorPageAgent> create(InstrumentingAgents*, Page*, InspectorAgent*, InspectorClient*, InspectorOverlay*);
 
     static bool cachedResourceContent(CachedResource*, String* result, bool* base64Encoded);
     static bool sharedBufferContent(PassRefPtr<SharedBuffer>, const String& textEncodingName, bool withBase64Encode, String* result);
@@ -166,7 +165,7 @@ public:
     static DocumentLoader* assertDocumentLoader(ErrorString*, Frame*);
 
 private:
-    InspectorPageAgent(InstrumentingAgents*, Page*, InspectorAgent*, InjectedScriptManager*, InspectorClient*, InspectorOverlay*);
+    InspectorPageAgent(InstrumentingAgents*, Page*, InspectorAgent*, InspectorClient*, InspectorOverlay*);
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchEventEmulationInPage(bool);
 #endif
@@ -178,7 +177,6 @@ private:
     PassRefPtr<Inspector::TypeBuilder::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
     Page* m_page;
     InspectorAgent* m_inspectorAgent;
-    InjectedScriptManager* m_injectedScriptManager;
     InspectorClient* m_client;
     std::unique_ptr<Inspector::InspectorPageFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorPageBackendDispatcher> m_backendDispatcher;

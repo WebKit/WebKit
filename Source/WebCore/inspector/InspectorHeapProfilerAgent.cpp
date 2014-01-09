@@ -34,10 +34,10 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
 #include "CommandLineAPIHost.h"
-#include "InjectedScript.h"
-#include "InjectedScriptHost.h"
 #include "InstrumentingAgents.h"
+#include "PageInjectedScriptManager.h"
 #include "ScriptProfiler.h"
+#include <inspector/InjectedScript.h>
 
 using namespace Inspector;
 
@@ -45,12 +45,12 @@ namespace WebCore {
 
 static const char* const UserInitiatedProfileNameHeap = "org.webkit.profiles.user-initiated";
 
-PassOwnPtr<InspectorHeapProfilerAgent> InspectorHeapProfilerAgent::create(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager)
+PassOwnPtr<InspectorHeapProfilerAgent> InspectorHeapProfilerAgent::create(InstrumentingAgents* instrumentingAgents, PageInjectedScriptManager* injectedScriptManager)
 {
     return adoptPtr(new InspectorHeapProfilerAgent(instrumentingAgents, injectedScriptManager));
 }
 
-InspectorHeapProfilerAgent::InspectorHeapProfilerAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager)
+InspectorHeapProfilerAgent::InspectorHeapProfilerAgent(InstrumentingAgents* instrumentingAgents, PageInjectedScriptManager* injectedScriptManager)
     : InspectorAgentBase(ASCIILiteral("HeapProfiler"), instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
     , m_nextUserInitiatedHeapSnapshotNumber(1)

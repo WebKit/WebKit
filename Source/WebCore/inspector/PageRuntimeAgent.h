@@ -38,6 +38,10 @@
 #include "ScriptState.h"
 #include <wtf/PassOwnPtr.h>
 
+namespace Inspector {
+class InjectedScriptManager;
+}
+
 namespace WebCore {
 
 class InspectorPageAgent;
@@ -46,7 +50,7 @@ class SecurityOrigin;
 
 class PageRuntimeAgent : public InspectorRuntimeAgent {
 public:
-    static PassOwnPtr<PageRuntimeAgent> create(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
+    static PassOwnPtr<PageRuntimeAgent> create(InstrumentingAgents* instrumentingAgents, Inspector::InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
     {
         return adoptPtr(new PageRuntimeAgent(instrumentingAgents, injectedScriptManager, page, pageAgent));
     }
@@ -60,9 +64,9 @@ public:
     void didCreateIsolatedContext(Frame*, JSC::ExecState*, SecurityOrigin*);
 
 private:
-    PageRuntimeAgent(InstrumentingAgents*, InjectedScriptManager*, Page*, InspectorPageAgent*);
+    PageRuntimeAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*, Page*, InspectorPageAgent*);
 
-    virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
+    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
     virtual void muteConsole();
     virtual void unmuteConsole();
     void reportExecutionContextCreation();

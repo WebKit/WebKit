@@ -38,16 +38,19 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
+namespace Inspector {
+class InjectedScriptManager;
+}
+
 namespace WebCore {
 
-class InjectedScriptManager;
 class InspectorPageAgent;
 
 typedef String ErrorString;
 
 class InspectorIndexedDBAgent : public InspectorAgentBase, public Inspector::InspectorIndexedDBBackendDispatcherHandler {
 public:
-    static PassOwnPtr<InspectorIndexedDBAgent> create(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, InspectorPageAgent* pageAgent)
+    static PassOwnPtr<InspectorIndexedDBAgent> create(InstrumentingAgents* instrumentingAgents, Inspector::InjectedScriptManager* injectedScriptManager, InspectorPageAgent* pageAgent)
     {
         return adoptPtr(new InspectorIndexedDBAgent(instrumentingAgents, injectedScriptManager, pageAgent));
     }
@@ -65,9 +68,9 @@ public:
     virtual void clearObjectStore(ErrorString*, const String& in_securityOrigin, const String& in_databaseName, const String& in_objectStoreName, PassRefPtr<ClearObjectStoreCallback>);
 
 private:
-    InspectorIndexedDBAgent(InstrumentingAgents*, InjectedScriptManager*, InspectorPageAgent*);
+    InspectorIndexedDBAgent(InstrumentingAgents*, Inspector::InjectedScriptManager*, InspectorPageAgent*);
 
-    InjectedScriptManager* m_injectedScriptManager;
+    Inspector::InjectedScriptManager* m_injectedScriptManager;
     InspectorPageAgent* m_pageAgent;
     RefPtr<Inspector::InspectorIndexedDBBackendDispatcher> m_backendDispatcher;
 };

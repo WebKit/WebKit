@@ -48,7 +48,6 @@ class InspectorValue;
 namespace WebCore {
 
 class Database;
-class InjectedScript;
 class InspectorAgent;
 class InspectorConsoleAgent;
 class InspectorDOMAgent;

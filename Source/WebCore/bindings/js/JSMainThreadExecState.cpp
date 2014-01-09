@@ -50,8 +50,14 @@ JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState* exec, JSC::JSValue
 {
     if (isMainThread())
         return JSMainThreadExecState::call(exec, functionObject, callType, callData, thisValue, args);
-    else
-        return JSC::call(exec, functionObject, callType, callData, thisValue, args);
+    return JSC::call(exec, functionObject, callType, callData, thisValue, args);
+}
+
+JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::JSValue* exception)
+{
+    if (isMainThread())
+        return JSMainThreadExecState::evaluate(exec, source, thisValue, exception);
+    return JSC::evaluate(exec, source, thisValue, exception);
 }
 
 } // namespace WebCore

@@ -238,7 +238,6 @@
 #include "JSIDBRequest.cpp"
 #include "JSIDBTransaction.cpp"
 #include "JSImageData.cpp"
-#include "JSInjectedScriptHost.cpp"
 #include "JSInspectorFrontendHost.cpp"
 #include "JSJavaScriptCallFrame.cpp"
 #include "JSKeyboardEvent.cpp"

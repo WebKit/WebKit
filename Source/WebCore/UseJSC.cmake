@@ -106,8 +106,6 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSIDBObjectStoreCustom.cpp
     bindings/js/JSImageConstructor.cpp
     bindings/js/JSImageDataCustom.cpp
-    bindings/js/JSInjectedScriptHostCustom.cpp
-    bindings/js/JSInjectedScriptManager.cpp
     bindings/js/JSInspectorFrontendHostCustom.cpp
     bindings/js/JSJavaScriptCallFrameCustom.cpp
     bindings/js/JSLazyEventListener.cpp

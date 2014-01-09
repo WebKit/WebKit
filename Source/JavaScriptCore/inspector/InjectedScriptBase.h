@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,41 +29,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedScriptModule_h
-#define InjectedScriptModule_h
-
-#include "InjectedScript.h"
-#include "InjectedScriptBase.h"
-#include "ScriptState.h"
-#include <wtf/text/WTFString.h>
+#ifndef InjectedScriptBase_h
+#define InjectedScriptBase_h
 
 #if ENABLE(INSPECTOR)
 
-namespace JSC {
-class JSValue;
+#include "InspectorEnvironment.h"
+#include "InspectorJSTypeBuilders.h"
+#include "bindings/ScriptObject.h"
+#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
+
+namespace Deprecated {
+class ScriptFunctionCall;
 }
 
-namespace WebCore {
+namespace Inspector {
 
-class InjectedScriptManager;
+typedef String ErrorString;
 
-class InjectedScriptModule : public InjectedScriptBase {
+class JS_EXPORT_PRIVATE InjectedScriptBase {
 public:
-    virtual String source() const = 0;
-    virtual JSC::JSValue host(InjectedScriptManager*, JSC::ExecState*) const = 0;
-    virtual bool returnsObject() const = 0;
+    virtual ~InjectedScriptBase();
+
+    const String& name() const { return m_name; }
+    bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
+    JSC::ExecState* scriptState() const { return m_injectedScriptObject.scriptState(); }
 
 protected:
-    // Do not expose constructor in the child classes as well. Instead provide
-    // a static factory method that would create a new instance of the class
-    // and call its ensureInjected() method immediately.
-    InjectedScriptModule(const String& name);
-    void ensureInjected(InjectedScriptManager*, JSC::ExecState*);
-    void ensureInjected(InjectedScriptManager*, InjectedScript);
+    InjectedScriptBase(const String& name);
+    InjectedScriptBase(const String& name, Deprecated::ScriptObject, InspectorEnvironment*);
+
+    InspectorEnvironment* inspectorEnvironment() const { return m_environment; }
+
+    void initialize(Deprecated::ScriptObject, InspectorEnvironment*);
+    bool hasAccessToInspectedScriptState() const;
+
+    const Deprecated::ScriptObject& injectedScriptObject() const;
+    Deprecated::ScriptValue callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall&, bool& hadException) const;
+    void makeCall(Deprecated::ScriptFunctionCall&, RefPtr<InspectorValue>* result);
+    void makeEvalCall(ErrorString*, Deprecated::ScriptFunctionCall&, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown);
+
+private:
+    String m_name;
+    Deprecated::ScriptObject m_injectedScriptObject;
+    InspectorEnvironment* m_environment;
 };
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)
 
-#endif
+#endif // InjectedScriptBase_h

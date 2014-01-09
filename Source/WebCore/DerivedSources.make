@@ -453,7 +453,6 @@ BINDING_IDLS = \
     $(WebCore)/html/track/VideoTrack.idl \
     $(WebCore)/html/track/VideoTrackList.idl \
     $(WebCore)/inspector/CommandLineAPIHost.idl \
-    $(WebCore)/inspector/InjectedScriptHost.idl \
     $(WebCore)/inspector/InspectorFrontendHost.idl \
     $(WebCore)/inspector/ScriptProfile.idl \
     $(WebCore)/inspector/ScriptProfileNode.idl \
@@ -773,8 +772,8 @@ CSSValueKeywords.h : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl $(PLATFORM_
 all : XMLViewerCSS.h
 
 XMLViewerCSS.h : xml/XMLViewer.css
-	python "$(WebCore)/inspector/Scripts/cssmin.py" <"$(WebCore)/xml/XMLViewer.css" > ./XMLViewer.min.css
-	perl $(WebCore)/inspector/xxd.pl XMLViewer_css ./XMLViewer.min.css XMLViewerCSS.h
+	python $(InspectorScripts)/cssmin.py <"$(WebCore)/xml/XMLViewer.css" > ./XMLViewer.min.css
+	perl $(InspectorScripts)/xxd.pl XMLViewer_css ./XMLViewer.min.css XMLViewerCSS.h
 	rm -f ./XMLViewer.min.css
 
 # --------
@@ -784,8 +783,8 @@ XMLViewerCSS.h : xml/XMLViewer.css
 all : XMLViewerJS.h
 
 XMLViewerJS.h : xml/XMLViewer.js
-	python "$(WebCore)/inspector/Scripts/jsmin.py" <"$(WebCore)/xml/XMLViewer.js" > ./XMLViewer.min.js
-	perl $(WebCore)/inspector/xxd.pl XMLViewer_js ./XMLViewer.min.js XMLViewerJS.h
+	python $(InspectorScripts)/jsmin.py <"$(WebCore)/xml/XMLViewer.js" > ./XMLViewer.min.js
+	perl $(InspectorScripts)/xxd.pl XMLViewer_js ./XMLViewer.min.js XMLViewerJS.h
 	rm -f ./XMLViewer.min.js
 
 # --------
@@ -1114,29 +1113,22 @@ InspectorWebFrontendDispatchers.h : InspectorWeb.json $(InspectorScripts)/Inspec
 all : InspectorOverlayPage.h
 
 InspectorOverlayPage.h : InspectorOverlayPage.html InspectorOverlayPage.css InspectorOverlayPage.js
-	python "$(WebCore)/inspector/Scripts/inline-and-minify-stylesheets-and-scripts.py" "$(WebCore)/inspector/InspectorOverlayPage.html" ./InspectorOverlayPage.combined.html
-	perl "$(WebCore)/inspector/xxd.pl" InspectorOverlayPage_html ./InspectorOverlayPage.combined.html InspectorOverlayPage.h
+	python $(InspectorScripts)/inline-and-minify-stylesheets-and-scripts.py $(WebCore)/inspector/InspectorOverlayPage.html ./InspectorOverlayPage.combined.html
+	perl $(InspectorScripts)/xxd.pl InspectorOverlayPage_html ./InspectorOverlayPage.combined.html InspectorOverlayPage.h
 	rm -f ./InspectorOverlayPage.combined.html
-
-all : InjectedScriptSource.h
-
-InjectedScriptSource.h : InjectedScriptSource.js
-	python "$(WebCore)/inspector/Scripts/jsmin.py" <"$(WebCore)/inspector/InjectedScriptSource.js" > ./InjectedScriptSource.min.js
-	perl "$(WebCore)/inspector/xxd.pl" InjectedScriptSource_js ./InjectedScriptSource.min.js InjectedScriptSource.h
-	rm -f ./InjectedScriptSource.min.js
 
 all : CommandLineAPIModuleSource.h
 
 CommandLineAPIModuleSource.h : CommandLineAPIModuleSource.js
-	python "$(WebCore)/inspector/Scripts/jsmin.py" <"$(WebCore)/inspector/CommandLineAPIModuleSource.js" > ./CommandLineAPIModuleSource.min.js
-	perl "$(WebCore)/inspector/xxd.pl" CommandLineAPIModuleSource_js ./CommandLineAPIModuleSource.min.js CommandLineAPIModuleSource.h
+	python $(InspectorScripts)/jsmin.py <$(WebCore)/inspector/CommandLineAPIModuleSource.js > ./CommandLineAPIModuleSource.min.js
+	perl $(InspectorScripts)/xxd.pl CommandLineAPIModuleSource_js ./CommandLineAPIModuleSource.min.js CommandLineAPIModuleSource.h
 	rm -f ./CommandLineAPIModuleSource.min.js
 
 all : InjectedScriptCanvasModuleSource.h
 
 InjectedScriptCanvasModuleSource.h : InjectedScriptCanvasModuleSource.js
-	python "$(WebCore)/inspector/Scripts/jsmin.py" <"$(WebCore)/inspector/InjectedScriptCanvasModuleSource.js" > ./InjectedScriptCanvasModuleSource.min.js
-	perl "$(WebCore)/inspector/xxd.pl" InjectedScriptCanvasModuleSource_js ./InjectedScriptCanvasModuleSource.min.js InjectedScriptCanvasModuleSource.h
+	python $(InspectorScripts)/jsmin.py <$(WebCore)/inspector/InjectedScriptCanvasModuleSource.js > ./InjectedScriptCanvasModuleSource.min.js
+	perl $(InspectorScripts)/xxd.pl InjectedScriptCanvasModuleSource_js ./InjectedScriptCanvasModuleSource.min.js InjectedScriptCanvasModuleSource.h
 	rm -f ./InjectedScriptCanvasModuleSource.min.js
 
 -include $(JS_DOM_HEADERS:.h=.dep)

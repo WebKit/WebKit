@@ -34,12 +34,12 @@
 
 #include "InjectedScriptCanvasModule.h"
 
-#include "InjectedScript.h"
 #include "InjectedScriptCanvasModuleSource.h"
-#include "InjectedScriptManager.h"
 #include "JSMainThreadExecState.h"
 #include <bindings/ScriptFunctionCall.h>
 #include <bindings/ScriptObject.h>
+#include <inspector/InjectedScript.h>
+#include <inspector/InjectedScriptManager.h>
 #include <inspector/InspectorValues.h>
 
 using Inspector::TypeBuilder::Array;
@@ -55,7 +55,7 @@ using namespace Inspector;
 namespace WebCore {
 
 InjectedScriptCanvasModule::InjectedScriptCanvasModule()
-    : InjectedScriptModule("InjectedScriptCanvasModule")
+    : Inspector::InjectedScriptModule("InjectedScriptCanvasModule")
 {
 }
 

@@ -47,7 +47,7 @@ class PageDebuggerAgent : public InspectorDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(PageDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<PageDebuggerAgent> create(InstrumentingAgents*, InspectorPageAgent*, InjectedScriptManager*, InspectorOverlay*);
+    static PassOwnPtr<PageDebuggerAgent> create(InstrumentingAgents*, InspectorPageAgent*, Inspector::InjectedScriptManager*, InspectorOverlay*);
     virtual ~PageDebuggerAgent();
 
     void didClearMainFrameWindowObject();
@@ -63,10 +63,10 @@ private:
     virtual void muteConsole();
     virtual void unmuteConsole();
 
-    virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
+    virtual Inspector::InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
     virtual void setOverlayMessage(ErrorString*, const String*);
 
-    PageDebuggerAgent(InstrumentingAgents*, InspectorPageAgent*, InjectedScriptManager*, InspectorOverlay*);
+    PageDebuggerAgent(InstrumentingAgents*, InspectorPageAgent*, Inspector::InjectedScriptManager*, InspectorOverlay*);
     InspectorPageAgent* m_pageAgent;
     InspectorOverlay* m_overlay;
 };

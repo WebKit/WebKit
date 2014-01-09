@@ -26,21 +26,21 @@
 #ifndef CommandLineAPIModule_h
 #define CommandLineAPIModule_h
 
-#include "InjectedScriptModule.h"
+#include <inspector/InjectedScriptModule.h>
 
 #if ENABLE(INSPECTOR)
 
 namespace WebCore {
 
-class CommandLineAPIModule FINAL : public InjectedScriptModule {
+class CommandLineAPIModule FINAL : public Inspector::InjectedScriptModule {
 public:
     CommandLineAPIModule();
 
     virtual String source() const OVERRIDE;
-    virtual JSC::JSValue host(InjectedScriptManager*, JSC::ExecState*) const OVERRIDE;
+    virtual JSC::JSValue host(Inspector::InjectedScriptManager*, JSC::ExecState*) const OVERRIDE;
     virtual bool returnsObject() const OVERRIDE { return false; }
 
-    static void injectIfNeeded(InjectedScriptManager*, InjectedScript);
+    static void injectIfNeeded(Inspector::InjectedScriptManager*, Inspector::InjectedScript);
 };
 
 } // namespace WebCore

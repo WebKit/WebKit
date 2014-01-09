@@ -95,7 +95,6 @@
 #include "JSImageConstructor.cpp"
 #include "JSImageDataCustom.cpp"
 #include "JSInjectedScriptHostCustom.cpp"
-#include "JSInjectedScriptManager.cpp"
 #include "JSInspectorFrontendHostCustom.cpp"
 #include "JSJavaScriptCallFrameCustom.cpp"
 #include "JSLazyEventListener.cpp"

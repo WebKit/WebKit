@@ -31,8 +31,9 @@
 #ifndef InjectedScriptCanvasModule_h
 #define InjectedScriptCanvasModule_h
 
-#include "InjectedScriptModule.h"
+#include "InspectorWebTypeBuilders.h"
 #include "ScriptState.h"
+#include <inspector/InjectedScriptModule.h>
 #include <wtf/text/WTFString.h>
 
 namespace Deprecated {
@@ -41,19 +42,19 @@ class ScriptObject;
 
 namespace WebCore {
 
-class InjectedScriptManager;
+typedef String ErrorString;
 
 #if ENABLE(INSPECTOR)
 
-class InjectedScriptCanvasModule FINAL : public InjectedScriptModule {
+class InjectedScriptCanvasModule FINAL : public Inspector::InjectedScriptModule {
 public:
     InjectedScriptCanvasModule();
     
     virtual String source() const OVERRIDE;
-    virtual JSC::JSValue host(InjectedScriptManager*, JSC::ExecState*) const OVERRIDE;
+    virtual JSC::JSValue host(Inspector::InjectedScriptManager*, JSC::ExecState*) const OVERRIDE;
     virtual bool returnsObject() const OVERRIDE { return true; }
 
-    static InjectedScriptCanvasModule moduleForState(InjectedScriptManager*, JSC::ExecState*);
+    static InjectedScriptCanvasModule moduleForState(Inspector::InjectedScriptManager*, JSC::ExecState*);
 
     Deprecated::ScriptObject wrapCanvas2DContext(const Deprecated::ScriptObject&);
 #if ENABLE(WEBGL)

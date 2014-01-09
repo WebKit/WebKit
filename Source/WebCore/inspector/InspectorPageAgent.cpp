@@ -56,7 +56,6 @@
 #include "HTMLNames.h"
 #include "IdentifiersFactory.h"
 #include "ImageBuffer.h"
-#include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
@@ -227,9 +226,9 @@ bool InspectorPageAgent::dataContent(const char* data, unsigned size, const Stri
     return decodeBuffer(data, size, textEncodingName, result);
 }
 
-PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InjectedScriptManager* injectedScriptManager, InspectorClient* client, InspectorOverlay* overlay)
+PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InspectorClient* client, InspectorOverlay* overlay)
 {
-    return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, inspectorAgent, injectedScriptManager, client, overlay));
+    return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, inspectorAgent, client, overlay));
 }
 
 // static
@@ -349,11 +348,10 @@ Inspector::TypeBuilder::Page::ResourceType::Enum InspectorPageAgent::cachedResou
     return resourceTypeJson(cachedResourceType(cachedResource));
 }
 
-InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InjectedScriptManager* injectedScriptManager, InspectorClient* client, InspectorOverlay* overlay)
+InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InspectorClient* client, InspectorOverlay* overlay)
     : InspectorAgentBase(ASCIILiteral("Page"), instrumentingAgents)
     , m_page(page)
     , m_inspectorAgent(inspectorAgent)
-    , m_injectedScriptManager(injectedScriptManager)
     , m_client(client)
     , m_overlay(overlay)
     , m_lastScriptIdentifier(0)
@@ -756,9 +754,6 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
 {
     if (&world != &mainThreadNormalWorld())
         return;
-
-    if (frame->isMainFrame())
-        m_injectedScriptManager->discardInjectedScripts();
 
     if (!m_frontendDispatcher)
         return;

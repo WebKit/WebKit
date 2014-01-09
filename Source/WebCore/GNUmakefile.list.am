@@ -21,7 +21,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/HTMLNames.cpp \
 	DerivedSources/WebCore/HTMLNames.h \
 	DerivedSources/WebCore/InjectedScriptCanvasModuleSource.h \
-	DerivedSources/WebCore/InjectedScriptSource.h \
 	DerivedSources/WebCore/InspectorOverlayPage.h \
 	DerivedSources/WebCore/InspectorWebBackendDispatchers.cpp \
 	DerivedSources/WebCore/InspectorWebBackendDispatchers.h \
@@ -452,8 +451,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBVersionChangeEvent.h \
 	DerivedSources/WebCore/JSImageData.cpp \
 	DerivedSources/WebCore/JSImageData.h \
-	DerivedSources/WebCore/JSInjectedScriptHost.cpp \
-	DerivedSources/WebCore/JSInjectedScriptHost.h \
 	DerivedSources/WebCore/JSInspectorFrontendHost.cpp \
 	DerivedSources/WebCore/JSInspectorFrontendHost.h \
 	DerivedSources/WebCore/JSScriptProcessorNode.cpp \
@@ -1551,7 +1548,6 @@ dom_binding_idls += \
 	$(WebCore)/html/track/VideoTrack.idl \
 	$(WebCore)/html/track/VideoTrackList.idl \
 	$(WebCore)/inspector/CommandLineAPIHost.idl \
-	$(WebCore)/inspector/InjectedScriptHost.idl \
 	$(WebCore)/inspector/InspectorFrontendHost.idl \
 	$(WebCore)/inspector/JavaScriptCallFrame.idl \
 	$(WebCore)/inspector/ScriptProfile.idl \
@@ -2368,8 +2364,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSImageConstructor.cpp \
 	Source/WebCore/bindings/js/JSImageConstructor.h \
 	Source/WebCore/bindings/js/JSImageDataCustom.cpp \
-	Source/WebCore/bindings/js/JSInjectedScriptHostCustom.cpp \
-	Source/WebCore/bindings/js/JSInjectedScriptManager.cpp \
 	Source/WebCore/bindings/js/JSInspectorFrontendHostCustom.cpp \
 	Source/WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp \
 	Source/WebCore/bindings/js/JSLazyEventListener.cpp \
@@ -3790,18 +3784,8 @@ webcore_sources += \
 	Source/WebCore/inspector/DOMPatchSupport.h \
 	Source/WebCore/inspector/IdentifiersFactory.cpp \
 	Source/WebCore/inspector/IdentifiersFactory.h \
-	Source/WebCore/inspector/InjectedScript.cpp \
-	Source/WebCore/inspector/InjectedScript.h \
-	Source/WebCore/inspector/InjectedScriptBase.cpp \
-	Source/WebCore/inspector/InjectedScriptBase.h \
 	Source/WebCore/inspector/InjectedScriptCanvasModule.cpp \
 	Source/WebCore/inspector/InjectedScriptCanvasModule.h \
-	Source/WebCore/inspector/InjectedScriptHost.cpp \
-	Source/WebCore/inspector/InjectedScriptHost.h \
-	Source/WebCore/inspector/InjectedScriptManager.cpp \
-	Source/WebCore/inspector/InjectedScriptManager.h \
-	Source/WebCore/inspector/InjectedScriptModule.cpp \
-	Source/WebCore/inspector/InjectedScriptModule.h \
 	Source/WebCore/inspector/InspectorAgent.cpp \
 	Source/WebCore/inspector/InspectorAgent.h \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.cpp \
@@ -3849,6 +3833,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorInputAgent.h \
 	Source/WebCore/inspector/InspectorInstrumentation.cpp \
 	Source/WebCore/inspector/InspectorInstrumentation.h \
+	Source/WebCore/inspector/InspectorInstrumentationCookie.cpp \
+	Source/WebCore/inspector/InspectorInstrumentationCookie.h \
 	Source/WebCore/inspector/InspectorLayerTreeAgent.cpp \
 	Source/WebCore/inspector/InspectorLayerTreeAgent.h \
 	Source/WebCore/inspector/InspectorMemoryAgent.cpp \
@@ -3883,6 +3869,8 @@ webcore_sources += \
 	Source/WebCore/inspector/PageConsoleAgent.h \
 	Source/WebCore/inspector/PageDebuggerAgent.cpp \
 	Source/WebCore/inspector/PageDebuggerAgent.h \
+	Source/WebCore/inspector/PageInjectedScriptHost.cpp \
+	Source/WebCore/inspector/PageInjectedScriptHost.h \
 	Source/WebCore/inspector/PageInjectedScriptManager.cpp \
 	Source/WebCore/inspector/PageInjectedScriptManager.h \
 	Source/WebCore/inspector/PageRuntimeAgent.cpp \

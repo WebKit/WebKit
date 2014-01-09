@@ -1876,6 +1876,7 @@ class Generator:
     backend_js_domain_initializer_list = []
 
     backend_handler_interface_list = []
+    backend_handler_implementation_list = []
     backend_dispatcher_interface_list = []
     type_builder_fragments = []
     type_builder_forwards = []
@@ -1890,6 +1891,7 @@ class Generator:
         first_cycle_guardable_list_list = [
             Generator.backend_method_implementation_list,
             Generator.backend_handler_interface_list,
+            Generator.backend_handler_implementation_list,
             Generator.backend_dispatcher_interface_list]
 
         for json_domain in json_api["domains"]:
@@ -1961,8 +1963,10 @@ class Generator:
                     Generator.process_command(json_command, domain_name, agent_interface_name, dispatcher_name, dispatcher_if_chain, dispatcher_commands_list)
 
                 Generator.backend_handler_interface_list.append("protected:\n")
-                Generator.backend_handler_interface_list.append("    virtual ~%s() { }\n" % agent_interface_name)
+                Generator.backend_handler_interface_list.append("    virtual ~%s();\n" % agent_interface_name)
                 Generator.backend_handler_interface_list.append("};\n\n")
+
+                Generator.backend_handler_implementation_list.append("%s::~%s() { }\n" % (agent_interface_name, agent_interface_name))
 
                 Generator.backend_dispatcher_interface_list.append("private:\n")
                 Generator.backend_dispatcher_interface_list.append("    %s(Inspector::InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
@@ -2471,6 +2475,7 @@ backend_h_file.write(Templates.backend_h.substitute(None,
 
 backend_cpp_file.write(Templates.backend_cpp.substitute(None,
     outputFileNamePrefix=output_file_name_prefix,
+    handlerImplementations="".join(flatten_list(Generator.backend_handler_implementation_list)),
     methods="\n".join(Generator.backend_method_implementation_list)))
 
 frontend_h_file.write(Templates.frontend_h.substitute(None,
