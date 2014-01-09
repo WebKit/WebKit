@@ -108,8 +108,6 @@ public:
 
     void willDestroyCachedResource(CachedResource*);
 
-    void applyUserAgentOverride(String* userAgent);
-
     // FIXME: InspectorResourceAgent should now be aware of style recalculation.
     void willRecalculateStyle();
     void didRecalculateStyle();
@@ -133,7 +131,6 @@ public:
     // Called from frontend
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
-    virtual void setUserAgentOverride(ErrorString*, const String& userAgent);
     virtual void setExtraHTTPHeaders(ErrorString*, const RefPtr<Inspector::InspectorObject>&);
     virtual void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded);
 
@@ -154,7 +151,6 @@ private:
     InspectorClient* m_client;
     std::unique_ptr<Inspector::InspectorNetworkFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorNetworkBackendDispatcher> m_backendDispatcher;
-    String m_userAgentOverride;
     OwnPtr<NetworkResourcesData> m_resourcesData;
     bool m_enabled;
     bool m_cacheDisabled;

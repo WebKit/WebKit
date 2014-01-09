@@ -418,12 +418,6 @@ void InspectorResourceAgent::willDestroyCachedResource(CachedResource* cachedRes
         m_resourcesData->setResourceContent(*it, content, base64Encoded);
 }
 
-void InspectorResourceAgent::applyUserAgentOverride(String* userAgent)
-{
-    if (!m_userAgentOverride.isNull())
-        *userAgent = m_userAgentOverride;
-}
-
 void InspectorResourceAgent::willRecalculateStyle()
 {
     m_isRecalculatingStyle = true;
@@ -542,15 +536,9 @@ void InspectorResourceAgent::enable()
 void InspectorResourceAgent::disable(ErrorString*)
 {
     m_enabled = false;
-    m_userAgentOverride = String();
     m_instrumentingAgents->setInspectorResourceAgent(0);
     m_resourcesData->clear();
     m_extraRequestHeaders.clear();
-}
-
-void InspectorResourceAgent::setUserAgentOverride(ErrorString*, const String& userAgent)
-{
-    m_userAgentOverride = userAgent;
 }
 
 void InspectorResourceAgent::setExtraHTTPHeaders(ErrorString*, const RefPtr<InspectorObject>& headers)

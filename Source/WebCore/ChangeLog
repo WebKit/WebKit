@@ -1,3 +1,46 @@
+2014-01-09  Seokju Kwon  <seokju@webkit.org>
+
+        Web Inspector: Remove unused overriding protocols.
+        https://bugs.webkit.org/show_bug.cgi?id=126630
+
+        Reviewed by Timothy Hatcher.
+
+        No new tests, No change in behavior.
+
+        Remove unused overriding protocols as these are not used anymore in Frontned.
+        -Page.setGeolocationOverride
+        -Page.clearGeolocationOverride
+        -Page.canOverrideGeolocation
+        -Page.setDeviceOrientationOverride
+        -Page.clearDeviceOrientationOverride
+        -Page.canOverrideGeolocation
+        -Network.setUserAgentOverride
+
+        * Modules/geolocation/GeolocationController.cpp:
+        (WebCore::GeolocationController::GeolocationController):
+        (WebCore::GeolocationController::create):
+        (WebCore::GeolocationController::positionChanged):
+        (WebCore::provideGeolocationTo):
+        * Modules/geolocation/GeolocationController.h:
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        (WebCore::DeviceOrientationController::create):
+        (WebCore::DeviceOrientationController::didChangeDeviceOrientation):
+        (WebCore::provideDeviceOrientationTo):
+        * dom/DeviceOrientationController.h:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::disable):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/protocol/Network.json:
+        * inspector/protocol/Page.json:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::userAgent):
+
 2014-01-09  Andrei Bucur  <abucur@adobe.com>
 
         [CSSRegions] Move regions auto-size code into RenderNamedFlowFragment

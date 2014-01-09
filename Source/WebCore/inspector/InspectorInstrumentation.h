@@ -61,8 +61,6 @@ class Document;
 class Element;
 class DocumentLoader;
 class DocumentStyleSheetCollection;
-class DeviceOrientationData;
-class GeolocationPosition;
 class GraphicsContext;
 class HTTPHeaderMap;
 class InspectorCSSAgent;
@@ -185,7 +183,6 @@ public:
     static InspectorInstrumentationCookie willProcessRule(Document*, StyleRule*, StyleResolver&);
     static void didProcessRule(const InspectorInstrumentationCookie&);
 
-    static void applyUserAgentOverride(Frame*, String*);
     static void applyEmulatedMedia(Frame*, String*);
     static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     static void continueAfterPingLoader(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
@@ -298,14 +295,8 @@ public:
     static bool timelineAgentEnabled(ScriptExecutionContext*) { return false; }
 #endif
 
-#if ENABLE(GEOLOCATION)
-    static GeolocationPosition* overrideGeolocationPosition(Page*, GeolocationPosition*);
-#endif
-
     static void registerInstrumentingAgents(InstrumentingAgents*);
     static void unregisterInstrumentingAgents(InstrumentingAgents*);
-
-    static DeviceOrientationData* overrideDeviceOrientation(Page*, DeviceOrientationData*);
 
 #if USE(ACCELERATED_COMPOSITING)
     static void layerTreeDidChange(Page*);
@@ -382,7 +373,6 @@ private:
     static InspectorInstrumentationCookie willProcessRuleImpl(InstrumentingAgents*, StyleRule*, StyleResolver&);
     static void didProcessRuleImpl(const InspectorInstrumentationCookie&);
 
-    static void applyUserAgentOverrideImpl(InstrumentingAgents*, String*);
     static void applyEmulatedMediaImpl(InstrumentingAgents*, String*);
     static void willSendRequestImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     static void continueAfterPingLoaderImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
@@ -484,12 +474,6 @@ private:
     static void pauseOnNativeEventIfNeeded(InstrumentingAgents*, bool isDOMEvent, const String& eventName, bool synchronous);
     static void cancelPauseOnNativeEvent(InstrumentingAgents*);
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
-
-#if ENABLE(GEOLOCATION)
-    static GeolocationPosition* overrideGeolocationPositionImpl(InstrumentingAgents*, GeolocationPosition*);
-#endif
-
-    static DeviceOrientationData* overrideDeviceOrientationImpl(InstrumentingAgents*, DeviceOrientationData*);
 
 #if USE(ACCELERATED_COMPOSITING)
     static void layerTreeDidChangeImpl(InstrumentingAgents*);
@@ -1261,18 +1245,6 @@ inline void InspectorInstrumentation::didProcessRule(const InspectorInstrumentat
 #endif
 }
 
-inline void InspectorInstrumentation::applyUserAgentOverride(Frame* frame, String* userAgent)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        applyUserAgentOverrideImpl(instrumentingAgents, userAgent);
-#else
-    UNUSED_PARAM(frame);
-    UNUSED_PARAM(userAgent);
-#endif
-}
-
 inline void InspectorInstrumentation::applyEmulatedMedia(Frame* frame, String* media)
 {
 #if ENABLE(INSPECTOR)
@@ -1953,32 +1925,6 @@ inline void InspectorInstrumentation::didFireAnimationFrame(const InspectorInstr
 #else
     UNUSED_PARAM(cookie);
 #endif
-}
-
-#if ENABLE(GEOLOCATION)
-inline GeolocationPosition* InspectorInstrumentation::overrideGeolocationPosition(Page* page, GeolocationPosition* position)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(position);
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        return overrideGeolocationPositionImpl(instrumentingAgents, position);
-#else
-    UNUSED_PARAM(page);
-#endif
-    return position;
-}
-#endif
-
-inline DeviceOrientationData* InspectorInstrumentation::overrideDeviceOrientation(Page* page, DeviceOrientationData* deviceOrientation)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(deviceOrientation);
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        return overrideDeviceOrientationImpl(instrumentingAgents, deviceOrientation);
-#else
-    UNUSED_PARAM(page);
-#endif
-    return deviceOrientation;
 }
 
 #if USE(ACCELERATED_COMPOSITING)

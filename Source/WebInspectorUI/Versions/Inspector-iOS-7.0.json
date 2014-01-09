@@ -326,46 +326,6 @@
                 ]
             },
             {
-                "name": "setGeolocationOverride",
-                "description": "Overrides the Geolocation Position or Error.",
-                "parameters": [
-                    { "name": "latitude", "type": "number", "optional": true, "description": "Mock longitude"},
-                    { "name": "longitude", "type": "number", "optional": true, "description": "Mock latitude"},
-                    { "name": "accuracy", "type": "number", "optional": true, "description": "Mock accuracy"}
-                ]
-            },
-            {
-                "name": "clearGeolocationOverride",
-                "description": "Clears the overriden Geolocation Position and Error."
-            },
-            {
-                "name": "canOverrideGeolocation",
-                "description": "Checks if Geolocation can be overridden.",
-                "returns": [
-                    { "name": "result", "type": "boolean", "description": "True if browser can ovrride Geolocation." }
-                ]
-            },
-            {
-                "name": "setDeviceOrientationOverride",
-                "description": "Overrides the Device Orientation.",
-                "parameters": [
-                    { "name": "alpha", "type": "number", "description": "Mock alpha"},
-                    { "name": "beta", "type": "number", "description": "Mock beta"},
-                    { "name": "gamma", "type": "number", "description": "Mock gamma"}
-                ]
-            },
-            {
-                "name": "clearDeviceOrientationOverride",
-                "description": "Clears the overridden Device Orientation."
-            },
-            {
-                "name": "canOverrideDeviceOrientation",
-                "description": "Check the backend if Web Inspector can override the device orientation.",
-                "returns": [
-                    { "name": "result", "type": "boolean", "description": "If true, <code>setDeviceOrientationOverride</code> can safely be invoked on the agent." }
-                ]
-            },
-            {
                 "name": "setTouchEmulationEnabled",
                 "parameters": [
                     { "name": "enabled", "type": "boolean", "description": "Whether the touch event emulation should be enabled." }
@@ -916,13 +876,6 @@
             {
                 "name": "disable",
                 "description": "Disables network tracking, prevents network events from being sent to the client."
-            },
-            {
-                "name": "setUserAgentOverride",
-                "description": "Allows overriding user agent with the given string.",
-                "parameters": [
-                    { "name": "userAgent", "type": "string", "description": "User agent to use." }
-                ]
             },
             {
                 "name": "setExtraHTTPHeaders",

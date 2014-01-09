@@ -2487,9 +2487,7 @@ int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
 
 String FrameLoader::userAgent(const URL& url) const
 {
-    String userAgent = m_client.userAgent(url);
-    InspectorInstrumentation::applyUserAgentOverride(&m_frame, &userAgent);
-    return userAgent;
+    return m_client.userAgent(url);
 }
 
 void FrameLoader::handledOnloadEvents()

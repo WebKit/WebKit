@@ -138,13 +138,6 @@
             "description": "Disables network tracking, prevents network events from being sent to the client."
         },
         {
-            "name": "setUserAgentOverride",
-            "description": "Allows overriding user agent with the given string.",
-            "parameters": [
-                { "name": "userAgent", "type": "string", "description": "User agent to use." }
-            ]
-        },
-        {
             "name": "setExtraHTTPHeaders",
             "description": "Specifies whether to always send extra HTTP headers with the requests from this page.",
             "parameters": [

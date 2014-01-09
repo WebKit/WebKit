@@ -30,13 +30,12 @@
 #include "DeviceOrientationClient.h"
 #include "DeviceOrientationData.h"
 #include "DeviceOrientationEvent.h"
-#include "InspectorInstrumentation.h"
+#include "Page.h"
 
 namespace WebCore {
 
-DeviceOrientationController::DeviceOrientationController(Page* page, DeviceOrientationClient* client)
+DeviceOrientationController::DeviceOrientationController(DeviceOrientationClient* client)
     : DeviceController(client)
-    , m_page(page)
 {
 #if PLATFORM(IOS)
     // FIXME: Temporarily avoid asserting while OpenSource is using a different design.
@@ -50,14 +49,13 @@ DeviceOrientationController::DeviceOrientationController(Page* page, DeviceOrien
 #endif
 }
 
-PassOwnPtr<DeviceOrientationController> DeviceOrientationController::create(Page* page, DeviceOrientationClient* client)
+PassOwnPtr<DeviceOrientationController> DeviceOrientationController::create(DeviceOrientationClient* client)
 {
-    return adoptPtr(new DeviceOrientationController(page, client));
+    return adoptPtr(new DeviceOrientationController(client));
 }
 
 void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientationData* orientation)
 {
-    orientation = InspectorInstrumentation::overrideDeviceOrientation(m_page, orientation);
     dispatchDeviceEvent(DeviceOrientationEvent::create(eventNames().deviceorientationEvent, orientation));
 }
 
@@ -111,7 +109,7 @@ bool DeviceOrientationController::isActiveAt(Page* page)
 
 void provideDeviceOrientationTo(Page* page, DeviceOrientationClient* client)
 {
-    DeviceOrientationController::provideTo(page, DeviceOrientationController::supplementName(), DeviceOrientationController::create(page, client));
+    DeviceOrientationController::provideTo(page, DeviceOrientationController::supplementName(), DeviceOrientationController::create(client));
 }
 
 } // namespace WebCore

@@ -33,8 +33,6 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "DeviceOrientationData.h"
-#include "GeolocationPosition.h"
 #include "InspectorWebAgentBase.h"
 #include "InspectorWebBackendDispatchers.h"
 #include "InspectorWebFrontendDispatchers.h"
@@ -121,12 +119,6 @@ public:
     virtual void setContinuousPaintingEnabled(ErrorString*, bool enabled);
     virtual void getScriptExecutionStatus(ErrorString*, Inspector::InspectorPageBackendDispatcherHandler::Result::Enum*);
     virtual void setScriptExecutionDisabled(ErrorString*, bool);
-    virtual void setGeolocationOverride(ErrorString*, const double*, const double*, const double*);
-    virtual void clearGeolocationOverride(ErrorString*);
-    virtual void canOverrideGeolocation(ErrorString*, bool* out_param);
-    virtual void setDeviceOrientationOverride(ErrorString*, double, double, double);
-    virtual void clearDeviceOrientationOverride(ErrorString*);
-    virtual void canOverrideDeviceOrientation(ErrorString*, bool*);
     virtual void setTouchEmulationEnabled(ErrorString*, bool);
     virtual void setEmulatedMedia(ErrorString*, const String&);
     virtual void getCompositingBordersVisible(ErrorString*, bool* out_param);
@@ -135,12 +127,6 @@ public:
     virtual void snapshotRect(ErrorString*, int x, int y, int width, int height, const String& coordinateSystem, String* outDataURL);
     virtual void handleJavaScriptDialog(ErrorString*, bool accept, const String* promptText);
     virtual void archive(ErrorString*, String* data);
-
-    // Geolocation override helpers.
-    GeolocationPosition* overrideGeolocationPosition(GeolocationPosition*);
-
-    // DeviceOrientation helper
-    DeviceOrientationData* overrideDeviceOrientation(DeviceOrientationData*);
 
     // InspectorInstrumentation API
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
@@ -208,14 +194,10 @@ private:
     bool m_enabled;
     bool m_isFirstLayoutAfterOnLoad;
     bool m_originalScriptExecutionDisabled;
-    bool m_geolocationOverridden;
     bool m_ignoreScriptsEnabledNotification;
     bool m_showPaintRects;
     String m_emulatedMedia;
     RefPtr<Inspector::InspectorObject> m_scriptsToEvaluateOnLoad;
-    RefPtr<GeolocationPosition> m_geolocationPosition;
-    RefPtr<GeolocationPosition> m_platformGeolocationPosition;
-    RefPtr<DeviceOrientationData> m_deviceOrientation;
 };
 
 

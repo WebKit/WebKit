@@ -1,3 +1,18 @@
+2014-01-09  Seokju Kwon  <seokju@webkit.org>
+
+        Web Inspector: Remove unused overriding protocols.
+        https://bugs.webkit.org/show_bug.cgi?id=126630
+
+        Reviewed by Timothy Hatcher.
+
+        Update InspectorWebBackendCommands.js after removing unused overriding protocols.
+
+        * UserInterface/InspectorWebBackendCommands.js:
+        * UserInterface/Legacy/6.0/InspectorWebBackendCommands.js:
+        * UserInterface/Legacy/7.0/InspectorWebBackendCommands.js:
+        * Versions/Inspector-iOS-6.0.json:
+        * Versions/Inspector-iOS-7.0.json:
+
 2014-01-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Typo "clipboarPrefixString"

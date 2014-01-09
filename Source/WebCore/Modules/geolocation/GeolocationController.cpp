@@ -31,13 +31,11 @@
 #include "GeolocationClient.h"
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
-#include "InspectorInstrumentation.h"
 
 namespace WebCore {
 
-GeolocationController::GeolocationController(Page* page, GeolocationClient* client)
+GeolocationController::GeolocationController(GeolocationClient* client)
     : m_client(client)
-    , m_page(page)
 {
 }
 
@@ -49,9 +47,9 @@ GeolocationController::~GeolocationController()
         m_client->geolocationDestroyed();
 }
 
-PassOwnPtr<GeolocationController> GeolocationController::create(Page* page, GeolocationClient* client)
+PassOwnPtr<GeolocationController> GeolocationController::create(GeolocationClient* client)
 {
-    return adoptPtr(new GeolocationController(page, client));
+    return adoptPtr(new GeolocationController(client));
 }
 
 void GeolocationController::addObserver(Geolocation* observer, bool enableHighAccuracy)
@@ -101,11 +99,6 @@ void GeolocationController::cancelPermissionRequest(Geolocation* geolocation)
 
 void GeolocationController::positionChanged(GeolocationPosition* position)
 {
-    position = InspectorInstrumentation::overrideGeolocationPosition(m_page, position);
-    if (!position) {
-        errorOccurred(GeolocationError::create(GeolocationError::PositionUnavailable, ASCIILiteral("PositionUnavailable")).get());
-        return;
-    }
     m_lastPosition = position;
     Vector<RefPtr<Geolocation>> observersVector;
     copyToVector(m_observers, observersVector);
@@ -139,7 +132,7 @@ const char* GeolocationController::supplementName()
 
 void provideGeolocationTo(Page* page, GeolocationClient* client)
 {
-    Supplement<Page>::provideTo(page, GeolocationController::supplementName(), GeolocationController::create(page, client));
+    Supplement<Page>::provideTo(page, GeolocationController::supplementName(), GeolocationController::create(client));
 }
     
 } // namespace WebCore
