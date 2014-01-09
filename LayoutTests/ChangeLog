@@ -1,3 +1,10 @@
+2014-01-09  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r161429?): Frequent crashes on media/track/media-element-enqueue-event-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=117756
+
+        * platform/mac/TestExpectations: Skipping the test, it crashes very frequently.
+
 2014-01-09  Pascal Jacquemart  <p.jacquemart@samsung.com>
 
         Cannot select multiple non-adjacent items in a multiple select control with the keyboard only
