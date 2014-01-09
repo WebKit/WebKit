@@ -63,7 +63,7 @@ void PDFDocumentImage::computeBoundsForCurrentPage()
     m_mediaBox = [pdfPage boundsForBox:kPDFDisplayBoxMediaBox];
     m_cropBox = [pdfPage boundsForBox:kPDFDisplayBoxCropBox];
 
-    m_rotation = deg2rad(static_cast<float>([pdfPage rotation]));
+    m_rotationDegrees = [pdfPage rotation];
 }
 
 unsigned PDFDocumentImage::pageCount() const
