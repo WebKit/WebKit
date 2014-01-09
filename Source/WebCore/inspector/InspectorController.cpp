@@ -100,7 +100,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_inspectorAgent = inspectorAgentPtr.get();
     m_agents.append(inspectorAgentPtr.release());
 
-    OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_inspectorAgent, inspectorClient, m_overlay.get()));
+    OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, inspectorClient, m_overlay.get()));
     InspectorPageAgent* pageAgent = pageAgentPtr.get();
     m_pageAgent = pageAgentPtr.get();
     m_agents.append(pageAgentPtr.release());
@@ -150,7 +150,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_debuggerAgent = debuggerAgentPtr.get();
     m_agents.append(debuggerAgentPtr.release());
 
-    OwnPtr<InspectorDOMDebuggerAgent> domDebuggerAgentPtr(InspectorDOMDebuggerAgent::create(m_instrumentingAgents.get(), m_domAgent, m_debuggerAgent, m_inspectorAgent));
+    OwnPtr<InspectorDOMDebuggerAgent> domDebuggerAgentPtr(InspectorDOMDebuggerAgent::create(m_instrumentingAgents.get(), m_domAgent, m_debuggerAgent));
     m_domDebuggerAgent = domDebuggerAgentPtr.get();
     m_agents.append(domDebuggerAgentPtr.release());
 

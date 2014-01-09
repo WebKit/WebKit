@@ -48,7 +48,6 @@ class InspectorObject;
 namespace WebCore {
 
 class Element;
-class InspectorAgent;
 class InspectorDOMAgent;
 class InspectorDebuggerAgent;
 class InstrumentingAgents;
@@ -59,7 +58,7 @@ typedef String ErrorString;
 class InspectorDOMDebuggerAgent : public InspectorAgentBase, public InspectorDebuggerAgent::Listener, public Inspector::InspectorDOMDebuggerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
 public:
-    static PassOwnPtr<InspectorDOMDebuggerAgent> create(InstrumentingAgents*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
+    static PassOwnPtr<InspectorDOMDebuggerAgent> create(InstrumentingAgents*, InspectorDOMAgent*, InspectorDebuggerAgent*);
 
     virtual ~InspectorDOMDebuggerAgent();
 
@@ -88,7 +87,7 @@ public:
     virtual void discardAgent();
 
 private:
-    InspectorDOMDebuggerAgent(InstrumentingAgents*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
+    InspectorDOMDebuggerAgent(InstrumentingAgents*, InspectorDOMAgent*, InspectorDebuggerAgent*);
 
     // InspectorDebuggerAgent::Listener implementation.
     virtual void debuggerWasEnabled();

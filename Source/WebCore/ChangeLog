@@ -1,3 +1,21 @@
+2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove Unnecessary InspectorAgent parameters
+        https://bugs.webkit.org/show_bug.cgi?id=126712
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::create):
+        (WebCore::InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::create):
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        * inspector/InspectorPageAgent.h:
+
 2014-01-09  Antti Koivisto  <antti@apple.com>
 
         Remove an accidentally left-behind static_cast.

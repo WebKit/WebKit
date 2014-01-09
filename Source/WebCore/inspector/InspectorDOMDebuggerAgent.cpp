@@ -35,7 +35,6 @@
 #include "InspectorDOMDebuggerAgent.h"
 
 #include "HTMLElement.h"
-#include "InspectorAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorInstrumentation.h"
@@ -65,12 +64,12 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PassOwnPtr<InspectorDOMDebuggerAgent> InspectorDOMDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent, InspectorAgent* inspectorAgent)
+PassOwnPtr<InspectorDOMDebuggerAgent> InspectorDOMDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent)
 {
-    return adoptPtr(new InspectorDOMDebuggerAgent(instrumentingAgents, domAgent, debuggerAgent, inspectorAgent));
+    return adoptPtr(new InspectorDOMDebuggerAgent(instrumentingAgents, domAgent, debuggerAgent));
 }
 
-InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent, InspectorAgent*)
+InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent)
     : InspectorAgentBase(ASCIILiteral("DOMDebugger"), instrumentingAgents)
     , m_domAgent(domAgent)
     , m_debuggerAgent(debuggerAgent)
