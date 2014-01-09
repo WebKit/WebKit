@@ -1,5 +1,48 @@
 2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Consolidate developerExtrasEnabled to just InspectorEnvironment
+        https://bugs.webkit.org/show_bug.cgi?id=126717
+
+        Reviewed by Timothy Hatcher.
+
+        They all route to InspectorEnvironment::developerExtrasEnabled, so make
+        InspectorEnvironment available to all agents through InstrumentingAgents
+        and use that where needed.
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        * inspector/InspectorAgent.h:
+        (WebCore::InspectorAgent::create):
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::addMessageToConsole):
+        (WebCore::InspectorConsoleAgent::didFinishXHRLoading):
+        (WebCore::InspectorConsoleAgent::didReceiveResponse):
+        (WebCore::InspectorConsoleAgent::didFailLoading):
+        (WebCore::InspectorConsoleAgent::addConsoleMessage):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::enabled):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::frameDocumentUpdatedImpl):
+        (WebCore::InspectorInstrumentation::didOpenDatabaseImpl):
+        (WebCore::InspectorInstrumentation::didCreateWebSocketImpl):
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::create):
+        (WebCore::InstrumentingAgents::inspectorEnvironment):
+        * inspector/PageConsoleAgent.cpp:
+        * inspector/PageConsoleAgent.h:
+        * inspector/WorkerConsoleAgent.cpp:
+        * inspector/WorkerConsoleAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+
+2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove Unnecessary InspectorAgent parameters
         https://bugs.webkit.org/show_bug.cgi?id=126712
 

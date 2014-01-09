@@ -52,11 +52,6 @@ void WorkerConsoleAgent::addInspectedNode(ErrorString* error, int)
     *error = "addInspectedNode is not supported for workers";
 }
 
-bool WorkerConsoleAgent::developerExtrasEnabled()
-{
-    return true;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

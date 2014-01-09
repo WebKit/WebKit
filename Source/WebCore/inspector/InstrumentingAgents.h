@@ -31,6 +31,7 @@
 #ifndef InstrumentingAgents_h
 #define InstrumentingAgents_h
 
+#include <inspector/InspectorEnvironment.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
@@ -65,12 +66,14 @@ class InstrumentingAgents : public RefCounted<InstrumentingAgents> {
     WTF_MAKE_NONCOPYABLE(InstrumentingAgents);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<InstrumentingAgents> create()
+    static PassRefPtr<InstrumentingAgents> create(Inspector::InspectorEnvironment& environment)
     {
-        return adoptRef(new InstrumentingAgents());
+        return adoptRef(new InstrumentingAgents(environment));
     }
     ~InstrumentingAgents() { }
     void reset();
+
+    Inspector::InspectorEnvironment& inspectorEnvironment() const { return m_environment; }
 
     InspectorAgent* inspectorAgent() const { return m_inspectorAgent; }
     void setInspectorAgent(InspectorAgent* agent) { m_inspectorAgent = agent; }
@@ -139,7 +142,9 @@ public:
 #endif
 
 private:
-    InstrumentingAgents();
+    InstrumentingAgents(Inspector::InspectorEnvironment&);
+
+    Inspector::InspectorEnvironment& m_environment;
 
     InspectorAgent* m_inspectorAgent;
     InspectorPageAgent* m_inspectorPageAgent;

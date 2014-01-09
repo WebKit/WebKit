@@ -141,7 +141,7 @@ void InspectorConsoleAgent::willDestroyFrontendAndBackend()
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
-    if (!developerExtrasEnabled())
+    if (!m_instrumentingAgents->inspectorEnvironment().developerExtrasEnabled())
         return;
 
     if (type == ClearMessageType) {
@@ -154,7 +154,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
 {
-    if (!developerExtrasEnabled())
+    if (!m_instrumentingAgents->inspectorEnvironment().developerExtrasEnabled())
         return;
 
     if (type == ClearMessageType) {
@@ -167,7 +167,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
 {
-    if (!developerExtrasEnabled())
+    if (!m_instrumentingAgents->inspectorEnvironment().developerExtrasEnabled())
         return;
 
     if (type == ClearMessageType) {
@@ -251,7 +251,7 @@ void InspectorConsoleAgent::frameWindowDiscarded(DOMWindow* window)
 
 void InspectorConsoleAgent::didFinishXHRLoading(unsigned long requestIdentifier, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber)
 {
-    if (!developerExtrasEnabled())
+    if (!m_instrumentingAgents->inspectorEnvironment().developerExtrasEnabled())
         return;
     if (m_frontendDispatcher && m_monitoringXHREnabled) {
         String message = "XHR finished loading: \"" + url + "\".";
@@ -261,7 +261,7 @@ void InspectorConsoleAgent::didFinishXHRLoading(unsigned long requestIdentifier,
 
 void InspectorConsoleAgent::didReceiveResponse(unsigned long requestIdentifier, const ResourceResponse& response)
 {
-    if (!developerExtrasEnabled())
+    if (!m_instrumentingAgents->inspectorEnvironment().developerExtrasEnabled())
         return;
 
     if (response.httpStatusCode() >= 400) {
@@ -272,7 +272,7 @@ void InspectorConsoleAgent::didReceiveResponse(unsigned long requestIdentifier, 
 
 void InspectorConsoleAgent::didFailLoading(unsigned long requestIdentifier, const ResourceError& error)
 {
-    if (!developerExtrasEnabled())
+    if (!m_instrumentingAgents->inspectorEnvironment().developerExtrasEnabled())
         return;
     if (error.isCancellation()) // Report failures only.
         return;
@@ -299,7 +299,7 @@ static bool isGroupMessage(MessageType type)
 
 void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> consoleMessage)
 {
-    ASSERT(developerExtrasEnabled());
+    ASSERT(m_instrumentingAgents->inspectorEnvironment().developerExtrasEnabled());
     ASSERT_ARG(consoleMessage, consoleMessage);
 
     if (m_previousMessage && !isGroupMessage(m_previousMessage->type()) && m_previousMessage->isEqual(consoleMessage.get())) {

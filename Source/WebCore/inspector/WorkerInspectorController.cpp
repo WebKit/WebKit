@@ -81,7 +81,7 @@ private:
 
 WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope* workerGlobalScope)
     : m_workerGlobalScope(workerGlobalScope)
-    , m_instrumentingAgents(InstrumentingAgents::create())
+    , m_instrumentingAgents(InstrumentingAgents::create(*this))
     , m_injectedScriptManager(std::make_unique<PageInjectedScriptManager>(*this, PageInjectedScriptHost::create()))
     , m_runtimeAgent(0)
 {

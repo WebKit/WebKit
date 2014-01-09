@@ -614,8 +614,7 @@ void InspectorInstrumentation::markResourceAsCachedImpl(InstrumentingAgents* ins
 
 void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingAgents* instrumentingAgents, DocumentLoader* loader, CachedResource* cachedResource)
 {
-    InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent();
-    if (!inspectorAgent || !inspectorAgent->developerExtrasEnabled())
+    if (!instrumentingAgents->inspectorEnvironment().developerExtrasEnabled())
         return;
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didLoadResourceFromMemoryCache(loader, cachedResource);
@@ -817,8 +816,7 @@ void InspectorInstrumentation::frameDetachedFromParentImpl(InstrumentingAgents* 
 
 void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrumentingAgents, Page* page, DocumentLoader* loader)
 {
-    InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent();
-    if (!inspectorAgent || !inspectorAgent->developerExtrasEnabled())
+    if (!instrumentingAgents->inspectorEnvironment().developerExtrasEnabled())
         return;
 
     if (loader->frame()->isMainFrame()) {
@@ -856,10 +854,8 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
 
 void InspectorInstrumentation::frameDocumentUpdatedImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
 {
-    InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent();
-    if (!inspectorAgent || !inspectorAgent->developerExtrasEnabled())
+    if (!instrumentingAgents->inspectorEnvironment().developerExtrasEnabled())
         return;
-
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
         domAgent->frameDocumentUpdated(frame);
 }
@@ -1026,8 +1022,7 @@ bool InspectorInstrumentation::profilerEnabledImpl(InstrumentingAgents* instrume
 #if ENABLE(SQL_DATABASE)
 void InspectorInstrumentation::didOpenDatabaseImpl(InstrumentingAgents* instrumentingAgents, PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
-    InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent();
-    if (!inspectorAgent || !inspectorAgent->developerExtrasEnabled())
+    if (!instrumentingAgents->inspectorEnvironment().developerExtrasEnabled())
         return;
     if (InspectorDatabaseAgent* dbAgent = instrumentingAgents->inspectorDatabaseAgent())
         dbAgent->didOpenDatabase(database, domain, name, version);
@@ -1075,8 +1070,7 @@ void InspectorInstrumentation::workerGlobalScopeTerminatedImpl(InstrumentingAgen
 #if ENABLE(WEB_SOCKETS)
 void InspectorInstrumentation::didCreateWebSocketImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const URL& requestURL, const URL&, const String& protocol, Document* document)
 {
-    InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent();
-    if (!inspectorAgent || !inspectorAgent->developerExtrasEnabled())
+    if (!instrumentingAgents->inspectorEnvironment().developerExtrasEnabled())
         return;
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didCreateWebSocket(identifier, requestURL);

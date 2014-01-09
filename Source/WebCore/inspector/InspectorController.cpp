@@ -83,7 +83,7 @@ using namespace Inspector;
 namespace WebCore {
 
 InspectorController::InspectorController(Page* page, InspectorClient* inspectorClient)
-    : m_instrumentingAgents(InstrumentingAgents::create())
+    : m_instrumentingAgents(InstrumentingAgents::create(*this))
     , m_injectedScriptManager(std::make_unique<PageInjectedScriptManager>(*this, PageInjectedScriptHost::create()))
     , m_overlay(InspectorOverlay::create(page, inspectorClient))
     , m_inspectorFrontendChannel(nullptr)
@@ -96,7 +96,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 {
     ASSERT_ARG(inspectorClient, inspectorClient);
 
-    OwnPtr<InspectorAgent> inspectorAgentPtr(InspectorAgent::create(page, m_instrumentingAgents.get()));
+    OwnPtr<InspectorAgent> inspectorAgentPtr(InspectorAgent::create(m_instrumentingAgents.get()));
     m_inspectorAgent = inspectorAgentPtr.get();
     m_agents.append(inspectorAgentPtr.release());
 
@@ -362,7 +362,7 @@ void InspectorController::inspect(Node* node)
 
 bool InspectorController::enabled() const
 {
-    return m_inspectorAgent->developerExtrasEnabled();
+    return developerExtrasEnabled();
 }
 
 Page* InspectorController::inspectedPage() const

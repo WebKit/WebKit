@@ -35,8 +35,6 @@
 #include "InspectorAgent.h"
 
 #include "InstrumentingAgents.h"
-#include "Page.h"
-#include "Settings.h"
 #include <bindings/ScriptValue.h>
 #include <inspector/InspectorJSFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
@@ -47,12 +45,10 @@ using namespace Inspector;
 
 namespace WebCore {
 
-InspectorAgent::InspectorAgent(Page* page, InstrumentingAgents* instrumentingAgents)
+InspectorAgent::InspectorAgent(InstrumentingAgents* instrumentingAgents)
     : InspectorAgentBase(ASCIILiteral("Inspector"), instrumentingAgents)
-    , m_inspectedPage(page)
     , m_enabled(false)
 {
-    ASSERT_ARG(page, page);
     m_instrumentingAgents->setInspectorAgent(this);
 }
 
@@ -113,13 +109,6 @@ void InspectorAgent::inspect(PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteO
     }
     m_pendingInspectData.first = objectToInspect;
     m_pendingInspectData.second = hints;
-}
-
-bool InspectorAgent::developerExtrasEnabled() const
-{
-    if (!m_inspectedPage)
-        return false;
-    return m_inspectedPage->settings().developerExtrasEnabled();
 }
 
 } // namespace WebCore

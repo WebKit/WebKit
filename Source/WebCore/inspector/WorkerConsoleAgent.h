@@ -52,7 +52,6 @@ public:
 private:
     WorkerConsoleAgent(InstrumentingAgents*, PageInjectedScriptManager*);
     virtual void addInspectedNode(ErrorString*, int nodeId);
-    virtual bool developerExtrasEnabled();
 };
 
 } // namespace WebCore

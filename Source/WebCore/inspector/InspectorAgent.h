@@ -44,25 +44,19 @@ class InspectorInspectorFrontendDispatcher;
 
 namespace WebCore {
 
-class DOMWrapperWorld;
-class DocumentLoader;
-class Frame;
 class InstrumentingAgents;
-class Page;
 
 typedef String ErrorString;
 
 class InspectorAgent : public InspectorAgentBase, public Inspector::InspectorInspectorBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
 public:
-    static PassOwnPtr<InspectorAgent> create(Page* page, InstrumentingAgents* instrumentingAgents)
+    static PassOwnPtr<InspectorAgent> create(InstrumentingAgents* instrumentingAgents)
     {
-        return adoptPtr(new InspectorAgent(page, instrumentingAgents));
+        return adoptPtr(new InspectorAgent(instrumentingAgents));
     }
 
     virtual ~InspectorAgent();
-
-    bool developerExtrasEnabled() const;
 
     // Inspector front-end API.
     void enable(ErrorString*);
@@ -77,15 +71,12 @@ public:
     void inspect(PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<Inspector::InspectorObject> hints);
 
 private:
-    InspectorAgent(Page*, InstrumentingAgents*);
+    InspectorAgent(InstrumentingAgents*);
 
-    Page* m_inspectedPage;
     std::unique_ptr<Inspector::InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorInspectorBackendDispatcher> m_backendDispatcher;
-
     Vector<std::pair<long, String>> m_pendingEvaluateTestCommands;
     std::pair<RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>, RefPtr<Inspector::InspectorObject>> m_pendingInspectData;
-
     bool m_enabled;
 };
 

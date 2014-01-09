@@ -98,8 +98,6 @@ public:
 protected:
     void addConsoleMessage(PassOwnPtr<ConsoleMessage>);
 
-    virtual bool developerExtrasEnabled() = 0;
-
     PageInjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<Inspector::InspectorConsoleFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::InspectorConsoleBackendDispatcher> m_backendDispatcher;

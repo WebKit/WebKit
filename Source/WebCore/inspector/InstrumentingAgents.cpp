@@ -29,10 +29,9 @@
  */
 
 #include "config.h"
+#include "InstrumentingAgents.h"
 
 #if ENABLE(INSPECTOR)
-
-#include "InstrumentingAgents.h"
 
 #include "InspectorController.h"
 #include "Page.h"
@@ -44,8 +43,9 @@ using namespace Inspector;
 
 namespace WebCore {
 
-InstrumentingAgents::InstrumentingAgents()
-    : m_inspectorAgent(0)
+InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment)
+    : m_environment(environment)
+    , m_inspectorAgent(0)
     , m_inspectorPageAgent(0)
     , m_inspectorCSSAgent(0)
 #if USE(ACCELERATED_COMPOSITING)
