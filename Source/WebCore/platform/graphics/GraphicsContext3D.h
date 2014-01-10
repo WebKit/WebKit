@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -688,7 +688,9 @@ public:
     void generateMipmap(GC3Denum target);
 
     bool getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo&);
+    bool getActiveAttribImpl(Platform3DObject program, GC3Duint index, ActiveInfo&);
     bool getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo&);
+    bool getActiveUniformImpl(Platform3DObject program, GC3Duint index, ActiveInfo&);
     void getAttachedShaders(Platform3DObject program, GC3Dsizei maxCount, GC3Dsizei* count, Platform3DObject* shaders);
     GC3Dint getAttribLocation(Platform3DObject, const String& name);
     void getBooleanv(GC3Denum pname, GC3Dboolean* value);
@@ -699,6 +701,7 @@ public:
     void getFramebufferAttachmentParameteriv(GC3Denum target, GC3Denum attachment, GC3Denum pname, GC3Dint* value);
     void getIntegerv(GC3Denum pname, GC3Dint* value);
     void getProgramiv(Platform3DObject program, GC3Denum pname, GC3Dint* value);
+    void getNonBuiltInActiveSymbolCount(Platform3DObject program, GC3Denum pname, GC3Dint* value);
     String getProgramInfoLog(Platform3DObject);
     void getRenderbufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value);
     void getShaderiv(Platform3DObject, GC3Denum pname, GC3Dint* value);
@@ -1043,6 +1046,25 @@ private:
 
     typedef HashMap<Platform3DObject, ShaderSourceEntry> ShaderSourceMap;
     ShaderSourceMap m_shaderSourceMap;
+
+    struct ActiveShaderSymbolCounts {
+        Vector<GC3Dint> filteredToActualAttributeIndexMap;
+        Vector<GC3Dint> filteredToActualUniformIndexMap;
+
+        ActiveShaderSymbolCounts()
+        {
+        }
+
+        GC3Dint countForType(GC3Denum activeType)
+        {
+            ASSERT(activeType == ACTIVE_ATTRIBUTES || activeType == ACTIVE_UNIFORMS);
+            if (activeType == ACTIVE_ATTRIBUTES)
+                return filteredToActualAttributeIndexMap.size();
+
+            return filteredToActualUniformIndexMap.size();
+        }
+    };
+    std::unique_ptr<ActiveShaderSymbolCounts> m_shaderSymbolCount;
 
     String mappedSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);
     String originalSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);

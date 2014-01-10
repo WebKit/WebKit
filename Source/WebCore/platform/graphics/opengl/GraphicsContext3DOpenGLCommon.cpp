@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2012 ChangSeok Oh <shivamidow@gmail.com>
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
@@ -337,17 +337,19 @@ void GraphicsContext3D::reshape(int width, int height)
 
 bool GraphicsContext3D::precisionsMatch(Platform3DObject vertexShader, Platform3DObject fragmentShader) const
 {
-    ShaderSourceEntry vertexEntry = m_shaderSourceMap.find(vertexShader)->value;
-    ShaderSourceEntry fragmentEntry = m_shaderSourceMap.find(fragmentShader)->value;
+    ASSERT(m_shaderSourceMap.contains(vertexShader));
+    ASSERT(m_shaderSourceMap.contains(fragmentShader));
+    const auto& vertexEntry = m_shaderSourceMap.find(vertexShader)->value;
+    const auto& fragmentEntry = m_shaderSourceMap.find(fragmentShader)->value;
 
     HashMap<String, ShPrecisionType> vertexSymbolPrecisionMap;
 
-    for (auto it = vertexEntry.uniformMap.begin(); it != vertexEntry.uniformMap.end(); ++it)
-        vertexSymbolPrecisionMap.add(it->value.mappedName, it->value.precision);
+    for (const auto& entry : vertexEntry.uniformMap)
+        vertexSymbolPrecisionMap.add(entry.value.mappedName, entry.value.precision);
 
-    for (auto it = fragmentEntry.uniformMap.begin(); it != fragmentEntry.uniformMap.end(); ++it) {
-        HashMap<String, ShPrecisionType>::iterator vertexSymbol = vertexSymbolPrecisionMap.find(it->value.mappedName);
-        if (vertexSymbol != vertexSymbolPrecisionMap.end() && vertexSymbol->value != it->value.precision)
+    for (const auto& entry : fragmentEntry.uniformMap) {
+        const auto& vertexSymbol = vertexSymbolPrecisionMap.find(entry.value.mappedName);
+        if (vertexSymbol != vertexSymbolPrecisionMap.end() && vertexSymbol->value != entry.value.precision)
             return false;
     }
 
@@ -564,6 +566,8 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
         BBLOG(BlackBerry::Platform::LogLevelWarn, "The shader validated, but didn't compile.\n");
 #endif
     }
+
+    m_shaderSymbolCount = nullptr;
 }
 
 void GraphicsContext3D::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border)
@@ -696,7 +700,7 @@ void GraphicsContext3D::generateMipmap(GC3Denum target)
     ::glGenerateMipmap(target);
 }
 
-bool GraphicsContext3D::getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo& info)
+bool GraphicsContext3D::getActiveAttribImpl(Platform3DObject program, GC3Duint index, ActiveInfo& info)
 {
     if (!program) {
         synthesizeGLError(INVALID_VALUE);
@@ -715,13 +719,26 @@ bool GraphicsContext3D::getActiveAttrib(Platform3DObject program, GC3Duint index
     
     String originalName = originalSymbolName(program, SHADER_SYMBOL_TYPE_ATTRIBUTE, String(name.get(), nameLength));
     
+#ifndef NDEBUG
+    String uniformName(name.get(), nameLength);
+    LOG(WebGL, "Program %d is mapping active attribute %d from '%s' to '%s'", program, index, uniformName.utf8().data(), originalName.utf8().data());
+#endif
+
     info.name = originalName;
     info.type = type;
     info.size = size;
     return true;
 }
 
-bool GraphicsContext3D::getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo& info)
+bool GraphicsContext3D::getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo& info)
+{
+    ASSERT(!m_shaderSymbolCount || index < m_shaderSymbolCount->filteredToActualAttributeIndexMap.size());
+    GC3Duint rawIndex = (m_shaderSymbolCount) ? m_shaderSymbolCount->filteredToActualAttributeIndexMap[index] : index;
+
+    return getActiveAttribImpl(program, rawIndex, info);
+}
+
+bool GraphicsContext3D::getActiveUniformImpl(Platform3DObject program, GC3Duint index, ActiveInfo& info)
 {
     if (!program) {
         synthesizeGLError(INVALID_VALUE);
@@ -742,12 +759,25 @@ bool GraphicsContext3D::getActiveUniform(Platform3DObject program, GC3Duint inde
     
     String originalName = originalSymbolName(program, SHADER_SYMBOL_TYPE_UNIFORM, String(name.get(), nameLength));
     
+#ifndef NDEBUG
+    String uniformName(name.get(), nameLength);
+    LOG(WebGL, "Program %d is mapping active uniform %d from '%s' to '%s'", program, index, uniformName.utf8().data(), originalName.utf8().data());
+#endif
+    
     info.name = originalName;
     info.type = type;
     info.size = size;
     return true;
 }
+
+bool GraphicsContext3D::getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo& info)
+{
+    ASSERT(!m_shaderSymbolCount || index < m_shaderSymbolCount->filteredToActualUniformIndexMap.size());
+    GC3Duint rawIndex = (m_shaderSymbolCount) ? m_shaderSymbolCount->filteredToActualUniformIndexMap[index] : index;
     
+    return getActiveUniformImpl(program, rawIndex, info);
+}
+
 void GraphicsContext3D::getAttachedShaders(Platform3DObject program, GC3Dsizei maxCount, GC3Dsizei* count, Platform3DObject* shaders)
 {
     if (!program) {
@@ -789,10 +819,9 @@ String GraphicsContext3D::originalSymbolName(Platform3DObject program, ANGLEShad
             continue;
         
         const ShaderSymbolMap& symbolMap = result->value.symbolMap(symbolType);
-        ShaderSymbolMap::const_iterator symbolEntry;
-        for (symbolEntry = symbolMap.begin(); symbolEntry != symbolMap.end(); ++symbolEntry) {
-            if (symbolEntry->value.mappedName == name)
-                return symbolEntry->key;
+        for (const auto& symbolEntry : symbolMap) {
+            if (symbolEntry.value.mappedName == name)
+                return symbolEntry.key;
         }
     }
     return name;
@@ -806,7 +835,7 @@ int GraphicsContext3D::getAttribLocation(Platform3DObject program, const String&
     makeContextCurrent();
 
     String mappedName = mappedSymbolName(program, SHADER_SYMBOL_TYPE_ATTRIBUTE, name);
-    LOG(WebGL, "::getAttribLocation is mapping %s to %s", name.utf8().data(), mappedName.utf8().data());
+    LOG(WebGL, "::glGetAttribLocation is mapping %s to %s", name.utf8().data(), mappedName.utf8().data());
     return ::glGetAttribLocation(program, mappedName.utf8().data());
 }
 
@@ -1227,6 +1256,49 @@ void GraphicsContext3D::getProgramiv(Platform3DObject program, GC3Denum pname, G
     ::glGetProgramiv(program, pname, value);
 }
 
+void GraphicsContext3D::getNonBuiltInActiveSymbolCount(Platform3DObject program, GC3Denum pname, GC3Dint* value)
+{
+    ASSERT(ACTIVE_ATTRIBUTES == pname || ACTIVE_UNIFORMS == pname);
+    if (!value)
+        return;
+
+    makeContextCurrent();
+
+    if (m_shaderSymbolCount) {
+        *value = m_shaderSymbolCount->countForType(pname);
+        return;
+    }
+
+    m_shaderSymbolCount = std::make_unique<ActiveShaderSymbolCounts>();
+
+    // Retrieve the active attributes, build a filtered count, and a mapping of
+    // our internal attributes indexes to the real unfiltered indexes inside OpenGL.
+    GC3Dint attributeCount = 0;
+    ::glGetProgramiv(program, ACTIVE_ATTRIBUTES, &attributeCount);
+    for (GC3Dint i = 0; i < attributeCount; ++i) {
+        ActiveInfo info;
+        getActiveAttribImpl(program, i, info);
+        if (info.name.startsWith("gl_"))
+            continue;
+
+        m_shaderSymbolCount->filteredToActualAttributeIndexMap.append(i);
+    }
+    
+    // Do the same for uniforms.
+    GC3Dint uniformCount = 0;
+    ::glGetProgramiv(program, ACTIVE_UNIFORMS, &uniformCount);
+    for (GC3Dint i = 0; i < uniformCount; ++i) {
+        ActiveInfo info;
+        getActiveUniformImpl(program, i, info);
+        if (info.name.startsWith("gl_"))
+            continue;
+        
+        m_shaderSymbolCount->filteredToActualUniformIndexMap.append(i);
+    }
+    
+    *value = m_shaderSymbolCount->countForType(pname);
+}
+
 String GraphicsContext3D::getProgramInfoLog(Platform3DObject program)
 {
     ASSERT(program);
@@ -1256,7 +1328,7 @@ void GraphicsContext3D::getShaderiv(Platform3DObject shader, GC3Denum pname, GC3
 
     makeContextCurrent();
 
-    ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
+    const auto& result = m_shaderSourceMap.find(shader);
     
     switch (pname) {
     case DELETE_STATUS:
@@ -1291,11 +1363,11 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
 
     makeContextCurrent();
 
-    ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
+    const auto& result = m_shaderSourceMap.find(shader);
     if (result == m_shaderSourceMap.end())
         return String(); 
 
-    ShaderSourceEntry entry = result->value;
+    const ShaderSourceEntry& entry = result->value;
     if (!entry.isValid)
         return entry.log;
 
@@ -1317,7 +1389,7 @@ String GraphicsContext3D::getShaderSource(Platform3DObject shader)
 
     makeContextCurrent();
 
-    ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
+    const auto& result = m_shaderSourceMap.find(shader);
     if (result == m_shaderSourceMap.end())
         return String(); 
 

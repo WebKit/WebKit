@@ -1,3 +1,45 @@
+2014-01-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebGL] Return filtered results for getProgramParameter for ACTIVE_ATTRIBUTES and ACTIVE_UNIFORMS
+        https://bugs.webkit.org/show_bug.cgi?id=126718
+        <rdar://problem/15202048>
+
+        Reviewed by Dean Jackson.
+
+        Covered by webgl/conformance/ogles/GL/biuDepthRange/biuDepthRange_001_to_002.html and
+        webgl/conformance/ogles/GL/gl_FragCoord/gl_FragCoord_001_to_003.html.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getActiveAttrib): Added loging.
+        (WebCore::WebGLRenderingContext::getActiveUniform): Added logging.
+        (WebCore::WebGLRenderingContext::getAttribLocation): Drive-by-fix. Return
+        -1 on link failure (an invalid location) rather than 0 (a valid
+        location) when link fails.
+        (WebCore::WebGLRenderingContext::getProgramParameter): Use new
+        method to return filtered count.
+        (WebCore::WebGLRenderingContext::getUniformLocation): Use nullptr
+        rather than returning 0.
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::ActiveShaderSymbolCounts::ActiveShaderSymbolCounts):
+        (WebCore::GraphicsContext3D::ActiveShaderSymbolCounts::countForType):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::precisionsMatch): Drive-by-fix. Don't
+        copy giant objects to read a single value.
+        (WebCore::GraphicsContext3D::compileShader): Release filtered count
+        when we change shader source code.
+        (WebCore::GraphicsContext3D::getActiveAttribImpl): Renamed from getActiveAttrib.
+        (WebCore::GraphicsContext3D::getActiveAttrib): Maps filtered indices to
+        real OpenGL indices.
+        (WebCore::GraphicsContext3D::getActiveUniformImpl): Renamed from getActiveUniform.
+        (WebCore::GraphicsContext3D::getActiveUniform): Maps filtered indices to
+        real OpenGL indices.
+        (WebCore::GraphicsContext3D::originalSymbolName): Use C++11 loop.
+        (WebCore::GraphicsContext3D::getAttribLocation): Added logging.
+        (WebCore::GraphicsContext3D::getNonBuiltinActiveSymbolCount): Added.
+        (WebCore::GraphicsContext3D::getShaderiv): Const correctness.
+        (WebCore::GraphicsContext3D::getShaderInfoLog): Ditto.
+        (WebCore::GraphicsContext3D::getShaderSource): Ditto.
+
 2014-01-09  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] First line gets incorrectly adjusted in shape-inside due to rounding

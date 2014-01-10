@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "IntSize.h"
+#include "Logging.h"
 #include "NotImplemented.h"
 #include "OESElementIndexUint.h"
 #include "OESStandardDerivatives.h"
@@ -2259,6 +2260,9 @@ PassRefPtr<WebGLActiveInfo> WebGLRenderingContext::getActiveAttrib(WebGLProgram*
     ActiveInfo info;
     if (!m_context->getActiveAttrib(objectOrZero(program), index, info))
         return 0;
+
+    LOG(WebGL, "Returning active attribute %d: %s", index, info.name.utf8().data());
+
     return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 
@@ -2273,6 +2277,9 @@ PassRefPtr<WebGLActiveInfo> WebGLRenderingContext::getActiveUniform(WebGLProgram
     if (!isGLES2Compliant())
         if (info.size > 1 && !info.name.endsWith("[0]"))
             info.name.append("[0]");
+
+    LOG(WebGL, "Returning active uniform %d: %s", index, info.name.utf8().data());
+
     return WebGLActiveInfo::create(info.name, info.type, info.size);
 }
 
@@ -2307,7 +2314,7 @@ GC3Dint WebGLRenderingContext::getAttribLocation(WebGLProgram* program, const St
         return -1;
     if (!program->getLinkStatus()) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getAttribLocation", "program not linked");
-        return 0;
+        return -1;
     }
     return m_context->getAttribLocation(objectOrZero(program), name);
 }
@@ -2787,9 +2794,11 @@ WebGLGetInfo WebGLRenderingContext::getProgramParameter(WebGLProgram* program, G
     case GraphicsContext3D::LINK_STATUS:
         return WebGLGetInfo(program->getLinkStatus());
     case GraphicsContext3D::ATTACHED_SHADERS:
+        m_context->getProgramiv(objectOrZero(program), pname, &value);
+        return WebGLGetInfo(value);
     case GraphicsContext3D::ACTIVE_ATTRIBUTES:
     case GraphicsContext3D::ACTIVE_UNIFORMS:
-        m_context->getProgramiv(objectOrZero(program), pname, &value);
+        m_context->getNonBuiltInActiveSymbolCount(objectOrZero(program), pname, &value);
         return WebGLGetInfo(value);
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getProgramParameter", "invalid parameter name");
@@ -3147,21 +3156,21 @@ PassRefPtr<WebGLUniformLocation> WebGLRenderingContext::getUniformLocation(WebGL
 {
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateWebGLObject("getUniformLocation", program))
-        return 0;
+        return nullptr;
     if (!validateLocationLength("getUniformLocation", name))
-        return 0;
+        return nullptr;
     if (!validateString("getUniformLocation", name))
-        return 0;
+        return nullptr;
     if (isPrefixReserved(name))
-        return 0;
+        return nullptr;
     if (!program->getLinkStatus()) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getUniformLocation", "program not linked");
-        return 0;
+        return nullptr;
     }
     WebGLStateRestorer(this, false);
     GC3Dint uniformLocation = m_context->getUniformLocation(objectOrZero(program), name);
     if (uniformLocation == -1)
-        return 0;
+        return nullptr;
 
     GC3Dint activeUniforms = 0;
     m_context->getProgramiv(objectOrZero(program), GraphicsContext3D::ACTIVE_UNIFORMS, &activeUniforms);
@@ -3180,7 +3189,7 @@ PassRefPtr<WebGLUniformLocation> WebGLRenderingContext::getUniformLocation(WebGL
                 return WebGLUniformLocation::create(program, uniformLocation, info.type);
         }
     }
-    return 0;
+    return nullptr;
 }
 
 WebGLGetInfo WebGLRenderingContext::getVertexAttrib(GC3Duint index, GC3Denum pname, ExceptionCode& ec)
