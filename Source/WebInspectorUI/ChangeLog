@@ -1,3 +1,60 @@
+2014-01-10  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: cycle clicked breakpoints between enabled, auto-continue, and disabled
+        https://bugs.webkit.org/show_bug.cgi?id=126669
+
+        Reviewed by Joseph Pecoraro.
+
+        It's time-consuming to change a breakpoint's auto-continue setting through the
+        breakpoint editor popup. This patch enables the user to toggle between enabled,
+        auto-continue, and disabled by clicking on the breakpoint wedge in the sidebar
+        tree and in the source text editor gutter. The auto-continue option is only
+        cycled when the breakpoint has associated actions.
+
+        Clean up the breakpoint editor dialog so it hides irrelevant options when
+        no breakpoint actions have been added.
+
+        Automatically unset auto-continue when the last breakpoint action is removed.
+
+        Rename the delegate textEditorBreakpointToggled to textEditorBreakpointClicked, since
+        the behavior of the click depends on breakpoint state not available in the text editor.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.cycleToNextMode): Added.
+        (WebInspector.Breakpoint.prototype.toggleAutoContinue): Added.
+        (WebInspector.Breakpoint.prototype.appendContextMenuItems): Add auto-continue options.
+        (WebInspector.Breakpoint.prototype.removeAction):
+
+        (WebInspector.Breakpoint.prototype._editBreakpointPopoverContentElement):
+        (WebInspector.Breakpoint.prototype._popoverActionsAddActionButtonClicked):
+        (WebInspector.Breakpoint.prototype.breakpointActionViewAppendActionView):
+        (WebInspector.Breakpoint.prototype.breakpointActionViewRemoveActionView):
+        (WebInspector.Breakpoint.prototype.willDismissPopover):
+        * UserInterface/BreakpointTreeElement.css:
+        (.item.breakpoint .status > .status-image.auto-continue):
+        (.item.breakpoint .status > .status-image.disabled):
+        * UserInterface/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement):
+        (WebInspector.BreakpointTreeElement.prototype.onenter):
+        (WebInspector.BreakpointTreeElement.prototype.onspace):
+        (WebInspector.BreakpointTreeElement.prototype._updateStatus):
+        (WebInspector.BreakpointTreeElement.prototype._breakpointLocationDidChange):
+        (WebInspector.BreakpointTreeElement.prototype._statusImageElementClicked):
+        * UserInterface/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype.close):
+        (WebInspector.SourceCodeTextEditor.prototype._breakpointInfoForBreakpoint):
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorBreakpointClicked):
+        * UserInterface/TextEditor.css:
+        (.text-editor > .CodeMirror .breakpoint-auto-continue:not(.breakpoint-disabled) .CodeMirror-linenumber::before):
+        * UserInterface/TextEditor.js:
+        (WebInspector.TextEditor.prototype._setBreakpointStylesOnLine.updateStyles):
+        (WebInspector.TextEditor.prototype._setBreakpointStylesOnLine):
+        (WebInspector.TextEditor.prototype.updateStyles):
+        (WebInspector.TextEditor.prototype._removeBreakpointFromLineAndColumn):
+        (WebInspector.TextEditor.prototype._documentMouseUp):
+
 2014-01-10  Timothy Hatcher  <timothy@apple.com>
 
         Clean up some areas of TreeOutline.

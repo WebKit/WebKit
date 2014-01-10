@@ -66,6 +66,10 @@
     border-image-source: -webkit-image-set(url(Images/Breakpoint.png) 1x, url(Images/Breakpoint@2x.png) 2x);
 }
 
+.text-editor > .CodeMirror .breakpoint-auto-continue:not(.breakpoint-disabled) .CodeMirror-linenumber::before {
+    opacity: 0.6;
+}
+
 .text-editor > .CodeMirror .breakpoint-disabled .CodeMirror-linenumber::before {
     opacity: 0.35;
 }

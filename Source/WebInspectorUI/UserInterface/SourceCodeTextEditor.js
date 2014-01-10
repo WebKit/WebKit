@@ -43,6 +43,7 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
 
     if (this._supportsDebugging) {
         WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._updateBreakpointStatus, this);
+        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._updateBreakpointStatus, this);
         WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateBreakpointStatus, this);
         WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.LocationDidChange, this._updateBreakpointLocation, this);
 
@@ -112,6 +113,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     {
         if (this._supportsDebugging) {
             WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._updateBreakpointStatus, this);
+            WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._updateBreakpointStatus, this);
             WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, this._updateBreakpointStatus, this);
             WebInspector.Breakpoint.removeEventListener(WebInspector.Breakpoint.Event.LocationDidChange, this._updateBreakpointLocation, this);
 
@@ -710,7 +712,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
     _breakpointInfoForBreakpoint: function(breakpoint)
     {
-        return {resolved: breakpoint.resolved, disabled: breakpoint.disabled};
+        return {resolved: breakpoint.resolved, disabled: breakpoint.disabled, autoContinue: breakpoint.autoContinue};
     },
 
     get _supportsDebugging()
@@ -908,7 +910,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
             this.updateBreakpointLineAndColumn(newLineInfo.lineNumber, newLineInfo.columnNumber, accurateNewLineInfo.lineNumber, accurateNewLineInfo.columnNumber);
     },
 
-    textEditorBreakpointToggled: function(textEditor, lineNumber, columnNumber, disabled)
+    textEditorBreakpointClicked: function(textEditor, lineNumber, columnNumber)
     {
         console.assert(this._supportsDebugging);
         if (!this._supportsDebugging)
@@ -919,7 +921,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         if (!breakpoint)
             return;
 
-        breakpoint.disabled = disabled;
+        breakpoint.cycleToNextMode();
     },
 
     textEditorUpdatedFormatting: function(textEditor)

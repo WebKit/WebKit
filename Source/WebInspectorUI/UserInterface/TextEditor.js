@@ -76,6 +76,7 @@ WebInspector.TextEditor.HighlightedStyleClassName = "highlighted";
 WebInspector.TextEditor.SearchResultStyleClassName = "search-result";
 WebInspector.TextEditor.HasBreakpointStyleClassName = "has-breakpoint";
 WebInspector.TextEditor.BreakpointResolvedStyleClassName = "breakpoint-resolved";
+WebInspector.TextEditor.BreakpointAutoContinueStyleClassName = "breakpoint-auto-continue";
 WebInspector.TextEditor.BreakpointDisabledStyleClassName = "breakpoint-disabled";
 WebInspector.TextEditor.MultipleBreakpointsStyleClassName = "multiple-breakpoints";
 WebInspector.TextEditor.ExecutionLineStyleClassName = "execution-line";
@@ -906,6 +907,7 @@ WebInspector.TextEditor.prototype = {
 
         var allDisabled = true;
         var allResolved = true;
+        var allAutoContinue = true;
         var multiple = Object.keys(columnBreakpoints).length > 1;
         for (var columnNumber in columnBreakpoints) {
             var breakpointInfo = columnBreakpoints[columnNumber];
@@ -913,6 +915,8 @@ WebInspector.TextEditor.prototype = {
                 allDisabled = false;
             if (!breakpointInfo.resolved)
                 allResolved = false;
+            if (!breakpointInfo.autoContinue)
+                allAutoContinue = false;
         }
 
         function updateStyles()
@@ -934,6 +938,11 @@ WebInspector.TextEditor.prototype = {
                 this._codeMirror.addLineClass(lineHandle, "wrap", WebInspector.TextEditor.BreakpointDisabledStyleClassName);
             else
                 this._codeMirror.removeLineClass(lineHandle, "wrap", WebInspector.TextEditor.BreakpointDisabledStyleClassName);
+
+            if (allAutoContinue)
+                this._codeMirror.addLineClass(lineHandle, "wrap", WebInspector.TextEditor.BreakpointAutoContinueStyleClassName);
+            else
+                this._codeMirror.removeLineClass(lineHandle, "wrap", WebInspector.TextEditor.BreakpointAutoContinueStyleClassName);
 
             if (multiple)
                 this._codeMirror.addLineClass(lineHandle, "wrap", WebInspector.TextEditor.MultipleBreakpointsStyleClassName);
@@ -975,6 +984,7 @@ WebInspector.TextEditor.prototype = {
             this._codeMirror.removeLineClass(lineHandle, "wrap", WebInspector.TextEditor.HasBreakpointStyleClassName);
             this._codeMirror.removeLineClass(lineHandle, "wrap", WebInspector.TextEditor.BreakpointResolvedStyleClassName);
             this._codeMirror.removeLineClass(lineHandle, "wrap", WebInspector.TextEditor.BreakpointDisabledStyleClassName);
+            this._codeMirror.removeLineClass(lineHandle, "wrap", WebInspector.TextEditor.BreakpointAutoContinueStyleClassName);
             this._codeMirror.removeLineClass(lineHandle, "wrap", WebInspector.TextEditor.MultipleBreakpointsStyleClassName);
         }
 
@@ -1116,7 +1126,7 @@ WebInspector.TextEditor.prototype = {
         document.removeEventListener("mousemove", this._documentMouseMovedEventListener, true);
         document.removeEventListener("mouseup", this._documentMouseUpEventListener, true);
 
-        const delegateImplementsBreakpointToggled = this._delegate && typeof this._delegate.textEditorBreakpointToggled === "function";
+        const delegateImplementsBreakpointClicked = this._delegate && typeof this._delegate.textEditorBreakpointClicked === "function";
         const delegateImplementsBreakpointRemoved = this._delegate && typeof this._delegate.textEditorBreakpointRemoved === "function";
         const delegateImplementsBreakpointMoved = this._delegate && typeof this._delegate.textEditorBreakpointMoved === "function";
 
@@ -1152,11 +1162,8 @@ WebInspector.TextEditor.prototype = {
             // Toggle the disabled state of the breakpoint.
             console.assert(this._lineNumberWithMousedDownBreakpoint in this._breakpoints);
             console.assert(this._columnNumberWithMousedDownBreakpoint in this._breakpoints[this._lineNumberWithMousedDownBreakpoint]);
-            if (this._lineNumberWithMousedDownBreakpoint in this._breakpoints && this._columnNumberWithMousedDownBreakpoint in this._breakpoints[this._lineNumberWithMousedDownBreakpoint] && delegateImplementsBreakpointToggled) {
-                var disabled = this._codeMirror.toggleLineClass(this._lineNumberWithMousedDownBreakpoint, "wrap", WebInspector.TextEditor.BreakpointDisabledStyleClassName);
-                this._breakpoints[this._lineNumberWithMousedDownBreakpoint][this._columnNumberWithMousedDownBreakpoint].disabled = disabled;
-                this._delegate.textEditorBreakpointToggled(this, this._lineNumberWithMousedDownBreakpoint, this._columnNumberWithMousedDownBreakpoint, disabled);
-            }
+            if (this._lineNumberWithMousedDownBreakpoint in this._breakpoints && this._columnNumberWithMousedDownBreakpoint in this._breakpoints[this._lineNumberWithMousedDownBreakpoint] && delegateImplementsBreakpointClicked)
+                this._delegate.textEditorBreakpointClicked(this, this._lineNumberWithMousedDownBreakpoint, this._columnNumberWithMousedDownBreakpoint);
         }
 
         delete this._documentMouseMovedEventListener;

@@ -34,8 +34,12 @@
     content: url(Images/BreakpointButton.svg);
 }
 
+.item.breakpoint .status > .status-image.auto-continue {
+    opacity: 0.6;
+}
+
 .item.breakpoint .status > .status-image.disabled {
-    opacity: 0.45;
+    opacity: 0.35;
 }
 
 .item.breakpoint .subtitle.formatted-location {
