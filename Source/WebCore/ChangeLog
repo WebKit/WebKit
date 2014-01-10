@@ -1,3 +1,34 @@
+2014-01-10  Anders Carlsson  <andersca@apple.com>
+
+        CTTE in AudioContext::AutoLocker
+        https://bugs.webkit.org/show_bug.cgi?id=126758
+
+        Reviewed by Antti Koivisto.
+
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::connect):
+        (WebCore::AudioBasicInspectorNode::disconnect):
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::refNode):
+        (WebCore::AudioContext::deleteMarkedNodes):
+        (WebCore::AudioContext::removeMarkedSummingJunction):
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::AudioContext::AutoLocker::AutoLocker):
+        (WebCore::AudioContext::AutoLocker::~AutoLocker):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::connect):
+        (WebCore::AudioNode::disconnect):
+        (WebCore::AudioNode::setChannelCount):
+        (WebCore::AudioNode::setChannelCountMode):
+        (WebCore::AudioNode::setChannelInterpretation):
+        (WebCore::AudioNode::enableOutputsIfNecessary):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::setOversample):
+
 2014-01-10  Antti Koivisto  <antti@apple.com>
 
         Use element iterators more

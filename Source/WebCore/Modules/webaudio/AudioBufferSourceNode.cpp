@@ -340,7 +340,7 @@ bool AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
     ASSERT(isMainThread());
     
     // The context must be locked since changing the buffer can re-configure the number of channels that are output.
-    AudioContext::AutoLocker contextLocker(context());
+    AudioContext::AutoLocker contextLocker(*context());
     
     // This synchronizes with process().
     MutexLocker processLocker(m_processLock);

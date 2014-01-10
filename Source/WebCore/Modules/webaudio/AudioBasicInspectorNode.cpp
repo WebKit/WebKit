@@ -55,7 +55,7 @@ void AudioBasicInspectorNode::connect(AudioNode* destination, unsigned outputInd
 {
     ASSERT(isMainThread());
 
-    AudioContext::AutoLocker locker(context());
+    AudioContext::AutoLocker locker(*context());
 
     AudioNode::connect(destination, outputIndex, inputIndex, ec);
     updatePullStatus();
@@ -65,7 +65,7 @@ void AudioBasicInspectorNode::disconnect(unsigned outputIndex, ExceptionCode& ec
 {
     ASSERT(isMainThread());
 
-    AudioContext::AutoLocker locker(context());
+    AudioContext::AutoLocker locker(*context());
 
     AudioNode::disconnect(outputIndex, ec);
     updatePullStatus();

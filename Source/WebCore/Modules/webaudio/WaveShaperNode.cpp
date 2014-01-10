@@ -58,7 +58,7 @@ void WaveShaperNode::setOversample(const String& type, ExceptionCode& ec)
     ASSERT(isMainThread());
 
     // Synchronize with any graph changes or changes to channel configuration.
-    AudioContext::AutoLocker contextLocker(context());
+    AudioContext::AutoLocker contextLocker(*context());
 
     if (type == "none")
         waveShaperProcessor()->setOversample(WaveShaperProcessor::OverSampleNone);

@@ -125,7 +125,7 @@ AudioNodeOutput* AudioNode::output(unsigned i)
 void AudioNode::connect(AudioNode* destination, unsigned outputIndex, unsigned inputIndex, ExceptionCode& ec)
 {
     ASSERT(isMainThread()); 
-    AudioContext::AutoLocker locker(context());
+    AudioContext::AutoLocker locker(*context());
 
     if (!destination) {
         ec = SYNTAX_ERR;
@@ -159,7 +159,7 @@ void AudioNode::connect(AudioNode* destination, unsigned outputIndex, unsigned i
 void AudioNode::connect(AudioParam* param, unsigned outputIndex, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
-    AudioContext::AutoLocker locker(context());
+    AudioContext::AutoLocker locker(*context());
 
     if (!param) {
         ec = SYNTAX_ERR;
@@ -183,7 +183,7 @@ void AudioNode::connect(AudioParam* param, unsigned outputIndex, ExceptionCode& 
 void AudioNode::disconnect(unsigned outputIndex, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
-    AudioContext::AutoLocker locker(context());
+    AudioContext::AutoLocker locker(*context());
 
     // Sanity check input and output indices.
     if (outputIndex >= numberOfOutputs()) {
@@ -203,7 +203,7 @@ unsigned long AudioNode::channelCount()
 void AudioNode::setChannelCount(unsigned long channelCount, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
-    AudioContext::AutoLocker locker(context());
+    AudioContext::AutoLocker locker(*context());
 
     if (channelCount > 0 && channelCount <= AudioContext::maxNumberOfChannels()) {
         if (m_channelCount != channelCount) {
@@ -232,7 +232,7 @@ String AudioNode::channelCountMode()
 void AudioNode::setChannelCountMode(const String& mode, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
-    AudioContext::AutoLocker locker(context());
+    AudioContext::AutoLocker locker(*context());
 
     ChannelCountMode oldMode = m_channelCountMode;
 
@@ -264,7 +264,7 @@ String AudioNode::channelInterpretation()
 void AudioNode::setChannelInterpretation(const String& interpretation, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
-    AudioContext::AutoLocker locker(context());
+    AudioContext::AutoLocker locker(*context());
 
     if (interpretation == "speakers")
         m_channelInterpretation = AudioBus::Speakers;
@@ -370,7 +370,7 @@ void AudioNode::enableOutputsIfNecessary()
 {
     if (m_isDisabled && m_connectionRefCount > 0) {
         ASSERT(isMainThread());
-        AudioContext::AutoLocker locker(context());
+        AudioContext::AutoLocker locker(*context());
 
         m_isDisabled = false;
         for (unsigned i = 0; i < m_outputs.size(); ++i)

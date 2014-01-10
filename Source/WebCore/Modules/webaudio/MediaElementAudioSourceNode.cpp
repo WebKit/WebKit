@@ -92,7 +92,7 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
 
         {
             // The context must be locked when changing the number of output channels.
-            AudioContext::AutoLocker contextLocker(context());
+            AudioContext::AutoLocker contextLocker(*context());
 
             // Do any necesssary re-configuration to the output's number of channels.
             output(0)->setNumberOfChannels(numberOfChannels);
