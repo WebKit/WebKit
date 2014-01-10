@@ -156,23 +156,6 @@
         "Editing": {
             "filename": r"Source/WebCore/editing/",
         },
-        "BlackBerry": {
-            "filename": r"Source/WebKit/blackberry/"
-                        r"|Source/WebCore/page/blackberry"
-                        r"|Source/WebCore/history/blackberry"
-                        r"|Source/WebCore/plugins/blackberry"
-                        r"|Source/WebCore/editing/blackberry"
-                        r"|Source/WebCore/Resources/blackberry"
-                        r"|Source/WebCore/platform/image-decoders/blackberry"
-                        r"|Source/WebCore/platform/blackberry"
-                        r"|Source/WebCore/platform/text/blackberry"
-                        r"|Source/WebCore/platform/network/blackberry"
-                        r"|Source/WebCore/platform/graphics/blackberry"
-                        r"|Source/WTF/wtf/blackberry"
-                        r"|ManualTests/blackberry"
-                        r"|Tools/DumpRenderTree/blackberry"
-                        r"|LayoutTests/platform/blackberry",
-        },
         "NetworkInfo": {
             "filename": r"Source/WebCore/Modules/networkinfo",
         },
@@ -202,7 +185,6 @@
         "TouchAdjustment": {
             "filename": r"Source/WebCore/page/TouchAdjustment.*"
                         r"|LayoutTests/touchadjustment"
-                        r"|Source/WebKit/blackberry/WebKitSupport/FatFingers.*",
         },
         "SVG": {
             "filename": r"Source/WebCore/svg"

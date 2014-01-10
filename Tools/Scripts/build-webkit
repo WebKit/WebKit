@@ -127,7 +127,6 @@ Usage: $programName [options] [options to pass to build system]
   --simulator                       Use the current iphonesimulator SDK (iOS only)
   --coverage                        Enable Code Coverage support (Mac only)
 
-  --blackberry                      Build the BlackBerry port on Mac/Linux
   --efl                             Build the EFL port
   --nix                             Build the Nix port
   --gtk                             Build the GTK+ port
@@ -136,7 +135,7 @@ Usage: $programName [options] [options to pass to build system]
 
   --inspector-frontend              Copy changes to the inspector front-end files to the build directory
 
-  --prefix=<path>                   Set installation prefix to the given path (Gtk/Efl/BlackBerry only)
+  --prefix=<path>                   Set installation prefix to the given path (Gtk/Efl only)
   --makeargs=<arguments>            Optional Makefile flags
   --cmakeargs=<arguments>           Optional CMake flags (e.g. --cmakeargs="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
 
@@ -306,18 +305,6 @@ if (isEfl() || isGtkCMake()) {
 
 if (isWinCE()) {
     buildCMakeProjectOrExit($clean, "WinCE", $prefixPath, $makeArgs, (cmakeBasedPortArguments(), cMakeArgsFromFeatures()), $cmakeArgs);
-}
-
-if (isBlackBerry()) {
-    my $numberOfJobs;
-    if ($ENV{"USE_ICECC"}) {
-        $numberOfJobs = 50; # 50 is the number we choose for internal development
-    } else {
-        $numberOfJobs = numberOfCPUs();
-    }
-    $makeArgs .= ($makeArgs ? " " : "") . "-j" . $numberOfJobs if $makeArgs !~ /-j\s*\d+/;
-    $prefixPath = $ENV{"STAGE_DIR"} unless $prefixPath;
-    buildCMakeProjectOrExit($clean, "BlackBerry", $prefixPath, $makeArgs, (cmakeBasedPortArguments(), cMakeArgsFromFeatures()), $cmakeArgs);
 }
 
 # Build, and abort if the build fails.

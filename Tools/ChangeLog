@@ -1,3 +1,26 @@
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove knowledge of Blackberry from build scripts
+        https://bugs.webkit.org/show_bug.cgi?id=126766
+
+        Reviewed by Anders Carlsson.
+        
+        Remove isBlackBerry() and references to it, and rmeove
+        blackberry-related stuff from the watchlist.
+
+        * Scripts/build-webkit:
+        * Scripts/webkit-build-directory:
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+        (argumentsForConfiguration):
+        (builtDylibPathForName):
+        (isAppleWebKit):
+        (buildCMakeProjectOrExit):
+        (cmakeBasedPortArguments):
+        (cmakeBasedPortName):
+        * Scripts/webkitperl/FeatureList.pm:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2014-01-10  Daniel Bates  <dabates@apple.com>
 
         [iOS] Fix up simulator build and enable default features
