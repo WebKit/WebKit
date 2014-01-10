@@ -1,3 +1,14 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [CSS Blending] Log blending as a layer creation reason in the WI
+        https://bugs.webkit.org/show_bug.cgi?id=126159
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/LayerTreeSidebarPanel.js:
+        (WebInspector.LayerTreeSidebarPanel.prototype._populateListOfCompositingReasons):
+
 2014-01-10  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Add missing function stub in InspectorFrontendHostStub.js

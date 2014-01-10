@@ -69,7 +69,8 @@
                 { "name": "blendingWithCompositedDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element with CSS blending applied and composited descendants." },
                 { "name": "perspective", "type": "boolean", "optional": true, "description": "Composition due to association with an element with perspective applied." },
                 { "name": "preserve3D", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"transform-style: preserve-3d\" style." },
-                { "name": "root", "type": "boolean", "optional": true, "description": "Composition due to association with the root element." }
+                { "name": "root", "type": "boolean", "optional": true, "description": "Composition due to association with the root element." },
+                { "name": "blending", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"blend-mode\" style." }
             ]
         }
     ],

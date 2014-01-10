@@ -428,6 +428,8 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
             addReason(WebInspector.UIString("Element has “transform-style: preserve-3d” style"));
         if (compositingReasons.root)
             addReason(WebInspector.UIString("Element is the root element"));
+        if (compositingReasons.blending)
+            addReason(WebInspector.UIString("Element has “blend-mode” style"));
     }
 };
 
