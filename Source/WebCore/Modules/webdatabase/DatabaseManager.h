@@ -31,6 +31,7 @@
 #include "DatabaseBasicTypes.h"
 #include "DatabaseDetails.h"
 #include "DatabaseError.h"
+#include <mutex>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
