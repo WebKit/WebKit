@@ -100,9 +100,9 @@ namespace WebCore {
             , m_nsRequest(nsRequest)
         {
         }
+#endif
 
         void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest&);
-#endif
 
 #if PLATFORM(MAC)
         void applyWebArchiveHackForMail();

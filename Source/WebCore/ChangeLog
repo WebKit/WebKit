@@ -1,5 +1,13 @@
 2014-01-09  Daniel Bates  <dabates@apple.com>
 
+        Another attempt to fix the Windows build following <http://trac.webkit.org/changeset/161589>
+        (https://bugs.webkit.org/show_bug.cgi?id=126654)
+
+        * platform/network/cf/ResourceRequest.h: Always declare ResourceRequest::updateFromDelegatePreservingOldHTTPBody()
+        instead of only declaring it when building without CFNetwork.
+
+2014-01-09  Daniel Bates  <dabates@apple.com>
+
         Attempt to fix the Windows build following <http://trac.webkit.org/changeset/161589>
         (https://bugs.webkit.org/show_bug.cgi?id=126654)
 
