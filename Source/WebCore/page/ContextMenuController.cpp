@@ -172,17 +172,18 @@ void ContextMenuController::showContextMenu(Event* event)
 
 static void openNewWindow(const URL& urlToLoad, Frame* frame)
 {
-    if (Page* oldPage = frame->page()) {
-        FrameLoadRequest request(frame->document()->securityOrigin(), ResourceRequest(urlToLoad, frame->loader().outgoingReferrer()));
-        Page* newPage = oldPage;
-        if (frame->settings().supportsMultipleWindows()) {
-            newPage = oldPage->chrome().createWindow(frame, request, WindowFeatures(), NavigationAction(request.resourceRequest()));
-            if (!newPage)
-                return;
-            newPage->chrome().show();
-        }
-        newPage->mainFrame().loader().loadFrameRequest(request, false, false, 0, 0, MaybeSendReferrer);
-    }
+    Page* oldPage = frame->page();
+    if (!oldPage)
+        return;
+    
+    FrameLoadRequest request(frame->document()->securityOrigin(), ResourceRequest(urlToLoad, frame->loader().outgoingReferrer()));
+    Page* newPage = oldPage;
+
+    newPage = oldPage->chrome().createWindow(frame, request, WindowFeatures(), NavigationAction(request.resourceRequest()));
+    if (!newPage)
+        return;
+    newPage->chrome().show();
+    newPage->mainFrame().loader().loadFrameRequest(request, false, false, 0, 0, MaybeSendReferrer);
 }
 
 #if PLATFORM(GTK)

@@ -50,7 +50,6 @@ localStorageEnabled initial=false
 allowUniversalAccessFromFileURLs initial=true
 allowFileAccessFromFileURLs initial=true
 javaScriptCanOpenWindowsAutomatically initial=false
-supportsMultipleWindows initial=true
 javaScriptCanAccessClipboard initial=false
 shouldPrintBackgrounds initial=false
 usesDashboardBackwardCompatibilityMode initial=false, conditional=DASHBOARD_SUPPORT

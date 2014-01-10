@@ -1,1 +1,0 @@
-FAIL: Popup opened in a new window
