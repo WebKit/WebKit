@@ -1,3 +1,15 @@
+2014-01-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Fix a build break on EFL debug build
+        https://bugs.webkit.org/show_bug.cgi?id=126735
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, just build fix.
+
+        * platform/ThreadTimers.cpp:
+        (WebCore::ThreadTimers::sharedTimerFiredInternal):  Add parentheses.
+
 2014-01-09  Anders Carlsson  <andersca@apple.com>
 
         Remove unused FrameLoader member functions

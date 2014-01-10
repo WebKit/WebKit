@@ -109,7 +109,7 @@ void ThreadTimers::sharedTimerFired()
 
 void ThreadTimers::sharedTimerFiredInternal()
 {
-    ASSERT(isMainThread() || !isWebThread() && !isUIThread());
+    ASSERT(isMainThread() || (!isWebThread() && !isUIThread()));
     // Do a re-entrancy check.
     if (m_firingTimers)
         return;
