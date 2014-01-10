@@ -85,7 +85,6 @@ void TileGrid::dropTilesOutsideRect(const IntRect& keepRect)
 void TileGrid::dropTilesBetweenRects(const IntRect& dropRect, const IntRect& keepRect)
 {
     Vector<TileIndex> toRemove;
-    TileMap::iterator end = m_tiles.end();
     for (auto tile : m_tiles) {
         TileIndex& index = tile.key;
         IntRect tileRect = tile.value->rect();

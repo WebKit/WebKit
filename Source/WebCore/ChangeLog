@@ -1,3 +1,17 @@
+2014-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Remove unused variable from TileGrid::dropTilesBetweenRects()
+
+        Fixes the following build error:
+
+            WebCore/platform/ios/TileGrid.mm:88:23: error: unused variable 'end' [-Werror,-Wunused-variable]
+                TileMap::iterator end = m_tiles.end();
+                                  ^
+
+        * platform/ios/TileGrid.mm:
+        (WebCore::TileGrid::dropTilesBetweenRects): Remove unused
+        variable now that the for loop uses an auto iterator.
+
 2014-01-10  Dean Jackson  <dino@apple.com>
 
         Implement OES texture half float linear
