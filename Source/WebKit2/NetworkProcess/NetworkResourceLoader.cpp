@@ -336,6 +336,14 @@ void NetworkResourceLoader::didCancelAuthenticationChallenge(ResourceHandle* han
     notImplemented();
 }
 
+void NetworkResourceLoader::receivedCancellation(ResourceHandle* handle, const AuthenticationChallenge& challenge)
+{
+    ASSERT_UNUSED(handle, handle == m_handle);
+
+    m_handle->cancel();
+    didFail(m_handle.get(), cancelledError(m_request));
+}
+
 IPC::Connection* NetworkResourceLoader::messageSenderConnection()
 {
     return connectionToWebProcess()->connection();

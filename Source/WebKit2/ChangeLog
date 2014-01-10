@@ -1,3 +1,18 @@
+2014-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Implement NetworkResourceLoader::receivedCancellation
+        https://bugs.webkit.org/show_bug.cgi?id=126129
+
+        Reviewed Alexey Proskuryakov.
+
+        Implement ResourceHandleClient::receivedCancellation() in the
+        network process to cancel the load when cancellation is received
+        from the authentication manager like the web process does.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::receivedCancellation): Cancel the load.
+        * NetworkProcess/NetworkResourceLoader.h:
+
 2014-01-09  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Add APIs for setting and getting the default text encoding name
