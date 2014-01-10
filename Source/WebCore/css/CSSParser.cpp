@@ -9888,15 +9888,6 @@ bool CSSParser::cssGridLayoutEnabled() const
 }
 
 #if ENABLE(CSS_REGIONS)
-bool CSSParser::parseFlowThread(const String& flowName)
-{
-    setupParser("@-webkit-decls{-webkit-flow-into:", flowName, "}");
-    cssyyparse(this);
-
-    m_rule = 0;
-
-    return ((m_parsedProperties.size() == 1) && (m_parsedProperties.first().id() == CSSPropertyWebkitFlowInto));
-}
 
 // none | <ident>
 bool CSSParser::parseFlowThread(CSSPropertyID propId, bool important)
