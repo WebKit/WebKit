@@ -66,6 +66,7 @@ public:
     bool hasVideo() const;
 
     MediaTime seekToTime(MediaTime, MediaTime negativeThreshold, MediaTime positiveThreshold);
+    IntSize naturalSize() const;
 
 private:
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC*);

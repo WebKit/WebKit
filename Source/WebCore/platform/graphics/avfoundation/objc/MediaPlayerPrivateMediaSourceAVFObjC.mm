@@ -303,8 +303,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setMuted(bool muted)
 
 IntSize MediaPlayerPrivateMediaSourceAVFObjC::naturalSize() const
 {
-    // FIXME(125156): Report the intrinsic size of the enabled video track.
-    return IntSize();
+    return m_mediaSourcePrivate->naturalSize();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasVideo() const
@@ -518,6 +517,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
 {
     m_player->rateChanged();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::sizeChanged()
+{
+    m_player->sizeChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)

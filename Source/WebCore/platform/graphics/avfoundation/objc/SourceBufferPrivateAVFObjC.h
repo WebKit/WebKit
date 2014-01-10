@@ -79,6 +79,7 @@ public:
 
     void seekToTime(MediaTime);
     MediaTime fastSeekTimeForMediaTime(MediaTime, MediaTime negativeThreshold, MediaTime positiveThreshold);
+    IntSize naturalSize();
 
 private:
     explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC*);
@@ -104,8 +105,8 @@ private:
     void didBecomeReadyForMoreSamples(int trackID);
     void destroyRenderers();
 
-    Vector<RefPtr<VideoTrackPrivate>> m_videoTracks;
-    Vector<RefPtr<AudioTrackPrivate>> m_audioTracks;
+    Vector<RefPtr<VideoTrackPrivateMediaSourceAVFObjC>> m_videoTracks;
+    Vector<RefPtr<AudioTrackPrivateMediaSourceAVFObjC>> m_audioTracks;
 
     RetainPtr<AVStreamDataParser> m_parser;
     RetainPtr<AVAsset> m_asset;

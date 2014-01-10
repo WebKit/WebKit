@@ -23,13 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "VideoTrackPrivateMediaSourceAVFObjC.h"
+#import "config.h"
+#import "VideoTrackPrivateMediaSourceAVFObjC.h"
 
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
 
-#include "AVTrackPrivateAVFObjCImpl.h"
-#include "SourceBufferPrivateAVFObjC.h"
+#import "AVTrackPrivateAVFObjCImpl.h"
+#import "SourceBufferPrivateAVFObjC.h"
+#import <AVFoundation/AVAssetTrack.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ void VideoTrackPrivateMediaSourceAVFObjC::setAssetTrack(AVAssetTrack *track)
     resetPropertiesFromTrack();
 }
 
-AVAssetTrack* VideoTrackPrivateMediaSourceAVFObjC::assetTrack()
+AVAssetTrack* VideoTrackPrivateMediaSourceAVFObjC::assetTrack() const
 {
     return m_impl->assetTrack();
 }
@@ -76,6 +77,11 @@ void VideoTrackPrivateMediaSourceAVFObjC::setSelected(bool selected)
 
     m_selected = selected;
     m_parent->trackDidChangeEnabled(this);
+}
+
+IntSize VideoTrackPrivateMediaSourceAVFObjC::naturalSize() const
+{
+    return IntSize([assetTrack() naturalSize]);
 }
 
 }

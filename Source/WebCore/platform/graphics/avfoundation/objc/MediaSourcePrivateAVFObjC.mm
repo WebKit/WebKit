@@ -174,6 +174,16 @@ MediaTime MediaSourcePrivateAVFObjC::seekToTime(MediaTime targetTime, MediaTime 
     return seekTime;
 }
 
+IntSize MediaSourcePrivateAVFObjC::naturalSize() const
+{
+    IntSize result;
+
+    for (auto* sourceBuffer : m_activeSourceBuffers)
+        result = result.expandedTo(sourceBuffer->naturalSize());
+
+    return result;
+}
+
 }
 
 #endif // ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)

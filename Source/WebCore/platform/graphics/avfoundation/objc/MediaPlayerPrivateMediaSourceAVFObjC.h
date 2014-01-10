@@ -69,6 +69,7 @@ public:
     void durationChanged();
 
     void effectiveRateChanged();
+    void sizeChanged();
 
 private:
     // MediaPlayerPrivateInterface

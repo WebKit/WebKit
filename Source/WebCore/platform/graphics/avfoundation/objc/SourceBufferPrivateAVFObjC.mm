@@ -319,24 +319,34 @@ void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 
     m_asset = asset;
 
+    m_videoTracks.clear();
+    m_audioTracks.clear();
+
     SourceBufferPrivateClient::InitializationSegment segment;
     segment.duration = toMediaTime([m_asset duration]);
 
     for (AVAssetTrack* track in [m_asset tracks]) {
         if ([track hasMediaCharacteristic:AVMediaCharacteristicVisual]) {
             SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
-            info.track = VideoTrackPrivateMediaSourceAVFObjC::create(track, this);
+            RefPtr<VideoTrackPrivateMediaSourceAVFObjC> videoTrack = VideoTrackPrivateMediaSourceAVFObjC::create(track, this);
+            info.track = videoTrack;
+            m_videoTracks.append(videoTrack);
             info.description = MediaDescriptionAVFObjC::create(track);
             segment.videoTracks.append(info);
         } else if ([track hasMediaCharacteristic:AVMediaCharacteristicAudible]) {
             SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
-            info.track = AudioTrackPrivateMediaSourceAVFObjC::create(track, this);
+            RefPtr<AudioTrackPrivateMediaSourceAVFObjC> audioTrack = AudioTrackPrivateMediaSourceAVFObjC::create(track, this);
+            info.track = audioTrack;
+            m_audioTracks.append(audioTrack);
             info.description = MediaDescriptionAVFObjC::create(track);
             segment.audioTracks.append(info);
         }
 
         // FIXME(125161): Add TextTrack support
     }
+
+    if (!m_videoTracks.isEmpty())
+        m_mediaSource->player()->sizeChanged();
 
     if (m_client)
         m_client->sourceBufferPrivateDidReceiveInitializationSegment(this, segment);
@@ -631,6 +641,16 @@ void SourceBufferPrivateAVFObjC::seekToTime(MediaTime time)
 {
     if (m_client)
         m_client->sourceBufferPrivateSeekToTime(this, time);
+}
+
+IntSize SourceBufferPrivateAVFObjC::naturalSize()
+{
+    for (auto videoTrack : m_videoTracks) {
+        if (videoTrack->selected())
+            return videoTrack->naturalSize();
+    }
+
+    return IntSize();
 }
 
 void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(int trackID)

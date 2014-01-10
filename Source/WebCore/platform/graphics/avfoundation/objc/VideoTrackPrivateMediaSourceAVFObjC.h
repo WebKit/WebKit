@@ -26,6 +26,7 @@
 #ifndef VideoTrackPrivateMediaSourceAVFObjC_h
 #define VideoTrackPrivateMediaSourceAVFObjC_h
 
+#include "IntSize.h"
 #include "VideoTrackPrivateAVF.h"
 
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
@@ -50,9 +51,11 @@ public:
     virtual void setSelected(bool) OVERRIDE;
 
     void setAssetTrack(AVAssetTrack*);
-    AVAssetTrack* assetTrack();
+    AVAssetTrack* assetTrack() const;
 
     int trackID() { return m_trackID; }
+
+    IntSize naturalSize() const;
 
 private:
     explicit VideoTrackPrivateMediaSourceAVFObjC(AVAssetTrack*, SourceBufferPrivateAVFObjC* parent);
