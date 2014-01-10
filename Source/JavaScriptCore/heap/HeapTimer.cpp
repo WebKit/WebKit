@@ -100,30 +100,6 @@ void HeapTimer::timerDidFire(CFRunLoopTimerRef timer, void* context)
     apiLock->unlock();
 }
 
-#elif PLATFORM(BLACKBERRY)
-
-HeapTimer::HeapTimer(VM* vm)
-    : m_vm(vm)
-    , m_timer(this, &HeapTimer::timerDidFire)
-{
-    // FIXME: Implement HeapTimer for other threads.
-    if (WTF::isMainThread() && !m_timer.tryCreateClient())
-        CRASH();
-}
-
-HeapTimer::~HeapTimer()
-{
-}
-
-void HeapTimer::timerDidFire()
-{
-    doWork();
-}
-
-void HeapTimer::invalidate()
-{
-}
-
 #elif PLATFORM(EFL)
 
 HeapTimer::HeapTimer(VM* vm)

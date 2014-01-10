@@ -46,13 +46,11 @@ public:
 protected:
 #if USE(CF)
     JS_EXPORT_PRIVATE IncrementalSweeper(Heap*, CFRunLoopRef);
-#elif PLATFORM(BLACKBERRY)
-    IncrementalSweeper(Heap*);
 #else
     IncrementalSweeper(VM*);
 #endif
 
-#if USE(CF) || PLATFORM(BLACKBERRY)
+#if USE(CF)
 private:
     void doSweep(double startTime);
     void scheduleTimer();
