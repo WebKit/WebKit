@@ -93,7 +93,7 @@
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-mini-142", "apple-mini-211"]
                     },
-                    { "name": "Apple Mavericks LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "mavericks-cloop-debug",
+                    { "name": "Apple Mavericks CLOOP (BuildAndTest)", "type": "BuildAndTestCLOOP", "builddir": "mavericks-cloop-debug",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-mini-180"]
                     },
@@ -195,7 +195,7 @@
                       "builderNames": ["Apple MountainLion Release (Build)", "Apple MountainLion Debug (Build)", "Apple MountainLion Release (32-bit Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mavericks", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple Mavericks Release (Build)", "Apple Mavericks Debug (Build)", "Apple Mavericks LLINT CLoop (BuildAndTest)"]
+                      "builderNames": ["Apple Mavericks Release (Build)", "Apple Mavericks Debug (Build)", "Apple Mavericks CLOOP (BuildAndTest)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win Release (Build)", "Apple Win Debug (Build)"]

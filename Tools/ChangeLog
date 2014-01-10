@@ -1,17 +1,3 @@
-2014-01-09  Lucas Forschler  <lforschler@apple.com>
-
-        Update the LLINT CLoop bot infrastructure.  
-        This will require a build master restart.
-        
-        Unreviewed. 
-        
-        * BuildSlaveSupport/build.webkit.org-config/config.json:
-        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
-        (CompileLLINTCLoop):
-        (RunLLINTCloopTests):
-        (BuildAndTestLLINTCLoopFactory):
-        (BuildAndTestLLINTCLoopFactory.__init__):
-
 2014-01-09  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Promote WKBackForwardList{,Item}.h to public
