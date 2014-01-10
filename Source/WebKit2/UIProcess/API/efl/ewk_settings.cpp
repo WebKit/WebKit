@@ -174,6 +174,24 @@ Eina_Bool ewk_settings_encoding_detector_enabled_set(Ewk_Settings* settings, Ein
     return true;
 }
 
+const char* ewk_settings_default_text_encoding_name_get(const Ewk_Settings* settings)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, 0);
+
+    WKEinaSharedString name = settings->preferences()->defaultTextEncodingName().utf8().data();
+
+    return name;
+}
+
+Eina_Bool ewk_settings_default_text_encoding_name_set(Ewk_Settings* settings, const char* encoding)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    settings->preferences()->setDefaultTextEncodingName(String::fromUTF8(encoding));
+
+    return true;
+}
+
 Eina_Bool ewk_settings_encoding_detector_enabled_get(const Ewk_Settings* settings)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);

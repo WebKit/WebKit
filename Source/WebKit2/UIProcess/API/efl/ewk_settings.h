@@ -234,7 +234,7 @@ EAPI Eina_Bool ewk_settings_dns_prefetching_enabled_get(const Ewk_Settings *sett
 EAPI Eina_Bool ewk_settings_encoding_detector_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
 
 /**
-* Returns whether the encoding detector is enabled or not.
+ * Returns whether the encoding detector is enabled or not.
  *
  * @param settings settings object to query whether encoding detector is enabled
  *
@@ -242,6 +242,27 @@ EAPI Eina_Bool ewk_settings_encoding_detector_enabled_set(Ewk_Settings *settings
  *         @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool ewk_settings_encoding_detector_enabled_get(const Ewk_Settings *settings);
+
+/**
+ * Sets the default text encoding name.
+ *
+ * @param settings settings object to set default text encoding name
+ * @param encoding default text encoding name
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_settings_default_text_encoding_name_set(Ewk_Settings *settings, const char *encoding);
+
+/**
+ * Gets the default text encoding name.
+ *
+ * The returned string is guaranteed to be stringshared.
+ *
+ * @param settings settings object to query default text encoding name
+ *
+ * @return default text encoding name
+ */
+EAPI const char *ewk_settings_default_text_encoding_name_get(const Ewk_Settings *settings);
 
 /**
  * Sets preferred minimum contents width which is used as default minimum contents width

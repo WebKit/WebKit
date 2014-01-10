@@ -1,3 +1,19 @@
+2014-01-09  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Add APIs for setting and getting the default text encoding name
+        https://bugs.webkit.org/show_bug.cgi?id=126736
+
+        Reviewed by Gyuyoung Kim.
+
+        Add APIs to set and get the default text encoding name.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_default_text_encoding_name_get):
+        (ewk_settings_default_text_encoding_name_set):
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+
 2014-01-09  Simon Fraser  <simon.fraser@apple.com>
 
         Enable async scrolling for iOS

@@ -169,6 +169,20 @@ TEST_F(EWK2UnitTestBase, ewk_settings_encoding_detector_enabled)
     ASSERT_FALSE(ewk_settings_encoding_detector_enabled_get(settings));
 }
 
+TEST_F(EWK2UnitTestBase, ewk_settings_default_text_encoding_name)
+{
+    Ewk_Settings* settings = ewk_view_settings_get(webView());
+
+    // The default encoding name is ISO-8859-1.
+    ASSERT_STREQ("ISO-8859-1", ewk_settings_default_text_encoding_name_get(settings));
+
+    ASSERT_TRUE(ewk_settings_default_text_encoding_name_set(settings, "UTF-8"));
+    ASSERT_STREQ("UTF-8", ewk_settings_default_text_encoding_name_get(settings));
+
+    ASSERT_TRUE(ewk_settings_default_text_encoding_name_set(settings, "ISO-8859-1"));
+    ASSERT_STREQ("ISO-8859-1", ewk_settings_default_text_encoding_name_get(settings));
+}
+
 TEST_F(EWK2UnitTestBase, ewk_settings_preferred_minimum_contents_width)
 {
     Ewk_Settings* settings = ewk_view_settings_get(webView());
