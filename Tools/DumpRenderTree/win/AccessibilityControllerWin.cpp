@@ -389,3 +389,9 @@ void AccessibilityController::winAddNotificationListener(PlatformUIElement eleme
     JSValueProtect(frame->globalContext(), functionCallback);
     m_notificationListeners.add(element, functionCallback);
 }
+
+JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("win"));
+    return platformName;
+}

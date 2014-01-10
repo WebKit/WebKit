@@ -28,6 +28,7 @@
 
 #include "AccessibilityUIElement.h"
 #include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <string>
 #include <wtf/HashMap.h>
 #include <wtf/Platform.h>
@@ -62,6 +63,8 @@ public:
     // Global notification listener, captures notifications on any object.
     bool addNotificationListener(JSObjectRef functionCallback);
     void removeNotificationListener();
+
+    JSRetainPtr<JSStringRef> platformName() const;
 
 #if PLATFORM(WIN)
     // Helper methods so this class can add the listeners on behalf of AccessibilityUIElement.

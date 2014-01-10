@@ -78,10 +78,4 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
     return JSStringCreateWithUTF8CString(testURI.get());
 }
 
-JSRetainPtr<JSStringRef> TestRunner::platformName()
-{
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("gtk"));
-    return platformName;
-}
-
 } // namespace WTR

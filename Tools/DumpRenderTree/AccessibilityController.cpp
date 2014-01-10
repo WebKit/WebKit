@@ -130,6 +130,15 @@ static JSValueRef removeNotificationListenerCallback(JSContextRef context, JSObj
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef getPlatformNameCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
+    JSRetainPtr<JSStringRef> platformName(controller->platformName());
+    if (!platformName.get())
+        return JSValueMakeUndefined(context);
+    return JSValueMakeString(context, platformName.get());
+}
+
 JSClassRef AccessibilityController::getJSClass()
 {
     static JSStaticFunction staticFunctions[] = {
@@ -147,6 +156,7 @@ JSClassRef AccessibilityController::getJSClass()
     static JSStaticValue staticValues[] = {
         { "focusedElement", getFocusedElementCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "rootElement", getRootElementCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "platformName", getPlatformNameCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
 

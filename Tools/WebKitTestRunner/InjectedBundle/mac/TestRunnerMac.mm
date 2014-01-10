@@ -60,11 +60,5 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
     return JSStringRetain(url); // Do nothing on mac.
 }
-    
-JSRetainPtr<JSStringRef> TestRunner::platformName()
-{
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("mac"));
-    return platformName;
-}
 
 } // namespace WTR

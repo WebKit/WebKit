@@ -112,6 +112,12 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementByI
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityController::platformName()
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("mac"));
+    return platformName;
+}
+
 } // namespace WTR
 
 #endif // HAVE(ACCESSIBILITY)

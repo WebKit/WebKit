@@ -83,10 +83,4 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
     return JSStringCreateWithUTF8CString(fullPathToUrl.utf8().data());
 }
 
-JSRetainPtr<JSStringRef> TestRunner::platformName()
-{
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("efl"));
-    return platformName;
-}
-
 } // namespace WTR

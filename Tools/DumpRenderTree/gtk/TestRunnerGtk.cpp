@@ -122,12 +122,6 @@ size_t TestRunner::webHistoryItemCount()
             webkit_web_back_forward_list_get_forward_length(list);
 }
 
-JSRetainPtr<JSStringRef> TestRunner::platformName() const
-{
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("gtk"));
-    return platformName;
-}
-
 void TestRunner::notifyDone()
 {
     if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())

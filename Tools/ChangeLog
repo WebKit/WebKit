@@ -1,3 +1,74 @@
+2014-01-10  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Move platformName property from testRunner to accessibilityController
+        https://bugs.webkit.org/show_bug.cgi?id=126689
+
+        Reviewed by Chris Fleizach.
+
+        Move the platformName property from the testRunner into
+        accessibilityController, since this is a concept that has only be
+        used by accessibility tests since it got added, and also because
+        the real intention was not to distinguish among "ports" (mac, win,
+        gtk, efl) but between platforms (atk, mac, win).
+
+        This change will be very useful to merge GTK's roles-exposed.html
+        and Mac's role-subrole-roledescription.html into one single test,
+        since we will be specifying in the test itself which elements are
+        supported in which accessibility "platform". In this context,
+        being able to check accessibilityController.platformName directly
+        against a list of supported accessibility platforms (e.g. "atk,mac")
+        will certainly maintain the code cleaner and simpler.
+
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::platformName): Removed.
+        * DumpRenderTree/TestRunner.cpp:
+        (getPlatformNameCallback): Removed.
+        (TestRunner::staticValues): Removed platformName
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        (TestRunner::platformName): Removed.
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        (TestRunner::platformName): Removed.
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::platformName): Removed.
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::platformName): Removed.
+
+        * DumpRenderTree/AccessibilityController.h:
+        (AccessibilityController::platformName): Added.
+        * DumpRenderTree/AccessibilityController.cpp:
+        (getPlatformNameCallback): Added.
+        (AccessibilityController::getJSClass): Added platformName.
+        * DumpRenderTree/atk/AccessibilityControllerAtk.cpp:
+        (AccessibilityController::platformName): Added, returning "atk".
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::platformName): Ditto, returning "mac".
+        * DumpRenderTree/ios/AccessibilityControllerIOS.mm:
+        (AccessibilityController::platformName): Ditto, returning "ios".
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::platformName): Ditto, returning "win".
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        (platformName): Removed.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner::platformName): Removed.
+        * WebKitTestRunner/InjectedBundle/efl/TestRunnerEfl.cpp:
+        (TestRunner::platformName): Removed.
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (TestRunner::platformName): Removed.
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (TestRunner::platformName): Removed.
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerWin.cpp:
+        (TestRunner::platformName): Removed.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        (WTR:AccessibilityController::platformName): Added.
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityController.idl:
+        (platformName): Added.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp:
+        (WTR::AccessibilityController::platformName): Added, returning "atk".
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::AccessibilityController::platformName): Added, returning "mac".
+
 2014-01-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the BlackBerry port from trunk

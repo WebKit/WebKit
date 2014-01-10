@@ -141,3 +141,9 @@ void AccessibilityController::removeNotificationListener()
     ASSERT(m_globalNotificationHandler);
     m_globalNotificationHandler.clear();
 }
+
+JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("mac"));
+    return platformName;
+}

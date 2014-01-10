@@ -1,3 +1,19 @@
+2014-01-10  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Move platformName property from testRunner to accessibilityController
+        https://bugs.webkit.org/show_bug.cgi?id=126689
+
+        Reviewed by Chris Fleizach.
+
+        Updated tests and expectations affected by the move of
+        platformName from TestRunner to AccessibilityController.
+
+        * accessibility/canvas-fallback-content.html:
+        * accessibility/ignore-spacer-elements.html:
+        * accessibility/platform-name.html:
+        * platform/efl/accessibility/platform-name-expected.txt:
+        * platform/gtk/accessibility/platform-name-expected.txt:
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         Remove supportMultipleWindows setting

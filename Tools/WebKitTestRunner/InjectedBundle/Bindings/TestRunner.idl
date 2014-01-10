@@ -155,8 +155,6 @@ interface TestRunner {
     void setPageVisibility(DOMString state);
     void resetPageVisibility();
 
-    readonly attribute DOMString platformName;
-
     // Control full screen behavior.
     void setHasCustomFullScreenBehavior(boolean value);
 

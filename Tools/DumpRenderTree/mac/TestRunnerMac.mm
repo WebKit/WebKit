@@ -285,12 +285,6 @@ size_t TestRunner::webHistoryItemCount()
     return [[[WebHistory optionalSharedHistory] allItems] count];
 }
 
-JSRetainPtr<JSStringRef> TestRunner::platformName() const
-{
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("mac"));
-    return platformName;
-}
-
 void TestRunner::notifyDone()
 {
     if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())

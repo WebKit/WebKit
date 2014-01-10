@@ -114,6 +114,12 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementByI
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityController::platformName()
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("atk"));
+    return platformName;
+}
+
 PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement()
 {
     WKBundlePageRef page = InjectedBundle::shared().page()->page();

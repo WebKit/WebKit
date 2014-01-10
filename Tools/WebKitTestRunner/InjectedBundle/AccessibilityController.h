@@ -44,6 +44,8 @@ public:
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
     virtual JSClassRef wrapperClass();
     
+    JSRetainPtr<JSStringRef> platformName();
+
     // Controller Methods - platform-independent implementations.
     PassRefPtr<AccessibilityUIElement> rootElement();
     PassRefPtr<AccessibilityUIElement> focusedElement();

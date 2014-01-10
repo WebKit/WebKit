@@ -125,4 +125,10 @@ void AccessibilityController::removeNotificationListener()
 {
 }
 
+JSRetainPtr<JSStringRef> AccessibilityController::platformName() const
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("ios"));
+    return platformName;
+}
+
 #endif // PLATFORM(IOS)

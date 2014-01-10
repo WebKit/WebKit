@@ -192,12 +192,6 @@ size_t TestRunner::webHistoryItemCount()
     return count;
 }
 
-JSRetainPtr<JSStringRef> TestRunner::platformName() const
-{
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("win"));
-    return platformName;
-}
-
 void TestRunner::notifyDone()
 {
     // Same as on mac.  This can be shared.

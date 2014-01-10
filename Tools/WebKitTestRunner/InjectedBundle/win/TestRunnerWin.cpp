@@ -64,10 +64,4 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
     return JSStringRetain(url); // TODO.
 }
 
-JSRetainPtr<JSStringRef> TestRunner::platformName()
-{
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("win"));
-    return platformName;
-}
-
 } // namespace WTR
