@@ -775,25 +775,25 @@ Object.defineProperty(Number, "secondsToString",
     {
         var ms = seconds * 1000;
 
-        if (higherResolution && ms < 100)
+        if (higherResolution && Math.abs(ms) < 100)
             return WebInspector.UIString("%.2fms").format(ms);
-        else if (ms < 100)
+        else if (Math.abs(ms) < 100)
             return WebInspector.UIString("%.1fms").format(ms);
 
-        if (higherResolution && ms < 1000)
+        if (higherResolution && Math.abs(ms) < 1000)
             return WebInspector.UIString("%.1fms").format(ms);
-        else if (ms < 1000)
+        else if (Math.abs(ms) < 1000)
             return WebInspector.UIString("%.0fms").format(ms);
 
-        if (seconds < 60)
+        if (Math.abs(seconds) < 60)
             return WebInspector.UIString("%.2fs").format(seconds);
 
         var minutes = seconds / 60;
-        if (minutes < 60)
+        if (Math.abs(minutes) < 60)
             return WebInspector.UIString("%.1fmin").format(minutes);
 
         var hours = minutes / 60;
-        if (hours < 24)
+        if (Math.abs(hours) < 24)
             return WebInspector.UIString("%.1fhrs").format(hours);
 
         var days = hours / 24;
@@ -808,17 +808,17 @@ Object.defineProperty(Number, "bytesToString",
         if (higherResolution === undefined)
             higherResolution = true;
 
-        if (bytes < 1024)
+        if (Math.abs(bytes) < 1024)
             return WebInspector.UIString("%.0f B").format(bytes);
 
         var kilobytes = bytes / 1024;
-        if (kilobytes < 10 || (higherResolution && kilobytes < 1024))
+        if (Math.abs(kilobytes) < 10 || (higherResolution && Math.abs(kilobytes) < 1024))
             return WebInspector.UIString("%.2f KB").format(kilobytes);
-        else if (kilobytes < 1024)
+        else if (Math.abs(kilobytes) < 1024)
             return WebInspector.UIString("%.1f KB").format(kilobytes);
 
         var megabytes = kilobytes / 1024;
-        if (higherResolution || megabytes < 10)
+        if (higherResolution || Math.abs(megabytes) < 10)
             return WebInspector.UIString("%.2f MB").format(megabytes);
         else
             return WebInspector.UIString("%.1f MB").format(megabytes);

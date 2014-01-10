@@ -1,3 +1,15 @@
+2014-01-10  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: support negative numbers in secondsToString and bytesToString.
+
+        https://bugs.webkit.org/show_bug.cgi?id=125708
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Utilities.js:
+        (Number.secondsToString): Use Math.abs in the size checks.
+        (Number.bytesToString): Ditto.
+
 2014-01-10  Brian Burg  <bburg@apple.com>
 
         Web Inspector: cycle clicked breakpoints between enabled, auto-continue, and disabled
