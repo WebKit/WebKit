@@ -1,3 +1,15 @@
+2014-01-10  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        [EFL][JSC] Enable udis86 disassembler on efl.
+        https://bugs.webkit.org/show_bug.cgi?id=125502
+
+        Reviewed by Michael Saboff.
+
+        Enable udis86 disassembler on efl and fix build warnings.
+
+        * Source/cmake/OptionsEfl.cmake:
+          Enable udis86 disassembler.
+
 2014-01-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the BlackBerry port from trunk

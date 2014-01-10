@@ -106,7 +106,7 @@ static void gen_operand(struct ud* u, struct ud_operand* op, int syn_cast)
 			else	mkasm(u, "%s0x%lx", (op_f) ? "+" : "", (unsigned long)op->lval.udword);
 		}
 		else if (op->offset == 64) 
-			mkasm(u, "%s0x" FMT64 "x", (op_f) ? "+" : "", op->lval.uqword);
+			mkasm(u, "%s0x" FMT64 "x", (op_f) ? "+" : "", (uint64_t)op->lval.uqword);
 
 		mkasm(u, "]");
 		break;
@@ -133,7 +133,7 @@ static void gen_operand(struct ud* u, struct ud_operand* op, int syn_cast)
         }
         if ( sext_size < 64 )
             sext_mask = ( 1ull << sext_size ) - 1;
-        mkasm( u, "0x" FMT64 "x", imm & sext_mask ); 
+        mkasm( u, "0x" FMT64 "x", (uint64_t)(imm & sext_mask) ); 
 
 		break;
     }
@@ -143,13 +143,13 @@ static void gen_operand(struct ud* u, struct ud_operand* op, int syn_cast)
 		if (syn_cast) opr_cast(u, op);
 		switch (op->size) {
 			case  8:
-				mkasm(u, "0x" FMT64 "x", u->pc + op->lval.sbyte); 
+				mkasm(u, "0x" FMT64 "x", (uint64_t)(u->pc + op->lval.sbyte)); 
 				break;
 			case 16:
-				mkasm(u, "0x" FMT64 "x", ( u->pc + op->lval.sword ) & 0xffff );
+				mkasm(u, "0x" FMT64 "x", (uint64_t)(( u->pc + op->lval.sword ) & 0xffff) );
 				break;
 			case 32:
-				mkasm(u, "0x" FMT64 "x", ( u->pc + op->lval.sdword ) & 0xfffffffful );
+				mkasm(u, "0x" FMT64 "x", (uint64_t)(( u->pc + op->lval.sdword ) & 0xfffffffful) );
 				break;
 			default:break;
 		}

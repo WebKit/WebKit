@@ -1,3 +1,26 @@
+2014-01-10  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        [EFL][JSC] Enable udis86 disassembler on efl.
+        https://bugs.webkit.org/show_bug.cgi?id=125502
+
+        Reviewed by Michael Saboff.
+
+        Enable udis86 disassembler on efl and fix build warnings.
+
+        * CMakeLists.txt:
+          Add udis86 disassembler source files.
+        * disassembler/udis86/udis86_decode.c:
+        (decode_modrm_rm):
+          Build warning fixes.
+        * disassembler/udis86/udis86_syn-att.c:
+        (gen_operand):
+          Build warning fixes.
+        * disassembler/udis86/udis86_syn-intel.c:
+        (gen_operand):
+          Build warning fixes.
+        * disassembler/udis86/udis86_types.h:
+          Correct FMT64 for uint64_t.
+
 2014-01-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the BlackBerry files outside WebCore

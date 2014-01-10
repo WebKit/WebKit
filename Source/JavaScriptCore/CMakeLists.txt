@@ -498,6 +498,36 @@ if (WTF_USE_ICU_UNICODE)
     )
 endif ()
 
+if (WTF_USE_UDIS86)
+    set(UDIS_GEN_DEP
+        disassembler/udis86/ud_opcode.py
+        disassembler/udis86/ud_optable.py
+    )
+
+    add_custom_command(
+        OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.c ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.h
+        DEPENDS ${UDIS_GEN_DEP}
+        WORKING_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
+        COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/disassembler/udis86/itab.py ${JAVASCRIPTCORE_DIR}/disassembler/udis86/optable.xml
+        VERBATIM)
+
+    list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
+        ${JAVASCRIPTCORE_DIR}/disassembler/udis86
+    )
+    list(APPEND JavaScriptCore_HEADERS
+        ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.h
+    )
+    list(APPEND JavaScriptCore_SOURCES
+        disassembler/udis86/udis86.c
+        disassembler/udis86/udis86_decode.c
+        disassembler/udis86/udis86_input.c
+        disassembler/udis86/udis86_itab_holder.c
+        disassembler/udis86/udis86_syn-att.c
+        disassembler/udis86/udis86_syn-intel.c
+        disassembler/udis86/udis86_syn.c
+    )
+endif ()
+
 if (ENABLE_LLINT)
     # We cannot check for RUBY_FOUND because it is set only when the full package is installed and
     # the only thing we need is the interpreter. Unlike Python, cmake does not provide a macro
