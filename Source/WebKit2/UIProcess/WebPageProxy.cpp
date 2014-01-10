@@ -4261,11 +4261,6 @@ void WebPageProxy::savePDFToFileInDownloadsFolder(const String& suggestedFilenam
     saveDataToFileInDownloadsFolder(suggestedFilename, "application/pdf", originatingURLString, data.get());
 }
 
-void WebPageProxy::linkClicked(const String& url, const WebMouseEvent& event)
-{
-    m_process->send(Messages::WebPage::LinkClicked(url, event), m_pageID, 0);
-}
-
 void WebPageProxy::setMinimumLayoutSize(const IntSize& minimumLayoutSize)
 {
     if (m_minimumLayoutSize == minimumLayoutSize)

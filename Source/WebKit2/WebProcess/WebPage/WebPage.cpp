@@ -949,15 +949,6 @@ void WebPage::loadWebArchiveData(const IPC::DataReference& webArchiveData, IPC::
     loadDataImpl(sharedBuffer, ASCIILiteral("application/x-webarchive"), ASCIILiteral("utf-16"), blankURL(), URL(), decoder);
 }
 
-void WebPage::linkClicked(const String& url, const WebMouseEvent& event)
-{
-    RefPtr<Event> coreEvent;
-    if (event.type() != WebEvent::NoType)
-        coreEvent = MouseEvent::create(eventNames().clickEvent, m_page->mainFrame().document()->defaultView(), platform(event), 0, 0);
-
-    m_page->mainFrame().loader().loadFrameRequest(FrameLoadRequest(&m_page->mainFrame(), ResourceRequest(url)), false, false, coreEvent.get(), 0, MaybeSendReferrer);
-}
-
 void WebPage::stopLoadingFrame(uint64_t frameID)
 {
     WebFrame* frame = WebProcess::shared().webFrame(frameID);

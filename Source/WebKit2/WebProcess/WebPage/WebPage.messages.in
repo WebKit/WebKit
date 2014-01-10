@@ -86,8 +86,6 @@ messages -> WebPage LegacyReceiver {
     LoadPlainTextString(String string, WebKit::WebContextUserMessageEncoder userData) Variadic
     LoadWebArchiveData(IPC::DataReference webArchiveData, WebKit::WebContextUserMessageEncoder userData) Variadic
 
-    LinkClicked(String url, WebKit::WebMouseEvent event)
-
     Reload(bool reloadFromOrigin, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     StopLoading()
 
