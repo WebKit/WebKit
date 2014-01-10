@@ -72,6 +72,10 @@
 #include "DeleteButtonController.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "BreakBlockquoteCommand.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -102,6 +106,14 @@ void EditCommandComposition::unapply()
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
+#if PLATFORM(IOS)
+    // FIXME: Where should iPhone code deal with the composition?
+    // Since editing commands don't save/restore the composition, undoing without fixing
+    // up the composition will leave a stale, invalid composition, as in <rdar://problem/6831637>.
+    // Desktop handles this in -[WebHTMLView _updateSelectionForInputManager], but the phone
+    // goes another route.
+    frame->editor().cancelComposition();
+#endif
 
     {
 #if ENABLE(DELETION_UI)
@@ -190,6 +202,10 @@ void CompositeEditCommand::apply()
         case EditActionSetWritingDirection:
         case EditActionCut:
         case EditActionUnspecified:
+#if PLATFORM(IOS)
+        case EditActionDelete:
+        case EditActionDictation:
+#endif
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -486,6 +502,49 @@ void CompositeEditCommand::splitTextNodeContainingElement(PassRefPtr<Text> text,
     applyCommandToComposite(SplitTextNodeContainingElementCommand::create(text, offset));
 }
 
+#if PLATFORM(IOS)
+void CompositeEditCommand::inputText(const String& text, bool selectInsertedText)
+{
+    unsigned offset = 0;
+    unsigned length = text.length();
+    
+    RefPtr<ContainerNode> scope;
+    unsigned startIndex = indexForVisiblePosition(endingSelection().visibleStart(), scope);
+    
+    size_t newline;
+    do {
+        newline = text.find('\n', offset);
+        if (newline != offset) {
+            int substringLength = newline == notFound ? length - offset : newline - offset;
+            RefPtr<InsertTextCommand> command = InsertTextCommand::create(document(), text.substring(offset, substringLength), false);
+            applyCommandToComposite(command);
+        }
+        if (newline != notFound) {
+            VisiblePosition caret(endingSelection().visibleStart());
+            if (enclosingNodeOfType(caret.deepEquivalent(), &isMailBlockquote)) {
+                // FIXME: Breaking a blockquote when the caret is just after a space will collapse the 
+                // space. Modify startIndex or length to compensate for this so that the ending selection 
+                // will be positioned correctly.
+                // <rdar://problem/9914462> breaking a Mail blockquote just after a space collapses the space
+                if (caret.previous().characterAfter() == ' ') {
+                    if (!offset && !startIndex)
+                        startIndex--;
+                    else if (!length)
+                        length--;
+                }
+                applyCommandToComposite(BreakBlockquoteCommand::create(document()));
+            } else
+                insertLineBreak();
+        }
+            
+        offset = newline + 1;
+    } while (newline != notFound && offset != length);
+    
+    if (selectInsertedText)
+        setEndingSelection(VisibleSelection(visiblePositionForIndex(startIndex, scope.get()), visiblePositionForIndex(startIndex + length, scope.get())));
+}
+#endif
+
 void CompositeEditCommand::insertTextIntoNode(PassRefPtr<Text> node, unsigned offset, const String& text)
 {
     if (!text.isEmpty())
@@ -535,7 +594,11 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(PassRefPtr<Text> p
     replaceTextInNode(node, offset, count, replacementText);
     RefPtr<Range> newRange = Range::create(document(), node, offset, node, offset + replacementText.length());
     for (size_t i = 0; i < markers.size(); ++i)
+#if PLATFORM(IOS)
+        markerController.addMarker(newRange.get(), markers[i].type(), markers[i].description(), markers[i].alternatives(), markers[i].metadata());
+#else
         markerController.addMarker(newRange.get(), markers[i].type(), markers[i].description());
+#endif // PLATFORM(IOS)
 }
 
 Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)
@@ -1201,7 +1264,11 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // anything if we're given an empty paragraph, but an empty paragraph can have style
     // too, <div><b><br></b></div> for example.  Save it so that we can preserve it later.
     RefPtr<EditingStyle> styleInEmptyParagraph;
+#if !PLATFORM(IOS)
     if (startOfParagraphToMove == endOfParagraphToMove && preserveStyle) {
+#else
+    if (startOfParagraphToMove == endOfParagraphToMove && preserveStyle && isRichlyEditablePosition(destination.deepEquivalent())) {
+#endif
         styleInEmptyParagraph = EditingStyle::create(startOfParagraphToMove.deepEquivalent());
         styleInEmptyParagraph->mergeTypingStyle(document());
         // The moved paragraph should assume the block style of the destination.

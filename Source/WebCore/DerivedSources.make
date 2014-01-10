@@ -28,6 +28,7 @@
 
 VPATH = \
     $(WebCore) \
+    $(WebCore)/Modules/airplay \
     $(WebCore)/Modules/encryptedmedia \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
@@ -67,6 +68,7 @@ VPATH = \
 #
 
 BINDING_IDLS = \
+    $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyMessageEvent.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyNeededEvent.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeySession.idl \
@@ -304,9 +306,6 @@ BINDING_IDLS = \
     $(WebCore)/dom/StringCallback.idl \
     $(WebCore)/dom/Text.idl \
     $(WebCore)/dom/TextEvent.idl \
-    $(WebCore)/dom/Touch.idl \
-    $(WebCore)/dom/TouchEvent.idl \
-    $(WebCore)/dom/TouchList.idl \
     $(WebCore)/dom/TransitionEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \
     $(WebCore)/dom/UIEvent.idl \
@@ -719,12 +718,44 @@ ifneq ($(SDKROOT),)
 	SDK_FLAGS=-isysroot $(SDKROOT)
 endif
 
+ifeq ($(shell $(CC) -isysroot $(SDKROOT) -std=gnu++11 -x c++ -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ' WTF_PLATFORM_IOS ' | cut -d' ' -f3), 1)
+    WTF_PLATFORM_IOS = 1
+else
+    WTF_PLATFORM_IOS = 0
+endif
+
 ifeq ($(shell $(CC) -std=gnu++11 -x c++ -E -P -dM $(SDK_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
     ENABLE_ORIENTATION_EVENTS = 1
 endif
 
 ifeq ($(PLATFORM_FEATURE_DEFINES),)
 PLATFORM_FEATURE_DEFINES = Configurations/FeatureDefines.xcconfig
+endif
+
+ifeq ($(WTF_PLATFORM_IOS), 1)
+
+ADDITIONAL_BINDING_IDLS = \
+    GestureEvent.idl \
+    Touch.idl \
+    TouchEvent.idl \
+    TouchList.idl
+
+BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
+
+all : $(ADDITIONAL_BINDING_IDLS:%.idl=JS%.h)
+
+vpath %.idl $(BUILT_PRODUCTS_DIR)/usr/local/include $(SDKROOT)/usr/local/include
+
+$(ADDITIONAL_BINDING_IDLS) : % : WebKitAdditions/%
+    cp $< .
+
+else
+
+BINDING_IDLS += \
+    $(WebCore)/dom/Touch.idl \
+    $(WebCore)/dom/TouchEvent.idl \
+    $(WebCore)/dom/TouchList.idl
+
 endif
 
 endif # MACOS
@@ -1156,14 +1187,51 @@ CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/char
 
 ifneq ($(ACTION),installhdrs)
 
+ifeq ($(WTF_PLATFORM_IOS),1)
+
+ifeq ($(findstring armv6,$(ARCHS)), armv6)
+    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv6.exp
+endif
+ifeq ($(findstring armv7f,$(ARCHS)), armv7f)
+    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv7f.exp
+endif
+ifeq ($(findstring armv7s,$(ARCHS)), armv7s)
+    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv7s.exp
+endif
+ifeq ($(findstring armv7,$(ARCHS)), armv7)
+    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv7.exp
+endif
+ifeq ($(findstring arm64,$(ARCHS)), arm64)
+    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.arm64.exp
+endif
+ifeq ($(findstring i386,$(ARCHS)), i386)
+    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.i386.exp
+endif
+ifeq ($(findstring x86_64,$(ARCHS)), x86_64)
+    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.x86_64.exp
+endif
+
+all : $(WEBCORE_EXPORT_FILES)
+
+WebCore.%.exp : generate-export-file WebCore.exp.in
+    $^ $@
+
+# Switch NSRect, NSSize and NSPoint with their CG counterparts for the 64-bit exports file.
+WebCore.LP64.%.exp : WebCore.%.exp
+    cat $^ | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ > $@
+
+else
+
 all : WebCore.exp WebCore.LP64.exp
 
 WebCore.exp : $(BUILT_PRODUCTS_DIR)/WebCoreExportFileGenerator
-	$^ > $@
+    $^ | grep -v '^# ' | sed -e 's/^#//' > $@
 
 # Switch NSRect, NSSize and NSPoint with their CG counterparts for the 64-bit exports file.
 WebCore.LP64.exp : WebCore.exp
 	cat $^ | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ > $@
+
+endif # WTF_PLATFORM_IOS
 
 endif # installhdrs
 

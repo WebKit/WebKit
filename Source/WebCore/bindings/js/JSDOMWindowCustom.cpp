@@ -41,6 +41,11 @@
 #include "JSSharedWorker.h"
 #endif
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+#include "JSTouchConstructor.h"
+#include "JSTouchListConstructor.h"
+#endif
+
 #if ENABLE(WEB_AUDIO)
 #include "JSAudioContext.h"
 #endif
@@ -451,6 +456,18 @@ JSValue JSDOMWindow::image(ExecState* exec) const
 {
     return getDOMConstructor<JSImageConstructor>(exec->vm(), this);
 }
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+JSValue JSDOMWindow::touch(ExecState* exec) const
+{
+    return getDOMConstructor<JSTouchConstructor>(exec->vm(), this);
+}
+
+JSValue JSDOMWindow::touchList(ExecState* exec) const
+{
+    return getDOMConstructor<JSTouchListConstructor>(exec->vm(), this);
+}
+#endif
 
 // Custom functions
 

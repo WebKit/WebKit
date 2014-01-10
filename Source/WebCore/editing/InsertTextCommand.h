@@ -68,6 +68,10 @@ private:
 
     virtual void doApply();
 
+#if PLATFORM(IOS)
+    virtual bool isInsertTextCommand() const OVERRIDE { return true; }
+#endif
+
     Position positionInsideTextNode(const Position&);
     Position insertTab(const Position&);
     

@@ -107,3 +107,6 @@ TreatReturnedNullStringAs=Null|Undefined
 TreatUndefinedAs=NullString
 TypedArray=*
 URL
+
+# PLATFORM(IOS)
+AppleCopyright

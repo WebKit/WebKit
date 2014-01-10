@@ -126,9 +126,11 @@ public:
     void pasteAsPlainText();
     void performDelete();
 
+#if !PLATFORM(IOS)
     void copyURL(const URL&, const String& title);
     void copyURL(const URL&, const String& title, Pasteboard&);
     void copyImage(const HitTestResult&);
+#endif
 
     String readPlainTextFromPasteboard(Pasteboard&);
 
@@ -161,9 +163,17 @@ public:
     void removeFormattingAndStyle();
 
     void clearLastEditCommand();
+#if PLATFORM(IOS)
+    void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping();
+#endif
 
     bool deleteWithDirection(SelectionDirection, TextGranularity, bool killRing, bool isTypingAction);
     void deleteSelectionWithSmartDelete(bool smartDelete);
+#if PLATFORM(IOS)
+    void clearText();
+    void removeUnchangeableStyles();
+#endif
+    
     bool dispatchCPPEvent(const AtomicString&, ClipboardAccessPolicy);
     
     void applyStyle(StyleProperties*, EditAction = EditActionUnspecified);
@@ -235,9 +245,14 @@ public:
     void toggleOverwriteModeEnabled();
 
     void markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask, Range* spellingRange, Range* grammarRange);
+#if PLATFORM(IOS)
+    NO_RETURN_DUE_TO_ASSERT
+#endif
     void changeBackToReplacedString(const String& replacedString);
 
+#if !PLATFORM(IOS)
     void advanceToNextMisspelling(bool startBeforeSelection = false);
+#endif // !PLATFORM(IOS)
     void showSpellingGuessPanel();
     bool spellingPanelIsShowing();
 
@@ -303,6 +318,14 @@ public:
     EditingBehavior behavior() const;
 
     PassRefPtr<Range> selectedRange();
+
+#if PLATFORM(IOS)
+    void confirmMarkedText();
+    void setTextAsChildOfElement(const String&, Element*);
+    void setTextAlignmentForChangedBaseWritingDirection(WritingDirection);
+    void insertDictationPhrases(PassOwnPtr<Vector<Vector<String> > > dictationPhrases, RetainPtr<id> metadata);
+    void setDictationPhrasesAsChildOfElement(PassOwnPtr<Vector<Vector<String> > > dictationPhrases, RetainPtr<id> metadata, Element* element);
+#endif
     
     void addToKillRing(Range*, bool prepend);
 
@@ -400,13 +423,15 @@ public:
     bool insertParagraphSeparatorInQuotedContent();
     const SimpleFontData* fontForSelection(bool&) const;
     NSDictionary* fontAttributesForSelectionStart() const;
+    String stringSelectionForPasteboard();
+    String stringSelectionForPasteboardWithImageAltText();
+    PassRefPtr<DocumentFragment> webContentFromPasteboard(Pasteboard&, Range& context, bool allowPlainText, bool& chosePlainText);
+#if !PLATFORM(IOS)
     bool canCopyExcludingStandaloneImages();
     void takeFindStringFromSelection();
     void readSelectionFromPasteboard(const String& pasteboardName);
-    String stringSelectionForPasteboard();
-    String stringSelectionForPasteboardWithImageAltText();
     PassRefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
-    PassRefPtr<DocumentFragment> webContentFromPasteboard(Pasteboard&, Range& context, bool allowPlainText, bool& chosePlainText);
+#endif // !PLATFORM(IOS)
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(EFL) || PLATFORM(NIX)

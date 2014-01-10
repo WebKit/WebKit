@@ -40,6 +40,14 @@
 #import "Event.h"
 #import "EventNames.h"
 
+#if ENABLE(TOUCH_EVENTS)
+#import "DOMTouchEvent.h"
+#endif
+
+#if ENABLE(IOS_GESTURE_EVENTS)
+#import "DOMGestureEvent.h"
+#endif
+
 using WebCore::eventNames;
 
 Class kitClass(WebCore::Event* impl)
@@ -54,7 +62,15 @@ Class kitClass(WebCore::Event* impl)
         if (desiredInterface == WebCore::TextEventInterfaceType)
             return [DOMTextEvent class];
         if (desiredInterface == WebCore::WheelEventInterfaceType)
-            return [DOMWheelEvent class];
+            return [DOMWheelEvent class];        
+#if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
+        if (desiredInterface == WebCore::TouchEventInterfaceType) 
+            return [DOMTouchEvent class];
+#endif
+#if ENABLE(IOS_GESTURE_EVENTS)
+        if (desiredInterface == WebCore::GestureEventInterfaceType)
+            return [DOMGestureEvent class];
+#endif
         return [DOMUIEvent class];
     }
 

@@ -44,6 +44,9 @@ namespace WebCore {
         void garbageCollectNow(); // It's better to call garbageCollectSoon, unless you have a specific reason not to.
 
         void garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone); // Used for stress testing.
+#if PLATFORM(IOS)
+        void releaseExecutableMemory();
+#endif
         void setJavaScriptGarbageCollectorTimerEnabled(bool);
         void discardAllCompiledCode();
 

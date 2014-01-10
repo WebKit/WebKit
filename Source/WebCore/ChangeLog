@@ -1,5 +1,389 @@
 2014-01-10  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Upstream WebCore and Tools miscellaneous changes
+        https://bugs.webkit.org/show_bug.cgi?id=126698
+
+        Reviewed by David Kilzer.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/WebCore.xcconfig:
+        * Configurations/WebCoreTestSupport.xcconfig:
+        * Configurations/iOS.xcconfig: Added.
+        * DerivedSources.make:
+        * English.lproj/Localizable.strings:
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp: Copied from Source/WebCore/editing/TextAffinity.h.
+        (WebCore::stringForPlaybackTargetAvailability):
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent):
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.h: Added.
+        (WebCore::WebKitPlaybackTargetAvailabilityEventInit::WebKitPlaybackTargetAvailabilityEventInit):
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::~WebKitPlaybackTargetAvailabilityEvent):
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::create):
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::availability):
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl: Copied from Source/WebCore/editing/DeleteButton.h.
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::Geolocation):
+        (WebCore::Geolocation::canSuspend):
+        (WebCore::Geolocation::suspend):
+        (WebCore::Geolocation::resume):
+        (WebCore::Geolocation::resumeTimerFired):
+        (WebCore::Geolocation::resetAllGeolocationPermission):
+        (WebCore::Geolocation::stop):
+        (WebCore::Geolocation::setIsAllowed):
+        (WebCore::Geolocation::positionChanged):
+        (WebCore::Geolocation::setError):
+        * Modules/geolocation/Geolocation.h:
+        * Modules/geolocation/NavigatorGeolocation.cpp:
+        (WebCore::NavigatorGeolocation::resetAllGeolocationPermission):
+        * Modules/geolocation/NavigatorGeolocation.h:
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::SpeechSynthesis):
+        (WebCore::SpeechSynthesis::speak):
+        * Modules/speech/SpeechSynthesis.h:
+        (WebCore::SpeechSynthesis::userGestureRequiredForSpeechStart):
+        (WebCore::SpeechSynthesis::removeBehaviorRestriction):
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        * Modules/webdatabase/Database.cpp:
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::DatabaseBackendBase::performOpenAndVerify):
+        (WebCore::DatabaseBackendBase::incrementalVacuumIfNeeded):
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::DatabaseContext):
+        (WebCore::DatabaseContext::databaseThread):
+        (WebCore::DatabaseContext::setPaused):
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/webdatabase/DatabaseManagerClient.h:
+        * Modules/webdatabase/DatabaseTask.cpp:
+        (WebCore::DatabaseTask::performTask):
+        (WebCore::Database::DatabaseTransactionTask::shouldPerformWhilePaused):
+        * Modules/webdatabase/DatabaseTask.h:
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::DatabaseThread):
+        (WebCore::DatabaseThread::requestTermination):
+        (WebCore::DatabaseUnpauseTask::create):
+        (WebCore::DatabaseUnpauseTask::shouldPerformWhilePaused):
+        (WebCore::DatabaseUnpauseTask::DatabaseUnpauseTask):
+        (WebCore::DatabaseUnpauseTask::doPerformTask):
+        (WebCore::DatabaseUnpauseTask::debugTaskName):
+        (WebCore::DatabaseThread::setPaused):
+        (WebCore::DatabaseThread::handlePausedQueue):
+        (WebCore::DatabaseThread::databaseThread):
+        * Modules/webdatabase/DatabaseThread.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::setQuota):
+        (WebCore::DatabaseTracker::deleteOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+        (WebCore::DatabaseTracker::removeDeletedOpenedDatabases):
+        (WebCore::isZeroByteFile):
+        (WebCore::DatabaseTracker::deleteDatabaseFileIfEmpty):
+        (WebCore::DatabaseTracker::openDatabaseMutex):
+        (WebCore::DatabaseTracker::emptyDatabaseFilesRemovalTaskWillBeScheduled):
+        (WebCore::DatabaseTracker::emptyDatabaseFilesRemovalTaskDidFinish):
+        (WebCore::DatabaseTracker::setDatabasesPaused):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * Modules/webdatabase/SQLTransactionBackend.cpp:
+        (WebCore::SQLTransactionBackend::shouldPerformWhilePaused):
+        * Modules/webdatabase/SQLTransactionBackend.h:
+        * Resources/DictationPhraseWithAlternativesDot.png: Added.
+        * Resources/DictationPhraseWithAlternativesDot@2x.png: Added.
+        * Resources/SpellingDot.png: Added.
+        * Resources/SpellingDot@2x.png: Added.
+        * Resources/decrementArrow.tiff: Added.
+        * Resources/hScrollControl_left.png: Added.
+        * Resources/hScrollControl_middle.png: Added.
+        * Resources/hScrollControl_right.png: Added.
+        * Resources/incrementArrow.tiff: Added.
+        * Resources/markedLeft.png: Added.
+        * Resources/markedMiddle.png: Added.
+        * Resources/markedRight.png: Added.
+        * Resources/vScrollControl_bottom.png: Added.
+        * Resources/vScrollControl_middle.png: Added.
+        * Resources/vScrollControl_top.png: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectNow):
+        (WebCore::GCController::releaseExecutableMemory):
+        * bindings/js/GCController.h:
+        * bindings/js/JSCallbackData.h:
+        (WebCore::JSCallbackData::~JSCallbackData):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsProfiling):
+        (WebCore::JSDOMWindowBase::shouldInterruptScriptBeforeTimeout):
+        (WebCore::JSDOMWindowBase::commonVM):
+        (WebCore::JSDOMWindowBase::commonVMExists):
+        (WebCore::JSDOMWindowBase::commonVMInternal):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::touch):
+        (WebCore::JSDOMWindow::touchList):
+        * bindings/js/JSDeviceOrientationEventCustom.cpp:
+        (WebCore::JSDeviceOrientationEvent::webkitCompassHeading):
+        (WebCore::JSDeviceOrientationEvent::webkitCompassAccuracy):
+        (WebCore::JSDeviceOrientationEvent::initDeviceOrientationEvent):
+        * bindings/js/JSMainThreadExecState.h:
+        * bindings/js/JSTouchCustom.cpp:
+        * bindings/js/JSTouchListCustom.cpp:
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::didContinue):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initializeThreading):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::handlePause):
+        * bindings/js/ios/TouchConstructors.cpp: Added.
+        * bindings/objc/DOM.mm:
+        (WebCore::wkQuadFromFloatQuad):
+        (WebCore::kit):
+        (WebCore::min4):
+        (WebCore::max4):
+        (WebCore::emptyQuad):
+        (-[WKQuadObject initWithQuad:]):
+        (-[WKQuadObject quad]):
+        (-[WKQuadObject boundingBox]):
+        (-[DOMNode boundingBox]):
+        (-[DOMNode absoluteQuad]):
+        (-[DOMNode absoluteQuadAndInsideFixedPosition:]):
+        (-[DOMNode boundingBoxUsingTransforms]):
+        (-[DOMNode lineBoxQuads]):
+        (-[DOMNode _linkElement]):
+        (-[DOMNode hrefURL]):
+        (-[DOMNode hrefTarget]):
+        (-[DOMNode hrefFrame]):
+        (-[DOMNode hrefLabel]):
+        (-[DOMNode hrefTitle]):
+        (-[DOMNode boundingFrame]):
+        (-[DOMNode innerFrameQuad]):
+        (-[DOMNode computedFontSize]):
+        (-[DOMNode nextFocusNode]):
+        (-[DOMNode previousFocusNode]):
+        (-[DOMRange boundingBox]):
+        (-[DOMRange renderedImageForcingBlackText:renderedImageForcingBlackText:]):
+        (-[DOMElement _font]):
+        (-[DOMHTMLLinkElement _mediaQueryMatchesForOrientation:]):
+        (-[DOMHTMLLinkElement _mediaQueryMatches]):
+        * bindings/objc/DOMEvents.h:
+        * bindings/objc/DOMEvents.mm:
+        (kitClass):
+        * bindings/objc/DOMExtensions.h:
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLElement scrollYOffset]):
+        (-[DOMHTMLElement setScrollXOffset:scrollYOffset:]):
+        (-[DOMHTMLElement setScrollXOffset:scrollYOffset:adjustForIOSCaret:]):
+        (-[DOMHTMLElement absolutePosition::::]):
+        (-[DOMHTMLInputElement _autocapitalizeType]):
+        (-[DOMHTMLTextAreaElement _autocapitalizeType]):
+        (-[DOMHTMLInputElement setValueWithChangeEvent:]):
+        (-[DOMHTMLInputElement setValueAsNumberWithChangeEvent:]):
+        * bindings/objc/DOMInternal.h:
+        * bindings/objc/DOMInternal.mm:
+        (wrapperCacheLock):
+        (getDOMWrapper):
+        (addDOMWrapper):
+        (removeDOMWrapper):
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/DOMUIKitExtensions.h: Added.
+        * bindings/objc/DOMUIKitExtensions.mm: Added.
+        * bindings/objc/PublicDOMInterfaces.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeaderContentHeader):
+        (GenerateImplementationContentHeader):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateCallbackImplementation):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (ReadPublicInterfaces):
+        (GetClassName):
+        (IsCoreFoundationType):
+        (GetObjCType):
+        (AddIncludesForType):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (WriteData):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor):
+        * bridge/objc/objc_class.mm:
+        (JSC::Bindings::ObjcClass::fieldNamed):
+        * bridge/objc/objc_instance.mm:
+        * config.h:
+        * dom/Document.cpp:
+        (WebCore::Document::addAutoSizingNode):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/ios/TouchEvents.cpp: Added.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::unapply):
+        (WebCore::CompositeEditCommand::apply):
+        (WebCore::CompositeEditCommand::inputText):
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteButton.h:
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::enable):
+        (WebCore::DeleteButtonController::disable):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/DeleteSelectionCommand.h:
+        * editing/EditAction.h:
+        * editing/EditCommand.h:
+        (WebCore::EditCommand::isInsertTextCommand):
+        * editing/EditingStyle.cpp:
+        * editing/Editor.cpp:
+        (WebCore::ClearTextCommand::ClearTextCommand):
+        (WebCore::ClearTextCommand::editingAction):
+        (WebCore::ClearTextCommand::CreateAndApply):
+        (WebCore::Editor::handleTextEvent):
+        (WebCore::Editor::clearText):
+        (WebCore::Editor::insertDictationPhrases):
+        (WebCore::Editor::setDictationPhrasesAsChildOfElement):
+        (WebCore::Editor::confirmMarkedText):
+        (WebCore::Editor::setTextAsChildOfElement):
+        (WebCore::Editor::notifyComponentsOnChangedSelection):
+        (WebCore::Editor::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::setBaseWritingDirection):
+        (WebCore::Editor::setComposition):
+        (WebCore::Editor::showSpellingGuessPanel):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markMisspellingsOrBadGrammar):
+        (WebCore::Editor::changeBackToReplacedString):
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing):
+        (WebCore::Editor::setIgnoreCompositionSelectionChange):
+        (WebCore::Editor::changeSelectionAfterCommand):
+        (WebCore::Editor::shouldChangeSelection):
+        (WebCore::Editor::respondToChangedSelection):
+        (WebCore::Editor::resolveTextCheckingTypeMask):
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeClearText):
+        (WebCore::enabledCopy):
+        (WebCore::enabledCut):
+        (WebCore::enabledClearText):
+        (WebCore::createCommandMap):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::modifyExtendingRight):
+        (WebCore::FrameSelection::modifyExtendingForward):
+        (WebCore::FrameSelection::modifyMovingRight):
+        (WebCore::FrameSelection::modifyMovingForward):
+        (WebCore::FrameSelection::modifyExtendingLeft):
+        (WebCore::FrameSelection::modifyExtendingBackward):
+        (WebCore::FrameSelection::modifyMovingLeft):
+        (WebCore::FrameSelection::modifyMovingBackward):
+        (WebCore::FrameSelection::setSelectedRange):
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        (WebCore::FrameSelection::updateAppearance):
+        (WebCore::FrameSelection::shouldDeleteSelection):
+        (WebCore::FrameSelection::revealSelection):
+        (WebCore::FrameSelection::setSelectionFromNone):
+        (WebCore::FrameSelection::shouldChangeSelection):
+        (WebCore::FrameSelection::expandSelectionToElementContainingCaretSelection):
+        (WebCore::FrameSelection::elementRangeContainingCaretSelection):
+        (WebCore::FrameSelection::expandSelectionToWordContainingCaretSelection):
+        (WebCore::FrameSelection::wordRangeContainingCaretSelection):
+        (WebCore::FrameSelection::expandSelectionToStartOfWordContainingCaretSelection):
+        (WebCore::FrameSelection::characterInRelationToCaretSelection):
+        (WebCore::FrameSelection::characterBeforeCaretSelection):
+        (WebCore::FrameSelection::characterAfterCaretSelection):
+        (WebCore::FrameSelection::wordOffsetInRange):
+        (WebCore::FrameSelection::spaceFollowsWordInRange):
+        (WebCore::FrameSelection::selectionAtDocumentStart):
+        (WebCore::FrameSelection::selectionAtSentenceStart):
+        (WebCore::FrameSelection::selectionAtWordStart):
+        (WebCore::FrameSelection::rangeByMovingCurrentSelection):
+        (WebCore::FrameSelection::rangeByExtendingCurrentSelection):
+        (WebCore::FrameSelection::selectRangeOnElement):
+        (WebCore::FrameSelection::wordSelectionContainingCaretSelection):
+        (WebCore::FrameSelection::actualSelectionAtSentenceStart):
+        (WebCore::FrameSelection::rangeByAlteringCurrentSelection):
+        (WebCore::FrameSelection::clearCurrentSelection):
+        (WebCore::FrameSelection::setCaretBlinks):
+        (WebCore::FrameSelection::setCaretColor):
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection::suppressCloseTyping):
+        (WebCore::FrameSelection::restoreCloseTyping):
+        (WebCore::FrameSelection::setUpdateAppearanceEnabled):
+        (WebCore::FrameSelection::suppressScrolling):
+        (WebCore::FrameSelection::restoreScrolling):
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doReapply):
+        * editing/InsertIntoTextNodeCommand.h:
+        * editing/InsertTextCommand.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/TextAffinity.h:
+        * editing/TextCheckingHelper.cpp:
+        * editing/TextGranularity.h:
+        * editing/TextIterator.cpp:
+        (WebCore::isRendererReplacedElement):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping):
+        (WebCore::TypingCommand::markMisspellingsAfterTyping):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::FriendlyEditCommand::setEndingSelection):
+        (WebCore::TypingCommand::setEndingSelectionOnLastInsertCommand):
+        * editing/TypingCommand.h:
+        * editing/VisiblePosition.h:
+        (WebCore::operator<):
+        (WebCore::operator>):
+        (WebCore::operator<=):
+        (WebCore::operator>=):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity):
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries):
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        (WebCore::startOfDocument):
+        (WebCore::endOfDocument):
+        (WebCore::directionIsDownstream):
+        (WebCore::atBoundaryOfGranularity):
+        (WebCore::withinTextUnitOfGranularity):
+        (WebCore::nextCharacterBoundaryInDirection):
+        (WebCore::nextWordBoundaryInDirection):
+        (WebCore::nextSentenceBoundaryInDirection):
+        (WebCore::nextLineBoundaryInDirection):
+        (WebCore::nextParagraphBoundaryInDirection):
+        (WebCore::nextDocumentBoundaryInDirection):
+        (WebCore::positionOfNextBoundaryOfGranularity):
+        (WebCore::enclosingTextUnitOfGranularity):
+        (WebCore::distanceBetweenPositions):
+        (WebCore::wordRangeFromPosition):
+        (WebCore::closestWordBoundaryForPosition):
+        * editing/VisibleUnits.h:
+        * editing/ios/DictationCommandIOS.cpp: Added.
+        * editing/ios/DictationCommandIOS.h: Added.
+        (WebCore::DictationCommandIOS::create):
+        (WebCore::DictationCommandIOS::editingAction):
+        * editing/mac/FrameSelectionMac.mm:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * fileapi/AsyncFileStream.cpp:
+        * generate-export-file: Added.
+        * inspector/InspectorCounters.h:
+        * inspector/InspectorFrontendHost.h:
+        * make-export-file-generator:
+        * plugins/PluginPackage.h:
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::willProvidePluginLayer):
+        (WebCore::PluginViewBase::attachPluginLayer):
+        (WebCore::PluginViewBase::detachPluginLayer):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::elementImplicitVisibility):
+        * testing/Internals.cpp:
+        (WebCore::Internals::getCurrentCursorInfo):
+        (WebCore::Internals::isSelectPopupVisible):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+
+2014-01-10  Daniel Bates  <dabates@apple.com>
+
         Fix the iOS build after <http://trac.webkit.org/changeset/161589>
         (https://bugs.webkit.org/show_bug.cgi?id=126654)
 

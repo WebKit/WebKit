@@ -44,6 +44,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#endif
+
 namespace WebCore {
 
 static PassRefPtr<FileThread> createFileThread()

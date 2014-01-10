@@ -250,8 +250,21 @@ bool isRendererReplacedElement(RenderObject* renderer)
     if (!renderer)
         return false;
     
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    if (renderer->isImage() || renderer->isMedia())
+        return true;
+    if (renderer->isWidget()) {
+        if (renderer->node() && renderer->node()->isElementNode()) {
+            Element* element = toElement(renderer->node());
+            if (element->hasTagName(videoTag) || !element->hasTagName(audioTag))
+                return false; // See <rdar://problem/6893793>.
+        }
+        return true;
+    }
+#else
     if (renderer->isImage() || renderer->isWidget() || renderer->isMedia())
         return true;
+#endif
     
     if (renderer->node() && renderer->node()->isElementNode()) {
         Element* element = toElement(renderer->node());

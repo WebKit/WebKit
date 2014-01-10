@@ -165,8 +165,8 @@ struct AnnotatedRegionValue;
 
 #if ENABLE(TOUCH_EVENTS)
 #if PLATFORM(IOS)
-#include "DocumentIOSForward.h"
-#endif
+#include <WebKitAdditions/DocumentIOSForward.h>
+#endif // PLATFORM(IOS)
 class Touch;
 class TouchList;
 #endif
@@ -1114,7 +1114,7 @@ public:
 
 #if ENABLE(TOUCH_EVENTS)
 #if PLATFORM(IOS)
-#include "DocumentIOS.h"
+#include <WebKitAdditions/DocumentIOS.h>
 #else
     PassRefPtr<Touch> createTouch(DOMWindow*, EventTarget*, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force, ExceptionCode&) const;
 #endif // PLATFORM(IOS)

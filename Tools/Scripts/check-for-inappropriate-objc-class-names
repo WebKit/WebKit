@@ -78,6 +78,34 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
     }
     close NM;
 
+    # begin PLATFORM(IOS)
+    # On iOS put exceptions in place for existing bad names. Future bad names will
+    # be caught and should be fixed immediately. Fixing these is covered by:
+    # <rdar://problem/10365008> Fix Inappropriate Objective-C Class Names found by build phase
+    my %exceptions = (
+        # WebCore
+        "WKQuadObject" => 1,
+        "TileCacheTombstone" => 1,
+        "TileHostLayer" => 1,
+        "TileLayer" => 1,
+        "WAKResponder" => 1,
+        "NSCursor" => 1,
+        "WAKClipView" => 1,
+        "WAKScrollView" => 1,
+        "WAKView" => 1,
+        "WAKWindow" => 1,
+        # WebKit2
+        "UIWKRemoteView" => 1,
+        "UIWKView" => 1,
+        "UIWKViewData" => 1
+    );
+    my @realBadNames;
+    for my $className (@badNames) {
+        push(@realBadNames, $className) unless exists($exceptions{$className});
+    }
+    @badNames = @realBadNames;
+    # end PLATFORM(IOS)
+
     if (@badNames) {
 
         my $shortName = $executablePath;

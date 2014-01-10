@@ -236,6 +236,16 @@ void TypingCommand::closeTyping(Frame* frame)
         lastTypingCommand->closeTyping();
 }
 
+#if PLATFORM(IOS)
+void TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(Frame* frame, const VisibleSelection& newSelection)
+{
+    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(frame)) {
+        lastTypingCommand->setEndingSelection(newSelection);
+        lastTypingCommand->setEndingSelectionOnLastInsertCommand(newSelection);
+    }
+}
+#endif
+
 void TypingCommand::doApply()
 {
     if (!endingSelection().isNonOrphanedCaretOrRange())
@@ -281,7 +291,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
 {
     Frame& frame = this->frame();
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     if (!frame.editor().isContinuousSpellCheckingEnabled()
         && !frame.editor().isAutomaticQuoteSubstitutionEnabled()
         && !frame.editor().isAutomaticLinkDetectionEnabled()
@@ -299,6 +309,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
     VisiblePosition start(endingSelection().start(), endingSelection().affinity());
     VisiblePosition previous = start.previous();
     if (previous.isNotNull()) {
+#if !PLATFORM(IOS)
         VisiblePosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
         VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
         if (p1 != p2) {
@@ -309,6 +320,22 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
             frame.editor().markMisspellingsAfterTypingToWord(p1, endingSelection(), !strippedPreviousWord.isEmpty());
         } else if (commandType == TypingCommand::InsertText)
             frame.editor().startAlternativeTextUITimer();
+#else
+        UNUSED_PARAM(commandType);
+        // If this bug gets fixed, this PLATFORM(IOS) code could be removed:
+        // <rdar://problem/7259611> Word boundary code on iPhone gives different results than desktop
+        EWordSide startWordSide = LeftWordIfOnBoundary;
+        UChar32 c = previous.characterAfter();
+        // FIXME: VisiblePosition::characterAfter() and characterBefore() do not emit newlines the same
+        // way as TextIterator, so we do an isEndOfParagraph check here.
+        if (isSpaceOrNewline(c) || c == 0xA0 || isEndOfParagraph(previous)) {
+            startWordSide = RightWordIfOnBoundary;
+        }
+        VisiblePosition p1 = startOfWord(previous, startWordSide);
+        VisiblePosition p2 = startOfWord(start, startWordSide);
+        if (p1 != p2)
+            frame.editor().markMisspellingsAfterTypingToWord(p1, endingSelection(), false);
+#endif // !PLATFORM(IOS)
     }
 }
 
@@ -487,8 +514,15 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
     }
     
     ASSERT(!selectionToDelete.isNone());
-    if (selectionToDelete.isNone())
+    if (selectionToDelete.isNone()) {
+#if PLATFORM(IOS)
+        // Workaround for this bug:
+        // <rdar://problem/4653755> UIKit text widgets should use WebKit editing API to manipulate text
+        setEndingSelection(frame.selection().selection());
+        closeTyping(&frame);
+#endif
         return;
+    }
     
     if (selectionToDelete.isCaret() || !frame.selection().shouldDeleteSelection(selectionToDelete))
         return;
@@ -578,8 +612,15 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
     }
     
     ASSERT(!selectionToDelete.isNone());
-    if (selectionToDelete.isNone())
+    if (selectionToDelete.isNone()) {
+#if PLATFORM(IOS)
+        // Workaround for this bug:
+        // <rdar://problem/4653755> UIKit text widgets should use WebKit editing API to manipulate text
+        setEndingSelection(frame.selection().selection());
+        closeTyping(&frame);
+#endif
         return;
+    }
     
     if (selectionToDelete.isCaret() || !frame.selection().shouldDeleteSelection(selectionToDelete))
         return;
@@ -598,6 +639,25 @@ void TypingCommand::deleteSelection(bool smartDelete)
     CompositeEditCommand::deleteSelection(smartDelete);
     typingAddedToOpenCommand(DeleteSelection);
 }
+
+#if PLATFORM(IOS)
+class FriendlyEditCommand : public EditCommand {
+public:
+    void setEndingSelection(const VisibleSelection& selection)
+    {
+        EditCommand::setEndingSelection(selection);
+    }
+};
+
+void TypingCommand::setEndingSelectionOnLastInsertCommand(const VisibleSelection& selection)
+{
+    if (!m_commands.isEmpty()) {
+        EditCommand* lastCommand = m_commands.last().get();
+        if (lastCommand->isInsertTextCommand())
+            static_cast<FriendlyEditCommand*>(lastCommand)->setEndingSelection(selection);
+    }
+}
+#endif
 
 void TypingCommand::updatePreservesTypingStyle(ETypingCommand commandType)
 {

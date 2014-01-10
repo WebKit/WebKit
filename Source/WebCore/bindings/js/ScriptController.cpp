@@ -61,8 +61,10 @@ namespace WebCore {
 
 void ScriptController::initializeThreading()
 {
+#if !PLATFORM(IOS)
     JSC::initializeThreading();
     WTF::initializeMainThread();
+#endif
 }
 
 ScriptController::ScriptController(Frame& frame)

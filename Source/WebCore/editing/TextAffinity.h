@@ -27,7 +27,11 @@
 #define TextAffinity_h
 
 #ifdef __OBJC__
+#if !PLATFORM(IOS)
 #include <AppKit/NSTextView.h>
+#else
+#include "WAKAppKitStubs.h"
+#endif // !PLATFORM(IOS)
 #endif
 
 namespace WebCore {

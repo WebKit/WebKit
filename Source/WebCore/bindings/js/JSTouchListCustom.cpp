@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#if !PLATFORM(IOS)
 #if ENABLE(TOUCH_EVENTS)
 
 #include "JSTouchList.h"
@@ -46,3 +47,4 @@ JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Touch
 } // namespace WebCore
 
 #endif // ENABLE(TOUCH_EVENTS)
+#endif // !PLATFORM(IOS)

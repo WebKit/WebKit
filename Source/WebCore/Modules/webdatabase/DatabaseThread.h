@@ -69,6 +69,11 @@ public:
     SQLTransactionClient* transactionClient() { return m_transactionClient.get(); }
     SQLTransactionCoordinator* transactionCoordinator() { return m_transactionCoordinator.get(); }
 
+#if PLATFORM(IOS)
+    void setPaused(bool);
+    void handlePausedQueue();
+#endif
+
 private:
     DatabaseThread();
 
@@ -80,6 +85,11 @@ private:
     RefPtr<DatabaseThread> m_selfRef;
 
     MessageQueue<DatabaseTask> m_queue;
+#if PLATFORM(IOS)
+    MessageQueue<DatabaseTask> m_pausedQueue;
+    Mutex m_pausedMutex;
+    volatile bool m_paused;
+#endif
 
     // This set keeps track of the open databases that have been used on this thread.
     typedef HashSet<RefPtr<DatabaseBackend>> DatabaseSet;

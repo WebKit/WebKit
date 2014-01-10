@@ -53,6 +53,22 @@
 #import <JavaScriptCore/APICast.h>
 #import <wtf/HashMap.h>
 
+#if PLATFORM(IOS)
+#import "FocusController.h"
+#import "HTMLLinkElement.h"
+#import "KeyboardEvent.h"
+#import "URL.h"
+#import "MediaList.h"
+#import "MediaQueryEvaluator.h"
+#import "NodeRenderStyle.h"
+#import "Page.h"
+#import "RenderView.h"
+#import "Touch.h"
+#import "WAKAppKitStubs.h"
+#import "WAKWindow.h"
+#import "WebCoreThreadMessage.h"
+#endif
+
 using namespace JSC;
 using namespace WebCore;
 
@@ -176,7 +192,79 @@ static NSArray *kit(const Vector<IntRect>& rects)
     return array;
 }
 
+#if PLATFORM(IOS)
+static WKQuad wkQuadFromFloatQuad(const FloatQuad& inQuad)
+{
+    WKQuad  theQuad;
+    theQuad.p1 = inQuad.p1();
+    theQuad.p2 = inQuad.p2();
+    theQuad.p3 = inQuad.p3();
+    theQuad.p4 = inQuad.p4();
+    
+    return theQuad;
+}
+
+static NSArray *kit(const Vector<FloatQuad>& quads)
+{
+    size_t size = quads.size();
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:size];
+    for (size_t i = 0; i < size; ++i) {
+        WKQuadObject* quadObject = [[WKQuadObject alloc] initWithQuad:wkQuadFromFloatQuad(quads[i])];
+        [array addObject:quadObject];
+        [quadObject release];
+    }
+    return array;
+}
+
+static inline float min4(float a, float b, float c, float d)
+{
+    return std::min(std::min(a, b), std::min(c, d));
+}
+
+static inline float max4(float a, float b, float c, float d)
+{
+    return std::max(std::max(a, b), std::max(c, d));
+}
+
+static inline WKQuad emptyQuad()
+{
+    WKQuad zeroQuad = { CGPointZero, CGPointZero, CGPointZero, CGPointZero };
+    return zeroQuad;
+}
+#endif
+
 } // namespace WebCore
+
+#if PLATFORM(IOS)
+@implementation WKQuadObject
+
+- (id)initWithQuad:(WKQuad)quad
+{
+    if ((self = [super init]))
+    {
+        _quad = quad;
+    }
+    return self;
+}
+
+- (WKQuad)quad
+{
+    return _quad;
+}
+
+- (CGRect)boundingBox
+{
+    float left      = WebCore::min4(_quad.p1.x, _quad.p2.x, _quad.p3.x, _quad.p4.x);
+    float top       = WebCore::min4(_quad.p1.y, _quad.p2.y, _quad.p3.y, _quad.p4.y);
+    
+    float right     = WebCore::max4(_quad.p1.x, _quad.p2.x, _quad.p3.x, _quad.p4.x);
+    float bottom    = WebCore::max4(_quad.p1.y, _quad.p2.y, _quad.p3.y, _quad.p4.y);
+    
+    return CGRectMake(left, top, right - left, bottom - top);
+}
+
+@end
+#endif
 
 @implementation DOMNode (WebCoreInternal)
 
@@ -263,13 +351,21 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
 @implementation DOMNode (DOMNodeExtensions)
 
+#if PLATFORM(IOS)
+- (CGRect)boundingBox
+#else
 - (NSRect)boundingBox
+#endif
 {
     // FIXME: Could we move this function to WebCore::Node and autogenerate?
     core(self)->document().updateLayoutIgnorePendingStylesheets();
     WebCore::RenderObject* renderer = core(self)->renderer();
     if (!renderer)
+#if PLATFORM(IOS)
+        return CGRectZero;
+#else
         return NSZeroRect;
+#endif
     return renderer->absoluteBoundingBoxRect();
 }
 
@@ -278,10 +374,180 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     return [self textRects];
 }
 
+#if PLATFORM(IOS)
+// quad in page coordinates, taking transforms into account. c.f. - (NSRect)boundingBox;
+- (WKQuad)absoluteQuad
+{
+    return [self absoluteQuadAndInsideFixedPosition:0];
+}
+
+- (WKQuad)absoluteQuadAndInsideFixedPosition:(BOOL *)insideFixed
+{
+    core(self)->document().updateLayoutIgnorePendingStylesheets();
+    WebCore::RenderObject *renderer = core(self)->renderer();
+    if (renderer) {
+        Vector<FloatQuad> quads;
+        bool wasFixed = false;
+        renderer->absoluteQuads(quads, &wasFixed);
+        if (insideFixed)
+            *insideFixed = wasFixed;
+
+        if (quads.size() == 0)
+            return WebCore::emptyQuad();
+        
+        if (quads.size() == 1)
+            return wkQuadFromFloatQuad(quads[0]);
+
+        FloatRect boundingRect = quads[0].boundingBox();
+        for (size_t i = 1; i < quads.size(); ++i)
+            boundingRect.unite(quads[i].boundingBox());
+
+        return wkQuadFromFloatQuad(boundingRect);
+    }
+
+    return WebCore::emptyQuad();
+}
+
+// this method is like - (CGRect)boundingBox, but it accounts for for transforms
+- (CGRect)boundingBoxUsingTransforms
+{
+    core(self)->document().updateLayoutIgnorePendingStylesheets();
+    WebCore::RenderObject* renderer = core(self)->renderer();
+    if (!renderer)
+        return CGRectZero;
+    return renderer->absoluteBoundingBoxRect(true);
+}
+
+// returns array of WKQuadObject
+- (NSArray *)lineBoxQuads
+{
+    core(self)->document().updateLayoutIgnorePendingStylesheets();
+    WebCore::RenderObject *renderer = core(self)->renderer();
+    if (renderer) {
+        Vector<WebCore::FloatQuad> quads;
+        renderer->absoluteQuads(quads);
+        return kit(quads);
+    }
+    return nil;
+}
+
+- (Element *)_linkElement
+{
+    WebCore::Node* node = core(self);
+    
+    while (node) {
+        if (node->isLink())
+            return static_cast<WebCore::Element*>(node);
+        node = node->parentNode();
+    }
+    
+    return 0;
+}
+
+- (NSURL *)hrefURL
+{
+    Element *link= [self _linkElement];
+    if (link)
+        return link->document().completeURL(stripLeadingAndTrailingHTMLSpaces(link->getAttribute(HTMLNames::hrefAttr)));
+    
+    return nil;
+}
+
+- (NSString *)hrefTarget
+{
+    Element *target = [self _linkElement];
+    
+    if(target) return target->getAttribute(HTMLNames::targetAttr);
+    
+    return nil;
+}
+
+- (CGRect)hrefFrame
+{
+    RenderObject *renderer = [self _linkElement]->renderer();
+    
+    if(renderer) return renderer->absoluteBoundingBoxRect();
+    
+    return NSZeroRect;
+}
+
+- (NSString *)hrefLabel
+{
+    Element *link= [self _linkElement];
+    
+    if (!link) return nil;
+    
+    return link->textContent();
+}
+
+- (NSString *)hrefTitle
+{
+    Element *link= [self _linkElement];
+    
+    if (!link) return nil;
+    
+    return link->document().displayStringModifiedByEncoding(static_cast<HTMLElement *>(link)->title());
+}
+
+- (CGRect)boundingFrame
+{
+    return [self boundingBox];
+}
+
+- (WKQuad)innerFrameQuad       // takes transforms into account
+{
+    core(self)->document().updateLayoutIgnorePendingStylesheets();
+    RenderObject* renderer = core(self)->renderer();
+    if (!renderer)
+        return emptyQuad();
+
+    RenderStyle& style = renderer->style();
+    IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
+
+    boundingBox.move(style.borderLeftWidth(), style.borderTopWidth());
+    boundingBox.setWidth(boundingBox.width() - style.borderLeftWidth() - style.borderRightWidth());
+    boundingBox.setHeight(boundingBox.height() - style.borderBottomWidth() - style.borderTopWidth());
+
+    // FIXME: This function advertises returning a quad, but it actually returns a bounding box (so there is no rotation, for instance).
+    return wkQuadFromFloatQuad(FloatQuad(boundingBox));
+}
+
+- (float)computedFontSize
+{
+    WebCore::Node *node = core(self);
+    RenderStyle *style = node->renderStyle();
+    if (!style)
+        return 0.0f;
+    return style->fontDescription().computedSize();
+}
+
+- (DOMNode *)nextFocusNode
+{
+    Page *page = core(self)->document().page();
+    if (!page)
+        return nil;
+
+    RefPtr<KeyboardEvent> key = KeyboardEvent::create();
+    return kit(page->focusController().nextFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&core(self)->document()), core(self), key.get()));
+}
+
+- (DOMNode *)previousFocusNode
+{
+    Page *page = core(self)->document().page();
+    if (!page)
+        return nil;
+
+    RefPtr<KeyboardEvent> key = KeyboardEvent::create();
+    return kit(page->focusController().previousFocusableElement(FocusNavigationScope::focusNavigationScopeOf(&core(self)->document()), core(self), key.get()));
+}
+
+#endif // PLATFORM(IOS)
+
 @end
 
 @implementation DOMNode (DOMNodeExtensionsPendingPublic)
 
+#if !PLATFORM(IOS)
 - (NSImage *)renderedImage
 {
     // FIXME: Could we move this function to WebCore::Node and autogenerate?
@@ -291,6 +557,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
         return nil;
     return [createDragImageForNode(*frame, *node).leakRef() autorelease];
 }
+#endif
 
 - (NSArray *)textRects
 {
@@ -321,14 +588,22 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
 @implementation DOMRange (DOMRangeExtensions)
 
+#if PLATFORM(IOS)
+- (CGRect)boundingBox
+#else
 - (NSRect)boundingBox
+#endif
 {
     // FIXME: The call to updateLayoutIgnorePendingStylesheets should be moved into WebCore::Range.
     core(self)->ownerDocument().updateLayoutIgnorePendingStylesheets();
     return core(self)->boundingBox();
 }
 
+#if !PLATFORM(IOS)
 - (NSImage *)renderedImageForcingBlackText:(BOOL)forceBlackText
+#else
+- (CGImageRef)renderedImageForcingBlackText:(BOOL)forceBlackText
+#endif
 {
     WebCore::Range* range = core(self);
     WebCore::Frame* frame = range->ownerDocument().frame();
@@ -360,6 +635,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
 @implementation DOMElement (DOMElementAppKitExtensions)
 
+#if !PLATFORM(IOS)
 - (NSImage*)image
 {
     // FIXME: Could we move this function to WebCore::Node and autogenerate?
@@ -371,11 +647,13 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
         return nil;
     return cachedImage->imageForRenderer(toRenderImage(renderer))->getNSImage();
 }
+#endif
 
 @end
 
 @implementation DOMElement (WebPrivate)
 
+#if !PLATFORM(IOS)
 - (NSFont *)_font
 {
     // FIXME: Could we move this function to WebCore::Element and autogenerate?
@@ -384,7 +662,17 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
         return nil;
     return renderer->style().font().primaryFont()->getNSFont();
 }
+#else
+- (CTFontRef)_font
+{
+    RenderObject* renderer = core(self)->renderer();
+    if (!renderer)
+        return nil;
+    return renderer->style().font().primaryFont()->getCTFont();
+}
+#endif
 
+#if !PLATFORM(IOS)
 - (NSData *)_imageTIFFRepresentation
 {
     // FIXME: Could we move this function to WebCore::Element and autogenerate?
@@ -396,6 +684,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
         return nil;
     return (NSData *)cachedImage->imageForRenderer(renderer)->getTIFFRepresentation();
 }
+#endif
 
 - (NSURL *)_getURLAttribute:(NSString *)name
 {
@@ -414,6 +703,49 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 }
 
 @end
+
+#if PLATFORM(IOS)
+@implementation DOMHTMLLinkElement (WebPrivate)
+- (BOOL)_mediaQueryMatchesForOrientation:(int)orientation
+{
+    Document& document = static_cast<HTMLLinkElement*>(core(self))->document();
+    FrameView* frameView = document.frame() ? document.frame()->view() : 0;
+    if (!frameView)
+        return false;
+    int layoutWidth = frameView->layoutWidth();
+    int layoutHeight = frameView->layoutHeight();
+    IntSize savedFixedLayoutSize = frameView->fixedLayoutSize();
+    bool savedUseFixedLayout = frameView->useFixedLayout();
+    if ((orientation == WebMediaQueryOrientationPortrait && layoutWidth > layoutHeight) ||
+        (orientation == WebMediaQueryOrientationLandscape && layoutWidth < layoutHeight)) {
+        // temporarily swap the orientation for the evaluation
+        frameView->setFixedLayoutSize(IntSize(layoutHeight, layoutWidth));
+        frameView->setUseFixedLayout(true);
+    }
+        
+    bool result = [self _mediaQueryMatches];
+
+    frameView->setFixedLayoutSize(savedFixedLayoutSize);
+    frameView->setUseFixedLayout(savedUseFixedLayout);
+
+    return result;
+}
+
+- (BOOL)_mediaQueryMatches
+{
+    HTMLLinkElement* link = static_cast<HTMLLinkElement*>(core(self));
+    String media = link->getAttribute(HTMLNames::mediaAttr);
+    if (media.isEmpty())
+        return true;
+    Document& document = link->document();
+
+    RefPtr<MediaQuerySet> mediaQuerySet = MediaQuerySet::createAllowingDescriptionSyntax(media);
+    MediaQueryEvaluator screenEval("screen", document.frame(), document.renderView() ? &document.renderView()->style() : 0);
+
+    return screenEval.eval(mediaQuerySet.get());
+}
+@end
+#endif
 
 //------------------------------------------------------------------------------------------
 // DOMRange
@@ -442,12 +774,14 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
 @implementation DOMRGBColor (WebPrivate)
 
+#if !PLATFORM(IOS)
 // FIXME: This should be removed as soon as all internal Apple uses of it have been replaced with
 // calls to the public method - (NSColor *)color.
 - (NSColor *)_color
 {
     return [self color];
 }
+#endif
 
 @end
 

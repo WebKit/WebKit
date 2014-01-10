@@ -161,7 +161,11 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
     CString jsName = name.ascii();
     RetainPtr<CFStringRef> fieldName = adoptCF(CFStringCreateWithCString(NULL, jsName.data(), kCFStringEncodingASCII));
     id targetObject = (static_cast<ObjcInstance*>(instance))->getObject();
+#if PLATFORM(IOS)
+    id attributes = [targetObject respondsToSelector:@selector(attributeKeys)] ? [targetObject performSelector:@selector(attributeKeys)] : nil;
+#else
     id attributes = [targetObject attributeKeys];
+#endif
     if (attributes) {
         // Class overrides attributeKeys, use that array of key names.
         unsigned count = [attributes count];

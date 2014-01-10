@@ -74,6 +74,10 @@ def resolve_include(header, included_header, permitted_types)
     return
   end
 
+  # iOS we want to keep the WAK headers private, even if a public header includes them,
+  # so we are going to not show warnings for WAK headers.
+  return if framework == "WebKit" and included_header_name =~ /^WAK/
+
   header_type = $HEADER_NAMES_TO_TYPE[included_header_name]
 
   if not header_type

@@ -57,6 +57,9 @@ sub applyPreprocessor
         push(@args, qw(-E -P -x c++));
     }
 
+    push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
+    push(@args, "-isysroot", $ENV{SDKROOT}) if $ENV{SDKROOT};
+
     # Remove double quotations from $defines and extract macros.
     # For example, if $defines is ' "A=1" "B=1" C=1 ""    D  ',
     # then it is converted into four macros -DA=1, -DB=1, -DC=1 and -DD.

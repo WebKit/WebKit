@@ -323,7 +323,7 @@
     // FIXME: Consider defining an ENABLE macro for iOS touch event code, say IOS_TOUCH_EVENTS,
     // and/or modifying the bindings scripts to support generating more complicated conditional code.
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
-#include "DocumentIOS.idl"
+#include <WebKitAdditions/DocumentIOS.idl>
 #else
     [ReturnNewObject, RaisesException] Touch createTouch([Default=Undefined] optional DOMWindow window,
                                                      [Default=Undefined] optional EventTarget target,

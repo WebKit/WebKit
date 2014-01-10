@@ -112,6 +112,12 @@
 /* title for a multiple file chooser button used in HTML forms. This title should be as short as possible. */
 "Choose Files" = "Choose Files";
 
+/* PLATFORM(IOS) title for file button used in HTML forms for media files */
+"Choose Media (Single)" = "Choose Photo";
+
+/* PLATFORM(IOS) title for file button used in HTML5 forms for multiple media files */
+"Choose Media (Multiple)" = "Choose Photos";
+
 /* menu item in Recent Searches menu that empties menu's contents */
 "Clear Recent Searches" = "Clear Recent Searches";
 
@@ -156,6 +162,12 @@
 
 /* Default writing direction context menu item */
 "Default" = "Default";
+
+/* PLATFORM(IOS) Undo action name */
+"Delete (Undo action name)" = "Delete";
+
+/* PLATFORM(IOS) Undo action name */
+"Dictation (Undo action name)" = "Dictation";
 
 /* text to display in <details> tag when it has no <summary> child */
 "Details" = "Details";
@@ -780,6 +792,12 @@
 
 /* text to display in file button used in HTML forms when no files are selected and the button allows multiple files to be selected */
 "no files selected" = "no files selected";
+
+/* PLATFORM(IOS) text to display in file button used in HTML forms for media files when no media file is selected */
+"no media selected (single)" = "no photo selected";
+
+/* PLATFORM(IOS) text to display in file button used in HTML forms for media files when no media files are selected and the button allows multiple files to be selected */
+"no media selected (multiple)" = "no photos selected";
 
 /* HTTP result code string */
 "no longer exists" = "no longer exists";

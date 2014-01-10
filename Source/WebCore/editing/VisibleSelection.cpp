@@ -321,6 +321,14 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             }
                 
             m_end = end.deepEquivalent();
+#if PLATFORM(IOS)
+            // End must not be before start.
+            if (m_start.deprecatedNode() == m_end.deprecatedNode() && m_start.deprecatedEditingOffset() > m_end.deprecatedEditingOffset()) {
+                Position swap(m_start);
+                m_start = m_end;    
+                m_end = swap;    
+            }
+#endif
             break;
         }
         case SentenceGranularity: {
@@ -384,6 +392,11 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(Text
             m_start = startOfSentence(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             m_end = endOfSentence(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
+#if PLATFORM(IOS)
+        case DocumentGranularity:
+            ASSERT_NOT_REACHED();
+            break;
+#endif
     }
     
     // Make sure we do not have a dangling start or end.
@@ -518,6 +531,13 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
 {
     if (m_base.isNull() || m_start.isNull() || m_end.isNull())
         return;
+
+#if PLATFORM(IOS)
+    // Early return in the caret case (the state hasn't actually been set yet, so we can't use isCaret()) to avoid the 
+    // expense of computing highestEditableRoot.
+    if (m_base == m_start && m_base == m_end)
+        return;
+#endif
 
     Node* baseRoot = highestEditableRoot(m_base);
     Node* startRoot = highestEditableRoot(m_start);

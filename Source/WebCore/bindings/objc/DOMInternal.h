@@ -45,6 +45,9 @@ namespace JSC {
 namespace WebCore {
     class NodeFilter;
     class XPathNSResolver;
+#if ENABLE(TOUCH_EVENTS)
+    class Touch;
+#endif
 }
 
 @interface DOMNodeFilter : DOMObject <DOMNodeFilter>

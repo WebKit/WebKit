@@ -46,6 +46,11 @@ class PluginViewBase : public Widget {
 public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const { return 0; }
+#if PLATFORM(IOS)
+    virtual bool willProvidePluginLayer() const { return false; }
+    virtual void attachPluginLayer() { }
+    virtual void detachPluginLayer() { }
+#endif
 #endif
 
     virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*) { return 0; }

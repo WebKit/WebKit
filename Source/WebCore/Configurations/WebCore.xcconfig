@@ -33,8 +33,9 @@ EXPORTED_SYMBOLS_FILE_arm64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCo
 EXPORTED_SYMBOLS_FILE_i386 = $(EXPORTED_SYMBOLS_FILE_i386_$(PLATFORM_NAME));
 EXPORTED_SYMBOLS_FILE_i386_iphonesimulator = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.i386.exp;
 EXPORTED_SYMBOLS_FILE_i386_macosx = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.exp;
-EXPORTED_SYMBOLS_FILE_ppc = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.exp;
-EXPORTED_SYMBOLS_FILE_x86_64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.exp;
+EXPORTED_SYMBOLS_FILE_x86_64 = $(EXPORTED_SYMBOLS_FILE_x86_64_$(PLATFORM_NAME));
+EXPORTED_SYMBOLS_FILE_x86_64_iphonesimulator = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.x86_64.exp;
+EXPORTED_SYMBOLS_FILE_x86_64_macosx = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebCore.LP64.exp;
 GCC_PREFIX_HEADER = WebCorePrefix.h;
 GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(FEATURE_DEFINES) WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST $(GCC_PREPROCESSOR_DEFINITIONS);
 FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(PLATFORM_NAME));
@@ -51,7 +52,9 @@ OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS);
 STAGED_FRAMEWORKS_SEARCH_PATH = $(STAGED_FRAMEWORKS_SEARCH_PATH_$(USE_STAGING_INSTALL_PATH));
 STAGED_FRAMEWORKS_SEARCH_PATH_YES = $(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/StagedFrameworks/Safari;
 
-HEADER_SEARCH_PATHS = ForwardingHeaders icu /usr/include/libxslt /usr/include/libxml2 "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore" "${BUILT_PRODUCTS_DIR}/usr/local/include" $(HEADER_SEARCH_PATHS);
+WEBKITADDITIONS_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions $(SDKROOT)/usr/local/include/WebKitAdditions;
+
+HEADER_SEARCH_PATHS = ForwardingHeaders icu /usr/include/libxslt /usr/include/libxml2 $(SQLITE3_HEADER_SEARCH_PATHS) "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore" "$(BUILT_PRODUCTS_DIR)/usr/local/include" $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) $(HEADER_SEARCH_PATHS);
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(INSTALL_PATH_$(PLATFORM_NAME));
 INSTALL_PATH_iphoneos = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
@@ -68,8 +71,8 @@ INSTALLHDRS_SCRIPT_PHASE = YES;
 PRODUCT_NAME = WebCore;
 OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE -allowable_client WebCoreTestSupport;
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework QuartzCore;
-OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
+OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_iphonesimulator) -framework IOSurface;
+OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_BASE) -framework Accelerate -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework OpenGLES -framework QuartzCore -lMobileGestalt;
 OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -umbrella WebKit -allowable_client WebKit2 -framework IOSurface;
 
 NORMAL_WEBCORE_FRAMEWORKS_DIR = $(NORMAL_WEBCORE_FRAMEWORKS_DIR_$(PLATFORM_NAME));
@@ -102,10 +105,13 @@ PRODUCTION_FRAMEWORKS_DIR_macosx_USE_STAGING_INSTALL_PATH_YES = $(NEXT_ROOT)$(SY
 JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_$(CONFIGURATION));
 JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Release = $(JAVASCRIPTCORE_PRIVATE_HEADERS_engineering);
 JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Debug = $(JAVASCRIPTCORE_PRIVATE_HEADERS_engineering);
-JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Production = $(SDKROOT)$(PRODUCTION_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders;
+JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Production = $(JAVASCRIPTCORE_PRIVATE_HEADERS_Production_$(PLATFORM_NAME));
+JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Production_iphoneos = $(SDKROOT)/$(SYSTEM_LIBRARY_DIR)/Frameworks/JavaScriptCore.framework/Headers;
+JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Production_iphonesimulator = $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Production_iphoneos);
+JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Production_macosx = $(SDKROOT)$(PRODUCTION_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders;
 JAVASCRIPTCORE_PRIVATE_HEADERS_engineering = $(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders;
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
-EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.tiff *Cursor.png Cursor.cpp CursorMac.mm EventHandlerMac.mm HTMLConverter.mm KillRingMac.mm PlatformEventFactoryMac.mm SSLKeyGeneratorMac.cpp SearchPopupMenuMac.mm ScrollingCoordinatorMac.mm ScrollingStateScrollingNodeMac.mm ScrollingTreeScrollingNodeMac.mm SharedTimerMac.mm WebVideoFullscreenController.mm WebVideoFullscreenHUDWindowController.mm WebWindowAnimation.mm;
+EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *.tiff *Cursor.png AccessibilityObjectMac.mm AXObjectCacheMac.mm ClipboardMac.mm ColorMac.mm Cursor.cpp CursorMac.mm EditorMac.mm EventHandlerMac.mm EventLoopMac.mm GeolocationServiceMac.mm GraphicsContext3DOpenGLES.cpp IconDatabase.cpp IconMac.mm KeyEventMac.mm KillRingMac.mm LocalCurrentGraphicsContext.mm MIMETypeRegistryMac.mm MediaPlayerPrivateQTKit.mm NSScrollerImpDetails.mm NetworkStateNotifierMac.cpp PasteboardMac.mm PlatformEventFactoryMac.mm PlatformMouseEventMac.mm PlatformPasteboardMac.mm PlatformScreenMac.mm PlatformSpeechSynthesizerMac.mm PluginMainThreadScheduler.cpp RunLoopMac.mm SSLKeyGeneratorMac.cpp ScrollingCoordinatorMac.mm ScrollingStateScrollingNodeMac.mm ScrollingTreeScrollingNodeMac.mm ScrollViewMac.mm ScrollbarThemeMac.mm SharedTimerMac.mm SoundMac.mm SystemTimeMac.cpp ThemeMac.mm ThreadCheck.mm WebAccessibilityObjectWrapperMac.mm WebCoreSystemInterface.mm WebCoreURLResponse.mm WebCoreView.m WebFontCache.mm WebVideoFullscreenController.mm WebVideoFullscreenHUDWindowController.mm WebWindowAnimation.mm WheelEventMac.mm WidgetMac.mm mac/LayerPool.mm DisplayRefreshMonitorMac.mm;
 EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
 EXCLUDED_SOURCE_FILE_NAMES_macosx = *IOS.h *IOS.cpp *IOS.mm KillRingNone.cpp WAKAppKitStubs.h WAKClipView.h WAKResponder.h WAKScrollView.h WAKView.h WAKViewPrivate.h WAKWindow.h WKContentObservation.h WKGraphics.h WKTypes.h WKUtilities.h WKView.h WKViewPrivate.h WebCoreThread.h WebCoreThreadMessage.h WebCoreThreadRun.h WebCoreThreadSystemInterface.h;

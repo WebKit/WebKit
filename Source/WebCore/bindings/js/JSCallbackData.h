@@ -58,7 +58,9 @@ public:
     
     ~JSCallbackData()
     {
+#if !PLATFORM(IOS)
         ASSERT(m_thread == currentThread());
+#endif
     }
 
     JSC::JSObject* callback() { return m_callback.get(); }

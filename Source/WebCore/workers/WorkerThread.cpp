@@ -43,6 +43,10 @@
 #include "DatabaseTask.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#endif
+
 namespace WebCore {
 
 static Mutex& threadSetMutex()
@@ -141,6 +145,11 @@ void WorkerThread::workerThreadStart(void* thread)
 
 void WorkerThread::workerThread()
 {
+    // Propagate the mainThread's fenv to workers.
+#if PLATFORM(IOS)
+    fesetenv(&mainThreadFEnv);
+#endif
+
     {
         MutexLocker lock(m_threadCreationMutex);
         m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_userAgent, std::move(m_startupData->m_groupSettings), m_startupData->m_contentSecurityPolicy, m_startupData->m_contentSecurityPolicyType, m_startupData->m_topOrigin.release());

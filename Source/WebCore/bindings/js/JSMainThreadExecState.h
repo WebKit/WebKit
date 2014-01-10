@@ -30,6 +30,10 @@
 #include <runtime/Completion.h>
 #include <wtf/MainThread.h>
 
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#endif
+
 namespace WebCore {
 
 class InspectorInstrumentationCookie;

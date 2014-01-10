@@ -39,6 +39,10 @@ public:
     static Geolocation* geolocation(Navigator*);
     Geolocation* geolocation() const;
 
+#if PLATFORM(IOS)
+    void resetAllGeolocationPermission();
+#endif // PLATFORM(IOS)
+
 private:
     NavigatorGeolocation(Frame*);
     static const char* supplementName();

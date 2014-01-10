@@ -29,7 +29,7 @@ output_file = ARGV[1]
 require 'erb'
 
 def line_for_output line
-  return line.chomp if line =~ /#/
+  return line.chomp if line =~ /^#\s*(if|ifdef|ifndef|else|elif|endif)/
   "    validateAndPrint(\"#{line.chomp}\");"
 end
 

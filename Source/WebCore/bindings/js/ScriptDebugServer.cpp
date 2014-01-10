@@ -34,6 +34,7 @@
 #include "ScriptDebugServer.h"
 
 #include "ContentSearchUtils.h"
+#include "EventLoop.h"
 #include "Frame.h"
 #include "JSDOMWindowCustom.h"
 #include "JSJavaScriptCallFrame.h"
@@ -48,6 +49,11 @@
 #include <runtime/JSLock.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(IOS)
+#include "JSDOMWindowBase.h"
+#include "WebCoreThreadInternal.h"
+#endif
 
 using namespace JSC;
 
@@ -295,11 +301,27 @@ void ScriptDebugServer::handlePause(Debugger::ReasonForPause, JSGlobalObject* vm
 
     TimerBase::fireTimersInNestedEventLoop();
 
+#if PLATFORM(IOS)
+    // On iOS, running an EventLoop causes us to run a nested WebRunLoop.
+    // Since the WebThread is autoreleased at the end of run loop iterations
+    // we need to gracefully handle releasing and reacquiring the lock.
+    ASSERT(WebThreadIsLockedOrDisabled());
+    {
+        if (WebThreadIsEnabled())
+            JSC::JSLock::DropAllLocks dropAllLocks(WebCore::JSDOMWindowBase::commonVM(), JSC::JSLock::DropAllLocks::AlwaysDropLocks);
+        WebRunLoopEnableNested();
+#endif
+
     m_runningNestedMessageLoop = true;
     m_doneProcessingDebuggerEvents = false;
     runEventLoopWhilePaused();
     m_runningNestedMessageLoop = false;
 
+#if PLATFORM(IOS)
+        WebRunLoopDisableNested();
+    }
+    ASSERT(WebThreadIsLockedOrDisabled());
+#endif
     didContinue(vmEntryGlobalObject);
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidContinue, vmEntryGlobalObject);
 }

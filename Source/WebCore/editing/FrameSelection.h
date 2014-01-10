@@ -35,6 +35,10 @@
 #include "VisibleSelection.h"
 #include <wtf/Noncopyable.h>
 
+#if PLATFORM(IOS)
+#include "Color.h"
+#endif
+
 namespace WebCore {
 
 class CharacterData;
@@ -228,6 +232,43 @@ public:
     void showTreeForThis() const;
 #endif
 
+#if PLATFORM(IOS)
+public:
+    void expandSelectionToElementContainingCaretSelection();
+    PassRefPtr<Range> elementRangeContainingCaretSelection() const;
+    void expandSelectionToWordContainingCaretSelection();
+    PassRefPtr<Range> wordRangeContainingCaretSelection();
+    void expandSelectionToStartOfWordContainingCaretSelection();
+    UChar characterInRelationToCaretSelection(int amount) const;
+    UChar characterBeforeCaretSelection() const;
+    UChar characterAfterCaretSelection() const;
+    int wordOffsetInRange(const Range*) const;
+    bool spaceFollowsWordInRange(const Range*) const;
+    bool selectionAtDocumentStart() const;
+    bool selectionAtSentenceStart() const;
+    bool selectionAtWordStart() const;
+    PassRefPtr<Range> rangeByMovingCurrentSelection(int amount) const;
+    PassRefPtr<Range> rangeByExtendingCurrentSelection(int amount) const;
+    void selectRangeOnElement(unsigned location, unsigned length, Node*);
+    void suppressCloseTyping() { ++m_closeTypingSuppressions; }
+    void restoreCloseTyping() { --m_closeTypingSuppressions; }
+    void clearCurrentSelection();
+    void setCaretBlinks(bool caretBlinks = true);
+    void setCaretColor(const Color&);
+    static VisibleSelection wordSelectionContainingCaretSelection(const VisibleSelection&);
+    void setUpdateAppearanceEnabled(bool enabled) { m_updateAppearanceEnabled = enabled; }
+    void suppressScrolling() { ++m_scrollingSuppressCount; }
+    void restoreScrolling()
+    {
+        ASSERT(m_scrollingSuppressCount);
+        --m_scrollingSuppressCount;
+    }
+private:
+    bool actualSelectionAtSentenceStart(const VisibleSelection&) const;
+    PassRefPtr<Range> rangeByAlteringCurrentSelection(EAlteration, int amount) const;
+public:
+#endif
+
     bool shouldChangeSelection(const VisibleSelection&) const;
     bool shouldDeleteSelection(const VisibleSelection&) const;
     enum EndPointsAdjustmentMode { AdjustEndpointsAtBidiBoundary, DoNotAdjsutEndpoints };
@@ -309,6 +350,14 @@ private:
     bool m_isCaretBlinkingSuspended : 1;
     bool m_focused : 1;
     bool m_shouldShowBlockCursor : 1;
+
+#if PLATFORM(IOS)
+    bool m_updateAppearanceEnabled : 1;
+    bool m_caretBlinks : 1;
+    Color m_caretColor;
+    int m_closeTypingSuppressions;
+    int m_scrollingSuppressCount;
+#endif
 };
 
 inline EditingStyle* FrameSelection::typingStyle() const

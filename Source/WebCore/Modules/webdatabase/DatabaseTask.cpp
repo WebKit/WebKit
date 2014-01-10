@@ -85,7 +85,13 @@ void DatabaseTask::performTask()
 
     LOG(StorageAPI, "Performing %s %p\n", debugTaskName(), this);
 
+#if !PLATFORM(IOS)
     m_database->resetAuthorizer();
+#else
+    if (m_database)
+        m_database->resetAuthorizer();
+#endif
+
     doPerformTask();
 
     if (m_synchronizer)
@@ -167,6 +173,13 @@ DatabaseBackend::DatabaseTransactionTask::~DatabaseTransactionTask()
     if (!m_didPerformTask)
         m_transaction->notifyDatabaseThreadIsShuttingDown();
 }
+
+#if PLATFORM(IOS)
+bool Database::DatabaseTransactionTask::shouldPerformWhilePaused() const
+{
+    return m_transaction->shouldPerformWhilePaused();
+}
+#endif
 
 void DatabaseBackend::DatabaseTransactionTask::doPerformTask()
 {

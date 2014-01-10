@@ -35,6 +35,9 @@
 
 #if !ASSERT_DISABLED
 #include <wtf/MainThread.h>
+#if PLATFORM(IOS)
+#include "WebCoreThread.h"
+#endif
 #endif
 
 namespace WebCore {

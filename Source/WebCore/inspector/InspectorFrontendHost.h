@@ -77,8 +77,10 @@ public:
     void append(const String& url, const String& content);
     void close(const String& url);
 
+#if ENABLE(CONTEXT_MENUS)
     // Called from [Custom] implementations.
     void showContextMenu(Event*, const Vector<ContextMenuItem>& items);
+#endif
     void sendMessageToBackend(const String& message);
     void dispatchEventAsContextMenuEvent(Event*);
 

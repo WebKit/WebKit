@@ -1968,7 +1968,7 @@ void Internals::stopTrackingRepaints(ExceptionCode& ec)
     frameView->setTracksRepaints(false);
 }
 
-#if USE(LAZY_NATIVE_CURSOR)
+#if !PLATFORM(IOS) && USE(LAZY_NATIVE_CURSOR)
 static const char* cursorTypeToString(Cursor::Type cursorType)
 {
     switch (cursorType) {
@@ -2031,9 +2031,9 @@ String Internals::getCurrentCursorInfo(ExceptionCode& ec)
         return String();
     }
 
+#if !PLATFORM(IOS) && USE(LAZY_NATIVE_CURSOR)
     Cursor cursor = document->frame()->eventHandler().currentMouseCursor();
 
-#if USE(LAZY_NATIVE_CURSOR)
     StringBuilder result;
     result.append("type=");
     result.append(cursorTypeToString(cursor.type()));
@@ -2132,8 +2132,12 @@ bool Internals::isSelectPopupVisible(Node* node)
     if (!renderer->isMenuList())
         return false;
 
+#if !PLATFORM(IOS)
     RenderMenuList* menuList = toRenderMenuList(renderer);
     return menuList->popupIsVisible();
+#else
+    return false;
+#endif // !PLATFORM(IOS)
 }
 
 String Internals::captionsStyleSheetOverride(ExceptionCode& ec)

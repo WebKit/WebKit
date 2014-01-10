@@ -26,6 +26,8 @@
 // All public DOM class interfaces, properties and methods need to be in this file.
 // Anything not in the file will be generated into the appropriate private header file.
 
+#include <wtf/Platform.h>
+
 #ifndef OBJC_CODE_GENERATION
 #error Do not include this header, instead include the appropriate DOM header.
 #endif

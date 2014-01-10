@@ -65,6 +65,15 @@
 #include <stdio.h>
 #include <wtf/text/CString.h>
 
+#if PLATFORM(IOS)
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "Color.h"
+#include "RenderLayer.h"
+#include "RenderObject.h"
+#include "RenderStyle.h"
+#endif
+
 #define EDIT_DEBUG 0
 
 namespace WebCore {
@@ -107,6 +116,12 @@ FrameSelection::FrameSelection(Frame* frame)
     , m_isCaretBlinkingSuspended(false)
     , m_focused(frame && frame->page() && frame->page()->focusController().focusedFrame() == frame)
     , m_shouldShowBlockCursor(false)
+#if PLATFORM(IOS)
+    , m_updateAppearanceEnabled(false)
+    , m_caretBlinks(true)
+    , m_closeTypingSuppressions(0)
+    , m_scrollingSuppressCount(0)
+#endif
 {
     if (shouldAlwaysUseDirectionalSelection(m_frame))
         m_selection.setIsDirectional(true);
@@ -268,7 +283,11 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
 
     m_granularity = granularity;
 
+#if PLATFORM(IOS)
+    if (closeTyping && m_closeTypingSuppressions == 0)
+#else
     if (closeTyping)
+#endif
         TypingCommand::closeTyping(m_frame);
 
     if (shouldClearTypingStyle)
@@ -620,6 +639,11 @@ VisiblePosition FrameSelection::modifyExtendingRight(TextGranularity granularity
         // FIXME: implement all of the above?
         pos = modifyExtendingForward(granularity);
         break;
+#if PLATFORM(IOS)
+    case DocumentGranularity:
+        ASSERT_NOT_REACHED();
+        break;
+#endif
     }
 #if ENABLE(USERSELECT_ALL)
     adjustPositionForUserSelectAll(pos, directionOfEnclosingBlock() == LTR);
@@ -646,6 +670,11 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
     case ParagraphGranularity:
         pos = nextParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(EXTENT));
         break;
+#if PLATFORM(IOS)
+    case DocumentGranularity:
+        ASSERT_NOT_REACHED();
+        break;
+#endif
     case SentenceBoundary:
         pos = endOfSentence(endForPlatform());
         break;
@@ -703,6 +732,11 @@ VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity)
     case LineBoundary:
         pos = rightBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
         break;
+#if PLATFORM(IOS)
+    case DocumentGranularity:
+        ASSERT_NOT_REACHED();
+        break;
+#endif
     }
     return pos;
 }
@@ -735,6 +769,11 @@ VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity)
     case ParagraphGranularity:
         pos = nextParagraphPosition(endForPlatform(), lineDirectionPointForBlockDirectionNavigation(START));
         break;
+#if PLATFORM(IOS)
+    case DocumentGranularity:
+        ASSERT_NOT_REACHED();
+        break;
+#endif
     case SentenceBoundary:
         pos = endOfSentence(endForPlatform());
         break;
@@ -791,6 +830,11 @@ VisiblePosition FrameSelection::modifyExtendingLeft(TextGranularity granularity)
     case DocumentBoundary:
         pos = modifyExtendingBackward(granularity);
         break;
+#if PLATFORM(IOS)
+    case DocumentGranularity:
+        ASSERT_NOT_REACHED();
+        break;
+#endif
     }
 #if ENABLE(USERSELECT_ALL)
     adjustPositionForUserSelectAll(pos, !(directionOfEnclosingBlock() == LTR));
@@ -838,6 +882,11 @@ VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granular
         else
             pos = startOfDocument(pos);
         break;
+#if PLATFORM(IOS)
+    case DocumentGranularity:
+        ASSERT_NOT_REACHED();
+        break;
+#endif
     }
 #if ENABLE(USERSELECT_ALL)
     adjustPositionForUserSelectAll(pos, !(directionOfEnclosingBlock() == LTR));
@@ -877,6 +926,11 @@ VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity)
     case LineBoundary:
         pos = leftBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
         break;
+#if PLATFORM(IOS)
+    case DocumentGranularity:
+        ASSERT_NOT_REACHED();
+        break;
+#endif
     }
     return pos;
 }
@@ -919,6 +973,11 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
         else
             pos = startOfDocument(pos);
         break;
+#if PLATFORM(IOS)
+    case DocumentGranularity:
+        ASSERT_NOT_REACHED();
+        break;
+#endif
     }
     return pos;
 }
@@ -1668,6 +1727,12 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
     // FIXME: Can we provide extentAffinity?
     VisiblePosition visibleStart(range->startPosition(), collapsed ? affinity : DOWNSTREAM);
     VisiblePosition visibleEnd(range->endPosition(), SEL_DEFAULT_AFFINITY);
+#if PLATFORM(IOS)
+    if (range->startContainer() && visibleStart.isNull())
+        return false;
+    if (range->endContainer() && visibleEnd.isNull())
+        return false;
+#endif
     setSelection(VisibleSelection(visibleStart, visibleEnd), ClearTypingStyle | (closeTyping ? CloseTyping : 0));
     return true;
 }
@@ -1685,6 +1750,12 @@ void FrameSelection::focusedOrActiveStateChanged()
 
     document->updateStyleIfNeeded();
 
+#if USE(UIKIT_EDITING)
+    // Caret blinking (blinks | does not blink)
+    if (activeAndFocused)
+        setSelectionFromNone();
+    setCaretVisible(activeAndFocused);
+#else
     // Because RenderObject::selectionBackgroundColor() and
     // RenderObject::selectionForegroundColor() check if the frame is active,
     // we have to update places those colors were painted.
@@ -1708,6 +1779,7 @@ void FrameSelection::focusedOrActiveStateChanged()
             if (renderer && renderer->style().hasAppearance())
                 renderer->theme().stateChanged(renderer, FocusState);
     }
+#endif
 }
 
 void FrameSelection::pageActivationChanged()
@@ -1738,6 +1810,11 @@ inline static bool shouldStopBlinkingDueToTypingCommand(Frame* frame)
 
 void FrameSelection::updateAppearance()
 {
+#if PLATFORM(IOS)
+    if (!m_updateAppearanceEnabled)
+        return;
+#endif
+
     // Paint a block cursor instead of a caret in overtype mode unless the caret is at the end of a line (in this case
     // the FrameSelection will paint a blinking caret as usual).
     VisiblePosition forwardPosition;
@@ -1912,6 +1989,10 @@ PassRefPtr<MutableStyleProperties> FrameSelection::copyTypingStyle() const
 
 bool FrameSelection::shouldDeleteSelection(const VisibleSelection& selection) const
 {
+#if PLATFORM(IOS)
+    if (m_frame->selectionChangeCallbacksDisabled())
+        return true;
+#endif
     return m_frame->editor().client()->shouldDeleteRange(selection.toNormalizedRange().get());
 }
 
@@ -2010,11 +2091,24 @@ void FrameSelection::revealSelection(const ScrollAlignment& alignment, RevealExt
     Position start = this->start();
     ASSERT(start.deprecatedNode());
     if (start.deprecatedNode() && start.deprecatedNode()->renderer()) {
+#if PLATFORM(IOS)
+        if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
+            if (!m_scrollingSuppressCount) {
+                layer->setAdjustForIOSCaretWhenScrolling(true);
+                layer->scrollRectToVisible(rect, alignment, alignment);
+                layer->setAdjustForIOSCaretWhenScrolling(false);
+                updateAppearance();
+                if (m_frame->page())
+                    m_frame->page()->chrome().client().notifyRevealedSelectionByScrollingFrame(m_frame);
+            }
+        }
+#else
         // FIXME: This code only handles scrolling the startContainer's layer, but
         // the selection rect could intersect more than just that.
         // See <rdar://problem/4799899>.
         if (start.deprecatedNode()->renderer()->scrollRectToVisible(rect, alignment, alignment))
             updateAppearance();
+#endif
     }
 }
 
@@ -2024,9 +2118,14 @@ void FrameSelection::setSelectionFromNone()
     // entire WebView is editable or designMode is on for this document).
 
     Document* document = m_frame->document();
+#if !PLATFORM(IOS)
     bool caretBrowsing = m_frame->settings().caretBrowsingEnabled();
     if (!isNone() || !(document->hasEditableStyle() || caretBrowsing))
         return;
+#else
+    if (!document || !(isNone() || isStartOfDocument(VisiblePosition(selection().start(), selection().affinity()))) || !document->rendererIsEditable())
+        return;
+#endif
 
     Node* node = document->documentElement();
     while (node && !node->hasTagName(bodyTag))
@@ -2037,6 +2136,10 @@ void FrameSelection::setSelectionFromNone()
 
 bool FrameSelection::shouldChangeSelection(const VisibleSelection& newSelection) const
 {
+#if PLATFORM(IOS)
+    if (m_frame->selectionChangeCallbacksDisabled())
+        return true;
+#endif
     return m_frame->editor().shouldChangeSelection(selection(), newSelection, newSelection.affinity(), false);
 }
 
@@ -2071,6 +2174,429 @@ void FrameSelection::showTreeForThis() const
 }
 
 #endif
+
+#if PLATFORM(IOS)
+void FrameSelection::expandSelectionToElementContainingCaretSelection()
+{
+    RefPtr<Range> range = elementRangeContainingCaretSelection();
+    if (!range)
+        return;
+    VisibleSelection selection(range.get(), DOWNSTREAM);
+    setSelection(selection);
+}
+
+PassRefPtr<Range> FrameSelection::elementRangeContainingCaretSelection() const
+{
+    if (m_selection.isNone())
+        return nullptr;
+
+    VisibleSelection selection = m_selection;
+    if (selection.isNone())
+        return nullptr;
+
+    VisiblePosition visiblePos(selection.start(), VP_DEFAULT_AFFINITY);
+    if (visiblePos.isNull())
+        return nullptr;
+
+    Node* node = visiblePos.deepEquivalent().deprecatedNode();
+    Element* element = deprecatedEnclosingBlockFlowElement(node);
+    if (!element)
+        return nullptr;
+
+    Position startPos = createLegacyEditingPosition(element, 0);
+    Position endPos = createLegacyEditingPosition(element, element->childNodeCount());
+    
+    VisiblePosition startVisiblePos(startPos, VP_DEFAULT_AFFINITY);
+    VisiblePosition endVisiblePos(endPos, VP_DEFAULT_AFFINITY);
+    if (startVisiblePos.isNull() || endVisiblePos.isNull())
+        return nullptr;
+
+    selection.setBase(startVisiblePos);
+    selection.setExtent(endVisiblePos);
+
+    return selection.toNormalizedRange();
+}
+
+void FrameSelection::expandSelectionToWordContainingCaretSelection()
+{
+    VisibleSelection selection(wordSelectionContainingCaretSelection(m_selection));        
+    if (selection.isCaretOrRange())
+        setSelection(selection);
+}
+
+PassRefPtr<Range> FrameSelection::wordRangeContainingCaretSelection()
+{
+    return wordSelectionContainingCaretSelection(m_selection).toNormalizedRange();
+}
+
+void FrameSelection::expandSelectionToStartOfWordContainingCaretSelection()
+{
+    if (m_selection.isNone() || isStartOfDocument(m_selection.start()))
+        return;
+
+    VisiblePosition s1(m_selection.start());
+    VisiblePosition e1(m_selection.end());
+
+    VisibleSelection expanded(wordSelectionContainingCaretSelection(m_selection));
+    VisiblePosition s2(expanded.start());
+
+    // Don't allow the start to become greater after the expansion.
+    if (s2.isNull() || s2 > s1)
+        s2 = s1;
+
+    moveTo(s2, e1);
+}
+
+UChar FrameSelection::characterInRelationToCaretSelection(int amount) const
+{
+    if (m_selection.isNone())
+        return 0;
+
+    VisibleSelection selection = m_selection;
+    ASSERT(selection.isCaretOrRange());
+
+    VisiblePosition visiblePosition(selection.start(), VP_DEFAULT_AFFINITY);
+
+    if (amount < 0) {
+        int count = abs(amount);
+        for (int i = 0; i < count; i++)
+            visiblePosition = visiblePosition.previous();    
+        return visiblePosition.characterBefore();
+    }
+    for (int i = 0; i < amount; i++)
+        visiblePosition = visiblePosition.next();    
+    return visiblePosition.characterAfter();
+}
+
+UChar FrameSelection::characterBeforeCaretSelection() const
+{
+    if (m_selection.isNone())
+        return 0;
+
+    VisibleSelection selection = m_selection;
+    ASSERT(selection.isCaretOrRange());
+
+    VisiblePosition visiblePosition(selection.start(), VP_DEFAULT_AFFINITY);
+    return visiblePosition.characterBefore();
+}
+
+UChar FrameSelection::characterAfterCaretSelection() const
+{
+    if (m_selection.isNone())
+        return 0;
+
+    VisibleSelection selection = m_selection;
+    ASSERT(selection.isCaretOrRange());
+
+    VisiblePosition visiblePosition(selection.end(), VP_DEFAULT_AFFINITY);
+    return visiblePosition.characterAfter();
+}
+
+int FrameSelection::wordOffsetInRange(const Range *range) const
+{
+    if (!range)
+        return -1;
+
+    VisibleSelection selection = m_selection;
+    if (!selection.isCaret())
+        return -1;
+
+    // FIXME: This will only work in cases where the selection remains in
+    // the same node after it is expanded. Improve to handle more complicated
+    // cases.
+    ExceptionCode ec = 0;
+    int result = selection.start().deprecatedEditingOffset() - range->startOffset(ec);
+    ASSERT(!ec);
+    if (result < 0)
+        result = 0;
+    return result;
+}
+
+bool FrameSelection::spaceFollowsWordInRange(const Range *range) const
+{
+    if (!range)
+        return false;
+    ExceptionCode ec = 0;
+    Node* node = range->endContainer(ec);
+    ASSERT(!ec);
+    int endOffset = range->endOffset(ec);
+    ASSERT(!ec);
+    VisiblePosition pos(createLegacyEditingPosition(node, endOffset), VP_DEFAULT_AFFINITY);
+    return isSpaceOrNewline(pos.characterAfter());
+}
+
+bool FrameSelection::selectionAtDocumentStart() const
+{
+    VisibleSelection selection = m_selection;
+    if (selection.isNone())
+        return false;
+
+    Position startPos(selection.start());
+    VisiblePosition pos(createLegacyEditingPosition(startPos.deprecatedNode(), startPos.deprecatedEditingOffset()), VP_DEFAULT_AFFINITY);
+    if (pos.isNull())
+        return false;
+
+    return isStartOfDocument(pos);
+}
+
+bool FrameSelection::selectionAtSentenceStart() const
+{
+    VisibleSelection selection = m_selection;
+    if (selection.isNone())
+        return false;
+
+    return actualSelectionAtSentenceStart(selection);
+}
+
+bool FrameSelection::selectionAtWordStart() const
+{
+    VisibleSelection selection = m_selection;
+    if (selection.isNone())
+        return false;
+
+    Position startPos(selection.start());
+    VisiblePosition pos(createLegacyEditingPosition(startPos.deprecatedNode(), startPos.deprecatedEditingOffset()), VP_DEFAULT_AFFINITY);
+    if (pos.isNull())
+        return false;
+
+    if (isStartOfParagraph(pos))
+        return true;
+        
+    bool result = true;
+    unsigned previousCount = 0;
+    for (pos = pos.previous(); !pos.isNull(); pos = pos.previous()) {
+        previousCount++;
+        if (isStartOfParagraph(pos)) {
+            if (previousCount == 1)
+                result = false;
+            break;
+        }
+        UChar c(pos.characterAfter());
+        if (c) {
+            result = isSpaceOrNewline(c) || c == 0xA0 || (u_ispunct(c) && c != ',' && c != '-' && c != '\'');
+            break;
+        }
+    }
+
+    return result;
+}
+
+PassRefPtr<Range> FrameSelection::rangeByMovingCurrentSelection(int amount) const
+{
+    return rangeByAlteringCurrentSelection(AlterationMove, amount);
+}
+
+PassRefPtr<Range> FrameSelection::rangeByExtendingCurrentSelection(int amount) const
+{
+    return rangeByAlteringCurrentSelection(AlterationExtend, amount);
+}
+
+void FrameSelection::selectRangeOnElement(unsigned location, unsigned length, Node* node)
+{
+    RefPtr<Range> resultRange = m_frame->document()->createRange();
+    ExceptionCode ec = 0;
+    resultRange->setStart(node, location, ec);
+    ASSERT(!ec);
+    resultRange->setEnd(node, location + length, ec);
+    ASSERT(!ec);
+    VisibleSelection selection = VisibleSelection(resultRange.get(), SEL_DEFAULT_AFFINITY);
+    setSelection(selection, true);
+}
+
+VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const VisibleSelection& selection)
+{
+    if (selection.isNone())
+        return VisibleSelection();
+
+    ASSERT(selection.isCaretOrRange());
+    FrameSelection frameSelection;
+    frameSelection.setSelection(selection);
+
+    Position startPosBeforeExpansion(selection.start());
+    Position endPosBeforeExpansion(selection.end());
+    VisiblePosition startVisiblePosBeforeExpansion(startPosBeforeExpansion, VP_DEFAULT_AFFINITY);
+    VisiblePosition endVisiblePosBeforeExpansion(endPosBeforeExpansion, VP_DEFAULT_AFFINITY);
+    if (endVisiblePosBeforeExpansion.isNull())
+        return VisibleSelection();
+
+    if (isEndOfParagraph(endVisiblePosBeforeExpansion)) {
+        UChar c(endVisiblePosBeforeExpansion.characterBefore());
+        if (isSpaceOrNewline(c) || c == 0xA0) {
+            // End of paragraph with space.
+            return VisibleSelection();
+        }
+    }
+
+    // If at end of paragraph, move backwards one character.
+    // This has the effect of selecting the word on the line (which is
+    // what we want, rather than selecting past the end of the line).
+    if (isEndOfParagraph(endVisiblePosBeforeExpansion) && !isStartOfParagraph(endVisiblePosBeforeExpansion))
+        frameSelection.modify(FrameSelection::AlterationMove, DirectionBackward, CharacterGranularity);
+
+    VisibleSelection newSelection = frameSelection.selection();
+    newSelection.expandUsingGranularity(WordGranularity);
+    frameSelection.setSelection(newSelection, frameSelection.granularity());
+
+    Position startPos(frameSelection.selection().start());
+    Position endPos(frameSelection.selection().end());
+
+    // Expansion cannot be allowed to change selection so that it is no longer
+    // touches (or contains) the original, unexpanded selection.
+    // Enforce this on the way into these additional calculations to give them
+    // the best chance to yield a suitable answer.
+    if (startPos > startPosBeforeExpansion)
+        startPos = startPosBeforeExpansion;
+    if (endPos < endPosBeforeExpansion)
+        endPos = endPosBeforeExpansion;
+
+    VisiblePosition startVisiblePos(startPos, VP_DEFAULT_AFFINITY);
+    VisiblePosition endVisiblePos(endPos, VP_DEFAULT_AFFINITY);
+
+    if (startVisiblePos.isNull() || endVisiblePos.isNull()) {
+        // Start or end is nil
+        return VisibleSelection();
+    }
+
+    if (isEndOfLine(endVisiblePosBeforeExpansion)) {
+        VisiblePosition previous(endVisiblePos.previous());
+        if (previous == endVisiblePos) {
+            // Empty document
+            return VisibleSelection();
+        }
+        UChar c(previous.characterAfter());
+        if (isSpaceOrNewline(c) || c == 0xA0) {
+            // Space at end of line
+            return VisibleSelection();
+        }
+    }
+
+    // Expansion has selected past end of line.
+    // Try repositioning backwards.
+    if (isEndOfLine(startVisiblePos) && isStartOfLine(endVisiblePos)) {
+        VisiblePosition previous(startVisiblePos.previous());
+        if (isEndOfLine(previous)) {
+            // On empty line
+            return VisibleSelection();
+        }
+        UChar c(previous.characterAfter());
+        if (isSpaceOrNewline(c) || c == 0xA0) {
+            // Space at end of line
+            return VisibleSelection();
+        }
+        frameSelection.moveTo(startVisiblePos);
+        frameSelection.modify(FrameSelection::AlterationExtend, DirectionBackward, WordGranularity);
+        startPos = frameSelection.selection().start();
+        endPos = frameSelection.selection().end();
+        startVisiblePos = VisiblePosition(startPos, VP_DEFAULT_AFFINITY);
+        endVisiblePos = VisiblePosition(endPos, VP_DEFAULT_AFFINITY);
+        if (startVisiblePos.isNull() || endVisiblePos.isNull()) {
+            // Start or end is nil
+            return VisibleSelection();
+        }
+    }
+
+    // Now loop backwards until we find a non-space.
+    while (endVisiblePos != startVisiblePos) {
+        VisiblePosition previous(endVisiblePos.previous());
+        UChar c(previous.characterAfter());
+        if (!isSpaceOrNewline(c) && c != 0xA0)
+            break;
+        endVisiblePos = previous;
+    }
+
+    // Expansion cannot be allowed to change selection so that it is no longer
+    // touches (or contains) the original, unexpanded selection.
+    // Enforce this on the way out of the function to preserve the invariant.
+    if (startVisiblePos > startVisiblePosBeforeExpansion)
+        startVisiblePos = startVisiblePosBeforeExpansion;
+    if (endVisiblePos < endVisiblePosBeforeExpansion)
+        endVisiblePos = endVisiblePosBeforeExpansion;
+
+    return VisibleSelection(startVisiblePos, endVisiblePos);    
+}
+
+bool FrameSelection::actualSelectionAtSentenceStart(const VisibleSelection& sel) const
+{
+    Position startPos(sel.start());
+    VisiblePosition pos(createLegacyEditingPosition(startPos.deprecatedNode(), startPos.deprecatedEditingOffset()), VP_DEFAULT_AFFINITY);
+    if (pos.isNull())
+        return false;
+
+    if (isStartOfParagraph(pos))
+        return true;
+ 
+    bool result = true;
+    bool sawSpace = false;
+    unsigned previousCount = 0;
+    for (pos = pos.previous(); !pos.isNull(); pos = pos.previous()) {
+        previousCount++;
+        if (isStartOfParagraph(pos)) {
+            if (previousCount == 1 || (previousCount == 2 && sawSpace))
+                result = false;
+            break;
+        }
+        UChar c(pos.characterAfter());
+        if (c) {
+            if (isSpaceOrNewline(c) || c == 0xA0) {
+                sawSpace = true;
+            }
+            else {
+                result = (c == '.' || c == '!' || c == '?');
+                break;
+            }
+        }
+    }
+    
+    return result;
+}
+
+PassRefPtr<Range> FrameSelection::rangeByAlteringCurrentSelection(EAlteration alteration, int amount) const
+{
+    if (m_selection.isNone())
+        return nullptr;
+
+    if (!amount)
+        return toNormalizedRange();
+
+    FrameSelection frameSelection;
+    frameSelection.setSelection(m_selection);
+    SelectionDirection direction = amount > 0 ? DirectionForward : DirectionBackward;
+    for (int i = 0; i < abs(amount); i++)
+        frameSelection.modify(alteration, direction, CharacterGranularity);
+    return frameSelection.toNormalizedRange();
+}
+
+void FrameSelection::clearCurrentSelection()
+{
+    setSelection(VisibleSelection());
+}
+
+void FrameSelection::setCaretBlinks(bool caretBlinks)
+{
+    if (m_caretBlinks == caretBlinks)
+        return;
+#if ENABLE(TEXT_CARET)
+    m_frame->document()->updateLayoutIgnorePendingStylesheets(); 
+    if (m_caretPaint) {
+        m_caretPaint = false; 
+        invalidateCaretRect(); 
+    }
+#endif
+    if (caretBlinks)
+        setFocusedElementIfNeeded();
+    m_caretBlinks = caretBlinks;
+    updateAppearance();
+}
+
+void FrameSelection::setCaretColor(const Color& caretColor)
+{
+    if (m_caretColor != caretColor) {
+        m_caretColor = caretColor;
+        if (caretIsVisible() && m_caretBlinks && isCaret())
+            invalidateCaretRect();
+    }
+}
+#endif // PLATFORM(IOS)
 
 }
 

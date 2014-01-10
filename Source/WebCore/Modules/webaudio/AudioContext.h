@@ -96,7 +96,6 @@ public:
     virtual void stop() OVERRIDE;
 
     Document* document() const; // ASSERTs if document no longer exists.
-    bool hasDocument();
 
     AudioDestinationNode* destination() { return m_destinationNode.get(); }
     size_t currentSampleFrame() const { return m_destinationNode->currentSampleFrame(); }

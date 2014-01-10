@@ -43,20 +43,89 @@
 #import <WebCore/DOMRGBColor.h>
 #import <WebCore/DOMRange.h>
 
+#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#import <CoreGraphics/CoreGraphics.h>
+#endif
+
 @class NSArray;
 @class NSImage;
 @class NSURL;
 
+
+#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+@interface DOMHTMLElement (DOMHTMLElementExtensions)
+- (int)scrollXOffset;
+- (int)scrollYOffset;
+- (void)setScrollXOffset:(int)x scrollYOffset:(int)y;
+- (void)setScrollXOffset:(int)x scrollYOffset:(int)y adjustForIOSCaret:(BOOL)adjustForIOSCaret;
+- (void)absolutePosition:(int *)x :(int *)y :(int *)w :(int *)h;
+@end
+#endif
+
+#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+typedef struct _WKQuad {
+    CGPoint p1;
+    CGPoint p2;
+    CGPoint p3;
+    CGPoint p4;
+} WKQuad;
+
+@interface WKQuadObject : NSObject
+{
+    WKQuad  _quad;
+}
+
+- (id)initWithQuad:(WKQuad)quad;
+- (WKQuad)quad;
+- (CGRect)boundingBox;
+@end
+#endif
+
 @interface DOMNode (DOMNodeExtensions)
+#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+- (CGRect)boundingBox;
+#else
 - (NSRect)boundingBox WEBKIT_AVAILABLE_MAC(10_5);
+#endif
 - (NSArray *)lineBoxRects WEBKIT_AVAILABLE_MAC(10_5);
+
+#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+- (CGRect)boundingBoxUsingTransforms; // takes transforms into account
+
+- (WKQuad)absoluteQuad;
+- (WKQuad)absoluteQuadAndInsideFixedPosition:(BOOL *)insideFixed;
+- (NSArray *)lineBoxQuads;      // returns array of WKQuadObject
+
+- (NSURL *)hrefURL;
+- (CGRect)hrefFrame;
+- (NSString *)hrefTarget;
+- (NSString *)hrefLabel;
+- (NSString *)hrefTitle;
+- (CGRect)boundingFrame;
+- (WKQuad)innerFrameQuad;       // takes transforms into account
+- (float)computedFontSize;
+- (DOMNode *)nextFocusNode;
+- (DOMNode *)previousFocusNode;
+#endif
 @end
 
 @interface DOMElement (DOMElementAppKitExtensions)
+#if !defined(TARGET_OS_EMBEDDED) || !TARGET_OS_EMBEDDED
 - (NSImage *)image WEBKIT_AVAILABLE_MAC(10_5);
+#endif
 @end
 
 @interface DOMHTMLDocument (DOMHTMLDocumentExtensions)
 - (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL WEBKIT_AVAILABLE_MAC(10_5);
 - (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text WEBKIT_AVAILABLE_MAC(10_5);
 @end
+
+#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+@interface DOMHTMLAreaElement (DOMHTMLAreaElementExtensions)
+- (CGRect)boundingFrameForOwner:(DOMNode *)anOwner;
+@end
+
+@interface DOMHTMLSelectElement (DOMHTMLSelectElementExtensions)
+- (DOMNode *)listItemAtIndex:(int)anIndex;
+@end
+#endif

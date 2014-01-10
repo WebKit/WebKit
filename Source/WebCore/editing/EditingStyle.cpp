@@ -71,6 +71,10 @@ static const CSSPropertyID editingProperties[] = {
     CSSPropertyWhiteSpace,
     CSSPropertyWidows,
     CSSPropertyWordSpacing,
+#if PLATFORM(IOS)
+    CSSPropertyWebkitTapHighlightColor,
+    CSSPropertyWebkitCompositionFillColor,
+#endif
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyWebkitTextFillColor,
 #if ENABLE(IOS_TEXT_AUTOSIZING)

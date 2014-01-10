@@ -66,6 +66,9 @@ public:
     static void insertParagraphSeparator(Document&, Options);
     static void insertParagraphSeparatorInQuotedContent(Document&);
     static void closeTyping(Frame*);
+#if PLATFORM(IOS)
+    static void ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(Frame*, const VisibleSelection&);
+#endif
 
     void insertText(const String &text, bool selectInsertedText);
     void insertTextRunWithoutNewlines(const String &text, bool selectInsertedText);
@@ -76,6 +79,10 @@ public:
     void forwardDeleteKeyPressed(TextGranularity, bool killRing);
     void deleteSelection(bool smartDelete);
     void setCompositionType(TextCompositionType type) { m_compositionType = type; }
+
+#if PLATFORM(IOS)
+    void setEndingSelectionOnLastInsertCommand(const VisibleSelection& selection);
+#endif
 
 private:
     static PassRefPtr<TypingCommand> create(Document& document, ETypingCommand command, const String& text = "", Options options = 0, TextGranularity granularity = CharacterGranularity)

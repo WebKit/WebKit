@@ -30,7 +30,9 @@
 #include "FileSystem.h"
 #include "PluginQuirkSet.h"
 #include "Timer.h"
+#if ENABLE(NETSCAPE_PLUGIN_API)
 #include "npruntime_internal.h"
+#endif
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
@@ -70,7 +72,9 @@ namespace WebCore {
         bool isEnabled() const { return m_isEnabled; }
         void setEnabled(bool);
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
         const NPPluginFuncs* pluginFuncs() const { return &m_pluginFuncs; }
+#endif
         int compareFileVersion(const PlatformModuleVersion&) const;
         int compare(const PluginPackage&) const;
         PluginQuirkSet quirks() const { return m_quirks; }
@@ -109,9 +113,11 @@ namespace WebCore {
         PlatformModule m_module;
         time_t m_lastModified;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
         NPP_ShutdownProcPtr m_NPP_Shutdown;
         NPPluginFuncs m_pluginFuncs;
         NPNetscapeFuncs m_browserFuncs;
+#endif
 
         void freeLibrarySoon();
         void freeLibraryTimerFired(Timer<PluginPackage>*);

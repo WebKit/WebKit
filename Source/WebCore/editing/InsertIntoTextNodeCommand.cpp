@@ -32,6 +32,9 @@
 #include "RenderText.h"
 #include "Settings.h"
 #include "Text.h"
+#if PLATFORM(IOS)
+#include "RenderText.h"
+#endif
 
 namespace WebCore {
 
@@ -68,6 +71,14 @@ void InsertIntoTextNodeCommand::doApply()
         cache->nodeTextChangeNotification(m_node.get(), AXObjectCache::AXTextInserted, m_offset, m_text);
 }
 
+#if PLATFORM(IOS)
+void InsertIntoTextNodeCommand::doReapply()
+{
+    ExceptionCode ec;
+    m_node->insertData(m_offset, m_text, ec);
+}
+#endif
+    
 void InsertIntoTextNodeCommand::doUnapply()
 {
     if (!m_node->hasEditableStyle())

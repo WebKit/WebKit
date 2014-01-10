@@ -302,6 +302,14 @@ static bool executeCut(Frame& frame, Event*, EditorCommandSource source, const S
     return true;
 }
 
+#if PLATFORM(IOS)
+static bool executeClearText(Frame& frame, Event*, EditorCommandSource, const String&)
+{
+    frame.editor().clearText();
+    return true;
+}
+#endif
+
 static bool executeDefaultParagraphSeparator(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
     if (equalIgnoringCase(value, "div"))
@@ -1093,7 +1101,7 @@ static bool executeSwapWithMark(Frame& frame, Event*, EditorCommandSource, const
     return true;
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 static bool executeTakeFindStringFromSelection(Frame& frame, Event*, EditorCommandSource, const String&)
 {
     frame.editor().takeFindStringFromSelection();
@@ -1237,13 +1245,29 @@ static bool enableCaretInEditableText(Frame& frame, Event* event, EditorCommandS
 
 static bool enabledCopy(Frame& frame, Event*, EditorCommandSource)
 {
+#if !PLATFORM(IOS)
     return frame.editor().canDHTMLCopy() || frame.editor().canCopy();
+#else
+    return frame.editor().canCopy();
+#endif
 }
 
 static bool enabledCut(Frame& frame, Event*, EditorCommandSource)
 {
+#if !PLATFORM(IOS)
     return frame.editor().canDHTMLCut() || frame.editor().canCut();
+#else
+    return frame.editor().canCut();
+#endif
 }
+
+#if PLATFORM(IOS)
+static bool enabledClearText(Frame& frame, Event*, EditorCommandSource)
+{
+    UNUSED_PARAM(frame);
+    return false;
+}
+#endif
 
 static bool enabledInEditableText(Frame& frame, Event* event, EditorCommandSource)
 {
@@ -1296,7 +1320,7 @@ static bool enabledRedo(Frame& frame, Event*, EditorCommandSource)
     return frame.editor().canRedo();
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 static bool enabledTakeFindStringFromSelection(Frame& frame, Event*, EditorCommandSource)
 {
     return frame.editor().canCopyExcludingStandaloneImages();
@@ -1603,8 +1627,15 @@ static const CommandMap& createCommandMap()
         { "PasteGlobalSelection", { executePasteGlobalSelection, supportedFromMenuOrKeyBinding, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
         { "TakeFindStringFromSelection", { executeTakeFindStringFromSelection, supportedFromMenuOrKeyBinding, enabledTakeFindStringFromSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+#endif
+#if PLATFORM(IOS)
+        { "ClearText", { executeClearText, supported, enabledClearText, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(QT)
+        { "PasteGlobalSelection", { executePasteGlobalSelection, supportedFromMenuOrKeyBinding, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
 #endif
     };
 

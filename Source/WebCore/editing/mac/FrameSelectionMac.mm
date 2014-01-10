@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+#if !PLATFORM(IOS)
 static CGRect accessibilityConvertScreenRect(CGRect bounds)
 {
     NSArray *screens = [NSScreen screens];
@@ -43,6 +44,7 @@ static CGRect accessibilityConvertScreenRect(CGRect bounds)
     
     return bounds;
 }
+#endif // !PLATFORM(IOS)
     
     
 void FrameSelection::notifyAccessibilityForSelectionChange()
@@ -54,6 +56,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange()
             cache->postNotification(m_selection.start().deprecatedNode()->renderer(), AXObjectCache::AXSelectedTextChanged, TargetObservableParent);
     }
 
+#if !PLATFORM(IOS)
     // if zoom feature is enabled, insertion point changes should update the zoom
     if (!UAZoomEnabled() || !m_selection.isCaret())
         return;
@@ -76,6 +79,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange()
     cgViewRect = accessibilityConvertScreenRect(cgViewRect);
 
     UAZoomChangeFocus(&cgViewRect, &cgCaretRect, kUAZoomFocusTypeInsertionPoint);
+#endif // !PLATFORM(IOS)
 }
 
 } // namespace WebCore

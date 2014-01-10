@@ -80,6 +80,11 @@
 #include "GStreamerUtilities.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "ScriptController.h"
+#include "Settings.h"
+#endif
+
 #include <runtime/ArrayBuffer.h>
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>

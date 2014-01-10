@@ -75,6 +75,10 @@ PassRef<RenderStyle> resolveForDocument(const Document& document)
     }
     // This overrides any -webkit-user-modify inherited from the parent iframe.
     documentStyle.get().setUserModify(document.inDesignMode() ? READ_WRITE : READ_ONLY);
+#if PLATFORM(IOS)
+    if (document.inDesignMode())
+        documentStyle.get().setTextSizeAdjust(TextSizeAdjustment(NoTextSizeAdjustment));
+#endif
 
     Element* docElement = document.documentElement();
     RenderObject* docElementRenderer = docElement ? docElement->renderer() : 0;

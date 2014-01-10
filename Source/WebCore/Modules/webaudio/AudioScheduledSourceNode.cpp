@@ -35,6 +35,10 @@
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
+#if PLATFORM(IOS)
+#include "ScriptController.h"
+#endif
+
 namespace WebCore {
 
 const double AudioScheduledSourceNode::UnknownTime = -1;

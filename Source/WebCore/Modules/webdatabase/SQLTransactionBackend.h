@@ -68,6 +68,10 @@ public:
     void lockAcquired();
     void performNextStep();
 
+#if PLATFORM(IOS)
+    bool shouldPerformWhilePaused() const;
+#endif
+
     DatabaseBackend* database() { return m_database.get(); }
     bool isReadOnly() { return m_readOnly; }
     void notifyDatabaseThreadIsShuttingDown();

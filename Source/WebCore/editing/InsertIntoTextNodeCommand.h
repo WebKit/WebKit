@@ -44,6 +44,9 @@ private:
 
     virtual void doApply() OVERRIDE;
     virtual void doUnapply() OVERRIDE;
+#if PLATFORM(IOS)
+    virtual void doReapply() OVERRIDE;
+#endif
     
 #ifndef NDEBUG
     virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;

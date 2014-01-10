@@ -4789,7 +4789,7 @@ HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 void Document::addAutoSizingNode(Node* node, float candidateSize)
 {
-    TextAutoSizingKey key(node->renderer()->style(), &document());
+    TextAutoSizingKey key(&node->renderer()->style(), &document());
     TextAutoSizingMap::AddResult result = m_textAutoSizedNodes.add(key, nullptr);
     if (result.isNewEntry)
         result.iterator->value = TextAutoSizingValue::create();

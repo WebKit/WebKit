@@ -49,6 +49,99 @@
 #import "Settings.h"
 #import "markup.h"
 
+#if PLATFORM(IOS)
+#import "Autocapitalize.h"
+#import "DOMHTMLElementInternal.h"
+#import "HTMLTextFormControlElement.h"
+#import "JSMainThreadExecState.h"
+#import "RenderLayer.h"
+#import "WAKWindow.h"
+#import "WebCoreThreadMessage.h"
+#endif
+
+#if PLATFORM(IOS)
+
+using namespace WebCore;
+
+@implementation DOMHTMLElement (DOMHTMLElementExtensions)
+
+- (int)scrollXOffset
+{
+    RenderObject *renderer = core(self)->renderer();
+    if (!renderer)
+        return 0;
+
+    if (!renderer->isRenderBlockFlow())
+        renderer = renderer->containingBlock();
+
+    if (!renderer->isBox() || !renderer->hasOverflowClip())
+        return 0;
+
+    RenderBox *renderBox = toRenderBox(renderer);
+    return renderBox->layer()->scrollXOffset();
+}
+
+- (int)scrollYOffset
+{
+    RenderObject *renderer = core(self)->renderer();
+    if (!renderer)
+        return 0;
+
+    if (!renderer->isRenderBlockFlow())
+        renderer = renderer->containingBlock();
+    if (!renderer->isBox() || !renderer->hasOverflowClip())
+        return 0;
+
+    RenderBox *renderBox = toRenderBox(renderer);
+    return renderBox->layer()->scrollYOffset();
+}
+
+- (void)setScrollXOffset:(int)x scrollYOffset:(int)y
+{
+    [self setScrollXOffset:x scrollYOffset:y adjustForIOSCaret:NO];
+}
+
+- (void)setScrollXOffset:(int)x scrollYOffset:(int)y adjustForIOSCaret:(BOOL)adjustForIOSCaret
+{
+    RenderObject *renderer = core(self)->renderer();
+    if (!renderer)
+        return;
+
+    if (!renderer->isRenderBlockFlow())
+        renderer = renderer->containingBlock();
+    if (!renderer->hasOverflowClip() || !renderer->isBox())
+        return;
+
+    RenderBox *renderBox = toRenderBox(renderer);
+    RenderLayer *layer = renderBox->layer();
+    if (adjustForIOSCaret)
+        layer->setAdjustForIOSCaretWhenScrolling(true);
+    layer->scrollToOffset(IntSize(x, y));
+    if (adjustForIOSCaret)
+        layer->setAdjustForIOSCaretWhenScrolling(false);
+}
+
+- (void)absolutePosition:(int *)x :(int *)y :(int *)w :(int *)h {
+    RenderBox *renderer = core(self)->renderBox();
+    if (renderer) {
+        if (w)
+            *w = renderer->width();
+        if (h)
+            *h = renderer->width();
+        if (x && y) {
+            FloatPoint floatPoint(*x, *y);
+            renderer->localToAbsolute(floatPoint);
+            IntPoint point = roundedIntPoint(floatPoint);
+            *x = point.x();
+            *y = point.y();
+        }
+    }
+}
+
+@end
+
+#endif // PLATFORM(IOS)
+
 //------------------------------------------------------------------------------------------
 // DOMHTMLDocument
 
@@ -90,6 +183,7 @@
     return core(self)->isTextField();
 }
 
+#if !PLATFORM(IOS)
 - (NSRect)_rectOnScreen
 {
     // Returns bounding rect of text field, in screen coordinates.
@@ -105,6 +199,7 @@
 #pragma clang diagnostic pop
     return result;
 }
+#endif
 
 - (void)_replaceCharactersInRange:(NSRange)targetRange withString:(NSString *)replacementString selectingFromIndex:(int)index
 {
@@ -180,6 +275,45 @@
 }
 
 @end
+
+#if PLATFORM(IOS)
+@implementation DOMHTMLInputElement (AutocapitalizeAdditions)
+
+- (WebAutocapitalizeType)_autocapitalizeType
+{
+    WebCore::HTMLInputElement* inputElement = core(self);
+    return static_cast<WebAutocapitalizeType>(inputElement->autocapitalizeType());
+}
+
+@end
+
+@implementation DOMHTMLTextAreaElement (AutocapitalizeAdditions)
+
+- (WebAutocapitalizeType)_autocapitalizeType
+{
+    WebCore::HTMLTextAreaElement* textareaElement = core(self);
+    return static_cast<WebAutocapitalizeType>(textareaElement->autocapitalizeType());
+}
+
+@end
+
+@implementation DOMHTMLInputElement (WebInputChangeEventAdditions)
+
+- (void)setValueWithChangeEvent:(NSString *)newValue
+{
+    WebCore::JSMainThreadNullState state;
+    core(self)->setValue(newValue, DispatchInputAndChangeEvent);
+}
+
+- (void)setValueAsNumberWithChangeEvent:(double)newValueAsNumber
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    core(self)->setValueAsNumber(newValueAsNumber, ec, DispatchInputAndChangeEvent);
+}
+
+@end
+#endif
 
 Class kitClass(WebCore::HTMLCollection* collection)
 {

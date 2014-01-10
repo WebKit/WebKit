@@ -35,6 +35,10 @@
 #include <wtf/Assertions.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+#if PLATFORM(IOS)
+#include <wtf/Threading.h>
+#endif // PLATFORM(IOS)
+
 namespace WebCore {
 
 class Database;
@@ -53,6 +57,9 @@ public:
 
     PassRefPtr<DatabaseBackendContext> backend();
     DatabaseThread* databaseThread();
+#if PLATFORM(IOS)
+    void setPaused(bool);
+#endif // PLATFORM(IOS)
 
     void setHasOpenDatabases() { m_hasOpenDatabases = true; }
     bool hasOpenDatabases() { return m_hasOpenDatabases; }
@@ -75,6 +82,11 @@ private:
 
     friend class DatabaseBackendContext;
     friend class DatabaseManager;
+
+#if PLATFORM(IOS)
+    Mutex m_databaseThreadMutex;
+    bool m_paused;
+#endif // PLATFORM(IOS)
 };
 
 } // namespace WebCore

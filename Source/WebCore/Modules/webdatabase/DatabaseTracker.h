@@ -100,6 +100,21 @@ public:
     bool deleteOrigin(SecurityOrigin*);
     bool deleteDatabase(SecurityOrigin*, const String& name);
 
+#if PLATFORM(IOS)
+    void removeDeletedOpenedDatabases();
+    static bool deleteDatabaseFileIfEmpty(const String&);
+
+    // MobileSafari will grab this mutex on the main thread before dispatching the task to 
+    // clean up zero byte database files.  Any operations to open new database will have to
+    // wait for that task to finish by waiting on this mutex.
+    static Mutex& openDatabaseMutex();
+    
+    static void emptyDatabaseFilesRemovalTaskWillBeScheduled();
+    static void emptyDatabaseFilesRemovalTaskDidFinish();
+    
+    void setDatabasesPaused(bool);
+#endif
+    
     void setClient(DatabaseManagerClient*);
 
     // From a secondary thread, must be thread safe with its data

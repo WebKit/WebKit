@@ -81,6 +81,12 @@ void GCController::gcTimerFired(Timer<GCController>*)
 void GCController::garbageCollectNow()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
+#if PLATFORM(IOS)
+    // If JavaScript was never run in this process, there's no need to call GC which will
+    // end up creating a VM unnecessarily.
+    if (!JSDOMWindow::commonVMExists())
+        return;
+#endif
     if (!JSDOMWindow::commonVM()->heap.isBusy())
         JSDOMWindow::commonVM()->heap.collectAllGarbage();
 }
@@ -96,6 +102,26 @@ void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDon
 
     detachThread(threadID);
 }
+
+#if PLATFORM(IOS)
+void GCController::releaseExecutableMemory()
+{
+    JSLockHolder lock(JSDOMWindow::commonVM());
+
+    if (!JSDOMWindow::commonVMExists())
+        return;
+
+    // We shouldn't have any javascript running on our stack when this function is called. The
+    // following line asserts that.
+    ASSERT(!JSDOMWindow::commonVM()->dynamicGlobalObject);
+
+    // But be safe in release builds just in case...
+    if (JSDOMWindow::commonVM()->dynamicGlobalObject)
+        return;
+
+    JSDOMWindow::commonVM()->releaseExecutableMemory();
+}
+#endif
 
 void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
 {

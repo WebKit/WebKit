@@ -102,6 +102,9 @@ DatabaseContext::DatabaseContext(ScriptExecutionContext* context)
     , m_hasOpenDatabases(false)
     , m_isRegistered(true) // will register on construction below.
     , m_hasRequestedTermination(false)
+#if PLATFORM(IOS)
+    , m_paused(false)
+#endif //PLATFORM(IOS)
 {
     // ActiveDOMObject expects this to be called to set internal flags.
     suspendIfNeeded();
@@ -161,6 +164,9 @@ PassRefPtr<DatabaseBackendContext> DatabaseContext::backend()
 DatabaseThread* DatabaseContext::databaseThread()
 {
     if (!m_databaseThread && !m_hasOpenDatabases) {
+#if PLATFORM(IOS)
+        MutexLocker lock(m_databaseThreadMutex);
+#endif //PLATFORM(IOS)
         // It's OK to ask for the m_databaseThread after we've requested
         // termination because we're still using it to execute the closing
         // of the database. However, it is NOT OK to create a new thread
@@ -172,10 +178,25 @@ DatabaseThread* DatabaseContext::databaseThread()
         m_databaseThread = DatabaseThread::create();
         if (!m_databaseThread->start())
             m_databaseThread = 0;
+#if PLATFORM(IOS)
+        if (m_databaseThread)
+            m_databaseThread->setPaused(m_paused);
+#endif //PLATFORM(IOS)
     }
 
     return m_databaseThread.get();
 }
+
+#if PLATFORM(IOS)
+void DatabaseContext::setPaused(bool paused)
+{
+    MutexLocker lock(m_databaseThreadMutex);
+
+    m_paused = paused;
+    if (m_databaseThread)
+        m_databaseThread->setPaused(m_paused);
+}
+#endif // PLATFORM(IOS)
 
 bool DatabaseContext::stopDatabases(DatabaseTaskSynchronizer* cleanupSync)
 {

@@ -43,8 +43,10 @@ public:
         return adoptRef(new DeleteSelectionCommand(selection, smartDelete, mergeBlocksAfterDelete, replace, expandForSpecialElements, sanitizeMarkup));
     }
 
-private:
+protected:
     DeleteSelectionCommand(Document&, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool santizeMarkup);
+
+private:
     DeleteSelectionCommand(const VisibleSelection&, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup);
 
     virtual void doApply();

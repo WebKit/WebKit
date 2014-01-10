@@ -127,6 +127,28 @@ inline bool operator!=(const VisiblePosition& a, const VisiblePosition& b)
 {
     return !(a == b);
 }
+    
+#if PLATFORM(IOS)
+inline bool operator<(const VisiblePosition& a, const VisiblePosition& b)
+{
+    return a.deepEquivalent() < b.deepEquivalent();
+}
+
+inline bool operator>(const VisiblePosition& a, const VisiblePosition& b) 
+{
+    return a.deepEquivalent() > b.deepEquivalent();
+}
+
+inline bool operator<=(const VisiblePosition& a, const VisiblePosition& b)
+{
+    return a.deepEquivalent() <= b.deepEquivalent();
+}
+
+inline bool operator>=(const VisiblePosition& a, const VisiblePosition& b) 
+{
+    return a.deepEquivalent() >= b.deepEquivalent();
+}    
+#endif
 
 PassRefPtr<Range> makeRange(const VisiblePosition&, const VisiblePosition&);
 bool setStart(Range*, const VisiblePosition&);

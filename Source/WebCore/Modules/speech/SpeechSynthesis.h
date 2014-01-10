@@ -76,11 +76,26 @@ private:
     void handleSpeakingCompleted(SpeechSynthesisUtterance*, bool errorOccurred);
     void fireEvent(const AtomicString& type, SpeechSynthesisUtterance*, unsigned long charIndex, const String& name);
     
+#if PLATFORM(IOS)
+    // Restrictions to change default behaviors.
+    enum BehaviorRestrictionFlags {
+        NoRestrictions = 0,
+        RequireUserGestureForSpeechStartRestriction = 1 << 0,
+    };
+    typedef unsigned BehaviorRestrictions;
+    
+    bool userGestureRequiredForSpeechStart() const { return m_restrictions & RequireUserGestureForSpeechStartRestriction; }
+    void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
+#endif
+    
     OwnPtr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
     Vector<RefPtr<SpeechSynthesisVoice>> m_voiceList;
     SpeechSynthesisUtterance* m_currentSpeechUtterance;
     Deque<RefPtr<SpeechSynthesisUtterance>> m_utteranceQueue;
     bool m_isPaused;
+#if PLATFORM(IOS)
+    BehaviorRestrictions m_restrictions;
+#endif
 };
     
 } // namespace WebCore

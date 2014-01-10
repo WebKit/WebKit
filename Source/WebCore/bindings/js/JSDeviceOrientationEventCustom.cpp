@@ -60,6 +60,25 @@ JSValue JSDeviceOrientationEvent::gamma(ExecState*) const
     return jsNumber(imp.orientation()->gamma());
 }
 
+#if PLATFORM(IOS)
+JSValue JSDeviceOrientationEvent::webkitCompassHeading(ExecState*) const
+{
+    DeviceOrientationEvent& imp = impl();
+    if (!imp.orientation()->canProvideCompassHeading())
+        return jsNull();
+    return jsNumber(imp.orientation()->compassHeading());
+}
+
+JSValue JSDeviceOrientationEvent::webkitCompassAccuracy(ExecState*) const
+{
+    DeviceOrientationEvent& imp = impl();
+    if (!imp.orientation()->canProvideCompassAccuracy())
+        return jsNull();
+    return jsNumber(imp.orientation()->compassAccuracy());
+}
+#endif
+
+#if !PLATFORM(IOS)
 JSValue JSDeviceOrientationEvent::absolute(ExecState*) const
 {
     DeviceOrientationEvent& imp = impl();
@@ -67,6 +86,7 @@ JSValue JSDeviceOrientationEvent::absolute(ExecState*) const
         return jsNull();
     return jsBoolean(imp.orientation()->absolute());
 }
+#endif
 
 JSValue JSDeviceOrientationEvent::initDeviceOrientationEvent(ExecState* exec)
 {
@@ -81,9 +101,17 @@ JSValue JSDeviceOrientationEvent::initDeviceOrientationEvent(ExecState* exec)
     double beta = exec->argument(4).toNumber(exec);
     bool gammaProvided = !exec->argument(5).isUndefinedOrNull();
     double gamma = exec->argument(5).toNumber(exec);
+#if PLATFORM(IOS)
+    bool compassHeadingProvided = !exec->argument(6).isUndefinedOrNull();
+    double compassHeading = exec->argument(6).toNumber(exec);
+    bool compassAccuracyProvided = !exec->argument(7).isUndefinedOrNull();
+    double compassAccuracy = exec->argument(7).toNumber(exec);
+    RefPtr<DeviceOrientationData> orientation = DeviceOrientationData::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma, compassHeadingProvided, compassHeading, compassAccuracyProvided, compassAccuracy);
+#else
     bool absoluteProvided = !exec->argument(6).isUndefinedOrNull();
     bool absolute = exec->argument(6).toBoolean(exec);
     RefPtr<DeviceOrientationData> orientation = DeviceOrientationData::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma, absoluteProvided, absolute);
+#endif
     impl().initDeviceOrientationEvent(type, bubbles, cancelable, orientation.get());
     return jsUndefined();
 }

@@ -518,6 +518,14 @@ void SQLTransactionBackend::performNextStep()
     runStateMachine();
 }
 
+#if PLATFORM(IOS)
+bool SQLTransactionBackend::shouldPerformWhilePaused() const
+{
+    // SQLTransactions should only run-while-paused if they have progressed passed the first transaction step.
+    return m_nextState != SQLTransactionState::AcquireLock;
+}
+#endif
+
 void SQLTransactionBackend::executeSQL(PassOwnPtr<AbstractSQLStatement> statement,
     const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions)
 {

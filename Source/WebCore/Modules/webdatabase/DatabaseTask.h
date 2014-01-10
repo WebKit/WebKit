@@ -75,6 +75,10 @@ class DatabaseTask {
 public:
     virtual ~DatabaseTask();
 
+#if PLATFORM(IOS)
+    virtual bool shouldPerformWhilePaused() const = 0;
+#endif
+
     void performTask();
 
     DatabaseBackend* database() const { return m_database; }
@@ -104,6 +108,10 @@ public:
     {
         return std::unique_ptr<DatabaseOpenTask>(new DatabaseOpenTask(db, setVersionInNewDatabase, synchronizer, error, errorMessage, success));
     }
+    
+#if PLATFORM(IOS)
+    virtual bool shouldPerformWhilePaused() const OVERRIDE { return true; }
+#endif
 
 private:
     DatabaseOpenTask(DatabaseBackend*, bool setVersionInNewDatabase, DatabaseTaskSynchronizer*, DatabaseError&, String& errorMessage, bool& success);
@@ -126,6 +134,10 @@ public:
         return std::unique_ptr<DatabaseCloseTask>(new DatabaseCloseTask(db, synchronizer));
     }
 
+#if PLATFORM(IOS)
+    virtual bool shouldPerformWhilePaused() const OVERRIDE { return true; }
+#endif
+
 private:
     DatabaseCloseTask(DatabaseBackend*, DatabaseTaskSynchronizer*);
 
@@ -144,6 +156,10 @@ public:
     {
         return std::unique_ptr<DatabaseTransactionTask>(new DatabaseTransactionTask(transaction));
     }
+
+#if PLATFORM(IOS)
+    virtual bool shouldPerformWhilePaused() const OVERRIDE;
+#endif
 
     SQLTransactionBackend* transaction() const { return m_transaction.get(); }
 
@@ -165,6 +181,10 @@ public:
     {
         return std::unique_ptr<DatabaseTableNamesTask>(new DatabaseTableNamesTask(db, synchronizer, names));
     }
+
+#if PLATFORM(IOS)
+    virtual bool shouldPerformWhilePaused() const OVERRIDE { return true; }
+#endif
 
 private:
     DatabaseTableNamesTask(DatabaseBackend*, DatabaseTaskSynchronizer*, Vector<String>& names);

@@ -33,10 +33,22 @@
 #import "WebScriptObjectPrivate.h"
 #import "runtime_root.h"
 
+#if PLATFORM(IOS)
+#define NEEDS_WRAPPER_CACHE_LOCK 1
+#endif
+
 //------------------------------------------------------------------------------------------
 // Wrapping WebCore implementation objects
 
 static NSMapTable* DOMWrapperCache;
+    
+#ifdef NEEDS_WRAPPER_CACHE_LOCK
+static Mutex& wrapperCacheLock()
+{
+    DEFINE_STATIC_LOCAL(Mutex, wrapperCacheMutex, ());
+    return wrapperCacheMutex;
+}
+#endif
 
 #if COMPILER(CLANG)
 #pragma clang diagnostic push
@@ -57,6 +69,9 @@ NSMapTable* createWrapperCache()
 
 NSObject* getDOMWrapper(DOMObjectInternal* impl)
 {
+#ifdef NEEDS_WRAPPER_CACHE_LOCK
+    MutexLocker locker(wrapperCacheLock());
+#endif
     if (!DOMWrapperCache)
         return nil;
     return static_cast<NSObject*>(NSMapGet(DOMWrapperCache, impl));
@@ -64,6 +79,9 @@ NSObject* getDOMWrapper(DOMObjectInternal* impl)
 
 void addDOMWrapper(NSObject* wrapper, DOMObjectInternal* impl)
 {
+#ifdef NEEDS_WRAPPER_CACHE_LOCK
+    MutexLocker locker(wrapperCacheLock());
+#endif
     if (!DOMWrapperCache)
         DOMWrapperCache = createWrapperCache();
     NSMapInsert(DOMWrapperCache, impl, wrapper);
@@ -71,6 +89,9 @@ void addDOMWrapper(NSObject* wrapper, DOMObjectInternal* impl)
 
 void removeDOMWrapper(DOMObjectInternal* impl)
 {
+#ifdef NEEDS_WRAPPER_CACHE_LOCK
+    MutexLocker locker(wrapperCacheLock());
+#endif
     if (!DOMWrapperCache)
         return;
     NSMapRemove(DOMWrapperCache, impl);

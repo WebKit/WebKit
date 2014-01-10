@@ -57,6 +57,14 @@ NavigatorGeolocation* NavigatorGeolocation::from(Navigator* navigator)
     return supplement;
 }
 
+#if PLATFORM(IOS)
+void NavigatorGeolocation::resetAllGeolocationPermission()
+{
+    if (m_geolocation)
+        m_geolocation->resetAllGeolocationPermission();
+}
+#endif // PLATFORM(IOS)
+
 Geolocation* NavigatorGeolocation::geolocation(Navigator* navigator)
 {
     return NavigatorGeolocation::from(navigator)->geolocation();

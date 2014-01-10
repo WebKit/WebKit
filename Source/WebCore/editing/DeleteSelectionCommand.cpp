@@ -861,7 +861,24 @@ void DeleteSelectionCommand::doApply()
         insertNodeAt(placeholder.get(), m_endingPosition);
     }
 
+#if PLATFORM(IOS)
+    // This checking is due to iphone shows the last entered character momentarily, removing and adding back the 
+    // space when deleting password cause space been showed insecurely.
+    bool isSecure = NO;
+    Node* node = m_endingPosition.deprecatedNode();
+    if (node && node->isTextNode()) {
+        Text* textNode = static_cast<Text*>(node);    
+        if (textNode->length() > 0) {
+            RenderObject* renderer = textNode->renderer();
+            isSecure = renderer->style().textSecurity() != TSNONE;
+        }
+    }
+        
+    if (!isSecure)
+        rebalanceWhitespaceAt(m_endingPosition);
+#else
     rebalanceWhitespaceAt(m_endingPosition);
+#endif
 
     calculateTypingStyleAfterDelete();
 

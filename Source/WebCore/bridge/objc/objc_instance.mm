@@ -37,6 +37,10 @@
 #import "runtime/FunctionPrototype.h"
 #import <wtf/Assertions.h>
 
+#if PLATFORM(IOS)
+#import <Foundation/NSMapTable.h>
+#endif // PLATFORM(IOS)
+
 #ifdef NDEBUG
 #define OBJC_LOG(formatAndArgs...) ((void)0)
 #else

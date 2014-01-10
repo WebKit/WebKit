@@ -100,7 +100,7 @@
 #endif
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 // New theme
 #define WTF_USE_NEW_THEME 1
 #endif // PLATFORM(MAC)
@@ -123,6 +123,11 @@ typedef float CGFloat;
 // CoreAnimation is available to IOS, Mac and Windows if using CG
 #if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && USE(CG))
 #define WTF_USE_CA 1
+#endif
+
+#if PLATFORM(IOS)
+#define WEBCORE_NAVIGATOR_PLATFORM wkGetPlatformNameForNavigator();
+#define WEBCORE_NAVIGATOR_VENDOR wkGetVendorNameForNavigator();
 #endif
 
 // FIXME: Move this to JavaScriptCore/wtf/Platform.h, which is where we define WTF_USE_AVFOUNDATION on the Mac.

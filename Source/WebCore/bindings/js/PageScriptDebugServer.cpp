@@ -148,6 +148,11 @@ void PageScriptDebugServer::didContinue(JSC::JSGlobalObject* globalObject)
 {
     // Page can be null if we are continuing because the Page closed.
     Page* page = toPage(globalObject);
+#if PLATFORM(IOS)
+    // FIXME: Can this happen in open source too, or is this iOS (multi-threaded) only?
+    if (!page)
+        return;
+#endif
     ASSERT(!page || page == m_pausedPage);
 
     m_pausedPage = 0;

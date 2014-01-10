@@ -30,6 +30,7 @@
 
 #include "PlatformSpeechSynthesisVoice.h"
 #include "PlatformSpeechSynthesizer.h"
+#include "ScriptController.h"
 #include "SpeechSynthesisEvent.h"
 #include "SpeechSynthesisUtterance.h"
 #include <wtf/CurrentTime.h>
@@ -44,6 +45,9 @@ PassRefPtr<SpeechSynthesis> SpeechSynthesis::create()
 SpeechSynthesis::SpeechSynthesis()
     : m_currentSpeechUtterance(0)
     , m_isPaused(false)
+#if PLATFORM(IOS)
+    , m_restrictions(RequireUserGestureForSpeechStartRestriction)
+#endif
 {
 }
     
@@ -112,6 +116,14 @@ void SpeechSynthesis::speak(SpeechSynthesisUtterance* utterance)
 {
     if (!utterance)
         return;
+ 
+    // Like Audio, we should require that the user interact to start a speech synthesis session.
+#if PLATFORM(IOS)
+    if (ScriptController::processingUserGesture())
+        removeBehaviorRestriction(RequireUserGestureForSpeechStartRestriction);
+    else if (userGestureRequiredForSpeechStart())
+        return;
+#endif
     
     m_utteranceQueue.append(utterance);
     

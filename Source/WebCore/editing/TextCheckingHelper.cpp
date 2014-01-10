@@ -233,6 +233,7 @@ TextCheckingHelper::~TextCheckingHelper()
 {
 }
 
+#if !PLATFORM(IOS)
 String TextCheckingHelper::findFirstMisspelling(int& firstMisspellingOffset, bool markAll, RefPtr<Range>& firstMisspellingRange)
 {
     WordAwareIterator it(m_range.get());
@@ -413,6 +414,7 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
     }
     return firstFoundItem;
 }
+#endif // !PLATFORM(IOS)
 
 #if USE(GRAMMAR_CHECKING)
 int TextCheckingHelper::findFirstGrammarDetail(const Vector<GrammarDetail>& grammarDetails, int badGrammarPhraseLocation, int startOffset, int endOffset, bool markAll) const
@@ -612,6 +614,7 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
 }
 
 
+#if !PLATFORM(IOS)
 void TextCheckingHelper::markAllMisspellings(RefPtr<Range>& firstMisspellingRange)
 {
     // Use the "markAll" feature of findFirstMisspelling. Ignore the return value and the "out parameter";
@@ -630,6 +633,7 @@ void TextCheckingHelper::markAllBadGrammar()
     findFirstBadGrammar(ignoredGrammarDetail, ignoredOffset, true);
 }
 #endif
+#endif // !PLATFORM(IOS)
 
 bool TextCheckingHelper::unifiedTextCheckerEnabled() const
 {

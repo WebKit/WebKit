@@ -49,6 +49,40 @@ my @depsContent = ();
 my $numCachedAttributes = 0;
 my $currentCachedAttribute = 0;
 
+my $beginAppleCopyrightForHeaderFiles = <<END;
+// ------- Begin Apple Copyright -------
+/*
+ * Copyright (C) 2008, Apple Inc. All rights reserved.
+ *
+ * Permission is granted by Apple to use this file to the extent
+ * necessary to relink with LGPL WebKit files.
+ *
+ * No license or rights are granted by Apple expressly or by
+ * implication, estoppel, or otherwise, to Apple patents and
+ * trademarks. For the sake of clarity, no license or rights are
+ * granted by Apple expressly or by implication, estoppel, or otherwise,
+ * under any Apple patents, copyrights and trademarks to underlying
+ * implementations of any application programming interfaces (APIs)
+ * or to any functionality that is invoked by calling any API.
+ */
+
+END
+my $beginAppleCopyrightForSourceFiles = <<END;
+// ------- Begin Apple Copyright -------
+/*
+ * Copyright (C) 2008, Apple Inc. All rights reserved.
+ *
+ * No license or rights are granted by Apple expressly or by implication,
+ * estoppel, or otherwise, to Apple copyrights, patents, trademarks, trade
+ * secrets or other rights.
+ */
+
+END
+my $endAppleCopyright   = <<END;
+// ------- End Apple Copyright   -------
+
+END
+
 # Default .h template
 my $headerTemplate = << "EOF";
 /*
@@ -448,7 +482,12 @@ sub GenerateHeaderContentHeader
     my $interface = shift;
     my $className = "JS" . $interface->name;
 
-    my @headerContentHeader = split("\r", $headerTemplate);
+    my @headerContentHeader;
+    if ($interface->extendedAttributes->{"AppleCopyright"}) {
+        @headerContentHeader = split("\r", $beginAppleCopyrightForHeaderFiles);
+    } else {
+        @headerContentHeader = split("\r", $headerTemplate);
+    }
 
     # - Add header protection
     push(@headerContentHeader, "\n#ifndef $className" . "_h");
@@ -464,7 +503,12 @@ sub GenerateImplementationContentHeader
     my $interface = shift;
     my $className = "JS" . $interface->name;
 
-    my @implContentHeader = split("\r", $headerTemplate);
+    my @implContentHeader;
+    if ($interface->extendedAttributes->{"AppleCopyright"}) {
+        @implContentHeader = split("\r", $beginAppleCopyrightForSourceFiles);
+    } else {
+        @implContentHeader = split("\r", $headerTemplate);
+    }
 
     push(@implContentHeader, "\n#include \"config.h\"\n");
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
@@ -867,8 +911,21 @@ sub GenerateHeader
     }
 
     if ($numCustomFunctions > 0) {
+        my $inAppleCopyright = 0;
         push(@headerContent, "\n    // Custom functions\n");
         foreach my $function (@{$interface->functions}) {
+            # PLATFORM_IOS
+            my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
+            if ($needsAppleCopyright) {
+                if (!$inAppleCopyright) {
+                    push(@headerContent, $beginAppleCopyrightForHeaderFiles);
+                    $inAppleCopyright = 1;
+                }
+            } elsif ($inAppleCopyright) {
+                push(@headerContent, $endAppleCopyright);
+                $inAppleCopyright = 0;
+            }
+            # end PLATFORM_IOS
             next unless HasCustomMethod($function->signature->extendedAttributes);
             next if $function->{overloads} && $function->{overloadIndex} != 1;
             my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
@@ -877,6 +934,7 @@ sub GenerateHeader
             push(@headerContent, "    " . ($function->isStatic ? "static " : "") . "JSC::JSValue " . $functionImplementationName . "(JSC::ExecState*);\n");
             push(@headerContent, "#endif\n") if $conditionalString;
         }
+        push(@headerContent, $endAppleCopyright) if $inAppleCopyright;
     }
 
     if (!$hasParent) {
@@ -1043,15 +1101,29 @@ sub GenerateHeader
     }
 
     if ($numFunctions > 0) {
+        my $inAppleCopyright = 0;
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$interface->functions}) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
+            my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
+            if ($needsAppleCopyright) {
+                if (!$inAppleCopyright) {
+                    push(@headerContent, $beginAppleCopyrightForHeaderFiles);
+                    $inAppleCopyright = 1;
+                }
+            } elsif ($inAppleCopyright) {
+                push(@headerContent, $endAppleCopyright);
+                $inAppleCopyright = 0;
+            }
+
             my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionName = GetFunctionName($className, $function);
             push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");
             push(@headerContent, "#endif\n") if $conditionalString;
         }
+
+        push(@headerContent, $endAppleCopyright) if $inAppleCopyright;
     }
 
     if ($numAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"}) {
@@ -1094,6 +1166,10 @@ sub GenerateHeader
     push(@headerContent, "\n} // namespace WebCore\n\n");
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
     push(@headerContent, "#endif\n");
+
+    if ($interface->extendedAttributes->{"AppleCopyright"}) {
+        push(@headerContent, split("\r", $endAppleCopyright));
+    }
 }
 
 sub GenerateAttributesHashTable($$)
@@ -2382,7 +2458,19 @@ sub GenerateImplementation
 
     # Functions
     if ($numFunctions > 0) {
+        my $inAppleCopyright = 0;
         foreach my $function (@{$interface->functions}) {
+            my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
+            if ($needsAppleCopyright) {
+                if (!$inAppleCopyright) {
+                    push(@implContent, $beginAppleCopyrightForSourceFiles);
+                    $inAppleCopyright = 1;
+                }
+            } elsif ($inAppleCopyright) {
+                push(@implContent, $endAppleCopyright);
+                $inAppleCopyright = 0;
+            }
+
             my $isCustom = HasCustomMethod($function->signature->extendedAttributes);
             my $isOverloaded = $function->{overloads} && @{$function->{overloads}} > 1;
             my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
@@ -2497,6 +2585,9 @@ sub GenerateImplementation
             }
 
         }
+
+        push(@implContent, $endAppleCopyright) if $inAppleCopyright;
+
     }
 
     if ($needsMarkChildren && !$interface->extendedAttributes->{"JSCustomMarkFunction"}) {
@@ -3229,6 +3320,10 @@ sub GenerateCallbackImplementation
     push(@implContent, "\n}\n");
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+
+    if ($interface->extendedAttributes->{"AppleCopyright"}) {
+        push(@implContent, split("\r", $endAppleCopyright));
+    }
 }
 
 sub GenerateImplementationFunctionCall()

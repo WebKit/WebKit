@@ -190,9 +190,51 @@ all : \
     $(PUBLIC_HEADERS_DIR)/nptypes.h \
 #
 
+ifeq ($(findstring WTF_PLATFORM_IOS,$(FEATURE_DEFINES)), WTF_PLATFORM_IOS)
+
+all : \
+    $(PUBLIC_HEADERS_DIR)/DOMGestureEvent.h \
+    $(PRIVATE_HEADERS_DIR)/DOMHTMLTextAreaElementPrivate.h \
+    $(PUBLIC_HEADERS_DIR)/DOMTouch.h \
+    $(PUBLIC_HEADERS_DIR)/DOMTouchEvent.h \
+    $(PUBLIC_HEADERS_DIR)/DOMTouchList.h \
+    $(PRIVATE_HEADERS_DIR)/DOMUIKitExtensions.h \
+    $(PRIVATE_HEADERS_DIR)/KeyEventCodesIOS.h \
+    $(PRIVATE_HEADERS_DIR)/MediaPlayerProxy.h \
+    $(PRIVATE_HEADERS_DIR)/PluginData.h \
+    $(PRIVATE_HEADERS_DIR)/ScrollTypes.h \
+    $(PRIVATE_HEADERS_DIR)/SystemMemory.h \
+    $(PRIVATE_HEADERS_DIR)/WAKAppKitStubs.h \
+    $(PRIVATE_HEADERS_DIR)/WAKResponder.h \
+    $(PRIVATE_HEADERS_DIR)/WAKScrollView.h \
+    $(PRIVATE_HEADERS_DIR)/WAKView.h \
+    $(PRIVATE_HEADERS_DIR)/WAKViewPrivate.h \
+    $(PRIVATE_HEADERS_DIR)/WAKWindow.h \
+    $(PRIVATE_HEADERS_DIR)/WKContentObservation.h \
+    $(PRIVATE_HEADERS_DIR)/WKGraphics.h \
+    $(PRIVATE_HEADERS_DIR)/WKTypes.h \
+    $(PRIVATE_HEADERS_DIR)/WKUtilities.h \
+    $(PRIVATE_HEADERS_DIR)/WKView.h \
+    $(PRIVATE_HEADERS_DIR)/WebAutocapitalize.h \
+    $(PRIVATE_HEADERS_DIR)/WebCoreFrameView.h \
+    $(PRIVATE_HEADERS_DIR)/WebCoreThread.h \
+    $(PRIVATE_HEADERS_DIR)/WebCoreThreadMessage.h \
+    $(PRIVATE_HEADERS_DIR)/WebCoreThreadRun.h \
+    $(PRIVATE_HEADERS_DIR)/WebEvent.h \
+    $(PRIVATE_HEADERS_DIR)/WebEventRegion.h \
+
+endif
+
 REPLACE_RULES = -e s/\<WebCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
 HEADER_MIGRATE_CMD = sed $(REPLACE_RULES) $< > $@
 PUBLIC_HEADER_CHECK_CMD = @if grep -q "AVAILABLE.*TBD" "$<"; then line=$$(awk "/AVAILABLE.*TBD/ { print FNR; exit }" "$<" ); echo "$<:$$line: error: A class within a public header has unspecified availability."; false; fi
+
+ifeq ($(findstring WTF_PLATFORM_IOS,$(FEATURE_DEFINES)), WTF_PLATFORM_IOS)
+
+$(PRIVATE_HEADERS_DIR)/WAKScrollView.h : WAKScrollView.h MigrateHeaders.make
+    cat $< $(PROCESS_HEADER_FOR_MACOSX_TARGET_CMD) > $@
+
+endif
 
 $(PUBLIC_HEADERS_DIR)/DOM% : DOMDOM% MigrateHeaders.make
 	$(PUBLIC_HEADER_CHECK_CMD)
