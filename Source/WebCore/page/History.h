@@ -57,9 +57,9 @@ public:
     bool stateChanged() const;
     bool isSameAsCurrentState(SerializedScriptValue*) const;
 
-    enum StateObjectType {
-        StateObjectPush,
-        StateObjectReplace
+    enum class StateObjectType {
+        Push,
+        Replace
     };
     void stateObjectAdded(PassRefPtr<SerializedScriptValue>, const String& title, const String& url, StateObjectType, ExceptionCode&);
 

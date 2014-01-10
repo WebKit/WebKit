@@ -1,3 +1,19 @@
+2014-01-09  Anders Carlsson  <andersca@apple.com>
+
+        History::StateObjectType should be a strong enum
+        https://bugs.webkit.org/show_bug.cgi?id=126725
+
+        Reviewed by Beth Dakin.
+
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::pushState):
+        (WebCore::JSHistory::replaceState):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::pushState):
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+        * page/History.h:
+
 2014-01-09  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Mountain Lion Release (32-bit) build following <http://trac.webkit.org/changeset/161589>

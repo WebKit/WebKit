@@ -147,17 +147,17 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
         return;
     }
 
-    if (stateObjectType == StateObjectPush)
+    if (stateObjectType == StateObjectType::Push)
         m_frame->loader().history().pushState(data, title, fullURL.string());
-    else if (stateObjectType == StateObjectReplace)
+    else if (stateObjectType == StateObjectType::Replace)
         m_frame->loader().history().replaceState(data, title, fullURL.string());
             
     if (!urlString.isEmpty())
         m_frame->document()->updateURLForPushOrReplaceState(fullURL);
 
-    if (stateObjectType == StateObjectPush)
+    if (stateObjectType == StateObjectType::Push)
         m_frame->loader().client().dispatchDidPushStateWithinPage();
-    else if (stateObjectType == StateObjectReplace)
+    else if (stateObjectType == StateObjectType::Replace)
         m_frame->loader().client().dispatchDidReplaceStateWithinPage();
 }
 

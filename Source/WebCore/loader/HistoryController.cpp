@@ -855,7 +855,6 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
 
     addVisitedLink(page, URL(ParsedURLString, urlString));
     m_frame.loader().client().updateGlobalHistory();
-
 }
 
 void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObject, const String& title, const String& urlString)
