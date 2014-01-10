@@ -31,7 +31,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include <wtf/Threading.h>
+#include <thread>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,10 +41,10 @@ public:
     DatabaseDetails()
         : m_expectedUsage(0)
         , m_currentUsage(0)
-    {
 #ifndef NDEBUG
-        m_thread = currentThread();
+        , m_threadID(std::this_thread::get_id())
 #endif
+    {
     }
 
     DatabaseDetails(const String& databaseName, const String& displayName, unsigned long long expectedUsage, unsigned long long currentUsage)
@@ -52,10 +52,10 @@ public:
         , m_displayName(displayName)
         , m_expectedUsage(expectedUsage)
         , m_currentUsage(currentUsage)
-    {
 #ifndef NDEBUG
-        m_thread = currentThread();
+        , m_threadID(std::this_thread::get_id())
 #endif
+    {
     }
 
     const String& name() const { return m_name; }
@@ -63,7 +63,7 @@ public:
     uint64_t expectedUsage() const { return m_expectedUsage; }
     uint64_t currentUsage() const { return m_currentUsage; }
 #ifndef NDEBUG
-    ThreadIdentifier thread() const { return m_thread; }
+    std::thread::id threadID() const { return m_threadID; }
 #endif
 
 private:
@@ -72,7 +72,7 @@ private:
     uint64_t m_expectedUsage;
     uint64_t m_currentUsage;
 #ifndef NDEBUG
-    ThreadIdentifier m_thread;
+    std::thread::id m_threadID;
 #endif
 };
 

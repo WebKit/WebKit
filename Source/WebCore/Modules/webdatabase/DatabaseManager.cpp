@@ -142,7 +142,7 @@ private:
 
 PassRefPtr<DatabaseContext> DatabaseManager::existingDatabaseContextFor(ScriptExecutionContext* context)
 {
-    MutexLocker locker(m_lock);
+    std::lock_guard<std::mutex> lock(m_mutex);
 
     ASSERT(m_databaseContextRegisteredCount >= 0);
     ASSERT(m_databaseContextInstanceCount >= 0);
@@ -173,7 +173,8 @@ PassRefPtr<DatabaseContext> DatabaseManager::databaseContextFor(ScriptExecutionC
 
 void DatabaseManager::registerDatabaseContext(DatabaseContext* databaseContext)
 {
-    MutexLocker locker(m_lock);
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     ScriptExecutionContext* context = databaseContext->scriptExecutionContext();
     m_contextMap.set(context, databaseContext);
 #if !ASSERT_DISABLED
@@ -183,7 +184,8 @@ void DatabaseManager::registerDatabaseContext(DatabaseContext* databaseContext)
 
 void DatabaseManager::unregisterDatabaseContext(DatabaseContext* databaseContext)
 {
-    MutexLocker locker(m_lock);
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     ScriptExecutionContext* context = databaseContext->scriptExecutionContext();
     ASSERT(m_contextMap.get(context));
 #if !ASSERT_DISABLED
@@ -195,13 +197,15 @@ void DatabaseManager::unregisterDatabaseContext(DatabaseContext* databaseContext
 #if !ASSERT_DISABLED
 void DatabaseManager::didConstructDatabaseContext()
 {
-    MutexLocker lock(m_lock);
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     m_databaseContextInstanceCount++;
 }
 
 void DatabaseManager::didDestructDatabaseContext()
 {
-    MutexLocker lock(m_lock);
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     m_databaseContextInstanceCount--;
     ASSERT(m_databaseContextRegisteredCount <= m_databaseContextInstanceCount);
 }
@@ -296,13 +300,15 @@ PassRefPtr<DatabaseBackendBase> DatabaseManager::openDatabaseBackend(ScriptExecu
 
 void DatabaseManager::addProposedDatabase(ProposedDatabase* proposedDb)
 {
-    MutexLocker locker(m_lock);
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     m_proposedDatabases.add(proposedDb);
 }
 
 void DatabaseManager::removeProposedDatabase(ProposedDatabase* proposedDb)
 {
-    MutexLocker locker(m_lock);
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     m_proposedDatabases.remove(proposedDb);
 }
 
@@ -380,11 +386,14 @@ void DatabaseManager::stopDatabases(ScriptExecutionContext* context, DatabaseTas
 String DatabaseManager::fullPathForDatabase(SecurityOrigin* origin, const String& name, bool createIfDoesNotExist)
 {
     {
-        MutexLocker locker(m_lock);
-        for (HashSet<ProposedDatabase*>::iterator iter = m_proposedDatabases.begin(); iter != m_proposedDatabases.end(); ++iter)
-            if ((*iter)->details().name() == name && (*iter)->origin()->equal(origin))
+        std::lock_guard<std::mutex> lock(m_mutex);
+
+        for (auto* proposedDatabase : m_proposedDatabases) {
+            if (proposedDatabase->details().name() == name && proposedDatabase->origin()->equal(origin))
                 return String();
+        }
     }
+    
     return m_server->fullPathForDatabase(origin, name, createIfDoesNotExist);
 }
 
@@ -406,13 +415,17 @@ bool DatabaseManager::databaseNamesForOrigin(SecurityOrigin* origin, Vector<Stri
 DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, SecurityOrigin* origin)
 {
     {
-        MutexLocker locker(m_lock);
-        for (HashSet<ProposedDatabase*>::iterator iter = m_proposedDatabases.begin(); iter != m_proposedDatabases.end(); ++iter)
-            if ((*iter)->details().name() == name && (*iter)->origin()->equal(origin)) {
-                ASSERT((*iter)->details().thread() == currentThread() || isMainThread());
-                return (*iter)->details();
+        std::lock_guard<std::mutex> lock(m_mutex);
+        
+        for (auto* proposedDatabase : m_proposedDatabases) {
+            if (proposedDatabase->details().name() == name && proposedDatabase->origin()->equal(origin)) {
+                ASSERT(proposedDatabase->details().threadID() == std::this_thread::get_id() || isMainThread());
+                
+                return proposedDatabase->details();
             }
+        }
     }
+    
     return m_server->detailsForNameAndOrigin(name, origin);
 }
 
