@@ -68,13 +68,15 @@ void PageConsole::printSourceURLAndPosition(const String& sourceURL, unsigned li
 {
     if (!sourceURL.isEmpty()) {
         if (lineNumber > 0 && columnNumber > 0)
-            printf("%s:%u:%u: ", sourceURL.utf8().data(), lineNumber, columnNumber);
+            printf("%s:%u:%u", sourceURL.utf8().data(), lineNumber, columnNumber);
+        else if (lineNumber > 0)
+            printf("%s:%u", sourceURL.utf8().data(), lineNumber);
         else
-            printf("%s: ", sourceURL.utf8().data());
+            printf("%s", sourceURL.utf8().data());
     }
 }
 
-void PageConsole::printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel level)
+void PageConsole::printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel level, bool showAsTrace)
 {
     const char* sourceString;
     switch (source) {
@@ -88,7 +90,7 @@ void PageConsole::printMessageSourceAndLevelPrefix(MessageSource source, Message
         sourceString = "NETWORK";
         break;
     case ConsoleAPIMessageSource:
-        sourceString = "CONSOLEAPI";
+        sourceString = "CONSOLE";
         break;
     case StorageMessageSource:
         sourceString = "STORAGE";
@@ -133,6 +135,9 @@ void PageConsole::printMessageSourceAndLevelPrefix(MessageSource source, Message
         levelString = "UNKNOWN";
         break;
     }
+
+    if (showAsTrace)
+        levelString = "TRACE";
 
     printf("%s %s:", sourceString, levelString);
 }
