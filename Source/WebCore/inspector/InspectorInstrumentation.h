@@ -386,8 +386,8 @@ private:
     static void didCommitLoadImpl(InstrumentingAgents*, Page*, DocumentLoader*);
     static void frameDocumentUpdatedImpl(InstrumentingAgents*, Frame*);
     static void loaderDetachedFromFrameImpl(InstrumentingAgents*, DocumentLoader*);
-    static void frameStartedLoadingImpl(InstrumentingAgents*, Frame*);
-    static void frameStoppedLoadingImpl(InstrumentingAgents*, Frame*);
+    static void frameStartedLoadingImpl(InstrumentingAgents&, Frame&);
+    static void frameStoppedLoadingImpl(InstrumentingAgents&, Frame&);
     static void frameScheduledNavigationImpl(InstrumentingAgents*, Frame*, double delay);
     static void frameClearedScheduledNavigationImpl(InstrumentingAgents*, Frame*);
     static InspectorInstrumentationCookie willRunJavaScriptDialogImpl(InstrumentingAgents*, const String& message);
@@ -1610,7 +1610,7 @@ inline void InspectorInstrumentation::frameStartedLoading(Frame& frame)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(&frame))
-        frameStartedLoadingImpl(instrumentingAgents, &frame);
+        frameStartedLoadingImpl(*instrumentingAgents, frame);
 #else
     UNUSED_PARAM(frame);
 #endif
@@ -1620,7 +1620,7 @@ inline void InspectorInstrumentation::frameStoppedLoading(Frame& frame)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(&frame))
-        frameStoppedLoadingImpl(instrumentingAgents, &frame);
+        frameStoppedLoadingImpl(*instrumentingAgents, frame);
 #else
     UNUSED_PARAM(frame);
 #endif

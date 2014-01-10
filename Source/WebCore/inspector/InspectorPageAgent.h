@@ -133,8 +133,8 @@ public:
     void frameNavigated(DocumentLoader*);
     void frameDetached(Frame*);
     void loaderDetachedFromFrame(DocumentLoader*);
-    void frameStartedLoading(Frame*);
-    void frameStoppedLoading(Frame*);
+    void frameStartedLoading(Frame&);
+    void frameStoppedLoading(Frame&);
     void frameScheduledNavigation(Frame*, double delay);
     void frameClearedScheduledNavigation(Frame*);
     void willRunJavaScriptDialog(const String& message);

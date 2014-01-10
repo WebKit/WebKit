@@ -866,15 +866,15 @@ void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents* 
         inspectorPageAgent->loaderDetachedFromFrame(loader);
 }
 
-void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
+void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
 {
-    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents->inspectorPageAgent())
+    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents.inspectorPageAgent())
         inspectorPageAgent->frameStartedLoading(frame);
 }
 
-void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
+void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
 {
-    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents->inspectorPageAgent())
+    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents.inspectorPageAgent())
         inspectorPageAgent->frameStoppedLoading(frame);
 }
 
