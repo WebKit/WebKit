@@ -32,6 +32,7 @@
 #include "FrameDestructionObserver.h"
 #include "URL.h"
 #include "Supplementable.h"
+#include <functional>
 
 namespace WebCore {
 
@@ -161,9 +162,7 @@ namespace WebCore {
         PassRefPtr<DOMWindow> open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
             DOMWindow& activeWindow, DOMWindow& firstWindow);
 
-        typedef void (*PrepareDialogFunction)(DOMWindow*, void* context);
-        void showModalDialog(const String& urlString, const String& dialogFeaturesString,
-            DOMWindow& activeWindow, DOMWindow& firstWindow, PrepareDialogFunction, void* functionContext);
+        void showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, std::function<void (DOMWindow&)> prepareDialogFunction);
 
         void alert(const String& message);
         bool confirm(const String& message);
@@ -443,9 +442,7 @@ namespace WebCore {
         virtual void refEventTarget() OVERRIDE { ref(); }
         virtual void derefEventTarget() OVERRIDE { deref(); }
 
-        static PassRefPtr<Frame> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&,
-            DOMWindow& activeWindow, Frame* firstFrame, Frame* openerFrame,
-            PrepareDialogFunction = 0, void* functionContext = 0);
+        static PassRefPtr<Frame> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&, DOMWindow& activeWindow, Frame* firstFrame, Frame* openerFrame, std::function<void (DOMWindow&)> prepareDialogFunction = nullptr);
         bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);
 
         void resetDOMWindowProperties();

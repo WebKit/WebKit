@@ -496,7 +496,7 @@ public:
     {
     }
 
-    void dialogCreated(DOMWindow*);
+    void dialogCreated(DOMWindow&);
     JSValue returnValue() const;
 
 private:
@@ -504,9 +504,10 @@ private:
     RefPtr<Frame> m_frame;
 };
 
-inline void DialogHandler::dialogCreated(DOMWindow* dialog)
+inline void DialogHandler::dialogCreated(DOMWindow& dialog)
 {
-    m_frame = dialog->frame();
+    m_frame = dialog.frame();
+    
     // FIXME: This looks like a leak between the normal world and an isolated
     //        world if dialogArguments comes from an isolated world.
     JSDOMWindow* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(m_exec->vm()));
@@ -526,11 +527,6 @@ inline JSValue DialogHandler::returnValue() const
     return slot.getValue(m_exec, identifier);
 }
 
-static void setUpDialog(DOMWindow* dialog, void* handler)
-{
-    static_cast<DialogHandler*>(handler)->dialogCreated(dialog);
-}
-
 JSValue JSDOMWindow::showModalDialog(ExecState* exec)
 {
     String urlString = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
@@ -542,7 +538,9 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec)
 
     DialogHandler handler(exec);
 
-    impl().showModalDialog(urlString, dialogFeaturesString, activeDOMWindow(exec), firstDOMWindow(exec), setUpDialog, &handler);
+    impl().showModalDialog(urlString, dialogFeaturesString, activeDOMWindow(exec), firstDOMWindow(exec), [&handler](DOMWindow& dialog) {
+        handler.dialogCreated(dialog);
+    });
 
     return handler.returnValue();
 }

@@ -1,3 +1,18 @@
+2014-01-10  Anders Carlsson  <andersca@apple.com>
+
+        DOMWindow::showModalDialog should use std::function
+        https://bugs.webkit.org/show_bug.cgi?id=126753
+
+        Reviewed by Antti Koivisto.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::DialogHandler::dialogCreated):
+        (WebCore::JSDOMWindow::showModalDialog):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+        (WebCore::DOMWindow::showModalDialog):
+        * page/DOMWindow.h:
+
 2014-01-10  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream WebCore and Tools miscellaneous changes
