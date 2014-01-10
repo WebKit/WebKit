@@ -1,3 +1,12 @@
+2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed Windows build fix for r161563.
+
+        Remove stale forward declaration causing namespace ambiguity
+        later on in a Windows AllInOne file that picked it up.
+
+        * bindings/js/ScriptGlobalObject.h:
+
 2014-01-09  Simon Fraser  <simon.fraser@apple.com>
 
         Enable async scrolling for iOS

@@ -41,7 +41,6 @@ class ExecState;
 
 namespace WebCore {
 
-class InjectedScriptHost;
 class InspectorFrontendHost;
 class MediaControlsHost;
 
