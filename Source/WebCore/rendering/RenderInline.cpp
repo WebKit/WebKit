@@ -217,7 +217,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
         || style().textEmphasisMark() != TextEmphasisMarkNone
         || (checkFonts && (!parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(style().font().fontMetrics())
         || parentStyle->lineHeight() != style().lineHeight()))
-        || (flowThread && flowThread->isRenderNamedFlowThread() && toRenderNamedFlowThread(flowThread)->hasRegionsWithStyling());
+        || (flowThread && flowThread->isRenderNamedFlowThread()); // FIXME: Enable the optimization once we make overflow computation for culled inlines in regions.
 
     if (!alwaysCreateLineBoxes && checkFonts && document().styleSheetCollection().usesFirstLineRules()) {
         // Have to check the first line style as well.
@@ -1033,6 +1033,50 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
     LayoutUnit logicalTop = firstLineBox()->logicalTopVisualOverflow(firstRootBox.lineTop());
     LayoutUnit logicalWidth = logicalRightSide - logicalLeftSide;
     LayoutUnit logicalHeight = lastLineBox()->logicalBottomVisualOverflow(lastRootBox.lineBottom()) - logicalTop;
+    
+    LayoutRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
+    if (!style().isHorizontalWritingMode())
+        rect = rect.transposedRect();
+    return rect;
+}
+
+LayoutRect RenderInline::linesVisualOverflowBoundingBoxInRegion(const RenderRegion* region) const
+{
+    ASSERT(alwaysCreateLineBoxes());
+    ASSERT(region);
+
+    if (!firstLineBox() || !lastLineBox())
+        return LayoutRect();
+
+    // Return the width of the minimal left side and the maximal right side.
+    LayoutUnit logicalLeftSide = LayoutUnit::max();
+    LayoutUnit logicalRightSide = LayoutUnit::min();
+    LayoutUnit logicalTop;
+    LayoutUnit logicalHeight;
+    InlineFlowBox* lastInlineInRegion = 0;
+    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        const RootInlineBox& root = curr->root();
+        if (root.containingRegion() != region) {
+            if (lastInlineInRegion)
+                break;
+            continue;
+        }
+
+        if (!lastInlineInRegion)
+            logicalTop = curr->logicalTopVisualOverflow(root.lineTop());
+
+        lastInlineInRegion = curr;
+
+        logicalLeftSide = std::min(logicalLeftSide, curr->logicalLeftVisualOverflow());
+        logicalRightSide = std::max(logicalRightSide, curr->logicalRightVisualOverflow());
+    }
+
+    if (!lastInlineInRegion)
+        return LayoutRect();
+
+    logicalHeight = lastInlineInRegion->logicalBottomVisualOverflow(lastInlineInRegion->root().lineBottom()) - logicalTop;
+    
+    LayoutUnit logicalWidth = logicalRightSide - logicalLeftSide;
     
     LayoutRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
     if (!style().isHorizontalWritingMode())

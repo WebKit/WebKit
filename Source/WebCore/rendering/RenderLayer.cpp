@@ -5499,16 +5499,20 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
     outlineRect = backgroundRect;
 
     RenderFlowThread* flowThread = clipRectsContext.region ? clipRectsContext.region->flowThread() : 0;
-    if (isSelfPaintingLayer() && flowThread && !renderer().isInFlowRenderFlowThread() && renderBox()) {
-        // FIXME: Handle the case where the renderer is not a RenderBox.
-        LayoutRect layerBoundsWithVisualOverflow = clipRectsContext.region->visualOverflowRectForBox(renderBox());
+    if (isSelfPaintingLayer() && flowThread && !renderer().isInFlowRenderFlowThread()) {
+        const RenderBoxModelObject& boxModelObject = toRenderBoxModelObject(renderer());
+        LayoutRect layerBoundsWithVisualOverflow = clipRectsContext.region->visualOverflowRectForBox(&boxModelObject);
 
         // Layers are in physical coordinates so the origin must be moved to the physical top-left of the flowthread.
-        if (flowThread->style().isFlippedBlocksWritingMode()) {
+        if (&boxModelObject == flowThread && flowThread->style().isFlippedBlocksWritingMode()) {
             if (flowThread->style().isHorizontalWritingMode())
                 layerBoundsWithVisualOverflow.moveBy(LayoutPoint(0, flowThread->height()));
             else
                 layerBoundsWithVisualOverflow.moveBy(LayoutPoint(flowThread->width(), 0));
+        } else {
+            RenderBlock* rendererContainingBlock = boxModelObject.enclosingBox()->isRenderBlock() ? toRenderBlock(boxModelObject.enclosingBox()) : 0;
+            if (rendererContainingBlock)
+                rendererContainingBlock->flipForWritingMode(layerBoundsWithVisualOverflow);
         }
 
         layerBoundsWithVisualOverflow.moveBy(offset);
@@ -5660,9 +5664,9 @@ bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const Layo
     // cause the paint rejection algorithm to prevent them from painting when using different width regions.
     // e.g. an absolutely positioned box with bottom:0px and right:0px would have it's frameRect.x relative
     // to the flow thread, not the last region (in which it will end up because of bottom:0px)
-    if (region && renderer().isBox() && renderer().flowThreadContainingBlock()) {
+    if (region && renderer().flowThreadContainingBlock()) {
         LayoutRect b = layerBounds;
-        b.moveBy(region->visualOverflowRectForBox(toRenderBox(&renderer())).location());
+        b.moveBy(region->visualOverflowRectForBox(toRenderBoxModelObject(&renderer())).location());
         b.inflate(renderer().view().maximalOutlineSize());
         if (b.intersects(damageRect))
             return true;

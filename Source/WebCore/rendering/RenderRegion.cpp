@@ -38,6 +38,7 @@
 #include "PaintInfo.h"
 #include "Range.h"
 #include "RenderBoxRegionInfo.h"
+#include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderNamedFlowFragment.h"
@@ -560,13 +561,23 @@ LayoutRect RenderRegion::layoutOverflowRectForBox(const RenderBox* box)
     return overflow->layoutOverflowRect();
 }
 
-LayoutRect RenderRegion::visualOverflowRectForBox(const RenderBox* box)
+LayoutRect RenderRegion::visualOverflowRectForBox(const RenderBoxModelObject* box)
 {
-    RefPtr<RenderOverflow> overflow;
-    ensureOverflowForBox(box, overflow, true);
-    
-    ASSERT(overflow);
-    return overflow->visualOverflowRect();
+    if (box->isRenderInline()) {
+        const RenderInline* inlineBox = toRenderInline(box);
+        return inlineBox->linesVisualOverflowBoundingBoxInRegion(this);
+    }
+
+    if (box->isBox()) {
+        RefPtr<RenderOverflow> overflow;
+        ensureOverflowForBox(toRenderBox(box), overflow, true);
+
+        ASSERT(overflow);
+        return overflow->visualOverflowRect();
+    }
+
+    ASSERT_NOT_REACHED();
+    return LayoutRect();
 }
 
 // FIXME: This doesn't work for writing modes.
@@ -590,7 +601,7 @@ LayoutRect RenderRegion::layoutOverflowRectForBoxForPropagation(const RenderBox*
     return rect;
 }
 
-LayoutRect RenderRegion::visualOverflowRectForBoxForPropagation(const RenderBox* box)
+LayoutRect RenderRegion::visualOverflowRectForBoxForPropagation(const RenderBoxModelObject* box)
 {
     LayoutRect rect = visualOverflowRectForBox(box);
     flowThread()->flipForWritingModeLocalCoordinates(rect);

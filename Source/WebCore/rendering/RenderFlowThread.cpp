@@ -843,7 +843,7 @@ bool RenderFlowThread::objectShouldPaintInFlowRegion(const RenderObject* object,
     if (enclosingBoxStartRegion && enclosingBoxEndRegion && !regionInRange(region, enclosingBoxStartRegion, enclosingBoxEndRegion))
         return false;
     
-    return object->isBox();
+    return object->isBox() || object->isRenderInline();
 }
 
 bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const RenderRegion* region) const

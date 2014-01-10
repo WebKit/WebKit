@@ -54,6 +54,7 @@ public:
 
     IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
+    LayoutRect linesVisualOverflowBoundingBoxInRegion(const RenderRegion*) const;
 
     InlineFlowBox* createAndAppendInlineFlowBox();
 

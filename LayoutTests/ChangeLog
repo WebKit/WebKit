@@ -1,3 +1,23 @@
+2014-01-10  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Implement visual overflow computation for inline elements
+        https://bugs.webkit.org/show_bug.cgi?id=125291
+
+        Reviewed by David Hyatt.
+
+        Tests for inline elements overflow correct painting inside regions.
+
+        * fast/regions/overflow-in-variable-width-regions-inline-bt-expected.html: Added.
+        * fast/regions/overflow-in-variable-width-regions-inline-bt.html: Added.
+        * fast/regions/overflow-in-variable-width-regions-inline-continuation-expected.html: Added.
+        * fast/regions/overflow-in-variable-width-regions-inline-continuation.html: Added.
+        * fast/regions/overflow-in-variable-width-regions-inline-expected.html: Added.
+        * fast/regions/overflow-in-variable-width-regions-inline-lr-expected.html: Added.
+        * fast/regions/overflow-in-variable-width-regions-inline-lr.html: Added.
+        * fast/regions/overflow-in-variable-width-regions-inline-rl-expected.html: Added.
+        * fast/regions/overflow-in-variable-width-regions-inline-rl.html: Added.
+        * fast/regions/overflow-in-variable-width-regions-inline.html: Added.
+
 2014-01-09  Jer Noble  <jer.noble@apple.com>
 
         [Mac] .mp3 media document controls missing their background
