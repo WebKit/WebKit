@@ -1,3 +1,11 @@
+2014-01-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix a copy-paste mistake in an include guard.
+
+        Rubber-stamped by Sam Weinig.
+
+        * crypto/parameters/CryptoAlgorithmRsaKeyParamsWithHash.h:
+
 2014-01-09  Anders Carlsson  <andersca@apple.com>
 
         History::StateObjectType should be a strong enum

@@ -24,7 +24,7 @@
  */
 
 #ifndef CryptoAlgorithmRsaKeyParamsWithHash_h
-#define CryptoAlgorithmRsaSsaKey
+#define CryptoAlgorithmRsaKeyParamsWithHash_h
 
 #include "CryptoAlgorithmIdentifier.h"
 #include "CryptoAlgorithmParameters.h"
@@ -55,4 +55,4 @@ CRYPTO_ALGORITHM_PARAMETERS_CASTS(RsaKeyParamsWithHash)
 }
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmRsaSsaParams_h
+#endif // CryptoAlgorithmRsaKeyParamsWithHash_h
