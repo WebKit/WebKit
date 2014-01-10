@@ -150,7 +150,6 @@ using namespace SVGNames;
 #endif
 
 static const char defaultAcceptHeader[] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-static double storedTimeOfLastCompletedLoad;
 
 #if PLATFORM(IOS)
 const int memoryLevelThresholdToPrunePageCache = 20;
@@ -1749,11 +1748,6 @@ void FrameLoader::setProvisionalDocumentLoader(DocumentLoader* loader)
     m_provisionalDocumentLoader = loader;
 }
 
-double FrameLoader::timeOfLastCompletedLoad()
-{
-    return storedTimeOfLastCompletedLoad;
-}
-
 void FrameLoader::setState(FrameState newState)
 {    
     m_state = newState;
@@ -1762,7 +1756,6 @@ void FrameLoader::setState(FrameState newState)
         provisionalLoadStarted();
     else if (newState == FrameStateComplete) {
         frameLoadCompleted();
-        storedTimeOfLastCompletedLoad = monotonicallyIncreasingTime();
         if (m_documentLoader)
             m_documentLoader->stopRecordingResponses();
     }
