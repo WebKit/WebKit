@@ -1,3 +1,12 @@
+2014-01-10  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed build fix since r161589.
+
+        The changeset causes a compile failure with --no-svg.
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::drawGlyphBuffer):
+
 2014-01-10  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
 
         [WebGL] Removing unnecessary pointer checks

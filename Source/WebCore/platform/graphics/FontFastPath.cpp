@@ -228,8 +228,9 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const G
 #if ENABLE(SVG_FONTS)
     if (renderingContext && fontData->isSVGFont())
         renderingContext->drawSVGGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
-    else {
+    else
 #endif
+    {
         drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
         point.setX(nextX);
     }
