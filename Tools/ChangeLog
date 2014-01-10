@@ -1,3 +1,13 @@
+2014-01-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Fix project build order
+
+        Ensure we build WebKitAdditions before WebCore (if applicable). Also, we don't
+        build WebInspectorUI, Tools/MiniBrowser, or Tools/WebKitTestRunner on iOS at the
+        time of writing.
+
+        * Scripts/build-webkit:
+
 2014-01-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Move platformName property from testRunner to accessibilityController
