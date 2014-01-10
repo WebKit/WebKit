@@ -91,15 +91,8 @@ TreeOutline.prototype.appendChild = function(child)
     if (child.hasChildren && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
         child.expanded = child.treeOutline._treeElementsExpandedState[child.identifier];
 
-    if (!this._childrenListNode) {
-        this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
-        this._childrenListNode.parentTreeElement = this;
-        this._childrenListNode.classList.add("children");
-        if (this.hidden)
-            this._childrenListNode.classList.add("hidden");
-    }
-
-    child._attach();
+    if (this._childrenListNode)
+        child._attach();
 
     if (this.treeOutline.onadd)
         this.treeOutline.onadd(child);
@@ -147,15 +140,8 @@ TreeOutline.prototype.insertChild = function(child, index)
     if (child.hasChildren && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
         child.expanded = child.treeOutline._treeElementsExpandedState[child.identifier];
 
-    if (!this._childrenListNode) {
-        this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
-        this._childrenListNode.parentTreeElement = this;
-        this._childrenListNode.classList.add("children");
-        if (this.hidden)
-            this._childrenListNode.classList.add("hidden");
-    }
-
-    child._attach();
+    if (this._childrenListNode)
+        child._attach();
 
     if (this.treeOutline.onadd)
         this.treeOutline.onadd(child);
@@ -293,7 +279,7 @@ TreeOutline.prototype.getCachedTreeElement = function(representedObject)
     if (!representedObject)
         return null;
 
-    if ("__treeElementIdentifier" in representedObject) {
+    if (representedObject.__treeElementIdentifier) {
         // If this representedObject has a tree element identifier, and it is a known TreeElement
         // in our tree we can just return that tree element.
         var elements = this._knownTreeElements[representedObject.__treeElementIdentifier];
@@ -321,7 +307,7 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
     var found = false;
     for (var i = 0; i < this.children.length; ++i) {
         item = this.children[i];
-        if (item.representedObject === representedObject || isAncestor(item.representedObject, representedObject)) {
+        if (item.representedObject === representedObject || (isAncestor && isAncestor(item.representedObject, representedObject))) {
             found = true;
             break;
         }

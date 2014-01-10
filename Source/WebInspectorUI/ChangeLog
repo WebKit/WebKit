@@ -1,5 +1,21 @@
 2014-01-10  Timothy Hatcher  <timothy@apple.com>
 
+        Clean up some areas of TreeOutline.
+
+        https://bugs.webkit.org/show_bug.cgi?id=123924
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/TreeOutline.js:
+        (TreeOutline.prototype.appendChild): Don't force create _childrenListNode, it will be created
+        when the tree element is expanded. Only attach if _childrenListNode already exists.
+        (TreeOutline.prototype.insertChild): Ditto.
+        (TreeOutline.prototype.getCachedTreeElement): Check the value of __treeElementIdentifier
+        not just the existence of the property. It should never be null/undefined/0, but be safe.
+        (TreeOutline.prototype.findTreeElement): Null check isAncestor, it isn't required.
+
+2014-01-10  Timothy Hatcher  <timothy@apple.com>
+
         Fix an exception in WebInspector.Color.
 
         https://bugs.webkit.org/show_bug.cgi?id=126765
