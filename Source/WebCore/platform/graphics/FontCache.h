@@ -33,7 +33,6 @@
 #include "FontDescription.h"
 #include <limits.h>
 #include <wtf/Forward.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -105,9 +104,9 @@ struct FontDescriptionFontDataCacheKey {
 };
 
 class FontCache {
-    WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
     friend class FontCachePurgePreventer;
-    friend class NeverDestroyed<FontCache>;
+
+    WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:
     friend FontCache* fontCache();
 

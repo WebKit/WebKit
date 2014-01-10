@@ -1,3 +1,16 @@
+2014-01-09  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Windows build following <http://trac.webkit.org/changeset/161589>
+        (https://bugs.webkit.org/show_bug.cgi?id=126654)
+
+        For some reason, the Windows build is unhappy that NeverDestroyed<FontCache> calls the private constructor
+        FontCache::FontCache() despite being a friend class of FontCache. Use DEFINE_STATIC_LOCAL instead of
+        NeverDestroyed<> for now. I'll look to investigate this issue offline.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::fontCache):
+        * platform/graphics/FontCache.h:
+
 2014-01-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove blackberry from WebCore/platform

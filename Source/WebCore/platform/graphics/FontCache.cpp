@@ -87,8 +87,8 @@ namespace WebCore {
 // FIXME: We should return a reference instead of a pointer since we never return a nullptr.
 FontCache* fontCache()
 {
-    static NeverDestroyed<FontCache> globalFontCache;
-    return &globalFontCache.get();
+    DEFINE_STATIC_LOCAL(FontCache, globalFontCache, ());
+    return &globalFontCache;
 }
 
 FontCache::FontCache()
