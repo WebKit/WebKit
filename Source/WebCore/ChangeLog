@@ -1,3 +1,30 @@
+2014-01-09  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] .mp3 media document controls missing their background
+        https://bugs.webkit.org/show_bug.cgi?id=126683
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-document-audio-controls-visible.html
+
+        <video> elements in a media document are created with an intrinsic size of 300x1,
+        with the expectation that either the size will be updated if the media has a video
+        track, or the controls will visibly overflow if the media is audio-only. Since the
+        shadow root is a flex-box, the panel was being collapsed to 1px high, so give the panel
+        a minimum height to prevent that. Also, disable "fading out" the controls in a
+        media document for an audio-only file by adding a "no-video" class to the panel
+        and adding a media document-only rule to force the controls to always be visible.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (video:-webkit-full-page-media::-webkit-media-controls-panel.no-video):
+        (audio::-webkit-media-controls-panel):
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller): Call updateHasVideo().
+        (Controller.prototype.addVideoListeners): Add video track listeners.
+        (Controller.prototype.removeVideoListeners): Remove same.
+        (Controller.prototype.updateHasVideo): Add a 'no-video' class to the panel if
+            the video element has no video tracks.
+
 2014-01-09  Anders Carlsson  <andersca@apple.com>
 
         Clean up ProgressTracker a little

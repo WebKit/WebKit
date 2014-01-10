@@ -44,6 +44,10 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
     bottom: 0px;
 }
 
+video:-webkit-full-page-media::-webkit-media-controls-panel.no-video {
+    opacity: 1;
+}
+
 ::-webkit-media-controls {
     width: inherit;
     height: inherit;
@@ -67,6 +71,7 @@ audio::-webkit-media-controls-panel {
     bottom: 0;
     width: 100%;
     padding-top: 1px;
+    min-height: 25px;
     height: 25px;
     line-height: 25px;
     -webkit-user-select: none;

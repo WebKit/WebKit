@@ -1,3 +1,13 @@
+2014-01-09  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] .mp3 media document controls missing their background
+        https://bugs.webkit.org/show_bug.cgi?id=126683
+
+        Reviewed by Eric Carlson.
+
+        * media/media-document-audio-controls-visible-expected.txt: Added.
+        * media/media-document-audio-controls-visible.html: Added.
+
 2014-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         text-decoration-skip: ink does not work with line wraps

@@ -26,6 +26,7 @@ function Controller(root, video, host)
     this.updateCaptionContainer();
     this.updateVolume();
     this.updateHasAudio();
+    this.updateHasVideo();
 };
 
 /* Enums */
@@ -75,6 +76,7 @@ Controller.prototype = {
         thumbnailImage: 'thumbnail-image',
         thumbnailTrack: 'thumbnail-track',
         volumeBox: 'volume-box',
+        noVideo: 'no-video',
     },
     KeyCodes: {
         enter: 13,
@@ -167,6 +169,11 @@ Controller.prototype = {
         this.listenFor(this.video.audioTracks, 'addtrack', this.updateHasAudio);
         this.listenFor(this.video.audioTracks, 'removetrack', this.updateHasAudio);
 
+        /* video tracks */
+        this.listenFor(this.video.videoTracks, 'change', this.updateHasVideo);
+        this.listenFor(this.video.videoTracks, 'addtrack', this.updateHasVideo);
+        this.listenFor(this.video.videoTracks, 'removetrack', this.updateHasVideo);
+
         /* controls attribute */
         this.controlsObserver = new MutationObserver(this.handleControlsChange.bind(this));
         this.controlsObserver.observe(this.video, { attributes: true, attributeFilter: ['controls'] });
@@ -187,6 +194,11 @@ Controller.prototype = {
         this.stopListeningFor(this.video.audioTracks, 'change', this.updateHasAudio);
         this.stopListeningFor(this.video.audioTracks, 'addtrack', this.updateHasAudio);
         this.stopListeningFor(this.video.audioTracks, 'removetrack', this.updateHasAudio);
+
+        /* video tracks */
+        this.stopListeningFor(this.video.videoTracks, 'change', this.updateHasVideo);
+        this.stopListeningFor(this.video.videoTracks, 'addtrack', this.updateHasVideo);
+        this.stopListeningFor(this.video.videoTracks, 'removetrack', this.updateHasVideo);
 
         /* controls attribute */
         this.controlsObserver.disconnect();
@@ -1099,6 +1111,14 @@ Controller.prototype = {
             this.controls.muteBox.classList.remove(this.ClassNames.hidden);
         else
             this.controls.muteBox.classList.add(this.ClassNames.hidden);
+    },
+
+    updateHasVideo: function()
+    {
+        if (this.video.videoTracks.length)
+            this.controls.panel.classList.remove(this.ClassNames.noVideo);
+        else
+            this.controls.panel.classList.add(this.ClassNames.noVideo);
     },
 
     updateVolume: function()
