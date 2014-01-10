@@ -1,3 +1,13 @@
+2014-01-09  Anders Carlsson  <andersca@apple.com>
+
+        Remove unused FrameLoader member functions
+        https://bugs.webkit.org/show_bug.cgi?id=126734
+
+        Reviewed by Andreas Kling.
+
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+
 2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed Windows build fix for r161563.

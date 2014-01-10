@@ -2762,13 +2762,6 @@ void FrameLoader::receivedMainResourceError(const ResourceError& error)
         checkLoadComplete();
 }
 
-void FrameLoader::callContinueFragmentScrollAfterNavigationPolicy(void* argument,
-    const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue)
-{
-    FrameLoader* loader = static_cast<FrameLoader*>(argument);
-    loader->continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
-}
-
 void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
 {
     m_quickRedirectComing = false;
@@ -2820,13 +2813,6 @@ void FrameLoader::scrollToFragmentWithParentBoundary(const URL& url)
 
     if (boundaryFrame)
         boundaryFrame->view()->setSafeToPropagateScrollToParent(true);
-}
-
-void FrameLoader::callContinueLoadAfterNavigationPolicy(void* argument,
-    const ResourceRequest& request, PassRefPtr<FormState> formState, bool shouldContinue)
-{
-    FrameLoader* loader = static_cast<FrameLoader*>(argument);
-    loader->continueLoadAfterNavigationPolicy(request, formState, shouldContinue);
 }
 
 bool FrameLoader::shouldClose()
@@ -3001,13 +2987,6 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
     m_client.dispatchWillSubmitForm(formState, [this](PolicyAction action) {
         policyChecker().continueLoadAfterWillSubmitForm(action);
     });
-}
-
-void FrameLoader::callContinueLoadAfterNewWindowPolicy(void* argument,
-    const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, const NavigationAction& action, bool shouldContinue)
-{
-    FrameLoader* loader = static_cast<FrameLoader*>(argument);
-    loader->continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue);
 }
 
 void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& request,
