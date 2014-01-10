@@ -190,8 +190,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/nptypes.h \
 #
 
-ifeq ($(findstring WTF_PLATFORM_IOS,$(FEATURE_DEFINES)), WTF_PLATFORM_IOS)
-
+ifneq ($(filter iphoneos iphonesimulator, $(PLATFORM_NAME)), )
 all : \
     $(PUBLIC_HEADERS_DIR)/DOMGestureEvent.h \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLTextAreaElementPrivate.h \
@@ -221,20 +220,12 @@ all : \
     $(PRIVATE_HEADERS_DIR)/WebCoreThreadMessage.h \
     $(PRIVATE_HEADERS_DIR)/WebCoreThreadRun.h \
     $(PRIVATE_HEADERS_DIR)/WebEvent.h \
-    $(PRIVATE_HEADERS_DIR)/WebEventRegion.h \
-
+    $(PRIVATE_HEADERS_DIR)/WebEventRegion.h
 endif
 
 REPLACE_RULES = -e s/\<WebCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/
 HEADER_MIGRATE_CMD = sed $(REPLACE_RULES) $< > $@
 PUBLIC_HEADER_CHECK_CMD = @if grep -q "AVAILABLE.*TBD" "$<"; then line=$$(awk "/AVAILABLE.*TBD/ { print FNR; exit }" "$<" ); echo "$<:$$line: error: A class within a public header has unspecified availability."; false; fi
-
-ifeq ($(findstring WTF_PLATFORM_IOS,$(FEATURE_DEFINES)), WTF_PLATFORM_IOS)
-
-$(PRIVATE_HEADERS_DIR)/WAKScrollView.h : WAKScrollView.h MigrateHeaders.make
-    cat $< $(PROCESS_HEADER_FOR_MACOSX_TARGET_CMD) > $@
-
-endif
 
 $(PUBLIC_HEADERS_DIR)/DOM% : DOMDOM% MigrateHeaders.make
 	$(PUBLIC_HEADER_CHECK_CMD)

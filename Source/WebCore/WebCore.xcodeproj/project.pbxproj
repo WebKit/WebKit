@@ -929,7 +929,7 @@
 		24F54EAD101FE914000AE741 /* ApplicationCacheHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */; settings = {ATTRIBUTES = (); }; };
 		2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */; };
 		2542F4DB1166C25A00E89A86 /* UserGestureIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 265541371489811C000DFC5D /* KeyEventCodesIOS.h */; };
+		265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 265541371489811C000DFC5D /* KeyEventCodesIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2655413A1489811C000DFC5D /* KeyEventIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 265541381489811C000DFC5D /* KeyEventIOS.mm */; };
 		265541521489B233000DFC5D /* CursorIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2655414B1489AA2B000DFC5D /* CursorIOS.cpp */; };
 		26601EBF14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 26601EBD14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -17850,15 +17850,6 @@
 			name = parser;
 			sourceTree = "<group>";
 		};
-		A516E8B2136E04C00076C3C0 /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */,
-				A516E8B5136E04DB0076C3C0 /* LocalizedDateCache.mm */,
-			);
-			path = ios;
-			sourceTree = "<group>";
-		};
 		A148328B187F506800DA63A6 /* wak */ = {
 			isa = PBXGroup;
 			children = (
@@ -17896,6 +17887,15 @@
 				A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */,
 			);
 			name = wak;
+			sourceTree = "<group>";
+		};
+		A516E8B2136E04C00076C3C0 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */,
+				A516E8B5136E04DB0076C3C0 /* LocalizedDateCache.mm */,
+			);
+			path = ios;
 			sourceTree = "<group>";
 		};
 		A59E3C1B11580F340072928E /* ios */ = {
