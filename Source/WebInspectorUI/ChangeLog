@@ -1,3 +1,17 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unimplemented or static ScriptDebugServer features
+        https://bugs.webkit.org/show_bug.cgi?id=126784
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/InspectorJSBackendCommands.js:
+        * UserInterface/InspectorWebBackendCommands.js:
+        * UserInterface/Legacy/6.0/InspectorWebBackendCommands.js:
+        * UserInterface/Legacy/7.0/InspectorWebBackendCommands.js:
+        * Versions/Inspector-iOS-6.0.json:
+        * Versions/Inspector-iOS-7.0.json:
+
 2014-01-10  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: support negative numbers in secondsToString and bytesToString.

@@ -2196,14 +2196,6 @@
         ],
         "commands": [
             {
-                "name": "causesRecompilation",
-                "returns": [
-                    { "name": "result", "type": "boolean", "description": "True if enabling debugger causes scripts recompilation." }
-                ],
-                "hidden": true,
-                "description": "Tells whether enabling debugger causes scripts recompilation."
-            },
-            {
                 "name": "supportsNativeBreakpoints",
                 "returns": [
                     { "name": "result", "type": "boolean", "description": "True if debugger supports native breakpoints." }
@@ -2299,26 +2291,6 @@
                     { "name": "result", "type": "array", "items": { "$ref": "Page.SearchMatch" }, "description": "List of search matches." }
                 ],
                 "description": "Searches for given string in script content."
-            },
-            {
-                "name": "canSetScriptSource",
-                "returns": [
-                    { "name": "result", "type": "boolean", "description": "True if <code>setScriptSource</code> is supported." }
-                ],
-                "description": "Tells whether <code>setScriptSource</code> is supported."
-            },
-            {
-                "name": "setScriptSource",
-                "parameters": [
-                    { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to edit." },
-                    { "name": "scriptSource", "type": "string", "description": "New content of the script." },
-                    { "name": "preview", "type": "boolean", "optional": true, "description": " If true the change will not actually be applied. Preview mode may be used to get result description without actually modifying the code.", "hidden": true }
-                ],
-                "returns": [
-                    { "name": "callFrames", "type": "array", "optional": true, "items": { "$ref": "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." },
-                    { "name": "result", "type": "object", "optional": true, "description": "VM-specific description of the changes applied.", "hidden": true }
-                ],
-                "description": "Edits JavaScript source live."
             },
             {
                 "name": "getScriptSource",
@@ -2518,12 +2490,6 @@
             }
         ],
         "commands": [
-            {
-                "name": "causesRecompilation",
-                "returns": [
-                    { "name": "result", "type": "boolean" }
-                ]
-            },
             {
                 "name": "isSampling",
                 "returns": [

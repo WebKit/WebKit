@@ -99,7 +99,7 @@ public:
     virtual void disable(ErrorString*);
     virtual void addScriptToEvaluateOnLoad(ErrorString*, const String& source, String* result);
     virtual void removeScriptToEvaluateOnLoad(ErrorString*, const String& identifier);
-    virtual void reload(ErrorString*, const bool* optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad, const String* optionalScriptPreprocessor);
+    virtual void reload(ErrorString*, const bool* optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad);
     virtual void navigate(ErrorString*, const String& url);
     virtual void getCookies(ErrorString*, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Page::Cookie>>& cookies);
     virtual void deleteCookie(ErrorString*, const String& cookieName, const String& url);
@@ -160,7 +160,6 @@ public:
     String loaderId(DocumentLoader*);
     Frame* findFrameWithSecurityOrigin(const String& originRawString);
     Frame* assertFrame(ErrorString*, const String& frameId);
-    String scriptPreprocessor() { return m_scriptPreprocessor; }
     static DocumentLoader* assertDocumentLoader(ErrorString*, Frame*);
 
 private:
@@ -182,8 +181,6 @@ private:
     long m_lastScriptIdentifier;
     String m_pendingScriptToEvaluateOnLoadOnce;
     String m_scriptToEvaluateOnLoadOnce;
-    String m_pendingScriptPreprocessor;
-    String m_scriptPreprocessor;
     HashMap<Frame*, String> m_frameToIdentifier;
     HashMap<String, Frame*> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;

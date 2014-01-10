@@ -47,12 +47,6 @@
     ],
     "commands": [
         {
-            "name": "causesRecompilation",
-            "returns": [
-                { "name": "result", "type": "boolean" }
-            ]
-        },
-        {
             "name": "isSampling",
             "returns": [
                 { "name": "result", "type": "boolean" }

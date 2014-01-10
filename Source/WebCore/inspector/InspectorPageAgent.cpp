@@ -426,10 +426,9 @@ void InspectorPageAgent::removeScriptToEvaluateOnLoad(ErrorString* error, const 
     m_scriptsToEvaluateOnLoad->remove(identifier);
 }
 
-void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad, const String* optionalScriptPreprocessor)
+void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad)
 {
     m_pendingScriptToEvaluateOnLoadOnce = optionalScriptToEvaluateOnLoad ? *optionalScriptToEvaluateOnLoad : "";
-    m_pendingScriptPreprocessor = optionalScriptPreprocessor ? *optionalScriptPreprocessor : "";
     m_page->mainFrame().loader().reload(optionalIgnoreCache ? *optionalIgnoreCache : false);
 }
 
@@ -784,9 +783,7 @@ void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
 {
     if (loader->frame()->isMainFrame()) {
         m_scriptToEvaluateOnLoadOnce = m_pendingScriptToEvaluateOnLoadOnce;
-        m_scriptPreprocessor = m_pendingScriptPreprocessor;
         m_pendingScriptToEvaluateOnLoadOnce = String();
-        m_pendingScriptPreprocessor = String();
     }
     m_frontendDispatcher->frameNavigated(buildObjectForFrame(loader->frame()));
 }

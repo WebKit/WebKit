@@ -16,8 +16,6 @@ InspectorBackend.registerEvent("Debugger.scriptFailedToParse", ["url", "scriptSo
 InspectorBackend.registerEvent("Debugger.breakpointResolved", ["breakpointId", "location"]);
 InspectorBackend.registerEvent("Debugger.paused", ["callFrames", "reason", "data"]);
 InspectorBackend.registerEvent("Debugger.resumed", []);
-InspectorBackend.registerCommand("Debugger.causesRecompilation", [], ["result"]);
-InspectorBackend.registerCommand("Debugger.supportsSeparateScriptCompilationAndExecution", [], ["result"]);
 InspectorBackend.registerCommand("Debugger.enable", [], []);
 InspectorBackend.registerCommand("Debugger.disable", [], []);
 InspectorBackend.registerCommand("Debugger.setBreakpointsActive", [{"name": "active", "type": "boolean", "optional": false}], []);
@@ -31,14 +29,10 @@ InspectorBackend.registerCommand("Debugger.stepOut", [], []);
 InspectorBackend.registerCommand("Debugger.pause", [], []);
 InspectorBackend.registerCommand("Debugger.resume", [], []);
 InspectorBackend.registerCommand("Debugger.searchInContent", [{"name": "scriptId", "type": "string", "optional": false}, {"name": "query", "type": "string", "optional": false}, {"name": "caseSensitive", "type": "boolean", "optional": true}, {"name": "isRegex", "type": "boolean", "optional": true}], ["result"]);
-InspectorBackend.registerCommand("Debugger.canSetScriptSource", [], ["result"]);
-InspectorBackend.registerCommand("Debugger.setScriptSource", [{"name": "scriptId", "type": "string", "optional": false}, {"name": "scriptSource", "type": "string", "optional": false}, {"name": "preview", "type": "boolean", "optional": true}], ["callFrames", "result"]);
 InspectorBackend.registerCommand("Debugger.getScriptSource", [{"name": "scriptId", "type": "string", "optional": false}], ["scriptSource"]);
 InspectorBackend.registerCommand("Debugger.getFunctionDetails", [{"name": "functionId", "type": "string", "optional": false}], ["details"]);
 InspectorBackend.registerCommand("Debugger.setPauseOnExceptions", [{"name": "state", "type": "string", "optional": false}], []);
 InspectorBackend.registerCommand("Debugger.evaluateOnCallFrame", [{"name": "callFrameId", "type": "string", "optional": false}, {"name": "expression", "type": "string", "optional": false}, {"name": "objectGroup", "type": "string", "optional": true}, {"name": "includeCommandLineAPI", "type": "boolean", "optional": true}, {"name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true}, {"name": "returnByValue", "type": "boolean", "optional": true}, {"name": "generatePreview", "type": "boolean", "optional": true}], ["result", "wasThrown"]);
-InspectorBackend.registerCommand("Debugger.compileScript", [{"name": "expression", "type": "string", "optional": false}, {"name": "sourceURL", "type": "string", "optional": false}], ["scriptId", "syntaxErrorMessage"]);
-InspectorBackend.registerCommand("Debugger.runScript", [{"name": "scriptId", "type": "string", "optional": false}, {"name": "contextId", "type": "number", "optional": true}, {"name": "objectGroup", "type": "string", "optional": true}, {"name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true}], ["result", "wasThrown"]);
 InspectorBackend.registerCommand("Debugger.setOverlayMessage", [{"name": "message", "type": "string", "optional": true}], []);
 
 // Inspector.

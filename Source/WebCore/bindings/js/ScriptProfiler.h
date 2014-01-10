@@ -67,7 +67,6 @@ public:
     static PassRefPtr<ScriptProfile> stopForPage(Page*, const String& title);
     static PassRefPtr<ScriptProfile> stopForWorkerGlobalScope(WorkerGlobalScope*, const String& title);
     static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String&, HeapSnapshotProgress*) { return 0; }
-    static bool causesRecompilation() { return true; }
     static bool isSampling() { return false; }
     static bool hasHeapProfiler() { return false; }
     static HashMap<String, double>* currentProfileNameIdleTimeMap() { return 0; }

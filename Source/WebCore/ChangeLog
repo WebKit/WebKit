@@ -1,3 +1,32 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unimplemented or static ScriptDebugServer features
+        https://bugs.webkit.org/show_bug.cgi?id=126784
+
+        Reviewed by Timothy Hatcher.
+
+        These features are unimplemented in the backend, and unused by the
+        current frontend. Most deal with features that were supported by v8
+        and are as yet unimplemented by JSC. If we decide to add such features
+        we can reimplement without conforming to an old implementation.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/ScriptProfiler.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::disable):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::reload):
+        (WebCore::InspectorPageAgent::frameNavigated):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::didClearMainFrameWindowObject):
+        * inspector/protocol/Page.json:
+        * inspector/protocol/Profiler.json:
+
 2014-01-10  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Remove unused variable from TileGrid::dropTilesBetweenRects()

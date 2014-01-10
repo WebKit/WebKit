@@ -1,3 +1,12 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unimplemented or static ScriptDebugServer features
+        https://bugs.webkit.org/show_bug.cgi?id=126784
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Debugger.json:
+
 2014-01-10  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(C stack work): stack traces no longer work in CrashTracer, lldb, and other tools

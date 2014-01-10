@@ -82,20 +82,6 @@
     ],
     "commands": [
         {
-            "name": "causesRecompilation",
-            "returns": [
-                { "name": "result", "type": "boolean", "description": "True if enabling debugger causes scripts recompilation." }
-            ],
-            "description": "Tells whether enabling debugger causes scripts recompilation."
-        },
-        {
-            "name": "supportsSeparateScriptCompilationAndExecution",
-            "returns": [
-                { "name": "result", "type": "boolean", "description": "True if debugger supports separate script compilation and execution." }
-            ],
-            "description": "Tells whether debugger supports separate script compilation and execution."
-        },
-        {
             "name": "enable",
             "description": "Enables debugger for the given page. Clients should not assume that the debugging has been enabled until the result for this command is received."
         },
@@ -185,26 +171,6 @@
             "description": "Searches for given string in script content."
         },
         {
-            "name": "canSetScriptSource",
-            "returns": [
-                { "name": "result", "type": "boolean", "description": "True if <code>setScriptSource</code> is supported." }
-            ],
-            "description": "Tells whether <code>setScriptSource</code> is supported."
-        },
-        {
-            "name": "setScriptSource",
-            "parameters": [
-                { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to edit." },
-                { "name": "scriptSource", "type": "string", "description": "New content of the script." },
-                { "name": "preview", "type": "boolean", "optional": true, "description": " If true the change will not actually be applied. Preview mode may be used to get result description without actually modifying the code." }
-            ],
-            "returns": [
-                { "name": "callFrames", "type": "array", "optional": true, "items": { "$ref": "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." },
-                { "name": "result", "type": "object", "optional": true, "description": "VM-specific description of the changes applied." }
-            ],
-            "description": "Edits JavaScript source live."
-        },
-        {
             "name": "getScriptSource",
             "parameters": [
                 { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to get source for." }
@@ -247,32 +213,6 @@
                 { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." }
             ],
             "description": "Evaluates expression on a given call frame."
-        },
-        {
-            "name": "compileScript",
-            "parameters": [
-                { "name": "expression", "type": "string", "description": "Expression to compile." },
-                { "name": "sourceURL", "type": "string", "description": "Source url to be set for the script." }
-            ],
-            "returns": [
-                { "name": "scriptId", "$ref": "ScriptId", "optional": true, "description": "Id of the script." },
-                { "name": "syntaxErrorMessage", "type": "string", "optional": true, "description": "Syntax error message if compilation failed." }
-            ],
-            "description": "Compiles expression."
-        },
-        {
-            "name": "runScript",
-            "parameters": [
-                { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to run." },
-                { "name": "contextId", "$ref": "Runtime.ExecutionContextId", "optional": true, "description": "Specifies in which isolated context to perform script run. Each content script lives in an isolated context and this parameter may be used to specify one of those contexts. If the parameter is omitted or 0 the evaluation will be performed in the context of the inspected page." },
-                { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
-                { "name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true, "description": "Specifies whether script run should stop on exceptions and mute console. Overrides setPauseOnException state." }
-            ],
-            "returns": [
-                { "name": "result", "$ref": "Runtime.RemoteObject", "description": "Run result." },
-                { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the script run." }
-            ],
-            "description": "Runs script with given id in a given context."
         },
         {
             "name": "setOverlayMessage",

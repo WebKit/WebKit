@@ -121,7 +121,6 @@ void PageDebuggerAgent::setOverlayMessage(ErrorString*, const String* message)
 void PageDebuggerAgent::didClearMainFrameWindowObject()
 {
     reset();
-    scriptDebugServer().setScriptPreprocessor(m_pageAgent->scriptPreprocessor());
 }
 
 } // namespace WebCore

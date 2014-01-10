@@ -190,11 +190,6 @@ PassRefPtr<Inspector::TypeBuilder::Profiler::ProfileHeader> InspectorProfilerAge
     return header.release();
 }
 
-void InspectorProfilerAgent::causesRecompilation(ErrorString*, bool* result)
-{
-    *result = ScriptProfiler::causesRecompilation();
-}
-
 void InspectorProfilerAgent::isSampling(ErrorString*, bool* result)
 {
     *result = ScriptProfiler::isSampling();

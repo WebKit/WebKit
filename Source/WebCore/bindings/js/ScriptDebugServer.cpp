@@ -131,24 +131,6 @@ void ScriptDebugServer::clearBreakpoints()
     m_breakpointIDToActions.clear();
 }
 
-bool ScriptDebugServer::canSetScriptSource()
-{
-    return false;
-}
-
-bool ScriptDebugServer::setScriptSource(const String&, const String&, bool, String*, Deprecated::ScriptValue*, Deprecated::ScriptObject*)
-{
-    // FIXME(40300): implement this.
-    return false;
-}
-
-
-void ScriptDebugServer::updateCallStack(Deprecated::ScriptValue*)
-{
-    // This method is used for restart frame feature that is not implemented yet.
-    // FIXME(40300): implement this.
-}
-
 void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
 {
     ASSERT(isPaused());
@@ -329,21 +311,6 @@ void ScriptDebugServer::handlePause(Debugger::ReasonForPause, JSGlobalObject* vm
 void ScriptDebugServer::recompileAllJSFunctionsSoon()
 {
     m_recompileTimer.startOneShot(0);
-}
-
-void ScriptDebugServer::compileScript(JSC::ExecState*, const String&, const String&, String*, String*)
-{
-    // FIXME(89652): implement this.
-}
-
-void ScriptDebugServer::clearCompiledScripts()
-{
-    // FIXME(89652): implement this.
-}
-
-void ScriptDebugServer::runScript(JSC::ExecState*, const String&, Deprecated::ScriptValue*, bool*, String*)
-{
-    // FIXME(89652): implement this.
 }
 
 } // namespace WebCore

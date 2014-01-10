@@ -70,10 +70,6 @@ public:
 
     virtual ~InspectorDebuggerAgent();
 
-    virtual void causesRecompilation(ErrorString*, bool*);
-    virtual void canSetScriptSource(ErrorString*, bool*);
-    virtual void supportsSeparateScriptCompilationAndExecution(ErrorString*, bool*);
-
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
@@ -92,7 +88,6 @@ public:
     virtual void continueToLocation(ErrorString*, const RefPtr<Inspector::InspectorObject>& location);
 
     virtual void searchInContent(ErrorString*, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::GenericTypes::SearchMatch>>&);
-    virtual void setScriptSource(ErrorString*, const String& scriptID, const String& newContent, const bool* preview, RefPtr<Inspector::TypeBuilder::Array<Inspector::TypeBuilder::Debugger::CallFrame>>& newCallFrames, RefPtr<Inspector::InspectorObject>& result);
     virtual void getScriptSource(ErrorString*, const String& scriptID, String* scriptSource);
     virtual void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<Inspector::TypeBuilder::Debugger::FunctionDetails>&);
     virtual void pause(ErrorString*);
@@ -111,8 +106,6 @@ public:
                              const bool* generatePreview,
                              RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result,
                              Inspector::TypeBuilder::OptOutput<bool>* wasThrown);
-    void compileScript(ErrorString*, const String& expression, const String& sourceURL, Inspector::TypeBuilder::OptOutput<Inspector::TypeBuilder::Debugger::ScriptId>*, Inspector::TypeBuilder::OptOutput<String>* syntaxErrorMessage);
-    void runScript(ErrorString*, const Inspector::TypeBuilder::Debugger::ScriptId&, const int* executionContextId, const String* objectGroup, const bool* doNotPauseOnExceptionsAndMuteConsole, RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>& result, Inspector::TypeBuilder::OptOutput<bool>* wasThrown);
     virtual void setOverlayMessage(ErrorString*, const String*);
 
     void schedulePauseOnNextStatement(Inspector::InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<Inspector::InspectorObject> data);

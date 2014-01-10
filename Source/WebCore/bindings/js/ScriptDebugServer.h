@@ -59,26 +59,10 @@ public:
     void removeBreakpoint(JSC::BreakpointID);
     void clearBreakpoints();
 
-    bool canSetScriptSource();
-    bool setScriptSource(const String& sourceID, const String& newContent, bool preview, String* error, Deprecated::ScriptValue* newCallFrames, Deprecated::ScriptObject* result);
-    void updateCallStack(Deprecated::ScriptValue* callFrame);
-
-    bool causesRecompilation() { return true; }
-    bool supportsSeparateScriptCompilationAndExecution() { return false; }
-
     void recompileAllJSFunctionsSoon();
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) = 0;
 
-    void setScriptPreprocessor(const String&)
-    {
-        // FIXME(webkit.org/b/82203): Implement preprocessor.
-    }
-
     bool runningNestedMessageLoop() { return m_runningNestedMessageLoop; }
-
-    void compileScript(JSC::ExecState*, const String& expression, const String& sourceURL, String* scriptID, String* exceptionMessage);
-    void clearCompiledScripts();
-    void runScript(JSC::ExecState*, const String& scriptID, Deprecated::ScriptValue* result, bool* wasThrown, String* exceptionMessage);
 
     class Task {
         WTF_MAKE_FAST_ALLOCATED;
