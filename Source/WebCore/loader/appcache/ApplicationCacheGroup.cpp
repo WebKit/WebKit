@@ -781,17 +781,15 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
     ASSERT(m_pendingEntries.isEmpty());
 
     if (isUpgradeAttempt) {
-        ApplicationCache::ResourceMap::const_iterator end = m_newestCache->end();
-        for (ApplicationCache::ResourceMap::const_iterator it = m_newestCache->begin(); it != end; ++it) {
-            unsigned type = it->value->type();
+        for (const auto& urlAndResource : *m_newestCache) {
+            unsigned type = urlAndResource.value->type();
             if (type & ApplicationCacheResource::Master)
-                addEntry(it->key, type);
+                addEntry(urlAndResource.key, type);
         }
     }
     
-    HashSet<String>::const_iterator end = manifest.explicitURLs.end();
-    for (HashSet<String>::const_iterator it = manifest.explicitURLs.begin(); it != end; ++it)
-        addEntry(*it, ApplicationCacheResource::Explicit);
+    for (const auto& explicitURL : manifest.explicitURLs)
+        addEntry(explicitURL, ApplicationCacheResource::Explicit);
 
     size_t fallbackCount = manifest.fallbackURLs.size();
     for (size_t i = 0; i  < fallbackCount; ++i)
@@ -1179,9 +1177,8 @@ void ApplicationCacheGroup::clearStorageID()
 {
     m_storageID = 0;
     
-    HashSet<ApplicationCache*>::const_iterator end = m_caches.end();
-    for (HashSet<ApplicationCache*>::const_iterator it = m_caches.begin(); it != end; ++it)
-        (*it)->clearStorageID();
+    for (const auto& cache : m_caches)
+        cache->clearStorageID();
 }
 
 }

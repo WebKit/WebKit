@@ -405,10 +405,8 @@ void AnimationControllerPrivate::removeFromAnimationsWaitingForStyle(AnimationBa
 void AnimationControllerPrivate::styleAvailable()
 {
     // Go through list of waiters and send them on their way
-    WaitingAnimationsSet::const_iterator it = m_animationsWaitingForStyle.begin();
-    WaitingAnimationsSet::const_iterator end = m_animationsWaitingForStyle.end();
-    for (; it != end; ++it)
-        (*it)->styleAvailable();
+    for (const auto& waitingAnimation : m_animationsWaitingForStyle)
+        waitingAnimation->styleAvailable();
 
     m_animationsWaitingForStyle.clear();
 }
@@ -451,10 +449,8 @@ void AnimationControllerPrivate::startTimeResponse(double time)
 {
     // Go through list of waiters and send them on their way
 
-    WaitingAnimationsSet::const_iterator it = m_animationsWaitingForStartTimeResponse.begin();
-    WaitingAnimationsSet::const_iterator end = m_animationsWaitingForStartTimeResponse.end();
-    for (; it != end; ++it)
-        (*it)->onAnimationStartResponse(time);
+    for (const auto& animation : m_animationsWaitingForStartTimeResponse)
+        animation->onAnimationStartResponse(time);
     
     m_animationsWaitingForStartTimeResponse.clear();
     m_waitingForAsyncStartNotification = false;

@@ -285,10 +285,9 @@ void ApplicationCacheHost::fillResourceList(ResourceInfoList* resources)
     ApplicationCache* cache = applicationCache();
     if (!cache || !cache->isComplete())
         return;
-     
-    ApplicationCache::ResourceMap::const_iterator end = cache->end();
-    for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
-        RefPtr<ApplicationCacheResource> resource = it->value;
+    
+    for (const auto& urlAndResource : *cache) {
+        RefPtr<ApplicationCacheResource> resource = urlAndResource.value;
         unsigned type = resource->type();
         bool isMaster   = type & ApplicationCacheResource::Master;
         bool isManifest = type & ApplicationCacheResource::Manifest;

@@ -210,10 +210,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
         return 0;
 
     // Check if a cache already exists in memory.
-    CacheGroupMap::const_iterator end = m_cachesInMemory.end();
-    for (CacheGroupMap::const_iterator it = m_cachesInMemory.begin(); it != end; ++it) {
-        ApplicationCacheGroup* group = it->value;
-
+    for (const auto& group : m_cachesInMemory.values()) {
         ASSERT(!group->isObsolete());
 
         if (!protocolHostAndPortAreEqual(url, group->manifestURL()))

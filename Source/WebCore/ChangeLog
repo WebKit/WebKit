@@ -1,5 +1,31 @@
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
+        Convert some for loops over to range-based for
+        https://bugs.webkit.org/show_bug.cgi?id=126752
+
+        Reviewed by Antti Koivisto.
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources):
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::clearStorageID):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::clearStorageID):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::fillResourceList):
+        * loader/appcache/ApplicationCacheResource.cpp:
+        (WebCore::ApplicationCacheResource::estimatedSizeInStorage):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::ArchiveFactory::registerKnownArchiveMIMETypes):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::styleAvailable):
+        (WebCore::AnimationControllerPrivate::startTimeResponse):
+
+2014-01-10  Anders Carlsson  <andersca@apple.com>
+
         Tighten up two functions in the inspector code
         https://bugs.webkit.org/show_bug.cgi?id=126751
 

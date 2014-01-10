@@ -52,9 +52,8 @@ int64_t ApplicationCacheResource::estimatedSizeInStorage()
     if (data())
         m_estimatedSizeInStorage = data()->size();
 
-    HTTPHeaderMap::const_iterator end = response().httpHeaderFields().end();
-    for (HTTPHeaderMap::const_iterator it = response().httpHeaderFields().begin(); it != end; ++it)
-        m_estimatedSizeInStorage += (it->key.length() + it->value.length() + 2) * sizeof(UChar);
+    for (const auto& headerField : response().httpHeaderFields())
+        m_estimatedSizeInStorage += (headerField.key.length() + headerField.value.length() + 2) * sizeof(UChar);
 
     m_estimatedSizeInStorage += url().string().length() * sizeof(UChar);
     m_estimatedSizeInStorage += sizeof(int); // response().m_httpStatusCode
