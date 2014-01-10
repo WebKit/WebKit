@@ -1,3 +1,11 @@
+2014-01-10  Andy Estes  <aestes@apple.com>
+
+        Fix some iOS build errors during bindings generation.
+
+        * bindings/objc/PublicDOMInterfaces.h: Included
+        WebKitAdditions/PublicDOMInterfacesIOS.h and change
+        -[DOMRGBColor color] to return a CGColorRef on iOS.
+
 2014-01-10  Timothy Hatcher  <timothy@apple.com>
 
         Prevent some resources from showing up in Web Inspector as years in duration.

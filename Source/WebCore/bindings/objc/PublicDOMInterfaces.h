@@ -953,7 +953,11 @@
 @property (readonly, strong) DOMCSSPrimitiveValue *green;
 @property (readonly, strong) DOMCSSPrimitiveValue *blue;
 @property (readonly, strong) DOMCSSPrimitiveValue *alpha;
+#if !PLATFORM(IOS)
 @property (readonly, copy) NSColor *color WEBKIT_AVAILABLE_MAC(10_5);
+#else
+- (CGColorRef)color;
+#endif
 @end
 
 @interface DOMCSSRule : DOMObject 10_4
@@ -1245,3 +1249,7 @@
 @protocol DOMXPathNSResolver <NSObject> 10_5
 - (NSString *)lookupNamespaceURI:(NSString *)prefix;
 @end
+
+#if PLATFORM(IOS)
+#include <WebKitAdditions/PublicDOMInterfacesIOS.h>
+#endif
