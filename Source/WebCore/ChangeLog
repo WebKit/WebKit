@@ -1,3 +1,12 @@
+2014-01-10  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the build after <http://trac.webkit.org/changeset/161638>
+        (https://bugs.webkit.org/show_bug.cgi?id=126698)
+
+        Substitute tab characters for space characters.
+
+        * DerivedSources.make:
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         DOMWindow::showModalDialog should use std::function

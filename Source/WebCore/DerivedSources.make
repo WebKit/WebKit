@@ -747,7 +747,7 @@ all : $(ADDITIONAL_BINDING_IDLS:%.idl=JS%.h)
 vpath %.idl $(BUILT_PRODUCTS_DIR)/usr/local/include $(SDKROOT)/usr/local/include
 
 $(ADDITIONAL_BINDING_IDLS) : % : WebKitAdditions/%
-    cp $< .
+	cp $< .
 
 else
 
@@ -1214,18 +1214,18 @@ endif
 all : $(WEBCORE_EXPORT_FILES)
 
 WebCore.%.exp : generate-export-file WebCore.exp.in
-    $^ $@
+	$^ $@
 
 # Switch NSRect, NSSize and NSPoint with their CG counterparts for the 64-bit exports file.
 WebCore.LP64.%.exp : WebCore.%.exp
-    cat $^ | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ > $@
+	cat $^ | sed -e s/7_NSRect/6CGRect/ -e s/7_NSSize/6CGSize/ -e s/8_NSPoint/7CGPoint/ > $@
 
 else
 
 all : WebCore.exp WebCore.LP64.exp
 
 WebCore.exp : $(BUILT_PRODUCTS_DIR)/WebCoreExportFileGenerator
-    $^ | grep -v '^# ' | sed -e 's/^#//' > $@
+	$^ | grep -v '^# ' | sed -e 's/^#//' > $@
 
 # Switch NSRect, NSSize and NSPoint with their CG counterparts for the 64-bit exports file.
 WebCore.LP64.exp : WebCore.exp
