@@ -140,10 +140,6 @@ macro doCallToJavaScript(makeCall, doReturn)
         const temp3 = t6
     end
 
-    if X86_64
-        loadp [sp], previousPC
-    end
-    move cfr, previousCFR
     functionPrologue(extraStackSpace)
 
     move topOfStack, cfr
@@ -153,6 +149,10 @@ macro doCallToJavaScript(makeCall, doReturn)
     loadp [vmTopCallFrame], temp1
     storep temp1, ScopeChain[cfr]
     storep 1, CodeBlock[cfr]
+    if X86_64
+        loadp 7*8[sp], previousPC
+        loadp 6*8[sp], previousCFR
+    end
     storep previousPC, ReturnPC[cfr]
     storep previousCFR, CallerFrame[cfr]
     move cfr, temp1
