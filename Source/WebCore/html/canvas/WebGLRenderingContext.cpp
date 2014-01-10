@@ -2964,6 +2964,10 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     Vector<String> result;
     if (m_context->getExtensions()->supports("GL_OES_texture_float"))
         result.append("OES_texture_float");
+    if (m_context->getExtensions()->supports("GL_OES_texture_float_linear"))
+        result.append("OES_texture_float_linear");
+    if (m_context->getExtensions()->supports("GL_OES_texture_half_float"))
+        result.append("OES_texture_half_float");
     if (m_context->getExtensions()->supports("GL_OES_standard_derivatives"))
         result.append("OES_standard_derivatives");
     if (m_context->getExtensions()->supports("GL_EXT_texture_filter_anisotropic"))

@@ -1,3 +1,19 @@
+2014-01-09  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Expose texture_float_linear and texture_half_float to getSupportedExtensions
+        https://bugs.webkit.org/show_bug.cgi?id=126732
+
+        Reviewed by Tim Horton.
+
+        When I added support for these two extensions, I forgot to add their
+        names to the list in getSupportedExtensions.
+
+        Covered by the Khronos test: conformance/extensions/get-extension.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getSupportedExtensions): Add OES_texture_float_linear
+        and OES_texture_half_float if the WebGL context supports them.
+
 2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Revert r161611, incorrect fix, will fix better.
