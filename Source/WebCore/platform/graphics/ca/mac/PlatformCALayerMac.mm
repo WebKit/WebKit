@@ -35,6 +35,7 @@
 #import "GraphicsLayerCA.h"
 #import "LengthFunctions.h"
 #import "PlatformCAFilters.h"
+#import "PlatformCAFiltersMac.h"
 #import "ScrollbarThemeMac.h"
 #import "SoftLinking.h"
 #import "TiledBacking.h"
@@ -703,6 +704,13 @@ bool PlatformCALayerMac::filtersCanBeComposited(const FilterOperations& filters)
     }
 
     return true;
+}
+#endif
+
+#if ENABLE(CSS_COMPOSITING)
+void PlatformCALayer::setBlendMode(BlendMode blendMode)
+{
+    PlatformCAFilters::setBlendingFiltersOnLayer(this, blendMode);
 }
 #endif
 

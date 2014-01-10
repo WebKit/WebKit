@@ -253,7 +253,7 @@ private:
     void updateFilters(const RenderStyle*);
 #endif
 #if ENABLE(CSS_COMPOSITING)
-    void updateLayerBlendMode(const RenderStyle*);
+    void updateBlendMode(const RenderStyle*);
 #endif
     // Return the opacity value that this layer should use for compositing.
     float compositingOpacity(float rendererOpacity) const;

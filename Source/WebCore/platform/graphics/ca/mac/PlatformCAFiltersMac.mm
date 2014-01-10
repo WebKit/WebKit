@@ -33,40 +33,11 @@
 #import "BlockExceptions.h"
 #import "FloatConversion.h"
 #import "LengthFunctions.h" // This is a layering violation.
+#import "PlatformCAFiltersMac.h"
 #import "PlatformCALayerMac.h"
 #import <QuartzCore/QuartzCore.h>
 
 using namespace WebCore;
-
-#if USE_CA_FILTERS
-struct CAColorMatrix
-{
-    float m11, m12, m13, m14, m15;
-    float m21, m22, m23, m24, m25;
-    float m31, m32, m33, m34, m35;
-    float m41, m42, m43, m44, m45;
-};
-
-typedef struct CAColorMatrix CAColorMatrix;
-
-@interface NSValue (Details)
-+ (NSValue *)valueWithCAColorMatrix:(CAColorMatrix)t;
-@end
-
-@interface CAFilter : NSObject <NSCopying, NSMutableCopying, NSCoding>
-@end
-
-@interface CAFilter (Details)
-@property(copy) NSString *name;
-+ (CAFilter *)filterWithType:(NSString *)type;
-@end
-
-extern NSString * const kCAFilterColorMatrix;
-extern NSString * const kCAFilterColorMonochrome;
-extern NSString * const kCAFilterColorHueRotate;
-extern NSString * const kCAFilterColorSaturate;
-extern NSString * const kCAFilterGaussianBlur;
-#endif
 
 // FIXME: Should share these values with FilterEffectRenderer::build() (https://bugs.webkit.org/show_bug.cgi?id=76008).
 static double sepiaFullConstants[3][3] = {
@@ -598,6 +569,70 @@ RetainPtr<NSValue> PlatformCAFilters::colorMatrixValueForFilter(const FilterOper
     }
 }
 #endif
+
+void PlatformCAFilters::setBlendingFiltersOnLayer(PlatformCALayer* platformCALayer, const BlendMode blendMode)
+{
+#if USE_CA_FILTERS
+    CALayer* layer = platformCALayer->platformLayer();
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    CAFilter* filter = nil;
+
+    switch (blendMode) {
+        case BlendModeNormal:
+            // No need to set an actual filter object in this case.
+            break;
+        case BlendModeOverlay:
+            filter = [CAFilter filterWithType:kCAFilterOverlayBlendMode];
+            break;
+        case BlendModeColorDodge:
+            filter = [CAFilter filterWithType:kCAFilterColorDodgeBlendMode];
+            break;
+        case BlendModeColorBurn:
+            filter = [CAFilter filterWithType:kCAFilterColorBurnBlendMode];
+            break;
+        case BlendModeDarken:
+            filter = [CAFilter filterWithType:kCAFilterDarkenBlendMode];
+            break;
+        case BlendModeDifference:
+            filter = [CAFilter filterWithType:kCAFilterDifferenceBlendMode];
+            break;
+        case BlendModeExclusion:
+            filter = [CAFilter filterWithType:kCAFilterExclusionBlendMode];
+            break;
+        case BlendModeHardLight:
+            filter = [CAFilter filterWithType:kCAFilterHardLightBlendMode];
+            break;
+        case BlendModeMultiply:
+            filter = [CAFilter filterWithType:kCAFilterMultiplyBlendMode];
+            break;
+        case BlendModeLighten:
+            filter = [CAFilter filterWithType:kCAFilterLightenBlendMode];
+            break;
+        case BlendModeSoftLight:
+            filter = [CAFilter filterWithType:kCAFilterSoftLightBlendMode];
+            break;
+        case BlendModeScreen:
+            filter = [CAFilter filterWithType:kCAFilterScreenBlendMode];
+            break;
+        case BlendModeHue:
+        case BlendModeSaturation:
+        case BlendModeColor:
+        case BlendModeLuminosity:
+            // Non-separable blend modes are not supported.
+            break;
+    }
+
+    [layer setCompositingFilter:filter];
+
+    END_BLOCK_OBJC_EXCEPTIONS
+
+#else
+    UNUSED_PARAM(platformCALayer);
+    UNUSED_PARAM(blendMode);
+#endif
+}
 
 int PlatformCAFilters::numAnimatedFilterProperties(FilterOperation::OperationType type)
 {

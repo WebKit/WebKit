@@ -30,6 +30,7 @@
 #if ENABLE(CSS_FILTERS)
 
 #include "FilterOperations.h"
+#include "GraphicsTypes.h"
 #include "PlatformLayer.h"
 #include <wtf/RetainPtr.h>
 
@@ -43,9 +44,12 @@ OBJC_CLASS NSValue;
 
 namespace WebCore {
 
+class PlatformCALayer;
+
 class PlatformCAFilters {
 public:
     static void setFiltersOnLayer(PlatformLayer*, const FilterOperations&);
+    static void setBlendingFiltersOnLayer(PlatformCALayer*, const BlendMode);
     static int numAnimatedFilterProperties(FilterOperation::OperationType);
     static const char* animatedFilterPropertyName(FilterOperation::OperationType, int internalFilterPropertyIndex);
 

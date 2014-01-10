@@ -1,3 +1,29 @@
+2014-01-10  Mihai Tica  <mitica@adobe.com>
+
+        Add support for blendmode to Core Animation layer.
+        Patch by Rik Cabanier, Dean Jackson and Mihai Tica.
+
+        https://bugs.webkit.org/show_bug.cgi?id=99200
+
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/blend-mode-layers.html: Added.
+        * css3/compositing/blend-mode-overflow-expected.txt: Added.
+        * css3/compositing/blend-mode-overflow.html: Added.
+        * css3/compositing/blend-mode-reflection.html: Added.
+        * css3/compositing/blend-mode-should-not-have-compositing-layer-expected.txt: Added.
+        * css3/compositing/blend-mode-should-not-have-compositing-layer.html: Added.
+        * css3/compositing/blend-mode-simple.html: Added.
+        * css3/compositing/should-have-compositing-layer-expected.txt:
+        * platform/efl/TestExpectations: Efl doesn't support blend modes at the moment.
+        * platform/mac/css3/compositing/blend-mode-layers-expected.png: Added.
+        * platform/mac/css3/compositing/blend-mode-layers-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-overflow-expected.png: Added.
+        * platform/mac/css3/compositing/blend-mode-reflection-expected.png: Added.
+        * platform/mac/css3/compositing/blend-mode-reflection-expected.txt: Added.
+        * platform/mac/css3/compositing/blend-mode-simple-expected.png: Added.
+        * platform/mac/css3/compositing/blend-mode-simple-expected.txt: Added.
+
 2014-01-10  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Implement visual overflow computation for inline elements

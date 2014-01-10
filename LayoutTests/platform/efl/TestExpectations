@@ -492,6 +492,11 @@ webkit.org/b/100519 fast/images/paletted-png-with-color-profile.html [ Skip ]
 # The following test fail because blending is not yet implemented
 webkit.org/b/105542 fast/canvas/canvas-blend-image.html [ Skip ]
 webkit.org/b/105542 fast/canvas/canvas-blend-solid.html [ Skip ]
+webkit.org/b/99200 css3/compositing/blend-mode-layers.html [ Skip ]
+webkit.org/b/99200 css3/compositing/blend-mode-overflow.html [ Skip ]
+webkit.org/b/99200 css3/compositing/blend-mode-reflection.html [ Skip ]
+webkit.org/b/99200 css3/compositing/blend-mode-simple.html [ Skip ]
+webkit.org/b/99200 css3/compositing/blend-mode-should-not-have-compositing-layer.html [ Skip ]
 
 # No concept of secure text input
 editing/secure-input [ Failure ]

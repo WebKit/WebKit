@@ -44,6 +44,10 @@
 #include "FilterOperations.h"
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+#include "GraphicsTypes.h"
+#endif
+
 enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextBehaviorNormal = 0,
     LayerTreeAsTextDebug = 1 << 0, // Dump extra debugging info like layer addresses.
@@ -345,6 +349,11 @@ public:
     virtual bool setFilters(const FilterOperations& filters) { m_filters = filters; return true; }
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+    BlendMode blendMode() const { return m_blendMode; }
+    virtual void setBlendMode(BlendMode blendMode) { m_blendMode = blendMode; }
+#endif
+
     // Some GraphicsLayers paint only the foreground or the background content
     GraphicsLayerPaintingPhase paintingPhase() const { return m_paintingPhase; }
     void setPaintingPhase(GraphicsLayerPaintingPhase phase) { m_paintingPhase = phase; }
@@ -565,6 +574,10 @@ protected:
     
 #if ENABLE(CSS_FILTERS)
     FilterOperations m_filters;
+#endif
+
+#if ENABLE(CSS_COMPOSITING)
+    BlendMode m_blendMode;
 #endif
 
     bool m_contentsOpaque : 1;

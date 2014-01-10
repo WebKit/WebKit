@@ -711,6 +711,17 @@ bool GraphicsLayerCA::setFilters(const FilterOperations& filterOperations)
 }
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+void GraphicsLayerCA::setBlendMode(BlendMode blendMode)
+{
+    if (GraphicsLayer::blendMode() == blendMode)
+        return;
+
+    GraphicsLayer::setBlendMode(blendMode);
+    noteLayerPropertyChanged(BlendModeChanged);
+}
+#endif
+
 void GraphicsLayerCA::setNeedsDisplay()
 {
     setNeedsDisplayInRect(FloatRect::infiniteRect());
@@ -1353,7 +1364,12 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & FiltersChanged)
         updateFilters();
 #endif
-    
+
+#if ENABLE(CSS_COMPOSITING)
+    if (m_uncommittedChanges & BlendModeChanged)
+        updateBlendMode();
+#endif
+
     if (m_uncommittedChanges & AnimationChanged)
         updateAnimations();
 
@@ -1684,6 +1700,22 @@ void GraphicsLayerCA::updateFilters()
                 continue;
 
             it->value->setFilters(m_filters);
+        }
+    }
+}
+#endif
+
+#if ENABLE(CSS_COMPOSITING)
+void GraphicsLayerCA::updateBlendMode()
+{
+    primaryLayer()->setBlendMode(m_blendMode);
+
+    if (LayerMap* layerCloneMap = primaryLayerClones()) {
+        LayerMap::const_iterator end = layerCloneMap->end();
+        for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
+            if (m_replicaLayer && isReplicatedRootClone(it->key))
+                continue;
+            it->value->setBlendMode(m_blendMode);
         }
     }
 }

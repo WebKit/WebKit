@@ -105,6 +105,10 @@ public:
     virtual bool filtersCanBeComposited(const FilterOperations&);
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+    virtual void setBlendMode(BlendMode) OVERRIDE;
+#endif
+
     virtual void setNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer);
     virtual void setContentsNeedsDisplay();
@@ -202,7 +206,11 @@ private:
 #if ENABLE(CSS_FILTERS)
     void updateFilters();
 #endif
-    
+
+#if ENABLE(CSS_COMPOSITING)
+    void updateBlendMode();
+#endif
+
     virtual PassRefPtr<PlatformCALayer> createPlatformCALayer(PlatformCALayer::LayerType, PlatformCALayerClient* owner);
     virtual PassRefPtr<PlatformCALayer> createPlatformCALayer(PlatformLayer*, PlatformCALayerClient* owner);
 
@@ -440,7 +448,8 @@ private:
         TilingAreaChanged = 1 << 28,
         TilesAdded = 1 < 29,
         DebugIndicatorsChanged = 1 << 30,
-        CustomAppearanceChanged = 1 << 31
+        CustomAppearanceChanged = 1 << 31,
+        BlendModeChanged        = 1 << 32
     };
     typedef unsigned LayerChangeFlags;
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };

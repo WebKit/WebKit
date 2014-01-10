@@ -1,0 +1,12 @@
+No blending. Duck should be yellow everywhere.
+Simple blending. Duck should be a horizontal rainbow inside, and blue on overflow.
+Parent is a stacking context. Duck should be a horizontal rainbow inside, and yellow on overflow (since there is no background there to blend with).
+Intermediate parent - no stacking context. Duck should be a vertical gradient inside, and blue on overflow.
+Intermediate parent with grandparent stacking context. Duck should be a vertical gradient inside, and yellow on overflow.
+Intermediate parent has overflow. Duck should be a vertical gradient inside, and overflow is hidden.
+ 
+ 
+
+ 
+ 
+

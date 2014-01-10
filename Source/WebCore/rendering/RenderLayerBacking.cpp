@@ -339,7 +339,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     updateFilters(&renderer().style());
 #endif
 #if ENABLE(CSS_COMPOSITING)
-    updateLayerBlendMode(&renderer().style());
+    updateBlendMode(&renderer().style());
 #endif
 }
 
@@ -404,8 +404,12 @@ void RenderLayerBacking::updateFilters(const RenderStyle* style)
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-void RenderLayerBacking::updateLayerBlendMode(const RenderStyle*)
+void RenderLayerBacking::updateBlendMode(const RenderStyle* style)
 {
+    if (m_ancestorClippingLayer)
+        m_ancestorClippingLayer->setBlendMode(style->blendMode());
+    else
+        m_graphicsLayer->setBlendMode(style->blendMode());
 }
 #endif
 
@@ -677,7 +681,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-    updateLayerBlendMode(&renderer().style());
+    updateBlendMode(&renderer().style());
 #endif
 
     bool isSimpleContainer = isSimpleContainerCompositingLayer();
@@ -2070,8 +2074,9 @@ void RenderLayerBacking::setRequiresOwnBackingStore(bool requiresOwnBacking)
 }
 
 #if ENABLE(CSS_COMPOSITING)
-void RenderLayerBacking::setBlendMode(BlendMode)
+void RenderLayerBacking::setBlendMode(BlendMode blendMode)
 {
+    m_graphicsLayer->setBlendMode(blendMode);
 }
 #endif
 

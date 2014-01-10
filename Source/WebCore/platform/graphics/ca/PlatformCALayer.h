@@ -181,6 +181,10 @@ public:
     virtual void copyFiltersFrom(const PlatformCALayer*) = 0;
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+    void setBlendMode(BlendMode);
+#endif
+
     virtual void setName(const String&) = 0;
 
     virtual void setSpeed(float) = 0;
