@@ -52,6 +52,7 @@ class OESStandardDerivatives;
 class OESTextureFloat;
 class OESTextureFloatLinear;
 class OESTextureHalfFloat;
+class OESTextureHalfFloatLinear;
 class OESVertexArrayObject;
 class OESElementIndexUint;
 class WebGLActiveInfo;
@@ -528,6 +529,7 @@ private:
     OwnPtr<OESTextureFloat> m_oesTextureFloat;
     OwnPtr<OESTextureFloatLinear> m_oesTextureFloatLinear;
     OwnPtr<OESTextureHalfFloat> m_oesTextureHalfFloat;
+    OwnPtr<OESTextureHalfFloatLinear> m_oesTextureHalfFloatLinear;
     OwnPtr<OESStandardDerivatives> m_oesStandardDerivatives;
     OwnPtr<OESVertexArrayObject> m_oesVertexArrayObject;
     OwnPtr<OESElementIndexUint> m_oesElementIndexUint;

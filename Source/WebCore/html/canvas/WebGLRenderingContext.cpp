@@ -52,6 +52,7 @@
 #include "OESTextureFloat.h"
 #include "OESTextureFloatLinear.h"
 #include "OESTextureHalfFloat.h"
+#include "OESTextureHalfFloatLinear.h"
 #include "OESVertexArrayObject.h"
 #include "Page.h"
 #include "RenderBox.h"
@@ -2415,6 +2416,14 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         }
         return m_oesTextureHalfFloat.get();
     }
+    if (equalIgnoringCase(name, "OES_texture_half_float_linear")
+        && m_context->getExtensions()->supports("GL_OES_texture_half_float_linear")) {
+        if (!m_oesTextureHalfFloatLinear) {
+            m_context->getExtensions()->ensureEnabled("GL_OES_texture_half_float_linear");
+            m_oesTextureHalfFloatLinear = OESTextureHalfFloatLinear::create(this);
+        }
+        return m_oesTextureHalfFloatLinear.get();
+    }
     if (equalIgnoringCase(name, "OES_vertex_array_object")
         && m_context->getExtensions()->supports("GL_OES_vertex_array_object")) {
         if (!m_oesVertexArrayObject) {
@@ -2968,6 +2977,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
         result.append("OES_texture_float_linear");
     if (m_context->getExtensions()->supports("GL_OES_texture_half_float"))
         result.append("OES_texture_half_float");
+    if (m_context->getExtensions()->supports("GL_OES_texture_half_float_linear"))
+        result.append("OES_texture_half_float_linear");
     if (m_context->getExtensions()->supports("GL_OES_standard_derivatives"))
         result.append("OES_standard_derivatives");
     if (m_context->getExtensions()->supports("GL_EXT_texture_filter_anisotropic"))
@@ -4854,7 +4865,7 @@ WebGLGetInfo WebGLRenderingContext::getWebGLIntArrayParameter(GC3Denum pname)
 void WebGLRenderingContext::checkTextureCompleteness(const char* functionName, bool prepareToDraw)
 {
     bool resetActiveUnit = false;
-    WebGLTexture::TextureExtensionFlag extensions = static_cast<WebGLTexture::TextureExtensionFlag>(m_oesTextureFloatLinear ? WebGLTexture::TextureExtensionFloatLinearEnabled : 0);
+    WebGLTexture::TextureExtensionFlag extensions = static_cast<WebGLTexture::TextureExtensionFlag>((m_oesTextureFloatLinear ? WebGLTexture::TextureExtensionFloatLinearEnabled : 0) | (m_oesTextureHalfFloatLinear ? WebGLTexture::TextureExtensionHalfFloatLinearEnabled : 0));
 
     for (unsigned ii = 0; ii < m_textureUnits.size(); ++ii) {
         if ((m_textureUnits[ii].texture2DBinding && m_textureUnits[ii].texture2DBinding->needToUseBlackTexture(extensions))
@@ -4871,7 +4882,7 @@ void WebGLRenderingContext::checkTextureCompleteness(const char* functionName, b
             if (prepareToDraw) {
                 String msg(String("texture bound to texture unit ") + String::number(ii)
                     + " is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete',"
-                    + " or it is a Float type with linear filtering and without the relevant float linear extension enabled.");
+                    + " or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.");
                 printGLWarningToConsole(functionName, msg.utf8().data());
                 tex2D = m_blackTexture2D.get();
                 texCubeMap = m_blackTextureCubeMap.get();

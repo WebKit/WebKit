@@ -508,6 +508,7 @@ set(WebCore_IDL_FILES
     html/canvas/OESTextureFloat.idl
     html/canvas/OESTextureFloatLinear.idl
     html/canvas/OESTextureHalfFloat.idl
+    html/canvas/OESTextureHalfFloatLinear.idl
     html/canvas/OESVertexArrayObject.idl
     html/canvas/WebGLActiveInfo.idl
     html/canvas/WebGLBuffer.idl
@@ -1505,6 +1506,7 @@ set(WebCore_SOURCES
     html/canvas/OESTextureFloat.cpp
     html/canvas/OESTextureFloatLinear.cpp
     html/canvas/OESTextureHalfFloat.cpp
+    html/canvas/OESTextureHalfFloatLinear.cpp
     html/canvas/OESVertexArrayObject.cpp
     html/canvas/WebGLBuffer.cpp
     html/canvas/WebGLCompressedTextureATC.cpp
@@ -2674,6 +2676,7 @@ if (ENABLE_WEBGL)
         html/canvas/OESTextureFloat.cpp
         html/canvas/OESTextureFloatLinear.cpp
         html/canvas/OESTextureHalfFloat.cpp
+        html/canvas/OESTextureHalfFloatLinear.cpp
         html/canvas/OESVertexArrayObject.cpp
         html/canvas/WebGLBuffer.cpp
         html/canvas/WebGLCompressedTextureATC.cpp
@@ -2709,6 +2712,7 @@ if (ENABLE_WEBGL)
         html/canvas/OESTextureFloat.idl
         html/canvas/OESTextureFloatLinear.idl
         html/canvas/OESTextureHalfFloat.idl
+        html/canvas/OESTextureHalfFloatLinear.idl
         html/canvas/OESVertexArrayObject.idl
         html/canvas/WebGLActiveInfo.idl
         html/canvas/WebGLBuffer.idl

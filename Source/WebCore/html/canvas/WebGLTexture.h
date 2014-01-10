@@ -38,7 +38,8 @@ public:
 
     enum TextureExtensionFlag {
         TextureExtensionsDisabled = 0,
-        TextureExtensionFloatLinearEnabled = 1 << 0
+        TextureExtensionFloatLinearEnabled = 1 << 0,
+        TextureExtensionHalfFloatLinearEnabled = 2 << 0
     };
 
     virtual ~WebGLTexture();
@@ -134,6 +135,7 @@ private:
     bool m_needToUseBlackTexture;
     bool m_isCompressed;
     bool m_isFloatType;
+    bool m_isHalfFloatType;
 };
 
 } // namespace WebCore

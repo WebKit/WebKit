@@ -55,6 +55,7 @@ public:
     //   GL_OES_texture_float
     //   GL_OES_texture_float_linear
     //   GL_OES_texture_half_float
+    //   GL_OES_texture_half_float_linear
     //   GL_OES_standard_derivatives
     //   GL_OES_rgb8_rgba8
     //   GL_OES_vertex_array_object

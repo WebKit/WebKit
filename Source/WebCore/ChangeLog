@@ -1,3 +1,49 @@
+2014-01-10  Dean Jackson  <dino@apple.com>
+
+        Implement OES texture half float linear
+        https://bugs.webkit.org/show_bug.cgi?id=125060
+
+        Reviewed by Brent Fulgham.
+
+        Test: fast/canvas/webgl/oes-texture-half-float-linear.html
+
+        * CMakeLists.txt: Add new files.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Generate new file from IDL.
+        * GNUmakefile.list.am: Add new files.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: New files for OESTextureHalfFloatLinear.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS): Map from extension name to native object.
+
+        * html/canvas/OESTextureHalfFloatLinear.cpp: Added. New files. These are boiler-plate.
+        * html/canvas/OESTextureHalfFloatLinear.h: Added.
+        * html/canvas/OESTextureHalfFloatLinear.idl: Added.
+
+        * html/canvas/WebGLExtension.h: Add new enum for the new extension.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension): Create the extension object if the
+        context is asked for one.
+        (WebCore::WebGLRenderingContext::getSupportedExtensions): Add the new extension to the
+        list of supported extensions. Actually remember to do it this time :)
+        (WebCore::WebGLRenderingContext::checkTextureCompleteness): Need to check for the half-float
+        extension as well, and update the log message.
+        * html/canvas/WebGLRenderingContext.h: New extension object.
+
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::WebGLTexture):
+        (WebCore::WebGLTexture::needToUseBlackTexture): Check for half-float type.
+        (WebCore::WebGLTexture::update): Mark a texture as half-float if necessary.
+        * html/canvas/WebGLTexture.h:
+
+        * platform/graphics/Extensions3D.h: Add a comment about the new extension.
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension): This extension is available
+        when GL_ARB_texture_float is supported, so add the name to the translation.
+
 2014-01-10  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Correct uniform input validation for texture sampler uniform

@@ -547,6 +547,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOESTextureFloatLinear.h \
 	DerivedSources/WebCore/JSOESTextureHalfFloat.cpp \
 	DerivedSources/WebCore/JSOESTextureHalfFloat.h \
+	DerivedSources/WebCore/JSOESTextureHalfFloatLinear.cpp \
+	DerivedSources/WebCore/JSOESTextureHalfFloatLinear.h \
 	DerivedSources/WebCore/JSOESVertexArrayObject.cpp \
 	DerivedSources/WebCore/JSOESVertexArrayObject.h \
 	DerivedSources/WebCore/JSOESElementIndexUint.cpp \
@@ -1516,6 +1518,7 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/OESTextureFloat.idl \
 	$(WebCore)/html/canvas/OESTextureFloatLinear.idl \
 	$(WebCore)/html/canvas/OESTextureHalfFloat.idl \
+	$(WebCore)/html/canvas/OESTextureHalfFloatLinear.idl \
 	$(WebCore)/html/canvas/OESVertexArrayObject.idl \
 	$(WebCore)/html/canvas/OESElementIndexUint.idl \
 	$(WebCore)/html/canvas/WebGLActiveInfo.idl \
@@ -3266,6 +3269,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/OESTextureFloatLinear.h \
 	Source/WebCore/html/canvas/OESTextureHalfFloat.cpp \
 	Source/WebCore/html/canvas/OESTextureHalfFloat.h \
+	Source/WebCore/html/canvas/OESTextureHalfFloatLinear.cpp \
+	Source/WebCore/html/canvas/OESTextureHalfFloatLinear.h \
 	Source/WebCore/html/canvas/OESVertexArrayObject.cpp \
 	Source/WebCore/html/canvas/OESVertexArrayObject.h \
 	Source/WebCore/html/canvas/OESElementIndexUint.cpp \

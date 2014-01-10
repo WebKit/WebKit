@@ -1094,6 +1094,10 @@
 		31060379143281CD00ABF4BA /* DOMWebKitCSSFilterValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 31060376143281CD00ABF4BA /* DOMWebKitCSSFilterValue.h */; };
 		3106037A143281CD00ABF4BA /* DOMWebKitCSSFilterValue.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31060377143281CD00ABF4BA /* DOMWebKitCSSFilterValue.mm */; };
 		3106037B143281CD00ABF4BA /* DOMWebKitCSSFilterValueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 31060378143281CD00ABF4BA /* DOMWebKitCSSFilterValueInternal.h */; };
+		31078CC71880AAB5008099DC /* OESTextureHalfFloatLinear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31078CC21880A6A6008099DC /* OESTextureHalfFloatLinear.cpp */; };
+		31078CC81880AABB008099DC /* OESTextureHalfFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 31078CC31880A6A6008099DC /* OESTextureHalfFloatLinear.h */; };
+		31078CC91880AAC9008099DC /* JSOESTextureHalfFloatLinear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31078CC51880AAAA008099DC /* JSOESTextureHalfFloatLinear.cpp */; };
+		31078CCA1880AACE008099DC /* JSOESTextureHalfFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 31078CC61880AAAA008099DC /* JSOESTextureHalfFloatLinear.h */; };
 		31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */; };
 		31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */; };
 		31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */; };
@@ -7910,6 +7914,11 @@
 		31060376143281CD00ABF4BA /* DOMWebKitCSSFilterValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSFilterValue.h; sourceTree = "<group>"; };
 		31060377143281CD00ABF4BA /* DOMWebKitCSSFilterValue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitCSSFilterValue.mm; sourceTree = "<group>"; };
 		31060378143281CD00ABF4BA /* DOMWebKitCSSFilterValueInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSFilterValueInternal.h; sourceTree = "<group>"; };
+		31078CC21880A6A6008099DC /* OESTextureHalfFloatLinear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OESTextureHalfFloatLinear.cpp; path = canvas/OESTextureHalfFloatLinear.cpp; sourceTree = "<group>"; };
+		31078CC31880A6A6008099DC /* OESTextureHalfFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OESTextureHalfFloatLinear.h; path = canvas/OESTextureHalfFloatLinear.h; sourceTree = "<group>"; };
+		31078CC41880A6A6008099DC /* OESTextureHalfFloatLinear.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OESTextureHalfFloatLinear.idl; path = canvas/OESTextureHalfFloatLinear.idl; sourceTree = "<group>"; };
+		31078CC51880AAAA008099DC /* JSOESTextureHalfFloatLinear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESTextureHalfFloatLinear.cpp; sourceTree = "<group>"; };
+		31078CC61880AAAA008099DC /* JSOESTextureHalfFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureHalfFloatLinear.h; sourceTree = "<group>"; };
 		31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSKeyframeRule.h; sourceTree = "<group>"; };
 		31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframesRule.cpp; sourceTree = "<group>"; };
@@ -15386,6 +15395,9 @@
 				A31C4E4C16E02AA6002F7957 /* OESTextureHalfFloat.cpp */,
 				A31C4E4E16E02AB4002F7957 /* OESTextureHalfFloat.h */,
 				A31C4E5016E02AC5002F7957 /* OESTextureHalfFloat.idl */,
+				31078CC21880A6A6008099DC /* OESTextureHalfFloatLinear.cpp */,
+				31078CC31880A6A6008099DC /* OESTextureHalfFloatLinear.h */,
+				31078CC41880A6A6008099DC /* OESTextureHalfFloatLinear.idl */,
 				77A17A6E12F28182004E02F6 /* OESVertexArrayObject.cpp */,
 				77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */,
 				77A17A7012F28182004E02F6 /* OESVertexArrayObject.idl */,
@@ -18261,6 +18273,8 @@
 				3146FE7118442367001A937C /* JSOESTextureFloatLinear.h */,
 				A31C4E5116E02B08002F7957 /* JSOESTextureHalfFloat.cpp */,
 				A31C4E5316E02B40002F7957 /* JSOESTextureHalfFloat.h */,
+				31078CC51880AAAA008099DC /* JSOESTextureHalfFloatLinear.cpp */,
+				31078CC61880AAAA008099DC /* JSOESTextureHalfFloatLinear.h */,
 				77A17AA212F28B2A004E02F6 /* JSOESVertexArrayObject.cpp */,
 				77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */,
 				B658FF9F1522EF3A00DD5595 /* JSRadioNodeList.cpp */,
@@ -23157,6 +23171,7 @@
 				A8185F3909765766005826D9 /* DocumentType.h in Headers */,
 				973889A1116EA9DC00ADF313 /* DocumentWriter.h in Headers */,
 				BC1A37AD097C715F0019F3D8 /* DOM.h in Headers */,
+				31078CC81880AABB008099DC /* OESTextureHalfFloatLinear.h in Headers */,
 				8538F0190AD718D8006A81D1 /* DOMAbstractView.h in Headers */,
 				BC99812E0DBE807A008CE9EF /* DOMAbstractViewFrame.h in Headers */,
 				8538F01B0AD718D8006A81D1 /* DOMAbstractViewInternal.h in Headers */,
@@ -23311,6 +23326,7 @@
 				85E711AB0AC5D5350053270F /* DOMHTMLFrameElementInternal.h in Headers */,
 				85DF81970AA77E4B00486AD7 /* DOMHTMLFrameSetElement.h in Headers */,
 				85E711AC0AC5D5350053270F /* DOMHTMLFrameSetElementInternal.h in Headers */,
+				31078CCA1880AACE008099DC /* JSOESTextureHalfFloatLinear.h in Headers */,
 				85992EBA0AA5069500AC0785 /* DOMHTMLHeadElement.h in Headers */,
 				85E711AD0AC5D5350053270F /* DOMHTMLHeadElementInternal.h in Headers */,
 				85183B440AA6926100F19FA3 /* DOMHTMLHeadingElement.h in Headers */,
@@ -26865,6 +26881,7 @@
 				853BF4DC0ABB6B55008647BB /* DOMNode.mm in Sources */,
 				85526C380AB0A17E000302EA /* DOMNodeIterator.mm in Sources */,
 				85ACAA8E0A9B759C00671E90 /* DOMNodeList.mm in Sources */,
+				31078CC91880AAC9008099DC /* JSOESTextureHalfFloatLinear.cpp in Sources */,
 				85CA96EB0A9624E900690CCF /* DOMNotation.mm in Sources */,
 				856C8AE50A912649005C687B /* DOMObject.mm in Sources */,
 				BC53DA62114314BD000D817E /* DOMObjectHashTableMap.cpp in Sources */,
@@ -27953,6 +27970,7 @@
 				1A750D5C0A90DEE1000FF215 /* JSTreeWalker.cpp in Sources */,
 				516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */,
 				A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */,
+				31078CC71880AAB5008099DC /* OESTextureHalfFloatLinear.cpp in Sources */,
 				AAA4FAD3175D5CB300743873 /* JSUIRequestEvent.cpp in Sources */,
 				15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */,
 				BE8EF04A171C9014009B48C3 /* JSVideoTrack.cpp in Sources */,

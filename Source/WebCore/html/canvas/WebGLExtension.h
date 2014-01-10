@@ -41,6 +41,7 @@ public:
         OESTextureFloatName,
         OESTextureFloatLinearName,
         OESTextureHalfFloatName,
+        OESTextureHalfFloatLinearName,
         OESStandardDerivativesName,
         OESVertexArrayObjectName,
         WebGLDebugRendererInfoName,
