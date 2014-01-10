@@ -156,7 +156,7 @@ private:
 
     void addDeferredRequest(NSString *name, id value);
 
-    virtual String engineDescription() const { String(ASCIILiteral("iOS")); }
+    virtual String engineDescription() const { return String(ASCIILiteral("iOS")); }
 
     virtual void attributeChanged(const String& name, const String& value) OVERRIDE;
     virtual bool readyForPlayback() const OVERRIDE;
