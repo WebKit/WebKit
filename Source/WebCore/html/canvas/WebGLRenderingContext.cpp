@@ -4208,8 +4208,9 @@ void WebGLRenderingContext::uniform1iv(const WebGLUniformLocation* location, Int
 
     if (location->type() == GraphicsContext3D::SAMPLER_2D || location->type() == GraphicsContext3D::SAMPLER_CUBE)
         for (unsigned i = 0; i < v->length(); ++i) {
-            if (((GC3Dint*)v)[i] >= static_cast<int>(m_textureUnits.size())) {
-                synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "uniform1i", "invalid texture unit");
+            if (v->data()[i] >= static_cast<int>(m_textureUnits.size())) {
+                LOG(WebGL, "Texture unit size=%zu, v[%d]=%d. Location type = %04X.", m_textureUnits.size(), i, v->data()[i], location->type());
+                synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "uniform1iv", "invalid texture unit");
                 return;
             }
         }
@@ -4227,7 +4228,7 @@ void WebGLRenderingContext::uniform1iv(const WebGLUniformLocation* location, GC3
     if (location->type() == GraphicsContext3D::SAMPLER_2D || location->type() == GraphicsContext3D::SAMPLER_CUBE)
         for (unsigned i = 0; i < static_cast<unsigned>(size); ++i) {
             if (((GC3Dint*)v)[i] >= static_cast<int>(m_textureUnits.size())) {
-                synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "uniform1i", "invalid texture unit");
+                synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "uniform1iv", "invalid texture unit");
                 return;
             }
         }
