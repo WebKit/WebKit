@@ -23,46 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteScrollingTree_h
-#define RemoteScrollingTree_h
+#ifndef ScrollingTreeScrollingNodeIOS_h
+#define ScrollingTreeScrollingNodeIOS_h
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "RemoteScrollingCoordinator.h"
-#include <WebCore/ScrollingConstraints.h>
-#include <WebCore/ScrollingTree.h>
+#include "ScrollingTreeScrollingNode.h"
+#include <wtf/RetainPtr.h>
 
-namespace WebKit {
+OBJC_CLASS CALayer;
 
-class RemoteScrollingCoordinatorProxy;
+namespace WebCore {
 
-class RemoteScrollingTree : public WebCore::ScrollingTree {
+class ScrollingTreeScrollingNodeIOS : public ScrollingTreeScrollingNode {
 public:
-    static RefPtr<RemoteScrollingTree> create(RemoteScrollingCoordinatorProxy&);
-    virtual ~RemoteScrollingTree();
-
-    virtual bool isRemoteScrollingTree() const OVERRIDE { return true; }
-    virtual EventResult tryToHandleWheelEvent(const WebCore::PlatformWheelEvent&) OVERRIDE;
-
-    const RemoteScrollingCoordinatorProxy& scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy; }
+    static PassOwnPtr<ScrollingTreeScrollingNode> create(ScrollingTree&, ScrollingNodeID);
+    virtual ~ScrollingTreeScrollingNodeIOS();
 
 private:
-    explicit RemoteScrollingTree(RemoteScrollingCoordinatorProxy&);
+    ScrollingTreeScrollingNodeIOS(ScrollingTree&, ScrollingNodeID);
 
-#if PLATFORM(MAC)
-    virtual void handleWheelEventPhase(WebCore::PlatformWheelEventPhase) OVERRIDE;
-#endif
-    virtual void updateMainFrameScrollPosition(const WebCore::IntPoint& scrollPosition, WebCore::SetOrSyncScrollingLayerPosition = WebCore::SyncScrollingLayerPosition) OVERRIDE;
+    // ScrollingTreeNode member functions.
+    virtual void updateBeforeChildren(const ScrollingStateNode&) OVERRIDE;
+    virtual void updateAfterChildren(const ScrollingStateNode&) OVERRIDE;
+    virtual void handleWheelEvent(const PlatformWheelEvent&) OVERRIDE { }
 
-    virtual PassOwnPtr<WebCore::ScrollingTreeNode> createNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
-    
-    RemoteScrollingCoordinatorProxy& m_scrollingCoordinatorProxy;
+    IntPoint scrollPosition() const;
+    void setScrollPosition(const IntPoint&);
+    void setScrollPositionWithoutContentEdgeConstraints(const IntPoint&);
+
+    void setScrollLayerPosition(const IntPoint&);
+
+    IntPoint minimumScrollPosition() const;
+    IntPoint maximumScrollPosition() const;
+
+    void scrollBy(const IntSize&);
+    void scrollByWithoutContentEdgeConstraints(const IntSize&);
+
+    RetainPtr<CALayer> m_scrollLayer;
+    RetainPtr<CALayer> m_counterScrollingLayer;
+    RetainPtr<CALayer> m_headerLayer;
+    RetainPtr<CALayer> m_footerLayer;
+    IntPoint m_probableMainThreadScrollPosition;
 };
 
-SCROLLING_TREE_TYPE_CASTS(RemoteScrollingTree, isRemoteScrollingTree());
-
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)
 
-#endif // RemoteScrollingTree_h
+#endif // ScrollingTreeScrollingNodeIOS_h

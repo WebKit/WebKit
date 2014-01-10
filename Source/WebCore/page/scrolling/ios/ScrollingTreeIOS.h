@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadedScrollingTree_h
-#define ThreadedScrollingTree_h
+#ifndef ScrollingTreeIOS_h
+#define ScrollingTreeIOS_h
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -37,45 +37,37 @@ namespace WebCore {
 
 class AsyncScrollingCoordinator;
 
-// The ThreadedScrollingTree class lives almost exclusively on the scrolling thread and manages the
-// hierarchy of scrollable regions on the page. It's also responsible for dispatching events
-// to the correct scrolling tree nodes or dispatching events back to the ScrollingCoordinator
-// object on the main thread if they can't be handled on the scrolling thread for various reasons.
-class ThreadedScrollingTree : public ScrollingTree {
+class ScrollingTreeIOS : public ScrollingTree {
 public:
-    static RefPtr<ThreadedScrollingTree> create(AsyncScrollingCoordinator*);
-
-    virtual ~ThreadedScrollingTree();
+    static RefPtr<ScrollingTreeIOS> create(AsyncScrollingCoordinator*);
+    virtual ~ScrollingTreeIOS();
 
     virtual void commitNewTreeState(PassOwnPtr<ScrollingStateTree>) OVERRIDE;
 
-    virtual void handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
-
-    // Can be called from any thread. Will try to handle the wheel event on the scrolling thread.
-    // Returns true if the wheel event can be handled on the scrolling thread and false if the
-    // event must be sent again to the WebCore event handler.
-    virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
+    // No wheel events on iOS
+    virtual void handleWheelEvent(const PlatformWheelEvent&) OVERRIDE { }
+    virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) OVERRIDE { return DidNotHandleEvent; }
 
     virtual void invalidate() OVERRIDE;
 
 private:
-    explicit ThreadedScrollingTree(AsyncScrollingCoordinator*);
-    virtual bool isThreadedScrollingTree() const OVERRIDE { return true; }
+    explicit ScrollingTreeIOS(AsyncScrollingCoordinator*);
+    virtual bool isScrollingTreeIOS() const OVERRIDE { return true; }
 
     virtual PassOwnPtr<ScrollingTreeNode> createNode(ScrollingNodeType, ScrollingNodeID) OVERRIDE;
 
     virtual void updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition) OVERRIDE;
 #if PLATFORM(MAC)
-    virtual void handleWheelEventPhase(PlatformWheelEventPhase) OVERRIDE;
+    virtual void handleWheelEventPhase(PlatformWheelEventPhase) OVERRIDE { }
 #endif
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
 };
 
-SCROLLING_TREE_TYPE_CASTS(ThreadedScrollingTree, isThreadedScrollingTree());
+SCROLLING_TREE_TYPE_CASTS(ScrollingTreeIOS, isScrollingTreeIOS());
 
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)
 
-#endif // ThreadedScrollingTree_h
+#endif // ScrollingTreeIOS_h

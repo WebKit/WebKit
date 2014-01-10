@@ -1,3 +1,68 @@
+2014-01-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable async scrolling for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=126730
+
+        Reviewed by Tim Horton.
+
+        Turn on ENABLE_ASYNC_SCROLLING for iOS.
+        
+        Disable rubber-banding and scrollbar-related Mac code for PLATFORM(IOS),
+        provide stubs for scrolling nodes and scrolling state nodes, and an
+        iOS scrolling tree, and scrolling coordinator.
+        
+        Move crollingCoordinator::create() into the platform implementation file.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::create):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setScrollbarPaintersFromScrollbars):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::isScrollingTreeIOS):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.h: Copied from Source/WebKit2/UIProcess/Scrolling/RemoteScrollingTree.h.
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm: Copied from Source/WebCore/page/scrolling/mac/ScrollingCoordinatorMac.mm.
+        (WebCore::ScrollingCoordinator::create):
+        (WebCore::ScrollingCoordinatorIOS::ScrollingCoordinatorIOS):
+        (WebCore::ScrollingCoordinatorIOS::~ScrollingCoordinatorIOS):
+        (WebCore::ScrollingCoordinatorIOS::pageDestroyed):
+        (WebCore::ScrollingCoordinatorIOS::commitTreeStateIfNeeded):
+        (WebCore::ScrollingCoordinatorIOS::scheduleTreeStateCommit):
+        (WebCore::ScrollingCoordinatorIOS::scrollingStateTreeCommitterTimerFired):
+        (WebCore::ScrollingCoordinatorIOS::commitTreeState):
+        (WebCore::ScrollingCoordinatorIOS::createScrollingTreeNode):
+        * page/scrolling/ios/ScrollingTreeIOS.cpp: Added.
+        (WebCore::ScrollingTreeIOS::create):
+        (WebCore::ScrollingTreeIOS::ScrollingTreeIOS):
+        (WebCore::ScrollingTreeIOS::~ScrollingTreeIOS):
+        (WebCore::derefScrollingCoordinator):
+        (WebCore::ScrollingTreeIOS::invalidate):
+        (WebCore::ScrollingTreeIOS::commitNewTreeState):
+        (WebCore::ScrollingTreeIOS::updateMainFrameScrollPosition):
+        (WebCore::ScrollingTreeIOS::createNode):
+        * page/scrolling/ios/ScrollingTreeIOS.h: Copied from Source/WebCore/page/scrolling/ThreadedScrollingTree.h.
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.h: Added.
+        * page/scrolling/ios/ScrollingTreeScrollingNodeIOS.mm: Added.
+        (WebCore::ScrollingTreeScrollingNodeIOS::create):
+        (WebCore::ScrollingTreeScrollingNodeIOS::ScrollingTreeScrollingNodeIOS):
+        (WebCore::ScrollingTreeScrollingNodeIOS::~ScrollingTreeScrollingNodeIOS):
+        (WebCore::ScrollingTreeScrollingNodeIOS::updateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNodeIOS::updateAfterChildren):
+        (WebCore::ScrollingTreeScrollingNodeIOS::scrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeIOS::setScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeScrollingNodeIOS::setScrollLayerPosition):
+        (WebCore::ScrollingTreeScrollingNodeIOS::minimumScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeIOS::maximumScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeIOS::scrollBy):
+        (WebCore::ScrollingTreeScrollingNodeIOS::scrollByWithoutContentEdgeConstraints):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::create):
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+
 2014-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         text-decoration-skip: ink does not work with line wraps

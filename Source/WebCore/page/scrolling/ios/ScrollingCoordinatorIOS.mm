@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,20 +27,18 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#import "ScrollingCoordinatorMac.h"
+#import "ScrollingCoordinatorIOS.h"
 
 #include "FrameView.h"
 #include "MainFrame.h"
 #include "Page.h"
-#include "PlatformWheelEvent.h"
 #include "Region.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingThread.h"
 #include "ScrollingTreeFixedNode.h"
-#include "ScrollingTreeScrollingNodeMac.h"
+#include "ScrollingTreeScrollingNodeIOS.h"
 #include "ScrollingTreeStickyNode.h"
-#include "ThreadedScrollingTree.h"
-#include "TiledBacking.h"
+#include "ScrollingTreeIOS.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
@@ -49,33 +47,32 @@ namespace WebCore {
 
 PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
-    return adoptRef(new ScrollingCoordinatorMac(page));
+    return adoptRef(new ScrollingCoordinatorIOS(page));
 }
 
-ScrollingCoordinatorMac::ScrollingCoordinatorMac(Page* page)
+ScrollingCoordinatorIOS::ScrollingCoordinatorIOS(Page* page)
     : AsyncScrollingCoordinator(page)
-    , m_scrollingStateTreeCommitterTimer(this, &ScrollingCoordinatorMac::scrollingStateTreeCommitterTimerFired)
+    , m_scrollingStateTreeCommitterTimer(this, &ScrollingCoordinatorIOS::scrollingStateTreeCommitterTimerFired)
 {
-    setScrollingTree(ThreadedScrollingTree::create(this));
+    setScrollingTree(ScrollingTreeIOS::create(this));
 }
 
-ScrollingCoordinatorMac::~ScrollingCoordinatorMac()
+ScrollingCoordinatorIOS::~ScrollingCoordinatorIOS()
 {
     ASSERT(!scrollingTree());
 }
 
-void ScrollingCoordinatorMac::pageDestroyed()
+void ScrollingCoordinatorIOS::pageDestroyed()
 {
     AsyncScrollingCoordinator::pageDestroyed();
 
     m_scrollingStateTreeCommitterTimer.stop();
 
     // Invalidating the scrolling tree will break the reference cycle between the ScrollingCoordinator and ScrollingTree objects.
-    RefPtr<ThreadedScrollingTree> scrollingTree = static_pointer_cast<ThreadedScrollingTree>(releaseScrollingTree());
-    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::invalidate, scrollingTree));
+    releaseScrollingTree();
 }
 
-void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
+void ScrollingCoordinatorIOS::commitTreeStateIfNeeded()
 {
     if (!scrollingStateTree()->hasChangedProperties())
         return;
@@ -84,19 +81,7 @@ void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
     m_scrollingStateTreeCommitterTimer.stop();
 }
 
-bool ScrollingCoordinatorMac::handleWheelEvent(FrameView*, const PlatformWheelEvent& wheelEvent)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-
-    if (scrollingTree()->willWheelEventStartSwipeGesture(wheelEvent))
-        return false;
-
-    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::handleWheelEvent, toThreadedScrollingTree(scrollingTree()), wheelEvent));
-    return true;
-}
-
-void ScrollingCoordinatorMac::scheduleTreeStateCommit()
+void ScrollingCoordinatorIOS::scheduleTreeStateCommit()
 {
     ASSERT(scrollingStateTree()->hasChangedProperties());
 
@@ -106,49 +91,26 @@ void ScrollingCoordinatorMac::scheduleTreeStateCommit()
     m_scrollingStateTreeCommitterTimer.startOneShot(0);
 }
 
-void ScrollingCoordinatorMac::scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinatorMac>*)
+void ScrollingCoordinatorIOS::scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinatorIOS>*)
 {
     commitTreeState();
 }
 
-void ScrollingCoordinatorMac::commitTreeState()
+void ScrollingCoordinatorIOS::commitTreeState()
 {
     ASSERT(scrollingStateTree()->hasChangedProperties());
 
     OwnPtr<ScrollingStateTree> treeState = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
-    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::commitNewTreeState, toThreadedScrollingTree(scrollingTree()), treeState.release()));
-
-    updateTiledScrollingIndicator();
+    // FIXME: figure out how to commit.
 }
 
-void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
-{
-    FrameView* frameView = m_page->mainFrame().view();
-    if (!frameView)
-        return;
-    
-    TiledBacking* tiledBacking = frameView->tiledBacking();
-    if (!tiledBacking)
-        return;
-
-    ScrollingModeIndication indicatorMode;
-    if (shouldUpdateScrollLayerPositionSynchronously())
-        indicatorMode = SynchronousScrollingBecauseOfStyleIndication;
-    else if (scrollingStateTree()->rootStateNode() && scrollingStateTree()->rootStateNode()->wheelEventHandlerCount())
-        indicatorMode =  SynchronousScrollingBecauseOfEventHandlersIndication;
-    else
-        indicatorMode = AsyncScrollingIndication;
-    
-    tiledBacking->setScrollingModeIndication(indicatorMode);
-}
-
-PassOwnPtr<ScrollingTreeNode> ScrollingCoordinatorMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+PassOwnPtr<ScrollingTreeNode> ScrollingCoordinatorIOS::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     ASSERT(scrollingTree());
 
     switch (nodeType) {
     case ScrollingNode:
-        return ScrollingTreeScrollingNodeMac::create(*scrollingTree(), nodeID);
+        return ScrollingTreeScrollingNodeIOS::create(*scrollingTree(), nodeID);
     case FixedNode:
         return ScrollingTreeFixedNode::create(*scrollingTree(), nodeID);
     case StickyNode:
@@ -156,6 +118,7 @@ PassOwnPtr<ScrollingTreeNode> ScrollingCoordinatorMac::createScrollingTreeNode(S
     }
     return nullptr;
 }
+
 
 } // namespace WebCore
 

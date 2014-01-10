@@ -116,7 +116,7 @@ public:
     const LayerRepresentation& footerLayer() const { return m_footerLayer; }
     void setFooterLayer(const LayerRepresentation&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     ScrollbarPainter verticalScrollbarPainter() const { return m_verticalScrollbarPainter; }
     ScrollbarPainter horizontalScrollbarPainter() const { return m_horizontalScrollbarPainter; }
 #endif
@@ -134,7 +134,7 @@ private:
     LayerRepresentation m_headerLayer;
     LayerRepresentation m_footerLayer;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     ScrollbarPainter m_verticalScrollbarPainter;
     ScrollbarPainter m_horizontalScrollbarPainter;
 #endif

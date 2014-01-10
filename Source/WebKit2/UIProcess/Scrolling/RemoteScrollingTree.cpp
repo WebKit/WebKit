@@ -31,8 +31,13 @@
 #include "RemoteLayerTreeHost.h"
 #include "RemoteScrollingCoordinatorProxy.h"
 #include <WebCore/ScrollingTreeFixedNode.h>
-#include <WebCore/ScrollingTreeScrollingNodeMac.h>
 #include <WebCore/ScrollingTreeStickyNode.h>
+
+#if PLATFORM(IOS)
+#include <WebCore/ScrollingTreeScrollingNodeIOS.h>
+#else
+#include <WebCore/ScrollingTreeScrollingNodeMac.h>
+#endif
 
 using namespace WebCore;
 
@@ -81,7 +86,11 @@ PassOwnPtr<ScrollingTreeNode> RemoteScrollingTree::createNode(ScrollingNodeType 
 {
     switch (nodeType) {
     case ScrollingNode:
+#if PLATFORM(IOS)
+        return ScrollingTreeScrollingNodeIOS::create(*this, nodeID);
+#else
         return ScrollingTreeScrollingNodeMac::create(*this, nodeID);
+#endif
     case FixedNode:
         return ScrollingTreeFixedNode::create(*this, nodeID);
     case StickyNode:

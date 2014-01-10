@@ -41,7 +41,7 @@ PassOwnPtr<ScrollingStateScrollingNode> ScrollingStateScrollingNode::create(Scro
 
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
     : ScrollingStateNode(ScrollingNode, stateTree, nodeID)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     , m_verticalScrollbarPainter(0)
     , m_horizontalScrollbarPainter(0)
 #endif
@@ -57,7 +57,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree& sta
 
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)
     : ScrollingStateNode(stateNode, adoptiveTree)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     , m_verticalScrollbarPainter(stateNode.verticalScrollbarPainter())
     , m_horizontalScrollbarPainter(stateNode.horizontalScrollbarPainter())
 #endif
@@ -231,6 +231,12 @@ void ScrollingStateScrollingNode::setFooterLayer(const LayerRepresentation& laye
 
     setPropertyChanged(FooterLayer);
 }
+
+#if !(PLATFORM(MAC) && !PLATFORM(IOS))
+void ScrollingStateScrollingNode::setScrollbarPaintersFromScrollbars(Scrollbar*, Scrollbar*)
+{
+}
+#endif
 
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent) const
 {

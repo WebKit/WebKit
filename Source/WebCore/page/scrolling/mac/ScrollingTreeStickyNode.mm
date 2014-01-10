@@ -30,6 +30,7 @@
 
 #include "ScrollingStateStickyNode.h"
 #include "ScrollingTree.h"
+#include <QuartzCore/CALayer.h>
 
 namespace WebCore {
 

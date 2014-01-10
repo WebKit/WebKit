@@ -58,6 +58,7 @@ public:
     
     virtual bool isThreadedScrollingTree() const { return false; }
     virtual bool isRemoteScrollingTree() const { return false; }
+    virtual bool isScrollingTreeIOS() const { return false; }
 
     virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) = 0;
     bool shouldHandleWheelEventSynchronously(const PlatformWheelEvent&);

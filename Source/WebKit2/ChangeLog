@@ -1,3 +1,18 @@
+2014-01-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable async scrolling for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=126730
+
+        Reviewed by Tim Horton.
+        
+        Turn on ENABLE_ASYNC_SCROLLING for iOS.
+        
+        On iOS, create ScrollingTreeScrollingNodeIOS nodes.
+
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createNode):
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+
 2014-01-06  Gavin Barraclough  <barraclough@apple.com>
 
         Change Page, FocusController to use ViewState

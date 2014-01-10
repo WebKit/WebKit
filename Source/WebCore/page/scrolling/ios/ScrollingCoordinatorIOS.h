@@ -23,46 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteScrollingTree_h
-#define RemoteScrollingTree_h
+#ifndef ScrollingCoordinatorIOS_h
+#define ScrollingCoordinatorIOS_h
 
 #if ENABLE(ASYNC_SCROLLING)
 
-#include "RemoteScrollingCoordinator.h"
-#include <WebCore/ScrollingConstraints.h>
-#include <WebCore/ScrollingTree.h>
+#include "AsyncScrollingCoordinator.h"
 
-namespace WebKit {
+namespace WebCore {
 
-class RemoteScrollingCoordinatorProxy;
+class Scrollbar;
+class ScrollingStateNode;
+class ScrollingStateScrollingNode;
+class ScrollingStateTree;
+class ThreadedScrollingTree;
 
-class RemoteScrollingTree : public WebCore::ScrollingTree {
+class ScrollingCoordinatorIOS : public AsyncScrollingCoordinator {
 public:
-    static RefPtr<RemoteScrollingTree> create(RemoteScrollingCoordinatorProxy&);
-    virtual ~RemoteScrollingTree();
+    explicit ScrollingCoordinatorIOS(Page*);
+    virtual ~ScrollingCoordinatorIOS();
 
-    virtual bool isRemoteScrollingTree() const OVERRIDE { return true; }
-    virtual EventResult tryToHandleWheelEvent(const WebCore::PlatformWheelEvent&) OVERRIDE;
+    virtual void pageDestroyed();
 
-    const RemoteScrollingCoordinatorProxy& scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy; }
+    virtual void commitTreeStateIfNeeded() OVERRIDE;
+
+    // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
+    virtual bool handleWheelEvent(FrameView*, const PlatformWheelEvent&) OVERRIDE { return false; }
 
 private:
-    explicit RemoteScrollingTree(RemoteScrollingCoordinatorProxy&);
+    virtual PassOwnPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) OVERRIDE;
+    virtual void scheduleTreeStateCommit() OVERRIDE;
 
-#if PLATFORM(MAC)
-    virtual void handleWheelEventPhase(WebCore::PlatformWheelEventPhase) OVERRIDE;
-#endif
-    virtual void updateMainFrameScrollPosition(const WebCore::IntPoint& scrollPosition, WebCore::SetOrSyncScrollingLayerPosition = WebCore::SyncScrollingLayerPosition) OVERRIDE;
+    void scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinatorIOS>*);
+    void commitTreeState();
 
-    virtual PassOwnPtr<WebCore::ScrollingTreeNode> createNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
-    
-    RemoteScrollingCoordinatorProxy& m_scrollingCoordinatorProxy;
+    Timer<ScrollingCoordinatorIOS> m_scrollingStateTreeCommitterTimer;
 };
 
-SCROLLING_TREE_TYPE_CASTS(RemoteScrollingTree, isRemoteScrollingTree());
-
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)
 
-#endif // RemoteScrollingTree_h
+#endif // ScrollingCoordinatorIOS_h
