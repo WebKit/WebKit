@@ -1,3 +1,27 @@
+2014-01-09  Anders Carlsson  <andersca@apple.com>
+
+        Clean up ProgressTracker a little
+        https://bugs.webkit.org/show_bug.cgi?id=126738
+
+        Reviewed by Dan Bernstein.
+
+        Use Frame& where the frame can never be null, avoid an extra hash lookup and
+        switch the m_progressItems map over to std::unique_ptr.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::frameStartedLoading):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameProgressTracker::~FrameProgressTracker):
+        (WebCore::FrameLoader::FrameProgressTracker::progressStarted):
+        (WebCore::FrameLoader::FrameProgressTracker::progressCompleted):
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::progressStarted):
+        (WebCore::ProgressTracker::progressCompleted):
+        (WebCore::ProgressTracker::incrementProgress):
+        * loader/ProgressTracker.h:
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didReceiveData):
+
 2014-01-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix a build break on EFL debug build

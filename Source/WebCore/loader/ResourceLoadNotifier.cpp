@@ -91,7 +91,7 @@ void ResourceLoadNotifier::didReceiveResponse(ResourceLoader* loader, const Reso
 void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const char* data, int dataLength, int encodedDataLength)
 {
     if (Page* page = m_frame.page())
-        page->progress().incrementProgress(loader->identifier(), data, dataLength);
+        page->progress().incrementProgress(loader->identifier(), dataLength);
 
     dispatchDidReceiveData(loader->documentLoader(), loader->identifier(), data, dataLength, encodedDataLength);
 }

@@ -195,8 +195,8 @@ public:
     static void didCommitLoad(Frame*, DocumentLoader*);
     static void frameDocumentUpdated(Frame*);
     static void loaderDetachedFromFrame(Frame*, DocumentLoader*);
-    static void frameStartedLoading(Frame*);
-    static void frameStoppedLoading(Frame*);
+    static void frameStartedLoading(Frame&);
+    static void frameStoppedLoading(Frame&);
     static void frameScheduledNavigation(Frame*, double delay);
     static void frameClearedScheduledNavigation(Frame*);
     static InspectorInstrumentationCookie willRunJavaScriptDialog(Page*, const String& message);
@@ -1606,21 +1606,21 @@ inline void InspectorInstrumentation::loaderDetachedFromFrame(Frame* frame, Docu
 #endif
 }
 
-inline void InspectorInstrumentation::frameStartedLoading(Frame* frame)
+inline void InspectorInstrumentation::frameStartedLoading(Frame& frame)
 {
 #if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        frameStartedLoadingImpl(instrumentingAgents, frame);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(&frame))
+        frameStartedLoadingImpl(instrumentingAgents, &frame);
 #else
     UNUSED_PARAM(frame);
 #endif
 }
 
-inline void InspectorInstrumentation::frameStoppedLoading(Frame* frame)
+inline void InspectorInstrumentation::frameStoppedLoading(Frame& frame)
 {
 #if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        frameStoppedLoadingImpl(instrumentingAgents, frame);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(&frame))
+        frameStoppedLoadingImpl(instrumentingAgents, &frame);
 #else
     UNUSED_PARAM(frame);
 #endif

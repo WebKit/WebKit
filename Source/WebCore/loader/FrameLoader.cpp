@@ -198,14 +198,14 @@ public:
     {
         ASSERT(!m_inProgress || m_frame.page());
         if (m_inProgress)
-            m_frame.page()->progress().progressCompleted(&m_frame);
+            m_frame.page()->progress().progressCompleted(m_frame);
     }
 
     void progressStarted()
     {
         ASSERT(m_frame.page());
         if (!m_inProgress)
-            m_frame.page()->progress().progressStarted(&m_frame);
+            m_frame.page()->progress().progressStarted(m_frame);
         m_inProgress = true;
     }
 
@@ -214,7 +214,7 @@ public:
         ASSERT(m_inProgress);
         ASSERT(m_frame.page());
         m_inProgress = false;
-        m_frame.page()->progress().progressCompleted(&m_frame);
+        m_frame.page()->progress().progressCompleted(m_frame);
     }
 
 private:
