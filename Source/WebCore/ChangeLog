@@ -1,3 +1,46 @@
+2014-01-09  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream WAK
+        https://bugs.webkit.org/show_bug.cgi?id=126724
+
+        Reviewed by David Kilzer.
+
+        * Configurations/WebCore.xcconfig: Excluded new iOS-specific Private
+        headers on the Mac build.
+        * WebCore.xcodeproj/project.pbxproj: Added new files to the project.
+        * platform/ios/wak/WAKAppKitStubs.h: Added.
+        * platform/ios/wak/WAKAppKitStubs.m: Added.
+        * platform/ios/wak/WAKClipView.h: Added.
+        * platform/ios/wak/WAKClipView.m: Added.
+        * platform/ios/wak/WAKResponder.h: Added.
+        * platform/ios/wak/WAKResponder.m: Added.
+        * platform/ios/wak/WAKScrollView.h: Added.
+        * platform/ios/wak/WAKScrollView.mm: Added.
+        * platform/ios/wak/WAKView.h: Added.
+        * platform/ios/wak/WAKView.mm: Added.
+        * platform/ios/wak/WAKViewPrivate.h: Added.
+        * platform/ios/wak/WAKWindow.h: Added.
+        * platform/ios/wak/WAKWindow.mm: Added.
+        * platform/ios/wak/WKContentObservation.cpp: Added.
+        * platform/ios/wak/WKContentObservation.h: Added.
+        * platform/ios/wak/WKGraphics.h: Added.
+        * platform/ios/wak/WKGraphics.mm: Added.
+        * platform/ios/wak/WKTypes.h: Added.
+        * platform/ios/wak/WKUtilities.c: Added.
+        * platform/ios/wak/WKUtilities.h: Added.
+        * platform/ios/wak/WKView.h: Added.
+        * platform/ios/wak/WKView.mm: Added.
+        * platform/ios/wak/WKViewPrivate.h: Added.
+        * platform/ios/wak/WebCoreThread.h: Added.
+        * platform/ios/wak/WebCoreThread.mm: Added.
+        * platform/ios/wak/WebCoreThreadInternal.h: Added.
+        * platform/ios/wak/WebCoreThreadMessage.h: Added.
+        * platform/ios/wak/WebCoreThreadRun.cpp: Added.
+        * platform/ios/wak/WebCoreThreadRun.h: Added.
+        * platform/ios/wak/WebCoreThreadSafe.h: Added.
+        * platform/ios/wak/WebCoreThreadSystemInterface.cpp: Added.
+        * platform/ios/wak/WebCoreThreadSystemInterface.h: Added.
+
 2014-01-09  Daniel Bates  <dabates@apple.com>
 
         Another attempt to fix the Windows build following <http://trac.webkit.org/changeset/161589>

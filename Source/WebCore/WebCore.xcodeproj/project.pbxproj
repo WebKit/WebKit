@@ -3526,6 +3526,38 @@
 		A12A1050166444FD008FA311 /* GridTrackSize.h in Headers */ = {isa = PBXBuildFile; fileRef = A12A104E166444DC008FA311 /* GridTrackSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A136A00C1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */; };
 		A136A00D1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h in Headers */ = {isa = PBXBuildFile; fileRef = A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */; };
+		A14832B0187F618D00DA63A6 /* WAKAppKitStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = A148328C187F508700DA63A6 /* WAKAppKitStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832B1187F61E100DA63A6 /* WAKAppKitStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = A148328D187F508700DA63A6 /* WAKAppKitStubs.m */; };
+		A14832B2187F61ED00DA63A6 /* WAKClipView.h in Headers */ = {isa = PBXBuildFile; fileRef = A148328E187F508700DA63A6 /* WAKClipView.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832B3187F629100DA63A6 /* WAKClipView.m in Sources */ = {isa = PBXBuildFile; fileRef = A148328F187F508700DA63A6 /* WAKClipView.m */; };
+		A14832B4187F629A00DA63A6 /* WAKResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = A1483290187F508700DA63A6 /* WAKResponder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832B5187F62FC00DA63A6 /* WAKResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = A1483291187F508700DA63A6 /* WAKResponder.m */; };
+		A14832B6187F631F00DA63A6 /* WAKScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = A1483292187F508700DA63A6 /* WAKScrollView.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832B7187F636C00DA63A6 /* WAKScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1483293187F508700DA63A6 /* WAKScrollView.mm */; };
+		A14832B8187F638600DA63A6 /* WAKView.h in Headers */ = {isa = PBXBuildFile; fileRef = A1483294187F508700DA63A6 /* WAKView.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832B9187F63D500DA63A6 /* WAKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1483295187F508700DA63A6 /* WAKView.mm */; };
+		A14832BA187F63E900DA63A6 /* WAKViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1483296187F508700DA63A6 /* WAKViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832BB187F643200DA63A6 /* WAKWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = A1483297187F508700DA63A6 /* WAKWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832BC187F648E00DA63A6 /* WAKWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1483298187F508700DA63A6 /* WAKWindow.mm */; };
+		A14832BD187F64B400DA63A6 /* WKContentObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14832A2187F508700DA63A6 /* WKContentObservation.cpp */; };
+		A14832BE187F64CC00DA63A6 /* WKContentObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A3187F508700DA63A6 /* WKContentObservation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832BF187F652C00DA63A6 /* WKGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A4187F508700DA63A6 /* WKGraphics.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832C0187F656600DA63A6 /* WKGraphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14832A5187F508700DA63A6 /* WKGraphics.mm */; };
+		A14832C1187F657A00DA63A6 /* WKTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A6187F508700DA63A6 /* WKTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832C2187F65C700DA63A6 /* WKUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = A14832A7187F508700DA63A6 /* WKUtilities.c */; };
+		A14832C3187F65DF00DA63A6 /* WKUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A8187F508700DA63A6 /* WKUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832C4187F663C00DA63A6 /* WKView.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A9187F508700DA63A6 /* WKView.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832C5187F668300DA63A6 /* WKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14832AA187F508700DA63A6 /* WKView.mm */; };
+		A14832C6187F668F00DA63A6 /* WKViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832AB187F508700DA63A6 /* WKViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832C7187F66C800DA63A6 /* WebCoreThread.h in Headers */ = {isa = PBXBuildFile; fileRef = A1483299187F508700DA63A6 /* WebCoreThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832C8187F673F00DA63A6 /* WebCoreThread.mm in Sources */ = {isa = PBXBuildFile; fileRef = A148329A187F508700DA63A6 /* WebCoreThread.mm */; };
+		A14832C9187F676B00DA63A6 /* WebCoreThreadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329B187F508700DA63A6 /* WebCoreThreadInternal.h */; };
+		A14832CA187F678000DA63A6 /* WebCoreThreadMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329C187F508700DA63A6 /* WebCoreThreadMessage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832CB187F67B400DA63A6 /* WebCoreThreadRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A148329D187F508700DA63A6 /* WebCoreThreadRun.cpp */; };
+		A14832CC187F67C400DA63A6 /* WebCoreThreadRun.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329E187F508700DA63A6 /* WebCoreThreadRun.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A14832CD187F682E00DA63A6 /* WebCoreThreadSafe.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329F187F508700DA63A6 /* WebCoreThreadSafe.h */; };
+		A14832CE187F683400DA63A6 /* WebCoreThreadSystemInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14832A0187F508700DA63A6 /* WebCoreThreadSystemInterface.cpp */; };
+		A14832CF187F684700DA63A6 /* WebCoreThreadSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
 		A1C7FAA2133A5D3500D6732D /* JSXPathResultCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */; };
@@ -10440,6 +10472,38 @@
 		A12A104E166444DC008FA311 /* GridTrackSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridTrackSize.h; path = style/GridTrackSize.h; sourceTree = "<group>"; };
 		A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestProgressEventThrottle.cpp; sourceTree = "<group>"; };
 		A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEventThrottle.h; sourceTree = "<group>"; };
+		A148328C187F508700DA63A6 /* WAKAppKitStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKAppKitStubs.h; path = ios/wak/WAKAppKitStubs.h; sourceTree = "<group>"; };
+		A148328D187F508700DA63A6 /* WAKAppKitStubs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WAKAppKitStubs.m; path = ios/wak/WAKAppKitStubs.m; sourceTree = "<group>"; };
+		A148328E187F508700DA63A6 /* WAKClipView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKClipView.h; path = ios/wak/WAKClipView.h; sourceTree = "<group>"; };
+		A148328F187F508700DA63A6 /* WAKClipView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WAKClipView.m; path = ios/wak/WAKClipView.m; sourceTree = "<group>"; };
+		A1483290187F508700DA63A6 /* WAKResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKResponder.h; path = ios/wak/WAKResponder.h; sourceTree = "<group>"; };
+		A1483291187F508700DA63A6 /* WAKResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WAKResponder.m; path = ios/wak/WAKResponder.m; sourceTree = "<group>"; };
+		A1483292187F508700DA63A6 /* WAKScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKScrollView.h; path = ios/wak/WAKScrollView.h; sourceTree = "<group>"; };
+		A1483293187F508700DA63A6 /* WAKScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WAKScrollView.mm; path = ios/wak/WAKScrollView.mm; sourceTree = "<group>"; };
+		A1483294187F508700DA63A6 /* WAKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKView.h; path = ios/wak/WAKView.h; sourceTree = "<group>"; };
+		A1483295187F508700DA63A6 /* WAKView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WAKView.mm; path = ios/wak/WAKView.mm; sourceTree = "<group>"; };
+		A1483296187F508700DA63A6 /* WAKViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKViewPrivate.h; path = ios/wak/WAKViewPrivate.h; sourceTree = "<group>"; };
+		A1483297187F508700DA63A6 /* WAKWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKWindow.h; path = ios/wak/WAKWindow.h; sourceTree = "<group>"; };
+		A1483298187F508700DA63A6 /* WAKWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WAKWindow.mm; path = ios/wak/WAKWindow.mm; sourceTree = "<group>"; };
+		A1483299187F508700DA63A6 /* WebCoreThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThread.h; path = ios/wak/WebCoreThread.h; sourceTree = "<group>"; };
+		A148329A187F508700DA63A6 /* WebCoreThread.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebCoreThread.mm; path = ios/wak/WebCoreThread.mm; sourceTree = "<group>"; };
+		A148329B187F508700DA63A6 /* WebCoreThreadInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThreadInternal.h; path = ios/wak/WebCoreThreadInternal.h; sourceTree = "<group>"; };
+		A148329C187F508700DA63A6 /* WebCoreThreadMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThreadMessage.h; path = ios/wak/WebCoreThreadMessage.h; sourceTree = "<group>"; };
+		A148329D187F508700DA63A6 /* WebCoreThreadRun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebCoreThreadRun.cpp; path = ios/wak/WebCoreThreadRun.cpp; sourceTree = "<group>"; };
+		A148329E187F508700DA63A6 /* WebCoreThreadRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThreadRun.h; path = ios/wak/WebCoreThreadRun.h; sourceTree = "<group>"; };
+		A148329F187F508700DA63A6 /* WebCoreThreadSafe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThreadSafe.h; path = ios/wak/WebCoreThreadSafe.h; sourceTree = "<group>"; };
+		A14832A0187F508700DA63A6 /* WebCoreThreadSystemInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebCoreThreadSystemInterface.cpp; path = ios/wak/WebCoreThreadSystemInterface.cpp; sourceTree = "<group>"; };
+		A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThreadSystemInterface.h; path = ios/wak/WebCoreThreadSystemInterface.h; sourceTree = "<group>"; };
+		A14832A2187F508700DA63A6 /* WKContentObservation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WKContentObservation.cpp; path = ios/wak/WKContentObservation.cpp; sourceTree = "<group>"; };
+		A14832A3187F508700DA63A6 /* WKContentObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContentObservation.h; path = ios/wak/WKContentObservation.h; sourceTree = "<group>"; };
+		A14832A4187F508700DA63A6 /* WKGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKGraphics.h; path = ios/wak/WKGraphics.h; sourceTree = "<group>"; };
+		A14832A5187F508700DA63A6 /* WKGraphics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKGraphics.mm; path = ios/wak/WKGraphics.mm; sourceTree = "<group>"; };
+		A14832A6187F508700DA63A6 /* WKTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKTypes.h; path = ios/wak/WKTypes.h; sourceTree = "<group>"; };
+		A14832A7187F508700DA63A6 /* WKUtilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = WKUtilities.c; path = ios/wak/WKUtilities.c; sourceTree = "<group>"; };
+		A14832A8187F508700DA63A6 /* WKUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKUtilities.h; path = ios/wak/WKUtilities.h; sourceTree = "<group>"; };
+		A14832A9187F508700DA63A6 /* WKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKView.h; path = ios/wak/WKView.h; sourceTree = "<group>"; };
+		A14832AA187F508700DA63A6 /* WKView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKView.mm; path = ios/wak/WKView.mm; sourceTree = "<group>"; };
+		A14832AB187F508700DA63A6 /* WKViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKViewPrivate.h; path = ios/wak/WKViewPrivate.h; sourceTree = "<group>"; };
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
 		A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; };
 		A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathResultCustom.cpp; sourceTree = "<group>"; };
@@ -17724,9 +17788,49 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
+		A148328B187F506800DA63A6 /* wak */ = {
+			isa = PBXGroup;
+			children = (
+				A148328C187F508700DA63A6 /* WAKAppKitStubs.h */,
+				A148328D187F508700DA63A6 /* WAKAppKitStubs.m */,
+				A148328E187F508700DA63A6 /* WAKClipView.h */,
+				A148328F187F508700DA63A6 /* WAKClipView.m */,
+				A1483290187F508700DA63A6 /* WAKResponder.h */,
+				A1483291187F508700DA63A6 /* WAKResponder.m */,
+				A1483292187F508700DA63A6 /* WAKScrollView.h */,
+				A1483293187F508700DA63A6 /* WAKScrollView.mm */,
+				A1483294187F508700DA63A6 /* WAKView.h */,
+				A1483295187F508700DA63A6 /* WAKView.mm */,
+				A1483296187F508700DA63A6 /* WAKViewPrivate.h */,
+				A1483297187F508700DA63A6 /* WAKWindow.h */,
+				A1483298187F508700DA63A6 /* WAKWindow.mm */,
+				A14832A2187F508700DA63A6 /* WKContentObservation.cpp */,
+				A14832A3187F508700DA63A6 /* WKContentObservation.h */,
+				A14832A4187F508700DA63A6 /* WKGraphics.h */,
+				A14832A5187F508700DA63A6 /* WKGraphics.mm */,
+				A14832A6187F508700DA63A6 /* WKTypes.h */,
+				A14832A7187F508700DA63A6 /* WKUtilities.c */,
+				A14832A8187F508700DA63A6 /* WKUtilities.h */,
+				A14832A9187F508700DA63A6 /* WKView.h */,
+				A14832AA187F508700DA63A6 /* WKView.mm */,
+				A14832AB187F508700DA63A6 /* WKViewPrivate.h */,
+				A1483299187F508700DA63A6 /* WebCoreThread.h */,
+				A148329A187F508700DA63A6 /* WebCoreThread.mm */,
+				A148329B187F508700DA63A6 /* WebCoreThreadInternal.h */,
+				A148329C187F508700DA63A6 /* WebCoreThreadMessage.h */,
+				A148329D187F508700DA63A6 /* WebCoreThreadRun.cpp */,
+				A148329E187F508700DA63A6 /* WebCoreThreadRun.h */,
+				A148329F187F508700DA63A6 /* WebCoreThreadSafe.h */,
+				A14832A0187F508700DA63A6 /* WebCoreThreadSystemInterface.cpp */,
+				A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */,
+			);
+			name = wak;
+			sourceTree = "<group>";
+		};
 		A59E3C1B11580F340072928E /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				A148328B187F506800DA63A6 /* wak */,
 				2903716416BA11BC00FEFDF0 /* ContentFilterIOS.mm */,
 				2655414B1489AA2B000DFC5D /* CursorIOS.cpp */,
 				31EAF97C121435A400E7C1BF /* DeviceMotionClientIOS.h */,
@@ -22541,6 +22645,7 @@
 				FDE2D55B159E66EB00DCCCF8 /* AudioIOCallback.h in Headers */,
 				FD31601012B0267600C1A359 /* AudioListener.h in Headers */,
 				0705852417FDC140005F2BCB /* MediaTrackConstraints.h in Headers */,
+				A14832CA187F678000DA63A6 /* WebCoreThreadMessage.h in Headers */,
 				FD31601312B0267600C1A359 /* AudioNode.h in Headers */,
 				FD31601612B0267600C1A359 /* AudioNodeInput.h in Headers */,
 				FD31601812B0267600C1A359 /* AudioNodeOutput.h in Headers */,
@@ -22890,6 +22995,7 @@
 				0705853217FDE6D9005F2BCB /* JSMediaTrackConstraint.h in Headers */,
 				1C4C8F020AD85D87009475CE /* DeleteButtonController.h in Headers */,
 				93309DDF099E64920056E581 /* DeleteFromTextNodeCommand.h in Headers */,
+				A14832B2187F61ED00DA63A6 /* WAKClipView.h in Headers */,
 				07C59B6417F4D1C4000FBCBB /* MockMediaStreamCenter.h in Headers */,
 				E1FE136B183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.h in Headers */,
 				93309DE1099E64920056E581 /* DeleteSelectionCommand.h in Headers */,
@@ -22904,9 +23010,11 @@
 				078E093417D16B0B00420AA1 /* MediaStreamCenter.h in Headers */,
 				31FB1A5B120A5D0600DC02A0 /* DeviceMotionData.h in Headers */,
 				31FB1A5D120A5D0600DC02A0 /* DeviceMotionEvent.h in Headers */,
+				A14832C3187F65DF00DA63A6 /* WKUtilities.h in Headers */,
 				E1C6571F1816E50300256CDD /* CryptoAlgorithmHmacParams.h in Headers */,
 				59A8F1D811A69520001AC34A /* DeviceOrientationClient.h in Headers */,
 				59309A1311F4AE6A00250603 /* DeviceOrientationClientMock.h in Headers */,
+				A14832B6187F631F00DA63A6 /* WAKScrollView.h in Headers */,
 				51D719CC181106E00016DC51 /* IDBDatabaseCallbacksImpl.h in Headers */,
 				59A8F1D611A69513001AC34A /* DeviceOrientationController.h in Headers */,
 				590E1B4911E4EF4B0069F784 /* DeviceOrientationData.h in Headers */,
@@ -23035,6 +23143,7 @@
 				854075200AD6C5FB00620C57 /* DOMEventTarget.h in Headers */,
 				85C78A680ABDE1B40044FC16 /* DOMException.h in Headers */,
 				BC1A37B5097C715F0019F3D8 /* DOMExtensions.h in Headers */,
+				A14832BF187F652C00DA63A6 /* WKGraphics.h in Headers */,
 				BC00F0040E0A185500FD04E3 /* DOMFile.h in Headers */,
 				2E3BC108117D479800B9409A /* DOMFileError.h in Headers */,
 				2E3BC10B117D47C800B9409A /* DOMFileErrorInternal.h in Headers */,
@@ -23107,6 +23216,7 @@
 				85DF81990AA77E4B00486AD7 /* DOMHTMLIFrameElement.h in Headers */,
 				85E711B10AC5D5350053270F /* DOMHTMLIFrameElementInternal.h in Headers */,
 				85DF81290AA7787200486AD7 /* DOMHTMLImageElement.h in Headers */,
+				A14832B0187F618D00DA63A6 /* WAKAppKitStubs.h in Headers */,
 				85E711B20AC5D5350053270F /* DOMHTMLImageElementInternal.h in Headers */,
 				85F32AEC0AA63B8700FF3184 /* DOMHTMLInputElement.h in Headers */,
 				85E711B30AC5D5350053270F /* DOMHTMLInputElementInternal.h in Headers */,
@@ -23138,6 +23248,7 @@
 				85E711BE0AC5D5350053270F /* DOMHTMLOListElementInternal.h in Headers */,
 				85F32AEE0AA63B8700FF3184 /* DOMHTMLOptGroupElement.h in Headers */,
 				CD9DE18217AAD6A400EA386D /* DOMURLMediaSource.h in Headers */,
+				A14832B8187F638600DA63A6 /* WAKView.h in Headers */,
 				85E711BF0AC5D5350053270F /* DOMHTMLOptGroupElementInternal.h in Headers */,
 				E125F85E182C2DF600D84CD9 /* CryptoKeyData.h in Headers */,
 				8540756B0AD6CBF900620C57 /* DOMHTMLOptionElement.h in Headers */,
@@ -23258,6 +23369,7 @@
 				76FC2B0C12370DA0006A991A /* DOMTokenList.h in Headers */,
 				E145349716A9BB6A000F6FD2 /* DOMTransitionEvent.h in Headers */,
 				E145349916A9BB6A000F6FD2 /* DOMTransitionEventInternal.h in Headers */,
+				A14832BB187F643200DA63A6 /* WAKWindow.h in Headers */,
 				BC1A37BE097C715F0019F3D8 /* DOMTraversal.h in Headers */,
 				85526CD20AB0B7D9000302EA /* DOMTreeWalker.h in Headers */,
 				850B41C30AD9E7E700A6ED4F /* DOMTreeWalkerInternal.h in Headers */,
@@ -23550,6 +23662,7 @@
 				2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */,
 				930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */,
 				9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */,
+				A14832CF187F684700DA63A6 /* WebCoreThreadSystemInterface.h in Headers */,
 				BC3BC29C0E91AB0F00835588 /* HostWindow.h in Headers */,
 				FD31609912B026F700C1A359 /* HRTFDatabase.h in Headers */,
 				FD31609B12B026F700C1A359 /* HRTFDatabaseLoader.h in Headers */,
@@ -23744,6 +23857,7 @@
 				37E3524D12450C6600BAF5D9 /* InputType.h in Headers */,
 				C348612415FDE21E007A1CC9 /* InputTypeNames.h in Headers */,
 				93309DEA099E64920056E581 /* InsertIntoTextNodeCommand.h in Headers */,
+				A14832C7187F66C800DA63A6 /* WebCoreThread.h in Headers */,
 				57CF497514EE36D700ECFF14 /* InsertionPoint.h in Headers */,
 				93309DEC099E64920056E581 /* InsertLineBreakCommand.h in Headers */,
 				D07DEABA0A36554A00CA30F8 /* InsertListCommand.h in Headers */,
@@ -23838,6 +23952,7 @@
 				FDA15EA412B03EE1003A583A /* JSChannelSplitterNode.h in Headers */,
 				65DF31F409D1CC60000BE325 /* JSCharacterData.h in Headers */,
 				BCC065880F3CE2A700CD2D87 /* JSClientRect.h in Headers */,
+				A14832C4187F663C00DA63A6 /* WKView.h in Headers */,
 				BCC0658A0F3CE2A700CD2D87 /* JSClientRectList.h in Headers */,
 				BCA83E500D7CE1E9003421A8 /* JSClipboard.h in Headers */,
 				51FB5504113E3E9100821176 /* JSCloseEvent.h in Headers */,
@@ -23865,6 +23980,7 @@
 				BC46C2070C0DDCA10020CFC3 /* JSCSSStyleRule.h in Headers */,
 				BCC5BE010C0E93110011C2DB /* JSCSSStyleSheet.h in Headers */,
 				FC54D05816A7676E00575E4D /* JSCSSSupportsRule.h in Headers */,
+				A14832CC187F67C400DA63A6 /* WebCoreThreadRun.h in Headers */,
 				14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */,
 				A8D05FAC0A23B30F005E7203 /* JSCSSValueList.h in Headers */,
 				E4778B80115A581A00B5D372 /* JSCustomEvent.h in Headers */,
@@ -24035,6 +24151,7 @@
 				E44614170CD6826900FADA75 /* JSHTMLVideoElement.h in Headers */,
 				C585A67D11D4FB08004C3E4B /* JSIDBAny.h in Headers */,
 				81BE20D311F4BC3200915DFA /* JSIDBCursor.h in Headers */,
+				A14832C1187F657A00DA63A6 /* WKTypes.h in Headers */,
 				C585A68311D4FB08004C3E4B /* JSIDBDatabase.h in Headers */,
 				C585A69711D4FB13004C3E4B /* JSIDBFactory.h in Headers */,
 				C572EE1F1201C9BC007D8F82 /* JSIDBIndex.h in Headers */,
@@ -24172,6 +24289,7 @@
 				B2FA3D610AB75A6F000E5AC4 /* JSSVGCursorElement.h in Headers */,
 				B2FA3D630AB75A6F000E5AC4 /* JSSVGDefsElement.h in Headers */,
 				B2FA3D650AB75A6F000E5AC4 /* JSSVGDescElement.h in Headers */,
+				A14832C9187F676B00DA63A6 /* WebCoreThreadInternal.h in Headers */,
 				B2FA3D670AB75A6F000E5AC4 /* JSSVGDocument.h in Headers */,
 				B222F69D0AB771B80022EFAD /* JSSVGElement.h in Headers */,
 				B2CB92440B5BD970009BAA78 /* JSSVGElementInstance.h in Headers */,
@@ -24582,6 +24700,7 @@
 				E1BD331C182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParams.h in Headers */,
 				3774ABA50FA21EB400AD7DE9 /* OverlapTestRequestClient.h in Headers */,
 				65A21468097A329100B9050A /* Page.h in Headers */,
+				A14832B4187F629A00DA63A6 /* WAKResponder.h in Headers */,
 				9B50B1DE17CD4C0F0087F63C /* FormNamedItem.h in Headers */,
 				1477E7770BF4134A00152872 /* PageCache.h in Headers */,
 				DAED203116F244480070EC0F /* PageConsole.h in Headers */,
@@ -24675,6 +24794,7 @@
 				ABC128770B33AA6D00C693D5 /* PopupMenuClient.h in Headers */,
 				BC3BE12B0E98092F00835588 /* PopupMenuStyle.h in Headers */,
 				37F567CE165358F400DDE92B /* PopupOpeningObserver.h in Headers */,
+				A14832C6187F668F00DA63A6 /* WKViewPrivate.h in Headers */,
 				93F199DE08245E59001E9ABC /* Position.h in Headers */,
 				9746AF2C14F4DDE6003E7A70 /* PositionCallback.h in Headers */,
 				9746AF2E14F4DDE6003E7A70 /* PositionError.h in Headers */,
@@ -24895,6 +25015,7 @@
 				514C767D0CE923A1007EF3CD /* ResourceRequestBase.h in Headers */,
 				07969DB817D14151007FF842 /* JSRTCIceCandidateEvent.h in Headers */,
 				7EE6846F12D26E3800E79415 /* ResourceRequestCFNet.h in Headers */,
+				A14832CD187F682E00DA63A6 /* WebCoreThreadSafe.h in Headers */,
 				7EE6847012D26E3800E79415 /* ResourceResponse.h in Headers */,
 				514C767F0CE923A1007EF3CD /* ResourceResponseBase.h in Headers */,
 				FD3160A512B026F700C1A359 /* Reverb.h in Headers */,
@@ -24956,6 +25077,7 @@
 				0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */,
 				5D925B680F64D4DD00B847F0 /* ScrollBehavior.h in Headers */,
 				1AA84F05143BA7BD0051D153 /* ScrollElasticityController.h in Headers */,
+				A14832BA187F63E900DA63A6 /* WAKViewPrivate.h in Headers */,
 				0F605AED15F94848004DF0C0 /* ScrollingConstraints.h in Headers */,
 				1AF62EE814DA22A70041556C /* ScrollingCoordinator.h in Headers */,
 				9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */,
@@ -25510,6 +25632,7 @@
 				1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */,
 				854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */,
 				C375D7FE16639519006184AB /* TypeAhead.h in Headers */,
+				A14832BE187F64CC00DA63A6 /* WKContentObservation.h in Headers */,
 				37C28A6810F659CC008C7813 /* TypesettingFeatures.h in Headers */,
 				93309E1A099E64920056E581 /* TypingCommand.h in Headers */,
 				85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */,
@@ -26186,6 +26309,7 @@
 				BCE7898B1120E8020060ECE5 /* BidiRun.cpp in Sources */,
 				FD31608C12B026F700C1A359 /* Biquad.cpp in Sources */,
 				FD31602412B0267600C1A359 /* BiquadDSPKernel.cpp in Sources */,
+				A14832B3187F629100DA63A6 /* WAKClipView.m in Sources */,
 				FDC54F041399B0DA008D9117 /* BiquadFilterNode.cpp in Sources */,
 				FD31602612B0267600C1A359 /* BiquadProcessor.cpp in Sources */,
 				070584FF17F9F05E005F2BCB /* CapabilityRange.cpp in Sources */,
@@ -26255,6 +26379,7 @@
 				ABAF22080C03B1C700B0BCF0 /* ChromeMac.mm in Sources */,
 				CD9DE17417AAC74C00EA386D /* JSMediaSource.cpp in Sources */,
 				4ACBC0BE12713CBD0094F9B2 /* ClassList.cpp in Sources */,
+				A14832C5187F668300DA63A6 /* WKView.mm in Sources */,
 				BC904B760D10998F00680D32 /* ClassNodeList.cpp in Sources */,
 				BCC0657D0F3CE1B700CD2D87 /* ClientRect.cpp in Sources */,
 				A584FE341864D5AF00843B10 /* CommandLineAPIHost.cpp in Sources */,
@@ -26564,6 +26689,7 @@
 				85ECBEF20AA7626900544F0B /* DOMHTMLHRElement.mm in Sources */,
 				85992EBD0AA5069500AC0785 /* DOMHTMLHtmlElement.mm in Sources */,
 				85DF819A0AA77E4B00486AD7 /* DOMHTMLIFrameElement.mm in Sources */,
+				A14832B9187F63D500DA63A6 /* WAKView.mm in Sources */,
 				85DF812A0AA7787200486AD7 /* DOMHTMLImageElement.mm in Sources */,
 				85F32AED0AA63B8700FF3184 /* DOMHTMLInputElement.mm in Sources */,
 				A6148A6812E41D940044A784 /* DOMHTMLKeygenElement.mm in Sources */,
@@ -27010,6 +27136,7 @@
 				514C76720CE923A1007EF3CD /* HTTPParsers.cpp in Sources */,
 				371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */,
 				97E4028F13A696ED00913D67 /* IconController.cpp in Sources */,
+				A14832BC187F648E00DA63A6 /* WAKWindow.mm in Sources */,
 				5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */,
 				516953971329A3C800B92D04 /* IconDatabaseBase.cpp in Sources */,
 				513F14530AB634C400094DDF /* IconLoader.cpp in Sources */,
@@ -27401,6 +27528,7 @@
 				E44614180CD6826900FADA75 /* JSMediaError.cpp in Sources */,
 				E19AC3F41824DC7900349426 /* CryptoAlgorithmSHA512.cpp in Sources */,
 				510B7DB7182D9F5D009BF957 /* IDBTransactionBackend.cpp in Sources */,
+				A14832CB187F67B400DA63A6 /* WebCoreThreadRun.cpp in Sources */,
 				CDA98DA31601464100FEA3B1 /* JSMediaKeyError.cpp in Sources */,
 				CDB859FA160D494900E5B07F /* JSMediaKeyEvent.cpp in Sources */,
 				CDA98DDF16026A3700FEA3B1 /* JSMediaKeyMessageEvent.cpp in Sources */,
@@ -27693,6 +27821,7 @@
 				E446141A0CD6826900FADA75 /* JSTimeRanges.cpp in Sources */,
 				070334E9145A1F36008D8D45 /* JSTrackCustom.cpp in Sources */,
 				07846342145B151A00A58DF1 /* JSTrackEvent.cpp in Sources */,
+				A14832C0187F656600DA63A6 /* WKGraphics.mm in Sources */,
 				07BDD6EC1469B4C2009C9F85 /* JSTrackEventCustom.cpp in Sources */,
 				E17B492216A9B8FF001C8839 /* JSTransitionEvent.cpp in Sources */,
 				078E091317D14CEE00420AA1 /* UserMediaRequest.cpp in Sources */,
@@ -27892,6 +28021,7 @@
 				85031B490A44EFC700F992E0 /* MutationEvent.cpp in Sources */,
 				C6F0900E14327B6100685849 /* MutationObserver.cpp in Sources */,
 				D6E528A3149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp in Sources */,
+				A14832B1187F61E100DA63A6 /* WAKAppKitStubs.m in Sources */,
 				E19AC3F9182566F700349426 /* CryptoKeyMac.cpp in Sources */,
 				D6E276AF14637455001D280A /* MutationObserverRegistration.cpp in Sources */,
 				C6F08FBC1430FE8F00685849 /* MutationRecord.cpp in Sources */,
@@ -27958,6 +28088,7 @@
 				9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */,
 				E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */,
 				7A674BDB0F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp in Sources */,
+				A14832B5187F62FC00DA63A6 /* WAKResponder.m in Sources */,
 				1C26497C0D7E24EC00BD10F2 /* PageMac.cpp in Sources */,
 				FBDB619D16D6034600BB3394 /* PageRuleCollector.cpp in Sources */,
 				F3820894147D35F90010BC06 /* PageRuntimeAgent.cpp in Sources */,
@@ -28208,6 +28339,7 @@
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
 				293EAE211356B32E0067ACF9 /* RuntimeApplicationChecks.cpp in Sources */,
 				8C6EA61911EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp in Sources */,
+				A14832CE187F683400DA63A6 /* WebCoreThreadSystemInterface.cpp in Sources */,
 				49E911CA0EF86D47009D0CAF /* ScaleTransformOperation.cpp in Sources */,
 				5DFE8F560D16477B0076E937 /* ScheduledAction.cpp in Sources */,
 				5162C7F411F77EFB00612EFE /* SchemeRegistry.cpp in Sources */,
@@ -28546,6 +28678,7 @@
 				7134496D146941B300720312 /* SVGLengthContext.cpp in Sources */,
 				07CA120E182D67D800D12197 /* JSRTCPeerConnectionCustom.cpp in Sources */,
 				B2227A350D00BF220071B782 /* SVGLengthList.cpp in Sources */,
+				A14832BD187F64B400DA63A6 /* WKContentObservation.cpp in Sources */,
 				07277E5017D018CC0015534D /* JSMediaStreamEvent.cpp in Sources */,
 				B2227A380D00BF220071B782 /* SVGLinearGradientElement.cpp in Sources */,
 				B2227A3B0D00BF220071B782 /* SVGLineElement.cpp in Sources */,
@@ -28589,6 +28722,7 @@
 				BC2274780E8366E200E7F975 /* SVGRenderStyle.cpp in Sources */,
 				BC22747A0E8366E200E7F975 /* SVGRenderStyleDefs.cpp in Sources */,
 				B2227AA20D00BF220071B782 /* SVGScriptElement.cpp in Sources */,
+				A14832B7187F636C00DA63A6 /* WAKScrollView.mm in Sources */,
 				B2227AA50D00BF220071B782 /* SVGSetElement.cpp in Sources */,
 				E4AFD00F0DAF335500F5F55C /* SVGSMILElement.cpp in Sources */,
 				B2227AA80D00BF220071B782 /* SVGStopElement.cpp in Sources */,
@@ -28598,7 +28732,9 @@
 				B2227ABD0D00BF220071B782 /* SVGSwitchElement.cpp in Sources */,
 				B2227AC00D00BF220071B782 /* SVGSymbolElement.cpp in Sources */,
 				51D719D2181106E00016DC51 /* IDBFactory.cpp in Sources */,
+				A14832C2187F65C700DA63A6 /* WKUtilities.c in Sources */,
 				078E090A17D14CEE00420AA1 /* RTCIceCandidateEvent.cpp in Sources */,
+				A14832C8187F673F00DA63A6 /* WebCoreThread.mm in Sources */,
 				B2227AC40D00BF220071B782 /* SVGTests.cpp in Sources */,
 				B2227AC70D00BF220071B782 /* SVGTextContentElement.cpp in Sources */,
 				07969DBB17D14151007FF842 /* JSRTCSessionDescription.cpp in Sources */,
