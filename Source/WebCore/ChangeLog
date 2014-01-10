@@ -1,3 +1,13 @@
+2014-01-10  Alex Christensen  <achristensen@webkit.org>
+
+        [WinCairo] Build fix after r161589.
+        https://bugs.webkit.org/show_bug.cgi?id=126747
+
+        Reviewed by Anders Carlsson.
+
+        * platform/network/ResourceHandle.cpp:
+        Include NotImplemented.h for all platforms.
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         Convert some for loops over to range-based for

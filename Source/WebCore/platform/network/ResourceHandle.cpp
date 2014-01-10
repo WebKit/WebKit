@@ -29,15 +29,12 @@
 
 #include "Logging.h"
 #include "NetworkingContext.h"
+#include "NotImplemented.h"
 #include "ResourceHandleClient.h"
 #include "Timer.h"
 #include <algorithm>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
-
-#if PLATFORM(IOS)
-#include "NotImplemented.h"
-#endif
 
 namespace WebCore {
 
