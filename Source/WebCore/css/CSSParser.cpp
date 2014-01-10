@@ -5866,7 +5866,7 @@ PassRefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
     CSSParserValue* value = m_valueList->current();
     CSSValueID valueId = value->id;
     RefPtr<CSSPrimitiveValue> keywordValue;
-    RefPtr<CSSBasicShape> shapeValue;
+    RefPtr<CSSPrimitiveValue> shapeValue;
 
     if (valueId == CSSValueNone
         || (valueId == CSSValueOutsideShape && propId == CSSPropertyWebkitShapeInside)) {
@@ -5902,10 +5902,12 @@ PassRefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
             return nullptr;
     }
 
-    if (shapeValue && keywordValue)
-        shapeValue->setLayoutBox(keywordValue.release());
+    ASSERT(!shapeValue || shapeValue->isShape());
 
-    return shapeValue ? cssValuePool().createValue(shapeValue.release()) : keywordValue.release();
+    if (shapeValue && keywordValue)
+        shapeValue->getShapeValue()->setLayoutBox(keywordValue.release());
+
+    return shapeValue ? shapeValue.release() : keywordValue.release();
 }
 #endif
 
@@ -5934,10 +5936,10 @@ PassRefPtr<CSSValue> CSSParser::parseClipPath()
         valueId = value->id;
         if (value->unit == CSSParserValue::Function && !shapeFound) {
             // parseBasicShape already asks for the next value list item.
-            RefPtr<CSSBasicShape> shapeValue = parseBasicShape();
+            RefPtr<CSSPrimitiveValue> shapeValue = parseBasicShape();
             if (!shapeValue)
                 return nullptr;
-            list->append(cssValuePool().createValue(shapeValue.release()));
+            list->append(shapeValue.release());
             shapeFound = true;
         } else if ((isBoxValue(valueId) || valueId == CSSValueBoundingBox) && !boxFound) {
             list->append(parseValidPrimitive(valueId, value));
@@ -5966,7 +5968,7 @@ static bool isDeprecatedBasicShape(CSSParserValueList* args)
     return false;
 }
 
-PassRefPtr<CSSBasicShape> CSSParser::parseBasicShape()
+PassRefPtr<CSSPrimitiveValue> CSSParser::parseBasicShape()
 {
     CSSParserValue* value = m_valueList->current();
     ASSERT(value->unit == CSSParserValue::Function);
@@ -5999,7 +6001,7 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShape()
         return nullptr;
 
     m_valueList->next();
-    return shape.release();
+    return cssValuePool().createValue(shape.release());
 }
 
 // [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]? 'font-family'

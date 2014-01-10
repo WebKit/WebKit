@@ -1,3 +1,21 @@
+2014-01-10  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Change parseBasicShape to return a CSSPrimitiveValue
+        https://bugs.webkit.org/show_bug.cgi?id=126713
+
+        Reviewed by Dirk Schulze.
+
+        Avoid the duplicated code wrapping the CSSBasicShape in a CSSPrimitiveValue
+        by having parseBasicShape return a CSSPrimitiveValue reference.
+
+        Refactoring, no new tests.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseShapeProperty):
+        (WebCore::CSSParser::parseClipPath):
+        (WebCore::CSSParser::parseBasicShape):
+        * css/CSSParser.h:
+
 2014-01-10  Piotr Grad  <p.grad@samsung.com>
 
         Possible crash in ApplicationCache::removeResource.
