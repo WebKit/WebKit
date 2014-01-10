@@ -1,3 +1,17 @@
+2014-01-10  Timothy Hatcher  <timothy@apple.com>
+
+        Prevent some resources from showing up in Web Inspector as years in duration.
+
+        No WebKit port passed a monotonic time to InspectorInstrumentation::didFinishLoading -- except Chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=126760
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didFinishLoadingImpl):
+        Revert part of r102961 to use finishTime as-is and not expect a monotonic time.
+
 2014-01-10  Dirk Schulze  <krit@webkit.org>
 
         Make clipping path from basic-shapes relative to <box> value
