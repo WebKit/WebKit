@@ -1,3 +1,14 @@
+2014-01-10  Daniel Bates  <dabates@apple.com>
+
+        Another build fix for the Production Mac build following <http://trac.webkit.org/changeset/161638>
+        (https://bugs.webkit.org/show_bug.cgi?id=126698)
+
+        Move the logic for appending the port-specific IDL files {Touch, TouchEvent, TouchList}.idl to the
+        list of binding IDLs (BINDING_IDLS) before the definition of variables DOM_CLASSES and JS_DOM_HEADERS
+        so that we generate the DOM and JS bindings for these IDLs.
+
+        * DerivedSources.make:
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         Remove supportMultipleWindows setting

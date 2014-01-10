@@ -660,54 +660,6 @@ BINDING_IDLS = \
     InternalSettingsGenerated.idl
 #
 
-.PHONY : all
-
-DOM_CLASSES=$(basename $(notdir $(BINDING_IDLS)))
-
-JS_DOM_HEADERS=$(filter-out JSEventListener.h, $(DOM_CLASSES:%=JS%.h))
-
-WEB_DOM_HEADERS :=
-
-all : \
-    $(SUPPLEMENTAL_DEPENDENCY_FILE) \
-    $(WINDOW_CONSTRUCTORS_FILE) \
-    $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) \
-    $(JS_DOM_HEADERS) \
-    $(WEB_DOM_HEADERS) \
-    \
-    JSJavaScriptCallFrame.h \
-    \
-    CSSGrammar.cpp \
-    CSSPropertyNames.h \
-    CSSValueKeywords.h \
-    ColorData.cpp \
-    EventFactory.cpp \
-    EventTargetInterfaces.h \
-    ExceptionCodeDescription.cpp \
-    HTMLElementFactory.cpp \
-    HTMLEntityTable.cpp \
-    HTMLNames.cpp \
-    JSHTMLElementWrapperFactory.cpp \
-    JSSVGElementWrapperFactory.cpp \
-    PlugInsResources.h \
-    SVGElementFactory.cpp \
-    SVGNames.cpp \
-    UserAgentScripts.h \
-    UserAgentStyleSheets.h \
-    WebKitFontFamilyNames.cpp \
-    WebKitFontFamilyNames.h \
-    XLinkNames.cpp \
-    XMLNSNames.cpp \
-    XMLNames.cpp \
-    MathMLElementFactory.cpp \
-    MathMLNames.cpp \
-    XPathGrammar.cpp \
-#
-
-# --------
-
-ADDITIONAL_IDL_DEFINES :=
-
 ifeq ($(OS),MACOS)
 
 FRAMEWORK_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
@@ -759,6 +711,54 @@ BINDING_IDLS += \
 endif
 
 endif # MACOS
+
+.PHONY : all
+
+DOM_CLASSES=$(basename $(notdir $(BINDING_IDLS)))
+
+JS_DOM_HEADERS=$(filter-out JSEventListener.h, $(DOM_CLASSES:%=JS%.h))
+
+WEB_DOM_HEADERS :=
+
+all : \
+    $(SUPPLEMENTAL_DEPENDENCY_FILE) \
+    $(WINDOW_CONSTRUCTORS_FILE) \
+    $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) \
+    $(JS_DOM_HEADERS) \
+    $(WEB_DOM_HEADERS) \
+    \
+    JSJavaScriptCallFrame.h \
+    \
+    CSSGrammar.cpp \
+    CSSPropertyNames.h \
+    CSSValueKeywords.h \
+    ColorData.cpp \
+    EventFactory.cpp \
+    EventTargetInterfaces.h \
+    ExceptionCodeDescription.cpp \
+    HTMLElementFactory.cpp \
+    HTMLEntityTable.cpp \
+    HTMLNames.cpp \
+    JSHTMLElementWrapperFactory.cpp \
+    JSSVGElementWrapperFactory.cpp \
+    PlugInsResources.h \
+    SVGElementFactory.cpp \
+    SVGNames.cpp \
+    UserAgentScripts.h \
+    UserAgentStyleSheets.h \
+    WebKitFontFamilyNames.cpp \
+    WebKitFontFamilyNames.h \
+    XLinkNames.cpp \
+    XMLNSNames.cpp \
+    XMLNames.cpp \
+    MathMLElementFactory.cpp \
+    MathMLNames.cpp \
+    XPathGrammar.cpp \
+#
+
+# --------
+
+ADDITIONAL_IDL_DEFINES :=
 
 ifndef ENABLE_ORIENTATION_EVENTS
     ENABLE_ORIENTATION_EVENTS = 0
