@@ -1,3 +1,54 @@
+2014-01-10  Youenn Fablet  <youennf@gmail.com>
+
+
+        Correctly set XHR loadend attributes (loaded and total).
+        https://bugs.webkit.org/show_bug.cgi?id=120828
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Added correct initialization of lengthComputable, loaded and total attributes 
+        to XHR ProgressEvent events (load, loadstart, loadend, abort, error and timeout).
+
+        XMLHttpRequestProgressEventThrottle and XMLHttpRequestUpload now keep persistent knowledge 
+        of m_loaded and m_total values with this patch.
+        
+        Code refactoring to handle event dispatching in case of error in a single manner.
+        XMLHttpRequestProgressEventThrottle::dispatchProgressEvent is renamed as dispatchThrottledProgressEvent
+        XMLHttpRequestProgressEventThrottle::dispatchEventAndLoadend is replaced by dispatchProgressEvent(const AtomicString&)
+        
+        Fixed assertion issues over bug 120828 patch
+
+        Tests: http/tests/xmlhttprequest/loadstart-event-init.html
+               http/tests/xmlhttprequest/onabort-progressevent-attributes.html
+               http/tests/xmlhttprequest/onload-progressevent-attributes.html
+               http/tests/xmlhttprequest/upload-onabort-progressevent-attributes.html
+               http/tests/xmlhttprequest/upload-onload-progressevent-attributes.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener): changed readystatechange event from ProgressEvent to Event (not cancellable, not bubblable) to better match the spec 
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::abort): code refactoring to handle error event dispatching in a single way
+        (WebCore::XMLHttpRequest::networkError): code refactoring to handle error event dispatching in a single way
+        (WebCore::XMLHttpRequest::abortError): code refactoring to handle error event dispatching in a single way
+        (WebCore::XMLHttpRequest::didSendData):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        (WebCore::XMLHttpRequest::dispatchErrorEvents): dispatch progress events in case of error
+        (WebCore::XMLHttpRequest::didTimeout): code refactoring to handle error event dispatching in a single way
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequestProgressEventThrottle.cpp: before the patch, the fact that a progress event is being throttled is stored indirectly (m_loaded or m_total not equal to zero). With the patch, this information is stored in m_hasThrottledProgressEvent. The m_loaded and m_total values are no longer set back to zero after a progress event is dispatched. This allows using these values to correctly initialize other ProgressEvent events (in particular loadend, abort, timeout...) 
+        (WebCore::XMLHttpRequestProgressEventThrottle::XMLHttpRequestProgressEventThrottle):
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEvent): always update the new m_loaded and m_total values. If progress event is not sent as part of the function call, store the fact that a progress event is being throttled through m_hasThrottledProgressEvent. 
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchProgressEvent): used to send any ProgressEvent event that is not be throttled
+        (WebCore::XMLHttpRequestProgressEventThrottle::flushProgressEvent): after the call, no progress event is throttled anymore
+        (WebCore::XMLHttpRequestProgressEventThrottle::fired): after the call, no progress event is throttled anymore
+        (WebCore::XMLHttpRequestProgressEventThrottle::hasEventToDispatch):
+        (WebCore::XMLHttpRequestProgressEventThrottle::suspend):
+        * xml/XMLHttpRequestProgressEventThrottle.h: introduced m_hasThrottledProgressEvent which stores whether a progress event is being throttled and m_computableLength which is used to initialize ProgressEvent computableLength
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::XMLHttpRequestUpload):
+        (WebCore::XMLHttpRequestUpload::dispatchProgressEvent):
+        * xml/XMLHttpRequestUpload.h: introduced m_loaded, m_total and m_lengthComputable, similarly to XMLHttpRequestProgressEventThrottle
+
 2014-01-10  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Change parseBasicShape to return a CSSPrimitiveValue

@@ -36,17 +36,33 @@ namespace WebCore {
 
 XMLHttpRequestUpload::XMLHttpRequestUpload(XMLHttpRequest* xmlHttpRequest)
     : m_xmlHttpRequest(xmlHttpRequest)
+    , m_lengthComputable(false)
+    , m_loaded(0)
+    , m_total(0)
 {
 }
 
-void XMLHttpRequestUpload::dispatchEventAndLoadEnd(PassRefPtr<Event> event)
+void XMLHttpRequestUpload::dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total)
 {
-    ASSERT(event->type() == eventNames().loadEvent || event->type() == eventNames().abortEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().timeoutEvent);
+    m_lengthComputable = lengthComputable;
+    m_loaded = loaded;
+    m_total = total;
 
-    dispatchEvent(event);
-    dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().loadendEvent));
+    dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().progressEvent, lengthComputable, loaded, total));
 }
 
+void XMLHttpRequestUpload::dispatchProgressEvent(const AtomicString &type)
+{
+    ASSERT(type == eventNames().loadEvent || type == eventNames().loadendEvent || type == eventNames().loadstartEvent || type == eventNames().abortEvent || type == eventNames().errorEvent || type == eventNames().timeoutEvent);
+
+    if (type == eventNames().loadstartEvent) {
+        m_lengthComputable = false;
+        m_loaded = 0;
+        m_total = 0;
+    }
+
+    dispatchEvent(XMLHttpRequestProgressEvent::create(type, m_lengthComputable, m_loaded, m_total));
+}
 
 
 } // namespace WebCore

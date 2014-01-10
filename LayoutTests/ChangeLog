@@ -1,3 +1,24 @@
+2014-01-10  Youenn Fablet  <youennf@gmail.com>
+
+        Correctly set XHR loadend event attributes (loaded and total).
+        https://bugs.webkit.org/show_bug.cgi?id=120828
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests for abort, load, loadstart and loadend ProgressEvent events for XMLHttpRequest and XMLHttpRequestUpload
+
+        * fast/xmlhttprequest/xmlhttprequest-get-expected.txt: Changed to correct event values
+        * http/tests/xmlhttprequest/loadstart-event-init-expected.txt: Added.
+        * http/tests/xmlhttprequest/loadstart-event-init.html: Added.
+        * http/tests/xmlhttprequest/onabort-progressevent-attributes-expected.txt: Added.
+        * http/tests/xmlhttprequest/onabort-progressevent-attributes.html: Added.
+        * http/tests/xmlhttprequest/onload-progressevent-attributes-expected.txt: Added.
+        * http/tests/xmlhttprequest/onload-progressevent-attributes.html: Added.
+        * http/tests/xmlhttprequest/upload-onabort-progressevent-attributes-expected.txt: Added.
+        * http/tests/xmlhttprequest/upload-onabort-progressevent-attributes.html: Added.
+        * http/tests/xmlhttprequest/upload-onload-progressevent-attributes-expected.txt: Added.
+        * http/tests/xmlhttprequest/upload-onload-progressevent-attributes.html: Added.
+
 2014-01-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Move platformName property from testRunner to accessibilityController
