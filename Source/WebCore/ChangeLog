@@ -1,3 +1,13 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Fill in missing WebCoreThread function pointers
+        https://bugs.webkit.org/show_bug.cgi?id=126776
+
+        Reviewed by Timothy Hatcher.
+
+        * platform/ios/wak/WebCoreThreadSystemInterface.cpp:
+        (InitWebCoreThreadSystemInterface):
+
 2014-01-10  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Clear unparented tiled layers on memory pressure.

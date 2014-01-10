@@ -28,7 +28,8 @@
 
 #if PLATFORM(IOS)
 
-#include "WebCoreThread.h" 
+#include "WebCoreThread.h"
+#include "WebCoreThreadRun.h"
 #include <wtf/ios/WebCoreThread.h>
 
 // "Fill In" JavaScriptCore's function pointers with ours.
@@ -44,6 +45,9 @@ void InitWebCoreThreadSystemInterface(void)
         return;
 
     INIT(WebThreadIsLockedOrDisabled);
+    INIT(WebThreadIsEnabled);
+    INIT(WebThreadRun);
+    INIT(WebThreadRunSync);
 
     didInit = true;
 }
