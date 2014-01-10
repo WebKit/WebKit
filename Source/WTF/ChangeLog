@@ -1,3 +1,14 @@
+2014-01-10  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Enable the DFG_JIT on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=126742
+
+        Reviewed by Gyuyoung Kim.
+
+        Turn on ENABLE_DFG_JIT on ARMv7 for EFL.
+
+        * wtf/Platform.h:
+
 2014-01-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Marking should be generational
