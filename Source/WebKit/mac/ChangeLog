@@ -1,3 +1,12 @@
+2014-01-10  Daniel Bates  <dabates@apple.com>
+
+        Fix the WebCore, WebKit build targets following <http://trac.webkit.org/changeset/161638>
+        (https://bugs.webkit.org/show_bug.cgi?id=126698)
+
+        Tell Xcode that the supported platforms for all WebCore targets are iOS and OS X.
+
+        * Configurations/Base.xcconfig:
+
 2014-01-09  Andy Estes  <aestes@apple.com>
 
         [iOS] Upstream iOS changes to MigrateHeaders.make
