@@ -180,7 +180,6 @@ enum MediaPlayerAVFoundationObservationContext {
 -(void)disconnect;
 -(void)playableKnown;
 -(void)metadataLoaded;
--(void)seekCompleted:(BOOL)finished;
 -(void)didEnd:(NSNotification *)notification;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context;
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
@@ -680,12 +679,20 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(double time, double negative
     // setCurrentTime generates several event callbacks, update afterwards.
     setDelayCallbacks(true);
 
-    WebCoreAVFMovieObserver *observer = m_objcObserver.get();
     CMTime cmTime = CMTimeMakeWithSeconds(time, 600);
     CMTime cmBefore = CMTimeMakeWithSeconds(negativeTolerance, 600);
     CMTime cmAfter = CMTimeMakeWithSeconds(positiveTolerance, 600);
+
+    __block auto weakThis = createWeakPtr();
+
     [m_avPlayerItem.get() seekToTime:cmTime toleranceBefore:cmBefore toleranceAfter:cmAfter completionHandler:^(BOOL finished) {
-        [observer seekCompleted:finished];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            auto _this = weakThis.get();
+            if (!_this)
+                return;
+
+            _this->seekCompleted(finished);
+        });
     }];
 
     setDelayCallbacks(false);
@@ -1926,14 +1933,6 @@ NSArray* itemKVOProperties()
         return;
 
     m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetPlayabilityKnown);
-}
-
-- (void)seekCompleted:(BOOL)finished
-{
-    if (!m_callback)
-        return;
-    
-    m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::SeekCompleted, static_cast<bool>(finished));
 }
 
 - (void)didEnd:(NSNotification *)unusedNotification

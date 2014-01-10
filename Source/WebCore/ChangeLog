@@ -1,3 +1,35 @@
+2014-01-09  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Scrubbing performance of HD content with software decoding is poor.
+        https://bugs.webkit.org/show_bug.cgi?id=126705
+
+        Reviewed by Eric Carlson.
+
+        Instead of issuing a new seek before the previous one completes, wait until that seek's
+        completion handler is called, and then issue the new seek. This has the added benefit of
+        coalescing multiple incoming seeks so that only the last one is acted upon.
+
+        Save the parameters passed into seekToTime and bind them together in a std::function
+        to be replayed once the in-flight seek completes. To handle the case where a completion
+        handler fires after the media player is destroyed, add a weakPtrFactory and pass a
+        WeakPtr into the completion handler.
+        
+        Clean up some ivars which are no longer necessary: remove m_seekCount and m_seekTime.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation): Initialize the
+            WeakPtrFactory.
+        (WebCore::MediaPlayerPrivateAVFoundation::seekWithTolerance):
+        (WebCore::MediaPlayerPrivateAVFoundation::seeking): m_seekTime -> m_seeking.
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createWeakPtr):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::finishSeek):
+
 2014-01-08  Jer Noble  <jer.noble@apple.com>
 
         [MSE][Mac] Report the intrinsic size of the media element

@@ -47,6 +47,7 @@ namespace WebCore {
 
 MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* player)
     : m_player(player)
+    , m_weakPtrFactory(this)
     , m_queuedNotifications()
     , m_queueMutex()
     , m_networkState(MediaPlayer::Empty)
@@ -58,7 +59,6 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_cachedDuration(MediaPlayer::invalidTime())
     , m_reportedDuration(MediaPlayer::invalidTime())
     , m_maxTimeLoadedAtLastDidLoadingProgress(MediaPlayer::invalidTime())
-    , m_seekTo(MediaPlayer::invalidTime())
     , m_requestedRate(1)
     , m_delayCallbacks(0)
     , m_delayCharacteristicsChangedNotification(0)
@@ -76,7 +76,7 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_inbandTrackConfigurationPending(false)
     , m_characteristicsChanged(false)
     , m_shouldMaintainAspectRatio(true)
-    , m_seekCount(0)
+    , m_seeking(false)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(%p)", this);
 }
@@ -271,6 +271,15 @@ void MediaPlayerPrivateAVFoundation::seek(float time)
 
 void MediaPlayerPrivateAVFoundation::seekWithTolerance(double time, double negativeTolerance, double positiveTolerance)
 {
+    if (m_seeking) {
+        LOG(Media, "MediaPlayerPrivateAVFoundation::seekWithTolerance(%p) - save pending seek", this);
+        m_pendingSeek = [this, time, negativeTolerance, positiveTolerance]() {
+            seekWithTolerance(time, negativeTolerance, positiveTolerance);
+        };
+        return;
+    }
+    m_seeking = true;
+
     if (!metaDataAvailable())
         return;
 
@@ -284,9 +293,7 @@ void MediaPlayerPrivateAVFoundation::seekWithTolerance(double time, double negat
         currentTrack()->beginSeeking();
     
     LOG(Media, "MediaPlayerPrivateAVFoundation::seek(%p) - seeking to %f", this, time);
-    m_seekTo = time;
 
-    ++m_seekCount;
     seekToTime(time, negativeTolerance, positiveTolerance);
 }
 
@@ -311,7 +318,7 @@ bool MediaPlayerPrivateAVFoundation::seeking() const
     if (!metaDataAvailable())
         return false;
 
-    return m_seekTo != MediaPlayer::invalidTime();
+    return m_seeking;
 }
 
 IntSize MediaPlayerPrivateAVFoundation::naturalSize() const
@@ -639,14 +646,20 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
     LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - finished = %d", this, finished);
     UNUSED_PARAM(finished);
 
-    ASSERT(m_seekCount);
-    if (--m_seekCount)
+    m_seeking = false;
+
+    std::function<void()> pendingSeek;
+    std::swap(pendingSeek, m_pendingSeek);
+
+    if (pendingSeek) {
+        LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - issuing pending seek", this);
+        pendingSeek();
         return;
+    }
 
     if (currentTrack())
         currentTrack()->endSeeking();
 
-    m_seekTo = MediaPlayer::invalidTime();
     updateStates();
     m_player->timeChanged();
 }

@@ -32,8 +32,10 @@
 #include "InbandTextTrackPrivateAVF.h"
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
+#include <functional>
 #include <wtf/Functional.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -138,6 +140,8 @@ public:
 protected:
     MediaPlayerPrivateAVFoundation(MediaPlayer*);
     virtual ~MediaPlayerPrivateAVFoundation();
+
+    WeakPtr<MediaPlayerPrivateAVFoundation> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
     // MediaPlayerPrivatePrivateInterface overrides.
     virtual void load(const String& url) OVERRIDE;
@@ -295,6 +299,10 @@ protected:
 private:
     MediaPlayer* m_player;
 
+    WeakPtrFactory<MediaPlayerPrivateAVFoundation> m_weakPtrFactory;
+
+    std::function<void()> m_pendingSeek;
+
     Vector<Notification> m_queuedNotifications;
     mutable Mutex m_queueMutex;
 
@@ -313,7 +321,6 @@ private:
     mutable float m_cachedDuration;
     float m_reportedDuration;
     mutable float m_maxTimeLoadedAtLastDidLoadingProgress;
-    double m_seekTo;
     float m_requestedRate;
     mutable int m_delayCallbacks;
     int m_delayCharacteristicsChangedNotification;
@@ -331,7 +338,7 @@ private:
     bool m_inbandTrackConfigurationPending;
     bool m_characteristicsChanged;
     bool m_shouldMaintainAspectRatio;
-    size_t m_seekCount;
+    bool m_seeking;
 };
 
 } // namespace WebCore
