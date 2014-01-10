@@ -1,3 +1,15 @@
+2014-01-10  Timothy Hatcher  <timothy@apple.com>
+
+        Fix an exception in WebInspector.Color.
+
+        https://bugs.webkit.org/show_bug.cgi?id=126765
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Color.js:
+        (WebInspector.Color.fromString): Check hasOwnPrperty before using the nickname color array.
+        (WebInspector.Color.prototype._toNicknameString): Ditto.
+
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         [CSS Blending] Log blending as a layer creation reason in the WI

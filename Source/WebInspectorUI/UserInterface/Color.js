@@ -93,7 +93,7 @@ WebInspector.Color.fromString = function(colorString)
             ]);
         } else if (match[3]) { // nickname
             var nickname = match[3].toLowerCase();
-            if (nickname in WebInspector.Color.Nicknames) {
+            if (WebInspector.Color.Nicknames.hasOwnProperty(nickname)) {
                 var color = new WebInspector.Color(WebInspector.Color.Format.Nickname, WebInspector.Color.Nicknames[nickname].concat(1));
                 color.nickname = nickname;
                 color.original = colorString;
@@ -276,6 +276,9 @@ WebInspector.Color.prototype = {
 
         var nicknames = WebInspector.Color.Nicknames;
         for (var nickname in nicknames) {
+            if (!nicknames.hasOwnProperty(nickname))
+                continue;
+
             var nicknameRGB = nicknames[nickname];
             if (nicknameRGB[0] === rgba[0] && nicknameRGB[1] === rgba[1] && nicknameRGB[2] === rgba[2])
                 return nickname;
