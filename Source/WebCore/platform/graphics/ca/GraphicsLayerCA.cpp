@@ -67,6 +67,8 @@ namespace WebCore {
 // texture size limit on all supported hardware.
 #if PLATFORM(IOS)
 static const int cMaxPixelDimension = 1280;
+static const int cMaxPixelDimensionLowMemory = 1024;
+static const int cMemoryLevelToUseSmallerPixelDimension = 35;
 #else
 static const int cMaxPixelDimension = 2000;
 #endif
@@ -3058,7 +3060,12 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
         return false;
 
     // FIXME: catch zero-size height or width here (or earlier)?
+#if PLATFORM(IOS)
+    int maxPixelDimension = systemMemoryLevel() < cMemoryLevelToUseSmallerPixelDimension ? cMaxPixelDimensionLowMemory : cMaxPixelDimension;
+    return m_size.width() * pageScaleFactor > maxPixelDimension || m_size.height() * pageScaleFactor > maxPixelDimension;
+#else
     return m_size.width() * pageScaleFactor > cMaxPixelDimension || m_size.height() * pageScaleFactor > cMaxPixelDimension;
+#endif
 }
 
 void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)

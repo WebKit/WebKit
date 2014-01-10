@@ -36,8 +36,12 @@
 #import <wtf/MainThread.h>
 #import <utility>
 
+#if PLATFORM(IOS)
+#import "TileControllerMemoryHandlerIOS.h"
+#endif
+
 namespace WebCore {
-    
+
 enum TileValidationPolicyFlag {
     PruneSecondaryTiles = 1 << 0,
     UnparentAllTiles = 1 << 1
@@ -83,6 +87,10 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
 TileController::~TileController()
 {
     ASSERT(isMainThread());
+
+#if PLATFORM(IOS)
+    tileControllerMemoryHandler().removeTileController(this);
+#endif
 
     for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
         it->value.layer->setOwner(nullptr);
@@ -824,6 +832,10 @@ TileController::TileCohort TileController::nextTileCohort() const
 void TileController::startedNewCohort(TileCohort cohort)
 {
     m_cohortList.append(TileCohortInfo(cohort, monotonicallyIncreasingTime()));
+#if PLATFORM(IOS)
+    if (!m_isInWindow)
+        tileControllerMemoryHandler().tileControllerGainedUnparentedTiles(this);
+#endif
 }
 
 TileController::TileCohort TileController::newestTileCohort() const
@@ -1168,5 +1180,17 @@ void TileController::drawTileMapContents(CGContextRef context, CGRect layerBound
     }
 }
     
+#if PLATFORM(IOS)
+void TileController::removeUnparentedTilesNow()
+{
+    while (!m_cohortList.isEmpty()) {
+        TileCohortInfo firstCohort = m_cohortList.takeFirst();
+        removeTilesInCohort(firstCohort.cohort);
+    }
+
+    if (m_tiledScrollingIndicatorLayer)
+        updateTileCoverageMap();
+}
+#endif
 
 } // namespace WebCore

@@ -2448,6 +2448,8 @@ _wkGetScreenScaleFactor
 _wkGetViewportScreenSize
 _wkIsGB18030ComplianceRequired
 _wkSetLayerContentsScale
+__ZN7WebCore27tileControllerMemoryHandlerEv
+__ZN7WebCore27TileControllerMemoryHandler27trimUnparentedTilesToTargetEi
 #endif
 
 #if !defined(NDEBUG)

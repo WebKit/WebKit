@@ -78,6 +78,11 @@ public:
     unsigned blankPixelCount() const;
     static unsigned blankPixelCountForTiles(const PlatformLayerList&, const FloatRect&, const IntPoint&);
 
+#if PLATFORM(IOS)
+    unsigned numberOfUnparentedTiles() const { return m_cohortList.size(); }
+    void removeUnparentedTilesNow();
+#endif
+
 public:
     // Only public for inline methods in the implementation file.
     typedef IntPoint TileIndex;

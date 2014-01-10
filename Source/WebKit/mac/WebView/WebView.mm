@@ -231,6 +231,7 @@
 #import <WebCore/SQLiteDatabaseTracker.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/TextRun.h>
+#import <WebCore/TileControllerMemoryHandlerIOS.h>
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThread.h>
 #import <WebCore/WebCoreThreadMessage.h>
@@ -1275,6 +1276,8 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     // Only perform the remaining if a non-simple document was created.
     if (!didOneTimeInitialization)
         return;
+
+    tileControllerMemoryHandler().trimUnparentedTilesToTarget(0);
 
 #if ENABLE(DISK_IMAGE_CACHE)
     {

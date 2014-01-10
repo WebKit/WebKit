@@ -901,6 +901,8 @@
 		1F3C3BEB135CAF3C00B8C1AC /* MediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3C3BE9135CAF3C00B8C1AC /* MediaControls.h */; };
 		1F3F19531499CA7600A5AEA7 /* PODFreeListArena.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3F19521499CA7600A5AEA7 /* PODFreeListArena.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1F68D4AE14BB9DCA007B5C62 /* MemoryPressureHandlerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F68D4AD14BB9DCA007B5C62 /* MemoryPressureHandlerIOS.mm */; };
+		1F72BF0A187FD4490009BCB3 /* TileControllerMemoryHandlerIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F72BF08187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.cpp */; };
+		1F72BF0B187FD45C0009BCB3 /* TileControllerMemoryHandlerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1FAFBF1815A5FA6E00083A20 /* UTIUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1FAFBF1715A5FA5200083A20 /* UTIUtilities.mm */; };
 		1FAFBF1915A5FA7400083A20 /* UTIUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FAFBF1615A5FA5200083A20 /* UTIUtilities.h */; };
 		1FC40FB91655CCB60040F29E /* SubimageCacheWithTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FC40FB81655C5910040F29E /* SubimageCacheWithTimer.cpp */; };
@@ -7683,6 +7685,8 @@
 		1F3C3BE9135CAF3C00B8C1AC /* MediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControls.h; sourceTree = "<group>"; };
 		1F3F19521499CA7600A5AEA7 /* PODFreeListArena.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODFreeListArena.h; sourceTree = "<group>"; };
 		1F68D4AD14BB9DCA007B5C62 /* MemoryPressureHandlerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MemoryPressureHandlerIOS.mm; path = ios/MemoryPressureHandlerIOS.mm; sourceTree = "<group>"; };
+		1F72BF08187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TileControllerMemoryHandlerIOS.cpp; path = ios/TileControllerMemoryHandlerIOS.cpp; sourceTree = "<group>"; };
+		1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileControllerMemoryHandlerIOS.h; path = ios/TileControllerMemoryHandlerIOS.h; sourceTree = "<group>"; };
 		1FAFBF1615A5FA5200083A20 /* UTIUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTIUtilities.h; sourceTree = "<group>"; };
 		1FAFBF1715A5FA5200083A20 /* UTIUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UTIUtilities.mm; sourceTree = "<group>"; };
 		1FC40FB71655C5910040F29E /* SubimageCacheWithTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubimageCacheWithTimer.h; sourceTree = "<group>"; };
@@ -17938,6 +17942,8 @@
 				44C9919E0F3D210E00586670 /* ThemeIOS.mm */,
 				E4C3B1F90F0E4161009693F6 /* TileCache.h */,
 				E4C3B1FB0F0E4170009693F6 /* TileCache.mm */,
+				1F72BF08187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.cpp */,
+				1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */,
 				E4B65A57132FA8E70070E7BE /* TileGrid.h */,
 				E4B65A59132FAAF90070E7BE /* TileGrid.mm */,
 				E424A39D1330DF0100CF6DC9 /* TileGridTile.h */,
@@ -24824,6 +24830,7 @@
 				51E1ECC30C91C90400DC255B /* PageURLRecord.h in Headers */,
 				FFD5B97B135CC97800D5E92A /* PageVisibilityState.h in Headers */,
 				9377ABA015DEFEEF0031FD04 /* Pagination.h in Headers */,
+				1F72BF0B187FD45C0009BCB3 /* TileControllerMemoryHandlerIOS.h in Headers */,
 				0885067F11DA045B00182B98 /* PaintInfo.h in Headers */,
 				0885068011DA045B00182B98 /* PaintPhase.h in Headers */,
 				07ED35A316D6DCE2002248F3 /* InbandTextTrackPrivateAVFIOS.h in Headers */,
@@ -27807,6 +27814,7 @@
 				19BFF64E11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.cpp in Sources */,
 				B2FA3D720AB75A6F000E5AC4 /* JSSVGFEDiffuseLightingElement.cpp in Sources */,
 				B2FA3D740AB75A6F000E5AC4 /* JSSVGFEDisplacementMapElement.cpp in Sources */,
+				1F72BF0A187FD4490009BCB3 /* TileControllerMemoryHandlerIOS.cpp in Sources */,
 				B2FA3D760AB75A6F000E5AC4 /* JSSVGFEDistantLightElement.cpp in Sources */,
 				4358E87C1360A2EE00E4748C /* JSSVGFEDropShadowElement.cpp in Sources */,
 				B2FA3D780AB75A6F000E5AC4 /* JSSVGFEFloodElement.cpp in Sources */,
