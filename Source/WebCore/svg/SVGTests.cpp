@@ -25,11 +25,7 @@
 
 #include "Attribute.h"
 #include "DOMImplementation.h"
-#include "HTMLNames.h"
 #include "Language.h"
-#if ENABLE(MATHML)
-#include "MathMLNames.h"
-#endif
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
@@ -99,14 +95,10 @@ SVGAttributeToPropertyMap& SVGTests::attributeToPropertyMap()
     return map;
 }
 
-bool SVGTests::hasExtension(const String& extension) const
+bool SVGTests::hasExtension(const String&) const
 {
-    // We recognize XHTML and MathML, as implemented in Gecko and suggested in the SVG Tiny recommendation (http://www.w3.org/TR/SVG11/struct.html#RequiredExtensionsAttribute).
-#if ENABLE(MATHML)
-    return extension == HTMLNames::xhtmlNamespaceURI || extension == MathMLNames::mathmlNamespaceURI;
-#else
-    return extension == HTMLNames::xhtmlNamespaceURI;
-#endif
+    // FIXME: Implement me!
+    return false;
 }
 
 bool SVGTests::isValid() const
@@ -125,12 +117,8 @@ bool SVGTests::isValid() const
             return false;
     }
 
-    unsigned extensionsSize = m_requiredExtensions.value.size();
-    for (unsigned i = 0; i < extensionsSize; ++i) {
-        String value = m_requiredExtensions.value.at(i);
-        if (!hasExtension(value))
-            return false;
-    }
+    if (!m_requiredExtensions.value.isEmpty())
+        return false;
 
     return true;
 }

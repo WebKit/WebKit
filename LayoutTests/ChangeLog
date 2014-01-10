@@ -1,3 +1,20 @@
+2014-01-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r161629.
+        http://trac.webkit.org/changeset/161629
+        https://bugs.webkit.org/show_bug.cgi?id=126762
+
+        Fails svg/custom/conditional-processing-2.html (Requested by
+        ap on #webkit).
+
+        * svg/custom/conditional-processing-1-expected.txt: Removed.
+        * svg/custom/conditional-processing-1.svg: Removed.
+        * svg/custom/conditional-processing-2-expected.txt: Removed.
+        * svg/custom/conditional-processing-2.html: Removed.
+        * svg/dom/SVGTests-expected.txt: Removed.
+        * svg/dom/SVGTests.html: Removed.
+        * svg/dom/script-tests/SVGTests.js: Removed.
+
 2014-01-10  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test correction after r161605.

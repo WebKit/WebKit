@@ -51,8 +51,8 @@ PassRefPtr<SVGSwitchElement> SVGSwitchElement::create(const QualifiedName& tagNa
 
 bool SVGSwitchElement::childShouldCreateRenderer(const Node& child) const
 {
-    // We create a renderer for the first valid SVG element child.
-    // FIXME: The renderer must be updated after dynamic change of the requiredFeatures, requiredExtensions and systemLanguage attributes (http://wkb.ug/74749).
+    // FIXME: This function does not do what the comment below implies it does.
+    // It will create a renderer for any valid SVG element children, not just the first one.
     for (auto& element : childrenOfType<SVGElement>(*this)) {
         if (!element.isValid())
             continue;
