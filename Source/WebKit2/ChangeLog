@@ -1,3 +1,16 @@
+2014-01-09  Tim Horton  <timothy_horton@apple.com>
+
+        Upstream iOS changes after r161530
+        https://bugs.webkit.org/show_bug.cgi?id=126728
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView setViewportSize:]):
+        (-[WKContentView didFinishScrollTo:]):
+        (-[WKContentView didScrollTo:]):
+        Adopt the new approach.
+
 2014-01-09  Brian Burg  <bburg@apple.com>
 
         REGRESSION (r160152): Selection drag snapshot doesn't appear or has the wrong content on Retina
