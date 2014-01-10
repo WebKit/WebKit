@@ -1,3 +1,10 @@
+2014-01-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test correction after r161605.
+
+        * platform/mac/TestExpectations: Reactivate tests fixed by
+        https://bugs.webkit.org/show_bug.cgi?id=126718.
+
 2014-01-10  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Disable accelerated compositing for fixed elements in regions tests
