@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script>
+            if (window.internals)
+                internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+        </script>
         <style>
-            #greenOuter { position: absolute; top: 100px; left: 50px; width: 100px; height: 100px; background-color: green; }
-            #orangeInner { position: absolute; top: 50px; left: 50px; width: 100px; height: 100px; background-color: orange; }
+            #greenOuter { position: fixed; top: 100px; left: 50px; width: 100px; height: 100px; background-color: green; }
+            #orangeInner { position: fixed; top: 150px; left: 100px; width: 100px; height: 100px; background-color: orange; }
         </style>
     </head>
     <body>

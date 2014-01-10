@@ -1,8 +1,12 @@
 <!doctype html>
 <html>
     <head>
+        <script>
+            if (window.internals)
+                internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+        </script>
         <style>
-            #red { position: absolute; width: 20%; height: 20%; top: 150px; left: 125px; background-color: red; }
+            #red { position: fixed; width: 20%; height: 20%; top: 150px; left: 125px; background-color: red; }
             #fixed { -webkit-flow-into: flow; position: fixed; width: 20%; height: 20%; background-color: green; top: 150px; left: 125px; }
             #region { -webkit-flow-from: flow; width: 200px; height: 200px; position: absolute; top: 150px; left: 150px; }
         </style>

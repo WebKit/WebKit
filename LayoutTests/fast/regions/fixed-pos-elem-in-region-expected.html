@@ -1,6 +1,10 @@
 <!doctype html>
 <html>
     <head>
+        <script>
+            if (window.internals)
+                internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+        </script>
         <style>
             #green { position: fixed; width: 20%; height: 20%; top: 150px; left: 125px; background-color: green; }
         </style>

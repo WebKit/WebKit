@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script>
+            if (window.internals)
+                internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+        </script>
         <style>
-            #redOuter { position: absolute; top: 100px; left: 50px; width: 100px; height: 100px; background-color: red; }
-            #redInner { position: absolute; top: 50px; left: 50px; width: 100px; height: 100px; background-color: red; }
+            #redOuter { position: fixed; top: 100px; left: 50px; width: 100px; height: 100px; background-color: red; }
+            #redInner { position: fixed; top: 150px; left: 100px; width: 100px; height: 100px; background-color: red; }
             #outerFixed { -webkit-flow-into: flow; position: fixed; top: 100px; left: 50px; width: 100px; height: 100px; background-color: green; }
             #innerFixed { position: fixed; top: 150px; left: 100px; width: 100px; height: 100px; background-color: orange; }
 
