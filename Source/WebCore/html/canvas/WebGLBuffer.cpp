@@ -100,14 +100,14 @@ bool WebGLBuffer::associateBufferData(ArrayBuffer* array)
 {
     if (!array)
         return false;
-    return associateBufferDataImpl(array ? array->data() : 0, array ? array->byteLength() : 0);
+    return associateBufferDataImpl(array->data(), array->byteLength());
 }
 
 bool WebGLBuffer::associateBufferData(ArrayBufferView* array)
 {
     if (!array)
         return false;
-    return associateBufferDataImpl(array ? array->baseAddress() : 0, array ? array->byteLength() : 0);
+    return associateBufferDataImpl(array->baseAddress(), array->byteLength());
 }
 
 bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, const void* data, GC3Dsizeiptr byteLength)

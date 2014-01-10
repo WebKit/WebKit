@@ -3,8 +3,25 @@
         Speculative build fix for Windows following <http://trac.webkit.org/changeset/161638>
         (https://bugs.webkit.org/show_bug.cgi?id=126698)
 
+        Reviewed by David Kilzer.
+
         * bindings/scripts/preprocessor.pm:
         (applyPreprocessor):
+
+2014-01-10  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
+
+        [WebGL] Removing unnecessary pointer checks
+        https://bugs.webkit.org/show_bug.cgi?id=124046
+
+        Reviewed by Brent Fulgham.
+
+        We do not need to check for a null array three times in
+        the same call. Let's just do it once!
+
+        No new tests. Covered by existing ones.
+
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::associateBufferData):
 
 2014-01-10  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
 
