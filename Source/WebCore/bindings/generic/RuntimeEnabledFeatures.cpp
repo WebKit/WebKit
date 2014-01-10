@@ -71,11 +71,7 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
     , m_isJavaScriptI18NAPIEnabled(false)
 #endif
 #if ENABLE(VIDEO_TRACK)
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(WIN)
     , m_isVideoTrackEnabled(true)
-#else
-    , m_isVideoTrackEnabled(false)
-#endif
 #endif
 #if ENABLE(SHADOW_DOM)
     , m_isShadowDOMEnabled(false)

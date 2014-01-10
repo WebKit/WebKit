@@ -11,16 +11,6 @@ list(APPEND WebCore_IDL_INCLUDES
     bindings/js
 )
 
-if (PORT MATCHES "BlackBerry")
-    list(APPEND WebCore_IDL_INCLUDES
-        testing/js
-    )
-    list(APPEND WebCore_IDL_FILES
-        testing/Internals.idl
-        testing/InternalSettings.idl
-    )
-endif ()
-
 list(APPEND WebCore_SOURCES
     bindings/js/ArrayValue.cpp
     bindings/js/CallbackFunction.cpp

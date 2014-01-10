@@ -1,3 +1,20 @@
+2014-01-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the BlackBerry port from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=126715
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::initProtocolHandlerWhitelist):
+        * UseJSC.cmake:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::GCController):
+        (WebCore::GCController::garbageCollectSoon):
+        * bindings/js/GCController.h:
+
 2014-01-10  Daniel Bates  <dabates@apple.com>
 
         Fix the WebCore, WebKit build targets following <http://trac.webkit.org/changeset/161638>
