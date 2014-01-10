@@ -68,7 +68,7 @@ public:
     void paintText();
     void paintTextInContext(GraphicsContext&, float amountToIncreaseStrokeWidthBy);
 
-    DashArray dashesForIntersectionsWithRect(const FloatRect& lineExtents, int textRunStartIndex, int textRunEndIndex);
+    DashArray dashesForIntersectionsWithRect(const FloatRect& lineExtents);
 
 private:
     bool m_paintSelectedTextOnly;

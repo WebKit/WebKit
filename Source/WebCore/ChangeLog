@@ -1,3 +1,27 @@
+2014-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        text-decoration-skip: ink does not work with line wraps
+        https://bugs.webkit.org/show_bug.cgi?id=126729
+
+        Reviewed by Simon Fraser.
+
+        InlineTextBox's m_start and m_length fields are offsets into the renderer's string,
+        not the generated TextRun. Because of this distinction, when multiple InlineTextBoxes
+        were constructed for the same element, all the subsequent elements would use incorrect
+        indices and therefore not have skipping decorations.
+
+        Test: fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-multiline.html
+
+        * platform/graphics/Font.h:
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::dashesForIntersectionsWithRect):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::drawSkipInkUnderline):
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::dashesForIntersectionsWithRect):
+        * rendering/TextPainter.h:
+
 2014-01-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove remaining blackberry files I could find in WebCore

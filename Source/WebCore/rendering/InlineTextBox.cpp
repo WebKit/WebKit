@@ -118,12 +118,12 @@ static DashArray translateIntersectionPointsToSkipInkBoundaries(const DashArray&
     return result;
 }
 
-static void drawSkipInkUnderline(TextPainter& textPainter, GraphicsContext& context, FloatPoint localOrigin, float underlineOffset, float width, bool isPrinting, int m_start, int m_len)
+static void drawSkipInkUnderline(TextPainter& textPainter, GraphicsContext& context, FloatPoint localOrigin, float underlineOffset, float width, bool isPrinting)
 {
     FloatPoint adjustedLocalOrigin = localOrigin;
     adjustedLocalOrigin.move(0, underlineOffset);
     FloatRect underlineBoundingBox = context.computeLineBoundsForText(adjustedLocalOrigin, width, isPrinting);
-    DashArray intersections = textPainter.dashesForIntersectionsWithRect(underlineBoundingBox, m_start, m_start + m_len);
+    DashArray intersections = textPainter.dashesForIntersectionsWithRect(underlineBoundingBox);
     DashArray a = translateIntersectionPointsToSkipInkBoundaries(intersections, underlineBoundingBox.height(), width);
 
     ASSERT(!(a.size() % 2));
@@ -1185,10 +1185,10 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
                 if (lineStyle.textDecorationSkip() == TextDecorationSkipInk) {
                     if (!context.paintingDisabled()) {
-                        drawSkipInkUnderline(textPainter, context, localOrigin, underlineOffset, width, isPrinting, m_start, m_len);
+                        drawSkipInkUnderline(textPainter, context, localOrigin, underlineOffset, width, isPrinting);
 
                         if (decorationStyle == TextDecorationStyleDouble)
-                            drawSkipInkUnderline(textPainter, context, localOrigin, underlineOffset + doubleOffset, width, isPrinting, m_start, m_len);
+                            drawSkipInkUnderline(textPainter, context, localOrigin, underlineOffset + doubleOffset, width, isPrinting);
                     }
                 } else {
 #endif // CSS3_TEXT_DECORATION_SKIP_INK
@@ -1219,10 +1219,10 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
                 if (lineStyle.textDecorationSkip() == TextDecorationSkipInk) {
                     if (!context.paintingDisabled()) {
-                        drawSkipInkUnderline(textPainter, context, localOrigin, 0, width, isPrinting, m_start, m_len);
+                        drawSkipInkUnderline(textPainter, context, localOrigin, 0, width, isPrinting);
 
                         if (decorationStyle == TextDecorationStyleDouble)
-                            drawSkipInkUnderline(textPainter, context, localOrigin, -doubleOffset, width, isPrinting, m_start, m_len);
+                            drawSkipInkUnderline(textPainter, context, localOrigin, -doubleOffset, width, isPrinting);
                     }
                 } else {
 #endif // CSS3_TEXT_DECORATION_SKIP_INK

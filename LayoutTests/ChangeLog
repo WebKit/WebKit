@@ -1,3 +1,16 @@
+2014-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        text-decoration-skip: ink does not work with line wraps
+        https://bugs.webkit.org/show_bug.cgi?id=126729
+
+        Reviewed by Simon Fraser.
+
+        This test compares rending of a single element that wraps lines with one element per line.
+        Both elements have text-decoration-skip:ink turned on.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-multiline-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-multiline.html: Added.
+
 2014-01-09  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] First line gets incorrectly adjusted in shape-inside due to rounding

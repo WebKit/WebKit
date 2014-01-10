@@ -436,14 +436,14 @@ static void findPathIntersections(void* stateAsVoidPointer, const CGPathElement*
     state.currentPoint = point;
 }
 
-DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, int textRunStartIndex, int textRunEndIndex, const FloatRect& lineExtents) const
+DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
 {
     float deltaX;
     GlyphBuffer glyphBuffer;
     if (codePath(run) != Complex)
-        deltaX = getGlyphsAndAdvancesForSimpleText(run, textRunStartIndex, textRunEndIndex, glyphBuffer);
+        deltaX = getGlyphsAndAdvancesForSimpleText(run, 0, run.length(), glyphBuffer);
     else
-        deltaX = getGlyphsAndAdvancesForComplexText(run, textRunStartIndex, textRunEndIndex, glyphBuffer);
+        deltaX = getGlyphsAndAdvancesForComplexText(run, 0, run.length(), glyphBuffer);
     CGAffineTransform translation = CGAffineTransformMakeTranslation(textOrigin.x() + deltaX, textOrigin.y());
     translation = CGAffineTransformScale(translation, 1, -1);
     DashArray result;

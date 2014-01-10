@@ -177,9 +177,9 @@ void TextPainter::paintTextInContext(GraphicsContext& context, float amountToInc
 }
 
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
-DashArray TextPainter::dashesForIntersectionsWithRect(const FloatRect& lineExtents, int textRunStartIndex, int textRunEndIndex)
+DashArray TextPainter::dashesForIntersectionsWithRect(const FloatRect& lineExtents)
 {
-    return m_font.dashesForIntersectionsWithRect(m_textRun, m_textOrigin, textRunStartIndex, textRunEndIndex, lineExtents);
+    return m_font.dashesForIntersectionsWithRect(m_textRun, m_textOrigin, lineExtents);
 }
 #endif
 
