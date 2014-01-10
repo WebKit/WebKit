@@ -67,12 +67,6 @@ public:
     void setTargetTouches(PassRefPtr<TouchList> targetTouches) { m_targetTouches = targetTouches; }
     void setChangedTouches(PassRefPtr<TouchList> changedTouches) { m_changedTouches = changedTouches; }
 
-#if PLATFORM(BLACKBERRY)
-    void setDoubleTap(bool doubleTap) { m_doubleTap = doubleTap; }
-    bool isDoubleTap() const { return m_doubleTap; }
-    void setTouchHold(bool touchHold) { m_touchHold = touchHold; }
-    bool isTouchHold() const { return m_touchHold; }
-#endif
     virtual bool isTouchEvent() const OVERRIDE;
 
     virtual EventInterface eventInterface() const;
@@ -88,10 +82,6 @@ private:
     RefPtr<TouchList> m_touches;
     RefPtr<TouchList> m_targetTouches;
     RefPtr<TouchList> m_changedTouches;
-#if PLATFORM(BLACKBERRY)
-    bool m_touchHold;
-    bool m_doubleTap;
-#endif
 };
 
 inline TouchEvent* toTouchEvent(Event* event)

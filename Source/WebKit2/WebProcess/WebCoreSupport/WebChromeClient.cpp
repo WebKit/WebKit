@@ -702,9 +702,7 @@ void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIcon
 #if !PLATFORM(IOS)
 void WebChromeClient::setCursor(const WebCore::Cursor& cursor)
 {
-#if USE(LAZY_NATIVE_CURSOR)
     m_page->send(Messages::WebPageProxy::SetCursor(cursor));
-#endif
 }
 
 void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)

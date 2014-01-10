@@ -144,48 +144,6 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
     return ResourceLoadPriorityLow;
 }
 
-#if PLATFORM(BLACKBERRY)
-static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource::Type type)
-{
-    switch (type) {
-    case CachedResource::MainResource:
-        return ResourceRequest::TargetIsMainFrame;
-    case CachedResource::CSSStyleSheet:
-#if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
-#endif
-        return ResourceRequest::TargetIsStyleSheet;
-    case CachedResource::Script: 
-        return ResourceRequest::TargetIsScript;
-    case CachedResource::FontResource:
-        return ResourceRequest::TargetIsFontResource;
-    case CachedResource::ImageResource:
-        return ResourceRequest::TargetIsImage;
-#if ENABLE(CSS_SHADERS)
-    case CachedResource::ShaderResource:
-#endif
-    case CachedResource::RawResource:
-        return ResourceRequest::TargetIsSubresource;    
-#if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkPrefetch:
-        return ResourceRequest::TargetIsPrefetch;
-    case CachedResource::LinkSubresource:
-        return ResourceRequest::TargetIsSubresource;
-#endif
-#if ENABLE(VIDEO_TRACK)
-    case CachedResource::TextTrackResource:
-        return ResourceRequest::TargetIsTextTrack;
-#endif
-#if ENABLE(SVG)
-    case CachedResource::SVGDocumentResource:
-        return ResourceRequest::TargetIsImage;
-#endif
-    }
-    ASSERT_NOT_REACHED();
-    return ResourceRequest::TargetIsSubresource;
-}
-#endif
-
 static double deadDecodedDataDeletionIntervalForResourceType(CachedResource::Type type)
 {
     if (type == CachedResource::Script)
@@ -318,11 +276,6 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
         const URL& documentURL = cachedResourceLoader->frame() ? cachedResourceLoader->frame()->loader().documentLoader()->response().url() : cachedResourceLoader->document()->url();
         m_resourceRequest.setURL(safeQLURLForDocumentURLAndResourceURL(documentURL, url()));
     }
-#endif
-
-#if PLATFORM(BLACKBERRY)
-    if (m_resourceRequest.targetType() == ResourceRequest::TargetIsUnspecified)
-        m_resourceRequest.setTargetType(cachedResourceTypeToTargetType(type()));
 #endif
 
     if (!accept().isEmpty())

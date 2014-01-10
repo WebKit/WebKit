@@ -492,24 +492,6 @@ PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL
         }
     }
 
-#if PLATFORM(BLACKBERRY)
-    ResourceRequest::TargetType target = ResourceRequest::TargetIsUnspecified;
-    if (newestCachedResource) {
-        const String& mimeType = newestCachedResource->response().mimeType();
-        if (!mimeType.isEmpty())
-            target = ResourceRequest::targetTypeFromMimeType(mimeType);
-    }
-    if (target == ResourceRequest::TargetIsUnspecified) {
-        String mimeType;
-        if (url.protocolIsData())
-            mimeType = mimeTypeFromDataURL(url);
-        if (!mimeType.isEmpty())
-            target = ResourceRequest::targetTypeFromMimeType(mimeType);
-    }
-
-    request.setTargetType(target);
-#endif
-
     RefPtr<ResourceHandle> handle = ResourceHandle::create(m_frame->loader().networkingContext(), request, this, false, true);
 #if ENABLE(INSPECTOR)
     // Because willSendRequest only gets called during redirects, we initialize

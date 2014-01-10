@@ -145,8 +145,6 @@ const Cursor& Cursor::fromType(Cursor::Type type)
     return pointerCursor();
 }
 
-#if USE(LAZY_NATIVE_CURSOR)
-
 Cursor::Cursor(Image* image, const IntPoint& hotSpot)
     : m_type(Custom)
     , m_image(image)
@@ -445,7 +443,5 @@ const Cursor& grabbingCursor()
     DEFINE_STATIC_LOCAL(Cursor, c, (Cursor::Grabbing));
     return c;
 }
-
-#endif
 
 } // namespace WebCore

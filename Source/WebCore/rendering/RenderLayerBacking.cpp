@@ -2047,7 +2047,7 @@ bool RenderLayerBacking::paintsIntoWindow() const
         return false;
 
     if (m_owningLayer.isRootLayer()) {
-#if PLATFORM(BLACKBERRY) || PLATFORM(IOS) || USE(COORDINATED_GRAPHICS)
+#if PLATFORM(IOS) || USE(COORDINATED_GRAPHICS)
         if (compositor().inForcedCompositingMode())
             return false;
 #endif

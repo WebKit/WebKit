@@ -43,10 +43,6 @@
 typedef struct objc_object* id;
 #endif
 
-#if PLATFORM(BLACKBERRY)
-#include "HistoryItemViewState.h"
-#endif
-
 namespace WebCore {
 
 class CachedPage;
@@ -199,10 +195,6 @@ public:
     void setTransientProperty(const String&, id);
 #endif
 
-#if PLATFORM(BLACKBERRY)
-    HistoryItemViewState& viewState() { return m_viewState; }
-#endif
-
 #ifndef NDEBUG
     int showTree() const;
     int showTreeWithIndent(unsigned indentLevel) const;
@@ -309,10 +301,6 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<id> m_viewState;
     OwnPtr<HashMap<String, RetainPtr<id>>> m_transientProperties;
-#endif
-
-#if PLATFORM(BLACKBERRY)
-    HistoryItemViewState m_viewState;
 #endif
 }; //class HistoryItem
 

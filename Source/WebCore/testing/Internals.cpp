@@ -1968,7 +1968,7 @@ void Internals::stopTrackingRepaints(ExceptionCode& ec)
     frameView->setTracksRepaints(false);
 }
 
-#if !PLATFORM(IOS) && USE(LAZY_NATIVE_CURSOR)
+#if !PLATFORM(IOS)
 static const char* cursorTypeToString(Cursor::Type cursorType)
 {
     switch (cursorType) {
@@ -2031,7 +2031,7 @@ String Internals::getCurrentCursorInfo(ExceptionCode& ec)
         return String();
     }
 
-#if !PLATFORM(IOS) && USE(LAZY_NATIVE_CURSOR)
+#if !PLATFORM(IOS)
     Cursor cursor = document->frame()->eventHandler().currentMouseCursor();
 
     StringBuilder result;

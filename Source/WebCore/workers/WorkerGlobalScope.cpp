@@ -227,9 +227,6 @@ void WorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode&
 
     for (Vector<URL>::const_iterator it = completedURLs.begin(); it != end; ++it) {
         RefPtr<WorkerScriptLoader> scriptLoader(WorkerScriptLoader::create());
-#if PLATFORM(BLACKBERRY)
-        scriptLoader->setTargetType(ResourceRequest::TargetIsScript);
-#endif
         scriptLoader->loadSynchronously(scriptExecutionContext(), *it, AllowCrossOriginRequests);
 
         // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.

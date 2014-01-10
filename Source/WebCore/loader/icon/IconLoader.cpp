@@ -60,9 +60,6 @@ void IconLoader::startLoading()
 
     CachedResourceRequest request(ResourceRequest(m_frame.loader().icon().url()), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForAnyCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
 
-#if PLATFORM(BLACKBERRY)
-    request.mutableResourceRequest().setTargetType(ResourceRequest::TargetIsFavicon);
-#endif
     request.mutableResourceRequest().setPriority(ResourceLoadPriorityLow);
     request.setInitiator(cachedResourceRequestInitiators().icon);
 

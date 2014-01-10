@@ -1725,7 +1725,7 @@ bool RenderObject::isRooted(RenderView** view) const
 
 RespectImageOrientationEnum RenderObject::shouldRespectImageOrientation() const
 {
-#if USE(CG) || USE(CAIRO) || PLATFORM(BLACKBERRY)
+#if USE(CG) || USE(CAIRO)
     // This can only be enabled for ports which honor the orientation flag in their drawing code.
     if (document().isImageDocument())
         return RespectImageOrientation;

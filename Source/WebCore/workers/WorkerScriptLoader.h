@@ -71,10 +71,6 @@ namespace WebCore {
         virtual void didFail(const ResourceError&) OVERRIDE;
         virtual void didFailRedirectCheck() OVERRIDE;
 
-#if PLATFORM(BLACKBERRY)
-        void setTargetType(ResourceRequest::TargetType targetType) { m_targetType = targetType; }
-#endif
-
     private:
         friend class WTF::RefCounted<WorkerScriptLoader>;
 
@@ -94,9 +90,6 @@ namespace WebCore {
         bool m_failed;
         unsigned long m_identifier;
         bool m_finishing;
-#if PLATFORM(BLACKBERRY)
-        ResourceRequest::TargetType m_targetType;
-#endif
     };
 
 } // namespace WebCore

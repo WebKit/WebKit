@@ -5,6 +5,60 @@
 
         Reviewed by Anders Carlsson.
 
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEvent::TouchEvent):
+        (WebCore::TouchEvent::initTouchEvent):
+        * dom/TouchEvent.h:
+        * dom/ViewportArguments.cpp:
+        * dom/ViewportArguments.h:
+        * history/HistoryItem.h:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::createResourceHandle):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        * page/NavigatorBase.cpp:
+        * page/Settings.cpp:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::create):
+        * platform/Cursor.cpp:
+        * platform/Cursor.h:
+        (WebCore::Cursor::Cursor):
+        * platform/DragData.h:
+        * platform/DragImage.h:
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintsIntoWindow):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldRespectImageOrientation):
+        * testing/Internals.cpp:
+        (WebCore::Internals::getCurrentCursorInfo):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::load):
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::importScripts):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::createResourceRequest):
+        * workers/WorkerScriptLoader.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
+2014-01-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the BlackBerry port from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=126715
+
+        Reviewed by Anders Carlsson.
+
         * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
         (WebCore::initProtocolHandlerWhitelist):
         * UseJSC.cmake:

@@ -5,6 +5,16 @@
 
         Reviewed by Anders Carlsson.
 
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setCursor):
+
+2014-01-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the BlackBerry port from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=126715
+
+        Reviewed by Anders Carlsson.
+
         * Scripts/generate-forwarding-headers.pl:
 
 2014-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>

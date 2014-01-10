@@ -103,9 +103,6 @@ PassOwnPtr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
 {
     OwnPtr<ResourceRequest> request = adoptPtr(new ResourceRequest(m_url));
     request->setHTTPMethod("GET");
-#if PLATFORM(BLACKBERRY)
-    request->setTargetType(m_targetType);
-#endif
     return request.release();
 }
     

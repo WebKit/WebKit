@@ -57,9 +57,6 @@ void PingLoader::loadImage(Frame* frame, const URL& url)
     }
 
     ResourceRequest request(url);
-#if PLATFORM(BLACKBERRY)
-    request.setTargetType(ResourceRequest::TargetIsImage);
-#endif
     request.setHTTPHeaderField("Cache-Control", "max-age=0");
     String referrer = SecurityPolicy::generateReferrerHeader(frame->document()->referrerPolicy(), request.url(), frame->loader().outgoingReferrer());
     if (!referrer.isEmpty())
@@ -73,9 +70,6 @@ void PingLoader::loadImage(Frame* frame, const URL& url)
 void PingLoader::sendPing(Frame* frame, const URL& pingURL, const URL& destinationURL)
 {
     ResourceRequest request(pingURL);
-#if PLATFORM(BLACKBERRY)
-    request.setTargetType(ResourceRequest::TargetIsSubresource);
-#endif
     request.setHTTPMethod("POST");
     request.setHTTPContentType("text/ping");
     request.setHTTPBody(FormData::create("PING"));
@@ -101,9 +95,6 @@ void PingLoader::sendPing(Frame* frame, const URL& pingURL, const URL& destinati
 void PingLoader::sendViolationReport(Frame* frame, const URL& reportURL, PassRefPtr<FormData> report)
 {
     ResourceRequest request(reportURL);
-#if PLATFORM(BLACKBERRY)
-    request.setTargetType(ResourceRequest::TargetIsSubresource);
-#endif
     request.setHTTPMethod("POST");
     request.setHTTPContentType("application/json");
     request.setHTTPBody(report);
