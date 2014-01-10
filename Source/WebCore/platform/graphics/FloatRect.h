@@ -46,14 +46,6 @@ typedef struct _NSRect NSRect;
 #endif
 #endif // PLATFORM(MAC) && !PLATFORM(IOS)
 
-#if PLATFORM(BLACKBERRY)
-namespace BlackBerry {
-namespace Platform {
-class FloatRect;
-}
-}
-#endif
-
 #if USE(CAIRO)
 typedef struct _cairo_rectangle cairo_rectangle_t;
 #endif
@@ -173,12 +165,6 @@ public:
     void fitToPoints(const FloatPoint& p0, const FloatPoint& p1);
     void fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2);
     void fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& p3);
-
-#if PLATFORM(BLACKBERRY)
-    FloatRect(const BlackBerry::Platform::FloatRect&);
-    operator BlackBerry::Platform::FloatRect() const;
-    FloatRect normalized() const;
-#endif
 
 #if USE(CG)
     FloatRect(const CGRect&);

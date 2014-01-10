@@ -63,9 +63,6 @@ DisplayRefreshMonitor::DisplayRefreshMonitor(PlatformDisplayID displayID)
 #if PLATFORM(MAC)
     , m_displayLink(0)
 #endif
-#if PLATFORM(BLACKBERRY)
-    , m_animationClient(0)
-#endif
 {
 }
 

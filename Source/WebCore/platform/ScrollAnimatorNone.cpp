@@ -51,14 +51,12 @@ const double kTickTime = 1 / kFrameRate;
 const double kMinimumTimerInterval = .001;
 const double kZoomTicks = 11;
 
-#if !(PLATFORM(BLACKBERRY))
 PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
 {
     if (scrollableArea && scrollableArea->scrollAnimatorEnabled())
         return adoptPtr(new ScrollAnimatorNone(scrollableArea));
     return adoptPtr(new ScrollAnimator(scrollableArea));
 }
-#endif
 
 ScrollAnimatorNone::Parameters::Parameters()
     : m_isEnabled(false)

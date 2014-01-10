@@ -31,14 +31,6 @@
 #include "IntPoint.h"
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(BLACKBERRY)
-namespace BlackBerry {
-namespace Platform {
-class FloatSize;
-}
-}
-#endif
-
 #if PLATFORM(IOS)
 #include <CoreGraphics/CoreGraphics.h>
 #endif
@@ -115,11 +107,6 @@ public:
     {
         return FloatSize(m_height, m_width);
     }
-
-#if PLATFORM(BLACKBERRY)
-    FloatSize(const BlackBerry::Platform::FloatSize&);
-    operator BlackBerry::Platform::FloatSize() const;
-#endif
 
 #if USE(CG)
     explicit FloatSize(const CGSize&); // don't do this implicitly since it's lossy

@@ -310,9 +310,6 @@ static void initializeSupportedImageMIMETypesForEncoding()
     supportedImageMIMETypesForEncoding->add("image/ico");
 #elif USE(CAIRO)
     supportedImageMIMETypesForEncoding->add("image/png");
-#elif PLATFORM(BLACKBERRY)
-    supportedImageMIMETypesForEncoding->add("image/png");
-    supportedImageMIMETypesForEncoding->add("image/jpeg");
 #endif
 }
 
@@ -686,14 +683,14 @@ const String& defaultMIMEType()
     return defaultMIMEType;
 }
 
-#if !PLATFORM(BLACKBERRY) && !USE(CURL)
+#if !USE(CURL)
 String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
 {
     return mimeType;
 }
 #endif
 
-#if PLATFORM(BLACKBERRY) || USE(CURL)
+#if USE(CURL)
 typedef HashMap<String, String> MIMETypeAssociationMap;
 
 static const MIMETypeAssociationMap& mimeTypeAssociationMap()

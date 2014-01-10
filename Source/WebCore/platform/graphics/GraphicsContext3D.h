@@ -26,6 +26,7 @@
 #ifndef GraphicsContext3D_h
 #define GraphicsContext3D_h
 
+#include "ANGLEWebKitBridge.h"
 #include "GraphicsTypes3D.h"
 #include "Image.h"
 #include "IntRect.h"
@@ -47,10 +48,6 @@
 #elif PLATFORM(GTK)
 // This define is from the X11 headers, but it's used below, so we must undefine it.
 #undef VERSION
-#endif
-
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(WIN) || PLATFORM(NIX)
-#include "ANGLEWebKitBridge.h"
 #endif
 
 #if PLATFORM(MAC)
@@ -103,8 +100,6 @@ class IntRect;
 class IntSize;
 #if USE(CAIRO)
 class PlatformContextCairo;
-#elif PLATFORM(BLACKBERRY)
-class GraphicsContext;
 #endif
 
 typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
@@ -502,10 +497,8 @@ public:
 
     bool makeContextCurrent();
 
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(WIN) || PLATFORM(NIX)
     // With multisampling on, blit from multisampleFBO to regular FBO.
     void prepareTexture();
-#endif
 
     // Equivalent to ::glTexImage2D(). Allows pixels==0 with no allocation.
     void texImage2DDirect(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels);
@@ -793,7 +786,7 @@ public:
 #if PLATFORM(GTK) || PLATFORM(EFL) || USE(CAIRO)
     void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
                        int canvasWidth, int canvasHeight, PlatformContextCairo* context);
-#elif PLATFORM(BLACKBERRY) || USE(CG)
+#elif USE(CG)
     void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
                        int canvasWidth, int canvasHeight, GraphicsContext*);
 #endif
@@ -808,10 +801,6 @@ public:
 
 #if PLATFORM(IOS)
     void endPaint();
-#endif
-
-#if PLATFORM(BLACKBERRY)
-    bool paintsIntoCanvasBuffer() const;
 #endif
 
     // Support for buffer creation and deletion
@@ -914,8 +903,6 @@ public:
         RetainPtr<CGImageRef> m_decodedImage;
         RetainPtr<CFDataRef> m_pixelData;
         std::unique_ptr<uint8_t[]> m_formalizedRGBA8Data;
-#elif PLATFORM(BLACKBERRY)
-        Vector<unsigned> m_imageData;
 #endif
         Image* m_image;
         ImageHtmlDomSource m_imageHtmlDomSource;
@@ -938,7 +925,6 @@ private:
     // Destination data will have no gaps between rows.
     static bool packPixels(const uint8_t* sourceData, DataFormat sourceDataFormat, unsigned width, unsigned height, unsigned sourceUnpackAlignment, unsigned destinationFormat, unsigned destinationType, AlphaOp, void* destinationData, bool flipY);
 
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(WIN) || PLATFORM(NIX)
     // Take into account the user's requested context creation attributes,
     // in particular stencil and antialias, and determine which could or
     // could not be honored based on the capabilities of the OpenGL
@@ -950,15 +936,9 @@ private:
     // backbuffer.
     void readRenderingResults(unsigned char* pixels, int pixelsSize);
     void readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels);
-#endif
 
 #if PLATFORM(IOS)
     bool setRenderbufferStorageFromDrawable(GC3Dsizei width, GC3Dsizei height);
-#endif
-
-#if PLATFORM(BLACKBERRY)
-    void logFrameBufferStatus(int line);
-    void readPixelsIMG(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data);
 #endif
 
     bool reshapeFBOs(const IntSize&);
@@ -978,14 +958,8 @@ private:
     RetainPtr<WebGLLayer> m_webGLLayer;
 #elif PLATFORM(WIN) && USE(CA)
     RefPtr<PlatformCALayer> m_webGLLayer;
-#elif PLATFORM(BLACKBERRY)
-#if USE(ACCELERATED_COMPOSITING)
-    RefPtr<PlatformLayer> m_compositingLayer;
-#endif
-    void* m_context;
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(WIN) || PLATFORM(NIX)
     struct SymbolInfo {
         SymbolInfo()
             : type(0)
@@ -1072,9 +1046,8 @@ private:
     ANGLEWebKitBridge m_compiler;
 
     OwnPtr<ShaderNameHash> nameHashMapForShaders;
-#endif
 
-#if PLATFORM(BLACKBERRY) || ((PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(NIX)) && USE(OPENGL_ES_2))
+#if ((PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(NIX)) && USE(OPENGL_ES_2))
     friend class Extensions3DOpenGLES;
     OwnPtr<Extensions3DOpenGLES> m_extensions;
 #else
@@ -1088,15 +1061,11 @@ private:
     Vector<Vector<float>> m_vertexArray;
 
     GC3Duint m_texture;
-#if !PLATFORM(BLACKBERRY)
     GC3Duint m_compositorTexture;
-#endif
     GC3Duint m_fbo;
 
-#if !PLATFORM(BLACKBERRY)
     GC3Duint m_depthBuffer;
     GC3Duint m_stencilBuffer;
-#endif
     GC3Duint m_depthStencilBuffer;
 
     bool m_layerComposited;
@@ -1124,14 +1093,8 @@ private:
     // Errors raised by synthesizeGLError().
     ListHashSet<GC3Denum> m_syntheticErrors;
 
-#if PLATFORM(BLACKBERRY)
-    bool m_isImaginationHardware;
-#endif
-
-#if !PLATFORM(BLACKBERRY)
     friend class GraphicsContext3DPrivate;
     OwnPtr<GraphicsContext3DPrivate> m_private;
-#endif
 };
 
 } // namespace WebCore

@@ -48,15 +48,6 @@ class PlatformContextCairo;
 typedef WebCore::PlatformContextCairo PlatformGraphicsContext;
 #elif USE(WINGDI)
 typedef struct HDC__ PlatformGraphicsContext;
-#elif PLATFORM(BLACKBERRY)
-namespace BlackBerry {
-namespace Platform {
-namespace Graphics {
-class PlatformGraphicsContext;
-}
-}
-}
-using BlackBerry::Platform::Graphics::PlatformGraphicsContext;
 #else
 typedef void PlatformGraphicsContext;
 #endif

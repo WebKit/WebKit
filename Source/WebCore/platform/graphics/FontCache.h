@@ -161,11 +161,7 @@ public:
         bool isBold;
         bool isItalic;
     };
-#if PLATFORM(BLACKBERRY)
-    static void getFontFamilyForCharacters(const UChar* characters, size_t numCharacters, const char* preferredLocale, const FontDescription&, SimpleFontFamily*);
-#else
     static void getFontFamilyForCharacters(const UChar* characters, size_t numCharacters, const char* preferredLocale, SimpleFontFamily*);
-#endif
 
 private:
     FontCache();

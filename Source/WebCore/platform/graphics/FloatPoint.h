@@ -31,14 +31,6 @@
 #include "IntPoint.h"
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(BLACKBERRY)
-namespace BlackBerry {
-namespace Platform {
-class FloatPoint;
-}
-}
-#endif
-
 #if USE(CG)
 typedef struct CGPoint CGPoint;
 #endif
@@ -145,11 +137,6 @@ public:
     operator NSPoint() const;
 #endif
 #endif // !PLATFORM(IOS)
-
-#if PLATFORM(BLACKBERRY)
-    FloatPoint(const BlackBerry::Platform::FloatPoint&);
-    operator BlackBerry::Platform::FloatPoint() const;
-#endif
 
     FloatPoint matrixTransform(const TransformationMatrix&) const;
     FloatPoint matrixTransform(const AffineTransform&) const;

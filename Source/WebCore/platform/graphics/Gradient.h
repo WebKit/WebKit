@@ -45,15 +45,6 @@ typedef CGGradientRef PlatformGradient;
 #elif USE(CAIRO)
 typedef struct _cairo_pattern cairo_pattern_t;
 typedef cairo_pattern_t* PlatformGradient;
-#elif PLATFORM(BLACKBERRY)
-namespace BlackBerry {
-namespace Platform {
-namespace Graphics {
-class Gradient;
-}
-}
-}
-typedef BlackBerry::Platform::Graphics::Gradient* PlatformGradient;
 #else
 typedef void* PlatformGradient;
 #endif

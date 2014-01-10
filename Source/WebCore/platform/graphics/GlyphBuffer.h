@@ -51,8 +51,6 @@ class SimpleFontData;
 typedef cairo_glyph_t GlyphBufferGlyph;
 #elif USE(WINGDI)
 typedef wchar_t GlyphBufferGlyph;
-#elif PLATFORM(BLACKBERRY)
-typedef unsigned GlyphBufferGlyph;
 #else
 typedef Glyph GlyphBufferGlyph;
 #endif

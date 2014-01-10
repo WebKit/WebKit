@@ -1,3 +1,39 @@
+2014-01-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the BlackBerry port from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=126715
+
+        Reviewed by Anders Carlsson.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformTouchEvent.h:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        * platform/PlatformTouchPoint.h:
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimator::create):
+        * platform/URL.cpp:
+        (WebCore::URL::parse):
+        (WebCore::portAllowed):
+        * platform/Widget.h:
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::DisplayRefreshMonitor):
+        * platform/graphics/DisplayRefreshMonitor.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/GlyphBuffer.h:
+        * platform/graphics/Gradient.cpp:
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+
 2014-01-10  Timothy Hatcher  <timothy@apple.com>
 
         Clean up and fix some issues with stdout formatting of console messages.

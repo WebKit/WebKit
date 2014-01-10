@@ -1128,17 +1128,6 @@ void URL::parse(const char* url, const String* originalString)
         && isLetterMatchIgnoringCase(url[2], 'l')
         && isLetterMatchIgnoringCase(url[3], 'e');
 
-#if PLATFORM(BLACKBERRY)
-    // Parse local: urls the same as file: urls.
-    if (!isFile)
-        isFile = schemeEnd == 5
-            && isLetterMatchIgnoringCase(url[0], 'l')
-            && isLetterMatchIgnoringCase(url[1], 'o')
-            && isLetterMatchIgnoringCase(url[2], 'c')
-            && isLetterMatchIgnoringCase(url[3], 'a')
-            && isLetterMatchIgnoringCase(url[4], 'l');
-#endif
-
     m_protocolIsInHTTPFamily = isLetterMatchIgnoringCase(url[0], 'h')
         && isLetterMatchIgnoringCase(url[1], 't')
         && isLetterMatchIgnoringCase(url[2], 't')
@@ -1914,11 +1903,6 @@ bool portAllowed(const URL& url)
     // Allow any port number in a file URL, since the port number is ignored.
     if (url.protocolIs("file"))
         return true;
-
-#if PLATFORM(BLACKBERRY)
-    if (url.protocolIs("local"))
-        return true;
-#endif
 
     return false;
 }
