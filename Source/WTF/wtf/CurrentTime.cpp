@@ -238,16 +238,6 @@ double currentTime()
     return ecore_time_unix_get();
 }
 
-#elif OS(QNX)
-
-double currentTime()
-{
-    struct timespec time;
-    if (clock_gettime(CLOCK_REALTIME, &time))
-        CRASH();
-    return time.tv_sec + time.tv_nsec / 1.0e9;
-}
-
 #else
 
 double currentTime()
@@ -284,16 +274,6 @@ double monotonicallyIncreasingTime()
 double monotonicallyIncreasingTime()
 {
     return static_cast<double>(g_get_monotonic_time() / 1000000.0);
-}
-
-#elif OS(QNX)
-
-double monotonicallyIncreasingTime()
-{
-    struct timespec time;
-    if (clock_gettime(CLOCK_MONOTONIC, &time))
-        CRASH();
-    return time.tv_sec + time.tv_nsec / 1.0e9;
 }
 
 #else
@@ -338,11 +318,6 @@ double currentCPUTime()
     GetThreadTimes(GetCurrentThread(), &creationTime, &exitTime, &kernelTime.fileTime, &userTime.fileTime);
     
     return userTime.fileTimeAsLong / 10000000. + kernelTime.fileTimeAsLong / 10000000.;
-#elif OS(QNX)
-    struct timespec time;
-    if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &time))
-        CRASH();
-    return time.tv_sec + time.tv_nsec / 1.0e9;
 #else
     // FIXME: We should return the time the current thread has spent executing.
 

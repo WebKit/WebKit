@@ -382,11 +382,6 @@
 #define WTF_OS_OPENBSD 1
 #endif
 
-/* OS(QNX) - QNX */
-#if defined(__QNXNTO__)
-#define WTF_OS_QNX 1
-#endif
-
 /* OS(SOLARIS) - Solaris */
 #if defined(sun) || defined(__sun)
 #define WTF_OS_SOLARIS 1
@@ -413,7 +408,6 @@
     || OS(LINUX)            \
     || OS(NETBSD)           \
     || OS(OPENBSD)          \
-    || OS(QNX)              \
     || OS(SOLARIS)          \
     || defined(unix)        \
     || defined(__unix)      \
@@ -426,15 +420,12 @@
 /* FIXME: these are all mixes of OS, operating environment and policy choices. */
 /* PLATFORM(EFL) */
 /* PLATFORM(GTK) */
-/* PLATFORM(BLACKBERRY) */
 /* PLATFORM(MAC) */
 /* PLATFORM(WIN) */
 #if defined(BUILDING_EFL__)
 #define WTF_PLATFORM_EFL 1
 #elif defined(BUILDING_GTK__)
 #define WTF_PLATFORM_GTK 1
-#elif defined(BUILDING_BLACKBERRY__)
-#define WTF_PLATFORM_BLACKBERRY 1
 #elif defined(BUILDING_NIX__)
 #include "nix/PlatformNix.h"
 #elif OS(DARWIN)
@@ -463,12 +454,6 @@
 #endif
 #if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && USE(CG))
 #define WTF_USE_CA 1
-#endif
-
-#if PLATFORM(BLACKBERRY)
-#define WTF_USE_LOW_QUALITY_IMAGE_INTERPOLATION 1
-#define WTF_USE_LOW_QUALITY_IMAGE_NO_JPEG_DITHERING 1
-#define WTF_USE_LOW_QUALITY_IMAGE_NO_JPEG_FANCY_UPSAMPLING 1
 #endif
 
 #if PLATFORM(GTK)
@@ -560,7 +545,7 @@
 #define WTF_USE_PTHREADS 1
 #endif /* OS(UNIX) */
 
-#if OS(UNIX) && !OS(QNX)
+#if OS(UNIX)
 #define HAVE_LANGINFO_H 1
 #endif
 
@@ -569,7 +554,7 @@
 #endif
 
 #if !defined(HAVE_VASPRINTF)
-#if !COMPILER(MSVC) && !COMPILER(MINGW) && !(COMPILER(GCC) && OS(QNX))
+#if !COMPILER(MSVC) && !COMPILER(MINGW)
 #define HAVE_VASPRINTF 1
 #endif
 #endif
@@ -613,11 +598,6 @@
 
 #if OS(WINDOWS)
 #define HAVE_VIRTUALALLOC 1
-#endif
-
-#if OS(QNX)
-#define HAVE_MADV_FREE_REUSE 1
-#define HAVE_MADV_FREE 1
 #endif
 
 /* ENABLE macro defaults */
@@ -683,7 +663,6 @@
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
     && (OS(DARWIN) || !COMPILER(GCC) || GCC_VERSION_AT_LEAST(4, 1, 0)) \
     && !OS(WINCE) \
-    && !OS(QNX) \
     && !(OS(WINDOWS) && CPU(X86_64))
 #define ENABLE_JIT 1
 #endif
@@ -739,7 +718,7 @@
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARMv7.  Only tested on iOS and Qt/GTK+ Linux. */
-#if (CPU(ARM_THUMB2) || CPU(ARM64)) && (PLATFORM(IOS) || PLATFORM(BLACKBERRY) || PLATFORM(GTK))
+#if (CPU(ARM_THUMB2) || CPU(ARM64)) && (PLATFORM(IOS) || PLATFORM(GTK))
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARM, MIPS and SH4. */
@@ -960,7 +939,7 @@
 
 #define ENABLE_OBJECT_MARK_LOGGING 0
 
-#if !defined(ENABLE_PARALLEL_GC) && !ENABLE(OBJECT_MARK_LOGGING) && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(BLACKBERRY) || PLATFORM(GTK)) && ENABLE(COMPARE_AND_SWAP)
+#if !defined(ENABLE_PARALLEL_GC) && !ENABLE(OBJECT_MARK_LOGGING) && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(GTK)) && ENABLE(COMPARE_AND_SWAP)
 #define ENABLE_PARALLEL_GC 1
 #endif
 
@@ -1021,7 +1000,7 @@
 
 #define WTF_USE_GRAMMAR_CHECKING 1
 
-#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(BLACKBERRY) || PLATFORM(EFL)
+#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(EFL)
 #define WTF_USE_UNIFIED_TEXT_CHECKING 1
 #endif
 #if !PLATFORM(IOS) && PLATFORM(MAC)

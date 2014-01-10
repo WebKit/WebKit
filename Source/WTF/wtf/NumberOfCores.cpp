@@ -36,8 +36,6 @@
 #include <unistd.h>
 #elif OS(WINDOWS)
 #include <windows.h>
-#elif OS(QNX)
-#include <sys/syspage.h>
 #endif
 
 namespace WTF {
@@ -70,10 +68,6 @@ int numberOfProcessorCores()
     GetSystemInfo(&sysInfo);
 
     s_numberOfCores = sysInfo.dwNumberOfProcessors;
-#elif OS(QNX)
-    UNUSED_PARAM(defaultIfUnavailable);
-
-    s_numberOfCores = _syspage_ptr->num_cpu;
 #else
     s_numberOfCores = defaultIfUnavailable;
 #endif

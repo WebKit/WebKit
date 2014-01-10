@@ -68,8 +68,6 @@ extern "C" void _ReadWriteBarrier(void);
 #pragma intrinsic(_ReadWriteBarrier)
 #endif
 #include <windows.h>
-#elif OS(QNX)
-#include <atomic.h>
 #endif
 
 namespace WTF {
@@ -92,12 +90,6 @@ inline int atomicDecrement(int volatile* addend) { return InterlockedDecrement(r
 inline int64_t atomicIncrement(int64_t volatile* addend) { return InterlockedIncrement64(reinterpret_cast<long long volatile*>(addend)); }
 inline int64_t atomicDecrement(int64_t volatile* addend) { return InterlockedDecrement64(reinterpret_cast<long long volatile*>(addend)); }
 #endif
-
-#elif OS(QNX)
-
-// Note, atomic_{add, sub}_value() return the previous value of addend's content.
-inline int atomicIncrement(int volatile* addend) { return static_cast<int>(atomic_add_value(reinterpret_cast<unsigned volatile*>(addend), 1)) + 1; }
-inline int atomicDecrement(int volatile* addend) { return static_cast<int>(atomic_sub_value(reinterpret_cast<unsigned volatile*>(addend), 1)) - 1; }
 
 #elif COMPILER(GCC)
 

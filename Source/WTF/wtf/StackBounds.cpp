@@ -35,15 +35,6 @@
 
 #include <thread.h>
 
-#elif OS(QNX)
-
-#include <errno.h>
-#include <fcntl.h>
-#include <pthread.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/procfs.h>
-
 #elif OS(UNIX)
 
 #include <pthread.h>
@@ -72,31 +63,6 @@ void StackBounds::initialize()
         size = pthread_get_stacksize_np(thread);
 
     m_bound = static_cast<char*>(m_origin) - size;
-}
-
-#elif OS(QNX)
-
-void StackBounds::initialize()
-{
-    void* stackBase = 0;
-    size_t stackSize = 0;
-
-    struct _debug_thread_info threadInfo;
-    memset(&threadInfo, 0, sizeof(threadInfo));
-    threadInfo.tid = pthread_self();
-    int fd = open("/proc/self", O_RDONLY);
-    if (fd == -1) {
-        LOG_ERROR("Unable to open /proc/self (errno: %d)", errno);
-        CRASH();
-    }
-    devctl(fd, DCMD_PROC_TIDSTATUS, &threadInfo, sizeof(threadInfo), 0);
-    close(fd);
-    stackBase = reinterpret_cast<void*>(threadInfo.stkbase);
-    stackSize = threadInfo.stksize;
-    ASSERT(stackBase);
-
-    m_bound = static_cast<char*>(stackBase) + 0x1000; // 4kb guard page
-    m_origin = static_cast<char*>(stackBase) + stackSize;
 }
 
 #elif OS(SOLARIS)

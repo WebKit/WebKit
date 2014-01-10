@@ -43,18 +43,6 @@
 #include <machine/ieee.h>
 #endif
 
-#if OS(QNX)
-// FIXME: Look into a way to have cmath import its functions into both the standard and global
-// namespace. For now, we include math.h since the QNX cmath header only imports its functions
-// into the standard namespace.
-#include <math.h>
-// These macros from math.h conflict with the real functions in the std namespace.
-#undef signbit
-#undef isnan
-#undef isinf
-#undef isfinite
-#endif
-
 #ifndef M_PI
 const double piDouble = 3.14159265358979323846;
 const float piFloat = 3.14159265358979323846f;
@@ -119,11 +107,6 @@ inline bool signbit(double x) { struct ieee_double *p = (struct ieee_double *)&x
 
 } // namespace std
 
-#endif
-
-#if COMPILER(GCC) && OS(QNX)
-// The stdlib on QNX doesn't contain long abs(long). See PR #104666.
-inline long long abs(long num) { return labs(num); }
 #endif
 
 #if COMPILER(MSVC)

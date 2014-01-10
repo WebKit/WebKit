@@ -334,15 +334,6 @@
 
 #endif /* PLATFORM(GTK) */
 
-/* --------- Blackberry port (QNX) --------- */
-#if PLATFORM(BLACKBERRY)
-
-#if !defined(ENABLE_BLACKBERRY_CREDENTIAL_PERSIST)
-#define ENABLE_BLACKBERRY_CREDENTIAL_PERSIST 1
-#endif
-
-#endif /* PLATFORM(BLACKBERRY) */
-
 /* ENABLE macro defaults for WebCore */
 /* Do not use PLATFORM() tests in this section ! */
 
