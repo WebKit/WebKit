@@ -52,6 +52,7 @@
 
 #include "HeapBlock.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -99,6 +100,9 @@ public:
 
     size_t size();
     bool isEmpty();
+
+    void fillVector(Vector<const JSCell*>&);
+    void clear();
 
 private:
     template <size_t size> struct CapacityFromSize {

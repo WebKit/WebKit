@@ -196,7 +196,7 @@ inline size_t Bitmap<size, atomicMode, WordType>::count(size_t start) const
             ++result;
     }
     for (size_t i = start / wordSize; i < words; ++i)
-        result += WTF::bitCount(bits[i]);
+        result += WTF::bitCount(static_cast<unsigned>(bits[i]));
     return result;
 }
 

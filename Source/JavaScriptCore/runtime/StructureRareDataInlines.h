@@ -35,9 +35,9 @@ inline Structure* StructureRareData::previousID() const
     return m_previous.get();
 }
 
-inline void StructureRareData::setPreviousID(VM& vm, Structure* transition, Structure* structure)
+inline void StructureRareData::setPreviousID(VM& vm, Structure*, Structure* structure)
 {
-    m_previous.set(vm, transition, structure);
+    m_previous.set(vm, this, structure);
 }
 
 inline void StructureRareData::clearPreviousID()
@@ -50,9 +50,9 @@ inline JSString* StructureRareData::objectToStringValue() const
     return m_objectToStringValue.get();
 }
 
-inline void StructureRareData::setObjectToStringValue(VM& vm, const JSCell* owner, JSString* value)
+inline void StructureRareData::setObjectToStringValue(VM& vm, const JSCell*, JSString* value)
 {
-    m_objectToStringValue.set(vm, owner, value);
+    m_objectToStringValue.set(vm, this, value);
 }
 
 } // namespace JSC

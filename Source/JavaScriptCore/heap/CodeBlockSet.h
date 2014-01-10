@@ -30,10 +30,12 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
 class CodeBlock;
+class Heap;
 class SlotVisitor;
 
 // CodeBlockSet tracks all CodeBlocks. Every CodeBlock starts out with one
@@ -65,11 +67,16 @@ public:
     // mayBeExecuting.
     void traceMarked(SlotVisitor&);
 
+    // Add all currently executing CodeBlocks to the remembered set to be 
+    // re-scanned during the next collection.
+    void rememberCurrentlyExecutingCodeBlocks(Heap*);
+
 private:
     // This is not a set of RefPtr<CodeBlock> because we need to be able to find
     // arbitrary bogus pointers. I could have written a thingy that had peek types
     // and all, but that seemed like overkill.
     HashSet<CodeBlock* > m_set;
+    Vector<CodeBlock*> m_currentlyExecuting;
 };
 
 } // namespace JSC

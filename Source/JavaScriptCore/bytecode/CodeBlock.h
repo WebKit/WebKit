@@ -1269,6 +1269,9 @@ inline void CodeBlockSet::mark(void* candidateCodeBlock)
         return;
     
     (*iter)->m_mayBeExecuting = true;
+#if ENABLE(GGC)
+    m_currentlyExecuting.append(static_cast<CodeBlock*>(candidateCodeBlock));
+#endif
 }
 
 } // namespace JSC

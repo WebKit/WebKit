@@ -105,6 +105,7 @@ MarkedSpace::~MarkedSpace()
 {
     Free free(Free::FreeAll, this);
     forEachBlock(free);
+    ASSERT(!m_blocks.set().size());
 }
 
 struct LastChanceToFinalize : MarkedBlock::VoidFunctor {
@@ -143,17 +144,27 @@ void MarkedSpace::resetAllocators()
     m_normalSpace.largeAllocator.reset();
     m_normalDestructorSpace.largeAllocator.reset();
     m_immortalStructureDestructorSpace.largeAllocator.reset();
+
+    m_blocksWithNewObjects.clear();
 }
 
 void MarkedSpace::visitWeakSets(HeapRootVisitor& heapRootVisitor)
 {
     VisitWeakSet visitWeakSet(heapRootVisitor);
-    forEachBlock(visitWeakSet);
+    if (m_heap->operationInProgress() == EdenCollection) {
+        for (unsigned i = 0; i < m_blocksWithNewObjects.size(); ++i)
+            visitWeakSet(m_blocksWithNewObjects[i]);
+    } else
+        forEachBlock(visitWeakSet);
 }
 
 void MarkedSpace::reapWeakSets()
 {
-    forEachBlock<ReapWeakSet>();
+    if (m_heap->operationInProgress() == EdenCollection) {
+        for (unsigned i = 0; i < m_blocksWithNewObjects.size(); ++i)
+            m_blocksWithNewObjects[i]->reapWeakSet();
+    } else
+        forEachBlock<ReapWeakSet>();
 }
 
 template <typename Functor>
@@ -302,6 +313,24 @@ void MarkedSpace::clearNewlyAllocated()
 #ifndef NDEBUG
     VerifyNewlyAllocated verifyFunctor;
     forEachBlock(verifyFunctor);
+#endif
+}
+
+#ifndef NDEBUG
+struct VerifyMarked : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock* block) { ASSERT(block->needsSweeping()); }
+};
+#endif
+
+void MarkedSpace::clearMarks()
+{
+    if (m_heap->operationInProgress() == EdenCollection) {
+        for (unsigned i = 0; i < m_blocksWithNewObjects.size(); ++i)
+            m_blocksWithNewObjects[i]->clearMarks();
+    } else
+        forEachBlock<ClearMarks>();
+#ifndef NDEBUG
+    forEachBlock<VerifyMarked>();
 #endif
 }
 

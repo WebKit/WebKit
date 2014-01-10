@@ -1,3 +1,119 @@
+2014-01-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Marking should be generational
+        https://bugs.webkit.org/show_bug.cgi?id=126552
+
+        Reviewed by Geoffrey Garen.
+
+        Re-marking the same objects over and over is a waste of effort. This patch implements 
+        the sticky mark bit algorithm (along with our already-present write barriers) to reduce 
+        overhead during garbage collection caused by rescanning objects.
+
+        There are now two collection modes, EdenCollection and FullCollection. EdenCollections
+        only visit new objects or objects that were added to the remembered set by a write barrier.
+        FullCollections are normal collections that visit all objects regardless of their 
+        generation.
+
+        In this patch EdenCollections do not do anything in CopiedSpace. This will be fixed in 
+        https://bugs.webkit.org/show_bug.cgi?id=126555.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlockSet::mark):
+        * dfg/DFGOperations.cpp:
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::add):
+        (JSC::CodeBlockSet::traceMarked):
+        (JSC::CodeBlockSet::rememberCurrentlyExecutingCodeBlocks):
+        * heap/CodeBlockSet.h:
+        * heap/CopiedBlockInlines.h:
+        (JSC::CopiedBlock::reportLiveBytes):
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::didStartFullCollection):
+        * heap/CopiedSpace.h:
+        (JSC::CopiedSpace::heap):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::didAbandon):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::copyBackingStores):
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::collect):
+        (JSC::Heap::didAllocate):
+        (JSC::Heap::writeBarrier):
+        * heap/Heap.h:
+        (JSC::Heap::isInRememberedSet):
+        (JSC::Heap::operationInProgress):
+        (JSC::Heap::shouldCollect):
+        (JSC::Heap::isCollecting):
+        (JSC::Heap::isWriteBarrierEnabled):
+        (JSC::Heap::writeBarrier):
+        * heap/HeapOperation.h:
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackArray::~MarkStackArray):
+        (JSC::MarkStackArray::clear):
+        (JSC::MarkStackArray::fillVector):
+        * heap/MarkStack.h:
+        * heap/MarkedAllocator.cpp:
+        (JSC::isListPagedOut):
+        (JSC::MarkedAllocator::isPagedOut):
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::addBlock):
+        (JSC::MarkedAllocator::removeBlock):
+        (JSC::MarkedAllocator::reset):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::MarkedAllocator):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::clearMarks):
+        (JSC::MarkedBlock::clearRememberedSet):
+        (JSC::MarkedBlock::clearMarksWithCollectionType):
+        (JSC::MarkedBlock::lastChanceToFinalize):
+        * heap/MarkedBlock.h: Changed atomSize to 16 bytes because we have no objects smaller
+        than 16 bytes. This is also to pay for the additional Bitmap for the remembered set.
+        (JSC::MarkedBlock::didConsumeEmptyFreeList):
+        (JSC::MarkedBlock::setRemembered):
+        (JSC::MarkedBlock::clearRemembered):
+        (JSC::MarkedBlock::atomicClearRemembered):
+        (JSC::MarkedBlock::isRemembered):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::~MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::visitWeakSets):
+        (JSC::MarkedSpace::reapWeakSets):
+        (JSC::VerifyMarked::operator()):
+        (JSC::MarkedSpace::clearMarks):
+        * heap/MarkedSpace.h:
+        (JSC::ClearMarks::operator()):
+        (JSC::ClearRememberedSet::operator()):
+        (JSC::MarkedSpace::didAllocateInBlock):
+        (JSC::MarkedSpace::clearRememberedSet):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::~SlotVisitor):
+        (JSC::SlotVisitor::clearMarkStack):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::markStack):
+        (JSC::SlotVisitor::sharedData):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::internalAppend):
+        (JSC::SlotVisitor::unconditionallyAppend):
+        (JSC::SlotVisitor::copyLater):
+        (JSC::SlotVisitor::reportExtraMemoryUsage):
+        (JSC::SlotVisitor::heap):
+        * jit/Repatch.cpp:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::StructureRareData::setEnumerationCache):
+        * runtime/JSString.cpp:
+        (JSC::JSString::visitChildren):
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::setPreviousID):
+        (JSC::StructureRareData::setObjectToStringValue):
+        * runtime/WeakMapData.cpp:
+        (JSC::WeakMapData::visitChildren):
+
 2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed Windows build fix for r161563.

@@ -42,6 +42,9 @@ inline void CopiedBlock::reportLiveBytes(JSCell* owner, CopyToken token, unsigne
 #endif
     m_liveBytes += bytes;
 
+    if (isPinned())
+        return;
+
     if (!shouldEvacuate()) {
         pin();
         return;
