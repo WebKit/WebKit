@@ -31,6 +31,7 @@
 #import "SoftLinking.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <objc/runtime.h>
+#import <wtf/PassOwnPtr.h>
 #import <wtf/RetainPtr.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
