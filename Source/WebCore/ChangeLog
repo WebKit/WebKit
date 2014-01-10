@@ -1,3 +1,21 @@
+2014-01-10  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
+
+        [WebGL] Wrong condition order in the if statement
+        https://bugs.webkit.org/show_bug.cgi?id=125000
+
+        Reviewed by Brent Fulgham.
+
+        We should only pay the cost of string comparison once. The
+        current logic requires a string comparison every time we
+        pass through the function. Instead, by reordering the statements
+        we can short-circuit through the boolean test after the initial
+        setup is complete.
+
+        No new tests. No behaviour changes.
+
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        (WebCore::Extensions3DOpenGLES::supportsExtension):
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         CTTE in AudioContext::AutoLocker

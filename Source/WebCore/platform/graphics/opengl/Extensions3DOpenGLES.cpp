@@ -240,17 +240,17 @@ void Extensions3DOpenGLES::getnUniformivEXT(GC3Duint program, int location, GC3D
 bool Extensions3DOpenGLES::supportsExtension(const String& name)
 {
     if (m_availableExtensions.contains(name)) {
-        if (name == "GL_OES_vertex_array_object" && !m_supportsOESvertexArrayObject) {
+        if (!m_supportsOESvertexArrayObject && name == "GL_OES_vertex_array_object") {
             m_glBindVertexArrayOES = reinterpret_cast<PFNGLBINDVERTEXARRAYOESPROC>(eglGetProcAddress("glBindVertexArrayOES"));
             m_glGenVertexArraysOES = reinterpret_cast<PFNGLGENVERTEXARRAYSOESPROC>(eglGetProcAddress("glGenVertexArraysOES"));
             m_glDeleteVertexArraysOES = reinterpret_cast<PFNGLDELETEVERTEXARRAYSOESPROC>(eglGetProcAddress("glDeleteVertexArraysOES"));
             m_glIsVertexArrayOES = reinterpret_cast<PFNGLISVERTEXARRAYOESPROC>(eglGetProcAddress("glIsVertexArrayOES"));
             m_supportsOESvertexArrayObject = true;
-        } else if (name == "GL_IMG_multisampled_render_to_texture" && !m_supportsIMGMultisampledRenderToTexture) {
+        } else if (!m_supportsIMGMultisampledRenderToTexture && name == "GL_IMG_multisampled_render_to_texture") {
             m_glFramebufferTexture2DMultisampleIMG = reinterpret_cast<PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMG>(eglGetProcAddress("glFramebufferTexture2DMultisampleIMG"));
             m_glRenderbufferStorageMultisampleIMG = reinterpret_cast<PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMG>(eglGetProcAddress("glRenderbufferStorageMultisampleIMG"));
             m_supportsIMGMultisampledRenderToTexture = true;
-        } else if (name == "GL_EXT_robustness" && !m_glGetGraphicsResetStatusEXT) {
+        } else if (!m_glGetGraphicsResetStatusEXT && name == "GL_EXT_robustness") {
             m_glGetGraphicsResetStatusEXT = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSEXTPROC>(eglGetProcAddress("glGetGraphicsResetStatusEXT"));
             m_glReadnPixelsEXT = reinterpret_cast<PFNGLREADNPIXELSEXTPROC>(eglGetProcAddress("glReadnPixelsEXT"));
             m_glGetnUniformfvEXT = reinterpret_cast<PFNGLGETNUNIFORMFVEXTPROC>(eglGetProcAddress("glGetnUniformfvEXT"));
