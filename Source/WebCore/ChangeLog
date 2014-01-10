@@ -1,3 +1,18 @@
+2014-01-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove blackberry from WebCore/platform
+        https://bugs.webkit.org/show_bug.cgi?id=126715
+
+        Reviewed by Anders Carlsson.
+
+        * platform/blackberry: Removed.
+        * platform/graphics/blackberry: Removed.
+        * platform/graphics/filters/blackberry: Removed.
+        * platform/image-decoders/blackberry: Removed.
+        * platform/mediastream/blackberry: Removed.
+        * platform/network/blackberry: Removed.
+        * platform/text/blackberry: Removed.
+
 2014-01-09  Alexey Proskuryakov  <ap@apple.com>
 
         Fix a copy-paste mistake in an include guard.
