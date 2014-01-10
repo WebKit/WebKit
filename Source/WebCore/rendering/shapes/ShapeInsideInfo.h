@@ -96,7 +96,7 @@ public:
     }
     void clearSegments() { m_segments.clear(); }
     bool adjustLogicalLineTop(float minSegmentWidth);
-    LayoutUnit computeFirstFitPositionForFloat(const LayoutSize) const;
+    LayoutUnit computeFirstFitPositionForFloat(const FloatSize) const;
 
     void setNeedsLayout(bool value) { m_needsLayout = value; }
     bool needsLayout() { return m_needsLayout; }

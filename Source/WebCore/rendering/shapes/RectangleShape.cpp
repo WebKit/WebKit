@@ -163,7 +163,7 @@ static FloatPoint cornerInterceptForWidth(float width, float widthAtIntercept, f
     return FloatPoint(xi, yi);
 }
 
-bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const
+bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, LayoutUnit& result) const
 {
     float minIntervalTop = minLogicalIntervalTop;
     float minIntervalHeight = minLogicalIntervalSize.height();

@@ -96,7 +96,7 @@ bool ShapeInsideInfo::adjustLogicalLineTop(float minSegmentWidth)
         return false;
 
     LayoutUnit newLineTop;
-    if (shape.firstIncludedIntervalLogicalTop(m_shapeLineTop, LayoutSize(minSegmentWidth, m_lineHeight), newLineTop)) {
+    if (shape.firstIncludedIntervalLogicalTop(m_shapeLineTop, FloatSize(minSegmentWidth, m_lineHeight), newLineTop)) {
         if (newLineTop > m_shapeLineTop) {
             m_shapeLineTop = newLineTop;
             return true;
@@ -111,7 +111,7 @@ ShapeValue* ShapeInsideInfo::shapeValue() const
     return m_renderer.style().resolvedShapeInside();
 }
 
-LayoutUnit ShapeInsideInfo::computeFirstFitPositionForFloat(const LayoutSize floatSize) const
+LayoutUnit ShapeInsideInfo::computeFirstFitPositionForFloat(const FloatSize floatSize) const
 {
     if (!floatSize.width() || shapeLogicalBottom() < logicalLineTop())
         return 0;

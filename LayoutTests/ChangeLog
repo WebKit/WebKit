@@ -1,3 +1,13 @@
+2014-01-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] First line gets incorrectly adjusted in shape-inside due to rounding
+        https://bugs.webkit.org/show_bug.cgi?id=126601
+
+        Reviewed by Bem Jones-Bey.
+
+        * fast/shapes/shape-inside/shape-inside-polygon-rounded-first-fit-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-polygon-rounded-first-fit.html: Added.
+
 2014-01-09  Tim Horton  <timothy_horton@apple.com>
 
         Rebaseline after r161568.

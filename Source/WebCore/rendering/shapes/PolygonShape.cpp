@@ -439,7 +439,7 @@ static inline bool aboveOrToTheLeft(const FloatRect& r1, const FloatRect& r2)
     return false;
 }
 
-bool PolygonShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const
+bool PolygonShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, LayoutUnit& result) const
 {
     float minIntervalTop = minLogicalIntervalTop;
     float minIntervalHeight = minLogicalIntervalSize.height();

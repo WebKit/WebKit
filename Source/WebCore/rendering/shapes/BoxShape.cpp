@@ -148,7 +148,7 @@ void BoxShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHei
     result.append(LineSegment(x1, x2));
 }
 
-bool BoxShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize&, LayoutUnit& result) const
+bool BoxShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize&, LayoutUnit& result) const
 {
     // FIXME: this method is only a stub, https://bugs.webkit.org/show_bug.cgi?id=124606.
 

@@ -1,3 +1,35 @@
+2014-01-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] First line gets incorrectly adjusted in shape-inside due to rounding
+        https://bugs.webkit.org/show_bug.cgi?id=126601
+
+        Reviewed by Bem Jones-Bey.
+
+        In order to get consistent results of the first fit position of the content in shapes,
+        firstIncludedIntervalLogicalTop should take a FloatSize rather than LayoutSize for
+        minLogicalIntervalSize, because LayoutSize clamps the float value to int, when subpixel-layout
+        is disabled, thus firstIncludedIntervalLogicalTop could end up calculating with an unprecize
+        value. This change modifies firstIncludedIntervalLogicalTop to take FloatSize consistently.
+
+        Test: fast/shapes/shape-inside/shape-inside-polygon-rounded-first-fit.html
+
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::BoxShape::firstIncludedIntervalLogicalTop):
+        * rendering/shapes/BoxShape.h:
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::PolygonShape::firstIncludedIntervalLogicalTop):
+        * rendering/shapes/PolygonShape.h:
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShape::firstIncludedIntervalLogicalTop):
+        * rendering/shapes/RasterShape.h:
+        * rendering/shapes/RectangleShape.cpp:
+        (WebCore::RectangleShape::firstIncludedIntervalLogicalTop):
+        * rendering/shapes/RectangleShape.h:
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::adjustLogicalLineTop):
+        (WebCore::ShapeInsideInfo::computeFirstFitPositionForFloat):
+
 2014-01-09  Andy Estes  <aestes@apple.com>
 
         [iOS] Upstream WAK

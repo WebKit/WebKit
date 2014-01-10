@@ -320,7 +320,7 @@ void RasterShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logical
     appendLineSegments(includedIntervals, result);
 }
 
-bool RasterShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const
+bool RasterShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, LayoutUnit& result) const
 {
     const RasterShapeIntervals& intervals = paddingIntervals();
     if (intervals.isEmpty())
