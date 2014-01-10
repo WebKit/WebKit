@@ -1,3 +1,17 @@
+2014-01-10  Piotr Grad  <p.grad@samsung.com>
+
+        Possible crash in ApplicationCache::removeResource.
+        https://bugs.webkit.org/show_bug.cgi?id=126695
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests.
+
+        Iterator variable was used after it was removed.
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::removeResource):
+
 2014-01-10  Daniel Bates  <dabates@apple.com>
 
         Another build fix for the Production Mac build following <http://trac.webkit.org/changeset/161638>

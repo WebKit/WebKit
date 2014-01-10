@@ -108,9 +108,9 @@ unsigned ApplicationCache::removeResource(const String& url)
     // The resource exists, get its type so we can return it.
     unsigned type = it->value->type();
 
-    m_resources.remove(it);
-
     m_estimatedSizeInStorage -= it->value->estimatedSizeInStorage();
+
+    m_resources.remove(it);
 
     return type;
 }    
