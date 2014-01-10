@@ -1,5 +1,17 @@
 2014-01-10  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Fix up simulator build and enable default features
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture):
+        (determinePassedArchitecture):
+        * Scripts/webkitperl/FeatureList.pm: Also expose command line option to toggle ENABLE_PLUGIN_PROXY_FOR_VIDEO (enabled
+        by default only in iOS).
+
+2014-01-10  Daniel Bates  <dabates@apple.com>
+
         [iOS] Upstream WebCore and Tools miscellaneous changes
         https://bugs.webkit.org/show_bug.cgi?id=126698
 

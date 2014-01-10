@@ -115,6 +115,7 @@ my (
     $notificationsSupport,
     $orientationEventsSupport,
     $pageVisibilityAPISupport,
+    $pluginProxyForVideo,
     $performanceTimelineSupport,
     $progressElementSupport,
     $promiseSupport,
@@ -159,7 +160,7 @@ my (
 
 my @features = (
     { option => "3d-rendering", desc => "Toggle 3D Rendering support",
-      define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() || isGtk() || isEfl()), value => \$threeDRenderingSupport },
+      define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() || isIOSWebKit() || isGtk() || isEfl()), value => \$threeDRenderingSupport },
 
     { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2DCanvasSupport },
@@ -168,7 +169,7 @@ my @features = (
       define => "ENABLE_BATTERY_STATUS", default => (isEfl() || isBlackBerry()), value => \$batteryStatusSupport },
 
     { option => "blob", desc => "Toggle Blob support",
-      define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$blobSupport },
+      define => "ENABLE_BLOB", default => ((isAppleMacWebKit() && !isIOSWebKit()) || isGtk() || isBlackBerry() || isEfl()), value => \$blobSupport },
 
     { option => "canvas-path", desc => "Toggle Canvas Path support",
       define => "ENABLE_CANVAS_PATH", default => 1, value => \$canvasPathSupport },
@@ -192,7 +193,7 @@ my @features = (
       define => "ENABLE_CSS_SHAPES", default => 1, value => \$cssShapesSupport },
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
-      define => "ENABLE_CSS_FILTERS", default => isAppleWebKit() || isBlackBerry(), value => \$cssFiltersSupport },
+      define => "ENABLE_CSS_FILTERS", default => (isAppleMacWebKit() || isBlackBerry() || isIOSWebKit()), value => \$cssFiltersSupport },
 
     { option => "css3-conditional-rules", desc => "Toggle CSS3 Conditional Rules support (i.e. \@supports)",
       define => "ENABLE_CSS3_CONDITIONAL_RULES", default => 0, value => \$css3ConditionalRulesSupport },
@@ -246,7 +247,7 @@ my @features = (
       define => "ENABLE_DETAILS_ELEMENT", default => 1, value => \$detailsElementSupport },
 
     { option => "device-orientation", desc => "Toggle Device Orientation support",
-      define => "ENABLE_DEVICE_ORIENTATION", default => isBlackBerry(), value => \$deviceOrientationSupport },
+      define => "ENABLE_DEVICE_ORIENTATION", default => (isIOSWebKit() || isBlackBerry()), value => \$deviceOrientationSupport },
 
     { option => "directory-upload", desc => "Toggle Directory Upload support",
       define => "ENABLE_DIRECTORY_UPLOAD", default => 0, value => \$directoryUploadSupport },
@@ -258,7 +259,7 @@ my @features = (
       define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => (isBlackBerry() || isEfl()), value => \$downloadAttributeSupport },
 
     { option => "filters", desc => "Toggle Filters support",
-      define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isEfl() || isBlackBerry()), value => \$filtersSupport },
+      define => "ENABLE_FILTERS", default => (isAppleWebKit() || isIOSWebKit() || isGtk() || isEfl() || isBlackBerry()), value => \$filtersSupport },
 
     { option => "font-load-events", desc => "Toggle Font Load Events support",
       define => "ENABLE_FONT_LOAD_EVENTS", default => 0, value => \$fontLoadEventsSupport },
@@ -273,13 +274,13 @@ my @features = (
       define => "ENABLE_GAMEPAD", default => (isEfl() || isGtk()), value => \$gamepadSupport },
 
     { option => "geolocation", desc => "Toggle Geolocation support",
-      define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$geolocationSupport },
+      define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isIOSWebKit() || isGtk() || isBlackBerry()), value => \$geolocationSupport },
 
     { option => "high-dpi-canvas", desc => "Toggle High DPI Canvas support",
       define => "ENABLE_HIGH_DPI_CANVAS", default => (isAppleWebKit()), value => \$highDPICanvasSupport },
 
     { option => "icon-database", desc => "Toggle Icondatabase support",
-      define => "ENABLE_ICONDATABASE", default => 1, value => \$icondatabaseSupport },
+      define => "ENABLE_ICONDATABASE", default => !isIOSWebKit(), value => \$icondatabaseSupport },
 
     { option => "iframe-seamless", desc => "Toggle iframe seamless attribute support",
       define => "ENABLE_IFRAME_SEAMLESS", default => 1, value => \$iframeSeamlessSupport },
@@ -357,7 +358,7 @@ my @features = (
       define => "ENABLE_NAVIGATOR_CONTENT_UTILS", default => (isBlackBerry() || isEfl()), value => \$registerProtocolHandlerSupport },
 
     { option => "netscape-plugin-api", desc => "Toggle Netscape Plugin API support",
-      define => "ENABLE_NETSCAPE_PLUGIN_API", default => 1, value => \$netscapePluginAPISupport },
+      define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isIOSWebKit(), value => \$netscapePluginAPISupport },
 
     { option => "network-info", desc => "Toggle Network Info support",
       define => "ENABLE_NETWORK_INFO", default => (isEfl() || isBlackBerry()), value => \$networkInfoSupport },
@@ -369,10 +370,13 @@ my @features = (
       define => "ENABLE_NOTIFICATIONS", default => isBlackBerry(), value => \$notificationsSupport },
 
     { option => "orientation-events", desc => "Toggle Orientation Events support",
-      define => "ENABLE_ORIENTATION_EVENTS", default => isBlackBerry(), value => \$orientationEventsSupport },
+      define => "ENABLE_ORIENTATION_EVENTS", default => isIOSWebKit() || isBlackBerry(), value => \$orientationEventsSupport },
 
     { option => "page-visibility-api", desc => "Toggle Page Visibility API support",
       define => "ENABLE_PAGE_VISIBILITY_API", default => (isBlackBerry() || isEfl() || isGtk()), value => \$pageVisibilityAPISupport },
+
+    { option => "plugin-proxy-for-video", desc => "Toggle Plugin Proxy for Video support",
+      define => "ENABLE_PLUGIN_PROXY_FOR_VIDEO", default => isIOSWebKit(), value => \$pluginProxyForVideo },
 
     { option => "performance-timeline", desc => "Toggle Performance Timeline support",
       define => "ENABLE_PERFORMANCE_TIMELINE", default => isGtk(), value => \$performanceTimelineSupport },
@@ -438,7 +442,7 @@ my @features = (
       define => "ENABLE_THREADED_HTML_PARSER", default => 0, value => \$threadedHTMLParserSupport },
 
     { option => "touch-events", desc => "Toggle Touch Events support",
-      define => "ENABLE_TOUCH_EVENTS", default => (isBlackBerry() || isEfl()), value => \$touchEventsSupport },
+      define => "ENABLE_TOUCH_EVENTS", default => (isIOSWebKit() || isBlackBerry() || isEfl()), value => \$touchEventsSupport },
 
     { option => "touch-slider", desc => "Toggle Touch Slider support",
       define => "ENABLE_TOUCH_SLIDER", default => isBlackBerry(), value => \$touchSliderSupport },
@@ -459,7 +463,7 @@ my @features = (
       define => "ENABLE_VIDEO_TRACK", default => (isAppleWebKit() || isGtk() || isEfl() || isBlackBerry()), value => \$videoTrackSupport },
 
     { option => "webgl", desc => "Toggle WebGL support",
-      define => "ENABLE_WEBGL", default => (isAppleMacWebKit() || isGtk() || isEfl()), value => \$webglSupport },
+      define => "ENABLE_WEBGL", default => (isAppleMacWebKit() || isIOSWebKit() || isGtk() || isEfl()), value => \$webglSupport },
 
     { option => "web-animations", desc => "Toggle Web Animation support",
       define => "ENABLE_WEB_ANIMATION", default => 0, value => \$webAnimationSupport },

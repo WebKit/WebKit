@@ -312,7 +312,7 @@ sub determineArchitecture
                 chomp $supports64Bit;
                 $architecture = 'x86_64' if $supports64Bit;
             } elsif ($xcodeSDK =~ /^iphonesimulator/) {
-                $architecture = 'i386';
+                $architecture = 'x86_64';
             } elsif ($xcodeSDK =~ /^iphoneos/) {
                 $architecture = 'armv7';
             }
@@ -657,6 +657,11 @@ sub determinePassedArchitecture
     $passedArchitecture = undef;
     if (checkForArgumentAndRemoveFromARGV("--32-bit")) {
         if (isAppleMacWebKit()) {
+            # PLATFORM_IOS: Don't run `arch` command inside Simulator environment
+            local %ENV = %ENV;
+            delete $ENV{DYLD_ROOT_PATH};
+            delete $ENV{DYLD_FRAMEWORK_PATH};
+
             $passedArchitecture = `arch`;
             chomp $passedArchitecture;
         }
