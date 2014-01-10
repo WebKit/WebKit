@@ -1,3 +1,14 @@
+2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed Windows build fix for r161563.
+
+        Remove stale forward declaration causing namespace ambiguity
+        later on in a Windows AllInOne file that picked it up. Also
+        remove a few stale functions that are not used and accidentally
+        got added back in when the file changed names.
+
+        * bindings/js/ScriptGlobalObject.h:
+
 2014-01-09  Dean Jackson  <dino@apple.com>
 
         [WebGL] Expose texture_float_linear and texture_half_float to getSupportedExtensions
