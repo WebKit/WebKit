@@ -1,3 +1,9 @@
+2014-01-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Revert r161611, incorrect fix, will fix better.
+
+        * bindings/js/ScriptGlobalObject.h:
+
 2014-01-09  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Scrubbing performance of HD content with software decoding is poor.
