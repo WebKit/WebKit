@@ -107,8 +107,6 @@ public:
     const Path pathForReferenceRect(const FloatRect& boundingRect) const
     {
         ASSERT(m_shape);
-        // FIXME: Make clipping path from basic-shapes relative to <box> value.
-        // https://bugs.webkit.org/show_bug.cgi?id=126206
         Path path;
         m_shape->path(path, boundingRect);
         return path;

@@ -3914,18 +3914,46 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
         return false;
 
     RenderStyle& style = renderer().style();
-
     ASSERT(style.clipPath());
     if (style.clipPath()->type() == ClipPathOperation::Shape) {
-        ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(style.clipPath());
+        ShapeClipPathOperation& clippingPath = toShapeClipPathOperation(*(style.clipPath()));
 
         if (!rootRelativeBoundsComputed) {
             rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
             rootRelativeBoundsComputed = true;
         }
 
+        LayoutRect referenceBox;
+        if (renderer().isBox()) {
+            RenderBox& box = toRenderBox(renderer());
+            switch (clippingPath.referenceBox()) {
+            case ContentBox:
+                referenceBox = box.contentBoxRect();
+                referenceBox.moveBy(rootRelativeBounds.location());
+                break;
+            case PaddingBox:
+                referenceBox = box.paddingBoxRect();
+                referenceBox.moveBy(rootRelativeBounds.location());
+                break;
+            case BorderBox:
+                referenceBox = box.borderBoxRect();
+                referenceBox.moveBy(rootRelativeBounds.location());
+                break;
+            case MarginBox:
+                // FIXME: Support margin-box. Use bounding client rect for now.
+            case BoundingBox:
+            case BoxMissing:
+                // FIXME: If no reference box was specified the spec demands to use
+                // the border-box. However, the current prefixed version of clip-path uses
+                // bounding-box. Keep bounding-box for now.
+                referenceBox = rootRelativeBounds;
+            }
+        } else
+            // FIXME: Support different reference boxes for inline content.
+            referenceBox = rootRelativeBounds;
+
         context->save();
-        context->clipPath(clipPath->pathForReferenceRect(rootRelativeBounds), clipPath->windRule());
+        context->clipPath(clippingPath.pathForReferenceRect(referenceBox), clippingPath.windRule());
         return true;
     }
 

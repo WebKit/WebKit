@@ -1,3 +1,20 @@
+2014-01-10  Dirk Schulze  <krit@webkit.org>
+
+        Make clipping path from basic-shapes relative to <box> value
+        https://bugs.webkit.org/show_bug.cgi?id=126206
+
+        Reviewed by Simon Fraser.
+
+        Tests: css3/masking/clip-path-circle-border-box.html
+               css3/masking/clip-path-circle-bounding-box.html
+               css3/masking/clip-path-circle-content-box.html
+               css3/masking/clip-path-circle-margin-box.html
+               css3/masking/clip-path-circle-padding-box.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupClipPath): Add switch to differ between boxes
+            and use different reference boxes to size the clipping path.
+
 2014-01-10  Youenn Fablet  <youennf@gmail.com>
 
 
