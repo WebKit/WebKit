@@ -1,3 +1,13 @@
+2014-01-10  Antti Koivisto  <antti@apple.com>
+
+        Crash when mutating SVG text with transform
+        https://bugs.webkit.org/show_bug.cgi?id=126744
+
+        Reviewed by Dirk Schulze.
+
+        * svg/custom/mutation-text-transform-crash-expected.txt: Added.
+        * svg/custom/mutation-text-transform-crash.html: Added.
+
 2014-01-10  Frédéric Wang  <fred.wang@free.fr>
 
         [SVG] Accept HTML and MathML namespaces as valid requiredExtensions

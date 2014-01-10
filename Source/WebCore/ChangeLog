@@ -1,3 +1,23 @@
+2014-01-10  Antti Koivisto  <antti@apple.com>
+
+        Crash when mutating SVG text with transform
+        https://bugs.webkit.org/show_bug.cgi?id=126744
+
+        Reviewed by Dirk Schulze.
+
+        Test: svg/custom/mutation-text-transform-crash.html
+        
+        Text-transform property triggers subtreeTextDidChange when an SVG text renderer is
+        being added to the render tree. The function assumes the child is already fully in the tree
+        but in this case we are still in middle of adding it.
+
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::subtreeTextDidChange):
+        
+            Bail out if the changed RenderSVGInlineText can't be found from m_layoutAttributes.
+            This means that subtreeChildWasAdded hasn't been invoked yet for it and there is nothing
+            to update. The required updates will happen in subtreeChildWasAdded.
+
 2014-01-10  Frédéric Wang  <fred.wang@free.fr>
 
         [SVG] Accept HTML and MathML namespaces as valid requiredExtensions

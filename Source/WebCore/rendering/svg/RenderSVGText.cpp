@@ -321,6 +321,11 @@ void RenderSVGText::subtreeTextDidChange(RenderSVGInlineText* text)
         ASSERT(!m_layoutAttributesBuilder.numberOfTextPositioningElements());
         return;
     }
+    // Text transforms can cause text change to be signaled during addChild before m_layoutAttributes has been updated.
+    if (!m_layoutAttributes.contains(text->layoutAttributes())) {
+        ASSERT(!text->everHadLayout());
+        return;
+    }
 
     // Always protect the cache before clearing text positioning elements when the cache will subsequently be rebuilt.
     FontCachePurgePreventer fontCachePurgePreventer;
