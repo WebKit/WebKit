@@ -1,3 +1,21 @@
+2014-01-10  Antti Koivisto  <antti@apple.com>
+
+        Use element iterators more
+        https://bugs.webkit.org/show_bug.cgi?id=126756
+
+        Reviewed by Anders Carlsson.
+
+        * dom/VisitedLinkState.cpp:
+        (WebCore::VisitedLinkState::invalidateStyleForAllLinks):
+        (WebCore::VisitedLinkState::invalidateStyleForLink):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::renderMeter):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::renderProgress):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::ensureInsertionPointList):
+        * style/StyleResolveTree.cpp:
+
 2014-01-10  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the iOS build after <http://trac.webkit.org/changeset/161589>

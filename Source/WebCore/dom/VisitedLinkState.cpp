@@ -29,7 +29,7 @@
 #include "config.h"
 #include "VisitedLinkState.h"
 
-#include "ElementTraversal.h"
+#include "ElementIterator.h"
 #include "Frame.h"
 #include "HTMLAnchorElement.h"
 #include "Page.h"
@@ -67,9 +67,9 @@ void VisitedLinkState::invalidateStyleForAllLinks()
 {
     if (m_linksCheckedForVisitedState.isEmpty())
         return;
-    for (Element* element = ElementTraversal::firstWithin(&m_document); element; element = ElementTraversal::next(element)) {
-        if (element->isLink())
-            element->setNeedsStyleRecalc();
+    for (auto& element : descendantsOfType<Element>(m_document)) {
+        if (element.isLink())
+            element.setNeedsStyleRecalc();
     }
 }
 
@@ -86,9 +86,9 @@ void VisitedLinkState::invalidateStyleForLink(LinkHash linkHash)
 {
     if (!m_linksCheckedForVisitedState.contains(linkHash))
         return;
-    for (Element* element = ElementTraversal::firstWithin(&m_document); element; element = ElementTraversal::next(element)) {
-        if (linkHashForElement(m_document, *element) == linkHash)
-            element->setNeedsStyleRecalc();
+    for (auto& element : descendantsOfType<Element>(m_document)) {
+        if (linkHashForElement(m_document, element) == linkHash)
+            element.setNeedsStyleRecalc();
     }
 }
 

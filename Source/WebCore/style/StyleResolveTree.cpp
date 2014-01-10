@@ -32,7 +32,6 @@
 #include "Element.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
-#include "ElementTraversal.h"
 #include "FlowThreadController.h"
 #include "InsertionPoint.h"
 #include "NodeRenderStyle.h"

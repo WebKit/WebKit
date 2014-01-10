@@ -23,7 +23,7 @@
 #include "HTMLProgressElement.h"
 
 #include "Attribute.h"
-#include "ElementTraversal.h"
+#include "ElementIterator.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
@@ -75,7 +75,7 @@ RenderProgress* HTMLProgressElement::renderProgress() const
 {
     if (renderer() && renderer()->isProgress())
         return toRenderProgress(renderer());
-    return toRenderProgress(ElementTraversal::firstWithin(userAgentShadowRoot())->renderer());
+    return toRenderProgress(descendantsOfType<Element>(*userAgentShadowRoot()).first()->renderer());
 }
 
 void HTMLProgressElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
