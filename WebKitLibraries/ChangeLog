@@ -1,3 +1,17 @@
+2014-01-10  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Crash when rendering (in pixman dll)
+        https://bugs.webkit.org/show_bug.cgi?id=126750
+
+        Reviewed by Brent Fulgham.
+
+        Since we link with cairo.lib, and the gstreamer installation also comes with cairo.lib,
+        we link with the wrong cairo.lib, and loads gstreamers cairo dll, instead of our own.
+        We should user our own cairo dll for rendering.
+
+        * win/tools/vsprops/GStreamer32.props: Put gstreamer lib path last, so we link with the correct cairo.lib.
+        * win/tools/vsprops/GStreamer64.props: Ditto.
+
 2014-01-03  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Enable video using GStreamer.

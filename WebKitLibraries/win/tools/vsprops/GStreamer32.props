@@ -5,7 +5,7 @@
       <AdditionalIncludeDirectories>$(GSTREAMER_1_0_ROOT_X86)include\gstreamer-1.0;$(GSTREAMER_1_0_ROOT_X86)include\glib-2.0;$(GSTREAMER_1_0_ROOT_X86)lib\glib-2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(GSTREAMER_1_0_ROOT_X86)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(GSTREAMER_1_0_ROOT_X86)lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
 </Project>
