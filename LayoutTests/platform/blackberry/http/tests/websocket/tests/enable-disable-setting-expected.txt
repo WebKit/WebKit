@@ -1,3 +1,0 @@
-PASSED: websocket object is available when WebSocketsEnabled is true
-PASSED: websocket object is not available when WebSocketsEnabled is false
-TEST COMPLETE

@@ -1,3 +1,13 @@
+2014-01-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the BlackBerry files outside WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=126715
+
+        Reviewed by Anders Carlsson.
+
+        * ManualTests/blackberry: Removed.
+        * Source/cmake/OptionsBlackBerry.cmake: Removed.
+
 2014-01-08  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Specify the executable and library output locations in the build

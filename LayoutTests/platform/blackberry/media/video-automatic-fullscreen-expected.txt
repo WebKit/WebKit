@@ -1,4 +1,0 @@
-EVENT(canplay)
-EVENT(webkitfullscreenchange)
-END OF TEST
-
