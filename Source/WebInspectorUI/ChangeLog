@@ -1,3 +1,15 @@
+2014-01-10  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Add missing function stub in InspectorFrontendHostStub.js
+        https://bugs.webkit.org/show_bug.cgi?id=126745
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.debuggableType):
+        The function debuggableType() was added to InspectorFrontendHost.idl and InspectorFrontendHost.cpp
+        in r160887, but not to InspectorFrontendHostStub.js.
+
 2014-01-09  Seokju Kwon  <seokju@webkit.org>
 
         Web Inspector: Remove unused overriding protocols.

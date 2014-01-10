@@ -94,6 +94,11 @@ if (!window.InspectorFrontendHost) {
             return undefined;
         },
 
+        debuggableType: function()
+        {
+            return "web";
+        },
+
         inspectedURLChanged: function(title)
         {
             document.title = title;
