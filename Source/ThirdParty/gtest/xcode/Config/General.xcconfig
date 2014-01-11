@@ -5,7 +5,9 @@
 //  examples.
 //  This file is based on the Xcode Configuration files in:
 //  http://code.google.com/p/google-toolbox-for-mac/
-// 
+//
+
+#include "iOS.xcconfig"
 
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 

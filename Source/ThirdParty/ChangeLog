@@ -1,3 +1,15 @@
+2014-01-11  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Upstream gtest
+        <http://webkit.org/b/126811>
+
+        Reviewed by Mark Rowe.
+
+        * gtest/xcode/Config/General.xcconfig: Include iOS.xcconfig.
+        * gtest/xcode/Config/iOS.xcconfig: Added.
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Add iOS.xcconfig.
+        Sort.
+
 2013-12-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Switch WebKit solution to Visual Studio 2013
