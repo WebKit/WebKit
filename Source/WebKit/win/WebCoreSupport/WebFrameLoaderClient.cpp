@@ -670,21 +670,21 @@ void WebFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceE
     m_hasSentResponseToPlugin = false;
 }
 
-void WebFrameLoaderClient::postProgressStartedNotification()
+void WebFrameLoaderClient::progressStarted(WebCore::Frame&)
 {
     static BSTR progressStartedName = SysAllocString(WebViewProgressStartedNotification);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
     notifyCenter->postNotificationName(progressStartedName, static_cast<IWebView*>(m_webFrame->webView()), 0);
 }
 
-void WebFrameLoaderClient::postProgressEstimateChangedNotification()
+void WebFrameLoaderClient::progressEstimateChanged(WebCore::Frame&)
 {
     static BSTR progressEstimateChangedName = SysAllocString(WebViewProgressEstimateChangedNotification);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
     notifyCenter->postNotificationName(progressEstimateChangedName, static_cast<IWebView*>(m_webFrame->webView()), 0);
 }
 
-void WebFrameLoaderClient::postProgressFinishedNotification()
+void WebFrameLoaderClient::progressFinished(WebCore::Frame&)
 {
     static BSTR progressFinishedName = SysAllocString(WebViewProgressFinishedNotification);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();

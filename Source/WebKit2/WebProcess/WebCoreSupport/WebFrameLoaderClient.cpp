@@ -825,28 +825,28 @@ void WebFrameLoaderClient::didChangeEstimatedProgress()
     notImplemented();
 }
 
-void WebFrameLoaderClient::postProgressStartedNotification()
+void WebFrameLoaderClient::progressStarted(Frame& originatingProgressFrame)
 {
     if (WebPage* webPage = m_frame->page()) {
-        if (m_frame->isMainFrame())
+        if (originatingProgressFrame.isMainFrame())
             webPage->send(Messages::WebPageProxy::DidStartProgress());
     }
 }
 
-void WebFrameLoaderClient::postProgressEstimateChangedNotification()
+void WebFrameLoaderClient::progressEstimateChanged(Frame& originatingProgressFrame)
 {
     if (WebPage* webPage = m_frame->page()) {
-        if (m_frame->isMainFrame()) {
+        if (originatingProgressFrame.isMainFrame()) {
             double progress = webPage->corePage()->progress().estimatedProgress();
             webPage->send(Messages::WebPageProxy::DidChangeProgress(progress));
         }
     }
 }
 
-void WebFrameLoaderClient::postProgressFinishedNotification()
+void WebFrameLoaderClient::progressFinished(Frame& originatingProgressFrame)
 {
     if (WebPage* webPage = m_frame->page()) {
-        if (m_frame->isMainFrame()) {
+        if (originatingProgressFrame.isMainFrame()) {
             // Notify the bundle client.
             webPage->injectedBundleLoaderClient().didFinishProgress(webPage);
 

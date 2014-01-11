@@ -125,9 +125,9 @@ class FrameLoaderClientEfl : public FrameLoaderClient, public ProgressTrackerCli
     virtual void revertToProvisionalState(DocumentLoader*) { }
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&);
 
-    virtual void postProgressStartedNotification();
-    virtual void postProgressEstimateChangedNotification();
-    virtual void postProgressFinishedNotification();
+    virtual void progressStarted(Frame&);
+    virtual void progressEstimateChanged(Frame&);
+    virtual void progressFinished(Frame&);
 
     virtual PassRefPtr<Frame> createFrame(const URL&, const String& name, HTMLFrameOwnerElement*,
                                const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);

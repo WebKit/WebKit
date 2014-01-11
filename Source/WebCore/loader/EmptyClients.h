@@ -636,9 +636,10 @@ public:
 class EmptyProgressTrackerClient : public ProgressTrackerClient {
     virtual void willChangeEstimatedProgress() OVERRIDE { }
     virtual void didChangeEstimatedProgress() OVERRIDE { }
-    virtual void postProgressStartedNotification() OVERRIDE { }
-    virtual void postProgressEstimateChangedNotification() OVERRIDE { }
-    virtual void postProgressFinishedNotification() OVERRIDE { }
+
+    virtual void progressStarted(Frame&) OVERRIDE { }
+    virtual void progressEstimateChanged(Frame&) OVERRIDE { }
+    virtual void progressFinished(Frame&) OVERRIDE { }
 };
 
 void fillWithEmptyClients(Page::PageClients&);

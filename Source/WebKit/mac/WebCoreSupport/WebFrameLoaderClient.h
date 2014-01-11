@@ -139,13 +139,9 @@ private:
     virtual void willChangeEstimatedProgress() OVERRIDE;
     virtual void didChangeEstimatedProgress() OVERRIDE;
 #endif
-    virtual void postProgressStartedNotification() OVERRIDE;
-    virtual void postProgressEstimateChangedNotification() OVERRIDE;
-#if !PLATFORM(IOS)
-    virtual void postProgressFinishedNotification() OVERRIDE;
-#else
-    virtual void postProgressFinishedNotification() OVERRIDE { }
-#endif
+    virtual void progressStarted(WebCore::Frame&) OVERRIDE;
+    virtual void progressEstimateChanged(WebCore::Frame&) OVERRIDE;
+    virtual void progressFinished(WebCore::Frame&) OVERRIDE;
     
     virtual void setMainFrameDocumentReady(bool) OVERRIDE;
 

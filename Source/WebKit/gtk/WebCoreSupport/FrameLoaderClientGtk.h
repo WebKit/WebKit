@@ -112,9 +112,9 @@ namespace WebKit {
         virtual void revertToProvisionalState(WebCore::DocumentLoader*) { }
         virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);
 
-        virtual void postProgressStartedNotification();
-        virtual void postProgressEstimateChangedNotification();
-        virtual void postProgressFinishedNotification();
+        virtual void progressStarted(WebCore::Frame&);
+        virtual void progressEstimateChanged(WebCore::Frame&);
+        virtual void progressFinished(WebCore::Frame&);
 
         virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL& url, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
                                    const WTF::String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);

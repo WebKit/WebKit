@@ -284,7 +284,7 @@ void FrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifie
     webkit_web_view_add_resource(getViewFromFrame(m_frame), identifierString.get(), webResource);
 }
 
-void FrameLoaderClient::postProgressStartedNotification()
+void FrameLoaderClient::progressStarted(WebCore::Frame&)
 {
     WebKitWebView* webView = getViewFromFrame(m_frame);
     g_signal_emit_by_name(webView, "load-started", m_frame);
@@ -292,7 +292,7 @@ void FrameLoaderClient::postProgressStartedNotification()
     g_object_notify(G_OBJECT(webView), "progress");
 }
 
-void FrameLoaderClient::postProgressEstimateChangedNotification()
+void FrameLoaderClient::progressEstimateChanged(WebCore::Frame&)
 {
     WebKitWebView* webView = getViewFromFrame(m_frame);
     Page* corePage = core(webView);
@@ -302,7 +302,7 @@ void FrameLoaderClient::postProgressEstimateChangedNotification()
     g_object_notify(G_OBJECT(webView), "progress");
 }
 
-void FrameLoaderClient::postProgressFinishedNotification()
+void FrameLoaderClient::progressFinished(WebCore::Frame&)
 {
     WebKitWebView* webView = getViewFromFrame(m_frame);
     WebKitWebViewPrivate* privateData = webView->priv;

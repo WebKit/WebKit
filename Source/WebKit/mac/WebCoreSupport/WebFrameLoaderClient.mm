@@ -1029,7 +1029,7 @@ void WebFrameLoaderClient::didChangeEstimatedProgress()
 }
 #endif
 
-void WebFrameLoaderClient::postProgressStartedNotification()
+void WebFrameLoaderClient::progressStarted(WebCore::Frame&)
 {
 #if !PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:getWebView(m_webFrame.get())];
@@ -1038,7 +1038,7 @@ void WebFrameLoaderClient::postProgressStartedNotification()
 #endif
 }
 
-void WebFrameLoaderClient::postProgressEstimateChangedNotification()
+void WebFrameLoaderClient::progressEstimateChanged(WebCore::Frame&)
 {
 #if !PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:getWebView(m_webFrame.get())];
@@ -1059,12 +1059,12 @@ void WebFrameLoaderClient::postProgressEstimateChangedNotification()
 #endif
 }
 
-#if !PLATFORM(IOS)
-void WebFrameLoaderClient::postProgressFinishedNotification()
+void WebFrameLoaderClient::progressFinished(WebCore::Frame&)
 {
+#if !PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:getWebView(m_webFrame.get())];
-}
 #endif
+}
 
 void WebFrameLoaderClient::setMainFrameDocumentReady(bool ready)
 {

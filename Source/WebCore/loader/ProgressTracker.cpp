@@ -52,8 +52,10 @@ static const int progressItemDefaultEstimatedLength = 1024 * 16;
 
 // Check if the load is progressing this often.
 static const double progressHeartbeatInterval = 0.1;
+
 // How many heartbeats must pass without progress before deciding the load is currently stalled.
 static const unsigned loadStalledHeartbeatCount = 4;
+
 // How many bytes are required between heartbeats to consider it progress.
 static const unsigned minumumBytesPerHeartbeatForProgress = 1024;
 
@@ -62,7 +64,9 @@ struct ProgressItem {
 public:
     ProgressItem(long long length) 
         : bytesReceived(0)
-        , estimatedLength(length) { }
+        , estimatedLength(length)
+    {
+    }
     
     long long bytesReceived;
     long long estimatedLength;
@@ -129,7 +133,7 @@ void ProgressTracker::progressStarted(Frame& frame)
         m_progressHeartbeatTimer.startRepeating(progressHeartbeatInterval);
         m_originatingProgressFrame->loader().loadProgressingStatusChanged();
 
-        m_client.postProgressStartedNotification();
+        m_client.progressStarted(*m_originatingProgressFrame);
     }
     m_numProgressTrackedFrames++;
 
@@ -163,13 +167,13 @@ void ProgressTracker::finalProgressComplete()
     // with final progress value.
     if (!m_finalProgressChangedSent) {
         m_progressValue = 1;
-        m_client.postProgressEstimateChangedNotification();
+        m_client.progressEstimateChanged(*frame);
     }
 
     reset();
 
     frame->loader().client().setMainFrameDocumentReady(true);
-    m_client.postProgressFinishedNotification();
+    m_client.progressFinished(*frame);
     frame->loader().loadProgressingStatusChanged();
 
     InspectorInstrumentation::frameStoppedLoading(*frame);
@@ -251,7 +255,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, unsigned bytes
             if (m_progressValue == 1)
                 m_finalProgressChangedSent = true;
             
-            m_client.postProgressEstimateChangedNotification();
+            m_client.progressEstimateChanged(*frame);
 
             m_lastNotifiedProgressValue = m_progressValue;
             m_lastNotifiedProgressTime = now;
@@ -263,17 +267,19 @@ void ProgressTracker::incrementProgress(unsigned long identifier, unsigned bytes
 
 void ProgressTracker::completeProgress(unsigned long identifier)
 {
-    ProgressItem* item = m_progressItems.get(identifier);
-    
+    auto it = m_progressItems.find(identifier);
+
     // This can happen if a load fails without receiving any response data.
-    if (!item)
+    if (it == m_progressItems.end())
         return;
+
+    ProgressItem& item = *it->value;
     
     // Adjust the total expected bytes to account for any overage/underage.
-    long long delta = item->bytesReceived - item->estimatedLength;
+    long long delta = item.bytesReceived - item.estimatedLength;
     m_totalPageAndResourceBytesToLoad += delta;
 
-    m_progressItems.remove(identifier);
+    m_progressItems.remove(it);
 }
 
 unsigned long ProgressTracker::createUniqueIdentifier()

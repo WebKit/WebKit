@@ -37,9 +37,10 @@ public:
 
     virtual void willChangeEstimatedProgress() { }
     virtual void didChangeEstimatedProgress() { }
-    virtual void postProgressStartedNotification() = 0;
-    virtual void postProgressEstimateChangedNotification() = 0;
-    virtual void postProgressFinishedNotification() = 0;
+
+    virtual void progressStarted(Frame& originatingProgressFrame) = 0;
+    virtual void progressEstimateChanged(Frame& originatingProgressFrame) = 0;
+    virtual void progressFinished(Frame& originatingProgressFrame) = 0;
 };
 
 } // namespace WebCore

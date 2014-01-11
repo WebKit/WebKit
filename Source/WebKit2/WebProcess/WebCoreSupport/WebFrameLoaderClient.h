@@ -119,9 +119,9 @@ private:
     // Maybe these should go into a ProgressTrackerClient some day
     virtual void willChangeEstimatedProgress() OVERRIDE;
     virtual void didChangeEstimatedProgress() OVERRIDE;
-    virtual void postProgressStartedNotification() OVERRIDE;
-    virtual void postProgressEstimateChangedNotification() OVERRIDE;
-    virtual void postProgressFinishedNotification() OVERRIDE;
+    virtual void progressStarted(WebCore::Frame&) OVERRIDE;
+    virtual void progressEstimateChanged(WebCore::Frame&) OVERRIDE;
+    virtual void progressFinished(WebCore::Frame&) OVERRIDE;
     
     virtual void setMainFrameDocumentReady(bool) OVERRIDE;
     

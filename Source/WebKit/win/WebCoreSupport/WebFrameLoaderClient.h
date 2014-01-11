@@ -119,9 +119,9 @@ public:
 
     virtual void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String()) OVERRIDE;
 
-    virtual void postProgressStartedNotification();
-    virtual void postProgressEstimateChangedNotification();
-    virtual void postProgressFinishedNotification();
+    virtual void progressStarted(WebCore::Frame&);
+    virtual void progressEstimateChanged(WebCore::Frame&);
+    virtual void progressFinished(WebCore::Frame&);
 
     virtual void committedLoad(WebCore::DocumentLoader*, const char*, int) OVERRIDE;
     virtual void finishedLoading(WebCore::DocumentLoader*) OVERRIDE;

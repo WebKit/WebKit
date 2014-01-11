@@ -1,3 +1,26 @@
+2014-01-10  Anders Carlsson  <andersca@apple.com>
+
+        Tweak ProgressTrackerClient functions
+        https://bugs.webkit.org/show_bug.cgi?id=126808
+
+        Reviewed by Sam Weinig.
+
+        Rename the three progress state related member functions since it's up to the various
+        WebKit implementations to decide what to do - not everyone wants to post a notification.
+        Also add an originating progress frame parameter since WebKit2 doesn't report progress for
+        subframe navigation and we need to be able to keep track of that.
+        
+        Finally, tweak ProgressTracker::completeProgress to get rid of an unnecessary hash lookup.
+
+        * loader/EmptyClients.h:
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressItem::ProgressItem):
+        (WebCore::ProgressTracker::progressStarted):
+        (WebCore::ProgressTracker::finalProgressComplete):
+        (WebCore::ProgressTracker::incrementProgress):
+        (WebCore::ProgressTracker::completeProgress):
+        * loader/ProgressTrackerClient.h:
+
 2014-01-10  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix COMPILE_ASSERT by updating struct SameSizeAsStyleRareInheritedData
