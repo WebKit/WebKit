@@ -1,3 +1,12 @@
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        A couple of iOS build fixes.
+
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix PlatformScreenIOS.mm for iOS. Unreviewed build fix.
