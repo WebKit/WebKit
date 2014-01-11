@@ -4,379 +4,110 @@
 #include "Arguments.h"
 #include "MessageDecoder.h"
 #include "MessageEncoder.h"
+#include <wtf/StdLibExtras.h>
 
 namespace IPC {
 
 // Dispatch functions with no reply arguments.
-template<typename C, typename MF>
-void callMemberFunction(std::tuple<>&&, C* object, MF function)
+
+template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex>
+void callMemberFunctionImpl(C* object, MF function, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
 {
-    (object->*function)();
+    (object->*function)(std::get<ArgsIndex>(args)...);
 }
 
-template<typename C, typename MF, typename P1>
-void callMemberFunction(std::tuple<P1>&& args, C* object, MF function)
+template<typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
+void callMemberFunction(ArgsTuple&& args, C* object, MF function)
 {
-    (object->*function)(std::get<0>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2>
-void callMemberFunction(std::tuple<P1, P2>&& args, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3>
-void callMemberFunction(std::tuple<P1, P2, P3>&& args, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4>
-void callMemberFunction(std::tuple<P1, P2, P3, P4>&& args, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5>&& args, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args));
-}
-    
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6>&& args, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6, P7>&& args, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<6>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6, P7, P8>&& args, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<6>(args), std::get<7>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8, typename P9, typename P10>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10>&& args, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<6>(args), std::get<7>(args), std::get<8>(args), std::get<9>(args));
+    callMemberFunctionImpl(object, function, std::forward<ArgsTuple>(args), ArgsIndicies());
 }
 
 // Dispatch functions with reply arguments.
 
-template<typename C, typename MF>
-void callMemberFunction(std::tuple<>&&, std::tuple<>&, C* object, MF function)
+template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex, typename ReplyArgsTuple, size_t... ReplyArgsIndex>
+void callMemberFunctionImpl(C* object, MF function, ArgsTuple&& args, ReplyArgsTuple& replyArgs, std::index_sequence<ArgsIndex...>, std::index_sequence<ReplyArgsIndex...>)
 {
-    (object->*function)();
+    (object->*function)(std::get<ArgsIndex>(std::forward<ArgsTuple>(args))..., std::get<ReplyArgsIndex>(replyArgs)...);
 }
 
-template<typename C, typename MF, typename R1>
-void callMemberFunction(std::tuple<>&&, std::tuple<R1>& replyArgs, C* object, MF function)
+template <typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>, typename ReplyArgsTuple, typename ReplyArgsIndicies = std::make_index_sequence<std::tuple_size<ReplyArgsTuple>::value>>
+void callMemberFunction(ArgsTuple&& args, ReplyArgsTuple& replyArgs, C* object, MF function)
 {
-    (object->*function)(std::get<0>(replyArgs));
-}
-
-template<typename C, typename MF, typename R1, typename R2>
-void callMemberFunction(std::tuple<>&&, std::tuple<R1, R2>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(replyArgs), std::get<1>(replyArgs));
-}
-
-template<typename C, typename MF, typename R1, typename R2, typename R3, typename R4, typename R5, typename R6>
-void callMemberFunction(std::tuple<>&&, std::tuple<R1, R2, R3, R4, R5, R6>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs), std::get<3>(replyArgs), std::get<4>(replyArgs), std::get<5>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1>
-void callMemberFunction(std::tuple<P1>&& args, std::tuple<>&, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args));
-}
-
-template<typename C, typename MF, typename P1, typename R1>
-void callMemberFunction(std::tuple<P1>&& args, std::tuple<R1>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<0>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename R1, typename R2>
-void callMemberFunction(std::tuple<P1>&& args, std::tuple<R1, R2>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<0>(replyArgs), std::get<1>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename R1, typename R2, typename R3>
-void callMemberFunction(std::tuple<P1>&& args, std::tuple<R1, R2, R3>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2>
-void callMemberFunction(std::tuple<P1, P2>&& args, std::tuple<>&, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args));
-}
-
-template<typename C, typename MF, typename P1, typename R1, typename R2, typename R3, typename R4>
-void callMemberFunction(std::tuple<P1>&& args, Arguments4<R1, R2, R3, R4>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs), std::get<3>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename R1>
-void callMemberFunction(std::tuple<P1, P2>&& args, std::tuple<R1>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<0>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename R1, typename R2>
-void callMemberFunction(std::tuple<P1, P2>&& args, std::tuple<R1, R2>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<0>(replyArgs), std::get<1>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename R1>
-void callMemberFunction(std::tuple<P1, P2, P3>&& args, std::tuple<R1>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<0>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename R1, typename R2>
-void callMemberFunction(std::tuple<P1, P2, P3>&& args, std::tuple<R1, R2>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<0>(replyArgs), std::get<1>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename R1>
-void callMemberFunction(std::tuple<P1, P2, P3, P4>&& args, std::tuple<R1>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<0>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename R1>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6>&& args, std::tuple<R1>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<0>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename R1>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6, P7>&& args, std::tuple<R1>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<6>(args), std::get<0>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8, typename R1>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6, P7, P8>&& args, std::tuple<R1>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<6>(args), std::get<7>(args), std::get<0>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename R1, typename R2>
-void callMemberFunction(std::tuple<P1, P2, P3, P4>&& args, std::tuple<R1, R2>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<0>(replyArgs), std::get<1>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename R1, typename R2>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5>&& args, std::tuple<R1, R2>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<0>(replyArgs), std::get<1>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename R1, typename R2, typename R3>
-void callMemberFunction(std::tuple<P1, P2, P3, P4>&& args, std::tuple<R1, R2, R3>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename R1, typename R2, typename R3>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5>&& args, std::tuple<R1, R2, R3>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename R1, typename R2>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6>&& args, std::tuple<R1, R2>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<0>(replyArgs), std::get<1>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename R1, typename R2, typename R3>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6>&& args, std::tuple<R1, R2, R3>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename R1, typename R2, typename R3, typename R4>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6>&& args, std::tuple<R1, R2, R3, R4>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs), std::get<3>(replyArgs));
+    callMemberFunctionImpl(object, function, std::forward<ArgsTuple>(args), replyArgs, ArgsIndicies(), ReplyArgsIndicies());
 }
 
 // Dispatch functions with delayed reply arguments.
-template<typename C, typename MF, typename R>
-void callMemberFunction(std::tuple<>&&, PassRefPtr<R> delayedReply, C* object, MF function)
+
+template <typename C, typename MF, typename R, typename ArgsTuple, size_t... ArgsIndex>
+void callMemberFunctionImpl(C* object, MF function, PassRefPtr<R> delayedReply, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
 {
-    (object->*function)(delayedReply);
+    (object->*function)(std::get<ArgsIndex>(args)..., delayedReply);
 }
 
-template<typename C, typename MF, typename P1, typename R>
-void callMemberFunction(std::tuple<P1>&& args, PassRefPtr<R> delayedReply, C* object, MF function)
+template<typename C, typename MF, typename R, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
+void callMemberFunction(ArgsTuple&& args, PassRefPtr<R> delayedReply, C* object, MF function)
 {
-    (object->*function)(std::get<0>(args), delayedReply);
+    callMemberFunctionImpl(object, function, delayedReply, std::forward<ArgsTuple>(args), ArgsIndicies());
 }
 
-template<typename C, typename MF, typename P1, typename P2, typename R>
-void callMemberFunction(std::tuple<P1, P2>&& args, PassRefPtr<R> delayedReply, C* object, MF function)
+// Dispatch functions with connection parameter with no reply arguments.
+
+template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex>
+void callMemberFunctionImpl(C* object, MF function, Connection* connection, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
 {
-    (object->*function)(std::get<0>(args), std::get<1>(args), delayedReply);
+    (object->*function)(connection, std::get<ArgsIndex>(args)...);
 }
 
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8, typename R>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6, P7, P8>&& args, PassRefPtr<R> delayedReply, C* object, MF function)
+template<typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
+void callMemberFunction(Connection* connection, ArgsTuple&& args, C* object, MF function)
 {
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<6>(args), std::get<7>(args), delayedReply);
+    callMemberFunctionImpl(object, function, connection, std::forward<ArgsTuple>(args), ArgsIndicies());
 }
 
-// Dispatch functions with connection parameter.
-template<typename C, typename MF>
-void callMemberFunction(Connection* connection, std::tuple<>&&, C* object, MF function)
+// Dispatch functions with connection parameter with reply arguments.
+
+template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex, typename ReplyArgsTuple, size_t... ReplyArgsIndex>
+void callMemberFunctionImpl(C* object, MF function, Connection* connection, ArgsTuple&& args, ReplyArgsTuple& replyArgs, std::index_sequence<ArgsIndex...>, std::index_sequence<ReplyArgsIndex...>)
 {
-    (object->*function)(connection);
+    (object->*function)(connection, std::get<ArgsIndex>(std::forward<ArgsTuple>(args))..., std::get<ReplyArgsIndex>(replyArgs)...);
 }
 
-template<typename C, typename MF, typename P1>
-void callMemberFunction(Connection* connection, std::tuple<P1>&& args, C* object, MF function)
+template <typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>, typename ReplyArgsTuple, typename ReplyArgsIndicies = std::make_index_sequence<std::tuple_size<ReplyArgsTuple>::value>>
+void callMemberFunction(Connection* connection, ArgsTuple&& args, ReplyArgsTuple& replyArgs, C* object, MF function)
 {
-    (object->*function)(connection, std::get<0>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2>
-void callMemberFunction(Connection* connection, std::tuple<P1, P2>&& args, C* object, MF function)
-{
-    (object->*function)(connection, std::get<0>(args), std::get<1>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3>
-void callMemberFunction(Connection* connection, std::tuple<P1, P2, P3>&& args, C* object, MF function)
-{
-    (object->*function)(connection, std::get<0>(args), std::get<1>(args), std::get<2>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4>
-void callMemberFunction(Connection* connection, std::tuple<P1, P2, P3, P4>&& args, C* object, MF function)
-{
-    (object->*function)(connection, std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5>
-void callMemberFunction(Connection* connection, std::tuple<P1, P2, P3, P4, P5>&& args, C* object, MF function)
-{
-    (object->*function)(connection, std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
-void callMemberFunction(Connection* connection, std::tuple<P1, P2, P3, P4, P5, P6>&& args, C* object, MF function)
-{
-    (object->*function)(connection, std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename R1>
-void callMemberFunction(Connection* connection, std::tuple<P1, P2>&& args, std::tuple<R1>& replyArgs, C* object, MF function)
-{
-    (object->*function)(connection, std::get<0>(args), std::get<1>(args), std::get<0>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename R1>
-void callMemberFunction(Connection* connection, std::tuple<P1>&& args, std::tuple<R1>& replyArgs, C* object, MF function)
-{
-    (object->*function)(connection, std::get<0>(args), std::get<0>(replyArgs));
+    callMemberFunctionImpl(object, function, connection, std::forward<ArgsTuple>(args), replyArgs, ArgsIndicies(), ReplyArgsIndicies());
 }
 
 // Variadic dispatch functions.
 
-template<typename C, typename MF>
-void callMemberFunction(std::tuple<>&&, MessageDecoder& decoder, C* object, MF function)
+template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex>
+void callMemberFunctionImpl(C* object, MF function, MessageDecoder& decoder, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
 {
-    (object->*function)(decoder);
+    (object->*function)(std::get<ArgsIndex>(args)..., decoder);
 }
 
-template<typename C, typename MF, typename P1>
-void callMemberFunction(std::tuple<P1>&& args, MessageDecoder& decoder, C* object, MF function)
+template<typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
+void callMemberFunction(ArgsTuple&& args, MessageDecoder& decoder, C* object, MF function)
 {
-    (object->*function)(std::get<0>(args), decoder);
-}
-
-template<typename C, typename MF, typename P1, typename P2>
-void callMemberFunction(std::tuple<P1, P2>&& args, MessageDecoder& decoder, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), decoder);
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3>
-void callMemberFunction(std::tuple<P1, P2, P3>&& args, MessageDecoder& decoder, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), decoder);
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4>
-void callMemberFunction(std::tuple<P1, P2, P3, P4>&& args, MessageDecoder& decoder, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), decoder);
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5>&& args, MessageDecoder& decoder, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), decoder);
-}
-    
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6>&& args, MessageDecoder& decoder, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), decoder);
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6, P7>&& args, MessageDecoder& decoder, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<6>(args), decoder);
+    callMemberFunctionImpl(object, function, decoder, std::forward<ArgsTuple>(args), ArgsIndicies());
 }
 
 // Variadic dispatch functions with non-variadic reply arguments.
 
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename R1, typename R2, typename R3>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5>&& args, MessageDecoder& decoder, std::tuple<R1, R2, R3>& replyArgs, C* object, MF function)
+template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex, typename ReplyArgsTuple, size_t... ReplyArgsIndex>
+void callMemberFunctionImpl(C* object, MF function, MessageDecoder& decoder, ArgsTuple&& args, ReplyArgsTuple& replyArgs, std::index_sequence<ArgsIndex...>, std::index_sequence<ReplyArgsIndex...>)
 {
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), decoder, std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs));
+    (object->*function)(std::get<ArgsIndex>(std::forward<ArgsTuple>(args))..., decoder, std::get<ReplyArgsIndex>(replyArgs)...);
 }
 
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename R1, typename R2>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6>&& args, MessageDecoder& decoder, std::tuple<R1, R2>& replyArgs, C* object, MF function)
+template <typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>, typename ReplyArgsTuple, typename ReplyArgsIndicies = std::make_index_sequence<std::tuple_size<ReplyArgsTuple>::value>>
+void callMemberFunction(ArgsTuple&& args, MessageDecoder& decoder, ReplyArgsTuple& replyArgs, C* object, MF function)
 {
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), decoder, std::get<0>(replyArgs), std::get<1>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename R1, typename R2, typename R3>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6, P7>&& args, MessageDecoder& decoder, std::tuple<R1, R2, R3>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<6>(args), decoder, std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs));
-}
-
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8, typename R1, typename R2, typename R3>
-void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6, P7, P8>&& args, MessageDecoder& decoder, std::tuple<R1, R2, R3>& replyArgs, C* object, MF function)
-{
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), std::get<5>(args), std::get<6>(args), std::get<7>(args), decoder, std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs));
+    callMemberFunctionImpl(object, function, decoder, std::forward<ArgsTuple>(args), replyArgs, ArgsIndicies(), ReplyArgsIndicies());
 }
 
 // Main dispatch functions
+
 template<typename T, typename C, typename MF>
 void handleMessage(MessageDecoder& decoder, C* object, MF function)
 {
