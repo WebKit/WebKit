@@ -43,7 +43,7 @@
 #import <WebCore/DOMRGBColor.h>
 #import <WebCore/DOMRange.h>
 
-#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#if TARGET_OS_IPHONE
 #import <CoreGraphics/CoreGraphics.h>
 #endif
 
@@ -52,7 +52,7 @@
 @class NSURL;
 
 
-#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#if TARGET_OS_IPHONE
 @interface DOMHTMLElement (DOMHTMLElementExtensions)
 - (int)scrollXOffset;
 - (int)scrollYOffset;
@@ -62,7 +62,7 @@
 @end
 #endif
 
-#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#if TARGET_OS_IPHONE
 typedef struct _WKQuad {
     CGPoint p1;
     CGPoint p2;
@@ -82,14 +82,14 @@ typedef struct _WKQuad {
 #endif
 
 @interface DOMNode (DOMNodeExtensions)
-#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#if TARGET_OS_IPHONE
 - (CGRect)boundingBox;
 #else
 - (NSRect)boundingBox WEBKIT_AVAILABLE_MAC(10_5);
 #endif
 - (NSArray *)lineBoxRects WEBKIT_AVAILABLE_MAC(10_5);
 
-#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#if TARGET_OS_IPHONE
 - (CGRect)boundingBoxUsingTransforms; // takes transforms into account
 
 - (WKQuad)absoluteQuad;
@@ -110,7 +110,7 @@ typedef struct _WKQuad {
 @end
 
 @interface DOMElement (DOMElementAppKitExtensions)
-#if !defined(TARGET_OS_EMBEDDED) || !TARGET_OS_EMBEDDED
+#if TARGET_OS_MAC
 - (NSImage *)image WEBKIT_AVAILABLE_MAC(10_5);
 #endif
 @end
@@ -120,7 +120,7 @@ typedef struct _WKQuad {
 - (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text WEBKIT_AVAILABLE_MAC(10_5);
 @end
 
-#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#if TARGET_OS_IPHONE
 @interface DOMHTMLAreaElement (DOMHTMLAreaElementExtensions)
 - (CGRect)boundingFrameForOwner:(DOMNode *)anOwner;
 @end

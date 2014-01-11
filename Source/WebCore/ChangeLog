@@ -1,3 +1,10 @@
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Use TARGET_OS_IPHONE in this API file, and #if TARGET_OS_MAC
+        for a non-iOS function.
+
+        * bindings/objc/DOMExtensions.h:
+
 2014-01-10  David Kilzer  <ddkilzer@apple.com>
 
         Clean up architectures in xcconfig files
