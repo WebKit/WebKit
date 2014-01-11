@@ -1,3 +1,14 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix WebAccessibilityObjectWrapperIOS.o for iOS. Unreviewed build fix.
+
+        The upstreamed WebAccessibilityObjectWrapperIOS.mm was out of date, e.g.
+        it was using GSFonts. Just upstream a newer version of the file. Also
+        explicitly namespace qualify std::pair.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (AXAttributeStringSetStyle):
+
 2014-01-10  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Remove willRespondToTouchEvents() which was used by chromium port
