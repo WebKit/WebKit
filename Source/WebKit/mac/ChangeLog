@@ -1,3 +1,13 @@
+2014-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up architectures in xcconfig files
+        <http://webkit.org/b/126794>
+
+        Reviewed by Andy Estes.
+
+        * Configurations/WebKit.xcconfig: Remove armv6, armv7f, ppc.
+        - Add new arch.
+
 2014-01-10  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Clear unparented tiled layers on memory pressure.

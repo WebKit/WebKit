@@ -1,3 +1,15 @@
+2014-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up architectures in xcconfig files
+        <http://webkit.org/b/126794>
+
+        Reviewed by Andy Estes.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/JavaScriptCore.xcconfig: Remove armv6, ppc.
+        * Configurations/ToolExecutable.xcconfig: Sort.
+        - Add new arch.
+
 2014-01-10  Dean Jackson  <dino@apple.com>
 
         [JSC] Revise typed array implementations to match ECMAScript and WebGL Specification

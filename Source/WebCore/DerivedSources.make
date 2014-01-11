@@ -1196,17 +1196,14 @@ ifneq ($(ACTION),installhdrs)
 
 ifeq ($(WTF_PLATFORM_IOS),1)
 
-ifeq ($(findstring armv6,$(ARCHS)), armv6)
-    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv6.exp
+ifeq ($(findstring armv7,$(ARCHS)), armv7)
+    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv7.exp
 endif
-ifeq ($(findstring armv7f,$(ARCHS)), armv7f)
-    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv7f.exp
+ifeq ($(findstring armv7k,$(ARCHS)), armv7k)
+    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv7k.exp
 endif
 ifeq ($(findstring armv7s,$(ARCHS)), armv7s)
     WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv7s.exp
-endif
-ifeq ($(findstring armv7,$(ARCHS)), armv7)
-    WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.armv7.exp
 endif
 ifeq ($(findstring arm64,$(ARCHS)), arm64)
     WEBCORE_EXPORT_FILES := $(WEBCORE_EXPORT_FILES) WebCore.LP64.arm64.exp

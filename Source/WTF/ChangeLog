@@ -1,3 +1,13 @@
+2014-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up architectures in xcconfig files
+        <http://webkit.org/b/126794>
+
+        Reviewed by Andy Estes.
+
+        * Configurations/Base.xcconfig:
+        - Add new arch.
+
 2014-01-10  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         [EFL][JSC] Enable udis86 disassembler on efl.

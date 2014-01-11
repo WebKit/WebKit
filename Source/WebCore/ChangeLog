@@ -1,3 +1,15 @@
+2014-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up architectures in xcconfig files
+        <http://webkit.org/b/126794>
+
+        Reviewed by Andy Estes.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/WebCore.xcconfig: Remove armv6.
+        * DerivedSources.make: Remove armv6, armv7f. Sort.
+        - Add new arch.
+
 2014-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix iOS build

@@ -31,15 +31,13 @@ EXCLUDED_SOURCE_FILE_NAMES_macosx = MemoryMeasure.h WebCaretChangeListener.h Web
 
 EXPORTED_SYMBOLS_FILE = $(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH));
 EXPORTED_SYMBOLS_FILE_ = mac/WebKit.exp;
-EXPORTED_SYMBOLS_FILE_armv6 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_armv7 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
-EXPORTED_SYMBOLS_FILE_armv7f = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
+EXPORTED_SYMBOLS_FILE_armv7k = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_armv7s = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_arm64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_i386 = $(EXPORTED_SYMBOLS_FILE_i386_$(PLATFORM_NAME));
 EXPORTED_SYMBOLS_FILE_i386_iphonesimulator = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_i386_macosx = mac/WebKit.exp;
-EXPORTED_SYMBOLS_FILE_ppc = mac/WebKit.exp;
 EXPORTED_SYMBOLS_FILE_x86_64 = $(EXPORTED_SYMBOLS_FILE_x86_64_$(PLATFORM_NAME));
 EXPORTED_SYMBOLS_FILE_x86_64_iphonesimulator = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_x86_64_macosx = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp;
