@@ -1,3 +1,17 @@
+2014-01-10  Dean Jackson  <dino@apple.com>
+
+        [JSC] Revise typed array implementations to match ECMAScript and WebGL Specification
+        https://bugs.webkit.org/show_bug.cgi?id=126754
+
+        Reviewed by Filip Pizlo.
+
+        The ECMAScript specification forbids calling the typed array
+        constructors without using "new". Change the call data to return
+        none so we throw and exception in these cases.
+
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::getCallData):
+
 2014-01-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the BlackBerry port from trunk

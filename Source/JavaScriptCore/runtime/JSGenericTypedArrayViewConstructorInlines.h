@@ -157,7 +157,7 @@ template<typename ViewClass>
 CallType JSGenericTypedArrayViewConstructor<ViewClass>::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = constructGenericTypedArrayView<ViewClass>;
-    return CallTypeHost;
+    return CallTypeNone;
 }
 
 } // namespace JSC
