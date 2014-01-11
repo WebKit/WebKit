@@ -1,3 +1,12 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix RenderImage.o for iOS. Unreviewed build fix.
+
+        inlineBoxWrapper() returns an InlineElementBox type, which is an InlineBox but
+        without including InlineElementBox.h, iOS didn't know what an InlineElementBox was!
+
+        * rendering/RenderImage.cpp:
+
 2014-01-10  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix macros in Scrollbar::supportsUpdateOnSecondaryThread()

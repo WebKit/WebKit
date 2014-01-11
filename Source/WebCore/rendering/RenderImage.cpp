@@ -41,6 +41,7 @@
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "InlineElementBox.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderView.h"
