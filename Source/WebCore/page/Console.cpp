@@ -115,7 +115,7 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
         if (functionName.isEmpty())
             functionName = ASCIILiteral("(unknown)");
 
-        printf("%lu: %s (", i, functionName.utf8().data());
+        printf("%lu: %s (", static_cast<unsigned long>(i), functionName.utf8().data());
 
         PageConsole::printSourceURLAndPosition(callFrame.sourceURL(), callFrame.lineNumber());
 
