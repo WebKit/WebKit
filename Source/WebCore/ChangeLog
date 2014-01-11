@@ -1,3 +1,22 @@
+2014-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Update EditorIOS.mm to switch from pointers to references
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAlignmentForChangedBaseWritingDirection):
+        (WebCore::Editor::insertParagraphSeparatorInQuotedContent):
+        (WebCore::styleForSelectionStart):
+        (WebCore::Editor::selectionInWebArchiveFormat):
+        (WebCore::Editor::writeImageToPasteboard):
+        (WebCore::Editor::WebContentReader::readWebArchive):
+        (WebCore::Editor::WebContentReader::readRTFD):
+        (WebCore::Editor::WebContentReader::readRTF):
+        (WebCore::uniqueURLWithRelativePart):
+        (WebCore::Editor::WebContentReader::readPlainText):
+        (WebCore::Editor::webContentFromPasteboard):
+        (WebCore::Editor::createFragmentAndAddResources):
+        (WebCore::Editor::createFragmentForImageResourceAndAddResource):
+
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Push InspectorAgent down into JSC, give JSC an InspectorController
