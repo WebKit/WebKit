@@ -1,3 +1,11 @@
+2014-01-10  Anders Carlsson  <andersca@apple.com>
+
+        Fix test crashes.
+        
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::~ProgressTracker):
+        Comment out the call to progressTrackerDestroyed for now.
+
 2014-01-10  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix build for RenderEmbeddedObject::canHaveChildren()
