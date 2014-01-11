@@ -1,5 +1,12 @@
 2014-01-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix use of GL_HALF_FLOAT_ARB on iOS.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::texSubImage2D):
+
+2014-01-11  Simon Fraser  <simon.fraser@apple.com>
+
         Fix build of SourceBufferPrivateAVFObjC.mm on iOS.
 
         * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:

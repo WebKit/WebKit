@@ -1436,7 +1436,7 @@ void GraphicsContext3D::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xo
 {
     makeContextCurrent();
 
-#if !USE(OPENGL_ES_2)
+#if !PLATFORM(IOS) && !USE(OPENGL_ES_2)
     if (type == HALF_FLOAT_OES)
         type = GL_HALF_FLOAT_ARB;
 #endif
