@@ -91,7 +91,7 @@ CGColorSpaceRef sRGBColorSpaceRef()
 {
 #if PLATFORM(IOS)
     return deviceRGBColorSpaceRef();
-#endif // PLATFORM(IOS)
+#else
     static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
 #if PLATFORM(WIN)
     // Out-of-date CG installations will not honor kCGColorSpaceSRGB. This logic avoids
@@ -99,8 +99,9 @@ CGColorSpaceRef sRGBColorSpaceRef()
     // is sRGB, this all works out nicely.
     if (!sRGBSpace)
         sRGBSpace = deviceRGBColorSpaceRef();
-#endif
+#endif // PLATFORM(WIN)
     return sRGBSpace;
+#endif // PLATFORM(IOS)
 }
 
 #if PLATFORM(IOS)
