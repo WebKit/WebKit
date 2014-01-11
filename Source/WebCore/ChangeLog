@@ -1,6 +1,15 @@
 2014-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix iOS build.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMRange renderedImageForcingBlackText:renderedImageForcingBlackText:]):
+        * bindings/objc/DOMExtensions.h:
+        * platform/DragImage.h:
+
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix iOS build.
         
         Generated DOMTouch* and DOMGesture* files need to be in the project.
         Exclude them on Mac via EXCLUDED_SOURCE_FILE_NAMES_macosx.

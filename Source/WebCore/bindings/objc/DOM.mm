@@ -610,7 +610,11 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     if (!frame)
         return nil;
 
+#if PLATFORM(IOS)
+    return createDragImageForRange(*frame, *range, forceBlackText).leakRef();
+#else
     return [createDragImageForRange(*frame, *range, forceBlackText).leakRef() autorelease];
+#endif
 }
 
 - (NSArray *)textRects

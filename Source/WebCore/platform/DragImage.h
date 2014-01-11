@@ -33,7 +33,10 @@
 #include "IntSize.h"
 #include <wtf/Forward.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS)
+#include <wtf/RetainPtr.h>
+typedef struct CGImage *CGImageRef;
+#elif PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSImage;
 #elif PLATFORM(WIN)
@@ -54,7 +57,9 @@ class Node;
 class Range;
 class URL;
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS)
+typedef RetainPtr<CGImageRef> DragImageRef;
+#elif PLATFORM(MAC)
 typedef RetainPtr<NSImage> DragImageRef;
 #elif PLATFORM(WIN)
 typedef HBITMAP DragImageRef;

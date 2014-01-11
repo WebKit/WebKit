@@ -48,7 +48,9 @@
 #endif
 
 @class NSArray;
+#if !TARGET_OS_IPHONE
 @class NSImage;
+#endif
 @class NSURL;
 
 
@@ -110,7 +112,7 @@ typedef struct _WKQuad {
 @end
 
 @interface DOMElement (DOMElementAppKitExtensions)
-#if TARGET_OS_MAC
+#if !TARGET_OS_IPHONE
 - (NSImage *)image WEBKIT_AVAILABLE_MAC(10_5);
 #endif
 @end
