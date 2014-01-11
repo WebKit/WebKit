@@ -1,3 +1,10 @@
+2014-01-10  Andy Estes  <aestes@apple.com>
+
+        [iOS] Build Fix: Properly add $SDKROOT/usr/local/include/ to the search path when building PublicDOMInterfaces.h
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (ReadPublicInterfaces):
+
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unimplemented or static ScriptDebugServer features

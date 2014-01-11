@@ -251,17 +251,10 @@ sub ReadPublicInterfaces
     %publicInterfaces = ();
 
     my @args = qw(-E -P -x objective-c);
-    # Set include path to find <wtf/Platform.h>.  We search BUILT_PRODUCTS_DIR
-    # first for local developer builds, then the installation path for B&I
-    # builds.
-    push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
-    push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . $ENV{SDKROOT} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
 
-    # Xcode 3.1 is required for SDKROOT to be set.
-    if ($ENV{SDKROOT} && $ENV{SYSTEM_LIBRARY_DIR}) {
-        push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . $ENV{SDKROOT} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
-        push(@args, "-I" . $ENV{SDKROOT} . "/usr/local/include");
-    }
+    push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
+    push(@args, "-isysroot", $ENV{SDKROOT}) if $ENV{SDKROOT};
+
     my $fileName = "WebCore/bindings/objc/PublicDOMInterfaces.h";
     my $gccLocation = "";
     if ($ENV{CC}) {
@@ -272,11 +265,6 @@ sub ReadPublicInterfaces
         $gccLocation = "/usr/bin/clang";
     } else {
         $gccLocation = "/usr/bin/gcc";
-    }
-
-    if ($ENV{SDKROOT}) {
-        # PLATFORM(IOS)
-        push(@args, "-isysroot", $ENV{SDKROOT});
     }
 
     open FILE, "-|", $gccLocation, @args,
