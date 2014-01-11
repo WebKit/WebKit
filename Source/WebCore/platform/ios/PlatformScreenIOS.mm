@@ -36,18 +36,6 @@
 
 namespace WebCore {
 
-int screenHorizontalDPI(Widget*)
-{
-    notImplemented();
-    return 0;
-}
-
-int screenVerticalDPI(Widget*)
-{
-    notImplemented();
-    return 0;
-}
-
 int screenDepth(Widget*)
 {
     // Assume 32 bits per pixel. See <rdar://problem/9378829>.
@@ -65,7 +53,7 @@ bool screenIsMonochrome(Widget*)
     return false;
 }
 
-// These functions scale between screen and page coordinates because JavaScript/DOM operations 
+// These functions scale between screen and page coordinates because JavaScript/DOM operations
 // assume that the screen and the page share the same coordinate system.
 FloatRect screenRect(Widget* widget)
 {
@@ -87,6 +75,11 @@ FloatRect screenAvailableRect(Widget* widget)
         return CGRectZero;
     CGRect screenRect = { CGPointZero, [window availableScreenSize] };
     return enclosingIntRect(screenRect);
+}
+
+void screenColorProfile(ColorProfile&)
+{
+    notImplemented();
 }
 
 } // namespace WebCore

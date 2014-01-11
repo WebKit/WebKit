@@ -1,3 +1,14 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix PlatformScreenIOS.mm for iOS. Unreviewed build fix.
+
+        PlatformScreen.h removed screenVerticalDPI and screenHorizontalDPI in r132419,
+        so remove the stale implementations on iOS. Also, add a notImplemented version
+        of screenColorProfile, which matches Mac and is unused in WebCore for this port.
+
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::screenColorProfile):
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         CTTE FrameTree
