@@ -72,6 +72,11 @@ NSString *systemMarketingVersion()
 }
 #else
 
+NSString *systemMarketingVersion()
+{
+    // FIXME: Needs implementation.
+    static NSString *version = @"";
+    return version;
 }
 
 #endif // !PLATFORM(IOS)

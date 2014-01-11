@@ -1,5 +1,15 @@
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix SystemVersionMac.o for iOS. Unreviewed build fix.
+
+        Add missing expected function. Maybe we can avoid including
+        this file entirely on iOS, there was already a FIXME.
+
+        * platform/mac/SystemVersionMac.mm:
+        (WebCore::systemMarketingVersion):
+
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix JSDOMWindowBase.o for iOS. Unreviewed build fix.
 
         Add missing iOS method declarations.
