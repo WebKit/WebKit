@@ -1,3 +1,32 @@
+2014-01-11  Sam Weinig  <sam@webkit.org>
+
+        Extract the FormatConverter class out of GraphicsContext3D.cpp and into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=126820
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FormatConverter.cpp: Copied from Source/WebCore/platform/graphics/GraphicsContext3D.cpp.
+        (WebCore::convertFloatToHalfFloat):
+        (WebCore::FormatConverter::convert):
+        * platform/graphics/FormatConverter.h: Copied from Source/WebCore/platform/graphics/GraphicsContext3D.cpp.
+        (WebCore::FormatConverter::FormatConverter):
+        (WebCore::FormatConverter::success):
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::computeFormatAndTypeParameters):
+        (WebCore::GraphicsContext3D::computeImageSizeInBytes):
+        (WebCore::GraphicsContext3D::packImageData):
+        (WebCore::GraphicsContext3D::extractImageData):
+        (WebCore::GraphicsContext3D::extractTextureData):
+        (WebCore::GraphicsContext3D::packPixels):
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::hasAlpha):
+        (WebCore::GraphicsContext3D::hasColor):
+
 2014-01-11  Simon Fraser  <simon.fraser@apple.com>
 
         Fix updateScrollingLayerWithClient() for iOS.

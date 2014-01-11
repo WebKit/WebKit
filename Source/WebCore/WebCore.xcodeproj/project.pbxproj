@@ -2293,6 +2293,8 @@
 		7C5343FC17B74B63004232F0 /* JSMediaQueryListListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C5343FA17B74B63004232F0 /* JSMediaQueryListListener.cpp */; };
 		7C5343FD17B74B63004232F0 /* JSMediaQueryListListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5343FB17B74B63004232F0 /* JSMediaQueryListListener.h */; };
 		7CC7E3D717208C0F003C5277 /* IDNScriptWhiteList.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7CC7E3D617208C0F003C5277 /* IDNScriptWhiteList.txt */; };
+		7CE6CBFB187F370700D46BF5 /* FormatConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE6CBFA187F370700D46BF5 /* FormatConverter.h */; };
+		7CE6CBFD187F394900D46BF5 /* FormatConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */; };
 		7D741BDA177226AA00859170 /* CSSValueKeywords.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 6565814809D13043000E61D7 /* CSSValueKeywords.h */; };
 		7E12E90F15FA5D3A005E4126 /* CustomFilterMeshGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E12E90D15FA5D3A005E4126 /* CustomFilterMeshGenerator.h */; };
 		7E12E91015FA5D3A005E4126 /* CustomFilterMeshGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E12E90E15FA5D3A005E4126 /* CustomFilterMeshGenerator.cpp */; };
@@ -9266,6 +9268,8 @@
 		7C6136F81710C35200FF4A57 /* InFilesParser.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = InFilesParser.pm; path = scripts/InFilesParser.pm; sourceTree = "<group>"; };
 		7C6136F91710C35200FF4A57 /* StaticString.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = StaticString.pm; path = scripts/StaticString.pm; sourceTree = "<group>"; };
 		7CC7E3D617208C0F003C5277 /* IDNScriptWhiteList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDNScriptWhiteList.txt; sourceTree = "<group>"; };
+		7CE6CBFA187F370700D46BF5 /* FormatConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormatConverter.h; sourceTree = "<group>"; };
+		7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormatConverter.cpp; sourceTree = "<group>"; };
 		7E12E90D15FA5D3A005E4126 /* CustomFilterMeshGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterMeshGenerator.h; path = filters/CustomFilterMeshGenerator.h; sourceTree = "<group>"; };
 		7E12E90E15FA5D3A005E4126 /* CustomFilterMeshGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterMeshGenerator.cpp; path = filters/CustomFilterMeshGenerator.cpp; sourceTree = "<group>"; };
 		7E33CD00127F340D00BE8F17 /* PurgePriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgePriority.h; sourceTree = "<group>"; };
@@ -19832,10 +19836,6 @@
 		B2A015910AF6CD53006BCE0E /* graphics */ = {
 			isa = PBXGroup;
 			children = (
-				6E0E5699183BFFE600E0E8D5 /* FloatRoundedRect.cpp */,
-				6E0E569A183BFFE600E0E8D5 /* FloatRoundedRect.h */,
-				CD641EB11818F5ED00EE4C41 /* MediaSourcePrivate.h */,
-				CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */,
 				076F0D0812B8192700C26AA4 /* avfoundation */,
 				499B3EC0128CCC1800E726C2 /* ca */,
 				B27535290B053814002CE64F /* cg */,
@@ -19872,6 +19872,8 @@
 				0FD723800EC8BD9300CA5DD7 /* FloatQuad.h */,
 				B275353C0B053814002CE64F /* FloatRect.cpp */,
 				B275353D0B053814002CE64F /* FloatRect.h */,
+				6E0E5699183BFFE600E0E8D5 /* FloatRoundedRect.cpp */,
+				6E0E569A183BFFE600E0E8D5 /* FloatRoundedRect.h */,
 				B275353E0B053814002CE64F /* FloatSize.cpp */,
 				B275353F0B053814002CE64F /* FloatSize.h */,
 				B2C3DA4F0D006CD600EF6F26 /* Font.cpp */,
@@ -19899,10 +19901,10 @@
 				37202198106213C600F25C4B /* FontSmoothingMode.h */,
 				3784C34A0E11AA34007D8D48 /* FontTraitsMask.h */,
 				BCE4413512F7490B009B84B8 /* FontWidthVariant.h */,
+				7CE6CBFC187F394900D46BF5 /* FormatConverter.cpp */,
+				7CE6CBFA187F370700D46BF5 /* FormatConverter.h */,
 				4FB390AC15EF61F3007AD51F /* GeneratedImage.cpp */,
 				BC23F0DA0DAFF4A4009FDC91 /* GeneratedImage.h */,
-				2D2FC0561460CD6F00263633 /* GradientImage.cpp */,
-				2D2FC0571460CD6F00263633 /* GradientImage.h */,
 				086BBD0E136039C2008B15D8 /* Glyph.h */,
 				B2C3DA5B0D006CD600EF6F26 /* GlyphBuffer.h */,
 				C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */,
@@ -19911,6 +19913,8 @@
 				B2C3DA5D0D006CD600EF6F26 /* GlyphPageTreeNode.h */,
 				BC53C6070DA56C570021EB5D /* Gradient.cpp */,
 				BC53C5F40DA56B920021EB5D /* Gradient.h */,
+				2D2FC0561460CD6F00263633 /* GradientImage.cpp */,
+				2D2FC0571460CD6F00263633 /* GradientImage.h */,
 				B2A015920AF6CD53006BCE0E /* GraphicsContext.cpp */,
 				B2A015930AF6CD53006BCE0E /* GraphicsContext.h */,
 				6E21C6BF1126338500A7BE02 /* GraphicsContext3D.cpp */,
@@ -19957,6 +19961,7 @@
 				E4B41E0C0CBF90BD00AF2ECE /* MediaPlayer.cpp */,
 				E4B41E0D0CBF90BD00AF2ECE /* MediaPlayer.h */,
 				079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */,
+				CD641EB11818F5ED00EE4C41 /* MediaSourcePrivate.h */,
 				6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */,
 				B27535520B053814002CE64F /* Path.cpp */,
 				B27535530B053814002CE64F /* Path.h */,
@@ -19977,8 +19982,7 @@
 				0F3DD44E12F5EA1B000D9190 /* ShadowBlur.h */,
 				B2C3DA530D006CD600EF6F26 /* SimpleFontData.cpp */,
 				B2C3DA540D006CD600EF6F26 /* SimpleFontData.h */,
-				CDC61DA0180867D8004B913F /* SourceBufferPrivate.h */,
-				CD54A75E180F535000B076C9 /* MediaSourcePrivate.h */,
+				CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */,
 				CDC8B5AC1804AE5D0016E685 /* SourceBufferPrivateClient.h */,
 				B23540F00D00782E002382FA /* StringTruncator.cpp */,
 				B23540F10D00782E002382FA /* StringTruncator.h */,
@@ -20002,6 +20006,8 @@
 				501BAAA813950E2C00F7ACEB /* WindRule.h */,
 				379919941200DDF400EA041C /* WOFFFileFormat.cpp */,
 				379919951200DDF400EA041C /* WOFFFileFormat.h */,
+				CDC61DA0180867D8004B913F /* SourceBufferPrivate.h */,
+				CD54A75E180F535000B076C9 /* MediaSourcePrivate.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -24944,6 +24950,7 @@
 				BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */,
 				BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */,
 				A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */,
+				7CE6CBFB187F370700D46BF5 /* FormatConverter.h in Headers */,
 				935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */,
 				0562F9611573F88F0031CA16 /* PlatformLayer.h in Headers */,
 				F544F78915CFB2A800AF33A8 /* PlatformLocale.h in Headers */,
@@ -27110,6 +27117,7 @@
 				511EF2C817F0FD3500E4FA16 /* JSIDBOpenDBRequest.cpp in Sources */,
 				31313F651443B35F006E2A90 /* FilterEffectRenderer.cpp in Sources */,
 				49ECEB6D1499790D00CDD3A4 /* FilterOperation.cpp in Sources */,
+				7CE6CBFD187F394900D46BF5 /* FormatConverter.cpp in Sources */,
 				49ECEB6F1499790D00CDD3A4 /* FilterOperations.cpp in Sources */,
 				A8CFF04D0A154F09000A4234 /* FixedTableLayout.cpp in Sources */,
 				51D719B6181106E00016DC51 /* DOMWindowIndexedDatabase.cpp in Sources */,

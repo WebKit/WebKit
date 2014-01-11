@@ -606,6 +606,49 @@ public:
         DataFormatNumFormats
     };
 
+    ALWAYS_INLINE static bool hasAlpha(DataFormat format)
+    {
+        return format == GraphicsContext3D::DataFormatA8
+            || format == GraphicsContext3D::DataFormatA16F
+            || format == GraphicsContext3D::DataFormatA32F
+            || format == GraphicsContext3D::DataFormatRA8
+            || format == GraphicsContext3D::DataFormatAR8
+            || format == GraphicsContext3D::DataFormatRA16F
+            || format == GraphicsContext3D::DataFormatRA32F
+            || format == GraphicsContext3D::DataFormatRGBA8
+            || format == GraphicsContext3D::DataFormatBGRA8
+            || format == GraphicsContext3D::DataFormatARGB8
+            || format == GraphicsContext3D::DataFormatABGR8
+            || format == GraphicsContext3D::DataFormatRGBA16F
+            || format == GraphicsContext3D::DataFormatRGBA32F
+            || format == GraphicsContext3D::DataFormatRGBA4444
+            || format == GraphicsContext3D::DataFormatRGBA5551;
+    }
+
+    ALWAYS_INLINE static bool hasColor(DataFormat format)
+    {
+        return format == GraphicsContext3D::DataFormatRGBA8
+            || format == GraphicsContext3D::DataFormatRGBA16F
+            || format == GraphicsContext3D::DataFormatRGBA32F
+            || format == GraphicsContext3D::DataFormatRGB8
+            || format == GraphicsContext3D::DataFormatRGB16F
+            || format == GraphicsContext3D::DataFormatRGB32F
+            || format == GraphicsContext3D::DataFormatBGR8
+            || format == GraphicsContext3D::DataFormatBGRA8
+            || format == GraphicsContext3D::DataFormatARGB8
+            || format == GraphicsContext3D::DataFormatABGR8
+            || format == GraphicsContext3D::DataFormatRGBA5551
+            || format == GraphicsContext3D::DataFormatRGBA4444
+            || format == GraphicsContext3D::DataFormatRGB565
+            || format == GraphicsContext3D::DataFormatR8
+            || format == GraphicsContext3D::DataFormatR16F
+            || format == GraphicsContext3D::DataFormatR32F
+            || format == GraphicsContext3D::DataFormatRA8
+            || format == GraphicsContext3D::DataFormatRA16F
+            || format == GraphicsContext3D::DataFormatRA32F
+            || format == GraphicsContext3D::DataFormatAR8;
+    }
+
     // Check if the format is one of the formats from the ImageData or DOM elements.
     // The formats from ImageData is always RGBA8.
     // The formats from DOM elements vary with Graphics ports. It can only be RGBA8 or BGRA8 for non-CG port while a little more for CG port.

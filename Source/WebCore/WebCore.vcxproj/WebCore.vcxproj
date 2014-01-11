@@ -7295,6 +7295,7 @@
     <ClCompile Include="..\platform\graphics\gpu\SharedGraphicsContext3D.cpp" />
     <ClCompile Include="..\platform\graphics\gpu\Texture.cpp" />
     <ClCompile Include="..\platform\graphics\gpu\TilingData.cpp" />
+    <ClCompile Include="..\platform\graphics\FormatConverter.cpp" />
     <ClCompile Include="..\platform\graphics\GraphicsContext3D.cpp" />
     <ClCompile Include="..\platform\graphics\GraphicsLayerAnimation.cpp" />
     <ClCompile Include="..\platform\graphics\GraphicsLayerTransform.cpp" />
@@ -19073,6 +19074,7 @@
     <ClInclude Include="..\platform\graphics\gpu\SharedGraphicsContext3D.h" />
     <ClInclude Include="..\platform\graphics\gpu\Texture.h" />
     <ClInclude Include="..\platform\graphics\gpu\TilingData.h" />
+    <ClInclude Include="..\platform\graphics\FormatConverter.h" />
     <ClInclude Include="..\platform\graphics\GraphicsContext3D.h" />
     <ClInclude Include="..\platform\graphics\GraphicsLayerAnimation.h" />
     <ClInclude Include="..\platform\graphics\GraphicsLayerFactory.h" />

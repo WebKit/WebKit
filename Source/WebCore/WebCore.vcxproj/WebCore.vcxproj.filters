@@ -6739,6 +6739,9 @@
     <ClCompile Include="..\platform\graphics\ANGLEWebKitBridge.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\FormatConverter.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\GraphicsContext3D.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
@@ -14600,6 +14603,9 @@
       <Filter>platform\audio</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\ANGLEWebKitBridge.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\FormatConverter.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\GraphicsContext3D.h">

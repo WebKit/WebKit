@@ -5366,6 +5366,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/filters/FilterOperations.h \
 	Source/WebCore/platform/graphics/gpu/DrawingBuffer.cpp \
 	Source/WebCore/platform/graphics/gpu/DrawingBuffer.h \
+	Source/WebCore/platform/graphics/FormatConverter.cpp \
+	Source/WebCore/platform/graphics/FormatConverter.h \
 	Source/WebCore/platform/graphics/GraphicsContext3D.cpp \
 	Source/WebCore/platform/graphics/GraphicsContext3D.h \
 	Source/WebCore/platform/graphics/GraphicsLayer.h \

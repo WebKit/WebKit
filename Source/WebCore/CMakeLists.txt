@@ -2979,6 +2979,7 @@ if (WTF_USE_3D_GRAPHICS)
     list(APPEND WebCore_SOURCES
         platform/graphics/ANGLEWebKitBridge.cpp
         platform/graphics/GraphicsContext3D.cpp
+        platform/graphics/FormatConverter.cpp
 
         platform/graphics/gpu/DrawingBuffer.cpp
     )
