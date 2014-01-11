@@ -1,3 +1,17 @@
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix CharsetData.cpp build for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=126792
+
+        Reviewed by Mark Rowe.
+
+        CharsetData.cpp should have an empty CharsetTable list for iOS.
+        Achieve this with an iOS-specific encodings.txt file.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/text/mac/ios-encodings.txt: Added.
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         CTTE in NavigationScheduler

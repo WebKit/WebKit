@@ -7217,6 +7217,7 @@
 		0F3F0E57157030C3006DA57F /* RenderGeometryMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderGeometryMap.cpp; sourceTree = "<group>"; };
 		0F3F0E58157030C3006DA57F /* RenderGeometryMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderGeometryMap.h; sourceTree = "<group>"; };
 		0F4E57161313276200CF85AF /* RenderSVGAllInOne.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGAllInOne.cpp; sourceTree = "<group>"; };
+		0F54DCCC1880C6AB003EEDBB /* ios-encodings.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ios-encodings.txt"; sourceTree = "<group>"; };
 		0F56028D0E4B76580065B038 /* RenderMarquee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMarquee.h; sourceTree = "<group>"; };
 		0F56028E0E4B76580065B038 /* RenderMarquee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMarquee.cpp; sourceTree = "<group>"; };
 		0F580B090F12A2690051D689 /* GraphicsLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayer.cpp; sourceTree = "<group>"; };
@@ -20046,6 +20047,7 @@
 				B2C3D9FA0D006C1D00EF6F26 /* CharsetData.h */,
 				F5973DDE15CFB2030027F804 /* LocaleMac.h */,
 				F5973DDF15CFB2030027F804 /* LocaleMac.mm */,
+				0F54DCCC1880C6AB003EEDBB /* ios-encodings.txt */,
 				B2AFFC860D00A5DF0030074D /* mac-encodings.txt */,
 				B2AFFC870D00A5DF0030074D /* make-charset-table.pl */,
 				B2AFFC8C0D00A5DF0030074D /* TextBoundaries.mm */,

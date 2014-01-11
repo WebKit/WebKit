@@ -1181,7 +1181,13 @@ all : CharsetData.cpp
 
 # character set name table
 
-CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/character-sets.txt platform/text/mac/mac-encodings.txt
+ifeq ($(WTF_PLATFORM_IOS),1)
+ENCODINGS_FILENAME := ios-encodings.txt
+else
+ENCODINGS_FILENAME := mac-encodings.txt
+endif # WTF_PLATFORM_IOS
+
+CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/character-sets.txt platform/text/mac/$(ENCODINGS_FILENAME)
 	perl $^ kTextEncoding > $@
 
 # --------
