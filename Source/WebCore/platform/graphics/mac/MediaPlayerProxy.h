@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef MediaPlayerProxy_h
@@ -39,6 +39,8 @@
 #define OBJC_CLASS class
 #endif
 #endif // !defined(OBJC_CLASS)
+
+OBJC_CLASS CALayer;
 #endif // PLATFORM(IOS)
 
 OBJC_CLASS WebMediaPlayerProxy;
@@ -154,6 +156,13 @@ enum MediaPlayerProxyNotificationType {
 - (unsigned)_bytesLoaded;
 
 - (NSArray *)_mimeTypes;
+
+#if PLATFORM(IOS)
+- (void)_setDelegate:(id)delegate;
+- (void)_setOutOfBandTextTracks:(NSArray *)textTracks;
+- (void)_setSelectedTextTrack:(NSNumber *)textTrack;
+- (void)_setTextTrackRepresentation:(CALayer*)representation;
+#endif
 
 @end
 #endif
