@@ -34,8 +34,6 @@
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -68,7 +66,7 @@ class NavigationScheduler {
     WTF_MAKE_NONCOPYABLE(NavigationScheduler);
 
 public:
-    explicit NavigationScheduler(Frame*);
+    explicit NavigationScheduler(Frame&);
     ~NavigationScheduler();
 
     bool redirectScheduledDuringLoad();
@@ -90,13 +88,13 @@ private:
     bool shouldScheduleNavigation(const String& url) const;
 
     void timerFired(Timer<NavigationScheduler>*);
-    void schedule(PassOwnPtr<ScheduledNavigation>);
+    void schedule(std::unique_ptr<ScheduledNavigation>);
 
-    static bool mustLockBackForwardList(Frame* targetFrame);
+    static bool mustLockBackForwardList(Frame& targetFrame);
 
-    Frame* m_frame;
+    Frame& m_frame;
     Timer<NavigationScheduler> m_timer;
-    OwnPtr<ScheduledNavigation> m_redirect;
+    std::unique_ptr<ScheduledNavigation> m_redirect;
 };
 
 } // namespace WebCore

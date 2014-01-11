@@ -868,15 +868,15 @@ void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& inst
         inspectorPageAgent->frameStoppedLoading(frame);
 }
 
-void InspectorInstrumentation::frameScheduledNavigationImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, double delay)
+void InspectorInstrumentation::frameScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, double delay)
 {
-    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents->inspectorPageAgent())
+    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents.inspectorPageAgent())
         inspectorPageAgent->frameScheduledNavigation(frame, delay);
 }
 
-void InspectorInstrumentation::frameClearedScheduledNavigationImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
+void InspectorInstrumentation::frameClearedScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
 {
-    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents->inspectorPageAgent())
+    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents.inspectorPageAgent())
         inspectorPageAgent->frameClearedScheduledNavigation(frame);
 }
 

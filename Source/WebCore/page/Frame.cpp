@@ -164,7 +164,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     , m_settings(&page.settings())
     , m_treeNode(this, parentFromOwnerElement(ownerElement))
     , m_loader(*this, frameLoaderClient)
-    , m_navigationScheduler(this)
+    , m_navigationScheduler(*this)
     , m_ownerElement(ownerElement)
     , m_script(std::make_unique<ScriptController>(*this))
     , m_editor(Editor::create(*this))

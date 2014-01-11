@@ -197,8 +197,8 @@ public:
     static void loaderDetachedFromFrame(Frame*, DocumentLoader*);
     static void frameStartedLoading(Frame&);
     static void frameStoppedLoading(Frame&);
-    static void frameScheduledNavigation(Frame*, double delay);
-    static void frameClearedScheduledNavigation(Frame*);
+    static void frameScheduledNavigation(Frame&, double delay);
+    static void frameClearedScheduledNavigation(Frame&);
     static InspectorInstrumentationCookie willRunJavaScriptDialog(Page*, const String& message);
     static void didRunJavaScriptDialog(const InspectorInstrumentationCookie&);
     static void willDestroyCachedResource(CachedResource*);
@@ -388,8 +388,8 @@ private:
     static void loaderDetachedFromFrameImpl(InstrumentingAgents*, DocumentLoader*);
     static void frameStartedLoadingImpl(InstrumentingAgents&, Frame&);
     static void frameStoppedLoadingImpl(InstrumentingAgents&, Frame&);
-    static void frameScheduledNavigationImpl(InstrumentingAgents*, Frame*, double delay);
-    static void frameClearedScheduledNavigationImpl(InstrumentingAgents*, Frame*);
+    static void frameScheduledNavigationImpl(InstrumentingAgents&, Frame&, double delay);
+    static void frameClearedScheduledNavigationImpl(InstrumentingAgents&, Frame&);
     static InspectorInstrumentationCookie willRunJavaScriptDialogImpl(InstrumentingAgents*, const String& message);
     static void didRunJavaScriptDialogImpl(const InspectorInstrumentationCookie&);
     static void willDestroyCachedResourceImpl(CachedResource*);
@@ -1626,22 +1626,22 @@ inline void InspectorInstrumentation::frameStoppedLoading(Frame& frame)
 #endif
 }
 
-inline void InspectorInstrumentation::frameScheduledNavigation(Frame* frame, double delay)
+inline void InspectorInstrumentation::frameScheduledNavigation(Frame& frame, double delay)
 {
 #if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        frameScheduledNavigationImpl(instrumentingAgents, frame, delay);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(&frame))
+        frameScheduledNavigationImpl(*instrumentingAgents, frame, delay);
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(delay);
 #endif
 }
 
-inline void InspectorInstrumentation::frameClearedScheduledNavigation(Frame* frame)
+inline void InspectorInstrumentation::frameClearedScheduledNavigation(Frame& frame)
 {
 #if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        frameClearedScheduledNavigationImpl(instrumentingAgents, frame);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(&frame))
+        frameClearedScheduledNavigationImpl(*instrumentingAgents, frame);
 #else
     UNUSED_PARAM(frame);
 #endif

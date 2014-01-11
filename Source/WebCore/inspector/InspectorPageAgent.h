@@ -135,8 +135,8 @@ public:
     void loaderDetachedFromFrame(DocumentLoader*);
     void frameStartedLoading(Frame&);
     void frameStoppedLoading(Frame&);
-    void frameScheduledNavigation(Frame*, double delay);
-    void frameClearedScheduledNavigation(Frame*);
+    void frameScheduledNavigation(Frame&, double delay);
+    void frameClearedScheduledNavigation(Frame&);
     void willRunJavaScriptDialog(const String& message);
     void didRunJavaScriptDialog();
     void applyEmulatedMedia(String*);
