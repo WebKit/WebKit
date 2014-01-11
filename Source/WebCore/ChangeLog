@@ -1,5 +1,13 @@
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix DragData.o for iOS. Unreviewed build fix.
+
+        String m_pasteboardName is unused on iOS, so ifdef it out.
+
+        * platform/DragData.h:
+
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix FrameIOS.o for iOS. Unreviewed build fix.
 
         Remove stale include to file that no longer exists. It was not needed.
