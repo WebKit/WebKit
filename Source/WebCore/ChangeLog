@@ -1,5 +1,14 @@
 2014-01-11  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Add USE(IOSURFACE_CANVAS_BACKING_STORE) to fix build
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer): The 'width' and 'height'
+        variables are only used by code protected by
+        USE(IOSURFACE_CANVAS_BACKING_STORE).
+
+2014-01-11  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Multisampling is not available on iOS
 
         * platform/graphics/mac/GraphicsContext3DMac.mm:

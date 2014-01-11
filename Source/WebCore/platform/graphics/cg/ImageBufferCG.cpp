@@ -147,8 +147,10 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace 
     if (m_size.width() <= 0 || m_size.height() <= 0)
         return;
 
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
     Checked<int, RecordOverflow> width = m_size.width();
     Checked<int, RecordOverflow> height = m_size.height();
+#endif
 
     // Prevent integer overflows
     m_data.m_bytesPerRow = 4 * Checked<unsigned, RecordOverflow>(m_data.m_backingStoreSize.width());
