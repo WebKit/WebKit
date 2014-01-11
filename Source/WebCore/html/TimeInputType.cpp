@@ -48,7 +48,7 @@ static const int timeDefaultStepBase = 0;
 static const int timeStepScaleFactor = 1000;
 
 TimeInputType::TimeInputType(HTMLInputElement& element)
-    : BaseTimeInputType(element)
+    : BaseChooserOnlyDateAndTimeInputType(element)
 {
 }
 

@@ -1,3 +1,13 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix MonthInputType.o for iOS. Unreviewed build fix.
+
+        When ENABLE_INPUT_MULTIPLE_FIELDS_UI was removed in r150876,
+        the wrong class name lingered. Fix it to be the base class.
+
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::TimeInputType):
+
 2014-01-10  Andy Estes  <aestes@apple.com>
 
         [iOS] Build fix: make sure WTF_PLATFORM_IOS is defined when preprocessing
