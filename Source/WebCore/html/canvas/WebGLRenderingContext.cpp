@@ -3493,11 +3493,11 @@ void WebGLRenderingContext::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC
             m_context->readPixels(x, y, width, height, format, type, data);
     }
 
-#if OS(DARWIN) || OS(QNX)
+#if OS(DARWIN)
     if (m_isRobustnessEXTSupported) // we haven't computed padding
         m_context->computeImageSizeInBytes(format, type, width, height, m_packAlignment, &totalBytesRequired, &padding);
     // FIXME: remove this section when GL driver bug on Mac AND the GLES driver bug
-    // on QC & Imagination QNX is fixed, i.e., when alpha is off, readPixels should
+    // on QC is fixed, i.e., when alpha is off, readPixels should
     // set alpha to 255 instead of 0.
     if (!m_framebufferBinding && !m_context->getContextAttributes().alpha) {
         unsigned char* pixels = reinterpret_cast<unsigned char*>(data);

@@ -32,13 +32,6 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
-#if OS(QNX)
-// See https://bugs.webkit.org/show_bug.cgi?id=91030.
-// Newer Khorons headers do define these with a PROC suffix, but older headers don't.
-#define PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMG PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMGPROC
-#define PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMG PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMGPROC
-#endif
-
 #ifndef GL_EXT_robustness
 /* reuse GL_NO_ERROR */
 #define GL_GUILTY_CONTEXT_RESET_EXT 0x8253

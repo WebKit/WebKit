@@ -35,9 +35,6 @@
 #include "Extensions3DOpenGLES.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#if PLATFORM(BLACKBERRY)
-#include "LayerWebKitThread.h"
-#endif
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -54,15 +51,6 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
     // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
     // all previous rendering calls should be done before reading pixels.
     ::glFlush();
-#if PLATFORM(BLACKBERRY)
-    if (m_isImaginationHardware && m_fbo == m_state.boundFBO) {
-        // FIXME: This workaround should always be used until the
-        // driver alignment bug is fixed, even when we aren't
-        // drawing to the canvas.
-        readPixelsIMG(x, y, width, height, format, type, data);
-    } else
-        ::glReadPixels(x, y, width, height, format, type, data);
-#else
     if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
          resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -73,22 +61,11 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
 
     if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-#endif
 }
 
 void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
-#if PLATFORM(BLACKBERRY)
-    if (m_isImaginationHardware && m_fbo == m_state.boundFBO) {
-        // FIXME: This workaround should always be used until the
-        // driver alignment bug is fixed, even when we aren't
-        // drawing to the canvas.
-        readPixelsIMG(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-    } else
-        ::glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-#else
     ::glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-#endif
     int totalBytes = width * height * 4;
     if (isGLES2Compliant()) {
         for (int i = 0; i < totalBytes; i += 4)
@@ -96,8 +73,6 @@ void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int 
     }
 }
 
-#if !PLATFORM(BLACKBERRY)
-// The BlackBerry port uses a special implementation of reshapeFBOs. See GraphicsContext3DBlackBerry.cpp
 bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 {
     const int width = size.width();
@@ -169,7 +144,6 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
     return mustRestoreFBO;
 }
-#endif
 
 void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
 {

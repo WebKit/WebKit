@@ -1347,7 +1347,7 @@ public:
         m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_MOV_imm_T3, imm.m_value.imm4, rd, imm);
     }
     
-#if OS(LINUX) || OS(QNX)
+#if OS(LINUX)
     static void revertJumpTo_movT3movtcmpT2(void* instructionStart, RegisterID left, RegisterID right, uintptr_t imm)
     {
         uint16_t* address = static_cast<uint16_t*>(instructionStart);
@@ -2268,7 +2268,7 @@ public:
         ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 1));
         ASSERT(!(bitwise_cast<uintptr_t>(to) & 1));
 
-#if OS(LINUX) || OS(QNX)
+#if OS(LINUX)
         if (canBeJumpT4(reinterpret_cast<uint16_t*>(instructionStart), to)) {
             uint16_t* ptr = reinterpret_cast<uint16_t*>(instructionStart) + 2;
             linkJumpT4(ptr, to);
@@ -2287,7 +2287,7 @@ public:
     
     static ptrdiff_t maxJumpReplacementSize()
     {
-#if OS(LINUX) || OS(QNX)
+#if OS(LINUX)
         return 10;
 #else
         return 4;
@@ -2377,13 +2377,6 @@ public:
         linuxPageFlush(current, end);
 #elif OS(WINCE)
         CacheRangeFlush(code, size, CACHE_SYNC_ALL);
-#elif OS(QNX)
-#if !ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-        msync(code, size, MS_INVALIDATE_ICACHE);
-#else
-        UNUSED_PARAM(code);
-        UNUSED_PARAM(size);
-#endif
 #else
 #error "The cacheFlush support is missing on this platform."
 #endif

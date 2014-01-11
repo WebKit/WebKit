@@ -48,12 +48,6 @@ typedef struct _NSSize NSSize;
 
 #if PLATFORM(WIN)
 typedef struct tagSIZE SIZE;
-#elif PLATFORM(BLACKBERRY)
-namespace BlackBerry {
-namespace Platform {
-class IntSize;
-}
-}
 #endif
 
 namespace WebCore {
@@ -146,11 +140,6 @@ public:
 #if PLATFORM(WIN)
     IntSize(const SIZE&);
     operator SIZE() const;
-#endif
-
-#if PLATFORM(BLACKBERRY)
-    IntSize(const BlackBerry::Platform::IntSize&);
-    operator BlackBerry::Platform::IntSize() const;
 #endif
 
     void dump(PrintStream& out) const;

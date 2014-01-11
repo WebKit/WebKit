@@ -33,10 +33,6 @@
 #include <EGL/egl.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(BLACKBERRY)
-#include <BlackBerryPlatformLog.h>
-#endif
-
 namespace WebCore {
 
 Extensions3DOpenGLES::Extensions3DOpenGLES(GraphicsContext3D* context)
@@ -176,11 +172,6 @@ int Extensions3DOpenGLES::getGraphicsResetStatusARB()
         m_context->makeContextCurrent();
         int reasonForReset = m_glGetGraphicsResetStatusEXT();
         if (reasonForReset != GL_NO_ERROR) {
-#if PLATFORM(BLACKBERRY)
-            // We cannot yet recreate our compositing thread, so just quit.
-            BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "Robust OpenGL context has been reset. Aborting.");
-            CRASH();
-#endif
             ASSERT(m_contextLostCallback);
             if (m_contextLostCallback)
                 m_contextLostCallback->onContextLost();

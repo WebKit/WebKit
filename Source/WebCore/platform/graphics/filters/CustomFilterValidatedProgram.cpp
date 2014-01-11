@@ -604,7 +604,7 @@ CustomFilterProgramInfo CustomFilterValidatedProgram::validatedProgramInfo() con
     return CustomFilterProgramInfo(m_validatedVertexShader, m_validatedFragmentShader, m_programInfo.programType(), m_programInfo.mixSettings(), m_programInfo.meshType());
 }
 
-#if !PLATFORM(BLACKBERRY) && !USE(TEXTURE_MAPPER)
+#if !USE(TEXTURE_MAPPER)
 void CustomFilterValidatedProgram::platformInit()
 {
 }

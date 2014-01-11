@@ -44,11 +44,6 @@ namespace WebCore {
     class PlatformPath;
 }
 typedef WebCore::PlatformPath PlatformPath;
-#elif PLATFORM(BLACKBERRY)
-namespace BlackBerry { namespace Platform { namespace Graphics {
-    class Path;
-} } }
-typedef BlackBerry::Platform::Graphics::Path PlatformPath;
 #else
 typedef void PlatformPath;
 #endif
@@ -146,12 +141,8 @@ namespace WebCore {
         void addPathForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius, RoundedRectStrategy = PreferNativeRoundedRect);
         void addBeziersForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
 
-#if USE(CG) || PLATFORM(BLACKBERRY)
+#if USE(CG)
         void platformAddPathForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
-#endif
-
-#if PLATFORM(BLACKBERRY)
-        Path(const PlatformPath&);
 #endif
 
     private:

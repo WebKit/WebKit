@@ -1,3 +1,24 @@
+2014-01-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the BlackBerry port from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=126715
+
+        Reviewed by Anders Carlsson.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::cacheFlush):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::replaceWithJump):
+        (JSC::ARMv7Assembler::maxJumpReplacementSize):
+        (JSC::ARMv7Assembler::cacheFlush):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::revertJumpReplacementToBranchPtrWithPatch):
+        * heap/MachineStackMarker.cpp:
+        (JSC::getPlatformThreadRegisters):
+        (JSC::otherThreadStackPointer):
+        (JSC::freePlatformThreadRegisters):
+        * jit/ExecutableAllocator.h:
+
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unimplemented or static ScriptDebugServer features

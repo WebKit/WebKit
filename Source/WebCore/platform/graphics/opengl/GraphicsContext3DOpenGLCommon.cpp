@@ -72,10 +72,6 @@
 #endif
 #endif
 
-#if PLATFORM(BLACKBERRY)
-#include <BlackBerryPlatformLog.h>
-#endif
-
 namespace WebCore {
 
 static ShaderNameHash* currentNameHashMapForShader;
@@ -164,7 +160,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer, 
         }
     }
 
-#if PLATFORM(BLACKBERRY) || USE(CG)
+#if USE(CG)
     paintToCanvas(pixels.get(), m_currentWidth, m_currentHeight,
                   imageBuffer->internalSize().width(), imageBuffer->internalSize().height(), imageBuffer->context());
 #else
@@ -203,7 +199,6 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(Drawin
     return imageData.release();
 }
 
-#if !PLATFORM(BLACKBERRY)
 void GraphicsContext3D::prepareTexture()
 {
     if (m_layerComposited)
@@ -228,7 +223,6 @@ void GraphicsContext3D::prepareTexture()
     ::glFinish();
     m_layerComposited = true;
 }
-#endif
 
 void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSize)
 {
@@ -399,11 +393,7 @@ void GraphicsContext3D::bindFramebuffer(GC3Denum target, Platform3DObject buffer
     if (buffer)
         fbo = buffer;
     else
-#if PLATFORM(BLACKBERRY)
-        fbo = m_fbo;
-#else
         fbo = (m_attrs.antialias ? m_multisampleFBO : m_fbo);
-#endif
     if (fbo != m_state.boundFBO) {
         ::glBindFramebufferEXT(target, fbo);
         m_state.boundFBO = fbo;
@@ -562,9 +552,6 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
     if (GLCompileSuccess != GL_TRUE) {
         entry.isValid = false;
         LOG(WebGL, "Error: shader translator produced a shader that OpenGL would not compile.");
-#if PLATFORM(BLACKBERRY) && !defined(NDEBUG)
-        BBLOG(BlackBerry::Platform::LogLevelWarn, "The shader validated, but didn't compile.\n");
-#endif
     }
 
     m_shaderSymbolCount = nullptr;
@@ -573,33 +560,25 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
 void GraphicsContext3D::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border)
 {
     makeContextCurrent();
-#if !PLATFORM(BLACKBERRY)
     if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     }
-#endif
     ::glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
-#if !PLATFORM(BLACKBERRY)
     if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
-#endif
 }
 
 void GraphicsContext3D::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height)
 {
     makeContextCurrent();
-#if !PLATFORM(BLACKBERRY)
     if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     }
-#endif
     ::glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-#if !PLATFORM(BLACKBERRY)
     if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
-#endif
 }
 
 void GraphicsContext3D::cullFace(GC3Denum mode)

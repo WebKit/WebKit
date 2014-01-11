@@ -1121,11 +1121,6 @@ namespace JSC {
             linuxPageFlush(current, end);
 #elif OS(WINCE)
             CacheRangeFlush(code, size, CACHE_SYNC_ALL);
-#elif OS(QNX) && ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-            UNUSED_PARAM(code);
-            UNUSED_PARAM(size);
-#elif OS(QNX)
-            msync(code, size, MS_INVALIDATE_ICACHE);
 #else
 #error "The cacheFlush support is missing on this platform."
 #endif

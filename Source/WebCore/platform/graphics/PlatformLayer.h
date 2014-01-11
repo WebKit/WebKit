@@ -51,12 +51,7 @@ namespace WebCore {
 class TextureMapperPlatformLayer;
 typedef TextureMapperPlatformLayer PlatformLayer;
 };
-#endif
-#elif PLATFORM(BLACKBERRY)
-namespace WebCore {
-class LayerWebKitThread;
-typedef LayerWebKitThread PlatformLayer;
-}
+#endif // USE(TEXTURE_MAPPER)
 #else
 typedef void* PlatformLayer;
 #endif

@@ -67,10 +67,6 @@ public:
     void setIsOnLine(bool);
 #endif
 
-#if PLATFORM(BLACKBERRY)
-    void networkStateChange(bool online);
-#endif
-
 private:
     bool m_isOnLine;
     Vector<NetworkStateChangeListener> m_listeners;
@@ -104,7 +100,7 @@ private:
 #endif
 };
 
-#if !PLATFORM(MAC) && !PLATFORM(WIN) && !PLATFORM(BLACKBERRY) && !PLATFORM(EFL)
+#if !PLATFORM(MAC) && !PLATFORM(WIN) && !PLATFORM(EFL)
 
 inline NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(true)

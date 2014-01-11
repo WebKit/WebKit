@@ -40,7 +40,7 @@
 #include <libkern/OSCacheControl.h>
 #endif
 
-#if OS(IOS) || OS(QNX)
+#if OS(IOS)
 #include <sys/mman.h>
 #endif
 

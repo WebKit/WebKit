@@ -38,14 +38,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
-// PlatformCompiledProgram defines a type that is compatible with the framework used to implement accelerated compositing on a particular platform.
-#if PLATFORM(BLACKBERRY)
-namespace WebCore {
-class LayerCompiledProgram;
-}
-typedef WebCore::LayerCompiledProgram PlatformCompiledProgram;
-#endif
-
 namespace WebCore {
 
 struct ANGLEShaderSymbol;
@@ -89,7 +81,7 @@ public:
         return m_validatedFragmentShader; 
     }
 
-#if PLATFORM(BLACKBERRY) || USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
     PlatformCompiledProgram* platformCompiledProgram();
 #endif
 
@@ -117,7 +109,7 @@ private:
     String m_validatedFragmentShader;
 
     RefPtr<CustomFilterCompiledProgram> m_compiledProgram;
-#if PLATFORM(BLACKBERRY) || USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
     PlatformCompiledProgram* m_platformCompiledProgram;
 #endif
 

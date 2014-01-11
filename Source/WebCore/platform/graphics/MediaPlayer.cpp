@@ -72,10 +72,7 @@
 #elif PLATFORM(WIN) && !USE(GSTREAMER)
 #if USE(AVFOUNDATION)
 #include "MediaPlayerPrivateAVFoundationCF.h"
-#endif
-#elif PLATFORM(BLACKBERRY)
-#include "MediaPlayerPrivateBlackBerry.h"
-#define PlatformMediaEngineClassName MediaPlayerPrivate
+#endif // USE(AVFOUNDATION)
 #endif
 
 namespace WebCore {

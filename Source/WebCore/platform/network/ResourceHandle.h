@@ -170,7 +170,7 @@ public:
     static void CALLBACK internetStatusCallback(HINTERNET, DWORD_PTR, DWORD, LPVOID, DWORD);
 #endif
 
-#if USE(CURL) || USE(SOUP) || PLATFORM(BLACKBERRY)
+#if USE(CURL) || USE(SOUP)
     ResourceHandleInternal* getInternal() { return d.get(); }
 #endif
 
@@ -222,10 +222,6 @@ public:
 #endif
 
     void setDefersLoading(bool);
-
-#if PLATFORM(BLACKBERRY)
-    void pauseLoad(bool); // FIXME: How is this different from setDefersLoading()?
-#endif
 
     void didChangePriority(ResourceLoadPriority);
 

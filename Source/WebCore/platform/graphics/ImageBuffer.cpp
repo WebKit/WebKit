@@ -98,7 +98,7 @@ void ImageBuffer::convertToLuminanceMask()
     genericConvertToLuminanceMask();
 }
 
-#if USE(ACCELERATED_COMPOSITING) && !USE(CAIRO) && !PLATFORM(BLACKBERRY)
+#if USE(ACCELERATED_COMPOSITING) && !USE(CAIRO)
 PlatformLayer* ImageBuffer::platformLayer() const
 {
     return 0;

@@ -144,7 +144,7 @@ void Path::addRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius,
 void Path::addPathForRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius, RoundedRectStrategy strategy)
 {
     if (strategy == PreferNativeRoundedRect) {
-#if USE(CG) || PLATFORM(BLACKBERRY)
+#if USE(CG)
         platformAddPathForRoundedRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
         return;
 #endif

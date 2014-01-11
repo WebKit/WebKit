@@ -49,12 +49,6 @@ typedef struct tagPOINT POINT;
 typedef struct tagPOINTS POINTS;
 #elif PLATFORM(GTK)
 typedef struct _GdkPoint GdkPoint;
-#elif PLATFORM(BLACKBERRY)
-namespace BlackBerry {
-namespace Platform {
-class IntPoint;
-}
-}
 #elif PLATFORM(EFL)
 typedef struct _Evas_Point Evas_Point;
 #endif
@@ -128,9 +122,6 @@ public:
 #elif PLATFORM(GTK)
     IntPoint(const GdkPoint&);
     operator GdkPoint() const;
-#elif PLATFORM(BLACKBERRY)
-    IntPoint(const BlackBerry::Platform::IntPoint&);
-    operator BlackBerry::Platform::IntPoint() const;
 #elif PLATFORM(EFL)
     explicit IntPoint(const Evas_Point&);
     operator Evas_Point() const;

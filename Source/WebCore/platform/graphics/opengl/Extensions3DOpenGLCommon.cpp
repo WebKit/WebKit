@@ -32,10 +32,6 @@
 #include "ANGLEWebKitBridge.h"
 #include "GraphicsContext3D.h"
 
-#if PLATFORM(BLACKBERRY)
-#include <BlackBerryPlatformLog.h>
-#endif
-
 #if PLATFORM(IOS)
 #include <OpenGLES/ES2/glext.h>
 #else
