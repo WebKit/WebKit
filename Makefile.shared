@@ -1,6 +1,6 @@
 SCRIPTS_PATH ?= ../Tools/Scripts
 
-XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $(ARGS)
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` COLOR_DIAGNOSTICS=YES $(ARGS)
 
 ifneq (,$(SDKROOT))
 	XCODE_OPTIONS += SDKROOT=$(SDKROOT)

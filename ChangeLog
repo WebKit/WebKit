@@ -1,3 +1,16 @@
+2014-01-11  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] xcodebuild color output is suppressed when using make
+        https://bugs.webkit.org/show_bug.cgi?id=126815
+
+        Reviewed by Anders Carlsson.
+
+        WHen using make, xcodebuild’s output is piped through a filter, which causes it not to
+        format its output with color and emphasis.
+
+        * Makefile.shared: Pass COLOR_DIAGNOSTICS=YES to xcodebuild to force color output on. Due to
+        xcodebuild limitations, this restores some of the formatting, but not all of it.
+
 2014-01-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the BlackBerry port from trunk
