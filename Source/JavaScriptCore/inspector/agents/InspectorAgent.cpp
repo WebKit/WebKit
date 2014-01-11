@@ -29,35 +29,28 @@
  */
 
 #include "config.h"
+#include "InspectorAgent.h"
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorAgent.h"
-
-#include "InstrumentingAgents.h"
-#include <bindings/ScriptValue.h>
-#include <inspector/InspectorJSFrontendDispatchers.h>
-#include <inspector/InspectorValues.h>
+#include "InspectorValues.h"
+#include "ScriptValue.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-using namespace Inspector;
+namespace Inspector {
 
-namespace WebCore {
-
-InspectorAgent::InspectorAgent(InstrumentingAgents* instrumentingAgents)
-    : InspectorAgentBase(ASCIILiteral("Inspector"), instrumentingAgents)
+InspectorAgent::InspectorAgent()
+    : InspectorAgentBase(ASCIILiteral("Inspector"))
     , m_enabled(false)
 {
-    m_instrumentingAgents->setInspectorAgent(this);
 }
 
 InspectorAgent::~InspectorAgent()
 {
-    m_instrumentingAgents->setInspectorAgent(0);
 }
 
-void InspectorAgent::didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
+void InspectorAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorInspectorFrontendDispatcher>(frontendChannel);
     m_backendDispatcher = InspectorInspectorBackendDispatcher::create(backendDispatcher, this);
@@ -91,6 +84,19 @@ void InspectorAgent::disable(ErrorString*)
     m_enabled = false;
 }
 
+void InspectorAgent::inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints)
+{
+    if (m_enabled && m_frontendDispatcher) {
+        m_frontendDispatcher->inspect(objectToInspect, hints);
+        m_pendingInspectData.first = nullptr;
+        m_pendingInspectData.second = nullptr;
+        return;
+    }
+
+    m_pendingInspectData.first = objectToInspect;
+    m_pendingInspectData.second = hints;
+}
+
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
 {
     if (m_enabled && m_frontendDispatcher)
@@ -99,18 +105,6 @@ void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script
         m_pendingEvaluateTestCommands.append(std::pair<long, String>(callId, script));
 }
 
-void InspectorAgent::inspect(PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints)
-{
-    if (m_enabled && m_frontendDispatcher) {
-        m_frontendDispatcher->inspect(objectToInspect, hints);
-        m_pendingInspectData.first = 0;
-        m_pendingInspectData.second = 0;
-        return;
-    }
-    m_pendingInspectData.first = objectToInspect;
-    m_pendingInspectData.second = hints;
-}
-
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // ENABLE(INSPECTOR)

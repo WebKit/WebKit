@@ -43,7 +43,6 @@ class InspectorValue;
 namespace WebCore {
 
 class Frame;
-class InspectorAgent;
 class InspectorPageAgent;
 class InstrumentingAgents;
 class Page;

@@ -44,7 +44,6 @@
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "EventDispatcher.h"
-#include "InspectorAgent.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"

@@ -47,6 +47,7 @@ for %%d in (
     heap
     debugger
     inspector
+    inspector\agents
     interpreter
     jit
     llint

@@ -37,7 +37,6 @@
 #include "DOMWrapperWorld.h"
 #include "GraphicsContext.h"
 #include "IdentifiersFactory.h"
-#include "InspectorAgent.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"
@@ -75,6 +74,7 @@
 #include "PageRuntimeAgent.h"
 #include "Settings.h"
 #include <inspector/InspectorBackendDispatcher.h>
+#include <inspector/agents/InspectorAgent.h>
 #include <runtime/JSLock.h>
 
 using namespace JSC;
@@ -96,8 +96,9 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 {
     ASSERT_ARG(inspectorClient, inspectorClient);
 
-    OwnPtr<InspectorAgent> inspectorAgentPtr(InspectorAgent::create(m_instrumentingAgents.get()));
+    OwnPtr<InspectorAgent> inspectorAgentPtr(InspectorAgent::create());
     m_inspectorAgent = inspectorAgentPtr.get();
+    m_instrumentingAgents->setInspectorAgent(m_inspectorAgent);
     m_agents.append(inspectorAgentPtr.release());
 
     OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, inspectorClient, m_overlay.get()));
@@ -141,7 +142,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     InspectorRuntimeAgent* runtimeAgent = runtimeAgentPtr.get();
     m_agents.append(runtimeAgentPtr.release());
 
-    OwnPtr<InspectorConsoleAgent> consoleAgentPtr(PageConsoleAgent::create(m_instrumentingAgents.get(), m_inspectorAgent, m_injectedScriptManager.get(), m_domAgent));
+    OwnPtr<InspectorConsoleAgent> consoleAgentPtr(PageConsoleAgent::create(m_instrumentingAgents.get(), m_injectedScriptManager.get(), m_domAgent));
     InspectorConsoleAgent* consoleAgent = consoleAgentPtr.get();
     m_agents.append(consoleAgentPtr.release());
 

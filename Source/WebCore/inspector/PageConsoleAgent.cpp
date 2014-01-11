@@ -35,7 +35,6 @@
 
 #include "CommandLineAPIHost.h"
 #include "DOMWindow.h"
-#include "InspectorAgent.h"
 #include "InspectorDOMAgent.h"
 #include "Node.h"
 #include "PageInjectedScriptManager.h"
@@ -44,16 +43,14 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PageConsoleAgent::PageConsoleAgent(InstrumentingAgents* instrumentingAgents, InspectorAgent* inspectorAgent, PageInjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
+PageConsoleAgent::PageConsoleAgent(InstrumentingAgents* instrumentingAgents, PageInjectedScriptManager* injectedScriptManager, InspectorDOMAgent* domAgent)
     : InspectorConsoleAgent(instrumentingAgents, injectedScriptManager)
-    , m_inspectorAgent(inspectorAgent)
     , m_inspectorDOMAgent(domAgent)
 {
 }
 
 PageConsoleAgent::~PageConsoleAgent()
 {
-    m_inspectorAgent = 0;
     m_inspectorDOMAgent = 0;
 }
 

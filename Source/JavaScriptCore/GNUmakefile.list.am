@@ -651,6 +651,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/inspector/JSInjectedScriptHost.h \
 	Source/JavaScriptCore/inspector/JSInjectedScriptHostPrototype.cpp \
 	Source/JavaScriptCore/inspector/JSInjectedScriptHostPrototype.h \
+	Source/JavaScriptCore/inspector/agents/InspectorAgent.h \
+	Source/JavaScriptCore/inspector/agents/InspectorAgent.cpp \
 	Source/JavaScriptCore/interpreter/AbstractPC.cpp \
 	Source/JavaScriptCore/interpreter/AbstractPC.h \
 	Source/JavaScriptCore/interpreter/CachedCall.h \

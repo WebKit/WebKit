@@ -31,16 +31,17 @@
 #define CommandLineAPIHost_h
 
 #include "ConsoleTypes.h"
-#include "InspectorAgent.h"
 #include "ScriptState.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace Deprecated {
 class ScriptValue;
 }
 
 namespace Inspector {
+class InspectorAgent;
 class InspectorObject;
 class InspectorValue;
 }
@@ -48,7 +49,6 @@ class InspectorValue;
 namespace WebCore {
 
 class Database;
-class InspectorAgent;
 class InspectorConsoleAgent;
 class InspectorDOMAgent;
 class InspectorDOMStorageAgent;
@@ -63,7 +63,7 @@ public:
     static PassRefPtr<CommandLineAPIHost> create();
     ~CommandLineAPIHost();
 
-    void init(InspectorAgent* inspectorAgent
+    void init(Inspector::InspectorAgent* inspectorAgent
             , InspectorConsoleAgent* consoleAgent
             , InspectorDOMAgent* domAgent
             , InspectorDOMStorageAgent* domStorageAgent
@@ -107,7 +107,7 @@ public:
 private:
     CommandLineAPIHost();
 
-    InspectorAgent* m_inspectorAgent;
+    Inspector::InspectorAgent* m_inspectorAgent;
     InspectorConsoleAgent* m_consoleAgent;
     InspectorDOMAgent* m_domAgent;
     InspectorDOMStorageAgent* m_domStorageAgent;

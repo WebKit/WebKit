@@ -37,9 +37,12 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+namespace Inspector {
+class InspectorAgent;
+}
+
 namespace WebCore {
 
-class InspectorAgent;
 class InspectorApplicationCacheAgent;
 class InspectorCSSAgent;
 class InspectorCanvasAgent;
@@ -75,8 +78,8 @@ public:
 
     Inspector::InspectorEnvironment& inspectorEnvironment() const { return m_environment; }
 
-    InspectorAgent* inspectorAgent() const { return m_inspectorAgent; }
-    void setInspectorAgent(InspectorAgent* agent) { m_inspectorAgent = agent; }
+    Inspector::InspectorAgent* inspectorAgent() const { return m_inspectorAgent; }
+    void setInspectorAgent(Inspector::InspectorAgent* agent) { m_inspectorAgent = agent; }
 
     InspectorPageAgent* inspectorPageAgent() const { return m_inspectorPageAgent; }
     void setInspectorPageAgent(InspectorPageAgent* agent) { m_inspectorPageAgent = agent; }
@@ -146,7 +149,7 @@ private:
 
     Inspector::InspectorEnvironment& m_environment;
 
-    InspectorAgent* m_inspectorAgent;
+    Inspector::InspectorAgent* m_inspectorAgent;
     InspectorPageAgent* m_inspectorPageAgent;
     InspectorCSSAgent* m_inspectorCSSAgent;
 #if USE(ACCELERATED_COMPOSITING)

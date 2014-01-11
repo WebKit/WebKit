@@ -3791,8 +3791,6 @@ webcore_sources += \
 	Source/WebCore/inspector/IdentifiersFactory.h \
 	Source/WebCore/inspector/InjectedScriptCanvasModule.cpp \
 	Source/WebCore/inspector/InjectedScriptCanvasModule.h \
-	Source/WebCore/inspector/InspectorAgent.cpp \
-	Source/WebCore/inspector/InspectorAgent.h \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.cpp \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.h \
 	Source/WebCore/inspector/InspectorCanvasAgent.cpp \

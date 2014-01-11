@@ -13,6 +13,7 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/heap"
     "${JAVASCRIPTCORE_DIR}/debugger"
     "${JAVASCRIPTCORE_DIR}/inspector"
+    "${JAVASCRIPTCORE_DIR}/inspector/agents"
     "${JAVASCRIPTCORE_DIR}/interpreter"
     "${JAVASCRIPTCORE_DIR}/jit"
     "${JAVASCRIPTCORE_DIR}/llint"
@@ -235,6 +236,7 @@ set(JavaScriptCore_SOURCES
     inspector/InjectedScriptModule.cpp
     inspector/JSInjectedScriptHost.cpp
     inspector/JSInjectedScriptHostPrototype.cpp
+    inspector/agents/InspectorAgent.cpp
 
     interpreter/AbstractPC.cpp
     interpreter/CallFrame.cpp
@@ -712,6 +714,7 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     debugger
     heap
     inspector
+    inspector/agents
     interpreter
     jit
     llint

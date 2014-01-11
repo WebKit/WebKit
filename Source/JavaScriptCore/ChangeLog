@@ -1,3 +1,53 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Push InspectorAgent down into JSC, give JSC an InspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=126763
+
+        Reviewed by Timothy Hatcher.
+
+        Introduce JSGlobalObjectInspectorController. This is the InspectorController
+        for a JSContext. It is created by the JSGlobalObject Remote Inspector Debuggable
+        when a remote frontend connects, and is destroyed when the remote frontend
+        disconnects of the JSGlobalObject is destroyed.
+
+        * inspector/JSGlobalObjectInspectorController.h: Added.
+        * inspector/JSGlobalObjectInspectorController.cpp: Added.
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::~JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::disconnectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::dispatchMessageFromFrontend):
+        (Inspector::JSGlobalObjectInspectorController::functionCallHandler):
+        (Inspector::JSGlobalObjectInspectorController::evaluateHandler):
+        Create/destory agents, create/destroy dispatches, implement InspectorEnvironment.
+
+        * runtime/JSGlobalObjectDebuggable.h:
+        * runtime/JSGlobalObjectDebuggable.cpp:
+        (JSC::JSGlobalObjectDebuggable::~JSGlobalObjectDebuggable):
+        (JSC::JSGlobalObjectDebuggable::connect):
+        (JSC::JSGlobalObjectDebuggable::disconnect):
+        (JSC::JSGlobalObjectDebuggable::dispatchMessageFromRemoteFrontend):
+        Forward actions to the InspectorController object.
+
+        * inspector/agents/InspectorAgent.h: Renamed from Source/WebCore/inspector/InspectorAgent.h.
+        * inspector/agents/InspectorAgent.cpp: Renamed from Source/WebCore/inspector/InspectorAgent.cpp.
+        (Inspector::InspectorAgent::InspectorAgent):
+        (Inspector::InspectorAgent::~InspectorAgent):
+        (Inspector::InspectorAgent::didCreateFrontendAndBackend):
+        (Inspector::InspectorAgent::inspect):
+        (Inspector::InspectorAgent::evaluateForTestInFrontend):
+        Implement InspectorAgent in JavaScriptCore in namespace Inspector.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+        * ChangeLog:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+        Add files and new inspector/agents subdirectory.
+
 2014-01-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r161702.

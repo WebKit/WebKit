@@ -30,56 +30,45 @@
 #ifndef InspectorAgent_h
 #define InspectorAgent_h
 
-#include "InspectorWebAgentBase.h"
-#include <inspector/InspectorJSBackendDispatchers.h>
+#include "InspectorJSBackendDispatchers.h"
+#include "InspectorJSFrontendDispatchers.h"
+#include "inspector/InspectorAgentBase.h"
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace Inspector {
+
 class InspectorObject;
-class InspectorInspectorFrontendDispatcher;
-}
-
-namespace WebCore {
-
 class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorAgent : public InspectorAgentBase, public Inspector::InspectorInspectorBackendDispatcherHandler {
+class JS_EXPORT_PRIVATE InspectorAgent FINAL : public InspectorAgentBase, public InspectorInspectorBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
 public:
-    static PassOwnPtr<InspectorAgent> create(InstrumentingAgents* instrumentingAgents)
-    {
-        return adoptPtr(new InspectorAgent(instrumentingAgents));
-    }
-
+    static PassOwnPtr<InspectorAgent> create() { return adoptPtr(new InspectorAgent); }
     virtual ~InspectorAgent();
 
-    // Inspector front-end API.
-    void enable(ErrorString*);
-    void disable(ErrorString*);
-
-    virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) OVERRIDE;
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
-    // Generic code called from custom implementations.
+    virtual void enable(ErrorString*) OVERRIDE;
+    virtual void disable(ErrorString*) OVERRIDE;
+
+    void inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints);
     void evaluateForTestInFrontend(long testCallId, const String& script);
 
-    void inspect(PassRefPtr<Inspector::TypeBuilder::Runtime::RemoteObject> objectToInspect, PassRefPtr<Inspector::InspectorObject> hints);
-
 private:
-    InspectorAgent(InstrumentingAgents*);
+    InspectorAgent();
 
-    std::unique_ptr<Inspector::InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
-    RefPtr<Inspector::InspectorInspectorBackendDispatcher> m_backendDispatcher;
+    std::unique_ptr<InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorInspectorBackendDispatcher> m_backendDispatcher;
     Vector<std::pair<long, String>> m_pendingEvaluateTestCommands;
-    std::pair<RefPtr<Inspector::TypeBuilder::Runtime::RemoteObject>, RefPtr<Inspector::InspectorObject>> m_pendingInspectData;
+    std::pair<RefPtr<TypeBuilder::Runtime::RemoteObject>, RefPtr<InspectorObject>> m_pendingInspectData;
     bool m_enabled;
 };
 
-} // namespace WebCore
+} // namespace Inspector
 
 #endif // !defined(InspectorAgent_h)

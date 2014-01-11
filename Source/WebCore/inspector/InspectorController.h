@@ -43,6 +43,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
+class InspectorAgent;
 class InspectorObject;
 class InspectorFrontendChannel;
 class InspectorBackendDispatcher;
@@ -53,7 +54,6 @@ namespace WebCore {
 class DOMWrapperWorld;
 class Frame;
 class GraphicsContext;
-class InspectorAgent;
 class InspectorApplicationCacheAgent;
 class InspectorClient;
 class InspectorDOMAgent;
@@ -152,7 +152,7 @@ private:
     std::unique_ptr<PageInjectedScriptManager> m_injectedScriptManager;
     OwnPtr<InspectorOverlay> m_overlay;
 
-    InspectorAgent* m_inspectorAgent;
+    Inspector::InspectorAgent* m_inspectorAgent;
     InspectorDOMAgent* m_domAgent;
     InspectorResourceAgent* m_resourceAgent;
     InspectorPageAgent* m_pageAgent;

@@ -1,3 +1,45 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Push InspectorAgent down into JSC, give JSC an InspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=126763
+
+        Reviewed by Timothy Hatcher.
+
+        No new tests, no observable change in functionality.
+
+        * CMakeLists.txt:
+        * ForwardingHeaders/inspector/agent/InspectorAgent.h: Added.
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        InspectorAgent moved to JavaScriptCore. Include forwarding header.
+
+        * inspector/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::PageConsoleAgent):
+        (WebCore::PageConsoleAgent::~PageConsoleAgent):
+        * inspector/PageConsoleAgent.h:
+        (WebCore::PageConsoleAgent::create):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        * inspector/InspectorApplicationCacheAgent.h:
+        InspectorAgent was not used by these files, remove it.
+
+        * inspector/CommandLineAPIHost.cpp:
+        * inspector/CommandLineAPIHost.h:
+        (WebCore::CommandLineAPIHost::init):
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorAgent):
+        (WebCore::InstrumentingAgents::setInspectorAgent):
+        Switch to Inspector::InspectorAgent where applicable.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorController.h:
+        Manually add InspectorAgent to the InstrumentingAgents. It is one
+        of the agents that is always available in InstrumentingAgents.
+
 2014-01-10  Simon Fraser  <simon.fraser@apple.com>
 
        Add TextAutoSizing.* for iOS, and fix DeviceOrientationController creation.

@@ -37,7 +37,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
-#include "InspectorAgent.h"
 #include "InspectorClient.h"
 #include "InspectorConsoleAgent.h"
 #include "InspectorDOMAgent.h"
@@ -49,6 +48,7 @@
 #include "markup.h"
 #include <bindings/ScriptValue.h>
 #include <inspector/InspectorValues.h>
+#include <inspector/agents/InspectorAgent.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 

@@ -1,0 +1,78 @@
+/*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifndef JSGlobalObjectInspectorController_h
+#define JSGlobalObjectInspectorController_h
+
+#if ENABLE(INSPECTOR)
+
+#include "InspectorAgentRegistry.h"
+#include "InspectorEnvironment.h"
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
+
+namespace JSC {
+class ExecState;
+class JSGlobalObject;
+}
+
+namespace Inspector {
+
+class InjectedScriptManager;
+class InspectorBackendDispatcher;
+class InspectorFrontendChannel;
+
+class JSGlobalObjectInspectorController FINAL : public InspectorEnvironment {
+    WTF_MAKE_NONCOPYABLE(JSGlobalObjectInspectorController);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    JSGlobalObjectInspectorController(JSC::JSGlobalObject&);
+    ~JSGlobalObjectInspectorController();
+
+    void connectFrontend(InspectorFrontendChannel*);
+    void disconnectFrontend();
+    void dispatchMessageFromFrontend(const String&);
+
+    virtual bool developerExtrasEnabled() const OVERRIDE { return true; }
+    virtual bool canAccessInspectedScriptState(JSC::ExecState*) const OVERRIDE { return true; }
+    virtual InspectorFunctionCallHandler functionCallHandler() const OVERRIDE;
+    virtual InspectorEvaluateHandler evaluateHandler() const OVERRIDE;
+    virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String&, int) OVERRIDE { }
+    virtual void didCallInjectedScriptFunction() OVERRIDE { }
+
+private:
+    JSC::JSGlobalObject& m_globalObject;
+    std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
+    InspectorAgentRegistry m_agents;
+    InspectorFrontendChannel* m_inspectorFrontendChannel;
+    RefPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
+};
+
+} // namespace Inspector
+
+#endif // ENABLE(INSPECTOR)
+
+#endif // !defined(JSGlobalObjectInspectorController_h)

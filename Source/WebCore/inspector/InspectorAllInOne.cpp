@@ -33,7 +33,6 @@
 #include "DOMPatchSupport.cpp"
 #include "IdentifiersFactory.cpp"
 #include "InjectedScriptCanvasModule.cpp"
-#include "InspectorAgent.cpp"
 #include "InspectorApplicationCacheAgent.cpp"
 #include "InspectorCSSAgent.cpp"
 #include "InspectorCanvasAgent.cpp"
