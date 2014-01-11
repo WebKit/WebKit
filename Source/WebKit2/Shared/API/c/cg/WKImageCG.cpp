@@ -57,10 +57,6 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
     auto graphicsContext = webImage->bitmap()->createGraphicsContext();
     FloatRect rect(FloatPoint(0, 0), imageSize);
     graphicsContext->clearRect(rect);
-#if PLATFORM(IOS)
-    graphicsContext->drawNativeImage(imageRef, imageSize, WebCore::ColorSpaceDeviceRGB, rect, rect, 1.0);
-#else
     graphicsContext->drawNativeImage(imageRef, imageSize, WebCore::ColorSpaceDeviceRGB, rect, rect);
-#endif
     return toAPI(webImage.release().leakRef());
 }

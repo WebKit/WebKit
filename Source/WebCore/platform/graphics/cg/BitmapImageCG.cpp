@@ -212,20 +212,23 @@ RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription description)
 {
+    CGImageRef image;
 #if !PLATFORM(IOS)
     startAnimation();
 
-    CGImageRef image = frameAtIndex(m_currentFrame);
+    image = frameAtIndex(m_currentFrame);
 #else
     startAnimation(false);
 
     CGRect transformedDestinationRect = CGRectApplyAffineTransform(destRect, CGContextGetCTM(ctxt->platformContext()));
-    RetainPtr<CGImageRef> image;
+    RetainPtr<CGImageRef> imagePossiblyCopied;
     // Never use subsampled images for drawing into PDF contexts.
     if (CGContextGetType(ctxt->platformContext()) == kCGContextTypePDF)
-        image = adoptCF(copyUnscaledFrameAtIndex(m_currentFrame));
+        imagePossiblyCopied = adoptCF(copyUnscaledFrameAtIndex(m_currentFrame));
     else
-        image = frameAtIndex(m_currentFrame, std::min<float>(1.0f, std::max(transformedDestinationRect.size.width  / srcRect.width(), transformedDestinationRect.size.height / srcRect.height())));
+        imagePossiblyCopied = frameAtIndex(m_currentFrame, std::min<float>(1.0f, std::max(transformedDestinationRect.size.width  / srcRect.width(), transformedDestinationRect.size.height / srcRect.height())));
+    
+    image = imagePossiblyCopied.get();
 #endif
     if (!image) // If it's too early we won't have an image yet.
         return;
@@ -235,8 +238,9 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
         return;
     }
 
+    float scale = 1;
 #if PLATFORM(IOS)
-    float scale = m_frames[m_currentFrame].m_scale;
+    scale = m_frames[m_currentFrame].m_scale;
 #endif
     FloatSize selfSize = currentFrameSize();
     ImageOrientation orientation;
@@ -244,11 +248,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
     if (description.respectImageOrientation() == RespectImageOrientation)
         orientation = frameOrientationAtIndex(m_currentFrame);
 
-#if PLATFORM(IOS)
-    ctxt->drawNativeImage(image.get(), selfSize, styleColorSpace, destRect, srcRect, scale, compositeOp, blendMode, orientation);
-#else
-    ctxt->drawNativeImage(image, selfSize, styleColorSpace, destRect, srcRect, compositeOp, blendMode, orientation);
-#endif
+    ctxt->drawNativeImage(image, selfSize, styleColorSpace, destRect, srcRect, scale, compositeOp, blendMode, orientation);
 
     if (imageObserver())
         imageObserver()->didDraw(this);

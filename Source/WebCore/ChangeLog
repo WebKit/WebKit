@@ -1,5 +1,31 @@
 2014-01-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Unfork GraphicsContext::drawNativeImage for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=126824
+
+        Reviewed by Dean Jackson.
+
+        GraphicsContext::drawNativeImage had a different signature for iOS,
+        which required #ifdefs at all the call sites. Unfork by passing the "scale"
+        parameter everywhere (it's only used on iOS).
+
+        * WebCore.exp.in:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::platformInit):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::draw):
+        * platform/graphics/ios/IconIOS.mm:
+        (WebCore::Icon::paint):
+
+2014-01-11  Simon Fraser  <simon.fraser@apple.com>
+
         Work around USE(CFNETWORK) build failure on iOS.
 
         * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:

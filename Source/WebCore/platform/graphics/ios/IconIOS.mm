@@ -69,7 +69,7 @@ void Icon::paint(GraphicsContext* context, const IntRect& destRect)
     ColorSpace colorSpace = ColorSpaceDeviceRGB;
 
     context->setImageInterpolationQuality(InterpolationHigh);
-    context->drawNativeImage(m_cgImage.get(), size, colorSpace, destRect, srcRect, 1.0f, CompositeSourceOver, BlendModeNormal, DefaultImageOrientation);
+    context->drawNativeImage(m_cgImage.get(), size, colorSpace, destRect, srcRect);
 }
 
 }

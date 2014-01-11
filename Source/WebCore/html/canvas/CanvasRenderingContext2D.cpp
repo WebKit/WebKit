@@ -1458,11 +1458,7 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
 
 #if USE(CG)
     if (PassNativeImagePtr image = video->nativeImageForCurrentTime()) {
-        c->drawNativeImage(image, FloatSize(video->videoWidth(), video->videoHeight()), ColorSpaceDeviceRGB, dstRect, srcRect
-#if PLATFORM(IOS)
-            , DefaultImageOrientation
-#endif
-            );
+        c->drawNativeImage(image, FloatSize(video->videoWidth(), video->videoHeight()), ColorSpaceDeviceRGB, dstRect, srcRect);
         if (rectContainsCanvas(dstRect))
             didDrawEntireCanvas();
         else
