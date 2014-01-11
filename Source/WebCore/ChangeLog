@@ -1,5 +1,20 @@
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        [iOS] Fix GCController::releaseExecutableMemory
+        https://bugs.webkit.org/show_bug.cgi?id=126805
+
+        Reviewed by Sam Weinig and Mark Lam.
+
+        VM::dynamicGlobalObject has since been replaced by VMEntryScope.
+        Update to check entryScope instead of the dynamicGlobalObject.
+        Also, make this non-iOS only.
+
+        * bindings/js/GCController.h:
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::releaseExecutableMemory):
+
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix HTMLMediaElement.o for iOS. Unreviewed build fix.
 
         There is now local variable mediaElement. Just call the

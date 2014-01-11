@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -103,7 +103,6 @@ void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDon
     detachThread(threadID);
 }
 
-#if PLATFORM(IOS)
 void GCController::releaseExecutableMemory()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
@@ -113,15 +112,14 @@ void GCController::releaseExecutableMemory()
 
     // We shouldn't have any javascript running on our stack when this function is called. The
     // following line asserts that.
-    ASSERT(!JSDOMWindow::commonVM()->dynamicGlobalObject);
+    ASSERT(!JSDOMWindow::commonVM()->entryScope);
 
     // But be safe in release builds just in case...
-    if (JSDOMWindow::commonVM()->dynamicGlobalObject)
+    if (JSDOMWindow::commonVM()->entryScope)
         return;
 
     JSDOMWindow::commonVM()->releaseExecutableMemory();
 }
-#endif
 
 void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
 {
