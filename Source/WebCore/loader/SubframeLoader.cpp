@@ -41,6 +41,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLAppletElement.h"
+#include "HTMLAudioElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
@@ -242,7 +243,7 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(HTMLMediaElement& 
         completedURL = completeURL(url);
 
     if (!m_frame.document()->securityOrigin()->canDisplay(completedURL)) {
-        FrameLoader::reportLocalLoadFailed(m_frame, completedURL.string());
+        FrameLoader::reportLocalLoadFailed(&m_frame, completedURL.string());
         return nullptr;
     }
 
@@ -264,7 +265,7 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(HTMLMediaElement& 
 
     if (widget && renderer) {
         renderer->setWidget(widget);
-        renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
+        renderer->frameOwnerElement().setNeedsStyleRecalc(SyntheticStyleChange);
     }
     m_containsPlugins = true;
 
@@ -452,7 +453,7 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginElement, const URL
     m_containsPlugins = true;
  
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
+    pluginElement.setNeedsStyleRecalc(SyntheticStyleChange);
 #endif
     return true;
 }

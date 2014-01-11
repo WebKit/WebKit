@@ -1,3 +1,12 @@
+2014-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix build of SubframeLoader.cpp
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadMediaPlayerProxyPlugin):
+        (WebCore::SubframeLoader::loadPlugin):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix Mac after r161747. One part of that is iOS specific.
