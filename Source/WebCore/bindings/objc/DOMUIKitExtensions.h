@@ -24,7 +24,7 @@
  *
  */
 
-#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#if TARGET_OS_IPHONE
 
 #import <WebCore/DOMElement.h>
 #import <WebCore/DOMExtensions.h>
@@ -86,4 +86,4 @@ typedef enum {
 - (int)structuralComplexityContribution; // Does not include children.
 @end
 
-#endif // defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#endif // TARGET_OS_IPHONE

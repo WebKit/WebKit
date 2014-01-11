@@ -150,4 +150,4 @@ enum { WebMediaQueryOrientationCurrent, WebMediaQueryOrientationPortrait, WebMed
 - (void)setValueWithChangeEvent:(NSString *)newValue;
 - (void)setValueAsNumberWithChangeEvent:(double)newValueAsNumber;
 @end
-#endif // defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#endif // TARGET_OS_IPHONE

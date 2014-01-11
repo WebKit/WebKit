@@ -27,7 +27,7 @@
 #if PLATFORM(IOS)
 
 #import "config.h"
-#import "htmlediting.h"
+#import "DOMUIKitExtensions.h"
 
 #import "CachedImage.h"
 #import "DOM.h"
@@ -41,11 +41,11 @@
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
-#import "DOMUIKitExtensions.h"
 #import "FloatPoint.h"
 #import "Font.h"
 #import "FrameSelection.h"
 #import "HTMLAreaElement.h"
+#import "htmlediting.h"
 #import "HTMLImageElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLSelectElement.h"

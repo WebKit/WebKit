@@ -1,5 +1,14 @@
 2014-01-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix DOM headers: TARGET_OS_EMBEDDED -> TARGET_OS_IPHONE
+        and a drive-by cleanup of DOMUIKitExtensions.mm #includes.
+
+        * bindings/objc/DOMPrivate.h:
+        * bindings/objc/DOMUIKitExtensions.h:
+        * bindings/objc/DOMUIKitExtensions.mm:
+
+2014-01-11  Simon Fraser  <simon.fraser@apple.com>
+
         Fix use of GL_HALF_FLOAT_ARB on iOS.
 
         * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
