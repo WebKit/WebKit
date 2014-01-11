@@ -310,7 +310,7 @@ void ResourceLoadScheduler::scheduleServePendingRequests()
         m_requestTimer.startOneShot(0);
 }
 
-void ResourceLoadScheduler::requestTimerFired(Timer<ResourceLoadScheduler>*) 
+void ResourceLoadScheduler::requestTimerFired(Timer<ResourceLoadScheduler>&)
 {
     LOG(ResourceLoading, "ResourceLoadScheduler::requestTimerFired\n");
     servePendingRequests();

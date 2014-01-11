@@ -397,7 +397,7 @@ void SourceBuffer::appendBufferInternal(unsigned char* data, unsigned size, Exce
     m_appendBufferTimer.startOneShot(0);
 }
 
-void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>*)
+void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>&)
 {
     ASSERT(m_updating);
 

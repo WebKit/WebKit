@@ -84,9 +84,9 @@ void DeviceController::dispatchDeviceEvent(PassRefPtr<Event> prpEvent)
     }
 }
 
-void DeviceController::fireDeviceEvent(Timer<DeviceController>* timer)
+void DeviceController::fireDeviceEvent(Timer<DeviceController>& timer)
 {
-    ASSERT_UNUSED(timer, timer == &m_timer);
+    ASSERT_UNUSED(timer, &timer == &m_timer);
     ASSERT(hasLastData());
 
     m_timer.stop();

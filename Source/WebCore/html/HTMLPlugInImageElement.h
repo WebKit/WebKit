@@ -143,13 +143,13 @@ private:
 
     virtual void updateSnapshot(PassRefPtr<Image>) OVERRIDE;
     virtual void dispatchPendingMouseClick() OVERRIDE;
-    void simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>*);
+    void simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>&);
 
     void restartSimilarPlugIns();
 
     virtual bool isPlugInImageElement() const OVERRIDE { return true; }
 
-    void removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>*);
+    void removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>&);
 
     virtual void defaultEventHandler(Event*) OVERRIDE;
 

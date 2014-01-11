@@ -184,7 +184,7 @@ LayoutRect RenderButton::controlClipRect(const LayoutPoint& additionalOffset) co
     return LayoutRect(additionalOffset.x() + borderLeft(), additionalOffset.y() + borderTop(), width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
 }
 
-void RenderButton::timerFired(Timer<RenderButton>*)
+void RenderButton::timerFired(Timer<RenderButton>&)
 {
     // FIXME Bug 25110: Ideally we would stop our timer when our Document
     // enters the page cache. But we currently have no way of being notified

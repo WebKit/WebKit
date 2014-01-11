@@ -106,7 +106,7 @@ void LayerPool::schedulePrune()
     m_pruneTimer.startOneShot(1);
 }
 
-void LayerPool::pruneTimerFired(Timer<LayerPool>*)
+void LayerPool::pruneTimerFired(Timer<LayerPool>&)
 {
     unsigned shrinkTo = decayedCapacity();
     while (m_totalBytes > shrinkTo) {

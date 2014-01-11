@@ -99,7 +99,7 @@ CSSImageGeneratorValue::CachedGeneratedImage::CachedGeneratedImage(CSSImageGener
     m_evictionTimer.restart();
 }
 
-void CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired(DeferrableOneShotTimer<CachedGeneratedImage>*)
+void CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired(DeferrableOneShotTimer<CachedGeneratedImage>&)
 {
     // NOTE: This is essentially a "delete this", the object is no longer valid after this line.
     m_owner.evictCachedGeneratedImage(m_size);

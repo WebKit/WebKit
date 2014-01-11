@@ -209,7 +209,7 @@ void MediaDocument::mediaElementSawUnsupportedTracks()
     m_replaceMediaElementTimer.startOneShot(0);
 }
 
-void MediaDocument::replaceMediaElementTimerFired(Timer<MediaDocument>*)
+void MediaDocument::replaceMediaElementTimerFired(Timer<MediaDocument>&)
 {
     HTMLElement* htmlBody = body();
     if (!htmlBody)

@@ -109,7 +109,7 @@ protected:
     bool m_inBeforeLoadEventHandler;
 
 private:
-    void swapRendererTimerFired(Timer<HTMLPlugInElement>*);
+    void swapRendererTimerFired(Timer<HTMLPlugInElement>&);
     bool shouldOverridePlugin(const String& url, const String& mimeType);
 
     bool dispatchBeforeLoadEvent(const String& sourceURL); // Not implemented, generates a compile error if subclasses call this by mistake.

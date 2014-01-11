@@ -236,7 +236,7 @@ private:
     
     Timer<AXObjectCache> m_notificationPostTimer;
     Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>> m_notificationsToPost;
-    void notificationPostTimerFired(Timer<AXObjectCache>*);
+    void notificationPostTimerFired(Timer<AXObjectCache>&);
     
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
     

@@ -121,11 +121,11 @@ private:
     void updateMediaElements();
     void bringElementUpToSpeed(HTMLMediaElement*);
     void scheduleEvent(const AtomicString& eventName);
-    void asyncEventTimerFired(Timer<MediaController>*);
-    void clearPositionTimerFired(Timer<MediaController>*);
+    void asyncEventTimerFired(Timer<MediaController>&);
+    void clearPositionTimerFired(Timer<MediaController>&);
     bool hasEnded() const;
     void scheduleTimeupdateEvent();
-    void timeupdateTimerFired(Timer<MediaController>*);
+    void timeupdateTimerFired(Timer<MediaController>&);
     void startTimeupdateTimer();
 
     // EventTarget

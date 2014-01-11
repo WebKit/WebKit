@@ -209,7 +209,7 @@ void ImageBufferBackingStoreCache::deallocate(IOSurfaceRef surface)
     schedulePurgeTimer();
 }
 
-void ImageBufferBackingStoreCache::timerFired(DeferrableOneShotTimer<ImageBufferBackingStoreCache>*)
+void ImageBufferBackingStoreCache::timerFired(DeferrableOneShotTimer<ImageBufferBackingStoreCache>&)
 {
     while (!m_cachedSurfaces.isEmpty()) {
         CachedSurfaceMap::iterator iter = m_cachedSurfaces.begin();

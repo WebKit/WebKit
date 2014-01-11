@@ -877,7 +877,7 @@ void IconDatabase::scheduleOrDeferSyncTimer()
     callOnMainThread(performScheduleOrDeferSyncTimerOnMainThread, this);
 }
 
-void IconDatabase::syncTimerFired(Timer<IconDatabase>*)
+void IconDatabase::syncTimerFired(Timer<IconDatabase>&)
 {
     ASSERT_NOT_SYNC_THREAD();
     wakeSyncThread();

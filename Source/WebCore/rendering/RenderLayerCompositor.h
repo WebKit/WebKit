@@ -335,7 +335,7 @@ private:
     void addToOverlapMap(OverlapMap&, RenderLayer&, IntRect& layerBounds, bool& boundsComputed);
     void addToOverlapMapRecursive(OverlapMap&, RenderLayer&, RenderLayer* ancestorLayer = nullptr);
 
-    void updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>*);
+    void updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>&);
 
     // Returns true if any layer's compositing changed
     void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap*, struct CompositingState&, bool& layersChanged, bool& descendantHas3DTransform);
@@ -427,9 +427,9 @@ private:
     void scheduleLayerFlushNow();
     bool isThrottlingLayerFlushes() const;
     void startLayerFlushTimerIfNeeded();
-    void layerFlushTimerFired(Timer<RenderLayerCompositor>*);
+    void layerFlushTimerFired(Timer<RenderLayerCompositor>&);
 
-    void paintRelatedMilestonesTimerFired(Timer<RenderLayerCompositor>*);
+    void paintRelatedMilestonesTimerFired(Timer<RenderLayerCompositor>&);
 
 #if !LOG_DISABLED
     const char* logReasonsForCompositing(const RenderLayer&);

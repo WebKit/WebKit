@@ -65,7 +65,7 @@ SubimageCacheWithTimer::SubimageCacheWithTimer()
 {
 }
 
-void SubimageCacheWithTimer::invalidateCacheTimerFired(DeferrableOneShotTimer<SubimageCacheWithTimer>*)
+void SubimageCacheWithTimer::invalidateCacheTimerFired(DeferrableOneShotTimer<SubimageCacheWithTimer>&)
 {
     m_images.clear();
     m_cache.clear();

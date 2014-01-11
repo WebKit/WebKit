@@ -231,7 +231,7 @@ bool AutoscrollController::panScrollInProgress() const
 }
 #endif
 
-void AutoscrollController::autoscrollTimerFired(Timer<AutoscrollController>*)
+void AutoscrollController::autoscrollTimerFired(Timer<AutoscrollController>&)
 {
     if (!m_autoscrollRenderer) {
         stopAutoscrollTimer();

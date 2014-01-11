@@ -716,8 +716,8 @@ public:
     void unscheduleStyleRecalc();
     bool hasPendingStyleRecalc() const;
     bool hasPendingForcedStyleRecalc() const;
-    void styleRecalcTimerFired(Timer<Document>*);
-    void optimizedStyleSheetUpdateTimerFired(Timer<Document>*);
+    void styleRecalcTimerFired(Timer<Document>&);
+    void optimizedStyleSheetUpdateTimerFired(Timer<Document>&);
 
     void registerNodeList(LiveNodeList&);
     void unregisterNodeList(LiveNodeList&);
@@ -1089,7 +1089,7 @@ public:
     RenderFullScreen* fullScreenRenderer() const { return m_fullScreenRenderer; }
     void fullScreenRendererDestroyed();
     
-    void fullScreenChangeDelayTimerFired(Timer<Document>*);
+    void fullScreenChangeDelayTimerFired(Timer<Document>&);
     bool fullScreenIsAllowedForElement(Element*) const;
     void fullScreenElementRemoved();
     void removeFullScreenElementOfSubtree(Node*, bool amongChildrenOnly = false);
@@ -1266,10 +1266,10 @@ private:
     virtual double timerAlignmentInterval() const OVERRIDE;
 
     void updateTitle(const StringWithDirection&);
-    void updateFocusAppearanceTimerFired(Timer<Document>*);
+    void updateFocusAppearanceTimerFired(Timer<Document>&);
     void updateBaseURL();
 
-    void resetHiddenFocusElementTimer(Timer<Document>*);
+    void resetHiddenFocusElementTimer(Timer<Document>&);
 
     void buildAccessKeyMap(TreeScope* root);
 
@@ -1277,9 +1277,9 @@ private:
 
     void seamlessParentUpdatedStylesheets();
 
-    void loadEventDelayTimerFired(Timer<Document>*);
+    void loadEventDelayTimerFired(Timer<Document>&);
 
-    void pendingTasksTimerFired(Timer<Document>*);
+    void pendingTasksTimerFired(Timer<Document>&);
 
     static void didReceiveTask(void*);
     
@@ -1302,13 +1302,13 @@ private:
 
     void setVisualUpdatesAllowed(ReadyState);
     void setVisualUpdatesAllowed(bool);
-    void visualUpdatesSuppressionTimerFired(Timer<Document>*);
+    void visualUpdatesSuppressionTimerFired(Timer<Document>&);
 
     void addListenerType(ListenerType listenerType) { m_listenerTypes |= listenerType; }
 
-    void didAssociateFormControlsTimerFired(Timer<Document>*);
+    void didAssociateFormControlsTimerFired(Timer<Document>&);
 
-    void styleResolverThrowawayTimerFired(DeferrableOneShotTimer<Document>*);
+    void styleResolverThrowawayTimerFired(DeferrableOneShotTimer<Document>&);
     DeferrableOneShotTimer<Document> m_styleResolverThrowawayTimer;
 
     OwnPtr<StyleResolver> m_styleResolver;
@@ -1617,7 +1617,7 @@ private:
     RefPtr<DOMSecurityPolicy> m_domSecurityPolicy;
 #endif
 
-    void sharedObjectPoolClearTimerFired(Timer<Document>*);
+    void sharedObjectPoolClearTimerFired(Timer<Document>&);
     Timer<Document> m_sharedObjectPoolClearTimer;
 
     OwnPtr<DocumentSharedObjectPool> m_sharedObjectPool;

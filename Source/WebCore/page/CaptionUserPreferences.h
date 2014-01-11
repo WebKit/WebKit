@@ -93,7 +93,7 @@ protected:
     void updateCaptionStyleSheetOveride();
 
 private:
-    void timerFired(Timer<CaptionUserPreferences>*);
+    void timerFired(Timer<CaptionUserPreferences>&);
     void notify();
 
     PageGroup& m_pageGroup;

@@ -1251,7 +1251,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         frame->loader().forcePageTransitionIfNeeded();
 }
 
-void Document::visualUpdatesSuppressionTimerFired(Timer<Document>*)
+void Document::visualUpdatesSuppressionTimerFired(Timer<Document>&)
 {
     ASSERT(!m_visualUpdatesAllowed);
 
@@ -1698,7 +1698,7 @@ bool Document::hasPendingForcedStyleRecalc() const
     return m_styleRecalcTimer.isActive() && m_pendingStyleRecalcShouldForce;
 }
 
-void Document::styleRecalcTimerFired(Timer<Document>*)
+void Document::styleRecalcTimerFired(Timer<Document>&)
 {
     updateStyleIfNeeded();
 }
@@ -3178,7 +3178,7 @@ void Document::evaluateMediaQueryList()
         m_mediaQueryMatcher->styleResolverChanged();
 }
 
-void Document::optimizedStyleSheetUpdateTimerFired(Timer<Document>*)
+void Document::optimizedStyleSheetUpdateTimerFired(Timer<Document>&)
 {
     styleResolverChanged(RecalcStyleIfNeeded);
 }
@@ -4462,7 +4462,7 @@ void Document::finishedParsing()
     m_cachedResourceLoader->clearPreloads();
 }
 
-void Document::sharedObjectPoolClearTimerFired(Timer<Document>*)
+void Document::sharedObjectPoolClearTimerFired(Timer<Document>&)
 {
     m_sharedObjectPool.clear();
 }
@@ -4472,7 +4472,7 @@ void Document::didAccessStyleResolver()
     m_styleResolverThrowawayTimer.restart();
 }
 
-void Document::styleResolverThrowawayTimerFired(DeferrableOneShotTimer<Document>*)
+void Document::styleResolverThrowawayTimerFired(DeferrableOneShotTimer<Document>&)
 {
     ASSERT(!m_inStyleRecalc);
     clearStyleResolver();
@@ -4736,7 +4736,7 @@ void Document::resetHiddenFocusElementSoon()
         m_resetHiddenFocusElementTimer.startOneShot(0);
 }
 
-void Document::updateFocusAppearanceTimerFired(Timer<Document>*)
+void Document::updateFocusAppearanceTimerFired(Timer<Document>&)
 {
     Element* element = focusedElement();
     if (!element)
@@ -4747,7 +4747,7 @@ void Document::updateFocusAppearanceTimerFired(Timer<Document>*)
         element->updateFocusAppearance(m_updateFocusAppearanceRestoresSelection);
 }
 
-void Document::resetHiddenFocusElementTimer(Timer<Document>*)
+void Document::resetHiddenFocusElementTimer(Timer<Document>&)
 {
     if (view() && view()->needsLayout())
         return;
@@ -4917,7 +4917,7 @@ void Document::postTask(PassOwnPtr<Task> task)
     callOnMainThread(didReceiveTask, new PerformTaskContext(m_weakFactory.createWeakPtr(), task));
 }
 
-void Document::pendingTasksTimerFired(Timer<Document>*)
+void Document::pendingTasksTimerFired(Timer<Document>&)
 {
     while (!m_pendingTasks.isEmpty()) {
         OwnPtr<Task> task = m_pendingTasks[0].release();
@@ -5435,7 +5435,7 @@ void Document::fullScreenRendererDestroyed()
     m_fullScreenRenderer = nullptr;
 }
 
-void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
+void Document::fullScreenChangeDelayTimerFired(Timer<Document>&)
 {
     // Since we dispatch events in this function, it's possible that the
     // document will be detached and GC'd. We protect it here to make sure we
@@ -5573,7 +5573,7 @@ void Document::decrementLoadEventDelayCount()
         m_loadEventDelayTimer.startOneShot(0);
 }
 
-void Document::loadEventDelayTimerFired(Timer<Document>*)
+void Document::loadEventDelayTimerFired(Timer<Document>&)
 {
     if (frame())
         frame()->loader().checkCompleted();
@@ -6081,9 +6081,10 @@ void Document::didAssociateFormControl(Element* element)
         m_didAssociateFormControlsTimer.startOneShot(0);
 }
 
-void Document::didAssociateFormControlsTimerFired(Timer<Document>* timer)
+void Document::didAssociateFormControlsTimerFired(Timer<Document>& timer)
 {
-    ASSERT_UNUSED(timer, timer == &m_didAssociateFormControlsTimer);
+    ASSERT_UNUSED(timer, &timer == &m_didAssociateFormControlsTimer);
+
     if (!frame() || !frame()->page())
         return;
 

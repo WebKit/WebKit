@@ -82,7 +82,7 @@ private:
     void scheduleAnimation();
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
-    void animationTimerFired(Timer<ScriptedAnimationController>*);
+    void animationTimerFired(Timer<ScriptedAnimationController>&);
     Timer<ScriptedAnimationController> m_animationTimer;
     double m_lastAnimationFrameTimeMonotonic;
 

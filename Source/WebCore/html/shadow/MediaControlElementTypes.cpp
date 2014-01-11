@@ -235,7 +235,7 @@ double MediaControlSeekButtonElement::nextRate() const
     return rate;
 }
 
-void MediaControlSeekButtonElement::seekTimerFired(Timer<MediaControlSeekButtonElement>*)
+void MediaControlSeekButtonElement::seekTimerFired(Timer<MediaControlSeekButtonElement>&)
 {
     if (m_seekType == Skip) {
         double skipTime = isForwardButton() ? cSkipTime : -cSkipTime;

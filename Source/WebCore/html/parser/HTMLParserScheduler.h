@@ -103,7 +103,7 @@ public:
 private:
     HTMLParserScheduler(HTMLDocumentParser&);
 
-    void continueNextChunkTimerFired(Timer<HTMLParserScheduler>*);
+    void continueNextChunkTimerFired(Timer<HTMLParserScheduler>&);
 
     HTMLDocumentParser& m_parser;
 

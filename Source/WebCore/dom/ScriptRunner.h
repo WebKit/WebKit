@@ -55,7 +55,7 @@ public:
     void notifyScriptReady(ScriptElement*, ExecutionType);
 
 private:
-    void timerFired(Timer<ScriptRunner>*);
+    void timerFired(Timer<ScriptRunner>&);
 
     Document& m_document;
     Vector<PendingScript> m_scriptsToExecuteInOrder;

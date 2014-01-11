@@ -539,7 +539,7 @@ void CachedResource::destroyDecodedDataIfNeeded()
     m_decodedDataDeletionTimer.restart();
 }
 
-void CachedResource::decodedDataDeletionTimerFired(DeferrableOneShotTimer<CachedResource>*)
+void CachedResource::decodedDataDeletionTimerFired(DeferrableOneShotTimer<CachedResource>&)
 {
     destroyDecodedData();
 }
@@ -884,7 +884,7 @@ void CachedResource::CachedResourceCallback::cancel()
         m_callbackTimer.stop();
 }
 
-void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCallback>*)
+void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCallback>&)
 {
     m_resource->didAddClient(m_client);
 }

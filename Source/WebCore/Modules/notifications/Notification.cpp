@@ -201,10 +201,10 @@ void Notification::dispatchErrorEvent()
 }
 
 #if ENABLE(NOTIFICATIONS)
-void Notification::taskTimerFired(Timer<Notification>* timer)
+void Notification::taskTimerFired(Timer<Notification>& timer)
 {
     ASSERT(scriptExecutionContext()->isDocument());
-    ASSERT_UNUSED(timer, timer == m_taskTimer.get());
+    ASSERT_UNUSED(timer, &timer == m_taskTimer.get());
     show();
 }
 #endif

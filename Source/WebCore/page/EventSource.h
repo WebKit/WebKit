@@ -97,7 +97,7 @@ private:
     void networkRequestEnded();
     void scheduleInitialConnect();
     void scheduleReconnect();
-    void connectTimerFired(Timer<EventSource>*);
+    void connectTimerFired(Timer<EventSource>&);
     void abortConnectionAttempt();
     void parseEventStream();
     void parseEventStreamLine(unsigned pos, int fieldLength, int lineLength);

@@ -696,7 +696,7 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, 
 }
 
 
-void BitmapImage::advanceAnimation(Timer<BitmapImage>*)
+void BitmapImage::advanceAnimation(Timer<BitmapImage>&)
 {
     internalAdvanceAnimation(false);
     // At this point the image region has been marked dirty, and if it's

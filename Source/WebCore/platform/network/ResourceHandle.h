@@ -228,7 +228,7 @@ public:
     ResourceRequest& firstRequest();
     const String& lastHTTPMethod() const;
 
-    void fireFailure(Timer<ResourceHandle>*);
+    void failureTimerFired(Timer<ResourceHandle>&);
 
     NetworkingContext* context() const;
 

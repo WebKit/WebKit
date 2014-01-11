@@ -100,7 +100,7 @@ private:
 
         void startTimerIfNeeded();
         void stopTimer();
-        void timerFired(Timer<GeoNotifier>*);
+        void timerFired(Timer<GeoNotifier>&);
         bool hasZeroTimeout() const;
 
     private:
@@ -186,7 +186,7 @@ private:
     bool m_hasChangedPosition;
     RefPtr<PositionError> m_errorWaitingForResume;
 
-    void resumeTimerFired(Timer<Geolocation>*);
+    void resumeTimerFired(Timer<Geolocation>&);
     Timer<Geolocation> m_resumeTimer;
 #endif // PLATFORM(IOS)
 

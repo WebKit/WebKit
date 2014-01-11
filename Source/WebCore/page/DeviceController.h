@@ -55,7 +55,7 @@ public:
     virtual PassRefPtr<Event> getLastEvent() { return 0; }
 
 protected:
-    void fireDeviceEvent(Timer<DeviceController>*);
+    void fireDeviceEvent(Timer<DeviceController>&);
 
     HashCountedSet<RefPtr<DOMWindow>> m_listeners;
     HashCountedSet<RefPtr<DOMWindow>> m_lastEventListeners;

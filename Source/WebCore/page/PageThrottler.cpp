@@ -133,7 +133,7 @@ void PageThrottler::startThrottleHysteresisTimer()
         m_throttleHysteresisTimer.startOneShot(kThrottleHysteresisSeconds);
 }
 
-void PageThrottler::throttleHysteresisTimerFired(Timer<PageThrottler>*)
+void PageThrottler::throttleHysteresisTimerFired(Timer<PageThrottler>&)
 {
     ASSERT(!m_activityTokens.size());
     throttlePage();

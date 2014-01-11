@@ -75,7 +75,7 @@ class InspectorBackendDispatchTask {
 public:
     InspectorBackendDispatchTask(InspectorController* inspectorController)
         : m_inspectorController(inspectorController)
-        , m_timer(this, &InspectorBackendDispatchTask::onTimer)
+        , m_timer(this, &InspectorBackendDispatchTask::timerFired)
     {
     }
 
@@ -92,7 +92,7 @@ public:
         m_timer.stop();
     }
 
-    void onTimer(Timer<InspectorBackendDispatchTask>*)
+    void timerFired(Timer<InspectorBackendDispatchTask>&)
     {
         if (!m_messages.isEmpty()) {
             // Dispatch can lead to the timer destruction -> schedule the next shot first.

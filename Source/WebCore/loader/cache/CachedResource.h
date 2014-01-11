@@ -284,7 +284,7 @@ protected:
         void cancel();
     private:
         CachedResourceCallback(CachedResource*, CachedResourceClient*);
-        void timerFired(Timer<CachedResourceCallback>*);
+        void timerFired(Timer<CachedResourceCallback>&);
 
         CachedResource* m_resource;
         CachedResourceClient* m_client;
@@ -308,7 +308,7 @@ protected:
 private:
     bool addClientToSet(CachedResourceClient*);
 
-    void decodedDataDeletionTimerFired(DeferrableOneShotTimer<CachedResource>*);
+    void decodedDataDeletionTimerFired(DeferrableOneShotTimer<CachedResource>&);
 
     virtual PurgePriority purgePriority() const { return PurgeDefault; }
     virtual bool mayTryReplaceEncodedData() const { return false; }

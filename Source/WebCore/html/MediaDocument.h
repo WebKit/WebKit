@@ -49,7 +49,7 @@ private:
 
     virtual void defaultEventHandler(Event*);
 
-    void replaceMediaElementTimerFired(Timer<MediaDocument>*);
+    void replaceMediaElementTimerFired(Timer<MediaDocument>&);
 
     Timer<MediaDocument> m_replaceMediaElementTimer;
 };

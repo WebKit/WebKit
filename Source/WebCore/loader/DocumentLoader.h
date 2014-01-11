@@ -323,7 +323,7 @@ namespace WebCore {
         void startDataLoadTimer();
 
         void deliverSubstituteResourcesAfterDelay();
-        void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*);
+        void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>&);
 
         void clearMainResource();
 

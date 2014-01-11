@@ -638,7 +638,7 @@ void AXObjectCache::childrenChanged(AccessibilityObject* obj)
     obj->childrenChanged();
 }
     
-void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
+void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>&)
 {
     Ref<Document> protectorForCacheOwner(m_document);
 

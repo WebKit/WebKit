@@ -282,7 +282,7 @@ RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(PassRef<Render
     return createRenderer<RenderEmbeddedObject>(*this, std::move(style));
 }
 
-void HTMLPlugInElement::swapRendererTimerFired(Timer<HTMLPlugInElement>*)
+void HTMLPlugInElement::swapRendererTimerFired(Timer<HTMLPlugInElement>&)
 {
     ASSERT(displayState() == PreparingPluginReplacement || displayState() == DisplayingSnapshot);
     if (userAgentShadowRoot())

@@ -49,7 +49,7 @@ private:
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
-    void animationTimerFired(Timer<RenderProgress>*);
+    void animationTimerFired(Timer<RenderProgress>&);
     void updateAnimationState();
 
     double m_position;

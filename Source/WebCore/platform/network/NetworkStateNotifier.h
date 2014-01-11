@@ -75,7 +75,7 @@ private:
     void updateState();
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-    void networkStateChangeTimerFired(Timer<NetworkStateNotifier>*);
+    void networkStateChangeTimerFired(Timer<NetworkStateNotifier>&);
 
     static void dynamicStoreCallback(SCDynamicStoreRef, CFArrayRef changedKeys, void *info); 
 

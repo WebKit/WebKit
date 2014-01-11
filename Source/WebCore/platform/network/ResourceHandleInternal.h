@@ -118,7 +118,7 @@ namespace WebCore {
             , m_currentMacChallenge(nil)
 #endif
             , m_scheduledFailureType(ResourceHandle::NoFailure)
-            , m_failureTimer(loader, &ResourceHandle::fireFailure)
+            , m_failureTimer(loader, &ResourceHandle::failureTimerFired)
         {
             const URL& url = m_firstRequest.url();
             m_user = url.user();

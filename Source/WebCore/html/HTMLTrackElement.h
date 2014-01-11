@@ -75,7 +75,7 @@ private:
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
-    void loadTimerFired(Timer<HTMLTrackElement>*);
+    void loadTimerFired(Timer<HTMLTrackElement>&);
 
     HTMLMediaElement* mediaElement() const;
 

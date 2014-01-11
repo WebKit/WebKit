@@ -71,7 +71,7 @@ protected:
 private:
     void scheduleLoad(ResourceLoader*, ResourceLoadPriority);
     void scheduleServePendingRequests();
-    void requestTimerFired(Timer<ResourceLoadScheduler>*);
+    void requestTimerFired(Timer<ResourceLoadScheduler>&);
 
     bool isSuspendingPendingRequests() const { return !!m_suspendPendingRequestsCount; }
 

@@ -323,7 +323,7 @@ void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleS
     markers.addMarker(range.get(), DocumentMarker::SpellCheckingExemption);
 }
 
-void AlternativeTextController::timerFired(Timer<AlternativeTextController>*)
+void AlternativeTextController::timerFired(Timer<AlternativeTextController>&)
 {
     m_isDismissedByEditing = false;
     switch (m_alternativeTextInfo.type) {

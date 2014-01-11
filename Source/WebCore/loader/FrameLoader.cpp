@@ -851,7 +851,7 @@ void FrameLoader::checkCompleted()
         m_frame.view()->handleLoadCompleted();
 }
 
-void FrameLoader::checkTimerFired(Timer<FrameLoader>*)
+void FrameLoader::checkTimerFired(Timer<FrameLoader>&)
 {
     Ref<Frame> protect(m_frame);
 

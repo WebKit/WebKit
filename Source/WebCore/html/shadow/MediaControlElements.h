@@ -66,7 +66,7 @@ private:
 
     void startTimer();
     void stopTimer();
-    void transitionTimerFired(Timer<MediaControlPanelElement>*);
+    void transitionTimerFired(Timer<MediaControlPanelElement>&);
 
     void setPosition(const LayoutPoint&);
 
@@ -477,7 +477,7 @@ public:
     static const AtomicString& textTrackContainerElementShadowPseudoId();
 
 private:
-    void updateTimerFired(Timer<MediaControlTextTrackContainerElement>*);
+    void updateTimerFired(Timer<MediaControlTextTrackContainerElement>&);
 
     explicit MediaControlTextTrackContainerElement(Document&);
     virtual const AtomicString& shadowPseudoId() const OVERRIDE;

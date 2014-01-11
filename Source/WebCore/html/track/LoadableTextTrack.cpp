@@ -81,7 +81,7 @@ void LoadableTextTrack::setTrackElement(HTMLTrackElement* element)
     m_trackElement = element;
 }
 
-void LoadableTextTrack::loadTimerFired(Timer<LoadableTextTrack>*)
+void LoadableTextTrack::loadTimerFired(Timer<LoadableTextTrack>&)
 {
     if (m_loader)
         m_loader->cancelLoad();

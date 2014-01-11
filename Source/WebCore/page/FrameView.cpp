@@ -2404,7 +2404,7 @@ double FrameView::adjustedDeferredRepaintDelay() const
     return std::max<double>(0, m_deferredRepaintDelay - timeSinceLastPaint);
 }
     
-void FrameView::deferredRepaintTimerFired(Timer<FrameView>*)
+void FrameView::deferredRepaintTimerFired(Timer<FrameView>&)
 {
     doDeferredRepaints();
 }
@@ -2433,7 +2433,7 @@ void FrameView::adjustTiledBackingCoverage()
 #endif
 }
 
-void FrameView::layoutTimerFired(Timer<FrameView>*)
+void FrameView::layoutTimerFired(Timer<FrameView>&)
 {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!frame().document()->ownerElement())
@@ -2908,7 +2908,7 @@ void FrameView::willEndLiveResize()
     adjustTiledBackingCoverage();
 }
 
-void FrameView::postLayoutTimerFired(Timer<FrameView>*)
+void FrameView::postLayoutTimerFired(Timer<FrameView>&)
 {
     performPostLayoutTasks();
 }

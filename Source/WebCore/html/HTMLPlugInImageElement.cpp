@@ -456,7 +456,7 @@ void HTMLPlugInImageElement::createShadowIFrameSubtree(const String& src)
 }
 #endif
 
-void HTMLPlugInImageElement::removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>*)
+void HTMLPlugInImageElement::removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>&)
 {
     m_snapshotImage = nullptr;
     m_isRestartedPlugin = false;
@@ -568,7 +568,7 @@ void HTMLPlugInImageElement::dispatchPendingMouseClick()
     m_simulatedMouseClickTimer.restart();
 }
 
-void HTMLPlugInImageElement::simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>*)
+void HTMLPlugInImageElement::simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>&)
 {
     ASSERT(displayState() == RestartingWithPendingMouseClick);
     ASSERT(m_pendingClickEventFromSnapshot);

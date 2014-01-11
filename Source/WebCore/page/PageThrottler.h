@@ -65,7 +65,7 @@ private:
 
     void startThrottleHysteresisTimer();
     void stopThrottleHysteresisTimer();
-    void throttleHysteresisTimerFired(Timer<PageThrottler>*);
+    void throttleHysteresisTimerFired(Timer<PageThrottler>&);
 
     void throttlePage();
     void unthrottlePage();

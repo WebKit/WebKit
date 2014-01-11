@@ -113,8 +113,8 @@ private:
     void checkInvalidRegions();
 
     bool canBeDestroyed() const { return m_invalidRegionList.isEmpty() && m_regionList.isEmpty() && m_contentElements.isEmpty(); }
-    void regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>*);
-    void regionOversetChangeEventTimerFired(Timer<RenderNamedFlowThread>*);
+    void regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>&);
+    void regionOversetChangeEventTimerFired(Timer<RenderNamedFlowThread>&);
     void clearContentElements();
     void updateWritingMode();
 

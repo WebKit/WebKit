@@ -327,9 +327,9 @@ private:
 
     OptionalCursor selectCursor(const HitTestResult&, bool shiftKey);
 
-    void hoverTimerFired(Timer<EventHandler>*);
+    void hoverTimerFired(Timer<EventHandler>&);
 #if ENABLE(CURSOR_SUPPORT)
-    void cursorUpdateTimerFired(Timer<EventHandler>*);
+    void cursorUpdateTimerFired(Timer<EventHandler>&);
 #endif
 
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
@@ -348,7 +348,7 @@ private:
     static bool isKeyboardOptionTab(KeyboardEvent*);
     static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent*);
 
-    void fakeMouseMoveEventTimerFired(Timer<EventHandler>*);
+    void fakeMouseMoveEventTimerFired(Timer<EventHandler>&);
     void cancelFakeMouseMoveEvent();
 
     bool isInsideScrollbar(const IntPoint&) const;
@@ -441,7 +441,7 @@ private:
 #if ENABLE(CURSOR_VISIBILITY)
     void startAutoHideCursorTimer();
     void cancelAutoHideCursorTimer();
-    void autoHideCursorTimerFired(Timer<EventHandler>*);
+    void autoHideCursorTimerFired(Timer<EventHandler>&);
 #endif
 
     Frame& m_frame;

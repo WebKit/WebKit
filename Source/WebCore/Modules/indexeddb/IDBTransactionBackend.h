@@ -96,7 +96,7 @@ private:
     bool isTaskQueueEmpty() const;
     bool hasPendingTasks() const;
 
-    void taskTimerFired(Timer<IDBTransactionBackend>*);
+    void taskTimerFired(Timer<IDBTransactionBackend>&);
     void closeOpenCursors();
 
     const HashSet<int64_t> m_objectStoreIds;

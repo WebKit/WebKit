@@ -572,7 +572,7 @@ void RenderLayerCompositor::scheduleCompositingLayerUpdate()
         m_updateCompositingLayersTimer.startOneShot(0);
 }
 
-void RenderLayerCompositor::updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>*)
+void RenderLayerCompositor::updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>&)
 {
     updateCompositingLayers(CompositingUpdateAfterLayout);
 }
@@ -3649,14 +3649,14 @@ void RenderLayerCompositor::startInitialLayerFlushTimerIfNeeded()
 }
 #endif
 
-void RenderLayerCompositor::layerFlushTimerFired(Timer<RenderLayerCompositor>*)
+void RenderLayerCompositor::layerFlushTimerFired(Timer<RenderLayerCompositor>&)
 {
     if (!m_hasPendingLayerFlush)
         return;
     scheduleLayerFlushNow();
 }
 
-void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer<RenderLayerCompositor>*)
+void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer<RenderLayerCompositor>&)
 {
     Frame& frame = m_renderView.frameView().frame();
     Page* page = frame.page();

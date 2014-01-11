@@ -324,7 +324,7 @@ private:
     void setFocusedElementIfNeeded();
     void focusedOrActiveStateChanged();
 
-    void caretBlinkTimerFired(Timer<FrameSelection>*);
+    void caretBlinkTimerFired(Timer<FrameSelection>&);
 
     void setCaretVisibility(CaretVisibility);
 

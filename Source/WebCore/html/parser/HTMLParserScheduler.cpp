@@ -111,10 +111,11 @@ HTMLParserScheduler::~HTMLParserScheduler()
     m_continueNextChunkTimer.stop();
 }
 
-void HTMLParserScheduler::continueNextChunkTimerFired(Timer<HTMLParserScheduler>* timer)
+void HTMLParserScheduler::continueNextChunkTimerFired(Timer<HTMLParserScheduler>& timer)
 {
     ASSERT(!m_suspended);
-    ASSERT_UNUSED(timer, timer == &m_continueNextChunkTimer);
+    ASSERT_UNUSED(timer, &timer == &m_continueNextChunkTimer);
+
     // FIXME: The timer class should handle timer priorities instead of this code.
     // If a layout is scheduled, wait again to let the layout timer run first.
     if (m_parser.document()->isLayoutTimerActive()) {

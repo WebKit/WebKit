@@ -174,7 +174,7 @@ private:
     void startTimer();
     void stopTimer();
     double nextRate() const;
-    void seekTimerFired(Timer<MediaControlSeekButtonElement>*);
+    void seekTimerFired(Timer<MediaControlSeekButtonElement>&);
 
     enum ActionType { Nothing, Play, Pause };
     ActionType m_actionOnStop;

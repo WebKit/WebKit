@@ -69,7 +69,7 @@ public:
 #endif
 
 private:
-    void autoscrollTimerFired(Timer<AutoscrollController>*);
+    void autoscrollTimerFired(Timer<AutoscrollController>&);
     void startAutoscrollTimer();
 #if ENABLE(PAN_SCROLLING)
     void updatePanScrollState(FrameView*, const IntPoint&);

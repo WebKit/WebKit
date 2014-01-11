@@ -159,7 +159,7 @@ private:
     void finishLoadingIcon();
 
 #if ENABLE(NOTIFICATIONS)
-    void taskTimerFired(Timer<Notification>*);
+    void taskTimerFired(Timer<Notification>&);
 #endif
 
     // Text notifications.

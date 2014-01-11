@@ -97,7 +97,7 @@ private:
     bool tryTakeFromCache(const IntSize&, CGColorSpaceRef, bool needExactSize, IOSurfaceAndContextWithCreationParams& outInfo);
     bool isAcceptableSurface(const IOSurfaceAndContextWithCreationParams&, const IntSize&, CGColorSpaceRef, bool needExactSize) const;
 
-    void timerFired(DeferrableOneShotTimer<ImageBufferBackingStoreCache>*);
+    void timerFired(DeferrableOneShotTimer<ImageBufferBackingStoreCache>&);
     void schedulePurgeTimer();
 
     DeferrableOneShotTimer<ImageBufferBackingStoreCache> m_purgeTimer;

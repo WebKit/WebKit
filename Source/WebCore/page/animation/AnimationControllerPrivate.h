@@ -67,7 +67,7 @@ public:
     CompositeAnimation& ensureCompositeAnimation(RenderElement*);
     bool clear(RenderElement*);
 
-    void updateStyleIfNeededDispatcherFired(Timer<AnimationControllerPrivate>*);
+    void updateStyleIfNeededDispatcherFired(Timer<AnimationControllerPrivate>&);
     void startUpdateStyleIfNeededDispatcher();
     void addEventToDispatch(PassRefPtr<Element> element, const AtomicString& eventType, const String& name, double elapsedTime);
     void addElementChangeToDispatch(PassRef<Element>);
@@ -113,7 +113,7 @@ public:
     void setAllowsNewAnimationsWhileSuspended(bool);
 
 private:
-    void animationTimerFired(Timer<AnimationControllerPrivate>*);
+    void animationTimerFired(Timer<AnimationControllerPrivate>&);
 
     void styleAvailable();
     void fireEventsAndUpdateStyle();

@@ -416,7 +416,7 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
     schedule(std::make_unique<ScheduledHistoryNavigation>(steps));
 }
 
-void NavigationScheduler::timerFired(Timer<NavigationScheduler>*)
+void NavigationScheduler::timerFired(Timer<NavigationScheduler>&)
 {
     if (!m_frame.page())
         return;

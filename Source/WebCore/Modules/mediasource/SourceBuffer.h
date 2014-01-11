@@ -134,7 +134,7 @@ private:
     void scheduleEvent(const AtomicString& eventName);
 
     void appendBufferInternal(unsigned char*, unsigned, ExceptionCode&);
-    void appendBufferTimerFired(Timer<SourceBuffer>*);
+    void appendBufferTimerFired(Timer<SourceBuffer>&);
 
     void setActive(bool);
 

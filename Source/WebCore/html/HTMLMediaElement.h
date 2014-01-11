@@ -583,9 +583,9 @@ private:
 
     virtual bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) OVERRIDE;
 
-    void loadTimerFired(Timer<HTMLMediaElement>*);
-    void progressEventTimerFired(Timer<HTMLMediaElement>*);
-    void playbackProgressTimerFired(Timer<HTMLMediaElement>*);
+    void loadTimerFired(Timer<HTMLMediaElement>&);
+    void progressEventTimerFired(Timer<HTMLMediaElement>&);
+    void playbackProgressTimerFired(Timer<HTMLMediaElement>&);
     void startPlaybackProgressTimer();
     void startProgressEventTimer();
     void stopPeriodicTimers();

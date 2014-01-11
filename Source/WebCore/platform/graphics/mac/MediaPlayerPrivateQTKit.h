@@ -173,7 +173,7 @@ private:
     void updateStates();
     void doSeek();
     void cancelSeek();
-    void seekTimerFired(Timer<MediaPlayerPrivateQTKit>*);
+    void seekTimerFired(Timer<MediaPlayerPrivateQTKit>&);
     float maxTimeLoaded() const;
     void disableUnsupportedTracks();
     

@@ -104,7 +104,7 @@ public:
 
     void layout(bool allowSubtree = true);
     bool didFirstLayout() const;
-    void layoutTimerFired(Timer<FrameView>*);
+    void layoutTimerFired(Timer<FrameView>&);
     void scheduleRelayout();
     void scheduleRelayoutOfSubtree(RenderElement&);
     void unscheduleRelayout();
@@ -269,7 +269,7 @@ public:
 
     void restoreScrollbar();
 
-    void postLayoutTimerFired(Timer<FrameView>*);
+    void postLayoutTimerFired(Timer<FrameView>&);
 
     bool wasScrolledByUser() const;
     void setWasScrolledByUser(bool);
@@ -544,7 +544,7 @@ private:
     virtual void notifyPageThatContentAreaWillPaint() const OVERRIDE;
 
     bool shouldUseLoadTimeDeferredRepaintDelay() const;
-    void deferredRepaintTimerFired(Timer<FrameView>*);
+    void deferredRepaintTimerFired(Timer<FrameView>&);
     void doDeferredRepaints();
     void updateDeferredRepaintDelayAfterRepaint();
     double adjustedDeferredRepaintDelay() const;

@@ -163,7 +163,7 @@ protected:
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
 
-    void autoscrollTimerFired(Timer<Scrollbar>*);
+    void autoscrollTimerFired(Timer<Scrollbar>&);
     void startTimerIfNeeded(double delay);
     void stopTimerIfNeeded();
     void autoscrollPressedPart(double delay);

@@ -537,7 +537,7 @@ void MediaController::scheduleEvent(const AtomicString& eventName)
         m_asyncEventTimer.startOneShot(0);
 }
 
-void MediaController::asyncEventTimerFired(Timer<MediaController>*)
+void MediaController::asyncEventTimerFired(Timer<MediaController>&)
 {
     Vector<RefPtr<Event>> pendingEvents;
 
@@ -547,7 +547,7 @@ void MediaController::asyncEventTimerFired(Timer<MediaController>*)
         dispatchEvent(pendingEvents[index].release(), IGNORE_EXCEPTION);
 }
 
-void MediaController::clearPositionTimerFired(Timer<MediaController>*)
+void MediaController::clearPositionTimerFired(Timer<MediaController>&)
 {
     m_position = MediaPlayer::invalidTime();
 }
@@ -659,7 +659,7 @@ void MediaController::startTimeupdateTimer()
     m_timeupdateTimer.startRepeating(maxTimeupdateEventFrequency);
 }
 
-void MediaController::timeupdateTimerFired(Timer<MediaController>*)
+void MediaController::timeupdateTimerFired(Timer<MediaController>&)
 {
     scheduleTimeupdateEvent();
 }

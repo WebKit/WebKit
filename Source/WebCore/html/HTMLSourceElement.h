@@ -52,7 +52,7 @@ private:
     virtual void removedFrom(ContainerNode&) OVERRIDE;
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
-    void errorEventTimerFired(Timer<HTMLSourceElement>*);
+    void errorEventTimerFired(Timer<HTMLSourceElement>&);
 
     Timer<HTMLSourceElement> m_errorEventTimer;
 };

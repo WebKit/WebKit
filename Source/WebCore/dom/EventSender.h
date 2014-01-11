@@ -49,7 +49,7 @@ public:
 #endif
 
 private:
-    void timerFired(Timer<EventSender<T>>*) { dispatchPendingEvents(); }
+    void timerFired(Timer<EventSender<T>>&) { dispatchPendingEvents(); }
 
     AtomicString m_eventType;
     Timer<EventSender<T>> m_timer;

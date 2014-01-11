@@ -77,8 +77,8 @@ public:
 
 protected:
     MediaKeySession(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
-    void keyRequestTimerFired(Timer<MediaKeySession>*);
-    void addKeyTimerFired(Timer<MediaKeySession>*);
+    void keyRequestTimerFired(Timer<MediaKeySession>&);
+    void addKeyTimerFired(Timer<MediaKeySession>&);
 
     MediaKeys* m_keys;
     String m_keySystem;

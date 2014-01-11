@@ -48,7 +48,7 @@ public:
     bool hasPendingEvents() const;
 
 private:
-    void timerFired(Timer<GenericEventQueue>*);
+    void timerFired(Timer<GenericEventQueue>&);
 
     EventTarget& m_owner;
     Vector<RefPtr<Event>> m_pendingEvents;

@@ -378,7 +378,7 @@ void ImageLoader::updatedHasPendingEvent()
     }   
 }
 
-void ImageLoader::timerFired(Timer<ImageLoader>*)
+void ImageLoader::timerFired(Timer<ImageLoader>&)
 {
     m_element->deref();
 }

@@ -232,7 +232,7 @@ public:
     void scheduleFor(WebKitNamedFlow*, int documentNodeId);
     void unschedule(WebKitNamedFlow*);
     void reset();
-    void onTimer(Timer<UpdateRegionLayoutTask>*);
+    void timerFired(Timer<UpdateRegionLayoutTask>&);
 
 private:
     InspectorCSSAgent* m_cssAgent;
@@ -242,7 +242,7 @@ private:
 
 UpdateRegionLayoutTask::UpdateRegionLayoutTask(InspectorCSSAgent* cssAgent)
     : m_cssAgent(cssAgent)
-    , m_timer(this, &UpdateRegionLayoutTask::onTimer)
+    , m_timer(this, &UpdateRegionLayoutTask::timerFired)
 {
 }
 
@@ -265,7 +265,7 @@ void UpdateRegionLayoutTask::reset()
     m_namedFlows.clear();
 }
 
-void UpdateRegionLayoutTask::onTimer(Timer<UpdateRegionLayoutTask>*)
+void UpdateRegionLayoutTask::timerFired(Timer<UpdateRegionLayoutTask>&)
 {
     // The timer is stopped on m_cssAgent destruction, so this method will never be called after m_cssAgent has been destroyed.
     Vector<std::pair<WebKitNamedFlow*, int>> namedFlows;
@@ -293,7 +293,7 @@ public:
     void scheduleFor(WebKitNamedFlow*, int documentNodeId);
     void unschedule(WebKitNamedFlow*);
     void reset();
-    void onTimer(Timer<ChangeRegionOversetTask>*);
+    void timerFired(Timer<ChangeRegionOversetTask>&);
     
 private:
     InspectorCSSAgent* m_cssAgent;
@@ -303,7 +303,7 @@ private:
 
 ChangeRegionOversetTask::ChangeRegionOversetTask(InspectorCSSAgent* cssAgent)
     : m_cssAgent(cssAgent)
-    , m_timer(this, &ChangeRegionOversetTask::onTimer)
+    , m_timer(this, &ChangeRegionOversetTask::timerFired)
 {
 }
 
@@ -326,7 +326,7 @@ void ChangeRegionOversetTask::reset()
     m_namedFlows.clear();
 }
 
-void ChangeRegionOversetTask::onTimer(Timer<ChangeRegionOversetTask>*)
+void ChangeRegionOversetTask::timerFired(Timer<ChangeRegionOversetTask>&)
 {
     // The timer is stopped on m_cssAgent destruction, so this method will never be called after m_cssAgent has been destroyed.
     for (HashMap<WebKitNamedFlow*, int>::iterator it = m_namedFlows.begin(), end = m_namedFlows.end(); it != end; ++it)

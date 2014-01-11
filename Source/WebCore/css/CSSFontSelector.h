@@ -85,7 +85,7 @@ private:
 
     void dispatchInvalidationCallbacks();
 
-    void beginLoadTimerFired(Timer<CSSFontSelector>*);
+    void beginLoadTimerFired(Timer<CSSFontSelector>&);
 
     Document* m_document;
     HashMap<String, OwnPtr<Vector<RefPtr<CSSFontFace>>>, CaseFoldingHash> m_fontFaces;

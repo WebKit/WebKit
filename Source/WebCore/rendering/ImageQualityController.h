@@ -55,7 +55,7 @@ private:
 
     void removeLayer(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer);
     void set(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer, const LayoutSize&);
-    void highQualityRepaintTimerFired(Timer<ImageQualityController>*);
+    void highQualityRepaintTimerFired(Timer<ImageQualityController>&);
     void restartTimer();
     void removeObject(RenderBoxModelObject*);
 

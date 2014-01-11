@@ -800,7 +800,7 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
     m_asyncEventQueue.enqueueEvent(event.release());
 }
 
-void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
+void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>&)
 {
     Ref<HTMLMediaElement> protect(*this); // loadNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
 
@@ -2195,7 +2195,7 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys)
 }
 #endif
 
-void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
+void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>&)
 {
     ASSERT(m_player);
     if (m_networkState != NETWORK_LOADING)
@@ -2973,7 +2973,7 @@ void HTMLMediaElement::startPlaybackProgressTimer()
     m_playbackProgressTimer.startRepeating(maxTimeupdateEventFrequency);
 }
 
-void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>*)
+void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>&)
 {
     ASSERT(m_player);
 
