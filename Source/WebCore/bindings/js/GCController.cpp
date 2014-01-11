@@ -107,8 +107,12 @@ void GCController::releaseExecutableMemory()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
 
+#if PLATFORM(IOS)
+    // If JavaScript was never run in this process, there's no need to call GC which will
+    // end up creating a VM unnecessarily.
     if (!JSDOMWindow::commonVMExists())
         return;
+#endif
 
     // We shouldn't have any javascript running on our stack when this function is called. The
     // following line asserts that.

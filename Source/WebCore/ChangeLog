@@ -1,5 +1,14 @@
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix Mac after r161747. One part of that is iOS specific.
+
+        Unreviewed build fix.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::releaseExecutableMemory):
+
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         [iOS] Fix GCController::releaseExecutableMemory
         https://bugs.webkit.org/show_bug.cgi?id=126805
 
