@@ -1,5 +1,16 @@
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix MonthInputType.o for iOS. Unreviewed build fix.
+
+        When ENABLE_INPUT_MULTIPLE_FIELDS_UI was removed in r150876, the
+        BaseMonthInputType typedef was removed. However a use of it lingered.
+        Changing to match the base class name.
+
+        * html/MonthInputType.h:
+        (WebCore::MonthInputType::MonthInputType):
+
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix RenderButton.o for iOS. Unreviewed build fix.
 
         Missing prototype in header for override of the layout method.

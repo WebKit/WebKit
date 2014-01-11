@@ -38,7 +38,7 @@ namespace WebCore {
 
 class MonthInputType : public BaseChooserOnlyDateAndTimeInputType {
 public:
-    explicit MonthInputType(HTMLInputElement& element) : BaseMonthInputType(element) { }
+    explicit MonthInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
 
 private:
     virtual void attach() OVERRIDE;
