@@ -1,5 +1,11 @@
 2014-01-10  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Fix COMPILE_ASSERT by updating struct SameSizeAsStyleRareInheritedData
+
+        * rendering/style/StyleRareInheritedData.cpp:
+
+2014-01-10  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Fix build of SubframeLoader.cpp
 
         * loader/SubframeLoader.cpp:

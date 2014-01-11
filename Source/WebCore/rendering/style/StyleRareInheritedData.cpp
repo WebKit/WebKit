@@ -49,6 +49,9 @@ struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareI
     unsigned unsigneds[1];
     short hyphenationShorts[3];
 
+#if PLATFORM(IOS)
+    Color compositionColor;
+#endif
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     TextSizeAdjustment textSizeAdjust;
 #endif
@@ -58,7 +61,7 @@ struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareI
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    Color touchColors;
+    Color tapHighlightColor;
 #endif
 };
 
