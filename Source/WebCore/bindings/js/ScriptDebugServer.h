@@ -62,8 +62,6 @@ public:
     void recompileAllJSFunctionsSoon();
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) = 0;
 
-    bool runningNestedMessageLoop() { return m_runningNestedMessageLoop; }
-
     class Task {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -95,22 +93,20 @@ protected:
     void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, bool isContentScript);
     void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
 
-    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) OVERRIDE;
-
     bool m_doneProcessingDebuggerEvents;
 
 private:
     typedef Vector<ScriptBreakpointAction> BreakpointActions;
     typedef HashMap<JSC::BreakpointID, BreakpointActions> BreakpointIDToActionsMap;
 
-    virtual bool needPauseHandling(JSC::JSGlobalObject*) OVERRIDE;
-    virtual void handleBreakpointHit(const JSC::Breakpoint&) OVERRIDE;
-    virtual void handleExceptionInBreakpointCondition(JSC::ExecState*, JSC::JSValue exception) const OVERRIDE;
-    virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) OVERRIDE;
-    virtual void notifyDoneProcessingDebuggerEvents() OVERRIDE;
+    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) OVERRIDE FINAL;
+    virtual bool needPauseHandling(JSC::JSGlobalObject*) OVERRIDE FINAL;
+    virtual void handleBreakpointHit(const JSC::Breakpoint&) OVERRIDE FINAL;
+    virtual void handleExceptionInBreakpointCondition(JSC::ExecState*, JSC::JSValue exception) const OVERRIDE FINAL;
+    virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) OVERRIDE FINAL;
+    virtual void notifyDoneProcessingDebuggerEvents() OVERRIDE FINAL;
 
     bool m_callingListeners;
-    bool m_runningNestedMessageLoop;
     BreakpointIDToActionsMap m_breakpointIDToActions;
     Timer<ScriptDebugServer> m_recompileTimer;
 

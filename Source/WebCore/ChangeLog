@@ -1,3 +1,23 @@
+2014-01-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Some ScriptDebugServer Cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=126793
+
+        Reviewed by Timothy Hatcher.
+
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::didContinue):
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePaused):
+        Move the special iOS WebThread EventLoop nesting handling here.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::handlePause):
+        * bindings/js/ScriptDebugServer.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        * inspector/InspectorDebuggerAgent.h:
+        Remove unused headers and functions.
+
 2014-01-11  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Add USE(IOSURFACE_CANVAS_BACKING_STORE) to fix build

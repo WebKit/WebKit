@@ -74,7 +74,6 @@ public:
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     bool isPaused();
-    bool runningNestedMessageLoop();
     void addMessageToConsole(MessageSource, MessageType);
 
     // Part of the protocol.

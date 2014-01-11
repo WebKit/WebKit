@@ -52,6 +52,11 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 
+#if PLATFORM(IOS)
+#include "JSDOMWindowBase.h"
+#include "WebCoreThreadInternal.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -148,11 +153,6 @@ void PageScriptDebugServer::didContinue(JSC::JSGlobalObject* globalObject)
 {
     // Page can be null if we are continuing because the Page closed.
     Page* page = toPage(globalObject);
-#if PLATFORM(IOS)
-    // FIXME: Can this happen in open source too, or is this iOS (multi-threaded) only?
-    if (!page)
-        return;
-#endif
     ASSERT(!page || page == m_pausedPage);
 
     m_pausedPage = 0;
@@ -174,9 +174,26 @@ void PageScriptDebugServer::didRemoveLastListener(Page* page)
 
 void PageScriptDebugServer::runEventLoopWhilePaused()
 {
+#if PLATFORM(IOS)
+    // On iOS, running an EventLoop causes us to run a nested WebRunLoop.
+    // Since the WebThread is autoreleased at the end of run loop iterations
+    // we need to gracefully handle releasing and reacquiring the lock.
+    ASSERT(WebThreadIsLockedOrDisabled());
+    {
+        if (WebThreadIsEnabled())
+            JSC::JSLock::DropAllLocks dropAllLocks(WebCore::JSDOMWindowBase::commonVM(), JSC::JSLock::DropAllLocks::AlwaysDropLocks);
+        WebRunLoopEnableNested();
+#endif
+
     EventLoop loop;
     while (!m_doneProcessingDebuggerEvents && !loop.ended())
         loop.cycle();
+
+#if PLATFORM(IOS)
+        WebRunLoopDisableNested();
+    }
+    ASSERT(WebThreadIsLockedOrDisabled());
+#endif
 }
 
 void PageScriptDebugServer::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)
