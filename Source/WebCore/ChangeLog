@@ -1,3 +1,11 @@
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix iOS build.
+
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::acceleratedImageDecodingEnabled):
+        (WebCore::ImageSource::setAcceleratedImageDecodingEnabled):
+
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed EFL build fix after r161678.
