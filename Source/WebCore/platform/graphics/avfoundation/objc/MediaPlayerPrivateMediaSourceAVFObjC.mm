@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
@@ -35,10 +35,11 @@
 #import "SoftLinking.h"
 #import <AVFoundation/AVAsset.h>
 #import <CoreMedia/CMSync.h>
+#import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
-#import <wtf/NeverDestroyed.h>
 #import <wtf/Functional.h>
 #import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
 
 #pragma mark -
 #pragma mark Soft Linking
