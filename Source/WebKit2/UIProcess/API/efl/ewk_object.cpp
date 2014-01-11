@@ -30,7 +30,7 @@
 
 Ewk_Object* ewk_object_ref(Ewk_Object* object)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(object, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(object, nullptr);
     object->ref();
 
     return object;

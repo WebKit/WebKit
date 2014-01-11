@@ -85,7 +85,7 @@ Eina_Bool ewk_file_chooser_request_allow_multiple_files_get(const Ewk_File_Choos
 
 Eina_List* ewk_file_chooser_request_accepted_mimetypes_get(const Ewk_File_Chooser_Request* request)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkFileChooserRequest, request, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkFileChooserRequest, request, impl, nullptr);
 
     Eina_List* mimeTypeList = 0;
     WKRetainPtr<WKArrayRef> mimeTypes = impl->acceptedMIMETypes();

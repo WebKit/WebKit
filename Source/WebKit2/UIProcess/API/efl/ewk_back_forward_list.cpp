@@ -133,28 +133,28 @@ void EwkBackForwardList::update(WKBackForwardListItemRef wkAddedItem, WKArrayRef
 
 Ewk_Back_Forward_List_Item* ewk_back_forward_list_current_item_get(const Ewk_Back_Forward_List* list)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, nullptr);
 
     return list->currentItem();
 }
 
 Ewk_Back_Forward_List_Item* ewk_back_forward_list_previous_item_get(const Ewk_Back_Forward_List* list)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, nullptr);
 
     return list->previousItem();
 }
 
 Ewk_Back_Forward_List_Item* ewk_back_forward_list_next_item_get(const Ewk_Back_Forward_List* list)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, nullptr);
 
     return list->nextItem();
 }
 
 Ewk_Back_Forward_List_Item* ewk_back_forward_list_item_at_index_get(const Ewk_Back_Forward_List* list, int index)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, nullptr);
 
     return list->itemAt(index);
 }
@@ -168,8 +168,8 @@ unsigned ewk_back_forward_list_count(Ewk_Back_Forward_List* list)
 
 Eina_List* ewk_back_forward_list_n_back_items_copy(const Ewk_Back_Forward_List* list, int limit)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
-    EINA_SAFETY_ON_FALSE_RETURN_VAL(limit == -1 || limit > 0, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, nullptr);
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(limit == -1 || limit > 0, nullptr);
 
     WKRetainPtr<WKArrayRef> backList = list->backList(limit);
 
@@ -178,8 +178,8 @@ Eina_List* ewk_back_forward_list_n_back_items_copy(const Ewk_Back_Forward_List* 
 
 Eina_List* ewk_back_forward_list_n_forward_items_copy(const Ewk_Back_Forward_List* list, int limit)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
-    EINA_SAFETY_ON_FALSE_RETURN_VAL(limit == -1 || limit > 0, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, nullptr);
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(limit == -1 || limit > 0, nullptr);
 
     WKRetainPtr<WKArrayRef> forwardList = list->forwardList(limit);
 

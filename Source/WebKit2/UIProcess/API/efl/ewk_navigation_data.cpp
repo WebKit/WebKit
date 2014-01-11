@@ -53,21 +53,21 @@ const char* EwkNavigationData::url() const
 
 const char* ewk_navigation_data_title_get(const Ewk_Navigation_Data* data)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationData, data, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationData, data, impl, nullptr);
 
     return impl->title();
 }
 
 Ewk_Url_Request* ewk_navigation_data_original_request_get(const Ewk_Navigation_Data* data)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationData, data, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationData, data, impl, nullptr);
 
     return impl->originalRequest();
 }
 
 const char* ewk_navigation_data_url_get(const Ewk_Navigation_Data* data)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationData, data, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationData, data, impl, nullptr);
 
     return impl->url();
 }

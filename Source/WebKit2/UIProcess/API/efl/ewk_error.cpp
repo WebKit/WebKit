@@ -87,7 +87,7 @@ Ewk_Error_Type ewk_error_type_get(const Ewk_Error* error)
 
 const char* ewk_error_url_get(const Ewk_Error* error)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(error, nullptr);
 
     return error->url();
 }
@@ -101,7 +101,7 @@ int ewk_error_code_get(const Ewk_Error* error)
 
 const char* ewk_error_description_get(const Ewk_Error* error)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(error, nullptr);
 
     return error->description();
 }

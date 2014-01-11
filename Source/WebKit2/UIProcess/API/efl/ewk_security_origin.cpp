@@ -62,14 +62,14 @@ uint32_t EwkSecurityOrigin::port() const
 
 const char* ewk_security_origin_host_get(const Ewk_Security_Origin* origin)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkSecurityOrigin, origin, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkSecurityOrigin, origin, impl, nullptr);
 
     return impl->host();
 }
 
 const char* ewk_security_origin_protocol_get(const Ewk_Security_Origin* origin)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkSecurityOrigin, origin, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkSecurityOrigin, origin, impl, nullptr);
 
     return impl->protocol();
 }

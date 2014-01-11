@@ -115,14 +115,14 @@ Event_Modifier_Keys ewk_navigation_policy_modifiers_get(const Ewk_Navigation_Pol
 
 const char* ewk_navigation_policy_frame_name_get(const Ewk_Navigation_Policy_Decision* decision)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, nullptr);
 
     return impl->frameName();
 }
 
 Ewk_Url_Request* ewk_navigation_policy_request_get(const Ewk_Navigation_Policy_Decision* decision)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, nullptr);
 
     return impl->request();
 }

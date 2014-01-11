@@ -100,7 +100,7 @@ Ewk_Popup_Menu_Item_Type ewk_popup_menu_item_type_get(const Ewk_Popup_Menu_Item*
 
 const char* ewk_popup_menu_item_text_get(const Ewk_Popup_Menu_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, nullptr);
 
     return item->text();
 }
@@ -121,14 +121,14 @@ Eina_Bool ewk_popup_menu_item_text_direction_override_get(const Ewk_Popup_Menu_I
 
 const char* ewk_popup_menu_item_tooltip_get(const Ewk_Popup_Menu_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, nullptr);
 
     return item->tooltipText();
 }
 
 const char* ewk_popup_menu_item_accessibility_text_get(const Ewk_Popup_Menu_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, nullptr);
 
     return item->accessibilityText();
 }

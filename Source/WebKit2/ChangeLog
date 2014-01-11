@@ -1,3 +1,100 @@
+2014-01-11  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Use nullptr instead of 0 in EFL API layer
+        https://bugs.webkit.org/show_bug.cgi?id=126806
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::create):
+        * UIProcess/API/efl/ewk_auth_request.cpp:
+        (ewk_auth_request_suggested_username_get):
+        (ewk_auth_request_realm_get):
+        (ewk_auth_request_host_get):
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (ewk_back_forward_list_current_item_get):
+        (ewk_back_forward_list_previous_item_get):
+        (ewk_back_forward_list_next_item_get):
+        (ewk_back_forward_list_item_at_index_get):
+        (ewk_back_forward_list_n_back_items_copy):
+        (ewk_back_forward_list_n_forward_items_copy):
+        * UIProcess/API/efl/ewk_back_forward_list_item.cpp:
+        (ewk_back_forward_list_item_url_get):
+        (ewk_back_forward_list_item_title_get):
+        (ewk_back_forward_list_item_original_url_get):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (ewk_context_cookie_manager_get):
+        (ewk_context_database_manager_get):
+        (ewk_context_favicon_database_get):
+        (ewk_context_storage_manager_get):
+        (ewk_context_new_with_injected_bundle_path):
+        * UIProcess/API/efl/ewk_context_menu.cpp:
+        (ewk_context_menu_items_get):
+        * UIProcess/API/efl/ewk_context_menu_item.cpp:
+        (ewk_context_menu_item_new_with_submenu):
+        (ewk_context_menu_item_title_get):
+        (ewk_context_menu_item_parent_menu_get):
+        (ewk_context_menu_item_submenu_get):
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (ewk_download_job_request_get):
+        (ewk_download_job_response_get):
+        (ewk_download_job_destination_get):
+        (ewk_download_job_suggested_filename_get):
+        * UIProcess/API/efl/ewk_error.cpp:
+        (ewk_error_url_get):
+        (ewk_error_description_get):
+        * UIProcess/API/efl/ewk_file_chooser_request.cpp:
+        (ewk_file_chooser_request_accepted_mimetypes_get):
+        * UIProcess/API/efl/ewk_form_submission_request.cpp:
+        (ewk_form_submission_request_field_names_get):
+        (ewk_form_submission_request_field_value_get):
+        * UIProcess/API/efl/ewk_navigation_data.cpp:
+        (ewk_navigation_data_title_get):
+        (ewk_navigation_data_original_request_get):
+        (ewk_navigation_data_url_get):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (ewk_navigation_policy_frame_name_get):
+        (ewk_navigation_policy_request_get):
+        * UIProcess/API/efl/ewk_object.cpp:
+        (ewk_object_ref):
+        * UIProcess/API/efl/ewk_popup_menu.cpp:
+        (ewk_popup_menu_items_get):
+        * UIProcess/API/efl/ewk_popup_menu_item.cpp:
+        (ewk_popup_menu_item_text_get):
+        (ewk_popup_menu_item_tooltip_get):
+        (ewk_popup_menu_item_accessibility_text_get):
+        * UIProcess/API/efl/ewk_security_origin.cpp:
+        (ewk_security_origin_host_get):
+        (ewk_security_origin_protocol_get):
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_default_text_encoding_name_get):
+        * UIProcess/API/efl/ewk_url_request.cpp:
+        (ewk_url_request_url_get):
+        (ewk_request_cookies_first_party_get):
+        (ewk_url_request_http_method_get):
+        * UIProcess/API/efl/ewk_url_response.cpp:
+        (ewk_url_response_url_get):
+        (ewk_url_response_mime_type_get):
+        * UIProcess/API/efl/ewk_url_scheme_request.cpp:
+        (ewk_url_scheme_request_scheme_get):
+        (ewk_url_scheme_request_url_get):
+        (ewk_url_scheme_request_path_get):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (toEwkViewChecked):
+        (EWKViewGetWKView):
+        (ewk_view_smart_add):
+        (ewk_view_add_with_context):
+        (ewk_view_context_get):
+        (ewk_view_page_group_get):
+        (ewk_view_url_get):
+        (ewk_view_favicon_get):
+        (ewk_view_settings_get):
+        (ewk_view_title_get):
+        (ewk_view_theme_get):
+        (ewk_view_back_forward_list_get):
+        (ewk_view_custom_encoding_get):
+        (ewk_view_user_agent_get):
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         Tweak ProgressTrackerClient functions

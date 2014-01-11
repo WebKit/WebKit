@@ -77,7 +77,7 @@ Ewk_Download_Job_State EwkDownloadJob::state() const
 
 Ewk_Url_Request* ewk_download_job_request_get(const Ewk_Download_Job* download)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, nullptr);
 
     return impl->request();
 }
@@ -94,7 +94,7 @@ EwkUrlRequest* EwkDownloadJob::request() const
 
 Ewk_Url_Response* ewk_download_job_response_get(const Ewk_Download_Job* download)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, nullptr);
 
     return impl->response();
 }
@@ -106,7 +106,7 @@ EwkUrlResponse* EwkDownloadJob::response() const
 
 const char* ewk_download_job_destination_get(const Ewk_Download_Job* download)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, nullptr);
 
     return impl->destination();
 }
@@ -133,7 +133,7 @@ void EwkDownloadJob::setDestination(const char* destination)
 
 const char* ewk_download_job_suggested_filename_get(const Ewk_Download_Job* download)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, nullptr);
 
     return impl->suggestedFileName();
 }

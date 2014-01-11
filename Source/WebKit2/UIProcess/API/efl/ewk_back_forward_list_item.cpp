@@ -59,21 +59,21 @@ const char* EwkBackForwardListItem::originalURL() const
 
 const char* ewk_back_forward_list_item_url_get(const Ewk_Back_Forward_List_Item* item)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkBackForwardListItem, item, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkBackForwardListItem, item, impl, nullptr);
 
     return impl->url();
 }
 
 const char* ewk_back_forward_list_item_title_get(const Ewk_Back_Forward_List_Item* item)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkBackForwardListItem, item, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkBackForwardListItem, item, impl, nullptr);
 
     return impl->title();
 }
 
 const char* ewk_back_forward_list_item_original_url_get(const Ewk_Back_Forward_List_Item* item)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkBackForwardListItem, item, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkBackForwardListItem, item, impl, nullptr);
 
     return impl->originalURL();
 }

@@ -68,7 +68,7 @@ Ewk_Context_Menu_Item* ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type
 
 Ewk_Context_Menu_Item* ewk_context_menu_item_new_with_submenu(Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool enabled, Ewk_Context_Menu* subMenu)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContextMenu, subMenu, subMenuImpl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContextMenu, subMenu, subMenuImpl, nullptr);
 
     return std::make_unique<Ewk_Context_Menu_Item>(EWK_SUBMENU_TYPE, action, title, false, enabled, subMenuImpl).release();
 }
@@ -107,7 +107,7 @@ Eina_Bool ewk_context_menu_item_action_set(Ewk_Context_Menu_Item* item, Ewk_Cont
 
 const char* ewk_context_menu_item_title_get(const Ewk_Context_Menu_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, nullptr);
 
     return item->title();
 }
@@ -155,14 +155,14 @@ Eina_Bool ewk_context_menu_item_enabled_set(Ewk_Context_Menu_Item* item, Eina_Bo
 
 Ewk_Context_Menu* ewk_context_menu_item_parent_menu_get(const Ewk_Context_Menu_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, nullptr);
 
     return item->parentMenu();
 }
 
 Ewk_Context_Menu* ewk_context_menu_item_submenu_get(const Ewk_Context_Menu_Item* item)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, nullptr);
 
     return item->subMenu();
 }

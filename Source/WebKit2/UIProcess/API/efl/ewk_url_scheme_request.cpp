@@ -73,21 +73,21 @@ void EwkUrlSchemeRequest::finish(const void* contentData, uint64_t contentLength
 
 const char* ewk_url_scheme_request_scheme_get(const Ewk_Url_Scheme_Request* request)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlSchemeRequest, request, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlSchemeRequest, request, impl, nullptr);
 
     return impl->scheme();
 }
 
 const char* ewk_url_scheme_request_url_get(const Ewk_Url_Scheme_Request* request)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlSchemeRequest, request, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlSchemeRequest, request, impl, nullptr);
 
     return impl->url();
 }
 
 const char* ewk_url_scheme_request_path_get(const Ewk_Url_Scheme_Request* request)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlSchemeRequest, request, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlSchemeRequest, request, impl, nullptr);
 
     return impl->path();
 }

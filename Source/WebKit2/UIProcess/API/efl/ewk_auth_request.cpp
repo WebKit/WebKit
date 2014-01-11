@@ -131,7 +131,7 @@ bool EwkAuthRequest::isRetrying() const
 
 const char* ewk_auth_request_suggested_username_get(const Ewk_Auth_Request* request)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkAuthRequest, request, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkAuthRequest, request, impl, nullptr);
 
     return impl->suggestedUsername();
 }
@@ -161,14 +161,14 @@ Eina_Bool ewk_auth_request_retrying_get(const Ewk_Auth_Request* request)
 
 const char* ewk_auth_request_realm_get(const Ewk_Auth_Request* request)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkAuthRequest, request, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkAuthRequest, request, impl, nullptr);
 
     return impl->realm();
 }
 
 const char* ewk_auth_request_host_get(const Ewk_Auth_Request* request)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkAuthRequest, request, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkAuthRequest, request, impl, nullptr);
 
     return impl->host();
 }

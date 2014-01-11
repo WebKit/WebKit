@@ -342,10 +342,10 @@ EwkView::~EwkView()
 
 EwkView* EwkView::create(WKViewRef webView, Evas* canvas, Evas_Smart* smart)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, nullptr);
 
     Evas_Object* evasObject = evas_object_smart_add(canvas, smart ? smart : defaultSmartClassInstance());
-    EINA_SAFETY_ON_NULL_RETURN_VAL(evasObject, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(evasObject, nullptr);
 
     Ewk_View_Smart_Data* smartData = toSmartData(evasObject);
     if (!smartData) {

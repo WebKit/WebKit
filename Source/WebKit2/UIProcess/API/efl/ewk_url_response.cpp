@@ -59,7 +59,7 @@ unsigned long EwkUrlResponse::contentLength() const
 
 const char* ewk_url_response_url_get(const Ewk_Url_Response* response)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlResponse, response, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlResponse, response, impl, nullptr);
 
     return impl->url();
 }
@@ -73,7 +73,7 @@ int ewk_url_response_status_code_get(const Ewk_Url_Response* response)
 
 const char* ewk_url_response_mime_type_get(const Ewk_Url_Response* response)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlResponse, response, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlResponse, response, impl, nullptr);
 
     return impl->mimeType();
 }

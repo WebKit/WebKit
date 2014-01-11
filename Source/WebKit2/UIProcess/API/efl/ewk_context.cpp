@@ -231,14 +231,14 @@ JSGlobalContextRef EwkContext::jsGlobalContext()
 
 Ewk_Cookie_Manager* ewk_context_cookie_manager_get(const Ewk_Context* ewkContext)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, nullptr);
 
     return const_cast<EwkContext*>(impl)->cookieManager();
 }
 
 Ewk_Database_Manager* ewk_context_database_manager_get(const Ewk_Context* ewkContext)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, nullptr);
 
     return const_cast<EwkContext*>(impl)->databaseManager();
 }
@@ -252,14 +252,14 @@ Eina_Bool ewk_context_favicon_database_directory_set(Ewk_Context* ewkContext, co
 
 Ewk_Favicon_Database* ewk_context_favicon_database_get(const Ewk_Context* ewkContext)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, nullptr);
 
     return const_cast<EwkContext*>(impl)->faviconDatabase();
 }
 
 Ewk_Storage_Manager* ewk_context_storage_manager_get(const Ewk_Context* ewkContext)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, nullptr);
 
     return impl->storageManager();
 }
@@ -286,7 +286,7 @@ Ewk_Context* ewk_context_new()
 
 Ewk_Context* ewk_context_new_with_injected_bundle_path(const char* path)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(path, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(path, nullptr);
 
     return EwkContext::create(String::fromUTF8(path)).leakRef();
 }

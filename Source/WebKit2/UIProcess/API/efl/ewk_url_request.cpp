@@ -53,21 +53,21 @@ const char* EwkUrlRequest::httpMethod() const
 
 const char* ewk_url_request_url_get(const Ewk_Url_Request* request)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlRequest, request, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlRequest, request, impl, nullptr);
 
     return impl->url();
 }
 
 const char* ewk_request_cookies_first_party_get(const Ewk_Url_Request* request)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlRequest, request, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlRequest, request, impl, nullptr);
 
     return impl->firstParty();
 }
 
 const char* ewk_url_request_http_method_get(const Ewk_Url_Request* request)
 {
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlRequest, request, impl, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlRequest, request, impl, nullptr);
 
     return impl->httpMethod();
 }

@@ -112,7 +112,7 @@ unsigned ewk_popup_menu_selected_index_get(const Ewk_Popup_Menu* popupMenu)
 
 const Eina_List* ewk_popup_menu_items_get(const Ewk_Popup_Menu* popupMenu)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(popupMenu, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(popupMenu, nullptr);
 
     return popupMenu->items();
 }
