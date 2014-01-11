@@ -57,9 +57,10 @@ sub applyPreprocessor
         push(@args, qw(-E -P -x c++));
     }
 
-    if ($Config::Config{"osname"} eq "darwin" && $ENV{SDKROOT}) {
+    if ($Config::Config{"osname"} eq "darwin") {
         push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
         push(@args, "-isysroot", $ENV{SDKROOT}) if $ENV{SDKROOT};
+        $defines .= " WTF_PLATFORM_IOS" if $ENV{PLATFORM_NAME} =~ /iphone(os|simulator)/;
     }
 
     # Remove double quotations from $defines and extract macros.

@@ -1,3 +1,11 @@
+2014-01-10  Andy Estes  <aestes@apple.com>
+
+        [iOS] Build fix: make sure WTF_PLATFORM_IOS is defined when preprocessing
+
+        * DerivedSources.make:
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor):
+
 2014-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         Use TARGET_OS_IPHONE in this API file, and #if TARGET_OS_MAC

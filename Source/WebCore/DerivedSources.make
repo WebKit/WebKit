@@ -789,11 +789,11 @@ ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
     WEBCORE_CSS_VALUE_KEYWORDS := $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/SVGCSSValueKeywords.in
 endif
 
-CSSPropertyNames.h : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl $(PLATFORM_FEATURE_DEFINES)
+CSSPropertyNames.h : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl bindings/scripts/preprocessor.pm $(PLATFORM_FEATURE_DEFINES)
 	cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
 	perl -I$(WebCore)/bindings/scripts "$(WebCore)/css/makeprop.pl" --defines "$(FEATURE_DEFINES)"
 
-CSSValueKeywords.h : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl $(PLATFORM_FEATURE_DEFINES)
+CSSValueKeywords.h : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl bindings/scripts/preprocessor.pm $(PLATFORM_FEATURE_DEFINES)
 	cat $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
 	perl -I$(WebCore)/bindings/scripts "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_DEFINES)"
 
