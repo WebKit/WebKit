@@ -481,7 +481,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_deviceMotionClient(DeviceMotionClientIOS::create())
     , m_deviceMotionController(DeviceMotionController::create(m_deviceMotionClient.get()))
     , m_deviceOrientationClient(DeviceOrientationClientIOS::create())
-    , m_deviceOrientationController(DeviceOrientationController::create(frame ? frame->page() : nullptr, m_deviceOrientationClient.get()))
+    , m_deviceOrientationController(DeviceOrientationController::create(m_deviceOrientationClient.get()))
 #endif
     , m_isTelephoneNumberParsingAllowed(true)
 #endif

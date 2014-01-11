@@ -1,3 +1,34 @@
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+       Add TextAutoSizing.* for iOS, and fix DeviceOrientationController creation.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * rendering/TextAutoSizing.cpp: Added.
+        (WebCore::cloneRenderStyleWithState):
+        (WebCore::TextAutoSizingKey::TextAutoSizingKey):
+        (WebCore::TextAutoSizingKey::~TextAutoSizingKey):
+        (WebCore::TextAutoSizingKey::operator=):
+        (WebCore::TextAutoSizingKey::ref):
+        (WebCore::TextAutoSizingKey::deref):
+        (WebCore::TextAutoSizingValue::numNodes):
+        (WebCore::TextAutoSizingValue::addNode):
+        (WebCore::TextAutoSizingValue::adjustNodeSizes):
+        (WebCore::TextAutoSizingValue::reset):
+        * rendering/TextAutoSizing.h: Added.
+        (WebCore::TextAutoSizingKey::doc):
+        (WebCore::TextAutoSizingKey::style):
+        (WebCore::TextAutoSizingKey::isValidDoc):
+        (WebCore::TextAutoSizingKey::isValidStyle):
+        (WebCore::TextAutoSizingKey::deletedKeyDoc):
+        (WebCore::TextAutoSizingKey::deletedKeyStyle):
+        (WebCore::operator==):
+        (WebCore::TextAutoSizingHash::hash):
+        (WebCore::TextAutoSizingHash::equal):
+        (WebCore::TextAutoSizingValue::create):
+        (WebCore::TextAutoSizingValue::TextAutoSizingValue):
+
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix GraphicsLayerCA.o for iOS. Unreviewed build fix.
