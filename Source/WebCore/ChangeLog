@@ -1,5 +1,12 @@
 2014-01-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix updateScrollingLayerWithClient() for iOS.
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::updateScrollingLayerWithClient):
+
+2014-01-11  Simon Fraser  <simon.fraser@apple.com>
+
         Unfork GraphicsContext::drawNativeImage for iOS
         https://bugs.webkit.org/show_bug.cgi?id=126824
 
