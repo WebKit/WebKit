@@ -36,7 +36,7 @@ using namespace WebCore;
 
 static const size_t kWebAudioBufferSize = 128;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) ||__MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 static const size_t kLowPowerVideoBufferSize = 4096;
 #endif
 

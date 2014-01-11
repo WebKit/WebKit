@@ -1,5 +1,11 @@
 2014-01-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the iOS build.
+
+        * platform/audio/mac/MediaSessionManagerMac.cpp:
+
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
         iOS doesn't have <OpenGL/gl.h>; fix iOS build.
 
         * platform/graphics/opengl/TemporaryOpenGLSetting.cpp:
