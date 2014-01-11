@@ -1,3 +1,11 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix RenderButton.o for iOS. Unreviewed build fix.
+
+        Missing prototype in header for override of the layout method.
+
+        * rendering/RenderButton.h:
+
 2014-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         A couple of iOS build fixes.

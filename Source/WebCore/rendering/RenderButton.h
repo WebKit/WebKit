@@ -57,6 +57,10 @@ public:
     void setText(const String&);
     String text() const;
 
+#if PLATFORM(IOS)
+    virtual void layout() OVERRIDE;
+#endif
+
 private:
     void element() const WTF_DELETED_FUNCTION;
 
