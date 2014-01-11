@@ -51,6 +51,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
