@@ -53,7 +53,6 @@ wtf_sources += \
     Source/WTF/wtf/FeatureDefines.h \
     Source/WTF/wtf/FilePrintStream.cpp \
     Source/WTF/wtf/FilePrintStream.h \
-    Source/WTF/wtf/FilterIterator.h \
     Source/WTF/wtf/FlipBytes.h \
     Source/WTF/wtf/Forward.h \
     Source/WTF/wtf/FunctionDispatcher.cpp \
@@ -73,7 +72,8 @@ wtf_sources += \
     Source/WTF/wtf/HexNumber.h \
     Source/WTF/wtf/InlineASM.h \
     Source/WTF/wtf/Insertion.h \
-    Source/WTF/wtf/IteratorPair.h \
+    Source/WTF/wtf/IteratorAdaptors.h \
+    Source/WTF/wtf/IteratorRange.h \
     Source/WTF/wtf/ListDump.h \
     Source/WTF/wtf/ListHashSet.h \
     Source/WTF/wtf/Locker.h \

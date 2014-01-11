@@ -28,7 +28,6 @@ set(WTF_HEADERS
     FastMalloc.h
     FeatureDefines.h
     FilePrintStream.h
-    FilterIterator.h
     FlipBytes.h
     Forward.h
     FunctionDispatcher.h
@@ -43,7 +42,8 @@ set(WTF_HEADERS
     HashTable.h
     HashTraits.h
     HexNumber.h
-    IteratorPair.h
+    IteratorAdaptors.h
+    IteratorRange.h
     ListHashSet.h
     Locker.h
     MD5.h

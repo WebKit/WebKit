@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_IteratorPair_h
-#define WTF_IteratorPair_h
+#ifndef WTF_IteratorRange_h
+#define WTF_IteratorRange_h
 
 namespace WTF {
 
 template<typename Iterator>
-class IteratorPair {
+class IteratorRange {
 public:
-    IteratorPair(Iterator begin, Iterator end)
+    IteratorRange(Iterator begin, Iterator end)
         : m_begin(std::move(begin))
         , m_end(std::move(end))
     {
@@ -45,6 +45,12 @@ private:
     Iterator m_end;
 };
 
+template<typename Iterator>
+IteratorRange<Iterator> makeIteratorRange(Iterator&& begin, Iterator&& end)
+{
+    return IteratorRange<Iterator>(std::forward<Iterator>(begin), std::forward<Iterator>(end));
+}
+
 } // namespace WTF
 
-#endif // WTF_IteratorPair
+#endif // WTF_IteratorRange_h

@@ -1,3 +1,48 @@
+2014-01-11  Sam Weinig  <sam@webkit.org>
+
+        Clean up iterator filter / iterator range code
+        https://bugs.webkit.org/show_bug.cgi?id=126817
+
+        Reviewed by Anders Carlsson.
+
+        - Renames IteratorPair to IteratorRange.
+        - Splits FilterIterator into FilterIterator (which now only filters) and
+          TransformIterator (which does the transform part of the old FilterIterator).
+          Move both of these to IteratorAdaptors.h
+
+        * GNUmakefile.list.am:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FilterIterator.h: Removed.
+        Add/remove files.
+
+        * wtf/HashMap.h:
+        (WTF::HashMap::keys):
+        (WTF::HashMap::values):
+        * wtf/RefPtrHashMap.h:
+        Update for rename to IteratorRange. Simplify by using makeIteratorRange().
+
+        * wtf/IteratorAdaptors.h: Copied from wtf/FilterIterator.h.
+        (WTF::FilterIterator::FilterIterator):
+        (WTF::FilterIterator::operator*):
+        (WTF::makeFilterIterator):
+        (WTF::TransformIterator::TransformIterator):
+        (WTF::TransformIterator::operator++):
+        (WTF::TransformIterator::operator*):
+        (WTF::TransformIterator::operator==):
+        (WTF::TransformIterator::operator!=):
+        (WTF::makeTransformIterator):
+        Split up filtering and transforming. Add makeFilterIterator() and makeTransformIterator()
+        helpers.
+
+        * wtf/IteratorPair.h: Removed.
+        * wtf/IteratorRange.h: Copied from wtf/IteratorPair.h.
+        (WTF::IteratorRange::IteratorRange):
+        (WTF::makeIteratorRange):
+        Renamed to IteratorRange and adds makeIteratorRange() helper.
+
 2014-01-10  David Kilzer  <ddkilzer@apple.com>
 
         Clean up architectures in xcconfig files

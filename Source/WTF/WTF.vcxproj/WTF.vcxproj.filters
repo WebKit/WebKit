@@ -435,9 +435,6 @@
     <ClInclude Include="..\wtf\FilePrintStream.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\FilterIterator.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\Forward.h">
       <Filter>wtf</Filter>
     </ClInclude>
@@ -474,7 +471,10 @@
     <ClInclude Include="..\wtf\HexNumber.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\IteratorPair.h">
+    <ClInclude Include="..\wtf\IteratorAdaptors.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\IteratorRange.h">
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\ListHashSet.h">

@@ -23,21 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTF_FilterIterator_h
-#define WTF_FilterIterator_h
-
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Vector.h>
+#ifndef WTF_IteratorAdaptors_h
+#define WTF_IteratorAdaptors_h
 
 namespace WTF {
 
-template<typename Predicate, typename Cast, typename Iterator>
+template<typename Predicate, typename Iterator>
 class FilterIterator {
 public:
-    FilterIterator(Predicate pred, Cast cast, Iterator begin, Iterator end)
+    FilterIterator(Predicate pred, Iterator begin, Iterator end)
         : m_pred(std::move(pred))
-        , m_cast(std::move(cast))
         , m_iter(std::move(begin))
         , m_end(std::move(end))
     {
@@ -55,11 +50,11 @@ public:
         return *this;
     }
 
-    const decltype(std::declval<Cast>()(*std::declval<Iterator>())) operator*() const
+    const decltype(*std::declval<Iterator>()) operator*() const
     {
         ASSERT(m_iter != m_end);
         ASSERT(m_pred(*m_iter));
-        return m_cast(*m_iter);
+        return *m_iter;
     }
 
     inline bool operator==(FilterIterator& other) const { return m_iter == other.m_iter; }
@@ -67,11 +62,50 @@ public:
 
 private:
     const Predicate m_pred;
-    const Cast m_cast;
     Iterator m_iter;
     Iterator m_end;
 };
 
+template<typename Predicate, typename Iterator>
+inline FilterIterator<Predicate, Iterator> makeFilterIterator(Predicate&& pred, Iterator&& begin, Iterator&& end)
+{
+    return FilterIterator<Predicate, Iterator>(std::forward<Predicate>(pred), std::forward<Iterator>(begin), std::forward<Iterator>(end));
+}
+
+template<typename Transform, typename Iterator>
+class TransformIterator {
+public:
+    TransformIterator(const Transform& transform, const Iterator& iter)
+        : m_transform(std::move(transform))
+        , m_iter(std::move(iter))
+    {
+    }
+
+    TransformIterator& operator++()
+    {
+        ++m_iter;
+        return *this;
+    }
+
+    const decltype(std::declval<Transform>()(*std::declval<Iterator>())) operator*() const
+    {
+        return m_transform(*m_iter);
+    }
+
+    inline bool operator==(TransformIterator& other) const { return m_iter == other.m_iter; }
+    inline bool operator!=(TransformIterator& other) const { return m_iter != other.m_iter; }
+
+private:
+    const Transform m_transform;
+    Iterator m_iter;
+};
+
+template<typename Transform, typename Iterator>
+inline TransformIterator<Transform, Iterator> makeTransformIterator(Transform&& transform, Iterator&& iter)
+{
+    return TransformIterator<Transform, Iterator>(std::forward<Transform>(transform), std::forward<Iterator>(iter));
+}
+
 } // namespace WTF
 
-#endif // WTF_FilterIterator_h
+#endif // WTF_IteratorAdaptors_h

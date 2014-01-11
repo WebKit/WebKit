@@ -197,7 +197,6 @@
     <ClInclude Include="..\wtf\FastMalloc.h" />
     <ClInclude Include="..\wtf\FeatureDefines.h" />
     <ClInclude Include="..\wtf\FilePrintStream.h" />
-    <ClInclude Include="..\wtf\FilterIterator.h" />
     <ClInclude Include="..\wtf\FlipBytes.h" />
     <ClInclude Include="..\wtf\Forward.h" />
     <ClInclude Include="..\wtf\FunctionDispatcher.h" />
@@ -217,7 +216,8 @@
     <ClInclude Include="..\wtf\HashTable.h" />
     <ClInclude Include="..\wtf\HashTraits.h" />
     <ClInclude Include="..\wtf\HexNumber.h" />
-    <ClInclude Include="..\wtf\IteratorPair.h" />
+    <ClInclude Include="..\wtf\IteratorAdaptors.h" />
+    <ClInclude Include="..\wtf\IteratorRange.h" />
     <ClInclude Include="..\wtf\ListHashSet.h" />
     <ClInclude Include="..\wtf\Locker.h" />
     <ClInclude Include="..\wtf\MainThread.h" />

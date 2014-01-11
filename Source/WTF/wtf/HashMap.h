@@ -22,7 +22,7 @@
 #define WTF_HashMap_h
 
 #include <wtf/HashTable.h>
-#include <wtf/IteratorPair.h>
+#include <wtf/IteratorRange.h>
 
 namespace WTF {
 
@@ -92,11 +92,11 @@ public:
     const_iterator begin() const;
     const_iterator end() const;
 
-    IteratorPair<typename iterator::Keys> keys() { return IteratorPair<typename iterator::Keys>(begin().keys(), end().keys()); }
-    const IteratorPair<typename const_iterator::Keys> keys() const { return IteratorPair<typename const_iterator::Keys>(begin().keys(), end().keys()); }
+    IteratorRange<typename iterator::Keys> keys() { return makeIteratorRange(begin().keys(), end().keys()); }
+    const IteratorRange<typename const_iterator::Keys> keys() const { return makeIteratorRange(begin().keys(), end().keys()); }
 
-    IteratorPair<typename iterator::Values> values() { return IteratorPair<typename iterator::Values>(begin().values(), end().values()); }
-    const IteratorPair<typename const_iterator::Values> values() const { return IteratorPair<typename const_iterator::Values>(begin().values(), end().values()); }
+    IteratorRange<typename iterator::Values> values() { return makeIteratorRange(begin().values(), end().values()); }
+    const IteratorRange<typename const_iterator::Values> values() const { return makeIteratorRange(begin().values(), end().values()); }
 
     iterator find(const KeyType&);
     const_iterator find(const KeyType&) const;

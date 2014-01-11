@@ -1,3 +1,15 @@
+2014-01-11  Sam Weinig  <sam@webkit.org>
+
+        Clean up iterator filter / iterator range code
+        https://bugs.webkit.org/show_bug.cgi?id=126817
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/APIArray.h:
+        Update elementsOfType() to use combination of FilterIterator and TransformIterator
+        (now that FilterIterator no longer has a transform predicate) and make use of the 
+        makeFoo() helpers.
+
 2014-01-11  Anders Carlsson  <andersca@apple.com>
 
         Simplify Timer and DeferrableOneShotTimer using std::function
