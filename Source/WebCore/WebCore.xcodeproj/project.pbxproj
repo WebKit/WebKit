@@ -3633,6 +3633,8 @@
 		A513B3D8114B166A001C429B /* KeyEventCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */; };
 		A516E8B7136E04DB0076C3C0 /* LocalizedDateCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */; };
 		A516E8B8136E04DB0076C3C0 /* LocalizedDateCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = A516E8B5136E04DB0076C3C0 /* LocalizedDateCache.mm */; };
+		A5416FE518810EF80009FC5F /* YouTubeEmbedShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5416FE318810EF80009FC5F /* YouTubeEmbedShadowElement.cpp */; };
+		A5416FE618810EF80009FC5F /* YouTubeEmbedShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A5416FE418810EF80009FC5F /* YouTubeEmbedShadowElement.h */; };
 		A54A82EC15228D2F00C72BA6 /* DOMNodePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A54A82EA15228CA300C72BA6 /* DOMNodePrivate.h */; };
 		A54A82F115228DF600C72BA6 /* DOMNodePrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A54A82EA15228CA300C72BA6 /* DOMNodePrivate.h */; };
 		A5732B0A136A161D005C8D7C /* DateComponents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5732B08136A161D005C8D7C /* DateComponents.cpp */; };
@@ -10620,6 +10622,8 @@
 		A516E8B5136E04DB0076C3C0 /* LocalizedDateCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedDateCache.mm; sourceTree = "<group>"; };
 		A518225417E2A0D400A9BA1D /* InspectorOverlayPage.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = InspectorOverlayPage.css; sourceTree = "<group>"; };
 		A518225517E2A0D400A9BA1D /* InspectorOverlayPage.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = InspectorOverlayPage.js; sourceTree = "<group>"; };
+		A5416FE318810EF80009FC5F /* YouTubeEmbedShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YouTubeEmbedShadowElement.cpp; sourceTree = "<group>"; };
+		A5416FE418810EF80009FC5F /* YouTubeEmbedShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouTubeEmbedShadowElement.h; sourceTree = "<group>"; };
 		A54A82EA15228CA300C72BA6 /* DOMNodePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMNodePrivate.h; sourceTree = "<group>"; };
 		A5732B08136A161D005C8D7C /* DateComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateComponents.cpp; sourceTree = "<group>"; };
 		A5732B09136A161D005C8D7C /* DateComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateComponents.h; sourceTree = "<group>"; };
@@ -15232,6 +15236,8 @@
 				4512502115DCE37D002F84E2 /* SpinButtonElement.h */,
 				142B97C713138943008BEF4B /* TextControlInnerElements.cpp */,
 				142B97C813138943008BEF4B /* TextControlInnerElements.h */,
+				A5416FE318810EF80009FC5F /* YouTubeEmbedShadowElement.cpp */,
+				A5416FE418810EF80009FC5F /* YouTubeEmbedShadowElement.h */,
 			);
 			path = shadow;
 			sourceTree = "<group>";
@@ -26048,6 +26054,7 @@
 				83C1D433178D5AB500141E68 /* SVGPathSegLinetoVerticalAbs.h in Headers */,
 				83C1D434178D5AB500141E68 /* SVGPathSegLinetoVerticalRel.h in Headers */,
 				83C1D435178D5AB500141E68 /* SVGPathSegMovetoAbs.h in Headers */,
+				A5416FE618810EF80009FC5F /* YouTubeEmbedShadowElement.h in Headers */,
 				83C1D436178D5AB500141E68 /* SVGPathSegMovetoRel.h in Headers */,
 				FD1762E0176686D900D836A8 /* UpSampler.h in Headers */,
 				FD1762E4176686EA00D836A8 /* DownSampler.h in Headers */,
@@ -27410,6 +27417,7 @@
 				B27535600B053814002CE64F /* IntPointCG.cpp in Sources */,
 				B275357C0B053814002CE64F /* IntPointMac.mm in Sources */,
 				B27535730B053814002CE64F /* IntRect.cpp in Sources */,
+				A5416FE518810EF80009FC5F /* YouTubeEmbedShadowElement.cpp in Sources */,
 				B27535610B053814002CE64F /* IntRectCG.cpp in Sources */,
 				B275357D0B053814002CE64F /* IntRectMac.mm in Sources */,
 				B27535620B053814002CE64F /* IntSizeCG.cpp in Sources */,

@@ -1,3 +1,18 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix HTMLPlugInImageElement.o for iOS. Unreviewed build fix.
+
+        Forgot to upstream YouTubeEmbedShadowElement.*. Do so and
+        add the files to the Xcode project so they build.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/shadow/YouTubeEmbedShadowElement.cpp: Added.
+        (WebCore::YouTubeEmbedShadowElement::create):
+        (WebCore::YouTubeEmbedShadowElement::YouTubeEmbedShadowElement):
+        (WebCore::YouTubeEmbedShadowElement::pluginElement):
+        (WebCore::YouTubeEmbedShadowElement::shadowPseudoId):
+        * html/shadow/YouTubeEmbedShadowElement.h: Added.
+
 2014-01-10  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Update EditorIOS.mm to switch from pointers to references
