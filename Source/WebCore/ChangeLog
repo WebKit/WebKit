@@ -1,3 +1,16 @@
+2014-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix macros in Scrollbar::supportsUpdateOnSecondaryThread()
+
+        Fixes the following build error:
+
+            WebCore/platform/Scrollbar.cpp:552:22: error: '__MAC_OS_X_VERSION_MIN_REQUIRED' is not defined, evaluates to 0 [-Werror,-Wundef]
+            #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && ENABLE(ASYNC_SCROLLING)
+                                 ^
+
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::supportsUpdateOnSecondaryThread):
+
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix RenderFileUploadControl.o for iOS. Unreviewed build fix.
