@@ -1,5 +1,13 @@
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix JSDOMWindowBase.o for iOS. Unreviewed build fix.
+
+        Add missing iOS method declarations.
+
+        * bindings/js/JSDOMWindowBase.h:
+
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix InputType.o for iOS. Unreviewed build fix.
 
         The RuntimeEnabledFeatures function pointer type should have a
