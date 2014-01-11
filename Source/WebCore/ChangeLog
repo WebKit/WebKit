@@ -1,3 +1,10 @@
+2014-01-11  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Multisampling is not available on iOS
+
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2014-01-10  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Fix build for HTMLImageElement::willRespondToMouseClickEvents()

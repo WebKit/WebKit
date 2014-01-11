@@ -218,9 +218,11 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 #endif    
     END_BLOCK_OBJC_EXCEPTIONS
 
+#if !PLATFORM(IOS)
     if (useMultisampling)
         ::glEnable(GL_MULTISAMPLE);
-    
+#endif
+
 #if PLATFORM(IOS)
     ::glGenRenderbuffers(1, &m_texture);
 #else
@@ -239,11 +241,11 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     ::glBindTexture(GL_TEXTURE_2D, 0);
 #endif
-    
+
     // create an FBO
     ::glGenFramebuffersEXT(1, &m_fbo);
     ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-    
+
     m_state.boundFBO = m_fbo;
     if (!m_attrs.antialias && (m_attrs.stencil || m_attrs.depth))
         ::glGenRenderbuffersEXT(1, &m_depthStencilBuffer);
