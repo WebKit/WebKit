@@ -477,6 +477,9 @@
 		0F54DCE21880F901003EEDBB /* DOMGestureEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCDF1880F901003EEDBB /* DOMGestureEventInternal.h */; };
 		0F54DCE51881051D003EEDBB /* TextAutoSizing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F54DCE31881051D003EEDBB /* TextAutoSizing.cpp */; };
 		0F54DCE61881051D003EEDBB /* TextAutoSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCE41881051D003EEDBB /* TextAutoSizing.h */; };
+		0F54DD081881D5F5003EEDBB /* Touch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DD051881D5F5003EEDBB /* Touch.h */; };
+		0F54DD091881D5F5003EEDBB /* TouchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DD061881D5F5003EEDBB /* TouchEvent.h */; };
+		0F54DD0A1881D5F5003EEDBB /* TouchList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DD071881D5F5003EEDBB /* TouchList.h */; };
 		0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56028D0E4B76580065B038 /* RenderMarquee.h */; };
 		0F5602900E4B76580065B038 /* RenderMarquee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F56028E0E4B76580065B038 /* RenderMarquee.cpp */; };
 		0F580B0C0F12A2690051D689 /* GraphicsLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F580B090F12A2690051D689 /* GraphicsLayer.cpp */; };
@@ -7245,6 +7248,9 @@
 		0F54DCDF1880F901003EEDBB /* DOMGestureEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMGestureEventInternal.h; sourceTree = "<group>"; };
 		0F54DCE31881051D003EEDBB /* TextAutoSizing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextAutoSizing.cpp; sourceTree = "<group>"; };
 		0F54DCE41881051D003EEDBB /* TextAutoSizing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextAutoSizing.h; sourceTree = "<group>"; };
+		0F54DD051881D5F5003EEDBB /* Touch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Touch.h; sourceTree = "<group>"; };
+		0F54DD061881D5F5003EEDBB /* TouchEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchEvent.h; sourceTree = "<group>"; };
+		0F54DD071881D5F5003EEDBB /* TouchList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchList.h; sourceTree = "<group>"; };
 		0F56028D0E4B76580065B038 /* RenderMarquee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMarquee.h; sourceTree = "<group>"; };
 		0F56028E0E4B76580065B038 /* RenderMarquee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMarquee.cpp; sourceTree = "<group>"; };
 		0F580B090F12A2690051D689 /* GraphicsLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayer.cpp; sourceTree = "<group>"; };
@@ -22267,6 +22273,9 @@
 				A77B419F12E675A90054343D /* TextEventInputType.h */,
 				E4D988B317BFD1F60084FB88 /* TextNodeTraversal.h */,
 				E4D988B517BFEB210084FB88 /* TextNodeTraversal.cpp */,
+				0F54DD051881D5F5003EEDBB /* Touch.h */,
+				0F54DD061881D5F5003EEDBB /* TouchEvent.h */,
+				0F54DD071881D5F5003EEDBB /* TouchList.h */,
 				5DB1BC6810715A6400EFAA49 /* TransformSource.h */,
 				5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */,
 				E17B491316A9B093001C8839 /* TransitionEvent.cpp */,
@@ -23368,6 +23377,7 @@
 				85E711AA0AC5D5350053270F /* DOMHTMLFormElementInternal.h in Headers */,
 				85DF81950AA77E4B00486AD7 /* DOMHTMLFrameElement.h in Headers */,
 				85E711AB0AC5D5350053270F /* DOMHTMLFrameElementInternal.h in Headers */,
+				0F54DD081881D5F5003EEDBB /* Touch.h in Headers */,
 				85DF81970AA77E4B00486AD7 /* DOMHTMLFrameSetElement.h in Headers */,
 				85E711AC0AC5D5350053270F /* DOMHTMLFrameSetElementInternal.h in Headers */,
 				31078CCA1880AACE008099DC /* JSOESTextureHalfFloatLinear.h in Headers */,
@@ -25258,6 +25268,7 @@
 				1AF62EE814DA22A70041556C /* ScrollingCoordinator.h in Headers */,
 				9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */,
 				93C38BFF164473C700091EB2 /* ScrollingStateFixedNode.h in Headers */,
+				0F54DD091881D5F5003EEDBB /* TouchEvent.h in Headers */,
 				931CBD0D161A44E900E4C874 /* ScrollingStateNode.h in Headers */,
 				931CBD0F161A44E900E4C874 /* ScrollingStateScrollingNode.h in Headers */,
 				0FB8890F167D30160010CDA5 /* ScrollingStateStickyNode.h in Headers */,
@@ -25962,6 +25973,7 @@
 				9380F47409A11AB4001FDB34 /* Widget.h in Headers */,
 				CD9DE17517AAC74C00EA386D /* JSMediaSource.h in Headers */,
 				1411DCB1164C39A800D49BC1 /* WidthCache.h in Headers */,
+				0F54DD0A1881D5F5003EEDBB /* TouchList.h in Headers */,
 				939B02EF0EA2DBC400C54570 /* WidthIterator.h in Headers */,
 				BC8243E90D0CFD7500460C8F /* WindowFeatures.h in Headers */,
 				7E99AF530B13846468FB01A5 /* WindowFocusAllowedIndicator.h in Headers */,

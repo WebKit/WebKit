@@ -26,7 +26,9 @@
 #ifndef Touch_h
 #define Touch_h
 
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
+#if PLATFORM(IOS)
+#include <WebKitAdditions/TouchIOS.h>
+#elif ENABLE(TOUCH_EVENTS)
 
 #include "EventTarget.h"
 #include "LayoutPoint.h"

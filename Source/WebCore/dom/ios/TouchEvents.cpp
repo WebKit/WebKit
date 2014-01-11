@@ -29,8 +29,8 @@
 
 #include <WebKitAdditions/DocumentIOS.cpp>
 #include <WebKitAdditions/GestureEventIOS.cpp>
-#include <WebKitAdditions/Touch.cpp>
-#include <WebKitAdditions/TouchEvent.cpp>
-#include <WebKitAdditions/TouchList.cpp>
+#include <WebKitAdditions/TouchIOS.cpp>
+#include <WebKitAdditions/TouchEventIOS.cpp>
+#include <WebKitAdditions/TouchListIOS.cpp>
 
 #endif
