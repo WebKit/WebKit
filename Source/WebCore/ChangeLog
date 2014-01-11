@@ -1,3 +1,30 @@
+2014-01-10  Anders Carlsson  <andersca@apple.com>
+
+        CTTE FrameTree
+        https://bugs.webkit.org/show_bug.cgi?id=126795
+
+        Reviewed by Tim Horton.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::transferChild):
+        (WebCore::FrameTree::appendChild):
+        (WebCore::FrameTree::actuallyAppendChild):
+        (WebCore::FrameTree::uniqueChildName):
+        (WebCore::FrameTree::scopedChild):
+        (WebCore::FrameTree::scopedChildCount):
+        (WebCore::FrameTree::child):
+        (WebCore::FrameTree::find):
+        (WebCore::FrameTree::isDescendantOf):
+        (WebCore::FrameTree::traverseNext):
+        (WebCore::FrameTree::traverseNextWithWrap):
+        (WebCore::FrameTree::traversePreviousWithWrap):
+        (WebCore::FrameTree::deepLastChild):
+        (WebCore::FrameTree::top):
+        * page/FrameTree.h:
+        (WebCore::FrameTree::FrameTree):
+
 2014-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix iOS build.

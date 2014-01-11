@@ -32,7 +32,7 @@ namespace WebCore {
     public:
         const static unsigned invalidCount = static_cast<unsigned>(-1);
 
-        FrameTree(Frame* thisFrame, Frame* parentFrame) 
+        FrameTree(Frame& thisFrame, Frame* parentFrame)
             : m_thisFrame(thisFrame)
             , m_parent(parentFrame)
             , m_previousSibling(0)
@@ -87,7 +87,7 @@ namespace WebCore {
         Frame* scopedChild(const AtomicString& name, TreeScope*) const;
         unsigned scopedChildCount(TreeScope*) const;
 
-        Frame* m_thisFrame;
+        Frame& m_thisFrame;
 
         Frame* m_parent;
         AtomicString m_name; // The actual frame name (may be empty).

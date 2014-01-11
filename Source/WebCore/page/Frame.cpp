@@ -162,7 +162,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     : m_mainFrame(ownerElement ? page.mainFrame() : static_cast<MainFrame&>(*this))
     , m_page(&page)
     , m_settings(&page.settings())
-    , m_treeNode(this, parentFromOwnerElement(ownerElement))
+    , m_treeNode(*this, parentFromOwnerElement(ownerElement))
     , m_loader(*this, frameLoaderClient)
     , m_navigationScheduler(*this)
     , m_ownerElement(ownerElement)
