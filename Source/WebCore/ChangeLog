@@ -1,5 +1,11 @@
 2014-01-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix build of SourceBufferPrivateAVFObjC.mm on iOS.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+
+2014-01-11  Simon Fraser  <simon.fraser@apple.com>
+
         Fix use of nonexistent kCGColorSpaceSRGB on iOS.
 
         * platform/graphics/cg/GraphicsContextCG.cpp:

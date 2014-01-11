@@ -42,8 +42,7 @@
 #import "AudioTrackPrivateMediaSourceAVFObjC.h"
 #import "VideoTrackPrivateMediaSourceAVFObjC.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
-#import <AVFoundation/AVAssetTrack.h>
-#import <AVFoundation/AVSampleBufferDisplayLayer.h>
+#import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
 #import <wtf/text/AtomicString.h>
 #import <wtf/text/CString.h>
@@ -119,7 +118,7 @@ SOFT_LINK(CoreMedia, CMSetAttachment, void, (CMAttachmentBearerRef target, CFStr
 #pragma mark -
 #pragma mark AVSampleBufferAudioRenderer
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
 @interface AVSampleBufferAudioRenderer : NSObject
 - (NSInteger)status;
 - (NSError*)error;
