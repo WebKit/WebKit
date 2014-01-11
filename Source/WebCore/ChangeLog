@@ -1,5 +1,15 @@
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix TileGrid.o for iOS. Unreviewed build fix.
+
+        Explicitly use namespace std in std::pair.
+
+        * platform/ios/TileGrid.mm:
+        (WebCore::isFartherAway):
+        (WebCore::TileGrid::dropDistantTiles):
+
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix RenderImage.o for iOS. Unreviewed build fix.
 
         inlineBoxWrapper() returns an InlineElementBox type, which is an InlineBox but
