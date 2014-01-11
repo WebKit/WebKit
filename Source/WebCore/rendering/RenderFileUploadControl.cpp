@@ -187,7 +187,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
                 // Draw the file icon and decorations.
                 IntRect iconRect(iconX, iconY, iconWidth, iconHeight);
                 RenderTheme::FileUploadDecorations decorationsType = inputElement().files()->length() == 1 ? RenderTheme::SingleFile : RenderTheme::MultipleFiles;
-                theme()->paintFileUploadIconDecorations(this, buttonRenderer, paintInfo, iconRect, inputElement().icon(), decorationsType);
+                theme().paintFileUploadIconDecorations(this, buttonRenderer, paintInfo, iconRect, inputElement().icon(), decorationsType);
             }
 #else
             // Draw the file icon

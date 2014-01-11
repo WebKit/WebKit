@@ -1,5 +1,14 @@
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix RenderFileUploadControl.o for iOS. Unreviewed build fix.
+
+        WebCore::theme() returns a reference now, not a pointer.
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix HTMLPlugInImageElement.o for iOS. Unreviewed build fix.
 
         Forgot to upstream YouTubeEmbedShadowElement.*. Do so and
