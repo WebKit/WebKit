@@ -40,6 +40,12 @@
 
         Fix iOS build.
 
+        * loader/ResourceLoader.h:
+
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix iOS build.
+
         * platform/graphics/ImageSource.h:
         (WebCore::ImageSource::acceleratedImageDecodingEnabled):
         (WebCore::ImageSource::setAcceleratedImageDecodingEnabled):

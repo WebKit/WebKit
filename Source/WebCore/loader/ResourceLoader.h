@@ -120,7 +120,7 @@ public:
     virtual void didFail(ResourceHandle*, const ResourceError&) OVERRIDE;
     virtual void wasBlocked(ResourceHandle*) OVERRIDE;
     virtual void cannotShowURL(ResourceHandle*) OVERRIDE;
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !USE(CFNETWORK)
     virtual void willStopBufferingData(ResourceHandle*, const char* data, unsigned length) OVERRIDE { willStopBufferingData(data, length); }
 #endif
     virtual bool shouldUseCredentialStorage(ResourceHandle*) OVERRIDE { return shouldUseCredentialStorage(); }
