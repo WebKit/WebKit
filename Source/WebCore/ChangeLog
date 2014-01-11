@@ -1,5 +1,13 @@
 2014-01-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix iOS build
+
+        * Configurations/WebCore.xcconfig:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::applyValue):
+
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
         Fix iOS build.
         
         * html/DateTimeLocalInputType.h:
