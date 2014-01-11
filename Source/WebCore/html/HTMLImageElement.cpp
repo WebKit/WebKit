@@ -412,8 +412,7 @@ bool HTMLImageElement::isServerMap() const
 bool HTMLImageElement::willRespondToMouseClickEvents()
 {
     auto renderer = this->renderer();
-    RenderStyle* style = renderer ? renderer->style() : nullptr;
-    if (!style || style->touchCalloutEnabled())
+    if (!renderer || renderer->style().touchCalloutEnabled())
         return true;
     return HTMLElement::willRespondToMouseClickEvents();
 }
