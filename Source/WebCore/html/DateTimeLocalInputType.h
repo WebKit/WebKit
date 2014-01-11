@@ -38,7 +38,7 @@ namespace WebCore {
 
 class DateTimeLocalInputType : public BaseChooserOnlyDateAndTimeInputType {
 public:
-    explicit DateTimeLocalInputType(HTMLInputElement& element) : BaseDateTimeLocalInputType(element) { }
+    explicit DateTimeLocalInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
 
 private:
     virtual void attach() OVERRIDE;

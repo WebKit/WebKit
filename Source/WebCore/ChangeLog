@@ -1,5 +1,13 @@
 2014-01-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix iOS build.
+        
+        * html/DateTimeLocalInputType.h:
+        (WebCore::DateTimeLocalInputType::DateTimeLocalInputType):
+        * loader/ios/DiskImageCacheIOS.h:
+
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
         iOS build fix: add StyleRareInheritedData::compositionFillColor
 
         * rendering/style/RenderStyle.h:

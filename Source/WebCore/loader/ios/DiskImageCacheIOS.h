@@ -82,6 +82,7 @@ private:
     };
 
 public:
+    DiskImageCache();
     friend DiskImageCache& diskImageCache();
     static const DiskImageCacheId invalidDiskCacheId = 0;
 
@@ -112,7 +113,6 @@ public:
     bool isFull() const { return m_size >= m_maximumCacheSize; }
 
 private:
-    DiskImageCache();
     ~DiskImageCache() { }
 
     bool createDirectoryIfNeeded();
