@@ -464,6 +464,17 @@
 		0F3F0E59157030C3006DA57F /* RenderGeometryMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3F0E57157030C3006DA57F /* RenderGeometryMap.cpp */; };
 		0F3F0E5A157030C3006DA57F /* RenderGeometryMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3F0E58157030C3006DA57F /* RenderGeometryMap.h */; };
 		0F4E57171313276200CF85AF /* RenderSVGAllInOne.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4E57161313276200CF85AF /* RenderSVGAllInOne.cpp */; };
+		0F54DCD51880F867003EEDBB /* DOMTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCCD1880F867003EEDBB /* DOMTouch.h */; };
+		0F54DCD61880F867003EEDBB /* DOMTouch.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F54DCCE1880F867003EEDBB /* DOMTouch.mm */; };
+		0F54DCD71880F867003EEDBB /* DOMTouchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCCF1880F867003EEDBB /* DOMTouchEvent.h */; };
+		0F54DCD81880F867003EEDBB /* DOMTouchEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F54DCD01880F867003EEDBB /* DOMTouchEvent.mm */; };
+		0F54DCD91880F867003EEDBB /* DOMTouchEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCD11880F867003EEDBB /* DOMTouchEventInternal.h */; };
+		0F54DCDA1880F867003EEDBB /* DOMTouchInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCD21880F867003EEDBB /* DOMTouchInternal.h */; };
+		0F54DCDB1880F867003EEDBB /* DOMTouchList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCD31880F867003EEDBB /* DOMTouchList.h */; };
+		0F54DCDC1880F867003EEDBB /* DOMTouchList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F54DCD41880F867003EEDBB /* DOMTouchList.mm */; };
+		0F54DCE01880F901003EEDBB /* DOMGestureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCDD1880F901003EEDBB /* DOMGestureEvent.h */; };
+		0F54DCE11880F901003EEDBB /* DOMGestureEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F54DCDE1880F901003EEDBB /* DOMGestureEvent.mm */; };
+		0F54DCE21880F901003EEDBB /* DOMGestureEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCDF1880F901003EEDBB /* DOMGestureEventInternal.h */; };
 		0F56028F0E4B76580065B038 /* RenderMarquee.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56028D0E4B76580065B038 /* RenderMarquee.h */; };
 		0F5602900E4B76580065B038 /* RenderMarquee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F56028E0E4B76580065B038 /* RenderMarquee.cpp */; };
 		0F580B0C0F12A2690051D689 /* GraphicsLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F580B090F12A2690051D689 /* GraphicsLayer.cpp */; };
@@ -7218,6 +7229,17 @@
 		0F3F0E58157030C3006DA57F /* RenderGeometryMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderGeometryMap.h; sourceTree = "<group>"; };
 		0F4E57161313276200CF85AF /* RenderSVGAllInOne.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGAllInOne.cpp; sourceTree = "<group>"; };
 		0F54DCCC1880C6AB003EEDBB /* ios-encodings.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ios-encodings.txt"; sourceTree = "<group>"; };
+		0F54DCCD1880F867003EEDBB /* DOMTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTouch.h; sourceTree = "<group>"; };
+		0F54DCCE1880F867003EEDBB /* DOMTouch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMTouch.mm; sourceTree = "<group>"; };
+		0F54DCCF1880F867003EEDBB /* DOMTouchEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTouchEvent.h; sourceTree = "<group>"; };
+		0F54DCD01880F867003EEDBB /* DOMTouchEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMTouchEvent.mm; sourceTree = "<group>"; };
+		0F54DCD11880F867003EEDBB /* DOMTouchEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTouchEventInternal.h; sourceTree = "<group>"; };
+		0F54DCD21880F867003EEDBB /* DOMTouchInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTouchInternal.h; sourceTree = "<group>"; };
+		0F54DCD31880F867003EEDBB /* DOMTouchList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTouchList.h; sourceTree = "<group>"; };
+		0F54DCD41880F867003EEDBB /* DOMTouchList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMTouchList.mm; sourceTree = "<group>"; };
+		0F54DCDD1880F901003EEDBB /* DOMGestureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMGestureEvent.h; path = "DOMGestureEvent.h"; sourceTree = "<group>"; };
+		0F54DCDE1880F901003EEDBB /* DOMGestureEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMGestureEvent.mm; path = "DOMGestureEvent.mm"; sourceTree = "<group>"; };
+		0F54DCDF1880F901003EEDBB /* DOMGestureEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMGestureEventInternal.h; path = "DOMGestureEventInternal.h"; sourceTree = "<group>"; };
 		0F56028D0E4B76580065B038 /* RenderMarquee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMarquee.h; sourceTree = "<group>"; };
 		0F56028E0E4B76580065B038 /* RenderMarquee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMarquee.cpp; sourceTree = "<group>"; };
 		0F580B090F12A2690051D689 /* GraphicsLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayer.cpp; sourceTree = "<group>"; };
@@ -16466,6 +16488,9 @@
 				85AFA8210AAF528A00E84305 /* DOMEvent.mm */,
 				85D2AD670AB1A40A00C313EA /* DOMEventListener.h */,
 				8540751F0AD6C5FB00620C57 /* DOMEventTarget.h */,
+				0F54DCDD1880F901003EEDBB /* DOMGestureEvent.h */,
+				0F54DCDE1880F901003EEDBB /* DOMGestureEvent.mm */,
+				0F54DCDF1880F901003EEDBB /* DOMGestureEventInternal.h */,
 				85FF31580AAFBFCB00374F38 /* DOMKeyboardEvent.h */,
 				85FF31590AAFBFCB00374F38 /* DOMKeyboardEvent.mm */,
 				75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */,
@@ -16484,6 +16509,14 @@
 				BCC573340D695BBE006EF517 /* DOMProgressEvent.mm */,
 				933A14750B7D1BAF00A53FFD /* DOMTextEvent.h */,
 				933A14A90B7D1D0900A53FFD /* DOMTextEvent.mm */,
+				0F54DCCD1880F867003EEDBB /* DOMTouch.h */,
+				0F54DCCE1880F867003EEDBB /* DOMTouch.mm */,
+				0F54DCCF1880F867003EEDBB /* DOMTouchEvent.h */,
+				0F54DCD01880F867003EEDBB /* DOMTouchEvent.mm */,
+				0F54DCD11880F867003EEDBB /* DOMTouchEventInternal.h */,
+				0F54DCD21880F867003EEDBB /* DOMTouchInternal.h */,
+				0F54DCD31880F867003EEDBB /* DOMTouchList.h */,
+				0F54DCD41880F867003EEDBB /* DOMTouchList.mm */,
 				E145349416A9BB6A000F6FD2 /* DOMTransitionEvent.h */,
 				E145349516A9BB6A000F6FD2 /* DOMTransitionEvent.mm */,
 				E145349616A9BB6A000F6FD2 /* DOMTransitionEventInternal.h */,
@@ -23032,6 +23065,7 @@
 				A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */,
 				26B999971804D54200D01121 /* SelectorCompiler.h in Headers */,
 				E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */,
+				0F54DCD51880F867003EEDBB /* DOMTouch.h in Headers */,
 				A80E6CE80A1989CA007FB8C5 /* CSSShadowValue.h in Headers */,
 				A80E6E0F0A19911C007FB8C5 /* CSSStyleDeclaration.h in Headers */,
 				A80E6D0C0A1989CA007FB8C5 /* CSSStyleRule.h in Headers */,
@@ -23134,6 +23168,7 @@
 				31FB1A5B120A5D0600DC02A0 /* DeviceMotionData.h in Headers */,
 				31FB1A5D120A5D0600DC02A0 /* DeviceMotionEvent.h in Headers */,
 				A14832C3187F65DF00DA63A6 /* WKUtilities.h in Headers */,
+				0F54DCDB1880F867003EEDBB /* DOMTouchList.h in Headers */,
 				E1C6571F1816E50300256CDD /* CryptoAlgorithmHmacParams.h in Headers */,
 				59A8F1D811A69520001AC34A /* DeviceOrientationClient.h in Headers */,
 				59309A1311F4AE6A00250603 /* DeviceOrientationClientMock.h in Headers */,
@@ -23453,6 +23488,7 @@
 				BC53DA601143141A000D817E /* DOMObjectHashTableMap.h in Headers */,
 				FED13D2A0CEA91DF00D89466 /* DOMUIKitExtensions.h in Headers */,
 				85C7F5D00AAFB8D9004014DD /* DOMOverflowEvent.h in Headers */,
+				0F54DCE21880F901003EEDBB /* DOMGestureEventInternal.h in Headers */,
 				85989DCF0ACC8BBD00A0BC51 /* DOMOverflowEventInternal.h in Headers */,
 				E1284BD61044A01E00EAEB52 /* DOMPageTransitionEvent.h in Headers */,
 				1ACE53E80A8D18E70022947D /* DOMParser.h in Headers */,
@@ -24230,6 +24266,7 @@
 				E1AD14231295EA7F00ACA989 /* JSHTMLInputElementCustom.h in Headers */,
 				A6148A7912E41E3B0044A784 /* JSHTMLKeygenElement.h in Headers */,
 				1AE2AB220A1CE63B00B42B25 /* JSHTMLLabelElement.h in Headers */,
+				0F54DCD91880F867003EEDBB /* DOMTouchEventInternal.h in Headers */,
 				1C21E57D183ED1FF001C289D /* ImageBufferBackingStoreCache.h in Headers */,
 				1AE2AB240A1CE63B00B42B25 /* JSHTMLLegendElement.h in Headers */,
 				1AE2AB260A1CE63B00B42B25 /* JSHTMLLIElement.h in Headers */,
@@ -24534,6 +24571,7 @@
 				B2FA3E090AB75A6F000E5AC4 /* JSSVGTitleElement.h in Headers */,
 				B2FA3E0B0AB75A6F000E5AC4 /* JSSVGTransform.h in Headers */,
 				070363D7181A146500C074A5 /* MediaStreamSourceStates.h in Headers */,
+				0F54DCDA1880F867003EEDBB /* DOMTouchInternal.h in Headers */,
 				B2FA3E0D0AB75A6F000E5AC4 /* JSSVGTransformList.h in Headers */,
 				07277E4F17D018CC0015534D /* JSMediaStreamAudioDestinationNode.h in Headers */,
 				B2FA3E0F0AB75A6F000E5AC4 /* JSSVGTRefElement.h in Headers */,
@@ -25700,6 +25738,7 @@
 				93309E18099E64920056E581 /* TextGranularity.h in Headers */,
 				F55B3DDA1251F12D003EF269 /* TextInputType.h in Headers */,
 				CECADFCE1537791D00E37068 /* TextInsertionBaseCommand.h in Headers */,
+				0F54DCE01880F901003EEDBB /* DOMGestureEvent.h in Headers */,
 				93309E1C099E64920056E581 /* TextIterator.h in Headers */,
 				BCEF45E90E687767001C1287 /* TextMetrics.h in Headers */,
 				930FC68A1072B9280045293E /* TextRenderingMode.h in Headers */,
@@ -26001,6 +26040,7 @@
 				07C59B7217F79C7C000FBCBB /* JSMediaSourceStates.h in Headers */,
 				83C1D42B178D5AB400141E68 /* SVGPathSegCurvetoQuadraticAbs.h in Headers */,
 				83C1D42C178D5AB500141E68 /* SVGPathSegCurvetoQuadraticRel.h in Headers */,
+				0F54DCD71880F867003EEDBB /* DOMTouchEvent.h in Headers */,
 				83C1D42D178D5AB500141E68 /* SVGPathSegCurvetoQuadraticSmoothAbs.h in Headers */,
 				83C1D42E178D5AB500141E68 /* SVGPathSegCurvetoQuadraticSmoothRel.h in Headers */,
 				83C1D42F178D5AB500141E68 /* SVGPathSegLinetoAbs.h in Headers */,
@@ -26388,6 +26428,7 @@
 				FD629EA4154B47160006D026 /* AudioBasicInspectorNode.cpp in Sources */,
 				FD315FF612B0267600C1A359 /* AudioBasicProcessorNode.cpp in Sources */,
 				FD315FF812B0267600C1A359 /* AudioBuffer.cpp in Sources */,
+				0F54DCD61880F867003EEDBB /* DOMTouch.mm in Sources */,
 				FD315FFB12B0267600C1A359 /* AudioBufferSourceNode.cpp in Sources */,
 				FD31607B12B026F700C1A359 /* AudioBus.cpp in Sources */,
 				FD3160BB12B0272A00C1A359 /* AudioBusMac.mm in Sources */,
@@ -26703,6 +26744,7 @@
 				59D1C10411EB5DCF00B638C8 /* DeviceOrientationData.cpp in Sources */,
 				59A85EA2119D68D900DEF1EF /* DeviceOrientationEvent.cpp in Sources */,
 				CD37B39815C1B971006DC898 /* DiagnosticLoggingKeys.cpp in Sources */,
+				0F54DCDC1880F867003EEDBB /* DOMTouchList.mm in Sources */,
 				CECADFC6153778FF00E37068 /* DictationAlternative.cpp in Sources */,
 				CECADFC8153778FF00E37068 /* DictationCommand.cpp in Sources */,
 				312D67B11535691F00563D0D /* Dictionary.cpp in Sources */,
@@ -28260,6 +28302,7 @@
 				B27535640B053814002CE64F /* PDFDocumentImage.cpp in Sources */,
 				8A7CC97012076F8A001D4588 /* PendingScript.cpp in Sources */,
 				E526AF3F1727F8F200E41781 /* Performance.cpp in Sources */,
+				0F54DCD81880F867003EEDBB /* DOMTouchEvent.mm in Sources */,
 				07DC5FD417D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp in Sources */,
 				86BE340315058CB200CE0FD8 /* PerformanceEntryList.cpp in Sources */,
 				8AF4E55511DC5A36000ED3DE /* PerformanceNavigation.cpp in Sources */,
@@ -28558,6 +28601,7 @@
 				E1C2F24A1533A2120083F974 /* SettingsMac.mm in Sources */,
 				E1233F0C185A3E3B008DFAF5 /* CryptoAlgorithmRSAES_PKCS1_v1_5.cpp in Sources */,
 				0F3DD44F12F5EA1B000D9190 /* ShadowBlur.cpp in Sources */,
+				0F54DCE11880F901003EEDBB /* DOMGestureEvent.mm in Sources */,
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
 				A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */,
 				FD45A953175D3FB800C21EC8 /* Shape.cpp in Sources */,

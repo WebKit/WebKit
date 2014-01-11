@@ -26,13 +26,13 @@
 
 #import <WebCore/DOM.h>
 
-#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#if TARGET_OS_IPHONE
 #import <WebCore/WebAutocapitalize.h>
 #import <CoreText/CoreText.h>
 #endif
 
 @interface DOMNode (DOMNodeExtensionsPendingPublic)
-#if !defined(TARGET_OS_EMBEDDED) || !TARGET_OS_EMBEDDED
+#if !TARGET_OS_IPHONE
 - (NSImage *)renderedImage;
 #endif
 - (NSArray *)textRects;
@@ -45,7 +45,7 @@
 // FIXME: this should be removed as soon as all internal Apple uses of it have been replaced with
 // calls to the public method - (NSColor *)color.
 @interface DOMRGBColor (WebPrivate)
-#if !defined(TARGET_OS_EMBEDDED) || !TARGET_OS_EMBEDDED
+#if !TARGET_OS_IPHONE
 - (NSColor *)_color;
 #endif
 @end
@@ -57,12 +57,12 @@
 @end
 
 @interface DOMRange (DOMRangeExtensions)
-#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#if TARGET_OS_IPHONE
 - (CGRect)boundingBox;
 #else
 - (NSRect)boundingBox;
 #endif
-#if !defined(TARGET_OS_EMBEDDED) || !TARGET_OS_EMBEDDED
+#if !TARGET_OS_IPHONE
 - (NSImage *)renderedImageForcingBlackText:(BOOL)forceBlackText;
 #else
 - (CGImageRef)renderedImageForcingBlackText:(BOOL)forceBlackText;
@@ -72,7 +72,7 @@
 @end
 
 @interface DOMElement (WebPrivate)
-#if !defined(TARGET_OS_EMBEDDED) || !TARGET_OS_EMBEDDED
+#if !TARGET_OS_IPHONE
 - (NSFont *)_font;
 - (NSData *)_imageTIFFRepresentation;
 #else
@@ -102,7 +102,7 @@
 @interface DOMHTMLInputElement (FormAutoFillTransition)
 - (BOOL)_isAutofilled;
 - (BOOL)_isTextField;
-#if !defined(TARGET_OS_EMBEDDED) || !TARGET_OS_EMBEDDED
+#if !TARGET_OS_IPHONE
 - (NSRect)_rectOnScreen; // bounding box of the text field, in screen coordinates
 #endif
 - (void)_replaceCharactersInRange:(NSRange)targetRange withString:(NSString *)replacementString selectingFromIndex:(int)index;
@@ -129,7 +129,7 @@
 - (void)_activateItemAtIndex:(int)index allowMultipleSelection:(BOOL)allowMultipleSelection;
 @end
 
-#if defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED
+#if TARGET_OS_IPHONE
 enum { WebMediaQueryOrientationCurrent, WebMediaQueryOrientationPortrait, WebMediaQueryOrientationLandscape };
 @interface DOMHTMLLinkElement (WebPrivate)
 - (BOOL)_mediaQueryMatchesForOrientation:(int)orientation;

@@ -1,3 +1,16 @@
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix iOS build.
+        
+        Generated DOMTouch* and DOMGesture* files need to be in the project.
+        Exclude them on Mac via EXCLUDED_SOURCE_FILE_NAMES_macosx.
+        
+        Use TARGET_OS_IPHONE instead of TARGET_OS_EMBEDDED in DOMPrivate.h
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMPrivate.h:
+
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix RenderThemeIOS.o for iOS. Unreviewed build fix.
