@@ -117,7 +117,7 @@ void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* 
     }
 }
 
-void PageScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)
+void PageScriptDebugServer::recompileAllJSFunctions()
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
     // If JavaScript stack is not empty postpone recompilation.

@@ -54,7 +54,7 @@ ScriptDebugServer::ScriptDebugServer(bool isInWorkerThread)
     : Debugger(isInWorkerThread)
     , m_doneProcessingDebuggerEvents(true)
     , m_callingListeners(false)
-    , m_recompileTimer(this, &ScriptDebugServer::recompileAllJSFunctions)
+    , m_recompileTimer(this, &ScriptDebugServer::recompileAllJSFunctionsTimerFired)
 {
 }
 
@@ -283,6 +283,11 @@ void ScriptDebugServer::handlePause(Debugger::ReasonForPause, JSGlobalObject* vm
 void ScriptDebugServer::recompileAllJSFunctionsSoon()
 {
     m_recompileTimer.startOneShot(0);
+}
+
+void ScriptDebugServer::recompileAllJSFunctionsTimerFired(Timer<ScriptDebugServer>&)
+{
+    recompileAllJSFunctions();
 }
 
 } // namespace WebCore

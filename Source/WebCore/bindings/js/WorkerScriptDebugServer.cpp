@@ -58,10 +58,10 @@ void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
     if (m_listeners.isEmpty())
         m_workerGlobalScope->script()->attachDebugger(this);
     m_listeners.add(listener);
-    recompileAllJSFunctions(0);
+    recompileAllJSFunctions();
 }
 
-void WorkerScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)
+void WorkerScriptDebugServer::recompileAllJSFunctions()
 {
     JSC::VM* vm = m_workerGlobalScope->script()->vm();
 

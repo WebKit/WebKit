@@ -51,7 +51,7 @@ public:
     void addListener(ScriptDebugListener*, Page*);
     void removeListener(ScriptDebugListener*, Page*);
 
-    virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>*);
+    virtual void recompileAllJSFunctions() OVERRIDE;
 
 private:
     typedef HashMap<Page*, OwnPtr<ListenerSet>> PageListenersMap;

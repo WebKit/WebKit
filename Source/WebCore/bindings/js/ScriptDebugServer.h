@@ -60,7 +60,7 @@ public:
     void clearBreakpoints();
 
     void recompileAllJSFunctionsSoon();
-    virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) = 0;
+    virtual void recompileAllJSFunctions() = 0;
 
     class Task {
         WTF_MAKE_FAST_ALLOCATED;
@@ -105,6 +105,8 @@ private:
     virtual void handleExceptionInBreakpointCondition(JSC::ExecState*, JSC::JSValue exception) const OVERRIDE FINAL;
     virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) OVERRIDE FINAL;
     virtual void notifyDoneProcessingDebuggerEvents() OVERRIDE FINAL;
+
+    void recompileAllJSFunctionsTimerFired(Timer<ScriptDebugServer>&);
 
     bool m_callingListeners;
     BreakpointIDToActionsMap m_breakpointIDToActions;

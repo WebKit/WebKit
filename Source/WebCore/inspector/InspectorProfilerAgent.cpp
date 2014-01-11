@@ -349,7 +349,7 @@ void InspectorProfilerAgent::start(ErrorString*)
         return;
     if (!enabled()) {
         enable(true);
-        PageScriptDebugServer::shared().recompileAllJSFunctions(0);
+        PageScriptDebugServer::shared().recompileAllJSFunctions();
     }
     m_recordingCPUProfile = true;
     String title = getCurrentUserInitiatedProfileName(true);

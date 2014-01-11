@@ -1,5 +1,29 @@
 2014-01-11  Anders Carlsson  <andersca@apple.com>
 
+        ScriptDebugServer should use a separate member function for its timer handler
+        https://bugs.webkit.org/show_bug.cgi?id=126819
+
+        Reviewed by Sam Weinig.
+
+        It's weird to have subclasses override a timer handler and sometimes invoke 
+        the timer handler directly so make it a separate member function instead.
+
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::recompileAllJSFunctions):
+        * bindings/js/PageScriptDebugServer.h:
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::recompileAllJSFunctionsTimerFired):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::addListener):
+        (WebCore::WorkerScriptDebugServer::recompileAllJSFunctions):
+        * bindings/js/WorkerScriptDebugServer.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::start):
+
+2014-01-11  Anders Carlsson  <andersca@apple.com>
+
         Simplify Timer and DeferrableOneShotTimer using std::function
         https://bugs.webkit.org/show_bug.cgi?id=126816
 

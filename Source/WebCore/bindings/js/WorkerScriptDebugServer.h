@@ -50,7 +50,7 @@ public:
 
     void interruptAndRunTask(PassOwnPtr<ScriptDebugServer::Task>);
 
-    void recompileAllJSFunctions(Timer<ScriptDebugServer>*);
+    void recompileAllJSFunctions() OVERRIDE;
 
 private:
     virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) OVERRIDE { return &m_listeners; }
