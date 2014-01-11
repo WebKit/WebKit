@@ -37,12 +37,13 @@ namespace WebCore {
 
 class Frame;
 class ResourceResponse;
+class ProgressTrackerClient;
 struct ProgressItem;
 
 class ProgressTracker {
     WTF_MAKE_NONCOPYABLE(ProgressTracker); WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProgressTracker();
+    explicit ProgressTracker(ProgressTrackerClient&);
     ~ProgressTracker();
 
     static unsigned long createUniqueIdentifier();
@@ -69,6 +70,7 @@ private:
     
     static unsigned long s_uniqueIdentifier;
     
+    ProgressTrackerClient& m_client;
     long long m_totalPageAndResourceBytesToLoad;
     long long m_totalBytesReceived;
     double m_lastNotifiedProgressValue;

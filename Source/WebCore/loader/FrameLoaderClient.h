@@ -187,13 +187,6 @@ namespace WebCore {
         virtual void revertToProvisionalState(DocumentLoader*) = 0;
         virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) = 0;
 
-        // Maybe these should go into a ProgressTrackerClient some day
-        virtual void willChangeEstimatedProgress() { }
-        virtual void didChangeEstimatedProgress() { }
-        virtual void postProgressStartedNotification() = 0;
-        virtual void postProgressEstimateChangedNotification() = 0;
-        virtual void postProgressFinishedNotification() = 0;
-        
         virtual void setMainFrameDocumentReady(bool) = 0;
 
         virtual void startDownload(const ResourceRequest&, const String& suggestedName = String()) = 0;

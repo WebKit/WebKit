@@ -309,6 +309,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
     pageClients.plugInClient = new WebPlugInClient(this);
     pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
+    pageClients.progressTrackerClient = static_cast<WebFrameLoaderClient*>(pageClients.loaderClientForMainFrame);
 
     m_page = adoptPtr(new Page(pageClients));
 

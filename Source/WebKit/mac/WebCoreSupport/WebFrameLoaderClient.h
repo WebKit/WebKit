@@ -27,6 +27,7 @@
  */
 
 #import <WebCore/FrameLoaderClient.h>
+#import <WebCore/ProgressTrackerClient.h>
 #import <WebCore/Timer.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
@@ -49,7 +50,7 @@ namespace WebCore {
 
 typedef HashMap<RefPtr<WebCore::ResourceLoader>, RetainPtr<WebResource>> ResourceMap;
 
-class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
+class WebFrameLoaderClient : public WebCore::FrameLoaderClient, public WebCore::ProgressTrackerClient {
 public:
     WebFrameLoaderClient(WebFrame* = 0);
 

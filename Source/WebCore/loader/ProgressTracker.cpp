@@ -33,6 +33,7 @@
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "ProgressTrackerClient.h"
 #include "ResourceResponse.h"
 #include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
@@ -69,8 +70,9 @@ public:
 
 unsigned long ProgressTracker::s_uniqueIdentifier = 0;
 
-ProgressTracker::ProgressTracker()
-    : m_totalPageAndResourceBytesToLoad(0)
+ProgressTracker::ProgressTracker(ProgressTrackerClient& client)
+    : m_client(client)
+    , m_totalPageAndResourceBytesToLoad(0)
     , m_totalBytesReceived(0)
     , m_lastNotifiedProgressValue(0)
     , m_lastNotifiedProgressTime(0)
@@ -87,6 +89,7 @@ ProgressTracker::ProgressTracker()
 
 ProgressTracker::~ProgressTracker()
 {
+    m_client.progressTrackerDestroyed();
 }
 
 double ProgressTracker::estimatedProgress() const
@@ -116,7 +119,7 @@ void ProgressTracker::progressStarted(Frame& frame)
 {
     LOG(Progress, "Progress started (%p) - frame %p(\"%s\"), value %f, tracked frames %d, originating frame %p", this, &frame, frame.tree().uniqueName().string().utf8().data(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
 
-    frame.loader().client().willChangeEstimatedProgress();
+    m_client.willChangeEstimatedProgress();
     
     if (!m_numProgressTrackedFrames || m_originatingProgressFrame == &frame) {
         reset();
@@ -126,11 +129,11 @@ void ProgressTracker::progressStarted(Frame& frame)
         m_progressHeartbeatTimer.startRepeating(progressHeartbeatInterval);
         m_originatingProgressFrame->loader().loadProgressingStatusChanged();
 
-        m_originatingProgressFrame->loader().client().postProgressStartedNotification();
+        m_client.postProgressStartedNotification();
     }
     m_numProgressTrackedFrames++;
 
-    frame.loader().client().didChangeEstimatedProgress();
+    m_client.didChangeEstimatedProgress();
     InspectorInstrumentation::frameStartedLoading(frame);
 }
 
@@ -141,13 +144,13 @@ void ProgressTracker::progressCompleted(Frame& frame)
     if (m_numProgressTrackedFrames <= 0)
         return;
     
-    frame.loader().client().willChangeEstimatedProgress();
+    m_client.willChangeEstimatedProgress();
         
     m_numProgressTrackedFrames--;
     if (!m_numProgressTrackedFrames || m_originatingProgressFrame == &frame)
         finalProgressComplete();
     
-    frame.loader().client().didChangeEstimatedProgress();
+    m_client.didChangeEstimatedProgress();
 }
 
 void ProgressTracker::finalProgressComplete()
@@ -160,13 +163,13 @@ void ProgressTracker::finalProgressComplete()
     // with final progress value.
     if (!m_finalProgressChangedSent) {
         m_progressValue = 1;
-        frame->loader().client().postProgressEstimateChangedNotification();
+        m_client.postProgressEstimateChangedNotification();
     }
 
     reset();
 
     frame->loader().client().setMainFrameDocumentReady(true);
-    frame->loader().client().postProgressFinishedNotification();
+    m_client.postProgressFinishedNotification();
     frame->loader().loadProgressingStatusChanged();
 
     InspectorInstrumentation::frameStoppedLoading(*frame);
@@ -205,7 +208,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, unsigned bytes
 
     RefPtr<Frame> frame = m_originatingProgressFrame;
     
-    frame->loader().client().willChangeEstimatedProgress();
+    m_client.willChangeEstimatedProgress();
     
     double increment, percentOfRemainingBytes;
     long long remainingBytes, estimatedBytesForPendingRequests;
@@ -248,14 +251,14 @@ void ProgressTracker::incrementProgress(unsigned long identifier, unsigned bytes
             if (m_progressValue == 1)
                 m_finalProgressChangedSent = true;
             
-            frame->loader().client().postProgressEstimateChangedNotification();
+            m_client.postProgressEstimateChangedNotification();
 
             m_lastNotifiedProgressValue = m_progressValue;
             m_lastNotifiedProgressTime = now;
         }
     }
     
-    frame->loader().client().didChangeEstimatedProgress();
+    m_client.didChangeEstimatedProgress();
 }
 
 void ProgressTracker::completeProgress(unsigned long identifier)

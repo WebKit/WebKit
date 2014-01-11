@@ -683,6 +683,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     pageClients.inspectorClient = new WebCore::InspectorClientEfl(smartData->self);
 #endif
     pageClients.loaderClientForMainFrame = new WebCore::FrameLoaderClientEfl(smartData->self);
+    pageClients.progressTrackerClient = static_cast<WebCore::FrameLoaderClientEfl*>(pageClients.loaderClientForMainFrame);
     priv->page = adoptPtr(new WebCore::Page(pageClients));
 
 #if ENABLE(DEVICE_ORIENTATION)

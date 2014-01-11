@@ -66,6 +66,9 @@ void fillWithEmptyClients(Page::PageClients& pageClients)
 
     static NeverDestroyed<EmptyFrameLoaderClient> dummyFrameLoaderClient;
     pageClients.loaderClientForMainFrame = &dummyFrameLoaderClient.get();
+    
+    static NeverDestroyed<EmptyProgressTrackerClient> dummyProgressTrackerClient;
+    pageClients.progressTrackerClient = &dummyProgressTrackerClient.get();
 }
 
 class EmptyPopupMenu : public PopupMenu {

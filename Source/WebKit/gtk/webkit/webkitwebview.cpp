@@ -3810,6 +3810,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #endif
     pageClients.inspectorClient = new WebKit::InspectorClient(webView);
     pageClients.loaderClientForMainFrame = new WebKit::FrameLoaderClient;
+    pageClients.progressTrackerClient = static_cast<WebKit::FrameLoaderClient*>(pageClients.loaderClientForMainFrame);
 
     priv->corePage = new Page(pageClients);
 

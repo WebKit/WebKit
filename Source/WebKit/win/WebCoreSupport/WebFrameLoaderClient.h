@@ -31,6 +31,7 @@
 
 #include <WebCore/COMPtr.h>
 #include <WebCore/FrameLoaderClient.h>
+#include <WebCore/ProgressTrackerClient.h>
 
 namespace WebCore {
     class PluginManualLoader;
@@ -41,7 +42,7 @@ class WebFrame;
 class WebFramePolicyListener;
 class WebHistory;
 
-class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
+class WebFrameLoaderClient : public WebCore::FrameLoaderClient, public WebCore::ProgressTrackerClient {
 public:
     WebFrameLoaderClient(WebFrame* = 0);
     ~WebFrameLoaderClient();

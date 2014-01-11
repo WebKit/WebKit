@@ -979,6 +979,7 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
     pageClients.editorClient = new WebEditorClient(self);
     pageClients.alternativeTextClient = new WebAlternativeTextClient(self);
     pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
+    pageClients.progressTrackerClient = static_cast<WebFrameLoaderClient*>(pageClients.loaderClientForMainFrame);
     _private->page = new Page(pageClients);
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(_private->page, new WebGeolocationClient(self));

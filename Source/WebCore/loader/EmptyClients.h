@@ -41,6 +41,7 @@
 #include "FrameLoaderClient.h"
 #include "InspectorClient.h"
 #include "Page.h"
+#include "ProgressTrackerClient.h"
 #include "ResourceError.h"
 #include <wtf/text/StringView.h>
 
@@ -315,12 +316,6 @@ public:
 
     virtual void revertToProvisionalState(DocumentLoader*) OVERRIDE { }
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) OVERRIDE { }
-
-    virtual void willChangeEstimatedProgress() OVERRIDE { }
-    virtual void didChangeEstimatedProgress() OVERRIDE { }
-    virtual void postProgressStartedNotification() OVERRIDE { }
-    virtual void postProgressEstimateChangedNotification() OVERRIDE { }
-    virtual void postProgressFinishedNotification() OVERRIDE { }
 
     virtual void setMainFrameDocumentReady(bool) OVERRIDE { }
 
@@ -636,6 +631,14 @@ public:
     virtual void setController(DeviceOrientationController*) OVERRIDE { }
     virtual DeviceOrientationData* lastOrientation() const OVERRIDE { return 0; }
     virtual void deviceOrientationControllerDestroyed() OVERRIDE { }
+};
+
+class EmptyProgressTrackerClient : public ProgressTrackerClient {
+    virtual void willChangeEstimatedProgress() OVERRIDE { }
+    virtual void didChangeEstimatedProgress() OVERRIDE { }
+    virtual void postProgressStartedNotification() OVERRIDE { }
+    virtual void postProgressEstimateChangedNotification() OVERRIDE { }
+    virtual void postProgressFinishedNotification() OVERRIDE { }
 };
 
 void fillWithEmptyClients(Page::PageClients&);

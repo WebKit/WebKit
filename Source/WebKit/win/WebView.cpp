@@ -2772,6 +2772,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     pageClients.inspectorClient = m_inspectorClient;
 #endif // ENABLE(INSPECTOR)
     pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
+    pageClients.progressTrackerClient = static_cast<WebFrameLoaderClient*>(pageClients.loaderClientForMainFrame);
 
     m_page = new Page(pageClients);
     provideGeolocationTo(m_page, new WebGeolocationClient(this));

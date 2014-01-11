@@ -27,13 +27,14 @@
 #define WebFrameLoaderClient_h
 
 #include <WebCore/FrameLoaderClient.h>
+#include <WebCore/ProgressTrackerClient.h>
 
 namespace WebKit {
 
 class PluginView;
 class WebFrame;
     
-class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
+class WebFrameLoaderClient : public WebCore::FrameLoaderClient, public WebCore::ProgressTrackerClient {
 public:
     WebFrameLoaderClient();
     ~WebFrameLoaderClient();

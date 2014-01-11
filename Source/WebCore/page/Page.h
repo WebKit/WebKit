@@ -93,6 +93,7 @@ class PluginData;
 class PluginViewBase;
 class PointerLockController;
 class ProgressTracker;
+class ProgressTrackerClient;
 class Range;
 class RenderObject;
 class RenderTheme;
@@ -134,6 +135,7 @@ public:
         DragClient* dragClient;
         InspectorClient* inspectorClient;
         PlugInClient* plugInClient;
+        ProgressTrackerClient* progressTrackerClient;
         RefPtr<BackForwardClient> backForwardClient;
         ValidationMessageClient* validationMessageClient;
         FrameLoaderClient* loaderClientForMainFrame;

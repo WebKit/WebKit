@@ -142,7 +142,7 @@ Page::Page(PageClients& pageClients)
     , m_pointerLockController(PointerLockController::create(this))
 #endif
     , m_settings(Settings::create(this))
-    , m_progress(std::make_unique<ProgressTracker>())
+    , m_progress(std::make_unique<ProgressTracker>(*pageClients.progressTrackerClient))
     , m_backForwardController(std::make_unique<BackForwardController>(*this, pageClients.backForwardClient))
     , m_mainFrame(MainFrame::create(*this, *pageClients.loaderClientForMainFrame))
     , m_theme(RenderTheme::themeForPage(this))
@@ -1601,17 +1601,18 @@ bool Page::isAnyFrameHandlingBeforeUnloadEvent()
 }
 
 Page::PageClients::PageClients()
-    : alternativeTextClient(0)
-    , chromeClient(0)
+    : alternativeTextClient(nullptr)
+    , chromeClient(nullptr)
 #if ENABLE(CONTEXT_MENUS)
-    , contextMenuClient(0)
+    , contextMenuClient(nullptr)
 #endif
-    , editorClient(0)
-    , dragClient(0)
-    , inspectorClient(0)
-    , plugInClient(0)
-    , validationMessageClient(0)
-    , loaderClientForMainFrame(0)
+    , editorClient(nullptr)
+    , dragClient(nullptr)
+    , inspectorClient(nullptr)
+    , plugInClient(nullptr)
+    , progressTrackerClient(nullptr)
+    , validationMessageClient(nullptr)
+    , loaderClientForMainFrame(nullptr)
 {
 }
 

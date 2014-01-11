@@ -31,6 +31,7 @@
 #define FrameLoaderClientGtk_h
 
 #include "FrameLoaderClient.h"
+#include "ProgressTrackerClient.h"
 #include "ResourceResponse.h"
 #include "webkitwebpolicydecision.h"
 
@@ -42,7 +43,7 @@ class PluginView;
 
 namespace WebKit {
 
-    class FrameLoaderClient : public WebCore::FrameLoaderClient {
+    class FrameLoaderClient : public WebCore::FrameLoaderClient, public WebCore::ProgressTrackerClient {
     public:
         FrameLoaderClient(WebKitWebFrame* = 0);
         virtual ~FrameLoaderClient();
