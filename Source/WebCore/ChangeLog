@@ -1,5 +1,13 @@
 2014-01-11  Simon Fraser  <simon.fraser@apple.com>
 
+        No need to include <ApplicationServices/ApplicationServices.h> in
+        the header. Can use <CoreGraphics/CoreGraphics.h> in the .cpp file.
+
+        * platform/graphics/cg/ImageBufferBackingStoreCache.cpp:
+        * platform/graphics/cg/ImageBufferBackingStoreCache.h:
+
+2014-01-11  Simon Fraser  <simon.fraser@apple.com>
+
         Fix DOM headers: TARGET_OS_EMBEDDED -> TARGET_OS_IPHONE
         and a drive-by cleanup of DOMUIKitExtensions.mm #includes.
 

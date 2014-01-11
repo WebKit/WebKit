@@ -30,7 +30,6 @@
 
 #include "Timer.h"
 
-#include <ApplicationServices/ApplicationServices.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/HashMap.h>
 

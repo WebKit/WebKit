@@ -27,6 +27,7 @@
 #include "ImageBufferBackingStoreCache.h"
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
+#include <CoreGraphics/CoreGraphics.h>
 #include <IOSurface/IOSurface.h>
 
 static const double purgeInterval = 5;
