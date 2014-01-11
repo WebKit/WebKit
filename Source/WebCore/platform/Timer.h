@@ -26,6 +26,7 @@
 #ifndef Timer_h
 #define Timer_h
 
+#include <functional>
 #include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -113,34 +114,23 @@ public:
     typedef void (TimerFiredClass::*TimerFiredFunction)(Timer&);
     typedef void (TimerFiredClass::*DeprecatedTimerFiredFunction)(Timer*);
 
-    Timer(TimerFiredClass* object, TimerFiredFunction function)
-        : m_object(object)
-        , m_deprecatedFunction(nullptr)
-        , m_function(function)
+    Timer(TimerFiredClass* object , TimerFiredFunction function)
+        : m_function(std::bind(function, object, std::ref(*this)))
     {
     }
 
     Timer(TimerFiredClass* object, DeprecatedTimerFiredFunction function)
-        : m_object(object)
-        , m_deprecatedFunction(function)
-        , m_function(nullptr)
+        : m_function(std::bind(function, object, this))
     {
     }
 
 private:
     virtual void fired() OVERRIDE
     {
-        if (m_deprecatedFunction) {
-            (m_object->*m_deprecatedFunction)(this);
-            return;
-        }
-
-        (m_object->*m_function)(*this);
+        m_function();
     }
 
-    TimerFiredClass* m_object;
-    DeprecatedTimerFiredFunction m_deprecatedFunction;
-    TimerFiredFunction m_function;
+    std::function<void ()> m_function;
 };
 
 inline bool TimerBase::isActive() const

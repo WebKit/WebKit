@@ -1,3 +1,14 @@
+2014-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Simplify Timer and DeferrableOneShotTimer using std::function
+        https://bugs.webkit.org/show_bug.cgi?id=126816
+
+        Reviewed by Sam Weinig.
+
+        Add another unexported symbol.
+
+        * Configurations/WebKit2.xcconfig:
+
 2014-01-11  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Use nullptr instead of 0 in EFL API layer
