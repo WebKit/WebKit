@@ -43,7 +43,6 @@
 #import "EventNames.h"
 #import "FormController.h"
 #import "FrameSelection.h"
-#import "FrameSnapshottingMac.h"
 #import "FrameView.h"
 #import "HTMLAreaElement.h"
 #import "HTMLDocument.h"
