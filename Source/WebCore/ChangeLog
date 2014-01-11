@@ -1,5 +1,12 @@
 2014-01-11  Simon Fraser  <simon.fraser@apple.com>
 
+        Work around USE(CFNETWORK) build failure on iOS.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForResponseToAuthenticationChallenge):
+
+2014-01-11  Simon Fraser  <simon.fraser@apple.com>
+
         Fix LegacyWebArchive.cpp:567:91: error: calling 'utf8' with incomplete return type 'WTF::CString'
         
         * loader/archive/cf/LegacyWebArchive.cpp:

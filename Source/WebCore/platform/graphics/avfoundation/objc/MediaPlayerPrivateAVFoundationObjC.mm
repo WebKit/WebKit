@@ -1031,9 +1031,15 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 
 bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForResponseToAuthenticationChallenge(NSURLAuthenticationChallenge* nsChallenge)
 {
+#if USE(CFNETWORK)
+    UNUSED_PARAM(nsChallenge);
+    // FIXME: <rdar://problem/15799844>
+    return false;
+#else
     AuthenticationChallenge challenge(nsChallenge);
 
     return player()->shouldWaitForResponseToAuthenticationChallenge(challenge);
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResourceLoadingRequest* avRequest)
