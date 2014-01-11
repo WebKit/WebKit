@@ -1,3 +1,28 @@
+2014-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSS word-spacing property does not obey percentages
+        https://bugs.webkit.org/show_bug.cgi?id=126674
+
+        Reviewed by Simon Fraser.
+
+        See per-file description
+
+        * fast/css3-text/css3-word-spacing-percentage/word-spacing-change-font-expected.html: Added.
+        * fast/css3-text/css3-word-spacing-percentage/word-spacing-change-font.html: Added.
+        Make sure that if Javascript changes the font after initial layout, that the word-spacing
+        value gets appropriately updated.
+        * fast/css3-text/css3-word-spacing-percentage/word-spacing-percentage-expected.html: Added.
+        * fast/css3-text/css3-word-spacing-percentage/word-spacing-percentage-parse-expected.txt: Added.
+        * fast/css3-text/css3-word-spacing-percentage/word-spacing-percentage-parse.html: Added.
+        Make sure that the CSSOM yields the correct percentage values when queried.
+        * fast/css3-text/css3-word-spacing-percentage/word-spacing-percentage.html: Added.
+        Try some specific values of percentages (-100%, 0%, and 100%).
+        * css1/text_properties/word_spacing.html: Updated to not disregard percentages
+        * css2.1/20110323/c541-word-sp-001-expected.html:
+        * css2.1/20110323/c541-word-sp-001.htm: Ditto
+        * platform/mac/css1/text_properties/word_spacing-expected.png:
+        * platform/mac/css1/text_properties/word_spacing-expected.txt: Ditto
+
 2014-01-10  Dean Jackson  <dino@apple.com>
 
         Implement OES texture half float linear

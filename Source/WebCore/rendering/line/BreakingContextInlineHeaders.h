@@ -668,7 +668,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     bool canHyphenate = style.hyphens() == HyphensAuto && WebCore::canHyphenate(style.locale());
 
     unsigned lastSpace = m_current.offset();
-    float wordSpacing = m_currentStyle->wordSpacing();
+    float wordSpacing = m_currentStyle->font().wordSpacing();
     float lastSpaceWordSpacing = 0;
     float wordSpacingForWordMeasurement = 0;
 

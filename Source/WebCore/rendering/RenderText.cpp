@@ -682,8 +682,8 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     m_hasEndWS = false;
 
     const RenderStyle& style = this->style();
-    const Font& f = style.font(); // FIXME: This ignores first-line.
-    float wordSpacing = style.wordSpacing();
+    const Font& font = style.font(); // FIXME: This ignores first-line.
+    float wordSpacing = font.wordSpacing();
     int len = textLength();
     LazyLineBreakIterator breakIterator(m_text, style.locale());
     bool needsWordSpacing = false;
@@ -696,7 +696,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
 
     // Non-zero only when kerning is enabled, in which case we measure words with their trailing
     // space, then subtract its width.
-    float wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.width(RenderBlock::constructTextRun(this, f, &space, 1, style), &fallbackFonts) + wordSpacing : 0;
+    float wordTrailingSpaceWidth = font.typesettingFeatures() & Kerning ? font.width(RenderBlock::constructTextRun(this, font, &space, 1, style), &fallbackFonts) + wordSpacing : 0;
 
     // If automatic hyphenation is allowed, we keep track of the width of the widest word (or word
     // fragment) encountered so far, and only try hyphenating words that are wider.
@@ -760,7 +760,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
             lastWordBoundary++;
             continue;
         } else if (c == softHyphen && style.hyphens() != HyphensNone) {
-            currMaxWidth += widthFromCache(f, lastWordBoundary, i - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
+            currMaxWidth += widthFromCache(font, lastWordBoundary, i - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
             if (firstGlyphLeftOverflow < 0)
                 firstGlyphLeftOverflow = glyphOverflow.left;
             lastWordBoundary = i + 1;
@@ -788,23 +788,23 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
             bool isSpace = (j < len) && isSpaceAccordingToStyle(c, style);
             float w;
             if (wordTrailingSpaceWidth && isSpace)
-                w = widthFromCache(f, i, wordLen + 1, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style) - wordTrailingSpaceWidth;
+                w = widthFromCache(font, i, wordLen + 1, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style) - wordTrailingSpaceWidth;
             else {
-                w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
+                w = widthFromCache(font, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
                 if (c == softHyphen && style.hyphens() != HyphensNone)
-                    currMinWidth += hyphenWidth(this, f);
+                    currMinWidth += hyphenWidth(this, font);
             }
 
             if (w > maxWordWidth) {
                 int suffixStart;
-                float maxFragmentWidth = maxWordFragmentWidth(this, style, f, characters() + i, wordLen, minimumPrefixLength, minimumSuffixLength, suffixStart, fallbackFonts, glyphOverflow);
+                float maxFragmentWidth = maxWordFragmentWidth(this, style, font, characters() + i, wordLen, minimumPrefixLength, minimumSuffixLength, suffixStart, fallbackFonts, glyphOverflow);
 
                 if (suffixStart) {
                     float suffixWidth;
                     if (wordTrailingSpaceWidth && isSpace)
-                        suffixWidth = widthFromCache(f, i + suffixStart, wordLen - suffixStart + 1, leadWidth + currMaxWidth, 0, 0, style) - wordTrailingSpaceWidth;
+                        suffixWidth = widthFromCache(font, i + suffixStart, wordLen - suffixStart + 1, leadWidth + currMaxWidth, 0, 0, style) - wordTrailingSpaceWidth;
                     else
-                        suffixWidth = widthFromCache(f, i + suffixStart, wordLen - suffixStart, leadWidth + currMaxWidth, 0, 0, style);
+                        suffixWidth = widthFromCache(font, i + suffixStart, wordLen - suffixStart, leadWidth + currMaxWidth, 0, 0, style);
 
                     maxFragmentWidth = std::max(maxFragmentWidth, suffixWidth);
 
@@ -821,7 +821,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                 if (lastWordBoundary == i)
                     currMaxWidth += w;
                 else
-                    currMaxWidth += widthFromCache(f, lastWordBoundary, j - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
+                    currMaxWidth += widthFromCache(font, lastWordBoundary, j - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
                 lastWordBoundary = j;
             }
 
@@ -872,13 +872,13 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                     m_maxWidth = currMaxWidth;
                 currMaxWidth = 0;
             } else {
-                TextRun run = RenderBlock::constructTextRun(this, f, this, i, 1, style);
+                TextRun run = RenderBlock::constructTextRun(this, font, this, i, 1, style);
                 run.setCharactersLength(len - i);
                 ASSERT(run.charactersLength() >= run.length());
                 run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
                 run.setXPos(leadWidth + currMaxWidth);
 
-                currMaxWidth += f.width(run, &fallbackFonts);
+                currMaxWidth += font.width(run, &fallbackFonts);
                 glyphOverflow.right = 0;
                 needsWordSpacing = isSpace && !previousCharacterIsSpace && i == len - 1;
             }

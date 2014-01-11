@@ -2142,11 +2142,17 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
 
     case CSSPropertyLetterSpacing:       // normal | <length> | inherit
-    case CSSPropertyWordSpacing:         // normal | <length> | inherit
         if (id == CSSValueNormal)
             validPrimitive = true;
         else
             validPrimitive = validUnit(value, FLength);
+        break;
+
+    case CSSPropertyWordSpacing:         // normal | <length> | <percentage> | inherit
+        if (id == CSSValueNormal)
+            validPrimitive = true;
+        else
+            validPrimitive = validUnit(value, FLength | FPercent);
         break;
 
     case CSSPropertyTextIndent:

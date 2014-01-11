@@ -2512,7 +2512,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWordBreak:
             return cssValuePool().createValue(style->wordBreak());
         case CSSPropertyWordSpacing:
-            return zoomAdjustedPixelValue(style->wordSpacing(), style.get());
+            return zoomAdjustedPixelValue(style->font().wordSpacing(), style.get());
         case CSSPropertyWordWrap:
             return cssValuePool().createValue(style->overflowWrap());
         case CSSPropertyWebkitLineBreak:

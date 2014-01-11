@@ -580,7 +580,7 @@ public:
 #else
     TextDecorationStyle textDecorationStyle() const { return TextDecorationStyleSolid; }
 #endif
-    float wordSpacing() const;
+    const Length& wordSpacing() const;
     float letterSpacing() const;
 
     float zoom() const { return visual->m_zoom; }
@@ -1189,7 +1189,7 @@ public:
 
     void setWhiteSpace(EWhiteSpace v) { inherited_flags._white_space = v; }
 
-    void setWordSpacing(float);
+    void setWordSpacing(Length);
     void setLetterSpacing(float);
 
     void clearBackgroundLayers() { m_background.access()->m_background = FillLayer(BackgroundFillLayer); }
@@ -1664,7 +1664,7 @@ public:
     static unsigned short initialColumnRuleWidth() { return 3; }
     static unsigned short initialOutlineWidth() { return 3; }
     static float initialLetterSpacing() { return 0; }
-    static float initialWordSpacing() { return 0; }
+    static Length initialWordSpacing() { return Length(Fixed); }
     static Length initialSize() { return Length(); }
     static Length initialMinSize() { return Length(Fixed); }
     static Length initialMaxSize() { return Length(Undefined); }

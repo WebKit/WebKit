@@ -140,7 +140,7 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (!style.textIndent().isZero())
         return false;
-    if (style.wordSpacing() || style.letterSpacing())
+    if (!style.wordSpacing().isZero() || style.letterSpacing())
         return false;
     if (style.textTransform() != TTNONE)
         return false;

@@ -39,7 +39,7 @@ struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareI
     void* ownPtrs[1];
     AtomicString atomicStrings[5];
     void* refPtrs[2];
-    Length lengths[1];
+    Length lengths[2];
     float secondFloat;
     unsigned m_bitfields[2];
 #if ENABLE(CSS3_TEXT_DECORATION) && ENABLE(CSS_IMAGE_ORIENTATION)

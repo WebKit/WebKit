@@ -1,3 +1,54 @@
+2014-01-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSS word-spacing property does not obey percentages
+        https://bugs.webkit.org/show_bug.cgi?id=126674
+
+        Reviewed by Simon Fraser.
+
+        One change between CSS2.1 and CSS3 is that the word-spacing CSS property can
+        take percentages (of the width of the space character) in CSS3. In order to
+        implement this, the datatype must be changed from a float to a Length, which
+        can hold percentage values. Then, during layout, we can query the width of
+        the space character and update the Font's word-spacing value appropriately.
+        However, the RenderStyle still holds on to the Length (as a rare inherited
+        value).
+
+        Tests: fast/css3-text/css3-word-spacing-percentage/word-spacing-change-font.html
+               fast/css3-text/css3-word-spacing-percentage/word-spacing-percentage-parse.html
+               fast/css3-text/css3-word-spacing-percentage/word-spacing-percentage.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Use Font's computed value instead
+        of style's Length value.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): word-spacing and letter-spacing no longer are
+        parsed the same way.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyWordSpacing::applyValue): Construct a length from a given
+        CSSValue and set the style's word spacing with it.
+        (WebCore::ApplyPropertyWordSpacing::createHandler):
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder): Use ApplyPropertyWordSpacing.
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun): Use Font's computed value instead
+        of style's Length value.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths): Ditto.
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor): Opt-out of the SimpleLineLayout
+        if either the percentage or the length is nonzero.
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::BreakingContext::handleText): Use Font's computed value instead
+        of style's Length value.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::wordSpacing):
+        (WebCore::RenderStyle::setWordSpacing): Consult the Font's space with to compute
+        percentage values, but hold on to the original Length.
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        * rendering/style/StyleRareInheritedData.h: Hold on to the specified Length
+
 2014-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS build.

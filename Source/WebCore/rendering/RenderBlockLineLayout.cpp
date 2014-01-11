@@ -479,7 +479,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
                     &wordMeasurement.fallbackFonts, &overflow);
                 UChar c = renderer->characterAt(wordMeasurement.startOffset);
                 if (i > 0 && wordLength == 1 && (c == ' ' || c == '\t'))
-                    measuredWidth += renderer->style().wordSpacing();
+                    measuredWidth += renderer->style().font().wordSpacing();
             } else
                 measuredWidth += wordMeasurement.width;
             if (!wordMeasurement.fallbackFonts.isEmpty()) {

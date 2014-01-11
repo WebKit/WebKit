@@ -1535,6 +1535,40 @@ public:
 };
 #endif
 
+class ApplyPropertyWordSpacing {
+public:
+    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        Length wordSpacing;
+
+        if (primitiveValue->getValueID() == CSSValueNormal)
+            wordSpacing = RenderStyle::initialWordSpacing();
+        else if (primitiveValue->isLength()) {
+            double multiplier = styleResolver->style()->effectiveZoom();
+            if (Frame* frame = styleResolver->document().frame())
+                multiplier *= frame->textZoomFactor();
+            wordSpacing = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), multiplier);
+        } else if (primitiveValue->isPercentage())
+            wordSpacing = Length(primitiveValue->getDoubleValue(), Percent);
+        else if (primitiveValue->isNumber())
+            wordSpacing = Length(primitiveValue->getDoubleValue(), Fixed);
+        else if (primitiveValue->isViewportPercentageLength())
+            wordSpacing = Length(styleResolver->viewportPercentageValue(*primitiveValue, primitiveValue->getDoubleValue()), Fixed);
+        else
+            return;
+        styleResolver->style()->setWordSpacing(wordSpacing);
+    }
+    static PropertyHandler createHandler()
+    {
+        PropertyHandler handler = ApplyPropertyDefaultBase<const Length&, &RenderStyle::wordSpacing, Length, &RenderStyle::setWordSpacing, Length, &RenderStyle::initialWordSpacing>::createHandler();
+        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
+    }
+};
+
 class ApplyPropertyPageSize {
 private:
     static Length mmLength(double mm)
@@ -2529,7 +2563,7 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWidows, ApplyPropertyAuto<short, &RenderStyle::widows, &RenderStyle::setWidows, &RenderStyle::hasAutoWidows, &RenderStyle::setHasAutoWidows>::createHandler());
     setPropertyHandler(CSSPropertyWidth, ApplyPropertyLength<&RenderStyle::width, &RenderStyle::setWidth, &RenderStyle::initialSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicEnabled, NoneDisabled, UndefinedDisabled>::createHandler());
     setPropertyHandler(CSSPropertyWordBreak, ApplyPropertyDefault<EWordBreak, &RenderStyle::wordBreak, EWordBreak, &RenderStyle::setWordBreak, EWordBreak, &RenderStyle::initialWordBreak>::createHandler());
-    setPropertyHandler(CSSPropertyWordSpacing, ApplyPropertyComputeLength<float, &RenderStyle::wordSpacing, &RenderStyle::setWordSpacing, &RenderStyle::initialWordSpacing, NormalEnabled, ThicknessDisabled, SVGZoomEnabled>::createHandler());
+    setPropertyHandler(CSSPropertyWordSpacing, ApplyPropertyWordSpacing::createHandler());
 
     // UAs must treat 'word-wrap' as an alternate name for the 'overflow-wrap' property. So using the same handlers.
     setPropertyHandler(CSSPropertyWordWrap, ApplyPropertyDefault<EOverflowWrap, &RenderStyle::overflowWrap, EOverflowWrap, &RenderStyle::setOverflowWrap, EOverflowWrap, &RenderStyle::initialOverflowWrap>::createHandler());
