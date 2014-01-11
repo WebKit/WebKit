@@ -1,5 +1,13 @@
 2014-01-11  Simon Fraser  <simon.fraser@apple.com>
 
+        #ifdef out the contents of Touch* files for iOS.
+        
+        * dom/Touch.h:
+        * dom/TouchEvent.h:
+        * dom/TouchList.h:
+
+2014-01-11  Simon Fraser  <simon.fraser@apple.com>
+
         No need to include <ApplicationServices/ApplicationServices.h> in
         the header. Can use <CoreGraphics/CoreGraphics.h> in the .cpp file.
 

@@ -26,7 +26,7 @@
 #ifndef TouchList_h
 #define TouchList_h
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 
 #include "Touch.h"
 #include <wtf/RefCounted.h>
