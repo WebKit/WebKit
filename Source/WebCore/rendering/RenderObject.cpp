@@ -289,9 +289,10 @@ RenderObject* RenderObject::lastLeafChild() const
 // Inspired by Node::traverseNextNode.
 RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin) const
 {
-    if (firstChild()) {
-        ASSERT(!stayWithin || firstChild()->isDescendantOf(stayWithin));
-        return firstChild();
+    RenderObject* child = firstChildSlow();
+    if (child) {
+        ASSERT(!stayWithin || child->isDescendantOf(stayWithin));
+        return child;
     }
     if (this == stayWithin)
         return 0;
@@ -315,7 +316,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightT
     BlockContentHeightType overflowType;
 
     // Check for suitable children.
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling()) {
         overflowType = inclusionFunction(child);
         if (overflowType != FixedHeight) {
             currentDepth++;
@@ -359,7 +360,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightT
 
 RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, TraverseNextInclusionFunction inclusionFunction) const
 {
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling()) {
         if (inclusionFunction(child)) {
             ASSERT(!stayWithin || child->isDescendantOf(stayWithin));
             return child;
@@ -398,18 +399,16 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, Travers
 
 static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject* render)
 {
-    RenderStyle* style = render->style();
-    if (style) {
-        if (style->height().type() == Fixed) {
-            if (render->isRenderBlock()) {
-                const RenderBlock* block = toRenderBlock(render);
-                // For fixed height styles, if the overflow size of the element spills out of the specified
-                // height, assume we can apply text auto-sizing.
-                if (style->overflowY() == OVISIBLE && style->height().value() < block->layoutOverflowRect().maxY())
-                    return RenderObject::OverflowHeight;
-            }
-            return RenderObject::FixedHeight;
+    const RenderStyle& style = render->style();
+    if (style.height().type() == Fixed) {
+        if (render->isRenderBlock()) {
+            const RenderBlock* block = toRenderBlock(render);
+            // For fixed height styles, if the overflow size of the element spills out of the specified
+            // height, assume we can apply text auto-sizing.
+            if (style.overflowY() == OVISIBLE && style.height().value() < block->layoutOverflowRect().maxY())
+                return RenderObject::OverflowHeight;
         }
+        return RenderObject::FixedHeight;
     }
     return RenderObject::FlexibleHeight;
 }

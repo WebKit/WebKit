@@ -1,5 +1,17 @@
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix RenderObject.o for iOS. Unreviewed build fix.
+
+        r156285 renamed firstChild() to firstChildSlow(), so update
+        occurances in IOS_TEXT_AUTOSIZING code. Also account for a
+        RenderObject::style reference / pointer change.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::traverseNext):
+        (WebCore::includeNonFixedHeight):
+
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix MediaPlayerPrivateMediaSourceAVFObjC.o for iOS. Unreviewed build fix.
 
         Import CALayer, which Mac must have been getting some other way.
