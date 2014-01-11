@@ -32,6 +32,8 @@
 #if USE(OPENGL_ES_2)
 #include <GLES2/gl2.h>
 #include "OpenGLESShims.h"
+#elif PLATFORM(IOS)
+#include <OpenGLES/ES2/gl.h>
 #elif PLATFORM(MAC)
 #include <OpenGL/gl.h>
 #elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(NIX)

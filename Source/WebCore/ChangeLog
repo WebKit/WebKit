@@ -1,3 +1,9 @@
+2014-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS doesn't have <OpenGL/gl.h>; fix iOS build.
+
+        * platform/graphics/opengl/TemporaryOpenGLSetting.cpp:
+
 2014-01-10  Andy Estes  <aestes@apple.com>
 
         [iOS] Build Fix: Properly add $SDKROOT/usr/local/include/ to the search path when building PublicDOMInterfaces.h
