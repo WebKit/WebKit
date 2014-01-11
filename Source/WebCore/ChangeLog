@@ -1,3 +1,10 @@
+2014-01-10  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix build for RenderEmbeddedObject::canHaveChildren()
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::canHaveChildren):
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         Tweak ProgressTrackerClient functions

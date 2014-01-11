@@ -656,10 +656,7 @@ CursorDirective RenderEmbeddedObject::getCursor(const LayoutPoint& point, Cursor
 bool RenderEmbeddedObject::canHaveChildren() const
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (!node())
-        return false;
-
-    if (toElement(node())->isMediaElement())
+    if (frameOwnerElement().isMediaElement())
         return true;
 #endif
 
