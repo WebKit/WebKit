@@ -2123,7 +2123,7 @@ void FrameSelection::setSelectionFromNone()
     if (!isNone() || !(document->hasEditableStyle() || caretBrowsing))
         return;
 #else
-    if (!document || !(isNone() || isStartOfDocument(VisiblePosition(selection().start(), selection().affinity()))) || !document->rendererIsEditable())
+    if (!document || !(isNone() || isStartOfDocument(VisiblePosition(selection().start(), selection().affinity()))) || !document->hasEditableStyle())
         return;
 #endif
 
