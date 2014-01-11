@@ -1,3 +1,15 @@
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix HTMLMediaElement.o for iOS. Unreviewed build fix.
+
+        There is now local variable mediaElement. Just call the
+        functions since they are methods on this class.
+
+        Fix RequireUserGestureToShowPlaybackTargetPickerRestriction typos.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         Move progress tracking functions from FrameLoaderClient to a new ProgressTrackerClient

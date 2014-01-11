@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -365,7 +365,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     if (!settings || settings->mediaPlaybackRequiresUserGesture()) {
         addBehaviorRestriction(RequireUserGestureForRateChangeRestriction);
 #if ENABLE(IOS_AIRPLAY)
-        addBehaviorRestriction(RequireUserGestureToShowPlaybackTargetPicker);
+        addBehaviorRestriction(RequireUserGestureToShowPlaybackTargetPickerRestriction);
 #endif
     }
 #endif // !PLATFORM(IOS)
@@ -4721,17 +4721,17 @@ void HTMLMediaElement::createMediaPlayerProxy()
 
 void HTMLMediaElement::updateWidget(PluginCreationOption)
 {
-    mediaElement->setNeedWidgetUpdate(false);
+    setNeedWidgetUpdate(false);
 
+    // FIXME: What if document().frame() is 0?
+
+    URL url;
     Vector<String> paramNames;
     Vector<String> paramValues;
-    // FIXME: Rename kurl to something more sensible.
-    URL kurl;
 
-    mediaElement->getPluginProxyParams(kurl, paramNames, paramValues);
-    // FIXME: What if document().frame() is 0?
+    getPluginProxyParams(url, paramNames, paramValues);
     SubframeLoader& loader = document().frame()->loader().subframeLoader();
-    loader.loadMediaPlayerProxyPlugin(*mediaElement, kurl, paramNames, paramValues);
+    loader.loadMediaPlayerProxyPlugin(*this, url, paramNames, paramValues);
 }
 
 #endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)

@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef HTMLMediaElement_h
@@ -451,7 +451,7 @@ protected:
         RequirePageConsentToLoadMediaRestriction = 1 << 3,
         RequirePageConsentToResumeMediaRestriction = 1 << 4,
 #if ENABLE(IOS_AIRPLAY)
-        RequireUserGestureToShowPlaybackTargetPicker = 1 << 5,
+        RequireUserGestureToShowPlaybackTargetPickerRestriction = 1 << 5,
 #endif
     };
     typedef unsigned BehaviorRestrictions;
@@ -462,7 +462,7 @@ protected:
     bool pageConsentRequiredForLoad() const { return m_restrictions & RequirePageConsentToLoadMediaRestriction; }
     bool pageConsentRequiredForResume() const { return m_restrictions & RequirePageConsentToResumeMediaRestriction; }
 #if ENABLE(IOS_AIRPLAY)
-    bool userGestureRequiredToShowPlaybackTargetPicker() const { return m_restrictions & RequireUserGestureToShowPlaybackTargetPicker; }
+    bool userGestureRequiredToShowPlaybackTargetPicker() const { return m_restrictions & RequireUserGestureToShowPlaybackTargetPickerRestriction; }
 #endif
     
     void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
