@@ -1,5 +1,14 @@
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Fix RenderThemeIOS.o for iOS. Unreviewed build fix.
+
+        Typo referring to generated name. Should be "iOS" not "IOS".
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsScript):
+
+2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix WebAccessibilityObjectWrapperIOS.o for iOS. Unreviewed build fix.
 
         The upstreamed WebAccessibilityObjectWrapperIOS.mm was out of date, e.g.
