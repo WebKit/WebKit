@@ -1,3 +1,13 @@
+2014-01-11  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix the easy half of the build errors in RenderBlock.cpp
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::isNonBlocksOrNonFixedHeightListItems):
+        (WebCore::oneLineTextMultiplier):
+        (WebCore::textMultiplier):
+        (WebCore::RenderBlock::adjustComputedFontSizes):
+
 2014-01-11  Simon Fraser  <simon.fraser@apple.com>
 
         Change touch-related headers to include WebKitAdditions headers,

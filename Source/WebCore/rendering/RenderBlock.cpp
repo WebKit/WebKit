@@ -5604,10 +5604,8 @@ static bool isNonBlocksOrNonFixedHeightListItems(const RenderObject* render)
 {
     if (!render->isRenderBlock())
         return true;
-    if (render->isListItem()) {
-        RenderStyle* style = render->style();
-        return style && style->height().type() != Fixed;
-    }
+    if (render->isListItem())
+        return render->style().height().type() != Fixed;
     return false;
 }
 
@@ -5615,12 +5613,12 @@ static bool isNonBlocksOrNonFixedHeightListItems(const RenderObject* render)
 //  We've been experimenting with low values for single lines of text.
 static inline float oneLineTextMultiplier(float specifiedSize)
 {
-    return max((1.0f / log10f(specifiedSize) * 1.7f), 1.0f);
+    return std::max((1.0f / log10f(specifiedSize) * 1.7f), 1.0f);
 }
 
 static inline float textMultiplier(float specifiedSize)
 {
-    return max((1.0f / log10f(specifiedSize) * 1.95f), 1.0f);
+    return std::max((1.0f / log10f(specifiedSize) * 1.95f), 1.0f);
 }
 
 void RenderBlock::adjustComputedFontSizes(float size, float visibleWidth)
@@ -5652,8 +5650,8 @@ void RenderBlock::adjustComputedFontSizes(float size, float visibleWidth)
     for (RenderObject* descendent = traverseNext(this, isNonBlocksOrNonFixedHeightListItems); descendent; descendent = descendent->traverseNext(this, isNonBlocksOrNonFixedHeightListItems)) {
         if (isVisibleRenderText(descendent) && resizeTextPermitted(descendent)) {
             RenderText* text = toRenderText(descendent);
-            RenderStyle* oldStyle = text->style();
-            FontDescription fontDescription = oldStyle->fontDescription();
+            RenderStyle& oldStyle = text->style();
+            FontDescription fontDescription = oldStyle.fontDescription();
             float specifiedSize = fontDescription.specifiedSize();
             float scaledSize = roundf(specifiedSize * scale);
             if (scaledSize > 0 && scaledSize < minFontSize) {
@@ -5666,8 +5664,8 @@ void RenderBlock::adjustComputedFontSizes(float size, float visibleWidth)
 
                 float candidateNewSize = 0;
                 float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(specifiedSize) : textMultiplier(specifiedSize);
-                candidateNewSize = roundf(min(minFontSize, specifiedSize * lineTextMultiplier));
-                if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text->node() && (!oldStyle || oldStyle->textSizeAdjust().isAuto()))
+                candidateNewSize = roundf(std::min(minFontSize, specifiedSize * lineTextMultiplier));
+                if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text->node() && oldStyle.textSizeAdjust().isAuto())
                     document().addAutoSizingNode(text->node(), candidateNewSize);
             }
         }
