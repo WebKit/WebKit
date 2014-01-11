@@ -1,3 +1,16 @@
+2014-01-10  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Remove willRespondToTouchEvents() which was used by chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=126739
+
+        Reviewed by Alexey Proskuryakov.
+
+        willRespondToTouchEvents() was added to check if a node listens to touch events in r126945.
+        However, it is not used anywhere after chromium port is removed.
+
+        * dom/Node.cpp:
+        * dom/Node.h:
+
 2014-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix SystemVersionMac.o for iOS. Unreviewed build fix.

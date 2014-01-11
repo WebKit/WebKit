@@ -500,7 +500,6 @@ public:
     virtual bool willRespondToMouseMoveEvents();
     virtual bool willRespondToMouseClickEvents();
     virtual bool willRespondToMouseWheelEvents();
-    virtual bool willRespondToTouchEvents();
 
     unsigned short compareDocumentPosition(Node*);
 

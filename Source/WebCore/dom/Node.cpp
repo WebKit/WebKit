@@ -2201,19 +2201,6 @@ bool Node::willRespondToMouseWheelEvents()
     return hasEventListeners(eventNames().mousewheelEvent);
 }
 
-bool Node::willRespondToTouchEvents()
-{
-#if ENABLE(TOUCH_EVENTS)
-    if (!isElementNode())
-        return false;
-    if (toElement(this)->isDisabledFormControl())
-        return false;
-    return hasEventListeners(eventNames().touchstartEvent) || hasEventListeners(eventNames().touchmoveEvent) || hasEventListeners(eventNames().touchcancelEvent) || hasEventListeners(eventNames().touchendEvent);
-#else
-    return false;
-#endif
-}
-
 // This is here so it can be inlined into Node::removedLastRef.
 // FIXME: Really? Seems like this could be inlined into Node::removedLastRef if it was in TreeScope.h.
 // FIXME: It also not seem important to inline this. Is this really hot?
