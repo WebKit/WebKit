@@ -1,3 +1,12 @@
+2014-01-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Fix the build
+
+        Only call CGContextFlush() when building for OS X < 10.9.
+
+        * platform/graphics/cg/ImageBufferBackingStoreCache.cpp:
+        (WebCore::ImageBufferBackingStoreCache::deallocate):
+
 2014-01-11  Anders Carlsson  <andersca@apple.com>
 
         InspectorAgentRegistry should use std::unique_ptr

@@ -200,7 +200,7 @@ void ImageBufferBackingStoreCache::deallocate(IOSurfaceRef surface)
     CGContextRestoreGState(context);
     // Clear opportunistically so CG has more time to carry it out.
     CGContextClearRect(context, CGRectMake(0, 0, surfaceSize.width(), surfaceSize.height()));
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
     CGContextFlush(context);
 #endif
 
