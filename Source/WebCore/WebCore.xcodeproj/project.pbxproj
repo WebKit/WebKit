@@ -3231,7 +3231,6 @@
 		93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24B06D18A7E004A6FA3 /* XSLTProcessor.cpp */; };
 		93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24D06D18A7E004A6FA3 /* XSLTProcessorLibxslt.cpp */; };
 		93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
-		93F19B1308245E59001E9ABC /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869302846DCD018635CA /* ApplicationServices.framework */; };
 		93F19B1408245E59001E9ABC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869402846DCD018635CA /* Carbon.framework */; };
 		93F19B1508245E59001E9ABC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869502846DCD018635CA /* Cocoa.framework */; };
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
@@ -13517,7 +13516,6 @@
 		F5C041E00FFCA96D00839D4A /* DOMHTMLDataListElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLDataListElementInternal.h; sourceTree = "<group>"; };
 		F5C041E10FFCA96D00839D4A /* JSHTMLDataListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDataListElement.cpp; sourceTree = "<group>"; };
 		F5C041E20FFCA96D00839D4A /* JSHTMLDataListElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDataListElement.h; sourceTree = "<group>"; };
-		F5C2869302846DCD018635CA /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		F5C2869402846DCD018635CA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F5C2869502846DCD018635CA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		F5E0C6591643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseChooserOnlyDateAndTimeInputType.cpp; sourceTree = "<group>"; };
@@ -13943,7 +13941,6 @@
 			files = (
 				5FE1D292178FD1F3001AA3C3 /* Security.framework in Frameworks */,
 				FD2DBF1212B048A300ED98C6 /* Accelerate.framework in Frameworks */,
-				93F19B1308245E59001E9ABC /* ApplicationServices.framework in Frameworks */,
 				FD2DBF1312B048A300ED98C6 /* AudioToolbox.framework in Frameworks */,
 				FD2DBF1412B048A300ED98C6 /* AudioUnit.framework in Frameworks */,
 				93F19B1408245E59001E9ABC /* Carbon.framework in Frameworks */,
@@ -14349,7 +14346,6 @@
 			isa = PBXGroup;
 			children = (
 				FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */,
-				F5C2869302846DCD018635CA /* ApplicationServices.framework */,
 				FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */,
 				FD2DBF1012B048A300ED98C6 /* AudioUnit.framework */,
 				F5C2869402846DCD018635CA /* Carbon.framework */,

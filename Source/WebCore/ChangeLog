@@ -1,5 +1,17 @@
 2014-01-11  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Do not link to ApplicationServices.framework for iOS
+        <http://webkit.org/b/126835>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebCore.xcconfig:
+        (OTHER_LDFLAGS_macosx): Add -framework ApplicationServices.
+        * WebCore.xcodeproj/project.pbxproj: Remove reference to
+        ApplicationServices.framework.
+
+2014-01-11  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Build fix for StyleResolver.cpp
 
         * rendering/style/RenderStyle.h:
