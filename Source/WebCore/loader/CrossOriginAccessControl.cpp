@@ -31,7 +31,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
-#include <wtf/Threading.h>
+#include <mutex>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -76,23 +76,21 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
     return true;
 }
 
-static PassOwnPtr<HTTPHeaderSet> createAllowedCrossOriginResponseHeadersSet()
-{
-    OwnPtr<HTTPHeaderSet> headerSet = adoptPtr(new HashSet<String, CaseFoldingHash>);
-    
-    headerSet->add("cache-control");
-    headerSet->add("content-language");
-    headerSet->add("content-type");
-    headerSet->add("expires");
-    headerSet->add("last-modified");
-    headerSet->add("pragma");
-
-    return headerSet.release();
-}
-
 bool isOnAccessControlResponseHeaderWhitelist(const String& name)
 {
-    AtomicallyInitializedStatic(HTTPHeaderSet*, allowedCrossOriginResponseHeaders = createAllowedCrossOriginResponseHeadersSet().leakPtr());
+    static std::once_flag onceFlag;
+    static HTTPHeaderSet* allowedCrossOriginResponseHeaders;
+
+    std::call_once(onceFlag, []{
+        allowedCrossOriginResponseHeaders = std::make_unique<HTTPHeaderSet, std::initializer_list<String>>({
+            "cache-control",
+            "content-language",
+            "content-type",
+            "expires",
+            "last-modified",
+            "pragma"
+        }).release();
+    });
 
     return allowedCrossOriginResponseHeaders->contains(name);
 }

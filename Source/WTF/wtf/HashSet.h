@@ -21,6 +21,7 @@
 #ifndef WTF_HashSet_h
 #define WTF_HashSet_h
 
+#include <initializer_list>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashTable.h>
 
@@ -48,6 +49,16 @@ namespace WTF {
         typedef HashTableConstIteratorAdapter<HashTableType, ValueType> iterator;
         typedef HashTableConstIteratorAdapter<HashTableType, ValueType> const_iterator;
         typedef typename HashTableType::AddResult AddResult;
+
+        HashSet()
+        {
+        }
+
+        HashSet(std::initializer_list<ValueArg> initializerList)
+        {
+            for (const auto& value : initializerList)
+                add(value);
+        }
 
         void swap(HashSet&);
 
