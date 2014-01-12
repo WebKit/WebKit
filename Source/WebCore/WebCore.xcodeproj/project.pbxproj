@@ -521,6 +521,14 @@
 		0FD308D6117D168500A791F7 /* RenderIFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD308D4117D168400A791F7 /* RenderIFrame.h */; };
 		0FD723820EC8BD9300CA5DD7 /* FloatQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD723800EC8BD9300CA5DD7 /* FloatQuad.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD723830EC8BD9300CA5DD7 /* FloatQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD723810EC8BD9300CA5DD7 /* FloatQuad.cpp */; };
+		0FDA7C16188322EB00C954B5 /* JSTouch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C10188322EB00C954B5 /* JSTouch.cpp */; };
+		0FDA7C17188322EB00C954B5 /* JSTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C11188322EB00C954B5 /* JSTouch.h */; };
+		0FDA7C18188322EB00C954B5 /* JSTouchEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C12188322EB00C954B5 /* JSTouchEvent.cpp */; };
+		0FDA7C19188322EB00C954B5 /* JSTouchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C13188322EB00C954B5 /* JSTouchEvent.h */; };
+		0FDA7C1A188322EB00C954B5 /* JSTouchList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C14188322EB00C954B5 /* JSTouchList.cpp */; };
+		0FDA7C1B188322EB00C954B5 /* JSTouchList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C15188322EB00C954B5 /* JSTouchList.h */; };
+		0FDA7C1E188322FC00C954B5 /* JSGestureEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDA7C1C188322FC00C954B5 /* JSGestureEvent.cpp */; };
+		0FDA7C1F188322FC00C954B5 /* JSGestureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDA7C1D188322FC00C954B5 /* JSGestureEvent.h */; };
 		0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */; };
 		0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */; };
 		0FF5025B102BA9010066F39A /* DOMStyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50259102BA9010066F39A /* DOMStyleMedia.h */; };
@@ -7298,6 +7306,14 @@
 		0FD308D4117D168400A791F7 /* RenderIFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderIFrame.h; sourceTree = "<group>"; };
 		0FD723800EC8BD9300CA5DD7 /* FloatQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatQuad.h; sourceTree = "<group>"; };
 		0FD723810EC8BD9300CA5DD7 /* FloatQuad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatQuad.cpp; sourceTree = "<group>"; };
+		0FDA7C10188322EB00C954B5 /* JSTouch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSTouch.cpp; path = "JSTouch.cpp"; sourceTree = "<group>"; };
+		0FDA7C11188322EB00C954B5 /* JSTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSTouch.h; path = "JSTouch.h"; sourceTree = "<group>"; };
+		0FDA7C12188322EB00C954B5 /* JSTouchEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSTouchEvent.cpp; path = "JSTouchEvent.cpp"; sourceTree = "<group>"; };
+		0FDA7C13188322EB00C954B5 /* JSTouchEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSTouchEvent.h; path = "JSTouchEvent.h"; sourceTree = "<group>"; };
+		0FDA7C14188322EB00C954B5 /* JSTouchList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSTouchList.cpp; path = "JSTouchList.cpp"; sourceTree = "<group>"; };
+		0FDA7C15188322EB00C954B5 /* JSTouchList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSTouchList.h; path = "JSTouchList.h"; sourceTree = "<group>"; };
+		0FDA7C1C188322FC00C954B5 /* JSGestureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSGestureEvent.cpp; path = "JSGestureEvent.cpp"; sourceTree = "<group>"; };
+		0FDA7C1D188322FC00C954B5 /* JSGestureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSGestureEvent.h; path = "JSGestureEvent.h"; sourceTree = "<group>"; };
 		0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarThemeMock.cpp; sourceTree = "<group>"; };
 		0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeMock.h; sourceTree = "<group>"; };
 		0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarTheme.cpp; sourceTree = "<group>"; };
@@ -18898,6 +18914,8 @@
 				5FC7DC26CFE2563200B85AE5 /* JSEventTarget.h */,
 				B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */,
 				B6D9D27914EAC0860090D75E /* JSFocusEvent.h */,
+				0FDA7C1C188322FC00C954B5 /* JSGestureEvent.cpp */,
+				0FDA7C1D188322FC00C954B5 /* JSGestureEvent.h */,
 				8482B74F1198CB6B00BFB005 /* JSHashChangeEvent.cpp */,
 				8482B7501198CB6B00BFB005 /* JSHashChangeEvent.h */,
 				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
@@ -18920,6 +18938,12 @@
 				5189F01C10B37BD900F3C739 /* JSPopStateEvent.h */,
 				933A14B60B7D1D5200A53FFD /* JSTextEvent.cpp */,
 				933A14B70B7D1D5200A53FFD /* JSTextEvent.h */,
+				0FDA7C10188322EB00C954B5 /* JSTouch.cpp */,
+				0FDA7C11188322EB00C954B5 /* JSTouch.h */,
+				0FDA7C12188322EB00C954B5 /* JSTouchEvent.cpp */,
+				0FDA7C13188322EB00C954B5 /* JSTouchEvent.h */,
+				0FDA7C14188322EB00C954B5 /* JSTouchList.cpp */,
+				0FDA7C15188322EB00C954B5 /* JSTouchList.h */,
 				E17B492016A9B8FF001C8839 /* JSTransitionEvent.cpp */,
 				E17B491F16A9B8FF001C8839 /* JSTransitionEvent.h */,
 				A86629CA09DA2B47009633A5 /* JSUIEvent.cpp */,
@@ -23395,6 +23419,7 @@
 				85E711A80AC5D5350053270F /* DOMHTMLFieldSetElementInternal.h in Headers */,
 				85ECBEEF0AA7626900544F0B /* DOMHTMLFontElement.h in Headers */,
 				85E711A90AC5D5350053270F /* DOMHTMLFontElementInternal.h in Headers */,
+				0FDA7C1F188322FC00C954B5 /* JSGestureEvent.h in Headers */,
 				85DF2C5C0AA341F600AD64C5 /* DOMHTMLFormElement.h in Headers */,
 				85E711AA0AC5D5350053270F /* DOMHTMLFormElementInternal.h in Headers */,
 				85DF81950AA77E4B00486AD7 /* DOMHTMLFrameElement.h in Headers */,
@@ -24183,6 +24208,7 @@
 				BCC5BE010C0E93110011C2DB /* JSCSSStyleSheet.h in Headers */,
 				FC54D05816A7676E00575E4D /* JSCSSSupportsRule.h in Headers */,
 				A14832CC187F67C400DA63A6 /* WebCoreThreadRun.h in Headers */,
+				0FDA7C1B188322EB00C954B5 /* JSTouchList.h in Headers */,
 				14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */,
 				A8D05FAC0A23B30F005E7203 /* JSCSSValueList.h in Headers */,
 				E4778B80115A581A00B5D372 /* JSCustomEvent.h in Headers */,
@@ -24691,6 +24717,7 @@
 				BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */,
 				BC60DA3A0D2A302800B9918F /* JSXMLHttpRequestException.h in Headers */,
 				F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */,
+				0FDA7C17188322EB00C954B5 /* JSTouch.h in Headers */,
 				BCDFD4960E30592F009D10AD /* JSXMLHttpRequestUpload.h in Headers */,
 				1ACE53F70A8D19470022947D /* JSXMLSerializer.h in Headers */,
 				A584FE3C1864E2D800843B10 /* JSCommandLineAPIHost.h in Headers */,
@@ -24874,6 +24901,7 @@
 				1A569D0F0D7E2B82007C3983 /* npruntime_impl.h in Headers */,
 				1A569D100D7E2B82007C3983 /* npruntime_internal.h in Headers */,
 				1A569D110D7E2B82007C3983 /* npruntime_priv.h in Headers */,
+				0FDA7C19188322EB00C954B5 /* JSTouchEvent.h in Headers */,
 				1A927FD41416A15B003A83C8 /* nptypes.h in Headers */,
 				93500F3213FDE3BE0099EC24 /* NSScrollerImpDetails.h in Headers */,
 				F55B3DC81251F12D003EF269 /* NumberInputType.h in Headers */,
@@ -27950,6 +27978,7 @@
 				B2FA3D940AB75A6F000E5AC4 /* JSSVGFETurbulenceElement.cpp in Sources */,
 				B2FA3D960AB75A6F000E5AC4 /* JSSVGFilterElement.cpp in Sources */,
 				E157A8EC181851AC009F821D /* CryptoAlgorithmDescriptionBuilder.cpp in Sources */,
+				0FDA7C16188322EB00C954B5 /* JSTouch.cpp in Sources */,
 				B27B28250CEF0C0700D39D54 /* JSSVGFontElement.cpp in Sources */,
 				A83B79040CCAFF15000B0825 /* JSSVGFontFaceElement.cpp in Sources */,
 				A83B79010CCAFF15000B0825 /* JSSVGFontFaceFormatElement.cpp in Sources */,
@@ -28027,6 +28056,7 @@
 				B2FA3DFC0AB75A6F000E5AC4 /* JSSVGSVGElement.cpp in Sources */,
 				B2FA3DFE0AB75A6F000E5AC4 /* JSSVGSwitchElement.cpp in Sources */,
 				B2FA3E000AB75A6F000E5AC4 /* JSSVGSymbolElement.cpp in Sources */,
+				0FDA7C18188322EB00C954B5 /* JSTouchEvent.cpp in Sources */,
 				B2FA3E020AB75A6F000E5AC4 /* JSSVGTextContentElement.cpp in Sources */,
 				B2FA3E040AB75A6F000E5AC4 /* JSSVGTextElement.cpp in Sources */,
 				B22362280C3AF04A0008CA9B /* JSSVGTextPathElement.cpp in Sources */,
@@ -28878,6 +28908,7 @@
 				B25599840D00D8BA00BB825C /* SVGFEImage.cpp in Sources */,
 				B22279EE0D00BF220071B782 /* SVGFEImageElement.cpp in Sources */,
 				51D719EB181106E00016DC51 /* IDBRequest.cpp in Sources */,
+				0FDA7C1A188322EB00C954B5 /* JSTouchList.cpp in Sources */,
 				A584FE2B1863870F00843B10 /* CommandLineAPIModule.cpp in Sources */,
 				B22279F10D00BF220071B782 /* SVGFELightElement.cpp in Sources */,
 				B22279F30D00BF220071B782 /* SVGFEMergeElement.cpp in Sources */,
@@ -28888,6 +28919,7 @@
 				B22279FF0D00BF220071B782 /* SVGFESpecularLightingElement.cpp in Sources */,
 				B2227A020D00BF220071B782 /* SVGFESpotLightElement.cpp in Sources */,
 				51D719FB181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp in Sources */,
+				0FDA7C1E188322FC00C954B5 /* JSGestureEvent.cpp in Sources */,
 				B2227A050D00BF220071B782 /* SVGFETileElement.cpp in Sources */,
 				B2227A080D00BF220071B782 /* SVGFETurbulenceElement.cpp in Sources */,
 				845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */,
