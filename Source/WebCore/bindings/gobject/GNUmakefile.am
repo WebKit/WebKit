@@ -474,10 +474,12 @@ BUILT_SOURCES += \
 
 gdom_class_list := $(subst WebKitDOM,, $(filter-out %Private, $(basename $(notdir $(webkitgtk_gdom_built_sources)))))
 gdom_class_list += Custom EventTarget Object Deprecated
-DerivedSources/webkitdom/webkitdom.h: $(WebCore)/bindings/scripts/gobject-generate-headers.pl $(WebCore)/bindings/gobject/GNUmakefile.am
+DerivedSources/webkitdom:
+	$(AM_V_at)mkdir -p $@
+DerivedSources/webkitdom/webkitdom.h: $(WebCore)/bindings/scripts/gobject-generate-headers.pl $(WebCore)/bindings/gobject/GNUmakefile.am DerivedSources/webkitdom
 	$(AM_V_GEN)echo $(gdom_class_list) | $(PERL) $< gdom > $@
 
-DerivedSources/webkitdom/webkitdomdefines.h: $(WebCore)/bindings/scripts/gobject-generate-headers.pl $(WebCore)/bindings/gobject/GNUmakefile.am
+DerivedSources/webkitdom/webkitdomdefines.h: $(WebCore)/bindings/scripts/gobject-generate-headers.pl $(WebCore)/bindings/gobject/GNUmakefile.am DerivedSources/webkitdom
 	$(AM_V_GEN)echo $(gdom_class_list) | $(PERL) $< defines > $@
 
 noinst_DATA += DerivedSources/webkitdom/webkitdom.symbols
@@ -518,16 +520,16 @@ CLEAN_FILES = \
 # DerivedSources/webkitdom directory.  The reason is that we want all header files distributed in the
 # include/webkit-x.y/webkitdom directory, but do not want to name the WebCore/bindings/gobject directory
 # "webkitdom", as that's a bit presumptuous for a GTK binding.
-$(top_builddir)/DerivedSources/webkitdom/WebKitDOMObject.h: $(WebCore)/bindings/gobject/WebKitDOMObject.h
+$(top_builddir)/DerivedSources/webkitdom/WebKitDOMObject.h: $(WebCore)/bindings/gobject/WebKitDOMObject.h $(top_builddir)/DerivedSources/webkitdom
 	$(AM_V_GEN)cp -f $< $@
 
-$(top_builddir)/DerivedSources/webkitdom/WebKitDOMEventTarget.h: $(WebCore)/bindings/gobject/WebKitDOMEventTarget.h
+$(top_builddir)/DerivedSources/webkitdom/WebKitDOMEventTarget.h: $(WebCore)/bindings/gobject/WebKitDOMEventTarget.h $(top_builddir)/DerivedSources/webkitdom
 	$(AM_V_GEN)cp -f $< $@
 
-$(top_builddir)/DerivedSources/webkitdom/WebKitDOMEventTargetPrivate.h: $(WebCore)/bindings/gobject/WebKitDOMEventTargetPrivate.h
+$(top_builddir)/DerivedSources/webkitdom/WebKitDOMEventTargetPrivate.h: $(WebCore)/bindings/gobject/WebKitDOMEventTargetPrivate.h $(top_builddir)/DerivedSources/webkitdom
 	$(AM_V_GEN)cp -f $< $@
 
-$(top_builddir)/DerivedSources/webkitdom/WebKitDOMCustom.h: $(WebCore)/bindings/gobject/WebKitDOMCustom.h
+$(top_builddir)/DerivedSources/webkitdom/WebKitDOMCustom.h: $(WebCore)/bindings/gobject/WebKitDOMCustom.h $(top_builddir)/DerivedSources/webkitdom
 	$(AM_V_GEN)cp -f $< $@
 
 $(top_builddir)/DerivedSources/webkitdom/WebKitDOMDeprecated.h: $(WebCore)/bindings/gobject/WebKitDOMDeprecated.h

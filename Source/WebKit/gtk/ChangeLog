@@ -1,3 +1,16 @@
+2014-01-12  Tobias Mueller  <tobiasmue@gnome.org>
+
+        --disable-dependency-tracking causes build failure due to missing directories
+        https://bugs.webkit.org/show_bug.cgi?id=94488
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Autotools build fix: Ensure output directory existing
+        before generating DerivedSources. This allows for
+        --disable-dependency-tracking to be run.
+
+        * GNUmakefile.am: Added a new target of the directory in which files are meant to be stored ($(GENSOURCES_WEBKIT)).
+
 2014-01-10  Anders Carlsson  <andersca@apple.com>
 
         Tweak ProgressTrackerClient functions
