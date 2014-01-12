@@ -1,5 +1,11 @@
 2014-01-12  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] WebFontCache is Mac-only
+
+        * WebCore.exp.in: Move export to Mac-only section.
+
+2014-01-12  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Upstream WebEventRegion.{h|mm} to fix the build
 
         * WebCore.xcodeproj/project.pbxproj: Add to project.

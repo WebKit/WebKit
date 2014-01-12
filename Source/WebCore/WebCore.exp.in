@@ -35,7 +35,6 @@
 .objc_class_name_DOMTextEvent
 .objc_class_name_DOMUIEvent
 .objc_class_name_DOMWheelEvent
-.objc_class_name_WebFontCache
 .objc_class_name_WebScriptObject
 .objc_class_name_WebScriptObjectPrivate
 .objc_class_name_WebUndefined
@@ -1994,6 +1993,7 @@ __ZN7WebCore27applicationIsMicrosoftMyDayEv
 .objc_class_name_WebCoreFullScreenPlaceholderView
 .objc_class_name_WebCoreFullScreenWarningView
 .objc_class_name_WebCoreFullScreenWindow
+.objc_class_name_WebFontCache
 .objc_class_name_WebHTMLConverter
 .objc_class_name_WebWindowFadeAnimation
 .objc_class_name_WebWindowScaleAnimation
