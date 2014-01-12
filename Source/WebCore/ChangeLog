@@ -1,5 +1,13 @@
 2014-01-12  Simon Fraser  <simon.fraser@apple.com>
 
+        We need DragImage.cpp code even when ENABLE_DRAG_SUPPORT is
+        not defined, because these are actually generic snapshotting
+        functions.
+
+        * platform/DragImage.cpp:
+
+2014-01-12  Simon Fraser  <simon.fraser@apple.com>
+
         Fix linker errors: add DateTimeFormat.cpp to the project,
         and make DateInputType::DateInputType not inline.
 

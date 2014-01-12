@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DragImage.h"
 
-#if ENABLE(DRAG_SUPPORT)
-
 #include "Frame.h"
 #include "FrameSnapshotting.h"
 #include "FrameView.h"
@@ -212,4 +210,3 @@ DragImageRef createDragImageForLink(URL&, const String&, FontRenderingMode)
 
 } // namespace WebCore
 
-#endif // ENABLE(DRAG_SUPPORT)
