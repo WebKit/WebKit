@@ -1,3 +1,9 @@
+2014-01-12  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Windows build after r161830.
+
+        * platform/network/NetworkStateNotifier.h:
+
 2014-01-12  Simon Fraser  <simon.fraser@apple.com>
 
         Don't build JSTouch* and JSGesture* files on Mac.
