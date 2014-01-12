@@ -1,5 +1,14 @@
 2014-01-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Add implementations of Frame::viewportArguments() and
+        Frame::setViewportArguments().
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::viewportArguments):
+        (WebCore::Frame::setViewportArguments):
+
+2014-01-12  Simon Fraser  <simon.fraser@apple.com>
+
         Add JSWebKitPlaybackTargetAvailabilityEvent.* to the project.
 
         * WebCore.xcodeproj/project.pbxproj:

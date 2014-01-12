@@ -98,6 +98,16 @@ void Frame::initWithSimpleHTMLDocument(const String& style, const URL& url)
     document->appendChild(rootElement, ec);
 }
 
+const ViewportArguments& Frame::viewportArguments() const
+{
+    return m_viewportArguments;
+}
+
+void Frame::setViewportArguments(const ViewportArguments& arguments)
+{
+    m_viewportArguments = arguments;
+}
+
 // FIXME: Extract the common code in indexCountOfWordPrecedingSelection() and wordsInCurrentParagraph() into a shared function.
 int Frame::indexCountOfWordPrecedingSelection(NSString *word) const
 {
