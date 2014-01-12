@@ -50,7 +50,7 @@ public:
         return *this;
     }
 
-    const decltype(*std::declval<Iterator>()) operator*() const
+    decltype(*std::declval<Iterator>()) operator*() const
     {
         ASSERT(m_iter != m_end);
         ASSERT(m_pred(*m_iter));

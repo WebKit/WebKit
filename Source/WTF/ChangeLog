@@ -1,3 +1,12 @@
+2014-01-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for ports using GCC after r161770.
+
+        * wtf/IteratorAdaptors.h:
+        (WTF::FilterIterator::operator*): Replicating r161797, the const qualifier for
+        FilterIterator::operator*() is removed since it clashes with some iterator types
+        that are also const, causing compilation failures with GCC.
+
 2014-01-11  Anders Carlsson  <andersca@apple.com>
 
         Use std::call_once instead of AtomicallyInitializedStatic when creating a HTTP header set
