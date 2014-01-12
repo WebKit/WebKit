@@ -146,6 +146,15 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
             break;
         }
 
+        // bool
+        case 'B': {
+            BOOL value;
+            [invocation getArgument:&value atIndex:i];;
+
+            encodeToObjectStream(encoder, @(value));
+            break;
+        }
+
         // Objective-C object
         case '@': {
             id value;
@@ -381,6 +390,13 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
         // int
         case 'i': {
             int value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) intValue];
+            [invocation setArgument:&value atIndex:i];
+            break;
+        }
+
+        // bool
+        case 'B': {
+            bool value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) boolValue];
             [invocation setArgument:&value atIndex:i];
             break;
         }

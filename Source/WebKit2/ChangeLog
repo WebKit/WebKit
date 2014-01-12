@@ -1,3 +1,17 @@
+2014-01-11  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Support bool argument for encoding/decoding invocations.
+        https://bugs.webkit.org/show_bug.cgi?id=126823
+
+        Reviewed by Sam Weinig.
+
+        For remote invocation method argument, current we support int, double and ObjC
+        object, this patch add support for bool type too.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocation):
+        (decodeInvocationArguments):
+
 2014-01-11  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] [Windows] Stop scheduling network requests in WebCore
