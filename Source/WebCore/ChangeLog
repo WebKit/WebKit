@@ -1,5 +1,12 @@
 2014-01-11  David Kilzer  <ddkilzer@apple.com>
 
+        [iOS] Build fix for StyleResolver.cpp
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setCompositionFillColor): Added.
+
+2014-01-11  David Kilzer  <ddkilzer@apple.com>
+
         [iOS] Fix build of RenderLayerCompositor::registerAllViewportConstrainedLayers()
 
         * rendering/RenderLayerCompositor.cpp:
