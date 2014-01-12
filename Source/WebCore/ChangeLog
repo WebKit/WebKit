@@ -1,3 +1,17 @@
+2014-01-12  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Upstream WebEventRegion.{h|mm} to fix the build
+
+        * WebCore.xcodeproj/project.pbxproj: Add to project.
+        * page/ios/WebEventRegion.h: Added.
+        * page/ios/WebEventRegion.mm: Added.
+        (-[WebEventRegion initWithPoints::::]):
+        (-[WebEventRegion copyWithZone:]):
+        (-[WebEventRegion description]):
+        (-[WebEventRegion hitTest:]):
+        (-[WebEventRegion isEqual:]):
+        (-[WebEventRegion quad]):
+
 2014-01-11  Anders Carlsson  <andersca@apple.com>
 
         Use std::call_once instead of AtomicallyInitializedStatic when creating a HTTP header set
